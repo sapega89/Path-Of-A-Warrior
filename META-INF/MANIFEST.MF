@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+MIDlet-1: Path of a Warrior, /icon48_48.png, Main
+MIDlet-Icon: /icon48_48.png
+Ant-Version: Apache Ant 1.6.2
+MicroEdition-Configuration: CLDC-1.0
+MIDlet-Version: 1.4.0
+Created-By: 1.5.0_05-b05 (Sun Microsystems Inc.)
+MIDlet-Vendor: Thanhdaik
+MIDlet-Name: Path of a Warrior
+MicroEdition-Profile: MIDP-1.0
+MIDlet-Permissions: javax.microedition.io.Connector.socket,javax.microedition.io.Connector.http
+BUILD_ID: POW_CIN_NK_N75
+GAMEVIL_CHEAT: NO
+GAMEVIL_SERVER: gamehub.pro
+GAMEVIL_PORT: 28230
+GAMEVIL_MOREGAMES: http://gamehub.pro
+GAMEVIL_MULTIPLAY: http://gamehub.pro
+MIDlet-Delete-Confirm: GameHub.Pro - Tai Game Java Hack !
+MIDlet-Description: http://gamehub.pro
+MIDlet-Info-URL: http://gamehub.pro

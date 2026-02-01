@@ -1,0 +1,34 @@
+# Godot 4
+.godot/
+*.translation
+export_presets.cfg
+
+# Godot import cache (optional, uncomment if too large)
+# .godot/imported/
+
+# Java / J2ME build
+*.class
+*.jar
+*.jad
+build/
+out/
+target/
+.idea/
+*.iml
+.settings/
+.project
+.classpath
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor / IDE
+*.swp
+*.swo
+*~
+.cursor/
+
+# Logs
+*.log
