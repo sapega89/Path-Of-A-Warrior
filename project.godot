@@ -11,9 +11,14 @@ config_version=5
 [application]
 
 config/name="Path of a Warrior"
-config/description="Port of Path of a Warrior (J2ME) to Godot 4"
+config/description="Port of Path of a Warrior (J2ME) to Godot 4.5"
 run/main_scene="res://scenes/main.tscn"
-config/features=PackedStringArray("4.2", "Forward Plus")
+config/features=PackedStringArray("4.5", "Forward Plus")
+
+[autoload]
+
+GameState="*res://scripts/game_state.gd"
+SoundManager="*res://scripts/sound_manager.gd"
 
 [display]
 
@@ -21,12 +26,18 @@ window/size/viewport_width=240
 window/size/viewport_height=320
 window/size/mode=2
 window/stretch/mode="canvas_items"
-window/stretch/aspect="keep_height"
+window/handheld/orientation=1
 
-[input]
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/midi/plugin.cfg")
 
 [layer_names]
 
 2d_physics/layer_1="world"
 2d_physics/layer_2="player"
 2d_physics/layer_3="entities"
+
+[rendering]
+
+environment/defaults/default_clear_color=Color(0.2, 0.18, 0.15, 1)
