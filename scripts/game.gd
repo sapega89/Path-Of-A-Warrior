@@ -1,61 +1,28 @@
 extends Node2D
-## Game scene: level tiles + player.
-## Original: 240x320, tile 27x27, grid ~9x9 visible.
+## Игровая сцена: карта (c.java) + персонаж + камера. Обновляет позицию карты по персонажу.
 
-const TILE_SIZE := 27
-const VIEW_WIDTH := 240
-const VIEW_HEIGHT := 320
+const VIEW_W := GameState.VIEW_W
+const VIEW_H := GameState.VIEW_H
+const CENTER := Vector2(VIEW_W / 2.0, VIEW_H / 2.0)
 
-var _level_num := 1
-var _tile_textures: Array[Texture2D] = []
-var _tile_layer: Node2D
-var _map_data: Array = []  # [row][col] = tile index 0..15
-var _map_cols := 0
-var _map_rows := 0
+var _map: Node2D
+var _player: CharacterBody2D
 
 func _ready() -> void:
-	_tile_layer = $TileLayer
-	_load_level_tiles(_level_num)
-	_build_demo_map()
-	_draw_tiles()
+	_map = $MapRenderer
+	_player = $Player
+	if _map.has_method("set_camera_offset"):
+		_update_map_camera()
 
-func _load_level_tiles(level: int) -> void:
-	_tile_textures.clear()
-	for i in range(1, 17):
-		var path := "res://%d_%02d.png" % [level, i]
-		if ResourceLoader.exists(path):
-			var tex: Texture2D = load(path) as Texture2D
-			_tile_textures.append(tex)
-		else:
-			_tile_textures.append(null)
-	if _tile_textures.is_empty():
-		push_warning("No tiles found for level %d (e.g. res://1_01.png)" % level)
+func _process(_delta: float) -> void:
+	_update_map_camera()
 
-func _build_demo_map() -> void:
-	# Demo: simple grid 12x12, border = tile 0, floor = tile 1
-	_map_cols = 12
-	_map_rows = 12
-	_map_data.clear()
-	for row in _map_rows:
-		var r: Array = []
-		for col in _map_cols:
-			if row == 0 or row == _map_rows - 1 or col == 0 or col == _map_cols - 1:
-				r.append(0)
-			else:
-				r.append(1)
-		_map_data.append(r)
-
-func _draw_tiles() -> void:
-	for c in _tile_layer.get_children():
-		c.queue_free()
-	if _tile_textures.is_empty():
+func _update_map_camera() -> void:
+	if not is_instance_valid(_player) or not is_instance_valid(_map):
 		return
-	for row in _map_data.size():
-		for col in _map_data[row].size():
-			var idx: int = _map_data[row][col]
-			if idx < 0 or idx >= _tile_textures.size() or _tile_textures[idx] == null:
-				continue
-			var spr := Sprite2D.new()
-			spr.texture = _tile_textures[idx]
-			spr.position = Vector2(col * TILE_SIZE + TILE_SIZE / 2.0, row * TILE_SIZE + TILE_SIZE / 2.0)
-			_tile_layer.add_child(spr)
+	var px: Vector2 = _player.global_position
+	var tile_x := int(px.x / GameState.TILE_SIZE)
+	var tile_y := int(px.y / GameState.TILE_SIZE)
+	var pixel_off_x := int(px.x) % GameState.TILE_SIZE
+	var pixel_off_y := int(px.y) % GameState.TILE_SIZE
+	_map.set_camera_offset(tile_x, tile_y, pixel_off_x, pixel_off_y)

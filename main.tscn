@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://bnboonfmebxxd"]
+
+[ext_resource type="Script" path="res://main.gd" id="1_hueaf"]
+[ext_resource type="Script" path="res://addons/xr-controller-midi-player/xr_controller_midi_player.gd" id="2_i7uew"]
+
+[node name="XROrigin3D" type="XROrigin3D"]
+script = ExtResource("1_hueaf")
+
+[node name="XRCamera3D" type="XRCamera3D" parent="."]
+
+[node name="XRController3D_l" type="XRController3D" parent="."]
+tracker = &"left_hand"
+
+[node name="XRController3D_r" type="XRController3D" parent="."]
+tracker = &"right_hand"
+
+[node name="XRControllerMidiPlayer" type="Node" parent="."]
+script = ExtResource("2_i7uew")
+
+[connection signal="button_pressed" from="XRController3D_l" to="." method="_on_xr_controller_3d_l_button_pressed"]
+[connection signal="button_pressed" from="XRController3D_r" to="." method="_on_xr_controller_3d_r_button_pressed"]

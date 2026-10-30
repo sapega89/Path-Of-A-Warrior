@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://cetcmenu"]
+
+[ext_resource type="PackedScene" uid="uid://c534c6yuensld" path="res://scenes/submenu_shell.tscn" id="1_shell"]
+[ext_resource type="Script" path="res://scripts/submenu_config.gd" id="2_config"]
+
+[node name="ETCMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SubmenuShell" parent="." instance=ExtResource("1_shell")]
+
+[node name="Config" type="Node" parent="SubmenuShell"]
+script = ExtResource("2_config")
+menu_id = 5

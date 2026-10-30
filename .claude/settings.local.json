@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(python3:*)",
+      "Bash(ls -lh \"D:\\\\Path-Of-A-Warrior-240x320.jar.src\"/*.png)",
+      "Bash(xxd -l 200 \"D:\\\\Path-Of-A-Warrior-240x320.jar.src\\\\imgchar.scr\")",
+      "Bash(awk '{print $5, $9}')",
+      "Bash(sort -k2 -V)",
+      "Bash(awk '{print $1, $2}')"
+    ]
+  }
+}

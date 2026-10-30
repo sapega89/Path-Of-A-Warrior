@@ -1,0 +1,38 @@
+[gd_scene load_steps=3 format=3 uid="uid://bgamemenu"]
+
+[ext_resource type="Script" uid="uid://dle5htu05bib6" path="res://scripts/game_menu.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://k11l7di6ekc" path="res://scenes/game/game_menu_vertical.tscn" id="2_menu"]
+
+[node name="GameMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="MainLayer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MenuContent" parent="MainLayer" instance=ExtResource("2_menu")]
+layout_mode = 1
+offset_left = -1.0
+offset_right = -1.0
+
+[node name="SubmenuLayer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = -1.0
+offset_right = 2.0
+offset_bottom = -1.0
+grow_horizontal = 2
+grow_vertical = 2

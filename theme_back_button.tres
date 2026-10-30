@@ -1,0 +1,35 @@
+так[gd_resource type="Theme" load_steps=3 format=3 uid="uid://dsjehq0myaj1q"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_back_press"]
+bg_color = Color(0.2, 0.18, 0.16, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.45, 0.42, 0.38, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_back_normal"]
+bg_color = Color(0.25, 0.23, 0.21, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.45, 0.42, 0.38, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[resource]
+default_font_size = 14
+Button/font_sizes/font_size = 14
+Button/styles/hover = SubResource("StyleBoxFlat_back_press")
+Button/styles/normal = SubResource("StyleBoxFlat_back_normal")
+Button/styles/pressed = SubResource("StyleBoxFlat_back_press")
+TextureButton/styles/hover = SubResource("StyleBoxFlat_back_press")
+TextureButton/styles/normal = SubResource("StyleBoxFlat_back_normal")
+TextureButton/styles/pressed = SubResource("StyleBoxFlat_back_press")

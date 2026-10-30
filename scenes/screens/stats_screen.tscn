@@ -1,0 +1,79 @@
+[gd_scene load_steps=3 format=3 uid="uid://statsscreen"]
+
+[ext_resource type="Script" path="res://scripts/stats_screen.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://c534c6yuensld" path="res://scenes/submenu_shell.tscn" id="2_shell"]
+
+[node name="StatsScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="SubmenuShell" parent="." instance=ExtResource("2_shell")]
+layout_mode = 1
+
+[node name="InfoRow" type="HBoxContainer" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Portrait" type="TextureRect" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox/InfoRow"]
+custom_minimum_size = Vector2(46, 46)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="InfoVBox" type="VBoxContainer" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox/InfoRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="NameLabel" type="Label" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox/InfoRow/InfoVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Hero"
+
+[node name="LevelLabel" type="Label" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox/InfoRow/InfoVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Lv.1  Fame: 0"
+
+[node name="StatsVBox" type="VBoxContainer" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Stat0" type="Label" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox/StatsVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "  Atk : 5"
+
+[node name="Stat1" type="Label" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox/StatsVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "  Def : 4"
+
+[node name="Stat2" type="Label" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox/StatsVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "  HP  : 30"
+
+[node name="Stat3" type="Label" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox/StatsVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "  MP  : 10"
+
+[node name="PointsLabel" type="Label" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.85, 0.85, 1)
+theme_override_font_sizes/font_size = 12
+text = "Points left: 5"
+horizontal_alignment = 1
+
+[node name="BtnConfirm" type="Button" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "Add point"

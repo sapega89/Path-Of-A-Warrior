@@ -1,0 +1,35 @@
+[gd_scene load_steps=2 format=3 uid="uid://cyo0pvdeg8215"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cell"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.42, 0.42, 0.42, 1)
+
+[node name="GeneralsTableRow" type="HBoxContainer"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="NameCell" type="PanelContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_cell")
+
+[node name="Button" type="Button" parent="NameCell"]
+layout_mode = 2
+text = "name"
+
+[node name="RelCell" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_cell")
+
+[node name="RelationshipLabel" type="Label" parent="RelCell"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "0"
+horizontal_alignment = 2

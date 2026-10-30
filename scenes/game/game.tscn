@@ -1,0 +1,26 @@
+[gd_scene load_steps=6 format=3 uid="uid://cgame001"]
+
+[ext_resource type="Script" uid="uid://3pi3mfrnb1i2" path="res://scripts/game.gd" id="1_game"]
+[ext_resource type="PackedScene" uid="uid://cplayer01" path="res://scenes/menus/player.tscn" id="2_player"]
+[ext_resource type="Script" uid="uid://dxg6tqdssqou1" path="res://scripts/map_renderer.gd" id="3_map"]
+[ext_resource type="PackedScene" uid="uid://cgameui01" path="res://scenes/game/game_ui.tscn" id="4_ui"]
+[ext_resource type="PackedScene" uid="uid://cvirtualpad" path="res://scenes/virtual_pad.tscn" id="5_pad"]
+
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1_game")
+
+[node name="MapRenderer" type="Node2D" parent="."]
+position = Vector2(120, 160)
+script = ExtResource("3_map")
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+position = Vector2(120, 160)
+
+[node name="Camera2D" type="Camera2D" parent="Player"]
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+
+[node name="GameUI" parent="." instance=ExtResource("4_ui")]
+
+[node name="VirtualPad" parent="." instance=ExtResource("5_pad")]

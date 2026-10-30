@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://cbuttonback"]
+
+[ext_resource type="Texture2D" uid="uid://dtotd1wsmwgrq" path="res://ui_back.png" id="1_tex"]
+
+[node name="ButtonBack" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+custom_minimum_size = Vector2(45, 28)
+
+[node name="Button" type="TextureButton" parent="ButtonBack"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("1_tex")
+stretch_mode = 5

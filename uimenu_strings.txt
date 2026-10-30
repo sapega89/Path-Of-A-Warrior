@@ -1,0 +1,28 @@
+0	Game Menu
+1	Missions
+2	Missions
+3	Briefing
+4	Tip
+5	MainMenu
+6	CHARACTER
+7	NAME
+8	ATTRIBUTES
+9	Options
+10	Etc
+11	Save
+12	Blacksmith
+13	Management
+14	Attributes
+15	Skills
+16	Gear
+17	Inventory
+18	Assign Items
+19	Select
+20	Visiting
+21	Buy Item
+22	Sell Item
+23	Enchant Item
+24	Combine
+25	Endings
+26	Network
+27	Help

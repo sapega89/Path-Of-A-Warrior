@@ -6,32 +6,21 @@ signal back_requested
 
 const MIN_NAME_LENGTH := 4
 
-@onready var _line_edit: LineEdit = $Margin/VBox/Center/LineEdit
-@onready var _hint: Label = $Margin/VBox/Hint
-@onready var _btn_confirm: Button = $Margin/VBox/BottomRow/BtnConfirm
-@onready var _btn_back: Button = $Margin/VBox/BottomRow/BtnBack
+@onready var _shell: Control = $SubmenuShell
+@onready var _line_edit: LineEdit = $SubmenuShell/MainLayer/MenuFrame/LinksVBox/LineEdit
+@onready var _hint: Label = $SubmenuShell/MainLayer/MenuFrame/LinksVBox/Hint
+@onready var _btn_confirm: Button = $SubmenuShell/MainLayer/MenuFrame/LinksVBox/BtnConfirm
 
 
 func _ready() -> void:
+	_shell.set_title("NAME")
+	_shell.back_pressed.connect(func() -> void: back_requested.emit())
 	_line_edit.text = GameState.player_name
 	_line_edit.placeholder_text = "Enter name (min %d chars)" % MIN_NAME_LENGTH
 	_update_hint()
 	_line_edit.text_changed.connect(_on_text_changed)
 	_btn_confirm.pressed.connect(_on_confirm)
-	_btn_back.pressed.connect(_on_back)
 	_line_edit.grab_focus()
-
-
-func _input(event: InputEvent) -> void:
-	if event.is_action_pressed(&"ui_cancel"):
-		_on_back()
-		get_viewport().set_input_as_handled()
-
-
-func process_menu_input(event: InputEvent) -> void:
-	if event.is_action_pressed(&"ui_cancel"):
-		_on_back()
-		get_viewport().set_input_as_handled()
 
 
 func _on_text_changed(_new_text: String) -> void:
@@ -55,7 +44,3 @@ func _on_confirm() -> void:
 		return
 	GameState.player_name = name_str
 	name_confirmed.emit(name_str)
-
-
-func _on_back() -> void:
-	back_requested.emit()

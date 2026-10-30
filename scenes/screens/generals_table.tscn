@@ -1,0 +1,38 @@
+[gd_scene load_steps=2 format=3 uid="uid://bqkoupfa58j0q"]
+
+[ext_resource type="PackedScene" uid="uid://cyo0pvdeg8215" path="res://scenes/screens/generals_table_row.tscn" id="1_row"]
+
+[node name="GeneralsTable" type="VBoxContainer"]
+custom_minimum_size = Vector2(0, 52)
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -77.0
+offset_right = 77.0
+offset_bottom = 170.0
+grow_horizontal = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="HeaderRow" parent="." instance=ExtResource("1_row")]
+layout_mode = 2
+
+[node name="Row0" parent="." instance=ExtResource("1_row")]
+layout_mode = 2
+
+[node name="Row1" parent="." instance=ExtResource("1_row")]
+layout_mode = 2
+
+[node name="Row2" parent="." instance=ExtResource("1_row")]
+layout_mode = 2
+
+[node name="Row3" parent="." instance=ExtResource("1_row")]
+layout_mode = 2
+
+[node name="Row4" parent="." instance=ExtResource("1_row")]
+layout_mode = 2
+
+[node name="Row5" parent="." instance=ExtResource("1_row")]
+layout_mode = 2
+
+[editable path="HeaderRow"]

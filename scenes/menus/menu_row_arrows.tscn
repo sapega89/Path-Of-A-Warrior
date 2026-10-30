@@ -1,0 +1,80 @@
+[gd_scene load_steps=6 format=3 uid="uid://bmenuarrows"]
+
+[ext_resource type="Script" uid="uid://deloviu70w1nv" path="res://scripts/menu_row_arrows.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://3a3rjqx4pe3p" path="res://bar_m.png" id="2_bar"]
+[ext_resource type="Texture2D" uid="uid://bm84intom52qm" path="res://textures/arrow_menu_left.tres" id="3_left"]
+[ext_resource type="Texture2D" uid="uid://ygxw3ll1vwsm" path="res://textures/arrow_menu_right.tres" id="4_right"]
+[ext_resource type="Texture2D" uid="uid://bpfpmx0rccpyy" path="res://box_01.png" id="5_box01"]
+
+[node name="MenuRowArrows" type="Control"]
+custom_minimum_size = Vector2(200, 28)
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_script")
+
+[node name="BarBg" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bar")
+stretch_mode = 5
+
+[node name="FocusBg" type="TextureRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_box01")
+stretch_mode = 5
+
+[node name="Row" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="LeftWrap" type="Control" parent="Row"]
+custom_minimum_size = Vector2(32, 28)
+layout_mode = 2
+
+[node name="BtnLeft" type="TextureButton" parent="Row/LeftWrap"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("3_left")
+stretch_mode = 5
+
+[node name="BtnSelect" type="Button" parent="Row"]
+custom_minimum_size = Vector2(100, 28)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "..."
+flat = true
+
+[node name="RightWrap" type="Control" parent="Row"]
+custom_minimum_size = Vector2(32, 28)
+layout_mode = 2
+
+[node name="BtnRight" type="TextureButton" parent="Row/RightWrap"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("4_right")
+stretch_mode = 5

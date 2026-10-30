@@ -1,0 +1,136 @@
+[gd_scene load_steps=7 format=3 uid="uid://c534c6yuensld"]
+
+[ext_resource type="Script" uid="uid://dokqqeyih0ka5" path="res://scripts/submenu_shell.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dtotd1wsmwgrq" path="res://ui_back.png" id="2_vsr6y"]
+[ext_resource type="Texture2D" uid="uid://yxb2ymt1ouqp" path="res://ui_titlebox.png" id="3_aqvdi"]
+[ext_resource type="Texture2D" uid="uid://dpd4lv8tyy8ws" path="res://ui_borderv.png" id="3_borderv"]
+[ext_resource type="Texture2D" uid="uid://dgtj3sgs5y7sn" path="res://ui_borderh.png" id="4_om3db"]
+[ext_resource type="PackedScene" uid="uid://c62gxcpp68uq" path="res://scenes/back_btn_wrap.tscn" id="6_vsr6y"]
+
+[node name="SubmenuShell" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_vsr6y")
+stretch_mode = 1
+
+[node name="MainLayer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleBox" type="TextureRect" parent="MainLayer"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -80.0
+offset_top = 5.0
+offset_right = 80.0
+offset_bottom = 37.0
+grow_horizontal = 2
+texture = ExtResource("3_aqvdi")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TitleLabel" type="Label" parent="MainLayer/TitleBox"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 16
+text = "Game Menu"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MenuFrame" type="Control" parent="MainLayer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BorderTop" type="TextureRect" parent="MainLayer/MenuFrame"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 6.0
+grow_horizontal = 2
+texture = ExtResource("4_om3db")
+expand_mode = 1
+stretch_mode = 1
+metadata/_edit_group_ = true
+
+[node name="BorderBottom" type="TextureRect" parent="MainLayer/MenuFrame"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -2.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 0
+texture = ExtResource("4_om3db")
+expand_mode = 1
+stretch_mode = 1
+metadata/_edit_group_ = true
+
+[node name="BorderLeft" type="TextureRect" parent="MainLayer/MenuFrame"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 6.0
+grow_vertical = 2
+texture = ExtResource("3_borderv")
+expand_mode = 1
+stretch_mode = 1
+metadata/_edit_group_ = true
+
+[node name="BorderRight" type="TextureRect" parent="MainLayer/MenuFrame"]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -6.0
+grow_horizontal = 0
+grow_vertical = 2
+texture = ExtResource("3_borderv")
+expand_mode = 1
+stretch_mode = 1
+metadata/_edit_group_ = true
+
+[node name="LinksVBox" type="VBoxContainer" parent="MainLayer/MenuFrame"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 44.0
+offset_right = -24.0
+offset_bottom = -36.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 6
+
+[node name="BackBtnWrap" parent="MainLayer" instance=ExtResource("6_vsr6y")]
+layout_mode = 1

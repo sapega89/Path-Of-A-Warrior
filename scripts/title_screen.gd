@@ -1,5 +1,5 @@
 extends Control
-## Главный экран: титул + «Press any key» → меню со стрелками.
+## [title] Титульний екран: порядок і кількість пунктів з M_text.png (індекси 0–8).
 
 signal start_game
 signal new_game
@@ -8,12 +8,16 @@ signal show_license
 signal show_help
 signal show_options
 signal show_endings
+signal show_about
+signal show_more_games
+signal show_multiplayer
 
 const VIEW_W := GameState.VIEW_W
 const VIEW_H := GameState.VIEW_H
 
+## Джерело правди: M_text.png — 9 пунктів у порядку рядків.
 const MENU_ITEMS: Array[String] = [
-	"Играть", "Продолжить", "Help", "Options", "Endings", "Лицензия", "Выход"
+	"Continue", "New Game", "Options", "Help", "Endings", "About", "More Games", "Multiplayer", "Exit"
 ]
 
 var _show_menu := false
@@ -58,10 +62,6 @@ func _go_to_menu() -> void:
 	_show_menu = true
 	_press_any_key.visible = false
 	_menu_frame.visible = true
-	# Фокус на кнопку рядка — показує box_01 (стиль кнопок)
-	var btn := _menu_row.get_node_or_null("Row/BtnSelect")
-	if btn is Control:
-		btn.grab_focus()
 
 func _handle_menu_input(event: InputEvent) -> void:
 	if _menu_row != null and _menu_row.has_method("process_menu_input"):
@@ -70,16 +70,20 @@ func _handle_menu_input(event: InputEvent) -> void:
 func _on_item_selected(index: int) -> void:
 	match index:
 		0:
-			new_game.emit()
-		1:
 			start_game.emit()
+		1:
+			new_game.emit()
 		2:
-			show_help.emit()
-		3:
 			show_options.emit()
+		3:
+			show_help.emit()
 		4:
 			show_endings.emit()
 		5:
-			show_license.emit()
+			show_about.emit()
 		6:
+			show_more_games.emit()
+		7:
+			show_multiplayer.emit()
+		8:
 			exit_game.emit()

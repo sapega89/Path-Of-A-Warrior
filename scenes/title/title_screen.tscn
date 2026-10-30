@@ -1,0 +1,129 @@
+[gd_scene load_steps=10 format=3 uid="uid://btitlescreen"]
+
+[ext_resource type="Script" uid="uid://dfubllrfvd1wa" path="res://scripts/title_screen.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cynh2s0mxctqx" path="res://title_1.png" id="2_t1"]
+[ext_resource type="Texture2D" uid="uid://uef5tb63doy2" path="res://title_2.png" id="3_t2"]
+[ext_resource type="Texture2D" uid="uid://c6wlaxoxll6xk" path="res://title_3.png" id="4_t3"]
+[ext_resource type="Texture2D" uid="uid://bhlw342nfqe5b" path="res://title_4.png" id="5_t4"]
+[ext_resource type="PackedScene" uid="uid://titlemenurow" path="res://scenes/title/title_menu_row.tscn" id="6_menu_row"]
+[ext_resource type="Theme" path="res://theme_game.tres" id="7_theme"]
+[ext_resource type="Texture2D" uid="uid://bykastpkevlun" path="res://gamevil.png" id="9_gamevil"]
+[ext_resource type="Texture2D" uid="uid://bw4p5of2a6o8v" path="res://press_any_key.png" id="10_press"]
+
+[node name="TitleScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("7_theme")
+script = ExtResource("1_script")
+
+[node name="TitleStrip" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title1" type="TextureRect" parent="TitleStrip"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 80.0
+grow_horizontal = 2
+texture = ExtResource("2_t1")
+stretch_mode = 5
+
+[node name="Title2" type="TextureRect" parent="TitleStrip"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 80.0
+offset_bottom = 160.0
+grow_horizontal = 2
+texture = ExtResource("3_t2")
+stretch_mode = 5
+
+[node name="Title3" type="TextureRect" parent="TitleStrip"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 160.0
+offset_bottom = 240.0
+grow_horizontal = 2
+texture = ExtResource("4_t3")
+stretch_mode = 5
+
+[node name="Title4" type="TextureRect" parent="TitleStrip"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 240.0
+offset_bottom = 320.0
+grow_horizontal = 2
+texture = ExtResource("5_t4")
+stretch_mode = 5
+
+[node name="PressAnyKey" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -78.0
+offset_top = 97.0
+offset_right = 81.0
+offset_bottom = 117.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("10_press")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="MenuFrame" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 32.0
+offset_top = -65.0
+offset_right = -32.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="VBox" type="VBoxContainer" parent="MenuFrame"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 3.0
+offset_bottom = -33.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 4
+
+[node name="MenuRow" parent="MenuFrame/VBox" instance=ExtResource("6_menu_row")]
+layout_mode = 2
+
+[node name="LicenseFooter" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -80.0
+offset_top = -20.0
+offset_right = 80.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 0
+texture = ExtResource("9_gamevil")
+expand_mode = 1
+stretch_mode = 4

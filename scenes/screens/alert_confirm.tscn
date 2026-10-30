@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://alert_confirm_01"]
+
+[ext_resource type="Script" path="res://scripts/alert_confirm.gd" id="1_script"]
+
+[node name="AlertConfirm" type="ConfirmationDialog"]
+title = "Confirm"
+initial_position = 3
+size = Vector2i(220, 120)
+script = ExtResource("1_script")
+dialog_text = "Message"
+dialog_autowrap = true
+ok_button_text = "Yes"
+cancel_button_text = "No"

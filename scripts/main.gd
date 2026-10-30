@@ -1,18 +1,22 @@
 extends Control
 ## Корень: титул → игровое меню (квест, магазин, кузнец…) → по «В игру» — мир (bV: 2 → 0).
 
-const TITLE_SCENE := preload("res://scenes/title_screen.tscn")
-const LICENSE_SCENE := preload("res://scenes/license_screen.tscn")
-const HELP_SCENE := preload("res://scenes/help_screen.tscn")
-const OPTIONS_SCENE := preload("res://scenes/options_screen.tscn")
-const ENDINGS_SCENE := preload("res://scenes/endings_screen.tscn")
-const HERO_SELECTION_SCENE := preload("res://scenes/hero_selection.tscn")
-const DIFFICULTY_SCENE := preload("res://scenes/difficulty_screen.tscn")
-const NAME_SCENE := preload("res://scenes/name_screen.tscn")
-const STATS_SCENE := preload("res://scenes/stats_screen.tscn")
-const STORY_SCENE := preload("res://scenes/story_screen.tscn")
-const GAME_MENU_SCENE := preload("res://scenes/game_menu.tscn")
-const GAME_SCENE := preload("res://scenes/game.tscn")
+const TITLE_SCENE := preload("res://scenes/title/title_screen.tscn")
+const LICENSE_SCENE := preload("res://scenes/screens/license_screen.tscn")
+const HELP_SCENE := preload("res://scenes/screens/help_screen.tscn")
+const OPTIONS_SCENE := preload("res://scenes/screens/options_screen.tscn")
+const ENDINGS_SCENE := preload("res://scenes/menus/endings_screen.tscn")
+const SUBMENU_SHELL_SCENE := preload("res://scenes/submenu_shell.tscn")
+const HERO_SELECTION_SCENE := preload("res://scenes/game/hero_selection.tscn")
+const DIFFICULTY_SCENE := preload("res://scenes/menus/difficulty_screen.tscn")
+const NAME_SCENE := preload("res://scenes/screens/name_screen.tscn")
+const STATS_SCENE := preload("res://scenes/screens/stats_screen.tscn")
+const STORY_SCENE := preload("res://scenes/screens/story_screen.tscn")
+const GAME_MENU_SCENE := preload("res://scenes/game/game_menu.tscn")
+const GAME_SCENE := preload("res://scenes/game/game.tscn")
+
+## Базові стати нової гри (з Java: ag.aw() — однакові для всіх героїв).
+const HERO_BASE_STATS := {"atk": 5, "def": 4, "hp": 30, "mp": 10, "points_left": 5}
 
 @onready var _viewport: SubViewport = $GameContainer/SubViewport
 
@@ -44,6 +48,12 @@ func _show_title() -> void:
 		title.show_options.connect(_show_options)
 	if title.has_signal("show_endings"):
 		title.show_endings.connect(_show_endings)
+	if title.has_signal("show_about"):
+		title.show_about.connect(_show_about)
+	if title.has_signal("show_more_games"):
+		title.show_more_games.connect(_show_more_games)
+	if title.has_signal("show_multiplayer"):
+		title.show_multiplayer.connect(_show_multiplayer)
 
 func _show_license() -> void:
 	_clear_viewport()
@@ -69,23 +79,31 @@ func _show_endings() -> void:
 	_viewport.add_child(endings_scn)
 	endings_scn.closed.connect(_show_title)
 
-func _start_new_game() -> void:
-	GameState.stat_atk = 1
-	GameState.stat_def = 1
-	GameState.stat_hp = 5
-	GameState.stat_mp = 3
-	GameState.stat_fame = 0
-	GameState.stat_points_left = 5
-	_show_hero_selection()
-
-func _show_hero_selection() -> void:
+func _show_about() -> void:
 	_clear_viewport()
-	var screen: Control = HERO_SELECTION_SCENE.instantiate()
-	_viewport.add_child(screen)
-	screen.hero_selected.connect(_on_hero_selected)
-	screen.back_requested.connect(_show_title)
+	var about_scn: Control = LICENSE_SCENE.instantiate()
+	_viewport.add_child(about_scn)
+	about_scn.closed.connect(_show_title)
 
-func _on_hero_selected(_hero_index: int) -> void:
+func _show_more_games() -> void:
+	_clear_viewport()
+	var stub: Control = SUBMENU_SHELL_SCENE.instantiate()
+	stub.set_menu("More Games", [])
+	stub.set_content_message("More Games — coming soon.")
+	_viewport.add_child(stub)
+	stub.closed.connect(_show_title)
+
+func _show_multiplayer() -> void:
+	_clear_viewport()
+	var stub: Control = SUBMENU_SHELL_SCENE.instantiate()
+	stub.set_menu("Multiplayer", [])
+	stub.set_content_message("Multiplayer — coming soon.")
+	_viewport.add_child(stub)
+	stub.closed.connect(_show_title)
+
+func _start_new_game() -> void:
+	GameState.stat_fame = 0
+	GameState.player_name = ""
 	_show_difficulty()
 
 func _show_difficulty() -> void:
@@ -95,7 +113,23 @@ func _show_difficulty() -> void:
 	screen.difficulty_confirmed.connect(_on_difficulty_confirmed)
 	screen.back_requested.connect(_show_title)
 
-func _on_difficulty_confirmed(_difficulty_index: int) -> void:
+func _on_difficulty_confirmed(difficulty_index: int) -> void:
+	GameState.difficulty_index = difficulty_index
+	_show_hero_selection()
+
+func _show_hero_selection() -> void:
+	_clear_viewport()
+	var screen: Control = HERO_SELECTION_SCENE.instantiate()
+	_viewport.add_child(screen)
+	screen.hero_selected.connect(_on_hero_selected)
+	screen.back_requested.connect(_show_difficulty)
+
+func _on_hero_selected(_hero_index: int) -> void:
+	GameState.stat_atk = HERO_BASE_STATS.atk
+	GameState.stat_def = HERO_BASE_STATS.def
+	GameState.stat_hp = HERO_BASE_STATS.hp
+	GameState.stat_mp = HERO_BASE_STATS.mp
+	GameState.stat_points_left = HERO_BASE_STATS.points_left
 	_show_name_screen()
 
 func _show_name_screen() -> void:

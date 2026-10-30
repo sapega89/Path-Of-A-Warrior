@@ -1,0 +1,72 @@
+0	Wind Slasher
+1	Storm Slasher
+2	Thunder Slasher
+3	Medium Heal
+4	Maximum Heal
+5	Devil Soul
+6	Guardian Soul
+7	Arch angel Soul
+8	Tide Crasher
+9	Wave Crasher
+10	Tidal wave Crasher
+11	Flame Twister
+12	Fire Tornado
+13	Tornado Blaze
+14	Lightning
+15	Chain Lightning
+16	Thunder Storm
+17	Dragon Breath
+18	Meteor Strike
+19	Dash & Slash
+20	Dash & Smash through
+21	Series of thrust attacks
+22	Heal HP
+23	Heal HP
+24	ATK Up
+25	Defend Up
+26	ATK and Defend Up
+27	Series of melee attacks
+28	Knocks back enemy
+29	Straight Angle ATK
+30	Fire ATK 360 degrees
+31	Fire ATK 360 degrees & Knocks back
+32	Battering ATK for 360 degrees
+33	Ranged ATK
+34	Ranged ATK & Knocks back
+35	Lightning Aerial ATK
+36	Fire Aerial ATK
+37	Meteor Aerial ATK
+38	Main Ending
+39	Fall Of The Yellow
+40	Bloody Scarp
+41	Love Of Warrior
+42	Unnamed Hero
+43	God's Will
+44	Conrad's Story
+45	Condition Of Hero
+46	New Force
+47	Wondering Warrior
+48	Lionheart
+49	Downfall
+50	Frederick
+51	Internal Strife
+52	What a shame
+53	Hero's Fall
+54	Nine Lives
+55	Code Of Honor
+56	Never Give Up
+57	Two Generals
+58	Lord Daniel
+59	Agnes' Story
+60	Lord Aaron
+61	Battle Dragon
+62	Gamevil USA Developer Team
+63	Do you want to connect to the server and restore your data?
+64	Data restoration - Successful.
+65	Data restoration - Failed.
+66	No Data Saved.
+67	Do you want to overwrite the saved data?
+68	Do you want to download?
+69	.
+70	Do you want to connect to the server and check your ranking?
+71	http://s.gamevil.com/r/sj/r1.asp

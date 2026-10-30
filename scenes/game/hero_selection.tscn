@@ -1,0 +1,68 @@
+[gd_scene load_steps=5 format=3 uid="uid://heroselect"]
+
+[ext_resource type="PackedScene" uid="uid://c534c6yuensld" path="res://scenes/submenu_shell.tscn" id="1_shell"]
+[ext_resource type="Script" uid="uid://bfxml1qihk7af" path="res://scripts/hero_selection.gd" id="2_script"]
+[ext_resource type="Texture2D" path="res://textures/arrow_menu_left.tres" id="3_left"]
+[ext_resource type="Texture2D" path="res://textures/arrow_menu_right.tres" id="4_right"]
+
+[node name="HeroSelection" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_script")
+
+[node name="SubmenuShell" parent="." instance=ExtResource("1_shell")]
+layout_mode = 1
+
+[node name="Hint" type="Label" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 12
+text = "Please select
+a character for battle."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Spacer" type="Control" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox"]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PortraitRow" type="HBoxContainer" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 4
+
+[node name="PortraitLeft" type="TextureButton" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox/PortraitRow"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+modulate = Color(0.45, 0.45, 0.45, 1)
+stretch_mode = 5
+
+[node name="BtnLeft" type="TextureButton" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox/PortraitRow"]
+custom_minimum_size = Vector2(30, 21)
+layout_mode = 2
+size_flags_vertical = 4
+texture_normal = ExtResource("3_left")
+stretch_mode = 3
+
+[node name="PortraitCenter" type="TextureButton" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox/PortraitRow"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+stretch_mode = 5
+
+[node name="BtnRight" type="TextureButton" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox/PortraitRow"]
+custom_minimum_size = Vector2(28, 19)
+layout_mode = 2
+size_flags_vertical = 4
+texture_normal = ExtResource("4_right")
+stretch_mode = 3
+
+[node name="PortraitRight" type="TextureButton" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox/PortraitRow"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+modulate = Color(0.45, 0.45, 0.45, 1)
+stretch_mode = 5

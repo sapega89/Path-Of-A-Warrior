@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://cvisitingmenu"]
+
+[ext_resource type="Script" uid="uid://bdwof8eixyiu7" path="res://scripts/generals_select_screen.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://c534c6yuensld" path="res://scenes/submenu_shell.tscn" id="2_shell"]
+[ext_resource type="PackedScene" uid="uid://bqkoupfa58j0q" path="res://scenes/screens/generals_table.tscn" id="3_table"]
+
+[node name="VisitingMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="SubmenuShell" parent="." instance=ExtResource("2_shell")]
+layout_mode = 1
+
+[node name="GeneralsTable" parent="SubmenuShell/MainLayer/MenuFrame/LinksVBox" index="0" instance=ExtResource("3_table")]
+
+[editable path="SubmenuShell"]

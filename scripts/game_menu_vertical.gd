@@ -11,31 +11,30 @@ const ILLU_PATHS := [
 	"res://m_illu1.png", "res://m_illu2.png", "res://m_illu3.png",
 	"res://m_illu4.png", "res://m_illu5.png", "res://m_illu6.png"
 ]
-## txt_m: 94x18 per row (selected), txt_b: 62x11 per row (prev/next)
-const TXT_M_W := 94
-const TXT_M_H := 18
-const TXT_B_W := 62
-const TXT_B_H := 11
+## txt_b: 94x18 per row (selected), txt_m: 62x11 per row (prev/next)
+const TXT_B_W := 94
+const TXT_B_H := 18
+const TXT_M_W := 62
+const TXT_M_H := 11
 
 var _current_index: int = 0
 var _txt_m_texture: Texture2D
 var _txt_b_texture: Texture2D
 
-@onready var _illustration: TextureRect = $MainLayer/MenuFrame/Illustration
-@onready var _item0: TextureRect = $MainLayer/MenuFrame/ItemsVBox/Row0/Item0Wrap/Item0
-@onready var _item1: TextureRect = $MainLayer/MenuFrame/ItemsVBox/Row1/Item1Wrap/Item1
-@onready var _item2: TextureRect = $MainLayer/MenuFrame/ItemsVBox/Row2/Item2Wrap/Item2
-@onready var _arrow_up: TextureRect = $MainLayer/MenuFrame/ItemsVBox/ArrowUpWrap/ArrowUp
-@onready var _arrow_down: TextureRect = $MainLayer/MenuFrame/ItemsVBox/ArrowDownWrap/ArrowDown
-@onready var _arrow_down1: TextureRect = $MainLayer/MenuFrame/ItemsVBox/Row1/ArrowDown1Wrap/ArrowDown1
-@onready var _back_btn: Button = $MainLayer/BackBtnWrap/BackBtn
-@onready var _arrow_up_wrap: Control = $MainLayer/MenuFrame/ItemsVBox/ArrowUpWrap
-@onready var _arrow_down_wrap: Control = $MainLayer/MenuFrame/ItemsVBox/ArrowDownWrap
-@onready var _arrow_down1_wrap: Control = $MainLayer/MenuFrame/ItemsVBox/Row1/ArrowDown1Wrap
-@onready var _row0: Control = $MainLayer/MenuFrame/ItemsVBox/Row0
-@onready var _row1: Control = $MainLayer/MenuFrame/ItemsVBox/Row1
-@onready var _row2: Control = $MainLayer/MenuFrame/ItemsVBox/Row2
-@onready var _items_vbox: Control = $MainLayer/MenuFrame/ItemsVBox
+@onready var _illustration: TextureRect = $SubmenuShell/MainLayer/MenuFrame/Illustration
+@onready var _item0: TextureRect = $SubmenuShell/MainLayer/MenuFrame/ItemsVBox/Row0/Item0Wrap/Item0
+@onready var _item1: TextureRect = $SubmenuShell/MainLayer/MenuFrame/ItemsVBox/Row1/Item1Wrap/Item1
+@onready var _item2: TextureRect = $SubmenuShell/MainLayer/MenuFrame/ItemsVBox/Row2/Item2Wrap/Item2
+@onready var _arrow_up: TextureRect = $SubmenuShell/MainLayer/MenuFrame/ItemsVBox/ArrowUpWrap/ArrowUp
+@onready var _arrow_down: TextureRect = $SubmenuShell/MainLayer/MenuFrame/ItemsVBox/ArrowDownWrap/ArrowDown
+@onready var _back_btn: BaseButton = $SubmenuShell/MainLayer/BackBtnWrap/BackBtn
+@onready var _btn_select_row: Button = $SubmenuShell/MainLayer/MenuFrame/ItemsVBox/Row1/Item1Wrap/BtnSelectRow
+@onready var _arrow_up_wrap: Control = $SubmenuShell/MainLayer/MenuFrame/ItemsVBox/ArrowUpWrap
+@onready var _arrow_down_wrap: Control = $SubmenuShell/MainLayer/MenuFrame/ItemsVBox/ArrowDownWrap
+@onready var _row0: Control = $SubmenuShell/MainLayer/MenuFrame/ItemsVBox/Row0
+@onready var _row1: Control = $SubmenuShell/MainLayer/MenuFrame/ItemsVBox/Row1
+@onready var _row2: Control = $SubmenuShell/MainLayer/MenuFrame/ItemsVBox/Row2
+@onready var _items_vbox: Control = $SubmenuShell/MainLayer/MenuFrame/ItemsVBox
 
 const ARROW_BOUNCE_PIXELS := 2
 const ARROW_BOUNCE_HZ := 2.0
@@ -55,10 +54,10 @@ func _ready() -> void:
 	_txt_m_texture = load(TXT_M_PATH) as Texture2D
 	_txt_b_texture = load(TXT_B_PATH) as Texture2D
 	_back_btn.pressed.connect(_on_back)
+	_btn_select_row.pressed.connect(_on_select_row_clicked)
 	## Java e.java: UP (-1) → aB(), DOWN (-2) → aC(); + клік по стрілках
 	_setup_arrow_click(_arrow_up_wrap, -1)
 	_setup_arrow_click(_arrow_down_wrap, 1)
-	_setup_arrow_click(_arrow_down1_wrap, 1)
 	_update_display()
 
 func _setup_arrow_click(ctrl: Control, dir: int) -> void:
@@ -149,16 +148,12 @@ func _hide_arrows() -> void:
 		_arrow_up_wrap.visible = false
 	if _arrow_down_wrap != null:
 		_arrow_down_wrap.visible = false
-	if _arrow_down1_wrap != null:
-		_arrow_down1_wrap.visible = false
 
 func _show_arrows() -> void:
 	if _arrow_up_wrap != null:
 		_arrow_up_wrap.visible = true
 	if _arrow_down_wrap != null:
 		_arrow_down_wrap.visible = true
-	if _arrow_down1_wrap != null:
-		_arrow_down1_wrap.visible = true
 
 func _reset_row_positions() -> void:
 	if _row0 != null:
@@ -181,9 +176,9 @@ func _update_display() -> void:
 			_illustration.texture = tex
 
 func _update_rows(i0: int, i1: int, i2: int, _step: int, _dir: int) -> void:
-	_update_region(_item0, i0, TXT_B_W, TXT_B_H, _txt_m_texture)
-	_update_region(_item1, i1, TXT_M_W, TXT_M_H, _txt_b_texture)
-	_update_region(_item2, i2, TXT_B_W, TXT_B_H, _txt_m_texture)
+	_update_region(_item0, i0, TXT_M_W, TXT_M_H, _txt_m_texture)
+	_update_region(_item1, i1, TXT_B_W, TXT_B_H, _txt_b_texture)
+	_update_region(_item2, i2, TXT_M_W, TXT_M_H, _txt_m_texture)
 
 ## Оновлює тільки ряд (idx) в атласі; зберігає position/size зі сцени якщо є
 func _update_region(rect: TextureRect, idx: int, w: int, h: int, atlas_tex: Texture2D) -> void:
@@ -208,8 +203,11 @@ func _process(delta: float) -> void:
 		_arrow_up.position.y = int(-offset_y)
 	if _arrow_down != null:
 		_arrow_down.position.y = int(offset_y)
-	if _arrow_down1 != null:
-		_arrow_down1.position.y = int(offset_y)
+
+func _on_select_row_clicked() -> void:
+	if _carousel_direction == 0:
+		item_selected.emit(_current_index)
+
 
 func _on_back() -> void:
 	back_requested.emit()

@@ -1,0 +1,242 @@
+[gd_scene load_steps=12 format=3 uid="uid://k11l7di6ekc"]
+
+[ext_resource type="Script" path="res://scripts/game_menu_vertical.gd" id="1_gmv"]
+[ext_resource type="PackedScene" uid="uid://c534c6yuensld" path="res://scenes/submenu_shell.tscn" id="4_e5bq0"]
+[ext_resource type="Texture2D" uid="uid://3a3rjqx4pe3p" path="res://bar_m.png" id="6_barm"]
+[ext_resource type="Texture2D" uid="uid://c0e0gg2w7a0x2" path="res://bar_b.png" id="7_barb"]
+[ext_resource type="Texture2D" uid="uid://ue0scbf4wcnn" path="res://textures/arrow_game_up.tres" id="8_up"]
+[ext_resource type="Texture2D" uid="uid://cc5anlsthkpkb" path="res://textures/arrow_game_down.tres" id="9_down"]
+[ext_resource type="Texture2D" uid="uid://ckwnvt05pf5mg" path="res://txt_m.png" id="10_txtm"]
+[ext_resource type="Texture2D" uid="uid://c0kqudryxicik" path="res://txt_b.png" id="11_txtb"]
+[ext_resource type="Texture2D" uid="uid://78a3fxoq53ee" path="res://m_illu1.png" id="12_illu1"]
+
+[sub_resource type="AtlasTexture" id="Atlas_txtm0"]
+atlas = ExtResource("10_txtm")
+region = Rect2(0, 0, 62, 11)
+
+[sub_resource type="AtlasTexture" id="Atlas_txtm2"]
+atlas = ExtResource("10_txtm")
+region = Rect2(0, 0, 62, 11)
+
+[sub_resource type="AtlasTexture" id="Atlas_txtb0"]
+atlas = ExtResource("11_txtb")
+region = Rect2(0, 0, 94, 18)
+
+[node name="GameMenuVertical" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_gmv")
+
+[node name="SubmenuShell" parent="." instance=ExtResource("4_e5bq0")]
+layout_mode = 1
+
+[node name="Illustration" type="TextureRect" parent="SubmenuShell/MainLayer/MenuFrame" index="0"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -40.0
+offset_top = 54.0
+offset_right = 50.0
+offset_bottom = 111.0
+grow_horizontal = 2
+texture = ExtResource("12_illu1")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="ItemsVBox" type="Control" parent="SubmenuShell/MainLayer/MenuFrame" index="5"]
+clip_children = 1
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -16.5
+offset_right = 80.0
+offset_bottom = 72.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Row0" type="HBoxContainer" parent="SubmenuShell/MainLayer/MenuFrame/ItemsVBox"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 0
+offset_left = 35.0
+offset_right = 124.0
+offset_bottom = 25.0
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="Item0Wrap" type="Control" parent="SubmenuShell/MainLayer/MenuFrame/ItemsVBox/Row0"]
+custom_minimum_size = Vector2(89, 20)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BarBg0" type="TextureRect" parent="SubmenuShell/MainLayer/MenuFrame/ItemsVBox/Row0/Item0Wrap"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_barm")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Item0" type="TextureRect" parent="SubmenuShell/MainLayer/MenuFrame/ItemsVBox/Row0/Item0Wrap"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -31.0
+offset_top = -5.5
+offset_right = 31.0
+offset_bottom = 5.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("Atlas_txtm0")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="ArrowUpWrap" type="Control" parent="SubmenuShell/MainLayer/MenuFrame/ItemsVBox"]
+custom_minimum_size = Vector2(20, 20)
+anchors_preset = 0
+offset_left = 70.0
+offset_top = 27.0
+offset_right = 90.0
+offset_bottom = 47.0
+
+[node name="ArrowUp" type="TextureRect" parent="SubmenuShell/MainLayer/MenuFrame/ItemsVBox/ArrowUpWrap"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8_up")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="Row1" type="HBoxContainer" parent="SubmenuShell/MainLayer/MenuFrame/ItemsVBox"]
+custom_minimum_size = Vector2(0, 35)
+layout_mode = 0
+offset_left = 4.0
+offset_top = 49.0
+offset_right = 155.0
+offset_bottom = 84.0
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="Item1Wrap" type="Control" parent="SubmenuShell/MainLayer/MenuFrame/ItemsVBox/Row1"]
+custom_minimum_size = Vector2(127, 29)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BarBg1" type="TextureRect" parent="SubmenuShell/MainLayer/MenuFrame/ItemsVBox/Row1/Item1Wrap"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_barb")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Item1" type="TextureRect" parent="SubmenuShell/MainLayer/MenuFrame/ItemsVBox/Row1/Item1Wrap"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -47.0
+offset_top = -9.0
+offset_right = 47.0
+offset_bottom = 9.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("Atlas_txtb0")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="BtnSelectRow" type="Button" parent="SubmenuShell/MainLayer/MenuFrame/ItemsVBox/Row1/Item1Wrap"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+flat = true
+
+[node name="ArrowDownWrap" type="Control" parent="SubmenuShell/MainLayer/MenuFrame/ItemsVBox"]
+custom_minimum_size = Vector2(20, 20)
+anchors_preset = 0
+offset_left = 70.0
+offset_top = 86.0
+offset_right = 90.0
+offset_bottom = 106.0
+
+[node name="ArrowDown" type="TextureRect" parent="SubmenuShell/MainLayer/MenuFrame/ItemsVBox/ArrowDownWrap"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("9_down")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="Row2" type="HBoxContainer" parent="SubmenuShell/MainLayer/MenuFrame/ItemsVBox"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 0
+offset_left = 35.0
+offset_top = 108.0
+offset_right = 124.0
+offset_bottom = 133.0
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="Item2Wrap" type="Control" parent="SubmenuShell/MainLayer/MenuFrame/ItemsVBox/Row2"]
+custom_minimum_size = Vector2(89, 20)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BarBg2" type="TextureRect" parent="SubmenuShell/MainLayer/MenuFrame/ItemsVBox/Row2/Item2Wrap"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_barm")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Item2" type="TextureRect" parent="SubmenuShell/MainLayer/MenuFrame/ItemsVBox/Row2/Item2Wrap"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -31.0
+offset_top = -5.5
+offset_right = 31.0
+offset_bottom = 5.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("Atlas_txtm2")
+expand_mode = 1
+stretch_mode = 4
+
+[editable path="SubmenuShell"]

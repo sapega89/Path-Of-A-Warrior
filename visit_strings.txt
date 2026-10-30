@@ -1,0 +1,76 @@
+0	Greetings.
+1	Hello.
+2	Hello... thank you for inviting me.
+3	Greetings, sir
+4	Welcome to my home.
+5	Thank you for the invitation.
+6	Greetings, sir.
+7	How are you, warrior?
+8	I am well, thank you.
+9	Hello?
+10	Welcome! Welcome!
+11	Hello! I am glad to see you.
+12	Hello? Is anyone there?
+13	Thank you for coming! I've been waiting for you. Here, have an ale!
+14	Thank you for the warm reception!
+15	Hello!
+16	Thank you for coming! Please, please... sit down, relax!
+17	I greatly appreciate your kindness, sir.
+18	Sorry I'm late!
+19	Finally! Here's a flagon of ale... to your health!
+20	This is wonderful. Thank you.
+21	Here I am!
+22	Excellent! I have been looking forward to seeing you!
+23	Haha! Likewise!
+24	Hello! Goodness, what a wonderful place!
+25	Welcome, welcome! I am so glad you've arrived!
+26	Thank you, I am flattered!
+27	Hello, friend!
+28	Thank you for doing me this great favor! You will be my honored guest for as long as you wish to stay.
+29	Thank you for your kind words. You are a wonderful host.
+30	Greetings.
+31	Hello.
+32	Thank you for inviting me.
+33	Greetings.
+34	Welcome.
+35	Thank you for inviting me.
+36	Greetings.
+37	How are you?
+38	I am well, thank you.
+39	Hello?
+40	Welcome! Welcome!
+41	It's great to see you!
+42	Hello?
+43	Oh! Thank you so much for coming.
+44	No, the honor is mine. Thank you for the kind greeting.
+45	Hello!
+46	Welcome, my friend!
+47	I feel like I'm home again. This is great.
+48	Here I am!
+49	Good! Please, rest your weary feet.
+50	Thanks very much. I owe you.
+51	I have arrived!
+52	Fantastic! I'm glad to see that you've made it here in one piece.
+53	Thank you.
+54	Hello, friend!
+55	Hello yourself! How have you been? Please, take off your armour and rest.
+56	Thank you. This is perfect.
+57	Greetings, my good friend!
+58	Greetings! It is a great honor to have you here!
+59	Thank you for your kind words. I am flattered.
+60	Your swordsmanship is without peer!
+61	Thanks.
+62	I have heard that you are a sage.
+63	Ha! I know a thing or two, I suppose.
+64	They told me that your strategy could defeat a god!
+65	No, no, your praise is too great. I am but a mere mortal.
+66	Your virtues have been extolled throughout the land!
+67	Ah, well. I am lucky to have been blessed by righteousness.
+68	What is a sword for?
+69	I'm glad you asked.
+70	You are said to be a very wise man.
+71	Thank you, that is very flattering.
+72	I have heard that your tactics are extraordinary.
+73	They are only extraordinary when they work, my friend.
+74	I wish to fight for the Empire's common folk.
+75	That is exceptionally generous of you.

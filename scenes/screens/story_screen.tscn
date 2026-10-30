@@ -1,0 +1,197 @@
+[gd_scene load_steps=4 format=3 uid="uid://bstoryscreen"]
+
+[ext_resource type="Script" path="res://scripts/story_screen.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dtotd1wsmwgrq" path="res://ui_back.png" id="2_bg"]
+[ext_resource type="Texture2D" uid="uid://yxb2ymt1ouqp" path="res://ui_titlebox.png" id="3_title"]
+
+[node name="StoryScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+stretch_mode = 1
+
+[node name="NarrativeLayer" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleBox" type="TextureRect" parent="NarrativeLayer"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -80.0
+offset_top = 5.0
+offset_right = 80.0
+offset_bottom = 29.0
+grow_horizontal = 2
+texture = ExtResource("3_title")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TitleLabel" type="Label" parent="NarrativeLayer/TitleBox"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 14
+text = "STORY"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ImageFrame" type="Control" parent="NarrativeLayer"]
+layout_mode = 1
+anchor_right = 1.0
+offset_bottom = 108.0
+grow_horizontal = 2
+
+[node name="StoryImage" type="TextureRect" parent="NarrativeLayer/ImageFrame"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -46.0
+offset_top = -46.0
+offset_right = 46.0
+offset_bottom = 46.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TextClip" type="Control" parent="NarrativeLayer"]
+clip_contents = true
+layout_mode = 1
+offset_left = 12.0
+offset_top = 112.0
+offset_right = -12.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextLabel" type="Label" parent="NarrativeLayer/TextClip"]
+layout_mode = 1
+offset_right = 216.0
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.9, 0.88, 0.85, 1)
+autowrap_mode = 2
+
+[node name="BtnSkip" type="Button" parent="NarrativeLayer"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -36.0
+offset_right = -8.0
+offset_bottom = -6.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "Skip"
+
+[node name="DialogLayer" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SceneImage" type="TextureRect" parent="DialogLayer"]
+layout_mode = 1
+anchor_right = 1.0
+offset_bottom = 158.0
+grow_horizontal = 2
+expand_mode = 1
+stretch_mode = 3
+
+[node name="DialogPanel" type="Control" parent="DialogLayer"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -162.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="DialogBg" type="TextureRect" parent="DialogLayer/DialogPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+stretch_mode = 1
+
+[node name="BorderTop" type="ColorRect" parent="DialogLayer/DialogPanel"]
+layout_mode = 1
+anchor_right = 1.0
+offset_bottom = 2.0
+grow_horizontal = 2
+color = Color(0.45, 0.38, 0.28, 1)
+
+[node name="ContentRow" type="HBoxContainer" parent="DialogLayer/DialogPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -38.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="SpeakerPortrait" type="TextureRect" parent="DialogLayer/DialogPanel/ContentRow"]
+custom_minimum_size = Vector2(46, 46)
+layout_mode = 2
+size_flags_vertical = 4
+expand_mode = 1
+stretch_mode = 5
+
+[node name="DialogText" type="Label" parent="DialogLayer/DialogPanel/ContentRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.9, 0.88, 0.85, 1)
+autowrap_mode = 2
+
+[node name="BtnNext" type="Button" parent="DialogLayer/DialogPanel"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -34.0
+offset_right = -8.0
+offset_bottom = -6.0
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 12
+text = "Next >"
