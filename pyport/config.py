@@ -53,3 +53,8 @@ NO_COMBAT = os.environ.get("POW_NO_COMBAT", "0") == "1"
 # held (the phone had no key release: a tap started walking and the next tap stopped).
 # POW_HOLD_TO_MOVE=0 = the phone way. tools/shot.py uses 0 (scenarios press keys like a phone).
 HOLD_TO_MOVE = os.environ.get("POW_HOLD_TO_MOVE", "1") == "1"
+
+# PORT-EXTRA (temporary, asked by the player): the Normal-difficulty auto-aim (ar.f(): before a hit
+# the hero turns to the nearest enemy) also on Hard. Gold and EXP of Hard stay as they are.
+# POW_AUTO_AIM_HARD=0 = the original (no auto-aim on Hard). tools/shot.py uses 0.
+AUTO_AIM_HARD = os.environ.get("POW_AUTO_AIM_HARD", "1") == "1"

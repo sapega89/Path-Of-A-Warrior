@@ -916,7 +916,7 @@ class ar(ag):
                         self.a__I(4)
 
     def f_v(self):  # ar.java:1196-1200  (Normal difficulty, ep = 1: turn to the nearest enemy before the attack)
-        if ag.ep != 0:
+        if ag.ep != 0 or config.AUTO_AIM_HARD:   # PORT-EXTRA config.AUTO_AIM_HARD: also on Hard
             i = self.aB()
             if i > -1:
                 ag.cz.d[0] = ag.cz.c = ar.a_LhLh(ag.cz.a[0], ag.ex[i].a[0])
