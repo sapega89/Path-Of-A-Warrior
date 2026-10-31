@@ -915,7 +915,7 @@ class ar(ag):
                         self.b_II(s, ag.dU.a)
                         self.a__I(4)
 
-    def f_v(self):  # ar.java:1196-1200  (Hard: turn to the nearest enemy before the attack)
+    def f_v(self):  # ar.java:1196-1200  (Normal difficulty, ep = 1: turn to the nearest enemy before the attack)
         if ag.ep != 0:
             i = self.aB()
             if i > -1:
