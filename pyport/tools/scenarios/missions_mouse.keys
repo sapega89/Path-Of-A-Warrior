@@ -1,0 +1,190 @@
+# Missions and Visiting played with the mouse (fresh hero made with keys; TEST-ONLY generals)
+wait 25
+key FIRE
+wait 2
+# sound: Yes
+key FIRE
+wait 2
+key FIRE
+wait 2
+key UP
+wait 2
+key DOWN
+wait 2
+key FIRE
+wait 2
+key FIRE
+wait 3
+key RIGHT
+wait 2
+key FIRE
+wait 3
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key FIRE
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key FIRE
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key FIRE
+wait 1
+key FIRE
+wait 1
+key BACK
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key FIRE
+wait 2
+key FIRE
+wait 2
+key DOWN
+wait 2
+key FIRE
+wait 2
+key DOWN
+wait 2
+key FIRE
+wait 2
+key DOWN
+wait 2
+key FIRE
+wait 2
+key FIRE
+wait 2
+key FIRE           # Yes -> save -> prologue (ag.l(100, 0), bV = 10)
+wait 3
+wait 60
+key LSOFT          # Skip on a picture page = next page
+wait 3
+wait 60
+key LSOFT
+wait 3
+wait 10
+key FIRE           # whole text at once
+wait 2
+wait 25
+wait 40
+key LSOFT          # Skip on a dialogue page = end of the prologue
+wait 4
+shot game_menu
+click 120 215      # big button: Mission
+wait 3
+click 120 160      # chapter "The Rise"
+wait 3
+shot lords
+click 120 205      # 4th lord: Lord Edison
+wait 3
+shot description
+click 150 275      # ► page
+wait 2
+shot description_page_2
+click 120 200      # text -> OK -> accept popup
+wait 3
+shot accept_popup
+click 80 200       # Yes
+wait 5
+shot briefing
+wait 20
+click 120 150      # whole line at once
+wait 3
+shot briefing_line
+click 20 312       # SKIP -> the map (not ported) -> Game Menu
+wait 5
+shot skip_not_ported
+click 120 200      # Ok
+wait 3
+generals 5
+click 120 175      # small button above -> Management
+wait 6
+click 120 175      # -> Visiting
+wait 6
+shot game_menu_visiting
+click 120 215
+wait 3
+shot generals
+click 120 176      # 3rd general: Augustine
+wait 3
+shot talk
+wait 200
+shot topics
+click 120 172      # 3rd topic: Tactics
+wait 2
+shot topic_tactics_chosen
+wait 60
+shot topic_answer

@@ -113,8 +113,18 @@ class e(ag):
             elif v in (21, 22, 23, 24):
                 self.c_Z(True)
                 self.k_v()
-            else:
-                not_ported("e.a(1) screen cM[0]=%d" % v)
+            elif v == 3:
+                self.aH()
+            elif v == 4:
+                self.aI()
+            elif v == 19:
+                self.aN()
+            elif v == 20:
+                self.b_I(ag.fE)
+                if ag.fA[0] > 0:
+                    e.a_III(ag.fD + 1 & 0x1, 0, 1)
+                if ag.fA[1] > 0:
+                    e.a_III(ag.fD & 0x1, 0, 1)
             if ag.cS.b != 0:
                 ag.cS.c_v()
                 return
@@ -125,7 +135,13 @@ class e(ag):
                     self.bf_v()
                     return
                 if v == 4:
-                    not_ported("e.a(2) cM[0]=4 (briefing)")
+                    x.a_Lg(ag.bu)
+                    self.e_v()
+                    self.aI()
+                    ag.ch = -5
+                    ag.dS = 0
+                    self.i_v()
+                    ag.ck -= 1
                 return
             if ag.cS.b != 0:
                 if ag.cS.j != 0:
@@ -171,8 +187,12 @@ class e(ag):
                     self.c_Z(False)
                     self.k_v()
                     return
-                if v in (4, 20):
-                    not_ported("e.a(0) screen cM[0]=%d" % v)
+                if v == 4:
+                    self.i_v()
+                    return
+                if v == 20:
+                    self.aO()
+                    return
 
     def a_v(self):  # e.java:207-302  (keys of the menus)
         if ag.bj:
@@ -402,7 +422,9 @@ class e(ag):
         v = cM[0]
         if v == 1:
             if ag.bj and ag.cq > 0:
-                not_ported("e.C() (mission list, debug cheat)")
+                ag.cq = i8(ag.cq - 1)
+                self.C_v()
+                ag.ck = 1
             return
         if v == 3:
             if cM[2] > 0:
@@ -491,7 +513,9 @@ class e(ag):
         v = cM[0]
         if v == 1:
             if ag.bj and ag.cq < 44:
-                not_ported("e.C() (mission list, debug cheat)")
+                ag.cq = i8(ag.cq + 1)
+                self.C_v()
+                ag.ck = 1
             return
         if v == 3:
             if (cM[2] + 1) * 6 - 1 < ag.dq[0]:
@@ -641,8 +665,14 @@ class e(ag):
                 self.ag()
             elif c0 in (21, 22, 23, 24):
                 self.aY()
-            elif c0 in (1, 3, 20):
-                not_ported("e.b() -> screen cM[0]=%d" % c0)
+            elif c0 == 1:
+                e.aG()
+                self.C_v()
+            elif c0 == 3:
+                ag.dm = i16(cM[1])
+                self.D_v()
+            elif c0 == 20:
+                self.bg_v()
             cM[2] = 0
             cM[1] = 0
             return
@@ -653,7 +683,17 @@ class e(ag):
                     ag.cS.e_I(35)
                     return
                 if ag.cz.S != 0 and ag.fo != 0:
-                    not_ported("e.b() general visits (cM[0]=19)")
+                    self.c_v()
+                    cM[0] = 19
+                    ag.fu = i16(ag.L_I(504))
+                    if ag.fu != 0:
+                        ag.cN = 44
+                    else:
+                        ag.cN = ag.fo
+                    e.bh_v()
+                    cM[2] = 0
+                    cM[1] = 0
+                    return
                 ag.cS.e_I(35)
                 ag.ck = 0
                 ag.cL = 0
@@ -780,8 +820,19 @@ class e(ag):
                     ag.cS.e_I(17)
             ag.da = 1
             return
-        elif v in (1, 3):
-            not_ported("e.b() cM[0]=%d" % v)
+        elif v == 1:
+            if (ag.dw & 1 << ag.ds[cM[1]] - 1) != 0:
+                self.c_v()
+                cM[0] = 2
+                ag.cN = ae.v[cM[0]]
+                ag.dk = i16(i8(cM[1]))
+                self.bi_v()
+                cM[2] = 0
+                cM[1] = 0
+                return
+        elif v == 3:
+            ag.cS.e_I(6)
+            return
 
     def aF(self):  # e.java:1002-1109  (BACK)
         cM = ag.cM
@@ -2331,3 +2382,439 @@ class e(ag):
         else:
             ag.dr += 1
         ag.h_II(-1, 2)
+
+    # ---- Missions: lords (1), missions (2), description (3), briefing (4) ------------------
+
+    def aH(self):  # e.java:1229-1238  (mission description, 6 lines per page)
+        self.a_IIIIZ(ag.dd - 100 + ag.db, ag.de - 80, 200, 40, False)
+        self.b_TII(ag.dl, ag.de - 80, 30)
+        self.b_TII(ag.dn, ag.de - 60, 30)
+        self.a_IIIIZ(ag.dd - 110, ag.de - 30, 220, 119, False)
+        for b in range(6):
+            if ag.dq[0] >= ag.cM[2] * 6 + b:
+                ag.a_IIT(ag.dd - 100 + ag.db, ag.de - 28 + b * 20 + ag.dc, ag.dp[0][ag.cM[2] * 6 + b])
+        self.a_IIIZ(ag.cM[2] + 1, idiv(ag.dq[0], 6) + 1, ag.de + 110, True)
+
+    def aI(self):  # e.java:1246-1250  (briefing: portraits + empty speech boxes)
+        self.b_I(ag.dB[ag.dm])
+        self.q_I(1)
+        self.R_I(3)
+
+    def h_v(self):  # e.java:1252-1264  (talk in the map: portrait bottom-left)
+        if (ag.dK & 0x1) != 0:
+            i = 0 + ag.dC.e
+        else:
+            i = 38 + ag.cz.aB
+        j_ = ag.bY.b - 46 - 4
+        self.a_IIIIZ(2 + ag.db, j_ + ag.dc, 48, 48, True)
+        j_ += 1
+        self.a_TIIIIII(ag.bB.a_I(i), 3 + ag.db, j_ + ag.dc, 46, 46, 0, 0)
+        self.aT()
+        self.q_I(1)
+
+    def i_v(self):  # e.java:1266-1361  (dialogue typewriter: dG 0 briefing, 1 map talk, 2 general)
+        arrayOfByte1 = [2, 3, 5]
+        arrayOfByte2 = [2, 1, 1]
+        if ag.bV == 5 and ag.ch != -6:
+            ag.ch = -999
+        x.a_Lg(ag.bu)
+        if ag.ch == -6:
+            ag.dS = 1
+            ag.dQ = i16(ag.dq[ag.dR])
+            ag.dK = i16(arrayOfByte1[ag.dG])
+        if ag.dS > 0:
+            ag.dS = i16(ag.dS - 1)
+            if ag.ch != -999:
+                ag.dS = 0
+            if ag.dS < 1:
+                if ag.dQ >= ag.dq[ag.dR]:
+                    if ag.dK >= arrayOfByte1[ag.dG]:
+                        ag.ck = 1
+                        if ag.dG != 0:
+                            if ag.dG == 1:
+                                ag.bV = 3
+                                return
+                            if ag.cr != 0:
+                                self.w_I(2)
+                                self.F_v()
+                                ag.cM[0] = 0
+                                ag.cN = ae.v[ag.cM[0]]
+                                ag.dE = ag.fU
+                                ag.bV = 2
+                                ag.cL = 0
+                                ag.cK = 0
+                                ag.ck = 1
+                                self.L_v()
+                                return
+                            ag.co = 1
+                            ag.cn = 5
+                            ag.bV = 3
+                            return
+                        self.y_v()
+                        return
+                    ag.dP = 0
+                    ag.dQ = 0
+                    if 0 == ag.dG:
+                        ag.dR = i16(ag.dR + 1 & 0x1)
+                    ag.ao()
+                    self.z_I(ag.dI + ag.dK - 1)
+                    if ag.dG != 0:
+                        self.h_v()
+                        return
+                    self.aS()
+                    return
+                ag.dP = i16(ag.dP + 1)
+                ag.dQ = i16(ag.dQ + 1)
+                ag.dO = 0
+                ag.dN = ag.dL[ag.dR]
+                if ag.dP > arrayOfByte2[ag.dG]:
+                    ag.dP = i16(arrayOfByte2[ag.dG])
+                    for b in range(20):
+                        if b < ag.dq[ag.dR]:
+                            ag.dp[ag.dR][b] = ag.dp[ag.dR][b + 1]
+                    if ag.dG != 0:
+                        self.aT()
+                        return
+                    self.aS()
+                    return
+        else:
+            if ag.ch == -5:
+                ag.dQ = i16(ag.dQ + arrayOfByte2[ag.dG] - ag.dP)
+                ag.dP = i16(arrayOfByte2[ag.dG])
+                ag.dO = 29
+                if ag.dG != 0:
+                    self.aT()
+                else:
+                    self.aS()
+                ag.dS = 3
+                return
+            line = ag.dp[ag.dR][ag.dP]
+            str_ = line[ag.dO:]
+            if len(str_) != 0 and ord(str_[0]) > 0:
+                ag.dO = i16(ag.dO + 1)
+                x.a_TIII(str_[0:1], ag.dN + ag.db, ag.dM[ag.dR] + 16 * ag.dP + ag.dc, 0)
+                ag.dN = i16(ag.dN + 9)
+                return
+            if ag.dQ >= ag.dq[ag.dR]:
+                ag.dS = 15
+                return
+            ag.dS = 1
+
+    def aS(self):  # e.java:2174-2205  (briefing: both speech boxes)
+        x.a_Lg(ag.bu)
+        self.R_I(2 if ag.dR != 0 else 1)
+        dp, dL, dM = ag.dp, ag.dL, ag.dM
+        if ag.dR != 0:
+            for b in range(3):
+                ag.c_IIT(dL[0] + ag.db, dM[0] + 16 * b + ag.dc, dp[0][b])
+        else:
+            for b in range(ag.dP):
+                if dp[0][b] is not None:
+                    ag.c_IIT(dL[0] + ag.db, dM[0] + 16 * b + ag.dc, dp[0][b])
+            if dp[0][ag.dP] is not None:
+                str_ = dp[0][ag.dP][0:min(ag.dO, len(dp[0][ag.dP]))]
+                ag.c_IIT(dL[0] + ag.db, dM[0] + 16 * ag.dP + ag.dc, str_)
+        if ag.dK > 1:
+            if ag.dR != 0:
+                for b in range(ag.dP):
+                    if dp[1][b] is not None:
+                        ag.c_IIT(dL[1] + ag.db, dM[1] + 16 * b + ag.dc, dp[1][b])
+                if dp[1][ag.dP] is not None:
+                    str_ = dp[1][ag.dP][0:min(ag.dO, len(dp[1][ag.dP]))]
+                    ag.c_IIT(dL[1] + ag.db, dM[1] + 16 * ag.dP + ag.dc, str_)
+                    return
+            else:
+                for b in range(3):
+                    ag.c_IIT(dL[1] + ag.db, dM[1] + 16 * b + ag.dc, dp[1][b])
+
+    def aT(self):  # e.java:2207-2214  (map talk: one speech box at the bottom)
+        self.a_IIIIZ(54 + ag.db, ag.bY.b - 40 + ag.dc, ag.bY.a - 56, 38, True)
+        x.a_Lg(ag.bu)
+        for b in range(ag.dP):
+            ag.c_IIT(ag.dL[0] + ag.db, ag.dM[0] + 16 * b + ag.dc, ag.dp[0][b])
+        str_ = ag.dp[0][ag.dP][0:ag.dO]
+        ag.c_IIT(ag.dL[0] + ag.db, ag.dM[0] + 16 * ag.dP + ag.dc, str_)
+
+    def bi_v(self):  # e.java:3569-3603  (missions of lord dk -> dz / dA / dB, list dE = dA)
+        from pow.game.structs import an
+        i = 0
+        ag.cg = ag.ds[ag.dk]
+        ag.dl = ag.dt[ag.dk]
+        arrayOfByte1 = ag.v_I(50)
+        ag.cN = ag.dv[ag.dk]
+        i = 11 * ag.du[ag.dk] + 11
+        arrayOfByte2 = ag.v_I(55)
+        for b in range(ag.cN):
+            if ag.dz[b] is None:
+                ag.dz[b] = an()
+            dz = ag.dz[b]
+            dz.a = ag.b_B(arrayOfByte1[i])
+            dz.b = ag.b_B(arrayOfByte1[i + 1])
+            dz.c = ag.b_B(arrayOfByte1[i + 2])
+            dz.d = ag.b_B(arrayOfByte1[i + 3])
+            dz.e = ag.b_B(arrayOfByte1[i + 4])
+            dz.f = ag.b_B(arrayOfByte1[i + 5])
+            dz.g = ag.b_B(arrayOfByte1[i + 6])
+            dz.h = ag.b_B(arrayOfByte1[i + 7])
+            dz.i = i16(arrayOfByte1[i + 8] & 0xFF | i8(arrayOfByte1[i + 9]) & 0xFF00)
+            dz.j = ag.b_B(arrayOfByte1[i + 10])
+            i += 11
+            j_ = 3 + (dz.a - 1) * 15
+            b1 = 14
+            for b2 in range(14):
+                if arrayOfByte2[j_ + b2] == 0:
+                    b1 = b2
+                    break
+            ag.dA[b] = ag.a_ABII(arrayOfByte2, j_, j_ + b1)
+            ag.dB[b] = i8(arrayOfByte2[17 + (dz.a - 1) * 15])
+        ag.dE = ag.dA
+
+    # ---- Visiting: generals (19 list, 20 talk) ---------------------------------------------
+
+    def aN(self):  # e.java:1694-1748  (generals: Name / Points, 4 per page)
+        arrayOfString = ["Name", "Points"]
+        i = idiv(ag.bZ.a - 208, 2) + 2
+        j_ = i + 134 + 10
+        k = ag.bY.b - 20 - 20 + 10
+        m = 20 + idiv(k - 177, 2) + 2
+        n = m
+        i1 = ag.cM[1] % 4
+        i2 = ag.cM[1] // 4
+        ag.fp[1] = i16(i2 + 1)
+        i2 *= 4
+        self.a_IIIIZ(i, n, 130, 22, False)
+        self.a_IIIIZ(j_, n, 60, 22, False)
+        x.a_Lg(ag.bu)
+        ag.b_IIT(i + 65, n + 1, arrayOfString[0])
+        ag.b_IIT(j_ + 30, n + 1, arrayOfString[1])
+        n += 31
+        for b in range(4):
+            if b == i1:
+                bool_ = True
+                x.a_Lg(ag.bw)
+            else:
+                bool_ = False
+                x.a_Lg(ag.bu)
+            self.a_IIIIZ(i, n, 130, 22, bool_)
+            self.a_IIIIZ(j_, n, 60, 22, bool_)
+            if i2 < ag.cN:
+                if ag.fu != 0:
+                    str_ = ag.fr.b_II(ag.fn[2][i2] - 1, 0)
+                else:
+                    str_ = ag.fr.b_II(ag.fn[0][i2] - 1, 0)
+                ag.b_IIT(i + 65, n + 1, str_)
+                if ag.fu != 0:
+                    b1 = 0
+                    while b1 < ag.fo and ag.fn[2][i2] != ag.fn[0][b1]:
+                        b1 += 1
+                    if b1 < ag.fo:
+                        str_ = "" + str(ag.fn[1][b1])
+                    else:
+                        str_ = "0"
+                else:
+                    str_ = "" + str(ag.fn[1][i2])
+                ag.b_IIT(j_ + 30, n + 1, str_)
+            i2 += 1
+            n += 31
+        n += 6
+        self.a_IIIZ(ag.fp[1], ag.fp[0], n, True)
+
+    def aO(self):  # e.java:1750-1802  (general talk: type the lines gf[], then popups 14 / 16)
+        if ag.dS > 0:
+            ag.dS = i16(ag.dS - 1)
+            if ag.ch != 0 and ag.dS > 3:
+                ag.dS = 3
+            if 0 == ag.dS:
+                ag.fD += 1
+                if ag.fD <= 3:
+                    ag.fw[ag.fD & 0x1] = ag.gf[ag.fD - 1]
+                    ag.fA[ag.fD & 0x1] = 0
+                    return
+                if ag.fD == 4:
+                    ag.cS.e_I(14)
+                    ag.fA[1] = 0
+                    return
+                if ag.fD < 7:
+                    ag.fw[ag.fD & 0x1] = ag.gf[ag.fD - 2]
+                    ag.fA[ag.fD & 0x1] = 0
+                    return
+                ag.fs.a_v()
+                ag.fs = None
+                ag.fr.a_v()
+                ag.fr = None
+                ag.cS.e_I(16)
+                return
+        else:
+            if ag.fD >= 10:
+                ag.fD -= 10
+                i = ag.fD & 0x1
+                ag.fA[i] = len(ag.fw[i])
+                j_ = 0
+            else:
+                i = ag.fD & 0x1
+                j_ = ag.fA[i]
+            if ag.fD != 4:
+                e.a_III(i, j_, 0)
+                if len(ag.fw[i]) <= ag.fA[i] + 1:
+                    if ag.ch != 0:
+                        ag.dS = 5
+                        return
+                    ag.dS = 15
+
+    def bg_v(self):  # e.java:3366-3393  (open the talk with general cM[1])
+        # the decompiler shows `j = 2;` as a field write; it is the local j declared below
+        if ag.fu != 0:
+            j_ = 2
+            b = 0
+            while b < ag.fo and ag.fn[0][b] != ag.fn[2][ag.cM[1]]:
+                b += 1
+            ag.fH = i16(b)
+            ag.fv = i16(ag.cM[1])
+        else:
+            j_ = 0
+            ag.fH = i16(ag.cM[1])
+        i = ag.fn[j_][ag.cM[1]] - 1
+        self.B_I(ag.fn[j_][ag.cM[1]])
+        ag.ft = ag.fr.b_II(i, 0)
+        j_ = ag.fr.a_II(i, 9)
+        k = ag.fr.a_II(i, 8)
+        i = ag.fn[1][ag.fH]
+        ag.fE = k
+        ag.fF = j_
+        if e.a_II(i, j_):
+            ag.fw[0] = ""
+            ag.fw[1] = ag.gf[0]
+            ag.fA[1] = 0
+            ag.fA[0] = 0
+            ag.fD = 1
+            return True
+        return False
+
+    @staticmethod
+    def a_II(paramInt1, paramInt2):  # e.java:3395-3430  (greeting lines of the general -> gf[])
+        from pow.game.al import al
+        if ag.fs is not None:
+            ag.fs.a_v()
+            ag.fs = None
+        ag.fs = al("/" + ag.bE.a_I(62))
+        if 0 <= paramInt1 <= 100 and ag.fs is not None:
+            if paramInt2 < 2:
+                if paramInt1 > 99:
+                    paramInt1 = 99
+                paramInt1 = paramInt1 // 10 * 3
+                if paramInt2 == 1:
+                    paramInt1 += 30
+                b1 = 3
+                b2 = 0
+            else:
+                paramInt1 = 60 + (paramInt2 - 2 << 1)
+                b1 = 2
+                b2 = 3
+            for b3 in range(b1):
+                if len(ag.fs.a_I(paramInt1)) > 0:
+                    str_ = ag.ft if (b3 & 0x1) != 0 else ag.cz.k
+                    ag.gf[b3 + b2] = "[" + str_ + "] " + ag.fs.a_I(paramInt1) + " "
+                    paramInt1 += 1
+                else:
+                    return False
+            return True
+        return False
+
+    @staticmethod
+    def b_II(paramInt1, paramInt2):  # e.java:3432-3463  (add paramInt2 friendship to general paramInt1)
+        from pow.game.d import d
+        b = 0
+        while b < ag.fo and ag.fn[0][b] != paramInt1:
+            b += 1
+        if b == ag.fo:
+            if paramInt2 > 0:
+                d_ = d("/" + ag.bE.a_I(52))
+                for b1 in range(44):
+                    i = d_.a_II(b1, 0)
+                    if i == paramInt1:
+                        ag.fn[0][b] = i16(paramInt1)
+                        ag.fo = i16(ag.fo + 1)
+                        ag.fn[1][b] = i16(ag.fn[1][b] + paramInt2)
+                        break
+        else:
+            ag.fn[1][b] = i16(ag.fn[1][b] + paramInt2)
+            if ag.fn[1][b] > 200 or 0 == ag.fn[1][b]:
+                while b < ag.fo:
+                    ag.fn[0][b] = ag.fn[0][b + 1]
+                    ag.fn[1][b] = ag.fn[1][b + 1]
+                    b += 1
+                ag.fo = i16(ag.fo - 1)
+            elif ag.fn[1][b] >= 100:
+                ag.fn[1][b] = 100
+                return 1
+        return 0
+
+    def o_v(self):  # e.java:3208-3281  (gift of the general after the talk -> fJ, cT[0])
+        arrayOfShort = [[[500, 800, 900, 960, 990, 995, 998], [60, 61, 91, 92, 392, 892, 992],
+                         [100, 600, 900, 930, 990, 995, 996], [1, 2, 5, 305, 310, 410, 910]],
+                        [[1, 101, 106, 606, 609, 610, 910], [30, 31, 91, 92, 592, 892, 992],
+                         [300, 360, 860, 960, 961, 991, 996], [1, 2, 5, 10, 40, 100, 200]]]
+        cz = ag.cz
+        if self.C_I(100) < ag.fn[1][ag.fH]:
+            i = self.C_I(1000)
+            ag.fJ = 0
+            while ag.fJ < 7 and i >= arrayOfShort[ag.dC.f][ag.fI][ag.fJ]:
+                ag.fJ = i16(ag.fJ + 1)
+            ag.cS.l[4] = ""
+            v = ag.fJ
+            if v == 0:
+                i = self.p_I(0)
+                if cz.W[i - 1] < 10:
+                    str_ = ag.e_II(54, i - 1)
+                    cz.W[i - 1] = cz.W[i - 1] + 1
+                    if cz.W[i - 1] == 1:
+                        ag.cS.l[4] = "Skill :"
+                        ag.cT[0] = str_
+                        return
+                    ag.cS.l[4] = "Skill up :"
+                    ag.cT[0] = str_
+                    return
+            elif v == 1:
+                if cz.m < 10000:
+                    cz.m += 1
+                    ag.cT[0] = ae.aR[0]
+                    return
+            elif v == 2:
+                if cz.n < 10000:
+                    cz.n += 1
+                    ag.cT[0] = ae.aR[1]
+                    return
+            elif v == 3:
+                if cz.o < 25000:
+                    cz.o += 5
+                    ag.cT[0] = ae.aR[2]
+                    return
+            elif v == 4:
+                if cz.q < 20000:
+                    cz.q += 3
+                    ag.cT[0] = ae.aR[3]
+                    return
+            elif v == 5:
+                cz.F += 10
+                ag.cT[0] = ae.aR[4]
+                return
+            elif v == 6:
+                if self.k_II(ag.bc.P_I(4), 1) != 0:
+                    ag.cT[0] = ag.cX.a
+                    ag.cS.l[4] = "Item Acquired!"
+                    return
+            else:
+                i = self.C_I(11)
+                if self.k_II(i + 1, 1) != 0:
+                    ag.cT[0] = ae.aN[i]
+                    ag.cS.l[4] = "Item Acquired!"
+                    return
+        ag.fJ = 8
+
+    @staticmethod
+    def bh_v():  # e.java:3562-3567
+        from pow.game.d import d
+        ag.fp[0] = i16(idiv(ag.cN - 1, 4) + 1)
+        if ag.fr is None:
+            ag.fr = d("/" + ag.bE.a_I(46))
+        return False

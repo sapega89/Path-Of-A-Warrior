@@ -203,7 +203,19 @@ class ag(AgFields, Canvas):
                 if config.STRICT:
                     raise
                 print("NotPorted:", np_)
-                if ag.bV == 2:
+                if ag.bV in (3, 4, 5):
+                    # the map / combat states have no screen yet: back to the Game Menu the
+                    # way the game itself returns there (e.java:1288-1300)
+                    self.w_I(2)
+                    self.F_v()
+                    ag.cM[0] = 0
+                    ag.cN = ae.v[0]
+                    ag.dE = ag.fU
+                    ag.bV = 2
+                    ag.cL = 0
+                    ag.cK = 0
+                    ag.ck = 1
+                elif ag.bV == 2:
                     ag.cM[0] = ag.cO if ag.cM[0] not in (0, 5) else ag.cM[0]
                     ag.ap()
                 ag.cS.a_T("3Not ported yet|(later phase)")
@@ -2178,6 +2190,276 @@ class ag(AgFields, Canvas):
             if j_ % 3 == (b2 + 1) % 3 and b2 != j_ - 1:
                 str_ = str_ + ","
         return str_
+
+    # ---- Missions: lords, mission list, briefing text, general data ------------------------
+
+    @staticmethod
+    def b_B(paramByte):  # ag.java:3484-3486
+        return i16(paramByte & 0xFF)
+
+    def C_v(self):  # ag.java:1043-1062  (lords of chapter cq -> ds/dt/du/dv, list dE = dt)
+        j_ = 0
+        arrayOfByte = ag.v_I(48)
+        j_ = 38 * ag.cq + 40
+        ag.dr = 0
+        for b in range(6):
+            ag.ds[b] = i8(arrayOfByte[j_ + b])
+            if ag.ds[b] > 0:
+                m = 38 * ag.ds[b] + 10
+                b1 = 0
+                while b1 < 30 and arrayOfByte[m + b1] != 0:
+                    b1 += 1
+                ag.dt[b] = ag.a_ABII(arrayOfByte, m, m + b1)
+                ag.du[b] = i8(arrayOfByte[m + 36])
+                ag.dv[b] = i8(arrayOfByte[m + 37])
+                ag.dr += 1
+        ag.cN = ag.dr
+        ag.dE = ag.dt
+
+    def D_v(self):  # ag.java:1064-1073  (mission description -> dp[0])
+        ag.dn = ag.dA[ag.dm]
+        arrayOfByte1 = ag.v_I(56)
+        arrayOfByte2 = self.a_ABI(arrayOfByte1, ag.du[ag.dk] + ag.dm)
+        b = 0
+        while b < len(arrayOfByte2) and arrayOfByte2[b] != 0:
+            b += 1
+        arrayOfByte3 = bytearray(arrayOfByte2[:b])
+        self.b_ABII(arrayOfByte3, 190, 0)
+
+    def a_ABI(self, paramArrayOfbyte, paramInt):  # ag.java:1075-1124  (text paramInt of a table, "(..)" macros)
+        arrayOfInt1 = [0] * 110
+        arrayOfByte1 = bytearray(1500)
+        arrayOfByte2 = bytearray(1500)
+        arrayOfByte3 = bytearray(1500)
+        arrayOfChar = ['\0'] * 3
+        b1 = 0
+        arrayOfInt2 = [0, 0]
+        arrayOfInt3 = [0, 0]
+        j_ = paramArrayOfbyte[0] & 0xFF | paramArrayOfbyte[1] << 8 & 0xFF00
+        for b2 in range(j_ + 1):
+            arrayOfInt1[b2] = paramArrayOfbyte[2 + b2 * 2] & 0xFF | paramArrayOfbyte[2 + b2 * 2 + 1] << 8 & 0xFF00
+        _arraycopy(paramArrayOfbyte, arrayOfInt1[paramInt], arrayOfByte1, 0,
+                   arrayOfInt1[paramInt + 1] - arrayOfInt1[paramInt])
+        b2 = 0
+        while b2 < 3 and 48 <= arrayOfByte1[b2] <= 57:
+            arrayOfChar[b2] = chr(arrayOfByte1[b2])
+            b1 += 1
+            b2 += 1
+        if b1 != 0:
+            arrayOfInt3[0] = b1 + 1
+            arrayOfInt2[0] = b1 + 1
+            m = ag.a_AC(arrayOfChar)
+            _arraycopy(paramArrayOfbyte, arrayOfInt1[m], arrayOfByte2, 0, arrayOfInt1[m + 1] - arrayOfInt1[m])
+        else:
+            _arraycopy(arrayOfByte1, 0, arrayOfByte2, 0, 1500)
+        while arrayOfByte2[arrayOfInt3[1]] != 0:
+            if arrayOfByte2[arrayOfInt3[1]] == 40:
+                arrayOfByte3 = ag.a_ABABII(arrayOfByte3, arrayOfByte2, arrayOfInt2[1], arrayOfInt3[1])
+                arrayOfInt2[1] = arrayOfInt3[1] + 1
+                if b1 != 0:
+                    arrayOfInt3[1] = ag.a_ABIC(arrayOfByte2, arrayOfInt3[1], ')')
+                    arrayOfInt2[1] = ag.a_ABIC(arrayOfByte2, arrayOfInt3[1], ')')
+                    arrayOfInt3[0] = ag.a_ABIC(arrayOfByte1, arrayOfInt3[0], '|')
+                    arrayOfByte3 = ag.a_ABABII(arrayOfByte3, arrayOfByte1, arrayOfInt2[0], arrayOfInt3[0] - 1)
+                    arrayOfInt2[0] = arrayOfInt3[0]
+                    continue
+                arrayOfInt3[1] = ag.a_ABIC(arrayOfByte2, arrayOfInt3[1], ')')
+                arrayOfByte3 = ag.a_ABABII(arrayOfByte3, arrayOfByte2, arrayOfInt2[1], arrayOfInt3[1] - 1)
+                arrayOfInt2[1] = arrayOfInt3[1]
+                continue
+            arrayOfInt3[1] = arrayOfInt3[1] + 1
+        arrayOfByte3 = ag.a_ABABII(arrayOfByte3, arrayOfByte2, arrayOfInt2[1], arrayOfInt3[1])
+        return arrayOfByte3
+
+    @staticmethod
+    def a_ABABII(paramArrayOfbyte1, paramArrayOfbyte2, paramInt1, paramInt2):  # ag.java:1126-1131  (append at the first 0)
+        b = 0
+        while b < len(paramArrayOfbyte1) and paramArrayOfbyte1[b] != 0:
+            b += 1
+        _arraycopy(paramArrayOfbyte2, paramInt1, paramArrayOfbyte1, b, paramInt2 - paramInt1)
+        return paramArrayOfbyte1
+
+    @staticmethod
+    def a_ABIC(paramArrayOfbyte, paramInt, paramChar):  # ag.java:1133-1142  (index after the next paramChar)
+        c = ord(paramChar)
+        b = 0
+        while paramArrayOfbyte[paramInt + b] != c and paramArrayOfbyte[paramInt + b] != 0:
+            if (paramArrayOfbyte[paramInt + b] & 0x80) != 0:
+                b += 2
+            b += 1
+        return paramInt + b + 1
+
+    def ac_v(self):  # ag.java:2277-2281
+        for b in range(6):
+            ag.cx[b] = None
+        ag.R_v()
+
+    def y_v(self):  # ag.java:872-967  (enter the map: bV = 3)
+        ag.bV = 3       # ag.java:886; the rest (map load) is phase 3, so the run loop's
+        not_ported("ag.y() (enter the map)")   # NotPorted fallback returns to the Game Menu
+
+    def am(self):  # ag.java:2572-2582  (start a dialogue: briefing dG 0, map talk 1, general 2)
+        ag.dK = 0
+        ag.dP = 0
+        ag.dQ = 0
+        ag.dR = 0
+        ag.dS = 0
+        ag.ao()
+        self.an()
+        if ag.dI < 200:
+            self.z_I(ag.dI)
+
+    def z_I(self, paramInt):  # ag.java:2584-2637  (line paramInt of dialogue file 57+dG -> dp[dR])
+        arrayOfByte1 = None
+        str1 = ""
+        arrayOfInt = [0] * 60
+        arrayOfString = [None, None]
+        s = ag.dR
+        if (ag.dK & 0x1) != 0:
+            if ag.dG == 0:
+                str1 = ag.dA[ag.dm]
+            elif ag.dG in (2, 1):
+                if ag.dG == 2:          # case 2 falls through into case 1
+                    if ag.cr != 0:
+                        self.B_I(ag.dz[ag.dm].f)
+                    else:
+                        self.B_I(ag.eO[ag.eP].o)
+                str1 = ag.dC.a
+        else:
+            str1 = ag.cz.k
+        arrayOfByte2 = arrayOfByte1 = ag.v_I(57 + ag.dG)
+        j_ = arrayOfByte2[0] & 0xFF | arrayOfByte2[1] << 8 & 0xFF00
+        for b1 in range(j_ + 1):
+            arrayOfInt[b1] = arrayOfByte2[2 + b1 * 2] & 0xFF | arrayOfByte2[2 + b1 * 2 + 1] << 8 & 0xFF00
+        arrayOfString[0] = ag.a_ABII(arrayOfByte2, arrayOfInt[paramInt], arrayOfInt[paramInt + 1])
+        arrayOfString[1] = "[" + str1 + "] "
+        ag.dD = len(arrayOfString[0])
+        m = 0
+        for b1 in range(ag.dD):
+            if arrayOfString[0][b1] == '&':
+                if m != b1:
+                    # System.arraycopy(String[], m, String, ...) would throw in Java; the game
+                    # only prints this marker, so the texts never have '&' after other text
+                    ag.b_T("=========================check this 96430jfds")
+                arrayOfString[1] = arrayOfString[1] + str1
+                m = b1 + 1
+        str2 = ""
+        for b2 in range(len(arrayOfString[0])):
+            if arrayOfString[0][b2] != '&':
+                str2 = str2 + arrayOfString[0][b2]
+        arrayOfString[0] = str2
+        if m < ag.dD:
+            arrayOfString[1] = arrayOfString[1] + arrayOfString[0]
+        self.b_ABII(bytearray(arrayOfString[1].encode("utf-8")), 150, s)
+
+    def an(self):  # ag.java:2639-2681  (first line dI of the dialogue)
+        from pow.game.e import e
+        v = ag.dG
+        if v == 0:
+            if ag.dH > 10:
+                ag.dH = 11
+                ag.dI = i16(ag.g_II(0, 18) + 10 << 1)
+                return
+            ag.dI = i16(ag.dH - 1 << 1)
+            return
+        if v == 1:
+            j_ = 0
+            e.b_II(ag.dJ, -5)
+            ag.dI = 21
+            return
+        if v == 2:
+            if ag.cr != 0:
+                j_ = ag.dz[ag.dm].f
+            else:
+                j_ = ag.eO[ag.eP].o
+            if 0 == j_:
+                ag.ck = 1
+                self.w_I(2)
+                self.F_v()
+                ag.cM[0] = 0
+                ag.cN = ae.v[ag.cM[0]]
+                ag.dE = ag.fU
+                ag.dI = 200
+                ag.bV = 2
+                ag.cL = 0
+                ag.cK = 0
+                return
+            e.b_II(j_, 5)
+            ag.fq = j_
+            j_ = ag.A_I(j_)
+            if j_ >= 100:
+                j_ = 95
+            ag.dI = i16(j_ // 10 * 5)
+
+    @staticmethod
+    def A_I(paramInt):  # ag.java:2683-2687  (friendship points of general paramInt)
+        b = 0
+        while b < ag.fo and ag.fn[0][b] != paramInt:
+            b += 1
+        return 0 if b == ag.fo else ag.fn[1][b]
+
+    @staticmethod
+    def ao():  # ag.java:2689-2703  (position of the next speech box)
+        ag.dK = i16(ag.dK + 1)
+        if ag.dG != 0:
+            ag.dL[ag.dR] = 60
+            ag.dM[ag.dR] = i16(ag.bY.b - 39)
+        elif (ag.dK & 0x1) != 0:
+            ag.dL[ag.dR] = i16(ag.dd - 60 + 15 + 2)
+            ag.dM[ag.dR] = i16(ag.de - 64)
+        else:
+            ag.dL[ag.dR] = i16(ag.dd - 60 + -40 + 2)
+            ag.dM[ag.dR] = i16(ag.de - 73 + 107 + 2)
+        ag.dO = 0
+        ag.dN = ag.dL[ag.dR]
+
+    def B_I(self, paramInt):  # ag.java:2705-2726  (general paramInt -> dC)
+        arrayOfByte = None
+        j_ = 0
+        arrayOfByte = ag.v_I(46)
+        j_ = 23 * (paramInt - 1) + 14
+        dC = ag.dC
+        dC.a = ""
+        b = 0
+        while b < 11 and arrayOfByte[j_ + b] != 0:
+            b += 1
+        dC.a = ag.a_ABII(arrayOfByte, j_, j_ + b)
+        dC.b = _jchar(arrayOfByte[j_ + 11])
+        dC.c = _jchar(arrayOfByte[j_ + 11 + 2])
+        dC.d[0] = _jchar(arrayOfByte[j_ + 11 + 3])
+        dC.d[1] = _jchar(arrayOfByte[j_ + 11 + 4])
+        dC.d[2] = _jchar(arrayOfByte[j_ + 11 + 5])
+        dC.d[3] = _jchar(arrayOfByte[j_ + 11 + 6])
+        dC.e = _jchar(arrayOfByte[j_ + 11 + 7])
+        dC.f = _jchar(arrayOfByte[j_ + 11 + 8])
+        dC.g = _jchar(arrayOfByte[j_ + 11 + 9])
+        dC.h = _jchar(arrayOfByte[j_ + 11 + 10])
+        dC.i = _jchar(arrayOfByte[j_ + 11 + 11])
+        dC.c = dC.c + 1 & 0x1
+
+    def p_I(self, paramInt):  # ag.java:1494-1505  (random skill of general dC)
+        b = 0
+        while b < 4 and 0 != ag.dC.d[b]:
+            b += 1
+        if paramInt != 0:
+            while True:
+                c1 = ag.dC.d[self.C_I(b)]
+                if not c1 > 0o20:
+                    return c1
+        return ag.dC.d[self.C_I(b)]
+
+
+
+def _arraycopy(src, srcPos, dest, destPos, length):
+    """System.arraycopy (throws on a negative length or out-of-range, like Java)."""
+    if length < 0 or srcPos < 0 or destPos < 0 or srcPos + length > len(src) or destPos + length > len(dest):
+        raise IndexError("arraycopy %d %d %d" % (srcPos, destPos, length))
+    dest[destPos:destPos + length] = src[srcPos:srcPos + length]
+
+
+def _jchar(b):
+    """(char) of a Java byte: sign-extended to 16 bits."""
+    return i8(b) & 0xFFFF
 
 
 def _late_init():

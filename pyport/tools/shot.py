@@ -14,6 +14,9 @@ list of steps, one per line:
     rclick          right mouse button (= BACK)
     shot NAME       save the last frame as NN_NAME.png
     gold N          TEST-ONLY: set the hero's gold (ag.cz.E) to N, to try the Blacksmith
+    generals N      TEST-ONLY: befriend the first N generals of the table (10, 30, 50... points)
+                    and allow one visit (cz.S = 1), as after a mission
+    win             TEST-ONLY: win the accepted mission now (c.d(1), as the combat would)
     save zero       (first line only) start with a minimal 965-byte save in RecordStore
                     "gamevil_pow_data" so that Main Menu -> Continue opens the Game Menu
     # ...           comment
@@ -116,6 +119,18 @@ def run(scenario, out, every=False):
                 return
             if cmd == "gold":
                 ag.cz.E = int(arg)
+                continue
+            if cmd == "win":
+                ag.cr = 1                  # the mission's general was met on the map (c.java:986)
+                ag.bd.d_I(1)               # what the combat calls on victory (c.java:1516)
+                continue
+            if cmd == "generals":
+                from pow.game.d import d
+                from pow.game.e import e
+                tab = d("/" + ag.bE.a_I(52))
+                for b1 in range(int(arg)):
+                    e.b_II(tab.a_II(b1, 0), 10 + 20 * b1)
+                ag.cz.S = 1
                 continue
             if cmd == "shot":
                 state["n"] += 1

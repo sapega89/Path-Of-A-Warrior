@@ -85,7 +85,10 @@ class l(ag):
                             if ag.bV == 2:
                                 c0 = ag.cM[0]
                                 if c0 == 3:
-                                    not_ported("l.b yes/cM[0]=3 (mission accept)")
+                                    ag.cM[0] = 4
+                                    ag.dG = 0
+                                    ag.dH = i16(ag.dH + 1)
+                                    self.am()
                                 elif c0 == 5:
                                     if self.b_ == 28:
                                         self.as_()
@@ -186,8 +189,24 @@ class l(ag):
                     ag.cM[0] = 12
                     ag.cN = ae.v[ag.cM[0]]
                     ag.cM[1] = 3
-                elif v in (9, 10, 11, 12, 14, 16, 22):
-                    not_ported("l.b timer b_=%d (map/combat/visits)" % v)
+                elif v == 14:
+                    from pow.game.e import e
+                    ag.fD += 1
+                    ag.fI = self.k
+                    e.a_II(0, (ag.fF << 2) + 2 + self.k)
+                    ag.fw[ag.fD & 0x1] = ag.gf[3]
+                elif v == 16:
+                    from pow.game.e import e
+                    ag.cz.S = 0
+                    ag.bb.o_v()
+                    if ag.fu != 0:
+                        ag.fu = i16(e.b_II(ag.fn[2][ag.fv], 5))
+                    else:
+                        ag.fu = i16(e.b_II(ag.fn[0][ag.fH], 5))
+                    self.ar()
+                    self.e_I(15)
+                elif v in (9, 10, 11, 12, 22):
+                    not_ported("l.b timer b_=%d (map/combat)" % v)
         return -1
 
     def c_v(self):  # l.java:326-397  (draw)
@@ -374,8 +393,41 @@ class l(ag):
             L[0] = {23: " / Hp 5 Increased", 24: " / MP 3 Increased",
                     25: " / DEF 1 Increased", 26: " / ATK 1 Increased"}[p][3:]
             L[1] = ""
-        elif p in (6, 8, 9, 10, 13, 15, 16, 22, 27):
-            not_ported("l.e(%d) (mission/visit popups)" % p)
+        elif p == 6:
+            dz = ag.dz[ag.dm]
+            self.B_I(dz.e)
+            ag.cT[0] = ag.dC.a
+            ag.cT[1] = "Lv" + str(ag.cz.l + dz.j) + " / Gold: " + str(dz.h * 150 * (1 + (ag.ep ^ 0x1)))
+            L[0] = ag.cT[0]
+            L[1] = ag.cT[1]
+            L[2] = "Do you want to"
+            L[3] = "accept this"
+            L[4] = "mission?"
+        elif p == 15:
+            ag.cT[1] = ag.dC.a
+            L[0] = "You visited"
+            L[1] = ag.cT[1] + '.'
+            if ag.fu != 0:
+                L[2] = "Friendship:100%"
+            else:
+                L[2] = "Friendship "
+                L[3] = "increased by 5."
+            if ag.fJ < 8:
+                L[5] = ag.cT[0]
+                self.i = i16(self.i + 1)
+            else:
+                L[4] = ""
+                L[5] = "Press OK"
+                self.i = i16(self.i + 1)
+            self.a__I(10)
+        elif p == 16:
+            L[0] = "You discussed"
+            ag.cT[0] = ae.ba[ag.fI] + " with"
+            L[1] = ag.cT[0]
+            ag.cT[1] = ag.dC.a + '.'
+            L[2] = ag.cT[1]
+        elif p in (8, 9, 10, 13, 22, 27):
+            not_ported("l.e(%d) (map/combat popups)" % p)
         self.h = i16(20 * self.i + (self.i - 1 << 1))
         if self.b == 2:
             self.h = i16(self.h + 25)

@@ -13,19 +13,27 @@ from conftest import ROOT
 
 SCEN = ROOT / "tools" / "scenarios"
 
+# shots that show a random result (ag.by is seeded from the clock, as in Java):
+# the gift of a general after a visit (e.o(): C(100) < friendship points)
+RANDOM_SHOTS = {"visiting": ("16_talk_visited.png", "17_talk_visited_later.png")}
+# these scenarios press SKIP in the briefing on purpose: ag.y() (the map) raises NotPorted
+# and the game shows "Not ported yet" and returns to the Game Menu
+NOT_STRICT = {"missions", "missions_mouse"}
+
 
 def _run(name, out):
     import os
     import subprocess
     import sys
-    env = dict(os.environ, POW_STRICT="1")          # a NotPorted path fails the test
+    env = dict(os.environ, POW_STRICT="0" if name in NOT_STRICT else "1")   # NotPorted fails the test
     r = subprocess.run([sys.executable, str(ROOT / "tools" / "shot.py"), str(SCEN / (name + ".keys")),
                         "--out", str(out)], capture_output=True, text=True, timeout=300, env=env)
     assert r.returncode == 0, r.stderr
 
 
 @pytest.mark.parametrize("name", ["title", "gamemenu", "mouse", "newgame", "newgame_mouse",
-                                  "options_help", "management", "menus_mouse"])
+                                  "options_help", "management", "menus_mouse",
+                                  "missions", "missions_mouse", "visiting"])
 def test_scenario_matches_baseline(name, tmp_path):
     out = tmp_path / name
     _run(name, out)
@@ -33,6 +41,8 @@ def test_scenario_matches_baseline(name, tmp_path):
     names = sorted(p.name for p in base.glob("*.png"))
     assert names == sorted(p.name for p in out.glob("*.png"))
     for n in names:
+        if n in RANDOM_SHOTS.get(name, ()):
+            continue
         a = pygame.image.load(str(base / n))
         b = pygame.image.load(str(out / n))
         assert pygame.image.tobytes(a, "RGB") == pygame.image.tobytes(b, "RGB"), n

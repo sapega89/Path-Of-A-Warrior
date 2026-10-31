@@ -18,6 +18,10 @@ exactly the Java one. Hit zones follow what is drawn on each screen (coordinates
   Options (cM[0] == 9)       click a row -> select it; ◄ / ► half of the value box -> LEFT / RIGHT
   pages "◄ n / m ►" (Help, About, Endings)  click left / right of the centre -> LEFT / RIGHT
   Blacksmith grid (21..24)   click an item -> move the cursor to it; click it again -> FIRE
+  Mission description (3)    ◄ / ► under the text -> pages, elsewhere -> FIRE (accept popup)
+  Briefing (4)               click -> FIRE (whole line), soft key "SKIP" -> LSOFT (-6)
+  Generals (19)              click a row -> UP/DOWN to it, then FIRE; ◄ / ► -> pages
+  4-choice popup (talk topic)  click a topic -> UP/DOWN to it, then FIRE
   other screens (Skills, Gear, Inventory, Assign Items)  click -> FIRE, wheel -> UP/DOWN
   soft key BACK (bottom right)                         -> BACK (-7)
   right mouse button anywhere                          -> BACK (-7)
@@ -27,6 +31,7 @@ exactly the Java one. Hit zones follow what is drawn on each screen (coordinates
 import collections
 
 from pow.game.ag import ag
+from pow.midp.jint import idiv
 
 UP, DOWN, LEFT, RIGHT, FIRE, BACK = -1, -2, -3, -4, -5, -7
 
@@ -38,6 +43,14 @@ def _popup_keys(x, y, kind):
             return [LEFT]               # LEFT/RIGHT both toggle l.k
         want = 0 if x < ag.dd else 1
         return ([LEFT] if cs.k != want else []) + [FIRE]
+    if cs.b == 3:                       # 4 choices (l.c: rows of 16 px below the text)
+        if kind != "click":
+            return [UP if kind == "wheel_up" else DOWN]
+        top = ag.de - (cs.h >> 1) + 20 * cs.i + 5
+        if top <= y < top + 64:
+            want = (y - top) // 16
+            return _steps(want - cs.k, UP, DOWN) + [FIRE]
+        return []
     if kind != "click":
         return []
     return [FIRE]
@@ -140,6 +153,19 @@ def _menu_keys(c0, x, y, kind):
     cM, dd, de, dc = ag.cM, ag.dd, ag.de, ag.dc
     if kind != "click":
         return [UP if kind == "wheel_up" else DOWN]
+    if c0 == 3 and ag.de + 102 <= y < ag.de + 132:             # e.aH: pages at de+110
+        return [LEFT if x < dd else RIGHT]
+    if c0 == 19:                                               # e.aN: 4 rows of 22 px, 31 apart
+        m = 20 + idiv(ag.bY.b - 30 - 177, 2) + 2
+        top = m + 31
+        pages = top + 4 * 31 + 6
+        if pages - 8 <= y < pages + 22:
+            return [LEFT if x < dd else RIGHT]
+        if 18 <= x < 222 and top <= y < top + 4 * 31 and (y - top) % 31 < 22:
+            want = cM[1] // 4 * 4 + (y - top) // 31
+            if want < ag.cN:
+                return _steps(want - cM[1], UP, DOWN) + [FIRE]
+        return []
     if c0 in (25, 28) and ag.bZ.b - 43 <= y < ag.bZ.b - 13:   # e.a(int,int,int,boolean) at bZ.b-35      # e.a(int,int,int,boolean)
         return [LEFT if x < dd else RIGHT]
     if c0 in (1, 2, 10, 11, 12, 13, 25, 27):                   # e.f(): rows of 180x20, 30 apart
@@ -228,6 +254,8 @@ def keys_for(x, y, kind="click"):
             return []
         if soft_back:
             return [BACK]
+        if c0 == 4 and kind == "click" and x < ag.bU.getWidth() and y >= ag.bK - ag.bU.getHeight():
+            return [-6]                 # briefing: soft key "SKIP"
         keys = _new_game_keys(c0, x, y, kind)
         if keys is not None:
             return keys
