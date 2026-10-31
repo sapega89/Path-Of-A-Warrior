@@ -1274,7 +1274,14 @@ class c(ag):
         arrayOfByte1 = [0, 0, 0, 6]
         arrayOfByte2 = [6, 0, 0, 0]
         arrayOfByte3 = [1, -1, -1, 1]
-        ag.eP = i16(idiv(idiv(ag.ce + 4, 7) * cE.b.a, 7) + idiv(ag.cd + 4, 7))
+        if config.DECOMP_FIX["F17"]:
+            # DECOMP-FIX F17: lost parentheses, `(ce + 4) / 7 * cE.b.a / 7` is row * (width / 7),
+            # as ar.X() steps the rows (eP +- width / 7). Literal, the 5th room row of a map
+            # 9 wide gives eP 6 instead of 5: a room that does not exist (crash) or a stale
+            # room of an earlier map.
+            ag.eP = i16(idiv(ag.ce + 4, 7) * idiv(cE.b.a, 7) + idiv(ag.cd + 4, 7))
+        else:
+            ag.eP = i16(idiv(idiv(ag.ce + 4, 7) * cE.b.a, 7) + idiv(ag.cd + 4, 7))
         c.p_v()
         for b1 in range(14):
             ag.eD[b1] = 0

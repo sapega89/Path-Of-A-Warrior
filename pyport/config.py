@@ -29,6 +29,7 @@ DECOMP_FIX = {
     "F14": True,  # c.i(): `k = aw[i]` read before the wall check -> aw[-1]; step with ar.c()'s new direction
     "F15": True,  # ag.a(byte[],int) "(..)" macro: chained `i2[1] = i3[1] = a(..,')')` decompiled as two calls
     "F16": True,  # c.b(4 ints): enemy start position written to ex.a[1] while ar reads ex.a[0] (fresh slot)
+    "F17": True,  # c.a(5 ints) room index: `(ce+4)/7 * W / 7` -> `(ce+4)/7 * (W/7)` (lost parentheses)
     "F11": True,  # e.T(int) stat cursor: decompiled `a(.., bool, bool, bool)` = colour 0x010101 -> 255,255,255
 }
 
