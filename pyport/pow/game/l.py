@@ -129,8 +129,15 @@ class l(ag):
                                     ag.bb.c_v()
                                     ag.cM[0] = 6
                                 # break -> leaves both switches, continues with the timer below
-                            elif ag.cR.a == 1:
-                                not_ported("l.b cR.a == 1 (pause menu in map)")
+                            elif ag.cR.a == 1:  # l.java:172-182  (pause menu: Exit -> Game Menu)
+                                if ag.cM[1] == 5:
+                                    self.al_()
+                                    self.w_I(2)
+                                    ag.cM[0] = 5
+                                    ag.cN = 10
+                                    ag.bV = 2
+                                    ag.cL = 0
+                                    ag.cK = 0
                             elif ag.bV == 0:
                                 return 0
                         else:
@@ -205,7 +212,13 @@ class l(ag):
                         ag.fu = i16(e.b_II(ag.fn[0][ag.fH], 5))
                     self.ar()
                     self.e_I(15)
-                elif v in (9, 10, 11, 12, 22):
+                elif v == 9:  # room cleared: the exits open, or the mission's general talks
+                    if ag.eO[ag.eP].o != 0:
+                        ag.bd.g_v()
+                    else:
+                        ag.co = 1
+                        ag.cn = 5
+                elif v in (10, 11, 12, 22):
                     not_ported("l.b timer b_=%d (map/combat)" % v)
         return -1
 
@@ -426,8 +439,23 @@ class l(ag):
             L[1] = ag.cT[0]
             ag.cT[1] = ag.dC.a + '.'
             L[2] = ag.cT[1]
-        elif p in (8, 9, 10, 13, 22, 27):
-            not_ported("l.e(%d) (map/combat popups)" % p)
+        elif p in (8, 9):  # l.java:679-689  (room / stage banner on the map)
+            ag.cT[0] = "Stage " + str(ag.do)
+            if p == 9:
+                ag.cT[0] = ag.cT[0] + " Complete."
+                self.a__I(5)
+            L[0] = ag.dl
+            L[1] = ag.dn
+            L[2] = ag.cT[0]
+        elif p == 10:  # l.java:690-693
+            L[0] = ag.dn
+            L[1] = "Mission Success"
+        elif p == 13:  # l.java:694-698  (item picked up)
+            ag.cT[0] = ag.cX.a
+            L[0] = ag.cT[0]
+            L[1] = "Acquired!!"
+        elif p in (22, 27):
+            not_ported("l.e(%d) (mission failed / ending reward)" % p)
         self.h = i16(20 * self.i + (self.i - 1 << 1))
         if self.b == 2:
             self.h = i16(self.h + 25)

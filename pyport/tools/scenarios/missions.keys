@@ -170,12 +170,31 @@ wait 40
 shot briefing_later
 key BACK           # BACK does nothing in the briefing
 wait 2
-key LSOFT          # SKIP -> ag.y() (the map: next phase)
+key LSOFT          # SKIP -> ag.y(): the map
 wait 5
-shot skip_map_not_ported
+shot skip_map
+wait 100           # banners "Stage 1" / "Stage 1 Complete." eat the keys
+key RSOFT          # PAUSE
+wait 3
+key DOWN
+wait 2
+key DOWN
+wait 2
+key DOWN
+wait 2
+key DOWN
+wait 2
+key DOWN           # Exit to Menu
+wait 2
 key FIRE
+wait 3
+key LEFT           # Yes
+wait 2
+key FIRE           # -> Main Menu
 wait 5
-shot after_not_ported
+key FIRE           # Continue -> Game Menu (the save is from before the mission)
+wait 5
+shot after_map_exit
 key FIRE
 wait 3
 key FIRE

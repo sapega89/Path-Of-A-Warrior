@@ -16,9 +16,8 @@ SCEN = ROOT / "tools" / "scenarios"
 # shots that show a random result (ag.by is seeded from the clock, as in Java):
 # the gift of a general after a visit (e.o(): C(100) < friendship points)
 RANDOM_SHOTS = {"visiting": ("16_talk_visited.png", "17_talk_visited_later.png")}
-# these scenarios press SKIP in the briefing on purpose: ag.y() (the map) raises NotPorted
-# and the game shows "Not ported yet" and returns to the Game Menu
-NOT_STRICT = {"missions", "missions_mouse"}
+# scenarios that may reach a NotPorted screen on purpose (none at the moment)
+NOT_STRICT = set()
 
 
 def _run(name, out):
@@ -33,7 +32,8 @@ def _run(name, out):
 
 @pytest.mark.parametrize("name", ["title", "gamemenu", "mouse", "newgame", "newgame_mouse",
                                   "options_help", "management", "menus_mouse",
-                                  "missions", "missions_mouse", "visiting"])
+                                  "missions", "missions_mouse", "visiting",
+                                  "map", "map_mouse"])
 def test_scenario_matches_baseline(name, tmp_path):
     out = tmp_path / name
     _run(name, out)

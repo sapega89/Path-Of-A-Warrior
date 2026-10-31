@@ -723,8 +723,17 @@ class e(ag):
                     cM[2] = 0
                     cM[1] = 0
                     self.aA()
-                    if ag.dj != 0:
-                        not_ported("e.b() continue inside a mission (dj != 0)")
+                    if ag.dj != 0:  # e.java:856-866  (the save was made on the map: back into it)
+                        self.C_v()
+                        self.bi_v()
+                        self.D_v()
+                        self.y_v()
+                        self.U_v()
+                        ag.dW[1] = ag.B_v()
+                        ag.dW[0] = ag.B_v()
+                        ag.dV = ag.dW[0] - ag.dV
+                        self.a__I(-1)
+                        return
                 return
             if cM[1] == 1:
                 ag.bz = None
@@ -868,16 +877,28 @@ class e(ag):
                         cM[1] = 2
                     elif cM[1] == 4:
                         cM[1] = 3
-                        if ag.bW == 3:
-                            not_ported("e.aF() back into the map pause menu")
+                        if ag.bW == 3:  # e.java:1048-1056  (back to the map's pause menu)
+                            ag.bV = ag.bW
+                            ag.bW = -1
+                            cM[0] = 10
+                            cM[1] = 4
+                            ag.cN = 7
+                            ag.dE = ag.fZ
+                            return
                     elif cM[1] == 5:
                         cM[1] = 4
                 if ag.cO == 25:
                     cM[1] = 4
                 if ag.cO == 27:
                     cM[1] = 3
-                    if ag.bW == 3:
-                        not_ported("e.aF() back into the map pause menu")
+                    if ag.bW == 3:  # e.java:1066-1074
+                        ag.bV = ag.bW
+                        ag.bW = -1
+                        cM[0] = 10
+                        cM[1] = 4
+                        ag.cN = 7
+                        ag.dE = ag.fZ
+                        return
         else:
             v = cM[0]
             if v == 0:
@@ -1169,11 +1190,24 @@ class e(ag):
         s1 = 0
         s2 = 0
         if ag.bV == 3:
-            not_ported("e.k() inside the map")
+            s1 = ag.db
+            s2 = ag.dc
+            x.b_IIIII(0, j_, i, dF.b.d, 0)
+            x.b_IIIII(ag.bJ - i, j_, i, dF.b.d, 0)
         self.a_MIIIIII(ag.ct[7], 0, j_, i, dF.b.d, -s1, j_ - s2)
         x.c_IIIII(i - 1, j_, i - 1, j_ + dF.b.d - 1, ag.k_III(80, 80, 80))
         self.a_MIIIIII(ag.ct[7], ag.bJ - i, j_, i - s1, dF.b.d, ag.bJ - i - s1, j_ - s2)
         x.c_IIIII(ag.bJ - i, j_, ag.bJ - i, j_ + dF.b.d - 1, ag.k_III(80, 80, 80))
+        if ag.bV == 3:
+            x.a_IIII(0, j_, ag.bJ, dF.b.d)
+            ag.bd.b_v()
+            x.a_v()
+            x.a_IIII(0, j_, i - 1, dF.b.d)
+            ag.cS.b_I(170)
+            x.a_v()
+            x.a_IIII(ag.bJ - i + 1, j_, i - 1, dF.b.d)
+            ag.cS.b_I(170)
+            x.a_v()
 
     def n_II(self, paramInt1, paramInt2):  # e.java:1632-1654  (Gear: hero sprite + 9 equipment slots)
         cz = ag.cz
@@ -2818,3 +2852,8 @@ class e(ag):
         if ag.fr is None:
             ag.fr = d("/" + ag.bE.a_I(46))
         return False
+
+    def n_v(self):  # e.java:2938-2972  (popup extras on the map: experience bars of popups 11 / 12)
+        if ag.cS.b_ in (11, 12):
+            from pow.game.ag import not_ported
+            not_ported("e.n() (experience bars after a mission)")

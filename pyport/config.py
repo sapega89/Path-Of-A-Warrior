@@ -25,6 +25,8 @@ DECOMP_FIX = {
     "F9": True,  # l.a(String): `s = s + 1; l[s] = ...` -> `l[s++] = ...` (proposed, see pyport/README.md)
     "F10": True,  # lost parentheses `a * b % c` -> `a * (b % c)`: ag.f(int,int) name grid, ag.a(..Image..) digits
     "F12": True,  # ag.h(int,int,int) gold amount: mangled do/continue loop never draws a digit
+    "F13": True,  # ag.y(): start position written to cz.a[1] while the map reads cz.a[0]
+    "F14": True,  # c.i(): `k = aw[i]` read before the wall check -> aw[-1]; step with ar.c()'s new direction
     "F11": True,  # e.T(int) stat cursor: decompiled `a(.., bool, bool, bool)` = colour 0x010101 -> 255,255,255
 }
 
@@ -38,3 +40,8 @@ STRICT = os.environ.get("POW_STRICT", "0") == "1"
 # going through New Game. Off by default since hero creation is ported; POW_DEMO_SAVE=1 or
 # main.py --demo turns it on.
 DEMO_SAVE = os.environ.get("POW_DEMO_SAVE", "0") == "1"
+
+# PORT-EXTRA (phase 3 = the map before the combat): no enemy is created on the map, and the
+# attack / skill / potion keys do nothing there. Turned off when the combat (phase 4) is ported.
+NO_ENEMIES = os.environ.get("POW_NO_ENEMIES", "1") == "1"
+NO_COMBAT = os.environ.get("POW_NO_COMBAT", "1") == "1"

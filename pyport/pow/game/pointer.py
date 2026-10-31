@@ -23,6 +23,9 @@ exactly the Java one. Hit zones follow what is drawn on each screen (coordinates
   Generals (19)              click a row -> UP/DOWN to it, then FIRE; ◄ / ► -> pages
   4-choice popup (talk topic)  click a topic -> UP/DOWN to it, then FIRE
   other screens (Skills, Gear, Inventory, Assign Items)  click -> FIRE, wheel -> UP/DOWN
+  Map (bV == 3)              click beside the hero -> that direction (tap = start / stop
+                             walking, two quick clicks = run); soft key PAUSE -> BACK (-7);
+                             pause menu: click a row -> UP/DOWN to it, then FIRE
   soft key BACK (bottom right)                         -> BACK (-7)
   right mouse button anywhere                          -> BACK (-7)
   wheel: Main Menu = LEFT/RIGHT, Game Menu = UP/DOWN, Yes/No popup = switch,
@@ -173,6 +176,8 @@ def _menu_keys(c0, x, y, kind):
         if c0 == 25 and cM[2] >= 20:
             rows = 4
         top = de - (rows * 30 - 10) // 2 + dc
+        if ag.bV == 3 or ag.bW == 3:                           # the map's pause menu: 30 px higher
+            top -= 30
         if dd - 90 <= x < dd + 90 and top <= y < top + rows * 30 and (y - top) % 30 < 20:
             return _steps((y - top) // 30 - (cM[1] - cM[2]), UP, DOWN) + [FIRE]
         return []
@@ -197,6 +202,31 @@ def _menu_keys(c0, x, y, kind):
     return [FIRE]
 
 
+def _map_keys(x, y, kind):
+    """The mission map (bV 3), the room scroll (4) and talks on the map (5)."""
+    if ag.cS.b != 0:
+        return _popup_keys(x, y, kind)
+    if x >= ag.bJ - 60 and y >= ag.bK - 20:            # soft key PAUSE / BACK (bottom right)
+        return [BACK]
+    if ag.bV != 3:
+        return [FIRE] if kind == "click" else []
+    if ag.cR.a == 1:                                   # pause menu: e.f() list, cM[0] == 10
+        return _menu_keys(10, x, y, kind)
+    if ag.cR.a != 0:                                   # Assign Items / Options / Help of the pause
+        if kind != "click":
+            return [UP if kind == "wheel_up" else DOWN]
+        return [FIRE]
+    if kind != "click":
+        return []
+    # walking: a click beside the hero = a tap on that direction (start / stop walking)
+    hx = ag.cz.a[0].a - ag.ca.a + ag.db
+    hy = ag.cz.a[0].b - ag.ca.b + ag.dc - 20
+    dx, dy = x - hx, y - hy
+    if abs(dx) >= abs(dy):
+        return [LEFT if dx < 0 else RIGHT]
+    return [UP if dy < 0 else DOWN]
+
+
 def keys_for(x, y, kind="click"):
     """-> list of phone key codes for a click / wheel at (x, y) in screen coordinates."""
     from pow.game.af import af
@@ -217,6 +247,8 @@ def keys_for(x, y, kind="click"):
         if x < ag.bU.getWidth() and y >= ag.bK - ag.bU.getHeight():
             return [-6]
         return [FIRE]
+    if bv in (3, 4, 5):
+        return _map_keys(x, y, kind)
     if bv == 2 and ag.cS.b != 0:
         return _popup_keys(x, y, kind)
     if bv == 2:

@@ -1,0 +1,227 @@
+# Fresh hero -> first mission -> briefing SKIP -> the map (no enemies yet)
+wait 25
+key FIRE
+wait 2
+# sound: Yes
+key FIRE
+wait 2
+key FIRE
+wait 2
+key UP
+wait 2
+key DOWN
+wait 2
+key FIRE
+wait 2
+key FIRE
+wait 3
+key RIGHT
+wait 2
+key FIRE
+wait 3
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key FIRE
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key FIRE
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key FIRE
+wait 1
+key FIRE
+wait 1
+key BACK
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key FIRE
+wait 2
+key FIRE
+wait 2
+key DOWN
+wait 2
+key FIRE
+wait 2
+key DOWN
+wait 2
+key FIRE
+wait 2
+key DOWN
+wait 2
+key FIRE
+wait 2
+key FIRE
+wait 2
+key FIRE           # Yes -> save -> prologue (ag.l(100, 0), bV = 10)
+wait 3
+wait 60
+key LSOFT          # Skip on a picture page = next page
+wait 3
+wait 60
+key LSOFT
+wait 3
+wait 10
+key FIRE           # whole text at once
+wait 2
+wait 25
+wait 40
+key LSOFT          # Skip on a dialogue page = end of the prologue
+wait 4
+key FIRE
+wait 3
+key FIRE
+wait 3
+key FIRE
+wait 3
+key RIGHT
+wait 2
+key FIRE
+wait 3
+key FIRE
+wait 3
+wait 30
+key FIRE
+wait 3
+wait 40
+key BACK           # BACK does nothing in the briefing
+wait 2
+key LSOFT          # SKIP -> ag.y() (the map: next phase)
+wait 10
+shot map_enter           # banner "Stage 1"
+wait 45
+shot room_clear          # no enemies yet: the room counts as cleared at once
+wait 40
+shot exits_open          # blinking arrow = exit of the room
+key LEFT                 # tap = start walking
+wait 12
+shot walk_left_wall      # stops at the edge of the room
+key RIGHT
+key RIGHT                # quick double tap = run
+wait 4
+shot run_right
+key DOWN                 # walk down to the exit
+wait 25
+shot walk_to_exit
+wait 6
+shot scroll_next_room
+wait 20
+shot next_room
+wait 40
+key RSOFT                # PAUSE -> pause menu
+wait 3
+shot pause_menu
+key DOWN
+wait 2
+shot pause_cursor
+key FIRE
+wait 3
+shot pause_sub
+key RSOFT
+wait 3
+shot pause_back
+key DOWN                 # Save (allowed: the room is cleared)
+wait 2
+key FIRE
+wait 3
+shot pause_saved
+wait 30
+key DOWN
+wait 2
+key DOWN
+wait 2
+key DOWN
+wait 2
+shot pause_exit
+key FIRE
+wait 3
+shot exit_popup
+key LEFT                 # Yes
+wait 2
+key FIRE
+wait 5
+shot back_game_menu
+key FIRE                 # Continue: the save was made on the map -> back into the mission
+wait 8
+shot continue_map
+wait 40
+shot continue_map_later
+key DOWN                 # walk down into the last room
+wait 30
+shot last_room
+wait 60
+shot last_room_closed    # the mission's general waits here (combat): exits stay closed

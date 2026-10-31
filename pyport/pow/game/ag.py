@@ -25,6 +25,7 @@ from pow.midp.rms import RecordStore
 
 F10 = config.DECOMP_FIX["F10"]
 F12 = config.DECOMP_FIX["F12"]
+F13 = config.DECOMP_FIX["F13"]
 
 
 class NotPorted(NotImplementedError):
@@ -66,7 +67,8 @@ class ag(AgFields, Canvas):
         from pow.game.e import e
         from pow.game.k import k
         from pow.game.c import c
-        from pow.game.stubs import ar_stub, as_stub, m_stub
+        from pow.game.stubs import as_stub, m_stub
+        from pow.game.ar import ar
         from pow.midp.jrandom import Random
         self.r_v()
         ag.bu = g("/0_font.png", 8, 17, 9, 16777215)
@@ -113,8 +115,8 @@ class ag(AgFields, Canvas):
         ag.be = as_stub()          # NOT-PORTED: as.java (Gamevil Live) - phase 7
         as_stub.a = m_stub()
         ag.bb = e()
-        ag.bc = ar_stub()          # NOT-PORTED: ar.java (map logic) - phase 3
-        ag.bd = c()                # c.java: only the story player c(int) so far (map & combat - phase 3/4)
+        ag.bc = ar()               # ar.java: the map (phase 3); the combat parts raise NotPorted
+        ag.bd = c()                # c.java: story player, map; the combat parts raise NotPorted
 
     def keyPressed(self, paramInt):  # ag.java:660-662
         self.t_I(paramInt)
@@ -440,11 +442,15 @@ class ag(AgFields, Canvas):
             elif v == 2:
                 ag.bb.a_I(1)
             elif v == 3:
-                not_ported("bc.b(1) (map)")
+                ag.bc.b_I(1)
             elif v == 4:
-                not_ported("bc.k() (map)")
+                ag.bc.k_v()
             elif v == 5:
-                not_ported("ag.L case 5 (map)")
+                self.K_v()
+                for b in range(81):
+                    ag.eE[b // 9][b % 9] = 1
+                ag.bd.c_v()
+                ag.bb.h_v()
             elif v in (6, 8, 9):
                 return
             elif v == 10:
@@ -479,8 +485,16 @@ class ag(AgFields, Canvas):
         if v == 2:
             ag.bb.a_I(0)
             return
-        if v in (3, 4, 5):
-            not_ported("ag.L ck=0 bV=%d (map)" % v)
+        if v == 3:
+            ag.bc.b_I(0)
+            return
+        if v == 4:
+            ag.bc.k_v()
+            ag.bc.n_v()
+            return
+        if v == 5:
+            ag.bb.i_v()
+            return
         if v in (6, 8, 9):
             return
         if v == 10:
@@ -513,8 +527,11 @@ class ag(AgFields, Canvas):
             else:
                 ag.bb.a_v()
             self.L_v()
-        elif v in (3, 4, 5):
-            not_ported("ag.P bV=%d (map/combat)" % v)
+        elif v == 3:
+            ag.bc.a_v()
+        elif v in (4, 5):
+            self.L_v()
+            ag.bc.O_I(0)
         elif v == 10:
             if ag.cS.b != 0:
                 ag.cS.b_v()
@@ -2295,8 +2312,229 @@ class ag(AgFields, Canvas):
         ag.R_v()
 
     def y_v(self):  # ag.java:872-967  (enter the map: bV = 3)
-        ag.bV = 3       # ag.java:886; the rest (map load) is phase 3, so the run loop's
-        not_ported("ag.y() (enter the map)")   # NotPorted fallback returns to the Game Menu
+        cz = ag.cz
+        cz.K = ag.g_I(cz.X[0].a)
+        ag.ai()
+        self.ah()
+        ag.bb.d_v()
+        self.ab_v()
+        ag.bY.a = 240
+        ag.bY.b = 243
+        ag.db = 0
+        ag.dc = 16
+        ag.bV = 3
+        ag.co = 2
+        ag.cn = 1
+        ag.cr = 0
+        ag.cl = 0
+        ag.fq = 0
+        if ag.dj != 0:
+            bool_ = 1
+        else:
+            if F13 and cz.a[1] is not cz.a[0]:
+                # DECOMP-FIX F13: the start position is written into cz.a[1], but the map
+                # (c.f(), c.a(5 ints)) reads cz.a[0]. Both are the same object once ar.aC()
+                # (cz.a[1] = cz.a[0]) has run; on the first map after start-up they are not,
+                # and the hero would stand at (0, 0).
+                cz.a[1] = cz.a[0]
+            cz.a[1].a = i16(ag.dz[ag.dm].b * 27 + 12)
+            cz.a[1].b = i16(ag.dz[ag.dm].c * 27 + 20)
+            ag.do = 1
+            ag.dY = 0
+            bool_ = 0
+        cz.d[1] = cz.c = 0
+        cz.d[0] = cz.c = 0
+        cz.e[1] = 0
+        cz.e[0] = 0
+        cz.f[1] = 0
+        cz.f[0] = 0
+        cz.O = 0
+        cz.N = 20
+        cz.L = 0
+        cz.T = 0
+        cz.H = 0
+        cz.I = 0
+        cz.A = 0
+        cz.B = 0
+        cz.C = 0
+        cz.D = 0
+        cz.R = 0
+        ag.O_v()
+        if ag.bi:
+            cz.E = 500000
+            cz.y = cz.p = cz.o = cz.m = cz.w = cz.n = cz.x = cz.z = cz.r = cz.q = 2000
+        ag.fh = 0
+        ag.fg = 1
+        ag.cR.a = 0
+        ag.dT.a = 0
+        ag.dU.a = 0
+        ag.ek = 0
+        ag.eB = 0
+        ag.eX = None
+        ag.fa = None
+        ag.fd = None
+        for b in range(2):
+            if ag.et[b] is None:
+                ag.et[b] = self.K_I(82 + b)
+        self.h_I(bool_)
+        self.A_v()
+        ag.eS[cz.K] = self.K_I(87 + (cz.K << 2))
+        cz.aD = self.K_I(51 + cz.aB)
+        cz.aF = self.K_I(46)
+        ag.eT[cz.K] = self.K_I(89 + (cz.K << 2))
+        ag.ct[40 + cz.K] = self.d_T(ag.bB.a_I(42 + cz.K))
+        ag.eU = self.K_I(86)
+        self.z_v()
+        ag.eQ = self.K_I(98)
+        ag.eR = self.d_T(ag.bC.a_I(44))
+        ag.eV = self.K_I(55)
+        ag.ct[43] = self.d_T(ag.bC.a_I(0))
+        ag.eW = self.K_I(56)
+        ag.ct[44] = self.d_T(ag.bC.a_I(1))
+        ag.ct[31] = self.d_T(ag.bA.a_I(52))
+        ag.eq = self.d_T(ag.bB.a_I(45))
+        ag.dW[1] = ag.B_v()
+        ag.dW[0] = ag.B_v()
+        ag.dV = ag.dW[0] - ag.dV
+        ag.dW[1] = ag.B_v()
+        ag.dV = ag.dW[0] = ag.B_v()
+        ag.dj = 1
+        ag.dX = 0
+
+    def z_v(self):  # ag.java:969-971
+        ag.ct[42] = self.d_T(ag.bC.a_I(2))
+
+    def A_v(self):  # ag.java:973-988  (enemy sprites, recoloured by dz.d)
+        arrayOfInt = [56, 57]
+        for b in range(len(arrayOfInt)):
+            if ag.dz[ag.dm].d != 0:
+                ag.es[b] = None
+                ag.et[b] = None
+                ag.es[b] = ag.a_TI(ag.bB.a_I(arrayOfInt[b]), ag.dz[ag.dm].d)
+            else:
+                ag.es[b] = None
+                ag.et[b] = None
+                ag.es[b] = self.d_T(ag.bB.a_I(arrayOfInt[b]))
+            if ag.et[b] is None:
+                ag.et[b] = self.K_I(82 + b)
+
+    _PAL = [[[236, 211, 197], [205, 143, 128], [129, 81, 69], [104, 60, 49], [79, 39, 29]],
+            [[226, 205, 178], [196, 179, 152], [180, 142, 122], [135, 111, 47], [93, 73, 49]],
+            [[174, 225, 242], [101, 156, 195], [61, 102, 139], [43, 78, 115], [45, 45, 84]],
+            [[162, 199, 159], [135, 156, 119], [86, 123, 98], [33, 98, 63], [51, 51, 51]]]
+
+    @staticmethod
+    def a_TI(paramString, paramInt):  # ag.java:990-1023  (PNG with palette 0 replaced by palette paramInt)
+        str_ = "/" + paramString + ".png"
+        arrayOfByte = bytearray(j.a(str_))
+        if paramInt == 0:
+            return Image.createImage(arrayOfByte, 0, len(arrayOfByte))
+        arrayOfInt = ag._PAL
+        m = len(arrayOfByte)
+        i1 = 0
+        for j_ in range(0, m - 4 + 1):
+            if arrayOfByte[j_] == 80 and arrayOfByte[j_ + 1] == 76 and arrayOfByte[j_ + 2] == 84 and arrayOfByte[j_ + 3] == 69:
+                i1 = j_
+                break
+        i2 = arrayOfByte[i1 - 1] & 0xFF | arrayOfByte[i1 - 2] << 8 & 0xFF00
+        for b in range(5):
+            for j_ in range(i1 + 4, i1 + i2 - 3 + 1):
+                if (arrayOfByte[j_] == arrayOfInt[0][b][0] and arrayOfByte[j_ + 1] == arrayOfInt[0][b][1]
+                        and arrayOfByte[j_ + 2] == arrayOfInt[0][b][2]):
+                    arrayOfByte[j_] = arrayOfInt[paramInt][b][0]
+                    arrayOfByte[j_ + 1] = arrayOfInt[paramInt][b][1]
+                    arrayOfByte[j_ + 2] = arrayOfInt[paramInt][b][2]
+                    break
+        l1 = x.a_ABII(arrayOfByte, i1, i2 + 4)
+        arrayOfByte[i1 + i2 + 4] = l1 >> 24 & 0xFF
+        arrayOfByte[i1 + i2 + 5] = l1 >> 16 & 0xFF
+        arrayOfByte[i1 + i2 + 6] = l1 >> 8 & 0xFF
+        arrayOfByte[i1 + i2 + 7] = l1 & 0xFF
+        return Image.createImage(arrayOfByte, 0, len(arrayOfByte))
+
+    def h_I(self, paramInt):  # ag.java:1025-1037  (load the map of the current lord, room around the hero)
+        from pow.game.c import c
+        self.d_III(0, 0, 0)
+        ct34 = ag.ct[34]
+        self.a_MIIIIII(ct34, ag.bZ.a // 2 - ct34.getWidth() // 2, ag.bZ.b // 2 - ct34.getHeight() // 2,
+                       ct34.getWidth(), ct34.getHeight(), 0, 0)
+        ag.ck = 1
+        c.f_v()
+        ag.cd = idiv(ag.cz.b[0].a - 1, 7) * 7 + 4 - (ag.cb.a >> 1)
+        ag.ce = idiv(ag.cz.b[0].b - 1, 7) * 7 + 4 - (ag.cb.b >> 1)
+        ag.cz.b[1].a = ag.cz.b[0].a
+        ag.cz.b[1].b = ag.cz.b[0].b
+        ag.cE = ag.bd.b_I(ag.cg)
+        ag.bd.a_I(ag.ds[ag.dk])
+        ag.bd.a_IIIII(ag.cb.a, ag.cb.b, ag.cd, ag.ce, paramInt)
+
+    def ab_v(self):  # ag.java:2271-2275  (HUD frame pieces)
+        arrayOfInt = [79, 61, 82, 78, 83, 81]
+        for b in range(6):
+            ag.cx[b] = self.d_T(ag.bA.a_I(arrayOfInt[b]))
+
+    @staticmethod
+    def af_v():  # ag.java:2321-2343  (pause-menu strings)
+        al1 = al("/" + ag.bE.a_I(69))
+        for b in range(30):
+            ag.fT[b] = al1.a_I(b)
+            if b < 7:
+                ag.gd[b] = al1.a_I(b + 48)
+            if b < 6:
+                ag.fV[b] = al1.a_I(b + 30)
+            if b < 5:
+                ag.ge[b] = al1.a_I(b + 55)
+            if b < 4:
+                ag.gb[b] = al1.a_I(b + 42)
+            if b < 2:
+                ag.gc[b] = al1.a_I(b + 46)
+        ag.fU[0] = al1.a_I(36)
+        ag.fW[0] = al1.a_I(37)
+        ag.ga[0] = al1.a_I(38)
+        ag.fX[0] = al1.a_I(39)
+        ag.fY[0] = al1.a_I(40)
+        ag.fZ[0] = al1.a_I(41)
+        al1.a_v()
+
+    def g_III(self, paramInt1, paramInt2, paramInt3):  # ag.java:2793-2795  (one digit of ct[19])
+        self.b_MIIIIII(ag.ct[19], paramInt2, paramInt3, 10, 14, 10 * paramInt1, 0)
+
+    @staticmethod
+    def D_I(paramInt):  # ag.java:2842-2847  (number of decimal digits)
+        b = 1
+        j_ = 10
+        while paramInt >= j_:
+            b += 1
+            j_ *= 10
+        return b
+
+    def j_III(self, paramInt1, paramInt2, paramInt3):  # ag.java:2849-2855  (mission clock mm:ss)
+        arrayOfInt1 = [0, 9, 25, 34]
+        arrayOfInt2 = [idiv(paramInt3, 600) % 10, idiv(paramInt3, 60) % 10, paramInt3 % 60 // 10, paramInt3 % 10]
+        for b in range(4):
+            self.g_III(arrayOfInt2[b], paramInt1 + arrayOfInt1[b] + 10, paramInt2)
+        self.b_MIIIIII(ag.ct[19], paramInt1 + 20 + 10, paramInt2, 4, 14, 115, 0)
+
+    def al_(self):  # ag.java:2548-2570  (free the map images; `al` would hide the al class)
+        ag.aj()
+        ag.ct[4] = None
+        if ag.bT is not None:
+            for b1 in range(len(ag.bT)):
+                ag.bT[b1] = None
+            ag.bT = None
+        ag.ct[9] = None
+        ag.ct[11] = None
+        ag.ct[12] = None
+        ag.ct[16] = None
+        ag.bb.d_v()
+        for b in range(5):
+            ag.ct[35 + b] = None
+        for b in range(4):
+            ag.ct[21 + b] = None
+        ag.bY.a = ag.bZ.a
+        ag.bY.b = ag.bZ.b
+        ag.db = 0
+        ag.dc = 0
 
     def am(self):  # ag.java:2572-2582  (start a dialogue: briefing dG 0, map talk 1, general 2)
         ag.dK = 0
