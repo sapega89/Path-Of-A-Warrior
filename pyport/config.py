@@ -58,3 +58,10 @@ HOLD_TO_MOVE = os.environ.get("POW_HOLD_TO_MOVE", "1") == "1"
 # the hero turns to the nearest enemy) also on Hard. Gold and EXP of Hard stay as they are.
 # POW_AUTO_AIM_HARD=0 = the original (no auto-aim on Hard). tools/shot.py uses 0.
 AUTO_AIM_HARD = os.environ.get("POW_AUTO_AIM_HARD", "1") == "1"
+
+# PORT-EXTRA: POW_CHEAT=1 turns on the original developers' cheat, the JAD/manifest property
+# GAMEVIL_CHEAT: TRUE (ag.java:626, ag.bi): loading a save sets gold to 555000 (ag.java:2179);
+# a new hero gets 500000 gold, 2000 in every stat and all skills (ag.java:916, 3260).
+CHEAT = os.environ.get("POW_CHEAT", "0") == "1"
+# PORT-EXTRA: POW_GOLD=N - after a save is loaded the hero has N gold (nothing else changes).
+GOLD = int(os.environ["POW_GOLD"]) if os.environ.get("POW_GOLD", "").isdigit() else None

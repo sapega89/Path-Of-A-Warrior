@@ -25,6 +25,8 @@ class Main:
 
     def __init__(self):
         self.props = _manifest()
+        if config.CHEAT:   # PORT-EXTRA config.CHEAT: the manifest property GAMEVIL_CHEAT: TRUE
+            self.props["GAMEVIL_CHEAT"] = "TRUE"
         self.destroyed = False
 
     def getAppProperty(self, key):

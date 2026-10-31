@@ -751,6 +751,8 @@ class ag(AgFields, Canvas):
             cz.E = ag.W_v()
             if ag.bi:
                 cz.E = 555000
+            if config.GOLD is not None:   # PORT-EXTRA config.GOLD (POW_GOLD=N)
+                cz.E = i32(config.GOLD)
             cz.F = ag.W_v()
             cz.G = ag.W_v()
             cz.H = ag.X_v()
