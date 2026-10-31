@@ -10,14 +10,14 @@
 
 | ID | Що зробити | Java | Файли | Готово, коли | Год |
 |---|---|---|---|---|---|
-| 0.1 | Заморозити Godot-версію в git (див. команди нижче) | — | — | є тег `godot-freeze`, робоче дерево чисте | 0.2 |
-| 0.2 | Каркас `pyport/`: `requirements.txt` (pygame-ce, pytest, pygbag), `main.py` з async-циклом; поверхня 240×320 з цілочисельним масштабом ×2/×3 (nearest) | `ag.run` 708-760 | `pyport/main.py`, `pyport/config.py` | `python pyport/main.py` відкриває вікно 480×640 або 720×960 | 1 |
-| 0.3 | Мінімальна прокладка J2ME: `Image` (PNG з кореня проєкту за ім'ям `"/name.png"`, порожні змінювані зображення), `Graphics` = методи `x.java` (`drawImage` з anchor 20, `clipRect`/`setClip`, `fillRect`, `drawRect`, `drawLine`, `setColor`); читання ресурсу = `j.a()` | `x.java` 1-90, `j.java` | `pow/midp/graphics.py` | тестовий кадр з `ui_back.png` і рамкою збігається зі скріном оригіналу | 1.5 |
-| 0.4 | Бітмап-шрифт: `g.java` (`0_font.png`, 4 кольори через заміну кольору палітри + CRC) і `x.a(String,…)` з вирівнюванням | `g.java`, `x.java` 90-120, `ag.java` 587-590 | `pow/midp/font.py` | рядок «RESUME» білим/чорним/оранжевим/сірим, ширини символів як в оригіналі | 1 |
-| 0.5 | `.scr` з правильним заголовком (`u16 count`, LE, порожні записи не обривають читання) | `al.java` 11-31 | `pow/data/scr.py` | `uimenu` = 60 рядків, `gamestr` = 71 | 0.3 |
-| 0.6 | Дослівний перенос екранів: лого → «sound?» → титул → Main Menu → Game Menu (карусель) | `af.java` 16-67; `ag.S` 1985, `ag.T` 2004-2124, `ag.E` 1154; `e.aJ` 1370; `e.bf` 3283-3364; клавіші `ag.keyPressed` 660, `ag.t` 1941-1961 | `pow/game/ag.py`, `pow/game/e.py`, `pow/game/af.py` (частково) | навігація стрілками/Enter як в оригіналі; анімація каруселі по кадрах | 2–3 |
-| 0.7 | Headless-скріншоти: `SDL_VIDEODRIVER=dummy`, сценарій «тік → клавіша», збереження PNG | — | `tools/shot.py` | `python tools/shot.py title.keys` дає PNG кожного кроку | 0.5 |
-| 0.8 | Браузер: `python -m pygbag pyport`, перевірити завантаження PNG, клавіші, 1 звук OGG, запис і читання збереження | — | — | працює в Chrome на ПК; результат перевірки збереження записано в нотатки | 1 |
+| 0.1 ✅ | Заморозити Godot-версію в git (див. команди нижче) | — | — | є тег `godot-freeze`, робоче дерево чисте | 0.2 |
+| 0.2 ✅ | Каркас `pyport/`: `requirements.txt` (pygame-ce, pytest, pygbag), `main.py` з async-циклом; поверхня 240×320 з цілочисельним масштабом ×2/×3 (nearest) | `ag.run` 708-760 | `pyport/main.py`, `pyport/config.py` | `python pyport/main.py` відкриває вікно 480×640 або 720×960 | 1 |
+| 0.3 ✅ | Мінімальна прокладка J2ME: `Image` (PNG з кореня проєкту за ім'ям `"/name.png"`, порожні змінювані зображення), `Graphics` = методи `x.java` (`drawImage` з anchor 20, `clipRect`/`setClip`, `fillRect`, `drawRect`, `drawLine`, `setColor`); читання ресурсу = `j.a()` | `x.java` 1-90, `j.java` | `pow/midp/graphics.py` | тестовий кадр з `ui_back.png` і рамкою збігається зі скріном оригіналу | 1.5 |
+| 0.4 ✅ | Бітмап-шрифт: `g.java` (`0_font.png`, 4 кольори через заміну кольору палітри + CRC) і `x.a(String,…)` з вирівнюванням | `g.java`, `x.java` 90-120, `ag.java` 587-590 | `pow/midp/font.py` | рядок «RESUME» білим/чорним/оранжевим/сірим, ширини символів як в оригіналі | 1 |
+| 0.5 ✅ | `.scr` з правильним заголовком (`u16 count`, LE, порожні записи не обривають читання) | `al.java` 11-31 | `pow/data/scr.py` | `uimenu` = 60 рядків, `gamestr` = 71 | 0.3 |
+| 0.6 ✅ | Дослівний перенос екранів: лого → «sound?» → титул → Main Menu → Game Menu (карусель) | `af.java` 16-67; `ag.S` 1985, `ag.T` 2004-2124, `ag.E` 1154; `e.aJ` 1370; `e.bf` 3283-3364; клавіші `ag.keyPressed` 660, `ag.t` 1941-1961 | `pow/game/ag.py`, `pow/game/e.py`, `pow/game/af.py` (частково) | навігація стрілками/Enter як в оригіналі; анімація каруселі по кадрах | 2–3 |
+| 0.7 ✅ | Headless-скріншоти: `SDL_VIDEODRIVER=dummy`, сценарій «тік → клавіша», збереження PNG | — | `tools/shot.py` | `python tools/shot.py title.keys` дає PNG кожного кроку | 0.5 |
+| 0.8 ⏳ | Браузер: `python -m pygbag pyport`, перевірити завантаження PNG, клавіші, 1 звук OGG, запис і читання збереження | — | — | працює в Chrome на ПК; результат перевірки збереження записано в нотатки | 1 |
 
 ## Команди для 0.1 (виконати у вас, у корені проєкту)
 
