@@ -1,0 +1,63 @@
+# Main Menu: Options, Help, Endings, About (no save -> cursor starts on New Game)
+wait 25
+key FIRE           # sound: Yes
+wait 2
+key FIRE           # title
+wait 2
+key RIGHT          # -> Options
+wait 2
+key FIRE
+wait 2
+shot options
+key DOWN           # Speed
+wait 2
+key RIGHT
+wait 2
+key UP             # Volume
+wait 2
+key LEFT
+wait 2
+shot options_changed
+key BACK
+wait 2
+key RIGHT          # -> Help
+wait 2
+key FIRE
+wait 2
+shot help_list
+key DOWN
+wait 2
+key FIRE
+wait 2
+shot help_page_1
+key RIGHT
+wait 2
+shot help_page_2
+key BACK
+wait 2
+shot help_back_list
+key BACK
+wait 2
+key RIGHT          # -> Endings
+wait 2
+key FIRE
+wait 2
+shot endings
+key FIRE
+wait 3
+shot endings_locked
+key FIRE
+wait 3
+key BACK
+wait 2
+key RIGHT          # -> About
+wait 2
+key FIRE
+wait 2
+shot about
+key RIGHT
+wait 2
+shot about_version
+key BACK
+wait 2
+shot back_main_menu

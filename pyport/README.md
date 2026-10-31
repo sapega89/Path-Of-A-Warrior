@@ -28,6 +28,11 @@ Esc/Backspace = права софт-клавіша (BACK), Q/F1 = ліва, ци
 - ім'я — клік по букві чи OK у сітці (курсор сам доходить туди стрілками і натискає OK), DEL = BACK;
 - очки характеристик — клік по рядку HP / MP / ATK / DEF додає очко саме туди;
 - пролог — клік = OK (увесь текст одразу), «SKIP» унизу ліворуч або Q/F1 = пропустити;
+- списки меню (Management, Blacksmith, Etc, Help, Endings) — клік по рядку відкриває його;
+- Options — клік по рядку вибирає його, ліва/права половина значення = ◄ / ►;
+- сторінки «◄ 1/3 ►» (Help, About, Endings) — клік лівіше/правіше центру гортає;
+- Blacksmith — клік по клітинці ставить туди курсор, повторний клік = OK (купити/продати/вибрати);
+- Skills, Gear, Inventory, Assign Items — поки клік = OK, колесо = вгору/вниз, решта з клавіатури;
 - BACK — права кнопка миші або клік по «BACK» внизу праворуч.
 
 ### Браузер (pygbag)
@@ -54,7 +59,7 @@ pygbag під час збирання і в браузері завантажу�
 | `d.java`, `at.java` | `pow/game/d.py`, `at.py` | таблиці `.arr` (kibo/sungbo/shinki) і буфер імені |
 | `c.java` (лише `c(int)`) | `pow/game/c.py` | сторінка прологу/епілогу; плеєр історії `ag.l(int,int)/L/M/N`, текст у рамках `e.a(int,int,int)/b(int)/R` |
 | `af.java` | `pow/game/af.py` | лого → «sound enabled?» → титул |
-| `e.java` (частина) | `pow/game/e.py` | Main Menu (`aJ`), карусель Game Menu (`bf`), клавіші `a/aB/aC/aD/aE/b/aF`; створення героя: складність `aU`, герой `aK`, ім'я `aL/aM`, очки `O/T`, предмети `e(int)`, `p()` |
+| `e.java` (частина) | `pow/game/e.py` | Main Menu (`aJ`), карусель Game Menu (`bf`), клавіші `a/aB/aC/aD/aE/b/aF`; створення героя: складність `aU`, герой `aK`, ім'я `aL/aM`, очки `O/T`, предмети `e(int)`, `p()`; меню: списки `f`, Options `j`, Help/About `l`, Endings, Attributes `O`, Skills `P`, Gear `n(int,int)`, Inventory `Q`, Assign Items `d(int)`, Blacksmith `c(boolean)/aW/aX/bc/bd/be` (Buy, Sell, Enchant, Combine) |
 | `l.java` (частина) | `pow/game/l.py` | попапи: рамка, кнопки Yes/No/Ok, усі текстові `e(int)`, клавіші й таймер |
 | `k.java` | `pow/game/k.py` | менеджер звуку (дослівно) |
 | `aq.java` | `pow/game/aq.py` | **спрощено** на pygame.mixer (дослівно — таск 1.5) |
@@ -89,6 +94,18 @@ pygbag під час збирання і в браузері завантажу�
 | F9 (новий) | `l.a(String)` 469-496 | `s = s + 1; l[s] = …` → `l[s++] = …`; буквально рядок 0 лишається старим, а останній не малюється |
 | F10 (новий) | `ag.f(int,int)` 1794-1819, сітка імені | `10 * p % 14`, `17 * b / 14` → `10 * (p % 14)`, `17 * (b / 14)`; буквально курсор стрибає хаотично, а букви йдуть «драбинкою» |
 | F11 (новий) | `e.T(int)` 3533-3545, курсор очок | декомпільований код передає `boolean` у колір: курсор малюється кольором 0x010101 і після першого ↑/↓ зникає; з F11 він білий, як у `e.O(1)`. **Перевірити в KEmulator** |
+| F12 (новий) | `ag.h(int,int,int)`, цифри золота | декомпільований цикл `do/continue` не малює жодної цифри (рамка золота порожня); відновлено: цифри справа наліво, кома перед кожною 3-ю. **Перевірити в KEmulator** |
+
+Не DECOMP-FIX, а помилка самого порту: `d.b(int,int)` робить `String.trim()`, який у Java
+зрізає всі символи `<= ' '`, а `str.strip()` у Python не зрізає `'\0'` — назви предметів
+закінчувались «!!!!» (гліф 0 шрифту). Виправлено в `d.py`.
+
+### Меню (усе, крім старту місії)
+
+Game Menu → **Management** (Attributes, Skills, Gear, Inventory, Assign Items), **Blacksmith**
+(Buy, Sell, Enchant, Combine), Main Menu → **Options**, **Help**, **Endings**, **About**.
+Лишаються `NotPorted`: **Mission** (карта й бій — наступний етап), **Visiting**
+(новому герою недоступний: попап «only after completing a mission»), **Gamevil Live** (мережа).
 
 Створення героя (`e.java` / `ag.java` / `l.java`): Main Menu → New Game (якщо сейв є — попап 3
 «saved game will be deleted») → складність (екран 29, попап 36) → герой (екран 6) → ім'я
@@ -103,8 +120,13 @@ Please select» на екрані 6 — дослівно з Java (`de - 90 - b*2
 `tools/shot.py` запускає справжній цикл `ag.run` з `SDL_VIDEODRIVER=dummy` і віртуальним
 годинником: час рухається лише через сон самого циклу (120 мс на тік у меню), тому кадри
 відтворювані до пікселя. Сценарії: `title`, `gamemenu`, `mouse`, `newgame` (створення героя клавішами, з видаленням
-букви і Continue після сейву), `newgame_mouse` (те саме лише мишкою).
-Сценарій — рядки `wait N`, `key NAME`, `click X Y`, `wheel up|down`, `rclick`, `shot NAME`, `save zero`.
+букви і Continue після сейву), `newgame_mouse` (те саме лише мишкою), `options_help`,
+`management`, `blacksmith` (новий герой + 30 000 золота: купити, продати, зачарувати, поєднати),
+`menus_mouse` (меню лише мишкою).
+Сценарій — рядки `wait N`, `key NAME`, `click X Y`, `wheel up|down`, `rclick`, `shot NAME`, `save zero`,
+`gold N` (лише для тестів: золото героя).
+Асортимент Blacksmith і результат зачарування беруться з `ag.by` (Random із сідом від часу, як у
+Java), тому `blacksmith` у тестах лише проганяється, без порівняння пікселів.
 `pyport/shots/` — поточні кадри порту (база для регресійного тесту `tests/test_screens.py`).
 Скріншоти KEmulator покласти в `pyport/shots_ref/<сценарій>/` з тими самими іменами й
 запустити `tools/compare_ref.py`.

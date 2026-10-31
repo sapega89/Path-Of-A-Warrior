@@ -24,6 +24,7 @@ from pow.midp.jint import i8, i16, i32, idiv, imod
 from pow.midp.rms import RecordStore
 
 F10 = config.DECOMP_FIX["F10"]
+F12 = config.DECOMP_FIX["F12"]
 
 
 class NotPorted(NotImplementedError):
@@ -1857,6 +1858,326 @@ class ag(AgFields, Canvas):
             str_ = str_ + paramArrayOfchar[b]
             b += 1
         return int(str_)
+
+    # ---- menus: Options / Help / Endings helpers -------------------------------------------
+
+    def d_II(self, paramInt1, paramInt2):  # ag.java:1743-1745
+        return ag.e_II(paramInt1, paramInt2).encode("latin-1")
+
+    @staticmethod
+    def e_II(paramInt1, paramInt2):  # ag.java:1747-1753  (string paramInt2 of edat file paramInt1)
+        al1 = al("/" + ag.bE.a_I(paramInt1))
+        str_ = al1.a_I(paramInt2)
+        al1.a_v()
+        return str_
+
+    def e_III(self, paramInt1, paramInt2, paramInt3):  # ag.java:1828-1830  (small number, ct[20])
+        self.a_IIIIIMIII(paramInt1, paramInt2, paramInt3, 9, 12, ag.ct[20], 0, 0, 0)
+
+    def a_IIIIIMIII(self, paramInt1, paramInt2, paramInt3, paramInt4, paramInt5, paramImage,
+                    paramInt6, paramInt7, paramInt8):  # ag.java:1832-1845  (number from a digit strip)
+        if paramInt1 < 0 or paramImage is None:
+            return
+        paramInt2 -= paramInt4
+        if paramInt1 > 0:
+            while paramInt1 > 0:
+                # DECOMP-FIX F10: `p6 + p4 * p1 % 10` -> `p6 + p4 * (p1 % 10)`
+                sx = paramInt6 + paramInt4 * (paramInt1 % 10) if F10 else paramInt6 + paramInt4 * paramInt1 % 10
+                ag.a_IIIIMII(paramInt2, paramInt3, paramInt4, paramInt5, paramImage, sx, paramInt7)
+                paramInt1 //= 10
+                paramInt2 -= paramInt4 + paramInt8
+            return
+        ag.a_IIIIMII(paramInt2, paramInt3, paramInt4, paramInt5, paramImage, paramInt6, paramInt7)
+
+    def i_II(self, paramInt1, paramInt2):  # ag.java:3169-3173  (empty 30x30 item slot)
+        ac1 = ac(paramInt1 + 1, paramInt2 + 1, 28, 28)
+        self.b_IIIIIII(paramInt1, paramInt2, 30, 30, 80, 80, 80)
+        x.b_IIIII(ac1.a, ac1.b, ac1.c, ac1.d, 0)
+
+    def e_IIII(self, paramInt1, paramInt2, paramInt3, paramInt4):  # ag.java:3175-3179  (grey frame, black inside)
+        ac1 = ac(paramInt1 + 1, paramInt2 + 1, paramInt3 - 2, paramInt4 - 2)
+        self.b_IIIIIII(paramInt1, paramInt2, paramInt3, paramInt4, 152, 152, 152)
+        x.b_IIIII(ac1.a, ac1.b, ac1.c, ac1.d, 0)
+
+    def y_I(self, paramInt):  # ag.java:2474-2520  (Options: change the value of row cM[1])
+        v = ag.cM[1]
+        if v == 0:
+            ag.df = not ag.df
+            if ag.df:
+                self.a__I(8)
+            else:
+                ag.ai()
+        elif v == 1:
+            if paramInt == 1:
+                ag.dg = i16(ag.dg + 25)
+                if ag.dg > 100:
+                    ag.dg = 0
+            elif paramInt == 0:
+                ag.dg = i16(ag.dg - 25)
+                if ag.dg < 0 or ag.dg > 100:
+                    ag.dg = 100
+            if ag.dg == 0:
+                ag.df = False
+                ag.ai()
+            elif ag.dg > 0:
+                ag.df = True
+                if system.currentTimeMillis() - ag.di > 300:
+                    ag.di = system.currentTimeMillis()
+                    self.a__I(8)
+        elif v == 2:
+            if paramInt != 0:
+                ag.dh = i16(ag.dh + 1)
+                if ag.dh > 4:
+                    ag.dh = 0
+            else:
+                ag.dh = i16(ag.dh - 1)
+                if ag.dh < 0:
+                    ag.dh = 4
+        ag.H_v()
+
+    # ---- Management: items, descriptions ---------------------------------------------------
+
+    @staticmethod
+    def g_I(paramInt):  # ag.java:867-870  (equipment slot type of an item)
+        ag.bb.e_I(paramInt)
+        if paramInt < 100:
+            return 1
+        if paramInt < 300:
+            return i8(ag.cX.b)
+        if paramInt < 500:
+            return ag.cY.b
+        return ag.cZ.b
+
+    @staticmethod
+    def a_LzZI(paramz, paramBoolean, paramInt):  # ag.java:1454-1457  (item description in the shop)
+        # dF.a() (ak.java:10-17) - the method is shadowed by the field ak.a in Python
+        dF = ag.dF
+        dF.a = 0
+        dF.b.a = dF.b.b = dF.b.c = dF.b.d = 0
+        dF.c = ""
+        ag.bb.a_LzIIIIIZ(paramz, 0, 0, 200, 22, paramInt, paramBoolean)
+
+    @staticmethod
+    def a_Lp(paramp):  # ag.java:1459-1465  (potion slot -> item)
+        z1 = z()
+        z.a(z1)
+        z1.a = paramp.a
+        z1.b = paramp.b
+        return z1
+
+    def o_I(self, paramInt):  # ag.java:1467-1492  (item under the cursor of the item grid)
+        z1 = z()
+        if paramInt == -1:
+            paramInt = ag.fK[18]
+        v = ag.fK[0]
+        if v == 0:
+            z1 = ag.fL[paramInt]
+        elif v == 1:
+            if paramInt < 5:
+                z1 = ag.a_Lp(ag.cz.Z[paramInt])
+            else:
+                z1 = ag.cz.Y[paramInt - 5]
+        elif v in (2, 3):
+            if ag.fK[27] == 0:
+                z1 = ag.cz.Y[paramInt]
+            else:
+                z1 = ag.cz.X[paramInt]
+        return z1
+
+    @staticmethod
+    def a_LacI(paramac, paramInt):  # ag.java:1507-1510  (fill rect)
+        if paramac is not None:
+            x.b_IIIII(paramac.a, paramac.b, paramac.c, paramac.d, paramInt)
+
+    @staticmethod
+    def b_LacI(paramac, paramInt):  # ag.java:1512-1515  (outline rect)
+        if paramac is not None:
+            x.a_IIIII(paramac.a, paramac.b, paramac.c, paramac.d, paramInt)
+
+    @staticmethod
+    def a_LacII(paramac, paramInt1, paramInt2):  # ag.java:1517-1520
+        x.b_IIIII(paramac.a, paramac.b, paramac.c, paramac.d, paramInt2)
+        x.a_IIIII(paramac.a, paramac.b, paramac.c, paramac.d, paramInt1)
+
+    @staticmethod
+    def c_T(paramString):  # ag.java:1755-1757  (text width)
+        return ag.bu.a_T(paramString)
+
+    def i_III(self, paramInt1, paramInt2, paramInt3):  # ag.java:1823-1825  (small digit from ct[20])
+        self.b_MIIIIII(ag.ct[20], paramInt1, paramInt2, 9, 12, paramInt3 * 9, 0)
+
+    def J_v(self):  # ag.java:1279-1291  (gold box)
+        arrayOfShort = [7, 14, 21, 32, 39, 46, 57, 64, 71, 82]
+        j_ = ag.cz.E
+        self.a_IIIIZ(ag.dd - 70, ag.de - 80 + ag.dc, 140, 22, False)
+        b = 0
+        while b < 9:
+            j_ = idiv(j_, 10)
+            if 0 == j_:
+                break
+            b += 1
+        self.d_IIII(ag.cz.E, ag.dd + (arrayOfShort[b] >> 1) + 16 - ag.db, ag.de - 76, 0)
+        self.b_MIIIIII(ag.ct[32], ag.dd - 69 - ag.db, ag.de - 80, ag.ct[32].getWidth(), ag.ct[32].getHeight(), 0, 0)
+
+    def b_IIIII(self, paramInt1, paramInt2, paramInt3, paramInt4, paramInt5):  # ag.java:1293-1352  (description of item / skill)
+        cz = ag.cz
+        dF = ag.dF
+        s1 = s2 = s3 = s4 = s5 = s6 = 0
+        str_ = ""
+        dF.b.a = paramInt2
+        dF.b.b = paramInt3
+        dF.b.c = paramInt4
+        dF.b.d = paramInt5
+        dF.c = ""
+        if paramInt1 > 999:
+            if paramInt1 < 1100:
+                it = cz.X[paramInt1 - 1000]
+            elif paramInt1 < 1200:
+                it = cz.Y[paramInt1 - 1100]
+            else:
+                it = None
+            if it is not None:
+                s6 = ag.m_I(it.a)
+                s1 = it.b
+                s2 = it.c
+                s3 = it.d
+                s4 = it.e
+                s5 = i16(it.f)
+                str_ = ag.l_I(it.a)
+            elif paramInt1 < 2000:
+                dF.c = ag.k_I(cz.Z[paramInt1 - 1200].a)
+            else:
+                dF.c = self.j_I(paramInt1 - 2000)
+        if dF.c != "":
+            if str_ != "":
+                dF.c += str_
+            if s1 != 0:
+                dF.c += " / ATK+" + str(s1)
+            if s2 != 0:
+                dF.c += " / DEF+" + str(s2)
+            if s3 != 0:
+                dF.c += " / HP+" + str(s3)
+            if s4 != 0:
+                dF.c += " / MP+" + str(s4)
+            if s5 != 0:
+                dF.c += " / Enchanted Lv" + str(s5)
+            if s6 != 0:
+                dF.c += " / Available at Lv" + str(s6)
+            ag.dD = ag.c_T(dF.c)
+            if ag.dD > paramInt4 - 2:
+                dF.a = 1
+                dF.d = i16(paramInt2 + 20)
+                return
+            dF.a = 0
+            dF.d = i16(paramInt2 + 1)
+
+    def j_I(self, paramInt):  # ag.java:1354-1368  (skill description)
+        str1 = ""
+        paramInt -= 12
+        if paramInt < 0 or paramInt > 18:
+            return str1
+        arrayOfByte = self.d_II(54, paramInt)
+        str2 = ag.a_ABII(arrayOfByte, 0, len(arrayOfByte))
+        if ag.cz.W[paramInt] != 0:
+            arrayOfByte = self.d_II(54, paramInt + 19)
+            str1 = str2 + " / Lv" + str(ag.cz.W[paramInt]) + " " + ag.a_ABII(arrayOfByte, 0, len(arrayOfByte))
+        else:
+            str1 = str2 + " / (Not Available)"
+        return str1
+
+    @staticmethod
+    def k_I(paramInt):  # ag.java:1370-1381  (potion description)
+        str_ = ""
+        paramInt -= 1
+        if paramInt < 0 or paramInt > 10:
+            return str_
+        if paramInt < 9:
+            str_ = (ae.aN[paramInt] + " / Recover " + str(ae.aP[paramInt % 3]) + "% of total "
+                    + ae.aO[paramInt // 3])
+        else:
+            arrayOfByte = ag.e_II(54, 24 + paramInt).encode("latin-1")
+            str_ = ae.aN[paramInt] + " / " + ag.a_ABII(arrayOfByte, 0, len(arrayOfByte))
+        return str_
+
+    @staticmethod
+    def l_I(paramInt):  # ag.java:1383-1399  (special item suffix)
+        return {434: " / Hp 5 Increased", 435: " / MP 3 Increased", 436: " / DEF 1 Increased",
+                437: " / ATK 1 Increased", 502: " / Catherine's scarf",
+                504: " / all General Visiting"}.get(paramInt, "")
+
+    @staticmethod
+    def m_I(paramInt):  # ag.java:1401-1416  (item name -> dF.c, returns the level needed)
+        ag.bb.e_I(paramInt)
+        if paramInt > 500:
+            ag.dF.c = ag.cZ.a
+            return ag.cZ.g
+        if paramInt > 300:
+            ag.dF.c = ag.cY.a
+            return ag.cY.h
+        if paramInt > 100:
+            ag.dF.c = ag.cX.a
+            return ae.aM[paramInt % 5]
+        return 0
+
+    # ---- Blacksmith helpers ----------------------------------------------------------------
+
+    def c_IIII(self, paramInt1, paramInt2, paramInt3, paramInt4):  # ag.java:1246-1248
+        ag.a_IIIIIIIZ(paramInt1 + 1, paramInt2 + 1, paramInt3 - 2, paramInt4 - 2, 0, 0, 10000536, True)
+
+    def b_III(self, paramInt1, paramInt2, paramInt3):  # ag.java:1250-1254  (centred box, returns its x)
+        j_ = 240 - paramInt2 >> 1
+        self.c_IIII(j_, paramInt1, paramInt2, paramInt3)
+        return j_
+
+    def c_II(self, paramInt1, paramInt2):  # ag.java:1256-1269  (gold box with amount paramInt1)
+        j_ = self.b_III(paramInt2, 200, 22)
+        b = 0
+        i1 = paramInt1
+        while True:
+            b += 1
+            i1 = idiv(i1, 10)
+            if not i1 > 0:
+                break
+        j_ += 100
+        m = b * 7 + (b - 1) // 3 * 4 + 12 + 3
+        j_ -= m >> 1
+        paramInt2 += 6
+        self.h_III(paramInt1, j_ + m + 10, paramInt2)
+        self.b_MIIIIII(ag.ct[32], ag.dd - 69, paramInt2 - 5, ag.ct[32].getWidth(), ag.ct[32].getHeight(), 0, 0)
+
+    def i_I(self, paramInt):  # ag.java:1271-1273
+        self.c_II(ag.cz.E, paramInt)
+
+    def h_III(self, paramInt1, paramInt2, paramInt3):  # ag.java:2797-2808  (number with thousands commas)
+        # DECOMP-FIX F12: the decompiled loop `do { if (!b || b % 3 != 0) continue; ... ++b; }`
+        # skips every digit (the number is never drawn). Restored: comma before every 3rd digit.
+        b = 0
+        while True:
+            if F12:
+                if b != 0 and b % 3 == 0:
+                    paramInt2 -= 4
+                    ag.a_IIIIMII(paramInt2, paramInt3, 5, 14, ag.ct[19], 100, 0)
+                paramInt2 -= 10
+                ag.a_IIIIMII(paramInt2, paramInt3, 10, 14, ag.ct[19], imod(paramInt1, 10) * 10, 0)
+                b += 1
+            paramInt1 = idiv(paramInt1, 10)
+            if not paramInt1 > 0:
+                break
+
+    @staticmethod
+    def n_I(paramInt):  # ag.java:1437-1452  (12345 -> "12,345")
+        str_ = str(paramInt)
+        j_ = len(str_)
+        arrayOfInt = [0] * j_
+        for b1 in range(j_):
+            arrayOfInt[j_ - b1 - 1] = imod(paramInt, 10)
+            paramInt = idiv(paramInt, 10)
+        str_ = ""
+        for b2 in range(j_):
+            str_ = str_ + str(arrayOfInt[b2])
+            if j_ % 3 == (b2 + 1) % 3 and b2 != j_ - 1:
+                str_ = str_ + ","
+        return str_
 
 
 def _late_init():

@@ -23,7 +23,8 @@ DECOMP_FIX = {
     "F6": True,  # e.java menu navigation: `cM[1]=cM[1]+1; if (cM[1]+1 >= cN)` -> `if (++cM[1] >= cN)`
     "F8": True,  # ag.L(): switch cases without break -> separate branches (always on, no literal mode)
     "F9": True,  # l.a(String): `s = s + 1; l[s] = ...` -> `l[s++] = ...` (proposed, see pyport/README.md)
-    "F10": True,  # ag.f(int,int) name grid: `10 * p % 14`, `17 * b / 14` -> `10 * (p % 14)`, `17 * (b / 14)`
+    "F10": True,  # lost parentheses `a * b % c` -> `a * (b % c)`: ag.f(int,int) name grid, ag.a(..Image..) digits
+    "F12": True,  # ag.h(int,int,int) gold amount: mangled do/continue loop never draws a digit
     "F11": True,  # e.T(int) stat cursor: decompiled `a(.., bool, bool, bool)` = colour 0x010101 -> 255,255,255
 }
 

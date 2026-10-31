@@ -1,0 +1,87 @@
+save zero
+# Menus played only with the mouse: Options, Help pages, Management list, Blacksmith grid.
+wait 25
+click 160 200      # sound: No
+wait 2
+click 120 160      # title
+wait 2
+click 200 262      # ► -> New Game
+wait 1
+click 200 262      # ► -> Options
+wait 1
+click 120 265      # OK
+wait 2
+shot options
+click 60 150       # label "Speed" -> select the row
+wait 1
+click 200 150      # ► half of the value box -> faster
+wait 1
+shot options_speed_right
+click 200 312      # BACK
+wait 2
+click 200 262      # ► -> Help
+wait 1
+click 120 265
+wait 2
+shot help_list
+click 120 130      # 2nd row "Visiting" -> DOWN + FIRE
+wait 2
+shot help_visiting_page_1
+click 148 287      # ► page
+wait 1
+shot help_visiting_page_2
+click 86 287       # ◄ page
+wait 1
+shot help_visiting_page_1_again
+rclick
+wait 2
+rclick
+wait 2
+click 44 262       # ◄ -> Options
+wait 1
+click 44 262       # ◄ -> New Game
+wait 1
+click 44 262       # ◄ -> Continue
+wait 1
+click 120 265      # Continue -> Game Menu
+wait 4
+shot game_menu
+click 120 175      # upper small button -> Management
+wait 5
+click 120 215      # big button -> open
+wait 2
+shot management
+click 120 160      # 3rd row "Gear"
+wait 2
+shot gear
+rclick
+wait 2
+shot management_back_on_gear
+click 120 100      # 1st row "Attributes"
+wait 2
+shot attributes
+rclick
+wait 2
+rclick
+wait 2
+click 120 255      # lower small button -> Mission
+wait 5
+click 120 255      # -> Blacksmith
+wait 5
+click 120 215
+wait 2
+shot blacksmith
+click 120 115      # "Buy Item"
+wait 3
+shot buy
+click 110 145      # cell (2, 1) -> cursor moves there
+wait 2
+shot buy_cursor_moved
+click 110 145      # same cell again -> FIRE (the zero-save hero gets an empty shop: nothing happens)
+wait 3
+shot buy_empty_cell
+click 120 200      # (no popup: plain FIRE, harmless)
+wait 12
+click 200 312      # BACK
+wait 2
+shot blacksmith_back

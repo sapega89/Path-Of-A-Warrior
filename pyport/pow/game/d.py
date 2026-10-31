@@ -37,9 +37,14 @@ class d:
 
     def b_II(self, paramInt1, paramInt2):  # d.java:47-49
         off = paramInt1 * self.d + (self.b[paramInt2] & 0xFF)
-        return bytes(self.c[off:off + (self.a[paramInt2] & 0xFF)]).decode("latin-1").strip()
+        return bytes(self.c[off:off + (self.a[paramInt2] & 0xFF)]).decode("latin-1").strip(_TRIM)
 
     def a_v(self):  # d.java:51-55
         self.a = None
         self.b = None
         self.c = None
+
+
+# Java String.trim() strips every char <= ' ' (the .arr names are padded with '\0', which
+# Python's str.strip() keeps and the font draws as '!')
+_TRIM = "".join(map(chr, range(33)))

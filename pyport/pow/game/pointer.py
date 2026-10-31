@@ -13,6 +13,12 @@ exactly the Java one. Hit zones follow what is drawn on each screen (coordinates
   Name (cM[0] == 7)          click a letter or OK -> arrow keys to it, then FIRE
   Stat points (cM[0] == 8)   click a stat row -> UP/DOWN to it, then FIRE (+1 point)
   Prologue (bV == 10)        click -> FIRE (whole text / next page), soft key "Skip" -> LSOFT (-6)
+  list menus (e.f: Management, Blacksmith, Etc, Help, Endings, ...)
+                             click a row -> UP/DOWN to it, then FIRE
+  Options (cM[0] == 9)       click a row -> select it; ◄ / ► half of the value box -> LEFT / RIGHT
+  pages "◄ n / m ►" (Help, About, Endings)  click left / right of the centre -> LEFT / RIGHT
+  Blacksmith grid (21..24)   click an item -> move the cursor to it; click it again -> FIRE
+  other screens (Skills, Gear, Inventory, Assign Items)  click -> FIRE, wheel -> UP/DOWN
   soft key BACK (bottom right)                         -> BACK (-7)
   right mouse button anywhere                          -> BACK (-7)
   wheel: Main Menu = LEFT/RIGHT, Game Menu = UP/DOWN, Yes/No popup = switch,
@@ -125,6 +131,46 @@ def _new_game_keys(c0, x, y, kind):
     return None
 
 
+def _steps(d, minus, plus):
+    return [plus] * d if d > 0 else [minus] * -d
+
+
+def _menu_keys(c0, x, y, kind):
+    """Menu screens reached from the Game Menu (e.f, e.j, e.l, e.c(boolean))."""
+    cM, dd, de, dc = ag.cM, ag.dd, ag.de, ag.dc
+    if kind != "click":
+        return [UP if kind == "wheel_up" else DOWN]
+    if c0 in (25, 28) and ag.bZ.b - 43 <= y < ag.bZ.b - 13:   # e.a(int,int,int,boolean) at bZ.b-35      # e.a(int,int,int,boolean)
+        return [LEFT if x < dd else RIGHT]
+    if c0 in (1, 2, 10, 11, 12, 13, 25, 27):                   # e.f(): rows of 180x20, 30 apart
+        rows = 5 if ag.cN > 5 else ag.cN
+        if c0 == 25 and cM[2] >= 20:
+            rows = 4
+        top = de - (rows * 30 - 10) // 2 + dc
+        if dd - 90 <= x < dd + 90 and top <= y < top + rows * 30 and (y - top) % 30 < 20:
+            return _steps((y - top) // 30 - (cM[1] - cM[2]), UP, DOWN) + [FIRE]
+        return []
+    if c0 == 9:                                                # e.j(): rows 1, 2 at de-50 + 30*(b-1)
+        for b in (1, 2):
+            top = de - 50 + (b - 1) * 30 + dc
+            if top <= y < top + 20 and dd - 100 <= x < dd + 100:
+                keys = _steps(b - cM[1], UP, DOWN)
+                if x >= dd - 10:
+                    keys.append(LEFT if x < dd + 45 else RIGHT)
+                return keys
+        return []
+    if c0 in (21, 22, 23, 24) and ag.fK[27] == 0:              # e.a(int, z[], int[]): 5 x fK[3] cells, 32 px
+        fK = ag.fK
+        x0, y0 = fK[5], fK[1] + 31
+        if x0 <= x < x0 + 160 and y0 <= y < y0 + 32 * fK[3]:
+            col, row = (x - x0) // 32, fK[8] + (y - y0) // 32
+            if col == fK[9] and row == fK[10]:
+                return [FIRE]
+            return _steps(row - fK[10], UP, DOWN) + _steps(col - fK[9], LEFT, RIGHT)
+        return []
+    return [FIRE]
+
+
 def keys_for(x, y, kind="click"):
     """-> list of phone key codes for a click / wheel at (x, y) in screen coordinates."""
     from pow.game.af import af
@@ -185,4 +231,5 @@ def keys_for(x, y, kind="click"):
         keys = _new_game_keys(c0, x, y, kind)
         if keys is not None:
             return keys
+        return _menu_keys(c0, x, y, kind)
     return [FIRE] if kind == "click" else []

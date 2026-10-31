@@ -7,10 +7,13 @@ import config
 from pow.game import ae
 from pow.game.ag import ag, not_ported
 from pow.game.at import at
+from pow.game.j import j
+from pow.game.structs import ac, z
 from pow.game.x import x
-from pow.midp.jint import i8, i16, i32, idiv
+from pow.midp.jint import i8, i16, i32, idiv, imod
 
 F6 = config.DECOMP_FIX["F6"]
+F10 = config.DECOMP_FIX["F10"]
 F11 = config.DECOMP_FIX["F11"]
 
 
@@ -22,6 +25,19 @@ def _dec_cmp(v):
 def _inc_cmp(v):
     """DECOMP-FIX F6: `cM[i] = cM[i] + 1; if (cM[i] + 1 >= n)` is a broken `if (++cM[i] >= n)`."""
     return v if F6 else v + 1
+
+
+def ar_c(paramInt):  # ar.java:249-261  (Assign Items: put potion slot cM[1] on key * (0) or # (1))
+    cz = ag.cz
+    if cz.Z[ag.cM[1]].a != 0 and cz.aa[paramInt] != ag.cM[1]:
+        if ag.cM[1] == cz.aa[paramInt + 1 & 0x1]:
+            i = cz.aa[paramInt]
+            cz.aa[paramInt] = cz.aa[paramInt + 1 & 0x1]
+            cz.aa[paramInt + 1 & 0x1] = i
+        else:
+            cz.aa[paramInt] = i8(ag.cM[1])
+        return 1
+    return 0
 
 
 class e(ag):
@@ -65,6 +81,12 @@ class e(ag):
             elif v == 5:
                 self.S_v()
                 self.aJ()
+            elif v in (1, 2, 10, 11, 12, 13, 25, 27):
+                self.f_v()
+            elif v == 9:
+                self.j_v()
+            elif v == 28:
+                self.l_v()
             elif v == 6:
                 self.aK()
             elif v == 7:
@@ -74,6 +96,23 @@ class e(ag):
                 self.O_I(1)
             elif v == 29:
                 self.aU()
+            elif v == 15:
+                self.P_I(0)
+                self.k_v()
+            elif v == 16:
+                self.n_II(cM[2], 0)
+                self.k_v()
+                ag.h_II(5, -1)
+            elif v == 17:
+                self.Q_I(0)
+                self.k_v()
+                ag.h_II(5, -1)
+            elif v == 18:
+                self.d_I(0)
+                self.k_v()
+            elif v in (21, 22, 23, 24):
+                self.c_Z(True)
+                self.k_v()
             else:
                 not_ported("e.a(1) screen cM[0]=%d" % v)
             if ag.cS.b != 0:
@@ -110,7 +149,29 @@ class e(ag):
                         self.O_I(0)
                         return
                     return
-                if v in (4, 15, 16, 17, 18, 20, 21, 22, 23, 24):
+                if v == 15:
+                    if ag.da != 0:
+                        self.P_I(ag.da)
+                    self.k_v()
+                    return
+                if v == 16:
+                    self.k_v()
+                    return
+                if v == 17:
+                    if ag.da != 0:
+                        self.Q_I(1)
+                    self.k_v()
+                    return
+                if v == 18:
+                    if ag.da != 0:
+                        self.d_I(1)
+                    self.k_v()
+                    return
+                if v in (21, 22, 23, 24):
+                    self.c_Z(False)
+                    self.k_v()
+                    return
+                if v in (4, 20):
                     not_ported("e.a(0) screen cM[0]=%d" % v)
 
     def a_v(self):  # e.java:207-302  (keys of the menus)
@@ -152,7 +213,8 @@ class e(ag):
                 return
             return
         if v in (21, 22, 23, 24):
-            not_ported("e.aW() (blacksmith)")
+            self.aW()
+            return
         ch = ag.ch
         if ch in (-1, 50):
             self.aB()
@@ -168,10 +230,12 @@ class e(ag):
             return
         if ch == 42:
             if ag.cM[0] == 18:
-                not_ported("ar.c(0) (quick slot)")
+                ag.ck = ar_c(0)
+                return
         elif ch == 35:
             if ag.cM[0] == 18:
-                not_ported("ar.c(1) (quick slot)")
+                ag.ck = ar_c(1)
+                return
         elif ch in (-5, 53):
             self.b_v()
             return
@@ -333,9 +397,31 @@ class e(ag):
         ag.I_v()
         ag.ck = 1
 
-    def aD(self):  # e.java:482-584  (LEFT) - Phase 0: Main Menu; other screens later
+    def aD(self):  # e.java:482-584  (LEFT)
         cM = ag.cM
         v = cM[0]
+        if v == 1:
+            if ag.bj and ag.cq > 0:
+                not_ported("e.C() (mission list, debug cheat)")
+            return
+        if v == 3:
+            if cM[2] > 0:
+                cM[2] = cM[2] - 1
+            else:
+                cM[2] = ag.dq[0] // 6
+            ag.ck = 1
+            return
+        if v == 28:
+            if cM[1] <= 0 and ag.ej == 8:
+                cM[1] = 1
+                ag.ck = 1
+                return
+            ag.ck = 1
+            cM[1] = cM[1] - 1
+            if _dec_cmp(cM[1]) < 0:
+                cM[1] = ae.z[ag.ej + 1] - ae.z[ag.ej] - 1
+                return
+            return
         if v == 5:
             ag.ck = 1
             cM[1] = cM[1] - 1
@@ -343,16 +429,88 @@ class e(ag):
                 cM[1] = 8
                 return
             return
+        if v == 18:
+            ag.da = 1
+            cM[1] = cM[1] - 1
+            if _dec_cmp(cM[1]) < 0:
+                cM[1] = ag.cN - 1
+                return
+            return
         if v == 6:
             ag.cz.aB = ag.cz.aB - 1 & 0x3
             ag.ck = 1
             return
-        if v in (1, 3, 9, 15, 16, 17, 18, 19, 25, 28):
-            not_ported("e.aD() cM[0]=%d" % v)
+        if v == 9:
+            self.y_I(0)
+            ag.ck = 1
+            return
+        if v == 15:
+            c3 = cM[3]
+            cM[c3] = cM[c3] - 1
+            if cM[3] == 1:
+                if cM[c3] < 0:
+                    cM[c3] = 4
+                ag.da = 2
+                return
+            if cM[1] < 4:
+                if cM[c3] < 0:
+                    cM[c3] = 17
+            elif cM[c3] < 18:
+                cM[c3] = 20
+            ag.da = 3
+            return
+        if v == 16:
+            ag.ck = 1
+            cM[2] = cM[2] + 1
+            if _inc_cmp(cM[2]) >= ag.cN:
+                cM[2] = 0
+                return
+            return
+        if v == 17:
+            cM[2] = cM[2] - 1
+            if _dec_cmp(cM[2]) < 0:
+                cM[2] = ag.cN - 1
+            ag.da = 1
+            return
+        if v == 19:
+            cM[1] = cM[1] - 4
+            if cM[1] < 0:
+                cM[1] = 0
+            ag.ck = 1
+            return
+        if v == 25:
+            cM[2] = cM[2] - 5
+            cM[1] = cM[1] - 5
+            if cM[2] < 0:
+                cM[2] = 20
+                cM[1] = 20 + imod(cM[1] + 20, 5)
+            ag.ck = 1
 
-    def aE(self):  # e.java:586-686  (RIGHT) - Phase 0: Main Menu; other screens later
+    def aE(self):  # e.java:586-686  (RIGHT)
         cM = ag.cM
         v = cM[0]
+        if v == 1:
+            if ag.bj and ag.cq < 44:
+                not_ported("e.C() (mission list, debug cheat)")
+            return
+        if v == 3:
+            if (cM[2] + 1) * 6 - 1 < ag.dq[0]:
+                cM[2] = cM[2] + 1
+            else:
+                cM[2] = 0
+            ag.ck = 1
+            return
+        if v == 28:
+            if cM[1] >= 1 and ag.ej == 8:
+                ag.ck = 1
+                cM[1] = 0
+                return
+            ag.ck = 1
+            cM[1] = cM[1] + 1
+            if _inc_cmp(cM[1]) >= ae.z[ag.ej + 1] - ae.z[ag.ej]:
+                cM[1] = 0
+                return
+            return
         if v == 5:
             ag.ck = 1
             cM[1] = cM[1] + 1
@@ -360,17 +518,68 @@ class e(ag):
                 cM[1] = 0
                 return
             return
+        if v == 18:
+            cM[1] = cM[1] + 1
+            if _inc_cmp(cM[1]) >= ag.cN:
+                cM[1] = 0
+            ag.da = 1
+            return
         if v == 6:
             ag.cz.aB = ag.cz.aB + 1 & 0x3
             ag.ck = 1
             return
-        if v in (1, 3, 9, 15, 16, 17, 18, 19, 25, 28):
-            not_ported("e.aE() cM[0]=%d" % v)
+        if v == 9:
+            self.y_I(1)
+            ag.ck = 1
+            return
+        if v == 15:
+            c3 = cM[3]
+            cM[c3] = cM[c3] + 1
+            if cM[3] == 1:
+                if cM[c3] > 4:
+                    cM[c3] = 0
+                ag.da = 2
+                return
+            if cM[1] < 4:
+                if cM[c3] > 17:
+                    cM[c3] = 0
+            elif cM[c3] > 20:
+                cM[c3] = 18
+            ag.da = 3
+            return
+        if v == 16:
+            ag.ck = 1
+            cM[2] = cM[2] - 1
+            if _dec_cmp(cM[2]) < 0:
+                cM[2] = ag.cN - 1
+                return
+            return
+        if v == 17:
+            cM[2] = cM[2] + 1
+            if _inc_cmp(cM[2]) >= ag.cN:
+                cM[2] = 0
+            ag.da = 1
+            return
+        if v == 19:
+            cM[1] = cM[1] + 4
+            if cM[1] >= ag.cN:
+                cM[1] = ag.cN - 1
+            ag.ck = 1
+            return
+        if v == 25:
+            cM[2] = cM[2] + 5
+            cM[1] = cM[1] + 5
+            if cM[2] > 20:
+                cM[2] = 0
+                cM[1] = imod(cM[1], 5)
+            ag.ck = 1
 
     def b_v(self):  # e.java:688-1000  (FIRE)
         cM = ag.cM
         if cM[0] == 9:
-            not_ported("e.y(1) (options)")
+            self.y_I(1)
+            ag.ck = 1
+            return
         if cM[0] == 5:
             v = cM[1]
             if v == 4:
@@ -400,10 +609,40 @@ class e(ag):
         if e.m_II(cM[0], cM[1] % 7) > -1:
             self.c_v()
             ag.cN = ae.v[cM[0]]
-            if cM[0] == 7:
+            c0 = cM[0]
+            if c0 == 7:
                 ag.cz.k = ""
-            else:   # 1 3 9 10 12 13 14 15 17 20-24 27 28: later phases
-                not_ported("e.b() -> screen cM[0]=%d" % cM[0])
+            elif c0 == 9:
+                ag.ai()
+            elif c0 == 10:
+                ag.dE = ag.fW
+            elif c0 == 12:
+                ag.dE = ag.fX
+            elif c0 == 13:
+                ag.dE = ag.fY
+            elif c0 == 27:
+                ag.dE = ag.ga
+                ag.ei = i16(ag.cO)
+            elif c0 == 28:
+                ag.ej = i16(cM[1])
+                ag.cN = ae.z[ag.ej + 1] - ae.z[ag.ej]
+            elif c0 == 14:
+                ag.O_v()
+            elif c0 == 15:
+                cM[3] = 1
+                ag.ct[37] = self.d_T(ag.bA.a_I(44))
+                ag.ct[38] = self.d_T(ag.bA.a_I(45))
+            elif c0 == 17:
+                cz = ag.cz
+                if ag.cO == 16 and cz.X[cM[2]].a != 0:
+                    for b in range(25):
+                        if 0 == cz.Y[b].a:
+                            self.a_LzLz(cz.X[cM[2]], cz.Y[b])
+                self.ag()
+            elif c0 in (21, 22, 23, 24):
+                self.aY()
+            elif c0 in (1, 3, 20):
+                not_ported("e.b() -> screen cM[0]=%d" % c0)
             cM[2] = 0
             cM[1] = 0
             return
@@ -473,7 +712,75 @@ class e(ag):
                     return
         elif v == 29:
             ag.cS.e_I(36)
-        elif v in (1, 3, 10, 11, 15, 17, 25):
+        elif v == 10:
+            if cM[1] == 2:
+                ag.cS.e_I(5)
+                return
+        elif v == 11:
+            if cM[1] == 0:
+                if self.ar() != 0:
+                    ag.cS.e_I(0)
+            return
+        elif v == 25:
+            if (ag.ed & 1 << cM[1]) != 0:
+                self.c_v()
+                self.l_II(cM[1], 0)
+                return
+            ag.cS.a_T("3You must first complete|the missions needed|to view this ending.")
+            return
+        elif v == 15:
+            cz = ag.cz
+            if cM[3] == 1:
+                if cz.V[cM[1]] != 0:
+                    cM[2] = ae.aD[cz.V[cM[1]] - 12]
+                    cz.V[cM[1]] = 0
+                elif cM[1] < 4:
+                    cM[2] = 0
+                else:
+                    cM[2] = 18
+                cM[3] = 2
+                if cM[2] < 18:
+                    ag.da = 6
+                    return
+                ag.ck = 1
+                return
+            if ae.aC[cM[2]] != 0:
+                if cz.W[ae.aC[cM[2]] - 12] != 0:
+                    cz.V[cM[1]] = ae.aC[cM[2]]
+                    cM[3] = 1
+                ag.da = 6
+                return
+        elif v == 17:
+            cz = ag.cz
+            it = cz.Y[cM[2]]
+            if it.a != 0:
+                b = ag.g_I(it.a)
+                if ag.m_I(it.a) <= cz.l:
+                    if it.a == 434:
+                        it.a = 0
+                        cz.o += 5
+                        ag.cS.e_I(23)
+                    elif it.a == 435:
+                        it.a = 0
+                        cz.q += 3
+                        ag.cS.e_I(24)
+                    elif it.a == 436:
+                        it.a = 0
+                        cz.n += 1
+                        ag.cS.e_I(25)
+                    elif it.a == 437:
+                        it.a = 0
+                        cz.m += 1
+                        ag.cS.e_I(26)
+                    elif it.a in (502, 504):
+                        ag.cS.e_I(17)
+                    else:
+                        self.a_LzLz(it, cz.X[ae.aE[b]])
+                else:
+                    ag.cS.e_I(17)
+            ag.da = 1
+            return
+        elif v in (1, 3):
             not_ported("e.b() cM[0]=%d" % v)
 
     def aF(self):  # e.java:1002-1109  (BACK)
@@ -481,7 +788,7 @@ class e(ag):
         bool_ = False
         if ae.u[cM[0]] > -1:
             if cM[0] in (14, 15, 16, 17, 18):
-                not_ported("e.ar() (save) on back")
+                self.ar()
             if ae.u[cM[0]] > 99:
                 ag.ej = 0
                 if cM[0] == 28 and ag.cO == 5:
@@ -511,7 +818,7 @@ class e(ag):
                     elif cM[1] == 4:
                         cM[1] = 3
                         if ag.bW == 3:
-                            not_ported("e.aF() back into the map")
+                            not_ported("e.aF() back into the map pause menu")
                     elif cM[1] == 5:
                         cM[1] = 4
                 if ag.cO == 25:
@@ -519,7 +826,7 @@ class e(ag):
                 if ag.cO == 27:
                     cM[1] = 3
                     if ag.bW == 3:
-                        not_ported("e.aF() back into the map")
+                        not_ported("e.aF() back into the map pause menu")
         else:
             v = cM[0]
             if v == 0:
@@ -534,7 +841,16 @@ class e(ag):
                 ag.ck = 1
                 return
             if v == 15:
-                not_ported("e.aF() cM[0]=15 (skills)")
+                if cM[3] == 1:
+                    cM[0] = 13
+                    ag.ap()
+                    ag.ct[37] = None
+                    ag.ct[38] = None
+                    self.ar()
+                    return
+                cM[3] = 1
+                ag.da = 6
+                return
             if v == 27:
                 cM[0] = ag.ei
                 ag.ap()
@@ -570,6 +886,1093 @@ class e(ag):
 
     def e_v(self):  # e.java:1141-1143  (menu background ct[7])
         self.a_MIIIIII(ag.ct[7], 0, 0, ag.bZ.a, ag.bZ.b, 0, 0)
+
+    def f_v(self):  # e.java:1145-1227  (vertical list menu: 1 2 10 11 12 13 25 27)
+        cM = ag.cM
+        i = ag.dd - 90
+        arrayOfByte = [13, 34, 20, 0, 0, 0, 0, 0, 0, 0,
+                       12, 18, 12, 13, 0, 0, 0, 0, 0, 0,
+                       0, 0, 0, 0, 0, 0, 0, 13, 0, 0]
+        b2 = 5 if ag.cN > 5 else ag.cN
+        if cM[0] == 25 and cM[2] >= 20:
+            b2 = 4
+            if cM[1] >= 24:
+                cM[1] = 23
+        j_ = ag.de - idiv(b2 * 30 - 10, 2)
+        if ag.bV == 3 or ag.bW == 3:
+            j_ -= 30
+        k = j_
+        b = arrayOfByte[cM[0]]
+        for b1 in range(b2):
+            if cM[1] - cM[2] == b1:
+                bool_ = True
+                x.a_Lg(ag.bw)
+            else:
+                bool_ = False
+                x.a_Lg(ag.bu)
+            m = i
+            self.a_IIIIZ(m, j_ + ag.dc, 180, 20, bool_)
+            if ag.bV == 2:
+                if cM[0] == 0:
+                    if cM[2] + b1 == 3 and (0 == ag.cz.S or ag.fo == 0):
+                        x.a_Lg(ag.bx)
+                elif cM[0] == 1:
+                    if ag.bj:
+                        ag.dw = -1
+                    if 0 == (ag.dw & 1 << ag.ds[cM[2] + b1] - 1):
+                        x.a_Lg(ag.bx)
+                elif cM[0] == 25:
+                    if 0 == (ag.ed & 1 << cM[2] + b1):
+                        x.a_Lg(ag.bx)
+            else:
+                if ag.cR.a == 1:
+                    if cM[2] + b1 == 2 and (ag.ez > 0 or ag.cr != 0 or ag.eD[0] != 0):
+                        x.a_Lg(ag.bx)
+            if cM[0] == 25:
+                if cM[2] + b1 < 24:
+                    arrayOfByte1 = self.d_II(54, 38 + cM[2] + b1)
+                    str_ = ag.a_ABII(arrayOfByte1, 0, len(arrayOfByte1))
+                    self.b_TII(str_, j_ - 1, 18)
+            elif cM[0] in (0, 10, 12, 13, 27):
+                self.b_TII(ag.b_TI(ag.dE[0], b1 + cM[2]), j_ - 1, 0)
+            else:
+                self.b_TII(ag.dE[b1 + cM[2]], j_ - 1, b)
+            j_ += 30
+        if cM[0] == 25:
+            self.a_IIIZ(cM[2] // 5 + 1, 5, ag.bZ.b - 35, True)
+        elif cM[2] != 0 or cM[2] + 5 < ag.cN - 1:
+            self.f_III(2, ag.dd - 8 - ag.db, k - 10 - 5)
+            self.f_III(3, ag.dd - 8 - ag.db, j_ - 5)
+        if cM[0] == 10:
+            x.a_MIII(ag.bU, 120, ag.dc + 15, 17)
+            x.a_Lg(ag.bu)
+            self.b_TII("PAUSE", 13, 0)
+        if ag.bj and cM[0] == 1:
+            x.a_Lg(ag.bu)
+            x.b_IIIII(ag.bJ // 2 - 16, ag.bK - 17, 32, 17, 0)
+            x.a_TIII("" + str(ag.cq + 1), ag.bJ // 2, ag.bK - 16, 1)
+
+    def j_v(self):  # e.java:1471-1521  (Options: Sound / Volume / Speed)
+        i = ag.de - 50
+        if ag.cM[1] == 0:
+            ag.cM[1] = 1
+        for b in range(1, 3):
+            if ag.cM[1] == b:
+                bool_ = True
+                x.a_Lg(ag.bw)
+            elif b == 3:
+                bool_ = False
+                x.a_Lg(ag.bx)
+            else:
+                bool_ = False
+                x.a_Lg(ag.bu)
+            self.a_IIIIZ(ag.dd - 100, i + ag.dc, 80, 20, bool_)
+            self.a_IIIIZ(ag.dd - 10, i + ag.dc, 110, 20, bool_)
+            ag.c_TII(ag.gb[b], ag.dd - 100 + 40 - ag.db, i + 1)
+            if bool_:
+                self.f_III(0, ag.dd - 10 - ag.db, i + 2)
+                self.f_III(1, ag.dd - 10 + 110 - 10 - 1 - ag.db, i + 2)
+            if b == 0:
+                str_ = ag.gc[1 if ag.df else 0]
+            elif b == 1:
+                str_ = ""
+                for b1 in range(ag.dg // 25):
+                    str_ = str_ + 'I'
+                if str_ == "":
+                    str_ = "OFF"
+            elif b == 2:
+                str_ = ag.ge[ag.dh]
+            elif b == 3:
+                str_ = ae.aX[ag.ep]
+            else:
+                return
+            ag.c_TII(str_, ag.dd + 156 - 111 - ag.db, i + 1)
+            i += 10
+            i += 20
+
+    def l_v(self):  # e.java:2311-2348  (Help / About page cM[1] of topic ej)
+        if ag.bV == 3 or ag.bW == 3:
+            ag.de -= 30
+        i = ag.cM[1] + ae.z[ag.ej]
+        arrayOfByte = self.d_II(61, i)
+        if ag.bV == 2:
+            self.b_ABII(arrayOfByte, 190, 0)
+            self.e_IIII(ag.dd - 100 + ag.db, ag.de - 90 + ag.dc, 200, 175)
+        else:
+            self.b_ABII(arrayOfByte, 190, 0)
+            self.e_IIII(ag.dd - 100, ag.de - 70 + ag.dc, 200, 120)
+        x.a_Lg(ag.bu)
+        for b in range(ag.dq[0] + 1):
+            if ag.bV == 2:
+                if ag.cM[0] == 28 and ag.ej == 8:
+                    self.b_TII(ag.dp[0][b], ag.de - 80 + b * 20 + 3, 30)
+                    if ag.cM[1] == 1:
+                        self.b_TII("v" + ag.bh, ag.de - 80 + 20 + 3, 30)
+                else:
+                    ag.d_TII(ag.dp[0][b], ag.dd - 95 - 1, ag.de - 80 + b * 20 + 3)
+            else:
+                ag.d_TII(ag.dp[0][b], ag.dd - 90 - 1 - ag.db, ag.de - 62 + b * 15)
+        n = ae.z[ag.ej + 1] - ae.z[ag.ej]
+        if ag.bV == 2:
+            if ag.bW == 3:
+                self.a_IIIZ(ag.cM[1] + 1, n, ag.bZ.b - 100, True)
+            else:
+                self.a_IIIZ(ag.cM[1] + 1, n, ag.bZ.b - 35, True)
+        else:
+            self.a_IIIZ(ag.cM[1] + 1, n, ag.de + 65, True)
+        if ag.bV == 3 or ag.bW == 3:
+            ag.de += 30
+
+    def a_IIIZ(self, paramInt1, paramInt2, paramInt3, paramBoolean):  # e.java:2350-2372  (page "n / m" with arrows)
+        if paramInt2 == 1:
+            return
+        i = ag.dd - 25 - 10
+        if paramInt2 > 1:
+            if paramInt1 != 1 or paramBoolean:
+                self.f_III(0, i, paramInt3)
+            i += 60
+            if paramInt1 != paramInt2 or paramBoolean:
+                self.f_III(1, i, paramInt3)
+        paramInt3 += 2
+        i = ag.dd - (8 + 9 * ((2 if paramInt2 > 9 else 1) + (2 if paramInt1 > 9 else 1)) + 2) // 2
+        i = i + (18 if paramInt1 > 9 else 9)
+        self.e_III(paramInt1, i, paramInt3 + ag.dc)
+        i += 1
+        if ag.bW == 3:
+            ag.a_IIIIMII(i - ag.db, paramInt3 + 16, 8, 12, ag.ct[20], 90, 0)
+        else:
+            ag.a_IIIIMII(i - ag.db, paramInt3, 8, 12, ag.ct[20], 90, 0)
+        i += 9 + (18 if paramInt2 > 9 else 9)
+        self.e_III(paramInt2, i, paramInt3 + ag.dc)
+
+    def P_I(self, paramInt):  # e.java:1523-1593  (Skills: 5 hot-key slots + skill tree pages)
+        cz = ag.cz
+        cM = ag.cM
+        arrayOfByte = [1, 3, 7, 9, 0]
+        if 0 == paramInt:
+            for b in range(5):
+                self.i_II(40 + b * 30 + 4 * b, 60)
+                self.d_IIII(arrayOfByte[b], 40 + b * 30 + 18 + 4 * b, 70, 0)
+        if paramInt % 2 == 0:
+            for b in range(5):
+                self.i_II(40 + b * 30 + 4 * b, 90)
+                if cz.V[b] != 0:
+                    self.b_MIIIIII(ag.ct[37], 40 + b * 30 + 4 * b + 1, 91, 28, 28, (cz.V[b] - 12) * 28, 0)
+            self.b_IIIIIII(40 + cM[1] * 30 + 4 * cM[1], 90, 30, 30, 255, 255, 255)
+        arrayOfAc = [ac(40, 140, 60, 20), ac(40, 165, 60, 20)]
+        if paramInt % 3 == 0:
+            i = cM[2] // 6 << 1
+            b2 = 2 if cM[2] < 18 else 1
+            for b1 in range(b2):
+                j_ = cM[2] // 6 * 6 + b1 * 3
+                ac1 = arrayOfAc[b1]
+                ac1.b = ac1.b + b1 * 10 + 5
+                self.b_IIIIIII(ac1.a - 1, ac1.b - 1, ac1.c + 2, ac1.d + 2, 152, 152, 152)
+                ag.a_LacI(ac1, 0)
+                x.a_Lg(ag.bu)
+                ag.dD = ag.c_T(ag.gd[i + b1])
+                ag.d_TII(ag.gd[i + b1], ac1.a + idiv(ac1.c - ag.dD, 2), ac1.b + 1)
+                for b in range(3):
+                    self.i_II(40 + (b + 2) * 34, 140 + 35 * b1)
+                    if ae.aC[j_ + b] != 0:
+                        if cz.W[ae.aC[j_ + b] - 12] != 0:
+                            image = ag.ct[37]
+                        else:
+                            image = ag.ct[38]
+                        self.b_MIIIIII(image, 40 + (b + 2) * 34 + 1, 140 + 35 * b1 + 1, 28, 28,
+                                       (ae.aC[j_ + b] - 12) * 28, 0)
+            if cM[3] == 2:
+                # DECOMP-FIX F10: `35 * cM[2] % 6 / 3` -> `35 * (cM[2] % 6 / 3)`
+                row = 35 * (cM[2] % 6 // 3) if F10 else 35 * cM[2] % 6 // 3
+                self.b_IIIIIII(40 + (cM[2] % 3 + 2) * 34, 140 + row, 30, 30, 255, 255, 255)
+            ac_ = ac(210, 0, 3, 20)
+            self.a_IIIIZ(210, 150, 3, 50, False)
+            if i == 6:
+                ac_.a = 210
+                ac_.b = 152
+                ac_.c = 3
+                ac_.d = 46
+                ag.a_LacI(ac_, ag.k_III(231, 227, 198))
+            else:
+                ac_.b = 151 + (i >> 1) * 14 + ag.dc
+                ag.a_LacI(ac_, ag.k_III(231, 227, 198))
+        # System.out.println("GameCanvas.DrawSkillSet(2)");
+        if cM[3] == 1:
+            self.b_IIIII(cz.V[cM[1]] + 2000, ag.dd - 100, ag.bZ.b - 70, 200, 22)
+        else:
+            self.b_IIIII(ae.aC[cM[2]] + 2000, ag.dd - 100, ag.bZ.b - 70, 200, 22)
+        ag.da = 0
+
+    def k_v(self):  # e.java:1595-1630  (description strip; scrolls when longer than the box)
+        dF = ag.dF
+        self.a_IIIIZ(dF.b.a + ag.db, dF.b.b + ag.dc, dF.b.c, dF.b.d, False)
+        x.a_Lg(ag.bu)
+        if dF.a != 0:
+            ag.dD = ag.c_T(dF.c)
+            dF.d = i16(dF.d - 5)
+            if dF.b.a - dF.d > ag.dD + 3:
+                dF.d = i16(dF.b.a + dF.b.c)
+        ag.d_TII(dF.c, dF.d, dF.b.b + (dF.b.d - 11 >> 1) - 2)
+        i = (ag.bJ - dF.b.c) // 2
+        j_ = dF.b.b + ag.dc
+        s1 = 0
+        s2 = 0
+        if ag.bV == 3:
+            not_ported("e.k() inside the map")
+        self.a_MIIIIII(ag.ct[7], 0, j_, i, dF.b.d, -s1, j_ - s2)
+        x.c_IIIII(i - 1, j_, i - 1, j_ + dF.b.d - 1, ag.k_III(80, 80, 80))
+        self.a_MIIIIII(ag.ct[7], ag.bJ - i, j_, i - s1, dF.b.d, ag.bJ - i - s1, j_ - s2)
+        x.c_IIIII(ag.bJ - i, j_, ag.bJ - i, j_ + dF.b.d - 1, ag.k_III(80, 80, 80))
+
+    def n_II(self, paramInt1, paramInt2):  # e.java:1632-1654  (Gear: hero sprite + 9 equipment slots)
+        cz = ag.cz
+        arrayOfByte1 = [-77, -77, -77, -33, 3, 47, 47, 47, -15]
+        arrayOfByte2 = [21, -15, -51, -79, -79, -51, -15, 21, 49]
+        ag.ct[39] = self.d_T(ag.bA.a_I(50))
+        ct39 = ag.ct[39]
+        self.b_MIIIIII(ct39, ag.dd - ct39.getWidth() // 2, ag.de - ct39.getHeight() // 2,
+                       ct39.getWidth(), ct39.getHeight(), 0, 0)
+        ag.ct[39] = None
+        for b in range(9):
+            if cz.X[b].a != 0:
+                self.e_I(cz.X[b].a)
+                self.g_IIII(cz.X[b].a, ag.dd + arrayOfByte1[b], ag.de + arrayOfByte2[b], 0)
+        self.b_IIIIIII(ag.dd + arrayOfByte1[paramInt1] - 1, ag.de + arrayOfByte2[paramInt1] - 1, 30, 30, 255, 255, 255)
+        ag.fK[24] = ag.dd + arrayOfByte1[paramInt1] + ag.db + 7
+        ag.fK[25] = ag.de + arrayOfByte2[paramInt1] + ag.dc + 7
+        f1 = cz.aE[1]
+        self.b_MIIIIII(cz.aH, ag.dd - f1.e, ag.de + 7 - f1.f + 17, f1.c, f1.d, f1.a, f1.b)
+        f2 = cz.aC[1]
+        self.b_MIIIIII(cz.aG, ag.dd - f2.e, ag.de + 7 - f2.f + 17, f2.c, f2.d, f2.a, f2.b)
+        if paramInt2 != 0:
+            ag.a_LzZI(self.o_I(-1), True, -1)
+            return
+        self.b_IIIII(paramInt1 + 1000, ag.dd - 79, ag.de + 81 + 5, 158, 20)
+
+    def Q_I(self, paramInt):  # e.java:1656-1692  (Inventory: 5x5 grid in 2 pages + gold)
+        cz = ag.cz
+        cM = ag.cM
+        arrayOfInt1 = [ag.dd - 75, ag.dd - 45, ag.dd - 15, ag.dd + 15, ag.dd + 45]
+        arrayOfInt2 = [ag.de - 45, ag.de - 15, ag.de + 15]
+        ac_ = ac(ag.dd + 80, ag.de - 40, 5, 80)
+        if cM[2] < 15:
+            b2 = 3
+            b3 = 0
+        else:
+            b2 = 2
+            b3 = 15
+        if paramInt != 0:
+            self.b_MIIIIII(ag.ct[7], ag.dd - 75, ag.de - 45, 150, 100, ag.dd - 75, ag.de - 45)
+        for b1 in range(b2):
+            for b in range(5):
+                self.i_II(arrayOfInt1[b] + ag.db, arrayOfInt2[b1] + ag.dc)
+                self.e_I(cz.Y[b3 + b1 * 5 + b].a)
+                self.g_IIII(cz.Y[b3 + b1 * 5 + b].a, arrayOfInt1[b] + 1, arrayOfInt2[b1] + 1, 0)
+        ag.a_LacI(ac_, ag.k_III(148, 148, 148))
+        ac_.a += 1
+        ac_.b += 1
+        ac_.c -= 2
+        ac_.d -= 2
+        ag.a_LacI(ac_, ag.k_III(33, 0, 0))
+        ac_.b = ag.de - 39 + (39 if b3 != 0 else 0) + ag.dc
+        ac_.d = 39
+        ag.a_LacI(ac_, ag.k_III(231, 227, 198))
+        self.b_IIIII(cM[2] + 1100, ag.dd - 75, ag.de + 50, 150, 22)
+        self.b_IIIIIII(arrayOfInt1[cM[2] % 5], arrayOfInt2[(cM[2] - b3) // 5] + ag.dc, 30, 30, 255, 255, 255)
+        if 0 == paramInt:
+            self.J_v()
+        ag.da = 0
+
+    def d_I(self, paramInt):  # e.java:3022-3058  (Assign Items: 5 potion slots, * and # quick keys)
+        cz = ag.cz
+        if ag.bV == 3:
+            ag.de -= 30
+        if 0 == paramInt:
+            self.J_v()
+            x.a_Lg(ag.bu)
+            for b1 in range(5):
+                self.a_IIIIZ(ag.dd - 80 + 32 * b1, ag.de - 40 + ag.dc, 30, 22, False)
+                if cz.aa[0] == b1:
+                    ag.d_TII(" * ", ag.dd - 80 + 32 * b1 - ag.db, ag.de - 38)
+                elif cz.aa[1] == b1:
+                    ag.d_TII(" # ", ag.dd - 80 + 32 * b1 - ag.db, ag.de - 38)
+        for b in range(5):
+            if ag.bV == 3:
+                self.a_IIIIZ(ag.dd - 79 + 32 * b, ag.de + 6, 28, 28, False)
+                self.g_IIII(cz.Z[b].a, ag.dd - 79 + 32 * b - ag.db, ag.de + 6 - ag.dc, b)
+            else:
+                self.a_IIIIZ(ag.dd - 79 + 32 * b, ag.de - 10, 28, 28, False)
+                self.g_IIII(cz.Z[b].a, ag.dd - 79 + 32 * b - ag.db, ag.de - 10 - ag.dc, b)
+        if ag.bV == 3:
+            self.b_IIIIIII(ag.dd - 80 + 32 * ag.cM[1], ag.de + 6, 30, 29, 255, 255, 255)
+        else:
+            self.b_IIIIIII(ag.dd - 80 + 32 * ag.cM[1], ag.de - 10, 30, 29, 255, 255, 255)
+        ag.da = 0
+        self.b_IIIII(ag.cM[1] + 1200, ag.dd - 80 - ag.db, ag.de + 30, 160, 22)
+        self.a_IIIIZ(ag.dd - 80, ag.de + 60 + ag.dc, 160, 22, False)
+        x.a_Lg(ag.bu)
+        self.b_TII("*,# key Assign", ag.de + 60, 15)
+        if ag.bV == 3:
+            ag.de += 30
+
+    def g_IIII(self, paramInt1, paramInt2, paramInt3, paramInt4):  # e.java:3060-3081  (item icon)
+        i = -1
+        b = 0
+        if paramInt1 > 500:
+            i = paramInt1 - 501
+            b = 3
+        elif paramInt1 > 300:
+            i = ag.cY.g
+            b = 2
+        elif paramInt1 > 100:
+            i = ag.cX.f
+            b = 1
+        elif paramInt1 > 0:
+            i = paramInt1 - 1
+            b = 0
+        if i > -1:
+            self.b_MIIIIII(ag.ct[0 + b], paramInt2, paramInt3, 28, 28, i * 28, 0)
+            if paramInt1 < 100:
+                self.i_III(paramInt2, paramInt3 + 2, ag.cz.Z[paramInt4].b)
+
+    # ---- Blacksmith (screens 21 Buy, 22 Sell, 23 Enchant, 24 Combine) ----------------------
+    # fK[0] = mode (cM[0]-21), fK[9]/fK[10] = cursor col/row, fK[18] = cell, fK[19] = item id,
+    # fK[20] = message for aV(), fK[21] = price, fK[26] = sparkle frame (-1 idle), fK[27] = 1 on Gear
+
+    def a_IAzAI(self, paramInt, paramArrayOfz, paramArrayOfint):  # e.java:1804-1861  (item grid)
+        i = ag.fK[8] * 5
+        if ag.fK[11] == 1:
+            ac1 = ac(0, 0, 0, 0)
+            ac2 = ac(0, 0, 0, 0)
+            ac1.c = 4
+            ac1.a = ag.fK[12]
+            ac1.d = ag.fK[6]
+            ac1.b = paramInt
+            ag.a_LacII(ac1, 16777215, 0)
+            ac1.c -= 2
+            ac1.a += 1
+            ac1.d -= 2
+            ac1.b += 1
+            j_ = ag.fK[8] * 32
+            k = ac2.d
+            j_ = idiv(j_ * k, ag.fK[7])
+            ac2.d = ag.fK[13]
+            ac2.b += j_
+            ag.a_LacI(ac2, 16777215)
+            ag.b_LacI(ac1, 10000536)
+        paramInt += 1
+        b1 = 0
+        b2 = 0
+        while b1 < ag.fK[3]:
+            j_ = ag.fK[5]
+            for b in range(5):
+                if i == ag.fK[18]:
+                    bool_ = True
+                    ag.fK[24] = j_ + 13 + 1
+                    ag.fK[25] = paramInt + 13 + 1
+                else:
+                    bool_ = False
+                for b3 in range(ag.fO[3]):
+                    if ag.fO[b3] == i:
+                        bool_ = True
+                        ag.fP[b2].a = i16(j_ + 13 + 1)
+                        ag.fP[b2].b = i16(paramInt + 13 + 1)
+                        b2 += 1
+                        break
+                self.a_IIZ(j_, paramInt, bool_)
+                if paramArrayOfint is not None:
+                    self.a_IIII(paramArrayOfint[i], j_, paramInt, 0)
+                else:
+                    self.a_IIIAz(i, j_, paramInt, paramArrayOfz)
+                j_ += 32
+                i += 1
+            paramInt += 32
+            b1 += 1
+
+    def a_IIIAz(self, paramInt1, paramInt2, paramInt3, paramArrayOfz):  # e.java:1863-1877
+        if paramArrayOfz is not None:
+            z1 = paramArrayOfz[paramInt1]
+        else:
+            z1 = self.o_I(paramInt1)
+        if ag.fK[0] == 1 and 0 < z1.a < 100:
+            bool_ = z1.b
+        else:
+            bool_ = 0
+        self.a_IIII(z1.a, paramInt2, paramInt3, bool_)
+
+    def a_IIZ(self, paramInt1, paramInt2, paramBoolean):  # e.java:1879-1881  (grid cell frame)
+        ag.a_IIIIIIIZ(paramInt1 + 1, paramInt2 + 1, 26, 26, 0, 0, 16777215 if paramBoolean else 5263440, True)
+
+    def a_IIII(self, paramInt1, paramInt2, paramInt3, paramInt4):  # e.java:1883-1902  (item icon by id + count)
+        if paramInt1 > 500:
+            image = ag.ct[3]
+            i = paramInt1 - 501
+        elif paramInt1 > 300:
+            image = ag.ct[2]
+            i = ag.bH[1].a_II(paramInt1 - 301, 7)
+        elif paramInt1 > 100:
+            image = ag.ct[1]
+            i = ag.bH[0].a_II(paramInt1 - 101, 7)
+        else:
+            image = ag.ct[0]
+            i = paramInt1 - 1
+        ag.a_IIIIMII(paramInt2, paramInt3, 28, 28, image, i * 28, 0)
+        if paramInt4 > 0:
+            ag.a_IIIIMII(paramInt2, paramInt3, 9, 12, ag.ct[20], paramInt4 * 9, 0)
+
+    def aP(self):  # e.java:1904-1910  (gold + item grid + description)
+        i = ag.fK[1] + 1
+        self.i_I(i)
+        i += 29
+        self.a_IAzAI(i, None, None)
+        ag.a_LzZI(self.o_I(-1), True, -1)
+
+    def c_Z(self, paramBoolean):  # e.java:1912-2111  (decompiler gave bytecode only; rebuilt from it)
+        fK = ag.fK
+        if paramBoolean:
+            if fK[27] == 0:
+                self.aP()
+            else:
+                self.n_II(fK[18], 1)
+            if fK[23] == -1 and ag.cS.b == 0:
+                # the Yes/No popup of Enchant / Combine has just closed
+                fK[23] = 0
+                if ag.ch == -5 and ag.cS.k == 0:
+                    if fK[21] > ag.cz.E:
+                        fK[20] = 4
+                        e.aV()
+                        e.bb()
+                    else:
+                        fK[26] = 0          # start the sparkle, the action follows below
+                else:
+                    e.bb()
+        if fK[26] == -1:
+            return
+        if fK[26] < 5:
+            self.aR()
+            fK[26] += 1
+            return
+        fK[26] = -1
+        ag.ck = 1
+        if fK[0] == 2:
+            self.aQ()
+        elif fK[0] == 3:
+            cz = ag.cz
+            if fK[22] == 0:
+                for b in range(3):
+                    z.a(cz.Y[ag.fO[b]])
+                dst = cz.Y[ag.fO[2]]
+                dst.a = ag.fQ.a
+                dst.b = ag.fQ.b
+                dst.c = ag.fQ.c
+                dst.d = ag.fQ.d
+                dst.e = ag.fQ.e
+                dst.f = ag.fQ.f
+            elif fK[31] != -1:
+                z.a(cz.Y[fK[31]])
+                fK[31] = -1
+            e.bb()
+            fK[20] = 9
+            cz.E -= fK[21]
+        self.ar()
+        e.aV()
+
+    def aQ(self):  # e.java:2113-2135  (Enchant: roll success / fail / lost)
+        arrayOfByte1 = [100, 90, 80, 70, 60, 45, 30, 10, 1]
+        arrayOfByte2 = [0, 10, 20, 40, 50, 60, 70, 80, 90]
+        z_ = self.o_I(-1)
+        ag.fK[20] = 2
+        ag.cz.E -= ag.fK[21]
+        if ag.fK[22] == -1:
+            ag.fK[23] = 2
+        else:
+            i = self.C_I(100) + 1
+            if i > arrayOfByte1[z_.f]:
+                i = self.C_I(100)
+                ag.fK[23] = 2 if i <= arrayOfByte2[z_.f] else 1
+            else:
+                self.a_LzI(z_, 1)
+                ag.fK[23] = 0
+        if ag.fK[23] == 2:
+            z.a(z_)
+            ag.fK[23] = 1
+
+    def o_II(self, paramInt1, paramInt2):  # e.java:2137-2144  (sparkle frame)
+        arrayOfByte1 = [0, 15, 30, 0, 20]
+        arrayOfByte2 = [0, 0, 0, 16, 16]
+        arrayOfByte3 = [16, 16, 16, 20, 24]
+        n = arrayOfByte3[ag.fK[26]]
+        paramInt1 -= n >> 1
+        paramInt2 -= n >> 1
+        ag.a_IIIIMII(paramInt1, paramInt2, n, n, ag.fN, arrayOfByte1[ag.fK[26]], arrayOfByte2[ag.fK[26]])
+
+    def aR(self):  # e.java:2146-2156
+        if ag.fK[0] == 2:
+            self.o_II(ag.fK[24], ag.fK[25])
+            return
+        if ag.fK[0] == 3:
+            for b in range(3):
+                if ag.fP[b].a > 0 and ag.fP[b].b > 0:
+                    self.o_II(ag.fP[b].a, ag.fP[b].b)
+
+    @staticmethod
+    def aV():  # e.java:2396-2451  (Blacksmith message popup)
+        from pow.game.l import l
+        arrayOfString = ["Success", "Fail"]
+        str_ = ""
+        ag.cS.a_v()
+        ag.ck = 1
+        fK = ag.fK
+        v = fK[20]
+        if v == 0:
+            if fK[19] < 1:
+                return
+            str_ = l.d_v()
+        elif v == 11:
+            str_ = l.e_v()
+        elif v == 1:
+            if fK[22] == 0:
+                str_ = "1Not possible |to enchant."
+            else:
+                str_ = "2Price is " + str(fK[21]) + ".If |enchanting fails,|Items can be lost.|Continue?"
+                ag.cS.d = 200
+        elif v == 2:
+            if fK[23] != 0:
+                fK[23] = 1
+            str_ = "1Enchant|" + arrayOfString[fK[23]]
+        elif v == 3:
+            str_ = "1Fully enchanted.|Not possible|to enchant."
+        elif v == 4:
+            str_ = "1Not enough Gold"
+        elif v == 5:
+            str_ = "1You cannot|buy anymore."
+        elif v == 6:
+            str_ = "3Your backpack|is full. Please|empty some items|and try again."
+        elif v == 7:
+            str_ = "3Please select|3 items to|combine into one."
+        elif v == 8:
+            if fK[22] == 2:
+                str_ = "1Not possible."
+            else:
+                str_ = ("2Compounding fee|is " + str(fK[21]) + ".|Selected items|could be lost|"
+                        "when it fails.|Continue?")
+                ag.cS.d = 200
+        elif v == 9:
+            str_ = "1Compounding| " + arrayOfString[fK[22]]
+        ag.cS.a_T(str_)
+
+    def aW(self):  # e.java:2453-2566  (Blacksmith keys)
+        fK = ag.fK
+        bool_ = True
+        if fK[26] != -1:
+            return
+        ch = ag.ch
+        if ch in (-1, 50):
+            if fK[27] == 0:
+                fK[10] = fK[10] - 1
+            else:
+                fK[18] = fK[18] + 1
+                if _inc_cmp(fK[18]) > 8:
+                    fK[18] = 0
+            ag.dF.c = ""
+        elif ch in (-2, 56):
+            if fK[27] == 0:
+                fK[10] = fK[10] + 1
+            else:
+                fK[18] = fK[18] - 1
+                if _dec_cmp(fK[18]) < 0:
+                    fK[18] = 8
+            ag.dF.c = ""
+        elif ch in (-3, 52):
+            if fK[27] == 0:
+                fK[9] = fK[9] - 1
+                if _dec_cmp(fK[9]) < 0:
+                    fK[9] = 4
+                    fK[10] = fK[10] - 1
+            else:
+                fK[18] = fK[18] + 1
+                if _inc_cmp(fK[18]) > 8:
+                    fK[18] = 0
+            ag.dF.c = ""
+        elif ch in (-4, 54):
+            if fK[27] == 0:
+                fK[9] = fK[9] + 1
+                if _inc_cmp(fK[9]) >= 5:
+                    fK[9] = 0
+                    fK[10] = fK[10] + 1
+            else:
+                fK[18] = fK[18] - 1
+                if _dec_cmp(fK[18]) < 0:
+                    fK[18] = 8
+            ag.dF.c = ""
+        elif ch == -7:
+            cM = ag.cM
+            cM[0] = ae.u[cM[0]]
+            ag.cN = ae.v[cM[0]]
+            cM[1] = ag.cP[cM[0]]
+            cM[2] = ag.cQ[cM[0]]
+            ag.ck = 1
+            bool_ = False
+            ag.ct[39] = None
+            ag.dF.c = ""
+            e.bb()
+        elif ch in (-5, 53):
+            if fK[0] == 0:
+                self.bc()
+                bool_ = False
+                e.aV()
+            elif fK[0] == 1:
+                if fK[19] != 0:
+                    self.bd()
+                    e.aV()
+                else:
+                    bool_ = False          # falls into `default`
+            elif fK[0] == 2:
+                self.be()
+                e.aV()
+                bool_ = False              # falls into `default`
+            else:
+                if fK[0] == 3 and self.o_I(-1).a > 100:
+                    b = 3
+                    if ag.fO[3] > 0:
+                        b = 0
+                        while b < ag.fO[3] and ag.fO[b] != fK[18]:
+                            b += 1
+                    if b < ag.fO[3]:
+                        while b < 2:
+                            ag.fO[b] = ag.fO[b + 1]
+                            b += 1
+                        ag.fO[3] = ag.fO[3] - 1
+                    else:
+                        ag.fO[ag.fO[3]] = fK[18]
+                        ag.fO[3] = ag.fO[3] + 1
+                    if ag.fO[3] == 3:
+                        self.aX()
+        else:
+            bool_ = False
+        if bool_:
+            self.ba()
+            ag.bb.c_Z(True)
+
+    def aX(self):  # e.java:2568-2626  (Combine: work out the result of 3 items)
+        arrayOfInt = [0, 0, 0]
+        i = 0
+        for b in range(3):
+            z_ = self.o_I(ag.fO[b])
+            b1 = 0
+            while b1 < b and arrayOfInt[b1] <= z_.a:
+                b1 += 1
+            for b2 in range(b, b1, -1):
+                arrayOfInt[b2] = arrayOfInt[b2 - 1]
+            arrayOfInt[b1] = z_.a
+            i += z_.f
+        e.a = j.a("/" + ag.bE.a_I(68))
+        if e.a is not None:
+            arrayOfInt1 = [0, 149, 298]
+            j_ = 0
+            k = 149
+            b = 0
+            while b < 3:
+                arrayOfInt2 = self.b_IIII(arrayOfInt1[b], arrayOfInt[b], j_, k)
+                j_ = arrayOfInt2[0]
+                k = arrayOfInt2[1]
+                if 0 == arrayOfInt2[2]:
+                    break
+                b += 1
+            if b < 3:
+                ag.fK[22] = 2
+                e.bb()
+            else:
+                j_ += self.C_I(k)
+                arrayOfInt[0] = e.S_I(447 + j_)
+                ag.fQ = self.J_I(arrayOfInt[0])
+                ag.fK[21] = idiv(e.b_Lz(ag.fQ), 4)
+                if arrayOfInt[0] < 500:
+                    arrayOfInt[1] = ag.bH[1].a_II(arrayOfInt[0] - 301, 8)
+                    arrayOfInt[2] = 15
+                else:
+                    arrayOfInt[1] = ag.bH[2].a_II(arrayOfInt[0] - 501, 7)
+                    arrayOfInt[2] = 12
+                arrayOfInt[1] = idiv(200 - arrayOfInt[1], 12)
+                if arrayOfInt[1] >= self.C_I(101):
+                    ag.fK[22] = 0
+                    ag.fQ = self.a_LzI(ag.fQ, idiv(i, 3))
+                else:
+                    ag.fK[22] = 1
+                    arrayOfInt[1] = idiv((100 - arrayOfInt[1]) * 10, arrayOfInt[2])
+                    ag.fK[31] = ag.fO[self.C_I(3)] if arrayOfInt[1] >= self.C_I(101) else -1
+                ag.fK[23] = -1
+            ag.fK[20] = 8
+            e.aV()
+        e.a = None
+
+    def a_LzI(self, paramz, paramInt):  # e.java:2628-2668  (enchant paramInt times: raise stats)
+        arrayOfByte = [30, 25, 20, 15, 9, 1]
+        for b in range(paramInt):
+            i = 0
+            j_ = self.C_I(101)
+            b1 = 0
+            while b1 < 5:
+                i += arrayOfByte[b1]
+                if j_ < i:
+                    break
+                b1 += 1
+            j_ = (b1 + 5) * 10
+            s = 0
+            for b1 in range(4):
+                s = (paramz.b, paramz.c, paramz.d, paramz.e)[b1]
+                i = s
+                if i > 0:
+                    i = idiv(idiv(i * j_, 10) + 50, 100)
+                    if i == 0:
+                        i = 1
+                    if b1 == 0:
+                        paramz.b = i16(paramz.b + i)
+                    elif b1 == 1:
+                        paramz.c = i16(paramz.c + i)
+                    elif b1 == 2:
+                        paramz.d = i16(paramz.d + i)
+                    elif b1 == 3:
+                        paramz.e = i16(paramz.e + i)
+            paramz.f = i8(paramz.f + 1)
+        return paramz
+
+    @staticmethod
+    def S_I(paramInt):  # e.java:2670-2672
+        return e.a[paramInt * 2] & 0xFF | (e.a[paramInt * 2 + 1] & 0xFF) << 8
+
+    def b_IIII(self, paramInt1, paramInt2, paramInt3, paramInt4):  # e.java:2674-2692  (find run of paramInt2)
+        arrayOfInt = [paramInt3, paramInt4, 0]
+        b = 0
+        while b < arrayOfInt[1]:
+            i = e.S_I(paramInt1 + arrayOfInt[0])
+            if i == paramInt2:
+                break
+            arrayOfInt[0] = arrayOfInt[0] + 1
+            b += 1
+        if b < arrayOfInt[1]:
+            arrayOfInt[1] = arrayOfInt[1] - b
+            b = 0
+            i = e.S_I(paramInt1 + arrayOfInt[0])
+            while b < arrayOfInt[1] and i == paramInt2:
+                b += 1
+                i = e.S_I(paramInt1 + arrayOfInt[0] + b)
+            arrayOfInt[1] = b
+            arrayOfInt[2] = 1
+            return arrayOfInt
+        arrayOfInt[2] = 0
+        return arrayOfInt
+
+    def aY(self):  # e.java:2694-2707  (enter a Blacksmith screen)
+        if ag.cM[0] == 24:
+            e.m_v()
+            if ag.fK[16] < 3:
+                ag.cS.e_I(39)
+                ag.ck = 1
+                ag.cM[1] = 3
+                return True
+        ag.az()
+        self.aZ()
+        return True
+
+    def aZ(self):  # e.java:2709-2754  (grid layout of the current Blacksmith mode)
+        fK = ag.fK
+        fK[0] = ag.cM[0] - 21
+        if fK[0] == 0 or fK[0] == 1:
+            fK[14] = fK[0] + 1
+        else:
+            fK[14] = 0
+        if fK[0] == 3:
+            e.bb()
+            fK[20] = 7
+            e.aV()
+        e.m_v()
+        i = 0
+        c = 173                     # '­'
+        fK[4] = 5
+        if fK[0] == 1:
+            fK[4] = fK[4] + 1
+        fK[3] = 5
+        if fK[3] > 3:
+            fK[3] = 3
+        if fK[3] < fK[4]:
+            fK[11] = 1
+        else:
+            fK[3] = fK[4]
+            fK[11] = 0
+        fK[6] = fK[3] * 32 - 2
+        i = 72 + fK[6]
+        fK[1] = 26 + (243 - i) // 2 + 1
+        i = 158
+        if fK[11] == 1:
+            c = 32
+            i = 164
+            fK[7] = 32 * fK[4] - 2
+            fK[13] = idiv(fK[6] * (fK[6] - 2), fK[7]) + 1
+        fK[5] = (240 - i) // 2 + 1
+        fK[12] = fK[5] + c
+        fK[27] = 0
+        fK[8] = 0
+        fK[10] = 0
+        fK[9] = 0
+        self.ba()
+        fK[26] = -1
+
+    def ba(self):  # e.java:2756-2772  (clamp cursor, scroll, item under cursor -> fK[19])
+        fK = ag.fK
+        if fK[27] == 0:
+            if fK[10] < 0:
+                fK[10] = fK[4] - 1
+            elif fK[10] >= fK[4]:
+                fK[10] = 0
+            if fK[10] < fK[8]:
+                fK[8] = fK[10]
+            elif fK[10] >= fK[8] + fK[3]:
+                fK[8] = fK[10] - fK[3] + 1
+            fK[18] = fK[10] * 5 + fK[9]
+        z_ = self.o_I(-1)
+        fK[19] = z_.a if z_ is not None else 0
+
+    @staticmethod
+    def c_I(paramInt):  # e.java:2774-2786  (item name)
+        if paramInt < 100:
+            return ae.aN[paramInt - 1]
+        if paramInt < 300:
+            return ag.bH[0].b_II(paramInt - 101, 0)
+        if paramInt < 500:
+            return ag.bH[1].b_II(paramInt - 301, 0)
+        return ag.bH[2].b_II(paramInt - 501, 0)
+
+    @staticmethod
+    def bb():  # e.java:2788-2801  (clear the Combine selection)
+        from pow.game.structs import h
+        for b in range(len(ag.fO)):
+            ag.fO[b] = 0
+        for b in range(len(ag.fP)):
+            if ag.fP[b] is None:
+                ag.fP[b] = h()
+            ag.fP[b].a = 0
+            ag.fP[b].b = 0
+        if ag.fQ is None:
+            ag.fQ = z()
+        z.a(ag.fQ)
+
+    @staticmethod
+    def m_v():  # e.java:2803-2815  (count items: fK[16] backpack, fK[17] potions)
+        ag.fK[16] = 0
+        for b in range(25):
+            if ag.cz.Y[b].a > 0:
+                ag.fK[16] = ag.fK[16] + 1
+        ag.fK[17] = 0
+        for b in range(5):
+            if ag.cz.Z[b].a > 0:
+                ag.fK[17] = ag.fK[17] + 1
+
+    @staticmethod
+    def b_Lz(paramz):  # e.java:2817-2830  (price of an item)
+        if paramz.a < 100:
+            i = ae.y[paramz.a - 1]
+        elif paramz.a < 300:
+            i = ag.bH[0].a_II(paramz.a - 101, 6)
+            i = i + paramz.b * 100
+            i = i + paramz.c * 100
+            i = i + idiv(paramz.d, 5) * 100
+            i = i + idiv(paramz.e, 3) * 100
+        elif paramz.a < 500:
+            j_ = 800 if ag.bH[1].a_II(paramz.a - 301, 6) == 0 else 400
+            i = paramz.b * j_
+            i = i + paramz.c * j_
+            i = i + idiv(paramz.d, 5) * j_
+            i = i + idiv(paramz.e, 3) * j_
+        else:
+            i = ag.bH[2].a_II(paramz.a - 501, 6)
+        return i
+
+    def bc(self):  # e.java:2832-2883  (Buy)
+        cz = ag.cz
+        fK = ag.fK
+        z_ = ag.fL[fK[18]]
+        if z_.a == 0:
+            fK[20] = -1
+            return
+        i = e.b_Lz(z_)
+        if cz.E >= i:
+            if z_.a < 100:
+                b = 0
+                while b < 5 and cz.Z[b].a != z_.a:
+                    b += 1
+                if b < 5:
+                    if cz.Z[b].b < 5:
+                        cz.Z[b].b = i16(cz.Z[b].b + 1)
+                        fK[20] = 0
+                    else:
+                        fK[20] = 5
+                else:
+                    b = 0
+                    while b < 5 and cz.Z[b].a != 0:
+                        b += 1
+                    if b < 5:
+                        cz.Z[b].a = z_.a
+                        cz.Z[b].b = 1
+                        fK[17] = fK[17] + 1
+                        fK[20] = 0
+                    else:
+                        fK[20] = 6
+            elif fK[16] < 25:
+                b = 0
+                while b < 25 and cz.Y[b].a != 0:
+                    b += 1
+                y_ = cz.Y[b]
+                y_.a = z_.a
+                y_.b = z_.b
+                y_.c = z_.c
+                y_.d = z_.d
+                y_.e = z_.e
+                y_.f = z_.f
+                z.a(z_)
+                fK[16] = fK[16] + 1
+                fK[20] = 0
+            else:
+                fK[20] = 6
+        else:
+            fK[20] = 4
+        if fK[20] == 0:
+            cz.E -= i
+            self.ar()
+
+    def bd(self):  # e.java:2885-2905  (Sell, half price)
+        cz = ag.cz
+        fK = ag.fK
+        z_ = self.o_I(-1)
+        if z_ is None or z_.a == 0:
+            return
+        i = e.b_Lz(z_)
+        if z_.a < 100:
+            if cz.Z[fK[18]].b > 1:
+                cz.Z[fK[18]].b = i16(cz.Z[fK[18]].b - 1)
+            else:
+                cz.Z[fK[18]].a = 0
+                cz.Z[fK[18]].b = 0
+                fK[17] = fK[17] - 1
+        else:
+            z.a(z_)
+            fK[16] = fK[16] - 1
+        fK[20] = 11
+        cz.E += idiv(i, 2)
+        self.ar()
+
+    def be(self):  # e.java:2907-2936  (Enchant: price and limit)
+        fK = ag.fK
+        z_ = self.o_I(-1)
+        if z_.a == 0:
+            fK[20] = -1
+            return
+        fK[22] = 0
+        fK[21] = 0
+        if 100 < z_.a < 500:
+            if z_.a < 300:
+                fK[22] = ag.bH[0].a_II(z_.a - 101, 5)
+            else:
+                fK[22] = ag.bH[1].a_II(z_.a - 301, 6)
+            if fK[22] > 0:
+                fK[21] = z_.b * 100
+                fK[21] = fK[21] + z_.c * 100
+                fK[21] = fK[21] + idiv(z_.d * 100, 5)
+                fK[21] = fK[21] + idiv(z_.e * 100, 3)
+                if z_.f >= fK[22]:
+                    fK[22] = 0
+                    fK[20] = 3
+                    return
+        fK[20] = 1
+        if fK[22] != 0:
+            fK[23] = -1
+
+    def a_LzIIIIIZ(self, paramz, paramInt1, paramInt2, paramInt3, paramInt4, paramInt5, paramBoolean):  # e.java:3083-3206  (shop description)
+        dF = ag.dF
+        str1 = "/ Price: "
+        str2 = "Price: "
+        if paramz.a == 0:
+            dF.a = 0
+            dF.b.a = dF.b.b = dF.b.c = dF.b.d = 0
+            dF.c = ""
+            dF.b.a = (ag.bJ - 202) // 2 - ag.db
+            dF.b.b = 200
+            dF.b.c = paramInt3 + 2
+            dF.b.d = paramInt4
+            return
+        if ag.fK[14] > 0 and paramInt5 == -1:
+            paramInt5 = e.b_Lz(paramz)
+        if paramz.a < 100:
+            i = paramz.a - 1
+            dF.c = ae.aN[i]
+            if ag.fK[14] == 2:
+                if len(dF.c) > 0:
+                    dF.c += " / "
+                dF.c += str2
+                dF.c += ag.n_I(paramInt5 >> 1)
+            dF.c += " / "
+            if i < 9:
+                str_ = "Recover " + str(ae.aP[i % 3]) + "% of total " + ae.aO[i // 3]
+            else:
+                str_ = "Ranged Atk"
+            dF.c += str_
+            if ag.fK[14] == 1:
+                dF.c += str1
+                dF.c += ag.n_I(paramInt5)
+        else:
+            if paramz.a < 300:
+                str_ = ag.bH[0].b_II(paramz.a - 101, 0)
+                i = ae.w[(paramz.a - 101) % 5]
+            elif paramz.a < 500:
+                str_ = ag.bH[1].b_II(paramz.a - 301, 0)
+                i = ag.bH[1].a_II(paramz.a - 301, 8)
+            else:
+                str_ = ag.bH[2].b_II(paramz.a - 501, 0)
+                i = ag.bH[2].a_II(paramz.a - 501, 7)
+            if paramBoolean:
+                dF.c += str_
+            if ag.fK[14] == 2:
+                if len(dF.c) > 0:
+                    dF.c += " / "
+                dF.c += str2
+                dF.c += ag.n_I(paramInt5 >> 1)
+            if len(dF.c) > 0:
+                dF.c += " / "
+            special = {434: " / Hp 5 Increased", 435: " / MP 3 Increased", 436: " / DEF 1 Increased",
+                       437: " / ATK 1 Increased", 502: " / Catherine's scarf", 504: " / all General Visiting"}
+            if paramz.a in special:
+                dF.c += special[paramz.a][3:]
+                if paramz.a == 504 and paramz.f > 0:
+                    dF.c += " / Enchanted Lv" + str(paramz.f)
+            else:
+                if paramz.b > 0:
+                    dF.c += "Atk+" + str(paramz.b) + " "
+                if paramz.c > 0:
+                    dF.c += "Def+" + str(paramz.c) + " "
+                if paramz.d > 0:
+                    dF.c += "HP+" + str(paramz.d) + " "
+                if paramz.e > 0:
+                    dF.c += "MP+" + str(paramz.e) + " "
+                if paramz.f > 0:
+                    dF.c += "/ Enchanted Lv" + str(paramz.f) + " "
+                if i > 0:
+                    dF.c += "/ Available at Lv" + str(i) + " "
+            if ag.fK[14] == 1:
+                dF.c += str1
+                dF.c += ag.n_I(paramInt5)
+        dF.b.a = (ag.bJ - 202) // 2 - ag.db
+        dF.b.b = 200
+        dF.b.c = paramInt3 + 2
+        dF.b.d = paramInt4
+        ag.dD = ag.c_T(dF.c)
+        if ag.dD > paramInt3 - 2:
+            dF.a = 1
+            if ag.ch != -999:
+                dF.d = i16(dF.b.a + dF.b.c)
+                return
+        else:
+            dF.a = 0
+            dF.d = i16(paramInt1 + 1)
 
     def g_v(self):  # e.java:1241-1244
         self.E_v()

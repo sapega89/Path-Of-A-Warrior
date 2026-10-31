@@ -13,6 +13,7 @@ list of steps, one per line:
     wheel up|down   mouse wheel over the screen
     rclick          right mouse button (= BACK)
     shot NAME       save the last frame as NN_NAME.png
+    gold N          TEST-ONLY: set the hero's gold (ag.cz.E) to N, to try the Blacksmith
     save zero       (first line only) start with a minimal 965-byte save in RecordStore
                     "gamevil_pow_data" so that Main Menu -> Continue opens the Game Menu
     # ...           comment
@@ -113,6 +114,9 @@ def run(scenario, out, every=False):
                     Main.b.click(0, 0, "back")
                 state["wait"] = max(1, len(Main.b.key_queue))   # queued keys go 1 per tick
                 return
+            if cmd == "gold":
+                ag.cz.E = int(arg)
+                continue
             if cmd == "shot":
                 state["n"] += 1
                 name = "%02d_%s.png" % (state["n"], arg)

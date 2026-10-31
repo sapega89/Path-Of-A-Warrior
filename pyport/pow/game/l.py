@@ -327,6 +327,16 @@ class l(ag):
     def d_I(self, paramInt):  # l.java:506-598
         not_ported("l.d(int) (gamestr popups)")
 
+    @staticmethod
+    def d_v():  # l.java:498-500  (Blacksmith: bought)
+        from pow.game.e import e
+        return " You bought|1 " + e.c_I(ag.fK[19]) + '.'
+
+    @staticmethod
+    def e_v():  # l.java:502-504  (Blacksmith: sold)
+        from pow.game.e import e
+        return " You sold|" + e.c_I(ag.fK[19]) + '.'
+
     def e_I(self, paramInt):  # l.java:600-891
         self.a = 0
         self.s = False
