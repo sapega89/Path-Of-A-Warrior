@@ -31,9 +31,26 @@ def rms_selftest():
         print("RMS selftest: FAIL", repr(ex))
 
 
+def demo_save():
+    """SPIKE-ONLY: New Game (name entry, prologue) is a Phase 2 screen, so without a save the
+    Game Menu cannot be reached. When there is no save yet, write the smallest save that
+    ag.U() accepts (hero "HERO", all values 0); then Main Menu -> Continue opens the Game Menu.
+    Turn off with --no-demo or POW_DEMO_SAVE=0. An existing save is never touched."""
+    from pow.midp.rms import RecordStore
+    rs = RecordStore.openRecordStore("gamevil_pow_data", True)
+    if rs.getNumRecords() == 0:
+        data = bytearray(965)
+        data[0], data[1] = 965 & 0xFF, 965 >> 8
+        data[2:10] = b"HERO    "
+        rs.addRecord(data, 0, len(data))
+        print("demo save created (Continue -> Game Menu)")
+
+
 async def main():
     display.init(headless=os.environ.get("SDL_VIDEODRIVER") == "dummy")
     rms_selftest()
+    if config.DEMO_SAVE and "--no-demo" not in sys.argv:
+        demo_save()
     from pow.game.Main import Main
     midlet = Main()
     await midlet.startApp()

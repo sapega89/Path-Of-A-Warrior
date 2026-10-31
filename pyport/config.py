@@ -30,3 +30,7 @@ DEBUG = os.environ.get("POW_DEBUG", "1") == "1"
 
 # NotPorted (a screen of a later phase): True = crash, False = popup + back to the menu.
 STRICT = os.environ.get("POW_STRICT", "0") == "1"
+
+# SPIKE-ONLY: create a minimal save on first start so Continue opens the Game Menu
+# (New Game is ported in Phase 2). main.py --no-demo or POW_DEMO_SAVE=0 disables it.
+DEMO_SAVE = os.environ.get("POW_DEMO_SAVE", "1") == "1"

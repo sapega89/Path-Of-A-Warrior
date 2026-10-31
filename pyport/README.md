@@ -7,7 +7,8 @@
 
 ```bash
 pip install -r pyport/requirements.txt
-python pyport/main.py                 # вікно 480×640
+python pyport/main.py                 # вікно 480×640; Main Menu -> Continue -> Game Menu
+python pyport/main.py --no-demo       # без демо-збереження (Continue сірий, як в оригіналі)
 POW_SCALE=3 python pyport/main.py     # 720×960
 python -m pytest -q pyport/tests      # тести (headless)
 python pyport/tools/shot.py pyport/tools/scenarios/title.keys      # скріншоти -> pyport/shots/title/
