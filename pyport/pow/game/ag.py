@@ -2481,29 +2481,6 @@ class ag(AgFields, Canvas):
         for b in range(6):
             ag.cx[b] = self.d_T(ag.bA.a_I(arrayOfInt[b]))
 
-    @staticmethod
-    def af_v():  # ag.java:2321-2343  (pause-menu strings)
-        al1 = al("/" + ag.bE.a_I(69))
-        for b in range(30):
-            ag.fT[b] = al1.a_I(b)
-            if b < 7:
-                ag.gd[b] = al1.a_I(b + 48)
-            if b < 6:
-                ag.fV[b] = al1.a_I(b + 30)
-            if b < 5:
-                ag.ge[b] = al1.a_I(b + 55)
-            if b < 4:
-                ag.gb[b] = al1.a_I(b + 42)
-            if b < 2:
-                ag.gc[b] = al1.a_I(b + 46)
-        ag.fU[0] = al1.a_I(36)
-        ag.fW[0] = al1.a_I(37)
-        ag.ga[0] = al1.a_I(38)
-        ag.fX[0] = al1.a_I(39)
-        ag.fY[0] = al1.a_I(40)
-        ag.fZ[0] = al1.a_I(41)
-        al1.a_v()
-
     def g_III(self, paramInt1, paramInt2, paramInt3):  # ag.java:2793-2795  (one digit of ct[19])
         self.b_MIIIIII(ag.ct[19], paramInt2, paramInt3, 10, 14, 10 * paramInt1, 0)
 
