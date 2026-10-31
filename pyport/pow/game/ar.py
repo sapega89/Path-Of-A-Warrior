@@ -1,14 +1,14 @@
-"""ar.java - the map / combat engine (bc). Literal port, partial (phase 3 = the map):
-the frame loop, the hero's walls and room exits, room scrolling, the HUD of the map and the
-pause menu are ported. Everything that only runs with enemies on the map (ez > 0) or for an
-attack (config.NO_COMBAT) raises NotPorted: it is the combat of phase 4."""
+"""ar.java - the map / combat engine (bc). Literal port: the frame loop, the hero's walls and
+room exits, room scrolling, the HUD of the map, the pause menu, the enemy AI, hits, skills,
+potions and scrolls, deaths and drops. config.NO_ENEMIES / NO_COMBAT (PORT-EXTRA, off by
+default) give the map without enemies / without the attack keys."""
 from pow.game import ae
 from pow.game.ag import ag, not_ported
 from pow.game.c import c
-from pow.game.structs import h
+from pow.game.structs import ac, h
 from pow.game.x import x
 import config
-from pow.midp.jint import i16, idiv
+from pow.midp.jint import i8, i16, i32, idiv
 
 F6 = config.DECOMP_FIX["F6"]
 
@@ -227,20 +227,6 @@ class ar(ag):
         n = ar.Q_I(k)
         i1 = ar.Q_I(m)
         return n < i and i1 < j_
-
-    # ---- the hero's attacks (phase 4) --------------------------------------------------------
-
-    def c_v(self):  # ar.java:370-408  (hero attack vs. breakable objects)
-        not_ported("ar.c() (attack objects)")
-
-    def d_I(self, paramInt):  # ar.java:674-724  (hero attack vs. enemies)
-        not_ported("ar.d(int) (attack enemies)")
-
-    def f_v(self):  # ar.java:1196-1200  (turn to the nearest enemy, Hard only)
-        not_ported("ar.f() (aim at an enemy)")
-
-    def U_I(self, paramInt):  # ar.java:580-638  (the hero is hit)
-        not_ported("ar.U(int) (hero hit)")
 
     @staticmethod
     def c_LhLh(paramh1, paramh2):  # ar.java:457-468  (distance, rounded)
@@ -604,11 +590,683 @@ class ar(ag):
                                 break
         return [paramInt1, paramInt2]
 
-    # ---- per-tick updates --------------------------------------------------------------------
+    # ---- the combat: hits ---------------------------------------------------------------------
 
-    def g_v(self):  # ar.java:1310-1604  (enemy AI)
-        if ag.ez > 0:
-            not_ported("ar.g() (enemy AI)")
+    def b_II(self, paramInt1, paramInt2):  # ar.java:284-339  (the hero's action paramInt2 hits enemy paramInt1)
+        ex = ag.ex[paramInt1]
+        cz = ag.cz
+        ex.t = 1
+        if paramInt2 > -1:
+            ex.e[0] = ex.d = ar.b_LhLh(ex.a[0], cz.a[0])
+        else:
+            ex.e[0] = ex.d = ar.b_LhLh(ex.a[0], ag.dU.c)
+        if 3 <= paramInt2 <= 8:
+            i = cz.w + cz.A - ex.k - ex.o
+            ex.m = i16(ex.m - (i if i > 0 else 1))
+        elif paramInt2 in (12, 13, 14) or 20 <= paramInt2 <= 30:
+            i = cz.w + cz.A + idiv(cz.w * cz.W[paramInt2 - 12], ae.aU[paramInt2 - 12]) - ex.k - ex.o
+            ex.m = i16(ex.m - (i if i > 0 else 1))
+        elif paramInt2 == -2:
+            ex.A = 2
+            ex.m = i16(ex.m - (50 if cz.l << 1 > 50 else cz.l << 1))
+            self.a__I(4)
+        elif paramInt2 == -1:
+            ex.m = i16(ex.m - (30 if cz.l > 30 else cz.l))
+            self.a__I(3)
+        if ex.m < 1:
+            ex.m = 0
+            ex.g[0] = 3
+        else:
+            ex.g[0] = 0
+        ar.R_I(paramInt1)
+        ex.v = ex.a[0]
+        ex.u = -1
+        ex.f[0] = 2
+        if ex.h < 200 and self.C_I(1000) < 150 and ex.m > 0:
+            self.m_II(paramInt1, 1)
+
+    def m_II(self, paramInt1, paramInt2):  # ar.java:341-368  (a general picks a skill)
+        ex = ag.ex[paramInt1]
+        ex.f[0] = i8(6 + ag.dC.d[self.C_I(4)] - 1)
+        if ex.f[0] < 6 and ex.f[0] > 21:
+            ex.f[0] = 1
+        else:
+            if ex.f[0] in (9, 10):
+                if ex.z > 3:
+                    ex.f[0] = 1
+                elif ex.l >> 1 > ex.m:
+                    ex.z = i8(ex.z + 1)
+                else:
+                    ex.f[0] = 1
+            elif ex.f[0] in (11, 12, 13):
+                if paramInt2 != 0:
+                    ex.f[0] = 1
+        ex.e[0] = ex.d = ar.a_LhLh(ex.a[0], ag.cz.a[0])
+
+    def c_v(self):  # ar.java:370-408  (the hero's attack vs. breakable objects cA)
+        cz = ag.cz
+        h_ = h()
+        for b in range(ag.cB):
+            cA = ag.cA[b]
+            if cA.a != 0 and cA.d > 0:
+                e0 = cz.e[0]
+                if e0 == 13:
+                    q = cz.d[0] >> 1
+                    if self.a_IIIIIIII(cz.a[0].a + ae.aF[q], cz.a[0].b + ae.aG[q], ae.aH[q], ae.aI[q], cA.b.a - 8, cA.b.b - 8, 18, 18):
+                        self.W_I(b)
+                elif e0 == 22:
+                    if ar.a_LhLhI(cz.a[0], cA.b, cz.d[0]) != 0:
+                        self.s_II(b, ae.aK[cz.K])
+                elif e0 in (23, 24):
+                    self.s_II(b, 45)
+                elif e0 == 25:
+                    if (cz.d[0] + (cz.f[0] >> 1 << 1) & 0x7) == ar.a_LhLh(cz.a[0], cA.b):
+                        self.s_II(b, ae.aK[cz.K])
+                elif e0 in (26, 27):
+                    h_.a = i16(cz.a[0].a + ae.aA[cz.d[0] >> 1])
+                    h_.b = i16(cz.a[0].b + ae.aB[cz.d[0] >> 1])
+                    if ar.c_LhLh(h_, cA.b) <= 35:
+                        self.W_I(b)
+                elif e0 in (28, 29, 30):
+                    self.W_I(b)
+                else:
+                    self.p_II(b, ae.aK[cz.K])
+
+    @staticmethod
+    def R_I(paramInt):  # ar.java:410-421  (message box: enemy name and HP bar)
+        ex = ag.ex[paramInt]
+        ag.dT.a = 1
+        ag.dT.b = 10
+        ag.dT.d = ex.i
+        ag.dT.e = i16(idiv(ex.m * 60, ex.l))
+        if ex.h < 200:
+            ag.dT.c = ag.dC.a
+            return
+        ag.dT.e = i16(ag.dT.e >> 1)
+        ag.dT.c = ae.aS[ex.h - 201]
+
+    @staticmethod
+    def a_LhLhI(paramh1, paramh2, paramInt):  # ar.java:423-443  (is paramh2 in front of paramh1?)
+        if paramInt == 2:
+            if paramh1.a > paramh2.a:
+                return 1
+        elif paramInt == 6:
+            if paramh1.a < paramh2.a:
+                return 1
+        elif paramInt == 0:
+            if paramh1.b < paramh2.b:
+                return 1
+        elif paramInt == 4:
+            if paramh1.b > paramh2.b:
+                return 1
+        return 0
+
+    @staticmethod
+    def a_LhLh(paramh1, paramh2):  # ar.java:445-449  (direction 0/2/4/6 from paramh1 to paramh2)
+        i = paramh2.a - paramh1.a
+        j_ = paramh2.b - paramh1.b
+        if j_ > i:
+            return 0 if j_ > -i else 2
+        return 6 if j_ > -i else 4
+
+    @staticmethod
+    def b_LhLh(paramh1, paramh2):  # ar.java:451-455  (direction 0..7 from paramh1 to paramh2)
+        i = paramh2.a - paramh1.a
+        j_ = paramh2.b - paramh1.b
+        if i + i < j_:
+            if i + i > -j_:
+                return 0
+            if -i < j_ + j_:
+                return 1
+            if i < j_ + j_:
+                return 2
+            return 3
+        if i + i < -j_:
+            return 4
+        if -i > j_ + j_:
+            return 5
+        if i > j_ + j_:
+            return 6
+        return 7
+
+    def n_II(self, paramInt1, paramInt2):  # ar.java:470-473
+        if ag.cz.d[0] == ar.a_LhLh(ag.cz.a[0], ag.ex[paramInt1].a[0]):
+            self.q_II(paramInt1, paramInt2)
+
+    def o_II(self, paramInt1, paramInt2):  # ar.java:475-478
+        if ag.ex[paramInt1].e[0] == ar.a_LhLh(ag.ex[paramInt1].a[0], ag.cz.a[0]):
+            self.r_II(paramInt1, paramInt2)
+
+    def p_II(self, paramInt1, paramInt2):  # ar.java:480-483
+        if ag.cz.d[0] == ar.a_LhLh(ag.cz.a[0], ag.cA[paramInt1].b):
+            self.s_II(paramInt1, paramInt2)
+
+    def q_II(self, paramInt1, paramInt2):  # ar.java:485-488
+        if ar.c_LhLh(ag.cz.a[0], ag.ex[paramInt1].a[0]) <= paramInt2:
+            self.S_I(paramInt1)
+
+    def r_II(self, paramInt1, paramInt2):  # ar.java:490-493
+        if ar.c_LhLh(ag.cz.a[0], ag.ex[paramInt1].a[0]) <= paramInt2:
+            self.T_I(paramInt1)
+
+    def s_II(self, paramInt1, paramInt2):  # ar.java:495-498
+        if ar.c_LhLh(ag.cz.a[0], ag.cA[paramInt1].b) <= paramInt2:
+            self.W_I(paramInt1)
+
+    def S_I(self, paramInt):  # ar.java:500-544  (the hero hits enemy paramInt: knock-back A, effects)
+        cz = ag.cz
+        ex = ag.ex[paramInt]
+        h_ = h()
+        if ex.f[0] > 5:
+            return
+        self.b_II(paramInt, cz.e[0])
+        if cz.M > 1 and cz.e[0] < 12:
+            ex.A = 1
+        e0 = cz.e[0]
+        if e0 == 12:
+            cz.f[0] = 5
+            ex.A = 2
+        elif e0 in (14, 22):
+            ex.A = 2
+        elif e0 == 20:
+            ex.t = i8(self.C_I(2) + 1)
+            ex.A = 0
+        elif e0 == 21:
+            ex.A = 5
+        elif e0 in (23, 24):
+            if e0 == 24:                    # case 24 falls through into case 23
+                ex.A = 5
+            self.V_I(paramInt)
+        elif e0 in (25, 26, 27):
+            if e0 == 25:                    # 25 -> 27 -> 26 fall through
+                ex.A = 2
+            if e0 in (25, 27):
+                ex.A = 5
+            ex.t = 2
+            h_.a = i16(cz.a[0].a + ae.aA[cz.d[0] >> 1])
+            h_.b = i16(cz.a[0].b + ae.aB[cz.d[0] >> 1])
+            ex.e[0] = ex.d = ar.b_LhLh(ex.a[0], h_)
+        elif e0 == 29:
+            self.V_I(paramInt)
+        self.a__I(16)                       # (`if (A != 0);` - the sound plays always)
+
+    def T_I(self, paramInt):  # ar.java:546-578  (a general's skill hits the hero)
+        cz = ag.cz
+        f0 = ag.ex[paramInt].f[0]
+        if f0 == 6:
+            ag.ex[paramInt].g[0] = 5
+            cz.R = 2
+        elif f0 in (8, 16):
+            cz.R = 2
+        elif f0 == 14:
+            cz.O = self.C_I(2) + 1
+        elif f0 == 15:
+            cz.R = 5
+        elif f0 in (17, 18):
+            if f0 == 18:                    # case 18 falls through into case 17
+                cz.R = 5
+            self.p_v()
+        elif f0 == 19:
+            cz.R = 2
+            self.p_v()
+        elif f0 in (20, 21):
+            if f0 == 21:                    # case 21 falls through into case 20
+                cz.R = 5
+            cz.O = 2
+        self.U_I(paramInt)
+
+    def U_I(self, paramInt):  # ar.java:580-638  (the hero is hit by enemy paramInt, or by arrow paramInt + 3)
+        cz = ag.cz
+        if paramInt > -1:
+            ex = ag.ex[paramInt]
+            cz.d[0] = cz.c = ar.b_LhLh(cz.a[0], ex.a[0])
+            if ex.f[0] in (6, 7, 8, 14, 15, 16, 17, 18, 19, 20, 21):
+                i = ex.j + ex.n + idiv(ex.j, ae.aU[ex.f[0] - 6]) - cz.x - cz.B
+            else:
+                i = ex.j + ex.n - cz.x - cz.B
+            i = i if i > 0 else 1
+            if cz.p > i:
+                cz.p -= i
+            else:
+                cz.p = 0
+        else:
+            eC = ag.eC[paramInt + 3]
+            cz.d[0] = cz.c = (eC.e << 1) + 4 & 0x7
+            i = eC.f - cz.x - cz.B
+            b = i8(i if i > 0 else 1)
+            if cz.p > b:
+                cz.p -= b
+            else:
+                cz.p = 0
+        if paramInt > -1:
+            ar.R_I(paramInt)
+        cz.Q = cz.a[0]
+        cz.O = 1
+        cz.P = -1
+        cz.f[0] = 0
+        cz.e[0] = 9
+        if cz.R != 0:
+            self.a__I(4)
+        else:
+            self.a__I(16)
+        if cz.p < 1:
+            cz.p = 0
+            cz.e[0] = 10
+
+    def V_I(self, paramInt):  # ar.java:640-651  (fire effect on an enemy)
+        ag.ex[paramInt].w = 1
+        ag.ex[paramInt].x = 0
+        ag.ff = 7
+        self.a__I(13)
+        if ag.fd is None:
+            ag.fe = self.K_I(60)
+            ag.fd = list(ae.ao)
+
+    def p_v(self):  # ar.java:653-661  (fire effect on the hero)
+        ag.cz.T = 1
+        ag.cz.U = 0
+        self.a__I(13)
+        if ag.eX is None:
+            ag.eY = self.K_I(60)
+            ag.eX = ae.ao
+
+    def W_I(self, paramInt):  # ar.java:663-672  (hit a breakable object)
+        cA = ag.cA[paramInt]
+        cA.d = i16(cA.d - ag.cz.w + ag.cz.A)
+        self.a__I(3)
+        cA.h = 2
+        if cA.d < 1:
+            cA.e = 12
+            i = cA.c.b * ag.cE.b.a + cA.c.a
+            ag.cE.a[ag.cE.e + i] = 0
+
+    def d_I(self, paramInt):  # ar.java:674-724  (the hero's attack (0) or a scroll (-1/-2) vs. enemies)
+        cz = ag.cz
+        h_ = h()
+        for b in range(ag.ez):
+            s = ag.ey[b]
+            ex = ag.ex[s]
+            if ex.m > 0 and ex.r != 0 and ex.f[0] < 6:
+                if paramInt == 0:
+                    e0 = cz.e[0]
+                    if e0 == 13:
+                        q = cz.d[0] >> 1
+                        if self.a_IIIIIIII(cz.a[0].a + ae.aF[q], cz.a[0].b + ae.aG[q], ae.aH[q], ae.aI[q], ex.a[0].a - 8, ex.a[0].b - 8, 17, 17):
+                            self.b_II(s, cz.e[0])
+                            self.a__I(3)
+                    elif e0 == 22:
+                        if ar.a_LhLhI(cz.a[0], ex.a[0], cz.d[0]) != 0:
+                            self.q_II(s, ae.aK[cz.K])
+                    elif e0 in (23, 24):
+                        self.q_II(s, 45)
+                    elif e0 == 25:
+                        if (cz.d[0] + (cz.f[0] >> 1 << 1) & 0x7) == ar.a_LhLh(cz.a[0], ex.a[0]):
+                            self.q_II(s, ae.aK[cz.K])
+                    elif e0 in (26, 27):
+                        h_.a = i16(cz.a[0].a + ae.aA[cz.d[0] >> 1])
+                        h_.b = i16(cz.a[0].b + ae.aB[cz.d[0] >> 1])
+                        if ar.c_LhLh(h_, ex.a[0]) <= 35:
+                            self.S_I(s)
+                    elif e0 in (28, 29, 30):
+                        self.S_I(s)
+                    self.n_II(s, ae.aK[cz.K])
+                elif paramInt in (-2, -1):
+                    if ar.c_LhLh(ag.dU.c, ex.a[0]) <= 35:
+                        self.b_II(s, ag.dU.a)
+                        self.a__I(4)
+
+    def f_v(self):  # ar.java:1196-1200  (Hard: turn to the nearest enemy before the attack)
+        if ag.ep != 0:
+            i = self.aB()
+            if i > -1:
+                ag.cz.d[0] = ag.cz.c = ar.a_LhLh(ag.cz.a[0], ag.ex[i].a[0])
+
+    def aB(self):  # ar.java:1202-1214  (nearest living enemy closer than 50)
+        s = -1
+        j_ = 50
+        for b in range(ag.ez):
+            s1 = ag.ey[b]
+            i = ar.c_LhLh(ag.ex[s1].a[0], ag.cz.a[0])
+            if j_ > i and ag.ex[s1].m > 0:
+                j_ = i
+                s = s1
+        return s
+
+    # ---- the combat: enemy AI ----------------------------------------------------------------
+
+    def Y_I(self, paramInt):  # ar.java:1216-1278  (choose the next action of enemy paramInt)
+        arrayOfByte = [-2, -1, 0, 0, 0, 0, 1, 2]
+        cz = ag.cz
+        ex = ag.ex[paramInt]
+        i = ar.c_LhLh(cz.a[0], ex.a[0])
+        b = 1 if i < 90 else 0
+        ex.g[0] = 0
+        j_ = self.C_I(1000)
+        b1 = ar.a_Lh(ex.a[0])
+        if ex.h in (201, 203):
+            if j_ < 150 + b * 300:
+                ex.f[0] = 0
+                ex.e[0] = ex.d = i8(b1 + arrayOfByte[j_ & 0x7] & 0x7)
+                return
+            if j_ < 850 - b * 100:
+                if b != 0:
+                    if i <= 45 and cz.e[0] != 9 and cz.e[0] != 10 and cz.e[0] < 12:
+                        ex.f[0] = 1
+                        ex.e[0] = ex.d = ar.a_LhLh(ex.a[0], cz.a[0])
+                        self.U_I(paramInt)
+                        return
+                    ex.f[0] = 0
+                    ex.e[0] = ex.d = i8(b1 + arrayOfByte[j_ & 0x7] & 0x7)
+                    return
+                ex.f[0] = 0
+                ex.e[0] = ex.d = i8(ex.e[0] + arrayOfByte[j_ & 0x7] & 0x7)
+                return
+            ex.f[0] = 0
+            if b != 0:
+                ex.e[0] = ex.d = i8(j_ & 0x7)
+                return
+            ex.e[0] = ex.d = i8(ex.e[0] + arrayOfByte[j_ & 0x7] & 0x7)
+            return
+        if ex.h == 202:
+            ex.f[0] = 1
+            ex.s = 15
+            ar.Z_I(paramInt)
+            return
+        if j_ < 150:
+            self.m_II(paramInt, 0)
+            return
+        if j_ < 350:
+            if i <= 60 and (cz.e[0] != 9 or cz.f[0] >= 6) and cz.e[0] != 10 and cz.e[0] < 12:
+                ex.f[0] = 1
+                ex.e[0] = ex.d = ar.a_LhLh(ex.a[0], cz.a[0])
+                return
+        else:
+            ex.e[0] = ex.d = b1
+
+    @staticmethod
+    def a_Lh(paramh):  # ar.java:1280-1284  (direction 0..7 from paramh to the hero, 27 px dead zone)
+        i = ag.cz.a[0].a - paramh.a
+        j_ = ag.cz.a[0].b - paramh.b
+        if i > 27:
+            return 7 if j_ > 27 else (5 if j_ < -27 else 6)
+        if i < -27:
+            return 1 if j_ > 27 else (3 if j_ < -27 else 2)
+        return 0 if j_ > 0 else 4
+
+    @staticmethod
+    def Z_I(paramInt):  # ar.java:1286-1308  (an archer shoots an arrow eC)
+        arrayOfByte1 = [-1, -15, -1, 5]
+        arrayOfByte2 = [-5, -13, -30, -13]
+        ex = ag.ex[paramInt]
+        i = ex.e[0] >> 1
+        for b in range(3):
+            eC = ag.eC[b]
+            if eC.a == 0:
+                eC.a = 1
+                eC.b[1].a = i16(ex.a[0].a + arrayOfByte1[i])
+                eC.b[1].b = i16(ex.a[0].b + arrayOfByte2[i])
+                eC.e = i8(i)
+                eC.g = 0
+                eC.f = ex.j
+                if (i & 0x1) != 0:
+                    eC.c = 11
+                    eC.d = 2
+                    return
+                eC.c = 2
+                eC.d = 11
+                return
+
+    _SHIFT203 = {3: (-10, 0), 1: (-10, 10), 2: (-10, 0), 0: (0, 10), 5: (10, 0), 7: (10, 10), 6: (10, 0)}
+
+    def g_v(self):  # ar.java:1310-1604  (enemy AI: one tick of every enemy)
+        arrayOfByte = [20, 20, 25]
+        i = 0
+        cz = ag.cz
+        # Java `for (b = 0; b < ag.ez; b++)` reads ez every time: ab() below removes the dead
+        # enemy from ey and decrements ez inside the loop (and the next enemy is skipped this tick)
+        b = -1
+        while True:
+            b += 1
+            if b >= ag.ez:
+                break
+            s1 = ag.ey[b]
+            ex = ag.ex[s1]
+            ex.f[0] = min(ex.f[0], len(ex.B[ex.e[0]]) - 1)
+            ex.g[0] = i8(ex.g[0] + 1)
+            ex.s = i8(ex.s - 1)
+            s2 = ex.B[ex.e[0]][ex.f[0]][ex.g[0]]
+            if ex.p > 0:
+                ex.p = i16(ex.p - 1)
+                if ex.p < 1:
+                    ex.n = 0
+            if ex.q > 0:
+                ex.q = i16(ex.q - 1)
+                if ex.q < 1:
+                    ex.o = 0
+            if ex.f[0] == 3:
+                if s2 > 200:
+                    self.ab_I(s1)
+                    if ag.eA < 1 and 0 == ag.eD[0] and ex.h != 202:
+                        if ag.cr != 0:
+                            ag.co = 4
+                            ag.cn = 22
+                        else:
+                            ag.co = 3
+                            ag.cn = 5
+                continue
+            if s2 > 200:
+                if ex.m < 1:
+                    ex.f[0] = 3
+                else:
+                    ex.f[0] = 0
+                ex.g[0] = 0
+                if ex.h < 200:
+                    ag.fb = None
+                    ag.fa = None
+            if ex.s < 1:
+                ex.r = 1
+                ex.s = 6
+                if ex.f[0] == 0:
+                    self.Y_I(s1)
+            if ex.h == 202:
+                ex.e[0] = ex.d = ar.a_LhLh(ex.a[0], cz.a[0])
+                continue
+            j_ = ex.d
+            if ex.r == 0:
+                ex.a[0].a = i16(ex.a[0].a + ae.aw[j_])
+                ex.a[0].b = i16(ex.a[0].b + ae.ax[j_])
+                continue
+            k = m = 0
+            f0 = ex.f[0]
+            g0 = ex.g[0]
+            e0 = ex.e[0]
+            if f0 == 0:
+                k = ae.aw[j_]
+                m = ae.ax[j_]
+            elif f0 in (1, 4, 5):
+                k = idiv(ae.aw[e0], 3)
+                m = idiv(ae.ax[e0], 3)
+            elif f0 == 6:
+                if 2 < g0 < 6:
+                    k = ae.aw[e0] << 2
+                    m = ae.ax[e0] << 2
+            elif f0 in (7, 8):
+                fall8 = f0 == 8
+                if f0 == 7 and 4 < g0 < 8:
+                    k = ae.aw[e0] << 2
+                    m = ae.ax[e0] << 2
+                    if k > 0:
+                        k = self.a_LhII(ex.a[0], k, 6)
+                    elif k < 0:
+                        k = self.a_LhII(ex.a[0], k, 2)
+                    if m > 0:
+                        m = self.a_LhII(ex.a[0], m, 0)
+                    elif m < 0:
+                        m = self.a_LhII(ex.a[0], m, 4)
+                    arrayOfInt = self.b_LhII(ex.a[0], k, m)
+                    k = arrayOfInt[0]
+                    m = arrayOfInt[1]
+                    ex.a[0].a = i16(ex.a[0].a + k)
+                    ex.a[0].b = i16(ex.a[0].b + m)
+                    fall8 = True            # no break: falls into case 8
+                if fall8 and 0 < g0 < 9:
+                    k = ae.aw[e0]
+                    m = ae.ax[e0]
+            elif f0 == 14:
+                if 0 == (g0 & 0x1):
+                    k = ae.aw[e0]
+                    m = ae.ax[e0]
+            elif f0 == 2 and ex.A > 0:
+                ex.A = i8(ex.A - 1)
+                j_ = j_ + 4 & 0x7
+                k = ae.aw[j_] << 2
+                m = ae.ax[j_] << 2
+            elif f0 == 2 and g0 == 1:
+                j_ = ex.d + 4 & 0x7
+                k = idiv(ae.aw[j_] * 3, 4)
+                m = idiv(ae.ax[j_] * 3, 4)
+            if k != 0 or m != 0:
+                if ex.h == 203:
+                    arrayOfH = ex.a
+                    dx, dy = ar._SHIFT203.get(j_, (0, 0))
+                    arrayOfH[0].a = i16(arrayOfH[0].a + dx)
+                    arrayOfH[1].a = i16(arrayOfH[1].a + dx)
+                    arrayOfH[0].b = i16(arrayOfH[0].b + dy)
+                    arrayOfH[1].b = i16(arrayOfH[1].b + dy)
+                    i = self.a_LhIIII(arrayOfH[0], k, m, j_, s1)
+                    arrayOfH[0].a = i16(arrayOfH[0].a - dx)
+                    arrayOfH[1].a = i16(arrayOfH[1].a - dx)
+                    arrayOfH[0].b = i16(arrayOfH[0].b - dy)
+                    arrayOfH[1].b = i16(arrayOfH[1].b - dy)
+                else:
+                    i = self.a_LhIIII(ex.a[0], k, m, j_, s1)
+                if ex.f[0] == 0 and j_ in (0, 2, 4, 6):
+                    if i == -1:
+                        i = ar.c_LhII(ex.a[0], ex.d, s1)
+                        if i != -1:
+                            self.a_LhIIII(ex.a[0], ae.aw[i], ae.ax[i], i, s1)
+            f0 = ex.f[0]
+            g0 = ex.g[0]
+            if f0 in (1, 4, 5):
+                if g0 == 1:
+                    self.aa_I(s1)
+            elif f0 == 6:
+                if 2 < g0 < 6:
+                    self.aa_I(s1)
+            elif f0 == 7:
+                if 4 < g0 < 8:
+                    self.aa_I(s1)
+            elif f0 == 8:
+                if g0 in (2, 4, 6, 8):
+                    self.aa_I(s1)
+            elif f0 in (9, 10):
+                if g0 == 11:
+                    ex.m = i16(ex.m + idiv(ex.l * (20 if f0 == 9 else 50), 100))
+                    if ex.m > ex.l:
+                        ex.m = ex.l
+            elif f0 in (11, 12, 13):
+                if g0 == 11:
+                    if f0 != 12:
+                        ex.n = i16(idiv(ex.j, arrayOfByte[f0 - 11]))
+                        if ex.n < 1:
+                            ex.n = 1
+                        ex.p = 50
+                    if f0 != 11:
+                        ex.o = i16(idiv(ex.k, arrayOfByte[f0 - 11]))
+                        if ex.o < 1:
+                            ex.o = 1
+                        ex.q = 50
+            elif f0 == 14:
+                if (g0 & 0x1) != 0:
+                    self.aa_I(s1)
+            elif f0 == 15:
+                if g0 == 5:
+                    self.aa_I(s1)
+            elif f0 == 16:
+                if g0 == 6:
+                    self.aa_I(s1)
+            elif f0 in (17, 18):
+                if g0 == 5:
+                    self.aa_I(s1)
+            elif f0 == 19:
+                if (g0 & 0x1) != 0:
+                    self.aa_I(s1)
+            elif f0 in (20, 21):
+                if g0 == 8:
+                    self.aa_I(s1)
+
+    def aa_I(self, paramInt):  # ar.java:1606-1661  (enemy paramInt strikes the hero)
+        cz = ag.cz
+        ex = ag.ex[paramInt]
+        h_ = h()
+        if cz.e[0] != 9 and cz.e[0] != 10:
+            if cz.e[0] < 12:
+                f0 = ex.f[0]
+                if f0 == 7:
+                    q = ex.e[0] >> 1
+                    if self.a_IIIIIIII(ex.a[0].a + ae.aF[q], ex.a[0].b + ae.aG[q], ae.aH[q], ae.aI[q], cz.a[0].a - 8, cz.a[0].b - 8, 17, 17):
+                        self.U_I(paramInt)
+                    return
+                if f0 == 16:
+                    if ar.a_LhLhI(ex.a[0], cz.a[0], ex.e[0]) != 0:
+                        self.r_II(paramInt, ae.aL[ag.dC.c])
+                    return
+                if f0 in (17, 18):
+                    self.r_II(paramInt, 45)
+                    return
+                if f0 == 19:
+                    if (ex.e[0] + (ex.g[0] >> 1 << 1) & 0x7) == ar.a_LhLh(ex.a[0], cz.a[0]):
+                        self.r_II(paramInt, ae.aL[ag.dC.c])
+                    return
+                if f0 in (20, 21):
+                    h_.a = i16(ex.a[0].a + ae.aA[ex.e[0] >> 1])
+                    h_.b = i16(ex.a[0].b + ae.aB[ex.e[0] >> 1])
+                    if ar.c_LhLh(h_, cz.a[0]) <= 35:
+                        self.T_I(paramInt)
+                    return
+                self.o_II(paramInt, ae.aL[ag.dC.c])
+                return
+        elif cz.e[0] == 9:
+            f0 = ex.f[0]
+            if f0 in (8, 14):
+                self.o_II(paramInt, ae.aL[ag.dC.c])
+                return
+            if f0 in (20, 21):
+                h_.a = i16(ex.a[0].a + ae.aA[cz.d[0] >> 1])
+                h_.b = i16(ex.a[0].b + ae.aB[cz.d[0] >> 1])
+                if ar.c_LhLh(h_, cz.a[0]) <= 35:
+                    self.T_I(paramInt)
+
+    def ab_I(self, paramInt):  # ar.java:1663-1698  (enemy paramInt is dead: exp, drop, remove)
+        ex = ag.ex[paramInt]
+        for b in range(ag.ez):
+            if ag.ey[b] == paramInt:
+                if ex.h < 200:
+                    b1 = 2 if ag.cr != 0 else 1
+                    ag.dY += ex.i << 1
+                    if ag.dC.c != ag.cz.K:
+                        ag.ct[40 + ag.dC.c] = None
+                    ag.er[1] = None
+                    for b2 in range(3, 9):
+                        ag.et[b2] = None
+                    ag.eB = 0
+                else:
+                    b1 = 0
+                    ag.dY += ex.i
+                self.a_ILh(b1, ex.a[0])
+                if ex.h == 203:
+                    ag.cz.H += 3
+                else:
+                    ag.cz.H += 1
+                for b1 in range(b, 6):
+                    ag.ey[b1] = ag.ey[b1 + 1]
+                ex.c = 0
+                ag.ez = i16(ag.ez - 1)
+                if ex.h != 202:
+                    ag.eA = i16(ag.eA - 1)
+                return
+
+    # ---- per-tick updates --------------------------------------------------------------------
 
     @staticmethod
     def h_v():  # ar.java:1700-1711  (sort enemies by y)
@@ -945,4 +1603,31 @@ class ar(ag):
             ag.h_II(-1, 1)
 
     def aE(self):  # ar.java:2109-2141  (message box dT: item picked up)
-        not_ported("ar.aE() (message box on the map)")
+        ag.dD = ag.c_T(ag.dT.c)
+        i = ag.bY.a - ag.bu.a_ACII(list(ag.dT.c), 0, len(ag.dT.c)) - 8
+        x.a_Lg(ag.bv)
+        ag.d_TII(ag.dT.c, i, 3)
+        ag.d_TII(ag.dT.c, i - 1, 2)
+        ag.d_TII(ag.dT.c, i + 1, 2)
+        ag.d_TII(ag.dT.c, i, 1)
+        x.a_Lg(ag.bu)
+        ag.d_TII(ag.dT.c, i, 2)
+        ag.dD = ag.s_I(ag.dT.d)
+        ct31 = ag.ct[31]
+        self.b_MIIIIII(ct31, ag.bY.a - ct31.getWidth() - 27 - 5 - 7, 2 + ag.bu.a_v(), ct31.getWidth(), ct31.getHeight(), 0, 0)
+        self.a_IIIIIMIII(ag.dT.d, ag.bY.a - 15, 1 + ag.bu.a_v() + 17, 9, 12, ag.ct[20], 0, 0, -1)
+        if ag.dT.e > 0:
+            ac_ = ac(ag.bY.a - 62 + ag.db - 7, 2 + ag.bu.a_v() + 12 + ag.dc, 62 if ag.dT.e > 62 else ag.dT.e, 7)
+            ag.a_LacI(ac_, ag.k_III(0, 0, 0))
+            ac_.b += 1
+            ac_.d = 5
+            ac_.a += 1
+            ac_.c -= 2
+            ag.a_LacI(ac_, ag.k_III(107, 0, 0))
+            ac_.b += 1
+            ac_.d = 3
+            ag.a_LacI(ac_, ag.k_III(181, 0, 0))
+            ac_.b += 1
+            ac_.d = 1
+            ag.a_LacI(ac_, ag.k_III(255, 73, 0))
+        c.a_IIII(ag.ca.a + 170, ag.ca.b, 68, 40)

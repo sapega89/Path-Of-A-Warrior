@@ -2854,6 +2854,68 @@ class e(ag):
         return False
 
     def n_v(self):  # e.java:2938-2972  (popup extras on the map: experience bars of popups 11 / 12)
-        if ag.cS.b_ in (11, 12):
-            from pow.game.ag import not_ported
-            not_ported("e.n() (experience bars after a mission)")
+        i = 0
+        if ag.cS.b_ == 11:
+            i = self.p_II(ag.ea, 0)
+            if 0 == i and 0 == ag.cS.e:
+                ag.ea = i16(ag.ea + 1)
+        elif ag.cS.b_ == 12:
+            i = self.p_II(ag.ea, 1)
+            if 0 == i and 0 == ag.cS.e:
+                ag.ea = i16(ag.ea + 1)
+        if i != 0 and 0 == ag.cS.e:
+            if i == 1:  # the bar is full: level up
+                ag.dZ[0] = 0
+                ag.dZ[1] = i16(ag.dZ[1] - 100)
+                if ag.dZ[1] < 0:
+                    ag.dZ[1] = 0
+                ag.dZ[2] = i16(ag.dZ[2] - 100)
+                ag.ea = 0
+                ag.cS.e = 1
+                ag.cS.f = 20
+                ag.cS.g = 12
+                ag.cz.l += 1
+                ag.cz.J += 3
+                ag.cT[0] = "Level Up : Lv " + str(ag.cz.l)
+                ag.cS.l[5] = ag.cT[0]
+                ag.cS.j = 1
+                return
+            if ag.cS.d > 100:
+                ag.cS.d = 16
+
+    def p_II(self, paramInt1, paramInt2):  # e.java:2974-3017  (experience bar; 1 = full, 2 = done)
+        arrayOfInt = [[ag.k_III(115, 142, 140), ag.k_III(181, 178, 181), 16777215],
+                      [ag.k_III(99, 0, 0), ag.k_III(181, 0, 0), ag.k_III(247, 73, 0)],
+                      [ag.k_III(0, 65, 255), ag.k_III(0, 146, 255), ag.k_III(0, 255, 173)],
+                      [ag.k_III(247, 73, 0), ag.k_III(255, 162, 0), ag.k_III(255, 223, 0)]]
+        if ag.bV == 3:
+            ag.dc = i16(ag.dc - 30)
+        y = ag.de + 37 + ag.dc + 20
+        arrayOfAc = [ac(ag.dd - 51, y, 102, 7),
+                     ac(ag.dd - 50, y, ag.dZ[0], 7),
+                     ac(ag.dd - 50 + ag.dZ[0], y, ag.dZ[1] - ag.dZ[0], 7),
+                     ac(ag.dd - 50 + ag.dZ[1], y, 0, 7)]
+        if ag.bV == 3:
+            ag.dc = i16(ag.dc + 30)
+        b3 = 0
+        b2 = 4 if paramInt2 != 0 else 3
+        if ag.dZ[paramInt2] + paramInt1 * 4 > ag.dZ[paramInt2 + 1]:
+            i = ag.dZ[paramInt2 + 1] - ag.dZ[paramInt2]
+            b3 = 2
+        else:
+            i = paramInt1 * 4
+        if ag.dZ[paramInt2] + i > 100:
+            arrayOfAc[paramInt2 + 2].c = 100 - ag.dZ[paramInt2]
+            b3 = 1
+        else:
+            arrayOfAc[paramInt2 + 2].c = i
+        ag.a_LacI(arrayOfAc[0], 0)
+        arrayOfAc[0].a += 1
+        arrayOfAc[0].c = 100
+        for b1 in range(b2):
+            if arrayOfAc[b1].c > 0:
+                for b in range(3):
+                    arrayOfAc[b1].b += 1
+                    arrayOfAc[b1].d -= 2
+                    ag.a_LacI(arrayOfAc[b1], arrayOfInt[b1][b])
+        return b3

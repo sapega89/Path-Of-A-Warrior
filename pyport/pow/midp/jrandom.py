@@ -1,4 +1,5 @@
 """java.util.Random - exact 48-bit LCG (spike: nextInt/nextInt(n); full tests = PHASE_1 1.3)."""
+import os
 import time
 
 from pow.midp.jint import i32
@@ -13,7 +14,10 @@ class Random:
     def __init__(self, seed=None):
         if seed is None:
             Random._uniq = (Random._uniq * 181783497276652981) & 0xFFFFFFFFFFFFFFFF
-            seed = Random._uniq ^ time.time_ns()
+            # PORT-EXTRA (tests): POW_SEED replaces the clock, so the headless scenarios
+            # (tools/shot.py sets it to 1) give the same enemies and hits on every run
+            fixed = os.environ.get("POW_SEED")
+            seed = Random._uniq ^ (int(fixed) if fixed else time.time_ns())
         self.setSeed(seed)
 
     def setSeed(self, seed):

@@ -173,14 +173,12 @@ wait 2
 key LSOFT          # SKIP -> ag.y(): the map
 wait 5
 shot skip_map
-wait 100           # banners "Stage 1" / "Stage 1 Complete." eat the keys
+wait 100           # banner "Stage 1" eats the keys; the enemies come
 key RSOFT          # PAUSE
 wait 3
 key DOWN
 wait 2
-key DOWN
-wait 2
-key DOWN
+key DOWN           # (Save is skipped: the enemies of the room are alive)
 wait 2
 key DOWN
 wait 2

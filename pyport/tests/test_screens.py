@@ -13,9 +13,8 @@ from conftest import ROOT
 
 SCEN = ROOT / "tools" / "scenarios"
 
-# shots that show a random result (ag.by is seeded from the clock, as in Java):
-# the gift of a general after a visit (e.o(): C(100) < friendship points)
-RANDOM_SHOTS = {"visiting": ("16_talk_visited.png", "17_talk_visited_later.png")}
+# tools/shot.py seeds every java.util.Random with POW_SEED=1 instead of the clock, so the enemy AI,
+# the Blacksmith stock and the gifts of the generals repeat exactly: every shot is compared.
 # scenarios that may reach a NotPorted screen on purpose (none at the moment)
 NOT_STRICT = set()
 
@@ -33,7 +32,7 @@ def _run(name, out):
 @pytest.mark.parametrize("name", ["title", "gamemenu", "mouse", "newgame", "newgame_mouse",
                                   "options_help", "management", "menus_mouse",
                                   "missions", "missions_mouse", "visiting",
-                                  "map", "map_mouse"])
+                                  "map", "map_mouse", "combat", "victory", "blacksmith"])
 def test_scenario_matches_baseline(name, tmp_path):
     out = tmp_path / name
     _run(name, out)
@@ -41,17 +40,7 @@ def test_scenario_matches_baseline(name, tmp_path):
     names = sorted(p.name for p in base.glob("*.png"))
     assert names == sorted(p.name for p in out.glob("*.png"))
     for n in names:
-        if n in RANDOM_SHOTS.get(name, ()):
-            continue
         a = pygame.image.load(str(base / n))
         b = pygame.image.load(str(out / n))
         assert pygame.image.tobytes(a, "RGB") == pygame.image.tobytes(b, "RGB"), n
 
-
-def test_blacksmith_runs(tmp_path):
-    """The Blacksmith stock and the enchant result use ag.C(int) = the time-seeded ag.by Random, so its
-    screenshots differ from run to run: only check that every step runs and every shot exists."""
-    out = tmp_path / "blacksmith"
-    _run("blacksmith", out)
-    base = ROOT / "shots" / "blacksmith"
-    assert sorted(p.name for p in base.glob("*.png")) == sorted(p.name for p in out.glob("*.png"))

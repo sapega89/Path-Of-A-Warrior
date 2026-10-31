@@ -1,4 +1,5 @@
 # Map with the mouse: walk by clicking beside the hero, PAUSE soft key, pause menu rows
+env POW_NO_ENEMIES=1     # PORT-EXTRA: the map without enemies (walking, rooms, pause, save)
 wait 25
 key FIRE
 wait 2

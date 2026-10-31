@@ -2029,6 +2029,14 @@ class ag(AgFields, Canvas):
         x.a_IIIII(paramac.a, paramac.b, paramac.c, paramac.d, paramInt1)
 
     @staticmethod
+    def s_I(paramInt):  # ag.java:1822-1826  (number of digits)
+        arrayOfInt = [10, 100, 1000, 10000]
+        b = 0
+        while b < 4 and paramInt >= arrayOfInt[b]:
+            b += 1
+        return b + 1
+
+    @staticmethod
     def c_T(paramString):  # ag.java:1755-1757  (text width)
         return ag.bu.a_T(paramString)
 

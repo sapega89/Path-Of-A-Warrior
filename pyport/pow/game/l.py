@@ -218,8 +218,31 @@ class l(ag):
                     else:
                         ag.co = 1
                         ag.cn = 5
-                elif v in (10, 11, 12, 22):
-                    not_ported("l.b timer b_=%d (map/combat)" % v)
+                elif v == 10:  # l.java:257-260  (Mission Success -> Total Exp)
+                    from pow.game.c import c
+                    self.e_I(11)
+                    c.h_v()
+                elif v == 11:  # l.java:261-268  (Total Exp -> Time Exp, if in time)
+                    if ag.dX < ag.dz[ag.dm].i:
+                        self.e_I(12)
+                        ag.ea = 0
+                    else:
+                        ag.bd.d_I(1)
+                elif v == 12:  # l.java:269-271
+                    ag.bd.d_I(1)
+                elif v == 22:  # l.java:300-315  (Mission fail -> Game Menu)
+                    if ag.dz[ag.dm].g > 200:
+                        ag.bd.d_I(0)
+                    else:
+                        self.w_I(2)
+                        self.F_v()
+                        ag.cM[0] = 0
+                        ag.cN = ae.v[ag.cM[0]]
+                        ag.dE = ag.fU
+                        ag.bV = 2
+                        ag.ck = 1
+                        ag.cL = 0
+                        ag.cK = 0
         return -1
 
     def c_v(self):  # l.java:326-397  (draw)
@@ -246,8 +269,24 @@ class l(ag):
                     x.a_Lg(ag.bu)
                 self.b_TII(self.l[b + 2], ag.de + i, 0)
                 i += 16
-        elif self.b == 4:
-            not_ported("l.c kind 4 (mission result)")
+        elif self.b == 4:  # l.java:357-381  (mission result: gold / total exp / time exp)
+            if ag.bV == 3:
+                ag.de -= 30
+            self.b_TII(ag.dl, ag.de - 75, len(ag.dl) + 1)
+            if self.b_ == 10:
+                j_ = ag.dz[ag.dm].h * 150 * (1 + (ag.ep ^ 0x1))
+                self.b_TII("Gold Acquired!", ag.de + 10, len("Gold Acquired!") + 1)
+                self.d_IIII(j_, ag.dd + (ag.D_I(j_) * 9 >> 1) - ag.db, ag.de + 30, 0)
+            elif self.b_ == 11:
+                self.b_TII("Total Exp", ag.de, len("Total Exp") + 1)
+            elif self.b_ == 12:
+                self.b_TII("Time Exp", ag.de - 7, len("Time Exp") + 1)
+                ag.d_TII("Time Limit:", ag.dd - 78 - ag.db, ag.de - 7 + 20)
+                self.j_III(ag.dd + 34 - ag.db, ag.de - 7 + 21, ag.dz[ag.dm].i)
+                ag.d_TII("Ested Time:", ag.dd - 78 - ag.db, ag.de - 7 + 40)
+                self.j_III(ag.dd + 34 - ag.db, ag.de - 7 + 41, ag.dX)
+            if ag.bV == 3:
+                ag.de += 30
         if self.e != 0:
             self.b_I(self.g)
             if ag.bV == 3:
@@ -454,8 +493,51 @@ class l(ag):
             ag.cT[0] = ag.cX.a
             L[0] = ag.cT[0]
             L[1] = "Acquired!!"
-        elif p in (22, 27):
-            not_ported("l.e(%d) (mission failed / ending reward)" % p)
+        elif p == 22:  # l.java:740-762  (mission failed: maybe an item is lost)
+            L[0] = ag.dl
+            L[1] = ag.dn
+            L[2] = "Mission fail!"
+            if ag.cz.l > 9 and self.C_I(100) < ag.cz.l >> 2:
+                i = self.C_I(9)
+                if ag.cz.X[i].a != 0:
+                    ag.bb.e_I(ag.cz.X[i].a)
+                    if ag.cz.X[i].a < 300:
+                        ag.cT[0] = ag.cX.a
+                    elif ag.cz.X[i].a < 500:
+                        ag.cT[0] = ag.cY.a
+                    else:
+                        ag.cT[0] = ag.cZ.a
+                    ag.cz.X[i] = None
+                    L[3] = "Lost!!"
+                    L[4] = ag.cT[0]
+                    self.i = i16(self.i + 2)
+            self.a__I(6)
+        elif p == 27:  # l.java:779-809  (reward item / hidden mission after the ending)
+            if ag.ef != 0:
+                if ag.ef == 502:
+                    ag.cT[0] = " / Catherine's scarf"[3:]
+                else:
+                    ag.bb.e_I(ag.ef)
+                    ag.cT[0] = ag.cX.a
+                L[0] = ag.cT[0]
+                self.i = i16(self.i + 1)
+                L[1] = "received!"
+                self.i = i16(self.i + 1)
+            if ag.eg != 0:
+                if ag.ef != 0:
+                    self.i = i16(self.i + 1)
+                    L[self.i] = ""
+                arrayOfByte = ag.v_I(48)
+                j_ = 38 * ag.eg + 10
+                b = 0
+                while b < 30 and arrayOfByte[j_ + b] != 0:
+                    b += 1
+                ag.dt[0] = ag.a_ABII(arrayOfByte, j_, j_ + b)
+                self.i = i16(self.i + 1)
+                L[self.i] = "Hidden Mission!"
+                ag.cT[1] = ag.dt[0]
+                self.i = i16(self.i + 1)
+                L[self.i] = ag.cT[1]
         self.h = i16(20 * self.i + (self.i - 1 << 1))
         if self.b == 2:
             self.h = i16(self.h + 25)

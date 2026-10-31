@@ -41,7 +41,8 @@ STRICT = os.environ.get("POW_STRICT", "0") == "1"
 # main.py --demo turns it on.
 DEMO_SAVE = os.environ.get("POW_DEMO_SAVE", "0") == "1"
 
-# PORT-EXTRA (phase 3 = the map before the combat): no enemy is created on the map, and the
-# attack / skill / potion keys do nothing there. Turned off when the combat (phase 4) is ported.
-NO_ENEMIES = os.environ.get("POW_NO_ENEMIES", "1") == "1"
-NO_COMBAT = os.environ.get("POW_NO_COMBAT", "1") == "1"
+# PORT-EXTRA (debug / tests): POW_NO_ENEMIES=1 = the map without enemies (rooms with a general
+# stay closed), POW_NO_COMBAT=1 = the attack / skill / potion keys do nothing on the map.
+# Both off by default: the game has its combat (phase 4).
+NO_ENEMIES = os.environ.get("POW_NO_ENEMIES", "0") == "1"
+NO_COMBAT = os.environ.get("POW_NO_COMBAT", "0") == "1"

@@ -16,11 +16,17 @@ list of steps, one per line:
     gold N          TEST-ONLY: set the hero's gold (ag.cz.E) to N, to try the Blacksmith
     generals N      TEST-ONLY: befriend the first N generals of the table (10, 30, 50... points)
                     and allow one visit (cz.S = 1), as after a mission
+    hero F N        TEST-ONLY: set the hero's field ag.cz.F to N (p = HP, r = MP, w = ATK, x = DEF)
+    skill S ID      TEST-ONLY: learn skill ID (12..30) and put it on skill key slot S (0..4 = 1 3 7 9 0)
+    potion K ID N   TEST-ONLY: put N potions of kind ID on the quick slot K (0 = *, 1 = #)
     win             TEST-ONLY: win the accepted mission now (c.d(1), as the combat would)
-    save zero       (first line only) start with a minimal 965-byte save in RecordStore
+    env NAME=VALUE  (first lines only) set an environment variable before the game reads config,
+                    e.g. env POW_NO_ENEMIES=1 for the map without enemies
+    save zero       (first line only, after env) start with a minimal 965-byte save in RecordStore
                     "gamevil_pow_data" so that Main Menu -> Continue opens the Game Menu
     # ...           comment
 
+Random() is seeded with POW_SEED (default 1) instead of the clock, so runs repeat.
 With --every, every tick is also saved as tick_NNNN.png.
 """
 import argparse
@@ -36,6 +42,7 @@ sys.path.insert(0, str(HERE.parent))
 os.environ["SDL_VIDEODRIVER"] = "dummy"
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 os.environ.setdefault("POW_SCALE", "1")
+os.environ.setdefault("POW_SEED", "1")   # Random() without the clock: repeatable runs
 
 
 def parse(path):
@@ -64,12 +71,16 @@ def make_zero_save():
 
 
 def run(scenario, out, every=False):
+    steps = parse(scenario)
+    while steps and steps[0][0] == "env":     # env NAME=VALUE lines first: before config is read
+        k, _, v = steps[0][1].partition("=")
+        os.environ[k] = v
+        steps = steps[1:]
     import pygame
     import config
     from pow.midp import display, system
     from pow.midp.canvas import KEYNAMES
 
-    steps = parse(scenario)
     save_dir = tempfile.mkdtemp(prefix="pow_rms_")
     config.SAVE_DIR = save_dir
     if steps and steps[0] == ("save", "zero"):
@@ -119,6 +130,22 @@ def run(scenario, out, every=False):
                 return
             if cmd == "gold":
                 ag.cz.E = int(arg)
+                continue
+            if cmd == "hero":              # TEST-ONLY: hero FIELD N, e.g. hero p 1 (HP), hero w 99 (ATK)
+                field, val = arg.split()
+                setattr(ag.cz, field, int(val))
+                continue
+            if cmd == "skill":             # TEST-ONLY: skill SLOT ID - learn skill ID (12..30) on key slot
+                slot, sid = map(int, arg.split())
+                if ag.cz.W[sid - 12] == 0:
+                    ag.cz.W[sid - 12] = 1
+                ag.cz.V[slot] = sid
+                continue
+            if cmd == "potion":            # TEST-ONLY: potion KEY ID N - N potions ID on * (KEY 0) or # (1)
+                key, pid, cnt = map(int, arg.split())
+                z = ag.cz.Z[ag.cz.aa[key]]
+                z.a = pid
+                z.b = cnt
                 continue
             if cmd == "win":
                 ag.cr = 1                  # the mission's general was met on the map (c.java:986)
