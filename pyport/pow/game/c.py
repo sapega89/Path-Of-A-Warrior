@@ -1060,7 +1060,13 @@ class c(ag):
 
     def a_I(self, paramInt):  # c.java:1089-1115  (rooms of the map: exits, enemy waves)
         from pow.game.structs import au
-        j0 = idiv(idiv(ag.cE.b.a, 7) * ag.cE.b.b, 7)
+        if config.DECOMP_FIX["F17"]:
+            # DECOMP-FIX F17 (also here): `cE.b.a / 7 * cE.b.b / 7` is (width / 7) * (height / 7);
+            # every N.arr holds exactly a whole number of missions of that many rooms. Literal,
+            # maps 30 / 37 wide (Vengeance, ...) read past the end of the room data.
+            j0 = idiv(ag.cE.b.a, 7) * idiv(ag.cE.b.b, 7)
+        else:
+            j0 = idiv(idiv(ag.cE.b.a, 7) * ag.cE.b.b, 7)
         arrayOfByte = ag.v_I(paramInt - 1)
         i = 20 + j0 * ag.dm * 19
         B = ag.b_B
