@@ -1336,7 +1336,7 @@ class c(ag):
         ag.dZ[0] = i16(cz.G * 100 // arrayOfInt[0])
         for b in range(2):
             if b != 0 and ag.dX < dz.i:
-                ag.dY += (idiv(idiv(dz.i - ag.dX, dz.i), 10) + 1) * idiv(ag.dY, 20)
+                ag.dY += idiv((idiv(idiv(dz.i - ag.dX, dz.i), 10) + 1) * ag.dY, 20)
             i = ag.dY << 1 + (ag.ep ^ 0x1)
             j_ = 0
             for b1 in range(10):

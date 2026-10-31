@@ -1,6 +1,6 @@
 # Mouse and held keys in the combat (POW_HOLD_TO_MOVE=1): walk while the button / key is held,
 # click on the hero = attack, right button = attack toward the pointer, HUD * box = potion,
-# middle button = skill 1
+# skills from the keyboard (key 1 = slot 1)
 env POW_HOLD_TO_MOVE=1
 wait 25
 key FIRE
@@ -201,8 +201,8 @@ shot hud_potion
 wait 10
 hero r 99                # TEST-ONLY: MP and a skill on slot 1
 skill 0 12
-mclick 120 160           # middle button: skill 1
+key 1                    # keyboard 1: skill slot 1 (the mouse only attacks)
 wait 3
-shot mclick_skill
+shot key_skill
 wait 20
 shot after_skill

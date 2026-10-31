@@ -20,8 +20,10 @@ KEYMAP = {
     pygame.K_RETURN: -5, pygame.K_KP_ENTER: -5, pygame.K_SPACE: -5, pygame.K_j: -5,
     pygame.K_q: -6, pygame.K_F1: -6,
     pygame.K_ESCAPE: -7, pygame.K_BACKSPACE: -7,
-    pygame.K_0: 48, pygame.K_1: 49, pygame.K_2: 50, pygame.K_3: 51, pygame.K_4: 52,
-    pygame.K_5: 53, pygame.K_6: 54, pygame.K_7: 55, pygame.K_8: 56, pygame.K_9: 57,
+    # PORT-EXTRA: number row 1..5 = the five skill slots (phone keys 1 3 7 9 0); the phone
+    # keypad (2 4 6 8 = arrows, 5 = OK) is on the numeric keypad
+    pygame.K_1: 49, pygame.K_2: 51, pygame.K_3: 55, pygame.K_4: 57, pygame.K_5: 48,
+    pygame.K_6: 54, pygame.K_7: 55, pygame.K_8: 56, pygame.K_9: 57, pygame.K_0: 48,
     pygame.K_u: 49, pygame.K_i: 51, pygame.K_o: 55, pygame.K_p: 57, pygame.K_k: 48,
     pygame.K_z: 42, pygame.K_x: 35,
     # numeric keypad = phone keypad (8 up, 2 down, 4 left, 6 right, 5 OK)

@@ -28,7 +28,7 @@ exactly the Java one. Hit zones follow what is drawn on each screen (coordinates
                              quick clicks = run); click on the hero -> FIRE (attack);
                              right button -> attack toward the pointer (turn, then FIRE);
                              * / # boxes of the HUD -> STAR / POUND (potion, bomb);
-                             middle button / wheel up / wheel down -> skill keys 1 / 3 / 7;
+                             (skills: keyboard 1..5 only);
                              soft key PAUSE -> BACK (-7); talk on the map (bV 5):
                              soft key SKIP (bottom left) -> LSOFT (-6);
                              pause menu: click a row -> UP/DOWN to it, then FIRE
@@ -44,7 +44,6 @@ from pow.midp.jint import idiv
 
 UP, DOWN, LEFT, RIGHT, FIRE, BACK = -1, -2, -3, -4, -5, -7
 STAR, POUND = 42, 35
-SKILL_KEYS = (49, 51, 55)                              # phone keys 1 / 3 / 7 = skill slots 1..3
 
 
 def _popup_keys(x, y, kind):
@@ -257,10 +256,8 @@ def _map_keys(x, y, kind):
         if d is not None and ag.cz.e[0] < 2 and _DIR_OF_KEY[d] != ag.cz.c:
             return [d, FIRE]                           # turn (one step), then strike
         return [FIRE]
-    if kind == "middle":                               # middle button: skill slot 1
-        return [SKILL_KEYS[0]] if playing else []
-    if playing and kind in ("wheel_up", "wheel_down"):  # wheel: skill slots 2 / 3
-        return [SKILL_KEYS[1] if kind == "wheel_up" else SKILL_KEYS[2]]
+    if kind == "middle" or (playing and kind in ("wheel_up", "wheel_down")):
+        return []                                      # skills only from the keyboard (1..5)
     if x >= ag.bJ - 60 and y >= ag.bK - 20:            # soft key PAUSE / BACK (bottom right)
         return [BACK]
     if ag.bV == 5:                                     # talk on the map: only SKIP (-6) works
