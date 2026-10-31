@@ -26,7 +26,7 @@ exactly the Java one. Hit zones follow what is drawn on each screen (coordinates
   Map (bV == 3)              click beside the hero -> that direction (hold the button = walk,
                              with config.HOLD_TO_MOVE; else tap = start / stop walking; two
                              quick clicks = run); click on the hero -> FIRE (attack);
-                             right button -> attack toward the pointer (turn, then FIRE);
+                             right button -> FIRE (attack where the hero faces);
                              * / # boxes of the HUD -> STAR / POUND (potion, bomb);
                              (skills: keyboard 1..5 only);
                              soft key PAUSE -> BACK (-7); talk on the map (bV 5):
@@ -209,9 +209,6 @@ def _menu_keys(c0, x, y, kind):
     return [FIRE]
 
 
-_DIR_OF_KEY = {DOWN: 0, LEFT: 2, UP: 4, RIGHT: 6}      # cz.c of a direction key (c.i_v)
-
-
 def _hero_dir_key(x, y):
     """Direction key from the hero to the screen point (x, y), or None on the hero himself."""
     hx = ag.cz.a[0].a - ag.ca.a + ag.db
@@ -249,13 +246,8 @@ def _map_keys(x, y, kind):
     if ag.cS.b != 0:
         return [BACK] if kind == "rclick" else _popup_keys(x, y, kind)
     playing = ag.bV == 3 and ag.cR.a == 0
-    if kind == "rclick":                               # right button: attack toward the pointer
-        if not playing:
-            return [BACK]
-        d = _hero_dir_key(x, y)
-        if d is not None and ag.cz.e[0] < 2 and _DIR_OF_KEY[d] != ag.cz.c:
-            return [d, FIRE]                           # turn (one step), then strike
-        return [FIRE]
+    if kind == "rclick":                               # right button: attack where the hero faces
+        return [FIRE] if playing else [BACK]
     if kind == "middle" or (playing and kind in ("wheel_up", "wheel_down")):
         return []                                      # skills only from the keyboard (1..5)
     if x >= ag.bJ - 60 and y >= ag.bK - 20:            # soft key PAUSE / BACK (bottom right)

@@ -1,5 +1,5 @@
 # Mouse and held keys in the combat (POW_HOLD_TO_MOVE=1): walk while the button / key is held,
-# click on the hero = attack, right button = attack toward the pointer, HUD * box = potion,
+# click on the hero = attack, right button = attack (no turning), HUD * box = potion,
 # skills from the keyboard (key 1 = slot 1)
 env POW_HOLD_TO_MOVE=1
 wait 25
@@ -183,7 +183,7 @@ click 157 132            # click on the hero: attack
 wait 1
 shot click_attack
 wait 6
-rclick 40 60             # right button up-left: turn there, then attack
+rclick 40 60             # right button: attack where the hero faces (the pointer does not turn him)
 wait 3
 shot rclick_attack
 wait 8
