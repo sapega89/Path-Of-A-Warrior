@@ -2283,7 +2283,14 @@ class ag(AgFields, Canvas):
                 arrayOfInt2[1] = arrayOfInt3[1] + 1
                 if b1 != 0:
                     arrayOfInt3[1] = ag.a_ABIC(arrayOfByte2, arrayOfInt3[1], ')')
-                    arrayOfInt2[1] = ag.a_ABIC(arrayOfByte2, arrayOfInt3[1], ')')
+                    # DECOMP-FIX F15: the source is `arrayOfInt2[1] = arrayOfInt3[1] = a(.., ')')`
+                    # (one call; JD split the dup_x2 into a second search). Literally the second
+                    # search skips the next "(..)" and the copy length is negative: every mission
+                    # description with a numbered template (Hellgate...) throws in arraycopy.
+                    if config.DECOMP_FIX["F15"]:
+                        arrayOfInt2[1] = arrayOfInt3[1]
+                    else:
+                        arrayOfInt2[1] = ag.a_ABIC(arrayOfByte2, arrayOfInt3[1], ')')
                     arrayOfInt3[0] = ag.a_ABIC(arrayOfByte1, arrayOfInt3[0], '|')
                     arrayOfByte3 = ag.a_ABABII(arrayOfByte3, arrayOfByte1, arrayOfInt2[0], arrayOfInt3[0] - 1)
                     arrayOfInt2[0] = arrayOfInt3[0]
