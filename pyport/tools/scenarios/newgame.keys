@@ -143,7 +143,29 @@ shot stats_1
 key FIRE
 wait 2
 shot popup_complete
-key FIRE
+key FIRE           # Yes -> save -> prologue (ag.l(100, 0), bV = 10)
+wait 3
+shot prologue_1_picture
+wait 60
+shot prologue_1_scroll
+key LSOFT          # Skip on a picture page = next page
+wait 3
+shot prologue_2_picture
+wait 60
+shot prologue_2_scroll
+key LSOFT
+wait 3
+shot prologue_3_dialogue
+wait 10
+shot prologue_3_typing
+key FIRE           # whole text at once
+wait 2
+shot prologue_3_full
+wait 25
+shot prologue_4_dialogue
+wait 40
+shot prologue_5_dialogue
+key LSOFT          # Skip on a dialogue page = end of the prologue
 wait 4
 shot game_menu
 key BACK

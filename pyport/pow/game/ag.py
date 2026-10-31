@@ -64,7 +64,8 @@ class ag(AgFields, Canvas):
     def s_v(self):  # ag.java:585-658
         from pow.game.e import e
         from pow.game.k import k
-        from pow.game.stubs import ar_stub, as_stub, c_stub, m_stub
+        from pow.game.c import c
+        from pow.game.stubs import ar_stub, as_stub, m_stub
         from pow.midp.jrandom import Random
         self.r_v()
         ag.bu = g("/0_font.png", 8, 17, 9, 16777215)
@@ -112,7 +113,7 @@ class ag(AgFields, Canvas):
         as_stub.a = m_stub()
         ag.bb = e()
         ag.bc = ar_stub()          # NOT-PORTED: ar.java (map logic) - phase 3
-        ag.bd = c_stub()           # NOT-PORTED: c.java (map & combat) - phase 3/4
+        ag.bd = c()                # c.java: only the story player c(int) so far (map & combat - phase 3/4)
 
     def keyPressed(self, paramInt):  # ag.java:660-662
         self.t_I(paramInt)
@@ -434,7 +435,24 @@ class ag(AgFields, Canvas):
             elif v in (6, 8, 9):
                 return
             elif v == 10:
-                not_ported("ag.L case 10 (story player)")
+                if (ag.ec == 0 and ag.fD < ag.eb[1] - ag.eb[0]) or (ag.ec != 0 and ag.fD >= ag.eb[1] - ag.eb[0]):
+                    from pow.game.e import e
+                    ag.bb.e_v()
+                    x.a_Lg(ag.bu)
+                    if ag.ec != 0:
+                        self.b_TII("Prologue", 2 - ag.dc, 9)
+                    else:
+                        self.b_TII("Epilogue", 2 - ag.dc, 9)
+                    ag.bb.b_I(ag.fE)
+                    if ag.fA[0] > 0:
+                        e.a_III(0, 0, 1)
+                    if ag.fA[1] > 0:
+                        e.a_III(1, 0, 1)
+                    self.q_I(1)
+                else:
+                    self.N_v()
+                if ag.cS.b != 0:
+                    ag.cS.c_v()
             return
         if ag.ck == 2:
             if ag.bV == 2:
@@ -453,7 +471,11 @@ class ag(AgFields, Canvas):
         if v in (6, 8, 9):
             return
         if v == 10:
-            not_ported("ag.L ck=0 bV=10 (story player)")
+            if ag.cS.b != 0:
+                if ag.cS.j != 0:
+                    ag.cS.c_v()
+                    return
+            self.M_v()
 
     def a__I(self, paramInt):  # ag.java:1882-1885
         if ag.bg is not None:
@@ -1627,13 +1649,43 @@ class ag(AgFields, Canvas):
             z1.e = i16(arrayOfInt[3])
         return z1
 
-    def l_II(self, paramInt1, paramInt2):  # ag.java:3488-3528  (story / mission briefing, bV = 10)
-        # SPIKE: l(100, 0) is the prologue after hero creation (Phase 2). It is skipped,
-        # the player stays in the Game Menu that l.b() has just set up.
-        if paramInt1 == 100:
-            print("l(100, 0): prologue skipped (Phase 2)")
-            return
-        not_ported("ag.l(%d, %d) (story / briefing)" % (paramInt1, paramInt2))
+    def l_II(self, paramInt1, paramInt2):  # ag.java:3488-3528  (start the story player, bV = 10)
+        ag.ee = i16(paramInt1)
+        if paramInt1 < 100:
+            ag.ec = 0
+            b = 64 + paramInt1 // 6
+            for b1 in range(3):
+                ag.eb[b1] = ae.aV[(paramInt1 << 1) + b1] - ae.aV[paramInt1 // 6 * 12]
+            if paramInt1 == 3 and paramInt2 != 0 and 0 == ag.L_I(502):
+                ag.eb[2] = 0
+                ag.eb[1] = 0
+                ag.eb[0] = 0
+                ag.cq = 4
+            ag.fE = -1
+        else:
+            ag.ec = 1
+            b = 63
+            ag.eb[0] = 0
+            ag.eb[1] = 2
+            ag.eb[2] = 13
+            ag.fE = 0
+            ag.dE = ag.fU
+            ag.cO = 0
+        if ag.bI is None:
+            ag.bI = al("/" + ag.bE.a_I(b))
+        ag.gf[1] = ""
+        ag.gf[0] = ""
+        ag.fA[1] = 0
+        ag.fA[0] = 0
+        ag.fD = 0
+        ag.dS = 0
+        ag.fG = 0
+        ag.bd.c_I(ag.fD)
+        if 0 == ag.ec:
+            self.x_I(1)
+        ag.bV = 10
+        self.a__I(2)
+        ag.ck = 1
 
     @staticmethod
     def L_I(paramInt):  # ag.java:3530-3536  (inventory slot of item, 1-based; 0 = none)
@@ -1641,6 +1693,170 @@ class ag(AgFields, Canvas):
             if ag.cz.Y[b].a == paramInt:
                 return b + 1
         return 0
+
+    # ---- story player (bV == 10): prologue / epilogue -------------------------------------
+
+    def M_v(self):  # ag.java:1612-1692  (one tick of the story player)
+        if ag.dS > 0:
+            ag.dS = i16(ag.dS - 1)
+            if ag.ch != -999 and ag.dS > 3:
+                ag.dS = 3
+            if 0 == ag.dS:
+                ag.fD += 1
+                if ag.fD < ag.eb[2] - ag.eb[0]:
+                    ag.bd.c_I(ag.fD)
+                elif 0 == ag.ec and ag.cO == 0 and ag.fD == ag.eb[2] - ag.eb[0]:
+                    if ag.ef != 0 or ag.eg != 0:
+                        ag.cS.e_I(27)
+                    ag.bd.c_I(ag.fD)
+                else:
+                    ag.bI.a_v()
+                    ag.bI = None
+                    ag.gf[1] = ""
+                    ag.gf[0] = ""
+                    self.F_v()
+                    ag.cM[0] = ag.cO
+                    ag.ct[35] = None
+                    ag.ct[35] = None
+                    ag.ap()
+                    if ag.cM[0] == 0:
+                        ag.cM[1] = 0
+                    ag.bV = 2
+                    ag.cL = 0
+                    ag.cK = 0
+                ag.ck = 1
+        elif (0 == ag.ec and ag.fD < ag.eb[1] - ag.eb[0]) or (ag.ec != 0 and ag.fD >= ag.eb[1] - ag.eb[0]):
+            from pow.game.e import e
+            e.a_III(ag.fG, ag.fA[ag.fG], 0)
+            if len(ag.fw[ag.fG]) <= ag.fA[ag.fG]:
+                if ag.ch != -999:
+                    ag.dS = 0
+                else:
+                    ag.dS = 15
+        else:
+            self.N_v()
+            ag.eh = i16(ag.eh + 1)
+            if ag.fG == 0:
+                if ag.eh > 3:
+                    ag.fG = i16(ag.fG + 1)
+                    ag.eh = 0
+            elif ag.fG == 2:
+                if ag.eh > 4:
+                    ag.dS = 3
+            elif ag.fG == 1:
+                ag.fA[0] = ag.fA[0] - 2
+                if ag.fA[0] < -28:
+                    ag.fA[0] = ag.fA[0] + 22
+                    ag.fC[0] = ag.fC[0] + 1
+                    if ag.dq[0] < ag.fC[0]:
+                        if ag.fD == ag.eb[2] - ag.eb[0]:
+                            ag.dS = 3
+                        else:
+                            ag.fG = i16(ag.fG + 1)
+                    ag.eh = 1
+        if ag.ch == -6:
+            ag.dS = 1
+            if ag.ec != 0:
+                if ag.fD >= ag.eb[1] - ag.eb[0]:
+                    ag.fD = 100
+                    return
+            elif ag.fD < ag.eb[1] - ag.eb[0]:
+                ag.fD = ag.eb[1] - ag.eb[0] - 1
+
+    def d_III(self, paramInt1, paramInt2, paramInt3):  # ag.java:1694-1696  (fill the screen)
+        x.b_IIIII(0, 0, ag.bZ.a, ag.bZ.b, ag.k_III(paramInt1, paramInt2, paramInt3))
+
+    def N_v(self):  # ag.java:1698-1737  (story picture + scrolling text)
+        self.d_III(0, 0, 0)
+        ct35 = ag.ct[35]
+        if ag.fG in (0, 2):
+            if 0 < ag.eh < 4:
+                self.b_MIIIIII(ct35, ag.dd - (ct35.getWidth() >> 1), ag.de - (ct35.getHeight() >> 1),
+                               ct35.getWidth(), ct35.getHeight(), 0, 0)
+        elif ag.fG == 1:
+            m = ag.fA[0]
+            if ag.fD != ag.eb[2] - ag.eb[0]:
+                self.b_MIIIIII(ct35, ag.dd - (ct35.getWidth() >> 1), ag.de - (ct35.getHeight() >> 1),
+                               ct35.getWidth(), ct35.getHeight(), 0, 0)
+            j_ = ag.fC[0]
+            while j_ <= ag.dq[0] and m <= 230:
+                # char arithmetic, as decompiled: `255 - (m - de + 72 << 4)` (only ==255 / ==0 matter)
+                if m > ag.de + 72:
+                    c1 = 255 - (m - ag.de + 72 << 4) & 0xFFFF
+                elif m < ag.de - 72:
+                    c1 = 255 - (ag.de - 72 - m << 4) & 0xFFFF
+                else:
+                    c1 = 255
+                x.a_Lg(ag.bv)
+                self.b_TII(ag.dp[0][j_], m + 1, 30)
+                ag.a_TII(ag.dp[0][j_], m - 1, 1)
+                if c1 == 255:
+                    x.a_Lg(ag.bu)
+                elif c1 == 0:
+                    x.a_Lg(ag.bv)
+                else:
+                    x.a_Lg(ag.bx)
+                self.b_TII(ag.dp[0][j_], m, 30)
+                m += 22
+                j_ += 1
+        self.q_I(2)
+
+    def q_I(self, paramInt):  # ag.java:1739-1741  (soft key "Skip")
+        ag.h_II(0, -1)
+
+    @staticmethod
+    def a_B(paramByte):  # ag.java:3021-3024  (width of a character)
+        return ag.bu.a_C(chr(paramByte & 0xFFFF))
+
+    def b_ABII(self, paramArrayOfbyte, paramInt1, paramInt2):  # ag.java:3100-3138  (word wrap into dp[paramInt2])
+        m = 0
+        i1 = 0
+        i2 = 0
+        b = 0
+        ag.dq[paramInt2] = 0
+        dp = ag.dp[paramInt2] = [None] * 120
+        n_ = len(paramArrayOfbyte)
+        j_ = 0
+        while j_ <= n_:
+            if j_ != n_:
+                c = paramArrayOfbyte[j_]
+                i2 += ag.a_B(c)
+                if (c == 32 or c == 124) and i2 - ag.a_B(c) >= paramInt1:
+                    if i1 < m:
+                        i1 = j_
+                    dp[b] = ag.a_ABII(paramArrayOfbyte, m, i1)
+                    b += 1
+                    m = i1 + 1
+                    j_ = m - 1
+                    i2 = 0
+                elif c == 32:
+                    i1 = j_
+                elif c == 124:
+                    dp[b] = ag.a_ABII(paramArrayOfbyte, m, j_)
+                    b += 1
+                    m = i1 = j_ + 1
+                    i2 = 0
+            elif i2 > paramInt1:
+                dp[b] = ag.a_ABII(paramArrayOfbyte, m, i1)
+                b += 1
+                dp[b] = ag.a_ABII(paramArrayOfbyte, i1 + 1, j_)
+                b += 1
+            elif i1 != n_ - 1:
+                dp[b] = ag.a_ABII(paramArrayOfbyte, m, j_)
+                b += 1
+            j_ += 1
+        if b >= 1:
+            ag.dq[paramInt2] = i8(b - 1)
+        return 1
+
+    @staticmethod
+    def a_AC(paramArrayOfchar):  # ag.java:3542-3547  (Integer.parseInt of the leading digits)
+        str_ = ""
+        b = 0
+        while b < len(paramArrayOfchar) and '0' <= paramArrayOfchar[b] <= '9':
+            str_ = str_ + paramArrayOfchar[b]
+            b += 1
+        return int(str_)
 
 
 def _late_init():

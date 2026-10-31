@@ -12,6 +12,7 @@ exactly the Java one. Hit zones follow what is drawn on each screen (coordinates
   Hero (cM[0] == 6)          left / right head -> LEFT / RIGHT, middle head -> FIRE
   Name (cM[0] == 7)          click a letter or OK -> arrow keys to it, then FIRE
   Stat points (cM[0] == 8)   click a stat row -> UP/DOWN to it, then FIRE (+1 point)
+  Prologue (bV == 10)        click -> FIRE (whole text / next page), soft key "Skip" -> LSOFT (-6)
   soft key BACK (bottom right)                         -> BACK (-7)
   right mouse button anywhere                          -> BACK (-7)
   wheel: Main Menu = LEFT/RIGHT, Game Menu = UP/DOWN, Yes/No popup = switch,
@@ -136,6 +137,14 @@ def keys_for(x, y, kind="click"):
         if af.b == 1:                   # "Would you like sound enabled?"
             return _popup_keys(x, y, kind)
         return [FIRE] if kind == "click" else []      # title: any key
+    if bv == 10:                        # story player ag.M(): FIRE shows the text, -6 skips
+        if ag.cS.b != 0:
+            return _popup_keys(x, y, kind)
+        if kind != "click":
+            return []
+        if x < ag.bU.getWidth() and y >= ag.bK - ag.bU.getHeight():
+            return [-6]
+        return [FIRE]
     if bv == 2 and ag.cS.b != 0:
         return _popup_keys(x, y, kind)
     if bv == 2:

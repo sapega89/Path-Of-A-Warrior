@@ -7,7 +7,7 @@
 
 ```bash
 pip install -r pyport/requirements.txt
-python pyport/main.py                 # вікно 480×640; New Game -> створення героя -> Game Menu
+python pyport/main.py                 # вікно 480×640; New Game -> створення героя -> пролог -> Game Menu
 python pyport/main.py --demo          # одразу покласти демо-сейв «HERO», якщо сейву ще немає
 POW_SCALE=3 python pyport/main.py     # 720×960
 python -m pytest -q pyport/tests      # тести (headless)
@@ -27,6 +27,7 @@ Esc/Backspace = права софт-клавіша (BACK), Q/F1 = ліва, ци
 - складність — клік по Hard / Normal; герой — клік по лівій/правій голові крутить, по середній = OK;
 - ім'я — клік по букві чи OK у сітці (курсор сам доходить туди стрілками і натискає OK), DEL = BACK;
 - очки характеристик — клік по рядку HP / MP / ATK / DEF додає очко саме туди;
+- пролог — клік = OK (увесь текст одразу), «SKIP» унизу ліворуч або Q/F1 = пропустити;
 - BACK — права кнопка миші або клік по «BACK» внизу праворуч.
 
 ### Браузер (pygbag)
@@ -51,6 +52,7 @@ pygbag під час збирання і в браузері завантажу�
 | поля `ag.java`, дрібні класи-структури | `pow/game/_ag_fields.py`, `structs.py` | **згенеровано** `tools/gen_fields.py` |
 | `ag.java` (частина) | `pow/game/ag.py` | цикл `run`, `paint/P/L`, титул `S/E/T`, читання сейву `U` і запис `ar`, фон меню `w/x`, софт-клавіші `h(int,int)`, новий герой `au/av/aw/ax/ay/k(int,int)`, сітка імені `r/f(int,int)` … |
 | `d.java`, `at.java` | `pow/game/d.py`, `at.py` | таблиці `.arr` (kibo/sungbo/shinki) і буфер імені |
+| `c.java` (лише `c(int)`) | `pow/game/c.py` | сторінка прологу/епілогу; плеєр історії `ag.l(int,int)/L/M/N`, текст у рамках `e.a(int,int,int)/b(int)/R` |
 | `af.java` | `pow/game/af.py` | лого → «sound enabled?» → титул |
 | `e.java` (частина) | `pow/game/e.py` | Main Menu (`aJ`), карусель Game Menu (`bf`), клавіші `a/aB/aC/aD/aE/b/aF`; створення героя: складність `aU`, герой `aK`, ім'я `aL/aM`, очки `O/T`, предмети `e(int)`, `p()` |
 | `l.java` (частина) | `pow/game/l.py` | попапи: рамка, кнопки Yes/No/Ok, усі текстові `e(int)`, клавіші й таймер |
@@ -91,7 +93,9 @@ pygbag під час збирання і в браузері завантажу�
 Створення героя (`e.java` / `ag.java` / `l.java`): Main Menu → New Game (якщо сейв є — попап 3
 «saved game will be deleted») → складність (екран 29, попап 36) → герой (екран 6) → ім'я
 (екран 7) → 5 очок характеристик (екран 8, попап 4) → `ax/ay/ar` записують сейв → Game Menu.
-Пролог `ag.l(100, 0)` (етап 2) поки пропускається. Порядок рядків «a character for battle. /
+Далі `ag.l(100, 0)` запускає пролог (bV = 10): дві сторінки-картинки з текстом, що
+пливе вгору, і діалоги «[Master] …» / «[ім'я героя] …» з друком по букві; кінець або SKIP → Game Menu.
+На картинці SKIP гортає лише одну сторінку, на діалозі — завершує пролог (так у Java, `ag.M()`). Порядок рядків «a character for battle. /
 Please select» на екрані 6 — дослівно з Java (`de - 90 - b*20`), теж варто звірити з KEmulator.
 
 ## Headless-скріншоти

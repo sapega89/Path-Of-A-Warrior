@@ -663,6 +663,103 @@ class e(ag):
             self.a_IIIIIII(ag.eM + 144, ag.eN + 97 + 20 * ag.cM[1] + ag.dc + 11, 14, 18, 255, 255, 255)
         ag.da = 0
 
+    def b_I(self, paramInt):  # e.java:2158-2165  (story: speaker portrait top-left, hero bottom-right)
+        self.a_IIIIZ(19 + ag.db + 2, ag.de - 72 + 9 + ag.dc, 46, 46, True)
+        if paramInt > -1:
+            self.a_TIIIIII(ag.bB.a_I(0 + paramInt), 19 + ag.db + 2, ag.de - 73 + 10 + ag.dc, 46, 46, 0, 0)
+        self.a_IIIIZ(ag.bZ.a // 2 + 60 - ag.db, ag.de - 72 + 109 + ag.dc, 46, 46, True)
+        self.a_TIIIIII(ag.bB.a_I(38 + ag.cz.aB), ag.bZ.a // 2 + 60 - ag.db, ag.de - 73 + 110 + ag.dc, 46, 46, 0, 0)
+        self.R_I(3)
+
+    def R_I(self, paramInt):  # e.java:2167-2172  (empty speech boxes: 1 = top, 2 = bottom)
+        if (paramInt & 0x1) != 0:
+            self.a_IIIIZ(ag.dd - 60 + 15 + ag.db, ag.de - 73 + 7 + ag.dc, 150, 53, False)
+        if (paramInt & 0x2) != 0:
+            self.a_IIIIZ(ag.dd - 60 + -40 + ag.db, ag.de - 73 + 107 + ag.dc, 150, 53, False)
+
+    @staticmethod
+    def a_III(paramInt1, paramInt2, paramInt3):  # e.java:2216-2309  (type speech text fw[p1], max 3 lines)
+        # paramInt3 == 0: one tick of typing (state kept in fA/fx/fy/fz/fB/fC); 1: redraw all
+        from pow.game.g import g
+        if paramInt1 == 0:
+            i3 = ag.dd - 60 + 15 + 2 + ag.db
+            i4 = ag.de - 73 + 7 + 2 + ag.dc
+        elif paramInt1 == 1:
+            i3 = ag.dd - 60 + -40 + 2 + ag.db
+            i4 = ag.de - 73 + 107 + 2 + ag.dc
+        else:
+            return False
+        if (ag.ch == -6 or ag.ch == -5) and 0 == paramInt3:
+            i1 = 1000                    # a key shows the whole text at once
+        else:
+            i1 = ag.fA[paramInt1]
+        # decompiled `if (!(n = (p2 != i1) ? 0 : p2))`: n == 0 -> start over, else continue
+        n = 0 if paramInt2 != i1 else paramInt2
+        if n == 0:
+            i = i3
+            j_ = i4
+            i2 = 0
+            m = 0
+            k = 0
+        else:
+            i = ag.fx[paramInt1]
+            j_ = ag.fy[paramInt1]
+            i2 = ag.fB[paramInt1]
+            m = ag.fC[paramInt1]
+            k = ag.fz[paramInt1]
+        x.a_Lg(ag.bu)
+        while n <= i1 and n < len(ag.fw[paramInt1]):
+            fw = ag.fw[paramInt1]
+            i5 = g.b_v() + g.c_v()
+            p = (1 if n <= 0 else n) - 1
+            if i == i3 or (p < len(fw) and fw[p] == ' ') or (n - 1 < len(fw) and fw[n - 1] == ']'):
+                b = 0
+                i6 = 0
+                while n + b + 1 < len(fw) and fw[n + b] != ' ' and fw[n + b] != ']' and fw[n + b] != ',':
+                    i6 += g.b_v() + g.c_v()
+                    b += 1
+                    if i6 > 146:
+                        i6 -= g.b_v() + g.c_v()
+                if fw[n + b] == ']':
+                    k += g.b_v()
+                if i6 + k > 146:
+                    k += i6
+            k += i5
+            if k > 146:
+                if ag.ch != -999 and m == 2:
+                    break
+                i = i3
+                k = i5
+                if m == 0:
+                    i2 = n
+                elif m != 1 and m == 2:
+                    # 3 lines are full: drop the first line and start drawing again
+                    str_ = fw[i2:]
+                    ag.fw[paramInt1] = str_
+                    i1 -= i2
+                    m = n = 0
+                    j_ = i4
+                    k = 0
+                    continue
+                m += 1
+                j_ += 16
+            if n == 0:
+                ag.bb.R_I(paramInt1 + 1)
+            if i == i3 and fw[n] == ' ':
+                n += 1
+            if len(fw) >= n + 1:
+                x.a_TIII(fw[n:n + 1], i, j_, 0)
+            i += i5
+            n += 1
+        if 0 == paramInt3:
+            ag.fA[paramInt1] = n
+            ag.fx[paramInt1] = i
+            ag.fy[paramInt1] = j_
+            ag.fz[paramInt1] = k
+            ag.fB[paramInt1] = i2
+            ag.fC[paramInt1] = m
+        return True
+
     def aU(self):  # e.java:2374-2394  (screen 29: difficulty Hard / Normal)
         arrayOfInt = [ag.dd - 80 + ag.db, ag.de - 60 + ag.dc]
         ag.ep = i16(ag.cM[1])

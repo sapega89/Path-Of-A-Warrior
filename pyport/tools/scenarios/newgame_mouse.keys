@@ -38,6 +38,16 @@ shot m_stats_1
 click 100 205      # MP -> last point, popup
 wait 4
 shot m_popup_complete
-click 60 200       # Yes -> save -> Game Menu
+click 60 200       # Yes -> save -> prologue
+wait 40
+shot m_prologue_scroll
+click 20 312       # Skip (left soft key): next page
+wait 3
+click 20 312       # Skip: first dialogue page
+wait 8
+click 120 160      # click = whole text at once
+wait 2
+shot m_prologue_dialogue
+click 20 312       # Skip: end of the prologue -> Game Menu
 wait 4
 shot m_game_menu
