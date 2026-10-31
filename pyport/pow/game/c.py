@@ -926,6 +926,13 @@ class c(ag):
             b += 1
         ex = ag.ex[b]
         ex.c = 1
+        if config.DECOMP_FIX["F16"] and ex.a[1] is not ex.a[0]:
+            # DECOMP-FIX F16: the start position is written into ex.a[1], but the enemy AI
+            # (ar.java:1340-1600) moves ex.a[0]. Both are the same object once ar.aC()
+            # (ex.a[1] = ex.a[0], ar.java:1831) has run for this slot; a slot used for the
+            # first time keeps a[0] at (0, 0), the enemy is pushed into the top-left corner
+            # of the room and can stay stuck there behind a tent or a wall.
+            ex.a[1] = ex.a[0]
         ex.a[1].a = i16(paramInt2 * 27 + 12 + arrayOfByte1[paramInt4])
         ex.a[1].b = i16(paramInt3 * 27 + 20 + arrayOfByte2[paramInt4])
         ex.b.a = ex.b.b = 0

@@ -28,6 +28,7 @@ DECOMP_FIX = {
     "F13": True,  # ag.y(): start position written to cz.a[1] while the map reads cz.a[0]
     "F14": True,  # c.i(): `k = aw[i]` read before the wall check -> aw[-1]; step with ar.c()'s new direction
     "F15": True,  # ag.a(byte[],int) "(..)" macro: chained `i2[1] = i3[1] = a(..,')')` decompiled as two calls
+    "F16": True,  # c.b(4 ints): enemy start position written to ex.a[1] while ar reads ex.a[0] (fresh slot)
     "F11": True,  # e.T(int) stat cursor: decompiled `a(.., bool, bool, bool)` = colour 0x010101 -> 255,255,255
 }
 
