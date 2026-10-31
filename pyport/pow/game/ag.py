@@ -20,8 +20,10 @@ from pow.game.x import x
 from pow.midp import system
 from pow.midp.canvas import Canvas
 from pow.midp.graphics import Image
-from pow.midp.jint import i8, i16, i32
+from pow.midp.jint import i8, i16, i32, idiv, imod
 from pow.midp.rms import RecordStore
+
+F10 = config.DECOMP_FIX["F10"]
 
 
 class NotPorted(NotImplementedError):
@@ -1141,6 +1143,504 @@ class ag(AgFields, Canvas):
     @staticmethod
     def M_I(paramInt):  # ag.java:3538-3540
         return ag.bG.a_I(paramInt)
+
+    # ---- New Game: hero creation (screens 29 / 6 / 7 / 8) and the save writer ------------
+
+    @staticmethod
+    def B_v():  # ag.java:1039-1041
+        return system.currentTimeMillis()
+
+    @staticmethod
+    def O_v():  # ag.java:1759-1773  (equipment bonuses -> derived stats)
+        cz = ag.cz
+        cz.s = cz.t = cz.u = cz.v = 0
+        for b in range(9):
+            if cz.X[b].a != 0:
+                cz.s += cz.X[b].b
+                cz.t += cz.X[b].c
+                cz.u += cz.X[b].d
+                cz.v += cz.X[b].e
+        cz.w = cz.m + cz.s
+        cz.x = cz.n + cz.t
+        cz.y = cz.p = cz.o + cz.u
+        cz.z = cz.r = cz.q + cz.v
+
+    @staticmethod
+    def r_I(paramInt):  # ag.java:1775-1792  (name entry: move the cursor over the 2x14 letter grid)
+        j_ = paramInt
+        if paramInt != -7 and paramInt != -5 and paramInt != 53:
+            if paramInt == -1 or paramInt == 50:
+                ag.bP = (ag.bP + 28 - 14) % 28
+            elif paramInt == -2 or paramInt == 56:
+                ag.bP = (ag.bP + 28 + 14) % 28
+            elif paramInt == -3 or paramInt == 52:
+                ag.bP = (ag.bP + 28 - 1) % 28
+            elif paramInt == -4 or paramInt == 54:
+                ag.bP = (ag.bP + 28 + 1) % 28
+                if ag.bP == 27:
+                    ag.bP = 0
+        if ag.bP == 27:
+            ag.bP = 26
+        return j_
+
+    _F_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
+                  "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
+                  "U", "V", "W", "X", "Y", "Z", "OK"]
+
+    @staticmethod
+    def f_II(paramInt1, paramInt2):  # ag.java:1794-1819  (letter grid A..Z + OK)
+        j_ = ag.bL - 71
+        arrayOfString = ag._F_LETTERS
+        x.b_IIIII(j_, paramInt2, 142, 34, 0)
+        x.b_IIIII(j_ + 123, paramInt2 + 18, 19, 15, 255)
+        if ag.bN % 4 < 2:
+            if paramInt1 == 26:
+                x.b_IIIII(j_ + 123, paramInt2 + 18, 19, 15, 16711680)
+            elif F10:
+                # DECOMP-FIX F10: `10 * p % 14`, `17 * p / 14` -> `10 * (p % 14)`, `17 * (p / 14)`
+                x.b_IIIII(j_ + 2 + 10 * (paramInt1 % 14), paramInt2 + 1 + 17 * (paramInt1 // 14), 10, 15, 16711680)
+            else:
+                x.b_IIIII(j_ + 2 + 10 * paramInt1 % 14, paramInt2 + 1 + 17 * paramInt1 // 14, 10, 15, 16711680)
+        x.a_Lg(ag.bu)
+        for b in range(len(arrayOfString)):
+            if b == 8:
+                b1 = 1
+            elif b == 26:
+                b1 = 1
+            else:
+                b1 = 0
+            row = 17 * (b // 14) if F10 else 17 * b // 14   # DECOMP-FIX F10
+            x.a_TIII(arrayOfString[b], j_ + 3 + b % 14 * 10 + b1, paramInt2 + row, 0)
+
+    def f_III(self, paramInt1, paramInt2, paramInt3):  # ag.java:1847-1880  (arrow from ct[17])
+        if paramInt1 == 0:
+            b3 = b4 = 0
+            b1, b2 = 10, 16
+        elif paramInt1 == 1:
+            b3, b4 = 9, 0
+            b1, b2 = 10, 16
+        elif paramInt1 == 2:
+            b3, b4 = 20, 0
+            b1, b2 = 16, 10
+        elif paramInt1 == 3:
+            b3, b4 = 20, 9
+            b1, b2 = 16, 10
+        else:
+            return
+        ag.a_IIIIMII(paramInt2 + ag.db, paramInt3 + ag.dc, b1, b2, ag.ct[17], b3, b4)
+
+    @staticmethod
+    def g_II(paramInt1, paramInt2):  # ag.java:2735-2737
+        paramInt2 -= 1
+        return paramInt1 + abs(imod(ag.by.nextInt(), abs(paramInt2 - paramInt1) + 1))
+
+    def C_I(self, paramInt):  # ag.java:2739-2741
+        return ag.g_II(0, paramInt)
+
+    def d_IIII(self, paramInt1, paramInt2, paramInt3, paramInt4):  # ag.java:2810-2834  (number from ct[19])
+        if paramInt4 != 0:
+            b1 = 0
+            m = idiv(paramInt1, 10)
+            paramInt2 += 9
+            while m > 0:
+                m = idiv(m, 10)
+                b1 += 1
+                paramInt2 += 9
+                if b1 % 3 == 0:
+                    paramInt2 += 4
+        j_ = paramInt2
+        b = 0
+        while True:
+            if b % 3 == 0 and b != 0:
+                paramInt2 -= 4
+                self.b_MIIIIII(ag.ct[19], paramInt2, paramInt3, 5, 14, 100, 0)
+            paramInt2 -= 9
+            self.b_MIIIIII(ag.ct[19], paramInt2, paramInt3, 10, 14, imod(paramInt1, 10) * 10, 0)
+            b += 1
+            paramInt1 = idiv(paramInt1, 10)
+            if paramInt1 <= 0:
+                return j_
+
+    def ar(self):  # ag.java:2871-2961  (write the save "gamevil_pow_data")
+        cz = ag.cz
+        arrayOfChar = [0] * 16
+        arrayOfByte = cz.k.encode("latin-1")
+        cF = ag.cF
+        for b in range(8):
+            if b < len(arrayOfByte):
+                cF[2 + b] = arrayOfByte[b]
+            else:
+                cF[2 + b] = 32
+        cF[18] = ag.dj & 0xFF
+        ag.cG = 19
+        ag.G_I(ag.dk)
+        ag.G_I(ag.dm)
+        ag.G_I(ag.do)
+        ag.a_J(ag.dw)
+        ag.a_J(ag.dx)
+        for b in range(8):
+            ag.E_I(i32(ag.dy[b]))
+        ag.E_I(ag.dY)
+        ag.E_I(ag.ed)
+        for b in range(44):
+            ag.G_I(ag.fn[0][b])
+            ag.G_I(ag.fn[1][b])
+        ag.G_I(ag.fo)
+        for b in range(25):
+            self.a_Lz(ag.fL[b])
+        ag.G_I(ag.cq)
+        ag.F_I((idiv(ag.cd + 2, 7) * 7 + 4) * 27)
+        ag.F_I((idiv(ag.ce + 2, 7) * 7 + 4) * 27)
+        for b in range(22):
+            ag.G_I(cz.g[b])
+        ag.G_I(cz.h)
+        ag.G_I(cz.i)
+        ag.G_I(cz.l)
+        ag.F_I(cz.m)
+        ag.F_I(cz.n)
+        ag.F_I(cz.o)
+        ag.F_I(cz.p)
+        ag.F_I(cz.q)
+        ag.F_I(cz.r)
+        ag.E_I(cz.E)
+        ag.E_I(cz.F)
+        ag.E_I(cz.G)
+        ag.F_I(cz.H)
+        ag.F_I(cz.J)
+        ag.G_I(cz.S)
+        for b in range(5):
+            ag.G_I(cz.V[b])
+        for b in range(19):
+            ag.G_I(cz.W[b])
+        for b in range(9):
+            self.a_Lz(cz.X[b])
+        for b in range(25):
+            self.a_Lz(cz.Y[b])
+        for b in range(5):
+            ag.F_I(cz.Z[b].a)
+            ag.G_I(cz.Z[b].b)
+        ag.G_I(cz.aa[0])
+        ag.G_I(cz.aa[1])
+        ag.G_I(cz.aB)
+        ag.E_I(i32(ag.dW[0] - ag.dV))
+        ag.E_I(i32(ag.eo))
+        ag.G_I(ag.fR)
+        ag.G_I(ag.fS)
+        ag.G_I(ag.dH)
+        ag.G_I(ag.ep)
+        for b in range(16):
+            ag.G_I(arrayOfChar[b])
+        ag.E_I(ag.fq)
+        for b in range(4):
+            ag.E_I(0)
+        cF[0] = ag.cG & 0xFF
+        cF[1] = ag.cG >> 8 & 0xFF
+        try:
+            recordStore = RecordStore.openRecordStore("gamevil_pow_data", True)
+            if recordStore.getNumRecords() == 0:
+                recordStore.addRecord(cF, 0, len(cF))
+            recordStore.setRecord(1, cF, 0, len(cF))
+        except Exception:
+            pass
+        return bool(ag.aq())
+
+    # cF holds Java bytes; the port stores them masked to 0..255 (RecordStore takes bytearray)
+    @staticmethod
+    def a_J(paramLong):  # ag.java:2963-2973
+        for k_ in range(8):
+            ag.cF[ag.cG + k_] = paramLong >> (8 * k_) & 0xFF
+        ag.cG += 8
+
+    @staticmethod
+    def E_I(paramInt):  # ag.java:2975-2981
+        ag.cF[ag.cG] = paramInt & 0xFF
+        ag.cF[ag.cG + 1] = paramInt >> 8 & 0xFF
+        ag.cF[ag.cG + 2] = paramInt >> 16 & 0xFF
+        ag.cF[ag.cG + 3] = paramInt >> 24 & 0xFF
+        ag.cG += 4
+
+    @staticmethod
+    def F_I(paramInt):  # ag.java:2983-2987
+        ag.cF[ag.cG] = paramInt & 0xFF
+        ag.cF[ag.cG + 1] = paramInt >> 8 & 0xFF
+        ag.cG += 2
+
+    @staticmethod
+    def G_I(paramInt):  # ag.java:2989-2992
+        ag.cF[ag.cG] = paramInt & 0xFF
+        ag.cG += 1
+
+    def a_Lz(self, paramz):  # ag.java:2994-3001
+        ag.F_I(paramz.a)
+        ag.F_I(paramz.b)
+        ag.F_I(paramz.c)
+        ag.F_I(paramz.d)
+        ag.F_I(paramz.e)
+        ag.G_I(paramz.f)
+
+    def a_IIIIIII(self, paramInt1, paramInt2, paramInt3, paramInt4, paramInt5, paramInt6, paramInt7):  # ag.java:3140-3146  (rectangle outline)
+        self.l_III(paramInt5, paramInt6, paramInt7)
+        ag.f_IIII(paramInt1, paramInt2, paramInt1 + paramInt3 - 1, paramInt2)
+        ag.f_IIII(paramInt1, paramInt2 + 1, paramInt1, paramInt2 + paramInt4 - 1)
+        ag.f_IIII(paramInt1 + paramInt3 - 1, paramInt2, paramInt1 + paramInt3 - 1, paramInt2 + paramInt4 - 1)
+        ag.f_IIII(paramInt1 + 1, paramInt2 + paramInt4 - 1, paramInt1 + paramInt3 - 2, paramInt2 + paramInt4 - 1)
+
+    def b_IIIIIII(self, paramInt1, paramInt2, paramInt3, paramInt4, paramInt5, paramInt6, paramInt7):  # ag.java:3181-3187  (outline, round corners)
+        self.l_III(paramInt5, paramInt6, paramInt7)
+        ag.f_IIII(paramInt1 + 1, paramInt2, paramInt1 + paramInt3 - 2, paramInt2)
+        ag.f_IIII(paramInt1, paramInt2 + 1, paramInt1, paramInt2 + paramInt4 - 2)
+        ag.f_IIII(paramInt1 + paramInt3 - 1, paramInt2 + 1, paramInt1 + paramInt3 - 1, paramInt2 + paramInt4 - 2)
+        ag.f_IIII(paramInt1 + 1, paramInt2 + paramInt4 - 1, paramInt1 + paramInt3 - 2, paramInt2 + paramInt4 - 1)
+
+    def c_IIIIIII(self, paramInt1, paramInt2, paramInt3, paramInt4, paramInt5, paramInt6, paramInt7):  # ag.java:3189-3199  (selection frame)
+        self.b_IIIIIII(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5, paramInt6, paramInt7)
+        self.j_II(paramInt1 + 1, paramInt2 + 1)
+        self.j_II(paramInt1 + paramInt3 - 2, paramInt2 + 1)
+        self.j_II(paramInt1 + 1, paramInt2 + paramInt4 - 2)
+        self.j_II(paramInt1 + paramInt3 - 2, paramInt2 + paramInt4 - 2)
+
+    def j_II(self, paramInt1, paramInt2):  # ag.java:3209-3211
+        ag.f_IIII(paramInt1, paramInt2, paramInt1 + 1, paramInt2 + 1)
+
+    def au(self):  # ag.java:3213-3220  (New Game -> difficulty screen 29)
+        ag.bb.c_v()
+        ag.cM[0] = 29
+        ag.cN = ae.v[ag.cM[0]]
+        ag.cM[1] = 1
+        ag.cz.aB = 0
+        self.av()
+
+    def av(self):  # ag.java:3222-3273  (fresh hero)
+        cz = ag.cz
+        ag.dj = 0
+        ag.dH = 0
+        ag.dw = 35113052110447
+        ag.dx = 0
+        ag.ed = 0
+        ag.cq = 0
+        cz.aB = 0
+        cz.k = ""
+        for b in range(45):
+            ag.fn[1][b] = 0
+            ag.fn[0][b] = 0
+        ag.fo = 0
+        for b in range(8):
+            ag.dy[b] = 0
+        cz.l = 1
+        ag.aw()
+        cz.F = 0
+        cz.E = 0
+        cz.G = 0
+        cz.S = 0
+        for b in range(22):
+            cz.g[b] = 0
+        cz.h = 0
+        cz.i = 0
+        for b in range(5):
+            cz.V[b] = 0
+            cz.Z[b].a = 0
+            cz.Z[b].b = 0
+        for b in range(19):
+            cz.W[b] = 0
+        cz.W[0] = 1
+        cz.W[5] = 1
+        cz.V[0] = 12
+        cz.V[1] = 17
+        if ag.bi:
+            for b in range(19):
+                cz.W[b] = 1
+            cz.W[18] = 1
+        # z.a() is shadowed by the field z.a on instances -> call it through the class
+        for b in range(9):
+            z.a(cz.X[b])
+        for b in range(25):
+            z.a(cz.Y[b])
+        self.k_II(116, 0)
+        self.a_LzLz(cz.X[0], cz.Y[0])
+        cz.aa[0] = 0
+        cz.aa[1] = 1
+
+    @staticmethod
+    def aw():  # ag.java:3275-3284  (base stats, 5 free points)
+        cz = ag.cz
+        cz.m = 5
+        cz.n = 4
+        cz.o = 30
+        cz.p = 30
+        cz.q = 10
+        cz.r = 10
+        cz.J = 5
+        ag.ck = 1
+
+    def k_II(self, paramInt1, paramInt2):  # ag.java:3286-3360  (give an item / potion / gold)
+        cz = ag.cz
+        b = 0
+        if paramInt1 < 100:
+            if paramInt2 != 0:
+                b1 = -1
+                b = 0
+                while b < 5:
+                    if cz.Z[b].a == paramInt1:
+                        if cz.Z[b].b > 4:
+                            return 0
+                        break
+                    if 0 == cz.Z[b].a and b1 < 0:
+                        b1 = b
+                    b += 1
+                if b1 > -1 and b > 4:
+                    b = b1
+                if b > 4:
+                    return 0
+            else:
+                cz.Z[ag.dU.e].b = i16(cz.Z[ag.dU.e].b - 1)
+                if cz.Z[ag.dU.e].b < 1:
+                    cz.Z[ag.dU.e].a = 0
+                return 1
+        elif paramInt1 < 10000:
+            b = 0
+            while b < 25 and 0 != cz.Y[b].a:
+                b += 1
+            if b > 24:
+                return 0
+            cz.Y[b].a = i16(paramInt1)
+            cz.Y[b].b = 0
+            cz.Y[b].c = 0
+            cz.Y[b].d = 0
+            cz.Y[b].e = 0
+            cz.Y[b].f = 0
+        if paramInt1 < 10000:
+            ag.bb.e_I(paramInt1)
+        if paramInt1 < 100:
+            cz.Z[b].a = i16(paramInt1)
+            cz.Z[b].b = i16(cz.Z[b].b + 1)
+        elif paramInt1 < 300:
+            if paramInt2 != 0:
+                s = i16(ag.cX.d + self.C_I(ag.cX.e + 1))
+            else:
+                s = ag.cX.d
+            if ag.cX.c == 0:
+                cz.Y[b].b = s
+            elif ag.cX.c == 1:
+                cz.Y[b].c = s
+            elif ag.cX.c == 2:
+                cz.Y[b].d = s
+            elif ag.cX.c == 3:
+                cz.Y[b].e = s
+        elif paramInt1 < 500:
+            cz.Y[b].b = ag.cY.c
+            cz.Y[b].c = i16(ag.cY.d)
+            cz.Y[b].d = ag.cY.e
+            cz.Y[b].e = i16(ag.cY.f)
+        elif paramInt1 < 10000:
+            cz.Y[b].b = ag.cZ.c
+            cz.Y[b].c = i16(ag.cZ.d)
+            cz.Y[b].d = ag.cZ.e
+            cz.Y[b].e = i16(ag.cZ.f)
+        else:
+            cz.E += paramInt1 - 10000
+        return 1
+
+    @staticmethod
+    def ax():  # ag.java:3362-3375  (starting quick items)
+        for b in range(8):
+            if ag.fL[b] is None:
+                ag.fL[b] = z()
+        ag.fL[0].a = 1
+        ag.fL[1].a = 2
+        ag.fL[2].a = 3
+        ag.fL[3].a = 4
+        ag.fL[4].a = 5
+        ag.fL[5].a = 6
+        ag.fL[6].a = 10
+        ag.fL[7].a = 11
+
+    def ay(self):  # ag.java:3377-3398  (17 random shop items, sorted)
+        arrayOfInt = [0] * 17
+        ag.az()
+        for b in range(17):
+            arrayOfInt[b] = 101 + 5 * ag.g_II(0, 20) + ag.I_I(ag.g_II(0, 100))
+        for b in range(16, 0, -1):
+            bool_ = False
+            for b1 in range(b):
+                if arrayOfInt[b1] > arrayOfInt[b1 + 1]:
+                    j_ = arrayOfInt[b1]
+                    arrayOfInt[b1] = arrayOfInt[b1 + 1]
+                    arrayOfInt[b1 + 1] = j_
+                    bool_ = True
+            if not bool_:
+                break
+        for b in range(17):
+            ag.fL[8 + b] = self.J_I(arrayOfInt[b])
+
+    @staticmethod
+    def az():  # ag.java:3400-3412
+        from pow.game.d import d
+        arrayOfInt = [47, 51, 49]
+        if not ag.fM[1]:
+            for b in range(3):
+                if ag.bH[b] is None:
+                    ag.bH[b] = d("/" + ag.bE.a_I(arrayOfInt[b]))
+                if ag.bH[b] is None:
+                    return False
+            ag.fM[1] = True
+        return True
+
+    @staticmethod
+    def I_I(paramInt):  # ag.java:3414-3422  (item tier by hero level)
+        m = 0
+        b = 0
+        while b < 5 and ag.cz.l >= ae.w[b]:
+            b += 1
+        j_ = ae.x[b - 1]
+        b = 0
+        while b < 4:
+            m += j_ & 0xFF
+            if not paramInt >= m:
+                break
+            j_ >>= 8
+            b += 1
+        return b
+
+    def J_I(self, paramInt):  # ag.java:3424-3457  (make item paramInt with random bonus)
+        z1 = z()
+        arrayOfInt = [0] * 5
+        z1.a = i16(paramInt)
+        z1.f = 0
+        if paramInt < 300:
+            for b in range(3):
+                arrayOfInt[b] = ag.bH[0].a_II(paramInt - 101, 2 + b)
+            if arrayOfInt[0] == 0:
+                z1.b = i16(arrayOfInt[1] + self.C_I(arrayOfInt[2]))
+            elif arrayOfInt[0] == 1:
+                z1.c = i16(arrayOfInt[1] + self.C_I(arrayOfInt[2]))
+            elif arrayOfInt[0] == 2:
+                z1.d = i16(arrayOfInt[1] + self.C_I(arrayOfInt[2]))
+            elif arrayOfInt[0] == 3:
+                z1.e = i16(arrayOfInt[1] + self.C_I(arrayOfInt[2]))
+        else:
+            tbl = ag.bH[1] if paramInt < 500 else ag.bH[2]
+            for b in range(4):
+                arrayOfInt[b] = tbl.a_II(paramInt - 301, 2 + b)   # sic: -301 for both tables
+            z1.b = i16(arrayOfInt[0])
+            z1.c = i16(arrayOfInt[1])
+            z1.d = i16(arrayOfInt[2])
+            z1.e = i16(arrayOfInt[3])
+        return z1
+
+    def l_II(self, paramInt1, paramInt2):  # ag.java:3488-3528  (story / mission briefing, bV = 10)
+        # SPIKE: l(100, 0) is the prologue after hero creation (Phase 2). It is skipped,
+        # the player stays in the Game Menu that l.b() has just set up.
+        if paramInt1 == 100:
+            print("l(100, 0): prologue skipped (Phase 2)")
+            return
+        not_ported("ag.l(%d, %d) (story / briefing)" % (paramInt1, paramInt2))
+
+    @staticmethod
+    def L_I(paramInt):  # ag.java:3530-3536  (inventory slot of item, 1-based; 0 = none)
+        for b in range(25):
+            if ag.cz.Y[b].a == paramInt:
+                return b + 1
+        return 0
 
 
 def _late_init():

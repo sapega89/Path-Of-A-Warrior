@@ -23,6 +23,8 @@ DECOMP_FIX = {
     "F6": True,  # e.java menu navigation: `cM[1]=cM[1]+1; if (cM[1]+1 >= cN)` -> `if (++cM[1] >= cN)`
     "F8": True,  # ag.L(): switch cases without break -> separate branches (always on, no literal mode)
     "F9": True,  # l.a(String): `s = s + 1; l[s] = ...` -> `l[s++] = ...` (proposed, see pyport/README.md)
+    "F10": True,  # ag.f(int,int) name grid: `10 * p % 14`, `17 * b / 14` -> `10 * (p % 14)`, `17 * (b / 14)`
+    "F11": True,  # e.T(int) stat cursor: decompiled `a(.., bool, bool, bool)` = colour 0x010101 -> 255,255,255
 }
 
 # Re-raise exceptions inside the game loop (Java would print "--run:" and continue).
@@ -31,6 +33,7 @@ DEBUG = os.environ.get("POW_DEBUG", "1") == "1"
 # NotPorted (a screen of a later phase): True = crash, False = popup + back to the menu.
 STRICT = os.environ.get("POW_STRICT", "0") == "1"
 
-# SPIKE-ONLY: create a minimal save on first start so Continue opens the Game Menu
-# (New Game is ported in Phase 2). main.py --no-demo or POW_DEMO_SAVE=0 disables it.
-DEMO_SAVE = os.environ.get("POW_DEMO_SAVE", "1") == "1"
+# SPIKE-ONLY: create a minimal save on first start so Continue opens the Game Menu without
+# going through New Game. Off by default since hero creation is ported; POW_DEMO_SAVE=1 or
+# main.py --demo turns it on.
+DEMO_SAVE = os.environ.get("POW_DEMO_SAVE", "0") == "1"

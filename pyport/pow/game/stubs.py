@@ -4,6 +4,7 @@ Phase 0 screens need from them: nothing, without crashing."""
 
 class as_stub:  # as.java (Gamevil Live) - phase 7
     a = None
+    d = False   # static boolean d: set when a new game is created (l.java:144)
     gu = False
 
     def i(self):  # as.i(): network tick, called every frame from ag.run

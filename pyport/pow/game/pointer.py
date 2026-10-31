@@ -8,10 +8,17 @@ exactly the Java one. Hit zones follow what is drawn on each screen (coordinates
   popup Ok / text            click                     -> FIRE
   Main Menu (cM[0] == 5)     caption strip: arrow ◄ / ► -> LEFT / RIGHT, caption -> FIRE
   Game Menu (cM[0] == 0)     small button above -> UP, big button -> FIRE, below -> DOWN
+  Difficulty (cM[0] == 29)   click Hard / Normal -> select it, then FIRE
+  Hero (cM[0] == 6)          left / right head -> LEFT / RIGHT, middle head -> FIRE
+  Name (cM[0] == 7)          click a letter or OK -> arrow keys to it, then FIRE
+  Stat points (cM[0] == 8)   click a stat row -> UP/DOWN to it, then FIRE (+1 point)
   soft key BACK (bottom right)                         -> BACK (-7)
   right mouse button anywhere                          -> BACK (-7)
-  wheel: Main Menu = LEFT/RIGHT, Game Menu = UP/DOWN, Yes/No popup = switch
+  wheel: Main Menu = LEFT/RIGHT, Game Menu = UP/DOWN, Yes/No popup = switch,
+         Difficulty / Stat points = UP/DOWN, Hero = LEFT/RIGHT
 """
+import collections
+
 from pow.game.ag import ag
 
 UP, DOWN, LEFT, RIGHT, FIRE, BACK = -1, -2, -3, -4, -5, -7
@@ -27,6 +34,94 @@ def _popup_keys(x, y, kind):
     if kind != "click":
         return []
     return [FIRE]
+
+
+def _name_step(p, key):
+    """ag.r(int) on a cursor value (ag.java:1775-1792), without touching ag.bP."""
+    if key == UP:
+        p = (p + 28 - 14) % 28
+    elif key == DOWN:
+        p = (p + 28 + 14) % 28
+    elif key == LEFT:
+        p = (p + 28 - 1) % 28
+    elif key == RIGHT:
+        p = (p + 28 + 1) % 28
+        if p == 27:
+            p = 0
+    return 26 if p == 27 else p
+
+
+def _name_path(src, dst):
+    """Shortest list of arrow keys that moves the name cursor from src to dst."""
+    prev = {src: None}
+    todo = collections.deque([src])
+    while todo:
+        p = todo.popleft()
+        if p == dst:
+            break
+        for key in (LEFT, RIGHT, UP, DOWN):
+            q = _name_step(p, key)
+            if q not in prev:
+                prev[q] = (p, key)
+                todo.append(q)
+    keys = []
+    p = dst
+    while prev.get(p) is not None:
+        p, key = prev[p]
+        keys.append(key)
+    return keys[::-1]
+
+
+def _name_cell(x, y):
+    """Cell of the letter grid ag.f(int,int) under (x, y): 0..25 letters, 26 OK, None outside."""
+    j_ = ag.bL - 71
+    top = ag.de + 32 + ag.dc
+    if not (j_ + 2 <= x < j_ + 142 and top <= y < top + 34):
+        return None
+    row = (y - top) // 17
+    if row == 1 and x >= j_ + 123:
+        return 26
+    return min(row * 14 + (x - j_ - 2) // 10, 25)
+
+
+def _new_game_keys(c0, x, y, kind):
+    """Hero creation screens (e.aU, e.aK, ag.f, e.O)."""
+    dd, de = ag.dd, ag.de
+    if c0 == 29:                        # e.aU: buttons at y = de-60 + b*25, h 20
+        if kind != "click":
+            return [UP]
+        for b in range(2):
+            top = de - 60 + b * 25
+            if dd - 80 <= x < dd + 80 and top - 2 <= y < top + 22:
+                return ([UP] if ag.cM[1] != b else []) + [FIRE]
+        return []
+    if c0 == 6:                         # e.aK: heads at x = dd-94 + 69*b, y = de+9, 50x50
+        if kind != "click":
+            return [LEFT if kind == "wheel_up" else RIGHT]
+        if de + 4 <= y < de + 64:
+            if x < dd - 27:
+                return [LEFT]
+            if x >= dd + 25:
+                return [RIGHT]
+            return [FIRE]
+        return []
+    if c0 == 7:                         # ag.f: 2 x 14 letters + OK
+        if kind != "click":
+            return []
+        cell = _name_cell(x, y)
+        if cell is None:
+            return []
+        return _name_path(ag.bP, cell) + [FIRE]
+    if c0 == 8:                         # e.O: rows HP MP ATK DEF at y = eN+108 + b*20, h 18
+        if kind != "click":
+            return [UP if kind == "wheel_up" else DOWN]
+        for b in range(4):
+            top = ag.eN + 108 + b * 20
+            if ag.eM + 39 <= x < ag.eM + 160 and top <= y < top + 20:
+                d = b - ag.cM[1]
+                return ([DOWN] * d if d > 0 else [UP] * -d) + [FIRE]
+        return []
+    return None
 
 
 def keys_for(x, y, kind="click"):
@@ -78,4 +173,7 @@ def keys_for(x, y, kind="click"):
             return []
         if soft_back:
             return [BACK]
+        keys = _new_game_keys(c0, x, y, kind)
+        if keys is not None:
+            return keys
     return [FIRE] if kind == "click" else []

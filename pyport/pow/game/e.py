@@ -6,10 +6,12 @@ Screens of later phases raise NotPorted.
 import config
 from pow.game import ae
 from pow.game.ag import ag, not_ported
+from pow.game.at import at
 from pow.game.x import x
-from pow.midp.jint import i16
+from pow.midp.jint import i8, i16, i32, idiv
 
 F6 = config.DECOMP_FIX["F6"]
+F11 = config.DECOMP_FIX["F11"]
 
 
 def _dec_cmp(v):
@@ -63,6 +65,15 @@ class e(ag):
             elif v == 5:
                 self.S_v()
                 self.aJ()
+            elif v == 6:
+                self.aK()
+            elif v == 7:
+                self.aL()
+                self.aM()
+            elif v in (8, 14):
+                self.O_I(1)
+            elif v == 29:
+                self.aU()
             else:
                 not_ported("e.a(1) screen cM[0]=%d" % v)
             if ag.cS.b != 0:
@@ -90,7 +101,16 @@ class e(ag):
                     self.S_v()
                     self.aJ()
                     return
-                if v in (4, 7, 15, 16, 17, 18, 20, 21, 22, 23, 24) or (v in (8, 14) and ag.da != 0):
+                if v == 7:
+                    self.aM()
+                    ag.f_II(ag.bP, ag.de + 32 + ag.dc)
+                    return
+                if v in (8, 14):
+                    if ag.da != 0:
+                        self.O_I(0)
+                        return
+                    return
+                if v in (4, 15, 16, 17, 18, 20, 21, 22, 23, 24):
                     not_ported("e.a(0) screen cM[0]=%d" % v)
 
     def a_v(self):  # e.java:207-302  (keys of the menus)
@@ -100,7 +120,32 @@ class e(ag):
         if v == 4:
             return
         if v == 7:
-            not_ported("e.a() name entry (cM[0]=7)")
+            i = ag.r_I(ag.ch)
+            if i == -7:
+                if len(ag.bz.a_v()) == 0:
+                    ag.cM[0] = 6
+                    ag.ck = 1
+                    return
+                ag.bz.a_I(-8)
+                return
+            if i == -5 or i == 53:
+                if ag.bP == 26:
+                    if len(ag.bz.a_v()) != 0:
+                        ag.cz.k = ag.bz.a_v()
+                        ag.bz.a_T(ag.cz.k)
+                        ag.cM[0] = 8
+                        ag.O_v()
+                        ag.cN = 4
+                        ag.aw()
+                        return
+                else:
+                    if len(ag.bz.a_v()) == 0:
+                        b = 65
+                    else:
+                        b = 97
+                    ag.bz.a_I(b + ag.bP)
+                    return
+            return
         if v == 20:
             if ag.ch != -5:
                 ag.ch = -999
@@ -152,7 +197,12 @@ class e(ag):
         if v in (3, 5, 6, 18, 20, 28):
             return
         if v in (8, 14):
-            not_ported("e.T(int) (stat points)")
+            self.T_I(0)
+            cM[1] = cM[1] - 1
+            if _dec_cmp(cM[1]) < 0:
+                cM[1] = ag.cN - 1
+            self.T_I(1)
+            return
         if v == 9:
             cM[1] = cM[1] - 1
             if _dec_cmp(cM[1]) < 1:
@@ -220,7 +270,12 @@ class e(ag):
         if v in (3, 5, 6, 18, 20, 28):
             return
         if v in (8, 14):
-            not_ported("e.T(int) (stat points)")
+            self.T_I(0)
+            cM[1] = cM[1] + 1
+            if _inc_cmp(cM[1]) >= ag.cN:
+                cM[1] = 0
+            self.T_I(1)
+            return
         if v == 9:
             cM[1] = cM[1] + 1
             if _inc_cmp(cM[1]) >= ag.cN:
@@ -345,7 +400,13 @@ class e(ag):
         if e.m_II(cM[0], cM[1] % 7) > -1:
             self.c_v()
             ag.cN = ae.v[cM[0]]
-            not_ported("e.b() -> screen cM[0]=%d" % cM[0])
+            if cM[0] == 7:
+                ag.cz.k = ""
+            else:   # 1 3 9 10 12 13 14 15 17 20-24 27 28: later phases
+                not_ported("e.b() -> screen cM[0]=%d" % cM[0])
+            cM[2] = 0
+            cM[1] = 0
+            return
         v = cM[0]
         if v == 0:
             if cM[1] == 3:
@@ -387,8 +448,32 @@ class e(ag):
                         not_ported("e.b() continue inside a mission (dj != 0)")
                 return
             if cM[1] == 1:
-                not_ported("e.b() New Game (at, au)")
-        elif v in (1, 3, 8, 10, 11, 14, 15, 17, 25, 29):
+                ag.bz = None
+                ag.bz = at("", 8, 10)
+                if ag.aq():
+                    ag.cS.e_I(3)
+                    return
+                self.au()
+                return
+        elif v in (8, 14):
+            if ag.cz.J > 0:
+                ag.da = 1
+                ag.cz.J -= 1
+                if cM[1] == 0:
+                    ag.cz.o += 5
+                elif cM[1] == 1:
+                    ag.cz.q += 3
+                elif cM[1] == 2:
+                    ag.cz.m += 1
+                elif cM[1] == 3:
+                    ag.cz.n += 1
+                if cM[0] == 8 and ag.cz.J == 0:
+                    ag.cS.e_I(4)
+                    ag.ck = 1
+                    return
+        elif v == 29:
+            ag.cS.e_I(36)
+        elif v in (1, 3, 10, 11, 15, 17, 25):
             not_ported("e.b() cM[0]=%d" % v)
 
     def aF(self):  # e.java:1002-1109  (BACK)
@@ -502,6 +587,187 @@ class e(ag):
             ag.dr = 32
             return
         ag.dr += 1
+
+    def aK(self):  # e.java:1385-1404  (screen 6: choose the hero, 3 heads, the middle one is chosen)
+        image = None
+        i = ag.cz.aB - 1 & 0x3
+        x.a_Lg(ag.bu)
+        for b in range(3):
+            str_ = ag.M_I(65 + b)
+            self.b_TII(str_, ag.de - 90 - b * 20 + 10, 0)
+        for b in range(3):
+            image = self.d_T(ag.bB.a_I(38 + i))
+            self.b_IIIIIII(ag.dd - 94 + 69 * b + ag.db, ag.de + 9 + ag.dc, 50, 50, 148, 109, 82)
+            self.a_IIIIIII(ag.dd - 93 + 69 * b + ag.db, ag.de + 10 + ag.dc, 48, 48, 33, 0, 0)
+            self.b_MIIIIII(image, ag.dd - 92 + 69 * b, ag.de + 11, 46, 46, 0, 0)
+            i = i + 1 & 0x3
+        self.c_IIIIIII(ag.dd - 27 + ag.db + 1, ag.de + 8 + ag.dc, 52, 52, 255, 182, 82)
+        self.f_III(0, ag.dd - 40, ag.de + 23)
+        self.f_III(1, ag.dd + 30, ag.de + 23)
+
+    def aL(self):  # e.java:1406-1413  (screen 7: the two caption lines)
+        x.a_Lg(ag.bu)
+        ag.cy = 0
+        while ag.cy < 2:
+            self.b_TII(ag.M_I(69 + ag.cy), ag.de - 47 + ag.cy * 20, 0)
+            ag.cy += 1
+
+    def aM(self):  # e.java:1415-1427  (screen 7: the name box)
+        i = ag.dd - 80 + ag.db
+        j_ = ag.de + 8 + ag.dc
+        x.b_IIIII(i, j_, 160, 20, 0)
+        x.a_IIIII(i, j_, 160, 20, ag.k_III(173, 170, 173))
+        x.a_Lg(ag.bu)
+        x.a_TIII(ag.bz.a_v(), ag.bL, j_ + 2, 1)
+        if ag.bz.b_v() == 0:
+            ag.h_II(-1, 2)
+            return
+        ag.h_II(-1, 10)
+
+    def O_I(self, paramInt):  # e.java:1429-1469  (screen 8/14: stat sheet; 1 = whole, 0 = numbers only)
+        cz = ag.cz
+        arrayOfInt1 = [cz.o, cz.q, cz.m, cz.n]
+        image = None
+        if paramInt != 0:
+            arrayOfInt = self.p_v()
+            ag.dZ[0] = i16(idiv(cz.G * 100, arrayOfInt[0]))
+            image = self.d_T(ag.bA.a_I(26))
+            i = image.getWidth()
+            j_ = image.getHeight()
+            ag.eN = ag.de - j_ // 2
+            ag.eM = ag.dd - i // 2
+            self.b_MIIIIII(image, ag.eM, ag.eN, i, j_, 0, 0)
+            ag.c_TII(cz.k, ag.eM + 110, ag.eN + 6)
+            self.d_IIII(cz.l, ag.eM + 152, ag.eN + 34, 0)
+            self.d_IIII(cz.F, ag.eM + 152, ag.eN + 61, 0)
+        else:
+            arrayOfInt = [ag.eM + 88, ag.eN + 83, 68, 20]
+            x.b_IIIII(arrayOfInt[0], arrayOfInt[1], arrayOfInt[2], arrayOfInt[3], 0)
+            arrayOfInt[0] = ag.eM + 39
+            arrayOfInt[1] = ag.eN + 108
+            arrayOfInt[2] = 104
+            arrayOfInt[3] = 18
+            for b1 in range(4):
+                x.b_IIIII(arrayOfInt[0], arrayOfInt[1], arrayOfInt[2], arrayOfInt[3], 0)
+                arrayOfInt[1] = arrayOfInt[1] + 20
+        arrayOfInt2 = [cz.u, cz.v, cz.s, cz.t]
+        self.d_IIII(cz.J, ag.eM + 152, ag.eN + 86, 0)
+        for b in range(4):
+            i = self.d_IIII(arrayOfInt1[b], ag.eM + 44, ag.eN + 110 + b * 20, 1)
+            if arrayOfInt2[b] > 0:
+                self.b_MIIIIII(ag.ct[19], i + 1, ag.eN + 110 + b * 20, 10, 14, 105, 0)
+                self.d_IIII(arrayOfInt2[b], i + 9, ag.eN + 110 + b * 20, 1)
+        image = self.d_T(ag.bB.a_I(38 + cz.aB))
+        self.b_MIIIIII(image, ag.eM + 2, ag.eN + 3, 46, 46, 0, 0)
+        if cz.J > 0:
+            self.a_IIIIIII(ag.eM + 144, ag.eN + 97 + 20 * ag.cM[1] + ag.dc + 11, 14, 18, 255, 255, 255)
+        ag.da = 0
+
+    def aU(self):  # e.java:2374-2394  (screen 29: difficulty Hard / Normal)
+        arrayOfInt = [ag.dd - 80 + ag.db, ag.de - 60 + ag.dc]
+        ag.ep = i16(ag.cM[1])
+        for b in range(2):
+            if ag.cM[1] == b:
+                x.a_Lg(ag.bw)
+                bool_ = True
+            else:
+                x.a_Lg(ag.bu)
+                bool_ = False
+            self.a_IIIIZ(arrayOfInt[0], arrayOfInt[1] + b * 25, 160, 20, bool_)
+            self.b_TII(ae.aX[b], arrayOfInt[1] + 1 + b * 25 - 1, 15)
+        x.a_Lg(ag.bu)
+        self.a_IIIIZ(arrayOfInt[0], ag.de + ag.dc, 160, 80, False)
+        for b in range(3):
+            self.b_TII(ae.aY[ag.cM[1]][b], ag.de + 10 + b * 20, 17)
+
+    def e_I(self, paramInt):  # e.java:3465-3531  (item record -> cX / cY / cZ)
+        arrayOfByte = bytearray(16)
+        if paramInt < 100:
+            return
+        if paramInt < 300:
+            if ag.cU is None:
+                ag.cU = ag.v_I(47)
+            cU = ag.cU
+            i = 9 + (paramInt - 101) * 23
+            b = 0
+            while b < 15:
+                arrayOfByte[b] = cU[i + b] & 0xFF
+                if arrayOfByte[b] == 0:
+                    break
+                b += 1
+            ag.cX.a = ag.a_ABII(arrayOfByte, 0, b)
+            ag.cX.b = i8(cU[i + 15])
+            ag.cX.c = i8(cU[i + 15 + 1])
+            ag.cX.d = i8(cU[i + 15 + 2])
+            ag.cX.e = i8(cU[i + 15 + 3])
+            ag.cX.f = i8(cU[i + 22])
+            if ag.bV != 2:
+                ag.cU = None
+                return
+        elif paramInt < 500:
+            if ag.cV is None:
+                ag.cV = ag.v_I(51)
+            cV = ag.cV
+            i = 10 + (paramInt - 301) * 24
+            b = 0
+            while b < 15:
+                arrayOfByte[b] = cV[i + b] & 0xFF
+                if arrayOfByte[b] == 0:
+                    break
+                b += 1
+            ag.cY.a = ag.a_ABII(arrayOfByte, 0, b)
+            ag.cY.b = i8(cV[i + 15])
+            ag.cY.c = ag.a_BB(cV[i + 16], cV[i + 17])
+            ag.cY.d = i8(cV[i + 18])
+            ag.cY.e = cV[i + 19] & 0xFF
+            ag.cY.f = i8(cV[i + 20])
+            ag.cY.g = i8(cV[i + 22])
+            ag.cY.h = cV[i + 23] & 0xFF
+            if ag.bV != 2:
+                ag.cV = None
+                return
+        else:
+            if ag.cW is None:
+                ag.cW = ag.v_I(49)
+            cW = ag.cW
+            i = 9 + (paramInt - 501) * 27
+            b = 0
+            while b < 15:
+                arrayOfByte[b] = cW[i + b] & 0xFF
+                if arrayOfByte[b] == 0:
+                    break
+                b += 1
+            ag.cZ.a = ag.a_ABII(arrayOfByte, 0, b)
+            ag.cZ.b = i8(cW[i + 15])
+            ag.cZ.c = ag.a_BB(cW[i + 16], cW[i + 17])
+            ag.cZ.d = i8(cW[i + 18])
+            ag.cZ.e = ag.a_BB(cW[i + 19], cW[i + 20])
+            ag.cZ.f = i8(cW[i + 21])
+            ag.cZ.g = cW[i + 26] & 0xFF
+            if ag.bV != 2:
+                ag.cW = None
+
+    def T_I(self, paramInt):  # e.java:3533-3545  (stat cursor: 0 = erase, 1 = draw)
+        if ag.cz.J > 0:
+            if paramInt != 0:
+                c = 255 if F11 else 1   # DECOMP-FIX F11: decompiled `true` (= 1) as a colour
+            else:
+                c = 0
+            self.a_IIIIIII(ag.eM + 144, ag.eN + 97 + 20 * ag.cM[1] + 11, 14, 18, c, c, c)
+
+    def p_v(self):  # e.java:3547-3560  (exp table of the hero level from edat 45)
+        arrayOfByte = ag.v_I(45)
+        j_ = 40
+        if ag.cz.l > 190:
+            j_ = 200 - ag.cz.l << 2
+        k = j_ // 4
+        arrayOfInt = [0] * k
+        i = 4 * (ag.cz.l - 1) + 2
+        for b in range(k):
+            o = i + b * 4
+            arrayOfInt[b] = i32((arrayOfByte[o + 3] & 0xFF) << 24 | (arrayOfByte[o + 2] & 0xFF) << 16
+                                | (arrayOfByte[o + 1] & 0xFF) << 8 | arrayOfByte[o] & 0xFF)
+        return arrayOfInt
 
     def bf_v(self):  # e.java:3283-3364  (Game Menu carousel, 4 animation frames per step)
         cM = ag.cM

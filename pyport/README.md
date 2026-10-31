@@ -7,8 +7,8 @@
 
 ```bash
 pip install -r pyport/requirements.txt
-python pyport/main.py                 # вікно 480×640; Main Menu -> Continue -> Game Menu
-python pyport/main.py --no-demo       # без демо-збереження (Continue сірий, як в оригіналі)
+python pyport/main.py                 # вікно 480×640; New Game -> створення героя -> Game Menu
+python pyport/main.py --demo          # одразу покласти демо-сейв «HERO», якщо сейву ще немає
 POW_SCALE=3 python pyport/main.py     # 720×960
 python -m pytest -q pyport/tests      # тести (headless)
 python pyport/tools/shot.py pyport/tools/scenarios/title.keys      # скріншоти -> pyport/shots/title/
@@ -24,6 +24,9 @@ Esc/Backspace = права софт-клавіша (BACK), Q/F1 = ліва, ци
 - попап Yes/No — клік лівіше центру = Yes, правіше = No (вибирає і підтверджує);
 - Main Menu — стрілка ◄ / ►, клік по назві пункту = OK; колесо гортає пункти;
 - Game Menu — верхня мала кнопка = вгору, велика = OK, нижня = вниз; колесо крутить карусель;
+- складність — клік по Hard / Normal; герой — клік по лівій/правій голові крутить, по середній = OK;
+- ім'я — клік по букві чи OK у сітці (курсор сам доходить туди стрілками і натискає OK), DEL = BACK;
+- очки характеристик — клік по рядку HP / MP / ATK / DEF додає очко саме туди;
 - BACK — права кнопка миші або клік по «BACK» внизу праворуч.
 
 ### Браузер (pygbag)
@@ -46,9 +49,10 @@ pygbag під час збирання і в браузері завантажу�
 | `j.java`, `al.java` | `pow/game/j.py`, `al.py` | читання ресурсів і `.scr` |
 | `ae.java` | `pow/game/ae.py` | **згенеровано** `tools/gen_ae.py` |
 | поля `ag.java`, дрібні класи-структури | `pow/game/_ag_fields.py`, `structs.py` | **згенеровано** `tools/gen_fields.py` |
-| `ag.java` (частина) | `pow/game/ag.py` | цикл `run`, `paint/P/L`, титул `S/E/T`, сейв `U`, фон меню `w/x`, софт-клавіші `h(int,int)` … |
+| `ag.java` (частина) | `pow/game/ag.py` | цикл `run`, `paint/P/L`, титул `S/E/T`, читання сейву `U` і запис `ar`, фон меню `w/x`, софт-клавіші `h(int,int)`, новий герой `au/av/aw/ax/ay/k(int,int)`, сітка імені `r/f(int,int)` … |
+| `d.java`, `at.java` | `pow/game/d.py`, `at.py` | таблиці `.arr` (kibo/sungbo/shinki) і буфер імені |
 | `af.java` | `pow/game/af.py` | лого → «sound enabled?» → титул |
-| `e.java` (частина) | `pow/game/e.py` | Main Menu (`aJ`), карусель Game Menu (`bf`), клавіші `a/aB/aC/aD/aE/b/aF` |
+| `e.java` (частина) | `pow/game/e.py` | Main Menu (`aJ`), карусель Game Menu (`bf`), клавіші `a/aB/aC/aD/aE/b/aF`; створення героя: складність `aU`, герой `aK`, ім'я `aL/aM`, очки `O/T`, предмети `e(int)`, `p()` |
 | `l.java` (частина) | `pow/game/l.py` | попапи: рамка, кнопки Yes/No/Ok, усі текстові `e(int)`, клавіші й таймер |
 | `k.java` | `pow/game/k.py` | менеджер звуку (дослівно) |
 | `aq.java` | `pow/game/aq.py` | **спрощено** на pygame.mixer (дослівно — таск 1.5) |
@@ -81,12 +85,22 @@ pygbag під час збирання і в браузері завантажу�
 | F6 | `e.java` навігація меню, `bf` | `cM[1]=cM[1]+1; if (cM[1]+1 >= cN)` → `if (++cM[1] >= cN)`; без цього Main Menu перескакує пункти |
 | F8 | `ag.L()` 1526-1546 | `switch` без `break`. Падіння крізь гілки є не лише в 3/4/5, а й у **0 і 2**: інакше на лого виконався б `bb.a(1)` і впав на `ct[7] == null` |
 | F9 (новий) | `l.a(String)` 469-496 | `s = s + 1; l[s] = …` → `l[s++] = …`; буквально рядок 0 лишається старим, а останній не малюється |
+| F10 (новий) | `ag.f(int,int)` 1794-1819, сітка імені | `10 * p % 14`, `17 * b / 14` → `10 * (p % 14)`, `17 * (b / 14)`; буквально курсор стрибає хаотично, а букви йдуть «драбинкою» |
+| F11 (новий) | `e.T(int)` 3533-3545, курсор очок | декомпільований код передає `boolean` у колір: курсор малюється кольором 0x010101 і після першого ↑/↓ зникає; з F11 він білий, як у `e.O(1)`. **Перевірити в KEmulator** |
+
+Створення героя (`e.java` / `ag.java` / `l.java`): Main Menu → New Game (якщо сейв є — попап 3
+«saved game will be deleted») → складність (екран 29, попап 36) → герой (екран 6) → ім'я
+(екран 7) → 5 очок характеристик (екран 8, попап 4) → `ax/ay/ar` записують сейв → Game Menu.
+Пролог `ag.l(100, 0)` (етап 2) поки пропускається. Порядок рядків «a character for battle. /
+Please select» на екрані 6 — дослівно з Java (`de - 90 - b*20`), теж варто звірити з KEmulator.
 
 ## Headless-скріншоти
 
 `tools/shot.py` запускає справжній цикл `ag.run` з `SDL_VIDEODRIVER=dummy` і віртуальним
 годинником: час рухається лише через сон самого циклу (120 мс на тік у меню), тому кадри
-відтворювані до пікселя. Сценарій — рядки `wait N`, `key NAME`, `click X Y`, `wheel up|down`, `rclick`, `shot NAME`, `save zero`.
+відтворювані до пікселя. Сценарії: `title`, `gamemenu`, `mouse`, `newgame` (створення героя клавішами, з видаленням
+букви і Continue після сейву), `newgame_mouse` (те саме лише мишкою).
+Сценарій — рядки `wait N`, `key NAME`, `click X Y`, `wheel up|down`, `rclick`, `shot NAME`, `save zero`.
 `pyport/shots/` — поточні кадри порту (база для регресійного тесту `tests/test_screens.py`).
 Скріншоти KEmulator покласти в `pyport/shots_ref/<сценарій>/` з тими самими іменами й
 запустити `tools/compare_ref.py`.

@@ -99,7 +99,23 @@ class l(ag):
                                     if ag.cM[1] == 1:
                                         self.au()
                                 elif c0 == 8:
-                                    not_ported("l.b yes/cM[0]=8 (new game)")
+                                    ag.ax()
+                                    self.ay()
+                                    ag.eo = ag.B_v()
+                                    if ag.be is not None:
+                                        type(ag.be).d = True     # as.d = true (static)
+                                    if self.ar() != 0:
+                                        ag.bb.c_v()
+                                        ag.dE = ag.fU
+                                        ag.cM[0] = 0
+                                        ag.cN = ae.v[ag.cM[0]]
+                                        ag.cM[2] = 0
+                                        ag.cM[1] = 0
+                                        self.aA()
+                                        self.l_II(100, 0)
+                                    else:
+                                        ag.aw()
+                                        self.e_I(1)
                                 elif c0 == 10:
                                     ag.aj()
                                     ag.cM[0] = 5
@@ -107,7 +123,8 @@ class l(ag):
                                     ag.cM[2] = 0
                                     ag.cM[1] = 0
                                 elif c0 == 29:
-                                    not_ported("l.b yes/cM[0]=29 (difficulty)")
+                                    ag.bb.c_v()
+                                    ag.cM[0] = 6
                                 # break -> leaves both switches, continues with the timer below
                             elif ag.cR.a == 1:
                                 not_ported("l.b cR.a == 1 (pause menu in map)")

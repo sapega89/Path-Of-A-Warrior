@@ -14,7 +14,7 @@ from conftest import ROOT
 SCEN = ROOT / "tools" / "scenarios"
 
 
-@pytest.mark.parametrize("name", ["title", "gamemenu", "mouse"])
+@pytest.mark.parametrize("name", ["title", "gamemenu", "mouse", "newgame", "newgame_mouse"])
 def test_scenario_matches_baseline(name, tmp_path):
     import subprocess
     import sys

@@ -35,7 +35,7 @@ def demo_save():
     """SPIKE-ONLY: New Game (name entry, prologue) is a Phase 2 screen, so without a save the
     Game Menu cannot be reached. When there is no save yet, write the smallest save that
     ag.U() accepts (hero "HERO", all values 0); then Main Menu -> Continue opens the Game Menu.
-    Turn off with --no-demo or POW_DEMO_SAVE=0. An existing save is never touched."""
+    Off by default; turn on with --demo or POW_DEMO_SAVE=1. An existing save is never touched."""
     from pow.midp.rms import RecordStore
     rs = RecordStore.openRecordStore("gamevil_pow_data", True)
     if rs.getNumRecords() == 0:
@@ -49,7 +49,7 @@ def demo_save():
 async def main():
     display.init(headless=os.environ.get("SDL_VIDEODRIVER") == "dummy")
     rms_selftest()
-    if config.DEMO_SAVE and "--no-demo" not in sys.argv:
+    if (config.DEMO_SAVE or "--demo" in sys.argv) and "--no-demo" not in sys.argv:
         demo_save()
     from pow.game.Main import Main
     midlet = Main()

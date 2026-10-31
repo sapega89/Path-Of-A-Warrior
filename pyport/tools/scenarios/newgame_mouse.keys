@@ -1,0 +1,43 @@
+# New Game with the mouse only: difficulty -> hero -> name "Leo" -> stat points -> save
+wait 25
+click 60 200       # sound: Yes
+wait 2
+click 120 160      # title
+wait 2
+click 120 262      # Main Menu caption "New Game"
+wait 2
+click 120 110      # Hard (selects, then OK)
+wait 3
+shot m_popup_hard
+click 60 200       # Yes
+wait 3
+click 190 190      # right head -> rotate
+wait 2
+shot m_hero_rotated
+click 120 190      # middle head -> OK
+wait 3
+click 166 200      # L
+wait 6
+click 96 200       # e
+wait 8
+click 56 217       # o
+wait 4
+shot m_name_leo
+click 177 217      # OK
+wait 16
+shot m_stats
+click 100 185      # HP
+wait 2
+click 100 185      # HP
+wait 2
+click 100 225      # ATK
+wait 4
+click 100 245      # DEF
+wait 4
+shot m_stats_1
+click 100 205      # MP -> last point, popup
+wait 4
+shot m_popup_complete
+click 60 200       # Yes -> save -> Game Menu
+wait 4
+shot m_game_menu
