@@ -14,8 +14,16 @@ python pyport/tools/shot.py pyport/tools/scenarios/title.keys      # скрін�
 python pyport/tools/sheet.py pyport/shots/title sheet.png          # усі кадри на одній картинці
 ```
 
-Клавіші (ПК → телефон, `PHASE_1_FOUNDATION.md` §5): стрілки/WASD, Enter/Space/J = OK,
-Esc/Backspace = права софт-клавіша (BACK), Q/F1 = ліва, цифри 0–9.
+**Клавіатура** (ПК → телефон, `PHASE_1_FOUNDATION.md` §5): стрілки/WASD, Enter/Space/J = OK,
+Esc/Backspace = права софт-клавіша (BACK), Q/F1 = ліва, цифри 0–9; цифровий блок працює як
+клавіатура телефону (8/2/4/6 = стрілки, 5 = OK).
+
+**Мишка** (`pow/game/pointer.py`, клік перекладається в натискання клавіш телефону):
+- титул, попап Ok — клік будь-де;
+- попап Yes/No — клік лівіше центру = Yes, правіше = No (вибирає і підтверджує);
+- Main Menu — стрілка ◄ / ►, клік по назві пункту = OK; колесо гортає пункти;
+- Game Menu — верхня мала кнопка = вгору, велика = OK, нижня = вниз; колесо крутить карусель;
+- BACK — права кнопка миші або клік по «BACK» внизу праворуч.
 
 ### Браузер (pygbag)
 
@@ -77,7 +85,7 @@ pygbag під час збирання і в браузері завантажу�
 
 `tools/shot.py` запускає справжній цикл `ag.run` з `SDL_VIDEODRIVER=dummy` і віртуальним
 годинником: час рухається лише через сон самого циклу (120 мс на тік у меню), тому кадри
-відтворювані до пікселя. Сценарій — рядки `wait N`, `key NAME`, `shot NAME`, `save zero`.
+відтворювані до пікселя. Сценарій — рядки `wait N`, `key NAME`, `click X Y`, `wheel up|down`, `rclick`, `shot NAME`, `save zero`.
 `pyport/shots/` — поточні кадри порту (база для регресійного тесту `tests/test_screens.py`).
 Скріншоти KEmulator покласти в `pyport/shots_ref/<сценарій>/` з тими самими іменами й
 запустити `tools/compare_ref.py`.

@@ -9,6 +9,9 @@ list of steps, one per line:
     wait N          run N ticks (frames)
     key NAME        press a phone key before the next tick: UP DOWN LEFT RIGHT FIRE
                     LSOFT RSOFT(=BACK) 0-9 STAR POUND
+    click X Y       left mouse click at screen pixel (X, Y) (0..239, 0..319)
+    wheel up|down   mouse wheel over the screen
+    rclick          right mouse button (= BACK)
     shot NAME       save the last frame as NN_NAME.png
     save zero       (first line only) start with a minimal 965-byte save in RecordStore
                     "gamevil_pow_data" so that Main Menu -> Continue opens the Game Menu
@@ -99,6 +102,16 @@ def run(scenario, out, every=False):
             if cmd == "key":
                 Main.b.keyPressed(KEYNAMES[arg.upper()])
                 state["wait"] = 1          # the key is consumed on the next tick
+                return
+            if cmd in ("click", "wheel", "rclick"):
+                if cmd == "click":
+                    cx, cy = map(int, arg.split())
+                    Main.b.click(cx, cy)
+                elif cmd == "wheel":
+                    Main.b.click(0, 0, "wheel_" + arg.lower())
+                else:
+                    Main.b.click(0, 0, "back")
+                state["wait"] = max(1, len(Main.b.key_queue))   # queued keys go 1 per tick
                 return
             if cmd == "shot":
                 state["n"] += 1
