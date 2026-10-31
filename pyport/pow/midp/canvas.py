@@ -32,6 +32,7 @@ KEYMAP = {
 
 # mouse wheel -> key, decided by the game (pow/game/pointer.py); right button = BACK
 MOUSE_BACK = -7
+DIRECTION_KEYS = (-1, -2, -3, -4, 50, 52, 54, 56)
 
 # names used by scenario files (tools/shot.py)
 KEYNAMES = {"UP": -1, "DOWN": -2, "LEFT": -3, "RIGHT": -4, "FIRE": -5, "OK": -5,
@@ -45,6 +46,9 @@ class Canvas:
         self.quit_requested = False
         self.key_queue = collections.deque()   # keys produced by the mouse, 1 per tick
         self.pointer = None                     # callable(x, y, button) -> list of key codes
+        self.hold_dir = None                    # callable(x, y) -> direction key while dragging
+        self.held = []                          # direction keys held down, last pressed last
+        self.mouse_dir = None                   # direction of the held left mouse button
 
     def getWidth(self):
         return config.SCREEN_W
@@ -74,14 +78,30 @@ class Canvas:
                 code = KEYMAP.get(ev.key)
                 if code is not None:
                     self.key_queue.clear()
+                    if code in DIRECTION_KEYS:
+                        self.hold(code)
                     self.keyPressed(code)
-            elif ev.type == pygame.MOUSEBUTTONDOWN and ev.button in (1, 3):
+            elif ev.type == pygame.KEYUP:
+                code = KEYMAP.get(ev.key)
+                if code in DIRECTION_KEYS:
+                    self.release(code)
+            elif ev.type == pygame.MOUSEBUTTONDOWN and ev.button in (1, 2, 3):
                 x, y = self._to_screen(ev.pos)
                 if ev.button == 3:
-                    keys = [MOUSE_BACK]
+                    keys = self.pointer(x, y, "rclick") if self.pointer else [MOUSE_BACK]
+                elif ev.button == 2:
+                    keys = self.pointer(x, y, "middle") if self.pointer else []
                 else:
                     keys = self.pointer(x, y, "click") if self.pointer else []
+                    # a click that walks: the button held down keeps walking (HOLD_TO_MOVE)
+                    self.mouse_dir = keys[0] if len(keys) == 1 and keys[0] in DIRECTION_KEYS else None
                 self.key_queue.extend(keys)
+            elif ev.type == pygame.MOUSEBUTTONUP and ev.button == 1:
+                self.mouse_dir = None
+            elif ev.type == pygame.MOUSEMOTION and self.mouse_dir is not None and self.hold_dir:
+                d = self.hold_dir(*self._to_screen(ev.pos))     # dragging turns the hero
+                if d is not None:
+                    self.mouse_dir = d
             elif ev.type == pygame.MOUSEWHEEL and ev.y != 0 and self.pointer:
                 x, y = self._to_screen(pygame.mouse.get_pos())
                 self.key_queue.extend(self.pointer(x, y, "wheel_up" if ev.y > 0 else "wheel_down"))
@@ -95,6 +115,22 @@ class Canvas:
             self.key_queue.append(MOUSE_BACK)
         elif self.pointer:
             self.key_queue.extend(self.pointer(x, y, kind))
+
+    # --- held direction keys (PORT-EXTRA config.HOLD_TO_MOVE: the phone had no key release) ---
+    def hold(self, code):
+        if code in self.held:
+            self.held.remove(code)
+        self.held.append(code)
+
+    def release(self, code):
+        if code in self.held:
+            self.held.remove(code)
+
+    def held_direction(self):
+        """Phone code of the direction held now (mouse button first, then the last key), or None."""
+        if self.mouse_dir is not None:
+            return self.mouse_dir
+        return self.held[-1] if self.held else None
 
     @staticmethod
     def _to_screen(pos):

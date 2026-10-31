@@ -11,7 +11,11 @@ list of steps, one per line:
                     LSOFT RSOFT(=BACK) 0-9 STAR POUND
     click X Y       left mouse click at screen pixel (X, Y) (0..239, 0..319)
     wheel up|down   mouse wheel over the screen
-    rclick          right mouse button (= BACK)
+    rclick [X Y]    right mouse button (= BACK; at X Y on the map = attack toward X Y)
+    mclick X Y      middle mouse button (on the map = skill key 1)
+    hold KEY        press a direction key and keep it down (POW_HOLD_TO_MOVE=1: walk)
+    release KEY     let the held key go
+    mousedown X Y   left button pressed and held at X Y; mouseup = let it go
     shot NAME       save the last frame as NN_NAME.png
     gold N          TEST-ONLY: set the hero's gold (ag.cz.E) to N, to try the Blacksmith
     generals N      TEST-ONLY: befriend the first N generals of the table (10, 30, 50... points)
@@ -42,7 +46,8 @@ sys.path.insert(0, str(HERE.parent))
 os.environ["SDL_VIDEODRIVER"] = "dummy"
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 os.environ.setdefault("POW_SCALE", "1")
-os.environ.setdefault("POW_SEED", "1")   # Random() without the clock: repeatable runs
+os.environ.setdefault("POW_SEED", "1")
+os.environ.setdefault("POW_HOLD_TO_MOVE", "0")   # keys are taps, as on the phone (env line to change)   # Random() without the clock: repeatable runs
 
 
 def parse(path):
@@ -79,7 +84,7 @@ def run(scenario, out, every=False):
     import pygame
     import config
     from pow.midp import display, system
-    from pow.midp.canvas import KEYNAMES
+    from pow.midp.canvas import DIRECTION_KEYS, KEYNAMES
 
     save_dir = tempfile.mkdtemp(prefix="pow_rms_")
     config.SAVE_DIR = save_dir
@@ -118,12 +123,37 @@ def run(scenario, out, every=False):
                 Main.b.keyPressed(KEYNAMES[arg.upper()])
                 state["wait"] = 1          # the key is consumed on the next tick
                 return
-            if cmd in ("click", "wheel", "rclick"):
+            if cmd in ("hold", "release"):     # a direction key held down / let go
+                code = KEYNAMES[arg.upper()]
+                if cmd == "hold":
+                    Main.b.hold(code)
+                    Main.b.keyPressed(code)
+                    state["wait"] = 1
+                    return
+                Main.b.release(code)
+                continue
+            if cmd in ("mousedown", "mouseup"):  # left button held at X Y (walk) / let go
+                if cmd == "mouseup":
+                    Main.b.mouse_dir = None
+                    continue
+                cx, cy = map(int, arg.split())
+                keys = Main.b.pointer(cx, cy, "click")
+                Main.b.mouse_dir = keys[0] if len(keys) == 1 and keys[0] in DIRECTION_KEYS else None
+                Main.b.key_queue.extend(keys)
+                state["wait"] = max(1, len(Main.b.key_queue))
+                return
+            if cmd in ("click", "wheel", "rclick", "mclick"):
                 if cmd == "click":
                     cx, cy = map(int, arg.split())
                     Main.b.click(cx, cy)
                 elif cmd == "wheel":
                     Main.b.click(0, 0, "wheel_" + arg.lower())
+                elif cmd == "mclick":
+                    cx, cy = map(int, arg.split())
+                    Main.b.click(cx, cy, "middle")
+                elif arg:
+                    cx, cy = map(int, arg.split())
+                    Main.b.click(cx, cy, "rclick")
                 else:
                     Main.b.click(0, 0, "back")
                 state["wait"] = max(1, len(Main.b.key_queue))   # queued keys go 1 per tick

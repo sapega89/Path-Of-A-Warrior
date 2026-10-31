@@ -60,8 +60,9 @@ class Main:
             Main.a = True  # Display.getDisplay(this)
             _late_init()
             Main.b = ag(self)
-            from pow.game.pointer import keys_for
+            from pow.game.pointer import hold_dir, keys_for
             Main.b.pointer = keys_for   # PORT-EXTRA: mouse -> phone keys
+            Main.b.hold_dir = hold_dir
 
     def startApp(self):  # Main.java:41-43  (tryNBuy_123456 -> constructor + startApp_123456)
         self.constructor_123456()

@@ -23,11 +23,17 @@ exactly the Java one. Hit zones follow what is drawn on each screen (coordinates
   Generals (19)              click a row -> UP/DOWN to it, then FIRE; ◄ / ► -> pages
   4-choice popup (talk topic)  click a topic -> UP/DOWN to it, then FIRE
   other screens (Skills, Gear, Inventory, Assign Items)  click -> FIRE, wheel -> UP/DOWN
-  Map (bV == 3)              click beside the hero -> that direction (tap = start / stop
-                             walking, two quick clicks = run); soft key PAUSE -> BACK (-7);
+  Map (bV == 3)              click beside the hero -> that direction (hold the button = walk,
+                             with config.HOLD_TO_MOVE; else tap = start / stop walking; two
+                             quick clicks = run); click on the hero -> FIRE (attack);
+                             right button -> attack toward the pointer (turn, then FIRE);
+                             * / # boxes of the HUD -> STAR / POUND (potion, bomb);
+                             middle button / wheel up / wheel down -> skill keys 1 / 3 / 7;
+                             soft key PAUSE -> BACK (-7); talk on the map (bV 5):
+                             soft key SKIP (bottom left) -> LSOFT (-6);
                              pause menu: click a row -> UP/DOWN to it, then FIRE
   soft key BACK (bottom right)                         -> BACK (-7)
-  right mouse button anywhere                          -> BACK (-7)
+  right mouse button anywhere (except playing on the map) -> BACK (-7)
   wheel: Main Menu = LEFT/RIGHT, Game Menu = UP/DOWN, Yes/No popup = switch,
          Difficulty / Stat points = UP/DOWN, Hero = LEFT/RIGHT
 """
@@ -37,6 +43,8 @@ from pow.game.ag import ag
 from pow.midp.jint import idiv
 
 UP, DOWN, LEFT, RIGHT, FIRE, BACK = -1, -2, -3, -4, -5, -7
+STAR, POUND = 42, 35
+SKILL_KEYS = (49, 51, 55)                              # phone keys 1 / 3 / 7 = skill slots 1..3
 
 
 def _popup_keys(x, y, kind):
@@ -202,12 +210,63 @@ def _menu_keys(c0, x, y, kind):
     return [FIRE]
 
 
+_DIR_OF_KEY = {DOWN: 0, LEFT: 2, UP: 4, RIGHT: 6}      # cz.c of a direction key (c.i_v)
+
+
+def _hero_dir_key(x, y):
+    """Direction key from the hero to the screen point (x, y), or None on the hero himself."""
+    hx = ag.cz.a[0].a - ag.ca.a + ag.db
+    hy = ag.cz.a[0].b - ag.ca.b + ag.dc - 20
+    dx, dy = x - hx, y - hy
+    if abs(dx) < 14 and abs(dy) < 20:
+        return None
+    if abs(dx) >= abs(dy):
+        return LEFT if dx < 0 else RIGHT
+    return UP if dy < 0 else DOWN
+
+
+def _hud_potion(x, y):
+    """* / # quick potion boxes of the HUD (ar.aD: 28x28 at dd-72 / dd+44, y = bottom - 50)."""
+    top = ag.bZ.b - 50
+    if top <= y < top + 28:
+        if ag.dd - 72 <= x < ag.dd - 44:
+            return STAR
+        if ag.dd + 44 <= x < ag.dd + 72:
+            return POUND
+    return None
+
+
+def hold_dir(x, y):
+    """While the left button is held on the map: direction key under the pointer (or None)."""
+    if ag.bV != 3 or ag.cS.b != 0 or ag.cR.a != 0 or ag.cz is None:
+        return None
+    if y >= ag.bZ.b - 50:
+        return None
+    return _hero_dir_key(x, y)
+
+
 def _map_keys(x, y, kind):
     """The mission map (bV 3), the room scroll (4) and talks on the map (5)."""
     if ag.cS.b != 0:
-        return _popup_keys(x, y, kind)
+        return [BACK] if kind == "rclick" else _popup_keys(x, y, kind)
+    playing = ag.bV == 3 and ag.cR.a == 0
+    if kind == "rclick":                               # right button: attack toward the pointer
+        if not playing:
+            return [BACK]
+        d = _hero_dir_key(x, y)
+        if d is not None and ag.cz.e[0] < 2 and _DIR_OF_KEY[d] != ag.cz.c:
+            return [d, FIRE]                           # turn (one step), then strike
+        return [FIRE]
+    if kind == "middle":                               # middle button: skill slot 1
+        return [SKILL_KEYS[0]] if playing else []
+    if playing and kind in ("wheel_up", "wheel_down"):  # wheel: skill slots 2 / 3
+        return [SKILL_KEYS[1] if kind == "wheel_up" else SKILL_KEYS[2]]
     if x >= ag.bJ - 60 and y >= ag.bK - 20:            # soft key PAUSE / BACK (bottom right)
         return [BACK]
+    if ag.bV == 5:                                     # talk on the map: only SKIP (-6) works
+        if kind == "click" and x < 60 and y >= ag.bK - 20:     # (e.i_v drops every other key)
+            return [-6]
+        return []
     if ag.bV != 3:
         return [FIRE] if kind == "click" else []
     if ag.cR.a == 1:                                   # pause menu: e.f() list, cM[0] == 10
@@ -218,19 +277,20 @@ def _map_keys(x, y, kind):
         return [FIRE]
     if kind != "click":
         return []
-    # walking: a click beside the hero = a tap on that direction (start / stop walking)
-    hx = ag.cz.a[0].a - ag.ca.a + ag.db
-    hy = ag.cz.a[0].b - ag.ca.b + ag.dc - 20
-    dx, dy = x - hx, y - hy
-    if abs(dx) >= abs(dy):
-        return [LEFT if dx < 0 else RIGHT]
-    return [UP if dy < 0 else DOWN]
+    potion = _hud_potion(x, y)
+    if potion is not None:                             # * / # boxes of the HUD: drink / throw
+        return [potion]
+    # a click on the hero = attack; beside the hero = a tap on that direction
+    d = _hero_dir_key(x, y)
+    return [FIRE] if d is None else [d]
 
 
 def keys_for(x, y, kind="click"):
     """-> list of phone key codes for a click / wheel at (x, y) in screen coordinates."""
     from pow.game.af import af
     bv = ag.bV
+    if kind in ("rclick", "middle") and bv not in (3, 4, 5):
+        return [BACK] if kind == "rclick" else []
     if bv == 12:                        # outro, quits by itself
         return []
     if bv == 0:

@@ -46,3 +46,8 @@ DEMO_SAVE = os.environ.get("POW_DEMO_SAVE", "0") == "1"
 # Both off by default: the game has its combat (phase 4).
 NO_ENEMIES = os.environ.get("POW_NO_ENEMIES", "0") == "1"
 NO_COMBAT = os.environ.get("POW_NO_COMBAT", "0") == "1"
+
+# PORT-EXTRA (PC controls): the hero walks only while a direction key / the mouse button is
+# held (the phone had no key release: a tap started walking and the next tap stopped).
+# POW_HOLD_TO_MOVE=0 = the phone way. tools/shot.py uses 0 (scenarios press keys like a phone).
+HOLD_TO_MOVE = os.environ.get("POW_HOLD_TO_MOVE", "1") == "1"

@@ -11,6 +11,10 @@ from pow.midp.jint import i8, i16, i32, idiv
 F14 = config.DECOMP_FIX["F14"]
 
 
+# direction key -> cz.c, as c.i_v reads ag.cj (used by the PORT-EXTRA HOLD_TO_MOVE)
+_HELD_DIR = {-1: 4, 50: 4, -3: 2, 52: 2, -4: 6, 54: 6, -2: 0, 56: 0}
+
+
 class c(ag):
     def __init__(self):  # c.java:4-6
         super().__init__(ag.bs)
@@ -1452,6 +1456,21 @@ class c(ag):
             ag.eX = None
             if cz.e[0] != 1:
                 cz.e[0] = 0
+        if config.HOLD_TO_MOVE and i == -1 and cz.e[0] < 2:
+            # PORT-EXTRA (config.HOLD_TO_MOVE): the hero walks only while a direction key or the
+            # mouse button is held; released = stand, still held after an attack = walk again
+            from pow.game.Main import Main
+            held = Main.b.held_direction() if Main.b is not None else None
+            if held is None:
+                if cz.e[0] == 1:
+                    cz.e[0] = 0
+                    cz.f[0] = 0
+            else:
+                hi = _HELD_DIR[held]
+                if cz.e[0] == 0 or cz.c != hi:
+                    cz.d[0] = cz.c = hi
+                    cz.e[0] = 1
+                    cz.f[0] = 0
         if cz.e[0] < 2:
             if i > -1:
                 if ar.e_v() != 0:
