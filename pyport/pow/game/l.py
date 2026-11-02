@@ -524,20 +524,37 @@ class l(ag):
                 L[1] = "received!"
                 self.i = i16(self.i + 1)
             if ag.eg != 0:
+                # DECOMP-FIX F19: decompiled `i = i + 1; l[i] = ...` is `l[i++] = ...` (as in F9 and in
+                # the ef lines just above). Literally l[0] (eg only) or l[2] (ef and eg) is never
+                # written and stays None -> the popup's draw fails and the screen after the ending
+                # lore stays dark with only SKIP; the hidden mission's name is never drawn.
+                f19 = config.DECOMP_FIX["F19"]
                 if ag.ef != 0:
-                    self.i = i16(self.i + 1)
-                    L[self.i] = ""
+                    if f19:
+                        L[self.i] = ""
+                        self.i = i16(self.i + 1)
+                    else:
+                        self.i = i16(self.i + 1)
+                        L[self.i] = ""
                 arrayOfByte = ag.v_I(48)
                 j_ = 38 * ag.eg + 10
                 b = 0
                 while b < 30 and arrayOfByte[j_ + b] != 0:
                     b += 1
                 ag.dt[0] = ag.a_ABII(arrayOfByte, j_, j_ + b)
-                self.i = i16(self.i + 1)
-                L[self.i] = "Hidden Mission!"
+                if f19:
+                    L[self.i] = "Hidden Mission!"
+                    self.i = i16(self.i + 1)
+                else:
+                    self.i = i16(self.i + 1)
+                    L[self.i] = "Hidden Mission!"
                 ag.cT[1] = ag.dt[0]
-                self.i = i16(self.i + 1)
-                L[self.i] = ag.cT[1]
+                if f19:
+                    L[self.i] = ag.cT[1]
+                    self.i = i16(self.i + 1)
+                else:
+                    self.i = i16(self.i + 1)
+                    L[self.i] = ag.cT[1]
         self.h = i16(20 * self.i + (self.i - 1 << 1))
         if self.b == 2:
             self.h = i16(self.h + 25)
