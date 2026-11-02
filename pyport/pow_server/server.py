@@ -19,6 +19,8 @@ from pow_server import battle as B, codec_bin, loot, messages as M
 from pow_server.model import apply_sp_hero, default_character, valid_slots
 from pow_server.storage import open_storage
 
+MATCH_WAIT = 60                                # Andrey: a whole minute for a live opponent
+MATCH_LEVELS = (10, 20)                        # level reach at first / after half the wait
 _ID_RE = re.compile(r"^[A-Z]{4,12}$")          # Login screen: A-Z, 4..12 (g:4888-4926)
 _PWD_RE = re.compile(r"^[0-9]{4,12}$")         # password: digits, 4..12 (g:4930-4990)
 _NAME_RE = re.compile(r"^[A-Za-z0-9]{1,8}$")   # Display Name: A-Z / a-z keyboard (g:2820-2866)
@@ -27,7 +29,8 @@ _QUOTE_RE = re.compile(r"^[ -~]{1,20}$")       # quotes: 1..20 printable charact
 
 class GameServer:
     def __init__(self, storage=None, *, require_token=True, auto_register=True,
-                 notices=(), notices_version=1, clock=time.monotonic, rng=None):
+                 notices=(), notices_version=1, clock=time.monotonic, rng=None,
+                 match_wait=MATCH_WAIT):
         """require_token: 262 must carry the token of the last 278 (PORT-EXTRA). False lets the
         original jar in, which logs in again with 262 and its UserID only (06 §2.3).
         auto_register: a 278 with an unknown UserID creates the account. The original only let
@@ -41,6 +44,32 @@ class GameServer:
         self.clock = clock
         self.rng = rng or random.Random()
         self.online = {}               # user id -> Session
+        self.match_wait = match_wait   # seconds a Duel waits for a live opponent, then a CPU
+        self.queue = []                # [Session] waiting in 512 (oldest first)
+
+    # --- matchmaking (9.15) ----------------------------------------------------------
+    def find_opponent(self, s, mode):
+        """A player waiting for the same kind of duel near my level: within MATCH_LEVELS, the
+        range opening to the original's 20 levels once they have waited half the time."""
+        now = self.clock()
+        for other in self.queue:
+            if other is s or other.closed or other.queued_mode != mode:
+                continue
+            reach = MATCH_LEVELS[1] if now - other.queued_at >= self.match_wait / 2 else MATCH_LEVELS[0]
+            if abs(other.char.level - s.char.level) <= reach:
+                return other
+        return None
+
+    def tick(self):
+        """Called about once a second by the transport: a duel that waited match_wait gets a
+        CPU fighter."""
+        now = self.clock()
+        for s in list(self.queue):
+            if s.closed:
+                self.queue.remove(s)
+            elif now - s.queued_at >= self.match_wait:
+                self.queue.remove(s)
+                s.start_vs_cpu(s.queued_mode)
 
     def connect(self, send):
         """A new connection. send(frame_bytes) writes to the client; returns the Session."""
@@ -57,6 +86,8 @@ class Session:
         self.last_seen = server.clock()
         self.close_after_send = False  # 279 OK: the client hangs up itself and comes back with 262
         self.room = None               # Room while in a battle
+        self.queued_mode = None        # 512 mode while waiting for an opponent
+        self.queued_at = 0
         self.slot = 0                  # my slot in it
 
     # --- I/O -----------------------------------------------------------------
@@ -84,6 +115,8 @@ class Session:
         if self.closed:
             return
         self.closed = True
+        if self in self.server.queue:
+            self.server.queue.remove(self)
         if self.room is not None:      # a duel left is a loss, a mission left earns nothing
             room, self.room = self.room, None
             room.leave(self)
@@ -281,9 +314,29 @@ class Session:
         return self.room.mission if self.room else None
 
     def on_match(self, msg):           # 512 -> 513, 514 per other fighter, 1024 (mission: 1037)
+        """A Duel (mode 0 / 1) waits up to match_wait seconds for a player near my level (the
+        client shows "Searching for opponent" until 513 comes, 06 §2.6), then gets a CPU
+        fighter; a Solo Mission (2) starts at once with a CPU ally."""
         mode = msg.get("mode")
-        if mode not in (0, 1, 2) or self.room is not None:
+        if mode not in (0, 1, 2) or self.room is not None or self in self.server.queue:
             return self.send(M.MATCH_ANS, st=-11)
+        if mode == 2 or self.server.match_wait <= 0:
+            return self.start_vs_cpu(mode)
+        other = self.server.find_opponent(self, mode)
+        if other is None:
+            self.queued_mode, self.queued_at = mode, self.server.clock()
+            self.server.queue.append(self)
+            return
+        self.server.queue.remove(other)
+        rng = self.server.rng
+        first = B.from_character(other.char, 0)      # the one who waited takes the left side
+        second = B.from_character(self.char, 1)
+        fighters = [first, second]
+        if mode == 1:
+            fighters += [B.cpu_fighter(rng, first, 2, ally=True), B.cpu_fighter(rng, second, 3, ally=True)]
+        Room(self.server, mode, fighters, {0: other, 1: self}, answer=M.MATCH_ANS).start()
+
+    def start_vs_cpu(self, mode):
         rng = self.server.rng
         me = B.from_character(self.char, 0)
         # slot % 2 = team, slot // 2 = row (06 §2.6): 1v1 uses 0/1, 2v2 and missions add an
@@ -311,7 +364,7 @@ class Session:
         other = self.server.online.get(uid)
         if other is None or other.closed or other.char is None:
             return self.send(M.INVITE_ANS, st=-3)
-        if other.room is not None:
+        if other.room is not None or other in self.server.queue:
             return self.send(M.INVITE_ANS, st=-5)
         if not other.char.invitation:
             return self.send(M.INVITE_ANS, st=-16)
@@ -349,8 +402,9 @@ class Room:
     to choose (ba = 10, then Defend, g:488-493), so only a dropped connection can stall a round:
     the transport closes an idle session and the round goes on without it."""
 
-    def __init__(self, server, mode, fighters, players, progress=0):
+    def __init__(self, server, mode, fighters, players, progress=0, answer=None):
         self.server = server
+        self.answer = answer           # the opening message for everyone (513 for a match)
         self.mode = mode
         self.players = dict(players)   # slot -> Session, the humans still connected
         self.human_slots = set(players)
@@ -386,7 +440,8 @@ class Room:
             s.room, s.slot = self, slot
             # 513 (or 769 / 770) before 514: O() clears the fighter list (06 §2.6); the client
             # adds itself from 263
-            op = M.MATCH_ANS if len(self.players) == 1 else (M.INVITE_ANS if slot == 0 else M.INVITED)
+            op = self.answer or (M.MATCH_ANS if len(self.players) == 1 else
+                                 (M.INVITE_ANS if slot == 0 else M.INVITED))
             s.send(op, st=1, bg=b.bg, slot=slot, mode=self.mode, unk=0)
             for f in b.fighters.values():
                 if f.slot != slot:
