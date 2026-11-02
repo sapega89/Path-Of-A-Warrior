@@ -40,6 +40,7 @@ DECOMP_FIX = {
     "F17": True,  # lost parentheses: c.a(5 ints) room index `(ce+4)/7 * (W/7)`, c.a(int) rooms `(W/7) * (H/7)`
     "F18": True,  # ar.Z(int): archer's arrow start written to eC.b[1] while ar.j()/ad() fly eC.b[0]
     "F19": True,  # l.e(27) reward popup after an ending: `i = i + 1; l[i] = ...` -> `l[i++] = ...`
+    "F20": True,  # as.a(ab) (Gamevil Live): the answer status read into a local, gr never set -> gr = status
     "F11": True,  # e.T(int) stat cursor: decompiled `a(.., bool, bool, bool)` = colour 0x010101 -> 255,255,255
 }
 
@@ -50,6 +51,10 @@ ORIG_BUG = {
     "B2": True,  # ag.Y() level read from the save as a signed byte: Lv128+ comes back negative
     "B3": True,  # e.java 790-801 Visiting with 504 Emperor's Seal: the list fn[2] of all 44 generals
                  # is never filled (visitgen.arr)
+    "B4": True,  # as.a(ab) 789 (Gamevil Live Buy into the Warehouse when the backpack is full):
+                 # the item is put into cz.Y anyway, past slot 24 -> it goes into the Warehouse
+    "B5": True,  # m.bp() Gamevil Live registration: 3 frames after CONFIRM "Network connection has
+                 # failed" replaces the answer of the 531 -> the answer stops that count
 }
 
 # Gamevil Live of the single player (pow_server/live.py): "local" = the server inside the game

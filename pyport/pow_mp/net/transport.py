@@ -99,7 +99,7 @@ class LocalTransport(Transport):
         for bot in self._bots:
             bot.pump()
         server = self.server or self._server
-        if server is not None:
+        if getattr(server, "tick", None) is not None:
             server.tick()
         out = list(self.inbox)
         self.inbox.clear()
@@ -199,6 +199,42 @@ class WebSocketTransport(Transport):
                 pass
         self._ws = None
         self.connected = False
+
+
+class LiveLocalTransport(LocalTransport):
+    """Gamevil Live of the single player (pow_server/live.py) inside the game, on the storage
+    of the in-game multiplayer server: the same accounts, Warehouse and Safe."""
+    _live = None
+
+    @classmethod
+    def shared_live(cls):
+        if cls._live is None:
+            import os
+            from pow_server.live import LiveServer
+            rng = None
+            if os.environ.get("POW_SEED"):
+                import random
+                rng = random.Random(int(os.environ["POW_SEED"]))
+            cls._live = LiveServer(LocalTransport.shared_server().storage, rng=rng)
+        return cls._live
+
+    def open(self):
+        server = self.server or self.shared_live()
+        self.inbox.clear()
+        self.session = server.connect(self._deliver)
+        self.connected, self.failed = True, False
+
+    def poll(self):
+        out = list(self.inbox)
+        self.inbox.clear()
+        return out
+
+
+def make_live_transport(where):
+    """config.LIVE_SERVER: "local" or ws(s)://host:port/live."""
+    if not where or where == "local":
+        return LiveLocalTransport()
+    return WebSocketTransport(where)
 
 
 def make_transport(where):

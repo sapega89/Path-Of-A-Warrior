@@ -702,7 +702,7 @@ class e(ag):
                 ag.cK = 0
                 return
             if cM[1] == 2:
-                ag.be.g()
+                ag.be.g_v()
                 ag.ck = 0
                 ag.cL = 0
                 ag.cK = 0
