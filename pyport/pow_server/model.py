@@ -30,16 +30,16 @@ class Character:
     level: int = 1
     wins: int = 0
     losses: int = 0
-    hp: int = 100
+    hp: int = 40                       # a new single-player hero (ag.aw) with its 5
     hp_bonus: int = 0
-    mp: int = 50
+    mp: int = 10                       # free points in ATK 2 / DEF 1 / HP 2
     mp_bonus: int = 0
-    atk: int = 10
+    atk: int = 7
     atk_bonus: int = 0
-    def_: int = 10
+    def_: int = 5
     def_bonus: int = 0
-    skills: dict = dataclasses.field(default_factory=lambda: {3: 1})   # skill id -> level
-    slots: list = dataclasses.field(default_factory=lambda: [3, 99, 99, 99])
+    skills: dict = dataclasses.field(default_factory=lambda: {3: 1, 11: 1})   # Wind, Devil Soul (ag.java new game)
+    slots: list = dataclasses.field(default_factory=lambda: [3, 11, 99, 99])
     quote_start: str = "Prepare yourself!"
     quote_win: str = "Too easy."
     mp_exp: int = 0
@@ -124,7 +124,10 @@ def apply_sp_hero(ch, msg):
 
 
 def default_character(user_id):
-    return Character(user_id=user_id)
+    """A new hero (ag.aw, 5 points in ATK 2 / DEF 1 / HP 2) wearing the shop's level-1 kit."""
+    from pow_server.sp_rules import shop_kit
+    kit = shop_kit(1)
+    return Character(user_id=user_id, atk_bonus=kit["atk"], def_bonus=kit["def"], hp_bonus=kit["hp"])
 
 
 def valid_slots(ch, slots):

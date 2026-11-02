@@ -42,7 +42,7 @@ def server(request):
 
 def test_login_creates_account_and_profile(server):
     c, prof = login(server)
-    assert prof["name"] == "ANDREY" and prof["level"] == 1 and prof["slots"] == [3, 99, 99, 99]
+    assert prof["name"] == "ANDREY" and prof["level"] == 1 and prof["slots"] == [3, 11, 99, 99]
     assert prof["notices"] == 2
     page = c.ask(M.NOTICE, page=1)
     assert page["lines"][:2] == ["Welcome to the", "new server!"] and page["remaining"] == 1
@@ -110,7 +110,7 @@ def test_character_screens(server):
     att = c.ask(M.ATTRIBUTES)
     assert att["op"] == 1288 and att["hp"] > 0
     sk = c.ask(M.SKILLS)
-    assert sk["n"] == 1 and sk["skills"] == [{"id": 3, "level": 1}]
+    assert sk["n"] == 2 and sk["skills"] == [{"id": 3, "level": 1}, {"id": 11, "level": 1}]
     assert c.ask(M.SKILL_SLOTS, slots=[99, 3, 99, 99])["st"] == 1
     assert c.ask(M.SKILL_SLOTS, slots=[4, 99, 99, 99])["st"] != 1      # not learned
     assert c.ask(M.SKILL_SLOTS, slots=[3, 3, 99, 99])["st"] != 1       # twice
@@ -345,6 +345,10 @@ def _play(a, b, rounds=120):
     for _ in range(rounds):
         for c in (a, b):
             if c in ends:
+                continue
+            pushed = [m for m in c.got if m["op"] == M.BATTLE_END]
+            if pushed:                                         # 1032 pushed while waiting
+                ends[c] = pushed[0]
                 continue
             ans = c.ask(M.ROUND_READY)
             if ans is None:
