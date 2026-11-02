@@ -742,6 +742,10 @@ class ag(AgFields, Canvas):
             cz.h = ag.Y_v()
             cz.i = ag.Y_v()
             cz.l = ag.Y_v()
+            if config.ORIG_BUG["B2"]:
+                # ORIG-BUG B2: the level is one byte in the save (G(cz.l), ag.java:2908) read back
+                # signed, so Lv128+ loaded as -128..; the rest of the game keeps it as an int
+                cz.l &= 0xFF
             cz.m = ag.X_v()
             cz.n = ag.X_v()
             cz.o = ag.X_v()
@@ -1673,8 +1677,11 @@ class ag(AgFields, Canvas):
                 z1.e = i16(arrayOfInt[1] + self.C_I(arrayOfInt[2]))
         else:
             tbl = ag.bH[1] if paramInt < 500 else ag.bH[2]
+            # ORIG-BUG B1: the original reads both tables at id - 301, so a Rare item (shinki.arr,
+            # ids 501-518) gets row 200+ -> all 0; its own row is id - 501
+            first = 501 if paramInt >= 500 and config.ORIG_BUG["B1"] else 301
             for b in range(4):
-                arrayOfInt[b] = tbl.a_II(paramInt - 301, 2 + b)   # sic: -301 for both tables
+                arrayOfInt[b] = tbl.a_II(paramInt - first, 2 + b)
             z1.b = i16(arrayOfInt[0])
             z1.c = i16(arrayOfInt[1])
             z1.d = i16(arrayOfInt[2])

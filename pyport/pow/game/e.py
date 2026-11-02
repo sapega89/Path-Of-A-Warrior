@@ -686,6 +686,8 @@ class e(ag):
                     self.c_v()
                     cM[0] = 19
                     ag.fu = i16(ag.L_I(504))
+                    if ag.fu != 0 and config.ORIG_BUG["B3"]:
+                        e.seal_list()
                     if ag.fu != 0:
                         ag.cN = 44
                     else:
@@ -2844,6 +2846,16 @@ class e(ag):
                     ag.cS.l[4] = "Item Acquired!"
                     return
         ag.fJ = 8
+
+    @staticmethod
+    def seal_list():
+        """ORIG-BUG B3: the list of "all General Visiting" of 504 Emperor's Seal (fn[2], drawn
+        by e.java:1725 and visited by bg() 3366-3378) is never filled in the original, so the
+        Visiting screen showed 44 empty rows; the 44 generals one can visit are visitgen.arr."""
+        from pow.game.d import d
+        vg = d("/visitgen.arr")
+        for b in range(44):
+            ag.fn[2][b] = i16(vg.a_II(b, 0))
 
     @staticmethod
     def bh_v():  # e.java:3562-3567
