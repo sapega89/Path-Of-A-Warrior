@@ -20,6 +20,16 @@ def _manifest():
     return props
 
 
+def _digit_keys():
+    """The number row types its own digit (the MP password and Challenge screens read 0-9).
+    The single-player map puts skill slots there (phone keys 1 3 7 9 0, pow/midp/canvas.py),
+    which would make "2" type a "3"."""
+    import pygame
+    from pow.midp.canvas import KEYMAP
+    for i in range(10):
+        KEYMAP[getattr(pygame, "K_%d" % i)] = 48 + i
+
+
 class Main:
     a = None      # Display
     b = None      # g (the canvas)
@@ -27,6 +37,7 @@ class Main:
 
     def __init__(self):  # Main.java:12-17
         from pow_mp import game
+        _digit_keys()
         game.load()
         from pow_mp._gen.g import g
         self.props = _manifest()

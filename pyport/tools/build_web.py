@@ -2,6 +2,9 @@
 
     python pyport/tools/build_web.py            # -> pyport/build/web-src (+ pygbag --build)
     python -m pygbag pyport/build/web-src       # dev server on http://localhost:8000
+    python pyport/tools/build_web.py --mp       # POW Multiplayer -> pyport/build/web-mp-src
+        page?server=ws://host:28200 talks to `python -m pow_server`, without it the server
+        runs inside the page (nothing kept after a reload)
 
 pygbag packs one folder, so the resources from the repository root are copied into
 web-src/res/ (config.RES_ROOT falls back to ./res when ../0_font.png does not exist).
@@ -13,7 +16,8 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 PY = ROOT / "pyport"
-OUT = PY / "build" / "web-src"
+MP = "--mp" in sys.argv
+OUT = PY / "build" / ("web-mp-src" if MP else "web-src")
 RES_GLOBS = ["*.png", "*.scr", "*.arr", "*.MAP", "*.SP3", "*.bin", "*.ft2", "*.pal"]
 
 
@@ -23,6 +27,8 @@ def stage():
     OUT.mkdir(parents=True)
     for f in ("main.py", "config.py"):
         shutil.copy2(PY / f, OUT / f)
+    if MP:                                  # pygbag starts main.py: the multiplayer one
+        shutil.copy2(PY / "mp_main.py", OUT / "main.py")
     for pkg in ("pow", "pow_mp", "pow_server"):
         shutil.copytree(PY / pkg, OUT / pkg, ignore=shutil.ignore_patterns("__pycache__"))
     # multiplayer resources (PHASE_9): config.MP_RES_ROOT falls back to ./res_mp

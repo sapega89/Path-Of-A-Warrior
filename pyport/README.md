@@ -83,6 +83,18 @@ pygbag під час збирання і в браузері завантажу�
 `RMS selftest: launch #N … OK (emscripten)`; після перезавантаження сторінки N має зрости на 1 —
 це перевірка збереження в `localStorage` (сейв живе в браузері, окремо від сейву ПК-версії).
 
+Мультиплеєр у браузері (окрема сторінка, бо pygbag запускає лише `main.py`):
+
+```bash
+python pyport/tools/build_web.py --mp --no-pygbag     # pyport/build/web-mp-src (main.py = mp_main.py)
+python -m pygbag --ume_block 0 pyport/build/web-mp-src   # http://localhost:8000 - сервер усередині сторінки
+cd pyport && python -m pow_server --port 28200         # в іншому терміналі, для окремого сервера:
+# http://localhost:8000/?server=ws://localhost:28200   - сторінка говорить із ним по WebSocket
+```
+
+Без `?server=` сервер живе в пам'яті сторінки: після перезавантаження акаунт зникає, тож клієнт
+отримує 263 «токен не підходить» і повертає на екран Login. Через https сторінці потрібен `wss://`.
+
 Особливість браузера: pygame у pygbag не вміє `pygame.image.load(BytesIO)` («can't access resource on
 platform»), тому `pow/midp/graphics.py` у браузері декодує PNG через тимчасовий файл.
 Перевірено в headless Chromium (pygbag 0.9.3): титул, новий герой, пролог, Game Menu, карта і бій,
