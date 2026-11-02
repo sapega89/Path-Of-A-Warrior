@@ -1,5 +1,5 @@
 """The generated MP client (pow_mp/_gen) driven headless through tools/mp_shot.py scenarios
-against the in-game server: login, main menu, Character, Ranking, Options must not raise."""
+against the in-game server: login, main menu, Character, Ranking, Options and a Duel vs CPU must not raise."""
 import importlib.util
 import pathlib
 
@@ -16,7 +16,8 @@ def _mp_shot():
     return mod
 
 
-@pytest.mark.parametrize("name", ["mp_login", "mp_menu", "mp_character", "mp_ranking", "mp_options"])
+@pytest.mark.parametrize("name", ["mp_login", "mp_menu", "mp_character", "mp_ranking", "mp_options",
+                                  "mp_duel"])
 def test_scenario_runs(name, tmp_path):
     mp_shot = _mp_shot()
     saved, frames = mp_shot.run(mp_shot.parse(SCEN / (name + ".keys")), tmp_path / "out",
@@ -31,3 +32,13 @@ def test_login_registers_on_local_server(tmp_path):
     srv = LocalTransport._server
     assert srv.storage.has_account("TEST")
     assert "TEST" in srv.online
+
+
+def test_duel_reaches_the_result_and_is_recorded(tmp_path):
+    mp_shot = _mp_shot()
+    saved, _ = mp_shot.run(mp_shot.parse(SCEN / "mp_duel.keys"), tmp_path / "out",
+                           save_dir=str(tmp_path / "rms"))
+    assert "08_result.png" in saved and saved[-1].endswith("back_to_duel_menu.png")
+    from pow_mp.net.transport import LocalTransport
+    ch = LocalTransport._server.storage.load("TEST")
+    assert ch.wins + ch.losses == 1

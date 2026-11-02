@@ -1,4 +1,6 @@
 """PHASE_9: the server's menu-side messages (login, character, ranking, options)."""
+import random
+
 import pytest
 
 from pow_server import codec_bin, messages as M
@@ -34,7 +36,8 @@ def login(server, uid="ANDREY", pwd="1234"):
 def server(request):
     from pow_server.storage import MemoryStorage, Storage
     st = Storage() if request.param == "sqlite" else MemoryStorage()
-    return GameServer(st, notices=[["Welcome to the", "new server!"], ["Page two"]])
+    return GameServer(st, notices=[["Welcome to the", "new server!"], ["Page two"]],
+                      rng=random.Random(7))
 
 
 def test_login_creates_account_and_profile(server):
@@ -146,9 +149,75 @@ def test_ranking_always_three_rows(server):
     assert [r["id"] for r in rows] == ["SOLO", "", ""]
 
 
-def test_matchmaking_not_there_yet(server):
+def test_other_modes_not_there_yet(server):
     c, _ = login(server)
-    assert c.ask(M.MATCH, mode=0) == {"op": 513, "st": -11}
+    assert c.ask(M.MATCH, mode=1) == {"op": 513, "st": -11}
+    assert c.ask(M.MATCH, mode=2) == {"op": 513, "st": -11}
+    assert c.ask(M.INVITE, mode=0, id="SOMEONE")["st"] == -11
+
+
+def _duel(c, action=0, hit=88, rounds=60):
+    """Play a duel to the end with one action; returns (513, 514, every 1028, 1032)."""
+    c.ask(M.MATCH, mode=0)
+    room, fighter, ready = c.got
+    turns = []
+    for _ in range(rounds):
+        ans = c.ask(M.ROUND_READY)
+        if ans["op"] == M.BATTLE_END:
+            return room, fighter, turns, ans
+        assert ans["op"] == M.ROUND_START and ans["st"] == 1
+        turns.append(c.ask(M.TURN, target=1, action=action, hit=hit))
+    raise AssertionError("the duel did not end in %d rounds" % rounds)
+
+
+def test_duel_vs_cpu(server):
+    c, prof = login(server)
+    room, fighter, turns, end = _duel(c)
+    assert room["op"] == 513 and room["st"] == 1 and room["slot"] == 0 and room["mode"] == 0
+    assert fighter["op"] == 514 and fighter["slot"] == 1
+    assert 30 <= fighter["face"] <= 33                      # CPU fighter (g:2197-2206)
+    assert 3 <= len(turns) <= 40
+    for t in turns:
+        assert t["op"] == 1028 and t["st"] == 1 and 1 <= len(t["records"]) <= 2
+        for r in t["records"]:
+            assert r["action"] not in (1, 2)                # stances never get a record
+            assert 0 <= r["actor_mp"] <= 100 and r["actor_hp"] >= 0
+    last = turns[-1]["records"][-1]
+    assert last["target_hp"] == 0 or last["actor_hp"] == 0 or any(
+        r["target_hp"] == 0 for t in turns[-1:] for r in t["records"])
+    assert end["op"] == 1032 and end["win"] in (0, 1) and end["loot"] == "NONE"
+    ch = server.storage.load("ANDREY")
+    assert (ch.wins, ch.losses) == ((1, 0) if end["win"] else (0, 1))
+    assert c.session.battle is None
+    c.ask(M.MATCH, mode=0)                                  # a new duel can start
+    assert [m["op"] for m in c.got] == [513, 514, 1024] and c.got[0]["st"] == 1
+
+
+def test_duel_attacking_with_perfect_hits_usually_wins(server):
+    wins = 0
+    for i in range(6):
+        c, _ = login(server, "PLAYER" + "ABCDEF"[i])
+        wins += _duel(c, hit=100)[3]["win"]
+    assert wins >= 4
+
+
+def test_leaving_a_duel_counts_as_a_loss(server):
+    c, _ = login(server)
+    c.ask(M.MATCH, mode=0)
+    c.ask(M.ROUND_READY)
+    c.session.close()                    # Exit Battle: the client hangs up (g:2990-2997)
+    ch = server.storage.load("ANDREY")
+    assert (ch.wins, ch.losses) == (0, 1)
+    c2, prof = login(server)
+    assert prof["losses"] == 1
+    c2.ask(M.MATCH, mode=0)
+    assert c2.got[0]["st"] == 1
+
+
+def test_turn_without_a_battle_is_ignored(server):
+    c, _ = login(server)
+    assert c.ask(M.TURN, target=1, action=0, hit=50) is None
+    assert c.ask(M.ROUND_READY) is None
 
 
 def test_garbage_is_ignored(server):

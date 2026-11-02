@@ -6,12 +6,15 @@ Session.receive() and writes the frames the session passes to its `send` callbac
 
 Done here: login 278/262 (+ PORT-EXTRA session token), duplicate login (280), notices
 258/259, Options 288-291, Character 1280-1299, Ranking 1293/1300, keepalive.
-Not yet (later PRs): rooms and battles 512-1038 - 512 and 768 answer "too many users" (-11).
+Battles: 1-on-1 Duel against a CPU fighter (512 mode 0 -> 513, 514, 1024; 1025/1026,
+1027/1028 per round; 1025 after the end -> 1032), resolved in pow_server/battle.py.
+Not yet: 2v2, missions and Challenge - 512 mode 1/2 and 768 answer "too many users" (-11).
 """
+import random
 import re
 import time
 
-from pow_server import codec_bin, messages as M
+from pow_server import battle as B, codec_bin, messages as M
 from pow_server.model import default_character, valid_slots
 from pow_server.storage import open_storage
 
@@ -23,7 +26,7 @@ _QUOTE_RE = re.compile(r"^[ -~]{1,20}$")       # quotes: 1..20 printable charact
 
 class GameServer:
     def __init__(self, storage=None, *, require_token=True, auto_register=True,
-                 notices=(), notices_version=1, clock=time.monotonic):
+                 notices=(), notices_version=1, clock=time.monotonic, rng=None):
         """require_token: 262 must carry the token of the last 278 (PORT-EXTRA). False lets the
         original jar in, which logs in again with 262 and its UserID only (06 §2.3).
         auto_register: a 278 with an unknown UserID creates the account. The original only let
@@ -35,6 +38,7 @@ class GameServer:
         self.notices = [list(p)[:4] for p in notices]
         self.notices_version = notices_version
         self.clock = clock
+        self.rng = rng or random.Random()
         self.online = {}               # user id -> Session
 
     def connect(self, send):
@@ -51,6 +55,8 @@ class Session:
         self.closed = False
         self.last_seen = server.clock()
         self.close_after_send = False  # 279 OK: the client hangs up itself and comes back with 262
+        self.battle = None             # pow_server.battle.Battle while in a room
+        self.slot = 0                  # my slot in it
 
     # --- I/O -----------------------------------------------------------------
     def send(self, op, **fields):
@@ -77,6 +83,12 @@ class Session:
         if self.closed:
             return
         self.closed = True
+        if self.battle is not None and not self.battle.over:
+            # "Exit Battle" (RSK -> Yes) hangs up and logs in again (g:2990-2997): a loss
+            self.battle.fighters[self.slot].hp = 0
+            B.duel_rewards(self.char, self.battle, self.slot, self.server.rng)
+            self.save()
+        self.battle = None
         if self.user and self.server.online.get(self.user) is self:
             del self.server.online[self.user]
 
@@ -227,9 +239,37 @@ class Session:
         rows += [{"rank": 0, "id": "", "value": 0}] * (3 - len(rows))
         self.send(M.RANK_LIST_ANS, st=1, rows=rows)
 
-    # --- rooms and battles (later PRs) ---------------------------------------------
-    def on_match(self, msg):           # 512 -> 513 -11 = cw8 "Too many users online"
-        self.send(M.MATCH_ANS, st=-11)
+    # --- rooms and battles ----------------------------------------------------------
+    def on_match(self, msg):           # 512 -> 513, 514 per other fighter, 1024
+        if msg.get("mode") != 0 or self.battle is not None:
+            return self.send(M.MATCH_ANS, st=-11)   # cw8 "Too many users online": 2v2 / missions later
+        rng = self.server.rng
+        me = B.from_character(self.char, 0)
+        foe = B.cpu_fighter(rng, self.char.level, 1)
+        self.battle, self.slot = B.Battle(rng, [me, foe], mode=0), 0
+        # 513 before 514: O() clears the fighter list (06 §2.6); the client adds itself from 263
+        self.send(M.MATCH_ANS, st=1, bg=self.battle.bg, slot=0, mode=0, unk=0)
+        self.send(M.ROOM_JOIN, st=1, **foe.wire())
+        self.send(M.ALL_READY, st=1)
+
+    def on_round_ready(self, msg):     # 1025 -> 1026 next round, or 1032 when it is over
+        b = self.battle
+        if b is None:
+            return
+        if not b.over:
+            return self.send(M.ROUND_START, st=1, bar_speed=0)
+        res = B.duel_rewards(self.char, b, self.slot, self.server.rng)
+        self.battle = None
+        self.save()
+        rank = next((r for r, uid, _ in self._table(2) if uid == self.user), 0)
+        self.send(M.BATTLE_END, st=1, rank=rank, **res)
+
+    def on_turn(self, msg):            # 1027 -> 1028
+        b = self.battle
+        if b is None or b.over:
+            return
+        turn = b.resolve({self.slot: (msg.get("target", 1), msg.get("action", 1), msg.get("hit", 20))})
+        self.send(M.TURN_RESULT, st=1, **turn)
 
     def on_invite(self, msg):          # 768 -> 769
         self.send(M.INVITE_ANS, st=-11)
@@ -253,5 +293,7 @@ _HANDLERS = {
     M.RANK_MINE: Session.on_rank_mine,
     M.RANK_LIST: Session.on_rank_list,
     M.MATCH: Session.on_match,
+    M.ROUND_READY: Session.on_round_ready,
+    M.TURN: Session.on_turn,
     M.INVITE: Session.on_invite,
 }

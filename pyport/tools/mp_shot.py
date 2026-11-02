@@ -3,7 +3,9 @@
     python pyport/tools/mp_shot.py pyport/tools/scenarios/mp_login.keys [--out DIR] [--every]
 
 Steps: wait N | key NAME [COUNT] (UP DOWN LEFT RIGHT FIRE LSOFT RSOFT 0-9 STAR POUND) |
-       shot NAME | include FILE | digits 1234 (number keys one per tick) | # comment
+       shot NAME | include FILE |
+       until STATE[,STATE] [MAX] (g.cY, the client state of 06 §1.2) |
+       goto_if STATE[,STATE] LABEL | label LABEL | digits 1234 (number keys one per tick) | # comment
 The server runs inside the game (POW_MP_SERVER=local) with a fresh temporary save folder.
 """
 import argparse
@@ -59,7 +61,7 @@ def run(steps, out, every=False, save_dir=None):
     from pow_mp.Main import Main
     midlet = Main()
     steps = list(steps)
-    st = {"frame": 0, "i": 0, "wait": 0, "n": 0, "last": None, "queue": []}
+    st = {"frame": 0, "i": 0, "wait": 0, "n": 0, "last": None, "queue": [], "until": None}
     saved = []
 
     def on_frame(screen):
@@ -70,6 +72,15 @@ def run(steps, out, every=False, save_dir=None):
         if st["queue"]:
             Main.b.keyPressed(st["queue"].pop(0))
             return
+        if st["until"] is not None:
+            states, left = st["until"]
+            from pow_mp._gen.g import g
+            if g.cY not in states and left > 0:
+                st["until"] = (states, left - 1)
+                return
+            if g.cY not in states:
+                raise SystemExit("until %s: still in state %d" % (states, g.cY))
+            st["until"] = None
         if st["wait"] > 0:
             st["wait"] -= 1
             if st["wait"] > 0:
@@ -86,6 +97,18 @@ def run(steps, out, every=False, save_dir=None):
                 Main.b.keyPressed(code)
                 st["queue"] = [code] * (int(count or 1) - 1)
                 st["wait"] = 1
+                return
+            if cmd == "label":
+                continue
+            if cmd == "goto_if":                 # goto_if STATE[,STATE...] LABEL
+                states, _, label = arg.partition(" ")
+                from pow_mp._gen.g import g
+                if g.cY in {int(x) for x in states.split(",")}:
+                    st["i"] = steps.index(("label", label.strip())) + 1
+                continue
+            if cmd == "until":                   # until STATE[,STATE...] [MAX_FRAMES]
+                states, _, limit = arg.partition(" ")
+                st["until"] = ({int(x) for x in states.split(",")}, int(limit or 3000))
                 return
             if cmd == "digits":
                 st["queue"] = [48 + int(ch) for ch in arg]
