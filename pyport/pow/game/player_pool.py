@@ -11,7 +11,7 @@ import pygame
 AUDIO = pathlib.Path(__file__).resolve().parents[2] / "assets" / "audio"
 
 
-class aq:
+class PlayerPool:
     def __init__(self, paramInt1, paramInt2, paramBoolean1, paramBoolean2):  # aq.java:40-54
         self.e = paramInt1
         self.a = [None] * self.e      # Player[] -> pygame Sound

@@ -7,21 +7,21 @@ from conftest import ROOT  # noqa: F401  (sets sys.path and the dummy video driv
 @pytest.fixture
 def game(tmp_path, monkeypatch):
     import config
-    from pow.game.ag import ag
-    from pow.game.al import al
-    from pow.game.e import e
-    from pow.game.structs import n
+    from pow.game.game_canvas import GameCanvas
+    from pow.game.scr_table import ScrTable
+    from pow.game.menus import Menus
+    from pow.game.structs import Hero
     from pow.midp.jrandom import Random
     monkeypatch.setattr(config, "SAVE_DIR", str(tmp_path))
-    g = e.__new__(e)
-    for name, value in (("bb", g), ("bE", al("/edat.scr")), ("by", Random(42)), ("cz", n()),
+    g = Menus.__new__(Menus)
+    for name, value in (("bb", g), ("bE", ScrTable("/edat.scr")), ("by", Random(42)), ("cz", Hero()),
                         ("cF", [0] * 2000), ("bV", 2), ("ep", 1), ("cG", 0), ("bH", [None] * 3),
                         ("fM", [False] * 16), ("fL", [None] * 25),
                         ("fn", [[0] * 45 for _ in range(3)])):
-        monkeypatch.setattr(ag, name, value)
-    ag.cz.a_v()
+        monkeypatch.setattr(GameCanvas, name, value)
+    GameCanvas.cz.a_v()
     g.av()
-    assert ag.az()
+    assert GameCanvas.az()
     return g
 
 
@@ -38,33 +38,33 @@ def test_b1_rare_items_get_their_stats(game, monkeypatch, fixed):
 @pytest.mark.parametrize("fixed", [True, False])
 def test_b2_level_128_and_above_survives_the_save(game, monkeypatch, fixed):
     import config
-    from pow.game.ag import ag
-    from pow.game.structs import n
+    from pow.game.game_canvas import GameCanvas
+    from pow.game.structs import Hero
     monkeypatch.setitem(config.ORIG_BUG, "B2", fixed)
-    ag.cz.k = "Leo"
-    ag.cz.l = 150
-    ag.ax()
+    GameCanvas.cz.k = "Leo"
+    GameCanvas.cz.l = 150
+    GameCanvas.ax()
     game.ay()
     assert game.ar()
-    monkeypatch.setattr(ag, "cz", n())
-    ag.cz.a_v()
-    monkeypatch.setattr(ag, "fL", [None] * 25)
+    monkeypatch.setattr(GameCanvas, "cz", Hero())
+    GameCanvas.cz.a_v()
+    monkeypatch.setattr(GameCanvas, "fL", [None] * 25)
     game.U_v()
-    assert ag.cz.l == (150 if fixed else 150 - 256)
+    assert GameCanvas.cz.l == (150 if fixed else 150 - 256)
 
 
 @pytest.mark.parametrize("fixed", [True, False])
 def test_b3_emperors_seal_lists_all_44_generals(game, monkeypatch, fixed):
     import config
-    from pow.game.ag import ag
-    from pow.game.e import e
+    from pow.game.game_canvas import GameCanvas
+    from pow.game.menus import Menus
     monkeypatch.setitem(config.ORIG_BUG, "B3", fixed)
     if config.ORIG_BUG["B3"]:
-        e.seal_list()
-    names = [ag.fn[2][i] for i in range(44)]
+        Menus.seal_list()
+    names = [GameCanvas.fn[2][i] for i in range(44)]
     if fixed:
         assert names[:3] == [4, 5, 6] and names[-1] == 140 and all(names)
-        e.bh_v()
-        assert ag.fr.b_II(names[0] - 1, 0)    # a general's name from general.arr
+        Menus.bh_v()
+        assert GameCanvas.fr.b_II(names[0] - 1, 0)    # a general's name from general.arr
     else:
         assert not any(names)

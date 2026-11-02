@@ -3,12 +3,12 @@
 The first palette entry of the PNG is replaced by the wanted colour and the PLTE CRC
 is recomputed with x.a(byte[],int,int), exactly as on the phone.
 """
-from pow.game.j import j
-from pow.game.x import x
+from pow.game.res_reader import ResReader
+from pow.game.gfx import Gfx
 from pow.midp.graphics import Image
 
 
-class g:
+class Font:
     e = 0  # private static int e = 0;   g.java:12 (offset of "PLTE")
 
     def __init__(self, paramString, paramInt1, paramInt2, paramInt3, paramInt4):  # g.java:14-44
@@ -17,20 +17,20 @@ class g:
         self.c = paramInt2     # glyph height
         self.d = paramInt3     # width of ' '
         try:
-            arrayOfByte = j.a(paramString)
+            arrayOfByte = ResReader.a(paramString)
             b1 = paramInt4 >> 16 & 0xFF
             b2 = paramInt4 >> 8 & 0xFF
             b3 = paramInt4 & 0xFF
             for b in range(100):
                 if arrayOfByte[b] == 80 and arrayOfByte[b + 1] == 76 and arrayOfByte[b + 2] == 84 and arrayOfByte[b + 3] == 69:
-                    g.e = b
+                    Font.e = b
                     break
-            e = g.e
+            e = Font.e
             if arrayOfByte[e + 4] != b1 or arrayOfByte[e + 5] != b2 or arrayOfByte[e + 6] != b3:
                 arrayOfByte[e + 4] = b1
                 arrayOfByte[e + 5] = b2
                 arrayOfByte[e + 6] = b3
-                l = x.a_ABII(arrayOfByte, e, 10)
+                l = Gfx.a_ABII(arrayOfByte, e, 10)
                 arrayOfByte[e + 10] = l >> 24 & 0xFF
                 arrayOfByte[e + 11] = l >> 16 & 0xFF
                 arrayOfByte[e + 12] = l >> 8 & 0xFF
@@ -53,7 +53,7 @@ class g:
     def a_CII(self, paramChar, paramInt1, paramInt2):  # g.java:58-62
         if paramChar == ' ':
             return
-        x.a_MIIIIII(self.a, paramInt1, paramInt2, self.b, self.c, g.b_C(paramChar) * self.b, 0)
+        Gfx.a_MIIIIII(self.a, paramInt1, paramInt2, self.b, self.c, Font.b_C(paramChar) * self.b, 0)
 
     @staticmethod
     def b_C(paramChar):  # g.java:64-138  (glyph index in 0_font.png)

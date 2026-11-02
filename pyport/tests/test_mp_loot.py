@@ -34,7 +34,9 @@ def test_drop_rates_are_the_single_players(kind, drop, equip):
 
 def test_normal_tier_follows_the_hero_level():
     rng = random.Random(5)
-    tiers = lambda lv: [(g - 101) % 5 for g in (loot.sp_drop(rng, lv, 2) for _ in range(6000)) if g > 100]
+    def tiers(lv):
+        return [(g - 101) % 5 for g in (loot.sp_drop(rng, lv, 2) for _ in range(6000)) if g > 100]
+
     assert set(tiers(5)) == {0, 1}                       # level <= 9: {80, 100} -> tiers 0-1
     assert min(tiers(80)) == 2                           # level > 69: {0, 0, 33, 77, 100}
 

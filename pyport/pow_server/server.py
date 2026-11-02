@@ -434,7 +434,7 @@ class Room:
         taken = {f.name for f in fighters if not f.cpu} | {f.name for f in keep}
         cpus = [f for f in fighters if f.cpu and not f.monster]
         names = [n for n in B.CPU_NAMES if n not in taken]
-        for f, name in zip(cpus, self.server.rng.sample(names, len(cpus))):
+        for f, name in zip(cpus, self.server.rng.sample(names, len(cpus)), strict=True):
             f.name = name
 
     def start(self):

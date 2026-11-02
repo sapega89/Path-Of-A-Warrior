@@ -4,7 +4,6 @@ The committed PNGs in pyport/shots/ are the port's own output (regression baseli
 When reference screenshots from KEmulator are available they go to pyport/shots_ref/
 and tools/compare_ref.py reports the difference.
 """
-import pathlib
 
 import pygame
 import pytest

@@ -101,8 +101,8 @@ def run(scenario, out, every=False):
 
     system.use_virtual_clock()
     display.init(headless=True)
-    from pow.game.Main import Main
-    from pow.game.ag import ag
+    from pow.game.midlet import Midlet
+    from pow.game.game_canvas import GameCanvas
 
     state = {"frame": 0, "i": 0, "wait": 0, "n": 0, "last": None}
     saved = []
@@ -123,74 +123,74 @@ def run(scenario, out, every=False):
                 state["wait"] = int(arg)
                 return
             if cmd == "key":
-                Main.b.keyPressed(KEYNAMES[arg.upper()])
+                Midlet.b.keyPressed(KEYNAMES[arg.upper()])
                 state["wait"] = 1          # the key is consumed on the next tick
                 return
             if cmd in ("hold", "release"):     # a direction key held down / let go
                 code = KEYNAMES[arg.upper()]
                 if cmd == "hold":
-                    Main.b.hold(code)
-                    Main.b.keyPressed(code)
+                    Midlet.b.hold(code)
+                    Midlet.b.keyPressed(code)
                     state["wait"] = 1
                     return
-                Main.b.release(code)
+                Midlet.b.release(code)
                 continue
             if cmd in ("mousedown", "mouseup"):  # left button held at X Y (walk) / let go
                 if cmd == "mouseup":
-                    Main.b.mouse_dir = None
+                    Midlet.b.mouse_dir = None
                     continue
                 cx, cy = map(int, arg.split())
-                keys = Main.b.pointer(cx, cy, "click")
-                Main.b.mouse_dir = keys[0] if len(keys) == 1 and keys[0] in DIRECTION_KEYS else None
-                Main.b.key_queue.extend(keys)
-                state["wait"] = max(1, len(Main.b.key_queue))
+                keys = Midlet.b.pointer(cx, cy, "click")
+                Midlet.b.mouse_dir = keys[0] if len(keys) == 1 and keys[0] in DIRECTION_KEYS else None
+                Midlet.b.key_queue.extend(keys)
+                state["wait"] = max(1, len(Midlet.b.key_queue))
                 return
             if cmd in ("click", "wheel", "rclick", "mclick"):
                 if cmd == "click":
                     cx, cy = map(int, arg.split())
-                    Main.b.click(cx, cy)
+                    Midlet.b.click(cx, cy)
                 elif cmd == "wheel":
-                    Main.b.click(0, 0, "wheel_" + arg.lower())
+                    Midlet.b.click(0, 0, "wheel_" + arg.lower())
                 elif cmd == "mclick":
                     cx, cy = map(int, arg.split())
-                    Main.b.click(cx, cy, "middle")
+                    Midlet.b.click(cx, cy, "middle")
                 elif arg:
                     cx, cy = map(int, arg.split())
-                    Main.b.click(cx, cy, "rclick")
+                    Midlet.b.click(cx, cy, "rclick")
                 else:
-                    Main.b.click(0, 0, "back")
-                state["wait"] = max(1, len(Main.b.key_queue))   # queued keys go 1 per tick
+                    Midlet.b.click(0, 0, "back")
+                state["wait"] = max(1, len(Midlet.b.key_queue))   # queued keys go 1 per tick
                 return
             if cmd == "gold":
-                ag.cz.E = int(arg)
+                GameCanvas.cz.E = int(arg)
                 continue
             if cmd == "hero":              # TEST-ONLY: hero FIELD N, e.g. hero p 1 (HP), hero w 99 (ATK)
                 field, val = arg.split()
-                setattr(ag.cz, field, int(val))
+                setattr(GameCanvas.cz, field, int(val))
                 continue
             if cmd == "skill":             # TEST-ONLY: skill SLOT ID - learn skill ID (12..30) on key slot
                 slot, sid = map(int, arg.split())
-                if ag.cz.W[sid - 12] == 0:
-                    ag.cz.W[sid - 12] = 1
-                ag.cz.V[slot] = sid
+                if GameCanvas.cz.W[sid - 12] == 0:
+                    GameCanvas.cz.W[sid - 12] = 1
+                GameCanvas.cz.V[slot] = sid
                 continue
             if cmd == "potion":            # TEST-ONLY: potion KEY ID N - N potions ID on * (KEY 0) or # (1)
                 key, pid, cnt = map(int, arg.split())
-                z = ag.cz.Z[ag.cz.aa[key]]
+                z = GameCanvas.cz.Z[GameCanvas.cz.aa[key]]
                 z.a = pid
                 z.b = cnt
                 continue
             if cmd == "win":
-                ag.cr = 1                  # the mission's general was met on the map (c.java:986)
-                ag.bd.d_I(1)               # what the combat calls on victory (c.java:1516)
+                GameCanvas.cr = 1                  # the mission's general was met on the map (c.java:986)
+                GameCanvas.bd.d_I(1)               # what the combat calls on victory (c.java:1516)
                 continue
             if cmd == "generals":
-                from pow.game.d import d
-                from pow.game.e import e
-                tab = d("/" + ag.bE.a_I(52))
+                from pow.game.arr_table import ArrTable
+                from pow.game.menus import Menus
+                tab = ArrTable("/" + GameCanvas.bE.a_I(52))
                 for b1 in range(int(arg)):
-                    e.b_II(tab.a_II(b1, 0), 10 + 20 * b1)
-                ag.cz.S = 1
+                    Menus.b_II(tab.a_II(b1, 0), 10 + 20 * b1)
+                GameCanvas.cz.S = 1
                 continue
             if cmd == "multiplayer":       # multiplayer N NAME: after the game quits (Main Menu >
                 state["mp"] = arg.split()      # Multiplayer > YES), N MP frames and shot NAME
@@ -202,10 +202,10 @@ def run(scenario, out, every=False):
                 saved.append(name)
                 continue
             raise SystemExit("unknown step: %s %s" % (cmd, arg))
-        ag.gh = False
+        GameCanvas.gh = False
 
     display.frame_hooks.append(on_frame)
-    midlet = Main()
+    midlet = Midlet()
     asyncio.run(midlet.startApp())
     display.frame_hooks.remove(on_frame)
     if state.get("mp"):                    # main.py: the Multiplayer game in the same window

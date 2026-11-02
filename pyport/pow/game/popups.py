@@ -5,17 +5,17 @@ plain-text messages, and the key/timer logic b() for the branches the menus reac
 Branches that need map/combat/campaign code raise NotPorted.
 """
 import config
-from pow.game import ae
-from pow.game.ag import ag, not_ported
-from pow.game.x import x
+from pow.game import consts
+from pow.game.game_canvas import GameCanvas
+from pow.game.gfx import Gfx
 from pow.midp.jint import i16
 
 
-class l(ag):
+class Popups(GameCanvas):
     r = None  # public static Image r = null;  l.java:38  (ui_popup)
 
     def __init__(self):  # l.java:42-44
-        super().__init__(ag.bs)
+        super().__init__(GameCanvas.bs)
         self.a = 0       # 1 = popup from d() (gamestr), 0 = from e()
         self.b = 0       # popup kind: 0 none, 1 text, 2 yes/no, 3 4-choice, 4 result, 10 ok
         self.b_ = 0      # popup id
@@ -51,25 +51,25 @@ class l(ag):
             self.l[b] = ""
 
     def b_v(self):  # l.java:62-324  (keys + timer; returns the chosen button or -1)
-        if ag.ch != 0:
+        if GameCanvas.ch != 0:
             self.j = 1
             if self.e != 0:
-                if (ag.ch == -5 or ag.ch == 53) and self.f > 2:
+                if (GameCanvas.ch == -5 or GameCanvas.ch == 53) and self.f > 2:
                     self.f = 2
             else:
                 if self.b == 1:
-                    if ag.ch == -5 or ag.ch == 53:
+                    if GameCanvas.ch == -5 or GameCanvas.ch == 53:
                         if self.a == 1:
                             if self.d > 2 and self.b_ != 20:
                                 self.d = 2
                             return -1
-                        if ag.bV != 1:
+                        if GameCanvas.bV != 1:
                             if self.d > 2 and self.b_ != 20:
                                 self.d = 2
                         elif self.b_ == 37:
                             self.as_()
                 elif self.b == 2:
-                    ch = ag.ch
+                    ch = GameCanvas.ch
                     if ch in (-4, -3, 52, 54):
                         self.k = i16(self.k + 1 & 0x1)
                     elif ch in (-5, 53):
@@ -82,12 +82,12 @@ class l(ag):
                             if self.b_ == 28:
                                 self.as_()
                                 return -1
-                            if ag.bV == 2:
-                                c0 = ag.cM[0]
+                            if GameCanvas.bV == 2:
+                                c0 = GameCanvas.cM[0]
                                 if c0 == 3:
-                                    ag.cM[0] = 4
-                                    ag.dG = 0
-                                    ag.dH = i16(ag.dH + 1)
+                                    GameCanvas.cM[0] = 4
+                                    GameCanvas.dG = 0
+                                    GameCanvas.dH = i16(GameCanvas.dH + 1)
                                     self.am()
                                 elif c0 == 5:
                                     if self.b_ == 28:
@@ -96,70 +96,70 @@ class l(ag):
                                     if self.b_ == 41 or self.b_ == 42:
                                         # platformRequest(ag.bm / ag.bn): the browser is not opened in the port
                                         if self.b_ == 41:
-                                            print("platformRequest:", ag.bm)
+                                            print("platformRequest:", GameCanvas.bm)
                                         else:
                                             # PORT-EXTRA: the Multiplayer jar is part of the port, so
                                             # main.py starts it after the game exits (no download)
-                                            ag.bs.to_multiplayer = True
-                                        ag.bs.destroyApp(True)
-                                        ag.bs.notifyDestroyed()
+                                            GameCanvas.bs.to_multiplayer = True
+                                        GameCanvas.bs.destroyApp(True)
+                                        GameCanvas.bs.notifyDestroyed()
                                         return -1
-                                    if ag.cM[1] == 1:
+                                    if GameCanvas.cM[1] == 1:
                                         self.au()
                                 elif c0 == 8:
-                                    ag.ax()
+                                    GameCanvas.ax()
                                     self.ay()
-                                    ag.eo = ag.B_v()
-                                    if ag.be is not None:
-                                        type(ag.be).d = True     # as.d = true (static)
+                                    GameCanvas.eo = GameCanvas.B_v()
+                                    if GameCanvas.be is not None:
+                                        type(GameCanvas.be).d = True     # as.d = true (static)
                                     if self.ar() != 0:
-                                        ag.bb.c_v()
-                                        ag.dE = ag.fU
-                                        ag.cM[0] = 0
-                                        ag.cN = ae.v[ag.cM[0]]
-                                        ag.cM[2] = 0
-                                        ag.cM[1] = 0
+                                        GameCanvas.bb.c_v()
+                                        GameCanvas.dE = GameCanvas.fU
+                                        GameCanvas.cM[0] = 0
+                                        GameCanvas.cN = consts.v[GameCanvas.cM[0]]
+                                        GameCanvas.cM[2] = 0
+                                        GameCanvas.cM[1] = 0
                                         self.aA()
                                         self.l_II(100, 0)
                                     else:
-                                        ag.aw()
+                                        GameCanvas.aw()
                                         self.e_I(1)
                                 elif c0 == 10:
-                                    ag.aj()
-                                    ag.cM[0] = 5
-                                    ag.cN = 10
-                                    ag.cM[2] = 0
-                                    ag.cM[1] = 0
+                                    GameCanvas.aj()
+                                    GameCanvas.cM[0] = 5
+                                    GameCanvas.cN = 10
+                                    GameCanvas.cM[2] = 0
+                                    GameCanvas.cM[1] = 0
                                 elif c0 == 29:
-                                    ag.bb.c_v()
-                                    ag.cM[0] = 6
+                                    GameCanvas.bb.c_v()
+                                    GameCanvas.cM[0] = 6
                                 # break -> leaves both switches, continues with the timer below
-                            elif ag.cR.a == 1:  # l.java:172-182  (pause menu: Exit -> Game Menu)
-                                if ag.cM[1] == 5:
+                            elif GameCanvas.cR.a == 1:  # l.java:172-182  (pause menu: Exit -> Game Menu)
+                                if GameCanvas.cM[1] == 5:
                                     self.al_()
                                     self.w_I(2)
-                                    ag.cM[0] = 5
-                                    ag.cN = 10
-                                    ag.bV = 2
-                                    ag.cL = 0
-                                    ag.cK = 0
-                            elif ag.bV == 0:
+                                    GameCanvas.cM[0] = 5
+                                    GameCanvas.cN = 10
+                                    GameCanvas.bV = 2
+                                    GameCanvas.cL = 0
+                                    GameCanvas.cK = 0
+                            elif GameCanvas.bV == 0:
                                 return 0
                         else:
                             if self.a == 1:
                                 self.b = 0
                                 return -1
-                            if ag.cM[0] == 8:
-                                ag.aw()
+                            if GameCanvas.cM[0] == 8:
+                                GameCanvas.aw()
                             return 1
                     elif ch == -7:
-                        if ag.cM[0] == 8:
+                        if GameCanvas.cM[0] == 8:
                             self.d = 1
-                            ag.aw()
+                            GameCanvas.aw()
                             return 1
                 elif self.b == 3:
                     if self.d > 5:
-                        ch = ag.ch
+                        ch = GameCanvas.ch
                         if ch in (-1, 50):
                             self.k = i16(self.k - 1)
                             self.k = i16(self.k & 0x3)
@@ -169,11 +169,11 @@ class l(ag):
                         elif ch in (-5, 53):
                             self.d = 4
                 elif self.b == 10:
-                    if ag.ch == -5 or ag.ch == 53:
+                    if GameCanvas.ch == -5 or GameCanvas.ch == 53:
                         self.d = 2
-                        ag.cS.b = 0
+                        GameCanvas.cS.b = 0
                         self.q = True
-                        ag.ck = 1
+                        GameCanvas.ck = 1
         return self._timer()
 
     def _timer(self):  # l.java:229-323  (the part of b() after the key switch)
@@ -181,158 +181,158 @@ class l(ag):
             self.f = i16(self.f - 1)
             if self.f < 1:
                 self.e = 0
-                ag.ck = 1
+                GameCanvas.ck = 1
         else:
             if self.d < 200:
                 self.d = i16(self.d - 1)
             if self.d == 0:
                 self.b = 0
-                ag.ck = 1
+                GameCanvas.ck = 1
                 v = self.b_
                 if v in (1, 18):
                     self.as_()
                 elif v == 15:
-                    ag.cM[0] = 0
+                    GameCanvas.cM[0] = 0
                     for b in range(5):
-                        ag.gf[b] = ""
-                    ag.ap()
-                    ag.dE = ag.fU
+                        GameCanvas.gf[b] = ""
+                    GameCanvas.ap()
+                    GameCanvas.dE = GameCanvas.fU
                 elif v == 39:
-                    ag.cM[0] = 12
-                    ag.cN = ae.v[ag.cM[0]]
-                    ag.cM[1] = 3
+                    GameCanvas.cM[0] = 12
+                    GameCanvas.cN = consts.v[GameCanvas.cM[0]]
+                    GameCanvas.cM[1] = 3
                 elif v == 14:
-                    from pow.game.e import e
-                    ag.fD += 1
-                    ag.fI = self.k
-                    e.a_II(0, (ag.fF << 2) + 2 + self.k)
-                    ag.fw[ag.fD & 0x1] = ag.gf[3]
+                    from pow.game.menus import Menus
+                    GameCanvas.fD += 1
+                    GameCanvas.fI = self.k
+                    Menus.a_II(0, (GameCanvas.fF << 2) + 2 + self.k)
+                    GameCanvas.fw[GameCanvas.fD & 0x1] = GameCanvas.gf[3]
                 elif v == 16:
-                    from pow.game.e import e
-                    ag.cz.S = 0
-                    ag.bb.o_v()
-                    if ag.fu != 0:
-                        ag.fu = i16(e.b_II(ag.fn[2][ag.fv], 5))
+                    from pow.game.menus import Menus
+                    GameCanvas.cz.S = 0
+                    GameCanvas.bb.o_v()
+                    if GameCanvas.fu != 0:
+                        GameCanvas.fu = i16(Menus.b_II(GameCanvas.fn[2][GameCanvas.fv], 5))
                     else:
-                        ag.fu = i16(e.b_II(ag.fn[0][ag.fH], 5))
+                        GameCanvas.fu = i16(Menus.b_II(GameCanvas.fn[0][GameCanvas.fH], 5))
                     self.ar()
                     self.e_I(15)
                 elif v == 9:  # room cleared: the exits open, or the mission's general talks
-                    if ag.eO[ag.eP].o != 0:
-                        ag.bd.g_v()
+                    if GameCanvas.eO[GameCanvas.eP].o != 0:
+                        GameCanvas.bd.g_v()
                     else:
-                        ag.co = 1
-                        ag.cn = 5
+                        GameCanvas.co = 1
+                        GameCanvas.cn = 5
                 elif v == 10:  # l.java:257-260  (Mission Success -> Total Exp)
-                    from pow.game.c import c
+                    from pow.game.map_scene import MapScene
                     self.e_I(11)
-                    c.h_v()
+                    MapScene.h_v()
                 elif v == 11:  # l.java:261-268  (Total Exp -> Time Exp, if in time)
-                    if ag.dX < ag.dz[ag.dm].i:
+                    if GameCanvas.dX < GameCanvas.dz[GameCanvas.dm].i:
                         self.e_I(12)
-                        ag.ea = 0
+                        GameCanvas.ea = 0
                     else:
-                        ag.bd.d_I(1)
+                        GameCanvas.bd.d_I(1)
                 elif v == 12:  # l.java:269-271
-                    ag.bd.d_I(1)
+                    GameCanvas.bd.d_I(1)
                 elif v == 22:  # l.java:300-315  (Mission fail -> Game Menu)
-                    if ag.dz[ag.dm].g > 200:
-                        ag.bd.d_I(0)
+                    if GameCanvas.dz[GameCanvas.dm].g > 200:
+                        GameCanvas.bd.d_I(0)
                     else:
                         self.w_I(2)
                         self.F_v()
-                        ag.cM[0] = 0
-                        ag.cN = ae.v[ag.cM[0]]
-                        ag.dE = ag.fU
-                        ag.bV = 2
-                        ag.ck = 1
-                        ag.cL = 0
-                        ag.cK = 0
+                        GameCanvas.cM[0] = 0
+                        GameCanvas.cN = consts.v[GameCanvas.cM[0]]
+                        GameCanvas.dE = GameCanvas.fU
+                        GameCanvas.bV = 2
+                        GameCanvas.ck = 1
+                        GameCanvas.cL = 0
+                        GameCanvas.cK = 0
         return -1
 
     def c_v(self):  # l.java:326-397  (draw)
         i = -(self.h >> 1)
         if self.b == 4:
             i += 20
-        if ag.bV == 3 or ag.bW == 3:
+        if GameCanvas.bV == 3 or GameCanvas.bW == 3:
             i -= 30
         self.b_I(self.h)
-        x.a_Lg(ag.bu)
+        Gfx.a_Lg(GameCanvas.bu)
         for b in range(self.i):
-            self.b_TII(self.l[b], ag.de + i, 0)
+            self.b_TII(self.l[b], GameCanvas.de + i, 0)
             i += 20
         if self.b == 10:
-            self.c_I(ag.de + self.h // 2 - 18)
+            self.c_I(GameCanvas.de + self.h // 2 - 18)
         elif self.b == 2:
-            self.O_I(ag.de + i + 5)
+            self.O_I(GameCanvas.de + i + 5)
         elif self.b == 3:
             i += 5
             for b in range(4):
                 if self.k == b:
-                    x.a_Lg(ag.bw)
+                    Gfx.a_Lg(GameCanvas.bw)
                 else:
-                    x.a_Lg(ag.bu)
-                self.b_TII(self.l[b + 2], ag.de + i, 0)
+                    Gfx.a_Lg(GameCanvas.bu)
+                self.b_TII(self.l[b + 2], GameCanvas.de + i, 0)
                 i += 16
         elif self.b == 4:  # l.java:357-381  (mission result: gold / total exp / time exp)
-            if ag.bV == 3:
-                ag.de -= 30
-            self.b_TII(ag.dl, ag.de - 75, len(ag.dl) + 1)
+            if GameCanvas.bV == 3:
+                GameCanvas.de -= 30
+            self.b_TII(GameCanvas.dl, GameCanvas.de - 75, len(GameCanvas.dl) + 1)
             if self.b_ == 10:
-                j_ = ag.dz[ag.dm].h * 150 * (1 + (ag.ep ^ 0x1))
-                self.b_TII("Gold Acquired!", ag.de + 10, len("Gold Acquired!") + 1)
-                self.d_IIII(j_, ag.dd + (ag.D_I(j_) * 9 >> 1) - ag.db, ag.de + 30, 0)
+                j_ = GameCanvas.dz[GameCanvas.dm].h * 150 * (1 + (GameCanvas.ep ^ 0x1))
+                self.b_TII("Gold Acquired!", GameCanvas.de + 10, len("Gold Acquired!") + 1)
+                self.d_IIII(j_, GameCanvas.dd + (GameCanvas.D_I(j_) * 9 >> 1) - GameCanvas.db, GameCanvas.de + 30, 0)
             elif self.b_ == 11:
-                self.b_TII("Total Exp", ag.de, len("Total Exp") + 1)
+                self.b_TII("Total Exp", GameCanvas.de, len("Total Exp") + 1)
             elif self.b_ == 12:
-                self.b_TII("Time Exp", ag.de - 7, len("Time Exp") + 1)
-                ag.d_TII("Time Limit:", ag.dd - 78 - ag.db, ag.de - 7 + 20)
-                self.j_III(ag.dd + 34 - ag.db, ag.de - 7 + 21, ag.dz[ag.dm].i)
-                ag.d_TII("Ested Time:", ag.dd - 78 - ag.db, ag.de - 7 + 40)
-                self.j_III(ag.dd + 34 - ag.db, ag.de - 7 + 41, ag.dX)
-            if ag.bV == 3:
-                ag.de += 30
+                self.b_TII("Time Exp", GameCanvas.de - 7, len("Time Exp") + 1)
+                GameCanvas.d_TII("Time Limit:", GameCanvas.dd - 78 - GameCanvas.db, GameCanvas.de - 7 + 20)
+                self.j_III(GameCanvas.dd + 34 - GameCanvas.db, GameCanvas.de - 7 + 21, GameCanvas.dz[GameCanvas.dm].i)
+                GameCanvas.d_TII("Ested Time:", GameCanvas.dd - 78 - GameCanvas.db, GameCanvas.de - 7 + 40)
+                self.j_III(GameCanvas.dd + 34 - GameCanvas.db, GameCanvas.de - 7 + 41, GameCanvas.dX)
+            if GameCanvas.bV == 3:
+                GameCanvas.de += 30
         if self.e != 0:
             self.b_I(self.g)
-            if ag.bV == 3:
-                ag.de -= 30
-            self.b_TII(self.l[5], ag.de - (self.g >> 1) - 3, 0)
-            if ag.bV == 3:
-                ag.de += 30
+            if GameCanvas.bV == 3:
+                GameCanvas.de -= 30
+            self.b_TII(self.l[5], GameCanvas.de - (self.g >> 1) - 3, 0)
+            if GameCanvas.bV == 3:
+                GameCanvas.de += 30
         if self.s:
-            self.c_I(ag.de + i - 10)
+            self.c_I(GameCanvas.de + i - 10)
         self.j = 0
 
     def b_I(self, paramInt):  # l.java:399-423  (popup frame)
-        i = ag.de - (paramInt >> 1) - 10
-        if l.r is None:
-            l.r = self.d_T(ag.bA.a_I(33))
-        r = l.r
-        if (ag.bV == 3 or ag.bW == 3) and not ag.bS:
+        i = GameCanvas.de - (paramInt >> 1) - 10
+        if Popups.r is None:
+            Popups.r = self.d_T(GameCanvas.bA.a_I(33))
+        r = Popups.r
+        if (GameCanvas.bV == 3 or GameCanvas.bW == 3) and not GameCanvas.bS:
             i -= 30
         for b in range(26):
-            self.b_MIIIIII(r, ag.dd - 103 + b * 8 - ag.db, i, 8, 3, 10, 0)
-        self.a_IIII(ag.dd - 102 - ag.db, i + 3, 210, paramInt + 14)
-        self.b_MIIIIII(r, ag.dd - 105 - ag.db, i, 3, 10, 0, 0)
-        self.b_MIIIIII(r, ag.dd + 104 - ag.db, i, 3, 10, 2, 0)
+            self.b_MIIIIII(r, GameCanvas.dd - 103 + b * 8 - GameCanvas.db, i, 8, 3, 10, 0)
+        self.a_IIII(GameCanvas.dd - 102 - GameCanvas.db, i + 3, 210, paramInt + 14)
+        self.b_MIIIIII(r, GameCanvas.dd - 105 - GameCanvas.db, i, 3, 10, 0, 0)
+        self.b_MIIIIII(r, GameCanvas.dd + 104 - GameCanvas.db, i, 3, 10, 2, 0)
         i += 10
-        arrayOfInt = [[ag.dd - 105 - ag.db, 162, 162, 162, ag.dd + 106 - ag.db],
-                      [ag.dd - 104 - ag.db, 67, 67, 67, ag.dd + 105 - ag.db],
-                      [ag.dd - 103 - ag.db, 33, 33, 33, ag.dd + 104 - ag.db]]
+        arrayOfInt = [[GameCanvas.dd - 105 - GameCanvas.db, 162, 162, 162, GameCanvas.dd + 106 - GameCanvas.db],
+                      [GameCanvas.dd - 104 - GameCanvas.db, 67, 67, 67, GameCanvas.dd + 105 - GameCanvas.db],
+                      [GameCanvas.dd - 103 - GameCanvas.db, 33, 33, 33, GameCanvas.dd + 104 - GameCanvas.db]]
         for b in range(3):
-            col = ag.k_III(arrayOfInt[b][1], arrayOfInt[b][2], arrayOfInt[b][3])
-            x.c_IIIII(arrayOfInt[b][0] + ag.db, i + ag.dc, arrayOfInt[b][0] + ag.db, i + paramInt - 1 + ag.dc, col)
-            x.c_IIIII(arrayOfInt[b][4] + ag.db, i + ag.dc, arrayOfInt[b][4] + ag.db, i + paramInt - 1 + ag.dc, col)
+            col = GameCanvas.k_III(arrayOfInt[b][1], arrayOfInt[b][2], arrayOfInt[b][3])
+            Gfx.c_IIIII(arrayOfInt[b][0] + GameCanvas.db, i + GameCanvas.dc, arrayOfInt[b][0] + GameCanvas.db, i + paramInt - 1 + GameCanvas.dc, col)
+            Gfx.c_IIIII(arrayOfInt[b][4] + GameCanvas.db, i + GameCanvas.dc, arrayOfInt[b][4] + GameCanvas.db, i + paramInt - 1 + GameCanvas.dc, col)
         i += paramInt
-        self.b_MIIIIII(r, ag.dd - 105 - ag.db, i, 3, 10, 5, 0)
-        self.b_MIIIIII(r, ag.dd + 104 - ag.db, i, 3, 10, 7, 0)
+        self.b_MIIIIII(r, GameCanvas.dd - 105 - GameCanvas.db, i, 3, 10, 5, 0)
+        self.b_MIIIIII(r, GameCanvas.dd + 104 - GameCanvas.db, i, 3, 10, 7, 0)
         i += 7
         for b in range(26):
-            self.b_MIIIIII(r, ag.dd - 103 + b * 8 - ag.db, i, 8, 3, 10, 3)
+            self.b_MIIIIII(r, GameCanvas.dd - 103 + b * 8 - GameCanvas.db, i, 8, 3, 10, 3)
 
     def a_IIII(self, paramInt1, paramInt2, paramInt3, paramInt4):  # l.java:425-446  (tiled ui_back)
-        if ag.ct[10] is None:
-            ag.ct[10] = self.d_T(ag.bA.a_I(59))
+        if GameCanvas.ct[10] is None:
+            GameCanvas.ct[10] = self.d_T(GameCanvas.bA.a_I(59))
         b = 0
         while b * 24 < paramInt4:
             if paramInt4 >= (b + 1) * 24:
@@ -345,26 +345,26 @@ class l(ag):
                     j_ = 52
                 else:
                     j_ = paramInt3 - b1 * 52
-                if ag.ct[10] is not None:
-                    self.b_MIIIIII(ag.ct[10], paramInt1 + b1 * 52, paramInt2 + b * 24, j_, i, 0, 0)
+                if GameCanvas.ct[10] is not None:
+                    self.b_MIIIIII(GameCanvas.ct[10], paramInt1 + b1 * 52, paramInt2 + b * 24, j_, i, 0, 0)
                 b1 += 1
             b += 1
 
     def O_I(self, paramInt):  # l.java:448-461  (Yes / No buttons)
         for b in range(2):
             if self.k == b:
-                x.a_Lg(ag.bu)
+                Gfx.a_Lg(GameCanvas.bu)
                 bool_ = True
             else:
-                x.a_Lg(ag.bx)
+                Gfx.a_Lg(GameCanvas.bx)
                 bool_ = False
-            self.a_IIIIZ(ag.dd - 60 + b * 80, paramInt + ag.dc, 40, 17, bool_)
-            ag.c_TII(ae.aZ[b], ag.dd - 40 + b * 80, paramInt + 1)
+            self.a_IIIIZ(GameCanvas.dd - 60 + b * 80, paramInt + GameCanvas.dc, 40, 17, bool_)
+            GameCanvas.c_TII(consts.aZ[b], GameCanvas.dd - 40 + b * 80, paramInt + 1)
 
     def c_I(self, paramInt):  # l.java:463-467  (Ok button)
-        x.a_Lg(ag.bu)
-        self.a_IIIIZ(ag.dd - 60 + 40 + ag.db, paramInt + ag.dc, 40, 17, True)
-        ag.c_TII(ae.aZ[2], ag.dd, paramInt)
+        Gfx.a_Lg(GameCanvas.bu)
+        self.a_IIIIZ(GameCanvas.dd - 60 + 40 + GameCanvas.db, paramInt + GameCanvas.dc, 40, 17, True)
+        GameCanvas.c_TII(consts.aZ[2], GameCanvas.dd, paramInt)
 
     def a_T(self, paramString):  # l.java:469-496  ("<kind>line|line|...")
         self.s = False
@@ -401,16 +401,16 @@ class l(ag):
             self.j = 1
 
     def d_I(self, paramInt):  # l.java:506-598  (gamestr popup N: text gamestr[N+15], kind from its first digit)
-        from pow.game.e import e
+        from pow.game.menus import Menus
         self.a = 1
         self.s = False
-        if ag.bV == 3:
-            ag.ck = 1
+        if GameCanvas.bV == 3:
+            GameCanvas.ck = 1
         else:
-            ag.cS.j = 1
+            GameCanvas.cS.j = 1
         self.k = 0
         self.b_ = i16(paramInt)
-        str1 = ag.M_I(paramInt + 15)
+        str1 = GameCanvas.M_I(paramInt + 15)
         c = str1[0]
         if '0' <= c <= '9':
             self.b = i16(ord(c) - 48)
@@ -440,10 +440,10 @@ class l(ag):
             self.l[2] = self.o
             self.l[3] = self.p
         elif paramInt == 34:
-            self.l[0] = e.c_I(ag.fK[19])
+            self.l[0] = Menus.c_I(GameCanvas.fK[19])
             self.l[1] = self.l[1] + self.m
         elif paramInt == 35:
-            self.l[1] = self.l[1] + " " + e.c_I(ag.fK[19])
+            self.l[1] = self.l[1] + " " + Menus.c_I(GameCanvas.fK[19])
         elif paramInt == 39:
             self.l[3] = self.m + "?"
         elif paramInt == 40:
@@ -468,20 +468,20 @@ class l(ag):
             self.h = 150
         elif self.b == 10:
             self.h = i16(self.h + 30)
-        ag.ck = 1
-        if ag.be is not None:
-            from pow.game.as_ import as_
-            as_.aJ()
+        GameCanvas.ck = 1
+        if GameCanvas.be is not None:
+            from pow.game.live import Live
+            Live.aJ()
 
     @staticmethod
     def d_v():  # l.java:498-500  (Blacksmith: bought)
-        from pow.game.e import e
-        return " You bought|1 " + e.c_I(ag.fK[19]) + '.'
+        from pow.game.menus import Menus
+        return " You bought|1 " + Menus.c_I(GameCanvas.fK[19]) + '.'
 
     @staticmethod
     def e_v():  # l.java:502-504  (Blacksmith: sold)
-        from pow.game.e import e
-        return " You sold|" + e.c_I(ag.fK[19]) + '.'
+        from pow.game.menus import Menus
+        return " You sold|" + Menus.c_I(GameCanvas.fK[19]) + '.'
 
     def e_I(self, paramInt):  # l.java:600-891
         self.a = 0
@@ -496,8 +496,8 @@ class l(ag):
         if paramInt == 39:
             self.s = True
         self.b = arrayOfByte2[paramInt]
-        if ag.bV == 3:
-            ag.ck = 1
+        if GameCanvas.bV == 3:
+            GameCanvas.ck = 1
         else:
             self.j = 1
         self.d = arrayOfShort[paramInt]
@@ -515,32 +515,32 @@ class l(ag):
             L[0] = "What do you want"
             L[1] = "to talk about?"
             for i in range(4):
-                L[i + 2] = ae.ba[i]
+                L[i + 2] = consts.ba[i]
         elif p in (23, 24, 25, 26):
             L[0] = {23: " / Hp 5 Increased", 24: " / MP 3 Increased",
                     25: " / DEF 1 Increased", 26: " / ATK 1 Increased"}[p][3:]
             L[1] = ""
         elif p == 6:
-            dz = ag.dz[ag.dm]
+            dz = GameCanvas.dz[GameCanvas.dm]
             self.B_I(dz.e)
-            ag.cT[0] = ag.dC.a
-            ag.cT[1] = "Lv" + str(ag.cz.l + dz.j) + " / Gold: " + str(dz.h * 150 * (1 + (ag.ep ^ 0x1)))
-            L[0] = ag.cT[0]
-            L[1] = ag.cT[1]
+            GameCanvas.cT[0] = GameCanvas.dC.a
+            GameCanvas.cT[1] = "Lv" + str(GameCanvas.cz.l + dz.j) + " / Gold: " + str(dz.h * 150 * (1 + (GameCanvas.ep ^ 0x1)))
+            L[0] = GameCanvas.cT[0]
+            L[1] = GameCanvas.cT[1]
             L[2] = "Do you want to"
             L[3] = "accept this"
             L[4] = "mission?"
         elif p == 15:
-            ag.cT[1] = ag.dC.a
+            GameCanvas.cT[1] = GameCanvas.dC.a
             L[0] = "You visited"
-            L[1] = ag.cT[1] + '.'
-            if ag.fu != 0:
+            L[1] = GameCanvas.cT[1] + '.'
+            if GameCanvas.fu != 0:
                 L[2] = "Friendship:100%"
             else:
                 L[2] = "Friendship "
                 L[3] = "increased by 5."
-            if ag.fJ < 8:
-                L[5] = ag.cT[0]
+            if GameCanvas.fJ < 8:
+                L[5] = GameCanvas.cT[0]
                 self.i = i16(self.i + 1)
             else:
                 L[4] = ""
@@ -549,87 +549,87 @@ class l(ag):
             self.a__I(10)
         elif p == 16:
             L[0] = "You discussed"
-            ag.cT[0] = ae.ba[ag.fI] + " with"
-            L[1] = ag.cT[0]
-            ag.cT[1] = ag.dC.a + '.'
-            L[2] = ag.cT[1]
+            GameCanvas.cT[0] = consts.ba[GameCanvas.fI] + " with"
+            L[1] = GameCanvas.cT[0]
+            GameCanvas.cT[1] = GameCanvas.dC.a + '.'
+            L[2] = GameCanvas.cT[1]
         elif p in (8, 9):  # l.java:679-689  (room / stage banner on the map)
-            ag.cT[0] = "Stage " + str(ag.do)
+            GameCanvas.cT[0] = "Stage " + str(GameCanvas.do)
             if p == 9:
-                ag.cT[0] = ag.cT[0] + " Complete."
+                GameCanvas.cT[0] = GameCanvas.cT[0] + " Complete."
                 self.a__I(5)
-            L[0] = ag.dl
-            L[1] = ag.dn
-            L[2] = ag.cT[0]
+            L[0] = GameCanvas.dl
+            L[1] = GameCanvas.dn
+            L[2] = GameCanvas.cT[0]
         elif p == 10:  # l.java:690-693
-            L[0] = ag.dn
+            L[0] = GameCanvas.dn
             L[1] = "Mission Success"
         elif p == 13:  # l.java:694-698  (item picked up)
-            ag.cT[0] = ag.cX.a
-            L[0] = ag.cT[0]
+            GameCanvas.cT[0] = GameCanvas.cX.a
+            L[0] = GameCanvas.cT[0]
             L[1] = "Acquired!!"
         elif p == 22:  # l.java:740-762  (mission failed: maybe an item is lost)
-            L[0] = ag.dl
-            L[1] = ag.dn
+            L[0] = GameCanvas.dl
+            L[1] = GameCanvas.dn
             L[2] = "Mission fail!"
-            if ag.cz.l > 9 and self.C_I(100) < ag.cz.l >> 2:
+            if GameCanvas.cz.l > 9 and self.C_I(100) < GameCanvas.cz.l >> 2:
                 i = self.C_I(9)
-                if ag.cz.X[i].a != 0:
-                    ag.bb.e_I(ag.cz.X[i].a)
-                    if ag.cz.X[i].a < 300:
-                        ag.cT[0] = ag.cX.a
-                    elif ag.cz.X[i].a < 500:
-                        ag.cT[0] = ag.cY.a
+                if GameCanvas.cz.X[i].a != 0:
+                    GameCanvas.bb.e_I(GameCanvas.cz.X[i].a)
+                    if GameCanvas.cz.X[i].a < 300:
+                        GameCanvas.cT[0] = GameCanvas.cX.a
+                    elif GameCanvas.cz.X[i].a < 500:
+                        GameCanvas.cT[0] = GameCanvas.cY.a
                     else:
-                        ag.cT[0] = ag.cZ.a
-                    ag.cz.X[i] = None
+                        GameCanvas.cT[0] = GameCanvas.cZ.a
+                    GameCanvas.cz.X[i] = None
                     L[3] = "Lost!!"
-                    L[4] = ag.cT[0]
+                    L[4] = GameCanvas.cT[0]
                     self.i = i16(self.i + 2)
             self.a__I(6)
         elif p == 27:  # l.java:779-809  (reward item / hidden mission after the ending)
-            if ag.ef != 0:
-                if ag.ef == 502:
-                    ag.cT[0] = " / Catherine's scarf"[3:]
+            if GameCanvas.ef != 0:
+                if GameCanvas.ef == 502:
+                    GameCanvas.cT[0] = " / Catherine's scarf"[3:]
                 else:
-                    ag.bb.e_I(ag.ef)
-                    ag.cT[0] = ag.cX.a
-                L[0] = ag.cT[0]
+                    GameCanvas.bb.e_I(GameCanvas.ef)
+                    GameCanvas.cT[0] = GameCanvas.cX.a
+                L[0] = GameCanvas.cT[0]
                 self.i = i16(self.i + 1)
                 L[1] = "received!"
                 self.i = i16(self.i + 1)
-            if ag.eg != 0:
+            if GameCanvas.eg != 0:
                 # DECOMP-FIX F19: decompiled `i = i + 1; l[i] = ...` is `l[i++] = ...` (as in F9 and in
                 # the ef lines just above). Literally l[0] (eg only) or l[2] (ef and eg) is never
                 # written and stays None -> the popup's draw fails and the screen after the ending
                 # lore stays dark with only SKIP; the hidden mission's name is never drawn.
                 f19 = config.DECOMP_FIX["F19"]
-                if ag.ef != 0:
+                if GameCanvas.ef != 0:
                     if f19:
                         L[self.i] = ""
                         self.i = i16(self.i + 1)
                     else:
                         self.i = i16(self.i + 1)
                         L[self.i] = ""
-                arrayOfByte = ag.v_I(48)
-                j_ = 38 * ag.eg + 10
+                arrayOfByte = GameCanvas.v_I(48)
+                j_ = 38 * GameCanvas.eg + 10
                 b = 0
                 while b < 30 and arrayOfByte[j_ + b] != 0:
                     b += 1
-                ag.dt[0] = ag.a_ABII(arrayOfByte, j_, j_ + b)
+                GameCanvas.dt[0] = GameCanvas.a_ABII(arrayOfByte, j_, j_ + b)
                 if f19:
                     L[self.i] = "Hidden Mission!"
                     self.i = i16(self.i + 1)
                 else:
                     self.i = i16(self.i + 1)
                     L[self.i] = "Hidden Mission!"
-                ag.cT[1] = ag.dt[0]
+                GameCanvas.cT[1] = GameCanvas.dt[0]
                 if f19:
-                    L[self.i] = ag.cT[1]
+                    L[self.i] = GameCanvas.cT[1]
                     self.i = i16(self.i + 1)
                 else:
                     self.i = i16(self.i + 1)
-                    L[self.i] = ag.cT[1]
+                    L[self.i] = GameCanvas.cT[1]
         self.h = i16(20 * self.i + (self.i - 1 << 1))
         if self.b == 2:
             self.h = i16(self.h + 25)
@@ -639,7 +639,7 @@ class l(ag):
             self.h = 150
         elif self.b == 10:
             self.h = i16(self.h + 25)
-        ag.ck = 1
+        GameCanvas.ck = 1
 
 
 # l.java:640-868 - the plain-text cases of e(int), copied 1:1
