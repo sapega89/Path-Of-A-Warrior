@@ -63,7 +63,8 @@ class LocalTransport(Transport):
             if os.environ.get("POW_SEED"):        # headless runs (tools/mp_shot.py) repeat exactly
                 import random
                 rng = random.Random(int(os.environ["POW_SEED"]))
-            cls._server = GameServer(open_storage(path), rng=rng)
+            # the offline game has nobody to wait for: a Duel gets its CPU fighter at once
+            cls._server = GameServer(open_storage(path), rng=rng, match_wait=0)
             # scripted players to Challenge / Invite in the offline game (pow_server/bot.py)
             from pow_server.bot import Bot
             names = os.environ.get("POW_MP_BOTS", "RIVAL").split(",")
@@ -97,6 +98,9 @@ class LocalTransport(Transport):
     def poll(self):
         for bot in self._bots:
             bot.pump()
+        server = self.server or self._server
+        if server is not None:
+            server.tick()
         out = list(self.inbox)
         self.inbox.clear()
         return out

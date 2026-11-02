@@ -37,7 +37,7 @@ def server(request):
     from pow_server.storage import MemoryStorage, Storage
     st = Storage() if request.param == "sqlite" else MemoryStorage()
     return GameServer(st, notices=[["Welcome to the", "new server!"], ["Page two"]],
-                      rng=random.Random(7))
+                      rng=random.Random(7), match_wait=0)
 
 
 def test_login_creates_account_and_profile(server):
@@ -482,3 +482,113 @@ def test_bot_accepts_and_plays(server):
     assert bot.results[0]["win"] != a.got[-1]["win"]
     with pytest.raises(ValueError):
         Bot(server, "RIVAL", pwd="9999")                       # the ID is taken
+
+
+# --- matchmaking (9.15) -------------------------------------------------------------------
+class Clock:
+    def __init__(self):
+        self.t = 1000.0
+
+    def __call__(self):
+        return self.t
+
+
+def _mm_server(clock):
+    from pow_server.storage import MemoryStorage
+    return GameServer(MemoryStorage(), rng=random.Random(3), clock=clock)
+
+
+def _set_level(server, c, level):
+    c.session.char.level = level
+
+
+def test_two_players_in_the_queue_meet():
+    clock = Clock()
+    server = _mm_server(clock)
+    a, _ = login(server, "ANDREY")
+    b, _ = login(server, "BORYS")
+    assert a.ask(M.MATCH, mode=0) is None                       # "Searching for opponent"
+    assert server.queue == [a.session]
+    clock.t += 20
+    server.tick()
+    assert a.got == []                                          # still waiting
+    b.ask(M.MATCH, mode=0)
+    ra = [m for m in a.got if m["op"] == M.MATCH_ANS][0]
+    rb = [m for m in b.got if m["op"] == M.MATCH_ANS][0]
+    assert ra["st"] == rb["st"] == 1 and ra["mode"] == rb["mode"] == 0
+    assert (ra["slot"], rb["slot"]) == (0, 1) and ra["bg"] == rb["bg"]
+    assert [m["op"] for m in a.got] == [513, 514, 1024] and [m["op"] for m in b.got] == [513, 514, 1024]
+    assert a.session.room is b.session.room and server.queue == []
+    turns, ea, eb = _play(a, b)
+    assert ea["win"] != eb["win"]
+    ca, cb = server.storage.load("ANDREY"), server.storage.load("BORYS")
+    assert ca.wins + cb.wins == 1 and ca.losses + cb.losses == 1
+
+
+def test_queue_waits_a_minute_then_a_cpu():
+    clock = Clock()
+    server = _mm_server(clock)
+    a, _ = login(server, "ANDREY")
+    a.ask(M.MATCH, mode=0)
+    clock.t += 59
+    server.tick()
+    assert a.got == [] and a.session.room is None
+    clock.t += 1
+    server.tick()
+    assert [m["op"] for m in a.got] == [513, 514, 1024] and a.session.room is not None
+    assert server.queue == [] and a.session.room.players == {0: a.session}
+
+
+def test_queue_matches_by_level_and_mode():
+    clock = Clock()
+    server = _mm_server(clock)
+    a, _ = login(server, "ANDREY")
+    b, _ = login(server, "BORYS")
+    c, _ = login(server, "CHUCK")
+    _set_level(server, a, 30)
+    _set_level(server, b, 45)                                   # 15 levels apart
+    _set_level(server, c, 31)
+    a.ask(M.MATCH, mode=0)
+    b.ask(M.MATCH, mode=0)
+    assert server.queue == [a.session, b.session]               # too far for the first half
+    c.ask(M.MATCH, mode=1)
+    assert len(server.queue) == 3                               # 2:2 does not meet 1:1
+    clock.t += 30                                               # half the wait: 20 levels
+    d, _ = login(server, "DMITRO")
+    _set_level(server, d, 46)
+    d.ask(M.MATCH, mode=0)
+    assert a.session.room is d.session.room is not None         # the oldest waiter first
+    assert server.queue == [b.session, c.session]
+
+
+def test_two_vs_two_from_the_queue_adds_cpu_allies():
+    clock = Clock()
+    server = _mm_server(clock)
+    a, _ = login(server, "ANDREY")
+    b, _ = login(server, "BORYS")
+    a.ask(M.MATCH, mode=1)
+    b.ask(M.MATCH, mode=1)
+    room = a.session.room
+    assert room is b.session.room and sorted(room.battle.fighters) == [0, 1, 2, 3]
+    assert sorted(room.human_slots) == [0, 1]
+
+
+def test_leaving_the_queue_and_busy_while_queued():
+    clock = Clock()
+    server = _mm_server(clock)
+    a, _ = login(server, "ANDREY")
+    b, _ = login(server, "BORYS")
+    a.ask(M.MATCH, mode=0)
+    assert b.ask(M.INVITE, mode=0, id="ANDREY")["st"] == -5     # searching: busy
+    assert a.ask(M.MATCH, mode=0) == {"op": 513, "st": -11}     # one search at a time
+    a.session.close()
+    assert server.queue == []
+    b.ask(M.MATCH, mode=0)
+    assert b.session.room is None and server.queue == [b.session]
+
+
+def test_mission_never_waits():
+    server = _mm_server(Clock())
+    a, _ = login(server, "ANDREY")
+    a.ask(M.MATCH, mode=2)
+    assert a.session.room is not None and server.queue == []
