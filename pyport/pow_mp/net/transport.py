@@ -41,6 +41,7 @@ class Transport:
 class LocalTransport(Transport):
     """The in-game server: one shared GameServer, a fresh Session per open()."""
     _server = None
+    _bots = []
 
     def __init__(self, server=None):
         self.server = server
@@ -63,6 +64,15 @@ class LocalTransport(Transport):
                 import random
                 rng = random.Random(int(os.environ["POW_SEED"]))
             cls._server = GameServer(open_storage(path), rng=rng)
+            # scripted players to Challenge / Invite in the offline game (pow_server/bot.py)
+            from pow_server.bot import Bot
+            names = os.environ.get("POW_MP_BOTS", "RIVAL").split(",")
+            cls._bots = []
+            for n in names:
+                try:
+                    cls._bots.append(Bot(cls._server, n.strip()))
+                except Exception as ex:        # a taken ID with another password: no bot
+                    print("MP bot %r not started: %r" % (n, ex))
         return cls._server
 
     def open(self):
@@ -85,6 +95,8 @@ class LocalTransport(Transport):
             self.connected = False
 
     def poll(self):
+        for bot in self._bots:
+            bot.pump()
         out = list(self.inbox)
         self.inbox.clear()
         return out

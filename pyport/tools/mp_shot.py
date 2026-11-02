@@ -6,7 +6,8 @@ Steps: wait N | key NAME [COUNT] (UP DOWN LEFT RIGHT FIRE LSOFT RSOFT 0-9 STAR P
        shot NAME | include FILE |
        until STATE[,STATE] [MAX] (g.cY, the client state of 06 §1.2) |
        goto_if STATE[,STATE] LABEL | label LABEL | key_if STATE[,STATE] KEY |
-       watch STATE NAME [FRAMES] (one shot FRAMES after first entering STATE) | digits 1234 (number keys one per tick) | # comment
+       watch STATE NAME [FRAMES] (one shot FRAMES after first entering STATE) | digits 1234 (number keys one per tick) |
+       bot_invite MODE (the scripted player RIVAL invites TEST: 0/1 Challenge, 2 mission) | # comment
 The server runs inside the game (POW_MP_SERVER=local) with a fresh temporary save folder.
 """
 import argparse
@@ -137,6 +138,10 @@ def run(steps, out, every=False, save_dir=None):
                 states, _, limit = arg.partition(" ")
                 st["until"] = ({int(x) for x in states.split(",")}, int(limit or 3000))
                 return
+            if cmd == "bot_invite":              # bot_invite MODE: the first bot invites TEST
+                from pow_mp.net.transport import LocalTransport
+                LocalTransport._bots[0].invite("TEST", int(arg or 0))
+                continue
             if cmd == "digits":
                 st["queue"] = [48 + int(ch) for ch in arg]
                 return

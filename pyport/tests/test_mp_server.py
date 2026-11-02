@@ -149,10 +149,9 @@ def test_ranking_always_three_rows(server):
     assert [r["id"] for r in rows] == ["SOLO", "", ""]
 
 
-def test_other_modes_not_there_yet(server):
+def test_unknown_match_mode(server):
     c, _ = login(server)
     assert c.ask(M.MATCH, mode=3) == {"op": 513, "st": -11}
-    assert c.ask(M.INVITE, mode=0, id="SOMEONE")["st"] == -11
 
 
 def _duel(c, action=0, hit=88, rounds=60, mode=0):
@@ -306,3 +305,175 @@ def test_solo_mission(server):
 def test_mission_stages_follow_single_player_progress():
     from pow_server import battle as B
     assert [B.mission_stages(p) for p in (0, 6, 12, 100)] == [2, 3, 4, 6]
+
+
+# --- Challenge and Invite An Ally: two players (768 / 769 / 770) ---------------------------
+def _pair(server, mode):
+    a, _ = login(server, "ANDREY")
+    b, _ = login(server, "BORYS")
+    b.got.clear()
+    ans = a.ask(M.INVITE, mode=mode, id="BORYS")
+    assert ans is not None and a.got[0]["op"] == M.INVITE_ANS and a.got[0]["st"] == 1
+    assert b.got[0]["op"] == M.INVITED and b.got[0]["st"] == 1
+    return a, b
+
+
+def _ops(c):
+    return [m["op"] for m in c.got]
+
+
+def test_invite_errors(server):
+    a, _ = login(server, "ANDREY")
+    assert a.ask(M.INVITE, mode=0, id="ANDREY")["st"] == -12     # "You cannot invite yourself."
+    assert a.ask(M.INVITE, mode=0, id="NOBODY")["st"] == -4      # "Unregistered user!"
+    b, _ = login(server, "BORYS")
+    b.session.close()
+    assert a.ask(M.INVITE, mode=0, id="BORYS")["st"] == -3       # "The user is not online."
+    b, _ = login(server, "BORYS")
+    b.ask(M.OPTIONS_SET, invitation=0)
+    assert a.ask(M.INVITE, mode=0, id="BORYS")["st"] == -16      # "Your invitation is denied"
+    b.ask(M.OPTIONS_SET, invitation=1)
+    b.ask(M.MATCH, mode=0)
+    assert a.ask(M.INVITE, mode=0, id="BORYS")["st"] == -5       # busy: "cannot be replied"
+    assert a.ask(M.INVITE, mode=7, id="BORYS")["st"] == -1
+
+
+def _play(a, b, rounds=120):
+    """Both players attack until both get 1032; returns (every 1028 of a, a's 1032, b's 1032)."""
+    turns, ends = [], {}
+    for _ in range(rounds):
+        for c in (a, b):
+            if c in ends:
+                continue
+            ans = c.ask(M.ROUND_READY)
+            if ans is None:
+                continue                                       # fallen: waiting for 1032
+            if ans["op"] == M.BATTLE_END:
+                ends[c] = ans
+        for c in (a, b):
+            if c in ends:
+                continue
+            for m in c.got:                                     # 1032 pushed while waiting
+                if m["op"] == M.BATTLE_END:
+                    ends[c] = m
+        if len(ends) == 2:
+            return turns, ends[a], ends[b]
+        live = [c for c in (a, b) if c not in ends and c.got and c.got[-1]["op"] == M.ROUND_START]
+        for i, c in enumerate(live):
+            room = c.session.room
+            foes = [s for s, f in room.battle.fighters.items()
+                    if f.alive and f.team != c.session.slot % 2]
+            other = live[1 - i] if len(live) == 2 else None
+            if other is not None:
+                other.got.clear()
+            ans = c.ask(M.TURN, target=foes[0], action=0, hit=100)
+            if i == 0 and len(live) == 2:
+                assert ans is None                              # waits for the other player
+            else:
+                assert ans["op"] == M.TURN_RESULT
+                if other is not None:
+                    assert other.got[-1] == ans                 # the same round for both
+                turns.append(ans)
+    raise AssertionError("no end in %d rounds" % rounds)
+
+
+def test_challenge_1v1_between_players(server):
+    a, b = _pair(server, 0)
+    assert _ops(a) == [769, 514, 1024] and _ops(b) == [770, 514, 1024]
+    assert a.got[0]["slot"] == 0 and b.got[0]["slot"] == 1 and a.got[0]["bg"] == b.got[0]["bg"]
+    assert a.got[1]["slot"] == 1 and a.got[1]["name"] == "BORYS" and a.got[1]["face"] < 10
+    assert b.got[1]["slot"] == 0 and b.got[1]["name"] == "ANDREY"
+    turns, ea, eb = _play(a, b)
+    assert {ea["win"], eb["win"]} == {0, 1} and turns
+    ca, cb = server.storage.load("ANDREY"), server.storage.load("BORYS")
+    assert ca.wins + cb.wins == 1 and ca.losses + cb.losses == 1
+    assert a.session.room is None and b.session.room is None
+    a.ask(M.MATCH, mode=0)
+    assert a.got[0]["st"] == 1                                  # free for the next battle
+
+
+def test_challenge_2v2_each_player_with_a_cpu_ally(server):
+    a, b = _pair(server, 1)
+    assert _ops(a) == [769, 514, 514, 514, 1024] and _ops(b) == [770, 514, 514, 514, 1024]
+    fs = a.session.room.battle.fighters
+    assert not fs[0].cpu and not fs[1].cpu and fs[2].cpu and fs[3].cpu
+    turns, ea, eb = _play(a, b, rounds=200)
+    assert {ea["win"], eb["win"]} == {0, 1}
+
+
+def test_leaving_a_challenge(server):
+    a, b = _pair(server, 0)
+    a.ask(M.ROUND_READY)
+    b.ask(M.ROUND_READY)
+    assert a.ask(M.TURN, target=1, action=0, hit=50) is None
+    a.got.clear()
+    b.session.close()                                           # B hangs up mid-round
+    assert a.got and a.got[-1]["op"] == M.TURN_RESULT and a.got[-1]["records"] == []
+    end = a.ask(M.ROUND_READY)
+    assert end["op"] == M.BATTLE_END and end["win"] == 1
+    assert server.storage.load("BORYS").losses == 1
+
+
+def test_invite_an_ally_to_a_mission(server):
+    a, b = _pair(server, 2)
+    assert _ops(a)[:4] == [769, 514, 514, 514] and _ops(a)[-1] == 1037
+    assert b.got[0]["slot"] == 2 and _ops(b)[-1] == 1037
+    assert a.ask(M.STAGE_INTRO_DONE) is None                    # waits for the ally's intro
+    b.got.clear()
+    assert a.got == [] and b.ask(M.STAGE_INTRO_DONE)["op"] == 1024
+    stage_ends = 0
+    for _ in range(200):
+        for c in (a, b):
+            if c.session.room is None:
+                continue
+            ans = c.ask(M.ROUND_READY)
+            if ans and ans["op"] == M.STAGE_END:
+                stage_ends += 1
+        live = [c for c in (a, b) if c.got and c.got[-1]["op"] == M.ROUND_START]
+        staged = [c for c in (a, b) if c.got and c.got[-1]["op"] == M.STAGE_END]
+        ends = [c for c in (a, b) if any(m["op"] == M.BATTLE_END for m in c.got)]
+        if ends and all(c.session.room is None for c in (a, b)):
+            break
+        if staged:
+            for c in staged:
+                c.got.clear()
+            for c in staged:
+                c.session.receive(codec_bin.unframe(codec_bin.encode(M.STAGE_NEXT, {}, to_client=False))[0][0])
+            for c in staged:
+                assert _ops(c) == [514, 514, 1037]
+                c.got.clear()
+            for c in staged:
+                c.session.receive(codec_bin.unframe(codec_bin.encode(M.STAGE_INTRO_DONE, {}, to_client=False))[0][0])
+            assert all(_ops(c) == [1024] for c in staged)
+            continue
+        for c in live:
+            room = c.session.room
+            foes = [s for s, f in room.battle.fighters.items() if f.alive and f.team == 1]
+            c.ask(M.TURN, target=foes[0], action=0, hit=100)
+    else:
+        raise AssertionError("the mission did not end")
+    assert a.session.room is None and b.session.room is None
+    ca, cb = server.storage.load("ANDREY"), server.storage.load("BORYS")
+    assert ca.gold > 0 or cb.gold > 0
+    assert (ca.wins, ca.losses, cb.wins, cb.losses) == (0, 0, 0, 0)
+    assert stage_ends >= 2                                      # both players past stage 1
+
+
+def test_bot_accepts_and_plays(server):
+    from pow_server.bot import Bot
+    bot = Bot(server, "RIVAL")
+    a, _ = login(server, "ANDREY")
+    a.ask(M.INVITE, mode=0, id="RIVAL")
+    assert a.got[0]["op"] == M.INVITE_ANS and a.got[0]["st"] == 1
+    for _ in range(200):
+        bot.pump()
+        if a.got and a.got[-1]["op"] == M.BATTLE_END:
+            break
+        ans = a.ask(M.ROUND_READY)
+        if ans["op"] == M.ROUND_START:
+            a.ask(M.TURN, target=1, action=0, hit=100)
+            bot.pump()
+    assert a.got[-1]["op"] == M.BATTLE_END and len(bot.results) == 1
+    assert bot.results[0]["win"] != a.got[-1]["win"]
+    with pytest.raises(ValueError):
+        Bot(server, "RIVAL", pwd="9999")                       # the ID is taken
