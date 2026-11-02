@@ -1005,6 +1005,15 @@ class ar(ag):
                 eC.a = 1
                 eC.b[1].a = i16(ex.a[0].a + arrayOfByte1[i])
                 eC.b[1].b = i16(ex.a[0].b + arrayOfByte2[i])
+                if config.DECOMP_FIX["F18"]:
+                    # DECOMP-FIX F18: the start goes into eC.b[1] (the "previous" position used
+                    # only for erasing, c.java:124-141), but ar.j() (ar.java:1734-1735) first
+                    # copies b[0] -> b[1] and then hits / moves b[0] (ar.ad). b[0] is a separate
+                    # h (f.java), so literally every arrow flies from (0, 0) or from where the
+                    # previous arrow of this slot vanished: never from the archer, never into
+                    # the hero. With F18 the arrow starts at the archer's bow.
+                    eC.b[0].a = eC.b[1].a
+                    eC.b[0].b = eC.b[1].b
                 eC.e = i8(i)
                 eC.g = 0
                 eC.f = ex.j
