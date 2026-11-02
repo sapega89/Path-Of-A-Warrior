@@ -32,7 +32,7 @@ class Midlet:
     def getAppProperty(self, key):
         return self.props.get(key)
 
-    def startApp_123456(self):  # Main.java:12-20  (returns the coroutine of the game thread)
+    def run_game(self):  # Main.java:12-20  (returns the coroutine of the game thread)
         from pow.game.game_canvas import GameCanvas
         if Midlet.started:
             return None
@@ -48,14 +48,14 @@ class Midlet:
         from pow.game.game_canvas import GameCanvas
         from pow.game.sound import Sound
         if Midlet.canvas is not None and GameCanvas.sound is not None and Sound.players is not None:
-            Sound.players.a_v()
+            Sound.players.close_all()
 
     def notifyDestroyed(self):
         from pow.game.game_canvas import GameCanvas
         self.destroyed = True
         GameCanvas.running = False
 
-    def constructor_123456(self):  # Main.java:31-39
+    def construct(self):  # Main.java:31-39
         from pow.game.game_canvas import GameCanvas, _late_init
         if Midlet.display is None:
             Midlet.started = False
@@ -67,5 +67,5 @@ class Midlet:
             Midlet.canvas.hold_dir = hold_dir
 
     def startApp(self):  # Main.java:41-43  (tryNBuy_123456 -> constructor + startApp_123456)
-        self.constructor_123456()
-        return self.startApp_123456()
+        self.construct()
+        return self.run_game()

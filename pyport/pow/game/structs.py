@@ -34,7 +34,7 @@ class Item:  # z.java
         self.mp = 0  # z.java:10 short
         self.enchant = 0  # z.java:12 byte
 
-    def a(self):  # z.java:15-22
+    def clear(self):  # z.java:15-22
         self.id = 0
         self.attack = 0
         self.defense = 0
@@ -91,7 +91,7 @@ class MapData:  # o.java
         self.layer_objects = 0  # o.java:10 int
         self.layer_flags = 0  # o.java:12 int
 
-    def a_v(self):  # o.java (final void a())
+    def free(self):  # o.java (final void a())
         self.data = None
 
 
@@ -364,7 +364,7 @@ class Hero:  # n.java
         self.head_image = None  # n.java:172 Image
         self.body_image = None  # n.java:174 Image
 
-    def a_v(self):  # n.java:130-144
+    def reset_inventory(self):  # n.java:130-144
         for b in range(9):
             self.equipped[b] = Item()
         for b in range(25):

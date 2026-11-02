@@ -7,12 +7,12 @@ def _popup(monkeypatch, ef, eg):
     from pow.game.popups import Popups
     data = bytearray(38 * 3 + 10 + 40)
     data[38 * 1 + 10:38 * 1 + 10 + 10] = b"Royal Seal"
-    monkeypatch.setattr(GameCanvas, "v_I", staticmethod(lambda n: bytes(data)))
+    monkeypatch.setattr(GameCanvas, "load_data_file", staticmethod(lambda n: bytes(data)))
     monkeypatch.setattr(GameCanvas, "reward_item", ef)
     monkeypatch.setattr(GameCanvas, "reward_skill", eg)
     monkeypatch.setattr(GameCanvas, "state", 10)
     p = Popups()
-    p.e_I(27)
+    p.setup_popup(27)
     return p.lines[:p.line_count]
 
 

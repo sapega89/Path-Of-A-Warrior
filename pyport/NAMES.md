@@ -515,4 +515,399 @@ Java-ім'я поля → Python-ім'я. Коментар `# ag.java:N` біл�
 | `hd` | `saved_9` | `he` | `saved_10` | `hf` | `saved_11` |
 | `hg` | `saved_12` | `hh` | `saved_13` |  |  |
 
-Методи поки мають Java-імена; їхні нові імена додаються сюди з наступним кроком.
+## Методи
+
+Java-ім'я методу (з суфіксом сигнатури, напр. `J_I` = `J(int)`) → Python-ім'я.
+Методи MIDP (`paint`, `keyPressed`, `run`, `startApp` тощо) мають свої стандартні імена.
+
+### GameCanvas
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `q_v` | `reset_globals` | `r_v` | `read_screen_size` |
+| `s_v` | `init_game` | `t_v` | `handle_key` |
+| `b_T` | `log` | `u_v` | `repaint_and_wait` |
+| `f_I` | `sleep` | `a_Z` | `set_paused` |
+| `b_Z` | `apply_pause` | `v_v` | `lock_keys` |
+| `w_v` | `unlock_keys` | `x_v` | `free_images` |
+| `a_IIT` | `draw_text_left` | `b_IIT` | `draw_text_centred` |
+| `E_v` | `load_title_picture` | `F_v` | `load_menu_frames` |
+| `G_v` | `load_options` | `H_v` | `save_options` |
+| `I_v` | `clamp_menu_scroll` | `a_MIIIIII` | `draw_view_region` |
+| `b_TI` | `split_field` | `c_IIT` | `draw_text` |
+| `a_BB` | `u16` | `K_v` | `draw_view_background` |
+| `c_III` | `fill_view` | `L_v` | `paint_state` |
+| `a__I` | `play_sound` | `P_v` | `tick_state` |
+| `Q_v` | `start_boot` | `t_I` | `key_down` |
+| `d_T` | `load_image` | `R_v` | `gc` |
+| `u_I` | `fill_screen` | `S_v` | `draw_title` |
+| `a_TIIIIII` | `draw_image_file` | `T_v` | `tick_title` |
+| `U_v` | `load_game` | `V_v` | `read_long` |
+| `W_v` | `read_int` | `X_v` | `read_short` |
+| `Y_v` | `read_byte` | `Z_v` | `read_item` |
+| `aa_v` | `load_ui_images` | `v_I` | `load_data_file` |
+| `w_I` | `open_menu` | `ad_v` | `load_menu_images` |
+| `ae_v` | `free_menu_images` | `af_v` | `load_menu_texts` |
+| `x_I` | `draw_menu_background` | `ag` | `compact_backpack` |
+| `a_LzLz` | `swap_items` | `b_LzLz` | `copy_item` |
+| `ah` | `free_hero_sprites` | `a_IIIIMII` | `draw_region` |
+| `b_MIIIIII` | `draw_map_region` | `c_MIIIIII` | `draw_region_at` |
+| `ai` | `stop_sound` | `aj` | `free_hero_images` |
+| `ak` | `set_menu_items` | `ap` | `restore_menu_cursor` |
+| `a_TII` | `draw_text_centred_at` | `b_TII` | `draw_text_at` |
+| `c_TII` | `draw_view_text_centred` | `d_TII` | `draw_view_text` |
+| `a_IIIIZ` | `draw_box` | `a_IIIIIIIZ` | `draw_frame_box` |
+| `k_III` | `rgb` | `aq` | `has_save` |
+| `as_` | `start_exit` | `at` | `draw_outro` |
+| `a_ABII` | `read_utf` | `h_II` | `draw_softkeys` |
+| `l_III` | `set_color` | `f_IIII` | `draw_line` |
+| `aA` | `load_hero_images` | `K_I` | `load_frames` |
+| `M_I` | `gamestr` | `N_I` | `key_digit` |
+| `H_I` | `add_exp` | `e_T` | `trim_right` |
+| `f_T` | `cut_at_control` | `g_T` | `cut_at_space` |
+| `B_v` | `now` | `O_v` | `update_hero_stats` |
+| `r_I` | `move_letter_cursor` | `f_II` | `draw_letter_grid` |
+| `f_III` | `draw_arrow` | `g_II` | `rand_range` |
+| `C_I` | `rand` | `d_IIII` | `draw_big_number` |
+| `ar` | `save_game` | `a_J` | `write_long` |
+| `E_I` | `write_int` | `F_I` | `write_short` |
+| `G_I` | `write_byte` | `a_Lz` | `write_item` |
+| `a_IIIIIII` | `draw_rect_outline` | `b_IIIIIII` | `draw_round_outline` |
+| `c_IIIIIII` | `draw_selection` | `j_II` | `draw_dot` |
+| `au` | `start_new_game` | `av` | `new_hero` |
+| `aw` | `reset_base_stats` | `k_II` | `give_item` |
+| `ax` | `reset_quick_items` | `ay` | `fill_shop` |
+| `az` | `load_item_tables` | `I_I` | `item_tier` |
+| `J_I` | `make_item` | `l_II` | `start_story` |
+| `L_I` | `backpack_slot_of` | `M_v` | `tick_story` |
+| `d_III` | `fill_screen_rgb` | `N_v` | `draw_story` |
+| `q_I` | `draw_skip_key` | `a_B` | `char_width` |
+| `b_ABII` | `word_wrap` | `a_AC` | `parse_int` |
+| `d_II` | `edat_bytes` | `e_II` | `edat_string` |
+| `e_III` | `draw_small_number` | `a_IIIIIMIII` | `draw_image_part` |
+| `i_II` | `draw_empty_slot` | `e_IIII` | `draw_grey_frame` |
+| `y_I` | `change_option` | `g_I` | `item_slot_type` |
+| `a_LzZI` | `describe_shop_item` | `a_Lp` | `quick_slot_item` |
+| `o_I` | `item_under_cursor` | `a_LacI` | `fill_rect` |
+| `b_LacI` | `outline_rect` | `a_LacII` | `draw_filled_rect` |
+| `s_I` | `digit_count` | `c_T` | `measure_text` |
+| `i_III` | `draw_small_digit` | `J_v` | `draw_gold_box` |
+| `b_IIIII` | `draw_description` | `j_I` | `describe_skill` |
+| `k_I` | `describe_potion` | `l_I` | `special_suffix` |
+| `m_I` | `set_item_name` | `c_IIII` | `draw_panel` |
+| `b_III` | `draw_centred_box` | `c_II` | `draw_gold_amount` |
+| `i_I` | `draw_hero_gold` | `h_III` | `draw_number_commas` |
+| `n_I` | `format_thousands` | `b_B` | `u8` |
+| `C_v` | `load_chapter_lords` | `D_v` | `load_mission_text` |
+| `a_ABI` | `table_text` | `a_ABABII` | `append_bytes` |
+| `a_ABIC` | `index_after` | `ac_v` | `free_hud` |
+| `y_v` | `enter_map` | `z_v` | `load_effect_image` |
+| `A_v` | `load_enemy_sprites` | `a_TI` | `load_recoloured` |
+| `h_I` | `load_lord_map` | `ab_v` | `load_hud` |
+| `g_III` | `draw_digit` | `D_I` | `decimal_digits` |
+| `j_III` | `draw_clock` | `al_` | `free_map_images` |
+| `am` | `start_dialogue` | `z_I` | `load_dialogue_line` |
+| `an` | `start_dialogue_text` | `A_I` | `friendship` |
+| `ao` | `next_speech_pos` | `B_I` | `set_general` |
+| `p_I` | `random_general_skill` |  |  |
+
+### Menus
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `a_I` | `draw_menu` | `a_v` | `menu_keys` |
+| `m_II` | `menu_link` | `aB` | `key_up` |
+| `aC` | `key_down_arrow` | `aD` | `key_left` |
+| `aE` | `key_right` | `b_v` | `key_fire` |
+| `aF` | `key_back` | `aG` | `free_carousel` |
+| `c_v` | `enter_submenu` | `d_v` | `free_shop_images` |
+| `e_v` | `draw_menu_frame` | `f_v` | `draw_list_menu` |
+| `j_v` | `draw_options` | `l_v` | `draw_help_page` |
+| `a_IIIZ` | `draw_page_number` | `P_I` | `draw_skills` |
+| `k_v` | `draw_description_strip` | `n_II` | `draw_gear` |
+| `Q_I` | `draw_inventory` | `d_I` | `draw_assign_items` |
+| `g_IIII` | `draw_item_icon` | `a_IAzAI` | `draw_item_grid` |
+| `a_IIIAz` | `draw_grid_item` | `a_IIZ` | `draw_grid_cell` |
+| `a_IIII` | `draw_item_count_icon` | `aP` | `draw_shop_grid` |
+| `c_Z` | `draw_blacksmith` | `aQ` | `roll_enchant` |
+| `o_II` | `draw_sparkle` | `aR` | `draw_sparkles` |
+| `aV` | `blacksmith_message` | `aW` | `blacksmith_keys` |
+| `aX` | `combine_result_of` | `a_LzI` | `enchant_item` |
+| `S_I` | `mix_entry` | `b_IIII` | `find_run` |
+| `aY` | `enter_blacksmith` | `aZ` | `blacksmith_layout` |
+| `ba` | `update_shop_cursor` | `c_I` | `item_name` |
+| `bb` | `clear_combine` | `m_v` | `count_items` |
+| `b_Lz` | `item_price` | `bc` | `buy_item` |
+| `bd` | `sell_item` | `be` | `enchant_price` |
+| `a_LzIIIIIZ` | `draw_shop_description` | `g_v` | `load_title_images` |
+| `aJ` | `draw_main_menu` | `aK` | `draw_hero_choice` |
+| `aL` | `draw_name_captions` | `aM` | `draw_name_box` |
+| `O_I` | `draw_stat_sheet` | `b_I` | `draw_story_portraits` |
+| `R_I` | `draw_speech_boxes` | `a_III` | `type_speech` |
+| `aU` | `draw_difficulty` | `e_I` | `load_item_def` |
+| `T_I` | `draw_stat_cursor` | `p_v` | `load_exp_table` |
+| `bf_v` | `draw_game_menu` | `aH` | `draw_mission_text` |
+| `aI` | `draw_briefing` | `h_v` | `draw_map_talk` |
+| `i_v` | `tick_dialogue` | `aS` | `draw_briefing_boxes` |
+| `aT` | `draw_map_talk_box` | `bi_v` | `load_lord_missions` |
+| `aN` | `draw_generals` | `aO` | `tick_general_talk` |
+| `bg_v` | `open_general_talk` | `a_II` | `load_greeting` |
+| `b_II` | `add_friendship` | `o_v` | `general_gift` |
+| `seal_list` | `seal_list` | `bh_v` | `load_general_table` |
+| `n_v` | `draw_popup_extras` | `p_II` | `draw_exp_bar` |
+
+### MapEngine
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `a_v` | `tick_map` | `b_I` | `draw_map` |
+| `o_v` | `pause_menu_keys` | `c_I` | `assign_quick_potion` |
+| `b_v` | `clamp_hero_hp_mp` | `Q_I` | `iabs` |
+| `a_IIIIIIII` | `boxes_touch` | `c_LhLh` | `distance` |
+| `d_v` | `spawn_next_enemy` | `e_I` | `skill_mp_cost` |
+| `e_v` | `check_run` | `a_LhII` | `step_until_free` |
+| `t_II` | `approach_zero` | `b_LhII` | `keep_in_room` |
+| `X_I` | `leave_room` | `c_LhII` | `slide_corner` |
+| `u_II` | `straighten_step` | `a_LhIIII` | `move` |
+| `a_LhIII` | `blocked_by_actor` | `b_II` | `hero_hits_enemy` |
+| `m_II` | `general_pick_skill` | `c_v` | `hero_hits_breakables` |
+| `R_I` | `show_target_info` | `a_LhLhI` | `is_in_front` |
+| `a_LhLh` | `dir4` | `b_LhLh` | `dir8` |
+| `n_II` | `hero_strike_if_facing` | `o_II` | `general_strike_if_facing` |
+| `p_II` | `breakable_hit_if_facing` | `q_II` | `hero_strike_if_near` |
+| `r_II` | `general_strike_if_near` | `s_II` | `breakable_hit_if_near` |
+| `S_I` | `strike_enemy` | `T_I` | `general_skill_hits_hero` |
+| `U_I` | `hero_is_hit` | `V_I` | `set_enemy_on_fire` |
+| `p_v` | `set_hero_on_fire` | `W_I` | `hit_breakable` |
+| `d_I` | `hero_attack` | `f_v` | `turn_to_nearest` |
+| `aB` | `nearest_enemy` | `Y_I` | `choose_enemy_action` |
+| `a_Lh` | `dir_to_hero` | `Z_I` | `shoot_arrow` |
+| `g_v` | `tick_enemies` | `aa_I` | `enemy_strikes_hero` |
+| `ab_I` | `enemy_dies` | `h_v` | `sort_actors` |
+| `i_v` | `pick_up_drops` | `j_v` | `tick_arrows` |
+| `ac_I` | `hero_can_be_hit` | `ad_I` | `move_arrow` |
+| `aC` | `end_tick` | `O_I` | `tick_mission_clock` |
+| `k_v` | `scroll_room` | `a_III` | `draw_spark` |
+| `a_IILy` | `draw_hero_weapon` | `a_II` | `draw_weapon_trail` |
+| `l_v` | `draw_object_layer` | `m_v` | `draw_drops` |
+| `a_ILh` | `drop_item` | `P_I` | `random_drop` |
+| `aD` | `draw_quick_potions` | `n_v` | `draw_hud` |
+| `aE` | `draw_message` |  |  |
+
+### MapScene
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `c_I` | `load_story_page` | `d_I` | `finish_mission` |
+| `g_v` | `start_victory_talk` | `a_v` | `draw_hud_balls` |
+| `a_IIII` | `mark_dirty` | `b_v` | `draw_hud_frame` |
+| `c_v` | `draw_frame` | `j_v` | `draw_exit_arrows` |
+| `k_v` | `draw_arrows` | `d_v` | `erase_arrows` |
+| `l_v` | `draw_upper_layer` | `m_v` | `draw_effects` |
+| `a_LyBII` | `draw_effect_frame` | `a_ALyABIII` | `draw_effect_frames` |
+| `e_v` | `draw_actors` | `n_v` | `draw_breaking` |
+| `_fm_from` | `set_enemy_fx_parts` | `e_I` | `draw_enemy` |
+| `a_IILyI` | `draw_general_weapon` | `_fj_from` | `set_hero_fx_parts` |
+| `o_v` | `draw_hero` | `g_IIII` | `run_cell_scripts` |
+| `c_IIIII` | `run_cell_script` | `b_IIII` | `create_enemy` |
+| `a_II` | `enemy_stats` | `p_v` | `reset_actors` |
+| `h_IIII` | `find_reachable` | `b_II` | `flood_fill` |
+| `a_I` | `load_rooms` | `f_v` | `hero_cell` |
+| `aB` | `free_map` | `b_I` | `load_map` |
+| `aC` | `reset_cell_scripts` | `a_III` | `cell_script_slot` |
+| `a_IIIII` | `draw_tiles` | `h_v` | `make_exp_bars` |
+| `i_v` | `tick_scene` | `aD` | `erase_breaking` |
+| `m_III` | `erase_spark` | `aE` | `erase_exit_arrows` |
+| `aF` | `erase_hero` | `m_II` | `erase_weapon_trail` |
+| `aG` | `erase_enemies` | `O_I` | `erase_general_weapon` |
+| `a_ALyI` | `frames_from` | `aH` | `erase_drops` |
+| `aI` | `erase_hero_effects` | `aJ` | `erase_message` |
+| `aK` | `erase_gold_and_clock` | `aL` | `draw_potion_effect` |
+
+### Live
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `g_v` | `open_live` | `h_v` | `open_registration` |
+| `i_v` | `tick_live` | `_i_end` | `_end_tick` |
+| `b_I` | `show_error` | `j_v` | `draw_connecting` |
+| `k_v` | `load_live_images` | `l_v` | `start_net` |
+| `f_v` | `on_connected` | `c_I` | `ask_request` |
+| `d_I` | `queue_request` | `m_v` | `check_answer` |
+| `e_I` | `send_request` | `n_v` | `write_request` |
+| `o_v` | `disconnect` | `e_v` | `on_connection_failed` |
+| `_copy` | `_copy_item` | `a_Lab` | `on_answer` |
+| `a_IILab` | `on_error_answer` | `p_v` | `clear_selected_lot` |
+| `O_I` | `save_and_sync` | `aB_v` | `list_height` |
+| `e_TII` | `set_list_items` | `P_I` | `list_keys` |
+| `aC_v` | `clamp_list_scroll` | `aD_v` | `draw_list` |
+| `aE_v` | `enter_live` | `aF_v` | `load_titles` |
+| `aG_v` | `load_live_strings` | `aH_v` | `open_live_menu` |
+| `aI_v` | `open_waiting` | `aJ` | `request_redraw` |
+| `a_IIIZ` | `draw_item_cell` | `a_TIII` | `draw_text_centred_in` |
+| `aK` | `draw_screen` | `c_TI` | `draw_caption_box` |
+| `t_I` | `key_down` | `Q_I` | `registration_keys` |
+| `R_I` | `sale_list_keys` | `S_I` | `cancel_sell_keys` |
+| `T_I` | `price_info_keys` | `U_I` | `sell_pick_keys` |
+| `V_I` | `sell_price_keys` | `W_I` | `buy_kind_keys` |
+| `X_I` | `buy_enchant_keys` | `Y_I` | `buy_lots_keys` |
+| `Z_I` | `buy_category_keys` | `aL_v` | `open_sell_price` |
+| `aM_v` | `open_cancel_sell` | `aN_v` | `open_sale_list` |
+| `aO_v` | `set_cancel_sell_grid` | `c_Z` | `restore_grid_cursor` |
+| `aP_v` | `open_sell_grid` | `aQ_v` | `open_price_info` |
+| `d_Z` | `open_buy_lots` | `aR_v` | `after_login` |
+| `aS_v` | `sync_sale_list` | `aT_v` | `open_trade_list` |
+| `aU_v` | `sync_gift_list` | `aV_v` | `sync_gifts` |
+| `aW_v` | `sync_exp_fame` | `aX_v` | `sync_done` |
+| `aa_I` | `trade_keys` | `ab_I` | `warehouse_keys` |
+| `aY_v` | `open_buy_category` | `aZ_v` | `set_category_list` |
+| `ac_I` | `grid_keys` | `a_IZ` | `draw_grid_cursor` |
+| `ad_I` | `safe_keys` | `ba_v` | `leave_live` |
+| `e_Z` | `save_grid_cursor` | `bb_v` | `open_warehouse` |
+| `bc_v` | `set_backpack_grid` | `bd_v` | `set_warehouse_grid` |
+| `a_IIZ` | `set_grid` | `f_Z` | `clamp_grid_cursor` |
+| `be_v` | `selected_grid_item` | `bf_v` | `open_trade` |
+| `ae_I` | `live_menu_keys` | `bg_v` | `open_safe` |
+| `bh_v` | `open_management` | `af_I` | `management_keys` |
+| `bi_v` | `drop_net` |  |  |
+
+### LiveScreen
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `a_v` | `draw_live_screen` | `bj_v` | `draw_list_screen` |
+| `bk_v` | `draw_safe` | `bl_v` | `draw_sell_price` |
+| `bm_v` | `draw_cancel_sell` | `bn_v` | `draw_sale_list` |
+| `bo_v` | `draw_waiting` | `bp_v` | `draw_registration` |
+| `bq_v` | `draw_buy_categories` | `br_v` | `draw_buy_kinds` |
+| `bs_v` | `draw_buy_enchants` | `bt_v` | `draw_buy_lots` |
+| `b_v` | `is_registered` | `c_v` | `save_login` |
+| `d_v` | `load_login` | `bu_v` | `draw_safe_amount` |
+| `a_IIII` | `draw_input_box` | `bv_v` | `draw_grid` |
+
+### Popups
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `a_v` | `reset` | `b_v` | `popup_keys` |
+| `_timer` | `_tick_timer` | `c_v` | `draw_popup` |
+| `b_I` | `draw_popup_frame` | `a_IIII` | `draw_tiled_back` |
+| `O_I` | `draw_yes_no` | `c_I` | `draw_ok` |
+| `a_T` | `show_text` | `d_I` | `show` |
+| `d_v` | `show_bought` | `e_v` | `show_sold` |
+| `e_I` | `setup_popup` |  |  |
+
+### Boot
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `a_v` | `draw_boot` | `b_v` | `boot_keys` |
+| `b_I` | `is_any_key` |  |  |
+
+### Sound
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `a__I` | `play_sound` | `a_v` | `tick_sound` |
+| `a_IZ` | `play_now` | `b_v` | `stop_all` |
+
+### ArrTable
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `a_II` | `get_int` | `b_II` | `get_string` |
+| `a_v` | `free` |  |  |
+
+### Font
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `a_v` | `height` | `b_v` | `ascent` |
+| `c_v` | `gap` | `a_CII` | `draw_char` |
+| `b_C` | `glyph_index` | `a_C` | `char_width` |
+| `a_ACII` | `chars_width` | `a_T` | `string_width` |
+
+### Gfx
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `a_G` | `set_graphics` | `a_IIII` | `push_clip` |
+| `a_v` | `pop_clip` | `a_MII` | `draw_image` |
+| `a_MIII` | `draw_image_anchored` | `a_MIIIIII` | `draw_image_part` |
+| `a_IIIII` | `draw_rect` | `b_IIIII` | `fill_rect` |
+| `c_IIIII` | `draw_line` | `a_Lg` | `set_font` |
+| `a_ACIIIII` | `draw_chars` | `a_TIII` | `draw_string` |
+| `b_v` | `make_crc_table` | `a_ABII` | `crc32` |
+
+### Hero
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `a_v` | `reset_inventory` |  |  |
+
+### Item
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `a` | `clear` |  |  |
+
+### LiveAnswer
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `a_v` | `read_s8` | `b_v` | `read_s16` |
+| `c_v` | `read_s32` | `a_I` | `read_string` |
+
+### LiveNet
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `a_TI` | `set_address` | `a_v` | `close` |
+| `c_v` | `open` | `a_Ls` | `set_listener` |
+| `a_I` | `begin_request` | `a_S` | `write_short` |
+| `a_B` | `write_byte` | `b_I` | `write_int` |
+| `a_Z` | `write_bool` | `b_TI` | `write_string` |
+| `b_v` | `send_request` |  |  |
+
+### MapData
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `a_v` | `free` |  |  |
+
+### Midlet
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `startApp_123456` | `run_game` | `constructor_123456` | `construct` |
+
+### NameBuffer
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `b_I` | `move_cursor` | `a_v` | `get_text` |
+| `a_T` | `set_text` | `b_v` | `length` |
+| `a_I` | `handle_key` |  |  |
+
+### PlayerPool
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `a_v` | `close_all` | `a_TI` | `load` |
+| `a_IZ` | `play` | `b_v` | `stop` |
+| `g` | `stop_current` | `a_I` | `set_volume` |
+| `c_v` | `pause` | `d_v` | `resume` |
+| `e_v` | `tick` |  |  |
+
+### ResReader
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `a` | `read` |  |  |
+
+### ScrTable
+
+| Java | Python | Java | Python |
+|---|---|---|---|
+| `a_I` | `get` | `a_v` | `free` |
+

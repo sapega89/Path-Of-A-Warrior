@@ -10,34 +10,34 @@ class Boot(GameCanvas):
 
     def __init__(self):  # af.java:2, 8-11
         super().__init__(GameCanvas.midlet)
-        self.logo = self.d_T("logo1")    # Image a = d("logo1");   (instance initializer)
+        self.logo = self.load_image("logo1")    # Image a = d("logo1");   (instance initializer)
         Boot.start_time = system.currentTimeMillis()
 
-    def a_v(self):  # af.java:15-36  (paint)
+    def draw_boot(self):  # af.java:15-36  (paint)
         from pow.game.midlet import Midlet
         if Boot.step == 0:
-            GameCanvas.u_I(16777215)
+            GameCanvas.fill_screen(16777215)
             if self.logo is not None:
-                Gfx.a_MIII(self.logo, GameCanvas.screen_cx, GameCanvas.screen_cy, 3)
+                Gfx.draw_image_anchored(self.logo, GameCanvas.screen_cx, GameCanvas.screen_cy, 3)
             if system.currentTimeMillis() - Boot.start_time > 2500:
                 self.logo = None
                 Boot.step = 1
-                GameCanvas.popups.e_I(40)
+                GameCanvas.popups.setup_popup(40)
                 return
         else:
             if Boot.step == 1:
-                GameCanvas.u_I(0)
-                Gfx.a_Lg(GameCanvas.font_white)
-                GameCanvas.popups.c_v()
+                GameCanvas.fill_screen(0)
+                Gfx.set_font(GameCanvas.font_white)
+                GameCanvas.popups.draw_popup()
                 return
             if Boot.step == 2:
-                Midlet.canvas.S_v()
+                Midlet.canvas.draw_title()
 
-    def b_v(self):  # af.java:38-64  (keys)
+    def boot_keys(self):  # af.java:38-64  (keys)
         if Boot.step == 0:
             return
         if Boot.step == 1:
-            i = GameCanvas.popups.b_v()
+            i = GameCanvas.popups.popup_keys()
             if i != -1:
                 GameCanvas.sound_on = (i == 0)
                 if i == 0:
@@ -45,17 +45,17 @@ class Boot(GameCanvas):
                         GameCanvas.volume = 75
                 else:
                     GameCanvas.volume = 0
-                self.a__I(0)
+                self.play_sound(0)
                 Boot.step = 2
-                self.E_v()
+                self.load_title_picture()
             return
-        if Boot.step == 2 and Boot.b_I(GameCanvas.key):
+        if Boot.step == 2 and Boot.is_any_key(GameCanvas.key):
             GameCanvas.redraw = 1
             GameCanvas.title_press = None
             GameCanvas.title_logo = None
-            GameCanvas.menus.g_v()
-            self.T_v()
+            GameCanvas.menus.load_title_images()
+            self.tick_title()
 
     @staticmethod
-    def b_I(paramInt):  # af.java:66-92  ("press any key": which keys count)
+    def is_any_key(paramInt):  # af.java:66-92  ("press any key": which keys count)
         return paramInt in (-10, -8, -7, -6, -5, -4, -3, -2, -1, 35, 42, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57)

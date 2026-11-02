@@ -27,11 +27,11 @@ class PlayerPool:
             except Exception as ex:
                 print("aq: no audio:", ex)
 
-    def a_v(self):  # aq.java:75-78  close all
+    def close_all(self):  # aq.java:75-78  close all
         for b in range(self.count):
             self.players[b] = None
 
-    def a_TI(self, paramString, paramInt):  # aq.java:177-179  load
+    def load(self, paramString, paramInt):  # aq.java:177-179  load
         if not self.ok or self.players[paramInt] is not None:
             return self.players[paramInt] is not None
         name = pathlib.Path(paramString).stem + ".ogg"
@@ -42,39 +42,39 @@ class PlayerPool:
             print("loading err:", ex)
             return False
 
-    def a_IZ(self, paramInt, paramBoolean):  # aq.java:88-95  play
+    def play(self, paramInt, paramBoolean):  # aq.java:88-95  play
         if paramInt < 0 or self.volume <= 0 or not self.ok or self.players[paramInt] is None:
             return
         self.looping = paramInt if paramBoolean else -1
-        self.g()
+        self.stop_current()
         snd = self.players[paramInt]
         snd.set_volume(self.volume / 100.0)
         snd.play(loops=-1 if paramBoolean else 0)
         self.playing = paramInt
 
-    def b_v(self):  # aq.java:216-221  stop
+    def stop(self):  # aq.java:216-221  stop
         self.looping = -1
-        self.g()
+        self.stop_current()
 
-    def g(self):  # aq.java:223-235
+    def stop_current(self):  # aq.java:223-235
         if self.playing != -1 and self.players[self.playing] is not None:
             self.players[self.playing].stop()
 
-    def a_I(self, paramInt):  # aq.java:242-247  volume
+    def set_volume(self, paramInt):  # aq.java:242-247  volume
         if 0 <= paramInt <= 100:
             self.volume = paramInt
         if self.playing != -1 and self.players[self.playing] is not None:
             self.players[self.playing].set_volume(self.volume / 100.0)
 
-    def c_v(self):  # aq.java:260-269  hideNotify
+    def pause(self):  # aq.java:260-269  hideNotify
         self.paused = True
-        self.g()
+        self.stop_current()
         self.playing = -1
 
-    def d_v(self):  # aq.java:271-276  showNotify
+    def resume(self):  # aq.java:271-276  showNotify
         self.paused = False
         if self.looping != -1:
-            self.a_IZ(self.looping, True)
+            self.play(self.looping, True)
 
-    def e_v(self):  # aq.java:278-290  per tick (re-start after endOfMedia) - not needed with loops=-1
+    def tick(self):  # aq.java:278-290  per tick (re-start after endOfMedia) - not needed with loops=-1
         pass

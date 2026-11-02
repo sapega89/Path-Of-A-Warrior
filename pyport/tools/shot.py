@@ -184,14 +184,14 @@ def run(scenario, out, every=False):
                 continue
             if cmd == "win":
                 GameCanvas.boss_fight = 1                  # the mission's general was met on the map (c.java:986)
-                GameCanvas.scene.d_I(1)               # what the combat calls on victory (c.java:1516)
+                GameCanvas.scene.finish_mission(1)               # what the combat calls on victory (c.java:1516)
                 continue
             if cmd == "generals":
                 from pow.game.arr_table import ArrTable
                 from pow.game.menus import Menus
-                tab = ArrTable("/" + GameCanvas.scr_data.a_I(52))
+                tab = ArrTable("/" + GameCanvas.scr_data.get(52))
                 for b1 in range(int(arg)):
-                    Menus.b_II(tab.a_II(b1, 0), 10 + 20 * b1)
+                    Menus.add_friendship(tab.get_int(b1, 0), 10 + 20 * b1)
                 GameCanvas.hero.live_registered = 1
                 continue
             if cmd == "multiplayer":       # multiplayer N NAME: after the game quits (Main Menu >

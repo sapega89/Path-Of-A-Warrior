@@ -17,7 +17,7 @@ class Font:
         self.glyph_h = paramInt2     # glyph height
         self.space_w = paramInt3     # width of ' '
         try:
-            arrayOfByte = ResReader.a(paramString)
+            arrayOfByte = ResReader.read(paramString)
             b1 = paramInt4 >> 16 & 0xFF
             b2 = paramInt4 >> 8 & 0xFF
             b3 = paramInt4 & 0xFF
@@ -30,7 +30,7 @@ class Font:
                 arrayOfByte[e + 4] = b1
                 arrayOfByte[e + 5] = b2
                 arrayOfByte[e + 6] = b3
-                l = Gfx.a_ABII(arrayOfByte, e, 10)
+                l = Gfx.crc32(arrayOfByte, e, 10)
                 arrayOfByte[e + 10] = l >> 24 & 0xFF
                 arrayOfByte[e + 11] = l >> 16 & 0xFF
                 arrayOfByte[e + 12] = l >> 8 & 0xFF
@@ -39,24 +39,24 @@ class Font:
         except Exception:
             return
 
-    def a_v(self):  # g.java:46-48
+    def height(self):  # g.java:46-48
         return self.glyph_h
 
     @staticmethod
-    def b_v():  # g.java:50-52
+    def ascent():  # g.java:50-52
         return 9
 
     @staticmethod
-    def c_v():  # g.java:54-56
+    def gap():  # g.java:54-56
         return 1
 
-    def a_CII(self, paramChar, paramInt1, paramInt2):  # g.java:58-62
+    def draw_char(self, paramChar, paramInt1, paramInt2):  # g.java:58-62
         if paramChar == ' ':
             return
-        Gfx.a_MIIIIII(self.image, paramInt1, paramInt2, self.glyph_w, self.glyph_h, Font.b_C(paramChar) * self.glyph_w, 0)
+        Gfx.draw_image_part(self.image, paramInt1, paramInt2, self.glyph_w, self.glyph_h, Font.glyph_index(paramChar) * self.glyph_w, 0)
 
     @staticmethod
-    def b_C(paramChar):  # g.java:64-138  (glyph index in 0_font.png)
+    def glyph_index(paramChar):  # g.java:64-138  (glyph index in 0_font.png)
         i = 0
         c = ord(paramChar)
         if 'A' <= paramChar <= 'Z':
@@ -69,19 +69,19 @@ class Font:
             i = _PUNCT.get(paramChar, 0)
         return i
 
-    def a_C(self, paramChar):  # g.java:140-142
+    def char_width(self, paramChar):  # g.java:140-142
         return self.space_w if paramChar == ' ' else (self.glyph_w + 1 - 0)
 
-    def a_ACII(self, paramArrayOfchar, paramInt1, paramInt2):  # g.java:144-150
+    def chars_width(self, paramArrayOfchar, paramInt1, paramInt2):  # g.java:144-150
         i = 0
         j_ = paramInt1 + paramInt2
         for k in range(paramInt1, j_):
-            i += self.a_C(paramArrayOfchar[k])
+            i += self.char_width(paramArrayOfchar[k])
         return i
 
-    def a_T(self, paramString):  # g.java:152-155
+    def string_width(self, paramString):  # g.java:152-155
         arrayOfChar = list(paramString)
-        return self.a_ACII(arrayOfChar, 0, len(arrayOfChar))
+        return self.chars_width(arrayOfChar, 0, len(arrayOfChar))
 
 
 # g.java:71-135 - the if/else chain for punctuation, as a table (same values, same default 0)
