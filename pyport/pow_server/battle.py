@@ -50,6 +50,7 @@ class Fighter:
     face: int = 0
     weapon: int = 0
     cpu: bool = False
+    monster: bool = False                 # face 10 in 514: spr_mon, attacks only
     wins: int = 0
     losses: int = 0
     quote_start: str = ""
@@ -82,7 +83,8 @@ class Fighter:
         return {
             "slot": self.slot, "name": self.name[:8], "level": self.level, "wins": self.wins,
             "losses": self.losses, "hp": self.max_hp, "weapon": self.weapon,
-            "face": self.face + (30 if self.cpu else 0), "quote_start": self.quote_start,
+            "face": MONSTER_FACE if self.monster else self.face + (30 if self.cpu else 0),
+            "quote_start": self.quote_start,
             "quote_win": self.quote_win, "cr": 0, "alt_name": self.name[:8],
         }
 
@@ -158,6 +160,17 @@ class Battle:
 
     def foes(self, f):
         return [g for g in self.fighters.values() if g.alive and g.team != f.team]
+
+    def new_wave(self, foes, rest=0.35):
+        """Mission: the next stage's foes replace team 1; my team keeps its MP and buffs and
+        gets back `rest` of its max HP (the living ones; the client shows the HP of the first
+        record of the next round, 06 §3.3)."""
+        self.fighters = {s: f for s, f in self.fighters.items() if f.team == 0}
+        for f in self.fighters.values():
+            if f.alive:
+                f.hp = min(f.max_hp, f.hp + int(f.max_hp * rest))
+        for f in foes:
+            self.fighters[f.slot] = f
 
     def finish(self, max_rounds=60):
         """Let the CPU fighters play the rest (the human side has no one left to choose)."""
@@ -311,5 +324,57 @@ def duel_rewards(ch, battle, my_slot, rng):
         ch.hp += 10
         ch.atk += 2
         ch.def_ += 2
+    return {"win": 1 if win else 0, "gold": gold, "grade": grade, "fame": fame, "exp": exp,
+            "loot": "NONE"}
+
+
+# --- missions (512 mode 2, Solo Mission) -----------------------------------------
+# Lost with the server: titles, waves, monsters, rewards. The client only knows one monster
+# sprite (spr_mon, face 10 in 514) that can attack but has no skill animations (06 §2.4).
+MISSION_TITLES = ("Dark Forest", "Old Ruins", "Bandit Pass", "Cursed Swamp", "Iron Keep",
+                  "Bone Valley", "Frozen Gate", "Lost Temple")
+MONSTER_NAMES = ("Goblin", "Ghoul", "Orc", "Troll", "Imp", "Wraith", "Ogre", "Lizard")
+MONSTER_FACE = 10
+
+
+def mission_stages(progress):
+    """Stages of a Solo Mission: "the number of stages ... will vary depending on POW Single
+    Player mission progress" (l.eD): 2 without a single-player save, up to 6."""
+    return 2 + min(4, progress // 6)
+
+
+def monster(rng, me, slot, stage, stages):
+    """A monster of wave `stage` of `stages`: weaker than a fighter, stronger every wave."""
+    k = 0.5 + 0.3 * stage / stages
+    return Fighter(slot=slot, name=rng.choice(MONSTER_NAMES), level=max(1, me.level - 2 + stage),
+                   max_hp=max(10, int(me.max_hp * 0.8 * k)), atk=max(1, int(me.atk * 1.1 * k)),
+                   def_=max(1, int(me.def_ * 0.8 * k)), skills={}, slots=[], face=0, weapon=0,
+                   cpu=True, monster=True)
+
+
+def mission_wave(rng, me, stage, stages):
+    """The foes of one stage at slots 1 and 3: monsters, the last stage has a CPU fighter."""
+    foes = [monster(rng, me, 1, stage, stages), monster(rng, me, 3, stage, stages)]
+    if stage == stages:
+        foes[0] = cpu_fighter(rng, me, 1, ally=True)    # the "ally" scale: a bit weaker
+    return foes
+
+
+def mission_rewards(ch, battle, my_slot, rng, cleared, stages):
+    """1032 for a mission (bz 2): no wins/losses (g:2313); grade by stages and HP left."""
+    me = battle.fighters[my_slot]
+    win = cleared == stages
+    if win:
+        grade = min(GRADE_TOP, 3 + stages // 2 + me.hp * 4 // max(1, me.max_hp))
+        ch.mission_grade = max(ch.mission_grade, grade)
+    else:
+        grade = 0
+    lvl = max(f.level for f in battle.fighters.values())
+    gold = cleared * (30 + 8 * lvl) + rng.randrange(20) * cleared
+    exp = cleared * (15 + 4 * lvl)
+    fame = cleared * 3 + (10 if win else 0)
+    ch.gold += gold
+    ch.mp_fame += fame
+    ch.mp_exp += exp
     return {"win": 1 if win else 0, "gold": gold, "grade": grade, "fame": fame, "exp": exp,
             "loot": "NONE"}

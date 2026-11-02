@@ -151,7 +151,7 @@ def test_ranking_always_three_rows(server):
 
 def test_other_modes_not_there_yet(server):
     c, _ = login(server)
-    assert c.ask(M.MATCH, mode=2) == {"op": 513, "st": -11}
+    assert c.ask(M.MATCH, mode=3) == {"op": 513, "st": -11}
     assert c.ask(M.INVITE, mode=0, id="SOMEONE")["st"] == -11
 
 
@@ -261,3 +261,48 @@ def test_2v2_ends_when_i_fall(server):
     b.fighters[0].hp = 0
     end = c.ask(M.ROUND_READY)
     assert end["op"] == 1032 and b.over
+
+
+def _mission(c, hit=100, rounds=200):
+    """Solo Mission to the end: returns (stage infos, 1031 count, 1032)."""
+    c.ask(M.MATCH, mode=2)
+    ops = [m["op"] for m in c.got]
+    assert ops[:4] == [513, 514, 514, 514] and ops[4] == 1037
+    assert c.got[0]["mode"] == 2
+    faces = [m["face"] for m in c.got[1:4]]
+    assert faces.count(10) == 2 and 30 <= faces[0] <= 33   # an ally, two monsters (spr_mon)
+    infos, stage_ends = [c.got[4]], 0
+    assert c.ask(M.STAGE_INTRO_DONE)["op"] == 1024
+    for _ in range(rounds):
+        ans = c.ask(M.ROUND_READY)
+        if ans["op"] == M.BATTLE_END:
+            return infos, stage_ends, ans
+        if ans["op"] == M.STAGE_END:
+            stage_ends += 1
+            c.ask(M.STAGE_NEXT)
+            assert [m["op"] for m in c.got] == [514, 514, 1037]
+            infos.append(c.got[-1])
+            assert c.ask(M.STAGE_INTRO_DONE)["op"] == 1024
+            continue
+        assert ans["op"] == M.ROUND_START
+        foes = [s for s, f in c.session.battle.fighters.items() if f.team == 1 and f.alive]
+        c.ask(M.TURN, target=foes[0], action=0, hit=hit)
+    raise AssertionError("the mission did not end")
+
+
+def test_solo_mission(server):
+    c, _ = login(server)
+    infos, stage_ends, end = _mission(c)
+    stages = infos[0]["stages"]
+    assert stages == 2 and [i["stage"] for i in infos] == list(range(1, len(infos) + 1))
+    assert end["op"] == 1032
+    ch = server.storage.load("ANDREY")
+    assert (ch.wins, ch.losses) == (0, 0)                    # missions do not count (g:2313)
+    if end["win"]:
+        assert stage_ends == stages - 1 and ch.mission_grade == end["grade"] > 0
+    assert ch.gold == end["gold"] and c.session.battle is None
+
+
+def test_mission_stages_follow_single_player_progress():
+    from pow_server import battle as B
+    assert [B.mission_stages(p) for p in (0, 6, 12, 100)] == [2, 3, 4, 6]
