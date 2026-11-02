@@ -139,6 +139,13 @@ def test_ranking(server):
     assert me.ask(M.RANK_LIST, code=99, page=1)["st"] != 1
 
 
+def test_ranking_always_three_rows(server):
+    """The client draws 3 boxes whatever arrives, so a short table is padded (g:612-622)."""
+    c, _ = login(server, "SOLO")
+    rows = c.ask(M.RANK_LIST, code=21, page=1)["rows"]
+    assert [r["id"] for r in rows] == ["SOLO", "", ""]
+
+
 def test_matchmaking_not_there_yet(server):
     c, _ = login(server)
     assert c.ask(M.MATCH, mode=0) == {"op": 513, "st": -11}
