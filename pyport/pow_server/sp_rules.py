@@ -63,6 +63,25 @@ def soldier_stats(t, level):
 # --- skills --------------------------------------------------------------------------------
 # multiplayer code -> single-player skill index (as.gG, as.java:84-86)
 SP_INDEX = {3: 0, 4: 1, 5: 2, 9: 3, 10: 4, 11: 5, 12: 6, 13: 7, 6: 8, 7: 9, 8: 10}
+# ar.e(int) (ar.java:743-756): MP a skill takes in the single player, base + (level - 1) * inc,
+# indexed by the single-player skill id - 12
+SKILL_MP_BASE = (5, 6, 7, 10, 15, 7, 10, 10, 8, 9, 10, 5, 6, 7, 9, 12, 20, 20, 20)
+SKILL_MP_INC = (3, 4, 5, 3, 4, 3, 3, 5, 3, 4, 5, 3, 4, 5, 5, 6, 5, 5, 5)
+
+
+def skill_mp(skill, level):
+    """MP of a multiplayer skill (3..13) at `level` in the single player."""
+    i = SP_INDEX[skill]
+    return SKILL_MP_BASE[i] + (max(1, level) - 1) * SKILL_MP_INC[i]
+
+
+def skill_cost(skill, level, max_mp):
+    """The cost on the multiplayer's 0..100 MP gauge: the share of the hero's MP the skill takes
+    in the single player (Wind Slasher Lv1 = 5 MP of a new hero's 10 -> 50). The original
+    server sent these in 263 (cI) and they are lost; above the hero's MP -> a full gauge."""
+    return max(1, min(100, -(-100 * skill_mp(skill, level) // max(1, max_mp))))
+
+
 # ae.aU (ae.java:246-248): an attack skill adds ATK * level / aU to every hit (ar.java:301-316)
 AU = (20, 20, 20, 0, 0, 0, 0, 0, 30, 25, 20)
 # hit frames of the player's skill animations (c.java:1920-2126): Wind f3-5, Storm f5-7,
