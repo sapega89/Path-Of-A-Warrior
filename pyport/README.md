@@ -83,7 +83,8 @@ pygbag під час збирання і в браузері завантажу�
 `RMS selftest: launch #N … OK (emscripten)`; після перезавантаження сторінки N має зрости на 1 —
 це перевірка збереження в `localStorage` (сейв живе в браузері, окремо від сейву ПК-версії).
 
-Мультиплеєр у браузері (окрема сторінка, бо pygbag запускає лише `main.py`):
+Мультиплеєр у браузері: зі звичайної збірки — Main Menu → Multiplayer (сервер — `?server=…`, як
+нижче). Або окрема сторінка лише з мультиплеєром:
 
 ```bash
 python pyport/tools/build_web.py --mp --no-pygbag     # pyport/build/web-mp-src (main.py = mp_main.py)
@@ -180,10 +181,15 @@ platform»), тому `pow/midp/graphics.py` у браузері декодує 
 | B4 | `as.a(ab)` 863-879 | Gamevil Live, Buy з повним рюкзаком: гра питає «зберегти у Warehouse?», сервер кладе туди, а клієнт однаково шукав вільне місце в рюкзаку за слотом 24 (виняток у мережевому потоці). Тепер предмет з'являється в списку складу |
 | B5 | `m.bp()` 158-208 | реєстрація в Gamevil Live: через 3 кадри після CONFIRM гра показувала «Network connection has failed» і повертала на UserID, навіть коли сервер уже відповів (попап «зареєстровано» підмінявся). Тепер лічильник стоїть, поки запит у дорозі, і зупиняється відповіддю |
 
-### Меню (усе, крім старту місії)
+### Меню
 
 Game Menu → **Management** (Attributes, Skills, Gear, Inventory, Assign Items), **Blacksmith**
-(Buy, Sell, Enchant, Combine), Main Menu → **Options**, **Help**, **Endings**, **About**.
+(Buy, Sell, Enchant, Combine), Main Menu → **Options**, **Help**, **Endings**, **About**,
+**Multiplayer**. В оригіналі YES у Multiplayer закривав гру й відкривав браузер, щоб завантажити
+окремий jar; у порті (PORT-EXTRA, `l.py`, `main.py`) YES закриває одиночну гру і в тому ж вікні
+(у браузері — на тій самій сторінці) запускає мультиплеєр (`mp_main.play`). Exit мультиплеєра
+повертає в одиночну гру: процес перезапускається, у браузері сторінка перезавантажується.
+Сценарій `tools/scenarios/multiplayer.keys`.
 **Gamevil Live** (онлайн-магазин) — з нашим сервером, див. нижче.
 
 ### Gamevil Live (етап 7, `docs/plans/PHASE_7_LIVE_OFFLINE.md`)
@@ -296,6 +302,7 @@ Please select» на екрані 6 — дослівно з Java (`de - 90 - b*2
 ## Мультиплеєр (етап 9, `docs/plans/PHASE_9_ARENA.md`)
 
 Окрема гра «Path of a Warrior Multiplayer» (Duel 1-на-1 / 2-на-2, Challenge, місії, рейтинги).
+Запускається з Main Menu → Multiplayer одиночної гри або сама: `python mp_main.py`.
 Розбір jar: `docs/analysis/06_multiplayer.md`. Готові протокол, сервер для меню, ресурси і клієнт
 (логін, Main Menu, Character, Ranking, Options, Help), Duel 1-на-1 і 2-на-2 (з CPU-союзником) проти
 CPU-бійців (сервер рахує ходи в `pow_server/battle.py`). Ще немає: місій, Challenge і PvP між людьми.

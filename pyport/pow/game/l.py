@@ -95,7 +95,12 @@ class l(ag):
                                         return -1
                                     if self.b_ == 41 or self.b_ == 42:
                                         # platformRequest(ag.bm / ag.bn): the browser is not opened in the port
-                                        print("platformRequest:", ag.bm if self.b_ == 41 else ag.bn)
+                                        if self.b_ == 41:
+                                            print("platformRequest:", ag.bm)
+                                        else:
+                                            # PORT-EXTRA: the Multiplayer jar is part of the port, so
+                                            # main.py starts it after the game exits (no download)
+                                            ag.bs.to_multiplayer = True
                                         ag.bs.destroyApp(True)
                                         ag.bs.notifyDestroyed()
                                         return -1
@@ -658,6 +663,8 @@ _E_TEXT = {
     39: ["You must have", "at least 3 items", "in order to have", "them combined.", ""],
     40: ["Would you like", "sound enabled?"],
     41: ["Accessing 'More Games'", "will exit the game", "and open the browser.", "Would you like", "to continue?"],
-    42: ["Selecting YES will", "exit the game and open", "the browser to allow", "downloading of the",
-         "Multiplayer version.", "Continue?"],
+    # PORT-EXTRA: the original text was "exit the game and open the browser to allow downloading of
+    # the Multiplayer version"; in the port YES starts the Multiplayer game itself (main.py)
+    42: ["Selecting YES will", "exit the game and", "start the online", "game: Path of a",
+         "Warrior Multiplayer.", "Continue?"],
 }
