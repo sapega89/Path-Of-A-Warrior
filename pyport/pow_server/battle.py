@@ -14,7 +14,6 @@ never produce a record of their own, a record with action 1 would hang the clien
 import dataclasses
 
 from pow_server import sp_rules as R
-from pow_server.model import SKILL_COST
 
 ATTACK, DEFEND, EVADE = 0, 1, 2
 WIND, STORM, THUNDER, TIDE, WAVE, TIDAL = 3, 4, 5, 6, 7, 8
@@ -63,6 +62,7 @@ class Fighter:
     buffs: dict = dataclasses.field(default_factory=dict)   # "atk"/"def" -> [bonus, turns]
     general: bool = False                 # worth 2L when beaten, a soldier L (ar.java:1663-1698)
     build: dict = None                    # where the hero's stat points went (CPU fighters copy it)
+    max_mp: int = 10                      # the hero's MP in the single player (skill costs)
 
     def __post_init__(self):
         self.hp = self.hp or self.max_hp
@@ -79,8 +79,12 @@ class Fighter:
         b = self.buffs.get(stat)
         return b[0] if b else 0
 
+    def cost(self, skill):
+        """Gauge cost of a skill: its single-player MP share of this hero's MP (sp_rules)."""
+        return R.skill_cost(skill, self.skills.get(skill, 1), self.max_mp)
+
     def can_use(self, skill):
-        return skill in self.slots and skill in self.skills and self.mp >= SKILL_COST[skill]
+        return skill in self.slots and skill in self.skills and self.mp >= self.cost(skill)
 
     def wire(self):
         """514 body (06 §2.4): a CPU fighter is sent as face + 30 (g:2197-2206)."""
@@ -99,7 +103,8 @@ def from_character(ch, slot):
                    skills=dict(ch.skills), slots=[s for s in ch.slots if s in ch.skills],
                    face=ch.face, weapon=ch.weapon, wins=ch.wins, losses=ch.losses,
                    quote_start=ch.quote_start, quote_win=ch.quote_win,
-                   build=hero_build(ch), general=True)     # a hero beaten counts like a general
+                   build=hero_build(ch), general=True,     # a hero beaten counts like a general
+                   max_mp=ch.max_mp())
 
 
 def hero_build(ch):
@@ -137,7 +142,7 @@ def cpu_fighter(rng, me, slot, ally=False):
                    skills=skills, slots=slots, face=rng.randrange(4),
                    weapon=rng.randrange(2), cpu=True, wins=rng.randrange(5 * level + 1),
                    losses=rng.randrange(5 * level + 1), quote_start=q[0], quote_win=q[1],
-                   general=True, build=build)
+                   general=True, build=build, max_mp=st["mp"])
 
 
 def cpu_choice(rng, me, foes):
@@ -269,7 +274,7 @@ class Battle:
         rec = {"actor": f.slot, "action": action, "target": t.slot, "result": RES_HIT,
                "has2nd": 0, "flags": 0}
         if action >= WIND:
-            f.mp -= SKILL_COST[action]
+            f.mp -= f.cost(action)
         if action in HEALS:
             t.hp = min(t.max_hp, t.hp + R.heal(action, t.max_hp, f.skills.get(action, 1)))
             if action == HEAL_MAX:

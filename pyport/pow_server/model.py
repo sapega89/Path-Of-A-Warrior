@@ -13,9 +13,6 @@ from pow_server import messages as M
 
 SKILL_IDS = tuple(range(3, 14))        # MP skill codes 3..13 = SP as.gG (06 §3.1)
 
-# MP cost of skills 3..13 on the 0..100 MP scale, sent in 263 (cI). Server-side and lost
-# with the original server: placeholders until the turn resolver is balanced (task 9.6).
-SKILL_COST = {3: 30, 4: 40, 5: 40, 6: 60, 7: 40, 8: 60, 9: 40, 10: 70, 11: 50, 12: 50, 13: 80}
 
 # Grade index 0..9 = l.eL {"D+", "C-", ..., "A+"}
 GRADES = ("D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+")
@@ -56,6 +53,14 @@ class Character:
     def max_hp(self):
         return self.hp + self.hp_bonus
 
+    def max_mp(self):
+        return self.mp + self.mp_bonus
+
+    def skill_cost(self, skill):
+        """0..100 gauge cost from the single player's MP rule (sp_rules.skill_cost)."""
+        from pow_server import sp_rules
+        return sp_rules.skill_cost(skill, self.skills.get(skill, 1), self.max_mp())
+
     def profile(self, notices=0):
         """263 body."""
         return {
@@ -63,7 +68,7 @@ class Character:
             "wins": self.wins, "losses": self.losses, "hp": self.max_hp(),
             "weapon": self.weapon, "slots": list(self.slots),
             "quote_start": self.quote_start, "quote_win": self.quote_win,
-            "skill_cost": [SKILL_COST[i] for i in SKILL_IDS], "notices": notices,
+            "skill_cost": [self.skill_cost(i) for i in SKILL_IDS], "notices": notices,
         }
 
     def fighter(self, slot):
