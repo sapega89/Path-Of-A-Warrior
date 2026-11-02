@@ -115,9 +115,7 @@ class Session:
         self.server.online[uid] = self
         pages = 0
         if self.server.notices and self.char.notices_seen < self.server.notices_version:
-            pages = len(self.server.notices)
-            self.char.notices_seen = self.server.notices_version
-            self.save()
+            pages = len(self.server.notices)   # marked seen when the last page is delivered
         self.send(M.LOGIN_ANS, st=1, **self.char.profile(notices=pages))
 
     def on_notice(self, msg):          # 258 -> 259 (page 1, 2, ...)
@@ -127,6 +125,9 @@ class Session:
             return self.send(M.NOTICE_ANS, st=-1)
         self.send(M.NOTICE_ANS, st=1, lines=[s[:16] for s in pages[page - 1]],
                   remaining=len(pages) - page)
+        if page == len(pages) and self.char.notices_seen < self.server.notices_version:
+            self.char.notices_seen = self.server.notices_version   # all pages reached the client
+            self.save()
 
     def on_keepalive(self, msg):       # 39327: nothing to answer
         pass

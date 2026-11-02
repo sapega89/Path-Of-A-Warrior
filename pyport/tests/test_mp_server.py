@@ -48,6 +48,19 @@ def test_login_creates_account_and_profile(server):
     assert again["notices"] == 0               # notices are shown once
 
 
+def test_notices_survive_a_dropped_connection(server):
+    c, prof = login(server)
+    assert prof["notices"] == 2
+    c.ask(M.NOTICE, page=1)
+    c.session.close()                          # dropped before the last page
+    c, prof = login(server)
+    assert prof["notices"] == 2
+    c.ask(M.NOTICE, page=1)
+    c.ask(M.NOTICE, page=2)
+    _, prof = login(server)
+    assert prof["notices"] == 0
+
+
 def test_login_errors(server):
     login(server)
     c = Client(server)
