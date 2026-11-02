@@ -1147,6 +1147,13 @@ class c(ag):
             if ag.cH[b] is None:
                 ag.cH[b] = ah()
             ag.cH[b].c = 0
+            # PORT-EXTRA (hang fix): the original clears only .c and keeps the links .b of the
+            # previous map. a_III() walks .b without looking at .c, so on a later map it can follow
+            # an old link and set a node's .b to a lower index (even to itself): a cycle, and the
+            # next a_III() into that bucket loops forever (the game freezes on a map load after
+            # some missions; the Java code has the same bug). A cleared link ends every walk at a
+            # node of this map, so a link always points to a higher index and cannot cycle.
+            ag.cH[b].b = 0
 
     @staticmethod
     def a_III(paramInt1, paramInt2, paramInt3):  # c.java:1173-1190  (hash of cell scripts by (x + y) & 7)

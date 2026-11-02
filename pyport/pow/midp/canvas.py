@@ -8,7 +8,7 @@ import collections
 import pygame
 
 import config
-from pow.midp import display, system
+from pow.midp import display, system, watchdog
 from pow.midp.graphics import Graphics
 
 # PC key -> phone key code (keyPressed argument)
@@ -144,6 +144,7 @@ class Canvas:
 
     async def sleep_ms(self, ms):
         """Thread.sleep inside the game loop. Lets the browser breathe and reads keys."""
+        watchdog.tick()
         if system.is_virtual():
             system.advance(ms)
             await asyncio.sleep(0)

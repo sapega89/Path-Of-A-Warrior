@@ -10,7 +10,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import config  # noqa: E402
-from pow.midp import display  # noqa: E402
+from pow.midp import display, watchdog  # noqa: E402
 
 
 def rms_selftest():
@@ -48,12 +48,19 @@ def demo_save():
 
 async def main():
     display.init(headless=os.environ.get("SDL_VIDEODRIVER") == "dummy")
+    watchdog.start()
     rms_selftest()
     if (config.DEMO_SAVE or "--demo" in sys.argv) and "--no-demo" not in sys.argv:
         demo_save()
     from pow.game.Main import Main
     midlet = Main()
-    await midlet.startApp()
+    try:
+        await midlet.startApp()
+    except BaseException:
+        watchdog.log_exception()
+        raise
+    finally:
+        watchdog.stop()
 
 
 if __name__ == "__main__":
