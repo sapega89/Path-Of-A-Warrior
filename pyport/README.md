@@ -69,13 +69,24 @@ Esc/Backspace = права софт-клавіша (BACK), Q/F1 = ліва; ци
 ### Браузер (pygbag)
 
 ```bash
-python pyport/tools/build_web.py --no-pygbag   # збирає pyport/build/web-src (код + ресурси, ~3.4 МБ)
-python -m pygbag pyport/build/web-src           # http://localhost:8000
+pip install -r pyport/requirements.txt
+python pyport/tools/build_web.py --no-pygbag   # збирає pyport/build/web-src (код + ресурси)
+python -m pygbag --ume_block 0 pyport/build/web-src   # http://localhost:8000, Ctrl+C - зупинити
 ```
 
-pygbag під час збирання і в браузері завантажує рантайм з `pygame-web.github.io`.
-У консолі браузера (F12) має бути рядок `RMS selftest: launch #N … OK (emscripten)`;
-після перезавантаження сторінки N має зрости на 1 — це перевірка збереження в `localStorage`.
+`python pyport/tools/build_web.py` без `--no-pygbag` одразу робить статичну збірку в
+`pyport/build/web-src/build/web/` (`index.html` + `web-src.apk`): цю папку можна викласти на будь-який
+статичний хостинг (itch.io, GitHub Pages). Відкривати `index.html` подвійним кліком не можна - лише через HTTP.
+
+pygbag під час збирання і в браузері завантажує рантайм з `pygame-web.github.io` (потрібен інтернет).
+У консолі браузера (F12) або в терміналі сторінки `index.html#debug` має бути рядок
+`RMS selftest: launch #N … OK (emscripten)`; після перезавантаження сторінки N має зрости на 1 —
+це перевірка збереження в `localStorage` (сейв живе в браузері, окремо від сейву ПК-версії).
+
+Особливість браузера: pygame у pygbag не вміє `pygame.image.load(BytesIO)` («can't access resource on
+platform»), тому `pow/midp/graphics.py` у браузері декодує PNG через тимчасовий файл.
+Перевірено в headless Chromium (pygbag 0.9.3): титул, новий герой, пролог, Game Menu, карта і бій,
+сейв переживає перезавантаження сторінки.
 
 ## Що вже перенесено
 

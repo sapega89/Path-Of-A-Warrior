@@ -5,6 +5,8 @@ fillRect, drawRect, drawLine, setColor, getClip*.  No drawRegion/transforms -
 the game never calls them.
 """
 import io
+import os
+import sys
 
 import pygame
 
@@ -18,6 +20,26 @@ RIGHT = 8
 TOP = 16
 BOTTOM = 32
 BASELINE = 64
+
+_IS_WEB = sys.platform == "emscripten"
+_TMP_PNG = "/tmp/pow_image.png"
+
+
+def _load_png(data, hint):
+    """PNG bytes -> Surface. pygbag's pygame cannot decode from a file object
+    ("can't access resource on platform"), only from a path, so in the browser the
+    bytes go through a temporary file in the in-memory FS."""
+    if _IS_WEB:
+        with open(_TMP_PNG, "wb") as fh:
+            fh.write(data)
+        try:
+            return pygame.image.load(_TMP_PNG)
+        finally:
+            try:
+                os.remove(_TMP_PNG)
+            except OSError:
+                pass
+    return pygame.image.load(io.BytesIO(data), hint)
 
 
 class Image:
@@ -41,10 +63,10 @@ class Image:
             data = resources.read(args[0])
             if data is None:
                 raise IOError("resource not found: " + args[0])
-            return Image(Image._prepare(pygame.image.load(io.BytesIO(data), args[0])))
+            return Image(Image._prepare(_load_png(data, args[0])))
         if len(args) == 3 and isinstance(args[0], (bytes, bytearray)):
             data, off, ln = args
-            return Image(Image._prepare(pygame.image.load(io.BytesIO(bytes(data[off:off + ln])), "x.png")))
+            return Image(Image._prepare(_load_png(bytes(data[off:off + ln]), "x.png")))
         if len(args) == 2:
             w, h = args
             s = pygame.Surface((w, h), pygame.SRCALPHA)
