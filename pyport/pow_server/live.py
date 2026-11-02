@@ -189,6 +189,7 @@ class LiveServer:
             m = {"next": 1, "lots": [], "npc_at": None}
         if m["npc_at"] is None or self.clock() - m["npc_at"] >= NPC_REFRESH:
             self._restock(m)
+            self.save_market(m)       # or every read would roll another stock with the same lot ids
         return m
 
     def save_market(self, m):
@@ -350,7 +351,7 @@ class LiveSession:
 
     # --- 768 sync: the client's gold and backpack -> Safe and Warehouse --------------
     def op_768(self, r):
-        self.gold = r.take("<i")
+        self.gold = max(0, min(MAX_GOLD, r.take("<i")))   # the client's word, as in the original
         n = r.take("<B")
         self.backpack = {}
         for _ in range(n):
@@ -368,6 +369,8 @@ class LiveSession:
         u = self._u()
         if amount <= 0 or (d == 0 and amount > self.gold) or (d == 1 and amount > u["safe"]):
             return self.send(833, -18)
+        if (d == 0 and u["safe"] + amount > MAX_GOLD) or (d == 1 and self.gold + amount > MAX_GOLD):
+            return self.send(833, -18)    # 9 digits, and the u32 fields stay in range
         if d == 0:
             self.gold, u["safe"] = self.gold - amount, u["safe"] + amount
         else:

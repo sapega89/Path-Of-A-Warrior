@@ -160,16 +160,22 @@ class WebSocketTransport(Transport):
         ws = pf.window.WebSocket.new(self.url)
         ws.binaryType = "arraybuffer"
 
+        # every handler checks that `ws` is still the current socket: open() closes the old one
+        # first, and its onclose comes later - it must not mark the new connection as failed
         def on_open(ev):
-            self.connected = True
+            if self._ws is ws:
+                self.connected = True
 
         def on_message(ev):
+            if self._ws is not ws:
+                return
             arr = pf.window.Uint8Array.new(ev.data)
             self.inbox.extend(codec_bin.unframe(bytes(arr.to_py() if hasattr(arr, "to_py") else arr))[0])
 
         def on_close(ev):
-            self.connected = False
-            self.failed = True
+            if self._ws is ws:
+                self.connected = False
+                self.failed = True
 
         ws.onopen, ws.onmessage, ws.onclose, ws.onerror = on_open, on_message, on_close, on_close
         self._ws = ws
