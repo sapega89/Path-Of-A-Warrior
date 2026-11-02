@@ -77,6 +77,8 @@ python -m pygbag --ume_block 0 pyport/build/web-src   # http://localhost:8000, C
 `python pyport/tools/build_web.py` без `--no-pygbag` одразу робить статичну збірку в
 `pyport/build/web-src/build/web/` (`index.html` + `web-src.apk`): цю папку можна викласти на будь-який
 статичний хостинг (itch.io, GitHub Pages). Відкривати `index.html` подвійним кліком не можна - лише через HTTP.
+Поруч кладеться `guide.html` — «Довідник воїна» (предмети, рецепти, секрети; джерело
+`pyport/web/guide.html`), а на сторінці гри з'являється посилання на нього в правому нижньому куті.
 
 pygbag під час збирання і в браузері завантажує рантайм з `pygame-web.github.io` (потрібен інтернет).
 У консолі браузера (F12) або в терміналі сторінки `index.html#debug` має бути рядок
