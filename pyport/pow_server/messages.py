@@ -207,7 +207,10 @@ S2C = {
     TURN_RESULT: (("turn", "rest", _enc_turn, _dec_turn),),
     STAGE_END: (("bg", "B"),),
     BATTLE_END: (("win", "B"), ("gold", "h"), ("grade", "B"), ("fame", "h"), ("exp", "h"),
-                 ("loot", 15), ("rank", "i"), ("unk1", "B"), ("unk2", "i"), ("unk3", "B")),
+                 ("loot", 15), ("rank", "i"), ("unk1", "B"), ("unk2", "i"), ("unk3", "B"),
+                 # PORT-EXTRA: the looted item for the single-player save (9.9), id 0 = none
+                 ("item_id", "H"), ("item_atk", "h"), ("item_def", "h"), ("item_hp", "h"),
+                 ("item_mp", "h")),
     MATCH_CANCEL: (),
     NAME_SET_ANS: (),
     QUOTE_START_ANS: (),

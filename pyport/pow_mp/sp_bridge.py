@@ -30,6 +30,9 @@ OFF_SKILLS = 506         # cz.W[19] u8: skill levels by index
 OFF_ITEMS = 525          # cz.X[9]: z {s16 id, s16 atk, s16 def, s16 hp, s16 mp, u8}
 OFF_DY = 38              # ag.dy[8] s32: mission progress bits
 OFF_FACE = 916           # cz.aB  u8: hero 0..3
+OFF_BACKPACK = 624       # cz.Y[25]: z like X[] (analysis/03 §4.2)
+OFF_BELT = 899           # cz.Z[5]: {u16 id, u8 count <= 5}, consumables 1..11
+PENDING_STORE = "pow_mp_loot"   # loot that found the backpack full, delivered later
 
 # as.gG (as.java:84-86): SP skill index -> skill code; MP knows codes 3..13
 SKILL_CODES = (3, 4, 5, 9, 10, 11, 12, 13, 6, 7, 8, 14, 15, 16, 17, 18, 19, 20, 21)
@@ -110,3 +113,63 @@ def add_rewards(gold, fame, exp):
         return True
     except Exception:
         return False
+
+
+def _put_item(data, item):
+    """ag.k(id, ...) (ag.java:3286-3360): a consumable stacks on the belt (5 at most), the rest
+    takes the first free backpack cell. False when there is no room."""
+    iid = item[0]
+    if iid < 100:
+        free = None
+        for i in range(5):
+            o = OFF_BELT + 3 * i
+            sid, cnt = struct.unpack_from("<hB", data, o)
+            if sid == iid and cnt < 5:
+                struct.pack_into("<hB", data, o, iid, cnt + 1)
+                return True
+            if sid == 0 and free is None:
+                free = o
+        if free is None:
+            return False
+        struct.pack_into("<hB", data, free, iid, 1)
+        return True
+    for i in range(25):
+        o = OFF_BACKPACK + 11 * i
+        if struct.unpack_from("<h", data, o)[0] == 0:
+            struct.pack_into("<hhhhhB", data, o, *item[:5], 0)
+            return True
+    return False
+
+
+def _pending():
+    from pow.midp.rms import RecordStore
+    rs = RecordStore.openRecordStore(PENDING_STORE, True)
+    if rs.getNumRecords() < 1:
+        rs.addRecord(bytearray(), 0, 0)
+    raw = bytes(b & 0xFF for b in (rs.getRecord(1) or b""))
+    return rs, [struct.unpack_from("<Hhhhh", raw, o) for o in range(0, len(raw) - 9, 10)]
+
+
+def add_item(item_id=0, atk=0, def_=0, hp=0, mp=0):
+    """1032 loot: into the single-player backpack (or belt); a full backpack keeps it waiting
+    in our own store until there is room (the next battle or login tries again). Returns the
+    number of items still waiting, or None without a single-player save."""
+    try:
+        from pow.midp.rms import RecordStore
+        rs = RecordStore.openRecordStore(SAVE_STORE, False)
+        if rs is None or rs.getNumRecords() < 1:
+            return None
+        data = bytearray(b & 0xFF for b in rs.getRecord(1))
+        if len(data) < SAVE_LEN:
+            return None
+        prs, waiting = _pending()
+        if item_id:
+            waiting.append((item_id, atk, def_, hp, mp))
+        left = [it for it in waiting if not _put_item(data, it)]
+        if len(left) != len(waiting):
+            rs.setRecord(1, data, 0, len(data))
+        raw = bytearray(b"".join(struct.pack("<Hhhhh", *it) for it in left))
+        prs.setRecord(1, raw, 0, len(raw))
+        return len(left)
+    except Exception:
+        return None
