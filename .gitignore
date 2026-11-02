@@ -32,3 +32,6 @@ desktop.ini
 
 # Logs
 *.log
+
+# POW Multiplayer server data (pyport/pow_server)
+*.sqlite

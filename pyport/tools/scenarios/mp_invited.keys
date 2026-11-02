@@ -1,0 +1,320 @@
+# RIVAL (pow_server/bot.py) invites TEST to Invite An Ally while TEST sits in the main menu:
+# 770 pulls the client into the room without a dialog (g:2152-2170, Options > Invitation: Accept).
+# States (06 §1.2): 91 stage intro, 94 choose action, 104 stage complete, 105 result.
+include _login.keys
+watch 104 stage_complete 5
+bot_invite 2
+until 91
+wait 10
+shot stage_intro
+until 94
+wait 3
+shot room
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,105 3000
+goto_if 105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+label end
+until 105
+wait 10
+shot result
+key FIRE
+until 12
+wait 5
+shot back_to_mission_menu

@@ -1,0 +1,11 @@
+# POW Multiplayer: logo -> sound? -> title -> Login (UserID, password) -> Welcome -> main menu
+wait 5
+shot logo
+wait 30
+shot sound_question
+key FIRE
+wait 3
+shot title
+key FIRE
+wait 3
+shot login

@@ -1,0 +1,41 @@
+save zero
+# The same path as title + gamemenu, played only with the mouse.
+wait 25
+shot sound_question
+click 160 200      # click "No" side -> selects No and confirms (sound off)
+wait 2
+shot title
+click 120 160      # any click on the title
+wait 2
+shot main_menu_continue
+click 44 262       # ◄ arrow
+shot main_menu_left_exit
+click 200 262      # ► arrow
+shot main_menu_right_continue
+wheel down         # wheel = RIGHT
+shot main_menu_wheel_new_game
+wheel up
+click 120 265      # caption = OK -> Continue -> Game Menu
+wait 2
+shot game_menu_0
+click 120 255      # lower small button -> DOWN
+wait 5
+shot game_menu_1
+click 120 175      # upper small button -> UP
+wait 5
+shot game_menu_back_0
+wheel down
+wait 5
+shot game_menu_wheel_1
+click 200 312      # BACK soft key
+wait 2
+shot main_menu_after_back
+click 44 262       # ◄ -> Exit
+click 120 265      # OK -> "Exit Game?" (No preselected)
+wait 1
+shot exit_popup
+rclick             # right button = BACK: the Yes/No popup ignores BACK
+wait 1
+click 80 200       # click "Yes" side -> select Yes + confirm
+wait 3
+shot outro

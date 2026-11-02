@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+MIDlet-1: Path of a Warrior Multiplayer, /icon40_40.png, Main
+MIDlet-Icon: /icon40_40.png
+Ant-Version: Apache Ant 1.6.2
+MicroEdition-Configuration: CLDC-1.0
+Created-By: 1.4.1_01-b01 (Sun Microsystems Inc.)
+MIDlet-Version: 1.0.6
+MIDlet-Info-URL: http://www.gamevil.com
+MIDlet-Name: Path of a Warrior Multiplayer
+MIDlet-Vendor: GAMEVIL Inc./BiNPDA
+MIDlet-Description: Path of a Warrior Multiplayer
+MicroEdition-Profile: MIDP-1.0
+MIDlet-Permissions: javax.microedition.io.Connector.socket
+BUILD_ID: POW_NW_CIN_NK_N75
+GAMEVIL_SERVER: ur.gamevil.net
+GAMEVIL_PORT: 28200
+GAMEVIL_GAME_VER: 0111

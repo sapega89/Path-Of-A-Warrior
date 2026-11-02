@@ -1,0 +1,17 @@
+# Main Menu > Multiplayer > YES: the single player quits and the Multiplayer game starts
+# in the same window (main.py -> mp_main.play)
+wait 25
+key FIRE           # sound: Yes
+wait 2
+key FIRE           # title -> Main Menu (item 1 New Game)
+wait 2
+key LEFT
+key LEFT
+key LEFT           # 1 -> 0 -> 8 Exit -> 7 Multiplayer
+shot main_menu_multiplayer
+key FIRE
+wait 1
+shot multiplayer_popup
+multiplayer 40 mp_title   # what to do after the game quits
+key FIRE           # Yes -> the game quits, main.py starts the Multiplayer game
+wait 5
