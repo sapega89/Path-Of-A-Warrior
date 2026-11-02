@@ -5,7 +5,8 @@
 Steps: wait N | key NAME [COUNT] (UP DOWN LEFT RIGHT FIRE LSOFT RSOFT 0-9 STAR POUND) |
        shot NAME | include FILE |
        until STATE[,STATE] [MAX] (g.cY, the client state of 06 §1.2) |
-       goto_if STATE[,STATE] LABEL | label LABEL | key_if STATE[,STATE] KEY | digits 1234 (number keys one per tick) | # comment
+       goto_if STATE[,STATE] LABEL | label LABEL | key_if STATE[,STATE] KEY |
+       watch STATE NAME [FRAMES] (one shot FRAMES after first entering STATE) | digits 1234 (number keys one per tick) | # comment
 The server runs inside the game (POW_MP_SERVER=local) with a fresh temporary save folder.
 """
 import argparse
@@ -61,7 +62,8 @@ def run(steps, out, every=False, save_dir=None):
     from pow_mp.Main import Main
     midlet = Main()
     steps = list(steps)
-    st = {"frame": 0, "i": 0, "wait": 0, "n": 0, "last": None, "queue": [], "until": None}
+    st = {"frame": 0, "i": 0, "wait": 0, "n": 0, "last": None, "queue": [], "until": None,
+          "watch": {}}
     saved = []
 
     def on_frame(screen):
@@ -69,6 +71,17 @@ def run(steps, out, every=False, save_dir=None):
         st["last"] = screen.copy()
         if every:
             pygame.image.save(screen, str(out / ("tick_%04d.png" % st["frame"])))
+        if st["watch"]:
+            from pow_mp._gen.g import g
+            w = st["watch"].get(g.cY)
+            if w and not w["done"]:
+                w["seen"] += 1
+                if w["seen"] > w["delay"]:
+                    w["done"] = True
+                    st["n"] += 1
+                    name = "%02d_%s.png" % (st["n"], w["name"])
+                    pygame.image.save(screen, str(out / name))
+                    saved.append(name)
         if st["queue"]:
             Main.b.keyPressed(st["queue"].pop(0))
             return
@@ -98,6 +111,12 @@ def run(steps, out, every=False, save_dir=None):
                 st["queue"] = [code] * (int(count or 1) - 1)
                 st["wait"] = 1
                 return
+            if cmd == "watch":                   # watch STATE NAME [FRAMES]: shot once, FRAMES in
+                state, _, rest = arg.partition(" ")
+                name, _, delay = rest.partition(" ")
+                st["watch"][int(state)] = {"name": name, "delay": int(delay or 0), "seen": 0,
+                                           "done": False}
+                continue
             if cmd == "label":
                 continue
             if cmd == "goto_if":                 # goto_if STATE[,STATE...] LABEL

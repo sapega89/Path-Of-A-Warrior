@@ -58,7 +58,11 @@ class LocalTransport(Transport):
             if sys.platform != "emscripten":
                 os.makedirs(config.SAVE_DIR, exist_ok=True)
                 path = os.path.join(config.SAVE_DIR, "mp_local.sqlite")
-            cls._server = GameServer(open_storage(path))
+            rng = None
+            if os.environ.get("POW_SEED"):        # headless runs (tools/mp_shot.py) repeat exactly
+                import random
+                rng = random.Random(int(os.environ["POW_SEED"]))
+            cls._server = GameServer(open_storage(path), rng=rng)
         return cls._server
 
     def open(self):
