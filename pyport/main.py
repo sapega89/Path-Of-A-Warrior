@@ -73,8 +73,14 @@ def restart():
         import platform
         platform.window.location.reload()
         return
+    # a new process, not os.execv: on Windows execv does not quote its arguments, so a path with
+    # a space ("C:\\Users\\Andrey S\\...") would break; a frozen exe has no main.py to pass
+    import subprocess
+    import pygame
+    args = [sys.executable] + ([] if getattr(sys, "frozen", False) else [os.path.abspath(__file__)])
     sys.stdout.flush()
-    os.execv(sys.executable, [sys.executable, os.path.abspath(__file__)] + sys.argv[1:])
+    pygame.quit()                          # the old window closes before the new one opens
+    subprocess.Popen(args + sys.argv[1:])
 
 
 async def main():

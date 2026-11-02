@@ -181,3 +181,17 @@ def test_gift_lands_in_the_warehouse(server):
     st, body = a.ask(520)
     assert body[0] == 1 and body[1:6] == b"RIVAL" and struct.unpack_from("<H", body, 9)[0] == 504
     assert len(sync(a, 0, [])[1]) == 1
+
+
+def test_npc_stock_is_kept_between_reads(server):
+    assert server.market()["lots"] == server.market()["lots"]
+
+
+def test_safe_stays_within_nine_digits(server):
+    from pow_server.live import MAX_GOLD
+    c, _, _ = login(server)
+    sync(c, 2 ** 31 - 1, [])                                        # a client that lies
+    assert c.ask(832, struct.pack("<Bi", 0, MAX_GOLD))[0] == 1
+    sync(c, MAX_GOLD, [])
+    assert c.ask(832, struct.pack("<Bi", 0, 1))[0] == -18
+    assert sync(c, 0, [])[0] == MAX_GOLD

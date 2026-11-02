@@ -153,6 +153,8 @@ class Session:
         if old is not None and old is not self:
             old.send(M.KICKED)         # "Another player has connected using your UserID"
             old.close()
+        if self.user and self.user != uid and self.server.online.get(self.user) is self:
+            del self.server.online[self.user]   # a second 262 as another UserID on this session
         self.user = uid
         self.char = st.load(uid) or default_character(uid)
         if apply_sp_hero(self.char, msg):        # PORT-EXTRA: the single-player hero (9.10)
@@ -355,8 +357,8 @@ class Session:
         Options > Invitation decides (06 §2.6). Errors as the client shows them (g:2110-2146):
         -3 not online, -4 unregistered, -5 cannot be replied (busy), -12 yourself, -16 denied."""
         mode, uid = msg.get("mode"), msg.get("id", "")
-        if mode not in (0, 1, 2) or self.room is not None:
-            return self.send(M.INVITE_ANS, st=-1)
+        if mode not in (0, 1, 2) or self.room is not None or self in self.server.queue:
+            return self.send(M.INVITE_ANS, st=-1)    # busy: in a battle or waiting for a Duel
         if uid == self.user:
             return self.send(M.INVITE_ANS, st=-12)
         if not self.server.storage.has_account(uid):
@@ -426,9 +428,10 @@ class Room:
         humans = [f for f in fighters if not f.cpu] or fighters
         return max(humans, key=lambda f: (f.max_hp, f.atk))
 
-    def _name_cpus(self, fighters):
-        """No two CPU fighters share a name, nor a player's (monsters keep theirs)."""
-        taken = {f.name for f in fighters if not f.cpu}
+    def _name_cpus(self, fighters, keep=()):
+        """No two CPU fighters share a name, nor a player's (monsters keep theirs). `keep`:
+        fighters already in the battle, whose names stay and are taken."""
+        taken = {f.name for f in fighters if not f.cpu} | {f.name for f in keep}
         cpus = [f for f in fighters if f.cpu and not f.monster]
         names = [n for n in B.CPU_NAMES if n not in taken]
         for f, name in zip(cpus, self.server.rng.sample(names, len(cpus))):
@@ -495,7 +498,7 @@ class Room:
         self.stage_bg = None
         mine = [f for f in b.fighters.values() if f.team == 0]
         foes = B.mission_wave(self.server.rng, self._strongest(mine), m["stage"], m["stages"])
-        self._name_cpus(mine + foes)
+        self._name_cpus(foes, keep=mine)   # the clients know the names of mine: only the new
         b.new_wave(foes)
         for slot in sorted(self.fighting()):
             s = self.players[slot]
@@ -563,7 +566,14 @@ class Room:
                 f.cpu = True           # the team plays on, a CPU takes the fighter over
             else:
                 f.hp = 0
+                if f not in b.beaten:  # the one who stayed beat them: Fame / EXP / gold
+                    b.beaten.append(f)
             B.duel_rewards(s.char, b, slot, self.server.rng)   # a duel left is a loss
+            s.save()
+        elif not self.mission:
+            # the duel is over but this player hung up before 1025 -> 1032 (s is still in
+            # players, so _battle_end has not run): the result counts all the same, a loss too
+            B.duel_rewards(s.char, b, slot, self.server.rng)
             s.save()
         elif self.mission:
             f.cpu = True               # the ally fights on; the mission left earns nothing

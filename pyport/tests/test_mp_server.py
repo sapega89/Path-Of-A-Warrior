@@ -592,3 +592,39 @@ def test_mission_never_waits():
     a, _ = login(server, "ANDREY")
     a.ask(M.MATCH, mode=2)
     assert a.session.room is not None and server.queue == []
+
+
+def test_hanging_up_after_the_last_blow_still_counts(server):
+    c, _ = login(server)
+    c.ask(M.MATCH, mode=0)
+    c.ask(M.ROUND_READY)
+    c.session.room.battle.fighters[0].hp = 0     # I fell in the last 1028 ...
+    c.session.close()                            # ... and hang up before 1025 -> 1032
+    assert server.storage.load("ANDREY").losses == 1
+
+
+def test_the_quitter_counts_as_beaten(server):
+    a, b = _pair(server, 0)
+    a.ask(M.ROUND_READY)
+    b.ask(M.ROUND_READY)
+    b.session.close()
+    end = a.ask(M.ROUND_READY)
+    assert end["win"] == 1 and end["fame"] > 0 and end["exp"] > 0
+
+
+def test_relogin_as_another_id_leaves_no_stale_online_entry(server):
+    c, _ = login(server, "ANDREY")
+    first = Client(server)
+    tok = first.ask(M.LOGIN_FIRST, id="BORYS", pwd="5555", ver=M.GAME_VER)["token"]
+    first.session.close()
+    assert c.ask(M.LOGIN, id="BORYS", ver=M.GAME_VER, token=tok)["st"] == 1
+    assert "ANDREY" not in server.online and server.online["BORYS"] is c.session
+
+
+def test_no_invite_while_queued():
+    server = _mm_server(Clock())
+    a, _ = login(server, "ANDREY")
+    login(server, "BORYS")
+    a.ask(M.MATCH, mode=0)
+    assert a.ask(M.INVITE, mode=0, id="BORYS")["st"] == -1
+    assert a.session.room is None

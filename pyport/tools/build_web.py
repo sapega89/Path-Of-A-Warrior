@@ -60,9 +60,13 @@ def add_guide(site):
     page = site / "index.html"
     if page.exists():
         html = page.read_text(encoding="utf-8")
-        if 'href="guide.html"' not in html:
-            html = html.replace("</body>", GUIDE_LINK + "\n</body>", 1)
-            page.write_text(html, encoding="utf-8")
+        end = html.rfind("</body>")         # the last one: a script of the page may hold the text
+        if 'href="guide.html"' in html:
+            pass
+        elif end < 0:
+            print("guide: no </body> in", page, "- the link is not added")
+        else:
+            page.write_text(html[:end] + GUIDE_LINK + "\n" + html[end:], encoding="utf-8")
     print("guide ->", site / "guide.html")
 
 
