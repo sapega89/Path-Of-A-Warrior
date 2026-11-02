@@ -23,6 +23,9 @@ CREATE TABLE IF NOT EXISTS accounts (
 CREATE TABLE IF NOT EXISTS characters (
     id TEXT PRIMARY KEY REFERENCES accounts(id), display_name TEXT UNIQUE, data TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS live (
+    key TEXT PRIMARY KEY, data TEXT NOT NULL
+);
 """
 
 
@@ -85,6 +88,16 @@ class Storage:
             rows = self.db.execute("SELECT data FROM characters").fetchall()
         return [Character.from_json(json.loads(r[0])) for r in rows]
 
+    # --- Gamevil Live (pow_server/live.py): JSON documents by key ---------------
+    def live_get(self, key):
+        row = self._one("SELECT data FROM live WHERE key=?", key)
+        return None if row is None else json.loads(row[0])
+
+    def live_put(self, key, value):
+        with self.lock:
+            self.db.execute("INSERT INTO live VALUES (?,?) ON CONFLICT(key) DO UPDATE SET "
+                            "data=excluded.data", (key, json.dumps(value)))
+
     def _one(self, sql, *args):
         with self.lock:
             return self.db.execute(sql, args).fetchone()
@@ -96,6 +109,7 @@ class MemoryStorage:
     def __init__(self, path=":memory:"):
         self.accounts = {}       # id -> [salt, hash, token]
         self.chars = {}          # id -> json dict
+        self.live = {}           # key -> json text (Gamevil Live)
 
     def has_account(self, user_id):
         return user_id in self.accounts
@@ -130,6 +144,13 @@ class MemoryStorage:
 
     def all_characters(self):
         return [Character.from_json(json.loads(d)) for d in self.chars.values()]
+
+    def live_get(self, key):
+        d = self.live.get(key)
+        return None if d is None else json.loads(d)
+
+    def live_put(self, key, value):
+        self.live[key] = json.dumps(value)
 
 
 def open_storage(path=":memory:"):

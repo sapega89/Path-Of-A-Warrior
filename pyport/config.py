@@ -52,6 +52,13 @@ ORIG_BUG = {
                  # is never filled (visitgen.arr)
 }
 
+# Gamevil Live of the single player (pow_server/live.py): "local" = the server inside the game
+# (shares the accounts of the in-game multiplayer server), or ws(s)://host:28200/live.
+LIVE_SERVER = os.environ.get("POW_LIVE_SERVER", "local")
+# PORT-EXTRA (PHASE_7 D3): the NPC market always sells these Rare items at these prices (the
+# data has 1 gold for both); without 502 / 504 only 71-82 of the 149 recipes can be crafted.
+LIVE_PRICE = {502: 3000, 504: 5000}
+
 # Re-raise exceptions inside the game loop (Java would print "--run:" and continue).
 DEBUG = os.environ.get("POW_DEBUG", "1") == "1"
 

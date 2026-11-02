@@ -11,6 +11,10 @@ server behind a TLS proxy (nginx / Caddy) or pass --cert/--key.
 --tcp-port: optional raw TCP gateway with the original framing, for the original jar in an
 emulator with GAMEVIL_SERVER/GAMEVIL_PORT pointed here (task 9.23, untested with the real jar).
 The jar logs in again with a 262 without a token, so this needs --legacy (no token check).
+
+Gamevil Live of the single player (pow_server/live.py) is on the same port at the path /live
+(ws://host:28200/live), and with --live-tcp-port on raw TCP for the original single-player jar
+(its GAMEVIL_PORT was 28230). It shares the accounts with the multiplayer server.
 """
 import argparse
 import asyncio
@@ -18,6 +22,7 @@ import logging
 import ssl
 
 from pow_server import codec_bin
+from pow_server.live import LiveServer
 from pow_server.server import GameServer
 from pow_server.storage import Storage
 
@@ -102,11 +107,17 @@ async def handle_tcp(server, reader, writer):
 
 
 async def serve(host="0.0.0.0", port=28200, db="mp_server.sqlite", tcp_port=None, legacy=False,
-                ssl_context=None, ready=None, notices=(), bots=(), match_wait=None):
+                ssl_context=None, ready=None, notices=(), bots=(), match_wait=None,
+                live_tcp_port=None):
     from websockets.asyncio.server import serve as ws_serve
     server = GameServer(Storage(db), require_token=not legacy, notices=notices)
     if match_wait is not None:
         server.match_wait = match_wait
+    live = LiveServer(server.storage, notices=notices)
+
+    def route(ws):
+        path = getattr(getattr(ws, "request", None), "path", "") or ""
+        return handle_ws(live if path.startswith("/live") else server, ws)
     if bots:
         from pow_server.bot import Bot
         bots = [Bot(server, name) for name in bots]
@@ -123,22 +134,27 @@ async def serve(host="0.0.0.0", port=28200, db="mp_server.sqlite", tcp_port=None
             server.tick()
             await asyncio.sleep(1)
     ticker = asyncio.ensure_future(tick())      # noqa: F841 (kept alive with serve)
-    async with ws_serve(lambda ws: handle_ws(server, ws), host, port,
+    async with ws_serve(route, host, port,
                         max_size=MAX_FRAME, ssl=ssl_context) as wss:
         tcp = None
         if tcp_port is not None:
             tcp = await asyncio.start_server(lambda r, w: handle_tcp(server, r, w), host, tcp_port)
+        live_tcp = None
+        if live_tcp_port is not None:
+            live_tcp = await asyncio.start_server(lambda r, w: handle_tcp(live, r, w), host, live_tcp_port)
         ports = [s.getsockname()[1] for s in wss.sockets]
-        if tcp:
-            ports += [s.getsockname()[1] for s in tcp.sockets]
+        for t in (tcp, live_tcp):
+            if t:
+                ports += [s.getsockname()[1] for s in t.sockets]
         log.info("POW Multiplayer server on %s ports %s", host, ports)
         if ready is not None:
             ready.set_result((server, ports))
         try:
             await asyncio.Future()
         finally:
-            if tcp:
-                tcp.close()
+            for t in (tcp, live_tcp):
+                if t:
+                    t.close()
 
 
 def main(argv=None):
@@ -152,6 +168,8 @@ def main(argv=None):
                     help="keep a scripted player online that accepts every Challenge (A-Z, 4-12)")
     ap.add_argument("--match-wait", type=float, default=None, metavar="SEC",
                     help="how long a Duel waits for a live opponent before a CPU (default 60)")
+    ap.add_argument("--live-tcp-port", type=int, default=None,
+                    help="raw TCP Gamevil Live for the original single-player jar (was 28230)")
     ap.add_argument("--cert")
     ap.add_argument("--key")
     a = ap.parse_args(argv)
@@ -162,6 +180,6 @@ def main(argv=None):
         ctx.load_cert_chain(a.cert, a.key)
     try:
         asyncio.run(serve(a.host, a.port, a.db, a.tcp_port, a.legacy, ctx, bots=a.bot,
-                          match_wait=a.match_wait))
+                          match_wait=a.match_wait, live_tcp_port=a.live_tcp_port))
     except KeyboardInterrupt:
         pass
