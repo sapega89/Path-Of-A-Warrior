@@ -102,9 +102,19 @@ async def handle_tcp(server, reader, writer):
 
 
 async def serve(host="0.0.0.0", port=28200, db="mp_server.sqlite", tcp_port=None, legacy=False,
-                ssl_context=None, ready=None, notices=()):
+                ssl_context=None, ready=None, notices=(), bots=()):
     from websockets.asyncio.server import serve as ws_serve
     server = GameServer(Storage(db), require_token=not legacy, notices=notices)
+    if bots:
+        from pow_server.bot import Bot
+        bots = [Bot(server, name) for name in bots]
+
+        async def pump():
+            while True:
+                for bot in bots:
+                    bot.pump()
+                await asyncio.sleep(0.2)
+        pumper = asyncio.ensure_future(pump())  # noqa: F841 (kept alive with serve)
     async with ws_serve(lambda ws: handle_ws(server, ws), host, port,
                         max_size=MAX_FRAME, ssl=ssl_context) as wss:
         tcp = None
@@ -130,6 +140,8 @@ def main(argv=None):
     ap.add_argument("--db", default="mp_server.sqlite", help="SQLite file (:memory: = nothing kept)")
     ap.add_argument("--tcp-port", type=int, default=None, help="raw TCP gateway for the original jar")
     ap.add_argument("--legacy", action="store_true", help="no session token check (original jar)")
+    ap.add_argument("--bot", action="append", default=[], metavar="ID",
+                    help="keep a scripted player online that accepts every Challenge (A-Z, 4-12)")
     ap.add_argument("--cert")
     ap.add_argument("--key")
     a = ap.parse_args(argv)
@@ -139,6 +151,6 @@ def main(argv=None):
         ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         ctx.load_cert_chain(a.cert, a.key)
     try:
-        asyncio.run(serve(a.host, a.port, a.db, a.tcp_port, a.legacy, ctx))
+        asyncio.run(serve(a.host, a.port, a.db, a.tcp_port, a.legacy, ctx, bots=a.bot))
     except KeyboardInterrupt:
         pass

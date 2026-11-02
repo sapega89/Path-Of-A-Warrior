@@ -1,0 +1,255 @@
+# Challenge 1:1 against another player: the scripted player RIVAL on the in-game server
+# (pow_server/bot.py) accepts and plays with plain attacks. States (06 §1.2): 11 Duel menu,
+# 20 Challenge 1:1 / 2:2, 21 UserID of the other player, 92 quotes, 94 choose action, 105 result.
+include _login.keys
+key FIRE          # Duel
+wait 5
+key DOWN 2        # Challenge
+shot duel_menu
+key FIRE
+until 20
+wait 3
+shot challenge_mode
+key FIRE          # Challenge 1:1
+until 21
+wait 3
+key DOWN          # R (the grid has 14 letters a row)
+key RIGHT 3
+key FIRE
+key UP            # I
+key RIGHT 5
+key FIRE
+key DOWN          # V
+key LEFT
+key FIRE
+key UP            # A
+key LEFT 7
+key FIRE
+key RIGHT 11      # L
+key FIRE
+key DOWN          # OK
+key RIGHT
+wait 2
+shot user_id
+key FIRE          # 768 -> 769
+until 92
+shot room
+wait 30
+shot quotes
+until 94,103,105
+key RIGHT         # Attack
+wait 9
+key FIRE
+until 99
+wait 3
+shot reveal
+wait 50
+shot playback
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 9
+key FIRE          # stop the timing bar
+label end
+until 105
+wait 10
+shot result
+key FIRE
+until 11
+wait 5
+shot back_to_duel_menu

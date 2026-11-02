@@ -6,9 +6,10 @@ Session.receive() and writes the frames the session passes to its `send` callbac
 
 Done here: login 278/262 (+ PORT-EXTRA session token), duplicate login (280), notices
 258/259, Options 288-291, Character 1280-1299, Ranking 1293/1300, keepalive.
-Battles: 1-on-1 Duel against a CPU fighter (512 mode 0 -> 513, 514, 1024; 1025/1026,
-1027/1028 per round; 1025 after the end -> 1032), resolved in pow_server/battle.py.
-Not yet: 2v2, missions and Challenge - 512 mode 1/2 and 768 answer "too many users" (-11).
+Battles (Room below, resolved in pow_server/battle.py): Duel 1-on-1 / 2-on-2 against CPU
+fighters and Solo Mission (512 mode 0/1/2 -> 513, 514, 1024 or 1037), Challenge 1:1 / 2:2 and
+Invite An Ally between two players (768 -> 769 to me, 770 to the other player); 1025/1026,
+1027/1028 per round; stages 1031/1036/1037/1038; 1025 after the end -> 1032.
 """
 import random
 import re
@@ -55,9 +56,8 @@ class Session:
         self.closed = False
         self.last_seen = server.clock()
         self.close_after_send = False  # 279 OK: the client hangs up itself and comes back with 262
-        self.battle = None             # pow_server.battle.Battle while in a room
+        self.room = None               # Room while in a battle
         self.slot = 0                  # my slot in it
-        self.mission = None            # {"title", "stages", "stage"} during a Solo Mission
 
     # --- I/O -----------------------------------------------------------------
     def send(self, op, **fields):
@@ -84,13 +84,9 @@ class Session:
         if self.closed:
             return
         self.closed = True
-        if self.battle is not None and not self.battle.over and not self.mission:
-            # "Exit Battle" (RSK -> Yes) hangs up and logs in again (g:2990-2997): a duel loss;
-            # a left mission just earns nothing
-            self.battle.fighters[self.slot].hp = 0
-            B.duel_rewards(self.char, self.battle, self.slot, self.server.rng)
-            self.save()
-        self.battle = None
+        if self.room is not None:      # a duel left is a loss, a mission left earns nothing
+            room, self.room = self.room, None
+            room.leave(self)
         if self.user and self.server.online.get(self.user) is self:
             del self.server.online[self.user]
 
@@ -149,6 +145,23 @@ class Session:
         pass
 
     # --- options ---------------------------------------------------------------
+    def _battle_end(self, room):
+        """1032 with my own rewards, and out of the room."""
+        b, m = room.battle, room.mission
+        if m:
+            stood = any(b.fighters[k].alive for k in room.human_slots)
+            cleared = m["stage"] - (0 if stood and not b.team_alive(1) else 1)
+            res = B.mission_rewards(self.char, b, self.slot, self.server.rng, cleared, m["stages"])
+            cat = 3
+        else:
+            res = B.duel_rewards(self.char, b, self.slot, self.server.rng)
+            cat = 2
+        room.players.pop(self.slot, None)
+        self.room = None
+        self.save()
+        rank = next((r for r, uid, _ in self._table(cat) if uid == self.user), 0)
+        self.send(M.BATTLE_END, st=1, rank=rank, **res)
+
     def on_options(self, msg):         # 288 -> 289
         self.send(M.OPTIONS_ANS, st=1, invitation=self.char.invitation)
 
@@ -244,96 +257,256 @@ class Session:
         self.send(M.RANK_LIST_ANS, st=1, rows=rows)
 
     # --- rooms and battles ----------------------------------------------------------
+    @property
+    def battle(self):
+        return self.room.battle if self.room else None
+
+    @battle.setter
+    def battle(self, value):           # tests: None drops the room
+        assert value is None
+        self.room = None
+
+    @property
+    def mission(self):
+        return self.room.mission if self.room else None
+
     def on_match(self, msg):           # 512 -> 513, 514 per other fighter, 1024 (mission: 1037)
         mode = msg.get("mode")
-        if mode not in (0, 1, 2) or self.battle is not None:
+        if mode not in (0, 1, 2) or self.room is not None:
             return self.send(M.MATCH_ANS, st=-11)
         rng = self.server.rng
         me = B.from_character(self.char, 0)
         # slot % 2 = team, slot // 2 = row (06 §2.6): 1v1 uses 0/1, 2v2 and missions add an
         # ally at 2 and a second foe at 3
         if mode == 2:
-            stages = B.mission_stages(self.char.sp_progress)
-            self.mission = {"title": rng.choice(B.MISSION_TITLES), "stages": stages, "stage": 1}
-            others = [B.cpu_fighter(rng, me, 2, ally=True)] + B.mission_wave(rng, me, 1, stages)
+            others = [B.cpu_fighter(rng, me, 2, ally=True)]
         else:
-            self.mission = None
             others = [B.cpu_fighter(rng, me, 1)]
             if mode == 1:
                 others += [B.cpu_fighter(rng, me, 2, ally=True), B.cpu_fighter(rng, me, 3)]
-        self._name_cpus(others)
-        self.battle, self.slot = B.Battle(rng, [me] + others, mode=mode), 0
-        # 513 before 514: O() clears the fighter list (06 §2.6); the client adds itself from 263
-        self.send(M.MATCH_ANS, st=1, bg=self.battle.bg, slot=0, mode=mode, unk=0)
-        for f in others:
-            self.send(M.ROOM_JOIN, st=1, **f.wire())
-        if self.mission:
-            self._stage_info()         # -> 91, the client answers 1038 -> 1024
-        else:
-            self.send(M.ALL_READY, st=1)
+        Room(self.server, mode, [me] + others, {0: self}, self.char.sp_progress).start()
 
-    def _name_cpus(self, fighters):
-        """No two CPU fighters share a name (monsters keep theirs)."""
-        cpus = [f for f in fighters if f.cpu and not f.monster]
-        for f, name in zip(cpus, self.server.rng.sample(B.CPU_NAMES, len(cpus))):
-            f.name = name
+    def on_invite(self, msg):          # 768 -> 769 to me, 770 pushed to the other player
+        """Challenge 1:1 / 2:2 (bz 0/1, the other player is the foe) and Invite An Ally (bz 2,
+        the other player fights the mission next to me). No Accept/Deny dialog in the client:
+        Options > Invitation decides (06 §2.6). Errors as the client shows them (g:2110-2146):
+        -3 not online, -4 unregistered, -5 cannot be replied (busy), -12 yourself, -16 denied."""
+        mode, uid = msg.get("mode"), msg.get("id", "")
+        if mode not in (0, 1, 2) or self.room is not None:
+            return self.send(M.INVITE_ANS, st=-1)
+        if uid == self.user:
+            return self.send(M.INVITE_ANS, st=-12)
+        if not self.server.storage.has_account(uid):
+            return self.send(M.INVITE_ANS, st=-4)
+        other = self.server.online.get(uid)
+        if other is None or other.closed or other.char is None:
+            return self.send(M.INVITE_ANS, st=-3)
+        if other.room is not None:
+            return self.send(M.INVITE_ANS, st=-5)
+        if not other.char.invitation:
+            return self.send(M.INVITE_ANS, st=-16)
+        rng = self.server.rng
+        me = B.from_character(self.char, 0)
+        them = B.from_character(other.char, 2 if mode == 2 else 1)
+        fighters = [me, them]
+        if mode == 1:                  # each player gets a CPU ally
+            fighters += [B.cpu_fighter(rng, me, 2, ally=True), B.cpu_fighter(rng, them, 3, ally=True)]
+        progress = max(self.char.sp_progress, other.char.sp_progress)
+        Room(self.server, mode, fighters, {0: self, them.slot: other}, progress).start()
 
-    def _stage_info(self):
-        m = self.mission
-        self.send(M.STAGE_INFO, st=1, title=m["title"][:14], stages=m["stages"], stage=m["stage"])
-
-    def on_stage_intro_done(self, msg):    # 1038 -> 1024
-        if self.battle is not None and self.mission:
-            self.send(M.ALL_READY, st=1)
+    def on_stage_intro_done(self, msg):    # 1038 -> 1024 once every player has seen the intro
+        if self.room is not None:
+            self.room.intro_done(self)
 
     def on_stage_next(self, msg):          # 1036 -> 514 per new foe, 1037
-        b, m = self.battle, self.mission
-        if b is None or not m or m["stage"] >= m["stages"] or b.team_alive(1):
-            return
-        m["stage"] += 1
-        foes = B.mission_wave(self.server.rng, b.fighters[self.slot], m["stage"], m["stages"])
-        self._name_cpus(foes)
-        b.new_wave(foes)
-        for f in foes:
-            self.send(M.ROOM_JOIN, st=1, **f.wire())
-        self._stage_info()
+        if self.room is not None:
+            self.room.stage_next(self)
 
     def on_round_ready(self, msg):     # 1025 -> 1026 next round, 1031 next stage or 1032 the end
+        if self.room is not None:
+            self.room.round_ready(self)
+
+    def on_turn(self, msg):            # 1027 -> 1028 once every player has chosen
+        if self.room is not None:
+            self.room.turn(self, (msg.get("target", 1), msg.get("action", 1), msg.get("hit", 20)))
+
+
+class Room:
+    """One battle and the players in it (one for the games against the CPU, two for Challenge
+    and Invite An Ally). The server waits for the 1027 of every player still fighting before it
+    resolves the round, and sends the same 1028 to all of them. A player who has fallen waits
+    in 103 for 1032 (g:683-684) while the others fight on. The client gives itself a time limit
+    to choose (ba = 10, then Defend, g:488-493), so only a dropped connection can stall a round:
+    the transport closes an idle session and the round goes on without it."""
+
+    def __init__(self, server, mode, fighters, players, progress=0):
+        self.server = server
+        self.mode = mode
+        self.players = dict(players)   # slot -> Session, the humans still connected
+        self.human_slots = set(players)
+        rng = server.rng
+        self.mission = None
+        if mode == 2:
+            stages = B.mission_stages(progress)
+            self.mission = {"title": rng.choice(B.MISSION_TITLES), "stages": stages, "stage": 1}
+            fighters = fighters + B.mission_wave(rng, self._strongest(fighters), 1, stages)
+        self._name_cpus(fighters)
+        self.battle = B.Battle(rng, fighters, mode=mode)
+        self.turns = {}                # slot -> (target, action, hit) of this round
+        self.waiting_end = set()       # fallen players whose client waits for 1032
+        self.ready = set()             # players past 104 (1036) or the stage intro (1038)
+        self.stage_bg = None
+
+    @staticmethod
+    def _strongest(fighters):
+        humans = [f for f in fighters if not f.cpu] or fighters
+        return max(humans, key=lambda f: (f.max_hp, f.atk))
+
+    def _name_cpus(self, fighters):
+        """No two CPU fighters share a name, nor a player's (monsters keep theirs)."""
+        taken = {f.name for f in fighters if not f.cpu}
+        cpus = [f for f in fighters if f.cpu and not f.monster]
+        names = [n for n in B.CPU_NAMES if n not in taken]
+        for f, name in zip(cpus, self.server.rng.sample(names, len(cpus))):
+            f.name = name
+
+    def start(self):
         b = self.battle
-        if b is None:
-            return
-        me = b.fighters[self.slot]
-        if not b.over and me.alive:
-            return self.send(M.ROUND_START, st=1, bar_speed=0)
+        for slot, s in self.players.items():
+            s.room, s.slot = self, slot
+            # 513 (or 769 / 770) before 514: O() clears the fighter list (06 §2.6); the client
+            # adds itself from 263
+            op = M.MATCH_ANS if len(self.players) == 1 else (M.INVITE_ANS if slot == 0 else M.INVITED)
+            s.send(op, st=1, bg=b.bg, slot=slot, mode=self.mode, unk=0)
+            for f in b.fighters.values():
+                if f.slot != slot:
+                    s.send(M.ROOM_JOIN, st=1, **f.wire())
+            if self.mission:
+                self._stage_info(s)    # -> 91, the client answers 1038 -> 1024
+            else:
+                s.send(M.ALL_READY, st=1)
+
+    # --- who is still playing -------------------------------------------------------
+    def fighting(self):
+        """Slots of the connected players whose fighter stands."""
+        return {slot for slot in self.players if self.battle.fighters[slot].alive}
+
+    def _stage_info(self, s):
         m = self.mission
-        if m and me.alive and not b.team_alive(1) and m["stage"] < m["stages"]:
-            b.bg = B.battle_background(self.server.rng)
-            return self.send(M.STAGE_END, st=1, bg=b.bg)      # -> 104 "Stage N Complete!", 1036
-        # once I fall the client stops (bW[0] == 0 -> 103, g:683-684) and waits for 1032,
-        # so the CPU fighters left fight it out here
-        b.finish()
-        if m:
-            cleared = m["stage"] - (0 if me.alive and not b.team_alive(1) else 1)
-            res = B.mission_rewards(self.char, b, self.slot, self.server.rng, cleared, m["stages"])
-            cat = 3
-        else:
-            res = B.duel_rewards(self.char, b, self.slot, self.server.rng)
-            cat = 2
-        self.battle = self.mission = None
-        self.save()
-        rank = next((r for r, uid, _ in self._table(cat) if uid == self.user), 0)
-        self.send(M.BATTLE_END, st=1, rank=rank, **res)
+        s.send(M.STAGE_INFO, st=1, title=m["title"][:14], stages=m["stages"], stage=m["stage"])
 
-    def on_turn(self, msg):            # 1027 -> 1028
-        b = self.battle
-        if b is None or b.over:
+    def _mission_left(self):
+        """Another stage follows the cleared one."""
+        m, b = self.mission, self.battle
+        return bool(m) and b.team_alive(0) and not b.team_alive(1) and m["stage"] < m["stages"]
+
+    # --- messages -----------------------------------------------------------------
+    def intro_done(self, s):           # 1038
+        if not self.mission or s.slot not in self.fighting():
             return
-        turn = b.resolve({self.slot: (msg.get("target", 1), msg.get("action", 1), msg.get("hit", 20))})
-        self.send(M.TURN_RESULT, st=1, **turn)
+        self.ready.add(s.slot)
+        self._release_intro()
 
-    def on_invite(self, msg):          # 768 -> 769
-        self.send(M.INVITE_ANS, st=-11)
+    def _release_intro(self):
+        if self.mission and self.ready and self.ready >= self.fighting():
+            for slot in sorted(self.ready & self.fighting()):
+                self.players[slot].send(M.ALL_READY, st=1)
+            self.ready.clear()
 
+    def stage_next(self, s):           # 1036
+        if not self._mission_left() or s.slot not in self.fighting():
+            return
+        self.ready.add(s.slot)
+        self._release_stage()
+
+    def _release_stage(self):
+        # the client clears the old foes when it sends 1036 (g:943-962), so the new 514s go out
+        # once every player has sent it
+        if not (self._mission_left() and self.ready and self.ready >= self.fighting()):
+            return
+        self.ready.clear()
+        m, b = self.mission, self.battle
+        m["stage"] += 1
+        self.stage_bg = None
+        mine = [f for f in b.fighters.values() if f.team == 0]
+        foes = B.mission_wave(self.server.rng, self._strongest(mine), m["stage"], m["stages"])
+        self._name_cpus(mine + foes)
+        b.new_wave(foes)
+        for slot in sorted(self.fighting()):
+            s = self.players[slot]
+            for f in foes:
+                s.send(M.ROOM_JOIN, st=1, **f.wire())
+            self._stage_info(s)
+
+    def turn(self, s, choice):         # 1027
+        if s.slot not in self.fighting():
+            return
+        if self.battle.over:           # the other side hung up while I was choosing
+            return s.send(M.TURN_RESULT, st=1, actions=[0] * 4, records=[])
+        self.turns[s.slot] = choice
+        self._resolve_if_ready()
+
+    def _resolve_if_ready(self):
+        playing = self.fighting()
+        if not self.turns or not (self.battle.over or set(self.turns) >= playing):
+            return
+        if self.battle.over:           # someone hung up: answer those who already chose
+            for slot in sorted(self.turns):
+                self.players[slot].send(M.TURN_RESULT, st=1, actions=[0] * 4, records=[])
+            self.turns.clear()
+            return self._flush_end()
+        turn = self.battle.resolve({k: v for k, v in self.turns.items() if k in playing})
+        self.turns.clear()
+        for slot in sorted(playing):
+            self.players[slot].send(M.TURN_RESULT, st=1, **turn)
+        self._flush_end()
+
+    def round_ready(self, s):          # 1025
+        b, me = self.battle, self.battle.fighters[s.slot]
+        if not b.over and me.alive:
+            return s.send(M.ROUND_START, st=1, bar_speed=0)
+        if me.alive and self._mission_left():
+            if self.stage_bg is None:
+                self.stage_bg = b.bg = B.battle_background(self.server.rng)
+            return s.send(M.STAGE_END, st=1, bg=self.stage_bg)   # -> 104 "Stage N Complete!", 1036
+        self.waiting_end.add(s.slot)
+        self._flush_end()
+
+    def _flush_end(self):
+        """1032 to the fallen players once nobody is left to play on: then the CPU fighters
+        left fight it out here (the client of a fallen player stops, g:683-684)."""
+        if not self.waiting_end or self.fighting() - self.waiting_end:
+            return                     # someone still plays on (a next stage too)
+        b = self.battle
+        b.finish()
+        for slot in sorted(self.waiting_end):
+            self.players[slot]._battle_end(self)
+        self.waiting_end.clear()
+
+    def leave(self, s):
+        """A player hung up ("Exit Battle" hangs up and logs in again, g:2990-2997)."""
+        slot = s.slot
+        if self.players.get(slot) is not s:
+            return
+        del self.players[slot]
+        self.turns.pop(slot, None)
+        self.ready.discard(slot)
+        self.waiting_end.discard(slot)
+        b, f = self.battle, self.battle.fighters[slot]
+        if not b.over and not self.mission:
+            if self.players and self.mode == 1:
+                f.cpu = True           # the team plays on, a CPU takes the fighter over
+            else:
+                f.hp = 0
+            B.duel_rewards(s.char, b, slot, self.server.rng)   # a duel left is a loss
+            s.save()
+        elif self.mission:
+            f.cpu = True               # the ally fights on; the mission left earns nothing
+        if self.players:
+            self._resolve_if_ready()
+            self._release_intro()
+            self._release_stage()
+            self._flush_end()
 
 _HANDLERS = {
     M.LOGIN_FIRST: Session.on_login_first,
