@@ -10,20 +10,20 @@ def _read_utf(buf: bytes) -> str:
 
 class ScrTable:
     def __init__(self, paramString):  # al.java:7-9
-        self.a = ResReader.a(paramString)
+        self.data = ResReader.a(paramString)
 
     def a_I(self, paramInt):  # al.java:11-29
         i = 2 + paramInt * 2
-        j_ = self.a[i] & 0xFF | (self.a[i + 1] & 0xFF) << 8
-        k = self.a[i + 2] & 0xFF | (self.a[i + 3] & 0xFF) << 8
+        j_ = self.data[i] & 0xFF | (self.data[i + 1] & 0xFF) << 8
+        k = self.data[i + 2] & 0xFF | (self.data[i + 3] & 0xFF) << 8
         str_ = None
         try:
             m = k - j_
             arrayOfByte = bytearray(m + 2)
             arrayOfByte[0] = m >> 8 & 0xFF
             arrayOfByte[1] = m & 0xFF
-            arrayOfByte[2:2 + m] = self.a[j_:j_ + m]
-            if len(self.a[j_:j_ + m]) != m or m < 0:
+            arrayOfByte[2:2 + m] = self.data[j_:j_ + m]
+            if len(self.data[j_:j_ + m]) != m or m < 0:
                 raise IndexError  # System.arraycopy bounds
             str_ = _read_utf(arrayOfByte)
         except Exception:
@@ -31,4 +31,4 @@ class ScrTable:
         return str_
 
     def a_v(self):  # al.java:31-33
-        self.a = None
+        self.data = None

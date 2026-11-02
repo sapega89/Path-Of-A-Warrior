@@ -9,13 +9,13 @@ from pow.midp.graphics import Image
 
 
 class Font:
-    e = 0  # private static int e = 0;   g.java:12 (offset of "PLTE")
+    plte_offset = 0  # private static int e = 0;   g.java:12 (offset of "PLTE")
 
     def __init__(self, paramString, paramInt1, paramInt2, paramInt3, paramInt4):  # g.java:14-44
-        self.a = None          # Image
-        self.b = paramInt1     # glyph width
-        self.c = paramInt2     # glyph height
-        self.d = paramInt3     # width of ' '
+        self.image = None          # Image
+        self.glyph_w = paramInt1     # glyph width
+        self.glyph_h = paramInt2     # glyph height
+        self.space_w = paramInt3     # width of ' '
         try:
             arrayOfByte = ResReader.a(paramString)
             b1 = paramInt4 >> 16 & 0xFF
@@ -23,9 +23,9 @@ class Font:
             b3 = paramInt4 & 0xFF
             for b in range(100):
                 if arrayOfByte[b] == 80 and arrayOfByte[b + 1] == 76 and arrayOfByte[b + 2] == 84 and arrayOfByte[b + 3] == 69:
-                    Font.e = b
+                    Font.plte_offset = b
                     break
-            e = Font.e
+            e = Font.plte_offset
             if arrayOfByte[e + 4] != b1 or arrayOfByte[e + 5] != b2 or arrayOfByte[e + 6] != b3:
                 arrayOfByte[e + 4] = b1
                 arrayOfByte[e + 5] = b2
@@ -35,12 +35,12 @@ class Font:
                 arrayOfByte[e + 11] = l >> 16 & 0xFF
                 arrayOfByte[e + 12] = l >> 8 & 0xFF
                 arrayOfByte[e + 13] = l & 0xFF
-            self.a = Image.createImage(arrayOfByte, 0, len(arrayOfByte))
+            self.image = Image.createImage(arrayOfByte, 0, len(arrayOfByte))
         except Exception:
             return
 
     def a_v(self):  # g.java:46-48
-        return self.c
+        return self.glyph_h
 
     @staticmethod
     def b_v():  # g.java:50-52
@@ -53,7 +53,7 @@ class Font:
     def a_CII(self, paramChar, paramInt1, paramInt2):  # g.java:58-62
         if paramChar == ' ':
             return
-        Gfx.a_MIIIIII(self.a, paramInt1, paramInt2, self.b, self.c, Font.b_C(paramChar) * self.b, 0)
+        Gfx.a_MIIIIII(self.image, paramInt1, paramInt2, self.glyph_w, self.glyph_h, Font.b_C(paramChar) * self.glyph_w, 0)
 
     @staticmethod
     def b_C(paramChar):  # g.java:64-138  (glyph index in 0_font.png)
@@ -70,7 +70,7 @@ class Font:
         return i
 
     def a_C(self, paramChar):  # g.java:140-142
-        return self.d if paramChar == ' ' else (self.b + 1 - 0)
+        return self.space_w if paramChar == ' ' else (self.glyph_w + 1 - 0)
 
     def a_ACII(self, paramArrayOfchar, paramInt1, paramInt2):  # g.java:144-150
         i = 0

@@ -5,55 +5,55 @@ from pow.midp import system
 
 
 class Boot(GameCanvas):
-    b = 0   # public static int b = 0;   af.java:4  (0 logo, 1 sound question, 2 title)
-    c = 0   # public static long c;      af.java:6
+    step = 0   # public static int b = 0;   af.java:4  (0 logo, 1 sound question, 2 title)
+    start_time = 0   # public static long c;      af.java:6
 
     def __init__(self):  # af.java:2, 8-11
-        super().__init__(GameCanvas.bs)
-        self.a = self.d_T("logo1")    # Image a = d("logo1");   (instance initializer)
-        Boot.c = system.currentTimeMillis()
+        super().__init__(GameCanvas.midlet)
+        self.logo = self.d_T("logo1")    # Image a = d("logo1");   (instance initializer)
+        Boot.start_time = system.currentTimeMillis()
 
     def a_v(self):  # af.java:15-36  (paint)
         from pow.game.midlet import Midlet
-        if Boot.b == 0:
+        if Boot.step == 0:
             GameCanvas.u_I(16777215)
-            if self.a is not None:
-                Gfx.a_MIII(self.a, GameCanvas.bL, GameCanvas.bM, 3)
-            if system.currentTimeMillis() - Boot.c > 2500:
-                self.a = None
-                Boot.b = 1
-                GameCanvas.cS.e_I(40)
+            if self.logo is not None:
+                Gfx.a_MIII(self.logo, GameCanvas.screen_cx, GameCanvas.screen_cy, 3)
+            if system.currentTimeMillis() - Boot.start_time > 2500:
+                self.logo = None
+                Boot.step = 1
+                GameCanvas.popups.e_I(40)
                 return
         else:
-            if Boot.b == 1:
+            if Boot.step == 1:
                 GameCanvas.u_I(0)
-                Gfx.a_Lg(GameCanvas.bu)
-                GameCanvas.cS.c_v()
+                Gfx.a_Lg(GameCanvas.font_white)
+                GameCanvas.popups.c_v()
                 return
-            if Boot.b == 2:
-                Midlet.b.S_v()
+            if Boot.step == 2:
+                Midlet.canvas.S_v()
 
     def b_v(self):  # af.java:38-64  (keys)
-        if Boot.b == 0:
+        if Boot.step == 0:
             return
-        if Boot.b == 1:
-            i = GameCanvas.cS.b_v()
+        if Boot.step == 1:
+            i = GameCanvas.popups.b_v()
             if i != -1:
-                GameCanvas.df = (i == 0)
+                GameCanvas.sound_on = (i == 0)
                 if i == 0:
-                    if GameCanvas.dg == 0:
-                        GameCanvas.dg = 75
+                    if GameCanvas.volume == 0:
+                        GameCanvas.volume = 75
                 else:
-                    GameCanvas.dg = 0
+                    GameCanvas.volume = 0
                 self.a__I(0)
-                Boot.b = 2
+                Boot.step = 2
                 self.E_v()
             return
-        if Boot.b == 2 and Boot.b_I(GameCanvas.ch):
-            GameCanvas.ck = 1
-            GameCanvas.cv = None
-            GameCanvas.cw = None
-            GameCanvas.bb.g_v()
+        if Boot.step == 2 and Boot.b_I(GameCanvas.key):
+            GameCanvas.redraw = 1
+            GameCanvas.title_press = None
+            GameCanvas.title_logo = None
+            GameCanvas.menus.g_v()
             self.T_v()
 
     @staticmethod

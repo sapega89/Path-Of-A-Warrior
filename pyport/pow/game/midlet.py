@@ -18,9 +18,9 @@ def _manifest():
 
 
 class Midlet:
-    a = None       # public static Display a = null;   Main.java:6
-    b = None       # public static ag b = null;        Main.java:8
-    c = False      # public static boolean c = false;  Main.java:10
+    display = None       # public static Display a = null;   Main.java:6
+    canvas = None       # public static ag b = null;        Main.java:8
+    started = False      # public static boolean c = false;  Main.java:10
 
     def __init__(self):
         self.props = _manifest()
@@ -34,37 +34,37 @@ class Midlet:
 
     def startApp_123456(self):  # Main.java:12-20  (returns the coroutine of the game thread)
         from pow.game.game_canvas import GameCanvas
-        if Midlet.c:
+        if Midlet.started:
             return None
-        Midlet.c = True
-        if GameCanvas.bt is None:
-            GameCanvas.bt = Midlet.b.run()
-        return GameCanvas.bt
+        Midlet.started = True
+        if GameCanvas.thread is None:
+            GameCanvas.thread = Midlet.canvas.run()
+        return GameCanvas.thread
 
     def pauseApp(self):  # Main.java:22-24
-        Midlet.b.hideNotify()
+        Midlet.canvas.hideNotify()
 
     def destroyApp(self, paramBoolean):  # Main.java:26-29
         from pow.game.game_canvas import GameCanvas
         from pow.game.sound import Sound
-        if Midlet.b is not None and GameCanvas.bg is not None and Sound.a is not None:
-            Sound.a.a_v()
+        if Midlet.canvas is not None and GameCanvas.sound is not None and Sound.players is not None:
+            Sound.players.a_v()
 
     def notifyDestroyed(self):
         from pow.game.game_canvas import GameCanvas
         self.destroyed = True
-        GameCanvas.gh = False
+        GameCanvas.running = False
 
     def constructor_123456(self):  # Main.java:31-39
         from pow.game.game_canvas import GameCanvas, _late_init
-        if Midlet.a is None:
-            Midlet.c = False
-            Midlet.a = True  # Display.getDisplay(this)
+        if Midlet.display is None:
+            Midlet.started = False
+            Midlet.display = True  # Display.getDisplay(this)
             _late_init()
-            Midlet.b = GameCanvas(self)
+            Midlet.canvas = GameCanvas(self)
             from pow.game.pointer import hold_dir, keys_for
-            Midlet.b.pointer = keys_for   # PORT-EXTRA: mouse -> phone keys
-            Midlet.b.hold_dir = hold_dir
+            Midlet.canvas.pointer = keys_for   # PORT-EXTRA: mouse -> phone keys
+            Midlet.canvas.hold_dir = hold_dir
 
     def startApp(self):  # Main.java:41-43  (tryNBuy_123456 -> constructor + startApp_123456)
         self.constructor_123456()

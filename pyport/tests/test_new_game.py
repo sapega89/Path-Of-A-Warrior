@@ -13,44 +13,44 @@ def test_new_hero_save_roundtrip(tmp_path, monkeypatch):
 
     monkeypatch.setattr(config, "SAVE_DIR", str(tmp_path))
     game = Menus.__new__(Menus)                 # no Canvas / thread, only the static state is used
-    monkeypatch.setattr(GameCanvas, "bb", game)
-    monkeypatch.setattr(GameCanvas, "bE", ScrTable("/edat.scr"))
-    monkeypatch.setattr(GameCanvas, "by", Random(42))
-    monkeypatch.setattr(GameCanvas, "cz", Hero())
-    monkeypatch.setattr(GameCanvas, "cF", [0] * 2000)
-    monkeypatch.setattr(GameCanvas, "bV", 2)
-    monkeypatch.setattr(GameCanvas, "ep", 1)
-    monkeypatch.setattr(GameCanvas, "cG", 0)
-    monkeypatch.setattr(GameCanvas, "bH", [None] * 3)
-    monkeypatch.setattr(GameCanvas, "fM", [False] * 16)
-    monkeypatch.setattr(GameCanvas, "fL", [None] * 25)
+    monkeypatch.setattr(GameCanvas, "menus", game)
+    monkeypatch.setattr(GameCanvas, "scr_data", ScrTable("/edat.scr"))
+    monkeypatch.setattr(GameCanvas, "rng", Random(42))
+    monkeypatch.setattr(GameCanvas, "hero", Hero())
+    monkeypatch.setattr(GameCanvas, "save_buf", [0] * 2000)
+    monkeypatch.setattr(GameCanvas, "state", 2)
+    monkeypatch.setattr(GameCanvas, "difficulty", 1)
+    monkeypatch.setattr(GameCanvas, "save_pos", 0)
+    monkeypatch.setattr(GameCanvas, "item_tables", [None] * 3)
+    monkeypatch.setattr(GameCanvas, "tables_loaded", [False] * 16)
+    monkeypatch.setattr(GameCanvas, "shop", [None] * 25)
 
-    GameCanvas.cz.a_v()                         # n.a(): allocates X / Y / Z (ag.java:600)
+    GameCanvas.hero.a_v()                         # n.a(): allocates X / Y / Z (ag.java:600)
     game.av()                           # ag.java:3222 fresh hero, gets item 116 equipped
-    assert GameCanvas.cz.X[0].a == 116 and GameCanvas.cz.Y[0].a == 0
-    GameCanvas.cz.k = "Leo"
-    GameCanvas.cz.aB = 2
-    GameCanvas.cz.o += 10
-    GameCanvas.cz.J = 0
-    GameCanvas.ep = 0                           # Hard
+    assert GameCanvas.hero.equipped[0].id == 116 and GameCanvas.hero.backpack[0].id == 0
+    GameCanvas.hero.name = "Leo"
+    GameCanvas.hero.head = 2
+    GameCanvas.hero.base_hp += 10
+    GameCanvas.hero.stat_points = 0
+    GameCanvas.difficulty = 0                           # Hard
     GameCanvas.ax()
     game.ay()
-    shop = [GameCanvas.fL[8 + b].a for b in range(17)]
+    shop = [GameCanvas.shop[8 + b].id for b in range(17)]
     assert shop == sorted(shop) and all(101 <= s < 300 for s in shop)
     assert game.ar()                    # ag.java:2871 -> RecordStore "gamevil_pow_data"
-    size = GameCanvas.cG
+    size = GameCanvas.save_pos
     rec = RecordStore.openRecordStore("gamevil_pow_data", False).getRecord(1)
     assert len(rec) == 2000 and rec[0] | rec[1] << 8 == size
     assert bytes(rec[2:10]) == b"Leo     "
 
-    monkeypatch.setattr(GameCanvas, "cz", Hero())
-    GameCanvas.cz.a_v()
-    monkeypatch.setattr(GameCanvas, "fL", [None] * 25)
-    GameCanvas.ep = 1
+    monkeypatch.setattr(GameCanvas, "hero", Hero())
+    GameCanvas.hero.a_v()
+    monkeypatch.setattr(GameCanvas, "shop", [None] * 25)
+    GameCanvas.difficulty = 1
     game.U_v()                          # ag.java:2126 Continue
-    assert GameCanvas.cz.k == "Leo"
-    assert (GameCanvas.cz.l, GameCanvas.cz.o, GameCanvas.cz.q, GameCanvas.cz.m, GameCanvas.cz.n, GameCanvas.cz.J, GameCanvas.cz.aB) == (1, 40, 10, 5, 4, 0, 2)
-    assert GameCanvas.cz.X[0].a == 116 and GameCanvas.cz.X[0].b == 1
-    assert GameCanvas.ep == 0
-    assert [GameCanvas.fL[8 + b].a for b in range(17)] == shop
-    assert GameCanvas.cG == size
+    assert GameCanvas.hero.name == "Leo"
+    assert (GameCanvas.hero.level, GameCanvas.hero.base_hp, GameCanvas.hero.base_mp, GameCanvas.hero.base_attack, GameCanvas.hero.base_defense, GameCanvas.hero.stat_points, GameCanvas.hero.head) == (1, 40, 10, 5, 4, 0, 2)
+    assert GameCanvas.hero.equipped[0].id == 116 and GameCanvas.hero.equipped[0].attack == 1
+    assert GameCanvas.difficulty == 0
+    assert [GameCanvas.shop[8 + b].id for b in range(17)] == shop
+    assert GameCanvas.save_pos == size
