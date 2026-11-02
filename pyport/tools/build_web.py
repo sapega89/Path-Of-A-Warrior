@@ -25,7 +25,7 @@ def stage():
     if OUT.exists():
         shutil.rmtree(OUT)
     OUT.mkdir(parents=True)
-    for f in ("main.py", "config.py"):
+    for f in ("main.py", "mp_main.py", "config.py"):   # mp_main: Main Menu > Multiplayer
         shutil.copy2(PY / f, OUT / f)
     if MP:                                  # pygbag starts main.py: the multiplayer one
         shutil.copy2(PY / "mp_main.py", OUT / "main.py")

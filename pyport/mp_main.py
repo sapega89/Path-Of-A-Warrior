@@ -28,15 +28,23 @@ def server_from_page():
         print("POW MP server from the page address: %r" % ex)
 
 
-async def main():
+async def play():
+    """Runs the Multiplayer game on an open display. Returns True when it ended with its own
+    Exit (main.py then goes back to the single player), False when the window was closed."""
     server_from_page()
-    display.init(headless=os.environ.get("SDL_VIDEODRIVER") == "dummy")
     import pygame
     pygame.display.set_caption("Path of a Warrior Multiplayer")
-    watchdog.start()
     from pow_mp.Main import Main
+    midlet = Main()
+    await midlet.startApp()
+    return not Main.b.quit_requested
+
+
+async def main():
+    display.init(headless=os.environ.get("SDL_VIDEODRIVER") == "dummy")
+    watchdog.start()
     try:
-        await Main().startApp()
+        await play()
     except BaseException:
         watchdog.log_exception()
         raise

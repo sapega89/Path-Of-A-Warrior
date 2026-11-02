@@ -28,6 +28,7 @@ class Main:
         if config.CHEAT:   # PORT-EXTRA config.CHEAT: the manifest property GAMEVIL_CHEAT: TRUE
             self.props["GAMEVIL_CHEAT"] = "TRUE"
         self.destroyed = False
+        self.to_multiplayer = False   # PORT-EXTRA: Main Menu > Multiplayer > YES (l.py, main.py)
 
     def getAppProperty(self, key):
         return self.props.get(key)

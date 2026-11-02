@@ -17,6 +17,8 @@ list of steps, one per line:
     release KEY     let the held key go
     mousedown X Y   left button pressed and held at X Y; mouseup = let it go
     shot NAME       save the last frame as NN_NAME.png
+    multiplayer N NAME  (before the YES of Main Menu > Multiplayer) once the game has quit, run
+                    the Multiplayer game as main.py does, N frames, and save the last as NN_NAME.png
     gold N          TEST-ONLY: set the hero's gold (ag.cz.E) to N, to try the Blacksmith
     generals N      TEST-ONLY: befriend the first N generals of the table (10, 30, 50... points)
                     and allow one visit (cz.S = 1), as after a mission
@@ -190,6 +192,9 @@ def run(scenario, out, every=False):
                     e.b_II(tab.a_II(b1, 0), 10 + 20 * b1)
                 ag.cz.S = 1
                 continue
+            if cmd == "multiplayer":       # multiplayer N NAME: after the game quits (Main Menu >
+                state["mp"] = arg.split()      # Multiplayer > YES), N MP frames and shot NAME
+                continue
             if cmd == "shot":
                 state["n"] += 1
                 name = "%02d_%s.png" % (state["n"], arg)
@@ -200,7 +205,31 @@ def run(scenario, out, every=False):
         ag.gh = False
 
     display.frame_hooks.append(on_frame)
-    asyncio.run(Main().startApp())
+    midlet = Main()
+    asyncio.run(midlet.startApp())
+    display.frame_hooks.remove(on_frame)
+    if state.get("mp"):                    # main.py: the Multiplayer game in the same window
+        if not midlet.to_multiplayer:
+            raise SystemExit("multiplayer: the game did not ask for the Multiplayer game")
+        import mp_main
+        from pow_mp.Main import Main as MPMain
+        frames, name = int(state["mp"][0]), state["mp"][1]
+        mp = {"left": frames}
+
+        def mp_frame(screen):
+            mp["left"] -= 1
+            if mp["left"] <= 0:
+                state["n"] += 1
+                fn = "%02d_%s.png" % (state["n"], name)
+                pygame.image.save(screen, str(out / fn))
+                saved.append(fn)
+                MPMain.b.l.destroyed = True     # its own Exit: main.py would restart the game
+
+        display.frame_hooks.append(mp_frame)
+        try:
+            assert asyncio.run(mp_main.play()) is True
+        finally:
+            display.frame_hooks.remove(mp_frame)
     shutil.rmtree(save_dir, ignore_errors=True)
     return saved, state["frame"]
 

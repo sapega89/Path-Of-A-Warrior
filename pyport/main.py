@@ -4,6 +4,11 @@
     python -m pygbag build/web       # browser, see tools/build_web.py
     POW_LIVE_SERVER=ws://host:28200/live   Gamevil Live on `python -m pow_server` (default: inside
                                      the game); browser: index.html?live=wss://host:port/live
+
+Main Menu > Multiplayer > YES ends the single player and starts the Multiplayer game in the same
+window (mp_main.play; the server choice is POW_MP_SERVER / index.html?server=...). Its Exit comes
+back here: the process restarts (the browser reloads the page), so the single player begins from
+a clean state, as when the phone started the other jar.
 """
 import asyncio
 import os
@@ -62,6 +67,16 @@ def live_from_page():
         print("Gamevil Live server from the page address: %r" % ex)
 
 
+def restart():
+    """Back from the Multiplayer game: start the single player again from scratch."""
+    if sys.platform == "emscripten":
+        import platform
+        platform.window.location.reload()
+        return
+    sys.stdout.flush()
+    os.execv(sys.executable, [sys.executable, os.path.abspath(__file__)] + sys.argv[1:])
+
+
 async def main():
     live_from_page()
     display.init(headless=os.environ.get("SDL_VIDEODRIVER") == "dummy")
@@ -73,6 +88,10 @@ async def main():
     midlet = Main()
     try:
         await midlet.startApp()
+        if midlet.to_multiplayer and not (Main.b is not None and Main.b.quit_requested):
+            import mp_main
+            if await mp_main.play():
+                restart()
     except BaseException:
         watchdog.log_exception()
         raise

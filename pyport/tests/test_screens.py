@@ -33,7 +33,7 @@ def _run(name, out):
                                   "options_help", "management", "menus_mouse",
                                   "missions", "missions_mouse", "visiting",
                                   "map", "map_mouse", "combat", "combat_mouse", "victory", "blacksmith",
-                                  "gamevil_live"])
+                                  "gamevil_live", "multiplayer"])
 def test_scenario_matches_baseline(name, tmp_path):
     out = tmp_path / name
     _run(name, out)
