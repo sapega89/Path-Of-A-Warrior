@@ -23,7 +23,10 @@ def stage():
     OUT.mkdir(parents=True)
     for f in ("main.py", "config.py"):
         shutil.copy2(PY / f, OUT / f)
-    shutil.copytree(PY / "pow", OUT / "pow", ignore=shutil.ignore_patterns("__pycache__"))
+    for pkg in ("pow", "pow_mp", "pow_server"):
+        shutil.copytree(PY / pkg, OUT / pkg, ignore=shutil.ignore_patterns("__pycache__"))
+    # multiplayer resources (PHASE_9): config.MP_RES_ROOT falls back to ./res_mp
+    shutil.copytree(PY / "assets_mp", OUT / "res_mp")
     shutil.copytree(PY / "assets", OUT / "assets")
     res = OUT / "res"
     res.mkdir()

@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+GAMEVIL_SERVER: ur.gamevil.net
+MIDlet-1: Path of a Warrior Multiplayer, /icon40_40.png, Main
+MIDlet-Icon: /icon40_40.png
+Ant-Version: Apache Ant 1.6.2
+BUILD_ID: POW_NW_CIN_NK_N75
+GAMEVIL_PORT: 28200
+MicroEdition-Configuration: CLDC-1.0
+MIDlet-Version: 1.0.6
+Created-By: 1.4.1_01-b01 (Sun Microsystems Inc.)
+MIDlet-Description: Path of a Warrior Multiplayer
+MIDlet-Vendor: GAMEVIL Inc./BiNPDA
+MIDlet-Info-URL: http://www.gamevil.com
+MIDlet-Name: Path of a Warrior Multiplayer
+MicroEdition-Profile: MIDP-1.0
+MIDlet-Permissions: javax.microedition.io.Connector.socket
+MIDlet-Jar-URL: Path_Of_A_Warrior_-_Imperial_Blood_240x320_Online_Multiplayer-272336-mobiles24.jar
+MIDlet-Jar-Size: 407739
+KEmu-Platform: SonyEricssonW900i

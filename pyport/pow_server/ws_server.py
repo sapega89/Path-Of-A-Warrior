@@ -1,0 +1,144 @@
+"""The standalone server (PHASE_9 tasks 9.20-9.23).
+
+    python -m pow_server                          # ws://0.0.0.0:28200, data in mp_server.sqlite
+    python -m pow_server --port 8765 --db x.sqlite --tcp-port 28200 --legacy
+
+WebSocket: one binary message = one whole frame (u16 length + payload), exactly the bytes the
+original sent over TCP. The browser can only open WebSockets (pygbag), the desktop client uses
+the same, so there is one protocol for both. Behind https the page needs wss://: put the
+server behind a TLS proxy (nginx / Caddy) or pass --cert/--key.
+
+--tcp-port: optional raw TCP gateway with the original framing, for the original jar in an
+emulator with GAMEVIL_SERVER/GAMEVIL_PORT pointed here (task 9.23, untested with the real jar).
+The jar logs in again with a 262 without a token, so this needs --legacy (no token check).
+"""
+import argparse
+import asyncio
+import logging
+import ssl
+
+from pow_server import codec_bin
+from pow_server.server import GameServer
+from pow_server.storage import Storage
+
+log = logging.getLogger("pow_server")
+
+IDLE_TIMEOUT = 300.0     # seconds without any frame (the client sends a keepalive every ~10-13 s)
+MAX_FRAME = 4096
+
+
+async def _idle_watch(session, close):
+    while not session.closed:
+        await asyncio.sleep(5)
+        if session.idle_seconds() > IDLE_TIMEOUT:
+            await close()
+            return
+
+
+async def handle_ws(server, ws):
+    out = asyncio.Queue()
+    session = server.connect(out.put_nowait)
+    peer = getattr(ws, "remote_address", None)
+    log.info("ws connect %s", peer)
+
+    async def writer():
+        while True:
+            data = await out.get()
+            await ws.send(data)
+
+    async def close():
+        await ws.close()
+
+    tasks = [asyncio.ensure_future(writer()), asyncio.ensure_future(_idle_watch(session, close))]
+    try:
+        async for data in ws:
+            if isinstance(data, str) or len(data) > MAX_FRAME:
+                break
+            try:
+                payloads, rest = codec_bin.unframe(data)
+            except codec_bin.CodecError:
+                break
+            for p in payloads:
+                session.receive(p)
+            if session.closed:
+                break
+        while not out.empty():                 # flush answers to the last frame
+            await ws.send(out.get_nowait())
+    except Exception as ex:                     # connection dropped
+        log.info("ws %s: %r", peer, ex)
+    finally:
+        session.close()
+        for t in tasks:
+            t.cancel()
+        log.info("ws disconnect %s (%s)", peer, session.user)
+
+
+async def handle_tcp(server, reader, writer):
+    session = server.connect(writer.write)
+    buf = b""
+
+    async def close():
+        writer.close()
+
+    watch = asyncio.ensure_future(_idle_watch(session, close))
+    try:
+        while not session.closed:
+            chunk = await reader.read(4096)
+            if not chunk:
+                break
+            buf += chunk
+            payloads, buf = codec_bin.unframe(buf)
+            for p in payloads:
+                session.receive(p)
+            await writer.drain()
+            if len(buf) > MAX_FRAME:
+                break
+    except (codec_bin.CodecError, ConnectionError):
+        pass
+    finally:
+        session.close()
+        watch.cancel()
+        writer.close()
+
+
+async def serve(host="0.0.0.0", port=28200, db="mp_server.sqlite", tcp_port=None, legacy=False,
+                ssl_context=None, ready=None, notices=()):
+    from websockets.asyncio.server import serve as ws_serve
+    server = GameServer(Storage(db), require_token=not legacy, notices=notices)
+    async with ws_serve(lambda ws: handle_ws(server, ws), host, port,
+                        max_size=MAX_FRAME, ssl=ssl_context) as wss:
+        tcp = None
+        if tcp_port is not None:
+            tcp = await asyncio.start_server(lambda r, w: handle_tcp(server, r, w), host, tcp_port)
+        ports = [s.getsockname()[1] for s in wss.sockets]
+        if tcp:
+            ports += [s.getsockname()[1] for s in tcp.sockets]
+        log.info("POW Multiplayer server on %s ports %s", host, ports)
+        if ready is not None:
+            ready.set_result((server, ports))
+        try:
+            await asyncio.Future()
+        finally:
+            if tcp:
+                tcp.close()
+
+
+def main(argv=None):
+    ap = argparse.ArgumentParser(prog="python -m pow_server", description=__doc__.split("\n")[0])
+    ap.add_argument("--host", default="0.0.0.0")
+    ap.add_argument("--port", type=int, default=28200, help="WebSocket port")
+    ap.add_argument("--db", default="mp_server.sqlite", help="SQLite file (:memory: = nothing kept)")
+    ap.add_argument("--tcp-port", type=int, default=None, help="raw TCP gateway for the original jar")
+    ap.add_argument("--legacy", action="store_true", help="no session token check (original jar)")
+    ap.add_argument("--cert")
+    ap.add_argument("--key")
+    a = ap.parse_args(argv)
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
+    ctx = None
+    if a.cert:
+        ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        ctx.load_cert_chain(a.cert, a.key)
+    try:
+        asyncio.run(serve(a.host, a.port, a.db, a.tcp_port, a.legacy, ctx))
+    except KeyboardInterrupt:
+        pass

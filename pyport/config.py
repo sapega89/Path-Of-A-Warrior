@@ -10,6 +10,14 @@ RES_ROOT = os.environ.get("POW_RES_ROOT") or (
     str(HERE.parent) if (HERE.parent / "0_font.png").exists() else str(HERE / "res")
 )
 
+# Multiplayer (PHASE_9): resources of the MP jar, and where its server is.
+# POW_MP_SERVER = "local" (the server runs inside the game) or ws(s)://host:port of
+# `python -m pow_server`.
+MP_RES_ROOT = os.environ.get("POW_MP_RES_ROOT") or (
+    str(HERE / "assets_mp") if (HERE / "assets_mp").exists() else str(HERE / "res_mp")
+)
+MP_SERVER = os.environ.get("POW_MP_SERVER", "local")
+
 # Phone screen (QVGA) and integer window scale (nearest neighbour).
 SCREEN_W = 240
 SCREEN_H = 320
