@@ -83,8 +83,18 @@ ERR_NAME_EXISTS = -6
 ERR_NOT_ACCEPTABLE = -49
 
 # --- C->S schemas ------------------------------------------------------------
+# PORT-EXTRA tail of 262: the hero of the single-player save (task 9.10), what the original's
+# Gamevil Live "Save User Data" sent with opcode 256 (as.java:475-528). sp = 0: no save.
+SP_HERO = (
+    ("sp", "B"), ("sp_level", "B"), ("sp_hp", "H"), ("sp_mp", "H"), ("sp_atk", "H"), ("sp_def", "H"),
+    ("sp_hp_bonus", "h"), ("sp_mp_bonus", "h"), ("sp_atk_bonus", "h"), ("sp_def_bonus", "h"),
+    ("sp_face", "B"), ("sp_weapon", "B"), ("sp_skills", "list", 11, "B"), ("sp_slots", "list", 4, "B"),
+    ("sp_progress", "B"),
+)
+
 C2S = {
-    LOGIN: (("id", 12), ("ver", 4), ("token", 16)),      # token: PORT-EXTRA, absent in the jar
+    # token and the hero: PORT-EXTRA, absent in the jar
+    LOGIN: (("id", 12), ("ver", 4), ("token", 16)) + SP_HERO,
     LOGIN_FIRST: (("id", 12), ("pwd", 16), ("ver", 4)),
     256: (("id", 12), ("ver", 4)),                       # rudiment, same body as 262 (g:1635)
     NOTICE: (("page", "i"),),

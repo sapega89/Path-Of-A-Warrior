@@ -49,6 +49,8 @@ class Character:
     mission_grade: int = 0
     invitation: int = 1                # Options -> Invitation: 0 Deny, 1 Accept (288/290)
     notices_seen: int = 0              # version of the notices last shown to this player
+    sp_linked: bool = False            # the hero comes from the single-player save (9.10)
+    sp_progress: int = 0               # single-player missions done (dy bits), for missions later
 
     # --- what goes on the wire -------------------------------------------------
     def max_hp(self):
@@ -93,6 +95,32 @@ class Character:
         d["skills"] = {int(k): v for k, v in d.get("skills", {}).items()}
         known = {f.name for f in dataclasses.fields(cls)}
         return cls(**{k: v for k, v in d.items() if k in known})
+
+
+def apply_sp_hero(ch, msg):
+    """262 PORT-EXTRA: the hero of the single-player save replaces the SP-side fields, like the
+    original "Save User Data" (opcode 256) did. MP-only data (name, quotes, wins, exp, fame,
+    gold, grades) stays. Returns False when the message carries no usable hero."""
+    if msg.get("sp") != 1 or msg.get("_short") or not 1 <= msg.get("sp_level", 0) <= 255:
+        return False
+    if msg.get("sp_hp", 0) <= 0:
+        return False
+    ch.level = msg["sp_level"]
+    ch.hp, ch.mp = msg["sp_hp"], msg["sp_mp"]
+    ch.atk, ch.def_ = msg["sp_atk"], msg["sp_def"]
+    ch.hp_bonus, ch.mp_bonus = msg["sp_hp_bonus"], msg["sp_mp_bonus"]
+    ch.atk_bonus, ch.def_bonus = msg["sp_atk_bonus"], msg["sp_def_bonus"]
+    ch.face, ch.weapon = msg["sp_face"] & 3, msg["sp_weapon"] & 1
+    first = not ch.sp_linked
+    ch.skills = {i + 3: lvl for i, lvl in enumerate(msg["sp_skills"]) if lvl > 0}
+    kept = [s for s in ch.slots if s in ch.skills]      # slots set in the MP menu (1291) stay
+    sp_slots = valid_slots(ch, list(msg["sp_slots"]))
+    if first and sp_slots is not None:                  # the first import takes the SP ones
+        kept = [s for s in sp_slots if s != M.EMPTY_SKILL]
+    ch.slots = (kept + [M.EMPTY_SKILL] * 4)[:4]
+    ch.sp_progress = msg["sp_progress"]
+    ch.sp_linked = True
+    return True
 
 
 def default_character(user_id):
