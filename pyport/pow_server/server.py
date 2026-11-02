@@ -15,7 +15,7 @@ import random
 import re
 import time
 
-from pow_server import battle as B, codec_bin, messages as M
+from pow_server import battle as B, codec_bin, loot, messages as M
 from pow_server.model import apply_sp_hero, default_character, valid_slots
 from pow_server.storage import open_storage
 
@@ -156,6 +156,16 @@ class Session:
         else:
             res = B.duel_rewards(self.char, b, self.slot, self.server.rng)
             cat = 2
+        # loot (9.9): one single-player drop roll per foe beaten, ar.P() kinds 0 soldier /
+        # 1 general / 2 boss; mission monsters are soldiers, the fighter of the last stage a boss
+        if m:
+            kills = [0, 0] * min(cleared, m["stages"] - 1) + ([2, 0] if cleared == m["stages"] else [])
+        else:
+            kills = [1] * sum(1 for f in b.fighters.values() if f.team != self.slot % 2) if res["win"] else []
+        got = loot.roll(self.server.rng, self.char.level, kills)
+        if got:
+            res.update(loot=got["name"], item_id=got["id"], item_atk=got["atk"],
+                       item_def=got["def"], item_hp=got["hp"], item_mp=got["mp"])
         room.players.pop(self.slot, None)
         self.room = None
         self.save()

@@ -76,9 +76,12 @@ def test_fighter_is_72_bytes():
     assert k.a() == 1 and k.a(8) == "ABCD"
 
 
-def test_battle_end_is_33_bytes():
+def test_battle_end_is_33_bytes_and_the_loot_item():
     p = payload(M.BATTLE_END, st=1, win=1, gold=120, grade=4, fame=7, exp=33, loot="NONE", rank=5)
-    assert len(p) == 3 + 33
+    assert len(p) == 3 + 33 + 10                # PORT-EXTRA item {u16 id, 4 x s16} after the 33
+    p = payload(M.BATTLE_END, st=1, win=1, loot="War Claymore", item_id=118, item_atk=9)
+    msg = codec_bin.decode(p, from_client=False)
+    assert msg["loot"] == "War Claymore" and (msg["item_id"], msg["item_atk"]) == (118, 9)
 
 
 def test_turn_result_layout():

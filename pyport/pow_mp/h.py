@@ -175,6 +175,7 @@ class h:
         """The SP_HERO tail of 262 (pow_server/messages.py); sp = 0 without a single-player save."""
         from pow_mp import sp_bridge
         from pow_server import codec_bin, messages as M
+        sp_bridge.add_item()                 # loot still waiting for a free backpack cell
         hero = sp_bridge.hero(sp_bridge.read_save())
         msg = {"sp": 0} if hero is None else dict({"sp": 1}, **{"sp_" + k: v for k, v in hero.items()})
         buf = bytearray()
@@ -194,6 +195,10 @@ class h:
             from pow_mp import sp_bridge
             gold, _, fame, exp = struct.unpack_from("<hBhh", payload, 4)
             sp_bridge.add_rewards(gold, fame, exp)
+            if len(payload) >= 46:                          # PORT-EXTRA loot (9.9)
+                item = struct.unpack_from("<Hhhhh", payload, 36)
+                if item[0]:
+                    sp_bridge.add_item(*item)
         if op == 279 and st == 1 and len(payload) >= 19:
             h._save_token(payload[3:19].split(b"\0")[0].decode("ascii", "replace"))
         elif op == 263 and st == -3:

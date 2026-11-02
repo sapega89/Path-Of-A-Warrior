@@ -183,7 +183,8 @@ def test_duel_vs_cpu(server):
     last = turns[-1]["records"][-1]
     assert last["target_hp"] == 0 or last["actor_hp"] == 0 or any(
         r["target_hp"] == 0 for t in turns[-1:] for r in t["records"])
-    assert end["op"] == 1032 and end["win"] in (0, 1) and end["loot"] == "NONE"
+    assert end["op"] == 1032 and end["win"] in (0, 1)
+    assert (end["loot"] == "NONE") == (end["item_id"] == 0)
     ch = server.storage.load("ANDREY")
     assert (ch.wins, ch.losses) == ((1, 0) if end["win"] else (0, 1))
     assert c.session.battle is None
