@@ -1,0 +1,239 @@
+# Duel 2-on-2 (me + a CPU ally against two CPU fighters), played to the result screen.
+# States (06 §1.2): 92 quotes, 96 choose target, 94 choose action, 97 timing bar, 99 reveal, 103 end, 105 result.
+include _login.keys
+key FIRE          # Duel
+wait 5
+key RIGHT         # 2-on-2 Duel
+wait 3
+key FIRE
+until 92
+shot room
+wait 30
+shot quotes
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+wait 2
+shot bar_stopped
+until 99
+wait 3
+shot reveal
+wait 50
+shot playback
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+until 94,103,105
+goto_if 103,105 end
+key RIGHT         # Attack
+wait 2
+key_if 96 FIRE    # two foes alive: take the first target
+wait 7
+key FIRE          # stop the timing bar
+label end
+until 105
+wait 10
+shot result
+wait 60
+shot result2
+key FIRE
+until 11
+wait 5
+shot back_to_duel_menu

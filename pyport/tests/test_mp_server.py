@@ -151,15 +151,14 @@ def test_ranking_always_three_rows(server):
 
 def test_other_modes_not_there_yet(server):
     c, _ = login(server)
-    assert c.ask(M.MATCH, mode=1) == {"op": 513, "st": -11}
     assert c.ask(M.MATCH, mode=2) == {"op": 513, "st": -11}
     assert c.ask(M.INVITE, mode=0, id="SOMEONE")["st"] == -11
 
 
-def _duel(c, action=0, hit=88, rounds=60):
-    """Play a duel to the end with one action; returns (513, 514, every 1028, 1032)."""
-    c.ask(M.MATCH, mode=0)
-    room, fighter, ready = c.got
+def _duel(c, action=0, hit=88, rounds=60, mode=0):
+    """Play a duel to the end with one action; returns (513, first 514, every 1028, 1032)."""
+    c.ask(M.MATCH, mode=mode)
+    room, fighter = c.got[0], c.got[1]
     turns = []
     for _ in range(rounds):
         ans = c.ask(M.ROUND_READY)
@@ -236,3 +235,29 @@ def test_storage_survives_restart(tmp_path):
     s2 = GameServer(Storage(db))
     _, prof = login(s2)
     assert prof["name"] == "Keep"
+
+
+def test_duel_2v2(server):
+    c, _ = login(server)
+    c.ask(M.MATCH, mode=1)
+    assert [m["op"] for m in c.got] == [513, 514, 514, 514, 1024]
+    assert c.got[0]["mode"] == 1 and c.got[0]["slot"] == 0
+    assert sorted(m["slot"] for m in c.got[1:4]) == [1, 2, 3]
+    assert len({m["name"] for m in c.got[1:4]}) == 3
+    c.session.battle = None
+    room, fighter, turns, end = _duel(c, mode=1, hit=100, rounds=80)
+    assert room["mode"] == 1
+    assert any(len(t["records"]) > 2 for t in turns)       # four fighters act in one round
+    for t in turns:
+        assert len(t["records"]) <= 4
+    assert end["op"] == 1032
+
+
+def test_2v2_ends_when_i_fall(server):
+    """The client goes to 103 when its own HP is 0 (g:683-684): the server must answer 1032."""
+    c, _ = login(server)
+    c.ask(M.MATCH, mode=1)
+    b = c.session.battle
+    b.fighters[0].hp = 0
+    end = c.ask(M.ROUND_READY)
+    assert end["op"] == 1032 and b.over

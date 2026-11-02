@@ -5,7 +5,7 @@
 Steps: wait N | key NAME [COUNT] (UP DOWN LEFT RIGHT FIRE LSOFT RSOFT 0-9 STAR POUND) |
        shot NAME | include FILE |
        until STATE[,STATE] [MAX] (g.cY, the client state of 06 §1.2) |
-       goto_if STATE[,STATE] LABEL | label LABEL | digits 1234 (number keys one per tick) | # comment
+       goto_if STATE[,STATE] LABEL | label LABEL | key_if STATE[,STATE] KEY | digits 1234 (number keys one per tick) | # comment
 The server runs inside the game (POW_MP_SERVER=local) with a fresh temporary save folder.
 """
 import argparse
@@ -105,6 +105,14 @@ def run(steps, out, every=False, save_dir=None):
                 from pow_mp._gen.g import g
                 if g.cY in {int(x) for x in states.split(",")}:
                     st["i"] = steps.index(("label", label.strip())) + 1
+                continue
+            if cmd == "key_if":                  # key_if STATE[,STATE...] KEY: press only there
+                states, _, name = arg.partition(" ")
+                from pow_mp._gen.g import g
+                if g.cY in {int(x) for x in states.split(",")}:
+                    Main.b.keyPressed(KEYNAMES[name.strip().upper()])
+                    st["wait"] = 1
+                    return
                 continue
             if cmd == "until":                   # until STATE[,STATE...] [MAX_FRAMES]
                 states, _, limit = arg.partition(" ")
