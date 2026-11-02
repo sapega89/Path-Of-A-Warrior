@@ -1,6 +1,7 @@
 """Browser build (PHASE_0 task 0.8): stage code + original resources, then run pygbag.
 
-    python pyport/tools/build_web.py            # -> pyport/build/web-src (+ pygbag --build)
+    python pyport/tools/build_web.py            # -> pyport/build/web-src (+ pygbag --build,
+                                                #    + guide.html and its link on the page)
     python -m pygbag pyport/build/web-src       # dev server on http://localhost:8000
     python pyport/tools/build_web.py --mp       # POW Multiplayer -> pyport/build/web-mp-src
         page?server=ws://host:28200 talks to `python -m pow_server`, without it the server
@@ -46,7 +47,29 @@ def stage():
     print("staged %d resource files -> %s" % (n, OUT))
 
 
+GUIDE_LINK = ('<a href="guide.html" target="_blank" style="position:fixed;right:8px;bottom:8px;z-index:9999;'
+              'font:14px sans-serif;color:#fff;background:#2747a8;padding:6px 10px;border-radius:6px;'
+              'text-decoration:none">Довідник воїна</a>')
+
+
+def add_guide(site):
+    """The players' guide (web/guide.html: items, recipes, secrets) next to the game, and a link
+    to it on the game page. Only into the built site: inside the game package it would only
+    make the download bigger."""
+    shutil.copy2(PY / "web" / "guide.html", site / "guide.html")
+    page = site / "index.html"
+    if page.exists():
+        html = page.read_text(encoding="utf-8")
+        if 'href="guide.html"' not in html:
+            html = html.replace("</body>", GUIDE_LINK + "\n</body>", 1)
+            page.write_text(html, encoding="utf-8")
+    print("guide ->", site / "guide.html")
+
+
 if __name__ == "__main__":
     stage()
     if "--no-pygbag" not in sys.argv:
-        sys.exit(subprocess.call([sys.executable, "-m", "pygbag", "--build", "--ume_block", "0", str(OUT)]))
+        rc = subprocess.call([sys.executable, "-m", "pygbag", "--build", "--ume_block", "0", str(OUT)])
+        if rc == 0 and not MP:
+            add_guide(OUT / "build" / "web")
+        sys.exit(rc)
