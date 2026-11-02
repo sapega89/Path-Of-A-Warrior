@@ -1,0 +1,9 @@
+include _login.keys
+key RIGHT 3
+wait 3
+key FIRE
+wait 20
+shot options
+key FIRE
+wait 20
+shot o1

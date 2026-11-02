@@ -1,0 +1,12 @@
+include _login.keys
+key LEFT
+wait 3
+key FIRE
+wait 20
+shot ranking
+key FIRE
+wait 20
+shot r1
+key FIRE
+wait 20
+shot r2

@@ -1,0 +1,208 @@
+# Mouse and held keys in the combat (POW_HOLD_TO_MOVE=1): walk while the button / key is held,
+# click on the hero = attack, right button = attack (no turning), HUD * box = potion,
+# skills from the keyboard (key 1 = slot 1)
+env POW_HOLD_TO_MOVE=1
+wait 25
+key FIRE
+wait 2
+# sound: Yes
+key FIRE
+wait 2
+key FIRE
+wait 2
+key UP
+wait 2
+key DOWN
+wait 2
+key FIRE
+wait 2
+key FIRE
+wait 3
+key RIGHT
+wait 2
+key FIRE
+wait 3
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key FIRE
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key FIRE
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key FIRE
+wait 1
+key FIRE
+wait 1
+key BACK
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key FIRE
+wait 2
+key FIRE
+wait 2
+key DOWN
+wait 2
+key FIRE
+wait 2
+key DOWN
+wait 2
+key FIRE
+wait 2
+key DOWN
+wait 2
+key FIRE
+wait 2
+key FIRE
+wait 2
+key FIRE           # Yes -> save -> prologue (ag.l(100, 0), bV = 10)
+wait 3
+wait 60
+key LSOFT          # Skip on a picture page = next page
+wait 3
+wait 60
+key LSOFT
+wait 3
+wait 10
+key FIRE           # whole text at once
+wait 2
+wait 25
+wait 40
+key LSOFT          # Skip on a dialogue page = end of the prologue
+wait 4
+key FIRE
+wait 3
+key FIRE
+wait 3
+key FIRE
+wait 3
+key RIGHT
+wait 2
+key FIRE
+wait 3
+key FIRE
+wait 3
+wait 30
+key FIRE
+wait 3
+wait 40
+key BACK           # BACK does nothing in the briefing
+wait 2
+key LSOFT          # SKIP -> ag.y() (the map: next phase)
+wait 10
+shot map_enter
+wait 20
+mousedown 210 100        # left button held right of the hero: walk right
+wait 8
+shot mouse_hold_walk
+mouseup
+wait 4
+shot mouse_released_stop
+hold DOWN                # keyboard: DOWN held
+wait 8
+shot key_hold_walk
+release DOWN
+wait 4
+shot key_released_stop
+click 157 132            # click on the hero: attack
+wait 1
+shot click_attack
+wait 6
+rclick 40 60             # right button: attack where the hero faces (the pointer does not turn him)
+wait 3
+shot rclick_attack
+wait 8
+rclick 40 60
+wait 3
+rclick 40 60
+wait 3
+shot rclick_combo
+hero p 10                # TEST-ONLY: low HP and potions on *
+potion 0 3 2
+wait 2
+click 64 284             # the * box of the HUD: drink
+wait 3
+shot hud_potion
+wait 10
+hero r 99                # TEST-ONLY: MP and a skill on slot 1
+skill 0 12
+key 1                    # keyboard 1: skill slot 1 (the mouse only attacks)
+wait 3
+shot key_skill
+wait 20
+shot after_skill

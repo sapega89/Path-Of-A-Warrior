@@ -1,0 +1,55 @@
+# logo -> "sound enabled?" -> title -> Main Menu (no saved game)
+wait 5
+shot logo
+wait 20            # logo stays 2.5 s = ~21 ticks of 120 ms
+shot sound_question
+key RIGHT
+shot sound_no_selected
+key LEFT
+shot sound_yes_selected
+key FIRE           # Yes -> title
+wait 2
+shot title
+wait 3
+shot title_blink   # "PRESS ANY KEY" blinks: bN % 6 < 3
+key FIRE           # any key -> ag.T() -> Main Menu
+wait 2
+shot main_menu_new_game
+key RIGHT
+shot main_menu_2
+key RIGHT
+shot main_menu_3
+key LEFT
+key LEFT
+key LEFT
+shot main_menu_continue_grey   # item 0 Continue is drawn grey (frame 9) when there is no save
+key LEFT
+shot main_menu_wrap_exit       # 0 -> LEFT wraps to item 8 (Exit)
+key RIGHT
+shot main_menu_wrap_back       # 8 -> RIGHT wraps to item 0
+key LEFT
+key FIRE           # item 8 = Exit -> popup ("No" is preselected: l.e(28) sets k = 1)
+wait 1
+shot exit_popup
+key FIRE           # No -> popup closes on the next tick (timer d = 1)
+wait 2
+shot main_menu_after_no
+key LEFT
+shot main_menu_7
+key LEFT
+shot main_menu_6
+key LEFT
+shot main_menu_5
+key LEFT
+shot main_menu_4
+key RIGHT
+key RIGHT
+key RIGHT
+key RIGHT          # back to Exit
+key FIRE
+wait 1
+key RIGHT          # select Yes
+shot exit_popup_yes
+key FIRE           # Yes -> ag.as(): outro screen, the game quits after 3 s
+wait 3
+shot outro

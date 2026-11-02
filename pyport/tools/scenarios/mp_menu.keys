@@ -1,0 +1,23 @@
+# Login with a new account (auto-registered by the local server), then the main menu items.
+include _login.keys
+shot main_duel
+key FIRE
+wait 5
+shot duel
+key BACK
+wait 5
+key RIGHT
+wait 3
+shot main_mission
+key RIGHT
+wait 3
+shot main_character
+key RIGHT
+wait 3
+shot main_options
+key RIGHT
+wait 3
+shot main_help
+key RIGHT
+wait 3
+shot main_ranking

@@ -1,0 +1,39 @@
+"""PHASE_9 task 9.1: all 59 SP2 files of the MP jar load, every frame lies on its sheet (06 §5.1)."""
+import pathlib
+
+import pygame
+
+import config
+from pow_mp.a import a
+
+ROOT = pathlib.Path(config.MP_RES_ROOT)
+
+
+def sheet_for(name):
+    base = name.rsplit(".", 1)[0]
+    for suffix in ("_basic", "_skill1", "_skill2"):
+        base = base.replace(suffix, "")
+    if base == "spreff3":                      # Soul aura: frames on spreff2 (06 §5.2)
+        base = "spreff2"
+    for cand in (base + ".png", base + "_r.png"):
+        if (ROOT / cand).exists():
+            return ROOT / cand
+    raise AssertionError("no sheet for " + name)
+
+
+def test_all_sp2():
+    files = sorted(ROOT.glob("*.SP2"))
+    assert len(files) == 59
+    counts = {}
+    for p in files:
+        spr = a("/" + p.name)
+        assert len(spr.b) == 1 + 6 * spr.a, p.name
+        img = pygame.image.load(str(sheet_for(p.name)))
+        w, h = img.get_size()
+        for i in range(spr.a):
+            assert spr.e[i] > 0 and spr.f[i] > 0, (p.name, i)
+            assert spr.c[i] + spr.e[i] <= w and spr.d[i] + spr.f[i] <= h, (p.name, i)
+        kind = p.name.rsplit("_", 1)[-1] if "_" in p.name else "single"
+        counts.setdefault(kind, set()).add(spr.a)
+        spr.a_v()
+    assert counts["basic.SP2"] == {19} and counts["skill1.SP2"] == {47} and counts["skill2.SP2"] == {47}
