@@ -1,0 +1,45 @@
+# Character submenu: Records, Attributes, Exp/Fame/Gold, Skills, Change Quote, Display Name
+include _login.keys
+key RIGHT 2
+wait 3
+key FIRE
+wait 20
+shot character
+key FIRE
+wait 20
+shot records
+key BACK
+wait 10
+key RIGHT
+wait 3
+key FIRE
+wait 20
+shot attributes
+key BACK
+wait 10
+key RIGHT
+wait 3
+key FIRE
+wait 20
+shot exp_fame_gold
+key BACK
+wait 10
+key RIGHT
+wait 3
+shot menu_4
+key FIRE
+wait 20
+shot item_4
+key FIRE
+wait 20
+shot item_4b
+key BACK
+wait 10
+key BACK
+wait 10
+key RIGHT 2
+wait 3
+shot menu_6
+key FIRE
+wait 20
+shot item_6

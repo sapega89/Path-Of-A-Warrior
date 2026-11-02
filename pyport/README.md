@@ -246,14 +246,19 @@ Please select» на екрані 6 — дослівно з Java (`de - 90 - b*2
 ## Мультиплеєр (етап 9, `docs/plans/PHASE_9_ARENA.md`)
 
 Окрема гра «Path of a Warrior Multiplayer» (Duel 1-на-1 / 2-на-2, Challenge, місії, рейтинги).
-Розбір jar: `docs/analysis/06_multiplayer.md`. Поки що готові протокол, сервер для меню і ресурси;
-клієнт (меню, логін, Character, Ranking) і бій 1-на-1 з CPU будуть наступними PR.
+Розбір jar: `docs/analysis/06_multiplayer.md`. Готові протокол, сервер для меню, ресурси і клієнт
+(логін, Main Menu, Character, Ranking, Options, Help); бій 1-на-1 з CPU буде наступним PR.
 
 - `assets_mp/` — ресурси з jar мультиплеєра (PNG, SP2, звук, маніфест; без класів і DRM Movaya).
 - `mp_java/` — декомпільований клієнт (CFR 0.152), довідка для дослівного переносу; рядки `g:NNNN`
   в `06_multiplayer.md` посилаються саме на цей `g.java`.
 - `pow_mp/` — клієнт: `a.py` (SP2), `n.py` (ресурси), `net/transport.py` — заміна сокета `h.java`:
   `LocalTransport` (сервер усередині гри) або `WebSocketTransport` (окремий сервер).
+  `_gen/` — класи l f i j k e d g m, згенеровані з `mp_java/` (`tools/j2py_mp.py`, потрібен
+  `pip install javalang`; правити конвертер, не `_gen`). Вручну: `h.py` (мережевий потік),
+  `c.py` (звук), `Main.py`, `game.py` (завантаження і цикл), `rt.py` (Java-хелпери).
+  Дві помилки CFR виправлено в конвертері: GOTO-ділянки (`tools/j2py_mp_fix/`) і `n6 *= 10`,
+  що опинилось у правій частині `||` (g:4670, g:4683; звірено з байткодом).
 - `pow_server/` — сервер на чистому Python: `messages.py` (opcode-и і схеми полів), `codec_bin.py`
   (оригінальний бінарний формат), `server.py` (логін, профіль, ім'я, фрази, навички, рейтинг, опції),
   `storage.py` (SQLite), `ws_server.py` (WebSocket + необов'язковий TCP-шлюз).
@@ -263,7 +268,9 @@ python -m pip install websockets                 # лише для окремо�
 cd pyport && python -m pow_server                 # ws://0.0.0.0:28200, дані в mp_server.sqlite
 python -m pow_server --port 8765 --db :memory:   # нічого не зберігати
 python -m pow_server --tcp-port 28200 --legacy   # TCP як в оригіналі, без перевірки токена
-POW_MP_SERVER=ws://localhost:28200 python pyport/main.py   # (клієнт - наступний PR)
+python mp_main.py                                  # клієнт із сервером усередині гри
+POW_MP_SERVER=ws://localhost:28200 python mp_main.py   # клієнт до окремого сервера
+python tools/mp_shot.py tools/scenarios/mp_menu.keys   # скріншоти в shots/mp_menu/
 ```
 
 Відмінності від оригіналу (PORT-EXTRA, у кінці пакетів, оригінальний jar їх ігнорує):
@@ -276,3 +283,5 @@ POW_MP_SERVER=ws://localhost:28200 python pyport/main.py   # (клієнт - н�
 - Ціни навичок у MP (`pow_server/model.py SKILL_COST`) і стартові стати вигадані: серверні дані
   оригіналу втрачено разом із сервером.
 - `512` (пошук бою) і `768` (виклик) поки відповідають «Too many users online».
+- 1294 (рейтинг) завжди має 3 рядки, порожні доповнюють список: клієнт малює 3 рамки й без них
+  падав би на null-імені (g:612-622).

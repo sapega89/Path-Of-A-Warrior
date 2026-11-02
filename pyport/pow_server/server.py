@@ -221,8 +221,11 @@ class Session:
             me = next((i for i, r in enumerate(table) if r[1] == self.user), 0)
             start = max(0, min(me - 1, len(table) - 3))
             rows = table[start:start + 3]
-        # at most 3 rows: the client keeps them in arrays of 3 (06 §2.4)
-        self.send(M.RANK_LIST_ANS, st=1, rows=[{"rank": r, "id": u, "value": v} for r, u, v in rows])
+        # exactly 3 rows: the client keeps them in arrays of 3 and always draws 3 boxes
+        # (06 §2.4, g:612-622); a missing row would be a null name. Empty rows pad the list.
+        rows = [{"rank": r, "id": u, "value": v} for r, u, v in rows]
+        rows += [{"rank": 0, "id": "", "value": 0}] * (3 - len(rows))
+        self.send(M.RANK_LIST_ANS, st=1, rows=rows)
 
     # --- rooms and battles (later PRs) ---------------------------------------------
     def on_match(self, msg):           # 512 -> 513 -11 = cw8 "Too many users online"

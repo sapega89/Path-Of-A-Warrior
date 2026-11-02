@@ -1,0 +1,25 @@
+# Login with a new account (auto-registered by the local server), then the main menu.
+wait 35
+key FIRE          # sound: Yes
+wait 3
+key FIRE          # title
+wait 3
+key RIGHT 19      # T
+key FIRE
+key LEFT 15       # E
+key FIRE
+key DOWN          # S
+key FIRE
+key RIGHT         # T
+key FIRE
+key RIGHT 7       # OK
+shot login_id
+key FIRE
+wait 3
+digits 1234
+wait 2
+shot password
+key LSOFT
+wait 40           # 278/279, reconnect, 262/263
+key FIRE          # Welcome OK
+wait 20           # Main Menu, on Duel
