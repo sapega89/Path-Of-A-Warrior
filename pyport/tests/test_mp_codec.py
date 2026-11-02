@@ -58,7 +58,7 @@ def test_login_answer_is_read_like_g_java():
     assert k.a() == ch.face and k.b() == 37 and k.c() == 70000 and k.c() == 3 and k.b() == 950
     k.b(), k.b()
     assert k.a() == 1
-    assert [k.a() for _ in range(4)] == [3, 99, 99, 99]
+    assert [k.a() for _ in range(4)] == [3, 11, 99, 99]     # Wind, Devil Soul: a new hero
     assert k.a(20) == ch.quote_start and k.a(20) == ch.quote_win
     costs = [k.a() for _ in range(11)]
     assert all(0 < c <= 100 for c in costs)

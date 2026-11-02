@@ -3,8 +3,9 @@
 The client only shows what the server decides (06 §3.3): it sends one 1027 {target, action,
 hit%} per round and plays the records of 1028 back. Everything here - turn order, damage,
 evasion, MP, skill effects, the CPU, rewards - was computed by the lost Gamevil server, so
-the numbers are ours (06 §6.1 "Доведеться вигадати"). Pure Python, the random source is
-passed in so that tests are repeatable.
+the numbers come from the single-player game where it has them (pow_server/sp_rules.py: hero
+stats, soldiers, damage ATK - DEF, skills, heals, souls, rewards); the rest is ours and says
+so. Pure Python, the random source is passed in so that tests are repeatable.
 
 Slots (06 §2.6): slot % 2 is the team (0 left, 1 right), slot // 2 the row; 1v1 uses 0 and 1.
 Actions: 0 Attack, 1 Defend, 2 Evade, 3..13 skills (l.eK). Defend and Evade are stances: they
@@ -12,6 +13,7 @@ never produce a record of their own, a record with action 1 would hang the clien
 """
 import dataclasses
 
+from pow_server import sp_rules as R
 from pow_server.model import SKILL_COST
 
 ATTACK, DEFEND, EVADE = 0, 1, 2
@@ -26,10 +28,10 @@ MP_MAX = 100
 MP_ATTACK, MP_HIT, MP_STANCE = 20, 10, 15
 EVADE_CHANCE = 0.45
 DEFEND_FACTOR = 0.4
-SKILL_HIT = 70                           # skills skip the timing bar (aS = 0): a fixed "good" hit
-BUFF_TURNS = 3
-# damage multiplier of the attack skills: 3 / 6 strikes are drawn, one number is shown (06 §3.4)
-SKILL_POWER = {WIND: 1.6, STORM: 1.3, THUNDER: 1.3, TIDE: 2.4, WAVE: 1.2, TIDAL: 1.2}
+SKILL_HIT = 70                           # skills skip the timing bar (aS = 0)
+# Attack = the single player's 3-hit combo (the 3rd hit knocks back, ar.java:505-506); the bar
+# decides how many of the three land (made up: the single player has no timing bar)
+COMBO_HITS = ((88, 3), (52, 2), (0, 1))
 
 CPU_NAMES = ("Garrick", "Selene", "Borin", "Kaida", "Ulric", "Mirena", "Dorn", "Ysolde",
              "Thane", "Rowan", "Brakka", "Liora")
@@ -58,7 +60,9 @@ class Fighter:
     hp: int = 0
     mp: int = 0
     stance: int = ATTACK
-    buffs: dict = dataclasses.field(default_factory=dict)   # "atk"/"def" -> [factor, turns]
+    buffs: dict = dataclasses.field(default_factory=dict)   # "atk"/"def" -> [bonus, turns]
+    general: bool = False                 # worth 2L when beaten, a soldier L (ar.java:1663-1698)
+    build: dict = None                    # where the hero's stat points went (CPU fighters copy it)
 
     def __post_init__(self):
         self.hp = self.hp or self.max_hp
@@ -71,9 +75,9 @@ class Fighter:
     def alive(self):
         return self.hp > 0
 
-    def factor(self, stat):
+    def bonus(self, stat):
         b = self.buffs.get(stat)
-        return 1.0 + (b[0] if b else 0.0)
+        return b[0] if b else 0
 
     def can_use(self, skill):
         return skill in self.slots and skill in self.skills and self.mp >= SKILL_COST[skill]
@@ -94,25 +98,46 @@ def from_character(ch, slot):
                    max_hp=ch.max_hp(), atk=ch.atk + ch.atk_bonus, def_=ch.def_ + ch.def_bonus,
                    skills=dict(ch.skills), slots=[s for s in ch.slots if s in ch.skills],
                    face=ch.face, weapon=ch.weapon, wins=ch.wins, losses=ch.losses,
-                   quote_start=ch.quote_start, quote_win=ch.quote_win)
+                   quote_start=ch.quote_start, quote_win=ch.quote_win,
+                   build=hero_build(ch), general=True)     # a hero beaten counts like a general
+
+
+def hero_build(ch):
+    """The stat points of a hero: its base stats over a new hero's (ag.aw), per point gain."""
+    b = R.HERO_BASE
+    return {"atk": max(0, ch.atk - b["atk"]), "def": max(0, ch.def_ - b["def"]),
+            "hp": max(0, (ch.hp - b["hp"]) // R.POINT_GAIN["hp"]),
+            "mp": max(0, (ch.mp - b["mp"]) // R.POINT_GAIN["mp"])}
+
+
+BUILDS = ({"atk": 2, "def": 1, "hp": 2}, {"atk": 3, "def": 1, "hp": 1},
+          {"atk": 1, "def": 2, "hp": 2}, {"atk": 2, "def": 2, "hp": 1})
 
 
 def cpu_fighter(rng, me, slot, ally=False):
-    """A CPU fighter next to or against `me`: within 2 levels and scaled to its stats (an imported
-    single-player hero can have hundreds of HP). The original: ±20 levels, decided by the server.
-    An ally is a bit weaker than a foe so that the player's own play still decides 2v2."""
-    level = max(1, me.level + rng.randint(-2, 1))
-    k = (1.0 + 0.05 * (level - me.level)) * (0.85 if ally else 1.0)
-    pool = [WIND, STORM, THUNDER, HEAL_MED, TIDE, SOUL_DEVIL, WAVE, SOUL_GUARD, HEAL_MAX]
-    n = min(len(pool), 1 + level // 3)
-    skills = {s: max(1, level // 4) for s in pool[:n]}
+    """A CPU fighter: a single-player hero of about my level, its points spent like mine, in the
+    shop's kit of its level - like a hero of this server without a single-player save. A hero
+    from the single player brings its own gear. The original: within 20 levels, decided by
+    the server."""
+    level = max(1, me.level + rng.randint(-2, 1) - (1 if ally else 0))
+    # the points go about where mine went: with damage = ATK - DEF (at least 1) a random build
+    # can out-DEF the other side's ATK and the duel never ends
+    build = dict(me.build) if me.build and sum(me.build.values()) else dict(rng.choice(BUILDS))
+    stat = rng.choice(("atk", "def", "hp"))
+    build[stat] = build.get(stat, 0) + max(1, sum(build.values()) // 10)
+    st = R.hero_stats(level, build)
+    # the skills are mine too (a new hero knows Wind Slasher and Devil Soul, ag.java new game;
+    # more and higher levels come only from Visiting in the single player)
+    skills = dict(me.skills) or {WIND: 1, SOUL_DEVIL: 1}
+    slots = [x for x in me.slots if x in skills] or list(skills)[:4]
     q = rng.choice(CPU_QUOTES)
-    return Fighter(slot=slot, name=rng.choice(CPU_NAMES), level=level,
-                   max_hp=max(10, int(me.max_hp * 1.15 * k)), atk=max(1, int(me.atk * 1.3 * k)),
-                   def_=max(1, int(me.def_ * k)),
-                   skills=skills, slots=list(skills)[:4], face=rng.randrange(4),
+    kit = R.shop_kit(level)
+    return Fighter(slot=slot, name=rng.choice(CPU_NAMES), level=level, max_hp=st["hp"] + kit["hp"],
+                   atk=st["atk"] + kit["atk"], def_=st["def"] + kit["def"],
+                   skills=skills, slots=slots, face=rng.randrange(4),
                    weapon=rng.randrange(2), cpu=True, wins=rng.randrange(5 * level + 1),
-                   losses=rng.randrange(5 * level + 1), quote_start=q[0], quote_win=q[1])
+                   losses=rng.randrange(5 * level + 1), quote_start=q[0], quote_win=q[1],
+                   general=True, build=build)
 
 
 def cpu_choice(rng, me, foes):
@@ -144,6 +169,7 @@ class Battle:
         self.fighters = {f.slot: f for f in fighters}
         self.round = 0
         self.bg = battle_background(rng)
+        self.beaten = []                   # fighters knocked out, in order (rewards)
 
     # --- state --------------------------------------------------------------
     def team_alive(self, team):
@@ -245,20 +271,18 @@ class Battle:
         if action >= WIND:
             f.mp -= SKILL_COST[action]
         if action in HEALS:
-            lvl = f.skills.get(action, 1)
-            amount = t.max_hp * ((4 if action == HEAL_MED else 8) + lvl) // 25
-            t.hp = min(t.max_hp, t.hp + amount)
+            t.hp = min(t.max_hp, t.hp + R.heal(action, t.max_hp, f.skills.get(action, 1)))
             if action == HEAL_MAX:
                 f.mp = min(MP_MAX, f.mp + 20)
         elif action in SOULS:
-            lvl = f.skills.get(action, 1)
-            boost = 0.2 + 0.02 * lvl
-            stats = {SOUL_DEVIL: ("atk",), SOUL_GUARD: ("def",), SOUL_ARCH: ("atk", "def")}[action]
+            a, d, ticks = R.soul(action, f.atk, f.def_, f.skills.get(action, 1))
+            turns = ticks // 50 + 1                       # 50 ticks ~ one round (made up)
             for ally in self.fighters.values():           # the aura covers the team (06 §3.3)
                 if ally.alive and ally.team == f.team:
-                    for st in stats:
-                        ally.buffs[st] = [boost if action != SOUL_ARCH else boost * 0.75,
-                                          BUFF_TURNS + 1]
+                    if a:
+                        ally.buffs["atk"] = [a, turns]
+                    if d:
+                        ally.buffs["def"] = [d, turns]
         else:
             rec["result"] = self._strike(f, t, action, hit)
             f.mp = min(MP_MAX, f.mp + (MP_ATTACK if action == ATTACK else 0))
@@ -275,20 +299,24 @@ class Battle:
         return rec
 
     def _strike(self, f, t, action, hit):
-        """Damage of one blow (one number, even for 3 / 6 strikes); returns targetRes."""
+        """Damage of one action, one number for all its hits; returns targetRes. One hit is
+        ATK + A - DEF - B, at least 1 (ar.java:293-316); a skill adds ATK*lvl/aU to every hit."""
         if t.stance == EVADE and action != THUNDER and self.rng.random() < EVADE_CHANCE:
             return RES_EVADED
-        atk = f.atk * f.factor("atk")
-        dfn = 0 if action == STORM else t.def_ * t.factor("def")
-        power = SKILL_POWER.get(action, 1.0)
-        dmg = atk * (0.5 + hit / 100.0) * 1.3 * power * self.rng.uniform(0.9, 1.1) - dfn * 0.5
-        if t.stance == DEFEND and action != STORM:
-            dmg *= DEFEND_FACTOR
-        dmg = max(1, int(round(dmg)))
+        atk = f.atk + f.bonus("atk")
+        one = atk - t.def_ - t.bonus("def")
+        if action == ATTACK:
+            hits = next(n for bar, n in COMBO_HITS if hit >= bar)
+        else:
+            one += R.skill_bonus(action, f.atk, f.skills.get(action, 1))
+            hits = R.SKILL_HITS[action]
+        dmg = max(1, one) * hits
+        if t.stance == DEFEND:
+            dmg = max(1, int(dmg * DEFEND_FACTOR))
         t.hp = max(0, t.hp - dmg)
         t.mp = min(MP_MAX, t.mp + MP_HIT)
-        if action == WAVE:
-            t.buffs["atk"] = [-0.2, BUFF_TURNS + 1]
+        if not t.alive:
+            self.beaten.append(t)
         return RES_HIT
 
 
@@ -296,34 +324,71 @@ class Battle:
 GRADE_TOP = 9                            # l.eL: D+ .. A+
 
 
-def duel_rewards(ch, battle, my_slot, rng):
-    """Apply the result of a finished duel (1v1 or 2v2) to the character; returns the 1032
-    fields (rank is filled in by the caller, it needs the whole table). 2v2 pays a bit more."""
-    me = battle.fighters[my_slot]
-    foe = max((f for f in battle.fighters.values() if f.team != me.team), key=lambda f: f.level)
-    win = battle.winner() == me.team
-    if win:
-        grade = min(GRADE_TOP, me.hp * 10 // me.max_hp + (2 if battle.round <= 5 else 0))
-        gold = (40 + 10 * foe.level + rng.randrange(20)) * (3 if battle.mode == 1 else 2) // 2
-        exp, fame = 20 + 5 * foe.level, 10 + foe.level
-        ch.wins += 1
-        ch.duel_grade = min(GRADE_TOP, ch.duel_grade + 1)
-    else:
-        grade = 0
-        gold, exp, fame = 0, 5 + foe.level, -min(5, ch.mp_fame)
-        ch.losses += 1
-        ch.duel_grade = max(0, ch.duel_grade - 1)
+# where a hero without a single-player save puts its 3 points a level (the multiplayer client has
+# no screen for it): 14 ATK, 4 DEF, 12 HP in every 30 points. With damage ATK - DEF and the
+# shop's DEF-heavy kit, a hero that grows ATK and DEF alike hits its like for 1-3 and a duel
+# lasts 30 rounds; this keeps it at 6-9 (made up, tools: the balance runs in the tests)
+POINT_ORDER = "ADHAHAHADHAHAHAADHAHAHADHAHAHA"
+
+
+def _level_up(ch):
+    """A hero without a single-player save levels up here by exp.arr, +3 points a level
+    (POINT_ORDER); an imported hero levels up in the single player, which gets the exp
+    (pow_mp/sp_bridge)."""
+    while not ch.sp_linked and ch.mp_exp >= R.exp_to_next(ch.level):
+        ch.mp_exp -= R.exp_to_next(ch.level)
+        level_up(ch)
+
+
+def level_up(ch):
+    """One level of a hero without a single-player save: 3 points, and the shop's kit of the
+    new level (sp_rules.shop_kit)."""
+    ch.level += 1
+    kit = R.shop_kit(ch.level)
+    ch.atk_bonus, ch.def_bonus, ch.hp_bonus = kit["atk"], kit["def"], kit["hp"]
+    for k in range(R.POINTS_PER_LEVEL):
+        stat = POINT_ORDER[((ch.level - 2) * R.POINTS_PER_LEVEL + k) % len(POINT_ORDER)]
+        if stat == "A":
+            ch.atk += R.POINT_GAIN["atk"]
+        elif stat == "D":
+            ch.def_ += R.POINT_GAIN["def"]
+        else:
+            ch.hp += R.POINT_GAIN["hp"]
+
+
+def _pay(ch, gold, fame, exp):
     ch.gold += gold
     ch.mp_fame += fame
     ch.mp_exp += exp
-    while not ch.sp_linked and ch.mp_exp >= ch.level * 100:
-        # level up of a hero without a single-player save (placeholders like the rest); an
-        # imported hero levels up in the single player, which gets the exp (pow_mp/sp_bridge)
-        ch.mp_exp -= ch.level * 100
-        ch.level += 1
-        ch.hp += 10
-        ch.atk += 2
-        ch.def_ += 2
+    _level_up(ch)
+
+
+def _dy(battle, team):
+    """dY of the foes `team` beat: L for a soldier, 2L for a general (ar.java:1663-1698)."""
+    return sum(R.kill_value(f.level, f.general) for f in battle.beaten if f.team != team)
+
+
+def duel_rewards(ch, battle, my_slot, rng):
+    """Apply the result of a finished duel (1v1 or 2v2) to the character; returns the 1032
+    fields (rank is filled in by the caller). A fighter beaten counts as a general killed in
+    the single player: Fame dY, EXP 2 dY (c.java:1616-1641), and the gold bag of a kill
+    without a drop, 20 gold at 25 % (ar.java:2075-2077). A loss pays nothing, like a death
+    in the single player."""
+    me = battle.fighters[my_slot]
+    win = battle.winner() == me.team
+    if win:
+        dy = _dy(battle, me.team)
+        fame, exp = dy, 2 * dy
+        gold = sum(20 for f in battle.beaten if f.team != me.team and rng.random() < 0.25)
+        # grades are the multiplayer's own (l.eL D+..A+): HP left and a quick win (made up)
+        grade = min(GRADE_TOP, me.hp * 10 // me.max_hp + (2 if battle.round <= 5 else 0))
+        ch.wins += 1
+        ch.duel_grade = min(GRADE_TOP, ch.duel_grade + 1)
+    else:
+        grade = gold = fame = exp = 0
+        ch.losses += 1
+        ch.duel_grade = max(0, ch.duel_grade - 1)
+    _pay(ch, gold, fame, exp)
     return {"win": 1 if win else 0, "gold": gold, "grade": grade, "fame": fame, "exp": exp,
             "loot": "NONE"}
 
@@ -343,38 +408,46 @@ def mission_stages(progress):
     return 2 + min(4, progress // 6)
 
 
+SOLDIER_KINDS = (0, 0, 1, 2)           # swordsmen more often than archers and squads
+
+
 def monster(rng, me, slot, stage, stages):
-    """A monster of wave `stage` of `stages`: weaker than a fighter, stronger every wave."""
-    k = 0.5 + 0.3 * stage / stages
-    return Fighter(slot=slot, name=rng.choice(MONSTER_NAMES), level=max(1, me.level - 2 + stage),
-                   max_hp=max(10, int(me.max_hp * 0.8 * k)), atk=max(1, int(me.atk * 1.1 * k)),
-                   def_=max(1, int(me.def_ * 0.8 * k)), skills={}, slots=[], face=0, weapon=0,
+    """A monster is a single-player soldier (c.java:1017-1039): its level around mine."""
+    level = R.soldier_level(rng, me.level)
+    st = R.soldier_stats(rng.choice(SOLDIER_KINDS), level)
+    return Fighter(slot=slot, name=rng.choice(MONSTER_NAMES), level=level, max_hp=st["hp"],
+                   atk=st["atk"], def_=st["def"], skills={}, slots=[], face=0, weapon=0,
                    cpu=True, monster=True)
 
 
 def mission_wave(rng, me, stage, stages):
-    """The foes of one stage at slots 1 and 3: monsters, the last stage has a CPU fighter."""
+    """The foes of one stage at slots 1 and 3: soldiers; the last stage has a CPU fighter, the
+    mission's boss."""
     foes = [monster(rng, me, 1, stage, stages), monster(rng, me, 3, stage, stages)]
     if stage == stages:
-        foes[0] = cpu_fighter(rng, me, 1, ally=True)    # the "ally" scale: a bit weaker
+        foes[0] = cpu_fighter(rng, me, 1)
     return foes
 
 
+def mission_gold_rate(stages):
+    """h of sideinfo.arr (3..15) for 2..6 stages."""
+    return 3 * (stages - 1)
+
+
 def mission_rewards(ch, battle, my_slot, rng, cleared, stages):
-    """1032 for a mission (bz 2): no wins/losses (g:2313); grade by stages and HP left."""
+    """1032 for a mission (bz 2): no wins/losses (g:2313). Accomplished: the single player's
+    mission end (c.java:1603, 1616-1641), Fame dY, EXP 2 (dY + dY/20 in time), gold h * 150.
+    Failed: nothing, like "Mission fail!" in the single player."""
     me = battle.fighters[my_slot]
     win = cleared == stages
     if win:
+        dy = _dy(battle, me.team)
+        fame, exp, gold = R.mission_end(dy, battle.round <= 6 * stages, mission_gold_rate(stages))
+        # grade: the multiplayer's own (made up): stages and HP left
         grade = min(GRADE_TOP, 3 + stages // 2 + me.hp * 4 // max(1, me.max_hp))
         ch.mission_grade = max(ch.mission_grade, grade)
     else:
-        grade = 0
-    lvl = max(f.level for f in battle.fighters.values())
-    gold = cleared * (30 + 8 * lvl) + rng.randrange(20) * cleared
-    exp = cleared * (15 + 4 * lvl)
-    fame = cleared * 3 + (10 if win else 0)
-    ch.gold += gold
-    ch.mp_fame += fame
-    ch.mp_exp += exp
+        grade = gold = fame = exp = 0
+    _pay(ch, gold, fame, exp)
     return {"win": 1 if win else 0, "gold": gold, "grade": grade, "fame": fame, "exp": exp,
             "loot": "NONE"}
