@@ -17,7 +17,7 @@ def _mp_shot():
 
 
 @pytest.mark.parametrize("name", ["mp_login", "mp_menu", "mp_character", "mp_ranking", "mp_options",
-                                  "mp_duel"])
+                                  "mp_duel", "mp_duel2"])
 def test_scenario_runs(name, tmp_path):
     mp_shot = _mp_shot()
     saved, frames = mp_shot.run(mp_shot.parse(SCEN / (name + ".keys")), tmp_path / "out",

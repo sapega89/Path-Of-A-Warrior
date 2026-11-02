@@ -259,8 +259,8 @@ Please select» на екрані 6 — дослівно з Java (`de - 90 - b*2
 
 Окрема гра «Path of a Warrior Multiplayer» (Duel 1-на-1 / 2-на-2, Challenge, місії, рейтинги).
 Розбір jar: `docs/analysis/06_multiplayer.md`. Готові протокол, сервер для меню, ресурси і клієнт
-(логін, Main Menu, Character, Ranking, Options, Help) і Duel 1-на-1 проти CPU-бійця (сервер рахує
-ходи в `pow_server/battle.py`). Ще немає: 2-на-2, місій, Challenge і PvP між людьми.
+(логін, Main Menu, Character, Ranking, Options, Help), Duel 1-на-1 і 2-на-2 (з CPU-союзником) проти
+CPU-бійців (сервер рахує ходи в `pow_server/battle.py`). Ще немає: місій, Challenge і PvP між людьми.
 
 - `assets_mp/` — ресурси з jar мультиплеєра (PNG, SP2, звук, маніфест; без класів і DRM Movaya).
 - `mp_java/` — декомпільований клієнт (CFR 0.152), довідка для дослівного переносу; рядки `g:NNNN`
@@ -285,6 +285,7 @@ python mp_main.py                                  # клієнт із серв�
 POW_MP_SERVER=ws://localhost:28200 python mp_main.py   # клієнт до окремого сервера
 python tools/mp_shot.py tools/scenarios/mp_menu.keys   # скріншоти в shots/mp_menu/
 python tools/mp_shot.py tools/scenarios/mp_duel.keys   # дуель із CPU до екрана результату
+python tools/mp_shot.py tools/scenarios/mp_duel2.keys  # 2-на-2
 ```
 
 Відмінності від оригіналу (PORT-EXTRA, у кінці пакетів, оригінальний jar їх ігнорує):
@@ -302,7 +303,9 @@ python tools/mp_shot.py tools/scenarios/mp_duel.keys   # дуель із CPU д�
 - 1026 має поле `bar_speed` (поки 0: клієнт, як оригінал, сам обирає швидкість смуги).
 - Ціни навичок у MP (`pow_server/model.py SKILL_COST`) і стартові стати вигадані: серверні дані
   оригіналу втрачено разом із сервером.
-- `512` з режимом 1 (2-на-2) і 2 (місія) та `768` (виклик) поки відповідають «Too many users online».
+- `512` з режимом 2 (місія) та `768` (виклик) поки відповідають «Too many users online».
+- 2-на-2: я в слоті 0, CPU-союзник у 2 (трохи слабший), вороги в 1 і 3. Коли я падаю, клієнт
+  чекає 1032 (g:683-684), тож решту бою CPU-бійці доводять на сервері; переможе команда.
 - Бій (`pow_server/battle.py`) вигаданий, бо його рахував сервер: порядок за MP, шкода
   `Atk·(0.5 + hit%/100)·1.3·сила_навички − Def/2` (Defend ×0.4, Evade 45 % ухилитися), MP +20 за атаку,
   +10 за отриманий удар, +15 за Defend/Evade. CPU атакує, захищається, лікується й б'є навичками.

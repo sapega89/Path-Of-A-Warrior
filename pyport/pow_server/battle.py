@@ -95,11 +95,12 @@ def from_character(ch, slot):
                    quote_start=ch.quote_start, quote_win=ch.quote_win)
 
 
-def cpu_fighter(rng, me, slot):
-    """A CPU opponent for the fighter `me`: within 2 levels and scaled to its stats (an imported
-    single-player hero can have hundreds of HP). The original: ±20 levels, decided by the server."""
+def cpu_fighter(rng, me, slot, ally=False):
+    """A CPU fighter next to or against `me`: within 2 levels and scaled to its stats (an imported
+    single-player hero can have hundreds of HP). The original: ±20 levels, decided by the server.
+    An ally is a bit weaker than a foe so that the player's own play still decides 2v2."""
     level = max(1, me.level + rng.randint(-2, 1))
-    k = 1.0 + 0.05 * (level - me.level)
+    k = (1.0 + 0.05 * (level - me.level)) * (0.85 if ally else 1.0)
     pool = [WIND, STORM, THUNDER, HEAL_MED, TIDE, SOUL_DEVIL, WAVE, SOUL_GUARD, HEAL_MAX]
     n = min(len(pool), 1 + level // 3)
     skills = {s: max(1, level // 4) for s in pool[:n]}
@@ -157,6 +158,12 @@ class Battle:
 
     def foes(self, f):
         return [g for g in self.fighters.values() if g.alive and g.team != f.team]
+
+    def finish(self, max_rounds=60):
+        """Let the CPU fighters play the rest (the human side has no one left to choose)."""
+        while not self.over and max_rounds > 0:
+            self.resolve({})
+            max_rounds -= 1
 
     # --- one round ------------------------------------------------------------
     def resolve(self, choices):
@@ -277,14 +284,14 @@ GRADE_TOP = 9                            # l.eL: D+ .. A+
 
 
 def duel_rewards(ch, battle, my_slot, rng):
-    """Apply the result of a finished duel to the character; returns the 1032 fields
-    (rank is filled in by the caller, it needs the whole table)."""
+    """Apply the result of a finished duel (1v1 or 2v2) to the character; returns the 1032
+    fields (rank is filled in by the caller, it needs the whole table). 2v2 pays a bit more."""
     me = battle.fighters[my_slot]
-    foe = next(f for f in battle.fighters.values() if f.team != me.team)
+    foe = max((f for f in battle.fighters.values() if f.team != me.team), key=lambda f: f.level)
     win = battle.winner() == me.team
     if win:
         grade = min(GRADE_TOP, me.hp * 10 // me.max_hp + (2 if battle.round <= 5 else 0))
-        gold = 40 + 10 * foe.level + rng.randrange(20)
+        gold = (40 + 10 * foe.level + rng.randrange(20)) * (3 if battle.mode == 1 else 2) // 2
         exp, fame = 20 + 5 * foe.level, 10 + foe.level
         ch.wins += 1
         ch.duel_grade = min(GRADE_TOP, ch.duel_grade + 1)

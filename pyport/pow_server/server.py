@@ -243,23 +243,35 @@ class Session:
 
     # --- rooms and battles ----------------------------------------------------------
     def on_match(self, msg):           # 512 -> 513, 514 per other fighter, 1024
-        if msg.get("mode") != 0 or self.battle is not None:
-            return self.send(M.MATCH_ANS, st=-11)   # cw8 "Too many users online": 2v2 / missions later
+        mode = msg.get("mode")
+        if mode not in (0, 1) or self.battle is not None:
+            return self.send(M.MATCH_ANS, st=-11)   # cw8 "Too many users online": missions later
         rng = self.server.rng
         me = B.from_character(self.char, 0)
-        foe = B.cpu_fighter(rng, me, 1)
-        self.battle, self.slot = B.Battle(rng, [me, foe], mode=0), 0
+        # slot % 2 = team, slot // 2 = row (06 §2.6): 1v1 uses 0/1, 2v2 adds an ally at 2, a foe at 3
+        others = [B.cpu_fighter(rng, me, 1)]
+        if mode == 1:
+            others += [B.cpu_fighter(rng, me, 2, ally=True), B.cpu_fighter(rng, me, 3)]
+        names = rng.sample(B.CPU_NAMES, len(others))     # no two CPU fighters share a name
+        for f, name in zip(others, names):
+            f.name = name
+        self.battle, self.slot = B.Battle(rng, [me] + others, mode=mode), 0
         # 513 before 514: O() clears the fighter list (06 §2.6); the client adds itself from 263
-        self.send(M.MATCH_ANS, st=1, bg=self.battle.bg, slot=0, mode=0, unk=0)
-        self.send(M.ROOM_JOIN, st=1, **foe.wire())
+        self.send(M.MATCH_ANS, st=1, bg=self.battle.bg, slot=0, mode=mode, unk=0)
+        for f in others:
+            self.send(M.ROOM_JOIN, st=1, **f.wire())
         self.send(M.ALL_READY, st=1)
 
     def on_round_ready(self, msg):     # 1025 -> 1026 next round, or 1032 when it is over
         b = self.battle
         if b is None:
             return
-        if not b.over:
+        me = b.fighters[self.slot]
+        if not b.over and me.alive:
             return self.send(M.ROUND_START, st=1, bar_speed=0)
+        # 2v2: once I fall the client stops (bW[0] == 0 -> 103, g:683-684) and waits for 1032,
+        # so the CPU fighters left fight it out here
+        b.finish()
         res = B.duel_rewards(self.char, b, self.slot, self.server.rng)
         self.battle = None
         self.save()
