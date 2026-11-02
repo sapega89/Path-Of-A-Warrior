@@ -11,7 +11,9 @@ not the manifest's GAMEVIL_SERVER (dead).
 
 PORT-EXTRA (pow_server/messages.py): the token of 279 is kept in RMS "pow_mp_token" and
 appended to every 262; a 263 with status -3 (token refused) forgets it and the saved UserID,
-so the next start shows the Login screen.
+so the next start shows the Login screen. After the token every 262 carries the hero of the
+single-player save (task 9.10, pow_mp/sp_bridge.py), and a 1032 (battle end) adds its gold,
+fame and exp to that save.
 """
 import struct
 
@@ -138,9 +140,10 @@ class h:
         h.g = True
         if buf is None or h.b is None:
             return
-        if struct.unpack_from("<H", buf)[0] == 262:      # PORT-EXTRA: session token
+        if struct.unpack_from("<H", buf)[0] == 262:      # PORT-EXTRA: session token + SP hero
             tok = (h.token() or "").encode("ascii")[:16]
             buf += tok + b"\0" * (16 - len(tok))
+            buf += h._sp_hero()
         h.b.send(struct.pack("<H", len(buf) + 2) + bytes(buf))
 
     # --- PORT-EXTRA: the session token -------------------------------------------------
@@ -168,10 +171,29 @@ class h:
             print("token not saved:", ex)
 
     @staticmethod
+    def _sp_hero():
+        """The SP_HERO tail of 262 (pow_server/messages.py); sp = 0 without a single-player save."""
+        from pow_mp import sp_bridge
+        from pow_server import codec_bin, messages as M
+        hero = sp_bridge.hero(sp_bridge.read_save())
+        msg = {"sp": 0} if hero is None else dict({"sp": 1}, **{"sp_" + k: v for k, v in hero.items()})
+        buf = bytearray()
+        try:
+            codec_bin._encode_fields(buf, M.SP_HERO, msg)
+        except Exception:
+            buf = bytearray()
+            codec_bin._encode_fields(buf, M.SP_HERO, {"sp": 0})
+        return bytes(buf)
+
+    @staticmethod
     def _port_extra_in(payload):
         if len(payload) < 3:
             return
         op, st = struct.unpack_from("<Hb", payload)
+        if op == 1032 and st == 1 and len(payload) >= 12:   # win u8, gold s16, grade u8, fame s16, exp s16
+            from pow_mp import sp_bridge
+            gold, _, fame, exp = struct.unpack_from("<hBhh", payload, 4)
+            sp_bridge.add_rewards(gold, fame, exp)
         if op == 279 and st == 1 and len(payload) >= 19:
             h._save_token(payload[3:19].split(b"\0")[0].decode("ascii", "replace"))
         elif op == 263 and st == -3:

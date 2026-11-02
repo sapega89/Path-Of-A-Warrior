@@ -15,7 +15,7 @@ import re
 import time
 
 from pow_server import battle as B, codec_bin, messages as M
-from pow_server.model import default_character, valid_slots
+from pow_server.model import apply_sp_hero, default_character, valid_slots
 from pow_server.storage import open_storage
 
 _ID_RE = re.compile(r"^[A-Z]{4,12}$")          # Login screen: A-Z, 4..12 (g:4888-4926)
@@ -124,6 +124,8 @@ class Session:
             old.close()
         self.user = uid
         self.char = st.load(uid) or default_character(uid)
+        if apply_sp_hero(self.char, msg):        # PORT-EXTRA: the single-player hero (9.10)
+            self.save()
         self.server.online[uid] = self
         pages = 0
         if self.server.notices and self.char.notices_seen < self.server.notices_version:
@@ -245,7 +247,7 @@ class Session:
             return self.send(M.MATCH_ANS, st=-11)   # cw8 "Too many users online": 2v2 / missions later
         rng = self.server.rng
         me = B.from_character(self.char, 0)
-        foe = B.cpu_fighter(rng, self.char.level, 1)
+        foe = B.cpu_fighter(rng, me, 1)
         self.battle, self.slot = B.Battle(rng, [me, foe], mode=0), 0
         # 513 before 514: O() clears the fighter list (06 §2.6); the client adds itself from 263
         self.send(M.MATCH_ANS, st=1, bg=self.battle.bg, slot=0, mode=0, unk=0)

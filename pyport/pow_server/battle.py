@@ -95,15 +95,18 @@ def from_character(ch, slot):
                    quote_start=ch.quote_start, quote_win=ch.quote_win)
 
 
-def cpu_fighter(rng, level, slot):
-    """A CPU opponent within 2 levels of the player (the original: ±20, decided by the server)."""
-    level = max(1, level + rng.randint(-2, 1))
+def cpu_fighter(rng, me, slot):
+    """A CPU opponent for the fighter `me`: within 2 levels and scaled to its stats (an imported
+    single-player hero can have hundreds of HP). The original: ±20 levels, decided by the server."""
+    level = max(1, me.level + rng.randint(-2, 1))
+    k = 1.0 + 0.05 * (level - me.level)
     pool = [WIND, STORM, THUNDER, HEAL_MED, TIDE, SOUL_DEVIL, WAVE, SOUL_GUARD, HEAL_MAX]
     n = min(len(pool), 1 + level // 3)
     skills = {s: max(1, level // 4) for s in pool[:n]}
     q = rng.choice(CPU_QUOTES)
     return Fighter(slot=slot, name=rng.choice(CPU_NAMES), level=level,
-                   max_hp=100 + 12 * level, atk=10 + 2 * level, def_=8 + 2 * level,
+                   max_hp=max(10, int(me.max_hp * 1.15 * k)), atk=max(1, int(me.atk * 1.3 * k)),
+                   def_=max(1, int(me.def_ * k)),
                    skills=skills, slots=list(skills)[:4], face=rng.randrange(4),
                    weapon=rng.randrange(2), cpu=True, wins=rng.randrange(5 * level + 1),
                    losses=rng.randrange(5 * level + 1), quote_start=q[0], quote_win=q[1])
@@ -293,7 +296,9 @@ def duel_rewards(ch, battle, my_slot, rng):
     ch.gold += gold
     ch.mp_fame += fame
     ch.mp_exp += exp
-    while ch.mp_exp >= ch.level * 100:                 # level up: placeholders like the rest
+    while not ch.sp_linked and ch.mp_exp >= ch.level * 100:
+        # level up of a hero without a single-player save (placeholders like the rest); an
+        # imported hero levels up in the single player, which gets the exp (pow_mp/sp_bridge)
         ch.mp_exp -= ch.level * 100
         ch.level += 1
         ch.hp += 10
