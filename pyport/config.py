@@ -43,6 +43,15 @@ DECOMP_FIX = {
     "F11": True,  # e.T(int) stat cursor: decompiled `a(.., bool, bool, bool)` = colour 0x010101 -> 255,255,255
 }
 
+# ORIG-BUG: bugs of the original game itself (not of the decompiler), fixed on request. True =
+# fixed, False = the original's behaviour. Each place is marked `# ORIG-BUG Bn`.
+ORIG_BUG = {
+    "B1": True,  # ag.J(id) 3424-3457: Rare items (501-518) read shinki.arr at row id-301 -> 0 stats
+    "B2": True,  # ag.Y() level read from the save as a signed byte: Lv128+ comes back negative
+    "B3": True,  # e.java 790-801 Visiting with 504 Emperor's Seal: the list fn[2] of all 44 generals
+                 # is never filled (visitgen.arr)
+}
+
 # Re-raise exceptions inside the game loop (Java would print "--run:" and continue).
 DEBUG = os.environ.get("POW_DEBUG", "1") == "1"
 
