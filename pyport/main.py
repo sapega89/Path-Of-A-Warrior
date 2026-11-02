@@ -2,6 +2,8 @@
 
     python pyport/main.py            # window 480x640 (POW_SCALE=3 -> 720x960)
     python -m pygbag build/web       # browser, see tools/build_web.py
+    POW_LIVE_SERVER=ws://host:28200/live   Gamevil Live on `python -m pow_server` (default: inside
+                                     the game); browser: index.html?live=wss://host:port/live
 """
 import asyncio
 import os
@@ -46,7 +48,22 @@ def demo_save():
         print("demo save created (Continue -> Game Menu)")
 
 
+def live_from_page():
+    """Browser: ?live=ws(s)://host:port/live in the page address picks the Gamevil Live server."""
+    if sys.platform != "emscripten":
+        return
+    try:
+        import platform
+        where = platform.window.URLSearchParams.new(platform.window.location.search).get("live")
+        if where:
+            config.LIVE_SERVER = str(where)
+            print("Gamevil Live server:", config.LIVE_SERVER)
+    except Exception as ex:
+        print("Gamevil Live server from the page address: %r" % ex)
+
+
 async def main():
+    live_from_page()
     display.init(headless=os.environ.get("SDL_VIDEODRIVER") == "dummy")
     watchdog.start()
     rms_selftest()

@@ -67,7 +67,8 @@ class ag(AgFields, Canvas):
         from pow.game.e import e
         from pow.game.k import k
         from pow.game.c import c
-        from pow.game.stubs import as_stub, m_stub
+        from pow.game.as_ import as_
+        from pow.game.m import m
         from pow.game.ar import ar
         from pow.midp.jrandom import Random
         self.r_v()
@@ -112,8 +113,8 @@ class ag(AgFields, Canvas):
         ag.by = Random()
         ag.bU = self.d_T("softbg")
         ag.bg = k(ag.bs)
-        ag.be = as_stub()          # NOT-PORTED: as.java (Gamevil Live) - phase 7
-        as_stub.a = m_stub()
+        ag.be = as_()
+        as_.a = m()
         ag.bb = e()
         ag.bc = ar()               # ar.java: the map (phase 3); the combat parts raise NotPorted
         ag.bd = c()                # c.java: story player, map; the combat parts raise NotPorted
@@ -134,7 +135,9 @@ class ag(AgFields, Canvas):
                 ag.bf.b_v()
                 return
         elif ag.bV == 11:
-            not_ported("as.t (Gamevil Live keys)")
+            from pow.game.as_ import as_
+            if not as_.gu:
+                ag.be.t_I(ag.ch)
 
     @staticmethod
     def b_T(paramString):  # ag.java:687-689
@@ -185,7 +188,7 @@ class ag(AgFields, Canvas):
                 if ag.bg is not None:
                     ag.bg.a_v()
                 self.u_v()
-                ag.be.i()
+                ag.be.i_v()
                 ag.ch = -999
                 if ag.bQ:
                     self.b_Z(ag.bR)
@@ -269,7 +272,9 @@ class ag(AgFields, Canvas):
         else:
             ag.f_I(300)
             ag.ck = 1
-            # if (be != null) as.aJ();   NOT-PORTED (Gamevil Live)
+            if ag.be is not None:
+                from pow.game.as_ import as_
+                as_.aJ()
             k.a.d_v()
             if ag.bV == 2 and ag.cM[0] == 4:
                 ag.ck = 2
@@ -537,8 +542,13 @@ class ag(AgFields, Canvas):
                 ag.cS.b_v()
             self.L_v()
         elif v == 11:
-            not_ported("as.aK (Gamevil Live)")
-        # if (be != null && as.gu) be.j();   - Gamevil Live overlay, as.gu is always false offline
+            if ag.be is not None:
+                from pow.game.as_ import as_
+                as_.aK()
+        if ag.be is not None:
+            from pow.game.as_ import as_
+            if as_.gu:
+                ag.be.j_v()
         ag.cj = -999
 
     @staticmethod
@@ -1201,6 +1211,51 @@ class ag(AgFields, Canvas):
     @staticmethod
     def M_I(paramInt):  # ag.java:3538-3540
         return ag.bG.a_I(paramInt)
+
+    @staticmethod
+    def N_I(paramInt):  # ag.java:3549-3574  (key code '0'..'9' -> digit, else -1)
+        if 48 <= paramInt <= 57:
+            return paramInt - 48
+        return -1
+
+    @staticmethod
+    def H_I(paramInt):  # ag.java:3081-3098  (add exp; returns the levels gained)
+        arrayOfInt = [0] * 10
+        b = 0
+        paramInt += ag.cz.G
+        while True:
+            j = b % 10
+            if j == 0:
+                arrayOfInt = ag.bb.p_v()
+            j = arrayOfInt[j]
+            if paramInt < j:
+                ag.cz.G = paramInt
+                return b
+            paramInt -= j
+            ag.cz.l += 1
+            ag.cz.J += 3
+            b += 1
+
+    @staticmethod
+    def e_T(paramString):  # ag.java:3148-3153  (trim trailing spaces; sic: one char left -> "")
+        m = len(paramString) - 1
+        while m >= 0 and paramString[m] == ' ':
+            m -= 1
+        return "" if m == 0 else paramString[:m + 1]
+
+    @staticmethod
+    def f_T(paramString):  # ag.java:3155-3160  (up to the first control character)
+        b = 0
+        while b < len(paramString) and paramString[b] >= ' ':
+            b += 1
+        return "" if b == 0 else paramString[:b]
+
+    @staticmethod
+    def g_T(paramString):  # ag.java:3162-3167  (up to the first space)
+        b = 0
+        while b < len(paramString) and paramString[b] != ' ':
+            b += 1
+        return "" if b == 0 else paramString[:b]
 
     # ---- New Game: hero creation (screens 29 / 6 / 7 / 8) and the save writer ------------
 

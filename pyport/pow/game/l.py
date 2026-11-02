@@ -395,8 +395,78 @@ class l(ag):
                 self.d = 10
             self.j = 1
 
-    def d_I(self, paramInt):  # l.java:506-598
-        not_ported("l.d(int) (gamestr popups)")
+    def d_I(self, paramInt):  # l.java:506-598  (gamestr popup N: text gamestr[N+15], kind from its first digit)
+        from pow.game.e import e
+        self.a = 1
+        self.s = False
+        if ag.bV == 3:
+            ag.ck = 1
+        else:
+            ag.cS.j = 1
+        self.k = 0
+        self.b_ = i16(paramInt)
+        str1 = ag.M_I(paramInt + 15)
+        c = str1[0]
+        if '0' <= c <= '9':
+            self.b = i16(ord(c) - 48)
+            if self.b != 2:
+                self.b = 10
+            str2 = str1[1:]
+        else:
+            self.b = 10
+            str2 = str1
+        self.d = 200
+        i = len(str2)
+        b2 = 0
+        j = 0
+        for b1 in range(i + 1):
+            if b1 == i or str2[b1] == '\\':
+                if j == b1:
+                    self.l[b2] = " "
+                else:
+                    self.l[b2] = str2[j:b1]
+                b2 += 1
+                j = b1 + 1
+        self.i = i16(b2)
+        if paramInt == 53:
+            self.i = 4
+            self.l[0] = self.m
+            self.l[1] = self.n
+            self.l[2] = self.o
+            self.l[3] = self.p
+        elif paramInt == 34:
+            self.l[0] = e.c_I(ag.fK[19])
+            self.l[1] = self.l[1] + self.m
+        elif paramInt == 35:
+            self.l[1] = self.l[1] + " " + e.c_I(ag.fK[19])
+        elif paramInt == 39:
+            self.l[3] = self.m + "?"
+        elif paramInt == 40:
+            self.l[0] = self.m
+        elif paramInt == 41:
+            self.l[0] = self.m + " " + self.l[0]
+            self.l[1] = self.n + " " + self.l[1]
+            self.l[4] = self.o + " Level up"
+        elif paramInt == 49:
+            self.l[1] = self.n
+            self.l[2] = self.m
+            self.i = 3
+        elif paramInt == 54:
+            self.l[0] = "You can't use the ID."
+            self.i = 1
+        self.h = i16(20 * self.i + (self.i - 1 << 1))
+        if self.b == 2:
+            self.h = i16(self.h + 25)
+        elif self.b == 3:
+            self.h = 140
+        elif self.b == 4:
+            self.h = 150
+        elif self.b == 10:
+            self.h = i16(self.h + 30)
+        ag.ck = 1
+        if ag.be is not None:
+            from pow.game.as_ import as_
+            as_.aJ()
 
     @staticmethod
     def d_v():  # l.java:498-500  (Blacksmith: bought)

@@ -84,3 +84,37 @@ def test_websocket_and_tcp_end_to_end():
             task.cancel()
 
     asyncio.run(run())
+
+
+def test_gamevil_live_on_the_ws_path_and_its_tcp_port():
+    """PHASE_7: /live is the single player's Gamevil Live (pow_server/live.py); it shares the
+    accounts with the multiplayer server."""
+    pytest.importorskip("websockets")
+    import struct
+    from pow_server.ws_server import serve
+    login = struct.pack("<H", 530) + b"WEBUSER".ljust(12, b"\0") + b"5678".ljust(16, b"\0") + b"1501" + bytes(8)
+
+    async def run():
+        ready = asyncio.get_running_loop().create_future()
+        task = asyncio.ensure_future(serve("127.0.0.1", 0, ":memory:", live_tcp_port=0, ready=ready))
+        server, (ws_port, live_port) = await asyncio.wait_for(ready, 5)
+        try:
+            t = WebSocketTransport("ws://127.0.0.1:%d/live" % ws_port)
+            t.open()
+            await _wait(lambda: t.connected)
+            t.send(codec_bin.frame(login))
+            got = []
+            await _wait(lambda: got.extend(t.poll()) or got)
+            assert struct.unpack_from("<HbBBB", got[0]) == (531, 1, 0, 0, 0)     # registered
+            assert server.storage.has_account("WEBUSER")
+            t.close()
+            r, w = await asyncio.open_connection("127.0.0.1", live_port)
+            w.write(codec_bin.frame(login))
+            await w.drain()
+            n = int.from_bytes(await r.readexactly(2), "little")
+            assert struct.unpack("<HbBBB", await r.readexactly(n - 2)) == (531, 1, 0, 0, 2)
+            w.close()
+        finally:
+            task.cancel()
+
+    asyncio.run(run())
