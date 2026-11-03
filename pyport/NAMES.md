@@ -927,6 +927,13 @@ Java-джерела: `pyport/mp_java/*.java` у гілці `java-reference`.
 | Java | Модуль | Клас | Що це |
 |---|---|---|---|
 | `g` | `pow_mp/mp_canvas.py` | `MpCanvas` | канвас: екрани, меню, бої |
+| `g` (частина) | `pow_mp/mp_canvas_draw.py` | `DrawMixin` | примітиви: текст, прямокутники, лінії, половинки зображень, числа, рамки, кнопки |
+| `g` (частина) | `pow_mp/mp_canvas_battle.py` | `BattleMixin` | бій: ходи, бійці й анімації, смуга таймінгу, шкода, HP, картки дій |
+| `g` (частина) | `pow_mp/mp_canvas_net.py` | `NetMixin` | з'єднання: запити, відповіді `on_answer`, логін, розриви, помилки |
+| `g` (частина) | `pow_mp/mp_canvas_input.py` | `InputMixin` | клавіші: меню, так/ні, попапи, сітка літер для імені й id |
+| `g` (частина) | `pow_mp/mp_canvas_screens.py` | `ScreensMixin` | екрани поза боєм: фони, вікна, рекорди, атрибути, скіли, довідка, помилка |
+| `g` (частина) | `pow_mp/mp_canvas_assets.py` | `AssetsMixin` | завантаження й звільнення зображень і спрайтів |
+| `g` (частина) | `pow_mp/mp_canvas_options.py` | `OptionsMixin` | опції в RecordStore, текстові хелпери, музика й гучність |
 | `m` | `pow_mp/mp_game.py` | `MpGame` | конкретний канвас (`m extends g`), музика меню |
 | `l` | `pow_mp/consts.py` | `Consts` | таблиці констант (інтерфейс `l`) |
 | `i` | `pow_mp/gfx.py` | `Gfx` | малювання, кліп, текст, CRC-32 |

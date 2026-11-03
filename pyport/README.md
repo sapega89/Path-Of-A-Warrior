@@ -431,7 +431,7 @@ CPU-бійців (сервер рахує ходи в `pow_server/battle.py`). �
   в `06_multiplayer.md` посилаються саме на цей `g.java`.
 - `pow_mp/` — клієнт: `sprite_frames.py` (SP2), `res_reader.py` (ресурси), `net/transport.py` — заміна
   сокета `h.java`: `LocalTransport` (сервер усередині гри) або `WebSocketTransport` (окремий сервер).
-  `mp_canvas.py` (g.java, екрани й бої), `mp_game.py`, `consts.py`, `gfx.py`, `font.py`, `draw.py`,
+  `mp_canvas.py` (g.java: цикл, стани, `paint_screen`; решту методів розкладено по міксинах `mp_canvas_*.py` — малювання, бій, мережа, клавіші, екрани, ресурси, опції), `mp_game.py`, `consts.py`, `gfx.py`, `font.py`, `draw.py`,
   `answer.py`, `frame_reader.py`, `frame_writer.py` колись згенеровано з `mp_java/` (гілка
   `java-reference`) конвертером `tools/j2py_mp.py`; тепер це звичайний код, який правлять руками
   (відповідність імен — у `NAMES.md`). `net_thread.py` (мережевий потік), `player_pool.py` (звук),
