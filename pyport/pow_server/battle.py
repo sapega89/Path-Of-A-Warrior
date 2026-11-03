@@ -64,6 +64,7 @@ class Fighter:
     general: bool = False                 # worth 2L when beaten, a soldier L (ar.java:1663-1698)
     build: dict = None                    # where the hero's stat points went (CPU fighters copy it)
     max_mp: int = 10                      # the hero's MP in the single player (skill costs)
+    keep_name: bool = False               # a server bot (server.py): its name is its UserID
     auto: bool = False                    # auto-battle: the bot chooses for this player
     last_action: int = ATTACK             # the bot does not take a stance twice in a row
     heals: int = 0                        # heals cast in this battle (the bot's HEAL_LIMIT)
