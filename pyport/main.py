@@ -4,6 +4,9 @@
     python -m pygbag build/web       # browser, see tools/build_web.py
     POW_LIVE_SERVER=ws://host:28200/live   Gamevil Live on `python -m pow_server` (default: inside
                                      the game); browser: index.html?live=wss://host:port/live
+    POW_SAVE_SERVER=auto                 the save also kept on that server (path /save) for the
+                                     Gamevil Live account; off / ws(s)://host:port/save;
+                                     browser: index.html?save=...
 
 Main Menu > Multiplayer > YES ends the single player and starts the Multiplayer game in the same
 window (mp_main.play; the server choice is POW_MP_SERVER / index.html?server=...). Its Exit comes
@@ -59,10 +62,14 @@ def live_from_page():
         return
     try:
         import platform
-        where = platform.window.URLSearchParams.new(platform.window.location.search).get("live")
+        params = platform.window.URLSearchParams.new(platform.window.location.search)
+        where = params.get("live")
         if where:
             config.LIVE_SERVER = str(where)
             print("Gamevil Live server:", config.LIVE_SERVER)
+        save = params.get("save")
+        if save:
+            config.SAVE_SERVER = str(save)
     except Exception as ex:
         print("Gamevil Live server from the page address: %r" % ex)
 
@@ -90,11 +97,17 @@ async def main():
     rms_selftest()
     if (config.DEMO_SAVE or "--demo" in sys.argv) and "--no-demo" not in sys.argv:
         demo_save()
+    from pow.game import cloud_save
+    # PORT-EXTRA: a newer save of this account from the server, before the hero is loaded
+    await cloud_save.boot()
     from pow.game.midlet import Midlet
     midlet = Midlet()
     try:
         await midlet.startApp()
-        if midlet.to_multiplayer and not (Midlet.canvas is not None and Midlet.canvas.quit_requested):
+        await cloud_save.flush()
+        if cloud_save.sync is not None and cloud_save.sync.restart_requested:
+            restart()                      # the server's hero replaced the one in memory
+        elif midlet.to_multiplayer and not (Midlet.canvas is not None and Midlet.canvas.quit_requested):
             import mp_main
             if await mp_main.play():
                 restart()

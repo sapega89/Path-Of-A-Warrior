@@ -15,13 +15,16 @@ The jar logs in again with a 262 without a token, so this needs --legacy (no tok
 Gamevil Live of the single player (pow_server/live.py) is on the same port at the path /live
 (ws://host:28200/live), and with --live-tcp-port on raw TCP for the original single-player jar
 (its GAMEVIL_PORT was 28230). It shares the accounts with the multiplayer server.
+
+PORT-EXTRA: the single player's saves (pow_server/cloud.py) are at the path /save
+(ws://host:28200/save), JSON text messages, on the same accounts.
 """
 import argparse
 import asyncio
 import logging
 import ssl
 
-from pow_server import codec_bin
+from pow_server import cloud, codec_bin
 from pow_server.live import LiveServer
 from pow_server.server import GameServer
 from pow_server.storage import Storage
@@ -78,6 +81,30 @@ async def handle_ws(server, ws):
         log.info("ws disconnect %s (%s)", peer, session.user)
 
 
+async def handle_text(server, ws):
+    """/save: one JSON text message per frame (pow_server/cloud.py)."""
+    out = asyncio.Queue()
+    session = server.connect(out.put_nowait)
+
+    async def writer():
+        while True:
+            await ws.send(await out.get())
+
+    task = asyncio.ensure_future(writer())
+    try:
+        async for data in ws:
+            if not isinstance(data, str) or len(data) > cloud.MAX_MESSAGE:
+                break
+            session.receive(data)
+        while not out.empty():
+            await ws.send(out.get_nowait())
+    except Exception as ex:                     # connection dropped
+        log.info("save ws: %r", ex)
+    finally:
+        session.close()
+        task.cancel()
+
+
 async def handle_tcp(server, reader, writer):
     session = server.connect(writer.write)
     buf = b""
@@ -108,15 +135,20 @@ async def handle_tcp(server, reader, writer):
 
 async def serve(host="0.0.0.0", port=28200, db="mp_server.sqlite", tcp_port=None, legacy=False,
                 ssl_context=None, ready=None, notices=(), bots=(), match_wait=None,
-                live_tcp_port=None):
+                live_tcp_port=None, server_bots=True):
     from websockets.asyncio.server import serve as ws_serve
     server = GameServer(Storage(db), require_token=not legacy, notices=notices)
     if match_wait is not None:
         server.match_wait = match_wait
+    if server_bots:                             # PORT-EXTRA: someone to Challenge when alone
+        server.add_bots()
     live = LiveServer(server.storage, notices=notices)
+    saves = cloud.CloudServer(server.storage)
 
     def route(ws):
         path = getattr(getattr(ws, "request", None), "path", "") or ""
+        if path.startswith("/save"):
+            return handle_text(saves, ws)
         return handle_ws(live if path.startswith("/live") else server, ws)
     if bots:
         from pow_server.bot import Bot
@@ -135,7 +167,7 @@ async def serve(host="0.0.0.0", port=28200, db="mp_server.sqlite", tcp_port=None
             await asyncio.sleep(1)
     ticker = asyncio.ensure_future(tick())      # noqa: F841 (kept alive with serve)
     async with ws_serve(route, host, port,
-                        max_size=MAX_FRAME, ssl=ssl_context) as wss:
+                        max_size=cloud.MAX_MESSAGE, ssl=ssl_context) as wss:
         tcp = None
         if tcp_port is not None:
             tcp = await asyncio.start_server(lambda r, w: handle_tcp(server, r, w), host, tcp_port)
@@ -166,6 +198,8 @@ def main(argv=None):
     ap.add_argument("--legacy", action="store_true", help="no session token check (original jar)")
     ap.add_argument("--bot", action="append", default=[], metavar="ID",
                     help="keep a scripted player online that accepts every Challenge (A-Z, 4-12)")
+    ap.add_argument("--no-server-bots", action="store_true",
+                    help="no server bots (BLADE, RAVEN, TIGER, SHADOW, IRONFIST) to Challenge")
     ap.add_argument("--match-wait", type=float, default=None, metavar="SEC",
                     help="how long a Duel waits for a live opponent before a CPU (default 60)")
     ap.add_argument("--live-tcp-port", type=int, default=None,
@@ -180,6 +214,7 @@ def main(argv=None):
         ctx.load_cert_chain(a.cert, a.key)
     try:
         asyncio.run(serve(a.host, a.port, a.db, a.tcp_port, a.legacy, ctx, bots=a.bot,
-                          match_wait=a.match_wait, live_tcp_port=a.live_tcp_port))
+                          match_wait=a.match_wait, live_tcp_port=a.live_tcp_port,
+                          server_bots=not a.no_server_bots))
     except KeyboardInterrupt:
         pass

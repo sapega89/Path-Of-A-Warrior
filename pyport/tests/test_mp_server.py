@@ -628,3 +628,55 @@ def test_no_invite_while_queued():
     a.ask(M.MATCH, mode=0)
     assert a.ask(M.INVITE, mode=0, id="BORYS")["st"] == -1
     assert a.session.room is None
+
+
+# --- PORT-EXTRA: server bots (bots when nobody is online) -----------------------------------
+def test_server_bots_can_be_challenged_alone(server):
+    server.add_bots()
+    server.add_bots()                                  # a restart finds the same accounts
+    a, prof = login(server, "ANDREY")
+    a.ask(M.INVITE, mode=0, id="BLADE")
+    assert _ops(a)[:3] == [M.INVITE_ANS, M.ROOM_JOIN, M.ALL_READY] and a.got[0]["st"] == 1
+    bot = a.got[1]
+    assert bot["name"] == "Blade" and 30 <= bot["face"] <= 33
+    assert abs(bot["level"] - prof["level"]) <= 2      # about my level
+    for _ in range(80):
+        ans = a.ask(M.ROUND_READY)
+        if ans["op"] == M.BATTLE_END:
+            break
+        a.ask(M.TURN, target=1, action=0, hit=88)
+    assert ans["op"] == M.BATTLE_END
+    ch = server.storage.load("ANDREY")
+    assert ch.wins + ch.losses == 1
+
+
+def test_server_bot_as_an_ally_and_in_2v2(server):
+    server.add_bots()
+    a, _ = login(server, "ANDREY")
+    a.ask(M.INVITE, mode=2, id="RAVEN")                # Invite An Ally to a mission
+    assert a.got[0]["op"] == M.INVITE_ANS and a.got[0]["mode"] == 2
+    joins = [m for m in a.got if m["op"] == M.ROOM_JOIN]
+    assert any(m["name"] == "Raven" and m["slot"] == 2 for m in joins)
+    assert a.got[-1]["op"] == M.STAGE_INFO
+    a.session.close()
+    a, _ = login(server, "ANDREY")
+    a.ask(M.INVITE, mode=1, id="TIGER")                # Challenge 2:2
+    joins = {m["slot"]: m["name"] for m in a.got if m["op"] == M.ROOM_JOIN}
+    assert sorted(joins) == [1, 2, 3] and joins[1] == "Tiger"
+    assert len(set(joins.values())) == 3
+
+
+def test_server_bots_in_ranking_and_locked(server):
+    server.add_bots()
+    a, _ = login(server, "ANDREY")
+    top = a.ask(M.RANK_LIST, code=11)["rows"]          # Top Rankers by Fame
+    assert [r["id"] for r in top] == ["BLADE", "RAVEN", "TIGER"]
+    c = Client(server)                                 # nobody can log in as a bot
+    assert c.ask(M.LOGIN_FIRST, id="BLADE", pwd="0000", ver=M.GAME_VER)["st"] == -1
+
+
+def test_server_bots_skip_a_players_id(server):
+    login(server, "BLADE")                             # a player got there first
+    server.add_bots()
+    assert "BLADE" not in server.bots and "RAVEN" in server.bots
+    assert not server.storage.load("BLADE").bot

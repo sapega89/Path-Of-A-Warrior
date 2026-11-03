@@ -10,6 +10,11 @@ Battles (Room below, resolved in pow_server/battle.py): Duel 1-on-1 / 2-on-2 aga
 fighters and Solo Mission (512 mode 0/1/2 -> 513, 514, 1024 or 1037), Challenge 1:1 / 2:2 and
 Invite An Ally between two players (768 -> 769 to me, 770 to the other player); 1025/1026,
 1027/1028 per round; stages 1031/1036/1037/1038; 1025 after the end -> 1032.
+
+PORT-EXTRA (asked by Andrey: bots when nobody is online): server bots (add_bots). They are
+accounts nobody can log in to, always "online" with Invitation: Accept, listed in the Ranking,
+so a player alone on the server can Challenge one or Invite one as an ally by its UserID. A bot
+fights as a CPU fighter of about the inviter's level (battle.cpu_fighter) under its own name.
 """
 import random
 import re
@@ -21,6 +26,9 @@ from pow_server.storage import open_storage
 
 MATCH_WAIT = 60                                # Andrey: a whole minute for a live opponent
 MATCH_LEVELS = (10, 20)                        # level reach at first / after half the wait
+# PORT-EXTRA: the standalone server's bots (UserID, display name, Ranking Fame / grades)
+DEFAULT_BOTS = (("BLADE", "Blade", 900), ("RAVEN", "Raven", 600), ("TIGER", "Tiger", 400),
+                ("SHADOW", "Shadow", 250), ("IRONFIST", "Ironfist", 100))
 _ID_RE = re.compile(r"^[A-Z]{4,12}$")          # Login screen: A-Z, 4..12 (g:4888-4926)
 _PWD_RE = re.compile(r"^[0-9]{4,12}$")         # password: digits, 4..12 (g:4930-4990)
 _NAME_RE = re.compile(r"^[A-Za-z0-9]{1,8}$")   # Display Name: A-Z / a-z keyboard (g:2820-2866)
@@ -46,6 +54,40 @@ class GameServer:
         self.online = {}               # user id -> Session
         self.match_wait = match_wait   # seconds a Duel waits for a live opponent, then a CPU
         self.queue = []                # [Session] waiting in 512 (oldest first)
+        self.bots = {}                 # PORT-EXTRA: UserID -> Character of a server bot
+
+    # --- PORT-EXTRA: server bots ---------------------------------------------------------
+    def add_bots(self, bots=DEFAULT_BOTS):
+        """Makes (or finds) the bot accounts. An ID a player already owns is skipped."""
+        import secrets
+        st = self.storage
+        for uid, name, fame in bots:
+            ch = st.load(uid) if st.has_account(uid) else None
+            if ch is None and st.has_account(uid):
+                continue
+            if ch is not None and not ch.bot:
+                continue                           # a player's account
+            if ch is None:
+                st.create_account(uid, "".join(secrets.choice("0123456789") for _ in range(12)))
+                ch = default_character(uid)
+                ch.bot = True
+                if st.name_taken(name, uid):
+                    name = ""
+                ch.name, ch.mp_fame = name, fame
+                ch.duel_grade = ch.mission_grade = min(9, fame // 100)
+                ch.wins, ch.losses = fame // 10, fame // 25
+                ch.quote_start, ch.quote_win = "Nobody else? Fight me!", "Come back stronger."
+                st.save(ch)
+            self.bots[uid] = ch
+
+    def bot_fighter(self, uid, me, slot, ally):
+        """A bot entering a room: a CPU fighter of about my level, with the bot's name."""
+        ch = self.bots[uid]
+        f = B.cpu_fighter(self.rng, me, slot, ally=ally)
+        f.name, f.keep_name = ch.name or uid[:8], True
+        f.wins, f.losses = ch.wins, ch.losses
+        f.quote_start, f.quote_win = ch.quote_start, ch.quote_win
+        return f
 
     # --- matchmaking (9.15) ----------------------------------------------------------
     def find_opponent(self, s, mode):
@@ -363,6 +405,8 @@ class Session:
             return self.send(M.INVITE_ANS, st=-12)
         if not self.server.storage.has_account(uid):
             return self.send(M.INVITE_ANS, st=-4)
+        if uid in self.server.bots and uid not in self.server.online:
+            return self._invite_bot(mode, uid)
         other = self.server.online.get(uid)
         if other is None or other.closed or other.char is None:
             return self.send(M.INVITE_ANS, st=-3)
@@ -378,6 +422,17 @@ class Session:
             fighters += [B.cpu_fighter(rng, me, 2, ally=True), B.cpu_fighter(rng, them, 3, ally=True)]
         progress = max(self.char.sp_progress, other.char.sp_progress)
         Room(self.server, mode, fighters, {0: self, them.slot: other}, progress).start()
+
+    def _invite_bot(self, mode, uid):
+        """PORT-EXTRA: Challenge / Invite An Ally a server bot. The same room as against the
+        CPU (start_vs_cpu), the bot in the invited player's place."""
+        srv, rng = self.server, self.server.rng
+        me = B.from_character(self.char, 0)
+        bot = srv.bot_fighter(uid, me, 2 if mode == 2 else 1, ally=mode == 2)
+        fighters = [me, bot]
+        if mode == 1:
+            fighters += [B.cpu_fighter(rng, me, 2, ally=True), B.cpu_fighter(rng, me, 3)]
+        Room(srv, mode, fighters, {0: self}, self.char.sp_progress, answer=M.INVITE_ANS).start()
 
     def on_stage_intro_done(self, msg):    # 1038 -> 1024 once every player has seen the intro
         if self.room is not None:
@@ -431,8 +486,8 @@ class Room:
     def _name_cpus(self, fighters, keep=()):
         """No two CPU fighters share a name, nor a player's (monsters keep theirs). `keep`:
         fighters already in the battle, whose names stay and are taken."""
-        taken = {f.name for f in fighters if not f.cpu} | {f.name for f in keep}
-        cpus = [f for f in fighters if f.cpu and not f.monster]
+        taken = {f.name for f in fighters if not f.cpu or f.keep_name} | {f.name for f in keep}
+        cpus = [f for f in fighters if f.cpu and not f.monster and not f.keep_name]
         names = [n for n in B.CPU_NAMES if n not in taken]
         for f, name in zip(cpus, self.server.rng.sample(names, len(cpus)), strict=True):
             f.name = name

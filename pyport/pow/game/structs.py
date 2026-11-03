@@ -1,5 +1,7 @@
 """Small Java data classes (h.java, z.java, n.java, ...). Generated once from the Java source;
 edited by hand since. Java -> Python names: pyport/NAMES.md."""
+import config
+
 
 class Point:  # h.java
     def __init__(self):
@@ -327,7 +329,7 @@ class Hero:  # n.java
         self.hotkeys = [0] * 5  # n.java:98 int[]
         self.skill_levels = [0] * 19  # n.java:100 int[]
         self.equipped = [None] * 9  # n.java:102 z[]
-        self.backpack = [None] * 25  # n.java:104 z[]
+        self.backpack = [None] * config.BACKPACK_SIZE  # n.java:104 z[25]; PORT-EXTRA config.BACKPACK_SIZE
         self.quick_slots = [None] * 5  # n.java:106 p[]
         self.quick_keys = [0] * 2  # n.java:108 int[]
         self.anims = [None] * 31  # n.java:110 short[][][]
@@ -367,7 +369,7 @@ class Hero:  # n.java
     def reset_inventory(self):  # n.java:130-144
         for b in range(9):
             self.equipped[b] = Item()
-        for b in range(25):
+        for b in range(config.BACKPACK_SIZE):
             self.backpack[b] = Item()
         for b in range(5):
             self.quick_slots[b] = QuickSlot()

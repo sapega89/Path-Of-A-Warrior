@@ -48,6 +48,7 @@ class Character:
     notices_seen: int = 0              # version of the notices last shown to this player
     sp_linked: bool = False            # the hero comes from the single-player save (9.10)
     sp_progress: int = 0               # single-player missions done (dy bits), for missions later
+    bot: bool = False                  # PORT-EXTRA: a server bot (server.py GameServer.add_bots)
 
     # --- what goes on the wire -------------------------------------------------
     def max_hp(self):

@@ -12,6 +12,10 @@ import config
 
 _IS_WEB = sys.platform == "emscripten"
 
+# PORT-EXTRA (server saves, pow/game/cloud_save.py): called with the store name after every
+# write to a store, so its new records can go to the server too.
+on_write = []
+
 
 class RecordStoreException(Exception):
     pass
@@ -62,6 +66,8 @@ class RecordStore:
 
     def _flush(self):
         _save_raw(self.name, json.dumps([base64.b64encode(bytes(r)).decode("ascii") for r in self.records]))
+        for fn in on_write:
+            fn(self.name)
 
     def getNumRecords(self):
         return len(self.records)

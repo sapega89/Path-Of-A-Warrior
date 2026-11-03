@@ -60,6 +60,11 @@ ORIG_BUG = {
 # Gamevil Live of the single player (pow_server/live.py): "local" = the server inside the game
 # (shares the accounts of the in-game multiplayer server), or ws(s)://host:28200/live.
 LIVE_SERVER = os.environ.get("POW_LIVE_SERVER", "local")
+# PORT-EXTRA (asked by Andrey): the single player's save also kept on the server
+# (pow/game/cloud_save.py, pow_server/cloud.py) for the Gamevil Live account. "auto" = the
+# server of LIVE_SERVER at the path /save when LIVE_SERVER is ws(s)://; "off"; or a
+# ws(s)://host:28200/save URL. Browser: index.html?save=...
+SAVE_SERVER = os.environ.get("POW_SAVE_SERVER", "auto")
 # PORT-EXTRA (PHASE_7 D3): the NPC market always sells these Rare items at these prices (the
 # data has 1 gold for both); without 502 / 504 only 71-82 of the 149 recipes can be crafted.
 LIVE_PRICE = {502: 3000, 504: 5000}
@@ -111,6 +116,18 @@ CHEAT = os.environ.get("POW_CHEAT", "0") == "1"
 VOLUME_CURVE = os.environ.get("POW_VOLUME_CURVE", "1") == "1"
 # PORT-EXTRA: POW_GOLD=N - after a save is loaded the hero has N gold (nothing else changes).
 GOLD = int(os.environ["POW_GOLD"]) if os.environ.get("POW_GOLD", "").isdigit() else None
+
+# PORT-EXTRA (asked by the player): a bigger backpack and Warehouse. The original had 25 backpack
+# cells (cz.Y, 5x5 in 2 pages) and 100 Warehouse cells (as.gw). The backpack beyond 25 is saved in an
+# extra block after the original save (game_canvas.save_game), so old saves load with the new cells
+# empty. Both must be multiples of 5 (grids of 5 columns); the Warehouse count goes in one byte.
+BACKPACK_SIZE = 45     # 3 pages of 3 rows in the Inventory
+WAREHOUSE_SIZE = 200
+
+# PORT-EXTRA (asked by the player): ar.P() (ar.java:2055-2078) above Lv69 switches to a drop row
+# without the two lowest tiers (Lv1 and Lv10 gear never drop). True = above Lv69 the drops keep
+# the odds of Lv45-69; False = the original.
+DROPS_AFTER_69 = True
 
 # PORT-EXTRA (asked by the player): auto-hunt on the mission map (pow/game/autopilot.py). The hero
 # walks to the nearest enemy, attacks, casts the skills on keys 1-5 and drinks the potions on * / #.

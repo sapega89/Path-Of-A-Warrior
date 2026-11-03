@@ -9,6 +9,8 @@ u = [ -1, 0, 1, 2, -1, -1, 29, 6, 7, 5, 0, 10, 0, 0, 13, -1, 13, 100, 13, 100, -
 v = [ 6, -1, -1, -1, -1, 8, -1, -1, 4, 3, 2, 4, 4, 5, 4, -1, 9, 25, 5, -1, -1, -1, -1, -1, -1, 25, -1, 8, -1, 2 ]
 if config.SCREEN_OPTION:   # PORT-EXTRA: Options gets a 4th row, Screen (full screen / window)
     v[9] = 4
+# PORT-EXTRA config.BACKPACK_SIZE: the Inventory (menu 17) has that many cells, not 25
+v[17] = config.BACKPACK_SIZE
 # ae.java:16-16  (int[])
 w = [ 1, 10, 25, 45, 70 ]
 # ae.java:18-18  (int[])
