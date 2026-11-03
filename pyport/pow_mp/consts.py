@@ -7,7 +7,7 @@ tools/j2py_mp.py; edited by hand since.
 
 
 
-class Consts(object):
+class Consts:
     speed_frame_ms = None  # l.java:5 int[]
     anim_first_frame = None  # l.java:6 int[]
     anim_length = None  # l.java:7 int[]

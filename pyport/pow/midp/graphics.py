@@ -62,7 +62,7 @@ class Image:
         if len(args) == 1 and isinstance(args[0], str):
             data = resources.read(args[0])
             if data is None:
-                raise IOError("resource not found: " + args[0])
+                raise OSError("resource not found: " + args[0])
             return Image(Image._prepare(_load_png(data, args[0])))
         if len(args) == 3 and isinstance(args[0], (bytes, bytearray)):
             data, off, ln = args

@@ -305,12 +305,12 @@ class MpCanvas(_Canvas):
 
     def init_screen(self):  # g.java:300
         MpCanvas.state_stack[0] = 1
-        _t1 = self.getWidth()
-        MpCanvas.canvas_w = _t1
-        MpCanvas.screen_w = _t1
-        _t2 = self.getHeight()
-        MpCanvas.canvas_h = _t2
-        MpCanvas.screen_h = _t2
+        width = self.getWidth()
+        MpCanvas.canvas_w = width
+        MpCanvas.screen_w = width
+        height = self.getHeight()
+        MpCanvas.canvas_h = height
+        MpCanvas.screen_h = height
         try:
             MpCanvas.app_version = MpCanvas.midlet.getAppProperty("MIDlet-Version")
             MpCanvas.server_host = MpCanvas.midlet.getAppProperty("GAMEVIL_SERVER")
@@ -356,7 +356,7 @@ class MpCanvas(_Canvas):
         elif step < 19:
             step = 19
         dy = 0
-        if ((MpCanvas.state == 162) or (MpCanvas.state == 163)) or (MpCanvas.state == 164):
+        if (MpCanvas.state in {162, 163}) or (MpCanvas.state == 164):
             dy = 15
         elif MpCanvas.state == 10:
             dy = 40
@@ -441,7 +441,7 @@ class MpCanvas(_Canvas):
                     MpCanvas.state_ticks = MpCanvas.state_ticks + 1
                 if MpCanvas.state_ticks >= 25000:
                     MpCanvas.state_ticks = 100
-                if ((wait_ms := (Consts.speed_frame_ms[MpCanvas.speed] - i32((((system.currentTimeMillis()) - MpCanvas.frame_start)))))) > 20:
+                if (wait_ms := (Consts.speed_frame_ms[MpCanvas.speed] - i32((system.currentTimeMillis()) - MpCanvas.frame_start))) > 20:
                     MpCanvas.sleep(wait_ms)
                 else:
                     MpCanvas.sleep(20)
@@ -451,7 +451,7 @@ class MpCanvas(_Canvas):
     def paint_screen(self):  # g.java:474
         if MpCanvas.painted:
             return
-        if (MpCanvas.state != 3) and (MpCanvas.state != 10000):
+        if MpCanvas.state not in {3, 10000}:
             MpCanvas.connecting = False
         if MpCanvas.paused:
             Draw.fill_rect(MpCanvas.screen_g, 0, 0, MpCanvas.screen_w, MpCanvas.screen_h, 0)
@@ -483,7 +483,7 @@ class MpCanvas(_Canvas):
                         MpCanvas.chosen_action = MpCanvas.AUTO_ACTION if MpCanvas.auto_battle else 1
                         MpCanvas.bar_x = (((MpCanvas.center_x - 44) + 72) + MpCanvas.bar_speed)
                         self.stop_timing()
-                    MpCanvas.set_timer((10 - MpCanvas.speed))
+                    MpCanvas.set_timer(10 - MpCanvas.speed)
             elif MpCanvas.timer_ticks > 0:
                 MpCanvas.timer_ticks = MpCanvas.timer_ticks - 1
         MpCanvas.prev_state = MpCanvas.state
@@ -632,7 +632,7 @@ class MpCanvas(_Canvas):
                 self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) - 10), Consts.texts[60], 0xFFFFFF)
                 self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) + 2), Consts.texts[61], 0xFFFFFF)
                 self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) + 14), Consts.texts[62], 0xFFFFFF)
-                secs_left = i32(((15 - idiv(((system.currentTimeMillis() - MpCanvas.exit_prompt_time)), 1000))))
+                secs_left = i32(15 - idiv(((system.currentTimeMillis() - MpCanvas.exit_prompt_time)), 1000))
                 self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) + 30), _js(Consts.texts[63], "   "), 0xFFFFFF)
                 self.draw_text_centred_on(MpCanvas.screen_g, (MpCanvas.center_x + 35), ((MpCanvas.center_y - 21) + 30), _js("", secs_left), 16400640)
                 i_btn = 0
@@ -993,7 +993,7 @@ class MpCanvas(_Canvas):
                                     Draw.fill_rect(MpCanvas.screen_g, ((MpCanvas.center_x + 21) + (5 * i_vol)), ((MpCanvas.center_y - 13) + (MpCanvas.loop_i * 19)), 3, 8, 0xFFFFFF)
                                     i_vol = i_vol + 1
                                 break
-                            self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[(6 + ((0 if (MpCanvas.get_volume() > 0) else 1)))], (MpCanvas.center_x + 33), ((MpCanvas.center_y - 15) + (MpCanvas.loop_i * 19)), 1, 0xFFFFFF)
+                            self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[(6 + (0 if (MpCanvas.get_volume() > 0) else 1))], (MpCanvas.center_x + 33), ((MpCanvas.center_y - 15) + (MpCanvas.loop_i * 19)), 1, 0xFFFFFF)
                         break
                     self.draw_box(MpCanvas.screen_g, (MpCanvas.center_x - 58), ((MpCanvas.center_y - 16) + (MpCanvas.loop_i * 19)), 61, 14, 3)
                     self.draw_box(MpCanvas.screen_g, (MpCanvas.center_x + 13), ((MpCanvas.center_y - 16) + (MpCanvas.loop_i * 19)), 39, 14, 3)
@@ -1013,7 +1013,7 @@ class MpCanvas(_Canvas):
                                     Draw.fill_rect(MpCanvas.screen_g, ((MpCanvas.center_x + 21) + (5 * i_vol)), ((MpCanvas.center_y - 13) + (MpCanvas.loop_i * 19)), 3, 8, 0x646464)
                                     i_vol = i_vol + 1
                                 break
-                            self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[(6 + ((0 if (MpCanvas.get_volume() > 0) else 1)))], (MpCanvas.center_x + 33), ((MpCanvas.center_y - 15) + (MpCanvas.loop_i * 19)), 1, 0x646464)
+                            self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[(6 + (0 if (MpCanvas.get_volume() > 0) else 1))], (MpCanvas.center_x + 33), ((MpCanvas.center_y - 15) + (MpCanvas.loop_i * 19)), 1, 0x646464)
                         break
                 MpCanvas.loop_i = MpCanvas.loop_i + 1
             self.draw_softkeys((-1), 1)
@@ -1026,7 +1026,7 @@ class MpCanvas(_Canvas):
             self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 112, 48, 0)
             self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (MpCanvas.center_y - 18), _js(Consts.texts[64], "!"), 0xFFFFFF)
             self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (MpCanvas.center_y - 6), MpCanvas.user_id, 0xFFFFFF)
-            self.draw_ok_button((MpCanvas.center_y + 9))
+            self.draw_ok_button(MpCanvas.center_y + 9)
         elif MpCanvas.state == 6:
             if MpCanvas.state_ticks < 2:
                 MpCanvas.state_ticks = 2
@@ -1055,7 +1055,7 @@ class MpCanvas(_Canvas):
             if MpCanvas.popup_shown:
                 self.draw_exit_confirm(MpCanvas.screen_g)
                 return
-            if (MpCanvas.error_msg == 7) or (MpCanvas.error_msg == 1):
+            if MpCanvas.error_msg in {7, 1}:
                 self.draw_softkeys(5, 2)
         elif MpCanvas.state == 5:
             Draw.fill_rect(MpCanvas.screen_g, 0, 0, MpCanvas.canvas_w, MpCanvas.canvas_h, 0)
@@ -1077,7 +1077,7 @@ class MpCanvas(_Canvas):
                 top_y = idiv(((MpCanvas.screen_h - 320)), 2)
                 i_title = 0
                 while i_title < 4:
-                    MpCanvas.title_image = self.load_image(_js(_js("/title_", ((i_title + 1))), ".png"))
+                    MpCanvas.title_image = self.load_image(_js(_js("/title_", (i_title + 1)), ".png"))
                     Draw.draw_image(MpCanvas.buffer_g, MpCanvas.title_image, (MpCanvas.center_x - idiv(MpCanvas.title_image.getWidth(), 2)), (top_y + (80 * i_title)), 0)
                     MpCanvas.title_image = None
                     i_title = i_title + 1
@@ -1303,7 +1303,7 @@ class MpCanvas(_Canvas):
             MpCanvas.draw_hp_bars(MpCanvas.screen_g)
 
     def send_request(self, opcode):  # g.java:1609
-        if (opcode == 262) or (opcode == 278):
+        if opcode in {262, 278}:
             MpCanvas.login_time = system.currentTimeMillis()
         if NetThread.connected and (idiv(((system.currentTimeMillis() - MpCanvas.login_time)), 1000) > 45):
             MpCanvas.ping_misses = 0
@@ -1317,14 +1317,11 @@ class MpCanvas(_Canvas):
         MpCanvas.request_opcode = opcode
         MpCanvas.net.begin(MpCanvas.request_opcode)
         if MpCanvas.request_opcode == 1300:
-            NetThread.write_byte(i8(((MpCanvas.rank_kind + 1))))
+            NetThread.write_byte(i8(MpCanvas.rank_kind + 1))
         elif MpCanvas.request_opcode == 1293:
             NetThread.write_byte(i8(MpCanvas.rank_list_kind))
             NetThread.write_int(1)
-        elif MpCanvas.request_opcode == 256:
-            NetThread.write_string(MpCanvas.user_id, 12)
-            NetThread.write_string(MpCanvas.game_ver, 4)
-        elif MpCanvas.request_opcode == 262:
+        elif MpCanvas.request_opcode in {256, 262}:
             NetThread.write_string(MpCanvas.user_id, 12)
             NetThread.write_string(MpCanvas.game_ver, 4)
         elif MpCanvas.request_opcode == 278:
@@ -1517,7 +1514,7 @@ class MpCanvas(_Canvas):
             MpCanvas.error_msg = 7
             MpCanvas.popup_shown = False
             MpCanvas.disconnect()
-            MpCanvas.set_timer((-1))
+            MpCanvas.set_timer(-1)
             self.push_state(4)
             return
         if NetThread.last_opcode == 280:
@@ -1629,7 +1626,7 @@ class MpCanvas(_Canvas):
             if MpCanvas.answer_status == 1:
                 MpCanvas.my_ranks[MpCanvas.rank_kind] = answer.read_s32()
                 MpCanvas.my_rank_value = answer.read_s32()
-                self.push_state(((161 + MpCanvas.cursor_stack[MpCanvas.stack_depth]) + 1))
+                self.push_state((161 + MpCanvas.cursor_stack[MpCanvas.stack_depth]) + 1)
             elif MpCanvas.answer_status == (-1):
                 MpCanvas.error_msg = 0
                 self.push_state(4)
@@ -1642,7 +1639,7 @@ class MpCanvas(_Canvas):
                     MpCanvas.rank_names[i] = answer.read_string(12)
                     MpCanvas.rank_values[i] = answer.read_s32()
                     i = i + 1
-                self.push_state((170 + MpCanvas.cursor_stack[MpCanvas.stack_depth]))
+                self.push_state(170 + MpCanvas.cursor_stack[MpCanvas.stack_depth])
             elif MpCanvas.answer_status == (-1):
                 MpCanvas.error_msg = 0
                 self.push_state(4)
@@ -1739,7 +1736,7 @@ class MpCanvas(_Canvas):
                 elif MpCanvas.fighter_face[MpCanvas.cur_slot] < 10:
                     MpCanvas.fighter_kind[MpCanvas.cur_slot] = 0
                 else:
-                    MpCanvas.fighter_face[MpCanvas.cur_slot] = i8(((MpCanvas.fighter_face[MpCanvas.cur_slot] - 30)))
+                    MpCanvas.fighter_face[MpCanvas.cur_slot] = i8(MpCanvas.fighter_face[MpCanvas.cur_slot] - 30)
                     MpCanvas.fighter_kind[MpCanvas.cur_slot] = 1
                 MpCanvas.fighter_quote_start[MpCanvas.cur_slot] = answer.read_string(20)
                 MpCanvas.fighter_quote_win[MpCanvas.cur_slot] = answer.read_string(20)
@@ -1764,7 +1761,7 @@ class MpCanvas(_Canvas):
         elif s == 1026:
             if MpCanvas.answer_status == 1:
                 MpCanvas.chosen_action = 99
-                MpCanvas.set_timer((10 - MpCanvas.speed))
+                MpCanvas.set_timer(10 - MpCanvas.speed)
                 MpCanvas.choose_secs = 1 if MpCanvas.auto_battle else 10   # PORT-EXTRA auto-battle
                 MpCanvas.exit_asked = False
                 MpCanvas.set_state(94)
@@ -1864,11 +1861,7 @@ class MpCanvas(_Canvas):
                 MpCanvas.error_msg = 6
                 self.push_state(4)
                 return
-            elif MpCanvas.answer_status == (-49):
-                MpCanvas.error_msg = 5
-                self.push_state(4)
-                return
-            elif MpCanvas.answer_status == (-15):
+            elif MpCanvas.answer_status in (-49, -15):
                 MpCanvas.error_msg = 5
                 self.push_state(4)
                 return
@@ -1940,7 +1933,7 @@ class MpCanvas(_Canvas):
                                 break
                             MpCanvas.loop_k = MpCanvas.loop_k + 1
                         if not MpCanvas.skill_taken:
-                            MpCanvas.skill_order[MpCanvas.loop_i] = i8(((3 + MpCanvas.loop_j)))
+                            MpCanvas.skill_order[MpCanvas.loop_i] = i8(3 + MpCanvas.loop_j)
                             break
                         MpCanvas.loop_j = MpCanvas.loop_j + 1
                     MpCanvas.loop_i = MpCanvas.loop_i + 1
@@ -1995,9 +1988,9 @@ class MpCanvas(_Canvas):
                 MpCanvas.set_state(6)
         elif s == 289:
             if MpCanvas.answer_status == 1:
-                _t51 = answer.read_s32()
-                MpCanvas.invitation_saved = _t51
-                MpCanvas.invitation = _t51
+                invitation = answer.read_s32()
+                MpCanvas.invitation_saved = invitation
+                MpCanvas.invitation = invitation
                 self.push_state(88)
                 return
             MpCanvas.error_msg = 0
@@ -2012,12 +2005,12 @@ class MpCanvas(_Canvas):
     def menu_keys(self, key):  # g.java:2589
         if MpCanvas.state_ticks < 2:
             return
-        if (key == (-3)) or (key == (-1)):
+        if key in (-3, -1):
             if MpCanvas.cursor_stack[MpCanvas.stack_depth] > 0:
                 MpCanvas.cursor_stack[MpCanvas.stack_depth] -= 1
             else:
                 MpCanvas.cursor_stack[MpCanvas.stack_depth] = (MpCanvas.menu_size - 1)
-        elif (key == (-4)) or (key == (-2)):
+        elif key in (-4, -2):
             if MpCanvas.cursor_stack[MpCanvas.stack_depth] < (MpCanvas.menu_size - 1):
                 MpCanvas.cursor_stack[MpCanvas.stack_depth] += 1
             else:
@@ -2028,12 +2021,12 @@ class MpCanvas(_Canvas):
     def yes_no_keys(self, key):  # g.java:2613
         if MpCanvas.state_ticks < 2:
             return
-        if (key == (-3)) or (key == (-1)):
+        if key in (-3, -1):
             if MpCanvas.cursor_stack[MpCanvas.stack_depth] > 0:
                 MpCanvas.cursor_stack[MpCanvas.stack_depth] -= 1
             else:
                 MpCanvas.cursor_stack[MpCanvas.stack_depth] = 1
-        elif (key == (-4)) or (key == (-2)):
+        elif key in (-4, -2):
             if MpCanvas.cursor_stack[MpCanvas.stack_depth] < 1:
                 MpCanvas.cursor_stack[MpCanvas.stack_depth] += 1
             else:
@@ -2048,7 +2041,7 @@ class MpCanvas(_Canvas):
             self.menu_select()
 
     def keyPressed(self, key):  # g.java:2645
-        if (key == (-32)) or (key == (-33)):
+        if key in (-32, -33):
             return
         if key == -100:                     # PORT-EXTRA: Tab = auto-battle on / off
             MpCanvas.auto_battle = not MpCanvas.auto_battle
@@ -2078,7 +2071,7 @@ class MpCanvas(_Canvas):
                 return
             self.menu_keys(MpCanvas.key_in)
         elif MpCanvas.state in (170, 171):
-            if (MpCanvas.key_in != (-7)) and (MpCanvas.key_in != (-5)):
+            if MpCanvas.key_in not in (-7, -5):
                 return
             self.pop_state()
         elif MpCanvas.state == 6:
@@ -2098,7 +2091,7 @@ class MpCanvas(_Canvas):
             self.reset_state_stack(10)
         elif MpCanvas.state == 10:
             if MpCanvas.popup_shown:
-                if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
+                if MpCanvas.key_in in (-3, -4):
                     MpCanvas.popup_cursor = imod(((MpCanvas.popup_cursor + 1)), 2)
                     return
                 if MpCanvas.key_in != (-5):
@@ -2121,7 +2114,7 @@ class MpCanvas(_Canvas):
                 return
             self.menu_keys(MpCanvas.key_in)
         elif MpCanvas.state in (80, 81, 83):
-            if (MpCanvas.key_in != (-5)) and (MpCanvas.key_in != (-7)):
+            if MpCanvas.key_in not in (-5, -7):
                 return
             self.pop_state()
         elif MpCanvas.state == 82:
@@ -2138,7 +2131,7 @@ class MpCanvas(_Canvas):
             elif MpCanvas.key_in == (-3):
                 while True:
                     if MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] > 3:
-                        MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] = i8(((MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] - 1)))
+                        MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] = i8(MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] - 1)
                     else:
                         MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] = 13
                     MpCanvas.skill_taken = False
@@ -2153,7 +2146,7 @@ class MpCanvas(_Canvas):
             elif MpCanvas.key_in == (-4):
                 while True:
                     if MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] < 13:
-                        MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] = i8(((MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] + 1)))
+                        MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] = i8(MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] + 1)
                     else:
                         MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] = 3
                     MpCanvas.skill_taken = False
@@ -2165,7 +2158,7 @@ class MpCanvas(_Canvas):
                         MpCanvas.loop_i = MpCanvas.loop_i + 1
                     if not (MpCanvas.skill_taken):
                         break
-            if (MpCanvas.key_in != (-5)) and (MpCanvas.key_in != (-7)):
+            if MpCanvas.key_in not in (-5, -7):
                 return
             self.menu_select()
         elif MpCanvas.state == 84:
@@ -2178,18 +2171,18 @@ class MpCanvas(_Canvas):
                     return
                 MpCanvas.input_text = MpCanvas.input_text[0:(len(MpCanvas.input_text) - 1)]
                 return
-            if (MpCanvas.key_in == (-5)) or (MpCanvas.key_in == (-6)):
+            if MpCanvas.key_in in (-5, -6):
                 if len(MpCanvas.input_text) == 0:
                     if MpCanvas.letter_cursor >= 26:
                         return
-                    MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((65 + MpCanvas.letter_cursor))) & 0xFFFF)))
+                    MpCanvas.input_text = _js(MpCanvas.input_text, chr((((65 + MpCanvas.letter_cursor))) & 0xFFFF))
                     return
                 if len(MpCanvas.input_text) > 20:
                     return
                 if MpCanvas.letter_cursor < 26:
                     if len(MpCanvas.input_text) >= 20:
                         return
-                    MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((97 + MpCanvas.letter_cursor))) & 0xFFFF)))
+                    MpCanvas.input_text = _js(MpCanvas.input_text, chr((((97 + MpCanvas.letter_cursor))) & 0xFFFF))
                     return
                 if MpCanvas.letter_cursor == 26:
                     if len(MpCanvas.input_text) >= 20:
@@ -2214,18 +2207,18 @@ class MpCanvas(_Canvas):
                     return
                 MpCanvas.input_text = MpCanvas.input_text[0:(len(MpCanvas.input_text) - 1)]
                 return
-            if (MpCanvas.key_in == (-5)) or (MpCanvas.key_in == (-6)):
+            if MpCanvas.key_in in (-5, -6):
                 if len(MpCanvas.input_text) == 0:
                     if MpCanvas.letter_cursor >= 26:
                         return
-                    MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((65 + MpCanvas.letter_cursor))) & 0xFFFF)))
+                    MpCanvas.input_text = _js(MpCanvas.input_text, chr((((65 + MpCanvas.letter_cursor))) & 0xFFFF))
                     return
                 if len(MpCanvas.input_text) > 8:
                     return
                 if MpCanvas.letter_cursor < 26:
                     if len(MpCanvas.input_text) >= 8:
                         return
-                    MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((97 + MpCanvas.letter_cursor))) & 0xFFFF)))
+                    MpCanvas.input_text = _js(MpCanvas.input_text, chr((((97 + MpCanvas.letter_cursor))) & 0xFFFF))
                     return
                 if MpCanvas.letter_cursor != 26:
                     return
@@ -2245,7 +2238,7 @@ class MpCanvas(_Canvas):
                     return
                 MpCanvas.cursor_stack[MpCanvas.stack_depth] = 0
                 return
-            if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
+            if MpCanvas.key_in in (-3, -4):
                 self.menu_select()
                 return
             if MpCanvas.key_in == (-5):
@@ -2269,7 +2262,7 @@ class MpCanvas(_Canvas):
                     return
                 MpCanvas.help_page = (Consts.help_pages[MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)]] - 1)
                 return
-            if (MpCanvas.key_in == (-4)) or (MpCanvas.key_in == (-5)):
+            if MpCanvas.key_in in (-4, -5):
                 if MpCanvas.help_page < (Consts.help_pages[MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)]] - 1):
                     MpCanvas.help_page = MpCanvas.help_page + 1
                     return
@@ -2284,21 +2277,19 @@ class MpCanvas(_Canvas):
                 return
             self.menu_keys(MpCanvas.key_in)
         elif MpCanvas.state == 21:
-            if (MpCanvas.key_in == (-5)) or (MpCanvas.key_in == (-6)):
+            if MpCanvas.key_in in (-5, -6):
                 if len(MpCanvas.input_text) > 12:
                     return
                 if MpCanvas.letter_cursor < 26:
                     if len(MpCanvas.input_text) >= 12:
                         return
-                    MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((65 + MpCanvas.letter_cursor))) & 0xFFFF)))
+                    MpCanvas.input_text = _js(MpCanvas.input_text, chr((((65 + MpCanvas.letter_cursor))) & 0xFFFF))
                     return
                 if (MpCanvas.letter_cursor != 26) or (len(MpCanvas.input_text) < 4):
                     return
                 if MpCanvas.room_mode == 0:
                     MpCanvas.loading_msg = 2
-                elif MpCanvas.room_mode == 1:
-                    MpCanvas.loading_msg = 4
-                elif MpCanvas.room_mode == 2:
+                elif MpCanvas.room_mode in {1, 2}:
                     MpCanvas.loading_msg = 4
                 MpCanvas.loading_msg = 0
                 self.send_request(768)
@@ -2313,7 +2304,7 @@ class MpCanvas(_Canvas):
             MpCanvas.letter_grid_keys(key)
         elif MpCanvas.state == 94:
             if MpCanvas.exit_prompt:
-                if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
+                if MpCanvas.key_in in (-3, -4):
                     MpCanvas.exit_cursor = imod(((MpCanvas.exit_cursor + 1)), 2)
                     return
                 if MpCanvas.key_in != (-5):
@@ -2321,7 +2312,7 @@ class MpCanvas(_Canvas):
                 if MpCanvas.exit_cursor == 0:
                     MpCanvas.relogin_to_menu = False
                     MpCanvas.disconnect()
-                    MpCanvas.set_timer((-1))
+                    MpCanvas.set_timer(-1)
                     MpCanvas.loading_msg = 0
                     MpCanvas.password_login = False
                     MpCanvas.set_state(10000)
@@ -2370,7 +2361,7 @@ class MpCanvas(_Canvas):
             MpCanvas.chosen_action = 99
             MpCanvas.set_state(94)
         elif MpCanvas.state == 96:
-            if (MpCanvas.key_in == (-1)) or (MpCanvas.key_in == (-2)):
+            if MpCanvas.key_in in (-1, -2):
                 if MpCanvas.chosen_action in (9, 10):
                     MpCanvas.loop_i = 0
                     while MpCanvas.loop_i < 4:
@@ -2416,7 +2407,7 @@ class MpCanvas(_Canvas):
                 self.push_state(12)
         elif MpCanvas.state == 4:
             if MpCanvas.popup_shown:
-                if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
+                if MpCanvas.key_in in (-3, -4):
                     MpCanvas.popup_cursor = imod(((MpCanvas.popup_cursor + 1)), 2)
                     return
                 if MpCanvas.key_in != (-5):
@@ -2428,7 +2419,7 @@ class MpCanvas(_Canvas):
                 MpCanvas.popup_cursor = 1
                 return
             if MpCanvas.key_in == (-6):
-                if (MpCanvas.error_msg != 7) and (MpCanvas.error_msg != 1):
+                if MpCanvas.error_msg not in {7, 1}:
                     return
                 MpCanvas.disconnect()
                 MpCanvas.popup_kind = 0
@@ -2437,7 +2428,7 @@ class MpCanvas(_Canvas):
                 MpCanvas.popup_shown = False
                 return
             if MpCanvas.key_in == (-7):
-                if (MpCanvas.error_msg != 7) and (MpCanvas.error_msg != 1):
+                if MpCanvas.error_msg not in {7, 1}:
                     return
                 MpCanvas.popup_shown = True
                 MpCanvas.popup_cursor = 1
@@ -2445,7 +2436,7 @@ class MpCanvas(_Canvas):
             if MpCanvas.key_in != (-5):
                 return
             if not NetThread.connected:
-                if ((MpCanvas.error_msg == 14) or (MpCanvas.error_msg == 15)) or (MpCanvas.error_msg == 16):
+                if (MpCanvas.error_msg in {14, 15}) or (MpCanvas.error_msg == 16):
                     self.pop_state()
                     return
                 if MpCanvas.error_msg == 17:
@@ -2470,7 +2461,7 @@ class MpCanvas(_Canvas):
                 return
             self.pop_state()
         elif MpCanvas.state == 5:
-            if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
+            if MpCanvas.key_in in (-3, -4):
                 MpCanvas.cursor_stack[MpCanvas.stack_depth] = imod(((MpCanvas.cursor_stack[MpCanvas.stack_depth] + 1)), 2)
                 return
             if MpCanvas.key_in != (-5):
@@ -2572,7 +2563,7 @@ class MpCanvas(_Canvas):
         elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 0:
             MpCanvas.fighter_anim[MpCanvas.attacker] = 2
             MpCanvas.run_dx = idiv((((MpCanvas.canvas_w - 67) - 42)), Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
-            MpCanvas.run_dy = (0 if (MpCanvas.room_mode == 0) else ((0 if (idiv(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == idiv(MpCanvas.turn_bytes[(12 + MpCanvas.turn_rec)], 2)) else ((idiv(46, Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]]) if (idiv(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == 0) else idiv((-46), Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]]))))))
+            MpCanvas.run_dy = (0 if (MpCanvas.room_mode == 0) else (0 if (idiv(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == idiv(MpCanvas.turn_bytes[(12 + MpCanvas.turn_rec)], 2)) else (idiv(46, Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]]) if (idiv(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == 0) else idiv((-46), Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]]))))
         MpCanvas.anim_length = Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]]
 
     def login(self):  # g.java:3374
@@ -2602,7 +2593,7 @@ class MpCanvas(_Canvas):
             NetThread.close()
         MpCanvas.net = None
         MpCanvas.relogin = True
-        MpCanvas.set_timer((-1))
+        MpCanvas.set_timer(-1)
         MpCanvas.sleep(100)
 
     def on_disconnect(self):  # g.java:3410
@@ -2808,7 +2799,7 @@ class MpCanvas(_Canvas):
                     MpCanvas.speed = 2
                     return
                 elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 1:
-                    if (MpCanvas.key_in != (-3)) and (MpCanvas.key_in != (-4)):
+                    if MpCanvas.key_in not in (-3, -4):
                         break
                     MpCanvas.invitation = imod(((MpCanvas.invitation + 1)), 2)
                     return
@@ -2836,7 +2827,7 @@ class MpCanvas(_Canvas):
         while i < 4:
             self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 31) + (12 * i)), MpCanvas.notice_lines[i], 0xFFFFFF)
             i = i + 1
-        self.draw_ok_button((MpCanvas.center_y + 22))
+        self.draw_ok_button(MpCanvas.center_y + 22)
 
     def draw_turn_fighters(self):  # g.java:3757
         MpCanvas.loop_i = 0
@@ -2904,20 +2895,20 @@ class MpCanvas(_Canvas):
             MpCanvas.anim_frame = 4
         MpCanvas.fighter_frame[MpCanvas.loop_i] = (Consts.anim_first_frame[MpCanvas.anim_id] + MpCanvas.anim_frame)
         MpCanvas.tmp = Consts.anim_steps[MpCanvas.anim_id][((3 * MpCanvas.anim_frame) + 1)]
-        MpCanvas.fighter_x[MpCanvas.loop_i] += ((((-1) if (((MpCanvas.tmp & 0x80)) > 0) else 1)) * ((MpCanvas.tmp & 0x7F)))
+        MpCanvas.fighter_x[MpCanvas.loop_i] += ((((-1) if (((MpCanvas.tmp & 0x80)) > 0) else 1)) * (MpCanvas.tmp & 0x7F))
         MpCanvas.tmp = Consts.anim_steps[MpCanvas.anim_id][((3 * MpCanvas.anim_frame) + 2)]
-        MpCanvas.fighter_y[MpCanvas.loop_i] += ((((-1) if (((MpCanvas.tmp & 0x80)) > 0) else 1)) * ((MpCanvas.tmp & 0x7F)))
+        MpCanvas.fighter_y[MpCanvas.loop_i] += ((((-1) if (((MpCanvas.tmp & 0x80)) > 0) else 1)) * (MpCanvas.tmp & 0x7F))
         self.draw_fighter(MpCanvas.screen_g, MpCanvas.loop_i)
         if (MpCanvas.anim_id == 12) and (MpCanvas.anim_frame >= 4):
             MpCanvas.anim_frame = MpCanvas.saved_anim_frame
 
     def draw_fighter_idle(self, graphics):  # g.java:3867
         if MpCanvas.fighter_hp[MpCanvas.loop_i] > 0:
-            if ((((MpCanvas.state == 104) or (MpCanvas.state == 105))) and (MpCanvas.fighter_kind[MpCanvas.loop_i] != 2)) and (MpCanvas.battle_won == 1):
+            if (((MpCanvas.state in {104, 105})) and (MpCanvas.fighter_kind[MpCanvas.loop_i] != 2)) and (MpCanvas.battle_won == 1):
                 if MpCanvas.state_ticks < 3:
                     MpCanvas.fighter_frame[MpCanvas.loop_i] = (Consts.anim_first_frame[MpCanvas.anim_id] + MpCanvas.state_ticks)
-                    MpCanvas.fighter_x[MpCanvas.loop_i] += ((((-1) if (((MpCanvas.tmp & 0x80)) > 0) else 1)) * ((MpCanvas.tmp & 0x7F)))
-                    MpCanvas.fighter_y[MpCanvas.loop_i] += ((((-1) if (((MpCanvas.tmp & 0x80)) > 0) else 1)) * ((MpCanvas.tmp & 0x7F)))
+                    MpCanvas.fighter_x[MpCanvas.loop_i] += ((((-1) if (((MpCanvas.tmp & 0x80)) > 0) else 1)) * (MpCanvas.tmp & 0x7F))
+                    MpCanvas.fighter_y[MpCanvas.loop_i] += ((((-1) if (((MpCanvas.tmp & 0x80)) > 0) else 1)) * (MpCanvas.tmp & 0x7F))
             else:
                 if imod(MpCanvas.state_ticks, 4) == MpCanvas.fighter_blink[MpCanvas.loop_i]:
                     MpCanvas.fighter_frame[MpCanvas.loop_i] = imod(idiv(MpCanvas.state_ticks, 4), 2)
@@ -2969,9 +2960,9 @@ class MpCanvas(_Canvas):
             return
         self.draw_text_centred_on(graphics, (MpCanvas.canvas_w - 30), (14 if (idiv(MpCanvas.fighter_slot[MpCanvas.target_cursor], 2) == 0) else (((MpCanvas.canvas_h - 12) - 15) + 2)), (MpCanvas.fighter_name[MpCanvas.target_cursor] if ((len(MpCanvas.fighter_alt_name[MpCanvas.target_cursor]) == 0) or (imod(MpCanvas.round_no, 2) == 0)) else MpCanvas.fighter_alt_name[MpCanvas.target_cursor]), 16400640)
         if imod(MpCanvas.state_ticks, 2) == 0:
-            MpCanvas.draw_right_half_h(graphics, (MpCanvas.canvas_w - ((1 + Consts.ui_dx[48]))), (((19 if (idiv(MpCanvas.fighter_slot[MpCanvas.target_cursor], 2) == 0) else (MpCanvas.canvas_h - 19))) + Consts.ui_dy[48]), 12, MpCanvas.ui_images[48])
+            MpCanvas.draw_right_half_h(graphics, (MpCanvas.canvas_w - (1 + Consts.ui_dx[48])), (((19 if (idiv(MpCanvas.fighter_slot[MpCanvas.target_cursor], 2) == 0) else (MpCanvas.canvas_h - 19))) + Consts.ui_dy[48]), 12, MpCanvas.ui_images[48])
             return
-        MpCanvas.draw_right_half_row1(graphics, (MpCanvas.canvas_w - ((2 + Consts.ui_dx[48]))), (((19 if (idiv(MpCanvas.fighter_slot[MpCanvas.target_cursor], 2) == 0) else (MpCanvas.canvas_h - 19))) + Consts.ui_dy[48]), 12, MpCanvas.ui_images[48])
+        MpCanvas.draw_right_half_row1(graphics, (MpCanvas.canvas_w - (2 + Consts.ui_dx[48])), (((19 if (idiv(MpCanvas.fighter_slot[MpCanvas.target_cursor], 2) == 0) else (MpCanvas.canvas_h - 19))) + Consts.ui_dy[48]), 12, MpCanvas.ui_images[48])
 
     def draw_stage_intro(self):  # g.java:3955
         self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 102, 86, 0)
@@ -3039,9 +3030,9 @@ class MpCanvas(_Canvas):
         if MpCanvas.chosen_action > 2:
             MpCanvas.hit_score = 0
         else:
-            if (((MpCanvas.bar_speed == 6) or (MpCanvas.bar_speed == 7))) and (abs((((MpCanvas.center_x - 44) + 72) - MpCanvas.bar_x)) <= idiv(MpCanvas.bar_speed, 2)):
+            if (MpCanvas.bar_speed in {6, 7}) and (abs(((MpCanvas.center_x - 44) + 72) - MpCanvas.bar_x) <= idiv(MpCanvas.bar_speed, 2)):
                 MpCanvas.bar_x = ((MpCanvas.center_x - 44) + 72)
-            MpCanvas.hit_score = ((((20 + MpCanvas.bar_x) - MpCanvas.center_x) + 44) if (MpCanvas.bar_x < ((MpCanvas.center_x - 44) + 72)) else ((100 if (MpCanvas.bar_x == ((MpCanvas.center_x - 44) + 72)) else 20)))
+            MpCanvas.hit_score = ((((20 + MpCanvas.bar_x) - MpCanvas.center_x) + 44) if (MpCanvas.bar_x < ((MpCanvas.center_x - 44) + 72)) else (100 if (MpCanvas.bar_x == ((MpCanvas.center_x - 44) + 72)) else 20))
         MpCanvas.set_state(98)
 
     @staticmethod
@@ -3061,7 +3052,7 @@ class MpCanvas(_Canvas):
         else:
             idx = frame
         if MpCanvas.draw_mirrored:
-            Draw.draw_image_part(graphics, images[1], (MpCanvas.canvas_w - (((MpCanvas.draw_x - frames.anchor_x[idx]) + frames.w[idx]))), (MpCanvas.draw_y - frames.anchor_y[idx]), frames.w[idx], frames.h[idx], frames.src_x[idx], frames.src_y[idx])
+            Draw.draw_image_part(graphics, images[1], (MpCanvas.canvas_w - ((MpCanvas.draw_x - frames.anchor_x[idx]) + frames.w[idx])), (MpCanvas.draw_y - frames.anchor_y[idx]), frames.w[idx], frames.h[idx], frames.src_x[idx], frames.src_y[idx])
             return
         Draw.draw_image_part(graphics, images[0], (MpCanvas.draw_x - frames.anchor_x[idx]), (MpCanvas.draw_y - frames.anchor_y[idx]), frames.w[idx], frames.h[idx], frames.src_x[idx], frames.src_y[idx])
 
@@ -3086,9 +3077,9 @@ class MpCanvas(_Canvas):
                 if pose == 2:
                     weapon_behind = Consts.bare_weapon_behind_pose2[imod(MpCanvas.fighter_frame[index], 100)]
             else:
-                weapon_behind = (Consts.weapon_behind_pose1[imod(MpCanvas.fighter_frame[index], 100)] if (pose == 1) else ((Consts.weapon_behind_pose2[imod(MpCanvas.fighter_frame[index], 100)] if (pose == 2) else Consts.weapon_behind_pose0[imod(MpCanvas.fighter_frame[index], 100)])))
+                weapon_behind = (Consts.weapon_behind_pose1[imod(MpCanvas.fighter_frame[index], 100)] if (pose == 1) else (Consts.weapon_behind_pose2[imod(MpCanvas.fighter_frame[index], 100)] if (pose == 2) else Consts.weapon_behind_pose0[imod(MpCanvas.fighter_frame[index], 100)]))
             if weapon_behind:
-                self.load_sprite(MpCanvas.weapon_images[MpCanvas.fighter_weapon[index]], MpCanvas.weapon_frames[MpCanvas.fighter_weapon[index]], _js("sprwp", ((MpCanvas.fighter_weapon[index] + 1))))
+                self.load_sprite(MpCanvas.weapon_images[MpCanvas.fighter_weapon[index]], MpCanvas.weapon_frames[MpCanvas.fighter_weapon[index]], _js("sprwp", (MpCanvas.fighter_weapon[index] + 1)))
                 MpCanvas.draw_sprite_frame(graphics, MpCanvas.weapon_images[MpCanvas.fighter_weapon[index]], MpCanvas.weapon_frames[MpCanvas.fighter_weapon[index]], MpCanvas.fighter_frame[index])
         if MpCanvas.fighter_kind[index] == 2:
             self.load_sprite_dir(MpCanvas.monster_images, MpCanvas.monster_frames, "spr_mon", 0)
@@ -3102,7 +3093,7 @@ class MpCanvas(_Canvas):
         if MpCanvas.fighter_kind[index] != 2:
             if MpCanvas.fighter_kind[index] == 0:
                 pose = MpCanvas.fighter_face[index]
-            self.load_sprite(MpCanvas.head_images[pose], MpCanvas.head_frames[pose], _js("sprhead", ((pose + 1))))
+            self.load_sprite(MpCanvas.head_images[pose], MpCanvas.head_frames[pose], _js("sprhead", (pose + 1)))
             MpCanvas.draw_sprite_frame(graphics, MpCanvas.head_images[pose], MpCanvas.head_frames[pose], MpCanvas.fighter_frame[index])
         if MpCanvas.fighter_present[index] and (MpCanvas.state != 105):
             if MpCanvas.fighter_status[index] == 11:
@@ -3119,7 +3110,7 @@ class MpCanvas(_Canvas):
                 self.load_sprite_dir(MpCanvas.mon_weapon_images, MpCanvas.mon_weapon_frames, "spr_wp_mon", 0)
                 MpCanvas.draw_sprite_frame(graphics, MpCanvas.mon_weapon_images, MpCanvas.mon_weapon_frames, MpCanvas.fighter_frame[index])
             else:
-                self.load_sprite(MpCanvas.weapon_images[MpCanvas.fighter_weapon[index]], MpCanvas.weapon_frames[MpCanvas.fighter_weapon[index]], _js("sprwp", ((MpCanvas.fighter_weapon[index] + 1))))
+                self.load_sprite(MpCanvas.weapon_images[MpCanvas.fighter_weapon[index]], MpCanvas.weapon_frames[MpCanvas.fighter_weapon[index]], _js("sprwp", (MpCanvas.fighter_weapon[index] + 1)))
                 MpCanvas.draw_sprite_frame(graphics, MpCanvas.weapon_images[MpCanvas.fighter_weapon[index]], MpCanvas.weapon_frames[MpCanvas.fighter_weapon[index]], MpCanvas.fighter_frame[index])
         self.draw_fighter_effects(index, False)
 
@@ -3133,11 +3124,11 @@ class MpCanvas(_Canvas):
         else:
             pose = 0
             if not behind:
-                self.load_sprite(MpCanvas.sword_images[MpCanvas.fighter_weapon[index]], MpCanvas.sword_frames[MpCanvas.fighter_weapon[index]], _js("sprsword", ((MpCanvas.fighter_weapon[index] + 1))))
+                self.load_sprite(MpCanvas.sword_images[MpCanvas.fighter_weapon[index]], MpCanvas.sword_frames[MpCanvas.fighter_weapon[index]], _js("sprsword", (MpCanvas.fighter_weapon[index] + 1)))
                 MpCanvas.draw_sprite_frame(MpCanvas.screen_g, MpCanvas.sword_images[MpCanvas.fighter_weapon[index]], MpCanvas.sword_frames[MpCanvas.fighter_weapon[index]], MpCanvas.fighter_frame[index])
                 self.load_sprite(MpCanvas.effect_images[0], MpCanvas.effect_frames[0], "spreff1")
                 MpCanvas.draw_sprite_frame(MpCanvas.screen_g, MpCanvas.effect_images[0], MpCanvas.effect_frames[0], MpCanvas.fighter_frame[index])
-            if behind == (((Consts.eff2_behind_pose1[imod(MpCanvas.fighter_frame[index], 100)] if (((pose := idiv(MpCanvas.fighter_frame[index], 100))) == 1) else ((Consts.eff2_behind_pose2[imod(MpCanvas.fighter_frame[index], 100)] if (pose == 2) else False))))):
+            if behind == (Consts.eff2_behind_pose1[imod(MpCanvas.fighter_frame[index], 100)] if (((pose := idiv(MpCanvas.fighter_frame[index], 100))) == 1) else (Consts.eff2_behind_pose2[imod(MpCanvas.fighter_frame[index], 100)] if (pose == 2) else False)):
                 self.load_sprite(MpCanvas.effect_images[1], MpCanvas.effect_frames[1], "spreff2")
                 MpCanvas.draw_sprite_frame(MpCanvas.screen_g, MpCanvas.effect_images[1], MpCanvas.effect_frames[1], MpCanvas.fighter_frame[index])
 
@@ -3146,7 +3137,7 @@ class MpCanvas(_Canvas):
             MpCanvas.damage_tick = (-1)
             MpCanvas.loop_i = 0
             while MpCanvas.loop_i < 4:
-                if MpCanvas.fighter_present[MpCanvas.loop_i] and ((((MpCanvas.loop_i == MpCanvas.attacker) or (MpCanvas.loop_i == MpCanvas.target)) or (MpCanvas.loop_i == MpCanvas.target2))):
+                if MpCanvas.fighter_present[MpCanvas.loop_i] and ((MpCanvas.loop_i in (MpCanvas.attacker, MpCanvas.target)) or (MpCanvas.loop_i == MpCanvas.target2)):
                     if MpCanvas.fighter_hp[MpCanvas.loop_i] != MpCanvas.fighter_hp_target[MpCanvas.loop_i]:
                         MpCanvas.fighter_hp[MpCanvas.loop_i] = MpCanvas.fighter_hp_target[MpCanvas.loop_i]
                     if MpCanvas.fighter_mp[MpCanvas.loop_i] != MpCanvas.fighter_mp_target[MpCanvas.loop_i]:
@@ -3371,7 +3362,7 @@ class MpCanvas(_Canvas):
             return
         MpCanvas.loop_i = 0
         while MpCanvas.loop_i < 4:
-            if MpCanvas.fighter_present[MpCanvas.loop_i] and ((((MpCanvas.loop_i == MpCanvas.attacker) or (MpCanvas.loop_i == MpCanvas.target)) or (MpCanvas.loop_i == MpCanvas.target2))):
+            if MpCanvas.fighter_present[MpCanvas.loop_i] and ((MpCanvas.loop_i in (MpCanvas.attacker, MpCanvas.target)) or (MpCanvas.loop_i == MpCanvas.target2)):
                 if MpCanvas.fighter_hp[MpCanvas.loop_i] != MpCanvas.fighter_hp_target[MpCanvas.loop_i]:
                     MpCanvas.fighter_hp[MpCanvas.loop_i] += MpCanvas.fighter_hp_step[MpCanvas.loop_i]
                     if MpCanvas.fighter_hp[MpCanvas.loop_i] < 0:
@@ -3390,7 +3381,7 @@ class MpCanvas(_Canvas):
         MpCanvas.draw_hp_bars(MpCanvas.screen_g)
         MpCanvas.loop_i = 0
         while MpCanvas.loop_i < 4:
-            if (MpCanvas.fighter_present[MpCanvas.loop_i] and ((((MpCanvas.loop_i == MpCanvas.attacker) or (MpCanvas.loop_i == MpCanvas.target)) or (MpCanvas.loop_i == MpCanvas.target2)))) and (MpCanvas.fighter_hp[MpCanvas.loop_i] == 0):
+            if (MpCanvas.fighter_present[MpCanvas.loop_i] and ((MpCanvas.loop_i in (MpCanvas.attacker, MpCanvas.target)) or (MpCanvas.loop_i == MpCanvas.target2))) and (MpCanvas.fighter_hp[MpCanvas.loop_i] == 0):
                 MpCanvas.fighter_hp[MpCanvas.loop_i] = 1
             MpCanvas.loop_i = MpCanvas.loop_i + 1
         MpCanvas.damage_tick = MpCanvas.damage_tick + 1
@@ -3479,7 +3470,7 @@ class MpCanvas(_Canvas):
         digits = 0
         if style in (0, 1, 7):
             while (idiv(value, place) > 0) or (place == 1):
-                digit = idiv(imod(value, ((place * 10))), place)
+                digit = idiv(imod(value, (place * 10)), place)
                 Draw.draw_image_part(graphics, MpCanvas.number_images[style], x, y, 5, 8, (digit * 5), 0)
                 x = (x - 6)
                 place = (place * 10)
@@ -3491,7 +3482,7 @@ class MpCanvas(_Canvas):
             Draw.draw_image_part(graphics, MpCanvas.number_images[6], (x - 3), (y - 1), 3, 10, 7, 0)
             x = (x - 9)
             while (idiv(value, place) > 0) or (place == 1):
-                digit2 = idiv(imod(value, ((place * 10))), place)
+                digit2 = idiv(imod(value, (place * 10)), place)
                 Draw.draw_image_part(graphics, MpCanvas.number_images[style], x, y, 5, 8, (digit2 * 5), 16)
                 x = (x - 6)
                 place = (place * 10)
@@ -3502,13 +3493,13 @@ class MpCanvas(_Canvas):
             Draw.draw_image_part(graphics, MpCanvas.number_images[6], (x - 2), (y - 1), 7, 10, 0, 0)
         elif style == 2:
             while (idiv(value, place) > 0) or (place == 1):
-                digit3 = idiv(imod(value, ((place * 10))), place)
+                digit3 = idiv(imod(value, (place * 10)), place)
                 Draw.draw_image_part(graphics, MpCanvas.number_images[style], x, y, 7, 11, (digit3 * 7), 0)
                 x = (x - 8)
                 place = (place * 10)
         elif style == 3:
             while (idiv(value, place) > 0) or (place == 1):
-                digit4 = idiv(imod(value, ((place * 10))), place)
+                digit4 = idiv(imod(value, (place * 10)), place)
                 Draw.draw_image_part(graphics, MpCanvas.number_images[style], x, y, 12, 13, (digit4 * 12), 0)
                 x = (x - 12)
                 place = (place * 10)
@@ -3519,7 +3510,7 @@ class MpCanvas(_Canvas):
             else:
                 MpCanvas.number_negative = False
             while (idiv(value, place) > 0) or (place == 1):
-                digit5 = idiv(imod(value, ((place * 10))), place)
+                digit5 = idiv(imod(value, (place * 10)), place)
                 Draw.draw_image_part(graphics, MpCanvas.number_images[style], x, y, 6, 10, (digit5 * 6), (10 if MpCanvas.number_negative else 0))
                 x = (x - 7)
                 place = (place * 10)
@@ -3591,10 +3582,10 @@ class MpCanvas(_Canvas):
         text = None
         try:
             size = (stop - pos)
-            buf = [0] * ((size + 2))
+            buf = [0] * (size + 2)
             utf = buf
-            buf[0] = i8((((size >> 8) & 0xFF)))
-            utf[1] = i8(((size & 0xFF)))
+            buf[0] = i8((size >> 8) & 0xFF)
+            utf[1] = i8(size & 0xFF)
             _arraycopy(data, pos, utf, 2, size)
             byteArrayInputStream = ByteArrayInputStream(utf, 0, len(utf))
             dataInputStream = DataInputStream(byteArrayInputStream)
@@ -3662,7 +3653,7 @@ class MpCanvas(_Canvas):
     def popup_keys(self, key):  # g.java:4888
         if MpCanvas.popup_kind == 0:
             if MpCanvas.popup_shown:
-                if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
+                if MpCanvas.key_in in (-3, -4):
                     MpCanvas.popup_cursor = imod(((MpCanvas.popup_cursor + 1)), 2)
                     return
                 if MpCanvas.key_in != (-5):
@@ -3678,13 +3669,13 @@ class MpCanvas(_Canvas):
                     return
                 MpCanvas.input_text = MpCanvas.input_text[0:(len(MpCanvas.input_text) - 1)]
                 return
-            if (MpCanvas.key_in == (-5)) or (MpCanvas.key_in == (-6)):
+            if MpCanvas.key_in in (-5, -6):
                 if len(MpCanvas.input_text) > 12:
                     return
                 if MpCanvas.letter_cursor < 26:
                     if len(MpCanvas.input_text) >= 12:
                         return
-                    MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((65 + MpCanvas.letter_cursor))) & 0xFFFF)))
+                    MpCanvas.input_text = _js(MpCanvas.input_text, chr((((65 + MpCanvas.letter_cursor))) & 0xFFFF))
                     return
                 if (MpCanvas.letter_cursor != 26) or (len(MpCanvas.input_text) < 4):
                     return
@@ -3826,7 +3817,7 @@ class MpCanvas(_Canvas):
             self.draw_number1_on(MpCanvas.screen_g, (MpCanvas.center_x + 36), (top + 84), MpCanvas.reward_fame)
             self.draw_text_colored(MpCanvas.screen_g, Consts.texts[4], (MpCanvas.center_x - 42), (top + 96), 0, 0x41FF41)
             self.draw_number0_on(MpCanvas.screen_g, (MpCanvas.center_x + 36), (top + 97), MpCanvas.reward_rank)
-            self.draw_ok_button((top + 109))
+            self.draw_ok_button(top + 109)
         elif MpCanvas.room_mode == 2:
             top2 = (MpCanvas.center_y - 62)
             self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 102, 124, 0)
@@ -3846,7 +3837,7 @@ class MpCanvas(_Canvas):
                 self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (top2 + 81), _js(Consts.texts[33], "!!!"), 0xFFFFFF)
             self.draw_text_colored(MpCanvas.screen_g, Consts.texts[4], (MpCanvas.center_x - 34), (top2 + 96), 0, 0x41FF41)
             self.draw_number1_on(MpCanvas.screen_g, (MpCanvas.center_x + 30), (top2 + 97), MpCanvas.reward_rank)
-            self.draw_ok_button((top2 + 109))
+            self.draw_ok_button(top2 + 109)
 
     @staticmethod
     def tick_status_effects():  # g.java:5133
@@ -3870,8 +3861,8 @@ class MpCanvas(_Canvas):
             MpCanvas.box_x = (-20)
         MpCanvas.loop_i = 0
         while MpCanvas.loop_i < 4:
-            if (MpCanvas.fighter_present[MpCanvas.loop_i] and (MpCanvas.fighter_hp[MpCanvas.loop_i] > 0)) and (((((MpCanvas.state == 99) or (MpCanvas.loop_i == MpCanvas.attacker)) or (MpCanvas.loop_i == MpCanvas.target)) or (MpCanvas.loop_i == MpCanvas.target2))):
-                MpCanvas.box_y = (27 if (MpCanvas.room_mode == 0) else ((27 if (idiv(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == 0) else ((MpCanvas.canvas_h - 27) - 23))))
+            if (MpCanvas.fighter_present[MpCanvas.loop_i] and (MpCanvas.fighter_hp[MpCanvas.loop_i] > 0)) and ((((MpCanvas.state == 99) or (MpCanvas.loop_i == MpCanvas.attacker)) or (MpCanvas.loop_i == MpCanvas.target)) or (MpCanvas.loop_i == MpCanvas.target2)):
+                MpCanvas.box_y = (27 if (MpCanvas.room_mode == 0) else (27 if (idiv(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == 0) else ((MpCanvas.canvas_h - 27) - 23)))
                 if MpCanvas.fighter_kind[MpCanvas.loop_i] == 0:
                     MpCanvas.card_face = MpCanvas.fighter_face[MpCanvas.loop_i]
                     MpCanvas.card_half = True
@@ -3945,7 +3936,7 @@ class MpCanvas(_Canvas):
                 if MpCanvas.fighter_mp[0] >= MpCanvas.skill_costs[(MpCanvas.skill_slots[MpCanvas.loop_k] - 3)]:
                     MpCanvas.skill_ready = True
                 MpCanvas.loop_k = MpCanvas.loop_k + 1
-        Draw.draw_image(graphics, MpCanvas.ui_images[(18 + ((0 if MpCanvas.skill_ready else 1)))], (MpCanvas.box_x - 12), (MpCanvas.box_y + 30), 0)
+        Draw.draw_image(graphics, MpCanvas.ui_images[(18 + (0 if MpCanvas.skill_ready else 1))], (MpCanvas.box_x - 12), (MpCanvas.box_y + 30), 0)
         if MpCanvas.chosen_action != 99:
             pad_y = 0
             pad_x = 0
@@ -3997,7 +3988,7 @@ class MpCanvas(_Canvas):
                 MpCanvas.error_msg = 13
                 MpCanvas.popup_shown = False
                 MpCanvas.disconnect()
-                MpCanvas.set_timer((-1))
+                MpCanvas.set_timer(-1)
                 self.push_state(4)
         else:
             MpCanvas.wait_started = True
@@ -4076,7 +4067,7 @@ class MpCanvas(_Canvas):
         elif step < 19:
             step = 19
         dy = 0
-        if ((MpCanvas.state == 162) or (MpCanvas.state == 163)) or (MpCanvas.state == 164):
+        if (MpCanvas.state in {162, 163}) or (MpCanvas.state == 164):
             dy = 15
         elif MpCanvas.state == 10:
             dy = 40
@@ -4097,7 +4088,7 @@ class MpCanvas(_Canvas):
     def draw_status_effect(graphics, kind):  # g.java:5488
         frame = ((kind * 2) + imod(MpCanvas.state_ticks, 2))
         if MpCanvas.draw_mirrored:
-            Draw.draw_image_part(graphics, MpCanvas.effect_images[1][1], (MpCanvas.canvas_w - (((MpCanvas.draw_x - MpCanvas.effect3_frames[0].anchor_x[frame]) + MpCanvas.effect3_frames[0].w[frame]))), (MpCanvas.draw_y - MpCanvas.effect3_frames[0].anchor_y[frame]), MpCanvas.effect3_frames[0].w[frame], MpCanvas.effect3_frames[0].h[frame], MpCanvas.effect3_frames[0].src_x[frame], MpCanvas.effect3_frames[0].src_y[frame])
+            Draw.draw_image_part(graphics, MpCanvas.effect_images[1][1], (MpCanvas.canvas_w - ((MpCanvas.draw_x - MpCanvas.effect3_frames[0].anchor_x[frame]) + MpCanvas.effect3_frames[0].w[frame])), (MpCanvas.draw_y - MpCanvas.effect3_frames[0].anchor_y[frame]), MpCanvas.effect3_frames[0].w[frame], MpCanvas.effect3_frames[0].h[frame], MpCanvas.effect3_frames[0].src_x[frame], MpCanvas.effect3_frames[0].src_y[frame])
             return
         Draw.draw_image_part(graphics, MpCanvas.effect_images[1][0], (MpCanvas.draw_x - MpCanvas.effect3_frames[0].anchor_x[frame]), (MpCanvas.draw_y - MpCanvas.effect3_frames[0].anchor_y[frame]), MpCanvas.effect3_frames[0].w[frame], MpCanvas.effect3_frames[0].h[frame], MpCanvas.effect3_frames[0].src_x[frame], MpCanvas.effect3_frames[0].src_y[frame])
 
@@ -4165,7 +4156,7 @@ class MpCanvas(_Canvas):
             MpCanvas.draw_image_on(MpCanvas.buffer_g, 18, (horizon - 30), MpCanvas.bg_images[12])
             MpCanvas.draw_image_on(MpCanvas.buffer_g, 52, (horizon - 15), MpCanvas.bg_images[13])
         ground = ((MpCanvas.room_bg >> 4) & 3)
-        self.load_bg((14 + ground))
+        self.load_bg(14 + ground)
         i = 0
         while i < tiles:
             MpCanvas.draw_image_on(MpCanvas.buffer_g, (30 * i), (horizon + 83), MpCanvas.bg_images[(14 + ground)])
@@ -4173,7 +4164,7 @@ class MpCanvas(_Canvas):
         front = (MpCanvas.room_bg & 3)
         front_y = 0
         front_dy = [3, 8, (-8), 16]
-        self.load_bg((0 + front))
+        self.load_bg(0 + front)
         front_y = (horizon + front_dy[front])
         MpCanvas.draw_image_on(MpCanvas.buffer_g, 0, front_y, MpCanvas.bg_images[(0 + front)])
         i = 0
@@ -4267,11 +4258,11 @@ class MpCanvas(_Canvas):
             part = (78 - idiv(((144 - MpCanvas.canvas_h)), 2))
             rest = ((MpCanvas.canvas_h - 18) - part)
             Draw.draw_image_part(graphics, MpCanvas.border_v_image, 0, 5, 5, 8, 0, 0)
-            Draw.draw_image_part(graphics, MpCanvas.border_v_image, 0, 13, 5, part, 0, (8 + ((78 - part))))
+            Draw.draw_image_part(graphics, MpCanvas.border_v_image, 0, 13, 5, part, 0, (8 + (78 - part)))
             Draw.draw_image_part(graphics, MpCanvas.border_v_image, 0, (13 + part), 5, rest, 0, (134 - rest))
             edge = (MpCanvas.canvas_w - 5)
             Draw.draw_image_part(graphics, MpCanvas.border_v_image, edge, 5, 5, 8, 5, 0)
-            Draw.draw_image_part(graphics, MpCanvas.border_v_image, edge, 13, 5, part, 5, (8 + ((78 - part))))
+            Draw.draw_image_part(graphics, MpCanvas.border_v_image, edge, 13, 5, part, 5, (8 + (78 - part)))
             Draw.draw_image_part(graphics, MpCanvas.border_v_image, edge, (13 + part), 5, rest, 5, (134 - rest))
         else:
             part = idiv(((MpCanvas.canvas_h - 144)), 2)
@@ -4492,7 +4483,7 @@ class MpCanvas(_Canvas):
 
     def draw_quote_prompt(self, graphics):  # g.java:5980
         text = MpCanvas.input_text
-        self.draw_text_centred(MpCanvas.center_x, (MpCanvas.center_y - 44), _js(_js(Consts.texts[58], "."), ((MpCanvas.quote_step + 1))), 16400640)
+        self.draw_text_centred(MpCanvas.center_x, (MpCanvas.center_y - 44), _js(_js(Consts.texts[58], "."), (MpCanvas.quote_step + 1)), 16400640)
         if MpCanvas.quote_step == 0:
             self.draw_text_centred(MpCanvas.center_x, (MpCanvas.center_y - 32), Consts.texts[23], 0xFFFFFF)
             self.draw_text_centred(MpCanvas.center_x, (MpCanvas.center_y - 20), Consts.texts[24], 0xFFFFFF)
@@ -4522,14 +4513,14 @@ class MpCanvas(_Canvas):
         Gfx.set_font(MpCanvas.font_white)
         i = 0
         while i < len(letters):
-            dx = (1 if (i == 8) else ((1 if (i == 26) else 0)))
+            dx = (1 if (i == 8) else (1 if (i == 26) else 0))
             Gfx.draw_string(letters[i], (((left + 3) + (imod(i, 14) * 8)) + dx), (y + (11 * (idiv(i, 14)))), 0)
             i = i + 1
 
     @staticmethod
     def letter_grid_keys(key):  # g.java:6023
         result = key
-        if ((key != (-7)) and (key != (-5))) and (key != (-6)):
+        if (key not in (-7, -5)) and (key != (-6)):
             if key == (-1):
                 MpCanvas.letter_cursor = imod((((MpCanvas.letter_cursor + 28) - 14)), 28)
             elif key == (-2):
@@ -4557,14 +4548,14 @@ class MpCanvas(_Canvas):
         Gfx.set_font(MpCanvas.font_white)
         i = 0
         while i < len(letters):
-            dx = (1 if (i == 8) else ((1 if (i == 26) else 0)))
+            dx = (1 if (i == 8) else (1 if (i == 26) else 0))
             Gfx.draw_string(letters[i], (((left + 3) + (imod(i, 14) * 8)) + dx), (y + (11 * (idiv(i, 14)))), 0)
             i = i + 1
 
     @staticmethod
     def letter_grid_space_keys(key):  # g.java:6064
         result = key
-        if ((key != (-7)) and (key != (-5))) and (key != (-6)):
+        if (key not in (-7, -5)) and (key != (-6)):
             if key == (-1):
                 MpCanvas.letter_cursor = imod((((MpCanvas.letter_cursor + 28) - 14)), 28)
             elif key == (-2):
@@ -4649,7 +4640,7 @@ class MpCanvas(_Canvas):
         while MpCanvas.loop_i < Consts.error_line_counts[MpCanvas.error_msg]:
             self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((((MpCanvas.center_y - idiv((Consts.error_line_counts[MpCanvas.error_msg] * 15), 2)) + (MpCanvas.loop_i * 15)) - 4) - idiv(MpCanvas.loop_j, 3)), MpCanvas.text_lines[MpCanvas.loop_i], 0xFFFFFF)
             MpCanvas.loop_i = MpCanvas.loop_i + 1
-        self.draw_ok_button(((MpCanvas.center_y + idiv((Consts.error_line_counts[MpCanvas.error_msg] * 15), 2)) - 5))
+        self.draw_ok_button((MpCanvas.center_y + idiv((Consts.error_line_counts[MpCanvas.error_msg] * 15), 2)) - 5)
 
     def draw_challenge_bg(self, graphics):  # g.java:6172
         self.draw_window(graphics)

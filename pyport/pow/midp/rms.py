@@ -33,7 +33,7 @@ def _load_raw(name):
     p = os.path.join(config.SAVE_DIR, name + ".rms.json")
     if not os.path.isfile(p):
         return None
-    with open(p, "r", encoding="utf-8") as fh:
+    with open(p, encoding="utf-8") as fh:
         return fh.read()
 
 

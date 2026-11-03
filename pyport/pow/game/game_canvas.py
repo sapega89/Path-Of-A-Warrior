@@ -115,7 +115,7 @@ class GameCanvas(GameFields, Canvas):
         if GameCanvas.key == -999:
             return
         if GameCanvas.paused:
-            if GameCanvas.key == -5 or GameCanvas.key == 53:
+            if GameCanvas.key in (-5, 53):
                 self.set_paused(False)
             GameCanvas.key = -999
             return
@@ -1129,7 +1129,7 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.key_time = system.currentTimeMillis()
 
     def draw_outro(self):  # ag.java:3011-3019  (outro picture)
-        if GameCanvas.frame == 2 or GameCanvas.frame == 5:
+        if GameCanvas.frame in {2, 5}:
             GameCanvas.stop_sound()
         GameCanvas.fill_screen(0)
         image = self.load_image(GameCanvas.scr_ui.get(0))
@@ -1302,14 +1302,14 @@ class GameCanvas(GameFields, Canvas):
     @staticmethod
     def move_letter_cursor(key):  # ag.java:1775-1792  (name entry: move the cursor over the 2x14 letter grid)
         result = key
-        if key != -7 and key != -5 and key != 53:
-            if key == -1 or key == 50:
+        if key not in (-7, -5, 53):
+            if key in (-1, 50):
                 GameCanvas.letter_cursor = (GameCanvas.letter_cursor + 28 - 14) % 28
-            elif key == -2 or key == 56:
+            elif key in (-2, 56):
                 GameCanvas.letter_cursor = (GameCanvas.letter_cursor + 28 + 14) % 28
-            elif key == -3 or key == 52:
+            elif key in (-3, 52):
                 GameCanvas.letter_cursor = (GameCanvas.letter_cursor + 28 - 1) % 28
-            elif key == -4 or key == 54:
+            elif key in (-4, 54):
                 GameCanvas.letter_cursor = (GameCanvas.letter_cursor + 28 + 1) % 28
                 if GameCanvas.letter_cursor == 27:
                     GameCanvas.letter_cursor = 0
@@ -1337,9 +1337,7 @@ class GameCanvas(GameFields, Canvas):
                 Gfx.fill_rect(left + 2 + 10 * cursor % 14, y + 1 + 17 * cursor // 14, 10, 15, 16711680)
         Gfx.set_font(GameCanvas.font_white)
         for b in range(len(letters)):
-            if b == 8:
-                dx = 1
-            elif b == 26:
+            if b in {8, 26}:
                 dx = 1
             else:
                 dx = 0
@@ -1621,7 +1619,7 @@ class GameCanvas(GameFields, Canvas):
                         if hero.quick_slots[b].count > 4:
                             return 0
                         break
-                    if 0 == hero.quick_slots[b].item and free_slot < 0:
+                    if hero.quick_slots[b].item == 0 and free_slot < 0:
                         free_slot = b
                     b += 1
                 if free_slot > -1 and b > 4:
@@ -1635,7 +1633,7 @@ class GameCanvas(GameFields, Canvas):
                 return 1
         elif item_id < 10000:
             b = 0
-            while b < config.BACKPACK_SIZE and 0 != hero.backpack[b].id:
+            while b < config.BACKPACK_SIZE and hero.backpack[b].id != 0:
                 b += 1
             if b > config.BACKPACK_SIZE - 1:
                 return 0
@@ -1773,7 +1771,7 @@ class GameCanvas(GameFields, Canvas):
             b = 64 + story // 6
             for i in range(3):
                 GameCanvas.story_pages[i] = consts.story_offsets[(story << 1) + i] - consts.story_offsets[story // 6 * 12]
-            if story == 3 and ending != 0 and 0 == GameCanvas.backpack_slot_of(502):
+            if story == 3 and ending != 0 and GameCanvas.backpack_slot_of(502) == 0:
                 GameCanvas.story_pages[2] = 0
                 GameCanvas.story_pages[1] = 0
                 GameCanvas.story_pages[0] = 0
@@ -1798,7 +1796,7 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.wait_ticks = 0
         GameCanvas.speech_line = 0
         GameCanvas.scene.load_story_page(GameCanvas.story_page)
-        if 0 == GameCanvas.story_ending:
+        if GameCanvas.story_ending == 0:
             self.draw_menu_background(1)
         GameCanvas.state = 10
         self.play_sound(2)
@@ -1818,11 +1816,11 @@ class GameCanvas(GameFields, Canvas):
             GameCanvas.wait_ticks = i16(GameCanvas.wait_ticks - 1)
             if GameCanvas.key != -999 and GameCanvas.wait_ticks > 3:
                 GameCanvas.wait_ticks = 3
-            if 0 == GameCanvas.wait_ticks:
+            if GameCanvas.wait_ticks == 0:
                 GameCanvas.story_page += 1
                 if GameCanvas.story_page < GameCanvas.story_pages[2] - GameCanvas.story_pages[0]:
                     GameCanvas.scene.load_story_page(GameCanvas.story_page)
-                elif 0 == GameCanvas.story_ending and GameCanvas.menu_return == 0 and GameCanvas.story_page == GameCanvas.story_pages[2] - GameCanvas.story_pages[0]:
+                elif GameCanvas.story_ending == 0 and GameCanvas.menu_return == 0 and GameCanvas.story_page == GameCanvas.story_pages[2] - GameCanvas.story_pages[0]:
                     if GameCanvas.reward_item != 0 or GameCanvas.reward_skill != 0:
                         GameCanvas.popups.setup_popup(27)
                     GameCanvas.scene.load_story_page(GameCanvas.story_page)
@@ -1842,7 +1840,7 @@ class GameCanvas(GameFields, Canvas):
                     GameCanvas.menu_scroll = 0
                     GameCanvas.menu_anim = 0
                 GameCanvas.redraw = 1
-        elif (0 == GameCanvas.story_ending and GameCanvas.story_page < GameCanvas.story_pages[1] - GameCanvas.story_pages[0]) or (GameCanvas.story_ending != 0 and GameCanvas.story_page >= GameCanvas.story_pages[1] - GameCanvas.story_pages[0]):
+        elif (GameCanvas.story_ending == 0 and GameCanvas.story_page < GameCanvas.story_pages[1] - GameCanvas.story_pages[0]) or (GameCanvas.story_ending != 0 and GameCanvas.story_page >= GameCanvas.story_pages[1] - GameCanvas.story_pages[0]):
             from pow.game.menus import Menus
             Menus.type_speech(GameCanvas.speech_line, GameCanvas.speech_pos[GameCanvas.speech_line], 0)
             if len(GameCanvas.speech[GameCanvas.speech_line]) <= GameCanvas.speech_pos[GameCanvas.speech_line]:
@@ -1938,7 +1936,7 @@ class GameCanvas(GameFields, Canvas):
             if pos != size:
                 ch = text[pos]
                 line_w += GameCanvas.char_width(ch)
-                if (ch == 32 or ch == 124) and line_w - GameCanvas.char_width(ch) >= width:
+                if (ch in {32, 124}) and line_w - GameCanvas.char_width(ch) >= width:
                     if break_at < line_start:
                         break_at = pos
                     lines[b] = GameCanvas.read_utf(text, line_start, break_at)
@@ -2140,7 +2138,7 @@ class GameCanvas(GameFields, Canvas):
         b = 0
         while b < 9:
             rest = idiv(rest, 10)
-            if 0 == rest:
+            if rest == 0:
                 break
             b += 1
         self.draw_big_number(GameCanvas.hero.gold, GameCanvas.view_cx + (widths[b] >> 1) + 16 - GameCanvas.view_x, GameCanvas.view_cy - 76, 0)
@@ -2539,7 +2537,7 @@ class GameCanvas(GameFields, Canvas):
         palettes = GameCanvas._PAL
         size = len(png)
         plte = 0
-        for pos in range(0, size - 4 + 1):
+        for pos in range(size - 4 + 1):
             if png[pos] == 80 and png[pos + 1] == 76 and png[pos + 2] == 84 and png[pos + 3] == 69:
                 plte = pos
                 break
@@ -2693,7 +2691,7 @@ class GameCanvas(GameFields, Canvas):
                 general = GameCanvas.lords[GameCanvas.mission].general
             else:
                 general = GameCanvas.cells[GameCanvas.cell].general
-            if 0 == general:
+            if general == 0:
                 GameCanvas.redraw = 1
                 self.open_menu(2)
                 self.load_menu_frames()
@@ -2760,7 +2758,7 @@ class GameCanvas(GameFields, Canvas):
 
     def random_general_skill(self, force):  # ag.java:1494-1505  (random skill of general dC)
         b = 0
-        while b < 4 and 0 != GameCanvas.general.skills[b]:
+        while b < 4 and GameCanvas.general.skills[b] != 0:
             b += 1
         if force != 0:
             while True:

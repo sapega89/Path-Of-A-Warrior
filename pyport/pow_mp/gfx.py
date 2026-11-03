@@ -7,7 +7,7 @@ from pow_mp.rt import i32, idiv, ushr32
 
 
 
-class Gfx(object):
+class Gfx:
     g = None  # i.java:12 Graphics
     clip_x = 0  # i.java:13 int
     clip_y = 0  # i.java:14 int
@@ -41,9 +41,9 @@ class Gfx(object):
 
     @staticmethod
     def draw_chars(chars, start, count, x, y, anchor):  # i.java:43
-        if ((anchor & 1)) != 0:
+        if (anchor & 1) != 0:
             x = (x - idiv(Gfx.font.chars_width(chars, start, count), 2))
-        elif ((anchor & 8)) != 0:
+        elif (anchor & 8) != 0:
             x = (x - Gfx.font.chars_width(chars, start, count))
         end = (start + count)
         pen_x = x
@@ -74,7 +74,7 @@ class Gfx(object):
             crc = i
             bit = 8
             while (bit := i32(bit + -1)) >= 0:
-                if ((crc & 1)) != 0:
+                if (crc & 1) != 0:
                     crc = (-306674912 ^ ushr32(crc, 1))
                     continue
                 crc = ushr32(crc, 1)

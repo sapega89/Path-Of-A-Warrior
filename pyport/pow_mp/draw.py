@@ -7,7 +7,7 @@ tools/j2py_mp.py; edited by hand since.
 
 
 
-class Draw(object):
+class Draw:
 
     @staticmethod
     def draw_image(graphics, image, x, y, anchor):  # f.java:12

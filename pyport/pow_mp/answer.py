@@ -7,7 +7,7 @@ from pow_mp.rt import _inc_post, _jstring, _jtrim, i16, i32
 
 
 
-class Answer(object):
+class Answer:
 
     def __init__(self, data):  # k.java:8
         self.data = None
@@ -20,7 +20,7 @@ class Answer(object):
     def read_s16(self):  # k.java:16
         lo = self.data[_inc_post(self, 'pos', 1)]
         hi = self.data[_inc_post(self, 'pos', 1)]
-        return i16(((i32((((lo & 0xFF))) << (0)) | i32((((hi & 0xFF))) << (8)))))
+        return i16(i32((((lo & 0xFF))) << (0)) | i32((((hi & 0xFF))) << (8)))
 
     def read_s32(self):  # k.java:22
         b0 = self.data[_inc_post(self, 'pos', 1)]
