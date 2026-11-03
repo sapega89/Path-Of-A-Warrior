@@ -101,7 +101,7 @@ class Menus(GameCanvas):
                 self.draw_difficulty()
             elif v == 15:
                 self.draw_skills(0)
-                self.draw_description_strip()
+                self.draw_skill_info()
             elif v == 16:
                 self.draw_gear(cM[2], 0)
                 self.draw_description_strip()
@@ -171,7 +171,7 @@ class Menus(GameCanvas):
                 if v == 15:
                     if GameCanvas.menu_part != 0:
                         self.draw_skills(GameCanvas.menu_part)
-                    self.draw_description_strip()
+                    self.draw_skill_info()
                     return
                 if v == 16:
                     self.draw_description_strip()
@@ -1126,6 +1126,9 @@ class Menus(GameCanvas):
         cz = GameCanvas.hero
         cM = GameCanvas.menu
         arrayOfByte = [1, 3, 7, 9, 0]
+        if config.SKILL_BAR or config.SKILL_CARD:
+            # PORT-EXTRA: the PC keys of the 5 slots are 1-5 (the phone's were 1 3 7 9 0)
+            arrayOfByte = [1, 2, 3, 4, 5]
         if 0 == paramInt:
             for b in range(5):
                 self.draw_empty_slot(40 + b * 30 + 4 * b, 60)
@@ -1179,6 +1182,17 @@ class Menus(GameCanvas):
         else:
             self.draw_description(consts.aC[cM[2]] + 2000, GameCanvas.view_cx - 100, GameCanvas.canvas_size.y - 70, 200, 22)
         GameCanvas.menu_part = 0
+
+    def draw_skill_info(self):
+        """Skills menu (cM[0] == 15): the description strip, or (PORT-EXTRA config.SKILL_CARD)
+        the skill card of pow/game/skill_bar.py for the slot / tree skill under the cursor."""
+        if not config.SKILL_CARD:
+            self.draw_description_strip()
+            return
+        from pow.game import skill_bar
+        cM = GameCanvas.menu
+        skill = GameCanvas.hero.hotkeys[cM[1]] if cM[3] == 1 else consts.aC[cM[2]]
+        skill_bar.draw_card(skill)
 
     def draw_description_strip(self):  # e.java:1595-1630  (description strip; scrolls when longer than the box)
         dF = GameCanvas.info_box
@@ -1282,7 +1296,10 @@ class Menus(GameCanvas):
             Gfx.set_font(GameCanvas.font_white)
             for b1 in range(5):
                 self.draw_box(GameCanvas.view_cx - 80 + 32 * b1, GameCanvas.view_cy - 40 + GameCanvas.view_y, 30, 22, False)
-                if cz.quick_keys[0] == b1:
+                if config.SKILL_BAR:
+                    # PORT-EXTRA config.SKILL_BAR: every belt slot has its own key Z X C V B
+                    GameCanvas.draw_view_text(" " + "ZXCVB"[b1] + " ", GameCanvas.view_cx - 80 + 32 * b1 - GameCanvas.view_x, GameCanvas.view_cy - 38)
+                elif cz.quick_keys[0] == b1:
                     GameCanvas.draw_view_text(" * ", GameCanvas.view_cx - 80 + 32 * b1 - GameCanvas.view_x, GameCanvas.view_cy - 38)
                 elif cz.quick_keys[1] == b1:
                     GameCanvas.draw_view_text(" # ", GameCanvas.view_cx - 80 + 32 * b1 - GameCanvas.view_x, GameCanvas.view_cy - 38)
@@ -1301,7 +1318,7 @@ class Menus(GameCanvas):
         self.draw_description(GameCanvas.menu[1] + 1200, GameCanvas.view_cx - 80 - GameCanvas.view_x, GameCanvas.view_cy + 30, 160, 22)
         self.draw_box(GameCanvas.view_cx - 80, GameCanvas.view_cy + 60 + GameCanvas.view_y, 160, 22, False)
         Gfx.set_font(GameCanvas.font_white)
-        self.draw_text_at("*,# key Assign", GameCanvas.view_cy + 60, 15)
+        self.draw_text_at("Keys Z X C V B" if config.SKILL_BAR else "*,# key Assign", GameCanvas.view_cy + 60, 15)
         if GameCanvas.state == 3:
             GameCanvas.view_cy += 30
 

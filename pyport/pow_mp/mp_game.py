@@ -27,7 +27,7 @@ class MpGame(MpCanvas):
         bl2 = True
         n2 = MpGame.requested_music
         MpGame.requested_music = (-1)
-        if (MpCanvas.am != 0) and (n2 != (-1)):
+        if (MpCanvas.volume != 0) and (n2 != (-1)):
             if n2 == 1:
                 if MpGame.music == n2:
                     bl2 = False
@@ -42,8 +42,8 @@ class MpGame(MpCanvas):
                 self.play_music(n2, bl)
 
     def play_music(self, n2, bl):  # m.java:44
-        MpGame.players.set_volume((MpCanvas.am * 20))
-        if MpCanvas.am == 0:
+        MpGame.players.set_volume((MpCanvas.volume * 20))
+        if MpCanvas.volume == 0:
             self.stop_music()
             return
         if n2 == 1:
