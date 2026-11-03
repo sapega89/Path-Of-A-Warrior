@@ -86,6 +86,11 @@ def test_stick_and_dpad_hold_a_direction():
     dpad = lambda t, b: g.handle(_ev(t, button=b))                                  # noqa: E731
     assert dpad(pygame.CONTROLLERBUTTONDOWN, pygame.CONTROLLER_BUTTON_DPAD_DOWN) == [(-2, True)]
     assert dpad(pygame.CONTROLLERBUTTONUP, pygame.CONTROLLER_BUTTON_DPAD_DOWN) == [(-2, False)]
+    # right, then up while right is still held: letting up go walks right again
+    assert dpad(pygame.CONTROLLERBUTTONDOWN, pygame.CONTROLLER_BUTTON_DPAD_RIGHT) == [(-4, True)]
+    assert dpad(pygame.CONTROLLERBUTTONDOWN, pygame.CONTROLLER_BUTTON_DPAD_UP) == [(-4, False), (-1, True)]
+    assert dpad(pygame.CONTROLLERBUTTONUP, pygame.CONTROLLER_BUTTON_DPAD_UP) == [(-1, False), (-4, True)]
+    assert dpad(pygame.CONTROLLERBUTTONUP, pygame.CONTROLLER_BUTTON_DPAD_RIGHT) == [(-4, False)]
 
 
 def test_plain_joystick_and_unplugging():

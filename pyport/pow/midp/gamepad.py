@@ -86,6 +86,7 @@ class Pad:
         self.stick = None                    # direction held by the stick
         self.hat = None                      # direction held by the hat / d-pad
         self.triggers = set()                # trigger axes pressed now
+        self.dpad = []                       # d-pad buttons held now, last pressed last
 
 
 class Gamepads:
@@ -142,8 +143,12 @@ class Gamepads:
                 if code is None:
                     return []
                 down = t == pygame.CONTROLLERBUTTONDOWN
-                if code in DIRECTIONS:
-                    return self._set_hat(pad, code if down else (None if pad.hat == code else pad.hat))
+                if code in DIRECTIONS:            # several held: the last one counts, then the rest
+                    if code in pad.dpad:
+                        pad.dpad.remove(code)
+                    if down:
+                        pad.dpad.append(code)
+                    return self._set_hat(pad, pad.dpad[-1] if pad.dpad else None)
                 return [(code, True)] if down else []
             if t == pygame.CONTROLLERAXISMOTION:
                 value = ev.value / 32767.0
