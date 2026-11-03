@@ -37,10 +37,10 @@ def test_saved_volume_used_on_first_sound(tmp_path, monkeypatch):
 def test_mp_volume_applies_to_playing_sound():
     """c.java a(int): setLevel also on the Player that is playing now."""
     from pow.midp.media import gain
-    from pow_mp.c import c
-    pool = c(4, 1, True, True)
-    assert pool.a_TI("/snd3.wav", 3)
-    pool.a_IZ(3, True)
-    pool.a_I(40)
+    from pow_mp.player_pool import PlayerPool
+    pool = PlayerPool(4, 1, True, True)
+    assert pool.load("/snd3.wav", 3)
+    pool.play(3, True)
+    pool.set_volume(40)
     assert abs(pool.snd[3].get_volume() - gain(40)) < 0.01
-    pool.a_v()
+    pool.stop()
