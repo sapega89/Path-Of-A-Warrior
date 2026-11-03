@@ -1603,10 +1603,13 @@ class MapEngine(GameCanvas):
             self.draw_message()
         else:
             self.draw_number_commas(GameCanvas.hero.kills_shown, GameCanvas.view_size.x - 4 - 7, 20)
-        self.draw_quick_potions()
         if config.SKILL_BAR:
+            # PORT-EXTRA config.SKILL_BAR: the belt above shows all 5 slots, so the * / # boxes of
+            # the frame stay empty (ar.aD is not drawn)
             from pow.game import skill_bar   # PORT-EXTRA config.SKILL_BAR: belt and skill slots
             skill_bar.draw_bar()
+        else:
+            self.draw_quick_potions()
         self.draw_clock(0, 5, GameCanvas.mission_seconds)
         if GameCanvas.state == 3 and GameCanvas.popups.kind == 0:
             if GameCanvas.map_mode.mode != 0:

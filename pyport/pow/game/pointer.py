@@ -40,6 +40,8 @@ exactly the Java one. Hit zones follow what is drawn on each screen (coordinates
 """
 import collections
 
+import config
+
 from pow.game import skill_bar
 from pow.game.game_canvas import GameCanvas
 from pow.midp.jint import idiv
@@ -273,7 +275,7 @@ def _map_keys(x, y, kind):
     slot = skill_bar.key_at(x, y)                     # PORT-EXTRA config.SKILL_BAR: belt / skill slot
     if slot is not None:
         return [] if slot == -999 else [slot]
-    potion = _hud_potion(x, y)
+    potion = None if config.SKILL_BAR else _hud_potion(x, y)   # PORT-EXTRA: no * / # boxes with the belt
     if potion is not None:                             # * / # boxes of the HUD: drink / throw
         return [potion]
     # a click on the hero = attack; beside the hero = a tap on that direction
