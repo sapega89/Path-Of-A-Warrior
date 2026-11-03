@@ -43,7 +43,7 @@ def stats_line(head):
 def spent_points(hero):
     """Stat points in the hero's base stats over its head's set (elixirs included)."""
     stats = (hero.base_hp, hero.base_mp, hero.base_attack, hero.base_defense)
-    return max(0, sum((s - b) // g for s, b, g in zip(stats, base_stats(hero.head), POINT_GAIN)))
+    return max(0, sum((s - b) // g for s, b, g in zip(stats, base_stats(hero.head), POINT_GAIN, strict=True)))
 
 
 def respec_gold(hero):

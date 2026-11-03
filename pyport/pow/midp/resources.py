@@ -1,5 +1,4 @@
 """Class.getResourceAsStream: resources live in the project root (same names as in the jar)."""
-import os
 import pathlib
 
 import config
@@ -18,6 +17,3 @@ def read(path: str):
     except OSError:
         return None
 
-
-def exists(path: str) -> bool:
-    return os.path.isfile(root() / path.lstrip("/"))

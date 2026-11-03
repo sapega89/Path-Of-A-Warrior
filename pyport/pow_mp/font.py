@@ -39,7 +39,6 @@ class Font(object):
                 png[(self.plte_offset + 12)] = i8((((crc >> 8) & 0xFF)))
                 png[(self.plte_offset + 13)] = i8(((crc & 0xFF)))
             self.image = Image.createImage(png, 0, len(png))
-            None
             return
         except Exception:
             print(_js(_js("font fail : ", path)))

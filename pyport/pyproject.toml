@@ -11,9 +11,6 @@ ignore = [
     "B007",  # unused loop variables of ported `for` loops
 ]
 
-[tool.ruff.lint.per-file-ignores]
-# the MP client was machine-translated from Java: dead locals and bare `None` statements stay as in g.java
-"pow_mp/*.py" = ["F841", "B018"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

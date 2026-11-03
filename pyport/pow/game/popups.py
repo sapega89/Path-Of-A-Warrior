@@ -1,9 +1,4 @@
-"""l.java - popups (cS). Literal port, Phase 0 subset.
-
-Ported: drawing (c, b(int), a(4 ints), O, c(int)), text popups a(String) and e(int) with all
-plain-text messages, and the key/timer logic b() for the branches the menus reach.
-Branches that need map/combat/campaign code raise NotPorted.
-"""
+"""l.java - popups (cS): drawing, text popups, choices and the key / timer logic."""
 import config
 from pow.game import consts
 from pow.game.game_canvas import GameCanvas

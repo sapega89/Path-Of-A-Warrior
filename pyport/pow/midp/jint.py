@@ -40,7 +40,3 @@ def ushr32(x: int, n: int) -> int:
     """x >>> n for int."""
     return i32((x & 0xFFFFFFFF) >> (n & 31))
 
-
-def sbyte(b: int) -> int:
-    """Signed value of an unsigned byte read from bytes/bytearray."""
-    return b - 0x100 if b & 0x80 else b

@@ -92,8 +92,8 @@ class Gfx(object):
 
 
 def _static_init():
-    byArray = [(-119), 80, 78, 71, 13, 10, 26, 10, 0, 0, 0, 13, 73, 72, 68, 82, 0, 0, 0, 0, 0, 0, 0, 0, 8, 3, 0, 0, 0]
-    byArray2 = [0, 0, 0, 0, 73, 69, 78, 68, (-82), 66, 96, (-126)]
+    # DECOMP_FIX: the PNG header / IEND locals of the static initializer were never read
+    pass
 
 
 def _late_imports():

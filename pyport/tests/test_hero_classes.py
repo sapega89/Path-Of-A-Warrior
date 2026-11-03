@@ -21,14 +21,14 @@ def test_every_hero_is_worth_the_original_points():
     assert orig == (30, 10, 5, 4)                       # ag.aw: head 0 keeps the original hero
     assert len(set(H.BASE_STATS)) == 4
     for stats in H.BASE_STATS:
-        diffs = [(s - o) / g for s, o, g in zip(stats, orig, H.POINT_GAIN)]
+        diffs = [(s - o) / g for s, o, g in zip(stats, orig, H.POINT_GAIN, strict=True)]
         assert all(d == int(d) for d in diffs) and sum(diffs) == 0
 
 
 def test_server_has_the_same_table():
     for head, (hp, mp, atk, df) in enumerate(H.BASE_STATS):
         assert R.hero_base(head) == {"hp": hp, "mp": mp, "atk": atk, "def": df}
-    assert R.POINT_GAIN == dict(zip(("hp", "mp", "atk", "def"), H.POINT_GAIN))
+    assert R.POINT_GAIN == dict(zip(("hp", "mp", "atk", "def"), H.POINT_GAIN, strict=True))
 
 
 @pytest.mark.parametrize("head", range(4))

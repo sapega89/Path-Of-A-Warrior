@@ -142,7 +142,8 @@ class MapEngine(GameCanvas):
                 GameCanvas.redraw = MapEngine.assign_quick_potion(1)
             return
         if key in (-5, 53):
-            if GameCanvas.menu[0] == 10 and GameCanvas.menu[1] == 4:
+            # ORIG-BUG B6: the test misses `cR.a == 1`, so FIRE on the 5th slot of Items opens Help too
+            if GameCanvas.menu[0] == 10 and GameCanvas.menu[1] == 4 and (GameCanvas.map_mode.mode == 1 or not config.ORIG_BUG["B6"]):
                 GameCanvas.menu[0] = 5
                 GameCanvas.menu[1] = 3
                 GameCanvas.prev_state = GameCanvas.state

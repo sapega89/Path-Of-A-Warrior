@@ -408,7 +408,6 @@ class MpCanvas(_Canvas):
         MpCanvas.pause_request = 0
 
     def run(self):  # g.java:414
-        g2 = self
         self.init_screen()
         self.main_loop()
         MpCanvas.sleep(250)
@@ -425,7 +424,6 @@ class MpCanvas(_Canvas):
                 self.repaint()
                 MpCanvas.sleep(250)
             else:
-                now = 0
                 wait_ms = 0
                 if MpCanvas.key != (-999):
                     self.handle_key(MpCanvas.key)
@@ -443,7 +441,7 @@ class MpCanvas(_Canvas):
                     MpCanvas.state_ticks = MpCanvas.state_ticks + 1
                 if MpCanvas.state_ticks >= 25000:
                     MpCanvas.state_ticks = 100
-                if ((wait_ms := (Consts.speed_frame_ms[MpCanvas.speed] - i32(((((now := system.currentTimeMillis())) - MpCanvas.frame_start)))))) > 20:
+                if ((wait_ms := (Consts.speed_frame_ms[MpCanvas.speed] - i32((((system.currentTimeMillis()) - MpCanvas.frame_start)))))) > 20:
                     MpCanvas.sleep(wait_ms)
                 else:
                     MpCanvas.sleep(20)
@@ -3134,13 +3132,12 @@ class MpCanvas(_Canvas):
                 MpCanvas.draw_sprite_frame(MpCanvas.screen_g, MpCanvas.mon_effect_images, MpCanvas.mon_effect_frames, MpCanvas.fighter_frame[index])
         else:
             pose = 0
-            fx_behind = False
             if not behind:
                 self.load_sprite(MpCanvas.sword_images[MpCanvas.fighter_weapon[index]], MpCanvas.sword_frames[MpCanvas.fighter_weapon[index]], _js("sprsword", ((MpCanvas.fighter_weapon[index] + 1))))
                 MpCanvas.draw_sprite_frame(MpCanvas.screen_g, MpCanvas.sword_images[MpCanvas.fighter_weapon[index]], MpCanvas.sword_frames[MpCanvas.fighter_weapon[index]], MpCanvas.fighter_frame[index])
                 self.load_sprite(MpCanvas.effect_images[0], MpCanvas.effect_frames[0], "spreff1")
                 MpCanvas.draw_sprite_frame(MpCanvas.screen_g, MpCanvas.effect_images[0], MpCanvas.effect_frames[0], MpCanvas.fighter_frame[index])
-            if behind == ((fx_behind := (Consts.eff2_behind_pose1[imod(MpCanvas.fighter_frame[index], 100)] if (((pose := idiv(MpCanvas.fighter_frame[index], 100))) == 1) else ((Consts.eff2_behind_pose2[imod(MpCanvas.fighter_frame[index], 100)] if (pose == 2) else False))))):
+            if behind == (((Consts.eff2_behind_pose1[imod(MpCanvas.fighter_frame[index], 100)] if (((pose := idiv(MpCanvas.fighter_frame[index], 100))) == 1) else ((Consts.eff2_behind_pose2[imod(MpCanvas.fighter_frame[index], 100)] if (pose == 2) else False))))):
                 self.load_sprite(MpCanvas.effect_images[1], MpCanvas.effect_frames[1], "spreff2")
                 MpCanvas.draw_sprite_frame(MpCanvas.screen_g, MpCanvas.effect_images[1], MpCanvas.effect_frames[1], MpCanvas.fighter_frame[index])
 
@@ -3384,7 +3381,7 @@ class MpCanvas(_Canvas):
                     if MpCanvas.fighter_mp[MpCanvas.loop_i] < 0:
                         MpCanvas.fighter_mp[MpCanvas.loop_i] = 0
                 if MpCanvas.fighter_hp_delta[MpCanvas.loop_i] != 0:
-                    mirrored = _set(MpCanvas, 'draw_mirrored', (imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) != 0))
+                    MpCanvas.draw_mirrored = (imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) != 0)
                     if not MpCanvas.draw_mirrored:
                         self.draw_damage_number(MpCanvas.screen_g, MpCanvas.fighter_x[MpCanvas.loop_i], ((MpCanvas.fighter_y[MpCanvas.loop_i] - 40) - (2 * MpCanvas.damage_tick)), MpCanvas.fighter_hp_delta[MpCanvas.loop_i])
                     else:
@@ -3675,8 +3672,6 @@ class MpCanvas(_Canvas):
                     return
                 MpCanvas.popup_shown = False
                 return
-            len(MpCanvas.user_id)
-            handled = False
             if key == (-7):
                 if len(MpCanvas.input_text) == 0:
                     MpCanvas.popup_shown = True
@@ -4189,7 +4184,7 @@ class MpCanvas(_Canvas):
 
     @staticmethod
     def noop():  # g.java:5599
-        None
+        pass
 
     def load_bg(self, index):  # g.java:5603
         if MpCanvas.bg_images[index] is None:
