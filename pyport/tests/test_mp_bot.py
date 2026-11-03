@@ -188,3 +188,11 @@ def test_the_bot_beats_random_play_and_bot_duels_end():
             assert bt.over
             rounds.append(bt.round)
         assert sum(rounds) / len(rounds) <= 15, (lvl, rounds)
+
+
+def test_a_one_off_skill_does_not_count_as_winning_the_race():
+    rng = FixedRng(100)
+    # Thunder kills in ~1 round but empties the gauge; on Attack the foe outlasts me: heal
+    me = fighter(0, hp=60, atk=60, mp=60, skills={B.THUNDER: 9, B.HEAL_MED: 1}, max_mp=100)
+    foe = fighter(1, hp=250, def_=55, atk=20, mp=0)   # Thunder 128, Attack 15; it hits 30
+    assert B.cpu_choice(rng, me, [foe])[1] == B.HEAL_MED

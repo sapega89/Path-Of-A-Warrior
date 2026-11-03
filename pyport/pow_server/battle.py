@@ -208,7 +208,9 @@ def _heal_choice(me, allies, incoming):
 def _winning_race(me, foes, opts):
     """My hits take the foes down in fewer rounds than theirs take me: a heal would only drag
     the fight out (two bots that both heal it out never end)."""
-    mine = sum(g.hp / max(1, max(strike_damage(me, g, a, h) for a, h, _ in opts)) for g in foes)
+    # counted on Attack: a skill the MP pays for now cannot be repeated every round
+    hit = next((h for a, h, _ in opts if a == ATTACK), 100)
+    mine = sum(g.hp / max(1, strike_damage(me, g, ATTACK, hit)) for g in foes)
     theirs = me.hp / max(1, sum(threat(g, me) for g in foes))
     return mine < theirs
 
