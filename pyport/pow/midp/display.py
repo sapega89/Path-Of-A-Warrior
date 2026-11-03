@@ -69,7 +69,8 @@ def is_fullscreen():
     if _browser():
         try:
             import platform
-            return bool(platform.window.document.fullscreenElement)
+            # a JS object in pygbag has no truth value (bool() raises): compare with None
+            return platform.window.document.fullscreenElement is not None
         except Exception:
             return False
     return fullscreen
@@ -82,9 +83,10 @@ def set_fullscreen(full):
         try:
             import platform
             doc = platform.window.document
-            if full and not doc.fullscreenElement:
+            now = doc.fullscreenElement is not None
+            if full and not now:
                 doc.documentElement.requestFullscreen()
-            elif not full and doc.fullscreenElement:
+            elif not full and now:
                 doc.exitFullscreen()
         except Exception as ex:
             print(f"Fullscreen API: {ex!r}")
@@ -92,6 +94,21 @@ def set_fullscreen(full):
     if window is not None and full != fullscreen:
         _set_mode(full)
     _save(full)
+
+
+_seen = None
+
+
+def screen_changed():
+    """True once after full screen went on or off. In the browser that happens a moment after the
+    request (or not at all: a page may go full screen only right after a key or a click)."""
+    global _seen
+    if not _browser():
+        return False
+    now = is_fullscreen()
+    changed = _seen is not None and now != _seen
+    _seen = now
+    return changed
 
 
 def toggle_fullscreen():

@@ -159,5 +159,6 @@ SCREEN_OPTION = os.environ.get("POW_SCREEN_OPTION", "1") == "1"
 
 # PORT-EXTRA (asked by the player): a gamepad / joystick on the PC works as the phone keys
 # (pow/midp/gamepad.py: stick and d-pad = arrows, A = OK, B = BACK, X Y LB RB LT = skills,
-# RT = *, L3 / R3 = #, Start = PAUSE). POW_GAMEPAD=0 turns it off.
+# RT = *, L3 = #, R3 = AUTO, Start = PAUSE; right stick = belt slots Z X C V on the map). POW_GAMEPAD=0
+# turns it off.
 GAMEPAD = os.environ.get("POW_GAMEPAD", "1") == "1"

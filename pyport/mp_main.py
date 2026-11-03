@@ -19,9 +19,11 @@ def server_from_page():
         return
     try:
         import platform
+        from urllib.parse import parse_qs
 
         import config
-        where = platform.window.URLSearchParams.new(platform.window.location.search).get("server")
+        # parsed here: pygbag's JS bridge has no URLSearchParams.new(...)
+        where = parse_qs(str(platform.window.location.search).lstrip("?")).get("server", [""])[0]
         if where:
             config.MP_SERVER = str(where)
             print("POW MP server:", config.MP_SERVER)

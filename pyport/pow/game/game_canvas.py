@@ -343,6 +343,8 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
 
     def tick_state(self):  # ag.java:1887-1933
         from pow.game.sound import Sound
+        if display.screen_changed():         # PORT-EXTRA: the browser went full screen / back later
+            GameCanvas.redraw = 1            # (Options shows Screen: Full / Window)
         state = GameCanvas.state
         if state == 12:
             self.paint_state()

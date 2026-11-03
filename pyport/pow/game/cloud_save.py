@@ -88,8 +88,9 @@ def _records(name):
 
 
 class TextSocket:
-    """A WebSocket of text messages: `websockets` on the desktop, the page's JS one in the
-    browser (like pow_mp/net/transport.py's WebSocketTransport, which is binary)."""
+    """A WebSocket of text messages with `websockets` on the desktop (like
+    pow_mp/net/transport.py's WebSocketTransport, which is binary). The browser uses
+    BrowserTextSocket."""
 
     def __init__(self, url):
         self.url = url
@@ -100,26 +101,8 @@ class TextSocket:
         self._task = None
 
     def open(self):
-        if sys.platform == "emscripten":
-            import platform as pf
-            ws = pf.window.WebSocket.new(self.url)
-
-            def on_open(ev):
-                if self._ws is ws:
-                    self.connected = True
-
-            def on_message(ev):
-                if self._ws is ws:
-                    self.inbox.append(str(ev.data))
-
-            def on_close(ev):
-                if self._ws is ws:
-                    self.connected, self.failed = False, True
-            ws.onopen, ws.onmessage, ws.onclose, ws.onerror = on_open, on_message, on_close, on_close
-            self._ws = ws
-        else:
-            self._out = asyncio.Queue()
-            self._task = asyncio.ensure_future(self._run())
+        self._out = asyncio.Queue()
+        self._task = asyncio.ensure_future(self._run())
 
     async def _run(self):
         try:
@@ -146,10 +129,7 @@ class TextSocket:
     def send(self, text):
         if not self.connected:
             return
-        if sys.platform == "emscripten":
-            self._ws.send(text)
-        else:
-            self._out.put_nowait(text)
+        self._out.put_nowait(text)
 
     def poll(self):
         out, self.inbox = self.inbox, []
@@ -168,10 +148,46 @@ class TextSocket:
         self.connected = False
 
 
+class BrowserTextSocket:
+    """PORT-EXTRA: TextSocket of the browser build: the page's WebSocket (pow/midp/webws.py)."""
+
+    def __init__(self, url):
+        self.url = url
+        self._ws = None
+
+    @property
+    def connected(self):
+        return self._ws is not None and self._ws.connected
+
+    @property
+    def failed(self):
+        return self._ws is not None and self._ws.failed
+
+    def open(self):
+        from pow.midp.webws import BrowserSocket
+        self._ws = BrowserSocket(self.url, binary=False)
+
+    def send(self, text):
+        if self.connected:
+            self._ws.send(str(text))
+
+    def poll(self):
+        if self._ws is None:
+            return []
+        return [m for m in self._ws.recv() if isinstance(m, str)]
+
+    def close(self):
+        if self._ws is not None:
+            self._ws.close()
+            self._ws = None
+
+
 class CloudSync:
     """The client side; step() does one bit of work, run by run() / boot() on the game loop."""
 
-    def __init__(self, url, make_socket=TextSocket, clock=now_ms):
+    def __init__(self, url, make_socket=None, clock=now_ms):
+        if make_socket is None:
+            make_socket = BrowserTextSocket if sys.platform == "emscripten" else TextSocket
         self.url = url
         self.make_socket = make_socket
         self.clock = clock
