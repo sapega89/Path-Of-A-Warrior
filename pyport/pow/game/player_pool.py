@@ -8,6 +8,8 @@ import pathlib
 
 import pygame
 
+from pow.midp.media import gain
+
 AUDIO = pathlib.Path(__file__).resolve().parents[2] / "assets" / "audio"
 
 
@@ -48,7 +50,7 @@ class PlayerPool:
         self.looping = paramInt if paramBoolean else -1
         self.stop_current()
         snd = self.players[paramInt]
-        snd.set_volume(self.volume / 100.0)
+        snd.set_volume(gain(self.volume))
         snd.play(loops=-1 if paramBoolean else 0)
         self.playing = paramInt
 
@@ -64,7 +66,7 @@ class PlayerPool:
         if 0 <= paramInt <= 100:
             self.volume = paramInt
         if self.playing != -1 and self.players[self.playing] is not None:
-            self.players[self.playing].set_volume(self.volume / 100.0)
+            self.players[self.playing].set_volume(gain(self.volume))
 
     def pause(self):  # aq.java:260-269  hideNotify
         self.paused = True
