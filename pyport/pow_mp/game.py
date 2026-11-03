@@ -61,7 +61,7 @@ async def run(self, midlet):
                 MpCanvas.state_ticks += 1
             if MpCanvas.state_ticks >= 25000:
                 MpCanvas.state_ticks = 100
-            n2 = Consts.ef[MpCanvas.speed] - int(system.currentTimeMillis() - MpCanvas.frame_start)
+            n2 = Consts.speed_frame_ms[MpCanvas.speed] - int(system.currentTimeMillis() - MpCanvas.frame_start)
             await self.sleep_ms(n2 if n2 > 20 else 20)
         self.apply_pause()
-        MpCanvas.K = True
+        MpCanvas.loop_started = True
