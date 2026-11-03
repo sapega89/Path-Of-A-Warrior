@@ -16,6 +16,7 @@ import dataclasses
 from pow_server import sp_rules as R
 
 ATTACK, DEFEND, EVADE = 0, 1, 2
+AUTO = 255                               # PORT-EXTRA: a 1027 with this action lets the bot choose
 WIND, STORM, THUNDER, TIDE, WAVE, TIDAL = 3, 4, 5, 6, 7, 8
 HEAL_MED, HEAL_MAX, SOUL_DEVIL, SOUL_GUARD, SOUL_ARCH = 9, 10, 11, 12, 13
 ENEMY_SKILLS = (WIND, STORM, THUNDER, TIDE, WAVE, TIDAL)
@@ -63,6 +64,9 @@ class Fighter:
     general: bool = False                 # worth 2L when beaten, a soldier L (ar.java:1663-1698)
     build: dict = None                    # where the hero's stat points went (CPU fighters copy it)
     max_mp: int = 10                      # the hero's MP in the single player (skill costs)
+    auto: bool = False                    # auto-battle: the bot chooses for this player
+    last_action: int = ATTACK             # the bot does not take a stance twice in a row
+    heals: int = 0                        # heals cast in this battle (the bot's HEAL_LIMIT)
 
     def __post_init__(self):
         self.hp = self.hp or self.max_hp
@@ -145,19 +149,154 @@ def cpu_fighter(rng, me, slot, ally=False):
                    general=True, build=build, max_mp=st["mp"])
 
 
-def cpu_choice(rng, me, foes):
-    """(target slot, action, hit%) for a CPU fighter."""
-    target = min(foes, key=lambda f: f.hp).slot
-    if me.hp * 100 < me.max_hp * 35:
-        for s in (HEAL_MAX, HEAL_MED):
-            if me.can_use(s):
-                return me.slot, s, 0
-    usable = [s for s in me.slots if me.can_use(s) and s not in HEALS]
-    if usable and rng.random() < 0.6:
-        return target, rng.choice(usable), 0
-    r = rng.random()
-    action = ATTACK if r < 0.7 else DEFEND if r < 0.88 else EVADE
-    return target, action, rng.choice((40, 52, 64, 76, 76, 88, 88, 100))
+# --- the bot (PORT-EXTRA: the lost server's CPU is unknown) ------------------------------------
+# One choice a round for a CPU fighter, and for a player on auto-battle (Fighter.auto). It looks
+# one round ahead on the same numbers as _strike: finish a foe off with the cheapest action that
+# kills, Defend or Evade when the hits coming are lethal, heal when HP is below them, else the
+# action with the most damage, a skill only when it beats Attack by enough for its MP.
+BAR_CHOICES = (40, 52, 64, 76, 76, 88, 88, 100)     # where the bot stops the timing bar
+HEAL_LIMIT = 3                                      # heals the bot casts in one battle, at most
+HEAL_ROUNDS = 2                                     # heal when HP lasts this many rounds or less
+MP_PER_ROUND = MP_ATTACK                            # an Attack round refills this much MP
+
+
+def strike_damage(f, t, action, hit=100, defended=False):
+    """The damage `action` of f would do to t, as _strike computes it (no Evade roll)."""
+    one = f.atk + f.bonus("atk") - t.def_ - t.bonus("def")
+    if action == ATTACK:
+        hits = next(n for bar, n in COMBO_HITS if hit >= bar)
+    else:
+        one += R.skill_bonus(action, f.atk, f.skills.get(action, 1))
+        hits = R.SKILL_HITS[action]
+    dmg = max(1, one) * hits
+    return max(1, int(dmg * DEFEND_FACTOR)) if defended else dmg
+
+
+def attack_options(f, hit=100):
+    """(action, hit%, MP cost) of everything f can strike with this round."""
+    opts = [(ATTACK, hit, 0)]
+    opts += [(s, SKILL_HIT, f.cost(s)) for s in f.slots if s in ENEMY_SKILLS and f.can_use(s)]
+    return opts
+
+
+def threat(g, me):
+    """The most damage foe g can do to me this round (a full combo or its best skill)."""
+    return max(strike_damage(g, me, a, h) for a, h, _ in attack_options(g))
+
+
+def _acts_before(me, g):
+    return me.mp > g.mp
+
+
+def _heal_choice(me, allies, incoming):
+    """(target slot, heal, 0) for the ally (or me) in the most need, or None."""
+    heals = [s for s in (HEAL_MED, HEAL_MAX) if me.can_use(s)]
+    if not heals or me.heals >= HEAL_LIMIT:
+        return None
+    team = [me] + [a for a in allies if a.alive and a is not me]
+    for t in sorted(team, key=lambda a: a.hp / a.max_hp):
+        # a heal against small hits only drags the fight out (MP comes back faster than HP goes)
+        if t.hp > HEAL_ROUNDS * incoming.get(t.slot, 0) or t.hp >= t.max_hp:
+            continue
+        # the smallest heal that lifts t out of reach, else the biggest one
+        gain = {s: R.heal(s, t.max_hp, me.skills.get(s, 1)) for s in heals}
+        enough = [s for s in heals if t.hp + gain[s] > incoming.get(t.slot, 0)]
+        return t.slot, (min(enough, key=me.cost) if enough else max(heals, key=gain.get)), 0
+    return None
+
+
+def _winning_race(me, foes, opts):
+    """My hits take the foes down in fewer rounds than theirs take me: a heal would only drag
+    the fight out (two bots that both heal it out never end)."""
+    # counted on Attack: a skill the MP pays for now cannot be repeated every round
+    hit = next((h for a, h, _ in opts if a == ATTACK), 100)
+    mine = sum(g.hp / max(1, strike_damage(me, g, ATTACK, hit)) for g in foes)
+    theirs = me.hp / max(1, sum(threat(g, me) for g in foes))
+    return mine < theirs
+
+
+def cpu_choice(rng, me, foes, allies=()):
+    """(target slot, action, hit%) for a CPU fighter or a player on auto-battle."""
+    foes = [g for g in foes if g.alive]
+    if not foes:
+        return me.slot, DEFEND, 0
+    hit = rng.choice(BAR_CHOICES)
+    incoming = {me.slot: sum(threat(g, me) for g in foes)}
+    for a in allies:
+        if a.alive and a is not me:
+            incoming[a.slot] = sum(threat(g, a) for g in foes)
+    lethal = me.hp <= incoming[me.slot]
+    # do I act before every foe (higher MP first, a tie is a coin flip)
+    first = all(_acts_before(me, g) for g in foes) or (
+        not any(_acts_before(g, me) for g in foes) and rng.random() < 0.5)
+    opts = attack_options(me, hit)
+
+    # 1. finish a foe off with the cheapest action that kills (the most dangerous foe first);
+    #    pointless when its hits land first and kill me
+    if first or not lethal:
+        kills = [(cost, -threat(g, me), g.slot, a, h)
+                 for g in foes for a, h, cost in opts if strike_damage(me, g, a, h) >= g.hp]
+        if kills:
+            _, _, slot, a, h = min(kills)
+            return slot, a, h
+
+    # 2. heal when HP is below the damage of the next rounds; against a lethal round it helps
+    #    only if I act first
+    heal = _heal_choice(me, allies, incoming)
+    if heal and (first or not lethal or heal[0] != me.slot) and not _winning_race(me, foes, opts):
+        return heal
+
+    # 3. a lethal round: Defend if it saves me, else Evade (45 %; Thunder ignores it). Not twice
+    #    in a row, so that two bots cannot hide behind their stances forever
+    if lethal and me.last_action not in (DEFEND, EVADE):
+        target = min(foes, key=lambda g: g.hp).slot
+        defended = sum(max(1, int(threat(g, me) * DEFEND_FACTOR)) for g in foes)
+        thunder = any(g.can_use(THUNDER) for g in foes)
+        if me.hp > defended or thunder:
+            return target, DEFEND, hit
+        return target, EVADE, hit
+
+    # 4. a soul when no aura is up and it is worth more than the Attack it costs: its bonus on
+    #    every hit of the rounds it lasts (the cast round is one of them, _act)
+    if not lethal and not (me.buffs.get("atk") or me.buffs.get("def")):
+        base = strike_damage(me, min(foes, key=lambda g: g.hp), ATTACK, hit)
+        fight = min(sum(g.hp for g in foes) / max(1, base), 99)   # rounds the fight lasts
+        best_soul, best_value = None, base
+        for s in SOULS:
+            if not me.can_use(s):
+                continue
+            a, d, ticks = R.soul(s, me.atk, me.def_, me.skills.get(s, 1))
+            rounds = min(ticks // 50, fight - 1)
+            value = rounds * (a * 3 + d * 3 * len(foes))
+            if value > best_value:
+                best_soul, best_value = s, value
+        if best_soul is not None:
+            return me.slot, best_soul, 0
+
+    # 5. damage on the foe that falls soonest (the most dangerous on a tie). A skill only when it
+    #    beats Attack this round, the one with the most extra damage per MP; with HP getting
+    #    low it leaves the MP of a heal
+    def rounds_to_kill(g):
+        return g.hp / max(1, max(strike_damage(me, g, a, h) for a, h, _ in opts))
+    target = min(foes, key=lambda g: (rounds_to_kill(g), -threat(g, me)))
+    base = strike_damage(me, target, ATTACK, hit)
+    others = [g for g in foes if g is not target]
+    reserve = 0
+    if me.hp * 100 < me.max_hp * 60:
+        reserve = min((me.cost(s) for s in HEALS if s in me.slots and s in me.skills), default=0)
+
+    def extra(o):
+        a, h, cost = o
+        dmg = strike_damage(me, target, a, h)
+        if a == TIDAL and others:                  # its second target takes a strike too
+            dmg += strike_damage(me, others[0], a, h)
+        return dmg - base
+
+    better = [o for o in opts if o[0] != ATTACK and extra(o) > 0 and me.mp - o[2] >= reserve]
+    if not better:
+        return target.slot, ATTACK, hit
+    a, h, _ = max(better, key=lambda o: (extra(o) / o[2], extra(o)))
+    return target.slot, a, h
 
 
 def battle_background(rng):
@@ -192,6 +331,9 @@ class Battle:
     def foes(self, f):
         return [g for g in self.fighters.values() if g.alive and g.team != f.team]
 
+    def allies(self, f):
+        return [g for g in self.fighters.values() if g.alive and g.team == f.team]
+
     def new_wave(self, foes, rest=0.35):
         """Mission: the next stage's foes replace team 1; my team keeps its MP and buffs and
         gets back `rest` of its max HP (the living ones; the client shows the HP of the first
@@ -211,19 +353,19 @@ class Battle:
 
     # --- one round ------------------------------------------------------------
     def resolve(self, choices):
-        """choices: slot -> (target, action, hit%) for the human fighters; the CPU picks for
-        itself. Returns the 1028 message fields."""
+        """choices: slot -> (target, action, hit%) for the human fighters; the CPU, a fighter on
+        auto-battle (Fighter.auto) and a choice with action AUTO go to the bot (cpu_choice). Returns the 1028 message fields."""
         self.round += 1
         plan = {}
         for f in self.fighters.values():
             if not f.alive:
                 continue
-            if f.cpu:
-                plan[f.slot] = cpu_choice(self.rng, f, self.foes(f))
-            else:
-                plan[f.slot] = self._validate(f, choices.get(f.slot, (f.slot, DEFEND, 20)))
+            choice = None if f.cpu or f.auto else choices.get(f.slot, (f.slot, DEFEND, 20))
+            if choice is None or choice[1] == AUTO:
+                choice = cpu_choice(self.rng, f, self.foes(f), self.allies(f))
+            plan[f.slot] = self._validate(f, choice)
         for slot, (_, action, _) in plan.items():
-            self.fighters[slot].stance = action
+            self.fighters[slot].stance = self.fighters[slot].last_action = action
         actions = [plan[s][1] if s in plan else 0 for s in range(4)]
         # higher MP acts first (06 §2.5); ties are random
         order = sorted(plan, key=lambda s: (-self.fighters[s].mp, self.rng.random()))
@@ -276,6 +418,7 @@ class Battle:
         if action >= WIND:
             f.mp -= f.cost(action)
         if action in HEALS:
+            f.heals += 1
             t.hp = min(t.max_hp, t.hp + R.heal(action, t.max_hp, f.skills.get(action, 1)))
             if action == HEAL_MAX:
                 f.mp = min(MP_MAX, f.mp + 20)
