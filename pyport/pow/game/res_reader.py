@@ -2,7 +2,7 @@
 from pow.midp import resources
 
 
-class j:
+class ResReader:
     @staticmethod
     def a(paramString):  # j.java:4-19
         # getResourceAsStream + read loop; on any exception returns null

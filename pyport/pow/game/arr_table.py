@@ -1,15 +1,15 @@
 """d.java - fixed-width data table (.arr: kibo, sungbo, shinki, ...). Literal port."""
-from pow.game.j import j
+from pow.game.res_reader import ResReader
 
 
-class d:
+class ArrTable:
     def __init__(self, paramString):  # d.java:12-34
         self.a = None   # column widths
         self.b = None   # column offsets (stored as byte, read with & 0xFF)
         self.c = None   # rows
         self.d = 0      # row size
         try:
-            data = j.a(paramString)
+            data = ResReader.a(paramString)
             i = data[0]
             self.a = bytearray(data[1:1 + i])
             self.b = bytearray(i)

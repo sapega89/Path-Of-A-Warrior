@@ -1,7 +1,7 @@
 """at.java - text input buffer for the hero name. Literal port."""
 
 
-class at:
+class NameBuffer:
     def __init__(self, paramString, paramInt1, paramInt2):  # at.java:12-18
         self.a = list(paramString)   # StringBuffer
         self.b = paramInt1           # max length

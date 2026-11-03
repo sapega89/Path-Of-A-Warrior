@@ -15,7 +15,7 @@ import struct
 import config
 
 
-class ab:  # ab.java: one answer, read field by field (little-endian)
+class LiveAnswer:  # ab.java: one answer, read field by field (little-endian)
     def __init__(self, paramArrayOfbyte):  # ab.java:6-8
         self.a = paramArrayOfbyte
         self.b = 0
@@ -47,7 +47,7 @@ class ab:  # ab.java: one answer, read field by field (little-endian)
         return s
 
 
-class v:  # v.java
+class LiveNet:  # v.java
     a = None        # StreamConnection -> the transport
     d = None        # s: the listener (as)
     f = True        # no request half-written
@@ -59,10 +59,10 @@ class v:  # v.java
     _buf = bytearray()   # u.b (ByteArrayOutputStream)
 
     def __init__(self):  # v.java:155-160
-        v.f = True
-        v.h = False
-        v.i = True
-        v.j = False
+        LiveNet.f = True
+        LiveNet.h = False
+        LiveNet.i = True
+        LiveNet.j = False
         self.k = None
         self.l = 0
         self._connecting = False
@@ -76,101 +76,101 @@ class v:  # v.java
     def a_TI(self, paramString, paramInt):  # v.java:33-37
         self.k = paramString
         self.l = paramInt
-        v.j = True
+        LiveNet.j = True
 
     def a_v(self):  # v.java:39-53  (close)
-        v.h = False
-        if v.a is not None:
-            v.a.close()
-            v.a = None
+        LiveNet.h = False
+        if LiveNet.a is not None:
+            LiveNet.a.close()
+            LiveNet.a = None
         self._connecting = False
-        v._buf = bytearray()
+        LiveNet._buf = bytearray()
 
     def c_v(self):  # v.java:55-68  (open; the result comes on a later pump())
         from pow_mp.net.transport import make_live_transport
         try:
-            v.a = make_live_transport(config.LIVE_SERVER)
-            v.a.open()
+            LiveNet.a = make_live_transport(config.LIVE_SERVER)
+            LiveNet.a.open()
             self._connecting = True
         except Exception as ex:
             print("Gamevil Live: connect failed:", repr(ex))
-            v.d.e_v()
+            LiveNet.d.e_v()
 
     @staticmethod
     def a_Ls(params):  # v.java:70-72
-        v.d = params
+        LiveNet.d = params
 
     def pump(self):  # v.java:74-100  run(), one step per game frame
-        if not v.i:
+        if not LiveNet.i:
             return
-        if v.j:
-            v.j = False
+        if LiveNet.j:
+            LiveNet.j = False
             self.c_v()
-        t = v.a
+        t = LiveNet.a
         if t is None:
             return
         if self._connecting:
             if t.connected:
                 self._connecting = False
-                v.h = True
-                v.d.f_v()
-                v.m = True
+                LiveNet.h = True
+                LiveNet.d.f_v()
+                LiveNet.m = True
             elif t.failed:
                 self._connecting = False
-                v.d.e_v()
+                LiveNet.d.e_v()
                 return
             else:
                 return
-        if not v.h:
+        if not LiveNet.h:
             return
         for p in t.poll():
             try:
-                v.d.a_Lab(ab(p))
+                LiveNet.d.a_Lab(LiveAnswer(p))
             except Exception as ex:          # run(): catch (Exception) -> d.e()
                 if config.DEBUG:
                     raise
                 print("Gamevil Live: bad answer:", repr(ex))
-                v.d.e_v()
+                LiveNet.d.e_v()
                 return
-            if v.a is not t:                 # the answer closed the connection
+            if LiveNet.a is not t:                 # the answer closed the connection
                 return
         if t.failed or not t.connected:      # IOException in b.b() -> d.e()
-            v.d.e_v()
+            LiveNet.d.e_v()
 
     def a_I(self, paramInt):  # v.java:111-118  (start a request: the opcode)
-        if v.h:
-            v.f = False
-            v._buf = bytearray(struct.pack("<H", paramInt & 0xFFFF))
+        if LiveNet.h:
+            LiveNet.f = False
+            LiveNet._buf = bytearray(struct.pack("<H", paramInt & 0xFFFF))
 
     @staticmethod
     def a_S(paramShort):  # v.java:120-123
-        if v.h:
-            v._buf += struct.pack("<H", paramShort & 0xFFFF)
+        if LiveNet.h:
+            LiveNet._buf += struct.pack("<H", paramShort & 0xFFFF)
 
     @staticmethod
     def a_B(paramByte):  # v.java:125-128
-        if v.h:
-            v._buf.append(paramByte & 0xFF)
+        if LiveNet.h:
+            LiveNet._buf.append(paramByte & 0xFF)
 
     @staticmethod
     def b_I(paramInt):  # v.java:130-133
-        if v.h:
-            v._buf += struct.pack("<I", paramInt & 0xFFFFFFFF)
+        if LiveNet.h:
+            LiveNet._buf += struct.pack("<I", paramInt & 0xFFFFFFFF)
 
     @staticmethod
     def a_Z(paramBoolean):  # v.java:135-138
-        if v.h:
-            v._buf.append(1 if paramBoolean else 0)
+        if LiveNet.h:
+            LiveNet._buf.append(1 if paramBoolean else 0)
 
     @staticmethod
     def b_TI(paramString, paramInt):  # v.java:140-143  (fixed-size string padded with 0)
-        if v.h:
+        if LiveNet.h:
             raw = paramString.encode("latin-1", "replace")
-            v._buf += raw[:paramInt].ljust(paramInt, b"\0")
+            LiveNet._buf += raw[:paramInt].ljust(paramInt, b"\0")
 
     def b_v(self):  # v.java:145-148 + u.java:73-99  (u16 length + the request)
-        data = bytes(v._buf)
-        v._buf = bytearray()
-        if v.a is not None and v.h:
-            v.a.send(struct.pack("<H", len(data) + 2) + data)
-        v.f = True
+        data = bytes(LiveNet._buf)
+        LiveNet._buf = bytearray()
+        if LiveNet.a is not None and LiveNet.h:
+            LiveNet.a.send(struct.pack("<H", len(data) + 2) + data)
+        LiveNet.f = True

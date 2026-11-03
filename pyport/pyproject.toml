@@ -1,0 +1,15 @@
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+extend-exclude = ["build", "web", "pow_mp/_gen", "tools/j2py_mp.py"]  # the generated MP client and its generator
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B"]
+ignore = [
+    "E501",  # long lines: the ported code keeps the Java line layout
+    "E741",  # `l` / `O` / `I`: names that come from the Java source
+    "B007",  # unused loop variables of ported `for` loops
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
