@@ -4,7 +4,7 @@ import pathlib
 import pygame
 
 import config
-from pow_mp.a import a
+from pow_mp.sprite_frames import SpriteFrames
 
 ROOT = pathlib.Path(config.MP_RES_ROOT)
 
@@ -26,14 +26,14 @@ def test_all_sp2():
     assert len(files) == 59
     counts = {}
     for p in files:
-        spr = a("/" + p.name)
-        assert len(spr.b) == 1 + 6 * spr.a, p.name
+        spr = SpriteFrames("/" + p.name)
+        assert len(spr.data) == 1 + 6 * spr.count, p.name
         img = pygame.image.load(str(sheet_for(p.name)))
         w, h = img.get_size()
-        for i in range(spr.a):
-            assert spr.e[i] > 0 and spr.f[i] > 0, (p.name, i)
-            assert spr.c[i] + spr.e[i] <= w and spr.d[i] + spr.f[i] <= h, (p.name, i)
+        for i in range(spr.count):
+            assert spr.w[i] > 0 and spr.h[i] > 0, (p.name, i)
+            assert spr.src_x[i] + spr.w[i] <= w and spr.src_y[i] + spr.h[i] <= h, (p.name, i)
         kind = p.name.rsplit("_", 1)[-1] if "_" in p.name else "single"
-        counts.setdefault(kind, set()).add(spr.a)
-        spr.a_v()
+        counts.setdefault(kind, set()).add(spr.count)
+        spr.free()
     assert counts["basic.SP2"] == {19} and counts["skill1.SP2"] == {47} and counts["skill2.SP2"] == {47}

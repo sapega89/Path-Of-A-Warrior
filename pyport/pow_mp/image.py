@@ -1,7 +1,7 @@
 """Image.createImage for the MP jar: same as pow.midp.graphics.Image, but a resource path is
 read from the MP resources (config.MP_RES_ROOT)."""
 from pow.midp.graphics import Image as _Image
-from pow_mp.n import n
+from pow_mp.res_reader import ResReader
 
 
 class Image(_Image):
@@ -10,7 +10,7 @@ class Image(_Image):
     @staticmethod
     def createImage(*args):
         if len(args) == 1 and isinstance(args[0], str):
-            data = n.a(args[0])
+            data = ResReader.read(args[0])
             if data is None:
                 raise IOError("resource not found: " + args[0])
             return _Image.createImage(bytes(x & 0xFF for x in data), 0, len(data))
