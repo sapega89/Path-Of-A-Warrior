@@ -972,6 +972,12 @@ Java-джерела: `pyport/mp_java/*.java` у гілці `java-reference`.
 
 ### MpCanvas (g.java)
 
+Довгі `paint_screen` (`g.java:474`), `handle_key` (`g.java:2661`) і `on_answer` (`g.java:1888`) були одним
+ланцюгом `if/elif` за станом або опкодом. Тепер кожна гілка — окремий метод, а метод бере його з таблиці:
+`_PAINT_BY_STATE` → `_paint_<екран>`, `_KEYS_BY_STATE` → `_keys_<екран>`, `_ANSWER_BY_OPCODE` → `_on_<відповідь>`
+(номер стану чи опкоду — у коментарі біля `def`). `step_turn_anim` (`g.java:4176`) так само розкладено на
+`_anim_after_*` за видом анімації, що закінчилась.
+
 Імена взято з коду та протоколу (`pow_server/messages.py`). Поля, які гра читає з
 відповіді, але ніде не використовує, звуться `profile_unused*` / `profile_cr`; `popup_line1..5`
 у Java ніде не присвоюються.

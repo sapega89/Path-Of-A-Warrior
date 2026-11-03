@@ -40,3 +40,14 @@ def test_parts_see_the_real_class_and_late_imports():
         for name in mp_canvas._LATE_NAMES:
             if name in vars(part):
                 assert vars(part)[name] is vars(mp_canvas)[name] is not None, (part.__name__, name)
+
+
+def test_dispatch_tables_point_at_the_class_methods():
+    """paint_screen / handle_key / on_answer pick a handler from a table built in the class body;
+    an override of a handler in another part would be bypassed by the table, so none may exist."""
+    canvas = mp_canvas.MpCanvas
+    for table in ("_PAINT_BY_STATE", "_KEYS_BY_STATE", "_ANSWER_BY_OPCODE"):
+        handlers = getattr(canvas, table)
+        assert len(handlers) > 20
+        for key, handler in handlers.items():
+            assert getattr(canvas, handler.__name__) is handler, (table, key)
