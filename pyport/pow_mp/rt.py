@@ -1,4 +1,4 @@
-"""Runtime of the generated MP code (pow_mp/_gen, tools/j2py_mp.py): Java semantics helpers
+"""Runtime of the MP client (code first machine-translated from Java): Java semantics helpers
 and the MIDP / java.* pieces the jar uses. Hand-written."""
 from pow.midp import system  # noqa: F401
 from pow.midp.canvas import Canvas as _Canvas  # noqa: F401
