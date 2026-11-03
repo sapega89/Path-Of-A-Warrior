@@ -14,6 +14,7 @@ from pow.midp.jint import i8, i16, i32, idiv, imod
 from pow.game.font import Font
 from pow.game.scr_table import ScrTable
 from pow.game.arr_table import ArrTable
+from pow.game import house
 
 F6 = config.DECOMP_FIX["F6"]
 F10 = config.DECOMP_FIX["F10"]
@@ -122,6 +123,8 @@ class Menus(GameCanvas):
                 self.draw_briefing()
             elif v == 19:
                 self.draw_generals()
+            elif v == house.MENU:                     # PORT-EXTRA: Management > House
+                house.draw(self)
             elif v == 20:
                 self.draw_story_portraits(GameCanvas.story_picture)
                 if GameCanvas.speech_pos[0] > 0:
@@ -676,6 +679,11 @@ class Menus(GameCanvas):
                 self.load_mission_text()
             elif c0 == 20:
                 self.open_general_talk()
+            elif c0 == house.MENU:                    # PORT-EXTRA: Management > House
+                cM[2] = 0
+                cM[1] = 0
+                house.enter()
+                return
             cM[2] = 0
             cM[1] = 0
             return
@@ -846,6 +854,9 @@ class Menus(GameCanvas):
                 return
         elif v == 3:
             GameCanvas.popups.setup_popup(6)
+            return
+        elif v == house.MENU:                         # PORT-EXTRA: swear allegiance (house.py)
+            house.fire()
             return
 
     def key_back(self):  # e.java:1002-1109  (BACK)

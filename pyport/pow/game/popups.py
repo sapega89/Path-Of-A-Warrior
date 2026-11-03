@@ -133,6 +133,9 @@ class Popups(GameCanvas):
                                 elif c0 == 29:
                                     GameCanvas.menus.enter_submenu()
                                     GameCanvas.menu[0] = 6
+                                elif c0 == 30:              # PORT-EXTRA: the oath (house.py)
+                                    from pow.game import house
+                                    house.on_yes()
                                 # break -> leaves both switches, continues with the timer below
                             elif GameCanvas.map_mode.mode == 1:  # l.java:172-182  (pause menu: Exit -> Game Menu)
                                 if GameCanvas.menu[1] == 5:

@@ -15,7 +15,7 @@ import random
 import re
 import time
 
-from pow_server import battle as B, codec_bin, loot, messages as M
+from pow_server import battle as B, codec_bin, houses as H, loot, messages as M
 from pow_server.model import apply_sp_hero, default_character, valid_slots
 from pow_server.storage import open_storage
 
@@ -37,6 +37,7 @@ class GameServer:
         in IDs registered in POW single ("Save User Data"); that bridge is task 9.10.
         notices: pages of 4 lines (16 characters each) shown once after login (258/259)."""
         self.storage = storage or open_storage()
+        self.houses = H.HouseHall(self.storage)        # PORT-EXTRA (proposal 22)
         self.require_token = require_token
         self.auto_register = auto_register
         self.notices = [list(p)[:4] for p in notices]
@@ -159,11 +160,23 @@ class Session:
         self.char = st.load(uid) or default_character(uid)
         if apply_sp_hero(self.char, msg):        # PORT-EXTRA: the single-player hero (9.10)
             self.save()
+            self._sp_house(msg.get("_extra", b""))
         self.server.online[uid] = self
         pages = 0
         if self.server.notices and self.char.notices_seen < self.server.notices_version:
             pages = len(self.server.notices)   # marked seen when the last page is delivered
         self.send(M.LOGIN_ANS, st=1, **self.char.profile(notices=pages))
+
+    def _sp_house(self, tail):
+        """PORT-EXTRA (proposal 22): the oath of the single-player save after SP_HERO."""
+        if len(tail) < 2:
+            return
+        sp = {}
+        codec_bin._decode_fields(tail, 0, M.SP_HOUSE, sp)
+        self.server.houses.set_oath(self.user, sp["sp_house"], sp["sp_loyalty"], self._display_name())
+
+    def _display_name(self):
+        return self.char.name or self.user[:8]
 
     def on_notice(self, msg):          # 258 -> 259 (page 1, 2, ...)
         page = msg.get("page", 0)
@@ -227,6 +240,7 @@ class Session:
             return self.send(M.NAME_SET_ANS, st=M.ERR_NAME_EXISTS)
         self.char.name = name
         self.save()
+        self.server.houses.rename(self.user, name)      # PORT-EXTRA (proposal 22)
         self.send(M.NAME_SET_ANS, st=1)
 
     def _quote(self, msg, field, answer):
@@ -394,6 +408,52 @@ class Session:
     def on_turn(self, msg):            # 1027 -> 1028 once every player has chosen
         if self.room is not None:
             self.room.turn(self, (msg.get("target", 1), msg.get("action", 1), msg.get("hit", 20)))
+
+    # --- PORT-EXTRA (proposal 22): houses of the lords and war bands --------------------------
+    def on_house_info(self, msg):      # 1552 -> 1553
+        hall = self.server.houses
+        me = hall.member(self.user) or {"house": 0, "loyalty": 0, "band": 0}
+        rows = [{"lord": lord, "name": H.house_of(lord).name, "members": n, "loyalty": total}
+                for lord, n, total in hall.summary()]
+        self.send(M.HOUSE_INFO_ANS, house=me["house"], loyalty=me["loyalty"], band=me["band"],
+                  n=len(rows), houses=rows)
+
+    def on_house_roster(self, msg):    # 1554 -> 1555
+        rows = [{"name": name, "loyalty": lv, "band": band}
+                for _uid, name, lv, band in self.server.houses.roster(msg.get("lord", 0))][:50]
+        self.send(M.HOUSE_ROSTER_ANS, n=len(rows), rows=rows)
+
+    def _band_call(self, op, fn, *args):
+        try:
+            return fn(self.user, *args), True
+        except H.HouseError as ex:
+            self.send(op, st=ex.code)
+            return None, False
+
+    def on_band_create(self, msg):     # 1556 -> 1557
+        bid, ok = self._band_call(M.BAND_CREATE_ANS, self.server.houses.create_band)
+        if ok:
+            self.send(M.BAND_CREATE_ANS, band=bid)
+
+    def on_band_join(self, msg):       # 1558 -> 1559
+        _, ok = self._band_call(M.BAND_JOIN_ANS, self.server.houses.join_band, msg.get("band", 0))
+        if ok:
+            self.send(M.BAND_JOIN_ANS)
+
+    def on_band_leave(self, msg):      # 1560 -> 1561
+        _, ok = self._band_call(M.BAND_LEAVE_ANS, self.server.houses.leave_band)
+        if ok:
+            self.send(M.BAND_LEAVE_ANS)
+
+    def on_band_list(self, msg):       # 1562 -> 1563
+        hall = self.server.houses
+        me = hall.member(self.user)
+        if me is None:
+            return self.send(M.BAND_LIST_ANS, st=H.NO_HOUSE)
+        names = {uid: name for uid, name, _lv, _b in hall.roster(me["house"])}
+        rows = [{"band": bid, "leader": names.get(leader, leader[:8]), "members": len(ms)}
+                for bid, leader, ms in hall.bands(me["house"])][:50]
+        self.send(M.BAND_LIST_ANS, n=len(rows), rows=rows)
 
 
 class Room:
@@ -606,4 +666,10 @@ _HANDLERS = {
     M.STAGE_NEXT: Session.on_stage_next,
     M.STAGE_INTRO_DONE: Session.on_stage_intro_done,
     M.INVITE: Session.on_invite,
+    M.HOUSE_INFO: Session.on_house_info,
+    M.HOUSE_ROSTER: Session.on_house_roster,
+    M.BAND_CREATE: Session.on_band_create,
+    M.BAND_JOIN: Session.on_band_join,
+    M.BAND_LEAVE: Session.on_band_leave,
+    M.BAND_LIST: Session.on_band_list,
 }

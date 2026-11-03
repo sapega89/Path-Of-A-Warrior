@@ -99,8 +99,8 @@ class GameFields:
     menu = [0] * 4  # ag.java:194 static int[]
     menu_count = 0  # ag.java:196 static int
     menu_return = 0  # ag.java:198 static int
-    menu_cursors = [0] * 30  # ag.java:200 static short[]
-    menu_tops = [0] * 30  # ag.java:202 static short[]
+    menu_cursors = [0] * 31  # ag.java:200 static short[]  (PORT-EXTRA: + [30] House)
+    menu_tops = [0] * 31  # ag.java:202 static short[]  (PORT-EXTRA: + [30] House)
     map_mode = MapMode()  # ag.java:204 static aa
     popups = None  # LATE-INIT: new l() - created in ag.py after the class  # ag.java:206 static l
     popup_lines = [None] * 2  # ag.java:208 static String[]
@@ -134,6 +134,7 @@ class GameFields:
     lord_mission_counts = [0] * 6  # ag.java:264 static short[]
     missions_done = 0  # ag.java:266 static long
     lords_done = 0  # ag.java:268 static long
+    house = 0  # PORT-EXTRA: the lord (ruler id) the hero swore to, 0 none (pow/game/house.py)
     stats = [0] * 8  # ag.java:270 static long[]
     lords = [None] * 5  # ag.java:272 static an[]
     mission_names = [None] * 5  # ag.java:274 static String[]
@@ -259,7 +260,7 @@ class GameFields:
     combine_result = Item()  # ag.java:514 static z
     live_gifts = 0  # ag.java:516 static short
     live_saved = 0  # ag.java:518 static short
-    menu_titles = [None] * 30  # ag.java:520 static String[]
+    menu_titles = [None] * 31  # ag.java:520 static String[]  (PORT-EXTRA: + [30] House)
     game_menu_items = [None] * 1  # ag.java:522 static String[]
     main_menu_items = [None] * 6  # ag.java:524 static String[]
     yes_no_items = [None] * 1  # ag.java:526 static String[]

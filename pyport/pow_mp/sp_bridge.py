@@ -32,6 +32,8 @@ OFF_DY = 38              # ag.dy[8] s32: mission progress bits
 OFF_FACE = 916           # cz.aB  u8: hero 0..3
 OFF_BACKPACK = 624       # cz.Y[25]: z like X[] (analysis/03 §4.2)
 OFF_BELT = 899           # cz.Z[5]: {u16 id, u8 count <= 5}, consumables 1..11
+OFF_PROGRESS = 447       # cz.ak[22] u8: loyalty to each lord (+5 per mission won for him)
+OFF_HOUSE = 949          # PORT-EXTRA s32: the lord of the oath, 0 none (pow/game/house.py)
 PENDING_STORE = "pow_mp_loot"   # loot that found the backpack full, delivered later
 
 # as.gG (as.java:84-86): SP skill index -> skill code; MP knows codes 3..13
@@ -93,6 +95,16 @@ def hero(data):
         "face": data[OFF_FACE] & 3, "weapon": weapon_type(items[0][0]), "skills": skills,
         "slots": slots + [99] * (4 - len(slots)), "progress": min(255, progress),
     }
+
+
+def house(data):
+    """PORT-EXTRA (proposal 22): (lord of the oath, loyalty to him) of a raw save; (0, 0) none."""
+    if data is None or len(data) < OFF_HOUSE + 4:
+        return 0, 0
+    lord = struct.unpack_from("<i", data, OFF_HOUSE)[0]
+    if not 1 <= lord <= 22:
+        return 0, 0
+    return lord, min(100, data[OFF_PROGRESS + lord - 1])
 
 
 def add_rewards(gold, fame, exp):

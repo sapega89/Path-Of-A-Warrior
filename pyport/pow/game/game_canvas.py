@@ -795,7 +795,10 @@ class GameCanvas(GameFields, Canvas):
             for b1 in range(16):
                 arrayOfByte1[b1] = GameCanvas.read_byte()
             GameCanvas.talk_points = GameCanvas.read_int()
-            for b1 in range(4):
+            GameCanvas.house = GameCanvas.read_int()             # PORT-EXTRA: the oath (house.py)
+            if not 0 <= GameCanvas.house <= 22:
+                GameCanvas.house = 0
+            for b1 in range(3):
                 GameCanvas.read_int()
         self.compact_backpack()
 
@@ -899,6 +902,8 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.help_items[0] = al1.get(38)
         GameCanvas.ok_items[0] = al1.get(39)
         GameCanvas.continue_items[0] = al1.get(40)
+        GameCanvas.menu_titles[30] = "House"                 # PORT-EXTRA: Management > House
+        GameCanvas.continue_items[0] += "|House"             # (pow/game/house.py)
         GameCanvas.pause_items[0] = al1.get(41)
         al1.free()
 
@@ -1442,7 +1447,8 @@ class GameCanvas(GameFields, Canvas):
         for b in range(16):
             GameCanvas.write_byte(arrayOfChar[b])
         GameCanvas.write_int(GameCanvas.talk_points)
-        for b in range(4):
+        GameCanvas.write_int(GameCanvas.house)               # PORT-EXTRA: the oath (house.py) in
+        for b in range(3):                                   # the first of the 4 ints written as 0
             GameCanvas.write_int(0)
         cF[0] = GameCanvas.save_pos & 0xFF
         cF[1] = GameCanvas.save_pos >> 8 & 0xFF
@@ -1545,6 +1551,7 @@ class GameCanvas(GameFields, Canvas):
         cz.live_registered = 0
         for b in range(22):
             cz.mission_progress[b] = 0
+        GameCanvas.house = 0                                 # PORT-EXTRA: no oath (house.py)
         cz.live_stat1 = 0
         cz.live_stat2 = 0
         for b in range(5):

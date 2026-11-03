@@ -601,6 +601,7 @@ class MapEngine(GameCanvas):
             ex.dir[0] = ex.facing = MapEngine.dir8(ex.pos[0], cz.pos[0])
         else:
             ex.dir[0] = ex.facing = MapEngine.dir8(ex.pos[0], GameCanvas.effect.pos)
+        hp0 = ex.hp
         if 3 <= paramInt2 <= 8:
             i = cz.attack + cz.attack_buff - ex.defense - ex.defense_buff
             ex.hp = i16(ex.hp - (i if i > 0 else 1))
@@ -614,6 +615,9 @@ class MapEngine(GameCanvas):
         elif paramInt2 == -1:
             ex.hp = i16(ex.hp - (30 if cz.level > 30 else cz.level))
             self.play_sound(3)
+        if ex.type < 200 and GameCanvas.house:      # PORT-EXTRA: the house bonus (house.py)
+            from pow.game import house
+            ex.hp = i16(ex.hp - house.extra_damage(ex.type, hp0 - ex.hp))
         if ex.hp < 1:
             ex.hp = 0
             ex.frame[0] = 3

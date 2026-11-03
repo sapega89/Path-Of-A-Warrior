@@ -178,6 +178,12 @@ def _menu_keys(c0, x, y, kind):
         return []
     if c0 in (25, 28) and GameCanvas.canvas_size.y - 43 <= y < GameCanvas.canvas_size.y - 13:   # e.a(int,int,int,boolean) at bZ.b-35      # e.a(int,int,int,boolean)
         return [LEFT if x < dd else RIGHT]
+    if c0 == 30:                                               # PORT-EXTRA: House (house.py)
+        from pow.game import house
+        want = house.row_at(x, y)
+        if want is None or want >= GameCanvas.menu_count:
+            return []
+        return _steps(want - cM[1], UP, DOWN) + [FIRE]
     if c0 in (1, 2, 10, 11, 12, 13, 25, 27):                   # e.f(): rows of 180x20, 30 apart
         rows = 5 if GameCanvas.menu_count > 5 else GameCanvas.menu_count
         if c0 == 25 and cM[2] >= 20:

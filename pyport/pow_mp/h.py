@@ -176,11 +176,15 @@ class h:
         from pow_mp import sp_bridge
         from pow_server import codec_bin, messages as M
         sp_bridge.add_item()                 # loot still waiting for a free backpack cell
-        hero = sp_bridge.hero(sp_bridge.read_save())
+        data = sp_bridge.read_save()
+        hero = sp_bridge.hero(data)
         msg = {"sp": 0} if hero is None else dict({"sp": 1}, **{"sp_" + k: v for k, v in hero.items()})
         buf = bytearray()
         try:
             codec_bin._encode_fields(buf, M.SP_HERO, msg)
+            if hero is not None:             # PORT-EXTRA (proposal 22): the oath to a lord
+                lord, loyalty = sp_bridge.house(data)
+                codec_bin._encode_fields(buf, M.SP_HOUSE, {"sp_house": lord, "sp_loyalty": loyalty})
         except Exception:
             buf = bytearray()
             codec_bin._encode_fields(buf, M.SP_HERO, {"sp": 0})

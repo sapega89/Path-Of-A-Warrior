@@ -25,6 +25,7 @@ list of steps, one per line:
     hero F N        TEST-ONLY: set the hero's field ag.cz.F to N (p = HP, r = MP, w = ATK, x = DEF)
     skill S ID      TEST-ONLY: learn skill ID (12..30) and put it on skill key slot S (0..4 = 1 3 7 9 0)
     potion K ID N   TEST-ONLY: put N potions of kind ID on the quick slot K (0 = *, 1 = #)
+    loyalty L N     TEST-ONLY: set the hero's loyalty to lord L (cz.ak[L - 1], House screen) to N
     win             TEST-ONLY: win the accepted mission now (c.d(1), as the combat would)
     env NAME=VALUE  (first lines only) set an environment variable before the game reads config,
                     e.g. env POW_NO_ENEMIES=1 for the map without enemies
@@ -181,6 +182,10 @@ def run(scenario, out, every=False):
                 z = GameCanvas.hero.quick_slots[GameCanvas.hero.quick_keys[key]]
                 z.item = pid
                 z.count = cnt
+                continue
+            if cmd == "loyalty":           # TEST-ONLY: loyalty LORD N - cz.ak[LORD - 1] = N (house.py)
+                lord, val = map(int, arg.split())
+                GameCanvas.hero.mission_progress[lord - 1] = val
                 continue
             if cmd == "win":
                 GameCanvas.boss_fight = 1                  # the mission's general was met on the map (c.java:986)

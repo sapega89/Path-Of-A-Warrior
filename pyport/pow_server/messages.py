@@ -63,6 +63,19 @@ EXP_FAME_GOLD_ANS = 1299
 RANK_MINE = 1300
 RANK_MINE_ANS = 1301
 SERVER_NOTICE = 1536        # S->C push
+# PORT-EXTRA (proposal 22): the houses of the lords and their war bands (pow_server/houses.py)
+HOUSE_INFO = 1552           # C->S: my house + every house -> 1553
+HOUSE_INFO_ANS = 1553
+HOUSE_ROSTER = 1554         # C->S u8 lord -> 1555 the members, most loyal first
+HOUSE_ROSTER_ANS = 1555
+BAND_CREATE = 1556          # C->S -> 1557 u16 the new band
+BAND_CREATE_ANS = 1557
+BAND_JOIN = 1558            # C->S u16 band -> 1559
+BAND_JOIN_ANS = 1559
+BAND_LEAVE = 1560           # C->S -> 1561
+BAND_LEAVE_ANS = 1561
+BAND_LIST = 1562            # C->S -> 1563 the bands of my house
+BAND_LIST_ANS = 1563
 KEEPALIVE = 39327           # C->S, no body, no answer
 
 GAME_VER = "0111"           # GAMEVIL_GAME_VER of the MP manifest
@@ -92,6 +105,10 @@ SP_HERO = (
     ("sp_progress", "B"),
 )
 
+# PORT-EXTRA tail after SP_HERO (proposal 22): the oath of the single-player save, the lord's
+# ruler id (0 = none) and the hero's loyalty to him. Optional: a 262 without it keeps the house.
+SP_HOUSE = (("sp_house", "B"), ("sp_loyalty", "B"))
+
 C2S = {
     # token and the hero: PORT-EXTRA, absent in the jar
     LOGIN: (("id", 12), ("ver", 4), ("token", 16)) + SP_HERO,
@@ -117,6 +134,12 @@ C2S = {
     EXP_FAME_GOLD: (),
     RANK_MINE: (("cat", "B"),),
     KEEPALIVE: (),
+    HOUSE_INFO: (),
+    HOUSE_ROSTER: (("lord", "B"),),
+    BAND_CREATE: (),
+    BAND_JOIN: (("band", "H"),),
+    BAND_LEAVE: (),
+    BAND_LIST: (),
 }
 
 # --- S->C schemas (after the status byte) -------------------------------------
@@ -223,6 +246,14 @@ S2C = {
     EXP_FAME_GOLD_ANS: (("exp", "i"), ("fame", "i"), ("gold", "i")),
     RANK_MINE_ANS: (("rank", "i"), ("value", "i")),
     RANK_LIST_ANS: (("n", "B"), ("rows", "list", "n", (("rank", "i"), ("id", 12), ("value", "i")))),
+    HOUSE_INFO_ANS: (("house", "B"), ("loyalty", "B"), ("band", "H"), ("n", "B"),
+                     ("houses", "list", "n", (("lord", "B"), ("name", 14), ("members", "H"),
+                                              ("loyalty", "i")))),
+    HOUSE_ROSTER_ANS: (("n", "B"), ("rows", "list", "n", (("name", 8), ("loyalty", "B"), ("band", "H")))),
+    BAND_CREATE_ANS: (("band", "H"),),
+    BAND_JOIN_ANS: (),
+    BAND_LEAVE_ANS: (),
+    BAND_LIST_ANS: (("n", "B"), ("rows", "list", "n", (("band", "H"), ("leader", 8), ("members", "B")))),
 }
 
 # Error answers: only the status, except 279 which tells why (g:1921).
