@@ -88,11 +88,11 @@ class Gfx:
             x -= Gfx.font.chars_width(chars, start, count)
         i = start + count
         j = x
-        for k in range(start, i):
-            c = chars[k]
-            m = Gfx.font.char_width(c)
-            Gfx.font.draw_char(c, j, y)
-            j += m
+        for pos in range(start, i):
+            ch = chars[pos]
+            ch_w = Gfx.font.char_width(ch)
+            Gfx.font.draw_char(ch, j, y)
+            j += ch_w
 
     @staticmethod
     def draw_string(text, x, y, anchor):  # x.java:104-106

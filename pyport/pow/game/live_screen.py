@@ -84,11 +84,11 @@ class LiveScreen(Live):
         from pow.game.menus import Menus
         sold_lines = ["Listed Items", "has been sold."]
         gift_lines = ["Listed Items", "has been recieved."]
-        s = sold_lines[0] if Live.list_kind == 0 else gift_lines[0]
+        line = sold_lines[0] if Live.list_kind == 0 else gift_lines[0]
         Gfx.set_font(GameCanvas.font_white)
-        Live.draw_text_centred_in(s, 0, 100, 240)
-        s = sold_lines[1] if Live.list_kind == 0 else gift_lines[1]
-        Live.draw_text_centred_in(s, 0, 113, 240)
+        Live.draw_text_centred_in(line, 0, 100, 240)
+        line = sold_lines[1] if Live.list_kind == 0 else gift_lines[1]
+        Live.draw_text_centred_in(line, 0, 113, 240)
         i = 42
         for b in range(5):
             Live.draw_item_cell(Live.lots[b].id, i, 130, b == Live.selected_slot)
@@ -289,13 +289,13 @@ class LiveScreen(Live):
 
     def draw_grid(self):  # m.java:358-380  (Backpack / Warehouse grid)
         if Live.flags[7] == 0:
-            s = "Backpack"
+            caption = "Backpack"
             items = GameCanvas.hero.backpack
         else:
-            s = "Warehouse"
+            caption = "Warehouse"
             items = Live.warehouse
         i = 20 + (255 - 38 + GameCanvas.cursor[6] + 16 + 22 >> 1)
-        self.draw_caption_box(s, i)
+        self.draw_caption_box(caption, i)
         i += 38
         GameCanvas.menus.draw_item_grid(i, items, None)
         GameCanvas.cursor[14] = 0

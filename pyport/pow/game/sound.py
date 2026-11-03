@@ -22,8 +22,8 @@ class Sound(GameCanvas):
     def play_sound(self, sound):  # k.java:22-33
         if Sound.players is None or not GameCanvas.sound_on:
             return
-        l = system.currentTimeMillis() - Sound.last_time
-        if Sound.last != -1 and Sound.min_gap[Sound.last] != 0 and l < Sound.min_gap[Sound.last]:
+        since = system.currentTimeMillis() - Sound.last_time
+        if Sound.last != -1 and Sound.min_gap[Sound.last] != 0 and since < Sound.min_gap[Sound.last]:
             return
         if sound > 2 and sound != 15 and sound != 16 and sound != 3 and sound != 4:
             Sound.stop_all()
