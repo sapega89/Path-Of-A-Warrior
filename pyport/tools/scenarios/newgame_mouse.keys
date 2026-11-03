@@ -11,7 +11,7 @@ wait 3
 shot m_popup_hard
 click 60 200       # Yes
 wait 3
-click 190 190      # right head -> rotate
+click 165 190      # head right of the middle -> rotate
 wait 2
 shot m_hero_rotated
 click 120 190      # middle head -> OK

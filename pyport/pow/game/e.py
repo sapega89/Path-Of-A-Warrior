@@ -6,6 +6,7 @@ Screens of later phases raise NotPorted.
 import config
 from pow.game import ae
 from pow.game.ag import ag, not_ported
+from pow.game import heroes
 from pow.game.at import at
 from pow.game.j import j
 from pow.game.structs import ac, z
@@ -459,7 +460,7 @@ class e(ag):
                 return
             return
         if v == 6:
-            ag.cz.aB = ag.cz.aB - 1 & 0x3
+            ag.cz.aB = (ag.cz.aB - 1) % heroes.HERO_COUNT   # PORT-EXTRA: 10 heroes (& 0x3)
             ag.ck = 1
             return
         if v == 9:
@@ -549,7 +550,7 @@ class e(ag):
             ag.da = 1
             return
         if v == 6:
-            ag.cz.aB = ag.cz.aB + 1 & 0x3
+            ag.cz.aB = (ag.cz.aB + 1) % heroes.HERO_COUNT   # PORT-EXTRA: 10 heroes (& 0x3)
             ag.ck = 1
             return
         if v == 9:
@@ -2078,22 +2079,28 @@ class e(ag):
             return
         ag.dr += 1
 
-    def aK(self):  # e.java:1385-1404  (screen 6: choose the hero, 3 heads, the middle one is chosen)
+    def aK(self):  # e.java:1385-1404  (screen 6: choose the hero, the middle head is chosen)
+        # PORT-EXTRA (pow/game/heroes.py): 10 heroes instead of 4, so the row is wider: 5 heads
+        # instead of 3 (two on each side, 47 px apart instead of 69), the chosen one in the
+        # middle, and its number "N/10" between the arrows under the row.
+        # Original: 3 frames 50x50 at x = dd-94 + 69*b, the arrows beside the middle head.
         image = None
-        i = ag.cz.aB - 1 & 0x3
+        n = heroes.HERO_COUNT
+        i = (ag.cz.aB - 2) % n
         x.a_Lg(ag.bu)
         for b in range(3):
             str_ = ag.M_I(65 + b)
             self.b_TII(str_, ag.de - 90 - b * 20 + 10, 0)
-        for b in range(3):
-            image = self.d_T(ag.bB.a_I(38 + i))
-            self.b_IIIIIII(ag.dd - 94 + 69 * b + ag.db, ag.de + 9 + ag.dc, 50, 50, 148, 109, 82)
-            self.a_IIIIIII(ag.dd - 93 + 69 * b + ag.db, ag.de + 10 + ag.dc, 48, 48, 33, 0, 0)
-            self.b_MIIIIII(image, ag.dd - 92 + 69 * b, ag.de + 11, 46, 46, 0, 0)
-            i = i + 1 & 0x3
-        self.c_IIIIIII(ag.dd - 27 + ag.db + 1, ag.de + 8 + ag.dc, 52, 52, 255, 182, 82)
-        self.f_III(0, ag.dd - 40, ag.de + 23)
-        self.f_III(1, ag.dd + 30, ag.de + 23)
+        for b in range(5):
+            image = self.d_T(ag.bB.a_I(heroes.portrait_index(i)))
+            x0 = ag.dd - 118 + 47 * b
+            self.b_IIIIIII(x0 + ag.db, ag.de + 9 + ag.dc, 48, 48, 148, 109, 82)
+            self.b_MIIIIII(image, x0 + 1, ag.de + 10, 46, 46, 0, 0)
+            i = (i + 1) % n
+        self.c_IIIIIII(ag.dd - 25 + ag.db, ag.de + 7 + ag.dc, 52, 52, 255, 182, 82)
+        self.b_TII("%d/%d" % (ag.cz.aB + 1, n), ag.de + 63, 0)
+        self.f_III(0, ag.dd - 40, ag.de + 64)
+        self.f_III(1, ag.dd + 30, ag.de + 64)
 
     def aL(self):  # e.java:1406-1413  (screen 7: the two caption lines)
         x.a_Lg(ag.bu)
@@ -2147,7 +2154,7 @@ class e(ag):
             if arrayOfInt2[b] > 0:
                 self.b_MIIIIII(ag.ct[19], i + 1, ag.eN + 110 + b * 20, 10, 14, 105, 0)
                 self.d_IIII(arrayOfInt2[b], i + 9, ag.eN + 110 + b * 20, 1)
-        image = self.d_T(ag.bB.a_I(38 + cz.aB))
+        image = self.d_T(ag.bB.a_I(heroes.portrait_index(cz.aB)))
         self.b_MIIIIII(image, ag.eM + 2, ag.eN + 3, 46, 46, 0, 0)
         if cz.J > 0:
             self.a_IIIIIII(ag.eM + 144, ag.eN + 97 + 20 * ag.cM[1] + ag.dc + 11, 14, 18, 255, 255, 255)
@@ -2158,7 +2165,7 @@ class e(ag):
         if paramInt > -1:
             self.a_TIIIIII(ag.bB.a_I(0 + paramInt), 19 + ag.db + 2, ag.de - 73 + 10 + ag.dc, 46, 46, 0, 0)
         self.a_IIIIZ(ag.bZ.a // 2 + 60 - ag.db, ag.de - 72 + 109 + ag.dc, 46, 46, True)
-        self.a_TIIIIII(ag.bB.a_I(38 + ag.cz.aB), ag.bZ.a // 2 + 60 - ag.db, ag.de - 73 + 110 + ag.dc, 46, 46, 0, 0)
+        self.a_TIIIIII(ag.bB.a_I(heroes.portrait_index(ag.cz.aB)), ag.bZ.a // 2 + 60 - ag.db, ag.de - 73 + 110 + ag.dc, 46, 46, 0, 0)
         self.R_I(3)
 
     def R_I(self, paramInt):  # e.java:2167-2172  (empty speech boxes: 1 = top, 2 = bottom)
@@ -2440,7 +2447,7 @@ class e(ag):
         if (ag.dK & 0x1) != 0:
             i = 0 + ag.dC.e
         else:
-            i = 38 + ag.cz.aB
+            i = heroes.portrait_index(ag.cz.aB)
         j_ = ag.bY.b - 46 - 4
         self.a_IIIIZ(2 + ag.db, j_ + ag.dc, 48, 48, True)
         j_ += 1

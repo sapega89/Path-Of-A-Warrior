@@ -29,7 +29,7 @@ OFF_SLOTS = 501          # cz.V[5] u8: assigned skills, index + 12 (as.java:500-
 OFF_SKILLS = 506         # cz.W[19] u8: skill levels by index
 OFF_ITEMS = 525          # cz.X[9]: z {s16 id, s16 atk, s16 def, s16 hp, s16 mp, u8}
 OFF_DY = 38              # ag.dy[8] s32: mission progress bits
-OFF_FACE = 916           # cz.aB  u8: hero 0..3
+OFF_FACE = 916           # cz.aB  u8: hero 0..9 (PORT-EXTRA heroes 4..9)
 OFF_BACKPACK = 624       # cz.Y[25]: z like X[] (analysis/03 §4.2)
 OFF_BELT = 899           # cz.Z[5]: {u16 id, u8 count <= 5}, consumables 1..11
 PENDING_STORE = "pow_mp_loot"   # loot that found the backpack full, delivered later
@@ -90,7 +90,7 @@ def hero(data):
         "level": data[OFF_LEVEL], "hp": _s16(data, OFF_HP), "mp": _s16(data, OFF_MP),
         "atk": _s16(data, OFF_ATK), "def": _s16(data, OFF_DEF),
         "atk_bonus": bonus[0], "def_bonus": bonus[1], "hp_bonus": bonus[2], "mp_bonus": bonus[3],
-        "face": data[OFF_FACE] & 3, "weapon": weapon_type(items[0][0]), "skills": skills,
+        "face": data[OFF_FACE] if data[OFF_FACE] < 10 else 0, "weapon": weapon_type(items[0][0]), "skills": skills,
         "slots": slots + [99] * (4 - len(slots)), "progress": min(255, progress),
     }
 

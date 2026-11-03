@@ -28,6 +28,16 @@ def load():
         mod.a, mod.c, mod.h, mod.n = a, c, h, n
     for name in MODS:
         getattr(mods[name], "_static_init_" + name)()
+    # PORT-EXTRA heroes 4..9 (pow/game/heroes.py): 10 face strips instead of 4 (g.de, g.java:237;
+    # the heads g.dw / g.dx already have 10 slots: sprhead1..10)
+    mods["g"].g.de = [None] * 10
+    # ... and their face panels act24..35 (pow_mp/faces.py: g.cD = face + 14 for faces 4..9)
+    from pow_mp import faces
+    n = faces.ACT_BASE + 16
+    mods["g"].g.dg = [None] * n
+    l = mods["l"].l
+    l.es = l.es + [2] * (n - len(l.es))
+    l.et = l.et + [2] * (n - len(l.et))
     _loaded = mods
     return mods
 

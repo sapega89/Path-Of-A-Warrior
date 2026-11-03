@@ -14,5 +14,9 @@ class n:
             with open(pathlib.Path(config.MP_RES_ROOT) / paramString.lstrip("/"), "rb") as fh:
                 return [b - 256 if b > 127 else b for b in fh.read()]
         except OSError as ex:
+            from pow_mp import faces                    # PORT-EXTRA heroes 4..9 (pow_mp/faces.py)
+            data = faces.read(paramString)
+            if data is not None:
+                return [b - 256 if b > 127 else b for b in data]
             print("fail to read " + paramString + " e:" + str(ex))
             return None

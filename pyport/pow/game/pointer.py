@@ -9,7 +9,8 @@ exactly the Java one. Hit zones follow what is drawn on each screen (coordinates
   Main Menu (cM[0] == 5)     caption strip: arrow ◄ / ► -> LEFT / RIGHT, caption -> FIRE
   Game Menu (cM[0] == 0)     small button above -> UP, big button -> FIRE, below -> DOWN
   Difficulty (cM[0] == 29)   click Hard / Normal -> select it, then FIRE
-  Hero (cM[0] == 6)          left / right head -> LEFT / RIGHT, middle head -> FIRE
+  Hero (cM[0] == 6)          a head left / right of the middle -> LEFT / RIGHT (x2 for the outer
+                             ones), middle head -> FIRE, arrows under the row -> LEFT / RIGHT
   Name (cM[0] == 7)          click a letter or OK -> arrow keys to it, then FIRE
   Stat points (cM[0] == 8)   click a stat row -> UP/DOWN to it, then FIRE (+1 point)
   Prologue (bV == 10)        click -> FIRE (whole text / next page), soft key "Skip" -> LSOFT (-6)
@@ -125,15 +126,21 @@ def _new_game_keys(c0, x, y, kind):
             if dd - 80 <= x < dd + 80 and top - 2 <= y < top + 22:
                 return ([UP] if ag.cM[1] != b else []) + [FIRE]
         return []
-    if c0 == 6:                         # e.aK: heads at x = dd-94 + 69*b, y = de+9, 50x50
+    if c0 == 6:                         # e.aK (PORT-EXTRA 10 heroes): 5 heads at x = dd-118 + 47*b
         if kind != "click":
             return [LEFT if kind == "wheel_up" else RIGHT]
-        if de + 4 <= y < de + 64:
-            if x < dd - 27:
+        if de + 4 <= y < de + 62:
+            b = (x - (dd - 118)) // 47
+            if not 0 <= b < 5:
+                return []
+            if b == 2:
+                return [FIRE]
+            return [LEFT] * (2 - b) if b < 2 else [RIGHT] * (b - 2)
+        if de + 62 <= y < de + 84:          # the arrows beside "N/10"
+            if x < dd - 20:
                 return [LEFT]
-            if x >= dd + 25:
+            if x >= dd + 20:
                 return [RIGHT]
-            return [FIRE]
         return []
     if c0 == 7:                         # ag.f: 2 x 14 letters + OK
         if kind != "click":

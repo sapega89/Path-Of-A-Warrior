@@ -14,6 +14,7 @@ from pow.game import ae
 from pow.game._ag_fields import AgFields
 from pow.game.al import al
 from pow.game.g import g
+from pow.game import heroes
 from pow.game.j import j
 from pow.game.structs import ac, ai, ao, t, z
 from pow.game.x import x
@@ -786,6 +787,8 @@ class ag(AgFields, Canvas):
             cz.aa[0] = ag.Y_v()
             cz.aa[1] = ag.Y_v()
             cz.aB = ag.Y_v()
+            if not 0 <= cz.aB < heroes.HERO_COUNT:   # PORT-EXTRA: 10 heroes, a broken byte -> hero 1
+                cz.aB = 0
             ag.dV = ag.W_v()
             ag.eo = ag.W_v()
             ag.fR = ag.Y_v()
@@ -1186,8 +1189,9 @@ class ag(AgFields, Canvas):
 
     def aA(self):  # ag.java:3459-3465
         ag.aj()
-        ag.cz.aG = self.d_T(ag.bB.a_I(46 + ag.cz.aB))
-        ag.cz.aC = self.K_I(47 + ag.cz.aB)
+        # PORT-EXTRA heroes 4..9 (pow/game/heroes.py): g_head1..6 and their frame tables
+        ag.cz.aG = self.d_T(ag.bB.a_I(heroes.head_image_index(ag.cz.aB)))
+        ag.cz.aC = heroes.head_frames(self, ag.cz.aB, 0)
         ag.cz.aH = self.d_T(ag.bB.a_I(44))
         ag.cz.aE = self.K_I(45)
 
@@ -2458,7 +2462,7 @@ class ag(AgFields, Canvas):
         self.h_I(bool_)
         self.A_v()
         ag.eS[cz.K] = self.K_I(87 + (cz.K << 2))
-        cz.aD = self.K_I(51 + cz.aB)
+        cz.aD = heroes.head_frames(self, cz.aB, 1)    # PORT-EXTRA heroes 4..9
         cz.aF = self.K_I(46)
         ag.eT[cz.K] = self.K_I(89 + (cz.K << 2))
         ag.ct[40 + cz.K] = self.d_T(ag.bB.a_I(42 + cz.K))

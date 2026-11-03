@@ -4424,7 +4424,7 @@ class g(_Canvas):
                 g.cP = (27 if (g.bz == 0) else ((27 if (idiv(g.bR[g.cL], 2) == 0) else ((g.cR - 27) - 23))))
                 _sw109 = g.ca[g.cL]
                 if _sw109 == 0:
-                    g.cD = g.bZ[g.cL]
+                    g.cD = g.bZ[g.cL] if g.bZ[g.cL] < 4 else g.bZ[g.cL] + 14  # PORT-EXTRA heroes 4..9 (pow_mp/faces.py)
                     g.bx = True
                 elif _sw109 == 1:
                     g.cD = 4

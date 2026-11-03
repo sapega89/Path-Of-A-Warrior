@@ -22,6 +22,7 @@ Fixes (config):
 """
 import config
 from pow.game.ag import ag
+from pow.game import heroes
 from pow.game.structs import z
 from pow.game.v import v
 from pow.game.x import x
@@ -520,6 +521,8 @@ class as_(ag):
                 cz.G = paramab.c_v()
                 cz.l = paramab.b_v() & 0xFF
                 cz.aB = paramab.a_v()
+                if not 0 <= cz.aB < heroes.HERO_COUNT:   # PORT-EXTRA: 10 heroes, a broken byte -> hero 1
+                    cz.aB = 0
                 cz.K = paramab.a_v()
                 cz.m = paramab.b_v()
                 cz.n = paramab.b_v()

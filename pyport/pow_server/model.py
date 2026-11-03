@@ -11,6 +11,7 @@ import dataclasses
 
 from pow_server import messages as M
 
+HERO_COUNT = 10                        # faces 0..9: SP heroes (PORT-EXTRA 4..9 = generals)
 SKILL_IDS = tuple(range(3, 14))        # MP skill codes 3..13 = SP as.gG (06 §3.1)
 
 
@@ -22,7 +23,7 @@ GRADES = ("D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+")
 class Character:
     user_id: str
     name: str = ""                     # display name, 8 chars max (1280)
-    face: int = 0                      # hero 0..3 (SP aB)
+    face: int = 0                      # hero 0..9 (SP aB; PORT-EXTRA heroes 4..9, 10 = spr_mon)
     weapon: int = 0                    # 0 long / 1 short -> sprwp1/2, sprsword1/2
     level: int = 1
     wins: int = 0
@@ -115,7 +116,9 @@ def apply_sp_hero(ch, msg):
     ch.atk, ch.def_ = msg["sp_atk"], msg["sp_def"]
     ch.hp_bonus, ch.mp_bonus = msg["sp_hp_bonus"], msg["sp_mp_bonus"]
     ch.atk_bonus, ch.def_bonus = msg["sp_atk_bonus"], msg["sp_def_bonus"]
-    ch.face, ch.weapon = msg["sp_face"] & 3, msg["sp_weapon"] & 1
+    # PORT-EXTRA: 10 heroes (pow/game/heroes.py), was & 3; 10 and up would be the monster sprite
+    ch.face = msg["sp_face"] if msg["sp_face"] < HERO_COUNT else 0
+    ch.weapon = msg["sp_weapon"] & 1
     first = not ch.sp_linked
     ch.skills = {i + 3: lvl for i, lvl in enumerate(msg["sp_skills"]) if lvl > 0}
     kept = [s for s in ch.slots if s in ch.skills]      # slots set in the MP menu (1291) stay

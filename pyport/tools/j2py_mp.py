@@ -1404,6 +1404,10 @@ def prep_g(text):
     for ln in (4670, 4683):
         assert lines[ln - 1].strip() == bad, ln
         lines[ln - 1] = lines[ln - 1].replace(bad, "n6 *= 10; if (++n7 % 3 != 0 || n4 / n6 <= 0) continue;")
+    # PORT-EXTRA heroes 4..9 (pow/game/heroes.py, pow_mp/faces.py): their face panels are
+    # act24..35, not act 6/12 + face (act10, 11, 16, 17 are the CPU fighter's and the monster's)
+    assert lines[5165 - 1].strip() == "cD = bZ[cL];"
+    lines[5165 - 1] = lines[5165 - 1].replace("cD = bZ[cL];", "cD = bZ[cL] < 4 ? bZ[cL] : bZ[cL] + 14;")
     src = "\n".join(lines)
     src = re.sub(r'(?<![\w.])do(?=\s*[,;=)])', 'do_', src)
     src = re.sub(r'(?<=[(, ])do(?=,)', 'do_', src)
