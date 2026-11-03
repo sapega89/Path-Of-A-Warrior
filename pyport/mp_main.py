@@ -37,7 +37,7 @@ async def play():
     from pow_mp.midlet import Midlet
     midlet = Midlet()
     await midlet.startApp()
-    return not Midlet.b.quit_requested
+    return not Midlet.canvas.quit_requested
 
 
 async def main():

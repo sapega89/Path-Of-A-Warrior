@@ -28,7 +28,7 @@ class PlayerPool:
     def _path(self, string):
         return pathlib.Path(config.MP_RES_ROOT) / string.lstrip("/")
 
-    def a_TI(self, string, n2):  # c.java  load
+    def load(self, string, n2):  # c.java  load
         if not self.ok or not 0 <= n2 < self.size:
             return False
         if string.endswith(".mid"):
@@ -42,10 +42,10 @@ class PlayerPool:
                 return False
         return True
 
-    def a_IZ(self, n2, bl):  # c.java  play (bl = loop)
+    def play(self, n2, bl):  # c.java  play (bl = loop)
         if not self.ok or self.vol <= 0 or not 0 <= n2 < self.size or self.snd[n2] is None:
             return
-        self.a_v()
+        self.stop()
         s = self.snd[n2]
         try:
             if isinstance(s, tuple):
@@ -60,7 +60,7 @@ class PlayerPool:
         except Exception as ex:
             print("c: play err:", ex)
 
-    def a_v(self):  # c.java  stop
+    def stop(self):  # c.java  stop
         if not self.ok:
             return
         if self.cur != -1 and not isinstance(self.snd[self.cur], tuple) and self.snd[self.cur] is not None:
@@ -73,8 +73,8 @@ class PlayerPool:
             self.music = False
         self.cur = -1
 
-    def a_I(self, n2):  # c.java  volume 0..100
+    def set_volume(self, n2):  # c.java  volume 0..100
         self.vol = max(0, min(100, n2))
 
-    def b(self):  # c.java  per tick
+    def tick(self):  # c.java  per tick
         pass

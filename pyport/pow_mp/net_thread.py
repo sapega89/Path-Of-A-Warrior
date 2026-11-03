@@ -25,26 +25,26 @@ TOKEN_STORE = "pow_mp_token"
 
 
 class NetThread:
-    a = 0          # opcode of the last received frame (h.java:12)
-    b = None       # StreamConnection -> the transport
-    e = None       # the game (g)
-    g = True       # free to start a new message (h.a(int) waits for it)
-    h = 0          # frames since the last traffic (keepalive counter of g.d())
-    i = 0
-    j = False      # connected
-    k = True       # thread running
-    l = False      # connect requested
+    last_opcode = 0          # opcode of the last received frame (h.java:12)
+    conn = None       # StreamConnection -> the transport
+    game = None       # the game (g)
+    free = True       # free to start a new message (h.a(int) waits for it)
+    idle_frames = 0          # frames since the last traffic (keepalive counter of g.d())
+    unused = 0
+    connected = False      # connected
+    running = True       # thread running
+    connect_requested = False      # connect requested
     _buf = None
     _inbox = []
     _token = None
 
     def __init__(self):  # h.java:29
-        NetThread.g = True
-        NetThread.j = False
-        NetThread.k = True
-        NetThread.l = False
-        self.m = None
-        self.n = 0
+        NetThread.free = True
+        NetThread.connected = False
+        NetThread.running = True
+        NetThread.connect_requested = False
+        self.host = None
+        self.port = 0
 
     def setPriority(self, p):
         pass
@@ -52,47 +52,47 @@ class NetThread:
     def start(self):
         pass
 
-    def a_TI(self, string, n2):  # h.java:36  connect to (host, port)
-        self.m = string
-        self.n = n2
-        NetThread.l = True
+    def set_address(self, string, n2):  # h.java:36  connect to (host, port)
+        self.host = string
+        self.port = n2
+        NetThread.connect_requested = True
 
     @staticmethod
-    def a_v():  # h.java:42  close
-        NetThread.h = 0
-        NetThread.j = False
-        if NetThread.b is not None:
-            NetThread.b.close()
-        NetThread.b = None
+    def close():  # h.java:42  close
+        NetThread.idle_frames = 0
+        NetThread.connected = False
+        if NetThread.conn is not None:
+            NetThread.conn.close()
+        NetThread.conn = None
 
     @staticmethod
-    def a_Lg(g2):  # h.java:84
-        NetThread.e = g2
+    def set_game(g2):  # h.java:84
+        NetThread.game = g2
 
     # --- the thread's loop, one step per game frame ------------------------------
     @staticmethod
     def tick():
         from pow_mp.answer import Answer
-        if NetThread.l:
-            NetThread.l = False
-            if NetThread.b is None:
-                NetThread.b = make_transport(config.MP_SERVER)
-            NetThread.b.open()
+        if NetThread.connect_requested:
+            NetThread.connect_requested = False
+            if NetThread.conn is None:
+                NetThread.conn = make_transport(config.MP_SERVER)
+            NetThread.conn.open()
             NetThread._connecting = True
-        t = NetThread.b
+        t = NetThread.conn
         if t is None:
             return
         if getattr(NetThread, "_connecting", False):
             if t.connected:
                 NetThread._connecting = False
-                NetThread.h = 0
-                NetThread.j = True
-                NetThread.e.l_v()                       # h.c(): connected -> g.l() sends 278 / 262
+                NetThread.idle_frames = 0
+                NetThread.connected = True
+                NetThread.game.l_v()                       # h.c(): connected -> g.l() sends 278 / 262
             elif t.failed:
                 NetThread._connecting = False
-                NetThread.e.g_I(0)
+                NetThread.game.g_I(0)
             return
-        if not NetThread.j:
+        if not NetThread.connected:
             return
         NetThread._inbox.extend(t.poll())
         if NetThread._inbox:
@@ -100,51 +100,51 @@ class NetThread:
             NetThread._port_extra_in(payload)
             data = [b - 256 if b > 127 else b for b in payload]   # Java bytes are signed
             if len(data) < 2:
-                NetThread.e.g_I(3)
+                NetThread.game.g_I(3)
                 return
-            NetThread.a = (data[0] & 0xFF) | (data[1] & 0xFF) << 8
+            NetThread.last_opcode = (data[0] & 0xFF) | (data[1] & 0xFF) << 8
             try:
-                NetThread.e.a_Lk(Answer(data))
+                NetThread.game.a_Lk(Answer(data))
             except IndexError:                  # a short frame: the client failed with g(3)
-                NetThread.e.g_I(3)
-            NetThread.h = 0
+                NetThread.game.g_I(3)
+            NetThread.idle_frames = 0
         elif not t.connected:
-            NetThread.e.g_I(2)                          # IOException in h.run()
+            NetThread.game.g_I(2)                          # IOException in h.run()
 
     # --- sending (e.java's buffer) --------------------------------------------------------
-    def a_I(self, n2):  # h.java:131  start a message with opcode n2
-        if NetThread.j:
-            NetThread.g = False
+    def begin(self, n2):  # h.java:131  start a message with opcode n2
+        if NetThread.connected:
+            NetThread.free = False
             NetThread._buf = bytearray(struct.pack("<H", n2 & 0xFFFF))
 
     @staticmethod
-    def a_B(by):  # h.java:141
-        if NetThread.j and NetThread._buf is not None:
+    def write_byte(by):  # h.java:141
+        if NetThread.connected and NetThread._buf is not None:
             NetThread._buf.append(by & 0xFF)
 
     @staticmethod
-    def b_I(n2):  # h.java:147  s32
-        if NetThread.j and NetThread._buf is not None:
+    def write_int(n2):  # h.java:147  s32
+        if NetThread.connected and NetThread._buf is not None:
             NetThread._buf += struct.pack("<I", n2 & 0xFFFFFFFF)
 
     @staticmethod
-    def b_TI(string, n2):  # h.java:153  fixed string
-        if NetThread.j and NetThread._buf is not None:
+    def write_string(string, n2):  # h.java:153  fixed string
+        if NetThread.connected and NetThread._buf is not None:
             raw = (string or "").encode("latin-1", "replace")[:n2]
             NetThread._buf += raw + b"\0" * (n2 - len(raw))
 
     @staticmethod
-    def b_v():  # h.java:159  send
-        NetThread.h = 0
+    def send():  # h.java:159  send
+        NetThread.idle_frames = 0
         buf, NetThread._buf = NetThread._buf, None
-        NetThread.g = True
-        if buf is None or NetThread.b is None:
+        NetThread.free = True
+        if buf is None or NetThread.conn is None:
             return
         if struct.unpack_from("<H", buf)[0] == 262:      # PORT-EXTRA: session token + SP hero
             tok = (NetThread.token() or "").encode("ascii")[:16]
             buf += tok + b"\0" * (16 - len(tok))
             buf += NetThread._sp_hero()
-        NetThread.b.send(struct.pack("<H", len(buf) + 2) + bytes(buf))
+        NetThread.conn.send(struct.pack("<H", len(buf) + 2) + bytes(buf))
 
     # --- PORT-EXTRA: the session token -------------------------------------------------
     @staticmethod

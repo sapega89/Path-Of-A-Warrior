@@ -9,7 +9,7 @@ import config
 
 class ResReader:
     @staticmethod
-    def a(paramString):  # n.java:8-25
+    def read(paramString):  # n.java:8-25
         try:
             with open(pathlib.Path(config.MP_RES_ROOT) / paramString.lstrip("/"), "rb") as fh:
                 return [b - 256 if b > 127 else b for b in fh.read()]

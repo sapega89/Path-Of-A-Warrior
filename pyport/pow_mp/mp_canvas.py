@@ -388,11 +388,11 @@ class MpCanvas(_Canvas):
             n3 = 15
         elif MpCanvas.cY == 10:
             n3 = 40
-        Draw.a_GMIIIIII(graphics, MpCanvas.do_, (idiv((((MpCanvas.cQ - (n2 * ((MpCanvas.k - 1)))) - 11)), 2) + (n2 * MpCanvas.dU[MpCanvas.dW])), ((MpCanvas.cX + 6) + n3), 12, 15, 0, 0)
+        Draw.draw_image_part(graphics, MpCanvas.do_, (idiv((((MpCanvas.cQ - (n2 * ((MpCanvas.k - 1)))) - 11)), 2) + (n2 * MpCanvas.dU[MpCanvas.dW])), ((MpCanvas.cX + 6) + n3), 12, 15, 0, 0)
 
     def paint(self, graphics):  # g.java:364
         MpCanvas.e = graphics
-        Gfx.a_G(graphics)
+        Gfx.set_graphics(graphics)
         if MpCanvas.w:
             MpCanvas.dY = True
             return
@@ -422,8 +422,8 @@ class MpCanvas(_Canvas):
             if MpCanvas.H == 1:
                 MpCanvas.J = True
                 if MpCanvas.b is not None:
-                    MpCanvas.I = MpGame.fd
-                    self.ag_v()
+                    MpCanvas.I = MpGame.music
+                    self.stop_music()
             elif MpCanvas.H == 2:
                 MpCanvas.J = False
                 if (MpCanvas.b is not None) and (MpCanvas.I != (-1)):
@@ -461,7 +461,7 @@ class MpCanvas(_Canvas):
                 if MpCanvas.b is not None:
                     if ((((((MpCanvas.cY >= 10) and (MpCanvas.cY <= 89)) and (MpCanvas.cY != 88)) and (not MpCanvas.J)) or (MpCanvas.cY == 1)) or (MpCanvas.cY == 6)) or (MpCanvas.cY == 7):
                         self.s_I(1)
-                    MpCanvas.b.ak_v()
+                    MpCanvas.b.tick_music()
                 if (MpCanvas.cZ == MpCanvas.cY) and (MpCanvas.da < 25000):
                     MpCanvas.da = MpCanvas.da + 1
                 if MpCanvas.da >= 25000:
@@ -479,13 +479,13 @@ class MpCanvas(_Canvas):
         if (MpCanvas.cY != 3) and (MpCanvas.cY != 10000):
             MpCanvas.L = False
         if MpCanvas.J:
-            Draw.b_GIIIII(MpCanvas.e, 0, 0, MpCanvas.cS, MpCanvas.cT, 0)
+            Draw.fill_rect(MpCanvas.e, 0, 0, MpCanvas.cS, MpCanvas.cT, 0)
             self.c_GIIIII(MpCanvas.e, MpCanvas.cW, MpCanvas.cX, 100, 29, 0)
             self.a_GTIIII(MpCanvas.e, Consts.eX[2], MpCanvas.cW, (MpCanvas.cX - 6), 1, 0xFFFFFF)
             return
-        if NetThread.j and (not MpCanvas.eb):
-            if NetThread.h > 100:
-                NetThread.h = 0
+        if NetThread.connected and (not MpCanvas.eb):
+            if NetThread.idle_frames > 100:
+                NetThread.idle_frames = 0
                 self.c_I(39327)
                 if _inc(MpCanvas, 'dZ', 1) > 20:
                     MpCanvas.dZ = 0
@@ -493,7 +493,7 @@ class MpCanvas(_Canvas):
                     MpCanvas.x = False
                     self.o_v()
             else:
-                NetThread.h = NetThread.h + 1
+                NetThread.idle_frames = NetThread.idle_frames + 1
         if not MpCanvas.D:
             if MpCanvas.d == 1:
                 MpCanvas.d = 0
@@ -528,9 +528,9 @@ class MpCanvas(_Canvas):
                         except Exception:
                             pass
                         MpCanvas.M = system.currentTimeMillis()
-                        Draw.b_GIIIII(MpCanvas.g, 0, 0, MpCanvas.cQ, MpCanvas.cR, 0xFFFFFF)
+                        Draw.fill_rect(MpCanvas.g, 0, 0, MpCanvas.cQ, MpCanvas.cR, 0xFFFFFF)
                     self.e_v()
-                    Draw.a_GMIII(MpCanvas.e, MpCanvas.ds, idiv(MpCanvas.cQ, 2), MpCanvas.dS, 17)
+                    Draw.draw_image(MpCanvas.e, MpCanvas.ds, idiv(MpCanvas.cQ, 2), MpCanvas.dS, 17)
                     if (system.currentTimeMillis() - MpCanvas.M) <= 3000:
                         break
                     MpCanvas.ds = None
@@ -855,7 +855,7 @@ class MpCanvas(_Canvas):
                         var1_4 = 0
                         while var1_4 < 3:
                             if MpCanvas.dv[var1_4] is not None:
-                                MpCanvas.dv[var1_4].a_v()
+                                MpCanvas.dv[var1_4].free()
                             MpCanvas.dv[var1_4] = None
                             var1_4 = var1_4 + 1
                         var1_4 = 0
@@ -865,7 +865,7 @@ class MpCanvas(_Canvas):
                             var2_9 = 0
                             while var2_9 < 3:
                                 if MpCanvas.dx[var1_4][var2_9] is not None:
-                                    MpCanvas.dx[var1_4][var2_9].a_v()
+                                    MpCanvas.dx[var1_4][var2_9].free()
                                 MpCanvas.dx[var1_4][var2_9] = None
                                 var2_9 = var2_9 + 1
                             var1_4 = var1_4 + 1
@@ -876,7 +876,7 @@ class MpCanvas(_Canvas):
                             var2_9 = 0
                             while var2_9 < 3:
                                 if MpCanvas.dz[var1_4][var2_9] is not None:
-                                    MpCanvas.dz[var1_4][var2_9].a_v()
+                                    MpCanvas.dz[var1_4][var2_9].free()
                                 MpCanvas.dz[var1_4][var2_9] = None
                                 var2_9 = var2_9 + 1
                             var1_4 = var1_4 + 1
@@ -938,7 +938,7 @@ class MpCanvas(_Canvas):
                         MpCanvas.k = 6
                         self.U_v()
                     self.e_v()
-                    Draw.a_GMIII(MpCanvas.e, MpCanvas.dd[MpCanvas.dU[MpCanvas.dW]], (MpCanvas.cW - 40), (MpCanvas.cX - 59), 0)
+                    Draw.draw_image(MpCanvas.e, MpCanvas.dd[MpCanvas.dU[MpCanvas.dW]], (MpCanvas.cW - 40), (MpCanvas.cX - 59), 0)
                     self.a_GTIIIIZZ(MpCanvas.e, Consts.eM[MpCanvas.dU[MpCanvas.dW]], (MpCanvas.cW - 39), (MpCanvas.cX + 21), 78, 17, False, True)
                     MpCanvas.a_G(MpCanvas.e)
                     if MpCanvas.x:
@@ -953,7 +953,7 @@ class MpCanvas(_Canvas):
                         MpCanvas.c = Consts.eM[0]
                         MpCanvas.k = 3
                         self.U_v()
-                    Draw.a_GMIII(MpCanvas.e, MpCanvas.f, 0, 0, 0)
+                    Draw.draw_image(MpCanvas.e, MpCanvas.f, 0, 0, 0)
                     self.a_GTIIIIZZ(MpCanvas.e, Consts.eN[MpCanvas.dU[MpCanvas.dW]], (MpCanvas.cW - 39), (MpCanvas.cX - 19), 78, 17, False, True)
                     MpCanvas.a_G(MpCanvas.e)
                     self.c_II((-1), 1)
@@ -1009,9 +1009,9 @@ class MpCanvas(_Canvas):
                     self.a_GIITI(MpCanvas.e, MpCanvas.cW, (var1_6 + 61), MpCanvas.bG, 0x41FF41)
                     MpCanvas.a_II(MpCanvas.C, (var1_6 + 75))
                     if imod(MpCanvas.da, 4) < 2:
-                        var2_10 = MpCanvas.n.a_T(MpCanvas.bG)
+                        var2_10 = MpCanvas.n.string_width(MpCanvas.bG)
                         if len(MpCanvas.bG) == 12:
-                            var2_10 = (var2_10 - (MpCanvas.n.a_T("A") * 2))
+                            var2_10 = (var2_10 - (MpCanvas.n.string_width("A") * 2))
                         MpCanvas.b_GIIIII(MpCanvas.e, (MpCanvas.cW + idiv(var2_10, 2)), (var1_6 + 71), ((MpCanvas.cW + idiv(var2_10, 2)) + 4), (var1_6 + 71), 0xFFFFFF)
                     if len(MpCanvas.bG) == 0:
                         self.c_II(4, 1)
@@ -1094,7 +1094,7 @@ class MpCanvas(_Canvas):
                                     if MpCanvas.ah_v() > 0:
                                         var2_11 = 0
                                         while var2_11 < MpCanvas.ah_v():
-                                            Draw.b_GIIIII(MpCanvas.e, ((MpCanvas.cW + 21) + (5 * var2_11)), ((MpCanvas.cX - 13) + (MpCanvas.cL * 19)), 3, 8, 0xFFFFFF)
+                                            Draw.fill_rect(MpCanvas.e, ((MpCanvas.cW + 21) + (5 * var2_11)), ((MpCanvas.cX - 13) + (MpCanvas.cL * 19)), 3, 8, 0xFFFFFF)
                                             var2_11 = var2_11 + 1
                                         break
                                     self.a_GTIIII(MpCanvas.e, Consts.eW[(6 + ((0 if (MpCanvas.ah_v() > 0) else 1)))], (MpCanvas.cW + 33), ((MpCanvas.cX - 15) + (MpCanvas.cL * 19)), 1, 0xFFFFFF)
@@ -1121,7 +1121,7 @@ class MpCanvas(_Canvas):
                                     if MpCanvas.ah_v() > 0:
                                         var2_11 = 0
                                         while var2_11 < MpCanvas.ah_v():
-                                            Draw.b_GIIIII(MpCanvas.e, ((MpCanvas.cW + 21) + (5 * var2_11)), ((MpCanvas.cX - 13) + (MpCanvas.cL * 19)), 3, 8, 0x646464)
+                                            Draw.fill_rect(MpCanvas.e, ((MpCanvas.cW + 21) + (5 * var2_11)), ((MpCanvas.cX - 13) + (MpCanvas.cL * 19)), 3, 8, 0x646464)
                                             var2_11 = var2_11 + 1
                                         break
                                     self.a_GTIIII(MpCanvas.e, Consts.eW[(6 + ((0 if (MpCanvas.ah_v() > 0) else 1)))], (MpCanvas.cW + 33), ((MpCanvas.cX - 15) + (MpCanvas.cL * 19)), 1, 0x646464)
@@ -1181,7 +1181,7 @@ class MpCanvas(_Canvas):
                     return
                 if _m4 or _sw3 == 5:
                     _m4 = True
-                    Draw.b_GIIIII(MpCanvas.e, 0, 0, MpCanvas.cQ, MpCanvas.cR, 0)
+                    Draw.fill_rect(MpCanvas.e, 0, 0, MpCanvas.cQ, MpCanvas.cR, 0)
                     self.c_GIIIII(MpCanvas.e, MpCanvas.cW, MpCanvas.cX, 120, 100, 0)
                     self.a_GIITI(MpCanvas.e, MpCanvas.cW, ((MpCanvas.cX - 21) - 10), Consts.eX[35], 0xFFFFFF)
                     self.a_GIITI(MpCanvas.e, MpCanvas.cW, ((MpCanvas.cX - 21) + 5), Consts.eX[36], 0xFFFFFF)
@@ -1203,18 +1203,18 @@ class MpCanvas(_Canvas):
                         var3_15 = 0
                         while var3_15 < 4:
                             MpCanvas.dp = self.b_T(_js(_js("/title_", ((var3_15 + 1))), ".png"))
-                            Draw.a_GMIII(MpCanvas.g, MpCanvas.dp, (MpCanvas.cW - idiv(MpCanvas.dp.getWidth(), 2)), (var2_12 + (80 * var3_15)), 0)
+                            Draw.draw_image(MpCanvas.g, MpCanvas.dp, (MpCanvas.cW - idiv(MpCanvas.dp.getWidth(), 2)), (var2_12 + (80 * var3_15)), 0)
                             MpCanvas.dp = None
                             var3_15 = var3_15 + 1
                         if MpCanvas.dr is None:
                             MpCanvas.dr = self.b_T("/gamevil.png")
-                        Draw.a_GMIII(MpCanvas.g, MpCanvas.dr, idiv(MpCanvas.cQ, 2), (MpCanvas.cR - 1), 33)
+                        Draw.draw_image(MpCanvas.g, MpCanvas.dr, idiv(MpCanvas.cQ, 2), (MpCanvas.cR - 1), 33)
                         if MpCanvas.dq is None:
                             MpCanvas.dq = self.b_T("/press.png")
                     self.e_v()
                     if imod(MpCanvas.da, 4) >= 2:
                         break
-                    Draw.a_GMIII(MpCanvas.e, MpCanvas.dq, idiv(MpCanvas.cQ, 2), (MpCanvas.cR - 27), 33)
+                    Draw.draw_image(MpCanvas.e, MpCanvas.dq, idiv(MpCanvas.cQ, 2), (MpCanvas.cR - 27), 33)
                     return
                 if _m4 or _sw3 == 2:
                     _m4 = True
@@ -1273,12 +1273,12 @@ class MpCanvas(_Canvas):
                     if MpCanvas.da < 2:
                         MpCanvas.da = 2
                         MpCanvas.n_v()
-                        self.ag_v()
+                        self.stop_music()
                         MpCanvas.ds = self.b_T("/outro.png")
-                    Draw.b_GIIIII(MpCanvas.e, 0, 0, MpCanvas.cS, MpCanvas.cT, 0)
+                    Draw.fill_rect(MpCanvas.e, 0, 0, MpCanvas.cS, MpCanvas.cT, 0)
                     var2_13 = MpCanvas.ds.getWidth()
-                    Gfx.a_MIIIIII(MpCanvas.ds, (MpCanvas.cW - idiv(var2_13, 2)), (MpCanvas.cX - 10), var2_13, 19, 0, 0)
-                    Gfx.a_MIIIIII(MpCanvas.ds, (MpCanvas.cW - idiv(var2_13, 2)), (MpCanvas.cT - 26), var2_13, 23, 0, 19)
+                    Gfx.draw_image_part(MpCanvas.ds, (MpCanvas.cW - idiv(var2_13, 2)), (MpCanvas.cX - 10), var2_13, 19, 0, 0)
+                    Gfx.draw_image_part(MpCanvas.ds, (MpCanvas.cW - idiv(var2_13, 2)), (MpCanvas.cT - 26), var2_13, 23, 0, 19)
                     if MpCanvas.da <= 30:
                         break
                     MpCanvas.l.destroyApp(True)
@@ -1350,28 +1350,28 @@ class MpCanvas(_Canvas):
     def a_GTIIII(self, graphics, string, n2, n3, n4, n5):  # g.java:1487
         _sw16 = n5
         if _sw16 == 0xFFFFFF:
-            Gfx.a_Lj(MpCanvas.n)
+            Gfx.set_font(MpCanvas.n)
         elif _sw16 == 16400640:
-            Gfx.a_Lj(MpCanvas.o)
+            Gfx.set_font(MpCanvas.o)
         elif _sw16 == 0x646464:
-            Gfx.a_Lj(MpCanvas.p)
+            Gfx.set_font(MpCanvas.p)
         elif _sw16 == 0x41FF41:
-            Gfx.a_Lj(MpCanvas.q)
+            Gfx.set_font(MpCanvas.q)
         else:
             MpCanvas.a_T(_js("=======================drawString: No Color:", n5))
-        Gfx.a_GTIII(graphics, string, n2, n3, n4)
+        Gfx.draw_string_on(graphics, string, n2, n3, n4)
 
     @staticmethod
     def a_IIIII(n2, n3, n4, n5, n6):  # g.java:1512
-        Draw.a_GIIIII(MpCanvas.e, n2, n3, n4, n5, n6)
+        Draw.draw_rect(MpCanvas.e, n2, n3, n4, n5, n6)
 
     @staticmethod
     def b_IIIII(n2, n3, n4, n5, n6):  # g.java:1516
-        Draw.b_GIIIII(MpCanvas.e, n2, n3, n4, n5, n6)
+        Draw.fill_rect(MpCanvas.e, n2, n3, n4, n5, n6)
 
     @staticmethod
     def a_GIIIII(graphics, n2, n3, n4, n5, n6):  # g.java:1520
-        Draw.b_GIIIII(graphics, n2, n3, n4, n5, n6)
+        Draw.fill_rect(graphics, n2, n3, n4, n5, n6)
 
     @staticmethod
     def a_GI(graphics, n2):  # g.java:1524
@@ -1379,86 +1379,86 @@ class MpCanvas(_Canvas):
 
     @staticmethod
     def b_GIIIII(graphics, n2, n3, n4, n5, n6):  # g.java:1528
-        Draw.c_GIIIII(graphics, n2, n3, n4, n5, n6)
+        Draw.draw_line_color(graphics, n2, n3, n4, n5, n6)
 
     @staticmethod
     def a_GIIII(graphics, n2, n3, n4, n5):  # g.java:1532
-        Draw.c_GIIII(graphics, n2, n3, n4, n5)
+        Draw.draw_line(graphics, n2, n3, n4, n5)
 
     @staticmethod
     def a_GIII(graphics, n2, n3, n4):  # g.java:1536
-        Draw.b_GIIIII(graphics, n2, n3, 1, 1, n4)
+        Draw.fill_rect(graphics, n2, n3, 1, 1, n4)
 
     @staticmethod
     def a_IIM(n2, n3, image):  # g.java:1540
-        Draw.a_GMIII(MpCanvas.e, image, n2, n3, 0)
+        Draw.draw_image(MpCanvas.e, image, n2, n3, 0)
 
     @staticmethod
     def a_GIIM(graphics, n2, n3, image):  # g.java:1544
-        Draw.a_GMIII(graphics, image, n2, n3, 0)
+        Draw.draw_image(graphics, image, n2, n3, 0)
 
     @staticmethod
     def b_IIM(n2, n3, image):  # g.java:1548
         n4 = (idiv(image.getWidth(), 2) + 1)
         n5 = image.getHeight()
-        Draw.a_GMIIIIII(MpCanvas.e, image, (n2 - n4), n3, n4, n5, (n4 - 1), 0)
+        Draw.draw_image_part(MpCanvas.e, image, (n2 - n4), n3, n4, n5, (n4 - 1), 0)
 
     @staticmethod
     def b_GIIM(graphics, n2, n3, image):  # g.java:1554
         n4 = (idiv(image.getWidth(), 2) + 1)
         n5 = image.getHeight()
-        Draw.a_GMIIIIII(graphics, image, (n2 - n4), n3, n4, n5, (n4 - 1), 0)
+        Draw.draw_image_part(graphics, image, (n2 - n4), n3, n4, n5, (n4 - 1), 0)
 
     @staticmethod
     def a_GIIIM(graphics, n2, n3, n4, image):  # g.java:1560
         n5 = (idiv(image.getWidth(), 2) + 1)
-        Draw.a_GMIIIIII(graphics, image, (n2 - n5), n3, n5, n4, (n5 - 1), 0)
+        Draw.draw_image_part(graphics, image, (n2 - n5), n3, n5, n4, (n5 - 1), 0)
 
     @staticmethod
     def a_IIMZ(n2, n3, image, bl):  # g.java:1565
         if bl:
             n4 = (idiv(image.getWidth(), 2) + 1)
             n5 = image.getHeight()
-            Draw.a_GMIIIIII(MpCanvas.e, image, (n2 - n4), n3, n4, n5, (n4 - 1), 0)
+            Draw.draw_image_part(MpCanvas.e, image, (n2 - n4), n3, n4, n5, (n4 - 1), 0)
             return
-        Draw.a_GMIII(MpCanvas.e, image, (n2 - image.getWidth()), n3, 0)
+        Draw.draw_image(MpCanvas.e, image, (n2 - image.getWidth()), n3, 0)
 
     @staticmethod
     def a_GIIMII(graphics, n2, n3, image, n4, n5):  # g.java:1575
         n6 = (idiv(image.getWidth(), 2) + 1)
-        Draw.a_GMIIIIII(graphics, image, n2, n3, n6, n4, 0, (n4 * n5))
+        Draw.draw_image_part(graphics, image, n2, n3, n6, n4, 0, (n4 * n5))
 
     @staticmethod
     def b_GIIIM(graphics, n2, n3, n4, image):  # g.java:1580
         n5 = (idiv(image.getWidth(), 2) + 1)
-        Draw.a_GMIIIIII(graphics, image, (n2 - n5), n3, n5, n4, (n5 - 1), n4)
+        Draw.draw_image_part(graphics, image, (n2 - n5), n3, n5, n4, (n5 - 1), n4)
 
     @staticmethod
     def c_IIM(n2, n3, image):  # g.java:1585
         n4 = (idiv(image.getWidth(), 2) + 1)
         n5 = image.getHeight()
-        Draw.a_GMIIIIII(MpCanvas.e, image, n2, n3, n4, n5, 0, 0)
+        Draw.draw_image_part(MpCanvas.e, image, n2, n3, n4, n5, 0, 0)
 
     @staticmethod
     def c_GIIM(graphics, n2, n3, image):  # g.java:1591
         n4 = (idiv(image.getWidth(), 2) + 1)
         n5 = image.getHeight()
-        Draw.a_GMIIIIII(graphics, image, n2, n3, n4, n5, 0, 0)
+        Draw.draw_image_part(graphics, image, n2, n3, n4, n5, 0, 0)
 
     @staticmethod
     def c_GIIIM(graphics, n2, n3, n4, image):  # g.java:1597
         n5 = (idiv(image.getWidth(), 2) + 1)
-        Draw.a_GMIIIIII(graphics, image, n2, n3, n5, n4, 0, 0)
+        Draw.draw_image_part(graphics, image, n2, n3, n5, n4, 0, 0)
 
     def e_v(self):  # g.java:1602
-        Draw.a_GMIII(MpCanvas.e, MpCanvas.f, 0, 0, 0)
+        Draw.draw_image(MpCanvas.e, MpCanvas.f, 0, 0, 0)
         if (MpCanvas.cY >= 90) and (MpCanvas.cY <= 105):
             MpCanvas.g_G(MpCanvas.e)
 
     def c_I(self, n2):  # g.java:1609
         if (n2 == 262) or (n2 == 278):
             MpCanvas.N = system.currentTimeMillis()
-        if NetThread.j and (idiv(((system.currentTimeMillis() - MpCanvas.N)), 1000) > 45):
+        if NetThread.connected and (idiv(((system.currentTimeMillis() - MpCanvas.N)), 1000) > 45):
             MpCanvas.dZ = 0
             MpCanvas.cw = 13
             MpCanvas.x = False
@@ -1468,55 +1468,55 @@ class MpCanvas(_Canvas):
         MpCanvas.N = system.currentTimeMillis()
         MpCanvas.dR = 0
         MpCanvas.dQ = n2
-        MpCanvas.dP.a_I(MpCanvas.dQ)
+        MpCanvas.dP.begin(MpCanvas.dQ)
         _sw17 = MpCanvas.dQ
         if _sw17 == 1300:
-            NetThread.a_B(i8(((MpCanvas.ae + 1))))
+            NetThread.write_byte(i8(((MpCanvas.ae + 1))))
         elif _sw17 == 1293:
-            NetThread.a_B(i8(MpCanvas.ab))
-            NetThread.b_I(1)
+            NetThread.write_byte(i8(MpCanvas.ab))
+            NetThread.write_int(1)
         elif _sw17 == 256:
-            NetThread.b_TI(MpCanvas.i, 12)
-            NetThread.b_TI(MpCanvas.t, 4)
+            NetThread.write_string(MpCanvas.i, 12)
+            NetThread.write_string(MpCanvas.t, 4)
         elif _sw17 == 262:
-            NetThread.b_TI(MpCanvas.i, 12)
-            NetThread.b_TI(MpCanvas.t, 4)
+            NetThread.write_string(MpCanvas.i, 12)
+            NetThread.write_string(MpCanvas.t, 4)
         elif _sw17 == 278:
-            NetThread.b_TI(MpCanvas.i, 12)
-            NetThread.b_TI(MpCanvas.j, 16)
-            NetThread.b_TI(MpCanvas.t, 4)
+            NetThread.write_string(MpCanvas.i, 12)
+            NetThread.write_string(MpCanvas.j, 16)
+            NetThread.write_string(MpCanvas.t, 4)
         elif _sw17 == 512:
-            NetThread.a_B(MpCanvas.bz)
+            NetThread.write_byte(MpCanvas.bz)
         elif _sw17 == 1291:
             MpCanvas.cM = 0
             MpCanvas.cL = 0
             while MpCanvas.cL < 4:
                 if MpCanvas.cH[(MpCanvas.cB[MpCanvas.cL] - 3)] != 99:
-                    NetThread.a_B(MpCanvas.cB[MpCanvas.cL])
+                    NetThread.write_byte(MpCanvas.cB[MpCanvas.cL])
                     MpCanvas.cM = MpCanvas.cM + 1
                 MpCanvas.cL = MpCanvas.cL + 1
             MpCanvas.cL = MpCanvas.cM
             while MpCanvas.cL < 4:
-                NetThread.a_B(i8(99))
+                NetThread.write_byte(i8(99))
                 MpCanvas.cL = MpCanvas.cL + 1
         elif _sw17 == 1280:
-            NetThread.b_TI(MpCanvas.bG, 8)
+            NetThread.write_string(MpCanvas.bG, 8)
         elif _sw17 == 258:
-            NetThread.b_I(MpCanvas.aO)
+            NetThread.write_int(MpCanvas.aO)
         elif _sw17 == 1027:
-            NetThread.a_B(i8(MpCanvas.bR[MpCanvas.bA]))
-            NetThread.a_B(i8(MpCanvas.bB))
-            NetThread.a_B(i8(MpCanvas.aS))
+            NetThread.write_byte(i8(MpCanvas.bR[MpCanvas.bA]))
+            NetThread.write_byte(i8(MpCanvas.bB))
+            NetThread.write_byte(i8(MpCanvas.aS))
         elif _sw17 in (1282, 1284):
-            NetThread.b_TI(MpCanvas.bG, 20)
+            NetThread.write_string(MpCanvas.bG, 20)
         elif _sw17 == 768:
-            NetThread.a_B(MpCanvas.bz)
-            NetThread.b_TI(MpCanvas.bG, 12)
+            NetThread.write_byte(MpCanvas.bz)
+            NetThread.write_string(MpCanvas.bG, 12)
         elif _sw17 == 288:
             pass
         elif _sw17 == 290:
-            NetThread.b_I(MpCanvas.ap)
-        NetThread.b_v()
+            NetThread.write_int(MpCanvas.ap)
+        NetThread.send()
 
     def f_v(self):  # g.java:1706
         MpCanvas.df[2] = self.b_T("/ui2.png")
@@ -1572,7 +1572,7 @@ class MpCanvas(_Canvas):
         n3 = 0
         while n3 < 3:
             if MpCanvas.dv[n3] is not None:
-                MpCanvas.dv[n3].a_v()
+                MpCanvas.dv[n3].free()
             MpCanvas.dv[n3] = None
             n3 = n3 + 1
         n3 = 0
@@ -1582,7 +1582,7 @@ class MpCanvas(_Canvas):
             n2 = 0
             while n2 < 3:
                 if MpCanvas.dx[n3][n2] is not None:
-                    MpCanvas.dx[n3][n2].a_v()
+                    MpCanvas.dx[n3][n2].free()
                 MpCanvas.dx[n3][n2] = None
                 n2 = n2 + 1
             n3 = n3 + 1
@@ -1593,7 +1593,7 @@ class MpCanvas(_Canvas):
             n2 = 0
             while n2 < 3:
                 if MpCanvas.dz[n3][n2] is not None:
-                    MpCanvas.dz[n3][n2].a_v()
+                    MpCanvas.dz[n3][n2].free()
                 MpCanvas.dz[n3][n2] = None
                 n2 = n2 + 1
             n3 = n3 + 1
@@ -1604,7 +1604,7 @@ class MpCanvas(_Canvas):
             n2 = 0
             while n2 < 3:
                 if MpCanvas.dB[n3][n2] is not None:
-                    MpCanvas.dB[n3][n2].a_v()
+                    MpCanvas.dB[n3][n2].free()
                 MpCanvas.dB[n3][n2] = None
                 n2 = n2 + 1
             n3 = n3 + 1
@@ -1615,7 +1615,7 @@ class MpCanvas(_Canvas):
             n2 = 0
             while n2 < 3:
                 if MpCanvas.dD[n3][n2] is not None:
-                    MpCanvas.dD[n3][n2].a_v()
+                    MpCanvas.dD[n3][n2].free()
                 MpCanvas.dD[n3][n2] = None
                 n2 = n2 + 1
             n3 = n3 + 1
@@ -1624,28 +1624,28 @@ class MpCanvas(_Canvas):
         n3 = 0
         while n3 < 3:
             if MpCanvas.dG[n3] is not None:
-                MpCanvas.dG[n3].a_v()
+                MpCanvas.dG[n3].free()
             MpCanvas.dG[n3] = None
             n3 = n3 + 1
         MpCanvas.dH[0] = None
         MpCanvas.dH[1] = None
         if MpCanvas.dI[0] is not None:
-            MpCanvas.dI[0].a_v()
+            MpCanvas.dI[0].free()
         MpCanvas.dI[0] = None
         MpCanvas.dJ[0] = None
         MpCanvas.dJ[1] = None
         if MpCanvas.dK[0] is not None:
-            MpCanvas.dK[0].a_v()
+            MpCanvas.dK[0].free()
         MpCanvas.dK[0] = None
         MpCanvas.dL[0] = None
         MpCanvas.dL[1] = None
         if MpCanvas.dM[0] is not None:
-            MpCanvas.dM[0].a_v()
+            MpCanvas.dM[0].free()
         MpCanvas.dM[0] = None
         MpCanvas.dN[0] = None
         MpCanvas.dN[0] = None
         if MpCanvas.dO[0] is not None:
-            MpCanvas.dO[0].a_v()
+            MpCanvas.dO[0].free()
         MpCanvas.dO[0] = None
         n3 = 2
         while n3 < len(MpCanvas.dg):
@@ -1674,16 +1674,16 @@ class MpCanvas(_Canvas):
             MpCanvas.b_I((-1))
             self.k_I(4)
             return
-        if NetThread.a == 280:
+        if NetThread.last_opcode == 280:
             MpCanvas.cw = 17
             MpCanvas.x = False
             MpCanvas.n_v()
             self.k_I(4)
             return
-        if not NetThread.j:
+        if not NetThread.connected:
             return
-        s = k2.b_v()
-        by = k2.a_v()
+        s = k2.read_s16()
+        by = k2.read_s8()
         MpCanvas.dR = by
         _sw18 = s
         try:
@@ -1698,7 +1698,7 @@ class MpCanvas(_Canvas):
                         MpCanvas.A = False
                         MpCanvas.i_I(10000)
                         return
-                    by2 = k2.a_v()
+                    by2 = k2.read_s8()
                     self.o_v()
                     if by2 == 0:
                         MpCanvas.z = 0
@@ -1715,44 +1715,44 @@ class MpCanvas(_Canvas):
                     _m19 = True
                     _sw20 = MpCanvas.dR
                     if _sw20 == 1:
-                        MpCanvas.cE = k2.a_I(8)
-                        MpCanvas.ar = k2.a_v()
-                        MpCanvas.as_ = k2.b_v()
-                        MpCanvas.at = k2.c()
-                        MpCanvas.au = k2.c()
-                        MpCanvas.av = k2.b_v()
-                        k2.b_v()
-                        k2.b_v()
-                        MpCanvas.aw = k2.a_v()
-                        MpCanvas.bE[0] = k2.a_v()
-                        MpCanvas.bE[1] = k2.a_v()
-                        MpCanvas.bE[2] = k2.a_v()
-                        MpCanvas.bE[3] = k2.a_v()
+                        MpCanvas.cE = k2.read_string(8)
+                        MpCanvas.ar = k2.read_s8()
+                        MpCanvas.as_ = k2.read_s16()
+                        MpCanvas.at = k2.read_s32()
+                        MpCanvas.au = k2.read_s32()
+                        MpCanvas.av = k2.read_s16()
+                        k2.read_s16()
+                        k2.read_s16()
+                        MpCanvas.aw = k2.read_s8()
+                        MpCanvas.bE[0] = k2.read_s8()
+                        MpCanvas.bE[1] = k2.read_s8()
+                        MpCanvas.bE[2] = k2.read_s8()
+                        MpCanvas.bE[3] = k2.read_s8()
                         MpCanvas.bD = 0
                         MpCanvas.cL = 0
                         while MpCanvas.cL < 4:
                             if MpCanvas.bE[MpCanvas.cL] != 99:
                                 MpCanvas.bD = MpCanvas.bD + 1
                             MpCanvas.cL = MpCanvas.cL + 1
-                        MpCanvas.cF = MpCanvas.d_T(k2.a_I(20))
-                        MpCanvas.cG = MpCanvas.d_T(k2.a_I(20))
+                        MpCanvas.cF = MpCanvas.d_T(k2.read_string(20))
+                        MpCanvas.cG = MpCanvas.d_T(k2.read_string(20))
                         MpCanvas.cL = 0
                         while MpCanvas.cL < 11:
-                            MpCanvas.cI[MpCanvas.cL] = k2.a_v()
+                            MpCanvas.cI[MpCanvas.cL] = k2.read_s8()
                             MpCanvas.cL = MpCanvas.cL + 1
-                        MpCanvas.aK = k2.a_v()
-                        MpCanvas.aL = k2.a_v()
-                        MpCanvas.aM = k2.a_v()
+                        MpCanvas.aK = k2.read_s8()
+                        MpCanvas.aL = k2.read_s8()
+                        MpCanvas.aM = k2.read_s8()
                         if MpCanvas.aL < 0:
                             MpCanvas.aL = 0
                         if MpCanvas.aM < 0:
                             MpCanvas.aM = 0
-                        MpCanvas.aN = k2.a_v()
-                        k2.a_I(8)
-                        k2.a_I(8)
-                        k2.a_v()
-                        k2.a_v()
-                        k2.a_v()
+                        MpCanvas.aN = k2.read_s8()
+                        k2.read_string(8)
+                        k2.read_string(8)
+                        k2.read_s8()
+                        k2.read_s8()
+                        k2.read_s8()
                         MpCanvas.dp = None
                         MpCanvas.dq = None
                         MpCanvas.dr = None
@@ -1804,8 +1804,8 @@ class MpCanvas(_Canvas):
                     while True:
                         if _m24 or _sw23 == 1:
                             _m24 = True
-                            MpCanvas.ac[MpCanvas.ae] = k2.c()
-                            MpCanvas.ad = k2.c()
+                            MpCanvas.ac[MpCanvas.ae] = k2.read_s32()
+                            MpCanvas.ad = k2.read_s32()
                             self.k_I(((161 + MpCanvas.dU[MpCanvas.dW]) + 1))
                             raise _Brk_block0_1631()
                         if _m24 or _sw23 == (-1):
@@ -1821,12 +1821,12 @@ class MpCanvas(_Canvas):
                     while True:
                         if _m26 or _sw25 == 1:
                             _m26 = True
-                            n2 = k2.a_v()
+                            n2 = k2.read_s8()
                             n3 = 0
                             while n3 < n2:
-                                MpCanvas.Z[n3] = k2.c()
-                                MpCanvas.Y[n3] = k2.a_I(12)
-                                MpCanvas.aa[n3] = k2.c()
+                                MpCanvas.Z[n3] = k2.read_s32()
+                                MpCanvas.Y[n3] = k2.read_string(12)
+                                MpCanvas.aa[n3] = k2.read_s32()
                                 n3 = n3 + 1
                             self.k_I((170 + MpCanvas.dU[MpCanvas.dW]))
                             raise _Brk_block0_1631()
@@ -1842,9 +1842,9 @@ class MpCanvas(_Canvas):
                     if _sw27 == 1:
                         n4 = 0
                         while n4 < 4:
-                            MpCanvas.bF[n4] = k2.a_I(16)
+                            MpCanvas.bF[n4] = k2.read_string(16)
                             n4 = n4 + 1
-                        MpCanvas.aN = k2.a_v()
+                        MpCanvas.aN = k2.read_s8()
                         MpCanvas.bd = 1
                         MpCanvas.i_I(6)
                         return
@@ -1855,10 +1855,10 @@ class MpCanvas(_Canvas):
                     _m19 = True
                     _sw28 = MpCanvas.dR
                     if _sw28 == 1:
-                        MpCanvas.by = k2.a_v()
-                        MpCanvas.bh = k2.a_v()
-                        MpCanvas.bz = k2.a_v()
-                        k2.a_v()
+                        MpCanvas.by = k2.read_s8()
+                        MpCanvas.bh = k2.read_s8()
+                        MpCanvas.bz = k2.read_s8()
+                        k2.read_s8()
                         MpCanvas.w = True
                         self.O_v()
                         MpCanvas.w = False
@@ -1874,10 +1874,10 @@ class MpCanvas(_Canvas):
                     _m19 = True
                     _sw30 = MpCanvas.dR
                     if _sw30 == 1:
-                        MpCanvas.by = k2.a_v()
-                        MpCanvas.bh = k2.a_v()
-                        MpCanvas.bz = k2.a_v()
-                        k2.a_v()
+                        MpCanvas.by = k2.read_s8()
+                        MpCanvas.bh = k2.read_s8()
+                        MpCanvas.bz = k2.read_s8()
+                        k2.read_s8()
                         MpCanvas.w = True
                         self.O_v()
                         MpCanvas.w = False
@@ -1903,10 +1903,10 @@ class MpCanvas(_Canvas):
                     _sw32 = MpCanvas.dR
                     if _sw32 == 1:
                         MpCanvas.x = False
-                        MpCanvas.by = k2.a_v()
-                        MpCanvas.bh = k2.a_v()
-                        MpCanvas.bz = k2.a_v()
-                        k2.a_v()
+                        MpCanvas.by = k2.read_s8()
+                        MpCanvas.bh = k2.read_s8()
+                        MpCanvas.bz = k2.read_s8()
+                        k2.read_s8()
                         MpCanvas.w = True
                         self.O_v()
                         MpCanvas.w = False
@@ -1926,19 +1926,19 @@ class MpCanvas(_Canvas):
                                 break
                             MpCanvas.cL = MpCanvas.cL + 1
                         MpCanvas.bQ[MpCanvas.ct] = True
-                        MpCanvas.bR[MpCanvas.ct] = k2.a_v()
+                        MpCanvas.bR[MpCanvas.ct] = k2.read_s8()
                         if imod(MpCanvas.bR[MpCanvas.ct], 2) == imod(MpCanvas.bR[0], 2):
                             MpCanvas.bb = MpCanvas.bb + 1
                         else:
                             MpCanvas.bc = MpCanvas.bc + 1
-                        MpCanvas.bM[MpCanvas.ct] = k2.a_I(8)
-                        MpCanvas.bS[MpCanvas.ct] = k2.b_v()
-                        MpCanvas.bT[MpCanvas.ct] = k2.c()
-                        MpCanvas.bU[MpCanvas.ct] = k2.c()
-                        MpCanvas.bW[MpCanvas.ct] = k2.b_v()
+                        MpCanvas.bM[MpCanvas.ct] = k2.read_string(8)
+                        MpCanvas.bS[MpCanvas.ct] = k2.read_s16()
+                        MpCanvas.bT[MpCanvas.ct] = k2.read_s32()
+                        MpCanvas.bU[MpCanvas.ct] = k2.read_s32()
+                        MpCanvas.bW[MpCanvas.ct] = k2.read_s16()
                         MpCanvas.bV[MpCanvas.ct] = MpCanvas.bW[MpCanvas.ct]
-                        MpCanvas.bY[MpCanvas.ct] = k2.a_v()
-                        MpCanvas.bZ[MpCanvas.ct] = k2.a_v()
+                        MpCanvas.bY[MpCanvas.ct] = k2.read_s8()
+                        MpCanvas.bZ[MpCanvas.ct] = k2.read_s8()
                         if MpCanvas.bZ[MpCanvas.ct] == 10:
                             MpCanvas.bZ[MpCanvas.ct] = 0
                             MpCanvas.ca[MpCanvas.ct] = 2
@@ -1948,10 +1948,10 @@ class MpCanvas(_Canvas):
                             n5 = MpCanvas.ct
                             MpCanvas.bZ[n5] = i8(((MpCanvas.bZ[n5] - 30)))
                             MpCanvas.ca[MpCanvas.ct] = 1
-                        MpCanvas.bN[MpCanvas.ct] = k2.a_I(20)
-                        MpCanvas.bO[MpCanvas.ct] = k2.a_I(20)
-                        MpCanvas.cr[MpCanvas.ct] = k2.a_v()
-                        MpCanvas.bP[MpCanvas.ct] = k2.a_I(8)
+                        MpCanvas.bN[MpCanvas.ct] = k2.read_string(20)
+                        MpCanvas.bO[MpCanvas.ct] = k2.read_string(20)
+                        MpCanvas.cr[MpCanvas.ct] = k2.read_s8()
+                        MpCanvas.bP[MpCanvas.ct] = k2.read_string(8)
                         MpCanvas.bX[MpCanvas.ct] = 0
                         MpCanvas.h_I(MpCanvas.ct)
                         MpCanvas.co[MpCanvas.ct] = imod(abs(MpCanvas.h.nextInt()), 4)
@@ -1997,32 +1997,32 @@ class MpCanvas(_Canvas):
                                     break
                                 MpCanvas.cM = MpCanvas.cM + 1
                             if MpCanvas.bi:
-                                MpCanvas.cb[MpCanvas.ct] = k2.a_v()
+                                MpCanvas.cb[MpCanvas.ct] = k2.read_s8()
                             else:
-                                MpCanvas.bJ = k2.a_v()
+                                MpCanvas.bJ = k2.read_s8()
                             MpCanvas.cL = MpCanvas.cL + 1
-                        MpCanvas.aT = k2.a_v()
+                        MpCanvas.aT = k2.read_s8()
                         MpCanvas.cL = 0
                         while MpCanvas.cL < MpCanvas.aT:
-                            MpCanvas.cK[(0 + MpCanvas.cL)] = k2.a_v()
-                            MpCanvas.cK[(4 + MpCanvas.cL)] = k2.a_v()
-                            MpCanvas.cJ[(0 + MpCanvas.cL)] = k2.b_v()
-                            MpCanvas.cK[(8 + MpCanvas.cL)] = k2.a_v()
-                            MpCanvas.cK[(12 + MpCanvas.cL)] = k2.a_v()
-                            MpCanvas.cK[(16 + MpCanvas.cL)] = k2.a_v()
-                            MpCanvas.cJ[(4 + MpCanvas.cL)] = k2.b_v()
-                            MpCanvas.cK[(20 + MpCanvas.cL)] = k2.a_v()
-                            MpCanvas.cK[(24 + MpCanvas.cL)] = k2.a_v()
-                            MpCanvas.cK[(28 + MpCanvas.cL)] = k2.a_v()
+                            MpCanvas.cK[(0 + MpCanvas.cL)] = k2.read_s8()
+                            MpCanvas.cK[(4 + MpCanvas.cL)] = k2.read_s8()
+                            MpCanvas.cJ[(0 + MpCanvas.cL)] = k2.read_s16()
+                            MpCanvas.cK[(8 + MpCanvas.cL)] = k2.read_s8()
+                            MpCanvas.cK[(12 + MpCanvas.cL)] = k2.read_s8()
+                            MpCanvas.cK[(16 + MpCanvas.cL)] = k2.read_s8()
+                            MpCanvas.cJ[(4 + MpCanvas.cL)] = k2.read_s16()
+                            MpCanvas.cK[(20 + MpCanvas.cL)] = k2.read_s8()
+                            MpCanvas.cK[(24 + MpCanvas.cL)] = k2.read_s8()
+                            MpCanvas.cK[(28 + MpCanvas.cL)] = k2.read_s8()
                             MpCanvas.cL = MpCanvas.cL + 1
-                        k2.a_v()
+                        k2.read_s8()
                         MpCanvas.cL = 0
                         while MpCanvas.cL < MpCanvas.aT:
                             if MpCanvas.cK[(24 + MpCanvas.cL)] == 1:
-                                MpCanvas.cK[(32 + MpCanvas.cL)] = k2.a_v()
-                                MpCanvas.cK[(36 + MpCanvas.cL)] = k2.a_v()
-                                MpCanvas.cJ[(8 + MpCanvas.cL)] = k2.b_v()
-                                MpCanvas.cK[(40 + MpCanvas.cL)] = k2.a_v()
+                                MpCanvas.cK[(32 + MpCanvas.cL)] = k2.read_s8()
+                                MpCanvas.cK[(36 + MpCanvas.cL)] = k2.read_s8()
+                                MpCanvas.cJ[(8 + MpCanvas.cL)] = k2.read_s16()
+                                MpCanvas.cK[(40 + MpCanvas.cL)] = k2.read_s8()
                             MpCanvas.cL = MpCanvas.cL + 1
                         MpCanvas.i_I(99)
                     return
@@ -2030,37 +2030,37 @@ class MpCanvas(_Canvas):
                     _m19 = True
                     _sw37 = MpCanvas.dR
                     if _sw37 == 1:
-                        MpCanvas.by = k2.a_v()
+                        MpCanvas.by = k2.read_s8()
                         MpCanvas.i_I(104)
                     return
                 if _m19 or _sw18 == 1032:
                     _m19 = True
                     _sw38 = MpCanvas.dR
                     if _sw38 == 1:
-                        MpCanvas.aU = k2.a_v()
+                        MpCanvas.aU = k2.read_s8()
                         if MpCanvas.bz != 2:
                             if MpCanvas.aU == 1:
                                 MpCanvas.at = MpCanvas.at + 1
                             else:
                                 MpCanvas.au = MpCanvas.au + 1
-                        MpCanvas.aV = k2.b_v()
-                        MpCanvas.aW = k2.a_v()
-                        MpCanvas.aX = k2.b_v()
-                        MpCanvas.aY = k2.b_v()
-                        MpCanvas.bI = k2.a_I(15)
-                        MpCanvas.aZ = k2.c()
-                        k2.a_v()
-                        k2.c()
-                        k2.a_v()
+                        MpCanvas.aV = k2.read_s16()
+                        MpCanvas.aW = k2.read_s8()
+                        MpCanvas.aX = k2.read_s16()
+                        MpCanvas.aY = k2.read_s16()
+                        MpCanvas.bI = k2.read_string(15)
+                        MpCanvas.aZ = k2.read_s32()
+                        k2.read_s8()
+                        k2.read_s32()
+                        k2.read_s8()
                         MpCanvas.i_I(105)
                     return
                 if _m19 or _sw18 == 1037:
                     _m19 = True
                     _sw39 = MpCanvas.dR
                     if _sw39 == 1:
-                        MpCanvas.bH = k2.a_I(14)
-                        MpCanvas.aP = k2.a_v()
-                        MpCanvas.aQ = k2.a_v()
+                        MpCanvas.bH = k2.read_string(14)
+                        MpCanvas.aP = k2.read_s8()
+                        MpCanvas.aQ = k2.read_s8()
                         MpCanvas.i_I(91)
                     return
                 if _m19 or _sw18 == 1035:
@@ -2070,7 +2070,7 @@ class MpCanvas(_Canvas):
                     while True:
                         if _m41 or _sw40 == 1:
                             _m41 = True
-                            MpCanvas.bg = k2.a_v()
+                            MpCanvas.bg = k2.read_s8()
                             MpCanvas.cL = 0
                             while MpCanvas.cL < 4:
                                 if MpCanvas.bQ[MpCanvas.cL] and (MpCanvas.bR[MpCanvas.cL] == MpCanvas.bg):
@@ -2143,14 +2143,14 @@ class MpCanvas(_Canvas):
                     _m19 = True
                     _sw45 = MpCanvas.dR
                     if _sw45 == 1:
-                        MpCanvas.aC = k2.b_v()
-                        MpCanvas.aD = k2.b_v()
-                        MpCanvas.aE = k2.b_v()
-                        MpCanvas.aF = k2.b_v()
-                        MpCanvas.aG = k2.b_v()
-                        MpCanvas.aH = k2.b_v()
-                        MpCanvas.aI = k2.b_v()
-                        MpCanvas.aJ = k2.b_v()
+                        MpCanvas.aC = k2.read_s16()
+                        MpCanvas.aD = k2.read_s16()
+                        MpCanvas.aE = k2.read_s16()
+                        MpCanvas.aF = k2.read_s16()
+                        MpCanvas.aG = k2.read_s16()
+                        MpCanvas.aH = k2.read_s16()
+                        MpCanvas.aI = k2.read_s16()
+                        MpCanvas.aJ = k2.read_s16()
                         self.k_I(81)
                         return
                     MpCanvas.cw = 0
@@ -2164,11 +2164,11 @@ class MpCanvas(_Canvas):
                         while MpCanvas.cL < 11:
                             MpCanvas.cH[MpCanvas.cL] = 99
                             MpCanvas.cL = MpCanvas.cL + 1
-                        MpCanvas.bf = k2.a_v()
+                        MpCanvas.bf = k2.read_s8()
                         MpCanvas.cL = 0
                         while MpCanvas.cL < MpCanvas.bf:
-                            MpCanvas.bp = k2.a_v()
-                            MpCanvas.cH[(MpCanvas.bp - 3)] = k2.a_v()
+                            MpCanvas.bp = k2.read_s8()
+                            MpCanvas.cH[(MpCanvas.bp - 3)] = k2.read_s8()
                             MpCanvas.cL = MpCanvas.cL + 1
                         MpCanvas.cL = 0
                         while MpCanvas.cL < MpCanvas.bD:
@@ -2219,9 +2219,9 @@ class MpCanvas(_Canvas):
                     _m19 = True
                     _sw48 = MpCanvas.dR
                     if _sw48 == 1:
-                        MpCanvas.ax = k2.c()
-                        MpCanvas.aA = k2.c()
-                        MpCanvas.aB = k2.c()
+                        MpCanvas.ax = k2.read_s32()
+                        MpCanvas.aA = k2.read_s32()
+                        MpCanvas.aB = k2.read_s32()
                         self.k_I(80)
                         return
                     MpCanvas.cw = 0
@@ -2231,9 +2231,9 @@ class MpCanvas(_Canvas):
                     _m19 = True
                     _sw49 = MpCanvas.dR
                     if _sw49 == 1:
-                        MpCanvas.ay = k2.c()
-                        MpCanvas.ax = k2.c()
-                        MpCanvas.az = k2.c()
+                        MpCanvas.ay = k2.read_s32()
+                        MpCanvas.ax = k2.read_s32()
+                        MpCanvas.az = k2.read_s32()
                         self.k_I(83)
                         return
                     MpCanvas.cw = 0
@@ -2243,10 +2243,10 @@ class MpCanvas(_Canvas):
                     _m19 = True
                     _sw50 = MpCanvas.dR
                     if _sw50 == 1:
-                        MpCanvas.bd = k2.a_v()
+                        MpCanvas.bd = k2.read_s8()
                         n6 = 0
                         while n6 < 4:
-                            MpCanvas.bF[n6] = k2.a_I(16)
+                            MpCanvas.bF[n6] = k2.read_string(16)
                             n6 = n6 + 1
                         MpCanvas.aN = 0
                         MpCanvas.i_I(6)
@@ -2254,7 +2254,7 @@ class MpCanvas(_Canvas):
                 if _m19 or _sw18 == 289:
                     _m19 = True
                     if MpCanvas.dR == 1:
-                        _t51 = k2.c()
+                        _t51 = k2.read_s32()
                         MpCanvas.ao = _t51
                         MpCanvas.ap = _t51
                         self.k_I(88)
@@ -2774,7 +2774,7 @@ class MpCanvas(_Canvas):
                         return
                     if MpCanvas.cs != (-5):
                         break
-                    if not NetThread.j:
+                    if not NetThread.connected:
                         if ((MpCanvas.cw == 14) or (MpCanvas.cw == 15)) or (MpCanvas.cw == 16):
                             self.N_v()
                             return
@@ -2936,23 +2936,23 @@ class MpCanvas(_Canvas):
 
     def m_v(self):  # g.java:3382
         MpCanvas.eb = False
-        if not NetThread.j:
+        if not NetThread.connected:
             if MpCanvas.dP is None:
                 MpCanvas.dP = NetThread()
                 MpCanvas.dP.setPriority(10)
                 MpCanvas.dP.start()
-            NetThread.a_Lg(self)
+            NetThread.set_game(self)
             MpCanvas.L = True
-            MpCanvas.dP.a_TI(MpCanvas.r, MpCanvas.s)
+            MpCanvas.dP.set_address(MpCanvas.r, MpCanvas.s)
 
     @staticmethod
     def n_v():  # g.java:3396
         MpCanvas.ea = True
-        NetThread.j = False
+        NetThread.connected = False
         MpCanvas.h.k = False
         MpCanvas.a_J(400)
         if MpCanvas.dP is not None:
-            NetThread.a_v()
+            NetThread.close()
         MpCanvas.dP = None
         MpCanvas.dX = True
         MpCanvas.b_I((-1))
@@ -2976,7 +2976,7 @@ class MpCanvas(_Canvas):
         MpCanvas.ea = False
 
     def hideNotify(self):  # g.java:3433
-        self.ag_v()
+        self.stop_music()
         MpCanvas.a_I(1)
 
     def showNotify(self):  # g.java:3438
@@ -2994,8 +2994,8 @@ class MpCanvas(_Canvas):
             MpCanvas.cx = (n2 - idiv(n4, 2))
             MpCanvas.cy = (n3 - idiv(n5, 2))
             if n6 == 0:
-                Draw.b_GIIIII(graphics, MpCanvas.cx, MpCanvas.cy, n4, n5, 0)
-            Draw.a_GIIIII(graphics, (MpCanvas.cx + 1), (MpCanvas.cy + 1), (n4 - 2), (n5 - 2), 0xADAAAD)
+                Draw.fill_rect(graphics, MpCanvas.cx, MpCanvas.cy, n4, n5, 0)
+            Draw.draw_rect(graphics, (MpCanvas.cx + 1), (MpCanvas.cy + 1), (n4 - 2), (n5 - 2), 0xADAAAD)
             MpCanvas.c_GIIM(graphics, (MpCanvas.cx + Consts.eq[2]), (MpCanvas.cy + Consts.er[2]), MpCanvas.df[2])
             MpCanvas.b_GIIM(graphics, ((MpCanvas.cx + n4) + Consts.eq[2]), (MpCanvas.cy + Consts.er[2]), MpCanvas.df[2])
             MpCanvas.c_GIIM(graphics, (MpCanvas.cx + Consts.eq[3]), ((((MpCanvas.cy + n5) - 2) - 5) + Consts.er[3]), MpCanvas.df[3])
@@ -3034,12 +3034,12 @@ class MpCanvas(_Canvas):
             MpCanvas.a_GIII(graphics, n2, ((n3 + n5) - 1), n8)
             MpCanvas.a_GIII(graphics, ((n2 + n4) - 1), ((n3 + n5) - 1), n8)
             return
-        Draw.b_GIIIII(graphics, n2, (n3 + 1), 1, (n5 - 2), n7)
-        Draw.b_GIIIII(graphics, ((n2 + n4) - 1), (n3 + 1), 1, (n5 - 2), n7)
+        Draw.fill_rect(graphics, n2, (n3 + 1), 1, (n5 - 2), n7)
+        Draw.fill_rect(graphics, ((n2 + n4) - 1), (n3 + 1), 1, (n5 - 2), n7)
         MpCanvas.cM = 1
         while MpCanvas.cM < (n4 - 1):
-            Draw.b_GIIIII(graphics, (n2 + MpCanvas.cM), n3, 1, n5, n7)
-            Draw.b_GIIIII(graphics, (n2 + MpCanvas.cM), (n3 + 1), 1, (n5 - 2), 0)
+            Draw.fill_rect(graphics, (n2 + MpCanvas.cM), n3, 1, n5, n7)
+            Draw.fill_rect(graphics, (n2 + MpCanvas.cM), (n3 + 1), 1, (n5 - 2), 0)
             MpCanvas.cM = MpCanvas.cM + 1
 
     def q_v(self):  # g.java:3512
@@ -3491,9 +3491,9 @@ class MpCanvas(_Canvas):
             if MpCanvas.bz == 0:
                 n2 = (MpCanvas.cT - 26)
             self.c_GIIIII(graphics, MpCanvas.cW, (n2 + 3), 110, 38, 0)
-            Draw.a_GMIII(graphics, MpCanvas.df[35], ((MpCanvas.cW - 44) + Consts.eq[35]), (n2 + Consts.er[35]), 0)
-            Draw.a_GMIII(graphics, MpCanvas.df[36], ((MpCanvas.cW - 44) + Consts.eq[36]), (n2 + Consts.er[36]), 0)
-            Draw.a_GMIII(graphics, MpCanvas.df[37], ((MpCanvas.cW - 44) + Consts.eq[37]), (n2 + Consts.er[37]), 0)
+            Draw.draw_image(graphics, MpCanvas.df[35], ((MpCanvas.cW - 44) + Consts.eq[35]), (n2 + Consts.er[35]), 0)
+            Draw.draw_image(graphics, MpCanvas.df[36], ((MpCanvas.cW - 44) + Consts.eq[36]), (n2 + Consts.er[36]), 0)
+            Draw.draw_image(graphics, MpCanvas.df[37], ((MpCanvas.cW - 44) + Consts.eq[37]), (n2 + Consts.er[37]), 0)
 
     def f_G(self, graphics):  # g.java:4007
         n2 = MpCanvas.cX
@@ -3501,16 +3501,16 @@ class MpCanvas(_Canvas):
             n2 = (MpCanvas.cT - 26)
         if MpCanvas.cY == 98:
             if MpCanvas.aS == 100:
-                Draw.a_GMIII(graphics, MpCanvas.df[52], (((MpCanvas.cW - 44) + 72) + Consts.eq[52]), (n2 + Consts.er[52]), 0)
+                Draw.draw_image(graphics, MpCanvas.df[52], (((MpCanvas.cW - 44) + 72) + Consts.eq[52]), (n2 + Consts.er[52]), 0)
                 self.t_I(0)
             elif MpCanvas.aS == 20:
-                Draw.a_GMIII(graphics, MpCanvas.df[53], (((MpCanvas.cW - 44) + 72) + Consts.eq[53]), (n2 + Consts.er[53]), 0)
+                Draw.draw_image(graphics, MpCanvas.df[53], (((MpCanvas.cW - 44) + 72) + Consts.eq[53]), (n2 + Consts.er[53]), 0)
             else:
-                Draw.a_GMIII(graphics, MpCanvas.df[49], ((MpCanvas.cA - 20) + Consts.eu[35]), ((n2 - 11) + Consts.ev[35]), 0)
+                Draw.draw_image(graphics, MpCanvas.df[49], ((MpCanvas.cA - 20) + Consts.eu[35]), ((n2 - 11) + Consts.ev[35]), 0)
                 self.t_I(0)
         if imod(MpCanvas.da, 2) == 0:
-            Draw.a_GMIII(graphics, MpCanvas.df[38], (((MpCanvas.cW - 44) + 72) + Consts.eq[38]), (n2 + Consts.er[38]), 0)
-        Draw.a_GMIII(graphics, MpCanvas.df[34], (MpCanvas.cA + Consts.eq[34]), (n2 + Consts.er[34]), 0)
+            Draw.draw_image(graphics, MpCanvas.df[38], (((MpCanvas.cW - 44) + 72) + Consts.eq[38]), (n2 + Consts.er[38]), 0)
+        Draw.draw_image(graphics, MpCanvas.df[34], (MpCanvas.cA + Consts.eq[34]), (n2 + Consts.er[34]), 0)
         if (MpCanvas.cY == 97) and (MpCanvas.cA > ((MpCanvas.cW - 44) + 72)):
             self.C_v()
 
@@ -3545,9 +3545,9 @@ class MpCanvas(_Canvas):
         else:
             n3 = n2
         if MpCanvas.bn:
-            Draw.a_GMIIIIII(graphics, imageArray[1], (MpCanvas.cQ - (((MpCanvas.cU - a2.g[n3]) + a2.e[n3]))), (MpCanvas.cV - a2.h[n3]), a2.e[n3], a2.f[n3], a2.c[n3], a2.d[n3])
+            Draw.draw_image_part(graphics, imageArray[1], (MpCanvas.cQ - (((MpCanvas.cU - a2.anchor_x[n3]) + a2.w[n3]))), (MpCanvas.cV - a2.anchor_y[n3]), a2.w[n3], a2.h[n3], a2.src_x[n3], a2.src_y[n3])
             return
-        Draw.a_GMIIIIII(graphics, imageArray[0], (MpCanvas.cU - a2.g[n3]), (MpCanvas.cV - a2.h[n3]), a2.e[n3], a2.f[n3], a2.c[n3], a2.d[n3])
+        Draw.draw_image_part(graphics, imageArray[0], (MpCanvas.cU - a2.anchor_x[n3]), (MpCanvas.cV - a2.anchor_y[n3]), a2.w[n3], a2.h[n3], a2.src_x[n3], a2.src_y[n3])
 
     def c_GI(self, graphics, n2):  # g.java:4073
         n3 = 0
@@ -3946,14 +3946,14 @@ class MpCanvas(_Canvas):
                 n3 = n3 - 1
                 if MpCanvas.bW[MpCanvas.cL] > 0:
                     if imod(MpCanvas.bR[MpCanvas.cL], 2) == 0:
-                        Draw.a_GIIII(graphics, n4, n5, n3, 0xB50000)
-                        Draw.a_GIIII(graphics, n4, (n5 + 1), n3, 0xFF0000)
-                        Draw.a_GIIII(graphics, n4, (n5 + 2), n3, 0xB50000)
+                        Draw.draw_hline(graphics, n4, n5, n3, 0xB50000)
+                        Draw.draw_hline(graphics, n4, (n5 + 1), n3, 0xFF0000)
+                        Draw.draw_hline(graphics, n4, (n5 + 2), n3, 0xB50000)
                     else:
                         n2 = (MpCanvas.bK - n3)
-                        Draw.a_GIIII(graphics, (n4 + n2), n5, n3, 0xB50000)
-                        Draw.a_GIIII(graphics, (n4 + n2), (n5 + 1), n3, 0xFF0000)
-                        Draw.a_GIIII(graphics, (n4 + n2), (n5 + 2), n3, 0xB50000)
+                        Draw.draw_hline(graphics, (n4 + n2), n5, n3, 0xB50000)
+                        Draw.draw_hline(graphics, (n4 + n2), (n5 + 1), n3, 0xFF0000)
+                        Draw.draw_hline(graphics, (n4 + n2), (n5 + 2), n3, 0xB50000)
                 if (((n3 := idiv((MpCanvas.bX[MpCanvas.cL] * MpCanvas.bK), 100))) == 0) and (MpCanvas.bX[MpCanvas.cL] > 0):
                     n3 = 1
                 n4 = (28 if (imod(MpCanvas.bR[MpCanvas.cL], 2) == 0) else ((MpCanvas.cQ - 28) - MpCanvas.bK))
@@ -3961,14 +3961,14 @@ class MpCanvas(_Canvas):
                 n3 = n3 - 1
                 if MpCanvas.bX[MpCanvas.cL] > 0:
                     if imod(MpCanvas.bR[MpCanvas.cL], 2) == 0:
-                        Draw.a_GIIII(graphics, n4, n5, n3, 3223675)
-                        Draw.a_GIIII(graphics, n4, (n5 + 1), n3, 9216734)
-                        Draw.a_GIIII(graphics, n4, (n5 + 2), n3, 3223675)
+                        Draw.draw_hline(graphics, n4, n5, n3, 3223675)
+                        Draw.draw_hline(graphics, n4, (n5 + 1), n3, 9216734)
+                        Draw.draw_hline(graphics, n4, (n5 + 2), n3, 3223675)
                     else:
                         n2 = (MpCanvas.bK - n3)
-                        Draw.a_GIIII(graphics, (n4 + n2), n5, n3, 3223675)
-                        Draw.a_GIIII(graphics, (n4 + n2), (n5 + 1), n3, 9216734)
-                        Draw.a_GIIII(graphics, (n4 + n2), (n5 + 2), n3, 3223675)
+                        Draw.draw_hline(graphics, (n4 + n2), n5, n3, 3223675)
+                        Draw.draw_hline(graphics, (n4 + n2), (n5 + 1), n3, 9216734)
+                        Draw.draw_hline(graphics, (n4 + n2), (n5 + 2), n3, 3223675)
             MpCanvas.cL = MpCanvas.cL + 1
 
     @staticmethod
@@ -4018,39 +4018,39 @@ class MpCanvas(_Canvas):
         if _sw100 in (0, 1, 7):
             while (idiv(n4, n6) > 0) or (n6 == 1):
                 n8 = idiv(imod(n4, ((n6 * 10))), n6)
-                Draw.a_GMIIIIII(graphics, MpCanvas.dh[n5], n2, n3, 5, 8, (n8 * 5), 0)
+                Draw.draw_image_part(graphics, MpCanvas.dh[n5], n2, n3, 5, 8, (n8 * 5), 0)
                 n2 = (n2 - 6)
                 n6 = (n6 * 10)
                 if (imod((n7 := i32(n7 + 1)), 3) != 0) or (idiv(n4, n6) <= 0):
                     continue
-                Draw.a_GMIIIIII(graphics, MpCanvas.dh[n5], (n2 := (n2 + 2)), (n3 + 5), 2, 3, 50, 5)
+                Draw.draw_image_part(graphics, MpCanvas.dh[n5], (n2 := (n2 + 2)), (n3 + 5), 2, 3, 50, 5)
                 n2 = (n2 - 6)
             return
         elif _sw100 == 5:
-            Draw.a_GMIIIIII(graphics, MpCanvas.dh[6], (n2 - 3), (n3 - 1), 3, 10, 7, 0)
+            Draw.draw_image_part(graphics, MpCanvas.dh[6], (n2 - 3), (n3 - 1), 3, 10, 7, 0)
             n2 = (n2 - 9)
             while (idiv(n4, n6) > 0) or (n6 == 1):
                 n9 = idiv(imod(n4, ((n6 * 10))), n6)
-                Draw.a_GMIIIIII(graphics, MpCanvas.dh[n5], n2, n3, 5, 8, (n9 * 5), 16)
+                Draw.draw_image_part(graphics, MpCanvas.dh[n5], n2, n3, 5, 8, (n9 * 5), 16)
                 n2 = (n2 - 6)
                 n6 = (n6 * 10)
                 if (imod((n7 := i32(n7 + 1)), 3) != 0) or (idiv(n4, n6) <= 0):
                     continue
-                Draw.b_GIIIII(graphics, (n2 := (n2 + 2)), (n3 + 6), 1, 3, 65280)
+                Draw.fill_rect(graphics, (n2 := (n2 + 2)), (n3 + 6), 1, 3, 65280)
                 n2 = (n2 - 6)
-            Draw.a_GMIIIIII(graphics, MpCanvas.dh[6], (n2 - 2), (n3 - 1), 7, 10, 0, 0)
+            Draw.draw_image_part(graphics, MpCanvas.dh[6], (n2 - 2), (n3 - 1), 7, 10, 0, 0)
             return
         elif _sw100 == 2:
             while (idiv(n4, n6) > 0) or (n6 == 1):
                 n10 = idiv(imod(n4, ((n6 * 10))), n6)
-                Draw.a_GMIIIIII(graphics, MpCanvas.dh[n5], n2, n3, 7, 11, (n10 * 7), 0)
+                Draw.draw_image_part(graphics, MpCanvas.dh[n5], n2, n3, 7, 11, (n10 * 7), 0)
                 n2 = (n2 - 8)
                 n6 = (n6 * 10)
             return
         elif _sw100 == 3:
             while (idiv(n4, n6) > 0) or (n6 == 1):
                 n11 = idiv(imod(n4, ((n6 * 10))), n6)
-                Draw.a_GMIIIIII(graphics, MpCanvas.dh[n5], n2, n3, 12, 13, (n11 * 12), 0)
+                Draw.draw_image_part(graphics, MpCanvas.dh[n5], n2, n3, 12, 13, (n11 * 12), 0)
                 n2 = (n2 - 12)
                 n6 = (n6 * 10)
             return
@@ -4062,7 +4062,7 @@ class MpCanvas(_Canvas):
                 MpCanvas.br = False
             while (idiv(n4, n6) > 0) or (n6 == 1):
                 n12 = idiv(imod(n4, ((n6 * 10))), n6)
-                Draw.a_GMIIIIII(graphics, MpCanvas.dh[n5], n2, n3, 6, 10, (n12 * 6), (10 if MpCanvas.br else 0))
+                Draw.draw_image_part(graphics, MpCanvas.dh[n5], n2, n3, 6, 10, (n12 * 6), (10 if MpCanvas.br else 0))
                 n2 = (n2 - 7)
                 n6 = (n6 * 10)
 
@@ -4177,14 +4177,14 @@ class MpCanvas(_Canvas):
                 while n3 < 7:
                     self.a_GIITI(MpCanvas.e, MpCanvas.cW, (n2 + (12 * n3)), Consts.eV[(1 + n3)], 0xFFFFFF)
                     n3 = n3 + 1
-                Draw.b_GIIIII(MpCanvas.e, (MpCanvas.cW - 40), (n2 + 86), 80, 13, 0)
-                Draw.a_GIIIII(MpCanvas.e, (MpCanvas.cW - 40), (n2 + 86), 80, 13, 0x646464)
+                Draw.fill_rect(MpCanvas.e, (MpCanvas.cW - 40), (n2 + 86), 80, 13, 0)
+                Draw.draw_rect(MpCanvas.e, (MpCanvas.cW - 40), (n2 + 86), 80, 13, 0x646464)
                 self.a_GIITI(MpCanvas.e, MpCanvas.cW, ((n2 + 52) + 35), MpCanvas.bG, 0x41FF41)
                 MpCanvas.a_II(MpCanvas.C, ((n2 + 64) + 35))
                 if imod(MpCanvas.da, 4) < 2:
-                    n4 = MpCanvas.n.a_T(MpCanvas.bG)
+                    n4 = MpCanvas.n.string_width(MpCanvas.bG)
                     if len(MpCanvas.bG) == 12:
-                        n4 = (n4 - (MpCanvas.n.a_T("A") * 2))
+                        n4 = (n4 - (MpCanvas.n.string_width("A") * 2))
                     MpCanvas.b_GIIIII(MpCanvas.e, (MpCanvas.cW + idiv(n4, 2)), ((n2 + 62) + 35), ((MpCanvas.cW + idiv(n4, 2)) + 4), ((n2 + 62) + 35), 0xFFFFFF)
                 if len(MpCanvas.bG) == 0:
                     self.c_II(4, 2)
@@ -4198,8 +4198,8 @@ class MpCanvas(_Canvas):
                 while n5 < 5:
                     self.a_GIITI(MpCanvas.e, MpCanvas.cW, (n2 + (12 * n5)), Consts.eV[(8 + n5)], 0xFFFFFF)
                     n5 = n5 + 1
-                Draw.b_GIIIII(MpCanvas.e, (MpCanvas.cW - 40), (n2 + 63), 80, 13, 0)
-                Draw.a_GIIIII(MpCanvas.e, (MpCanvas.cW - 40), (n2 + 63), 80, 13, 0x646464)
+                Draw.fill_rect(MpCanvas.e, (MpCanvas.cW - 40), (n2 + 63), 80, 13, 0)
+                Draw.draw_rect(MpCanvas.e, (MpCanvas.cW - 40), (n2 + 63), 80, 13, 0x646464)
                 self.a_GIITI(MpCanvas.e, MpCanvas.cW, (n2 + 64), MpCanvas.j, 0x41FF41)
                 if len(MpCanvas.j) >= 4:
                     self.c_II(0, 3)
@@ -4354,12 +4354,12 @@ class MpCanvas(_Canvas):
         MpCanvas.aR = 0
         MpCanvas.D = False
         self.k_I(90)
-        self.ag_v()
+        self.stop_music()
         MpCanvas.O = True
 
     def h_G(self, graphics):  # g.java:5068
         self.c_GIIIII(graphics, MpCanvas.cW, (MpCanvas.cX - 26), 110, 60, 0)
-        Draw.b_GIIIII(graphics, (MpCanvas.cW - 51), ((MpCanvas.cX - 51) + (MpCanvas.db * 12)), 102, 12, 12956683)
+        Draw.fill_rect(graphics, (MpCanvas.cW - 51), ((MpCanvas.cX - 51) + (MpCanvas.db * 12)), 102, 12, 12956683)
         MpCanvas.cL = 0
         while MpCanvas.cL < MpCanvas.bD:
             if MpCanvas.bX[0] < MpCanvas.cI[(MpCanvas.bE[MpCanvas.cL] - 3)]:
@@ -4458,8 +4458,8 @@ class MpCanvas(_Canvas):
                 elif MpCanvas.cL == MpCanvas.U:
                     MpCanvas.bJ = MpCanvas.cK[(36 + MpCanvas.bC)]
                 if imod(MpCanvas.bR[MpCanvas.cL], 2) == 0:
-                    Draw.a_GIIIII(MpCanvas.e, MpCanvas.cO, MpCanvas.cP, 60, 23, 0)
-                    Draw.a_GIIIII(MpCanvas.e, (MpCanvas.cO + 1), (MpCanvas.cP + 1), 58, 21, 16769990)
+                    Draw.draw_rect(MpCanvas.e, MpCanvas.cO, MpCanvas.cP, 60, 23, 0)
+                    Draw.draw_rect(MpCanvas.e, (MpCanvas.cO + 1), (MpCanvas.cP + 1), 58, 21, 16769990)
                     _sw110 = MpCanvas.bJ
                     if _sw110 in (0, 3, 4, 5, 6, 7, 8):
                         self.a_AMTI(MpCanvas.dg, "act", 0)
@@ -4493,10 +4493,10 @@ class MpCanvas(_Canvas):
 
     def i_G(self, graphics):  # g.java:5246
         if MpCanvas.aR < 10:
-            Draw.a_GMIIIIII(graphics, MpCanvas.dh[3], (MpCanvas.cW - 33), (MpCanvas.cX - 31), 52, 13, 120, 0)
+            Draw.draw_image_part(graphics, MpCanvas.dh[3], (MpCanvas.cW - 33), (MpCanvas.cX - 31), 52, 13, 120, 0)
             self.d_GIII(graphics, (MpCanvas.cW + 21), (MpCanvas.cX - 31), MpCanvas.aR)
             return
-        Draw.a_GMIIIIII(graphics, MpCanvas.dh[3], (MpCanvas.cW - 39), (MpCanvas.cX - 31), 52, 13, 120, 0)
+        Draw.draw_image_part(graphics, MpCanvas.dh[3], (MpCanvas.cW - 39), (MpCanvas.cX - 31), 52, 13, 120, 0)
         self.d_GIII(graphics, (MpCanvas.cW + 27), (MpCanvas.cX - 31), MpCanvas.aR)
 
     @staticmethod
@@ -4505,9 +4505,9 @@ class MpCanvas(_Canvas):
         MpCanvas.cP = (MpCanvas.cX - 40)
         if MpCanvas.bz == 0:
             MpCanvas.cP = (MpCanvas.cP - 6)
-        Draw.a_GMIII(graphics, MpCanvas.df[17], (MpCanvas.cO - 12), MpCanvas.cP, 0)
-        Draw.a_GMIII(graphics, MpCanvas.df[16], ((MpCanvas.cO - 36) - 1), (MpCanvas.cP + 16), 0)
-        Draw.a_GMIII(graphics, MpCanvas.df[15], ((MpCanvas.cO + 12) + 1), (MpCanvas.cP + 16), 0)
+        Draw.draw_image(graphics, MpCanvas.df[17], (MpCanvas.cO - 12), MpCanvas.cP, 0)
+        Draw.draw_image(graphics, MpCanvas.df[16], ((MpCanvas.cO - 36) - 1), (MpCanvas.cP + 16), 0)
+        Draw.draw_image(graphics, MpCanvas.df[15], ((MpCanvas.cO + 12) + 1), (MpCanvas.cP + 16), 0)
         MpCanvas.bs = False
         if MpCanvas.bD > 0:
             MpCanvas.cN = 0
@@ -4515,7 +4515,7 @@ class MpCanvas(_Canvas):
                 if MpCanvas.bX[0] >= MpCanvas.cI[(MpCanvas.bE[MpCanvas.cN] - 3)]:
                     MpCanvas.bs = True
                 MpCanvas.cN = MpCanvas.cN + 1
-        Draw.a_GMIII(graphics, MpCanvas.df[(18 + ((0 if MpCanvas.bs else 1)))], (MpCanvas.cO - 12), (MpCanvas.cP + 30), 0)
+        Draw.draw_image(graphics, MpCanvas.df[(18 + ((0 if MpCanvas.bs else 1)))], (MpCanvas.cO - 12), (MpCanvas.cP + 30), 0)
         if MpCanvas.bB != 99:
             n2 = 0
             n3 = 0
@@ -4531,8 +4531,8 @@ class MpCanvas(_Canvas):
             else:
                 n3 = (MpCanvas.cO - 12)
                 n2 = (MpCanvas.cP + 30)
-            Draw.a_GIIIII(graphics, (n3 - 1), (n2 - 1), 24, 24, 15721306)
-            Draw.a_GIIIII(graphics, n3, n2, 23, 23, 15721306)
+            Draw.draw_rect(graphics, (n3 - 1), (n2 - 1), 24, 24, 15721306)
+            Draw.draw_rect(graphics, n3, n2, 23, 23, 15721306)
 
     def d_GI(self, graphics, n2):  # g.java:5297
         n3 = 0
@@ -4671,7 +4671,7 @@ class MpCanvas(_Canvas):
             n3 = 40
         MpCanvas.cL = 0
         while MpCanvas.cL < MpCanvas.k:
-            Draw.a_GMIIIIII(MpCanvas.g, MpCanvas.do_, (idiv((((MpCanvas.cQ - (n2 * ((MpCanvas.k - 1)))) - 11)), 2) + (n2 * MpCanvas.cL)), ((MpCanvas.cX + 6) + n3), 12, 15, 12, 0)
+            Draw.draw_image_part(MpCanvas.g, MpCanvas.do_, (idiv((((MpCanvas.cQ - (n2 * ((MpCanvas.k - 1)))) - 11)), 2) + (n2 * MpCanvas.cL)), ((MpCanvas.cX + 6) + n3), 12, 15, 12, 0)
             MpCanvas.cL = MpCanvas.cL + 1
 
     def V_v(self):  # g.java:5477
@@ -4686,9 +4686,9 @@ class MpCanvas(_Canvas):
     def e_GI(graphics, n2):  # g.java:5488
         n3 = ((n2 * 2) + imod(MpCanvas.da, 2))
         if MpCanvas.bn:
-            Draw.a_GMIIIIII(graphics, MpCanvas.dC[1][1], (MpCanvas.cQ - (((MpCanvas.cU - MpCanvas.dE[0].g[n3]) + MpCanvas.dE[0].e[n3]))), (MpCanvas.cV - MpCanvas.dE[0].h[n3]), MpCanvas.dE[0].e[n3], MpCanvas.dE[0].f[n3], MpCanvas.dE[0].c[n3], MpCanvas.dE[0].d[n3])
+            Draw.draw_image_part(graphics, MpCanvas.dC[1][1], (MpCanvas.cQ - (((MpCanvas.cU - MpCanvas.dE[0].anchor_x[n3]) + MpCanvas.dE[0].w[n3]))), (MpCanvas.cV - MpCanvas.dE[0].anchor_y[n3]), MpCanvas.dE[0].w[n3], MpCanvas.dE[0].h[n3], MpCanvas.dE[0].src_x[n3], MpCanvas.dE[0].src_y[n3])
             return
-        Draw.a_GMIIIIII(graphics, MpCanvas.dC[1][0], (MpCanvas.cU - MpCanvas.dE[0].g[n3]), (MpCanvas.cV - MpCanvas.dE[0].h[n3]), MpCanvas.dE[0].e[n3], MpCanvas.dE[0].f[n3], MpCanvas.dE[0].c[n3], MpCanvas.dE[0].d[n3])
+        Draw.draw_image_part(graphics, MpCanvas.dC[1][0], (MpCanvas.cU - MpCanvas.dE[0].anchor_x[n3]), (MpCanvas.cV - MpCanvas.dE[0].anchor_y[n3]), MpCanvas.dE[0].w[n3], MpCanvas.dE[0].h[n3], MpCanvas.dE[0].src_x[n3], MpCanvas.dE[0].src_y[n3])
 
     def a_AMTI(self, imageArray, string, n2):  # g.java:5497
         if imageArray[n2] is None:
@@ -4719,7 +4719,7 @@ class MpCanvas(_Canvas):
     def W_v(self):  # g.java:5534
         n2 = 0
         n3 = 0
-        Draw.b_GIIIII(MpCanvas.g, 0, 0, MpCanvas.cQ, MpCanvas.cR, 0)
+        Draw.fill_rect(MpCanvas.g, 0, 0, MpCanvas.cQ, MpCanvas.cR, 0)
         n3 = (idiv(MpCanvas.cT, 2) - 95)
         n4 = (idiv(MpCanvas.cS, 30) + 1)
         n5 = ((MpCanvas.by >> 6) & 3)
@@ -4730,7 +4730,7 @@ class MpCanvas(_Canvas):
             self.n_I(6)
             self.n_I(7)
             self.n_I(8)
-            Draw.b_GIIIII(MpCanvas.g, 0, 0, MpCanvas.cQ, (n3 + 1), 11257599)
+            Draw.fill_rect(MpCanvas.g, 0, 0, MpCanvas.cQ, (n3 + 1), 11257599)
             n2 = 0
             while n2 < n4:
                 MpCanvas.a_GIIM(MpCanvas.g, (30 * n2), n3, MpCanvas.dj[4])
@@ -4745,7 +4745,7 @@ class MpCanvas(_Canvas):
             self.n_I(11)
             self.n_I(12)
             self.n_I(13)
-            Draw.b_GIIIII(MpCanvas.g, 0, 0, MpCanvas.cQ, (n3 + 1), 1645890)
+            Draw.fill_rect(MpCanvas.g, 0, 0, MpCanvas.cQ, (n3 + 1), 1645890)
             n2 = 0
             while n2 < n4:
                 MpCanvas.a_GIIM(MpCanvas.g, (30 * n2), n3, MpCanvas.dj[9])
@@ -4781,56 +4781,56 @@ class MpCanvas(_Canvas):
             MpCanvas.dj[n2] = self.b_T(_js(_js("/gamebg", n2), ".png"))
 
     def Y_v(self):  # g.java:5609
-        Draw.b_GIIIII(MpCanvas.g, 0, 0, MpCanvas.cQ, 12, 0)
+        Draw.fill_rect(MpCanvas.g, 0, 0, MpCanvas.cQ, 12, 0)
         MpCanvas.o_I(0)
         n2 = 0
-        Draw.a_GIIII(MpCanvas.g, 28, 4, (MpCanvas.bK - 1), 8429760)
-        Draw.a_GIIII(MpCanvas.g, 28, 10, (MpCanvas.bK - 1), 8429760)
-        Draw.a_GIIII(MpCanvas.g, 31, 4, ((MpCanvas.bK - 1) - 6), 0x808080)
-        Draw.a_GIIII(MpCanvas.g, 31, 10, ((MpCanvas.bK - 1) - 6), 0x808080)
+        Draw.draw_hline(MpCanvas.g, 28, 4, (MpCanvas.bK - 1), 8429760)
+        Draw.draw_hline(MpCanvas.g, 28, 10, (MpCanvas.bK - 1), 8429760)
+        Draw.draw_hline(MpCanvas.g, 31, 4, ((MpCanvas.bK - 1) - 6), 0x808080)
+        Draw.draw_hline(MpCanvas.g, 31, 10, ((MpCanvas.bK - 1) - 6), 0x808080)
         n2 = (28 + MpCanvas.bK)
-        Draw.b_GIIII(MpCanvas.g, n2, 0, 10, 0x808080)
-        Draw.b_GIIII(MpCanvas.g, n2, 3, 1, 8429760)
-        Draw.b_GIIII(MpCanvas.g, n2, 4, 1, 0)
-        Draw.b_GIIII(MpCanvas.g, n2, 5, 1, 8429760)
-        Draw.b_GIIII(MpCanvas.g, n2, 9, 1, 8429760)
+        Draw.draw_vline(MpCanvas.g, n2, 0, 10, 0x808080)
+        Draw.draw_vline(MpCanvas.g, n2, 3, 1, 8429760)
+        Draw.draw_vline(MpCanvas.g, n2, 4, 1, 0)
+        Draw.draw_vline(MpCanvas.g, n2, 5, 1, 8429760)
+        Draw.draw_vline(MpCanvas.g, n2, 9, 1, 8429760)
         MpCanvas.o_I(1)
         n2 = (((MpCanvas.cQ - 28) - MpCanvas.bK) + 1)
-        Draw.a_GIIII(MpCanvas.g, n2, 4, (MpCanvas.bK - 1), 8429760)
-        Draw.a_GIIII(MpCanvas.g, n2, 10, (MpCanvas.bK - 1), 8429760)
-        Draw.a_GIIII(MpCanvas.g, (n2 + 3), 4, ((MpCanvas.bK - 1) - 6), 0x808080)
-        Draw.a_GIIII(MpCanvas.g, (n2 + 3), 10, ((MpCanvas.bK - 1) - 6), 0x808080)
+        Draw.draw_hline(MpCanvas.g, n2, 4, (MpCanvas.bK - 1), 8429760)
+        Draw.draw_hline(MpCanvas.g, n2, 10, (MpCanvas.bK - 1), 8429760)
+        Draw.draw_hline(MpCanvas.g, (n2 + 3), 4, ((MpCanvas.bK - 1) - 6), 0x808080)
+        Draw.draw_hline(MpCanvas.g, (n2 + 3), 10, ((MpCanvas.bK - 1) - 6), 0x808080)
         n2 = (((MpCanvas.cQ - 28) - 1) - MpCanvas.bK)
-        Draw.b_GIIII(MpCanvas.g, n2, 0, 10, 0x808080)
-        Draw.b_GIIII(MpCanvas.g, n2, 3, 1, 8429760)
-        Draw.b_GIIII(MpCanvas.g, n2, 4, 1, 0)
-        Draw.b_GIIII(MpCanvas.g, n2, 5, 1, 8429760)
-        Draw.b_GIIII(MpCanvas.g, n2, 9, 1, 8429760)
+        Draw.draw_vline(MpCanvas.g, n2, 0, 10, 0x808080)
+        Draw.draw_vline(MpCanvas.g, n2, 3, 1, 8429760)
+        Draw.draw_vline(MpCanvas.g, n2, 4, 1, 0)
+        Draw.draw_vline(MpCanvas.g, n2, 5, 1, 8429760)
+        Draw.draw_vline(MpCanvas.g, n2, 9, 1, 8429760)
         if MpCanvas.bz != 0:
-            Draw.b_GIIIII(MpCanvas.g, 0, (MpCanvas.cR - 12), MpCanvas.cQ, 12, 0)
+            Draw.fill_rect(MpCanvas.g, 0, (MpCanvas.cR - 12), MpCanvas.cQ, 12, 0)
             MpCanvas.o_I(2)
-            Draw.a_GIIII(MpCanvas.g, 28, (MpCanvas.cR - 5), (MpCanvas.bK - 1), 8429760)
-            Draw.a_GIIII(MpCanvas.g, 28, (MpCanvas.cR - 11), (MpCanvas.bK - 1), 8429760)
-            Draw.a_GIIII(MpCanvas.g, 31, (MpCanvas.cR - 5), (MpCanvas.bK - 6), 0x808080)
-            Draw.a_GIIII(MpCanvas.g, 31, (MpCanvas.cR - 11), (MpCanvas.bK - 6), 0x808080)
+            Draw.draw_hline(MpCanvas.g, 28, (MpCanvas.cR - 5), (MpCanvas.bK - 1), 8429760)
+            Draw.draw_hline(MpCanvas.g, 28, (MpCanvas.cR - 11), (MpCanvas.bK - 1), 8429760)
+            Draw.draw_hline(MpCanvas.g, 31, (MpCanvas.cR - 5), (MpCanvas.bK - 6), 0x808080)
+            Draw.draw_hline(MpCanvas.g, 31, (MpCanvas.cR - 11), (MpCanvas.bK - 6), 0x808080)
             n2 = ((28 + MpCanvas.bK) + 1)
-            Draw.b_GIIII(MpCanvas.g, (n2 - 1), (MpCanvas.cR - 9), 9, 0x808080)
-            Draw.b_GIIII(MpCanvas.g, (n2 - 1), (MpCanvas.cR - 4), 1, 8429760)
-            Draw.b_GIIII(MpCanvas.g, (n2 - 1), (MpCanvas.cR - 5), 1, 0)
-            Draw.b_GIIII(MpCanvas.g, (n2 - 1), (MpCanvas.cR - 6), 1, 8429760)
-            Draw.b_GIIII(MpCanvas.g, (n2 - 1), (MpCanvas.cR - 10), 1, 8429760)
+            Draw.draw_vline(MpCanvas.g, (n2 - 1), (MpCanvas.cR - 9), 9, 0x808080)
+            Draw.draw_vline(MpCanvas.g, (n2 - 1), (MpCanvas.cR - 4), 1, 8429760)
+            Draw.draw_vline(MpCanvas.g, (n2 - 1), (MpCanvas.cR - 5), 1, 0)
+            Draw.draw_vline(MpCanvas.g, (n2 - 1), (MpCanvas.cR - 6), 1, 8429760)
+            Draw.draw_vline(MpCanvas.g, (n2 - 1), (MpCanvas.cR - 10), 1, 8429760)
             MpCanvas.o_I(3)
             n2 = (((MpCanvas.cQ - 28) - MpCanvas.bK) + 1)
-            Draw.a_GIIII(MpCanvas.g, n2, (MpCanvas.cR - 5), (MpCanvas.bK - 1), 8429760)
-            Draw.a_GIIII(MpCanvas.g, n2, (MpCanvas.cR - 11), (MpCanvas.bK - 1), 8429760)
-            Draw.a_GIIII(MpCanvas.g, (n2 + 3), (MpCanvas.cR - 5), ((MpCanvas.bK - 1) - 6), 0x808080)
-            Draw.a_GIIII(MpCanvas.g, (n2 + 3), (MpCanvas.cR - 11), ((MpCanvas.bK - 1) - 6), 0x808080)
+            Draw.draw_hline(MpCanvas.g, n2, (MpCanvas.cR - 5), (MpCanvas.bK - 1), 8429760)
+            Draw.draw_hline(MpCanvas.g, n2, (MpCanvas.cR - 11), (MpCanvas.bK - 1), 8429760)
+            Draw.draw_hline(MpCanvas.g, (n2 + 3), (MpCanvas.cR - 5), ((MpCanvas.bK - 1) - 6), 0x808080)
+            Draw.draw_hline(MpCanvas.g, (n2 + 3), (MpCanvas.cR - 11), ((MpCanvas.bK - 1) - 6), 0x808080)
             n2 = (((MpCanvas.cQ - 28) - 1) - MpCanvas.bK)
-            Draw.b_GIIII(MpCanvas.g, n2, (MpCanvas.cR - 9), 10, 0x808080)
-            Draw.b_GIIII(MpCanvas.g, n2, (MpCanvas.cR - 4), 1, 8429760)
-            Draw.b_GIIII(MpCanvas.g, n2, (MpCanvas.cR - 5), 1, 0)
-            Draw.b_GIIII(MpCanvas.g, n2, (MpCanvas.cR - 6), 1, 8429760)
-            Draw.b_GIIII(MpCanvas.g, n2, (MpCanvas.cR - 10), 1, 8429760)
+            Draw.draw_vline(MpCanvas.g, n2, (MpCanvas.cR - 9), 10, 0x808080)
+            Draw.draw_vline(MpCanvas.g, n2, (MpCanvas.cR - 4), 1, 8429760)
+            Draw.draw_vline(MpCanvas.g, n2, (MpCanvas.cR - 5), 1, 0)
+            Draw.draw_vline(MpCanvas.g, n2, (MpCanvas.cR - 6), 1, 8429760)
+            Draw.draw_vline(MpCanvas.g, n2, (MpCanvas.cR - 10), 1, 8429760)
 
     @staticmethod
     def o_I(n2):  # g.java:5663
@@ -4840,9 +4840,9 @@ class MpCanvas(_Canvas):
         while n5 < 2:
             if n5 == 1:
                 n4 = (n4 + 6)
-            Draw.a_GIIII(MpCanvas.g, n3, n4, (MpCanvas.bK - 1), 0x808080)
-            Draw.a_GIIII(MpCanvas.g, n3, (n4 + 1), (MpCanvas.bK - 1), 0xFFFFFF)
-            Draw.a_GIIII(MpCanvas.g, n3, (n4 + 2), (MpCanvas.bK - 1), 0xC0C0C0)
+            Draw.draw_hline(MpCanvas.g, n3, n4, (MpCanvas.bK - 1), 0x808080)
+            Draw.draw_hline(MpCanvas.g, n3, (n4 + 1), (MpCanvas.bK - 1), 0xFFFFFF)
+            Draw.draw_hline(MpCanvas.g, n3, (n4 + 2), (MpCanvas.bK - 1), 0xC0C0C0)
             n5 = n5 + 1
 
     def k_G(self, graphics):  # g.java:5678
@@ -4856,48 +4856,48 @@ class MpCanvas(_Canvas):
         if MpCanvas.cR <= 144:
             n4 = (78 - idiv(((144 - MpCanvas.cR)), 2))
             n3 = ((MpCanvas.cR - 18) - n4)
-            Draw.a_GMIIIIII(graphics, MpCanvas.dk, 0, 5, 5, 8, 0, 0)
-            Draw.a_GMIIIIII(graphics, MpCanvas.dk, 0, 13, 5, n4, 0, (8 + ((78 - n4))))
-            Draw.a_GMIIIIII(graphics, MpCanvas.dk, 0, (13 + n4), 5, n3, 0, (134 - n3))
+            Draw.draw_image_part(graphics, MpCanvas.dk, 0, 5, 5, 8, 0, 0)
+            Draw.draw_image_part(graphics, MpCanvas.dk, 0, 13, 5, n4, 0, (8 + ((78 - n4))))
+            Draw.draw_image_part(graphics, MpCanvas.dk, 0, (13 + n4), 5, n3, 0, (134 - n3))
             n2 = (MpCanvas.cQ - 5)
-            Draw.a_GMIIIIII(graphics, MpCanvas.dk, n2, 5, 5, 8, 5, 0)
-            Draw.a_GMIIIIII(graphics, MpCanvas.dk, n2, 13, 5, n4, 5, (8 + ((78 - n4))))
-            Draw.a_GMIIIIII(graphics, MpCanvas.dk, n2, (13 + n4), 5, n3, 5, (134 - n3))
+            Draw.draw_image_part(graphics, MpCanvas.dk, n2, 5, 5, 8, 5, 0)
+            Draw.draw_image_part(graphics, MpCanvas.dk, n2, 13, 5, n4, 5, (8 + ((78 - n4))))
+            Draw.draw_image_part(graphics, MpCanvas.dk, n2, (13 + n4), 5, n3, 5, (134 - n3))
         else:
             n4 = idiv(((MpCanvas.cR - 144)), 2)
             n3 = ((MpCanvas.cR - 144) - n4)
-            Draw.a_GMIIIIII(graphics, MpCanvas.dk, 0, 5, 5, 59, 0, 0)
+            Draw.draw_image_part(graphics, MpCanvas.dk, 0, 5, 5, 59, 0, 0)
             MpCanvas.d_GIIII(graphics, 0, 64, n4, 0)
-            Draw.a_GMIIIIII(graphics, MpCanvas.dk, 0, (64 + n4), 5, 17, 0, 59)
+            Draw.draw_image_part(graphics, MpCanvas.dk, 0, (64 + n4), 5, 17, 0, 59)
             MpCanvas.d_GIIII(graphics, 0, ((64 + n4) + 17), n3, 0)
-            Draw.a_GMIIIIII(graphics, MpCanvas.dk, 0, ((MpCanvas.cR - 5) - 58), 5, 58, 0, 76)
+            Draw.draw_image_part(graphics, MpCanvas.dk, 0, ((MpCanvas.cR - 5) - 58), 5, 58, 0, 76)
             n2 = (MpCanvas.cQ - 5)
-            Draw.a_GMIIIIII(graphics, MpCanvas.dk, n2, 5, 5, 59, 5, 0)
+            Draw.draw_image_part(graphics, MpCanvas.dk, n2, 5, 5, 59, 5, 0)
             MpCanvas.d_GIIII(graphics, n2, 64, n4, 5)
-            Draw.a_GMIIIIII(graphics, MpCanvas.dk, n2, (64 + n4), 5, 17, 5, 59)
+            Draw.draw_image_part(graphics, MpCanvas.dk, n2, (64 + n4), 5, 17, 5, 59)
             MpCanvas.d_GIIII(graphics, n2, ((64 + n4) + 17), n4, 5)
-            Draw.a_GMIIIIII(graphics, MpCanvas.dk, n2, ((MpCanvas.cR - 5) - 58), 5, 58, 5, 76)
+            Draw.draw_image_part(graphics, MpCanvas.dk, n2, ((MpCanvas.cR - 5) - 58), 5, 58, 5, 76)
         n4 = idiv(((MpCanvas.cQ - 120)), 2)
         n3 = ((MpCanvas.cQ - 120) - n4)
-        Draw.a_GMIIIIII(graphics, MpCanvas.dm, 0, 0, 21, 5, 0, 0)
+        Draw.draw_image_part(graphics, MpCanvas.dm, 0, 0, 21, 5, 0, 0)
         MpCanvas.e_GIIII(graphics, 21, 0, n4, 0)
-        Draw.a_GMIIIIII(graphics, MpCanvas.dm, (21 + n4), 0, 77, 5, 21, 0)
+        Draw.draw_image_part(graphics, MpCanvas.dm, (21 + n4), 0, 77, 5, 21, 0)
         MpCanvas.e_GIIII(graphics, (98 + n4), 0, n3, 0)
-        Draw.a_GMIIIIII(graphics, MpCanvas.dm, (MpCanvas.cQ - 21), 0, 21, 5, 98, 0)
+        Draw.draw_image_part(graphics, MpCanvas.dm, (MpCanvas.cQ - 21), 0, 21, 5, 98, 0)
         n2 = (MpCanvas.cR - 5)
-        Draw.a_GMIIIIII(graphics, MpCanvas.dm, 0, n2, 37, 5, 0, 5)
+        Draw.draw_image_part(graphics, MpCanvas.dm, 0, n2, 37, 5, 0, 5)
         MpCanvas.e_GIIII(graphics, 37, n2, n4, 5)
-        Draw.a_GMIIIIII(graphics, MpCanvas.dm, (37 + n4), n2, 45, 5, 37, 5)
+        Draw.draw_image_part(graphics, MpCanvas.dm, (37 + n4), n2, 45, 5, 37, 5)
         MpCanvas.e_GIIII(graphics, (82 + n4), n2, n3, 5)
-        Draw.a_GMIIIIII(graphics, MpCanvas.dm, (MpCanvas.cQ - 37), n2, 37, 5, 82, 5)
-        Draw.a_GMIIIIII(graphics, MpCanvas.dn, (MpCanvas.cW - 46), 0, 46, 15, 0, 0)
-        Draw.a_GMIIIIII(graphics, MpCanvas.dn, MpCanvas.cW, 0, 46, 15, 17, 0)
+        Draw.draw_image_part(graphics, MpCanvas.dm, (MpCanvas.cQ - 37), n2, 37, 5, 82, 5)
+        Draw.draw_image_part(graphics, MpCanvas.dn, (MpCanvas.cW - 46), 0, 46, 15, 0, 0)
+        Draw.draw_image_part(graphics, MpCanvas.dn, MpCanvas.cW, 0, 46, 15, 17, 0)
         self.a_GTIIII(graphics, MpCanvas.c, idiv(MpCanvas.cQ, 2), 2, 1, 0xFFFFFF)
 
     def a_GTIIIIZZ(self, graphics, string, n2, n3, n4, n5, bl, bl2):  # g.java:5730
         if bl:
-            Draw.a_GIIIIII(graphics, (n2 - 1), (n3 - 1), (n4 + 2), (n5 + 2), 1, 0xFFFFFF)
-            Draw.a_GIIIII(graphics, n2, n3, n4, n5, 0xFFFFFF)
+            Draw.draw_frame(graphics, (n2 - 1), (n3 - 1), (n4 + 2), (n5 + 2), 1, 0xFFFFFF)
+            Draw.draw_rect(graphics, n2, n3, n4, n5, 0xFFFFFF)
         MpCanvas.c_GIIII(graphics, n2, n3, n4, n5)
         if not bl2:
             self.a_IITI((n2 + idiv(n4, 2)), (n3 + idiv(((n5 - 11)), 2)), string, 0x646464)
@@ -4906,8 +4906,8 @@ class MpCanvas(_Canvas):
 
     @staticmethod
     def c_GIIII(graphics, n2, n3, n4, n5):  # g.java:5743
-        Draw.a_GIIIIII(graphics, n2, n3, n4, n5, 1, 0x949694)
-        Draw.b_GIIIII(graphics, (n2 + 1), (n3 + 1), (n4 - 2), (n5 - 2), 0)
+        Draw.draw_frame(graphics, n2, n3, n4, n5, 1, 0x949694)
+        Draw.fill_rect(graphics, (n2 + 1), (n3 + 1), (n4 - 2), (n5 - 2), 0)
 
     def m_G(self, graphics):  # g.java:5748
         MpCanvas.cL = 0
@@ -4941,7 +4941,7 @@ class MpCanvas(_Canvas):
         n6 = (idiv(n4, 11) + 1)
         n7 = 0
         while n7 < n6:
-            Draw.a_GMIIIIII(graphics, MpCanvas.dk, n2, (n3 + (11 * n7)), 5, 11, n5, 8)
+            Draw.draw_image_part(graphics, MpCanvas.dk, n2, (n3 + (11 * n7)), 5, 11, n5, 8)
             n7 = n7 + 1
 
     @staticmethod
@@ -4953,10 +4953,10 @@ class MpCanvas(_Canvas):
             n5 = 0
             while n5 < n3:
                 if imod(n5, 2) != 0:
-                    Draw.a_GMIII(graphics, MpCanvas.dl, (MpCanvas.dl.getWidth() * n4), (MpCanvas.dl.getHeight() * n5), 0)
+                    Draw.draw_image(graphics, MpCanvas.dl, (MpCanvas.dl.getWidth() * n4), (MpCanvas.dl.getHeight() * n5), 0)
                 else:
-                    Draw.a_GMIIIIII(graphics, MpCanvas.dl, (MpCanvas.dl.getWidth() * n4), (MpCanvas.dl.getHeight() * n5), 21, 24, 31, 0)
-                    Draw.a_GMIIIIII(graphics, MpCanvas.dl, ((MpCanvas.dl.getWidth() * n4) + 21), (MpCanvas.dl.getHeight() * n5), 31, 24, 0, 0)
+                    Draw.draw_image_part(graphics, MpCanvas.dl, (MpCanvas.dl.getWidth() * n4), (MpCanvas.dl.getHeight() * n5), 21, 24, 31, 0)
+                    Draw.draw_image_part(graphics, MpCanvas.dl, ((MpCanvas.dl.getWidth() * n4) + 21), (MpCanvas.dl.getHeight() * n5), 31, 24, 0, 0)
                 n5 = n5 + 1
             n4 = n4 + 1
 
@@ -4965,7 +4965,7 @@ class MpCanvas(_Canvas):
         n6 = (idiv(n4, 11) + 1)
         n7 = 0
         while n7 < n6:
-            Draw.a_GMIIIIII(graphics, MpCanvas.dm, (n2 + (11 * n7)), n3, 11, 5, 10, n5)
+            Draw.draw_image_part(graphics, MpCanvas.dm, (n2 + (11 * n7)), n3, 11, 5, 10, n5)
             n7 = n7 + 1
 
     def o_G(self, graphics):  # g.java:5820
@@ -5095,9 +5095,9 @@ class MpCanvas(_Canvas):
         self.a_IITI(MpCanvas.cW, (MpCanvas.cX - 8), Consts.eX[25], 0xFFFFFF)
         self.a_GIITI(graphics, MpCanvas.cW, (MpCanvas.cX + 9), string, 0x41FF41)
         if imod(MpCanvas.da, 4) < 2:
-            n2 = MpCanvas.n.a_T(string)
+            n2 = MpCanvas.n.string_width(string)
             if len(string) == 20:
-                n2 = (n2 - (MpCanvas.n.a_T("A") * 2))
+                n2 = (n2 - (MpCanvas.n.string_width("A") * 2))
             MpCanvas.b_GIIIII(graphics, (MpCanvas.cW + idiv(n2, 2)), (MpCanvas.cX + 20), ((MpCanvas.cW + idiv(n2, 2)) + 4), (MpCanvas.cX + 20), 0xFFFFFF)
         MpCanvas.b_II(MpCanvas.C, (MpCanvas.cX + 27))
 
@@ -5105,18 +5105,18 @@ class MpCanvas(_Canvas):
     def a_II(n2, n3):  # g.java:6002
         n4 = (MpCanvas.cW - 57)
         stringArray = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "OK"]
-        Gfx.a_IIIII(n4, n3, 115, 22, 0)
-        Gfx.a_IIIII((n4 + 99), (n3 + 12), 13, 9, 255)
+        Gfx.fill_rect(n4, n3, 115, 22, 0)
+        Gfx.fill_rect((n4 + 99), (n3 + 12), 13, 9, 255)
         if imod(MpCanvas.da, 4) < 2:
             if n2 == 26:
-                Gfx.a_IIIII((n4 + 99), (n3 + 12), 13, 9, 0xFF0000)
+                Gfx.fill_rect((n4 + 99), (n3 + 12), 13, 9, 0xFF0000)
             else:
-                Gfx.a_IIIII(((n4 + 2) + (imod(n2, 14) * 8)), ((n3 + 1) + (11 * (idiv(n2, 14)))), 7, 9, 0xFF0000)
-        Gfx.a_Lj(MpCanvas.n)
+                Gfx.fill_rect(((n4 + 2) + (imod(n2, 14) * 8)), ((n3 + 1) + (11 * (idiv(n2, 14)))), 7, 9, 0xFF0000)
+        Gfx.set_font(MpCanvas.n)
         n5 = 0
         while n5 < len(stringArray):
             n6 = (1 if (n5 == 8) else ((1 if (n5 == 26) else 0)))
-            Gfx.a_TIII(stringArray[n5], (((n4 + 3) + (imod(n5, 14) * 8)) + n6), (n3 + (11 * (idiv(n5, 14)))), 0)
+            Gfx.draw_string(stringArray[n5], (((n4 + 3) + (imod(n5, 14) * 8)) + n6), (n3 + (11 * (idiv(n5, 14)))), 0)
             n5 = n5 + 1
 
     @staticmethod
@@ -5139,19 +5139,19 @@ class MpCanvas(_Canvas):
     def b_II(n2, n3):  # g.java:6042
         n4 = (MpCanvas.cW - 60)
         stringArray = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", " ", "OK"]
-        Gfx.a_IIIII(n4, n3, 120, 22, 0)
-        Gfx.a_IIIII((n4 + 99), (n3 + 13), 5, 7, 0x666666)
-        Gfx.a_IIIII((n4 + 106), (n3 + 12), 13, 9, 255)
+        Gfx.fill_rect(n4, n3, 120, 22, 0)
+        Gfx.fill_rect((n4 + 99), (n3 + 13), 5, 7, 0x666666)
+        Gfx.fill_rect((n4 + 106), (n3 + 12), 13, 9, 255)
         if imod(MpCanvas.da, 4) < 2:
             if n2 == 27:
-                Gfx.a_IIIII((n4 + 106), (n3 + 12), 13, 9, 0xFF0000)
+                Gfx.fill_rect((n4 + 106), (n3 + 12), 13, 9, 0xFF0000)
             else:
-                Gfx.a_IIIII(((n4 + 2) + (imod(n2, 14) * 8)), ((n3 + 1) + (11 * (idiv(n2, 14)))), 7, 9, 0xFF0000)
-        Gfx.a_Lj(MpCanvas.n)
+                Gfx.fill_rect(((n4 + 2) + (imod(n2, 14) * 8)), ((n3 + 1) + (11 * (idiv(n2, 14)))), 7, 9, 0xFF0000)
+        Gfx.set_font(MpCanvas.n)
         n5 = 0
         while n5 < len(stringArray):
             n6 = (1 if (n5 == 8) else ((1 if (n5 == 26) else 0)))
-            Gfx.a_TIII(stringArray[n5], (((n4 + 3) + (imod(n5, 14) * 8)) + n6), (n3 + (11 * (idiv(n5, 14)))), 0)
+            Gfx.draw_string(stringArray[n5], (((n4 + 3) + (imod(n5, 14) * 8)) + n6), (n3 + (11 * (idiv(n5, 14)))), 0)
             n5 = n5 + 1
 
     @staticmethod
@@ -5190,9 +5190,9 @@ class MpCanvas(_Canvas):
     def t_G(self, graphics):  # g.java:6101
         self.a_GIITI(graphics, MpCanvas.cW, (MpCanvas.cX + 9), MpCanvas.bG, 0x41FF41)
         if imod(MpCanvas.da, 4) < 2:
-            n2 = MpCanvas.n.a_T(MpCanvas.bG)
+            n2 = MpCanvas.n.string_width(MpCanvas.bG)
             if len(MpCanvas.bG) == 8:
-                n2 = (n2 - (MpCanvas.n.a_T("A") * 2))
+                n2 = (n2 - (MpCanvas.n.string_width("A") * 2))
             MpCanvas.b_GIIIII(graphics, (MpCanvas.cW + idiv(n2, 2)), (MpCanvas.cX + 20), ((MpCanvas.cW + idiv(n2, 2)) + 4), (MpCanvas.cX + 20), 0xFFFFFF)
         MpCanvas.a_II(MpCanvas.C, (MpCanvas.cX + 27))
 
@@ -5268,7 +5268,7 @@ class MpCanvas(_Canvas):
             string = ".."
         elif imod(MpCanvas.da, 4) == 3:
             string = "..."
-        n2 = (MpCanvas.n.a_T(Consts.fa[MpCanvas.cv]) + 14)
+        n2 = (MpCanvas.n.string_width(Consts.fa[MpCanvas.cv]) + 14)
         self.c_GIIIII(MpCanvas.e, MpCanvas.cW, MpCanvas.cX, (n2 + 22), 30, 0)
         self.b_GIITI(MpCanvas.e, (MpCanvas.cW - idiv(n2, 2)), ((MpCanvas.cX - 7) + 2), _js(Consts.fa[MpCanvas.cv], string), 0xFFFFFF)
 
@@ -5280,7 +5280,7 @@ class MpCanvas(_Canvas):
             string = ".."
         elif imod(MpCanvas.da, 4) == 3:
             string = "..."
-        n2 = (MpCanvas.n.a_T(Consts.eX[7]) + 14)
+        n2 = (MpCanvas.n.string_width(Consts.eX[7]) + 14)
         self.c_GIIIII(MpCanvas.e, MpCanvas.cW, MpCanvas.cX, (n2 + 22), 30, 0)
         self.b_GIITI(MpCanvas.e, (MpCanvas.cW - idiv(n2, 2)), (MpCanvas.cX - 6), _js(Consts.eX[7], string), 0xFFFFFF)
 
@@ -5305,11 +5305,11 @@ class MpCanvas(_Canvas):
     @staticmethod
     def u_I(n2):  # g.java:6244
         if MpCanvas.b is not None:
-            MpGame.v_I(n2)
+            MpGame.request_music(n2)
 
-    def ag_v(self):  # g.java:6250
+    def stop_music(self):  # g.java:6250
         if MpCanvas.b is not None:
-            MpCanvas.b.ag_v()
+            MpCanvas.b.stop_music()
 
     @staticmethod
     def ah_v():  # g.java:6256
@@ -5317,13 +5317,13 @@ class MpCanvas(_Canvas):
 
     def ai_v(self):  # g.java:6260
         MpCanvas.am = imod((((MpCanvas.am + 6) - 1)), 6)
-        self.ag_v()
+        self.stop_music()
         if MpCanvas.am != 0:
             self.t_I(3)
 
     def aj_v(self):  # g.java:6268
         MpCanvas.am = imod(((MpCanvas.am + 1)), 6)
-        self.ag_v()
+        self.stop_music()
         if MpCanvas.am != 0:
             self.t_I(3)
 

@@ -31,9 +31,9 @@ def _digit_keys():
 
 
 class Midlet:
-    a = None      # Display
-    b = None      # g (the canvas)
-    c = False     # started
+    display = None      # Display
+    canvas = None      # g (the canvas)
+    started = False     # started
 
     def __init__(self):  # Main.java:12-17
         from pow_mp import game
@@ -42,9 +42,9 @@ class Midlet:
         from pow_mp.mp_canvas import MpCanvas
         self.props = _manifest()
         self.destroyed = False
-        Midlet.c = False
-        Midlet.a = True
-        Midlet.b = MpCanvas(self)
+        Midlet.started = False
+        Midlet.display = True
+        Midlet.canvas = MpCanvas(self)
 
     def getAppProperty(self, key):
         return self.props.get(key)
@@ -57,11 +57,11 @@ class Midlet:
 
     def startApp(self):  # Main.java:19-27: the game thread -> the async loop
         from pow_mp import game
-        if Midlet.c:
+        if Midlet.started:
             return None
-        Midlet.c = True
-        return game.run(Midlet.b, self)
+        Midlet.started = True
+        return game.run(Midlet.canvas, self)
 
     def pauseApp(self):
-        if Midlet.b is not None:
-            Midlet.b.hideNotify()
+        if Midlet.canvas is not None:
+            Midlet.canvas.hideNotify()

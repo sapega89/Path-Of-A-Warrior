@@ -56,7 +56,7 @@ async def run(self, midlet):
             if MpCanvas.b is not None:
                 if (10 <= MpCanvas.cY <= 89 and MpCanvas.cY != 88 and not MpCanvas.J) or MpCanvas.cY in (1, 6, 7):
                     self.s_I(1)
-                MpCanvas.b.ak_v()
+                MpCanvas.b.tick_music()
             if MpCanvas.cZ == MpCanvas.cY and MpCanvas.da < 25000:
                 MpCanvas.da += 1
             if MpCanvas.da >= 25000:

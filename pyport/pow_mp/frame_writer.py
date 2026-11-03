@@ -10,72 +10,72 @@ from pow_mp.rt import _arraycopy, _js, i8, ushr32
 class FrameWriter(object):
 
     def __init__(self, outputStream):  # e.java:15
-        self.a = None
-        self.b = ByteArrayOutputStream()  # noqa: F821 - never constructed: NetThread writes the frames
-        self.c = 0
-        self.d = None
-        self.e = [0] * (4)
-        self.a = DataOutputStream(outputStream)  # noqa: F821
-        self.e[0] = 0
-        self.e[1] = 1
-        self.e[2] = 117
-        self.e[3] = 126
+        self.stream = None
+        self.buf = ByteArrayOutputStream()  # noqa: F821 - never constructed: NetThread writes the frames
+        self.length = 0
+        self.frame = None
+        self.unused = [0] * (4)
+        self.stream = DataOutputStream(outputStream)  # noqa: F821
+        self.unused[0] = 0
+        self.unused[1] = 1
+        self.unused[2] = 117
+        self.unused[3] = 126
 
-    def a_v(self):  # e.java:23
+    def close(self):  # e.java:23
         try:
-            if self.b is not None:
-                self.b.close()
-            if self.a is not None:
-                self.a.close()
+            if self.buf is not None:
+                self.buf.close()
+            if self.stream is not None:
+                self.stream.close()
             return
         except Exception:
             return
 
-    def a_I(self, n2):  # e.java:38
-        self.b.write(i8(((ushr32(n2, 0) & 0xFF))))
-        self.b.write(i8(((ushr32(n2, 8) & 0xFF))))
+    def write_short(self, n2):  # e.java:38
+        self.buf.write(i8(((ushr32(n2, 0) & 0xFF))))
+        self.buf.write(i8(((ushr32(n2, 8) & 0xFF))))
 
-    def a_B(self, by):  # e.java:43
-        self.b.write(by)
+    def write_byte(self, by):  # e.java:43
+        self.buf.write(by)
 
-    def b_I(self, n2):  # e.java:47
-        self.b.write(i8(((ushr32(n2, 0) & 0xFF))))
-        self.b.write(i8(((ushr32(n2, 8) & 0xFF))))
-        self.b.write(i8(((ushr32(n2, 16) & 0xFF))))
-        self.b.write(i8(((ushr32(n2, 24) & 0xFF))))
+    def write_int(self, n2):  # e.java:47
+        self.buf.write(i8(((ushr32(n2, 0) & 0xFF))))
+        self.buf.write(i8(((ushr32(n2, 8) & 0xFF))))
+        self.buf.write(i8(((ushr32(n2, 16) & 0xFF))))
+        self.buf.write(i8(((ushr32(n2, 24) & 0xFF))))
 
-    def a_TI(self, string, n2):  # e.java:54
+    def write_string(self, string, n2):  # e.java:54
         byArray = bytearray(string.encode('latin-1', 'replace'))
         n3 = 0
         while n3 < n2:
             if n3 < len(byArray):
-                self.b.write(byArray[n3])
+                self.buf.write(byArray[n3])
             else:
-                self.b.write(0)
+                self.buf.write(0)
             n3 = n3 + 1
 
-    def b_v(self):  # e.java:67
+    def send(self):  # e.java:67
         try:
             n2 = 0
-            byArray = self.b.toByteArray()
-            self.b.reset()
-            self.c = len(byArray)
-            n3 = (self.c + 2)
-            self.d = [0] * (n3)
-            self.d[0] = i8(((ushr32(n3, 0) & 0xFF)))
-            self.d[1] = i8(((ushr32(n3, 8) & 0xFF)))
-            _arraycopy(byArray, 0, self.d, 2, self.c)
-            n2 = (2 + self.c)
-            self.a.write(self.d, 0, n2)
-            self.a.flush()
+            byArray = self.buf.toByteArray()
+            self.buf.reset()
+            self.length = len(byArray)
+            n3 = (self.length + 2)
+            self.frame = [0] * (n3)
+            self.frame[0] = i8(((ushr32(n3, 0) & 0xFF)))
+            self.frame[1] = i8(((ushr32(n3, 8) & 0xFF)))
+            _arraycopy(byArray, 0, self.frame, 2, self.length)
+            n2 = (2 + self.length)
+            self.stream.write(self.frame, 0, n2)
+            self.stream.flush()
             print(_js("SEND DATA :  "), end='')
             n4 = 0
             while n4 < n2:
-                print(_js(_js(_js(_js(_js(_js(_js("[", n4), "]"), ((self.d[n4] & 0xFF))), "'"), chr(((((32) & 0xFFFF) if (self.d[n4] == 0) else ((self.d[n4]) & 0xFFFF))))), "' ")), end='')
+                print(_js(_js(_js(_js(_js(_js(_js("[", n4), "]"), ((self.frame[n4] & 0xFF))), "'"), chr(((((32) & 0xFFFF) if (self.frame[n4] == 0) else ((self.frame[n4]) & 0xFFFF))))), "' ")), end='')
                 n4 = n4 + 1
             print(_js(""))
-            self.c = 0
-            self.d = None
+            self.length = 0
+            self.frame = None
             return
         except Exception:
             return

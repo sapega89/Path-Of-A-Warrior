@@ -9,53 +9,53 @@ from pow_mp.rt import _js
 from pow_mp.mp_canvas import MpCanvas
 
 class MpGame(MpCanvas):
-    fb = None  # m.java:6 c
-    fc = (-1)  # m.java:7 int
-    fd = (-1)  # m.java:8 int
+    players = None  # m.java:6 c
+    requested_music = (-1)  # m.java:7 int
+    music = (-1)  # m.java:8 int
 
     def __init__(self, main):  # m.java:10
         super().__init__(main)
-        MpGame.fb = PlayerPool(7, 1, True, True)
+        MpGame.players = PlayerPool(7, 1, True, True)
 
     @staticmethod
-    def v_I(n2):  # m.java:15
-        MpGame.fc = n2
+    def request_music(n2):  # m.java:15
+        MpGame.requested_music = n2
 
-    def ak_v(self):  # m.java:19
-        MpGame.fb.b()
+    def tick_music(self):  # m.java:19
+        MpGame.players.tick()
         bl = False
         bl2 = True
-        n2 = MpGame.fc
-        MpGame.fc = (-1)
+        n2 = MpGame.requested_music
+        MpGame.requested_music = (-1)
         if (MpCanvas.am != 0) and (n2 != (-1)):
             if n2 == 1:
-                if MpGame.fd == n2:
+                if MpGame.music == n2:
                     bl2 = False
                 else:
-                    self.ag_v()
-                MpGame.fd = n2
+                    self.stop_music()
+                MpGame.music = n2
                 bl = True
             else:
-                MpGame.fd = (-1)
+                MpGame.music = (-1)
                 bl = False
             if bl2:
-                self.b_IZ(n2, bl)
+                self.play_music(n2, bl)
 
-    def b_IZ(self, n2, bl):  # m.java:44
-        MpGame.fb.a_I((MpCanvas.am * 20))
+    def play_music(self, n2, bl):  # m.java:44
+        MpGame.players.set_volume((MpCanvas.am * 20))
         if MpCanvas.am == 0:
-            self.ag_v()
+            self.stop_music()
             return
         if n2 == 1:
-            MpGame.fb.a_TI(_js(_js("/snd", n2), ".mid"), n2)
+            MpGame.players.load(_js(_js("/snd", n2), ".mid"), n2)
         else:
-            MpGame.fb.a_TI(_js(_js("/snd", n2), ".wav"), n2)
-        MpGame.fb.a_IZ(n2, bl)
+            MpGame.players.load(_js(_js("/snd", n2), ".wav"), n2)
+        MpGame.players.play(n2, bl)
 
-    def ag_v(self):  # m.java:58
-        MpGame.fc = (-1)
-        MpGame.fd = (-1)
-        MpGame.fb.a_v()
+    def stop_music(self):  # m.java:58
+        MpGame.requested_music = (-1)
+        MpGame.music = (-1)
+        MpGame.players.stop()
 
 
 def _static_init():

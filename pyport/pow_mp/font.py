@@ -10,48 +10,48 @@ from pow_mp.rt import Image, _js, i8
 class Font(object):
 
     def __init__(self, string, n2, n3, n4, n5):  # j.java:16
-        self.a = None
-        self.b = 0
-        self.c = 0
-        self.d = 0
-        self.e = 0
-        self.b = n2
-        self.c = n3
-        self.d = n4
+        self.image = None
+        self.glyph_w = 0
+        self.glyph_h = 0
+        self.space_w = 0
+        self.plte_offset = 0
+        self.glyph_w = n2
+        self.glyph_h = n3
+        self.space_w = n4
         try:
-            byArray = ResReader.a(string)
+            byArray = ResReader.read(string)
             by = i8((((n5 >> 16) & 0xFF)))
             by2 = i8((((n5 >> 8) & 0xFF)))
             by3 = i8(((n5 & 0xFF)))
             n6 = 0
             while n6 < 100:
                 if (((byArray[n6] == 80) and (byArray[(n6 + 1)] == 76)) and (byArray[(n6 + 2)] == 84)) and (byArray[(n6 + 3)] == 69):
-                    self.e = n6
+                    self.plte_offset = n6
                     break
                 n6 = n6 + 1
-            if ((byArray[(self.e + 4)] != by) or (byArray[(self.e + 5)] != by2)) or (byArray[(self.e + 6)] != by3):
-                byArray[(self.e + 4)] = by
-                byArray[(self.e + 5)] = by2
-                byArray[(self.e + 6)] = by3
-                l2 = Gfx.a_ABII(byArray, self.e, 10)
-                byArray[(self.e + 10)] = i8((((l2 >> 24) & 0xFF)))
-                byArray[(self.e + 11)] = i8((((l2 >> 16) & 0xFF)))
-                byArray[(self.e + 12)] = i8((((l2 >> 8) & 0xFF)))
-                byArray[(self.e + 13)] = i8(((l2 & 0xFF)))
-            self.a = Image.createImage(byArray, 0, len(byArray))
+            if ((byArray[(self.plte_offset + 4)] != by) or (byArray[(self.plte_offset + 5)] != by2)) or (byArray[(self.plte_offset + 6)] != by3):
+                byArray[(self.plte_offset + 4)] = by
+                byArray[(self.plte_offset + 5)] = by2
+                byArray[(self.plte_offset + 6)] = by3
+                l2 = Gfx.crc32(byArray, self.plte_offset, 10)
+                byArray[(self.plte_offset + 10)] = i8((((l2 >> 24) & 0xFF)))
+                byArray[(self.plte_offset + 11)] = i8((((l2 >> 16) & 0xFF)))
+                byArray[(self.plte_offset + 12)] = i8((((l2 >> 8) & 0xFF)))
+                byArray[(self.plte_offset + 13)] = i8(((l2 & 0xFF)))
+            self.image = Image.createImage(byArray, 0, len(byArray))
             None
             return
         except Exception:
             print(_js(_js("font fail : ", string)))
             return
 
-    def a_CII(self, c2, n2, n3):  # j.java:53
+    def draw_char(self, c2, n2, n3):  # j.java:53
         if c2 == 32:
             return
-        Gfx.a_MIIIIII(self.a, n2, n3, self.b, self.c, (Font.b_C(c2) * self.b), 0)
+        Gfx.draw_image_part(self.image, n2, n3, self.glyph_w, self.glyph_h, (Font.glyph_index(c2) * self.glyph_w), 0)
 
     @staticmethod
-    def b_C(c2):  # j.java:60
+    def glyph_index(c2):  # j.java:60
         n2 = 0
         if (c2 >= 65) and (c2 <= 90):
             n2 = (32 + ((c2 - 65)))
@@ -125,23 +125,23 @@ class Font(object):
             n2 = 99
         return n2
 
-    def a_C(self, c2):  # j.java:136
+    def char_width(self, c2):  # j.java:136
         if c2 == 32:
-            return self.d
-        return ((self.b + 1) - 0)
+            return self.space_w
+        return ((self.glyph_w + 1) - 0)
 
-    def a_ACII(self, cArray, n2, n3):  # j.java:143
+    def chars_width(self, cArray, n2, n3):  # j.java:143
         n4 = 0
         n5 = (n2 + n3)
         n6 = n2
         while n6 < n5:
-            n4 = (n4 + self.a_C(cArray[n6]))
+            n4 = (n4 + self.char_width(cArray[n6]))
             n6 = n6 + 1
         return n4
 
-    def a_T(self, string):  # j.java:154
+    def string_width(self, string):  # j.java:154
         cArray = [ord(_c) for _c in string]
-        return self.a_ACII(cArray, 0, len(cArray))
+        return self.chars_width(cArray, 0, len(cArray))
 
 
 def _static_init():

@@ -10,28 +10,28 @@ from pow_mp.rt import DataInputStream, _js, i32
 class FrameReader(object):
 
     def __init__(self, inputStream):  # d.java:13
-        self.a = None
-        self.b = 0
-        self.c = [0] * (1024)
-        self.a = DataInputStream(inputStream)
-        self.b = (-1)
+        self.stream = None
+        self.length = 0
+        self.header = [0] * (1024)
+        self.stream = DataInputStream(inputStream)
+        self.length = (-1)
 
-    def a_v(self):  # d.java:18
+    def close(self):  # d.java:18
         try:
-            if self.a is not None:
-                self.a.close()
+            if self.stream is not None:
+                self.stream.close()
             return
         except Exception:
             return
 
-    def b_v(self):  # d.java:30
+    def read_frame(self):  # d.java:30
         byArray = None
-        self.c[0] = 0
-        self.c[1] = 0
-        self.a.read(self.c, 0, 2)
-        self.b = (i32((((self.c[0] & 0xFF))) << (0)) | i32((((self.c[1] & 0xFF))) << (8)))
-        byArray = [0] * ((self.b - 2))
-        self.a.readFully(byArray, 0, len(byArray))
+        self.header[0] = 0
+        self.header[1] = 0
+        self.stream.read(self.header, 0, 2)
+        self.length = (i32((((self.header[0] & 0xFF))) << (0)) | i32((((self.header[1] & 0xFF))) << (8)))
+        byArray = [0] * ((self.length - 2))
+        self.stream.readFully(byArray, 0, len(byArray))
         print(_js("RECV DATA :  "), end='')
         n2 = 0
         while n2 < len(byArray):
@@ -39,7 +39,7 @@ class FrameReader(object):
             n2 = n2 + 1
         print(_js(""))
         k2 = Answer(byArray)
-        self.b = (-1)
+        self.length = (-1)
         return k2
 
 

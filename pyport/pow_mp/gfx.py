@@ -8,67 +8,67 @@ from pow_mp.rt import i32, idiv, ushr32
 
 
 class Gfx(object):
-    b = None  # i.java:12 Graphics
-    c = 0  # i.java:13 int
-    d = 0  # i.java:14 int
-    e = 0  # i.java:15 int
-    f = 0  # i.java:16 int
-    g = None  # i.java:17 j
-    a = None  # i.java:18 int[]
+    g = None  # i.java:12 Graphics
+    clip_x = 0  # i.java:13 int
+    clip_y = 0  # i.java:14 int
+    clip_w = 0  # i.java:15 int
+    clip_h = 0  # i.java:16 int
+    font = None  # i.java:17 j
+    crc_table = None  # i.java:18 int[]
 
     @staticmethod
-    def a_G(graphics):  # i.java:20
-        Gfx.b = graphics
-        Gfx.c = Gfx.b.getClipX()
-        Gfx.d = Gfx.b.getClipY()
-        Gfx.e = Gfx.b.getClipWidth()
-        Gfx.f = Gfx.b.getClipHeight()
+    def set_graphics(graphics):  # i.java:20
+        Gfx.g = graphics
+        Gfx.clip_x = Gfx.g.getClipX()
+        Gfx.clip_y = Gfx.g.getClipY()
+        Gfx.clip_w = Gfx.g.getClipWidth()
+        Gfx.clip_h = Gfx.g.getClipHeight()
 
     @staticmethod
-    def a_MIIIIII(image, n2, n3, n4, n5, n6, n7):  # i.java:28
-        Gfx.b.clipRect(n2, n3, n4, n5)
-        Gfx.b.drawImage(image, (n2 - n6), (n3 - n7), 20)
-        Gfx.b.setClip(Gfx.c, Gfx.d, Gfx.e, Gfx.f)
+    def draw_image_part(image, n2, n3, n4, n5, n6, n7):  # i.java:28
+        Gfx.g.clipRect(n2, n3, n4, n5)
+        Gfx.g.drawImage(image, (n2 - n6), (n3 - n7), 20)
+        Gfx.g.setClip(Gfx.clip_x, Gfx.clip_y, Gfx.clip_w, Gfx.clip_h)
 
     @staticmethod
-    def a_IIIII(n2, n3, n4, n5, n6):  # i.java:34
-        Gfx.b.setColor(n6)
-        Gfx.b.fillRect(n2, n3, n4, n5)
+    def fill_rect(n2, n3, n4, n5, n6):  # i.java:34
+        Gfx.g.setColor(n6)
+        Gfx.g.fillRect(n2, n3, n4, n5)
 
     @staticmethod
-    def a_Lj(j2):  # i.java:39
-        Gfx.g = j2
+    def set_font(j2):  # i.java:39
+        Gfx.font = j2
 
     @staticmethod
-    def a_ACIIIII(cArray, n2, n3, n4, n5, n6):  # i.java:43
+    def draw_chars(cArray, n2, n3, n4, n5, n6):  # i.java:43
         if ((n6 & 1)) != 0:
-            n4 = (n4 - idiv(Gfx.g.a_ACII(cArray, n2, n3), 2))
+            n4 = (n4 - idiv(Gfx.font.chars_width(cArray, n2, n3), 2))
         elif ((n6 & 8)) != 0:
-            n4 = (n4 - Gfx.g.a_ACII(cArray, n2, n3))
+            n4 = (n4 - Gfx.font.chars_width(cArray, n2, n3))
         n7 = (n2 + n3)
         n8 = n4
         n9 = n2
         while n9 < n7:
             c2 = cArray[n9]
-            n10 = Gfx.g.a_C(c2)
-            Gfx.g.a_CII(c2, n8, n5)
+            n10 = Gfx.font.char_width(c2)
+            Gfx.font.draw_char(c2, n8, n5)
             n8 = (n8 + n10)
             n9 = n9 + 1
 
     @staticmethod
-    def a_TIII(string, n2, n3, n4):  # i.java:61
-        Gfx.a_ACIIIII([ord(_c) for _c in string], 0, len(string), n2, n3, n4)
+    def draw_string(string, n2, n3, n4):  # i.java:61
+        Gfx.draw_chars([ord(_c) for _c in string], 0, len(string), n2, n3, n4)
 
     @staticmethod
-    def a_GTIII(graphics, string, n2, n3, n4):  # i.java:65
-        graphics2 = Gfx.b
-        Gfx.b = graphics
-        Gfx.a_ACIIIII([ord(_c) for _c in string], 0, len(string), n2, n3, n4)
-        Gfx.b = graphics2
+    def draw_string_on(graphics, string, n2, n3, n4):  # i.java:65
+        graphics2 = Gfx.g
+        Gfx.g = graphics
+        Gfx.draw_chars([ord(_c) for _c in string], 0, len(string), n2, n3, n4)
+        Gfx.g = graphics2
 
     @staticmethod
-    def a_v():  # i.java:72
-        Gfx.a = [0] * (256)
+    def make_crc_table():  # i.java:72
+        Gfx.crc_table = [0] * (256)
         n2 = 0
         while n2 < 256:
             n3 = n2
@@ -78,16 +78,16 @@ class Gfx(object):
                     n3 = (-306674912 ^ ushr32(n3, 1))
                     continue
                 n3 = ushr32(n3, 1)
-            Gfx.a[n2] = n3
+            Gfx.crc_table[n2] = n3
             n2 = n2 + 1
 
     @staticmethod
-    def a_ABII(byArray, n2, n3):  # i.java:90
-        if Gfx.a is None:
-            Gfx.a_v()
+    def crc32(byArray, n2, n3):  # i.java:90
+        if Gfx.crc_table is None:
+            Gfx.make_crc_table()
         n4 = (-1)
         while (n3 := i32(n3 + -1)) >= 0:
-            n4 = (Gfx.a[(((n4 ^ byArray[((n2 := i32(n2 + 1)) - 1)])) & 0xFF)] ^ ushr32(n4, 8))
+            n4 = (Gfx.crc_table[(((n4 ^ byArray[((n2 := i32(n2 + 1)) - 1)])) & 0xFF)] ^ ushr32(n4, 8))
         return (((~n4)) & 0xFFFFFFFF)
 
 

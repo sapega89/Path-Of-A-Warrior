@@ -225,7 +225,7 @@ def run(scenario, out, every=False):
                 fn = "%02d_%s.png" % (state["n"], name)
                 pygame.image.save(screen, str(out / fn))
                 saved.append(fn)
-                MPMain.b.l.destroyed = True     # its own Exit: main.py would restart the game
+                MPMain.canvas.l.destroyed = True     # its own Exit: main.py would restart the game
 
         display.frame_hooks.append(mp_frame)
         try:

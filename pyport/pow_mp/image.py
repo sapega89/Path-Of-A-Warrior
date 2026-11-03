@@ -10,7 +10,7 @@ class Image(_Image):
     @staticmethod
     def createImage(*args):
         if len(args) == 1 and isinstance(args[0], str):
-            data = ResReader.a(args[0])
+            data = ResReader.read(args[0])
             if data is None:
                 raise IOError("resource not found: " + args[0])
             return _Image.createImage(bytes(x & 0xFF for x in data), 0, len(data))

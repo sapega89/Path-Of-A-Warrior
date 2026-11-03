@@ -11,27 +11,27 @@ def _s8(v):
 
 class SpriteFrames:
     def __init__(self, string):  # a.java:14-33
-        self.b = ResReader.a(string)
-        self.a = _s8(self.b[0])
-        self.c = [0] * self.a          # short[] srcX
-        self.d = [0] * self.a          # short[] srcY
-        self.e = [0] * self.a          # byte[] w
-        self.f = [0] * self.a          # byte[] h
-        self.g = [0] * self.a          # byte[] anchorX
-        self.h = [0] * self.a          # byte[] anchorY
-        for n2 in range(self.a):
-            self.c[n2] = self.b[1 + 6 * n2] & 0xFF
-            self.d[n2] = self.b[2 + 6 * n2] & 0xFF
-            self.e[n2] = _s8(self.b[3 + 6 * n2])
-            self.f[n2] = _s8(self.b[4 + 6 * n2])
-            self.g[n2] = _s8(self.b[5 + 6 * n2])
-            self.h[n2] = _s8(self.b[6 + 6 * n2])
+        self.data = ResReader.read(string)
+        self.count = _s8(self.data[0])
+        self.src_x = [0] * self.count          # short[] srcX
+        self.src_y = [0] * self.count          # short[] srcY
+        self.w = [0] * self.count          # byte[] w
+        self.h = [0] * self.count          # byte[] h
+        self.anchor_x = [0] * self.count          # byte[] anchorX
+        self.anchor_y = [0] * self.count          # byte[] anchorY
+        for n2 in range(self.count):
+            self.src_x[n2] = self.data[1 + 6 * n2] & 0xFF
+            self.src_y[n2] = self.data[2 + 6 * n2] & 0xFF
+            self.w[n2] = _s8(self.data[3 + 6 * n2])
+            self.h[n2] = _s8(self.data[4 + 6 * n2])
+            self.anchor_x[n2] = _s8(self.data[5 + 6 * n2])
+            self.anchor_y[n2] = _s8(self.data[6 + 6 * n2])
 
-    def a_v(self):  # a.java:35-44
-        self.b = None
-        self.c = None
-        self.d = None
-        self.e = None
-        self.f = None
-        self.g = None
+    def free(self):  # a.java:35-44
+        self.data = None
+        self.src_x = None
+        self.src_y = None
+        self.w = None
         self.h = None
+        self.anchor_x = None
+        self.anchor_y = None

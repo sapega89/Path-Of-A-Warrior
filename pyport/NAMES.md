@@ -933,3 +933,20 @@ Java-джерела: `pyport/mp_java/*.java` у гілці `java-reference`.
 | `h` | `pow_mp/net_thread.py` | `NetThread` | мережевий потік |
 | `n` | `pow_mp/res_reader.py` | `ResReader` | читання ресурсів |
 | `Main` | `pow_mp/midlet.py` | `Midlet` | MIDlet |
+
+### Поля й методи малих класів `pow_mp`
+
+- **SpriteFrames**: `a` → `count`, `b` → `data`, `c` → `src_x`, `d` → `src_y`, `e` → `w`, `f` → `h`, `g` → `anchor_x`, `h` → `anchor_y`, `a_v` → `free`
+- **Font**: `a` → `image`, `b` → `glyph_w`, `c` → `glyph_h`, `d` → `space_w`, `e` → `plte_offset`, `a_CII` → `draw_char`, `b_C` → `glyph_index`, `a_C` → `char_width`, `a_ACII` → `chars_width`, `a_T` → `string_width`
+- **Gfx**: `a` → `crc_table`, `b` → `g`, `c` → `clip_x`, `d` → `clip_y`, `e` → `clip_w`, `f` → `clip_h`, `g` → `font`, `a_G` → `set_graphics`, `a_MIIIIII` → `draw_image_part`, `a_IIIII` → `fill_rect`, `a_Lj` → `set_font`, `a_ACIIIII` → `draw_chars`, `a_TIII` → `draw_string`, `a_GTIII` → `draw_string_on`, `a_v` → `make_crc_table`, `a_ABII` → `crc32`
+- **Draw**: `a_GMIII` → `draw_image`, `a_GMIIIIII` → `draw_image_part`, `a_GIIIII` → `draw_rect`, `a_GIIIIII` → `draw_frame`, `b_GIIIII` → `fill_rect`, `a_GIIII` → `draw_hline`, `b_GIIII` → `draw_vline`, `c_GIIIII` → `draw_line_color`, `c_GIIII` → `draw_line`
+- **Answer**: `a` → `data`, `b` → `pos`, `a_v` → `read_s8`, `b_v` → `read_s16`, `c` → `read_s32`, `a_I` → `read_string`
+- **FrameReader**: `a` → `stream`, `b` → `length`, `c` → `header`, `a_v` → `close`, `b_v` → `read_frame`
+- **FrameWriter**: `a` → `stream`, `b` → `buf`, `c` → `length`, `d` → `frame`, `e` → `unused`, `a_v` → `close`, `a_I` → `write_short`, `a_B` → `write_byte`, `b_I` → `write_int`, `a_TI` → `write_string`, `b_v` → `send`
+- **MpGame**: `fb` → `players`, `fc` → `requested_music`, `fd` → `music`, `v_I` → `request_music`, `ak_v` → `tick_music`, `b_IZ` → `play_music`, `ag_v` → `stop_music`
+- **Midlet**: `a` → `display`, `b` → `canvas`, `c` → `started`
+- **PlayerPool**: `a_TI` → `load`, `a_IZ` → `play`, `a_v` → `stop`, `a_I` → `set_volume`, `b` → `tick`
+- **ResReader**: `a` → `read`
+- **NetThread**: `a` → `last_opcode`, `b` → `conn`, `e` → `game`, `g` → `free`, `h` → `idle_frames`, `i` → `unused`, `j` → `connected`, `k` → `running`, `l` → `connect_requested`, `m` → `host`, `n` → `port`, `a_TI` → `set_address`, `a_v` → `close`, `a_Lg` → `set_game`, `a_I` → `begin`, `a_B` → `write_byte`, `b_I` → `write_int`, `b_TI` → `write_string`, `b_v` → `send`
+
+`MpCanvas` (g.java) і `Consts` (l.java) поки мають Java-імена полів і методів (крім `ag` → `stop_music`).

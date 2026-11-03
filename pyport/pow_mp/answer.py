@@ -10,36 +10,36 @@ from pow_mp.rt import _inc_post, _jstring, _jtrim, i16, i32
 class Answer(object):
 
     def __init__(self, byArray):  # k.java:8
-        self.a = None
-        self.b = 0
-        self.a = byArray
+        self.data = None
+        self.pos = 0
+        self.data = byArray
 
-    def a_v(self):  # k.java:12
-        return self.a[_inc_post(self, 'b', 1)]
+    def read_s8(self):  # k.java:12
+        return self.data[_inc_post(self, 'pos', 1)]
 
-    def b_v(self):  # k.java:16
-        by = self.a[_inc_post(self, 'b', 1)]
-        by2 = self.a[_inc_post(self, 'b', 1)]
+    def read_s16(self):  # k.java:16
+        by = self.data[_inc_post(self, 'pos', 1)]
+        by2 = self.data[_inc_post(self, 'pos', 1)]
         return i16(((i32((((by & 0xFF))) << (0)) | i32((((by2 & 0xFF))) << (8)))))
 
-    def c(self):  # k.java:22
-        by = self.a[_inc_post(self, 'b', 1)]
-        by2 = self.a[_inc_post(self, 'b', 1)]
-        by3 = self.a[_inc_post(self, 'b', 1)]
-        by4 = self.a[_inc_post(self, 'b', 1)]
+    def read_s32(self):  # k.java:22
+        by = self.data[_inc_post(self, 'pos', 1)]
+        by2 = self.data[_inc_post(self, 'pos', 1)]
+        by3 = self.data[_inc_post(self, 'pos', 1)]
+        by4 = self.data[_inc_post(self, 'pos', 1)]
         return (((i32((((by & 0xFF))) << (0)) | i32((((by2 & 0xFF))) << (8))) | i32((((by3 & 0xFF))) << (16))) | i32((((by4 & 0xFF))) << (24)))
 
-    def a_I(self, n2):  # k.java:30
-        if self.a[self.b] == 0:
-            self.b = (self.b + n2)
+    def read_string(self, n2):  # k.java:30
+        if self.data[self.pos] == 0:
+            self.pos = (self.pos + n2)
             return ""
         n3 = 0
         while n3 < n2:
-            if self.a[(self.b + n3)] == 0:
+            if self.data[(self.pos + n3)] == 0:
                 break
             n3 = n3 + 1
-        string = _jstring(self.a, self.b, n3)
-        self.b = (self.b + n2)
+        string = _jstring(self.data, self.pos, n3)
+        self.pos = (self.pos + n2)
         return _jtrim(string)
 
 

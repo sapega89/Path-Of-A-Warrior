@@ -84,7 +84,7 @@ def run(steps, out, every=False, save_dir=None):
                     pygame.image.save(screen, str(out / name))
                     saved.append(name)
         if st["queue"]:
-            Midlet.b.keyPressed(st["queue"].pop(0))
+            Midlet.canvas.keyPressed(st["queue"].pop(0))
             return
         if st["until"] is not None:
             states, left = st["until"]
@@ -108,7 +108,7 @@ def run(steps, out, every=False, save_dir=None):
             if cmd == "key":                     # key NAME [COUNT]
                 name, _, count = arg.partition(" ")
                 code = KEYNAMES[name.upper()]
-                Midlet.b.keyPressed(code)
+                Midlet.canvas.keyPressed(code)
                 st["queue"] = [code] * (int(count or 1) - 1)
                 st["wait"] = 1
                 return
@@ -130,7 +130,7 @@ def run(steps, out, every=False, save_dir=None):
                 states, _, name = arg.partition(" ")
                 from pow_mp.mp_canvas import MpCanvas
                 if MpCanvas.cY in {int(x) for x in states.split(",")}:
-                    Midlet.b.keyPressed(KEYNAMES[name.strip().upper()])
+                    Midlet.canvas.keyPressed(KEYNAMES[name.strip().upper()])
                     st["wait"] = 1
                     return
                 continue
