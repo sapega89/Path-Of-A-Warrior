@@ -10,15 +10,15 @@ class Point:  # h.java
 
 
 class Rect:  # ac.java
-    def __init__(self, paramInt1=0, paramInt2=0, paramInt3=0, paramInt4=0):
+    def __init__(self, x=0, y=0, w=0, h=0):
         self.x = 0  # ac.java:2 int
         self.y = 0  # ac.java:4 int
         self.w = 0  # ac.java:6 int
         self.h = 0  # ac.java:8 int
-        self.x = paramInt1  # constructor
-        self.y = paramInt2  # constructor
-        self.w = paramInt3  # constructor
-        self.h = paramInt4  # constructor
+        self.x = x  # constructor
+        self.y = y  # constructor
+        self.w = w  # constructor
+        self.h = h  # constructor
 
 
 class MapMode:  # aa.java

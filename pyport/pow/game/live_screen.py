@@ -274,11 +274,11 @@ class LiveScreen(Live):
         GameCanvas.draw_softkeys(-1, 2)
         GameCanvas.popups.draw_ok(200)
 
-    def draw_input_box(self, paramInt1, paramInt2, paramInt3, paramInt4):  # m.java:343-356  (input box)
-        GameCanvas.input_box.w = paramInt3 + 1
-        GameCanvas.input_box.x = paramInt1 - 1
-        GameCanvas.input_box.h = paramInt4 + 1
-        GameCanvas.input_box.y = paramInt2 - 1
+    def draw_input_box(self, x, y, w, h):  # m.java:343-356  (input box)
+        GameCanvas.input_box.w = w + 1
+        GameCanvas.input_box.x = x - 1
+        GameCanvas.input_box.h = h + 1
+        GameCanvas.input_box.y = y - 1
         GameCanvas.outline_rect(GameCanvas.input_box, 0)
         GameCanvas.input_box.x += 1
         GameCanvas.input_box.y += 1

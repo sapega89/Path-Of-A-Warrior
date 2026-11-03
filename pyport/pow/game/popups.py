@@ -311,8 +311,8 @@ class Popups(GameCanvas):
             self.draw_ok(GameCanvas.view_cy + i - 10)
         self.popup_redraw = 0
 
-    def draw_popup_frame(self, paramInt):  # l.java:399-423  (popup frame)
-        i = GameCanvas.view_cy - (paramInt >> 1) - 10
+    def draw_popup_frame(self, height):  # l.java:399-423  (popup frame)
+        i = GameCanvas.view_cy - (height >> 1) - 10
         if Popups.image is None:
             Popups.image = self.load_image(GameCanvas.scr_ui.get(33))
         r = Popups.image
@@ -320,7 +320,7 @@ class Popups(GameCanvas):
             i -= 30
         for b in range(26):
             self.draw_map_region(r, GameCanvas.view_cx - 103 + b * 8 - GameCanvas.view_x, i, 8, 3, 10, 0)
-        self.draw_tiled_back(GameCanvas.view_cx - 102 - GameCanvas.view_x, i + 3, 210, paramInt + 14)
+        self.draw_tiled_back(GameCanvas.view_cx - 102 - GameCanvas.view_x, i + 3, 210, height + 14)
         self.draw_map_region(r, GameCanvas.view_cx - 105 - GameCanvas.view_x, i, 3, 10, 0, 0)
         self.draw_map_region(r, GameCanvas.view_cx + 104 - GameCanvas.view_x, i, 3, 10, 2, 0)
         i += 10
@@ -329,36 +329,36 @@ class Popups(GameCanvas):
                       [GameCanvas.view_cx - 103 - GameCanvas.view_x, 33, 33, 33, GameCanvas.view_cx + 104 - GameCanvas.view_x]]
         for b in range(3):
             col = GameCanvas.rgb(arrayOfInt[b][1], arrayOfInt[b][2], arrayOfInt[b][3])
-            Gfx.draw_line(arrayOfInt[b][0] + GameCanvas.view_x, i + GameCanvas.view_y, arrayOfInt[b][0] + GameCanvas.view_x, i + paramInt - 1 + GameCanvas.view_y, col)
-            Gfx.draw_line(arrayOfInt[b][4] + GameCanvas.view_x, i + GameCanvas.view_y, arrayOfInt[b][4] + GameCanvas.view_x, i + paramInt - 1 + GameCanvas.view_y, col)
-        i += paramInt
+            Gfx.draw_line(arrayOfInt[b][0] + GameCanvas.view_x, i + GameCanvas.view_y, arrayOfInt[b][0] + GameCanvas.view_x, i + height - 1 + GameCanvas.view_y, col)
+            Gfx.draw_line(arrayOfInt[b][4] + GameCanvas.view_x, i + GameCanvas.view_y, arrayOfInt[b][4] + GameCanvas.view_x, i + height - 1 + GameCanvas.view_y, col)
+        i += height
         self.draw_map_region(r, GameCanvas.view_cx - 105 - GameCanvas.view_x, i, 3, 10, 5, 0)
         self.draw_map_region(r, GameCanvas.view_cx + 104 - GameCanvas.view_x, i, 3, 10, 7, 0)
         i += 7
         for b in range(26):
             self.draw_map_region(r, GameCanvas.view_cx - 103 + b * 8 - GameCanvas.view_x, i, 8, 3, 10, 3)
 
-    def draw_tiled_back(self, paramInt1, paramInt2, paramInt3, paramInt4):  # l.java:425-446  (tiled ui_back)
+    def draw_tiled_back(self, x, y, w, h):  # l.java:425-446  (tiled ui_back)
         if GameCanvas.images[10] is None:
             GameCanvas.images[10] = self.load_image(GameCanvas.scr_ui.get(59))
         b = 0
-        while b * 24 < paramInt4:
-            if paramInt4 >= (b + 1) * 24:
+        while b * 24 < h:
+            if h >= (b + 1) * 24:
                 i = 24
             else:
-                i = paramInt4 - b * 24
+                i = h - b * 24
             b1 = 0
-            while b1 * 52 < paramInt3:
-                if paramInt3 >= (b1 + 1) * 52:
+            while b1 * 52 < w:
+                if w >= (b1 + 1) * 52:
                     j_ = 52
                 else:
-                    j_ = paramInt3 - b1 * 52
+                    j_ = w - b1 * 52
                 if GameCanvas.images[10] is not None:
-                    self.draw_map_region(GameCanvas.images[10], paramInt1 + b1 * 52, paramInt2 + b * 24, j_, i, 0, 0)
+                    self.draw_map_region(GameCanvas.images[10], x + b1 * 52, y + b * 24, j_, i, 0, 0)
                 b1 += 1
             b += 1
 
-    def draw_yes_no(self, paramInt):  # l.java:448-461  (Yes / No buttons)
+    def draw_yes_no(self, y):  # l.java:448-461  (Yes / No buttons)
         for b in range(2):
             if self.button == b:
                 Gfx.set_font(GameCanvas.font_white)
@@ -366,40 +366,40 @@ class Popups(GameCanvas):
             else:
                 Gfx.set_font(GameCanvas.font_gray)
                 bool_ = False
-            self.draw_box(GameCanvas.view_cx - 60 + b * 80, paramInt + GameCanvas.view_y, 40, 17, bool_)
-            GameCanvas.draw_view_text_centred(consts.yes_no_ok[b], GameCanvas.view_cx - 40 + b * 80, paramInt + 1)
+            self.draw_box(GameCanvas.view_cx - 60 + b * 80, y + GameCanvas.view_y, 40, 17, bool_)
+            GameCanvas.draw_view_text_centred(consts.yes_no_ok[b], GameCanvas.view_cx - 40 + b * 80, y + 1)
 
-    def draw_ok(self, paramInt):  # l.java:463-467  (Ok button)
+    def draw_ok(self, y):  # l.java:463-467  (Ok button)
         Gfx.set_font(GameCanvas.font_white)
-        self.draw_box(GameCanvas.view_cx - 60 + 40 + GameCanvas.view_x, paramInt + GameCanvas.view_y, 40, 17, True)
-        GameCanvas.draw_view_text_centred(consts.yes_no_ok[2], GameCanvas.view_cx, paramInt)
+        self.draw_box(GameCanvas.view_cx - 60 + 40 + GameCanvas.view_x, y + GameCanvas.view_y, 40, 17, True)
+        GameCanvas.draw_view_text_centred(consts.yes_no_ok[2], GameCanvas.view_cx, y)
 
-    def show_text(self, paramString):  # l.java:469-496  ("<kind>line|line|...")
+    def show_text(self, text):  # l.java:469-496  ("<kind>line|line|...")
         self.drawn = False
         i = 1
-        if paramString != "":
-            self.kind = i16(ord(paramString[0]) - 48)
+        if text != "":
+            self.kind = i16(ord(text[0]) - 48)
             if self.kind == 3:
                 self.kind = 10
                 self.timer = 200
             s = 0
-            for b in range(len(paramString)):
-                if paramString[b] == '|':
+            for b in range(len(text)):
+                if text[b] == '|':
                     # DECOMP-FIX F9 (proposed): decompiled `s = s + 1; l[s] = ...` is `l[s++] = ...`;
                     # literally, line 0 keeps stale text and the last line is never drawn.
                     if config.DECOMP_FIX["F9"]:
-                        self.lines[s] = paramString[i:b]
+                        self.lines[s] = text[i:b]
                         s = i16(s + 1)
                     else:
                         s = i16(s + 1)
-                        self.lines[s] = paramString[i:b]
+                        self.lines[s] = text[i:b]
                     i = b + 1
             if config.DECOMP_FIX["F9"]:
-                self.lines[s] = paramString[i:]
+                self.lines[s] = text[i:]
                 s = i16(s + 1)
             else:
                 s = i16(s + 1)
-                self.lines[s] = paramString[i:]
+                self.lines[s] = text[i:]
             self.line_count = s
             self.height = i16(20 * s + (s - 1) * 2)
             if self.kind == 2 or self.kind == 10:
@@ -408,7 +408,7 @@ class Popups(GameCanvas):
                 self.timer = 10
             self.popup_redraw = 1
 
-    def show(self, paramInt):  # l.java:506-598  (gamestr popup N: text gamestr[N+15], kind from its first digit)
+    def show(self, popup):  # l.java:506-598  (gamestr popup N: text gamestr[N+15], kind from its first digit)
         from pow.game.menus import Menus
         self.from_gamestr = 1
         self.drawn = False
@@ -417,8 +417,8 @@ class Popups(GameCanvas):
         else:
             GameCanvas.popups.popup_redraw = 1
         self.button = 0
-        self.popup_id = i16(paramInt)
-        str1 = GameCanvas.gamestr(paramInt + 15)
+        self.popup_id = i16(popup)
+        str1 = GameCanvas.gamestr(popup + 15)
         c = str1[0]
         if '0' <= c <= '9':
             self.kind = i16(ord(c) - 48)
@@ -441,30 +441,30 @@ class Popups(GameCanvas):
                 b2 += 1
                 j = b1 + 1
         self.line_count = i16(b2)
-        if paramInt == 53:
+        if popup == 53:
             self.line_count = 4
             self.lines[0] = self.arg1
             self.lines[1] = self.arg2
             self.lines[2] = self.arg3
             self.lines[3] = self.arg4
-        elif paramInt == 34:
+        elif popup == 34:
             self.lines[0] = Menus.item_name(GameCanvas.cursor[19])
             self.lines[1] = self.lines[1] + self.arg1
-        elif paramInt == 35:
+        elif popup == 35:
             self.lines[1] = self.lines[1] + " " + Menus.item_name(GameCanvas.cursor[19])
-        elif paramInt == 39:
+        elif popup == 39:
             self.lines[3] = self.arg1 + "?"
-        elif paramInt == 40:
+        elif popup == 40:
             self.lines[0] = self.arg1
-        elif paramInt == 41:
+        elif popup == 41:
             self.lines[0] = self.arg1 + " " + self.lines[0]
             self.lines[1] = self.arg2 + " " + self.lines[1]
             self.lines[4] = self.arg3 + " Level up"
-        elif paramInt == 49:
+        elif popup == 49:
             self.lines[1] = self.arg2
             self.lines[2] = self.arg1
             self.line_count = 3
-        elif paramInt == 54:
+        elif popup == 54:
             self.lines[0] = "You can't use the ID."
             self.line_count = 1
         self.height = i16(20 * self.line_count + (self.line_count - 1 << 1))
@@ -509,7 +509,7 @@ class Popups(GameCanvas):
         self.popup_redraw = 1
         GameCanvas.redraw = 1
 
-    def setup_popup(self, paramInt):  # l.java:600-891
+    def setup_popup(self, popup):  # l.java:600-891
         self.from_gamestr = 0
         self.choices = 4
         self.drawn = False
@@ -520,19 +520,19 @@ class Popups(GameCanvas):
         arrayOfShort = [20, 20, 20, 200, 200, 200, 200, 20, 20, 20, 20, 200, 200, 20, 200, 200, 20, 20, 200, 200,
                         200, 20, 20, 20, 20, 20, 20, 20, 200, 200, 20, 20, 20, 200, 200, 200, 200, 20, 200, 200,
                         200, 200, 200]
-        if paramInt == 39:
+        if popup == 39:
             self.drawn = True
-        self.kind = arrayOfByte2[paramInt]
+        self.kind = arrayOfByte2[popup]
         if GameCanvas.state == 3:
             GameCanvas.redraw = 1
         else:
             self.popup_redraw = 1
-        self.timer = arrayOfShort[paramInt]
-        self.line_count = arrayOfByte1[paramInt]
+        self.timer = arrayOfShort[popup]
+        self.line_count = arrayOfByte1[popup]
         self.button = 0
-        self.popup_id = paramInt
+        self.popup_id = popup
         L = self.lines
-        p = paramInt
+        p = popup
         if p in _E_TEXT:
             for n, s in enumerate(_E_TEXT[p]):
                 L[n] = s
