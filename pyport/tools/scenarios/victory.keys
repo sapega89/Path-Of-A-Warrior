@@ -164,8 +164,8 @@ key BACK           # BACK does nothing in the briefing
 wait 2
 key LSOFT          # SKIP -> ag.y() (the map: next phase)
 wait 10
-hero w 500               # TEST-ONLY: every hit kills
-hero p 9999              # TEST-ONLY: the hero survives
+hero attack 500               # TEST-ONLY: every hit kills
+hero hp 9999              # TEST-ONLY: the hero survives
 shot map_enter
 key FIRE
 wait 3

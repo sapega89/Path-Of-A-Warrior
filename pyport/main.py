@@ -94,7 +94,7 @@ async def main():
     midlet = Midlet()
     try:
         await midlet.startApp()
-        if midlet.to_multiplayer and not (Midlet.b is not None and Midlet.b.quit_requested):
+        if midlet.to_multiplayer and not (Midlet.canvas is not None and Midlet.canvas.quit_requested):
             import mp_main
             if await mp_main.play():
                 restart()

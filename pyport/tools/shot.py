@@ -123,74 +123,76 @@ def run(scenario, out, every=False):
                 state["wait"] = int(arg)
                 return
             if cmd == "key":
-                Midlet.b.keyPressed(KEYNAMES[arg.upper()])
+                Midlet.canvas.keyPressed(KEYNAMES[arg.upper()])
                 state["wait"] = 1          # the key is consumed on the next tick
                 return
             if cmd in ("hold", "release"):     # a direction key held down / let go
                 code = KEYNAMES[arg.upper()]
                 if cmd == "hold":
-                    Midlet.b.hold(code)
-                    Midlet.b.keyPressed(code)
+                    Midlet.canvas.hold(code)
+                    Midlet.canvas.keyPressed(code)
                     state["wait"] = 1
                     return
-                Midlet.b.release(code)
+                Midlet.canvas.release(code)
                 continue
             if cmd in ("mousedown", "mouseup"):  # left button held at X Y (walk) / let go
                 if cmd == "mouseup":
-                    Midlet.b.mouse_dir = None
+                    Midlet.canvas.mouse_dir = None
                     continue
                 cx, cy = map(int, arg.split())
-                keys = Midlet.b.pointer(cx, cy, "click")
-                Midlet.b.mouse_dir = keys[0] if len(keys) == 1 and keys[0] in DIRECTION_KEYS else None
-                Midlet.b.key_queue.extend(keys)
-                state["wait"] = max(1, len(Midlet.b.key_queue))
+                keys = Midlet.canvas.pointer(cx, cy, "click")
+                Midlet.canvas.mouse_dir = keys[0] if len(keys) == 1 and keys[0] in DIRECTION_KEYS else None
+                Midlet.canvas.key_queue.extend(keys)
+                state["wait"] = max(1, len(Midlet.canvas.key_queue))
                 return
             if cmd in ("click", "wheel", "rclick", "mclick"):
                 if cmd == "click":
                     cx, cy = map(int, arg.split())
-                    Midlet.b.click(cx, cy)
+                    Midlet.canvas.click(cx, cy)
                 elif cmd == "wheel":
-                    Midlet.b.click(0, 0, "wheel_" + arg.lower())
+                    Midlet.canvas.click(0, 0, "wheel_" + arg.lower())
                 elif cmd == "mclick":
                     cx, cy = map(int, arg.split())
-                    Midlet.b.click(cx, cy, "middle")
+                    Midlet.canvas.click(cx, cy, "middle")
                 elif arg:
                     cx, cy = map(int, arg.split())
-                    Midlet.b.click(cx, cy, "rclick")
+                    Midlet.canvas.click(cx, cy, "rclick")
                 else:
-                    Midlet.b.click(0, 0, "back")
-                state["wait"] = max(1, len(Midlet.b.key_queue))   # queued keys go 1 per tick
+                    Midlet.canvas.click(0, 0, "back")
+                state["wait"] = max(1, len(Midlet.canvas.key_queue))   # queued keys go 1 per tick
                 return
             if cmd == "gold":
-                GameCanvas.cz.E = int(arg)
+                GameCanvas.hero.gold = int(arg)
                 continue
-            if cmd == "hero":              # TEST-ONLY: hero FIELD N, e.g. hero p 1 (HP), hero w 99 (ATK)
+            if cmd == "hero":              # TEST-ONLY: hero FIELD N, e.g. hero hp 1, hero attack 99
                 field, val = arg.split()
-                setattr(GameCanvas.cz, field, int(val))
+                if not hasattr(GameCanvas.hero, field):
+                    raise SystemExit("unknown hero field: " + field)
+                setattr(GameCanvas.hero, field, int(val))
                 continue
             if cmd == "skill":             # TEST-ONLY: skill SLOT ID - learn skill ID (12..30) on key slot
                 slot, sid = map(int, arg.split())
-                if GameCanvas.cz.W[sid - 12] == 0:
-                    GameCanvas.cz.W[sid - 12] = 1
-                GameCanvas.cz.V[slot] = sid
+                if GameCanvas.hero.skill_levels[sid - 12] == 0:
+                    GameCanvas.hero.skill_levels[sid - 12] = 1
+                GameCanvas.hero.hotkeys[slot] = sid
                 continue
             if cmd == "potion":            # TEST-ONLY: potion KEY ID N - N potions ID on * (KEY 0) or # (1)
                 key, pid, cnt = map(int, arg.split())
-                z = GameCanvas.cz.Z[GameCanvas.cz.aa[key]]
-                z.a = pid
-                z.b = cnt
+                z = GameCanvas.hero.quick_slots[GameCanvas.hero.quick_keys[key]]
+                z.item = pid
+                z.count = cnt
                 continue
             if cmd == "win":
-                GameCanvas.cr = 1                  # the mission's general was met on the map (c.java:986)
-                GameCanvas.bd.d_I(1)               # what the combat calls on victory (c.java:1516)
+                GameCanvas.boss_fight = 1                  # the mission's general was met on the map (c.java:986)
+                GameCanvas.scene.d_I(1)               # what the combat calls on victory (c.java:1516)
                 continue
             if cmd == "generals":
                 from pow.game.arr_table import ArrTable
                 from pow.game.menus import Menus
-                tab = ArrTable("/" + GameCanvas.bE.a_I(52))
+                tab = ArrTable("/" + GameCanvas.scr_data.a_I(52))
                 for b1 in range(int(arg)):
                     Menus.b_II(tab.a_II(b1, 0), 10 + 20 * b1)
-                GameCanvas.cz.S = 1
+                GameCanvas.hero.live_registered = 1
                 continue
             if cmd == "multiplayer":       # multiplayer N NAME: after the game quits (Main Menu >
                 state["mp"] = arg.split()      # Multiplayer > YES), N MP frames and shot NAME
@@ -202,7 +204,7 @@ def run(scenario, out, every=False):
                 saved.append(name)
                 continue
             raise SystemExit("unknown step: %s %s" % (cmd, arg))
-        GameCanvas.gh = False
+        GameCanvas.running = False
 
     display.frame_hooks.append(on_frame)
     midlet = Midlet()

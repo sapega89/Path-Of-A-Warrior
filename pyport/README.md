@@ -295,7 +295,7 @@ Please select» на екрані 6 — дослівно з Java (`de - 90 - b*2
 `mousedown X Y` / `mouseup`, `rclick [X Y]`, `mclick X Y`, `wheel up|down`, `shot NAME`, `save zero`,
 `gold N` (лише для тестів: золото героя), `generals N` (лише для тестів: N знайомих
 генералів і дозвіл на візит), `win` (лише для тестів: виграти прийняту місію, `c.d(1)`),
-`hero F N` (поле героя: `p` HP, `r` MP, `w` атака, `x` захист), `skill S ID` (вивчити скіл на слот),
+`hero F N` (поле героя: `hp`, `mp`, `attack`, `defense`), `skill S ID` (вивчити скіл на слот),
 `potion K ID N` (N зілль / бомб на * або #) — теж лише для тестів.
 У грі `java.util.Random` має сід від часу, як у Java; `shot.py` ставить `POW_SEED=1` (PORT-EXTRA
 у `jrandom.py`), тому ШІ ворогів, асортимент Blacksmith і подарунки генералів повторюються, і

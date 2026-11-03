@@ -8,12 +8,12 @@ def _popup(monkeypatch, ef, eg):
     data = bytearray(38 * 3 + 10 + 40)
     data[38 * 1 + 10:38 * 1 + 10 + 10] = b"Royal Seal"
     monkeypatch.setattr(GameCanvas, "v_I", staticmethod(lambda n: bytes(data)))
-    monkeypatch.setattr(GameCanvas, "ef", ef)
-    monkeypatch.setattr(GameCanvas, "eg", eg)
-    monkeypatch.setattr(GameCanvas, "bV", 10)
+    monkeypatch.setattr(GameCanvas, "reward_item", ef)
+    monkeypatch.setattr(GameCanvas, "reward_skill", eg)
+    monkeypatch.setattr(GameCanvas, "state", 10)
     p = Popups()
     p.e_I(27)
-    return p.l[:p.i]
+    return p.lines[:p.line_count]
 
 
 @pytest.mark.parametrize("ef,eg,lines", [

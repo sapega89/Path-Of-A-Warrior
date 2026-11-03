@@ -4,45 +4,45 @@ from pow.game.res_reader import ResReader
 
 class ArrTable:
     def __init__(self, paramString):  # d.java:12-34
-        self.a = None   # column widths
-        self.b = None   # column offsets (stored as byte, read with & 0xFF)
-        self.c = None   # rows
-        self.d = 0      # row size
+        self.widths = None   # column widths
+        self.offsets = None   # column offsets (stored as byte, read with & 0xFF)
+        self.rows = None   # rows
+        self.row_size = 0      # row size
         try:
             data = ResReader.a(paramString)
             i = data[0]
-            self.a = bytearray(data[1:1 + i])
-            self.b = bytearray(i)
-            self.c = bytearray(data[1 + i:])
+            self.widths = bytearray(data[1:1 + i])
+            self.offsets = bytearray(i)
+            self.rows = bytearray(data[1 + i:])
             k = 0
             for b in range(i):
-                self.b[b] = k & 0xFF
-                k += self.a[b] & 0xFF
-            self.d = k
+                self.offsets[b] = k & 0xFF
+                k += self.widths[b] & 0xFF
+            self.row_size = k
         except Exception:
             return
 
     def a_II(self, paramInt1, paramInt2):  # d.java:36-45  (little-endian unsigned cell)
         i = 0
         try:
-            j_ = self.a[paramInt2] & 0xFF
-            k = paramInt1 * self.d + (self.b[paramInt2] & 0xFF)
+            j_ = self.widths[paramInt2] & 0xFF
+            k = paramInt1 * self.row_size + (self.offsets[paramInt2] & 0xFF)
             if k < 0 or paramInt2 < 0 or paramInt1 < 0:
                 raise IndexError  # Java arrays throw on negative indices
             for b in range(j_):
-                i |= (self.c[k + b] & 0xFF) << b * 8
+                i |= (self.rows[k + b] & 0xFF) << b * 8
         except Exception:
             pass
         return i
 
     def b_II(self, paramInt1, paramInt2):  # d.java:47-49
-        off = paramInt1 * self.d + (self.b[paramInt2] & 0xFF)
-        return bytes(self.c[off:off + (self.a[paramInt2] & 0xFF)]).decode("latin-1").strip(_TRIM)
+        off = paramInt1 * self.row_size + (self.offsets[paramInt2] & 0xFF)
+        return bytes(self.rows[off:off + (self.widths[paramInt2] & 0xFF)]).decode("latin-1").strip(_TRIM)
 
     def a_v(self):  # d.java:51-55
-        self.a = None
-        self.b = None
-        self.c = None
+        self.widths = None
+        self.offsets = None
+        self.rows = None
 
 
 # Java String.trim() strips every char <= ' ' (the .arr names are padded with '\0', which
