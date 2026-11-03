@@ -117,3 +117,22 @@ GOLD = int(os.environ["POW_GOLD"]) if os.environ.get("POW_GOLD", "").isdigit() e
 # Tab or a click on the bottom-left corner of the map turns it on and off; POW_AUTO_HUNT=1 = on
 # from the start. Any key of the player pauses it for a moment.
 AUTO_HUNT = os.environ.get("POW_AUTO_HUNT", "0") == "1"
+
+# PORT-EXTRA (asked by the player): the description of an item / skill / potion (Blacksmith,
+# Gear, Inventory, Skills, Assign Items; not Gamevil Live, whose grids leave no room) in a box as wide as the screen, in up to
+# WIDE_DESC_LINES lines, instead of the narrow strip whose one line runs by.
+# POW_WIDE_DESC=0 = the original strip.
+WIDE_DESC = os.environ.get("POW_WIDE_DESC", "1") == "1"
+WIDE_DESC_LINES = 3
+
+# PORT-EXTRA (asked by the player): full screen. F11 or Alt+Enter switch it, and so does
+# Options > Screen; the choice is remembered (RecordStore "pow_display"). POW_FULLSCREEN=1 / 0
+# forces it at start.
+FULLSCREEN = {"1": True, "0": False}.get(os.environ.get("POW_FULLSCREEN", ""))
+# PORT-EXTRA: the Screen row (full screen / window) in Options of the menu and of the pause.
+SCREEN_OPTION = os.environ.get("POW_SCREEN_OPTION", "1") == "1"
+
+# PORT-EXTRA (asked by the player): a gamepad / joystick on the PC works as the phone keys
+# (pow/midp/gamepad.py: stick and d-pad = arrows, A = OK, B = BACK, X Y LB RB LT = skills,
+# RT = *, L3 / R3 = #, Start = PAUSE). POW_GAMEPAD=0 turns it off.
+GAMEPAD = os.environ.get("POW_GAMEPAD", "1") == "1"

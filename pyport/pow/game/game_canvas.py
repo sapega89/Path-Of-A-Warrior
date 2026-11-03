@@ -16,7 +16,7 @@ from pow.game.font import Font
 from pow.game.res_reader import ResReader
 from pow.game.structs import GearDef, Item, RareDef, Rect, SpriteFrame, TreasureDef
 from pow.game.gfx import Gfx
-from pow.midp import system
+from pow.midp import display, system
 from pow.midp.canvas import Canvas
 from pow.midp.graphics import Image
 from pow.midp.jint import i8, i16, i32, idiv, imod
@@ -2037,6 +2037,9 @@ class GameCanvas(GameFields, Canvas):
                 GameCanvas.speed = i16(GameCanvas.speed - 1)
                 if GameCanvas.speed < 0:
                     GameCanvas.speed = 4
+        elif v == 3 and config.SCREEN_OPTION:      # PORT-EXTRA: Screen = full screen / window
+            display.toggle_fullscreen()
+            return
         GameCanvas.save_options()
 
     # ---- Management: items, descriptions ---------------------------------------------------

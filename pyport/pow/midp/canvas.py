@@ -8,7 +8,7 @@ import collections
 import pygame
 
 import config
-from pow.midp import display, system, watchdog
+from pow.midp import display, gamepad, system, watchdog
 from pow.midp.graphics import Graphics
 
 # PC key -> phone key code (keyPressed argument)
@@ -61,6 +61,7 @@ class Canvas:
         self.mouse_dir = None                   # direction of the held left mouse button
         self.autopilot = None                   # PORT-EXTRA: tick() -> key, .direction, player_key()
         self.belt_active = None                 # callable() -> True: Z X C V B are belt keys
+        self.pads = gamepad.Gamepads() if config.GAMEPAD else None   # PORT-EXTRA: gamepad
 
     def getWidth(self):
         return config.SCREEN_W
@@ -86,6 +87,10 @@ class Canvas:
         for ev in pygame.event.get():
             if ev.type == pygame.QUIT:
                 self.quit_requested = True
+            elif ev.type == pygame.KEYDOWN and (ev.key == pygame.K_F11 or (
+                    ev.key in (pygame.K_RETURN, pygame.K_KP_ENTER) and ev.mod & pygame.KMOD_ALT)):
+                display.toggle_fullscreen()          # PORT-EXTRA: full screen
+                display.present()
             elif ev.type == pygame.KEYDOWN:
                 code = KEYMAP.get(ev.key)
                 if ev.key in BELT_KEYMAP and self.belt_active is not None and self.belt_active():
@@ -120,6 +125,15 @@ class Canvas:
                 d = self.hold_dir(*self._to_screen(ev.pos))     # dragging turns the hero
                 if d is not None:
                     self.mouse_dir = d
+            elif self.pads is not None and ev.type in gamepad.EVENTS:
+                for code, down in self.pads.handle(ev):
+                    if not down:
+                        self.release(code)
+                        continue
+                    self.key_queue.clear()
+                    if code in DIRECTION_KEYS:
+                        self.hold(code)
+                    self.keyPressed(code)
             elif ev.type == pygame.MOUSEWHEEL and ev.y != 0 and self.pointer:
                 x, y = self._to_screen(pygame.mouse.get_pos())
                 self.key_queue.extend(self.pointer(x, y, "wheel_up" if ev.y > 0 else "wheel_down"))
@@ -158,11 +172,7 @@ class Canvas:
 
     @staticmethod
     def _to_screen(pos):
-        win = display.window
-        if win is None:
-            return pos
-        w, h = win.get_size()
-        return pos[0] * config.SCREEN_W // max(1, w), pos[1] * config.SCREEN_H // max(1, h)
+        return display.to_screen(pos)
 
     async def sleep_ms(self, ms):
         """Thread.sleep inside the game loop. Lets the browser breathe and reads keys."""

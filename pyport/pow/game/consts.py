@@ -1,4 +1,5 @@
 """ae.java constants (interface ae). Generated once from the Java source; edited by hand since."""
+import config
 
 # ae.java:2-4  (String[])
 t = [ "SKIP", "PAUSE", "BACK", "BACKPACK", "WAREHOUSE", "EXCHANGE", "EXIT", "VIEW MARKET", "CONFIRM", "BACK", "DEL ", "OK", "RESET" ]  # PORT-EXTRA 12 "RESET" (hero_classes)
@@ -6,6 +7,8 @@ t = [ "SKIP", "PAUSE", "BACK", "BACKPACK", "WAREHOUSE", "EXCHANGE", "EXIT", "VIE
 u = [ -1, 0, 1, 2, -1, -1, 29, 6, 7, 5, 0, 10, 0, 0, 13, -1, 13, 100, 13, 100, -1, 12, 12, 12, 12, 5, -1, 5, 100, 5 ]
 # ae.java:11-14  (byte[])
 v = [ 6, -1, -1, -1, -1, 8, -1, -1, 4, 3, 2, 4, 4, 5, 4, -1, 9, 25, 5, -1, -1, -1, -1, -1, -1, 25, -1, 8, -1, 2 ]
+if config.SCREEN_OPTION:   # PORT-EXTRA: Options gets a 4th row, Screen (full screen / window)
+    v[9] = 4
 # ae.java:16-16  (int[])
 w = [ 1, 10, 25, 45, 70 ]
 # ae.java:18-18  (int[])
