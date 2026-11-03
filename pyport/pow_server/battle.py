@@ -112,8 +112,8 @@ def from_character(ch, slot):
 
 
 def hero_build(ch):
-    """The stat points of a hero: its base stats over a new hero's (ag.aw), per point gain."""
-    b = R.HERO_BASE
+    """The stat points of a hero: its base stats over a new hero's of its face (ag.aw), per point gain."""
+    b = R.hero_base(ch.face)
     return {"atk": max(0, ch.atk - b["atk"]), "def": max(0, ch.def_ - b["def"]),
             "hp": max(0, (ch.hp - b["hp"]) // R.POINT_GAIN["hp"]),
             "mp": max(0, (ch.mp - b["mp"]) // R.POINT_GAIN["mp"])}
@@ -134,16 +134,18 @@ def cpu_fighter(rng, me, slot, ally=False):
     build = dict(me.build) if me.build and sum(me.build.values()) else dict(rng.choice(BUILDS))
     stat = rng.choice(("atk", "def", "hp"))
     build[stat] = build.get(stat, 0) + max(1, sum(build.values()) // 10)
-    st = R.hero_stats(level, build)
     # the skills are mine too (a new hero knows Wind Slasher and Devil Soul, ag.java new game;
     # more and higher levels come only from Visiting in the single player)
     skills = dict(me.skills) or {WIND: 1, SOUL_DEVIL: 1}
     slots = [x for x in me.slots if x in skills] or list(skills)[:4]
     q = rng.choice(CPU_QUOTES)
     kit = R.shop_kit(level)
-    return Fighter(slot=slot, name=rng.choice(CPU_NAMES), level=level, max_hp=st["hp"] + kit["hp"],
+    name = rng.choice(CPU_NAMES)
+    face = rng.randrange(4)
+    st = R.hero_stats(level, build, face)       # PORT-EXTRA: the face's base stats (sp_rules)
+    return Fighter(slot=slot, name=name, level=level, max_hp=st["hp"] + kit["hp"],
                    atk=st["atk"] + kit["atk"], def_=st["def"] + kit["def"],
-                   skills=skills, slots=slots, face=rng.randrange(4),
+                   skills=skills, slots=slots, face=face,
                    weapon=rng.randrange(2), cpu=True, wins=rng.randrange(5 * level + 1),
                    losses=rng.randrange(5 * level + 1), quote_start=q[0], quote_win=q[1],
                    general=True, build=build, max_mp=st["mp"])

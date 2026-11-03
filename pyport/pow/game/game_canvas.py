@@ -1589,13 +1589,11 @@ class GameCanvas(GameFields, Canvas):
 
     @staticmethod
     def reset_base_stats():  # ag.java:3275-3284  (base stats, 5 free points)
+        from pow.game import hero_classes
         cz = GameCanvas.hero
-        cz.base_attack = 5
-        cz.base_defense = 4
-        cz.base_hp = 30
-        cz.hp = 30
-        cz.base_mp = 10
-        cz.mp = 10
+        # PORT-EXTRA: the stats of the chosen head (pow/game/hero_classes.py); the original
+        # gave every head ATK 5 / DEF 4 / HP 30 / MP 10, which is still head 0
+        hero_classes.set_base_stats(cz)
         cz.stat_points = 5
         GameCanvas.redraw = 1
 
