@@ -1604,6 +1604,9 @@ class MapEngine(GameCanvas):
         else:
             self.draw_number_commas(GameCanvas.hero.kills_shown, GameCanvas.view_size.x - 4 - 7, 20)
         self.draw_quick_potions()
+        if config.SKILL_BAR:
+            from pow.game import skill_bar   # PORT-EXTRA config.SKILL_BAR: belt and skill slots
+            skill_bar.draw_bar()
         self.draw_clock(0, 5, GameCanvas.mission_seconds)
         if GameCanvas.state == 3 and GameCanvas.popups.kind == 0:
             if GameCanvas.map_mode.mode != 0:

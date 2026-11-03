@@ -101,7 +101,7 @@ class Menus(GameCanvas):
                 self.draw_difficulty()
             elif v == 15:
                 self.draw_skills(0)
-                self.draw_description_strip()
+                self.draw_skill_info()
             elif v == 16:
                 self.draw_gear(cM[2], 0)
                 self.draw_description_strip()
@@ -171,7 +171,7 @@ class Menus(GameCanvas):
                 if v == 15:
                     if GameCanvas.menu_part != 0:
                         self.draw_skills(GameCanvas.menu_part)
-                    self.draw_description_strip()
+                    self.draw_skill_info()
                     return
                 if v == 16:
                     self.draw_description_strip()
@@ -1179,6 +1179,17 @@ class Menus(GameCanvas):
         else:
             self.draw_description(consts.aC[cM[2]] + 2000, GameCanvas.view_cx - 100, GameCanvas.canvas_size.y - 70, 200, 22)
         GameCanvas.menu_part = 0
+
+    def draw_skill_info(self):
+        """Skills menu (cM[0] == 15): the description strip, or (PORT-EXTRA config.SKILL_CARD)
+        the skill card of pow/game/skill_bar.py for the slot / tree skill under the cursor."""
+        if not config.SKILL_CARD:
+            self.draw_description_strip()
+            return
+        from pow.game import skill_bar
+        cM = GameCanvas.menu
+        skill = GameCanvas.hero.hotkeys[cM[1]] if cM[3] == 1 else consts.aC[cM[2]]
+        skill_bar.draw_card(skill)
 
     def draw_description_strip(self):  # e.java:1595-1630  (description strip; scrolls when longer than the box)
         dF = GameCanvas.info_box
