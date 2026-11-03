@@ -1,7 +1,5 @@
-"""e.java - menu screens (bb). Literal port, Phase 0 subset:
-Main Menu (cM[0] == 5) and the Game Menu carousel (cM[0] == 0), with the full key routing
+"""e.java - menu screens (bb): every menu screen and its key routing
 (a(), aB/aC/aD/aE = up/down/left/right, b() = fire, aF() = back).
-Screens of later phases raise NotPorted.
 """
 import re
 
@@ -1855,6 +1853,11 @@ class Menus(GameCanvas):
                 GameCanvas.popups.setup_popup(39)
                 GameCanvas.redraw = 1
                 GameCanvas.menu[1] = 3
+                if config.ORIG_BUG["B7"]:
+                    # ORIG-BUG B7: the grid behind this popup keeps the scroll / cursor of the last
+                    # grid screen; after the 9-row Warehouse of Gamevil Live they point past shop[24]
+                    GameCanvas.cursor[8] = 0
+                    GameCanvas.cursor[18] = 0
                 return True
         GameCanvas.load_item_tables()
         self.blacksmith_layout()

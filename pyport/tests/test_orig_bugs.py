@@ -68,3 +68,19 @@ def test_b3_emperors_seal_lists_all_44_generals(game, monkeypatch, fixed):
         assert GameCanvas.general_table.get_string(names[0] - 1, 0)    # a general's name from general.arr
     else:
         assert not any(names)
+
+
+@pytest.mark.parametrize("fixed", [True, False])
+def test_b6_fire_on_the_5th_item_slot_does_not_open_help(monkeypatch, fixed):
+    import config
+    from pow.game.game_canvas import GameCanvas
+    from pow.game.map_engine import MapEngine
+    monkeypatch.setitem(config.ORIG_BUG, "B6", fixed)
+    fired = []
+    monkeypatch.setattr(GameCanvas, "menus", type("M", (), {"key_fire": lambda self: fired.append(1)})())
+    monkeypatch.setattr(GameCanvas, "map_mode", type("MM", (), {"mode": 2, "sub": 0})())
+    monkeypatch.setattr(GameCanvas, "menu", [10, 4, 0, 0, 0, 0])   # pause menu > Items, cursor on slot 5
+    for name, value in (("key", -5), ("state", 3), ("actor_count", 0), ("boss_fight", 0), ("waves", [0] * 4)):
+        monkeypatch.setattr(GameCanvas, name, value)
+    MapEngine.__new__(MapEngine).pause_menu_keys()
+    assert (GameCanvas.state, bool(fired)) == ((3, False) if fixed else (2, True))

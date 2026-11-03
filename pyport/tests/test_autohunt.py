@@ -12,7 +12,7 @@ from conftest import ROOT
 
 @pytest.mark.parametrize("name", ["autohunt", "autohunt_belt"])
 def test_autohunt_scenario(tmp_path, name):
-    env = dict(os.environ, POW_STRICT="1")
+    env = dict(os.environ, POW_DEBUG="1")
     r = subprocess.run([sys.executable, str(ROOT / "tools" / "shot.py"),
                         str(ROOT / "tools" / "scenarios" / (name + ".keys")), "--out", str(tmp_path)],
                        capture_output=True, text=True, timeout=300, env=env)
@@ -49,7 +49,7 @@ def test_the_auto_button_is_shown_while_off(tmp_path):
     head = src[:src.index("auto on")]
     scen.write_text("env POW_AUTO_BUTTON=1\n" + head + "wait 40\nshot off\nclick 20 312\nwait 40\n"
                     "shot on\nexpect kills >= 1\n", encoding="utf-8")
-    env = dict(os.environ, POW_STRICT="1", POW_AUTO_BUTTON="1")
+    env = dict(os.environ, POW_DEBUG="1", POW_AUTO_BUTTON="1")
     r = subprocess.run([sys.executable, str(ROOT / "tools" / "shot.py"), str(scen), "--out",
                         str(tmp_path / "out")], capture_output=True, text=True, timeout=300, env=env)
     assert r.returncode == 0, r.stdout + r.stderr

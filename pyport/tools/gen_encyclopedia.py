@@ -12,7 +12,6 @@ Needs Pillow (icons are cut from the sheets and embedded as data: URIs, the page
 build_web.py copies the page next to the game, like guide.html.
 """
 import base64
-import html
 import io
 import json
 import pathlib
@@ -420,7 +419,7 @@ def soldier_table():
         lo, hi = lv_range(lp)
         row = dict(lp=lp, lv="%d–%d" % (lo, hi), u=[])
         for t in range(3):
-            f = lambda L: ((base[t] + L) * mult[t] // 100, L - 1, hpb[t] + 3 * L)   # noqa: E731
+            f = lambda L, t=t: ((base[t] + L) * mult[t] // 100, L - 1, hpb[t] + 3 * L)   # noqa: E731
             a, b = f(lo), f(hi)
             row["u"].append(["%d–%d" % (a[k], b[k]) for k in range(3)])
         rows.append(row)

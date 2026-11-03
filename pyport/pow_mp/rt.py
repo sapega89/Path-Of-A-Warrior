@@ -59,24 +59,8 @@ def _inc_post(obj, name, d):
     return v
 
 
-def _inci(arr, i, d):
-    arr[i] += d
-    return arr[i]
-
-
-def _inci_post(arr, i, d):
-    v = arr[i]
-    arr[i] = v + d
-    return v
-
-
 def _set(obj, name, v):
     setattr(obj, name, v)
-    return v
-
-
-def _seti(arr, i, v):
-    arr[i] = v
     return v
 
 

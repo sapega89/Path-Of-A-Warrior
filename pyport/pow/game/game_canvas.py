@@ -1,10 +1,7 @@
 """ag.java - the main Canvas class (game loop, state machine, shared helpers).
 
-Literal port, Phase 0 subset: everything on the path
-logo -> "sound?" -> title -> Main Menu -> Game Menu.
 Method names follow pyport/NAMES.md (signature suffix when the Java name is overloaded).
-Every method has a `# ag.java:FROM-TO` comment. Methods that are not ported yet raise
-NotPorted so a missing piece is loud, not silent.
+Every method has a `# ag.java:FROM-TO` comment.
 """
 import traceback
 
@@ -26,14 +23,6 @@ from pow.game.arr_table import ArrTable
 F10 = config.DECOMP_FIX["F10"]
 F12 = config.DECOMP_FIX["F12"]
 F13 = config.DECOMP_FIX["F13"]
-
-
-class NotPorted(NotImplementedError):
-    pass
-
-
-def not_ported(where):
-    raise NotPorted(where + " is not ported yet (later phase)")
 
 
 class GameCanvas(GameFields, Canvas):
@@ -116,8 +105,8 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.live = Live()
         Live.screen = LiveScreen()
         GameCanvas.menus = Menus()
-        GameCanvas.engine = MapEngine()               # ar.java: the map (phase 3); the combat parts raise NotPorted
-        GameCanvas.scene = MapScene()                # c.java: story player, map; the combat parts raise NotPorted
+        GameCanvas.engine = MapEngine()               # ar.java: map engine (movement, combat)
+        GameCanvas.scene = MapScene()                # c.java: story player, map scene
 
     def keyPressed(self, key):  # ag.java:660-662
         self.key_down(key)
@@ -203,29 +192,6 @@ class GameCanvas(GameFields, Canvas):
                 if GameCanvas.frame > 2:
                     GameCanvas.started = True
                 GameCanvas.last_state = GameCanvas.state
-            except NotPorted as err:
-                # Spike convenience: a screen of a later phase shows a popup and returns
-                # to the menu instead of killing the game (config.STRICT = re-raise).
-                if config.STRICT:
-                    raise
-                print("NotPorted:", err)
-                if GameCanvas.state in (3, 4, 5):
-                    # the map / combat states have no screen yet: back to the Game Menu the
-                    # way the game itself returns there (e.java:1288-1300)
-                    self.open_menu(2)
-                    self.load_menu_frames()
-                    GameCanvas.menu[0] = 0
-                    GameCanvas.menu_count = consts.menu_sizes[0]
-                    GameCanvas.menu_items = GameCanvas.game_menu_items
-                    GameCanvas.state = 2
-                    GameCanvas.menu_scroll = 0
-                    GameCanvas.menu_anim = 0
-                    GameCanvas.redraw = 1
-                elif GameCanvas.state == 2:
-                    GameCanvas.menu[0] = GameCanvas.menu_return if GameCanvas.menu[0] not in (0, 5) else GameCanvas.menu[0]
-                    GameCanvas.restore_menu_cursor()
-                GameCanvas.popups.show_text("3Not ported yet|(later phase)")
-                await self.sleep_ms(20)
             except Exception as exception:
                 GameCanvas.log("--run:" + repr(exception))
                 if config.DEBUG:
@@ -2511,6 +2477,8 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.boss_spawned = 0
         GameCanvas.hero_fx_data = None
         GameCanvas.enemy_fx_data = None
+        if config.ORIG_BUG["B8"]:
+            GameCanvas.enemy_fx_kind = 0   # ORIG-BUG B8: reset like hero_fx_kind above, or a general's effect outlives its data
         GameCanvas.fire_data = None
         for b in range(2):
             if GameCanvas.enemy_frames[b] is None:

@@ -55,6 +55,12 @@ ORIG_BUG = {
                  # the item is put into cz.Y anyway, past slot 24 -> it goes into the Warehouse
     "B5": True,  # m.bp() Gamevil Live registration: 3 frames after CONFIRM "Network connection has
                  # failed" replaces the answer of the 531 -> the answer stops that count
+    "B6": True,  # ar.java:179 pause menu: FIRE on the 5th slot of Items (cR.a == 2, cM[1] == 4) opens
+                 # Help as the Help row of the list does; back in Items cN is 7 -> slots 6-7 -> AIOOBE
+    "B7": True,  # e.java:2694-2707 Combine with < 3 items: popup 39 over a grid that keeps fK[8] / fK[18]
+                 # of the last grid screen (Gamevil Live: 9 rows) -> af[34] -> AIOOBE
+    "B8": True,  # ag.java:872-967 entering the map clears the enemy effect data (fn = null) but not its
+                 # kind: a general that was mid-skill leaves kind 2 -> the next enemy reads fn[..] -> NPE
 }
 
 # Gamevil Live of the single player (pow_server/live.py): "local" = the server inside the game
@@ -72,8 +78,6 @@ LIVE_PRICE = {502: 3000, 504: 5000}
 # Re-raise exceptions inside the game loop (Java would print "--run:" and continue).
 DEBUG = os.environ.get("POW_DEBUG", "1") == "1"
 
-# NotPorted (a screen of a later phase): True = crash, False = popup + back to the menu.
-STRICT = os.environ.get("POW_STRICT", "0") == "1"
 
 # SPIKE-ONLY: create a minimal save on first start so Continue opens the Game Menu without
 # going through New Game. Off by default since hero creation is ported; POW_DEMO_SAVE=1 or
