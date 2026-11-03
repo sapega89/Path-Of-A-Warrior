@@ -1,7 +1,7 @@
 """Browser build (PHASE_0 task 0.8): stage code + original resources, then run pygbag.
 
     python pyport/tools/build_web.py            # -> pyport/build/web-src (+ pygbag --build,
-                                                #    + guide.html and its link on the page)
+                                                #    + guide.html, encyclopedia.html and links)
     python -m pygbag pyport/build/web-src       # dev server on http://localhost:8000
     python pyport/tools/build_web.py --mp       # POW Multiplayer -> pyport/build/web-mp-src
         page?server=ws://host:28200 talks to `python -m pow_server`, without it the server
@@ -47,16 +47,21 @@ def stage():
     print("staged %d resource files -> %s" % (n, OUT))
 
 
-GUIDE_LINK = ('<a href="guide.html" target="_blank" style="position:fixed;right:8px;bottom:8px;z-index:9999;'
-              'font:14px sans-serif;color:#fff;background:#2747a8;padding:6px 10px;border-radius:6px;'
-              'text-decoration:none">Довідник воїна</a>')
+_LINK_CSS = ('font:14px sans-serif;color:#fff;background:#2747a8;padding:6px 10px;border-radius:6px;'
+             'text-decoration:none')
+GUIDE_LINK = ('<div style="position:fixed;right:8px;bottom:8px;z-index:9999;display:flex;gap:6px">'
+              '<a href="guide.html" target="_blank" style="%s">Довідник воїна</a>'
+              '<a href="encyclopedia.html" target="_blank" style="%s">Енциклопедія</a></div>'
+              % (_LINK_CSS, _LINK_CSS))
 
 
 def add_guide(site):
-    """The players' guide (web/guide.html: items, recipes, secrets) next to the game, and a link
-    to it on the game page. Only into the built site: inside the game package it would only
+    """The players' guide (web/guide.html: items, recipes, secrets) and the encyclopedia
+    (web/encyclopedia.html, made by tools/gen_encyclopedia.py) next to the game, and links to
+    them on the game page. Only into the built site: inside the game package they would only
     make the download bigger."""
-    shutil.copy2(PY / "web" / "guide.html", site / "guide.html")
+    for name in ("guide.html", "encyclopedia.html"):
+        shutil.copy2(PY / "web" / name, site / name)
     page = site / "index.html"
     if page.exists():
         html = page.read_text(encoding="utf-8")
@@ -67,7 +72,7 @@ def add_guide(site):
             print("guide: no </body> in", page, "- the link is not added")
         else:
             page.write_text(html[:end] + GUIDE_LINK + "\n" + html[end:], encoding="utf-8")
-    print("guide ->", site / "guide.html")
+    print("guide, encyclopedia ->", site)
 
 
 if __name__ == "__main__":
