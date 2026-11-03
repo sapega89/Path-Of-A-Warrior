@@ -3,6 +3,7 @@
 Generated once from pyport/mp_java/g.java (branch java-reference) by the old
 tools/j2py_mp.py; edited by hand since.
 """
+import config
 from pow_mp.rt import (
     ByteArrayInputStream,
     DataInputStream,
@@ -58,7 +59,7 @@ class _Cont_block49_2378(BaseException):
 class MpCanvas(_Canvas):
     # PORT-EXTRA auto-battle: Tab (key -100) turns it on / off; the round's 1027 then goes out after
     # a second with action AUTO_ACTION, and the server's bot chooses (pow_server/battle.py cpu_choice)
-    auto_battle = bool(getattr(__import__("config"), "AUTO_HUNT", False))
+    auto_battle = config.AUTO_HUNT
     AUTO_ACTION = 255
     app_version = None  # g.java:25 String
     game = None  # g.java:26 m
@@ -401,8 +402,12 @@ class MpCanvas(_Canvas):
             MpCanvas.painted = True
             return
         self.paint_screen()
-        if MpCanvas.auto_battle and 94 <= MpCanvas.state <= 98:     # PORT-EXTRA: auto-battle badge
-            self.draw_text_left_on(graphics, 4, MpCanvas.canvas_h - 30, "AUTO", 16400640)
+        if 94 <= MpCanvas.state <= 98 and (MpCanvas.auto_battle or config.AUTO_BUTTON):
+            # PORT-EXTRA auto-battle button: orange AUTO = on, white with the keys = off (Tab / F / R3)
+            if MpCanvas.auto_battle:
+                self.draw_text_left_on(graphics, 4, MpCanvas.canvas_h - 30, "AUTO", 16400640)
+            else:
+                self.draw_text_left_on(graphics, 4, MpCanvas.canvas_h - 30, "AUTO: Tab/F", 0xFFFFFF)
         if graphics.getClipX() > 0:
             graphics.setClip(0, 0, MpCanvas.canvas_w, MpCanvas.canvas_h)
         MpCanvas.painted = True

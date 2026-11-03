@@ -1189,13 +1189,16 @@ class GameCanvas(GameFields, Canvas):
 
     @staticmethod
     def draw_auto_badge():
-        """PORT-EXTRA (pow/game/autopilot.py): "AUTO" in the bottom-left corner of the map while
-        the auto-hunt is on (the corner is empty on the map; a click on it toggles)."""
+        """PORT-EXTRA (pow/game/autopilot.py): the AUTO button in the bottom-left corner of the map
+        (the corner is empty on the map; a click on it, Tab or F toggles): white while the
+        auto-hunt is on, grey while it is off (config.AUTO_BUTTON: only while it is on)."""
         from pow.game.autopilot import Autopilot
-        if not Autopilot.on or GameCanvas.state != 3 or GameCanvas.popups.kind != 0:
+        if GameCanvas.state != 3 or GameCanvas.popups.kind != 0:
+            return
+        if not (Autopilot.on or config.AUTO_BUTTON):
             return
         Gfx.fill_rect(0, GameCanvas.screen_h - 17, 48, 17, 0)
-        Gfx.set_font(GameCanvas.font_white)
+        Gfx.set_font(GameCanvas.font_white if Autopilot.on else GameCanvas.font_gray)
         Gfx.draw_string("AUTO", 24, GameCanvas.screen_h - 17, 1)
 
     @staticmethod

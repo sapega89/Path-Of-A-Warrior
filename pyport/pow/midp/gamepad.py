@@ -3,7 +3,8 @@
     left stick, d-pad    arrows (held = the hero keeps walking, as with the keys)
     A                    OK / attack            B          BACK
     X  Y  LB  RB  LT     the 5 skill keys (phone 1 3 7 9 0)
-    RT                   *  (potion)            L3 / R3    #  (potion)
+    RT                   *  (potion)            L3         #  (potion)
+    R3                   AUTO: auto-hunt / auto-battle on / off
     Start                right soft key (PAUSE / BACK)
     Back / Select        left soft key (SKIP, EXCHANGE)
 
@@ -23,6 +24,7 @@ UP, DOWN, LEFT, RIGHT = -1, -2, -3, -4
 OK, LSOFT, BACK = -5, -6, -7
 SKILLS = (49, 51, 55, 57, 48)
 STAR, POUND = 42, 35
+AUTO = -100             # PORT-EXTRA: auto-hunt / auto-battle on / off (as Tab)
 
 DEADZONE = 0.5          # how far a stick goes before it counts as a direction
 TRIGGER = 0.5           # how far a trigger goes before it counts as pressed
@@ -38,7 +40,7 @@ CONTROLLER_BUTTONS = {
     pygame.CONTROLLER_BUTTON_START: BACK,
     pygame.CONTROLLER_BUTTON_BACK: LSOFT,
     pygame.CONTROLLER_BUTTON_LEFTSTICK: POUND,
-    pygame.CONTROLLER_BUTTON_RIGHTSTICK: POUND,
+    pygame.CONTROLLER_BUTTON_RIGHTSTICK: AUTO,      # PORT-EXTRA: auto-hunt / auto-battle
     pygame.CONTROLLER_BUTTON_DPAD_UP: UP,
     pygame.CONTROLLER_BUTTON_DPAD_DOWN: DOWN,
     pygame.CONTROLLER_BUTTON_DPAD_LEFT: LEFT,
@@ -50,7 +52,7 @@ CONTROLLER_TRIGGERS = {
 }
 # any other joystick: Xbox order of the first buttons
 JOYSTICK_BUTTONS = {0: OK, 1: BACK, 2: SKILLS[0], 3: SKILLS[1], 4: SKILLS[2], 5: SKILLS[3],
-                    6: LSOFT, 7: BACK, 8: POUND, 9: POUND}
+                    6: LSOFT, 7: BACK, 8: POUND, 9: AUTO}
 
 DIRECTIONS = (UP, DOWN, LEFT, RIGHT)
 EVENTS = (pygame.JOYDEVICEADDED, pygame.JOYDEVICEREMOVED, pygame.JOYBUTTONDOWN, pygame.JOYBUTTONUP,

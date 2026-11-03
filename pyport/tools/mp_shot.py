@@ -24,6 +24,7 @@ os.environ["SDL_VIDEODRIVER"] = "dummy"
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 os.environ.setdefault("POW_SCALE", "1")
 os.environ.setdefault("POW_SEED", "1")
+os.environ.setdefault("POW_AUTO_BUTTON", "0")   # the AUTO button only while on (original screenshots)
 os.environ.setdefault("POW_MP_SERVER", "local")
 
 
