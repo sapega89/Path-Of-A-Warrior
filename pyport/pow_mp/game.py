@@ -33,35 +33,35 @@ async def run(self, midlet):
     from pow_mp.mp_canvas import MpCanvas
     from pow_mp.consts import Consts
     from pow_mp.net_thread import NetThread
-    self.a_v()
-    MpCanvas.ee = system.currentTimeMillis()
+    self.init_screen()
+    MpCanvas.frame_start = system.currentTimeMillis()
     while not self.quit_requested and not midlet.destroyed:
-        MpCanvas.ee = system.currentTimeMillis()
+        MpCanvas.frame_start = system.currentTimeMillis()
         NetThread.tick()                                   # the network thread (h.run)
-        if MpCanvas.J:
-            if MpCanvas.m != -999:
-                self.f_I(MpCanvas.m)
-                MpCanvas.m = -999
-            MpCanvas.dY = False
+        if MpCanvas.paused:
+            if MpCanvas.key != -999:
+                self.handle_key(MpCanvas.key)
+                MpCanvas.key = -999
+            MpCanvas.painted = False
             self.repaint()
             self.serviceRepaints()
             await self.sleep_ms(250)
         else:
-            if MpCanvas.m != -999:
-                self.f_I(MpCanvas.m)
-                MpCanvas.m = -999
-            MpCanvas.dY = False
+            if MpCanvas.key != -999:
+                self.handle_key(MpCanvas.key)
+                MpCanvas.key = -999
+            MpCanvas.painted = False
             self.repaint()
             self.serviceRepaints()
-            if MpCanvas.b is not None:
-                if (10 <= MpCanvas.cY <= 89 and MpCanvas.cY != 88 and not MpCanvas.J) or MpCanvas.cY in (1, 6, 7):
-                    self.s_I(1)
-                MpCanvas.b.tick_music()
-            if MpCanvas.cZ == MpCanvas.cY and MpCanvas.da < 25000:
-                MpCanvas.da += 1
-            if MpCanvas.da >= 25000:
-                MpCanvas.da = 100
-            n2 = Consts.ef[MpCanvas.an] - int(system.currentTimeMillis() - MpCanvas.ee)
+            if MpCanvas.game is not None:
+                if (10 <= MpCanvas.state <= 89 and MpCanvas.state != 88 and not MpCanvas.paused) or MpCanvas.state in (1, 6, 7):
+                    self.start_music(1)
+                MpCanvas.game.tick_music()
+            if MpCanvas.prev_state == MpCanvas.state and MpCanvas.state_ticks < 25000:
+                MpCanvas.state_ticks += 1
+            if MpCanvas.state_ticks >= 25000:
+                MpCanvas.state_ticks = 100
+            n2 = Consts.ef[MpCanvas.speed] - int(system.currentTimeMillis() - MpCanvas.frame_start)
             await self.sleep_ms(n2 if n2 > 20 else 20)
-        self.b_v()
+        self.apply_pause()
         MpCanvas.K = True

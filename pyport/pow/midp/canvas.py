@@ -32,6 +32,10 @@ KEYMAP = {
     pygame.K_KP_MULTIPLY: 42, pygame.K_KP_DIVIDE: 35,
 }
 
+# PORT-EXTRA (config.SKILL_BAR): while the hero acts on the map, Z X C V B = belt slots 0..4
+# (key codes -101..-105); elsewhere Z and X stay * and # (Assign Items)
+BELT_KEYMAP = {pygame.K_z: -101, pygame.K_x: -102, pygame.K_c: -103, pygame.K_v: -104, pygame.K_b: -105}
+
 # mouse wheel -> key, decided by the game (pow/game/pointer.py); right button = BACK
 MOUSE_BACK = -7
 DIRECTION_KEYS = (-1, -2, -3, -4, 50, 52, 54, 56)
@@ -40,6 +44,7 @@ DIRECTION_KEYS = (-1, -2, -3, -4, 50, 52, 54, 56)
 KEYNAMES = {"UP": -1, "DOWN": -2, "LEFT": -3, "RIGHT": -4, "FIRE": -5, "OK": -5,
             "LSOFT": -6, "RSOFT": -7, "BACK": -7, "STAR": 42, "POUND": 35}
 KEYNAMES.update({str(i): 48 + i for i in range(10)})
+KEYNAMES.update({"BELT%d" % (i + 1): -101 - i for i in range(5)})
 
 
 class Canvas:
@@ -51,6 +56,7 @@ class Canvas:
         self.hold_dir = None                    # callable(x, y) -> direction key while dragging
         self.held = []                          # direction keys held down, last pressed last
         self.mouse_dir = None                   # direction of the held left mouse button
+        self.belt_active = None                 # callable() -> True: Z X C V B are belt keys
 
     def getWidth(self):
         return config.SCREEN_W
@@ -78,6 +84,8 @@ class Canvas:
                 self.quit_requested = True
             elif ev.type == pygame.KEYDOWN:
                 code = KEYMAP.get(ev.key)
+                if ev.key in BELT_KEYMAP and self.belt_active is not None and self.belt_active():
+                    code = BELT_KEYMAP[ev.key]
                 if code is not None:
                     self.key_queue.clear()
                     if code in DIRECTION_KEYS:

@@ -91,9 +91,23 @@ HOLD_TO_MOVE = os.environ.get("POW_HOLD_TO_MOVE", "1") == "1"
 # POW_AUTO_AIM_HARD=0 = the original (no auto-aim on Hard). tools/shot.py uses 0.
 AUTO_AIM_HARD = os.environ.get("POW_AUTO_AIM_HARD", "1") == "1"
 
+# PORT-EXTRA (like Dragon Nest): a strip above the HUD frame with the 5 belt slots (keys Z X C V B
+# or a click) and the 5 skill slots (keys 1-5 or a click; grey without the MP), see
+# pow/game/skill_bar.py. POW_SKILL_BAR=0 = the original HUD (only * and # in combat).
+# tools/shot.py uses 0 so the baseline screenshots stay the original's.
+SKILL_BAR = os.environ.get("POW_SKILL_BAR", "1") == "1"
+# PORT-EXTRA: the Skills menu shows a card (level, MP, damage, strikes, heal / buff, next level)
+# instead of the one-line strip. POW_SKILL_CARD=0 = the original strip. tools/shot.py uses 0.
+SKILL_CARD = os.environ.get("POW_SKILL_CARD", "1") == "1"
+
 # PORT-EXTRA: POW_CHEAT=1 turns on the original developers' cheat, the JAD/manifest property
 # GAMEVIL_CHEAT: TRUE (ag.java:626, ag.bi): loading a save sets gold to 555000 (ag.java:2179);
 # a new hero gets 500000 gold, 2000 in every stat and all skills (ag.java:916, 3260).
 CHEAT = os.environ.get("POW_CHEAT", "0") == "1"
+
+# PORT-EXTRA (asked by the player): Options volume steps on a loudness curve (pow/midp/media.py):
+# pygame volume = (level / 100) ** 2, so "I" / "II" / "III" are clearly quieter than "IIII".
+# POW_VOLUME_CURVE=0 = level / 100, as before.
+VOLUME_CURVE = os.environ.get("POW_VOLUME_CURVE", "1") == "1"
 # PORT-EXTRA: POW_GOLD=N - after a save is loaded the hero has N gold (nothing else changes).
 GOLD = int(os.environ["POW_GOLD"]) if os.environ.get("POW_GOLD", "").isdigit() else None
