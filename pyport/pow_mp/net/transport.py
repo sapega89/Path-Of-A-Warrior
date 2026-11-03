@@ -3,12 +3,13 @@
 h.java opened socket://GAMEVIL_SERVER:GAMEVIL_PORT in its own thread and called g.a(k) for
 every frame. Here the game loop calls poll() once per tick and gets the payloads received
 since the last call (frame length removed, opcode first), and send() takes a whole frame
-(what e.b() wrote). Two implementations with the same interface:
+(what e.b() wrote). These implementations with the same interface:
 
 - LocalTransport: the server runs inside the game (9a: bots, no network).
 - WebSocketTransport: ws:// or wss:// to `python -m pow_server` (9b). Desktop: the
-  `websockets` package on the game's asyncio loop. Browser (pygbag): the page's JS WebSocket.
-  The browser path is NOT tested yet (PHASE_9 risk "WebSocket in pygbag": spike in the next PR).
+  `websockets` package on the game's asyncio loop.
+- BrowserWebSocketTransport: the same in the browser build (pygbag), the page's JS WebSocket
+  (pow/midp/webws.py).
 
 make_transport(config.MP_SERVER) picks one: "local" or a ws(s):// URL.
 """
@@ -124,11 +125,8 @@ class WebSocketTransport(Transport):
         self.close()
         self.connected = self.failed = False
         self.inbox.clear()
-        if sys.platform == "emscripten":
-            self._open_browser()
-        else:
-            self._out = asyncio.Queue()
-            self._task = asyncio.ensure_future(self._run_desktop())
+        self._out = asyncio.Queue()
+        self._task = asyncio.ensure_future(self._run_desktop())
 
     # --- desktop: websockets on the game loop ---------------------------------
     async def _run_desktop(self):
@@ -155,40 +153,10 @@ class WebSocketTransport(Transport):
         while True:
             await ws.send(await self._out.get())
 
-    # --- browser: the page's WebSocket through pygbag's `platform.window` -------
-    def _open_browser(self):
-        import platform as pf  # pygbag replaces the stdlib module with the JS bridge
-        ws = pf.window.WebSocket.new(self.url)
-        ws.binaryType = "arraybuffer"
-
-        # every handler checks that `ws` is still the current socket: open() closes the old one
-        # first, and its onclose comes later - it must not mark the new connection as failed
-        def on_open(ev):
-            if self._ws is ws:
-                self.connected = True
-
-        def on_message(ev):
-            if self._ws is not ws:
-                return
-            arr = pf.window.Uint8Array.new(ev.data)
-            self.inbox.extend(codec_bin.unframe(bytes(arr.to_py() if hasattr(arr, "to_py") else arr))[0])
-
-        def on_close(ev):
-            if self._ws is ws:
-                self.connected = False
-                self.failed = True
-
-        ws.onopen, ws.onmessage, ws.onclose, ws.onerror = on_open, on_message, on_close, on_close
-        self._ws = ws
-
     def send(self, frame):
         if not self.connected:
             return
-        if sys.platform == "emscripten":
-            import platform as pf
-            self._ws.send(pf.window.Uint8Array.new(list(frame)))
-        else:
-            self._out.put_nowait(frame)
+        self._out.put_nowait(frame)
 
     def poll(self):
         out = list(self.inbox)
@@ -199,13 +167,54 @@ class WebSocketTransport(Transport):
         if self._task is not None:
             self._task.cancel()
             self._task = None
-        if self._ws is not None and sys.platform == "emscripten":
-            try:
-                self._ws.close()
-            except Exception:
-                pass
         self._ws = None
         self.connected = False
+
+
+class BrowserWebSocketTransport(Transport):
+    """PORT-EXTRA: WebSocketTransport of the browser build (pygbag): the page's WebSocket through
+    pow/midp/webws.py, polled once per tick. connected / failed are read from the page."""
+
+    def __init__(self, url):
+        self.url = url
+        self.inbox = collections.deque()
+        self._ws = None
+
+    @property
+    def connected(self):
+        return self._ws is not None and self._ws.connected
+
+    @property
+    def failed(self):
+        return self._ws is not None and self._ws.failed
+
+    def open(self):
+        from pow.midp.webws import BrowserSocket
+        self.close()
+        self.inbox.clear()
+        self._ws = BrowserSocket(self.url, binary=True)
+
+    def send(self, frame):
+        if self.connected:
+            self._ws.send(bytes(frame))
+
+    def poll(self):
+        if self._ws is not None:
+            for data in self._ws.recv():
+                if isinstance(data, bytes):
+                    self.inbox.extend(codec_bin.unframe(data)[0])
+        out = list(self.inbox)
+        self.inbox.clear()
+        return out
+
+    def close(self):
+        if self._ws is not None:
+            self._ws.close()
+        self._ws = None
+
+
+def _ws_transport(url):
+    return BrowserWebSocketTransport(url) if sys.platform == "emscripten" else WebSocketTransport(url)
 
 
 class LiveLocalTransport(LocalTransport):
@@ -242,10 +251,10 @@ def make_live_transport(where):
     """config.LIVE_SERVER: "local" or ws(s)://host:port/live."""
     if not where or where == "local":
         return LiveLocalTransport()
-    return WebSocketTransport(where)
+    return _ws_transport(where)
 
 
 def make_transport(where):
     if not where or where == "local":
         return LocalTransport()
-    return WebSocketTransport(where)
+    return _ws_transport(where)

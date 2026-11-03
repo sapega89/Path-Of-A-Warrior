@@ -62,14 +62,16 @@ def live_from_page():
         return
     try:
         import platform
-        params = platform.window.URLSearchParams.new(platform.window.location.search)
-        where = params.get("live")
+        from urllib.parse import parse_qs
+        # parsed here: pygbag's JS bridge has no URLSearchParams.new(...)
+        params = parse_qs(str(platform.window.location.search).lstrip("?"))
+        where = params.get("live", [""])[0]
         if where:
-            config.LIVE_SERVER = str(where)
+            config.LIVE_SERVER = where
             print("Gamevil Live server:", config.LIVE_SERVER)
-        save = params.get("save")
+        save = params.get("save", [""])[0]
         if save:
-            config.SAVE_SERVER = str(save)
+            config.SAVE_SERVER = save
     except Exception as ex:
         print(f"Gamevil Live server from the page address: {ex!r}")
 

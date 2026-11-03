@@ -4,6 +4,7 @@ Key map = PHASE_1_FOUNDATION.md §5.
 """
 import asyncio
 import collections
+import sys
 
 import pygame
 
@@ -42,6 +43,8 @@ BELT_KEYMAP = {pygame.K_z: -101, pygame.K_x: -102, pygame.K_c: -103, pygame.K_v:
 MOUSE_BACK = -7
 AUTO_TOGGLE = -100                      # PORT-EXTRA: Tab / the AUTO corner of the map
 DIRECTION_KEYS = (-1, -2, -3, -4, 50, 52, 54, 56)
+_IS_WEB = sys.platform == "emscripten"
+PAD_POLL_MS = 20                        # browser: how often a sleeping game loop reads the gamepad
 
 # names used by scenario files (tools/shot.py)
 KEYNAMES = {"UP": -1, "DOWN": -2, "LEFT": -3, "RIGHT": -4, "FIRE": -5, "OK": -5,
@@ -127,17 +130,12 @@ class Canvas:
                 if d is not None:
                     self.mouse_dir = d
             elif self.pads is not None and ev.type in gamepad.EVENTS:
-                for code, down in self.pads.handle(ev):
-                    if not down:
-                        self.release(code)
-                        continue
-                    self.key_queue.clear()
-                    if code in DIRECTION_KEYS:
-                        self.hold(code)
-                    self.keyPressed(code)
+                self._pad_keys(self.pads.handle(ev))
             elif ev.type == pygame.MOUSEWHEEL and ev.y != 0 and self.pointer:
                 x, y = self._to_screen(pygame.mouse.get_pos())
                 self.key_queue.extend(self.pointer(x, y, "wheel_up" if ev.y > 0 else "wheel_down"))
+        if self.pads is not None and self.pads.pads:
+            self._pad_keys(self.pads.poll())
         # a phone delivers one key per tick: queued mouse keys go one by one
         if self.key_queue:
             self.keyPressed(self.key_queue.popleft())
@@ -145,6 +143,21 @@ class Canvas:
             key = self.autopilot.tick()
             if key is not None:
                 self.keyPressed(key)
+
+    def _pad_keys(self, keys):
+        """PORT-EXTRA: (phone key, pressed) pairs of the gamepad, handled like the keyboard's."""
+        for code, down in keys:
+            if not down:
+                self.release(code)
+                continue
+            if code in gamepad.BELT_CODES and not (self.belt_active is not None and self.belt_active()):
+                continue                    # the belt only while the hero acts on the map
+            self.key_queue.clear()
+            if self.autopilot is not None and code != AUTO_TOGGLE:
+                self.autopilot.player_key()     # as a key: the auto-hunt waits a moment
+            if code in DIRECTION_KEYS:
+                self.hold(code)
+            self.keyPressed(code)
 
     def click(self, x, y, kind="click"):
         """Mouse input in screen coordinates (240x320), used by tests and tools/shot.py."""
@@ -181,6 +194,17 @@ class Canvas:
         if system.is_virtual():
             system.advance(ms)
             await asyncio.sleep(0)
+        elif self.pads is not None and _IS_WEB and ms > PAD_POLL_MS:
+            # PORT-EXTRA: in the browser SDL reads the gamepad only when events are pumped, so a
+            # short tap between two ticks was lost; pump it every PAD_POLL_MS while sleeping
+            # (pump() keeps the events in the queue for pump_events)
+            left = ms
+            while left > 0:
+                step = min(left, PAD_POLL_MS)
+                await asyncio.sleep(step / 1000.0)
+                left -= step
+                if left > 0:
+                    pygame.event.pump()
         else:
             await asyncio.sleep(ms / 1000.0)
         self.pump_events()
