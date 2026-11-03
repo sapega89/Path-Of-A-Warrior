@@ -23,39 +23,6 @@ from pow_mp.rt import (
 )
 
 
-
-class _Brk_block0_1631(BaseException):
-    pass
-
-
-class _Brk_block0_2273(BaseException):
-    pass
-
-
-class _Brk_block0_2989(BaseException):
-    pass
-
-
-class _Brk_block1_457(BaseException):
-    pass
-
-
-class _Brk_block4_3348(BaseException):
-    pass
-
-
-class _Brk_block5_3348(BaseException):
-    pass
-
-
-class _Cont_block47_2359(BaseException):
-    pass
-
-
-class _Cont_block49_2378(BaseException):
-    pass
-
-
 class MpCanvas(_Canvas):
     # PORT-EXTRA auto-battle: Tab (key -100) turns it on / off; the round's 1027 then goes out after
     # a second with action AUTO_ACTION, and the server's bot chooses (pow_server/battle.py cpu_choice)
@@ -417,7 +384,6 @@ class MpCanvas(_Canvas):
         if l2 > 0:
             try:
                 system.sleep(l2)
-                return
             except Exception:
                 pass
 
@@ -523,825 +489,697 @@ class MpCanvas(_Canvas):
             elif MpCanvas.timer_ticks > 0:
                 MpCanvas.timer_ticks = MpCanvas.timer_ticks - 1
         MpCanvas.prev_state = MpCanvas.state
-        _sw3 = MpCanvas.state
-        try:
-            _m4 = False
-            while True:
-                if _m4 or _sw3 == 0:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        try:
-                            MpCanvas.logo_image = self.load_image("/gamevillogo.png")
-                            MpCanvas.softkey_image = self.load_image("/softbg.png")
-                            MpCanvas.logo_y = idiv(((MpCanvas.canvas_h - ((MpCanvas.logo_image.getHeight() + 12)))), 2)
-                            MpCanvas.logo_image.getHeight()
-                            MpCanvas.logo_image.getWidth()
-                        except Exception:
-                            pass
-                        MpCanvas.logo_time = system.currentTimeMillis()
-                        Draw.fill_rect(MpCanvas.buffer_g, 0, 0, MpCanvas.canvas_w, MpCanvas.canvas_h, 0xFFFFFF)
-                    self.draw_buffer()
-                    Draw.draw_image(MpCanvas.screen_g, MpCanvas.logo_image, idiv(MpCanvas.canvas_w, 2), MpCanvas.logo_y, 17)
-                    if (system.currentTimeMillis() - MpCanvas.logo_time) <= 3000:
-                        break
-                    MpCanvas.logo_image = None
-                    MpCanvas.state = 5
-                    return
-                if _m4 or _sw3 == 161:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.title = Consts.main_menu[5]
-                        MpCanvas.menu_size = 3
-                        self.draw_menu_icons()
-                    self.draw_buffer()
-                    self.draw_button(MpCanvas.screen_g, Consts.rank_menu[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 43), (MpCanvas.center_y - 19), 86, 17, False, True)
-                    MpCanvas.draw_menu_cursor(MpCanvas.screen_g)
-                    self.draw_softkeys((-1), 1)
-                    return
-                if _m4 or _sw3 in (162, 163, 164):
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.title = Consts.rank_menu[(MpCanvas.state - 162)]
-                        MpCanvas.menu_size = 2
-                        self.draw_menu_icons()
-                        MpCanvas.box_x = ((MpCanvas.canvas_w - 96) >> 1)
-                        MpCanvas.draw_panel(MpCanvas.buffer_g, MpCanvas.box_x, (MpCanvas.center_y - 54), 96, 15)
-                        self.draw_text_colored(MpCanvas.buffer_g, MpCanvas.user_id, (idiv(MpCanvas.canvas_w, 2) + 4), ((MpCanvas.center_y + 2) - 54), 1, 0xFFFFFF)
-                        MpCanvas.draw_panel(MpCanvas.buffer_g, MpCanvas.box_x, ((MpCanvas.center_y + 14) - 54), 96, 15)
-                        self.draw_text_colored(MpCanvas.buffer_g, Consts.texts[4], (MpCanvas.box_x + 3), (((MpCanvas.center_y + 14) + 2) - 54), 0, 0xFFFFFF)
-                        MpCanvas.draw_number(MpCanvas.buffer_g, ((MpCanvas.box_x + 96) - 7), (((MpCanvas.center_y + 14) + 3) - 54), MpCanvas.my_ranks[MpCanvas.rank_kind], 0)
-                        _sw5 = MpCanvas.state
-                        if _sw5 == 162:
-                            var1_1 = Consts.rank_menu[0]
-                        else:
-                            var1_1 = Consts.texts[3]
-                        MpCanvas.draw_panel(MpCanvas.buffer_g, MpCanvas.box_x, ((MpCanvas.center_y + 28) - 54), 96, 15)
-                        self.draw_text_colored(MpCanvas.buffer_g, var1_1, (MpCanvas.box_x + 3), (((MpCanvas.center_y + 28) + 2) - 54), 0, 0xFFFFFF)
-                        MpCanvas.draw_number(MpCanvas.buffer_g, ((MpCanvas.box_x + 96) - 7), (((MpCanvas.center_y + 28) + 3) - 54), MpCanvas.my_rank_value, 0)
-                    self.draw_buffer()
-                    self.draw_button(MpCanvas.screen_g, Consts.rank_view_menu[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 43), ((MpCanvas.center_y - 19) + 15), 86, 17, False, True)
-                    MpCanvas.draw_menu_cursor(MpCanvas.screen_g)
-                    self.draw_softkeys((-1), 1)
-                    return
-                if _m4 or _sw3 in (170, 171):
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.title = Consts.rank_view_menu[(MpCanvas.state - 170)]
-                        self.draw_window_bg(MpCanvas.buffer_g)
-                        var1_2 = ((MpCanvas.canvas_w - 110) >> 1)
-                        var2_7 = (MpCanvas.canvas_h >> 1)
-                        _sw6 = MpCanvas.rank_list_state
-                        if _sw6 == 162:
-                            var3_14 = Consts.rank_menu[0]
-                        elif _sw6 == 163:
-                            var3_14 = Consts.texts[3]
-                        else:
-                            var3_14 = Consts.texts[3]
-                        var4_16 = 0
-                        while var4_16 < 3:
-                            self.draw_text_colored(MpCanvas.buffer_g, MpCanvas.rank_names[var4_16], MpCanvas.center_x, ((var2_7 - 65) + (45 * var4_16)), 1, 0xFFFFFF)
-                            MpCanvas.draw_panel(MpCanvas.buffer_g, var1_2, ((var2_7 - 52) + (45 * var4_16)), 110, 15)
-                            MpCanvas.draw_panel(MpCanvas.buffer_g, var1_2, ((var2_7 - 38) + (45 * var4_16)), 110, 15)
-                            self.draw_text_colored(MpCanvas.buffer_g, Consts.texts[4], (var1_2 + 3), (((var2_7 - 52) + 2) + (45 * var4_16)), 0, 0xFFFFFF)
-                            MpCanvas.draw_number(MpCanvas.buffer_g, ((var1_2 + 110) - 7), ((((var2_7 - 52) + 2) + 1) + (45 * var4_16)), MpCanvas.rank_ranks[var4_16], 0)
-                            self.draw_text_colored(MpCanvas.buffer_g, var3_14, (var1_2 + 3), (((var2_7 - 38) + 2) + (45 * var4_16)), 0, 0xFFFFFF)
-                            MpCanvas.draw_number(MpCanvas.buffer_g, ((var1_2 + 110) - 7), ((((var2_7 - 38) + 2) + 1) + (45 * var4_16)), MpCanvas.rank_values[var4_16], 0)
-                            var4_16 = var4_16 + 1
-                    self.draw_buffer()
-                    self.draw_softkeys((-1), 1)
-                    return
-                if _m4 or _sw3 == 90:
-                    _m4 = True
-                    if MpCanvas.room_dirty:
-                        self.draw_background()
-                        self.draw_hp_bar_frames()
-                        MpCanvas.room_dirty = False
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.show_record = False
-                    if MpCanvas.hud_dirty:
-                        if MpCanvas.fighter_kind[MpCanvas.cur_slot] == 0:
-                            MpCanvas.show_record = True
-                        self.draw_battle_hud(MpCanvas.buffer_g)
-                        MpCanvas.hud_dirty = False
-                    self.draw_buffer()
-                    self.draw_fighters(MpCanvas.screen_g)
-                    if MpCanvas.show_record:
-                        self.draw_fighter_record()
-                        break
-                    self.draw_waiting()
-                    return
-                if _m4 or _sw3 == 91:
-                    _m4 = True
-                    self.draw_buffer()
-                    self.draw_fighters(MpCanvas.screen_g)
-                    self.draw_stage_intro()
-                    if MpCanvas.state_ticks != idiv(1500, MpCanvas.tick_ms):
-                        break
-                    self.send_request(1038)
-                    return
-                if _m4 or _sw3 == 92:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                    self.draw_buffer()
-                    self.draw_fighters(MpCanvas.screen_g)
-                    if (MpCanvas.state_ticks >= idiv(500, MpCanvas.tick_ms)) and (MpCanvas.state_ticks < idiv(1500, MpCanvas.tick_ms)):
-                        self.draw_quotes(MpCanvas.screen_g, 0)
-                    elif MpCanvas.state_ticks >= idiv(1500, MpCanvas.tick_ms):
-                        self.draw_quotes(MpCanvas.screen_g, 1)
-                    if MpCanvas.state_ticks != idiv(2500, MpCanvas.tick_ms):
-                        break
-                    MpCanvas.round_no = 0
-                    MpCanvas.set_state(93)
-                    return
-                if _m4 or _sw3 == 93:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.noop()
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.round_no = MpCanvas.round_no + 1
-                        if ((MpCanvas.allies_alive == 0) or (MpCanvas.enemies_alive == 0)) or (MpCanvas.fighter_hp[0] == 0):
-                            MpCanvas.set_state(103)
-                        else:
-                            MpCanvas.tick_status_effects()
-                    elif MpCanvas.state_ticks == idiv(1000, MpCanvas.tick_ms):
-                        self.send_request(1025)
-                    self.draw_buffer()
-                    self.draw_fighters(MpCanvas.screen_g)
-                    if ((((MpCanvas.round_no > 0) and (MpCanvas.round_no < 100)) and (MpCanvas.allies_alive != 0)) and (MpCanvas.enemies_alive != 0)) and (MpCanvas.fighter_hp[0] != 0):
-                        self.draw_round(MpCanvas.screen_g)
-                        self.draw_battle_prompt(MpCanvas.screen_g, 2)
-                        self.check_invite_timeout()
-                    return
-                if _m4 or _sw3 == 94:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.bar_shown = False
-                    self.draw_buffer()
-                    if MpCanvas.exit_prompt:
-                        MpCanvas.ping_misses = 1
-                        MpCanvas.state_ticks = MpCanvas.state_ticks - 1
-                        self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 120, 100, 0)
-                        self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) - 10), Consts.texts[60], 0xFFFFFF)
-                        self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) + 2), Consts.texts[61], 0xFFFFFF)
-                        self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) + 14), Consts.texts[62], 0xFFFFFF)
-                        var1_3 = i32(((15 - idiv(((system.currentTimeMillis() - MpCanvas.exit_prompt_time)), 1000))))
-                        self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) + 30), _js(Consts.texts[63], "   "), 0xFFFFFF)
-                        self.draw_text_centred_on(MpCanvas.screen_g, (MpCanvas.center_x + 35), ((MpCanvas.center_y - 21) + 30), _js("", var1_3), 16400640)
-                        var2_8 = 0
-                        while var2_8 < 2:
-                            if MpCanvas.exit_cursor == var2_8:
-                                self.draw_text_colored(MpCanvas.screen_g, Consts.texts[(40 + var2_8)], ((MpCanvas.center_x - 28) + (var2_8 * 55)), (MpCanvas.center_y + 28), 1, 0xFFFFFF)
-                                self.draw_box(MpCanvas.screen_g, ((MpCanvas.center_x - 42) + (var2_8 * 55)), (MpCanvas.center_y + 25), 29, 14, 3)
-                            else:
-                                self.draw_box(MpCanvas.screen_g, ((MpCanvas.center_x - 42) + (var2_8 * 55)), (MpCanvas.center_y + 25), 29, 14, 2)
-                                self.draw_text_colored(MpCanvas.screen_g, Consts.texts[(40 + var2_8)], ((MpCanvas.center_x - 28) + (var2_8 * 55)), (MpCanvas.center_y + 28), 1, 0x646464)
-                            var2_8 = var2_8 + 1
-                        if var1_3 > 0:
-                            break
-                        MpCanvas.exit_prompt = False
-                        break
-                    self.draw_fighters(MpCanvas.screen_g)
-                    MpCanvas.draw_action_pad(MpCanvas.screen_g)
-                    self.draw_battle_prompt(MpCanvas.screen_g, 0)
-                    return
-                if _m4 or _sw3 == 95:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.skill_cursor = 0
-                    self.draw_buffer()
-                    self.draw_fighters(MpCanvas.screen_g)
-                    self.draw_skill_menu(MpCanvas.screen_g)
-                    self.draw_battle_prompt(MpCanvas.screen_g, 1)
-                    return
-                if _m4 or _sw3 == 96:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        _sw7 = MpCanvas.chosen_action
-                        _m8 = False
-                        while True:
-                            if _m8 or _sw7 in (9, 10):
-                                _m8 = True
-                                MpCanvas.target_cursor = 0
-                                if MpCanvas.allies_alive > 1:
-                                    break
-                                self.start_timing()
-                                return
-                            if _m8 or _sw7 in (0, 3, 4, 5, 6, 7):
-                                _m8 = True
-                                MpCanvas.loop_i = 1
-                                while MpCanvas.loop_i < 4:
-                                    if MpCanvas.fighter_present[MpCanvas.loop_i] and (imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) != imod(MpCanvas.fighter_slot[0], 2)):
-                                        MpCanvas.target_cursor = MpCanvas.loop_i
-                                        break
-                                    MpCanvas.loop_i = MpCanvas.loop_i + 1
-                                if MpCanvas.enemies_alive > 1:
-                                    break
-                            if _m8 or _sw7 not in (9, 10, 0, 3, 4, 5, 6, 7):
-                                _m8 = True
-                                self.start_timing()
-                            break
-                    self.draw_buffer()
-                    self.draw_fighters(MpCanvas.screen_g)
-                    MpCanvas.draw_action_pad(MpCanvas.screen_g)
-                    self.draw_target_marker(MpCanvas.screen_g)
-                    self.draw_battle_prompt(MpCanvas.screen_g, 1)
-                    return
-                if _m4 or _sw3 == 97:
-                    _m4 = True
-                    self.draw_buffer()
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        if MpCanvas.chosen_action > 2:
-                            self.draw_fighters(MpCanvas.screen_g)
-                            MpCanvas.draw_action_pad(MpCanvas.screen_g)
-                            self.stop_timing()
-                            return
-                        self.draw_fighters(MpCanvas.screen_g)
-                        MpCanvas.draw_action_pad(MpCanvas.screen_g)
-                        MpCanvas.start_timing_bar()
-                        self.draw_timing_bar(MpCanvas.screen_g)
-                        self.draw_timing_cursor(MpCanvas.screen_g)
-                        return
-                    if MpCanvas.state_ticks > 0:
-                        self.draw_fighters(MpCanvas.screen_g)
-                        MpCanvas.draw_action_pad(MpCanvas.screen_g)
-                        self.draw_timing_bar(MpCanvas.screen_g)
-                        self.draw_timing_cursor(MpCanvas.screen_g)
-                        return
-                    self.draw_fighters(MpCanvas.screen_g)
-                    MpCanvas.draw_action_pad(MpCanvas.screen_g)
-                    self.draw_timing_bar(MpCanvas.screen_g)
-                    self.draw_timing_cursor(MpCanvas.screen_g)
-                    return
-                if _m4 or _sw3 == 98:
-                    _m4 = True
-                    self.draw_buffer()
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        self.draw_fighters(MpCanvas.screen_g)
-                        MpCanvas.draw_action_pad(MpCanvas.screen_g)
-                        self.draw_timing_bar(MpCanvas.screen_g)
-                        if (MpCanvas.chosen_action <= 2) and MpCanvas.bar_shown:
-                            self.draw_timing_cursor(MpCanvas.screen_g)
-                    elif MpCanvas.state_ticks == 4:
-                        self.draw_fighters(MpCanvas.screen_g)
-                        MpCanvas.draw_action_pad(MpCanvas.screen_g)
-                        self.draw_timing_bar(MpCanvas.screen_g)
-                        self.send_request(1027)
+        if MpCanvas.state == 0:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                try:
+                    MpCanvas.logo_image = self.load_image("/gamevillogo.png")
+                    MpCanvas.softkey_image = self.load_image("/softbg.png")
+                    MpCanvas.logo_y = idiv(((MpCanvas.canvas_h - ((MpCanvas.logo_image.getHeight() + 12)))), 2)
+                    MpCanvas.logo_image.getHeight()
+                    MpCanvas.logo_image.getWidth()
+                except Exception:
+                    pass
+                MpCanvas.logo_time = system.currentTimeMillis()
+                Draw.fill_rect(MpCanvas.buffer_g, 0, 0, MpCanvas.canvas_w, MpCanvas.canvas_h, 0xFFFFFF)
+            self.draw_buffer()
+            Draw.draw_image(MpCanvas.screen_g, MpCanvas.logo_image, idiv(MpCanvas.canvas_w, 2), MpCanvas.logo_y, 17)
+            if (system.currentTimeMillis() - MpCanvas.logo_time) <= 3000:
+                return
+            MpCanvas.logo_image = None
+            MpCanvas.state = 5
+        elif MpCanvas.state == 161:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.title = Consts.main_menu[5]
+                MpCanvas.menu_size = 3
+                self.draw_menu_icons()
+            self.draw_buffer()
+            self.draw_button(MpCanvas.screen_g, Consts.rank_menu[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 43), (MpCanvas.center_y - 19), 86, 17, False, True)
+            MpCanvas.draw_menu_cursor(MpCanvas.screen_g)
+            self.draw_softkeys((-1), 1)
+        elif MpCanvas.state in (162, 163, 164):
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.title = Consts.rank_menu[(MpCanvas.state - 162)]
+                MpCanvas.menu_size = 2
+                self.draw_menu_icons()
+                MpCanvas.box_x = ((MpCanvas.canvas_w - 96) >> 1)
+                MpCanvas.draw_panel(MpCanvas.buffer_g, MpCanvas.box_x, (MpCanvas.center_y - 54), 96, 15)
+                self.draw_text_colored(MpCanvas.buffer_g, MpCanvas.user_id, (idiv(MpCanvas.canvas_w, 2) + 4), ((MpCanvas.center_y + 2) - 54), 1, 0xFFFFFF)
+                MpCanvas.draw_panel(MpCanvas.buffer_g, MpCanvas.box_x, ((MpCanvas.center_y + 14) - 54), 96, 15)
+                self.draw_text_colored(MpCanvas.buffer_g, Consts.texts[4], (MpCanvas.box_x + 3), (((MpCanvas.center_y + 14) + 2) - 54), 0, 0xFFFFFF)
+                MpCanvas.draw_number(MpCanvas.buffer_g, ((MpCanvas.box_x + 96) - 7), (((MpCanvas.center_y + 14) + 3) - 54), MpCanvas.my_ranks[MpCanvas.rank_kind], 0)
+                if MpCanvas.state == 162:
+                    var1_1 = Consts.rank_menu[0]
+                else:
+                    var1_1 = Consts.texts[3]
+                MpCanvas.draw_panel(MpCanvas.buffer_g, MpCanvas.box_x, ((MpCanvas.center_y + 28) - 54), 96, 15)
+                self.draw_text_colored(MpCanvas.buffer_g, var1_1, (MpCanvas.box_x + 3), (((MpCanvas.center_y + 28) + 2) - 54), 0, 0xFFFFFF)
+                MpCanvas.draw_number(MpCanvas.buffer_g, ((MpCanvas.box_x + 96) - 7), (((MpCanvas.center_y + 28) + 3) - 54), MpCanvas.my_rank_value, 0)
+            self.draw_buffer()
+            self.draw_button(MpCanvas.screen_g, Consts.rank_view_menu[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 43), ((MpCanvas.center_y - 19) + 15), 86, 17, False, True)
+            MpCanvas.draw_menu_cursor(MpCanvas.screen_g)
+            self.draw_softkeys((-1), 1)
+        elif MpCanvas.state in (170, 171):
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.title = Consts.rank_view_menu[(MpCanvas.state - 170)]
+                self.draw_window_bg(MpCanvas.buffer_g)
+                var1_2 = ((MpCanvas.canvas_w - 110) >> 1)
+                var2_7 = (MpCanvas.canvas_h >> 1)
+                if MpCanvas.rank_list_state == 162:
+                    var3_14 = Consts.rank_menu[0]
+                elif MpCanvas.rank_list_state == 163:
+                    var3_14 = Consts.texts[3]
+                else:
+                    var3_14 = Consts.texts[3]
+                var4_16 = 0
+                while var4_16 < 3:
+                    self.draw_text_colored(MpCanvas.buffer_g, MpCanvas.rank_names[var4_16], MpCanvas.center_x, ((var2_7 - 65) + (45 * var4_16)), 1, 0xFFFFFF)
+                    MpCanvas.draw_panel(MpCanvas.buffer_g, var1_2, ((var2_7 - 52) + (45 * var4_16)), 110, 15)
+                    MpCanvas.draw_panel(MpCanvas.buffer_g, var1_2, ((var2_7 - 38) + (45 * var4_16)), 110, 15)
+                    self.draw_text_colored(MpCanvas.buffer_g, Consts.texts[4], (var1_2 + 3), (((var2_7 - 52) + 2) + (45 * var4_16)), 0, 0xFFFFFF)
+                    MpCanvas.draw_number(MpCanvas.buffer_g, ((var1_2 + 110) - 7), ((((var2_7 - 52) + 2) + 1) + (45 * var4_16)), MpCanvas.rank_ranks[var4_16], 0)
+                    self.draw_text_colored(MpCanvas.buffer_g, var3_14, (var1_2 + 3), (((var2_7 - 38) + 2) + (45 * var4_16)), 0, 0xFFFFFF)
+                    MpCanvas.draw_number(MpCanvas.buffer_g, ((var1_2 + 110) - 7), ((((var2_7 - 38) + 2) + 1) + (45 * var4_16)), MpCanvas.rank_values[var4_16], 0)
+                    var4_16 = var4_16 + 1
+            self.draw_buffer()
+            self.draw_softkeys((-1), 1)
+        elif MpCanvas.state == 90:
+            if MpCanvas.room_dirty:
+                self.draw_background()
+                self.draw_hp_bar_frames()
+                MpCanvas.room_dirty = False
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.show_record = False
+            if MpCanvas.hud_dirty:
+                if MpCanvas.fighter_kind[MpCanvas.cur_slot] == 0:
+                    MpCanvas.show_record = True
+                self.draw_battle_hud(MpCanvas.buffer_g)
+                MpCanvas.hud_dirty = False
+            self.draw_buffer()
+            self.draw_fighters(MpCanvas.screen_g)
+            if MpCanvas.show_record:
+                self.draw_fighter_record()
+                return
+            self.draw_waiting()
+        elif MpCanvas.state == 91:
+            self.draw_buffer()
+            self.draw_fighters(MpCanvas.screen_g)
+            self.draw_stage_intro()
+            if MpCanvas.state_ticks != idiv(1500, MpCanvas.tick_ms):
+                return
+            self.send_request(1038)
+        elif MpCanvas.state == 92:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+            self.draw_buffer()
+            self.draw_fighters(MpCanvas.screen_g)
+            if (MpCanvas.state_ticks >= idiv(500, MpCanvas.tick_ms)) and (MpCanvas.state_ticks < idiv(1500, MpCanvas.tick_ms)):
+                self.draw_quotes(MpCanvas.screen_g, 0)
+            elif MpCanvas.state_ticks >= idiv(1500, MpCanvas.tick_ms):
+                self.draw_quotes(MpCanvas.screen_g, 1)
+            if MpCanvas.state_ticks != idiv(2500, MpCanvas.tick_ms):
+                return
+            MpCanvas.round_no = 0
+            MpCanvas.set_state(93)
+        elif MpCanvas.state == 93:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.noop()
+                MpCanvas.state_ticks = 2
+                MpCanvas.round_no = MpCanvas.round_no + 1
+                if ((MpCanvas.allies_alive == 0) or (MpCanvas.enemies_alive == 0)) or (MpCanvas.fighter_hp[0] == 0):
+                    MpCanvas.set_state(103)
+                else:
+                    MpCanvas.tick_status_effects()
+            elif MpCanvas.state_ticks == idiv(1000, MpCanvas.tick_ms):
+                self.send_request(1025)
+            self.draw_buffer()
+            self.draw_fighters(MpCanvas.screen_g)
+            if ((((MpCanvas.round_no > 0) and (MpCanvas.round_no < 100)) and (MpCanvas.allies_alive != 0)) and (MpCanvas.enemies_alive != 0)) and (MpCanvas.fighter_hp[0] != 0):
+                self.draw_round(MpCanvas.screen_g)
+                self.draw_battle_prompt(MpCanvas.screen_g, 2)
+                self.check_invite_timeout()
+        elif MpCanvas.state == 94:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.bar_shown = False
+            self.draw_buffer()
+            if MpCanvas.exit_prompt:
+                MpCanvas.ping_misses = 1
+                MpCanvas.state_ticks = MpCanvas.state_ticks - 1
+                self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 120, 100, 0)
+                self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) - 10), Consts.texts[60], 0xFFFFFF)
+                self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) + 2), Consts.texts[61], 0xFFFFFF)
+                self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) + 14), Consts.texts[62], 0xFFFFFF)
+                var1_3 = i32(((15 - idiv(((system.currentTimeMillis() - MpCanvas.exit_prompt_time)), 1000))))
+                self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) + 30), _js(Consts.texts[63], "   "), 0xFFFFFF)
+                self.draw_text_centred_on(MpCanvas.screen_g, (MpCanvas.center_x + 35), ((MpCanvas.center_y - 21) + 30), _js("", var1_3), 16400640)
+                var2_8 = 0
+                while var2_8 < 2:
+                    if MpCanvas.exit_cursor == var2_8:
+                        self.draw_text_colored(MpCanvas.screen_g, Consts.texts[(40 + var2_8)], ((MpCanvas.center_x - 28) + (var2_8 * 55)), (MpCanvas.center_y + 28), 1, 0xFFFFFF)
+                        self.draw_box(MpCanvas.screen_g, ((MpCanvas.center_x - 42) + (var2_8 * 55)), (MpCanvas.center_y + 25), 29, 14, 3)
                     else:
-                        self.draw_fighters(MpCanvas.screen_g)
-                        MpCanvas.draw_action_pad(MpCanvas.screen_g)
-                        if MpCanvas.state_ticks < 4:
-                            self.draw_timing_bar(MpCanvas.screen_g)
-                    if MpCanvas.state_ticks < 4:
-                        break
-                    self.draw_battle_prompt(MpCanvas.screen_g, 2)
-                    self.check_invite_timeout()
+                        self.draw_box(MpCanvas.screen_g, ((MpCanvas.center_x - 42) + (var2_8 * 55)), (MpCanvas.center_y + 25), 29, 14, 2)
+                        self.draw_text_colored(MpCanvas.screen_g, Consts.texts[(40 + var2_8)], ((MpCanvas.center_x - 28) + (var2_8 * 55)), (MpCanvas.center_y + 28), 1, 0x646464)
+                    var2_8 = var2_8 + 1
+                if var1_3 > 0:
                     return
-                if _m4 or _sw3 == 99:
-                    _m4 = True
-                    self.draw_buffer()
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                    self.draw_fighters(MpCanvas.screen_g)
-                    self.draw_action_cards()
-                    if MpCanvas.state_ticks < 4:
+                MpCanvas.exit_prompt = False
+                return
+            self.draw_fighters(MpCanvas.screen_g)
+            MpCanvas.draw_action_pad(MpCanvas.screen_g)
+            self.draw_battle_prompt(MpCanvas.screen_g, 0)
+        elif MpCanvas.state == 95:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.skill_cursor = 0
+            self.draw_buffer()
+            self.draw_fighters(MpCanvas.screen_g)
+            self.draw_skill_menu(MpCanvas.screen_g)
+            self.draw_battle_prompt(MpCanvas.screen_g, 1)
+        elif MpCanvas.state == 96:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                while True:
+                    if MpCanvas.chosen_action in (9, 10):
+                        MpCanvas.target_cursor = 0
+                        if MpCanvas.allies_alive > 1:
+                            break
+                        self.start_timing()
                         return
-                    MpCanvas.turn_rec = 0
-                    self.next_turn_record()
-                    return
-                if _m4 or _sw3 == 100:
-                    _m4 = True
-                    self.draw_buffer()
-                    self.draw_fighters(MpCanvas.screen_g)
-                    self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, (MpCanvas.center_y - 25), 80, 20, 0)
-                    self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 6) - 25), Consts.texts[8], 0xFFFFFF)
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        return
-                    if MpCanvas.state_ticks != idiv(1000, MpCanvas.tick_ms):
-                        break
-                    MpCanvas.set_state(93)
-                    return
-                if _m4 or _sw3 == 101:
-                    _m4 = True
-                    self.draw_buffer()
-                    self.draw_fighters(MpCanvas.screen_g)
-                    self.reset_turn()
-                    MpCanvas.set_state(102)
-                    return
-                if _m4 or _sw3 == 102:
-                    _m4 = True
-                    self.draw_buffer()
-                    self.draw_turn_fighters()
-                    self.draw_action_cards()
-                    self.draw_damage()
-                    MpCanvas.anim_frame = MpCanvas.anim_frame + 1
-                    self.step_turn_anim()
-                    return
-                if _m4 or _sw3 == 103:
-                    _m4 = True
-                    self.draw_buffer()
-                    self.draw_fighters(MpCanvas.screen_g)
-                    if MpCanvas.state_ticks >= 2:
-                        break
-                    MpCanvas.state_ticks = 2
-                    self.send_request(1025)
-                    return
-                if _m4 or _sw3 == 104:
-                    _m4 = True
-                    self.draw_buffer()
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.body_images[0] = None
-                        MpCanvas.body_images[1] = None
-                        var1_4 = 0
-                        while var1_4 < 3:
-                            if MpCanvas.body_frames[var1_4] is not None:
-                                MpCanvas.body_frames[var1_4].free()
-                            MpCanvas.body_frames[var1_4] = None
-                            var1_4 = var1_4 + 1
-                        var1_4 = 0
-                        while var1_4 < 10:
-                            MpCanvas.head_images[var1_4][0] = None
-                            MpCanvas.head_images[var1_4][1] = None
-                            var2_9 = 0
-                            while var2_9 < 3:
-                                if MpCanvas.head_frames[var1_4][var2_9] is not None:
-                                    MpCanvas.head_frames[var1_4][var2_9].free()
-                                MpCanvas.head_frames[var1_4][var2_9] = None
-                                var2_9 = var2_9 + 1
-                            var1_4 = var1_4 + 1
-                        var1_4 = 0
-                        while var1_4 < 2:
-                            MpCanvas.weapon_images[var1_4][0] = None
-                            MpCanvas.weapon_images[var1_4][1] = None
-                            var2_9 = 0
-                            while var2_9 < 3:
-                                if MpCanvas.weapon_frames[var1_4][var2_9] is not None:
-                                    MpCanvas.weapon_frames[var1_4][var2_9].free()
-                                MpCanvas.weapon_frames[var1_4][var2_9] = None
-                                var2_9 = var2_9 + 1
-                            var1_4 = var1_4 + 1
-                        MpCanvas.noop()
-                    if MpCanvas.state_ticks < idiv(1000, MpCanvas.tick_ms):
-                        self.draw_fighters(MpCanvas.screen_g)
-                        self.draw_stage_complete()
-                        return
-                    if MpCanvas.state_ticks == idiv(1000, MpCanvas.tick_ms):
-                        self.draw_fighters(MpCanvas.screen_g)
+                    elif MpCanvas.chosen_action in (0, 3, 4, 5, 6, 7):
                         MpCanvas.loop_i = 1
                         while MpCanvas.loop_i < 4:
                             if MpCanvas.fighter_present[MpCanvas.loop_i] and (imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) != imod(MpCanvas.fighter_slot[0], 2)):
-                                MpCanvas.fighter_present[MpCanvas.loop_i] = False
-                            MpCanvas.loop_i = MpCanvas.loop_i + 1
-                        MpCanvas.enemies_alive = 0
-                        self.send_request(1036)
-                        MpCanvas.loop_i = 0
-                        while MpCanvas.loop_i < 4:
-                            MpCanvas.fighter_status[MpCanvas.loop_i] = 99
-                            MpCanvas.fighter_status_ticks[MpCanvas.loop_i] = 0
-                            MpCanvas.loop_i = MpCanvas.loop_i + 1
-                        MpCanvas.set_state(90)
-                        MpCanvas.room_dirty = True
-                        return
-                    self.draw_fighters(MpCanvas.screen_g)
-                    return
-                if _m4 or _sw3 == 105:
-                    _m4 = True
-                    self.draw_buffer()
-                    if MpCanvas.state_ticks < 5:
-                        MpCanvas.state_ticks = 5
-                        self.free_battle_images()
-                        if MpCanvas.battle_won == 1:
-                            self.start_sound(5)
-                        else:
-                            self.start_sound(4)
-                    if MpCanvas.state_ticks < idiv(1500, MpCanvas.tick_ms):
-                        MpCanvas.draw_hp_bars(MpCanvas.screen_g)
-                        self.draw_fighters(MpCanvas.screen_g)
-                        self.draw_quotes(MpCanvas.screen_g, 2)
-                        return
-                    if MpCanvas.state_ticks < idiv(1500, MpCanvas.tick_ms):
-                        break
-                    MpCanvas.draw_hp_bars(MpCanvas.screen_g)
-                    self.draw_fighters(MpCanvas.screen_g)
-                    self.draw_battle_result()
-                    return
-                if _m4 or _sw3 == 10:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        var1_5 = 0
-                        while var1_5 < len(MpCanvas.face_images):
-                            MpCanvas.face_images[var1_5] = None
-                            var1_5 = var1_5 + 1
-                        self.free_battle_images()
-                        MpCanvas.title = Consts.texts[9]
-                        MpCanvas.menu_size = 6
-                        self.draw_menu_icons()
-                    self.draw_buffer()
-                    Draw.draw_image(MpCanvas.screen_g, MpCanvas.mpic_images[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 40), (MpCanvas.center_y - 59), 0)
-                    self.draw_button(MpCanvas.screen_g, Consts.main_menu[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 39), (MpCanvas.center_y + 21), 78, 17, False, True)
-                    MpCanvas.draw_menu_cursor(MpCanvas.screen_g)
-                    if MpCanvas.popup_shown:
-                        self.draw_exit_confirm(MpCanvas.screen_g)
-                        break
-                    self.draw_softkeys(5, 2)
-                    return
-                if _m4 or _sw3 == 11:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.title = Consts.main_menu[0]
-                        MpCanvas.menu_size = 3
-                        self.draw_menu_icons()
-                    Draw.draw_image(MpCanvas.screen_g, MpCanvas.buffer, 0, 0, 0)
-                    self.draw_button(MpCanvas.screen_g, Consts.duel_menu[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 39), (MpCanvas.center_y - 19), 78, 17, False, True)
-                    MpCanvas.draw_menu_cursor(MpCanvas.screen_g)
-                    self.draw_softkeys((-1), 1)
-                    return
-                if _m4 or _sw3 == 12:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.title = Consts.main_menu[1]
-                        MpCanvas.menu_size = 2
-                        self.draw_menu_icons()
-                    self.draw_buffer()
-                    self.draw_button(MpCanvas.screen_g, Consts.mission_menu[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 45), (MpCanvas.center_y - 19), 90, 17, False, True)
-                    MpCanvas.draw_menu_cursor(MpCanvas.screen_g)
-                    self.draw_softkeys((-1), 1)
-                    return
-                if _m4 or _sw3 == 16:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.title = Consts.main_menu[2]
-                        MpCanvas.menu_size = 6
-                        self.draw_menu_icons()
-                    self.draw_buffer()
-                    self.draw_button(MpCanvas.screen_g, Consts.character_menu[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 45), (MpCanvas.center_y - 19), 90, 17, False, True)
-                    MpCanvas.draw_menu_cursor(MpCanvas.screen_g)
-                    self.draw_softkeys((-1), 1)
-                    return
-                if _m4 or _sw3 == 20:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.menu_size = 2
-                        self.draw_challenge_bg(MpCanvas.buffer_g)
-                    self.draw_buffer()
-                    MpCanvas.loop_i = 0
-                    while MpCanvas.loop_i < 2:
-                        if MpCanvas.cursor_stack[MpCanvas.stack_depth] == MpCanvas.loop_i:
-                            self.draw_box(MpCanvas.screen_g, (MpCanvas.center_x - 56), ((MpCanvas.center_y - 16) + (MpCanvas.loop_i * 20)), 111, 14, 3)
-                            self.draw_text_colored(MpCanvas.screen_g, Consts.texts[(38 + MpCanvas.loop_i)], idiv(MpCanvas.screen_w, 2), ((MpCanvas.center_y - 15) + (MpCanvas.loop_i * 20)), 1, 0xFFFFFF)
-                        MpCanvas.loop_i = MpCanvas.loop_i + 1
-                    self.draw_softkeys((-1), 1)
-                    return
-                if _m4 or _sw3 == 21:
-                    _m4 = True
-                    var1_6 = (MpCanvas.center_y - 48)
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.letter_cursor = 0
-                        MpCanvas.input_text = ""
-                        self.draw_user_id_prompt(MpCanvas.buffer_g, var1_6)
-                    self.draw_buffer()
-                    self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (var1_6 + 61), MpCanvas.input_text, 0x41FF41)
-                    MpCanvas.draw_letter_grid(MpCanvas.letter_cursor, (var1_6 + 75))
-                    if imod(MpCanvas.state_ticks, 4) < 2:
-                        var2_10 = MpCanvas.font_white.string_width(MpCanvas.input_text)
-                        if len(MpCanvas.input_text) == 12:
-                            var2_10 = (var2_10 - (MpCanvas.font_white.string_width("A") * 2))
-                        MpCanvas.draw_line_color(MpCanvas.screen_g, (MpCanvas.center_x + idiv(var2_10, 2)), (var1_6 + 71), ((MpCanvas.center_x + idiv(var2_10, 2)) + 4), (var1_6 + 71), 0xFFFFFF)
-                    if len(MpCanvas.input_text) == 0:
-                        self.draw_softkeys(4, 1)
-                        break
-                    self.draw_softkeys(4, 3)
-                    return
-                if _m4 or _sw3 == 80:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.title = Consts.character_menu[0]
-                    self.draw_records()
-                    self.draw_softkeys((-1), 1)
-                    return
-                if _m4 or _sw3 == 81:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.title = Consts.character_menu[1]
-                    self.draw_attributes()
-                    self.draw_softkeys((-1), 1)
-                    return
-                if _m4 or _sw3 == 82:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.title = Consts.character_menu[2]
-                        self.draw_skills_bg(MpCanvas.buffer_g)
-                    self.draw_buffer()
-                    self.draw_skill_slots()
-                    self.draw_softkeys((-1), 1)
-                    return
-                if _m4 or _sw3 == 83:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.title = Consts.character_menu[3]
-                    self.draw_exp_fame_gold()
-                    self.draw_softkeys((-1), 1)
-                    return
-                if _m4 or _sw3 == 84:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.letter_cursor = 0
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.title = Consts.character_menu[4]
-                        self.draw_quote_bg(MpCanvas.buffer_g)
-                    self.draw_buffer()
-                    self.draw_quote_prompt(MpCanvas.screen_g)
-                    if len(MpCanvas.input_text) == 0:
-                        self.draw_softkeys(4, 1)
-                        break
-                    self.draw_softkeys(4, 3)
-                    return
-                if _m4 or _sw3 == 88:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.title = Consts.main_menu[3]
-                        MpCanvas.menu_size = 3
-                        self.draw_options_bg(MpCanvas.buffer_g)
-                    self.draw_buffer()
-                    MpCanvas.loop_i = 0
-                    while MpCanvas.loop_i < 3:
-                        if MpCanvas.cursor_stack[MpCanvas.stack_depth] == MpCanvas.loop_i:
-                            self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[MpCanvas.loop_i], (MpCanvas.center_x - 28), ((MpCanvas.center_y - 15) + (MpCanvas.loop_i * 19)), 1, 0xFFFFFF)
-                            _sw9 = MpCanvas.loop_i
-                            _m10 = False
-                            while True:
-                                if _m10 or _sw9 == 0:
-                                    _m10 = True
-                                    self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[(3 + MpCanvas.speed)], (MpCanvas.center_x + 33), (MpCanvas.center_y - 15), 1, 0xFFFFFF)
-                                    break
-                                if _m10 or _sw9 == 1:
-                                    _m10 = True
-                                    self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[(8 + MpCanvas.invitation)], (MpCanvas.center_x + 33), ((MpCanvas.center_y - 15) + (MpCanvas.loop_i * 19)), 1, 0xFFFFFF)
-                                    break
-                                if _m10 or _sw9 == 2:
-                                    _m10 = True
-                                    if MpCanvas.get_volume() > 0:
-                                        var2_11 = 0
-                                        while var2_11 < MpCanvas.get_volume():
-                                            Draw.fill_rect(MpCanvas.screen_g, ((MpCanvas.center_x + 21) + (5 * var2_11)), ((MpCanvas.center_y - 13) + (MpCanvas.loop_i * 19)), 3, 8, 0xFFFFFF)
-                                            var2_11 = var2_11 + 1
-                                        break
-                                    self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[(6 + ((0 if (MpCanvas.get_volume() > 0) else 1)))], (MpCanvas.center_x + 33), ((MpCanvas.center_y - 15) + (MpCanvas.loop_i * 19)), 1, 0xFFFFFF)
+                                MpCanvas.target_cursor = MpCanvas.loop_i
                                 break
-                            self.draw_box(MpCanvas.screen_g, (MpCanvas.center_x - 58), ((MpCanvas.center_y - 16) + (MpCanvas.loop_i * 19)), 61, 14, 3)
-                            self.draw_box(MpCanvas.screen_g, (MpCanvas.center_x + 13), ((MpCanvas.center_y - 16) + (MpCanvas.loop_i * 19)), 39, 14, 3)
-                            if imod(MpCanvas.state_ticks, 4) < 2:
-                                MpCanvas.draw_left_half((MpCanvas.center_x + 6), ((MpCanvas.center_y - 13) + (MpCanvas.loop_i * 19)), MpCanvas.arrow_images[1])
-                                MpCanvas.draw_right_half((MpCanvas.center_x + 59), ((MpCanvas.center_y - 13) + (MpCanvas.loop_i * 19)), MpCanvas.arrow_images[1])
-                        else:
-                            _sw11 = MpCanvas.loop_i
-                            _m12 = False
-                            while True:
-                                if _m12 or _sw11 == 0:
-                                    _m12 = True
-                                    self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[(3 + MpCanvas.speed)], (MpCanvas.center_x + 33), (MpCanvas.center_y - 15), 1, 0x646464)
-                                    break
-                                if _m12 or _sw11 == 1:
-                                    _m12 = True
-                                    self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[(8 + MpCanvas.invitation)], (MpCanvas.center_x + 33), ((MpCanvas.center_y - 15) + (MpCanvas.loop_i * 19)), 1, 0x646464)
-                                    break
-                                if _m12 or _sw11 == 2:
-                                    _m12 = True
-                                    if MpCanvas.get_volume() > 0:
-                                        var2_11 = 0
-                                        while var2_11 < MpCanvas.get_volume():
-                                            Draw.fill_rect(MpCanvas.screen_g, ((MpCanvas.center_x + 21) + (5 * var2_11)), ((MpCanvas.center_y - 13) + (MpCanvas.loop_i * 19)), 3, 8, 0x646464)
-                                            var2_11 = var2_11 + 1
-                                        break
-                                    self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[(6 + ((0 if (MpCanvas.get_volume() > 0) else 1)))], (MpCanvas.center_x + 33), ((MpCanvas.center_y - 15) + (MpCanvas.loop_i * 19)), 1, 0x646464)
-                                break
-                        MpCanvas.loop_i = MpCanvas.loop_i + 1
-                    self.draw_softkeys((-1), 1)
+                            MpCanvas.loop_i = MpCanvas.loop_i + 1
+                        if MpCanvas.enemies_alive > 1:
+                            break
+                        self.start_timing()
+                    else:
+                        self.start_timing()
+                    break
+            self.draw_buffer()
+            self.draw_fighters(MpCanvas.screen_g)
+            MpCanvas.draw_action_pad(MpCanvas.screen_g)
+            self.draw_target_marker(MpCanvas.screen_g)
+            self.draw_battle_prompt(MpCanvas.screen_g, 1)
+        elif MpCanvas.state == 97:
+            self.draw_buffer()
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                if MpCanvas.chosen_action > 2:
+                    self.draw_fighters(MpCanvas.screen_g)
+                    MpCanvas.draw_action_pad(MpCanvas.screen_g)
+                    self.stop_timing()
                     return
-                if _m4 or _sw3 == 7:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.title = Consts.texts[64]
-                        self.draw_window(MpCanvas.buffer_g)
-                    self.draw_buffer()
-                    self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 112, 48, 0)
-                    self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (MpCanvas.center_y - 18), _js(Consts.texts[64], "!"), 0xFFFFFF)
-                    self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (MpCanvas.center_y - 6), MpCanvas.user_id, 0xFFFFFF)
-                    self.draw_ok_button((MpCanvas.center_y + 9))
-                    return
-                if _m4 or _sw3 == 6:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.title = Consts.texts[18]
-                        self.draw_window(MpCanvas.buffer_g)
-                    self.draw_notice()
-                    return
-                if _m4 or _sw3 == 3:
-                    _m4 = True
-                    self.draw_buffer()
-                    if MpCanvas.state_ticks > idiv(20000, MpCanvas.tick_ms):
-                        MpCanvas.error_msg = 7
-                        self.on_disconnect()
-                        return
-                    self.draw_loading()
-                    return
-                if _m4 or _sw3 == 10000:
-                    _m4 = True
-                    self.draw_buffer()
-                    if MpCanvas.state_ticks == 1:
-                        self.connect()
-                    if MpCanvas.state_ticks > idiv(20000, MpCanvas.tick_ms):
-                        MpCanvas.error_msg = 7
-                        self.on_disconnect()
-                        return
-                    self.draw_loading()
-                    return
-                if _m4 or _sw3 == 4:
-                    _m4 = True
-                    self.draw_buffer()
-                    self.draw_error()
-                    if MpCanvas.popup_shown:
-                        self.draw_exit_confirm(MpCanvas.screen_g)
-                        break
-                    if (MpCanvas.error_msg == 7) or (MpCanvas.error_msg == 1):
-                        self.draw_softkeys(5, 2)
-                    return
-                if _m4 or _sw3 == 5:
-                    _m4 = True
-                    Draw.fill_rect(MpCanvas.screen_g, 0, 0, MpCanvas.canvas_w, MpCanvas.canvas_h, 0)
-                    self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 120, 100, 0)
-                    self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) - 10), Consts.texts[35], 0xFFFFFF)
-                    self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) + 5), Consts.texts[36], 0xFFFFFF)
-                    MpCanvas.loop_i = 0
-                    while MpCanvas.loop_i < 2:
-                        if MpCanvas.cursor_stack[MpCanvas.stack_depth] == MpCanvas.loop_i:
-                            self.draw_text_colored(MpCanvas.screen_g, Consts.texts[(40 + MpCanvas.loop_i)], ((MpCanvas.center_x - 28) + (MpCanvas.loop_i * 55)), (MpCanvas.center_y + 28), 1, 0xFFFFFF)
-                            self.draw_box(MpCanvas.screen_g, ((MpCanvas.center_x - 42) + (MpCanvas.loop_i * 55)), (MpCanvas.center_y + 25), 29, 14, 3)
-                        else:
-                            self.draw_box(MpCanvas.screen_g, ((MpCanvas.center_x - 42) + (MpCanvas.loop_i * 55)), (MpCanvas.center_y + 25), 29, 14, 2)
-                            self.draw_text_colored(MpCanvas.screen_g, Consts.texts[(40 + MpCanvas.loop_i)], ((MpCanvas.center_x - 28) + (MpCanvas.loop_i * 55)), (MpCanvas.center_y + 28), 1, 0x646464)
-                        MpCanvas.loop_i = MpCanvas.loop_i + 1
-                    return
-                if _m4 or _sw3 == 1:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        var2_12 = idiv(((MpCanvas.screen_h - 320)), 2)
-                        var3_15 = 0
-                        while var3_15 < 4:
-                            MpCanvas.title_image = self.load_image(_js(_js("/title_", ((var3_15 + 1))), ".png"))
-                            Draw.draw_image(MpCanvas.buffer_g, MpCanvas.title_image, (MpCanvas.center_x - idiv(MpCanvas.title_image.getWidth(), 2)), (var2_12 + (80 * var3_15)), 0)
-                            MpCanvas.title_image = None
-                            var3_15 = var3_15 + 1
-                        if MpCanvas.gamevil_image is None:
-                            MpCanvas.gamevil_image = self.load_image("/gamevil.png")
-                        Draw.draw_image(MpCanvas.buffer_g, MpCanvas.gamevil_image, idiv(MpCanvas.canvas_w, 2), (MpCanvas.canvas_h - 1), 33)
-                        if MpCanvas.press_image is None:
-                            MpCanvas.press_image = self.load_image("/press.png")
-                    self.draw_buffer()
-                    if imod(MpCanvas.state_ticks, 4) >= 2:
-                        break
-                    Draw.draw_image(MpCanvas.screen_g, MpCanvas.press_image, idiv(MpCanvas.canvas_w, 2), (MpCanvas.canvas_h - 27), 33)
-                    return
-                if _m4 or _sw3 == 2:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.input_text = ""
-                        self.free_battle_images()
-                        MpCanvas.title = Consts.login_texts[0]
-                        self.draw_window_bg(MpCanvas.buffer_g)
-                    self.draw_buffer()
-                    self.draw_popup()
-                    return
-                if _m4 or _sw3 == 160:
-                    _m4 = True
-                    self.draw_buffer()
-                    _sw13 = MpCanvas.popup_style
-                    _m14 = False
+                self.draw_fighters(MpCanvas.screen_g)
+                MpCanvas.draw_action_pad(MpCanvas.screen_g)
+                MpCanvas.start_timing_bar()
+                self.draw_timing_bar(MpCanvas.screen_g)
+                self.draw_timing_cursor(MpCanvas.screen_g)
+                return
+            if MpCanvas.state_ticks > 0:
+                self.draw_fighters(MpCanvas.screen_g)
+                MpCanvas.draw_action_pad(MpCanvas.screen_g)
+                self.draw_timing_bar(MpCanvas.screen_g)
+                self.draw_timing_cursor(MpCanvas.screen_g)
+                return
+            self.draw_fighters(MpCanvas.screen_g)
+            MpCanvas.draw_action_pad(MpCanvas.screen_g)
+            self.draw_timing_bar(MpCanvas.screen_g)
+            self.draw_timing_cursor(MpCanvas.screen_g)
+        elif MpCanvas.state == 98:
+            self.draw_buffer()
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                self.draw_fighters(MpCanvas.screen_g)
+                MpCanvas.draw_action_pad(MpCanvas.screen_g)
+                self.draw_timing_bar(MpCanvas.screen_g)
+                if (MpCanvas.chosen_action <= 2) and MpCanvas.bar_shown:
+                    self.draw_timing_cursor(MpCanvas.screen_g)
+            elif MpCanvas.state_ticks == 4:
+                self.draw_fighters(MpCanvas.screen_g)
+                MpCanvas.draw_action_pad(MpCanvas.screen_g)
+                self.draw_timing_bar(MpCanvas.screen_g)
+                self.send_request(1027)
+            else:
+                self.draw_fighters(MpCanvas.screen_g)
+                MpCanvas.draw_action_pad(MpCanvas.screen_g)
+                if MpCanvas.state_ticks < 4:
+                    self.draw_timing_bar(MpCanvas.screen_g)
+            if MpCanvas.state_ticks < 4:
+                return
+            self.draw_battle_prompt(MpCanvas.screen_g, 2)
+            self.check_invite_timeout()
+        elif MpCanvas.state == 99:
+            self.draw_buffer()
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+            self.draw_fighters(MpCanvas.screen_g)
+            self.draw_action_cards()
+            if MpCanvas.state_ticks < 4:
+                return
+            MpCanvas.turn_rec = 0
+            self.next_turn_record()
+        elif MpCanvas.state == 100:
+            self.draw_buffer()
+            self.draw_fighters(MpCanvas.screen_g)
+            self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, (MpCanvas.center_y - 25), 80, 20, 0)
+            self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 6) - 25), Consts.texts[8], 0xFFFFFF)
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                return
+            if MpCanvas.state_ticks != idiv(1000, MpCanvas.tick_ms):
+                return
+            MpCanvas.set_state(93)
+        elif MpCanvas.state == 101:
+            self.draw_buffer()
+            self.draw_fighters(MpCanvas.screen_g)
+            self.reset_turn()
+            MpCanvas.set_state(102)
+        elif MpCanvas.state == 102:
+            self.draw_buffer()
+            self.draw_turn_fighters()
+            self.draw_action_cards()
+            self.draw_damage()
+            MpCanvas.anim_frame = MpCanvas.anim_frame + 1
+            self.step_turn_anim()
+        elif MpCanvas.state == 103:
+            self.draw_buffer()
+            self.draw_fighters(MpCanvas.screen_g)
+            if MpCanvas.state_ticks >= 2:
+                return
+            MpCanvas.state_ticks = 2
+            self.send_request(1025)
+        elif MpCanvas.state == 104:
+            self.draw_buffer()
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.body_images[0] = None
+                MpCanvas.body_images[1] = None
+                var1_4 = 0
+                while var1_4 < 3:
+                    if MpCanvas.body_frames[var1_4] is not None:
+                        MpCanvas.body_frames[var1_4].free()
+                    MpCanvas.body_frames[var1_4] = None
+                    var1_4 = var1_4 + 1
+                var1_4 = 0
+                while var1_4 < 10:
+                    MpCanvas.head_images[var1_4][0] = None
+                    MpCanvas.head_images[var1_4][1] = None
+                    var2_9 = 0
+                    while var2_9 < 3:
+                        if MpCanvas.head_frames[var1_4][var2_9] is not None:
+                            MpCanvas.head_frames[var1_4][var2_9].free()
+                        MpCanvas.head_frames[var1_4][var2_9] = None
+                        var2_9 = var2_9 + 1
+                    var1_4 = var1_4 + 1
+                var1_4 = 0
+                while var1_4 < 2:
+                    MpCanvas.weapon_images[var1_4][0] = None
+                    MpCanvas.weapon_images[var1_4][1] = None
+                    var2_9 = 0
+                    while var2_9 < 3:
+                        if MpCanvas.weapon_frames[var1_4][var2_9] is not None:
+                            MpCanvas.weapon_frames[var1_4][var2_9].free()
+                        MpCanvas.weapon_frames[var1_4][var2_9] = None
+                        var2_9 = var2_9 + 1
+                    var1_4 = var1_4 + 1
+                MpCanvas.noop()
+            if MpCanvas.state_ticks < idiv(1000, MpCanvas.tick_ms):
+                self.draw_fighters(MpCanvas.screen_g)
+                self.draw_stage_complete()
+                return
+            if MpCanvas.state_ticks == idiv(1000, MpCanvas.tick_ms):
+                self.draw_fighters(MpCanvas.screen_g)
+                MpCanvas.loop_i = 1
+                while MpCanvas.loop_i < 4:
+                    if MpCanvas.fighter_present[MpCanvas.loop_i] and (imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) != imod(MpCanvas.fighter_slot[0], 2)):
+                        MpCanvas.fighter_present[MpCanvas.loop_i] = False
+                    MpCanvas.loop_i = MpCanvas.loop_i + 1
+                MpCanvas.enemies_alive = 0
+                self.send_request(1036)
+                MpCanvas.loop_i = 0
+                while MpCanvas.loop_i < 4:
+                    MpCanvas.fighter_status[MpCanvas.loop_i] = 99
+                    MpCanvas.fighter_status_ticks[MpCanvas.loop_i] = 0
+                    MpCanvas.loop_i = MpCanvas.loop_i + 1
+                MpCanvas.set_state(90)
+                MpCanvas.room_dirty = True
+                return
+            self.draw_fighters(MpCanvas.screen_g)
+        elif MpCanvas.state == 105:
+            self.draw_buffer()
+            if MpCanvas.state_ticks < 5:
+                MpCanvas.state_ticks = 5
+                self.free_battle_images()
+                if MpCanvas.battle_won == 1:
+                    self.start_sound(5)
+                else:
+                    self.start_sound(4)
+            if MpCanvas.state_ticks < idiv(1500, MpCanvas.tick_ms):
+                MpCanvas.draw_hp_bars(MpCanvas.screen_g)
+                self.draw_fighters(MpCanvas.screen_g)
+                self.draw_quotes(MpCanvas.screen_g, 2)
+                return
+            if MpCanvas.state_ticks < idiv(1500, MpCanvas.tick_ms):
+                return
+            MpCanvas.draw_hp_bars(MpCanvas.screen_g)
+            self.draw_fighters(MpCanvas.screen_g)
+            self.draw_battle_result()
+        elif MpCanvas.state == 10:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                var1_5 = 0
+                while var1_5 < len(MpCanvas.face_images):
+                    MpCanvas.face_images[var1_5] = None
+                    var1_5 = var1_5 + 1
+                self.free_battle_images()
+                MpCanvas.title = Consts.texts[9]
+                MpCanvas.menu_size = 6
+                self.draw_menu_icons()
+            self.draw_buffer()
+            Draw.draw_image(MpCanvas.screen_g, MpCanvas.mpic_images[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 40), (MpCanvas.center_y - 59), 0)
+            self.draw_button(MpCanvas.screen_g, Consts.main_menu[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 39), (MpCanvas.center_y + 21), 78, 17, False, True)
+            MpCanvas.draw_menu_cursor(MpCanvas.screen_g)
+            if MpCanvas.popup_shown:
+                self.draw_exit_confirm(MpCanvas.screen_g)
+                return
+            self.draw_softkeys(5, 2)
+        elif MpCanvas.state == 11:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.title = Consts.main_menu[0]
+                MpCanvas.menu_size = 3
+                self.draw_menu_icons()
+            Draw.draw_image(MpCanvas.screen_g, MpCanvas.buffer, 0, 0, 0)
+            self.draw_button(MpCanvas.screen_g, Consts.duel_menu[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 39), (MpCanvas.center_y - 19), 78, 17, False, True)
+            MpCanvas.draw_menu_cursor(MpCanvas.screen_g)
+            self.draw_softkeys((-1), 1)
+        elif MpCanvas.state == 12:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.title = Consts.main_menu[1]
+                MpCanvas.menu_size = 2
+                self.draw_menu_icons()
+            self.draw_buffer()
+            self.draw_button(MpCanvas.screen_g, Consts.mission_menu[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 45), (MpCanvas.center_y - 19), 90, 17, False, True)
+            MpCanvas.draw_menu_cursor(MpCanvas.screen_g)
+            self.draw_softkeys((-1), 1)
+        elif MpCanvas.state == 16:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.title = Consts.main_menu[2]
+                MpCanvas.menu_size = 6
+                self.draw_menu_icons()
+            self.draw_buffer()
+            self.draw_button(MpCanvas.screen_g, Consts.character_menu[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 45), (MpCanvas.center_y - 19), 90, 17, False, True)
+            MpCanvas.draw_menu_cursor(MpCanvas.screen_g)
+            self.draw_softkeys((-1), 1)
+        elif MpCanvas.state == 20:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.menu_size = 2
+                self.draw_challenge_bg(MpCanvas.buffer_g)
+            self.draw_buffer()
+            MpCanvas.loop_i = 0
+            while MpCanvas.loop_i < 2:
+                if MpCanvas.cursor_stack[MpCanvas.stack_depth] == MpCanvas.loop_i:
+                    self.draw_box(MpCanvas.screen_g, (MpCanvas.center_x - 56), ((MpCanvas.center_y - 16) + (MpCanvas.loop_i * 20)), 111, 14, 3)
+                    self.draw_text_colored(MpCanvas.screen_g, Consts.texts[(38 + MpCanvas.loop_i)], idiv(MpCanvas.screen_w, 2), ((MpCanvas.center_y - 15) + (MpCanvas.loop_i * 20)), 1, 0xFFFFFF)
+                MpCanvas.loop_i = MpCanvas.loop_i + 1
+            self.draw_softkeys((-1), 1)
+        elif MpCanvas.state == 21:
+            var1_6 = (MpCanvas.center_y - 48)
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.letter_cursor = 0
+                MpCanvas.input_text = ""
+                self.draw_user_id_prompt(MpCanvas.buffer_g, var1_6)
+            self.draw_buffer()
+            self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (var1_6 + 61), MpCanvas.input_text, 0x41FF41)
+            MpCanvas.draw_letter_grid(MpCanvas.letter_cursor, (var1_6 + 75))
+            if imod(MpCanvas.state_ticks, 4) < 2:
+                var2_10 = MpCanvas.font_white.string_width(MpCanvas.input_text)
+                if len(MpCanvas.input_text) == 12:
+                    var2_10 = (var2_10 - (MpCanvas.font_white.string_width("A") * 2))
+                MpCanvas.draw_line_color(MpCanvas.screen_g, (MpCanvas.center_x + idiv(var2_10, 2)), (var1_6 + 71), ((MpCanvas.center_x + idiv(var2_10, 2)) + 4), (var1_6 + 71), 0xFFFFFF)
+            if len(MpCanvas.input_text) == 0:
+                self.draw_softkeys(4, 1)
+                return
+            self.draw_softkeys(4, 3)
+        elif MpCanvas.state == 80:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.title = Consts.character_menu[0]
+            self.draw_records()
+            self.draw_softkeys((-1), 1)
+        elif MpCanvas.state == 81:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.title = Consts.character_menu[1]
+            self.draw_attributes()
+            self.draw_softkeys((-1), 1)
+        elif MpCanvas.state == 82:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.title = Consts.character_menu[2]
+                self.draw_skills_bg(MpCanvas.buffer_g)
+            self.draw_buffer()
+            self.draw_skill_slots()
+            self.draw_softkeys((-1), 1)
+        elif MpCanvas.state == 83:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.title = Consts.character_menu[3]
+            self.draw_exp_fame_gold()
+            self.draw_softkeys((-1), 1)
+        elif MpCanvas.state == 84:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.letter_cursor = 0
+                MpCanvas.state_ticks = 2
+                MpCanvas.title = Consts.character_menu[4]
+                self.draw_quote_bg(MpCanvas.buffer_g)
+            self.draw_buffer()
+            self.draw_quote_prompt(MpCanvas.screen_g)
+            if len(MpCanvas.input_text) == 0:
+                self.draw_softkeys(4, 1)
+                return
+            self.draw_softkeys(4, 3)
+        elif MpCanvas.state == 88:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.title = Consts.main_menu[3]
+                MpCanvas.menu_size = 3
+                self.draw_options_bg(MpCanvas.buffer_g)
+            self.draw_buffer()
+            MpCanvas.loop_i = 0
+            while MpCanvas.loop_i < 3:
+                if MpCanvas.cursor_stack[MpCanvas.stack_depth] == MpCanvas.loop_i:
+                    self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[MpCanvas.loop_i], (MpCanvas.center_x - 28), ((MpCanvas.center_y - 15) + (MpCanvas.loop_i * 19)), 1, 0xFFFFFF)
                     while True:
-                        if _m14 or _sw13 == 0:
-                            _m14 = True
-                            MpCanvas.tmp = len(MpCanvas.popup_line1)
-                            self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, ((MpCanvas.tmp * 7) + 6), 45, 0)
-                            self.draw_text_centred(MpCanvas.center_x, (MpCanvas.center_y - 13), MpCanvas.popup_line1, 16400640)
-                            self.draw_text_centred(MpCanvas.center_x, (MpCanvas.center_y + 2), MpCanvas.popup_line2, 16400640)
-                            raise _Brk_block1_457()
-                        if _m14 or _sw13 == 1:
-                            _m14 = True
-                            self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 120, 100, 0)
-                            self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) - 10), MpCanvas.popup_line1, 16400640)
-                            self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) + 5), MpCanvas.popup_line2, 16400640)
-                            self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) + 20), Consts.texts[19], 16400640)
-                            MpCanvas.loop_i = 0
-                            while MpCanvas.loop_i < 2:
-                                if MpCanvas.cursor_stack[MpCanvas.stack_depth] == MpCanvas.loop_i:
-                                    self.draw_text_colored(MpCanvas.screen_g, Consts.texts[(40 + MpCanvas.loop_i)], ((MpCanvas.center_x - 28) + (MpCanvas.loop_i * 55)), (MpCanvas.center_y + 28), 1, 16400640)
-                                    self.draw_box(MpCanvas.screen_g, ((MpCanvas.center_x - 42) + (MpCanvas.loop_i * 55)), (MpCanvas.center_y + 25), 29, 14, 3)
-                                else:
-                                    self.draw_box(MpCanvas.screen_g, ((MpCanvas.center_x - 42) + (MpCanvas.loop_i * 55)), (MpCanvas.center_y + 25), 29, 14, 2)
-                                    self.draw_text_colored(MpCanvas.screen_g, Consts.texts[(40 + MpCanvas.loop_i)], ((MpCanvas.center_x - 28) + (MpCanvas.loop_i * 55)), (MpCanvas.center_y + 28), 1, 0xFFFFFF)
-                                MpCanvas.loop_i = MpCanvas.loop_i + 1
-                            raise _Brk_block1_457()
-                        if _m14 or _sw13 == 2:
-                            _m14 = True
-                            self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 120, 100, 0)
-                            self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 26) - 10), MpCanvas.popup_line1, 16400640)
-                            self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 26) + 5), MpCanvas.popup_line2, 16400640)
-                            self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 26) + 20), MpCanvas.popup_line3, 16400640)
-                            self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 26) + 35), MpCanvas.popup_line4, 16400640)
-                            self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 26) + 50), MpCanvas.popup_line5, 16400640)
-                        if _m14 or _sw13 not in (0, 1, 2):
-                            _m14 = True
-                            return
+                        if MpCanvas.loop_i == 0:
+                            self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[(3 + MpCanvas.speed)], (MpCanvas.center_x + 33), (MpCanvas.center_y - 15), 1, 0xFFFFFF)
+                        elif MpCanvas.loop_i == 1:
+                            self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[(8 + MpCanvas.invitation)], (MpCanvas.center_x + 33), ((MpCanvas.center_y - 15) + (MpCanvas.loop_i * 19)), 1, 0xFFFFFF)
+                        elif MpCanvas.loop_i == 2:
+                            if MpCanvas.get_volume() > 0:
+                                var2_11 = 0
+                                while var2_11 < MpCanvas.get_volume():
+                                    Draw.fill_rect(MpCanvas.screen_g, ((MpCanvas.center_x + 21) + (5 * var2_11)), ((MpCanvas.center_y - 13) + (MpCanvas.loop_i * 19)), 3, 8, 0xFFFFFF)
+                                    var2_11 = var2_11 + 1
+                                break
+                            self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[(6 + ((0 if (MpCanvas.get_volume() > 0) else 1)))], (MpCanvas.center_x + 33), ((MpCanvas.center_y - 15) + (MpCanvas.loop_i * 19)), 1, 0xFFFFFF)
                         break
-                if _m4 or _sw3 == 300:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.disconnect()
-                        self.stop_music()
-                        MpCanvas.logo_image = self.load_image("/outro.png")
-                    Draw.fill_rect(MpCanvas.screen_g, 0, 0, MpCanvas.screen_w, MpCanvas.screen_h, 0)
-                    var2_13 = MpCanvas.logo_image.getWidth()
-                    Gfx.draw_image_part(MpCanvas.logo_image, (MpCanvas.center_x - idiv(var2_13, 2)), (MpCanvas.center_y - 10), var2_13, 19, 0, 0)
-                    Gfx.draw_image_part(MpCanvas.logo_image, (MpCanvas.center_x - idiv(var2_13, 2)), (MpCanvas.screen_h - 26), var2_13, 23, 0, 19)
-                    if MpCanvas.state_ticks <= 30:
+                    self.draw_box(MpCanvas.screen_g, (MpCanvas.center_x - 58), ((MpCanvas.center_y - 16) + (MpCanvas.loop_i * 19)), 61, 14, 3)
+                    self.draw_box(MpCanvas.screen_g, (MpCanvas.center_x + 13), ((MpCanvas.center_y - 16) + (MpCanvas.loop_i * 19)), 39, 14, 3)
+                    if imod(MpCanvas.state_ticks, 4) < 2:
+                        MpCanvas.draw_left_half((MpCanvas.center_x + 6), ((MpCanvas.center_y - 13) + (MpCanvas.loop_i * 19)), MpCanvas.arrow_images[1])
+                        MpCanvas.draw_right_half((MpCanvas.center_x + 59), ((MpCanvas.center_y - 13) + (MpCanvas.loop_i * 19)), MpCanvas.arrow_images[1])
+                else:
+                    while True:
+                        if MpCanvas.loop_i == 0:
+                            self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[(3 + MpCanvas.speed)], (MpCanvas.center_x + 33), (MpCanvas.center_y - 15), 1, 0x646464)
+                        elif MpCanvas.loop_i == 1:
+                            self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[(8 + MpCanvas.invitation)], (MpCanvas.center_x + 33), ((MpCanvas.center_y - 15) + (MpCanvas.loop_i * 19)), 1, 0x646464)
+                        elif MpCanvas.loop_i == 2:
+                            if MpCanvas.get_volume() > 0:
+                                var2_11 = 0
+                                while var2_11 < MpCanvas.get_volume():
+                                    Draw.fill_rect(MpCanvas.screen_g, ((MpCanvas.center_x + 21) + (5 * var2_11)), ((MpCanvas.center_y - 13) + (MpCanvas.loop_i * 19)), 3, 8, 0x646464)
+                                    var2_11 = var2_11 + 1
+                                break
+                            self.draw_text_colored(MpCanvas.screen_g, Consts.option_texts[(6 + ((0 if (MpCanvas.get_volume() > 0) else 1)))], (MpCanvas.center_x + 33), ((MpCanvas.center_y - 15) + (MpCanvas.loop_i * 19)), 1, 0x646464)
                         break
-                    MpCanvas.midlet.destroyApp(True)
-                    MpCanvas.midlet.notifyDestroyed()
-                    return
-                if _m4 or _sw3 == 87:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.title = Consts.main_menu[4]
-                        MpCanvas.menu_size = 6
-                        self.draw_menu_icons()
-                    self.draw_buffer()
-                    self.draw_button(MpCanvas.screen_g, Consts.help_topics[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 39), (MpCanvas.center_y - 19), 78, 17, False, True)
-                    MpCanvas.draw_menu_cursor(MpCanvas.screen_g)
-                    self.draw_softkeys((-1), 1)
-                    return
-                if _m4 or _sw3 == 89:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.help_page = 0
-                    self.draw_help()
-                    self.draw_softkeys((-1), 1)
-                    return
-                if _m4 or _sw3 == 85:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        _sw15 = MpCanvas.state
-                        if _sw15 == 85:
-                            MpCanvas.title = Consts.character_menu[5]
-                        self.draw_name_prompt(MpCanvas.buffer_g)
-                    self.draw_buffer()
-                    self.draw_input_line(MpCanvas.screen_g)
-                    if len(MpCanvas.input_text) == 0:
-                        self.draw_softkeys(4, 1)
-                        break
-                    self.draw_softkeys(4, 3)
-                    return
-                if _m4 or _sw3 == 86:
-                    _m4 = True
-                    if MpCanvas.state_ticks < 2:
-                        MpCanvas.state_ticks = 2
-                        MpCanvas.menu_size = 2
-                    self.draw_buffer()
-                    self.draw_input_line(MpCanvas.screen_g)
-                    self.draw_name_confirm(MpCanvas.screen_g)
-                break
-        except _Brk_block1_457:
-            pass
+                MpCanvas.loop_i = MpCanvas.loop_i + 1
+            self.draw_softkeys((-1), 1)
+        elif MpCanvas.state == 7:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.title = Consts.texts[64]
+                self.draw_window(MpCanvas.buffer_g)
+            self.draw_buffer()
+            self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 112, 48, 0)
+            self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (MpCanvas.center_y - 18), _js(Consts.texts[64], "!"), 0xFFFFFF)
+            self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (MpCanvas.center_y - 6), MpCanvas.user_id, 0xFFFFFF)
+            self.draw_ok_button((MpCanvas.center_y + 9))
+        elif MpCanvas.state == 6:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.title = Consts.texts[18]
+                self.draw_window(MpCanvas.buffer_g)
+            self.draw_notice()
+        elif MpCanvas.state == 3:
+            self.draw_buffer()
+            if MpCanvas.state_ticks > idiv(20000, MpCanvas.tick_ms):
+                MpCanvas.error_msg = 7
+                self.on_disconnect()
+                return
+            self.draw_loading()
+        elif MpCanvas.state == 10000:
+            self.draw_buffer()
+            if MpCanvas.state_ticks == 1:
+                self.connect()
+            if MpCanvas.state_ticks > idiv(20000, MpCanvas.tick_ms):
+                MpCanvas.error_msg = 7
+                self.on_disconnect()
+                return
+            self.draw_loading()
+        elif MpCanvas.state == 4:
+            self.draw_buffer()
+            self.draw_error()
+            if MpCanvas.popup_shown:
+                self.draw_exit_confirm(MpCanvas.screen_g)
+                return
+            if (MpCanvas.error_msg == 7) or (MpCanvas.error_msg == 1):
+                self.draw_softkeys(5, 2)
+        elif MpCanvas.state == 5:
+            Draw.fill_rect(MpCanvas.screen_g, 0, 0, MpCanvas.canvas_w, MpCanvas.canvas_h, 0)
+            self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 120, 100, 0)
+            self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) - 10), Consts.texts[35], 0xFFFFFF)
+            self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) + 5), Consts.texts[36], 0xFFFFFF)
+            MpCanvas.loop_i = 0
+            while MpCanvas.loop_i < 2:
+                if MpCanvas.cursor_stack[MpCanvas.stack_depth] == MpCanvas.loop_i:
+                    self.draw_text_colored(MpCanvas.screen_g, Consts.texts[(40 + MpCanvas.loop_i)], ((MpCanvas.center_x - 28) + (MpCanvas.loop_i * 55)), (MpCanvas.center_y + 28), 1, 0xFFFFFF)
+                    self.draw_box(MpCanvas.screen_g, ((MpCanvas.center_x - 42) + (MpCanvas.loop_i * 55)), (MpCanvas.center_y + 25), 29, 14, 3)
+                else:
+                    self.draw_box(MpCanvas.screen_g, ((MpCanvas.center_x - 42) + (MpCanvas.loop_i * 55)), (MpCanvas.center_y + 25), 29, 14, 2)
+                    self.draw_text_colored(MpCanvas.screen_g, Consts.texts[(40 + MpCanvas.loop_i)], ((MpCanvas.center_x - 28) + (MpCanvas.loop_i * 55)), (MpCanvas.center_y + 28), 1, 0x646464)
+                MpCanvas.loop_i = MpCanvas.loop_i + 1
+        elif MpCanvas.state == 1:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                var2_12 = idiv(((MpCanvas.screen_h - 320)), 2)
+                var3_15 = 0
+                while var3_15 < 4:
+                    MpCanvas.title_image = self.load_image(_js(_js("/title_", ((var3_15 + 1))), ".png"))
+                    Draw.draw_image(MpCanvas.buffer_g, MpCanvas.title_image, (MpCanvas.center_x - idiv(MpCanvas.title_image.getWidth(), 2)), (var2_12 + (80 * var3_15)), 0)
+                    MpCanvas.title_image = None
+                    var3_15 = var3_15 + 1
+                if MpCanvas.gamevil_image is None:
+                    MpCanvas.gamevil_image = self.load_image("/gamevil.png")
+                Draw.draw_image(MpCanvas.buffer_g, MpCanvas.gamevil_image, idiv(MpCanvas.canvas_w, 2), (MpCanvas.canvas_h - 1), 33)
+                if MpCanvas.press_image is None:
+                    MpCanvas.press_image = self.load_image("/press.png")
+            self.draw_buffer()
+            if imod(MpCanvas.state_ticks, 4) >= 2:
+                return
+            Draw.draw_image(MpCanvas.screen_g, MpCanvas.press_image, idiv(MpCanvas.canvas_w, 2), (MpCanvas.canvas_h - 27), 33)
+        elif MpCanvas.state == 2:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.input_text = ""
+                self.free_battle_images()
+                MpCanvas.title = Consts.login_texts[0]
+                self.draw_window_bg(MpCanvas.buffer_g)
+            self.draw_buffer()
+            self.draw_popup()
+        elif MpCanvas.state == 160:
+            self.draw_buffer()
+            if MpCanvas.popup_style == 0:
+                MpCanvas.tmp = len(MpCanvas.popup_line1)
+                self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, ((MpCanvas.tmp * 7) + 6), 45, 0)
+                self.draw_text_centred(MpCanvas.center_x, (MpCanvas.center_y - 13), MpCanvas.popup_line1, 16400640)
+                self.draw_text_centred(MpCanvas.center_x, (MpCanvas.center_y + 2), MpCanvas.popup_line2, 16400640)
+            elif MpCanvas.popup_style == 1:
+                self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 120, 100, 0)
+                self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) - 10), MpCanvas.popup_line1, 16400640)
+                self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) + 5), MpCanvas.popup_line2, 16400640)
+                self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 21) + 20), Consts.texts[19], 16400640)
+                MpCanvas.loop_i = 0
+                while MpCanvas.loop_i < 2:
+                    if MpCanvas.cursor_stack[MpCanvas.stack_depth] == MpCanvas.loop_i:
+                        self.draw_text_colored(MpCanvas.screen_g, Consts.texts[(40 + MpCanvas.loop_i)], ((MpCanvas.center_x - 28) + (MpCanvas.loop_i * 55)), (MpCanvas.center_y + 28), 1, 16400640)
+                        self.draw_box(MpCanvas.screen_g, ((MpCanvas.center_x - 42) + (MpCanvas.loop_i * 55)), (MpCanvas.center_y + 25), 29, 14, 3)
+                    else:
+                        self.draw_box(MpCanvas.screen_g, ((MpCanvas.center_x - 42) + (MpCanvas.loop_i * 55)), (MpCanvas.center_y + 25), 29, 14, 2)
+                        self.draw_text_colored(MpCanvas.screen_g, Consts.texts[(40 + MpCanvas.loop_i)], ((MpCanvas.center_x - 28) + (MpCanvas.loop_i * 55)), (MpCanvas.center_y + 28), 1, 0xFFFFFF)
+                    MpCanvas.loop_i = MpCanvas.loop_i + 1
+            elif MpCanvas.popup_style == 2:
+                self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 120, 100, 0)
+                self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 26) - 10), MpCanvas.popup_line1, 16400640)
+                self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 26) + 5), MpCanvas.popup_line2, 16400640)
+                self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 26) + 20), MpCanvas.popup_line3, 16400640)
+                self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 26) + 35), MpCanvas.popup_line4, 16400640)
+                self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((MpCanvas.center_y - 26) + 50), MpCanvas.popup_line5, 16400640)
+            else:
+                return
+        elif MpCanvas.state == 300:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.disconnect()
+                self.stop_music()
+                MpCanvas.logo_image = self.load_image("/outro.png")
+            Draw.fill_rect(MpCanvas.screen_g, 0, 0, MpCanvas.screen_w, MpCanvas.screen_h, 0)
+            var2_13 = MpCanvas.logo_image.getWidth()
+            Gfx.draw_image_part(MpCanvas.logo_image, (MpCanvas.center_x - idiv(var2_13, 2)), (MpCanvas.center_y - 10), var2_13, 19, 0, 0)
+            Gfx.draw_image_part(MpCanvas.logo_image, (MpCanvas.center_x - idiv(var2_13, 2)), (MpCanvas.screen_h - 26), var2_13, 23, 0, 19)
+            if MpCanvas.state_ticks <= 30:
+                return
+            MpCanvas.midlet.destroyApp(True)
+            MpCanvas.midlet.notifyDestroyed()
+        elif MpCanvas.state == 87:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.title = Consts.main_menu[4]
+                MpCanvas.menu_size = 6
+                self.draw_menu_icons()
+            self.draw_buffer()
+            self.draw_button(MpCanvas.screen_g, Consts.help_topics[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 39), (MpCanvas.center_y - 19), 78, 17, False, True)
+            MpCanvas.draw_menu_cursor(MpCanvas.screen_g)
+            self.draw_softkeys((-1), 1)
+        elif MpCanvas.state == 89:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.help_page = 0
+            self.draw_help()
+            self.draw_softkeys((-1), 1)
+        elif MpCanvas.state == 85:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                if MpCanvas.state == 85:
+                    MpCanvas.title = Consts.character_menu[5]
+                self.draw_name_prompt(MpCanvas.buffer_g)
+            self.draw_buffer()
+            self.draw_input_line(MpCanvas.screen_g)
+            if len(MpCanvas.input_text) == 0:
+                self.draw_softkeys(4, 1)
+                return
+            self.draw_softkeys(4, 3)
+        elif MpCanvas.state == 86:
+            if MpCanvas.state_ticks < 2:
+                MpCanvas.state_ticks = 2
+                MpCanvas.menu_size = 2
+            self.draw_buffer()
+            self.draw_input_line(MpCanvas.screen_g)
+            self.draw_name_confirm(MpCanvas.screen_g)
 
     @staticmethod
     def set_timer(ticks):  # g.java:1467
@@ -1360,14 +1198,13 @@ class MpCanvas(_Canvas):
         self.draw_text_colored(MpCanvas.screen_g, text, x, y, 0, color)
 
     def draw_text_colored(self, graphics, text, x, y, anchor, color):  # g.java:1487
-        _sw16 = color
-        if _sw16 == 0xFFFFFF:
+        if color == 0xFFFFFF:
             Gfx.set_font(MpCanvas.font_white)
-        elif _sw16 == 16400640:
+        elif color == 16400640:
             Gfx.set_font(MpCanvas.font_orange)
-        elif _sw16 == 0x646464:
+        elif color == 0x646464:
             Gfx.set_font(MpCanvas.font_gray)
-        elif _sw16 == 0x41FF41:
+        elif color == 0x41FF41:
             Gfx.set_font(MpCanvas.font_green)
         else:
             MpCanvas.log(_js("=======================drawString: No Color:", color))
@@ -1481,25 +1318,24 @@ class MpCanvas(_Canvas):
         MpCanvas.answer_status = 0
         MpCanvas.request_opcode = opcode
         MpCanvas.net.begin(MpCanvas.request_opcode)
-        _sw17 = MpCanvas.request_opcode
-        if _sw17 == 1300:
+        if MpCanvas.request_opcode == 1300:
             NetThread.write_byte(i8(((MpCanvas.rank_kind + 1))))
-        elif _sw17 == 1293:
+        elif MpCanvas.request_opcode == 1293:
             NetThread.write_byte(i8(MpCanvas.rank_list_kind))
             NetThread.write_int(1)
-        elif _sw17 == 256:
+        elif MpCanvas.request_opcode == 256:
             NetThread.write_string(MpCanvas.user_id, 12)
             NetThread.write_string(MpCanvas.game_ver, 4)
-        elif _sw17 == 262:
+        elif MpCanvas.request_opcode == 262:
             NetThread.write_string(MpCanvas.user_id, 12)
             NetThread.write_string(MpCanvas.game_ver, 4)
-        elif _sw17 == 278:
+        elif MpCanvas.request_opcode == 278:
             NetThread.write_string(MpCanvas.user_id, 12)
             NetThread.write_string(MpCanvas.password, 16)
             NetThread.write_string(MpCanvas.game_ver, 4)
-        elif _sw17 == 512:
+        elif MpCanvas.request_opcode == 512:
             NetThread.write_byte(MpCanvas.room_mode)
-        elif _sw17 == 1291:
+        elif MpCanvas.request_opcode == 1291:
             MpCanvas.loop_j = 0
             MpCanvas.loop_i = 0
             while MpCanvas.loop_i < 4:
@@ -1511,22 +1347,22 @@ class MpCanvas(_Canvas):
             while MpCanvas.loop_i < 4:
                 NetThread.write_byte(i8(99))
                 MpCanvas.loop_i = MpCanvas.loop_i + 1
-        elif _sw17 == 1280:
+        elif MpCanvas.request_opcode == 1280:
             NetThread.write_string(MpCanvas.input_text, 8)
-        elif _sw17 == 258:
+        elif MpCanvas.request_opcode == 258:
             NetThread.write_int(MpCanvas.notice_page)
-        elif _sw17 == 1027:
+        elif MpCanvas.request_opcode == 1027:
             NetThread.write_byte(i8(MpCanvas.fighter_slot[MpCanvas.target_cursor]))
             NetThread.write_byte(i8(MpCanvas.chosen_action))
             NetThread.write_byte(i8(MpCanvas.hit_score))
-        elif _sw17 in (1282, 1284):
+        elif MpCanvas.request_opcode in (1282, 1284):
             NetThread.write_string(MpCanvas.input_text, 20)
-        elif _sw17 == 768:
+        elif MpCanvas.request_opcode == 768:
             NetThread.write_byte(MpCanvas.room_mode)
             NetThread.write_string(MpCanvas.input_text, 12)
-        elif _sw17 == 288:
+        elif MpCanvas.request_opcode == 288:
             pass
-        elif _sw17 == 290:
+        elif MpCanvas.request_opcode == 290:
             NetThread.write_int(MpCanvas.invitation)
         NetThread.send()
 
@@ -1697,593 +1533,484 @@ class MpCanvas(_Canvas):
         s = answer.read_s16()
         by = answer.read_s8()
         MpCanvas.answer_status = by
-        _sw18 = s
-        try:
-            _m19 = False
-            while True:
-                if _m19 or _sw18 == 279:
-                    _m19 = True
-                    if MpCanvas.answer_status == 1:
-                        MpCanvas.save_options()
-                        self.on_disconnect()
-                        MpCanvas.loading_msg = 0
-                        MpCanvas.password_login = False
-                        MpCanvas.set_state(10000)
-                        return
-                    by2 = answer.read_s8()
-                    self.on_disconnect()
-                    if by2 == 0:
-                        MpCanvas.popup_kind = 0
-                        MpCanvas.error_msg = 14
-                    elif by2 == 1:
-                        MpCanvas.popup_kind = 1
-                        MpCanvas.error_msg = 15
-                    else:
-                        MpCanvas.popup_kind = 0
-                        MpCanvas.error_msg = 0
-                    self.push_state(4)
-                    return
-                if _m19 or _sw18 == 263:
-                    _m19 = True
-                    _sw20 = MpCanvas.answer_status
-                    if _sw20 == 1:
-                        MpCanvas.name = answer.read_string(8)
-                        MpCanvas.face = answer.read_s8()
-                        MpCanvas.level = answer.read_s16()
-                        MpCanvas.wins = answer.read_s32()
-                        MpCanvas.losses = answer.read_s32()
-                        MpCanvas.hp = answer.read_s16()
-                        answer.read_s16()
-                        answer.read_s16()
-                        MpCanvas.weapon = answer.read_s8()
-                        MpCanvas.skill_slots[0] = answer.read_s8()
-                        MpCanvas.skill_slots[1] = answer.read_s8()
-                        MpCanvas.skill_slots[2] = answer.read_s8()
-                        MpCanvas.skill_slots[3] = answer.read_s8()
-                        MpCanvas.skill_slot_count = 0
-                        MpCanvas.loop_i = 0
-                        while MpCanvas.loop_i < 4:
-                            if MpCanvas.skill_slots[MpCanvas.loop_i] != 99:
-                                MpCanvas.skill_slot_count = MpCanvas.skill_slot_count + 1
-                            MpCanvas.loop_i = MpCanvas.loop_i + 1
-                        MpCanvas.quote_start = MpCanvas.trim_right(answer.read_string(20))
-                        MpCanvas.quote_win = MpCanvas.trim_right(answer.read_string(20))
-                        MpCanvas.loop_i = 0
-                        while MpCanvas.loop_i < 11:
-                            MpCanvas.skill_costs[MpCanvas.loop_i] = answer.read_s8()
-                            MpCanvas.loop_i = MpCanvas.loop_i + 1
-                        MpCanvas.profile_cr = answer.read_s8()
-                        MpCanvas.profile_unused1 = answer.read_s8()
-                        MpCanvas.profile_unused2 = answer.read_s8()
-                        if MpCanvas.profile_unused1 < 0:
-                            MpCanvas.profile_unused1 = 0
-                        if MpCanvas.profile_unused2 < 0:
-                            MpCanvas.profile_unused2 = 0
-                        MpCanvas.notices_left = answer.read_s8()
-                        answer.read_string(8)
-                        answer.read_string(8)
-                        answer.read_s8()
-                        answer.read_s8()
-                        answer.read_s8()
-                        MpCanvas.title_image = None
-                        MpCanvas.press_image = None
-                        MpCanvas.gamevil_image = None
-                        MpCanvas.noop()
-                        if MpCanvas.relogin:
-                            if MpCanvas.relogin_to_menu:
-                                self.reset_state_stack(7)
-                                return
-                            self.reset_state_stack(10)
-                            return
-                        if MpCanvas.notices_left > 0:
-                            MpCanvas.notice_page = 1
-                            self.send_request(258)
-                            return
-                        MpCanvas.notices_left = 0
+        if s == 279:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.save_options()
+                self.on_disconnect()
+                MpCanvas.loading_msg = 0
+                MpCanvas.password_login = False
+                MpCanvas.set_state(10000)
+                return
+            by2 = answer.read_s8()
+            self.on_disconnect()
+            if by2 == 0:
+                MpCanvas.popup_kind = 0
+                MpCanvas.error_msg = 14
+            elif by2 == 1:
+                MpCanvas.popup_kind = 1
+                MpCanvas.error_msg = 15
+            else:
+                MpCanvas.popup_kind = 0
+                MpCanvas.error_msg = 0
+            self.push_state(4)
+        elif s == 263:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.name = answer.read_string(8)
+                MpCanvas.face = answer.read_s8()
+                MpCanvas.level = answer.read_s16()
+                MpCanvas.wins = answer.read_s32()
+                MpCanvas.losses = answer.read_s32()
+                MpCanvas.hp = answer.read_s16()
+                answer.read_s16()
+                answer.read_s16()
+                MpCanvas.weapon = answer.read_s8()
+                MpCanvas.skill_slots[0] = answer.read_s8()
+                MpCanvas.skill_slots[1] = answer.read_s8()
+                MpCanvas.skill_slots[2] = answer.read_s8()
+                MpCanvas.skill_slots[3] = answer.read_s8()
+                MpCanvas.skill_slot_count = 0
+                MpCanvas.loop_i = 0
+                while MpCanvas.loop_i < 4:
+                    if MpCanvas.skill_slots[MpCanvas.loop_i] != 99:
+                        MpCanvas.skill_slot_count = MpCanvas.skill_slot_count + 1
+                    MpCanvas.loop_i = MpCanvas.loop_i + 1
+                MpCanvas.quote_start = MpCanvas.trim_right(answer.read_string(20))
+                MpCanvas.quote_win = MpCanvas.trim_right(answer.read_string(20))
+                MpCanvas.loop_i = 0
+                while MpCanvas.loop_i < 11:
+                    MpCanvas.skill_costs[MpCanvas.loop_i] = answer.read_s8()
+                    MpCanvas.loop_i = MpCanvas.loop_i + 1
+                MpCanvas.profile_cr = answer.read_s8()
+                MpCanvas.profile_unused1 = answer.read_s8()
+                MpCanvas.profile_unused2 = answer.read_s8()
+                if MpCanvas.profile_unused1 < 0:
+                    MpCanvas.profile_unused1 = 0
+                if MpCanvas.profile_unused2 < 0:
+                    MpCanvas.profile_unused2 = 0
+                MpCanvas.notices_left = answer.read_s8()
+                answer.read_string(8)
+                answer.read_string(8)
+                answer.read_s8()
+                answer.read_s8()
+                answer.read_s8()
+                MpCanvas.title_image = None
+                MpCanvas.press_image = None
+                MpCanvas.gamevil_image = None
+                MpCanvas.noop()
+                if MpCanvas.relogin:
+                    if MpCanvas.relogin_to_menu:
                         self.reset_state_stack(7)
                         return
-                    elif _sw20 == (-2):
-                        MpCanvas.error_msg = 1
-                        self.on_disconnect()
-                        return
-                    elif _sw20 == (-9):
-                        MpCanvas.error_msg = 8
-                        self.on_disconnect()
-                        return
-                    MpCanvas.error_msg = 7
-                    MpCanvas.popup_shown = False
-                    MpCanvas.disconnect()
-                    self.push_state(4)
+                    self.reset_state_stack(10)
                     return
-                if _m19 or _sw18 == 1286:
-                    _m19 = True
-                    _sw21 = MpCanvas.room_mode
-                    _m22 = False
-                    while True:
-                        if _m22 or _sw21 in (0, 1):
-                            _m22 = True
-                            MpCanvas.set_state(11)
-                            raise _Brk_block0_1631()
-                        if _m22 or _sw21 == 2:
-                            _m22 = True
-                            MpCanvas.set_state(12)
+                if MpCanvas.notices_left > 0:
+                    MpCanvas.notice_page = 1
+                    self.send_request(258)
+                    return
+                MpCanvas.notices_left = 0
+                self.reset_state_stack(7)
+                return
+            elif MpCanvas.answer_status == (-2):
+                MpCanvas.error_msg = 1
+                self.on_disconnect()
+                return
+            elif MpCanvas.answer_status == (-9):
+                MpCanvas.error_msg = 8
+                self.on_disconnect()
+                return
+            MpCanvas.error_msg = 7
+            MpCanvas.popup_shown = False
+            MpCanvas.disconnect()
+            self.push_state(4)
+        elif s == 1286:
+            if MpCanvas.room_mode in (0, 1):
+                MpCanvas.set_state(11)
+            elif MpCanvas.room_mode == 2:
+                MpCanvas.set_state(12)
+        elif s == 1301:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.my_ranks[MpCanvas.rank_kind] = answer.read_s32()
+                MpCanvas.my_rank_value = answer.read_s32()
+                self.push_state(((161 + MpCanvas.cursor_stack[MpCanvas.stack_depth]) + 1))
+            elif MpCanvas.answer_status == (-1):
+                MpCanvas.error_msg = 0
+                self.push_state(4)
+        elif s == 1294:
+            if MpCanvas.answer_status == 1:
+                n2 = answer.read_s8()
+                n3 = 0
+                while n3 < n2:
+                    MpCanvas.rank_ranks[n3] = answer.read_s32()
+                    MpCanvas.rank_names[n3] = answer.read_string(12)
+                    MpCanvas.rank_values[n3] = answer.read_s32()
+                    n3 = n3 + 1
+                self.push_state((170 + MpCanvas.cursor_stack[MpCanvas.stack_depth]))
+            elif MpCanvas.answer_status == (-1):
+                MpCanvas.error_msg = 0
+                self.push_state(4)
+        elif s == 259:
+            if MpCanvas.answer_status == 1:
+                n4 = 0
+                while n4 < 4:
+                    MpCanvas.notice_lines[n4] = answer.read_string(16)
+                    n4 = n4 + 1
+                MpCanvas.notices_left = answer.read_s8()
+                MpCanvas.notice_kind = 1
+                MpCanvas.set_state(6)
+                return
+            MpCanvas.error_msg = 0
+            self.push_state(4)
+        elif s == 513:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.room_bg = answer.read_s8()
+                MpCanvas.my_slot = answer.read_s8()
+                MpCanvas.room_mode = answer.read_s8()
+                answer.read_s8()
+                MpCanvas.painting_blocked = True
+                self.free_frame_images()
+                MpCanvas.painting_blocked = False
+                MpCanvas.room_dirty = True
+                return
+            MpCanvas.error_msg = 0
+            if MpCanvas.answer_status == (-11):
+                MpCanvas.error_msg = 8
+            self.push_state(4)
+        elif s == 769:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.room_bg = answer.read_s8()
+                MpCanvas.my_slot = answer.read_s8()
+                MpCanvas.room_mode = answer.read_s8()
+                answer.read_s8()
+                MpCanvas.painting_blocked = True
+                self.free_frame_images()
+                MpCanvas.painting_blocked = False
+                MpCanvas.room_dirty = True
+                return
+            if MpCanvas.answer_status == (-3):
+                MpCanvas.error_msg = 2
+            elif MpCanvas.answer_status == (-4):
+                MpCanvas.error_msg = 3
+            elif MpCanvas.answer_status == (-5):
+                MpCanvas.error_msg = 4
+            elif MpCanvas.answer_status == (-12):
+                MpCanvas.error_msg = 9
+            elif MpCanvas.answer_status == (-16):
+                MpCanvas.error_msg = 18
+            else:
+                MpCanvas.error_msg = 0
+            self.push_state(4)
+        elif s == 770:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.popup_shown = False
+                MpCanvas.room_bg = answer.read_s8()
+                MpCanvas.my_slot = answer.read_s8()
+                MpCanvas.room_mode = answer.read_s8()
+                answer.read_s8()
+                MpCanvas.painting_blocked = True
+                self.free_frame_images()
+                MpCanvas.painting_blocked = False
+                MpCanvas.room_dirty = True
+                return
+            MpCanvas.error_msg = 0
+            self.push_state(4)
+        elif s == 514:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.loop_i = 0
+                while MpCanvas.loop_i < 4:
+                    if not MpCanvas.fighter_present[MpCanvas.loop_i]:
+                        MpCanvas.cur_slot = MpCanvas.loop_i
                         break
+                    MpCanvas.loop_i = MpCanvas.loop_i + 1
+                MpCanvas.fighter_present[MpCanvas.cur_slot] = True
+                MpCanvas.fighter_slot[MpCanvas.cur_slot] = answer.read_s8()
+                if imod(MpCanvas.fighter_slot[MpCanvas.cur_slot], 2) == imod(MpCanvas.fighter_slot[0], 2):
+                    MpCanvas.allies_alive = MpCanvas.allies_alive + 1
+                else:
+                    MpCanvas.enemies_alive = MpCanvas.enemies_alive + 1
+                MpCanvas.fighter_name[MpCanvas.cur_slot] = answer.read_string(8)
+                MpCanvas.fighter_level[MpCanvas.cur_slot] = answer.read_s16()
+                MpCanvas.fighter_wins[MpCanvas.cur_slot] = answer.read_s32()
+                MpCanvas.fighter_losses[MpCanvas.cur_slot] = answer.read_s32()
+                MpCanvas.fighter_hp[MpCanvas.cur_slot] = answer.read_s16()
+                MpCanvas.fighter_max_hp[MpCanvas.cur_slot] = MpCanvas.fighter_hp[MpCanvas.cur_slot]
+                MpCanvas.fighter_weapon[MpCanvas.cur_slot] = answer.read_s8()
+                MpCanvas.fighter_face[MpCanvas.cur_slot] = answer.read_s8()
+                if MpCanvas.fighter_face[MpCanvas.cur_slot] == 10:
+                    MpCanvas.fighter_face[MpCanvas.cur_slot] = 0
+                    MpCanvas.fighter_kind[MpCanvas.cur_slot] = 2
+                elif MpCanvas.fighter_face[MpCanvas.cur_slot] < 10:
+                    MpCanvas.fighter_kind[MpCanvas.cur_slot] = 0
+                else:
+                    n5 = MpCanvas.cur_slot
+                    MpCanvas.fighter_face[n5] = i8(((MpCanvas.fighter_face[n5] - 30)))
+                    MpCanvas.fighter_kind[MpCanvas.cur_slot] = 1
+                MpCanvas.fighter_quote_start[MpCanvas.cur_slot] = answer.read_string(20)
+                MpCanvas.fighter_quote_win[MpCanvas.cur_slot] = answer.read_string(20)
+                MpCanvas.fighter_cr[MpCanvas.cur_slot] = answer.read_s8()
+                MpCanvas.fighter_alt_name[MpCanvas.cur_slot] = answer.read_string(8)
+                MpCanvas.fighter_mp[MpCanvas.cur_slot] = 0
+                MpCanvas.place_fighter(MpCanvas.cur_slot)
+                MpCanvas.fighter_blink[MpCanvas.cur_slot] = imod(abs(MpCanvas.rng.nextInt()), 4)
+                MpCanvas.fighter_status[MpCanvas.cur_slot] = 99
+                MpCanvas.fighter_status_ticks[MpCanvas.cur_slot] = 0
+                MpCanvas.hud_dirty = True
+                if MpCanvas.state != 4:
                     return
-                if _m19 or _sw18 == 1301:
-                    _m19 = True
-                    _sw23 = MpCanvas.answer_status
-                    _m24 = False
-                    while True:
-                        if _m24 or _sw23 == 1:
-                            _m24 = True
-                            MpCanvas.my_ranks[MpCanvas.rank_kind] = answer.read_s32()
-                            MpCanvas.my_rank_value = answer.read_s32()
-                            self.push_state(((161 + MpCanvas.cursor_stack[MpCanvas.stack_depth]) + 1))
-                            raise _Brk_block0_1631()
-                        if _m24 or _sw23 == (-1):
-                            _m24 = True
-                            MpCanvas.error_msg = 0
-                            self.push_state(4)
-                        break
-                    return
-                if _m19 or _sw18 == 1294:
-                    _m19 = True
-                    _sw25 = MpCanvas.answer_status
-                    _m26 = False
-                    while True:
-                        if _m26 or _sw25 == 1:
-                            _m26 = True
-                            n2 = answer.read_s8()
-                            n3 = 0
-                            while n3 < n2:
-                                MpCanvas.rank_ranks[n3] = answer.read_s32()
-                                MpCanvas.rank_names[n3] = answer.read_string(12)
-                                MpCanvas.rank_values[n3] = answer.read_s32()
-                                n3 = n3 + 1
-                            self.push_state((170 + MpCanvas.cursor_stack[MpCanvas.stack_depth]))
-                            raise _Brk_block0_1631()
-                        if _m26 or _sw25 == (-1):
-                            _m26 = True
-                            MpCanvas.error_msg = 0
-                            self.push_state(4)
-                        break
-                    return
-                if _m19 or _sw18 == 259:
-                    _m19 = True
-                    _sw27 = MpCanvas.answer_status
-                    if _sw27 == 1:
-                        n4 = 0
-                        while n4 < 4:
-                            MpCanvas.notice_lines[n4] = answer.read_string(16)
-                            n4 = n4 + 1
-                        MpCanvas.notices_left = answer.read_s8()
-                        MpCanvas.notice_kind = 1
-                        MpCanvas.set_state(6)
-                        return
-                    MpCanvas.error_msg = 0
-                    self.push_state(4)
-                    return
-                if _m19 or _sw18 == 513:
-                    _m19 = True
-                    _sw28 = MpCanvas.answer_status
-                    if _sw28 == 1:
-                        MpCanvas.room_bg = answer.read_s8()
-                        MpCanvas.my_slot = answer.read_s8()
-                        MpCanvas.room_mode = answer.read_s8()
-                        answer.read_s8()
-                        MpCanvas.painting_blocked = True
-                        self.free_frame_images()
-                        MpCanvas.painting_blocked = False
-                        MpCanvas.room_dirty = True
-                        return
-                    MpCanvas.error_msg = 0
-                    _sw29 = MpCanvas.answer_status
-                    if _sw29 == (-11):
-                        MpCanvas.error_msg = 8
-                    self.push_state(4)
-                    return
-                if _m19 or _sw18 == 769:
-                    _m19 = True
-                    _sw30 = MpCanvas.answer_status
-                    if _sw30 == 1:
-                        MpCanvas.room_bg = answer.read_s8()
-                        MpCanvas.my_slot = answer.read_s8()
-                        MpCanvas.room_mode = answer.read_s8()
-                        answer.read_s8()
-                        MpCanvas.painting_blocked = True
-                        self.free_frame_images()
-                        MpCanvas.painting_blocked = False
-                        MpCanvas.room_dirty = True
-                        return
-                    _sw31 = MpCanvas.answer_status
-                    if _sw31 == (-3):
-                        MpCanvas.error_msg = 2
-                    elif _sw31 == (-4):
-                        MpCanvas.error_msg = 3
-                    elif _sw31 == (-5):
-                        MpCanvas.error_msg = 4
-                    elif _sw31 == (-12):
-                        MpCanvas.error_msg = 9
-                    elif _sw31 == (-16):
-                        MpCanvas.error_msg = 18
-                    else:
-                        MpCanvas.error_msg = 0
-                    self.push_state(4)
-                    return
-                if _m19 or _sw18 == 770:
-                    _m19 = True
-                    _sw32 = MpCanvas.answer_status
-                    if _sw32 == 1:
-                        MpCanvas.popup_shown = False
-                        MpCanvas.room_bg = answer.read_s8()
-                        MpCanvas.my_slot = answer.read_s8()
-                        MpCanvas.room_mode = answer.read_s8()
-                        answer.read_s8()
-                        MpCanvas.painting_blocked = True
-                        self.free_frame_images()
-                        MpCanvas.painting_blocked = False
-                        MpCanvas.room_dirty = True
-                        return
-                    MpCanvas.error_msg = 0
-                    self.push_state(4)
-                    return
-                if _m19 or _sw18 == 514:
-                    _m19 = True
-                    _sw33 = MpCanvas.answer_status
-                    if _sw33 == 1:
-                        MpCanvas.loop_i = 0
-                        while MpCanvas.loop_i < 4:
-                            if not MpCanvas.fighter_present[MpCanvas.loop_i]:
-                                MpCanvas.cur_slot = MpCanvas.loop_i
-                                break
-                            MpCanvas.loop_i = MpCanvas.loop_i + 1
-                        MpCanvas.fighter_present[MpCanvas.cur_slot] = True
-                        MpCanvas.fighter_slot[MpCanvas.cur_slot] = answer.read_s8()
-                        if imod(MpCanvas.fighter_slot[MpCanvas.cur_slot], 2) == imod(MpCanvas.fighter_slot[0], 2):
-                            MpCanvas.allies_alive = MpCanvas.allies_alive + 1
-                        else:
-                            MpCanvas.enemies_alive = MpCanvas.enemies_alive + 1
-                        MpCanvas.fighter_name[MpCanvas.cur_slot] = answer.read_string(8)
-                        MpCanvas.fighter_level[MpCanvas.cur_slot] = answer.read_s16()
-                        MpCanvas.fighter_wins[MpCanvas.cur_slot] = answer.read_s32()
-                        MpCanvas.fighter_losses[MpCanvas.cur_slot] = answer.read_s32()
-                        MpCanvas.fighter_hp[MpCanvas.cur_slot] = answer.read_s16()
-                        MpCanvas.fighter_max_hp[MpCanvas.cur_slot] = MpCanvas.fighter_hp[MpCanvas.cur_slot]
-                        MpCanvas.fighter_weapon[MpCanvas.cur_slot] = answer.read_s8()
-                        MpCanvas.fighter_face[MpCanvas.cur_slot] = answer.read_s8()
-                        if MpCanvas.fighter_face[MpCanvas.cur_slot] == 10:
-                            MpCanvas.fighter_face[MpCanvas.cur_slot] = 0
-                            MpCanvas.fighter_kind[MpCanvas.cur_slot] = 2
-                        elif MpCanvas.fighter_face[MpCanvas.cur_slot] < 10:
-                            MpCanvas.fighter_kind[MpCanvas.cur_slot] = 0
-                        else:
-                            n5 = MpCanvas.cur_slot
-                            MpCanvas.fighter_face[n5] = i8(((MpCanvas.fighter_face[n5] - 30)))
-                            MpCanvas.fighter_kind[MpCanvas.cur_slot] = 1
-                        MpCanvas.fighter_quote_start[MpCanvas.cur_slot] = answer.read_string(20)
-                        MpCanvas.fighter_quote_win[MpCanvas.cur_slot] = answer.read_string(20)
-                        MpCanvas.fighter_cr[MpCanvas.cur_slot] = answer.read_s8()
-                        MpCanvas.fighter_alt_name[MpCanvas.cur_slot] = answer.read_string(8)
-                        MpCanvas.fighter_mp[MpCanvas.cur_slot] = 0
-                        MpCanvas.place_fighter(MpCanvas.cur_slot)
-                        MpCanvas.fighter_blink[MpCanvas.cur_slot] = imod(abs(MpCanvas.rng.nextInt()), 4)
-                        MpCanvas.fighter_status[MpCanvas.cur_slot] = 99
-                        MpCanvas.fighter_status_ticks[MpCanvas.cur_slot] = 0
-                        MpCanvas.hud_dirty = True
-                        if MpCanvas.state != 4:
+                MpCanvas.set_state(90)
+                MpCanvas.room_dirty = True
+                return
+            MpCanvas.error_msg = 0
+            self.push_state(4)
+        elif s == 1024:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.set_state(92)
+        elif s == 1026:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.chosen_action = 99
+                MpCanvas.set_timer((10 - MpCanvas.speed))
+                MpCanvas.choose_secs = 1 if MpCanvas.auto_battle else 10   # PORT-EXTRA auto-battle
+                MpCanvas.exit_asked = False
+                MpCanvas.set_state(94)
+        elif s == 1028:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.loop_i = 0
+                while MpCanvas.loop_i < 4:
+                    MpCanvas.slot_found = False
+                    MpCanvas.loop_j = 0
+                    while MpCanvas.loop_j < 4:
+                        if MpCanvas.fighter_present[MpCanvas.loop_j] and (MpCanvas.fighter_slot[MpCanvas.loop_j] == MpCanvas.loop_i):
+                            MpCanvas.cur_slot = MpCanvas.loop_j
+                            MpCanvas.slot_found = True
                             break
-                        MpCanvas.set_state(90)
-                        MpCanvas.room_dirty = True
-                        return
-                    MpCanvas.error_msg = 0
-                    self.push_state(4)
-                    return
-                if _m19 or _sw18 == 1024:
-                    _m19 = True
-                    _sw34 = MpCanvas.answer_status
-                    if _sw34 == 1:
-                        MpCanvas.set_state(92)
-                    return
-                if _m19 or _sw18 == 1026:
-                    _m19 = True
-                    _sw35 = MpCanvas.answer_status
-                    if _sw35 == 1:
-                        MpCanvas.chosen_action = 99
-                        MpCanvas.set_timer((10 - MpCanvas.speed))
-                        MpCanvas.choose_secs = 1 if MpCanvas.auto_battle else 10   # PORT-EXTRA auto-battle
-                        MpCanvas.exit_asked = False
-                        MpCanvas.set_state(94)
-                    return
-                if _m19 or _sw18 == 1028:
-                    _m19 = True
-                    _sw36 = MpCanvas.answer_status
-                    if _sw36 == 1:
-                        MpCanvas.loop_i = 0
-                        while MpCanvas.loop_i < 4:
-                            MpCanvas.slot_found = False
-                            MpCanvas.loop_j = 0
-                            while MpCanvas.loop_j < 4:
-                                if MpCanvas.fighter_present[MpCanvas.loop_j] and (MpCanvas.fighter_slot[MpCanvas.loop_j] == MpCanvas.loop_i):
-                                    MpCanvas.cur_slot = MpCanvas.loop_j
-                                    MpCanvas.slot_found = True
-                                    break
-                                MpCanvas.loop_j = MpCanvas.loop_j + 1
-                            if MpCanvas.slot_found:
-                                MpCanvas.turn_actions[MpCanvas.cur_slot] = answer.read_s8()
-                            else:
-                                MpCanvas.tmp = answer.read_s8()
-                            MpCanvas.loop_i = MpCanvas.loop_i + 1
-                        MpCanvas.turn_record_count = answer.read_s8()
-                        MpCanvas.loop_i = 0
-                        while MpCanvas.loop_i < MpCanvas.turn_record_count:
-                            MpCanvas.turn_bytes[(0 + MpCanvas.loop_i)] = answer.read_s8()
-                            MpCanvas.turn_bytes[(4 + MpCanvas.loop_i)] = answer.read_s8()
-                            MpCanvas.turn_hps[(0 + MpCanvas.loop_i)] = answer.read_s16()
-                            MpCanvas.turn_bytes[(8 + MpCanvas.loop_i)] = answer.read_s8()
-                            MpCanvas.turn_bytes[(12 + MpCanvas.loop_i)] = answer.read_s8()
-                            MpCanvas.turn_bytes[(16 + MpCanvas.loop_i)] = answer.read_s8()
-                            MpCanvas.turn_hps[(4 + MpCanvas.loop_i)] = answer.read_s16()
-                            MpCanvas.turn_bytes[(20 + MpCanvas.loop_i)] = answer.read_s8()
-                            MpCanvas.turn_bytes[(24 + MpCanvas.loop_i)] = answer.read_s8()
-                            MpCanvas.turn_bytes[(28 + MpCanvas.loop_i)] = answer.read_s8()
-                            MpCanvas.loop_i = MpCanvas.loop_i + 1
-                        answer.read_s8()
-                        MpCanvas.loop_i = 0
-                        while MpCanvas.loop_i < MpCanvas.turn_record_count:
-                            if MpCanvas.turn_bytes[(24 + MpCanvas.loop_i)] == 1:
-                                MpCanvas.turn_bytes[(32 + MpCanvas.loop_i)] = answer.read_s8()
-                                MpCanvas.turn_bytes[(36 + MpCanvas.loop_i)] = answer.read_s8()
-                                MpCanvas.turn_hps[(8 + MpCanvas.loop_i)] = answer.read_s16()
-                                MpCanvas.turn_bytes[(40 + MpCanvas.loop_i)] = answer.read_s8()
-                            MpCanvas.loop_i = MpCanvas.loop_i + 1
-                        MpCanvas.set_state(99)
-                    return
-                if _m19 or _sw18 == 1031:
-                    _m19 = True
-                    _sw37 = MpCanvas.answer_status
-                    if _sw37 == 1:
-                        MpCanvas.room_bg = answer.read_s8()
-                        MpCanvas.set_state(104)
-                    return
-                if _m19 or _sw18 == 1032:
-                    _m19 = True
-                    _sw38 = MpCanvas.answer_status
-                    if _sw38 == 1:
-                        MpCanvas.battle_won = answer.read_s8()
-                        if MpCanvas.room_mode != 2:
-                            if MpCanvas.battle_won == 1:
-                                MpCanvas.wins = MpCanvas.wins + 1
-                            else:
-                                MpCanvas.losses = MpCanvas.losses + 1
-                        MpCanvas.reward_gold = answer.read_s16()
-                        MpCanvas.reward_grade = answer.read_s8()
-                        MpCanvas.reward_fame = answer.read_s16()
-                        MpCanvas.reward_exp = answer.read_s16()
-                        MpCanvas.loot = answer.read_string(15)
-                        MpCanvas.reward_rank = answer.read_s32()
-                        answer.read_s8()
-                        answer.read_s32()
-                        answer.read_s8()
-                        MpCanvas.set_state(105)
-                    return
-                if _m19 or _sw18 == 1037:
-                    _m19 = True
-                    _sw39 = MpCanvas.answer_status
-                    if _sw39 == 1:
-                        MpCanvas.stage_title = answer.read_string(14)
-                        MpCanvas.stage_count = answer.read_s8()
-                        MpCanvas.stage = answer.read_s8()
-                        MpCanvas.set_state(91)
-                    return
-                if _m19 or _sw18 == 1035:
-                    _m19 = True
-                    _sw40 = MpCanvas.answer_status
-                    _m41 = False
-                    while True:
-                        if _m41 or _sw40 == 1:
-                            _m41 = True
-                            MpCanvas.leaving_slot = answer.read_s8()
-                            MpCanvas.loop_i = 0
-                            while MpCanvas.loop_i < 4:
-                                if MpCanvas.fighter_present[MpCanvas.loop_i] and (MpCanvas.fighter_slot[MpCanvas.loop_i] == MpCanvas.leaving_slot):
-                                    MpCanvas.cur_slot = MpCanvas.loop_i
-                                    break
-                                MpCanvas.loop_i = MpCanvas.loop_i + 1
-                            MpCanvas.fighter_present[MpCanvas.cur_slot] = False
-                            if MpCanvas.fighter_hp[MpCanvas.cur_slot] == 0:
-                                break
-                            if imod(MpCanvas.fighter_slot[MpCanvas.cur_slot], 2) == imod(MpCanvas.fighter_slot[0], 2):
-                                MpCanvas.allies_alive = MpCanvas.allies_alive - 1
-                                raise _Brk_block0_1631()
-                            MpCanvas.enemies_alive = MpCanvas.enemies_alive - 1
+                        MpCanvas.loop_j = MpCanvas.loop_j + 1
+                    if MpCanvas.slot_found:
+                        MpCanvas.turn_actions[MpCanvas.cur_slot] = answer.read_s8()
+                    else:
+                        MpCanvas.tmp = answer.read_s8()
+                    MpCanvas.loop_i = MpCanvas.loop_i + 1
+                MpCanvas.turn_record_count = answer.read_s8()
+                MpCanvas.loop_i = 0
+                while MpCanvas.loop_i < MpCanvas.turn_record_count:
+                    MpCanvas.turn_bytes[(0 + MpCanvas.loop_i)] = answer.read_s8()
+                    MpCanvas.turn_bytes[(4 + MpCanvas.loop_i)] = answer.read_s8()
+                    MpCanvas.turn_hps[(0 + MpCanvas.loop_i)] = answer.read_s16()
+                    MpCanvas.turn_bytes[(8 + MpCanvas.loop_i)] = answer.read_s8()
+                    MpCanvas.turn_bytes[(12 + MpCanvas.loop_i)] = answer.read_s8()
+                    MpCanvas.turn_bytes[(16 + MpCanvas.loop_i)] = answer.read_s8()
+                    MpCanvas.turn_hps[(4 + MpCanvas.loop_i)] = answer.read_s16()
+                    MpCanvas.turn_bytes[(20 + MpCanvas.loop_i)] = answer.read_s8()
+                    MpCanvas.turn_bytes[(24 + MpCanvas.loop_i)] = answer.read_s8()
+                    MpCanvas.turn_bytes[(28 + MpCanvas.loop_i)] = answer.read_s8()
+                    MpCanvas.loop_i = MpCanvas.loop_i + 1
+                answer.read_s8()
+                MpCanvas.loop_i = 0
+                while MpCanvas.loop_i < MpCanvas.turn_record_count:
+                    if MpCanvas.turn_bytes[(24 + MpCanvas.loop_i)] == 1:
+                        MpCanvas.turn_bytes[(32 + MpCanvas.loop_i)] = answer.read_s8()
+                        MpCanvas.turn_bytes[(36 + MpCanvas.loop_i)] = answer.read_s8()
+                        MpCanvas.turn_hps[(8 + MpCanvas.loop_i)] = answer.read_s16()
+                        MpCanvas.turn_bytes[(40 + MpCanvas.loop_i)] = answer.read_s8()
+                    MpCanvas.loop_i = MpCanvas.loop_i + 1
+                MpCanvas.set_state(99)
+        elif s == 1031:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.room_bg = answer.read_s8()
+                MpCanvas.set_state(104)
+        elif s == 1032:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.battle_won = answer.read_s8()
+                if MpCanvas.room_mode != 2:
+                    if MpCanvas.battle_won == 1:
+                        MpCanvas.wins = MpCanvas.wins + 1
+                    else:
+                        MpCanvas.losses = MpCanvas.losses + 1
+                MpCanvas.reward_gold = answer.read_s16()
+                MpCanvas.reward_grade = answer.read_s8()
+                MpCanvas.reward_fame = answer.read_s16()
+                MpCanvas.reward_exp = answer.read_s16()
+                MpCanvas.loot = answer.read_string(15)
+                MpCanvas.reward_rank = answer.read_s32()
+                answer.read_s8()
+                answer.read_s32()
+                answer.read_s8()
+                MpCanvas.set_state(105)
+        elif s == 1037:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.stage_title = answer.read_string(14)
+                MpCanvas.stage_count = answer.read_s8()
+                MpCanvas.stage = answer.read_s8()
+                MpCanvas.set_state(91)
+        elif s == 1035:
+            while True:
+                if MpCanvas.answer_status == 1:
+                    MpCanvas.leaving_slot = answer.read_s8()
+                    MpCanvas.loop_i = 0
+                    while MpCanvas.loop_i < 4:
+                        if MpCanvas.fighter_present[MpCanvas.loop_i] and (MpCanvas.fighter_slot[MpCanvas.loop_i] == MpCanvas.leaving_slot):
+                            MpCanvas.cur_slot = MpCanvas.loop_i
+                            break
+                        MpCanvas.loop_i = MpCanvas.loop_i + 1
+                    MpCanvas.fighter_present[MpCanvas.cur_slot] = False
+                    if MpCanvas.fighter_hp[MpCanvas.cur_slot] == 0:
                         break
-                    return
-                if _m19 or _sw18 == 1281:
-                    _m19 = True
-                    _sw42 = MpCanvas.answer_status
-                    if _sw42 == 1:
-                        MpCanvas.name = MpCanvas.input_text
-                        self.pop_states(2)
+                    if imod(MpCanvas.fighter_slot[MpCanvas.cur_slot], 2) == imod(MpCanvas.fighter_slot[0], 2):
+                        MpCanvas.allies_alive = MpCanvas.allies_alive - 1
                         return
-                    elif _sw42 == (-6):
-                        MpCanvas.error_msg = 6
-                        self.push_state(4)
-                        return
-                    elif _sw42 == (-49):
-                        MpCanvas.error_msg = 5
-                        self.push_state(4)
-                        return
-                    elif _sw42 == (-15):
-                        MpCanvas.error_msg = 5
-                        self.push_state(4)
-                        return
-                    MpCanvas.error_msg = 0
-                    self.push_state(4)
-                    return
-                if _m19 or _sw18 == 1283:
-                    _m19 = True
-                    self.push_state(84)
-                    _sw43 = MpCanvas.answer_status
-                    if _sw43 == 1:
-                        MpCanvas.quote_start = MpCanvas.input_text
-                        MpCanvas.letter_cursor = 0
-                        MpCanvas.input_text = MpCanvas.quote_win
-                        MpCanvas.quote_step = 1
-                        return
-                    elif _sw43 == (-49):
-                        MpCanvas.error_msg = 5
-                        self.push_state(4)
-                        return
-                    MpCanvas.error_msg = 0
-                    self.push_state(4)
-                    return
-                if _m19 or _sw18 == 1285:
-                    _m19 = True
-                    _sw44 = MpCanvas.answer_status
-                    if _sw44 == 1:
-                        MpCanvas.quote_win = MpCanvas.input_text
-                        self.pop_state()
-                        return
-                    elif _sw44 == (-49):
-                        MpCanvas.error_msg = 5
-                        self.push_state(4)
-                        return
-                    MpCanvas.error_msg = 0
-                    self.push_state(4)
-                    return
-                if _m19 or _sw18 == 1288:
-                    _m19 = True
-                    _sw45 = MpCanvas.answer_status
-                    if _sw45 == 1:
-                        MpCanvas.attr_hp = answer.read_s16()
-                        MpCanvas.attr_hp_bonus = answer.read_s16()
-                        MpCanvas.attr_mp = answer.read_s16()
-                        MpCanvas.attr_mp_bonus = answer.read_s16()
-                        MpCanvas.attr_attack = answer.read_s16()
-                        MpCanvas.attr_attack_bonus = answer.read_s16()
-                        MpCanvas.attr_defense = answer.read_s16()
-                        MpCanvas.attr_defense_bonus = answer.read_s16()
-                        self.push_state(81)
-                        return
-                    MpCanvas.error_msg = 0
-                    self.push_state(4)
-                    return
-                if _m19 or _sw18 == 1290:
-                    _m19 = True
-                    _sw46 = MpCanvas.answer_status
-                    if _sw46 == 1:
-                        MpCanvas.loop_i = 0
-                        while MpCanvas.loop_i < 11:
-                            MpCanvas.skill_levels[MpCanvas.loop_i] = 99
-                            MpCanvas.loop_i = MpCanvas.loop_i + 1
-                        MpCanvas.skill_count = answer.read_s8()
-                        MpCanvas.loop_i = 0
-                        while MpCanvas.loop_i < MpCanvas.skill_count:
-                            MpCanvas.skill_id = answer.read_s8()
-                            MpCanvas.skill_levels[(MpCanvas.skill_id - 3)] = answer.read_s8()
-                            MpCanvas.loop_i = MpCanvas.loop_i + 1
-                        MpCanvas.loop_i = 0
-                        while MpCanvas.loop_i < MpCanvas.skill_slot_count:
-                            MpCanvas.skill_order[MpCanvas.loop_i] = MpCanvas.skill_slots[MpCanvas.loop_i]
-                            MpCanvas.loop_i = MpCanvas.loop_i + 1
-                        while MpCanvas.loop_i < 4:
-                            MpCanvas.loop_j = 0
-                            while MpCanvas.loop_j < 11:
-                                MpCanvas.skill_taken = False
-                                MpCanvas.loop_k = 0
-                                while MpCanvas.loop_k < MpCanvas.loop_i:
-                                    if MpCanvas.skill_order[MpCanvas.loop_k] == (3 + MpCanvas.loop_j):
-                                        MpCanvas.skill_taken = True
-                                        break
-                                    MpCanvas.loop_k = MpCanvas.loop_k + 1
-                                if not MpCanvas.skill_taken:
-                                    MpCanvas.skill_order[MpCanvas.loop_i] = i8(((3 + MpCanvas.loop_j)))
-                                    break
-                                MpCanvas.loop_j = MpCanvas.loop_j + 1
-                            MpCanvas.loop_i = MpCanvas.loop_i + 1
-                        self.push_state(82)
-                        return
-                    MpCanvas.error_msg = 0
-                    self.push_state(4)
-                    return
-                if _m19 or _sw18 == 1292:
-                    _m19 = True
-                    _sw47 = MpCanvas.answer_status
-                    if _sw47 == 1:
-                        MpCanvas.loop_j = 0
-                        MpCanvas.loop_i = 0
-                        while MpCanvas.loop_i < 4:
-                            if MpCanvas.skill_levels[(MpCanvas.skill_order[MpCanvas.loop_i] - 3)] != 99:
-                                MpCanvas.skill_slots[MpCanvas.loop_j] = MpCanvas.skill_order[MpCanvas.loop_i]
-                                MpCanvas.loop_j = MpCanvas.loop_j + 1
-                            MpCanvas.loop_i = MpCanvas.loop_i + 1
-                        MpCanvas.skill_slot_count = MpCanvas.loop_j
-                        MpCanvas.loop_i = MpCanvas.loop_j
-                        while MpCanvas.loop_i < 4:
-                            MpCanvas.skill_slots[MpCanvas.loop_j] = 99
-                            MpCanvas.loop_i = MpCanvas.loop_i + 1
-                        self.pop_state()
-                        return
-                    MpCanvas.error_msg = 0
-                    self.push_state(4)
-                    return
-                if _m19 or _sw18 == 1297:
-                    _m19 = True
-                    _sw48 = MpCanvas.answer_status
-                    if _sw48 == 1:
-                        MpCanvas.fame = answer.read_s32()
-                        MpCanvas.duel_grade = answer.read_s32()
-                        MpCanvas.mission_grade = answer.read_s32()
-                        self.push_state(80)
-                        return
-                    MpCanvas.error_msg = 0
-                    self.push_state(4)
-                    return
-                if _m19 or _sw18 == 1299:
-                    _m19 = True
-                    _sw49 = MpCanvas.answer_status
-                    if _sw49 == 1:
-                        MpCanvas.exp = answer.read_s32()
-                        MpCanvas.fame = answer.read_s32()
-                        MpCanvas.gold = answer.read_s32()
-                        self.push_state(83)
-                        return
-                    MpCanvas.error_msg = 0
-                    self.push_state(4)
-                    return
-                if _m19 or _sw18 == 1536:
-                    _m19 = True
-                    _sw50 = MpCanvas.answer_status
-                    if _sw50 == 1:
-                        MpCanvas.notice_kind = answer.read_s8()
-                        n6 = 0
-                        while n6 < 4:
-                            MpCanvas.notice_lines[n6] = answer.read_string(16)
-                            n6 = n6 + 1
-                        MpCanvas.notices_left = 0
-                        MpCanvas.set_state(6)
-                    return
-                if _m19 or _sw18 == 289:
-                    _m19 = True
-                    if MpCanvas.answer_status == 1:
-                        _t51 = answer.read_s32()
-                        MpCanvas.invitation_saved = _t51
-                        MpCanvas.invitation = _t51
-                        self.push_state(88)
-                        return
-                    MpCanvas.error_msg = 0
-                    self.push_state(4)
-                    return
-                if _m19 or _sw18 == 291:
-                    _m19 = True
-                    if MpCanvas.answer_status == 1:
-                        self.pop_state()
-                        return
-                    MpCanvas.error_msg = 0
-                    self.push_state(4)
+                    MpCanvas.enemies_alive = MpCanvas.enemies_alive - 1
                 break
-        except _Brk_block0_1631:
-            pass
+        elif s == 1281:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.name = MpCanvas.input_text
+                self.pop_states(2)
+                return
+            elif MpCanvas.answer_status == (-6):
+                MpCanvas.error_msg = 6
+                self.push_state(4)
+                return
+            elif MpCanvas.answer_status == (-49):
+                MpCanvas.error_msg = 5
+                self.push_state(4)
+                return
+            elif MpCanvas.answer_status == (-15):
+                MpCanvas.error_msg = 5
+                self.push_state(4)
+                return
+            MpCanvas.error_msg = 0
+            self.push_state(4)
+        elif s == 1283:
+            self.push_state(84)
+            if MpCanvas.answer_status == 1:
+                MpCanvas.quote_start = MpCanvas.input_text
+                MpCanvas.letter_cursor = 0
+                MpCanvas.input_text = MpCanvas.quote_win
+                MpCanvas.quote_step = 1
+                return
+            elif MpCanvas.answer_status == (-49):
+                MpCanvas.error_msg = 5
+                self.push_state(4)
+                return
+            MpCanvas.error_msg = 0
+            self.push_state(4)
+        elif s == 1285:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.quote_win = MpCanvas.input_text
+                self.pop_state()
+                return
+            elif MpCanvas.answer_status == (-49):
+                MpCanvas.error_msg = 5
+                self.push_state(4)
+                return
+            MpCanvas.error_msg = 0
+            self.push_state(4)
+        elif s == 1288:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.attr_hp = answer.read_s16()
+                MpCanvas.attr_hp_bonus = answer.read_s16()
+                MpCanvas.attr_mp = answer.read_s16()
+                MpCanvas.attr_mp_bonus = answer.read_s16()
+                MpCanvas.attr_attack = answer.read_s16()
+                MpCanvas.attr_attack_bonus = answer.read_s16()
+                MpCanvas.attr_defense = answer.read_s16()
+                MpCanvas.attr_defense_bonus = answer.read_s16()
+                self.push_state(81)
+                return
+            MpCanvas.error_msg = 0
+            self.push_state(4)
+        elif s == 1290:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.loop_i = 0
+                while MpCanvas.loop_i < 11:
+                    MpCanvas.skill_levels[MpCanvas.loop_i] = 99
+                    MpCanvas.loop_i = MpCanvas.loop_i + 1
+                MpCanvas.skill_count = answer.read_s8()
+                MpCanvas.loop_i = 0
+                while MpCanvas.loop_i < MpCanvas.skill_count:
+                    MpCanvas.skill_id = answer.read_s8()
+                    MpCanvas.skill_levels[(MpCanvas.skill_id - 3)] = answer.read_s8()
+                    MpCanvas.loop_i = MpCanvas.loop_i + 1
+                MpCanvas.loop_i = 0
+                while MpCanvas.loop_i < MpCanvas.skill_slot_count:
+                    MpCanvas.skill_order[MpCanvas.loop_i] = MpCanvas.skill_slots[MpCanvas.loop_i]
+                    MpCanvas.loop_i = MpCanvas.loop_i + 1
+                while MpCanvas.loop_i < 4:
+                    MpCanvas.loop_j = 0
+                    while MpCanvas.loop_j < 11:
+                        MpCanvas.skill_taken = False
+                        MpCanvas.loop_k = 0
+                        while MpCanvas.loop_k < MpCanvas.loop_i:
+                            if MpCanvas.skill_order[MpCanvas.loop_k] == (3 + MpCanvas.loop_j):
+                                MpCanvas.skill_taken = True
+                                break
+                            MpCanvas.loop_k = MpCanvas.loop_k + 1
+                        if not MpCanvas.skill_taken:
+                            MpCanvas.skill_order[MpCanvas.loop_i] = i8(((3 + MpCanvas.loop_j)))
+                            break
+                        MpCanvas.loop_j = MpCanvas.loop_j + 1
+                    MpCanvas.loop_i = MpCanvas.loop_i + 1
+                self.push_state(82)
+                return
+            MpCanvas.error_msg = 0
+            self.push_state(4)
+        elif s == 1292:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.loop_j = 0
+                MpCanvas.loop_i = 0
+                while MpCanvas.loop_i < 4:
+                    if MpCanvas.skill_levels[(MpCanvas.skill_order[MpCanvas.loop_i] - 3)] != 99:
+                        MpCanvas.skill_slots[MpCanvas.loop_j] = MpCanvas.skill_order[MpCanvas.loop_i]
+                        MpCanvas.loop_j = MpCanvas.loop_j + 1
+                    MpCanvas.loop_i = MpCanvas.loop_i + 1
+                MpCanvas.skill_slot_count = MpCanvas.loop_j
+                MpCanvas.loop_i = MpCanvas.loop_j
+                while MpCanvas.loop_i < 4:
+                    MpCanvas.skill_slots[MpCanvas.loop_j] = 99
+                    MpCanvas.loop_i = MpCanvas.loop_i + 1
+                self.pop_state()
+                return
+            MpCanvas.error_msg = 0
+            self.push_state(4)
+        elif s == 1297:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.fame = answer.read_s32()
+                MpCanvas.duel_grade = answer.read_s32()
+                MpCanvas.mission_grade = answer.read_s32()
+                self.push_state(80)
+                return
+            MpCanvas.error_msg = 0
+            self.push_state(4)
+        elif s == 1299:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.exp = answer.read_s32()
+                MpCanvas.fame = answer.read_s32()
+                MpCanvas.gold = answer.read_s32()
+                self.push_state(83)
+                return
+            MpCanvas.error_msg = 0
+            self.push_state(4)
+        elif s == 1536:
+            if MpCanvas.answer_status == 1:
+                MpCanvas.notice_kind = answer.read_s8()
+                n6 = 0
+                while n6 < 4:
+                    MpCanvas.notice_lines[n6] = answer.read_string(16)
+                    n6 = n6 + 1
+                MpCanvas.notices_left = 0
+                MpCanvas.set_state(6)
+        elif s == 289:
+            if MpCanvas.answer_status == 1:
+                _t51 = answer.read_s32()
+                MpCanvas.invitation_saved = _t51
+                MpCanvas.invitation = _t51
+                self.push_state(88)
+                return
+            MpCanvas.error_msg = 0
+            self.push_state(4)
+        elif s == 291:
+            if MpCanvas.answer_status == 1:
+                self.pop_state()
+                return
+            MpCanvas.error_msg = 0
+            self.push_state(4)
 
     def menu_keys(self, key):  # g.java:2589
         if MpCanvas.state_ticks < 2:
@@ -2344,521 +2071,448 @@ class MpCanvas(_Canvas):
     def handle_key(self, var1_1):  # g.java:2661
         MpCanvas.ping_misses = 0
         MpCanvas.key_in = var1_1
-        _sw52 = MpCanvas.state
-        try:
-            _m53 = False
-            while True:
-                if _m53 or _sw52 == 161:
-                    _m53 = True
-                    if MpCanvas.key_in == (-7):
-                        self.pop_state()
-                        return
-                if _m53 or _sw52 in (11, 12, 16, 87, 162, 163, 164):
-                    _m53 = True
-                    if MpCanvas.key_in == (-7):
-                        self.pop_state()
-                        return
-                    self.menu_keys(MpCanvas.key_in)
+        if MpCanvas.state == 161:
+            if MpCanvas.key_in == (-7):
+                self.pop_state()
+                return
+            if MpCanvas.key_in == (-7):
+                self.pop_state()
+                return
+            self.menu_keys(MpCanvas.key_in)
+        elif MpCanvas.state in (11, 12, 16, 87, 162, 163, 164):
+            if MpCanvas.key_in == (-7):
+                self.pop_state()
+                return
+            self.menu_keys(MpCanvas.key_in)
+        elif MpCanvas.state in (170, 171):
+            if (MpCanvas.key_in != (-7)) and (MpCanvas.key_in != (-5)):
+                return
+            self.pop_state()
+        elif MpCanvas.state == 6:
+            if MpCanvas.notices_left > 0:
+                MpCanvas.notice_page = MpCanvas.notice_page + 1
+                self.send_request(258)
+                return
+            if MpCanvas.notice_kind == 1:
+                self.reset_state_stack(7)
+                return
+            if MpCanvas.notice_kind != 9:
+                return
+            MpCanvas.set_state(300)
+        elif MpCanvas.state == 7:
+            MpCanvas.menu_size = 2
+            MpCanvas.relogin_to_menu = False
+            self.reset_state_stack(10)
+        elif MpCanvas.state == 10:
+            if MpCanvas.popup_shown:
+                if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
+                    MpCanvas.popup_cursor = imod(((MpCanvas.popup_cursor + 1)), 2)
                     return
-                if _m53 or _sw52 in (170, 171):
-                    _m53 = True
-                    if (MpCanvas.key_in != (-7)) and (MpCanvas.key_in != (-5)):
-                        break
-                    self.pop_state()
+                if MpCanvas.key_in != (-5):
                     return
-                if _m53 or _sw52 == 6:
-                    _m53 = True
-                    if MpCanvas.notices_left > 0:
-                        MpCanvas.notice_page = MpCanvas.notice_page + 1
-                        self.send_request(258)
-                        return
-                    if MpCanvas.notice_kind == 1:
-                        self.reset_state_stack(7)
-                        return
-                    if MpCanvas.notice_kind != 9:
-                        break
+                if MpCanvas.popup_cursor == 0:
                     MpCanvas.set_state(300)
                     return
-                if _m53 or _sw52 == 7:
-                    _m53 = True
-                    MpCanvas.menu_size = 2
-                    MpCanvas.relogin_to_menu = False
-                    self.reset_state_stack(10)
-                    return
-                if _m53 or _sw52 == 10:
-                    _m53 = True
-                    if MpCanvas.popup_shown:
-                        if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
-                            MpCanvas.popup_cursor = imod(((MpCanvas.popup_cursor + 1)), 2)
-                            return
-                        if MpCanvas.key_in != (-5):
+                MpCanvas.popup_shown = False
+                return
+            if MpCanvas.key_in == (-6):
+                MpCanvas.disconnect()
+                MpCanvas.popup_kind = 0
+                MpCanvas.relogin_to_menu = True
+                MpCanvas.letter_cursor = 0
+                self.push_state(2)
+                return
+            if MpCanvas.key_in == (-7):
+                MpCanvas.popup_shown = True
+                MpCanvas.popup_cursor = 1
+                return
+            self.menu_keys(MpCanvas.key_in)
+        elif MpCanvas.state in (80, 81, 83):
+            if (MpCanvas.key_in != (-5)) and (MpCanvas.key_in != (-7)):
+                return
+            self.pop_state()
+        elif MpCanvas.state == 82:
+            if MpCanvas.key_in == (-1):
+                if MpCanvas.cursor_stack[MpCanvas.stack_depth] > 0:
+                    v0 = MpCanvas.stack_depth
+                    MpCanvas.cursor_stack[v0] = (MpCanvas.cursor_stack[v0] - 1)
+                else:
+                    MpCanvas.cursor_stack[MpCanvas.stack_depth] = 3
+            elif MpCanvas.key_in == (-2):
+                if MpCanvas.cursor_stack[MpCanvas.stack_depth] < 3:
+                    v1 = MpCanvas.stack_depth
+                    MpCanvas.cursor_stack[v1] = (MpCanvas.cursor_stack[v1] + 1)
+                else:
+                    MpCanvas.cursor_stack[MpCanvas.stack_depth] = 0
+            elif MpCanvas.key_in == (-3):
+                while True:
+                    if MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] > 3:
+                        v2 = MpCanvas.cursor_stack[MpCanvas.stack_depth]
+                        MpCanvas.skill_order[v2] = i8(((MpCanvas.skill_order[v2] - 1)))
+                    else:
+                        MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] = 13
+                    MpCanvas.skill_taken = False
+                    MpCanvas.loop_i = 0
+                    while MpCanvas.loop_i < 4:
+                        if (MpCanvas.loop_i != MpCanvas.cursor_stack[MpCanvas.stack_depth]) and (MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] == MpCanvas.skill_order[MpCanvas.loop_i]):
+                            MpCanvas.skill_taken = True
                             break
-                        if MpCanvas.popup_cursor == 0:
-                            MpCanvas.set_state(300)
-                            return
-                        MpCanvas.popup_shown = False
-                        return
-                    if MpCanvas.key_in == (-6):
-                        MpCanvas.disconnect()
-                        MpCanvas.popup_kind = 0
-                        MpCanvas.relogin_to_menu = True
-                        MpCanvas.letter_cursor = 0
-                        self.push_state(2)
-                        return
-                    if MpCanvas.key_in == (-7):
-                        MpCanvas.popup_shown = True
-                        MpCanvas.popup_cursor = 1
-                        return
-                    self.menu_keys(MpCanvas.key_in)
-                    return
-                if _m53 or _sw52 in (80, 81, 83):
-                    _m53 = True
-                    if (MpCanvas.key_in != (-5)) and (MpCanvas.key_in != (-7)):
+                        MpCanvas.loop_i = MpCanvas.loop_i + 1
+                    if not (MpCanvas.skill_taken):
                         break
-                    self.pop_state()
-                    return
-                if _m53 or _sw52 == 82:
-                    _m53 = True
-                    if MpCanvas.key_in == (-1):
-                        if MpCanvas.cursor_stack[MpCanvas.stack_depth] > 0:
-                            v0 = MpCanvas.stack_depth
-                            MpCanvas.cursor_stack[v0] = (MpCanvas.cursor_stack[v0] - 1)
-                        else:
-                            MpCanvas.cursor_stack[MpCanvas.stack_depth] = 3
-                    elif MpCanvas.key_in == (-2):
-                        if MpCanvas.cursor_stack[MpCanvas.stack_depth] < 3:
-                            v1 = MpCanvas.stack_depth
-                            MpCanvas.cursor_stack[v1] = (MpCanvas.cursor_stack[v1] + 1)
-                        else:
-                            MpCanvas.cursor_stack[MpCanvas.stack_depth] = 0
-                    elif MpCanvas.key_in == (-3):
-                        while True:
-                            try:
-                                if MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] > 3:
-                                    v2 = MpCanvas.cursor_stack[MpCanvas.stack_depth]
-                                    MpCanvas.skill_order[v2] = i8(((MpCanvas.skill_order[v2] - 1)))
-                                else:
-                                    MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] = 13
-                                MpCanvas.skill_taken = False
-                                MpCanvas.loop_i = 0
-                                while MpCanvas.loop_i < 4:
-                                    if (MpCanvas.loop_i != MpCanvas.cursor_stack[MpCanvas.stack_depth]) and (MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] == MpCanvas.skill_order[MpCanvas.loop_i]):
-                                        MpCanvas.skill_taken = True
-                                        raise _Cont_block47_2359()
-                                    MpCanvas.loop_i = MpCanvas.loop_i + 1
-                            except _Cont_block47_2359:
-                                pass
-                            if not (MpCanvas.skill_taken):
-                                break
-                    elif MpCanvas.key_in == (-4):
-                        while True:
-                            try:
-                                if MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] < 13:
-                                    v3 = MpCanvas.cursor_stack[MpCanvas.stack_depth]
-                                    MpCanvas.skill_order[v3] = i8(((MpCanvas.skill_order[v3] + 1)))
-                                else:
-                                    MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] = 3
-                                MpCanvas.skill_taken = False
-                                MpCanvas.loop_i = 0
-                                while MpCanvas.loop_i < 4:
-                                    if (MpCanvas.loop_i != MpCanvas.cursor_stack[MpCanvas.stack_depth]) and (MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] == MpCanvas.skill_order[MpCanvas.loop_i]):
-                                        MpCanvas.skill_taken = True
-                                        raise _Cont_block49_2378()
-                                    MpCanvas.loop_i = MpCanvas.loop_i + 1
-                            except _Cont_block49_2378:
-                                pass
-                            if not (MpCanvas.skill_taken):
-                                break
-                    if (MpCanvas.key_in != (-5)) and (MpCanvas.key_in != (-7)):
+            elif MpCanvas.key_in == (-4):
+                while True:
+                    if MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] < 13:
+                        v3 = MpCanvas.cursor_stack[MpCanvas.stack_depth]
+                        MpCanvas.skill_order[v3] = i8(((MpCanvas.skill_order[v3] + 1)))
+                    else:
+                        MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] = 3
+                    MpCanvas.skill_taken = False
+                    MpCanvas.loop_i = 0
+                    while MpCanvas.loop_i < 4:
+                        if (MpCanvas.loop_i != MpCanvas.cursor_stack[MpCanvas.stack_depth]) and (MpCanvas.skill_order[MpCanvas.cursor_stack[MpCanvas.stack_depth]] == MpCanvas.skill_order[MpCanvas.loop_i]):
+                            MpCanvas.skill_taken = True
+                            break
+                        MpCanvas.loop_i = MpCanvas.loop_i + 1
+                    if not (MpCanvas.skill_taken):
                         break
-                    self.menu_select()
-                    return
-                if _m53 or _sw52 == 84:
-                    _m53 = True
-                    if MpCanvas.key_in == (-7):
-                        if len(MpCanvas.input_text) == 0:
-                            if MpCanvas.quote_step == 0:
-                                self.pop_state()
-                                return
-                            MpCanvas.quote_step = MpCanvas.quote_step - 1
-                            return
-                        MpCanvas.input_text = MpCanvas.input_text[0:(len(MpCanvas.input_text) - 1)]
-                        return
-                    if (MpCanvas.key_in == (-5)) or (MpCanvas.key_in == (-6)):
-                        if len(MpCanvas.input_text) == 0:
-                            if MpCanvas.letter_cursor >= 26:
-                                break
-                            MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((65 + MpCanvas.letter_cursor))) & 0xFFFF)))
-                            return
-                        if len(MpCanvas.input_text) > 20:
-                            break
-                        if MpCanvas.letter_cursor < 26:
-                            if len(MpCanvas.input_text) >= 20:
-                                break
-                            MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((97 + MpCanvas.letter_cursor))) & 0xFFFF)))
-                            return
-                        if MpCanvas.letter_cursor == 26:
-                            if len(MpCanvas.input_text) >= 20:
-                                break
-                            MpCanvas.input_text = _js(MpCanvas.input_text, chr(32))
-                            return
-                        if MpCanvas.letter_cursor != 27:
-                            break
-                        MpCanvas.loading_msg = 5
-                        MpCanvas.input_text = MpCanvas.trim_right(MpCanvas.input_text)
-                        if MpCanvas.quote_step == 0:
-                            self.send_request(1282)
-                        else:
-                            self.send_request(1284)
-                        MpCanvas.set_state(3)
-                        return
-                    MpCanvas.letter_grid_space_keys(MpCanvas.key_in)
-                    return
-                if _m53 or _sw52 == 85:
-                    _m53 = True
-                    if MpCanvas.key_in == (-7):
-                        if len(MpCanvas.input_text) == 0:
-                            self.pop_state()
-                            return
-                        MpCanvas.input_text = MpCanvas.input_text[0:(len(MpCanvas.input_text) - 1)]
-                        return
-                    if (MpCanvas.key_in == (-5)) or (MpCanvas.key_in == (-6)):
-                        if len(MpCanvas.input_text) == 0:
-                            if MpCanvas.letter_cursor >= 26:
-                                break
-                            MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((65 + MpCanvas.letter_cursor))) & 0xFFFF)))
-                            return
-                        if len(MpCanvas.input_text) > 8:
-                            break
-                        if MpCanvas.letter_cursor < 26:
-                            if len(MpCanvas.input_text) >= 8:
-                                break
-                            MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((97 + MpCanvas.letter_cursor))) & 0xFFFF)))
-                            return
-                        if MpCanvas.letter_cursor != 26:
-                            break
-                        self.push_state(86)
-                        return
-                    MpCanvas.letter_grid_keys(MpCanvas.key_in)
-                    return
-                if _m53 or _sw52 == 88:
-                    _m53 = True
-                    if MpCanvas.key_in == (-1):
-                        if MpCanvas.cursor_stack[MpCanvas.stack_depth] > 0:
-                            v4 = MpCanvas.stack_depth
-                            MpCanvas.cursor_stack[v4] = (MpCanvas.cursor_stack[v4] - 1)
-                            return
-                        MpCanvas.cursor_stack[MpCanvas.stack_depth] = 2
-                        return
-                    if MpCanvas.key_in == (-2):
-                        if MpCanvas.cursor_stack[MpCanvas.stack_depth] < 2:
-                            v5 = MpCanvas.stack_depth
-                            MpCanvas.cursor_stack[v5] = (MpCanvas.cursor_stack[v5] + 1)
-                            return
-                        MpCanvas.cursor_stack[MpCanvas.stack_depth] = 0
-                        return
-                    if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
-                        self.menu_select()
-                        return
-                    if MpCanvas.key_in == (-5):
-                        MpCanvas.key_in = (-4)
-                        self.menu_select()
-                        return
-                    if MpCanvas.key_in != (-7):
-                        break
-                    MpCanvas.save_options()
-                    if MpCanvas.invitation != MpCanvas.invitation_saved:
-                        MpCanvas.loading_msg = 1
-                        MpCanvas.set_state(3)
-                        self.send_request(290)
-                        return
-                    self.pop_state()
-                    self.start_sound(1)
-                    return
-                if _m53 or _sw52 == 89:
-                    _m53 = True
-                    if MpCanvas.key_in == (-3):
-                        if MpCanvas.help_page > 0:
-                            MpCanvas.help_page = MpCanvas.help_page - 1
-                            return
-                        MpCanvas.help_page = (Consts.help_pages[MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)]] - 1)
-                        return
-                    if (MpCanvas.key_in == (-4)) or (MpCanvas.key_in == (-5)):
-                        if MpCanvas.help_page < (Consts.help_pages[MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)]] - 1):
-                            MpCanvas.help_page = MpCanvas.help_page + 1
-                            return
-                        MpCanvas.help_page = 0
-                        return
-                    if MpCanvas.key_in != (-7):
-                        break
-                    self.pop_state()
-                    return
-                if _m53 or _sw52 == 20:
-                    _m53 = True
-                    if MpCanvas.key_in == (-7):
+            if (MpCanvas.key_in != (-5)) and (MpCanvas.key_in != (-7)):
+                return
+            self.menu_select()
+        elif MpCanvas.state == 84:
+            if MpCanvas.key_in == (-7):
+                if len(MpCanvas.input_text) == 0:
+                    if MpCanvas.quote_step == 0:
                         self.pop_state()
                         return
-                    self.menu_keys(MpCanvas.key_in)
+                    MpCanvas.quote_step = MpCanvas.quote_step - 1
                     return
-                if _m53 or _sw52 == 21:
-                    _m53 = True
-                    if (MpCanvas.key_in == (-5)) or (MpCanvas.key_in == (-6)):
-                        if len(MpCanvas.input_text) > 12:
-                            break
-                        if MpCanvas.letter_cursor < 26:
-                            if len(MpCanvas.input_text) >= 12:
-                                break
-                            MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((65 + MpCanvas.letter_cursor))) & 0xFFFF)))
-                            return
-                        if (MpCanvas.letter_cursor != 26) or (len(MpCanvas.input_text) < 4):
-                            break
-                        _sw54 = MpCanvas.room_mode
-                        if _sw54 == 0:
-                            MpCanvas.loading_msg = 2
-                        elif _sw54 == 1:
-                            MpCanvas.loading_msg = 4
-                        elif _sw54 == 2:
-                            MpCanvas.loading_msg = 4
-                        MpCanvas.loading_msg = 0
-                        self.send_request(768)
-                        MpCanvas.set_state(3)
+                MpCanvas.input_text = MpCanvas.input_text[0:(len(MpCanvas.input_text) - 1)]
+                return
+            if (MpCanvas.key_in == (-5)) or (MpCanvas.key_in == (-6)):
+                if len(MpCanvas.input_text) == 0:
+                    if MpCanvas.letter_cursor >= 26:
                         return
-                    if var1_1 == (-7):
-                        if len(MpCanvas.input_text) == 0:
-                            self.pop_state()
-                            return
-                        MpCanvas.input_text = MpCanvas.input_text[0:(len(MpCanvas.input_text) - 1)]
-                        return
-                    MpCanvas.letter_grid_keys(var1_1)
+                    MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((65 + MpCanvas.letter_cursor))) & 0xFFFF)))
                     return
-                if _m53 or _sw52 == 94:
-                    _m53 = True
-                    if MpCanvas.exit_prompt:
-                        if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
-                            MpCanvas.exit_cursor = imod(((MpCanvas.exit_cursor + 1)), 2)
-                            return
-                        if MpCanvas.key_in != (-5):
-                            break
-                        if MpCanvas.exit_cursor == 0:
-                            MpCanvas.relogin_to_menu = False
-                            MpCanvas.disconnect()
-                            MpCanvas.set_timer((-1))
-                            MpCanvas.loading_msg = 0
-                            MpCanvas.password_login = False
-                            MpCanvas.set_state(10000)
-                            return
-                        MpCanvas.exit_prompt = False
-                        return
-                    MpCanvas.chosen_action = 99
-                    if MpCanvas.key_in == (-1):
-                        MpCanvas.chosen_action = 2
-                    elif MpCanvas.key_in == (-3):
-                        MpCanvas.chosen_action = 1
-                    elif MpCanvas.key_in == (-4):
-                        MpCanvas.chosen_action = 0
-                    elif MpCanvas.key_in == (-2):
-                        if MpCanvas.skill_slot_count > 0:
-                            MpCanvas.loop_k = 0
-                            while MpCanvas.loop_k < MpCanvas.skill_slot_count:
-                                if MpCanvas.fighter_mp[0] >= MpCanvas.skill_costs[(MpCanvas.skill_slots[MpCanvas.loop_k] - 3)]:
-                                    MpCanvas.chosen_action = 20
-                                    break
-                                MpCanvas.loop_k = MpCanvas.loop_k + 1
-                    elif (MpCanvas.key_in == (-7)) and (not MpCanvas.exit_asked):
-                        MpCanvas.exit_asked = True
-                        MpCanvas.exit_prompt = True
-                        MpCanvas.exit_cursor = 1
-                        MpCanvas.exit_prompt_time = system.currentTimeMillis()
-                    if MpCanvas.chosen_action == 20:
-                        MpCanvas.set_state(95)
-                        return
-                    if MpCanvas.chosen_action == 99:
-                        break
-                    MpCanvas.set_state(96)
+                if len(MpCanvas.input_text) > 20:
                     return
-                if _m53 or _sw52 == 95:
-                    _m53 = True
-                    if MpCanvas.key_in == (-1):
-                        MpCanvas.skill_cursor = (_inc(MpCanvas, 'skill_cursor', -1) if (MpCanvas.skill_cursor > 0) else (MpCanvas.skill_slot_count - 1))
-                    elif MpCanvas.key_in == (-2):
-                        MpCanvas.skill_cursor = (_inc(MpCanvas, 'skill_cursor', 1) if (MpCanvas.skill_cursor < (MpCanvas.skill_slot_count - 1)) else 0)
-                    if MpCanvas.key_in == (-5):
-                        if MpCanvas.fighter_mp[0] < MpCanvas.skill_costs[(MpCanvas.skill_slots[MpCanvas.skill_cursor] - 3)]:
-                            break
-                        MpCanvas.chosen_action = MpCanvas.skill_slots[MpCanvas.skill_cursor]
-                        MpCanvas.set_state(96)
+                if MpCanvas.letter_cursor < 26:
+                    if len(MpCanvas.input_text) >= 20:
                         return
-                    if MpCanvas.key_in != (-7):
-                        break
-                    MpCanvas.chosen_action = 99
-                    MpCanvas.set_state(94)
+                    MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((97 + MpCanvas.letter_cursor))) & 0xFFFF)))
                     return
-                if _m53 or _sw52 == 96:
-                    _m53 = True
-                    if (MpCanvas.key_in == (-1)) or (MpCanvas.key_in == (-2)):
-                        _sw55 = MpCanvas.chosen_action
-                        _m56 = False
-                        while True:
-                            if _m56 or _sw55 in (9, 10):
-                                _m56 = True
-                                MpCanvas.loop_i = 0
-                                while MpCanvas.loop_i < 4:
-                                    if (MpCanvas.fighter_present[MpCanvas.loop_i] and (imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == imod(MpCanvas.fighter_slot[MpCanvas.target_cursor], 2))) and (MpCanvas.fighter_slot[MpCanvas.loop_i] != MpCanvas.fighter_slot[MpCanvas.target_cursor]):
-                                        MpCanvas.target_cursor = MpCanvas.loop_i
-                                        raise _Brk_block0_2273()
-                                    MpCanvas.loop_i = MpCanvas.loop_i + 1
-                                raise _Brk_block0_2273()
-                            if _m56 or _sw55 in (0, 3, 4, 5, 6, 7):
-                                _m56 = True
-                                MpCanvas.loop_i = 1
-                                while MpCanvas.loop_i < 4:
-                                    if (MpCanvas.fighter_present[MpCanvas.loop_i] and (imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == imod(MpCanvas.fighter_slot[MpCanvas.target_cursor], 2))) and (MpCanvas.fighter_slot[MpCanvas.loop_i] != MpCanvas.fighter_slot[MpCanvas.target_cursor]):
-                                        MpCanvas.target_cursor = MpCanvas.loop_i
-                                        raise _Brk_block0_2273()
-                                    MpCanvas.loop_i = MpCanvas.loop_i + 1
-                            if _m56 or _sw55 not in (9, 10, 0, 3, 4, 5, 6, 7):
-                                _m56 = True
-                                return
-                            break
-                    if MpCanvas.key_in == (-5):
-                        self.start_timing()
+                if MpCanvas.letter_cursor == 26:
+                    if len(MpCanvas.input_text) >= 20:
                         return
-                    if MpCanvas.key_in != (-7):
-                        break
-                    _sw57 = MpCanvas.chosen_action
-                    if _sw57 in (3, 4, 5, 6, 7, 9, 10):
-                        MpCanvas.set_state(95)
-                        return
-                    MpCanvas.set_state(94)
+                    MpCanvas.input_text = _js(MpCanvas.input_text, chr(32))
                     return
-                if _m53 or _sw52 == 97:
-                    _m53 = True
-                    if (MpCanvas.state_ticks <= 0) or (MpCanvas.key_in != (-5)):
-                        break
-                    self.stop_timing()
+                if MpCanvas.letter_cursor != 27:
                     return
-                if _m53 or _sw52 == 105:
-                    _m53 = True
-                    if (MpCanvas.state_ticks <= idiv(1000, MpCanvas.tick_ms)) or (MpCanvas.key_in != (-5)):
-                        break
-                    self.reset_state_stack(10)
-                    _sw58 = MpCanvas.room_mode
-                    _m59 = False
-                    while True:
-                        if _m59 or _sw58 == 0:
-                            _m59 = True
-                            self.push_state(11)
-                            raise _Brk_block0_2273()
-                        if _m59 or _sw58 == 1:
-                            _m59 = True
-                            self.push_state(11)
-                            MpCanvas.cursor_stack[MpCanvas.stack_depth] = 1
-                            raise _Brk_block0_2273()
-                        if _m59 or _sw58 == 2:
-                            _m59 = True
-                            MpCanvas.cursor_stack[MpCanvas.stack_depth] = 1
-                            self.push_state(12)
-                        break
-                    return
-                if _m53 or _sw52 == 4:
-                    _m53 = True
-                    if MpCanvas.popup_shown:
-                        if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
-                            MpCanvas.popup_cursor = imod(((MpCanvas.popup_cursor + 1)), 2)
-                            return
-                        if MpCanvas.key_in != (-5):
-                            break
-                        if MpCanvas.popup_cursor == 0:
-                            MpCanvas.set_state(300)
-                            return
-                        MpCanvas.popup_shown = False
-                        MpCanvas.popup_cursor = 1
-                        return
-                    if MpCanvas.key_in == (-6):
-                        if (MpCanvas.error_msg != 7) and (MpCanvas.error_msg != 1):
-                            break
-                        MpCanvas.disconnect()
-                        MpCanvas.popup_kind = 0
-                        MpCanvas.relogin_to_menu = True
-                        MpCanvas.set_state(2)
-                        MpCanvas.popup_shown = False
-                        return
-                    if MpCanvas.key_in == (-7):
-                        if (MpCanvas.error_msg != 7) and (MpCanvas.error_msg != 1):
-                            break
-                        MpCanvas.popup_shown = True
-                        MpCanvas.popup_cursor = 1
-                        return
-                    if MpCanvas.key_in != (-5):
-                        break
-                    if not NetThread.connected:
-                        if ((MpCanvas.error_msg == 14) or (MpCanvas.error_msg == 15)) or (MpCanvas.error_msg == 16):
-                            self.pop_state()
-                            return
-                        if MpCanvas.error_msg == 17:
-                            MpCanvas.popup_kind = 0
-                            MpCanvas.relogin_to_menu = True
-                            self.push_state(2)
-                            return
-                        if MpCanvas.error_msg != 1:
-                            MpCanvas.loading_msg = 0
-                            MpCanvas.set_state(10000)
-                            return
-                        self.reset_state_stack(1)
-                        return
-                    if MpCanvas.pending_state > (-1):
-                        self.push_state(MpCanvas.pending_state)
-                        MpCanvas.pending_state = (-1)
-                        return
-                    _sw60 = MpCanvas.state_stack[(MpCanvas.stack_depth - 1)]
-                    if _sw60 == 105:
-                        return
-                    elif _sw60 == 86:
-                        self.pop_states(2)
-                        return
+                MpCanvas.loading_msg = 5
+                MpCanvas.input_text = MpCanvas.trim_right(MpCanvas.input_text)
+                if MpCanvas.quote_step == 0:
+                    self.send_request(1282)
+                else:
+                    self.send_request(1284)
+                MpCanvas.set_state(3)
+                return
+            MpCanvas.letter_grid_space_keys(MpCanvas.key_in)
+        elif MpCanvas.state == 85:
+            if MpCanvas.key_in == (-7):
+                if len(MpCanvas.input_text) == 0:
                     self.pop_state()
                     return
-                if _m53 or _sw52 == 5:
-                    _m53 = True
-                    if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
-                        MpCanvas.cursor_stack[MpCanvas.stack_depth] = imod(((MpCanvas.cursor_stack[MpCanvas.stack_depth] + 1)), 2)
+                MpCanvas.input_text = MpCanvas.input_text[0:(len(MpCanvas.input_text) - 1)]
+                return
+            if (MpCanvas.key_in == (-5)) or (MpCanvas.key_in == (-6)):
+                if len(MpCanvas.input_text) == 0:
+                    if MpCanvas.letter_cursor >= 26:
                         return
-                    if MpCanvas.key_in != (-5):
-                        break
-                    if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
-                        if MpCanvas.volume == 0:
-                            MpCanvas.volume = 4
-                    else:
-                        MpCanvas.volume = 0
-                    MpCanvas.save_options()
-                    MpCanvas.set_state(1)
-                    self.start_music(1)
+                    MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((65 + MpCanvas.letter_cursor))) & 0xFFFF)))
                     return
-                if _m53 or _sw52 == 1:
-                    _m53 = True
-                    if MpCanvas.state_ticks <= 3:
-                        break
-                    if MpCanvas.user_id == "":
-                        MpCanvas.popup_kind = 0
-                        self.push_state(2)
+                if len(MpCanvas.input_text) > 8:
+                    return
+                if MpCanvas.letter_cursor < 26:
+                    if len(MpCanvas.input_text) >= 8:
                         return
-                    if MpCanvas.error_msg == 1:
-                        MpCanvas.set_state(4)
+                    MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((97 + MpCanvas.letter_cursor))) & 0xFFFF)))
+                    return
+                if MpCanvas.letter_cursor != 26:
+                    return
+                self.push_state(86)
+                return
+            MpCanvas.letter_grid_keys(MpCanvas.key_in)
+        elif MpCanvas.state == 88:
+            if MpCanvas.key_in == (-1):
+                if MpCanvas.cursor_stack[MpCanvas.stack_depth] > 0:
+                    v4 = MpCanvas.stack_depth
+                    MpCanvas.cursor_stack[v4] = (MpCanvas.cursor_stack[v4] - 1)
+                    return
+                MpCanvas.cursor_stack[MpCanvas.stack_depth] = 2
+                return
+            if MpCanvas.key_in == (-2):
+                if MpCanvas.cursor_stack[MpCanvas.stack_depth] < 2:
+                    v5 = MpCanvas.stack_depth
+                    MpCanvas.cursor_stack[v5] = (MpCanvas.cursor_stack[v5] + 1)
+                    return
+                MpCanvas.cursor_stack[MpCanvas.stack_depth] = 0
+                return
+            if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
+                self.menu_select()
+                return
+            if MpCanvas.key_in == (-5):
+                MpCanvas.key_in = (-4)
+                self.menu_select()
+                return
+            if MpCanvas.key_in != (-7):
+                return
+            MpCanvas.save_options()
+            if MpCanvas.invitation != MpCanvas.invitation_saved:
+                MpCanvas.loading_msg = 1
+                MpCanvas.set_state(3)
+                self.send_request(290)
+                return
+            self.pop_state()
+            self.start_sound(1)
+        elif MpCanvas.state == 89:
+            if MpCanvas.key_in == (-3):
+                if MpCanvas.help_page > 0:
+                    MpCanvas.help_page = MpCanvas.help_page - 1
+                    return
+                MpCanvas.help_page = (Consts.help_pages[MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)]] - 1)
+                return
+            if (MpCanvas.key_in == (-4)) or (MpCanvas.key_in == (-5)):
+                if MpCanvas.help_page < (Consts.help_pages[MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)]] - 1):
+                    MpCanvas.help_page = MpCanvas.help_page + 1
+                    return
+                MpCanvas.help_page = 0
+                return
+            if MpCanvas.key_in != (-7):
+                return
+            self.pop_state()
+        elif MpCanvas.state == 20:
+            if MpCanvas.key_in == (-7):
+                self.pop_state()
+                return
+            self.menu_keys(MpCanvas.key_in)
+        elif MpCanvas.state == 21:
+            if (MpCanvas.key_in == (-5)) or (MpCanvas.key_in == (-6)):
+                if len(MpCanvas.input_text) > 12:
+                    return
+                if MpCanvas.letter_cursor < 26:
+                    if len(MpCanvas.input_text) >= 12:
                         return
+                    MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((65 + MpCanvas.letter_cursor))) & 0xFFFF)))
+                    return
+                if (MpCanvas.letter_cursor != 26) or (len(MpCanvas.input_text) < 4):
+                    return
+                if MpCanvas.room_mode == 0:
+                    MpCanvas.loading_msg = 2
+                elif MpCanvas.room_mode == 1:
+                    MpCanvas.loading_msg = 4
+                elif MpCanvas.room_mode == 2:
+                    MpCanvas.loading_msg = 4
+                MpCanvas.loading_msg = 0
+                self.send_request(768)
+                MpCanvas.set_state(3)
+                return
+            if var1_1 == (-7):
+                if len(MpCanvas.input_text) == 0:
+                    self.pop_state()
+                    return
+                MpCanvas.input_text = MpCanvas.input_text[0:(len(MpCanvas.input_text) - 1)]
+                return
+            MpCanvas.letter_grid_keys(var1_1)
+        elif MpCanvas.state == 94:
+            if MpCanvas.exit_prompt:
+                if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
+                    MpCanvas.exit_cursor = imod(((MpCanvas.exit_cursor + 1)), 2)
+                    return
+                if MpCanvas.key_in != (-5):
+                    return
+                if MpCanvas.exit_cursor == 0:
+                    MpCanvas.relogin_to_menu = False
+                    MpCanvas.disconnect()
+                    MpCanvas.set_timer((-1))
                     MpCanvas.loading_msg = 0
                     MpCanvas.password_login = False
                     MpCanvas.set_state(10000)
                     return
-                if _m53 or _sw52 == 2:
-                    _m53 = True
-                    self.popup_keys(MpCanvas.key_in)
+                MpCanvas.exit_prompt = False
+                return
+            MpCanvas.chosen_action = 99
+            if MpCanvas.key_in == (-1):
+                MpCanvas.chosen_action = 2
+            elif MpCanvas.key_in == (-3):
+                MpCanvas.chosen_action = 1
+            elif MpCanvas.key_in == (-4):
+                MpCanvas.chosen_action = 0
+            elif MpCanvas.key_in == (-2):
+                if MpCanvas.skill_slot_count > 0:
+                    MpCanvas.loop_k = 0
+                    while MpCanvas.loop_k < MpCanvas.skill_slot_count:
+                        if MpCanvas.fighter_mp[0] >= MpCanvas.skill_costs[(MpCanvas.skill_slots[MpCanvas.loop_k] - 3)]:
+                            MpCanvas.chosen_action = 20
+                            break
+                        MpCanvas.loop_k = MpCanvas.loop_k + 1
+            elif (MpCanvas.key_in == (-7)) and (not MpCanvas.exit_asked):
+                MpCanvas.exit_asked = True
+                MpCanvas.exit_prompt = True
+                MpCanvas.exit_cursor = 1
+                MpCanvas.exit_prompt_time = system.currentTimeMillis()
+            if MpCanvas.chosen_action == 20:
+                MpCanvas.set_state(95)
+                return
+            if MpCanvas.chosen_action == 99:
+                return
+            MpCanvas.set_state(96)
+        elif MpCanvas.state == 95:
+            if MpCanvas.key_in == (-1):
+                MpCanvas.skill_cursor = (_inc(MpCanvas, 'skill_cursor', -1) if (MpCanvas.skill_cursor > 0) else (MpCanvas.skill_slot_count - 1))
+            elif MpCanvas.key_in == (-2):
+                MpCanvas.skill_cursor = (_inc(MpCanvas, 'skill_cursor', 1) if (MpCanvas.skill_cursor < (MpCanvas.skill_slot_count - 1)) else 0)
+            if MpCanvas.key_in == (-5):
+                if MpCanvas.fighter_mp[0] < MpCanvas.skill_costs[(MpCanvas.skill_slots[MpCanvas.skill_cursor] - 3)]:
                     return
-                if _m53 or _sw52 in (86, 160):
-                    _m53 = True
-                    self.yes_no_keys(MpCanvas.key_in)
-                break
-        except _Brk_block0_2273:
-            pass
+                MpCanvas.chosen_action = MpCanvas.skill_slots[MpCanvas.skill_cursor]
+                MpCanvas.set_state(96)
+                return
+            if MpCanvas.key_in != (-7):
+                return
+            MpCanvas.chosen_action = 99
+            MpCanvas.set_state(94)
+        elif MpCanvas.state == 96:
+            if (MpCanvas.key_in == (-1)) or (MpCanvas.key_in == (-2)):
+                if MpCanvas.chosen_action in (9, 10):
+                    MpCanvas.loop_i = 0
+                    while MpCanvas.loop_i < 4:
+                        if (MpCanvas.fighter_present[MpCanvas.loop_i] and (imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == imod(MpCanvas.fighter_slot[MpCanvas.target_cursor], 2))) and (MpCanvas.fighter_slot[MpCanvas.loop_i] != MpCanvas.fighter_slot[MpCanvas.target_cursor]):
+                            MpCanvas.target_cursor = MpCanvas.loop_i
+                            return
+                        MpCanvas.loop_i = MpCanvas.loop_i + 1
+                    return
+                elif MpCanvas.chosen_action in (0, 3, 4, 5, 6, 7):
+                    MpCanvas.loop_i = 1
+                    while MpCanvas.loop_i < 4:
+                        if (MpCanvas.fighter_present[MpCanvas.loop_i] and (imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == imod(MpCanvas.fighter_slot[MpCanvas.target_cursor], 2))) and (MpCanvas.fighter_slot[MpCanvas.loop_i] != MpCanvas.fighter_slot[MpCanvas.target_cursor]):
+                            MpCanvas.target_cursor = MpCanvas.loop_i
+                            return
+                        MpCanvas.loop_i = MpCanvas.loop_i + 1
+                    return
+                else:
+                    return
+            if MpCanvas.key_in == (-5):
+                self.start_timing()
+                return
+            if MpCanvas.key_in != (-7):
+                return
+            if MpCanvas.chosen_action in (3, 4, 5, 6, 7, 9, 10):
+                MpCanvas.set_state(95)
+                return
+            MpCanvas.set_state(94)
+        elif MpCanvas.state == 97:
+            if (MpCanvas.state_ticks <= 0) or (MpCanvas.key_in != (-5)):
+                return
+            self.stop_timing()
+        elif MpCanvas.state == 105:
+            if (MpCanvas.state_ticks <= idiv(1000, MpCanvas.tick_ms)) or (MpCanvas.key_in != (-5)):
+                return
+            self.reset_state_stack(10)
+            if MpCanvas.room_mode == 0:
+                self.push_state(11)
+            elif MpCanvas.room_mode == 1:
+                self.push_state(11)
+                MpCanvas.cursor_stack[MpCanvas.stack_depth] = 1
+            elif MpCanvas.room_mode == 2:
+                MpCanvas.cursor_stack[MpCanvas.stack_depth] = 1
+                self.push_state(12)
+        elif MpCanvas.state == 4:
+            if MpCanvas.popup_shown:
+                if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
+                    MpCanvas.popup_cursor = imod(((MpCanvas.popup_cursor + 1)), 2)
+                    return
+                if MpCanvas.key_in != (-5):
+                    return
+                if MpCanvas.popup_cursor == 0:
+                    MpCanvas.set_state(300)
+                    return
+                MpCanvas.popup_shown = False
+                MpCanvas.popup_cursor = 1
+                return
+            if MpCanvas.key_in == (-6):
+                if (MpCanvas.error_msg != 7) and (MpCanvas.error_msg != 1):
+                    return
+                MpCanvas.disconnect()
+                MpCanvas.popup_kind = 0
+                MpCanvas.relogin_to_menu = True
+                MpCanvas.set_state(2)
+                MpCanvas.popup_shown = False
+                return
+            if MpCanvas.key_in == (-7):
+                if (MpCanvas.error_msg != 7) and (MpCanvas.error_msg != 1):
+                    return
+                MpCanvas.popup_shown = True
+                MpCanvas.popup_cursor = 1
+                return
+            if MpCanvas.key_in != (-5):
+                return
+            if not NetThread.connected:
+                if ((MpCanvas.error_msg == 14) or (MpCanvas.error_msg == 15)) or (MpCanvas.error_msg == 16):
+                    self.pop_state()
+                    return
+                if MpCanvas.error_msg == 17:
+                    MpCanvas.popup_kind = 0
+                    MpCanvas.relogin_to_menu = True
+                    self.push_state(2)
+                    return
+                if MpCanvas.error_msg != 1:
+                    MpCanvas.loading_msg = 0
+                    MpCanvas.set_state(10000)
+                    return
+                self.reset_state_stack(1)
+                return
+            if MpCanvas.pending_state > (-1):
+                self.push_state(MpCanvas.pending_state)
+                MpCanvas.pending_state = (-1)
+                return
+            if MpCanvas.state_stack[(MpCanvas.stack_depth - 1)] == 105:
+                return
+            elif MpCanvas.state_stack[(MpCanvas.stack_depth - 1)] == 86:
+                self.pop_states(2)
+                return
+            self.pop_state()
+        elif MpCanvas.state == 5:
+            if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
+                MpCanvas.cursor_stack[MpCanvas.stack_depth] = imod(((MpCanvas.cursor_stack[MpCanvas.stack_depth] + 1)), 2)
+                return
+            if MpCanvas.key_in != (-5):
+                return
+            if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
+                if MpCanvas.volume == 0:
+                    MpCanvas.volume = 4
+            else:
+                MpCanvas.volume = 0
+            MpCanvas.save_options()
+            MpCanvas.set_state(1)
+            self.start_music(1)
+        elif MpCanvas.state == 1:
+            if MpCanvas.state_ticks <= 3:
+                return
+            if MpCanvas.user_id == "":
+                MpCanvas.popup_kind = 0
+                self.push_state(2)
+                return
+            if MpCanvas.error_msg == 1:
+                MpCanvas.set_state(4)
+                return
+            MpCanvas.loading_msg = 0
+            MpCanvas.password_login = False
+            MpCanvas.set_state(10000)
+        elif MpCanvas.state == 2:
+            self.popup_keys(MpCanvas.key_in)
+        elif MpCanvas.state in (86, 160):
+            self.yes_no_keys(MpCanvas.key_in)
 
     @staticmethod
     def update_bars():  # g.java:3263
@@ -2898,18 +2552,13 @@ class MpCanvas(_Canvas):
                     MpCanvas.fighter_hp_target[MpCanvas.loop_i] = MpCanvas.turn_hps[(4 + MpCanvas.turn_rec)]
                     MpCanvas.fighter_mp_target[MpCanvas.loop_i] = MpCanvas.turn_bytes[(20 + MpCanvas.turn_rec)]
                     MpCanvas.update_bars()
-                    _sw61 = MpCanvas.turn_bytes[(16 + MpCanvas.turn_rec)]
-                    _m62 = False
                     while True:
-                        if _m62 or _sw61 == 1:
-                            _m62 = True
+                        if MpCanvas.turn_bytes[(16 + MpCanvas.turn_rec)] == 1:
                             if MpCanvas.turn_actions[MpCanvas.target] == 1:
                                 MpCanvas.target_reaction = 4
                                 break
                             MpCanvas.target_reaction = 1
-                            break
-                        if _m62 or _sw61 == 2:
-                            _m62 = True
+                        elif MpCanvas.turn_bytes[(16 + MpCanvas.turn_rec)] == 2:
                             MpCanvas.target_reaction = 5
                         break
                 if (MpCanvas.turn_bytes[(24 + MpCanvas.turn_rec)] > 0) and (MpCanvas.fighter_slot[MpCanvas.loop_i] == MpCanvas.turn_bytes[(32 + MpCanvas.turn_rec)]):
@@ -2917,29 +2566,23 @@ class MpCanvas(_Canvas):
                     MpCanvas.fighter_hp_target[MpCanvas.loop_i] = MpCanvas.turn_hps[(8 + MpCanvas.turn_rec)]
                     MpCanvas.fighter_mp_target[MpCanvas.loop_i] = MpCanvas.turn_bytes[(40 + MpCanvas.turn_rec)]
                     MpCanvas.update_bars()
-                    _sw63 = MpCanvas.turn_bytes[(36 + MpCanvas.turn_rec)]
-                    _m64 = False
                     while True:
-                        if _m64 or _sw63 == 1:
-                            _m64 = True
+                        if MpCanvas.turn_bytes[(36 + MpCanvas.turn_rec)] == 1:
                             if MpCanvas.turn_actions[MpCanvas.target2] == 1:
                                 MpCanvas.target2_reaction = 4
                                 break
                             MpCanvas.target2_reaction = 1
-                            break
-                        if _m64 or _sw63 == 2:
-                            _m64 = True
+                        elif MpCanvas.turn_bytes[(36 + MpCanvas.turn_rec)] == 2:
                             MpCanvas.target2_reaction = 5
                         break
             MpCanvas.loop_i = MpCanvas.loop_i + 1
-        _sw65 = MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)]
-        if _sw65 in (3, 4, 5, 6, 7, 8):
+        if MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] in (3, 4, 5, 6, 7, 8):
             MpCanvas.fighter_anim[MpCanvas.attacker] = 8
-        elif _sw65 in (2, 9, 10):
+        elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] in (2, 9, 10):
             MpCanvas.fighter_anim[MpCanvas.attacker] = 12
-        elif _sw65 in (11, 12, 13):
+        elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] in (11, 12, 13):
             MpCanvas.fighter_anim[MpCanvas.attacker] = 13
-        elif _sw65 == 0:
+        elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 0:
             MpCanvas.fighter_anim[MpCanvas.attacker] = 2
             MpCanvas.run_dx = idiv((((MpCanvas.canvas_w - 67) - 42)), Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
             MpCanvas.run_dy = (0 if (MpCanvas.room_mode == 0) else ((0 if (idiv(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == idiv(MpCanvas.turn_bytes[(12 + MpCanvas.turn_rec)], 2)) else ((idiv(46, Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]]) if (idiv(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == 0) else idiv((-46), Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]]))))))
@@ -3002,8 +2645,7 @@ class MpCanvas(_Canvas):
     def draw_box(self, graphics, x, y, w, h, style):  # g.java:3442
         n7 = 0x525152
         n8 = 0xFFFFFF
-        _sw66 = style
-        if _sw66 in (0, 7):
+        if style in (0, 7):
             if imod(w, 2) == 1:
                 w = w + 1
             if imod(h, 2) == 1:
@@ -3018,7 +2660,7 @@ class MpCanvas(_Canvas):
             MpCanvas.draw_left_half_on(graphics, (MpCanvas.win_x + Consts.ui_dx[3]), ((((MpCanvas.win_y + h) - 2) - 5) + Consts.ui_dy[3]), MpCanvas.ui_images[3])
             MpCanvas.draw_right_half_on(graphics, ((MpCanvas.win_x + w) + Consts.ui_dx[3]), ((((MpCanvas.win_y + h) - 2) - 5) + Consts.ui_dy[3]), MpCanvas.ui_images[3])
             return
-        elif _sw66 == 1:
+        elif style == 1:
             MpCanvas.fill_rect_on(graphics, x, y, w, h, 0)
             MpCanvas.set_color(graphics, 0xBDBABD)
             MpCanvas.draw_line(graphics, (x + 14), y, (((x + w) - 14) - 1), y)
@@ -3040,7 +2682,7 @@ class MpCanvas(_Canvas):
             MpCanvas.draw_line(graphics, x, (y + 4), x, ((y + h) - 5))
             MpCanvas.draw_line(graphics, ((x + w) - 1), (y + 4), ((x + w) - 1), ((y + h) - 5))
             return
-        elif _sw66 == 3:
+        elif style == 3:
             MpCanvas.set_color(graphics, n8)
             MpCanvas.draw_line(graphics, x, (y - 1), ((x + w) - 1), (y - 1))
             MpCanvas.draw_line(graphics, x, (y + h), ((x + w) - 1), (y + h))
@@ -3060,250 +2702,145 @@ class MpCanvas(_Canvas):
             MpCanvas.loop_j = MpCanvas.loop_j + 1
 
     def menu_select(self):  # g.java:3512
-        _sw67 = MpCanvas.state
-        try:
-            _m68 = False
-            while True:
-                if _m68 or _sw67 == 160:
-                    _m68 = True
-                    _sw69 = MpCanvas.popup_style
-                    _m70 = False
-                    while True:
-                        if _m70 or _sw69 == 1:
-                            _m70 = True
-                            if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
-                                MpCanvas.loading_msg = 5
-                                MpCanvas.set_state(3)
-                                raise _Brk_block0_2989()
-                            self.on_disconnect()
-                            MpCanvas.set_state(1)
-                            raise _Brk_block0_2989()
-                        if _m70 or _sw69 in (0, 2):
-                            _m70 = True
-                            self.on_disconnect()
-                            MpCanvas.set_state(1)
-                        break
-                    return
-                if _m68 or _sw67 == 161:
-                    _m68 = True
-                    MpCanvas.rank_kind = i8(MpCanvas.cursor_stack[MpCanvas.stack_depth])
-                    MpCanvas.loading_msg = 1
-                    MpCanvas.set_state(3)
-                    self.send_request(1300)
-                    return
-                if _m68 or _sw67 in (162, 163, 164):
-                    _m68 = True
-                    MpCanvas.rank_list_state = MpCanvas.state
-                    MpCanvas.rank_list_kind = ((((((MpCanvas.state_stack[MpCanvas.stack_depth] - 162) + 1)) * 10) + MpCanvas.cursor_stack[MpCanvas.stack_depth]) + 1)
-                    MpCanvas.loading_msg = 1
-                    MpCanvas.set_state(3)
-                    self.send_request(1293)
-                    return
-                if _m68 or _sw67 == 10:
-                    _m68 = True
-                    _sw71 = MpCanvas.cursor_stack[MpCanvas.stack_depth]
-                    _m72 = False
-                    while True:
-                        if _m72 or _sw71 == 0:
-                            _m72 = True
-                            self.push_state(11)
-                            raise _Brk_block0_2989()
-                        if _m72 or _sw71 == 1:
-                            _m72 = True
-                            self.push_state(12)
-                            raise _Brk_block0_2989()
-                        if _m72 or _sw71 == 2:
-                            _m72 = True
-                            self.push_state(16)
-                            raise _Brk_block0_2989()
-                        if _m72 or _sw71 == 3:
-                            _m72 = True
-                            MpCanvas.loading_msg = 1
-                            MpCanvas.set_state(3)
-                            self.send_request(288)
-                            raise _Brk_block0_2989()
-                        if _m72 or _sw71 == 4:
-                            _m72 = True
-                            self.push_state(87)
-                            raise _Brk_block0_2989()
-                        if _m72 or _sw71 == 5:
-                            _m72 = True
-                            self.push_state(161)
-                        break
-                    return
-                if _m68 or _sw67 == 11:
-                    _m68 = True
-                    _sw73 = MpCanvas.cursor_stack[MpCanvas.stack_depth]
-                    _m74 = False
-                    while True:
-                        if _m74 or _sw73 == 0:
-                            _m74 = True
-                            MpCanvas.room_mode = 0
-                            MpCanvas.loading_msg = 2
-                            MpCanvas.set_state(3)
-                            self.send_request(512)
-                            raise _Brk_block0_2989()
-                        if _m74 or _sw73 == 1:
-                            _m74 = True
-                            MpCanvas.room_mode = 1
-                            MpCanvas.loading_msg = 2
-                            MpCanvas.set_state(3)
-                            self.send_request(512)
-                            raise _Brk_block0_2989()
-                        if _m74 or _sw73 == 2:
-                            _m74 = True
-                            self.push_state(20)
-                            raise _Brk_block0_2989()
-                        if _m74 or _sw73 == 3:
-                            _m74 = True
-                            self.push_state(87)
-                            raise _Brk_block0_2989()
-                        if _m74 or _sw73 == 4:
-                            _m74 = True
-                            self.push_state(161)
-                        break
-                    return
-                if _m68 or _sw67 == 12:
-                    _m68 = True
-                    _sw75 = MpCanvas.cursor_stack[MpCanvas.stack_depth]
-                    _m76 = False
-                    while True:
-                        if _m76 or _sw75 == 0:
-                            _m76 = True
-                            MpCanvas.room_mode = i8(2)
-                            MpCanvas.loading_msg = 3
-                            MpCanvas.set_state(3)
-                            self.send_request(512)
-                            raise _Brk_block0_2989()
-                        if _m76 or _sw75 == 1:
-                            _m76 = True
-                            MpCanvas.room_mode = i8(2)
-                            self.push_state(21)
-                            raise _Brk_block0_2989()
-                        if _m76 or _sw75 == 2:
-                            _m76 = True
-                            self.push_state(87)
-                            raise _Brk_block0_2989()
-                        if _m76 or _sw75 == 3:
-                            _m76 = True
-                            self.push_state(161)
-                        break
-                    return
-                if _m68 or _sw67 == 16:
-                    _m68 = True
-                    _sw77 = MpCanvas.cursor_stack[MpCanvas.stack_depth]
-                    _m78 = False
-                    while True:
-                        if _m78 or _sw77 == 0:
-                            _m78 = True
-                            MpCanvas.loading_msg = 1
-                            MpCanvas.set_state(3)
-                            self.send_request(1296)
-                            raise _Brk_block0_2989()
-                        if _m78 or _sw77 == 1:
-                            _m78 = True
-                            MpCanvas.loading_msg = 1
-                            MpCanvas.set_state(3)
-                            self.send_request(1287)
-                            raise _Brk_block0_2989()
-                        if _m78 or _sw77 == 2:
-                            _m78 = True
-                            MpCanvas.loading_msg = 1
-                            MpCanvas.set_state(3)
-                            self.send_request(1289)
-                            raise _Brk_block0_2989()
-                        if _m78 or _sw77 == 3:
-                            _m78 = True
-                            MpCanvas.loading_msg = 1
-                            MpCanvas.set_state(3)
-                            self.send_request(1298)
-                            raise _Brk_block0_2989()
-                        if _m78 or _sw77 == 4:
-                            _m78 = True
-                            MpCanvas.letter_cursor = 0
-                            MpCanvas.quote_step = 0
-                            MpCanvas.input_text = MpCanvas.quote_start
-                            self.push_state(84)
-                            raise _Brk_block0_2989()
-                        if _m78 or _sw77 == 5:
-                            _m78 = True
-                            MpCanvas.letter_cursor = 0
-                            MpCanvas.input_text = MpCanvas.name
-                            self.push_state(85)
-                        break
-                    return
-                if _m68 or _sw67 == 82:
-                    _m68 = True
+        if MpCanvas.state == 160:
+            if MpCanvas.popup_style == 1:
+                if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
                     MpCanvas.loading_msg = 5
                     MpCanvas.set_state(3)
-                    self.send_request(1291)
                     return
-                if _m68 or _sw67 == 84:
-                    _m68 = True
-                    return
-                if _m68 or _sw67 == 86:
-                    _m68 = True
-                    _sw79 = MpCanvas.cursor_stack[MpCanvas.stack_depth]
-                    _m80 = False
-                    while True:
-                        if _m80 or _sw79 == 0:
-                            _m80 = True
-                            MpCanvas.loading_msg = 5
-                            MpCanvas.set_state(3)
-                            self.send_request(1280)
-                            raise _Brk_block0_2989()
-                        if _m80 or _sw79 == 1:
-                            _m80 = True
-                            self.pop_states(1)
+                self.on_disconnect()
+                MpCanvas.set_state(1)
+            elif MpCanvas.popup_style in (0, 2):
+                self.on_disconnect()
+                MpCanvas.set_state(1)
+        elif MpCanvas.state == 161:
+            MpCanvas.rank_kind = i8(MpCanvas.cursor_stack[MpCanvas.stack_depth])
+            MpCanvas.loading_msg = 1
+            MpCanvas.set_state(3)
+            self.send_request(1300)
+        elif MpCanvas.state in (162, 163, 164):
+            MpCanvas.rank_list_state = MpCanvas.state
+            MpCanvas.rank_list_kind = ((((((MpCanvas.state_stack[MpCanvas.stack_depth] - 162) + 1)) * 10) + MpCanvas.cursor_stack[MpCanvas.stack_depth]) + 1)
+            MpCanvas.loading_msg = 1
+            MpCanvas.set_state(3)
+            self.send_request(1293)
+        elif MpCanvas.state == 10:
+            if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
+                self.push_state(11)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 1:
+                self.push_state(12)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 2:
+                self.push_state(16)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 3:
+                MpCanvas.loading_msg = 1
+                MpCanvas.set_state(3)
+                self.send_request(288)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 4:
+                self.push_state(87)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 5:
+                self.push_state(161)
+        elif MpCanvas.state == 11:
+            if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
+                MpCanvas.room_mode = 0
+                MpCanvas.loading_msg = 2
+                MpCanvas.set_state(3)
+                self.send_request(512)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 1:
+                MpCanvas.room_mode = 1
+                MpCanvas.loading_msg = 2
+                MpCanvas.set_state(3)
+                self.send_request(512)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 2:
+                self.push_state(20)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 3:
+                self.push_state(87)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 4:
+                self.push_state(161)
+        elif MpCanvas.state == 12:
+            if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
+                MpCanvas.room_mode = i8(2)
+                MpCanvas.loading_msg = 3
+                MpCanvas.set_state(3)
+                self.send_request(512)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 1:
+                MpCanvas.room_mode = i8(2)
+                self.push_state(21)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 2:
+                self.push_state(87)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 3:
+                self.push_state(161)
+        elif MpCanvas.state == 16:
+            if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
+                MpCanvas.loading_msg = 1
+                MpCanvas.set_state(3)
+                self.send_request(1296)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 1:
+                MpCanvas.loading_msg = 1
+                MpCanvas.set_state(3)
+                self.send_request(1287)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 2:
+                MpCanvas.loading_msg = 1
+                MpCanvas.set_state(3)
+                self.send_request(1289)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 3:
+                MpCanvas.loading_msg = 1
+                MpCanvas.set_state(3)
+                self.send_request(1298)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 4:
+                MpCanvas.letter_cursor = 0
+                MpCanvas.quote_step = 0
+                MpCanvas.input_text = MpCanvas.quote_start
+                self.push_state(84)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 5:
+                MpCanvas.letter_cursor = 0
+                MpCanvas.input_text = MpCanvas.name
+                self.push_state(85)
+        elif MpCanvas.state == 82:
+            MpCanvas.loading_msg = 5
+            MpCanvas.set_state(3)
+            self.send_request(1291)
+        elif MpCanvas.state == 84:
+            return
+        elif MpCanvas.state == 86:
+            if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
+                MpCanvas.loading_msg = 5
+                MpCanvas.set_state(3)
+                self.send_request(1280)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 1:
+                self.pop_states(1)
+        elif MpCanvas.state == 88:
+            while True:
+                if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
+                    if MpCanvas.key_in == (-4):
+                        if _inc(MpCanvas, 'speed', 1) <= 2:
+                            break
+                        MpCanvas.speed = 0
+                        return
+                    if (MpCanvas.key_in != (-3)) or (_inc(MpCanvas, 'speed', -1) >= 0):
                         break
+                    MpCanvas.speed = 2
                     return
-                if _m68 or _sw67 == 88:
-                    _m68 = True
-                    _sw81 = MpCanvas.cursor_stack[MpCanvas.stack_depth]
-                    _m82 = False
-                    while True:
-                        if _m82 or _sw81 == 0:
-                            _m82 = True
-                            if MpCanvas.key_in == (-4):
-                                if _inc(MpCanvas, 'speed', 1) <= 2:
-                                    break
-                                MpCanvas.speed = 0
-                                raise _Brk_block0_2989()
-                            if (MpCanvas.key_in != (-3)) or (_inc(MpCanvas, 'speed', -1) >= 0):
-                                break
-                            MpCanvas.speed = 2
-                            raise _Brk_block0_2989()
-                        if _m82 or _sw81 == 1:
-                            _m82 = True
-                            if (MpCanvas.key_in != (-3)) and (MpCanvas.key_in != (-4)):
-                                break
-                            MpCanvas.invitation = imod(((MpCanvas.invitation + 1)), 2)
-                            raise _Brk_block0_2989()
-                        if _m82 or _sw81 == 2:
-                            _m82 = True
-                            if MpCanvas.key_in == (-3):
-                                self.volume_down()
-                                raise _Brk_block0_2989()
-                            if MpCanvas.key_in != (-4):
-                                break
-                            self.volume_up()
+                elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 1:
+                    if (MpCanvas.key_in != (-3)) and (MpCanvas.key_in != (-4)):
                         break
+                    MpCanvas.invitation = imod(((MpCanvas.invitation + 1)), 2)
                     return
-                if _m68 or _sw67 == 87:
-                    _m68 = True
-                    self.push_state(89)
-                    return
-                if _m68 or _sw67 == 20:
-                    _m68 = True
-                    _sw83 = MpCanvas.cursor_stack[MpCanvas.stack_depth]
-                    if _sw83 == 0:
-                        MpCanvas.room_mode = 0
-                    elif _sw83 == 1:
-                        MpCanvas.room_mode = 1
-                    self.push_state(21)
+                elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 2:
+                    if MpCanvas.key_in == (-3):
+                        self.volume_down()
+                        return
+                    if MpCanvas.key_in != (-4):
+                        break
+                    self.volume_up()
                 break
-        except _Brk_block0_2989:
-            pass
+        elif MpCanvas.state == 87:
+            self.push_state(89)
+        elif MpCanvas.state == 20:
+            if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
+                MpCanvas.room_mode = 0
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 1:
+                MpCanvas.room_mode = 1
+            self.push_state(21)
 
     def draw_notice(self):  # g.java:3746
         self.draw_buffer()
@@ -3318,24 +2855,22 @@ class MpCanvas(_Canvas):
         MpCanvas.loop_i = 0
         while MpCanvas.loop_i < 4:
             if MpCanvas.fighter_present[MpCanvas.loop_i] and (MpCanvas.loop_i != MpCanvas.attacker):
-                _sw84 = MpCanvas.fighter_anim[MpCanvas.loop_i]
-                if _sw84 == 0:
+                if MpCanvas.fighter_anim[MpCanvas.loop_i] == 0:
                     self.draw_fighter_idle(MpCanvas.screen_g)
-                elif _sw84 in (1, 4):
+                elif MpCanvas.fighter_anim[MpCanvas.loop_i] in (1, 4):
                     self.draw_fighter_hit()
-                elif _sw84 == 5:
+                elif MpCanvas.fighter_anim[MpCanvas.loop_i] == 5:
                     self.draw_fighter_evade()
-                elif _sw84 == 6:
+                elif MpCanvas.fighter_anim[MpCanvas.loop_i] == 6:
                     self.draw_fighter_dying()
                 else:
                     self.draw_fighter_anim()
             MpCanvas.loop_i = MpCanvas.loop_i + 1
         MpCanvas.loop_i = MpCanvas.attacker
-        _sw85 = MpCanvas.fighter_anim[MpCanvas.attacker]
-        if _sw85 in (2, 28):
+        if MpCanvas.fighter_anim[MpCanvas.attacker] in (2, 28):
             self.draw_fighter_run()
             return
-        elif _sw85 == 6:
+        elif MpCanvas.fighter_anim[MpCanvas.attacker] == 6:
             self.draw_fighter_dying()
             return
         self.draw_fighter_anim()
@@ -3420,27 +2955,14 @@ class MpCanvas(_Canvas):
     def draw_quotes(self, graphics, side):  # g.java:3895
         MpCanvas.loop_i = 0
         while MpCanvas.loop_i < 4:
-            try:
-                try:
-                    if not MpCanvas.fighter_present[MpCanvas.loop_i]:
-                        raise _Brk_block4_3348()
-                    if imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == side:
-                        raise _Brk_block5_3348()
-                    if side != 2:
-                        raise _Brk_block4_3348()
-                    bl = ((imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == MpCanvas.fighter_slot[0]) if (MpCanvas.battle_won == 1) else (imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) != MpCanvas.fighter_slot[0]))
-                    if not bl:
-                        raise _Brk_block4_3348()
-                except _Brk_block5_3348:
-                    pass
+            if MpCanvas.fighter_present[MpCanvas.loop_i] and (
+                    imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == side or (side == 2 and ((imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == MpCanvas.fighter_slot[0]) if (MpCanvas.battle_won == 1) else (imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) != MpCanvas.fighter_slot[0])))):
                 self.draw_box(graphics, (0 if (imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == 0) else (MpCanvas.canvas_w - 60)), (12 if (idiv(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == 0) else ((MpCanvas.canvas_h - 12) - 15)), 60, 15, 1)
                 self.draw_text_centred((30 if (imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == 0) else (MpCanvas.canvas_w - 30)), (14 if (idiv(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == 0) else (((MpCanvas.canvas_h - 12) - 15) + 2)), MpCanvas.fighter_name[MpCanvas.loop_i], 16400640)
                 MpCanvas.box_x = MpCanvas.center_x
                 MpCanvas.box_y = (38 if (idiv(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == 0) else (((MpCanvas.canvas_h - 12) - 15) - 11))
                 self.draw_box(graphics, MpCanvas.box_x, MpCanvas.box_y, MpCanvas.canvas_w, 22, 0)
                 self.draw_text_centred(MpCanvas.box_x, (MpCanvas.box_y - 5), (MpCanvas.fighter_quote_win[MpCanvas.loop_i] if (side == 2) else MpCanvas.fighter_quote_start[MpCanvas.loop_i]), 0xFFFFFF)
-            except _Brk_block4_3348:
-                pass
             MpCanvas.loop_i = MpCanvas.loop_i + 1
 
     def draw_fighter_record(self):  # g.java:3917
@@ -3491,10 +3013,9 @@ class MpCanvas(_Canvas):
     @staticmethod
     def start_timing_bar():  # g.java:3974
         MpCanvas.tmp = imod(abs(MpCanvas.rng.nextInt()), 3)
-        _sw86 = MpCanvas.tmp
-        if _sw86 == 0:
+        if MpCanvas.tmp == 0:
             MpCanvas.bar_speed = 4
-        elif _sw86 == 1:
+        elif MpCanvas.tmp == 1:
             MpCanvas.bar_speed = 8
         else:
             MpCanvas.bar_speed = 5
@@ -3606,14 +3127,13 @@ class MpCanvas(_Canvas):
             self.load_sprite(MpCanvas.head_images[n3], MpCanvas.head_frames[n3], _js("sprhead", ((n3 + 1))))
             MpCanvas.draw_sprite_frame(graphics, MpCanvas.head_images[n3], MpCanvas.head_frames[n3], MpCanvas.fighter_frame[index])
         if MpCanvas.fighter_present[index] and (MpCanvas.state != 105):
-            _sw87 = MpCanvas.fighter_status[index]
-            if _sw87 == 11:
+            if MpCanvas.fighter_status[index] == 11:
                 self.load_status_effect()
                 MpCanvas.draw_status_effect(graphics, 0)
-            elif _sw87 == 12:
+            elif MpCanvas.fighter_status[index] == 12:
                 self.load_status_effect()
                 MpCanvas.draw_status_effect(graphics, 1)
-            elif _sw87 == 13:
+            elif MpCanvas.fighter_status[index] == 13:
                 self.load_status_effect()
                 MpCanvas.draw_status_effect(graphics, 2)
         if not bl:
@@ -3632,7 +3152,6 @@ class MpCanvas(_Canvas):
                 MpCanvas.draw_sprite_frame(MpCanvas.screen_g, MpCanvas.mon_sword_images, MpCanvas.mon_sword_frames, MpCanvas.fighter_frame[index])
                 self.load_sprite_dir(MpCanvas.mon_effect_images, MpCanvas.mon_effect_frames, "spr_eff_mon", 0)
                 MpCanvas.draw_sprite_frame(MpCanvas.screen_g, MpCanvas.mon_effect_images, MpCanvas.mon_effect_frames, MpCanvas.fighter_frame[index])
-                return
         else:
             n3 = 0
             bl2 = False
@@ -3658,37 +3177,28 @@ class MpCanvas(_Canvas):
                 MpCanvas.loop_i = MpCanvas.loop_i + 1
         if MpCanvas.anim_frame >= MpCanvas.anim_length:
             MpCanvas.anim_frame = 0
-            _sw88 = MpCanvas.fighter_anim[MpCanvas.attacker]
-            _m89 = False
             while True:
-                if _m89 or _sw88 in (2, 17, 18, 19):
-                    _m89 = True
+                if MpCanvas.fighter_anim[MpCanvas.attacker] in (2, 17, 18, 19):
                     MpCanvas.fighter_x[MpCanvas.attacker] = (MpCanvas.canvas_w - 67)
                     MpCanvas.fighter_y[MpCanvas.attacker] = (MpCanvas.center_y + 65)
                     if MpCanvas.room_mode != 0:
                         n2 = MpCanvas.attacker
                         MpCanvas.fighter_y[n2] = (MpCanvas.fighter_y[n2] + ((((-1) if (idiv(MpCanvas.turn_bytes[(12 + MpCanvas.turn_rec)], 2) == 0) else 1)) * 23))
-                    _sw90 = MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)]
-                    if _sw90 == 3:
+                    if MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 3:
                         MpCanvas.fighter_anim[MpCanvas.attacker] = 9
-                    elif _sw90 == 4:
+                    elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 4:
                         MpCanvas.fighter_anim[MpCanvas.attacker] = 10
-                    elif _sw90 == 5:
+                    elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 5:
                         MpCanvas.fighter_anim[MpCanvas.attacker] = 11
-                    elif _sw90 == 6:
+                    elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 6:
                         MpCanvas.fighter_anim[MpCanvas.attacker] = 14
-                    elif _sw90 == 7:
+                    elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 7:
                         MpCanvas.fighter_anim[MpCanvas.attacker] = 15
-                    elif _sw90 == 0:
+                    elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 0:
                         MpCanvas.fighter_anim[MpCanvas.attacker] = 3
-                    break
-                if _m89 or _sw88 == 8:
-                    _m89 = True
-                    _sw91 = MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)]
-                    _m92 = False
+                elif MpCanvas.fighter_anim[MpCanvas.attacker] == 8:
                     while True:
-                        if _m92 or _sw91 in (3, 4, 5):
-                            _m92 = True
+                        if MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] in (3, 4, 5):
                             MpCanvas.fighter_anim[MpCanvas.attacker] = 2
                             MpCanvas.run_dx = idiv((((MpCanvas.canvas_w - 67) - 42)), Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
                             if MpCanvas.room_mode == 0:
@@ -3701,9 +3211,7 @@ class MpCanvas(_Canvas):
                                 MpCanvas.run_dy = idiv(46, Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
                                 break
                             MpCanvas.run_dy = idiv((-46), Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
-                            break
-                        if _m92 or _sw91 in (6, 7):
-                            _m92 = True
+                        elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] in (6, 7):
                             if MpCanvas.room_mode == 0:
                                 MpCanvas.fighter_anim[MpCanvas.attacker] = 17
                                 break
@@ -3714,20 +3222,13 @@ class MpCanvas(_Canvas):
                                 MpCanvas.fighter_anim[MpCanvas.attacker] = 18
                                 break
                             MpCanvas.fighter_anim[MpCanvas.attacker] = 19
-                            break
-                        if _m92 or _sw91 == 8:
-                            _m92 = True
+                        elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 8:
                             MpCanvas.fighter_anim[MpCanvas.attacker] = 20
                         break
-                    break
-                if _m89 or _sw88 == 20:
-                    _m89 = True
-                    _sw93 = MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)]
-                    if _sw93 == 8:
+                elif MpCanvas.fighter_anim[MpCanvas.attacker] == 20:
+                    if MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 8:
                         MpCanvas.fighter_anim[MpCanvas.attacker] = 16
-                    break
-                if _m89 or _sw88 in (3, 9, 10, 11, 14, 15, 16):
-                    _m89 = True
+                elif MpCanvas.fighter_anim[MpCanvas.attacker] in (3, 9, 10, 11, 14, 15, 16):
                     if (MpCanvas.turn_bytes[(28 + MpCanvas.turn_rec)] == 3) and (MpCanvas.fighter_slot[MpCanvas.attacker] == MpCanvas.turn_bytes[(0 + MpCanvas.turn_rec)]):
                         MpCanvas.tmp = MpCanvas.attacker
                         MpCanvas.attacker = MpCanvas.target
@@ -3754,9 +3255,7 @@ class MpCanvas(_Canvas):
                         MpCanvas.run_dy = idiv((-46), Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
                         break
                     MpCanvas.run_dy = idiv(46, Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
-                    break
-                if _m89 or _sw88 in (12, 13, 28):
-                    _m89 = True
+                elif MpCanvas.fighter_anim[MpCanvas.attacker] in (12, 13, 28):
                     MpCanvas.place_fighter(MpCanvas.attacker)
                     MpCanvas.tmp = (-1)
                     MpCanvas.loop_i = 0
@@ -3780,9 +3279,7 @@ class MpCanvas(_Canvas):
                         break
                     MpCanvas.turn_rec = MpCanvas.turn_rec + 1
                     self.next_turn_record()
-                    break
-                if _m89 or _sw88 == 6:
-                    _m89 = True
+                elif MpCanvas.fighter_anim[MpCanvas.attacker] == 6:
                     MpCanvas.turn_rec = MpCanvas.turn_rec + 1
                     self.next_turn_record()
                 break
@@ -3813,95 +3310,72 @@ class MpCanvas(_Canvas):
                 if MpCanvas.fighter_anim_tick[MpCanvas.target2] >= MpCanvas.fighter_anim_len[MpCanvas.target2]:
                     MpCanvas.fighter_anim[MpCanvas.target2] = 0
                     MpCanvas.place_fighter(MpCanvas.target2)
-        _sw94 = MpCanvas.fighter_anim[MpCanvas.attacker]
-        _m95 = False
-        while True:
-            if _m95 or _sw94 in (3, 9, 10, 11, 14):
-                _m95 = True
-                _sw96 = MpCanvas.target_reaction
-                _m97 = False
-                while True:
-                    if _m97 or _sw96 in (1, 4):
-                        _m97 = True
-                        if (MpCanvas.fighter_anim[MpCanvas.attacker] == 11) and (MpCanvas.anim_frame == 17):
-                            self.start_reaction()
-                            MpCanvas.fighter_anim_len[MpCanvas.target] = 3
-                            return
-                        if imod(MpCanvas.anim_frame, 2) != 1:
-                            return
-                        if (MpCanvas.fighter_anim[MpCanvas.attacker] == 11) and (MpCanvas.anim_frame > 10):
-                            return
-                        self.start_reaction()
-                        MpCanvas.fighter_anim_len[MpCanvas.target] = 2
-                        return
-                    if _m97 or _sw96 == 5:
-                        _m97 = True
-                        if MpCanvas.turn_bytes[(28 + MpCanvas.turn_rec)] == 3:
-                            if MpCanvas.anim_frame != 0:
-                                return
-                            MpCanvas.fighter_anim[MpCanvas.target] = 5
-                            MpCanvas.fighter_anim_tick[MpCanvas.target] = 0
-                            MpCanvas.fighter_anim_len[MpCanvas.target] = MpCanvas.anim_length
-                            return
-                        else:
-                            if imod(MpCanvas.anim_frame, 2) != 1:
-                                return
-                            self.start_reaction()
-                            MpCanvas.fighter_anim_len[MpCanvas.target] = 2
-                    if _m97 or _sw96 not in (1, 4, 5):
-                        _m97 = True
-                        return
-                    break
-            if _m95 or _sw94 == 15:
-                _m95 = True
-                _sw98 = MpCanvas.target_reaction
-                if _sw98 in (1, 4):
-                    if MpCanvas.anim_frame != 2:
-                        return
-                    self.start_reaction()
-                    MpCanvas.fighter_anim_len[MpCanvas.target] = 4
-                return
-            if _m95 or _sw94 == 16:
-                _m95 = True
-                _sw99 = MpCanvas.target_reaction
-                if _sw99 in (1, 4):
-                    if MpCanvas.anim_frame != 8:
-                        return
+        if MpCanvas.fighter_anim[MpCanvas.attacker] in (3, 9, 10, 11, 14):
+            if MpCanvas.target_reaction in (1, 4):
+                if (MpCanvas.fighter_anim[MpCanvas.attacker] == 11) and (MpCanvas.anim_frame == 17):
                     self.start_reaction()
                     MpCanvas.fighter_anim_len[MpCanvas.target] = 3
-                    if MpCanvas.target2 == (-1):
+                    return
+                if imod(MpCanvas.anim_frame, 2) != 1:
+                    return
+                if (MpCanvas.fighter_anim[MpCanvas.attacker] == 11) and (MpCanvas.anim_frame > 10):
+                    return
+                self.start_reaction()
+                MpCanvas.fighter_anim_len[MpCanvas.target] = 2
+            elif MpCanvas.target_reaction == 5:
+                if MpCanvas.turn_bytes[(28 + MpCanvas.turn_rec)] == 3:
+                    if MpCanvas.anim_frame != 0:
                         return
-                    MpCanvas.fighter_anim[MpCanvas.target2] = MpCanvas.target2_reaction
-                    MpCanvas.fighter_anim_tick[MpCanvas.target2] = 0
-                    MpCanvas.fighter_anim_len[MpCanvas.target2] = 3
+                    MpCanvas.fighter_anim[MpCanvas.target] = 5
+                    MpCanvas.fighter_anim_tick[MpCanvas.target] = 0
+                    MpCanvas.fighter_anim_len[MpCanvas.target] = MpCanvas.anim_length
+                else:
+                    if imod(MpCanvas.anim_frame, 2) != 1:
+                        return
+                    self.start_reaction()
+                    MpCanvas.fighter_anim_len[MpCanvas.target] = 2
+            else:
                 return
-            if _m95 or _sw94 == 12:
-                _m95 = True
-                if MpCanvas.anim_frame != 4:
+        elif MpCanvas.fighter_anim[MpCanvas.attacker] == 15:
+            if MpCanvas.target_reaction in (1, 4):
+                if MpCanvas.anim_frame != 2:
                     return
-                MpCanvas.damage_tick = 0
-                self.start_sound(6)
-                if MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 2:
+                self.start_reaction()
+                MpCanvas.fighter_anim_len[MpCanvas.target] = 4
+        elif MpCanvas.fighter_anim[MpCanvas.attacker] == 16:
+            if MpCanvas.target_reaction in (1, 4):
+                if MpCanvas.anim_frame != 8:
                     return
+                self.start_reaction()
+                MpCanvas.fighter_anim_len[MpCanvas.target] = 3
+                if MpCanvas.target2 == (-1):
+                    return
+                MpCanvas.fighter_anim[MpCanvas.target2] = MpCanvas.target2_reaction
+                MpCanvas.fighter_anim_tick[MpCanvas.target2] = 0
+                MpCanvas.fighter_anim_len[MpCanvas.target2] = 3
+        elif MpCanvas.fighter_anim[MpCanvas.attacker] == 12:
+            if MpCanvas.anim_frame != 4:
                 return
-            if _m95 or _sw94 == 13:
-                _m95 = True
-                if (MpCanvas.anim_frame == 4) and (MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 13):
-                    MpCanvas.loop_i = 0
-                    while MpCanvas.loop_i < 4:
-                        MpCanvas.loop_i = MpCanvas.loop_i + 1
-                    self.start_sound(5)
-                    return
-                if MpCanvas.anim_frame == 7:
-                    MpCanvas.loop_i = 0
-                    while MpCanvas.loop_i < 4:
-                        MpCanvas.loop_i = MpCanvas.loop_i + 1
-                    self.start_sound(5)
-                    return
-                if MpCanvas.anim_frame != 5:
-                    return
-                MpCanvas.damage_tick = 0
-            break
+            MpCanvas.damage_tick = 0
+            self.start_sound(6)
+            if MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 2:
+                return
+        elif MpCanvas.fighter_anim[MpCanvas.attacker] == 13:
+            if (MpCanvas.anim_frame == 4) and (MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 13):
+                MpCanvas.loop_i = 0
+                while MpCanvas.loop_i < 4:
+                    MpCanvas.loop_i = MpCanvas.loop_i + 1
+                self.start_sound(5)
+                return
+            if MpCanvas.anim_frame == 7:
+                MpCanvas.loop_i = 0
+                while MpCanvas.loop_i < 4:
+                    MpCanvas.loop_i = MpCanvas.loop_i + 1
+                self.start_sound(5)
+                return
+            if MpCanvas.anim_frame != 5:
+                return
+            MpCanvas.damage_tick = 0
 
     def start_reaction(self):  # g.java:4501
         MpCanvas.fighter_anim[MpCanvas.target] = MpCanvas.target_reaction
@@ -4031,8 +3505,7 @@ class MpCanvas(_Canvas):
     def draw_number(graphics, x, y, value, style):  # g.java:4659
         n6 = 1
         n7 = 0
-        _sw100 = style
-        if _sw100 in (0, 1, 7):
+        if style in (0, 1, 7):
             while (idiv(value, n6) > 0) or (n6 == 1):
                 n8 = idiv(imod(value, ((n6 * 10))), n6)
                 Draw.draw_image_part(graphics, MpCanvas.number_images[style], x, y, 5, 8, (n8 * 5), 0)
@@ -4042,8 +3515,7 @@ class MpCanvas(_Canvas):
                     continue
                 Draw.draw_image_part(graphics, MpCanvas.number_images[style], (x := (x + 2)), (y + 5), 2, 3, 50, 5)
                 x = (x - 6)
-            return
-        elif _sw100 == 5:
+        elif style == 5:
             Draw.draw_image_part(graphics, MpCanvas.number_images[6], (x - 3), (y - 1), 3, 10, 7, 0)
             x = (x - 9)
             while (idiv(value, n6) > 0) or (n6 == 1):
@@ -4056,22 +3528,19 @@ class MpCanvas(_Canvas):
                 Draw.fill_rect(graphics, (x := (x + 2)), (y + 6), 1, 3, 65280)
                 x = (x - 6)
             Draw.draw_image_part(graphics, MpCanvas.number_images[6], (x - 2), (y - 1), 7, 10, 0, 0)
-            return
-        elif _sw100 == 2:
+        elif style == 2:
             while (idiv(value, n6) > 0) or (n6 == 1):
                 n10 = idiv(imod(value, ((n6 * 10))), n6)
                 Draw.draw_image_part(graphics, MpCanvas.number_images[style], x, y, 7, 11, (n10 * 7), 0)
                 x = (x - 8)
                 n6 = (n6 * 10)
-            return
-        elif _sw100 == 3:
+        elif style == 3:
             while (idiv(value, n6) > 0) or (n6 == 1):
                 n11 = idiv(imod(value, ((n6 * 10))), n6)
                 Draw.draw_image_part(graphics, MpCanvas.number_images[style], x, y, 12, 13, (n11 * 12), 0)
                 x = (x - 12)
                 n6 = (n6 * 10)
-            return
-        elif _sw100 == 4:
+        elif style == 4:
             if value < 0:
                 value = (-value)
                 MpCanvas.number_negative = True
@@ -4120,7 +3589,6 @@ class MpCanvas(_Canvas):
             if recordStore.getNumRecords() == 0:
                 recordStore.addRecord(byArray, 0, len(byArray))
             recordStore.setRecord(1, byArray, 0, len(byArray))
-            return
         except Exception:
             return
 
@@ -4181,136 +3649,121 @@ class MpCanvas(_Canvas):
 
     def draw_popup(self):  # g.java:4833
         n2 = 0
-        _sw101 = MpCanvas.popup_kind
-        _m102 = False
-        while True:
-            if _m102 or _sw101 == 0:
-                _m102 = True
-                if MpCanvas.popup_shown:
-                    self.draw_exit_confirm(MpCanvas.screen_g)
-                    return
-                n2 = (MpCanvas.center_y - 57)
-                n3 = 0
-                while n3 < 7:
-                    self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (n2 + (12 * n3)), Consts.login_texts[(1 + n3)], 0xFFFFFF)
-                    n3 = n3 + 1
-                Draw.fill_rect(MpCanvas.screen_g, (MpCanvas.center_x - 40), (n2 + 86), 80, 13, 0)
-                Draw.draw_rect(MpCanvas.screen_g, (MpCanvas.center_x - 40), (n2 + 86), 80, 13, 0x646464)
-                self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((n2 + 52) + 35), MpCanvas.input_text, 0x41FF41)
-                MpCanvas.draw_letter_grid(MpCanvas.letter_cursor, ((n2 + 64) + 35))
-                if imod(MpCanvas.state_ticks, 4) < 2:
-                    n4 = MpCanvas.font_white.string_width(MpCanvas.input_text)
-                    if len(MpCanvas.input_text) == 12:
-                        n4 = (n4 - (MpCanvas.font_white.string_width("A") * 2))
-                    MpCanvas.draw_line_color(MpCanvas.screen_g, (MpCanvas.center_x + idiv(n4, 2)), ((n2 + 62) + 35), ((MpCanvas.center_x + idiv(n4, 2)) + 4), ((n2 + 62) + 35), 0xFFFFFF)
-                if len(MpCanvas.input_text) == 0:
-                    self.draw_softkeys(4, 2)
-                    break
-                self.draw_softkeys(4, 3)
+        if MpCanvas.popup_kind == 0:
+            if MpCanvas.popup_shown:
+                self.draw_exit_confirm(MpCanvas.screen_g)
                 return
-            if _m102 or _sw101 == 1:
-                _m102 = True
-                n2 = (MpCanvas.center_y - 45)
-                n5 = 0
-                while n5 < 5:
-                    self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (n2 + (12 * n5)), Consts.login_texts[(8 + n5)], 0xFFFFFF)
-                    n5 = n5 + 1
-                Draw.fill_rect(MpCanvas.screen_g, (MpCanvas.center_x - 40), (n2 + 63), 80, 13, 0)
-                Draw.draw_rect(MpCanvas.screen_g, (MpCanvas.center_x - 40), (n2 + 63), 80, 13, 0x646464)
-                self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (n2 + 64), MpCanvas.password, 0x41FF41)
-                if len(MpCanvas.password) >= 4:
-                    self.draw_softkeys(0, 3)
-                    return
-                if len(MpCanvas.password) > 0:
-                    self.draw_softkeys((-1), 3)
-                    return
-                self.draw_softkeys((-1), 1)
-            break
+            n2 = (MpCanvas.center_y - 57)
+            n3 = 0
+            while n3 < 7:
+                self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (n2 + (12 * n3)), Consts.login_texts[(1 + n3)], 0xFFFFFF)
+                n3 = n3 + 1
+            Draw.fill_rect(MpCanvas.screen_g, (MpCanvas.center_x - 40), (n2 + 86), 80, 13, 0)
+            Draw.draw_rect(MpCanvas.screen_g, (MpCanvas.center_x - 40), (n2 + 86), 80, 13, 0x646464)
+            self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, ((n2 + 52) + 35), MpCanvas.input_text, 0x41FF41)
+            MpCanvas.draw_letter_grid(MpCanvas.letter_cursor, ((n2 + 64) + 35))
+            if imod(MpCanvas.state_ticks, 4) < 2:
+                n4 = MpCanvas.font_white.string_width(MpCanvas.input_text)
+                if len(MpCanvas.input_text) == 12:
+                    n4 = (n4 - (MpCanvas.font_white.string_width("A") * 2))
+                MpCanvas.draw_line_color(MpCanvas.screen_g, (MpCanvas.center_x + idiv(n4, 2)), ((n2 + 62) + 35), ((MpCanvas.center_x + idiv(n4, 2)) + 4), ((n2 + 62) + 35), 0xFFFFFF)
+            if len(MpCanvas.input_text) == 0:
+                self.draw_softkeys(4, 2)
+                return
+            self.draw_softkeys(4, 3)
+        elif MpCanvas.popup_kind == 1:
+            n2 = (MpCanvas.center_y - 45)
+            n5 = 0
+            while n5 < 5:
+                self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (n2 + (12 * n5)), Consts.login_texts[(8 + n5)], 0xFFFFFF)
+                n5 = n5 + 1
+            Draw.fill_rect(MpCanvas.screen_g, (MpCanvas.center_x - 40), (n2 + 63), 80, 13, 0)
+            Draw.draw_rect(MpCanvas.screen_g, (MpCanvas.center_x - 40), (n2 + 63), 80, 13, 0x646464)
+            self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (n2 + 64), MpCanvas.password, 0x41FF41)
+            if len(MpCanvas.password) >= 4:
+                self.draw_softkeys(0, 3)
+                return
+            if len(MpCanvas.password) > 0:
+                self.draw_softkeys((-1), 3)
+                return
+            self.draw_softkeys((-1), 1)
 
     def popup_keys(self, key):  # g.java:4888
-        _sw103 = MpCanvas.popup_kind
-        _m104 = False
-        while True:
-            if _m104 or _sw103 == 0:
-                _m104 = True
-                if MpCanvas.popup_shown:
-                    if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
-                        MpCanvas.popup_cursor = imod(((MpCanvas.popup_cursor + 1)), 2)
-                        return
-                    if MpCanvas.key_in != (-5):
-                        break
-                    if MpCanvas.popup_cursor == 0:
-                        MpCanvas.set_state(300)
-                        return
-                    MpCanvas.popup_shown = False
+        if MpCanvas.popup_kind == 0:
+            if MpCanvas.popup_shown:
+                if (MpCanvas.key_in == (-3)) or (MpCanvas.key_in == (-4)):
+                    MpCanvas.popup_cursor = imod(((MpCanvas.popup_cursor + 1)), 2)
                     return
-                len(MpCanvas.user_id)
-                bl = False
-                if key == (-7):
-                    if len(MpCanvas.input_text) == 0:
-                        MpCanvas.popup_shown = True
-                        return
-                    MpCanvas.input_text = MpCanvas.input_text[0:(len(MpCanvas.input_text) - 1)]
+                if MpCanvas.key_in != (-5):
                     return
-                if (MpCanvas.key_in == (-5)) or (MpCanvas.key_in == (-6)):
-                    if len(MpCanvas.input_text) > 12:
-                        break
-                    if MpCanvas.letter_cursor < 26:
-                        if len(MpCanvas.input_text) >= 12:
-                            break
-                        MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((65 + MpCanvas.letter_cursor))) & 0xFFFF)))
-                        return
-                    if (MpCanvas.letter_cursor != 26) or (len(MpCanvas.input_text) < 4):
-                        break
-                    MpCanvas.user_id = MpCanvas.input_text
-                    MpCanvas.popup_kind = 1
-                    MpCanvas.password = ""
+                if MpCanvas.popup_cursor == 0:
+                    MpCanvas.set_state(300)
                     return
-                MpCanvas.letter_grid_keys(MpCanvas.key_in)
+                MpCanvas.popup_shown = False
                 return
-            if _m104 or _sw103 == 1:
-                _m104 = True
-                n3 = len(MpCanvas.password)
-                n4 = (-1)
-                _sw105 = key
-                if _sw105 == 48:
-                    n4 = 0
-                elif _sw105 == 49:
-                    n4 = 1
-                elif _sw105 == 50:
-                    n4 = 2
-                elif _sw105 == 51:
-                    n4 = 3
-                elif _sw105 == 52:
-                    n4 = 4
-                elif _sw105 == 53:
-                    n4 = 5
-                elif _sw105 == 54:
-                    n4 = 6
-                elif _sw105 == 55:
-                    n4 = 7
-                elif _sw105 == 56:
-                    n4 = 8
-                elif _sw105 == 57:
-                    n4 = 9
-                if key == (-7):
-                    if n3 > 0:
-                        MpCanvas.password = MpCanvas.password[0:(n3 - 1)]
+            len(MpCanvas.user_id)
+            bl = False
+            if key == (-7):
+                if len(MpCanvas.input_text) == 0:
+                    MpCanvas.popup_shown = True
+                    return
+                MpCanvas.input_text = MpCanvas.input_text[0:(len(MpCanvas.input_text) - 1)]
+                return
+            if (MpCanvas.key_in == (-5)) or (MpCanvas.key_in == (-6)):
+                if len(MpCanvas.input_text) > 12:
+                    return
+                if MpCanvas.letter_cursor < 26:
+                    if len(MpCanvas.input_text) >= 12:
                         return
-                    MpCanvas.popup_kind = 0
-                    MpCanvas.letter_cursor = 0
+                    MpCanvas.input_text = _js(MpCanvas.input_text, chr(((((65 + MpCanvas.letter_cursor))) & 0xFFFF)))
                     return
-                if n4 != (-1):
-                    if n3 >= 12:
-                        break
-                    MpCanvas.password = _js(_js(MpCanvas.password, ""), n4)
+                if (MpCanvas.letter_cursor != 26) or (len(MpCanvas.input_text) < 4):
                     return
-                if (key != (-6)) or (n3 < 4):
-                    break
-                MpCanvas.loading_msg = 0
-                MpCanvas.password_login = True
-                MpCanvas.set_state(10000)
-            break
+                MpCanvas.user_id = MpCanvas.input_text
+                MpCanvas.popup_kind = 1
+                MpCanvas.password = ""
+                return
+            MpCanvas.letter_grid_keys(MpCanvas.key_in)
+        elif MpCanvas.popup_kind == 1:
+            n3 = len(MpCanvas.password)
+            n4 = (-1)
+            if key == 48:
+                n4 = 0
+            elif key == 49:
+                n4 = 1
+            elif key == 50:
+                n4 = 2
+            elif key == 51:
+                n4 = 3
+            elif key == 52:
+                n4 = 4
+            elif key == 53:
+                n4 = 5
+            elif key == 54:
+                n4 = 6
+            elif key == 55:
+                n4 = 7
+            elif key == 56:
+                n4 = 8
+            elif key == 57:
+                n4 = 9
+            if key == (-7):
+                if n3 > 0:
+                    MpCanvas.password = MpCanvas.password[0:(n3 - 1)]
+                    return
+                MpCanvas.popup_kind = 0
+                MpCanvas.letter_cursor = 0
+                return
+            if n4 != (-1):
+                if n3 >= 12:
+                    return
+                MpCanvas.password = _js(_js(MpCanvas.password, ""), n4)
+                return
+            if (key != (-6)) or (n3 < 4):
+                return
+            MpCanvas.loading_msg = 0
+            MpCanvas.password_login = True
+            MpCanvas.set_state(10000)
 
     def push_state(self, state):  # g.java:4996
         if state != MpCanvas.state_stack[MpCanvas.stack_depth]:
@@ -4388,8 +3841,7 @@ class MpCanvas(_Canvas):
             MpCanvas.loop_i = MpCanvas.loop_i + 1
 
     def draw_battle_result(self):  # g.java:5085
-        _sw106 = MpCanvas.room_mode
-        if _sw106 in (0, 1):
+        if MpCanvas.room_mode in (0, 1):
             n2 = (MpCanvas.center_y - 62)
             self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 102, 124, 0)
             self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (n2 + 5), MpCanvas.fighter_name[0], 0xFFFFFF)
@@ -4406,8 +3858,7 @@ class MpCanvas(_Canvas):
             self.draw_text_colored(MpCanvas.screen_g, Consts.texts[4], (MpCanvas.center_x - 42), (n2 + 96), 0, 0x41FF41)
             self.draw_number0_on(MpCanvas.screen_g, (MpCanvas.center_x + 36), (n2 + 97), MpCanvas.reward_rank)
             self.draw_ok_button((n2 + 109))
-            return
-        elif _sw106 == 2:
+        elif MpCanvas.room_mode == 2:
             n3 = (MpCanvas.center_y - 62)
             self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 102, 124, 0)
             self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (n3 + 3), MpCanvas.fighter_name[0], 0xFFFFFF)
@@ -4433,11 +3884,8 @@ class MpCanvas(_Canvas):
         MpCanvas.loop_i = 0
         while MpCanvas.loop_i < 4:
             if MpCanvas.fighter_present[MpCanvas.loop_i]:
-                _sw107 = MpCanvas.fighter_status[MpCanvas.loop_i]
-                _m108 = False
                 while True:
-                    if _m108 or _sw107 in (11, 12, 13):
-                        _m108 = True
+                    if MpCanvas.fighter_status[MpCanvas.loop_i] in (11, 12, 13):
                         n2 = MpCanvas.loop_i
                         MpCanvas.fighter_status_ticks[n2] = (MpCanvas.fighter_status_ticks[n2] - 1)
                         if MpCanvas.fighter_status_ticks[MpCanvas.loop_i] > 0:
@@ -4456,14 +3904,13 @@ class MpCanvas(_Canvas):
         while MpCanvas.loop_i < 4:
             if (MpCanvas.fighter_present[MpCanvas.loop_i] and (MpCanvas.fighter_hp[MpCanvas.loop_i] > 0)) and (((((MpCanvas.state == 99) or (MpCanvas.loop_i == MpCanvas.attacker)) or (MpCanvas.loop_i == MpCanvas.target)) or (MpCanvas.loop_i == MpCanvas.target2))):
                 MpCanvas.box_y = (27 if (MpCanvas.room_mode == 0) else ((27 if (idiv(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == 0) else ((MpCanvas.canvas_h - 27) - 23))))
-                _sw109 = MpCanvas.fighter_kind[MpCanvas.loop_i]
-                if _sw109 == 0:
+                if MpCanvas.fighter_kind[MpCanvas.loop_i] == 0:
                     MpCanvas.card_face = MpCanvas.fighter_face[MpCanvas.loop_i]
                     MpCanvas.card_half = True
-                elif _sw109 == 1:
+                elif MpCanvas.fighter_kind[MpCanvas.loop_i] == 1:
                     MpCanvas.card_face = 4
                     MpCanvas.card_half = False
-                elif _sw109 == 2:
+                elif MpCanvas.fighter_kind[MpCanvas.loop_i] == 2:
                     MpCanvas.card_face = 5
                     MpCanvas.card_half = False
                 if MpCanvas.state == 99:
@@ -4477,8 +3924,7 @@ class MpCanvas(_Canvas):
                 if imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == 0:
                     Draw.draw_rect(MpCanvas.screen_g, MpCanvas.box_x, MpCanvas.box_y, 60, 23, 0)
                     Draw.draw_rect(MpCanvas.screen_g, (MpCanvas.box_x + 1), (MpCanvas.box_y + 1), 58, 21, 16769990)
-                    _sw110 = MpCanvas.tmp
-                    if _sw110 in (0, 3, 4, 5, 6, 7, 8):
+                    if MpCanvas.tmp in (0, 3, 4, 5, 6, 7, 8):
                         self.load_numbered_image(MpCanvas.act_images, "act", 0)
                         self.load_numbered_image(MpCanvas.act_images, "act", (6 + MpCanvas.card_face))
                         MpCanvas.draw_left_half((MpCanvas.box_x + Consts.act_dx[0]), (MpCanvas.box_y + Consts.act_dy[0]), MpCanvas.act_images[0])
@@ -4494,8 +3940,7 @@ class MpCanvas(_Canvas):
                 else:
                     MpCanvas.draw_rect(((MpCanvas.canvas_w - MpCanvas.box_x) - 60), MpCanvas.box_y, 60, 23, 0)
                     MpCanvas.draw_rect((((MpCanvas.canvas_w - MpCanvas.box_x) - 60) + 1), (MpCanvas.box_y + 1), 58, 21, 16769990)
-                    _sw111 = MpCanvas.tmp
-                    if _sw111 in (0, 3, 4, 5, 6, 7, 8):
+                    if MpCanvas.tmp in (0, 3, 4, 5, 6, 7, 8):
                         self.load_numbered_image(MpCanvas.act_images, "act", (6 + MpCanvas.card_face))
                         MpCanvas.draw_right_half((MpCanvas.canvas_w - ((MpCanvas.box_x + Consts.act_dx[0]))), (MpCanvas.box_y + Consts.act_dy[0]), MpCanvas.act_images[0])
                         MpCanvas.draw_right_aligned((MpCanvas.canvas_w - ((MpCanvas.box_x + Consts.act_dx[(6 + MpCanvas.card_face)]))), (MpCanvas.box_y + Consts.act_dy[(6 + MpCanvas.card_face)]), MpCanvas.act_images[(6 + MpCanvas.card_face)], MpCanvas.card_half)
@@ -4555,8 +4000,7 @@ class MpCanvas(_Canvas):
         n3 = 0
         if MpCanvas.room_mode == 0:
             n3 = 25
-        _sw112 = kind
-        if _sw112 == 0:
+        if kind == 0:
             if MpCanvas.choose_secs > 5:
                 self.draw_box(graphics, MpCanvas.center_x, ((MpCanvas.center_y + 28) + n3), 120, 27, 0)
                 self.draw_text_centred(MpCanvas.center_x, ((MpCanvas.center_y + 17) + n3), Consts.texts[0], 0xFFFFFF)
@@ -4564,12 +4008,10 @@ class MpCanvas(_Canvas):
                 return
             self.draw_box(graphics, MpCanvas.center_x, ((MpCanvas.center_y + 28) + n3), 26, 26, 0)
             self.draw_number2_on(graphics, (MpCanvas.center_x - 4), ((MpCanvas.center_y + 22) + n3), MpCanvas.choose_secs)
-            return
-        elif _sw112 == 1:
+        elif kind == 1:
             self.draw_box(graphics, MpCanvas.center_x, ((MpCanvas.center_y + 28) + n3), 120, 27, 0)
             self.draw_text_centred(MpCanvas.center_x, ((MpCanvas.center_y + 23) + n3), Consts.texts[17], 0xFFFFFF)
-            return
-        elif _sw112 == 2:
+        elif kind == 2:
             string = ""
             if imod(MpCanvas.state_ticks, 4) == 1:
                 string = "."
@@ -4589,7 +4031,6 @@ class MpCanvas(_Canvas):
                 MpCanvas.disconnect()
                 MpCanvas.set_timer((-1))
                 self.push_state(4)
-                return
         else:
             MpCanvas.wait_started = True
             MpCanvas.wait_start_time = system.currentTimeMillis()
@@ -4603,69 +4044,54 @@ class MpCanvas(_Canvas):
         MpCanvas.help_first_line = 0
         MpCanvas.loop_i = 0
         while MpCanvas.loop_i < MpCanvas.help_page:
-            _sw113 = MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)]
-            if _sw113 == 0:
+            if MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 0:
                 MpCanvas.help_first_line = (MpCanvas.help_first_line + Consts.help_controls_lines[MpCanvas.loop_i])
-            elif _sw113 == 1:
+            elif MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 1:
                 MpCanvas.help_first_line = (MpCanvas.help_first_line + Consts.help_menu_lines[MpCanvas.loop_i])
-            elif _sw113 == 2:
+            elif MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 2:
                 MpCanvas.help_first_line = (MpCanvas.help_first_line + Consts.help_duel_lines[MpCanvas.loop_i])
-            elif _sw113 == 3:
+            elif MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 3:
                 MpCanvas.help_first_line = (MpCanvas.help_first_line + Consts.help_mission_lines[MpCanvas.loop_i])
-            elif _sw113 == 4:
+            elif MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 4:
                 MpCanvas.help_first_line = (MpCanvas.help_first_line + Consts.help_about_lines[MpCanvas.loop_i])
-            elif _sw113 == 5:
+            elif MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 5:
                 MpCanvas.help_first_line = (MpCanvas.help_first_line + Consts.help_network_lines[MpCanvas.loop_i])
             MpCanvas.loop_i = MpCanvas.loop_i + 1
-        _sw114 = MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)]
-        if _sw114 == 0:
+        if MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 0:
             self.draw_text_centred(MpCanvas.center_x, n2, Consts.help_controls[MpCanvas.help_first_line], 0xFFFFFF)
             MpCanvas.tmp = Consts.help_controls_lines[MpCanvas.help_page]
-        elif _sw114 == 1:
+        elif MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 1:
             self.draw_text_centred(MpCanvas.center_x, n2, Consts.help_menu[MpCanvas.help_first_line], 0xFFFFFF)
             MpCanvas.tmp = Consts.help_menu_lines[MpCanvas.help_page]
-        elif _sw114 == 2:
+        elif MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 2:
             self.draw_text_centred(MpCanvas.center_x, n2, Consts.help_duel[MpCanvas.help_first_line], 0xFFFFFF)
             MpCanvas.tmp = Consts.help_duel_lines[MpCanvas.help_page]
-        elif _sw114 == 3:
+        elif MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 3:
             self.draw_text_centred(MpCanvas.center_x, n2, Consts.help_mission[MpCanvas.help_first_line], 0xFFFFFF)
             MpCanvas.tmp = Consts.help_mission_lines[MpCanvas.help_page]
-        elif _sw114 == 4:
+        elif MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 4:
             self.draw_text_centred(MpCanvas.center_x, n2, Consts.help_about[MpCanvas.help_first_line], 0xFFFFFF)
             MpCanvas.tmp = Consts.help_about_lines[MpCanvas.help_page]
-        elif _sw114 == 5:
+        elif MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 5:
             self.draw_text_centred(MpCanvas.center_x, n2, Consts.help_network[MpCanvas.help_first_line], 0xFFFFFF)
             MpCanvas.tmp = Consts.help_network_lines[MpCanvas.help_page]
         MpCanvas.loop_i = 1
         while MpCanvas.loop_i < MpCanvas.tmp:
-            _sw115 = MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)]
-            _m116 = False
             while True:
-                if _m116 or _sw115 == 0:
-                    _m116 = True
+                if MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 0:
                     self.draw_text_left((MpCanvas.center_x - 56), ((n2 + (MpCanvas.loop_i * 12)) + 1), Consts.help_controls[(MpCanvas.help_first_line + MpCanvas.loop_i)], 0xFFFFFF)
-                    break
-                if _m116 or _sw115 == 1:
-                    _m116 = True
+                elif MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 1:
                     self.draw_text_left((MpCanvas.center_x - 56), ((n2 + (MpCanvas.loop_i * 12)) + 1), Consts.help_menu[(MpCanvas.help_first_line + MpCanvas.loop_i)], 0xFFFFFF)
-                    break
-                if _m116 or _sw115 == 2:
-                    _m116 = True
+                elif MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 2:
                     self.draw_text_left((MpCanvas.center_x - 56), ((n2 + (MpCanvas.loop_i * 12)) + 1), Consts.help_duel[(MpCanvas.help_first_line + MpCanvas.loop_i)], 0xFFFFFF)
-                    break
-                if _m116 or _sw115 == 3:
-                    _m116 = True
+                elif MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 3:
                     self.draw_text_left((MpCanvas.center_x - 56), ((n2 + (MpCanvas.loop_i * 12)) + 1), Consts.help_mission[(MpCanvas.help_first_line + MpCanvas.loop_i)], 0xFFFFFF)
-                    break
-                if _m116 or _sw115 == 4:
-                    _m116 = True
+                elif MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 4:
                     self.draw_text_centred(MpCanvas.center_x, ((n2 + (MpCanvas.loop_i * 17)) + 9), Consts.help_about[(MpCanvas.help_first_line + MpCanvas.loop_i)], 0xFFFFFF)
                     if MpCanvas.loop_i != 3:
                         break
                     self.draw_text_centred(MpCanvas.center_x, ((n2 + (MpCanvas.loop_i * 17)) + 9), _js("v", MpCanvas.app_version), 0xFFFFFF)
-                    break
-                if _m116 or _sw115 == 5:
-                    _m116 = True
+                elif MpCanvas.cursor_stack[(MpCanvas.stack_depth - 1)] == 5:
                     self.draw_text_left((MpCanvas.center_x - 56), ((n2 + (MpCanvas.loop_i * 12)) + 1), Consts.help_network[(MpCanvas.help_first_line + MpCanvas.loop_i)], 0xFFFFFF)
                 break
             MpCanvas.loop_i = MpCanvas.loop_i + 1
@@ -4740,8 +4166,7 @@ class MpCanvas(_Canvas):
         n3 = (idiv(MpCanvas.screen_h, 2) - 95)
         n4 = (idiv(MpCanvas.screen_w, 30) + 1)
         n5 = ((MpCanvas.room_bg >> 6) & 3)
-        _sw117 = n5
-        if _sw117 == 0:
+        if n5 == 0:
             self.load_bg(4)
             self.load_bg(5)
             self.load_bg(6)
@@ -4756,7 +4181,7 @@ class MpCanvas(_Canvas):
             MpCanvas.draw_image_on(MpCanvas.buffer_g, (MpCanvas.screen_w - MpCanvas.bg_images[6].getWidth()), ((n3 - 2) - MpCanvas.bg_images[6].getHeight()), MpCanvas.bg_images[6])
             MpCanvas.draw_image_on(MpCanvas.buffer_g, 18, (n3 - 30), MpCanvas.bg_images[7])
             MpCanvas.draw_image_on(MpCanvas.buffer_g, 52, (n3 - 15), MpCanvas.bg_images[8])
-        elif _sw117 == 1:
+        elif n5 == 1:
             self.load_bg(9)
             self.load_bg(10)
             self.load_bg(11)
@@ -5001,18 +4426,17 @@ class MpCanvas(_Canvas):
             self.draw_box(MpCanvas.screen_g, (MpCanvas.center_x - 60), ((MpCanvas.center_y - 47) + (MpCanvas.loop_i * 17)), 81, 14, 2)
             self.draw_box(MpCanvas.screen_g, (MpCanvas.center_x + 23), ((MpCanvas.center_y - 47) + (MpCanvas.loop_i * 17)), 37, 14, 2)
             self.draw_text_colored(MpCanvas.screen_g, Consts.texts[(46 + MpCanvas.loop_i)], (MpCanvas.center_x - 19), ((MpCanvas.center_y - 45) + (MpCanvas.loop_i * 17)), 1, 0xFFFFFF)
-            _sw118 = MpCanvas.loop_i
-            if _sw118 == 0:
+            if MpCanvas.loop_i == 0:
                 self.draw_number1((MpCanvas.center_x + 52), ((MpCanvas.center_y - 44) + (MpCanvas.loop_i * 17)), MpCanvas.level)
-            elif _sw118 == 1:
+            elif MpCanvas.loop_i == 1:
                 self.draw_number1_b((MpCanvas.center_x + 52), ((MpCanvas.center_y - 44) + (MpCanvas.loop_i * 17)), MpCanvas.fame)
-            elif _sw118 == 2:
+            elif MpCanvas.loop_i == 2:
                 MpCanvas.stat_value = MpCanvas.duel_grade
-            elif _sw118 == 3:
+            elif MpCanvas.loop_i == 3:
                 MpCanvas.stat_value = MpCanvas.wins
-            elif _sw118 == 4:
+            elif MpCanvas.loop_i == 4:
                 MpCanvas.stat_value = MpCanvas.losses
-            elif _sw118 == 5:
+            elif MpCanvas.loop_i == 5:
                 MpCanvas.stat_value = MpCanvas.mission_grade
             if MpCanvas.loop_i > 1:
                 self.draw_number0_b((MpCanvas.center_x + 52), ((MpCanvas.center_y - 44) + (MpCanvas.loop_i * 17)), MpCanvas.stat_value)
@@ -5026,17 +4450,16 @@ class MpCanvas(_Canvas):
             self.draw_box(MpCanvas.screen_g, (MpCanvas.center_x - 54), ((MpCanvas.center_y - 30) + (MpCanvas.loop_i * 17)), 39, 14, 2)
             self.draw_box(MpCanvas.screen_g, (MpCanvas.center_x - 13), ((MpCanvas.center_y - 30) + (MpCanvas.loop_i * 17)), 67, 14, 2)
             self.draw_text_colored(MpCanvas.screen_g, Consts.texts[(42 + MpCanvas.loop_i)], (MpCanvas.center_x - 35), ((MpCanvas.center_y - 28) + (MpCanvas.loop_i * 17)), 1, 0xFFFFFF)
-            _sw119 = MpCanvas.loop_i
-            if _sw119 == 0:
+            if MpCanvas.loop_i == 0:
                 MpCanvas.stat_value = MpCanvas.attr_hp
                 n2 = MpCanvas.attr_hp_bonus
-            elif _sw119 == 1:
+            elif MpCanvas.loop_i == 1:
                 MpCanvas.stat_value = MpCanvas.attr_mp
                 n2 = MpCanvas.attr_mp_bonus
-            elif _sw119 == 2:
+            elif MpCanvas.loop_i == 2:
                 MpCanvas.stat_value = MpCanvas.attr_attack
                 n2 = MpCanvas.attr_attack_bonus
-            elif _sw119 == 3:
+            elif MpCanvas.loop_i == 3:
                 MpCanvas.stat_value = MpCanvas.attr_defense
                 n2 = MpCanvas.attr_defense_bonus
             self.draw_number0((MpCanvas.center_x + 9), ((MpCanvas.center_y - 27) + (MpCanvas.loop_i * 17)), MpCanvas.stat_value)
@@ -5086,12 +4509,11 @@ class MpCanvas(_Canvas):
             self.draw_box(MpCanvas.screen_g, (MpCanvas.center_x - 50), ((MpCanvas.center_y - 45) + (MpCanvas.loop_i * 34)), 100, 14, 2)
             self.draw_box(MpCanvas.screen_g, (MpCanvas.center_x - 50), ((MpCanvas.center_y - 32) + (MpCanvas.loop_i * 34)), 100, 14, 2)
             self.draw_text_colored(MpCanvas.screen_g, Consts.texts[(52 + MpCanvas.loop_i)], MpCanvas.center_x, ((MpCanvas.center_y - 43) + (MpCanvas.loop_i * 34)), 1, 0xFFFFFF)
-            _sw120 = MpCanvas.loop_i
-            if _sw120 == 0:
+            if MpCanvas.loop_i == 0:
                 MpCanvas.stat_value = MpCanvas.exp
-            elif _sw120 == 1:
+            elif MpCanvas.loop_i == 1:
                 MpCanvas.stat_value = MpCanvas.fame
-            elif _sw120 == 2:
+            elif MpCanvas.loop_i == 2:
                 MpCanvas.stat_value = MpCanvas.gold
             self.draw_number0_b((MpCanvas.center_x + 24), ((MpCanvas.center_y - 29) + (MpCanvas.loop_i * 34)), MpCanvas.stat_value)
             MpCanvas.loop_i = MpCanvas.loop_i + 1
