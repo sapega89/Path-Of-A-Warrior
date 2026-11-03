@@ -25,6 +25,8 @@ list of steps, one per line:
     hero F N        TEST-ONLY: set the hero's field ag.cz.F to N (p = HP, r = MP, w = ATK, x = DEF)
     skill S ID      TEST-ONLY: learn skill ID (12..30) and put it on skill key slot S (0..4 = 1 3 7 9 0)
     potion K ID N   TEST-ONLY: put N potions of kind ID on the quick slot K (0 = *, 1 = #)
+    auto on|off     PORT-EXTRA auto-hunt (pow/game/autopilot.py) on / off
+    expect F OP N   TEST-ONLY: stop with an error unless the hero's field F OP N (OP: >= <= == > <)
     win             TEST-ONLY: win the accepted mission now (c.d(1), as the combat would)
     env NAME=VALUE  (first lines only) set an environment variable before the game reads config,
                     e.g. env POW_NO_ENEMIES=1 for the map without enemies
@@ -181,6 +183,21 @@ def run(scenario, out, every=False):
                 z = GameCanvas.hero.quick_slots[GameCanvas.hero.quick_keys[key]]
                 z.item = pid
                 z.count = cnt
+                continue
+            if cmd == "auto":
+                from pow.game.autopilot import Autopilot
+                if Autopilot.on != (arg.lower() == "on"):
+                    Autopilot.toggle()
+                continue
+            if cmd == "expect":
+                import operator
+                field, op, val = arg.split()
+                ops = {">=": operator.ge, "<=": operator.le, "==": operator.eq, ">": operator.gt,
+                       "<": operator.lt}
+                have = getattr(GameCanvas.hero, field)
+                if not ops[op](have, int(val)):
+                    raise SystemExit("expect %s %s %s: it is %s" % (field, op, val, have))
+                print("expect %s %s %s: %s" % (field, op, val, have))
                 continue
             if cmd == "win":
                 GameCanvas.boss_fight = 1                  # the mission's general was met on the map (c.java:986)

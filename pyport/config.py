@@ -97,3 +97,9 @@ AUTO_AIM_HARD = os.environ.get("POW_AUTO_AIM_HARD", "1") == "1"
 CHEAT = os.environ.get("POW_CHEAT", "0") == "1"
 # PORT-EXTRA: POW_GOLD=N - after a save is loaded the hero has N gold (nothing else changes).
 GOLD = int(os.environ["POW_GOLD"]) if os.environ.get("POW_GOLD", "").isdigit() else None
+
+# PORT-EXTRA (asked by the player): auto-hunt on the mission map (pow/game/autopilot.py). The hero
+# walks to the nearest enemy, attacks, casts the skills on keys 1-5 and drinks the potions on * / #.
+# Tab or a click on the bottom-left corner of the map turns it on and off; POW_AUTO_HUNT=1 = on
+# from the start. Any key of the player pauses it for a moment.
+AUTO_HUNT = os.environ.get("POW_AUTO_HUNT", "0") == "1"

@@ -26,6 +26,7 @@ KEYMAP = {
     pygame.K_6: 54, pygame.K_7: 55, pygame.K_8: 56, pygame.K_9: 57, pygame.K_0: 48,
     pygame.K_u: 49, pygame.K_i: 51, pygame.K_o: 55, pygame.K_p: 57, pygame.K_k: 48,
     pygame.K_z: 42, pygame.K_x: 35,
+    pygame.K_TAB: -100,                 # PORT-EXTRA: auto-hunt on / off (pow/game/autopilot.py)
     # numeric keypad = phone keypad (8 up, 2 down, 4 left, 6 right, 5 OK)
     pygame.K_KP8: -1, pygame.K_KP2: -2, pygame.K_KP4: -3, pygame.K_KP6: -4, pygame.K_KP5: -5,
     pygame.K_KP0: 48, pygame.K_KP1: 49, pygame.K_KP3: 51, pygame.K_KP7: 55, pygame.K_KP9: 57,
@@ -34,11 +35,13 @@ KEYMAP = {
 
 # mouse wheel -> key, decided by the game (pow/game/pointer.py); right button = BACK
 MOUSE_BACK = -7
+AUTO_TOGGLE = -100                      # PORT-EXTRA: Tab / the AUTO corner of the map
 DIRECTION_KEYS = (-1, -2, -3, -4, 50, 52, 54, 56)
 
 # names used by scenario files (tools/shot.py)
 KEYNAMES = {"UP": -1, "DOWN": -2, "LEFT": -3, "RIGHT": -4, "FIRE": -5, "OK": -5,
-            "LSOFT": -6, "RSOFT": -7, "BACK": -7, "STAR": 42, "POUND": 35}
+            "LSOFT": -6, "RSOFT": -7, "BACK": -7, "STAR": 42, "POUND": 35,
+            "AUTO": -100}                       # PORT-EXTRA: Tab, auto-hunt / auto-battle
 KEYNAMES.update({str(i): 48 + i for i in range(10)})
 
 
@@ -51,6 +54,7 @@ class Canvas:
         self.hold_dir = None                    # callable(x, y) -> direction key while dragging
         self.held = []                          # direction keys held down, last pressed last
         self.mouse_dir = None                   # direction of the held left mouse button
+        self.autopilot = None                   # PORT-EXTRA: tick() -> key, .direction, player_key()
 
     def getWidth(self):
         return config.SCREEN_W
@@ -80,6 +84,8 @@ class Canvas:
                 code = KEYMAP.get(ev.key)
                 if code is not None:
                     self.key_queue.clear()
+                    if self.autopilot is not None and code != AUTO_TOGGLE:
+                        self.autopilot.player_key()
                     if code in DIRECTION_KEYS:
                         self.hold(code)
                     self.keyPressed(code)
@@ -95,6 +101,8 @@ class Canvas:
                     keys = self.pointer(x, y, "middle") if self.pointer else []
                 else:
                     keys = self.pointer(x, y, "click") if self.pointer else []
+                    if self.autopilot is not None and keys and keys != [AUTO_TOGGLE]:
+                        self.autopilot.player_key()
                     # a click that walks: the button held down keeps walking (HOLD_TO_MOVE)
                     self.mouse_dir = keys[0] if len(keys) == 1 and keys[0] in DIRECTION_KEYS else None
                 self.key_queue.extend(keys)
@@ -110,6 +118,10 @@ class Canvas:
         # a phone delivers one key per tick: queued mouse keys go one by one
         if self.key_queue:
             self.keyPressed(self.key_queue.popleft())
+        elif self.autopilot is not None:        # PORT-EXTRA: the auto-hunt presses its key
+            key = self.autopilot.tick()
+            if key is not None:
+                self.keyPressed(key)
 
     def click(self, x, y, kind="click"):
         """Mouse input in screen coordinates (240x320), used by tests and tools/shot.py."""
@@ -132,7 +144,9 @@ class Canvas:
         """Phone code of the direction held now (mouse button first, then the last key), or None."""
         if self.mouse_dir is not None:
             return self.mouse_dir
-        return self.held[-1] if self.held else None
+        if self.held:
+            return self.held[-1]
+        return self.autopilot.direction if self.autopilot is not None else None
 
     @staticmethod
     def _to_screen(pos):

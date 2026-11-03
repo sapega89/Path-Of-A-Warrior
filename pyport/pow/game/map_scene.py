@@ -14,6 +14,8 @@ F14 = config.DECOMP_FIX["F14"]
 
 
 # direction key -> cz.c, as c.i_v reads ag.cj (used by the PORT-EXTRA HOLD_TO_MOVE)
+from pow.game.autopilot import Autopilot   # noqa: E402  PORT-EXTRA auto-hunt walks like HOLD_TO_MOVE
+
 _HELD_DIR = {-1: 4, 50: 4, -3: 2, 52: 2, -4: 6, 54: 6, -2: 0, 56: 0}
 
 
@@ -1474,7 +1476,7 @@ class MapScene(GameCanvas):
             GameCanvas.hero_fx_data = None
             if cz.action[0] != 1:
                 cz.action[0] = 0
-        if config.HOLD_TO_MOVE and i == -1 and cz.action[0] < 2:
+        if (config.HOLD_TO_MOVE or Autopilot.on) and i == -1 and cz.action[0] < 2:
             # PORT-EXTRA (config.HOLD_TO_MOVE): the hero walks only while a direction key or the
             # mouse button is held; released = stand, still held after an attack = walk again
             from pow.game.midlet import Midlet

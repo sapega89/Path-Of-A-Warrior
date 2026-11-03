@@ -56,6 +56,10 @@ class _Cont_block49_2378(BaseException):
 
 
 class MpCanvas(_Canvas):
+    # PORT-EXTRA auto-battle: Tab (key -100) turns it on / off; the round's 1027 then goes out after
+    # a second with action AUTO_ACTION, and the server's bot chooses (pow_server/battle.py cpu_choice)
+    auto_battle = bool(getattr(__import__("config"), "AUTO_HUNT", False))
+    AUTO_ACTION = 255
     a = None  # g.java:25 String
     b = None  # g.java:26 m
     c = None  # g.java:27 String
@@ -397,6 +401,8 @@ class MpCanvas(_Canvas):
             MpCanvas.dY = True
             return
         self.d_v()
+        if MpCanvas.auto_battle and 94 <= MpCanvas.cY <= 98:     # PORT-EXTRA: auto-battle badge
+            self.b_GIITI(graphics, 4, MpCanvas.cR - 30, "AUTO", 16400640)
         if graphics.getClipX() > 0:
             graphics.setClip(0, 0, MpCanvas.cQ, MpCanvas.cR)
         MpCanvas.dY = True
@@ -504,7 +510,8 @@ class MpCanvas(_Canvas):
                         MpCanvas.b_I(1)
                 else:
                     if _inc(MpCanvas, 'ba', -1) == 0:
-                        MpCanvas.bB = 1
+                        # PORT-EXTRA: on auto-battle the time-out sends AUTO instead of Defend
+                        MpCanvas.bB = MpCanvas.AUTO_ACTION if MpCanvas.auto_battle else 1
                         MpCanvas.cA = (((MpCanvas.cW - 44) + 72) + MpCanvas.cz)
                         self.C_v()
                     MpCanvas.b_I((10 - MpCanvas.an))
@@ -1978,7 +1985,7 @@ class MpCanvas(_Canvas):
                     if _sw35 == 1:
                         MpCanvas.bB = 99
                         MpCanvas.b_I((10 - MpCanvas.an))
-                        MpCanvas.ba = 10
+                        MpCanvas.ba = 1 if MpCanvas.auto_battle else 10   # PORT-EXTRA auto-battle
                         MpCanvas.G = False
                         MpCanvas.i_I(94)
                     return
@@ -2317,6 +2324,11 @@ class MpCanvas(_Canvas):
 
     def keyPressed(self, n2):  # g.java:2645
         if (n2 == (-32)) or (n2 == (-33)):
+            return
+        if n2 == -100:                     # PORT-EXTRA: Tab = auto-battle on / off
+            MpCanvas.auto_battle = not MpCanvas.auto_battle
+            if MpCanvas.auto_battle and MpCanvas.cY == 94 and MpCanvas.ba > 1:
+                MpCanvas.ba = 1            # this round too
             return
         MpCanvas.m = n2
         if MpCanvas.J:
