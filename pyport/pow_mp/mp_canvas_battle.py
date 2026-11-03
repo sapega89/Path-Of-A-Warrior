@@ -414,114 +414,130 @@ class BattleMixin:
                 MpCanvas.loop_i = MpCanvas.loop_i + 1
         if MpCanvas.anim_frame >= MpCanvas.anim_length:
             MpCanvas.anim_frame = 0
-            while True:
-                if MpCanvas.fighter_anim[MpCanvas.attacker] in (2, 17, 18, 19):
-                    MpCanvas.fighter_x[MpCanvas.attacker] = (MpCanvas.canvas_w - 67)
-                    MpCanvas.fighter_y[MpCanvas.attacker] = (MpCanvas.center_y + 65)
-                    if MpCanvas.room_mode != 0:
-                        MpCanvas.fighter_y[MpCanvas.attacker] += ((((-1) if (idiv(MpCanvas.turn_bytes[(12 + MpCanvas.turn_rec)], 2) == 0) else 1)) * 23)
-                    if MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 3:
-                        MpCanvas.fighter_anim[MpCanvas.attacker] = 9
-                    elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 4:
-                        MpCanvas.fighter_anim[MpCanvas.attacker] = 10
-                    elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 5:
-                        MpCanvas.fighter_anim[MpCanvas.attacker] = 11
-                    elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 6:
-                        MpCanvas.fighter_anim[MpCanvas.attacker] = 14
-                    elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 7:
-                        MpCanvas.fighter_anim[MpCanvas.attacker] = 15
-                    elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 0:
-                        MpCanvas.fighter_anim[MpCanvas.attacker] = 3
-                elif MpCanvas.fighter_anim[MpCanvas.attacker] == 8:
-                    while True:
-                        if MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] in (3, 4, 5):
-                            MpCanvas.fighter_anim[MpCanvas.attacker] = 2
-                            MpCanvas.run_dx = idiv((((MpCanvas.canvas_w - 67) - 42)), Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
-                            if MpCanvas.room_mode == 0:
-                                MpCanvas.run_dy = 0
-                                break
-                            if idiv(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == idiv(MpCanvas.turn_bytes[(12 + MpCanvas.turn_rec)], 2):
-                                MpCanvas.run_dy = 0
-                                break
-                            if idiv(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == 0:
-                                MpCanvas.run_dy = idiv(46, Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
-                                break
-                            MpCanvas.run_dy = idiv((-46), Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
-                        elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] in (6, 7):
-                            if MpCanvas.room_mode == 0:
-                                MpCanvas.fighter_anim[MpCanvas.attacker] = 17
-                                break
-                            if idiv(MpCanvas.turn_bytes[(12 + MpCanvas.turn_rec)], 2) == idiv(MpCanvas.turn_bytes[(0 + MpCanvas.turn_rec)], 2):
-                                MpCanvas.fighter_anim[MpCanvas.attacker] = 17
-                                break
-                            if idiv(MpCanvas.turn_bytes[(12 + MpCanvas.turn_rec)], 2) == 1:
-                                MpCanvas.fighter_anim[MpCanvas.attacker] = 18
-                                break
-                            MpCanvas.fighter_anim[MpCanvas.attacker] = 19
-                        elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 8:
-                            MpCanvas.fighter_anim[MpCanvas.attacker] = 20
-                        break
-                elif MpCanvas.fighter_anim[MpCanvas.attacker] == 20:
-                    if MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 8:
-                        MpCanvas.fighter_anim[MpCanvas.attacker] = 16
-                elif MpCanvas.fighter_anim[MpCanvas.attacker] in (3, 9, 10, 11, 14, 15, 16):
-                    if (MpCanvas.turn_bytes[(28 + MpCanvas.turn_rec)] == 3) and (MpCanvas.fighter_slot[MpCanvas.attacker] == MpCanvas.turn_bytes[(0 + MpCanvas.turn_rec)]):
-                        MpCanvas.tmp = MpCanvas.attacker
-                        MpCanvas.attacker = MpCanvas.target
-                        MpCanvas.target = MpCanvas.tmp
-                        MpCanvas.fighter_anim[MpCanvas.attacker] = 3
-                        MpCanvas.target_reaction = 1
-                        break
-                    MpCanvas.damage_tick = 0
-                    if MpCanvas.turn_bytes[(28 + MpCanvas.turn_rec)] == 3:
-                        MpCanvas.tmp = MpCanvas.attacker
-                        MpCanvas.attacker = MpCanvas.target
-                        MpCanvas.target = MpCanvas.tmp
-                        MpCanvas.fighter_anim[MpCanvas.target] = 0
-                        MpCanvas.place_fighter(MpCanvas.target)
-                    MpCanvas.fighter_anim[MpCanvas.attacker] = 28
-                    MpCanvas.run_dx = idiv(((42 - MpCanvas.fighter_x[MpCanvas.attacker])), Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
-                    if MpCanvas.room_mode == 0:
-                        MpCanvas.run_dy = 0
-                        break
-                    if idiv(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == idiv(MpCanvas.turn_bytes[(12 + MpCanvas.turn_rec)], 2):
-                        MpCanvas.run_dy = 0
-                        break
-                    if idiv(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == 0:
-                        MpCanvas.run_dy = idiv((-46), Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
-                        break
-                    MpCanvas.run_dy = idiv(46, Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
-                elif MpCanvas.fighter_anim[MpCanvas.attacker] in (12, 13, 28):
-                    MpCanvas.place_fighter(MpCanvas.attacker)
-                    MpCanvas.tmp = (-1)
-                    MpCanvas.loop_i = 0
-                    while MpCanvas.loop_i < 4:
-                        if MpCanvas.fighter_present[MpCanvas.loop_i]:
-                            if (MpCanvas.fighter_anim[MpCanvas.attacker] == 13) and (imod(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2)):
-                                MpCanvas.fighter_status[MpCanvas.loop_i] = MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)]
-                                MpCanvas.fighter_status_ticks[MpCanvas.loop_i] = 3
-                            if (MpCanvas.fighter_hp[MpCanvas.loop_i] == 0) and (MpCanvas.fighter_hp_delta[MpCanvas.loop_i] != 0):
-                                MpCanvas.tmp = MpCanvas.loop_i
-                                MpCanvas.fighter_anim[MpCanvas.tmp] = 6
-                                if imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == imod(MpCanvas.fighter_slot[0], 2):
-                                    MpCanvas.allies_alive = MpCanvas.allies_alive - 1
-                                else:
-                                    MpCanvas.enemies_alive = MpCanvas.enemies_alive - 1
-                        MpCanvas.loop_i = MpCanvas.loop_i + 1
-                    if MpCanvas.tmp > 0:
-                        if MpCanvas.fighter_anim[MpCanvas.attacker] != 6:
-                            MpCanvas.fighter_anim[MpCanvas.attacker] = 0
-                        MpCanvas.attacker = MpCanvas.tmp
-                        break
-                    MpCanvas.turn_rec = MpCanvas.turn_rec + 1
-                    self.next_turn_record()
-                elif MpCanvas.fighter_anim[MpCanvas.attacker] == 6:
-                    MpCanvas.turn_rec = MpCanvas.turn_rec + 1
-                    self.next_turn_record()
-                break
+            if MpCanvas.fighter_anim[MpCanvas.attacker] in (2, 17, 18, 19):
+                self._anim_after_run_in()
+            elif MpCanvas.fighter_anim[MpCanvas.attacker] == 8:
+                self._anim_after_ready()
+            elif MpCanvas.fighter_anim[MpCanvas.attacker] == 20:
+                self._anim_after_charge()
+            elif MpCanvas.fighter_anim[MpCanvas.attacker] in (3, 9, 10, 11, 14, 15, 16):
+                self._anim_after_strike()
+            elif MpCanvas.fighter_anim[MpCanvas.attacker] in (12, 13, 28):
+                self._anim_after_run_back()
+            elif MpCanvas.fighter_anim[MpCanvas.attacker] == 6:
+                self._anim_after_dying()
             MpCanvas.anim_length = Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]]
         if MpCanvas.fighter_anim[MpCanvas.attacker] != 6:
             self.update_reactions()
+
+    def _anim_after_run_in(self):  # step_turn_anim: the run to the target (2, 17-19) ended: start the action
+        MpCanvas.fighter_x[MpCanvas.attacker] = (MpCanvas.canvas_w - 67)
+        MpCanvas.fighter_y[MpCanvas.attacker] = (MpCanvas.center_y + 65)
+        if MpCanvas.room_mode != 0:
+            MpCanvas.fighter_y[MpCanvas.attacker] += ((((-1) if (idiv(MpCanvas.turn_bytes[(12 + MpCanvas.turn_rec)], 2) == 0) else 1)) * 23)
+        if MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 3:
+            MpCanvas.fighter_anim[MpCanvas.attacker] = 9
+        elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 4:
+            MpCanvas.fighter_anim[MpCanvas.attacker] = 10
+        elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 5:
+            MpCanvas.fighter_anim[MpCanvas.attacker] = 11
+        elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 6:
+            MpCanvas.fighter_anim[MpCanvas.attacker] = 14
+        elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 7:
+            MpCanvas.fighter_anim[MpCanvas.attacker] = 15
+        elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 0:
+            MpCanvas.fighter_anim[MpCanvas.attacker] = 3
+
+    def _anim_after_ready(self):  # step_turn_anim: the ready pose (8) ended: run, cast or charge
+        while True:
+            if MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] in (3, 4, 5):
+                MpCanvas.fighter_anim[MpCanvas.attacker] = 2
+                MpCanvas.run_dx = idiv((((MpCanvas.canvas_w - 67) - 42)), Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
+                if MpCanvas.room_mode == 0:
+                    MpCanvas.run_dy = 0
+                    break
+                if idiv(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == idiv(MpCanvas.turn_bytes[(12 + MpCanvas.turn_rec)], 2):
+                    MpCanvas.run_dy = 0
+                    break
+                if idiv(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == 0:
+                    MpCanvas.run_dy = idiv(46, Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
+                    break
+                MpCanvas.run_dy = idiv((-46), Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
+            elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] in (6, 7):
+                if MpCanvas.room_mode == 0:
+                    MpCanvas.fighter_anim[MpCanvas.attacker] = 17
+                    break
+                if idiv(MpCanvas.turn_bytes[(12 + MpCanvas.turn_rec)], 2) == idiv(MpCanvas.turn_bytes[(0 + MpCanvas.turn_rec)], 2):
+                    MpCanvas.fighter_anim[MpCanvas.attacker] = 17
+                    break
+                if idiv(MpCanvas.turn_bytes[(12 + MpCanvas.turn_rec)], 2) == 1:
+                    MpCanvas.fighter_anim[MpCanvas.attacker] = 18
+                    break
+                MpCanvas.fighter_anim[MpCanvas.attacker] = 19
+            elif MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 8:
+                MpCanvas.fighter_anim[MpCanvas.attacker] = 20
+            break
+
+    def _anim_after_charge(self):  # step_turn_anim: the charge (20) ended
+        if MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)] == 8:
+            MpCanvas.fighter_anim[MpCanvas.attacker] = 16
+
+    def _anim_after_strike(self):  # step_turn_anim: the strike (3, 9-11, 14-16) ended: counter-attack or run back
+        if (MpCanvas.turn_bytes[(28 + MpCanvas.turn_rec)] == 3) and (MpCanvas.fighter_slot[MpCanvas.attacker] == MpCanvas.turn_bytes[(0 + MpCanvas.turn_rec)]):
+            MpCanvas.tmp = MpCanvas.attacker
+            MpCanvas.attacker = MpCanvas.target
+            MpCanvas.target = MpCanvas.tmp
+            MpCanvas.fighter_anim[MpCanvas.attacker] = 3
+            MpCanvas.target_reaction = 1
+            return
+        MpCanvas.damage_tick = 0
+        if MpCanvas.turn_bytes[(28 + MpCanvas.turn_rec)] == 3:
+            MpCanvas.tmp = MpCanvas.attacker
+            MpCanvas.attacker = MpCanvas.target
+            MpCanvas.target = MpCanvas.tmp
+            MpCanvas.fighter_anim[MpCanvas.target] = 0
+            MpCanvas.place_fighter(MpCanvas.target)
+        MpCanvas.fighter_anim[MpCanvas.attacker] = 28
+        MpCanvas.run_dx = idiv(((42 - MpCanvas.fighter_x[MpCanvas.attacker])), Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
+        if MpCanvas.room_mode == 0:
+            MpCanvas.run_dy = 0
+            return
+        if idiv(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == idiv(MpCanvas.turn_bytes[(12 + MpCanvas.turn_rec)], 2):
+            MpCanvas.run_dy = 0
+            return
+        if idiv(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == 0:
+            MpCanvas.run_dy = idiv((-46), Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
+            return
+        MpCanvas.run_dy = idiv(46, Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]])
+
+    def _anim_after_run_back(self):  # step_turn_anim: the run back (12, 13, 28) ended: deaths, next record
+        MpCanvas.place_fighter(MpCanvas.attacker)
+        MpCanvas.tmp = (-1)
+        MpCanvas.loop_i = 0
+        while MpCanvas.loop_i < 4:
+            if MpCanvas.fighter_present[MpCanvas.loop_i]:
+                if (MpCanvas.fighter_anim[MpCanvas.attacker] == 13) and (imod(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2)):
+                    MpCanvas.fighter_status[MpCanvas.loop_i] = MpCanvas.turn_bytes[(4 + MpCanvas.turn_rec)]
+                    MpCanvas.fighter_status_ticks[MpCanvas.loop_i] = 3
+                if (MpCanvas.fighter_hp[MpCanvas.loop_i] == 0) and (MpCanvas.fighter_hp_delta[MpCanvas.loop_i] != 0):
+                    MpCanvas.tmp = MpCanvas.loop_i
+                    MpCanvas.fighter_anim[MpCanvas.tmp] = 6
+                    if imod(MpCanvas.fighter_slot[MpCanvas.loop_i], 2) == imod(MpCanvas.fighter_slot[0], 2):
+                        MpCanvas.allies_alive = MpCanvas.allies_alive - 1
+                    else:
+                        MpCanvas.enemies_alive = MpCanvas.enemies_alive - 1
+            MpCanvas.loop_i = MpCanvas.loop_i + 1
+        if MpCanvas.tmp > 0:
+            if MpCanvas.fighter_anim[MpCanvas.attacker] != 6:
+                MpCanvas.fighter_anim[MpCanvas.attacker] = 0
+            MpCanvas.attacker = MpCanvas.tmp
+            return
+        MpCanvas.turn_rec = MpCanvas.turn_rec + 1
+        self.next_turn_record()
+
+    def _anim_after_dying(self):  # step_turn_anim: a dying fighter (6) ended: next record
+        MpCanvas.turn_rec = MpCanvas.turn_rec + 1
+        self.next_turn_record()
 
     def next_turn_record(self):  # g.java:4372
         if MpCanvas.turn_record_count == 0:
