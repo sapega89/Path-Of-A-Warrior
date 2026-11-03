@@ -42,7 +42,7 @@ class MpGame(MpCanvas):
                 self.play_music(music, loop)
 
     def play_music(self, music, loop):  # m.java:44
-        MpGame.players.set_volume((MpCanvas.volume * 20))
+        MpGame.players.set_volume(MpCanvas.volume * 20)
         if MpCanvas.volume == 0:
             self.stop_music()
             return

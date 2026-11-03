@@ -12,7 +12,7 @@ class Image(_Image):
         if len(args) == 1 and isinstance(args[0], str):
             data = ResReader.read(args[0])
             if data is None:
-                raise IOError("resource not found: " + args[0])
+                raise OSError("resource not found: " + args[0])
             return _Image.createImage(bytes(x & 0xFF for x in data), 0, len(data))
         if len(args) == 3 and isinstance(args[0], list):
             data = bytes(x & 0xFF for x in args[0])

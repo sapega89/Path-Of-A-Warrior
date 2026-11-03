@@ -24,7 +24,7 @@ class NameBuffer:
 
     def handle_key(self, key):  # at.java:44-70
         i = len(self.chars) - 1
-        if key == -7 or key == -8:
+        if key in (-7, -8):
             if i >= 0:
                 del self.chars[i:]          # setLength(i)
                 self.changed = 0

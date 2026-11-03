@@ -28,7 +28,7 @@ def test_every_hero_is_worth_the_original_points():
 def test_server_has_the_same_table():
     for head, (hp, mp, atk, df) in enumerate(H.BASE_STATS):
         assert R.hero_base(head) == {"hp": hp, "mp": mp, "atk": atk, "def": df}
-    assert R.POINT_GAIN == dict(zip(("hp", "mp", "atk", "def"), H.POINT_GAIN, strict=True))
+    assert dict(zip(("hp", "mp", "atk", "def"), H.POINT_GAIN, strict=True)) == R.POINT_GAIN
 
 
 @pytest.mark.parametrize("head", range(4))

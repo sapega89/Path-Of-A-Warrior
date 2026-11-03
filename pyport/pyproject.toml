@@ -4,7 +4,7 @@ target-version = "py311"
 extend-exclude = ["build", "web"]
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "B"]
+select = ["E", "F", "W", "B", "UP004", "UP015", "UP024", "UP034", "SIM114", "SIM300", "PIE808", "PLR1714", "PLR5501"]
 ignore = [
     "E501",  # long lines: the ported code keeps the Java line layout
     "E741",  # `l` / `O` / `I`: names that come from the Java source

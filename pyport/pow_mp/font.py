@@ -7,7 +7,7 @@ from pow_mp.rt import Image, _js, i8
 
 
 
-class Font(object):
+class Font:
 
     def __init__(self, path, glyph_w, glyph_h, space_w, color):  # j.java:16
         self.image = None
@@ -20,9 +20,9 @@ class Font(object):
         self.space_w = space_w
         try:
             png = ResReader.read(path)
-            red = i8((((color >> 16) & 0xFF)))
-            green = i8((((color >> 8) & 0xFF)))
-            blue = i8(((color & 0xFF)))
+            red = i8((color >> 16) & 0xFF)
+            green = i8((color >> 8) & 0xFF)
+            blue = i8(color & 0xFF)
             i = 0
             while i < 100:
                 if (((png[i] == 80) and (png[(i + 1)] == 76)) and (png[(i + 2)] == 84)) and (png[(i + 3)] == 69):
@@ -34,10 +34,10 @@ class Font(object):
                 png[(self.plte_offset + 5)] = green
                 png[(self.plte_offset + 6)] = blue
                 crc = Gfx.crc32(png, self.plte_offset, 10)
-                png[(self.plte_offset + 10)] = i8((((crc >> 24) & 0xFF)))
-                png[(self.plte_offset + 11)] = i8((((crc >> 16) & 0xFF)))
-                png[(self.plte_offset + 12)] = i8((((crc >> 8) & 0xFF)))
-                png[(self.plte_offset + 13)] = i8(((crc & 0xFF)))
+                png[(self.plte_offset + 10)] = i8((crc >> 24) & 0xFF)
+                png[(self.plte_offset + 11)] = i8((crc >> 16) & 0xFF)
+                png[(self.plte_offset + 12)] = i8((crc >> 8) & 0xFF)
+                png[(self.plte_offset + 13)] = i8(crc & 0xFF)
             self.image = Image.createImage(png, 0, len(png))
             return
         except Exception:
@@ -53,11 +53,11 @@ class Font(object):
     def glyph_index(ch):  # j.java:60
         index = 0
         if (ch >= 65) and (ch <= 90):
-            index = (32 + ((ch - 65)))
+            index = (32 + (ch - 65))
         elif (ch >= 97) and (ch <= 122):
-            index = (64 + ((ch - 97)))
+            index = (64 + (ch - 97))
         elif (ch >= 48) and (ch <= 57):
-            index = (15 + ((ch - 48)))
+            index = (15 + (ch - 48))
         elif ch == 33:
             index = 0
         elif ch == 34:

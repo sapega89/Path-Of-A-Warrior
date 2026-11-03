@@ -329,7 +329,7 @@ class MapEngine(GameCanvas):
                     walls += 1
             if walls != 0:
                 step = MapEngine.approach_zero(walls, step)[1]
-                if 0 == step:
+                if step == 0:
                     return 0
                 continue
             return step
@@ -405,7 +405,7 @@ class MapEngine(GameCanvas):
         elif dir in (2, 4):
             side_dir = -1
         def free(q):
-            return 0 == (game_map.data[game_map.layer_flags + q] & 0x1) and 0 == game_map.data[game_map.layer_objects + q]
+            return (game_map.data[game_map.layer_flags + q] & 0x1) == 0 and game_map.data[game_map.layer_objects + q] == 0
 
         if dir in (0, 4):
             i = cell + game_map.size.w * side_dir
@@ -514,10 +514,10 @@ class MapEngine(GameCanvas):
                 step_y = self.step_until_free(pos, dy, 4)
         straight = MapEngine.straighten_step
         if dir in (2, 6):
-            if 0 == i:
+            if i == 0:
                 return -1
         elif dir in (0, 4):
-            if 0 == step_y:
+            if step_y == 0:
                 return -1
         elif dir in (1, 3, 5, 7):
             # diagonal: if one axis is blocked, go straight along the other one
@@ -632,17 +632,16 @@ class MapEngine(GameCanvas):
         actor.action[0] = i8(6 + GameCanvas.general.skills[self.rand(4)] - 1)
         if actor.action[0] < 6 and actor.action[0] > 21:
             actor.action[0] = 1
-        else:
-            if actor.action[0] in (9, 10):
-                if actor.skill_step > 3:
-                    actor.action[0] = 1
-                elif actor.max_hp >> 1 > actor.hp:
-                    actor.skill_step = i8(actor.skill_step + 1)
-                else:
-                    actor.action[0] = 1
-            elif actor.action[0] in (11, 12, 13):
-                if force != 0:
-                    actor.action[0] = 1
+        elif actor.action[0] in (9, 10):
+            if actor.skill_step > 3:
+                actor.action[0] = 1
+            elif actor.max_hp >> 1 > actor.hp:
+                actor.skill_step = i8(actor.skill_step + 1)
+            else:
+                actor.action[0] = 1
+        elif actor.action[0] in (11, 12, 13):
+            if force != 0:
+                actor.action[0] = 1
         actor.dir[0] = actor.facing = MapEngine.dir4(actor.pos[0], GameCanvas.hero.pos[0])
 
     def hero_hits_breakables(self):  # ar.java:370-408  (the hero's attack vs. breakable objects cA)
@@ -1057,7 +1056,7 @@ class MapEngine(GameCanvas):
             if actor.action[0] == 3:
                 if anim_frame > 200:
                     self.enemy_dies(slot)
-                    if GameCanvas.enemies_alive < 1 and 0 == GameCanvas.waves[0] and actor.type != 202:
+                    if GameCanvas.enemies_alive < 1 and GameCanvas.waves[0] == 0 and actor.type != 202:
                         if GameCanvas.boss_fight != 0:
                             GameCanvas.room_phase = 4
                             GameCanvas.room_phase_timer = 22
@@ -1124,7 +1123,7 @@ class MapEngine(GameCanvas):
                     step_x = consts.dir_dx8[dir]
                     step_y = consts.dir_dy8[dir]
             elif action == 14:
-                if 0 == (frame & 0x1):
+                if (frame & 0x1) == 0:
                     step_x = consts.dir_dx8[dir]
                     step_y = consts.dir_dy8[dir]
             elif action == 2 and actor.ai_mode > 0:
@@ -1402,7 +1401,7 @@ class MapEngine(GameCanvas):
                         GameCanvas.state = 4
                         GameCanvas.room_phase = 0
                         GameCanvas.exit_blink = 1
-                    if 0 == GameCanvas.room_phase_timer:
+                    if GameCanvas.room_phase_timer == 0:
                         GameCanvas.exit_blink = 2
                         for b in range(4):
                             if GameCanvas.cells[GameCanvas.cell].exits[b] != 0:
@@ -1527,7 +1526,7 @@ class MapEngine(GameCanvas):
                         self.draw_map_region(GameCanvas.images[7], i, sy, 27, 27, i + GameCanvas.view_offset.x, sy + GameCanvas.view_offset.y)
                     else:
                         break
-                if 0 == breakable.break_ticks:
+                if breakable.break_ticks == 0:
                     self.drop_item(3, breakable.pos)
                     breakable.active = 0
 
@@ -1539,7 +1538,7 @@ class MapEngine(GameCanvas):
         item = self.random_drop(kind)
         if item != 0:
             i = idiv(y, 27) * GameCanvas.map.size.w + idiv(x, 27)
-            if 0 == (GameCanvas.map.data[GameCanvas.map.layer_flags + i] & 0x1):
+            if (GameCanvas.map.data[GameCanvas.map.layer_flags + i] & 0x1) == 0:
                 b = 0
                 while b < 10 and GameCanvas.drops[b].item != 0:
                     b += 1

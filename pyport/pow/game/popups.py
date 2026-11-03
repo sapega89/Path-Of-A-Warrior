@@ -54,126 +54,125 @@ class Popups(GameCanvas):
         if GameCanvas.key != 0:
             self.popup_redraw = 1
             if self.extra != 0:
-                if (GameCanvas.key == -5 or GameCanvas.key == 53) and self.extra_w > 2:
+                if (GameCanvas.key in (-5, 53)) and self.extra_w > 2:
                     self.extra_w = 2
-            else:
-                if self.kind == 1:
-                    if GameCanvas.key == -5 or GameCanvas.key == 53:
+            elif self.kind == 1:
+                if GameCanvas.key in (-5, 53):
+                    if self.from_gamestr == 1:
+                        if self.timer > 2 and self.popup_id != 20:
+                            self.timer = 2
+                        return -1
+                    if GameCanvas.state != 1:
+                        if self.timer > 2 and self.popup_id != 20:
+                            self.timer = 2
+                    elif self.popup_id == 37:
+                        self.start_exit()
+            elif self.kind == 2:
+                key = GameCanvas.key
+                if key in (-4, -3, 52, 54):
+                    self.button = i16(self.button + 1 & 0x1)
+                elif key in (-5, 53):
+                    self.timer = 1
+                    if self.button == 0:
                         if self.from_gamestr == 1:
-                            if self.timer > 2 and self.popup_id != 20:
-                                self.timer = 2
+                            self.kind = 0
+                            self.answered = True
                             return -1
-                        if GameCanvas.state != 1:
-                            if self.timer > 2 and self.popup_id != 20:
-                                self.timer = 2
-                        elif self.popup_id == 37:
+                        if self.popup_id == 28:
                             self.start_exit()
-                elif self.kind == 2:
-                    key = GameCanvas.key
-                    if key in (-4, -3, 52, 54):
-                        self.button = i16(self.button + 1 & 0x1)
-                    elif key in (-5, 53):
-                        self.timer = 1
-                        if self.button == 0:
-                            if self.from_gamestr == 1:
-                                self.kind = 0
-                                self.answered = True
-                                return -1
-                            if self.popup_id == 28:
-                                self.start_exit()
-                                return -1
-                            if GameCanvas.state == 2:
-                                menu_id = GameCanvas.menu[0]
-                                if menu_id == 3:
-                                    GameCanvas.menu[0] = 4
-                                    GameCanvas.talk_kind = 0
-                                    GameCanvas.talk_count = i16(GameCanvas.talk_count + 1)
-                                    self.start_dialogue()
-                                elif menu_id == 5:
-                                    if self.popup_id == 28:
-                                        self.start_exit()
-                                        return -1
-                                    if self.popup_id == 41 or self.popup_id == 42:
-                                        # platformRequest(ag.bm / ag.bn): the browser is not opened in the port
-                                        if self.popup_id == 41:
-                                            print("platformRequest:", GameCanvas.more_games_url)
-                                        else:
-                                            # PORT-EXTRA: the Multiplayer jar is part of the port, so
-                                            # main.py starts it after the game exits (no download)
-                                            GameCanvas.midlet.to_multiplayer = True
-                                        GameCanvas.midlet.destroyApp(True)
-                                        GameCanvas.midlet.notifyDestroyed()
-                                        return -1
-                                    if GameCanvas.menu[1] == 1:
-                                        self.start_new_game()
-                                elif menu_id == 8:
-                                    GameCanvas.reset_quick_items()
-                                    self.fill_shop()
-                                    GameCanvas.live_time = GameCanvas.now()
-                                    if GameCanvas.live is not None:
-                                        type(GameCanvas.live).first_login = True     # as.d = true (static)
-                                    if self.save_game() != 0:
-                                        GameCanvas.menus.enter_submenu()
-                                        GameCanvas.menu_items = GameCanvas.game_menu_items
-                                        GameCanvas.menu[0] = 0
-                                        GameCanvas.menu_count = consts.menu_sizes[GameCanvas.menu[0]]
-                                        GameCanvas.menu[2] = 0
-                                        GameCanvas.menu[1] = 0
-                                        self.load_hero_images()
-                                        self.start_story(100, 0)
+                            return -1
+                        if GameCanvas.state == 2:
+                            menu_id = GameCanvas.menu[0]
+                            if menu_id == 3:
+                                GameCanvas.menu[0] = 4
+                                GameCanvas.talk_kind = 0
+                                GameCanvas.talk_count = i16(GameCanvas.talk_count + 1)
+                                self.start_dialogue()
+                            elif menu_id == 5:
+                                if self.popup_id == 28:
+                                    self.start_exit()
+                                    return -1
+                                if self.popup_id in {41, 42}:
+                                    # platformRequest(ag.bm / ag.bn): the browser is not opened in the port
+                                    if self.popup_id == 41:
+                                        print("platformRequest:", GameCanvas.more_games_url)
                                     else:
-                                        GameCanvas.reset_base_stats()
-                                        self.setup_popup(1)
-                                elif menu_id == 10:
-                                    GameCanvas.free_hero_images()
-                                    GameCanvas.menu[0] = 5
-                                    GameCanvas.menu_count = 10
+                                        # PORT-EXTRA: the Multiplayer jar is part of the port, so
+                                        # main.py starts it after the game exits (no download)
+                                        GameCanvas.midlet.to_multiplayer = True
+                                    GameCanvas.midlet.destroyApp(True)
+                                    GameCanvas.midlet.notifyDestroyed()
+                                    return -1
+                                if GameCanvas.menu[1] == 1:
+                                    self.start_new_game()
+                            elif menu_id == 8:
+                                GameCanvas.reset_quick_items()
+                                self.fill_shop()
+                                GameCanvas.live_time = GameCanvas.now()
+                                if GameCanvas.live is not None:
+                                    type(GameCanvas.live).first_login = True     # as.d = true (static)
+                                if self.save_game() != 0:
+                                    GameCanvas.menus.enter_submenu()
+                                    GameCanvas.menu_items = GameCanvas.game_menu_items
+                                    GameCanvas.menu[0] = 0
+                                    GameCanvas.menu_count = consts.menu_sizes[GameCanvas.menu[0]]
                                     GameCanvas.menu[2] = 0
                                     GameCanvas.menu[1] = 0
-                                elif menu_id == 29:
-                                    GameCanvas.menus.enter_submenu()
-                                    GameCanvas.menu[0] = 6
-                                # break -> leaves both switches, continues with the timer below
-                            elif GameCanvas.map_mode.mode == 1:  # l.java:172-182  (pause menu: Exit -> Game Menu)
-                                if GameCanvas.menu[1] == 5:
-                                    self.free_map_images()
-                                    self.open_menu(2)
-                                    GameCanvas.menu[0] = 5
-                                    GameCanvas.menu_count = 10
-                                    GameCanvas.state = 2
-                                    GameCanvas.menu_scroll = 0
-                                    GameCanvas.menu_anim = 0
-                            elif GameCanvas.state == 0:
-                                return 0
-                        else:
-                            if self.from_gamestr == 1:
-                                self.kind = 0
-                                return -1
-                            if GameCanvas.menu[0] == 8:
-                                GameCanvas.reset_base_stats()
-                            return 1
-                    elif key == -7:
+                                    self.load_hero_images()
+                                    self.start_story(100, 0)
+                                else:
+                                    GameCanvas.reset_base_stats()
+                                    self.setup_popup(1)
+                            elif menu_id == 10:
+                                GameCanvas.free_hero_images()
+                                GameCanvas.menu[0] = 5
+                                GameCanvas.menu_count = 10
+                                GameCanvas.menu[2] = 0
+                                GameCanvas.menu[1] = 0
+                            elif menu_id == 29:
+                                GameCanvas.menus.enter_submenu()
+                                GameCanvas.menu[0] = 6
+                            # break -> leaves both switches, continues with the timer below
+                        elif GameCanvas.map_mode.mode == 1:  # l.java:172-182  (pause menu: Exit -> Game Menu)
+                            if GameCanvas.menu[1] == 5:
+                                self.free_map_images()
+                                self.open_menu(2)
+                                GameCanvas.menu[0] = 5
+                                GameCanvas.menu_count = 10
+                                GameCanvas.state = 2
+                                GameCanvas.menu_scroll = 0
+                                GameCanvas.menu_anim = 0
+                        elif GameCanvas.state == 0:
+                            return 0
+                    else:
+                        if self.from_gamestr == 1:
+                            self.kind = 0
+                            return -1
                         if GameCanvas.menu[0] == 8:
-                            self.timer = 1
                             GameCanvas.reset_base_stats()
-                            return 1
-                elif self.kind == 3:
-                    if self.timer > 5:
-                        key = GameCanvas.key
-                        if key in (-1, 50):
-                            self.button = i16(self.button - 1)
-                            self.button = i16(self.button % self.choices)    # & 0x3 with 4 rows
-                        elif key in (-2, 56):
-                            self.button = i16(self.button + 1)
-                            self.button = i16(self.button % self.choices)
-                        elif key in (-5, 53):
-                            self.timer = 4
-                elif self.kind == 10:
-                    if GameCanvas.key == -5 or GameCanvas.key == 53:
-                        self.timer = 2
-                        GameCanvas.popups.kind = 0
-                        self.answered = True
-                        GameCanvas.redraw = 1
+                        return 1
+                elif key == -7:
+                    if GameCanvas.menu[0] == 8:
+                        self.timer = 1
+                        GameCanvas.reset_base_stats()
+                        return 1
+            elif self.kind == 3:
+                if self.timer > 5:
+                    key = GameCanvas.key
+                    if key in (-1, 50):
+                        self.button = i16(self.button - 1)
+                        self.button = i16(self.button % self.choices)    # & 0x3 with 4 rows
+                    elif key in (-2, 56):
+                        self.button = i16(self.button + 1)
+                        self.button = i16(self.button % self.choices)
+                    elif key in (-5, 53):
+                        self.timer = 4
+            elif self.kind == 10:
+                if GameCanvas.key in (-5, 53):
+                    self.timer = 2
+                    GameCanvas.popups.kind = 0
+                    self.answered = True
+                    GameCanvas.redraw = 1
         return self._tick_timer()
 
     def _tick_timer(self):  # l.java:229-323  (the part of b() after the key switch)
@@ -397,7 +396,7 @@ class Popups(GameCanvas):
                 self.lines[line] = text[i:]
             self.line_count = line
             self.height = i16(20 * line + (line - 1) * 2)
-            if self.kind == 2 or self.kind == 10:
+            if self.kind in {2, 10}:
                 self.height = i16(self.height + 20)
             if self.timer == 0:
                 self.timer = 10

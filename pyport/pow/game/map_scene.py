@@ -33,7 +33,7 @@ class MapScene(GameCanvas):
             line = ""
             if '/' < str_[0] < ':':
                 GameCanvas.talk_lines[0] = ""
-                if 0 == GameCanvas.story_id and page == 2:
+                if GameCanvas.story_id == 0 and page == 2:
                     GameCanvas.story_picture = 0
                     line = GameCanvas.gamestr(1)
                 else:
@@ -51,12 +51,12 @@ class MapScene(GameCanvas):
                 GameCanvas.speech_line = 0
                 GameCanvas.speech_pos[0] = 0
             else:
-                if GameCanvas.story_ending != 0 and 0 == (page & 0x1):
+                if GameCanvas.story_ending != 0 and (page & 0x1) == 0:
                     GameCanvas.speech_line = 0
                 else:
                     GameCanvas.speech_line = 1
                 GameCanvas.talk_lines[GameCanvas.speech_line] = line
-                if GameCanvas.story_ending != 0 and 0 == (page & 0x1):
+                if GameCanvas.story_ending != 0 and (page & 0x1) == 0:
                     line = "[Master] " + str_
                 else:
                     line = "[" + GameCanvas.hero.name + "] " + str_
@@ -73,7 +73,7 @@ class MapScene(GameCanvas):
                 for b in range(45):
                     if b < 24 and (GameCanvas.score & 1 << b) != 0:
                         ending_pct += 1
-                    if 0 == (0x1FEF64FF7E6F & 1 << b):
+                    if (0x1FEF64FF7E6F & 1 << b) == 0:
                         for bit in range(5):
                             stat_bit = b * 5 + bit
                             if (GameCanvas.stats[stat_bit >> 5] & i32(1 << (stat_bit & 0x1F))) != 0:
@@ -110,7 +110,7 @@ class MapScene(GameCanvas):
                     picture = 10
                 else:
                     picture = 1
-            elif 0 == GameCanvas.story_id and page == 5:
+            elif GameCanvas.story_id == 0 and page == 5:
                 picture = 0
                 b = -1
                 str_ = GameCanvas.gamestr(0)
@@ -160,9 +160,9 @@ class MapScene(GameCanvas):
             self.open_menu(2)
             GameCanvas.menu_items = GameCanvas.game_menu_items
             GameCanvas.menu_return = 0
-            if i != 3 or 0 != GameCanvas.backpack_slot_of(502):
+            if i != 3 or GameCanvas.backpack_slot_of(502) != 0:
                 GameCanvas.score |= 1 << i
-            if 0 == i:
+            if i == 0:
                 b = 0
                 best = hero.mission_progress[1]
                 if hero.mission_progress[0] + hero.mission_progress[15] > best:
@@ -179,7 +179,7 @@ class MapScene(GameCanvas):
                 hero.live_stat1 = i16(b)
                 hero.live_stat2 = i16(best)
             GameCanvas.chapter = i8(next_chapter[i])
-            if 0 == GameCanvas.chapter:
+            if GameCanvas.chapter == 0:
                 for b in range(22):
                     hero.mission_progress[b] = 0
             if i == 2:
@@ -191,19 +191,19 @@ class MapScene(GameCanvas):
             left = 0
             GameCanvas.reward_skill = 0
             for mis in range(45):
-                if 0 == (GameCanvas.missions_done & 1 << mis):
+                if (GameCanvas.missions_done & 1 << mis) == 0:
                     left += 1
             if left != 0:
                 best = self.rand(left)
                 b = 0
                 for mis in range(45):
-                    if 0 == (GameCanvas.missions_done & 1 << mis):
+                    if (GameCanvas.missions_done & 1 << mis) == 0:
                         if best == b:
                             GameCanvas.missions_done |= 1 << mis
                             GameCanvas.reward_skill = i16(mis + 1)
                             break
                         b += 1
-            if GameCanvas.reward_item != 0 and 0 == self.give_item(GameCanvas.reward_item, 1):
+            if GameCanvas.reward_item != 0 and self.give_item(GameCanvas.reward_item, 1) == 0:
                 GameCanvas.reward_item = 0
             self.start_story(i, 1)
         if GameCanvas.general_count != 0:
@@ -263,15 +263,15 @@ class MapScene(GameCanvas):
         GameCanvas.draw_region(GameCanvas.canvas_size.x // 2, GameCanvas.canvas_size.y - 61, 120, 61, hud[2], 0, 0)
 
     def draw_frame(self):  # c.java:48-64  (draw one map frame)
-        if 0 == GameCanvas.screen_fill:
+        if GameCanvas.screen_fill == 0:
             GameCanvas.engine.draw_object_layer()
         for b in range(81):
             GameCanvas.dirty[b // 9][b % 9] = 0
-        if 0 == GameCanvas.screen_fill:
+        if GameCanvas.screen_fill == 0:
             GameCanvas.engine.draw_drops()
         self.draw_actors()
         self.draw_effects()
-        if 0 == GameCanvas.screen_fill:
+        if GameCanvas.screen_fill == 0:
             self.draw_upper_layer()
         self.draw_arrows()
         self.draw_hud_frame()
@@ -531,7 +531,7 @@ class MapScene(GameCanvas):
                     GameCanvas.enemy_fx_pos = i16(frame - 4)
                     self.set_enemy_fx_parts(GameCanvas.enemy_fx_frames, GameCanvas.enemy_fx_pos)
             elif action == 15:
-                if frame == 5 or frame == 6:
+                if frame in {5, 6}:
                     if frame == 5:
                         GameCanvas.enemy_fx_frames = self.load_frames(59)
                         GameCanvas.enemy_fx_data = consts.fx_anim_21
@@ -545,12 +545,12 @@ class MapScene(GameCanvas):
                     GameCanvas.enemy_fx_image = GameCanvas.images[44]
                     self.set_enemy_fx_parts(GameCanvas.skill_frames, frame & 0x1)
             elif action == 17:
-                if frame == 5 or frame == 6:
+                if frame in {5, 6}:
                     GameCanvas.enemy_fx_kind = 1
                     GameCanvas.enemy_fx_image = GameCanvas.images[44]
                     self.set_enemy_fx_parts(GameCanvas.skill_frames, frame - 5)
             elif action == 18:
-                if frame == 5 or frame == 6:
+                if frame in {5, 6}:
                     if frame == 5:
                         GameCanvas.enemy_fx_frames = self.load_frames(61)
                         GameCanvas.enemy_fx_data = consts.fx_anim_24
@@ -600,7 +600,7 @@ class MapScene(GameCanvas):
                 self.draw_map_region(GameCanvas.hero.body_image, i - body.ox, sy - body.oy, body.w, body.h, body.src_x, body.src_y)
                 self.draw_map_region(GameCanvas.boss_images[1], i - head.ox, sy - head.oy, head.w, head.h, head.src_x, head.src_y)
                 MapScene.mark_dirty(actor.pos[0].x - body.ox, actor.pos[0].y - body.oy, body.w, body.h)
-                if 0 == weapon_front:
+                if weapon_front == 0:
                     self.draw_general_weapon(i, sy, weapon_set[anim_frame], index)
                 if GameCanvas.enemy_effect_drawn == 1:
                     bits = 3 + GameCanvas.frame % 3
@@ -710,7 +710,7 @@ class MapScene(GameCanvas):
                 self.set_hero_fx_parts(GameCanvas.skill_frames, hero.dir[0] + (frame & 0x1))
         elif action == 14:
             if 0 < frame < 9:
-                if 0 == (frame & 0x1):
+                if (frame & 0x1) == 0:
                     trail = 1
                 GameCanvas.hero_fx_kind = 1
                 GameCanvas.hero_fx_image = GameCanvas.images[44]
@@ -737,7 +737,7 @@ class MapScene(GameCanvas):
             if (frame & 0x1) != 0:
                 trail = hero.combo
         elif action == 21:
-            if frame == 5 or frame == 6:
+            if frame in {5, 6}:
                 if frame == 5:
                     trail = 2
                     GameCanvas.hero_fx_frames = self.load_frames(59)
@@ -754,12 +754,12 @@ class MapScene(GameCanvas):
             elif frame == 6:
                 trail = 2
         elif action == 23:
-            if frame == 5 or frame == 6:
+            if frame in {5, 6}:
                 GameCanvas.hero_fx_kind = 1
                 GameCanvas.hero_fx_image = GameCanvas.images[44]
                 self.set_hero_fx_parts(GameCanvas.skill_frames, frame - 5)
         elif action == 24:
-            if frame == 5 or frame == 6:
+            if frame in {5, 6}:
                 if GameCanvas.hero_fx_data is None:
                     GameCanvas.hero_fx_frames = self.load_frames(61)
                     GameCanvas.hero_fx_data = consts.fx_anim_24
@@ -844,9 +844,7 @@ class MapScene(GameCanvas):
             self.draw_map_region(GameCanvas.shadow_image, i - shadow_frame.ox, sy - shadow_frame.oy + 3, shadow_frame.w, shadow_frame.h, shadow_frame.src_x, shadow_frame.src_y)
             GameCanvas.hero_effect_drawn = 1
         if trail > -1:
-            if 18 == (hero.dir[0] >> 1) * 6 + (trail << 1):
-                GameCanvas.engine.draw_weapon_trail(-1, trail)
-            elif hero.dir[0] == 4 and hero.action[0] != 25:
+            if (hero.dir[0] >> 1) * 6 + (trail << 1) == 18 or hero.dir[0] == 4 and hero.action[0] != 25:
                 GameCanvas.engine.draw_weapon_trail(-1, trail)
         if weapon_front != 0:
             GameCanvas.engine.draw_hero_weapon(i, sy, weapon_set[hero.sprite_frame])
@@ -855,12 +853,10 @@ class MapScene(GameCanvas):
         self.draw_map_region(hero.head_image, i - head.ox, sy - head.oy, head.w, head.h, head.src_x, head.src_y)
         MapScene.mark_dirty(hero.pos[0].x - head.ox, hero.pos[0].y - head.oy, head.w, head.h)
         MapScene.mark_dirty(hero.pos[0].x - body.ox, hero.pos[0].y - body.oy, body.w, body.h)
-        if 0 == weapon_front:
+        if weapon_front == 0:
             GameCanvas.engine.draw_hero_weapon(i, sy, weapon_set[hero.sprite_frame])
         if trail > -1:
-            if hero.action[0] == 25:
-                GameCanvas.engine.draw_weapon_trail(-1, trail)
-            elif 18 != (hero.dir[0] >> 1) * 6 + (trail << 1) and hero.dir[0] != 4:
+            if hero.action[0] == 25 or (hero.dir[0] >> 1) * 6 + (trail << 1) != 18 and hero.dir[0] != 4:
                 GameCanvas.engine.draw_weapon_trail(-1, trail)
         if GameCanvas.hero_picked_up == 1:
             shadow = 3 + GameCanvas.frame % 3
@@ -905,7 +901,7 @@ class MapScene(GameCanvas):
                                 break
                         break
                     i = GameCanvas.cell_scripts[i].next
-                    if 0 == i:
+                    if i == 0:
                         break
 
     def run_cell_script(self, op, mission, enemy, tx, ty):  # c.java:917-926
@@ -922,7 +918,7 @@ class MapScene(GameCanvas):
         spawn_dx = [0, -56, 0, 56, 0]
         spawn_dy = [56, 0, -56, 0, 0]
         b = 0
-        while b < GameCanvas.actor_count and 0 != GameCanvas.actors[b].active:
+        while b < GameCanvas.actor_count and GameCanvas.actors[b].active != 0:
             b += 1
         actor = GameCanvas.actors[b]
         actor.active = 1
@@ -1054,7 +1050,7 @@ class MapScene(GameCanvas):
         for b in range(4):
             nx = cx + dx[b]
             ny = cy + dy[b]
-            if -1 < nx < 7 and -1 < ny < 7 and 0 == GameCanvas.reachable[nx][ny]:
+            if -1 < nx < 7 and -1 < ny < 7 and GameCanvas.reachable[nx][ny] == 0:
                 self.flood_fill(nx, ny)
 
     def load_rooms(self, map_no):  # c.java:1089-1115  (rooms of the map: exits, enemy waves)
@@ -1209,11 +1205,11 @@ class MapScene(GameCanvas):
                 m = (ty + row) * game_map.size.w + tx
                 for col in range(tiles_w):
                     if pass_no != 0:
-                        if (game_map.data[game_map.layer_flags + m + col] & 0x2) != 0 and game_map.data[game_map.layer_upper + m + col] != 0 and 0 == GameCanvas.tile_slots[game_map.data[game_map.layer_upper + m + col] - 1]:
+                        if (game_map.data[game_map.layer_flags + m + col] & 0x2) != 0 and game_map.data[game_map.layer_upper + m + col] != 0 and GameCanvas.tile_slots[game_map.data[game_map.layer_upper + m + col] - 1] == 0:
                             k += 1
                             GameCanvas.tile_slots[game_map.data[game_map.layer_upper + m + col] - 1] = k
                         if game_map.data[game_map.layer_objects + m + col] != 0:
-                            if 0 == GameCanvas.tile_slots[game_map.data[game_map.layer_objects + m + col] - 1]:
+                            if GameCanvas.tile_slots[game_map.data[game_map.layer_objects + m + col] - 1] == 0:
                                 k += 1
                                 GameCanvas.tile_slots[game_map.data[game_map.layer_objects + m + col] - 1] = k
                                 k += 1
@@ -1241,10 +1237,10 @@ class MapScene(GameCanvas):
                                 breakable.break_frame = 0
                                 GameCanvas.breakable_count = i16(GameCanvas.breakable_count + 1)
                     else:
-                        if game_map.data[game_map.layer_ground + m + col] != 0 and 0 == GameCanvas.tile_slots[game_map.data[game_map.layer_ground + m + col] - 1]:
+                        if game_map.data[game_map.layer_ground + m + col] != 0 and GameCanvas.tile_slots[game_map.data[game_map.layer_ground + m + col] - 1] == 0:
                             k += 1
                             GameCanvas.tile_slots[game_map.data[game_map.layer_ground + m + col] - 1] = k
-                        if game_map.data[game_map.layer_upper + m + col] != 0 and 0 == GameCanvas.tile_slots[game_map.data[game_map.layer_upper + m + col] - 1]:
+                        if game_map.data[game_map.layer_upper + m + col] != 0 and GameCanvas.tile_slots[game_map.data[game_map.layer_upper + m + col] - 1] == 0:
                             k += 1
                             GameCanvas.tile_slots[game_map.data[game_map.layer_upper + m + col] - 1] = k
             row = tiles_h if tiles_h > 0 else 0
@@ -1262,7 +1258,7 @@ class MapScene(GameCanvas):
                     if GameCanvas.tile_slots[m + col] != 0:
                         GameCanvas.tile_images[GameCanvas.tile_slots[m + col] - 1] = self.load_image(GameCanvas.scr_tile.get(0 + row) + "_" + ("" if col >= 9 else "0") + str(col + 1))
             Gfx.set_graphics(GameCanvas.buffer_g)
-            if 0 == pass_no:
+            if pass_no == 0:
                 for row in range(tiles_h):
                     for col in range(tiles_w):
                         k = (ty + row) * game_map.size.w + tx + col
@@ -1293,7 +1289,7 @@ class MapScene(GameCanvas):
         for row in range(14):
             GameCanvas.waves[row] = 0
         cell_data = GameCanvas.cells[GameCanvas.cell]
-        if 0 == full:
+        if full == 0:
             GameCanvas.waves[0] = cell_data.wave_0
             GameCanvas.waves[1] = cell_data.wave_1
             GameCanvas.waves[2] = cell_data.wave_2
@@ -1318,7 +1314,7 @@ class MapScene(GameCanvas):
                     if (row & 0x1) != 0:
                         if GameCanvas.reachable[k - i][b] == 1:
                             cell = k + (m + b) * game_map.size.w
-                            if 0 == game_map.data[game_map.layer_objects + cell]:
+                            if game_map.data[game_map.layer_objects + cell] == 0:
                                 cell += exit_step[row]
                                 if (game_map.data[game_map.layer_flags + cell] & 0x1) == 0 and game_map.data[game_map.layer_objects + cell] == 0:
                                     if GameCanvas.spawn_spots[GameCanvas.spawn_spot_count] is None:
@@ -1329,7 +1325,7 @@ class MapScene(GameCanvas):
                                     GameCanvas.spawn_spot_count = i16(GameCanvas.spawn_spot_count + 1)
                     elif GameCanvas.reachable[b][m - room_ty] == 1:
                         cell = k + b + m * game_map.size.w
-                        if 0 == game_map.data[game_map.layer_objects + cell]:
+                        if game_map.data[game_map.layer_objects + cell] == 0:
                             cell += exit_step[row] * game_map.size.w
                             if (game_map.data[game_map.layer_flags + cell] & 0x1) == 0 and game_map.data[game_map.layer_objects + cell] == 0:
                                 if GameCanvas.spawn_spots[GameCanvas.spawn_spot_count] is None:
@@ -1423,7 +1419,7 @@ class MapScene(GameCanvas):
         elif key in (-5, 53):
             skill = 3
         elif key in (35, 42):
-            if 0 == GameCanvas.effect.item and hero.action[0] < 10:
+            if GameCanvas.effect.item == 0 and hero.action[0] < 10:
                 sel = belt if belt > -1 else hero.quick_keys[0 if GameCanvas.key == 42 else 1]
                 GameCanvas.effect.item = hero.quick_slots[sel].item
                 brk = False
@@ -1571,7 +1567,7 @@ class MapScene(GameCanvas):
             if frame < 10:
                 hero.pos[0].x = i16(hero.pos[0].x + (-1 if (frame & 0x1) != 0 else 1))
         elif action == 20:
-            if 0 == (frame & 0x1):
+            if (frame & 0x1) == 0:
                 step_x = consts.dir_dx8[move_dir]
                 step_y = consts.dir_dy8[move_dir]
         elif action == 9 and hero.hurt_ticks > 0:
@@ -1614,7 +1610,7 @@ class MapScene(GameCanvas):
                                 if -1 < i < 8:
                                     hero.dir[0] = i
                 elif hero.facing in (1, 3, 5, 7):
-                    if i != -1 and i != 9:
+                    if i not in (-1, 9):
                         hero.dir[0] = i
         action = hero.action[0]
         frame = hero.frame[0]
@@ -1724,7 +1720,7 @@ class MapScene(GameCanvas):
                     self.play_sound(14)
                 bool_ = False
                 GameCanvas.redraw = 1
-                if frame == 12 or frame == 16:
+                if frame in {12, 16}:
                     GameCanvas.screen_fill = 2
                 else:
                     GameCanvas.screen_fill = 1
@@ -1738,7 +1734,7 @@ class MapScene(GameCanvas):
                     bool_ = False
                     GameCanvas.screen_fill = 1
                 GameCanvas.redraw = 1
-                if frame == 9 or frame == 11:
+                if frame in {9, 11}:
                     GameCanvas.screen_fill = 2
                 elif frame == 15:
                     GameCanvas.engine.hero_attack(0)
@@ -1957,7 +1953,7 @@ class MapScene(GameCanvas):
                 GameCanvas.enemy_fx_kind = 3
                 GameCanvas.hero_fx_parts = frames_from(GameCanvas.enemy_fx_frames, frame - 4)
         elif action in (15, 18):
-            if frame == 5 or frame == 6:
+            if frame in {5, 6}:
                 GameCanvas.enemy_fx_kind = 1
                 GameCanvas.hero_fx_parts = frames_from(GameCanvas.enemy_fx_frames, frame - 5)
         elif action == 16:
@@ -1965,7 +1961,7 @@ class MapScene(GameCanvas):
                 GameCanvas.enemy_fx_kind = 1
                 GameCanvas.hero_fx_parts = frames_from(GameCanvas.skill_frames, frame & 0x1)
         elif action == 17:
-            if frame == 5 or frame == 6:
+            if frame in {5, 6}:
                 GameCanvas.enemy_fx_kind = 1
                 GameCanvas.hero_fx_parts = frames_from(GameCanvas.skill_frames, frame - 5)
         elif action in (20, 21):
@@ -2030,7 +2026,7 @@ class MapScene(GameCanvas):
                 GameCanvas.hero_fx_kind = 3
                 GameCanvas.hero_fx_parts = frames_from(GameCanvas.hero_fx_frames, frame - 4)
         elif action in (21, 24):
-            if frame == 5 or frame == 6:
+            if frame in {5, 6}:
                 GameCanvas.hero_fx_kind = 1
                 GameCanvas.hero_fx_parts = frames_from(GameCanvas.hero_fx_frames, frame - 5)
         elif action == 22:
@@ -2038,7 +2034,7 @@ class MapScene(GameCanvas):
                 GameCanvas.hero_fx_kind = 1
                 GameCanvas.hero_fx_parts = frames_from(GameCanvas.skill_frames, frame & 0x1)
         elif action == 23:
-            if frame == 5 or frame == 6:
+            if frame in {5, 6}:
                 GameCanvas.hero_fx_kind = 1
                 GameCanvas.hero_fx_parts = frames_from(GameCanvas.skill_frames, frame - 5)
         elif action in (26, 27):

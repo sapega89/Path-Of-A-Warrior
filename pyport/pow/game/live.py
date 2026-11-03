@@ -452,7 +452,7 @@ class Live(GameCanvas):
                 answer.read_s8()
                 answer.read_s8()
                 result = answer.read_s8()
-                if (result == 0 or result == 2) and Live.reg_from_popup:
+                if (result in {0, 2}) and Live.reg_from_popup:
                     from pow.game.live_screen import LiveScreen
                     LiveScreen.save_login()
                     if result == 0:
@@ -992,7 +992,7 @@ class Live(GameCanvas):
             if i == -7:
                 GameCanvas.name_buf.handle_key(-8)
                 return
-            if i == -5 or i == 53:
+            if i in (-5, 53):
                 if GameCanvas.letter_cursor == 26 and len(GameCanvas.name_buf.get_text()) >= 4:
                     if len(GameCanvas.name_buf.get_text()) != 0:
                         Live.user_id = GameCanvas.name_buf.get_text()
@@ -1431,31 +1431,30 @@ class Live(GameCanvas):
                     Live.request_redraw()
             else:
                 bool_ = False
-        else:
-            if 48 <= key <= 57:
-                i = GameCanvas.key_digit(key)
-                if i != -1:
-                    Live.values[14] = Live.values[14] * 10
-                    Live.values[14] = Live.values[14] + i
-                    if Live.values[14] > Live.values[15]:
-                        Live.values[14] = Live.values[15]
-            elif key == -7:
-                if Live.values[14] > 0:
-                    Live.values[14] = idiv(Live.values[14], 10)
-                else:
-                    Live.flags[14] = 0
-                    Live.live_screen = 2
-                    Live.request_redraw()
-            elif key == -5:
-                if Live.values[14] > 0:
-                    self.ask_request(832)
-                    Live.flags[14] = 0
-                    Live.live_screen = 2
-                    Live.request_redraw()
-                else:
-                    bool_ = False
+        elif 48 <= key <= 57:
+            i = GameCanvas.key_digit(key)
+            if i != -1:
+                Live.values[14] = Live.values[14] * 10
+                Live.values[14] = Live.values[14] + i
+                if Live.values[14] > Live.values[15]:
+                    Live.values[14] = Live.values[15]
+        elif key == -7:
+            if Live.values[14] > 0:
+                Live.values[14] = idiv(Live.values[14], 10)
+            else:
+                Live.flags[14] = 0
+                Live.live_screen = 2
+                Live.request_redraw()
+        elif key == -5:
+            if Live.values[14] > 0:
+                self.ask_request(832)
+                Live.flags[14] = 0
+                Live.live_screen = 2
+                Live.request_redraw()
             else:
                 bool_ = False
+        else:
+            bool_ = False
         if bool_:
             Live.request_redraw()
 
