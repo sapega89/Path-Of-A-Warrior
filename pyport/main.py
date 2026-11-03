@@ -90,11 +90,11 @@ async def main():
     rms_selftest()
     if (config.DEMO_SAVE or "--demo" in sys.argv) and "--no-demo" not in sys.argv:
         demo_save()
-    from pow.game.Main import Main
-    midlet = Main()
+    from pow.game.midlet import Midlet
+    midlet = Midlet()
     try:
         await midlet.startApp()
-        if midlet.to_multiplayer and not (Main.b is not None and Main.b.quit_requested):
+        if midlet.to_multiplayer and not (Midlet.canvas is not None and Midlet.canvas.quit_requested):
             import mp_main
             if await mp_main.play():
                 restart()

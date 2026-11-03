@@ -192,14 +192,14 @@ wait 3
 rclick 40 60
 wait 3
 shot rclick_combo
-hero p 10                # TEST-ONLY: low HP and potions on *
+hero hp 10                # TEST-ONLY: low HP and potions on *
 potion 0 3 2
 wait 2
 click 64 284             # the * box of the HUD: drink
 wait 3
 shot hud_potion
 wait 10
-hero r 99                # TEST-ONLY: MP and a skill on slot 1
+hero mp 99                # TEST-ONLY: MP and a skill on slot 1
 skill 0 12
 key 1                    # keyboard 1: skill slot 1 (the mouse only attacks)
 wait 3

@@ -7,26 +7,26 @@ import random
 
 
 def _buckets_end():
-    from pow.game.ag import ag
+    from pow.game.game_canvas import GameCanvas
     for head in range(8):
         i, seen = head, set()
-        while ag.cH[i].b != 0:
+        while GameCanvas.cell_scripts[i].next != 0:
             if i in seen:
                 return False
             seen.add(i)
-            i = ag.cH[i].b
+            i = GameCanvas.cell_scripts[i].next
     return True
 
 
 def test_cell_script_hash_has_no_cycles():
-    from pow.game.ag import ag
-    from pow.game.c import c
+    from pow.game.game_canvas import GameCanvas
+    from pow.game.map_scene import MapScene
     rnd = random.Random(1)
     for _ in range(3000):              # 3000 map loads with random scripts
-        c.aC()
+        MapScene.reset_cell_scripts()
         for k in range(rnd.randint(0, 30)):
-            if ag.cI >= 49:
+            if GameCanvas.cell_script_next >= 49:
                 break
             assert _buckets_end()
-            c.a_III(k, rnd.randrange(8), 0)
+            MapScene.cell_script_slot(k, rnd.randrange(8), 0)
         assert _buckets_end()

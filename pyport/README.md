@@ -105,25 +105,28 @@ platform»), тому `pow/midp/graphics.py` у браузері декодує 
 
 ## Що вже перенесено
 
+Імена модулів і класів змістовні; яке ім'я мав кожен клас у Java — `NAMES.md`. Методи й поля
+поки мають Java-імена (буде перейменовано наступними кроками рефакторингу).
+
 | Java | Python | Що |
 |---|---|---|
-| `x.java` | `pow/game/x.py` | уся графіка гри: clip, drawImage, fillRect/drawRect/drawLine, текст, CRC |
-| `g.java` | `pow/game/g.py` | бітмап-шрифт: заміна кольору палітри PNG + перерахунок CRC |
-| `j.java`, `al.java` | `pow/game/j.py`, `al.py` | читання ресурсів і `.scr` |
-| `ae.java` | `pow/game/ae.py` | **згенеровано** `tools/gen_ae.py` |
-| поля `ag.java`, дрібні класи-структури | `pow/game/_ag_fields.py`, `structs.py` | **згенеровано** `tools/gen_fields.py` |
-| `ag.java` (частина) | `pow/game/ag.py` | цикл `run`, `paint/P/L`, титул `S/E/T`, читання сейву `U` і запис `ar`, фон меню `w/x`, софт-клавіші `h(int,int)`, новий герой `au/av/aw/ax/ay/k(int,int)`, сітка імені `r/f(int,int)` … |
-| `d.java`, `at.java` | `pow/game/d.py`, `at.py` | таблиці `.arr` (kibo/sungbo/shinki) і буфер імені |
-| `c.java` (частина) | `pow/game/c.py` | сторінка прологу/епілогу `c(int)`; кінець місії `d(int)/g()`, досвід `h()`; карта: завантаження `b(int)/a(int)`, кімната й тайли `a(5 int)`, кадр `c/e/o/l/m/k/j/b`, HUD-кулі `a()`, тік героя `i()` (рух, біг, стіни, атака, скіли, зілля, смерть), вороги: поява `b(4 int)`, характеристики `a(int,int)`, малювання `e(int)`, стирання `aG/O`; стирання `aD..aL` |
-| `ar.java` | `pow/game/ar.py` | тік карти `a()`, малювання `b(int)`, пауза-меню `o()`, стіни `a/b/c(h,…)`, виходи з кімнати `X`, прокрутка в наступну кімнату `k()`, кінець тіку `aC`, годинник `O`, HUD `n/aD/aE`; бій: хвилі `d()`, ШІ ворогів `g/Y/Z/aa`, стріли, удари й шкода `b(int,int)/c/S/T/U/V/W`, скіли генералів `m`, смерть і дроп `ab/a(int,h)` |
-| `af.java` | `pow/game/af.py` | лого → «sound enabled?» → титул |
-| `e.java` (частина) | `pow/game/e.py` | Main Menu (`aJ`), карусель Game Menu (`bf`), клавіші `a/aB/aC/aD/aE/b/aF`; створення героя: складність `aU`, герой `aK`, ім'я `aL/aM`, очки `O/T`, предмети `e(int)`, `p()`; меню: списки `f`, Options `j`, Help/About `l`, Endings, Attributes `O`, Skills `P`, Gear `n(int,int)`, Inventory `Q`, Assign Items `d(int)`, Blacksmith `c(boolean)/aW/aX/bc/bd/be` (Buy, Sell, Enchant, Combine) |
-| `l.java` (частина) | `pow/game/l.py` | попапи: рамка, кнопки Yes/No/Ok, усі текстові `e(int)`, підсумок місії (вид 4: золото, Total Exp, Time Exp), клавіші й таймер, gamestr-попапи `d(int)` (Gamevil Live) |
-| `as.java`, `m.java` | `pow/game/as_.py`, `m.py` | Gamevil Live: реєстрація, ланцюжок після входу, Trade (Buy / Sell / Cancel, Price Info), Warehouse, Safe, Management (Save / Load User Data) |
-| `v.java`, `u.java`, `b.java`, `ab.java` | `pow/game/v.py` | мережа Gamevil Live: замість потоку й сокета `pump()` раз на кадр через транспорт `pow_mp/net/transport.py` |
-| `k.java` | `pow/game/k.py` | менеджер звуку (дослівно) |
-| `aq.java` | `pow/game/aq.py` | **спрощено** на pygame.mixer (дослівно — таск 1.5) |
-| `Main.java` | `pow/game/Main.py` | MIDlet; `com/movaya` не переноситься |
+| `x.java` | `pow/game/gfx.py` (`Gfx`) | уся графіка гри: clip, drawImage, fillRect/drawRect/drawLine, текст, CRC |
+| `g.java` | `pow/game/font.py` (`Font`) | бітмап-шрифт: заміна кольору палітри PNG + перерахунок CRC |
+| `j.java`, `al.java` | `pow/game/res_reader.py` (`ResReader`), `scr_table.py` (`ScrTable`) | читання ресурсів і `.scr` |
+| `ae.java` | `pow/game/consts.py` | константи (колись згенеровано з Java) |
+| поля `ag.java`, дрібні класи-структури | `pow/game/game_fields.py` (`GameFields`), `structs.py` | колись згенеровано з Java |
+| `ag.java` (частина) | `pow/game/game_canvas.py` (`GameCanvas`) | цикл `run`, `paint/P/L`, титул `S/E/T`, читання сейву `U` і запис `ar`, фон меню `w/x`, софт-клавіші `h(int,int)`, новий герой `au/av/aw/ax/ay/k(int,int)`, сітка імені `r/f(int,int)` … |
+| `d.java`, `at.java` | `pow/game/arr_table.py` (`ArrTable`), `name_buffer.py` (`NameBuffer`) | таблиці `.arr` (kibo/sungbo/shinki) і буфер імені |
+| `c.java` (частина) | `pow/game/map_scene.py` (`MapScene`) | сторінка прологу/епілогу `c(int)`; кінець місії `d(int)/g()`, досвід `h()`; карта: завантаження `b(int)/a(int)`, кімната й тайли `a(5 int)`, кадр `c/e/o/l/m/k/j/b`, HUD-кулі `a()`, тік героя `i()` (рух, біг, стіни, атака, скіли, зілля, смерть), вороги: поява `b(4 int)`, характеристики `a(int,int)`, малювання `e(int)`, стирання `aG/O`; стирання `aD..aL` |
+| `ar.java` | `pow/game/map_engine.py` (`MapEngine`) | тік карти `a()`, малювання `b(int)`, пауза-меню `o()`, стіни `a/b/c(h,…)`, виходи з кімнати `X`, прокрутка в наступну кімнату `k()`, кінець тіку `aC`, годинник `O`, HUD `n/aD/aE`; бій: хвилі `d()`, ШІ ворогів `g/Y/Z/aa`, стріли, удари й шкода `b(int,int)/c/S/T/U/V/W`, скіли генералів `m`, смерть і дроп `ab/a(int,h)` |
+| `af.java` | `pow/game/boot.py` (`Boot`) | лого → «sound enabled?» → титул |
+| `e.java` (частина) | `pow/game/menus.py` (`Menus`) | Main Menu (`aJ`), карусель Game Menu (`bf`), клавіші `a/aB/aC/aD/aE/b/aF`; створення героя: складність `aU`, герой `aK`, ім'я `aL/aM`, очки `O/T`, предмети `e(int)`, `p()`; меню: списки `f`, Options `j`, Help/About `l`, Endings, Attributes `O`, Skills `P`, Gear `n(int,int)`, Inventory `Q`, Assign Items `d(int)`, Blacksmith `c(boolean)/aW/aX/bc/bd/be` (Buy, Sell, Enchant, Combine) |
+| `l.java` (частина) | `pow/game/popups.py` (`Popups`) | попапи: рамка, кнопки Yes/No/Ok, усі текстові `e(int)`, підсумок місії (вид 4: золото, Total Exp, Time Exp), клавіші й таймер, gamestr-попапи `d(int)` (Gamevil Live) |
+| `as.java`, `m.java` | `pow/game/live.py` (`Live`), `live_screen.py` (`LiveScreen`) | Gamevil Live: реєстрація, ланцюжок після входу, Trade (Buy / Sell / Cancel, Price Info), Warehouse, Safe, Management (Save / Load User Data) |
+| `v.java`, `u.java`, `b.java`, `ab.java` | `pow/game/live_net.py` (`LiveNet`, `LiveAnswer`) | мережа Gamevil Live: замість потоку й сокета `pump()` раз на кадр через транспорт `pow_mp/net/transport.py` |
+| `k.java` | `pow/game/sound.py` (`Sound`) | менеджер звуку (дослівно) |
+| `aq.java` | `pow/game/player_pool.py` (`PlayerPool`) | **спрощено** на pygame.mixer (дослівно — таск 1.5) |
+| `Main.java` | `pow/game/midlet.py` (`Midlet`) | MIDlet; `com/movaya` не переноситься |
 | J2ME API | `pow/midp/*` | `Image/Graphics`, `Canvas`, `RecordStore` (файли / localStorage), `java.util.Random`, семантика int |
 
 Екрани наступних етапів кидають `NotPorted`. У звичайному режимі гра показує попап
@@ -136,9 +139,9 @@ platform»), тому `pow/midp/graphics.py` у браузері декодує 
    `I` int, `H` short, `B` byte, `C` char, `J` long, `Z` boolean, `T` String, `M` Image,
    `G` Graphics, `A…` масив, `L<клас>` об'єкт, `v` без параметрів.
    Приклади: `x.a(Image,int,int)` → `x.a_MII`, `ag.T()` → `ag.T_v`, `ag.a_(int)` → `ag.a__I`.
-   Таблиця всіх імен — `tools/java_names.txt` (генерує `tools/java_names.py`).
+   Таблиця всіх імен методів — `tools/java_names.txt`; класи й модулі — `NAMES.md`.
    Ключові слова Python отримують `_` в кінці: `as` → `as_`.
-2. **Статичні поля** читаються й пишуться лише як `ag.X` (ніколи `self.X`, бо присвоєння
+2. **Статичні поля** читаються й пишуться лише як `GameCanvas.X` (Java `ag.X`) (ніколи `self.X`, бо присвоєння
    через `self` створить поле екземпляра).
 3. Кожен метод має коментар `# file.java:FROM-TO`.
 4. Семантика Java: `pow/midp/jint.py` (`i8/i16/i32`, `idiv/imod`, `ushr32`). `//` замість `/`
@@ -292,7 +295,7 @@ Please select» на екрані 6 — дослівно з Java (`de - 90 - b*2
 `mousedown X Y` / `mouseup`, `rclick [X Y]`, `mclick X Y`, `wheel up|down`, `shot NAME`, `save zero`,
 `gold N` (лише для тестів: золото героя), `generals N` (лише для тестів: N знайомих
 генералів і дозвіл на візит), `win` (лише для тестів: виграти прийняту місію, `c.d(1)`),
-`hero F N` (поле героя: `p` HP, `r` MP, `w` атака, `x` захист), `skill S ID` (вивчити скіл на слот),
+`hero F N` (поле героя: `hp`, `mp`, `attack`, `defense`), `skill S ID` (вивчити скіл на слот),
 `potion K ID N` (N зілль / бомб на * або #) — теж лише для тестів.
 У грі `java.util.Random` має сід від часу, як у Java; `shot.py` ставить `POW_SEED=1` (PORT-EXTRA
 у `jrandom.py`), тому ШІ ворогів, асортимент Blacksmith і подарунки генералів повторюються, і
@@ -310,14 +313,16 @@ Please select» на екрані 6 — дослівно з Java (`de - 90 - b*2
 CPU-бійців (сервер рахує ходи в `pow_server/battle.py`). Ще немає: місій, Challenge і PvP між людьми.
 
 - `assets_mp/` — ресурси з jar мультиплеєра (PNG, SP2, звук, маніфест; без класів і DRM Movaya).
-- `mp_java/` — декомпільований клієнт (CFR 0.152), довідка для дослівного переносу; рядки `g:NNNN`
+- `mp_java/` (лише в гілці `java-reference`) — декомпільований клієнт (CFR 0.152), довідка для дослівного переносу; рядки `g:NNNN`
   в `06_multiplayer.md` посилаються саме на цей `g.java`.
-- `pow_mp/` — клієнт: `a.py` (SP2), `n.py` (ресурси), `net/transport.py` — заміна сокета `h.java`:
-  `LocalTransport` (сервер усередині гри) або `WebSocketTransport` (окремий сервер).
-  `_gen/` — класи l f i j k e d g m, згенеровані з `mp_java/` (`tools/j2py_mp.py`, потрібен
-  `pip install javalang`; правити конвертер, не `_gen`). Вручну: `h.py` (мережевий потік),
-  `c.py` (звук), `Main.py`, `game.py` (завантаження і цикл), `rt.py` (Java-хелпери).
-  Дві помилки CFR виправлено в конвертері: GOTO-ділянки (`tools/j2py_mp_fix/`) і `n6 *= 10`,
+- `pow_mp/` — клієнт: `sprite_frames.py` (SP2), `res_reader.py` (ресурси), `net/transport.py` — заміна
+  сокета `h.java`: `LocalTransport` (сервер усередині гри) або `WebSocketTransport` (окремий сервер).
+  `mp_canvas.py` (g.java, екрани й бої), `mp_game.py`, `consts.py`, `gfx.py`, `font.py`, `draw.py`,
+  `answer.py`, `frame_reader.py`, `frame_writer.py` колись згенеровано з `mp_java/` (гілка
+  `java-reference`) конвертером `tools/j2py_mp.py`; тепер це звичайний код, який правлять руками
+  (відповідність імен — у `NAMES.md`). `net_thread.py` (мережевий потік), `player_pool.py` (звук),
+  `midlet.py`, `game.py` (завантаження і цикл), `rt.py` (Java-хелпери).
+  Дві помилки CFR виправлено ще в конвертері: GOTO-ділянки і `n6 *= 10`,
   що опинилось у правій частині `||` (g:4670, g:4683; звірено з байткодом).
 - `pow_server/` — сервер на чистому Python: `messages.py` (opcode-и і схеми полів), `codec_bin.py`
   (оригінальний бінарний формат), `server.py` (логін, профіль, ім'я, фрази, навички, рейтинг, опції),

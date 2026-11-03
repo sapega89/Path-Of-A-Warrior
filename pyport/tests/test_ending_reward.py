@@ -3,17 +3,17 @@ import pytest
 
 
 def _popup(monkeypatch, ef, eg):
-    from pow.game.ag import ag
-    from pow.game.l import l
+    from pow.game.game_canvas import GameCanvas
+    from pow.game.popups import Popups
     data = bytearray(38 * 3 + 10 + 40)
     data[38 * 1 + 10:38 * 1 + 10 + 10] = b"Royal Seal"
-    monkeypatch.setattr(ag, "v_I", staticmethod(lambda n: bytes(data)))
-    monkeypatch.setattr(ag, "ef", ef)
-    monkeypatch.setattr(ag, "eg", eg)
-    monkeypatch.setattr(ag, "bV", 10)
-    p = l()
-    p.e_I(27)
-    return p.l[:p.i]
+    monkeypatch.setattr(GameCanvas, "load_data_file", staticmethod(lambda n: bytes(data)))
+    monkeypatch.setattr(GameCanvas, "reward_item", ef)
+    monkeypatch.setattr(GameCanvas, "reward_skill", eg)
+    monkeypatch.setattr(GameCanvas, "state", 10)
+    p = Popups()
+    p.setup_popup(27)
+    return p.lines[:p.line_count]
 
 
 @pytest.mark.parametrize("ef,eg,lines", [

@@ -34,7 +34,9 @@ def test_drop_rates_are_the_single_players(kind, drop, equip):
 
 def test_normal_tier_follows_the_hero_level():
     rng = random.Random(5)
-    tiers = lambda lv: [(g - 101) % 5 for g in (loot.sp_drop(rng, lv, 2) for _ in range(6000)) if g > 100]
+    def tiers(lv):
+        return [(g - 101) % 5 for g in (loot.sp_drop(rng, lv, 2) for _ in range(6000)) if g > 100]
+
     assert set(tiers(5)) == {0, 1}                       # level <= 9: {80, 100} -> tiers 0-1
     assert min(tiers(80)) == 2                           # level > 69: {0, 0, 33, 77, 100}
 
@@ -89,13 +91,13 @@ def test_no_save_no_loot(save_dir):
 
 
 def test_client_takes_the_item_from_1032(save_dir):
-    from pow_mp.h import h
+    from pow_mp.net_thread import NetThread
     from pow_server import codec_bin, messages as M
     store(make_save(gold=0, fame=0, exp=0))
     frame = codec_bin.encode(M.BATTLE_END, {"st": 1, "win": 1, "gold": 50, "fame": 3, "exp": 9,
                                             "loot": "Black Barb", "item_id": 379, "item_def": 4,
                                             "item_hp": 75, "item_mp": 36}, to_client=True)
-    h._port_extra_in(codec_bin.unframe(frame)[0][0])
+    NetThread._port_extra_in(codec_bin.unframe(frame)[0][0])
     d = S.read_save()
     assert _cell(d, 0) == (379, 0, 4, 75, 36, 0)
     assert struct.unpack_from("<iii", d, S.OFF_GOLD) == (50, 3, 9)
