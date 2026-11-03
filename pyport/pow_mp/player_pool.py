@@ -8,6 +8,7 @@ import pathlib
 import pygame
 
 import config
+from pow.midp.media import gain
 
 
 class PlayerPool:
@@ -50,11 +51,11 @@ class PlayerPool:
         try:
             if isinstance(s, tuple):
                 pygame.mixer.music.load(str(s[1]))
-                pygame.mixer.music.set_volume(self.vol / 100.0)
+                pygame.mixer.music.set_volume(gain(self.vol))
                 pygame.mixer.music.play(-1 if bl else 0)
                 self.music = True
             else:
-                s.set_volume(self.vol / 100.0)
+                s.set_volume(gain(self.vol))
                 s.play(loops=-1 if bl else 0)
             self.cur = n2
         except Exception as ex:
@@ -75,6 +76,15 @@ class PlayerPool:
 
     def set_volume(self, n2):  # c.java  volume 0..100
         self.vol = max(0, min(100, n2))
+        # c.java b(Player): setLevel on the playing Player too, not only on the next one
+        s = self.snd[self.cur] if 0 <= self.cur < self.size else None
+        try:
+            if self.music:
+                pygame.mixer.music.set_volume(gain(self.vol))
+            elif s is not None and not isinstance(s, tuple):
+                s.set_volume(gain(self.vol))
+        except Exception:
+            pass
 
     def tick(self):  # c.java  per tick
         pass

@@ -74,7 +74,7 @@ def run(steps, out, every=False, save_dir=None):
             pygame.image.save(screen, str(out / ("tick_%04d.png" % st["frame"])))
         if st["watch"]:
             from pow_mp.mp_canvas import MpCanvas
-            w = st["watch"].get(MpCanvas.cY)
+            w = st["watch"].get(MpCanvas.state)
             if w and not w["done"]:
                 w["seen"] += 1
                 if w["seen"] > w["delay"]:
@@ -89,11 +89,11 @@ def run(steps, out, every=False, save_dir=None):
         if st["until"] is not None:
             states, left = st["until"]
             from pow_mp.mp_canvas import MpCanvas
-            if MpCanvas.cY not in states and left > 0:
+            if MpCanvas.state not in states and left > 0:
                 st["until"] = (states, left - 1)
                 return
-            if MpCanvas.cY not in states:
-                raise SystemExit("until %s: still in state %d" % (states, MpCanvas.cY))
+            if MpCanvas.state not in states:
+                raise SystemExit("until %s: still in state %d" % (states, MpCanvas.state))
             st["until"] = None
         if st["wait"] > 0:
             st["wait"] -= 1
@@ -123,13 +123,13 @@ def run(steps, out, every=False, save_dir=None):
             if cmd == "goto_if":                 # goto_if STATE[,STATE...] LABEL
                 states, _, label = arg.partition(" ")
                 from pow_mp.mp_canvas import MpCanvas
-                if MpCanvas.cY in {int(x) for x in states.split(",")}:
+                if MpCanvas.state in {int(x) for x in states.split(",")}:
                     st["i"] = steps.index(("label", label.strip())) + 1
                 continue
             if cmd == "key_if":                  # key_if STATE[,STATE...] KEY: press only there
                 states, _, name = arg.partition(" ")
                 from pow_mp.mp_canvas import MpCanvas
-                if MpCanvas.cY in {int(x) for x in states.split(",")}:
+                if MpCanvas.state in {int(x) for x in states.split(",")}:
                     Midlet.canvas.keyPressed(KEYNAMES[name.strip().upper()])
                     st["wait"] = 1
                     return

@@ -5,13 +5,16 @@ import os
 import subprocess
 import sys
 
+import pytest
+
 from conftest import ROOT
 
 
-def test_autohunt_scenario(tmp_path):
+@pytest.mark.parametrize("name", ["autohunt", "autohunt_belt"])
+def test_autohunt_scenario(tmp_path, name):
     env = dict(os.environ, POW_STRICT="1")
     r = subprocess.run([sys.executable, str(ROOT / "tools" / "shot.py"),
-                        str(ROOT / "tools" / "scenarios" / "autohunt.keys"), "--out", str(tmp_path)],
+                        str(ROOT / "tools" / "scenarios" / (name + ".keys")), "--out", str(tmp_path)],
                        capture_output=True, text=True, timeout=300, env=env)
     assert r.returncode == 0, r.stdout + r.stderr
     assert r.stdout.count("expect ") == 5, r.stdout

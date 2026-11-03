@@ -68,6 +68,8 @@ class Midlet:
             from pow.game.autopilot import Autopilot
             Autopilot.reset()
             Midlet.canvas.autopilot = Autopilot   # PORT-EXTRA: auto-hunt (config.AUTO_HUNT)
+            from pow.game.skill_bar import playing
+            Midlet.canvas.belt_active = playing   # PORT-EXTRA config.SKILL_BAR: Z X C V B = belt
 
     def startApp(self):  # Main.java:41-43  (tryNBuy_123456 -> constructor + startApp_123456)
         self.construct()

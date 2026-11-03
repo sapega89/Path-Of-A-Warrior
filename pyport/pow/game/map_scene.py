@@ -1401,9 +1401,15 @@ class MapScene(GameCanvas):
         elif v in (-2, 56):
             i = 0
         v = GameCanvas.key
-        if config.NO_COMBAT and v in (49, 51, 55, 57, 48, -5, 53, 35, 42):
+        if config.NO_COMBAT and v in (49, 51, 55, 57, 48, -5, 53, 35, 42, -101, -102, -103, -104, -105):
             # PORT-EXTRA (POW_NO_COMBAT=1): attack, skill and potion keys do nothing
             v = None
+        belt = -1
+        if v in (-101, -102, -103, -104, -105) and config.SKILL_BAR:
+            # PORT-EXTRA config.SKILL_BAR: Z X C V B (or a click on the belt) = belt slot 0..4,
+            # used exactly like the slot of * / # below
+            belt = -101 - v
+            v = 42
         if v == 49:
             j_ = cz.hotkeys[0]
         elif v == 51:
@@ -1418,7 +1424,7 @@ class MapScene(GameCanvas):
             j_ = 3
         elif v in (35, 42):
             if 0 == GameCanvas.effect.item and cz.action[0] < 10:
-                sel = cz.quick_keys[0 if GameCanvas.key == 42 else 1]
+                sel = belt if belt > -1 else cz.quick_keys[0 if GameCanvas.key == 42 else 1]
                 GameCanvas.effect.item = cz.quick_slots[sel].item
                 brk = False
                 if GameCanvas.effect.item > 9:

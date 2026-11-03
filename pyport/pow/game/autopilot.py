@@ -1,7 +1,7 @@
 """Auto-hunt on the mission map (PORT-EXTRA, config.AUTO_HUNT: the phone game had no such thing).
 
 The autopilot plays like a player: every tick it may hold a direction (the HOLD_TO_MOVE walk) and
-press one phone key (attack, a skill key 1-5, the potion keys * / #), so the game logic stays the
+press one phone key (attack, a skill key 1-5, the potion keys * / # or the belt Z X C V B), so the game logic stays the
 Java one. Its choices:
   - potions: an HP potion below 30 % HP when no heal skill can be cast, an MP potion when the MP
     is too low for any skill while enemies are around;
@@ -170,8 +170,11 @@ class Autopilot:
             hp_low = False                     # the heal skill comes first (_skill)
         mp_low = bool(foes) and cz.max_mp > 0 and not cls._castable(cz, [s for s in cz.hotkeys if s])
         mp_low = mp_low and any(12 <= s <= 30 for s in cz.hotkeys)
-        for k, key in enumerate((STAR, POUND)):
-            slot = cz.quick_slots[cz.quick_keys[k]]
+        if config.SKILL_BAR:                   # the belt: all 5 slots, keys Z X C V B (skill_bar.py)
+            keys = [(cz.quick_slots[i], -101 - i) for i in range(5)]
+        else:                                  # the phone: the 2 slots on * / #
+            keys = [(cz.quick_slots[cz.quick_keys[k]], key) for k, key in enumerate((STAR, POUND))]
+        for slot, key in keys:
             if slot is None or slot.count < 1:
                 continue
             if hp_low and slot.item in HP_POTIONS:

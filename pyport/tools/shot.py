@@ -8,7 +8,7 @@ list of steps, one per line:
 
     wait N          run N ticks (frames)
     key NAME        press a phone key before the next tick: UP DOWN LEFT RIGHT FIRE
-                    LSOFT RSOFT(=BACK) 0-9 STAR POUND
+                    LSOFT RSOFT(=BACK) 0-9 STAR POUND BELT1-BELT5 (Z X C V B)
     click X Y       left mouse click at screen pixel (X, Y) (0..239, 0..319)
     wheel up|down   mouse wheel over the screen
     rclick [X Y]    right mouse button (= BACK; at X Y on the map = attack toward X Y)
@@ -27,6 +27,8 @@ list of steps, one per line:
     potion K ID N   TEST-ONLY: put N potions of kind ID on the quick slot K (0 = *, 1 = #)
     auto on|off     PORT-EXTRA auto-hunt (pow/game/autopilot.py) on / off
     expect F OP N   TEST-ONLY: stop with an error unless the hero's field F OP N (OP: >= <= == > <)
+    skilllv ID LV   TEST-ONLY: set the level of skill ID (12..30) to LV
+    belt S ID N     TEST-ONLY: put N items of kind ID on belt slot S (0..4 = keys Z X C V B)
     win             TEST-ONLY: win the accepted mission now (c.d(1), as the combat would)
     env NAME=VALUE  (first lines only) set an environment variable before the game reads config,
                     e.g. env POW_NO_ENEMIES=1 for the map without enemies
@@ -53,6 +55,8 @@ os.environ.setdefault("POW_SCALE", "1")
 os.environ.setdefault("POW_SEED", "1")
 os.environ.setdefault("POW_AUTO_AIM_HARD", "0")   # the original: no auto-aim on Hard
 os.environ.setdefault("POW_HOLD_TO_MOVE", "0")   # keys are taps, as on the phone (env line to change)   # Random() without the clock: repeatable runs
+os.environ.setdefault("POW_SKILL_BAR", "0")   # the original HUD (env line to turn the skill bar on)
+os.environ.setdefault("POW_SKILL_CARD", "0")  # the original description strip of Skills
 
 
 def parse(path):
@@ -199,6 +203,16 @@ def run(scenario, out, every=False):
                     raise SystemExit("expect %s %s %s: it is %s" % (field, op, val, have))
                 print("expect %s %s %s: %s" % (field, op, val, have))
                 continue
+            if cmd == "skilllv":           # TEST-ONLY: skilllv ID LV - skill ID (12..30) at level LV
+                sid, lv = map(int, arg.split())
+                GameCanvas.hero.skill_levels[sid - 12] = lv
+                continue
+            if cmd == "belt":              # TEST-ONLY: belt SLOT ID N - N items ID on belt slot 0..4
+                slot, pid, cnt = map(int, arg.split())
+                z = GameCanvas.hero.quick_slots[slot]
+                z.item = pid
+                z.count = cnt
+                continue
             if cmd == "win":
                 GameCanvas.boss_fight = 1                  # the mission's general was met on the map (c.java:986)
                 GameCanvas.scene.finish_mission(1)               # what the combat calls on victory (c.java:1516)
@@ -242,7 +256,7 @@ def run(scenario, out, every=False):
                 fn = "%02d_%s.png" % (state["n"], name)
                 pygame.image.save(screen, str(out / fn))
                 saved.append(fn)
-                MPMain.canvas.l.destroyed = True     # its own Exit: main.py would restart the game
+                MPMain.canvas.midlet.destroyed = True     # its own Exit: main.py would restart the game
 
         display.frame_hooks.append(mp_frame)
         try:
