@@ -10,6 +10,10 @@ from pow.game.game_canvas import GameCanvas
 from pow.game.gfx import Gfx
 from pow.midp.jint import i16
 
+# PORT-EXTRA popup ids past the original 0..42: the attribute reset (Menus.open_respec)
+RESPEC_POPUP = 90           # 3 choices: gold / elixir / cancel
+RESPEC_DONE_POPUP = 91      # its result (Ok); no action when it closes
+
 
 class Popups(GameCanvas):
     image = None  # public static Image r = null;  l.java:38  (ui_popup)
@@ -34,6 +38,7 @@ class Popups(GameCanvas):
         self.arg4 = None
         self.answered = False
         self.drawn = False
+        self.choices = 4        # PORT-EXTRA: rows of a kind-3 popup (the original always has 4)
 
     def reset(self):  # l.java:46-60
         self.kind = 0
@@ -162,10 +167,10 @@ class Popups(GameCanvas):
                         ch = GameCanvas.key
                         if ch in (-1, 50):
                             self.button = i16(self.button - 1)
-                            self.button = i16(self.button & 0x3)
+                            self.button = i16(self.button % self.choices)    # & 0x3 with 4 rows
                         elif ch in (-2, 56):
                             self.button = i16(self.button + 1)
-                            self.button = i16(self.button & 0x3)
+                            self.button = i16(self.button % self.choices)
                         elif ch in (-5, 53):
                             self.timer = 4
                 elif self.kind == 10:
@@ -197,6 +202,9 @@ class Popups(GameCanvas):
                         GameCanvas.talk_lines[b] = ""
                     GameCanvas.restore_menu_cursor()
                     GameCanvas.menu_items = GameCanvas.game_menu_items
+                elif v == RESPEC_POPUP:     # PORT-EXTRA: attribute reset chosen
+                    self.choices = 4
+                    GameCanvas.menus.finish_respec(self.button)
                 elif v == 39:
                     GameCanvas.menu[0] = 12
                     GameCanvas.menu_count = consts.v[GameCanvas.menu[0]]
@@ -267,7 +275,7 @@ class Popups(GameCanvas):
             self.draw_yes_no(GameCanvas.view_cy + i + 5)
         elif self.kind == 3:
             i += 5
-            for b in range(4):
+            for b in range(self.choices):
                 if self.button == b:
                     Gfx.set_font(GameCanvas.font_orange)
                 else:
@@ -483,8 +491,27 @@ class Popups(GameCanvas):
         from pow.game.menus import Menus
         return " You sold|" + Menus.item_name(GameCanvas.cursor[19]) + '.'
 
+    def setup_choice(self, popup_id, text, choices):
+        """PORT-EXTRA: a kind-3 popup (like e(14)) with its own text and 2..4 choice rows; the
+        chosen row comes to _tick_timer() under popup_id as self.button."""
+        self.from_gamestr = 0
+        self.drawn = False
+        self.kind = 3
+        self.timer = 200
+        self.button = 0
+        self.popup_id = popup_id
+        assert len(text) == 2       # draw_popup() takes the rows from lines[2..]
+        self.line_count = len(text)
+        self.choices = len(choices)
+        for n, s in enumerate(list(text) + list(choices)):
+            self.lines[n] = s
+        self.height = 140 - 16 * (4 - self.choices)     # e(int) gives kind 3 a height of 140
+        self.popup_redraw = 1
+        GameCanvas.redraw = 1
+
     def setup_popup(self, paramInt):  # l.java:600-891
         self.from_gamestr = 0
+        self.choices = 4
         self.drawn = False
         arrayOfByte1 = [2, 2, 2, 4, 3, 3, 5, 3, 3, 3, 2, 2, 2, 2, 2, 5, 3, 2, 2, 3,
                         2, 4, 3, 2, 2, 2, 2, 0, 2, 3, 1, 1, 1, 1, 4, 4, 4, 1, 5, 5, 2, 5, 6]

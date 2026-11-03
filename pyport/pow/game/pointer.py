@@ -57,7 +57,7 @@ def _popup_keys(x, y, kind):
         if kind != "click":
             return [UP if kind == "wheel_up" else DOWN]
         top = GameCanvas.view_cy - (cs.height >> 1) + 20 * cs.line_count + 5
-        if top <= y < top + 64:
+        if top <= y < top + 16 * cs.choices:       # PORT-EXTRA choices: 4 in the original
             want = (y - top) // 16
             return _steps(want - cs.button, UP, DOWN) + [FIRE]
         return []
@@ -337,6 +337,8 @@ def keys_for(x, y, kind="click"):
             return [BACK]
         if c0 == 4 and kind == "click" and x < GameCanvas.softkey_bg.getWidth() and y >= GameCanvas.screen_h - GameCanvas.softkey_bg.getHeight():
             return [-6]                 # briefing: soft key "SKIP"
+        if c0 == 14 and kind == "click" and x < GameCanvas.softkey_bg.getWidth() and y >= GameCanvas.screen_h - GameCanvas.softkey_bg.getHeight():
+            return [-6]                 # PORT-EXTRA: Attributes, soft key "RESET"
         keys = _new_game_keys(c0, x, y, kind)
         if keys is not None:
             return keys

@@ -27,6 +27,7 @@
 | `aq.java` | `pow/game/player_pool.py` |
 | `Main.java` | `pow/game/midlet.py` |
 | `v.java` | `pow/game/live_net.py` |
+| — (PORT-EXTRA) | `pow/game/hero_classes.py` (базові стати 4 героїв, перерозподіл атрибутів) |
 
 ## Класи
 
