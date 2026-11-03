@@ -64,3 +64,19 @@ def test_single_player_hero_plays_the_duel_and_gets_the_rewards(tmp_path, monkey
     monkeypatch.setattr(config, "SAVE_DIR", str(rms))
     gold, fame, exp = struct.unpack_from("<iii", S.read_save(), S.OFF_GOLD)
     assert gold == 1000 + ch.gold and exp == 7 + ch.mp_exp and fame == 50 + ch.mp_fame
+
+
+def test_auto_battle_plays_the_duel_alone(tmp_path):
+    """PORT-EXTRA auto-battle: after Tab the client sends AUTO (255) in every 1027 and the
+    server's bot plays the hero; the duel ends without an action key."""
+    mp_shot = _mp_shot()
+    try:
+        saved, _ = mp_shot.run(mp_shot.parse(SCEN / "mp_autobattle.keys"), tmp_path / "out",
+                               save_dir=str(tmp_path / "rms"))
+    finally:
+        from pow_mp.mp_canvas import MpCanvas
+        auto, MpCanvas.auto_battle = MpCanvas.auto_battle, False
+    assert auto and saved[-1].endswith("auto_end.png")
+    from pow_mp.net.transport import LocalTransport
+    ch = LocalTransport._server.storage.load("TEST")
+    assert ch.wins + ch.losses == 1

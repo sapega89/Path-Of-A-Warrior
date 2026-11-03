@@ -156,6 +156,7 @@ class GameCanvas(GameFields, Canvas):
             GameCanvas.painted = True
             return
         self.tick_state()
+        GameCanvas.draw_auto_badge()
         GameCanvas.painted = True
 
     async def run(self):  # ag.java:708-760  (Thread.run -> async loop for pygbag)
@@ -560,6 +561,10 @@ class GameCanvas(GameFields, Canvas):
 
     def key_down(self, paramInt):  # ag.java:1941-1961
         if paramInt == -10:
+            return
+        if paramInt == -100:               # PORT-EXTRA: Tab / the AUTO corner (pow/game/autopilot.py)
+            from pow.game.autopilot import Autopilot
+            Autopilot.toggle()
             return
         if GameCanvas.paused:
             GameCanvas.key = paramInt
@@ -1143,6 +1148,17 @@ class GameCanvas(GameFields, Canvas):
         except Exception:
             pass
         return str_
+
+    @staticmethod
+    def draw_auto_badge():
+        """PORT-EXTRA (pow/game/autopilot.py): "AUTO" in the bottom-left corner of the map while
+        the auto-hunt is on (the corner is empty on the map; a click on it toggles)."""
+        from pow.game.autopilot import Autopilot
+        if not Autopilot.on or GameCanvas.state != 3 or GameCanvas.popups.kind != 0:
+            return
+        Gfx.fill_rect(0, GameCanvas.screen_h - 17, 48, 17, 0)
+        Gfx.set_font(GameCanvas.font_white)
+        Gfx.draw_string("AUTO", 24, GameCanvas.screen_h - 17, 1)
 
     @staticmethod
     def draw_softkeys(paramInt1, paramInt2):  # ag.java:3045-3079  (soft-key captions)
