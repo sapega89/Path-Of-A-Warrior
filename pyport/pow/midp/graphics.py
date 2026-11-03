@@ -22,7 +22,7 @@ BOTTOM = 32
 BASELINE = 64
 
 _IS_WEB = sys.platform == "emscripten"
-_TMP_PNG = "/tmp/pow_image.png"
+_TMP_PNG = "/tmp/pow_image.png"   # noqa: S108 (browser build only: the emscripten in-memory FS)
 
 
 def _load_png(data, hint):
@@ -43,7 +43,7 @@ def _load_png(data, hint):
 
 
 class Image:
-    __slots__ = ("surface", "mutable")
+    __slots__ = ("mutable", "surface")
 
     def __init__(self, surface, mutable=False):
         self.surface = surface

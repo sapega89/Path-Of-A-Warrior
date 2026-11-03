@@ -6,7 +6,6 @@ tools/j2py_mp.py; edited by hand since.
 from pow_mp.rt import DataInputStream, _js, i32
 
 
-
 class FrameReader:
 
     def __init__(self, input_stream):  # d.java:13
@@ -32,10 +31,10 @@ class FrameReader:
         self.length = (i32((((self.header[0] & 0xFF))) << (0)) | i32((((self.header[1] & 0xFF))) << (8)))
         body = [0] * (self.length - 2)
         self.stream.readFully(body, 0, len(body))
-        print(_js("RECV DATA :  "), end='')
+        print(_js("RECV DATA :  "), end="")
         i = 0
         while i < len(body):
-            print(_js(_js(_js(_js(_js(_js(_js("[", i), "]"), (body[i] & 0xFF)), "'"), chr(((32) & 0xFFFF) if (body[i] <= 47) else ((body[i]) & 0xFFFF))), "' ")), end='')
+            print(_js(_js(_js(_js(_js(_js(_js("[", i), "]"), (body[i] & 0xFF)), "'"), chr(((32) & 0xFFFF) if (body[i] <= 47) else ((body[i]) & 0xFFFF))), "' ")), end="")
             i = i + 1
         print(_js(""))
         answer = Answer(body)

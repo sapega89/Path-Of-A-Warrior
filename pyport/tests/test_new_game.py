@@ -5,8 +5,8 @@ from conftest import ROOT  # noqa: F401  (sets sys.path and the dummy video driv
 def test_new_hero_save_roundtrip(tmp_path, monkeypatch):
     import config
     from pow.game.game_canvas import GameCanvas
-    from pow.game.scr_table import ScrTable
     from pow.game.menus import Menus
+    from pow.game.scr_table import ScrTable
     from pow.game.structs import Hero
     from pow.midp.jrandom import Random
     from pow.midp.rms import RecordStore

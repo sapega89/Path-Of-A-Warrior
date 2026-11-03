@@ -6,7 +6,6 @@ import subprocess
 import sys
 
 import pytest
-
 from conftest import ROOT
 
 
@@ -15,7 +14,7 @@ def test_autohunt_scenario(tmp_path, name):
     env = dict(os.environ, POW_DEBUG="1")
     r = subprocess.run([sys.executable, str(ROOT / "tools" / "shot.py"),
                         str(ROOT / "tools" / "scenarios" / (name + ".keys")), "--out", str(tmp_path)],
-                       capture_output=True, text=True, timeout=300, env=env)
+                       capture_output=True, text=True, check=False, timeout=300, env=env)
     assert r.returncode == 0, r.stdout + r.stderr
     assert r.stdout.count("expect ") == 5, r.stdout
 
@@ -35,6 +34,7 @@ def test_autohunt_is_off_by_default_and_toggles():
 
 def test_auto_keys_tab_f_and_the_right_stick():
     import pygame
+
     from pow.midp import canvas, gamepad
     assert canvas.KEYMAP[pygame.K_TAB] == canvas.KEYMAP[pygame.K_f] == -100
     assert gamepad.CONTROLLER_BUTTONS[pygame.CONTROLLER_BUTTON_RIGHTSTICK] == -100
@@ -51,7 +51,7 @@ def test_the_auto_button_is_shown_while_off(tmp_path):
                     "shot on\nexpect kills >= 1\n", encoding="utf-8")
     env = dict(os.environ, POW_DEBUG="1", POW_AUTO_BUTTON="1")
     r = subprocess.run([sys.executable, str(ROOT / "tools" / "shot.py"), str(scen), "--out",
-                        str(tmp_path / "out")], capture_output=True, text=True, timeout=300, env=env)
+                        str(tmp_path / "out")], capture_output=True, text=True, check=False, timeout=300, env=env)
     assert r.returncode == 0, r.stdout + r.stderr
     import pygame
     shots = sorted((tmp_path / "out").glob("*.png"))

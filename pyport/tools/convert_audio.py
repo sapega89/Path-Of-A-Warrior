@@ -17,9 +17,9 @@ SF2 = pathlib.Path("/usr/share/sounds/sf2/FluidR3_GM.sf2")
 
 
 def run(cmd):
-    r = subprocess.run(cmd, capture_output=True, text=True)
+    r = subprocess.run(cmd, capture_output=True, text=True, check=False)
     if r.returncode != 0:
-        sys.exit("failed: %s\n%s" % (" ".join(map(str, cmd)), r.stderr[-2000:]))
+        sys.exit("failed: {}\n{}".format(" ".join(map(str, cmd)), r.stderr[-2000:]))
 
 
 def main():

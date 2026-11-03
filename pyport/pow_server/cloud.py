@@ -59,7 +59,7 @@ class CloudSession:
 
     def receive(self, text):
         if self.closed:
-            return
+            return None
         try:
             msg = json.loads(text)
         except (ValueError, TypeError):

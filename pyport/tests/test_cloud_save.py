@@ -26,7 +26,7 @@ class FakeSocket:
         if FakeSocket.down:
             self.failed = True
             return
-        self.session = FakeSocket.server.connect(lambda text: self.inbox.append(text))
+        self.session = FakeSocket.server.connect(lambda text: self.inbox.append(text))   # noqa: PLW0108 (self.inbox is replaced later)
         self.connected = True
 
     def send(self, text):

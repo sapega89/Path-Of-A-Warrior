@@ -90,7 +90,7 @@ def hero(data):
         v = data[OFF_SLOTS + i]
         if v >= 12 and SKILL_CODES[v - 12] in MP_SKILLS and len(slots) < 4:
             slots.append(SKILL_CODES[v - 12])
-    progress = sum(bin(struct.unpack_from("<I", data, OFF_DY + 4 * i)[0]).count("1") for i in range(8))
+    progress = sum(struct.unpack_from("<I", data, OFF_DY + 4 * i)[0].bit_count() for i in range(8))
     return {
         "level": data[OFF_LEVEL], "hp": _s16(data, OFF_HP), "mp": _s16(data, OFF_MP),
         "atk": _s16(data, OFF_ATK), "def": _s16(data, OFF_DEF),

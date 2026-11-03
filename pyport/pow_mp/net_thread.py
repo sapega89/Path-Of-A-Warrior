@@ -21,7 +21,7 @@ import config
 from pow.midp.rms import RecordStore
 from pow_mp.net.transport import make_transport
 
-TOKEN_STORE = "pow_mp_token"
+TOKEN_STORE = "pow_mp_token"   # noqa: S105 (the name of the RecordStore, not a secret)
 
 
 class NetThread:
@@ -174,7 +174,8 @@ class NetThread:
     def _sp_hero():
         """The SP_HERO tail of 262 (pow_server/messages.py); sp = 0 without a single-player save."""
         from pow_mp import sp_bridge
-        from pow_server import codec_bin, messages as M
+        from pow_server import codec_bin
+        from pow_server import messages as M
         sp_bridge.add_item()                 # loot still waiting for a free backpack cell
         hero = sp_bridge.hero(sp_bridge.read_save())
         msg = {"sp": 0} if hero is None else dict({"sp": 1}, **{"sp_" + k: v for k, v in hero.items()})

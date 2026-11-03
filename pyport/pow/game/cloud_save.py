@@ -35,6 +35,7 @@ META = "pow_cloud_meta"           # raw entry: {"user": UserID, "stores": {name:
 REGIST = "gamevil_pow_regist"
 RETRY_MS = 10000                  # reconnect after a failed connection
 STEP_SECONDS = 0.25
+_TASKS = set()                    # running sync tasks (asyncio keeps only weak references)
 
 
 def server_url():
@@ -73,7 +74,7 @@ def read_login():
 
 
 def _digest(records):
-    return hashlib.sha1(json.dumps(records).encode()).hexdigest()[:16]
+    return hashlib.sha1(json.dumps(records).encode()).hexdigest()[:16]   # noqa: S324 (a change check, not security)
 
 
 def _records(name):
@@ -251,7 +252,7 @@ class CloudSync:
             try:
                 self._answer(json.loads(text))
             except (ValueError, KeyError, TypeError) as ex:
-                print("Server saves: bad answer %r (%r)" % (text[:80], ex))
+                print(f"Server saves: bad answer {text[:80]!r} ({ex!r})")
             if self.sock is None:
                 return
         if self.state == "ready":
@@ -261,7 +262,7 @@ class CloudSync:
         op = msg.get("op")
         if op == "login":
             if not msg.get("ok"):
-                print("Server saves: login refused (%s)" % msg.get("err"))
+                print("Server saves: login refused ({})".format(msg.get("err")))
                 return self._drop("off")
             self.sock.send(json.dumps({"op": "get"}))
             self.state = "get"
@@ -353,7 +354,7 @@ class CloudSync:
             rms._save_raw(name + "_backup", json.dumps(cur["records"]))
             m["rev"] = cur["rev"]
         else:
-            print("Server saves: %s not saved (%s)" % (name, msg.get("err")))
+            print("Server saves: {} not saved ({})".format(name, msg.get("err")))
             m["dirty"] = False
         self._save_meta()
 
@@ -382,7 +383,9 @@ async def boot(timeout=4.0):
             break
         await asyncio.sleep(0.05)
     sync.started = True
-    asyncio.ensure_future(run(sync))
+    task = asyncio.ensure_future(run(sync))
+    _TASKS.add(task)                     # asyncio keeps only a weak reference to a task
+    task.add_done_callback(_TASKS.discard)
     return sync
 
 
@@ -401,5 +404,5 @@ async def run(s):
         try:
             s.step()
         except Exception as ex:            # never let the saves stop the game
-            print("Server saves: %r" % ex)
+            print(f"Server saves: {ex!r}")
         await asyncio.sleep(STEP_SECONDS)

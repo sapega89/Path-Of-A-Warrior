@@ -3,7 +3,8 @@ import struct
 
 import pytest
 
-from pow_server import codec_bin, messages as M
+from pow_server import codec_bin
+from pow_server import messages as M
 from pow_server.model import default_character
 
 
@@ -98,7 +99,7 @@ def test_turn_result_layout():
     msg = codec_bin.decode(p, from_client=False)
     assert msg["actions"] == [0, 8, 99, 99]
     assert msg["records"][1]["target2_hp"] == 50 and msg["records"][0]["target_hp"] == 77
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="at most 4 records"):
         payload(M.TURN_RESULT, st=1, actions=[0] * 4, records=recs * 3)
 
 
@@ -126,7 +127,7 @@ def test_error_answers_carry_only_the_status():
 
 
 def test_rank_list_counts_rows():
-    rows = [{"rank": i, "id": "PLAYER%s" % "ABC"[i - 1], "value": 10 - i} for i in (1, 2, 3)]
+    rows = [{"rank": i, "id": "PLAYER{}".format("ABC"[i - 1]), "value": 10 - i} for i in (1, 2, 3)]
     msg = codec_bin.decode(payload(M.RANK_LIST_ANS, st=1, rows=rows), from_client=False)
     assert msg["n"] == 3 and msg["rows"] == rows
 

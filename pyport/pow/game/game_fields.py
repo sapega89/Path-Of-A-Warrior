@@ -1,6 +1,20 @@
 """All fields of ag.java with their initial values. Generated once from the Java source; edited by
 hand since."""
-from pow.game.structs import MapMode, Rect, ActiveEffect, GearDef, InfoBox, GeneralDef, RareDef, Point, Hero, MapData, TreasureDef, TargetInfo, Item
+from pow.game.structs import (
+    ActiveEffect,
+    GearDef,
+    GeneralDef,
+    Hero,
+    InfoBox,
+    Item,
+    MapData,
+    MapMode,
+    Point,
+    RareDef,
+    Rect,
+    TargetInfo,
+    TreasureDef,
+)
 
 
 class GameFields:

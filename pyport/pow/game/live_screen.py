@@ -3,8 +3,8 @@
 as.a = m(); ag.L() calls as.aK() -> m.a() every frame while bV == 11. as.ho picks the screen.
 """
 from pow.game.game_canvas import GameCanvas
-from pow.game.live import Live, B5
 from pow.game.gfx import Gfx
+from pow.game.live import B5, Live
 from pow.midp.rms import RecordStore
 
 
@@ -219,7 +219,7 @@ class LiveScreen(Live):
     def is_registered():  # m.java:278-285  (registered already?)
         try:
             rs = RecordStore.openRecordStore("gamevil_pow_regist", True)
-            return not (rs.getNumRecords() == 0)
+            return rs.getNumRecords() != 0
         except Exception:
             return False
 

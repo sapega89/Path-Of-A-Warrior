@@ -58,10 +58,10 @@ def _put(buf, kind, value):
         else:
             lo, hi = 0, (1 << (8 * _NUM[kind])) - 1
         if not lo <= v <= hi:
-            raise CodecError("value %r does not fit %s" % (v, kind))
+            raise CodecError(f"value {v!r} does not fit {kind}")
         buf += struct.pack("<" + kind, v)
     else:
-        raise CodecError("unknown field kind %r" % (kind,))
+        raise CodecError(f"unknown field kind {kind!r}")
 
 
 def _get(data, pos, kind):
@@ -100,7 +100,7 @@ def _encode_fields(buf, schema, msg):
 
 
 def _encode_row(buf, sub, row):
-    if isinstance(sub, str) or isinstance(sub, int):   # list of plain values
+    if isinstance(sub, (str, int)):   # list of plain values
         _put(buf, sub, row if row is not None else (99 if sub == "B" else 0))
     else:
         _encode_fields(buf, sub, row or {})

@@ -6,7 +6,6 @@ tools/j2py_mp.py; edited by hand since.
 from pow_mp.rt import _arraycopy, _js, i8, ushr32
 
 
-
 class FrameWriter:
 
     def __init__(self, output_stream):  # e.java:15
@@ -45,7 +44,7 @@ class FrameWriter:
         self.buf.write(i8(ushr32(value, 24) & 0xFF))
 
     def write_string(self, text, size):  # e.java:54
-        raw = bytearray(text.encode('latin-1', 'replace'))
+        raw = bytearray(text.encode("latin-1", "replace"))
         i = 0
         while i < size:
             if i < len(raw):
@@ -68,10 +67,10 @@ class FrameWriter:
             sent = (2 + self.length)
             self.stream.write(self.frame, 0, sent)
             self.stream.flush()
-            print(_js("SEND DATA :  "), end='')
+            print(_js("SEND DATA :  "), end="")
             i = 0
             while i < sent:
-                print(_js(_js(_js(_js(_js(_js(_js("[", i), "]"), (self.frame[i] & 0xFF)), "'"), chr(((32) & 0xFFFF) if (self.frame[i] == 0) else ((self.frame[i]) & 0xFFFF))), "' ")), end='')
+                print(_js(_js(_js(_js(_js(_js(_js("[", i), "]"), (self.frame[i] & 0xFF)), "'"), chr(((32) & 0xFFFF) if (self.frame[i] == 0) else ((self.frame[i]) & 0xFFFF))), "' ")), end="")
                 i = i + 1
             print(_js(""))
             self.length = 0

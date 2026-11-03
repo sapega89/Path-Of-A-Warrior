@@ -48,7 +48,7 @@ def _set_mode(full):
         try:
             window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         except pygame.error as ex:
-            print("full screen failed: %r" % ex)
+            print(f"full screen failed: {ex!r}")
             full = False
     if not full:
         window = pygame.display.set_mode((w, h))
@@ -87,7 +87,7 @@ def set_fullscreen(full):
             elif not full and doc.fullscreenElement:
                 doc.exitFullscreen()
         except Exception as ex:
-            print("Fullscreen API: %r" % ex)
+            print(f"Fullscreen API: {ex!r}")
         return
     if window is not None and full != fullscreen:
         _set_mode(full)
@@ -119,7 +119,7 @@ def _save(full):
         else:
             rs.setRecord(1, data, 0, 1)
     except Exception as ex:
-        print("pow_display: %r" % ex)
+        print(f"pow_display: {ex!r}")
 
 
 def to_screen(pos):

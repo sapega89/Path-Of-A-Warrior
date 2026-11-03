@@ -22,9 +22,9 @@ Fixes (config):
 """
 import config
 from pow.game.game_canvas import GameCanvas
-from pow.game.structs import Item
-from pow.game.live_net import LiveNet
 from pow.game.gfx import Gfx
+from pow.game.live_net import LiveNet
+from pow.game.structs import Item
 from pow.midp import system
 from pow.midp.graphics import Image
 from pow.midp.jint import i8, i16, idiv
@@ -356,7 +356,7 @@ class Live(GameCanvas):
                             break
                     LiveNet.write_bool(bool_)
             LiveNet.write_string(hero.name, 8)
-            LiveNet.write_bool(not (hero.live_registered == 0))
+            LiveNet.write_bool(hero.live_registered != 0)
             LiveNet.write_byte(GameCanvas.general_count & 0xFF)
             for i_gen in range(GameCanvas.general_count):
                 LiveNet.write_byte(GameCanvas.generals[0][i_gen] & 0xFF)
@@ -701,8 +701,7 @@ class Live(GameCanvas):
                     Live.lot_ids[idx] = 0
                     Live.prices[idx] = 0
                 count = answer.read_s8()
-                if count > 20:
-                    count = 20
+                count = min(count, 20)
                 for idx in range(count):
                     if op == 865:
                         Live.lot_ids[idx] = answer.read_s32()
@@ -826,7 +825,7 @@ class Live(GameCanvas):
         i = 0
         j = 0
         for b in range(len(items)):
-            if items[b] == '|':
+            if items[b] == "|":
                 Live.list_items[i] = items[j:b]
                 j = b + 1
                 i += 1
@@ -835,8 +834,7 @@ class Live(GameCanvas):
         Live.list_count = i16(i)
         i = idiv(h + 12, 32)
         Live.list_rows = i16(i)
-        if Live.list_rows > Live.list_count:
-            Live.list_rows = Live.list_count
+        Live.list_rows = min(Live.list_rows, Live.list_count)
         Live.list_y = i16(y + (h - 32 * Live.list_rows - 12 >> 1))
         Live.list_top = Live.list_cursor = 0
 
@@ -1436,8 +1434,7 @@ class Live(GameCanvas):
             if i != -1:
                 Live.values[14] = Live.values[14] * 10
                 Live.values[14] = Live.values[14] + i
-                if Live.values[14] > Live.values[15]:
-                    Live.values[14] = Live.values[15]
+                Live.values[14] = min(Live.values[14], Live.values[15])
         elif key == -7:
             if Live.values[14] > 0:
                 Live.values[14] = idiv(Live.values[14], 10)

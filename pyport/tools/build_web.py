@@ -47,12 +47,11 @@ def stage():
     print("staged %d resource files -> %s" % (n, OUT))
 
 
-_LINK_CSS = ('font:14px sans-serif;color:#fff;background:#2747a8;padding:6px 10px;border-radius:6px;'
-             'text-decoration:none')
+_LINK_CSS = ("font:14px sans-serif;color:#fff;background:#2747a8;padding:6px 10px;border-radius:6px;"
+             "text-decoration:none")
 GUIDE_LINK = ('<div style="position:fixed;right:8px;bottom:8px;z-index:9999;display:flex;gap:6px">'
-              '<a href="guide.html" target="_blank" style="%s">Довідник воїна</a>'
-              '<a href="encyclopedia.html" target="_blank" style="%s">Енциклопедія</a></div>'
-              % (_LINK_CSS, _LINK_CSS))
+              f'<a href="guide.html" target="_blank" style="{_LINK_CSS}">Довідник воїна</a>'
+              f'<a href="encyclopedia.html" target="_blank" style="{_LINK_CSS}">Енциклопедія</a></div>')
 
 
 def add_guide(site):

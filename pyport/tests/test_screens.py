@@ -7,7 +7,6 @@ and tools/compare_ref.py reports the difference.
 
 import pygame
 import pytest
-
 from conftest import ROOT
 
 SCEN = ROOT / "tools" / "scenarios"
@@ -22,7 +21,7 @@ def _run(name, out):
     import sys
     env = dict(os.environ, POW_DEBUG="1")   # an exception in the game loop fails the test
     r = subprocess.run([sys.executable, str(ROOT / "tools" / "shot.py"), str(SCEN / (name + ".keys")),
-                        "--out", str(out)], capture_output=True, text=True, timeout=300, env=env)
+                        "--out", str(out)], capture_output=True, text=True, check=False, timeout=300, env=env)
     assert r.returncode == 0, r.stderr
 
 

@@ -102,7 +102,7 @@ class Gamepads:
             if sdl_controller is not None and not sdl_controller.get_init():
                 sdl_controller.init()
         except Exception as ex:
-            print("gamepad: %r" % ex)
+            print(f"gamepad: {ex!r}")
 
     # -- devices --
     def _add(self, index):
@@ -111,12 +111,12 @@ class Gamepads:
                 dev = sdl_controller.Controller(index)
                 iid = dev.as_joystick().get_instance_id()
                 self.pads[iid] = Pad(dev, True)
-                print("gamepad: %s" % dev.name)
+                print(f"gamepad: {dev.name}")
             else:
                 dev = pygame.joystick.Joystick(index)
                 dev.init()
                 self.pads[dev.get_instance_id()] = Pad(dev, False)
-                print("joystick: %s" % dev.get_name())
+                print(f"joystick: {dev.get_name()}")
         except Exception as ex:
             print("gamepad %d: %r" % (index, ex))
 

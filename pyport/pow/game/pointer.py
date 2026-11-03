@@ -42,7 +42,6 @@ exactly the Java one. Hit zones follow what is drawn on each screen (coordinates
 import collections
 
 import config
-
 from pow.game import consts, skill_bar
 from pow.game.game_canvas import GameCanvas
 from pow.midp.jint import idiv
@@ -65,7 +64,7 @@ def _popup_keys(x, y, kind):
         top = GameCanvas.view_cy - (cs.height >> 1) + 20 * cs.line_count + 5
         if top <= y < top + 16 * cs.choices:       # PORT-EXTRA choices: 4 in the original
             want = (y - top) // 16
-            return _steps(want - cs.button, UP, DOWN) + [FIRE]
+            return [*_steps(want - cs.button, UP, DOWN), FIRE]
         return []
     if kind != "click":
         return []
@@ -147,7 +146,7 @@ def _new_game_keys(menu_id, x, y, kind):
         cell = _name_cell(x, y)
         if cell is None:
             return []
-        return _name_path(GameCanvas.letter_cursor, cell) + [FIRE]
+        return [*_name_path(GameCanvas.letter_cursor, cell), FIRE]
     if menu_id == 8:                         # e.O: rows HP MP ATK DEF at y = eN+108 + b*20, h 18
         if kind != "click":
             return [UP if kind == "wheel_up" else DOWN]
@@ -180,19 +179,19 @@ def _menu_keys(menu_id, x, y, kind):
         if 18 <= x < 222 and top <= y < top + 4 * 31 and (y - top) % 31 < 22:
             want = cM[1] // 4 * 4 + (y - top) // 31
             if want < GameCanvas.menu_count:
-                return _steps(want - cM[1], UP, DOWN) + [FIRE]
+                return [*_steps(want - cM[1], UP, DOWN), FIRE]
         return []
     if menu_id in (25, 28) and GameCanvas.canvas_size.y - 43 <= y < GameCanvas.canvas_size.y - 13:   # e.a(int,int,int,boolean) at bZ.b-35      # e.a(int,int,int,boolean)
         return [LEFT if x < dd else RIGHT]
     if menu_id in (1, 2, 10, 11, 12, 13, 25, 27):                   # e.f(): rows of 180x20, 30 apart
-        rows = 5 if GameCanvas.menu_count > 5 else GameCanvas.menu_count
+        rows = min(GameCanvas.menu_count, 5)
         if menu_id == 25 and cM[2] >= 20:
             rows = 4
         top = de - (rows * 30 - 10) // 2 + dc
         if GameCanvas.state == 3 or GameCanvas.prev_state == 3:                           # the map's pause menu: 30 px higher
             top -= 30
         if dd - 90 <= x < dd + 90 and top <= y < top + rows * 30 and (y - top) % 30 < 20:
-            return _steps((y - top) // 30 - (cM[1] - cM[2]), UP, DOWN) + [FIRE]
+            return [*_steps((y - top) // 30 - (cM[1] - cM[2]), UP, DOWN), FIRE]
         return []
     if menu_id == 9:                                                # e.j(): rows 1, 2 at de-50 + 30*(b-1)
         for b in range(1, consts.menu_sizes[9]):                      # + row 3 Screen (config.SCREEN_OPTION)

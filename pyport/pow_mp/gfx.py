@@ -6,7 +6,6 @@ tools/j2py_mp.py; edited by hand since.
 from pow_mp.rt import i32, idiv, ushr32
 
 
-
 class Gfx:
     g = None  # i.java:12 Graphics
     clip_x = 0  # i.java:13 int
@@ -100,6 +99,6 @@ def _late_imports():
     global Draw, Font, FrameWriter, FrameReader, MpCanvas
     from pow_mp.draw import Draw
     from pow_mp.font import Font
-    from pow_mp.frame_writer import FrameWriter
     from pow_mp.frame_reader import FrameReader
+    from pow_mp.frame_writer import FrameWriter
     from pow_mp.mp_canvas import MpCanvas

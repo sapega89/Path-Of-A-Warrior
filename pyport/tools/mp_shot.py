@@ -44,6 +44,7 @@ def parse(path):
 
 def run(steps, out, every=False, save_dir=None):
     import pygame
+
     import config
     from pow.midp import display, system
     from pow.midp.canvas import KEYNAMES
@@ -152,7 +153,7 @@ def run(steps, out, every=False, save_dir=None):
                 pygame.image.save(st["last"], str(out / name))
                 saved.append(name)
                 continue
-            raise SystemExit("unknown step: %s %s" % (cmd, arg))
+            raise SystemExit(f"unknown step: {cmd} {arg}")
         midlet.destroyed = True
 
     display.frame_hooks.append(on_frame)

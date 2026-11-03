@@ -3,7 +3,8 @@ import random
 
 import pytest
 
-from pow_server import codec_bin, messages as M
+from pow_server import codec_bin
+from pow_server import messages as M
 from pow_server.server import GameServer
 
 
@@ -169,7 +170,7 @@ def _duel(c, action=0, hit=88, rounds=60, mode=0):
 
 
 def test_duel_vs_cpu(server):
-    c, prof = login(server)
+    c, _prof = login(server)
     room, fighter, turns, end = _duel(c)
     assert room["op"] == 513 and room["st"] == 1 and room["slot"] == 0 and room["mode"] == 0
     assert fighter["op"] == 514 and fighter["slot"] == 1
@@ -245,7 +246,7 @@ def test_duel_2v2(server):
     assert sorted(m["slot"] for m in c.got[1:4]) == [1, 2, 3]
     assert len({m["name"] for m in c.got[1:4]}) == 3
     c.session.battle = None
-    room, fighter, turns, end = _duel(c, mode=1, hit=100, rounds=80)
+    room, _fighter, turns, end = _duel(c, mode=1, hit=100, rounds=80)
     assert room["mode"] == 1
     assert any(len(t["records"]) > 2 for t in turns)       # four fighters act in one round
     for t in turns:
@@ -402,7 +403,7 @@ def test_challenge_2v2_each_player_with_a_cpu_ally(server):
     assert _ops(a) == [769, 514, 514, 514, 1024] and _ops(b) == [770, 514, 514, 514, 1024]
     fs = a.session.room.battle.fighters
     assert not fs[0].cpu and not fs[1].cpu and fs[2].cpu and fs[3].cpu
-    turns, ea, eb = _play(a, b, rounds=200)
+    _turns, ea, eb = _play(a, b, rounds=200)
     assert {ea["win"], eb["win"]} == {0, 1}
 
 
@@ -480,7 +481,7 @@ def test_bot_accepts_and_plays(server):
             bot.pump()
     assert a.got[-1]["op"] == M.BATTLE_END and len(bot.results) == 1
     assert bot.results[0]["win"] != a.got[-1]["win"]
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="login refused"):
         Bot(server, "RIVAL", pwd="9999")                       # the ID is taken
 
 
@@ -513,13 +514,13 @@ def test_two_players_in_the_queue_meet():
     server.tick()
     assert a.got == []                                          # still waiting
     b.ask(M.MATCH, mode=0)
-    ra = [m for m in a.got if m["op"] == M.MATCH_ANS][0]
-    rb = [m for m in b.got if m["op"] == M.MATCH_ANS][0]
+    ra = next(m for m in a.got if m["op"] == M.MATCH_ANS)
+    rb = next(m for m in b.got if m["op"] == M.MATCH_ANS)
     assert ra["st"] == rb["st"] == 1 and ra["mode"] == rb["mode"] == 0
     assert (ra["slot"], rb["slot"]) == (0, 1) and ra["bg"] == rb["bg"]
     assert [m["op"] for m in a.got] == [513, 514, 1024] and [m["op"] for m in b.got] == [513, 514, 1024]
     assert a.session.room is b.session.room and server.queue == []
-    turns, ea, eb = _play(a, b)
+    _turns, ea, eb = _play(a, b)
     assert ea["win"] != eb["win"]
     ca, cb = server.storage.load("ANDREY"), server.storage.load("BORYS")
     assert ca.wins + cb.wins == 1 and ca.losses + cb.losses == 1

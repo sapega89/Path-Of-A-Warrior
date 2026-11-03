@@ -92,7 +92,7 @@ def anim_frames(skill):
 def strikes(skill):
     """How many times the action calls hero_attack(0) (c.java hero actions 12-30)."""
     n = anim_frames(skill)
-    frames = range(n if n else 30)
+    frames = range(n or 30)
     if skill == 12:
         return sum(1 for f in frames if 2 < f < 6)
     if skill == 13:

@@ -80,8 +80,7 @@ def base_item(item_id, rng=None):
     if item_id < 300:
         it[keys[row[2]]] = row[3] + (rng.randint(0, row[4]) if rng else 0)
     else:
-        for k, v in zip(keys, row[2:6], strict=True):
-            it[k] = v
+        it.update(zip(keys, row[2:6], strict=True))
     return it
 
 
@@ -254,7 +253,7 @@ class LiveSession:
     def receive(self, payload):
         self.last_seen = self.server.clock()
         if len(payload) < 2:
-            return
+            return None
         op = payload[0] | payload[1] << 8
         r = Reader(payload[2:])
         h = getattr(self, "op_%d" % op, None)

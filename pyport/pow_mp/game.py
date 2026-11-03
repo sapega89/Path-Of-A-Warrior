@@ -30,8 +30,8 @@ def load():
 
 async def run(self, midlet):
     """g.run() + g.c() (g.java:414-469)."""
-    from pow_mp.mp_canvas import MpCanvas
     from pow_mp.consts import Consts
+    from pow_mp.mp_canvas import MpCanvas
     from pow_mp.net_thread import NetThread
     self.init_screen()
     MpCanvas.frame_start = system.currentTimeMillis()
@@ -62,6 +62,6 @@ async def run(self, midlet):
             if MpCanvas.state_ticks >= 25000:
                 MpCanvas.state_ticks = 100
             wait_ms = Consts.speed_frame_ms[MpCanvas.speed] - int(system.currentTimeMillis() - MpCanvas.frame_start)
-            await self.sleep_ms(wait_ms if wait_ms > 20 else 20)
+            await self.sleep_ms(max(20, wait_ms))
         self.apply_pause()
         MpCanvas.loop_started = True
