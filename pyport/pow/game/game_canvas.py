@@ -611,34 +611,34 @@ class GameCanvas(GameFields, Canvas):
             GameCanvas.draw_region(x, y, w, h, image, src_x, src_y)
 
     def tick_title(self):  # ag.java:2004-2124  (title -> Main Menu)
-        cz = GameCanvas.hero
+        hero = GameCanvas.hero
         for b in range(8):
             dir4 = consts.dir8_to_dir4[b]
-            cz.anim_0[b] = consts.hero_anim_0[dir4]
-            cz.anim_1[b] = consts.hero_anim_1[dir4]
-            cz.anim_2[b] = consts.hero_anim_2[dir4]
-            cz.anim_9[b] = consts.hero_anim_9[dir4]
-            cz.anim_3[b] = consts.hero_anim_3[dir4]
-            cz.anim_4[b] = consts.hero_anim_4[dir4]
-            cz.anim_5[b] = consts.hero_anim_5[dir4]
-            cz.anim_6[b] = consts.hero_anim_6[dir4]
-            cz.anim_7[b] = consts.hero_anim_7[dir4]
-            cz.anim_8[b] = consts.hero_anim_8[dir4]
-            cz.anim_10[b] = consts.hero_anim_10
-            cz.anim_11[b] = consts.hero_anim_11[dir4]
-            cz.anim_12[b] = consts.hero_anim_12[dir4]
-            cz.anim_13[b] = consts.hero_anim_13[dir4]
-            cz.anim_14[b] = consts.hero_anim_14[dir4]
-            cz.anim_15_19[b] = consts.hero_anim_15_19
-            cz.anim_20[b] = consts.hero_anim_20[dir4]
-            cz.anim_21[b] = consts.hero_anim_21[dir4]
-            cz.anim_22[b] = consts.hero_anim_22[dir4]
-            cz.anim_23_24[b] = consts.hero_anim_23_24
-            cz.anim_25[b] = consts.hero_anim_25[dir4]
-            cz.anim_26_27[b] = consts.hero_anim_26_27[dir4]
-            cz.anim_28[b] = consts.hero_anim_28
-            cz.anim_29[b] = consts.hero_anim_29
-            cz.anim_30[b] = consts.hero_anim_30
+            hero.anim_0[b] = consts.hero_anim_0[dir4]
+            hero.anim_1[b] = consts.hero_anim_1[dir4]
+            hero.anim_2[b] = consts.hero_anim_2[dir4]
+            hero.anim_9[b] = consts.hero_anim_9[dir4]
+            hero.anim_3[b] = consts.hero_anim_3[dir4]
+            hero.anim_4[b] = consts.hero_anim_4[dir4]
+            hero.anim_5[b] = consts.hero_anim_5[dir4]
+            hero.anim_6[b] = consts.hero_anim_6[dir4]
+            hero.anim_7[b] = consts.hero_anim_7[dir4]
+            hero.anim_8[b] = consts.hero_anim_8[dir4]
+            hero.anim_10[b] = consts.hero_anim_10
+            hero.anim_11[b] = consts.hero_anim_11[dir4]
+            hero.anim_12[b] = consts.hero_anim_12[dir4]
+            hero.anim_13[b] = consts.hero_anim_13[dir4]
+            hero.anim_14[b] = consts.hero_anim_14[dir4]
+            hero.anim_15_19[b] = consts.hero_anim_15_19
+            hero.anim_20[b] = consts.hero_anim_20[dir4]
+            hero.anim_21[b] = consts.hero_anim_21[dir4]
+            hero.anim_22[b] = consts.hero_anim_22[dir4]
+            hero.anim_23_24[b] = consts.hero_anim_23_24
+            hero.anim_25[b] = consts.hero_anim_25[dir4]
+            hero.anim_26_27[b] = consts.hero_anim_26_27[dir4]
+            hero.anim_28[b] = consts.hero_anim_28
+            hero.anim_29[b] = consts.hero_anim_29
+            hero.anim_30[b] = consts.hero_anim_30
             GameCanvas.head_anim[b][0] = consts.head_anim_0[dir4]
             GameCanvas.head_anim[b][1] = consts.head_anim_1[dir4]
             GameCanvas.head_anim[b][2] = consts.head_anim_2[dir4]
@@ -676,13 +676,13 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.char_anims[1] = GameCanvas.body_anims
         GameCanvas.char_anims[2] = GameCanvas.head_anims
         GameCanvas.char_anims[3] = GameCanvas.weapon_anims
-        ab = cz.anims
-        (ab[0], ab[1], ab[2], ab[3], ab[4], ab[5], ab[6], ab[7], ab[8], ab[9]) = (
-            cz.anim_0, cz.anim_1, cz.anim_2, cz.anim_3, cz.anim_4, cz.anim_5, cz.anim_6, cz.anim_7, cz.anim_8, cz.anim_9)
-        (ab[10], ab[11], ab[12], ab[13], ab[14]) = (cz.anim_10, cz.anim_11, cz.anim_12, cz.anim_13, cz.anim_14)
-        (ab[15], ab[16], ab[17], ab[18], ab[19]) = (cz.anim_15_19, cz.anim_15_19, cz.anim_15_19, cz.anim_15_19, cz.anim_15_19)
-        (ab[20], ab[21], ab[22], ab[23], ab[24]) = (cz.anim_20, cz.anim_21, cz.anim_22, cz.anim_23_24, cz.anim_23_24)
-        (ab[25], ab[26], ab[27], ab[28], ab[29], ab[30]) = (cz.anim_25, cz.anim_26_27, cz.anim_26_27, cz.anim_28, cz.anim_29, cz.anim_30)
+        anims = hero.anims
+        (anims[0], anims[1], anims[2], anims[3], anims[4], anims[5], anims[6], anims[7], anims[8], anims[9]) = (
+            hero.anim_0, hero.anim_1, hero.anim_2, hero.anim_3, hero.anim_4, hero.anim_5, hero.anim_6, hero.anim_7, hero.anim_8, hero.anim_9)
+        (anims[10], anims[11], anims[12], anims[13], anims[14]) = (hero.anim_10, hero.anim_11, hero.anim_12, hero.anim_13, hero.anim_14)
+        (anims[15], anims[16], anims[17], anims[18], anims[19]) = (hero.anim_15_19, hero.anim_15_19, hero.anim_15_19, hero.anim_15_19, hero.anim_15_19)
+        (anims[20], anims[21], anims[22], anims[23], anims[24]) = (hero.anim_20, hero.anim_21, hero.anim_22, hero.anim_23_24, hero.anim_23_24)
+        (anims[25], anims[26], anims[27], anims[28], anims[29], anims[30]) = (hero.anim_25, hero.anim_26_27, hero.anim_26_27, hero.anim_28, hero.anim_29, hero.anim_30)
         GameCanvas.view_size.x = 240
         GameCanvas.view_size.y = 243
         GameCanvas.view_tiles.x = i16(GameCanvas.view_size.x // 27 + (1 if GameCanvas.view_size.x % 27 > 0 else 0))
@@ -709,7 +709,7 @@ class GameCanvas(GameFields, Canvas):
             GameCanvas.menu[1] = 1
 
     def load_game(self):  # ag.java:2126-2214  (load save "gamevil_pow_data")
-        cz = GameCanvas.hero
+        hero = GameCanvas.hero
         GameCanvas.save_pos = 0
         try:
             recordStore = RecordStore.openRecordStore("gamevil_pow_data", False)
@@ -721,16 +721,16 @@ class GameCanvas(GameFields, Canvas):
             pass
         save_end = GameCanvas.save_pos
         if GameCanvas.save_pos != 0:
-            cF = GameCanvas.save_buf
+            buf = GameCanvas.save_buf
             reserved = [0] * 16
             name_len = 0
-            while name_len < 8 and cF[2 + name_len] != 32:
+            while name_len < 8 and buf[2 + name_len] != 32:
                 name_len += 1
             name_utf = bytearray(name_len)
             for i in range(name_len):
-                name_utf[i] = cF[2 + i]
-            cz.name = GameCanvas.read_utf(name_utf, 0, name_len)
-            GameCanvas.save_flag = i8(cF[18])
+                name_utf[i] = buf[2 + i]
+            hero.name = GameCanvas.read_utf(name_utf, 0, name_len)
+            GameCanvas.save_flag = i8(buf[18])
             GameCanvas.save_pos = 19
             GameCanvas.lord = GameCanvas.read_byte()
             GameCanvas.mission = GameCanvas.read_byte()
@@ -748,50 +748,50 @@ class GameCanvas(GameFields, Canvas):
             for i in range(25):
                 GameCanvas.shop[i] = self.read_item()
             GameCanvas.chapter = GameCanvas.read_byte()
-            cz.pos[0].x = GameCanvas.read_short()
-            cz.pos[0].y = GameCanvas.read_short()
+            hero.pos[0].x = GameCanvas.read_short()
+            hero.pos[0].y = GameCanvas.read_short()
             # Java int division (values are positions >= 0, so // == /)
-            cz.pos[0].x = i16((cz.pos[0].x // 27 // 7 * 7 + 4) * 27 + 8)
-            cz.pos[0].y = i16((cz.pos[0].y // 27 // 7 * 7 + 4) * 27 + 8)
+            hero.pos[0].x = i16((hero.pos[0].x // 27 // 7 * 7 + 4) * 27 + 8)
+            hero.pos[0].y = i16((hero.pos[0].y // 27 // 7 * 7 + 4) * 27 + 8)
             for i in range(22):
-                cz.mission_progress[i] = GameCanvas.read_byte()
-            cz.live_stat1 = GameCanvas.read_byte()
-            cz.live_stat2 = GameCanvas.read_byte()
-            cz.level = GameCanvas.read_byte()
+                hero.mission_progress[i] = GameCanvas.read_byte()
+            hero.live_stat1 = GameCanvas.read_byte()
+            hero.live_stat2 = GameCanvas.read_byte()
+            hero.level = GameCanvas.read_byte()
             if config.ORIG_BUG["B2"]:
                 # ORIG-BUG B2: the level is one byte in the save (G(cz.l), ag.java:2908) read back
                 # signed, so Lv128+ loaded as -128..; the rest of the game keeps it as an int
-                cz.level &= 0xFF
-            cz.base_attack = GameCanvas.read_short()
-            cz.base_defense = GameCanvas.read_short()
-            cz.base_hp = GameCanvas.read_short()
-            cz.hp = GameCanvas.read_short()
-            cz.base_mp = GameCanvas.read_short()
-            cz.mp = GameCanvas.read_short()
-            cz.gold = GameCanvas.read_int()
+                hero.level &= 0xFF
+            hero.base_attack = GameCanvas.read_short()
+            hero.base_defense = GameCanvas.read_short()
+            hero.base_hp = GameCanvas.read_short()
+            hero.hp = GameCanvas.read_short()
+            hero.base_mp = GameCanvas.read_short()
+            hero.mp = GameCanvas.read_short()
+            hero.gold = GameCanvas.read_int()
             if GameCanvas.cheat:
-                cz.gold = 555000
+                hero.gold = 555000
             if config.GOLD is not None:   # PORT-EXTRA config.GOLD (POW_GOLD=N)
-                cz.gold = i32(config.GOLD)
-            cz.fame = GameCanvas.read_int()
-            cz.exp = GameCanvas.read_int()
-            cz.kills = GameCanvas.read_short()
-            cz.stat_points = GameCanvas.read_short()
-            cz.live_registered = GameCanvas.read_byte()
+                hero.gold = i32(config.GOLD)
+            hero.fame = GameCanvas.read_int()
+            hero.exp = GameCanvas.read_int()
+            hero.kills = GameCanvas.read_short()
+            hero.stat_points = GameCanvas.read_short()
+            hero.live_registered = GameCanvas.read_byte()
             for i in range(5):
-                cz.hotkeys[i] = GameCanvas.read_byte()
+                hero.hotkeys[i] = GameCanvas.read_byte()
             for i in range(19):
-                cz.skill_levels[i] = GameCanvas.read_byte()
+                hero.skill_levels[i] = GameCanvas.read_byte()
             for i in range(9):
-                cz.equipped[i] = self.read_item()
+                hero.equipped[i] = self.read_item()
             for i in range(25):
-                cz.backpack[i] = self.read_item()
+                hero.backpack[i] = self.read_item()
             for i in range(5):
-                cz.quick_slots[i].item = GameCanvas.read_short()
-                cz.quick_slots[i].count = GameCanvas.read_byte()
-            cz.quick_keys[0] = GameCanvas.read_byte()
-            cz.quick_keys[1] = GameCanvas.read_byte()
-            cz.head = GameCanvas.read_byte()
+                hero.quick_slots[i].item = GameCanvas.read_short()
+                hero.quick_slots[i].count = GameCanvas.read_byte()
+            hero.quick_keys[0] = GameCanvas.read_byte()
+            hero.quick_keys[1] = GameCanvas.read_byte()
+            hero.head = GameCanvas.read_byte()
             GameCanvas.play_time = GameCanvas.read_int()
             GameCanvas.live_time = GameCanvas.read_int()
             GameCanvas.live_gifts = GameCanvas.read_byte()
@@ -812,49 +812,49 @@ class GameCanvas(GameFields, Canvas):
     BACKPACK_EXTRA_MARK = 0x42
 
     def read_backpack_extra(self, save_end):
-        cz = GameCanvas.hero
+        hero = GameCanvas.hero
         for b in range(25, config.BACKPACK_SIZE):
-            cz.backpack[b] = Item()
-        cF = GameCanvas.save_buf
-        if GameCanvas.save_pos + 2 > save_end or cF[GameCanvas.save_pos] & 0xFF != GameCanvas.BACKPACK_EXTRA_MARK:
+            hero.backpack[b] = Item()
+        buf = GameCanvas.save_buf
+        if GameCanvas.save_pos + 2 > save_end or buf[GameCanvas.save_pos] & 0xFF != GameCanvas.BACKPACK_EXTRA_MARK:
             return
-        count = cF[GameCanvas.save_pos + 1] & 0xFF
+        count = buf[GameCanvas.save_pos + 1] & 0xFF
         GameCanvas.save_pos += 2
         for b in range(count):
             if GameCanvas.save_pos + 11 > save_end:
                 break
             it = self.read_item()
             if 25 + b < config.BACKPACK_SIZE:
-                cz.backpack[25 + b] = it
+                hero.backpack[25 + b] = it
             else:
                 # a save of a bigger backpack than this build has: keep the item in the first free cell
-                free = next((s for s in range(config.BACKPACK_SIZE) if cz.backpack[s].id == 0), None)
+                free = next((s for s in range(config.BACKPACK_SIZE) if hero.backpack[s].id == 0), None)
                 if free is not None and it.id != 0:
-                    cz.backpack[free] = it
+                    hero.backpack[free] = it
 
     def write_backpack_extra(self):
-        cz = GameCanvas.hero
+        hero = GameCanvas.hero
         count = config.BACKPACK_SIZE - 25
         if count <= 0:
             return
         GameCanvas.write_byte(GameCanvas.BACKPACK_EXTRA_MARK)
         GameCanvas.write_byte(count)
         for b in range(25, config.BACKPACK_SIZE):
-            self.write_item(cz.backpack[b])
+            self.write_item(hero.backpack[b])
 
     @staticmethod
     def read_long():  # ag.java:2216-2230  (u64 LE; bytes 4..7 are sign-extended then masked)
-        cF, cG = GameCanvas.save_buf, GameCanvas.save_pos
+        buf, pos = GameCanvas.save_buf, GameCanvas.save_pos
         value = 0
         for nth in range(8):
-            value |= (cF[cG + nth] & 0xFF) << (8 * nth)
+            value |= (buf[pos + nth] & 0xFF) << (8 * nth)
         GameCanvas.save_pos += 8
         return value - (1 << 64) if value & (1 << 63) else value
 
     @staticmethod
     def read_int():  # ag.java:2232-2237
-        cF, cG = GameCanvas.save_buf, GameCanvas.save_pos
-        value = cF[cG] & 0xFF | cF[cG + 1] << 8 & 0xFF00 | cF[cG + 2] << 16 & 0xFF0000 | cF[cG + 3] << 24 & 0xFF000000
+        buf, pos = GameCanvas.save_buf, GameCanvas.save_pos
+        value = buf[pos] & 0xFF | buf[pos + 1] << 8 & 0xFF00 | buf[pos + 2] << 16 & 0xFF0000 | buf[pos + 3] << 24 & 0xFF000000
         GameCanvas.save_pos += 4
         return i32(value)
 
@@ -1097,9 +1097,9 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.redraw = 1
 
     @staticmethod
-    def draw_text_centred_at(text, y, dx):  # ag.java:2743-2746  (centred text)
+    def draw_text_centred_at(text, y, view_x):  # ag.java:2743-2746  (centred text)
         y += 2
-        Gfx.draw_string(text, GameCanvas.view_cx + GameCanvas.view_x + dx, y + GameCanvas.view_y, 1)
+        Gfx.draw_string(text, GameCanvas.view_cx + GameCanvas.view_x + view_x, y + GameCanvas.view_y, 1)
 
     def draw_text_at(self, text, y, unused):  # ag.java:2748-2750
         GameCanvas.draw_text_centred_at(text, y, 0)
@@ -1320,18 +1320,18 @@ class GameCanvas(GameFields, Canvas):
 
     @staticmethod
     def update_hero_stats():  # ag.java:1759-1773  (equipment bonuses -> derived stats)
-        cz = GameCanvas.hero
-        cz.gear_attack = cz.gear_defense = cz.gear_hp = cz.gear_mp = 0
+        hero = GameCanvas.hero
+        hero.gear_attack = hero.gear_defense = hero.gear_hp = hero.gear_mp = 0
         for b in range(9):
-            if cz.equipped[b].id != 0:
-                cz.gear_attack += cz.equipped[b].attack
-                cz.gear_defense += cz.equipped[b].defense
-                cz.gear_hp += cz.equipped[b].hp
-                cz.gear_mp += cz.equipped[b].mp
-        cz.attack = cz.base_attack + cz.gear_attack
-        cz.defense = cz.base_defense + cz.gear_defense
-        cz.max_hp = cz.hp = cz.base_hp + cz.gear_hp
-        cz.max_mp = cz.mp = cz.base_mp + cz.gear_mp
+            if hero.equipped[b].id != 0:
+                hero.gear_attack += hero.equipped[b].attack
+                hero.gear_defense += hero.equipped[b].defense
+                hero.gear_hp += hero.equipped[b].hp
+                hero.gear_mp += hero.equipped[b].mp
+        hero.attack = hero.base_attack + hero.gear_attack
+        hero.defense = hero.base_defense + hero.gear_defense
+        hero.max_hp = hero.hp = hero.base_hp + hero.gear_hp
+        hero.max_mp = hero.mp = hero.base_mp + hero.gear_mp
 
     @staticmethod
     def move_letter_cursor(key):  # ag.java:1775-1792  (name entry: move the cursor over the 2x14 letter grid)
@@ -1430,20 +1430,20 @@ class GameCanvas(GameFields, Canvas):
                 return end_x
 
     def save_game(self):  # ag.java:2871-2961  (write the save "gamevil_pow_data")
-        cz = GameCanvas.hero
+        hero = GameCanvas.hero
         reserved = [0] * 16
-        name = cz.name.encode("latin-1")
+        name = hero.name.encode("latin-1")
         if len(GameCanvas.save_buf) < 2000:
             # PORT-EXTRA: a loaded save can be shorter than ag.cF (965 bytes, e.g. tools/shot.py's);
             # the backpack block written after it needs the room of the 2000-byte buffer
             GameCanvas.save_buf = bytearray(GameCanvas.save_buf) + bytearray(2000 - len(GameCanvas.save_buf))
-        cF = GameCanvas.save_buf
+        buf = GameCanvas.save_buf
         for b in range(8):
             if b < len(name):
-                cF[2 + b] = name[b]
+                buf[2 + b] = name[b]
             else:
-                cF[2 + b] = 32
-        cF[18] = GameCanvas.save_flag & 0xFF
+                buf[2 + b] = 32
+        buf[18] = GameCanvas.save_flag & 0xFF
         GameCanvas.save_pos = 19
         GameCanvas.write_byte(GameCanvas.lord)
         GameCanvas.write_byte(GameCanvas.mission)
@@ -1464,36 +1464,36 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.write_short((idiv(GameCanvas.view_tx + 2, 7) * 7 + 4) * 27)
         GameCanvas.write_short((idiv(GameCanvas.view_ty + 2, 7) * 7 + 4) * 27)
         for b in range(22):
-            GameCanvas.write_byte(cz.mission_progress[b])
-        GameCanvas.write_byte(cz.live_stat1)
-        GameCanvas.write_byte(cz.live_stat2)
-        GameCanvas.write_byte(cz.level)
-        GameCanvas.write_short(cz.base_attack)
-        GameCanvas.write_short(cz.base_defense)
-        GameCanvas.write_short(cz.base_hp)
-        GameCanvas.write_short(cz.hp)
-        GameCanvas.write_short(cz.base_mp)
-        GameCanvas.write_short(cz.mp)
-        GameCanvas.write_int(cz.gold)
-        GameCanvas.write_int(cz.fame)
-        GameCanvas.write_int(cz.exp)
-        GameCanvas.write_short(cz.kills)
-        GameCanvas.write_short(cz.stat_points)
-        GameCanvas.write_byte(cz.live_registered)
+            GameCanvas.write_byte(hero.mission_progress[b])
+        GameCanvas.write_byte(hero.live_stat1)
+        GameCanvas.write_byte(hero.live_stat2)
+        GameCanvas.write_byte(hero.level)
+        GameCanvas.write_short(hero.base_attack)
+        GameCanvas.write_short(hero.base_defense)
+        GameCanvas.write_short(hero.base_hp)
+        GameCanvas.write_short(hero.hp)
+        GameCanvas.write_short(hero.base_mp)
+        GameCanvas.write_short(hero.mp)
+        GameCanvas.write_int(hero.gold)
+        GameCanvas.write_int(hero.fame)
+        GameCanvas.write_int(hero.exp)
+        GameCanvas.write_short(hero.kills)
+        GameCanvas.write_short(hero.stat_points)
+        GameCanvas.write_byte(hero.live_registered)
         for b in range(5):
-            GameCanvas.write_byte(cz.hotkeys[b])
+            GameCanvas.write_byte(hero.hotkeys[b])
         for b in range(19):
-            GameCanvas.write_byte(cz.skill_levels[b])
+            GameCanvas.write_byte(hero.skill_levels[b])
         for b in range(9):
-            self.write_item(cz.equipped[b])
+            self.write_item(hero.equipped[b])
         for b in range(25):
-            self.write_item(cz.backpack[b])
+            self.write_item(hero.backpack[b])
         for b in range(5):
-            GameCanvas.write_short(cz.quick_slots[b].item)
-            GameCanvas.write_byte(cz.quick_slots[b].count)
-        GameCanvas.write_byte(cz.quick_keys[0])
-        GameCanvas.write_byte(cz.quick_keys[1])
-        GameCanvas.write_byte(cz.head)
+            GameCanvas.write_short(hero.quick_slots[b].item)
+            GameCanvas.write_byte(hero.quick_slots[b].count)
+        GameCanvas.write_byte(hero.quick_keys[0])
+        GameCanvas.write_byte(hero.quick_keys[1])
+        GameCanvas.write_byte(hero.head)
         GameCanvas.write_int(i32(GameCanvas.clock[0] - GameCanvas.play_time))
         GameCanvas.write_int(i32(GameCanvas.live_time))
         GameCanvas.write_byte(GameCanvas.live_gifts)
@@ -1506,13 +1506,13 @@ class GameCanvas(GameFields, Canvas):
         for b in range(4):
             GameCanvas.write_int(0)
         self.write_backpack_extra()
-        cF[0] = GameCanvas.save_pos & 0xFF
-        cF[1] = GameCanvas.save_pos >> 8 & 0xFF
+        buf[0] = GameCanvas.save_pos & 0xFF
+        buf[1] = GameCanvas.save_pos >> 8 & 0xFF
         try:
             recordStore = RecordStore.openRecordStore("gamevil_pow_data", True)
             if recordStore.getNumRecords() == 0:
-                recordStore.addRecord(cF, 0, len(cF))
-            recordStore.setRecord(1, cF, 0, len(cF))
+                recordStore.addRecord(buf, 0, len(buf))
+            recordStore.setRecord(1, buf, 0, len(buf))
         except Exception:
             pass
         return bool(GameCanvas.has_save())
@@ -1584,78 +1584,78 @@ class GameCanvas(GameFields, Canvas):
         self.new_hero()
 
     def new_hero(self):  # ag.java:3222-3273  (fresh hero)
-        cz = GameCanvas.hero
+        hero = GameCanvas.hero
         GameCanvas.save_flag = 0
         GameCanvas.talk_count = 0
         GameCanvas.missions_done = 35113052110447
         GameCanvas.lords_done = 0
         GameCanvas.score = 0
         GameCanvas.chapter = 0
-        cz.head = 0
-        cz.name = ""
+        hero.head = 0
+        hero.name = ""
         for b in range(45):
             GameCanvas.generals[1][b] = 0
             GameCanvas.generals[0][b] = 0
         GameCanvas.general_count = 0
         for b in range(8):
             GameCanvas.stats[b] = 0
-        cz.level = 1
+        hero.level = 1
         GameCanvas.reset_base_stats()
-        cz.fame = 0
-        cz.gold = 0
-        cz.exp = 0
-        cz.live_registered = 0
+        hero.fame = 0
+        hero.gold = 0
+        hero.exp = 0
+        hero.live_registered = 0
         for b in range(22):
-            cz.mission_progress[b] = 0
-        cz.live_stat1 = 0
-        cz.live_stat2 = 0
+            hero.mission_progress[b] = 0
+        hero.live_stat1 = 0
+        hero.live_stat2 = 0
         for b in range(5):
-            cz.hotkeys[b] = 0
-            cz.quick_slots[b].item = 0
-            cz.quick_slots[b].count = 0
+            hero.hotkeys[b] = 0
+            hero.quick_slots[b].item = 0
+            hero.quick_slots[b].count = 0
         for b in range(19):
-            cz.skill_levels[b] = 0
-        cz.skill_levels[0] = 1
-        cz.skill_levels[5] = 1
-        cz.hotkeys[0] = 12
-        cz.hotkeys[1] = 17
+            hero.skill_levels[b] = 0
+        hero.skill_levels[0] = 1
+        hero.skill_levels[5] = 1
+        hero.hotkeys[0] = 12
+        hero.hotkeys[1] = 17
         if GameCanvas.cheat:
             for b in range(19):
-                cz.skill_levels[b] = 1
-            cz.skill_levels[18] = 1
+                hero.skill_levels[b] = 1
+            hero.skill_levels[18] = 1
         # z.a(): called through the class (in Java the field z.a shadowed it)
         for b in range(9):
-            Item.clear(cz.equipped[b])
+            Item.clear(hero.equipped[b])
         for b in range(config.BACKPACK_SIZE):
-            Item.clear(cz.backpack[b])
+            Item.clear(hero.backpack[b])
         self.give_item(116, 0)
-        self.swap_items(cz.equipped[0], cz.backpack[0])
-        cz.quick_keys[0] = 0
-        cz.quick_keys[1] = 1
+        self.swap_items(hero.equipped[0], hero.backpack[0])
+        hero.quick_keys[0] = 0
+        hero.quick_keys[1] = 1
 
     @staticmethod
     def reset_base_stats():  # ag.java:3275-3284  (base stats, 5 free points)
         from pow.game import hero_classes
-        cz = GameCanvas.hero
+        hero = GameCanvas.hero
         # PORT-EXTRA: the stats of the chosen head (pow/game/hero_classes.py); the original
         # gave every head ATK 5 / DEF 4 / HP 30 / MP 10, which is still head 0
-        hero_classes.set_base_stats(cz)
-        cz.stat_points = 5
+        hero_classes.set_base_stats(hero)
+        hero.stat_points = 5
         GameCanvas.redraw = 1
 
     def give_item(self, item_id, count):  # ag.java:3286-3360  (give an item / potion / gold)
-        cz = GameCanvas.hero
+        hero = GameCanvas.hero
         b = 0
         if item_id < 100:
             if count != 0:
                 free_slot = -1
                 b = 0
                 while b < 5:
-                    if cz.quick_slots[b].item == item_id:
-                        if cz.quick_slots[b].count > 4:
+                    if hero.quick_slots[b].item == item_id:
+                        if hero.quick_slots[b].count > 4:
                             return 0
                         break
-                    if 0 == cz.quick_slots[b].item and free_slot < 0:
+                    if 0 == hero.quick_slots[b].item and free_slot < 0:
                         free_slot = b
                     b += 1
                 if free_slot > -1 and b > 4:
@@ -1663,52 +1663,52 @@ class GameCanvas(GameFields, Canvas):
                 if b > 4:
                     return 0
             else:
-                cz.quick_slots[GameCanvas.effect.slot].count = i16(cz.quick_slots[GameCanvas.effect.slot].count - 1)
-                if cz.quick_slots[GameCanvas.effect.slot].count < 1:
-                    cz.quick_slots[GameCanvas.effect.slot].item = 0
+                hero.quick_slots[GameCanvas.effect.slot].count = i16(hero.quick_slots[GameCanvas.effect.slot].count - 1)
+                if hero.quick_slots[GameCanvas.effect.slot].count < 1:
+                    hero.quick_slots[GameCanvas.effect.slot].item = 0
                 return 1
         elif item_id < 10000:
             b = 0
-            while b < config.BACKPACK_SIZE and 0 != cz.backpack[b].id:
+            while b < config.BACKPACK_SIZE and 0 != hero.backpack[b].id:
                 b += 1
             if b > config.BACKPACK_SIZE - 1:
                 return 0
-            cz.backpack[b].id = i16(item_id)
-            cz.backpack[b].attack = 0
-            cz.backpack[b].defense = 0
-            cz.backpack[b].hp = 0
-            cz.backpack[b].mp = 0
-            cz.backpack[b].enchant = 0
+            hero.backpack[b].id = i16(item_id)
+            hero.backpack[b].attack = 0
+            hero.backpack[b].defense = 0
+            hero.backpack[b].hp = 0
+            hero.backpack[b].mp = 0
+            hero.backpack[b].enchant = 0
         if item_id < 10000:
             GameCanvas.menus.load_item_def(item_id)
         if item_id < 100:
-            cz.quick_slots[b].item = i16(item_id)
-            cz.quick_slots[b].count = i16(cz.quick_slots[b].count + 1)
+            hero.quick_slots[b].item = i16(item_id)
+            hero.quick_slots[b].count = i16(hero.quick_slots[b].count + 1)
         elif item_id < 300:
             if count != 0:
                 bonus = i16(GameCanvas.gear_def.bonus + self.rand(GameCanvas.gear_def.bonus_range + 1))
             else:
                 bonus = GameCanvas.gear_def.bonus
             if GameCanvas.gear_def.bonus_stat == 0:
-                cz.backpack[b].attack = bonus
+                hero.backpack[b].attack = bonus
             elif GameCanvas.gear_def.bonus_stat == 1:
-                cz.backpack[b].defense = bonus
+                hero.backpack[b].defense = bonus
             elif GameCanvas.gear_def.bonus_stat == 2:
-                cz.backpack[b].hp = bonus
+                hero.backpack[b].hp = bonus
             elif GameCanvas.gear_def.bonus_stat == 3:
-                cz.backpack[b].mp = bonus
+                hero.backpack[b].mp = bonus
         elif item_id < 500:
-            cz.backpack[b].attack = GameCanvas.treasure_def.attack
-            cz.backpack[b].defense = i16(GameCanvas.treasure_def.defense)
-            cz.backpack[b].hp = GameCanvas.treasure_def.hp
-            cz.backpack[b].mp = i16(GameCanvas.treasure_def.mp)
+            hero.backpack[b].attack = GameCanvas.treasure_def.attack
+            hero.backpack[b].defense = i16(GameCanvas.treasure_def.defense)
+            hero.backpack[b].hp = GameCanvas.treasure_def.hp
+            hero.backpack[b].mp = i16(GameCanvas.treasure_def.mp)
         elif item_id < 10000:
-            cz.backpack[b].attack = GameCanvas.rare_def.attack
-            cz.backpack[b].defense = i16(GameCanvas.rare_def.defense)
-            cz.backpack[b].hp = GameCanvas.rare_def.hp
-            cz.backpack[b].mp = i16(GameCanvas.rare_def.mp)
+            hero.backpack[b].attack = GameCanvas.rare_def.attack
+            hero.backpack[b].defense = i16(GameCanvas.rare_def.defense)
+            hero.backpack[b].hp = GameCanvas.rare_def.hp
+            hero.backpack[b].mp = i16(GameCanvas.rare_def.mp)
         else:
-            cz.gold += item_id - 10000
+            hero.gold += item_id - 10000
         return 1
 
     @staticmethod
@@ -1965,7 +1965,7 @@ class GameCanvas(GameFields, Canvas):
         line_w = 0
         b = 0
         GameCanvas.text_line_count[slot] = 0
-        dp = GameCanvas.text_lines[slot] = [None] * 120
+        lines = GameCanvas.text_lines[slot] = [None] * 120
         size = len(text)
         pos = 0
         while pos <= size:
@@ -1975,7 +1975,7 @@ class GameCanvas(GameFields, Canvas):
                 if (ch == 32 or ch == 124) and line_w - GameCanvas.char_width(ch) >= width:
                     if break_at < line_start:
                         break_at = pos
-                    dp[b] = GameCanvas.read_utf(text, line_start, break_at)
+                    lines[b] = GameCanvas.read_utf(text, line_start, break_at)
                     b += 1
                     line_start = break_at + 1
                     pos = line_start - 1
@@ -1983,17 +1983,17 @@ class GameCanvas(GameFields, Canvas):
                 elif ch == 32:
                     break_at = pos
                 elif ch == 124:
-                    dp[b] = GameCanvas.read_utf(text, line_start, pos)
+                    lines[b] = GameCanvas.read_utf(text, line_start, pos)
                     b += 1
                     line_start = break_at = pos + 1
                     line_w = 0
             elif line_w > width:
-                dp[b] = GameCanvas.read_utf(text, line_start, break_at)
+                lines[b] = GameCanvas.read_utf(text, line_start, break_at)
                 b += 1
-                dp[b] = GameCanvas.read_utf(text, break_at + 1, pos)
+                lines[b] = GameCanvas.read_utf(text, break_at + 1, pos)
                 b += 1
             elif break_at != size - 1:
-                dp[b] = GameCanvas.read_utf(text, line_start, pos)
+                lines[b] = GameCanvas.read_utf(text, line_start, pos)
                 b += 1
             pos += 1
         if b >= 1:
@@ -2104,10 +2104,10 @@ class GameCanvas(GameFields, Canvas):
     @staticmethod
     def describe_shop_item(item, with_name, price):  # ag.java:1454-1457  (item description in the shop)
         # dF.a() (ak.java:10-17) - the method is shadowed by the field ak.a in Python
-        dF = GameCanvas.info_box
-        dF.shown = 0
-        dF.rect.x = dF.rect.y = dF.rect.w = dF.rect.h = 0
-        dF.text = ""
+        info = GameCanvas.info_box
+        info.shown = 0
+        info.rect.x = info.rect.y = info.rect.w = info.rect.h = 0
+        info.text = ""
         GameCanvas.menus.draw_shop_description(item, 0, 0, 200, 22, price, with_name)
 
     @staticmethod
@@ -2181,20 +2181,20 @@ class GameCanvas(GameFields, Canvas):
         self.draw_map_region(GameCanvas.images[32], GameCanvas.view_cx - 69 - GameCanvas.view_x, GameCanvas.view_cy - 80, GameCanvas.images[32].getWidth(), GameCanvas.images[32].getHeight(), 0, 0)
 
     def draw_description(self, what, x, y, w, h):  # ag.java:1293-1352  (description of item / skill)
-        cz = GameCanvas.hero
-        dF = GameCanvas.info_box
+        hero = GameCanvas.hero
+        info = GameCanvas.info_box
         attack = defense = hp = mp = enchant = min_level = 0
         str_ = ""
-        dF.rect.x = x
-        dF.rect.y = y
-        dF.rect.w = w
-        dF.rect.h = h
-        dF.text = ""
+        info.rect.x = x
+        info.rect.y = y
+        info.rect.w = w
+        info.rect.h = h
+        info.text = ""
         if what > 999:
             if what < 1100:
-                it = cz.equipped[what - 1000]
+                it = hero.equipped[what - 1000]
             elif what < 1200:
-                it = cz.backpack[what - 1100]
+                it = hero.backpack[what - 1100]
             else:
                 it = None
             if it is not None:
@@ -2206,31 +2206,31 @@ class GameCanvas(GameFields, Canvas):
                 enchant = i16(it.enchant)
                 str_ = GameCanvas.special_suffix(it.id)
             elif what < 2000:
-                dF.text = GameCanvas.describe_potion(cz.quick_slots[what - 1200].item)
+                info.text = GameCanvas.describe_potion(hero.quick_slots[what - 1200].item)
             else:
-                dF.text = self.describe_skill(what - 2000)
-        if dF.text != "":
+                info.text = self.describe_skill(what - 2000)
+        if info.text != "":
             if str_ != "":
-                dF.text += str_
+                info.text += str_
             if attack != 0:
-                dF.text += " / ATK+" + str(attack)
+                info.text += " / ATK+" + str(attack)
             if defense != 0:
-                dF.text += " / DEF+" + str(defense)
+                info.text += " / DEF+" + str(defense)
             if hp != 0:
-                dF.text += " / HP+" + str(hp)
+                info.text += " / HP+" + str(hp)
             if mp != 0:
-                dF.text += " / MP+" + str(mp)
+                info.text += " / MP+" + str(mp)
             if enchant != 0:
-                dF.text += " / Enchanted Lv" + str(enchant)
+                info.text += " / Enchanted Lv" + str(enchant)
             if min_level != 0:
-                dF.text += " / Available at Lv" + str(min_level)
-            GameCanvas.text_width = GameCanvas.measure_text(dF.text)
+                info.text += " / Available at Lv" + str(min_level)
+            GameCanvas.text_width = GameCanvas.measure_text(info.text)
             if GameCanvas.text_width > w - 2:
-                dF.shown = 1
-                dF.text_x = i16(x + 20)
+                info.shown = 1
+                info.text_x = i16(x + 20)
                 return
-            dF.shown = 0
-            dF.text_x = i16(x + 1)
+            info.shown = 0
+            info.text_x = i16(x + 1)
 
     def describe_skill(self, skill):  # ag.java:1354-1368  (skill description)
         text = ""
@@ -2451,8 +2451,8 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.gc()
 
     def enter_map(self):  # ag.java:872-967  (enter the map: bV = 3)
-        cz = GameCanvas.hero
-        cz.weapon_kind = GameCanvas.item_slot_type(cz.equipped[0].id)
+        hero = GameCanvas.hero
+        hero.weapon_kind = GameCanvas.item_slot_type(hero.equipped[0].id)
         GameCanvas.stop_sound()
         self.free_hero_sprites()
         GameCanvas.menus.free_shop_images()
@@ -2470,38 +2470,38 @@ class GameCanvas(GameFields, Canvas):
         if GameCanvas.save_flag != 0:
             bool_ = 1
         else:
-            if F13 and cz.pos[1] is not cz.pos[0]:
+            if F13 and hero.pos[1] is not hero.pos[0]:
                 # DECOMP-FIX F13: the start position is written into cz.a[1], but the map
                 # (c.f(), c.a(5 ints)) reads cz.a[0]. Both are the same object once ar.aC()
                 # (cz.a[1] = cz.a[0]) has run; on the first map after start-up they are not,
                 # and the hero would stand at (0, 0).
-                cz.pos[1] = cz.pos[0]
-            cz.pos[1].x = i16(GameCanvas.lords[GameCanvas.mission].start_x * 27 + 12)
-            cz.pos[1].y = i16(GameCanvas.lords[GameCanvas.mission].start_y * 27 + 20)
+                hero.pos[1] = hero.pos[0]
+            hero.pos[1].x = i16(GameCanvas.lords[GameCanvas.mission].start_x * 27 + 12)
+            hero.pos[1].y = i16(GameCanvas.lords[GameCanvas.mission].start_y * 27 + 20)
             GameCanvas.rooms_visited = 1
             GameCanvas.mission_exp = 0
             bool_ = 0
-        cz.dir[1] = cz.facing = 0
-        cz.dir[0] = cz.facing = 0
-        cz.action[1] = 0
-        cz.action[0] = 0
-        cz.frame[1] = 0
-        cz.frame[0] = 0
-        cz.hit_fx_kind = 0
-        cz.idle_ticks = 20
-        cz.sprite_frame = 0
-        cz.on_fire = 0
-        cz.kills = 0
-        cz.kills_shown = 0
-        cz.attack_buff = 0
-        cz.defense_buff = 0
-        cz.attack_buff_ticks = 0
-        cz.defense_buff_ticks = 0
-        cz.hurt_ticks = 0
+        hero.dir[1] = hero.facing = 0
+        hero.dir[0] = hero.facing = 0
+        hero.action[1] = 0
+        hero.action[0] = 0
+        hero.frame[1] = 0
+        hero.frame[0] = 0
+        hero.hit_fx_kind = 0
+        hero.idle_ticks = 20
+        hero.sprite_frame = 0
+        hero.on_fire = 0
+        hero.kills = 0
+        hero.kills_shown = 0
+        hero.attack_buff = 0
+        hero.defense_buff = 0
+        hero.attack_buff_ticks = 0
+        hero.defense_buff_ticks = 0
+        hero.hurt_ticks = 0
         GameCanvas.update_hero_stats()
         if GameCanvas.cheat:
-            cz.gold = 500000
-            cz.max_hp = cz.hp = cz.base_hp = cz.base_attack = cz.attack = cz.base_defense = cz.defense = cz.max_mp = cz.mp = cz.base_mp = 2000
+            hero.gold = 500000
+            hero.max_hp = hero.hp = hero.base_hp = hero.base_attack = hero.attack = hero.base_defense = hero.defense = hero.max_mp = hero.mp = hero.base_mp = 2000
         GameCanvas.hero_fx_kind = 0
         GameCanvas.hero_fx_count = 1
         GameCanvas.map_mode.mode = 0
@@ -2517,11 +2517,11 @@ class GameCanvas(GameFields, Canvas):
                 GameCanvas.enemy_frames[b] = self.load_frames(82 + b)
         self.load_lord_map(bool_)
         self.load_enemy_sprites()
-        GameCanvas.hero_weapon_frames[cz.weapon_kind] = self.load_frames(87 + (cz.weapon_kind << 2))
-        cz.head_frames2 = self.load_frames(51 + cz.head)
-        cz.body_frames2 = self.load_frames(46)
-        GameCanvas.hero_body_frames[cz.weapon_kind] = self.load_frames(89 + (cz.weapon_kind << 2))
-        GameCanvas.images[40 + cz.weapon_kind] = self.load_image(GameCanvas.scr_char.get(42 + cz.weapon_kind))
+        GameCanvas.hero_weapon_frames[hero.weapon_kind] = self.load_frames(87 + (hero.weapon_kind << 2))
+        hero.head_frames2 = self.load_frames(51 + hero.head)
+        hero.body_frames2 = self.load_frames(46)
+        GameCanvas.hero_body_frames[hero.weapon_kind] = self.load_frames(89 + (hero.weapon_kind << 2))
+        GameCanvas.images[40 + hero.weapon_kind] = self.load_image(GameCanvas.scr_char.get(42 + hero.weapon_kind))
         GameCanvas.trail_frames = self.load_frames(86)
         self.load_effect_image()
         GameCanvas.shadow_frames = self.load_frames(98)
@@ -2771,24 +2771,24 @@ class GameCanvas(GameFields, Canvas):
         offset = 0
         data = GameCanvas.load_data_file(46)
         offset = 23 * (general - 1) + 14
-        dC = GameCanvas.general
-        dC.name = ""
+        gen = GameCanvas.general
+        gen.name = ""
         b = 0
         while b < 11 and data[offset + b] != 0:
             b += 1
-        dC.name = GameCanvas.read_utf(data, offset, offset + b)
-        dC.look = _jchar(data[offset + 11])
-        dC.side = _jchar(data[offset + 11 + 2])
-        dC.skills[0] = _jchar(data[offset + 11 + 3])
-        dC.skills[1] = _jchar(data[offset + 11 + 4])
-        dC.skills[2] = _jchar(data[offset + 11 + 5])
-        dC.skills[3] = _jchar(data[offset + 11 + 6])
-        dC.portrait = _jchar(data[offset + 11 + 7])
-        dC.gift_table = _jchar(data[offset + 11 + 8])
-        dC.attack = _jchar(data[offset + 11 + 9])
-        dC.defense = _jchar(data[offset + 11 + 10])
-        dC.hp = _jchar(data[offset + 11 + 11])
-        dC.side = dC.side + 1 & 0x1
+        gen.name = GameCanvas.read_utf(data, offset, offset + b)
+        gen.look = _jchar(data[offset + 11])
+        gen.side = _jchar(data[offset + 11 + 2])
+        gen.skills[0] = _jchar(data[offset + 11 + 3])
+        gen.skills[1] = _jchar(data[offset + 11 + 4])
+        gen.skills[2] = _jchar(data[offset + 11 + 5])
+        gen.skills[3] = _jchar(data[offset + 11 + 6])
+        gen.portrait = _jchar(data[offset + 11 + 7])
+        gen.gift_table = _jchar(data[offset + 11 + 8])
+        gen.attack = _jchar(data[offset + 11 + 9])
+        gen.defense = _jchar(data[offset + 11 + 10])
+        gen.hp = _jchar(data[offset + 11 + 11])
+        gen.side = gen.side + 1 & 0x1
 
     def random_general_skill(self, force):  # ag.java:1494-1505  (random skill of general dC)
         b = 0
