@@ -1576,7 +1576,9 @@ class MapEngine(GameCanvas):
         if C(100) < arrayOfByte1[paramInt]:
             i = C(100)
             if i < arrayOfByte2[paramInt]:
-                for b in range(5):
+                # PORT-EXTRA config.DROPS_AFTER_69: row 0 (above Lv69: no Lv1 / Lv10 gear) is skipped,
+                # so a hero above Lv69 keeps the odds of Lv45-69
+                for b in range(1 if config.DROPS_AFTER_69 else 0, 5):
                     if GameCanvas.hero.level > arrayOfByte3[b]:
                         i = C(100)
                         for b1 in range(5):

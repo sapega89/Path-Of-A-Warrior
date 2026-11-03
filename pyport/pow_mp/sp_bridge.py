@@ -13,6 +13,8 @@ char[16] name, u8 at 18, then the fields in reading order.
 """
 import struct
 
+import config
+
 SAVE_STORE = "gamevil_pow_data"
 SAVE_LEN = 965
 
@@ -32,6 +34,9 @@ OFF_DY = 38              # ag.dy[8] s32: mission progress bits
 OFF_FACE = 916           # cz.aB  u8: hero 0..3
 OFF_BACKPACK = 624       # cz.Y[25]: z like X[] (analysis/03 §4.2)
 OFF_BELT = 899           # cz.Z[5]: {u16 id, u8 count <= 5}, consumables 1..11
+# PORT-EXTRA config.BACKPACK_SIZE: the cells past 25 follow the record as {u8 'B', u8 n, n x z}
+# (GameCanvas.write_backpack_extra)
+BACKPACK_EXTRA_MARK = 0x42
 PENDING_STORE = "pow_mp_loot"   # loot that found the backpack full, delivered later
 
 # as.gG (as.java:84-86): SP skill index -> skill code; MP knows codes 3..13
@@ -133,12 +138,35 @@ def _put_item(data, item):
             return False
         struct.pack_into("<hB", data, free, iid, 1)
         return True
-    for i in range(25):
-        o = OFF_BACKPACK + 11 * i
+    for o in _backpack_offsets(data):
         if struct.unpack_from("<h", data, o)[0] == 0:
             struct.pack_into("<hhhhhB", data, o, *item[:5], 0)
             return True
     return False
+
+
+def _backpack_offsets(data):
+    """Offsets of every backpack cell in the record: the original 25, then the extra block. A
+    record without the block (an old save) gets an empty one, so loot can use those cells too."""
+    offs = [OFF_BACKPACK + 11 * i for i in range(25)]
+    extra = config.BACKPACK_SIZE - 25
+    if extra <= 0:
+        return offs
+    end = data[0] | data[1] << 8
+    if end == SAVE_LEN:
+        need = SAVE_LEN + 2 + 11 * extra
+        if len(data) < need:
+            data.extend(bytes(need - len(data)))
+        data[SAVE_LEN], data[SAVE_LEN + 1] = BACKPACK_EXTRA_MARK, extra
+        data[SAVE_LEN + 2:need] = bytes(11 * extra)
+        data[0], data[1] = need & 0xFF, need >> 8 & 0xFF
+        end = need
+    if end >= SAVE_LEN + 2 and data[SAVE_LEN] == BACKPACK_EXTRA_MARK:
+        for i in range(min(data[SAVE_LEN + 1], extra)):
+            o = SAVE_LEN + 2 + 11 * i
+            if o + 11 <= end:
+                offs.append(o)
+    return offs
 
 
 def _pending():
