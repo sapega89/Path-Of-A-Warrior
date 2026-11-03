@@ -25,70 +25,70 @@ class Gfx(object):
         Gfx.clip_h = Gfx.g.getClipHeight()
 
     @staticmethod
-    def draw_image_part(image, n2, n3, n4, n5, n6, n7):  # i.java:28
-        Gfx.g.clipRect(n2, n3, n4, n5)
-        Gfx.g.drawImage(image, (n2 - n6), (n3 - n7), 20)
+    def draw_image_part(image, x, y, w, h, src_x, src_y):  # i.java:28
+        Gfx.g.clipRect(x, y, w, h)
+        Gfx.g.drawImage(image, (x - src_x), (y - src_y), 20)
         Gfx.g.setClip(Gfx.clip_x, Gfx.clip_y, Gfx.clip_w, Gfx.clip_h)
 
     @staticmethod
-    def fill_rect(n2, n3, n4, n5, n6):  # i.java:34
-        Gfx.g.setColor(n6)
-        Gfx.g.fillRect(n2, n3, n4, n5)
+    def fill_rect(x, y, w, h, color):  # i.java:34
+        Gfx.g.setColor(color)
+        Gfx.g.fillRect(x, y, w, h)
 
     @staticmethod
-    def set_font(j2):  # i.java:39
-        Gfx.font = j2
+    def set_font(font):  # i.java:39
+        Gfx.font = font
 
     @staticmethod
-    def draw_chars(cArray, n2, n3, n4, n5, n6):  # i.java:43
-        if ((n6 & 1)) != 0:
-            n4 = (n4 - idiv(Gfx.font.chars_width(cArray, n2, n3), 2))
-        elif ((n6 & 8)) != 0:
-            n4 = (n4 - Gfx.font.chars_width(cArray, n2, n3))
-        n7 = (n2 + n3)
-        n8 = n4
-        n9 = n2
-        while n9 < n7:
-            c2 = cArray[n9]
-            n10 = Gfx.font.char_width(c2)
-            Gfx.font.draw_char(c2, n8, n5)
-            n8 = (n8 + n10)
-            n9 = n9 + 1
+    def draw_chars(chars, start, count, x, y, anchor):  # i.java:43
+        if ((anchor & 1)) != 0:
+            x = (x - idiv(Gfx.font.chars_width(chars, start, count), 2))
+        elif ((anchor & 8)) != 0:
+            x = (x - Gfx.font.chars_width(chars, start, count))
+        end = (start + count)
+        pen_x = x
+        i = start
+        while i < end:
+            ch = chars[i]
+            ch_w = Gfx.font.char_width(ch)
+            Gfx.font.draw_char(ch, pen_x, y)
+            pen_x = (pen_x + ch_w)
+            i = i + 1
 
     @staticmethod
-    def draw_string(string, n2, n3, n4):  # i.java:61
-        Gfx.draw_chars([ord(_c) for _c in string], 0, len(string), n2, n3, n4)
+    def draw_string(text, x, y, anchor):  # i.java:61
+        Gfx.draw_chars([ord(_c) for _c in text], 0, len(text), x, y, anchor)
 
     @staticmethod
-    def draw_string_on(graphics, string, n2, n3, n4):  # i.java:65
-        graphics2 = Gfx.g
+    def draw_string_on(graphics, text, x, y, anchor):  # i.java:65
+        saved_g = Gfx.g
         Gfx.g = graphics
-        Gfx.draw_chars([ord(_c) for _c in string], 0, len(string), n2, n3, n4)
-        Gfx.g = graphics2
+        Gfx.draw_chars([ord(_c) for _c in text], 0, len(text), x, y, anchor)
+        Gfx.g = saved_g
 
     @staticmethod
     def make_crc_table():  # i.java:72
         Gfx.crc_table = [0] * (256)
-        n2 = 0
-        while n2 < 256:
-            n3 = n2
-            n4 = 8
-            while (n4 := i32(n4 + -1)) >= 0:
-                if ((n3 & 1)) != 0:
-                    n3 = (-306674912 ^ ushr32(n3, 1))
+        i = 0
+        while i < 256:
+            crc = i
+            bit = 8
+            while (bit := i32(bit + -1)) >= 0:
+                if ((crc & 1)) != 0:
+                    crc = (-306674912 ^ ushr32(crc, 1))
                     continue
-                n3 = ushr32(n3, 1)
-            Gfx.crc_table[n2] = n3
-            n2 = n2 + 1
+                crc = ushr32(crc, 1)
+            Gfx.crc_table[i] = crc
+            i = i + 1
 
     @staticmethod
-    def crc32(byArray, n2, n3):  # i.java:90
+    def crc32(data, pos, count):  # i.java:90
         if Gfx.crc_table is None:
             Gfx.make_crc_table()
-        n4 = (-1)
-        while (n3 := i32(n3 + -1)) >= 0:
-            n4 = (Gfx.crc_table[(((n4 ^ byArray[((n2 := i32(n2 + 1)) - 1)])) & 0xFF)] ^ ushr32(n4, 8))
-        return (((~n4)) & 0xFFFFFFFF)
+        crc = (-1)
+        while (count := i32(count + -1)) >= 0:
+            crc = (Gfx.crc_table[(((crc ^ data[((pos := i32(pos + 1)) - 1)])) & 0xFF)] ^ ushr32(crc, 8))
+        return (((~crc)) & 0xFFFFFFFF)
 
 
 def _static_init():

@@ -12,9 +12,9 @@ from pow.midp.media import gain
 
 
 class PlayerPool:
-    def __init__(self, n2, n3, bl, bl2):  # c.java:24
-        self.size = n2
-        self.snd = [None] * n2
+    def __init__(self, size, unused_count, unused_flag, unused_flag2):  # c.java:24
+        self.size = size
+        self.snd = [None] * size
         self.vol = 100
         self.cur = -1
         self.music = False
@@ -26,38 +26,38 @@ class PlayerPool:
             except Exception as ex:
                 print("c: no audio:", ex)
 
-    def _path(self, string):
-        return pathlib.Path(config.MP_RES_ROOT) / string.lstrip("/")
+    def _path(self, name):
+        return pathlib.Path(config.MP_RES_ROOT) / name.lstrip("/")
 
-    def load(self, string, n2):  # c.java  load
-        if not self.ok or not 0 <= n2 < self.size:
+    def load(self, name, index):  # c.java  load
+        if not self.ok or not 0 <= index < self.size:
             return False
-        if string.endswith(".mid"):
-            self.snd[n2] = ("mid", self._path(string))
+        if name.endswith(".mid"):
+            self.snd[index] = ("mid", self._path(name))
             return True
-        if self.snd[n2] is None:
+        if self.snd[index] is None:
             try:
-                self.snd[n2] = pygame.mixer.Sound(str(self._path(string)))
+                self.snd[index] = pygame.mixer.Sound(str(self._path(name)))
             except Exception as ex:
                 print("c: loading err:", ex)
                 return False
         return True
 
-    def play(self, n2, bl):  # c.java  play (bl = loop)
-        if not self.ok or self.vol <= 0 or not 0 <= n2 < self.size or self.snd[n2] is None:
+    def play(self, index, loop):  # c.java  play (bl = loop)
+        if not self.ok or self.vol <= 0 or not 0 <= index < self.size or self.snd[index] is None:
             return
         self.stop()
-        s = self.snd[n2]
+        s = self.snd[index]
         try:
             if isinstance(s, tuple):
                 pygame.mixer.music.load(str(s[1]))
                 pygame.mixer.music.set_volume(gain(self.vol))
-                pygame.mixer.music.play(-1 if bl else 0)
+                pygame.mixer.music.play(-1 if loop else 0)
                 self.music = True
             else:
                 s.set_volume(gain(self.vol))
-                s.play(loops=-1 if bl else 0)
-            self.cur = n2
+                s.play(loops=-1 if loop else 0)
+            self.cur = index
         except Exception as ex:
             print("c: play err:", ex)
 
@@ -74,8 +74,8 @@ class PlayerPool:
             self.music = False
         self.cur = -1
 
-    def set_volume(self, n2):  # c.java  volume 0..100
-        self.vol = max(0, min(100, n2))
+    def set_volume(self, volume):  # c.java  volume 0..100
+        self.vol = max(0, min(100, volume))
         # c.java b(Player): setLevel on the playing Player too, not only on the next one
         s = self.snd[self.cur] if 0 <= self.cur < self.size else None
         try:

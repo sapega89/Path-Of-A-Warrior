@@ -10,8 +10,8 @@ def _s8(v):
 
 
 class SpriteFrames:
-    def __init__(self, string):  # a.java:14-33
-        self.data = ResReader.read(string)
+    def __init__(self, path):  # a.java:14-33
+        self.data = ResReader.read(path)
         self.count = _s8(self.data[0])
         self.src_x = [0] * self.count          # short[] srcX
         self.src_y = [0] * self.count          # short[] srcY
@@ -19,13 +19,13 @@ class SpriteFrames:
         self.h = [0] * self.count          # byte[] h
         self.anchor_x = [0] * self.count          # byte[] anchorX
         self.anchor_y = [0] * self.count          # byte[] anchorY
-        for n2 in range(self.count):
-            self.src_x[n2] = self.data[1 + 6 * n2] & 0xFF
-            self.src_y[n2] = self.data[2 + 6 * n2] & 0xFF
-            self.w[n2] = _s8(self.data[3 + 6 * n2])
-            self.h[n2] = _s8(self.data[4 + 6 * n2])
-            self.anchor_x[n2] = _s8(self.data[5 + 6 * n2])
-            self.anchor_y[n2] = _s8(self.data[6 + 6 * n2])
+        for i in range(self.count):
+            self.src_x[i] = self.data[1 + 6 * i] & 0xFF
+            self.src_y[i] = self.data[2 + 6 * i] & 0xFF
+            self.w[i] = _s8(self.data[3 + 6 * i])
+            self.h[i] = _s8(self.data[4 + 6 * i])
+            self.anchor_x[i] = _s8(self.data[5 + 6 * i])
+            self.anchor_y[i] = _s8(self.data[6 + 6 * i])
 
     def free(self):  # a.java:35-44
         self.data = None
