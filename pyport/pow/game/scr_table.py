@@ -9,11 +9,11 @@ def _read_utf(buf: bytes) -> str:
 
 
 class ScrTable:
-    def __init__(self, paramString):  # al.java:7-9
-        self.data = ResReader.read(paramString)
+    def __init__(self, path):  # al.java:7-9
+        self.data = ResReader.read(path)
 
-    def get(self, paramInt):  # al.java:11-29
-        i = 2 + paramInt * 2
+    def get(self, index):  # al.java:11-29
+        i = 2 + index * 2
         j_ = self.data[i] & 0xFF | (self.data[i + 1] & 0xFF) << 8
         k = self.data[i + 2] & 0xFF | (self.data[i + 3] & 0xFF) << 8
         str_ = None

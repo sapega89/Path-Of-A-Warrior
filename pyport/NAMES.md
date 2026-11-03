@@ -913,6 +913,12 @@ Java-ім'я методу (з суфіксом сигнатури, напр. `J_
 | `a_I` | `get` | `a_v` | `free` |
 
 
+### consts (ae.java)
+
+Таблиці модуля `pow/game/consts.py`. Анімації героя названо за полем `Hero`, у яке їх кладе `tick_title` (`hero_anim_N` → `Hero.anim_N`); `fx_anim_N` — кадри ефекту для анімації героя N (і того самого ефекту ворога).
+
+`t` → `softkey_labels`, `u` → `menu_parent`, `v` → `menu_sizes`, `w` → `tier_levels`, `x` → `tier_drop_odds`, `y` → `item_prices`, `z` → `help_topic_start`, `A` → `menu_music`, `B` → `hero_anim_0`, `C` → `hero_anim_1`, `D` → `hero_anim_2`, `E` → `hero_anim_9`, `F` → `hero_anim_3`, `G` → `hero_anim_4`, `H` → `hero_anim_5`, `I` → `hero_anim_6`, `J` → `hero_anim_7`, `K` → `hero_anim_8`, `L` → `hero_anim_10`, `M` → `hero_anim_11`, `N` → `hero_anim_12`, `O` → `hero_anim_13`, `P` → `hero_anim_14`, `Q` → `hero_anim_15_19`, `R` → `hero_anim_20`, `S` → `hero_anim_21`, `T` → `hero_anim_22`, `U` → `hero_anim_23_24`, `V` → `hero_anim_25`, `W` → `hero_anim_26_27`, `X` → `hero_anim_28`, `Y` → `hero_anim_29`, `Z` → `hero_anim_30`, `aa` → `head_anim_0`, `ab` → `head_anim_1`, `ac` → `head_anim_2`, `ad` → `head_anim_3`, `ae` → `body_anim_0`, `af` → `body_anim_1`, `ag` → `body_anim_2`, `ah` → `body_anim_3`, `ai` → `weapon_anim_1`, `aj` → `weapon_anim_2`, `ak` → `weapon_anim_3`, `al` → `fx_anim_15_16`, `am` → `fx_anim_17_19`, `an` → `fx_anim_21`, `ao` → `fx_fire`, `ap` → `fx_anim_24`, `aq` → `fx_anim_26_27`, `ar` → `fx_anim_27_end`, `as_` → `fx_anim_28`, `at` → `fx_anim_29`, `au` → `fx_anim_30`, `av` → `fx_item_10_11`, `aw` → `dir_dx8`, `ax` → `dir_dy8`, `ay` → `squad_offsets`, `az` → `squad_dirty_box`, `aA` → `front_dx`, `aB` → `front_dy`, `aC` → `skill_menu_ids`, `aD` → `skill_menu_index`, `aE` → `equip_slot_order`, `aF` → `hit_box_x`, `aG` → `hit_box_y`, `aH` → `hit_box_w`, `aI` → `hit_box_h`, `aJ` → `general_frame_flags`, `aK` → `weapon_reach`, `aL` → `general_reach`, `aM` → `tier_req_level`, `aN` → `potion_names`, `aO` → `potion_kinds`, `aP` → `potion_percents`, `aQ` → `speed_frame_ms`, `aR` → `stat_up_texts`, `aS` → `troop_names`, `aT` → `dir8_to_dir4`, `aU` → `skill_attack_div`, `aV` → `story_offsets`, `aW` → `menu_links`, `aX` → `difficulty_names`, `aY` → `mode_texts`, `aZ` → `yes_no_ok`, `ba` → `gift_kinds`
+
 ## Мультиплеєр (`pow_mp`)
 
 Код клієнта мультиплеєра колись генерував `tools/j2py_mp.py` у `pow_mp/_gen`; тепер це звичайний код.

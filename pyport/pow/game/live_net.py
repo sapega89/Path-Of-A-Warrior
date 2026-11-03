@@ -16,8 +16,8 @@ import config
 
 
 class LiveAnswer:  # ab.java: one answer, read field by field (little-endian)
-    def __init__(self, paramArrayOfbyte):  # ab.java:6-8
-        self.data = paramArrayOfbyte
+    def __init__(self, data):  # ab.java:6-8
+        self.data = data
         self.pos = 0
 
     def read_s8(self):  # ab.java:10-12  (s8)
@@ -35,15 +35,15 @@ class LiveAnswer:  # ab.java: one answer, read field by field (little-endian)
         self.pos += 4
         return v
 
-    def read_string(self, paramInt):  # ab.java:28-37  (fixed-size string, up to the first 0)
+    def read_string(self, size):  # ab.java:28-37  (fixed-size string, up to the first 0)
         if self.data[self.pos] == 0:
-            self.pos += paramInt
+            self.pos += size
             return ""
         b = 0
-        while b < paramInt and self.data[self.pos + b] != 0:
+        while b < size and self.data[self.pos + b] != 0:
             b += 1
         s = bytes(self.data[self.pos:self.pos + b]).decode("latin-1")
-        self.pos += paramInt
+        self.pos += size
         return s
 
 
@@ -73,9 +73,9 @@ class LiveNet:  # v.java
     def start(self):
         pass
 
-    def set_address(self, paramString, paramInt):  # v.java:33-37
-        self.host = paramString
-        self.port = paramInt
+    def set_address(self, host, port):  # v.java:33-37
+        self.host = host
+        self.port = port
         LiveNet.connect_requested = True
 
     def close(self):  # v.java:39-53  (close)
@@ -97,8 +97,8 @@ class LiveNet:  # v.java
             LiveNet.listener.on_connection_failed()
 
     @staticmethod
-    def set_listener(params):  # v.java:70-72
-        LiveNet.listener = params
+    def set_listener(listener):  # v.java:70-72
+        LiveNet.listener = listener
 
     def pump(self):  # v.java:74-100  run(), one step per game frame
         if not LiveNet.running:
@@ -137,36 +137,36 @@ class LiveNet:  # v.java
         if t.failed or not t.connected:      # IOException in b.b() -> d.e()
             LiveNet.listener.on_connection_failed()
 
-    def begin_request(self, paramInt):  # v.java:111-118  (start a request: the opcode)
+    def begin_request(self, opcode):  # v.java:111-118  (start a request: the opcode)
         if LiveNet.connected:
             LiveNet.idle = False
-            LiveNet._buf = bytearray(struct.pack("<H", paramInt & 0xFFFF))
+            LiveNet._buf = bytearray(struct.pack("<H", opcode & 0xFFFF))
 
     @staticmethod
-    def write_short(paramShort):  # v.java:120-123
+    def write_short(value):  # v.java:120-123
         if LiveNet.connected:
-            LiveNet._buf += struct.pack("<H", paramShort & 0xFFFF)
+            LiveNet._buf += struct.pack("<H", value & 0xFFFF)
 
     @staticmethod
-    def write_byte(paramByte):  # v.java:125-128
+    def write_byte(value):  # v.java:125-128
         if LiveNet.connected:
-            LiveNet._buf.append(paramByte & 0xFF)
+            LiveNet._buf.append(value & 0xFF)
 
     @staticmethod
-    def write_int(paramInt):  # v.java:130-133
+    def write_int(value):  # v.java:130-133
         if LiveNet.connected:
-            LiveNet._buf += struct.pack("<I", paramInt & 0xFFFFFFFF)
+            LiveNet._buf += struct.pack("<I", value & 0xFFFFFFFF)
 
     @staticmethod
-    def write_bool(paramBoolean):  # v.java:135-138
+    def write_bool(value):  # v.java:135-138
         if LiveNet.connected:
-            LiveNet._buf.append(1 if paramBoolean else 0)
+            LiveNet._buf.append(1 if value else 0)
 
     @staticmethod
-    def write_string(paramString, paramInt):  # v.java:140-143  (fixed-size string padded with 0)
+    def write_string(text, size):  # v.java:140-143  (fixed-size string padded with 0)
         if LiveNet.connected:
-            raw = paramString.encode("latin-1", "replace")
-            LiveNet._buf += raw[:paramInt].ljust(paramInt, b"\0")
+            raw = text.encode("latin-1", "replace")
+            LiveNet._buf += raw[:size].ljust(size, b"\0")
 
     def send_request(self):  # v.java:145-148 + u.java:73-99  (u16 length + the request)
         data = bytes(LiveNet._buf)

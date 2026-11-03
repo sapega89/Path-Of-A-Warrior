@@ -133,7 +133,7 @@ class Autopilot:
             return None
         target = min(foes, key=lambda ex: distance(cz.pos[0], ex.pos[0]))
         dist = distance(cz.pos[0], target.pos[0])
-        reach = consts.aK[cz.weapon_kind] - 6
+        reach = consts.weapon_reach[cz.weapon_kind] - 6
         key = cls._skill(cz, foes, target, dist, reach)
         if key is not None or dist <= reach:
             cls.direction = None
@@ -277,8 +277,8 @@ class Autopilot:
                 return key_of[s]
         if dist > reach:
             d = dir4(cz.pos[0], target.pos[0])
-            ahead_x = cz.pos[0].x + consts.aA[d >> 1]
-            ahead_y = cz.pos[0].y + consts.aB[d >> 1]
+            ahead_x = cz.pos[0].x + consts.front_dx[d >> 1]
+            ahead_y = cz.pos[0].y + consts.front_dy[d >> 1]
             if (ahead_x - target.pos[0].x) ** 2 + (ahead_y - target.pos[0].y) ** 2 <= 35 * 35:
                 for s in usable(RANGED):
                     return key_of[s]

@@ -14,8 +14,8 @@ AUDIO = pathlib.Path(__file__).resolve().parents[2] / "assets" / "audio"
 
 
 class PlayerPool:
-    def __init__(self, paramInt1, paramInt2, paramBoolean1, paramBoolean2):  # aq.java:40-54
-        self.count = paramInt1
+    def __init__(self, count, unused_count, unused_flag, unused_flag2):  # aq.java:40-54
+        self.count = count
         self.players = [None] * self.count      # Player[] -> pygame Sound
         self.volume = 100                  # volume 0..100
         self.playing = -1                   # playing index
@@ -33,26 +33,26 @@ class PlayerPool:
         for b in range(self.count):
             self.players[b] = None
 
-    def load(self, paramString, paramInt):  # aq.java:177-179  load
-        if not self.ok or self.players[paramInt] is not None:
-            return self.players[paramInt] is not None
-        name = pathlib.Path(paramString).stem + ".ogg"
+    def load(self, path, index):  # aq.java:177-179  load
+        if not self.ok or self.players[index] is not None:
+            return self.players[index] is not None
+        name = pathlib.Path(path).stem + ".ogg"
         try:
-            self.players[paramInt] = pygame.mixer.Sound(str(AUDIO / name))
+            self.players[index] = pygame.mixer.Sound(str(AUDIO / name))
             return True
         except Exception as ex:
             print("loading err:", ex)
             return False
 
-    def play(self, paramInt, paramBoolean):  # aq.java:88-95  play
-        if paramInt < 0 or self.volume <= 0 or not self.ok or self.players[paramInt] is None:
+    def play(self, index, loop):  # aq.java:88-95  play
+        if index < 0 or self.volume <= 0 or not self.ok or self.players[index] is None:
             return
-        self.looping = paramInt if paramBoolean else -1
+        self.looping = index if loop else -1
         self.stop_current()
-        snd = self.players[paramInt]
+        snd = self.players[index]
         snd.set_volume(gain(self.volume))
-        snd.play(loops=-1 if paramBoolean else 0)
-        self.playing = paramInt
+        snd.play(loops=-1 if loop else 0)
+        self.playing = index
 
     def stop(self):  # aq.java:216-221  stop
         self.looping = -1
@@ -62,9 +62,9 @@ class PlayerPool:
         if self.playing != -1 and self.players[self.playing] is not None:
             self.players[self.playing].stop()
 
-    def set_volume(self, paramInt):  # aq.java:242-247  volume
-        if 0 <= paramInt <= 100:
-            self.volume = paramInt
+    def set_volume(self, volume):  # aq.java:242-247  volume
+        if 0 <= volume <= 100:
+            self.volume = volume
         if self.playing != -1 and self.players[self.playing] is not None:
             self.players[self.playing].set_volume(gain(self.volume))
 

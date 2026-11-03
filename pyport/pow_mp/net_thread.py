@@ -52,9 +52,9 @@ class NetThread:
     def start(self):
         pass
 
-    def set_address(self, string, n2):  # h.java:36  connect to (host, port)
-        self.host = string
-        self.port = n2
+    def set_address(self, host, port):  # h.java:36  connect to (host, port)
+        self.host = host
+        self.port = port
         NetThread.connect_requested = True
 
     @staticmethod
@@ -66,8 +66,8 @@ class NetThread:
         NetThread.conn = None
 
     @staticmethod
-    def set_game(g2):  # h.java:84
-        NetThread.game = g2
+    def set_game(game):  # h.java:84
+        NetThread.game = game
 
     # --- the thread's loop, one step per game frame ------------------------------
     @staticmethod
@@ -112,26 +112,26 @@ class NetThread:
             NetThread.game.on_net_error(2)                          # IOException in h.run()
 
     # --- sending (e.java's buffer) --------------------------------------------------------
-    def begin(self, n2):  # h.java:131  start a message with opcode n2
+    def begin(self, opcode):  # h.java:131  start a message with opcode n2
         if NetThread.connected:
             NetThread.free = False
-            NetThread._buf = bytearray(struct.pack("<H", n2 & 0xFFFF))
+            NetThread._buf = bytearray(struct.pack("<H", opcode & 0xFFFF))
 
     @staticmethod
-    def write_byte(by):  # h.java:141
+    def write_byte(value):  # h.java:141
         if NetThread.connected and NetThread._buf is not None:
-            NetThread._buf.append(by & 0xFF)
+            NetThread._buf.append(value & 0xFF)
 
     @staticmethod
-    def write_int(n2):  # h.java:147  s32
+    def write_int(value):  # h.java:147  s32
         if NetThread.connected and NetThread._buf is not None:
-            NetThread._buf += struct.pack("<I", n2 & 0xFFFFFFFF)
+            NetThread._buf += struct.pack("<I", value & 0xFFFFFFFF)
 
     @staticmethod
-    def write_string(string, n2):  # h.java:153  fixed string
+    def write_string(text, size):  # h.java:153  fixed string
         if NetThread.connected and NetThread._buf is not None:
-            raw = (string or "").encode("latin-1", "replace")[:n2]
-            NetThread._buf += raw + b"\0" * (n2 - len(raw))
+            raw = (text or "").encode("latin-1", "replace")[:size]
+            NetThread._buf += raw + b"\0" * (size - len(raw))
 
     @staticmethod
     def send():  # h.java:159  send

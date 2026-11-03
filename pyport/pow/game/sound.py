@@ -12,23 +12,23 @@ class Sound(GameCanvas):
     last_time = 0
     min_gap = [0] * 17
 
-    def __init__(self, paramMain):  # k.java:14-20
-        super().__init__(paramMain)
+    def __init__(self, main):  # k.java:14-20
+        super().__init__(main)
         for b in range(17):
             Sound.min_gap[b] = 0
         Sound.min_gap[9] = 500
         Sound.players = PlayerPool(17, 1, True, True)
 
-    def play_sound(self, paramInt):  # k.java:22-33
+    def play_sound(self, sound):  # k.java:22-33
         if Sound.players is None or not GameCanvas.sound_on:
             return
         l = system.currentTimeMillis() - Sound.last_time
         if Sound.last != -1 and Sound.min_gap[Sound.last] != 0 and l < Sound.min_gap[Sound.last]:
             return
-        if paramInt > 2 and paramInt != 15 and paramInt != 16 and paramInt != 3 and paramInt != 4:
+        if sound > 2 and sound != 15 and sound != 16 and sound != 3 and sound != 4:
             Sound.stop_all()
-        Sound.requested = paramInt
-        Sound.last = paramInt
+        Sound.requested = sound
+        Sound.last = sound
         Sound.last_time = system.currentTimeMillis()
 
     def tick_sound(self):  # k.java:35-59  (called once per tick from ag.run)
@@ -53,16 +53,16 @@ class Sound(GameCanvas):
             if bool2:
                 self.play_now(i, bool1)
 
-    def play_now(self, paramInt, paramBoolean):  # k.java:61-73
+    def play_now(self, sound, loop):  # k.java:61-73
         Sound.players.set_volume(GameCanvas.volume)
         if GameCanvas.volume == 0:
             Sound.stop_all()
             return
-        if paramInt <= 2:
-            Sound.players.load("/snd" + str(paramInt) + ".mid", paramInt)
+        if sound <= 2:
+            Sound.players.load("/snd" + str(sound) + ".mid", sound)
         else:
-            Sound.players.load("/snd" + str(paramInt) + ".wav", paramInt)
-        Sound.players.play(paramInt, paramBoolean)
+            Sound.players.load("/snd" + str(sound) + ".wav", sound)
+        Sound.players.play(sound, loop)
 
     @staticmethod
     def stop_all():  # k.java:75-79

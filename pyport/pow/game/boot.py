@@ -57,5 +57,5 @@ class Boot(GameCanvas):
             self.tick_title()
 
     @staticmethod
-    def is_any_key(paramInt):  # af.java:66-92  ("press any key": which keys count)
-        return paramInt in (-10, -8, -7, -6, -5, -4, -3, -2, -1, 35, 42, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57)
+    def is_any_key(key):  # af.java:66-92  ("press any key": which keys count)
+        return key in (-10, -8, -7, -6, -5, -4, -3, -2, -1, 35, 42, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57)
