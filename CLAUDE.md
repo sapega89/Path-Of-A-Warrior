@@ -22,7 +22,8 @@ The earlier Godot port and the J2ME emulator files were removed; the Godot audit
 
 - New code goes into `pyport/` (Python)
 - Before implementing anything — analyze the original Java source first (branch `java-reference`)
-- Keep the Java structure and behaviour; mark deliberate changes (`PORT-EXTRA`,
+- Keep the Java behaviour; the Java classes may be split into modules/mixins by
+  responsibility (keep the `# file.java:FROM-TO` comments). Mark deliberate changes (`PORT-EXTRA`,
   `DECOMP_FIX`, `ORIG_BUG`) as `pyport/README.md` does
 - Names are being refactored from the obfuscated Java ones to meaningful ones;
   `pyport/NAMES.md` maps every Java name to its Python name. Keep the `# file.java:FROM-TO`

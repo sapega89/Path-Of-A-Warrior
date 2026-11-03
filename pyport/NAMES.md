@@ -7,7 +7,14 @@
 
 | Java | Python-модуль |
 |---|---|
-| `ag.java` | `pow/game/game_canvas.py` |
+| `ag.java` | `pow/game/game_canvas.py` (`GameCanvas`: цикл, стани, клавіші, меню, вхід на карту), а решту методів розкладено на міксини: |
+| `ag.java`: сейв і опції | `pow/game/canvas_save.py` (`SaveMixin`) |
+| `ag.java`: предмети, рюкзак, магазин, стати героя | `pow/game/canvas_items.py` (`ItemsMixin`) |
+| `ag.java`: таблиці текстів, перенос рядків, рядки з байтів | `pow/game/canvas_text.py` (`TextMixin`) |
+| `ag.java`: примітиви малювання, рамки, числа, описи | `pow/game/canvas_draw.py` (`DrawMixin`) |
+| `ag.java`: сюжет, діалоги, генерали, лорди | `pow/game/canvas_story.py` (`StoryMixin`) |
+| `ag.java`: завантаження й звільнення картинок / спрайтів | `pow/game/canvas_assets.py` (`AssetsMixin`) |
+| `System.arraycopy`, `(char)` байта | `pow/game/jutil.py` |
 | поля `ag.java` | `pow/game/game_fields.py` |
 | `ae.java` | `pow/game/consts.py` |
 | `af.java` | `pow/game/boot.py` |
