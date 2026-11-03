@@ -123,3 +123,9 @@ WAREHOUSE_SIZE = 200
 # without the two lowest tiers (Lv1 and Lv10 gear never drop). True = above Lv69 the drops keep
 # the odds of Lv45-69; False = the original.
 DROPS_AFTER_69 = True
+
+# PORT-EXTRA (asked by the player): auto-hunt on the mission map (pow/game/autopilot.py). The hero
+# walks to the nearest enemy, attacks, casts the skills on keys 1-5 and drinks the potions on * / #.
+# Tab or a click on the bottom-left corner of the map turns it on and off; POW_AUTO_HUNT=1 = on
+# from the start. Any key of the player pauses it for a moment.
+AUTO_HUNT = os.environ.get("POW_AUTO_HUNT", "0") == "1"

@@ -11,15 +11,27 @@ import config
 # ag.aw() (ag.java:3275-3284): a new hero; 5 free points, +3 per level (e.java:2877-2878);
 # a point gives HP +5 / MP +3 / ATK +1 / DEF +1 (e.java:882-907)
 HERO_BASE = {"atk": 5, "def": 4, "hp": 30, "mp": 10}
+# PORT-EXTRA: the four heroes (face = SP head 0..3) have their own base stats, each worth the
+# points of the original one; the same table as the single player's pow/game/hero_classes.py
+HERO_BASES = (
+    HERO_BASE,                                          # 0 Warrior (the original numbers)
+    {"atk": 3, "def": 5, "hp": 40, "mp": 7},            # 1 Guardian
+    {"atk": 4, "def": 4, "hp": 25, "mp": 16},           # 2 Mystic
+    {"atk": 7, "def": 3, "hp": 25, "mp": 10},           # 3 Berserker
+)
 POINTS_START, POINTS_PER_LEVEL = 5, 3
 POINT_GAIN = {"atk": 1, "def": 1, "hp": 5, "mp": 3}
 
 
-def hero_stats(level, build):
-    """ATK / DEF / HP / MP of a hero of `level` whose points went by `build` {stat: share}."""
+def hero_base(face=0):
+    return HERO_BASES[face & 3]
+
+
+def hero_stats(level, build, face=0):
+    """ATK / DEF / HP / MP of a hero of `level` and `face` whose points went by `build` {stat: share}."""
     points = POINTS_START + POINTS_PER_LEVEL * (level - 1)
     total = sum(build.values())
-    out = dict(HERO_BASE)
+    out = dict(hero_base(face))
     given = 0
     for i, (stat, share) in enumerate(build.items()):
         n = points - given if i == len(build) - 1 else points * share // total

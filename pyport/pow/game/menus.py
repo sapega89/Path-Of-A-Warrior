@@ -14,6 +14,8 @@ from pow.midp.jint import i8, i16, i32, idiv, imod
 from pow.game.font import Font
 from pow.game.scr_table import ScrTable
 from pow.game.arr_table import ArrTable
+from pow.game import hero_classes
+from pow.game.popups import RESPEC_POPUP, RESPEC_DONE_POPUP
 
 F6 = config.DECOMP_FIX["F6"]
 F10 = config.DECOMP_FIX["F10"]
@@ -74,6 +76,8 @@ class Menus(GameCanvas):
                 if consts.u[cM[0]] != -1 or (consts.u[cM[0]] == -1 and cM[0] == 15):
                     if cM[0] == 3:
                         GameCanvas.draw_softkeys(11, 2)
+                    elif cM[0] == 14:   # PORT-EXTRA: RESET the attributes (hero_classes)
+                        GameCanvas.draw_softkeys(12, 2)
                     else:
                         GameCanvas.draw_softkeys(-1, 2)
             v = cM[0]
@@ -263,6 +267,9 @@ class Menus(GameCanvas):
             self.key_fire()
             return
         elif ch == -6:
+            if GameCanvas.menu[0] == 14:    # PORT-EXTRA: attribute reset
+                self.open_respec()
+                return
             if GameCanvas.menu[0] == 16 or GameCanvas.menu[0] == 17 or GameCanvas.menu[0] == 3:
                 self.key_fire()
                 return
@@ -2115,6 +2122,55 @@ class Menus(GameCanvas):
         self.draw_selection(GameCanvas.view_cx - 27 + GameCanvas.view_x + 1, GameCanvas.view_cy + 8 + GameCanvas.view_y, 52, 52, 255, 182, 82)
         self.draw_arrow(0, GameCanvas.view_cx - 40, GameCanvas.view_cy + 23)
         self.draw_arrow(1, GameCanvas.view_cx + 30, GameCanvas.view_cy + 23)
+        # PORT-EXTRA: the heroes differ in base stats (hero_classes); show the chosen one's
+        head = GameCanvas.hero.head
+        self.draw_text_at(hero_classes.NAMES[head & 0x3], GameCanvas.view_cy + 72, 0)
+        self.draw_text_at(hero_classes.stats_line(head), GameCanvas.view_cy + 92, 0)
+
+    # --- PORT-EXTRA: attribute reset (pow/game/hero_classes.py) ---------------------------------
+    def open_respec(self):
+        """Attributes screen, left soft key: pay gold or an elixir to get the stat points back."""
+        cz = GameCanvas.hero
+        cs = GameCanvas.popups
+        if hero_classes.spent_points(cz) == 0:
+            cs.popup_id = RESPEC_DONE_POPUP
+            cs.show_text("3Nothing to reset.")
+            return
+        slot = hero_classes.respec_item_slot(cz)
+        if slot >= 0:
+            item = "Use " + Menus.item_name(cz.backpack[slot].id)
+        else:
+            item = "No elixir"
+        cs.setup_choice(RESPEC_POPUP, ["Reset attributes?", "Refund: %d points" % hero_classes.spent_points(cz)],
+                        ["Pay " + GameCanvas.format_thousands(hero_classes.respec_gold(cz)) + " gold", item, "Cancel"])
+
+    def finish_respec(self, choice):
+        """The choice of open_respec(): 0 gold, 1 elixir, 2 cancel."""
+        cz = GameCanvas.hero
+        cs = GameCanvas.popups
+        GameCanvas.redraw = 1
+        if choice == 0:
+            cost = hero_classes.respec_gold(cz)
+            if cz.gold < cost:
+                cs.popup_id = RESPEC_DONE_POPUP
+                cs.show_text("3Not enough gold.")
+                return
+            cz.gold -= cost
+        elif choice == 1:
+            slot = hero_classes.respec_item_slot(cz)
+            if slot < 0:
+                cs.popup_id = RESPEC_DONE_POPUP
+                cs.show_text("3You have no elixir.|Rise Potion, Azure|Potion, Falls or|Forest Medicine.")
+                return
+            Item.clear(cz.backpack[slot])
+        else:
+            return
+        n = hero_classes.respec(cz)
+        GameCanvas.update_hero_stats()
+        GameCanvas.menu[1] = 0
+        self.save_game()
+        cs.popup_id = RESPEC_DONE_POPUP
+        cs.show_text("3Attributes reset.|%d points are free." % n)
 
     def draw_name_captions(self):  # e.java:1406-1413  (screen 7: the two caption lines)
         Gfx.set_font(GameCanvas.font_white)

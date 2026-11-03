@@ -1,7 +1,7 @@
 """ae.java constants (interface ae). Generated once from the Java source; edited by hand since."""
 
 # ae.java:2-4  (String[])
-t = [ "SKIP", "PAUSE", "BACK", "BACKPACK", "WAREHOUSE", "EXCHANGE", "EXIT", "VIEW MARKET", "CONFIRM", "BACK", "DEL ", "OK" ]
+t = [ "SKIP", "PAUSE", "BACK", "BACKPACK", "WAREHOUSE", "EXCHANGE", "EXIT", "VIEW MARKET", "CONFIRM", "BACK", "DEL ", "OK", "RESET" ]  # PORT-EXTRA 12 "RESET" (hero_classes)
 # ae.java:6-9  (byte[])
 u = [ -1, 0, 1, 2, -1, -1, 29, 6, 7, 5, 0, 10, 0, 0, 13, -1, 13, 100, 13, 100, -1, 12, 12, 12, 12, 5, -1, 5, 100, 5 ]
 # ae.java:11-14  (byte[])
