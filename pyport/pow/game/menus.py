@@ -3,7 +3,10 @@ Main Menu (cM[0] == 5) and the Game Menu carousel (cM[0] == 0), with the full ke
 (a(), aB/aC/aD/aE = up/down/left/right, b() = fire, aF() = back).
 Screens of later phases raise NotPorted.
 """
+import re
+
 import config
+from pow.midp import display
 from pow.game import consts
 from pow.game.game_canvas import GameCanvas
 from pow.game.name_buffer import NameBuffer
@@ -1040,11 +1043,11 @@ class Menus(GameCanvas):
         i = GameCanvas.view_cy - 50
         if GameCanvas.menu[1] == 0:
             GameCanvas.menu[1] = 1
-        for b in range(1, 3):
+        for b in range(1, consts.v[9]):         # PORT-EXTRA config.SCREEN_OPTION: + row 3 Screen
             if GameCanvas.menu[1] == b:
                 bool_ = True
                 Gfx.set_font(GameCanvas.font_orange)
-            elif b == 3:
+            elif b == 3 and not config.SCREEN_OPTION:
                 bool_ = False
                 Gfx.set_font(GameCanvas.font_gray)
             else:
@@ -1052,7 +1055,8 @@ class Menus(GameCanvas):
                 Gfx.set_font(GameCanvas.font_white)
             self.draw_box(GameCanvas.view_cx - 100, i + GameCanvas.view_y, 80, 20, bool_)
             self.draw_box(GameCanvas.view_cx - 10, i + GameCanvas.view_y, 110, 20, bool_)
-            GameCanvas.draw_view_text_centred(GameCanvas.option_names[b], GameCanvas.view_cx - 100 + 40 - GameCanvas.view_x, i + 1)
+            name = "Screen" if b == 3 and config.SCREEN_OPTION else GameCanvas.option_names[b]
+            GameCanvas.draw_view_text_centred(name, GameCanvas.view_cx - 100 + 40 - GameCanvas.view_x, i + 1)
             if bool_:
                 self.draw_arrow(0, GameCanvas.view_cx - 10 - GameCanvas.view_x, i + 2)
                 self.draw_arrow(1, GameCanvas.view_cx - 10 + 110 - 10 - 1 - GameCanvas.view_x, i + 2)
@@ -1066,6 +1070,8 @@ class Menus(GameCanvas):
                     str_ = "OFF"
             elif b == 2:
                 str_ = GameCanvas.speed_names[GameCanvas.speed]
+            elif b == 3 and config.SCREEN_OPTION:
+                str_ = "Full" if display.is_fullscreen() else "Window"
             elif b == 3:
                 str_ = consts.aX[GameCanvas.difficulty]
             else:
@@ -1203,6 +1209,9 @@ class Menus(GameCanvas):
 
     def draw_description_strip(self):  # e.java:1595-1630  (description strip; scrolls when longer than the box)
         dF = GameCanvas.info_box
+        if config.WIDE_DESC and GameCanvas.state != 11:   # Gamevil Live (11): the strip sits on its grid
+            self.draw_wide_description()
+            return
         self.draw_box(dF.rect.x + GameCanvas.view_x, dF.rect.y + GameCanvas.view_y, dF.rect.w, dF.rect.h, False)
         Gfx.set_font(GameCanvas.font_white)
         if dF.shown != 0:
@@ -1234,6 +1243,66 @@ class Menus(GameCanvas):
             Gfx.push_clip(GameCanvas.screen_w - i + 1, j_, i - 1, dF.rect.h)
             GameCanvas.popups.draw_popup_frame(170)
             Gfx.pop_clip()
+
+    # PORT-EXTRA (config.WIDE_DESC): the description of an item / skill / potion in a box as wide
+    # as the screen, in up to WIDE_DESC_LINES lines, instead of the narrow strip whose one line
+    # runs by. The box always has the same size, so a shorter text leaves nothing behind.
+    WIDE_DESC_X = 4
+    WIDE_DESC_LINE = 14
+
+    @staticmethod
+    def wide_description_lines(text, width):
+        """The parts of the description (" / " between them) packed into lines of `width` px;
+        a part longer than a line is broken between words."""
+        measure = GameCanvas.measure_text
+        lines = []
+        for part in re.split(r"\s*/\s+", text):
+            part = part.strip()
+            if not part:
+                continue
+            if lines and measure(lines[-1] + " / " + part) <= width:
+                lines[-1] += " / " + part
+                continue
+            line = ""
+            for word in part.split(" "):
+                if line and measure(line + " " + word) > width:
+                    lines.append(line)
+                    line = word
+                else:
+                    line = (line + " " + word) if line else word
+            if line:
+                lines.append(line)
+        return lines
+
+    def draw_wide_description(self):
+        dF = GameCanvas.info_box
+        if dF.rect.w == 0 and dF.rect.h == 0:
+            return
+        x = Menus.WIDE_DESC_X
+        w = GameCanvas.screen_w - 2 * x
+        rows = config.WIDE_DESC_LINES
+        h = rows * Menus.WIDE_DESC_LINE + 6
+        y = dF.rect.y + GameCanvas.view_y
+        bottom = GameCanvas.screen_h - 20           # above the soft-key bar (BACK)
+        if y + h > bottom:
+            y = bottom - h
+        self.draw_box(x, y, w, h, False)
+        if GameCanvas.popups.kind != 0:            # a popup covers the top of the box only
+            return
+        Gfx.set_font(GameCanvas.font_white)
+        lines = Menus.wide_description_lines(dF.text, w - 8)
+        if len(lines) > rows:                        # too long even so: the last row runs by
+            rest = " / ".join(lines[rows - 1:])
+            lines = lines[:rows - 1]
+            tw = GameCanvas.measure_text(rest)
+            dF.text_x = i16(dF.text_x - 5)
+            if dF.text_x < x + 4 - tw - 20 or dF.text_x > x + w:
+                dF.text_x = i16(x + w - 20)
+            Gfx.push_clip(x + 1, y, w - 2, h)
+            Gfx.draw_string(rest, dF.text_x, y + 3 + (rows - 1) * Menus.WIDE_DESC_LINE, 0)
+            Gfx.pop_clip()
+        for n, line in enumerate(lines):
+            Gfx.draw_string(line, x + 4, y + 3 + n * Menus.WIDE_DESC_LINE, 0)
 
     def draw_gear(self, paramInt1, paramInt2):  # e.java:1632-1654  (Gear: hero sprite + 9 equipment slots)
         cz = GameCanvas.hero
@@ -1322,7 +1391,9 @@ class Menus(GameCanvas):
         else:
             self.draw_round_outline(GameCanvas.view_cx - 80 + 32 * GameCanvas.menu[1], GameCanvas.view_cy - 10, 30, 29, 255, 255, 255)
         GameCanvas.menu_part = 0
-        self.draw_description(GameCanvas.menu[1] + 1200, GameCanvas.view_cx - 80 - GameCanvas.view_x, GameCanvas.view_cy + 30, 160, 22)
+        # PORT-EXTRA config.WIDE_DESC: the taller box goes under "*,# key Assign", not over it
+        self.draw_description(GameCanvas.menu[1] + 1200, GameCanvas.view_cx - 80 - GameCanvas.view_x,
+                              GameCanvas.view_cy + (88 if config.WIDE_DESC else 30), 160, 22)
         self.draw_box(GameCanvas.view_cx - 80, GameCanvas.view_cy + 60 + GameCanvas.view_y, 160, 22, False)
         Gfx.set_font(GameCanvas.font_white)
         self.draw_text_at("Keys Z X C V B" if config.SKILL_BAR else "*,# key Assign", GameCanvas.view_cy + 60, 15)

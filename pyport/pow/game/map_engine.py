@@ -86,7 +86,7 @@ class MapEngine(GameCanvas):
 
     def pause_menu_keys(self):  # ar.java:95-247  (keys of the pause menu cR.a: 1 menu, 2 items, 3 options, 4 help)
         arrayOfByte1 = [0, 3, 0, 2, 4, 0, 0]
-        arrayOfByte2 = [0, 3, 0, 5, 3, 0, 0]
+        arrayOfByte2 = [0, consts.v[9], 0, 5, 3, 0, 0]    # Options: 3 rows (+1 with config.SCREEN_OPTION)
         v = GameCanvas.key
         blocked = GameCanvas.actor_count > 0 or GameCanvas.boss_fight != 0 or GameCanvas.waves[0] != 0
         if v in (-1, 50):
