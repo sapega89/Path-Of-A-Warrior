@@ -362,8 +362,8 @@ class MapScene(GameCanvas):
             v = cz.action[0]
             if v == 27:
                 if cz.frame[0] == 9:
-                    i += consts.aA[cz.dir[1] >> 1]
-                    j_ += consts.aB[cz.dir[1] >> 1]
+                    i += consts.front_dx[cz.dir[1] >> 1]
+                    j_ += consts.front_dy[cz.dir[1] >> 1]
             elif v in (28, 29, 30):
                 i = GameCanvas.view_cx
                 j_ = GameCanvas.view_cy + 11
@@ -379,23 +379,23 @@ class MapScene(GameCanvas):
             b1 = 2
             v = dU.item
             if v == -2:
-                arrayOfByte = consts.ar
+                arrayOfByte = consts.fx_anim_27_end
                 b2 = 63
                 dU.frame = dU.step
             elif v == -1:
-                arrayOfByte = consts.ao
+                arrayOfByte = consts.fx_fire
                 b2 = 60
                 dU.frame = dU.step
                 b1 = 0
             elif v in (10, 11):
-                arrayOfByte = consts.av
+                arrayOfByte = consts.fx_item_10_11
                 b2 = 67
                 if dU.step > 0:
                     dU.frame = i16(dU.step - 1 + (dU.dir << 2))
                 else:
                     return
             else:
-                arrayOfByte = consts.am
+                arrayOfByte = consts.fx_anim_17_19
                 b2 = 58
                 dU.frame = i16(dU.step + 4)
             if dU.frame_data is None:
@@ -469,11 +469,11 @@ class MapScene(GameCanvas):
         if ex.type > 200:
             if s < 100:
                 if ex.type == 203:
-                    ay = consts.ay[consts.aT[ex.dir[0]]]
+                    ay = consts.squad_offsets[consts.dir8_to_dir4[ex.dir[0]]]
                     D = ex.frames[s]
                     for b in range(3):
                         self.draw_map_region(ex.image, i - D.ox + ay[b][0], j_ - D.oy + ay[b][1], D.w, D.h, D.src_x, D.src_y)
-                    az = consts.az[consts.aT[ex.dir[1]]]
+                    az = consts.squad_dirty_box[consts.dir8_to_dir4[ex.dir[1]]]
                     MapScene.mark_dirty(ex.pos[0].x - D.ox + az[0], ex.pos[0].y - D.oy + az[1], D.w + az[2], D.h + az[3])
                 else:
                     if ex.type == 202:
@@ -491,7 +491,7 @@ class MapScene(GameCanvas):
                 arrayOfY3 = GameCanvas.enemy_frames[5]
             else:
                 b = 2 if GameCanvas.general.side != 0 else 3
-                n = consts.aJ[(s >> 5 << 2) + b] >> (s & 0x1F) & 0x1
+                n = consts.general_frame_flags[(s >> 5 << 2) + b] >> (s & 0x1F) & 0x1
                 arrayOfY1 = GameCanvas.enemy_frames[7]
                 arrayOfY2 = GameCanvas.enemy_frames[6]
                 arrayOfY3 = GameCanvas.enemy_frames[8]
@@ -516,7 +516,7 @@ class MapScene(GameCanvas):
                 if g0 > 3:
                     if g0 == 4:
                         GameCanvas.enemy_fx_frames = self.load_frames(57)
-                        GameCanvas.enemy_fx_data = consts.al
+                        GameCanvas.enemy_fx_data = consts.fx_anim_15_16
                     GameCanvas.enemy_fx_kind = 2
                     GameCanvas.enemy_fx_image = None
                     GameCanvas.enemy_fx_pos = i16(g0 - 4)
@@ -525,7 +525,7 @@ class MapScene(GameCanvas):
                 if 3 < g0 < 10:
                     if g0 == 4:
                         GameCanvas.enemy_fx_frames = self.load_frames(58)
-                        GameCanvas.enemy_fx_data = consts.am
+                        GameCanvas.enemy_fx_data = consts.fx_anim_17_19
                     GameCanvas.enemy_fx_kind = 2
                     GameCanvas.enemy_fx_image = None
                     GameCanvas.enemy_fx_pos = i16(g0 - 4)
@@ -534,7 +534,7 @@ class MapScene(GameCanvas):
                 if g0 == 5 or g0 == 6:
                     if g0 == 5:
                         GameCanvas.enemy_fx_frames = self.load_frames(59)
-                        GameCanvas.enemy_fx_data = consts.an
+                        GameCanvas.enemy_fx_data = consts.fx_anim_21
                     GameCanvas.enemy_fx_kind = 1
                     GameCanvas.enemy_fx_image = None
                     GameCanvas.enemy_fx_pos = i16(g0 - 5)
@@ -553,7 +553,7 @@ class MapScene(GameCanvas):
                 if g0 == 5 or g0 == 6:
                     if g0 == 5:
                         GameCanvas.enemy_fx_frames = self.load_frames(61)
-                        GameCanvas.enemy_fx_data = consts.ap
+                        GameCanvas.enemy_fx_data = consts.fx_anim_24
                     GameCanvas.enemy_fx_kind = 1
                     GameCanvas.enemy_fx_image = None
                     GameCanvas.enemy_fx_pos = i16(g0 - 5)
@@ -561,14 +561,14 @@ class MapScene(GameCanvas):
             elif f0 in (20, 21):
                 if f0 == 21 and g0 == 9:        # case 21 falls through into case 20
                     GameCanvas.enemy_fx_frames = self.load_frames(63)
-                    GameCanvas.enemy_fx_data = consts.ar
+                    GameCanvas.enemy_fx_data = consts.fx_anim_27_end
                     GameCanvas.enemy_fx_pos = 2
                     GameCanvas.enemy_fx_kind = 2
                     self.set_enemy_fx_parts(GameCanvas.enemy_fx_frames, 1)
                 if 1 < g0 < 9:
                     if g0 == 2:
                         GameCanvas.enemy_fx_frames = self.load_frames(62)
-                        GameCanvas.enemy_fx_data = consts.aq
+                        GameCanvas.enemy_fx_data = consts.fx_anim_26_27
                     GameCanvas.enemy_fx_kind = 2
                     GameCanvas.enemy_fx_image = None
                     GameCanvas.enemy_fx_pos = i16(g0 - 2 + (ex.dir[0] >> 1) * 7)
@@ -640,8 +640,8 @@ class MapScene(GameCanvas):
                     GameCanvas.engine.draw_weapon_trail(paramInt, ex.skill_fx)
             if GameCanvas.enemy_fx_kind == 2:
                 if ex.action[0] == 21 and ex.frame[0] == 9:
-                    i += consts.aA[ex.dir[1] >> 1]
-                    j_ += consts.aB[ex.dir[1] >> 1]
+                    i += consts.front_dx[ex.dir[1] >> 1]
+                    j_ += consts.front_dy[ex.dir[1] >> 1]
                 self.draw_effect_frames(GameCanvas.enemy_fx_parts, [GameCanvas.enemy_fx_data[GameCanvas.enemy_fx_pos]], 1, i, j_)
                 MapScene.mark_dirty(ex.pos[0].x - GameCanvas.enemy_fx_parts[0].ox, ex.pos[0].y - GameCanvas.enemy_fx_parts[0].oy, GameCanvas.enemy_fx_parts[0].w, GameCanvas.enemy_fx_parts[0].h)
         if ex.on_fire != 0:
@@ -683,7 +683,7 @@ class MapScene(GameCanvas):
             arrayOfY3 = GameCanvas.hero_weapon_frames[cz.weapon_kind]
         else:
             b1 = 0 if cz.weapon_kind != 0 else 1
-            k = consts.aJ[(cz.sprite_frame >> 5 << 2) + b1] >> (cz.sprite_frame & 0x1F) & 0x1
+            k = consts.general_frame_flags[(cz.sprite_frame >> 5 << 2) + b1] >> (cz.sprite_frame & 0x1F) & 0x1
             arrayOfY1 = cz.head_frames2
             arrayOfY2 = cz.body_frames2
             arrayOfY3 = GameCanvas.hero_body_frames[cz.weapon_kind]
@@ -719,7 +719,7 @@ class MapScene(GameCanvas):
             if f0 > 3:
                 if GameCanvas.hero_fx_data is None:
                     GameCanvas.hero_fx_frames = self.load_frames(57)
-                    GameCanvas.hero_fx_data = consts.al
+                    GameCanvas.hero_fx_data = consts.fx_anim_15_16
                 GameCanvas.hero_fx_kind = 2
                 GameCanvas.hero_fx_image = None
                 GameCanvas.hero_fx_pos = i16(f0 - 4)
@@ -728,7 +728,7 @@ class MapScene(GameCanvas):
             if 3 < f0 < 10:
                 if GameCanvas.hero_fx_data is None:
                     GameCanvas.hero_fx_frames = self.load_frames(58)
-                    GameCanvas.hero_fx_data = consts.am
+                    GameCanvas.hero_fx_data = consts.fx_anim_17_19
                 GameCanvas.hero_fx_kind = 3
                 GameCanvas.hero_fx_image = None
                 GameCanvas.hero_fx_pos = i16(f0 - 4)
@@ -741,7 +741,7 @@ class MapScene(GameCanvas):
                 if f0 == 5:
                     m = 2
                     GameCanvas.hero_fx_frames = self.load_frames(59)
-                    GameCanvas.hero_fx_data = consts.an
+                    GameCanvas.hero_fx_data = consts.fx_anim_21
                 GameCanvas.hero_fx_kind = 1
                 GameCanvas.hero_fx_image = None
                 GameCanvas.hero_fx_pos = i16(f0 - 5)
@@ -762,7 +762,7 @@ class MapScene(GameCanvas):
             if f0 == 5 or f0 == 6:
                 if GameCanvas.hero_fx_data is None:
                     GameCanvas.hero_fx_frames = self.load_frames(61)
-                    GameCanvas.hero_fx_data = consts.ap
+                    GameCanvas.hero_fx_data = consts.fx_anim_24
                 GameCanvas.hero_fx_kind = 1
                 GameCanvas.hero_fx_image = None
                 GameCanvas.hero_fx_pos = i16(f0 - 5)
@@ -773,14 +773,14 @@ class MapScene(GameCanvas):
         elif e0 in (26, 27):
             if e0 == 27 and f0 == 9:
                 GameCanvas.hero_fx_frames = self.load_frames(63)
-                GameCanvas.hero_fx_data = consts.ar
+                GameCanvas.hero_fx_data = consts.fx_anim_27_end
                 GameCanvas.hero_fx_kind = 3
                 GameCanvas.hero_fx_pos = 1
                 self.set_hero_fx_parts(GameCanvas.hero_fx_frames, 1)
             if 1 < f0 < 9:
                 if GameCanvas.hero_fx_data is None:
                     GameCanvas.hero_fx_frames = self.load_frames(62)
-                    GameCanvas.hero_fx_data = consts.aq
+                    GameCanvas.hero_fx_data = consts.fx_anim_26_27
                 GameCanvas.hero_fx_kind = 3
                 GameCanvas.hero_fx_image = None
                 GameCanvas.hero_fx_pos = i16(f0 - 2 + (cz.dir[0] >> 1) * 7)
@@ -789,7 +789,7 @@ class MapScene(GameCanvas):
             if 3 < f0 < 22:
                 if GameCanvas.hero_fx_data is None:
                     GameCanvas.hero_fx_frames = self.load_frames(64)
-                    GameCanvas.hero_fx_data = consts.as_
+                    GameCanvas.hero_fx_data = consts.fx_anim_28
                 GameCanvas.hero_fx_kind = 3
                 GameCanvas.hero_fx_image = None
                 if f0 > 9:
@@ -802,7 +802,7 @@ class MapScene(GameCanvas):
             if 6 < f0 < 22:
                 if GameCanvas.hero_fx_data is None:
                     GameCanvas.hero_fx_frames = self.load_frames(65)
-                    GameCanvas.hero_fx_data = consts.at
+                    GameCanvas.hero_fx_data = consts.fx_anim_29
                 GameCanvas.hero_fx_kind = 3
                 GameCanvas.hero_fx_image = None
                 GameCanvas.hero_fx_pos = i16(f0 - 7)
@@ -811,7 +811,7 @@ class MapScene(GameCanvas):
             if 3 < f0 < 9:
                 if GameCanvas.hero_fx_data is None:
                     GameCanvas.hero_fx_frames = self.load_frames(66)
-                    GameCanvas.hero_fx_data = consts.au
+                    GameCanvas.hero_fx_data = consts.fx_anim_30
                 GameCanvas.hero_fx_kind = 3
                 GameCanvas.hero_fx_image = None
                 GameCanvas.hero_fx_pos = i16((f0 - 4) * 5)
@@ -820,7 +820,7 @@ class MapScene(GameCanvas):
             elif 12 < f0 < 15:
                 if f0 == 13:
                     GameCanvas.hero_fx_frames = self.load_frames(63)
-                    GameCanvas.hero_fx_data = consts.ar
+                    GameCanvas.hero_fx_data = consts.fx_anim_27_end
                 GameCanvas.hero_fx_kind = 3
                 GameCanvas.hero_fx_image = None
                 GameCanvas.hero_fx_pos = i16((f0 - 13) * 5 + 2)
@@ -1440,7 +1440,7 @@ class MapScene(GameCanvas):
                     GameCanvas.effect.step = 0
                     GameCanvas.effect.pos.x = cz.pos[0].x
                     GameCanvas.effect.pos.y = cz.pos[0].y
-                    GameCanvas.effect.dir = i16(consts.aT[cz.dir[0]])
+                    GameCanvas.effect.dir = i16(consts.dir8_to_dir4[cz.dir[0]])
         elif v == -7:
             if GameCanvas.sound is not None:
                 self.play_sound(-1)
@@ -1520,9 +1520,9 @@ class MapScene(GameCanvas):
                 cz.idle_ticks = 0
                 cz.action[0] = 3 + cz.combo + (cz.weapon_kind ^ 0x1) * 3
                 cz.frame[0] = 0
-                cz.dir[0] = cz.facing = consts.aT[cz.facing] << 1
+                cz.dir[0] = cz.facing = consts.dir8_to_dir4[cz.facing] << 1
             elif j_ > 0 and MapEngine.skill_mp_cost(j_) != 0:
-                cz.dir[0] = cz.facing = consts.aT[cz.facing] << 1
+                cz.dir[0] = cz.facing = consts.dir8_to_dir4[cz.facing] << 1
                 cz.action[0] = j_
                 cz.frame[0] = 0
                 if cz.action[0] in (15, 16, 21, 22, 23, 24, 25):
@@ -1531,24 +1531,24 @@ class MapScene(GameCanvas):
         e0 = cz.action[0]
         f0 = cz.frame[0]
         if e0 == 1:
-            k = consts.aw[n]
-            m = consts.ax[n]
+            k = consts.dir_dx8[n]
+            m = consts.dir_dy8[n]
         elif e0 == 2:
-            k = consts.aw[n] << 2
-            m = consts.ax[n] << 2
+            k = consts.dir_dx8[n] << 2
+            m = consts.dir_dy8[n] << 2
         elif 3 <= e0 <= 8:
-            k = idiv(consts.aw[n], 3)
-            m = idiv(consts.ax[n], 3)
+            k = idiv(consts.dir_dx8[n], 3)
+            m = idiv(consts.dir_dy8[n], 3)
         elif e0 == 12:
             if 2 < f0 < 6:
-                k = consts.aw[n] << 2
-                m = consts.ax[n] << 2
+                k = consts.dir_dx8[n] << 2
+                m = consts.dir_dy8[n] << 2
         elif e0 in (13, 14):
             fall14 = e0 == 14
             if e0 == 13:
                 if 4 < f0 < 8:
-                    k = consts.aw[n] << 2
-                    m = consts.ax[n] << 2
+                    k = consts.dir_dx8[n] << 2
+                    m = consts.dir_dy8[n] << 2
                     if k > 0:
                         k = GameCanvas.engine.step_until_free(cz.pos[0], k, 6)
                     elif k < 0:
@@ -1565,24 +1565,24 @@ class MapScene(GameCanvas):
                     fall14 = True       # no break: falls into case 14
             if fall14:
                 if 0 < f0 < 9:
-                    k = consts.aw[n]
-                    m = consts.ax[n]
+                    k = consts.dir_dx8[n]
+                    m = consts.dir_dy8[n]
         elif e0 == 10:
             if f0 < 10:
                 cz.pos[0].x = i16(cz.pos[0].x + (-1 if (f0 & 0x1) != 0 else 1))
         elif e0 == 20:
             if 0 == (f0 & 0x1):
-                k = consts.aw[n]
-                m = consts.ax[n]
+                k = consts.dir_dx8[n]
+                m = consts.dir_dy8[n]
         elif e0 == 9 and cz.hurt_ticks > 0:
             cz.hurt_ticks -= 1
             n = cz.facing + 4 & 0x7
-            k = consts.aw[n] << 2
-            m = consts.ax[n] << 2
+            k = consts.dir_dx8[n] << 2
+            m = consts.dir_dy8[n] << 2
         elif e0 == 9 and f0 == 1:
             n = cz.facing + 4 & 0x7
-            k = idiv(consts.aw[n] * 3, 4)
-            m = idiv(consts.ax[n] * 3, 4)
+            k = idiv(consts.dir_dx8[n] * 3, 4)
+            m = idiv(consts.dir_dy8[n] * 3, 4)
         else:
             k = m = 0
         if k != 0 or m != 0:
@@ -1597,16 +1597,16 @@ class MapScene(GameCanvas):
                         if i == -1:
                             i = MapEngine.slide_corner(cz.pos[0], cz.dir[0], -1)
                             if i != -1:
-                                k = consts.aw[i]
-                                m = consts.ax[i]
+                                k = consts.dir_dx8[i]
+                                m = consts.dir_dy8[i]
                                 i = GameCanvas.engine.move(cz.pos[0], k, m, i, -1)
                                 if -1 < i < 8:
                                     cz.dir[0] = i
                     else:
                         if i < 0:
                             raise IndexError("ArrayIndexOutOfBoundsException: aw[%d]" % i)
-                        k = consts.aw[i]
-                        m = consts.ax[i]
+                        k = consts.dir_dx8[i]
+                        m = consts.dir_dy8[i]
                         if i == -1:
                             i = MapEngine.slide_corner(cz.pos[0], cz.dir[0], -1)
                             if i != -1:
@@ -1884,7 +1884,7 @@ class MapScene(GameCanvas):
                 if s2 < 180:
                     D = ex.frames[s2]
                     if ex.type == 203:
-                        az = consts.az[consts.aT[ex.dir[1]]]
+                        az = consts.squad_dirty_box[consts.dir8_to_dir4[ex.dir[1]]]
                         self.draw_map_region(ct7, i - D.ox + az[0], j_ - D.oy + az[1], D.w + az[2], D.h + az[3],
                                        i - D.ox + cc_a + az[0], j_ - D.oy + cc_b + az[1])
                     else:
@@ -1972,8 +1972,8 @@ class MapScene(GameCanvas):
             if f1 == 21 and g1 == 9:        # case 21 falls through into case 20
                 GameCanvas.enemy_fx_kind = 3
                 GameCanvas.hero_fx_parts = A(GameCanvas.enemy_fx_frames, 1)
-                h_.x = i16(h_.x + consts.aA[ex.dir[1] >> 1])
-                h_.y = i16(h_.y + consts.aB[ex.dir[1] >> 1])
+                h_.x = i16(h_.x + consts.front_dx[ex.dir[1] >> 1])
+                h_.y = i16(h_.y + consts.front_dy[ex.dir[1] >> 1])
             if 1 < g1 < 9:
                 GameCanvas.enemy_fx_kind = 3
                 GameCanvas.hero_fx_parts = A(GameCanvas.enemy_fx_frames, g1 - 2 + (ex.dir[1] >> 1) * 7)
@@ -2045,8 +2045,8 @@ class MapScene(GameCanvas):
             if e1 == 27 and f1 == 9:        # case 27 falls through into case 26
                 GameCanvas.hero_fx_kind = 3
                 GameCanvas.hero_fx_parts = A(GameCanvas.hero_fx_frames, 1)
-                h_.x = i16(h_.x + consts.aA[cz.dir[1] >> 1])
-                h_.y = i16(h_.y + consts.aB[cz.dir[1] >> 1])
+                h_.x = i16(h_.x + consts.front_dx[cz.dir[1] >> 1])
+                h_.y = i16(h_.y + consts.front_dy[cz.dir[1] >> 1])
             if 1 < f1 < 9:
                 GameCanvas.hero_fx_kind = 3
                 GameCanvas.hero_fx_parts = A(GameCanvas.hero_fx_frames, f1 - 2 + (cz.dir[1] >> 1) * 7)
@@ -2109,8 +2109,8 @@ class MapScene(GameCanvas):
                 self.play_sound(9)
                 dU.frame_data = None
                 dU.frames = self.load_frames(arrayOfShort[dU.item - 10])
-                dU.pos.x = i16(dU.pos.x + consts.aA[dU.dir])
-                dU.pos.y = i16(dU.pos.y + consts.aB[dU.dir])
+                dU.pos.x = i16(dU.pos.x + consts.front_dx[dU.dir])
+                dU.pos.y = i16(dU.pos.y + consts.front_dy[dU.dir])
                 dU.item = i16(dU.item - 12)
                 dU.step = 0
             if dU.step >= arrayOfByte1[dU.item + 2]:

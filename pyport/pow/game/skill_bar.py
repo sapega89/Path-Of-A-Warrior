@@ -112,7 +112,7 @@ def skill_lines(skill, lv):
     i = skill - 12
     lines = []
     if skill in (12, 13, 14) or 20 <= skill <= 30:
-        bonus = idiv(cz.attack * lv, consts.aU[i])
+        bonus = idiv(cz.attack * lv, consts.skill_attack_div[i])
         n = strikes(skill)
         lines.append("DMG %d%s%s" % (cz.attack + cz.attack_buff + bonus, " x%d" % n if n > 1 else "",
                                       " all" if skill >= 28 else ""))
@@ -122,7 +122,7 @@ def skill_lines(skill, lv):
         lines.append("HP+%d" % idiv(cz.max_hp * (9 + lv), 20))
     elif skill in _BUFF_DIV:
         ticks = 50 if lv < 4 else 100 if lv < 8 else 150
-        secs = idiv(ticks * consts.aQ[GameCanvas.speed], 1000)
+        secs = idiv(ticks * consts.speed_frame_ms[GameCanvas.speed], 1000)
         parts = []
         if skill != 18:
             parts.append("ATK+%d" % max(1, idiv(cz.attack * lv, _BUFF_DIV[skill])))

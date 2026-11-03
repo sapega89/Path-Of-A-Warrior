@@ -121,7 +121,7 @@ class Popups(GameCanvas):
                                         GameCanvas.menus.enter_submenu()
                                         GameCanvas.menu_items = GameCanvas.game_menu_items
                                         GameCanvas.menu[0] = 0
-                                        GameCanvas.menu_count = consts.v[GameCanvas.menu[0]]
+                                        GameCanvas.menu_count = consts.menu_sizes[GameCanvas.menu[0]]
                                         GameCanvas.menu[2] = 0
                                         GameCanvas.menu[1] = 0
                                         self.load_hero_images()
@@ -207,7 +207,7 @@ class Popups(GameCanvas):
                     GameCanvas.menus.finish_respec(self.button)
                 elif v == 39:
                     GameCanvas.menu[0] = 12
-                    GameCanvas.menu_count = consts.v[GameCanvas.menu[0]]
+                    GameCanvas.menu_count = consts.menu_sizes[GameCanvas.menu[0]]
                     GameCanvas.menu[1] = 3
                 elif v == 14:
                     from pow.game.menus import Menus
@@ -250,7 +250,7 @@ class Popups(GameCanvas):
                         self.open_menu(2)
                         self.load_menu_frames()
                         GameCanvas.menu[0] = 0
-                        GameCanvas.menu_count = consts.v[GameCanvas.menu[0]]
+                        GameCanvas.menu_count = consts.menu_sizes[GameCanvas.menu[0]]
                         GameCanvas.menu_items = GameCanvas.game_menu_items
                         GameCanvas.state = 2
                         GameCanvas.redraw = 1
@@ -367,12 +367,12 @@ class Popups(GameCanvas):
                 Gfx.set_font(GameCanvas.font_gray)
                 bool_ = False
             self.draw_box(GameCanvas.view_cx - 60 + b * 80, paramInt + GameCanvas.view_y, 40, 17, bool_)
-            GameCanvas.draw_view_text_centred(consts.aZ[b], GameCanvas.view_cx - 40 + b * 80, paramInt + 1)
+            GameCanvas.draw_view_text_centred(consts.yes_no_ok[b], GameCanvas.view_cx - 40 + b * 80, paramInt + 1)
 
     def draw_ok(self, paramInt):  # l.java:463-467  (Ok button)
         Gfx.set_font(GameCanvas.font_white)
         self.draw_box(GameCanvas.view_cx - 60 + 40 + GameCanvas.view_x, paramInt + GameCanvas.view_y, 40, 17, True)
-        GameCanvas.draw_view_text_centred(consts.aZ[2], GameCanvas.view_cx, paramInt)
+        GameCanvas.draw_view_text_centred(consts.yes_no_ok[2], GameCanvas.view_cx, paramInt)
 
     def show_text(self, paramString):  # l.java:469-496  ("<kind>line|line|...")
         self.drawn = False
@@ -542,7 +542,7 @@ class Popups(GameCanvas):
             L[0] = "What do you want"
             L[1] = "to talk about?"
             for i in range(4):
-                L[i + 2] = consts.ba[i]
+                L[i + 2] = consts.gift_kinds[i]
         elif p in (23, 24, 25, 26):
             L[0] = {23: " / Hp 5 Increased", 24: " / MP 3 Increased",
                     25: " / DEF 1 Increased", 26: " / ATK 1 Increased"}[p][3:]
@@ -576,7 +576,7 @@ class Popups(GameCanvas):
             self.play_sound(10)
         elif p == 16:
             L[0] = "You discussed"
-            GameCanvas.popup_lines[0] = consts.ba[GameCanvas.gift_kind] + " with"
+            GameCanvas.popup_lines[0] = consts.gift_kinds[GameCanvas.gift_kind] + " with"
             L[1] = GameCanvas.popup_lines[0]
             GameCanvas.popup_lines[1] = GameCanvas.general.name + '.'
             L[2] = GameCanvas.popup_lines[1]

@@ -195,7 +195,7 @@ class GameCanvas(GameFields, Canvas):
                     self.apply_pause(GameCanvas.pause_pending_value)
                     GameCanvas.pause_pending = False
                 l1 = system.currentTimeMillis()
-                j_ = (consts.aQ[GameCanvas.speed] if GameCanvas.state == 3 else consts.aQ[2]) - int(l1 - GameCanvas.tick_start)
+                j_ = (consts.speed_frame_ms[GameCanvas.speed] if GameCanvas.state == 3 else consts.speed_frame_ms[2]) - int(l1 - GameCanvas.tick_start)
                 if j_ > 20:
                     await self.sleep_ms(j_)
                 else:
@@ -215,7 +215,7 @@ class GameCanvas(GameFields, Canvas):
                     self.open_menu(2)
                     self.load_menu_frames()
                     GameCanvas.menu[0] = 0
-                    GameCanvas.menu_count = consts.v[0]
+                    GameCanvas.menu_count = consts.menu_sizes[0]
                     GameCanvas.menu_items = GameCanvas.game_menu_items
                     GameCanvas.state = 2
                     GameCanvas.menu_scroll = 0
@@ -526,8 +526,8 @@ class GameCanvas(GameFields, Canvas):
         if v == 0:
             self.paint_state()
         elif v == 2:
-            if GameCanvas.sound is not None and GameCanvas.menu[0] < 29 and Sound.music != consts.A[GameCanvas.menu[0]] and GameCanvas.menu[0] != 20 and not GameCanvas.in_live:
-                self.play_sound(consts.A[GameCanvas.menu[0]])
+            if GameCanvas.sound is not None and GameCanvas.menu[0] < 29 and Sound.music != consts.menu_music[GameCanvas.menu[0]] and GameCanvas.menu[0] != 20 and not GameCanvas.in_live:
+                self.play_sound(consts.menu_music[GameCanvas.menu[0]])
             if GameCanvas.popups.kind != 0:
                 GameCanvas.popups.popup_keys()
             else:
@@ -613,64 +613,64 @@ class GameCanvas(GameFields, Canvas):
     def tick_title(self):  # ag.java:2004-2124  (title -> Main Menu)
         cz = GameCanvas.hero
         for b in range(8):
-            q = consts.aT[b]
-            cz.anim_0[b] = consts.B[q]
-            cz.anim_1[b] = consts.C[q]
-            cz.anim_2[b] = consts.D[q]
-            cz.anim_9[b] = consts.E[q]
-            cz.anim_3[b] = consts.F[q]
-            cz.anim_4[b] = consts.G[q]
-            cz.anim_5[b] = consts.H[q]
-            cz.anim_6[b] = consts.I[q]
-            cz.anim_7[b] = consts.J[q]
-            cz.anim_8[b] = consts.K[q]
-            cz.anim_10[b] = consts.L
-            cz.anim_11[b] = consts.M[q]
-            cz.anim_12[b] = consts.N[q]
-            cz.anim_13[b] = consts.O[q]
-            cz.anim_14[b] = consts.P[q]
-            cz.anim_15_19[b] = consts.Q
-            cz.anim_20[b] = consts.R[q]
-            cz.anim_21[b] = consts.S[q]
-            cz.anim_22[b] = consts.T[q]
-            cz.anim_23_24[b] = consts.U
-            cz.anim_25[b] = consts.V[q]
-            cz.anim_26_27[b] = consts.W[q]
-            cz.anim_28[b] = consts.X
-            cz.anim_29[b] = consts.Y
-            cz.anim_30[b] = consts.Z
-            GameCanvas.head_anim[b][0] = consts.aa[q]
-            GameCanvas.head_anim[b][1] = consts.ab[q]
-            GameCanvas.head_anim[b][2] = consts.ac[q]
-            GameCanvas.head_anim[b][3] = consts.ad[q]
+            q = consts.dir8_to_dir4[b]
+            cz.anim_0[b] = consts.hero_anim_0[q]
+            cz.anim_1[b] = consts.hero_anim_1[q]
+            cz.anim_2[b] = consts.hero_anim_2[q]
+            cz.anim_9[b] = consts.hero_anim_9[q]
+            cz.anim_3[b] = consts.hero_anim_3[q]
+            cz.anim_4[b] = consts.hero_anim_4[q]
+            cz.anim_5[b] = consts.hero_anim_5[q]
+            cz.anim_6[b] = consts.hero_anim_6[q]
+            cz.anim_7[b] = consts.hero_anim_7[q]
+            cz.anim_8[b] = consts.hero_anim_8[q]
+            cz.anim_10[b] = consts.hero_anim_10
+            cz.anim_11[b] = consts.hero_anim_11[q]
+            cz.anim_12[b] = consts.hero_anim_12[q]
+            cz.anim_13[b] = consts.hero_anim_13[q]
+            cz.anim_14[b] = consts.hero_anim_14[q]
+            cz.anim_15_19[b] = consts.hero_anim_15_19
+            cz.anim_20[b] = consts.hero_anim_20[q]
+            cz.anim_21[b] = consts.hero_anim_21[q]
+            cz.anim_22[b] = consts.hero_anim_22[q]
+            cz.anim_23_24[b] = consts.hero_anim_23_24
+            cz.anim_25[b] = consts.hero_anim_25[q]
+            cz.anim_26_27[b] = consts.hero_anim_26_27[q]
+            cz.anim_28[b] = consts.hero_anim_28
+            cz.anim_29[b] = consts.hero_anim_29
+            cz.anim_30[b] = consts.hero_anim_30
+            GameCanvas.head_anim[b][0] = consts.head_anim_0[q]
+            GameCanvas.head_anim[b][1] = consts.head_anim_1[q]
+            GameCanvas.head_anim[b][2] = consts.head_anim_2[q]
+            GameCanvas.head_anim[b][3] = consts.head_anim_3[q]
             GameCanvas.head_anims[b] = GameCanvas.head_anim[b]
-            GameCanvas.body_anim[b][0] = consts.ae[q]
-            GameCanvas.body_anim[b][1] = consts.af[q]
-            GameCanvas.body_anim[b][2] = consts.ag[q]
-            GameCanvas.body_anim[b][3] = consts.ah[q]
+            GameCanvas.body_anim[b][0] = consts.body_anim_0[q]
+            GameCanvas.body_anim[b][1] = consts.body_anim_1[q]
+            GameCanvas.body_anim[b][2] = consts.body_anim_2[q]
+            GameCanvas.body_anim[b][3] = consts.body_anim_3[q]
             GameCanvas.body_anims[b] = GameCanvas.body_anim[b]
-            GameCanvas.weapon_anim[b][0] = consts.aa[q]
-            GameCanvas.weapon_anim[b][1] = consts.ai[q]
-            GameCanvas.weapon_anim[b][2] = consts.aj[q]
-            GameCanvas.weapon_anim[b][3] = consts.ak
-            GameCanvas.weapon_anim[b][4] = consts.ai[q]
-            GameCanvas.weapon_anim[b][5] = consts.ai[q]
-            GameCanvas.weapon_anim[b][6] = consts.N[q]
-            GameCanvas.weapon_anim[b][7] = consts.O[q]
-            GameCanvas.weapon_anim[b][8] = consts.P[q]
-            GameCanvas.weapon_anim[b][9] = consts.Q
-            GameCanvas.weapon_anim[b][10] = consts.Q
-            GameCanvas.weapon_anim[b][11] = consts.Q
-            GameCanvas.weapon_anim[b][12] = consts.Q
-            GameCanvas.weapon_anim[b][13] = consts.Q
-            GameCanvas.weapon_anim[b][14] = consts.R[q]
-            GameCanvas.weapon_anim[b][15] = consts.S[q]
-            GameCanvas.weapon_anim[b][16] = consts.T[q]
-            GameCanvas.weapon_anim[b][17] = consts.U
-            GameCanvas.weapon_anim[b][18] = consts.U
-            GameCanvas.weapon_anim[b][19] = consts.V[q]
-            GameCanvas.weapon_anim[b][20] = consts.W[q]
-            GameCanvas.weapon_anim[b][21] = consts.W[q]
+            GameCanvas.weapon_anim[b][0] = consts.head_anim_0[q]
+            GameCanvas.weapon_anim[b][1] = consts.weapon_anim_1[q]
+            GameCanvas.weapon_anim[b][2] = consts.weapon_anim_2[q]
+            GameCanvas.weapon_anim[b][3] = consts.weapon_anim_3
+            GameCanvas.weapon_anim[b][4] = consts.weapon_anim_1[q]
+            GameCanvas.weapon_anim[b][5] = consts.weapon_anim_1[q]
+            GameCanvas.weapon_anim[b][6] = consts.hero_anim_12[q]
+            GameCanvas.weapon_anim[b][7] = consts.hero_anim_13[q]
+            GameCanvas.weapon_anim[b][8] = consts.hero_anim_14[q]
+            GameCanvas.weapon_anim[b][9] = consts.hero_anim_15_19
+            GameCanvas.weapon_anim[b][10] = consts.hero_anim_15_19
+            GameCanvas.weapon_anim[b][11] = consts.hero_anim_15_19
+            GameCanvas.weapon_anim[b][12] = consts.hero_anim_15_19
+            GameCanvas.weapon_anim[b][13] = consts.hero_anim_15_19
+            GameCanvas.weapon_anim[b][14] = consts.hero_anim_20[q]
+            GameCanvas.weapon_anim[b][15] = consts.hero_anim_21[q]
+            GameCanvas.weapon_anim[b][16] = consts.hero_anim_22[q]
+            GameCanvas.weapon_anim[b][17] = consts.hero_anim_23_24
+            GameCanvas.weapon_anim[b][18] = consts.hero_anim_23_24
+            GameCanvas.weapon_anim[b][19] = consts.hero_anim_25[q]
+            GameCanvas.weapon_anim[b][20] = consts.hero_anim_26_27[q]
+            GameCanvas.weapon_anim[b][21] = consts.hero_anim_26_27[q]
             GameCanvas.weapon_anims[b] = GameCanvas.weapon_anim[b]
         GameCanvas.char_anims[0] = GameCanvas.head_anims
         GameCanvas.char_anims[1] = GameCanvas.body_anims
@@ -1091,7 +1091,7 @@ class GameCanvas(GameFields, Canvas):
 
     @staticmethod
     def restore_menu_cursor():  # ag.java:2728-2733
-        GameCanvas.menu_count = consts.v[GameCanvas.menu[0]]
+        GameCanvas.menu_count = consts.menu_sizes[GameCanvas.menu[0]]
         GameCanvas.menu[1] = GameCanvas.menu_cursors[GameCanvas.menu[0]]
         GameCanvas.menu[2] = GameCanvas.menu_tops[GameCanvas.menu[0]]
         GameCanvas.redraw = 1
@@ -1208,27 +1208,27 @@ class GameCanvas(GameFields, Canvas):
         if paramInt1 != -1:
             Gfx.set_font(GameCanvas.font_white)
             Gfx.draw_image(GameCanvas.softkey_bg, 0, GameCanvas.screen_h - m)
-            i1 = len(str_ + consts.t[paramInt1]) * 10
+            i1 = len(str_ + consts.softkey_labels[paramInt1]) * 10
             i2 = i1 + 4 - GameCanvas.softkey_bg.getWidth()
             if i2 > 0:
                 Gfx.fill_rect(j_ - 8, GameCanvas.screen_h - m + 2, 8, 13, 0)
                 Gfx.draw_image(GameCanvas.softkey_bg, i2, GameCanvas.screen_h - m)
                 Gfx.fill_rect(i2, GameCanvas.screen_h - m + 2, 8, 13, 0)
-                Gfx.draw_string(str_ + consts.t[paramInt1], (j_ + i2) // 2, GameCanvas.screen_h - m, 1)
+                Gfx.draw_string(str_ + consts.softkey_labels[paramInt1], (j_ + i2) // 2, GameCanvas.screen_h - m, 1)
             else:
-                Gfx.draw_string(str_ + consts.t[paramInt1], j_ // 2, GameCanvas.screen_h - m, 1)
+                Gfx.draw_string(str_ + consts.softkey_labels[paramInt1], j_ // 2, GameCanvas.screen_h - m, 1)
         if paramInt2 != -1:
             Gfx.set_font(GameCanvas.font_white)
             Gfx.draw_image(GameCanvas.softkey_bg, GameCanvas.screen_w - j_ - 0, GameCanvas.screen_h - m)
-            i1 = len(str_ + consts.t[paramInt2]) * 10
+            i1 = len(str_ + consts.softkey_labels[paramInt2]) * 10
             i2 = i1 + 15 - GameCanvas.softkey_bg.getWidth()
             if i2 > 0:
                 Gfx.fill_rect(GameCanvas.screen_w - j_ - 0, GameCanvas.screen_h - m + 2, 8, 13, 0)
                 Gfx.draw_image(GameCanvas.softkey_bg, GameCanvas.screen_w - j_ - i2 - 0, GameCanvas.screen_h - m)
                 Gfx.fill_rect(GameCanvas.screen_w - i2 - 0 - 8, GameCanvas.screen_h - m + 2, 8, 13, 0)
-                Gfx.draw_string(str_ + consts.t[paramInt2], GameCanvas.screen_w - (j_ + i2) // 2 - 0, GameCanvas.screen_h - m, 1)
+                Gfx.draw_string(str_ + consts.softkey_labels[paramInt2], GameCanvas.screen_w - (j_ + i2) // 2 - 0, GameCanvas.screen_h - m, 1)
                 return
-            Gfx.draw_string(str_ + consts.t[paramInt2], GameCanvas.screen_w - j_ // 2 - 0, GameCanvas.screen_h - m, 1)
+            Gfx.draw_string(str_ + consts.softkey_labels[paramInt2], GameCanvas.screen_w - j_ // 2 - 0, GameCanvas.screen_h - m, 1)
 
     def set_color(self, paramInt1, paramInt2, paramInt3):  # ag.java:3201-3203
         GameCanvas.fill_color = GameCanvas.rgb(paramInt1, paramInt2, paramInt3)
@@ -1575,7 +1575,7 @@ class GameCanvas(GameFields, Canvas):
     def start_new_game(self):  # ag.java:3213-3220  (New Game -> difficulty screen 29)
         GameCanvas.menus.enter_submenu()
         GameCanvas.menu[0] = 29
-        GameCanvas.menu_count = consts.v[GameCanvas.menu[0]]
+        GameCanvas.menu_count = consts.menu_sizes[GameCanvas.menu[0]]
         GameCanvas.menu[1] = 1
         GameCanvas.hero.head = 0
         self.new_hero()
@@ -1756,9 +1756,9 @@ class GameCanvas(GameFields, Canvas):
     def item_tier(paramInt):  # ag.java:3414-3422  (item tier by hero level)
         m = 0
         b = 0
-        while b < 5 and GameCanvas.hero.level >= consts.w[b]:
+        while b < 5 and GameCanvas.hero.level >= consts.tier_levels[b]:
             b += 1
-        j_ = consts.x[b - 1]
+        j_ = consts.tier_drop_odds[b - 1]
         b = 0
         while b < 4:
             m += j_ & 0xFF
@@ -1803,7 +1803,7 @@ class GameCanvas(GameFields, Canvas):
             GameCanvas.story_ending = 0
             b = 64 + paramInt1 // 6
             for b1 in range(3):
-                GameCanvas.story_pages[b1] = consts.aV[(paramInt1 << 1) + b1] - consts.aV[paramInt1 // 6 * 12]
+                GameCanvas.story_pages[b1] = consts.story_offsets[(paramInt1 << 1) + b1] - consts.story_offsets[paramInt1 // 6 * 12]
             if paramInt1 == 3 and paramInt2 != 0 and 0 == GameCanvas.backpack_slot_of(502):
                 GameCanvas.story_pages[2] = 0
                 GameCanvas.story_pages[1] = 0
@@ -2250,11 +2250,11 @@ class GameCanvas(GameFields, Canvas):
         if paramInt < 0 or paramInt > 10:
             return str_
         if paramInt < 9:
-            str_ = (consts.aN[paramInt] + " / Recover " + str(consts.aP[paramInt % 3]) + "% of total "
-                    + consts.aO[paramInt // 3])
+            str_ = (consts.potion_names[paramInt] + " / Recover " + str(consts.potion_percents[paramInt % 3]) + "% of total "
+                    + consts.potion_kinds[paramInt // 3])
         else:
             arrayOfByte = GameCanvas.edat_string(54, 24 + paramInt).encode("latin-1")
-            str_ = consts.aN[paramInt] + " / " + GameCanvas.read_utf(arrayOfByte, 0, len(arrayOfByte))
+            str_ = consts.potion_names[paramInt] + " / " + GameCanvas.read_utf(arrayOfByte, 0, len(arrayOfByte))
         return str_
 
     @staticmethod
@@ -2274,7 +2274,7 @@ class GameCanvas(GameFields, Canvas):
             return GameCanvas.treasure_def.level
         if paramInt > 100:
             GameCanvas.info_box.text = GameCanvas.gear_def.name
-            return consts.aM[paramInt % 5]
+            return consts.tier_req_level[paramInt % 5]
         return 0
 
     # ---- Blacksmith helpers ----------------------------------------------------------------
@@ -2727,7 +2727,7 @@ class GameCanvas(GameFields, Canvas):
                 self.open_menu(2)
                 self.load_menu_frames()
                 GameCanvas.menu[0] = 0
-                GameCanvas.menu_count = consts.v[GameCanvas.menu[0]]
+                GameCanvas.menu_count = consts.menu_sizes[GameCanvas.menu[0]]
                 GameCanvas.menu_items = GameCanvas.game_menu_items
                 GameCanvas.talk_line = 200
                 GameCanvas.state = 2

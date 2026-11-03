@@ -147,7 +147,7 @@ def soldier(mon, pal, frame=0):
 TYPE = ["Зброя (довга)", "Зброя (коротка)", "Шолом", "Броня", "Рукавиці", "Чоботи", "Пояс",
         "Наруч", "Амулет", "Особливе"]
 STAT = ["ATK", "DEF", "HP", "MP"]
-TIER_LV = ae.w                    # ae.java:16 reqLevel of the 5 tiers of Normal items
+TIER_LV = ae.tier_levels                    # ae.java:16 reqLevel of the 5 tiers of Normal items
 
 # ar.java:2055-2078 (ar.P): drop class 0 soldier / 1 general / 2 mission target
 DROP_CHANCE = [5, 10, 20]         # % that the enemy drops anything but gold
@@ -198,15 +198,15 @@ def load_items():
 
 def load_consumables():
     out = []
-    for k, name in enumerate(ae.aN):                            # ae.java:230-238
+    for k, name in enumerate(ae.potion_names):                            # ae.java:230-238
         cid = k + 1
         if cid <= 9:
-            e = "%s +%d%%" % (ae.aO[k // 3], ae.aP[k % 3])
+            e = "%s +%d%%" % (ae.potion_kinds[k // 3], ae.potion_percents[k % 3])
         elif cid == 10:
             e = "Кидок на 60 px, вибух r=35: шкода min(50, 2·рівень героя), відкидає"
         else:
             e = "Кидок на 60 px, вибух r=35: 3 удари по min(30, рівень героя)"
-        out.append(dict(id=cid, n=name.strip(), e=e, p=ae.y[k], shop=cid in (1, 2, 3, 4, 5, 6, 10, 11),
+        out.append(dict(id=cid, n=name.strip(), e=e, p=ae.item_prices[k], shop=cid in (1, 2, 3, 4, 5, 6, 10, 11),
                         ic=cell("tool.png", k)))
     return out
 
@@ -220,7 +220,7 @@ def load_recipes():
 
 # ---- skills --------------------------------------------------------------------------------
 
-# ar.java:743-757: MP = base + (level - 1) * inc;  ae.aU: damage bonus ATK*lvl/aU
+# ar.java:743-757: MP = base + (level - 1) * inc;  ae.skill_attack_div: damage bonus ATK*lvl/aU
 SKILL_MP = [(5, 3), (6, 4), (7, 5), (10, 3), (15, 4), (7, 3), (10, 3), (10, 5), (8, 3), (9, 4),
             (10, 5), (5, 3), (6, 4), (7, 5), (9, 5), (12, 6), (20, 5), (20, 5), (20, 5)]
 SKILL_CAT = ["MOVE", "MOVE", "MOVE", "HEAL", "HEAL", "PASV", "PASV", "PASV", "FWD", "FWD", "FWD",
@@ -255,7 +255,7 @@ def load_skills(text):
     for i in range(19):
         base, inc = SKILL_MP[i]
         cat = SKILL_CAT[i]
-        bonus = ae.aU[i]
+        bonus = ae.skill_attack_div[i]
         out.append(dict(id=i + 1, n=text[i], d=text[19 + i], cat=cat, catn=CAT_UA[cat],
                         mp1=base, mp10=base + 9 * inc, bonus=("ATK·рівень/%d" % bonus) if bonus else "",
                         e=SKILL_EFFECT[i], ic=cell("skill.png", i), icg=cell("skillgray.png", i)))

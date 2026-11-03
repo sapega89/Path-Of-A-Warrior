@@ -86,7 +86,7 @@ class MapEngine(GameCanvas):
 
     def pause_menu_keys(self):  # ar.java:95-247  (keys of the pause menu cR.a: 1 menu, 2 items, 3 options, 4 help)
         arrayOfByte1 = [0, 3, 0, 2, 4, 0, 0]
-        arrayOfByte2 = [0, consts.v[9], 0, 5, 3, 0, 0]    # Options: 3 rows (+1 with config.SCREEN_OPTION)
+        arrayOfByte2 = [0, consts.menu_sizes[9], 0, 5, 3, 0, 0]    # Options: 3 rows (+1 with config.SCREEN_OPTION)
         v = GameCanvas.key
         blocked = GameCanvas.actor_count > 0 or GameCanvas.boss_fight != 0 or GameCanvas.waves[0] != 0
         if v in (-1, 50):
@@ -605,7 +605,7 @@ class MapEngine(GameCanvas):
             i = cz.attack + cz.attack_buff - ex.defense - ex.defense_buff
             ex.hp = i16(ex.hp - (i if i > 0 else 1))
         elif paramInt2 in (12, 13, 14) or 20 <= paramInt2 <= 30:
-            i = cz.attack + cz.attack_buff + idiv(cz.attack * cz.skill_levels[paramInt2 - 12], consts.aU[paramInt2 - 12]) - ex.defense - ex.defense_buff
+            i = cz.attack + cz.attack_buff + idiv(cz.attack * cz.skill_levels[paramInt2 - 12], consts.skill_attack_div[paramInt2 - 12]) - ex.defense - ex.defense_buff
             ex.hp = i16(ex.hp - (i if i > 0 else 1))
         elif paramInt2 == -2:
             ex.ai_mode = 2
@@ -653,25 +653,25 @@ class MapEngine(GameCanvas):
                 e0 = cz.action[0]
                 if e0 == 13:
                     q = cz.dir[0] >> 1
-                    if self.boxes_touch(cz.pos[0].x + consts.aF[q], cz.pos[0].y + consts.aG[q], consts.aH[q], consts.aI[q], cA.pos.x - 8, cA.pos.y - 8, 18, 18):
+                    if self.boxes_touch(cz.pos[0].x + consts.hit_box_x[q], cz.pos[0].y + consts.hit_box_y[q], consts.hit_box_w[q], consts.hit_box_h[q], cA.pos.x - 8, cA.pos.y - 8, 18, 18):
                         self.hit_breakable(b)
                 elif e0 == 22:
                     if MapEngine.is_in_front(cz.pos[0], cA.pos, cz.dir[0]) != 0:
-                        self.breakable_hit_if_near(b, consts.aK[cz.weapon_kind])
+                        self.breakable_hit_if_near(b, consts.weapon_reach[cz.weapon_kind])
                 elif e0 in (23, 24):
                     self.breakable_hit_if_near(b, 45)
                 elif e0 == 25:
                     if (cz.dir[0] + (cz.frame[0] >> 1 << 1) & 0x7) == MapEngine.dir4(cz.pos[0], cA.pos):
-                        self.breakable_hit_if_near(b, consts.aK[cz.weapon_kind])
+                        self.breakable_hit_if_near(b, consts.weapon_reach[cz.weapon_kind])
                 elif e0 in (26, 27):
-                    h_.x = i16(cz.pos[0].x + consts.aA[cz.dir[0] >> 1])
-                    h_.y = i16(cz.pos[0].y + consts.aB[cz.dir[0] >> 1])
+                    h_.x = i16(cz.pos[0].x + consts.front_dx[cz.dir[0] >> 1])
+                    h_.y = i16(cz.pos[0].y + consts.front_dy[cz.dir[0] >> 1])
                     if MapEngine.distance(h_, cA.pos) <= 35:
                         self.hit_breakable(b)
                 elif e0 in (28, 29, 30):
                     self.hit_breakable(b)
                 else:
-                    self.breakable_hit_if_facing(b, consts.aK[cz.weapon_kind])
+                    self.breakable_hit_if_facing(b, consts.weapon_reach[cz.weapon_kind])
 
     @staticmethod
     def show_target_info(paramInt):  # ar.java:410-421  (message box: enemy name and HP bar)
@@ -684,7 +684,7 @@ class MapEngine(GameCanvas):
             GameCanvas.message.name = GameCanvas.general.name
             return
         GameCanvas.message.hp_bar = i16(GameCanvas.message.hp_bar >> 1)
-        GameCanvas.message.name = consts.aS[ex.type - 201]
+        GameCanvas.message.name = consts.troop_names[ex.type - 201]
 
     @staticmethod
     def is_in_front(paramh1, paramh2, paramInt):  # ar.java:423-443  (is paramh2 in front of paramh1?)
@@ -784,8 +784,8 @@ class MapEngine(GameCanvas):
             if e0 in (25, 27):
                 ex.ai_mode = 5
             ex.hit_fx_kind = 2
-            h_.x = i16(cz.pos[0].x + consts.aA[cz.dir[0] >> 1])
-            h_.y = i16(cz.pos[0].y + consts.aB[cz.dir[0] >> 1])
+            h_.x = i16(cz.pos[0].x + consts.front_dx[cz.dir[0] >> 1])
+            h_.y = i16(cz.pos[0].y + consts.front_dy[cz.dir[0] >> 1])
             ex.dir[0] = ex.facing = MapEngine.dir8(ex.pos[0], h_)
         elif e0 == 29:
             self.set_enemy_on_fire(paramInt)
@@ -822,7 +822,7 @@ class MapEngine(GameCanvas):
             ex = GameCanvas.actors[paramInt]
             cz.dir[0] = cz.facing = MapEngine.dir8(cz.pos[0], ex.pos[0])
             if ex.action[0] in (6, 7, 8, 14, 15, 16, 17, 18, 19, 20, 21):
-                i = ex.attack + ex.attack_buff + idiv(ex.attack, consts.aU[ex.action[0] - 6]) - cz.defense - cz.defense_buff
+                i = ex.attack + ex.attack_buff + idiv(ex.attack, consts.skill_attack_div[ex.action[0] - 6]) - cz.defense - cz.defense_buff
             else:
                 i = ex.attack + ex.attack_buff - cz.defense - cz.defense_buff
             i = i if i > 0 else 1
@@ -861,7 +861,7 @@ class MapEngine(GameCanvas):
         self.play_sound(13)
         if GameCanvas.fire_data is None:
             GameCanvas.fire_frames = self.load_frames(60)
-            GameCanvas.fire_data = list(consts.ao)
+            GameCanvas.fire_data = list(consts.fx_fire)
 
     def set_hero_on_fire(self):  # ar.java:653-661  (fire effect on the hero)
         GameCanvas.hero.on_fire = 1
@@ -869,7 +869,7 @@ class MapEngine(GameCanvas):
         self.play_sound(13)
         if GameCanvas.hero_fx_data is None:
             GameCanvas.hero_fx_frames = self.load_frames(60)
-            GameCanvas.hero_fx_data = consts.ao
+            GameCanvas.hero_fx_data = consts.fx_fire
 
     def hit_breakable(self, paramInt):  # ar.java:663-672  (hit a breakable object)
         cA = GameCanvas.breakables[paramInt]
@@ -892,25 +892,25 @@ class MapEngine(GameCanvas):
                     e0 = cz.action[0]
                     if e0 == 13:
                         q = cz.dir[0] >> 1
-                        if self.boxes_touch(cz.pos[0].x + consts.aF[q], cz.pos[0].y + consts.aG[q], consts.aH[q], consts.aI[q], ex.pos[0].x - 8, ex.pos[0].y - 8, 17, 17):
+                        if self.boxes_touch(cz.pos[0].x + consts.hit_box_x[q], cz.pos[0].y + consts.hit_box_y[q], consts.hit_box_w[q], consts.hit_box_h[q], ex.pos[0].x - 8, ex.pos[0].y - 8, 17, 17):
                             self.hero_hits_enemy(s, cz.action[0])
                             self.play_sound(3)
                     elif e0 == 22:
                         if MapEngine.is_in_front(cz.pos[0], ex.pos[0], cz.dir[0]) != 0:
-                            self.hero_strike_if_near(s, consts.aK[cz.weapon_kind])
+                            self.hero_strike_if_near(s, consts.weapon_reach[cz.weapon_kind])
                     elif e0 in (23, 24):
                         self.hero_strike_if_near(s, 45)
                     elif e0 == 25:
                         if (cz.dir[0] + (cz.frame[0] >> 1 << 1) & 0x7) == MapEngine.dir4(cz.pos[0], ex.pos[0]):
-                            self.hero_strike_if_near(s, consts.aK[cz.weapon_kind])
+                            self.hero_strike_if_near(s, consts.weapon_reach[cz.weapon_kind])
                     elif e0 in (26, 27):
-                        h_.x = i16(cz.pos[0].x + consts.aA[cz.dir[0] >> 1])
-                        h_.y = i16(cz.pos[0].y + consts.aB[cz.dir[0] >> 1])
+                        h_.x = i16(cz.pos[0].x + consts.front_dx[cz.dir[0] >> 1])
+                        h_.y = i16(cz.pos[0].y + consts.front_dy[cz.dir[0] >> 1])
                         if MapEngine.distance(h_, ex.pos[0]) <= 35:
                             self.strike_enemy(s)
                     elif e0 in (28, 29, 30):
                         self.strike_enemy(s)
-                    self.hero_strike_if_facing(s, consts.aK[cz.weapon_kind])
+                    self.hero_strike_if_facing(s, consts.weapon_reach[cz.weapon_kind])
                 elif paramInt in (-2, -1):
                     if MapEngine.distance(GameCanvas.effect.pos, ex.pos[0]) <= 35:
                         self.hero_hits_enemy(s, GameCanvas.effect.item)
@@ -1083,28 +1083,28 @@ class MapEngine(GameCanvas):
                 continue
             j_ = ex.facing
             if ex.alerted == 0:
-                ex.pos[0].x = i16(ex.pos[0].x + consts.aw[j_])
-                ex.pos[0].y = i16(ex.pos[0].y + consts.ax[j_])
+                ex.pos[0].x = i16(ex.pos[0].x + consts.dir_dx8[j_])
+                ex.pos[0].y = i16(ex.pos[0].y + consts.dir_dy8[j_])
                 continue
             k = m = 0
             f0 = ex.action[0]
             g0 = ex.frame[0]
             e0 = ex.dir[0]
             if f0 == 0:
-                k = consts.aw[j_]
-                m = consts.ax[j_]
+                k = consts.dir_dx8[j_]
+                m = consts.dir_dy8[j_]
             elif f0 in (1, 4, 5):
-                k = idiv(consts.aw[e0], 3)
-                m = idiv(consts.ax[e0], 3)
+                k = idiv(consts.dir_dx8[e0], 3)
+                m = idiv(consts.dir_dy8[e0], 3)
             elif f0 == 6:
                 if 2 < g0 < 6:
-                    k = consts.aw[e0] << 2
-                    m = consts.ax[e0] << 2
+                    k = consts.dir_dx8[e0] << 2
+                    m = consts.dir_dy8[e0] << 2
             elif f0 in (7, 8):
                 fall8 = f0 == 8
                 if f0 == 7 and 4 < g0 < 8:
-                    k = consts.aw[e0] << 2
-                    m = consts.ax[e0] << 2
+                    k = consts.dir_dx8[e0] << 2
+                    m = consts.dir_dy8[e0] << 2
                     if k > 0:
                         k = self.step_until_free(ex.pos[0], k, 6)
                     elif k < 0:
@@ -1120,21 +1120,21 @@ class MapEngine(GameCanvas):
                     ex.pos[0].y = i16(ex.pos[0].y + m)
                     fall8 = True            # no break: falls into case 8
                 if fall8 and 0 < g0 < 9:
-                    k = consts.aw[e0]
-                    m = consts.ax[e0]
+                    k = consts.dir_dx8[e0]
+                    m = consts.dir_dy8[e0]
             elif f0 == 14:
                 if 0 == (g0 & 0x1):
-                    k = consts.aw[e0]
-                    m = consts.ax[e0]
+                    k = consts.dir_dx8[e0]
+                    m = consts.dir_dy8[e0]
             elif f0 == 2 and ex.ai_mode > 0:
                 ex.ai_mode = i8(ex.ai_mode - 1)
                 j_ = j_ + 4 & 0x7
-                k = consts.aw[j_] << 2
-                m = consts.ax[j_] << 2
+                k = consts.dir_dx8[j_] << 2
+                m = consts.dir_dy8[j_] << 2
             elif f0 == 2 and g0 == 1:
                 j_ = ex.facing + 4 & 0x7
-                k = idiv(consts.aw[j_] * 3, 4)
-                m = idiv(consts.ax[j_] * 3, 4)
+                k = idiv(consts.dir_dx8[j_] * 3, 4)
+                m = idiv(consts.dir_dy8[j_] * 3, 4)
             if k != 0 or m != 0:
                 if ex.type == 203:
                     arrayOfH = ex.pos
@@ -1154,7 +1154,7 @@ class MapEngine(GameCanvas):
                     if i == -1:
                         i = MapEngine.slide_corner(ex.pos[0], ex.facing, s1)
                         if i != -1:
-                            self.move(ex.pos[0], consts.aw[i], consts.ax[i], i, s1)
+                            self.move(ex.pos[0], consts.dir_dx8[i], consts.dir_dy8[i], i, s1)
             f0 = ex.action[0]
             g0 = ex.frame[0]
             if f0 in (1, 4, 5):
@@ -1214,36 +1214,36 @@ class MapEngine(GameCanvas):
                 f0 = ex.action[0]
                 if f0 == 7:
                     q = ex.dir[0] >> 1
-                    if self.boxes_touch(ex.pos[0].x + consts.aF[q], ex.pos[0].y + consts.aG[q], consts.aH[q], consts.aI[q], cz.pos[0].x - 8, cz.pos[0].y - 8, 17, 17):
+                    if self.boxes_touch(ex.pos[0].x + consts.hit_box_x[q], ex.pos[0].y + consts.hit_box_y[q], consts.hit_box_w[q], consts.hit_box_h[q], cz.pos[0].x - 8, cz.pos[0].y - 8, 17, 17):
                         self.hero_is_hit(paramInt)
                     return
                 if f0 == 16:
                     if MapEngine.is_in_front(ex.pos[0], cz.pos[0], ex.dir[0]) != 0:
-                        self.general_strike_if_near(paramInt, consts.aL[GameCanvas.general.side])
+                        self.general_strike_if_near(paramInt, consts.general_reach[GameCanvas.general.side])
                     return
                 if f0 in (17, 18):
                     self.general_strike_if_near(paramInt, 45)
                     return
                 if f0 == 19:
                     if (ex.dir[0] + (ex.frame[0] >> 1 << 1) & 0x7) == MapEngine.dir4(ex.pos[0], cz.pos[0]):
-                        self.general_strike_if_near(paramInt, consts.aL[GameCanvas.general.side])
+                        self.general_strike_if_near(paramInt, consts.general_reach[GameCanvas.general.side])
                     return
                 if f0 in (20, 21):
-                    h_.x = i16(ex.pos[0].x + consts.aA[ex.dir[0] >> 1])
-                    h_.y = i16(ex.pos[0].y + consts.aB[ex.dir[0] >> 1])
+                    h_.x = i16(ex.pos[0].x + consts.front_dx[ex.dir[0] >> 1])
+                    h_.y = i16(ex.pos[0].y + consts.front_dy[ex.dir[0] >> 1])
                     if MapEngine.distance(h_, cz.pos[0]) <= 35:
                         self.general_skill_hits_hero(paramInt)
                     return
-                self.general_strike_if_facing(paramInt, consts.aL[GameCanvas.general.side])
+                self.general_strike_if_facing(paramInt, consts.general_reach[GameCanvas.general.side])
                 return
         elif cz.action[0] == 9:
             f0 = ex.action[0]
             if f0 in (8, 14):
-                self.general_strike_if_facing(paramInt, consts.aL[GameCanvas.general.side])
+                self.general_strike_if_facing(paramInt, consts.general_reach[GameCanvas.general.side])
                 return
             if f0 in (20, 21):
-                h_.x = i16(ex.pos[0].x + consts.aA[cz.dir[0] >> 1])
-                h_.y = i16(ex.pos[0].y + consts.aB[cz.dir[0] >> 1])
+                h_.x = i16(ex.pos[0].x + consts.front_dx[cz.dir[0] >> 1])
+                h_.y = i16(ex.pos[0].y + consts.front_dy[cz.dir[0] >> 1])
                 if MapEngine.distance(h_, cz.pos[0]) <= 35:
                     self.general_skill_hits_hero(paramInt)
 

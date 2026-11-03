@@ -195,7 +195,7 @@ def _menu_keys(c0, x, y, kind):
             return _steps((y - top) // 30 - (cM[1] - cM[2]), UP, DOWN) + [FIRE]
         return []
     if c0 == 9:                                                # e.j(): rows 1, 2 at de-50 + 30*(b-1)
-        for b in range(1, consts.v[9]):                      # + row 3 Screen (config.SCREEN_OPTION)
+        for b in range(1, consts.menu_sizes[9]):                      # + row 3 Screen (config.SCREEN_OPTION)
             top = de - 50 + (b - 1) * 30 + dc
             if top <= y < top + 20 and dd - 100 <= x < dd + 100:
                 keys = _steps(b - cM[1], UP, DOWN)

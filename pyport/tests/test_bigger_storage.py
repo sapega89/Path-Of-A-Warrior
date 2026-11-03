@@ -56,7 +56,7 @@ def test_sizes():
     assert config.BACKPACK_SIZE > 25 and config.BACKPACK_SIZE % 5 == 0
     assert config.WAREHOUSE_SIZE > 100 and config.WAREHOUSE_SIZE % 5 == 0 and config.WAREHOUSE_SIZE < 256
     assert len(Hero().backpack) == config.BACKPACK_SIZE
-    assert consts.v[17] == config.BACKPACK_SIZE            # cells of the Inventory menu
+    assert consts.menu_sizes[17] == config.BACKPACK_SIZE            # cells of the Inventory menu
     assert len(Live.warehouse) == config.WAREHOUSE_SIZE
 
 

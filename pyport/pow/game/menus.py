@@ -76,7 +76,7 @@ class Menus(GameCanvas):
                         self.draw_text_at(str_, 15, 0)
                     else:
                         self.draw_text_at(str_, 2 - GameCanvas.view_y, 0)
-                if consts.u[cM[0]] != -1 or (consts.u[cM[0]] == -1 and cM[0] == 15):
+                if consts.menu_parent[cM[0]] != -1 or (consts.menu_parent[cM[0]] == -1 and cM[0] == 15):
                     if cM[0] == 3:
                         GameCanvas.draw_softkeys(11, 2)
                     elif cM[0] == 14:   # PORT-EXTRA: RESET the attributes (hero_classes)
@@ -281,7 +281,7 @@ class Menus(GameCanvas):
 
     @staticmethod
     def menu_link(paramInt1, paramInt2):  # e.java:304-307
-        return consts.aW[paramInt1][paramInt2]
+        return consts.menu_links[paramInt1][paramInt2]
 
     def key_up(self):  # e.java:309-392  (UP)
         cM = GameCanvas.menu
@@ -454,7 +454,7 @@ class Menus(GameCanvas):
             GameCanvas.redraw = 1
             cM[1] = cM[1] - 1
             if _dec_cmp(cM[1]) < 0:
-                cM[1] = consts.z[GameCanvas.help_topic + 1] - consts.z[GameCanvas.help_topic] - 1
+                cM[1] = consts.help_topic_start[GameCanvas.help_topic + 1] - consts.help_topic_start[GameCanvas.help_topic] - 1
                 return
             return
         if v == 5:
@@ -544,7 +544,7 @@ class Menus(GameCanvas):
                 return
             GameCanvas.redraw = 1
             cM[1] = cM[1] + 1
-            if _inc_cmp(cM[1]) >= consts.z[GameCanvas.help_topic + 1] - consts.z[GameCanvas.help_topic]:
+            if _inc_cmp(cM[1]) >= consts.help_topic_start[GameCanvas.help_topic + 1] - consts.help_topic_start[GameCanvas.help_topic]:
                 cM[1] = 0
                 return
             return
@@ -645,7 +645,7 @@ class Menus(GameCanvas):
             cM[1] = arrayOfInt[cM[1]]
         if Menus.menu_link(cM[0], cM[1] % 7) > -1:
             self.enter_submenu()
-            GameCanvas.menu_count = consts.v[cM[0]]
+            GameCanvas.menu_count = consts.menu_sizes[cM[0]]
             c0 = cM[0]
             if c0 == 7:
                 GameCanvas.hero.name = ""
@@ -662,7 +662,7 @@ class Menus(GameCanvas):
                 GameCanvas.menu_before_talk = i16(GameCanvas.menu_return)
             elif c0 == 28:
                 GameCanvas.help_topic = i16(cM[1])
-                GameCanvas.menu_count = consts.z[GameCanvas.help_topic + 1] - consts.z[GameCanvas.help_topic]
+                GameCanvas.menu_count = consts.help_topic_start[GameCanvas.help_topic + 1] - consts.help_topic_start[GameCanvas.help_topic]
             elif c0 == 14:
                 GameCanvas.update_hero_stats()
             elif c0 == 15:
@@ -733,7 +733,7 @@ class Menus(GameCanvas):
                     GameCanvas.menu_anim = 0
                     GameCanvas.menu_scroll = 0
                     cM[0] = 0
-                    GameCanvas.menu_count = consts.v[cM[0]]
+                    GameCanvas.menu_count = consts.menu_sizes[cM[0]]
                     GameCanvas.menu_items = GameCanvas.game_menu_items
                     cM[2] = 0
                     cM[1] = 0
@@ -796,7 +796,7 @@ class Menus(GameCanvas):
             cz = GameCanvas.hero
             if cM[3] == 1:
                 if cz.hotkeys[cM[1]] != 0:
-                    cM[2] = consts.aD[cz.hotkeys[cM[1]] - 12]
+                    cM[2] = consts.skill_menu_index[cz.hotkeys[cM[1]] - 12]
                     cz.hotkeys[cM[1]] = 0
                 elif cM[1] < 4:
                     cM[2] = 0
@@ -808,9 +808,9 @@ class Menus(GameCanvas):
                     return
                 GameCanvas.redraw = 1
                 return
-            if consts.aC[cM[2]] != 0:
-                if cz.skill_levels[consts.aC[cM[2]] - 12] != 0:
-                    cz.hotkeys[cM[1]] = consts.aC[cM[2]]
+            if consts.skill_menu_ids[cM[2]] != 0:
+                if cz.skill_levels[consts.skill_menu_ids[cM[2]] - 12] != 0:
+                    cz.hotkeys[cM[1]] = consts.skill_menu_ids[cM[2]]
                     cM[3] = 1
                 GameCanvas.menu_part = 6
                 return
@@ -839,7 +839,7 @@ class Menus(GameCanvas):
                     elif it.id in (502, 504):
                         GameCanvas.popups.setup_popup(17)
                     else:
-                        self.swap_items(it, cz.equipped[consts.aE[b]])
+                        self.swap_items(it, cz.equipped[consts.equip_slot_order[b]])
                 else:
                     GameCanvas.popups.setup_popup(17)
             GameCanvas.menu_part = 1
@@ -848,7 +848,7 @@ class Menus(GameCanvas):
             if (GameCanvas.missions_done & 1 << GameCanvas.lord_ids[cM[1]] - 1) != 0:
                 self.enter_submenu()
                 cM[0] = 2
-                GameCanvas.menu_count = consts.v[cM[0]]
+                GameCanvas.menu_count = consts.menu_sizes[cM[0]]
                 GameCanvas.lord = i16(i8(cM[1]))
                 self.load_lord_missions()
                 cM[2] = 0
@@ -861,10 +861,10 @@ class Menus(GameCanvas):
     def key_back(self):  # e.java:1002-1109  (BACK)
         cM = GameCanvas.menu
         bool_ = False
-        if consts.u[cM[0]] > -1:
+        if consts.menu_parent[cM[0]] > -1:
             if cM[0] in (14, 15, 16, 17, 18):
                 self.save_game()
-            if consts.u[cM[0]] > 99:
+            if consts.menu_parent[cM[0]] > 99:
                 GameCanvas.help_topic = 0
                 if cM[0] == 28 and GameCanvas.menu_return == 5:
                     GameCanvas.help_topic = 7
@@ -881,7 +881,7 @@ class Menus(GameCanvas):
             else:
                 if cM[0] == 1:
                     self.load_menu_frames()
-                cM[0] = consts.u[cM[0]]
+                cM[0] = consts.menu_parent[cM[0]]
                 if cM[0] == 0:
                     GameCanvas.menu_anim = 0
                     GameCanvas.menu_scroll = 0
@@ -1043,7 +1043,7 @@ class Menus(GameCanvas):
         i = GameCanvas.view_cy - 50
         if GameCanvas.menu[1] == 0:
             GameCanvas.menu[1] = 1
-        for b in range(1, consts.v[9]):         # PORT-EXTRA config.SCREEN_OPTION: + row 3 Screen
+        for b in range(1, consts.menu_sizes[9]):         # PORT-EXTRA config.SCREEN_OPTION: + row 3 Screen
             if GameCanvas.menu[1] == b:
                 bool_ = True
                 Gfx.set_font(GameCanvas.font_orange)
@@ -1073,7 +1073,7 @@ class Menus(GameCanvas):
             elif b == 3 and config.SCREEN_OPTION:
                 str_ = "Full" if display.is_fullscreen() else "Window"
             elif b == 3:
-                str_ = consts.aX[GameCanvas.difficulty]
+                str_ = consts.difficulty_names[GameCanvas.difficulty]
             else:
                 return
             GameCanvas.draw_view_text_centred(str_, GameCanvas.view_cx + 156 - 111 - GameCanvas.view_x, i + 1)
@@ -1083,7 +1083,7 @@ class Menus(GameCanvas):
     def draw_help_page(self):  # e.java:2311-2348  (Help / About page cM[1] of topic ej)
         if GameCanvas.state == 3 or GameCanvas.prev_state == 3:
             GameCanvas.view_cy -= 30
-        i = GameCanvas.menu[1] + consts.z[GameCanvas.help_topic]
+        i = GameCanvas.menu[1] + consts.help_topic_start[GameCanvas.help_topic]
         arrayOfByte = self.edat_bytes(61, i)
         if GameCanvas.state == 2:
             self.word_wrap(arrayOfByte, 190, 0)
@@ -1102,7 +1102,7 @@ class Menus(GameCanvas):
                     GameCanvas.draw_view_text(GameCanvas.text_lines[0][b], GameCanvas.view_cx - 95 - 1, GameCanvas.view_cy - 80 + b * 20 + 3)
             else:
                 GameCanvas.draw_view_text(GameCanvas.text_lines[0][b], GameCanvas.view_cx - 90 - 1 - GameCanvas.view_x, GameCanvas.view_cy - 62 + b * 15)
-        n = consts.z[GameCanvas.help_topic + 1] - consts.z[GameCanvas.help_topic]
+        n = consts.help_topic_start[GameCanvas.help_topic + 1] - consts.help_topic_start[GameCanvas.help_topic]
         if GameCanvas.state == 2:
             if GameCanvas.prev_state == 3:
                 self.draw_page_number(GameCanvas.menu[1] + 1, n, GameCanvas.canvas_size.y - 100, True)
@@ -1167,13 +1167,13 @@ class Menus(GameCanvas):
                 GameCanvas.draw_view_text(GameCanvas.skill_names[i + b1], ac1.x + idiv(ac1.w - GameCanvas.text_width, 2), ac1.y + 1)
                 for b in range(3):
                     self.draw_empty_slot(40 + (b + 2) * 34, 140 + 35 * b1)
-                    if consts.aC[j_ + b] != 0:
-                        if cz.skill_levels[consts.aC[j_ + b] - 12] != 0:
+                    if consts.skill_menu_ids[j_ + b] != 0:
+                        if cz.skill_levels[consts.skill_menu_ids[j_ + b] - 12] != 0:
                             image = GameCanvas.images[37]
                         else:
                             image = GameCanvas.images[38]
                         self.draw_map_region(image, 40 + (b + 2) * 34 + 1, 140 + 35 * b1 + 1, 28, 28,
-                                       (consts.aC[j_ + b] - 12) * 28, 0)
+                                       (consts.skill_menu_ids[j_ + b] - 12) * 28, 0)
             if cM[3] == 2:
                 # DECOMP-FIX F10: `35 * cM[2] % 6 / 3` -> `35 * (cM[2] % 6 / 3)`
                 row = 35 * (cM[2] % 6 // 3) if F10 else 35 * cM[2] % 6 // 3
@@ -1193,7 +1193,7 @@ class Menus(GameCanvas):
         if cM[3] == 1:
             self.draw_description(cz.hotkeys[cM[1]] + 2000, GameCanvas.view_cx - 100, GameCanvas.canvas_size.y - 70, 200, 22)
         else:
-            self.draw_description(consts.aC[cM[2]] + 2000, GameCanvas.view_cx - 100, GameCanvas.canvas_size.y - 70, 200, 22)
+            self.draw_description(consts.skill_menu_ids[cM[2]] + 2000, GameCanvas.view_cx - 100, GameCanvas.canvas_size.y - 70, 200, 22)
         GameCanvas.menu_part = 0
 
     def draw_skill_info(self):
@@ -1204,7 +1204,7 @@ class Menus(GameCanvas):
             return
         from pow.game import skill_bar
         cM = GameCanvas.menu
-        skill = GameCanvas.hero.hotkeys[cM[1]] if cM[3] == 1 else consts.aC[cM[2]]
+        skill = GameCanvas.hero.hotkeys[cM[1]] if cM[3] == 1 else consts.skill_menu_ids[cM[2]]
         skill_bar.draw_card(skill)
 
     def draw_description_strip(self):  # e.java:1595-1630  (description strip; scrolls when longer than the box)
@@ -1692,8 +1692,8 @@ class Menus(GameCanvas):
             GameCanvas.info_box.text = ""
         elif ch == -7:
             cM = GameCanvas.menu
-            cM[0] = consts.u[cM[0]]
-            GameCanvas.menu_count = consts.v[cM[0]]
+            cM[0] = consts.menu_parent[cM[0]]
+            GameCanvas.menu_count = consts.menu_sizes[cM[0]]
             cM[1] = GameCanvas.menu_cursors[cM[0]]
             cM[2] = GameCanvas.menu_tops[cM[0]]
             GameCanvas.redraw = 1
@@ -1923,7 +1923,7 @@ class Menus(GameCanvas):
     @staticmethod
     def item_name(paramInt):  # e.java:2774-2786  (item name)
         if paramInt < 100:
-            return consts.aN[paramInt - 1]
+            return consts.potion_names[paramInt - 1]
         if paramInt < 300:
             return GameCanvas.item_tables[0].get_string(paramInt - 101, 0)
         if paramInt < 500:
@@ -1957,7 +1957,7 @@ class Menus(GameCanvas):
     @staticmethod
     def item_price(paramz):  # e.java:2817-2830  (price of an item)
         if paramz.id < 100:
-            i = consts.y[paramz.id - 1]
+            i = consts.item_prices[paramz.id - 1]
         elif paramz.id < 300:
             i = GameCanvas.item_tables[0].get_int(paramz.id - 101, 6)
             i = i + paramz.attack * 100
@@ -2090,7 +2090,7 @@ class Menus(GameCanvas):
             paramInt5 = Menus.item_price(paramz)
         if paramz.id < 100:
             i = paramz.id - 1
-            dF.text = consts.aN[i]
+            dF.text = consts.potion_names[i]
             if GameCanvas.cursor[14] == 2:
                 if len(dF.text) > 0:
                     dF.text += " / "
@@ -2098,7 +2098,7 @@ class Menus(GameCanvas):
                 dF.text += GameCanvas.format_thousands(paramInt5 >> 1)
             dF.text += " / "
             if i < 9:
-                str_ = "Recover " + str(consts.aP[i % 3]) + "% of total " + consts.aO[i // 3]
+                str_ = "Recover " + str(consts.potion_percents[i % 3]) + "% of total " + consts.potion_kinds[i // 3]
             else:
                 str_ = "Ranged Atk"
             dF.text += str_
@@ -2108,7 +2108,7 @@ class Menus(GameCanvas):
         else:
             if paramz.id < 300:
                 str_ = GameCanvas.item_tables[0].get_string(paramz.id - 101, 0)
-                i = consts.w[(paramz.id - 101) % 5]
+                i = consts.tier_levels[(paramz.id - 101) % 5]
             elif paramz.id < 500:
                 str_ = GameCanvas.item_tables[1].get_string(paramz.id - 301, 0)
                 i = GameCanvas.item_tables[1].get_int(paramz.id - 301, 8)
@@ -2408,11 +2408,11 @@ class Menus(GameCanvas):
                 Gfx.set_font(GameCanvas.font_white)
                 bool_ = False
             self.draw_box(arrayOfInt[0], arrayOfInt[1] + b * 25, 160, 20, bool_)
-            self.draw_text_at(consts.aX[b], arrayOfInt[1] + 1 + b * 25 - 1, 15)
+            self.draw_text_at(consts.difficulty_names[b], arrayOfInt[1] + 1 + b * 25 - 1, 15)
         Gfx.set_font(GameCanvas.font_white)
         self.draw_box(arrayOfInt[0], GameCanvas.view_cy + GameCanvas.view_y, 160, 80, False)
         for b in range(3):
-            self.draw_text_at(consts.aY[GameCanvas.menu[1]][b], GameCanvas.view_cy + 10 + b * 20, 17)
+            self.draw_text_at(consts.mode_texts[GameCanvas.menu[1]][b], GameCanvas.view_cy + 10 + b * 20, 17)
 
     def load_item_def(self, paramInt):  # e.java:3465-3531  (item record -> cX / cY / cZ)
         arrayOfByte = bytearray(16)
@@ -2621,7 +2621,7 @@ class Menus(GameCanvas):
                                 self.open_menu(2)
                                 self.load_menu_frames()
                                 GameCanvas.menu[0] = 0
-                                GameCanvas.menu_count = consts.v[GameCanvas.menu[0]]
+                                GameCanvas.menu_count = consts.menu_sizes[GameCanvas.menu[0]]
                                 GameCanvas.menu_items = GameCanvas.game_menu_items
                                 GameCanvas.state = 2
                                 GameCanvas.menu_scroll = 0
@@ -2957,26 +2957,26 @@ class Menus(GameCanvas):
             elif v == 1:
                 if cz.base_attack < 10000:
                     cz.base_attack += 1
-                    GameCanvas.popup_lines[0] = consts.aR[0]
+                    GameCanvas.popup_lines[0] = consts.stat_up_texts[0]
                     return
             elif v == 2:
                 if cz.base_defense < 10000:
                     cz.base_defense += 1
-                    GameCanvas.popup_lines[0] = consts.aR[1]
+                    GameCanvas.popup_lines[0] = consts.stat_up_texts[1]
                     return
             elif v == 3:
                 if cz.base_hp < 25000:
                     cz.base_hp += 5
-                    GameCanvas.popup_lines[0] = consts.aR[2]
+                    GameCanvas.popup_lines[0] = consts.stat_up_texts[2]
                     return
             elif v == 4:
                 if cz.base_mp < 20000:
                     cz.base_mp += 3
-                    GameCanvas.popup_lines[0] = consts.aR[3]
+                    GameCanvas.popup_lines[0] = consts.stat_up_texts[3]
                     return
             elif v == 5:
                 cz.fame += 10
-                GameCanvas.popup_lines[0] = consts.aR[4]
+                GameCanvas.popup_lines[0] = consts.stat_up_texts[4]
                 return
             elif v == 6:
                 if self.give_item(GameCanvas.engine.random_drop(4), 1) != 0:
@@ -2986,7 +2986,7 @@ class Menus(GameCanvas):
             else:
                 i = self.rand(11)
                 if self.give_item(i + 1, 1) != 0:
-                    GameCanvas.popup_lines[0] = consts.aN[i]
+                    GameCanvas.popup_lines[0] = consts.potion_names[i]
                     GameCanvas.popups.lines[4] = "Item Acquired!"
                     return
         GameCanvas.gift_level = 8
