@@ -131,9 +131,13 @@ DROPS_AFTER_69 = True
 
 # PORT-EXTRA (asked by the player): auto-hunt on the mission map (pow/game/autopilot.py). The hero
 # walks to the nearest enemy, attacks, casts the skills on keys 1-5 and drinks the potions on * / #.
-# Tab or a click on the bottom-left corner of the map turns it on and off; POW_AUTO_HUNT=1 = on
+# Tab, F or a click on the AUTO button (bottom-left corner of the map) turns it on and off; POW_AUTO_HUNT=1 = on
 # from the start. Any key of the player pauses it for a moment.
 AUTO_HUNT = os.environ.get("POW_AUTO_HUNT", "0") == "1"
+# The AUTO button is always drawn (grey = off) on the map and in Multiplayer battles, so the
+# mode can be found; F and the right stick of a gamepad toggle it too. POW_AUTO_BUTTON=0 = only
+# while it is on (tools/shot.py and tools/mp_shot.py, for the original screenshots).
+AUTO_BUTTON = os.environ.get("POW_AUTO_BUTTON", "1") == "1"
 
 # PORT-EXTRA (asked by the player): the description of an item / skill / potion (Blacksmith,
 # Gear, Inventory, Skills, Assign Items; not Gamevil Live, whose grids leave no room) in a box as wide as the screen, in up to

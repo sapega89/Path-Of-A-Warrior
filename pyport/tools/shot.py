@@ -53,6 +53,7 @@ os.environ["SDL_VIDEODRIVER"] = "dummy"
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 os.environ.setdefault("POW_SCALE", "1")
 os.environ.setdefault("POW_SEED", "1")
+os.environ.setdefault("POW_AUTO_BUTTON", "0")   # the AUTO button only while on (original screenshots)
 os.environ.setdefault("POW_AUTO_AIM_HARD", "0")   # the original: no auto-aim on Hard
 os.environ.setdefault("POW_HOLD_TO_MOVE", "0")   # keys are taps, as on the phone (env line to change)   # Random() without the clock: repeatable runs
 os.environ.setdefault("POW_SKILL_BAR", "0")   # the original HUD (env line to turn the skill bar on)
