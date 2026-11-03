@@ -60,6 +60,11 @@ ORIG_BUG = {
 # Gamevil Live of the single player (pow_server/live.py): "local" = the server inside the game
 # (shares the accounts of the in-game multiplayer server), or ws(s)://host:28200/live.
 LIVE_SERVER = os.environ.get("POW_LIVE_SERVER", "local")
+# PORT-EXTRA (asked by Andrey): the single player's save also kept on the server
+# (pow/game/cloud_save.py, pow_server/cloud.py) for the Gamevil Live account. "auto" = the
+# server of LIVE_SERVER at the path /save when LIVE_SERVER is ws(s)://; "off"; or a
+# ws(s)://host:28200/save URL. Browser: index.html?save=...
+SAVE_SERVER = os.environ.get("POW_SAVE_SERVER", "auto")
 # PORT-EXTRA (PHASE_7 D3): the NPC market always sells these Rare items at these prices (the
 # data has 1 gold for both); without 502 / 504 only 71-82 of the 149 recipes can be crafted.
 LIVE_PRICE = {502: 3000, 504: 5000}

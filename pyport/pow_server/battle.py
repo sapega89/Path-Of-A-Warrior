@@ -63,6 +63,7 @@ class Fighter:
     general: bool = False                 # worth 2L when beaten, a soldier L (ar.java:1663-1698)
     build: dict = None                    # where the hero's stat points went (CPU fighters copy it)
     max_mp: int = 10                      # the hero's MP in the single player (skill costs)
+    keep_name: bool = False               # a server bot (server.py): its name is its UserID
 
     def __post_init__(self):
         self.hp = self.hp or self.max_hp

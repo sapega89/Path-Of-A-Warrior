@@ -26,6 +26,10 @@ CREATE TABLE IF NOT EXISTS characters (
 CREATE TABLE IF NOT EXISTS live (
     key TEXT PRIMARY KEY, data TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS saves (
+    id TEXT NOT NULL REFERENCES accounts(id), store TEXT NOT NULL, rev INTEGER NOT NULL,
+    at INTEGER NOT NULL, data TEXT NOT NULL, PRIMARY KEY (id, store)
+);
 """
 
 
@@ -98,6 +102,29 @@ class Storage:
             self.db.execute("INSERT INTO live VALUES (?,?) ON CONFLICT(key) DO UPDATE SET "
                             "data=excluded.data", (key, json.dumps(value)))
 
+    # --- PORT-EXTRA: single-player saves kept on the server (pow_server/cloud.py) -------
+    def saves_get(self, user_id):
+        """{store: {"rev", "at", "records"}} of one account."""
+        with self.lock:
+            rows = self.db.execute("SELECT store, rev, at, data FROM saves WHERE id=?",
+                                   (user_id,)).fetchall()
+        return {r[0]: {"rev": r[1], "at": r[2], "records": json.loads(r[3])} for r in rows}
+
+    def save_put(self, user_id, store, base, at, records):
+        """Writes the store when `base` is its current revision (0 = none yet). Returns
+        (True, new entry) or (False, the current entry) when another device wrote it first."""
+        with self.lock:
+            row = self.db.execute("SELECT rev, at, data FROM saves WHERE id=? AND store=?",
+                                  (user_id, store)).fetchone()
+            rev = row[0] if row else 0
+            if base != rev:
+                return False, {"rev": rev, "at": row[1], "records": json.loads(row[2])}
+            entry = {"rev": rev + 1, "at": at, "records": records}
+            self.db.execute("INSERT INTO saves VALUES (?,?,?,?,?) ON CONFLICT(id, store) DO UPDATE "
+                            "SET rev=excluded.rev, at=excluded.at, data=excluded.data",
+                            (user_id, store, rev + 1, at, json.dumps(records)))
+        return True, entry
+
     def _one(self, sql, *args):
         with self.lock:
             return self.db.execute(sql, args).fetchone()
@@ -110,6 +137,7 @@ class MemoryStorage:
         self.accounts = {}       # id -> [salt, hash, token]
         self.chars = {}          # id -> json dict
         self.live = {}           # key -> json text (Gamevil Live)
+        self.saves = {}          # (id, store) -> {"rev", "at", "records"}
 
     def has_account(self, user_id):
         return user_id in self.accounts
@@ -151,6 +179,17 @@ class MemoryStorage:
 
     def live_put(self, key, value):
         self.live[key] = json.dumps(value)
+
+    def saves_get(self, user_id):
+        return {st: dict(e) for (uid, st), e in self.saves.items() if uid == user_id}
+
+    def save_put(self, user_id, store, base, at, records):
+        cur = self.saves.get((user_id, store))
+        rev = cur["rev"] if cur else 0
+        if base != rev:
+            return False, dict(cur)
+        self.saves[(user_id, store)] = entry = {"rev": rev + 1, "at": at, "records": list(records)}
+        return True, dict(entry)
 
 
 def open_storage(path=":memory:"):
