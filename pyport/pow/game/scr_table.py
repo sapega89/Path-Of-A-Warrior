@@ -14,16 +14,16 @@ class ScrTable:
 
     def get(self, index):  # al.java:11-29
         i = 2 + index * 2
-        j_ = self.data[i] & 0xFF | (self.data[i + 1] & 0xFF) << 8
-        k = self.data[i + 2] & 0xFF | (self.data[i + 3] & 0xFF) << 8
+        start = self.data[i] & 0xFF | (self.data[i + 1] & 0xFF) << 8
+        end = self.data[i + 2] & 0xFF | (self.data[i + 3] & 0xFF) << 8
         str_ = None
         try:
-            m = k - j_
-            utf = bytearray(m + 2)
-            utf[0] = m >> 8 & 0xFF
-            utf[1] = m & 0xFF
-            utf[2:2 + m] = self.data[j_:j_ + m]
-            if len(self.data[j_:j_ + m]) != m or m < 0:
+            size = end - start
+            utf = bytearray(size + 2)
+            utf[0] = size >> 8 & 0xFF
+            utf[1] = size & 0xFF
+            utf[2:2 + size] = self.data[start:start + size]
+            if len(self.data[start:start + size]) != size or size < 0:
                 raise IndexError  # System.arraycopy bounds
             str_ = _read_utf(utf)
         except Exception:

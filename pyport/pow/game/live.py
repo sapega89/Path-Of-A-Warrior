@@ -229,9 +229,9 @@ class Live(GameCanvas):
         GameCanvas.popups.draw_popup_frame(96)
         i = GameCanvas.view_cy - 20 - 10
         j = Live.loading0.getWidth()
-        k = Live.loading0.getHeight()
-        GameCanvas.draw_region((GameCanvas.screen_w - j) // 2, i, j, k, Live.loading0, 0, 0)
-        GameCanvas.draw_region((GameCanvas.screen_w - j) // 2, i, j * (GameCanvas.frame % 6) // 5, k, Live.loading1, 0, 0)
+        bar_h = Live.loading0.getHeight()
+        GameCanvas.draw_region((GameCanvas.screen_w - j) // 2, i, j, bar_h, Live.loading0, 0, 0)
+        GameCanvas.draw_region((GameCanvas.screen_w - j) // 2, i, j * (GameCanvas.frame % 6) // 5, bar_h, Live.loading1, 0, 0)
         Gfx.set_font(GameCanvas.font_white)
         Gfx.draw_string("Connecting...", GameCanvas.screen_w // 2, i + 50, 1)
 
@@ -314,15 +314,15 @@ class Live(GameCanvas):
         cz = GameCanvas.hero
         Live.answer_status = 0
         Live.net.begin_request(Live.request_in_flight)
-        q = Live.request_in_flight
-        if q == 530:
+        op = Live.request_in_flight
+        if op == 530:
             LiveNet.write_string(Live.user_id, 12)
             LiveNet.write_string(Live.password, 16)
             LiveNet.write_string("1501", 4)
             LiveNet.write_int(Live.session_id)
             Live.session_new = system.currentTimeMillis() // 10000
             LiveNet.write_int(Live.session_new)
-        elif q in (516, 256):
+        elif op in (516, 256):
             LiveNet.write_int(cz.fame)
             LiveNet.write_int(cz.exp)
             LiveNet.write_short(cz.level)
@@ -369,7 +369,7 @@ class Live(GameCanvas):
             LiveNet.write_byte(cz.live_stat1 & 0xFF)
             LiveNet.write_byte(cz.live_stat2 & 0xFF)
             LiveNet.write_int(GameCanvas.score)
-        elif q == 768:
+        elif op == 768:
             from pow.game.menus import Menus
             LiveNet.write_int(cz.gold)
             Menus.count_items()
@@ -385,26 +385,26 @@ class Live(GameCanvas):
                     LiveNet.write_short(cz.backpack[i_item].defense)
                     LiveNet.write_short(cz.backpack[i_item].hp)
                     LiveNet.write_short(cz.backpack[i_item].mp)
-        elif q == 832:
+        elif op == 832:
             LiveNet.write_byte(Live.flags[15] ^ 0x1)
             LiveNet.write_int(Live.values[14])
-        elif q == 816:
+        elif op == 816:
             LiveNet.write_byte(Live.flags[7])
             LiveNet.write_short(Live.selected_serial)
-        elif q in (784, 786, 788, 800):     # case 784 / 786 / 788 / 800 fall through
-            if q == 784:
+        elif op in (784, 786, 788, 800):     # case 784 / 786 / 788 / 800 fall through
+            if op == 784:
                 LiveNet.write_byte(Live.category + 1)
-            if q in (784, 786):
+            if op in (784, 786):
                 LiveNet.write_byte(Live.category + 1)
                 LiveNet.write_byte(Live.kind + 1)
                 LiveNet.write_byte(Live.enchant)
-            if q in (784, 786, 788):
+            if op in (784, 786, 788):
                 LiveNet.write_int(Live.lot_ids[GameCanvas.cursor[18]])
             LiveNet.write_byte(Live.flags[7])
             LiveNet.write_short(Live.selected_serial)
             LiveNet.write_int(Live.values[14])
-        elif q in (802, 866):               # case 802 falls through into 866
-            if q == 802:
+        elif op in (802, 866):               # case 802 falls through into 866
+            if op == 802:
                 LiveNet.write_byte(Live.category + 1)
                 LiveNet.write_byte(Live.kind + 1)
             LiveNet.write_int(Live.lot_ids[Live.selected_slot])
@@ -1503,15 +1503,15 @@ class Live(GameCanvas):
         fK[6] = 32 * visible_rows - 4 + 2
         fK[4] = rows
         fK[7] = 32 * rows - 4 + 2
-        c = 156                              # char c = '\u009c'
+        grid_w = 156                              # char c = '\u009c'
         if visible_rows < rows:
-            c += 8
+            grid_w += 8
             fK[11] = 1
             fK[13] = fK[6] * (fK[6] - 2) * 10
             fK[13] = idiv(idiv(fK[13], fK[7]) + 9, 10)
         else:
             fK[11] = 0
-        fK[5] = 240 - c >> 1
+        fK[5] = 240 - grid_w >> 1
         fK[12] = fK[5] + 156 + 4
         fK[26] = -1
         fK[27] = 0

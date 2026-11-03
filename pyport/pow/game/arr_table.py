@@ -14,23 +14,23 @@ class ArrTable:
             self.widths = bytearray(data[1:1 + i])
             self.offsets = bytearray(i)
             self.rows = bytearray(data[1 + i:])
-            k = 0
+            offset = 0
             for b in range(i):
-                self.offsets[b] = k & 0xFF
-                k += self.widths[b] & 0xFF
-            self.row_size = k
+                self.offsets[b] = offset & 0xFF
+                offset += self.widths[b] & 0xFF
+            self.row_size = offset
         except Exception:
             return
 
     def get_int(self, row, col):  # d.java:36-45  (little-endian unsigned cell)
         i = 0
         try:
-            j_ = self.widths[col] & 0xFF
-            k = row * self.row_size + (self.offsets[col] & 0xFF)
-            if k < 0 or col < 0 or row < 0:
+            size = self.widths[col] & 0xFF
+            pos = row * self.row_size + (self.offsets[col] & 0xFF)
+            if pos < 0 or col < 0 or row < 0:
                 raise IndexError  # Java arrays throw on negative indices
-            for b in range(j_):
-                i |= (self.rows[k + b] & 0xFF) << b * 8
+            for b in range(size):
+                i |= (self.rows[pos + b] & 0xFF) << b * 8
         except Exception:
             pass
         return i

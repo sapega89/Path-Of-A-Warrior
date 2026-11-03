@@ -66,35 +66,35 @@ class MapScene(GameCanvas):
         else:
             if page == GameCanvas.story_pages[2] - GameCanvas.story_pages[0]:
                 # last page of an epilogue: completion statistics
-                i = j_ = k = m = 0
+                mission_pct = hidden_pct = ending_pct = warrior_pct = 0
                 for bit in range(225):
                     if (GameCanvas.stats[bit >> 5] & i32(1 << (bit & 0x1F))) != 0:
-                        i += 1
+                        mission_pct += 1
                 for b in range(45):
                     if b < 24 and (GameCanvas.score & 1 << b) != 0:
-                        k += 1
+                        ending_pct += 1
                     if 0 == (0x1FEF64FF7E6F & 1 << b):
                         for bit in range(5):
-                            n = b * 5 + bit
-                            if (GameCanvas.stats[n >> 5] & i32(1 << (n & 0x1F))) != 0:
-                                j_ += 1
-                i = i * 100 // 102
-                j_ = j_ * 100 // 18
-                k = k * 100 // 24
-                m = GameCanvas.general_count * 100 // 44
+                            stat_bit = b * 5 + bit
+                            if (GameCanvas.stats[stat_bit >> 5] & i32(1 << (stat_bit & 0x1F))) != 0:
+                                hidden_pct += 1
+                mission_pct = mission_pct * 100 // 102
+                hidden_pct = hidden_pct * 100 // 18
+                ending_pct = ending_pct * 100 // 24
+                warrior_pct = GameCanvas.general_count * 100 // 44
                 dp = GameCanvas.text_lines[0]
                 dp[0] = "Mission"
                 dp[1] = "Accomplished"
-                dp[2] = "" + str(i) + " %"
+                dp[2] = "" + str(mission_pct) + " %"
                 dp[3] = "Hidden Mission"
                 dp[4] = "Accomplished"
-                dp[5] = "" + str(j_) + " %"
+                dp[5] = "" + str(hidden_pct) + " %"
                 dp[6] = "Ending Collected"
-                dp[7] = "" + str(k) + " %"
+                dp[7] = "" + str(ending_pct) + " %"
                 dp[8] = "Warrior Collected"
-                dp[9] = "" + str(m) + " %"
+                dp[9] = "" + str(warrior_pct) + " %"
                 dp[10] = "Total Accomplished"
-                dp[11] = "" + str(i + j_ + k + m >> 2) + " %"
+                dp[11] = "" + str(mission_pct + hidden_pct + ending_pct + warrior_pct >> 2) + " %"
                 GameCanvas.text_line_count[0] = 11
                 GameCanvas.speech_line = 1
                 GameCanvas.speech_pos[0] = GameCanvas.view_size.y
@@ -164,20 +164,20 @@ class MapScene(GameCanvas):
                 GameCanvas.score |= 1 << i
             if 0 == i:
                 b = 0
-                j_ = cz.mission_progress[1]
-                if cz.mission_progress[0] + cz.mission_progress[15] > j_:
-                    j_ = cz.mission_progress[0] + cz.mission_progress[15]
+                best = cz.mission_progress[1]
+                if cz.mission_progress[0] + cz.mission_progress[15] > best:
+                    best = cz.mission_progress[0] + cz.mission_progress[15]
                     b = 1
-                if cz.mission_progress[2] + cz.mission_progress[10] + cz.mission_progress[14] > j_:
-                    j_ = cz.mission_progress[2] + cz.mission_progress[10] + cz.mission_progress[14]
+                if cz.mission_progress[2] + cz.mission_progress[10] + cz.mission_progress[14] > best:
+                    best = cz.mission_progress[2] + cz.mission_progress[10] + cz.mission_progress[14]
                     b = 2
-                j_ = idiv(j_ - 20, 10)
-                if j_ > 8:
-                    j_ = 8
-                elif j_ < 0:
-                    j_ = 0
+                best = idiv(best - 20, 10)
+                if best > 8:
+                    best = 8
+                elif best < 0:
+                    best = 0
                 cz.live_stat1 = i16(b)
-                cz.live_stat2 = i16(j_)
+                cz.live_stat2 = i16(best)
             GameCanvas.chapter = i8(next_chapter[i])
             if 0 == GameCanvas.chapter:
                 for b in range(22):
@@ -194,11 +194,11 @@ class MapScene(GameCanvas):
                 if 0 == (GameCanvas.missions_done & 1 << mis):
                     left += 1
             if left != 0:
-                j_ = self.rand(left)
+                best = self.rand(left)
                 b = 0
                 for mis in range(45):
                     if 0 == (GameCanvas.missions_done & 1 << mis):
-                        if j_ == b:
+                        if best == b:
                             GameCanvas.missions_done |= 1 << mis
                             GameCanvas.reward_skill = i16(mis + 1)
                             break
@@ -237,20 +237,20 @@ class MapScene(GameCanvas):
 
     @staticmethod
     def mark_dirty(x, y, w, h):  # c.java:20-37  (mark map cells dirty)
-        j_ = idiv(x, 27) - GameCanvas.view_tx
-        k = idiv(y, 27) - GameCanvas.view_ty
-        m = idiv(x + w - 1, 27) - GameCanvas.view_tx
-        n = idiv(y + h - 1, 27) - GameCanvas.view_ty
-        if j_ < 0:
-            j_ = 0
-        if k < 0:
-            k = 0
-        if m > GameCanvas.view_tiles.x - 1:
-            m = GameCanvas.view_tiles.x - 1
-        if n > GameCanvas.view_tiles.y - 1:
-            n = GameCanvas.view_tiles.y - 1
-        for i in range(j_, m + 1):
-            for row in range(k, n + 1):
+        col0 = idiv(x, 27) - GameCanvas.view_tx
+        row0 = idiv(y, 27) - GameCanvas.view_ty
+        col1 = idiv(x + w - 1, 27) - GameCanvas.view_tx
+        row1 = idiv(y + h - 1, 27) - GameCanvas.view_ty
+        if col0 < 0:
+            col0 = 0
+        if row0 < 0:
+            row0 = 0
+        if col1 > GameCanvas.view_tiles.x - 1:
+            col1 = GameCanvas.view_tiles.x - 1
+        if row1 > GameCanvas.view_tiles.y - 1:
+            row1 = GameCanvas.view_tiles.y - 1
+        for i in range(col0, col1 + 1):
+            for row in range(row0, row1 + 1):
                 GameCanvas.dirty[row][i] = 1
 
     def draw_hud_frame(self):  # c.java:39-46  (HUD frame)
@@ -292,40 +292,40 @@ class MapScene(GameCanvas):
                         MapScene.mark_dirty(GameCanvas.camera.x + arrow_x[b], GameCanvas.camera.y + arrow_y[b], img.getWidth(), img.getHeight())
 
     def draw_arrows(self):  # c.java:81-122  (arrows flying: eC; only enemies shoot them)
-        ac_ = Rect(0, 0, 0, 0)
+        rect = Rect(0, 0, 0, 0)
         for b in range(3):
             eC = GameCanvas.arrows[b]
             if eC.active != 0:
-                ac_.x = i16(eC.pos[0].x - GameCanvas.camera.x + GameCanvas.view_x)
-                ac_.y = i16(eC.pos[0].y - GameCanvas.camera.y + GameCanvas.view_y) - 8
-                ac_.w = eC.w
-                ac_.h = eC.h
-                GameCanvas.fill_rect(ac_, GameCanvas.rgb(245, 206, 116))
-                ac_.w -= 1
-                ac_.h -= 1
-                GameCanvas.fill_rect(ac_, GameCanvas.rgb(240, 142, 53))
-                ac_.w += 1
-                ac_.h += 1
+                rect.x = i16(eC.pos[0].x - GameCanvas.camera.x + GameCanvas.view_x)
+                rect.y = i16(eC.pos[0].y - GameCanvas.camera.y + GameCanvas.view_y) - 8
+                rect.w = eC.w
+                rect.h = eC.h
+                GameCanvas.fill_rect(rect, GameCanvas.rgb(245, 206, 116))
+                rect.w -= 1
+                rect.h -= 1
+                GameCanvas.fill_rect(rect, GameCanvas.rgb(240, 142, 53))
+                rect.w += 1
+                rect.h += 1
                 MapScene.mark_dirty(eC.pos[0].x, eC.pos[0].y, eC.w, eC.h)
                 bool_ = False
-                if ac_.x < GameCanvas.view_x:
-                    ac_.w = GameCanvas.view_x - ac_.x
-                    if ac_.w > 0:
+                if rect.x < GameCanvas.view_x:
+                    rect.w = GameCanvas.view_x - rect.x
+                    if rect.w > 0:
                         bool_ = True
-                if ac_.y < GameCanvas.view_y:
-                    ac_.h = GameCanvas.view_y - ac_.y
-                    if ac_.h > 0:
+                if rect.y < GameCanvas.view_y:
+                    rect.h = GameCanvas.view_y - rect.y
+                    if rect.h > 0:
                         bool_ = True
-                if ac_.x + ac_.w >= GameCanvas.view_size.x + GameCanvas.view_x:
-                    ac_.x = GameCanvas.view_size.x + GameCanvas.view_x
-                    ac_.w = GameCanvas.view_x
+                if rect.x + rect.w >= GameCanvas.view_size.x + GameCanvas.view_x:
+                    rect.x = GameCanvas.view_size.x + GameCanvas.view_x
+                    rect.w = GameCanvas.view_x
                     bool_ = True
-                if ac_.y + ac_.h >= GameCanvas.view_size.y + GameCanvas.view_y:
-                    ac_.y = GameCanvas.view_size.y + GameCanvas.view_y
-                    ac_.h = GameCanvas.view_y
+                if rect.y + rect.h >= GameCanvas.view_size.y + GameCanvas.view_y:
+                    rect.y = GameCanvas.view_size.y + GameCanvas.view_y
+                    rect.h = GameCanvas.view_y
                     bool_ = True
                 if bool_:
-                    GameCanvas.fill_rect(ac_, 0)
+                    GameCanvas.fill_rect(rect, 0)
                     MapScene.mark_dirty(eC.pos[0].x, eC.pos[0].y, eC.w, eC.h)
 
     def erase_arrows(self):  # c.java:124-141  (erase the arrows)
@@ -333,14 +333,14 @@ class MapScene(GameCanvas):
             eC = GameCanvas.arrows[b]
             if eC.active != 0:
                 i = eC.pos[1].x - GameCanvas.camera.x
-                j_ = eC.pos[1].y - GameCanvas.camera.y - 8
+                sy = eC.pos[1].y - GameCanvas.camera.y - 8
                 if (eC.dir & 0x1) != 0:
                     w = 11
                     h = 3
                 else:
                     w = 3
                     h = 11
-                self.draw_map_region(GameCanvas.images[7], i, j_, w, h, i + GameCanvas.view_offset.x, j_ + GameCanvas.view_offset.y)
+                self.draw_map_region(GameCanvas.images[7], i, sy, w, h, i + GameCanvas.view_offset.x, sy + GameCanvas.view_offset.y)
 
     def draw_upper_layer(self):  # c.java:143-156  (upper tile layer over dirty cells)
         cE = GameCanvas.map
@@ -349,8 +349,8 @@ class MapScene(GameCanvas):
                 if GameCanvas.dirty[row][b] != 0:
                     i = (GameCanvas.view_ty + row) * cE.size.w + GameCanvas.view_tx + b
                     if (cE.data[cE.layer_flags + i] & 0x2) != 0 and cE.data[cE.layer_upper + i] - 1 >= 0:
-                        j_ = GameCanvas.tile_slots[cE.data[cE.layer_upper + i] - 1] - 1
-                        self.draw_map_region(GameCanvas.tile_images[j_], (GameCanvas.view_tx + b) * 27 - GameCanvas.camera.x, (GameCanvas.view_ty + row) * 27 - GameCanvas.camera.y, 27, 27, 0, 0)
+                        image = GameCanvas.tile_slots[cE.data[cE.layer_upper + i] - 1] - 1
+                        self.draw_map_region(GameCanvas.tile_images[image], (GameCanvas.view_tx + b) * 27 - GameCanvas.camera.x, (GameCanvas.view_ty + row) * 27 - GameCanvas.camera.y, 27, 27, 0, 0)
 
     def draw_effects(self):  # c.java:158-226  (skill effects fh == 3 and potion / scroll effect dU)
         fx_dx = [3, -10, 10]
@@ -358,36 +358,36 @@ class MapScene(GameCanvas):
         cz = GameCanvas.hero
         if GameCanvas.hero_fx_kind == 3:
             i = cz.pos[0].x - GameCanvas.camera.x
-            j_ = cz.pos[0].y - GameCanvas.camera.y
-            v = cz.action[0]
-            if v == 27:
+            sy = cz.pos[0].y - GameCanvas.camera.y
+            kind = cz.action[0]
+            if kind == 27:
                 if cz.frame[0] == 9:
                     i += consts.front_dx[cz.dir[1] >> 1]
-                    j_ += consts.front_dy[cz.dir[1] >> 1]
-            elif v in (28, 29, 30):
+                    sy += consts.front_dy[cz.dir[1] >> 1]
+            elif kind in (28, 29, 30):
                 i = GameCanvas.view_cx
-                j_ = GameCanvas.view_cy + 11
+                sy = GameCanvas.view_cy + 11
             fx_data = list(GameCanvas.hero_fx_data[GameCanvas.hero_fx_pos:GameCanvas.hero_fx_pos + GameCanvas.hero_fx_count])
             if len(fx_data) < GameCanvas.hero_fx_count:
                 raise IndexError("System.arraycopy")
-            self.draw_effect_frames(GameCanvas.hero_fx_parts, fx_data, GameCanvas.hero_fx_count, i, j_)
+            self.draw_effect_frames(GameCanvas.hero_fx_parts, fx_data, GameCanvas.hero_fx_count, i, sy)
             for b in range(GameCanvas.hero_fx_count):
                 MapScene.mark_dirty(cz.pos[0].x - GameCanvas.hero_fx_parts[b].ox, cz.pos[0].y - GameCanvas.hero_fx_parts[b].oy, GameCanvas.hero_fx_parts[b].w, GameCanvas.hero_fx_parts[b].h)
             GameCanvas.hero_fx_count = 1
         dU = GameCanvas.effect
         if dU.item != 0:
             part = 2
-            v = dU.item
-            if v == -2:
+            kind = dU.item
+            if kind == -2:
                 fx_data = consts.fx_anim_27_end
                 frames_file = 63
                 dU.frame = dU.step
-            elif v == -1:
+            elif kind == -1:
                 fx_data = consts.fx_fire
                 frames_file = 60
                 dU.frame = dU.step
                 part = 0
-            elif v in (10, 11):
+            elif kind in (10, 11):
                 fx_data = consts.fx_item_10_11
                 frames_file = 67
                 if dU.step > 0:
@@ -403,11 +403,11 @@ class MapScene(GameCanvas):
                 dU.frames = self.load_frames(frames_file)
             while part < 3:
                 i = dU.pos.x - GameCanvas.camera.x
-                j_ = dU.pos.y - GameCanvas.camera.y
+                sy = dU.pos.y - GameCanvas.camera.y
                 if dU.item == -1:
                     i += fx_dx[part]
-                    j_ += fx_dy[part]
-                self.draw_effect_frame(dU.frames[dU.frame], dU.frame_data[dU.frame], i, j_)
+                    sy += fx_dy[part]
+                self.draw_effect_frame(dU.frames[dU.frame], dU.frame_data[dU.frame], i, sy)
                 MapScene.mark_dirty(dU.pos.x - dU.frames[dU.frame].ox, dU.pos.y - dU.frames[dU.frame].oy, dU.frames[dU.frame].w, dU.frames[dU.frame].h)
                 part += 1
 
@@ -431,11 +431,11 @@ class MapScene(GameCanvas):
         cz = GameCanvas.hero
         cz.sprite_frame = cz.anims[cz.action[0]][cz.dir[0]][cz.frame[0]]
         for b in range(GameCanvas.actor_count):
-            s = GameCanvas.actor_slots[b]
-            if bool_ and cz.pos[0].y < GameCanvas.actors[s].pos[0].y:
+            slot = GameCanvas.actor_slots[b]
+            if bool_ and cz.pos[0].y < GameCanvas.actors[slot].pos[0].y:
                 self.draw_hero()
                 bool_ = False
-            self.draw_enemy(s)
+            self.draw_enemy(slot)
         if bool_:
             self.draw_hero()
         self.draw_breaking()
@@ -445,13 +445,13 @@ class MapScene(GameCanvas):
             cA = GameCanvas.breakables[b]
             if cA.active != 0 and cA.break_frame != 0:
                 i = cA.pos.x - GameCanvas.camera.x
-                j_ = cA.pos.y - GameCanvas.camera.y
-                k = 2 - cA.break_frame
-                if k <= 3 and k >= 0:
+                sy = cA.pos.y - GameCanvas.camera.y
+                spark = 2 - cA.break_frame
+                if spark <= 3 and spark >= 0:
                     if GameCanvas.images[43] is None:
                         return
-                    GameCanvas.engine.draw_spark(k, i, j_)
-                    MapScene.mark_dirty(cA.pos.x - GameCanvas.spark_frames[k].ox, cA.pos.y - GameCanvas.spark_frames[k].oy, GameCanvas.spark_frames[k].w, GameCanvas.spark_frames[k].h)
+                    GameCanvas.engine.draw_spark(spark, i, sy)
+                    MapScene.mark_dirty(cA.pos.x - GameCanvas.spark_frames[spark].ox, cA.pos.y - GameCanvas.spark_frames[spark].oy, GameCanvas.spark_frames[spark].w, GameCanvas.spark_frames[spark].h)
                 else:
                     break
 
@@ -464,34 +464,34 @@ class MapScene(GameCanvas):
         ex = GameCanvas.actors[index]
         ex.action[0] = min(ex.action[0], len(ex.anims[ex.dir[0]]) - 1)
         i = ex.pos[0].x - GameCanvas.camera.x
-        j_ = ex.pos[0].y - GameCanvas.camera.y
-        s = ex.anims[ex.dir[0]][ex.action[0]][ex.frame[0]]
+        sy = ex.pos[0].y - GameCanvas.camera.y
+        anim_frame = ex.anims[ex.dir[0]][ex.action[0]][ex.frame[0]]
         if ex.type > 200:
-            if s < 100:
+            if anim_frame < 100:
                 if ex.type == 203:
                     ay = consts.squad_offsets[consts.dir8_to_dir4[ex.dir[0]]]
-                    D = ex.frames[s]
+                    D = ex.frames[anim_frame]
                     for b in range(3):
-                        self.draw_map_region(ex.image, i - D.ox + ay[b][0], j_ - D.oy + ay[b][1], D.w, D.h, D.src_x, D.src_y)
+                        self.draw_map_region(ex.image, i - D.ox + ay[b][0], sy - D.oy + ay[b][1], D.w, D.h, D.src_x, D.src_y)
                     az = consts.squad_dirty_box[consts.dir8_to_dir4[ex.dir[1]]]
                     MapScene.mark_dirty(ex.pos[0].x - D.ox + az[0], ex.pos[0].y - D.oy + az[1], D.w + az[2], D.h + az[3])
                 else:
                     if ex.type == 202:
                         ex.image = GameCanvas.enemy_images[1]
                         ex.frames = GameCanvas.enemy_frames[1]
-                    D = ex.frames[s]
-                    self.draw_map_region(ex.image, i - D.ox, j_ - D.oy, D.w, D.h, D.src_x, D.src_y)
+                    D = ex.frames[anim_frame]
+                    self.draw_map_region(ex.image, i - D.ox, sy - D.oy, D.w, D.h, D.src_x, D.src_y)
                     MapScene.mark_dirty(ex.pos[0].x - D.ox, ex.pos[0].y - D.oy, D.w, D.h)
         else:
             if ex.action[0] < 6:
                 bits = 1310732 if GameCanvas.general.side != 0 else 1053711
-                n = bits >> s & 0x1
+                weapon_front = bits >> anim_frame & 0x1
                 head_set = GameCanvas.enemy_frames[4]
                 body_set = GameCanvas.enemy_frames[3]
                 weapon_set = GameCanvas.enemy_frames[5]
             else:
                 b = 2 if GameCanvas.general.side != 0 else 3
-                n = consts.general_frame_flags[(s >> 5 << 2) + b] >> (s & 0x1F) & 0x1
+                weapon_front = consts.general_frame_flags[(anim_frame >> 5 << 2) + b] >> (anim_frame & 0x1F) & 0x1
                 head_set = GameCanvas.enemy_frames[7]
                 body_set = GameCanvas.enemy_frames[6]
                 weapon_set = GameCanvas.enemy_frames[8]
@@ -573,43 +573,43 @@ class MapScene(GameCanvas):
                     GameCanvas.enemy_fx_image = None
                     GameCanvas.enemy_fx_pos = i16(frame - 2 + (ex.dir[0] >> 1) * 7)
                     self.set_enemy_fx_parts(GameCanvas.enemy_fx_frames, GameCanvas.enemy_fx_pos)
-            if s < 180:
-                body = body_set[s]
-                self.draw_map_region(GameCanvas.general_mark, i - body.ox + idiv(body.w, 2) - 13, j_ - body.oy + body.h - 5, GameCanvas.general_mark.getWidth(), GameCanvas.general_mark.getHeight(), 0, 0)
+            if anim_frame < 180:
+                body = body_set[anim_frame]
+                self.draw_map_region(GameCanvas.general_mark, i - body.ox + idiv(body.w, 2) - 13, sy - body.oy + body.h - 5, GameCanvas.general_mark.getWidth(), GameCanvas.general_mark.getHeight(), 0, 0)
             if GameCanvas.enemy_fx_kind == 1:
                 fx = GameCanvas.enemy_fx_parts[0]
                 if GameCanvas.enemy_fx_image is not None:
-                    self.draw_map_region(GameCanvas.enemy_fx_image, i - fx.ox, j_ - fx.oy, fx.w, fx.h, fx.src_x, fx.src_y)
+                    self.draw_map_region(GameCanvas.enemy_fx_image, i - fx.ox, sy - fx.oy, fx.w, fx.h, fx.src_x, fx.src_y)
                 else:
-                    self.draw_effect_frames(GameCanvas.enemy_fx_parts, [GameCanvas.enemy_fx_data[GameCanvas.enemy_fx_pos]], 1, i, j_)
+                    self.draw_effect_frames(GameCanvas.enemy_fx_parts, [GameCanvas.enemy_fx_data[GameCanvas.enemy_fx_pos]], 1, i, sy)
                 MapScene.mark_dirty(ex.pos[0].x - fx.ox, ex.pos[0].y - fx.oy, fx.w, fx.h)
             GameCanvas.enemy_effect_drawn = 0
             GameCanvas.enemy_trail_drawn = 0
-            if s < 180:
+            if anim_frame < 180:
                 if ex.defense_buff_ticks > 0 or ex.attack_buff_ticks > 0:
                     GameCanvas.enemy_effect_drawn = 1
                 if GameCanvas.enemy_effect_drawn == 1:
                     bits = GameCanvas.frame % 3
-                    q = GameCanvas.shadow_frames[bits]
-                    self.draw_map_region(GameCanvas.shadow_image, i - q.ox, j_ - q.oy + 3, q.w, q.h, q.src_x, q.src_y)
+                    shadow = GameCanvas.shadow_frames[bits]
+                    self.draw_map_region(GameCanvas.shadow_image, i - shadow.ox, sy - shadow.oy + 3, shadow.w, shadow.h, shadow.src_x, shadow.src_y)
                     GameCanvas.enemy_trail_drawn = 1
-                if n != 0:
-                    self.draw_general_weapon(i, j_, weapon_set[s], index)
-                body = body_set[s]
-                head = head_set[s]
-                self.draw_map_region(GameCanvas.hero.body_image, i - body.ox, j_ - body.oy, body.w, body.h, body.src_x, body.src_y)
-                self.draw_map_region(GameCanvas.boss_images[1], i - head.ox, j_ - head.oy, head.w, head.h, head.src_x, head.src_y)
+                if weapon_front != 0:
+                    self.draw_general_weapon(i, sy, weapon_set[anim_frame], index)
+                body = body_set[anim_frame]
+                head = head_set[anim_frame]
+                self.draw_map_region(GameCanvas.hero.body_image, i - body.ox, sy - body.oy, body.w, body.h, body.src_x, body.src_y)
+                self.draw_map_region(GameCanvas.boss_images[1], i - head.ox, sy - head.oy, head.w, head.h, head.src_x, head.src_y)
                 MapScene.mark_dirty(ex.pos[0].x - body.ox, ex.pos[0].y - body.oy, body.w, body.h)
-                if 0 == n:
-                    self.draw_general_weapon(i, j_, weapon_set[s], index)
+                if 0 == weapon_front:
+                    self.draw_general_weapon(i, sy, weapon_set[anim_frame], index)
                 if GameCanvas.enemy_effect_drawn == 1:
                     bits = 3 + GameCanvas.frame % 3
-                    q = GameCanvas.shadow_frames[bits]
-                    self.draw_map_region(GameCanvas.shadow_image, i - q.ox, j_ - q.oy + 3, q.w, q.h, q.src_x, q.src_y)
+                    shadow = GameCanvas.shadow_frames[bits]
+                    self.draw_map_region(GameCanvas.shadow_image, i - shadow.ox, sy - shadow.oy + 3, shadow.w, shadow.h, shadow.src_x, shadow.src_y)
                     GameCanvas.enemy_trail_drawn = 1
             ex.skill_fx = -1
             if ex.action[0] < 6:
-                if 8 < s < 16 and (s & 0x1) != 0:
+                if 8 < anim_frame < 16 and (anim_frame & 0x1) != 0:
                     ex.skill_fx = i8(self.rand(3))
                     GameCanvas.engine.draw_weapon_trail(index, ex.skill_fx)
             else:
@@ -641,12 +641,12 @@ class MapScene(GameCanvas):
             if GameCanvas.enemy_fx_kind == 2:
                 if ex.action[0] == 21 and ex.frame[0] == 9:
                     i += consts.front_dx[ex.dir[1] >> 1]
-                    j_ += consts.front_dy[ex.dir[1] >> 1]
-                self.draw_effect_frames(GameCanvas.enemy_fx_parts, [GameCanvas.enemy_fx_data[GameCanvas.enemy_fx_pos]], 1, i, j_)
+                    sy += consts.front_dy[ex.dir[1] >> 1]
+                self.draw_effect_frames(GameCanvas.enemy_fx_parts, [GameCanvas.enemy_fx_data[GameCanvas.enemy_fx_pos]], 1, i, sy)
                 MapScene.mark_dirty(ex.pos[0].x - GameCanvas.enemy_fx_parts[0].ox, ex.pos[0].y - GameCanvas.enemy_fx_parts[0].oy, GameCanvas.enemy_fx_parts[0].w, GameCanvas.enemy_fx_parts[0].h)
         if ex.on_fire != 0:
             fe = GameCanvas.fire_frames[ex.fire_frame]
-            self.draw_effect_frame(fe, GameCanvas.fire_data[ex.fire_frame], i, j_)
+            self.draw_effect_frame(fe, GameCanvas.fire_data[ex.fire_frame], i, sy)
             MapScene.mark_dirty(ex.pos[0].x - fe.ox, ex.pos[0].y - fe.oy, fe.w, fe.h)
         if ex.hit_fx_kind != 0:
             ex.hit_fx_frame = i8(ex.hit_fx_frame + 1)
@@ -654,11 +654,11 @@ class MapScene(GameCanvas):
                 ex.hit_fx_kind = 0
                 return
             i = ex.hit_fx_pos.x - GameCanvas.camera.x
-            j_ = ex.hit_fx_pos.y - GameCanvas.camera.y
-            n = ex.hit_fx_frame + (ex.hit_fx_kind - 1 << 1)
-            GameCanvas.engine.draw_spark(n, i, j_)
-            v_ = GameCanvas.spark_frames[n]
-            MapScene.mark_dirty(ex.hit_fx_pos.x - v_.ox, ex.hit_fx_pos.y - v_.oy, v_.w, v_.h)
+            sy = ex.hit_fx_pos.y - GameCanvas.camera.y
+            weapon_front = ex.hit_fx_frame + (ex.hit_fx_kind - 1 << 1)
+            GameCanvas.engine.draw_spark(weapon_front, i, sy)
+            spark = GameCanvas.spark_frames[weapon_front]
+            MapScene.mark_dirty(ex.hit_fx_pos.x - spark.ox, ex.hit_fx_pos.y - spark.oy, spark.w, spark.h)
 
     def draw_general_weapon(self, x, y, frame, index):  # c.java:568-571  (a general's weapon)
         self.draw_map_region(GameCanvas.images[40 + GameCanvas.general.side], x - frame.ox, y - frame.oy, frame.w, frame.h, frame.src_x, frame.src_y)
@@ -671,19 +671,19 @@ class MapScene(GameCanvas):
 
     def draw_hero(self):  # c.java:575-892  (draw the hero: shadow, body, weapon, effects)
         cz = GameCanvas.hero
-        m = -1
+        trail = -1
         fx_data = None
         if cz.action[0] < 12:
-            l_ = 5789684072952 if cz.weapon_kind != 0 else 8263870709823
-            k = l_ >> cz.sprite_frame & 0x1
+            bits = 5789684072952 if cz.weapon_kind != 0 else 8263870709823
+            weapon_front = bits >> cz.sprite_frame & 0x1
             if 11 < cz.sprite_frame < 36 and (cz.sprite_frame & 0x1) != 0:
-                m = ((cz.sprite_frame - 12) & 0xFFFE) % 6 >> 1
+                trail = ((cz.sprite_frame - 12) & 0xFFFE) % 6 >> 1
             head_set = cz.head_frames
             body_set = cz.body_frames
             weapon_set = GameCanvas.hero_weapon_frames[cz.weapon_kind]
         else:
             bare = 0 if cz.weapon_kind != 0 else 1
-            k = consts.general_frame_flags[(cz.sprite_frame >> 5 << 2) + bare] >> (cz.sprite_frame & 0x1F) & 0x1
+            weapon_front = consts.general_frame_flags[(cz.sprite_frame >> 5 << 2) + bare] >> (cz.sprite_frame & 0x1F) & 0x1
             head_set = cz.head_frames2
             body_set = cz.body_frames2
             weapon_set = GameCanvas.hero_body_frames[cz.weapon_kind]
@@ -698,20 +698,20 @@ class MapScene(GameCanvas):
                 self.play_sound(7)
         elif action == 12:
             if 2 < frame < 6:
-                m = 1
+                trail = 1
                 GameCanvas.hero_fx_kind = 1
                 GameCanvas.hero_fx_image = GameCanvas.images[44]
                 self.set_hero_fx_parts(GameCanvas.skill_frames, cz.dir[0] + (frame & 0x1))
         elif action == 13:
             if 4 < frame < 8:
-                m = 1
+                trail = 1
                 GameCanvas.hero_fx_kind = 1
                 GameCanvas.hero_fx_image = GameCanvas.images[44]
                 self.set_hero_fx_parts(GameCanvas.skill_frames, cz.dir[0] + (frame & 0x1))
         elif action == 14:
             if 0 < frame < 9:
                 if 0 == (frame & 0x1):
-                    m = 1
+                    trail = 1
                 GameCanvas.hero_fx_kind = 1
                 GameCanvas.hero_fx_image = GameCanvas.images[44]
                 self.set_hero_fx_parts(GameCanvas.skill_frames, cz.dir[0] + (frame & 0x1))
@@ -735,11 +735,11 @@ class MapScene(GameCanvas):
                 self.set_hero_fx_parts(GameCanvas.hero_fx_frames, GameCanvas.hero_fx_pos)
         elif action == 20:
             if (frame & 0x1) != 0:
-                m = cz.combo
+                trail = cz.combo
         elif action == 21:
             if frame == 5 or frame == 6:
                 if frame == 5:
-                    m = 2
+                    trail = 2
                     GameCanvas.hero_fx_frames = self.load_frames(59)
                     GameCanvas.hero_fx_data = consts.fx_anim_21
                 GameCanvas.hero_fx_kind = 1
@@ -752,7 +752,7 @@ class MapScene(GameCanvas):
                 GameCanvas.hero_fx_image = GameCanvas.images[44]
                 self.set_hero_fx_parts(GameCanvas.skill_frames, frame & 0x1)
             elif frame == 6:
-                m = 2
+                trail = 2
         elif action == 23:
             if frame == 5 or frame == 6:
                 GameCanvas.hero_fx_kind = 1
@@ -769,7 +769,7 @@ class MapScene(GameCanvas):
                 self.set_hero_fx_parts(GameCanvas.hero_fx_frames, 1)
         elif action == 25:
             if (frame & 0x1) != 0:
-                m = 2
+                trail = 2
         elif action in (26, 27):
             if action == 27 and frame == 9:
                 GameCanvas.hero_fx_frames = self.load_frames(63)
@@ -827,55 +827,55 @@ class MapScene(GameCanvas):
                 self.set_hero_fx_parts(GameCanvas.hero_fx_frames, GameCanvas.hero_fx_pos)
                 GameCanvas.hero_fx_count = 3
         i = cz.pos[0].x - GameCanvas.camera.x
-        j_ = cz.pos[0].y - GameCanvas.camera.y
+        sy = cz.pos[0].y - GameCanvas.camera.y
         body = body_set[cz.sprite_frame]
-        self.draw_map_region(GameCanvas.general_mark, i - body.ox + idiv(body.w, 2) - 13, j_ - body.oy + body.h - 5, GameCanvas.general_mark.getWidth(), GameCanvas.general_mark.getHeight(), 0, 0)
+        self.draw_map_region(GameCanvas.general_mark, i - body.ox + idiv(body.w, 2) - 13, sy - body.oy + body.h - 5, GameCanvas.general_mark.getWidth(), GameCanvas.general_mark.getHeight(), 0, 0)
         if GameCanvas.hero_fx_kind == 1:
             fx = GameCanvas.hero_fx_parts[0]
             if GameCanvas.hero_fx_image is not None:
-                self.draw_map_region(GameCanvas.hero_fx_image, i - fx.ox, j_ - fx.oy, fx.w, fx.h, fx.src_x, fx.src_y)
+                self.draw_map_region(GameCanvas.hero_fx_image, i - fx.ox, sy - fx.oy, fx.w, fx.h, fx.src_x, fx.src_y)
             else:
                 fx_data = list(GameCanvas.hero_fx_data[GameCanvas.hero_fx_pos:])
-                self.draw_effect_frames(GameCanvas.hero_fx_parts, fx_data, 1, i, j_)
+                self.draw_effect_frames(GameCanvas.hero_fx_parts, fx_data, 1, i, sy)
             MapScene.mark_dirty(cz.pos[0].x - fx.ox, cz.pos[0].y - fx.oy, fx.w, fx.h)
         if GameCanvas.hero_picked_up == 1:
             shadow = GameCanvas.frame % 3
-            q = GameCanvas.shadow_frames[shadow]
-            self.draw_map_region(GameCanvas.shadow_image, i - q.ox, j_ - q.oy + 3, q.w, q.h, q.src_x, q.src_y)
+            shadow_frame = GameCanvas.shadow_frames[shadow]
+            self.draw_map_region(GameCanvas.shadow_image, i - shadow_frame.ox, sy - shadow_frame.oy + 3, shadow_frame.w, shadow_frame.h, shadow_frame.src_x, shadow_frame.src_y)
             GameCanvas.hero_effect_drawn = 1
-        if m > -1:
-            if 18 == (cz.dir[0] >> 1) * 6 + (m << 1):
-                GameCanvas.engine.draw_weapon_trail(-1, m)
+        if trail > -1:
+            if 18 == (cz.dir[0] >> 1) * 6 + (trail << 1):
+                GameCanvas.engine.draw_weapon_trail(-1, trail)
             elif cz.dir[0] == 4 and cz.action[0] != 25:
-                GameCanvas.engine.draw_weapon_trail(-1, m)
-        if k != 0:
-            GameCanvas.engine.draw_hero_weapon(i, j_, weapon_set[cz.sprite_frame])
+                GameCanvas.engine.draw_weapon_trail(-1, trail)
+        if weapon_front != 0:
+            GameCanvas.engine.draw_hero_weapon(i, sy, weapon_set[cz.sprite_frame])
         head = head_set[cz.sprite_frame]
-        self.draw_map_region(cz.body_image, i - body.ox, j_ - body.oy, body.w, body.h, body.src_x, body.src_y)
-        self.draw_map_region(cz.head_image, i - head.ox, j_ - head.oy, head.w, head.h, head.src_x, head.src_y)
+        self.draw_map_region(cz.body_image, i - body.ox, sy - body.oy, body.w, body.h, body.src_x, body.src_y)
+        self.draw_map_region(cz.head_image, i - head.ox, sy - head.oy, head.w, head.h, head.src_x, head.src_y)
         MapScene.mark_dirty(cz.pos[0].x - head.ox, cz.pos[0].y - head.oy, head.w, head.h)
         MapScene.mark_dirty(cz.pos[0].x - body.ox, cz.pos[0].y - body.oy, body.w, body.h)
-        if 0 == k:
-            GameCanvas.engine.draw_hero_weapon(i, j_, weapon_set[cz.sprite_frame])
-        if m > -1:
+        if 0 == weapon_front:
+            GameCanvas.engine.draw_hero_weapon(i, sy, weapon_set[cz.sprite_frame])
+        if trail > -1:
             if cz.action[0] == 25:
-                GameCanvas.engine.draw_weapon_trail(-1, m)
-            elif 18 != (cz.dir[0] >> 1) * 6 + (m << 1) and cz.dir[0] != 4:
-                GameCanvas.engine.draw_weapon_trail(-1, m)
+                GameCanvas.engine.draw_weapon_trail(-1, trail)
+            elif 18 != (cz.dir[0] >> 1) * 6 + (trail << 1) and cz.dir[0] != 4:
+                GameCanvas.engine.draw_weapon_trail(-1, trail)
         if GameCanvas.hero_picked_up == 1:
             shadow = 3 + GameCanvas.frame % 3
-            q = GameCanvas.shadow_frames[shadow]
-            self.draw_map_region(GameCanvas.shadow_image, i - q.ox, j_ - q.oy + 3, q.w, q.h, q.src_x, q.src_y)
+            shadow_frame = GameCanvas.shadow_frames[shadow]
+            self.draw_map_region(GameCanvas.shadow_image, i - shadow_frame.ox, sy - shadow_frame.oy + 3, shadow_frame.w, shadow_frame.h, shadow_frame.src_x, shadow_frame.src_y)
         if GameCanvas.hero_fx_kind == 2:
             fx_data = list(GameCanvas.hero_fx_data[GameCanvas.hero_fx_pos:])
-            self.draw_effect_frames(GameCanvas.hero_fx_parts, fx_data, 1, i, j_)
+            self.draw_effect_frames(GameCanvas.hero_fx_parts, fx_data, 1, i, sy)
             MapScene.mark_dirty(cz.pos[0].x - GameCanvas.hero_fx_parts[0].ox, cz.pos[0].y - GameCanvas.hero_fx_parts[0].oy, GameCanvas.hero_fx_parts[0].w, GameCanvas.hero_fx_parts[0].h)
         elif cz.on_fire != 0:
             fx_data = list(GameCanvas.hero_fx_data[GameCanvas.hero_fx_pos:])
             fx_frames = GameCanvas.hero_fx_frames[cz.fire_frame:]
-            self.draw_effect_frames(fx_frames, fx_data, 1, i, j_)
-            u = GameCanvas.hero_fx_frames[cz.fire_frame]
-            MapScene.mark_dirty(cz.pos[0].x - u.ox, cz.pos[0].y - u.oy, u.w, u.h)
+            self.draw_effect_frames(fx_frames, fx_data, 1, i, sy)
+            fire = GameCanvas.hero_fx_frames[cz.fire_frame]
+            MapScene.mark_dirty(cz.pos[0].x - fire.ox, cz.pos[0].y - fire.oy, fire.w, fire.h)
         if cz.hit_fx_kind != 0:
             cz.hit_fx_frame += 1
             if cz.hit_fx_frame > 1:
@@ -883,25 +883,25 @@ class MapScene(GameCanvas):
                 return
             shadow = cz.hit_fx_frame
             i = cz.hit_fx_pos.x - GameCanvas.camera.x
-            j_ = cz.hit_fx_pos.y - GameCanvas.camera.y
-            GameCanvas.engine.draw_spark(shadow, i, j_)
-            v_ = GameCanvas.spark_frames[shadow]
-            MapScene.mark_dirty(cz.hit_fx_pos.x - v_.ox, cz.hit_fx_pos.y - v_.oy, v_.w, v_.h)
+            sy = cz.hit_fx_pos.y - GameCanvas.camera.y
+            GameCanvas.engine.draw_spark(shadow, i, sy)
+            spark = GameCanvas.spark_frames[shadow]
+            MapScene.mark_dirty(cz.hit_fx_pos.x - spark.ox, cz.hit_fx_pos.y - spark.oy, spark.w, spark.h)
 
     def run_cell_scripts(self, tx, ty, tw, th):  # c.java:894-915  (run the scripts of cells)
         for b in range(th):
             for col in range(tw):
                 i = tx + col + ty + b & 0x7
                 while GameCanvas.cell_scripts[i].used != 0:
-                    j_ = GameCanvas.map.data[GameCanvas.cell_scripts[i].offset] & 0xFF
-                    k = GameCanvas.map.data[GameCanvas.cell_scripts[i].offset + 1] & 0xFF
-                    if j_ == tx + col and k == ty + b:
-                        m = GameCanvas.cell_scripts[i].offset
-                        s = i16(i16(GameCanvas.map.data[m + 2] & 0xFF | (GameCanvas.map.data[m + 3] & 0xFF) << 8) + 4)
-                        n = 4
+                    cell_x = GameCanvas.map.data[GameCanvas.cell_scripts[i].offset] & 0xFF
+                    cell_y = GameCanvas.map.data[GameCanvas.cell_scripts[i].offset + 1] & 0xFF
+                    if cell_x == tx + col and cell_y == ty + b:
+                        offset = GameCanvas.cell_scripts[i].offset
+                        end = i16(i16(GameCanvas.map.data[offset + 2] & 0xFF | (GameCanvas.map.data[offset + 3] & 0xFF) << 8) + 4)
+                        pos = 4
                         while True:
-                            n += self.run_cell_script(GameCanvas.map.data[m + n], GameCanvas.map.data[m + n + 1], GameCanvas.map.data[m + n + 2], j_, k)
-                            if not n < s:
+                            pos += self.run_cell_script(GameCanvas.map.data[offset + pos], GameCanvas.map.data[offset + pos + 1], GameCanvas.map.data[offset + pos + 2], cell_x, cell_y)
+                            if not pos < end:
                                 break
                         break
                     i = GameCanvas.cell_scripts[i].next
@@ -1028,34 +1028,34 @@ class MapScene(GameCanvas):
 
     def find_reachable(self, room_tx, room_ty, px, py):  # c.java:1052-1075  (reachable cells of the room)
         i = idiv(px, 27)
-        j_ = idiv(py, 27)
+        ty = idiv(py, 27)
         if i < room_tx:
             i = room_tx
         elif i > room_tx + 6:
             i = room_tx + 6
-        if j_ < room_ty:
-            j_ = room_ty
-        elif j_ > room_ty + 6:
-            j_ = room_ty + 6
+        if ty < room_ty:
+            ty = room_ty
+        elif ty > room_ty + 6:
+            ty = room_ty + 6
         for b in range(7):
             for row in range(7):
                 GameCanvas.reachable[b][row] = 0
         for b in range(7):
             for row in range(7):
-                k = room_tx + b + (room_ty + row) * GameCanvas.map.size.w
-                if (GameCanvas.map.data[GameCanvas.map.layer_flags + k] & 0x1) != 0:
+                cell = room_tx + b + (room_ty + row) * GameCanvas.map.size.w
+                if (GameCanvas.map.data[GameCanvas.map.layer_flags + cell] & 0x1) != 0:
                     GameCanvas.reachable[b][row] = -1
-        self.flood_fill(i - room_tx, j_ - room_ty)
+        self.flood_fill(i - room_tx, ty - room_ty)
 
     def flood_fill(self, cx, cy):  # c.java:1077-1086  (flood fill)
         dx = [0, -1, 0, 1]
         dy = [1, 0, -1, 0]
         GameCanvas.reachable[cx][cy] = 1
         for b in range(4):
-            x_ = cx + dx[b]
-            y_ = cy + dy[b]
-            if -1 < x_ < 7 and -1 < y_ < 7 and 0 == GameCanvas.reachable[x_][y_]:
-                self.flood_fill(x_, y_)
+            nx = cx + dx[b]
+            ny = cy + dy[b]
+            if -1 < nx < 7 and -1 < ny < 7 and 0 == GameCanvas.reachable[nx][ny]:
+                self.flood_fill(nx, ny)
 
     def load_rooms(self, map_no):  # c.java:1089-1115  (rooms of the map: exits, enemy waves)
         if config.DECOMP_FIX["F17"]:
@@ -1103,38 +1103,38 @@ class MapScene(GameCanvas):
             GameCanvas.map.free()
 
     def load_map(self, map_no):  # c.java:1127-1162  (load map file #paramInt of mdat)
-        o_ = MapData()
+        map = MapData()
         MapScene.free_map()
         data = ResReader.read("/" + GameCanvas.scr_maps.get(map_no - 1))
-        k = len(data)
-        o_.data = [b & 0xFF for b in data]
-        if o_.size is None:
-            o_.size = MapSize()
-        o_.size.w = o_.data[0]
-        o_.size.h = o_.data[1]
-        o_.size.extra = o_.data[2]
-        i = 3 + o_.size.extra
-        o_.layer_ground = i
-        j_ = o_.size.h * o_.size.w
-        i += j_
-        o_.layer_upper = i
-        i += j_
-        o_.layer_objects = i
-        i += j_
-        o_.layer_flags = i
+        size = len(data)
+        map.data = [b & 0xFF for b in data]
+        if map.size is None:
+            map.size = MapSize()
+        map.size.w = map.data[0]
+        map.size.h = map.data[1]
+        map.size.extra = map.data[2]
+        i = 3 + map.size.extra
+        map.layer_ground = i
+        layer_size = map.size.h * map.size.w
+        i += layer_size
+        map.layer_upper = i
+        i += layer_size
+        map.layer_objects = i
+        i += layer_size
+        map.layer_flags = i
         MapScene.reset_cell_scripts()
-        i += j_
-        if k > i:
-            s = o_.data[i]
+        i += layer_size
+        if size > i:
+            script_count = map.data[i]
             i += 1
             i += 2
-            for b in range(s):
-                op = o_.data[i]
-                arg = o_.data[i + 1]
-                m = o_.data[i + 2] & 0xFF | o_.data[i + 3] << 8 & 0xFF00
+            for b in range(script_count):
+                op = map.data[i]
+                arg = map.data[i + 1]
+                script_len = map.data[i + 2] & 0xFF | map.data[i + 3] << 8 & 0xFF00
                 MapScene.cell_script_slot(i, op, arg)
-                i = i + 4 + m
-        return o_
+                i = i + 4 + script_len
+        return map
 
     @staticmethod
     def reset_cell_scripts():  # c.java:1164-1171
@@ -1308,30 +1308,30 @@ class MapScene(GameCanvas):
             GameCanvas.waves[11] = eO.wave_11
         GameCanvas.spawn_spot_count = 0
         i = idiv(GameCanvas.view_tx + 2, 7) * 7 + 1
-        j_ = idiv(GameCanvas.view_ty + 2, 7) * 7 + 1
-        GameCanvas.scene.find_reachable(i, j_, GameCanvas.hero.pos[0].x, GameCanvas.hero.pos[0].y)
+        room_ty = idiv(GameCanvas.view_ty + 2, 7) * 7 + 1
+        GameCanvas.scene.find_reachable(i, room_ty, GameCanvas.hero.pos[0].x, GameCanvas.hero.pos[0].y)
         for row in range(4):
             if eO.exits[row] != 0:
                 k = i + exit_dx[row]
-                m = j_ + exit_dy[row]
+                m = room_ty + exit_dy[row]
                 for b in range(7):
                     if (row & 0x1) != 0:
                         if GameCanvas.reachable[k - i][b] == 1:
-                            n = k + (m + b) * cE.size.w
-                            if 0 == cE.data[cE.layer_objects + n]:
-                                n += exit_step[row]
-                                if (cE.data[cE.layer_flags + n] & 0x1) == 0 and cE.data[cE.layer_objects + n] == 0:
+                            cell = k + (m + b) * cE.size.w
+                            if 0 == cE.data[cE.layer_objects + cell]:
+                                cell += exit_step[row]
+                                if (cE.data[cE.layer_flags + cell] & 0x1) == 0 and cE.data[cE.layer_objects + cell] == 0:
                                     if GameCanvas.spawn_spots[GameCanvas.spawn_spot_count] is None:
                                         GameCanvas.spawn_spots[GameCanvas.spawn_spot_count] = SpawnSpot()
                                     GameCanvas.spawn_spots[GameCanvas.spawn_spot_count].tx = k & 0xFFFF
                                     GameCanvas.spawn_spots[GameCanvas.spawn_spot_count].ty = (m + b) & 0xFFFF
                                     GameCanvas.spawn_spots[GameCanvas.spawn_spot_count].dir = row
                                     GameCanvas.spawn_spot_count = i16(GameCanvas.spawn_spot_count + 1)
-                    elif GameCanvas.reachable[b][m - j_] == 1:
-                        n = k + b + m * cE.size.w
-                        if 0 == cE.data[cE.layer_objects + n]:
-                            n += exit_step[row] * cE.size.w
-                            if (cE.data[cE.layer_flags + n] & 0x1) == 0 and cE.data[cE.layer_objects + n] == 0:
+                    elif GameCanvas.reachable[b][m - room_ty] == 1:
+                        cell = k + b + m * cE.size.w
+                        if 0 == cE.data[cE.layer_objects + cell]:
+                            cell += exit_step[row] * cE.size.w
+                            if (cE.data[cE.layer_flags + cell] & 0x1) == 0 and cE.data[cE.layer_objects + cell] == 0:
                                 if GameCanvas.spawn_spots[GameCanvas.spawn_spot_count] is None:
                                     GameCanvas.spawn_spots[GameCanvas.spawn_spot_count] = SpawnSpot()
                                 GameCanvas.spawn_spots[GameCanvas.spawn_spot_count].tx = (k + b) & 0xFFFF
@@ -1359,16 +1359,16 @@ class MapScene(GameCanvas):
             if b != 0 and GameCanvas.mission_seconds < dz.time_limit:
                 GameCanvas.mission_exp += idiv((idiv(idiv(dz.time_limit - GameCanvas.mission_seconds, dz.time_limit), 10) + 1) * GameCanvas.mission_exp, 20)
             i = GameCanvas.mission_exp << 1 + (GameCanvas.difficulty ^ 0x1)
-            j_ = 0
+            total = 0
             for lv in range(10):
-                j_ += exp_table[lv]
-                if cz.exp + i < j_:
-                    k = exp_table[lv] - j_ + cz.exp + i
-                    GameCanvas.exp_bars[b + 1] = i16(idiv(k * 100, exp_table[lv]) + lv * 100)
+                total += exp_table[lv]
+                if cz.exp + i < total:
+                    rest = exp_table[lv] - total + cz.exp + i
+                    GameCanvas.exp_bars[b + 1] = i16(idiv(rest * 100, exp_table[lv]) + lv * 100)
                     if GameCanvas.exp_bars[b + 1] < lv * 100 + 1:
                         GameCanvas.exp_bars[b + 1] = i16(lv * 100 + 1)
                     if b == 1:
-                        cz.exp = k
+                        cz.exp = rest
                     break
         GameCanvas.exp_bar_step = 0
 
@@ -1377,10 +1377,10 @@ class MapScene(GameCanvas):
         buff_div = [20, 20, 25]
         hit_frame = [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 5, 5]
         i = -1
-        j_ = 0
+        skill = 0
         bool_ = True
-        k = 0
-        m = 0
+        step_x = 0
+        step_y = 0
         cz = GameCanvas.hero
         self.erase_breaking()
         self.erase_hero()
@@ -1391,38 +1391,38 @@ class MapScene(GameCanvas):
         self.draw_potion_effect()
         if GameCanvas.room_phase == 1:
             self.erase_exit_arrows()
-        v = GameCanvas.key_held
-        if v in (-1, 50):
+        key = GameCanvas.key_held
+        if key in (-1, 50):
             i = 4
-        elif v in (-3, 52):
+        elif key in (-3, 52):
             i = 2
-        elif v in (-4, 54):
+        elif key in (-4, 54):
             i = 6
-        elif v in (-2, 56):
+        elif key in (-2, 56):
             i = 0
-        v = GameCanvas.key
-        if config.NO_COMBAT and v in (49, 51, 55, 57, 48, -5, 53, 35, 42, -101, -102, -103, -104, -105):
+        key = GameCanvas.key
+        if config.NO_COMBAT and key in (49, 51, 55, 57, 48, -5, 53, 35, 42, -101, -102, -103, -104, -105):
             # PORT-EXTRA (POW_NO_COMBAT=1): attack, skill and potion keys do nothing
-            v = None
+            key = None
         belt = -1
-        if v in (-101, -102, -103, -104, -105) and config.SKILL_BAR:
+        if key in (-101, -102, -103, -104, -105) and config.SKILL_BAR:
             # PORT-EXTRA config.SKILL_BAR: Z X C V B (or a click on the belt) = belt slot 0..4,
             # used exactly like the slot of * / # below
-            belt = -101 - v
-            v = 42
-        if v == 49:
-            j_ = cz.hotkeys[0]
-        elif v == 51:
-            j_ = cz.hotkeys[1]
-        elif v == 55:
-            j_ = cz.hotkeys[2]
-        elif v == 57:
-            j_ = cz.hotkeys[3]
-        elif v == 48:
-            j_ = cz.hotkeys[4]
-        elif v in (-5, 53):
-            j_ = 3
-        elif v in (35, 42):
+            belt = -101 - key
+            key = 42
+        if key == 49:
+            skill = cz.hotkeys[0]
+        elif key == 51:
+            skill = cz.hotkeys[1]
+        elif key == 55:
+            skill = cz.hotkeys[2]
+        elif key == 57:
+            skill = cz.hotkeys[3]
+        elif key == 48:
+            skill = cz.hotkeys[4]
+        elif key in (-5, 53):
+            skill = 3
+        elif key in (35, 42):
             if 0 == GameCanvas.effect.item and cz.action[0] < 10:
                 sel = belt if belt > -1 else cz.quick_keys[0 if GameCanvas.key == 42 else 1]
                 GameCanvas.effect.item = cz.quick_slots[sel].item
@@ -1441,7 +1441,7 @@ class MapScene(GameCanvas):
                     GameCanvas.effect.pos.x = cz.pos[0].x
                     GameCanvas.effect.pos.y = cz.pos[0].y
                     GameCanvas.effect.dir = i16(consts.dir8_to_dir4[cz.dir[0]])
-        elif v == -7:
+        elif key == -7:
             if GameCanvas.sound is not None:
                 self.play_sound(-1)
                 GameCanvas.stop_sound()
@@ -1512,7 +1512,7 @@ class MapScene(GameCanvas):
                     cz.dir[0] = cz.facing = i
                     cz.action[0] = 1
                     cz.frame[0] = 0
-            if j_ == 3:
+            if skill == 3:
                 if cz.idle_ticks < 7:
                     cz.combo = (cz.combo + 1) % 3
                 else:
@@ -1521,72 +1521,72 @@ class MapScene(GameCanvas):
                 cz.action[0] = 3 + cz.combo + (cz.weapon_kind ^ 0x1) * 3
                 cz.frame[0] = 0
                 cz.dir[0] = cz.facing = consts.dir8_to_dir4[cz.facing] << 1
-            elif j_ > 0 and MapEngine.skill_mp_cost(j_) != 0:
+            elif skill > 0 and MapEngine.skill_mp_cost(skill) != 0:
                 cz.dir[0] = cz.facing = consts.dir8_to_dir4[cz.facing] << 1
-                cz.action[0] = j_
+                cz.action[0] = skill
                 cz.frame[0] = 0
                 if cz.action[0] in (15, 16, 21, 22, 23, 24, 25):
                     self.play_sound(11)
-        n = cz.facing
+        move_dir = cz.facing
         action = cz.action[0]
         frame = cz.frame[0]
         if action == 1:
-            k = consts.dir_dx8[n]
-            m = consts.dir_dy8[n]
+            step_x = consts.dir_dx8[move_dir]
+            step_y = consts.dir_dy8[move_dir]
         elif action == 2:
-            k = consts.dir_dx8[n] << 2
-            m = consts.dir_dy8[n] << 2
+            step_x = consts.dir_dx8[move_dir] << 2
+            step_y = consts.dir_dy8[move_dir] << 2
         elif 3 <= action <= 8:
-            k = idiv(consts.dir_dx8[n], 3)
-            m = idiv(consts.dir_dy8[n], 3)
+            step_x = idiv(consts.dir_dx8[move_dir], 3)
+            step_y = idiv(consts.dir_dy8[move_dir], 3)
         elif action == 12:
             if 2 < frame < 6:
-                k = consts.dir_dx8[n] << 2
-                m = consts.dir_dy8[n] << 2
+                step_x = consts.dir_dx8[move_dir] << 2
+                step_y = consts.dir_dy8[move_dir] << 2
         elif action in (13, 14):
             fall14 = action == 14
             if action == 13:
                 if 4 < frame < 8:
-                    k = consts.dir_dx8[n] << 2
-                    m = consts.dir_dy8[n] << 2
-                    if k > 0:
-                        k = GameCanvas.engine.step_until_free(cz.pos[0], k, 6)
-                    elif k < 0:
-                        k = GameCanvas.engine.step_until_free(cz.pos[0], k, 2)
-                    if m > 0:
-                        m = GameCanvas.engine.step_until_free(cz.pos[0], m, 0)
-                    elif m < 0:
-                        m = GameCanvas.engine.step_until_free(cz.pos[0], m, 4)
-                    delta = GameCanvas.engine.keep_in_room(cz.pos[0], k, m)
-                    k = delta[0]
-                    m = delta[1]
-                    cz.pos[0].x = i16(cz.pos[0].x + k)
-                    cz.pos[0].y = i16(cz.pos[0].y + m)
+                    step_x = consts.dir_dx8[move_dir] << 2
+                    step_y = consts.dir_dy8[move_dir] << 2
+                    if step_x > 0:
+                        step_x = GameCanvas.engine.step_until_free(cz.pos[0], step_x, 6)
+                    elif step_x < 0:
+                        step_x = GameCanvas.engine.step_until_free(cz.pos[0], step_x, 2)
+                    if step_y > 0:
+                        step_y = GameCanvas.engine.step_until_free(cz.pos[0], step_y, 0)
+                    elif step_y < 0:
+                        step_y = GameCanvas.engine.step_until_free(cz.pos[0], step_y, 4)
+                    delta = GameCanvas.engine.keep_in_room(cz.pos[0], step_x, step_y)
+                    step_x = delta[0]
+                    step_y = delta[1]
+                    cz.pos[0].x = i16(cz.pos[0].x + step_x)
+                    cz.pos[0].y = i16(cz.pos[0].y + step_y)
                     fall14 = True       # no break: falls into case 14
             if fall14:
                 if 0 < frame < 9:
-                    k = consts.dir_dx8[n]
-                    m = consts.dir_dy8[n]
+                    step_x = consts.dir_dx8[move_dir]
+                    step_y = consts.dir_dy8[move_dir]
         elif action == 10:
             if frame < 10:
                 cz.pos[0].x = i16(cz.pos[0].x + (-1 if (frame & 0x1) != 0 else 1))
         elif action == 20:
             if 0 == (frame & 0x1):
-                k = consts.dir_dx8[n]
-                m = consts.dir_dy8[n]
+                step_x = consts.dir_dx8[move_dir]
+                step_y = consts.dir_dy8[move_dir]
         elif action == 9 and cz.hurt_ticks > 0:
             cz.hurt_ticks -= 1
-            n = cz.facing + 4 & 0x7
-            k = consts.dir_dx8[n] << 2
-            m = consts.dir_dy8[n] << 2
+            move_dir = cz.facing + 4 & 0x7
+            step_x = consts.dir_dx8[move_dir] << 2
+            step_y = consts.dir_dy8[move_dir] << 2
         elif action == 9 and frame == 1:
-            n = cz.facing + 4 & 0x7
-            k = idiv(consts.dir_dx8[n] * 3, 4)
-            m = idiv(consts.dir_dy8[n] * 3, 4)
+            move_dir = cz.facing + 4 & 0x7
+            step_x = idiv(consts.dir_dx8[move_dir] * 3, 4)
+            step_y = idiv(consts.dir_dy8[move_dir] * 3, 4)
         else:
-            k = m = 0
-        if k != 0 or m != 0:
-            i = GameCanvas.engine.move(cz.pos[0], k, m, n, -1)
+            step_x = step_y = 0
+        if step_x != 0 or step_y != 0:
+            i = GameCanvas.engine.move(cz.pos[0], step_x, step_y, move_dir, -1)
             if cz.action[0] == 1:
                 if cz.facing in (0, 2, 4, 6):
                     if F14:
@@ -1597,20 +1597,20 @@ class MapScene(GameCanvas):
                         if i == -1:
                             i = MapEngine.slide_corner(cz.pos[0], cz.dir[0], -1)
                             if i != -1:
-                                k = consts.dir_dx8[i]
-                                m = consts.dir_dy8[i]
-                                i = GameCanvas.engine.move(cz.pos[0], k, m, i, -1)
+                                step_x = consts.dir_dx8[i]
+                                step_y = consts.dir_dy8[i]
+                                i = GameCanvas.engine.move(cz.pos[0], step_x, step_y, i, -1)
                                 if -1 < i < 8:
                                     cz.dir[0] = i
                     else:
                         if i < 0:
                             raise IndexError("ArrayIndexOutOfBoundsException: aw[%d]" % i)
-                        k = consts.dir_dx8[i]
-                        m = consts.dir_dy8[i]
+                        step_x = consts.dir_dx8[i]
+                        step_y = consts.dir_dy8[i]
                         if i == -1:
                             i = MapEngine.slide_corner(cz.pos[0], cz.dir[0], -1)
                             if i != -1:
-                                i = GameCanvas.engine.move(cz.pos[0], k, m, i, -1)
+                                i = GameCanvas.engine.move(cz.pos[0], step_x, step_y, i, -1)
                                 if -1 < i < 8:
                                     cz.dir[0] = i
                 elif cz.facing in (1, 3, 5, 7):
@@ -1756,15 +1756,15 @@ class MapScene(GameCanvas):
             cA = GameCanvas.breakables[b]
             if cA.active != 0 and cA.break_frame != 0:
                 i = cA.pos.x - GameCanvas.camera.x
-                j_ = cA.pos.y - GameCanvas.camera.y
-                k = 2 - cA.break_frame
+                sy = cA.pos.y - GameCanvas.camera.y
+                spark = 2 - cA.break_frame
                 cA.break_frame = i16(cA.break_frame - 1)
-                self.erase_spark(k, i, j_)
+                self.erase_spark(spark, i, sy)
 
     def erase_spark(self, frame, x, y):  # c.java:2150-2152  (erase an eV frame from ct[7])
-        v_ = GameCanvas.spark_frames[frame]
-        self.draw_map_region(GameCanvas.images[7], x - v_.ox, y - v_.oy, v_.w, v_.h,
-                       x - v_.ox + GameCanvas.view_offset.x, y - v_.oy + GameCanvas.view_offset.y)
+        spark = GameCanvas.spark_frames[frame]
+        self.draw_map_region(GameCanvas.images[7], x - spark.ox, y - spark.oy, spark.w, spark.h,
+                       x - spark.ox + GameCanvas.view_offset.x, y - spark.oy + GameCanvas.view_offset.y)
 
     def erase_exit_arrows(self):  # c.java:2154-2162  (erase the exit arrows)
         arrow_x = [GameCanvas.view_cx - 9, 5, GameCanvas.view_cx - 9, GameCanvas.view_size.x - 31]
@@ -1786,88 +1786,88 @@ class MapScene(GameCanvas):
             body_set = cz.body_frames2
             weapon_set = GameCanvas.hero_body_frames[cz.weapon_kind]
         i = cz.pos[1].x - GameCanvas.camera.x
-        j_ = cz.pos[1].y - GameCanvas.camera.y
+        sy = cz.pos[1].y - GameCanvas.camera.y
         back = GameCanvas.images[7]
         ccx = GameCanvas.view_offset.x
         ccy = GameCanvas.view_offset.y
         head = head_set[cz.sprite_frame]
         body = body_set[cz.sprite_frame]
         weapon = weapon_set[cz.sprite_frame]
-        self.draw_map_region(back, i - head.ox, j_ - head.oy, head.w, head.h, i - head.ox + ccx, j_ - head.oy + ccy)
-        self.draw_map_region(back, i - body.ox, j_ - body.oy, body.w, body.h, i - body.ox + ccx, j_ - body.oy + ccy)
-        self.draw_map_region(back, i - body.ox + idiv(body.w, 2) - 13, j_ - body.oy + body.h - 5, 27, 11,
-                       i - body.ox + ccx + idiv(body.w, 2) - 13, j_ - body.oy + ccy + body.h - 5)
-        self.draw_map_region(back, i - weapon.ox, j_ - weapon.oy, weapon.w, weapon.h, i - weapon.ox + ccx, j_ - weapon.oy + ccy)
+        self.draw_map_region(back, i - head.ox, sy - head.oy, head.w, head.h, i - head.ox + ccx, sy - head.oy + ccy)
+        self.draw_map_region(back, i - body.ox, sy - body.oy, body.w, body.h, i - body.ox + ccx, sy - body.oy + ccy)
+        self.draw_map_region(back, i - body.ox + idiv(body.w, 2) - 13, sy - body.oy + body.h - 5, 27, 11,
+                       i - body.ox + ccx + idiv(body.w, 2) - 13, sy - body.oy + ccy + body.h - 5)
+        self.draw_map_region(back, i - weapon.ox, sy - weapon.oy, weapon.w, weapon.h, i - weapon.ox + ccx, sy - weapon.oy + ccy)
         if GameCanvas.hero_picked_up == 1 or GameCanvas.hero_effect_drawn == 1:
-            k = (GameCanvas.frame - 1) % 3
-            q = GameCanvas.shadow_frames[k]
-            self.draw_map_region(back, i - q.ox, j_ - q.oy - 18, 40, 50, i - q.ox + ccx, j_ - q.oy + ccy - 18)
+            step = (GameCanvas.frame - 1) % 3
+            shadow = GameCanvas.shadow_frames[step]
+            self.draw_map_region(back, i - shadow.ox, sy - shadow.oy - 18, 40, 50, i - shadow.ox + ccx, sy - shadow.oy + ccy - 18)
             GameCanvas.hero_effect_drawn = 0
         if cz.action[1] < 12:
             if 11 < cz.sprite_frame < 36:
-                k = cz.sprite_frame - 12
-                if (k & 0x1) != 0:
-                    k &= 0xFFFE
-                    self.erase_weapon_trail(-1, k % 6 >> 1)
+                step = cz.sprite_frame - 12
+                if (step & 0x1) != 0:
+                    step &= 0xFFFE
+                    self.erase_weapon_trail(-1, step % 6 >> 1)
         else:
-            k = -1
+            step = -1
             action = cz.action[1]
             frame = cz.frame[1]
             if action == 12:
                 if 2 < frame < 6:
-                    k = 1
+                    step = 1
             elif action == 13:
                 if 4 < frame < 8:
-                    k = 1
+                    step = 1
             elif action == 14:
                 if frame in (2, 4, 6, 8):
-                    k = 1
+                    step = 1
             elif action == 20:
                 if (frame & 0x1) != 0:
-                    k = cz.combo
+                    step = cz.combo
             elif action == 21:
                 if frame == 5:
-                    k = 2
+                    step = 2
             elif action == 22:
                 if frame == 6:
-                    k = 2
+                    step = 2
             elif action == 25:
                 if (frame & 0x1) != 0:
-                    k = 2
-            if k > -1:
-                self.erase_weapon_trail(-1, k)
+                    step = 2
+            if step > -1:
+                self.erase_weapon_trail(-1, step)
         if cz.on_fire != 0:
-            u = GameCanvas.hero_fx_frames[cz.fire_frame]
-            self.draw_map_region(back, i - u.ox, j_ - u.oy, u.w, u.h, i - u.ox + ccx, j_ - u.oy + ccy)
+            fire = GameCanvas.hero_fx_frames[cz.fire_frame]
+            self.draw_map_region(back, i - fire.ox, sy - fire.oy, fire.w, fire.h, i - fire.ox + ccx, sy - fire.oy + ccy)
             cz.fire_frame += 1
             if cz.fire_frame > 5:
                 cz.on_fire = 0
         if cz.hit_fx_kind != 0 and cz.hit_fx_frame > -1:
             i = cz.hit_fx_pos.x - GameCanvas.camera.x
-            j_ = cz.hit_fx_pos.y - GameCanvas.camera.y
-            k = cz.hit_fx_frame
-            self.erase_spark(k, i, j_)
+            sy = cz.hit_fx_pos.y - GameCanvas.camera.y
+            step = cz.hit_fx_frame
+            self.erase_spark(step, i, sy)
 
     def erase_weapon_trail(self, index, step):  # c.java:2255-2281  (erase a weapon trail)
         if index > -1:
-            h_ = GameCanvas.actors[index].pos[1]
+            pos = GameCanvas.actors[index].pos[1]
             if GameCanvas.actors[index].action[1] == 19:
                 i = GameCanvas.actors[index].dir[1] + (GameCanvas.actors[index].frame[1] >> 1 << 1) & 0x7
             else:
                 i = GameCanvas.actors[index].dir[1]
         else:
-            h_ = GameCanvas.hero.pos[1]
+            pos = GameCanvas.hero.pos[1]
             if GameCanvas.hero.action[1] == 25:
                 i = GameCanvas.hero.dir[1] + (GameCanvas.hero.frame[1] >> 1 << 1) & 0x7
             else:
                 i = GameCanvas.hero.dir[1]
-        j_ = (i >> 1) * 6 + (step << 1)
-        k = h_.x - GameCanvas.camera.x
-        m = h_.y - GameCanvas.camera.y
+        frame = (i >> 1) * 6 + (step << 1)
+        sx = pos.x - GameCanvas.camera.x
+        sy = pos.y - GameCanvas.camera.y
         for b in range(2):
-            u = GameCanvas.trail_frames[j_]
-            self.draw_map_region(GameCanvas.images[7], k - u.ox, m - u.oy, u.w, u.h, k - u.ox + GameCanvas.view_offset.x, m - u.oy + GameCanvas.view_offset.y)
-            j_ += 1
+            part = GameCanvas.trail_frames[frame]
+            self.draw_map_region(GameCanvas.images[7], sx - part.ox, sy - part.oy, part.w, part.h, sx - part.ox + GameCanvas.view_offset.x, sy - part.oy + GameCanvas.view_offset.y)
+            frame += 1
 
     def erase_enemies(self):  # c.java:2283-2340  (erase the enemies)
         cc_a = GameCanvas.view_offset.x
@@ -1879,16 +1879,16 @@ class MapScene(GameCanvas):
             ex.action[0] = min(ex.action[0], len(ex.anims[ex.dir[0]]) - 1)
             anim_frame = ex.anims[ex.dir[1]][ex.action[1]][ex.frame[1]]
             i = ex.pos[1].x - GameCanvas.camera.x
-            j_ = ex.pos[1].y - GameCanvas.camera.y
+            sy = ex.pos[1].y - GameCanvas.camera.y
             if ex.type > 200:
                 if anim_frame < 180:
                     D = ex.frames[anim_frame]
                     if ex.type == 203:
                         az = consts.squad_dirty_box[consts.dir8_to_dir4[ex.dir[1]]]
-                        self.draw_map_region(back, i - D.ox + az[0], j_ - D.oy + az[1], D.w + az[2], D.h + az[3],
-                                       i - D.ox + cc_a + az[0], j_ - D.oy + cc_b + az[1])
+                        self.draw_map_region(back, i - D.ox + az[0], sy - D.oy + az[1], D.w + az[2], D.h + az[3],
+                                       i - D.ox + cc_a + az[0], sy - D.oy + cc_b + az[1])
                     else:
-                        self.draw_map_region(back, i - D.ox, j_ - D.oy, D.w, D.h, i - D.ox + cc_a, j_ - D.oy + cc_b)
+                        self.draw_map_region(back, i - D.ox, sy - D.oy, D.w, D.h, i - D.ox + cc_a, sy - D.oy + cc_b)
             else:
                 if ex.action[1] < 6:
                     body_set = GameCanvas.enemy_frames[3]
@@ -1900,38 +1900,38 @@ class MapScene(GameCanvas):
                     weapon_set = GameCanvas.enemy_frames[8]
                 if anim_frame < 180:
                     body = body_set[anim_frame]
-                    self.draw_map_region(back, i - body.ox + idiv(body.w, 2) - 13, j_ - body.oy + body.h - 4, 27, 11,
-                                   i - body.ox + cc_a + idiv(body.w, 2) - 13, j_ - body.oy + cc_b + body.h - 5)
+                    self.draw_map_region(back, i - body.ox + idiv(body.w, 2) - 13, sy - body.oy + body.h - 4, 27, 11,
+                                   i - body.ox + cc_a + idiv(body.w, 2) - 13, sy - body.oy + cc_b + body.h - 5)
                     if GameCanvas.enemy_effect_drawn == 1 or GameCanvas.enemy_trail_drawn == 1:
-                        k = (GameCanvas.frame - 1) % 3
-                        q = GameCanvas.shadow_frames[k]
-                        self.draw_map_region(back, i - q.ox, j_ - q.oy - 18, 40, 50, i - q.ox + cc_a, j_ - q.oy + cc_b - 18)
+                        frame = (GameCanvas.frame - 1) % 3
+                        shadow = GameCanvas.shadow_frames[frame]
+                        self.draw_map_region(back, i - shadow.ox, sy - shadow.oy - 18, 40, 50, i - shadow.ox + cc_a, sy - shadow.oy + cc_b - 18)
                         GameCanvas.enemy_trail_drawn = 0
                 else:
                     body = body_set[20]
-                    self.draw_map_region(back, i - body.ox + idiv(body.w, 2) - 9, j_ - body.oy + body.h - 4, 18, 7,
-                                   i - body.ox + cc_a + idiv(body.w, 2) - 9, j_ - body.oy + cc_b + body.h - 4)
+                    self.draw_map_region(back, i - body.ox + idiv(body.w, 2) - 9, sy - body.oy + body.h - 4, 18, 7,
+                                   i - body.ox + cc_a + idiv(body.w, 2) - 9, sy - body.oy + cc_b + body.h - 4)
                 if anim_frame < 180:
                     for Y in (head_set[anim_frame], body_set[anim_frame], weapon_set[anim_frame]):
-                        self.draw_map_region(back, i - Y.ox, j_ - Y.oy, Y.w, Y.h, i - Y.ox + cc_a, j_ - Y.oy + cc_b)
+                        self.draw_map_region(back, i - Y.ox, sy - Y.oy, Y.w, Y.h, i - Y.ox + cc_a, sy - Y.oy + cc_b)
                 self.erase_general_weapon(slot)
                 if -1 < ex.skill_fx < 100:
                     self.erase_weapon_trail(slot, ex.skill_fx)
             if ex.on_fire != 0:
                 fe = GameCanvas.fire_frames[ex.fire_frame]
-                self.draw_map_region(back, i - fe.ox, j_ - fe.oy, fe.w, fe.h, i - fe.ox + cc_a, j_ - fe.oy + cc_b)
+                self.draw_map_region(back, i - fe.ox, sy - fe.oy, fe.w, fe.h, i - fe.ox + cc_a, sy - fe.oy + cc_b)
                 ex.fire_frame = i8(ex.fire_frame + 1)
                 if ex.fire_frame > 5:
                     ex.on_fire = 0
             if ex.hit_fx_kind != 0 and ex.hit_fx_frame > -1:
                 i = ex.hit_fx_pos.x - GameCanvas.camera.x
-                j_ = ex.hit_fx_pos.y - GameCanvas.camera.y
-                k = ex.hit_fx_frame + (ex.hit_fx_kind - 1 << 1)
-                self.erase_spark(k, i, j_)
+                sy = ex.hit_fx_pos.y - GameCanvas.camera.y
+                frame = ex.hit_fx_frame + (ex.hit_fx_kind - 1 << 1)
+                self.erase_spark(frame, i, sy)
 
     def erase_general_weapon(self, index):  # c.java:2350-2421  (erase a general's weapon effect)
         ex = GameCanvas.actors[index]
-        h_ = ex.pos[1]          # (the same object: case 21 moves it, as in the original)
+        pos = ex.pos[1]          # (the same object: case 21 moves it, as in the original)
         GameCanvas.enemy_fx_kind = 0
         A = MapScene.frames_from
         action = ex.action[1]
@@ -1972,18 +1972,18 @@ class MapScene(GameCanvas):
             if action == 21 and frame == 9:        # case 21 falls through into case 20
                 GameCanvas.enemy_fx_kind = 3
                 GameCanvas.hero_fx_parts = A(GameCanvas.enemy_fx_frames, 1)
-                h_.x = i16(h_.x + consts.front_dx[ex.dir[1] >> 1])
-                h_.y = i16(h_.y + consts.front_dy[ex.dir[1] >> 1])
+                pos.x = i16(pos.x + consts.front_dx[ex.dir[1] >> 1])
+                pos.y = i16(pos.y + consts.front_dy[ex.dir[1] >> 1])
             if 1 < frame < 9:
                 GameCanvas.enemy_fx_kind = 3
                 GameCanvas.hero_fx_parts = A(GameCanvas.enemy_fx_frames, frame - 2 + (ex.dir[1] >> 1) * 7)
         if GameCanvas.enemy_fx_kind != 0:
-            i = h_.x - GameCanvas.camera.x
-            j_ = h_.y - GameCanvas.camera.y
+            i = pos.x - GameCanvas.camera.x
+            sy = pos.y - GameCanvas.camera.y
             GameCanvas.enemy_fx_kind = 0
             fj = GameCanvas.hero_fx_parts[0]
-            self.draw_map_region(GameCanvas.images[7], i - fj.ox - 8, j_ - fj.oy - 8, fj.w + 16, fj.h + 16,
-                           i - fj.ox - 8 + GameCanvas.view_offset.x, j_ - fj.oy - 8 + GameCanvas.view_offset.y)
+            self.draw_map_region(GameCanvas.images[7], i - fj.ox - 8, sy - fj.oy - 8, fj.w + 16, fj.h + 16,
+                           i - fj.ox - 8 + GameCanvas.view_offset.x, sy - fj.oy - 8 + GameCanvas.view_offset.y)
 
     @staticmethod
     def frames_from(frames, start):  # c.java:2342-2348
@@ -1999,9 +1999,9 @@ class MapScene(GameCanvas):
 
     def erase_hero_effects(self):  # c.java:2430-2514  (erase the hero's weapon effects)
         cz = GameCanvas.hero
-        h_ = Point()
-        h_.x = cz.pos[1].x
-        h_.y = cz.pos[1].y
+        pos = Point()
+        pos.x = cz.pos[1].x
+        pos.y = cz.pos[1].y
         GameCanvas.hero_fx_kind = 0
         action = cz.action[1]
         frame = cz.frame[1]
@@ -2045,18 +2045,18 @@ class MapScene(GameCanvas):
             if action == 27 and frame == 9:        # case 27 falls through into case 26
                 GameCanvas.hero_fx_kind = 3
                 GameCanvas.hero_fx_parts = A(GameCanvas.hero_fx_frames, 1)
-                h_.x = i16(h_.x + consts.front_dx[cz.dir[1] >> 1])
-                h_.y = i16(h_.y + consts.front_dy[cz.dir[1] >> 1])
+                pos.x = i16(pos.x + consts.front_dx[cz.dir[1] >> 1])
+                pos.y = i16(pos.y + consts.front_dy[cz.dir[1] >> 1])
             if 1 < frame < 9:
                 GameCanvas.hero_fx_kind = 3
                 GameCanvas.hero_fx_parts = A(GameCanvas.hero_fx_frames, frame - 2 + (cz.dir[1] >> 1) * 7)
         if GameCanvas.hero_fx_kind != 0:
-            i = h_.x - GameCanvas.camera.x
-            j_ = h_.y - GameCanvas.camera.y
+            i = pos.x - GameCanvas.camera.x
+            sy = pos.y - GameCanvas.camera.y
             for b in range(GameCanvas.hero_fx_count):
                 fj = GameCanvas.hero_fx_parts[b]
-                self.draw_map_region(GameCanvas.images[7], i - fj.ox - 8, j_ - fj.oy - 8, fj.w + 16, fj.h + 16,
-                               i - fj.ox + GameCanvas.view_offset.x - 8, j_ - fj.oy + GameCanvas.view_offset.y - 8)
+                self.draw_map_region(GameCanvas.images[7], i - fj.ox - 8, sy - fj.oy - 8, fj.w + 16, fj.h + 16,
+                               i - fj.ox + GameCanvas.view_offset.x - 8, sy - fj.oy + GameCanvas.view_offset.y - 8)
             GameCanvas.hero_fx_kind = 0
             GameCanvas.hero_fx_count = 1
 
@@ -2090,20 +2090,20 @@ class MapScene(GameCanvas):
             if dU.item <= 9 or dU.step != 0:
                 hf = dU.frames[dU.frame]
                 i = dU.pos.x - hf.ox - GameCanvas.camera.x
-                j_ = dU.pos.y - hf.oy - GameCanvas.camera.y
+                sy = dU.pos.y - hf.oy - GameCanvas.camera.y
                 w = hf.w
                 h = hf.h
                 if dU.item < 0:
                     if dU.item == -1:
                         i -= 10
-                        j_ -= 6
+                        sy -= 6
                         w = i16(w + 20)
                         h = i16(h + 11)
                         if dU.step in (1, 4, 7):
                             GameCanvas.engine.hero_attack(dU.item)
                     elif dU.step == 1:
                         GameCanvas.engine.hero_attack(dU.item)
-                self.draw_map_region(GameCanvas.images[7], i, j_, w, h, i + GameCanvas.view_offset.x, j_ + GameCanvas.view_offset.y)
+                self.draw_map_region(GameCanvas.images[7], i, sy, w, h, i + GameCanvas.view_offset.x, sy + GameCanvas.view_offset.y)
             dU.step = i16(dU.step + 1)
             if dU.item > 9 and dU.step > 4:
                 self.play_sound(9)
