@@ -74,10 +74,10 @@ class Popups(GameCanvas):
                         elif self.popup_id == 37:
                             self.start_exit()
                 elif self.kind == 2:
-                    ch = GameCanvas.key
-                    if ch in (-4, -3, 52, 54):
+                    key = GameCanvas.key
+                    if key in (-4, -3, 52, 54):
                         self.button = i16(self.button + 1 & 0x1)
-                    elif ch in (-5, 53):
+                    elif key in (-5, 53):
                         self.timer = 1
                         if self.button == 0:
                             if self.from_gamestr == 1:
@@ -157,21 +157,21 @@ class Popups(GameCanvas):
                             if GameCanvas.menu[0] == 8:
                                 GameCanvas.reset_base_stats()
                             return 1
-                    elif ch == -7:
+                    elif key == -7:
                         if GameCanvas.menu[0] == 8:
                             self.timer = 1
                             GameCanvas.reset_base_stats()
                             return 1
                 elif self.kind == 3:
                     if self.timer > 5:
-                        ch = GameCanvas.key
-                        if ch in (-1, 50):
+                        key = GameCanvas.key
+                        if key in (-1, 50):
                             self.button = i16(self.button - 1)
                             self.button = i16(self.button % self.choices)    # & 0x3 with 4 rows
-                        elif ch in (-2, 56):
+                        elif key in (-2, 56):
                             self.button = i16(self.button + 1)
                             self.button = i16(self.button % self.choices)
-                        elif ch in (-5, 53):
+                        elif key in (-5, 53):
                             self.timer = 4
                 elif self.kind == 10:
                     if GameCanvas.key == -5 or GameCanvas.key == 53:
@@ -531,74 +531,74 @@ class Popups(GameCanvas):
         self.line_count = line_counts[popup]
         self.button = 0
         self.popup_id = popup
-        L = self.lines
+        lines = self.lines
         p = popup
         if p in _E_TEXT:
             for n, s in enumerate(_E_TEXT[p]):
-                L[n] = s
+                lines[n] = s
             if p in (5, 28):
                 self.button = 1
         elif p == 14:
-            L[0] = "What do you want"
-            L[1] = "to talk about?"
+            lines[0] = "What do you want"
+            lines[1] = "to talk about?"
             for i in range(4):
-                L[i + 2] = consts.gift_kinds[i]
+                lines[i + 2] = consts.gift_kinds[i]
         elif p in (23, 24, 25, 26):
-            L[0] = {23: " / Hp 5 Increased", 24: " / MP 3 Increased",
+            lines[0] = {23: " / Hp 5 Increased", 24: " / MP 3 Increased",
                     25: " / DEF 1 Increased", 26: " / ATK 1 Increased"}[p][3:]
-            L[1] = ""
+            lines[1] = ""
         elif p == 6:
-            dz = GameCanvas.lords[GameCanvas.mission]
-            self.set_general(dz.boss_type)
+            lord = GameCanvas.lords[GameCanvas.mission]
+            self.set_general(lord.boss_type)
             GameCanvas.popup_lines[0] = GameCanvas.general.name
-            GameCanvas.popup_lines[1] = "Lv" + str(GameCanvas.hero.level + dz.level_bonus) + " / Gold: " + str(dz.gold * 150 * (1 + (GameCanvas.difficulty ^ 0x1)))
-            L[0] = GameCanvas.popup_lines[0]
-            L[1] = GameCanvas.popup_lines[1]
-            L[2] = "Do you want to"
-            L[3] = "accept this"
-            L[4] = "mission?"
+            GameCanvas.popup_lines[1] = "Lv" + str(GameCanvas.hero.level + lord.level_bonus) + " / Gold: " + str(lord.gold * 150 * (1 + (GameCanvas.difficulty ^ 0x1)))
+            lines[0] = GameCanvas.popup_lines[0]
+            lines[1] = GameCanvas.popup_lines[1]
+            lines[2] = "Do you want to"
+            lines[3] = "accept this"
+            lines[4] = "mission?"
         elif p == 15:
             GameCanvas.popup_lines[1] = GameCanvas.general.name
-            L[0] = "You visited"
-            L[1] = GameCanvas.popup_lines[1] + '.'
+            lines[0] = "You visited"
+            lines[1] = GameCanvas.popup_lines[1] + '.'
             if GameCanvas.seal != 0:
-                L[2] = "Friendship:100%"
+                lines[2] = "Friendship:100%"
             else:
-                L[2] = "Friendship "
-                L[3] = "increased by 5."
+                lines[2] = "Friendship "
+                lines[3] = "increased by 5."
             if GameCanvas.gift_level < 8:
-                L[5] = GameCanvas.popup_lines[0]
+                lines[5] = GameCanvas.popup_lines[0]
                 self.line_count = i16(self.line_count + 1)
             else:
-                L[4] = ""
-                L[5] = "Press OK"
+                lines[4] = ""
+                lines[5] = "Press OK"
                 self.line_count = i16(self.line_count + 1)
             self.play_sound(10)
         elif p == 16:
-            L[0] = "You discussed"
+            lines[0] = "You discussed"
             GameCanvas.popup_lines[0] = consts.gift_kinds[GameCanvas.gift_kind] + " with"
-            L[1] = GameCanvas.popup_lines[0]
+            lines[1] = GameCanvas.popup_lines[0]
             GameCanvas.popup_lines[1] = GameCanvas.general.name + '.'
-            L[2] = GameCanvas.popup_lines[1]
+            lines[2] = GameCanvas.popup_lines[1]
         elif p in (8, 9):  # l.java:679-689  (room / stage banner on the map)
             GameCanvas.popup_lines[0] = "Stage " + str(GameCanvas.rooms_visited)
             if p == 9:
                 GameCanvas.popup_lines[0] = GameCanvas.popup_lines[0] + " Complete."
                 self.play_sound(5)
-            L[0] = GameCanvas.lord_name
-            L[1] = GameCanvas.mission_name
-            L[2] = GameCanvas.popup_lines[0]
+            lines[0] = GameCanvas.lord_name
+            lines[1] = GameCanvas.mission_name
+            lines[2] = GameCanvas.popup_lines[0]
         elif p == 10:  # l.java:690-693
-            L[0] = GameCanvas.mission_name
-            L[1] = "Mission Success"
+            lines[0] = GameCanvas.mission_name
+            lines[1] = "Mission Success"
         elif p == 13:  # l.java:694-698  (item picked up)
             GameCanvas.popup_lines[0] = GameCanvas.gear_def.name
-            L[0] = GameCanvas.popup_lines[0]
-            L[1] = "Acquired!!"
+            lines[0] = GameCanvas.popup_lines[0]
+            lines[1] = "Acquired!!"
         elif p == 22:  # l.java:740-762  (mission failed: maybe an item is lost)
-            L[0] = GameCanvas.lord_name
-            L[1] = GameCanvas.mission_name
-            L[2] = "Mission fail!"
+            lines[0] = GameCanvas.lord_name
+            lines[1] = GameCanvas.mission_name
+            lines[2] = "Mission fail!"
             if GameCanvas.hero.level > 9 and self.rand(100) < GameCanvas.hero.level >> 2:
                 i = self.rand(9)
                 if GameCanvas.hero.equipped[i].id != 0:
@@ -610,8 +610,8 @@ class Popups(GameCanvas):
                     else:
                         GameCanvas.popup_lines[0] = GameCanvas.rare_def.name
                     GameCanvas.hero.equipped[i] = None
-                    L[3] = "Lost!!"
-                    L[4] = GameCanvas.popup_lines[0]
+                    lines[3] = "Lost!!"
+                    lines[4] = GameCanvas.popup_lines[0]
                     self.line_count = i16(self.line_count + 2)
             self.play_sound(6)
         elif p == 27:  # l.java:779-809  (reward item / hidden mission after the ending)
@@ -621,9 +621,9 @@ class Popups(GameCanvas):
                 else:
                     GameCanvas.menus.load_item_def(GameCanvas.reward_item)
                     GameCanvas.popup_lines[0] = GameCanvas.gear_def.name
-                L[0] = GameCanvas.popup_lines[0]
+                lines[0] = GameCanvas.popup_lines[0]
                 self.line_count = i16(self.line_count + 1)
-                L[1] = "received!"
+                lines[1] = "received!"
                 self.line_count = i16(self.line_count + 1)
             if GameCanvas.reward_skill != 0:
                 # DECOMP-FIX F19: decompiled `i = i + 1; l[i] = ...` is `l[i++] = ...` (as in F9 and in
@@ -633,11 +633,11 @@ class Popups(GameCanvas):
                 fix_f19 = config.DECOMP_FIX["F19"]
                 if GameCanvas.reward_item != 0:
                     if fix_f19:
-                        L[self.line_count] = ""
+                        lines[self.line_count] = ""
                         self.line_count = i16(self.line_count + 1)
                     else:
                         self.line_count = i16(self.line_count + 1)
-                        L[self.line_count] = ""
+                        lines[self.line_count] = ""
                 data = GameCanvas.load_data_file(48)
                 pos = 38 * GameCanvas.reward_skill + 10
                 b = 0
@@ -645,18 +645,18 @@ class Popups(GameCanvas):
                     b += 1
                 GameCanvas.lord_names[0] = GameCanvas.read_utf(data, pos, pos + b)
                 if fix_f19:
-                    L[self.line_count] = "Hidden Mission!"
+                    lines[self.line_count] = "Hidden Mission!"
                     self.line_count = i16(self.line_count + 1)
                 else:
                     self.line_count = i16(self.line_count + 1)
-                    L[self.line_count] = "Hidden Mission!"
+                    lines[self.line_count] = "Hidden Mission!"
                 GameCanvas.popup_lines[1] = GameCanvas.lord_names[0]
                 if fix_f19:
-                    L[self.line_count] = GameCanvas.popup_lines[1]
+                    lines[self.line_count] = GameCanvas.popup_lines[1]
                     self.line_count = i16(self.line_count + 1)
                 else:
                     self.line_count = i16(self.line_count + 1)
-                    L[self.line_count] = GameCanvas.popup_lines[1]
+                    lines[self.line_count] = GameCanvas.popup_lines[1]
         self.height = i16(20 * self.line_count + (self.line_count - 1 << 1))
         if self.kind == 2:
             self.height = i16(self.height + 25)

@@ -311,7 +311,7 @@ class Live(GameCanvas):
         Live.answered = False
 
     def write_request(self):  # as.java:453-576  (write the request gq)
-        cz = GameCanvas.hero
+        hero = GameCanvas.hero
         Live.answer_status = 0
         Live.net.begin_request(Live.request_in_flight)
         op = Live.request_in_flight
@@ -323,40 +323,40 @@ class Live(GameCanvas):
             Live.session_new = system.currentTimeMillis() // 10000
             LiveNet.write_int(Live.session_new)
         elif op in (516, 256):
-            LiveNet.write_int(cz.fame)
-            LiveNet.write_int(cz.exp)
-            LiveNet.write_short(cz.level)
-            LiveNet.write_byte(cz.head)
-            LiveNet.write_byte(GameCanvas.item_slot_type(cz.equipped[0].id) ^ 0x1)
-            LiveNet.write_short(cz.base_attack)
-            LiveNet.write_short(cz.base_defense)
-            LiveNet.write_short(cz.base_hp)
-            LiveNet.write_short(cz.base_mp)
-            LiveNet.write_short(cz.stat_points)
+            LiveNet.write_int(hero.fame)
+            LiveNet.write_int(hero.exp)
+            LiveNet.write_short(hero.level)
+            LiveNet.write_byte(hero.head)
+            LiveNet.write_byte(GameCanvas.item_slot_type(hero.equipped[0].id) ^ 0x1)
+            LiveNet.write_short(hero.base_attack)
+            LiveNet.write_short(hero.base_defense)
+            LiveNet.write_short(hero.base_hp)
+            LiveNet.write_short(hero.base_mp)
+            LiveNet.write_short(hero.stat_points)
             GameCanvas.update_hero_stats()
-            LiveNet.write_short(cz.gear_attack)
-            LiveNet.write_short(cz.gear_defense)
-            LiveNet.write_short(cz.gear_hp)
-            LiveNet.write_short(cz.gear_mp)
+            LiveNet.write_short(hero.gear_attack)
+            LiveNet.write_short(hero.gear_defense)
+            LiveNet.write_short(hero.gear_hp)
+            LiveNet.write_short(hero.gear_mp)
             for i_stat in range(8):
                 LiveNet.write_int(GameCanvas.stats[i_stat])
             b = 0
-            for i_cat in range(len(cz.skill_levels)):
-                if cz.skill_levels[i_cat] > 0:
+            for i_cat in range(len(hero.skill_levels)):
+                if hero.skill_levels[i_cat] > 0:
                     b += 1
             LiveNet.write_byte(b)
-            for i_skill in range(len(cz.skill_levels)):
-                if cz.skill_levels[i_skill] > 0:
+            for i_skill in range(len(hero.skill_levels)):
+                if hero.skill_levels[i_skill] > 0:
                     LiveNet.write_byte(Live.category_codes[i_skill])
-                    LiveNet.write_byte(cz.skill_levels[i_skill])
+                    LiveNet.write_byte(hero.skill_levels[i_skill])
                     bool_ = False
                     for i_key in range(4):
-                        if cz.hotkeys[i_key] - 12 == i_skill:
+                        if hero.hotkeys[i_key] - 12 == i_skill:
                             bool_ = True
                             break
                     LiveNet.write_bool(bool_)
-            LiveNet.write_string(cz.name, 8)
-            LiveNet.write_bool(not (cz.live_registered == 0))
+            LiveNet.write_string(hero.name, 8)
+            LiveNet.write_bool(not (hero.live_registered == 0))
             LiveNet.write_byte(GameCanvas.general_count & 0xFF)
             for i_gen in range(GameCanvas.general_count):
                 LiveNet.write_byte(GameCanvas.generals[0][i_gen] & 0xFF)
@@ -365,26 +365,26 @@ class Live(GameCanvas):
             LiveNet.write_int(GameCanvas.missions_done >> 32 & 0xFFFFFFFF)
             LiveNet.write_byte(GameCanvas.chapter)
             for i_mis in range(22):
-                LiveNet.write_byte(cz.mission_progress[i_mis] & 0xFF)
-            LiveNet.write_byte(cz.live_stat1 & 0xFF)
-            LiveNet.write_byte(cz.live_stat2 & 0xFF)
+                LiveNet.write_byte(hero.mission_progress[i_mis] & 0xFF)
+            LiveNet.write_byte(hero.live_stat1 & 0xFF)
+            LiveNet.write_byte(hero.live_stat2 & 0xFF)
             LiveNet.write_int(GameCanvas.score)
         elif op == 768:
             from pow.game.menus import Menus
-            LiveNet.write_int(cz.gold)
+            LiveNet.write_int(hero.gold)
             Menus.count_items()
             slot_count = i8(GameCanvas.cursor[16])
             LiveNet.write_byte(slot_count)
             for i_item in range(config.BACKPACK_SIZE):
-                if cz.backpack[i_item].id > 0:
-                    LiveNet.write_short(cz.backpack[i_item].id)
+                if hero.backpack[i_item].id > 0:
+                    LiveNet.write_short(hero.backpack[i_item].id)
                     Live.backpack_serials[i_item] = i16(i_item + 1)
                     LiveNet.write_short(Live.backpack_serials[i_item])
-                    LiveNet.write_byte(cz.backpack[i_item].enchant)
-                    LiveNet.write_short(cz.backpack[i_item].attack)
-                    LiveNet.write_short(cz.backpack[i_item].defense)
-                    LiveNet.write_short(cz.backpack[i_item].hp)
-                    LiveNet.write_short(cz.backpack[i_item].mp)
+                    LiveNet.write_byte(hero.backpack[i_item].enchant)
+                    LiveNet.write_short(hero.backpack[i_item].attack)
+                    LiveNet.write_short(hero.backpack[i_item].defense)
+                    LiveNet.write_short(hero.backpack[i_item].hp)
+                    LiveNet.write_short(hero.backpack[i_item].mp)
         elif op == 832:
             LiveNet.write_byte(Live.flags[15] ^ 0x1)
             LiveNet.write_int(Live.values[14])
@@ -434,8 +434,8 @@ class Live(GameCanvas):
         dst.id, dst.attack, dst.defense, dst.hp, dst.mp, dst.enchant = src.id, src.attack, src.defense, src.hp, src.mp, src.enchant
 
     def on_answer(self, answer):  # as.java:601-990  (s.a(ab): one answer)
-        cz = GameCanvas.hero
-        fK = GameCanvas.cursor
+        hero = GameCanvas.hero
+        cursor = GameCanvas.cursor
         Live.in_answer = True
         LiveNet.waiting = False
         op = answer.read_s16()
@@ -515,20 +515,20 @@ class Live(GameCanvas):
                     GameCanvas.live_gifts = 0
                     self.sync_gifts()
             elif op == 263:
-                cz.fame = answer.read_s32()
-                cz.exp = answer.read_s32()
-                cz.level = answer.read_s16() & 0xFF
-                cz.head = answer.read_s8()
-                cz.weapon_kind = answer.read_s8()
-                cz.base_attack = answer.read_s16()
-                cz.base_defense = answer.read_s16()
-                cz.base_hp = answer.read_s16()
-                cz.base_mp = answer.read_s16()
-                cz.stat_points = answer.read_s16()
-                for idx in range(len(cz.skill_levels)):
-                    cz.skill_levels[idx] = 0
-                for idx in range(len(cz.hotkeys)):
-                    cz.hotkeys[idx] = 0
+                hero.fame = answer.read_s32()
+                hero.exp = answer.read_s32()
+                hero.level = answer.read_s16() & 0xFF
+                hero.head = answer.read_s8()
+                hero.weapon_kind = answer.read_s8()
+                hero.base_attack = answer.read_s16()
+                hero.base_defense = answer.read_s16()
+                hero.base_hp = answer.read_s16()
+                hero.base_mp = answer.read_s16()
+                hero.stat_points = answer.read_s16()
+                for idx in range(len(hero.skill_levels)):
+                    hero.skill_levels[idx] = 0
+                for idx in range(len(hero.hotkeys)):
+                    hero.hotkeys[idx] = 0
                 count = answer.read_s8()
                 idx = 0
                 hotkey = 0
@@ -537,16 +537,16 @@ class Live(GameCanvas):
                     cat = 0
                     while cat < 19 and Live.category_codes[cat] != code:
                         cat += 1
-                    cz.skill_levels[cat] = answer.read_s8()
+                    hero.skill_levels[cat] = answer.read_s8()
                     code = answer.read_s8()
                     if code == 1:
-                        cz.hotkeys[hotkey] = cat + 12
+                        hero.hotkeys[hotkey] = cat + 12
                         hotkey += 1
                     idx += 1
                 for idx in range(8):
                     GameCanvas.stats[idx] = answer.read_s32()
-                cz.name = GameCanvas.cut_at_space(GameCanvas.cut_at_control(answer.read_string(8)))
-                cz.live_registered = answer.read_s8()
+                hero.name = GameCanvas.cut_at_space(GameCanvas.cut_at_control(answer.read_string(8)))
+                hero.live_registered = answer.read_s8()
                 for idx in range(45):
                     GameCanvas.generals[0][idx] = 0
                     GameCanvas.generals[1][idx] = 0
@@ -560,9 +560,9 @@ class Live(GameCanvas):
                 GameCanvas.missions_done |= i                  # sic: a negative low word fills the high one (Java long |)
                 GameCanvas.chapter = answer.read_s8()
                 for idx in range(22):
-                    cz.mission_progress[idx] = i16(answer.read_s8())
-                cz.live_stat1 = i16(answer.read_s8())
-                cz.live_stat2 = i16(answer.read_s8())
+                    hero.mission_progress[idx] = i16(answer.read_s8())
+                hero.live_stat1 = i16(answer.read_s8())
+                hero.live_stat2 = i16(answer.read_s8())
                 GameCanvas.score = answer.read_s32()
                 self.save_game()
                 GameCanvas.popups.show(19)
@@ -587,31 +587,31 @@ class Live(GameCanvas):
                     Live.warehouse[idx].mp = answer.read_s16()
                 self.open_live_menu()
             elif op == 833:
-                cz.gold = answer.read_s32()
+                hero.gold = answer.read_s32()
                 Live.safe_gold = answer.read_s32()
             elif op == 817:
                 if Live.flags[7] == 0:
                     Live.list_rows = config.WAREHOUSE_SIZE
-                    fK[16] = fK[16] - 1
+                    cursor[16] = cursor[16] - 1
                     Live.flags[6] = i16(Live.flags[6] + 1)
                     idx = 0
                     while idx < Live.list_rows and Live.warehouse[idx].id != 0:
                         idx += 1
-                    Live._copy_item(Live.warehouse[idx], cz.backpack[fK[18]])
-                    Item.clear(cz.backpack[fK[18]])
+                    Live._copy_item(Live.warehouse[idx], hero.backpack[cursor[18]])
+                    Item.clear(hero.backpack[cursor[18]])
                     Live.warehouse_serials[idx] = answer.read_s16()
-                    Live.backpack_serials[fK[18]] = 0
+                    Live.backpack_serials[cursor[18]] = 0
                 else:
                     Live.list_rows = config.BACKPACK_SIZE
                     Live.flags[6] = i16(Live.flags[6] - 1)
-                    fK[16] = fK[16] + 1
+                    cursor[16] = cursor[16] + 1
                     idx = 0
-                    while idx < Live.list_rows and cz.backpack[idx].id != 0:
+                    while idx < Live.list_rows and hero.backpack[idx].id != 0:
                         idx += 1
-                    Live._copy_item(cz.backpack[idx], Live.warehouse[fK[18]])
-                    Item.clear(Live.warehouse[fK[18]])
+                    Live._copy_item(hero.backpack[idx], Live.warehouse[cursor[18]])
+                    Item.clear(Live.warehouse[cursor[18]])
                     Live.backpack_serials[idx] = answer.read_s16()
-                    Live.warehouse_serials[fK[18]] = 0
+                    Live.warehouse_serials[cursor[18]] = 0
                 self.save_and_sync(0)
                 Live.request_redraw()
             elif op == 785:
@@ -665,27 +665,27 @@ class Live(GameCanvas):
                     idx = 0
                     while idx < config.WAREHOUSE_SIZE and Live.warehouse[idx].id != 0:
                         idx += 1
-                    Live._copy_item(Live.warehouse[idx], Live.lots[fK[18]])
+                    Live._copy_item(Live.warehouse[idx], Live.lots[cursor[18]])
                     Live.clear_selected_lot()
                     Live.warehouse_serials[idx] = answer.read_s16()
                 else:
                     Live.list_rows = config.BACKPACK_SIZE
-                    fK[16] = fK[16] + 1
+                    cursor[16] = cursor[16] + 1
                     idx = 0
-                    while idx < Live.list_rows and cz.backpack[idx].id != 0:
+                    while idx < Live.list_rows and hero.backpack[idx].id != 0:
                         idx += 1
-                    Live._copy_item(cz.backpack[idx], Live.lots[fK[18]])
+                    Live._copy_item(hero.backpack[idx], Live.lots[cursor[18]])
                     Live.clear_selected_lot()
                     Live.backpack_serials[idx] = answer.read_s16()
-                cz.gold = answer.read_s32()
+                hero.gold = answer.read_s32()
                 Live.safe_gold = answer.read_s32()
                 self.save_and_sync(0)
                 GameCanvas.popups.show(35)
             elif op == 801:
                 if Live.flags[7] == 0:
-                    Item.clear(cz.backpack[Live.selected_slot])
+                    Item.clear(hero.backpack[Live.selected_slot])
                     Live.backpack_serials[Live.selected_slot] = 0
-                    fK[16] = fK[16] - 1
+                    cursor[16] = cursor[16] - 1
                 else:
                     Item.clear(Live.warehouse[Live.selected_slot])
                     Live.warehouse_serials[Live.selected_slot] = 0
@@ -725,17 +725,17 @@ class Live(GameCanvas):
                 if Live.flags[7] == 0:
                     Live.list_rows = config.BACKPACK_SIZE
                     Live.flags[6] = i16(Live.flags[6] - 1)
-                    fK[16] = fK[16] + 1
+                    cursor[16] = cursor[16] + 1
                     idx = 0
-                    while idx < Live.list_rows and cz.backpack[idx].id != 0:
+                    while idx < Live.list_rows and hero.backpack[idx].id != 0:
                         idx += 1
-                    Live._copy_item(cz.backpack[idx], Live.lots[Live.selected_slot])
+                    Live._copy_item(hero.backpack[idx], Live.lots[Live.selected_slot])
                     Item.clear(Live.lots[Live.selected_slot])
                     Live.clear_selected_lot()
                     Live.backpack_serials[idx] = answer.read_s16()
                 else:
                     Live.list_rows = config.WAREHOUSE_SIZE
-                    fK[16] = fK[16] - 1
+                    cursor[16] = cursor[16] - 1
                     Live.flags[6] = i16(Live.flags[6] + 1)
                     idx = 0
                     while idx < Live.list_rows and Live.warehouse[idx].id != 0:
@@ -750,7 +750,7 @@ class Live(GameCanvas):
                 Live.values[15] = answer.read_s32()
                 Live.values[14] = answer.read_s32()
                 Live.values[13] = GameCanvas.add_exp(Live.values[14])
-                cz.fame += Live.values[15]
+                hero.fame += Live.values[15]
                 GameCanvas.live_gifts = 1
                 self.save_game()
                 self.sync_exp_fame()
@@ -1378,22 +1378,22 @@ class Live(GameCanvas):
             self.draw_grid_cursor(key, True)
 
     def draw_grid_cursor(self, key, wrap):  # as.java:1843-1877  (grid cursor)
-        fK = GameCanvas.cursor
+        cursor = GameCanvas.cursor
         i = 1
         if key in (-1, 50):
-            fK[10] = fK[10] - 1
+            cursor[10] = cursor[10] - 1
         elif key in (-2, 56):
-            fK[10] = fK[10] + 1
+            cursor[10] = cursor[10] + 1
         elif key in (-3, 52):
-            fK[9] = fK[9] - 1
-            if fK[9] - 1 < 0:
-                fK[9] = 4
-                fK[10] = fK[10] - 1
+            cursor[9] = cursor[9] - 1
+            if cursor[9] - 1 < 0:
+                cursor[9] = 4
+                cursor[10] = cursor[10] - 1
         elif key in (-4, 54):
-            fK[9] = fK[9] + 1
-            if fK[9] + 1 >= 5:
-                fK[9] = 0
-                fK[10] = fK[10] + 1
+            cursor[9] = cursor[9] + 1
+            if cursor[9] + 1 >= 5:
+                cursor[9] = 0
+                cursor[10] = cursor[10] + 1
         else:
             i = 0
         if i:
@@ -1498,53 +1498,53 @@ class Live(GameCanvas):
         self.set_grid(config.WAREHOUSE_SIZE // 5, 3, True)
 
     def set_grid(self, rows, visible_rows, reset):  # as.java:2019-2043  (grid geometry)
-        fK = GameCanvas.cursor
-        fK[3] = visible_rows
-        fK[6] = 32 * visible_rows - 4 + 2
-        fK[4] = rows
-        fK[7] = 32 * rows - 4 + 2
+        cursor = GameCanvas.cursor
+        cursor[3] = visible_rows
+        cursor[6] = 32 * visible_rows - 4 + 2
+        cursor[4] = rows
+        cursor[7] = 32 * rows - 4 + 2
         grid_w = 156                              # char c = '\u009c'
         if visible_rows < rows:
             grid_w += 8
-            fK[11] = 1
-            fK[13] = fK[6] * (fK[6] - 2) * 10
-            fK[13] = idiv(idiv(fK[13], fK[7]) + 9, 10)
+            cursor[11] = 1
+            cursor[13] = cursor[6] * (cursor[6] - 2) * 10
+            cursor[13] = idiv(idiv(cursor[13], cursor[7]) + 9, 10)
         else:
-            fK[11] = 0
-        fK[5] = 240 - grid_w >> 1
-        fK[12] = fK[5] + 156 + 4
-        fK[26] = -1
-        fK[27] = 0
+            cursor[11] = 0
+        cursor[5] = 240 - grid_w >> 1
+        cursor[12] = cursor[5] + 156 + 4
+        cursor[26] = -1
+        cursor[27] = 0
         if reset:
-            fK[8] = 0
-            fK[10] = 0
-            fK[9] = 0
+            cursor[8] = 0
+            cursor[10] = 0
+            cursor[9] = 0
             Live.clamp_grid_cursor(True)
 
     @staticmethod
     def clamp_grid_cursor(wrap):  # as.java:2045-2072  (clamp the grid cursor; -1 / 1 = left the grid)
-        fK = GameCanvas.cursor
-        if fK[10] < 0:
+        cursor = GameCanvas.cursor
+        if cursor[10] < 0:
             if wrap:
-                fK[10] = fK[4] - 1
+                cursor[10] = cursor[4] - 1
             else:
-                fK[10] = Live.values[5]
-                fK[9] = Live.values[6]
+                cursor[10] = Live.values[5]
+                cursor[9] = Live.values[6]
                 return -1
-        elif fK[10] >= fK[4]:
+        elif cursor[10] >= cursor[4]:
             if wrap:
-                fK[10] = 0
+                cursor[10] = 0
             else:
-                fK[10] = Live.values[5]
-                fK[9] = Live.values[6]
+                cursor[10] = Live.values[5]
+                cursor[9] = Live.values[6]
                 return 1
-        Live.values[5] = fK[10]
-        Live.values[6] = fK[9]
-        if fK[10] < fK[8]:
-            fK[8] = fK[10]
-        elif fK[10] >= fK[8] + fK[3]:
-            fK[8] = fK[10] - fK[3] + 1
-        fK[18] = fK[10] * 5 + fK[9]
+        Live.values[5] = cursor[10]
+        Live.values[6] = cursor[9]
+        if cursor[10] < cursor[8]:
+            cursor[8] = cursor[10]
+        elif cursor[10] >= cursor[8] + cursor[3]:
+            cursor[8] = cursor[10] - cursor[3] + 1
+        cursor[18] = cursor[10] * 5 + cursor[9]
         return 0
 
     @staticmethod
