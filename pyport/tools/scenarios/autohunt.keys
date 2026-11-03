@@ -1,0 +1,189 @@
+# Fresh hero -> first mission -> the map, then the auto-hunt (PORT-EXTRA) fights alone:
+# it walks to the enemies, attacks, casts the skills on keys 1-5 and drinks the potions
+wait 25
+key FIRE
+wait 2
+# sound: Yes
+key FIRE
+wait 2
+key FIRE
+wait 2
+key UP
+wait 2
+key DOWN
+wait 2
+key FIRE
+wait 2
+key FIRE
+wait 3
+key RIGHT
+wait 2
+key FIRE
+wait 3
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key FIRE
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key LEFT
+wait 1
+key FIRE
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key FIRE
+wait 1
+key FIRE
+wait 1
+key BACK
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key RIGHT
+wait 1
+key FIRE
+wait 2
+key FIRE
+wait 2
+key DOWN
+wait 2
+key FIRE
+wait 2
+key DOWN
+wait 2
+key FIRE
+wait 2
+key DOWN
+wait 2
+key FIRE
+wait 2
+key FIRE
+wait 2
+key FIRE           # Yes -> save -> prologue (ag.l(100, 0), bV = 10)
+wait 3
+wait 60
+key LSOFT          # Skip on a picture page = next page
+wait 3
+wait 60
+key LSOFT
+wait 3
+wait 10
+key FIRE           # whole text at once
+wait 2
+wait 25
+wait 40
+key LSOFT          # Skip on a dialogue page = end of the prologue
+wait 4
+key FIRE
+wait 3
+key FIRE
+wait 3
+key FIRE
+wait 3
+key RIGHT
+wait 2
+key FIRE
+wait 3
+key FIRE
+wait 3
+wait 30
+key FIRE
+wait 3
+wait 40
+key BACK           # BACK does nothing in the briefing
+wait 2
+key LSOFT          # SKIP -> ag.y() (the map: next phase)
+wait 10
+shot map_enter
+skill 0 12                # TEST-ONLY: Wind Slasher on key 1, a heal on key 3, 3 HP potions on *
+skill 1 15
+potion 0 2 3
+auto on
+wait 2
+shot auto_badge
+wait 300
+shot auto_fight
+expect kills >= 3
+hero mp 0                 # TEST-ONLY: no MP for the heal: the HP potion on *
+hero hp 5
+wait 20
+shot auto_potion
+expect hp > 5
+hero mp 13                # TEST-ONLY: MP for the heal: Medium Heal (key 3)
+hero hp 5
+wait 30
+shot auto_heal
+expect hp > 5
+expect mp < 13
+wait 400
+shot auto_next_rooms
+expect kills >= 20

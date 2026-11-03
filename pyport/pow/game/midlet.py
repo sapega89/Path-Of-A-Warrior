@@ -65,6 +65,9 @@ class Midlet:
             from pow.game.pointer import hold_dir, keys_for
             Midlet.canvas.pointer = keys_for   # PORT-EXTRA: mouse -> phone keys
             Midlet.canvas.hold_dir = hold_dir
+            from pow.game.autopilot import Autopilot
+            Autopilot.reset()
+            Midlet.canvas.autopilot = Autopilot   # PORT-EXTRA: auto-hunt (config.AUTO_HUNT)
             from pow.game.skill_bar import playing
             Midlet.canvas.belt_active = playing   # PORT-EXTRA config.SKILL_BAR: Z X C V B = belt
 
