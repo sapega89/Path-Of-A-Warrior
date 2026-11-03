@@ -30,7 +30,7 @@ def _digit_keys():
         KEYMAP[getattr(pygame, "K_%d" % i)] = 48 + i
 
 
-class Main:
+class Midlet:
     a = None      # Display
     b = None      # g (the canvas)
     c = False     # started
@@ -39,12 +39,12 @@ class Main:
         from pow_mp import game
         _digit_keys()
         game.load()
-        from pow_mp._gen.g import g
+        from pow_mp.mp_canvas import MpCanvas
         self.props = _manifest()
         self.destroyed = False
-        Main.c = False
-        Main.a = True
-        Main.b = g(self)
+        Midlet.c = False
+        Midlet.a = True
+        Midlet.b = MpCanvas(self)
 
     def getAppProperty(self, key):
         return self.props.get(key)
@@ -57,11 +57,11 @@ class Main:
 
     def startApp(self):  # Main.java:19-27: the game thread -> the async loop
         from pow_mp import game
-        if Main.c:
+        if Midlet.c:
             return None
-        Main.c = True
-        return game.run(Main.b, self)
+        Midlet.c = True
+        return game.run(Midlet.b, self)
 
     def pauseApp(self):
-        if Main.b is not None:
-            Main.b.hideNotify()
+        if Midlet.b is not None:
+            Midlet.b.hideNotify()

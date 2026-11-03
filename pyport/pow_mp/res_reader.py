@@ -7,7 +7,7 @@ import pathlib
 import config
 
 
-class n:
+class ResReader:
     @staticmethod
     def a(paramString):  # n.java:8-25
         try:

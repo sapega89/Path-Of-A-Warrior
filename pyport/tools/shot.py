@@ -214,7 +214,7 @@ def run(scenario, out, every=False):
         if not midlet.to_multiplayer:
             raise SystemExit("multiplayer: the game did not ask for the Multiplayer game")
         import mp_main
-        from pow_mp.Main import Main as MPMain
+        from pow_mp.midlet import Midlet as MPMain
         frames, name = int(state["mp"][0]), state["mp"][1]
         mp = {"left": frames}
 

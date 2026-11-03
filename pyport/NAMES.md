@@ -911,3 +911,25 @@ Java-ім'я методу (з суфіксом сигнатури, напр. `J_
 |---|---|---|---|
 | `a_I` | `get` | `a_v` | `free` |
 
+
+## Мультиплеєр (`pow_mp`)
+
+Код клієнта мультиплеєра колись генерував `tools/j2py_mp.py` у `pow_mp/_gen`; тепер це звичайний код.
+Java-джерела: `pyport/mp_java/*.java` у гілці `java-reference`.
+
+| Java | Модуль | Клас | Що це |
+|---|---|---|---|
+| `g` | `pow_mp/mp_canvas.py` | `MpCanvas` | канвас: екрани, меню, бої |
+| `m` | `pow_mp/mp_game.py` | `MpGame` | конкретний канвас (`m extends g`), музика меню |
+| `l` | `pow_mp/consts.py` | `Consts` | таблиці констант (інтерфейс `l`) |
+| `i` | `pow_mp/gfx.py` | `Gfx` | малювання, кліп, текст, CRC-32 |
+| `j` | `pow_mp/font.py` | `Font` | бітмап-шрифт `0_font.png` |
+| `f` | `pow_mp/draw.py` | `Draw` | малювання картинок і прямокутників на Graphics |
+| `k` | `pow_mp/answer.py` | `Answer` | відповідь сервера, читання полів |
+| `d` | `pow_mp/frame_reader.py` | `FrameReader` | читання кадру з потоку |
+| `e` | `pow_mp/frame_writer.py` | `FrameWriter` | запис кадру запиту (не використовується: його замінив `NetThread`) |
+| `a` | `pow_mp/sprite_frames.py` | `SpriteFrames` | кадри SP2 |
+| `c` | `pow_mp/player_pool.py` | `PlayerPool` | пул програвачів звуку |
+| `h` | `pow_mp/net_thread.py` | `NetThread` | мережевий потік |
+| `n` | `pow_mp/res_reader.py` | `ResReader` | читання ресурсів |
+| `Main` | `pow_mp/midlet.py` | `Midlet` | MIDlet |

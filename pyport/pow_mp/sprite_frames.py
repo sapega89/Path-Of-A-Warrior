@@ -2,16 +2,16 @@
 
     u8 n ; n x {u8 srcX, u8 srcY, s8 w, s8 h, s8 anchorX, s8 anchorY}     (06 §5.1)
 """
-from pow_mp.n import n
+from pow_mp.res_reader import ResReader
 
 
 def _s8(v):
     return v - 256 if v > 127 else v
 
 
-class a:
+class SpriteFrames:
     def __init__(self, string):  # a.java:14-33
-        self.b = n.a(string)
+        self.b = ResReader.a(string)
         self.a = _s8(self.b[0])
         self.c = [0] * self.a          # short[] srcX
         self.d = [0] * self.a          # short[] srcY

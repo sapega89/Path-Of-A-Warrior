@@ -10,7 +10,7 @@ import pygame
 import config
 
 
-class c:
+class PlayerPool:
     def __init__(self, n2, n3, bl, bl2):  # c.java:24
         self.size = n2
         self.snd = [None] * n2

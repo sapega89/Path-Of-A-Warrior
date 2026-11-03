@@ -4,7 +4,7 @@ import pathlib
 import pygame
 
 import config
-from pow_mp.a import a
+from pow_mp.sprite_frames import SpriteFrames
 
 ROOT = pathlib.Path(config.MP_RES_ROOT)
 
@@ -26,7 +26,7 @@ def test_all_sp2():
     assert len(files) == 59
     counts = {}
     for p in files:
-        spr = a("/" + p.name)
+        spr = SpriteFrames("/" + p.name)
         assert len(spr.b) == 1 + 6 * spr.a, p.name
         img = pygame.image.load(str(sheet_for(p.name)))
         w, h = img.get_size()

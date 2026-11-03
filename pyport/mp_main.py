@@ -34,10 +34,10 @@ async def play():
     server_from_page()
     import pygame
     pygame.display.set_caption("Path of a Warrior Multiplayer")
-    from pow_mp.Main import Main
-    midlet = Main()
+    from pow_mp.midlet import Midlet
+    midlet = Midlet()
     await midlet.startApp()
-    return not Main.b.quit_requested
+    return not Midlet.b.quit_requested
 
 
 async def main():
