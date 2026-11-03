@@ -54,9 +54,9 @@ class Menus(GameCanvas):
     def __init__(self):  # e.java:6-8
         super().__init__(GameCanvas.midlet)
 
-    def draw_menu(self, paramInt):  # e.java:10-205  (draw the current menu; 1 = first frame, 2 = animation)
+    def draw_menu(self, mode):  # e.java:10-205  (draw the current menu; 1 = first frame, 2 = animation)
         cM = GameCanvas.menu
-        if paramInt == 1:
+        if mode == 1:
             if cM[0] != 5:
                 Gfx.set_font(GameCanvas.font_white)
                 if GameCanvas.prev_state == 3:
@@ -139,7 +139,7 @@ class Menus(GameCanvas):
                 GameCanvas.popups.draw_popup()
                 return
         else:
-            if paramInt == 2:
+            if mode == 2:
                 v = cM[0]
                 if v == 0:
                     self.draw_game_menu()
@@ -280,8 +280,8 @@ class Menus(GameCanvas):
             self.key_back()
 
     @staticmethod
-    def menu_link(paramInt1, paramInt2):  # e.java:304-307
-        return consts.menu_links[paramInt1][paramInt2]
+    def menu_link(menu, item):  # e.java:304-307
+        return consts.menu_links[menu][item]
 
     def key_up(self):  # e.java:309-392  (UP)
         cM = GameCanvas.menu
@@ -1113,47 +1113,47 @@ class Menus(GameCanvas):
         if GameCanvas.state == 3 or GameCanvas.prev_state == 3:
             GameCanvas.view_cy += 30
 
-    def draw_page_number(self, paramInt1, paramInt2, paramInt3, paramBoolean):  # e.java:2350-2372  (page "n / m" with arrows)
-        if paramInt2 == 1:
+    def draw_page_number(self, page, pages, y, wrap):  # e.java:2350-2372  (page "n / m" with arrows)
+        if pages == 1:
             return
         i = GameCanvas.view_cx - 25 - 10
-        if paramInt2 > 1:
-            if paramInt1 != 1 or paramBoolean:
-                self.draw_arrow(0, i, paramInt3)
+        if pages > 1:
+            if page != 1 or wrap:
+                self.draw_arrow(0, i, y)
             i += 60
-            if paramInt1 != paramInt2 or paramBoolean:
-                self.draw_arrow(1, i, paramInt3)
-        paramInt3 += 2
-        i = GameCanvas.view_cx - (8 + 9 * ((2 if paramInt2 > 9 else 1) + (2 if paramInt1 > 9 else 1)) + 2) // 2
-        i = i + (18 if paramInt1 > 9 else 9)
-        self.draw_small_number(paramInt1, i, paramInt3 + GameCanvas.view_y)
+            if page != pages or wrap:
+                self.draw_arrow(1, i, y)
+        y += 2
+        i = GameCanvas.view_cx - (8 + 9 * ((2 if pages > 9 else 1) + (2 if page > 9 else 1)) + 2) // 2
+        i = i + (18 if page > 9 else 9)
+        self.draw_small_number(page, i, y + GameCanvas.view_y)
         i += 1
         if GameCanvas.prev_state == 3:
-            GameCanvas.draw_region(i - GameCanvas.view_x, paramInt3 + 16, 8, 12, GameCanvas.images[20], 90, 0)
+            GameCanvas.draw_region(i - GameCanvas.view_x, y + 16, 8, 12, GameCanvas.images[20], 90, 0)
         else:
-            GameCanvas.draw_region(i - GameCanvas.view_x, paramInt3, 8, 12, GameCanvas.images[20], 90, 0)
-        i += 9 + (18 if paramInt2 > 9 else 9)
-        self.draw_small_number(paramInt2, i, paramInt3 + GameCanvas.view_y)
+            GameCanvas.draw_region(i - GameCanvas.view_x, y, 8, 12, GameCanvas.images[20], 90, 0)
+        i += 9 + (18 if pages > 9 else 9)
+        self.draw_small_number(pages, i, y + GameCanvas.view_y)
 
-    def draw_skills(self, paramInt):  # e.java:1523-1593  (Skills: 5 hot-key slots + skill tree pages)
+    def draw_skills(self, mode):  # e.java:1523-1593  (Skills: 5 hot-key slots + skill tree pages)
         cz = GameCanvas.hero
         cM = GameCanvas.menu
         arrayOfByte = [1, 3, 7, 9, 0]
         if config.SKILL_BAR or config.SKILL_CARD:
             # PORT-EXTRA: the PC keys of the 5 slots are 1-5 (the phone's were 1 3 7 9 0)
             arrayOfByte = [1, 2, 3, 4, 5]
-        if 0 == paramInt:
+        if 0 == mode:
             for b in range(5):
                 self.draw_empty_slot(40 + b * 30 + 4 * b, 60)
                 self.draw_big_number(arrayOfByte[b], 40 + b * 30 + 18 + 4 * b, 70, 0)
-        if paramInt % 2 == 0:
+        if mode % 2 == 0:
             for b in range(5):
                 self.draw_empty_slot(40 + b * 30 + 4 * b, 90)
                 if cz.hotkeys[b] != 0:
                     self.draw_map_region(GameCanvas.images[37], 40 + b * 30 + 4 * b + 1, 91, 28, 28, (cz.hotkeys[b] - 12) * 28, 0)
             self.draw_round_outline(40 + cM[1] * 30 + 4 * cM[1], 90, 30, 30, 255, 255, 255)
         arrayOfAc = [Rect(40, 140, 60, 20), Rect(40, 165, 60, 20)]
-        if paramInt % 3 == 0:
+        if mode % 3 == 0:
             i = cM[2] // 6 << 1
             b2 = 2 if cM[2] < 18 else 1
             for b1 in range(b2):
@@ -1304,7 +1304,7 @@ class Menus(GameCanvas):
         for n, line in enumerate(lines):
             Gfx.draw_string(line, x + 4, y + 3 + n * Menus.WIDE_DESC_LINE, 0)
 
-    def draw_gear(self, paramInt1, paramInt2):  # e.java:1632-1654  (Gear: hero sprite + 9 equipment slots)
+    def draw_gear(self, slot, describe):  # e.java:1632-1654  (Gear: hero sprite + 9 equipment slots)
         cz = GameCanvas.hero
         arrayOfByte1 = [-77, -77, -77, -33, 3, 47, 47, 47, -15]
         arrayOfByte2 = [21, -15, -51, -79, -79, -51, -15, 21, 49]
@@ -1317,19 +1317,19 @@ class Menus(GameCanvas):
             if cz.equipped[b].id != 0:
                 self.load_item_def(cz.equipped[b].id)
                 self.draw_item_icon(cz.equipped[b].id, GameCanvas.view_cx + arrayOfByte1[b], GameCanvas.view_cy + arrayOfByte2[b], 0)
-        self.draw_round_outline(GameCanvas.view_cx + arrayOfByte1[paramInt1] - 1, GameCanvas.view_cy + arrayOfByte2[paramInt1] - 1, 30, 30, 255, 255, 255)
-        GameCanvas.cursor[24] = GameCanvas.view_cx + arrayOfByte1[paramInt1] + GameCanvas.view_x + 7
-        GameCanvas.cursor[25] = GameCanvas.view_cy + arrayOfByte2[paramInt1] + GameCanvas.view_y + 7
+        self.draw_round_outline(GameCanvas.view_cx + arrayOfByte1[slot] - 1, GameCanvas.view_cy + arrayOfByte2[slot] - 1, 30, 30, 255, 255, 255)
+        GameCanvas.cursor[24] = GameCanvas.view_cx + arrayOfByte1[slot] + GameCanvas.view_x + 7
+        GameCanvas.cursor[25] = GameCanvas.view_cy + arrayOfByte2[slot] + GameCanvas.view_y + 7
         f1 = cz.body_frames[1]
         self.draw_map_region(cz.body_image, GameCanvas.view_cx - f1.ox, GameCanvas.view_cy + 7 - f1.oy + 17, f1.w, f1.h, f1.src_x, f1.src_y)
         f2 = cz.head_frames[1]
         self.draw_map_region(cz.head_image, GameCanvas.view_cx - f2.ox, GameCanvas.view_cy + 7 - f2.oy + 17, f2.w, f2.h, f2.src_x, f2.src_y)
-        if paramInt2 != 0:
+        if describe != 0:
             GameCanvas.describe_shop_item(self.item_under_cursor(-1), True, -1)
             return
-        self.draw_description(paramInt1 + 1000, GameCanvas.view_cx - 79, GameCanvas.view_cy + 81 + 5, 158, 20)
+        self.draw_description(slot + 1000, GameCanvas.view_cx - 79, GameCanvas.view_cy + 81 + 5, 158, 20)
 
-    def draw_inventory(self, paramInt):  # e.java:1656-1692  (Inventory: 5x5 grid in 2 pages + gold)
+    def draw_inventory(self, mode):  # e.java:1656-1692  (Inventory: 5x5 grid in 2 pages + gold)
         cz = GameCanvas.hero
         cM = GameCanvas.menu
         arrayOfInt1 = [GameCanvas.view_cx - 75, GameCanvas.view_cx - 45, GameCanvas.view_cx - 15, GameCanvas.view_cx + 15, GameCanvas.view_cx + 45]
@@ -1341,7 +1341,7 @@ class Menus(GameCanvas):
         page = cM[2] // 15
         b3 = page * 15
         b2 = min(3, (config.BACKPACK_SIZE - b3) // 5)
-        if paramInt != 0:
+        if mode != 0:
             self.draw_map_region(GameCanvas.images[7], GameCanvas.view_cx - 75, GameCanvas.view_cy - 45, 150, 100, GameCanvas.view_cx - 75, GameCanvas.view_cy - 45)
         for b1 in range(b2):
             for b in range(5):
@@ -1359,15 +1359,15 @@ class Menus(GameCanvas):
         GameCanvas.fill_rect(ac_, GameCanvas.rgb(231, 227, 198))
         self.draw_description(cM[2] + 1100, GameCanvas.view_cx - 75, GameCanvas.view_cy + 50, 150, 22)
         self.draw_round_outline(arrayOfInt1[cM[2] % 5], arrayOfInt2[(cM[2] - b3) // 5] + GameCanvas.view_y, 30, 30, 255, 255, 255)
-        if 0 == paramInt:
+        if 0 == mode:
             self.draw_gold_box()
         GameCanvas.menu_part = 0
 
-    def draw_assign_items(self, paramInt):  # e.java:3022-3058  (Assign Items: 5 potion slots, * and # quick keys)
+    def draw_assign_items(self, mode):  # e.java:3022-3058  (Assign Items: 5 potion slots, * and # quick keys)
         cz = GameCanvas.hero
         if GameCanvas.state == 3:
             GameCanvas.view_cy -= 30
-        if 0 == paramInt:
+        if 0 == mode:
             self.draw_gold_box()
             Gfx.set_font(GameCanvas.font_white)
             for b1 in range(5):
@@ -1400,31 +1400,31 @@ class Menus(GameCanvas):
         if GameCanvas.state == 3:
             GameCanvas.view_cy += 30
 
-    def draw_item_icon(self, paramInt1, paramInt2, paramInt3, paramInt4):  # e.java:3060-3081  (item icon)
+    def draw_item_icon(self, item_id, x, y, slot):  # e.java:3060-3081  (item icon)
         i = -1
         b = 0
-        if paramInt1 > 500:
-            i = paramInt1 - 501
+        if item_id > 500:
+            i = item_id - 501
             b = 3
-        elif paramInt1 > 300:
+        elif item_id > 300:
             i = GameCanvas.treasure_def.icon
             b = 2
-        elif paramInt1 > 100:
+        elif item_id > 100:
             i = GameCanvas.gear_def.icon
             b = 1
-        elif paramInt1 > 0:
-            i = paramInt1 - 1
+        elif item_id > 0:
+            i = item_id - 1
             b = 0
         if i > -1:
-            self.draw_map_region(GameCanvas.images[0 + b], paramInt2, paramInt3, 28, 28, i * 28, 0)
-            if paramInt1 < 100:
-                self.draw_small_digit(paramInt2, paramInt3 + 2, GameCanvas.hero.quick_slots[paramInt4].count)
+            self.draw_map_region(GameCanvas.images[0 + b], x, y, 28, 28, i * 28, 0)
+            if item_id < 100:
+                self.draw_small_digit(x, y + 2, GameCanvas.hero.quick_slots[slot].count)
 
     # ---- Blacksmith (screens 21 Buy, 22 Sell, 23 Enchant, 24 Combine) ----------------------
     # fK[0] = mode (cM[0]-21), fK[9]/fK[10] = cursor col/row, fK[18] = cell, fK[19] = item id,
     # fK[20] = message for aV(), fK[21] = price, fK[26] = sparkle frame (-1 idle), fK[27] = 1 on Gear
 
-    def draw_item_grid(self, paramInt, paramArrayOfz, paramArrayOfint):  # e.java:1804-1861  (item grid)
+    def draw_item_grid(self, y, items, marks):  # e.java:1804-1861  (item grid)
         i = GameCanvas.cursor[8] * 5
         if GameCanvas.cursor[11] == 1:
             ac1 = Rect(0, 0, 0, 0)
@@ -1432,7 +1432,7 @@ class Menus(GameCanvas):
             ac1.w = 4
             ac1.x = GameCanvas.cursor[12]
             ac1.h = GameCanvas.cursor[6]
-            ac1.y = paramInt
+            ac1.y = y
             GameCanvas.draw_filled_rect(ac1, 16777215, 0)
             ac1.w -= 2
             ac1.x += 1
@@ -1445,7 +1445,7 @@ class Menus(GameCanvas):
             ac2.y += j_
             GameCanvas.fill_rect(ac2, 16777215)
             GameCanvas.outline_rect(ac1, 10000536)
-        paramInt += 1
+        y += 1
         b1 = 0
         b2 = 0
         while b1 < GameCanvas.cursor[3]:
@@ -1454,56 +1454,56 @@ class Menus(GameCanvas):
                 if i == GameCanvas.cursor[18]:
                     bool_ = True
                     GameCanvas.cursor[24] = j_ + 13 + 1
-                    GameCanvas.cursor[25] = paramInt + 13 + 1
+                    GameCanvas.cursor[25] = y + 13 + 1
                 else:
                     bool_ = False
                 for b3 in range(GameCanvas.combine_slots[3]):
                     if GameCanvas.combine_slots[b3] == i:
                         bool_ = True
                         GameCanvas.combine_pos[b2].x = i16(j_ + 13 + 1)
-                        GameCanvas.combine_pos[b2].y = i16(paramInt + 13 + 1)
+                        GameCanvas.combine_pos[b2].y = i16(y + 13 + 1)
                         b2 += 1
                         break
-                self.draw_grid_cell(j_, paramInt, bool_)
-                if paramArrayOfint is not None:
-                    self.draw_item_count_icon(paramArrayOfint[i], j_, paramInt, 0)
+                self.draw_grid_cell(j_, y, bool_)
+                if marks is not None:
+                    self.draw_item_count_icon(marks[i], j_, y, 0)
                 else:
-                    self.draw_grid_item(i, j_, paramInt, paramArrayOfz)
+                    self.draw_grid_item(i, j_, y, items)
                 j_ += 32
                 i += 1
-            paramInt += 32
+            y += 32
             b1 += 1
 
-    def draw_grid_item(self, paramInt1, paramInt2, paramInt3, paramArrayOfz):  # e.java:1863-1877
-        if paramArrayOfz is not None:
-            z1 = paramArrayOfz[paramInt1]
+    def draw_grid_item(self, index, x, y, items):  # e.java:1863-1877
+        if items is not None:
+            z1 = items[index]
         else:
-            z1 = self.item_under_cursor(paramInt1)
+            z1 = self.item_under_cursor(index)
         if GameCanvas.cursor[0] == 1 and 0 < z1.id < 100:
             bool_ = z1.attack
         else:
             bool_ = 0
-        self.draw_item_count_icon(z1.id, paramInt2, paramInt3, bool_)
+        self.draw_item_count_icon(z1.id, x, y, bool_)
 
-    def draw_grid_cell(self, paramInt1, paramInt2, paramBoolean):  # e.java:1879-1881  (grid cell frame)
-        GameCanvas.draw_frame_box(paramInt1 + 1, paramInt2 + 1, 26, 26, 0, 0, 16777215 if paramBoolean else 5263440, True)
+    def draw_grid_cell(self, x, y, selected):  # e.java:1879-1881  (grid cell frame)
+        GameCanvas.draw_frame_box(x + 1, y + 1, 26, 26, 0, 0, 16777215 if selected else 5263440, True)
 
-    def draw_item_count_icon(self, paramInt1, paramInt2, paramInt3, paramInt4):  # e.java:1883-1902  (item icon by id + count)
-        if paramInt1 > 500:
+    def draw_item_count_icon(self, item_id, x, y, count):  # e.java:1883-1902  (item icon by id + count)
+        if item_id > 500:
             image = GameCanvas.images[3]
-            i = paramInt1 - 501
-        elif paramInt1 > 300:
+            i = item_id - 501
+        elif item_id > 300:
             image = GameCanvas.images[2]
-            i = GameCanvas.item_tables[1].get_int(paramInt1 - 301, 7)
-        elif paramInt1 > 100:
+            i = GameCanvas.item_tables[1].get_int(item_id - 301, 7)
+        elif item_id > 100:
             image = GameCanvas.images[1]
-            i = GameCanvas.item_tables[0].get_int(paramInt1 - 101, 7)
+            i = GameCanvas.item_tables[0].get_int(item_id - 101, 7)
         else:
             image = GameCanvas.images[0]
-            i = paramInt1 - 1
-        GameCanvas.draw_region(paramInt2, paramInt3, 28, 28, image, i * 28, 0)
-        if paramInt4 > 0:
-            GameCanvas.draw_region(paramInt2, paramInt3, 9, 12, GameCanvas.images[20], paramInt4 * 9, 0)
+            i = item_id - 1
+        GameCanvas.draw_region(x, y, 28, 28, image, i * 28, 0)
+        if count > 0:
+            GameCanvas.draw_region(x, y, 9, 12, GameCanvas.images[20], count * 9, 0)
 
     def draw_shop_grid(self):  # e.java:1904-1910  (gold + item grid + description)
         i = GameCanvas.cursor[1] + 1
@@ -1512,9 +1512,9 @@ class Menus(GameCanvas):
         self.draw_item_grid(i, None, None)
         GameCanvas.describe_shop_item(self.item_under_cursor(-1), True, -1)
 
-    def draw_blacksmith(self, paramBoolean):  # e.java:1912-2111  (decompiler gave bytecode only; rebuilt from it)
+    def draw_blacksmith(self, full):  # e.java:1912-2111  (decompiler gave bytecode only; rebuilt from it)
         fK = GameCanvas.cursor
-        if paramBoolean:
+        if full:
             if fK[27] == 0:
                 self.draw_shop_grid()
             else:
@@ -1582,14 +1582,14 @@ class Menus(GameCanvas):
             Item.clear(z_)
             GameCanvas.cursor[23] = 1
 
-    def draw_sparkle(self, paramInt1, paramInt2):  # e.java:2137-2144  (sparkle frame)
+    def draw_sparkle(self, x, y):  # e.java:2137-2144  (sparkle frame)
         arrayOfByte1 = [0, 15, 30, 0, 20]
         arrayOfByte2 = [0, 0, 0, 16, 16]
         arrayOfByte3 = [16, 16, 16, 20, 24]
         n = arrayOfByte3[GameCanvas.cursor[26]]
-        paramInt1 -= n >> 1
-        paramInt2 -= n >> 1
-        GameCanvas.draw_region(paramInt1, paramInt2, n, n, GameCanvas.sparkle, arrayOfByte1[GameCanvas.cursor[26]], arrayOfByte2[GameCanvas.cursor[26]])
+        x -= n >> 1
+        y -= n >> 1
+        GameCanvas.draw_region(x, y, n, n, GameCanvas.sparkle, arrayOfByte1[GameCanvas.cursor[26]], arrayOfByte2[GameCanvas.cursor[26]])
 
     def draw_sparkles(self):  # e.java:2146-2156
         if GameCanvas.cursor[0] == 2:
@@ -1791,9 +1791,9 @@ class Menus(GameCanvas):
             Menus.blacksmith_message()
         Menus.mix_table = None
 
-    def enchant_item(self, paramz, paramInt):  # e.java:2628-2668  (enchant paramInt times: raise stats)
+    def enchant_item(self, item, times):  # e.java:2628-2668  (enchant paramInt times: raise stats)
         arrayOfByte = [30, 25, 20, 15, 9, 1]
-        for b in range(paramInt):
+        for b in range(times):
             i = 0
             j_ = self.rand(101)
             b1 = 0
@@ -1805,43 +1805,43 @@ class Menus(GameCanvas):
             j_ = (b1 + 5) * 10
             s = 0
             for b1 in range(4):
-                s = (paramz.attack, paramz.defense, paramz.hp, paramz.mp)[b1]
+                s = (item.attack, item.defense, item.hp, item.mp)[b1]
                 i = s
                 if i > 0:
                     i = idiv(idiv(i * j_, 10) + 50, 100)
                     if i == 0:
                         i = 1
                     if b1 == 0:
-                        paramz.attack = i16(paramz.attack + i)
+                        item.attack = i16(item.attack + i)
                     elif b1 == 1:
-                        paramz.defense = i16(paramz.defense + i)
+                        item.defense = i16(item.defense + i)
                     elif b1 == 2:
-                        paramz.hp = i16(paramz.hp + i)
+                        item.hp = i16(item.hp + i)
                     elif b1 == 3:
-                        paramz.mp = i16(paramz.mp + i)
-            paramz.enchant = i8(paramz.enchant + 1)
-        return paramz
+                        item.mp = i16(item.mp + i)
+            item.enchant = i8(item.enchant + 1)
+        return item
 
     @staticmethod
-    def mix_entry(paramInt):  # e.java:2670-2672
-        return Menus.mix_table[paramInt * 2] & 0xFF | (Menus.mix_table[paramInt * 2 + 1] & 0xFF) << 8
+    def mix_entry(index):  # e.java:2670-2672
+        return Menus.mix_table[index * 2] & 0xFF | (Menus.mix_table[index * 2 + 1] & 0xFF) << 8
 
-    def find_run(self, paramInt1, paramInt2, paramInt3, paramInt4):  # e.java:2674-2692  (find run of paramInt2)
-        arrayOfInt = [paramInt3, paramInt4, 0]
+    def find_run(self, base, value, start, count):  # e.java:2674-2692  (find run of paramInt2)
+        arrayOfInt = [start, count, 0]
         b = 0
         while b < arrayOfInt[1]:
-            i = Menus.mix_entry(paramInt1 + arrayOfInt[0])
-            if i == paramInt2:
+            i = Menus.mix_entry(base + arrayOfInt[0])
+            if i == value:
                 break
             arrayOfInt[0] = arrayOfInt[0] + 1
             b += 1
         if b < arrayOfInt[1]:
             arrayOfInt[1] = arrayOfInt[1] - b
             b = 0
-            i = Menus.mix_entry(paramInt1 + arrayOfInt[0])
-            while b < arrayOfInt[1] and i == paramInt2:
+            i = Menus.mix_entry(base + arrayOfInt[0])
+            while b < arrayOfInt[1] and i == value:
                 b += 1
-                i = Menus.mix_entry(paramInt1 + arrayOfInt[0] + b)
+                i = Menus.mix_entry(base + arrayOfInt[0] + b)
             arrayOfInt[1] = b
             arrayOfInt[2] = 1
             return arrayOfInt
@@ -1921,14 +1921,14 @@ class Menus(GameCanvas):
         fK[19] = z_.id if z_ is not None else 0
 
     @staticmethod
-    def item_name(paramInt):  # e.java:2774-2786  (item name)
-        if paramInt < 100:
-            return consts.potion_names[paramInt - 1]
-        if paramInt < 300:
-            return GameCanvas.item_tables[0].get_string(paramInt - 101, 0)
-        if paramInt < 500:
-            return GameCanvas.item_tables[1].get_string(paramInt - 301, 0)
-        return GameCanvas.item_tables[2].get_string(paramInt - 501, 0)
+    def item_name(item_id):  # e.java:2774-2786  (item name)
+        if item_id < 100:
+            return consts.potion_names[item_id - 1]
+        if item_id < 300:
+            return GameCanvas.item_tables[0].get_string(item_id - 101, 0)
+        if item_id < 500:
+            return GameCanvas.item_tables[1].get_string(item_id - 301, 0)
+        return GameCanvas.item_tables[2].get_string(item_id - 501, 0)
 
     @staticmethod
     def clear_combine():  # e.java:2788-2801  (clear the Combine selection)
@@ -1955,23 +1955,23 @@ class Menus(GameCanvas):
                 GameCanvas.cursor[17] = GameCanvas.cursor[17] + 1
 
     @staticmethod
-    def item_price(paramz):  # e.java:2817-2830  (price of an item)
-        if paramz.id < 100:
-            i = consts.item_prices[paramz.id - 1]
-        elif paramz.id < 300:
-            i = GameCanvas.item_tables[0].get_int(paramz.id - 101, 6)
-            i = i + paramz.attack * 100
-            i = i + paramz.defense * 100
-            i = i + idiv(paramz.hp, 5) * 100
-            i = i + idiv(paramz.mp, 3) * 100
-        elif paramz.id < 500:
-            j_ = 800 if GameCanvas.item_tables[1].get_int(paramz.id - 301, 6) == 0 else 400
-            i = paramz.attack * j_
-            i = i + paramz.defense * j_
-            i = i + idiv(paramz.hp, 5) * j_
-            i = i + idiv(paramz.mp, 3) * j_
+    def item_price(item):  # e.java:2817-2830  (price of an item)
+        if item.id < 100:
+            i = consts.item_prices[item.id - 1]
+        elif item.id < 300:
+            i = GameCanvas.item_tables[0].get_int(item.id - 101, 6)
+            i = i + item.attack * 100
+            i = i + item.defense * 100
+            i = i + idiv(item.hp, 5) * 100
+            i = i + idiv(item.mp, 3) * 100
+        elif item.id < 500:
+            j_ = 800 if GameCanvas.item_tables[1].get_int(item.id - 301, 6) == 0 else 400
+            i = item.attack * j_
+            i = i + item.defense * j_
+            i = i + idiv(item.hp, 5) * j_
+            i = i + idiv(item.mp, 3) * j_
         else:
-            i = GameCanvas.item_tables[2].get_int(paramz.id - 501, 6)
+            i = GameCanvas.item_tables[2].get_int(item.id - 501, 6)
         return i
 
     def buy_item(self):  # e.java:2832-2883  (Buy)
@@ -2073,29 +2073,29 @@ class Menus(GameCanvas):
         if fK[22] != 0:
             fK[23] = -1
 
-    def draw_shop_description(self, paramz, paramInt1, paramInt2, paramInt3, paramInt4, paramInt5, paramBoolean):  # e.java:3083-3206  (shop description)
+    def draw_shop_description(self, item, x, y, w, h, price, with_name):  # e.java:3083-3206  (shop description)
         dF = GameCanvas.info_box
         str1 = "/ Price: "
         str2 = "Price: "
-        if paramz.id == 0:
+        if item.id == 0:
             dF.shown = 0
             dF.rect.x = dF.rect.y = dF.rect.w = dF.rect.h = 0
             dF.text = ""
             dF.rect.x = (GameCanvas.screen_w - 202) // 2 - GameCanvas.view_x
             dF.rect.y = 200
-            dF.rect.w = paramInt3 + 2
-            dF.rect.h = paramInt4
+            dF.rect.w = w + 2
+            dF.rect.h = h
             return
-        if GameCanvas.cursor[14] > 0 and paramInt5 == -1:
-            paramInt5 = Menus.item_price(paramz)
-        if paramz.id < 100:
-            i = paramz.id - 1
+        if GameCanvas.cursor[14] > 0 and price == -1:
+            price = Menus.item_price(item)
+        if item.id < 100:
+            i = item.id - 1
             dF.text = consts.potion_names[i]
             if GameCanvas.cursor[14] == 2:
                 if len(dF.text) > 0:
                     dF.text += " / "
                 dF.text += str2
-                dF.text += GameCanvas.format_thousands(paramInt5 >> 1)
+                dF.text += GameCanvas.format_thousands(price >> 1)
             dF.text += " / "
             if i < 9:
                 str_ = "Recover " + str(consts.potion_percents[i % 3]) + "% of total " + consts.potion_kinds[i // 3]
@@ -2104,61 +2104,61 @@ class Menus(GameCanvas):
             dF.text += str_
             if GameCanvas.cursor[14] == 1:
                 dF.text += str1
-                dF.text += GameCanvas.format_thousands(paramInt5)
+                dF.text += GameCanvas.format_thousands(price)
         else:
-            if paramz.id < 300:
-                str_ = GameCanvas.item_tables[0].get_string(paramz.id - 101, 0)
-                i = consts.tier_levels[(paramz.id - 101) % 5]
-            elif paramz.id < 500:
-                str_ = GameCanvas.item_tables[1].get_string(paramz.id - 301, 0)
-                i = GameCanvas.item_tables[1].get_int(paramz.id - 301, 8)
+            if item.id < 300:
+                str_ = GameCanvas.item_tables[0].get_string(item.id - 101, 0)
+                i = consts.tier_levels[(item.id - 101) % 5]
+            elif item.id < 500:
+                str_ = GameCanvas.item_tables[1].get_string(item.id - 301, 0)
+                i = GameCanvas.item_tables[1].get_int(item.id - 301, 8)
             else:
-                str_ = GameCanvas.item_tables[2].get_string(paramz.id - 501, 0)
-                i = GameCanvas.item_tables[2].get_int(paramz.id - 501, 7)
-            if paramBoolean:
+                str_ = GameCanvas.item_tables[2].get_string(item.id - 501, 0)
+                i = GameCanvas.item_tables[2].get_int(item.id - 501, 7)
+            if with_name:
                 dF.text += str_
             if GameCanvas.cursor[14] == 2:
                 if len(dF.text) > 0:
                     dF.text += " / "
                 dF.text += str2
-                dF.text += GameCanvas.format_thousands(paramInt5 >> 1)
+                dF.text += GameCanvas.format_thousands(price >> 1)
             if len(dF.text) > 0:
                 dF.text += " / "
             special = {434: " / Hp 5 Increased", 435: " / MP 3 Increased", 436: " / DEF 1 Increased",
                        437: " / ATK 1 Increased", 502: " / Catherine's scarf", 504: " / all General Visiting"}
-            if paramz.id in special:
-                dF.text += special[paramz.id][3:]
-                if paramz.id == 504 and paramz.enchant > 0:
-                    dF.text += " / Enchanted Lv" + str(paramz.enchant)
+            if item.id in special:
+                dF.text += special[item.id][3:]
+                if item.id == 504 and item.enchant > 0:
+                    dF.text += " / Enchanted Lv" + str(item.enchant)
             else:
-                if paramz.attack > 0:
-                    dF.text += "Atk+" + str(paramz.attack) + " "
-                if paramz.defense > 0:
-                    dF.text += "Def+" + str(paramz.defense) + " "
-                if paramz.hp > 0:
-                    dF.text += "HP+" + str(paramz.hp) + " "
-                if paramz.mp > 0:
-                    dF.text += "MP+" + str(paramz.mp) + " "
-                if paramz.enchant > 0:
-                    dF.text += "/ Enchanted Lv" + str(paramz.enchant) + " "
+                if item.attack > 0:
+                    dF.text += "Atk+" + str(item.attack) + " "
+                if item.defense > 0:
+                    dF.text += "Def+" + str(item.defense) + " "
+                if item.hp > 0:
+                    dF.text += "HP+" + str(item.hp) + " "
+                if item.mp > 0:
+                    dF.text += "MP+" + str(item.mp) + " "
+                if item.enchant > 0:
+                    dF.text += "/ Enchanted Lv" + str(item.enchant) + " "
                 if i > 0:
                     dF.text += "/ Available at Lv" + str(i) + " "
             if GameCanvas.cursor[14] == 1:
                 dF.text += str1
-                dF.text += GameCanvas.format_thousands(paramInt5)
+                dF.text += GameCanvas.format_thousands(price)
         dF.rect.x = (GameCanvas.screen_w - 202) // 2 - GameCanvas.view_x
         dF.rect.y = 200
-        dF.rect.w = paramInt3 + 2
-        dF.rect.h = paramInt4
+        dF.rect.w = w + 2
+        dF.rect.h = h
         GameCanvas.text_width = GameCanvas.measure_text(dF.text)
-        if GameCanvas.text_width > paramInt3 - 2:
+        if GameCanvas.text_width > w - 2:
             dF.shown = 1
             if GameCanvas.key != -999:
                 dF.text_x = i16(dF.rect.x + dF.rect.w)
                 return
         else:
             dF.shown = 0
-            dF.text_x = i16(paramInt1 + 1)
+            dF.text_x = i16(x + 1)
 
     def load_title_images(self):  # e.java:1241-1244
         self.load_title_picture()
@@ -2262,11 +2262,11 @@ class Menus(GameCanvas):
             return
         GameCanvas.draw_softkeys(-1, 10)
 
-    def draw_stat_sheet(self, paramInt):  # e.java:1429-1469  (screen 8/14: stat sheet; 1 = whole, 0 = numbers only)
+    def draw_stat_sheet(self, whole):  # e.java:1429-1469  (screen 8/14: stat sheet; 1 = whole, 0 = numbers only)
         cz = GameCanvas.hero
         arrayOfInt1 = [cz.base_hp, cz.base_mp, cz.base_attack, cz.base_defense]
         image = None
-        if paramInt != 0:
+        if whole != 0:
             arrayOfInt = self.load_exp_table()
             GameCanvas.exp_bars[0] = i16(idiv(cz.exp * 100, arrayOfInt[0]))
             image = self.load_image(GameCanvas.scr_ui.get(26))
@@ -2301,37 +2301,37 @@ class Menus(GameCanvas):
             self.draw_rect_outline(GameCanvas.sheet_x + 144, GameCanvas.sheet_y + 97 + 20 * GameCanvas.menu[1] + GameCanvas.view_y + 11, 14, 18, 255, 255, 255)
         GameCanvas.menu_part = 0
 
-    def draw_story_portraits(self, paramInt):  # e.java:2158-2165  (story: speaker portrait top-left, hero bottom-right)
+    def draw_story_portraits(self, speaker):  # e.java:2158-2165  (story: speaker portrait top-left, hero bottom-right)
         self.draw_box(19 + GameCanvas.view_x + 2, GameCanvas.view_cy - 72 + 9 + GameCanvas.view_y, 46, 46, True)
-        if paramInt > -1:
-            self.draw_image_file(GameCanvas.scr_char.get(0 + paramInt), 19 + GameCanvas.view_x + 2, GameCanvas.view_cy - 73 + 10 + GameCanvas.view_y, 46, 46, 0, 0)
+        if speaker > -1:
+            self.draw_image_file(GameCanvas.scr_char.get(0 + speaker), 19 + GameCanvas.view_x + 2, GameCanvas.view_cy - 73 + 10 + GameCanvas.view_y, 46, 46, 0, 0)
         self.draw_box(GameCanvas.canvas_size.x // 2 + 60 - GameCanvas.view_x, GameCanvas.view_cy - 72 + 109 + GameCanvas.view_y, 46, 46, True)
         self.draw_image_file(GameCanvas.scr_char.get(38 + GameCanvas.hero.head), GameCanvas.canvas_size.x // 2 + 60 - GameCanvas.view_x, GameCanvas.view_cy - 73 + 110 + GameCanvas.view_y, 46, 46, 0, 0)
         self.draw_speech_boxes(3)
 
-    def draw_speech_boxes(self, paramInt):  # e.java:2167-2172  (empty speech boxes: 1 = top, 2 = bottom)
-        if (paramInt & 0x1) != 0:
+    def draw_speech_boxes(self, boxes):  # e.java:2167-2172  (empty speech boxes: 1 = top, 2 = bottom)
+        if (boxes & 0x1) != 0:
             self.draw_box(GameCanvas.view_cx - 60 + 15 + GameCanvas.view_x, GameCanvas.view_cy - 73 + 7 + GameCanvas.view_y, 150, 53, False)
-        if (paramInt & 0x2) != 0:
+        if (boxes & 0x2) != 0:
             self.draw_box(GameCanvas.view_cx - 60 + -40 + GameCanvas.view_x, GameCanvas.view_cy - 73 + 107 + GameCanvas.view_y, 150, 53, False)
 
     @staticmethod
-    def type_speech(paramInt1, paramInt2, paramInt3):  # e.java:2216-2309  (type speech text fw[p1], max 3 lines)
+    def type_speech(slot, pos, redraw):  # e.java:2216-2309  (type speech text fw[p1], max 3 lines)
         # paramInt3 == 0: one tick of typing (state kept in fA/fx/fy/fz/fB/fC); 1: redraw all
-        if paramInt1 == 0:
+        if slot == 0:
             i3 = GameCanvas.view_cx - 60 + 15 + 2 + GameCanvas.view_x
             i4 = GameCanvas.view_cy - 73 + 7 + 2 + GameCanvas.view_y
-        elif paramInt1 == 1:
+        elif slot == 1:
             i3 = GameCanvas.view_cx - 60 + -40 + 2 + GameCanvas.view_x
             i4 = GameCanvas.view_cy - 73 + 107 + 2 + GameCanvas.view_y
         else:
             return False
-        if (GameCanvas.key == -6 or GameCanvas.key == -5) and 0 == paramInt3:
+        if (GameCanvas.key == -6 or GameCanvas.key == -5) and 0 == redraw:
             i1 = 1000                    # a key shows the whole text at once
         else:
-            i1 = GameCanvas.speech_pos[paramInt1]
+            i1 = GameCanvas.speech_pos[slot]
         # decompiled `if (!(n = (p2 != i1) ? 0 : p2))`: n == 0 -> start over, else continue
-        n = 0 if paramInt2 != i1 else paramInt2
+        n = 0 if pos != i1 else pos
         if n == 0:
             i = i3
             j_ = i4
@@ -2339,14 +2339,14 @@ class Menus(GameCanvas):
             m = 0
             k = 0
         else:
-            i = GameCanvas.speech_x[paramInt1]
-            j_ = GameCanvas.speech_y[paramInt1]
-            i2 = GameCanvas.speech_lines[paramInt1]
-            m = GameCanvas.speech_done[paramInt1]
-            k = GameCanvas.speech_w[paramInt1]
+            i = GameCanvas.speech_x[slot]
+            j_ = GameCanvas.speech_y[slot]
+            i2 = GameCanvas.speech_lines[slot]
+            m = GameCanvas.speech_done[slot]
+            k = GameCanvas.speech_w[slot]
         Gfx.set_font(GameCanvas.font_white)
-        while n <= i1 and n < len(GameCanvas.speech[paramInt1]):
-            fw = GameCanvas.speech[paramInt1]
+        while n <= i1 and n < len(GameCanvas.speech[slot]):
+            fw = GameCanvas.speech[slot]
             i5 = Font.ascent() + Font.gap()
             p = (1 if n <= 0 else n) - 1
             if i == i3 or (p < len(fw) and fw[p] == ' ') or (n - 1 < len(fw) and fw[n - 1] == ']'):
@@ -2372,7 +2372,7 @@ class Menus(GameCanvas):
                 elif m != 1 and m == 2:
                     # 3 lines are full: drop the first line and start drawing again
                     str_ = fw[i2:]
-                    GameCanvas.speech[paramInt1] = str_
+                    GameCanvas.speech[slot] = str_
                     i1 -= i2
                     m = n = 0
                     j_ = i4
@@ -2381,20 +2381,20 @@ class Menus(GameCanvas):
                 m += 1
                 j_ += 16
             if n == 0:
-                GameCanvas.menus.draw_speech_boxes(paramInt1 + 1)
+                GameCanvas.menus.draw_speech_boxes(slot + 1)
             if i == i3 and fw[n] == ' ':
                 n += 1
             if len(fw) >= n + 1:
                 Gfx.draw_string(fw[n:n + 1], i, j_, 0)
             i += i5
             n += 1
-        if 0 == paramInt3:
-            GameCanvas.speech_pos[paramInt1] = n
-            GameCanvas.speech_x[paramInt1] = i
-            GameCanvas.speech_y[paramInt1] = j_
-            GameCanvas.speech_w[paramInt1] = k
-            GameCanvas.speech_lines[paramInt1] = i2
-            GameCanvas.speech_done[paramInt1] = m
+        if 0 == redraw:
+            GameCanvas.speech_pos[slot] = n
+            GameCanvas.speech_x[slot] = i
+            GameCanvas.speech_y[slot] = j_
+            GameCanvas.speech_w[slot] = k
+            GameCanvas.speech_lines[slot] = i2
+            GameCanvas.speech_done[slot] = m
         return True
 
     def draw_difficulty(self):  # e.java:2374-2394  (screen 29: difficulty Hard / Normal)
@@ -2414,15 +2414,15 @@ class Menus(GameCanvas):
         for b in range(3):
             self.draw_text_at(consts.mode_texts[GameCanvas.menu[1]][b], GameCanvas.view_cy + 10 + b * 20, 17)
 
-    def load_item_def(self, paramInt):  # e.java:3465-3531  (item record -> cX / cY / cZ)
+    def load_item_def(self, item_id):  # e.java:3465-3531  (item record -> cX / cY / cZ)
         arrayOfByte = bytearray(16)
-        if paramInt < 100:
+        if item_id < 100:
             return
-        if paramInt < 300:
+        if item_id < 300:
             if GameCanvas.gear_data is None:
                 GameCanvas.gear_data = GameCanvas.load_data_file(47)
             cU = GameCanvas.gear_data
-            i = 9 + (paramInt - 101) * 23
+            i = 9 + (item_id - 101) * 23
             b = 0
             while b < 15:
                 arrayOfByte[b] = cU[i + b] & 0xFF
@@ -2438,11 +2438,11 @@ class Menus(GameCanvas):
             if GameCanvas.state != 2:
                 GameCanvas.gear_data = None
                 return
-        elif paramInt < 500:
+        elif item_id < 500:
             if GameCanvas.treasure_data is None:
                 GameCanvas.treasure_data = GameCanvas.load_data_file(51)
             cV = GameCanvas.treasure_data
-            i = 10 + (paramInt - 301) * 24
+            i = 10 + (item_id - 301) * 24
             b = 0
             while b < 15:
                 arrayOfByte[b] = cV[i + b] & 0xFF
@@ -2464,7 +2464,7 @@ class Menus(GameCanvas):
             if GameCanvas.rare_data is None:
                 GameCanvas.rare_data = GameCanvas.load_data_file(49)
             cW = GameCanvas.rare_data
-            i = 9 + (paramInt - 501) * 27
+            i = 9 + (item_id - 501) * 27
             b = 0
             while b < 15:
                 arrayOfByte[b] = cW[i + b] & 0xFF
@@ -2481,9 +2481,9 @@ class Menus(GameCanvas):
             if GameCanvas.state != 2:
                 GameCanvas.rare_data = None
 
-    def draw_stat_cursor(self, paramInt):  # e.java:3533-3545  (stat cursor: 0 = erase, 1 = draw)
+    def draw_stat_cursor(self, draw):  # e.java:3533-3545  (stat cursor: 0 = erase, 1 = draw)
         if GameCanvas.hero.stat_points > 0:
-            if paramInt != 0:
+            if draw != 0:
                 c = 255 if F11 else 1   # DECOMP-FIX F11: decompiled `true` (= 1) as a colour
             else:
                 c = 0
@@ -2873,51 +2873,51 @@ class Menus(GameCanvas):
         return False
 
     @staticmethod
-    def load_greeting(paramInt1, paramInt2):  # e.java:3395-3430  (greeting lines of the general -> gf[])
+    def load_greeting(friendship, kind):  # e.java:3395-3430  (greeting lines of the general -> gf[])
         if GameCanvas.visit_text is not None:
             GameCanvas.visit_text.free()
             GameCanvas.visit_text = None
         GameCanvas.visit_text = ScrTable("/" + GameCanvas.scr_data.get(62))
-        if 0 <= paramInt1 <= 100 and GameCanvas.visit_text is not None:
-            if paramInt2 < 2:
-                if paramInt1 > 99:
-                    paramInt1 = 99
-                paramInt1 = paramInt1 // 10 * 3
-                if paramInt2 == 1:
-                    paramInt1 += 30
+        if 0 <= friendship <= 100 and GameCanvas.visit_text is not None:
+            if kind < 2:
+                if friendship > 99:
+                    friendship = 99
+                friendship = friendship // 10 * 3
+                if kind == 1:
+                    friendship += 30
                 b1 = 3
                 b2 = 0
             else:
-                paramInt1 = 60 + (paramInt2 - 2 << 1)
+                friendship = 60 + (kind - 2 << 1)
                 b1 = 2
                 b2 = 3
             for b3 in range(b1):
-                if len(GameCanvas.visit_text.get(paramInt1)) > 0:
+                if len(GameCanvas.visit_text.get(friendship)) > 0:
                     str_ = GameCanvas.general_name if (b3 & 0x1) != 0 else GameCanvas.hero.name
-                    GameCanvas.talk_lines[b3 + b2] = "[" + str_ + "] " + GameCanvas.visit_text.get(paramInt1) + " "
-                    paramInt1 += 1
+                    GameCanvas.talk_lines[b3 + b2] = "[" + str_ + "] " + GameCanvas.visit_text.get(friendship) + " "
+                    friendship += 1
                 else:
                     return False
             return True
         return False
 
     @staticmethod
-    def add_friendship(paramInt1, paramInt2):  # e.java:3432-3463  (add paramInt2 friendship to general paramInt1)
+    def add_friendship(general, amount):  # e.java:3432-3463  (add paramInt2 friendship to general paramInt1)
         b = 0
-        while b < GameCanvas.general_count and GameCanvas.generals[0][b] != paramInt1:
+        while b < GameCanvas.general_count and GameCanvas.generals[0][b] != general:
             b += 1
         if b == GameCanvas.general_count:
-            if paramInt2 > 0:
+            if amount > 0:
                 d_ = ArrTable("/" + GameCanvas.scr_data.get(52))
                 for b1 in range(44):
                     i = d_.get_int(b1, 0)
-                    if i == paramInt1:
-                        GameCanvas.generals[0][b] = i16(paramInt1)
+                    if i == general:
+                        GameCanvas.generals[0][b] = i16(general)
                         GameCanvas.general_count = i16(GameCanvas.general_count + 1)
-                        GameCanvas.generals[1][b] = i16(GameCanvas.generals[1][b] + paramInt2)
+                        GameCanvas.generals[1][b] = i16(GameCanvas.generals[1][b] + amount)
                         break
         else:
-            GameCanvas.generals[1][b] = i16(GameCanvas.generals[1][b] + paramInt2)
+            GameCanvas.generals[1][b] = i16(GameCanvas.generals[1][b] + amount)
             if GameCanvas.generals[1][b] > 200 or 0 == GameCanvas.generals[1][b]:
                 while b < GameCanvas.general_count:
                     GameCanvas.generals[0][b] = GameCanvas.generals[0][b + 1]
@@ -3037,7 +3037,7 @@ class Menus(GameCanvas):
             if GameCanvas.popups.timer > 100:
                 GameCanvas.popups.timer = 16
 
-    def draw_exp_bar(self, paramInt1, paramInt2):  # e.java:2974-3017  (experience bar; 1 = full, 2 = done)
+    def draw_exp_bar(self, step, bar):  # e.java:2974-3017  (experience bar; 1 = full, 2 = done)
         arrayOfInt = [[GameCanvas.rgb(115, 142, 140), GameCanvas.rgb(181, 178, 181), 16777215],
                       [GameCanvas.rgb(99, 0, 0), GameCanvas.rgb(181, 0, 0), GameCanvas.rgb(247, 73, 0)],
                       [GameCanvas.rgb(0, 65, 255), GameCanvas.rgb(0, 146, 255), GameCanvas.rgb(0, 255, 173)],
@@ -3052,17 +3052,17 @@ class Menus(GameCanvas):
         if GameCanvas.state == 3:
             GameCanvas.view_y = i16(GameCanvas.view_y + 30)
         b3 = 0
-        b2 = 4 if paramInt2 != 0 else 3
-        if GameCanvas.exp_bars[paramInt2] + paramInt1 * 4 > GameCanvas.exp_bars[paramInt2 + 1]:
-            i = GameCanvas.exp_bars[paramInt2 + 1] - GameCanvas.exp_bars[paramInt2]
+        b2 = 4 if bar != 0 else 3
+        if GameCanvas.exp_bars[bar] + step * 4 > GameCanvas.exp_bars[bar + 1]:
+            i = GameCanvas.exp_bars[bar + 1] - GameCanvas.exp_bars[bar]
             b3 = 2
         else:
-            i = paramInt1 * 4
-        if GameCanvas.exp_bars[paramInt2] + i > 100:
-            arrayOfAc[paramInt2 + 2].w = 100 - GameCanvas.exp_bars[paramInt2]
+            i = step * 4
+        if GameCanvas.exp_bars[bar] + i > 100:
+            arrayOfAc[bar + 2].w = 100 - GameCanvas.exp_bars[bar]
             b3 = 1
         else:
-            arrayOfAc[paramInt2 + 2].w = i
+            arrayOfAc[bar + 2].w = i
         GameCanvas.fill_rect(arrayOfAc[0], 0)
         arrayOfAc[0].x += 1
         arrayOfAc[0].w = 100

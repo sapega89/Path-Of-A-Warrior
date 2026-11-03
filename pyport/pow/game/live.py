@@ -215,12 +215,12 @@ class Live(GameCanvas):
             self.check_answer()
 
     @staticmethod
-    def show_error(paramInt):  # as.java:301-353  (error code -> gamestr popup)
+    def show_error(code):  # as.java:301-353  (error code -> gamestr popup)
         b = {-1: 21, -2: 22, -4: 23, -12: 24, -13: 25, -15: 26, -16: 27, -18: 28, -20: 29,
-             -22: 30, -23: 31, -26: 7, -49: 54}.get(paramInt, -1)
-        if paramInt == -26:
+             -22: 30, -23: 31, -26: 7, -49: 54}.get(code, -1)
+        if code == -26:
             Live.close_target = 3
-        elif paramInt == -11:
+        elif code == -11:
             b = 10 if Live.page > 0 else 8
         if b != -1:
             GameCanvas.popups.show(b)
@@ -259,20 +259,20 @@ class Live(GameCanvas):
     def on_connected(self):  # as.java:388-390  (s.f(): connected)
         self.write_request()
 
-    def ask_request(self, paramInt):  # as.java:392-397  (ask for a request on the next i())
+    def ask_request(self, opcode):  # as.java:392-397  (ask for a request on the next i())
         Live.answer_status = 0
         GameCanvas.lock_keys()
         Live.busy = True
-        Live.pending_request = paramInt
+        Live.pending_request = opcode
 
-    def queue_request(self, paramInt):  # as.java:399-413
+    def queue_request(self, opcode):  # as.java:399-413
         Live.pending_request = -1
         Live.login_request = 0
         if not LiveNet.connected:
-            Live.login_request = paramInt
+            Live.login_request = opcode
             Live.request_in_flight = 530
         else:
-            Live.request_in_flight = paramInt
+            Live.request_in_flight = opcode
         Live.request_time = system.currentTimeMillis()
         Live.waiting = False
         self.send_request(Live.request_in_flight)
@@ -299,8 +299,8 @@ class Live(GameCanvas):
             Live.request_in_flight = Live.login_request
             self.ask_request(Live.request_in_flight)
 
-    def send_request(self, paramInt):  # as.java:440-451
-        Live.request_in_flight = paramInt
+    def send_request(self, opcode):  # as.java:440-451
+        Live.request_in_flight = opcode
         if not LiveNet.connected:
             if Live.net is None:
                 Live.start_net()
@@ -433,13 +433,13 @@ class Live(GameCanvas):
     def _copy_item(dst, src):
         dst.id, dst.attack, dst.defense, dst.hp, dst.mp, dst.enchant = src.id, src.attack, src.defense, src.hp, src.mp, src.enchant
 
-    def on_answer(self, paramab):  # as.java:601-990  (s.a(ab): one answer)
+    def on_answer(self, answer):  # as.java:601-990  (s.a(ab): one answer)
         cz = GameCanvas.hero
         fK = GameCanvas.cursor
         Live.in_answer = True
         LiveNet.waiting = False
-        s1 = paramab.read_s16()
-        b = paramab.read_s8()
+        s1 = answer.read_s16()
+        b = answer.read_s8()
         if F20:
             Live.answer_status = b                      # DECOMP_FIX F20
         Live.answer_op = s1
@@ -449,9 +449,9 @@ class Live(GameCanvas):
             if s1 == 531:
                 Live.session_id = Live.session_new
                 self.save_game()
-                paramab.read_s8()
-                paramab.read_s8()
-                b6 = paramab.read_s8()
+                answer.read_s8()
+                answer.read_s8()
+                b6 = answer.read_s8()
                 if (b6 == 0 or b6 == 2) and Live.reg_from_popup:
                     from pow.game.live_screen import LiveScreen
                     LiveScreen.save_login()
@@ -462,24 +462,24 @@ class Live(GameCanvas):
                     Live.close_target = 2
                     Live.reg_from_popup = False
             elif s1 == 513:
-                Live.flags[15] = paramab.read_s8()
-                Live.flags[14] = paramab.read_s8()
-                Live.flags[13] = paramab.read_s8()
-                paramab.read_s8()
+                Live.flags[15] = answer.read_s8()
+                Live.flags[14] = answer.read_s8()
+                Live.flags[13] = answer.read_s8()
+                answer.read_s8()
                 for _ in range(5):
-                    paramab.read_s32()
-                Live.flags[4] = paramab.read_s8()
-                Live.flags[5] = paramab.read_s8()
+                    answer.read_s32()
+                Live.flags[4] = answer.read_s8()
+                Live.flags[5] = answer.read_s8()
                 self.after_login()
                 Live.request_redraw()
             elif s1 == 517:
-                GameCanvas.popups.arg1 = GameCanvas.trim_right(GameCanvas.cut_at_control(paramab.read_string(16)))
-                GameCanvas.popups.arg2 = GameCanvas.trim_right(GameCanvas.cut_at_control(paramab.read_string(16)))
-                GameCanvas.popups.arg3 = GameCanvas.trim_right(GameCanvas.cut_at_control(paramab.read_string(16)))
-                GameCanvas.popups.arg4 = GameCanvas.trim_right(GameCanvas.cut_at_control(paramab.read_string(16)))
+                GameCanvas.popups.arg1 = GameCanvas.trim_right(GameCanvas.cut_at_control(answer.read_string(16)))
+                GameCanvas.popups.arg2 = GameCanvas.trim_right(GameCanvas.cut_at_control(answer.read_string(16)))
+                GameCanvas.popups.arg3 = GameCanvas.trim_right(GameCanvas.cut_at_control(answer.read_string(16)))
+                GameCanvas.popups.arg4 = GameCanvas.trim_right(GameCanvas.cut_at_control(answer.read_string(16)))
                 GameCanvas.popups.show(53)
                 Live.close_target = 7
-                if paramab.read_s8() == 1:
+                if answer.read_s8() == 1:
                     Live.flags[15] = i16(Live.flags[15] + 1)
                 else:
                     Live.flags[15] = 0
@@ -489,11 +489,11 @@ class Live(GameCanvas):
                         Live.lots[b1] = Item()
                     Item.clear(Live.lots[b1])
                     Live.prices[b1] = 0
-                b5 = paramab.read_s8()
+                b5 = answer.read_s8()
                 for b1 in range(b5):
-                    Live.lots[b1].id = paramab.read_s16()
-                    Live.lots[b1].enchant = paramab.read_s8()
-                    Live.prices[b1] = paramab.read_s32()
+                    Live.lots[b1].id = answer.read_s16()
+                    Live.lots[b1].enchant = answer.read_s8()
+                    Live.prices[b1] = answer.read_s32()
                 Live.list_kind = 0
                 self.open_trade_list()
             elif s1 == 261:
@@ -515,80 +515,80 @@ class Live(GameCanvas):
                     GameCanvas.live_gifts = 0
                     self.sync_gifts()
             elif s1 == 263:
-                cz.fame = paramab.read_s32()
-                cz.exp = paramab.read_s32()
-                cz.level = paramab.read_s16() & 0xFF
-                cz.head = paramab.read_s8()
-                cz.weapon_kind = paramab.read_s8()
-                cz.base_attack = paramab.read_s16()
-                cz.base_defense = paramab.read_s16()
-                cz.base_hp = paramab.read_s16()
-                cz.base_mp = paramab.read_s16()
-                cz.stat_points = paramab.read_s16()
+                cz.fame = answer.read_s32()
+                cz.exp = answer.read_s32()
+                cz.level = answer.read_s16() & 0xFF
+                cz.head = answer.read_s8()
+                cz.weapon_kind = answer.read_s8()
+                cz.base_attack = answer.read_s16()
+                cz.base_defense = answer.read_s16()
+                cz.base_hp = answer.read_s16()
+                cz.base_mp = answer.read_s16()
+                cz.stat_points = answer.read_s16()
                 for b1 in range(len(cz.skill_levels)):
                     cz.skill_levels[b1] = 0
                 for b1 in range(len(cz.hotkeys)):
                     cz.hotkeys[b1] = 0
-                b4 = paramab.read_s8()
+                b4 = answer.read_s8()
                 b1 = 0
                 b2 = 0
                 while b1 < b4:
-                    b8 = paramab.read_s8()
+                    b8 = answer.read_s8()
                     b7 = 0
                     while b7 < 19 and Live.category_codes[b7] != b8:
                         b7 += 1
-                    cz.skill_levels[b7] = paramab.read_s8()
-                    b8 = paramab.read_s8()
+                    cz.skill_levels[b7] = answer.read_s8()
+                    b8 = answer.read_s8()
                     if b8 == 1:
                         cz.hotkeys[b2] = b7 + 12
                         b2 += 1
                     b1 += 1
                 for b1 in range(8):
-                    GameCanvas.stats[b1] = paramab.read_s32()
-                cz.name = GameCanvas.cut_at_space(GameCanvas.cut_at_control(paramab.read_string(8)))
-                cz.live_registered = paramab.read_s8()
+                    GameCanvas.stats[b1] = answer.read_s32()
+                cz.name = GameCanvas.cut_at_space(GameCanvas.cut_at_control(answer.read_string(8)))
+                cz.live_registered = answer.read_s8()
                 for b1 in range(45):
                     GameCanvas.generals[0][b1] = 0
                     GameCanvas.generals[1][b1] = 0
-                GameCanvas.general_count = i16(paramab.read_s8())
+                GameCanvas.general_count = i16(answer.read_s8())
                 for b1 in range(GameCanvas.general_count):
-                    GameCanvas.generals[0][b1] = i16(paramab.read_s8())
-                    GameCanvas.generals[1][b1] = i16(paramab.read_s8())
-                i = paramab.read_s32()
-                GameCanvas.missions_done = paramab.read_s32()
+                    GameCanvas.generals[0][b1] = i16(answer.read_s8())
+                    GameCanvas.generals[1][b1] = i16(answer.read_s8())
+                i = answer.read_s32()
+                GameCanvas.missions_done = answer.read_s32()
                 GameCanvas.missions_done <<= 32
                 GameCanvas.missions_done |= i                  # sic: a negative low word fills the high one (Java long |)
-                GameCanvas.chapter = paramab.read_s8()
+                GameCanvas.chapter = answer.read_s8()
                 for b1 in range(22):
-                    cz.mission_progress[b1] = i16(paramab.read_s8())
-                cz.live_stat1 = i16(paramab.read_s8())
-                cz.live_stat2 = i16(paramab.read_s8())
-                GameCanvas.score = paramab.read_s32()
+                    cz.mission_progress[b1] = i16(answer.read_s8())
+                cz.live_stat1 = i16(answer.read_s8())
+                cz.live_stat2 = i16(answer.read_s8())
+                GameCanvas.score = answer.read_s32()
                 self.save_game()
                 GameCanvas.popups.show(19)
             elif s1 == 257:
                 GameCanvas.popups.show(18)
             elif s1 == 769:
-                Live.safe_gold = paramab.read_s32()
+                Live.safe_gold = answer.read_s32()
                 for b1 in range(config.WAREHOUSE_SIZE):
                     if Live.warehouse[b1] is None:
                         Live.warehouse[b1] = Item()
                     Item.clear(Live.warehouse[b1])
-                Live.flags[6] = i16(paramab.read_s8() & 0xFF)
+                Live.flags[6] = i16(answer.read_s8() & 0xFF)
                 for b1 in range(len(Live.warehouse)):
                     Item.clear(Live.warehouse[b1])
                 for b1 in range(Live.flags[6]):
-                    Live.warehouse[b1].id = paramab.read_s16()
-                    Live.warehouse_serials[b1] = paramab.read_s16()
-                    Live.warehouse[b1].enchant = paramab.read_s8()
-                    Live.warehouse[b1].attack = paramab.read_s16()
-                    Live.warehouse[b1].defense = paramab.read_s16()
-                    Live.warehouse[b1].hp = paramab.read_s16()
-                    Live.warehouse[b1].mp = paramab.read_s16()
+                    Live.warehouse[b1].id = answer.read_s16()
+                    Live.warehouse_serials[b1] = answer.read_s16()
+                    Live.warehouse[b1].enchant = answer.read_s8()
+                    Live.warehouse[b1].attack = answer.read_s16()
+                    Live.warehouse[b1].defense = answer.read_s16()
+                    Live.warehouse[b1].hp = answer.read_s16()
+                    Live.warehouse[b1].mp = answer.read_s16()
                 self.open_live_menu()
             elif s1 == 833:
-                cz.gold = paramab.read_s32()
-                Live.safe_gold = paramab.read_s32()
+                cz.gold = answer.read_s32()
+                Live.safe_gold = answer.read_s32()
             elif s1 == 817:
                 if Live.flags[7] == 0:
                     Live.list_rows = config.WAREHOUSE_SIZE
@@ -599,7 +599,7 @@ class Live(GameCanvas):
                         b1 += 1
                     Live._copy_item(Live.warehouse[b1], cz.backpack[fK[18]])
                     Item.clear(cz.backpack[fK[18]])
-                    Live.warehouse_serials[b1] = paramab.read_s16()
+                    Live.warehouse_serials[b1] = answer.read_s16()
                     Live.backpack_serials[fK[18]] = 0
                 else:
                     Live.list_rows = config.BACKPACK_SIZE
@@ -610,7 +610,7 @@ class Live(GameCanvas):
                         b1 += 1
                     Live._copy_item(cz.backpack[b1], Live.warehouse[fK[18]])
                     Item.clear(Live.warehouse[fK[18]])
-                    Live.backpack_serials[b1] = paramab.read_s16()
+                    Live.backpack_serials[b1] = answer.read_s16()
                     Live.warehouse_serials[fK[18]] = 0
                 self.save_and_sync(0)
                 Live.request_redraw()
@@ -618,7 +618,7 @@ class Live(GameCanvas):
                 b1 = 0
                 b3 = 15
                 while b1 < 10:
-                    Live.counts[b3] = paramab.read_s8()
+                    Live.counts[b3] = answer.read_s8()
                     b1 += 1
                     b3 -= 1
                 self.open_cancel_sell()
@@ -628,16 +628,16 @@ class Live(GameCanvas):
                         Live.lots[b1] = Item()
                     Item.clear(Live.lots[b1])
                     Live.gift_from[b1] = ""
-                b5 = paramab.read_s8()
+                b5 = answer.read_s8()
                 for b1 in range(b5):
-                    Live.gift_from[b1] = GameCanvas.cut_at_control(paramab.read_string(8))
-                    Live.lots[b1].id = paramab.read_s16()
-                    Live.lots[b1].enchant = paramab.read_s8()
-                    Live.lots[b1].attack = paramab.read_s16()
-                    Live.lots[b1].defense = paramab.read_s16()
-                    Live.lots[b1].hp = paramab.read_s16()
-                    Live.lots[b1].mp = paramab.read_s16()
-                Live.flags[13] = paramab.read_s8()
+                    Live.gift_from[b1] = GameCanvas.cut_at_control(answer.read_string(8))
+                    Live.lots[b1].id = answer.read_s16()
+                    Live.lots[b1].enchant = answer.read_s8()
+                    Live.lots[b1].attack = answer.read_s16()
+                    Live.lots[b1].defense = answer.read_s16()
+                    Live.lots[b1].hp = answer.read_s16()
+                    Live.lots[b1].mp = answer.read_s16()
+                Live.flags[13] = answer.read_s8()
                 Live.list_kind = 1
                 self.open_trade_list()
             elif s1 == 787:
@@ -647,16 +647,16 @@ class Live(GameCanvas):
                     Item.clear(Live.lots[b1])
                     Live.lot_ids[b1] = 0
                     Live.prices[b1] = 0
-                b4 = paramab.read_s8()
+                b4 = answer.read_s8()
                 for b1 in range(b4):
-                    Live.lot_ids[b1] = paramab.read_s32()
-                    Live.lots[b1].id = paramab.read_s16()
-                    Live.prices[b1] = paramab.read_s32()
-                    Live.lots[b1].enchant = paramab.read_s8()
-                    Live.lots[b1].attack = paramab.read_s16()
-                    Live.lots[b1].defense = paramab.read_s16()
-                    Live.lots[b1].hp = paramab.read_s16()
-                    Live.lots[b1].mp = paramab.read_s16()
+                    Live.lot_ids[b1] = answer.read_s32()
+                    Live.lots[b1].id = answer.read_s16()
+                    Live.prices[b1] = answer.read_s32()
+                    Live.lots[b1].enchant = answer.read_s8()
+                    Live.lots[b1].attack = answer.read_s16()
+                    Live.lots[b1].defense = answer.read_s16()
+                    Live.lots[b1].hp = answer.read_s16()
+                    Live.lots[b1].mp = answer.read_s16()
                 Live.page = i8(Live.page + Live.page_step)
                 self.open_sale_list()
             elif s1 == 789:
@@ -667,7 +667,7 @@ class Live(GameCanvas):
                         b1 += 1
                     Live._copy_item(Live.warehouse[b1], Live.lots[fK[18]])
                     Live.clear_selected_lot()
-                    Live.warehouse_serials[b1] = paramab.read_s16()
+                    Live.warehouse_serials[b1] = answer.read_s16()
                 else:
                     Live.list_rows = config.BACKPACK_SIZE
                     fK[16] = fK[16] + 1
@@ -676,9 +676,9 @@ class Live(GameCanvas):
                         b1 += 1
                     Live._copy_item(cz.backpack[b1], Live.lots[fK[18]])
                     Live.clear_selected_lot()
-                    Live.backpack_serials[b1] = paramab.read_s16()
-                cz.gold = paramab.read_s32()
-                Live.safe_gold = paramab.read_s32()
+                    Live.backpack_serials[b1] = answer.read_s16()
+                cz.gold = answer.read_s32()
+                Live.safe_gold = answer.read_s32()
                 self.save_and_sync(0)
                 GameCanvas.popups.show(35)
             elif s1 == 801:
@@ -700,19 +700,19 @@ class Live(GameCanvas):
                     Item.clear(Live.lots[b1])
                     Live.lot_ids[b1] = 0
                     Live.prices[b1] = 0
-                b4 = paramab.read_s8()
+                b4 = answer.read_s8()
                 if b4 > 20:
                     b4 = 20
                 for b1 in range(b4):
                     if s1 == 865:
-                        Live.lot_ids[b1] = paramab.read_s32()
-                    Live.lots[b1].id = paramab.read_s16()
-                    Live.prices[b1] = paramab.read_s32()
-                    Live.lots[b1].enchant = paramab.read_s8()
-                    Live.lots[b1].attack = paramab.read_s16()
-                    Live.lots[b1].defense = paramab.read_s16()
-                    Live.lots[b1].hp = paramab.read_s16()
-                    Live.lots[b1].mp = paramab.read_s16()
+                        Live.lot_ids[b1] = answer.read_s32()
+                    Live.lots[b1].id = answer.read_s16()
+                    Live.prices[b1] = answer.read_s32()
+                    Live.lots[b1].enchant = answer.read_s8()
+                    Live.lots[b1].attack = answer.read_s16()
+                    Live.lots[b1].defense = answer.read_s16()
+                    Live.lots[b1].hp = answer.read_s16()
+                    Live.lots[b1].mp = answer.read_s16()
                 if s1 == 803:
                     self.set_cancel_sell_grid()
                     Live.live_screen = 8
@@ -732,7 +732,7 @@ class Live(GameCanvas):
                     Live._copy_item(cz.backpack[b1], Live.lots[Live.selected_slot])
                     Item.clear(Live.lots[Live.selected_slot])
                     Live.clear_selected_lot()
-                    Live.backpack_serials[b1] = paramab.read_s16()
+                    Live.backpack_serials[b1] = answer.read_s16()
                 else:
                     Live.list_rows = config.WAREHOUSE_SIZE
                     fK[16] = fK[16] - 1
@@ -743,69 +743,69 @@ class Live(GameCanvas):
                     Live._copy_item(Live.warehouse[b1], Live.lots[Live.selected_slot])
                     Item.clear(Live.lots[Live.selected_slot])
                     Live.clear_selected_lot()
-                    Live.warehouse_serials[b1] = paramab.read_s16()
+                    Live.warehouse_serials[b1] = answer.read_s16()
                 self.save_and_sync(0)
                 GameCanvas.popups.show(40)
             elif s1 == 259:
-                Live.values[15] = paramab.read_s32()
-                Live.values[14] = paramab.read_s32()
+                Live.values[15] = answer.read_s32()
+                Live.values[14] = answer.read_s32()
                 Live.values[13] = GameCanvas.add_exp(Live.values[14])
                 cz.fame += Live.values[15]
                 GameCanvas.live_gifts = 1
                 self.save_game()
                 self.sync_exp_fame()
         else:
-            self.on_error_answer(Live.answer_op, Live.answer_status if F20 else 0, paramab)
+            self.on_error_answer(Live.answer_op, Live.answer_status if F20 else 0, answer)
         Live.in_answer = False
         LiveNet.waiting = True
         Live.answered = True
 
-    def on_error_answer(self, paramInt1, paramInt2, paramab):  # as.java:992-1056  (error answers)
-        if paramInt1 == 531:
-            if paramab is None:
-                Live.show_error(paramInt2)
+    def on_error_answer(self, opcode, code, answer):  # as.java:992-1056  (error answers)
+        if opcode == 531:
+            if answer is None:
+                Live.show_error(code)
                 Live.close_target = 3
                 return
-            paramab.read_s8()
-            paramab.read_s8()
-            b = paramab.read_s8()
+            answer.read_s8()
+            answer.read_s8()
+            b = answer.read_s8()
             if b == 1:
                 GameCanvas.popups.show(43)
                 return
-            if b == 3 and paramInt2 != -49:
+            if b == 3 and code != -49:
                 GameCanvas.popups.show(47)
                 return
-            Live.show_error(paramInt2)
+            Live.show_error(code)
             Live.close_target = 3
             return
-        if paramInt1 == 513:
-            Live.show_error(paramInt2)
+        if opcode == 513:
+            Live.show_error(code)
             Live.close_target = 3
             return
-        if paramInt1 == 517:
+        if opcode == 517:
             self.sync_sale_list()
             return
-        if paramInt1 == 519:
+        if opcode == 519:
             self.sync_gift_list()
             return
-        if paramInt1 == 521:
+        if opcode == 521:
             self.sync_gifts()
             return
-        if paramInt1 in (259, 261):
+        if opcode in (259, 261):
             self.sync_done()
             return
-        if paramInt1 == 769:
-            Live.show_error(paramInt2)
+        if opcode == 769:
+            Live.show_error(code)
             Live.close_target = 3
             return
-        if paramInt1 == 789:
-            Live.show_error(paramInt2)
+        if opcode == 789:
+            Live.show_error(code)
             return
-        if paramInt1 == 867 and paramInt2 == -12:
+        if opcode == 867 and code == -12:
             Live.clear_selected_lot()
-        if paramInt1 in (867, 801, 817, 833, 849):
+        if opcode in (867, 801, 817, 833, 849):
             self.save_and_sync(0)
-        Live.show_error(paramInt2)
+        Live.show_error(code)
 
     @staticmethod
     def clear_selected_lot():  # as.java:1058-1062
@@ -813,8 +813,8 @@ class Live(GameCanvas):
         Live.prices[Live.selected_slot] = 0
         Live.lot_ids[Live.selected_slot] = 0
 
-    def save_and_sync(self, paramInt):  # as.java:1064-1067  (save the game)
-        GameCanvas.live_saved = i16(paramInt)
+    def save_and_sync(self, saved):  # as.java:1064-1067  (save the game)
+        GameCanvas.live_saved = i16(saved)
         self.save_game()
 
     @staticmethod
@@ -822,28 +822,28 @@ class Live(GameCanvas):
         return 32 * Live.list_rows - 12
 
     @staticmethod
-    def set_list_items(paramString, paramInt1, paramInt2):  # as.java:1073-1092  ("a|b|c|" -> list menu)
+    def set_list_items(items, y, h):  # as.java:1073-1092  ("a|b|c|" -> list menu)
         i = 0
         j = 0
-        for b in range(len(paramString)):
-            if paramString[b] == '|':
-                Live.list_items[i] = paramString[j:b]
+        for b in range(len(items)):
+            if items[b] == '|':
+                Live.list_items[i] = items[j:b]
                 j = b + 1
                 i += 1
         if i == 0:
             return
         Live.list_count = i16(i)
-        i = idiv(paramInt2 + 12, 32)
+        i = idiv(h + 12, 32)
         Live.list_rows = i16(i)
         if Live.list_rows > Live.list_count:
             Live.list_rows = Live.list_count
-        Live.list_y = i16(paramInt1 + (paramInt2 - 32 * Live.list_rows - 12 >> 1))
+        Live.list_y = i16(y + (h - 32 * Live.list_rows - 12 >> 1))
         Live.list_top = Live.list_cursor = 0
 
-    def list_keys(self, paramInt):  # as.java:1094-1109  (list keys: -2 moved, index chosen, -1)
+    def list_keys(self, key):  # as.java:1094-1109  (list keys: -2 moved, index chosen, -1)
         i = -1
-        if paramInt in (-1, -2, 50, 56):
-            if paramInt in (-1, 50):
+        if key in (-1, -2, 50, 56):
+            if key in (-1, 50):
                 Live.list_cursor -= 1
                 if Live.list_cursor < 0:
                     Live.list_cursor = i16(Live.list_count - 1)
@@ -853,7 +853,7 @@ class Live(GameCanvas):
                     Live.list_cursor = 0
             Live.clamp_list_scroll()
             i = -2
-        elif paramInt in (-5, 53):
+        elif key in (-5, 53):
             i = Live.list_cursor
         return i
 
@@ -928,27 +928,27 @@ class Live(GameCanvas):
         Live.screen_redraw = True
 
     @staticmethod
-    def draw_item_cell(paramInt1, paramInt2, paramInt3, paramBoolean):  # as.java:1190-1194  (item cell)
-        GameCanvas.menus.draw_grid_cell(paramInt2, paramInt3, paramBoolean)
-        if paramInt1 > 0:
-            GameCanvas.menus.draw_item_count_icon(paramInt1, paramInt2, paramInt3, 0)
+    def draw_item_cell(item_id, x, y, selected):  # as.java:1190-1194  (item cell)
+        GameCanvas.menus.draw_grid_cell(x, y, selected)
+        if item_id > 0:
+            GameCanvas.menus.draw_item_count_icon(item_id, x, y, 0)
 
     @staticmethod
-    def draw_text_centred_in(paramString, paramInt1, paramInt2, paramInt3):  # as.java:1196-1198
-        Gfx.draw_string(paramString, paramInt1 + idiv(paramInt3, 2), paramInt2, 1)
+    def draw_text_centred_in(text, x, y, w):  # as.java:1196-1198
+        Gfx.draw_string(text, x + idiv(w, 2), y, 1)
 
     @staticmethod
     def draw_screen():  # as.java:1200-1202
         Live.screen.draw_live_screen()
 
-    def draw_caption_box(self, paramString, paramInt):  # as.java:1204-1209  (caption box)
+    def draw_caption_box(self, text, y):  # as.java:1204-1209  (caption box)
         Gfx.set_font(GameCanvas.font_white)
-        self.draw_centred_box(paramInt, 200, 22)
-        if paramString != "":
-            self.draw_text_at(paramString, paramInt + 1 - GameCanvas.view_y, 0)
+        self.draw_centred_box(y, 200, 22)
+        if text != "":
+            self.draw_text_at(text, y + 1 - GameCanvas.view_y, 0)
 
-    def key_down(self, paramInt):  # as.java:1211-1269  (keys)
-        i = paramInt
+    def key_down(self, key):  # as.java:1211-1269  (keys)
+        i = key
         if GameCanvas.popups.kind != 0:
             GameCanvas.popups.popup_keys()
             GameCanvas.key = -999
@@ -961,10 +961,10 @@ class Live(GameCanvas):
         if h is not None:
             h(i)
 
-    def registration_keys(self, paramInt):  # as.java:1271-1328  (registration: UserID, then password)
+    def registration_keys(self, key):  # as.java:1271-1328  (registration: UserID, then password)
         if Live.reg_step == 0:
             i = len(Live.password)
-            if paramInt == -7:
+            if key == -7:
                 if i > 0:
                     Live.password = Live.password[:i - 1]
                 else:
@@ -973,22 +973,22 @@ class Live(GameCanvas):
                 if i == 10:
                     Live.request_redraw()
                     return
-            elif paramInt == -6:
+            elif key == -6:
                 if i >= 4:
                     Live.blink = True
                     Live.reg_from_popup = True
                     self.ask_request(530)
                     return
             else:
-                j = GameCanvas.key_digit(paramInt)
+                j = GameCanvas.key_digit(key)
                 if j != -1 and i < 12:
                     Live.password += str(j)
                 return
         elif Live.reg_step == 1:
-            if len(GameCanvas.name_buf.get_text()) == 0 and paramInt == -7:
+            if len(GameCanvas.name_buf.get_text()) == 0 and key == -7:
                 self.leave_live()
                 return
-            i = GameCanvas.move_letter_cursor(paramInt)
+            i = GameCanvas.move_letter_cursor(key)
             if i == -7:
                 GameCanvas.name_buf.handle_key(-8)
                 return
@@ -1009,48 +1009,48 @@ class Live(GameCanvas):
                 Live.reg_step = 0
                 Live.request_redraw()
 
-    def sale_list_keys(self, paramInt):  # as.java:1330-1357  (Sale / Gift List)
-        if paramInt == -3:
+    def sale_list_keys(self, key):  # as.java:1330-1357  (Sale / Gift List)
+        if key == -3:
             Live.selected_slot = Live.selected_slot - 1 if Live.selected_slot > 0 else 4
             Live.request_redraw()
-        elif paramInt == -4:
+        elif key == -4:
             Live.selected_slot = Live.selected_slot + 1 if Live.selected_slot < 4 else 0
             Live.request_redraw()
-        elif paramInt in (-8, -5):
+        elif key in (-8, -5):
             if Live.list_kind == 0:
                 self.sync_gift_list()
             else:
                 self.sync_gifts()
 
-    def cancel_sell_keys(self, paramInt):  # as.java:1359-1394  (Cancel Sell: my 5 lots)
+    def cancel_sell_keys(self, key):  # as.java:1359-1394  (Cancel Sell: my 5 lots)
         from pow.game.menus import Menus
-        if paramInt == -7:
+        if key == -7:
             self.open_trade()
-        elif paramInt in (-5, 53):
+        elif key in (-5, 53):
             if Live.lots[Live.selected_slot].id > 0:
                 Live.shown_item = Live.lots[Live.selected_slot].id
                 Live.flags[7] = 0 if GameCanvas.cursor[16] < config.BACKPACK_SIZE else 1
                 GameCanvas.popups.arg1 = Menus.item_name(Live.lots[Live.selected_slot].id)
                 GameCanvas.popups.show(39)
                 Live.close_target = 14
-        elif paramInt in (-3, 52):
+        elif key in (-3, 52):
             Live.selected_slot = Live.selected_slot - 1 if Live.selected_slot > 0 else 4
             Live.request_redraw()
-        elif paramInt in (-4, 54):
+        elif key in (-4, 54):
             Live.selected_slot = Live.selected_slot + 1 if Live.selected_slot < 4 else 0
             Live.request_redraw()
 
-    def price_info_keys(self, paramInt):  # as.java:1396-1403  (Price Info list)
-        if paramInt == -7:
+    def price_info_keys(self, key):  # as.java:1396-1403  (Price Info list)
+        if key == -7:
             self.open_price_info()
             return
-        self.draw_grid_cursor(paramInt, False)
+        self.draw_grid_cursor(key, False)
 
-    def sell_pick_keys(self, paramInt):  # as.java:1405-1440  (Sell: pick an item)
-        if paramInt == -7:
+    def sell_pick_keys(self, key):  # as.java:1405-1440  (Sell: pick an item)
+        if key == -7:
             self.open_trade()
             return
-        if paramInt in (-5, 53):
+        if key in (-5, 53):
             z1 = Live.selected_grid_item()
             if z1.id > 0:
                 if 434 <= z1.id <= 437:
@@ -1073,30 +1073,30 @@ class Live(GameCanvas):
                 Live.save_grid_cursor(True)
                 self.open_price_info()
             return
-        self.grid_keys(paramInt)
+        self.grid_keys(key)
 
-    def sell_price_keys(self, paramInt):  # as.java:1442-1489  (Sell: the price)
+    def sell_price_keys(self, key):  # as.java:1442-1489  (Sell: the price)
         bool_ = True
-        if 48 <= paramInt <= 57:
-            i = GameCanvas.key_digit(paramInt)
+        if 48 <= key <= 57:
+            i = GameCanvas.key_digit(key)
             if 0 <= i <= 9 and Live.values[13] < 9:
                 Live.values[14] = Live.values[14] * 10
                 Live.values[14] = Live.values[14] + i
                 if Live.values[14] > 0:
                     Live.values[13] = Live.values[13] + 1
-        elif paramInt == -7:
+        elif key == -7:
             if Live.values[13] > 0:
                 Live.values[14] = idiv(Live.values[14], 10)
                 Live.values[13] = Live.values[13] - 1
             else:
                 self.open_sell_grid()
-        elif paramInt == -5:
+        elif key == -5:
             if Live.values[14] > 0:
                 self.ask_request(800)
                 Live.scroll = 0
             else:
                 bool_ = False
-        elif paramInt == -6:
+        elif key == -6:
             self.ask_request(802)
             Live.scroll = 0
         else:
@@ -1104,11 +1104,11 @@ class Live(GameCanvas):
         if bool_:
             Live.request_redraw()
 
-    def buy_kind_keys(self, paramInt):  # as.java:1491-1518  (Buy: kind)
-        if paramInt == -7:
+    def buy_kind_keys(self, key):  # as.java:1491-1518  (Buy: kind)
+        if key == -7:
             self.open_buy_category()
             return
-        if paramInt in (-5, 53):
+        if key in (-5, 53):
             if Live.kind_items[Live.category][GameCanvas.cursor[18]] != 0:
                 Live.save_grid_cursor(False)
                 Live.shown_item = Live.kind_items[Live.category][GameCanvas.cursor[18]]
@@ -1124,20 +1124,20 @@ class Live(GameCanvas):
                 Live.scroll = 0
                 Live.request_redraw()
             return
-        self.draw_grid_cursor(paramInt, False)
+        self.draw_grid_cursor(key, False)
 
-    def buy_enchant_keys(self, paramInt):  # as.java:1520-1556  (Buy: enchant level)
+    def buy_enchant_keys(self, key):  # as.java:1520-1556  (Buy: enchant level)
         bool_ = True
-        if paramInt == -7:
+        if key == -7:
             self.open_sell_price()                      # falls through into case -3
             Live.enchant = i16(Live.enchant - 1 if Live.enchant > 0 else 9)
-        elif paramInt in (-3, 52):
+        elif key in (-3, 52):
             Live.enchant = i16(Live.enchant - 1 if Live.enchant > 0 else 9)
-        elif paramInt in (-4, 54):
+        elif key in (-4, 54):
             Live.enchant = i16(Live.enchant + 1 if Live.enchant < 9 else 0)
-        elif paramInt in (-2, -1, 50, 56):
+        elif key in (-2, -1, 50, 56):
             Live.enchant = i16(Live.enchant + (-5 if Live.enchant > 4 else 5))
-        elif paramInt in (-5, 53):
+        elif key in (-5, 53):
             if Live.counts[15 - Live.enchant] > 0:
                 Live.page = 0
                 Live.page_step = 1
@@ -1150,14 +1150,14 @@ class Live(GameCanvas):
         if bool_:
             Live.request_redraw()
 
-    def buy_lots_keys(self, paramInt):  # as.java:1558-1608  (Buy: the lots)
-        if paramInt == -7:
+    def buy_lots_keys(self, key):  # as.java:1558-1608  (Buy: the lots)
+        if key == -7:
             if Live.category == 2:
                 self.open_sell_price()
                 return
             Live.scroll = 0
             self.ask_request(784)
-        elif paramInt in (-5, 53):
+        elif key in (-5, 53):
             GameCanvas.cursor[19] = Live.lots[GameCanvas.cursor[18]].id
             if Live.lots[GameCanvas.cursor[18]].id != 0:
                 if Live.prices[GameCanvas.cursor[18]] > GameCanvas.hero.gold:
@@ -1172,7 +1172,7 @@ class Live(GameCanvas):
                 Live.close_target = 10
             return
         else:
-            i = self.draw_grid_cursor(paramInt, False)
+            i = self.draw_grid_cursor(key, False)
             if i != 0:
                 if i < 0:
                     if Live.page > 1:
@@ -1189,11 +1189,11 @@ class Live(GameCanvas):
                 return
         Live.request_redraw()
 
-    def buy_category_keys(self, paramInt):  # as.java:1610-1626  (Buy: category)
-        if paramInt == -7:
+    def buy_category_keys(self, key):  # as.java:1610-1626  (Buy: category)
+        if key == -7:
             self.open_trade()
             return
-        i = self.list_keys(paramInt)
+        i = self.list_keys(key)
         if 0 <= i <= 2:
             Live.saved_2 = i16(Live.list_cursor)
             Live.saved_3 = i16(Live.list_top)
@@ -1224,10 +1224,10 @@ class Live(GameCanvas):
     def set_cancel_sell_grid(self):  # as.java:1648-1650
         self.set_grid(4, 2, True)
 
-    def restore_grid_cursor(self, paramBoolean):  # as.java:1652-1666  (restore the grid cursor)
+    def restore_grid_cursor(self, items_grid):  # as.java:1652-1666  (restore the grid cursor)
         Live.flags[7] = Live.saved_11
         Live.category = Live.saved_6
-        if paramBoolean:
+        if items_grid:
             self.set_grid(config.BACKPACK_SIZE // 5 if Live.flags[7] == 0 else config.WAREHOUSE_SIZE // 5, 3, False)
         else:
             self.set_grid(4 if Live.category == 2 else 3, 3, False)
@@ -1251,8 +1251,8 @@ class Live(GameCanvas):
         Live.title = Live.titles[5]
         Live.request_redraw()
 
-    def open_buy_lots(self, paramBoolean):  # as.java:1683-1695
-        if paramBoolean:
+    def open_buy_lots(self, request):  # as.java:1683-1695
+        if request:
             Live.scroll = 0
             Live.page = 0
             self.ask_request(864)
@@ -1313,11 +1313,11 @@ class Live(GameCanvas):
         self.ask_request(768)
         Live.request_redraw()
 
-    def trade_keys(self, paramInt):  # as.java:1758-1785  (Trade: Buy / Sell / Cancel)
-        if paramInt == -7:
+    def trade_keys(self, key):  # as.java:1758-1785  (Trade: Buy / Sell / Cancel)
+        if key == -7:
             self.open_live_menu()
             return
-        i = self.list_keys(paramInt)
+        i = self.list_keys(key)
         if i >= 0:
             Live.saved_2 = i16(Live.list_cursor)
             Live.saved_3 = i16(Live.list_top)
@@ -1334,18 +1334,18 @@ class Live(GameCanvas):
         if i == -2:
             Live.request_redraw()
 
-    def warehouse_keys(self, paramInt):  # as.java:1787-1804  (Warehouse grid: move an item)
-        if paramInt == -7:
+    def warehouse_keys(self, key):  # as.java:1787-1804  (Warehouse grid: move an item)
+        if key == -7:
             self.open_live_menu()
             return
-        if paramInt in (-5, 53):
+        if key in (-5, 53):
             z1 = Live.selected_grid_item()
             if z1.id > 0:
                 self.ask_request(816)
                 Live.scroll = 0
                 Live.request_redraw()
             return
-        self.grid_keys(paramInt)
+        self.grid_keys(key)
 
     def open_buy_category(self):  # as.java:1806-1812
         self.set_category_list()
@@ -1364,8 +1364,8 @@ class Live(GameCanvas):
         Live.values[15] = i
         Live.list_y = i + 22 + 10
 
-    def grid_keys(self, paramInt):  # as.java:1826-1841  (grid keys, -6 switches Backpack / Warehouse)
-        if paramInt == -6:
+    def grid_keys(self, key):  # as.java:1826-1841  (grid keys, -6 switches Backpack / Warehouse)
+        if key == -6:
             if Live.flags[7] == 1:
                 self.set_backpack_grid()
                 Live.request_redraw()
@@ -1375,21 +1375,21 @@ class Live(GameCanvas):
                 Live.request_redraw()
                 return
         else:
-            self.draw_grid_cursor(paramInt, True)
+            self.draw_grid_cursor(key, True)
 
-    def draw_grid_cursor(self, paramInt, paramBoolean):  # as.java:1843-1877  (grid cursor)
+    def draw_grid_cursor(self, key, wrap):  # as.java:1843-1877  (grid cursor)
         fK = GameCanvas.cursor
         i = 1
-        if paramInt in (-1, 50):
+        if key in (-1, 50):
             fK[10] = fK[10] - 1
-        elif paramInt in (-2, 56):
+        elif key in (-2, 56):
             fK[10] = fK[10] + 1
-        elif paramInt in (-3, 52):
+        elif key in (-3, 52):
             fK[9] = fK[9] - 1
             if fK[9] - 1 < 0:
                 fK[9] = 4
                 fK[10] = fK[10] - 1
-        elif paramInt in (-4, 54):
+        elif key in (-4, 54):
             fK[9] = fK[9] + 1
             if fK[9] + 1 >= 5:
                 fK[9] = 0
@@ -1397,25 +1397,25 @@ class Live(GameCanvas):
         else:
             i = 0
         if i:
-            i = Live.clamp_grid_cursor(paramBoolean)
+            i = Live.clamp_grid_cursor(wrap)
             if i == 0:
                 Live.request_redraw()
         return i
 
-    def safe_keys(self, paramInt):  # as.java:1879-1968  (Safe)
+    def safe_keys(self, key):  # as.java:1879-1968  (Safe)
         bool_ = True
         if Live.flags[14] == 0:
-            if paramInt in (-4, -3):
+            if key in (-4, -3):
                 Live.flags[15] = i16(Live.flags[15] ^ 0x1)
-            elif paramInt in (-1, 50):
+            elif key in (-1, 50):
                 Live.flags[15] = 0
-            elif paramInt in (-2, 56):
+            elif key in (-2, 56):
                 Live.flags[15] = 1
-            elif paramInt == -7:
+            elif key == -7:
                 self.open_live_menu()
                 GameCanvas.images[22] = None
                 GameCanvas.images[24] = None
-            elif paramInt in (-5, 53):
+            elif key in (-5, 53):
                 if Live.flags[15] == 0:
                     Live.values[15] = Live.safe_gold
                     if Live.safe_gold == 0:
@@ -1432,21 +1432,21 @@ class Live(GameCanvas):
             else:
                 bool_ = False
         else:
-            if 48 <= paramInt <= 57:
-                i = GameCanvas.key_digit(paramInt)
+            if 48 <= key <= 57:
+                i = GameCanvas.key_digit(key)
                 if i != -1:
                     Live.values[14] = Live.values[14] * 10
                     Live.values[14] = Live.values[14] + i
                     if Live.values[14] > Live.values[15]:
                         Live.values[14] = Live.values[15]
-            elif paramInt == -7:
+            elif key == -7:
                 if Live.values[14] > 0:
                     Live.values[14] = idiv(Live.values[14], 10)
                 else:
                     Live.flags[14] = 0
                     Live.live_screen = 2
                     Live.request_redraw()
-            elif paramInt == -5:
+            elif key == -5:
                 if Live.values[14] > 0:
                     self.ask_request(832)
                     Live.flags[14] = 0
@@ -1469,9 +1469,9 @@ class Live(GameCanvas):
         GameCanvas.in_live = False
 
     @staticmethod
-    def save_grid_cursor(paramBoolean):  # as.java:1980-1999  (remember / reset the grid cursor)
+    def save_grid_cursor(reset):  # as.java:1980-1999  (remember / reset the grid cursor)
         Live.saved_6 = Live.category
-        if paramBoolean:
+        if reset:
             Live.saved_7 = Live.saved_8 = Live.saved_9 = Live.saved_10 = Live.saved_11 = Live.saved_12 = Live.saved_13 = 0
             return
         Live.saved_11 = Live.flags[7]
@@ -1497,14 +1497,14 @@ class Live(GameCanvas):
         Live.flags[7] = 1
         self.set_grid(config.WAREHOUSE_SIZE // 5, 3, True)
 
-    def set_grid(self, paramInt1, paramInt2, paramBoolean):  # as.java:2019-2043  (grid geometry)
+    def set_grid(self, rows, visible_rows, reset):  # as.java:2019-2043  (grid geometry)
         fK = GameCanvas.cursor
-        fK[3] = paramInt2
-        fK[6] = 32 * paramInt2 - 4 + 2
-        fK[4] = paramInt1
-        fK[7] = 32 * paramInt1 - 4 + 2
+        fK[3] = visible_rows
+        fK[6] = 32 * visible_rows - 4 + 2
+        fK[4] = rows
+        fK[7] = 32 * rows - 4 + 2
         c = 156                              # char c = '\u009c'
-        if paramInt2 < paramInt1:
+        if visible_rows < rows:
             c += 8
             fK[11] = 1
             fK[13] = fK[6] * (fK[6] - 2) * 10
@@ -1515,24 +1515,24 @@ class Live(GameCanvas):
         fK[12] = fK[5] + 156 + 4
         fK[26] = -1
         fK[27] = 0
-        if paramBoolean:
+        if reset:
             fK[8] = 0
             fK[10] = 0
             fK[9] = 0
             Live.clamp_grid_cursor(True)
 
     @staticmethod
-    def clamp_grid_cursor(paramBoolean):  # as.java:2045-2072  (clamp the grid cursor; -1 / 1 = left the grid)
+    def clamp_grid_cursor(wrap):  # as.java:2045-2072  (clamp the grid cursor; -1 / 1 = left the grid)
         fK = GameCanvas.cursor
         if fK[10] < 0:
-            if paramBoolean:
+            if wrap:
                 fK[10] = fK[4] - 1
             else:
                 fK[10] = Live.values[5]
                 fK[9] = Live.values[6]
                 return -1
         elif fK[10] >= fK[4]:
-            if paramBoolean:
+            if wrap:
                 fK[10] = 0
             else:
                 fK[10] = Live.values[5]
@@ -1565,13 +1565,13 @@ class Live(GameCanvas):
         Live.title = Live.titles[3]
         Live.request_redraw()
 
-    def live_menu_keys(self, paramInt):  # as.java:2095-2126  (GAMEVIL LIVE menu)
-        if paramInt == -7:
+    def live_menu_keys(self, key):  # as.java:2095-2126  (GAMEVIL LIVE menu)
+        if key == -7:
             self.leave_live()
             if GameCanvas.live_saved == 0:
                 return
         else:
-            i = self.list_keys(paramInt)
+            i = self.list_keys(key)
             if i >= 0:
                 Live.saved_0 = i16(Live.list_cursor)
                 Live.saved_1 = i16(Live.list_top)
@@ -1603,11 +1603,11 @@ class Live(GameCanvas):
         Live.title = Live.titles[11]
         Live.request_redraw()
 
-    def management_keys(self, paramInt):  # as.java:2145-2159  (Management keys)
-        if paramInt == -7:
+    def management_keys(self, key):  # as.java:2145-2159  (Management keys)
+        if key == -7:
             self.open_live_menu()
             return
-        i = self.list_keys(paramInt)
+        i = self.list_keys(key)
         if 0 <= i <= 1:
             Live.flags[14] = i16(i)
             GameCanvas.popups.show(16 if i == 0 else 17)
