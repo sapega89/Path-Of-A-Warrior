@@ -17,9 +17,9 @@ def _setup(monkeypatch):
 def test_arrow_starts_at_the_archer(monkeypatch):
     from pow.game.map_engine import MapEngine
     ag = _setup(monkeypatch)
-    MapEngine.Z_I(0)
+    MapEngine.shoot_arrow(0)
     a = ag.arrows[0]
     assert a.active == 1
     assert (a.pos[0].x, a.pos[0].y) == (149, 170)   # bow of an archer facing up: (-1, -30)
-    MapEngine.ad_I(0)                                  # flies 12 px a tick toward where it faces
+    MapEngine.move_arrow(0)                                  # flies 12 px a tick toward where it faces
     assert (a.pos[0].x, a.pos[0].y) == (149, 158)

@@ -19,22 +19,22 @@ class Sound(GameCanvas):
         Sound.min_gap[9] = 500
         Sound.players = PlayerPool(17, 1, True, True)
 
-    def a__I(self, paramInt):  # k.java:22-33
+    def play_sound(self, paramInt):  # k.java:22-33
         if Sound.players is None or not GameCanvas.sound_on:
             return
         l = system.currentTimeMillis() - Sound.last_time
         if Sound.last != -1 and Sound.min_gap[Sound.last] != 0 and l < Sound.min_gap[Sound.last]:
             return
         if paramInt > 2 and paramInt != 15 and paramInt != 16 and paramInt != 3 and paramInt != 4:
-            Sound.b_v()
+            Sound.stop_all()
         Sound.requested = paramInt
         Sound.last = paramInt
         Sound.last_time = system.currentTimeMillis()
 
-    def a_v(self):  # k.java:35-59  (called once per tick from ag.run)
+    def tick_sound(self):  # k.java:35-59  (called once per tick from ag.run)
         if Sound.players is None or not GameCanvas.sound_on:
             return
-        Sound.players.e_v()
+        Sound.players.tick()
         bool1 = False
         bool2 = True
         i = Sound.requested
@@ -44,28 +44,28 @@ class Sound(GameCanvas):
                 if Sound.music == i:
                     bool2 = False
                 else:
-                    Sound.b_v()
+                    Sound.stop_all()
                 Sound.music = i
                 bool1 = True
             else:
                 Sound.music = -1
                 bool1 = False
             if bool2:
-                self.a_IZ(i, bool1)
+                self.play_now(i, bool1)
 
-    def a_IZ(self, paramInt, paramBoolean):  # k.java:61-73
-        Sound.players.a_I(GameCanvas.volume)
+    def play_now(self, paramInt, paramBoolean):  # k.java:61-73
+        Sound.players.set_volume(GameCanvas.volume)
         if GameCanvas.volume == 0:
-            Sound.b_v()
+            Sound.stop_all()
             return
         if paramInt <= 2:
-            Sound.players.a_TI("/snd" + str(paramInt) + ".mid", paramInt)
+            Sound.players.load("/snd" + str(paramInt) + ".mid", paramInt)
         else:
-            Sound.players.a_TI("/snd" + str(paramInt) + ".wav", paramInt)
-        Sound.players.a_IZ(paramInt, paramBoolean)
+            Sound.players.load("/snd" + str(paramInt) + ".wav", paramInt)
+        Sound.players.play(paramInt, paramBoolean)
 
     @staticmethod
-    def b_v():  # k.java:75-79
+    def stop_all():  # k.java:75-79
         Sound.requested = -1
         Sound.music = -1
-        Sound.players.b_v()
+        Sound.players.stop()

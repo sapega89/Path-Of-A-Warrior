@@ -9,26 +9,26 @@ class NameBuffer:
         self.last_char = ' '
         self.cursor = len(paramString)
 
-    def b_I(self, paramInt):  # at.java:20-23
-        if self.cursor + paramInt >= 0 and self.cursor + paramInt <= self.max_len - 1 and self.b_v() == self.cursor + paramInt:
+    def move_cursor(self, paramInt):  # at.java:20-23
+        if self.cursor + paramInt >= 0 and self.cursor + paramInt <= self.max_len - 1 and self.length() == self.cursor + paramInt:
             self.cursor += paramInt
 
-    def a_v(self):  # at.java:25-28
+    def get_text(self):  # at.java:25-28
         return "".join(self.chars)
 
-    def a_T(self, paramString):  # at.java:30-32
+    def set_text(self, paramString):  # at.java:30-32
         self.chars = list(paramString)
 
-    def b_v(self):  # at.java:34-42
+    def length(self):  # at.java:34-42
         return 0 if len(self.chars) == 0 else len(self.chars)
 
-    def a_I(self, paramInt):  # at.java:44-70
+    def handle_key(self, paramInt):  # at.java:44-70
         i = len(self.chars) - 1
         if paramInt == -7 or paramInt == -8:
             if i >= 0:
                 del self.chars[i:]          # setLength(i)
                 self.changed = 0
-                self.b_I(-1)
+                self.move_cursor(-1)
             else:
                 return 1
         elif 97 <= paramInt <= 122 or 65 <= paramInt <= 90:
@@ -42,6 +42,6 @@ class NameBuffer:
                 self.changed = 1
             elif len(self.chars) < self.max_len:
                 if len(self.chars) != 0:
-                    self.b_I(1)
+                    self.move_cursor(1)
                 self.chars.append(c)
         return 0

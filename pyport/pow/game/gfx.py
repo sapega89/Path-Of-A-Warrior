@@ -20,7 +20,7 @@ class Gfx:
     crc_table = None   # static int[] a;      (CRC table)    x.java:25
 
     @staticmethod
-    def a_G(paramGraphics):  # x.java:27-33
+    def set_graphics(paramGraphics):  # x.java:27-33
         Gfx.g = paramGraphics
         Gfx.clip_x = Gfx.g.getClipX()
         Gfx.clip_y = Gfx.g.getClipY()
@@ -28,7 +28,7 @@ class Gfx:
         Gfx.clip_h = Gfx.g.getClipHeight()
 
     @staticmethod
-    def a_IIII(paramInt1, paramInt2, paramInt3, paramInt4):  # x.java:35-45
+    def push_clip(paramInt1, paramInt2, paramInt3, paramInt4):  # x.java:35-45
         Gfx.saved_clip_x = Gfx.clip_x
         Gfx.saved_clip_y = Gfx.clip_y
         Gfx.saved_clip_w = Gfx.clip_w
@@ -40,7 +40,7 @@ class Gfx:
         Gfx.g.clipRect(paramInt1, paramInt2, paramInt3, paramInt4)
 
     @staticmethod
-    def a_v():  # x.java:47-53
+    def pop_clip():  # x.java:47-53
         Gfx.clip_x = Gfx.saved_clip_x
         Gfx.clip_y = Gfx.saved_clip_y
         Gfx.clip_w = Gfx.saved_clip_w
@@ -48,58 +48,58 @@ class Gfx:
         Gfx.g.setClip(Gfx.saved_clip_x, Gfx.saved_clip_y, Gfx.saved_clip_w, Gfx.saved_clip_h)
 
     @staticmethod
-    def a_MII(paramImage, paramInt1, paramInt2):  # x.java:55-57
+    def draw_image(paramImage, paramInt1, paramInt2):  # x.java:55-57
         Gfx.g.drawImage(paramImage, paramInt1, paramInt2, 20)
 
     @staticmethod
-    def a_MIII(paramImage, paramInt1, paramInt2, paramInt3):  # x.java:59-61
+    def draw_image_anchored(paramImage, paramInt1, paramInt2, paramInt3):  # x.java:59-61
         Gfx.g.drawImage(paramImage, paramInt1, paramInt2, paramInt3)
 
     @staticmethod
-    def a_MIIIIII(paramImage, paramInt1, paramInt2, paramInt3, paramInt4, paramInt5, paramInt6):  # x.java:63-67
+    def draw_image_part(paramImage, paramInt1, paramInt2, paramInt3, paramInt4, paramInt5, paramInt6):  # x.java:63-67
         Gfx.g.clipRect(paramInt1, paramInt2, paramInt3, paramInt4)
         Gfx.g.drawImage(paramImage, paramInt1 - paramInt5, paramInt2 - paramInt6, 20)
         Gfx.g.setClip(Gfx.clip_x, Gfx.clip_y, Gfx.clip_w, Gfx.clip_h)
 
     @staticmethod
-    def a_IIIII(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5):  # x.java:69-72
+    def draw_rect(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5):  # x.java:69-72
         Gfx.g.setColor(paramInt5)
         Gfx.g.drawRect(paramInt1, paramInt2, paramInt3 - 1, paramInt4 - 1)
 
     @staticmethod
-    def b_IIIII(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5):  # x.java:74-77
+    def fill_rect(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5):  # x.java:74-77
         Gfx.g.setColor(paramInt5)
         Gfx.g.fillRect(paramInt1, paramInt2, paramInt3, paramInt4)
 
     @staticmethod
-    def c_IIIII(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5):  # x.java:79-82
+    def draw_line(paramInt1, paramInt2, paramInt3, paramInt4, paramInt5):  # x.java:79-82
         Gfx.g.setColor(paramInt5)
         Gfx.g.drawLine(paramInt1, paramInt2, paramInt3, paramInt4)
 
     @staticmethod
-    def a_Lg(paramg):  # x.java:84-86
+    def set_font(paramg):  # x.java:84-86
         Gfx.font = paramg
 
     @staticmethod
-    def a_ACIIIII(paramArrayOfchar, paramInt1, paramInt2, paramInt3, paramInt4, paramInt5):  # x.java:88-102
+    def draw_chars(paramArrayOfchar, paramInt1, paramInt2, paramInt3, paramInt4, paramInt5):  # x.java:88-102
         if (paramInt5 & 0x1) != 0:
-            paramInt3 -= Gfx.font.a_ACII(paramArrayOfchar, paramInt1, paramInt2) // 2  # width >= 0: // == Java /
+            paramInt3 -= Gfx.font.chars_width(paramArrayOfchar, paramInt1, paramInt2) // 2  # width >= 0: // == Java /
         elif (paramInt5 & 0x8) != 0:
-            paramInt3 -= Gfx.font.a_ACII(paramArrayOfchar, paramInt1, paramInt2)
+            paramInt3 -= Gfx.font.chars_width(paramArrayOfchar, paramInt1, paramInt2)
         i = paramInt1 + paramInt2
         j = paramInt3
         for k in range(paramInt1, i):
             c = paramArrayOfchar[k]
-            m = Gfx.font.a_C(c)
-            Gfx.font.a_CII(c, j, paramInt4)
+            m = Gfx.font.char_width(c)
+            Gfx.font.draw_char(c, j, paramInt4)
             j += m
 
     @staticmethod
-    def a_TIII(paramString, paramInt1, paramInt2, paramInt3):  # x.java:104-106
-        Gfx.a_ACIIIII(list(paramString), 0, len(paramString), paramInt1, paramInt2, paramInt3)
+    def draw_string(paramString, paramInt1, paramInt2, paramInt3):  # x.java:104-106
+        Gfx.draw_chars(list(paramString), 0, len(paramString), paramInt1, paramInt2, paramInt3)
 
     @staticmethod
-    def b_v():  # x.java:108-122  (CRC-32 table, polynomial 0xEDB88320)
+    def make_crc_table():  # x.java:108-122  (CRC-32 table, polynomial 0xEDB88320)
         Gfx.crc_table = [0] * 256
         for b in range(256):
             i = b
@@ -115,9 +115,9 @@ class Gfx:
             Gfx.crc_table[b] = i
 
     @staticmethod
-    def a_ABII(paramArrayOfbyte, paramInt1, paramInt2):  # x.java:124-129  (CRC-32)
+    def crc32(paramArrayOfbyte, paramInt1, paramInt2):  # x.java:124-129  (CRC-32)
         if Gfx.crc_table is None:
-            Gfx.b_v()
+            Gfx.make_crc_table()
         i = -1
         while True:
             paramInt2 -= 1

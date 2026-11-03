@@ -20,22 +20,22 @@ class LiveAnswer:  # ab.java: one answer, read field by field (little-endian)
         self.data = paramArrayOfbyte
         self.pos = 0
 
-    def a_v(self):  # ab.java:10-12  (s8)
+    def read_s8(self):  # ab.java:10-12  (s8)
         v = self.data[self.pos]
         self.pos += 1
         return v - 256 if v > 127 else v
 
-    def b_v(self):  # ab.java:14-18  (s16)
+    def read_s16(self):  # ab.java:14-18  (s16)
         v = self.data[self.pos] | self.data[self.pos + 1] << 8
         self.pos += 2
         return v - 65536 if v > 32767 else v
 
-    def c_v(self):  # ab.java:20-26  (s32)
+    def read_s32(self):  # ab.java:20-26  (s32)
         v = struct.unpack_from("<i", self.data, self.pos)[0]
         self.pos += 4
         return v
 
-    def a_I(self, paramInt):  # ab.java:28-37  (fixed-size string, up to the first 0)
+    def read_string(self, paramInt):  # ab.java:28-37  (fixed-size string, up to the first 0)
         if self.data[self.pos] == 0:
             self.pos += paramInt
             return ""
@@ -73,12 +73,12 @@ class LiveNet:  # v.java
     def start(self):
         pass
 
-    def a_TI(self, paramString, paramInt):  # v.java:33-37
+    def set_address(self, paramString, paramInt):  # v.java:33-37
         self.host = paramString
         self.port = paramInt
         LiveNet.connect_requested = True
 
-    def a_v(self):  # v.java:39-53  (close)
+    def close(self):  # v.java:39-53  (close)
         LiveNet.connected = False
         if LiveNet.conn is not None:
             LiveNet.conn.close()
@@ -86,7 +86,7 @@ class LiveNet:  # v.java
         self._connecting = False
         LiveNet._buf = bytearray()
 
-    def c_v(self):  # v.java:55-68  (open; the result comes on a later pump())
+    def open(self):  # v.java:55-68  (open; the result comes on a later pump())
         from pow_mp.net.transport import make_live_transport
         try:
             LiveNet.conn = make_live_transport(config.LIVE_SERVER)
@@ -94,10 +94,10 @@ class LiveNet:  # v.java
             self._connecting = True
         except Exception as ex:
             print("Gamevil Live: connect failed:", repr(ex))
-            LiveNet.listener.e_v()
+            LiveNet.listener.on_connection_failed()
 
     @staticmethod
-    def a_Ls(params):  # v.java:70-72
+    def set_listener(params):  # v.java:70-72
         LiveNet.listener = params
 
     def pump(self):  # v.java:74-100  run(), one step per game frame
@@ -105,7 +105,7 @@ class LiveNet:  # v.java
             return
         if LiveNet.connect_requested:
             LiveNet.connect_requested = False
-            self.c_v()
+            self.open()
         t = LiveNet.conn
         if t is None:
             return
@@ -113,11 +113,11 @@ class LiveNet:  # v.java
             if t.connected:
                 self._connecting = False
                 LiveNet.connected = True
-                LiveNet.listener.f_v()
+                LiveNet.listener.on_connected()
                 LiveNet.waiting = True
             elif t.failed:
                 self._connecting = False
-                LiveNet.listener.e_v()
+                LiveNet.listener.on_connection_failed()
                 return
             else:
                 return
@@ -125,50 +125,50 @@ class LiveNet:  # v.java
             return
         for p in t.poll():
             try:
-                LiveNet.listener.a_Lab(LiveAnswer(p))
+                LiveNet.listener.on_answer(LiveAnswer(p))
             except Exception as ex:          # run(): catch (Exception) -> d.e()
                 if config.DEBUG:
                     raise
                 print("Gamevil Live: bad answer:", repr(ex))
-                LiveNet.listener.e_v()
+                LiveNet.listener.on_connection_failed()
                 return
             if LiveNet.conn is not t:                 # the answer closed the connection
                 return
         if t.failed or not t.connected:      # IOException in b.b() -> d.e()
-            LiveNet.listener.e_v()
+            LiveNet.listener.on_connection_failed()
 
-    def a_I(self, paramInt):  # v.java:111-118  (start a request: the opcode)
+    def begin_request(self, paramInt):  # v.java:111-118  (start a request: the opcode)
         if LiveNet.connected:
             LiveNet.idle = False
             LiveNet._buf = bytearray(struct.pack("<H", paramInt & 0xFFFF))
 
     @staticmethod
-    def a_S(paramShort):  # v.java:120-123
+    def write_short(paramShort):  # v.java:120-123
         if LiveNet.connected:
             LiveNet._buf += struct.pack("<H", paramShort & 0xFFFF)
 
     @staticmethod
-    def a_B(paramByte):  # v.java:125-128
+    def write_byte(paramByte):  # v.java:125-128
         if LiveNet.connected:
             LiveNet._buf.append(paramByte & 0xFF)
 
     @staticmethod
-    def b_I(paramInt):  # v.java:130-133
+    def write_int(paramInt):  # v.java:130-133
         if LiveNet.connected:
             LiveNet._buf += struct.pack("<I", paramInt & 0xFFFFFFFF)
 
     @staticmethod
-    def a_Z(paramBoolean):  # v.java:135-138
+    def write_bool(paramBoolean):  # v.java:135-138
         if LiveNet.connected:
             LiveNet._buf.append(1 if paramBoolean else 0)
 
     @staticmethod
-    def b_TI(paramString, paramInt):  # v.java:140-143  (fixed-size string padded with 0)
+    def write_string(paramString, paramInt):  # v.java:140-143  (fixed-size string padded with 0)
         if LiveNet.connected:
             raw = paramString.encode("latin-1", "replace")
             LiveNet._buf += raw[:paramInt].ljust(paramInt, b"\0")
 
-    def b_v(self):  # v.java:145-148 + u.java:73-99  (u16 length + the request)
+    def send_request(self):  # v.java:145-148 + u.java:73-99  (u16 length + the request)
         data = bytes(LiveNet._buf)
         LiveNet._buf = bytearray()
         if LiveNet.conn is not None and LiveNet.connected:

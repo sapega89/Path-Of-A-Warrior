@@ -21,13 +21,13 @@ def test_al_matches_loader():  # al.java reads the same strings as the stand-alo
     from pow.game.scr_table import ScrTable
     ref = scr.load(RES / "uimenu.scr")
     a = ScrTable("/uimenu.scr")
-    assert [a.a_I(i) for i in range(60)] == ref
+    assert [a.get(i) for i in range(60)] == ref
 
 
 def test_crc_is_crc32():  # x.java:108-129
     from pow.game.gfx import Gfx
     data = bytearray(b"PLTE\x01\x02\x03\x04\x05\x06\x07")
-    assert Gfx.a_ABII(data, 0, 10) == zlib.crc32(bytes(data[:10]))
+    assert Gfx.crc32(data, 0, 10) == zlib.crc32(bytes(data[:10]))
 
 
 def test_java_ints():
@@ -47,12 +47,12 @@ def test_font_widths_and_colours(display):  # task 0.4
     surf = pygame.Surface((240, 100))
     for n, (name, rgb) in enumerate(colours.items()):
         f = Font("/0_font.png", 8, 17, 9, rgb)
-        assert f.a_T("RESUME") == 6 * 9          # glyph 8 px + 1 px gap
-        assert f.a_T("A B") == 9 + 9 + 9          # ' ' is 9 px wide (d)
+        assert f.string_width("RESUME") == 6 * 9          # glyph 8 px + 1 px gap
+        assert f.string_width("A B") == 9 + 9 + 9          # ' ' is 9 px wide (d)
         surf.fill((0, 128, 0))
-        Gfx.a_G(Graphics(surf))
-        Gfx.a_Lg(f)
-        Gfx.a_TIII("RESUME", 120, 10, 1)           # anchor 1 = HCENTER
+        Gfx.set_graphics(Graphics(surf))
+        Gfx.set_font(f)
+        Gfx.draw_string("RESUME", 120, 10, 1)           # anchor 1 = HCENTER
         found = {tuple(surf.get_at((px, py)))[:3] for px in range(93, 147) for py in range(10, 27)}
         assert ((rgb >> 16) & 255, (rgb >> 8) & 255, rgb & 255) in found, name
         assert surf.get_at((92, 15))[:3] == (0, 128, 0)   # nothing left of the centred text
@@ -63,9 +63,9 @@ def test_clip_draw_restores_clip(display):  # x.java:63-67
     from pow.midp.graphics import Graphics, Image
     surf = pygame.Surface((240, 320))
     gr = Graphics(surf)
-    Gfx.a_G(gr)
+    Gfx.set_graphics(gr)
     img = Image.createImage(20, 20)
-    Gfx.a_MIIIIII(img, 5, 5, 4, 4, 0, 0)
+    Gfx.draw_image_part(img, 5, 5, 4, 4, 0, 0)
     assert (gr.getClipX(), gr.getClipY(), gr.getClipWidth(), gr.getClipHeight()) == (0, 0, 240, 320)
     assert surf.get_at((5, 5))[:3] == (255, 255, 255) and surf.get_at((9, 9))[:3] == (0, 0, 0)
 
@@ -74,8 +74,8 @@ def test_drawrect_is_w_plus_1(display):  # MIDP drawRect covers w+1 x h+1; x.a(5
     from pow.game.gfx import Gfx
     from pow.midp.graphics import Graphics
     surf = pygame.Surface((50, 50))
-    Gfx.a_G(Graphics(surf))
-    Gfx.a_IIIII(10, 10, 5, 5, 0xFFFFFF)
+    Gfx.set_graphics(Graphics(surf))
+    Gfx.draw_rect(10, 10, 5, 5, 0xFFFFFF)
     assert surf.get_at((14, 14))[:3] == (255, 255, 255)
     assert surf.get_at((15, 15))[:3] == (0, 0, 0)
 

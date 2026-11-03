@@ -25,29 +25,29 @@ def test_new_hero_save_roundtrip(tmp_path, monkeypatch):
     monkeypatch.setattr(GameCanvas, "tables_loaded", [False] * 16)
     monkeypatch.setattr(GameCanvas, "shop", [None] * 25)
 
-    GameCanvas.hero.a_v()                         # n.a(): allocates X / Y / Z (ag.java:600)
-    game.av()                           # ag.java:3222 fresh hero, gets item 116 equipped
+    GameCanvas.hero.reset_inventory()                         # n.a(): allocates X / Y / Z (ag.java:600)
+    game.new_hero()                           # ag.java:3222 fresh hero, gets item 116 equipped
     assert GameCanvas.hero.equipped[0].id == 116 and GameCanvas.hero.backpack[0].id == 0
     GameCanvas.hero.name = "Leo"
     GameCanvas.hero.head = 2
     GameCanvas.hero.base_hp += 10
     GameCanvas.hero.stat_points = 0
     GameCanvas.difficulty = 0                           # Hard
-    GameCanvas.ax()
-    game.ay()
+    GameCanvas.reset_quick_items()
+    game.fill_shop()
     shop = [GameCanvas.shop[8 + b].id for b in range(17)]
     assert shop == sorted(shop) and all(101 <= s < 300 for s in shop)
-    assert game.ar()                    # ag.java:2871 -> RecordStore "gamevil_pow_data"
+    assert game.save_game()                    # ag.java:2871 -> RecordStore "gamevil_pow_data"
     size = GameCanvas.save_pos
     rec = RecordStore.openRecordStore("gamevil_pow_data", False).getRecord(1)
     assert len(rec) == 2000 and rec[0] | rec[1] << 8 == size
     assert bytes(rec[2:10]) == b"Leo     "
 
     monkeypatch.setattr(GameCanvas, "hero", Hero())
-    GameCanvas.hero.a_v()
+    GameCanvas.hero.reset_inventory()
     monkeypatch.setattr(GameCanvas, "shop", [None] * 25)
     GameCanvas.difficulty = 1
-    game.U_v()                          # ag.java:2126 Continue
+    game.load_game()                          # ag.java:2126 Continue
     assert GameCanvas.hero.name == "Leo"
     assert (GameCanvas.hero.level, GameCanvas.hero.base_hp, GameCanvas.hero.base_mp, GameCanvas.hero.base_attack, GameCanvas.hero.base_defense, GameCanvas.hero.stat_points, GameCanvas.hero.head) == (1, 40, 10, 5, 4, 0, 2)
     assert GameCanvas.hero.equipped[0].id == 116 and GameCanvas.hero.equipped[0].attack == 1

@@ -9,7 +9,7 @@ class ArrTable:
         self.rows = None   # rows
         self.row_size = 0      # row size
         try:
-            data = ResReader.a(paramString)
+            data = ResReader.read(paramString)
             i = data[0]
             self.widths = bytearray(data[1:1 + i])
             self.offsets = bytearray(i)
@@ -22,7 +22,7 @@ class ArrTable:
         except Exception:
             return
 
-    def a_II(self, paramInt1, paramInt2):  # d.java:36-45  (little-endian unsigned cell)
+    def get_int(self, paramInt1, paramInt2):  # d.java:36-45  (little-endian unsigned cell)
         i = 0
         try:
             j_ = self.widths[paramInt2] & 0xFF
@@ -35,11 +35,11 @@ class ArrTable:
             pass
         return i
 
-    def b_II(self, paramInt1, paramInt2):  # d.java:47-49
+    def get_string(self, paramInt1, paramInt2):  # d.java:47-49
         off = paramInt1 * self.row_size + (self.offsets[paramInt2] & 0xFF)
         return bytes(self.rows[off:off + (self.widths[paramInt2] & 0xFF)]).decode("latin-1").strip(_TRIM)
 
-    def a_v(self):  # d.java:51-55
+    def free(self):  # d.java:51-55
         self.widths = None
         self.offsets = None
         self.rows = None
