@@ -28,8 +28,10 @@ exactly the Java one. Hit zones follow what is drawn on each screen (coordinates
                              quick clicks = run); click on the hero -> FIRE (attack);
                              right button -> FIRE (attack where the hero faces);
                              * / # boxes of the HUD -> STAR / POUND (potion, bomb);
-                             (skills: keyboard 1..5 only);
-                             soft key PAUSE -> BACK (-7); talk on the map (bV 5):
+                             (skills: keyboard 1..5 only; with config.SKILL_BAR a click
+                             on the strip above the HUD = belt slot Z X C V B / skill 1..5);
+                             soft key PAUSE -> BACK (-7); bottom-left corner -> auto-hunt
+                             on / off (PORT-EXTRA, AUTO); talk on the map (bV 5):
                              soft key SKIP (bottom left) -> LSOFT (-6);
                              pause menu: click a row -> UP/DOWN to it, then FIRE
   soft key BACK (bottom right)                         -> BACK (-7)
@@ -39,11 +41,15 @@ exactly the Java one. Hit zones follow what is drawn on each screen (coordinates
 """
 import collections
 
+import config
+
+from pow.game import skill_bar
 from pow.game.game_canvas import GameCanvas
 from pow.midp.jint import idiv
 
 UP, DOWN, LEFT, RIGHT, FIRE, BACK = -1, -2, -3, -4, -5, -7
 STAR, POUND = 42, 35
+AUTO = -100                            # PORT-EXTRA: auto-hunt on / off (pow/game/autopilot.py)
 
 
 def _popup_keys(x, y, kind):
@@ -238,6 +244,8 @@ def hold_dir(x, y):
         return None
     if y >= GameCanvas.canvas_size.y - 50:
         return None
+    if skill_bar.key_at(x, y) is not None:            # PORT-EXTRA: the skill bar / belt strip
+        return None
     return _hero_dir_key(x, y)
 
 
@@ -252,6 +260,9 @@ def _map_keys(x, y, kind):
         return []                                      # skills only from the keyboard (1..5)
     if x >= GameCanvas.screen_w - 60 and y >= GameCanvas.screen_h - 20:            # soft key PAUSE / BACK (bottom right)
         return [BACK]
+    if (kind == "click" and GameCanvas.state == 3 and GameCanvas.map_mode.mode == 0 and x < 48
+            and y >= GameCanvas.screen_h - 17):          # PORT-EXTRA: the AUTO corner = auto-hunt
+        return [AUTO]
     if GameCanvas.state == 5:                                     # talk on the map: only SKIP (-6) works
         if kind == "click" and x < 60 and y >= GameCanvas.screen_h - 20:     # (e.i_v drops every other key)
             return [-6]
@@ -266,7 +277,10 @@ def _map_keys(x, y, kind):
         return [FIRE]
     if kind != "click":
         return []
-    potion = _hud_potion(x, y)
+    slot = skill_bar.key_at(x, y)                     # PORT-EXTRA config.SKILL_BAR: belt / skill slot
+    if slot is not None:
+        return [] if slot == -999 else [slot]
+    potion = None if config.SKILL_BAR else _hud_potion(x, y)   # PORT-EXTRA: no * / # boxes with the belt
     if potion is not None:                             # * / # boxes of the HUD: drink / throw
         return [potion]
     # a click on the hero = attack; beside the hero = a tap on that direction

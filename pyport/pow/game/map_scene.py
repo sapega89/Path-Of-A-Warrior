@@ -14,6 +14,8 @@ F14 = config.DECOMP_FIX["F14"]
 
 
 # direction key -> cz.c, as c.i_v reads ag.cj (used by the PORT-EXTRA HOLD_TO_MOVE)
+from pow.game.autopilot import Autopilot   # noqa: E402  PORT-EXTRA auto-hunt walks like HOLD_TO_MOVE
+
 _HELD_DIR = {-1: 4, 50: 4, -3: 2, 52: 2, -4: 6, 54: 6, -2: 0, 56: 0}
 
 
@@ -1399,9 +1401,15 @@ class MapScene(GameCanvas):
         elif v in (-2, 56):
             i = 0
         v = GameCanvas.key
-        if config.NO_COMBAT and v in (49, 51, 55, 57, 48, -5, 53, 35, 42):
+        if config.NO_COMBAT and v in (49, 51, 55, 57, 48, -5, 53, 35, 42, -101, -102, -103, -104, -105):
             # PORT-EXTRA (POW_NO_COMBAT=1): attack, skill and potion keys do nothing
             v = None
+        belt = -1
+        if v in (-101, -102, -103, -104, -105) and config.SKILL_BAR:
+            # PORT-EXTRA config.SKILL_BAR: Z X C V B (or a click on the belt) = belt slot 0..4,
+            # used exactly like the slot of * / # below
+            belt = -101 - v
+            v = 42
         if v == 49:
             j_ = cz.hotkeys[0]
         elif v == 51:
@@ -1416,7 +1424,7 @@ class MapScene(GameCanvas):
             j_ = 3
         elif v in (35, 42):
             if 0 == GameCanvas.effect.item and cz.action[0] < 10:
-                sel = cz.quick_keys[0 if GameCanvas.key == 42 else 1]
+                sel = belt if belt > -1 else cz.quick_keys[0 if GameCanvas.key == 42 else 1]
                 GameCanvas.effect.item = cz.quick_slots[sel].item
                 brk = False
                 if GameCanvas.effect.item > 9:
@@ -1474,7 +1482,7 @@ class MapScene(GameCanvas):
             GameCanvas.hero_fx_data = None
             if cz.action[0] != 1:
                 cz.action[0] = 0
-        if config.HOLD_TO_MOVE and i == -1 and cz.action[0] < 2:
+        if (config.HOLD_TO_MOVE or Autopilot.on) and i == -1 and cz.action[0] < 2:
             # PORT-EXTRA (config.HOLD_TO_MOVE): the hero walks only while a direction key or the
             # mouse button is held; released = stand, still held after an attack = walk again
             from pow.game.midlet import Midlet

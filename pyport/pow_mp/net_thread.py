@@ -87,10 +87,10 @@ class NetThread:
                 NetThread._connecting = False
                 NetThread.idle_frames = 0
                 NetThread.connected = True
-                NetThread.game.l_v()                       # h.c(): connected -> g.l() sends 278 / 262
+                NetThread.game.login()                       # h.c(): connected -> g.l() sends 278 / 262
             elif t.failed:
                 NetThread._connecting = False
-                NetThread.game.g_I(0)
+                NetThread.game.on_net_error(0)
             return
         if not NetThread.connected:
             return
@@ -100,16 +100,16 @@ class NetThread:
             NetThread._port_extra_in(payload)
             data = [b - 256 if b > 127 else b for b in payload]   # Java bytes are signed
             if len(data) < 2:
-                NetThread.game.g_I(3)
+                NetThread.game.on_net_error(3)
                 return
             NetThread.last_opcode = (data[0] & 0xFF) | (data[1] & 0xFF) << 8
             try:
-                NetThread.game.a_Lk(Answer(data))
+                NetThread.game.on_answer(Answer(data))
             except IndexError:                  # a short frame: the client failed with g(3)
-                NetThread.game.g_I(3)
+                NetThread.game.on_net_error(3)
             NetThread.idle_frames = 0
         elif not t.connected:
-            NetThread.game.g_I(2)                          # IOException in h.run()
+            NetThread.game.on_net_error(2)                          # IOException in h.run()
 
     # --- sending (e.java's buffer) --------------------------------------------------------
     def begin(self, n2):  # h.java:131  start a message with opcode n2

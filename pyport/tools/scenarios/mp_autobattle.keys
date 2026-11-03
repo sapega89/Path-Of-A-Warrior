@@ -1,0 +1,16 @@
+# Duel 1-on-1 on auto-battle (PORT-EXTRA, Tab = key AUTO): no action keys, the server's bot
+# chooses every round until the result screen.
+include _login.keys
+key FIRE          # Duel
+wait 5
+key FIRE          # 1-on-1 Duel
+until 92
+key AUTO          # Tab: auto-battle on
+until 94
+wait 3
+shot auto_choose
+until 105 4000
+wait 10
+shot auto_end
+key FIRE
+until 11
