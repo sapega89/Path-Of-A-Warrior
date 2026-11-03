@@ -318,7 +318,7 @@ class Menus(GameCanvas):
         if v == 17:
             cM[2] = cM[2] - 5
             if cM[2] < 0:
-                cM[2] = cM[2] + 25
+                cM[2] = cM[2] + config.BACKPACK_SIZE
             GameCanvas.menu_part = 1
             return
         if v == 19:
@@ -390,8 +390,8 @@ class Menus(GameCanvas):
             return
         if v == 17:
             cM[2] = cM[2] + 5
-            if cM[2] > 24:
-                cM[2] = cM[2] - 25
+            if cM[2] > config.BACKPACK_SIZE - 1:
+                cM[2] = cM[2] - config.BACKPACK_SIZE
             GameCanvas.menu_part = 1
             return
         if v == 19:
@@ -662,7 +662,7 @@ class Menus(GameCanvas):
             elif c0 == 17:
                 cz = GameCanvas.hero
                 if GameCanvas.menu_return == 16 and cz.equipped[cM[2]].id != 0:
-                    for b in range(25):
+                    for b in range(config.BACKPACK_SIZE):
                         if 0 == cz.backpack[b].id:
                             self.swap_items(cz.equipped[cM[2]], cz.backpack[b])
                 self.compact_backpack()
@@ -1245,12 +1245,12 @@ class Menus(GameCanvas):
         arrayOfInt1 = [GameCanvas.view_cx - 75, GameCanvas.view_cx - 45, GameCanvas.view_cx - 15, GameCanvas.view_cx + 15, GameCanvas.view_cx + 45]
         arrayOfInt2 = [GameCanvas.view_cy - 45, GameCanvas.view_cy - 15, GameCanvas.view_cy + 15]
         ac_ = Rect(GameCanvas.view_cx + 80, GameCanvas.view_cy - 40, 5, 80)
-        if cM[2] < 15:
-            b2 = 3
-            b3 = 0
-        else:
-            b2 = 2
-            b3 = 15
+        # PORT-EXTRA config.BACKPACK_SIZE: pages of 3 rows (15 cells), the last one may be shorter;
+        # with 25 cells this is the original's 3 + 2 rows
+        pages = (config.BACKPACK_SIZE + 14) // 15
+        page = cM[2] // 15
+        b3 = page * 15
+        b2 = min(3, (config.BACKPACK_SIZE - b3) // 5)
         if paramInt != 0:
             self.draw_map_region(GameCanvas.images[7], GameCanvas.view_cx - 75, GameCanvas.view_cy - 45, 150, 100, GameCanvas.view_cx - 75, GameCanvas.view_cy - 45)
         for b1 in range(b2):
@@ -1264,8 +1264,8 @@ class Menus(GameCanvas):
         ac_.w -= 2
         ac_.h -= 2
         GameCanvas.fill_rect(ac_, GameCanvas.rgb(33, 0, 0))
-        ac_.y = GameCanvas.view_cy - 39 + (39 if b3 != 0 else 0) + GameCanvas.view_y
-        ac_.h = 39
+        ac_.h = 78 // pages
+        ac_.y = GameCanvas.view_cy - 39 + page * 78 // pages + GameCanvas.view_y
         GameCanvas.fill_rect(ac_, GameCanvas.rgb(231, 227, 198))
         self.draw_description(cM[2] + 1100, GameCanvas.view_cx - 75, GameCanvas.view_cy + 50, 150, 22)
         self.draw_round_outline(arrayOfInt1[cM[2] % 5], arrayOfInt2[(cM[2] - b3) // 5] + GameCanvas.view_y, 30, 30, 255, 255, 255)
@@ -1780,6 +1780,8 @@ class Menus(GameCanvas):
         i = 0
         c = 173                     # '­'
         fK[4] = 5
+        if fK[0] != 0:
+            fK[4] = config.BACKPACK_SIZE // 5   # PORT-EXTRA config.BACKPACK_SIZE (the shop of mode 0 keeps 25)
         if fK[0] == 1:
             fK[4] = fK[4] + 1
         fK[3] = 5
@@ -1849,7 +1851,7 @@ class Menus(GameCanvas):
     @staticmethod
     def count_items():  # e.java:2803-2815  (count items: fK[16] backpack, fK[17] potions)
         GameCanvas.cursor[16] = 0
-        for b in range(25):
+        for b in range(config.BACKPACK_SIZE):
             if GameCanvas.hero.backpack[b].id > 0:
                 GameCanvas.cursor[16] = GameCanvas.cursor[16] + 1
         GameCanvas.cursor[17] = 0
@@ -1907,9 +1909,9 @@ class Menus(GameCanvas):
                         fK[20] = 0
                     else:
                         fK[20] = 6
-            elif fK[16] < 25:
+            elif fK[16] < config.BACKPACK_SIZE:
                 b = 0
-                while b < 25 and cz.backpack[b].id != 0:
+                while b < config.BACKPACK_SIZE and cz.backpack[b].id != 0:
                     b += 1
                 y_ = cz.backpack[b]
                 y_.id = z_.id

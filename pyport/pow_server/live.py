@@ -29,8 +29,8 @@ from pow_server.loot import _read_arr
 
 TAX_PERCENT = 10              # ht[4], shown in "Enter your selling price. N% of total ..."
 GIFT_TAX_PERCENT = 0          # ht[5] (the Gift menu is not in this client)
-WAREHOUSE = 100               # as.gw
-BACKPACK = 25                 # cz.Y
+WAREHOUSE = config.WAREHOUSE_SIZE   # as.gw: 100 (PORT-EXTRA config.WAREHOUSE_SIZE)
+BACKPACK = config.BACKPACK_SIZE     # cz.Y: 25 (PORT-EXTRA config.BACKPACK_SIZE)
 MAX_SALES = 5                 # gamestr 27 "Item sales are limited up to 5 per user"
 PAGE = 20                     # lots per page (as.gz)
 NPC_REFRESH = 3600            # seconds between new NPC stock

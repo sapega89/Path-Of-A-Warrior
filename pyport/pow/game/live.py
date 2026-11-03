@@ -61,8 +61,8 @@ class Live(GameCanvas):
     answered = False          # an answer (or an error) came
     close_target = -1             # what the closing popup leads to (i())
     busy = False          # busy: "Connecting..." over the screen, keys ignored
-    backpack_serials = None           # short[25] backpack serials
-    warehouse = [None] * 100   # z[100] warehouse
+    backpack_serials = None           # short[25] backpack serials (PORT-EXTRA config.BACKPACK_SIZE)
+    warehouse = [None] * config.WAREHOUSE_SIZE   # z[100] warehouse (PORT-EXTRA config.WAREHOUSE_SIZE)
     warehouse_serials = None           # short[100] warehouse serials
     safe_gold = 0              # gold in the Safe
     lots = [None] * 20    # z[20] lots of the page / Sale List / Gift List / my lots
@@ -109,9 +109,9 @@ class Live(GameCanvas):
     def __init__(self):  # as.java:172-178
         super().__init__(GameCanvas.midlet)
         if Live.backpack_serials is None:
-            Live.backpack_serials = [0] * 25
+            Live.backpack_serials = [0] * config.BACKPACK_SIZE
         if Live.warehouse_serials is None:
-            Live.warehouse_serials = [0] * 100
+            Live.warehouse_serials = [0] * config.WAREHOUSE_SIZE
 
     def open_live(self):  # as.java:180-190  (Game Menu > Gamevil Live)
         from pow.game.live_screen import LiveScreen
@@ -191,7 +191,7 @@ class Live(GameCanvas):
                         self.ask_request(262)
             elif i == 10:
                 if s1 == 0:
-                    if GameCanvas.cursor[16] < 25:
+                    if GameCanvas.cursor[16] < config.BACKPACK_SIZE:
                         Live.flags[7] = 0
                         Live.scroll = 0
                         self.ask_request(788)
@@ -375,7 +375,7 @@ class Live(GameCanvas):
             Menus.count_items()
             b6 = i8(GameCanvas.cursor[16])
             LiveNet.write_byte(b6)
-            for b7 in range(25):
+            for b7 in range(config.BACKPACK_SIZE):
                 if cz.backpack[b7].id > 0:
                     LiveNet.write_short(cz.backpack[b7].id)
                     Live.backpack_serials[b7] = i16(b7 + 1)
@@ -408,7 +408,7 @@ class Live(GameCanvas):
                 LiveNet.write_byte(Live.category + 1)
                 LiveNet.write_byte(Live.kind + 1)
             LiveNet.write_int(Live.lot_ids[Live.selected_slot])
-            LiveNet.write_byte(0 if GameCanvas.cursor[16] < 25 else 1)
+            LiveNet.write_byte(0 if GameCanvas.cursor[16] < config.BACKPACK_SIZE else 1)
         Live.net.send_request()
 
     def disconnect(self):  # as.java:578-591
@@ -570,7 +570,7 @@ class Live(GameCanvas):
                 GameCanvas.popups.show(18)
             elif s1 == 769:
                 Live.safe_gold = paramab.read_s32()
-                for b1 in range(100):
+                for b1 in range(config.WAREHOUSE_SIZE):
                     if Live.warehouse[b1] is None:
                         Live.warehouse[b1] = Item()
                     Item.clear(Live.warehouse[b1])
@@ -591,7 +591,7 @@ class Live(GameCanvas):
                 Live.safe_gold = paramab.read_s32()
             elif s1 == 817:
                 if Live.flags[7] == 0:
-                    Live.list_rows = 100
+                    Live.list_rows = config.WAREHOUSE_SIZE
                     fK[16] = fK[16] - 1
                     Live.flags[6] = i16(Live.flags[6] + 1)
                     b1 = 0
@@ -602,7 +602,7 @@ class Live(GameCanvas):
                     Live.warehouse_serials[b1] = paramab.read_s16()
                     Live.backpack_serials[fK[18]] = 0
                 else:
-                    Live.list_rows = 25
+                    Live.list_rows = config.BACKPACK_SIZE
                     Live.flags[6] = i16(Live.flags[6] - 1)
                     fK[16] = fK[16] + 1
                     b1 = 0
@@ -663,13 +663,13 @@ class Live(GameCanvas):
                 if B4 and Live.flags[7] == 1:     # ORIG-BUG B4: bought into the warehouse
                     Live.flags[6] = i16(Live.flags[6] + 1)
                     b1 = 0
-                    while b1 < 100 and Live.warehouse[b1].id != 0:
+                    while b1 < config.WAREHOUSE_SIZE and Live.warehouse[b1].id != 0:
                         b1 += 1
                     Live._copy_item(Live.warehouse[b1], Live.lots[fK[18]])
                     Live.clear_selected_lot()
                     Live.warehouse_serials[b1] = paramab.read_s16()
                 else:
-                    Live.list_rows = 25
+                    Live.list_rows = config.BACKPACK_SIZE
                     fK[16] = fK[16] + 1
                     b1 = 0
                     while b1 < Live.list_rows and cz.backpack[b1].id != 0:
@@ -723,7 +723,7 @@ class Live(GameCanvas):
                     self.open_buy_lots(False)
             elif s1 == 867:
                 if Live.flags[7] == 0:
-                    Live.list_rows = 25
+                    Live.list_rows = config.BACKPACK_SIZE
                     Live.flags[6] = i16(Live.flags[6] - 1)
                     fK[16] = fK[16] + 1
                     b1 = 0
@@ -734,7 +734,7 @@ class Live(GameCanvas):
                     Live.clear_selected_lot()
                     Live.backpack_serials[b1] = paramab.read_s16()
                 else:
-                    Live.list_rows = 100
+                    Live.list_rows = config.WAREHOUSE_SIZE
                     fK[16] = fK[16] - 1
                     Live.flags[6] = i16(Live.flags[6] + 1)
                     b1 = 0
@@ -1029,7 +1029,7 @@ class Live(GameCanvas):
         elif paramInt in (-5, 53):
             if Live.lots[Live.selected_slot].id > 0:
                 Live.shown_item = Live.lots[Live.selected_slot].id
-                Live.flags[7] = 0 if GameCanvas.cursor[16] < 25 else 1
+                Live.flags[7] = 0 if GameCanvas.cursor[16] < config.BACKPACK_SIZE else 1
                 GameCanvas.popups.arg1 = Menus.item_name(Live.lots[Live.selected_slot].id)
                 GameCanvas.popups.show(39)
                 Live.close_target = 14
@@ -1163,7 +1163,7 @@ class Live(GameCanvas):
                 if Live.prices[GameCanvas.cursor[18]] > GameCanvas.hero.gold:
                     GameCanvas.popups.show(11)
                     return
-                if GameCanvas.cursor[16] >= 25:
+                if GameCanvas.cursor[16] >= config.BACKPACK_SIZE:
                     GameCanvas.popups.show(12)
                     return
                 Live.selected_slot = GameCanvas.cursor[18]
@@ -1228,7 +1228,7 @@ class Live(GameCanvas):
         Live.flags[7] = Live.saved_11
         Live.category = Live.saved_6
         if paramBoolean:
-            self.set_grid(5 if Live.flags[7] == 0 else 20, 3, False)
+            self.set_grid(config.BACKPACK_SIZE // 5 if Live.flags[7] == 0 else config.WAREHOUSE_SIZE // 5, 3, False)
         else:
             self.set_grid(4 if Live.category == 2 else 3, 3, False)
         GameCanvas.cursor[10] = Live.saved_7
@@ -1491,11 +1491,11 @@ class Live(GameCanvas):
 
     def set_backpack_grid(self):  # as.java:2009-2012
         Live.flags[7] = 0
-        self.set_grid(5, 3, True)
+        self.set_grid(config.BACKPACK_SIZE // 5, 3, True)
 
     def set_warehouse_grid(self):  # as.java:2014-2017
         Live.flags[7] = 1
-        self.set_grid(20, 3, True)
+        self.set_grid(config.WAREHOUSE_SIZE // 5, 3, True)
 
     def set_grid(self, paramInt1, paramInt2, paramBoolean):  # as.java:2019-2043  (grid geometry)
         fK = GameCanvas.cursor

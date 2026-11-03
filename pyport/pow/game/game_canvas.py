@@ -714,6 +714,7 @@ class GameCanvas(GameFields, Canvas):
             GameCanvas.save_pos = GameCanvas.save_buf[0] & 0xFF | GameCanvas.save_buf[1] << 8 & 0xFF00
         except Exception:
             pass
+        save_end = GameCanvas.save_pos
         if GameCanvas.save_pos != 0:
             cF = GameCanvas.save_buf
             arrayOfByte1 = [0] * 16
@@ -797,7 +798,44 @@ class GameCanvas(GameFields, Canvas):
             GameCanvas.talk_points = GameCanvas.read_int()
             for b1 in range(4):
                 GameCanvas.read_int()
+            self.read_backpack_extra(save_end)
         self.compact_backpack()
+
+    # PORT-EXTRA config.BACKPACK_SIZE: the backpack cells past the original 25 follow the original
+    # save as {u8 'B', u8 n, n items}. A save without the block (an old one, or the original game's)
+    # loads with those cells empty; the header length (save_buf[0..1]) tells where the save ends.
+    BACKPACK_EXTRA_MARK = 0x42
+
+    def read_backpack_extra(self, save_end):
+        cz = GameCanvas.hero
+        for b in range(25, config.BACKPACK_SIZE):
+            cz.backpack[b] = Item()
+        cF = GameCanvas.save_buf
+        if GameCanvas.save_pos + 2 > save_end or cF[GameCanvas.save_pos] & 0xFF != GameCanvas.BACKPACK_EXTRA_MARK:
+            return
+        n = cF[GameCanvas.save_pos + 1] & 0xFF
+        GameCanvas.save_pos += 2
+        for b in range(n):
+            if GameCanvas.save_pos + 11 > save_end:
+                break
+            it = self.read_item()
+            if 25 + b < config.BACKPACK_SIZE:
+                cz.backpack[25 + b] = it
+            else:
+                # a save of a bigger backpack than this build has: keep the item in the first free cell
+                free = next((s for s in range(config.BACKPACK_SIZE) if cz.backpack[s].id == 0), None)
+                if free is not None and it.id != 0:
+                    cz.backpack[free] = it
+
+    def write_backpack_extra(self):
+        cz = GameCanvas.hero
+        n = config.BACKPACK_SIZE - 25
+        if n <= 0:
+            return
+        GameCanvas.write_byte(GameCanvas.BACKPACK_EXTRA_MARK)
+        GameCanvas.write_byte(n)
+        for b in range(25, config.BACKPACK_SIZE):
+            self.write_item(cz.backpack[b])
 
     @staticmethod
     def read_long():  # ag.java:2216-2230  (u64 LE; bytes 4..7 are sign-extended then masked)
@@ -933,9 +971,9 @@ class GameCanvas(GameFields, Canvas):
         Gfx.set_graphics(GameCanvas.screen_g)
 
     def compact_backpack(self):  # ag.java:2372-2382  (compact inventory cz.Y)
-        for b in range(24):
+        for b in range(config.BACKPACK_SIZE - 1):
             if GameCanvas.hero.backpack[b].id == 0:
-                for j_ in range(b + 1, 25):
+                for j_ in range(b + 1, config.BACKPACK_SIZE):
                     if GameCanvas.hero.backpack[j_].id != 0:
                         self.swap_items(GameCanvas.hero.backpack[b], GameCanvas.hero.backpack[j_])
                         break
@@ -1376,6 +1414,10 @@ class GameCanvas(GameFields, Canvas):
         cz = GameCanvas.hero
         arrayOfChar = [0] * 16
         arrayOfByte = cz.name.encode("latin-1")
+        if len(GameCanvas.save_buf) < 2000:
+            # PORT-EXTRA: a loaded save can be shorter than ag.cF (965 bytes, e.g. tools/shot.py's);
+            # the backpack block written after it needs the room of the 2000-byte buffer
+            GameCanvas.save_buf = bytearray(GameCanvas.save_buf) + bytearray(2000 - len(GameCanvas.save_buf))
         cF = GameCanvas.save_buf
         for b in range(8):
             if b < len(arrayOfByte):
@@ -1444,6 +1486,7 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.write_int(GameCanvas.talk_points)
         for b in range(4):
             GameCanvas.write_int(0)
+        self.write_backpack_extra()
         cF[0] = GameCanvas.save_pos & 0xFF
         cF[1] = GameCanvas.save_pos >> 8 & 0xFF
         try:
@@ -1564,7 +1607,7 @@ class GameCanvas(GameFields, Canvas):
         # z.a(): called through the class (in Java the field z.a shadowed it)
         for b in range(9):
             Item.clear(cz.equipped[b])
-        for b in range(25):
+        for b in range(config.BACKPACK_SIZE):
             Item.clear(cz.backpack[b])
         self.give_item(116, 0)
         self.swap_items(cz.equipped[0], cz.backpack[0])
@@ -1609,9 +1652,9 @@ class GameCanvas(GameFields, Canvas):
                 return 1
         elif paramInt1 < 10000:
             b = 0
-            while b < 25 and 0 != cz.backpack[b].id:
+            while b < config.BACKPACK_SIZE and 0 != cz.backpack[b].id:
                 b += 1
-            if b > 24:
+            if b > config.BACKPACK_SIZE - 1:
                 return 0
             cz.backpack[b].id = i16(paramInt1)
             cz.backpack[b].attack = 0
@@ -1780,7 +1823,7 @@ class GameCanvas(GameFields, Canvas):
 
     @staticmethod
     def backpack_slot_of(paramInt):  # ag.java:3530-3536  (inventory slot of item, 1-based; 0 = none)
-        for b in range(25):
+        for b in range(config.BACKPACK_SIZE):
             if GameCanvas.hero.backpack[b].id == paramInt:
                 return b + 1
         return 0

@@ -38,7 +38,13 @@ def test_normal_tier_follows_the_hero_level():
         return [(g - 101) % 5 for g in (loot.sp_drop(rng, lv, 2) for _ in range(6000)) if g > 100]
 
     assert set(tiers(5)) == {0, 1}                       # level <= 9: {80, 100} -> tiers 0-1
-    assert min(tiers(80)) == 2                           # level > 69: {0, 0, 33, 77, 100}
+    assert set(tiers(80)) == set(tiers(50)) == {0, 1, 2, 3, 4}   # PORT-EXTRA DROPS_AFTER_69
+    import config
+    old, config.DROPS_AFTER_69 = config.DROPS_AFTER_69, False
+    try:
+        assert min(tiers(80)) == 2                       # the original above Lv69: {0, 0, 33, 77, 100}
+    finally:
+        config.DROPS_AFTER_69 = old
 
 
 def test_roll_keeps_the_best_and_can_give_special_or_rare():
@@ -74,8 +80,8 @@ def test_item_goes_into_the_backpack_and_potions_onto_the_belt(save_dir):
 
 def test_full_backpack_keeps_the_loot_waiting(save_dir):
     data = bytearray(make_save())
-    for i in range(25):
-        struct.pack_into("<h", data, S.OFF_BACKPACK + 11 * i, 101)
+    for o in S._backpack_offsets(data):                  # the 25 cells and the extra block
+        struct.pack_into("<h", data, o, 101)
     store(data)
     assert S.add_item(504) == 1                          # waiting
     d = bytearray(S.read_save())

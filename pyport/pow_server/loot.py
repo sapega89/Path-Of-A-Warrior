@@ -96,6 +96,8 @@ def sp_drop(rng, level, kind):
     if rng.randrange(100) >= EQUIP_CHANCE[kind]:
         return rng.randrange(11) + 1
     row = next(i for i, lv in enumerate(TIER_LEVELS) if level > lv or lv == 0)
+    if row == 0 and config.DROPS_AFTER_69:   # PORT-EXTRA: above Lv69 the odds of Lv45-69
+        row = 1
     r = rng.randrange(100)
     tier = next(t for t, odds in enumerate(TIER_ODDS[row]) if r < odds)
     return 101 + tier + 5 * rng.randrange(20)
