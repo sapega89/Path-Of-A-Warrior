@@ -6,7 +6,7 @@ Everything on the page is read from the resource files in the repository root (k
 shinki / general / mission / sideinfo / ruler / N.arr / *.scr / item-mixing-table.bin and the
 PNG sheets), so after a data change it is enough to run the script again. The few numbers the
 Java code keeps as constants (consumables, skill MP, the drop table, soldier stats) are taken
-from pow.game.ae or copied here with the Java line they come from.
+from pow.game.consts (ae.java) or copied here with the Java line they come from.
 
 Needs Pillow (icons are cut from the sheets and embedded as data: URIs, the page is one file).
 build_web.py copies the page next to the game, like guide.html.
@@ -23,7 +23,7 @@ from PIL import Image
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 PY = ROOT / "pyport"
 sys.path.insert(0, str(PY))
-from pow.game import ae  # noqa: E402  (pure constants, no pygame)
+from pow.game import consts as ae  # noqa: E402  (ae.java constants, no pygame)
 
 OUT = PY / "web" / "encyclopedia.html"
 
@@ -39,7 +39,9 @@ def strings(name):
     a = raw(name)
     n = a[0] | a[1] << 8
     off = [a[2 + i * 2] | a[3 + i * 2] << 8 for i in range(n + 1)]
-    return [a[off[i]:off[i + 1]].decode("utf-8", "replace") for i in range(n)]
+    # a few texts keep EUC-KR curly quotes (\xa1\xae / \xa1\xaf) from the Korean original
+    return [a[off[i]:off[i + 1]].replace(b"\xa1\xae", "\u2018".encode()).replace(b"\xa1\xaf", "\u2019".encode())
+            .decode("utf-8", "replace") for i in range(n)]
 
 
 class Table:
