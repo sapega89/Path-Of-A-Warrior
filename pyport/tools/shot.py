@@ -228,7 +228,7 @@ def run(scenario, out, every=False):
         if not midlet.to_multiplayer:
             raise SystemExit("multiplayer: the game did not ask for the Multiplayer game")
         import mp_main
-        from pow_mp.Main import Main as MPMain
+        from pow_mp.midlet import Midlet as MPMain
         frames, name = int(state["mp"][0]), state["mp"][1]
         mp = {"left": frames}
 
@@ -239,7 +239,7 @@ def run(scenario, out, every=False):
                 fn = "%02d_%s.png" % (state["n"], name)
                 pygame.image.save(screen, str(out / fn))
                 saved.append(fn)
-                MPMain.b.l.destroyed = True     # its own Exit: main.py would restart the game
+                MPMain.canvas.l.destroyed = True     # its own Exit: main.py would restart the game
 
         display.frame_hooks.append(mp_frame)
         try:

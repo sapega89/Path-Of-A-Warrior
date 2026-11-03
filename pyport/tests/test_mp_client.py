@@ -1,4 +1,4 @@
-"""The generated MP client (pow_mp/_gen) driven headless through tools/mp_shot.py scenarios
+"""The MP client (pow_mp) driven headless through tools/mp_shot.py scenarios
 against the in-game server: login, main menu, Character, Ranking, Options and a Duel vs CPU must not raise."""
 import importlib.util
 import pathlib
