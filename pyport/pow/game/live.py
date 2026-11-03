@@ -151,12 +151,12 @@ class Live(GameCanvas):
             GameCanvas.popups.answered = False
             i = Live.close_target
             Live.close_target = -1
-            s1 = GameCanvas.popups.button
+            button = GameCanvas.popups.button
             if i == 3:
                 self.leave_live()
                 Live.request_redraw()
             elif i == 2:
-                if s1 == 0:
+                if button == 0:
                     GameCanvas.in_live = True
                     GameCanvas.stop_sound()
                     self.load_live_images()
@@ -174,7 +174,7 @@ class Live(GameCanvas):
             elif i == 8:
                 self.sync_done()
             elif i == 9:
-                if s1 == 0:
+                if button == 0:
                     bool_ = False
                     if Live.flags[14] == 1:
                         for b in range(9):
@@ -190,7 +190,7 @@ class Live(GameCanvas):
                     else:
                         self.ask_request(262)
             elif i == 10:
-                if s1 == 0:
+                if button == 0:
                     if GameCanvas.cursor[16] < config.BACKPACK_SIZE:
                         Live.flags[7] = 0
                         Live.scroll = 0
@@ -199,12 +199,12 @@ class Live(GameCanvas):
                         GameCanvas.popups.show(12)
                         Live.close_target = 11
             elif i == 11:
-                if s1 == 0:
+                if button == 0:
                     Live.flags[7] = 1
                     Live.scroll = 0
                     self.ask_request(788)
             elif i == 14:
-                if s1 == 0:
+                if button == 0:
                     Live.scroll = 0
                     self.ask_request(866)
                     Live.screen_redraw = True
@@ -338,34 +338,34 @@ class Live(GameCanvas):
             LiveNet.write_short(cz.gear_defense)
             LiveNet.write_short(cz.gear_hp)
             LiveNet.write_short(cz.gear_mp)
-            for b1 in range(8):
-                LiveNet.write_int(GameCanvas.stats[b1])
+            for i_stat in range(8):
+                LiveNet.write_int(GameCanvas.stats[i_stat])
             b = 0
-            for b2 in range(len(cz.skill_levels)):
-                if cz.skill_levels[b2] > 0:
+            for i_cat in range(len(cz.skill_levels)):
+                if cz.skill_levels[i_cat] > 0:
                     b += 1
             LiveNet.write_byte(b)
-            for b3 in range(len(cz.skill_levels)):
-                if cz.skill_levels[b3] > 0:
-                    LiveNet.write_byte(Live.category_codes[b3])
-                    LiveNet.write_byte(cz.skill_levels[b3])
+            for i_skill in range(len(cz.skill_levels)):
+                if cz.skill_levels[i_skill] > 0:
+                    LiveNet.write_byte(Live.category_codes[i_skill])
+                    LiveNet.write_byte(cz.skill_levels[i_skill])
                     bool_ = False
-                    for b8 in range(4):
-                        if cz.hotkeys[b8] - 12 == b3:
+                    for i_key in range(4):
+                        if cz.hotkeys[i_key] - 12 == i_skill:
                             bool_ = True
                             break
                     LiveNet.write_bool(bool_)
             LiveNet.write_string(cz.name, 8)
             LiveNet.write_bool(not (cz.live_registered == 0))
             LiveNet.write_byte(GameCanvas.general_count & 0xFF)
-            for b4 in range(GameCanvas.general_count):
-                LiveNet.write_byte(GameCanvas.generals[0][b4] & 0xFF)
-                LiveNet.write_byte(GameCanvas.generals[1][b4] & 0xFF)
+            for i_gen in range(GameCanvas.general_count):
+                LiveNet.write_byte(GameCanvas.generals[0][i_gen] & 0xFF)
+                LiveNet.write_byte(GameCanvas.generals[1][i_gen] & 0xFF)
             LiveNet.write_int(GameCanvas.missions_done & 0xFFFFFFFF)
             LiveNet.write_int(GameCanvas.missions_done >> 32 & 0xFFFFFFFF)
             LiveNet.write_byte(GameCanvas.chapter)
-            for b5 in range(22):
-                LiveNet.write_byte(cz.mission_progress[b5] & 0xFF)
+            for i_mis in range(22):
+                LiveNet.write_byte(cz.mission_progress[i_mis] & 0xFF)
             LiveNet.write_byte(cz.live_stat1 & 0xFF)
             LiveNet.write_byte(cz.live_stat2 & 0xFF)
             LiveNet.write_int(GameCanvas.score)
@@ -373,18 +373,18 @@ class Live(GameCanvas):
             from pow.game.menus import Menus
             LiveNet.write_int(cz.gold)
             Menus.count_items()
-            b6 = i8(GameCanvas.cursor[16])
-            LiveNet.write_byte(b6)
-            for b7 in range(config.BACKPACK_SIZE):
-                if cz.backpack[b7].id > 0:
-                    LiveNet.write_short(cz.backpack[b7].id)
-                    Live.backpack_serials[b7] = i16(b7 + 1)
-                    LiveNet.write_short(Live.backpack_serials[b7])
-                    LiveNet.write_byte(cz.backpack[b7].enchant)
-                    LiveNet.write_short(cz.backpack[b7].attack)
-                    LiveNet.write_short(cz.backpack[b7].defense)
-                    LiveNet.write_short(cz.backpack[b7].hp)
-                    LiveNet.write_short(cz.backpack[b7].mp)
+            slot_count = i8(GameCanvas.cursor[16])
+            LiveNet.write_byte(slot_count)
+            for i_item in range(config.BACKPACK_SIZE):
+                if cz.backpack[i_item].id > 0:
+                    LiveNet.write_short(cz.backpack[i_item].id)
+                    Live.backpack_serials[i_item] = i16(i_item + 1)
+                    LiveNet.write_short(Live.backpack_serials[i_item])
+                    LiveNet.write_byte(cz.backpack[i_item].enchant)
+                    LiveNet.write_short(cz.backpack[i_item].attack)
+                    LiveNet.write_short(cz.backpack[i_item].defense)
+                    LiveNet.write_short(cz.backpack[i_item].hp)
+                    LiveNet.write_short(cz.backpack[i_item].mp)
         elif q == 832:
             LiveNet.write_byte(Live.flags[15] ^ 0x1)
             LiveNet.write_int(Live.values[14])
@@ -438,30 +438,30 @@ class Live(GameCanvas):
         fK = GameCanvas.cursor
         Live.in_answer = True
         LiveNet.waiting = False
-        s1 = answer.read_s16()
+        op = answer.read_s16()
         b = answer.read_s8()
         if F20:
             Live.answer_status = b                      # DECOMP_FIX F20
-        Live.answer_op = s1
-        if B5 and s1 == 531:
+        Live.answer_op = op
+        if B5 and op == 531:
             Live.blink = False                  # ORIG-BUG B5
         if b == 1:
-            if s1 == 531:
+            if op == 531:
                 Live.session_id = Live.session_new
                 self.save_game()
                 answer.read_s8()
                 answer.read_s8()
-                b6 = answer.read_s8()
-                if (b6 == 0 or b6 == 2) and Live.reg_from_popup:
+                result = answer.read_s8()
+                if (result == 0 or result == 2) and Live.reg_from_popup:
                     from pow.game.live_screen import LiveScreen
                     LiveScreen.save_login()
-                    if b6 == 0:
+                    if result == 0:
                         GameCanvas.popups.show(48)
-                    elif b6 == 2:
+                    elif result == 2:
                         GameCanvas.popups.show(44)
                     Live.close_target = 2
                     Live.reg_from_popup = False
-            elif s1 == 513:
+            elif op == 513:
                 Live.flags[15] = answer.read_s8()
                 Live.flags[14] = answer.read_s8()
                 Live.flags[13] = answer.read_s8()
@@ -472,7 +472,7 @@ class Live(GameCanvas):
                 Live.flags[5] = answer.read_s8()
                 self.after_login()
                 Live.request_redraw()
-            elif s1 == 517:
+            elif op == 517:
                 GameCanvas.popups.arg1 = GameCanvas.trim_right(GameCanvas.cut_at_control(answer.read_string(16)))
                 GameCanvas.popups.arg2 = GameCanvas.trim_right(GameCanvas.cut_at_control(answer.read_string(16)))
                 GameCanvas.popups.arg3 = GameCanvas.trim_right(GameCanvas.cut_at_control(answer.read_string(16)))
@@ -483,20 +483,20 @@ class Live(GameCanvas):
                     Live.flags[15] = i16(Live.flags[15] + 1)
                 else:
                     Live.flags[15] = 0
-            elif s1 == 519:
-                for b1 in range(20):
-                    if Live.lots[b1] is None:
-                        Live.lots[b1] = Item()
-                    Item.clear(Live.lots[b1])
-                    Live.prices[b1] = 0
-                b5 = answer.read_s8()
-                for b1 in range(b5):
-                    Live.lots[b1].id = answer.read_s16()
-                    Live.lots[b1].enchant = answer.read_s8()
-                    Live.prices[b1] = answer.read_s32()
+            elif op == 519:
+                for idx in range(20):
+                    if Live.lots[idx] is None:
+                        Live.lots[idx] = Item()
+                    Item.clear(Live.lots[idx])
+                    Live.prices[idx] = 0
+                lot_count = answer.read_s8()
+                for idx in range(lot_count):
+                    Live.lots[idx].id = answer.read_s16()
+                    Live.lots[idx].enchant = answer.read_s8()
+                    Live.prices[idx] = answer.read_s32()
                 Live.list_kind = 0
                 self.open_trade_list()
-            elif s1 == 261:
+            elif op == 261:
                 GameCanvas.live_gifts = i16(GameCanvas.live_gifts - 1)
                 if GameCanvas.live_gifts == 0:
                     self.save_game()
@@ -514,7 +514,7 @@ class Live(GameCanvas):
                 else:
                     GameCanvas.live_gifts = 0
                     self.sync_gifts()
-            elif s1 == 263:
+            elif op == 263:
                 cz.fame = answer.read_s32()
                 cz.exp = answer.read_s32()
                 cz.level = answer.read_s16() & 0xFF
@@ -525,163 +525,163 @@ class Live(GameCanvas):
                 cz.base_hp = answer.read_s16()
                 cz.base_mp = answer.read_s16()
                 cz.stat_points = answer.read_s16()
-                for b1 in range(len(cz.skill_levels)):
-                    cz.skill_levels[b1] = 0
-                for b1 in range(len(cz.hotkeys)):
-                    cz.hotkeys[b1] = 0
-                b4 = answer.read_s8()
-                b1 = 0
-                b2 = 0
-                while b1 < b4:
-                    b8 = answer.read_s8()
-                    b7 = 0
-                    while b7 < 19 and Live.category_codes[b7] != b8:
-                        b7 += 1
-                    cz.skill_levels[b7] = answer.read_s8()
-                    b8 = answer.read_s8()
-                    if b8 == 1:
-                        cz.hotkeys[b2] = b7 + 12
-                        b2 += 1
-                    b1 += 1
-                for b1 in range(8):
-                    GameCanvas.stats[b1] = answer.read_s32()
+                for idx in range(len(cz.skill_levels)):
+                    cz.skill_levels[idx] = 0
+                for idx in range(len(cz.hotkeys)):
+                    cz.hotkeys[idx] = 0
+                count = answer.read_s8()
+                idx = 0
+                hotkey = 0
+                while idx < count:
+                    code = answer.read_s8()
+                    cat = 0
+                    while cat < 19 and Live.category_codes[cat] != code:
+                        cat += 1
+                    cz.skill_levels[cat] = answer.read_s8()
+                    code = answer.read_s8()
+                    if code == 1:
+                        cz.hotkeys[hotkey] = cat + 12
+                        hotkey += 1
+                    idx += 1
+                for idx in range(8):
+                    GameCanvas.stats[idx] = answer.read_s32()
                 cz.name = GameCanvas.cut_at_space(GameCanvas.cut_at_control(answer.read_string(8)))
                 cz.live_registered = answer.read_s8()
-                for b1 in range(45):
-                    GameCanvas.generals[0][b1] = 0
-                    GameCanvas.generals[1][b1] = 0
+                for idx in range(45):
+                    GameCanvas.generals[0][idx] = 0
+                    GameCanvas.generals[1][idx] = 0
                 GameCanvas.general_count = i16(answer.read_s8())
-                for b1 in range(GameCanvas.general_count):
-                    GameCanvas.generals[0][b1] = i16(answer.read_s8())
-                    GameCanvas.generals[1][b1] = i16(answer.read_s8())
+                for idx in range(GameCanvas.general_count):
+                    GameCanvas.generals[0][idx] = i16(answer.read_s8())
+                    GameCanvas.generals[1][idx] = i16(answer.read_s8())
                 i = answer.read_s32()
                 GameCanvas.missions_done = answer.read_s32()
                 GameCanvas.missions_done <<= 32
                 GameCanvas.missions_done |= i                  # sic: a negative low word fills the high one (Java long |)
                 GameCanvas.chapter = answer.read_s8()
-                for b1 in range(22):
-                    cz.mission_progress[b1] = i16(answer.read_s8())
+                for idx in range(22):
+                    cz.mission_progress[idx] = i16(answer.read_s8())
                 cz.live_stat1 = i16(answer.read_s8())
                 cz.live_stat2 = i16(answer.read_s8())
                 GameCanvas.score = answer.read_s32()
                 self.save_game()
                 GameCanvas.popups.show(19)
-            elif s1 == 257:
+            elif op == 257:
                 GameCanvas.popups.show(18)
-            elif s1 == 769:
+            elif op == 769:
                 Live.safe_gold = answer.read_s32()
-                for b1 in range(config.WAREHOUSE_SIZE):
-                    if Live.warehouse[b1] is None:
-                        Live.warehouse[b1] = Item()
-                    Item.clear(Live.warehouse[b1])
+                for idx in range(config.WAREHOUSE_SIZE):
+                    if Live.warehouse[idx] is None:
+                        Live.warehouse[idx] = Item()
+                    Item.clear(Live.warehouse[idx])
                 Live.flags[6] = i16(answer.read_s8() & 0xFF)
-                for b1 in range(len(Live.warehouse)):
-                    Item.clear(Live.warehouse[b1])
-                for b1 in range(Live.flags[6]):
-                    Live.warehouse[b1].id = answer.read_s16()
-                    Live.warehouse_serials[b1] = answer.read_s16()
-                    Live.warehouse[b1].enchant = answer.read_s8()
-                    Live.warehouse[b1].attack = answer.read_s16()
-                    Live.warehouse[b1].defense = answer.read_s16()
-                    Live.warehouse[b1].hp = answer.read_s16()
-                    Live.warehouse[b1].mp = answer.read_s16()
+                for idx in range(len(Live.warehouse)):
+                    Item.clear(Live.warehouse[idx])
+                for idx in range(Live.flags[6]):
+                    Live.warehouse[idx].id = answer.read_s16()
+                    Live.warehouse_serials[idx] = answer.read_s16()
+                    Live.warehouse[idx].enchant = answer.read_s8()
+                    Live.warehouse[idx].attack = answer.read_s16()
+                    Live.warehouse[idx].defense = answer.read_s16()
+                    Live.warehouse[idx].hp = answer.read_s16()
+                    Live.warehouse[idx].mp = answer.read_s16()
                 self.open_live_menu()
-            elif s1 == 833:
+            elif op == 833:
                 cz.gold = answer.read_s32()
                 Live.safe_gold = answer.read_s32()
-            elif s1 == 817:
+            elif op == 817:
                 if Live.flags[7] == 0:
                     Live.list_rows = config.WAREHOUSE_SIZE
                     fK[16] = fK[16] - 1
                     Live.flags[6] = i16(Live.flags[6] + 1)
-                    b1 = 0
-                    while b1 < Live.list_rows and Live.warehouse[b1].id != 0:
-                        b1 += 1
-                    Live._copy_item(Live.warehouse[b1], cz.backpack[fK[18]])
+                    idx = 0
+                    while idx < Live.list_rows and Live.warehouse[idx].id != 0:
+                        idx += 1
+                    Live._copy_item(Live.warehouse[idx], cz.backpack[fK[18]])
                     Item.clear(cz.backpack[fK[18]])
-                    Live.warehouse_serials[b1] = answer.read_s16()
+                    Live.warehouse_serials[idx] = answer.read_s16()
                     Live.backpack_serials[fK[18]] = 0
                 else:
                     Live.list_rows = config.BACKPACK_SIZE
                     Live.flags[6] = i16(Live.flags[6] - 1)
                     fK[16] = fK[16] + 1
-                    b1 = 0
-                    while b1 < Live.list_rows and cz.backpack[b1].id != 0:
-                        b1 += 1
-                    Live._copy_item(cz.backpack[b1], Live.warehouse[fK[18]])
+                    idx = 0
+                    while idx < Live.list_rows and cz.backpack[idx].id != 0:
+                        idx += 1
+                    Live._copy_item(cz.backpack[idx], Live.warehouse[fK[18]])
                     Item.clear(Live.warehouse[fK[18]])
-                    Live.backpack_serials[b1] = answer.read_s16()
+                    Live.backpack_serials[idx] = answer.read_s16()
                     Live.warehouse_serials[fK[18]] = 0
                 self.save_and_sync(0)
                 Live.request_redraw()
-            elif s1 == 785:
-                b1 = 0
-                b3 = 15
-                while b1 < 10:
-                    Live.counts[b3] = answer.read_s8()
-                    b1 += 1
-                    b3 -= 1
+            elif op == 785:
+                idx = 0
+                count_slot = 15
+                while idx < 10:
+                    Live.counts[count_slot] = answer.read_s8()
+                    idx += 1
+                    count_slot -= 1
                 self.open_cancel_sell()
-            elif s1 == 521:
-                for b1 in range(5):
-                    if Live.lots[b1] is None:
-                        Live.lots[b1] = Item()
-                    Item.clear(Live.lots[b1])
-                    Live.gift_from[b1] = ""
-                b5 = answer.read_s8()
-                for b1 in range(b5):
-                    Live.gift_from[b1] = GameCanvas.cut_at_control(answer.read_string(8))
-                    Live.lots[b1].id = answer.read_s16()
-                    Live.lots[b1].enchant = answer.read_s8()
-                    Live.lots[b1].attack = answer.read_s16()
-                    Live.lots[b1].defense = answer.read_s16()
-                    Live.lots[b1].hp = answer.read_s16()
-                    Live.lots[b1].mp = answer.read_s16()
+            elif op == 521:
+                for idx in range(5):
+                    if Live.lots[idx] is None:
+                        Live.lots[idx] = Item()
+                    Item.clear(Live.lots[idx])
+                    Live.gift_from[idx] = ""
+                lot_count = answer.read_s8()
+                for idx in range(lot_count):
+                    Live.gift_from[idx] = GameCanvas.cut_at_control(answer.read_string(8))
+                    Live.lots[idx].id = answer.read_s16()
+                    Live.lots[idx].enchant = answer.read_s8()
+                    Live.lots[idx].attack = answer.read_s16()
+                    Live.lots[idx].defense = answer.read_s16()
+                    Live.lots[idx].hp = answer.read_s16()
+                    Live.lots[idx].mp = answer.read_s16()
                 Live.flags[13] = answer.read_s8()
                 Live.list_kind = 1
                 self.open_trade_list()
-            elif s1 == 787:
-                for b1 in range(20):
-                    if Live.lots[b1] is None:
-                        Live.lots[b1] = Item()
-                    Item.clear(Live.lots[b1])
-                    Live.lot_ids[b1] = 0
-                    Live.prices[b1] = 0
-                b4 = answer.read_s8()
-                for b1 in range(b4):
-                    Live.lot_ids[b1] = answer.read_s32()
-                    Live.lots[b1].id = answer.read_s16()
-                    Live.prices[b1] = answer.read_s32()
-                    Live.lots[b1].enchant = answer.read_s8()
-                    Live.lots[b1].attack = answer.read_s16()
-                    Live.lots[b1].defense = answer.read_s16()
-                    Live.lots[b1].hp = answer.read_s16()
-                    Live.lots[b1].mp = answer.read_s16()
+            elif op == 787:
+                for idx in range(20):
+                    if Live.lots[idx] is None:
+                        Live.lots[idx] = Item()
+                    Item.clear(Live.lots[idx])
+                    Live.lot_ids[idx] = 0
+                    Live.prices[idx] = 0
+                count = answer.read_s8()
+                for idx in range(count):
+                    Live.lot_ids[idx] = answer.read_s32()
+                    Live.lots[idx].id = answer.read_s16()
+                    Live.prices[idx] = answer.read_s32()
+                    Live.lots[idx].enchant = answer.read_s8()
+                    Live.lots[idx].attack = answer.read_s16()
+                    Live.lots[idx].defense = answer.read_s16()
+                    Live.lots[idx].hp = answer.read_s16()
+                    Live.lots[idx].mp = answer.read_s16()
                 Live.page = i8(Live.page + Live.page_step)
                 self.open_sale_list()
-            elif s1 == 789:
+            elif op == 789:
                 if B4 and Live.flags[7] == 1:     # ORIG-BUG B4: bought into the warehouse
                     Live.flags[6] = i16(Live.flags[6] + 1)
-                    b1 = 0
-                    while b1 < config.WAREHOUSE_SIZE and Live.warehouse[b1].id != 0:
-                        b1 += 1
-                    Live._copy_item(Live.warehouse[b1], Live.lots[fK[18]])
+                    idx = 0
+                    while idx < config.WAREHOUSE_SIZE and Live.warehouse[idx].id != 0:
+                        idx += 1
+                    Live._copy_item(Live.warehouse[idx], Live.lots[fK[18]])
                     Live.clear_selected_lot()
-                    Live.warehouse_serials[b1] = answer.read_s16()
+                    Live.warehouse_serials[idx] = answer.read_s16()
                 else:
                     Live.list_rows = config.BACKPACK_SIZE
                     fK[16] = fK[16] + 1
-                    b1 = 0
-                    while b1 < Live.list_rows and cz.backpack[b1].id != 0:
-                        b1 += 1
-                    Live._copy_item(cz.backpack[b1], Live.lots[fK[18]])
+                    idx = 0
+                    while idx < Live.list_rows and cz.backpack[idx].id != 0:
+                        idx += 1
+                    Live._copy_item(cz.backpack[idx], Live.lots[fK[18]])
                     Live.clear_selected_lot()
-                    Live.backpack_serials[b1] = answer.read_s16()
+                    Live.backpack_serials[idx] = answer.read_s16()
                 cz.gold = answer.read_s32()
                 Live.safe_gold = answer.read_s32()
                 self.save_and_sync(0)
                 GameCanvas.popups.show(35)
-            elif s1 == 801:
+            elif op == 801:
                 if Live.flags[7] == 0:
                     Item.clear(cz.backpack[Live.selected_slot])
                     Live.backpack_serials[Live.selected_slot] = 0
@@ -693,27 +693,27 @@ class Live(GameCanvas):
                 self.save_and_sync(0)
                 GameCanvas.popups.show(36)
                 self.open_sell_grid()
-            elif s1 in (803, 865):
-                for b1 in range(20):
-                    if Live.lots[b1] is None:
-                        Live.lots[b1] = Item()
-                    Item.clear(Live.lots[b1])
-                    Live.lot_ids[b1] = 0
-                    Live.prices[b1] = 0
-                b4 = answer.read_s8()
-                if b4 > 20:
-                    b4 = 20
-                for b1 in range(b4):
-                    if s1 == 865:
-                        Live.lot_ids[b1] = answer.read_s32()
-                    Live.lots[b1].id = answer.read_s16()
-                    Live.prices[b1] = answer.read_s32()
-                    Live.lots[b1].enchant = answer.read_s8()
-                    Live.lots[b1].attack = answer.read_s16()
-                    Live.lots[b1].defense = answer.read_s16()
-                    Live.lots[b1].hp = answer.read_s16()
-                    Live.lots[b1].mp = answer.read_s16()
-                if s1 == 803:
+            elif op in (803, 865):
+                for idx in range(20):
+                    if Live.lots[idx] is None:
+                        Live.lots[idx] = Item()
+                    Item.clear(Live.lots[idx])
+                    Live.lot_ids[idx] = 0
+                    Live.prices[idx] = 0
+                count = answer.read_s8()
+                if count > 20:
+                    count = 20
+                for idx in range(count):
+                    if op == 865:
+                        Live.lot_ids[idx] = answer.read_s32()
+                    Live.lots[idx].id = answer.read_s16()
+                    Live.prices[idx] = answer.read_s32()
+                    Live.lots[idx].enchant = answer.read_s8()
+                    Live.lots[idx].attack = answer.read_s16()
+                    Live.lots[idx].defense = answer.read_s16()
+                    Live.lots[idx].hp = answer.read_s16()
+                    Live.lots[idx].mp = answer.read_s16()
+                if op == 803:
                     self.set_cancel_sell_grid()
                     Live.live_screen = 8
                     Live.input_handler = 10
@@ -721,32 +721,32 @@ class Live(GameCanvas):
                     Live.request_redraw()
                 else:
                     self.open_buy_lots(False)
-            elif s1 == 867:
+            elif op == 867:
                 if Live.flags[7] == 0:
                     Live.list_rows = config.BACKPACK_SIZE
                     Live.flags[6] = i16(Live.flags[6] - 1)
                     fK[16] = fK[16] + 1
-                    b1 = 0
-                    while b1 < Live.list_rows and cz.backpack[b1].id != 0:
-                        b1 += 1
-                    Live._copy_item(cz.backpack[b1], Live.lots[Live.selected_slot])
+                    idx = 0
+                    while idx < Live.list_rows and cz.backpack[idx].id != 0:
+                        idx += 1
+                    Live._copy_item(cz.backpack[idx], Live.lots[Live.selected_slot])
                     Item.clear(Live.lots[Live.selected_slot])
                     Live.clear_selected_lot()
-                    Live.backpack_serials[b1] = answer.read_s16()
+                    Live.backpack_serials[idx] = answer.read_s16()
                 else:
                     Live.list_rows = config.WAREHOUSE_SIZE
                     fK[16] = fK[16] - 1
                     Live.flags[6] = i16(Live.flags[6] + 1)
-                    b1 = 0
-                    while b1 < Live.list_rows and Live.warehouse[b1].id != 0:
-                        b1 += 1
-                    Live._copy_item(Live.warehouse[b1], Live.lots[Live.selected_slot])
+                    idx = 0
+                    while idx < Live.list_rows and Live.warehouse[idx].id != 0:
+                        idx += 1
+                    Live._copy_item(Live.warehouse[idx], Live.lots[Live.selected_slot])
                     Item.clear(Live.lots[Live.selected_slot])
                     Live.clear_selected_lot()
-                    Live.warehouse_serials[b1] = answer.read_s16()
+                    Live.warehouse_serials[idx] = answer.read_s16()
                 self.save_and_sync(0)
                 GameCanvas.popups.show(40)
-            elif s1 == 259:
+            elif op == 259:
                 Live.values[15] = answer.read_s32()
                 Live.values[14] = answer.read_s32()
                 Live.values[13] = GameCanvas.add_exp(Live.values[14])
@@ -1051,23 +1051,23 @@ class Live(GameCanvas):
             self.open_trade()
             return
         if key in (-5, 53):
-            z1 = Live.selected_grid_item()
-            if z1.id > 0:
-                if 434 <= z1.id <= 437:
+            item = Live.selected_grid_item()
+            if item.id > 0:
+                if 434 <= item.id <= 437:
                     GameCanvas.popups.show(13)
                     return
-                Live.shown_item = z1.id
-                Live.enchant = i16(z1.enchant)
+                Live.shown_item = item.id
+                Live.enchant = i16(item.enchant)
                 Live.selected_slot = GameCanvas.cursor[18]
-                if z1.id > 500:
+                if item.id > 500:
                     Live.category = 2
-                    Live.kind = i16(z1.id - 501)
-                elif z1.id > 300:
+                    Live.kind = i16(item.id - 501)
+                elif item.id > 300:
                     Live.category = 1
-                    Live.kind = i16(GameCanvas.item_tables[1].get_int(z1.id - 301, 7))
+                    Live.kind = i16(GameCanvas.item_tables[1].get_int(item.id - 301, 7))
                 else:
                     Live.category = 0
-                    Live.kind = i16(GameCanvas.item_tables[0].get_int(z1.id - 101, 7))
+                    Live.kind = i16(GameCanvas.item_tables[0].get_int(item.id - 101, 7))
                 Live.values[13] = 0
                 Live.values[14] = 0
                 Live.save_grid_cursor(True)
@@ -1339,8 +1339,8 @@ class Live(GameCanvas):
             self.open_live_menu()
             return
         if key in (-5, 53):
-            z1 = Live.selected_grid_item()
-            if z1.id > 0:
+            item = Live.selected_grid_item()
+            if item.id > 0:
                 self.ask_request(816)
                 Live.scroll = 0
                 Live.request_redraw()

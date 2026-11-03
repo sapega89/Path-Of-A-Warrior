@@ -19,13 +19,13 @@ class ScrTable:
         str_ = None
         try:
             m = k - j_
-            arrayOfByte = bytearray(m + 2)
-            arrayOfByte[0] = m >> 8 & 0xFF
-            arrayOfByte[1] = m & 0xFF
-            arrayOfByte[2:2 + m] = self.data[j_:j_ + m]
+            utf = bytearray(m + 2)
+            utf[0] = m >> 8 & 0xFF
+            utf[1] = m & 0xFF
+            utf[2:2 + m] = self.data[j_:j_ + m]
             if len(self.data[j_:j_ + m]) != m or m < 0:
                 raise IndexError  # System.arraycopy bounds
-            str_ = _read_utf(arrayOfByte)
+            str_ = _read_utf(utf)
         except Exception:
             pass
         return str_
