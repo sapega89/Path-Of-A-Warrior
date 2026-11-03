@@ -37,8 +37,8 @@ class MapEngine(GameCanvas):
         if mode == 1:
             self.draw_view_background()
             for b in range(9):
-                for b1 in range(9):
-                    GameCanvas.dirty[b][b1] = 1
+                for row in range(9):
+                    GameCanvas.dirty[b][row] = 1
             GameCanvas.scene.draw_frame()
             if GameCanvas.map_mode.mode != 0:
                 GameCanvas.popups.draw_popup_frame(170)
@@ -85,8 +85,8 @@ class MapEngine(GameCanvas):
             GameCanvas.scene.draw_frame()
 
     def pause_menu_keys(self):  # ar.java:95-247  (keys of the pause menu cR.a: 1 menu, 2 items, 3 options, 4 help)
-        arrayOfByte1 = [0, 3, 0, 2, 4, 0, 0]
-        arrayOfByte2 = [0, consts.menu_sizes[9], 0, 5, 3, 0, 0]    # Options: 3 rows (+1 with config.SCREEN_OPTION)
+        sub_modes = [0, 3, 0, 2, 4, 0, 0]
+        sub_sizes = [0, consts.menu_sizes[9], 0, 5, 3, 0, 0]    # Options: 3 rows (+1 with config.SCREEN_OPTION)
         v = GameCanvas.key
         blocked = GameCanvas.actor_count > 0 or GameCanvas.boss_fight != 0 or GameCanvas.waves[0] != 0
         if v in (-1, 50):
@@ -150,9 +150,9 @@ class MapEngine(GameCanvas):
                 GameCanvas.menus.key_fire()
                 return
             if GameCanvas.map_mode.mode == 1:
-                if arrayOfByte1[GameCanvas.menu[1]] != 0:
-                    GameCanvas.map_mode.mode = arrayOfByte1[GameCanvas.menu[1]]
-                    GameCanvas.menu_count = arrayOfByte2[GameCanvas.menu[1]]
+                if sub_modes[GameCanvas.menu[1]] != 0:
+                    GameCanvas.map_mode.mode = sub_modes[GameCanvas.menu[1]]
+                    GameCanvas.menu_count = sub_sizes[GameCanvas.menu[1]]
                     GameCanvas.redraw = 1
                     GameCanvas.menu_cursors[0] = i16(GameCanvas.menu[1])
                     GameCanvas.menu_tops[0] = i16(GameCanvas.menu[2])
@@ -220,13 +220,13 @@ class MapEngine(GameCanvas):
         return -value if value < 0 else value
 
     def boxes_touch(self, x1, y1, w1, h1, x2, y2, w2, h2):  # ar.java:274-282
-        i = idiv(w1 + w2, 2)
-        j_ = idiv(h1 + h2, 2)
-        k = x1 + idiv(w1, 2) - x2 + idiv(w2, 2)
-        m = y1 + idiv(h1, 2) - y2 + idiv(h2, 2)
-        n = MapEngine.iabs(k)
-        i1 = MapEngine.iabs(m)
-        return n < i and i1 < j_
+        max_dx = idiv(w1 + w2, 2)
+        max_dy = idiv(h1 + h2, 2)
+        dx = x1 + idiv(w1, 2) - x2 + idiv(w2, 2)
+        dy = y1 + idiv(h1, 2) - y2 + idiv(h2, 2)
+        abs_dx = MapEngine.iabs(dx)
+        abs_dy = MapEngine.iabs(dy)
+        return abs_dx < max_dx and abs_dy < max_dy
 
     @staticmethod
     def distance(a, b):  # ar.java:457-468  (distance, rounded)
@@ -277,11 +277,11 @@ class MapEngine(GameCanvas):
 
     @staticmethod
     def skill_mp_cost(skill):  # ar.java:743-757  (MP cost of skill paramInt; 0 = not enough MP)
-        arrayOfByte1 = [5, 6, 7, 10, 15, 7, 10, 10, 8, 9, 10, 5, 6, 7, 9, 12, 20, 20, 20]
-        arrayOfByte2 = [3, 4, 5, 3, 4, 3, 3, 5, 3, 4, 5, 3, 4, 5, 5, 6, 5, 5, 5]
+        base_cost = [5, 6, 7, 10, 15, 7, 10, 10, 8, 9, 10, 5, 6, 7, 9, 12, 20, 20, 20]
+        cost_per_level = [3, 4, 5, 3, 4, 3, 3, 5, 3, 4, 5, 3, 4, 5, 5, 6, 5, 5, 5]
         i = 0
         if 12 <= skill <= 30:
-            i = arrayOfByte1[skill - 12] + (GameCanvas.hero.skill_levels[skill - 12] - 1) * arrayOfByte2[skill - 12]
+            i = base_cost[skill - 12] + (GameCanvas.hero.skill_levels[skill - 12] - 1) * cost_per_level[skill - 12]
         if i > GameCanvas.hero.mp:
             return 0
         GameCanvas.hero.mp -= i
@@ -299,35 +299,35 @@ class MapEngine(GameCanvas):
     # ---- walls -------------------------------------------------------------------------------
 
     def step_until_free(self, pos, step, dir):  # ar.java:769-815  (step paramInt1 towards paramInt2 until no wall)
-        arrayOfInt1 = [0, 0]
-        arrayOfInt2 = [0, 0]
-        arrayOfInt3 = [0, 0]
+        cols = [0, 0]
+        rows = [0, 0]
+        cells = [0, 0]
         cE = GameCanvas.map
         n = len(cE.data) - 1
         while True:
-            b2 = 0
+            walls = 0
             if dir == 2:
-                arrayOfInt2[0] = idiv(pos.y - 20, 27)
-                arrayOfInt2[1] = idiv(pos.y + 6, 27)
-                arrayOfInt1[1] = arrayOfInt1[0] = idiv(pos.x + step - 12, 27)
+                rows[0] = idiv(pos.y - 20, 27)
+                rows[1] = idiv(pos.y + 6, 27)
+                cols[1] = cols[0] = idiv(pos.x + step - 12, 27)
             elif dir == 6:
-                arrayOfInt2[0] = idiv(pos.y - 20, 27)
-                arrayOfInt2[1] = idiv(pos.y + 6, 27)
-                arrayOfInt1[1] = arrayOfInt1[0] = idiv(pos.x + step + 12, 27)
+                rows[0] = idiv(pos.y - 20, 27)
+                rows[1] = idiv(pos.y + 6, 27)
+                cols[1] = cols[0] = idiv(pos.x + step + 12, 27)
             elif dir == 4:
-                arrayOfInt1[0] = idiv(pos.x - 12, 27)
-                arrayOfInt1[1] = idiv(pos.x + 12, 27)
-                arrayOfInt2[1] = arrayOfInt2[0] = idiv(pos.y + step - 20, 27)
+                cols[0] = idiv(pos.x - 12, 27)
+                cols[1] = idiv(pos.x + 12, 27)
+                rows[1] = rows[0] = idiv(pos.y + step - 20, 27)
             elif dir == 0:
-                arrayOfInt1[0] = idiv(pos.x - 12, 27)
-                arrayOfInt1[1] = idiv(pos.x + 12, 27)
-                arrayOfInt2[1] = arrayOfInt2[0] = idiv(pos.y + step + 6, 27)
-            for b1 in range(2):
-                arrayOfInt3[b1] = arrayOfInt2[b1] * cE.size.w + arrayOfInt1[b1]
-                if (cE.data[min(cE.layer_flags + arrayOfInt3[b1], n)] & 0x1) != 0 or cE.data[min(cE.layer_objects + arrayOfInt3[b1], n)] != 0:
-                    b2 += 1
-            if b2 != 0:
-                step = MapEngine.approach_zero(b2, step)[1]
+                cols[0] = idiv(pos.x - 12, 27)
+                cols[1] = idiv(pos.x + 12, 27)
+                rows[1] = rows[0] = idiv(pos.y + step + 6, 27)
+            for i in range(2):
+                cells[i] = rows[i] * cE.size.w + cols[i]
+                if (cE.data[min(cE.layer_flags + cells[i], n)] & 0x1) != 0 or cE.data[min(cE.layer_objects + cells[i], n)] != 0:
+                    walls += 1
+            if walls != 0:
+                step = MapEngine.approach_zero(walls, step)[1]
                 if 0 == step:
                     return 0
                 continue
@@ -346,26 +346,26 @@ class MapEngine(GameCanvas):
         return [dx, dy]
 
     def keep_in_room(self, pos, dx, dy):  # ar.java:834-865  (keep inside the room; touching an edge = exit)
-        arrayOfShort = [18, 144, 270, 396, 522, 648, 774, 900, 1026, 1152, 1278]
+        edges = [18, 144, 270, 396, 522, 648, 774, 900, 1026, 1152, 1278]
         for b in range(11):
-            arrayOfShort[b] = i16(idiv(arrayOfShort[b] * 3, 2))
-        h1 = Point()
-        h1.x = i16(pos.x + dx)
-        h1.y = i16(pos.y + dy)
-        if h1.x < arrayOfShort[GameCanvas.room_origin.x] + 12:
-            dx = arrayOfShort[GameCanvas.room_origin.x] + 12 - pos.x
+            edges[b] = i16(idiv(edges[b] * 3, 2))
+        dest = Point()
+        dest.x = i16(pos.x + dx)
+        dest.y = i16(pos.y + dy)
+        if dest.x < edges[GameCanvas.room_origin.x] + 12:
+            dx = edges[GameCanvas.room_origin.x] + 12 - pos.x
             if GameCanvas.room_phase == 1:
                 MapEngine.leave_room(2)
-        elif h1.x > arrayOfShort[GameCanvas.room_origin.x + 1] - 12:
-            dx = arrayOfShort[GameCanvas.room_origin.x + 1] - 12 - pos.x
+        elif dest.x > edges[GameCanvas.room_origin.x + 1] - 12:
+            dx = edges[GameCanvas.room_origin.x + 1] - 12 - pos.x
             if GameCanvas.room_phase == 1:
                 MapEngine.leave_room(4)
-        if h1.y < arrayOfShort[GameCanvas.room_origin.y] + 10:
-            dy = arrayOfShort[GameCanvas.room_origin.y] + 10 - pos.y
+        if dest.y < edges[GameCanvas.room_origin.y] + 10:
+            dy = edges[GameCanvas.room_origin.y] + 10 - pos.y
             if GameCanvas.room_phase == 1:
                 MapEngine.leave_room(3)
-        elif h1.y > arrayOfShort[GameCanvas.room_origin.y + 1] + 10:
-            dy = arrayOfShort[GameCanvas.room_origin.y + 1] + 10 - pos.y
+        elif dest.y > edges[GameCanvas.room_origin.y + 1] + 10:
+            dy = edges[GameCanvas.room_origin.y + 1] + 10 - pos.y
             if GameCanvas.room_phase == 1:
                 MapEngine.leave_room(1)
         return [dx, dy]
@@ -389,108 +389,108 @@ class MapEngine(GameCanvas):
     @staticmethod
     def slide_corner(pos, dir, actor):  # ar.java:890-1014  (slide around a corner: new direction or -1)
         cE = GameCanvas.map
-        b1 = 0
+        side_dir = 0
         j_ = idiv(pos.x, 27)
         k = idiv(pos.y, 27)
         m = j_ + k * cE.size.w
-        arrayOfInt1 = [0, 0]
-        arrayOfInt2 = [1, 1]
+        free_side = [0, 0]
+        open_side = [1, 1]
         if actor == -1:
-            h1 = GameCanvas.hero.slide_target
+            slide = GameCanvas.hero.slide_target
         else:
-            h1 = GameCanvas.actors[actor].target
+            slide = GameCanvas.actors[actor].target
         if dir in (0, 6):
-            b1 = 1
+            side_dir = 1
         elif dir in (2, 4):
-            b1 = -1
+            side_dir = -1
         def free(q):
             return 0 == (cE.data[cE.layer_flags + q] & 0x1) and 0 == cE.data[cE.layer_objects + q]
 
         if dir in (0, 4):
-            i = m + cE.size.w * b1
+            i = m + cE.size.w * side_dir
             if free(i):
-                h1.y = 0
+                slide.y = 0
                 n = j_ * 27 + 8
                 if pos.x > n:
                     if pos.x - n > 3:
-                        h1.x = -3
+                        slide.x = -3
                     else:
-                        h1.x = i16(n - pos.x)
+                        slide.x = i16(n - pos.x)
                 elif n - pos.x > 3:
-                    h1.x = 3
+                    slide.x = 3
                 else:
-                    h1.x = i16(n - pos.x)
+                    slide.x = i16(n - pos.x)
                 return 8
             for b in range(1, 6):
                 if j_ + b < cE.size.w:
                     i = m + b
-                    if free(i) and arrayOfInt2[0] != 0:
-                        i = m + b + cE.size.w * b1
+                    if free(i) and open_side[0] != 0:
+                        i = m + b + cE.size.w * side_dir
                         if free(i):
-                            arrayOfInt1[0] = 1
+                            free_side[0] = 1
                     else:
-                        arrayOfInt2[0] = 0
+                        open_side[0] = 0
                 if j_ - b > -1:
                     i = m - b
-                    if free(i) and arrayOfInt2[1] != 0:
-                        i = m - b + cE.size.w * b1
+                    if free(i) and open_side[1] != 0:
+                        i = m - b + cE.size.w * side_dir
                         if free(i):
-                            arrayOfInt1[1] = 1
+                            free_side[1] = 1
                     else:
-                        arrayOfInt2[1] = 0
-                if arrayOfInt1[0] != 0 and arrayOfInt1[1] != 0:
+                        open_side[1] = 0
+                if free_side[0] != 0 and free_side[1] != 0:
                     return 6 if pos.x - j_ * 27 > 8 else 2
-                if arrayOfInt1[0] != 0:
+                if free_side[0] != 0:
                     return 6
-                if arrayOfInt1[1] != 0:
+                if free_side[1] != 0:
                     return 2
         elif dir in (2, 6):
-            i = m + b1
+            i = m + side_dir
             if free(i):
-                h1.x = 0
+                slide.x = 0
                 n = k * 27 + 20
                 if pos.y > n:
                     if pos.y - n > 4:
-                        h1.y = -4
+                        slide.y = -4
                     else:
-                        h1.y = i16(n - pos.y)
+                        slide.y = i16(n - pos.y)
                 elif n - pos.y > 4:
-                    h1.y = 4
+                    slide.y = 4
                 else:
-                    h1.y = i16(n - pos.y)
+                    slide.y = i16(n - pos.y)
                 return 8
             for b in range(1, 6):
                 if k + b < cE.size.h:
                     i = m + b * cE.size.w
-                    if free(i) and arrayOfInt2[0] != 0:
-                        i = m + b * cE.size.w + b1
+                    if free(i) and open_side[0] != 0:
+                        i = m + b * cE.size.w + side_dir
                         if free(i):
-                            arrayOfInt1[0] = 1
+                            free_side[0] = 1
                     else:
-                        arrayOfInt2[0] = 0
+                        open_side[0] = 0
                 if k - b > -1:
                     i = m - b * cE.size.w
-                    if free(i) and arrayOfInt2[1] != 0:
-                        i = m - b * cE.size.w + b1
+                    if free(i) and open_side[1] != 0:
+                        i = m - b * cE.size.w + side_dir
                         if free(i):
-                            arrayOfInt1[1] = 1
+                            free_side[1] = 1
                     else:
-                        arrayOfInt2[1] = 0
-                if arrayOfInt1[0] != 0 and arrayOfInt1[1] != 0:
+                        open_side[1] = 0
+                if free_side[0] != 0 and free_side[1] != 0:
                     return 0 if pos.y - k * 27 > 8 else 4
-                if arrayOfInt1[0] != 0:
+                if free_side[0] != 0:
                     return 0
-                if arrayOfInt1[1] != 0:
+                if free_side[1] != 0:
                     return 4
         return -1
 
     @staticmethod
     def straighten_step(delta, row):  # ar.java:1016-1023  (diagonal step -> straight step)
-        arrayOfByte = [[0, 1, 1, 2, 3, 4, 4, 5, 6, 7, 7, 8, 8, 9, 10, 10, 11],
+        steps = [[0, 1, 1, 2, 3, 4, 4, 5, 6, 7, 7, 8, 8, 9, 10, 10, 11],
                        [0, 2, 3, 4, 6, 7, 8, 9, 11, 13, 14, 16, 17, 18, 20, 21, 23]]
         if delta < 0:
-            return -arrayOfByte[row][min(16, -delta)]
-        return arrayOfByte[row][min(16, delta)]
+            return -steps[row][min(16, -delta)]
+        return steps[row][min(16, delta)]
 
     def move(self, pos, dx, dy, dir, actor):  # ar.java:1025-1153  (move; returns the direction, -1 blocked, 9 stopped)
         i = 0
@@ -532,26 +532,26 @@ class MapEngine(GameCanvas):
                     return -1
         elif dir == 8:
             if actor == -1:
-                h1 = GameCanvas.hero.slide_target
+                slide = GameCanvas.hero.slide_target
             else:
-                h1 = GameCanvas.actors[actor].target
-            i = h1.x
-            j_ = h1.y
-            if h1.x > 0:
+                slide = GameCanvas.actors[actor].target
+            i = slide.x
+            j_ = slide.y
+            if slide.x > 0:
                 dir = 6
-            elif h1.x < 0:
+            elif slide.x < 0:
                 dir = 2
-            elif h1.y > 0:
+            elif slide.y > 0:
                 dir = 0
-            elif h1.y < 0:
+            elif slide.y < 0:
                 dir = 4
-        arrayOfInt = self.keep_in_room(pos, i, j_)
-        i = arrayOfInt[0]
-        j_ = arrayOfInt[1]
+        delta = self.keep_in_room(pos, i, j_)
+        i = delta[0]
+        j_ = delta[1]
         if i != 0 or j_ != 0:
-            arrayOfInt = self.blocked_by_actor(pos, i, j_, actor)
-            i = arrayOfInt[0]
-            j_ = arrayOfInt[1]
+            delta = self.blocked_by_actor(pos, i, j_, actor)
+            i = delta[0]
+            j_ = delta[1]
             if i == 0 and j_ == 0:
                 return 9
         pos.x = i16(pos.x + i)
@@ -560,32 +560,32 @@ class MapEngine(GameCanvas):
 
     def blocked_by_actor(self, pos, dx, dy, actor):  # ar.java:1155-1194  (do not walk into the hero / enemies)
         b = 0
-        h1 = Point()
-        h1.x = i16(pos.x + dx)
-        h1.y = i16(pos.y + dy)
+        dest = Point()
+        dest.x = i16(pos.x + dx)
+        dest.y = i16(pos.y + dy)
         if actor > -1:
-            i = MapEngine.distance(h1, GameCanvas.hero.pos[0])
+            i = MapEngine.distance(dest, GameCanvas.hero.pos[0])
             j_ = MapEngine.distance(pos, GameCanvas.hero.pos[0])
             if i < j_ and i < 20:
-                while MapEngine.iabs(h1.x - GameCanvas.hero.pos[0].x) <= 27 and MapEngine.iabs(h1.y - GameCanvas.hero.pos[0].y) <= 27:
+                while MapEngine.iabs(dest.x - GameCanvas.hero.pos[0].x) <= 27 and MapEngine.iabs(dest.y - GameCanvas.hero.pos[0].y) <= 27:
                     MapEngine.approach_zero(dx, dy)       # (result unused in the original)
-                    h1.x = i16(pos.x + dx)
-                    h1.y = i16(pos.y + dy)
+                    dest.x = i16(pos.x + dx)
+                    dest.y = i16(pos.y + dy)
                     b += 1
                     if b > 16:
                         break
         else:
-            for b1 in range(GameCanvas.actor_count):
-                s = GameCanvas.actor_slots[b1]
+            for nth in range(GameCanvas.actor_count):
+                s = GameCanvas.actor_slots[nth]
                 if GameCanvas.actors[s].action[0] != 3:
-                    i = MapEngine.distance(h1, GameCanvas.actors[s].pos[0])
+                    i = MapEngine.distance(dest, GameCanvas.actors[s].pos[0])
                     j_ = MapEngine.distance(pos, GameCanvas.actors[s].pos[0])
                     if i < j_ and i < 20:
                         b = 0
-                        while MapEngine.iabs(h1.x - GameCanvas.actors[s].pos[0].x) <= 27 and MapEngine.iabs(h1.y - GameCanvas.actors[s].pos[0].y) <= 27:
+                        while MapEngine.iabs(dest.x - GameCanvas.actors[s].pos[0].x) <= 27 and MapEngine.iabs(dest.y - GameCanvas.actors[s].pos[0].y) <= 27:
                             MapEngine.approach_zero(dx, dy)
-                            h1.x = i16(pos.x + dx)
-                            h1.y = i16(pos.y + dy)
+                            dest.x = i16(pos.x + dx)
+                            dest.y = i16(pos.y + dy)
                             b += 1
                             if b > 16:
                                 break
@@ -650,25 +650,25 @@ class MapEngine(GameCanvas):
         for b in range(GameCanvas.breakable_count):
             cA = GameCanvas.breakables[b]
             if cA.active != 0 and cA.hp > 0:
-                e0 = cz.action[0]
-                if e0 == 13:
+                action = cz.action[0]
+                if action == 13:
                     q = cz.dir[0] >> 1
                     if self.boxes_touch(cz.pos[0].x + consts.hit_box_x[q], cz.pos[0].y + consts.hit_box_y[q], consts.hit_box_w[q], consts.hit_box_h[q], cA.pos.x - 8, cA.pos.y - 8, 18, 18):
                         self.hit_breakable(b)
-                elif e0 == 22:
+                elif action == 22:
                     if MapEngine.is_in_front(cz.pos[0], cA.pos, cz.dir[0]) != 0:
                         self.breakable_hit_if_near(b, consts.weapon_reach[cz.weapon_kind])
-                elif e0 in (23, 24):
+                elif action in (23, 24):
                     self.breakable_hit_if_near(b, 45)
-                elif e0 == 25:
+                elif action == 25:
                     if (cz.dir[0] + (cz.frame[0] >> 1 << 1) & 0x7) == MapEngine.dir4(cz.pos[0], cA.pos):
                         self.breakable_hit_if_near(b, consts.weapon_reach[cz.weapon_kind])
-                elif e0 in (26, 27):
+                elif action in (26, 27):
                     h_.x = i16(cz.pos[0].x + consts.front_dx[cz.dir[0] >> 1])
                     h_.y = i16(cz.pos[0].y + consts.front_dy[cz.dir[0] >> 1])
                     if MapEngine.distance(h_, cA.pos) <= 35:
                         self.hit_breakable(b)
-                elif e0 in (28, 29, 30):
+                elif action in (28, 29, 30):
                     self.hit_breakable(b)
                 else:
                     self.breakable_hit_if_facing(b, consts.weapon_reach[cz.weapon_kind])
@@ -763,55 +763,55 @@ class MapEngine(GameCanvas):
         self.hero_hits_enemy(index, cz.action[0])
         if cz.combo > 1 and cz.action[0] < 12:
             ex.ai_mode = 1
-        e0 = cz.action[0]
-        if e0 == 12:
+        action = cz.action[0]
+        if action == 12:
             cz.frame[0] = 5
             ex.ai_mode = 2
-        elif e0 in (14, 22):
+        elif action in (14, 22):
             ex.ai_mode = 2
-        elif e0 == 20:
+        elif action == 20:
             ex.hit_fx_kind = i8(self.rand(2) + 1)
             ex.ai_mode = 0
-        elif e0 == 21:
+        elif action == 21:
             ex.ai_mode = 5
-        elif e0 in (23, 24):
-            if e0 == 24:                    # case 24 falls through into case 23
+        elif action in (23, 24):
+            if action == 24:                    # case 24 falls through into case 23
                 ex.ai_mode = 5
             self.set_enemy_on_fire(index)
-        elif e0 in (25, 26, 27):
-            if e0 == 25:                    # 25 -> 27 -> 26 fall through
+        elif action in (25, 26, 27):
+            if action == 25:                    # 25 -> 27 -> 26 fall through
                 ex.ai_mode = 2
-            if e0 in (25, 27):
+            if action in (25, 27):
                 ex.ai_mode = 5
             ex.hit_fx_kind = 2
             h_.x = i16(cz.pos[0].x + consts.front_dx[cz.dir[0] >> 1])
             h_.y = i16(cz.pos[0].y + consts.front_dy[cz.dir[0] >> 1])
             ex.dir[0] = ex.facing = MapEngine.dir8(ex.pos[0], h_)
-        elif e0 == 29:
+        elif action == 29:
             self.set_enemy_on_fire(index)
         self.play_sound(16)                       # (`if (A != 0);` - the sound plays always)
 
     def general_skill_hits_hero(self, index):  # ar.java:546-578  (a general's skill hits the hero)
         cz = GameCanvas.hero
-        f0 = GameCanvas.actors[index].action[0]
-        if f0 == 6:
+        action = GameCanvas.actors[index].action[0]
+        if action == 6:
             GameCanvas.actors[index].frame[0] = 5
             cz.hurt_ticks = 2
-        elif f0 in (8, 16):
+        elif action in (8, 16):
             cz.hurt_ticks = 2
-        elif f0 == 14:
+        elif action == 14:
             cz.hit_fx_kind = self.rand(2) + 1
-        elif f0 == 15:
+        elif action == 15:
             cz.hurt_ticks = 5
-        elif f0 in (17, 18):
-            if f0 == 18:                    # case 18 falls through into case 17
+        elif action in (17, 18):
+            if action == 18:                    # case 18 falls through into case 17
                 cz.hurt_ticks = 5
             self.set_hero_on_fire()
-        elif f0 == 19:
+        elif action == 19:
             cz.hurt_ticks = 2
             self.set_hero_on_fire()
-        elif f0 in (20, 21):
-            if f0 == 21:                    # case 21 falls through into case 20
+        elif action in (20, 21):
+            if action == 21:                    # case 21 falls through into case 20
                 cz.hurt_ticks = 5
             cz.hit_fx_kind = 2
         self.hero_is_hit(index)
@@ -889,26 +889,26 @@ class MapEngine(GameCanvas):
             ex = GameCanvas.actors[s]
             if ex.hp > 0 and ex.alerted != 0 and ex.action[0] < 6:
                 if kind == 0:
-                    e0 = cz.action[0]
-                    if e0 == 13:
+                    action = cz.action[0]
+                    if action == 13:
                         q = cz.dir[0] >> 1
                         if self.boxes_touch(cz.pos[0].x + consts.hit_box_x[q], cz.pos[0].y + consts.hit_box_y[q], consts.hit_box_w[q], consts.hit_box_h[q], ex.pos[0].x - 8, ex.pos[0].y - 8, 17, 17):
                             self.hero_hits_enemy(s, cz.action[0])
                             self.play_sound(3)
-                    elif e0 == 22:
+                    elif action == 22:
                         if MapEngine.is_in_front(cz.pos[0], ex.pos[0], cz.dir[0]) != 0:
                             self.hero_strike_if_near(s, consts.weapon_reach[cz.weapon_kind])
-                    elif e0 in (23, 24):
+                    elif action in (23, 24):
                         self.hero_strike_if_near(s, 45)
-                    elif e0 == 25:
+                    elif action == 25:
                         if (cz.dir[0] + (cz.frame[0] >> 1 << 1) & 0x7) == MapEngine.dir4(cz.pos[0], ex.pos[0]):
                             self.hero_strike_if_near(s, consts.weapon_reach[cz.weapon_kind])
-                    elif e0 in (26, 27):
+                    elif action in (26, 27):
                         h_.x = i16(cz.pos[0].x + consts.front_dx[cz.dir[0] >> 1])
                         h_.y = i16(cz.pos[0].y + consts.front_dy[cz.dir[0] >> 1])
                         if MapEngine.distance(h_, ex.pos[0]) <= 35:
                             self.strike_enemy(s)
-                    elif e0 in (28, 29, 30):
+                    elif action in (28, 29, 30):
                         self.strike_enemy(s)
                     self.hero_strike_if_facing(s, consts.weapon_reach[cz.weapon_kind])
                 elif kind in (-2, -1):
@@ -926,28 +926,28 @@ class MapEngine(GameCanvas):
         s = -1
         j_ = 50
         for b in range(GameCanvas.actor_count):
-            s1 = GameCanvas.actor_slots[b]
-            i = MapEngine.distance(GameCanvas.actors[s1].pos[0], GameCanvas.hero.pos[0])
-            if j_ > i and GameCanvas.actors[s1].hp > 0:
+            slot = GameCanvas.actor_slots[b]
+            i = MapEngine.distance(GameCanvas.actors[slot].pos[0], GameCanvas.hero.pos[0])
+            if j_ > i and GameCanvas.actors[slot].hp > 0:
                 j_ = i
-                s = s1
+                s = slot
         return s
 
     # ---- the combat: enemy AI ----------------------------------------------------------------
 
     def choose_enemy_action(self, index):  # ar.java:1216-1278  (choose the next action of enemy paramInt)
-        arrayOfByte = [-2, -1, 0, 0, 0, 0, 1, 2]
+        turns = [-2, -1, 0, 0, 0, 0, 1, 2]
         cz = GameCanvas.hero
         ex = GameCanvas.actors[index]
         i = MapEngine.distance(cz.pos[0], ex.pos[0])
         b = 1 if i < 90 else 0
         ex.frame[0] = 0
         j_ = self.rand(1000)
-        b1 = MapEngine.dir_to_hero(ex.pos[0])
+        to_hero = MapEngine.dir_to_hero(ex.pos[0])
         if ex.type in (201, 203):
             if j_ < 150 + b * 300:
                 ex.action[0] = 0
-                ex.dir[0] = ex.facing = i8(b1 + arrayOfByte[j_ & 0x7] & 0x7)
+                ex.dir[0] = ex.facing = i8(to_hero + turns[j_ & 0x7] & 0x7)
                 return
             if j_ < 850 - b * 100:
                 if b != 0:
@@ -957,16 +957,16 @@ class MapEngine(GameCanvas):
                         self.hero_is_hit(index)
                         return
                     ex.action[0] = 0
-                    ex.dir[0] = ex.facing = i8(b1 + arrayOfByte[j_ & 0x7] & 0x7)
+                    ex.dir[0] = ex.facing = i8(to_hero + turns[j_ & 0x7] & 0x7)
                     return
                 ex.action[0] = 0
-                ex.dir[0] = ex.facing = i8(ex.dir[0] + arrayOfByte[j_ & 0x7] & 0x7)
+                ex.dir[0] = ex.facing = i8(ex.dir[0] + turns[j_ & 0x7] & 0x7)
                 return
             ex.action[0] = 0
             if b != 0:
                 ex.dir[0] = ex.facing = i8(j_ & 0x7)
                 return
-            ex.dir[0] = ex.facing = i8(ex.dir[0] + arrayOfByte[j_ & 0x7] & 0x7)
+            ex.dir[0] = ex.facing = i8(ex.dir[0] + turns[j_ & 0x7] & 0x7)
             return
         if ex.type == 202:
             ex.action[0] = 1
@@ -982,7 +982,7 @@ class MapEngine(GameCanvas):
                 ex.dir[0] = ex.facing = MapEngine.dir4(ex.pos[0], cz.pos[0])
                 return
         else:
-            ex.dir[0] = ex.facing = b1
+            ex.dir[0] = ex.facing = to_hero
 
     @staticmethod
     def dir_to_hero(pos):  # ar.java:1280-1284  (direction 0..7 from paramh to the hero, 27 px dead zone)
@@ -996,16 +996,16 @@ class MapEngine(GameCanvas):
 
     @staticmethod
     def shoot_arrow(index):  # ar.java:1286-1308  (an archer shoots an arrow eC)
-        arrayOfByte1 = [-1, -15, -1, 5]
-        arrayOfByte2 = [-5, -13, -30, -13]
+        arrow_dx = [-1, -15, -1, 5]
+        arrow_dy = [-5, -13, -30, -13]
         ex = GameCanvas.actors[index]
         i = ex.dir[0] >> 1
         for b in range(3):
             eC = GameCanvas.arrows[b]
             if eC.active == 0:
                 eC.active = 1
-                eC.pos[1].x = i16(ex.pos[0].x + arrayOfByte1[i])
-                eC.pos[1].y = i16(ex.pos[0].y + arrayOfByte2[i])
+                eC.pos[1].x = i16(ex.pos[0].x + arrow_dx[i])
+                eC.pos[1].y = i16(ex.pos[0].y + arrow_dy[i])
                 if config.DECOMP_FIX["F18"]:
                     # DECOMP-FIX F18: the start goes into eC.b[1] (the "previous" position used
                     # only for erasing, c.java:124-141), but ar.j() (ar.java:1734-1735) first
@@ -1029,7 +1029,7 @@ class MapEngine(GameCanvas):
     _SHIFT203 = {3: (-10, 0), 1: (-10, 10), 2: (-10, 0), 0: (0, 10), 5: (10, 0), 7: (10, 10), 6: (10, 0)}
 
     def tick_enemies(self):  # ar.java:1310-1604  (enemy AI: one tick of every enemy)
-        arrayOfByte = [20, 20, 25]
+        buff_div = [20, 20, 25]
         i = 0
         cz = GameCanvas.hero
         # Java `for (b = 0; b < ag.ez; b++)` reads ez every time: ab() below removes the dead
@@ -1039,12 +1039,12 @@ class MapEngine(GameCanvas):
             b += 1
             if b >= GameCanvas.actor_count:
                 break
-            s1 = GameCanvas.actor_slots[b]
-            ex = GameCanvas.actors[s1]
+            slot = GameCanvas.actor_slots[b]
+            ex = GameCanvas.actors[slot]
             ex.action[0] = min(ex.action[0], len(ex.anims[ex.dir[0]]) - 1)
             ex.frame[0] = i8(ex.frame[0] + 1)
             ex.think_ticks = i8(ex.think_ticks - 1)
-            s2 = ex.anims[ex.dir[0]][ex.action[0]][ex.frame[0]]
+            anim_frame = ex.anims[ex.dir[0]][ex.action[0]][ex.frame[0]]
             if ex.attack_buff_ticks > 0:
                 ex.attack_buff_ticks = i16(ex.attack_buff_ticks - 1)
                 if ex.attack_buff_ticks < 1:
@@ -1054,8 +1054,8 @@ class MapEngine(GameCanvas):
                 if ex.defense_buff_ticks < 1:
                     ex.defense_buff = 0
             if ex.action[0] == 3:
-                if s2 > 200:
-                    self.enemy_dies(s1)
+                if anim_frame > 200:
+                    self.enemy_dies(slot)
                     if GameCanvas.enemies_alive < 1 and 0 == GameCanvas.waves[0] and ex.type != 202:
                         if GameCanvas.boss_fight != 0:
                             GameCanvas.room_phase = 4
@@ -1064,7 +1064,7 @@ class MapEngine(GameCanvas):
                             GameCanvas.room_phase = 3
                             GameCanvas.room_phase_timer = 5
                 continue
-            if s2 > 200:
+            if anim_frame > 200:
                 if ex.hp < 1:
                     ex.action[0] = 3
                 else:
@@ -1077,7 +1077,7 @@ class MapEngine(GameCanvas):
                 ex.alerted = 1
                 ex.think_ticks = 6
                 if ex.action[0] == 0:
-                    self.choose_enemy_action(s1)
+                    self.choose_enemy_action(slot)
             if ex.type == 202:
                 ex.dir[0] = ex.facing = MapEngine.dir4(ex.pos[0], cz.pos[0])
                 continue
@@ -1087,24 +1087,24 @@ class MapEngine(GameCanvas):
                 ex.pos[0].y = i16(ex.pos[0].y + consts.dir_dy8[j_])
                 continue
             k = m = 0
-            f0 = ex.action[0]
-            g0 = ex.frame[0]
-            e0 = ex.dir[0]
-            if f0 == 0:
+            action = ex.action[0]
+            frame = ex.frame[0]
+            dir = ex.dir[0]
+            if action == 0:
                 k = consts.dir_dx8[j_]
                 m = consts.dir_dy8[j_]
-            elif f0 in (1, 4, 5):
-                k = idiv(consts.dir_dx8[e0], 3)
-                m = idiv(consts.dir_dy8[e0], 3)
-            elif f0 == 6:
-                if 2 < g0 < 6:
-                    k = consts.dir_dx8[e0] << 2
-                    m = consts.dir_dy8[e0] << 2
-            elif f0 in (7, 8):
-                fall8 = f0 == 8
-                if f0 == 7 and 4 < g0 < 8:
-                    k = consts.dir_dx8[e0] << 2
-                    m = consts.dir_dy8[e0] << 2
+            elif action in (1, 4, 5):
+                k = idiv(consts.dir_dx8[dir], 3)
+                m = idiv(consts.dir_dy8[dir], 3)
+            elif action == 6:
+                if 2 < frame < 6:
+                    k = consts.dir_dx8[dir] << 2
+                    m = consts.dir_dy8[dir] << 2
+            elif action in (7, 8):
+                fall8 = action == 8
+                if action == 7 and 4 < frame < 8:
+                    k = consts.dir_dx8[dir] << 2
+                    m = consts.dir_dy8[dir] << 2
                     if k > 0:
                         k = self.step_until_free(ex.pos[0], k, 6)
                     elif k < 0:
@@ -1113,97 +1113,97 @@ class MapEngine(GameCanvas):
                         m = self.step_until_free(ex.pos[0], m, 0)
                     elif m < 0:
                         m = self.step_until_free(ex.pos[0], m, 4)
-                    arrayOfInt = self.keep_in_room(ex.pos[0], k, m)
-                    k = arrayOfInt[0]
-                    m = arrayOfInt[1]
+                    delta = self.keep_in_room(ex.pos[0], k, m)
+                    k = delta[0]
+                    m = delta[1]
                     ex.pos[0].x = i16(ex.pos[0].x + k)
                     ex.pos[0].y = i16(ex.pos[0].y + m)
                     fall8 = True            # no break: falls into case 8
-                if fall8 and 0 < g0 < 9:
-                    k = consts.dir_dx8[e0]
-                    m = consts.dir_dy8[e0]
-            elif f0 == 14:
-                if 0 == (g0 & 0x1):
-                    k = consts.dir_dx8[e0]
-                    m = consts.dir_dy8[e0]
-            elif f0 == 2 and ex.ai_mode > 0:
+                if fall8 and 0 < frame < 9:
+                    k = consts.dir_dx8[dir]
+                    m = consts.dir_dy8[dir]
+            elif action == 14:
+                if 0 == (frame & 0x1):
+                    k = consts.dir_dx8[dir]
+                    m = consts.dir_dy8[dir]
+            elif action == 2 and ex.ai_mode > 0:
                 ex.ai_mode = i8(ex.ai_mode - 1)
                 j_ = j_ + 4 & 0x7
                 k = consts.dir_dx8[j_] << 2
                 m = consts.dir_dy8[j_] << 2
-            elif f0 == 2 and g0 == 1:
+            elif action == 2 and frame == 1:
                 j_ = ex.facing + 4 & 0x7
                 k = idiv(consts.dir_dx8[j_] * 3, 4)
                 m = idiv(consts.dir_dy8[j_] * 3, 4)
             if k != 0 or m != 0:
                 if ex.type == 203:
-                    arrayOfH = ex.pos
+                    pos = ex.pos
                     dx, dy = MapEngine._SHIFT203.get(j_, (0, 0))
-                    arrayOfH[0].x = i16(arrayOfH[0].x + dx)
-                    arrayOfH[1].x = i16(arrayOfH[1].x + dx)
-                    arrayOfH[0].y = i16(arrayOfH[0].y + dy)
-                    arrayOfH[1].y = i16(arrayOfH[1].y + dy)
-                    i = self.move(arrayOfH[0], k, m, j_, s1)
-                    arrayOfH[0].x = i16(arrayOfH[0].x - dx)
-                    arrayOfH[1].x = i16(arrayOfH[1].x - dx)
-                    arrayOfH[0].y = i16(arrayOfH[0].y - dy)
-                    arrayOfH[1].y = i16(arrayOfH[1].y - dy)
+                    pos[0].x = i16(pos[0].x + dx)
+                    pos[1].x = i16(pos[1].x + dx)
+                    pos[0].y = i16(pos[0].y + dy)
+                    pos[1].y = i16(pos[1].y + dy)
+                    i = self.move(pos[0], k, m, j_, slot)
+                    pos[0].x = i16(pos[0].x - dx)
+                    pos[1].x = i16(pos[1].x - dx)
+                    pos[0].y = i16(pos[0].y - dy)
+                    pos[1].y = i16(pos[1].y - dy)
                 else:
-                    i = self.move(ex.pos[0], k, m, j_, s1)
+                    i = self.move(ex.pos[0], k, m, j_, slot)
                 if ex.action[0] == 0 and j_ in (0, 2, 4, 6):
                     if i == -1:
-                        i = MapEngine.slide_corner(ex.pos[0], ex.facing, s1)
+                        i = MapEngine.slide_corner(ex.pos[0], ex.facing, slot)
                         if i != -1:
-                            self.move(ex.pos[0], consts.dir_dx8[i], consts.dir_dy8[i], i, s1)
-            f0 = ex.action[0]
-            g0 = ex.frame[0]
-            if f0 in (1, 4, 5):
-                if g0 == 1:
-                    self.enemy_strikes_hero(s1)
-            elif f0 == 6:
-                if 2 < g0 < 6:
-                    self.enemy_strikes_hero(s1)
-            elif f0 == 7:
-                if 4 < g0 < 8:
-                    self.enemy_strikes_hero(s1)
-            elif f0 == 8:
-                if g0 in (2, 4, 6, 8):
-                    self.enemy_strikes_hero(s1)
-            elif f0 in (9, 10):
-                if g0 == 11:
-                    ex.hp = i16(ex.hp + idiv(ex.max_hp * (20 if f0 == 9 else 50), 100))
+                            self.move(ex.pos[0], consts.dir_dx8[i], consts.dir_dy8[i], i, slot)
+            action = ex.action[0]
+            frame = ex.frame[0]
+            if action in (1, 4, 5):
+                if frame == 1:
+                    self.enemy_strikes_hero(slot)
+            elif action == 6:
+                if 2 < frame < 6:
+                    self.enemy_strikes_hero(slot)
+            elif action == 7:
+                if 4 < frame < 8:
+                    self.enemy_strikes_hero(slot)
+            elif action == 8:
+                if frame in (2, 4, 6, 8):
+                    self.enemy_strikes_hero(slot)
+            elif action in (9, 10):
+                if frame == 11:
+                    ex.hp = i16(ex.hp + idiv(ex.max_hp * (20 if action == 9 else 50), 100))
                     if ex.hp > ex.max_hp:
                         ex.hp = ex.max_hp
-            elif f0 in (11, 12, 13):
-                if g0 == 11:
-                    if f0 != 12:
-                        ex.attack_buff = i16(idiv(ex.attack, arrayOfByte[f0 - 11]))
+            elif action in (11, 12, 13):
+                if frame == 11:
+                    if action != 12:
+                        ex.attack_buff = i16(idiv(ex.attack, buff_div[action - 11]))
                         if ex.attack_buff < 1:
                             ex.attack_buff = 1
                         ex.attack_buff_ticks = 50
-                    if f0 != 11:
-                        ex.defense_buff = i16(idiv(ex.defense, arrayOfByte[f0 - 11]))
+                    if action != 11:
+                        ex.defense_buff = i16(idiv(ex.defense, buff_div[action - 11]))
                         if ex.defense_buff < 1:
                             ex.defense_buff = 1
                         ex.defense_buff_ticks = 50
-            elif f0 == 14:
-                if (g0 & 0x1) != 0:
-                    self.enemy_strikes_hero(s1)
-            elif f0 == 15:
-                if g0 == 5:
-                    self.enemy_strikes_hero(s1)
-            elif f0 == 16:
-                if g0 == 6:
-                    self.enemy_strikes_hero(s1)
-            elif f0 in (17, 18):
-                if g0 == 5:
-                    self.enemy_strikes_hero(s1)
-            elif f0 == 19:
-                if (g0 & 0x1) != 0:
-                    self.enemy_strikes_hero(s1)
-            elif f0 in (20, 21):
-                if g0 == 8:
-                    self.enemy_strikes_hero(s1)
+            elif action == 14:
+                if (frame & 0x1) != 0:
+                    self.enemy_strikes_hero(slot)
+            elif action == 15:
+                if frame == 5:
+                    self.enemy_strikes_hero(slot)
+            elif action == 16:
+                if frame == 6:
+                    self.enemy_strikes_hero(slot)
+            elif action in (17, 18):
+                if frame == 5:
+                    self.enemy_strikes_hero(slot)
+            elif action == 19:
+                if (frame & 0x1) != 0:
+                    self.enemy_strikes_hero(slot)
+            elif action in (20, 21):
+                if frame == 8:
+                    self.enemy_strikes_hero(slot)
 
     def enemy_strikes_hero(self, index):  # ar.java:1606-1661  (enemy paramInt strikes the hero)
         cz = GameCanvas.hero
@@ -1211,24 +1211,24 @@ class MapEngine(GameCanvas):
         h_ = Point()
         if cz.action[0] != 9 and cz.action[0] != 10:
             if cz.action[0] < 12:
-                f0 = ex.action[0]
-                if f0 == 7:
+                action = ex.action[0]
+                if action == 7:
                     q = ex.dir[0] >> 1
                     if self.boxes_touch(ex.pos[0].x + consts.hit_box_x[q], ex.pos[0].y + consts.hit_box_y[q], consts.hit_box_w[q], consts.hit_box_h[q], cz.pos[0].x - 8, cz.pos[0].y - 8, 17, 17):
                         self.hero_is_hit(index)
                     return
-                if f0 == 16:
+                if action == 16:
                     if MapEngine.is_in_front(ex.pos[0], cz.pos[0], ex.dir[0]) != 0:
                         self.general_strike_if_near(index, consts.general_reach[GameCanvas.general.side])
                     return
-                if f0 in (17, 18):
+                if action in (17, 18):
                     self.general_strike_if_near(index, 45)
                     return
-                if f0 == 19:
+                if action == 19:
                     if (ex.dir[0] + (ex.frame[0] >> 1 << 1) & 0x7) == MapEngine.dir4(ex.pos[0], cz.pos[0]):
                         self.general_strike_if_near(index, consts.general_reach[GameCanvas.general.side])
                     return
-                if f0 in (20, 21):
+                if action in (20, 21):
                     h_.x = i16(ex.pos[0].x + consts.front_dx[ex.dir[0] >> 1])
                     h_.y = i16(ex.pos[0].y + consts.front_dy[ex.dir[0] >> 1])
                     if MapEngine.distance(h_, cz.pos[0]) <= 35:
@@ -1237,11 +1237,11 @@ class MapEngine(GameCanvas):
                 self.general_strike_if_facing(index, consts.general_reach[GameCanvas.general.side])
                 return
         elif cz.action[0] == 9:
-            f0 = ex.action[0]
-            if f0 in (8, 14):
+            action = ex.action[0]
+            if action in (8, 14):
                 self.general_strike_if_facing(index, consts.general_reach[GameCanvas.general.side])
                 return
-            if f0 in (20, 21):
+            if action in (20, 21):
                 h_.x = i16(ex.pos[0].x + consts.front_dx[cz.dir[0] >> 1])
                 h_.y = i16(ex.pos[0].y + consts.front_dy[cz.dir[0] >> 1])
                 if MapEngine.distance(h_, cz.pos[0]) <= 35:
@@ -1252,24 +1252,24 @@ class MapEngine(GameCanvas):
         for b in range(GameCanvas.actor_count):
             if GameCanvas.actor_slots[b] == index:
                 if ex.type < 200:
-                    b1 = 2 if GameCanvas.boss_fight != 0 else 1
+                    drop_kind = 2 if GameCanvas.boss_fight != 0 else 1
                     GameCanvas.mission_exp += ex.level << 1
                     if GameCanvas.general.side != GameCanvas.hero.weapon_kind:
                         GameCanvas.images[40 + GameCanvas.general.side] = None
                     GameCanvas.boss_images[1] = None
-                    for b2 in range(3, 9):
-                        GameCanvas.enemy_frames[b2] = None
+                    for i in range(3, 9):
+                        GameCanvas.enemy_frames[i] = None
                     GameCanvas.boss_spawned = 0
                 else:
-                    b1 = 0
+                    drop_kind = 0
                     GameCanvas.mission_exp += ex.level
-                self.drop_item(b1, ex.pos[0])
+                self.drop_item(drop_kind, ex.pos[0])
                 if ex.type == 203:
                     GameCanvas.hero.kills += 3
                 else:
                     GameCanvas.hero.kills += 1
-                for b1 in range(b, 6):
-                    GameCanvas.actor_slots[b1] = GameCanvas.actor_slots[b1 + 1]
+                for drop_kind in range(b, 6):
+                    GameCanvas.actor_slots[drop_kind] = GameCanvas.actor_slots[drop_kind + 1]
                 ex.active = 0
                 GameCanvas.actor_count = i16(GameCanvas.actor_count - 1)
                 if ex.type != 202:
@@ -1319,19 +1319,19 @@ class MapEngine(GameCanvas):
                     self.hero_can_be_hit(b)
 
     def hero_can_be_hit(self, index):  # ar.java:1751-1772
-        e1 = GameCanvas.hero.action[1]
-        f1 = GameCanvas.hero.frame[1]
-        if e1 in (26, 27):
-            if 1 < f1 < 9:
+        action = GameCanvas.hero.action[1]
+        frame = GameCanvas.hero.frame[1]
+        if action in (26, 27):
+            if 1 < frame < 9:
                 return
-        elif e1 == 28:
-            if f1 > 3:
+        elif action == 28:
+            if frame > 3:
                 return
-        elif e1 == 29:
-            if f1 > 6:
+        elif action == 29:
+            if frame > 6:
                 return
-        elif e1 == 30:
-            if 3 < f1 < 15:
+        elif action == 30:
+            if 3 < frame < 15:
                 return
         MapEngine.move_arrow(index)
 
@@ -1447,9 +1447,9 @@ class MapEngine(GameCanvas):
             GameCanvas.exit_blink = i16(GameCanvas.exit_blink + 6)
             GameCanvas.scene.draw_tiles(GameCanvas.view_tiles.x, GameCanvas.view_tiles.y, GameCanvas.view_tx, GameCanvas.view_ty, 0)
         self.draw_view_region(GameCanvas.images[7], GameCanvas.view_x, GameCanvas.view_y, GameCanvas.view_size.x, GameCanvas.view_size.y, GameCanvas.view_offset.x, GameCanvas.view_offset.y)
-        arrayOfInt = self.keep_in_room(GameCanvas.hero.pos[0], 0, 0)
-        GameCanvas.hero.pos[0].x = i16(GameCanvas.hero.pos[0].x + arrayOfInt[0])
-        GameCanvas.hero.pos[0].y = i16(GameCanvas.hero.pos[0].y + arrayOfInt[1])
+        delta = self.keep_in_room(GameCanvas.hero.pos[0], 0, 0)
+        GameCanvas.hero.pos[0].x = i16(GameCanvas.hero.pos[0].x + delta[0])
+        GameCanvas.hero.pos[0].y = i16(GameCanvas.hero.pos[0].y + delta[1])
         GameCanvas.scene.draw_actors()
         if GameCanvas.exit_blink > 1:
             self.play_sound(-1)
@@ -1498,12 +1498,12 @@ class MapEngine(GameCanvas):
     def draw_object_layer(self):  # ar.java:1971-1983  (object layer over dirty cells)
         cE = GameCanvas.map
         for b in range(GameCanvas.view_tiles.x):
-            for b1 in range(GameCanvas.view_tiles.y):
-                if GameCanvas.dirty[b1][b] != 0:
-                    i = (GameCanvas.view_ty + b1) * cE.size.w + GameCanvas.view_tx + b
+            for row in range(GameCanvas.view_tiles.y):
+                if GameCanvas.dirty[row][b] != 0:
+                    i = (GameCanvas.view_ty + row) * cE.size.w + GameCanvas.view_tx + b
                     if cE.data[cE.layer_objects + i] != 0:
                         j_ = GameCanvas.tile_slots[cE.data[cE.layer_objects + i] - 1] - 1
-                        self.draw_map_region(GameCanvas.tile_images[j_], (GameCanvas.view_tx + b) * 27 - GameCanvas.camera.x, (GameCanvas.view_ty + b1) * 27 - GameCanvas.camera.y, 27, 27, 0, 0)
+                        self.draw_map_region(GameCanvas.tile_images[j_], (GameCanvas.view_tx + b) * 27 - GameCanvas.camera.x, (GameCanvas.view_ty + row) * 27 - GameCanvas.camera.y, 27, 27, 0, 0)
 
     def draw_drops(self):  # ar.java:1985-2015  (dropped items; objects being broken)
         for b in range(GameCanvas.drop_count):
@@ -1531,13 +1531,13 @@ class MapEngine(GameCanvas):
                     cA.active = 0
 
     def drop_item(self, kind, pos):  # ar.java:2017-2053  (drop an item at paramh)
-        s1 = pos.x
-        s2 = pos.y
-        if s2 <= GameCanvas.camera.y + 27 or s2 >= GameCanvas.camera.y + 162 or s1 <= GameCanvas.camera.x + 27 or s1 >= GameCanvas.camera.x + 162:
+        x = pos.x
+        y = pos.y
+        if y <= GameCanvas.camera.y + 27 or y >= GameCanvas.camera.y + 162 or x <= GameCanvas.camera.x + 27 or x >= GameCanvas.camera.x + 162:
             return
-        s3 = self.random_drop(kind)
-        if s3 != 0:
-            i = idiv(s2, 27) * GameCanvas.map.size.w + idiv(s1, 27)
+        item = self.random_drop(kind)
+        if item != 0:
+            i = idiv(y, 27) * GameCanvas.map.size.w + idiv(x, 27)
             if 0 == (GameCanvas.map.data[GameCanvas.map.layer_flags + i] & 0x1):
                 b = 0
                 while b < 10 and GameCanvas.drops[b].item != 0:
@@ -1545,45 +1545,45 @@ class MapEngine(GameCanvas):
                 if b > 9:
                     return
                 cC = GameCanvas.drops[b]
-                cC.item = s3
+                cC.item = item
                 if cC.pos is None:
                     cC.pos = Point()
-                cC.pos.x = s1
-                cC.pos.y = s2
+                cC.pos.x = x
+                cC.pos.y = y
                 cC.ticks = 75
                 cC.w = cC.h = 28
-                if s3 > 10000:
+                if item > 10000:
                     cC.image = GameCanvas.images[32]
                     cC.frame = 0
                     cC.w = i16(GameCanvas.images[32].getWidth())
                     cC.h = i16(GameCanvas.images[32].getHeight())
-                elif s3 > 100:
+                elif item > 100:
                     cC.image = GameCanvas.images[0]
                     cC.frame = 11
                 else:
                     cC.image = GameCanvas.images[0]
-                    cC.frame = i16(s3 - 1)
+                    cC.frame = i16(item - 1)
                 if b >= GameCanvas.drop_count:
                     GameCanvas.drop_count = i16(GameCanvas.drop_count + 1)
 
     def random_drop(self, kind):  # ar.java:2055-2078  (random drop: item id, potion, or gold 10020/10040)
         C = self.rand
-        arrayOfByte1 = [5, 10, 20, 5, 100]
-        arrayOfByte2 = [10, 30, 60, 1, 100]
-        arrayOfByte3 = [69, 44, 24, 9, 0]
-        arrayOfByte = [[0, 0, 33, 77, 100], [5, 30, 55, 80, 100], [30, 60, 90, 100, 100],
+        drop_odds = [5, 10, 20, 5, 100]
+        potion_odds = [10, 30, 60, 1, 100]
+        tier_min_level = [69, 44, 24, 9, 0]
+        tier_odds = [[0, 0, 33, 77, 100], [5, 30, 55, 80, 100], [30, 60, 90, 100, 100],
                        [40, 80, 100, 100, 100], [80, 100, 100, 100, 100]]
-        if C(100) < arrayOfByte1[kind]:
+        if C(100) < drop_odds[kind]:
             i = C(100)
-            if i < arrayOfByte2[kind]:
+            if i < potion_odds[kind]:
                 # PORT-EXTRA config.DROPS_AFTER_69: row 0 (above Lv69: no Lv1 / Lv10 gear) is skipped,
                 # so a hero above Lv69 keeps the odds of Lv45-69
                 for b in range(1 if config.DROPS_AFTER_69 else 0, 5):
-                    if GameCanvas.hero.level > arrayOfByte3[b]:
+                    if GameCanvas.hero.level > tier_min_level[b]:
                         i = C(100)
-                        for b1 in range(5):
-                            if i < arrayOfByte[b][b1]:
-                                return i16(101 + b1 + 5 * C(20))
+                        for tier in range(5):
+                            if i < tier_odds[b][tier]:
+                                return i16(101 + tier + 5 * C(20))
             else:
                 return i16(C(11) + 1)
         elif C(100) < 25:
@@ -1630,8 +1630,8 @@ class MapEngine(GameCanvas):
         Gfx.set_font(GameCanvas.font_white)
         GameCanvas.draw_view_text(GameCanvas.message.name, i, 2)
         GameCanvas.text_width = GameCanvas.digit_count(GameCanvas.message.level)
-        ct31 = GameCanvas.images[31]
-        self.draw_map_region(ct31, GameCanvas.view_size.x - ct31.getWidth() - 27 - 5 - 7, 2 + GameCanvas.font_white.height(), ct31.getWidth(), ct31.getHeight(), 0, 0)
+        box = GameCanvas.images[31]
+        self.draw_map_region(box, GameCanvas.view_size.x - box.getWidth() - 27 - 5 - 7, 2 + GameCanvas.font_white.height(), box.getWidth(), box.getHeight(), 0, 0)
         self.draw_image_part(GameCanvas.message.level, GameCanvas.view_size.x - 15, 1 + GameCanvas.font_white.height() + 17, 9, 12, GameCanvas.images[20], 0, 0, -1)
         if GameCanvas.message.hp_bar > 0:
             ac_ = Rect(GameCanvas.view_size.x - 62 + GameCanvas.view_x - 7, 2 + GameCanvas.font_white.height() + 12 + GameCanvas.view_y, 62 if GameCanvas.message.hp_bar > 62 else GameCanvas.message.hp_bar, 7)

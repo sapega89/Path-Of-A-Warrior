@@ -18,18 +18,18 @@ class Font:
         self.space_w = space_w     # width of ' '
         try:
             png = ResReader.read(path)
-            b1 = color >> 16 & 0xFF
-            b2 = color >> 8 & 0xFF
-            b3 = color & 0xFF
+            red = color >> 16 & 0xFF
+            green = color >> 8 & 0xFF
+            blue = color & 0xFF
             for b in range(100):
                 if png[b] == 80 and png[b + 1] == 76 and png[b + 2] == 84 and png[b + 3] == 69:
                     Font.plte_offset = b
                     break
             e = Font.plte_offset
-            if png[e + 4] != b1 or png[e + 5] != b2 or png[e + 6] != b3:
-                png[e + 4] = b1
-                png[e + 5] = b2
-                png[e + 6] = b3
+            if png[e + 4] != red or png[e + 5] != green or png[e + 6] != blue:
+                png[e + 4] = red
+                png[e + 5] = green
+                png[e + 6] = blue
                 l = Gfx.crc32(png, e, 10)
                 png[e + 10] = l >> 24 & 0xFF
                 png[e + 11] = l >> 16 & 0xFF

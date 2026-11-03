@@ -103,10 +103,10 @@ class Gfx:
         Gfx.crc_table = [0] * 256
         for b in range(256):
             i = b
-            b1 = 8
+            bits = 8
             while True:
-                b1 -= 1
-                if b1 < 0:
+                bits -= 1
+                if bits < 0:
                     break
                 if (i & 0x1) != 0:
                     i = i32(0xEDB88320 ^ ushr32(i, 1))

@@ -3048,7 +3048,7 @@ class MpCanvas(_Canvas):
 
     @staticmethod
     def draw_sprite_frame(graphics, images, sets, frame):  # g.java:4050
-        a2 = sets[0]
+        frames = sets[0]
         idx = 0
         if frame >= 400:
             idx = (frame - 400)
@@ -3056,16 +3056,16 @@ class MpCanvas(_Canvas):
             idx = (frame - 300)
         elif frame >= 200:
             idx = (frame - 200)
-            a2 = sets[2]
+            frames = sets[2]
         elif frame >= 100:
             idx = (frame - 100)
-            a2 = sets[1]
+            frames = sets[1]
         else:
             idx = frame
         if MpCanvas.draw_mirrored:
-            Draw.draw_image_part(graphics, images[1], (MpCanvas.canvas_w - (((MpCanvas.draw_x - a2.anchor_x[idx]) + a2.w[idx]))), (MpCanvas.draw_y - a2.anchor_y[idx]), a2.w[idx], a2.h[idx], a2.src_x[idx], a2.src_y[idx])
+            Draw.draw_image_part(graphics, images[1], (MpCanvas.canvas_w - (((MpCanvas.draw_x - frames.anchor_x[idx]) + frames.w[idx]))), (MpCanvas.draw_y - frames.anchor_y[idx]), frames.w[idx], frames.h[idx], frames.src_x[idx], frames.src_y[idx])
             return
-        Draw.draw_image_part(graphics, images[0], (MpCanvas.draw_x - a2.anchor_x[idx]), (MpCanvas.draw_y - a2.anchor_y[idx]), a2.w[idx], a2.h[idx], a2.src_x[idx], a2.src_y[idx])
+        Draw.draw_image_part(graphics, images[0], (MpCanvas.draw_x - frames.anchor_x[idx]), (MpCanvas.draw_y - frames.anchor_y[idx]), frames.w[idx], frames.h[idx], frames.src_x[idx], frames.src_y[idx])
 
     def draw_fighter(self, graphics, index):  # g.java:4073
         pose = 0

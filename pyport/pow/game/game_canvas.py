@@ -194,8 +194,8 @@ class GameCanvas(GameFields, Canvas):
                 if GameCanvas.pause_pending:
                     self.apply_pause(GameCanvas.pause_pending_value)
                     GameCanvas.pause_pending = False
-                l1 = system.currentTimeMillis()
-                j_ = (consts.speed_frame_ms[GameCanvas.speed] if GameCanvas.state == 3 else consts.speed_frame_ms[2]) - int(l1 - GameCanvas.tick_start)
+                now = system.currentTimeMillis()
+                j_ = (consts.speed_frame_ms[GameCanvas.speed] if GameCanvas.state == 3 else consts.speed_frame_ms[2]) - int(now - GameCanvas.tick_start)
                 if j_ > 20:
                     await self.sleep_ms(j_)
                 else:
@@ -352,29 +352,29 @@ class GameCanvas(GameFields, Canvas):
 
     @staticmethod
     def load_options():  # ag.java:1174-1186
-        arrayOfByte = bytearray(2)
+        record = bytearray(2)
         try:
             recordStore = RecordStore.openRecordStore("gamevil_pow_env", False)
             if recordStore is None or recordStore.getNumRecords() < 1:
                 return
-            arrayOfByte = recordStore.getRecord(1)
-            GameCanvas.save_pos = len(arrayOfByte)
+            record = recordStore.getRecord(1)
+            GameCanvas.save_pos = len(record)
         except Exception:
             pass
         if GameCanvas.save_pos >= 2:
-            GameCanvas.volume = i8(arrayOfByte[0])
-            GameCanvas.speed = i8(arrayOfByte[1])
+            GameCanvas.volume = i8(record[0])
+            GameCanvas.speed = i8(record[1])
 
     @staticmethod
     def save_options():  # ag.java:1188-1201
-        arrayOfByte = bytearray(2)
-        arrayOfByte[0] = GameCanvas.volume & 0xFF
-        arrayOfByte[1] = GameCanvas.speed & 0xFF
+        record = bytearray(2)
+        record[0] = GameCanvas.volume & 0xFF
+        record[1] = GameCanvas.speed & 0xFF
         try:
             recordStore = RecordStore.openRecordStore("gamevil_pow_env", True)
             if recordStore.getNumRecords() == 0:
-                recordStore.addRecord(arrayOfByte, 0, len(arrayOfByte))
-            recordStore.setRecord(1, arrayOfByte, 0, len(arrayOfByte))
+                recordStore.addRecord(record, 0, len(record))
+            recordStore.setRecord(1, record, 0, len(record))
         except Exception:
             return
 
@@ -395,22 +395,22 @@ class GameCanvas(GameFields, Canvas):
             return None
         bool_ = False
         j_ = 0
-        b1 = 0
-        b2 = 0
+        end = 0
+        field = 0
         text = text + "|"
-        for b3 in range(len(text)):
-            if text[b3] == '|':
-                b2 += 1
-            if not bool_ and b2 == index:
-                if b2 == 0:
-                    j_ = b3
+        for pos in range(len(text)):
+            if text[pos] == '|':
+                field += 1
+            if not bool_ and field == index:
+                if field == 0:
+                    j_ = pos
                 else:
-                    j_ = b3 + 1
+                    j_ = pos + 1
                 bool_ = True
-            elif bool_ and b2 == index + 1:
-                b1 = b3
+            elif bool_ and field == index + 1:
+                end = pos
                 break
-        return text[j_:b1]
+        return text[j_:end]
 
     @staticmethod
     def draw_text(x, y, text):  # ag.java:1242-1244
@@ -722,14 +722,14 @@ class GameCanvas(GameFields, Canvas):
         save_end = GameCanvas.save_pos
         if GameCanvas.save_pos != 0:
             cF = GameCanvas.save_buf
-            arrayOfByte1 = [0] * 16
-            b2 = 0
-            while b2 < 8 and cF[2 + b2] != 32:
-                b2 += 1
-            arrayOfByte2 = bytearray(b2)
-            for b1 in range(b2):
-                arrayOfByte2[b1] = cF[2 + b1]
-            cz.name = GameCanvas.read_utf(arrayOfByte2, 0, b2)
+            reserved = [0] * 16
+            name_len = 0
+            while name_len < 8 and cF[2 + name_len] != 32:
+                name_len += 1
+            name_utf = bytearray(name_len)
+            for i in range(name_len):
+                name_utf[i] = cF[2 + i]
+            cz.name = GameCanvas.read_utf(name_utf, 0, name_len)
             GameCanvas.save_flag = i8(cF[18])
             GameCanvas.save_pos = 19
             GameCanvas.lord = GameCanvas.read_byte()
@@ -737,24 +737,24 @@ class GameCanvas(GameFields, Canvas):
             GameCanvas.rooms_visited = GameCanvas.read_byte()
             GameCanvas.missions_done = GameCanvas.read_long()
             GameCanvas.lords_done = GameCanvas.read_long()
-            for b1 in range(8):
-                GameCanvas.stats[b1] = GameCanvas.read_int()
+            for i in range(8):
+                GameCanvas.stats[i] = GameCanvas.read_int()
             GameCanvas.mission_exp = GameCanvas.read_int()
             GameCanvas.score = GameCanvas.read_int()
-            for b1 in range(44):
-                GameCanvas.generals[0][b1] = GameCanvas.read_byte()
-                GameCanvas.generals[1][b1] = GameCanvas.read_byte()
+            for i in range(44):
+                GameCanvas.generals[0][i] = GameCanvas.read_byte()
+                GameCanvas.generals[1][i] = GameCanvas.read_byte()
             GameCanvas.general_count = GameCanvas.read_byte()
-            for b1 in range(25):
-                GameCanvas.shop[b1] = self.read_item()
+            for i in range(25):
+                GameCanvas.shop[i] = self.read_item()
             GameCanvas.chapter = GameCanvas.read_byte()
             cz.pos[0].x = GameCanvas.read_short()
             cz.pos[0].y = GameCanvas.read_short()
             # Java int division (values are positions >= 0, so // == /)
             cz.pos[0].x = i16((cz.pos[0].x // 27 // 7 * 7 + 4) * 27 + 8)
             cz.pos[0].y = i16((cz.pos[0].y // 27 // 7 * 7 + 4) * 27 + 8)
-            for b1 in range(22):
-                cz.mission_progress[b1] = GameCanvas.read_byte()
+            for i in range(22):
+                cz.mission_progress[i] = GameCanvas.read_byte()
             cz.live_stat1 = GameCanvas.read_byte()
             cz.live_stat2 = GameCanvas.read_byte()
             cz.level = GameCanvas.read_byte()
@@ -778,17 +778,17 @@ class GameCanvas(GameFields, Canvas):
             cz.kills = GameCanvas.read_short()
             cz.stat_points = GameCanvas.read_short()
             cz.live_registered = GameCanvas.read_byte()
-            for b1 in range(5):
-                cz.hotkeys[b1] = GameCanvas.read_byte()
-            for b1 in range(19):
-                cz.skill_levels[b1] = GameCanvas.read_byte()
-            for b1 in range(9):
-                cz.equipped[b1] = self.read_item()
-            for b1 in range(25):
-                cz.backpack[b1] = self.read_item()
-            for b1 in range(5):
-                cz.quick_slots[b1].item = GameCanvas.read_short()
-                cz.quick_slots[b1].count = GameCanvas.read_byte()
+            for i in range(5):
+                cz.hotkeys[i] = GameCanvas.read_byte()
+            for i in range(19):
+                cz.skill_levels[i] = GameCanvas.read_byte()
+            for i in range(9):
+                cz.equipped[i] = self.read_item()
+            for i in range(25):
+                cz.backpack[i] = self.read_item()
+            for i in range(5):
+                cz.quick_slots[i].item = GameCanvas.read_short()
+                cz.quick_slots[i].count = GameCanvas.read_byte()
             cz.quick_keys[0] = GameCanvas.read_byte()
             cz.quick_keys[1] = GameCanvas.read_byte()
             cz.head = GameCanvas.read_byte()
@@ -798,10 +798,10 @@ class GameCanvas(GameFields, Canvas):
             GameCanvas.live_saved = GameCanvas.read_byte()
             GameCanvas.talk_count = GameCanvas.read_byte()
             GameCanvas.difficulty = GameCanvas.read_byte()
-            for b1 in range(16):
-                arrayOfByte1[b1] = GameCanvas.read_byte()
+            for i in range(16):
+                reserved[i] = GameCanvas.read_byte()
             GameCanvas.talk_points = GameCanvas.read_int()
-            for b1 in range(4):
+            for i in range(4):
                 GameCanvas.read_int()
             self.read_backpack_extra(save_end)
         self.compact_backpack()
@@ -845,11 +845,11 @@ class GameCanvas(GameFields, Canvas):
     @staticmethod
     def read_long():  # ag.java:2216-2230  (u64 LE; bytes 4..7 are sign-extended then masked)
         cF, cG = GameCanvas.save_buf, GameCanvas.save_pos
-        l1 = 0
+        value = 0
         for k_ in range(8):
-            l1 |= (cF[cG + k_] & 0xFF) << (8 * k_)
+            value |= (cF[cG + k_] & 0xFF) << (8 * k_)
         GameCanvas.save_pos += 8
-        return l1 - (1 << 64) if l1 & (1 << 63) else l1
+        return value - (1 << 64) if value & (1 << 63) else value
 
     @staticmethod
     def read_int():  # ag.java:2232-2237
@@ -871,14 +871,14 @@ class GameCanvas(GameFields, Canvas):
         return b
 
     def read_item(self):  # ag.java:2252-2261
-        z1 = Item()
-        z1.id = GameCanvas.read_short()
-        z1.attack = GameCanvas.read_short()
-        z1.defense = GameCanvas.read_short()
-        z1.hp = GameCanvas.read_short()
-        z1.mp = GameCanvas.read_short()
-        z1.enchant = GameCanvas.read_byte()
-        return z1
+        item = Item()
+        item.id = GameCanvas.read_short()
+        item.attack = GameCanvas.read_short()
+        item.defense = GameCanvas.read_short()
+        item.hp = GameCanvas.read_short()
+        item.mp = GameCanvas.read_short()
+        item.enchant = GameCanvas.read_byte()
+        return item
 
     def load_ui_images(self):  # ag.java:2263-2269
         GameCanvas.images[34] = self.load_image(GameCanvas.scr_ui.get(22))
@@ -924,26 +924,26 @@ class GameCanvas(GameFields, Canvas):
 
     @staticmethod
     def load_menu_texts():  # ag.java:2321-2343  (menu captions from uimenu.scr = edat[69])
-        al1 = ScrTable("/" + GameCanvas.scr_data.get(69))
+        table = ScrTable("/" + GameCanvas.scr_data.get(69))
         for b in range(30):
-            GameCanvas.menu_titles[b] = al1.get(b)
+            GameCanvas.menu_titles[b] = table.get(b)
             if b < 7:
-                GameCanvas.skill_names[b] = al1.get(b + 48)
+                GameCanvas.skill_names[b] = table.get(b + 48)
             if b < 6:
-                GameCanvas.main_menu_items[b] = al1.get(b + 30)
+                GameCanvas.main_menu_items[b] = table.get(b + 30)
             if b < 5:
-                GameCanvas.speed_names[b] = al1.get(b + 55)
+                GameCanvas.speed_names[b] = table.get(b + 55)
             if b < 4:
-                GameCanvas.option_names[b] = al1.get(b + 42)
+                GameCanvas.option_names[b] = table.get(b + 42)
             if b < 2:
-                GameCanvas.on_off[b] = al1.get(b + 46)
-        GameCanvas.game_menu_items[0] = al1.get(36)
-        GameCanvas.yes_no_items[0] = al1.get(37)
-        GameCanvas.help_items[0] = al1.get(38)
-        GameCanvas.ok_items[0] = al1.get(39)
-        GameCanvas.continue_items[0] = al1.get(40)
-        GameCanvas.pause_items[0] = al1.get(41)
-        al1.free()
+                GameCanvas.on_off[b] = table.get(b + 46)
+        GameCanvas.game_menu_items[0] = table.get(36)
+        GameCanvas.yes_no_items[0] = table.get(37)
+        GameCanvas.help_items[0] = table.get(38)
+        GameCanvas.ok_items[0] = table.get(39)
+        GameCanvas.continue_items[0] = table.get(40)
+        GameCanvas.pause_items[0] = table.get(41)
+        table.free()
 
     def draw_menu_background(self, mode):  # ag.java:2345-2370  (menu background into ct[7])
         if mode == 1:
@@ -957,8 +957,8 @@ class GameCanvas(GameFields, Canvas):
         m = GameCanvas.images[9].getHeight()
         b = 0
         while b * m < GameCanvas.canvas_size.y + m:
-            for b1 in range(4):
-                GameCanvas.draw_region_at(GameCanvas.images[9], 0, 0, (b & 0x1) * -31 + b1 * j_, b * m, j_, m)
+            for col in range(4):
+                GameCanvas.draw_region_at(GameCanvas.images[9], 0, 0, (b & 0x1) * -31 + col * j_, b * m, j_, m)
             b += 1
         # Java: (W - w) * b / 2 and H / 2 * b % 2 - all operands >= 0, so // matches Java /
         for b in range(4):
@@ -984,10 +984,10 @@ class GameCanvas(GameFields, Canvas):
                         break
 
     def swap_items(self, a, b):  # ag.java:2384-2389
-        z1 = Item()
-        GameCanvas.copy_item(z1, a)
+        tmp = Item()
+        GameCanvas.copy_item(tmp, a)
         GameCanvas.copy_item(a, b)
-        GameCanvas.copy_item(b, z1)
+        GameCanvas.copy_item(b, tmp)
 
     @staticmethod
     def copy_item(dst, src):  # ag.java:2391-2398
@@ -1008,8 +1008,8 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.images[40] = None
         GameCanvas.images[41] = None
         if GameCanvas.tile_images is not None:
-            for b1 in range(len(GameCanvas.tile_images)):
-                GameCanvas.tile_images[b1] = None
+            for i in range(len(GameCanvas.tile_images)):
+                GameCanvas.tile_images[i] = None
             GameCanvas.tile_images = None
         GameCanvas.trail_frames = None
         GameCanvas.images[42] = None
@@ -1038,21 +1038,21 @@ class GameCanvas(GameFields, Canvas):
         Gfx.draw_image_part(image, x, y, w, h, src_x, src_y)
 
     def draw_map_region(self, image, x, y, w, h, src_x, src_y):  # ag.java:2442-2457
-        i1 = y
-        if i1 > 0:
-            i1 = 0
-        i2 = GameCanvas.view_size.y - y - h
-        if i2 > 0:
-            i2 = 0
+        clip_top = y
+        if clip_top > 0:
+            clip_top = 0
+        clip_bottom = GameCanvas.view_size.y - y - h
+        if clip_bottom > 0:
+            clip_bottom = 0
         j_ = x
         if j_ > 0:
             j_ = 0
         m = GameCanvas.view_size.x - x - w
         if m > 0:
             m = 0
-        if h + i1 + i2 > 0 and w + j_ + m > 0:
-            GameCanvas.draw_region(x + GameCanvas.view_x - j_, y - i1 + GameCanvas.view_y, w + j_ + m, h + i1 + i2,
-                         image, src_x - j_, src_y - i1)
+        if h + clip_top + clip_bottom > 0 and w + j_ + m > 0:
+            GameCanvas.draw_region(x + GameCanvas.view_x - j_, y - clip_top + GameCanvas.view_y, w + j_ + m, h + clip_top + clip_bottom,
+                         image, src_x - j_, src_y - clip_top)
 
     @staticmethod
     def draw_region_at(image, src_x, src_y, x, y, w, h):  # ag.java:2459-2461
@@ -1117,31 +1117,31 @@ class GameCanvas(GameFields, Canvas):
 
     @staticmethod
     def draw_frame_box(x, y, w, h, fill, outer, inner, framed):  # ag.java:2764-2791
-        ac1 = Rect(0, 0, 0, 0)
+        rect = Rect(0, 0, 0, 0)
         if framed:
-            ac1.x = x - 2
-            ac1.w = w + 4
-            ac1.y = y - 1
-            ac1.h = h + 2
-            Gfx.draw_rect(ac1.x, ac1.y, ac1.w, ac1.h, inner)
-            ac1.x += 1
-            ac1.w -= 2
-            ac1.y -= 1
-            ac1.h += 2
-            Gfx.draw_rect(ac1.x, ac1.y, ac1.w, ac1.h, inner)
-        ac1.x = x - 1
-        ac1.w = w + 2
-        ac1.y = y
-        ac1.h = h
-        Gfx.draw_rect(ac1.x, ac1.y, ac1.w, ac1.h, outer)
-        ac1.x += 1
-        ac1.w -= 2
-        ac1.y -= 1
-        ac1.h += 2
-        Gfx.draw_rect(ac1.x, ac1.y, ac1.w, ac1.h, outer)
-        ac1.y += 1
-        ac1.h -= 2
-        Gfx.fill_rect(ac1.x, ac1.y, ac1.w, ac1.h, fill)
+            rect.x = x - 2
+            rect.w = w + 4
+            rect.y = y - 1
+            rect.h = h + 2
+            Gfx.draw_rect(rect.x, rect.y, rect.w, rect.h, inner)
+            rect.x += 1
+            rect.w -= 2
+            rect.y -= 1
+            rect.h += 2
+            Gfx.draw_rect(rect.x, rect.y, rect.w, rect.h, inner)
+        rect.x = x - 1
+        rect.w = w + 2
+        rect.y = y
+        rect.h = h
+        Gfx.draw_rect(rect.x, rect.y, rect.w, rect.h, outer)
+        rect.x += 1
+        rect.w -= 2
+        rect.y -= 1
+        rect.h += 2
+        Gfx.draw_rect(rect.x, rect.y, rect.w, rect.h, outer)
+        rect.y += 1
+        rect.h -= 2
+        Gfx.fill_rect(rect.x, rect.y, rect.w, rect.h, fill)
 
     @staticmethod
     def rgb(r, g, b):  # ag.java:2857-2860
@@ -1177,12 +1177,12 @@ class GameCanvas(GameFields, Canvas):
         m = end
         str_ = None
         try:
-            i1 = m - j_
-            arrayOfByte = bytearray(i1 + 2)
-            arrayOfByte[0] = i1 >> 8 & 0xFF
-            arrayOfByte[1] = i1 & 0xFF
-            arrayOfByte[2:] = data[j_:j_ + i1]
-            str_ = _read_utf(arrayOfByte)
+            size = m - j_
+            utf = bytearray(size + 2)
+            utf[0] = size >> 8 & 0xFF
+            utf[1] = size & 0xFF
+            utf[2:] = data[j_:j_ + size]
+            str_ = _read_utf(utf)
         except Exception:
             pass
         return str_
@@ -1211,25 +1211,25 @@ class GameCanvas(GameFields, Canvas):
         if left != -1:
             Gfx.set_font(GameCanvas.font_white)
             Gfx.draw_image(GameCanvas.softkey_bg, 0, GameCanvas.screen_h - m)
-            i1 = len(str_ + consts.softkey_labels[left]) * 10
-            i2 = i1 + 4 - GameCanvas.softkey_bg.getWidth()
-            if i2 > 0:
+            text_w = len(str_ + consts.softkey_labels[left]) * 10
+            extra = text_w + 4 - GameCanvas.softkey_bg.getWidth()
+            if extra > 0:
                 Gfx.fill_rect(j_ - 8, GameCanvas.screen_h - m + 2, 8, 13, 0)
-                Gfx.draw_image(GameCanvas.softkey_bg, i2, GameCanvas.screen_h - m)
-                Gfx.fill_rect(i2, GameCanvas.screen_h - m + 2, 8, 13, 0)
-                Gfx.draw_string(str_ + consts.softkey_labels[left], (j_ + i2) // 2, GameCanvas.screen_h - m, 1)
+                Gfx.draw_image(GameCanvas.softkey_bg, extra, GameCanvas.screen_h - m)
+                Gfx.fill_rect(extra, GameCanvas.screen_h - m + 2, 8, 13, 0)
+                Gfx.draw_string(str_ + consts.softkey_labels[left], (j_ + extra) // 2, GameCanvas.screen_h - m, 1)
             else:
                 Gfx.draw_string(str_ + consts.softkey_labels[left], j_ // 2, GameCanvas.screen_h - m, 1)
         if right != -1:
             Gfx.set_font(GameCanvas.font_white)
             Gfx.draw_image(GameCanvas.softkey_bg, GameCanvas.screen_w - j_ - 0, GameCanvas.screen_h - m)
-            i1 = len(str_ + consts.softkey_labels[right]) * 10
-            i2 = i1 + 15 - GameCanvas.softkey_bg.getWidth()
-            if i2 > 0:
+            text_w = len(str_ + consts.softkey_labels[right]) * 10
+            extra = text_w + 15 - GameCanvas.softkey_bg.getWidth()
+            if extra > 0:
                 Gfx.fill_rect(GameCanvas.screen_w - j_ - 0, GameCanvas.screen_h - m + 2, 8, 13, 0)
-                Gfx.draw_image(GameCanvas.softkey_bg, GameCanvas.screen_w - j_ - i2 - 0, GameCanvas.screen_h - m)
-                Gfx.fill_rect(GameCanvas.screen_w - i2 - 0 - 8, GameCanvas.screen_h - m + 2, 8, 13, 0)
-                Gfx.draw_string(str_ + consts.softkey_labels[right], GameCanvas.screen_w - (j_ + i2) // 2 - 0, GameCanvas.screen_h - m, 1)
+                Gfx.draw_image(GameCanvas.softkey_bg, GameCanvas.screen_w - j_ - extra - 0, GameCanvas.screen_h - m)
+                Gfx.fill_rect(GameCanvas.screen_w - extra - 0 - 8, GameCanvas.screen_h - m + 2, 8, 13, 0)
+                Gfx.draw_string(str_ + consts.softkey_labels[right], GameCanvas.screen_w - (j_ + extra) // 2 - 0, GameCanvas.screen_h - m, 1)
                 return
             Gfx.draw_string(str_ + consts.softkey_labels[right], GameCanvas.screen_w - j_ // 2 - 0, GameCanvas.screen_h - m, 1)
 
@@ -1248,20 +1248,20 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.hero.body_frames = self.load_frames(45)
 
     def load_frames(self, index):  # ag.java:3467-3482  (frame table from mdat_QVGA)
-        b1 = 1
-        arrayOfByte = ResReader.read("/" + GameCanvas.scr_maps.get(index))
-        n = arrayOfByte[0] & 0xFF
-        arrayOfY = [None] * n
-        for b2 in range(n):
-            arrayOfY[b2] = SpriteFrame()
-            arrayOfY[b2].src_x = GameCanvas.u16(arrayOfByte[b1], arrayOfByte[b1 + 1])
-            arrayOfY[b2].src_y = GameCanvas.u16(arrayOfByte[b1 + 2], arrayOfByte[b1 + 3])
-            arrayOfY[b2].w = GameCanvas.u16(arrayOfByte[b1 + 4], arrayOfByte[b1 + 5])
-            arrayOfY[b2].h = GameCanvas.u16(arrayOfByte[b1 + 6], arrayOfByte[b1 + 7])
-            arrayOfY[b2].ox = GameCanvas.u16(arrayOfByte[b1 + 8], arrayOfByte[b1 + 9])
-            arrayOfY[b2].oy = GameCanvas.u16(arrayOfByte[b1 + 10], arrayOfByte[b1 + 11])
-            b1 += 12
-        return arrayOfY
+        pos = 1
+        data = ResReader.read("/" + GameCanvas.scr_maps.get(index))
+        n = data[0] & 0xFF
+        frames = [None] * n
+        for i in range(n):
+            frames[i] = SpriteFrame()
+            frames[i].src_x = GameCanvas.u16(data[pos], data[pos + 1])
+            frames[i].src_y = GameCanvas.u16(data[pos + 2], data[pos + 3])
+            frames[i].w = GameCanvas.u16(data[pos + 4], data[pos + 5])
+            frames[i].h = GameCanvas.u16(data[pos + 6], data[pos + 7])
+            frames[i].ox = GameCanvas.u16(data[pos + 8], data[pos + 9])
+            frames[i].oy = GameCanvas.u16(data[pos + 10], data[pos + 11])
+            pos += 12
+        return frames
 
     @staticmethod
     def gamestr(index):  # ag.java:3538-3540
@@ -1275,14 +1275,14 @@ class GameCanvas(GameFields, Canvas):
 
     @staticmethod
     def add_exp(exp):  # ag.java:3081-3098  (add exp; returns the levels gained)
-        arrayOfInt = [0] * 10
+        exp_table = [0] * 10
         b = 0
         exp += GameCanvas.hero.exp
         while True:
             j = b % 10
             if j == 0:
-                arrayOfInt = GameCanvas.menus.load_exp_table()
-            j = arrayOfInt[j]
+                exp_table = GameCanvas.menus.load_exp_table()
+            j = exp_table[j]
             if exp < j:
                 GameCanvas.hero.exp = exp
                 return b
@@ -1358,7 +1358,7 @@ class GameCanvas(GameFields, Canvas):
     @staticmethod
     def draw_letter_grid(cursor, y):  # ag.java:1794-1819  (letter grid A..Z + OK)
         j_ = GameCanvas.screen_cx - 71
-        arrayOfString = GameCanvas._F_LETTERS
+        letters = GameCanvas._F_LETTERS
         Gfx.fill_rect(j_, y, 142, 34, 0)
         Gfx.fill_rect(j_ + 123, y + 18, 19, 15, 255)
         if GameCanvas.frame % 4 < 2:
@@ -1370,32 +1370,32 @@ class GameCanvas(GameFields, Canvas):
             else:
                 Gfx.fill_rect(j_ + 2 + 10 * cursor % 14, y + 1 + 17 * cursor // 14, 10, 15, 16711680)
         Gfx.set_font(GameCanvas.font_white)
-        for b in range(len(arrayOfString)):
+        for b in range(len(letters)):
             if b == 8:
-                b1 = 1
+                dx = 1
             elif b == 26:
-                b1 = 1
+                dx = 1
             else:
-                b1 = 0
+                dx = 0
             row = 17 * (b // 14) if F10 else 17 * b // 14   # DECOMP-FIX F10
-            Gfx.draw_string(arrayOfString[b], j_ + 3 + b % 14 * 10 + b1, y + row, 0)
+            Gfx.draw_string(letters[b], j_ + 3 + b % 14 * 10 + dx, y + row, 0)
 
     def draw_arrow(self, dir, x, y):  # ag.java:1847-1880  (arrow from ct[17])
         if dir == 0:
-            b3 = b4 = 0
-            b1, b2 = 10, 16
+            src_x = src_y = 0
+            w, h = 10, 16
         elif dir == 1:
-            b3, b4 = 9, 0
-            b1, b2 = 10, 16
+            src_x, src_y = 9, 0
+            w, h = 10, 16
         elif dir == 2:
-            b3, b4 = 20, 0
-            b1, b2 = 16, 10
+            src_x, src_y = 20, 0
+            w, h = 16, 10
         elif dir == 3:
-            b3, b4 = 20, 9
-            b1, b2 = 16, 10
+            src_x, src_y = 20, 9
+            w, h = 16, 10
         else:
             return
-        GameCanvas.draw_region(x + GameCanvas.view_x, y + GameCanvas.view_y, b1, b2, GameCanvas.images[17], b3, b4)
+        GameCanvas.draw_region(x + GameCanvas.view_x, y + GameCanvas.view_y, w, h, GameCanvas.images[17], src_x, src_y)
 
     @staticmethod
     def rand_range(lo, hi):  # ag.java:2735-2737
@@ -1407,14 +1407,14 @@ class GameCanvas(GameFields, Canvas):
 
     def draw_big_number(self, value, x, y, with_commas):  # ag.java:2810-2834  (number from ct[19])
         if with_commas != 0:
-            b1 = 0
+            digits = 0
             m = idiv(value, 10)
             x += 9
             while m > 0:
                 m = idiv(m, 10)
-                b1 += 1
+                digits += 1
                 x += 9
-                if b1 % 3 == 0:
+                if digits % 3 == 0:
                     x += 4
         j_ = x
         b = 0
@@ -1431,16 +1431,16 @@ class GameCanvas(GameFields, Canvas):
 
     def save_game(self):  # ag.java:2871-2961  (write the save "gamevil_pow_data")
         cz = GameCanvas.hero
-        arrayOfChar = [0] * 16
-        arrayOfByte = cz.name.encode("latin-1")
+        reserved = [0] * 16
+        name = cz.name.encode("latin-1")
         if len(GameCanvas.save_buf) < 2000:
             # PORT-EXTRA: a loaded save can be shorter than ag.cF (965 bytes, e.g. tools/shot.py's);
             # the backpack block written after it needs the room of the 2000-byte buffer
             GameCanvas.save_buf = bytearray(GameCanvas.save_buf) + bytearray(2000 - len(GameCanvas.save_buf))
         cF = GameCanvas.save_buf
         for b in range(8):
-            if b < len(arrayOfByte):
-                cF[2 + b] = arrayOfByte[b]
+            if b < len(name):
+                cF[2 + b] = name[b]
             else:
                 cF[2 + b] = 32
         cF[18] = GameCanvas.save_flag & 0xFF
@@ -1501,7 +1501,7 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.write_byte(GameCanvas.talk_count)
         GameCanvas.write_byte(GameCanvas.difficulty)
         for b in range(16):
-            GameCanvas.write_byte(arrayOfChar[b])
+            GameCanvas.write_byte(reserved[b])
         GameCanvas.write_int(GameCanvas.talk_points)
         for b in range(4):
             GameCanvas.write_int(0)
@@ -1648,18 +1648,18 @@ class GameCanvas(GameFields, Canvas):
         b = 0
         if item_id < 100:
             if count != 0:
-                b1 = -1
+                free_slot = -1
                 b = 0
                 while b < 5:
                     if cz.quick_slots[b].item == item_id:
                         if cz.quick_slots[b].count > 4:
                             return 0
                         break
-                    if 0 == cz.quick_slots[b].item and b1 < 0:
-                        b1 = b
+                    if 0 == cz.quick_slots[b].item and free_slot < 0:
+                        free_slot = b
                     b += 1
-                if b1 > -1 and b > 4:
-                    b = b1
+                if free_slot > -1 and b > 4:
+                    b = free_slot
                 if b > 4:
                     return 0
             else:
@@ -1726,30 +1726,30 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.shop[7].id = 11
 
     def fill_shop(self):  # ag.java:3377-3398  (17 random shop items, sorted)
-        arrayOfInt = [0] * 17
+        ids = [0] * 17
         GameCanvas.load_item_tables()
         for b in range(17):
-            arrayOfInt[b] = 101 + 5 * GameCanvas.rand_range(0, 20) + GameCanvas.item_tier(GameCanvas.rand_range(0, 100))
+            ids[b] = 101 + 5 * GameCanvas.rand_range(0, 20) + GameCanvas.item_tier(GameCanvas.rand_range(0, 100))
         for b in range(16, 0, -1):
             bool_ = False
-            for b1 in range(b):
-                if arrayOfInt[b1] > arrayOfInt[b1 + 1]:
-                    j_ = arrayOfInt[b1]
-                    arrayOfInt[b1] = arrayOfInt[b1 + 1]
-                    arrayOfInt[b1 + 1] = j_
+            for i in range(b):
+                if ids[i] > ids[i + 1]:
+                    j_ = ids[i]
+                    ids[i] = ids[i + 1]
+                    ids[i + 1] = j_
                     bool_ = True
             if not bool_:
                 break
         for b in range(17):
-            GameCanvas.shop[8 + b] = self.make_item(arrayOfInt[b])
+            GameCanvas.shop[8 + b] = self.make_item(ids[b])
 
     @staticmethod
     def load_item_tables():  # ag.java:3400-3412
-        arrayOfInt = [47, 51, 49]
+        files = [47, 51, 49]
         if not GameCanvas.tables_loaded[1]:
             for b in range(3):
                 if GameCanvas.item_tables[b] is None:
-                    GameCanvas.item_tables[b] = ArrTable("/" + GameCanvas.scr_data.get(arrayOfInt[b]))
+                    GameCanvas.item_tables[b] = ArrTable("/" + GameCanvas.scr_data.get(files[b]))
                 if GameCanvas.item_tables[b] is None:
                     return False
             GameCanvas.tables_loaded[1] = True
@@ -1772,41 +1772,41 @@ class GameCanvas(GameFields, Canvas):
         return b
 
     def make_item(self, item_id):  # ag.java:3424-3457  (make item paramInt with random bonus)
-        z1 = Item()
-        arrayOfInt = [0] * 5
-        z1.id = i16(item_id)
-        z1.enchant = 0
+        item = Item()
+        stats = [0] * 5
+        item.id = i16(item_id)
+        item.enchant = 0
         if item_id < 300:
             for b in range(3):
-                arrayOfInt[b] = GameCanvas.item_tables[0].get_int(item_id - 101, 2 + b)
-            if arrayOfInt[0] == 0:
-                z1.attack = i16(arrayOfInt[1] + self.rand(arrayOfInt[2]))
-            elif arrayOfInt[0] == 1:
-                z1.defense = i16(arrayOfInt[1] + self.rand(arrayOfInt[2]))
-            elif arrayOfInt[0] == 2:
-                z1.hp = i16(arrayOfInt[1] + self.rand(arrayOfInt[2]))
-            elif arrayOfInt[0] == 3:
-                z1.mp = i16(arrayOfInt[1] + self.rand(arrayOfInt[2]))
+                stats[b] = GameCanvas.item_tables[0].get_int(item_id - 101, 2 + b)
+            if stats[0] == 0:
+                item.attack = i16(stats[1] + self.rand(stats[2]))
+            elif stats[0] == 1:
+                item.defense = i16(stats[1] + self.rand(stats[2]))
+            elif stats[0] == 2:
+                item.hp = i16(stats[1] + self.rand(stats[2]))
+            elif stats[0] == 3:
+                item.mp = i16(stats[1] + self.rand(stats[2]))
         else:
             tbl = GameCanvas.item_tables[1] if item_id < 500 else GameCanvas.item_tables[2]
             # ORIG-BUG B1: the original reads both tables at id - 301, so a Rare item (shinki.arr,
             # ids 501-518) gets row 200+ -> all 0; its own row is id - 501
             first = 501 if item_id >= 500 and config.ORIG_BUG["B1"] else 301
             for b in range(4):
-                arrayOfInt[b] = tbl.get_int(item_id - first, 2 + b)
-            z1.attack = i16(arrayOfInt[0])
-            z1.defense = i16(arrayOfInt[1])
-            z1.hp = i16(arrayOfInt[2])
-            z1.mp = i16(arrayOfInt[3])
-        return z1
+                stats[b] = tbl.get_int(item_id - first, 2 + b)
+            item.attack = i16(stats[0])
+            item.defense = i16(stats[1])
+            item.hp = i16(stats[2])
+            item.mp = i16(stats[3])
+        return item
 
     def start_story(self, story, ending):  # ag.java:3488-3528  (start the story player, bV = 10)
         GameCanvas.story_id = i16(story)
         if story < 100:
             GameCanvas.story_ending = 0
             b = 64 + story // 6
-            for b1 in range(3):
-                GameCanvas.story_pages[b1] = consts.story_offsets[(story << 1) + b1] - consts.story_offsets[story // 6 * 12]
+            for i in range(3):
+                GameCanvas.story_pages[i] = consts.story_offsets[(story << 1) + i] - consts.story_offsets[story // 6 * 12]
             if story == 3 and ending != 0 and 0 == GameCanvas.backpack_slot_of(502):
                 GameCanvas.story_pages[2] = 0
                 GameCanvas.story_pages[1] = 0
@@ -1919,31 +1919,31 @@ class GameCanvas(GameFields, Canvas):
 
     def draw_story(self):  # ag.java:1698-1737  (story picture + scrolling text)
         self.fill_screen_rgb(0, 0, 0)
-        ct35 = GameCanvas.images[35]
+        picture = GameCanvas.images[35]
         if GameCanvas.speech_line in (0, 2):
             if 0 < GameCanvas.story_fade < 4:
-                self.draw_map_region(ct35, GameCanvas.view_cx - (ct35.getWidth() >> 1), GameCanvas.view_cy - (ct35.getHeight() >> 1),
-                               ct35.getWidth(), ct35.getHeight(), 0, 0)
+                self.draw_map_region(picture, GameCanvas.view_cx - (picture.getWidth() >> 1), GameCanvas.view_cy - (picture.getHeight() >> 1),
+                               picture.getWidth(), picture.getHeight(), 0, 0)
         elif GameCanvas.speech_line == 1:
             m = GameCanvas.speech_pos[0]
             if GameCanvas.story_page != GameCanvas.story_pages[2] - GameCanvas.story_pages[0]:
-                self.draw_map_region(ct35, GameCanvas.view_cx - (ct35.getWidth() >> 1), GameCanvas.view_cy - (ct35.getHeight() >> 1),
-                               ct35.getWidth(), ct35.getHeight(), 0, 0)
+                self.draw_map_region(picture, GameCanvas.view_cx - (picture.getWidth() >> 1), GameCanvas.view_cy - (picture.getHeight() >> 1),
+                               picture.getWidth(), picture.getHeight(), 0, 0)
             j_ = GameCanvas.speech_done[0]
             while j_ <= GameCanvas.text_line_count[0] and m <= 230:
                 # char arithmetic, as decompiled: `255 - (m - de + 72 << 4)` (only ==255 / ==0 matter)
                 if m > GameCanvas.view_cy + 72:
-                    c1 = 255 - (m - GameCanvas.view_cy + 72 << 4) & 0xFFFF
+                    alpha = 255 - (m - GameCanvas.view_cy + 72 << 4) & 0xFFFF
                 elif m < GameCanvas.view_cy - 72:
-                    c1 = 255 - (GameCanvas.view_cy - 72 - m << 4) & 0xFFFF
+                    alpha = 255 - (GameCanvas.view_cy - 72 - m << 4) & 0xFFFF
                 else:
-                    c1 = 255
+                    alpha = 255
                 Gfx.set_font(GameCanvas.font_black)
                 self.draw_text_at(GameCanvas.text_lines[0][j_], m + 1, 30)
                 GameCanvas.draw_text_centred_at(GameCanvas.text_lines[0][j_], m - 1, 1)
-                if c1 == 255:
+                if alpha == 255:
                     Gfx.set_font(GameCanvas.font_white)
-                elif c1 == 0:
+                elif alpha == 0:
                     Gfx.set_font(GameCanvas.font_black)
                 else:
                     Gfx.set_font(GameCanvas.font_gray)
@@ -1961,8 +1961,8 @@ class GameCanvas(GameFields, Canvas):
 
     def word_wrap(self, text, width, slot):  # ag.java:3100-3138  (word wrap into dp[paramInt2])
         m = 0
-        i1 = 0
-        i2 = 0
+        break_at = 0
+        line_w = 0
         b = 0
         GameCanvas.text_line_count[slot] = 0
         dp = GameCanvas.text_lines[slot] = [None] * 120
@@ -1971,28 +1971,28 @@ class GameCanvas(GameFields, Canvas):
         while j_ <= n_:
             if j_ != n_:
                 c = text[j_]
-                i2 += GameCanvas.char_width(c)
-                if (c == 32 or c == 124) and i2 - GameCanvas.char_width(c) >= width:
-                    if i1 < m:
-                        i1 = j_
-                    dp[b] = GameCanvas.read_utf(text, m, i1)
+                line_w += GameCanvas.char_width(c)
+                if (c == 32 or c == 124) and line_w - GameCanvas.char_width(c) >= width:
+                    if break_at < m:
+                        break_at = j_
+                    dp[b] = GameCanvas.read_utf(text, m, break_at)
                     b += 1
-                    m = i1 + 1
+                    m = break_at + 1
                     j_ = m - 1
-                    i2 = 0
+                    line_w = 0
                 elif c == 32:
-                    i1 = j_
+                    break_at = j_
                 elif c == 124:
                     dp[b] = GameCanvas.read_utf(text, m, j_)
                     b += 1
-                    m = i1 = j_ + 1
-                    i2 = 0
-            elif i2 > width:
-                dp[b] = GameCanvas.read_utf(text, m, i1)
+                    m = break_at = j_ + 1
+                    line_w = 0
+            elif line_w > width:
+                dp[b] = GameCanvas.read_utf(text, m, break_at)
                 b += 1
-                dp[b] = GameCanvas.read_utf(text, i1 + 1, j_)
+                dp[b] = GameCanvas.read_utf(text, break_at + 1, j_)
                 b += 1
-            elif i1 != n_ - 1:
+            elif break_at != n_ - 1:
                 dp[b] = GameCanvas.read_utf(text, m, j_)
                 b += 1
             j_ += 1
@@ -2016,9 +2016,9 @@ class GameCanvas(GameFields, Canvas):
 
     @staticmethod
     def edat_string(file, index):  # ag.java:1747-1753  (string paramInt2 of edat file paramInt1)
-        al1 = ScrTable("/" + GameCanvas.scr_data.get(file))
-        str_ = al1.get(index)
-        al1.free()
+        table = ScrTable("/" + GameCanvas.scr_data.get(file))
+        str_ = table.get(index)
+        table.free()
         return str_
 
     def draw_small_number(self, value, x, y):  # ag.java:1828-1830  (small number, ct[20])
@@ -2040,14 +2040,14 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.draw_region(x, y, w, h, image, src_x, src_y)
 
     def draw_empty_slot(self, x, y):  # ag.java:3169-3173  (empty 30x30 item slot)
-        ac1 = Rect(x + 1, y + 1, 28, 28)
+        rect = Rect(x + 1, y + 1, 28, 28)
         self.draw_round_outline(x, y, 30, 30, 80, 80, 80)
-        Gfx.fill_rect(ac1.x, ac1.y, ac1.w, ac1.h, 0)
+        Gfx.fill_rect(rect.x, rect.y, rect.w, rect.h, 0)
 
     def draw_grey_frame(self, x, y, w, h):  # ag.java:3175-3179  (grey frame, black inside)
-        ac1 = Rect(x + 1, y + 1, w - 2, h - 2)
+        rect = Rect(x + 1, y + 1, w - 2, h - 2)
         self.draw_round_outline(x, y, w, h, 152, 152, 152)
-        Gfx.fill_rect(ac1.x, ac1.y, ac1.w, ac1.h, 0)
+        Gfx.fill_rect(rect.x, rect.y, rect.w, rect.h, 0)
 
     def change_option(self, step):  # ag.java:2474-2520  (Options: change the value of row cM[1])
         v = GameCanvas.menu[1]
@@ -2112,30 +2112,30 @@ class GameCanvas(GameFields, Canvas):
 
     @staticmethod
     def quick_slot_item(slot):  # ag.java:1459-1465  (potion slot -> item)
-        z1 = Item()
-        Item.clear(z1)
-        z1.id = slot.item
-        z1.attack = slot.count
-        return z1
+        item = Item()
+        Item.clear(item)
+        item.id = slot.item
+        item.attack = slot.count
+        return item
 
     def item_under_cursor(self, index):  # ag.java:1467-1492  (item under the cursor of the item grid)
-        z1 = Item()
+        item = Item()
         if index == -1:
             index = GameCanvas.cursor[18]
         v = GameCanvas.cursor[0]
         if v == 0:
-            z1 = GameCanvas.shop[index]
+            item = GameCanvas.shop[index]
         elif v == 1:
             if index < 5:
-                z1 = GameCanvas.quick_slot_item(GameCanvas.hero.quick_slots[index])
+                item = GameCanvas.quick_slot_item(GameCanvas.hero.quick_slots[index])
             else:
-                z1 = GameCanvas.hero.backpack[index - 5]
+                item = GameCanvas.hero.backpack[index - 5]
         elif v in (2, 3):
             if GameCanvas.cursor[27] == 0:
-                z1 = GameCanvas.hero.backpack[index]
+                item = GameCanvas.hero.backpack[index]
             else:
-                z1 = GameCanvas.hero.equipped[index]
-        return z1
+                item = GameCanvas.hero.equipped[index]
+        return item
 
     @staticmethod
     def fill_rect(rect, color):  # ag.java:1507-1510  (fill rect)
@@ -2154,9 +2154,9 @@ class GameCanvas(GameFields, Canvas):
 
     @staticmethod
     def digit_count(value):  # ag.java:1822-1826  (number of digits)
-        arrayOfInt = [10, 100, 1000, 10000]
+        powers = [10, 100, 1000, 10000]
         b = 0
-        while b < 4 and value >= arrayOfInt[b]:
+        while b < 4 and value >= powers[b]:
             b += 1
         return b + 1
 
@@ -2168,7 +2168,7 @@ class GameCanvas(GameFields, Canvas):
         self.draw_map_region(GameCanvas.images[20], x, y, 9, 12, digit * 9, 0)
 
     def draw_gold_box(self):  # ag.java:1279-1291  (gold box)
-        arrayOfShort = [7, 14, 21, 32, 39, 46, 57, 64, 71, 82]
+        widths = [7, 14, 21, 32, 39, 46, 57, 64, 71, 82]
         j_ = GameCanvas.hero.gold
         self.draw_box(GameCanvas.view_cx - 70, GameCanvas.view_cy - 80 + GameCanvas.view_y, 140, 22, False)
         b = 0
@@ -2177,13 +2177,13 @@ class GameCanvas(GameFields, Canvas):
             if 0 == j_:
                 break
             b += 1
-        self.draw_big_number(GameCanvas.hero.gold, GameCanvas.view_cx + (arrayOfShort[b] >> 1) + 16 - GameCanvas.view_x, GameCanvas.view_cy - 76, 0)
+        self.draw_big_number(GameCanvas.hero.gold, GameCanvas.view_cx + (widths[b] >> 1) + 16 - GameCanvas.view_x, GameCanvas.view_cy - 76, 0)
         self.draw_map_region(GameCanvas.images[32], GameCanvas.view_cx - 69 - GameCanvas.view_x, GameCanvas.view_cy - 80, GameCanvas.images[32].getWidth(), GameCanvas.images[32].getHeight(), 0, 0)
 
     def draw_description(self, what, x, y, w, h):  # ag.java:1293-1352  (description of item / skill)
         cz = GameCanvas.hero
         dF = GameCanvas.info_box
-        s1 = s2 = s3 = s4 = s5 = s6 = 0
+        attack = defense = hp = mp = enchant = min_level = 0
         str_ = ""
         dF.rect.x = x
         dF.rect.y = y
@@ -2198,12 +2198,12 @@ class GameCanvas(GameFields, Canvas):
             else:
                 it = None
             if it is not None:
-                s6 = GameCanvas.set_item_name(it.id)
-                s1 = it.attack
-                s2 = it.defense
-                s3 = it.hp
-                s4 = it.mp
-                s5 = i16(it.enchant)
+                min_level = GameCanvas.set_item_name(it.id)
+                attack = it.attack
+                defense = it.defense
+                hp = it.hp
+                mp = it.mp
+                enchant = i16(it.enchant)
                 str_ = GameCanvas.special_suffix(it.id)
             elif what < 2000:
                 dF.text = GameCanvas.describe_potion(cz.quick_slots[what - 1200].item)
@@ -2212,18 +2212,18 @@ class GameCanvas(GameFields, Canvas):
         if dF.text != "":
             if str_ != "":
                 dF.text += str_
-            if s1 != 0:
-                dF.text += " / ATK+" + str(s1)
-            if s2 != 0:
-                dF.text += " / DEF+" + str(s2)
-            if s3 != 0:
-                dF.text += " / HP+" + str(s3)
-            if s4 != 0:
-                dF.text += " / MP+" + str(s4)
-            if s5 != 0:
-                dF.text += " / Enchanted Lv" + str(s5)
-            if s6 != 0:
-                dF.text += " / Available at Lv" + str(s6)
+            if attack != 0:
+                dF.text += " / ATK+" + str(attack)
+            if defense != 0:
+                dF.text += " / DEF+" + str(defense)
+            if hp != 0:
+                dF.text += " / HP+" + str(hp)
+            if mp != 0:
+                dF.text += " / MP+" + str(mp)
+            if enchant != 0:
+                dF.text += " / Enchanted Lv" + str(enchant)
+            if min_level != 0:
+                dF.text += " / Available at Lv" + str(min_level)
             GameCanvas.text_width = GameCanvas.measure_text(dF.text)
             if GameCanvas.text_width > w - 2:
                 dF.shown = 1
@@ -2233,18 +2233,18 @@ class GameCanvas(GameFields, Canvas):
             dF.text_x = i16(x + 1)
 
     def describe_skill(self, skill):  # ag.java:1354-1368  (skill description)
-        str1 = ""
+        text = ""
         skill -= 12
         if skill < 0 or skill > 18:
-            return str1
-        arrayOfByte = self.edat_bytes(54, skill)
-        str2 = GameCanvas.read_utf(arrayOfByte, 0, len(arrayOfByte))
+            return text
+        utf = self.edat_bytes(54, skill)
+        name = GameCanvas.read_utf(utf, 0, len(utf))
         if GameCanvas.hero.skill_levels[skill] != 0:
-            arrayOfByte = self.edat_bytes(54, skill + 19)
-            str1 = str2 + " / Lv" + str(GameCanvas.hero.skill_levels[skill]) + " " + GameCanvas.read_utf(arrayOfByte, 0, len(arrayOfByte))
+            utf = self.edat_bytes(54, skill + 19)
+            text = name + " / Lv" + str(GameCanvas.hero.skill_levels[skill]) + " " + GameCanvas.read_utf(utf, 0, len(utf))
         else:
-            str1 = str2 + " / (Not Available)"
-        return str1
+            text = name + " / (Not Available)"
+        return text
 
     @staticmethod
     def describe_potion(potion):  # ag.java:1370-1381  (potion description)
@@ -2256,8 +2256,8 @@ class GameCanvas(GameFields, Canvas):
             str_ = (consts.potion_names[potion] + " / Recover " + str(consts.potion_percents[potion % 3]) + "% of total "
                     + consts.potion_kinds[potion // 3])
         else:
-            arrayOfByte = GameCanvas.edat_string(54, 24 + potion).encode("latin-1")
-            str_ = consts.potion_names[potion] + " / " + GameCanvas.read_utf(arrayOfByte, 0, len(arrayOfByte))
+            utf = GameCanvas.edat_string(54, 24 + potion).encode("latin-1")
+            str_ = consts.potion_names[potion] + " / " + GameCanvas.read_utf(utf, 0, len(utf))
         return str_
 
     @staticmethod
@@ -2293,11 +2293,11 @@ class GameCanvas(GameFields, Canvas):
     def draw_gold_amount(self, gold, y):  # ag.java:1256-1269  (gold box with amount paramInt1)
         j_ = self.draw_centred_box(y, 200, 22)
         b = 0
-        i1 = gold
+        rest = gold
         while True:
             b += 1
-            i1 = idiv(i1, 10)
-            if not i1 > 0:
+            rest = idiv(rest, 10)
+            if not rest > 0:
                 break
         j_ += 100
         m = b * 7 + (b - 1) // 3 * 4 + 12 + 3
@@ -2329,14 +2329,14 @@ class GameCanvas(GameFields, Canvas):
     def format_thousands(value):  # ag.java:1437-1452  (12345 -> "12,345")
         str_ = str(value)
         j_ = len(str_)
-        arrayOfInt = [0] * j_
-        for b1 in range(j_):
-            arrayOfInt[j_ - b1 - 1] = imod(value, 10)
+        digits = [0] * j_
+        for i in range(j_):
+            digits[j_ - i - 1] = imod(value, 10)
             value = idiv(value, 10)
         str_ = ""
-        for b2 in range(j_):
-            str_ = str_ + str(arrayOfInt[b2])
-            if j_ % 3 == (b2 + 1) % 3 and b2 != j_ - 1:
+        for j in range(j_):
+            str_ = str_ + str(digits[j])
+            if j_ % 3 == (j + 1) % 3 and j != j_ - 1:
                 str_ = str_ + ","
         return str_
 
@@ -2348,84 +2348,84 @@ class GameCanvas(GameFields, Canvas):
 
     def load_chapter_lords(self):  # ag.java:1043-1062  (lords of chapter cq -> ds/dt/du/dv, list dE = dt)
         j_ = 0
-        arrayOfByte = GameCanvas.load_data_file(48)
+        data = GameCanvas.load_data_file(48)
         j_ = 38 * GameCanvas.chapter + 40
         GameCanvas.lord_count = 0
         for b in range(6):
-            GameCanvas.lord_ids[b] = i8(arrayOfByte[j_ + b])
+            GameCanvas.lord_ids[b] = i8(data[j_ + b])
             if GameCanvas.lord_ids[b] > 0:
                 m = 38 * GameCanvas.lord_ids[b] + 10
-                b1 = 0
-                while b1 < 30 and arrayOfByte[m + b1] != 0:
-                    b1 += 1
-                GameCanvas.lord_names[b] = GameCanvas.read_utf(arrayOfByte, m, m + b1)
-                GameCanvas.lord_missions[b] = i8(arrayOfByte[m + 36])
-                GameCanvas.lord_mission_counts[b] = i8(arrayOfByte[m + 37])
+                name_len = 0
+                while name_len < 30 and data[m + name_len] != 0:
+                    name_len += 1
+                GameCanvas.lord_names[b] = GameCanvas.read_utf(data, m, m + name_len)
+                GameCanvas.lord_missions[b] = i8(data[m + 36])
+                GameCanvas.lord_mission_counts[b] = i8(data[m + 37])
                 GameCanvas.lord_count += 1
         GameCanvas.menu_count = GameCanvas.lord_count
         GameCanvas.menu_items = GameCanvas.lord_names
 
     def load_mission_text(self):  # ag.java:1064-1073  (mission description -> dp[0])
         GameCanvas.mission_name = GameCanvas.mission_names[GameCanvas.mission]
-        arrayOfByte1 = GameCanvas.load_data_file(56)
-        arrayOfByte2 = self.table_text(arrayOfByte1, GameCanvas.lord_missions[GameCanvas.lord] + GameCanvas.mission)
+        table = GameCanvas.load_data_file(56)
+        text = self.table_text(table, GameCanvas.lord_missions[GameCanvas.lord] + GameCanvas.mission)
         b = 0
-        while b < len(arrayOfByte2) and arrayOfByte2[b] != 0:
+        while b < len(text) and text[b] != 0:
             b += 1
-        arrayOfByte3 = bytearray(arrayOfByte2[:b])
-        self.word_wrap(arrayOfByte3, 190, 0)
+        line = bytearray(text[:b])
+        self.word_wrap(line, 190, 0)
 
     def table_text(self, table, index):  # ag.java:1075-1124  (text paramInt of a table, "(..)" macros)
-        arrayOfInt1 = [0] * 110
-        arrayOfByte1 = bytearray(1500)
-        arrayOfByte2 = bytearray(1500)
-        arrayOfByte3 = bytearray(1500)
-        arrayOfChar = ['\0'] * 3
-        b1 = 0
-        arrayOfInt2 = [0, 0]
-        arrayOfInt3 = [0, 0]
+        offsets = [0] * 110
+        src = bytearray(1500)
+        macro = bytearray(1500)
+        out = bytearray(1500)
+        digits = ['\0'] * 3
+        digit_count = 0
+        copied = [0, 0]
+        pos = [0, 0]
         j_ = table[0] & 0xFF | table[1] << 8 & 0xFF00
-        for b2 in range(j_ + 1):
-            arrayOfInt1[b2] = table[2 + b2 * 2] & 0xFF | table[2 + b2 * 2 + 1] << 8 & 0xFF00
-        _arraycopy(table, arrayOfInt1[index], arrayOfByte1, 0,
-                   arrayOfInt1[index + 1] - arrayOfInt1[index])
-        b2 = 0
-        while b2 < 3 and 48 <= arrayOfByte1[b2] <= 57:
-            arrayOfChar[b2] = chr(arrayOfByte1[b2])
-            b1 += 1
-            b2 += 1
-        if b1 != 0:
-            arrayOfInt3[0] = b1 + 1
-            arrayOfInt2[0] = b1 + 1
-            m = GameCanvas.parse_int(arrayOfChar)
-            _arraycopy(table, arrayOfInt1[m], arrayOfByte2, 0, arrayOfInt1[m + 1] - arrayOfInt1[m])
+        for i in range(j_ + 1):
+            offsets[i] = table[2 + i * 2] & 0xFF | table[2 + i * 2 + 1] << 8 & 0xFF00
+        _arraycopy(table, offsets[index], src, 0,
+                   offsets[index + 1] - offsets[index])
+        i = 0
+        while i < 3 and 48 <= src[i] <= 57:
+            digits[i] = chr(src[i])
+            digit_count += 1
+            i += 1
+        if digit_count != 0:
+            pos[0] = digit_count + 1
+            copied[0] = digit_count + 1
+            m = GameCanvas.parse_int(digits)
+            _arraycopy(table, offsets[m], macro, 0, offsets[m + 1] - offsets[m])
         else:
-            _arraycopy(arrayOfByte1, 0, arrayOfByte2, 0, 1500)
-        while arrayOfByte2[arrayOfInt3[1]] != 0:
-            if arrayOfByte2[arrayOfInt3[1]] == 40:
-                arrayOfByte3 = GameCanvas.append_bytes(arrayOfByte3, arrayOfByte2, arrayOfInt2[1], arrayOfInt3[1])
-                arrayOfInt2[1] = arrayOfInt3[1] + 1
-                if b1 != 0:
-                    arrayOfInt3[1] = GameCanvas.index_after(arrayOfByte2, arrayOfInt3[1], ')')
+            _arraycopy(src, 0, macro, 0, 1500)
+        while macro[pos[1]] != 0:
+            if macro[pos[1]] == 40:
+                out = GameCanvas.append_bytes(out, macro, copied[1], pos[1])
+                copied[1] = pos[1] + 1
+                if digit_count != 0:
+                    pos[1] = GameCanvas.index_after(macro, pos[1], ')')
                     # DECOMP-FIX F15: the source is `arrayOfInt2[1] = arrayOfInt3[1] = a(.., ')')`
                     # (one call; JD split the dup_x2 into a second search). Literally the second
                     # search skips the next "(..)" and the copy length is negative: every mission
                     # description with a numbered template (Hellgate...) throws in arraycopy.
                     if config.DECOMP_FIX["F15"]:
-                        arrayOfInt2[1] = arrayOfInt3[1]
+                        copied[1] = pos[1]
                     else:
-                        arrayOfInt2[1] = GameCanvas.index_after(arrayOfByte2, arrayOfInt3[1], ')')
-                    arrayOfInt3[0] = GameCanvas.index_after(arrayOfByte1, arrayOfInt3[0], '|')
-                    arrayOfByte3 = GameCanvas.append_bytes(arrayOfByte3, arrayOfByte1, arrayOfInt2[0], arrayOfInt3[0] - 1)
-                    arrayOfInt2[0] = arrayOfInt3[0]
+                        copied[1] = GameCanvas.index_after(macro, pos[1], ')')
+                    pos[0] = GameCanvas.index_after(src, pos[0], '|')
+                    out = GameCanvas.append_bytes(out, src, copied[0], pos[0] - 1)
+                    copied[0] = pos[0]
                     continue
-                arrayOfInt3[1] = GameCanvas.index_after(arrayOfByte2, arrayOfInt3[1], ')')
-                arrayOfByte3 = GameCanvas.append_bytes(arrayOfByte3, arrayOfByte2, arrayOfInt2[1], arrayOfInt3[1] - 1)
-                arrayOfInt2[1] = arrayOfInt3[1]
+                pos[1] = GameCanvas.index_after(macro, pos[1], ')')
+                out = GameCanvas.append_bytes(out, macro, copied[1], pos[1] - 1)
+                copied[1] = pos[1]
                 continue
-            arrayOfInt3[1] = arrayOfInt3[1] + 1
-        arrayOfByte3 = GameCanvas.append_bytes(arrayOfByte3, arrayOfByte2, arrayOfInt2[1], arrayOfInt3[1])
-        return arrayOfByte3
+            pos[1] = pos[1] + 1
+        out = GameCanvas.append_bytes(out, macro, copied[1], pos[1])
+        return out
 
     @staticmethod
     def append_bytes(dst, src, start, end):  # ag.java:1126-1131  (append at the first 0)
@@ -2544,16 +2544,16 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.images[42] = self.load_image(GameCanvas.scr_effect.get(2))
 
     def load_enemy_sprites(self):  # ag.java:973-988  (enemy sprites, recoloured by dz.d)
-        arrayOfInt = [56, 57]
-        for b in range(len(arrayOfInt)):
+        sprites = [56, 57]
+        for b in range(len(sprites)):
             if GameCanvas.lords[GameCanvas.mission].tint != 0:
                 GameCanvas.enemy_images[b] = None
                 GameCanvas.enemy_frames[b] = None
-                GameCanvas.enemy_images[b] = GameCanvas.load_recoloured(GameCanvas.scr_char.get(arrayOfInt[b]), GameCanvas.lords[GameCanvas.mission].tint)
+                GameCanvas.enemy_images[b] = GameCanvas.load_recoloured(GameCanvas.scr_char.get(sprites[b]), GameCanvas.lords[GameCanvas.mission].tint)
             else:
                 GameCanvas.enemy_images[b] = None
                 GameCanvas.enemy_frames[b] = None
-                GameCanvas.enemy_images[b] = self.load_image(GameCanvas.scr_char.get(arrayOfInt[b]))
+                GameCanvas.enemy_images[b] = self.load_image(GameCanvas.scr_char.get(sprites[b]))
             if GameCanvas.enemy_frames[b] is None:
                 GameCanvas.enemy_frames[b] = self.load_frames(82 + b)
 
@@ -2565,38 +2565,38 @@ class GameCanvas(GameFields, Canvas):
     @staticmethod
     def load_recoloured(name, palette):  # ag.java:990-1023  (PNG with palette 0 replaced by palette paramInt)
         str_ = "/" + name + ".png"
-        arrayOfByte = bytearray(ResReader.read(str_))
+        png = bytearray(ResReader.read(str_))
         if palette == 0:
-            return Image.createImage(arrayOfByte, 0, len(arrayOfByte))
-        arrayOfInt = GameCanvas._PAL
-        m = len(arrayOfByte)
-        i1 = 0
+            return Image.createImage(png, 0, len(png))
+        palettes = GameCanvas._PAL
+        m = len(png)
+        plte = 0
         for j_ in range(0, m - 4 + 1):
-            if arrayOfByte[j_] == 80 and arrayOfByte[j_ + 1] == 76 and arrayOfByte[j_ + 2] == 84 and arrayOfByte[j_ + 3] == 69:
-                i1 = j_
+            if png[j_] == 80 and png[j_ + 1] == 76 and png[j_ + 2] == 84 and png[j_ + 3] == 69:
+                plte = j_
                 break
-        i2 = arrayOfByte[i1 - 1] & 0xFF | arrayOfByte[i1 - 2] << 8 & 0xFF00
+        plte_len = png[plte - 1] & 0xFF | png[plte - 2] << 8 & 0xFF00
         for b in range(5):
-            for j_ in range(i1 + 4, i1 + i2 - 3 + 1):
-                if (arrayOfByte[j_] == arrayOfInt[0][b][0] and arrayOfByte[j_ + 1] == arrayOfInt[0][b][1]
-                        and arrayOfByte[j_ + 2] == arrayOfInt[0][b][2]):
-                    arrayOfByte[j_] = arrayOfInt[palette][b][0]
-                    arrayOfByte[j_ + 1] = arrayOfInt[palette][b][1]
-                    arrayOfByte[j_ + 2] = arrayOfInt[palette][b][2]
+            for j_ in range(plte + 4, plte + plte_len - 3 + 1):
+                if (png[j_] == palettes[0][b][0] and png[j_ + 1] == palettes[0][b][1]
+                        and png[j_ + 2] == palettes[0][b][2]):
+                    png[j_] = palettes[palette][b][0]
+                    png[j_ + 1] = palettes[palette][b][1]
+                    png[j_ + 2] = palettes[palette][b][2]
                     break
-        l1 = Gfx.crc32(arrayOfByte, i1, i2 + 4)
-        arrayOfByte[i1 + i2 + 4] = l1 >> 24 & 0xFF
-        arrayOfByte[i1 + i2 + 5] = l1 >> 16 & 0xFF
-        arrayOfByte[i1 + i2 + 6] = l1 >> 8 & 0xFF
-        arrayOfByte[i1 + i2 + 7] = l1 & 0xFF
-        return Image.createImage(arrayOfByte, 0, len(arrayOfByte))
+        crc = Gfx.crc32(png, plte, plte_len + 4)
+        png[plte + plte_len + 4] = crc >> 24 & 0xFF
+        png[plte + plte_len + 5] = crc >> 16 & 0xFF
+        png[plte + plte_len + 6] = crc >> 8 & 0xFF
+        png[plte + plte_len + 7] = crc & 0xFF
+        return Image.createImage(png, 0, len(png))
 
     def load_lord_map(self, full):  # ag.java:1025-1037  (load the map of the current lord, room around the hero)
         from pow.game.map_scene import MapScene
         self.fill_screen_rgb(0, 0, 0)
-        ct34 = GameCanvas.images[34]
-        self.draw_view_region(ct34, GameCanvas.canvas_size.x // 2 - ct34.getWidth() // 2, GameCanvas.canvas_size.y // 2 - ct34.getHeight() // 2,
-                       ct34.getWidth(), ct34.getHeight(), 0, 0)
+        map_image = GameCanvas.images[34]
+        self.draw_view_region(map_image, GameCanvas.canvas_size.x // 2 - map_image.getWidth() // 2, GameCanvas.canvas_size.y // 2 - map_image.getHeight() // 2,
+                       map_image.getWidth(), map_image.getHeight(), 0, 0)
         GameCanvas.redraw = 1
         MapScene.hero_cell()
         GameCanvas.view_tx = idiv(GameCanvas.hero.room_pos[0].x - 1, 7) * 7 + 4 - (GameCanvas.view_tiles.x >> 1)
@@ -2608,9 +2608,9 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.scene.draw_tiles(GameCanvas.view_tiles.x, GameCanvas.view_tiles.y, GameCanvas.view_tx, GameCanvas.view_ty, full)
 
     def load_hud(self):  # ag.java:2271-2275  (HUD frame pieces)
-        arrayOfInt = [79, 61, 82, 78, 83, 81]
+        pieces = [79, 61, 82, 78, 83, 81]
         for b in range(6):
-            GameCanvas.hud_frame[b] = self.load_image(GameCanvas.scr_ui.get(arrayOfInt[b]))
+            GameCanvas.hud_frame[b] = self.load_image(GameCanvas.scr_ui.get(pieces[b]))
 
     def draw_digit(self, digit, x, y):  # ag.java:2793-2795  (one digit of ct[19])
         self.draw_map_region(GameCanvas.images[19], x, y, 10, 14, 10 * digit, 0)
@@ -2625,18 +2625,18 @@ class GameCanvas(GameFields, Canvas):
         return b
 
     def draw_clock(self, x, y, secs):  # ag.java:2849-2855  (mission clock mm:ss)
-        arrayOfInt1 = [0, 9, 25, 34]
-        arrayOfInt2 = [idiv(secs, 600) % 10, idiv(secs, 60) % 10, secs % 60 // 10, secs % 10]
+        digit_x = [0, 9, 25, 34]
+        digits = [idiv(secs, 600) % 10, idiv(secs, 60) % 10, secs % 60 // 10, secs % 10]
         for b in range(4):
-            self.draw_digit(arrayOfInt2[b], x + arrayOfInt1[b] + 10, y)
+            self.draw_digit(digits[b], x + digit_x[b] + 10, y)
         self.draw_map_region(GameCanvas.images[19], x + 20 + 10, y, 4, 14, 115, 0)
 
     def free_map_images(self):  # ag.java:2548-2570  (free the map images; `al` would hide the al class)
         GameCanvas.free_hero_images()
         GameCanvas.images[4] = None
         if GameCanvas.tile_images is not None:
-            for b1 in range(len(GameCanvas.tile_images)):
-                GameCanvas.tile_images[b1] = None
+            for i in range(len(GameCanvas.tile_images)):
+                GameCanvas.tile_images[i] = None
             GameCanvas.tile_images = None
         GameCanvas.images[9] = None
         GameCanvas.images[11] = None
@@ -2664,46 +2664,46 @@ class GameCanvas(GameFields, Canvas):
             self.load_dialogue_line(GameCanvas.talk_line)
 
     def load_dialogue_line(self, line):  # ag.java:2584-2637  (line paramInt of dialogue file 57+dG -> dp[dR])
-        str1 = ""
-        arrayOfInt = [0] * 60
-        arrayOfString = [None, None]
+        speaker = ""
+        offsets = [0] * 60
+        parts = [None, None]
         s = GameCanvas.talk_side
         if (GameCanvas.talk_box & 0x1) != 0:
             if GameCanvas.talk_kind == 0:
-                str1 = GameCanvas.mission_names[GameCanvas.mission]
+                speaker = GameCanvas.mission_names[GameCanvas.mission]
             elif GameCanvas.talk_kind in (2, 1):
                 if GameCanvas.talk_kind == 2:          # case 2 falls through into case 1
                     if GameCanvas.boss_fight != 0:
                         self.set_general(GameCanvas.lords[GameCanvas.mission].general)
                     else:
                         self.set_general(GameCanvas.cells[GameCanvas.cell].general)
-                str1 = GameCanvas.general.name
+                speaker = GameCanvas.general.name
         else:
-            str1 = GameCanvas.hero.name
-        arrayOfByte2 = GameCanvas.load_data_file(57 + GameCanvas.talk_kind)
-        j_ = arrayOfByte2[0] & 0xFF | arrayOfByte2[1] << 8 & 0xFF00
-        for b1 in range(j_ + 1):
-            arrayOfInt[b1] = arrayOfByte2[2 + b1 * 2] & 0xFF | arrayOfByte2[2 + b1 * 2 + 1] << 8 & 0xFF00
-        arrayOfString[0] = GameCanvas.read_utf(arrayOfByte2, arrayOfInt[line], arrayOfInt[line + 1])
-        arrayOfString[1] = "[" + str1 + "] "
-        GameCanvas.text_width = len(arrayOfString[0])
+            speaker = GameCanvas.hero.name
+        data = GameCanvas.load_data_file(57 + GameCanvas.talk_kind)
+        j_ = data[0] & 0xFF | data[1] << 8 & 0xFF00
+        for i in range(j_ + 1):
+            offsets[i] = data[2 + i * 2] & 0xFF | data[2 + i * 2 + 1] << 8 & 0xFF00
+        parts[0] = GameCanvas.read_utf(data, offsets[line], offsets[line + 1])
+        parts[1] = "[" + speaker + "] "
+        GameCanvas.text_width = len(parts[0])
         m = 0
-        for b1 in range(GameCanvas.text_width):
-            if arrayOfString[0][b1] == '&':
-                if m != b1:
+        for i in range(GameCanvas.text_width):
+            if parts[0][i] == '&':
+                if m != i:
                     # System.arraycopy(String[], m, String, ...) would throw in Java; the game
                     # only prints this marker, so the texts never have '&' after other text
                     GameCanvas.log("=========================check this 96430jfds")
-                arrayOfString[1] = arrayOfString[1] + str1
-                m = b1 + 1
-        str2 = ""
-        for b2 in range(len(arrayOfString[0])):
-            if arrayOfString[0][b2] != '&':
-                str2 = str2 + arrayOfString[0][b2]
-        arrayOfString[0] = str2
+                parts[1] = parts[1] + speaker
+                m = i + 1
+        clean = ""
+        for j in range(len(parts[0])):
+            if parts[0][j] != '&':
+                clean = clean + parts[0][j]
+        parts[0] = clean
         if m < GameCanvas.text_width:
-            arrayOfString[1] = arrayOfString[1] + arrayOfString[0]
-        self.word_wrap(bytearray(arrayOfString[1].encode("utf-8")), 150, s)
+            parts[1] = parts[1] + parts[0]
+        self.word_wrap(bytearray(parts[1].encode("utf-8")), 150, s)
 
     def start_dialogue_text(self):  # ag.java:2639-2681  (first line dI of the dialogue)
         from pow.game.menus import Menus
@@ -2767,27 +2767,27 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.talk_cursor_x = GameCanvas.talk_x[GameCanvas.talk_side]
 
     def set_general(self, general):  # ag.java:2705-2726  (general paramInt -> dC)
-        arrayOfByte = None
+        data = None
         j_ = 0
-        arrayOfByte = GameCanvas.load_data_file(46)
+        data = GameCanvas.load_data_file(46)
         j_ = 23 * (general - 1) + 14
         dC = GameCanvas.general
         dC.name = ""
         b = 0
-        while b < 11 and arrayOfByte[j_ + b] != 0:
+        while b < 11 and data[j_ + b] != 0:
             b += 1
-        dC.name = GameCanvas.read_utf(arrayOfByte, j_, j_ + b)
-        dC.look = _jchar(arrayOfByte[j_ + 11])
-        dC.side = _jchar(arrayOfByte[j_ + 11 + 2])
-        dC.skills[0] = _jchar(arrayOfByte[j_ + 11 + 3])
-        dC.skills[1] = _jchar(arrayOfByte[j_ + 11 + 4])
-        dC.skills[2] = _jchar(arrayOfByte[j_ + 11 + 5])
-        dC.skills[3] = _jchar(arrayOfByte[j_ + 11 + 6])
-        dC.portrait = _jchar(arrayOfByte[j_ + 11 + 7])
-        dC.gift_table = _jchar(arrayOfByte[j_ + 11 + 8])
-        dC.attack = _jchar(arrayOfByte[j_ + 11 + 9])
-        dC.defense = _jchar(arrayOfByte[j_ + 11 + 10])
-        dC.hp = _jchar(arrayOfByte[j_ + 11 + 11])
+        dC.name = GameCanvas.read_utf(data, j_, j_ + b)
+        dC.look = _jchar(data[j_ + 11])
+        dC.side = _jchar(data[j_ + 11 + 2])
+        dC.skills[0] = _jchar(data[j_ + 11 + 3])
+        dC.skills[1] = _jchar(data[j_ + 11 + 4])
+        dC.skills[2] = _jchar(data[j_ + 11 + 5])
+        dC.skills[3] = _jchar(data[j_ + 11 + 6])
+        dC.portrait = _jchar(data[j_ + 11 + 7])
+        dC.gift_table = _jchar(data[j_ + 11 + 8])
+        dC.attack = _jchar(data[j_ + 11 + 9])
+        dC.defense = _jchar(data[j_ + 11 + 10])
+        dC.hp = _jchar(data[j_ + 11 + 11])
         dC.side = dC.side + 1 & 0x1
 
     def random_general_skill(self, force):  # ag.java:1494-1505  (random skill of general dC)
@@ -2796,9 +2796,9 @@ class GameCanvas(GameFields, Canvas):
             b += 1
         if force != 0:
             while True:
-                c1 = GameCanvas.general.skills[self.rand(b)]
-                if not c1 > 0o20:
-                    return c1
+                skill = GameCanvas.general.skills[self.rand(b)]
+                if not skill > 0o20:
+                    return skill
         return GameCanvas.general.skills[self.rand(b)]
 
 

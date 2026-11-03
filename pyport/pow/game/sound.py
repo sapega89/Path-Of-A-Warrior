@@ -35,23 +35,23 @@ class Sound(GameCanvas):
         if Sound.players is None or not GameCanvas.sound_on:
             return
         Sound.players.tick()
-        bool1 = False
-        bool2 = True
+        loop = False
+        start = True
         i = Sound.requested
         Sound.requested = -1
         if GameCanvas.sound_on and i != -1:
             if i <= 2:
                 if Sound.music == i:
-                    bool2 = False
+                    start = False
                 else:
                     Sound.stop_all()
                 Sound.music = i
-                bool1 = True
+                loop = True
             else:
                 Sound.music = -1
-                bool1 = False
-            if bool2:
-                self.play_now(i, bool1)
+                loop = False
+            if start:
+                self.play_now(i, loop)
 
     def play_now(self, sound, loop):  # k.java:61-73
         Sound.players.set_volume(GameCanvas.volume)
