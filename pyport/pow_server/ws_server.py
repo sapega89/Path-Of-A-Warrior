@@ -63,7 +63,7 @@ async def handle_ws(server, ws):
             if isinstance(data, str) or len(data) > MAX_FRAME:
                 break
             try:
-                payloads, rest = codec_bin.unframe(data)
+                payloads, _rest = codec_bin.unframe(data)
             except codec_bin.CodecError:
                 break
             for p in payloads:
@@ -144,6 +144,7 @@ async def serve(host="0.0.0.0", port=28200, db="mp_server.sqlite", tcp_port=None
         server.add_bots()
     live = LiveServer(server.storage, notices=notices)
     saves = cloud.CloudServer(server.storage)
+    background = []                             # tasks that live as long as serve()
 
     def route(ws):
         path = getattr(getattr(ws, "request", None), "path", "") or ""
@@ -159,13 +160,13 @@ async def serve(host="0.0.0.0", port=28200, db="mp_server.sqlite", tcp_port=None
                 for bot in bots:
                     bot.pump()
                 await asyncio.sleep(0.2)
-        pumper = asyncio.ensure_future(pump())  # noqa: F841 (kept alive with serve)
+        background.append(asyncio.ensure_future(pump()))   # kept alive with serve
 
     async def tick():                           # matchmaking: a Duel that waited gets a CPU
         while True:
             server.tick()
             await asyncio.sleep(1)
-    ticker = asyncio.ensure_future(tick())      # noqa: F841 (kept alive with serve)
+    background.append(asyncio.ensure_future(tick()))       # kept alive with serve
     async with ws_serve(route, host, port,
                         max_size=cloud.MAX_MESSAGE, ssl=ssl_context) as wss:
         tcp = None

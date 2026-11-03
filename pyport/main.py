@@ -19,8 +19,8 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-import config  # noqa: E402
-from pow.midp import display, watchdog  # noqa: E402
+import config
+from pow.midp import display, watchdog
 
 
 def rms_selftest():
@@ -71,7 +71,7 @@ def live_from_page():
         if save:
             config.SAVE_SERVER = str(save)
     except Exception as ex:
-        print("Gamevil Live server from the page address: %r" % ex)
+        print(f"Gamevil Live server from the page address: {ex!r}")
 
 
 def restart():
@@ -83,11 +83,12 @@ def restart():
     # a new process, not os.execv: on Windows execv does not quote its arguments, so a path with
     # a space ("C:\\Users\\Andrey S\\...") would break; a frozen exe has no main.py to pass
     import subprocess
+
     import pygame
     args = [sys.executable] + ([] if getattr(sys, "frozen", False) else [os.path.abspath(__file__)])
     sys.stdout.flush()
     pygame.quit()                          # the old window closes before the new one opens
-    subprocess.Popen(args + sys.argv[1:])
+    subprocess.Popen(args + sys.argv[1:])   # noqa: S603 (relaunches this same game)
 
 
 async def main():

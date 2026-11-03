@@ -280,7 +280,7 @@ def cpu_choice(rng, me, foes, allies=()):
     #    beats Attack this round, the one with the most extra damage per MP; with HP getting
     #    low it leaves the MP of a heal
     def rounds_to_kill(g):
-        return g.hp / max(1, max(strike_damage(me, g, a, h) for a, h, _ in opts))
+        return g.hp / max(1, *(strike_damage(me, g, a, h) for a, h, _ in opts))
     target = min(foes, key=lambda g: (rounds_to_kill(g), -threat(g, me)))
     base = strike_damage(me, target, ATTACK, hit)
     others = [g for g in foes if g is not target]
@@ -289,7 +289,7 @@ def cpu_choice(rng, me, foes, allies=()):
         reserve = min((me.cost(s) for s in HEALS if s in me.slots and s in me.skills), default=0)
 
     def extra(o):
-        a, h, cost = o
+        a, h, _cost = o
         dmg = strike_damage(me, target, a, h)
         if a == TIDAL and others:                  # its second target takes a strike too
             dmg += strike_damage(me, others[0], a, h)

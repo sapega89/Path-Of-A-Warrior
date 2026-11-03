@@ -4,19 +4,18 @@
 import re
 
 import config
-from pow.midp import display
-from pow.game import consts
-from pow.game.game_canvas import GameCanvas
-from pow.game.name_buffer import NameBuffer
-from pow.game.res_reader import ResReader
-from pow.game.structs import Item, MissionDef, Point, Rect
-from pow.game.gfx import Gfx
-from pow.midp.jint import i8, i16, i32, idiv, imod
-from pow.game.font import Font
-from pow.game.scr_table import ScrTable
+from pow.game import consts, hero_classes
 from pow.game.arr_table import ArrTable
-from pow.game import hero_classes
-from pow.game.popups import RESPEC_POPUP, RESPEC_DONE_POPUP
+from pow.game.font import Font
+from pow.game.game_canvas import GameCanvas
+from pow.game.gfx import Gfx
+from pow.game.name_buffer import NameBuffer
+from pow.game.popups import RESPEC_DONE_POPUP, RESPEC_POPUP
+from pow.game.res_reader import ResReader
+from pow.game.scr_table import ScrTable
+from pow.game.structs import Item, MissionDef, Point, Rect
+from pow.midp import display
+from pow.midp.jint import i8, i16, i32, idiv, imod
 
 F6 = config.DECOMP_FIX["F6"]
 F10 = config.DECOMP_FIX["F10"]
@@ -507,8 +506,7 @@ class Menus(GameCanvas):
             return
         if screen == 19:
             menu[1] = menu[1] - 4
-            if menu[1] < 0:
-                menu[1] = 0
+            menu[1] = max(menu[1], 0)
             GameCanvas.redraw = 1
             return
         if screen == 25:
@@ -779,9 +777,8 @@ class Menus(GameCanvas):
                 GameCanvas.popups.setup_popup(5)
                 return
         elif sel == 11:
-            if menu[1] == 0:
-                if self.save_game() != 0:
-                    GameCanvas.popups.setup_popup(0)
+            if menu[1] == 0 and self.save_game() != 0:
+                GameCanvas.popups.setup_popup(0)
             return
         elif sel == 25:
             if (GameCanvas.score & 1 << menu[1]) != 0:
@@ -978,7 +975,7 @@ class Menus(GameCanvas):
         text_dx = [13, 34, 20, 0, 0, 0, 0, 0, 0, 0,
                        12, 18, 12, 13, 0, 0, 0, 0, 0, 0,
                        0, 0, 0, 0, 0, 0, 0, 13, 0, 0]
-        rows = 5 if GameCanvas.menu_count > 5 else GameCanvas.menu_count
+        rows = min(GameCanvas.menu_count, 5)
         if menu[0] == 25 and menu[2] >= 20:
             rows = 4
             if menu[1] >= 24:
@@ -1006,12 +1003,10 @@ class Menus(GameCanvas):
                         GameCanvas.missions_done = -1
                     if (GameCanvas.missions_done & 1 << GameCanvas.lord_ids[menu[2] + row] - 1) == 0:
                         Gfx.set_font(GameCanvas.font_gray)
-                elif menu[0] == 25:
-                    if (GameCanvas.score & 1 << menu[2] + row) == 0:
-                        Gfx.set_font(GameCanvas.font_gray)
-            elif GameCanvas.map_mode.mode == 1:
-                if menu[2] + row == 2 and (GameCanvas.actor_count > 0 or GameCanvas.boss_fight != 0 or GameCanvas.waves[0] != 0):
+                elif menu[0] == 25 and (GameCanvas.score & 1 << menu[2] + row) == 0:
                     Gfx.set_font(GameCanvas.font_gray)
+            elif GameCanvas.map_mode.mode == 1 and menu[2] + row == 2 and (GameCanvas.actor_count > 0 or GameCanvas.boss_fight != 0 or GameCanvas.waves[0] != 0):
+                Gfx.set_font(GameCanvas.font_gray)
             if menu[0] == 25:
                 if menu[2] + row < 24:
                     utf = self.edat_bytes(54, 38 + menu[2] + row)
@@ -1062,7 +1057,7 @@ class Menus(GameCanvas):
             elif b == 1:
                 str_ = ""
                 for bar in range(GameCanvas.volume // 25):
-                    str_ = str_ + 'I'
+                    str_ = str_ + "I"
                 if str_ == "":
                     str_ = "OFF"
             elif b == 2:
@@ -1253,8 +1248,8 @@ class Menus(GameCanvas):
         a part longer than a line is broken between words."""
         measure = GameCanvas.measure_text
         lines = []
-        for part in re.split(r"\s*/\s+", text):
-            part = part.strip()
+        for raw in re.split(r"\s*/\s+", text):
+            part = raw.strip()
             if not part:
                 continue
             if lines and measure(lines[-1] + " / " + part) <= width:
@@ -1881,8 +1876,7 @@ class Menus(GameCanvas):
         if cursor[0] == 1:
             cursor[4] = cursor[4] + 1
         cursor[3] = 5
-        if cursor[3] > 3:
-            cursor[3] = 3
+        cursor[3] = min(cursor[3], 3)
         if cursor[3] < cursor[4]:
             cursor[11] = 1
         else:
@@ -2350,15 +2344,15 @@ class Menus(GameCanvas):
             text = GameCanvas.speech[slot]
             line_h = Font.ascent() + Font.gap()
             prev = (1 if cur <= 0 else cur) - 1
-            if i == left or (prev < len(text) and text[prev] == ' ') or (cur - 1 < len(text) and text[cur - 1] == ']'):
+            if i == left or (prev < len(text) and text[prev] == " ") or (cur - 1 < len(text) and text[cur - 1] == "]"):
                 b = 0
                 used_h = 0
-                while cur + b + 1 < len(text) and text[cur + b] != ' ' and text[cur + b] != ']' and text[cur + b] != ',':
+                while cur + b + 1 < len(text) and text[cur + b] != " " and text[cur + b] != "]" and text[cur + b] != ",":
                     used_h += Font.ascent() + Font.gap()
                     b += 1
                     if used_h > 146:
                         used_h -= Font.ascent() + Font.gap()
-                if text[cur + b] == ']':
+                if text[cur + b] == "]":
                     extent += Font.ascent()
                 if used_h + extent > 146:
                     extent += used_h
@@ -2383,7 +2377,7 @@ class Menus(GameCanvas):
                 y += 16
             if cur == 0:
                 GameCanvas.menus.draw_speech_boxes(slot + 1)
-            if i == left and text[cur] == ' ':
+            if i == left and text[cur] == " ":
                 cur += 1
             if len(text) >= cur + 1:
                 Gfx.draw_string(text[cur:cur + 1], i, y, 0)
@@ -2881,8 +2875,7 @@ class Menus(GameCanvas):
         GameCanvas.visit_text = ScrTable("/" + GameCanvas.scr_data.get(62))
         if 0 <= friendship <= 100 and GameCanvas.visit_text is not None:
             if kind < 2:
-                if friendship > 99:
-                    friendship = 99
+                friendship = min(friendship, 99)
                 friendship = friendship // 10 * 3
                 if kind == 1:
                     friendship += 30
@@ -3022,8 +3015,7 @@ class Menus(GameCanvas):
             if i == 1:  # the bar is full: level up
                 GameCanvas.exp_bars[0] = 0
                 GameCanvas.exp_bars[1] = i16(GameCanvas.exp_bars[1] - 100)
-                if GameCanvas.exp_bars[1] < 0:
-                    GameCanvas.exp_bars[1] = 0
+                GameCanvas.exp_bars[1] = max(GameCanvas.exp_bars[1], 0)
                 GameCanvas.exp_bars[2] = i16(GameCanvas.exp_bars[2] - 100)
                 GameCanvas.exp_bar_step = 0
                 GameCanvas.popups.extra = 1

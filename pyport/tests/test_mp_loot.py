@@ -3,11 +3,11 @@ import random
 import struct
 
 import pytest
+from test_mp_sp_bridge import make_save, store
 
 import config
 from pow_mp import sp_bridge as S
 from pow_server import loot
-from test_mp_sp_bridge import make_save, store
 
 
 def test_tables_from_the_single_player():
@@ -21,7 +21,7 @@ def test_tables_from_the_single_player():
     assert 502 not in {it.id for it in t["rare"]}                       # story only
 
 
-@pytest.mark.parametrize("kind,drop,equip", [(0, 5, 10), (1, 10, 30), (2, 20, 60)])
+@pytest.mark.parametrize(("kind", "drop", "equip"), [(0, 5, 10), (1, 10, 30), (2, 20, 60)])
 def test_drop_rates_are_the_single_players(kind, drop, equip):
     rng = random.Random(3)
     n = 40000
@@ -98,7 +98,8 @@ def test_no_save_no_loot(save_dir):
 
 def test_client_takes_the_item_from_1032(save_dir):
     from pow_mp.net_thread import NetThread
-    from pow_server import codec_bin, messages as M
+    from pow_server import codec_bin
+    from pow_server import messages as M
     store(make_save(gold=0, fame=0, exp=0))
     frame = codec_bin.encode(M.BATTLE_END, {"st": 1, "win": 1, "gold": 50, "fame": 3, "exp": 9,
                                             "loot": "Black Barb", "item_id": 379, "item_def": 4,

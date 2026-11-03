@@ -1,6 +1,5 @@
 """ORIG-BUG: bugs of the original game, fixed behind config.ORIG_BUG (False = the original)."""
 import pytest
-
 from conftest import ROOT  # noqa: F401  (sets sys.path and the dummy video driver)
 
 
@@ -8,8 +7,8 @@ from conftest import ROOT  # noqa: F401  (sets sys.path and the dummy video driv
 def game(tmp_path, monkeypatch):
     import config
     from pow.game.game_canvas import GameCanvas
-    from pow.game.scr_table import ScrTable
     from pow.game.menus import Menus
+    from pow.game.scr_table import ScrTable
     from pow.game.structs import Hero
     from pow.midp.jrandom import Random
     monkeypatch.setattr(config, "SAVE_DIR", str(tmp_path))

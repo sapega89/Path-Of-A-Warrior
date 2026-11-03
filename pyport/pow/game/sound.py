@@ -1,7 +1,7 @@
 """k.java - sound manager (music snd0-2, SFX snd3-16). Literal port."""
 from pow.game.game_canvas import GameCanvas
-from pow.midp import system
 from pow.game.player_pool import PlayerPool
+from pow.midp import system
 
 
 class Sound(GameCanvas):

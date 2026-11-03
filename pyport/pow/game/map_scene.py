@@ -1,20 +1,32 @@
 """c.java - map, combat and the story player (bd). Literal port, partial:
 c(int) (one page of a prologue / epilogue) and d(int) / g() (end of a mission) are ported;
 the map and combat (phases 3-4) are not."""
-from pow.game.game_canvas import GameCanvas
-from pow.game import consts
-from pow.game.res_reader import ResReader
-from pow.game.gfx import Gfx
 import config
-from pow.midp.jint import i16, i32, i8, idiv
-from pow.game.structs import Actor, Arrow, Breakable, Drop, MapData, MapSize, Point, Rect, RoomCell, ScriptSlot, SpawnSpot
+from pow.game import consts
 from pow.game.font import Font
+from pow.game.game_canvas import GameCanvas
+from pow.game.gfx import Gfx
+from pow.game.res_reader import ResReader
+from pow.game.structs import (
+    Actor,
+    Arrow,
+    Breakable,
+    Drop,
+    MapData,
+    MapSize,
+    Point,
+    Rect,
+    RoomCell,
+    ScriptSlot,
+    SpawnSpot,
+)
+from pow.midp.jint import i8, i16, i32, idiv
 
 F14 = config.DECOMP_FIX["F14"]
 
 
 # direction key -> cz.c, as c.i_v reads ag.cj (used by the PORT-EXTRA HOLD_TO_MOVE)
-from pow.game.autopilot import Autopilot   # noqa: E402  PORT-EXTRA auto-hunt walks like HOLD_TO_MOVE
+from pow.game.autopilot import Autopilot  # noqa: E402  PORT-EXTRA auto-hunt walks like HOLD_TO_MOVE
 
 _HELD_DIR = {-1: 4, 50: 4, -3: 2, 52: 2, -4: 6, 54: 6, -2: 0, 56: 0}
 
@@ -24,14 +36,14 @@ class MapScene(GameCanvas):
         super().__init__(GameCanvas.midlet)
 
     def load_story_page(self, page):  # c.java:1393-1514  (load story page paramInt)
-        digits = ['\0'] * 10
+        digits = ["\0"] * 10
         picture = 0
         str_ = GameCanvas.scr_story.get(GameCanvas.story_pages[0] + page)
         if (GameCanvas.story_ending == 0 and page < GameCanvas.story_pages[1] - GameCanvas.story_pages[0]) or (GameCanvas.story_ending != 0 and page >= GameCanvas.story_pages[1] - GameCanvas.story_pages[0]):
             # dialogue page: "[Name] text" typed into one of the two speech boxes
             self.play_sound(0)
             line = ""
-            if '/' < str_[0] < ':':
+            if "/" < str_[0] < ":":
                 GameCanvas.talk_lines[0] = ""
                 if GameCanvas.story_id == 0 and page == 2:
                     GameCanvas.story_picture = 0
@@ -39,8 +51,8 @@ class MapScene(GameCanvas):
                 else:
                     b = 0
                     while b < 10:
-                        if str_[b] == '|':
-                            digits[b] = '\0'
+                        if str_[b] == "|":
+                            digits[b] = "\0"
                             break
                         digits[b] = str_[b]
                         b += 1
@@ -117,8 +129,8 @@ class MapScene(GameCanvas):
             else:
                 b = 0
                 while b < 10:
-                    if str_[b] == '|':
-                        digits[b] = '\0'
+                    if str_[b] == "|":
+                        digits[b] = "\0"
                         break
                     digits[b] = str_[b]
                     b += 1
@@ -142,8 +154,7 @@ class MapScene(GameCanvas):
         lord = GameCanvas.lords[GameCanvas.mission]
         if won != 0:
             hero.mission_progress[lord.id - 1] = i16(hero.mission_progress[lord.id - 1] + 5)
-            if hero.mission_progress[lord.id - 1] > 100:
-                hero.mission_progress[lord.id - 1] = 100
+            hero.mission_progress[lord.id - 1] = min(hero.mission_progress[lord.id - 1], 100)
             GameCanvas.lords_done |= 1 << GameCanvas.lord_ids[GameCanvas.lord] - 1
             i = (GameCanvas.lord_ids[GameCanvas.lord] - 1) * 5 + GameCanvas.mission
             GameCanvas.stats[i >> 5] = GameCanvas.stats[i >> 5] | i32(1 << (i & 0x1F))
@@ -231,7 +242,7 @@ class MapScene(GameCanvas):
             GameCanvas.ball_cover = self.load_image("ball_black")
         for b in range(2):
             if cover[b] != 0:
-                cover[b] = 3 if cover[b] < 3 else cover[b]
+                cover[b] = max(cover[b], 3)
             GameCanvas.draw_region(ball_pos[b][0], ball_pos[b][1], GameCanvas.ball_cover.getWidth(), GameCanvas.ball_cover.getHeight() - cover[b],
                          GameCanvas.ball_cover, 0, 0)
 
@@ -241,14 +252,10 @@ class MapScene(GameCanvas):
         row0 = idiv(y, 27) - GameCanvas.view_ty
         col1 = idiv(x + w - 1, 27) - GameCanvas.view_tx
         row1 = idiv(y + h - 1, 27) - GameCanvas.view_ty
-        if col0 < 0:
-            col0 = 0
-        if row0 < 0:
-            row0 = 0
-        if col1 > GameCanvas.view_tiles.x - 1:
-            col1 = GameCanvas.view_tiles.x - 1
-        if row1 > GameCanvas.view_tiles.y - 1:
-            row1 = GameCanvas.view_tiles.y - 1
+        col0 = max(col0, 0)
+        row0 = max(row0, 0)
+        col1 = min(col1, GameCanvas.view_tiles.x - 1)
+        row1 = min(row1, GameCanvas.view_tiles.y - 1)
         for i in range(col0, col1 + 1):
             for row in range(row0, row1 + 1):
                 GameCanvas.dirty[row][i] = 1
@@ -633,9 +640,8 @@ class MapScene(GameCanvas):
                 elif action == 16:
                     if frame == 6:
                         actor.skill_fx = 2
-                elif action == 19:
-                    if (frame & 0x1) != 0:
-                        actor.skill_fx = 2
+                elif action == 19 and (frame & 0x1) != 0:
+                    actor.skill_fx = 2
                 if -1 < actor.skill_fx < 100:
                     GameCanvas.engine.draw_weapon_trail(index, actor.skill_fx)
             if GameCanvas.enemy_fx_kind == 2:
@@ -843,9 +849,8 @@ class MapScene(GameCanvas):
             shadow_frame = GameCanvas.shadow_frames[shadow]
             self.draw_map_region(GameCanvas.shadow_image, i - shadow_frame.ox, sy - shadow_frame.oy + 3, shadow_frame.w, shadow_frame.h, shadow_frame.src_x, shadow_frame.src_y)
             GameCanvas.hero_effect_drawn = 1
-        if trail > -1:
-            if (hero.dir[0] >> 1) * 6 + (trail << 1) == 18 or hero.dir[0] == 4 and hero.action[0] != 25:
-                GameCanvas.engine.draw_weapon_trail(-1, trail)
+        if trail > -1 and ((hero.dir[0] >> 1) * 6 + (trail << 1) == 18 or (hero.dir[0] == 4 and hero.action[0] != 25)):
+            GameCanvas.engine.draw_weapon_trail(-1, trail)
         if weapon_front != 0:
             GameCanvas.engine.draw_hero_weapon(i, sy, weapon_set[hero.sprite_frame])
         head = head_set[hero.sprite_frame]
@@ -855,9 +860,8 @@ class MapScene(GameCanvas):
         MapScene.mark_dirty(hero.pos[0].x - body.ox, hero.pos[0].y - body.oy, body.w, body.h)
         if weapon_front == 0:
             GameCanvas.engine.draw_hero_weapon(i, sy, weapon_set[hero.sprite_frame])
-        if trail > -1:
-            if hero.action[0] == 25 or (hero.dir[0] >> 1) * 6 + (trail << 1) != 18 and hero.dir[0] != 4:
-                GameCanvas.engine.draw_weapon_trail(-1, trail)
+        if trail > -1 and (hero.action[0] == 25 or ((hero.dir[0] >> 1) * 6 + (trail << 1) != 18 and hero.dir[0] != 4)):
+            GameCanvas.engine.draw_weapon_trail(-1, trail)
         if GameCanvas.hero_picked_up == 1:
             shadow = 3 + GameCanvas.frame % 3
             shadow_frame = GameCanvas.shadow_frames[shadow]
@@ -911,7 +915,7 @@ class MapScene(GameCanvas):
             return 3
         return 0
 
-    def create_enemy(self, kind, tx, ty, dir):  # c.java:928-1015  (create an enemy)
+    def create_enemy(self, kind, tx, ty, direction):  # c.java:928-1015  (create an enemy)
         if config.NO_ENEMIES:
             # PORT-EXTRA (POW_NO_ENEMIES=1): the map without the combat - nobody is created
             return
@@ -929,11 +933,11 @@ class MapScene(GameCanvas):
             # first time keeps a[0] at (0, 0), the enemy is pushed into the top-left corner
             # of the room and can stay stuck there behind a tent or a wall.
             actor.pos[1] = actor.pos[0]
-        actor.pos[1].x = i16(tx * 27 + 12 + spawn_dx[dir])
-        actor.pos[1].y = i16(ty * 27 + 20 + spawn_dy[dir])
+        actor.pos[1].x = i16(tx * 27 + 12 + spawn_dx[direction])
+        actor.pos[1].y = i16(ty * 27 + 20 + spawn_dy[direction])
         actor.target.x = actor.target.y = 0
-        actor.dir[1] = actor.facing = i8((dir << 1) + 4 & 0x7)
-        actor.dir[0] = actor.facing = i8((dir << 1) + 4 & 0x7)
+        actor.dir[1] = actor.facing = i8((direction << 1) + 4 & 0x7)
+        actor.dir[0] = actor.facing = i8((direction << 1) + 4 & 0x7)
         actor.action[1] = 0
         actor.action[0] = 0
         actor.frame[1] = 0
@@ -1099,38 +1103,38 @@ class MapScene(GameCanvas):
             GameCanvas.map.free()
 
     def load_map(self, map_no):  # c.java:1127-1162  (load map file #paramInt of mdat)
-        map = MapData()
+        map_data = MapData()
         MapScene.free_map()
         data = ResReader.read("/" + GameCanvas.scr_maps.get(map_no - 1))
         size = len(data)
-        map.data = [b & 0xFF for b in data]
-        if map.size is None:
-            map.size = MapSize()
-        map.size.w = map.data[0]
-        map.size.h = map.data[1]
-        map.size.extra = map.data[2]
-        i = 3 + map.size.extra
-        map.layer_ground = i
-        layer_size = map.size.h * map.size.w
+        map_data.data = [b & 0xFF for b in data]
+        if map_data.size is None:
+            map_data.size = MapSize()
+        map_data.size.w = map_data.data[0]
+        map_data.size.h = map_data.data[1]
+        map_data.size.extra = map_data.data[2]
+        i = 3 + map_data.size.extra
+        map_data.layer_ground = i
+        layer_size = map_data.size.h * map_data.size.w
         i += layer_size
-        map.layer_upper = i
+        map_data.layer_upper = i
         i += layer_size
-        map.layer_objects = i
+        map_data.layer_objects = i
         i += layer_size
-        map.layer_flags = i
+        map_data.layer_flags = i
         MapScene.reset_cell_scripts()
         i += layer_size
         if size > i:
-            script_count = map.data[i]
+            script_count = map_data.data[i]
             i += 1
             i += 2
             for b in range(script_count):
-                op = map.data[i]
-                arg = map.data[i + 1]
-                script_len = map.data[i + 2] & 0xFF | map.data[i + 3] << 8 & 0xFF00
+                op = map_data.data[i]
+                arg = map_data.data[i + 1]
+                script_len = map_data.data[i + 2] & 0xFF | map_data.data[i + 3] << 8 & 0xFF00
                 MapScene.cell_script_slot(i, op, arg)
                 i = i + 4 + script_len
-        return map
+        return map_data
 
     @staticmethod
     def reset_cell_scripts():  # c.java:1164-1171
@@ -1243,7 +1247,7 @@ class MapScene(GameCanvas):
                         if game_map.data[game_map.layer_upper + m + col] != 0 and GameCanvas.tile_slots[game_map.data[game_map.layer_upper + m + col] - 1] == 0:
                             k += 1
                             GameCanvas.tile_slots[game_map.data[game_map.layer_upper + m + col] - 1] = k
-            row = tiles_h if tiles_h > 0 else 0
+            row = max(0, tiles_h)
             if GameCanvas.tile_images is not None:
                 m = len(GameCanvas.tile_images)
                 while row < m:
@@ -1541,28 +1545,26 @@ class MapScene(GameCanvas):
                 step_y = consts.dir_dy8[move_dir] << 2
         elif action in (13, 14):
             fall14 = action == 14
-            if action == 13:
-                if 4 < frame < 8:
-                    step_x = consts.dir_dx8[move_dir] << 2
-                    step_y = consts.dir_dy8[move_dir] << 2
-                    if step_x > 0:
-                        step_x = GameCanvas.engine.step_until_free(hero.pos[0], step_x, 6)
-                    elif step_x < 0:
-                        step_x = GameCanvas.engine.step_until_free(hero.pos[0], step_x, 2)
-                    if step_y > 0:
-                        step_y = GameCanvas.engine.step_until_free(hero.pos[0], step_y, 0)
-                    elif step_y < 0:
-                        step_y = GameCanvas.engine.step_until_free(hero.pos[0], step_y, 4)
-                    delta = GameCanvas.engine.keep_in_room(hero.pos[0], step_x, step_y)
-                    step_x = delta[0]
-                    step_y = delta[1]
-                    hero.pos[0].x = i16(hero.pos[0].x + step_x)
-                    hero.pos[0].y = i16(hero.pos[0].y + step_y)
-                    fall14 = True       # no break: falls into case 14
-            if fall14:
-                if 0 < frame < 9:
-                    step_x = consts.dir_dx8[move_dir]
-                    step_y = consts.dir_dy8[move_dir]
+            if action == 13 and 4 < frame < 8:
+                step_x = consts.dir_dx8[move_dir] << 2
+                step_y = consts.dir_dy8[move_dir] << 2
+                if step_x > 0:
+                    step_x = GameCanvas.engine.step_until_free(hero.pos[0], step_x, 6)
+                elif step_x < 0:
+                    step_x = GameCanvas.engine.step_until_free(hero.pos[0], step_x, 2)
+                if step_y > 0:
+                    step_y = GameCanvas.engine.step_until_free(hero.pos[0], step_y, 0)
+                elif step_y < 0:
+                    step_y = GameCanvas.engine.step_until_free(hero.pos[0], step_y, 4)
+                delta = GameCanvas.engine.keep_in_room(hero.pos[0], step_x, step_y)
+                step_x = delta[0]
+                step_y = delta[1]
+                hero.pos[0].x = i16(hero.pos[0].x + step_x)
+                hero.pos[0].y = i16(hero.pos[0].y + step_y)
+                fall14 = True       # no break: falls into case 14
+            if fall14 and 0 < frame < 9:
+                step_x = consts.dir_dx8[move_dir]
+                step_y = consts.dir_dy8[move_dir]
         elif action == 10:
             if frame < 10:
                 hero.pos[0].x = i16(hero.pos[0].x + (-1 if (frame & 0x1) != 0 else 1))
@@ -1609,9 +1611,8 @@ class MapScene(GameCanvas):
                                 i = GameCanvas.engine.move(hero.pos[0], step_x, step_y, i, -1)
                                 if -1 < i < 8:
                                     hero.dir[0] = i
-                elif hero.facing in (1, 3, 5, 7):
-                    if i not in (-1, 9):
-                        hero.dir[0] = i
+                elif hero.facing in (1, 3, 5, 7) and i not in (-1, 9):
+                    hero.dir[0] = i
         action = hero.action[0]
         frame = hero.frame[0]
         if 3 <= action <= 8 or 21 <= action <= 24:
@@ -1655,8 +1656,7 @@ class MapScene(GameCanvas):
             if frame == 11:
                 if action != 18:
                     hero.attack_buff = idiv(hero.attack * hero.skill_levels[action - 12], buff_div[action - 17])
-                    if hero.attack_buff < 1:
-                        hero.attack_buff = 1
+                    hero.attack_buff = max(hero.attack_buff, 1)
                     if hero.skill_levels[action - 12] < 4:
                         hero.attack_buff_ticks = 50
                     elif hero.skill_levels[action - 12] < 8:
@@ -1665,8 +1665,7 @@ class MapScene(GameCanvas):
                         hero.attack_buff_ticks = 150
                 if action != 17:
                     hero.defense_buff = idiv(hero.defense * hero.skill_levels[action - 12], buff_div[action - 17])
-                    if hero.defense_buff < 1:
-                        hero.defense_buff = 1
+                    hero.defense_buff = max(hero.defense_buff, 1)
                     if hero.skill_levels[action - 12] < 4:
                         hero.defense_buff_ticks = 50
                     elif hero.skill_levels[action - 12] < 8:
@@ -1827,9 +1826,8 @@ class MapScene(GameCanvas):
             elif action == 22:
                 if frame == 6:
                     step = 2
-            elif action == 25:
-                if (frame & 0x1) != 0:
-                    step = 2
+            elif action == 25 and (frame & 0x1) != 0:
+                step = 2
             if step > -1:
                 self.erase_weapon_trail(-1, step)
         if hero.on_fire != 0:

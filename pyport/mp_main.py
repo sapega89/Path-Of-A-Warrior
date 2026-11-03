@@ -10,7 +10,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from pow.midp import display, watchdog  # noqa: E402
+from pow.midp import display, watchdog
 
 
 def server_from_page():
@@ -19,13 +19,14 @@ def server_from_page():
         return
     try:
         import platform
+
         import config
         where = platform.window.URLSearchParams.new(platform.window.location.search).get("server")
         if where:
             config.MP_SERVER = str(where)
             print("POW MP server:", config.MP_SERVER)
     except Exception as ex:
-        print("POW MP server from the page address: %r" % ex)
+        print(f"POW MP server from the page address: {ex!r}")
 
 
 async def play():

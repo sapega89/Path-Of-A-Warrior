@@ -1,7 +1,6 @@
 """PORT-EXTRA PC controls: full screen, the wide description box, the gamepad."""
 import pygame
 
-
 # ---- full screen ---------------------------------------------------------------------------------
 
 def test_fit_takes_the_biggest_whole_scale_and_centres(display):
@@ -104,8 +103,8 @@ def test_plain_joystick_and_unplugging():
 
 
 def test_canvas_walks_while_the_stick_is_held(display):
-    from pow.midp.canvas import Canvas
     from pow.midp import gamepad
+    from pow.midp.canvas import Canvas
     c = Canvas()
     got = []
     c.keyPressed = got.append

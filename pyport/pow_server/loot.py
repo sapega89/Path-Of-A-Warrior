@@ -18,10 +18,10 @@ _tables = None
 
 
 class Item:
-    __slots__ = ("id", "name", "atk", "def_", "hp", "mp", "level", "spread", "stat")
+    __slots__ = ("atk", "def_", "hp", "id", "level", "mp", "name", "spread", "stat")
 
-    def __init__(self, id, name, level, atk=0, def_=0, hp=0, mp=0, spread=0, stat=None):
-        self.id, self.name, self.level = id, name, level
+    def __init__(self, item_id, name, level, atk=0, def_=0, hp=0, mp=0, spread=0, stat=None):
+        self.id, self.name, self.level = item_id, name, level
         self.atk, self.def_, self.hp, self.mp = atk, def_, hp, mp
         self.spread, self.stat = spread, stat
 

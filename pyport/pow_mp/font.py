@@ -6,7 +6,6 @@ tools/j2py_mp.py; edited by hand since.
 from pow_mp.rt import Image, _js, i8
 
 
-
 class Font:
 
     def __init__(self, path, glyph_w, glyph_h, space_w, color):  # j.java:16
@@ -149,7 +148,7 @@ def _static_init():
 
 def _late_imports():
     global ResReader, Gfx, FrameWriter, FrameReader
-    from pow_mp.res_reader import ResReader
-    from pow_mp.gfx import Gfx
-    from pow_mp.frame_writer import FrameWriter
     from pow_mp.frame_reader import FrameReader
+    from pow_mp.frame_writer import FrameWriter
+    from pow_mp.gfx import Gfx
+    from pow_mp.res_reader import ResReader

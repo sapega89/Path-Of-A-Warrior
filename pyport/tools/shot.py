@@ -92,6 +92,7 @@ def run(scenario, out, every=False):
         os.environ[k] = v
         steps = steps[1:]
     import pygame
+
     import config
     from pow.midp import display, system
     from pow.midp.canvas import DIRECTION_KEYS, KEYNAMES
@@ -108,8 +109,8 @@ def run(scenario, out, every=False):
 
     system.use_virtual_clock()
     display.init(headless=True)
-    from pow.game.midlet import Midlet
     from pow.game.game_canvas import GameCanvas
+    from pow.game.midlet import Midlet
 
     state = {"frame": 0, "i": 0, "wait": 0, "n": 0, "last": None}
     saved = []
@@ -201,8 +202,8 @@ def run(scenario, out, every=False):
                        "<": operator.lt}
                 have = getattr(GameCanvas.hero, field)
                 if not ops[op](have, int(val)):
-                    raise SystemExit("expect %s %s %s: it is %s" % (field, op, val, have))
-                print("expect %s %s %s: %s" % (field, op, val, have))
+                    raise SystemExit(f"expect {field} {op} {val}: it is {have}")
+                print(f"expect {field} {op} {val}: {have}")
                 continue
             if cmd == "skilllv":           # TEST-ONLY: skilllv ID LV - skill ID (12..30) at level LV
                 sid, lv = map(int, arg.split())
@@ -235,7 +236,7 @@ def run(scenario, out, every=False):
                 pygame.image.save(state["last"], str(out / name))
                 saved.append(name)
                 continue
-            raise SystemExit("unknown step: %s %s" % (cmd, arg))
+            raise SystemExit(f"unknown step: {cmd} {arg}")
         GameCanvas.running = False
 
     display.frame_hooks.append(on_frame)
@@ -261,7 +262,8 @@ def run(scenario, out, every=False):
 
         display.frame_hooks.append(mp_frame)
         try:
-            assert asyncio.run(mp_main.play()) is True
+            if asyncio.run(mp_main.play()) is not True:
+                raise SystemExit("multiplayer: mp_main.play() did not return to the single player")
         finally:
             display.frame_hooks.remove(mp_frame)
     shutil.rmtree(save_dir, ignore_errors=True)

@@ -5,7 +5,8 @@ import pytest
 
 import config
 from pow_mp import sp_bridge as S
-from pow_server import codec_bin, messages as M
+from pow_server import codec_bin
+from pow_server import messages as M
 from pow_server.server import GameServer
 from pow_server.storage import MemoryStorage
 
@@ -88,7 +89,7 @@ def _login(server, extra):
 def test_server_takes_the_hero_from_login():
     server = GameServer(MemoryStorage())
     hero = S.hero(make_save())
-    sess, out = _login(server, dict({"sp": 1}, **{"sp_" + k: v for k, v in hero.items()}))
+    _sess, out = _login(server, dict({"sp": 1}, **{"sp_" + k: v for k, v in hero.items()}))
     prof = out[-1]
     assert prof["st"] == 1 and prof["level"] == 12 and prof["hp"] == 260 and prof["face"] == 2
     assert prof["slots"] == [3, 9, 99, 99]
@@ -99,7 +100,7 @@ def test_server_takes_the_hero_from_login():
 
 def test_login_without_a_save_keeps_the_default_hero():
     server = GameServer(MemoryStorage())
-    sess, out = _login(server, {"sp": 0})
+    _sess, out = _login(server, {"sp": 0})
     assert out[-1]["level"] == 1 and not server.storage.load("HERO").sp_linked
 
 

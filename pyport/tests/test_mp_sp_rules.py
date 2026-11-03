@@ -1,7 +1,8 @@
 """The multiplayer battles on the single player's numbers (pow_server/sp_rules.py)."""
 import random
 
-from pow_server import battle as B, sp_rules as R
+from pow_server import battle as B
+from pow_server import sp_rules as R
 from pow_server.model import default_character
 
 

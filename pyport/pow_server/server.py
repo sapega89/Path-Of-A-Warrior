@@ -20,7 +20,9 @@ import random
 import re
 import time
 
-from pow_server import battle as B, codec_bin, loot, messages as M
+from pow_server import battle as B
+from pow_server import codec_bin, loot
+from pow_server import messages as M
 from pow_server.model import apply_sp_hero, default_character, valid_slots
 from pow_server.storage import open_storage
 
@@ -71,9 +73,7 @@ class GameServer:
                 st.create_account(uid, "".join(secrets.choice("0123456789") for _ in range(12)))
                 ch = default_character(uid)
                 ch.bot = True
-                if st.name_taken(name, uid):
-                    name = ""
-                ch.name, ch.mp_fame = name, fame
+                ch.name, ch.mp_fame = ("" if st.name_taken(name, uid) else name), fame
                 ch.duel_grade = ch.mission_grade = min(9, fame // 100)
                 ch.wins, ch.losses = fame // 10, fame // 25
                 ch.quote_start, ch.quote_win = "Nobody else? Fight me!", "Come back stronger."
@@ -350,7 +350,8 @@ class Session:
 
     @battle.setter
     def battle(self, value):           # tests: None drops the room
-        assert value is None
+        if value is not None:
+            raise ValueError("only None (drop the room) can be set")
         self.room = None
 
     @property
@@ -370,7 +371,7 @@ class Session:
         if other is None:
             self.queued_mode, self.queued_at = mode, self.server.clock()
             self.server.queue.append(self)
-            return
+            return None
         self.server.queue.remove(other)
         rng = self.server.rng
         first = B.from_character(other.char, 0)      # the one who waited takes the left side
@@ -391,7 +392,7 @@ class Session:
             others = [B.cpu_fighter(rng, me, 1)]
             if mode == 1:
                 others += [B.cpu_fighter(rng, me, 2, ally=True), B.cpu_fighter(rng, me, 3)]
-        Room(self.server, mode, [me] + others, {0: self}, self.char.sp_progress).start()
+        Room(self.server, mode, [me, *others], {0: self}, self.char.sp_progress).start()
 
     def on_invite(self, msg):          # 768 -> 769 to me, 770 pushed to the other player
         """Challenge 1:1 / 2:2 (bz 0/1, the other player is the foe) and Invite An Ally (bz 2,
@@ -563,7 +564,7 @@ class Room:
 
     def turn(self, s, choice):         # 1027
         if s.slot not in self.fighting():
-            return
+            return None
         if self.battle.over:           # the other side hung up while I was choosing
             return s.send(M.TURN_RESULT, st=1, actions=[0] * 4, records=[])
         self.turns[s.slot] = choice
@@ -572,7 +573,7 @@ class Room:
     def _resolve_if_ready(self):
         playing = self.fighting()
         if not self.turns or not (self.battle.over or set(self.turns) >= playing):
-            return
+            return None
         if self.battle.over:           # someone hung up: answer those who already chose
             for slot in sorted(self.turns):
                 self.players[slot].send(M.TURN_RESULT, st=1, actions=[0] * 4, records=[])

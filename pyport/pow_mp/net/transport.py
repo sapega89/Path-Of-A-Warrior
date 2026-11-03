@@ -52,6 +52,7 @@ class LocalTransport(Transport):
     def shared_server(cls):
         if cls._server is None:
             import os
+
             import config
             from pow_server.server import GameServer
             from pow_server.storage import open_storage
@@ -73,7 +74,7 @@ class LocalTransport(Transport):
                 try:
                     cls._bots.append(Bot(cls._server, n.strip()))
                 except Exception as ex:        # a taken ID with another password: no bot
-                    print("MP bot %r not started: %r" % (n, ex))
+                    print(f"MP bot {n!r} not started: {ex!r}")
         return cls._server
 
     def open(self):
@@ -156,7 +157,7 @@ class WebSocketTransport(Transport):
 
     # --- browser: the page's WebSocket through pygbag's `platform.window` -------
     def _open_browser(self):
-        import platform as pf    # pygbag replaces the stdlib module with the JS bridge
+        import platform as pf  # pygbag replaces the stdlib module with the JS bridge
         ws = pf.window.WebSocket.new(self.url)
         ws.binaryType = "arraybuffer"
 
@@ -216,6 +217,7 @@ class LiveLocalTransport(LocalTransport):
     def shared_live(cls):
         if cls._live is None:
             import os
+
             from pow_server.live import LiveServer
             rng = None
             if os.environ.get("POW_SEED"):

@@ -94,7 +94,7 @@ SP_HERO = (
 
 C2S = {
     # token and the hero: PORT-EXTRA, absent in the jar
-    LOGIN: (("id", 12), ("ver", 4), ("token", 16)) + SP_HERO,
+    LOGIN: (("id", 12), ("ver", 4), ("token", 16), *SP_HERO),
     LOGIN_FIRST: (("id", 12), ("pwd", 16), ("ver", 4)),
     256: (("id", 12), ("ver", 4)),                       # rudiment, same body as 262 (g:1635)
     NOTICE: (("page", "i"),),
@@ -126,7 +126,7 @@ _ROOM = (("bg", "B"), ("slot", "B"), ("mode", "B"), ("unk", "B"))
 def _enc_turn(buf, msg):
     """1028 body (g:2247-2299), see 06 §2.5."""
     from pow_server.codec_bin import _put
-    for a in (list(msg.get("actions", [])) + [0, 0, 0, 0])[:4]:
+    for a in ([*list(msg.get("actions", [])), 0, 0, 0, 0])[:4]:
         _put(buf, "B", a)
     recs = msg.get("records", [])
     if len(recs) > 4:

@@ -3,10 +3,9 @@
 Generated once from pyport/mp_java/m.java (branch java-reference) by the old
 tools/j2py_mp.py; edited by hand since.
 """
+from pow_mp.mp_canvas import MpCanvas
 from pow_mp.rt import _js
 
-
-from pow_mp.mp_canvas import MpCanvas
 
 class MpGame(MpCanvas):
     players = None  # m.java:6 c
@@ -64,5 +63,5 @@ def _static_init():
 
 def _late_imports():
     global PlayerPool, MpCanvas
-    from pow_mp.player_pool import PlayerPool
     from pow_mp.mp_canvas import MpCanvas
+    from pow_mp.player_pool import PlayerPool

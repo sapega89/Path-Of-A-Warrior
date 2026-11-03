@@ -25,6 +25,7 @@ def _digit_keys():
     The single-player map puts skill slots there (phone keys 1 3 7 9 0, pow/midp/canvas.py),
     which would make "2" type a "3"."""
     import pygame
+
     from pow.midp.canvas import KEYMAP
     for i in range(10):
         KEYMAP[getattr(pygame, "K_%d" % i)] = 48 + i

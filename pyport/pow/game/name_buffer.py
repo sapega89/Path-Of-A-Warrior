@@ -6,7 +6,7 @@ class NameBuffer:
         self.chars = list(text)   # StringBuffer
         self.max_len = max_len           # max length
         self.changed = 0
-        self.last_char = ' '
+        self.last_char = " "
         self.cursor = len(text)
 
     def move_cursor(self, step):  # at.java:20-23

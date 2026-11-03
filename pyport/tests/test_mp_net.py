@@ -4,7 +4,8 @@ import asyncio
 import pytest
 
 from pow_mp.net.transport import LocalTransport, WebSocketTransport, make_transport
-from pow_server import codec_bin, messages as M
+from pow_server import codec_bin
+from pow_server import messages as M
 from pow_server.server import GameServer
 
 
@@ -47,7 +48,7 @@ def test_websocket_and_tcp_end_to_end():
     async def run():
         ready = asyncio.get_running_loop().create_future()
         task = asyncio.ensure_future(serve("127.0.0.1", 0, ":memory:", tcp_port=0, ready=ready))
-        server, (ws_port, tcp_port) = await asyncio.wait_for(ready, 5)
+        _server, (ws_port, tcp_port) = await asyncio.wait_for(ready, 5)
         try:
             t = WebSocketTransport("ws://127.0.0.1:%d" % ws_port)
             t.open()
@@ -91,6 +92,7 @@ def test_gamevil_live_on_the_ws_path_and_its_tcp_port():
     accounts with the multiplayer server."""
     pytest.importorskip("websockets")
     import struct
+
     from pow_server.ws_server import serve
     login = struct.pack("<H", 530) + b"WEBUSER".ljust(12, b"\0") + b"5678".ljust(16, b"\0") + b"1501" + bytes(8)
 

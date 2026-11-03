@@ -151,11 +151,10 @@ class Popups(GameCanvas):
                         if GameCanvas.menu[0] == 8:
                             GameCanvas.reset_base_stats()
                         return 1
-                elif key == -7:
-                    if GameCanvas.menu[0] == 8:
-                        self.timer = 1
-                        GameCanvas.reset_base_stats()
-                        return 1
+                elif key == -7 and GameCanvas.menu[0] == 8:
+                    self.timer = 1
+                    GameCanvas.reset_base_stats()
+                    return 1
             elif self.kind == 3:
                 if self.timer > 5:
                     key = GameCanvas.key
@@ -167,12 +166,11 @@ class Popups(GameCanvas):
                         self.button = i16(self.button % self.choices)
                     elif key in (-5, 53):
                         self.timer = 4
-            elif self.kind == 10:
-                if GameCanvas.key in (-5, 53):
-                    self.timer = 2
-                    GameCanvas.popups.kind = 0
-                    self.answered = True
-                    GameCanvas.redraw = 1
+            elif self.kind == 10 and GameCanvas.key in (-5, 53):
+                self.timer = 2
+                GameCanvas.popups.kind = 0
+                self.answered = True
+                GameCanvas.redraw = 1
         return self._tick_timer()
 
     def _tick_timer(self):  # l.java:229-323  (the part of b() after the key switch)
@@ -378,7 +376,7 @@ class Popups(GameCanvas):
                 self.timer = 200
             line = 0
             for b in range(len(text)):
-                if text[b] == '|':
+                if text[b] == "|":
                     # DECOMP-FIX F9 (proposed): decompiled `s = s + 1; l[s] = ...` is `l[s++] = ...`;
                     # literally, line 0 keeps stale text and the last line is never drawn.
                     if config.DECOMP_FIX["F9"]:
@@ -414,7 +412,7 @@ class Popups(GameCanvas):
         self.popup_id = i16(popup)
         raw = GameCanvas.gamestr(popup + 15)
         first = raw[0]
-        if '0' <= first <= '9':
+        if "0" <= first <= "9":
             self.kind = i16(ord(first) - 48)
             if self.kind != 2:
                 self.kind = 10
@@ -427,7 +425,7 @@ class Popups(GameCanvas):
         line = 0
         j = 0
         for pos in range(i + 1):
-            if pos == i or text[pos] == '\\':
+            if pos == i or text[pos] == "\\":
                 if j == pos:
                     self.lines[line] = " "
                 else:
@@ -478,12 +476,12 @@ class Popups(GameCanvas):
     @staticmethod
     def show_bought():  # l.java:498-500  (Blacksmith: bought)
         from pow.game.menus import Menus
-        return " You bought|1 " + Menus.item_name(GameCanvas.cursor[19]) + '.'
+        return " You bought|1 " + Menus.item_name(GameCanvas.cursor[19]) + "."
 
     @staticmethod
     def show_sold():  # l.java:502-504  (Blacksmith: sold)
         from pow.game.menus import Menus
-        return " You sold|" + Menus.item_name(GameCanvas.cursor[19]) + '.'
+        return " You sold|" + Menus.item_name(GameCanvas.cursor[19]) + "."
 
     def setup_choice(self, popup_id, text, choices):
         """PORT-EXTRA: a kind-3 popup (like e(14)) with its own text and 2..4 choice rows; the
@@ -494,7 +492,8 @@ class Popups(GameCanvas):
         self.timer = 200
         self.button = 0
         self.popup_id = popup_id
-        assert len(text) == 2       # draw_popup() takes the rows from lines[2..]
+        if len(text) != 2:          # draw_popup() takes the rows from lines[2..]
+            raise ValueError("setup_choice: the text has %d lines, 2 expected" % len(text))
         self.line_count = len(text)
         self.choices = len(choices)
         for n, s in enumerate(list(text) + list(choices)):
@@ -554,7 +553,7 @@ class Popups(GameCanvas):
         elif p == 15:
             GameCanvas.popup_lines[1] = GameCanvas.general.name
             lines[0] = "You visited"
-            lines[1] = GameCanvas.popup_lines[1] + '.'
+            lines[1] = GameCanvas.popup_lines[1] + "."
             if GameCanvas.seal != 0:
                 lines[2] = "Friendship:100%"
             else:
@@ -572,7 +571,7 @@ class Popups(GameCanvas):
             lines[0] = "You discussed"
             GameCanvas.popup_lines[0] = consts.gift_kinds[GameCanvas.gift_kind] + " with"
             lines[1] = GameCanvas.popup_lines[0]
-            GameCanvas.popup_lines[1] = GameCanvas.general.name + '.'
+            GameCanvas.popup_lines[1] = GameCanvas.general.name + "."
             lines[2] = GameCanvas.popup_lines[1]
         elif p in (8, 9):  # l.java:679-689  (room / stage banner on the map)
             GameCanvas.popup_lines[0] = "Stage " + str(GameCanvas.rooms_visited)

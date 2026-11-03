@@ -49,9 +49,11 @@ def test_single_player_hero_plays_the_duel_and_gets_the_rewards(tmp_path, monkey
     """9.10: with a single-player save next to it, the client logs in with that hero and the
     duel's gold / fame / exp end up in the save."""
     import struct
+
+    from test_mp_sp_bridge import make_save, store
+
     import config
     from pow_mp import sp_bridge as S
-    from test_mp_sp_bridge import make_save, store
     rms = tmp_path / "rms"
     monkeypatch.setattr(config, "SAVE_DIR", str(rms))
     store(make_save(gold=1000, fame=50, exp=7))

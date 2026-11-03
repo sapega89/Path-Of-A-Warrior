@@ -2,7 +2,6 @@
 import zlib
 
 import pygame
-
 from conftest import ROOT
 
 RES = ROOT.parent
@@ -93,6 +92,7 @@ def test_rms_roundtrip(tmp_path, monkeypatch):  # task 0.8 (desktop side)
 def test_rms_browser_branch(monkeypatch):  # task 0.8: the localStorage path, with a fake JS window
     import sys
     import types
+
     from pow.midp import rms
 
     store = {}
@@ -120,9 +120,9 @@ def test_rms_browser_branch(monkeypatch):  # task 0.8: the localStorage path, wi
 def test_window_scale(monkeypatch):  # task 0.2: 240x320 x2 / x3, nearest neighbour
     import subprocess
     import sys
-    code = ("import os,sys;sys.path.insert(0,%r);import config;from pow.midp import display;"
-            "display.init(headless=True);print(display.window.get_size())") % str(ROOT)
+    code = (f"import os,sys;sys.path.insert(0,{str(ROOT)!r});import config;from pow.midp import display;"
+            "display.init(headless=True);print(display.window.get_size())")
     for scale, size in (("2", "(480, 640)"), ("3", "(720, 960)")):
         env = dict(__import__("os").environ, POW_SCALE=scale)
-        out = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True).stdout
+        out = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True, check=False).stdout
         assert size in out

@@ -7,18 +7,18 @@ import traceback
 
 import config
 from pow.game import consts
-from pow.game.game_fields import GameFields
-from pow.game.scr_table import _read_utf, ScrTable
+from pow.game.arr_table import ArrTable
 from pow.game.font import Font
-from pow.game.res_reader import ResReader
-from pow.game.structs import GearDef, Item, RareDef, Rect, SpriteFrame, TreasureDef
+from pow.game.game_fields import GameFields
 from pow.game.gfx import Gfx
+from pow.game.res_reader import ResReader
+from pow.game.scr_table import ScrTable, _read_utf
+from pow.game.structs import GearDef, Item, RareDef, Rect, SpriteFrame, TreasureDef
 from pow.midp import display, system
 from pow.midp.canvas import Canvas
 from pow.midp.graphics import Image
 from pow.midp.jint import i8, i16, i32, idiv, imod
 from pow.midp.rms import RecordStore
-from pow.game.arr_table import ArrTable
 
 F10 = config.DECOMP_FIX["F10"]
 F12 = config.DECOMP_FIX["F12"]
@@ -53,12 +53,12 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.screen_cy = GameCanvas.screen_h // 2
 
     def init_game(self):  # ag.java:585-658
-        from pow.game.menus import Menus
-        from pow.game.sound import Sound
-        from pow.game.map_scene import MapScene
         from pow.game.live import Live
         from pow.game.live_screen import LiveScreen
         from pow.game.map_engine import MapEngine
+        from pow.game.map_scene import MapScene
+        from pow.game.menus import Menus
+        from pow.game.sound import Sound
         from pow.midp.jrandom import Random
         self.read_screen_size()
         GameCanvas.font_white = Font("/0_font.png", 8, 17, 9, 16777215)
@@ -170,8 +170,7 @@ class GameCanvas(GameFields, Canvas):
                     GameCanvas.key = GameCanvas.key_pressed
                 GameCanvas.key_pressed = -999
                 GameCanvas.frame = i32(GameCanvas.frame + 1)
-                if GameCanvas.frame < 0:
-                    GameCanvas.frame = 0
+                GameCanvas.frame = max(GameCanvas.frame, 0)
                 if GameFields.key_delay > 0:   # private static int a  (ag.java:98)
                     GameFields.key_delay -= 1
                 self.handle_key()
@@ -365,7 +364,7 @@ class GameCanvas(GameFields, Canvas):
         field = 0
         text = text + "|"
         for pos in range(len(text)):
-            if text[pos] == '|':
+            if text[pos] == "|":
                 field += 1
             if not bool_ and field == index:
                 if field == 0:
@@ -470,10 +469,9 @@ class GameCanvas(GameFields, Canvas):
         if state in (6, 8, 9):
             return
         if state == 10:
-            if GameCanvas.popups.kind != 0:
-                if GameCanvas.popups.popup_redraw != 0:
-                    GameCanvas.popups.draw_popup()
-                    return
+            if GameCanvas.popups.kind != 0 and GameCanvas.popups.popup_redraw != 0:
+                GameCanvas.popups.draw_popup()
+                return
             self.tick_story()
 
     def play_sound(self, sound):  # ag.java:1882-1885
@@ -508,10 +506,9 @@ class GameCanvas(GameFields, Canvas):
             if GameCanvas.popups.kind != 0:
                 GameCanvas.popups.popup_keys()
             self.paint_state()
-        elif state == 11:
-            if GameCanvas.live is not None:
-                from pow.game.live import Live
-                Live.draw_screen()
+        elif state == 11 and GameCanvas.live is not None:
+            from pow.game.live import Live
+            Live.draw_screen()
         if GameCanvas.live is not None:
             from pow.game.live import Live
             if Live.busy:
@@ -1005,17 +1002,13 @@ class GameCanvas(GameFields, Canvas):
 
     def draw_map_region(self, image, x, y, w, h, src_x, src_y):  # ag.java:2442-2457
         clip_top = y
-        if clip_top > 0:
-            clip_top = 0
+        clip_top = min(clip_top, 0)
         clip_bottom = GameCanvas.view_size.y - y - h
-        if clip_bottom > 0:
-            clip_bottom = 0
+        clip_bottom = min(clip_bottom, 0)
         clip_left = x
-        if clip_left > 0:
-            clip_left = 0
+        clip_left = min(clip_left, 0)
         clip_right = GameCanvas.view_size.x - x - w
-        if clip_right > 0:
-            clip_right = 0
+        clip_right = min(clip_right, 0)
         if h + clip_top + clip_bottom > 0 and w + clip_left + clip_right > 0:
             GameCanvas.draw_region(x + GameCanvas.view_x - clip_left, y - clip_top + GameCanvas.view_y, w + clip_left + clip_right, h + clip_top + clip_bottom,
                          image, src_x - clip_left, src_y - clip_top)
@@ -1117,7 +1110,7 @@ class GameCanvas(GameFields, Canvas):
     def has_save():  # ag.java:2862-2869  (is there a saved game?)
         try:
             recordStore = RecordStore.openRecordStore("gamevil_pow_data", True)
-            return not (recordStore.getNumRecords() == 0)
+            return recordStore.getNumRecords() != 0
         except Exception:
             return False
 
@@ -1260,21 +1253,21 @@ class GameCanvas(GameFields, Canvas):
     @staticmethod
     def trim_right(text):  # ag.java:3148-3153  (trim trailing spaces; sic: one char left -> "")
         last = len(text) - 1
-        while last >= 0 and text[last] == ' ':
+        while last >= 0 and text[last] == " ":
             last -= 1
         return "" if last == 0 else text[:last + 1]
 
     @staticmethod
     def cut_at_control(text):  # ag.java:3155-3160  (up to the first control character)
         b = 0
-        while b < len(text) and text[b] >= ' ':
+        while b < len(text) and text[b] >= " ":
             b += 1
         return "" if b == 0 else text[:b]
 
     @staticmethod
     def cut_at_space(text):  # ag.java:3162-3167  (up to the first space)
         b = 0
-        while b < len(text) and text[b] != ' ':
+        while b < len(text) and text[b] != " ":
             b += 1
         return "" if b == 0 else text[:b]
 
@@ -1344,17 +1337,17 @@ class GameCanvas(GameFields, Canvas):
             row = 17 * (b // 14) if F10 else 17 * b // 14   # DECOMP-FIX F10
             Gfx.draw_string(letters[b], left + 3 + b % 14 * 10 + dx, y + row, 0)
 
-    def draw_arrow(self, dir, x, y):  # ag.java:1847-1880  (arrow from ct[17])
-        if dir == 0:
+    def draw_arrow(self, direction, x, y):  # ag.java:1847-1880  (arrow from ct[17])
+        if direction == 0:
             src_x = src_y = 0
             w, h = 10, 16
-        elif dir == 1:
+        elif direction == 1:
             src_x, src_y = 9, 0
             w, h = 10, 16
-        elif dir == 2:
+        elif direction == 2:
             src_x, src_y = 20, 0
             w, h = 16, 10
-        elif dir == 3:
+        elif direction == 3:
             src_x, src_y = 20, 9
             w, h = 16, 10
         else:
@@ -1968,7 +1961,7 @@ class GameCanvas(GameFields, Canvas):
     def parse_int(chars):  # ag.java:3542-3547  (Integer.parseInt of the leading digits)
         str_ = ""
         b = 0
-        while b < len(chars) and '0' <= chars[b] <= '9':
+        while b < len(chars) and "0" <= chars[b] <= "9":
             str_ = str_ + chars[b]
             b += 1
         return int(str_)
@@ -2344,7 +2337,7 @@ class GameCanvas(GameFields, Canvas):
         src = bytearray(1500)
         macro = bytearray(1500)
         out = bytearray(1500)
-        digits = ['\0'] * 3
+        digits = ["\0"] * 3
         digit_count = 0
         copied = [0, 0]
         pos = [0, 0]
@@ -2370,7 +2363,7 @@ class GameCanvas(GameFields, Canvas):
                 out = GameCanvas.append_bytes(out, macro, copied[1], pos[1])
                 copied[1] = pos[1] + 1
                 if digit_count != 0:
-                    pos[1] = GameCanvas.index_after(macro, pos[1], ')')
+                    pos[1] = GameCanvas.index_after(macro, pos[1], ")")
                     # DECOMP-FIX F15: the source is `arrayOfInt2[1] = arrayOfInt3[1] = a(.., ')')`
                     # (one call; JD split the dup_x2 into a second search). Literally the second
                     # search skips the next "(..)" and the copy length is negative: every mission
@@ -2378,18 +2371,17 @@ class GameCanvas(GameFields, Canvas):
                     if config.DECOMP_FIX["F15"]:
                         copied[1] = pos[1]
                     else:
-                        copied[1] = GameCanvas.index_after(macro, pos[1], ')')
-                    pos[0] = GameCanvas.index_after(src, pos[0], '|')
+                        copied[1] = GameCanvas.index_after(macro, pos[1], ")")
+                    pos[0] = GameCanvas.index_after(src, pos[0], "|")
                     out = GameCanvas.append_bytes(out, src, copied[0], pos[0] - 1)
                     copied[0] = pos[0]
                     continue
-                pos[1] = GameCanvas.index_after(macro, pos[1], ')')
+                pos[1] = GameCanvas.index_after(macro, pos[1], ")")
                 out = GameCanvas.append_bytes(out, macro, copied[1], pos[1] - 1)
                 copied[1] = pos[1]
                 continue
             pos[1] = pos[1] + 1
-        out = GameCanvas.append_bytes(out, macro, copied[1], pos[1])
-        return out
+        return GameCanvas.append_bytes(out, macro, copied[1], pos[1])
 
     @staticmethod
     def append_bytes(dst, src, start, end):  # ag.java:1126-1131  (append at the first 0)
@@ -2655,7 +2647,7 @@ class GameCanvas(GameFields, Canvas):
         GameCanvas.text_width = len(parts[0])
         text_start = 0
         for i in range(GameCanvas.text_width):
-            if parts[0][i] == '&':
+            if parts[0][i] == "&":
                 if text_start != i:
                     # System.arraycopy(String[], m, String, ...) would throw in Java; the game
                     # only prints this marker, so the texts never have '&' after other text
@@ -2664,7 +2656,7 @@ class GameCanvas(GameFields, Canvas):
                 text_start = i + 1
         clean = ""
         for j in range(len(parts[0])):
-            if parts[0][j] != '&':
+            if parts[0][j] != "&":
                 clean = clean + parts[0][j]
         parts[0] = clean
         if text_start < GameCanvas.text_width:

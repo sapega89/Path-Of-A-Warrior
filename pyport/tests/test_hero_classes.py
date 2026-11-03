@@ -5,7 +5,8 @@ import pytest
 
 from pow.game import hero_classes as H
 from pow.game.structs import Item
-from pow_server import battle as B, sp_rules as R
+from pow_server import battle as B
+from pow_server import sp_rules as R
 
 
 def _hero(head, hp, mp, atk, df, level=1, points=0, items=()):
@@ -64,9 +65,9 @@ def test_hero_build_uses_the_face():
 
 
 def _game(monkeypatch, gold, items=()):
+    from pow.game import popups as P
     from pow.game.game_canvas import GameCanvas
     from pow.game.menus import Menus
-    from pow.game import popups as P
     hp, mp, atk, df = H.BASE_STATS[2]
     hero = _hero(2, hp + 5, mp, atk + 2, df, level=4, items=items)
     hero.gold = gold
@@ -92,7 +93,7 @@ def test_pay_gold(monkeypatch):
 
 
 def test_not_enough_gold_and_cancel(monkeypatch):
-    m, hero, shown, P = _game(monkeypatch, 399)
+    m, hero, shown, _P = _game(monkeypatch, 399)
     m.finish_respec(0)
     assert "Not enough gold" in shown[-1] and hero.stat_points == 0 and hero.gold == 399
     m.finish_respec(2)
@@ -100,7 +101,7 @@ def test_not_enough_gold_and_cancel(monkeypatch):
 
 
 def test_pay_with_an_elixir(monkeypatch):
-    m, hero, shown, P = _game(monkeypatch, 0, items=(101, 436))
+    m, hero, shown, _P = _game(monkeypatch, 0, items=(101, 436))
     m.open_respec()
     assert shown[-1][2][1] == "Use Falls Medicine"
     m.finish_respec(1)

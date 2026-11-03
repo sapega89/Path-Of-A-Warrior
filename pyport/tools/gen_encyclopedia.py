@@ -173,22 +173,22 @@ def load_items():
     for r in range(kibo.rows):                                  # Normal 101..200
         iid = 101 + r
         st, base, spr = kibo.int(r, 2), kibo.int(r, 3), kibo.int(r, 4)
-        items[iid] = dict(id=iid, n=kibo.str(r, 0), cat="n", t=kibo.int(r, 1),
-                          ic=cell("kibo.png", kibo.int(r, 7)), lv=TIER_LV[r % 5],
-                          s={STAT[st]: "%d–%d" % (base, base + spr)}, me=kibo.int(r, 5),
-                          p=kibo.int(r, 6), tier=r % 5)
+        items[iid] = {"id": iid, "n": kibo.str(r, 0), "cat": "n", "t": kibo.int(r, 1),
+                          "ic": cell("kibo.png", kibo.int(r, 7)), "lv": TIER_LV[r % 5],
+                          "s": {STAT[st]: "%d–%d" % (base, base + spr)}, "me": kibo.int(r, 5),
+                          "p": kibo.int(r, 6), "tier": r % 5}
     for r in range(sungbo.rows):                                # Special 301..437
         iid = 301 + r
         s = {STAT[k]: sungbo.int(r, 2 + k) for k in range(4) if sungbo.int(r, 2 + k)}
-        items[iid] = dict(id=iid, n=sungbo.str(r, 0), cat="s", t=sungbo.int(r, 1),
-                          ic=cell("sungbo.png", sungbo.int(r, 7)), lv=sungbo.int(r, 8), s=s,
-                          me=sungbo.int(r, 6))
+        items[iid] = {"id": iid, "n": sungbo.str(r, 0), "cat": "s", "t": sungbo.int(r, 1),
+                          "ic": cell("sungbo.png", sungbo.int(r, 7)), "lv": sungbo.int(r, 8), "s": s,
+                          "me": sungbo.int(r, 6)}
     for r in range(shinki.rows):                                # Rare 501..518
         iid = 501 + r
         s = {STAT[k]: shinki.int(r, 2 + k) for k in range(4) if shinki.int(r, 2 + k)}
-        items[iid] = dict(id=iid, n=shinki.str(r, 0), cat="r", t=shinki.int(r, 1),
-                          ic=cell("shinki.png", r), lv=shinki.int(r, 7), s=s, me=0,
-                          p=shinki.int(r, 6))   # shinki.png holds the 18 icons in id order
+        items[iid] = {"id": iid, "n": shinki.str(r, 0), "cat": "r", "t": shinki.int(r, 1),
+                          "ic": cell("shinki.png", r), "lv": shinki.int(r, 7), "s": s, "me": 0,
+                          "p": shinki.int(r, 6)}   # shinki.png holds the 18 icons in id order
     for iid, it in items.items():
         if iid in SPECIAL_NOTE:
             it["note"] = SPECIAL_NOTE[iid]
@@ -205,8 +205,8 @@ def load_consumables():
             e = "Кидок на 60 px, вибух r=35: шкода min(50, 2·рівень героя), відкидає"
         else:
             e = "Кидок на 60 px, вибух r=35: 3 удари по min(30, рівень героя)"
-        out.append(dict(id=cid, n=name.strip(), e=e, p=ae.item_prices[k], shop=cid in (1, 2, 3, 4, 5, 6, 10, 11),
-                        ic=cell("tool.png", k)))
+        out.append({"id": cid, "n": name.strip(), "e": e, "p": ae.item_prices[k], "shop": cid in (1, 2, 3, 4, 5, 6, 10, 11),
+                        "ic": cell("tool.png", k)})
     return out
 
 
@@ -214,7 +214,7 @@ def load_recipes():
     b = raw("item-mixing-table.bin")
     n = len(b) // 8
     u = lambda i: b[2 * i] | b[2 * i + 1] << 8                  # noqa: E731
-    return [dict(a=[u(r), u(n + r), u(2 * n + r)], r=u(3 * n + r)) for r in range(n)]
+    return [{"a": [u(r), u(n + r), u(2 * n + r)], "r": u(3 * n + r)} for r in range(n)]
 
 
 # ---- skills --------------------------------------------------------------------------------
@@ -255,9 +255,9 @@ def load_skills(text):
         base, inc = SKILL_MP[i]
         cat = SKILL_CAT[i]
         bonus = ae.skill_attack_div[i]
-        out.append(dict(id=i + 1, n=text[i], d=text[19 + i], cat=cat, catn=CAT_UA[cat],
-                        mp1=base, mp10=base + 9 * inc, bonus=("ATK·рівень/%d" % bonus) if bonus else "",
-                        e=SKILL_EFFECT[i], ic=cell("skill.png", i), icg=cell("skillgray.png", i)))
+        out.append({"id": i + 1, "n": text[i], "d": text[19 + i], "cat": cat, "catn": CAT_UA[cat],
+                        "mp1": base, "mp10": base + 9 * inc, "bonus": ("ATK·рівень/%d" % bonus) if bonus else "",
+                        "e": SKILL_EFFECT[i], "ic": cell("skill.png", i), "icg": cell("skillgray.png", i)})
     return out
 
 
@@ -268,11 +268,11 @@ def load_generals():
     out = {}
     for r in range(g.rows):
         gid = r + 1
-        out[gid] = dict(id=gid, n=g.str(r, 0), head=g.int(r, 1),
-                        wep="коротка" if (g.int(r, 3) + 1) & 1 else "довга",
-                        sk=[g.int(r, 4 + k) for k in range(4) if g.int(r, 4 + k)],
-                        por=g.int(r, 8), ty=g.int(r, 9), atk=g.int(r, 10), df=g.int(r, 11),
-                        hp=g.int(r, 12))
+        out[gid] = {"id": gid, "n": g.str(r, 0), "head": g.int(r, 1),
+                        "wep": "коротка" if (g.int(r, 3) + 1) & 1 else "довга",
+                        "sk": [g.int(r, 4 + k) for k in range(4) if g.int(r, 4 + k)],
+                        "por": g.int(r, 8), "ty": g.int(r, 9), "atk": g.int(r, 10), "df": g.int(r, 11),
+                        "hp": g.int(r, 12)}
     vg = Table("visitgen.arr")
     visit = [vg.int(r, 0) for r in range(vg.rows)]
     for gid in visit:
@@ -316,7 +316,7 @@ def load_missions(gens, text):
     rulers = {}
     for a in range(1, (len(ruler) - 3) // 15 + 1):
         rec = ruler[3 + (a - 1) * 15:3 + a * 15]
-        rulers[a] = dict(n=rec[:14].split(b"\0")[0].decode("latin-1").strip(), por=portrait(rec[14]))
+        rulers[a] = {"n": rec[:14].split(b"\0")[0].decode("latin-1").strip(), "por": portrait(rec[14])}
     # ag.java:3225 - scenarios closed at a new game ("Hidden Mission", opened by an ending)
     hidden = {5, 8, 9, 16, 25, 26, 28, 29, 32, 37}
     scen, missions = [], []
@@ -329,8 +329,8 @@ def load_missions(gens, text):
         mp = raw(mdat[sid - 1])
         rooms = (mp[0] // 7) * (mp[1] // 7)
         level = raw("%d.arr" % sid)
-        scen.append(dict(id=sid, n=name, next=nxt, hidden=sid in hidden, rooms=rooms,
-                         ms=list(range(du, du + dv))))
+        scen.append({"id": sid, "n": name, "next": nxt, "hidden": sid in hidden, "rooms": rooms,
+                         "ms": list(range(du, du + dv))})
         for k in range(dv):
             gi = du + k
             r = side[11 * gi + 11:11 * gi + 22]
@@ -348,11 +348,11 @@ def load_missions(gens, text):
                 if level[q + 18] and level[q + 18] not in friends:
                     friends.append(level[q + 18])
             succ, fail = r[5], r[6]
-            mis = dict(id=gi, no=gi + 1, sc=sid, scn=name, k=k, ru=r[0], rn=rulers[r[0]]["n"],
-                       rp=rulers[r[0]]["por"], pal=r[3], boss=r[4], bl=r[10],
-                       gold=r[7] * 150, time=r[8],         # Java reads only the low byte (e.java:3588)
-                       succ=succ, fail=fail, sold=soldiers, foes=foes, fr=friends,
-                       brief=brief_text(briefs, gi), hidden=sid in hidden)
+            mis = {"id": gi, "no": gi + 1, "sc": sid, "scn": name, "k": k, "ru": r[0], "rn": rulers[r[0]]["n"],
+                       "rp": rulers[r[0]]["por"], "pal": r[3], "boss": r[4], "bl": r[10],
+                       "gold": r[7] * 150, "time": r[8],         # Java reads only the low byte (e.java:3588)
+                       "succ": succ, "fail": fail, "sold": soldiers, "foes": foes, "fr": friends,
+                       "brief": brief_text(briefs, gi), "hidden": sid in hidden}
             if succ >= 200:
                 mis["end"] = text[38 + succ - 200]
             elif succ:
@@ -417,7 +417,7 @@ def soldier_table():
     rows = []
     for lp in (1, 10, 20, 30, 50, 70, 100, 150):
         lo, hi = lv_range(lp)
-        row = dict(lp=lp, lv="%d–%d" % (lo, hi), u=[])
+        row = {"lp": lp, "lv": "%d–%d" % (lo, hi), "u": []}
         for t in range(3):
             f = lambda L, t=t: ((base[t] + L) * mult[t] // 100, L - 1, hpb[t] + 3 * L)   # noqa: E731
             a, b = f(lo), f(hi)
@@ -438,18 +438,15 @@ def main():
     scen, missions, rulers = load_missions(gens, text)
     link_up(items, recipes, gens, missions, skills)
     enemies = [
-        dict(id=201, n="Мечник", en="Swords", ic=soldier("mon1", 0), mult=100, note=
-             "Ходить кімнатою і б'є впритул. З імовірністю 50% замість нього з'являється загін (203)."),
-        dict(id=202, n="Лучник", en="Archers", ic=soldier("mon2", 0), mult=100, note=
-             "Стоїть на місці (його ставить скрипт карти), стріляє. Не рахується для зачистки кімнати."),
-        dict(id=203, n="Загін мечників", en="Swords", ic=soldier("mon1", 0), mult=150, note=
-             "Троє мечників як один юніт, ATK ×1.5. За вбивство рахується 3 вороги."),
+        {"id": 201, "n": "Мечник", "en": "Swords", "ic": soldier("mon1", 0), "mult": 100, "note": "Ходить кімнатою і б'є впритул. З імовірністю 50% замість нього з'являється загін (203)."},
+        {"id": 202, "n": "Лучник", "en": "Archers", "ic": soldier("mon2", 0), "mult": 100, "note": "Стоїть на місці (його ставить скрипт карти), стріляє. Не рахується для зачистки кімнати."},
+        {"id": 203, "n": "Загін мечників", "en": "Swords", "ic": soldier("mon1", 0), "mult": 150, "note": "Троє мечників як один юніт, ATK ×1.5. За вбивство рахується 3 вороги."},
     ]
     pals = [[soldier("mon1", p), soldier("mon2", p)] for p in range(4)]
-    data = dict(items=list(items.values()), cons=cons, rec=recipes, skills=skills,
-                gens=list(gens.values()), scen=scen, mis=missions, enemies=enemies, pals=pals,
-                stable=soldier_table(), types=TYPE, img=IMG,
-                rulers={k: v for k, v in rulers.items()})
+    data = {"items": list(items.values()), "cons": cons, "rec": recipes, "skills": skills,
+                "gens": list(gens.values()), "scen": scen, "mis": missions, "enemies": enemies, "pals": pals,
+                "stable": soldier_table(), "types": TYPE, "img": IMG,
+                "rulers": dict(rulers.items())}
     blob = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     page = (PY / "tools" / "encyclopedia_template.html").read_text(encoding="utf-8")
     page = page.replace("/*DATA*/null", blob)
