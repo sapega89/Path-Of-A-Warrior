@@ -2,6 +2,7 @@
 
 as.a = m(); ag.L() calls as.aK() -> m.a() every frame while bV == 11. as.ho picks the screen.
 """
+import config
 from pow.game.game_canvas import GameCanvas
 from pow.game.gfx import Gfx
 from pow.game.live import B5, Live
@@ -294,7 +295,10 @@ class LiveScreen(Live):
         else:
             caption = "Warehouse"
             items = Live.warehouse
-        i = 20 + (255 - 38 + GameCanvas.cursor[6] + 16 + 22 >> 1)
+        if config.ORIG_BUG["B9"]:      # ORIG-BUG B9: centre caption + grid + strip, grid above the strip
+            i = 20 + (255 - (38 + GameCanvas.cursor[6] + 16 + 22) >> 1)
+        else:
+            i = 20 + (255 - 38 + GameCanvas.cursor[6] + 16 + 22 >> 1)
         self.draw_caption_box(caption, i)
         i += 38
         GameCanvas.menus.draw_item_grid(i, items, None)

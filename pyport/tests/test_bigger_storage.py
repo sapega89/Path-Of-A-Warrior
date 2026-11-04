@@ -154,3 +154,28 @@ def test_mp_loot_uses_the_new_cells_of_an_old_save(tmp_path, monkeypatch):
     assert d[S.SAVE_LEN] == S.BACKPACK_EXTRA_MARK
     assert struct.unpack_from("<hhhhhB", d, S.SAVE_LEN + 2) == (118, 9, 0, 0, 0, 0)
     assert d[0] | d[1] << 8 == S.SAVE_LEN + 2 + 11 * (config.BACKPACK_SIZE - 25)
+
+
+def test_live_grid_above_softkeys(monkeypatch):
+    """ORIG-BUG B9: the Backpack / Warehouse grid of Gamevil Live ends above the description strip
+    (y 200) and the soft keys, also with the bigger Warehouse."""
+    from pow.game.game_canvas import GameCanvas
+    from pow.game.live import Live
+    from pow.game.live_screen import LiveScreen
+    tops = []
+    monkeypatch.setattr(LiveScreen, "draw_caption_box", lambda self, s, y: tops.append(y))
+    stub = type("M", (), {"draw_item_grid": lambda self, y, items, marks: tops.append(y),
+                          "draw_description_strip": lambda self: None})()
+    monkeypatch.setattr(GameCanvas, "menus", stub)
+    monkeypatch.setattr(GameCanvas, "describe_shop_item", lambda *a: None)
+    monkeypatch.setattr(GameCanvas, "hero", type("H", (), {"backpack": [None] * config.BACKPACK_SIZE})())
+    monkeypatch.setattr(Live, "warehouse", [None] * config.WAREHOUSE_SIZE)
+    monkeypatch.setattr(GameCanvas, "draw_softkeys", lambda *a: None)
+    GameCanvas.cursor[6] = 32 * 3 - 4 + 2
+    GameCanvas.cursor[18] = 0
+    for flag in (0, 1):
+        Live.flags[7] = flag
+        tops.clear()
+        LiveScreen.draw_grid(LiveScreen.__new__(LiveScreen))
+        caption, grid = tops
+        assert caption >= 22 and grid + GameCanvas.cursor[6] <= 198, tops
