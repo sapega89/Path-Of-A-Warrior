@@ -631,7 +631,8 @@ class InputMixin:
             elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 2:
                 self.push_state(20)
             elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 3:
-                self.push_state(87)
+                # PORT-EXTRA: 2-on-2 Order (the jar's dead branch pushed Help here, menu_size 3)
+                self.open_order(pick=3)
             elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 4:
                 self.push_state(161)
         elif MpCanvas.state == 12:
@@ -644,7 +645,8 @@ class InputMixin:
                 MpCanvas.room_mode = i8(2)
                 self.push_state(21)
             elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 2:
-                self.push_state(87)
+                # PORT-EXTRA: Order Ally (the jar's dead branch pushed Help here, menu_size 2)
+                self.open_order(pick=2)
             elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 3:
                 self.push_state(161)
         elif MpCanvas.state == 16:

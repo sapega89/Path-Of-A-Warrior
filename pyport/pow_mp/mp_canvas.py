@@ -892,7 +892,8 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
         if MpCanvas.state_ticks < 2:
             MpCanvas.state_ticks = 2
             MpCanvas.title = Consts.main_menu[0]
-            MpCanvas.menu_size = 3
+            mp_canvas_order.install()
+            MpCanvas.menu_size = len(Consts.duel_menu)   # PORT-EXTRA: + 2-on-2 Order
             self.draw_menu_icons()
         Draw.draw_image(MpCanvas.screen_g, MpCanvas.buffer, 0, 0, 0)
         self.draw_button(MpCanvas.screen_g, Consts.duel_menu[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 39), (MpCanvas.center_y - 19), 78, 17, False, True)
@@ -903,7 +904,8 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
         if MpCanvas.state_ticks < 2:
             MpCanvas.state_ticks = 2
             MpCanvas.title = Consts.main_menu[1]
-            MpCanvas.menu_size = 2
+            mp_canvas_order.install()
+            MpCanvas.menu_size = len(Consts.mission_menu)   # PORT-EXTRA: + Order Ally
             self.draw_menu_icons()
         self.draw_buffer()
         self.draw_button(MpCanvas.screen_g, Consts.mission_menu[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 45), (MpCanvas.center_y - 19), 90, 17, False, True)

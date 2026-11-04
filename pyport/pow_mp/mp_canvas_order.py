@@ -1,6 +1,8 @@
 """PORT-EXTRA (asked by Andrey, plan item 22): the Order window of the online game.
 
-Not in the original jar. A seventh picture of the main menu carousel opens it. An order is a
+Not in the original jar. A seventh picture of the main menu carousel opens it; "2-on-2 Order"
+in the Duel menu and "Order Ally" in the Mission menu open it as a pick list, where FIRE on a
+member invites them at once (2-on-2 Together / Mission Together). An order is a
 name and up to 30 players (pow_server/orders.py); the window shows who is in it and who is
 online, and invites a member to a mission (768 mode 2, the jar's Invite An Ally) or to a
 2-on-2 duel on my side (768 mode 3). Nothing of it reaches the single player.
@@ -28,6 +30,8 @@ ROW_H = 17
 
 TEXTS = ["Order", "Create Order", "Join Order", "Leave Order", "Mission Together",
          "2-on-2 Together", "Leave the order?", "Online"]
+DUEL_ITEM, MISSION_ITEM = "2-on-2 Order", "Order Ally"   # the 4th Duel / 3rd Mission menu item
+PICK_TITLES = {2: MISSION_ITEM, 3: DUEL_ITEM}
 PROMPTS = (["Enter the name", "of your new order.", "(4-12 letters)"],
            ["Enter the name", "of the order", "you wish to join.", "(4-12 letters)"])
 # error_msg 19.. (Consts.error_lines / error_line_counts are extended by install())
@@ -41,6 +45,9 @@ STATUS_ERRORS = {-6: 6, -49: 5, -20: ERR_FIRST, -21: ERR_FIRST + 1, -22: ERR_FIR
 
 def install():
     """Adds the texts the window needs to the jar's tables (once per run)."""
+    if DUEL_ITEM not in Consts.duel_menu:
+        Consts.duel_menu.append(DUEL_ITEM)
+        Consts.mission_menu.append(MISSION_ITEM)
     if len(Consts.error_line_counts) == ERR_FIRST:
         for lines in ERRORS:
             Consts.error_lines.extend(lines)
@@ -55,11 +62,14 @@ class OrderMixin:
     order_creating = True       # 32: create (True) or join (False)
     order_invite = False        # the battle came from the window: back to it afterwards
     order_count = 0
+    order_pick = 0              # opened from Duel (3) / Mission (2): FIRE on a member invites
 
     # --- requests ------------------------------------------------------------------
-    def open_order(self):
-        """Asks the server for my order; the answer (1793) shows the window."""
+    def open_order(self, pick=0):
+        """Asks the server for my order; the answer (1793) shows the window. pick: 768 mode a
+        member is invited with at once (2 mission, 3 2-on-2 together), 0 = the member menu."""
         install()
+        MpCanvas.order_pick = pick
         MpCanvas.loading_msg = 1
         MpCanvas.set_state(3)
         self.send_request(1792)
@@ -120,7 +130,7 @@ class OrderMixin:
             return self._paint_order_menu()
         if MpCanvas.state_ticks < 2:
             MpCanvas.state_ticks = 2
-            MpCanvas.title = TEXTS[0]
+            MpCanvas.title = PICK_TITLES.get(MpCanvas.order_pick, TEXTS[0])
             self.draw_window_bg(MpCanvas.buffer_g)
             x, top = MpCanvas.center_x - 75, MpCanvas.center_y - 100
             MpCanvas.draw_panel(MpCanvas.buffer_g, x, top, 150, 15)
@@ -261,6 +271,16 @@ class OrderMixin:
     def _keys_order_leave(self, key):  # state 33
         self.yes_no_keys(MpCanvas.key_in)
 
+    def invite_member(self, mode):
+        """768 to the member under the cursor. From the window the battle goes back to it; from
+        the Duel / Mission menu item it goes back to that menu, like the jar's own modes."""
+        MpCanvas.room_mode = mode
+        MpCanvas.input_text = MpCanvas.order_rows[MpCanvas.order_cursor][0]
+        MpCanvas.order_invite = not MpCanvas.order_pick
+        MpCanvas.loading_msg = 4
+        MpCanvas.set_state(3)
+        self.send_request(768)
+
     def order_select(self):
         """FIRE on the window's states (from menu_select)."""
         cur = MpCanvas.cursor_stack[MpCanvas.stack_depth]
@@ -270,15 +290,14 @@ class OrderMixin:
         elif MpCanvas.state == ORDER:
             if MpCanvas.order_cursor == MpCanvas.order_count:
                 self.push_state(LEAVE)
-            elif MpCanvas.order_rows[MpCanvas.order_cursor][0] != MpCanvas.user_id:
-                self.push_state(MEMBER)        # not me
+            elif MpCanvas.order_rows[MpCanvas.order_cursor][0] == MpCanvas.user_id:
+                pass                           # not myself
+            elif MpCanvas.order_pick:
+                self.invite_member(MpCanvas.order_pick)
+            else:
+                self.push_state(MEMBER)
         elif MpCanvas.state == MEMBER:
-            MpCanvas.room_mode = 2 if cur == 0 else 3
-            MpCanvas.input_text = MpCanvas.order_rows[MpCanvas.order_cursor][0]
-            MpCanvas.order_invite = True
-            MpCanvas.loading_msg = 4
-            MpCanvas.set_state(3)
-            self.send_request(768)
+            self.invite_member(2 if cur == 0 else 3)
         elif MpCanvas.state == LEAVE:
             if cur == 0:
                 MpCanvas.loading_msg = 5

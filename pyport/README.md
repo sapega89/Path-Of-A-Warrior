@@ -475,6 +475,7 @@ python tools/mp_shot.py tools/scenarios/mp_challenge.keys  # Challenge 1:1 пр�
 python tools/mp_shot.py tools/scenarios/mp_invited.keys    # RIVAL кличе TEST у місію
 python tools/mp_shot.py tools/scenarios/mp_order.keys      # орден: вступ, бій 2 на 2 разом, вихід
 python tools/mp_shot.py tools/scenarios/mp_order_mission.keys  # орден: місія разом
+python tools/mp_shot.py tools/scenarios/mp_order_menus.keys    # пункти ордену в меню Duel і Mission
 python -m pow_server --bot RIVAL                  # сервер із ботом, якого можна викликати
 python -m pow_server --match-wait 20              # Duel чекає живого суперника 20 с (типово 60)
 python -m pow_server --no-server-bots             # без ботів сервера (BLADE, RAVEN, ...)
@@ -527,7 +528,9 @@ python -m pow_server --no-server-bots             # без ботів серве
   пункт Leave Order (з підтвердженням). Останній, хто вийшов, звільняє назву. На учасника FIRE →
   **Mission Together** (`768` режим 2, як Invite An Ally) або **2-on-2 Together** (`768` режим 3:
   ми вдвох у слотах 0 і 2 проти двох CPU-бійців, кожен приблизно рівня того, з ким стоїть; для
-  клієнтів і нагород це звичайна дуель 2:2). Режим 3 лише для учасників одного ордену (-23 «The
+  клієнтів і нагород це звичайна дуель 2:2). Те саме з меню: **2-on-2 Order** (четвертий пункт Duel) і
+  **Order Ally** (третій пункт Mission) відкривають список ордену, і FIRE на учаснику одразу
+  кличе його в бій 2 на 2 разом / в місію; після бою — назад у те меню. Режим 3 лише для учасників одного ордену (-23 «The
   player is not in your order»). Після бою, розпочатого з вікна, OK повертає у вікно ордену.
   Нові опкоди: 1792/1793 мій орден і учасники, 1794/1795 створити, 1796/1797 вступити, 1798/1799
   вийти; помилки -6 назва зайнята, -49 недопустима назва, -20 немає такого ордену, -21 повний,
