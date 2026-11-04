@@ -130,6 +130,7 @@ class NetMixin:
 
     def _on_hero_data(self, answer):  # answer 263
         if MpCanvas.answer_status == 1:
+            self.chat_reset()                 # PORT-EXTRA: another account keeps no chat of the last one
             MpCanvas.name = answer.read_string(8)
             MpCanvas.face = answer.read_s8()
             MpCanvas.level = answer.read_s16()

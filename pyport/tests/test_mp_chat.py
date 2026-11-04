@@ -180,3 +180,14 @@ def test_client_wraps_long_messages():
     assert all(len(t) * 6 <= 120 for t in texts)
     assert lines[0][0] == ("RIVAL:", None)
     assert ["".join(t for t, _ in ln) for ln in wrap(Font, "A", "x" * 30, 60)] == ["A:", "x" * 10, "x" * 10, "x" * 10]
+
+
+def test_client_forgets_the_last_accounts_chat_on_login():
+    import os
+    os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
+    from pow_mp.mp_canvas import MpCanvas
+    MpCanvas.chat_unread = [3, 2, 1]
+    MpCanvas.chat_rows = {(0, ""): [("A", "A", "hi")]}
+    MpCanvas.chat_loaded = {(0, "")}
+    MpCanvas.chat_reset()
+    assert MpCanvas.chat_unread == [0, 0, 0] and MpCanvas.chat_rows == {} and MpCanvas.chat_loaded == set()

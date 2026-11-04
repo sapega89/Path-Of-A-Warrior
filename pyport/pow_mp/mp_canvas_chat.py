@@ -130,6 +130,13 @@ class ChatMixin:
             return None
         return (MpCanvas.chat_tab, "")
 
+    @staticmethod
+    def chat_reset():
+        """A (new) login: nothing read, nothing unread until its 1815."""
+        MpCanvas.chat_rows, MpCanvas.chat_loaded, MpCanvas.chat_peers = {}, set(), []
+        MpCanvas.chat_unread = [0, 0, 0]
+        MpCanvas.chat_no_order = MpCanvas.chat_seen_live = False
+
     # --- requests ------------------------------------------------------------------
     def open_chat(self):
         """From the main menu: the tab with unread messages (order, then private), else Lobby."""
