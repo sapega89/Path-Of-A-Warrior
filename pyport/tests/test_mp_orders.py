@@ -38,12 +38,16 @@ def test_create_join_list_and_leave(server):
     c.session.close()                                  # C is offline now
     info = b.ask(M.ORDER_INFO)
     assert info["name"] == "WOLVES"
-    assert [(r["id"], r["online"]) for r in info["rows"]] == [("BORYS", 1), ("ANDREY", 1), ("CYRIL", 0)]
+    assert [(r["id"], r["online"], r["leader"]) for r in info["rows"]] == [
+        ("ANDREY", 1, 1), ("BORYS", 1, 0), ("CYRIL", 0, 0)]             # the leader first
     assert info["rows"][0]["level"] == 1
     assert b.ask(M.ORDER_LEAVE)["st"] == 1
     assert b.ask(M.ORDER_INFO)["name"] == ""
     assert [r["id"] for r in a.ask(M.ORDER_INFO)["rows"]] == ["ANDREY", "CYRIL"]
     assert server.storage.load("BORYS").order == ""
+    a.ask(M.ORDER_LEAVE)                               # the leader leaves: the oldest member leads
+    rows = b.ask(M.ORDER_JOIN, name="WOLVES") and b.ask(M.ORDER_INFO)["rows"]
+    assert [(r["id"], r["leader"]) for r in rows] == [("CYRIL", 1), ("BORYS", 0)]
 
 
 def test_the_last_member_leaving_frees_the_name(server):

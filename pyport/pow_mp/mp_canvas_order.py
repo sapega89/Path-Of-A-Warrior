@@ -49,7 +49,7 @@ def install():
 
 class OrderMixin:
     order_name = ""             # "" = in no order
-    order_rows = []             # [(UserID, display name, level, online)]
+    order_rows = []             # [(UserID, display name, level, online, leader)]
     order_cursor = 0            # members then "Leave Order"
     order_top = 0               # first row shown
     order_creating = True       # 32: create (True) or join (False)
@@ -78,7 +78,8 @@ class OrderMixin:
             name = answer.read_string(8)
             level = answer.read_s16() & 0xFFFF
             online = answer.read_s8() != 0
-            rows.append((uid, name, level, online))
+            leader = answer.read_s8() != 0
+            rows.append((uid, name, level, online, leader))
         MpCanvas.order_rows = rows
         MpCanvas.order_count = count
         MpCanvas.order_cursor = min(MpCanvas.order_cursor, count)
@@ -146,12 +147,14 @@ class OrderMixin:
                 self.draw_text_colored(MpCanvas.screen_g, TEXTS[3], MpCanvas.center_x, y + 1, 1,
                                        0xFFFFFF if on else 0x646464)
                 continue
-            _uid, name, level, online = MpCanvas.order_rows[i]
+            _uid, name, level, online, leader = MpCanvas.order_rows[i]
             self.draw_box(MpCanvas.screen_g, x, y, 150, 14, 3 if on else 2)
             Draw.fill_rect(MpCanvas.screen_g, x + 6, y + 5, 4, 4, 0x41FF41 if online else 0x525152)
             color = 0x41FF41 if online else (0xFFFFFF if on else 0x646464)
             self.draw_text_colored(MpCanvas.screen_g, name, x + 14, y + 1, 0, color)
-            self.draw_text_colored(MpCanvas.screen_g, Consts.texts[27], x + 92, y + 1, 0, 0x646464)
+            if leader:                         # the leader's emblem: the bright shield of the menu dots
+                Draw.draw_image_part(MpCanvas.screen_g, MpCanvas.menu_icon_image, x + 66, y - 1, 12, 15, 0, 0)
+            self.draw_text_colored(MpCanvas.screen_g, Consts.texts[27], x + 98, y + 1, 0, 0x646464)
             MpCanvas.draw_number(MpCanvas.screen_g, x + 150 - 7, y + 3, level, 0)
         if MpCanvas.order_top > 0 or MpCanvas.order_top + VISIBLE_ROWS < items:
             self.draw_text_colored(MpCanvas.screen_g, "%d/%d" % (cur + 1, items), MpCanvas.center_x,

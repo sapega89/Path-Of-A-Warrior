@@ -365,8 +365,10 @@ class Session:
                 continue
             s = online.get(uid)
             rows.append({"id": uid, "name": ch.name or uid[:8], "level": ch.level,
-                         "online": int(s is not None and not s.closed)})
-        rows.sort(key=lambda r: (r["id"] != self.user, not r["online"]))   # me, online, others
+                         "online": int(s is not None and not s.closed),
+                         "leader": int(uid == orders.leader(doc))})
+        # the leader, me, who is online, the others
+        rows.sort(key=lambda r: (not r["leader"], r["id"] != self.user, not r["online"]))
         self.send(M.ORDER_INFO_ANS, st=1, name=doc["name"], rows=rows[:orders.MAX_MEMBERS])
 
     def _order_enter(self, msg, answer, fn):

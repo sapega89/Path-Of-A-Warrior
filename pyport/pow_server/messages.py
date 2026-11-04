@@ -244,9 +244,10 @@ S2C = {
     EXP_FAME_GOLD_ANS: (("exp", "i"), ("fame", "i"), ("gold", "i")),
     RANK_MINE_ANS: (("rank", "i"), ("value", "i")),
     RANK_LIST_ANS: (("n", "B"), ("rows", "list", "n", (("rank", "i"), ("id", 12), ("value", "i")))),
-    # PORT-EXTRA: name "" = in no order; rows: me first, then online, then the rest
+    # PORT-EXTRA: name "" = in no order; rows: the leader, me, who is online, the others
     ORDER_INFO_ANS: (("name", 12), ("n", "B"),
-                     ("rows", "list", "n", (("id", 12), ("name", 8), ("level", "H"), ("online", "B")))),
+                     ("rows", "list", "n", (("id", 12), ("name", 8), ("level", "H"), ("online", "B"),
+                                            ("leader", "B")))),
     ORDER_CREATE_ANS: (),
     ORDER_JOIN_ANS: (),
     ORDER_LEAVE_ANS: (),

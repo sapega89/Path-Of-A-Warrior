@@ -32,9 +32,8 @@ key FIRE          # 1796 -> 1797, 1792 -> 1793
 until 30
 wait 3
 shot order_list
-key DOWN          # RIVAL
 wait 2
-shot member_cursor
+shot member_cursor  # RIVAL, the leader, first
 key FIRE
 until 31
 wait 3

@@ -1,9 +1,10 @@
 """PORT-EXTRA (asked by Andrey, plan item 22): orders of the online game.
 
-An order is a name and up to MAX_MEMBERS players. No ranks, no leader, nothing in the single
-player: create one, join one by its name, leave it, see who is in it and who is online, and
-invite a member to a mission (768 mode 2) or to a 2-on-2 duel on my side (768 mode 3,
-Session.on_invite). A player is in one order at most (Character.order).
+An order is a name and up to MAX_MEMBERS players, nothing in the single player: create one,
+join one by its name, leave it, see who is in it and who is online, and invite a member to a mission (768 mode 2) or to a 2-on-2 duel on my side (768 mode 3,
+Session.on_invite). A player is in one order at most (Character.order). No ranks; the leader
+(Andrey: an emblem for the leader) is only a mark, with no powers: the founder, then, when the
+leader leaves, the member who has been in the order longest (members[0]).
 
 Kept in the storage's JSON documents (Storage.live_get / live_put) under "order:<NAME>" =
 {"name": NAME, "members": [UserID, ...]} (oldest first). The last member to leave deletes
@@ -58,6 +59,11 @@ def leave(storage, name, uid):
         return
     doc["members"].remove(uid)
     storage.live_put(_key(name), doc)
+
+
+def leader(doc):
+    """UserID of the order's leader: the oldest member."""
+    return doc["members"][0] if doc and doc.get("members") else ""
 
 
 def same_order(storage, a, b):
