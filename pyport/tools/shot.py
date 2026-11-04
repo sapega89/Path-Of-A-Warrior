@@ -53,6 +53,7 @@ os.environ["SDL_VIDEODRIVER"] = "dummy"
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 os.environ.setdefault("POW_SCALE", "1")
 os.environ.setdefault("POW_SEED", "1")
+os.environ["POW_CHEAT"] = "0"   # a POW_CHEAT=1 left in the shell (500000 gold, all skills) breaks every baseline
 os.environ.setdefault("POW_AUTO_BUTTON", "0")   # the AUTO button only while on (original screenshots)
 os.environ.setdefault("POW_AUTO_AIM_HARD", "0")   # the original: no auto-aim on Hard
 os.environ.setdefault("POW_HOLD_TO_MOVE", "0")   # keys are taps, as on the phone (env line to change)   # Random() without the clock: repeatable runs

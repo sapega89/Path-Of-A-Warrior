@@ -24,6 +24,7 @@ os.environ["SDL_VIDEODRIVER"] = "dummy"
 os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
 os.environ.setdefault("POW_SCALE", "1")
 os.environ.setdefault("POW_SEED", "1")
+os.environ["POW_CHEAT"] = "0"   # a POW_CHEAT=1 left in the shell (500000 gold, all skills) breaks every baseline
 os.environ.setdefault("POW_AUTO_BUTTON", "0")   # the AUTO button only while on (original screenshots)
 os.environ.setdefault("POW_MP_SERVER", "local")
 
