@@ -61,6 +61,9 @@ ORIG_BUG = {
                  # of the last grid screen (Gamevil Live: 9 rows) -> af[34] -> AIOOBE
     "B8": True,  # ag.java:872-967 entering the map clears the enemy effect data (fn = null) but not its
                  # kind: a general that was mid-skill leaves kind 2 -> the next enemy reads fn[..] -> NPE
+    "B9": True,  # m.bv() 365 Gamevil Live Backpack / Warehouse grid: 255 - 38 + fK[6] puts the caption at
+                 # y 194 under the description strip and the 3 rows at y 232..326, under the soft keys
+                 # -> 255 - (38 + fK[6] + 16 + 22): caption y 62, rows y 100..194, strip y 200
 }
 
 # Gamevil Live of the single player (pow_server/live.py): "local" = the server inside the game
