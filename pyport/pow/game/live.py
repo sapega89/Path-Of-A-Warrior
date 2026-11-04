@@ -8,6 +8,9 @@ pow/game/v.py. Screens (ho, drawn by m.a()): 1 list, 2 Safe, 3 amount, 4 Backpac
 12 waiting, 13 registration. Input handlers (hp): see t(int).
 
 Fixes (config):
+- DECOMP_FIX F6: the Backpack / Warehouse grid cursor (as.a(int, boolean)) has the same broken
+  `--fK[9] < 0` / `++fK[9] >= 5`: LEFT from column 1 and RIGHT from column 3 jumped over the
+  edge cell to the next row, so columns 0 and 4 could not be reached sideways.
 - DECOMP_FIX F20: as.a(ab) reads the status byte into a local and never sets gr, but m()
   waits for gr == 1 after the login 530 to send the request that needed it, and the error
   path passes gr as the error code: the status is gr (analysis/03 §5.1).
@@ -30,6 +33,7 @@ from pow.midp.graphics import Image
 from pow.midp.jint import i8, i16, idiv
 
 F20 = config.DECOMP_FIX["F20"]
+F6 = config.DECOMP_FIX["F6"]
 B4 = config.ORIG_BUG["B4"]
 B5 = config.ORIG_BUG["B5"]
 
@@ -1436,12 +1440,12 @@ class Live(GameCanvas):
             cursor[10] = cursor[10] + 1
         elif key in (-3, 52):
             cursor[9] = cursor[9] - 1
-            if cursor[9] - 1 < 0:
+            if (cursor[9] < 0) if F6 else (cursor[9] - 1 < 0):     # DECOMP-FIX F6
                 cursor[9] = 4
                 cursor[10] = cursor[10] - 1
         elif key in (-4, 54):
             cursor[9] = cursor[9] + 1
-            if cursor[9] + 1 >= 5:
+            if (cursor[9] >= 5) if F6 else (cursor[9] + 1 >= 5):   # DECOMP-FIX F6
                 cursor[9] = 0
                 cursor[10] = cursor[10] + 1
         else:
