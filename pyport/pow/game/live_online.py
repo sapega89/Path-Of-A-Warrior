@@ -38,6 +38,7 @@ class Online:
     next_try = 0            # ms: the next background login
     retry_ms = RETRY_MS
     last_sent = 0           # ms: the last background 530
+    attempts = 0            # background 530s sent (tools/shot.py `logins`)
 
     @staticmethod
     def enabled():
@@ -110,14 +111,15 @@ class Online:
         if not LiveScreen.is_registered():
             return
         now = system.currentTimeMillis()
-        if not LiveNet.connected:
+        if Online.logged_in and LiveNet.connected:
+            if now - Online.last_sent < KEEPALIVE_MS:
+                return
+        else:                                # offline, or the last login was refused: back off
             Online.logged_in = False
             if now < Online.next_try:
                 return
             Online.next_try = now + Online.retry_ms
             Online.retry_ms = min(RETRY_MAX_MS, Online.retry_ms * 2)
-        elif Online.logged_in and now - Online.last_sent < KEEPALIVE_MS:
-            return
         Online.login(live)
 
     @staticmethod
@@ -128,6 +130,7 @@ class Online:
         if not Live.user_id or not Live.password:
             return
         Online.background = True
+        Online.attempts += 1
         Online.last_sent = system.currentTimeMillis()
         Live.reg_from_popup = False
         Live.answer_op = 0

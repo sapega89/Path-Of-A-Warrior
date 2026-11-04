@@ -20,6 +20,7 @@ list of steps, one per line:
     multiplayer N NAME  (before the YES of Main Menu > Multiplayer) once the game has quit, run
                     the Multiplayer game as main.py does, N frames, and save the last as NN_NAME.png
     account ID PWD  TEST-ONLY: register the Gamevil Live UserID / password on this device
+    logins N        TEST-ONLY: stop with an error if the game sent more than N background logins
     online yes|no   TEST-ONLY: stop with an error unless the background login (ALWAYS_ONLINE) is that
     gold N          TEST-ONLY: set the hero's gold (ag.cz.E) to N, to try the Blacksmith
     generals N      TEST-ONLY: befriend the first N generals of the table (10, 30, 50... points)
@@ -219,6 +220,12 @@ def run(scenario, out, every=False):
                 if rs.getNumRecords() == 0:
                     rs.addRecord(rec, 0, 28)
                 rs.setRecord(1, rec, 0, 28)
+                continue
+            if cmd == "logins":            # TEST-ONLY: logins N - stop if more than N background
+                from pow.game.live_online import Online   # 530s of ALWAYS_ONLINE were sent
+                if Online.attempts > int(arg):
+                    raise SystemExit(f"logins {arg}: {Online.attempts} sent")
+                print(f"logins {arg}: {Online.attempts}")
                 continue
             if cmd == "online":            # TEST-ONLY: online yes|no - stop unless the background
                 from pow.game.live_online import Online

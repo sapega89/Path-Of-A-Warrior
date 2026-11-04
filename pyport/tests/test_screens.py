@@ -31,7 +31,7 @@ def _run(name, out):
                                   "map", "map_mouse", "combat", "combat_mouse", "victory", "blacksmith",
                                   "gamevil_live", "multiplayer", "skill_bar", "skill_card", "respec",
                                   "always_online", "always_online_continue",
-                                  "always_online_offline"])
+                                  "always_online_offline", "always_online_badpwd"])
 def test_scenario_matches_baseline(name, tmp_path):
     out = tmp_path / name
     _run(name, out)
