@@ -704,6 +704,10 @@ Java-ім'я методу (з суфіксом сигнатури, напр. `J_
 
 ### MapScene
 
+`tick_scene` (`c.java:1643-2136`, `i_v`) розкладено на кроки (нові імена, у Java їх немає): `_erase_actors`,
+`_held_direction`, `_read_action_key`, `_end_talk`, `_hold_to_move`, `_start_hero_action`, `_move_hero`,
+`_hero_action_hits`; таблиці `buff_div` / `hit_frame` стали модульними `_BUFF_DIV` / `_HIT_FRAME`.
+
 | Java | Python | Java | Python |
 |---|---|---|---|
 | `c_I` | `load_story_page` | `d_I` | `finish_mission` |

@@ -28,6 +28,8 @@ F14 = config.DECOMP_FIX["F14"]
 # direction key -> cz.c, as c.i_v reads ag.cj (used by the PORT-EXTRA HOLD_TO_MOVE)
 from pow.game.autopilot import Autopilot  # noqa: E402  PORT-EXTRA auto-hunt walks like HOLD_TO_MOVE
 
+_BUFF_DIV = [20, 20, 25]   # c.java tick: buff = stat * skill level / this, skills 17..19
+_HIT_FRAME = [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 5, 5]   # the frame that hits, by action
 _HELD_DIR = {-1: 4, 50: 4, -3: 2, 52: 2, -4: 6, 54: 6, -2: 0, 56: 0}
 
 
@@ -1374,14 +1376,45 @@ class MapScene(GameCanvas):
 
     def tick_scene(self):  # c.java:1643-2136  (one map tick: erase, input, hero movement / actions)
         from pow.game.map_engine import MapEngine
-        buff_div = [20, 20, 25]
-        hit_frame = [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 5, 5]
-        i = -1
-        skill = 0
-        bool_ = True
-        step_x = 0
-        step_y = 0
         hero = GameCanvas.hero
+        self._erase_actors()
+        i = self._held_direction()
+        skill = self._read_action_key(hero)
+        if GameCanvas.effect.item > 0:
+            if GameCanvas.effect.item > 9:
+                hero.frame[0] = GameCanvas.effect.step
+                return
+            return
+        GameCanvas.engine.spawn_next_enemy()
+        hero.frame[0] = i16(hero.frame[0] + 1)
+        GameCanvas.dir_history[0] = i
+        if hero.anims[hero.action[0]][hero.dir[0]][hero.frame[0]] > 200:   # the hero's animation ended
+            if hero.action[0] == 2:
+                GameCanvas.dir_history[4] = GameCanvas.dir_history[3] = GameCanvas.dir_history[2] = GameCanvas.dir_history[1] = GameCanvas.dir_history[0] = -1
+                i = -1
+            elif hero.action[0] == 10:
+                self._end_talk(hero)
+                return
+            hero.frame[0] = 0
+            GameCanvas.hero_fx_frames = None
+            GameCanvas.hero_fx_data = None
+            if hero.action[0] != 1:
+                hero.action[0] = 0
+        if (config.HOLD_TO_MOVE or Autopilot.on) and i == -1 and hero.action[0] < 2:
+            self._hold_to_move(hero)
+        if hero.action[0] < 2:
+            self._start_hero_action(hero, i, skill)
+        self._move_hero(hero)
+        world_runs = self._hero_action_hits(hero)
+        if world_runs:
+            GameCanvas.engine.tick_arrows()
+            GameCanvas.scene.erase_arrows()
+            GameCanvas.engine.pick_up_drops()
+            GameCanvas.engine.tick_enemies()
+            MapEngine.sort_actors()
+        MapScene.hero_cell()
+
+    def _erase_actors(self):  # tick_scene: erase the moving things before they are drawn again
         self.erase_breaking()
         self.erase_hero()
         self.erase_enemies()
@@ -1391,6 +1424,9 @@ class MapScene(GameCanvas):
         self.draw_potion_effect()
         if GameCanvas.room_phase == 1:
             self.erase_exit_arrows()
+
+    def _held_direction(self):  # tick_scene: the 8-direction of the held key, -1 = none
+        i = -1
         key = GameCanvas.key_held
         if key in (-1, 50):
             i = 4
@@ -1400,6 +1436,10 @@ class MapScene(GameCanvas):
             i = 6
         elif key in (-2, 56):
             i = 0
+        return i
+
+    def _read_action_key(self, hero):  # tick_scene: the pressed key -> skill (3 = attack); potions, pause
+        skill = 0
         key = GameCanvas.key
         if config.NO_COMBAT and key in (49, 51, 55, 57, 48, -5, 53, 35, 42, -101, -102, -103, -104, -105):
             # PORT-EXTRA (POW_NO_COMBAT=1): attack, skill and potion keys do nothing
@@ -1456,77 +1496,69 @@ class MapScene(GameCanvas):
             GameCanvas.redraw = 1
             GameCanvas.images[10] = self.load_image(GameCanvas.scr_ui.get(59))
             GameCanvas.images[17] = self.load_image(GameCanvas.scr_ui.get(27))
-        if GameCanvas.effect.item > 0:
-            if GameCanvas.effect.item > 9:
-                hero.frame[0] = GameCanvas.effect.step
-                return
-            return
-        GameCanvas.engine.spawn_next_enemy()
-        hero.frame[0] = i16(hero.frame[0] + 1)
-        GameCanvas.dir_history[0] = i
-        if hero.anims[hero.action[0]][hero.dir[0]][hero.frame[0]] > 200:
-            if hero.action[0] == 2:
-                GameCanvas.dir_history[4] = GameCanvas.dir_history[3] = GameCanvas.dir_history[2] = GameCanvas.dir_history[1] = GameCanvas.dir_history[0] = -1
-                i = -1
-            elif hero.action[0] == 10:
-                from pow.game.menus import Menus
-                hero.frame[0] = 10
-                if GameCanvas.talk_points != 0:
-                    Menus.add_friendship(GameCanvas.talk_points, -5)
-                GameCanvas.popups.setup_popup(22)
-                GameCanvas.save_flag = 0
-                self.save_game()
-                return
-            hero.frame[0] = 0
-            GameCanvas.hero_fx_frames = None
-            GameCanvas.hero_fx_data = None
-            if hero.action[0] != 1:
+        return skill
+
+    def _end_talk(self, hero):  # tick_scene: the talk animation (action 10) ended: friendship, popup 22, save
+        from pow.game.menus import Menus
+        hero.frame[0] = 10
+        if GameCanvas.talk_points != 0:
+            Menus.add_friendship(GameCanvas.talk_points, -5)
+        GameCanvas.popups.setup_popup(22)
+        GameCanvas.save_flag = 0
+        self.save_game()
+
+    def _hold_to_move(self, hero):  # tick_scene: PORT-EXTRA config.HOLD_TO_MOVE / auto-hunt
+        # PORT-EXTRA (config.HOLD_TO_MOVE): the hero walks only while a direction key or the
+        # mouse button is held; released = stand, still held after an attack = walk again
+        from pow.game.midlet import Midlet
+        held = Midlet.canvas.held_direction() if Midlet.canvas is not None else None
+        if held is None:
+            if hero.action[0] == 1:
                 hero.action[0] = 0
-        if (config.HOLD_TO_MOVE or Autopilot.on) and i == -1 and hero.action[0] < 2:
-            # PORT-EXTRA (config.HOLD_TO_MOVE): the hero walks only while a direction key or the
-            # mouse button is held; released = stand, still held after an attack = walk again
-            from pow.game.midlet import Midlet
-            held = Midlet.canvas.held_direction() if Midlet.canvas is not None else None
-            if held is None:
-                if hero.action[0] == 1:
-                    hero.action[0] = 0
-                    hero.frame[0] = 0
+                hero.frame[0] = 0
+        else:
+            hi = _HELD_DIR[held]
+            if hero.action[0] == 0 or hero.facing != hi:
+                hero.dir[0] = hero.facing = hi
+                hero.action[0] = 1
+                hero.frame[0] = 0
+
+    def _start_hero_action(self, hero, i, skill):  # tick_scene: a direction or skill key starts walking, running or an action
+        from pow.game.map_engine import MapEngine
+        if i > -1:
+            if MapEngine.check_run() != 0:
+                hero.action[0] = 2
+                hero.frame[0] = 0
+                hero.dir[0] = hero.facing = i
+                if GameCanvas.sound is not None:
+                    GameCanvas.stop_sound()
+            elif hero.facing == i:
+                hero.action[0] = hero.action[0] + 1 & 0x1
+                hero.frame[0] = 0
             else:
-                hi = _HELD_DIR[held]
-                if hero.action[0] == 0 or hero.facing != hi:
-                    hero.dir[0] = hero.facing = hi
-                    hero.action[0] = 1
-                    hero.frame[0] = 0
-        if hero.action[0] < 2:
-            if i > -1:
-                if MapEngine.check_run() != 0:
-                    hero.action[0] = 2
-                    hero.frame[0] = 0
-                    hero.dir[0] = hero.facing = i
-                    if GameCanvas.sound is not None:
-                        GameCanvas.stop_sound()
-                elif hero.facing == i:
-                    hero.action[0] = hero.action[0] + 1 & 0x1
-                    hero.frame[0] = 0
-                else:
-                    hero.dir[0] = hero.facing = i
-                    hero.action[0] = 1
-                    hero.frame[0] = 0
-            if skill == 3:
-                if hero.idle_ticks < 7:
-                    hero.combo = (hero.combo + 1) % 3
-                else:
-                    hero.combo = 0
-                hero.idle_ticks = 0
-                hero.action[0] = 3 + hero.combo + (hero.weapon_kind ^ 0x1) * 3
+                hero.dir[0] = hero.facing = i
+                hero.action[0] = 1
                 hero.frame[0] = 0
-                hero.dir[0] = hero.facing = consts.dir8_to_dir4[hero.facing] << 1
-            elif skill > 0 and MapEngine.skill_mp_cost(skill) != 0:
-                hero.dir[0] = hero.facing = consts.dir8_to_dir4[hero.facing] << 1
-                hero.action[0] = skill
-                hero.frame[0] = 0
-                if hero.action[0] in (15, 16, 21, 22, 23, 24, 25):
-                    self.play_sound(11)
+        if skill == 3:
+            if hero.idle_ticks < 7:
+                hero.combo = (hero.combo + 1) % 3
+            else:
+                hero.combo = 0
+            hero.idle_ticks = 0
+            hero.action[0] = 3 + hero.combo + (hero.weapon_kind ^ 0x1) * 3
+            hero.frame[0] = 0
+            hero.dir[0] = hero.facing = consts.dir8_to_dir4[hero.facing] << 1
+        elif skill > 0 and MapEngine.skill_mp_cost(skill) != 0:
+            hero.dir[0] = hero.facing = consts.dir8_to_dir4[hero.facing] << 1
+            hero.action[0] = skill
+            hero.frame[0] = 0
+            if hero.action[0] in (15, 16, 21, 22, 23, 24, 25):
+                self.play_sound(11)
+
+    def _move_hero(self, hero):  # tick_scene: the hero's step for this frame of its action
+        from pow.game.map_engine import MapEngine
+        step_x = 0
+        step_y = 0
         move_dir = hero.facing
         action = hero.action[0]
         frame = hero.frame[0]
@@ -1613,12 +1645,16 @@ class MapScene(GameCanvas):
                                     hero.dir[0] = i
                 elif hero.facing in (1, 3, 5, 7) and i not in (-1, 9):
                     hero.dir[0] = i
+
+    def _hero_action_hits(self, hero):  # tick_scene: hits, sounds and buffs on the frames of the action; False = a cinematic skill stops the world
+        from pow.game.map_engine import MapEngine
+        world_runs = True
         action = hero.action[0]
         frame = hero.frame[0]
         if 3 <= action <= 8 or 21 <= action <= 24:
-            if 3 <= action <= 8 and frame == hit_frame[action]:
+            if 3 <= action <= 8 and frame == _HIT_FRAME[action]:
                 GameCanvas.engine.turn_to_nearest()
-            if frame == hit_frame[action]:
+            if frame == _HIT_FRAME[action]:
                 if action in (3, 4, 6, 7):
                     self.play_sound(15)
                 elif action in (5, 8, 21, 22):
@@ -1655,7 +1691,7 @@ class MapScene(GameCanvas):
         elif action in (17, 18, 19):
             if frame == 11:
                 if action != 18:
-                    hero.attack_buff = idiv(hero.attack * hero.skill_levels[action - 12], buff_div[action - 17])
+                    hero.attack_buff = idiv(hero.attack * hero.skill_levels[action - 12], _BUFF_DIV[action - 17])
                     hero.attack_buff = max(hero.attack_buff, 1)
                     if hero.skill_levels[action - 12] < 4:
                         hero.attack_buff_ticks = 50
@@ -1664,7 +1700,7 @@ class MapScene(GameCanvas):
                     else:
                         hero.attack_buff_ticks = 150
                 if action != 17:
-                    hero.defense_buff = idiv(hero.defense * hero.skill_levels[action - 12], buff_div[action - 17])
+                    hero.defense_buff = idiv(hero.defense * hero.skill_levels[action - 12], _BUFF_DIV[action - 17])
                     hero.defense_buff = max(hero.defense_buff, 1)
                     if hero.skill_levels[action - 12] < 4:
                         hero.defense_buff_ticks = 50
@@ -1697,14 +1733,14 @@ class MapScene(GameCanvas):
             if 1 < frame < 9:
                 if frame == 2:
                     self.play_sound(13)
-                bool_ = False
+                world_runs = False
         elif action == 28:
             if frame == 22:
                 GameCanvas.engine.hero_attack(0)
                 GameCanvas.engine.hero_hits_breakables()
                 GameCanvas.redraw = 1
             elif frame > 3:
-                bool_ = False
+                world_runs = False
                 GameCanvas.redraw = 1
                 GameCanvas.screen_fill = 1
                 if frame == 6:
@@ -1717,7 +1753,7 @@ class MapScene(GameCanvas):
             elif frame > 6:
                 if frame == 7:
                     self.play_sound(14)
-                bool_ = False
+                world_runs = False
                 GameCanvas.redraw = 1
                 if frame in {12, 16}:
                     GameCanvas.screen_fill = 2
@@ -1730,7 +1766,7 @@ class MapScene(GameCanvas):
                 elif frame == 13:
                     self.play_sound(9)
                 if frame < 15:
-                    bool_ = False
+                    world_runs = False
                     GameCanvas.screen_fill = 1
                 GameCanvas.redraw = 1
                 if frame in {9, 11}:
@@ -1738,13 +1774,7 @@ class MapScene(GameCanvas):
                 elif frame == 15:
                     GameCanvas.engine.hero_attack(0)
                     GameCanvas.engine.hero_hits_breakables()
-        if bool_:
-            GameCanvas.engine.tick_arrows()
-            GameCanvas.scene.erase_arrows()
-            GameCanvas.engine.pick_up_drops()
-            GameCanvas.engine.tick_enemies()
-            MapEngine.sort_actors()
-        MapScene.hero_cell()
+        return world_runs
 
     def erase_breaking(self):  # c.java:2138-2148  (erase the breaking-object animation)
         for b in range(GameCanvas.breakable_count):
