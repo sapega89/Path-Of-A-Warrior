@@ -51,3 +51,13 @@ def test_dispatch_tables_point_at_the_class_methods():
         assert len(handlers) > 20
         for key, handler in handlers.items():
             assert getattr(canvas, handler.__name__) is handler, (table, key)
+
+
+def test_single_player_dispatch_tables_point_at_the_class_methods():
+    from pow.game.live import Live
+    from pow.game.menus import Menus
+    for cls, table in ((Live, "_ANSWER_BY_OPCODE"), (Menus, "_FIRE_BY_MENU")):
+        handlers = getattr(cls, table)
+        assert len(handlers) > 10
+        for key, handler in handlers.items():
+            assert getattr(cls, handler.__name__) is handler, (table, key)

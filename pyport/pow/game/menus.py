@@ -686,172 +686,198 @@ class Menus(GameCanvas):
             menu[1] = 0
             return
         sel = menu[0]
-        if sel == 0:
-            if menu[1] == 3:
-                if GameCanvas.general_count == 0:
-                    GameCanvas.popups.setup_popup(35)
-                    return
-                if GameCanvas.hero.live_registered != 0 and GameCanvas.general_count != 0:
-                    self.enter_submenu()
-                    menu[0] = 19
-                    GameCanvas.seal = i16(GameCanvas.backpack_slot_of(504))
-                    if GameCanvas.seal != 0 and config.ORIG_BUG["B3"]:
-                        Menus.seal_list()
-                    if GameCanvas.seal != 0:
-                        GameCanvas.menu_count = 44
-                    else:
-                        GameCanvas.menu_count = GameCanvas.general_count
-                    Menus.load_general_table()
-                    menu[2] = 0
-                    menu[1] = 0
-                    return
+        handler = self._FIRE_BY_MENU.get(sel)
+        if handler is not None:
+            handler(self, menu)
+
+    def _fire_game_menu(self, menu):  # menu 0
+        if menu[1] == 3:
+            if GameCanvas.general_count == 0:
                 GameCanvas.popups.setup_popup(35)
-                GameCanvas.redraw = 0
-                GameCanvas.menu_scroll = 0
-                GameCanvas.menu_anim = 0
                 return
-            if menu[1] == 2:
-                GameCanvas.live.open_live()
-                GameCanvas.redraw = 0
-                GameCanvas.menu_scroll = 0
-                GameCanvas.menu_anim = 0
-                return
-        elif sel == 5:
-            GameCanvas.redraw = 1
-            if menu[1] == 0:
-                if GameCanvas.has_save():
-                    self.load_game()
-                    if GameCanvas.live_saved != 0:
-                        return
-                    GameCanvas.stop_sound()
-                    self.load_menu_frames()
-                    self.enter_submenu()
-                    GameCanvas.menu_anim = 0
-                    GameCanvas.menu_scroll = 0
-                    menu[0] = 0
-                    GameCanvas.menu_count = consts.menu_sizes[menu[0]]
-                    GameCanvas.menu_items = GameCanvas.game_menu_items
-                    menu[2] = 0
-                    menu[1] = 0
-                    self.load_hero_images()
-                    if GameCanvas.save_flag != 0:  # e.java:856-866  (the save was made on the map: back into it)
-                        self.load_chapter_lords()
-                        self.load_lord_missions()
-                        self.load_mission_text()
-                        self.enter_map()
-                        self.load_game()
-                        GameCanvas.clock[1] = GameCanvas.now()
-                        GameCanvas.clock[0] = GameCanvas.now()
-                        GameCanvas.play_time = GameCanvas.clock[0] - GameCanvas.play_time
-                        self.play_sound(-1)
-                        return
-                return
-            if menu[1] == 1:
-                GameCanvas.name_buf = None
-                GameCanvas.name_buf = NameBuffer("", 8, 10)
-                if GameCanvas.has_save():
-                    GameCanvas.popups.setup_popup(3)
-                    return
-                self.start_new_game()
-                return
-        elif sel in (8, 14):
-            if GameCanvas.hero.stat_points > 0:
-                GameCanvas.menu_part = 1
-                GameCanvas.hero.stat_points -= 1
-                if menu[1] == 0:
-                    GameCanvas.hero.base_hp += 5
-                elif menu[1] == 1:
-                    GameCanvas.hero.base_mp += 3
-                elif menu[1] == 2:
-                    GameCanvas.hero.base_attack += 1
-                elif menu[1] == 3:
-                    GameCanvas.hero.base_defense += 1
-                if menu[0] == 8 and GameCanvas.hero.stat_points == 0:
-                    GameCanvas.popups.setup_popup(4)
-                    GameCanvas.redraw = 1
-                    return
-        elif sel == 29:
-            GameCanvas.popups.setup_popup(36)
-        elif sel == 10:
-            if menu[1] == 2:
-                GameCanvas.popups.setup_popup(5)
-                return
-        elif sel == 11:
-            if menu[1] == 0 and self.save_game() != 0:
-                GameCanvas.popups.setup_popup(0)
-            return
-        elif sel == 25:
-            if (GameCanvas.score & 1 << menu[1]) != 0:
+            if GameCanvas.hero.live_registered != 0 and GameCanvas.general_count != 0:
                 self.enter_submenu()
-                self.start_story(menu[1], 0)
-                return
-            GameCanvas.popups.show_text("3You must first complete|the missions needed|to view this ending.")
-            return
-        elif sel == 15:
-            hero = GameCanvas.hero
-            if menu[3] == 1:
-                if hero.hotkeys[menu[1]] != 0:
-                    menu[2] = consts.skill_menu_index[hero.hotkeys[menu[1]] - 12]
-                    hero.hotkeys[menu[1]] = 0
-                elif menu[1] < 4:
-                    menu[2] = 0
+                menu[0] = 19
+                GameCanvas.seal = i16(GameCanvas.backpack_slot_of(504))
+                if GameCanvas.seal != 0 and config.ORIG_BUG["B3"]:
+                    Menus.seal_list()
+                if GameCanvas.seal != 0:
+                    GameCanvas.menu_count = 44
                 else:
-                    menu[2] = 18
-                menu[3] = 2
-                if menu[2] < 18:
-                    GameCanvas.menu_part = 6
-                    return
-                GameCanvas.redraw = 1
-                return
-            if consts.skill_menu_ids[menu[2]] != 0:
-                if hero.skill_levels[consts.skill_menu_ids[menu[2]] - 12] != 0:
-                    hero.hotkeys[menu[1]] = consts.skill_menu_ids[menu[2]]
-                    menu[3] = 1
-                GameCanvas.menu_part = 6
-                return
-        elif sel == 17:
-            hero = GameCanvas.hero
-            it = hero.backpack[menu[2]]
-            if it.id != 0:
-                b = GameCanvas.item_slot_type(it.id)
-                if GameCanvas.set_item_name(it.id) <= hero.level:
-                    if it.id == 434:
-                        it.id = 0
-                        hero.base_hp += 5
-                        GameCanvas.popups.setup_popup(23)
-                    elif it.id == 435:
-                        it.id = 0
-                        hero.base_mp += 3
-                        GameCanvas.popups.setup_popup(24)
-                    elif it.id == 436:
-                        it.id = 0
-                        hero.base_defense += 1
-                        GameCanvas.popups.setup_popup(25)
-                    elif it.id == 437:
-                        it.id = 0
-                        hero.base_attack += 1
-                        GameCanvas.popups.setup_popup(26)
-                    elif it.id in (502, 504):
-                        GameCanvas.popups.setup_popup(17)
-                    else:
-                        self.swap_items(it, hero.equipped[consts.equip_slot_order[b]])
-                else:
-                    GameCanvas.popups.setup_popup(17)
-            GameCanvas.menu_part = 1
-            return
-        elif sel == 1:
-            if (GameCanvas.missions_done & 1 << GameCanvas.lord_ids[menu[1]] - 1) != 0:
-                self.enter_submenu()
-                menu[0] = 2
-                GameCanvas.menu_count = consts.menu_sizes[menu[0]]
-                GameCanvas.lord = i16(i8(menu[1]))
-                self.load_lord_missions()
+                    GameCanvas.menu_count = GameCanvas.general_count
+                Menus.load_general_table()
                 menu[2] = 0
                 menu[1] = 0
                 return
-        elif sel == 3:
-            GameCanvas.popups.setup_popup(6)
+            GameCanvas.popups.setup_popup(35)
+            GameCanvas.redraw = 0
+            GameCanvas.menu_scroll = 0
+            GameCanvas.menu_anim = 0
             return
+        if menu[1] == 2:
+            GameCanvas.live.open_live()
+            GameCanvas.redraw = 0
+            GameCanvas.menu_scroll = 0
+            GameCanvas.menu_anim = 0
+            return
+
+    def _fire_title_menu(self, menu):  # menu 5
+        GameCanvas.redraw = 1
+        if menu[1] == 0:
+            if GameCanvas.has_save():
+                self.load_game()
+                if GameCanvas.live_saved != 0:
+                    return
+                GameCanvas.stop_sound()
+                self.load_menu_frames()
+                self.enter_submenu()
+                GameCanvas.menu_anim = 0
+                GameCanvas.menu_scroll = 0
+                menu[0] = 0
+                GameCanvas.menu_count = consts.menu_sizes[menu[0]]
+                GameCanvas.menu_items = GameCanvas.game_menu_items
+                menu[2] = 0
+                menu[1] = 0
+                self.load_hero_images()
+                if GameCanvas.save_flag != 0:  # e.java:856-866  (the save was made on the map: back into it)
+                    self.load_chapter_lords()
+                    self.load_lord_missions()
+                    self.load_mission_text()
+                    self.enter_map()
+                    self.load_game()
+                    GameCanvas.clock[1] = GameCanvas.now()
+                    GameCanvas.clock[0] = GameCanvas.now()
+                    GameCanvas.play_time = GameCanvas.clock[0] - GameCanvas.play_time
+                    self.play_sound(-1)
+                    return
+            return
+        if menu[1] == 1:
+            GameCanvas.name_buf = None
+            GameCanvas.name_buf = NameBuffer("", 8, 10)
+            if GameCanvas.has_save():
+                GameCanvas.popups.setup_popup(3)
+                return
+            self.start_new_game()
+            return
+
+    def _fire_stat_points(self, menu):  # menu 8/14
+        if GameCanvas.hero.stat_points > 0:
+            GameCanvas.menu_part = 1
+            GameCanvas.hero.stat_points -= 1
+            if menu[1] == 0:
+                GameCanvas.hero.base_hp += 5
+            elif menu[1] == 1:
+                GameCanvas.hero.base_mp += 3
+            elif menu[1] == 2:
+                GameCanvas.hero.base_attack += 1
+            elif menu[1] == 3:
+                GameCanvas.hero.base_defense += 1
+            if menu[0] == 8 and GameCanvas.hero.stat_points == 0:
+                GameCanvas.popups.setup_popup(4)
+                GameCanvas.redraw = 1
+                return
+
+    def _fire_difficulty(self, menu):  # menu 29
+        GameCanvas.popups.setup_popup(36)
+
+    def _fire_confirm(self, menu):  # menu 10
+        if menu[1] == 2:
+            GameCanvas.popups.setup_popup(5)
+            return
+
+    def _fire_save_menu(self, menu):  # menu 11
+        if menu[1] == 0 and self.save_game() != 0:
+            GameCanvas.popups.setup_popup(0)
+
+    def _fire_endings(self, menu):  # menu 25
+        if (GameCanvas.score & 1 << menu[1]) != 0:
+            self.enter_submenu()
+            self.start_story(menu[1], 0)
+            return
+        GameCanvas.popups.show_text("3You must first complete|the missions needed|to view this ending.")
+        return
+
+    def _fire_hotkeys(self, menu):  # menu 15
+        hero = GameCanvas.hero
+        if menu[3] == 1:
+            if hero.hotkeys[menu[1]] != 0:
+                menu[2] = consts.skill_menu_index[hero.hotkeys[menu[1]] - 12]
+                hero.hotkeys[menu[1]] = 0
+            elif menu[1] < 4:
+                menu[2] = 0
+            else:
+                menu[2] = 18
+            menu[3] = 2
+            if menu[2] < 18:
+                GameCanvas.menu_part = 6
+                return
+            GameCanvas.redraw = 1
+            return
+        if consts.skill_menu_ids[menu[2]] != 0:
+            if hero.skill_levels[consts.skill_menu_ids[menu[2]] - 12] != 0:
+                hero.hotkeys[menu[1]] = consts.skill_menu_ids[menu[2]]
+                menu[3] = 1
+            GameCanvas.menu_part = 6
+            return
+
+    def _fire_backpack(self, menu):  # menu 17
+        hero = GameCanvas.hero
+        it = hero.backpack[menu[2]]
+        if it.id != 0:
+            b = GameCanvas.item_slot_type(it.id)
+            if GameCanvas.set_item_name(it.id) <= hero.level:
+                if it.id == 434:
+                    it.id = 0
+                    hero.base_hp += 5
+                    GameCanvas.popups.setup_popup(23)
+                elif it.id == 435:
+                    it.id = 0
+                    hero.base_mp += 3
+                    GameCanvas.popups.setup_popup(24)
+                elif it.id == 436:
+                    it.id = 0
+                    hero.base_defense += 1
+                    GameCanvas.popups.setup_popup(25)
+                elif it.id == 437:
+                    it.id = 0
+                    hero.base_attack += 1
+                    GameCanvas.popups.setup_popup(26)
+                elif it.id in (502, 504):
+                    GameCanvas.popups.setup_popup(17)
+                else:
+                    self.swap_items(it, hero.equipped[consts.equip_slot_order[b]])
+            else:
+                GameCanvas.popups.setup_popup(17)
+        GameCanvas.menu_part = 1
+
+    def _fire_lords(self, menu):  # menu 1
+        if (GameCanvas.missions_done & 1 << GameCanvas.lord_ids[menu[1]] - 1) != 0:
+            self.enter_submenu()
+            menu[0] = 2
+            GameCanvas.menu_count = consts.menu_sizes[menu[0]]
+            GameCanvas.lord = i16(i8(menu[1]))
+            self.load_lord_missions()
+            menu[2] = 0
+            menu[1] = 0
+            return
+
+    def _fire_missions(self, menu):  # menu 3
+        GameCanvas.popups.setup_popup(6)
+
+    _FIRE_BY_MENU = {  # menu -> handler, the branches of key_fire
+        0: _fire_game_menu,
+        5: _fire_title_menu,
+        8: _fire_stat_points,
+        14: _fire_stat_points,
+        29: _fire_difficulty,
+        10: _fire_confirm,
+        11: _fire_save_menu,
+        25: _fire_endings,
+        15: _fire_hotkeys,
+        17: _fire_backpack,
+        1: _fire_lords,
+        3: _fire_missions,
+    }
 
     def key_back(self):  # e.java:1002-1109  (BACK)
         menu = GameCanvas.menu
