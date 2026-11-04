@@ -33,7 +33,9 @@ def stage():
     for pkg in ("pow", "pow_mp", "pow_server"):
         shutil.copytree(PY / pkg, OUT / pkg, ignore=shutil.ignore_patterns("__pycache__"))
     # multiplayer resources (PHASE_9): config.MP_RES_ROOT falls back to ./res_mp
-    shutil.copytree(PY / "assets_mp", OUT / "res_mp")
+    # without the WAVs: pygbag refuses to pack a WAV that has no OGG of the same name, and the
+    # browser plays the OGG (pow_mp/player_pool.py)
+    shutil.copytree(PY / "assets_mp", OUT / "res_mp", ignore=shutil.ignore_patterns("*.wav"))
     shutil.copytree(PY / "assets", OUT / "assets")
     res = OUT / "res"
     res.mkdir()
