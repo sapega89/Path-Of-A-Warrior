@@ -120,3 +120,10 @@ def test_team_duel_partner_busy_or_offline(server):
     assert a.ask(M.INVITE, mode=M.INVITE_TEAM, id="BORYS")["st"] == -5
     b.session.close()
     assert a.ask(M.INVITE, mode=M.INVITE_TEAM, id="BORYS")["st"] == -3
+
+
+def test_records_carry_the_order_name(server):
+    a, _ = login(server, "ANDREY")
+    assert a.ask(M.RECORDS)["order"] == ""
+    a.ask(M.ORDER_CREATE, name="WOLVES")
+    assert a.ask(M.RECORDS)["order"] == "WOLVES"

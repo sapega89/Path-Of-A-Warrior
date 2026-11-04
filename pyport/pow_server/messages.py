@@ -240,7 +240,8 @@ S2C = {
                      ("atk", "h"), ("atk_bonus", "h"), ("def", "h"), ("def_bonus", "h")),
     SKILLS_ANS: (("n", "B"), ("skills", "list", "n", (("id", "B"), ("level", "B")))),
     SKILL_SLOTS_ANS: (),
-    RECORDS_ANS: (("fame", "i"), ("duel_grade", "i"), ("mission_grade", "i")),
+    # PORT-EXTRA tail: the name of my order ("" = none), shown under Character > Records
+    RECORDS_ANS: (("fame", "i"), ("duel_grade", "i"), ("mission_grade", "i"), ("order", 12)),
     EXP_FAME_GOLD_ANS: (("exp", "i"), ("fame", "i"), ("gold", "i")),
     RANK_MINE_ANS: (("rank", "i"), ("value", "i")),
     RANK_LIST_ANS: (("n", "B"), ("rows", "list", "n", (("rank", "i"), ("id", 12), ("value", "i")))),

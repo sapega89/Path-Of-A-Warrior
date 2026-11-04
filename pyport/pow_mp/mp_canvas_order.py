@@ -125,6 +125,15 @@ class OrderMixin:
         self.open_order()
 
     # --- painting ------------------------------------------------------------------
+    def draw_records_order(self):
+        """Character > Records: a 7th row, "Order" and the order's name (orange), "-" without one."""
+        y = MpCanvas.center_y - 47 + 6 * 17
+        self.draw_box(MpCanvas.screen_g, MpCanvas.center_x - 60, y, 120, 14, 2)
+        self.draw_text_colored(MpCanvas.screen_g, TEXTS[0], MpCanvas.center_x - 56, y + 2, 0, 0xFFFFFF)
+        name = MpCanvas.order_name or "-"
+        self.draw_text_colored(MpCanvas.screen_g, name, MpCanvas.center_x + 56 - MpCanvas.font_white.string_width(name),
+                               y + 2, 0, 16400640 if MpCanvas.order_name else 0x646464)
+
     def _paint_order(self):  # state 30
         if not MpCanvas.order_name:
             return self._paint_order_menu()
@@ -157,10 +166,12 @@ class OrderMixin:
                 self.draw_text_colored(MpCanvas.screen_g, TEXTS[3], MpCanvas.center_x, y + 1, 1,
                                        0xFFFFFF if on else 0x646464)
                 continue
-            _uid, name, level, online, leader = MpCanvas.order_rows[i]
+            uid, name, level, online, leader = MpCanvas.order_rows[i]
             self.draw_box(MpCanvas.screen_g, x, y, 150, 14, 3 if on else 2)
             Draw.fill_rect(MpCanvas.screen_g, x + 6, y + 5, 4, 4, 0x41FF41 if online else 0x525152)
             color = 0x41FF41 if online else (0xFFFFFF if on else 0x646464)
+            if uid == MpCanvas.user_id:
+                color = 16400640               # me: orange, like the order's name
             self.draw_text_colored(MpCanvas.screen_g, name, x + 14, y + 1, 0, color)
             if leader:                         # the leader's emblem: the bright shield of the menu dots
                 Draw.draw_image_part(MpCanvas.screen_g, MpCanvas.menu_icon_image, x + 66, y - 1, 12, 15, 0, 0)

@@ -31,6 +31,20 @@ wait 3
 shot order_list
 key BACK          # main menu
 wait 5
+key LEFT 4        # Order -> Character
+wait 3
+key FIRE
+wait 5
+key FIRE          # Records: 1296 -> 1297 with the order's name
+until 80
+wait 3
+shot records_order
+key BACK
+wait 5
+key BACK
+wait 5
+key RIGHT 4       # Character -> Order
+wait 3
 key RIGHT         # Order -> Duel
 wait 3
 key FIRE

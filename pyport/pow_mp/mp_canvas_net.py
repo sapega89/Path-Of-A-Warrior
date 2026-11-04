@@ -560,6 +560,8 @@ class NetMixin:
             MpCanvas.fame = answer.read_s32()
             MpCanvas.duel_grade = answer.read_s32()
             MpCanvas.mission_grade = answer.read_s32()
+            # PORT-EXTRA: my order's name after the jar's fields (absent from an older server)
+            MpCanvas.order_name = answer.read_string(12) if len(answer.data) - answer.pos >= 12 else ""
             self.push_state(80)
             return
         MpCanvas.error_msg = 0

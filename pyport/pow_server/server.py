@@ -301,8 +301,9 @@ class Session:
 
     def on_records(self, msg):         # 1296 -> 1297
         c = self.char
+        doc = self._my_order()                 # PORT-EXTRA: the order's name
         self.send(M.RECORDS_ANS, st=1, fame=c.mp_fame, duel_grade=c.duel_grade,
-                  mission_grade=c.mission_grade)
+                  mission_grade=c.mission_grade, order=doc["name"] if doc else "")
 
     def on_exp_fame_gold(self, msg):   # 1298 -> 1299
         c = self.char
