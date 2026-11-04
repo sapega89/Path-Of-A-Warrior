@@ -55,7 +55,7 @@ class AssetsMixin:
 
     def load_menu_images(self):  # g.java:1740
         i = 0
-        while i < 6:
+        while i < 7:                   # PORT-EXTRA: mpic6 = Order
             if MpCanvas.mpic_images[i] is None:
                 MpCanvas.mpic_images[i] = self.load_image(_js(_js("/mpic", i), ".png"))
             i = i + 1
@@ -177,7 +177,7 @@ class AssetsMixin:
         MpCanvas.back_image = None
         MpCanvas.menu_icon_image = None
         i = 0
-        while i < 6:
+        while i < 7:
             MpCanvas.mpic_images[i] = None
             i = i + 1
         MpCanvas.arrow_images[1] = None

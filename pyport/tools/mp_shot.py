@@ -7,7 +7,9 @@ Steps: wait N | key NAME [COUNT] (UP DOWN LEFT RIGHT FIRE LSOFT RSOFT 0-9 STAR P
        until STATE[,STATE] [MAX] (g.cY, the client state of 06 §1.2) |
        goto_if STATE[,STATE] LABEL | label LABEL | key_if STATE[,STATE] KEY |
        watch STATE NAME [FRAMES] (one shot FRAMES after first entering STATE) | digits 1234 (number keys one per tick) |
-       bot_invite MODE (the scripted player RIVAL invites TEST: 0/1 Challenge, 2 mission) | # comment
+       bot_invite MODE (the scripted player RIVAL invites TEST: 0/1 Challenge, 2 mission) |
+       bot_order NAME [N] (RIVAL creates the order NAME; N offline members MEMBERA.. join it) |
+       # comment
 The server runs inside the game (POW_MP_SERVER=local) with a fresh temporary save folder.
 """
 import argparse
@@ -144,6 +146,24 @@ def run(steps, out, every=False, save_dir=None):
             if cmd == "bot_invite":              # bot_invite MODE: the first bot invites TEST
                 from pow_mp.net.transport import LocalTransport
                 LocalTransport._bots[0].invite("TEST", int(arg or 0))
+                continue
+            if cmd == "bot_order":               # bot_order NAME: the first bot creates an order
+                from pow_mp.net.transport import LocalTransport
+                from pow_server import messages as M
+                from pow_server import orders
+                from pow_server.model import default_character
+                name, _, fill = arg.partition(" ")
+                LocalTransport._bots[0]._send(M.ORDER_CREATE, name=name)
+                srv = LocalTransport._server
+                doc = orders.get(srv.storage, name)
+                for i in range(int(fill or 0)):
+                    uid = "MEMBER" + chr(65 + i)
+                    srv.storage.create_account(uid, "0000")
+                    ch = default_character(uid)
+                    ch.level, ch.order = 1 + 3 * i, name
+                    srv.storage.save(ch)
+                    doc["members"].append(uid)
+                srv.storage.live_put("order:" + name, doc)
                 continue
             if cmd == "digits":
                 st["queue"] = [48 + int(ch) for ch in arg]

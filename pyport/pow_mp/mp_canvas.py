@@ -11,6 +11,7 @@ from pow_mp import (
     mp_canvas_input,
     mp_canvas_net,
     mp_canvas_options,
+    mp_canvas_order,
     mp_canvas_screens,
 )
 from pow_mp.mp_canvas_assets import AssetsMixin
@@ -19,6 +20,7 @@ from pow_mp.mp_canvas_draw import DrawMixin
 from pow_mp.mp_canvas_input import InputMixin
 from pow_mp.mp_canvas_net import NetMixin
 from pow_mp.mp_canvas_options import OptionsMixin
+from pow_mp.mp_canvas_order import OrderMixin
 from pow_mp.mp_canvas_screens import ScreensMixin
 from pow_mp.rt import (
     Image,
@@ -34,7 +36,8 @@ from pow_mp.rt import (
 )
 
 
-class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, AssetsMixin, OptionsMixin, _Canvas):
+class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, AssetsMixin, OptionsMixin,
+               OrderMixin, _Canvas):
     # PORT-EXTRA auto-battle: Tab (key -100) turns it on / off; the round's 1027 then goes out after
     # a second with action AUTO_ACTION, and the server's bot chooses (pow_server/battle.py cpu_choice)
     auto_battle = config.AUTO_HUNT
@@ -871,11 +874,14 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
                 i_face = i_face + 1
             self.free_battle_images()
             MpCanvas.title = Consts.texts[9]
-            MpCanvas.menu_size = 6
+            MpCanvas.menu_size = 7         # PORT-EXTRA: 6 = Order (pow_mp/mp_canvas_order.py)
+            MpCanvas.order_invite = False
             self.draw_menu_icons()
         self.draw_buffer()
-        Draw.draw_image(MpCanvas.screen_g, MpCanvas.mpic_images[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 40), (MpCanvas.center_y - 59), 0)
-        self.draw_button(MpCanvas.screen_g, Consts.main_menu[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 39), (MpCanvas.center_y + 21), 78, 17, False, True)
+        item = MpCanvas.cursor_stack[MpCanvas.stack_depth]
+        Draw.draw_image(MpCanvas.screen_g, MpCanvas.mpic_images[item], (MpCanvas.center_x - 40), (MpCanvas.center_y - 59), 0)
+        label = Consts.main_menu[item] if item < 6 else mp_canvas_order.TEXTS[0]
+        self.draw_button(MpCanvas.screen_g, label, (MpCanvas.center_x - 39), (MpCanvas.center_y + 21), 78, 17, False, True)
         MpCanvas.draw_menu_cursor(MpCanvas.screen_g)
         if MpCanvas.popup_shown:
             self.draw_exit_confirm(MpCanvas.screen_g)
@@ -1380,7 +1386,7 @@ def _static_init():
     MpCanvas.turn_hps = [0] * (12)
     MpCanvas.turn_bytes = [0] * (44)
     MpCanvas.tick_ms = 100
-    MpCanvas.mpic_images = [None] * (6)
+    MpCanvas.mpic_images = [None] * (7)   # PORT-EXTRA: mpic6 = Order
     MpCanvas.face_images = [None] * (4)
     MpCanvas.ui_images = [None] * (57)
     MpCanvas.act_images = [None] * (18)
@@ -1439,6 +1445,12 @@ def _late_imports():
 
 
 _LATE_NAMES = ("SpriteFrames", "PlayerPool", "NetThread", "ResReader", "Consts", "Draw", "Gfx", "Font", "Answer", "FrameWriter", "FrameReader", "MpGame")
-_PARTS = (mp_canvas_draw, mp_canvas_battle, mp_canvas_net, mp_canvas_input, mp_canvas_screens, mp_canvas_assets, mp_canvas_options)
+_PARTS = (mp_canvas_draw, mp_canvas_battle, mp_canvas_net, mp_canvas_input, mp_canvas_screens, mp_canvas_assets,
+          mp_canvas_options, mp_canvas_order)
 for _part in _PARTS:
     _part.MpCanvas = MpCanvas
+# PORT-EXTRA: the Order window's states and answers (pow_mp/mp_canvas_order.py)
+MpCanvas._PAINT_BY_STATE.update(OrderMixin.PAINT)
+MpCanvas._KEYS_BY_STATE.update(OrderMixin.KEYS)
+MpCanvas._KEYS_BY_STATE[mp_canvas_order.MEMBER] = InputMixin._keys_duel_menu
+MpCanvas._ANSWER_BY_OPCODE.update(OrderMixin.ANSWERS)

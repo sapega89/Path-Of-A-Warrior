@@ -64,6 +64,18 @@ RANK_MINE = 1300
 RANK_MINE_ANS = 1301
 SERVER_NOTICE = 1536        # S->C push
 KEEPALIVE = 39327           # C->S, no body, no answer
+# PORT-EXTRA: orders (pow_server/orders.py), opcodes the original never used
+ORDER_INFO = 1792           # C->S -> 1793: my order, its members and who is online
+ORDER_INFO_ANS = 1793
+ORDER_CREATE = 1794         # C->S char[12] name
+ORDER_CREATE_ANS = 1795
+ORDER_JOIN = 1796           # C->S char[12] name
+ORDER_JOIN_ANS = 1797
+ORDER_LEAVE = 1798          # C->S
+ORDER_LEAVE_ANS = 1799
+# 768 modes: 0 Challenge 1:1, 1 Challenge 2:2, 2 Invite An Ally (mission); PORT-EXTRA 3: an
+# order member fights a 2-on-2 duel on my side against two CPU fighters
+INVITE_TEAM = 3
 
 GAME_VER = "0111"           # GAMEVIL_GAME_VER of the MP manifest
 EMPTY_SKILL = 99            # empty skill slot in 263 / 1291
@@ -81,6 +93,11 @@ REASON_OTHER = 2
 # 1281 / 1283 / 1285: -6 -> cw6 "name already exists", -49 / -15 -> cw5 "not acceptable"
 ERR_NAME_EXISTS = -6
 ERR_NOT_ACCEPTABLE = -49
+# PORT-EXTRA order answers (1795 / 1797 / 768 mode 3)
+ERR_ORDER_NONE = -20        # no order with that name
+ERR_ORDER_FULL = -21        # 30 members already
+ERR_ORDER_IN = -22          # I am in an order already (create / join)
+ERR_NOT_MEMBER = -23        # 768 mode 3: the player is not in my order
 
 # --- C->S schemas ------------------------------------------------------------
 # PORT-EXTRA tail of 262: the hero of the single-player save (task 9.10), what the original's
@@ -117,6 +134,10 @@ C2S = {
     EXP_FAME_GOLD: (),
     RANK_MINE: (("cat", "B"),),
     KEEPALIVE: (),
+    ORDER_INFO: (),
+    ORDER_CREATE: (("name", 12),),
+    ORDER_JOIN: (("name", 12),),
+    ORDER_LEAVE: (),
 }
 
 # --- S->C schemas (after the status byte) -------------------------------------
@@ -223,6 +244,12 @@ S2C = {
     EXP_FAME_GOLD_ANS: (("exp", "i"), ("fame", "i"), ("gold", "i")),
     RANK_MINE_ANS: (("rank", "i"), ("value", "i")),
     RANK_LIST_ANS: (("n", "B"), ("rows", "list", "n", (("rank", "i"), ("id", 12), ("value", "i")))),
+    # PORT-EXTRA: name "" = in no order; rows: me first, then online, then the rest
+    ORDER_INFO_ANS: (("name", 12), ("n", "B"),
+                     ("rows", "list", "n", (("id", 12), ("name", 8), ("level", "H"), ("online", "B")))),
+    ORDER_CREATE_ANS: (),
+    ORDER_JOIN_ANS: (),
+    ORDER_LEAVE_ANS: (),
 }
 
 # Error answers: only the status, except 279 which tells why (g:1921).

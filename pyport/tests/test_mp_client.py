@@ -18,7 +18,7 @@ def _mp_shot():
 
 @pytest.mark.parametrize("name", ["mp_login", "mp_menu", "mp_character", "mp_ranking", "mp_options",
                                   "mp_duel", "mp_duel2", "mp_mission",
-                                  "mp_challenge", "mp_invited"])
+                                  "mp_challenge", "mp_invited", "mp_order_mission"])
 def test_scenario_runs(name, tmp_path):
     mp_shot = _mp_shot()
     saved, frames = mp_shot.run(mp_shot.parse(SCEN / (name + ".keys")), tmp_path / "out",
@@ -82,3 +82,20 @@ def test_auto_battle_plays_the_duel_alone(tmp_path):
     from pow_mp.net.transport import LocalTransport
     ch = LocalTransport._server.storage.load("TEST")
     assert ch.wins + ch.losses == 1
+
+
+def test_order_window_team_duel_and_leave(tmp_path):
+    """PORT-EXTRA: join RIVAL's order in the Order window, a 2-on-2 duel together, back to the
+    window, leave the order."""
+    mp_shot = _mp_shot()
+    saved, _ = mp_shot.run(mp_shot.parse(SCEN / "mp_order.keys"), tmp_path / "out",
+                           save_dir=str(tmp_path / "rms"))
+    assert any(n.endswith("_result.png") for n in saved)
+    assert any(n.endswith("_back_to_order.png") for n in saved) and saved[-1].endswith("after_leave.png")
+    from pow_mp.net.transport import LocalTransport
+    from pow_server import orders
+    st = LocalTransport._server.storage
+    test, rival = st.load("TEST"), st.load("RIVAL")
+    assert test.order == "" and rival.order == "WOLF"
+    assert orders.get(st, "WOLF")["members"] == ["RIVAL"]
+    assert test.wins + test.losses == 1 and test.wins == rival.wins and test.losses == rival.losses

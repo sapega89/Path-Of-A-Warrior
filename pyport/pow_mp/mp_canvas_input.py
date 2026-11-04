@@ -434,6 +434,9 @@ class InputMixin:
     def _keys_battle_result(self, key):  # state 105
         if (MpCanvas.state_ticks <= idiv(1000, MpCanvas.tick_ms)) or (MpCanvas.key_in != (-5)):
             return
+        if MpCanvas.order_invite:       # PORT-EXTRA: the battle started in the Order window
+            self.back_to_order()
+            return
         self.reset_state_stack(10)
         if MpCanvas.room_mode == 0:
             self.push_state(11)
@@ -573,7 +576,9 @@ class InputMixin:
     }
 
     def menu_select(self):  # g.java:3512
-        if MpCanvas.state == 160:
+        if MpCanvas.state in self.PAINT:     # PORT-EXTRA: the Order window (mp_canvas_order.py)
+            self.order_select()
+        elif MpCanvas.state == 160:
             if MpCanvas.popup_style == 1:
                 if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
                     MpCanvas.loading_msg = 5
@@ -610,6 +615,8 @@ class InputMixin:
                 self.push_state(87)
             elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 5:
                 self.push_state(161)
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 6:   # PORT-EXTRA: Order
+                self.open_order()
         elif MpCanvas.state == 11:
             if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
                 MpCanvas.room_mode = 0

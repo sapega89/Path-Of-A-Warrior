@@ -73,6 +73,8 @@ class NetMixin:
             pass
         elif MpCanvas.request_opcode == 290:
             NetThread.write_int(MpCanvas.invitation)
+        elif MpCanvas.request_opcode in (1794, 1796):    # PORT-EXTRA: create / join an order
+            NetThread.write_string(MpCanvas.input_text, 12)
         NetThread.send()
 
     def on_answer(self, answer):  # g.java:1888
@@ -267,6 +269,8 @@ class NetMixin:
             MpCanvas.error_msg = 9
         elif MpCanvas.answer_status == (-16):
             MpCanvas.error_msg = 18
+        elif self.order_invite_error():   # PORT-EXTRA: "not in your order" (768 mode 3)
+            pass
         else:
             MpCanvas.error_msg = 0
         self.push_state(4)
