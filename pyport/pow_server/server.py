@@ -21,7 +21,7 @@ import re
 import time
 
 from pow_server import battle as B
-from pow_server import codec_bin, loot, orders
+from pow_server import chat, codec_bin, loot, orders
 from pow_server import messages as M
 from pow_server.model import apply_sp_hero, default_character, valid_slots
 from pow_server.storage import open_storage
@@ -131,6 +131,8 @@ class Session:
         self.queued_mode = None        # 512 mode while waiting for an opponent
         self.queued_at = 0
         self.slot = 0                  # my slot in it
+        self.port_client = False       # PORT-EXTRA: logged in with the port's token (chat pushes)
+        self.chat_rate = chat.RateLimit()
 
     # --- I/O -----------------------------------------------------------------
     def send(self, op, **fields):
@@ -206,6 +208,11 @@ class Session:
         if self.server.notices and self.char.notices_seen < self.server.notices_version:
             pages = len(self.server.notices)   # marked seen when the last page is delivered
         self.send(M.LOGIN_ANS, st=1, **self.char.profile(notices=pages))
+        self.port_client = bool(msg.get("token"))
+        if self.port_client:                   # PORT-EXTRA: chat messages that wait for me
+            order, private = chat.unread(st, uid, self.char.order)
+            if order or private:
+                self.send(M.CHAT_UNREAD, st=1, order=order, private=private)
 
     def on_notice(self, msg):          # 258 -> 259 (page 1, 2, ...)
         page = msg.get("page", 0)
@@ -372,6 +379,98 @@ class Session:
         rows.sort(key=lambda r: (not r["leader"], r["id"] != self.user, not r["online"]))
         self.send(M.ORDER_INFO_ANS, st=1, name=doc["name"], rows=rows[:orders.MAX_MEMBERS])
 
+    # --- PORT-EXTRA: the chat (pow_server/chat.py) ---------------------------------------
+    def _display_name(self, uid):
+        if uid == self.user:
+            return self.char.name or uid[:8]
+        s = self.server.online.get(uid)
+        ch = s.char if s is not None and s.char is not None else self.server.storage.load(uid)
+        return (ch.name or uid[:8]) if ch is not None else uid[:8]
+
+    def _chat_target(self, channel, peer):
+        """(storage key, error status or 1) of a conversation."""
+        st = self.server.storage
+        if channel == chat.LOBBY:
+            return "chat:lobby", 1
+        if channel == chat.ORDER:
+            doc = self._my_order()
+            return (chat.order_key(doc["name"]), 1) if doc else (None, M.ERR_NO_ORDER)
+        if channel == chat.PRIVATE:
+            if peer == self.user:
+                return None, M.ERR_SELF
+            if not _ID_RE.match(peer or "") or not st.has_account(peer):
+                return None, M.ERR_NO_PLAYER
+            return chat.pm_key(self.user, peer), 1
+        return None, -1
+
+    def on_chat_read(self, msg):       # 1808 -> 1809
+        channel, peer = msg.get("channel"), (msg.get("peer") or "").upper()
+        key, res = self._chat_target(channel, peer)
+        if res != 1:
+            return self.send(M.CHAT_READ_ANS, st=res)
+        st = self.server.storage
+        doc = chat.history(st, key)
+        if channel == chat.ORDER:
+            me = chat.me_doc(st, self.user)
+            me["order_seen"] = doc["seq"]
+            chat.put_me(st, self.user, me)
+        elif channel == chat.PRIVATE:
+            chat.mark_peer_read(st, self.user, peer)
+        else:
+            peer = ""
+        self.send(M.CHAT_READ_ANS, st=1, channel=channel, peer=peer,
+                  peer_name=self._display_name(peer) if peer else "", rows=chat.rows_out(doc["rows"]))
+
+    def on_chat_send(self, msg):       # 1810 -> 1811, 1812 to every online reader
+        channel, peer = msg.get("channel"), (msg.get("peer") or "").upper()
+        key, res = self._chat_target(channel, peer)
+        if res != 1:
+            return self.send(M.CHAT_SEND_ANS, st=res)
+        text = chat.clean(msg.get("text"))
+        if text is None:
+            return self.send(M.CHAT_SEND_ANS, st=M.ERR_NOT_ACCEPTABLE)
+        if not self.chat_rate.allow(self.server.clock()):
+            return self.send(M.CHAT_SEND_ANS, st=M.ERR_TOO_FAST)
+        st, online = self.server.storage, self.server.online
+        name = self._display_name(self.user)
+        doc = chat.append(st, key, self.user, name, text)
+        row = {"id": self.user, "name": name, "text": text}
+        if channel == chat.LOBBY:
+            readers = [(uid, "") for uid in online]
+        elif channel == chat.ORDER:
+            readers = [(uid, "") for uid in self._my_order()["members"]]
+            me = chat.me_doc(st, self.user)
+            me["order_seen"] = doc["seq"]      # my own message is read
+            chat.put_me(st, self.user, me)
+        else:
+            readers = [(self.user, peer), (peer, self.user)]
+            chat.touch_peer(st, self.user, peer, 0)
+            chat.touch_peer(st, peer, self.user, 1)
+        self.send(M.CHAT_SEND_ANS, st=1)
+        for uid, their_peer in readers:
+            s = online.get(uid)
+            if s is not None and not s.closed and s.port_client:
+                s.send(M.CHAT_PUSH, st=1, channel=channel, peer=their_peer, **row)
+        if channel == chat.PRIVATE and peer in self.server.bots:
+            self._bot_answers(peer)
+
+    def _bot_answers(self, bot):
+        """A server bot answers a private message with one of its lines."""
+        st, line = self.server.storage, self.server.rng.choice(chat.BOT_LINES)
+        name = self._display_name(bot)
+        chat.append(st, chat.pm_key(self.user, bot), bot, name, line)
+        chat.touch_peer(st, self.user, bot, 1)
+        if self.port_client:
+            self.send(M.CHAT_PUSH, st=1, channel=chat.PRIVATE, peer=bot, id=bot, name=name, text=line)
+
+    def on_chat_peers(self, msg):      # 1813 -> 1814
+        st, online, rows = self.server.storage, self.server.online, []
+        for uid, unread in chat.me_doc(st, self.user)["peers"]:
+            s = online.get(uid)
+            live = (s is not None and not s.closed) or uid in self.server.bots
+            rows.append({"id": uid, "name": self._display_name(uid), "unread": unread, "online": int(live)})
+        self.send(M.CHAT_PEERS_ANS, st=1, rows=rows)
+
     def _order_enter(self, msg, answer, fn):
         if self._my_order() is not None:
             return self.send(answer, st=M.ERR_ORDER_IN)
@@ -380,6 +479,11 @@ class Session:
         if res == 1:
             self.char.order = name
             self.save()
+            if fn is orders.create:            # PORT-EXTRA chat: a new order starts a new chat
+                chat.clear(self.server.storage, chat.order_key(name))
+            me = chat.me_doc(self.server.storage, self.user)   # earlier messages count as read
+            me["order_seen"] = chat.history(self.server.storage, chat.order_key(name))["seq"]
+            chat.put_me(self.server.storage, self.user, me)
         self.send(answer, st=res)
 
     def on_order_create(self, msg):    # 1794 -> 1795
@@ -735,4 +839,7 @@ _HANDLERS = {
     M.ORDER_CREATE: Session.on_order_create,
     M.ORDER_JOIN: Session.on_order_join,
     M.ORDER_LEAVE: Session.on_order_leave,
+    M.CHAT_READ: Session.on_chat_read,
+    M.CHAT_SEND: Session.on_chat_send,
+    M.CHAT_PEERS: Session.on_chat_peers,
 }

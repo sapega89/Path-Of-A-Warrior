@@ -1,7 +1,7 @@
 # PORT-EXTRA: TEST joins the order of RIVAL, then Duel > 2-on-2 Order and Mission > Order Ally
 include _login.keys
 bot_order WOLF
-key LEFT          # Duel -> Order (the last picture)
+key LEFT 2        # Duel -> Chat -> Order
 wait 3
 shot main_order
 key FIRE          # 1792 -> 1793
@@ -45,7 +45,7 @@ key BACK
 wait 5
 key RIGHT 4       # Character -> Order
 wait 3
-key RIGHT         # Order -> Duel
+key RIGHT 2       # Order -> Chat -> Duel
 wait 3
 key FIRE
 wait 5
