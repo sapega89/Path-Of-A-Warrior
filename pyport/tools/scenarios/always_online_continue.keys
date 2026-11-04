@@ -1,0 +1,24 @@
+env POW_ALWAYS_ONLINE=1
+save zero
+# PORT-EXTRA "always online": Continue with a registered account logs in to Gamevil Live in the
+# background (no popup, keys free), and Game Menu > Gamevil Live then opens at once.
+account TEST 1234
+wait 25
+key FIRE           # sound: Yes
+wait 2
+key FIRE           # title -> Main Menu (Continue is selected when a save exists)
+wait 2
+online no
+key FIRE           # Continue -> Game Menu, the login goes in the background
+wait 4
+online yes
+shot game_menu_online
+key DOWN
+wait 6
+key DOWN
+wait 6
+key FIRE           # Gamevil Live: no "Connect to Gamevil Live?", no "Connecting..."
+wait 1
+shot live_at_once
+wait 8
+shot welcome

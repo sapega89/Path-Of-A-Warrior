@@ -728,6 +728,8 @@ class Menus(GameCanvas):
                 self.load_game()
                 if GameCanvas.live_saved != 0:
                     return
+                from pow.game.live_online import Online
+                Online.on_game_start()       # PORT-EXTRA: log in to Gamevil Live in the background
                 GameCanvas.stop_sound()
                 self.load_menu_frames()
                 self.enter_submenu()
