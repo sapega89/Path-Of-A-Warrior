@@ -17,8 +17,10 @@ list of steps, one per line:
     release KEY     let the held key go
     mousedown X Y   left button pressed and held at X Y; mouseup = let it go
     shot NAME       save the last frame as NN_NAME.png
-    multiplayer N NAME  (before the YES of Main Menu > Multiplayer) once the game has quit, run
-                    the Multiplayer game as main.py does, N frames, and save the last as NN_NAME.png
+    multiplayer N NAME [BACK]  (before the YES of Main Menu > Multiplayer) once the game has
+                    quit, run the Multiplayer game as main.py does, N frames, and save the last as
+                    NN_NAME.png; with BACK its Exit then starts the single player again as main.py
+                    does (straight at the Main Menu) and saves its 5th frame as NN_BACK.png
     gold N          TEST-ONLY: set the hero's gold (ag.cz.E) to N, to try the Blacksmith
     generals N      TEST-ONLY: befriend the first N generals of the table (10, 30, 50... points)
                     and allow one visit (cz.S = 1), as after a mission
@@ -247,9 +249,13 @@ def run(scenario, out, every=False):
     if state.get("mp"):                    # main.py: the Multiplayer game in the same window
         if not midlet.to_multiplayer:
             raise SystemExit("multiplayer: the game did not ask for the Multiplayer game")
+        import main as main_py
         import mp_main
+        from pow.midp import canvas
         from pow_mp.midlet import Midlet as MPMain
         frames, name = int(state["mp"][0]), state["mp"][1]
+        back = state["mp"][2] if len(state["mp"]) > 2 else None
+        keymap = dict(canvas.KEYMAP)
         mp = {"left": frames}
 
         def mp_frame(screen):
@@ -263,10 +269,35 @@ def run(scenario, out, every=False):
 
         display.frame_hooks.append(mp_frame)
         try:
-            if asyncio.run(mp_main.play()) is not True:
+            if asyncio.run(mp_main.play(sound_on=GameCanvas.sound_on)) is not True:
                 raise SystemExit("multiplayer: mp_main.play() did not return to the single player")
         finally:
             display.frame_hooks.remove(mp_frame)
+        if back:                           # main.py: the single player again, at the Main Menu
+            canvas.KEYMAP.clear()
+            canvas.KEYMAP.update(keymap)
+            sound_on = GameCanvas.sound_on
+            main_py.fresh_games()
+            from pow.game.game_canvas import GameCanvas as SP
+            from pow.game.midlet import Midlet as SPMain
+            sp = {"left": 5}
+
+            def sp_frame(screen):
+                sp["left"] -= 1
+                if sp["left"] <= 0:
+                    state["n"] += 1
+                    fn = "%02d_%s.png" % (state["n"], back)
+                    pygame.image.save(screen, str(out / fn))
+                    saved.append(fn)
+                    SP.running = False
+
+            again = SPMain()
+            again.resume_sound = sound_on
+            display.frame_hooks.append(sp_frame)
+            try:
+                asyncio.run(again.startApp())
+            finally:
+                display.frame_hooks.remove(sp_frame)
     shutil.rmtree(save_dir, ignore_errors=True)
     return saved, state["frame"]
 

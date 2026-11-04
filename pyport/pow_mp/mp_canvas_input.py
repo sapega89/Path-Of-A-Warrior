@@ -509,7 +509,10 @@ class InputMixin:
             return
         if MpCanvas.key_in != (-5):
             return
-        if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
+        self.answer_sound_prompt(MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0)
+
+    def answer_sound_prompt(self, yes):  # the YES / NO of state 5 (g.java, split out for the logo)
+        if yes:
             if MpCanvas.volume == 0:
                 MpCanvas.volume = 4
         else:
