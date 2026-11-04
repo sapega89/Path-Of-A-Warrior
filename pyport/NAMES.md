@@ -978,6 +978,9 @@ Java-джерела: `pyport/mp_java/*.java` у гілці `java-reference`.
 (номер стану чи опкоду — у коментарі біля `def`). `step_turn_anim` (`g.java:4176`) так само розкладено на
 `_anim_after_*` за видом анімації, що закінчилась.
 
+Так само в одиночній грі: `Live.on_answer` (`as.java:601-990`) бере `_on_<відповідь>` з `_ANSWER_BY_OPCODE`,
+`Menus.key_fire` (`e.java:688-1000`) — `_fire_<меню>` з `_FIRE_BY_MENU`.
+
 Імена взято з коду та протоколу (`pow_server/messages.py`). Поля, які гра читає з
 відповіді, але ніде не використовує, звуться `profile_unused*` / `profile_cr`; `popup_line1..5`
 у Java ніде не присвоюються.
