@@ -222,7 +222,7 @@ def run(scenario, out, every=False):
                 rs.setRecord(1, rec, 0, 28)
                 continue
             if cmd == "logins":            # TEST-ONLY: logins N - stop if more than N background
-                from pow.game.live_online import Online   # 530s of ALWAYS_ONLINE were sent
+                from pow.game.live_online import Online
                 if Online.attempts > int(arg):
                     raise SystemExit(f"logins {arg}: {Online.attempts} sent")
                 print(f"logins {arg}: {Online.attempts}")
