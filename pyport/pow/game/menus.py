@@ -1227,7 +1227,7 @@ class Menus(GameCanvas):
 
     def draw_description_strip(self):  # e.java:1595-1630  (description strip; scrolls when longer than the box)
         info = GameCanvas.info_box
-        if config.WIDE_DESC and GameCanvas.state != 11:   # Gamevil Live (11): the strip sits on its grid
+        if config.WIDE_DESC:
             self.draw_wide_description()
             return
         self.draw_box(info.rect.x + GameCanvas.view_x, info.rect.y + GameCanvas.view_y, info.rect.w, info.rect.h, False)
