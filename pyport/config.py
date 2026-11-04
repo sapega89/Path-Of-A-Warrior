@@ -64,6 +64,11 @@ ORIG_BUG = {
     "B9": True,  # m.bv() 365 Gamevil Live Backpack / Warehouse grid: 255 - 38 + fK[6] puts the caption at
                  # y 194 under the description strip and the 3 rows at y 232..326, under the soft keys
                  # -> 255 - (38 + fK[6] + 16 + 22): caption y 62, rows y 100..194, strip y 200
+    "B10": True,  # m.java:257 Gamevil Live Buy, the lots of a page: the same 255 - 84 + fK[6] puts the
+                  # 2 rows of lots at y 218..282 under the description strip (y 200)
+                  # -> 255 - (84 + fK[6] + 10 + 32): gold y 52, rows y 136..200, strip y 200
+    "B11": True,  # m.bl() Gamevil Live Sell, the price: the strip describes ag.cz.Y[fK[18]] (the backpack)
+                  # also when the item is sold from the warehouse -> empty or another item's text
 }
 
 # Gamevil Live of the single player (pow_server/live.py): "local" = the server inside the game

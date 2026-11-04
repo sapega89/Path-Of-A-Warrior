@@ -61,8 +61,13 @@ class LiveScreen(Live):
         self.draw_input_box(45, 210, 150, 22)
         Gfx.set_font(GameCanvas.font_black)
         Live.draw_text_centred_in(GameCanvas.format_thousands(Live.values[14]), 0, 212, 240)
-        GameCanvas.describe_shop_item(GameCanvas.hero.backpack[GameCanvas.cursor[18]], True, -1)
+        items = GameCanvas.hero.backpack
+        if config.ORIG_BUG["B11"] and Live.flags[7] == 1:   # ORIG-BUG B11: sold from the warehouse
+            items = Live.warehouse
+        GameCanvas.describe_shop_item(items[GameCanvas.cursor[18]], True, -1)
         GameCanvas.info_box.rect.y = 155 - GameCanvas.view_y
+        if config.WIDE_DESC:            # PORT-EXTRA: the tall box under the price box, not over the item
+            GameCanvas.info_box.rect.y = 238 - GameCanvas.view_y
         GameCanvas.menus.draw_description_strip()
         GameCanvas.draw_softkeys(7, 2)
 
@@ -105,6 +110,8 @@ class LiveScreen(Live):
             Live.draw_text_centred_in(Live.gift_from[Live.selected_slot], i, 170, 100)
             Live.draw_text_centred_in(Menus.item_name(Live.lots[Live.selected_slot].id), i, 183, 100)
             GameCanvas.describe_shop_item(Live.lots[Live.selected_slot], False, -1)
+            if config.WIDE_DESC:        # PORT-EXTRA: the tall box under the gift box (y 166..211)
+                GameCanvas.info_box.rect.y = 216 - GameCanvas.view_y
             GameCanvas.menus.draw_description_strip()
 
     @staticmethod
@@ -198,7 +205,10 @@ class LiveScreen(Live):
         GameCanvas.draw_softkeys(-1, 2)
 
     def draw_buy_lots(self):  # m.java:256-276  (Buy: the lots of a page)
-        j = 20 + (255 - 84 + GameCanvas.cursor[6] + 10 + 32 >> 1)
+        if config.ORIG_BUG["B10"]:     # ORIG-BUG B10: centre gold + box + grid + strip, grid above the strip
+            j = 20 + (255 - (84 + GameCanvas.cursor[6] + 10 + 32) >> 1)
+        else:
+            j = 20 + (255 - 84 + GameCanvas.cursor[6] + 10 + 32 >> 1)
         self.draw_hero_gold(j)
         j += 42
         i = self.draw_centred_box(j, 200, 32)
