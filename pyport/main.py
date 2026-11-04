@@ -111,6 +111,8 @@ async def main():
         while True:
             from pow.game.game_canvas import GameCanvas
             from pow.game.midlet import Midlet
+            if cloud_save.sync is not None:  # a newer hero taken during the Multiplayer game:
+                cloud_save.sync.restart_requested = False   # the game below loads it anyway
             midlet = Midlet()
             midlet.resume_sound = resume_sound
             await midlet.startApp()
@@ -118,8 +120,8 @@ async def main():
             if Midlet.canvas is not None and Midlet.canvas.quit_requested:
                 break                      # the window was closed
             if cloud_save.sync is not None and cloud_save.sync.restart_requested:
-                cloud_save.sync.restart_requested = False   # the server's hero replaced the one
-            elif midlet.to_multiplayer:                       # in memory: load it again
+                pass                       # the server's hero replaced the one in memory: load it
+            elif midlet.to_multiplayer:
                 import mp_main
                 from pow.midp import canvas
                 keymap = dict(canvas.KEYMAP)                 # the MP number row types digits
