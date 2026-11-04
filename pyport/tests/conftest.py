@@ -7,6 +7,7 @@ sys.path.insert(0, str(ROOT))
 os.environ["SDL_VIDEODRIVER"] = "dummy"
 os.environ["SDL_AUDIODRIVER"] = "dummy"
 os.environ["POW_SCALE"] = "1"
+os.environ["POW_CHEAT"] = "0"   # the developers' cheat from the shell must not leak into the tests
 
 import pytest  # noqa: E402
 
