@@ -49,6 +49,7 @@ class Character:
     sp_linked: bool = False            # the hero comes from the single-player save (9.10)
     sp_progress: int = 0               # single-player missions done (dy bits), for missions later
     bot: bool = False                  # PORT-EXTRA: a server bot (server.py GameServer.add_bots)
+    order: str = ""                    # PORT-EXTRA: the name of my order (pow_server/orders.py)
 
     # --- what goes on the wire -------------------------------------------------
     def max_hp(self):

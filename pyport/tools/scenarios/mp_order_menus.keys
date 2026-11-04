@@ -1,0 +1,77 @@
+# PORT-EXTRA: TEST joins the order of RIVAL, then Duel > 2-on-2 Order and Mission > Order Ally
+include _login.keys
+bot_order WOLF
+key LEFT          # Duel -> Order (the last picture)
+wait 3
+shot main_order
+key FIRE          # 1792 -> 1793
+until 30
+wait 3
+shot no_order
+key RIGHT         # Join Order
+wait 2
+shot join_menu
+key FIRE
+until 32
+wait 3
+key RIGHT 22      # W
+key FIRE
+key LEFT 8        # O
+key FIRE
+key LEFT 3        # L
+key FIRE
+key LEFT 6        # F
+key FIRE
+key RIGHT 21      # OK
+wait 2
+shot order_name
+key FIRE          # 1796 -> 1797, 1792 -> 1793
+until 30
+wait 3
+shot order_list
+key BACK          # main menu
+wait 5
+key LEFT 4        # Order -> Character
+wait 3
+key FIRE
+wait 5
+key FIRE          # Records: 1296 -> 1297 with the order's name
+until 80
+wait 3
+shot records_order
+key BACK
+wait 5
+key BACK
+wait 5
+key RIGHT 4       # Character -> Order
+wait 3
+key RIGHT         # Order -> Duel
+wait 3
+key FIRE
+wait 5
+key DOWN 3        # 2-on-2 Order
+wait 2
+shot duel_menu_order
+key FIRE          # 1792 -> 1793: the order as a pick list
+until 30
+wait 3
+shot duel_pick
+key BACK          # back to the Duel menu
+wait 5
+key BACK
+wait 5
+key RIGHT         # Mission
+wait 3
+key FIRE
+wait 5
+key DOWN 2        # Order Ally
+wait 2
+shot mission_menu_order
+key FIRE
+until 30
+wait 3
+shot mission_pick
+key FIRE          # RIVAL: 768 mode 2 at once
+until 91
+wait 3
+shot stage_intro

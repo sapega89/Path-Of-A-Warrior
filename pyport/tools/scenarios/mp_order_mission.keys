@@ -1,0 +1,45 @@
+# PORT-EXTRA Order window: TEST joins the order of RIVAL and invites RIVAL to a mission
+# States: 30 the order, 31 a member, 32 the order name, 33 leave? (Yes / No).
+include _login.keys
+bot_order WOLF
+key LEFT          # Duel -> Order (the last picture)
+wait 3
+shot main_order
+key FIRE          # 1792 -> 1793
+until 30
+wait 3
+shot no_order
+key RIGHT         # Join Order
+wait 2
+shot join_menu
+key FIRE
+until 32
+wait 3
+key RIGHT 22      # W
+key FIRE
+key LEFT 8        # O
+key FIRE
+key LEFT 3        # L
+key FIRE
+key LEFT 6        # F
+key FIRE
+key RIGHT 21      # OK
+wait 2
+shot order_name
+key FIRE          # 1796 -> 1797, 1792 -> 1793
+until 30
+wait 3
+shot order_list
+wait 2
+shot member_cursor  # RIVAL, the leader, first
+key FIRE
+until 31
+wait 3
+shot member_menu
+key FIRE          # Mission Together: 768 mode 2 -> 769, 1037
+until 91
+wait 3
+shot stage_intro
+until 92,93,94
+wait 5
+shot room

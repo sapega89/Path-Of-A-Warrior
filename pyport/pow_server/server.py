@@ -21,7 +21,7 @@ import re
 import time
 
 from pow_server import battle as B
-from pow_server import codec_bin, loot
+from pow_server import codec_bin, loot, orders
 from pow_server import messages as M
 from pow_server.model import apply_sp_hero, default_character, valid_slots
 from pow_server.storage import open_storage
@@ -301,8 +301,9 @@ class Session:
 
     def on_records(self, msg):         # 1296 -> 1297
         c = self.char
+        doc = self._my_order()                 # PORT-EXTRA: the order's name
         self.send(M.RECORDS_ANS, st=1, fame=c.mp_fame, duel_grade=c.duel_grade,
-                  mission_grade=c.mission_grade)
+                  mission_grade=c.mission_grade, order=doc["name"] if doc else "")
 
     def on_exp_fame_gold(self, msg):   # 1298 -> 1299
         c = self.char
@@ -342,6 +343,57 @@ class Session:
         rows = [{"rank": r, "id": u, "value": v} for r, u, v in rows]
         rows += [{"rank": 0, "id": "", "value": 0}] * (3 - len(rows))
         self.send(M.RANK_LIST_ANS, st=1, rows=rows)
+
+    # --- PORT-EXTRA: orders (pow_server/orders.py) -------------------------------------
+    def _my_order(self):
+        """My order document; a stale Character.order (the order is gone) is cleared."""
+        doc = orders.get(self.server.storage, self.char.order)
+        if doc is None or self.user not in doc["members"]:
+            if self.char.order:
+                self.char.order = ""
+                self.save()
+            return None
+        return doc
+
+    def on_order_info(self, msg):      # 1792 -> 1793
+        doc = self._my_order()
+        if doc is None:
+            return self.send(M.ORDER_INFO_ANS, st=1, name="", rows=[])
+        st, online, rows = self.server.storage, self.server.online, []
+        for uid in doc["members"]:
+            ch = self.char if uid == self.user else st.load(uid)
+            if ch is None:
+                continue
+            s = online.get(uid)
+            rows.append({"id": uid, "name": ch.name or uid[:8], "level": ch.level,
+                         "online": int(s is not None and not s.closed),
+                         "leader": int(uid == orders.leader(doc))})
+        # the leader, me, who is online, the others
+        rows.sort(key=lambda r: (not r["leader"], r["id"] != self.user, not r["online"]))
+        self.send(M.ORDER_INFO_ANS, st=1, name=doc["name"], rows=rows[:orders.MAX_MEMBERS])
+
+    def _order_enter(self, msg, answer, fn):
+        if self._my_order() is not None:
+            return self.send(answer, st=M.ERR_ORDER_IN)
+        name = (msg.get("name") or "").upper()
+        res = fn(self.server.storage, name, self.user)
+        if res == 1:
+            self.char.order = name
+            self.save()
+        self.send(answer, st=res)
+
+    def on_order_create(self, msg):    # 1794 -> 1795
+        self._order_enter(msg, M.ORDER_CREATE_ANS, orders.create)
+
+    def on_order_join(self, msg):      # 1796 -> 1797
+        self._order_enter(msg, M.ORDER_JOIN_ANS, orders.join)
+
+    def on_order_leave(self, msg):     # 1798 -> 1799
+        if self.char.order:
+            orders.leave(self.server.storage, self.char.order, self.user)
+            self.char.order = ""
+            self.save()
+        self.send(M.ORDER_LEAVE_ANS, st=1)
 
     # --- rooms and battles ----------------------------------------------------------
     @property
@@ -400,12 +452,16 @@ class Session:
         Options > Invitation decides (06 §2.6). Errors as the client shows them (g:2110-2146):
         -3 not online, -4 unregistered, -5 cannot be replied (busy), -12 yourself, -16 denied."""
         mode, uid = msg.get("mode"), msg.get("id", "")
-        if mode not in (0, 1, 2) or self.room is not None or self in self.server.queue:
+        if mode not in (0, 1, 2, M.INVITE_TEAM) or self.room is not None or self in self.server.queue:
             return self.send(M.INVITE_ANS, st=-1)    # busy: in a battle or waiting for a Duel
         if uid == self.user:
             return self.send(M.INVITE_ANS, st=-12)
         if not self.server.storage.has_account(uid):
             return self.send(M.INVITE_ANS, st=-4)
+        live = self.server.online.get(uid)
+        them = live.char if live is not None and live.char is not None else self.server.storage.load(uid)
+        if mode == M.INVITE_TEAM and not orders.same_order(self.server.storage, self.char, them):
+            return self.send(M.INVITE_ANS, st=M.ERR_NOT_MEMBER)
         if uid in self.server.bots and uid not in self.server.online:
             return self._invite_bot(mode, uid)
         other = self.server.online.get(uid)
@@ -415,6 +471,8 @@ class Session:
             return self.send(M.INVITE_ANS, st=-5)
         if not other.char.invitation:
             return self.send(M.INVITE_ANS, st=-16)
+        if mode == M.INVITE_TEAM:
+            return self._invite_team(other)
         rng = self.server.rng
         me = B.from_character(self.char, 0)
         them = B.from_character(other.char, 2 if mode == 2 else 1)
@@ -423,6 +481,17 @@ class Session:
             fighters += [B.cpu_fighter(rng, me, 2, ally=True), B.cpu_fighter(rng, them, 3, ally=True)]
         progress = max(self.char.sp_progress, other.char.sp_progress)
         Room(self.server, mode, fighters, {0: self, them.slot: other}, progress).start()
+
+    def _invite_team(self, other):
+        """PORT-EXTRA (orders): the order member fights next to me (slots 0 and 2) against two
+        CPU fighters, each of about the level of the player it faces. On the wire and on the
+        server it is a 2-on-2 Duel (mode 1): the clients, rewards and a player leaving work as
+        in any 2-on-2."""
+        rng = self.server.rng
+        me = B.from_character(self.char, 0)
+        them = B.from_character(other.char, 2)
+        fighters = [me, them, B.cpu_fighter(rng, me, 1), B.cpu_fighter(rng, them, 3)]
+        Room(self.server, 1, fighters, {0: self, 2: other}).start()
 
     def _invite_bot(self, mode, uid):
         """PORT-EXTRA: Challenge / Invite An Ally a server bot. The same room as against the
@@ -662,4 +731,8 @@ _HANDLERS = {
     M.STAGE_NEXT: Session.on_stage_next,
     M.STAGE_INTRO_DONE: Session.on_stage_intro_done,
     M.INVITE: Session.on_invite,
+    M.ORDER_INFO: Session.on_order_info,
+    M.ORDER_CREATE: Session.on_order_create,
+    M.ORDER_JOIN: Session.on_order_join,
+    M.ORDER_LEAVE: Session.on_order_leave,
 }

@@ -232,6 +232,7 @@ class ScreensMixin:
             if MpCanvas.loop_i > 1:
                 self.draw_number0_b((MpCanvas.center_x + 52), ((MpCanvas.center_y - 44) + (MpCanvas.loop_i * 17)), MpCanvas.stat_value)
             MpCanvas.loop_i = MpCanvas.loop_i + 1
+        self.draw_records_order()          # PORT-EXTRA: the order row (pow_mp/mp_canvas_order.py)
 
     def draw_attributes(self):  # g.java:5870
         self.draw_window(MpCanvas.screen_g)
