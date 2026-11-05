@@ -133,6 +133,8 @@ class LiveScreen(Live):
             Gfx.fill_rect(GameCanvas.screen_w // 2 - 65, i + 65, 130, 20, 13421772)
             Gfx.set_font(GameCanvas.font_black)
             Gfx.draw_string(Live.password, GameCanvas.screen_w // 2, i + 67, 1)
+            if config.REG_KEYBOARD:          # PORT-EXTRA: 0..9 + OK under the box (key_grid.py)
+                Live.pwd_grid.draw(i + 90)
             if Live.blink and not (B5 and Live.busy):     # ORIG-BUG B5: not while the 530 is on its way
                 Live.blink_count += 1
                 if Live.blink_count - 1 > 2:
@@ -160,7 +162,10 @@ class LiveScreen(Live):
                 Gfx.fill_rect(GameCanvas.screen_w // 2 - 60, i + 70, 120, 20, 13421772)
                 Gfx.set_font(GameCanvas.font_black)
                 Gfx.draw_string(GameCanvas.name_buf.get_text(), GameCanvas.screen_w // 2, i + 72, 1)
-                GameCanvas.draw_letter_grid(GameCanvas.letter_cursor, i + 90)
+                if config.REG_KEYBOARD:      # PORT-EXTRA: the letters + a row of digits (key_grid.py)
+                    Live.id_grid.draw(i + 90)
+                else:
+                    GameCanvas.draw_letter_grid(GameCanvas.letter_cursor, i + 90)
             self.draw_view_region(GameCanvas.images[7], 0, GameCanvas.screen_h - 20, GameCanvas.screen_w, 20, 0, GameCanvas.screen_h - 20)
             j = GameCanvas.name_buf.length()
             bool_ = 1                        # sic: (j >= 4 && j <= 12) ? true : true

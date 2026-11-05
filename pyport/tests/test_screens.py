@@ -32,7 +32,7 @@ def _run(name, out):
                                   "gamevil_live", "multiplayer", "skill_bar", "skill_card", "respec",
                                   "always_online", "always_online_continue",
                                   "always_online_offline", "always_online_badpwd",
-                                  "server_only_register"])
+                                  "server_only_register", "registration_keyboard"])
 def test_scenario_matches_baseline(name, tmp_path):
     out = tmp_path / name
     _run(name, out)

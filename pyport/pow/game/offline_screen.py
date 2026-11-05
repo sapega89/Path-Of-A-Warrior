@@ -13,13 +13,14 @@ import pygame
 
 import config
 from pow.game.font import Font
-from pow.midp import display, rms
+from pow.midp import canvas, display, rms
 
 AUTO_RETRY_MS = 10000
 KEYS_OK = (pygame.K_RETURN, pygame.K_KP_ENTER, pygame.K_SPACE, pygame.K_j, pygame.K_KP5)
 KEYS_BACK = (pygame.K_ESCAPE, pygame.K_BACKSPACE)
 
 _font = None
+_pads = []              # PORT-EXTRA: the joysticks opened for their button events
 
 
 def _glyphs():
@@ -39,12 +40,33 @@ def _text(screen, text, y, font):
         x += font.char_width(ch)
 
 
+def _keys():
+    """PORT-EXTRA (config.KEY_HINTS): the OK / BACK keys of the device last used."""
+    if not config.KEY_HINTS:
+        return "OK", "BACK"
+    return ("A", "B") if canvas.input_source == "gamepad" else ("ENTER", "ESC")
+
+
 def lines(sync):
     """What the screen says: the server is not there, or it refused the stored login."""
+    ok, back = _keys()
     if sync.state == "off":
-        return ["Login refused", "", "OK: try again", "BACK: other account"]
+        return ["Login refused", "", ok + ": try again", back + ": other account"]
     return ["No connection", "to the server", "", "The game starts", "only online", "",
-            "OK: try again"]
+            ok + ": try again"]
+
+
+def _open_pads():
+    """PORT-EXTRA: a pad sends its button events only once opened (GameCanvas does it later)."""
+    if not config.GAMEPAD or _pads:
+        return
+    try:
+        if not pygame.joystick.get_init():
+            pygame.joystick.init()
+        for index in range(pygame.joystick.get_count()):
+            _pads.append(pygame.joystick.Joystick(index))
+    except Exception as ex:
+        print(f"offline screen: gamepad {ex!r}")
 
 
 def draw(sync, trying=False):
@@ -67,16 +89,24 @@ def forget_account():
 
 async def show(sync):
     """Until the player (or the timer) asks for another try; main.py's boot() then tries."""
+    _open_pads()
     draw(sync)
     shown = time.monotonic()
     while True:
         for ev in pygame.event.get():
             if ev.type == pygame.QUIT:
                 raise SystemExit
+            if ev.type in (pygame.KEYDOWN, pygame.JOYBUTTONDOWN):   # PORT-EXTRA: config.KEY_HINTS
+                source = "keyboard" if ev.type == pygame.KEYDOWN else "gamepad"
+                if source != canvas.input_source:
+                    canvas.input_source = source
+                    draw(sync)
+            back = (ev.type == pygame.KEYDOWN and ev.key in KEYS_BACK) or (
+                ev.type == pygame.JOYBUTTONDOWN and ev.button == 1)     # PORT-EXTRA: B of the pad
             if ev.type == pygame.KEYDOWN and ev.key == pygame.K_F11:
                 display.toggle_fullscreen()
                 draw(sync)
-            elif ev.type == pygame.KEYDOWN and ev.key in KEYS_BACK and sync.state == "off":
+            elif back and sync.state == "off":
                 forget_account()
                 sync.reachable = False
                 sync.retry_now()

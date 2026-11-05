@@ -66,6 +66,8 @@ os.environ.setdefault("POW_SKILL_BAR", "0")   # the original HUD (env line to tu
 os.environ.setdefault("POW_ALWAYS_ONLINE", "0")   # Gamevil Live as in the original: connect on entry
 os.environ.setdefault("POW_SERVER_ONLY_SAVE", "0")   # the save on the device (no server in the scenarios)
 os.environ.setdefault("POW_SKILL_CARD", "0")  # the original description strip of Skills
+os.environ.setdefault("POW_REG_KEYBOARD", "0")   # the original registration grid (env line to turn on)
+os.environ.setdefault("POW_KEY_HINTS", "0")   # plain soft-key captions (env line to turn on)
 
 
 def parse(path):

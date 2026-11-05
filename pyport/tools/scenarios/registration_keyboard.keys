@@ -1,0 +1,51 @@
+env POW_ALWAYS_ONLINE=1
+env POW_SERVER_ONLY_SAVE=1
+env POW_LIVE_SERVER=ws://127.0.0.1:9/live
+env POW_REG_KEYBOARD=1
+env POW_KEY_HINTS=1
+save zero
+# PORT-EXTRA: the on-screen keyboards of the registration (pow/game/key_grid.py) and the
+# soft-key captions naming the keys (config.KEY_HINTS): the UserID grid with its row of
+# digits, the password row 0..9 + OK.
+wait 25
+key FIRE           # sound: Yes
+wait 2
+key FIRE           # title -> Main Menu
+wait 2
+key FIRE           # Continue -> Game Menu -> the registration offer
+wait 4
+key FIRE           # A
+key RIGHT
+key FIRE           # B
+key DOWN
+key DOWN           # the row of digits
+key FIRE           # 1
+key RIGHT
+key FIRE           # 2
+wait 2
+shot userid_digits
+key UP
+key LEFT
+key LEFT
+key LEFT           # wraps onto OK
+wait 2
+shot userid_ok
+key FIRE           # -> the password
+wait 2
+key RIGHT
+key FIRE           # 1
+key RIGHT
+key FIRE           # 2
+key RIGHT
+key FIRE           # 3
+key RIGHT
+key FIRE           # 4
+wait 2
+shot password_digits
+key LEFT
+key LEFT
+key LEFT
+key LEFT
+key LEFT           # 4 -> 0 -> OK
+wait 2
+shot password_ok

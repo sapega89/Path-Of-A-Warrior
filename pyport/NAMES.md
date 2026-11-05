@@ -35,6 +35,8 @@
 | `Main.java` | `pow/game/midlet.py` |
 | `v.java` | `pow/game/live_net.py` |
 | — (PORT-EXTRA) | `pow/game/hero_classes.py` (базові стати 4 героїв, перерозподіл атрибутів) |
+| — (PORT-EXTRA) | `pow/game/key_grid.py` (`KeyGrid`: екранні клавіатури реєстрації Gamevil Live — UserID з рядком цифр, пароль 0..9 + OK; `Live.keyboard_key`, `Live.id_grid` / `pwd_grid`, `config.REG_KEYBOARD`) |
+| — (PORT-EXTRA) | `pow/midp/canvas.py` `input_source`, `key_hints()` (підписи софт-клавіш з назвою клавіші останнього пристрою, `config.KEY_HINTS`) |
 
 ## Класи
 

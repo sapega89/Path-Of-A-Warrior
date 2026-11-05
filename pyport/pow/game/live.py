@@ -26,6 +26,7 @@ Fixes (config):
 import config
 from pow.game.game_canvas import GameCanvas
 from pow.game.gfx import Gfx
+from pow.game.key_grid import KeyGrid
 from pow.game.live_net import LiveNet
 from pow.game.live_online import Online
 from pow.game.structs import Item
@@ -53,6 +54,8 @@ class Live(GameCanvas):
     password = ""              # password
     user_id = ""              # UserID
     reg_from_popup = False           # the 530 is a registration from the screen (popups 48 / 44)
+    id_grid = None             # PORT-EXTRA: KeyGrid of the UserID (config.REG_KEYBOARD)
+    pwd_grid = None            # PORT-EXTRA: KeyGrid of the password
     inited = False
     loading0 = None            # netLoading0.png
     loading1 = None            # netLoading1.png
@@ -141,6 +144,8 @@ class Live(GameCanvas):
         Live.input_handler = 18
         Live.reg_step = 1
         GameCanvas.letter_cursor = 0
+        if config.REG_KEYBOARD:        # PORT-EXTRA: the on-screen keyboards (pow/game/key_grid.py)
+            Live.id_grid, Live.pwd_grid = KeyGrid.user_id(), KeyGrid.password()
         Live.request_redraw()
         GameCanvas.state = 11
         Live.password = ""
@@ -1057,7 +1062,35 @@ class Live(GameCanvas):
         if h is not None:
             h(i)
 
+    def keyboard_key(self, key):
+        """PORT-EXTRA (config.REG_KEYBOARD): the on-screen keyboards of key_grid.py in front of
+        registration_keys: arrows move (on the UserID step the phone's 2 4 6 8 too, as ag.r does),
+        OK types the cell; -> the key for the original handler, None when taken here."""
+        if Live.reg_step == 0:                   # the password: the number keys stay digits
+            grid = Live.pwd_grid
+            if grid.move(key):
+                Live.request_redraw()
+                return None
+            if key == -5:
+                return -6 if grid.is_ok else ord(grid.label)   # CONFIRM / the digit's key
+            return key
+        grid = Live.id_grid
+        if grid.move({50: -1, 56: -2, 52: -3, 54: -4}.get(key, key)):
+            Live.request_redraw()
+            return None
+        if key in (-5, 53):
+            if grid.is_ok:
+                return -6
+            GameCanvas.name_buf.handle_key(ord(grid.label))    # A..Z, 0..9
+            Live.request_redraw()
+            return None
+        return key
+
     def registration_keys(self, key):  # as.java:1271-1328  (registration: UserID, then password)
+        if config.REG_KEYBOARD:
+            key = self.keyboard_key(key)         # PORT-EXTRA
+            if key is None:
+                return
         if Live.reg_step == 0:
             i = len(Live.password)
             if key == -7:

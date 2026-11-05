@@ -185,3 +185,14 @@ SCREEN_OPTION = os.environ.get("POW_SCREEN_OPTION", "1") == "1"
 # RT = *, L3 = #, R3 = AUTO, Start = PAUSE; right stick = belt slots Z X C V on the map). POW_GAMEPAD=0
 # turns it off.
 GAMEPAD = os.environ.get("POW_GAMEPAD", "1") == "1"
+
+# PORT-EXTRA (asked by the player): on-screen keyboards of the Gamevil Live registration
+# (pow/game/key_grid.py): the UserID grid gets a row of digits and the password screen a row
+# 0..9 + OK, so a gamepad (or the mouse) can type them. POW_REG_KEYBOARD=0 = the original
+# (letters only, the password from the number keys). tools/shot.py uses 0 (baseline screenshots).
+REG_KEYBOARD = os.environ.get("POW_REG_KEYBOARD", "1") == "1"
+
+# PORT-EXTRA (asked by the player): the soft-key captions name the key of the last device used:
+# "Q:CONFIRM" / "ESC:BACK" after the keyboard, "SEL:CONFIRM" / "B:BACK" after the gamepad
+# (pow/midp/canvas.py input_source). POW_KEY_HINTS=0 = the plain captions; tools/shot.py uses 0.
+KEY_HINTS = os.environ.get("POW_KEY_HINTS", "1") == "1"
