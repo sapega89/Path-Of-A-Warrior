@@ -33,6 +33,7 @@ os.environ.setdefault("POW_SEED", "1")
 os.environ["POW_CHEAT"] = "0"   # a POW_CHEAT=1 left in the shell (500000 gold, all skills) breaks every baseline
 os.environ.setdefault("POW_AUTO_BUTTON", "0")   # the AUTO button only while on (original screenshots)
 os.environ.setdefault("POW_MP_SERVER", "local")
+os.environ.setdefault("POW_NO_GAMEVIL", "0")   # the original texts and logos (env line to hide Gamevil)
 
 
 def parse(path):

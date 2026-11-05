@@ -1,4 +1,5 @@
 """al.java - string table (.scr) reader. Literal port."""
+from pow.game import rebrand
 from pow.game.res_reader import ResReader
 
 
@@ -11,6 +12,7 @@ def _read_utf(buf: bytes) -> str:
 class ScrTable:
     def __init__(self, path):  # al.java:7-9
         self.data = ResReader.read(path)
+        self.path = path  # PORT-EXTRA: rebrand.scr() keys the replacements by the file name
 
     def get(self, index):  # al.java:11-29
         i = 2 + index * 2
@@ -28,7 +30,7 @@ class ScrTable:
             str_ = _read_utf(utf)
         except Exception:
             pass
-        return str_
+        return rebrand.scr(self.path, index, str_)  # PORT-EXTRA: no Gamevil (rebrand.py)
 
     def free(self):  # al.java:31-33
         self.data = None

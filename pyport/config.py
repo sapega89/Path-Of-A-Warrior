@@ -200,3 +200,7 @@ REG_KEYBOARD = os.environ.get("POW_REG_KEYBOARD", "1") == "1"
 # "Q:CONFIRM" / "ESC:BACK" after the keyboard, "SEL:CONFIRM" / "B:BACK" after the gamepad
 # (pow/midp/canvas.py input_source). POW_KEY_HINTS=0 = the plain captions; tools/shot.py uses 0.
 KEY_HINTS = os.environ.get("POW_KEY_HINTS", "1") == "1"
+
+# PORT-EXTRA (asked by Andrey): no Gamevil name, logo, site or "Gamevil Live" in what the player
+# sees (pow/game/rebrand.py). 0 = as in the original.
+NO_GAMEVIL = os.environ.get("POW_NO_GAMEVIL", "1") == "1"

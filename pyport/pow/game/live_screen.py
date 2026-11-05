@@ -3,6 +3,7 @@
 as.a = m(); ag.L() calls as.aK() -> m.a() every frame while bV == 11. as.ho picks the screen.
 """
 import config
+from pow.game import rebrand
 from pow.game.game_canvas import GameCanvas
 from pow.game.gfx import Gfx
 from pow.game.live import B5, Live
@@ -155,7 +156,7 @@ class LiveScreen(Live):
                 Live.blink = False
                 Gfx.set_font(GameCanvas.font_white)
                 Gfx.draw_string("In order to access", GameCanvas.screen_w // 2, i - 30, 1)
-                Gfx.draw_string("Gamevil Live", GameCanvas.screen_w // 2, i - 10, 1)
+                Gfx.draw_string(rebrand.text("Gamevil Live"), GameCanvas.screen_w // 2, i - 10, 1)
                 Gfx.draw_string("you must register first.", GameCanvas.screen_w // 2, i + 10, 1)
                 Gfx.draw_string("Please enter a UserID.", GameCanvas.screen_w // 2, i + 30, 1)
                 Gfx.draw_string("(4-12 characters)", GameCanvas.screen_w // 2, i + 50, 1)
