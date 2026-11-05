@@ -59,6 +59,14 @@ def peer_address(ws, behind_proxy=False):
     addr = getattr(ws, "remote_address", None)
     return addr[0] if isinstance(addr, (tuple, list)) and addr else None
 
+def drop(ws):
+    """PORT-EXTRA: cut a flooding connection without the close handshake. Its unread messages
+    fill websockets' receive queue, which pauses reading, so a normal close() would only end
+    after close_timeout (10 s) and the flooder would keep the slot that long."""
+    transport = getattr(ws, "transport", None)
+    if transport is not None:
+        transport.abort()
+
 
 async def handle_ws(server, ws, peer=None, meter=None):
     out = asyncio.Queue()
@@ -85,6 +93,7 @@ async def handle_ws(server, ws, peer=None, meter=None):
                 break
             if meter is not None and not all(meter.allow() for _ in payloads):
                 log.info("ws %s: too many messages", peer)   # every frame counts, not the message
+                drop(ws)
                 break
             for p in payloads:
                 session.receive(p)
@@ -117,6 +126,8 @@ async def handle_text(server, ws, peer=None, meter=None):
             if not isinstance(data, str) or len(data) > cloud.MAX_MESSAGE:
                 break
             if meter is not None and not meter.allow():
+                log.info("save ws %s: too many messages", peer)
+                drop(ws)
                 break
             session.receive(data)
         while not out.empty():
