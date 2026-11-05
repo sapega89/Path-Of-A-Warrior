@@ -36,7 +36,7 @@ def _load_raw(name):
     return disk_load(name)
 
 
-# : the stores lost the original publisher's prefix. A device
+# the stores lost the original publisher's prefix. A device
 # that still has a store under its old name gets it moved to the new one on the first read.
 OLD_PREFIX = "game" + "vil_"
 RENAMED = ("pow_data", "pow_data_backup", "pow_env", "pow_env_backup", "pow_regist")

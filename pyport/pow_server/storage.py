@@ -70,7 +70,7 @@ class Storage:
         self.db = sqlite3.connect(path, check_same_thread=False, isolation_level=None)
         self.lock = threading.Lock()
         self.db.executescript(_SCHEMA)
-        # : the save stores lost the original publisher's prefix
+        # the save stores lost the original publisher's prefix
         # (pow/midp/rms.py RENAMED); rows saved under the old names move to the new ones
         old = "game" + "vil_"
         self.db.execute("UPDATE OR IGNORE saves SET store = substr(store, ?) WHERE store LIKE ?",

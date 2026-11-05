@@ -1,5 +1,4 @@
 """String table (.scr) reader."""
-from pow.game import rebrand
 from pow.game.res_reader import ResReader
 
 
@@ -12,7 +11,6 @@ def _read_utf(buf: bytes) -> str:
 class ScrTable:
     def __init__(self, path):
         self.data = ResReader.read(path)
-        self.path = path  # rebrand.scr keys the replacements by the file name
 
     def get(self, index):
         i = 2 + index * 2
@@ -30,7 +28,7 @@ class ScrTable:
             str_ = _read_utf(utf)
         except Exception:
             pass
-        return rebrand.scr(self.path, index, str_)  # rebrand.py
+        return str_
 
     def free(self):
         self.data = None

@@ -5,7 +5,7 @@
 - **Language:** Python 3 + pygame-ce (`pyport/`)
 - **Target resolution:** 240×320 (QVGA), scaled by `POW_SCALE`
 - **Tile size:** 27×27 px
-- **Server (Gamevil Live, multiplayer, saves):** `pyport/pow_server` (WebSocket / TCP)
+- **Server (Live, multiplayer, saves):** `pyport/pow_server` (WebSocket / TCP)
 
 ## Project Context
 
