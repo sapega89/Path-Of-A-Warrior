@@ -66,7 +66,11 @@ class LocalTransport(Transport):
                 import random
                 rng = random.Random(int(os.environ["POW_SEED"]))
             # the offline game has nobody to wait for: a Duel gets its CPU fighter at once
-            cls._server = GameServer(open_storage(path), rng=rng, match_wait=0)
+            kw = {}
+            from pow.midp import system
+            if system.is_virtual():              # headless runs: the chat's rate limit follows the game clock
+                kw["clock"] = lambda: system.currentTimeMillis() / 1000
+            cls._server = GameServer(open_storage(path), rng=rng, match_wait=0, **kw)
             # scripted players to Challenge / Invite in the offline game (pow_server/bot.py)
             from pow_server.bot import Bot
             names = os.environ.get("POW_MP_BOTS", "RIVAL").split(",")

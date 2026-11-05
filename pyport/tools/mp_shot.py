@@ -9,6 +9,8 @@ Steps: wait N | key NAME [COUNT] (UP DOWN LEFT RIGHT FIRE LSOFT RSOFT 0-9 STAR P
        watch STATE NAME [FRAMES] (one shot FRAMES after first entering STATE) | digits 1234 (number keys one per tick) |
        bot_invite MODE (the scripted player RIVAL invites TEST: 0/1 Challenge, 2 mission) |
        bot_order NAME [N] (RIVAL creates the order NAME; N offline members MEMBERA.. join it) |
+       bot_chat CHANNEL [TO] TEXT (RIVAL writes in the chat: 0 lobby, 1 order, 2 private to TO) |
+       type TEXT (a PC keyboard types TEXT, one character per tick, into the chat's text box) |
        # comment
 The server runs inside the game (POW_MP_SERVER=local) with a fresh temporary save folder.
 """
@@ -89,7 +91,11 @@ def run(steps, out, every=False, save_dir=None):
                     pygame.image.save(screen, str(out / name))
                     saved.append(name)
         if st["queue"]:
-            Midlet.canvas.keyPressed(st["queue"].pop(0))
+            item = st["queue"].pop(0)
+            if isinstance(item, tuple):          # ("text", char): typed on a PC keyboard
+                Midlet.canvas.text_input(item[1])
+            else:
+                Midlet.canvas.keyPressed(item)
             return
         if st["until"] is not None:
             states, left = st["until"]
@@ -165,6 +171,20 @@ def run(steps, out, every=False, save_dir=None):
                     doc["members"].append(uid)
                 srv.storage.live_put("order:" + name, doc)
                 continue
+            if cmd == "bot_chat":                # bot_chat CHANNEL [TO] TEXT
+                from pow_mp.net.transport import LocalTransport
+                from pow_server import messages as M
+                channel, _, text = arg.partition(" ")
+                peer = ""
+                if channel == "2":
+                    peer, _, text = text.partition(" ")
+                bot = LocalTransport._bots[0]
+                bot.session.chat_rate.times.clear()
+                bot._send(M.CHAT_SEND, channel=int(channel), peer=peer, text=text)
+                continue
+            if cmd == "type":                    # type TEXT: the PC keyboard (Canvas.text_input)
+                st["queue"] = [("text", ch) for ch in arg]
+                return
             if cmd == "digits":
                 st["queue"] = [48 + int(ch) for ch in arg]
                 return

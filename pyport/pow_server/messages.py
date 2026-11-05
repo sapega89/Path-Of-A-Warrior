@@ -73,6 +73,15 @@ ORDER_JOIN = 1796           # C->S char[12] name
 ORDER_JOIN_ANS = 1797
 ORDER_LEAVE = 1798          # C->S
 ORDER_LEAVE_ANS = 1799
+# PORT-EXTRA: the chat (pow_server/chat.py); channel 0 lobby, 1 my order, 2 private (peer)
+CHAT_READ = 1808            # C->S u8 channel, char[12] peer -> 1809: the last messages, marked read
+CHAT_READ_ANS = 1809
+CHAT_SEND = 1810            # C->S u8 channel, char[12] peer, char[40] text -> 1811
+CHAT_SEND_ANS = 1811
+CHAT_PUSH = 1812            # S->C push: a new message of a conversation I read
+CHAT_PEERS = 1813           # C->S -> 1814: my private conversations, newest first
+CHAT_PEERS_ANS = 1814
+CHAT_UNREAD = 1815          # S->C push after the login: unread order / private messages
 # 768 modes: 0 Challenge 1:1, 1 Challenge 2:2, 2 Invite An Ally (mission); PORT-EXTRA 3: an
 # order member fights a 2-on-2 duel on my side against two CPU fighters
 INVITE_TEAM = 3
@@ -98,6 +107,11 @@ ERR_ORDER_NONE = -20        # no order with that name
 ERR_ORDER_FULL = -21        # 30 members already
 ERR_ORDER_IN = -22          # I am in an order already (create / join)
 ERR_NOT_MEMBER = -23        # 768 mode 3: the player is not in my order
+# PORT-EXTRA chat answers (1809 / 1811)
+ERR_TOO_FAST = -24          # too many messages in a short time
+ERR_NO_ORDER = -25          # the order channel without an order
+ERR_NO_PLAYER = -26         # private: no such UserID
+ERR_SELF = -27              # private: a message to myself
 
 # --- C->S schemas ------------------------------------------------------------
 # PORT-EXTRA tail of 262: the hero of the single-player save (task 9.10), what the original's
@@ -138,6 +152,9 @@ C2S = {
     ORDER_CREATE: (("name", 12),),
     ORDER_JOIN: (("name", 12),),
     ORDER_LEAVE: (),
+    CHAT_READ: (("channel", "B"), ("peer", 12)),
+    CHAT_SEND: (("channel", "B"), ("peer", 12), ("text", 40)),
+    CHAT_PEERS: (),
 }
 
 # --- S->C schemas (after the status byte) -------------------------------------
@@ -209,6 +226,8 @@ FIGHTER = (
     ("alt_name", 8),
 )
 
+_CHAT_ROW = (("id", 12), ("name", 8), ("text", 40))
+
 S2C = {
     LOGIN_FIRST_ANS: (("token", 16),),          # PORT-EXTRA: the token for the next 262
     LOGIN_ANS: PROFILE,
@@ -252,6 +271,14 @@ S2C = {
     ORDER_CREATE_ANS: (),
     ORDER_JOIN_ANS: (),
     ORDER_LEAVE_ANS: (),
+    # PORT-EXTRA chat: rows oldest first; peer_name = the private peer's display name
+    CHAT_READ_ANS: (("channel", "B"), ("peer", 12), ("peer_name", 8), ("n", "B"),
+                    ("rows", "list", "n", _CHAT_ROW)),
+    CHAT_SEND_ANS: (),
+    CHAT_PUSH: (("channel", "B"), ("peer", 12), *_CHAT_ROW),
+    CHAT_PEERS_ANS: (("n", "B"), ("rows", "list", "n", (("id", 12), ("name", 8), ("unread", "B"),
+                                                       ("online", "B")))),
+    CHAT_UNREAD: (("order", "B"), ("private", "B")),
 }
 
 # Error answers: only the status, except 279 which tells why (g:1921).

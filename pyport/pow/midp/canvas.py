@@ -66,6 +66,7 @@ class Canvas:
         self.autopilot = None                   # PORT-EXTRA: tick() -> key, .direction, player_key()
         self.belt_active = None                 # callable() -> True: Z X C V B are belt keys
         self.pads = gamepad.Gamepads() if config.GAMEPAD else None   # PORT-EXTRA: gamepad
+        self.text_input = None                  # PORT-EXTRA: callable(char) -> True: typed text
 
     def getWidth(self):
         return config.SCREEN_W
@@ -95,6 +96,9 @@ class Canvas:
                     ev.key in (pygame.K_RETURN, pygame.K_KP_ENTER) and ev.mod & pygame.KMOD_ALT)):
                 display.toggle_fullscreen()          # PORT-EXTRA: full screen
                 display.present()
+            elif ev.type == pygame.KEYDOWN and self.text_input is not None and ev.unicode and \
+                    not ev.mod & (pygame.KMOD_CTRL | pygame.KMOD_ALT) and self.text_input(ev.unicode):
+                pass                                 # PORT-EXTRA: a text box took the key (MP chat)
             elif ev.type == pygame.KEYDOWN:
                 code = KEYMAP.get(ev.key)
                 if ev.key in BELT_KEYMAP and self.belt_active is not None and self.belt_active():
