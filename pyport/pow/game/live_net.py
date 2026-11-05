@@ -1,7 +1,7 @@
-"""v.java / u.java / b.java / ab.java - the network of Gamevil Live (PHASE_7). Port with a
+"""v.java / u.java / b.java / ab.java - the network of Live (PHASE_7). Port with a
 replaced transport.
 
-v.java was a Thread that opened socket://GAMEVIL_SERVER:GAMEVIL_PORT (ur.gamevil.net:28230),
+v.java was a Thread that opened socket://POW_SERVER:POW_PORT (the original host, port 28230),
 read frames in its run() loop and called s.a(ab) for each (s = the as instance); u.java
 wrote a request into a buffer and sent it with the u16 length in front; b.java read one
 frame; ab.java reads the fields of an answer. The server is lost (pow_server/live.py speaks
@@ -93,7 +93,7 @@ class LiveNet:  # v.java
             LiveNet.conn.open()
             self._connecting = True
         except Exception as ex:
-            print("Gamevil Live: connect failed:", repr(ex))
+            print("Live: connect failed:", repr(ex))
             LiveNet.listener.on_connection_failed()
 
     @staticmethod
@@ -129,7 +129,7 @@ class LiveNet:  # v.java
             except Exception as ex:          # run(): catch (Exception) -> d.e()
                 if config.DEBUG:
                     raise
-                print("Gamevil Live: bad answer:", repr(ex))
+                print("Live: bad answer:", repr(ex))
                 LiveNet.listener.on_connection_failed()
                 return
             if LiveNet.conn is not t:                 # the answer closed the connection

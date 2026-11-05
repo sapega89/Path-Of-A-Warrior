@@ -1,7 +1,7 @@
 """Loot of the multiplayer battles (PHASE_9 task 9.9): items of the single-player tables.
 
 The original server chose the loot; only its name reached the MP client (1032 char[15], drawn
-with "Loot!!!", g:5122-5124), and the item itself went to the single player through Gamevil
+with "Loot!!!", g:5122-5124), and the item itself went to the single player through
 Live (Gift List 520 / Warehouse, analysis/03 §5.2). That server is lost, so the rates here are
 made up. What is not: the items and their stats come from the single-player tables, and the
 Special (301-437) and Rare (501-518) ones are what the single player cannot get offline except
@@ -83,7 +83,7 @@ EQUIP_CHANCE = (10, 30, 60)        # % of a drop that is equipment (else a consu
 TIER_LEVELS = (69, 44, 24, 9, 0)   # hero level above -> the row of TIER_ODDS
 TIER_ODDS = ((0, 0, 33, 77, 100), (5, 30, 55, 80, 100), (30, 60, 90, 100, 100),
              (40, 80, 100, 100, 100), (80, 100, 100, 100, 100))
-# not in the single player (Special and Rare came only from Combine and Gamevil Live): the
+# not in the single player (Special and Rare came only from Combine and Live): the
 # share of the equipment drops that is Special / Rare instead of Normal - made up
 SPECIAL_SHARE, RARE_SHARE = 20, 2
 

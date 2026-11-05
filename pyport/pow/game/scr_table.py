@@ -30,7 +30,7 @@ class ScrTable:
             str_ = _read_utf(utf)
         except Exception:
             pass
-        return rebrand.scr(self.path, index, str_)  # PORT-EXTRA: no Gamevil (rebrand.py)
+        return rebrand.scr(self.path, index, str_)  # PORT-EXTRA: rebrand.py
 
     def free(self):  # al.java:31-33
         self.data = None

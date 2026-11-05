@@ -1,8 +1,8 @@
 env POW_ALWAYS_ONLINE=1
 save zero
-# Gamevil Live > Multiplayer (PORT-EXTRA, main.py): the Multiplayer screens run in the same
+# Live > Multiplayer (PORT-EXTRA, main.py): the Multiplayer screens run in the same
 # window and process while the single player waits in memory; their Exit comes back to the
-# Gamevil Live menu. Registered on this device already (account), logged in by Continue.
+# Live menu. Registered on this device already (account), logged in by Continue.
 account TESTUSER 1234
 wait 25
 key FIRE           # sound: Yes
@@ -13,7 +13,7 @@ key FIRE           # Continue -> Game Menu (the background login)
 wait 6
 key DOWN
 wait 6
-key DOWN           # Mission -> Blacksmith -> Gamevil Live
+key DOWN           # Mission -> Blacksmith -> Live
 wait 6
 key FIRE           # opens at once (no question)
 wait 6

@@ -1,4 +1,4 @@
-"""Gamevil Live: the full (wide) description instead of the running strip, and the layouts
+"""Live: the full (wide) description instead of the running strip, and the layouts
 that make room for it (ORIG-BUG B10 Buy lots, B11 Sell price from the warehouse)."""
 import os
 
@@ -7,7 +7,7 @@ os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 import config  # noqa: E402
 
 
-def test_wide_description_in_gamevil_live(monkeypatch):
+def test_wide_description_in_live(monkeypatch):
     from pow.game.game_canvas import GameCanvas
     from pow.game.menus import Menus
     calls = []

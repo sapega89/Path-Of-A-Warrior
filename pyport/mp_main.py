@@ -36,7 +36,7 @@ async def play(sound_on=None, embedded=False):
     Exit (main.py then goes back to the single player), False when the window was closed.
     sound_on: the single player's answer to "sound enabled?" (main.py), so the Multiplayer
     game skips its logo and asks nothing; None = its own logo and question.
-    embedded: a part of the single player (Gamevil Live > Multiplayer): no exit popup and no
+    embedded: a part of the single player (Live > Multiplayer): no exit popup and no
     outro, and the rewards of the battles wait in memory (take_rewards) for its hero."""
     server_from_page()
     import pygame

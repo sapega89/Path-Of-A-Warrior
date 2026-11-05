@@ -1,7 +1,7 @@
-"""Gamevil Live of the single-player game: the "online shop" (PHASE_7, server side).
+"""Live of the single-player game: the "online shop" (PHASE_7, server side).
 
-The single player's Gamevil Live (as.java / m.java, analysis/03 §1.8, §5) talked to
-ur.gamevil.net:28230: a market where players sold items to each other (Trade), a Warehouse of
+The single player's Live (as.java / m.java, analysis/03 §1.8, §5) talked to
+the original server (port 28230): a market where players sold items to each other (Trade), a Warehouse of
 100 slots, a Safe for gold, a Gift List, server-kept Exp/Fame and a backup of the hero
 (Management). That server is lost; this one speaks the same protocol, so the ported screens
 work as they did. Accounts are the multiplayer ones (the original registered the UserID here

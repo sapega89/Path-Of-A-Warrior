@@ -29,7 +29,7 @@ def _run(name, out):
                                   "options_help", "management", "menus_mouse",
                                   "missions", "missions_mouse", "visiting",
                                   "map", "map_mouse", "combat", "combat_mouse", "victory", "blacksmith",
-                                  "gamevil_live", "multiplayer", "skill_bar", "skill_card", "respec",
+                                  "live", "multiplayer", "skill_bar", "skill_card", "respec",
                                   "always_online", "always_online_continue",
                                   "always_online_offline", "always_online_badpwd",
                                   "server_only_register", "registration_keyboard"])

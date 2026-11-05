@@ -1,4 +1,4 @@
-"""PORT-EXTRA: the Multiplayer screens as a part of the single player (main.py): Gamevil Live >
+"""PORT-EXTRA: the Multiplayer screens as a part of the single player (main.py): Live >
 Multiplayer suspends the game loop with everything in memory, the Multiplayer client runs
 embedded (no exit popup, no outro, the rewards kept in memory) and Live.after_multiplayer pays
 the hero when the loop goes on."""
@@ -112,7 +112,7 @@ def test_rewards_of_1032_wait_in_memory_when_embedded(monkeypatch):
     assert sp_bridge.take_rewards() == []
 
 
-def test_main_menu_multiplayer_opens_gamevil_live_then_multiplayer(monkeypatch):
+def test_main_menu_multiplayer_opens_live_then_multiplayer(monkeypatch):
     import config
     from pow.game.game_canvas import GameCanvas
     from pow.game.live import Live

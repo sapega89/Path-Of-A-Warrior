@@ -169,7 +169,7 @@ class NetMixin:
             answer.read_s8()
             MpCanvas.title_image = None
             MpCanvas.press_image = None
-            MpCanvas.gamevil_image = None
+            MpCanvas.copyright_image = None
             MpCanvas.noop()
             if MpCanvas.relogin:
                 if MpCanvas.relogin_to_menu:

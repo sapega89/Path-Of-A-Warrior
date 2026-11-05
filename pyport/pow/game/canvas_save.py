@@ -1,4 +1,4 @@
-"""ag.java, part of GameCanvas: the save file: load / save gamevil_pow_data, options, byte readers and writers.
+"""ag.java, part of GameCanvas: the save file: load / save pow_data, options, byte readers and writers.
 
 A mixin of GameCanvas (pow/game/game_canvas.py); the methods keep their `# ag.java:FROM-TO`
 comments. `GameCanvas` below is the real class, set by game_canvas.py once it exists.
@@ -17,7 +17,7 @@ class SaveMixin:
     def load_options():  # ag.java:1174-1186
         record = bytearray(2)
         try:
-            recordStore = RecordStore.openRecordStore("gamevil_pow_env", False)
+            recordStore = RecordStore.openRecordStore("pow_env", False)
             if recordStore is None or recordStore.getNumRecords() < 1:
                 return
             record = recordStore.getRecord(1)
@@ -34,18 +34,18 @@ class SaveMixin:
         record[0] = GameCanvas.volume & 0xFF
         record[1] = GameCanvas.speed & 0xFF
         try:
-            recordStore = RecordStore.openRecordStore("gamevil_pow_env", True)
+            recordStore = RecordStore.openRecordStore("pow_env", True)
             if recordStore.getNumRecords() == 0:
                 recordStore.addRecord(record, 0, len(record))
             recordStore.setRecord(1, record, 0, len(record))
         except Exception:
             return
 
-    def load_game(self):  # ag.java:2126-2214  (load save "gamevil_pow_data")
+    def load_game(self):  # ag.java:2126-2214  (load save "pow_data")
         hero = GameCanvas.hero
         GameCanvas.save_pos = 0
         try:
-            recordStore = RecordStore.openRecordStore("gamevil_pow_data", False)
+            recordStore = RecordStore.openRecordStore("pow_data", False)
             if recordStore is None or recordStore.getNumRecords() < 1:
                 return
             GameCanvas.save_buf = recordStore.getRecord(1)
@@ -216,12 +216,12 @@ class SaveMixin:
     @staticmethod
     def has_save():  # ag.java:2862-2869  (is there a saved game?)
         try:
-            recordStore = RecordStore.openRecordStore("gamevil_pow_data", True)
+            recordStore = RecordStore.openRecordStore("pow_data", True)
             return recordStore.getNumRecords() != 0
         except Exception:
             return False
 
-    def save_game(self):  # ag.java:2871-2961  (write the save "gamevil_pow_data")
+    def save_game(self):  # ag.java:2871-2961  (write the save "pow_data")
         hero = GameCanvas.hero
         reserved = [0] * 16
         name = hero.name.encode("latin-1")
@@ -301,7 +301,7 @@ class SaveMixin:
         buf[0] = GameCanvas.save_pos & 0xFF
         buf[1] = GameCanvas.save_pos >> 8 & 0xFF
         try:
-            recordStore = RecordStore.openRecordStore("gamevil_pow_data", True)
+            recordStore = RecordStore.openRecordStore("pow_data", True)
             if recordStore.getNumRecords() == 0:
                 recordStore.addRecord(buf, 0, len(buf))
             recordStore.setRecord(1, buf, 0, len(buf))

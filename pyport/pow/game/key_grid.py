@@ -1,4 +1,4 @@
-"""PORT-EXTRA (asked by the player): on-screen keyboards of the Gamevil Live registration
+"""PORT-EXTRA (asked by the player): on-screen keyboards of the Live registration
 (config.REG_KEYBOARD), so that a gamepad can type the UserID and the password too.
 
 The original (as.java:1271-1328) typed the UserID on the hero-name grid ag.f(int,int) (2 x 14

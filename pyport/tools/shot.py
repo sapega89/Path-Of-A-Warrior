@@ -17,10 +17,10 @@ list of steps, one per line:
     release KEY     let the held key go
     mousedown X Y   left button pressed and held at X Y; mouseup = let it go
     shot NAME       save the last frame as NN_NAME.png
-    multiplayer N NAME  (before the key that opens Gamevil Live > Multiplayer) run the Multiplayer
+    multiplayer N NAME  (before the key that opens Live > Multiplayer) run the Multiplayer
                     screens as main.py does, N frames, save the last as NN_NAME.png, and come back
                     (their Exit): the single player goes on and the steps after it continue there
-    account ID PWD  TEST-ONLY: register the Gamevil Live UserID / password on this device
+    account ID PWD  TEST-ONLY: register the Live UserID / password on this device
     logins N        TEST-ONLY: stop with an error if the game sent more than N background logins
     online yes|no   TEST-ONLY: stop with an error unless the background login (ALWAYS_ONLINE) is that
     gold N          TEST-ONLY: set the hero's gold (ag.cz.E) to N, to try the Blacksmith
@@ -37,7 +37,7 @@ list of steps, one per line:
     env NAME=VALUE  (first lines only) set an environment variable before the game reads config,
                     e.g. env POW_NO_ENEMIES=1 for the map without enemies
     save zero       (first line only, after env) start with a minimal 965-byte save in RecordStore
-                    "gamevil_pow_data" so that Main Menu -> Continue opens the Game Menu
+                    "pow_data" so that Main Menu -> Continue opens the Game Menu
     # ...           comment
 
 Random() is seeded with POW_SEED (default 1) instead of the clock, so runs repeat.
@@ -62,12 +62,12 @@ os.environ.setdefault("POW_AUTO_BUTTON", "0")   # the AUTO button only while on 
 os.environ.setdefault("POW_AUTO_AIM_HARD", "0")   # the original: no auto-aim on Hard
 os.environ.setdefault("POW_HOLD_TO_MOVE", "0")   # keys are taps, as on the phone (env line to change)   # Random() without the clock: repeatable runs
 os.environ.setdefault("POW_SKILL_BAR", "0")   # the original HUD (env line to turn the skill bar on)
-os.environ.setdefault("POW_ALWAYS_ONLINE", "0")   # Gamevil Live as in the original: connect on entry
+os.environ.setdefault("POW_ALWAYS_ONLINE", "0")   # Live as in the original: connect on entry
 os.environ.setdefault("POW_SERVER_ONLY_SAVE", "0")   # the save on the device (no server in the scenarios)
 os.environ.setdefault("POW_SKILL_CARD", "0")  # the original description strip of Skills
 os.environ.setdefault("POW_REG_KEYBOARD", "0")   # the original registration grid (env line to turn on)
 os.environ.setdefault("POW_KEY_HINTS", "0")   # plain soft-key captions (env line to turn on)
-os.environ.setdefault("POW_NO_GAMEVIL", "0")   # the original texts and logos (env line to hide Gamevil)
+os.environ.setdefault("POW_REBRAND", "0")   # the original texts and logos (env line to rebrand)
 
 
 def parse(path):
@@ -88,7 +88,7 @@ def make_zero_save():
     data[0] = 965 & 0xFF
     data[1] = 965 >> 8
     data[2:10] = b"HERO    "
-    rs = RecordStore.openRecordStore("gamevil_pow_data", True)
+    rs = RecordStore.openRecordStore("pow_data", True)
     if rs.getNumRecords() == 0:
         rs.addRecord(data, 0, len(data))
     else:
@@ -215,13 +215,13 @@ def run(scenario, out, every=False):
                     raise SystemExit(f"expect {field} {op} {val}: it is {have}")
                 print(f"expect {field} {op} {val}: {have}")
                 continue
-            if cmd == "account":           # TEST-ONLY: account ID PWD - the Gamevil Live registration
-                uid, pwd = arg.split()         # (RecordStore "gamevil_pow_regist", m.java:287-305)
+            if cmd == "account":           # TEST-ONLY: account ID PWD - the Live registration
+                uid, pwd = arg.split()         # (RecordStore "pow_regist", m.java:287-305)
                 from pow.midp.rms import RecordStore
                 rec = bytearray(28)
                 rec[0:len(pwd)] = pwd.encode()
                 rec[12:12 + len(uid)] = uid.encode()
-                rs = RecordStore.openRecordStore("gamevil_pow_regist", True)
+                rs = RecordStore.openRecordStore("pow_regist", True)
                 if rs.getNumRecords() == 0:
                     rs.addRecord(rec, 0, 28)
                 rs.setRecord(1, rec, 0, 28)
@@ -275,7 +275,7 @@ def run(scenario, out, every=False):
     display.frame_hooks.append(on_frame)
     midlet = Midlet()
     asyncio.run(midlet.startApp())
-    while GameCanvas.suspended:            # Gamevil Live > Multiplayer: the Multiplayer screens in
+    while GameCanvas.suspended:            # Live > Multiplayer: the Multiplayer screens in
         if not state.get("mp"):           # the same window (main.py), the single player waits
             raise SystemExit("multiplayer: the Multiplayer screens opened without a `multiplayer N NAME` step")
         import main as main_py

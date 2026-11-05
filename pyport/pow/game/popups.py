@@ -100,7 +100,7 @@ class Popups(GameCanvas):
                                         GameCanvas.midlet.notifyDestroyed()
                                         return -1
                                     # PORT-EXTRA: the Multiplayer screens are part of this game:
-                                    # Continue, then Gamevil Live > Multiplayer opens by itself
+                                    # Continue, then Live > Multiplayer opens by itself
                                     # (live_online.Online.mp_pending); nothing without a save
                                     from pow.game.live_online import Online
                                     if GameCanvas.has_save():
