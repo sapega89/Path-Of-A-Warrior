@@ -62,6 +62,7 @@ os.environ.setdefault("POW_AUTO_AIM_HARD", "0")   # the original: no auto-aim on
 os.environ.setdefault("POW_HOLD_TO_MOVE", "0")   # keys are taps, as on the phone (env line to change)   # Random() without the clock: repeatable runs
 os.environ.setdefault("POW_SKILL_BAR", "0")   # the original HUD (env line to turn the skill bar on)
 os.environ.setdefault("POW_ALWAYS_ONLINE", "0")   # Gamevil Live as in the original: connect on entry
+os.environ.setdefault("POW_SERVER_ONLY_SAVE", "0")   # the save on the device (no server in the scenarios)
 os.environ.setdefault("POW_SKILL_CARD", "0")  # the original description strip of Skills
 
 
