@@ -376,7 +376,7 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
             Live.draw_screen()
         if GameCanvas.live is not None:
             from pow.game.live import Live
-            if Live.busy:
+            if Live.busy and not Live.quiet_request():   # PORT-EXTRA: live_online.py
                 GameCanvas.live.draw_connecting()
         GameCanvas.key_held = -999
 

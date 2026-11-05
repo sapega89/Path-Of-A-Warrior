@@ -27,6 +27,28 @@ def test_scenario_runs(name, tmp_path):
     assert saved and frames > 30
 
 
+def test_single_player_account_logs_in_without_the_login_screen(tmp_path):
+    """PORT-EXTRA use_sp_account: the Gamevil Live registration of the single player is the
+    Multiplayer account: the title logs in at once, no Login screen (state 2) on the way."""
+    mp_shot = _mp_shot()
+    states = set()
+    from pow.midp import display
+
+    def seen(_screen):
+        from pow_mp.mp_canvas import MpCanvas
+        states.add(MpCanvas.state)
+    display.frame_hooks.append(seen)
+    try:
+        saved, _ = mp_shot.run(mp_shot.parse(SCEN / "mp_sp_account.keys"), tmp_path / "out",
+                               save_dir=str(tmp_path / "rms"))
+    finally:
+        display.frame_hooks.remove(seen)
+    from pow_mp.net.transport import LocalTransport
+    assert "ANDREY" in LocalTransport._server.online
+    assert 2 not in states and 10 in states
+    assert saved[-1].endswith("main_menu_no_login.png")
+
+
 def test_login_registers_on_local_server(tmp_path):
     mp_shot = _mp_shot()
     mp_shot.run(mp_shot.parse(SCEN / "mp_menu.keys"), tmp_path / "out", save_dir=str(tmp_path / "rms"))
@@ -100,3 +122,23 @@ def test_order_window_team_duel_and_leave(tmp_path):
     assert test.order == "" and rival.order == "WOLF"
     assert orders.get(st, "WOLF")["members"] == ["RIVAL"]
     assert test.wins + test.losses == 1 and test.wins == rival.wins and test.losses == rival.losses
+
+
+def test_chat_private_answer_and_lobby(tmp_path):
+    """PORT-EXTRA: the Chat window: RIVAL's private message waits (badge, Private tab), TEST
+    answers on the keyboard grid and the PC keyboard, RIVAL answers back, then TEST writes in
+    the Lobby (40 characters at most)."""
+    mp_shot = _mp_shot()
+    saved, _ = mp_shot.run(mp_shot.parse(SCEN / "mp_chat.keys"), tmp_path / "out",
+                           save_dir=str(tmp_path / "rms"))
+    assert saved[-1].endswith("no_order.png")
+    from pow_mp.mp_canvas import MpCanvas
+    from pow_mp.net.transport import LocalTransport
+    from pow_server import chat
+    st = LocalTransport._server.storage
+    pm = chat.history(st, chat.pm_key("TEST", "RIVAL"))["rows"]
+    assert [r[0] for r in pm] == ["RIVAL", "TEST", "RIVAL"]
+    assert pm[1][2] == "Hi! Ready when you are." and pm[2][2] in chat.BOT_LINES
+    lobby = chat.history(st, "chat:lobby")["rows"]
+    assert lobby[-1] == ["TEST", "TEST", "Hello everyone, I am new here and ready"]
+    assert MpCanvas.chat_unread == [0, 0, 0] and MpCanvas.chat_no_order

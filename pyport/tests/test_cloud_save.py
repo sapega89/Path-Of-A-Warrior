@@ -258,3 +258,112 @@ def test_wrong_password_stops_until_a_new_registration(server, tmp_path, monkeyp
     a.register(pwd="1234")
     a.steps()
     assert server_hero(server) == (b"A1", 1)
+
+
+# --- server only (config.SERVER_ONLY_SAVE) --------------------------------------------------
+@pytest.fixture
+def memory_only(monkeypatch):
+    monkeypatch.setattr(rms, "memory_only", set())
+    monkeypatch.setattr(rms, "memory", {})
+
+
+def start_server_only(device):
+    device.start()
+    device.sync.server_only = True
+    device.sync.purge = cloud_save.use_memory_only()
+    return device
+
+
+def on_disk(device, name="gamevil_pow_data"):
+    import os
+    return os.path.isfile(os.path.join(device.dir, name + ".rms.json"))
+
+
+def test_server_only_never_writes_the_hero_to_the_device(server, tmp_path, monkeypatch, clock, memory_only):
+    a = start_server_only(Device(tmp_path, "a", monkeypatch, clock))
+    a.register()
+    a.save_hero(b"A1")
+    a.steps()
+    assert server_hero(server) == (b"A1", 1)
+    assert a.hero() == b"A1" and not on_disk(a)
+    assert on_disk(a, "gamevil_pow_regist")          # the account stays on the device
+
+
+def test_server_only_boot_takes_the_server_copy(server, tmp_path, monkeypatch, clock, memory_only):
+    a = start_server_only(Device(tmp_path, "a", monkeypatch, clock))
+    a.register()
+    a.save_hero(b"A1")
+    a.steps()
+    rms.memory.clear()                                # the game closed: nothing kept
+    a = start_server_only(a)
+    assert a.hero() is None
+    a.steps()
+    assert a.sync.online and a.hero() == b"A1" and not a.sync.restart_requested
+
+
+def test_server_only_moves_the_old_device_save_to_the_server(server, tmp_path, monkeypatch, clock, memory_only):
+    a = Device(tmp_path, "a", monkeypatch, clock).start()
+    a.register()
+    FakeSocket.down = True
+    a.save_hero(b"old local hero")                  # before "server only": on the device
+    a.steps()
+    FakeSocket.down = False
+    assert on_disk(a)
+    a = start_server_only(a)
+    assert a.hero() == b"old local hero"
+    a.steps(6)
+    assert server_hero(server) == (b"old local hero", 1)
+    assert not on_disk(a)                           # off the device once the server has it
+
+
+def test_server_only_server_copy_wins_over_an_old_device_save(server, tmp_path, monkeypatch, clock, memory_only):
+    b = Device(tmp_path, "b", monkeypatch, clock).start()
+    b.register()
+    b.save_hero(b"hero on the server")
+    b.steps()
+    a = Device(tmp_path, "a", monkeypatch, clock).start()
+    a.register()
+    FakeSocket.down = True
+    a.save_hero(b"edited local hero")               # a later, edited copy on the device
+    a.steps()
+    FakeSocket.down = False
+    a = start_server_only(a)
+    a.steps(6)
+    assert a.hero() == b"hero on the server"
+    assert server_hero(server) == (b"hero on the server", 1)
+    assert not on_disk(a)
+
+
+def test_server_only_offline_is_not_online(server, tmp_path, monkeypatch, clock, memory_only):
+    FakeSocket.down = True
+    a = start_server_only(Device(tmp_path, "a", monkeypatch, clock))
+    a.steps()
+    assert not a.sync.online                        # no account: the server must still answer
+    a.register()
+    a.steps()
+    assert not a.sync.online
+    FakeSocket.down = False
+    a.sync.retry_now()
+    a.steps()
+    assert a.sync.online
+
+
+def test_server_only_no_account_needs_the_server(server, tmp_path, monkeypatch, clock, memory_only):
+    a = start_server_only(Device(tmp_path, "a", monkeypatch, clock))
+    a.steps()
+    assert a.sync.online and a.sync.sock is None    # the server answered; nothing to send
+    a.save_hero(b"new hero")
+    a.register()                                   # the registration the game asks for
+    a.steps()
+    assert server_hero(server) == (b"new hero", 1) and not on_disk(a)
+
+
+def test_server_only_switch(monkeypatch):
+    monkeypatch.setattr(config, "LIVE_SERVER", "local")
+    monkeypatch.setattr(config, "SAVE_SERVER", "auto")
+    monkeypatch.setattr(config, "SERVER_ONLY_SAVE", True)
+    assert not cloud_save.server_only()             # the in-game server: the save on the device
+    monkeypatch.setattr(config, "LIVE_SERVER", "wss://pow.example/live")
+    assert cloud_save.server_only()
+    monkeypatch.setattr(config, "SERVER_ONLY_SAVE", False)
+    assert not cloud_save.server_only()

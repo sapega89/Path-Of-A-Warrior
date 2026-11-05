@@ -15,6 +15,11 @@ _IS_WEB = sys.platform == "emscripten"
 # PORT-EXTRA (server saves, pow/game/cloud_save.py): called with the store name after every
 # write to a store, so its new records can go to the server too.
 on_write = []
+# PORT-EXTRA (asked by Andrey, cloud_save.SERVER_ONLY): stores kept only in memory, never in
+# the files / localStorage: the server has the only lasting copy. cloud_save fills them from
+# the server before the game reads them.
+memory_only = set()
+memory = {}
 
 
 class RecordStoreException(Exception):
@@ -26,6 +31,13 @@ class RecordStoreNotFoundException(RecordStoreException):
 
 
 def _load_raw(name):
+    if name in memory_only:
+        return memory.get(name)
+    return disk_load(name)
+
+
+def disk_load(name):
+    """The device's own copy (files / localStorage), even of a memory-only store."""
     if _IS_WEB:
         import platform  # pygbag: platform.window is the JS window
         v = platform.window.localStorage.getItem("rms_" + name)
@@ -38,6 +50,9 @@ def _load_raw(name):
 
 
 def _save_raw(name, text):
+    if name in memory_only:
+        memory[name] = text
+        return
     if _IS_WEB:
         import platform
         platform.window.localStorage.setItem("rms_" + name, text)
@@ -93,10 +108,18 @@ class RecordStore:
 
     @staticmethod
     def deleteRecordStore(name):
-        if _IS_WEB:
-            import platform
-            platform.window.localStorage.removeItem("rms_" + name)
+        if name in memory_only:
+            memory.pop(name, None)
             return
-        p = os.path.join(config.SAVE_DIR, name + ".rms.json")
-        if os.path.isfile(p):
-            os.remove(p)
+        disk_delete(name)
+
+
+def disk_delete(name):
+    """Removes the device's own copy of a store (files / localStorage)."""
+    if _IS_WEB:
+        import platform
+        platform.window.localStorage.removeItem("rms_" + name)
+        return
+    p = os.path.join(config.SAVE_DIR, name + ".rms.json")
+    if os.path.isfile(p):
+        os.remove(p)

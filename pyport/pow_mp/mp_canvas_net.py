@@ -75,9 +75,15 @@ class NetMixin:
             NetThread.write_int(MpCanvas.invitation)
         elif MpCanvas.request_opcode in (1794, 1796):    # PORT-EXTRA: create / join an order
             NetThread.write_string(MpCanvas.input_text, 12)
+        elif MpCanvas.request_opcode in (1808, 1810):    # PORT-EXTRA: read / write the chat
+            self.chat_write_request()
         NetThread.send()
 
     def on_answer(self, answer):  # g.java:1888
+        if NetThread.last_opcode in (1812, 1815):     # PORT-EXTRA: chat pushes (mp_canvas_chat.py)
+            if NetThread.connected:
+                self.on_chat_answer(answer)
+            return
         MpCanvas.wait_started = False
         if MpCanvas.paused or (MpCanvas.pause_request == 1):
             MpCanvas.error_msg = 7
@@ -124,6 +130,7 @@ class NetMixin:
 
     def _on_hero_data(self, answer):  # answer 263
         if MpCanvas.answer_status == 1:
+            self.chat_reset()                 # PORT-EXTRA: another account keeps no chat of the last one
             MpCanvas.name = answer.read_string(8)
             MpCanvas.face = answer.read_s8()
             MpCanvas.level = answer.read_s16()

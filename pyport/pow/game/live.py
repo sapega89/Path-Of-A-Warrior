@@ -27,6 +27,7 @@ import config
 from pow.game.game_canvas import GameCanvas
 from pow.game.gfx import Gfx
 from pow.game.live_net import LiveNet
+from pow.game.live_online import Online
 from pow.game.structs import Item
 from pow.midp import system
 from pow.midp.graphics import Image
@@ -123,6 +124,9 @@ class Live(GameCanvas):
         if LiveScreen.is_registered():
             Live.reg_from_popup = False
             Live.screen.load_login()
+            if Online.enabled():             # PORT-EXTRA: no "Connect to Gamevil Live?"
+                self.connect_live()
+                return
             GameCanvas.popups.show(2)
             Live.close_target = 2
             return
@@ -149,7 +153,8 @@ class Live(GameCanvas):
     def tick_live(self):  # as.java:210-299  (every frame from ag.run)
         if Live.net is not None:
             Live.net.pump()
-        if Live.pending_request != -1:
+        Online.tick(self)                    # PORT-EXTRA: the background login (live_online.py)
+        if Live.pending_request != -1 and not Online.background:
             self.queue_request(Live.pending_request)
         if GameCanvas.popups.answered:
             GameCanvas.popups.answered = False
@@ -161,12 +166,7 @@ class Live(GameCanvas):
                 Live.request_redraw()
             elif i == 2:
                 if button == 0:
-                    GameCanvas.in_live = True
-                    GameCanvas.stop_sound()
-                    self.load_live_images()
-                    self.enter_live()
-                    self.open_waiting()
-                    self.ask_request(512)
+                    self.connect_live()
                 else:
                     self.leave_live()
                     Live.request_redraw()
@@ -214,6 +214,14 @@ class Live(GameCanvas):
                     Live.screen_redraw = True
         self._end_tick()
 
+    def connect_live(self):  # as.java:226-232  (popup 2 YES: into Gamevil Live, request 512)
+        GameCanvas.in_live = True
+        GameCanvas.stop_sound()
+        self.load_live_images()
+        self.enter_live()
+        self.open_waiting()
+        self.ask_request(512)
+
     def _end_tick(self):
         if Live.waiting:
             self.check_answer()
@@ -228,6 +236,13 @@ class Live(GameCanvas):
             b = 10 if Live.page > 0 else 8
         if b != -1:
             GameCanvas.popups.show(b)
+
+    @staticmethod
+    def quiet_request():
+        """PORT-EXTRA (config.ALWAYS_ONLINE): no "Connecting..." for a request over the connection
+        that is already open, unless its answer takes longer than QUIET_MS."""
+        return (Online.enabled() and LiveNet.connected
+                and system.currentTimeMillis() - Live.request_time < Online.QUIET_MS)
 
     def draw_connecting(self):  # as.java:355-364  ("Connecting..." over the screen)
         GameCanvas.popups.draw_popup_frame(96)
@@ -284,6 +299,9 @@ class Live(GameCanvas):
         Live.waiting = True
 
     def check_answer(self):  # as.java:415-438  (answer came / timeout)
+        if Online.background:                # PORT-EXTRA: the background 530, no screen to update
+            self.check_background_answer()
+            return
         if Live.answered:
             if not Live.in_answer:
                 GameCanvas.unlock_keys()
@@ -302,6 +320,19 @@ class Live(GameCanvas):
         if Live.answer_status == 1 and Live.request_in_flight == 530 and Live.login_request != 530:
             Live.request_in_flight = Live.login_request
             self.ask_request(Live.request_in_flight)
+
+    def check_background_answer(self):
+        """PORT-EXTRA: check_answer() for the background login: silent, keys never locked."""
+        if Live.answered:
+            if not Live.in_answer:
+                Live.waiting = False
+                Online.on_login_answer(Live.answer_op == 531 and Live.answer_status == 1 and LiveNet.connected)
+        elif system.currentTimeMillis() > Live.request_time + 30000:
+            if Live.net is not None:
+                Live.net.close()
+                Live.drop_net()
+            Live.waiting = False
+            Online.on_login_answer(False)
 
     def send_request(self, opcode):  # as.java:440-451
         Live.request_in_flight = opcode
@@ -416,16 +447,20 @@ class Live(GameCanvas):
         Live.net.send_request()
 
     def disconnect(self):  # as.java:578-591
-        LiveNet.connected = False
-        if Live.net is not None:
-            Live.net.close()
-            Live.drop_net()
+        if not (Online.enabled() and Online.wanted):   # PORT-EXTRA: else the connection stays
+            self.close_net()
         if GameCanvas.state == 11:
             Live.close_target = 3
             GameCanvas.popups.show(29)
         Live.busy = False
         Live.waiting = False
         GameCanvas.sleep(300)
+
+    def close_net(self):
+        LiveNet.connected = False
+        if Live.net is not None:
+            Live.net.close()
+            Live.drop_net()
 
     def on_connection_failed(self):  # as.java:593-599  (s.e(): the connection failed / broke)
         if Live.net is not None:
@@ -459,7 +494,8 @@ class Live(GameCanvas):
 
     def _on_login(self, answer, op):  # answer 531
         Live.session_id = Live.session_new
-        self.save_game()
+        if not Online.background:            # PORT-EXTRA: the background login saves nothing
+            self.save_game()
         answer.read_s8()
         answer.read_s8()
         result = answer.read_s8()
@@ -472,6 +508,9 @@ class Live(GameCanvas):
                 GameCanvas.popups.show(44)
             Live.close_target = 2
             Live.reg_from_popup = False
+            if Online.offer_open:            # PORT-EXTRA: the offered registration: back to the game
+                Online.on_registration_closed(True)
+                Live.close_target = 3
 
     def _on_status(self, answer, op):  # answer 513
         Live.flags[15] = answer.read_s8()
@@ -816,6 +855,8 @@ class Live(GameCanvas):
     }
 
     def on_error_answer(self, opcode, code, answer):  # as.java:992-1056  (error answers)
+        if Online.background:                # PORT-EXTRA: the background login fails silently
+            return
         if opcode == 531:
             if answer is None:
                 Live.show_error(code)
@@ -953,7 +994,8 @@ class Live(GameCanvas):
         return True
 
     def open_live_menu(self):  # as.java:1157-1176  (GAMEVIL LIVE menu)
-        Live.set_list_items("Trade|Warehouse|Safe|Management|", 20, 255)
+        # PORT-EXTRA: one hero kept on the server, so no Management (Save / Load User Data)
+        Live.set_list_items("Trade|Warehouse|Safe|" if Online.enabled() else "Trade|Warehouse|Safe|Management|", 20, 255)
         Live.list_cursor = Live.saved_0
         Live.list_top = Live.saved_1
         Live.clamp_list_scroll()
@@ -1512,6 +1554,8 @@ class Live(GameCanvas):
             Live.request_redraw()
 
     def leave_live(self):  # as.java:1970-1978  (leave Gamevil Live -> Game Menu)
+        if Online.offer_open:                # PORT-EXTRA: BACK on the offered registration = skip
+            Online.on_registration_closed(False)
         GameCanvas.state = 2
         self.disconnect()
         GameCanvas.redraw = 1

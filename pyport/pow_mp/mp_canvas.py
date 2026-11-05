@@ -7,6 +7,7 @@ import config
 from pow_mp import (
     mp_canvas_assets,
     mp_canvas_battle,
+    mp_canvas_chat,
     mp_canvas_draw,
     mp_canvas_input,
     mp_canvas_net,
@@ -16,6 +17,7 @@ from pow_mp import (
 )
 from pow_mp.mp_canvas_assets import AssetsMixin
 from pow_mp.mp_canvas_battle import BattleMixin
+from pow_mp.mp_canvas_chat import ChatMixin
 from pow_mp.mp_canvas_draw import DrawMixin
 from pow_mp.mp_canvas_input import InputMixin
 from pow_mp.mp_canvas_net import NetMixin
@@ -37,10 +39,11 @@ from pow_mp.rt import (
 
 
 class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, AssetsMixin, OptionsMixin,
-               OrderMixin, _Canvas):
+               OrderMixin, ChatMixin, _Canvas):
     # PORT-EXTRA auto-battle: Tab (key -100) turns it on / off; the round's 1027 then goes out after
     # a second with action AUTO_ACTION, and the server's bot chooses (pow_server/battle.py cpu_choice)
     auto_battle = config.AUTO_HUNT
+    sound_from_sp = None   # PORT-EXTRA: the single player's sound answer (mp_main.play), None = ask
     AUTO_ACTION = 255
     app_version = None  # g.java:25 String
     game = None  # g.java:26 m
@@ -69,6 +72,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
     popup_cursor = 0  # g.java:49 int
     popup_kind = 0  # g.java:50 int
     password_login = False  # g.java:51 boolean
+    sp_account = False  # PORT-EXTRA: user_id / password are the single player's (use_sp_account)
     quote_step = 0  # g.java:52 int
     letter_cursor = 0  # g.java:53 int
     exit_prompt = False  # g.java:54 boolean
@@ -310,6 +314,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
 
     def __init__(self, main):  # g.java:295
         _Canvas.__init__(self)
+        self.text_input = self.chat_text_key   # PORT-EXTRA: a PC keyboard types into the chat
         MpCanvas.midlet = main
         self.setFullScreenMode(True)
 
@@ -350,6 +355,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
         MpCanvas.font_green = Font("/0_font.png", 5, 11, 6, 0x41FF41)
         self.load_ui_images()
         self.load_options()
+        self.use_sp_account()           # PORT-EXTRA: the single player's account, no Login screen
         MpCanvas.game = MpGame(MpCanvas.midlet)
         MpCanvas.noop()
         MpCanvas.set_state(0)
@@ -498,6 +504,12 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
             Draw.fill_rect(MpCanvas.buffer_g, 0, 0, MpCanvas.canvas_w, MpCanvas.canvas_h, 0xFFFFFF)
         self.draw_buffer()
         Draw.draw_image(MpCanvas.screen_g, MpCanvas.logo_image, idiv(MpCanvas.canvas_w, 2), MpCanvas.logo_y, 17)
+        if MpCanvas.sound_from_sp is not None:
+            # PORT-EXTRA: started from the single player's Main Menu (mp_main.play): it already
+            # showed the logo and asked about the sound, so its answer goes straight on
+            MpCanvas.logo_image = None
+            self.answer_sound_prompt(MpCanvas.sound_from_sp)
+            return
         if (system.currentTimeMillis() - MpCanvas.logo_time) <= 3000:
             return
         MpCanvas.logo_image = None
@@ -874,19 +886,21 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
                 i_face = i_face + 1
             self.free_battle_images()
             MpCanvas.title = Consts.texts[9]
-            MpCanvas.menu_size = 7         # PORT-EXTRA: 6 = Order (pow_mp/mp_canvas_order.py)
+            MpCanvas.menu_size = 8         # PORT-EXTRA: 6 = Order, 7 = Chat (mp_canvas_order / _chat)
             MpCanvas.order_invite = False
             self.draw_menu_icons()
         self.draw_buffer()
         item = MpCanvas.cursor_stack[MpCanvas.stack_depth]
         Draw.draw_image(MpCanvas.screen_g, MpCanvas.mpic_images[item], (MpCanvas.center_x - 40), (MpCanvas.center_y - 59), 0)
-        label = Consts.main_menu[item] if item < 6 else mp_canvas_order.TEXTS[0]
+        label = Consts.main_menu[item] if item < 6 else (mp_canvas_order.TEXTS[0] if item == 6 else mp_canvas_chat.TEXTS[0])
         self.draw_button(MpCanvas.screen_g, label, (MpCanvas.center_x - 39), (MpCanvas.center_y + 21), 78, 17, False, True)
+        self.draw_chat_badge()             # PORT-EXTRA: unread order / private messages
         MpCanvas.draw_menu_cursor(MpCanvas.screen_g)
         if MpCanvas.popup_shown:
             self.draw_exit_confirm(MpCanvas.screen_g)
             return
-        self.draw_softkeys(5, 2)
+        # PORT-EXTRA: no LOGIN (another account) with the single player's account
+        self.draw_softkeys(-1 if MpCanvas.sp_account else 5, 2)
 
     def _paint_duel_menu(self):  # state 11
         if MpCanvas.state_ticks < 2:
@@ -1323,7 +1337,7 @@ def _static_init():
     MpCanvas.timer_ticks = 0
     MpCanvas.screen_g = None
     MpCanvas.rng = Random()
-    MpCanvas.menu_size = 7
+    MpCanvas.menu_size = 8
     MpCanvas.key = (-999)
     MpCanvas.font_white = None
     MpCanvas.font_orange = None
@@ -1388,7 +1402,7 @@ def _static_init():
     MpCanvas.turn_hps = [0] * (12)
     MpCanvas.turn_bytes = [0] * (44)
     MpCanvas.tick_ms = 100
-    MpCanvas.mpic_images = [None] * (7)   # PORT-EXTRA: mpic6 = Order
+    MpCanvas.mpic_images = [None] * (8)   # PORT-EXTRA: mpic6 = Order, mpic7 = Chat
     MpCanvas.face_images = [None] * (4)
     MpCanvas.ui_images = [None] * (57)
     MpCanvas.act_images = [None] * (18)
@@ -1448,7 +1462,7 @@ def _late_imports():
 
 _LATE_NAMES = ("SpriteFrames", "PlayerPool", "NetThread", "ResReader", "Consts", "Draw", "Gfx", "Font", "Answer", "FrameWriter", "FrameReader", "MpGame")
 _PARTS = (mp_canvas_draw, mp_canvas_battle, mp_canvas_net, mp_canvas_input, mp_canvas_screens, mp_canvas_assets,
-          mp_canvas_options, mp_canvas_order)
+          mp_canvas_options, mp_canvas_order, mp_canvas_chat)
 for _part in _PARTS:
     _part.MpCanvas = MpCanvas
 # PORT-EXTRA: the Order window's states and answers (pow_mp/mp_canvas_order.py)
@@ -1456,3 +1470,7 @@ MpCanvas._PAINT_BY_STATE.update(OrderMixin.PAINT)
 MpCanvas._KEYS_BY_STATE.update(OrderMixin.KEYS)
 MpCanvas._KEYS_BY_STATE[mp_canvas_order.MEMBER] = InputMixin._keys_duel_menu
 MpCanvas._ANSWER_BY_OPCODE.update(OrderMixin.ANSWERS)
+# PORT-EXTRA: the Chat window's states and answers (pow_mp/mp_canvas_chat.py)
+MpCanvas._PAINT_BY_STATE.update(ChatMixin.PAINT)
+MpCanvas._KEYS_BY_STATE.update(ChatMixin.KEYS)
+MpCanvas._ANSWER_BY_OPCODE.update(ChatMixin.ANSWERS)

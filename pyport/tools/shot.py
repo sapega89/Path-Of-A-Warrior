@@ -17,8 +17,13 @@ list of steps, one per line:
     release KEY     let the held key go
     mousedown X Y   left button pressed and held at X Y; mouseup = let it go
     shot NAME       save the last frame as NN_NAME.png
-    multiplayer N NAME  (before the YES of Main Menu > Multiplayer) once the game has quit, run
-                    the Multiplayer game as main.py does, N frames, and save the last as NN_NAME.png
+    multiplayer N NAME [BACK]  (before the YES of Main Menu > Multiplayer) once the game has
+                    quit, run the Multiplayer game as main.py does, N frames, and save the last as
+                    NN_NAME.png; with BACK its Exit then starts the single player again as main.py
+                    does (straight at the Main Menu) and saves its 5th frame as NN_BACK.png
+    account ID PWD  TEST-ONLY: register the Gamevil Live UserID / password on this device
+    logins N        TEST-ONLY: stop with an error if the game sent more than N background logins
+    online yes|no   TEST-ONLY: stop with an error unless the background login (ALWAYS_ONLINE) is that
     gold N          TEST-ONLY: set the hero's gold (ag.cz.E) to N, to try the Blacksmith
     generals N      TEST-ONLY: befriend the first N generals of the table (10, 30, 50... points)
                     and allow one visit (cz.S = 1), as after a mission
@@ -58,6 +63,8 @@ os.environ.setdefault("POW_AUTO_BUTTON", "0")   # the AUTO button only while on 
 os.environ.setdefault("POW_AUTO_AIM_HARD", "0")   # the original: no auto-aim on Hard
 os.environ.setdefault("POW_HOLD_TO_MOVE", "0")   # keys are taps, as on the phone (env line to change)   # Random() without the clock: repeatable runs
 os.environ.setdefault("POW_SKILL_BAR", "0")   # the original HUD (env line to turn the skill bar on)
+os.environ.setdefault("POW_ALWAYS_ONLINE", "0")   # Gamevil Live as in the original: connect on entry
+os.environ.setdefault("POW_SERVER_ONLY_SAVE", "0")   # the save on the device (no server in the scenarios)
 os.environ.setdefault("POW_SKILL_CARD", "0")  # the original description strip of Skills
 
 
@@ -206,6 +213,29 @@ def run(scenario, out, every=False):
                     raise SystemExit(f"expect {field} {op} {val}: it is {have}")
                 print(f"expect {field} {op} {val}: {have}")
                 continue
+            if cmd == "account":           # TEST-ONLY: account ID PWD - the Gamevil Live registration
+                uid, pwd = arg.split()         # (RecordStore "gamevil_pow_regist", m.java:287-305)
+                from pow.midp.rms import RecordStore
+                rec = bytearray(28)
+                rec[0:len(pwd)] = pwd.encode()
+                rec[12:12 + len(uid)] = uid.encode()
+                rs = RecordStore.openRecordStore("gamevil_pow_regist", True)
+                if rs.getNumRecords() == 0:
+                    rs.addRecord(rec, 0, 28)
+                rs.setRecord(1, rec, 0, 28)
+                continue
+            if cmd == "logins":            # TEST-ONLY: logins N - stop if more than N background
+                from pow.game.live_online import Online
+                if Online.attempts > int(arg):
+                    raise SystemExit(f"logins {arg}: {Online.attempts} sent")
+                print(f"logins {arg}: {Online.attempts}")
+                continue
+            if cmd == "online":            # TEST-ONLY: online yes|no - stop unless the background
+                from pow.game.live_online import Online
+                if Online.logged_in != (arg == "yes"):
+                    raise SystemExit(f"online {arg}: logged_in is {Online.logged_in}")
+                print(f"online {arg}: ok")
+                continue
             if cmd == "skilllv":           # TEST-ONLY: skilllv ID LV - skill ID (12..30) at level LV
                 sid, lv = map(int, arg.split())
                 GameCanvas.hero.skill_levels[sid - 12] = lv
@@ -247,9 +277,13 @@ def run(scenario, out, every=False):
     if state.get("mp"):                    # main.py: the Multiplayer game in the same window
         if not midlet.to_multiplayer:
             raise SystemExit("multiplayer: the game did not ask for the Multiplayer game")
+        import main as main_py
         import mp_main
+        from pow.midp import canvas
         from pow_mp.midlet import Midlet as MPMain
         frames, name = int(state["mp"][0]), state["mp"][1]
+        back = state["mp"][2] if len(state["mp"]) > 2 else None
+        keymap = dict(canvas.KEYMAP)
         mp = {"left": frames}
 
         def mp_frame(screen):
@@ -263,10 +297,35 @@ def run(scenario, out, every=False):
 
         display.frame_hooks.append(mp_frame)
         try:
-            if asyncio.run(mp_main.play()) is not True:
+            if asyncio.run(mp_main.play(sound_on=GameCanvas.sound_on)) is not True:
                 raise SystemExit("multiplayer: mp_main.play() did not return to the single player")
         finally:
             display.frame_hooks.remove(mp_frame)
+        if back:                           # main.py: the single player again, at the Main Menu
+            canvas.KEYMAP.clear()
+            canvas.KEYMAP.update(keymap)
+            sound_on = GameCanvas.sound_on
+            main_py.fresh_games()
+            from pow.game.game_canvas import GameCanvas as SP
+            from pow.game.midlet import Midlet as SPMain
+            sp = {"left": 5}
+
+            def sp_frame(screen):
+                sp["left"] -= 1
+                if sp["left"] <= 0:
+                    state["n"] += 1
+                    fn = "%02d_%s.png" % (state["n"], back)
+                    pygame.image.save(screen, str(out / fn))
+                    saved.append(fn)
+                    SP.running = False
+
+            again = SPMain()
+            again.resume_sound = sound_on
+            display.frame_hooks.append(sp_frame)
+            try:
+                asyncio.run(again.startApp())
+            finally:
+                display.frame_hooks.remove(sp_frame)
     shutil.rmtree(save_dir, ignore_errors=True)
     return saved, state["frame"]
 

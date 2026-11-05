@@ -1,0 +1,23 @@
+env POW_ALWAYS_ONLINE=1
+save zero
+# PORT-EXTRA "always online": a stored account with a wrong password. The server refuses the
+# background login (531 -1) but keeps the connection; the game stays silent and does not send a
+# 530 every frame: the next try waits (live_online.py RETRY_MS).
+account TEST 1234
+wait 25
+key FIRE           # sound: Yes
+wait 2
+key FIRE           # title -> Main Menu
+wait 2
+key FIRE           # Continue: TEST / 1234 is registered on the server
+wait 4
+online yes
+account TEST 9999
+key DOWN           # Game Menu keeps working
+wait 6
+wait 2100          # past the keepalive (240 s at 120 ms a frame): the 530 with 9999 is refused
+online no
+logins 3
+wait 60
+logins 3
+shot game_menu_no_popup
