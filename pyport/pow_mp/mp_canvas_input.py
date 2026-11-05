@@ -127,7 +127,7 @@ class InputMixin:
                 return
             MpCanvas.popup_shown = False
             return
-        if MpCanvas.key_in == (-6):
+        if MpCanvas.key_in == (-6) and not MpCanvas.sp_account:   # PORT-EXTRA: one account
             MpCanvas.disconnect()
             MpCanvas.popup_kind = 0
             MpCanvas.relogin_to_menu = True
@@ -532,7 +532,8 @@ class InputMixin:
             MpCanvas.set_state(4)
             return
         MpCanvas.loading_msg = 0
-        MpCanvas.password_login = False
+        # PORT-EXTRA: the single player's account logs in with its password (278) every time
+        MpCanvas.password_login = MpCanvas.sp_account
         MpCanvas.set_state(10000)
 
     def _keys_login(self, key):  # state 2

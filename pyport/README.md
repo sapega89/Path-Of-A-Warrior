@@ -357,6 +357,12 @@ Gamevil Live?», «Connecting...», логін 530) і відключалась,
   `always_online*.keys` вмикають 1. Нові команди `shot.py`: `account ID PWD` (реєстрація на цьому
   пристрої) і `online yes|no` (перевірка фонового логіну).
 
+**Один акаунт і для мультиплеєра** (PORT-EXTRA, просив Andrey; `MpCanvas.use_sp_account`): з
+`ALWAYS_ONLINE` мультиплеєр бере UserID і пароль реєстрації Gamevil Live одиночної гри
+(`gamevil_pow_regist`): екрана Login немає, заставка одразу входить (278, потім 262), а в Main Menu
+немає софт-клавіші LOGIN (інший акаунт). Без цієї реєстрації — як в оригіналі. Сценарій
+`tools/scenarios/mp_sp_account.keys` (`sp_account ID PWD` у `tools/mp_shot.py`).
+
 ### Сейв на сервері (PORT-EXTRA, просив Andrey)
 
 Сейв одиночної гри, як і раніше, лежить у `~/.path_of_a_warrior` (ПК) або в localStorage
