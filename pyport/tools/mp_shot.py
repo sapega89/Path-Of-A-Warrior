@@ -9,6 +9,8 @@ Steps: wait N | key NAME [COUNT] (UP DOWN LEFT RIGHT FIRE LSOFT RSOFT 0-9 STAR P
        watch STATE NAME [FRAMES] (one shot FRAMES after first entering STATE) | digits 1234 (number keys one per tick) |
        bot_invite MODE (the scripted player RIVAL invites TEST: 0/1 Challenge, 2 mission) |
        bot_order NAME [N] (RIVAL creates the order NAME; N offline members MEMBERA.. join it) |
+       sp_account ID PWD (before the game starts: the single player's Gamevil Live registration
+       on this device, which logs in to the Multiplayer game too - PORT-EXTRA use_sp_account) |
        # comment
 The server runs inside the game (POW_MP_SERVER=local) with a fresh temporary save folder.
 """
@@ -45,6 +47,18 @@ def parse(path):
     return steps
 
 
+def sp_account(uid, pwd):
+    """The single player's "gamevil_pow_regist" record (m.java:287-305: password, then UserID)."""
+    from pow.midp.rms import RecordStore
+    rec = bytearray(28)
+    rec[0:len(pwd)] = pwd.encode()
+    rec[12:12 + len(uid)] = uid.encode()
+    rs = RecordStore.openRecordStore("gamevil_pow_regist", True)
+    if rs.getNumRecords() == 0:
+        rs.addRecord(rec, 0, 28)
+    rs.setRecord(1, rec, 0, 28)
+
+
 def run(steps, out, every=False, save_dir=None):
     import pygame
 
@@ -65,6 +79,9 @@ def run(steps, out, every=False, save_dir=None):
     out.mkdir(parents=True)
     system.use_virtual_clock()
     display.init(headless=True)
+    for cmd, arg in steps:
+        if cmd == "sp_account":
+            sp_account(*arg.split())
     from pow_mp.midlet import Midlet
     midlet = Midlet()
     steps = list(steps)
@@ -164,6 +181,8 @@ def run(steps, out, every=False, save_dir=None):
                     srv.storage.save(ch)
                     doc["members"].append(uid)
                 srv.storage.live_put("order:" + name, doc)
+                continue
+            if cmd == "sp_account":              # done before the game started
                 continue
             if cmd == "digits":
                 st["queue"] = [48 + int(ch) for ch in arg]

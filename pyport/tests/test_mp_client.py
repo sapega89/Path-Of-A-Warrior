@@ -27,6 +27,28 @@ def test_scenario_runs(name, tmp_path):
     assert saved and frames > 30
 
 
+def test_single_player_account_logs_in_without_the_login_screen(tmp_path):
+    """PORT-EXTRA use_sp_account: the Gamevil Live registration of the single player is the
+    Multiplayer account: the title logs in at once, no Login screen (state 2) on the way."""
+    mp_shot = _mp_shot()
+    states = set()
+    from pow.midp import display
+
+    def seen(_screen):
+        from pow_mp.mp_canvas import MpCanvas
+        states.add(MpCanvas.state)
+    display.frame_hooks.append(seen)
+    try:
+        saved, _ = mp_shot.run(mp_shot.parse(SCEN / "mp_sp_account.keys"), tmp_path / "out",
+                               save_dir=str(tmp_path / "rms"))
+    finally:
+        display.frame_hooks.remove(seen)
+    from pow_mp.net.transport import LocalTransport
+    assert "ANDREY" in LocalTransport._server.online
+    assert 2 not in states and 10 in states
+    assert saved[-1].endswith("main_menu_no_login.png")
+
+
 def test_login_registers_on_local_server(tmp_path):
     mp_shot = _mp_shot()
     mp_shot.run(mp_shot.parse(SCEN / "mp_menu.keys"), tmp_path / "out", save_dir=str(tmp_path / "rms"))

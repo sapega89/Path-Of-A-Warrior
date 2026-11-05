@@ -69,6 +69,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
     popup_cursor = 0  # g.java:49 int
     popup_kind = 0  # g.java:50 int
     password_login = False  # g.java:51 boolean
+    sp_account = False  # PORT-EXTRA: user_id / password are the single player's (use_sp_account)
     quote_step = 0  # g.java:52 int
     letter_cursor = 0  # g.java:53 int
     exit_prompt = False  # g.java:54 boolean
@@ -350,6 +351,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
         MpCanvas.font_green = Font("/0_font.png", 5, 11, 6, 0x41FF41)
         self.load_ui_images()
         self.load_options()
+        self.use_sp_account()           # PORT-EXTRA: the single player's account, no Login screen
         MpCanvas.game = MpGame(MpCanvas.midlet)
         MpCanvas.noop()
         MpCanvas.set_state(0)
@@ -886,7 +888,8 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
         if MpCanvas.popup_shown:
             self.draw_exit_confirm(MpCanvas.screen_g)
             return
-        self.draw_softkeys(5, 2)
+        # PORT-EXTRA: no LOGIN (another account) with the single player's account
+        self.draw_softkeys(-1 if MpCanvas.sp_account else 5, 2)
 
     def _paint_duel_menu(self):  # state 11
         if MpCanvas.state_ticks < 2:

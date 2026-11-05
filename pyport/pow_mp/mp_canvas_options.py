@@ -4,6 +4,7 @@ A mixin of MpCanvas (pow_mp/mp_canvas.py); the methods keep their `# g.java:FROM
 comments. The module names below are set by mp_canvas.py: `MpCanvas` once the class exists,
 the others by its _late_imports().
 """
+import config
 from pow_mp.rt import (
     ByteArrayInputStream,
     DataInputStream,
@@ -44,6 +45,28 @@ class OptionsMixin:
             recordStore.setRecord(1, record, 0, len(record))
         except Exception:
             return
+
+    @staticmethod
+    def use_sp_account():
+        """PORT-EXTRA (asked by Andrey, config.ALWAYS_ONLINE): one account for the whole game.
+        The UserID / password of the single player's Gamevil Live registration
+        ("gamevil_pow_regist", pow/game/cloud_save.read_login) log in to the Multiplayer game too,
+        so its Login screen (state 2) is not shown; the title logs in with 278 at once. Without
+        that registration the Multiplayer game asks as in the original."""
+        MpCanvas.sp_account = False
+        if not config.ALWAYS_ONLINE:
+            return False
+        try:
+            from pow.game.cloud_save import read_login
+            login = read_login()
+        except Exception as ex:
+            print(f"single player account: {ex!r}")
+            return False
+        if login is None:
+            return False
+        MpCanvas.user_id, MpCanvas.password = login
+        MpCanvas.sp_account = True
+        return True
 
     def load_options(self):  # g.java:4774
         record = [0] * (28)
