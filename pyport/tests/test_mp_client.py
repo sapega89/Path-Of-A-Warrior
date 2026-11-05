@@ -122,3 +122,23 @@ def test_order_window_team_duel_and_leave(tmp_path):
     assert test.order == "" and rival.order == "WOLF"
     assert orders.get(st, "WOLF")["members"] == ["RIVAL"]
     assert test.wins + test.losses == 1 and test.wins == rival.wins and test.losses == rival.losses
+
+
+def test_chat_private_answer_and_lobby(tmp_path):
+    """PORT-EXTRA: the Chat window: RIVAL's private message waits (badge, Private tab), TEST
+    answers on the keyboard grid and the PC keyboard, RIVAL answers back, then TEST writes in
+    the Lobby (40 characters at most)."""
+    mp_shot = _mp_shot()
+    saved, _ = mp_shot.run(mp_shot.parse(SCEN / "mp_chat.keys"), tmp_path / "out",
+                           save_dir=str(tmp_path / "rms"))
+    assert saved[-1].endswith("no_order.png")
+    from pow_mp.mp_canvas import MpCanvas
+    from pow_mp.net.transport import LocalTransport
+    from pow_server import chat
+    st = LocalTransport._server.storage
+    pm = chat.history(st, chat.pm_key("TEST", "RIVAL"))["rows"]
+    assert [r[0] for r in pm] == ["RIVAL", "TEST", "RIVAL"]
+    assert pm[1][2] == "Hi! Ready when you are." and pm[2][2] in chat.BOT_LINES
+    lobby = chat.history(st, "chat:lobby")["rows"]
+    assert lobby[-1] == ["TEST", "TEST", "Hello everyone, I am new here and ready"]
+    assert MpCanvas.chat_unread == [0, 0, 0] and MpCanvas.chat_no_order
