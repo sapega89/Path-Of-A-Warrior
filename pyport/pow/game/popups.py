@@ -96,12 +96,17 @@ class Popups(GameCanvas):
                                     # platformRequest(ag.bm / ag.bn): the browser is not opened in the port
                                     if self.popup_id == 41:
                                         print("platformRequest:", GameCanvas.more_games_url)
-                                    else:
-                                        # PORT-EXTRA: the Multiplayer jar is part of the port, so
-                                        # main.py starts it after the game exits (no download)
-                                        GameCanvas.midlet.to_multiplayer = True
-                                    GameCanvas.midlet.destroyApp(True)
-                                    GameCanvas.midlet.notifyDestroyed()
+                                        GameCanvas.midlet.destroyApp(True)
+                                        GameCanvas.midlet.notifyDestroyed()
+                                        return -1
+                                    # PORT-EXTRA: the Multiplayer screens are part of this game:
+                                    # Continue, then Gamevil Live > Multiplayer opens by itself
+                                    # (live_online.Online.mp_pending); nothing without a save
+                                    from pow.game.live_online import Online
+                                    if GameCanvas.has_save():
+                                        Online.mp_pending = True
+                                        GameCanvas.menu[1] = 0
+                                        GameCanvas.menus._fire_title_menu(GameCanvas.menu)
                                     return -1
                                 if GameCanvas.menu[1] == 1:
                                     self.start_new_game()

@@ -173,15 +173,6 @@ class DrawMixin:
     def rgb(r, g, b):  # ag.java:2857-2860
         return (r & 0xFF) << 16 | (g & 0xFF) << 8 | b & 0xFF
 
-    def draw_outro(self):  # ag.java:3011-3019  (outro picture)
-        if GameCanvas.frame in {2, 5}:
-            GameCanvas.stop_sound()
-        GameCanvas.fill_screen(0)
-        image = self.load_image(GameCanvas.scr_ui.get(0))
-        img_w = image.getWidth()
-        GameCanvas.draw_region(GameCanvas.screen_cx - img_w // 2, GameCanvas.screen_cy - 10, img_w, 20, image, 0, 0)
-        GameCanvas.draw_region(GameCanvas.screen_cx - img_w // 2, GameCanvas.screen_h - 24, img_w, 22, image, 0, 20)
-
     @staticmethod
     def draw_auto_badge():
         """PORT-EXTRA (pow/game/autopilot.py): the AUTO button in the bottom-left corner of the map

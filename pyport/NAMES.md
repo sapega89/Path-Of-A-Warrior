@@ -44,7 +44,7 @@
 |---|---|---|
 | `ag` | `GameCanvas` | головний Canvas: цикл гри, стан, спільні допоміжні методи; усі статичні поля |
 | поля `ag` | `GameFields` | поля `ag.java` з початковими значеннями (база `GameCanvas`) |
-| `af` | `Boot` | лого → «sound enabled?» → титул |
+| `af` | `Boot` | «sound enabled?» → титул (лого прибрано, PORT-EXTRA) |
 | `e` | `Menus` | екрани меню, створення героя, Blacksmith |
 | `c` | `MapScene` | карта: завантаження, кімнати, герой, вороги, історія (пролог/епілог) |
 | `ar` | `MapEngine` | тік карти й бій: ШІ ворогів, стріли, шкода, пауза-меню |
@@ -568,7 +568,8 @@ Java-ім'я методу (з суфіксом сигнатури, напр. `J_
 | `c_TII` | `draw_view_text_centred` | `d_TII` | `draw_view_text` |
 | `a_IIIIZ` | `draw_box` | `a_IIIIIIIZ` | `draw_frame_box` |
 | `k_III` | `rgb` | `aq` | `has_save` |
-| `as_` | `start_exit` | `at` | `draw_outro` |
+| `as_` | `start_exit` | `at` | — (outro прибрано, PORT-EXTRA) |
+| — (PORT-EXTRA) | `suspend` / `loop` | — | цикл можна зупинити й продовжити (мультиплеєр у тому ж вікні, `main.py`) |
 | `a_ABII` | `read_utf` | `h_II` | `draw_softkeys` |
 | `l_III` | `set_color` | `f_IIII` | `draw_line` |
 | `aA` | `load_hero_images` | `K_I` | `load_frames` |

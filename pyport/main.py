@@ -8,11 +8,13 @@
                                      Gamevil Live account; off / ws(s)://host:port/save;
                                      browser: index.html?save=...
 
-Main Menu > Multiplayer > YES ends the single player and starts the Multiplayer game in the same
-window and process (mp_main.play; the server choice is POW_MP_SERVER / index.html?server=...),
-without its logo and sound question. Its Exit comes back here: the single player starts again
-from a clean state (its modules are imported anew, as when the phone started the other jar), but
-straight at the Main Menu: no logo, sound question or title, no new process or page reload.
+Gamevil Live > Multiplayer (and Main Menu > Multiplayer > YES, which is Continue + that) suspends
+the single player with everything in memory and runs the Multiplayer screens (pow_mp) in the
+same window and process (mp_main.play; the server choice is POW_MP_SERVER /
+index.html?server=...), without their logo, sound question, exit popup and outro. Their Exit
+comes back here: the single player goes on in the Gamevil Live menu, and what the battles
+earned goes to the hero (Live.after_multiplayer). Only the pow_mp modules are imported anew on
+every visit (their static fields start clean, as when the phone started the other jar).
 """
 import asyncio
 import os
@@ -82,18 +84,40 @@ def live_from_page():
 _KEEP = ("pow.game.cloud_save", "pow_mp.net", "pow_mp.net.transport")
 
 
-def fresh_games():
-    """PORT-EXTRA: forget the single-player and Multiplayer modules, so that the next Midlet
-    starts with the static fields of a new JVM (what the process restart used to give)."""
+def fresh_games(single_player=True):
+    """PORT-EXTRA: forget the Multiplayer modules (and the single-player ones too, for a restart
+    with a newer hero from the server), so that they start with the static fields of a new JVM
+    (what the process restart used to give)."""
     kept = {m: sys.modules[m] for m in _KEEP if m in sys.modules}
+    roots = ("pow.game", "pow_mp") if single_player else ("pow_mp",)
     for m in list(sys.modules):
-        if m in ("pow.game", "pow_mp") or m.startswith(("pow.game.", "pow_mp.")):
+        if m in roots or m.startswith(tuple(r + "." for r in roots)):
             del sys.modules[m]
     sys.modules.update(kept)
     import importlib
     for name, mod in kept.items():         # `from pow.game import cloud_save` finds the kept one
         parent, _, leaf = name.rpartition(".")
         setattr(importlib.import_module(parent), leaf, mod)
+
+
+async def multiplayer():
+    """PORT-EXTRA: the Multiplayer screens while the single player waits in memory (Gamevil Live
+    > Multiplayer). False when the window was closed there."""
+    import mp_main
+    from pow.game.game_canvas import GameCanvas
+    from pow.midp import canvas
+    keymap = dict(canvas.KEYMAP)                 # the MP number row types digits
+    try:
+        back = await mp_main.play(sound_on=GameCanvas.sound_on, embedded=True)
+        rewards = mp_main.take_rewards()
+    finally:
+        canvas.KEYMAP.clear()
+        canvas.KEYMAP.update(keymap)
+    fresh_games(single_player=False)         # pow_mp starts clean on the next visit
+    if not back:
+        return False
+    GameCanvas.live.after_multiplayer(rewards)
+    return True
 
 
 async def main():
@@ -112,26 +136,21 @@ async def main():
         while True:
             from pow.game.game_canvas import GameCanvas
             from pow.game.midlet import Midlet
-            if cloud_save.sync is not None:  # a newer hero taken during the Multiplayer game:
-                cloud_save.sync.restart_requested = False   # the game below loads it anyway
+            if cloud_save.sync is not None:
+                cloud_save.sync.restart_requested = False   # the game below loads the newer hero
             midlet = Midlet()
             midlet.resume_sound = resume_sound
             await midlet.startApp()
+            while GameCanvas.suspended:    # Gamevil Live > Multiplayer: the screens of pow_mp
+                if not await multiplayer():
+                    return                 # the window was closed there
+                await Midlet.canvas.loop()
             await cloud_save.flush()
             if Midlet.canvas is not None and Midlet.canvas.quit_requested:
                 break                      # the window was closed
-            if cloud_save.sync is not None and cloud_save.sync.restart_requested:
-                pass                       # the server's hero replaced the one in memory: load it
-            elif midlet.to_multiplayer:
-                import mp_main
-                from pow.midp import canvas
-                keymap = dict(canvas.KEYMAP)                 # the MP number row types digits
-                if not await mp_main.play(sound_on=GameCanvas.sound_on):
-                    break
-                canvas.KEYMAP.clear()
-                canvas.KEYMAP.update(keymap)
-            else:
+            if not (cloud_save.sync is not None and cloud_save.sync.restart_requested):
                 break                      # its own Exit
+            # the server's hero replaced the one in memory: the game starts again and loads it;
             # the sound question answered (state 0 = the boot screens): not asked again
             resume_sound = GameCanvas.sound_on if GameCanvas.state != 0 else resume_sound
             fresh_games()

@@ -10,7 +10,7 @@ class Boot(GameCanvas):
 
     def __init__(self):  # af.java:2, 8-11
         super().__init__(GameCanvas.midlet)
-        self.logo = self.load_image("logo1")    # Image a = d("logo1");   (instance initializer)
+        self.logo = None     # PORT-EXTRA (asked by the player): no logo screen ("logo1", 2.5 s)
         Boot.start_time = system.currentTimeMillis()
 
     def draw_boot(self):  # af.java:15-36  (paint)
@@ -18,15 +18,11 @@ class Boot(GameCanvas):
         if Boot.step == 0 and GameCanvas.midlet.resume_sound is not None:
             self.resume()
             return
-        if Boot.step == 0:
-            GameCanvas.fill_screen(16777215)
-            if self.logo is not None:
-                Gfx.draw_image_anchored(self.logo, GameCanvas.screen_cx, GameCanvas.screen_cy, 3)
-            if system.currentTimeMillis() - Boot.start_time > 2500:
-                self.logo = None
-                Boot.step = 1
-                GameCanvas.popups.setup_popup(40)
-                return
+        if Boot.step == 0:                   # PORT-EXTRA: the sound question at once
+            GameCanvas.fill_screen(0)
+            Boot.step = 1
+            GameCanvas.popups.setup_popup(40)
+            return
         else:
             if Boot.step == 1:
                 GameCanvas.fill_screen(0)

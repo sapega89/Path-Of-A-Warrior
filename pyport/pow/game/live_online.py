@@ -42,6 +42,8 @@ class Online:
     retry_ms = RETRY_MS
     last_sent = 0           # ms: the last background 530
     attempts = 0            # background 530s sent (tools/shot.py `logins`)
+    mp_pending = False      # Main Menu > Multiplayer > YES: open Gamevil Live > Multiplayer on
+                            # the next free Game Menu frame (popups.py)
 
     @staticmethod
     def enabled():
@@ -118,6 +120,11 @@ class Online:
                 Online.offer = False
                 Online.offer_open = True
                 live.open_registration()
+            return
+        if Online.mp_pending and Online._game_menu_free():   # Main Menu > Multiplayer > YES
+            Online.mp_pending = False
+            Live.auto_mp = True
+            live.open_live()
             return
         if not LiveScreen.is_registered():
             return

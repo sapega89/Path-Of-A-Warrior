@@ -31,18 +31,22 @@ def server_from_page():
         print(f"POW MP server from the page address: {ex!r}")
 
 
-async def play(sound_on=None):
+async def play(sound_on=None, embedded=False):
     """Runs the Multiplayer game on an open display. Returns True when it ended with its own
     Exit (main.py then goes back to the single player), False when the window was closed.
     sound_on: the single player's answer to "sound enabled?" (main.py), so the Multiplayer
-    game skips its logo and asks nothing; None = its own logo and question."""
+    game skips its logo and asks nothing; None = its own logo and question.
+    embedded: a part of the single player (Gamevil Live > Multiplayer): no exit popup and no
+    outro, and the rewards of the battles wait in memory (take_rewards) for its hero."""
     server_from_page()
     import pygame
     pygame.display.set_caption("Path of a Warrior Multiplayer")
+    from pow_mp import sp_bridge
     from pow_mp.midlet import Midlet
     from pow_mp.mp_canvas import MpCanvas
     from pow_mp.net_thread import NetThread
     MpCanvas.sound_from_sp = sound_on
+    MpCanvas.embedded = sp_bridge.embedded = embedded
     midlet = Midlet()
     try:
         await midlet.startApp()
@@ -52,6 +56,12 @@ async def play(sound_on=None):
             MpCanvas.game.stop_music()     # the outro stops it; a closed window does not
         pygame.display.set_caption("Path of a Warrior")
     return not Midlet.canvas.quit_requested
+
+
+def take_rewards():
+    """PORT-EXTRA: the rewards kept by play(embedded=True), for Live.after_multiplayer."""
+    from pow_mp import sp_bridge
+    return sp_bridge.take_rewards()
 
 
 async def main():

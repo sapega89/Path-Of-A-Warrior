@@ -27,9 +27,9 @@ class Midlet:
         if config.CHEAT:   # PORT-EXTRA config.CHEAT: the manifest property GAMEVIL_CHEAT: TRUE
             self.props["GAMEVIL_CHEAT"] = "TRUE"
         self.destroyed = False
-        self.to_multiplayer = False   # PORT-EXTRA: Main Menu > Multiplayer > YES (l.py, main.py)
-        self.resume_sound = None      # PORT-EXTRA: back from the Multiplayer game (main.py): the
-                                      # sound answer given before, the boot goes to the Main Menu
+        self.resume_sound = None      # PORT-EXTRA: the game started again in the same process
+                                      # (main.py, a newer hero from the server): the sound answer
+                                      # given before, the boot goes to the Main Menu
 
     def getAppProperty(self, key):
         return self.props.get(key)
