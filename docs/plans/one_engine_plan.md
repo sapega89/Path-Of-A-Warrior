@@ -123,7 +123,7 @@ Multiplayer. Малювання, стани (0…300), поля й методи 
 `pow/midp/transport.py`; `online_session.py` (стан 13, `enter` / `frame` / `leave`), один кадр = `online/game.py frame`.
 Статичні поля `MpCanvas` і далі чистяться перезавантаженням модулів `pow.game.online` при кожному
 вході (`online_session._fresh`): простіше й надійніше за ручний `reset()`. Титул «press any key»
-пропускається (рішення гравця).
+лишається (гравцеві подобається).
 
 ---
 

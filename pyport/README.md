@@ -326,7 +326,7 @@ Game Menu → **Management** (Attributes, Skills, Gear, Inventory, Assign Items)
 «завжди онлайн» немає): екрани мультиплеєра стають станом тієї ж канви й того ж циклу
 (`GameCanvas.state` 13, `pow/game/online_session.py`): `GameCanvas.loop` крутить по одному кадру
 `MpCanvas` (`online/game.py frame`, те, що робив `g.c()`), клавіші йдуть у неї (`keyPressed`), без
-її лого, питання «sound enabled?», титулу «press any key», попапу «Would you like to exit?» і
+її лого, питання «sound enabled?», попапу «Would you like to exit?» і
 outro: BACK у її головному меню повертає в меню Gamevil Live. Окремого циклу, `Midlet` і вікна в
 мультиплеєра більше немає; сам по собі він ще запускається (`mp_main.py`, `online/game.py run`).
 Що заробили бої (1032: золото, слава, досвід, лут), не пишеться в сейв сирими

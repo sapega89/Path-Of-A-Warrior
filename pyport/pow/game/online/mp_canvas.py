@@ -1125,10 +1125,6 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
             MpCanvas.loop_i = MpCanvas.loop_i + 1
 
     def _paint_title(self):  # state 1
-        if MpCanvas.embedded:                # PORT-EXTRA: no "press any key" title, straight on
-            MpCanvas.state_ticks = 4         # (as if a key was pressed after its 3 ticks)
-            self._keys_title(-5)
-            return
         if MpCanvas.state_ticks < 2:
             MpCanvas.state_ticks = 2
             top_y = idiv(((MpCanvas.screen_h - 320)), 2)
