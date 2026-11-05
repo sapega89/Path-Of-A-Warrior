@@ -949,6 +949,8 @@ Java-джерела: `pyport/mp_java/*.java` у гілці `java-reference`.
 | `g` (частина) | `pow_mp/mp_canvas_options.py` | `OptionsMixin` | опції в RecordStore, текстові хелпери, музика й гучність |
 | — (PORT-EXTRA) | `pow_mp/mp_canvas_order.py` | `OrderMixin` | вікно ордену (стани 30–33), запити 1792–1798 і відповіді |
 | — (PORT-EXTRA) | `pow_server/orders.py` | — | ордени на сервері: створити, вступити, вийти, до 30 учасників |
+| — (PORT-EXTRA) | `pow_mp/mp_canvas_chat.py` | `ChatMixin` | вікно чату (стани 40–42), запити 1808–1813, пуші 1812 / 1815 |
+| — (PORT-EXTRA) | `pow_server/chat.py` | — | чат на сервері: лобі, орден, особисті, історія, ліміт, фільтр |
 | `m` | `pow_mp/mp_game.py` | `MpGame` | конкретний канвас (`m extends g`), музика меню |
 | `l` | `pow_mp/consts.py` | `Consts` | таблиці констант (інтерфейс `l`) |
 | `i` | `pow_mp/gfx.py` | `Gfx` | малювання, кліп, текст, CRC-32 |

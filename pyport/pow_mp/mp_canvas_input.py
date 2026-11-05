@@ -620,6 +620,8 @@ class InputMixin:
                 self.push_state(161)
             elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 6:   # PORT-EXTRA: Order
                 self.open_order()
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 7:   # PORT-EXTRA: Chat
+                self.open_chat()
         elif MpCanvas.state == 11:
             if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
                 MpCanvas.room_mode = 0

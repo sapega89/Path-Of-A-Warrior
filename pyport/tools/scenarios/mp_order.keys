@@ -4,7 +4,7 @@
 # States: 30 the order, 31 a member, 32 the order name, 33 leave? (Yes / No).
 include _login.keys
 bot_order WOLF
-key LEFT          # Duel -> Order (the last picture)
+key LEFT 2        # Duel -> Chat -> Order
 wait 3
 shot main_order
 key FIRE          # 1792 -> 1793
