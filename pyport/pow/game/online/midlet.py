@@ -56,13 +56,4 @@ class Midlet:
     def notifyDestroyed(self):
         self.destroyed = True
 
-    def startApp(self):  # the game thread -> the async loop
-        from pow.game.online import game
-        if Midlet.started:
-            return None
-        Midlet.started = True
-        return game.run(Midlet.canvas, self)
 
-    def pauseApp(self):
-        if Midlet.canvas is not None:
-            Midlet.canvas.hideNotify()

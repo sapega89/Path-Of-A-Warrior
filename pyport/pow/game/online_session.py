@@ -32,11 +32,9 @@ class Session:
         import pygame
         self.canvas = canvas                          # the GameCanvas
         self.keymap = dict(midp_canvas.KEYMAP)        # the Multiplayer number row types digits
-        from pow.game.online import sp_bridge
         from pow.game.online.midlet import Midlet
         from pow.game.online.mp_canvas import MpCanvas
         MpCanvas.sound_from_sp = GameCanvas.sound_on
-        MpCanvas.embedded = sp_bridge.embedded = True
         self.midlet = Midlet()                        # loads the classes, makes the MpCanvas
         self.mp = Midlet.canvas
         pygame.display.set_caption("Path of a Warrior Multiplayer")

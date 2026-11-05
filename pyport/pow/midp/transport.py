@@ -58,7 +58,7 @@ class LocalTransport(Transport):
             os.makedirs(config.SAVE_DIR, exist_ok=True)
             path = os.path.join(config.SAVE_DIR, "mp_local.sqlite")
             rng = None
-            if os.environ.get("POW_SEED"):        # headless runs (tools/mp_shot.py) repeat exactly
+            if os.environ.get("POW_SEED"):        # headless runs (tools/shot.py) repeat exactly
                 import random
                 rng = random.Random(int(os.environ["POW_SEED"]))
             # the offline game has nobody to wait for: a Duel gets its CPU fighter at once

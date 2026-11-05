@@ -134,12 +134,8 @@ class InputMixin:
             MpCanvas.letter_cursor = 0
             self.push_state(2)
             return
-        if MpCanvas.key_in == (-7):
-            if MpCanvas.embedded:            # no "Would you like to exit?"
-                MpCanvas.set_state(300)
-                return
-            MpCanvas.popup_shown = True
-            MpCanvas.popup_cursor = 1
+        if MpCanvas.key_in == (-7):          # BACK: back to the single player, no popup
+            MpCanvas.set_state(300)
             return
         self.menu_keys(MpCanvas.key_in)
 

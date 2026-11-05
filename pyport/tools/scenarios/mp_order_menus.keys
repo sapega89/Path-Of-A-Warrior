@@ -1,5 +1,5 @@
 # TEST joins the order of RIVAL, then Duel > 2-on-2 Order and Mission > Order Ally
-include _login.keys
+include _enter.keys
 bot_order WOLF
 key LEFT 2        # Duel -> Chat -> Order
 wait 3

@@ -40,9 +40,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
     # auto-battle: Tab (key -100) turns it on / off; the round's 1027 then goes out after
     # a second with action AUTO_ACTION, and the server's bot chooses (pow_server/battle.py cpu_choice)
     auto_battle = config.AUTO_HUNT
-    sound_from_sp = None   # the single player's sound answer (mp_main.play), None = ask
-    embedded = False       # a part of the single player (main.py): BACK in the main
-                           # menu leaves at once, no exit popup, no outro picture
+    sound_from_sp = None   # the single player's sound answer (online_session)
     AUTO_ACTION = 255
     app_version = None  # String
     game = None  # m
@@ -499,16 +497,9 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
             MpCanvas.logo_time = 0
             Draw.fill_rect(MpCanvas.buffer_g, 0, 0, MpCanvas.canvas_w, MpCanvas.canvas_h, 0xFFFFFF)
         self.draw_buffer()
-        if MpCanvas.sound_from_sp is not None:
-            # started from the single player's Main Menu (mp_main.play): it already
-            # showed the logo and asked about the sound, so its answer goes straight on
-            MpCanvas.logo_image = None
-            self.answer_sound_prompt(MpCanvas.sound_from_sp)
-            return
-        if (system.currentTimeMillis() - MpCanvas.logo_time) <= 3000:
-            return
+        # the single player already asked about the sound: its answer goes straight on
         MpCanvas.logo_image = None
-        MpCanvas.state = 5
+        self.answer_sound_prompt(MpCanvas.sound_from_sp if MpCanvas.sound_from_sp is not None else True)
 
     def _paint_ranking_menu(self):  # state 161
         if MpCanvas.state_ticks < 2:
@@ -1177,8 +1168,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
             return
 
     def _paint_outro(self):  # state 300
-        # : no outro picture of the original publisher (outro.png,
-        # 3 s); the game ends (or, embedded, goes back to the single player) at once
+        # no outro picture: straight back to the single player
         MpCanvas.disconnect()
         self.stop_music()
         MpCanvas.midlet.destroyApp(True)

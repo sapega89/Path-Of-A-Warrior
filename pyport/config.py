@@ -118,7 +118,7 @@ DROPS_AFTER_69 = True
 AUTO_HUNT = os.environ.get("POW_AUTO_HUNT", "0") == "1"
 # The AUTO button is always drawn (grey = off) on the map and in Multiplayer battles, so the
 # mode can be found; F and the right stick of a gamepad toggle it too. POW_AUTO_BUTTON=0 = only
-# while it is on (tools/shot.py and tools/mp_shot.py, for the original screenshots).
+# while it is on (tools/shot.py, for the original screenshots).
 AUTO_BUTTON = os.environ.get("POW_AUTO_BUTTON", "1") == "1"
 
 # : the description of an item / skill / potion (Blacksmith,

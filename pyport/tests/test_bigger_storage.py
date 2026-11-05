@@ -139,21 +139,19 @@ def test_drops_above_lv69_keep_the_lv45_69_odds(monkeypatch):
     assert min(_tiers(rand, 80)) == 2                           # the original: {0, 0, 33, 77, 100}
 
 
-def test_mp_loot_uses_the_new_cells_of_an_old_save(tmp_path, monkeypatch):
-    from test_mp_sp_bridge import make_save, store
+def test_mp_loot_uses_the_new_cells(monkeypatch):
+    """Loot of the multiplayer lands in a cell past the 25th when those are full."""
+    from pow.game.game_canvas import GameCanvas
+    from pow.game.live import Live
+    from pow.game.structs import Hero, Item
+    hero = Hero()
+    hero.backpack = [Item() for _ in range(config.BACKPACK_SIZE)]
+    for cell in hero.backpack[:25]:
+        cell.id = 101
+    monkeypatch.setattr(GameCanvas, "hero", hero)
+    assert Live.__new__(Live).give_loot((118, 9, 0, 0, 0))
+    assert (hero.backpack[25].id, hero.backpack[25].attack) == (118, 9)
 
-    from pow.game.online import sp_bridge as S
-    monkeypatch.setattr(config, "SAVE_DIR", str(tmp_path))
-    data = bytearray(make_save())
-    assert data[0] | data[1] << 8 == S.SAVE_LEN                 # a save of before the change
-    for i in range(25):
-        struct.pack_into("<h", data, S.OFF_BACKPACK + 11 * i, 101)
-    store(data)
-    assert S.add_item(118, 9, 0, 0, 0) == 0                     # not waiting: cell 26
-    d = S.read_save()
-    assert d[S.SAVE_LEN] == S.BACKPACK_EXTRA_MARK
-    assert struct.unpack_from("<hhhhhB", d, S.SAVE_LEN + 2) == (118, 9, 0, 0, 0, 0)
-    assert d[0] | d[1] << 8 == S.SAVE_LEN + 2 + 11 * (config.BACKPACK_SIZE - 25)
 
 
 def test_live_grid_above_softkeys(monkeypatch):

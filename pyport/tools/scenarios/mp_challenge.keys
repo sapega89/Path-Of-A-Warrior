@@ -1,7 +1,7 @@
 # Challenge 1:1 against another player: the scripted player RIVAL on the in-game server
 # (pow_server/bot.py) accepts and plays with plain attacks. States (06 §1.2): 11 Duel menu,
 # 20 Challenge 1:1 / 2:2, 21 UserID of the other player, 92 quotes, 94 choose action, 105 result.
-include _login.keys
+include _enter.keys
 key FIRE          # Duel
 wait 5
 key DOWN 2        # Challenge

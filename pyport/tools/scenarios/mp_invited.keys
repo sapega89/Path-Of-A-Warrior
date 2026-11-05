@@ -1,7 +1,7 @@
 # RIVAL (pow_server/bot.py) invites TEST to Invite An Ally while TEST sits in the main menu:
 # 770 pulls the client into the room without a dialog (g:2152-2170, Options > Invitation: Accept).
 # States (06 §1.2): 91 stage intro, 94 choose action, 104 stage complete, 105 result.
-include _login.keys
+include _enter.keys
 watch 104 stage_complete 5
 bot_invite 2
 until 91

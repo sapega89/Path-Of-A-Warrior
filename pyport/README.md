@@ -241,7 +241,7 @@ Game Menu → **Management** (Attributes, Skills, Gear, Inventory, Assign Items)
 `MpCanvas` (`online/game.py frame`, те, що робив `g.c()`), клавіші йдуть у неї (`keyPressed`), без
 її лого, питання «sound enabled?», попапу «Would you like to exit?» і
 outro: BACK у її головному меню повертає в меню Live. Окремого циклу, `Midlet` і вікна в
-мультиплеєра більше немає; сам по собі він ще запускається (`mp_main.py`, `online/game.py run`).
+мультиплеєра більше немає.
 Що заробили бої (1032: золото, слава, досвід, лут), не пишеться в сейв сирими
 байтами, а чекає в пам'яті (`sp_bridge.pending`) і при поверненні йде героєві через штатні
 `add_exp` (рівні) і рюкзак, з попапом «Exp N / Fame M / Level L» (той, що показував Live
@@ -298,7 +298,7 @@ Live?», «Connecting...», логін 530) і відключалась, кол�
 `ALWAYS_ONLINE` мультиплеєр бере UserID і пароль реєстрації Live одиночної гри
 (`pow_regist`): екрана Login немає, заставка одразу входить (278, потім 262), а в Main Menu
 немає софт-клавіші LOGIN (інший акаунт). Без цієї реєстрації — як в оригіналі. Сценарій
-`tools/scenarios/mp_sp_account.keys` (`sp_account ID PWD` у `tools/mp_shot.py`).
+`tools/scenarios/mp_sp_account.keys` (`sp_account ID PWD` у `tools/shot.py`).
 
 ### Сейв на сервері (просив Andrey)
 
@@ -427,8 +427,7 @@ Please select» на екрані 6 — як в оригіналі.
 ## Мультиплеєр (етап 9, `docs/plans/PHASE_9_ARENA.md`)
 
 Колись окрема гра «Path of a Warrior Multiplayer» (Duel 1-на-1 / 2-на-2, Challenge, місії, рейтинги),
-тепер екрани одиночної: Live → Multiplayer (див. «Меню» вище); сама по собі ще запускається:
-`python mp_main.py`.
+тепер екрани одиночної: Live → Multiplayer (див. «Меню» вище).
 Розбір оригінального клієнта: `docs/analysis/06_multiplayer.md`. Готові протокол, сервер для меню, ресурси і клієнт
 (логін, Main Menu, Character, Ranking, Options, Help), Duel 1-на-1 і 2-на-2 (з CPU-союзником) проти
 CPU-бійців (сервер рахує ходи в `pow_server/battle.py`). Ще немає: місій, Challenge і PvP між людьми.
@@ -447,18 +446,17 @@ python -m pip install websockets                 # лише для окремо�
 cd pyport && python -m pow_server                 # ws://0.0.0.0:28200, дані в mp_server.sqlite
 python -m pow_server --port 8765 --db :memory:   # нічого не зберігати
 python -m pow_server --tcp-port 28200 --legacy   # TCP як в оригіналі, без перевірки токена
-python mp_main.py                                  # клієнт із сервером усередині гри
-POW_MP_SERVER=ws://localhost:28200 python mp_main.py   # клієнт до окремого сервера
-python tools/mp_shot.py tools/scenarios/mp_menu.keys   # скріншоти в shots/mp_menu/
-python tools/mp_shot.py tools/scenarios/mp_duel.keys   # дуель із CPU до екрана результату
-python tools/mp_shot.py tools/scenarios/mp_duel2.keys  # 2-на-2
-python tools/mp_shot.py tools/scenarios/mp_mission.keys # Solo Mission, два етапи
-python tools/mp_shot.py tools/scenarios/mp_challenge.keys  # Challenge 1:1 проти бота RIVAL
-python tools/mp_shot.py tools/scenarios/mp_invited.keys    # RIVAL кличе TEST у місію
-python tools/mp_shot.py tools/scenarios/mp_order.keys      # орден: вступ, бій 2 на 2 разом, вихід
-python tools/mp_shot.py tools/scenarios/mp_order_mission.keys  # орден: місія разом
-python tools/mp_shot.py tools/scenarios/mp_order_menus.keys    # пункти ордену в меню Duel і Mission
-python tools/mp_shot.py tools/scenarios/mp_chat.keys        # чат: особисте від RIVAL, відповідь, лобі, вкладка Order
+POW_MP_SERVER=ws://localhost:28200 python pyport/main.py   # мультиплеєр до окремого сервера (типово: усередині гри)
+python tools/shot.py tools/scenarios/mp_menu.keys   # скріншоти в shots/mp_menu/
+python tools/shot.py tools/scenarios/mp_duel.keys   # дуель із CPU до екрана результату
+python tools/shot.py tools/scenarios/mp_duel2.keys  # 2-на-2
+python tools/shot.py tools/scenarios/mp_mission.keys # Solo Mission, два етапи
+python tools/shot.py tools/scenarios/mp_challenge.keys  # Challenge 1:1 проти бота RIVAL
+python tools/shot.py tools/scenarios/mp_invited.keys    # RIVAL кличе TEST у місію
+python tools/shot.py tools/scenarios/mp_order.keys      # орден: вступ, бій 2 на 2 разом, вихід
+python tools/shot.py tools/scenarios/mp_order_mission.keys  # орден: місія разом
+python tools/shot.py tools/scenarios/mp_order_menus.keys    # пункти ордену в меню Duel і Mission
+python tools/shot.py tools/scenarios/mp_chat.keys        # чат: особисте від RIVAL, відповідь, лобі, вкладка Order
 python -m pow_server --bot RIVAL                  # сервер із ботом, якого можна викликати
 python -m pow_server --match-wait 20              # Duel чекає живого суперника 20 с (типово 60)
 python -m pow_server --no-server-bots             # без ботів сервера (BLADE, RAVEN, ...)
@@ -572,7 +570,7 @@ python -m pow_server --require-tls --behind-proxy --host 127.0.0.1 --origin http
   етапі замість одного монстра CPU-боєць. Між етапами 1031 → «Stage N Complete!» → 1036 → нові 514
   і 1037 (назва місії, етап) → 1038 → 1024; союзник і я відновлюємо 35 % HP. Оцінка й
   Mission Grade залежать від кількості етапів і залишку HP; gold/exp/fame — від пройдених етапів.
-  У `mp_shot` сервер усередині гри бере сід із `POW_SEED`, тож сценарії повторюються.
+  У `shot.py` сервер усередині гри бере сід із `POW_SEED`, тож сценарії повторюються.
 - 2-на-2: я в слоті 0, CPU-союзник у 2 (трохи слабший), вороги в 1 і 3. Коли я падаю, клієнт
   чекає 1032 (g:683-684), тож решту бою CPU-бійці доводять на сервері; переможе команда.
 - Бій і нагороди за числами одиночної гри (`pow_server/sp_rules.py`):
