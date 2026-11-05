@@ -935,40 +935,43 @@ Java-ім'я методу (з суфіксом сигнатури, напр. `J_
 
 `t` → `softkey_labels`, `u` → `menu_parent`, `v` → `menu_sizes`, `w` → `tier_levels`, `x` → `tier_drop_odds`, `y` → `item_prices`, `z` → `help_topic_start`, `A` → `menu_music`, `B` → `hero_anim_0`, `C` → `hero_anim_1`, `D` → `hero_anim_2`, `E` → `hero_anim_9`, `F` → `hero_anim_3`, `G` → `hero_anim_4`, `H` → `hero_anim_5`, `I` → `hero_anim_6`, `J` → `hero_anim_7`, `K` → `hero_anim_8`, `L` → `hero_anim_10`, `M` → `hero_anim_11`, `N` → `hero_anim_12`, `O` → `hero_anim_13`, `P` → `hero_anim_14`, `Q` → `hero_anim_15_19`, `R` → `hero_anim_20`, `S` → `hero_anim_21`, `T` → `hero_anim_22`, `U` → `hero_anim_23_24`, `V` → `hero_anim_25`, `W` → `hero_anim_26_27`, `X` → `hero_anim_28`, `Y` → `hero_anim_29`, `Z` → `hero_anim_30`, `aa` → `head_anim_0`, `ab` → `head_anim_1`, `ac` → `head_anim_2`, `ad` → `head_anim_3`, `ae` → `body_anim_0`, `af` → `body_anim_1`, `ag` → `body_anim_2`, `ah` → `body_anim_3`, `ai` → `weapon_anim_1`, `aj` → `weapon_anim_2`, `ak` → `weapon_anim_3`, `al` → `fx_anim_15_16`, `am` → `fx_anim_17_19`, `an` → `fx_anim_21`, `ao` → `fx_fire`, `ap` → `fx_anim_24`, `aq` → `fx_anim_26_27`, `ar` → `fx_anim_27_end`, `as_` → `fx_anim_28`, `at` → `fx_anim_29`, `au` → `fx_anim_30`, `av` → `fx_item_10_11`, `aw` → `dir_dx8`, `ax` → `dir_dy8`, `ay` → `squad_offsets`, `az` → `squad_dirty_box`, `aA` → `front_dx`, `aB` → `front_dy`, `aC` → `skill_menu_ids`, `aD` → `skill_menu_index`, `aE` → `equip_slot_order`, `aF` → `hit_box_x`, `aG` → `hit_box_y`, `aH` → `hit_box_w`, `aI` → `hit_box_h`, `aJ` → `general_frame_flags`, `aK` → `weapon_reach`, `aL` → `general_reach`, `aM` → `tier_req_level`, `aN` → `potion_names`, `aO` → `potion_kinds`, `aP` → `potion_percents`, `aQ` → `speed_frame_ms`, `aR` → `stat_up_texts`, `aS` → `troop_names`, `aT` → `dir8_to_dir4`, `aU` → `skill_attack_div`, `aV` → `story_offsets`, `aW` → `menu_links`, `aX` → `difficulty_names`, `aY` → `mode_texts`, `aZ` → `yes_no_ok`, `ba` → `gift_kinds`
 
-## Мультиплеєр (`pow_mp`)
+## Мультиплеєр (`pow.game.online`)
 
-Код клієнта мультиплеєра колись генерував `tools/j2py_mp.py` у `pow_mp/_gen`; тепер це звичайний код.
+Код клієнта мультиплеєра колись генерував `tools/j2py_mp.py`; тепер це звичайний код у
+`pow/game/online/` (до PR #68 — каталог `pow_mp/`), транспорт у `pow/midp/transport.py`.
 Java-джерела: `pyport/mp_java/*.java` у гілці `java-reference`.
 
 | Java | Модуль | Клас | Що це |
 |---|---|---|---|
-| `g` | `pow_mp/mp_canvas.py` | `MpCanvas` | канвас: екрани, меню, бої |
-| `g` (частина) | `pow_mp/mp_canvas_draw.py` | `DrawMixin` | примітиви: текст, прямокутники, лінії, половинки зображень, числа, рамки, кнопки |
-| `g` (частина) | `pow_mp/mp_canvas_battle.py` | `BattleMixin` | бій: ходи, бійці й анімації, смуга таймінгу, шкода, HP, картки дій |
-| `g` (частина) | `pow_mp/mp_canvas_net.py` | `NetMixin` | з'єднання: запити, відповіді `on_answer`, логін, розриви, помилки |
-| `g` (частина) | `pow_mp/mp_canvas_input.py` | `InputMixin` | клавіші: меню, так/ні, попапи, сітка літер для імені й id |
-| `g` (частина) | `pow_mp/mp_canvas_screens.py` | `ScreensMixin` | екрани поза боєм: фони, вікна, рекорди, атрибути, скіли, довідка, помилка |
-| `g` (частина) | `pow_mp/mp_canvas_assets.py` | `AssetsMixin` | завантаження й звільнення зображень і спрайтів |
-| `g` (частина) | `pow_mp/mp_canvas_options.py` | `OptionsMixin` | опції в RecordStore, текстові хелпери, музика й гучність |
-| — (PORT-EXTRA) | `pow_mp/mp_canvas_order.py` | `OrderMixin` | вікно ордену (стани 30–33), запити 1792–1798 і відповіді |
+| `g` | `pow/game/online/mp_canvas.py` | `MpCanvas` | канвас: екрани, меню, бої |
+| — (PORT-EXTRA) | `pow/game/online_session.py` | `Session` | екрани мультиплеєра як стан 13 `GameCanvas`: `enter` / `frame` / `leave` |
+| `g.c()` (частина) | `pow/game/online/game.py` | `frame` / `close` / `run` | один кадр `g.c()`; `run` — цикл окремого клієнта (`mp_main.py`) |
+| `g` (частина) | `pow/game/online/mp_canvas_draw.py` | `DrawMixin` | примітиви: текст, прямокутники, лінії, половинки зображень, числа, рамки, кнопки |
+| `g` (частина) | `pow/game/online/mp_canvas_battle.py` | `BattleMixin` | бій: ходи, бійці й анімації, смуга таймінгу, шкода, HP, картки дій |
+| `g` (частина) | `pow/game/online/mp_canvas_net.py` | `NetMixin` | з'єднання: запити, відповіді `on_answer`, логін, розриви, помилки |
+| `g` (частина) | `pow/game/online/mp_canvas_input.py` | `InputMixin` | клавіші: меню, так/ні, попапи, сітка літер для імені й id |
+| `g` (частина) | `pow/game/online/mp_canvas_screens.py` | `ScreensMixin` | екрани поза боєм: фони, вікна, рекорди, атрибути, скіли, довідка, помилка |
+| `g` (частина) | `pow/game/online/mp_canvas_assets.py` | `AssetsMixin` | завантаження й звільнення зображень і спрайтів |
+| `g` (частина) | `pow/game/online/mp_canvas_options.py` | `OptionsMixin` | опції в RecordStore, текстові хелпери, музика й гучність |
+| — (PORT-EXTRA) | `pow/game/online/mp_canvas_order.py` | `OrderMixin` | вікно ордену (стани 30–33), запити 1792–1798 і відповіді |
 | — (PORT-EXTRA) | `pow_server/orders.py` | — | ордени на сервері: створити, вступити, вийти, до 30 учасників |
-| — (PORT-EXTRA) | `pow_mp/mp_canvas_chat.py` | `ChatMixin` | вікно чату (стани 40–42), запити 1808–1813, пуші 1812 / 1815 |
+| — (PORT-EXTRA) | `pow/game/online/mp_canvas_chat.py` | `ChatMixin` | вікно чату (стани 40–42), запити 1808–1813, пуші 1812 / 1815 |
 | — (PORT-EXTRA) | `pow_server/chat.py` | — | чат на сервері: лобі, орден, особисті, історія, ліміт, фільтр |
-| `m` | `pow_mp/mp_game.py` | `MpGame` | конкретний канвас (`m extends g`), музика меню |
-| `l` | `pow_mp/consts.py` | `Consts` | таблиці констант (інтерфейс `l`) |
-| `i` | `pow_mp/gfx.py` | `Gfx` | малювання, кліп, текст, CRC-32 |
-| `j` | `pow_mp/font.py` | `Font` | бітмап-шрифт `0_font.png` |
-| `f` | `pow_mp/draw.py` | `Draw` | малювання картинок і прямокутників на Graphics |
-| `k` | `pow_mp/answer.py` | `Answer` | відповідь сервера, читання полів |
-| `d` | `pow_mp/frame_reader.py` | `FrameReader` | читання кадру з потоку |
-| `e` | `pow_mp/frame_writer.py` | `FrameWriter` | запис кадру запиту (не використовується: його замінив `NetThread`) |
-| `a` | `pow_mp/sprite_frames.py` | `SpriteFrames` | кадри SP2 |
-| `c` | `pow_mp/player_pool.py` | `PlayerPool` | пул програвачів звуку |
-| `h` | `pow_mp/net_thread.py` | `NetThread` | мережевий потік |
-| `n` | `pow_mp/res_reader.py` | `ResReader` | читання ресурсів |
-| `Main` | `pow_mp/midlet.py` | `Midlet` | MIDlet |
+| `m` | `pow/game/online/mp_game.py` | `MpGame` | конкретний канвас (`m extends g`), музика меню |
+| `l` | `pow/game/online/consts.py` | `Consts` | таблиці констант (інтерфейс `l`) |
+| `i` | `pow/game/online/gfx.py` | `Gfx` | малювання, кліп, текст, CRC-32 |
+| `j` | `pow/game/online/font.py` | `Font` | бітмап-шрифт `0_font.png` |
+| `f` | `pow/game/online/draw.py` | `Draw` | малювання картинок і прямокутників на Graphics |
+| `k` | `pow/game/online/answer.py` | `Answer` | відповідь сервера, читання полів |
+| `d` | `pow/game/online/frame_reader.py` | `FrameReader` | читання кадру з потоку |
+| `e` | `pow/game/online/frame_writer.py` | `FrameWriter` | запис кадру запиту (не використовується: його замінив `NetThread`) |
+| `a` | `pow/game/online/sprite_frames.py` | `SpriteFrames` | кадри SP2 |
+| `c` | `pow/game/online/player_pool.py` | `PlayerPool` | пул програвачів звуку |
+| `h` | `pow/game/online/net_thread.py` | `NetThread` | мережевий потік |
+| `n` | `pow/game/online/res_reader.py` | `ResReader` | читання ресурсів |
+| `Main` | `pow/game/online/midlet.py` | `Midlet` | MIDlet |
 
-### Поля й методи малих класів `pow_mp`
+### Поля й методи малих класів `pow.game.online`
 
 - **SpriteFrames**: `a` → `count`, `b` → `data`, `c` → `src_x`, `d` → `src_y`, `e` → `w`, `f` → `h`, `g` → `anchor_x`, `h` → `anchor_y`, `a_v` → `free`
 - **Font**: `a` → `image`, `b` → `glyph_w`, `c` → `glyph_h`, `d` → `space_w`, `e` → `plte_offset`, `a_CII` → `draw_char`, `b_C` → `glyph_index`, `a_C` → `char_width`, `a_ACII` → `chars_width`, `a_T` → `string_width`

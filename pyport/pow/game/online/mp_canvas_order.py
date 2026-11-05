@@ -14,9 +14,9 @@ States (unused numbers of the jar's menu range, so the menu music plays on):
     33  "Leave the order?" Yes / No
 The window is drawn with the jar's own pieces (window, panels, boxes, buttons, fonts).
 """
-from pow_mp.rt import idiv, imod
+from pow.game.online.rt import idiv, imod
 
-MpCanvas = None   # set by pow_mp/mp_canvas.py
+MpCanvas = None   # set by pow/game/online/mp_canvas.py
 Consts = Draw = None   # set by mp_canvas._late_imports
 
 ORDER = 30

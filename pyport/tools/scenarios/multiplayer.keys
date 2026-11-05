@@ -1,8 +1,8 @@
 env POW_ALWAYS_ONLINE=1
 save zero
-# Gamevil Live > Multiplayer (PORT-EXTRA, main.py): the Multiplayer screens run in the same
-# window and process while the single player waits in memory; their Exit comes back to the
-# Gamevil Live menu. Registered on this device already (account), logged in by Continue.
+# Gamevil Live > Multiplayer (PORT-EXTRA, pow/game/online_session.py): the Multiplayer screens
+# are a state of the same canvas and loop; BACK in their main menu comes back to the Gamevil
+# Live menu. Registered on this device already (account), logged in by Continue.
 account TESTUSER 1234
 wait 25
 key FIRE           # sound: Yes
@@ -27,7 +27,12 @@ wait 1
 key DOWN           # Trade -> Warehouse -> Safe -> Multiplayer
 wait 2
 shot multiplayer_selected
-multiplayer 40 mp_title
-key FIRE           # the Multiplayer screens; their Exit -> back here
+key FIRE           # the Multiplayer screens: no logo, sound question or title: the login
+wait 40
+shot mp_welcome
+key FIRE           # OK -> its main menu
+wait 3
+shot mp_main_menu
+key BACK           # its Exit: no popup, no outro
 wait 4
 shot live_menu_back

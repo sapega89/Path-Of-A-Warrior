@@ -71,9 +71,9 @@ def run(steps, out, every=False, save_dir=None):
     own = save_dir is None
     save_dir = save_dir or tempfile.mkdtemp(prefix="pow_mp_rms_")
     config.SAVE_DIR = save_dir
-    for mod in [m for m in sys.modules if m == "pow_mp" or m.startswith("pow_mp.")]:
+    for mod in [m for m in sys.modules if m == "pow.game.online" or m.startswith("pow.game.online.")]:
         del sys.modules[mod]           # fresh statics every run, like a new JVM
-    from pow_mp.net.transport import LocalTransport
+    from pow.midp.transport import LocalTransport
     LocalTransport._server = None
     out = pathlib.Path(out)
     if out.exists():
@@ -84,7 +84,7 @@ def run(steps, out, every=False, save_dir=None):
     for cmd, arg in steps:
         if cmd == "sp_account":
             sp_account(*arg.split())
-    from pow_mp.midlet import Midlet
+    from pow.game.online.midlet import Midlet
     midlet = Midlet()
     steps = list(steps)
     st = {"frame": 0, "i": 0, "wait": 0, "n": 0, "last": None, "queue": [], "until": None,
@@ -97,7 +97,7 @@ def run(steps, out, every=False, save_dir=None):
         if every:
             pygame.image.save(screen, str(out / ("tick_%04d.png" % st["frame"])))
         if st["watch"]:
-            from pow_mp.mp_canvas import MpCanvas
+            from pow.game.online.mp_canvas import MpCanvas
             w = st["watch"].get(MpCanvas.state)
             if w and not w["done"]:
                 w["seen"] += 1
@@ -116,7 +116,7 @@ def run(steps, out, every=False, save_dir=None):
             return
         if st["until"] is not None:
             states, left = st["until"]
-            from pow_mp.mp_canvas import MpCanvas
+            from pow.game.online.mp_canvas import MpCanvas
             if MpCanvas.state not in states and left > 0:
                 st["until"] = (states, left - 1)
                 return
@@ -150,13 +150,13 @@ def run(steps, out, every=False, save_dir=None):
                 continue
             if cmd == "goto_if":                 # goto_if STATE[,STATE...] LABEL
                 states, _, label = arg.partition(" ")
-                from pow_mp.mp_canvas import MpCanvas
+                from pow.game.online.mp_canvas import MpCanvas
                 if MpCanvas.state in {int(x) for x in states.split(",")}:
                     st["i"] = steps.index(("label", label.strip())) + 1
                 continue
             if cmd == "key_if":                  # key_if STATE[,STATE...] KEY: press only there
                 states, _, name = arg.partition(" ")
-                from pow_mp.mp_canvas import MpCanvas
+                from pow.game.online.mp_canvas import MpCanvas
                 if MpCanvas.state in {int(x) for x in states.split(",")}:
                     Midlet.canvas.keyPressed(KEYNAMES[name.strip().upper()])
                     st["wait"] = 1
@@ -167,11 +167,11 @@ def run(steps, out, every=False, save_dir=None):
                 st["until"] = ({int(x) for x in states.split(",")}, int(limit or 3000))
                 return
             if cmd == "bot_invite":              # bot_invite MODE: the first bot invites TEST
-                from pow_mp.net.transport import LocalTransport
+                from pow.midp.transport import LocalTransport
                 LocalTransport._bots[0].invite("TEST", int(arg or 0))
                 continue
             if cmd == "bot_order":               # bot_order NAME: the first bot creates an order
-                from pow_mp.net.transport import LocalTransport
+                from pow.midp.transport import LocalTransport
                 from pow_server import messages as M
                 from pow_server import orders
                 from pow_server.model import default_character
@@ -189,7 +189,7 @@ def run(steps, out, every=False, save_dir=None):
                 srv.storage.live_put("order:" + name, doc)
                 continue
             if cmd == "bot_chat":                # bot_chat CHANNEL [TO] TEXT
-                from pow_mp.net.transport import LocalTransport
+                from pow.midp.transport import LocalTransport
                 from pow_server import messages as M
                 channel, _, text = arg.partition(" ")
                 peer = ""

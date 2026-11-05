@@ -41,10 +41,10 @@ async def play(sound_on=None, embedded=False):
     server_from_page()
     import pygame
     pygame.display.set_caption("Path of a Warrior Multiplayer")
-    from pow_mp import sp_bridge
-    from pow_mp.midlet import Midlet
-    from pow_mp.mp_canvas import MpCanvas
-    from pow_mp.net_thread import NetThread
+    from pow.game.online import sp_bridge
+    from pow.game.online.midlet import Midlet
+    from pow.game.online.mp_canvas import MpCanvas
+    from pow.game.online.net_thread import NetThread
     MpCanvas.sound_from_sp = sound_on
     MpCanvas.embedded = sp_bridge.embedded = embedded
     midlet = Midlet()
@@ -56,12 +56,6 @@ async def play(sound_on=None, embedded=False):
             MpCanvas.game.stop_music()     # the outro stops it; a closed window does not
         pygame.display.set_caption("Path of a Warrior")
     return not Midlet.canvas.quit_requested
-
-
-def take_rewards():
-    """PORT-EXTRA: the rewards kept by play(embedded=True), for Live.after_multiplayer."""
-    from pow_mp import sp_bridge
-    return sp_bridge.take_rewards()
 
 
 async def main():

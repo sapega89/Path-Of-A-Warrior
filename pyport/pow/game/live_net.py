@@ -6,7 +6,7 @@ read frames in its run() loop and called s.a(ab) for each (s = the as instance);
 wrote a request into a buffer and sent it with the u16 length in front; b.java read one
 frame; ab.java reads the fields of an answer. The server is lost (pow_server/live.py speaks
 the same protocol), and the port has no threads: pump() does what run() did, once per frame
-from as.i(), and the socket is a transport of pow_mp/net/transport.py chosen by
+from as.i(), and the socket is a transport of pow/midp/transport.py chosen by
 config.LIVE_SERVER ("local" = the server inside the game, or ws(s)://host:port/live).
 The connect host / port of a(String, int) are kept but not used.
 """
@@ -87,7 +87,7 @@ class LiveNet:  # v.java
         LiveNet._buf = bytearray()
 
     def open(self):  # v.java:55-68  (open; the result comes on a later pump())
-        from pow_mp.net.transport import make_live_transport
+        from pow.midp.transport import make_live_transport
         try:
             LiveNet.conn = make_live_transport(config.LIVE_SERVER)
             LiveNet.conn.open()

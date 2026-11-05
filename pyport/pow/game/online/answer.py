@@ -3,7 +3,7 @@
 Generated once from pyport/mp_java/k.java (branch java-reference) by the old
 tools/j2py_mp.py; edited by hand since.
 """
-from pow_mp.rt import _inc_post, _jstring, _jtrim, i16, i32
+from pow.game.online.rt import _inc_post, _jstring, _jtrim, i16, i32
 
 
 class Answer:

@@ -1,16 +1,16 @@
 """g.java, part of MpCanvas: the battle: turns, fighters and their animations, timing bar, damage, HP bars, action cards.
 
-A mixin of MpCanvas (pow_mp/mp_canvas.py); the methods keep their `# g.java:FROM-TO`
+A mixin of MpCanvas (pow/game/online/mp_canvas.py); the methods keep their `# g.java:FROM-TO`
 comments. The module names below are set by mp_canvas.py: `MpCanvas` once the class exists,
 the others by its _late_imports().
 """
-from pow_mp.rt import (
+from pow.game.online.rt import (
     _js,
     idiv,
     imod,
 )
 
-MpCanvas = None   # set by pow_mp/mp_canvas.py
+MpCanvas = None   # set by pow/game/online/mp_canvas.py
 SpriteFrames = Consts = Draw = None   # set by mp_canvas._late_imports
 
 

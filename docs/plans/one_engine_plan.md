@@ -7,7 +7,7 @@
 Одна гра, один рушій (`GameCanvas`, один цикл `run`, один `Midlet`, один дисплей, одна обробка
 клавіш, звуку й мережі). Код мультиплеєра **переноситься без змін у поведінці**: усе, що
 `MpCanvas` малював, малює той самий код, але викликаний з циклу одиночної гри. Жодного
-перемальовування на віджети одиночної гри, жодних змін у вигляді. Наприкінці каталог `pow_mp/` і
+перемальовування на віджети одиночної гри, жодних змін у вигляді. Наприкінці каталог `pow/game/online/` і
 `mp_main.py` зникають, їхні модулі живуть у `pow/game/online/`.
 
 **Критерій приймання кожного PR:** еталонні скріншоти мультиплеєра (`shots/mp_*`, сценарії
@@ -19,7 +19,7 @@
 | Частина | Рядків | Що містить |
 |---|---|---|
 | `pow/game` (одиночна, `ag.java` та ін.) | 16 100 | карта, бій у реальному часі, меню, Gamevil Live |
-| `pow_mp` (мультиплеєр, `g.java` та ін.) | 8 000 | 49 станів `MpCanvas`: меню, персонаж, рейтинг, орден, чат, дуель; свої `font/gfx/draw/image` |
+| `pow.game.online` (мультиплеєр, `g.java` та ін.) | 8 000 | 49 станів `MpCanvas`: меню, персонаж, рейтинг, орден, чат, дуель; свої `font/gfx/draw/image` |
 | `pow_server` | 4 000 | обидва протоколи, бій дуелі, ордени, чат |
 | `res_mp` | 202 файли | спрайти бійців, тла, обличчя, UI, звуки мультиплеєра |
 
@@ -33,8 +33,8 @@ level-up і без повідомлення; Gamevil Live потім каже «
 
 ```
 PR 0  Trade: сітка видів над софт-клавішами, опис без біжучого рядка        (злито: #66)
-PR 1  Один Midlet: MP як екран тієї ж гри, нагороди героєві, без попапу й outro (цей PR)
-PR 2  Один цикл: MpCanvas працює всередині GameCanvas.run, код переїжджає в pow/game/online/
+PR 1  Один Midlet: MP як екран тієї ж гри, нагороди героєві, без попапу й outro (злито: #67)
+PR 2  Один цикл: MpCanvas працює всередині GameCanvas.run, код переїжджає в pow/game/online/ (цей PR)
 PR 3  Прибирання: mp_main.py, mp_shot.py, web --mp, sp_bridge сирими байтами, документація
 ```
 
@@ -55,8 +55,8 @@ PR 3  Прибирання: mp_main.py, mp_shot.py, web --mp, sp_bridge сири
 2. `pow/game/game_canvas.py run`: вихід із циклу зі станом у пам'яті (`GameCanvas.suspended`) і
    `resume()` без `init_game`. Звук: `stop_sound` перед виходом, музика поточного стану після.
 3. `main.py`: цикл «одиночна → (призупинена) MP → одиночна продовжує». `fresh_games()` стирає лише
-   `pow_mp.*` (статичні поля чисті на кожен вхід, як у jar); `pow.game` не чіпає. У PR 2 це зникне.
-4. `pow_mp/mp_canvas_input.py`, `mp_canvas.py`: Exit у головному меню MP без попапу; стан 300
+   `pow.game.online.*` (статичні поля чисті на кожен вхід, як у jar); `pow.game` не чіпає. У PR 2 це зникне.
+4. `pow/game/online/mp_canvas_input.py`, `mp_canvas.py`: Exit у головному меню MP без попапу; стан 300
    (`_paint_outro`, `outro.png`, 30 кадрів) пропускається — одразу назад.
 5. **Нагороди.** 1032 (`net_thread._port_extra_in`): замість сирих байтів у сейв — `(gold, fame,
    exp, loot)` у пам'яті (`sp_bridge.pending`). Після повернення: `hero.gold += gold`, `hero.fame +=
@@ -96,21 +96,21 @@ Multiplayer. Малювання, стани (0…300), поля й методи 
    при виході — те, що зараз робить `main.py`.
 3. Мережа: `NetThread.tick()` викликається з того ж місця циклу, де `tick_live()`; транспорт і
    `pow_server` без змін.
-4. Звук: `pow_mp/game.py` → `pow/game/online/sound.py`, грає через той самий `pow/midp/media`.
+4. Звук: `pow/game/online/game.py` → `pow/game/online/sound.py`, грає через той самий `pow/midp/media`.
 5. Ресурси: `res_mp/` лишається каталогом ресурсів розділу (`config.MP_RES_ROOT`); завантажувач
    `online/assets.py` = `mp_canvas_assets.py` як є. Злиття в `res/` — не потрібне.
 6. Переїзд файлів (git mv, лише імпорти й назви класів):
 
    | було | стає |
    |---|---|
-   | `pow_mp/mp_canvas.py` + `mp_canvas_*.py` | `pow/game/online/canvas.py` + `online/*.py` (той самий поділ на mixin-и) |
-   | `pow_mp/net_thread.py`, `net/` | `pow/game/online/net.py`, транспорт лишається в `pow_mp/net/` → `pow/midp/transport.py` (його вже використовує Gamevil Live) |
-   | `pow_mp/font.py`, `gfx.py`, `draw.py`, `image.py` | `pow/game/online/` як є (інший формат шрифту й малювання, ніж у `pow/game/font.py`; не зливати, щоб не змінити піксель) |
-   | `pow_mp/sp_bridge.py` | `pow/game/online/bridge.py`: хвіст 262 будується з `GameCanvas.hero` у пам'яті замість розбору 965-байтного сейва |
-   | `pow_mp/midlet.py`, `mp_game.py` | видаляються (Midlet один; `Game` → частина `online/canvas.py`) |
-   | `pow_mp/consts.py`, `answer.py`, `frame_*`, `rt.py`, `sprite_frames.py`, `player_pool.py`, `res_reader.py` | `pow/game/online/…` як є |
+   | `pow/game/online/mp_canvas.py` + `mp_canvas_*.py` | `pow/game/online/canvas.py` + `online/*.py` (той самий поділ на mixin-и) |
+   | `pow/game/online/net_thread.py`, `net/` | `pow/game/online/net.py`, транспорт лишається в `pow/game/online/net/` → `pow/midp/transport.py` (його вже використовує Gamevil Live) |
+   | `pow/game/online/font.py`, `gfx.py`, `draw.py`, `image.py` | `pow/game/online/` як є (інший формат шрифту й малювання, ніж у `pow/game/font.py`; не зливати, щоб не змінити піксель) |
+   | `pow/game/online/sp_bridge.py` | `pow/game/online/bridge.py`: хвіст 262 будується з `GameCanvas.hero` у пам'яті замість розбору 965-байтного сейва |
+   | `pow/game/online/midlet.py`, `mp_game.py` | видаляються (Midlet один; `Game` → частина `online/canvas.py`) |
+   | `pow/game/online/consts.py`, `answer.py`, `frame_*`, `rt.py`, `sprite_frames.py`, `player_pool.py`, `res_reader.py` | `pow/game/online/…` як є |
 
-7. `pow_mp/` після цього порожній, лишається до PR 3 тільки `mp_main.py` як тонка обгортка для
+7. `pow/game/online/` після цього порожній, лишається до PR 3 тільки `mp_main.py` як тонка обгортка для
    старих сценаріїв `mp_shot.py` (щоб порівняти еталони до/після).
 
 **Критерій.** Сценарії `mp_login … mp_order_menus` (12 штук) ганяються через `shot.py` в
@@ -119,9 +119,11 @@ Multiplayer. Малювання, стани (0…300), поля й методи 
 
 **Java.** `g.java c_v` (цикл), `f_I` (клавіші), `d_v` (paint), `h.java` (мережа).
 
-**Ризики.** Віртуальний годинник і темп кадрів у `shot.py` проти `mp_shot.py` (щоб еталони зійшлись
-кадр у кадр); статичні поля `MpCanvas`, які раніше чистились перезавантаженням модулів — тепер
-`online.reset()` при кожному вході (явний список полів з `NAMES.md` §MpCanvas).
+**Як зроблено.** Файли переїхали без перейменувань (`pow/game/online/mp_canvas*.py` тощо), транспорт у
+`pow/midp/transport.py`; `online_session.py` (стан 13, `enter` / `frame` / `leave`), один кадр = `online/game.py frame`.
+Статичні поля `MpCanvas` і далі чистяться перезавантаженням модулів `pow.game.online` при кожному
+вході (`online_session._fresh`): простіше й надійніше за ручний `reset()`. Титул «press any key»
+пропускається (рішення гравця).
 
 ---
 

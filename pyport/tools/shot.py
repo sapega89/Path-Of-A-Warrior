@@ -17,9 +17,6 @@ list of steps, one per line:
     release KEY     let the held key go
     mousedown X Y   left button pressed and held at X Y; mouseup = let it go
     shot NAME       save the last frame as NN_NAME.png
-    multiplayer N NAME  (before the key that opens Gamevil Live > Multiplayer) run the Multiplayer
-                    screens as main.py does, N frames, save the last as NN_NAME.png, and come back
-                    (their Exit): the single player goes on and the steps after it continue there
     account ID PWD  TEST-ONLY: register the Gamevil Live UserID / password on this device
     logins N        TEST-ONLY: stop with an error if the game sent more than N background logins
     online yes|no   TEST-ONLY: stop with an error unless the background login (ALWAYS_ONLINE) is that
@@ -259,9 +256,6 @@ def run(scenario, out, every=False):
                     Menus.add_friendship(tab.get_int(b1, 0), 10 + 20 * b1)
                 GameCanvas.hero.live_registered = 1
                 continue
-            if cmd == "multiplayer":       # multiplayer N NAME: after the game quits (Main Menu >
-                state["mp"] = arg.split()      # Multiplayer > YES), N MP frames and shot NAME
-                continue
             if cmd == "shot":
                 state["n"] += 1
                 name = "%02d_%s.png" % (state["n"], arg)
@@ -274,33 +268,6 @@ def run(scenario, out, every=False):
     display.frame_hooks.append(on_frame)
     midlet = Midlet()
     asyncio.run(midlet.startApp())
-    while GameCanvas.suspended:            # Gamevil Live > Multiplayer: the Multiplayer screens in
-        if not state.get("mp"):           # the same window (main.py), the single player waits
-            raise SystemExit("multiplayer: the Multiplayer screens opened without a `multiplayer N NAME` step")
-        import main as main_py
-        from pow_mp.midlet import Midlet as MPMain
-        frames, name = int(state["mp"][0]), state["mp"][1]
-        state["mp"] = None
-        mp = {"left": frames}
-
-        def mp_frame(screen):
-            mp["left"] -= 1
-            if mp["left"] <= 0:
-                state["n"] += 1
-                fn = "%02d_%s.png" % (state["n"], name)
-                pygame.image.save(screen, str(out / fn))
-                saved.append(fn)
-                MPMain.canvas.midlet.destroyed = True     # its own Exit: back to the single player
-
-        display.frame_hooks.remove(on_frame)   # the scenario waits with the single player
-        display.frame_hooks.append(mp_frame)
-        try:
-            if not asyncio.run(main_py.multiplayer()):
-                raise SystemExit("multiplayer: the Multiplayer screens did not come back to the single player")
-        finally:
-            display.frame_hooks.remove(mp_frame)
-            display.frame_hooks.append(on_frame)
-        asyncio.run(Midlet.canvas.loop())  # the single player goes on, the scenario with it
     display.frame_hooks.remove(on_frame)
     shutil.rmtree(save_dir, ignore_errors=True)
     return saved, state["frame"]

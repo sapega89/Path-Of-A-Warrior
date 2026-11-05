@@ -17,6 +17,7 @@ from pow.game.font import Font
 from pow.game.game_fields import GameFields
 from pow.game.gfx import Gfx
 from pow.game.scr_table import ScrTable
+from pow.game import online_session
 from pow.midp import display, system
 from pow.midp.canvas import Canvas
 from pow.midp.graphics import Image
@@ -109,6 +110,9 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         GameCanvas.scene = MapScene()                # c.java: story player, map scene
 
     def keyPressed(self, key):  # ag.java:660-662
+        if GameCanvas.state == online_session.ONLINE and GameCanvas.online is not None:
+            GameCanvas.online.mp.keyPressed(key)   # PORT-EXTRA: the Multiplayer screens' key
+            return
         self.key_down(key)
 
     def handle_key(self):  # ag.java:664-685
@@ -152,20 +156,15 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         self.init_game()
         await self.loop()
 
-    def suspend(self):
-        """PORT-EXTRA: leave loop() with everything in memory; main.py runs the Multiplayer
-        screens in the same window and then calls loop() again (Gamevil Live > Multiplayer)."""
-        GameCanvas.stop_sound()
-        GameCanvas.suspended = True
-        GameCanvas.running = False
-
-    async def loop(self):  # ag.java:714-760  (the frames; PORT-EXTRA: re-entered after suspend())
-        GameCanvas.suspended = False
-        GameCanvas.running = True
+    async def loop(self):  # ag.java:714-760  (the frames)
         GameCanvas.tick_start = system.currentTimeMillis()
         while GameCanvas.running and not self.quit_requested:
             try:
                 GameCanvas.tick_start = system.currentTimeMillis()
+                if GameCanvas.state == online_session.ONLINE:   # PORT-EXTRA: the Multiplayer
+                    if not await GameCanvas.online.frame():     # screens, one frame per tick
+                        GameCanvas.online.leave()
+                    continue
                 if GameCanvas.paused:
                     self.handle_key()
                     self.repaint(0, 0, GameCanvas.screen_w, GameCanvas.screen_h)

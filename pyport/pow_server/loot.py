@@ -6,7 +6,7 @@ Live (Gift List 520 / Warehouse, analysis/03 §5.2). That server is lost, so the
 made up. What is not: the items and their stats come from the single-player tables, and the
 Special (301-437) and Rare (501-518) ones are what the single player cannot get offline except
 by Combine (analysis/03 §1.2). Our client puts the item into the single-player backpack
-(pow_mp/sp_bridge.add_item); 1032 carries it as PORT-EXTRA.
+(pow/game/online/sp_bridge.add_item); 1032 carries it as PORT-EXTRA.
 """
 import pathlib
 

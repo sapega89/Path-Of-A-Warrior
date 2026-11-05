@@ -1,4 +1,4 @@
-"""The MP client (pow_mp) driven headless through tools/mp_shot.py scenarios
+"""The MP client (pow.game.online) driven headless through tools/mp_shot.py scenarios
 against the in-game server: login, main menu, Character, Ranking, Options and a Duel vs CPU must not raise."""
 import importlib.util
 import pathlib
@@ -35,7 +35,7 @@ def test_single_player_account_logs_in_without_the_login_screen(tmp_path):
     from pow.midp import display
 
     def seen(_screen):
-        from pow_mp.mp_canvas import MpCanvas
+        from pow.game.online.mp_canvas import MpCanvas
         states.add(MpCanvas.state)
     display.frame_hooks.append(seen)
     try:
@@ -43,7 +43,7 @@ def test_single_player_account_logs_in_without_the_login_screen(tmp_path):
                                save_dir=str(tmp_path / "rms"))
     finally:
         display.frame_hooks.remove(seen)
-    from pow_mp.net.transport import LocalTransport
+    from pow.midp.transport import LocalTransport
     assert "ANDREY" in LocalTransport._server.online
     assert 2 not in states and 10 in states
     assert saved[-1].endswith("main_menu_no_login.png")
@@ -52,7 +52,7 @@ def test_single_player_account_logs_in_without_the_login_screen(tmp_path):
 def test_login_registers_on_local_server(tmp_path):
     mp_shot = _mp_shot()
     mp_shot.run(mp_shot.parse(SCEN / "mp_menu.keys"), tmp_path / "out", save_dir=str(tmp_path / "rms"))
-    from pow_mp.net.transport import LocalTransport
+    from pow.midp.transport import LocalTransport
     srv = LocalTransport._server
     assert srv.storage.has_account("TEST")
     assert "TEST" in srv.online
@@ -63,7 +63,7 @@ def test_duel_reaches_the_result_and_is_recorded(tmp_path):
     saved, _ = mp_shot.run(mp_shot.parse(SCEN / "mp_duel.keys"), tmp_path / "out",
                            save_dir=str(tmp_path / "rms"))
     assert "08_result.png" in saved and saved[-1].endswith("back_to_duel_menu.png")
-    from pow_mp.net.transport import LocalTransport
+    from pow.midp.transport import LocalTransport
     ch = LocalTransport._server.storage.load("TEST")
     assert ch.wins + ch.losses == 1
 
@@ -76,14 +76,14 @@ def test_single_player_hero_plays_the_duel_and_gets_the_rewards(tmp_path, monkey
     from test_mp_sp_bridge import make_save, store
 
     import config
-    from pow_mp import sp_bridge as S
+    from pow.game.online import sp_bridge as S
     rms = tmp_path / "rms"
     monkeypatch.setattr(config, "SAVE_DIR", str(rms))
     store(make_save(gold=1000, fame=50, exp=7))
     mp_shot = _mp_shot()
     saved, _ = mp_shot.run(mp_shot.parse(SCEN / "mp_duel.keys"), tmp_path / "out", save_dir=str(rms))
     assert "08_result.png" in saved
-    from pow_mp.net.transport import LocalTransport
+    from pow.midp.transport import LocalTransport
     ch = LocalTransport._server.storage.load("TEST")
     assert ch.sp_linked and ch.level == 12 and ch.max_hp() == 260 and ch.skills == {3: 3, 9: 2}
     monkeypatch.setattr(config, "SAVE_DIR", str(rms))
@@ -99,10 +99,10 @@ def test_auto_battle_plays_the_duel_alone(tmp_path):
         saved, _ = mp_shot.run(mp_shot.parse(SCEN / "mp_autobattle.keys"), tmp_path / "out",
                                save_dir=str(tmp_path / "rms"))
     finally:
-        from pow_mp.mp_canvas import MpCanvas
+        from pow.game.online.mp_canvas import MpCanvas
         auto, MpCanvas.auto_battle = MpCanvas.auto_battle, False
     assert auto and saved[-1].endswith("auto_end.png")
-    from pow_mp.net.transport import LocalTransport
+    from pow.midp.transport import LocalTransport
     ch = LocalTransport._server.storage.load("TEST")
     assert ch.wins + ch.losses == 1
 
@@ -115,7 +115,7 @@ def test_order_window_team_duel_and_leave(tmp_path):
                            save_dir=str(tmp_path / "rms"))
     assert any(n.endswith("_result.png") for n in saved)
     assert any(n.endswith("_back_to_order.png") for n in saved) and saved[-1].endswith("after_leave.png")
-    from pow_mp.net.transport import LocalTransport
+    from pow.midp.transport import LocalTransport
     from pow_server import orders
     st = LocalTransport._server.storage
     test, rival = st.load("TEST"), st.load("RIVAL")
@@ -132,8 +132,8 @@ def test_chat_private_answer_and_lobby(tmp_path):
     saved, _ = mp_shot.run(mp_shot.parse(SCEN / "mp_chat.keys"), tmp_path / "out",
                            save_dir=str(tmp_path / "rms"))
     assert saved[-1].endswith("no_order.png")
-    from pow_mp.mp_canvas import MpCanvas
-    from pow_mp.net.transport import LocalTransport
+    from pow.game.online.mp_canvas import MpCanvas
+    from pow.midp.transport import LocalTransport
     from pow_server import chat
     st = LocalTransport._server.storage
     pm = chat.history(st, chat.pm_key("TEST", "RIVAL"))["rows"]

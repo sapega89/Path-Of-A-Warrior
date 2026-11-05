@@ -4,7 +4,7 @@ import pathlib
 import pygame
 
 import config
-from pow_mp.sprite_frames import SpriteFrames
+from pow.game.online.sprite_frames import SpriteFrames
 
 ROOT = pathlib.Path(config.MP_RES_ROOT)
 

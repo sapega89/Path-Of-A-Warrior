@@ -3,7 +3,7 @@
 Generated once from pyport/mp_java/d.java (branch java-reference) by the old
 tools/j2py_mp.py; edited by hand since.
 """
-from pow_mp.rt import DataInputStream, _js, i32
+from pow.game.online.rt import DataInputStream, _js, i32
 
 
 class FrameReader:
@@ -48,4 +48,4 @@ def _static_init():
 
 def _late_imports():
     global Answer
-    from pow_mp.answer import Answer
+    from pow.game.online.answer import Answer
