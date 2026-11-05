@@ -815,6 +815,8 @@ Java-ім'я методу (з суфіксом сигнатури, напр. `J_
 |---|---|---|---|
 | `a_v` | `draw_boot` | `b_v` | `boot_keys` |
 | `b_I` | `is_any_key` |  |  |
+| — (`b_v` 44-55) | `answer_sound` | — (`b_v` 57-63) | `leave_title` |
+| PORT-EXTRA | `resume` |  |  |
 
 ### Sound
 

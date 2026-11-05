@@ -41,6 +41,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
     # PORT-EXTRA auto-battle: Tab (key -100) turns it on / off; the round's 1027 then goes out after
     # a second with action AUTO_ACTION, and the server's bot chooses (pow_server/battle.py cpu_choice)
     auto_battle = config.AUTO_HUNT
+    sound_from_sp = None   # PORT-EXTRA: the single player's sound answer (mp_main.play), None = ask
     AUTO_ACTION = 255
     app_version = None  # g.java:25 String
     game = None  # g.java:26 m
@@ -498,6 +499,12 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
             Draw.fill_rect(MpCanvas.buffer_g, 0, 0, MpCanvas.canvas_w, MpCanvas.canvas_h, 0xFFFFFF)
         self.draw_buffer()
         Draw.draw_image(MpCanvas.screen_g, MpCanvas.logo_image, idiv(MpCanvas.canvas_w, 2), MpCanvas.logo_y, 17)
+        if MpCanvas.sound_from_sp is not None:
+            # PORT-EXTRA: started from the single player's Main Menu (mp_main.play): it already
+            # showed the logo and asked about the sound, so its answer goes straight on
+            MpCanvas.logo_image = None
+            self.answer_sound_prompt(MpCanvas.sound_from_sp)
+            return
         if (system.currentTimeMillis() - MpCanvas.logo_time) <= 3000:
             return
         MpCanvas.logo_image = None

@@ -31,15 +31,26 @@ def server_from_page():
         print(f"POW MP server from the page address: {ex!r}")
 
 
-async def play():
+async def play(sound_on=None):
     """Runs the Multiplayer game on an open display. Returns True when it ended with its own
-    Exit (main.py then goes back to the single player), False when the window was closed."""
+    Exit (main.py then goes back to the single player), False when the window was closed.
+    sound_on: the single player's answer to "sound enabled?" (main.py), so the Multiplayer
+    game skips its logo and asks nothing; None = its own logo and question."""
     server_from_page()
     import pygame
     pygame.display.set_caption("Path of a Warrior Multiplayer")
     from pow_mp.midlet import Midlet
+    from pow_mp.mp_canvas import MpCanvas
+    from pow_mp.net_thread import NetThread
+    MpCanvas.sound_from_sp = sound_on
     midlet = Midlet()
-    await midlet.startApp()
+    try:
+        await midlet.startApp()
+    finally:
+        NetThread.close()                  # the server forgets this session (it lives on)
+        if MpCanvas.game is not None:
+            MpCanvas.game.stop_music()     # the outro stops it; a closed window does not
+        pygame.display.set_caption("Path of a Warrior")
     return not Midlet.canvas.quit_requested
 
 
