@@ -24,7 +24,7 @@ import struct
 import time
 
 import config
-from pow_server import codec_bin
+from pow_server import codec_bin, security
 from pow_server.loot import _read_arr
 
 TAX_PERCENT = 10              # ht[4], shown in "Enter your selling price. N% of total ..."
@@ -167,6 +167,7 @@ class LiveServer:
         self.rng = rng or random.Random()
         self.clock = clock
         self.notices = [list(p)[:4] for p in notices]
+        self.guard = None              # security.Guard (ws_server.serve)
 
     def connect(self, send):
         return LiveSession(self, send)
@@ -235,6 +236,7 @@ class LiveSession:
         self._send = send
         self.user = None
         self.closed = False
+        self.peer = None               # the client's address (ws_server.py), for security.Guard
         self.gold = 0                  # cz.E as the last 768 / answer said
         self.backpack = {}             # serial -> item (the backpack the client sent in 768)
         self.notice_page = 0
@@ -294,10 +296,12 @@ class LiveSession:
         if not _ID_RE.match(uid) or not _PWD_RE.match(pwd):
             return self.send(531, -49, b"\0\0\3")
         if st.has_account(uid):
-            if not st.check_password(uid, pwd):
+            if not security.check_password(self.server, self, uid, pwd):
                 return self.send(531, -1, b"\0\0\1")
             result = 2
         else:
+            if not security.may_create(self.server, self):
+                return self.send(531, -49, b"\0\0\3")    # PORT-EXTRA: too many new accounts
             st.create_account(uid, pwd)
             result = 0
         self.user = uid

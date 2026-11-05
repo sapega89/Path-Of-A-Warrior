@@ -21,7 +21,7 @@ import re
 import time
 
 from pow_server import battle as B
-from pow_server import codec_bin, loot, orders
+from pow_server import codec_bin, loot, orders, security
 from pow_server import messages as M
 from pow_server.model import apply_sp_hero, default_character, valid_slots
 from pow_server.storage import open_storage
@@ -57,6 +57,7 @@ class GameServer:
         self.match_wait = match_wait   # seconds a Duel waits for a live opponent, then a CPU
         self.queue = []                # [Session] waiting in 512 (oldest first)
         self.bots = {}                 # PORT-EXTRA: UserID -> Character of a server bot
+        self.guard = None              # PORT-EXTRA: security.Guard (ws_server.serve)
 
     # --- PORT-EXTRA: server bots ---------------------------------------------------------
     def add_bots(self, bots=DEFAULT_BOTS):
@@ -123,6 +124,7 @@ class Session:
         self.server = server
         self._send = send
         self.user = None               # user id after a good 262
+        self.peer = None               # PORT-EXTRA: the client's address, for security.Guard
         self.char = None
         self.closed = False
         self.last_seen = server.clock()
@@ -179,9 +181,11 @@ class Session:
         if not st.has_account(uid):
             if not self.server.auto_register:
                 return self.send(M.LOGIN_FIRST_ANS, st=-1, reason=M.REASON_NO_ID)
+            if not security.may_create(self.server, self):      # PORT-EXTRA: too many new accounts
+                return self.send(M.LOGIN_FIRST_ANS, st=-1, reason=M.REASON_OTHER)
             st.create_account(uid, pwd)
             st.save(default_character(uid))
-        elif not st.check_password(uid, pwd):
+        elif not security.check_password(self.server, self, uid, pwd):
             return self.send(M.LOGIN_FIRST_ANS, st=-1, reason=M.REASON_BAD_PASSWORD)
         self.send(M.LOGIN_FIRST_ANS, st=1, token=st.new_token(uid))
 
