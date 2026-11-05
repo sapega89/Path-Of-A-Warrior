@@ -1,7 +1,7 @@
 """The POW Multiplayer server: sessions and the menu-side messages (PHASE_9 tasks 9.13, 9.14, 9.18).
 
 Pure Python, no pygame and no I/O: a transport (pow_server/ws_server.py, or the in-game
-LocalTransport of pow_mp/net/transport.py) hands every received frame payload to
+LocalTransport of pow/midp/transport.py) hands every received frame payload to
 Session.receive() and writes the frames the session passes to its `send` callback.
 
 Done here: login 278/262 (+ PORT-EXTRA session token), duplicate login (280), notices

@@ -1,10 +1,10 @@
 """g.java, part of MpCanvas: key handling: menus, yes/no, popups, the letter grid for names and ids.
 
-A mixin of MpCanvas (pow_mp/mp_canvas.py); the methods keep their `# g.java:FROM-TO`
+A mixin of MpCanvas (pow/game/online/mp_canvas.py); the methods keep their `# g.java:FROM-TO`
 comments. The module names below are set by mp_canvas.py: `MpCanvas` once the class exists,
 the others by its _late_imports().
 """
-from pow_mp.rt import (
+from pow.game.online.rt import (
     _inc,
     _js,
     _set,
@@ -14,7 +14,7 @@ from pow_mp.rt import (
     system,
 )
 
-MpCanvas = None   # set by pow_mp/mp_canvas.py
+MpCanvas = None   # set by pow/game/online/mp_canvas.py
 NetThread = Consts = Draw = Gfx = None   # set by mp_canvas._late_imports
 
 

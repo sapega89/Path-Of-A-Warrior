@@ -1,16 +1,16 @@
 """g.java, part of MpCanvas: the non-battle screens: backgrounds, windows, records, attributes, skills, help, error, loading.
 
-A mixin of MpCanvas (pow_mp/mp_canvas.py); the methods keep their `# g.java:FROM-TO`
+A mixin of MpCanvas (pow/game/online/mp_canvas.py); the methods keep their `# g.java:FROM-TO`
 comments. The module names below are set by mp_canvas.py: `MpCanvas` once the class exists,
 the others by its _late_imports().
 """
-from pow_mp.rt import (
+from pow.game.online.rt import (
     _js,
     idiv,
     imod,
 )
 
-MpCanvas = None   # set by pow_mp/mp_canvas.py
+MpCanvas = None   # set by pow/game/online/mp_canvas.py
 Consts = Draw = None   # set by mp_canvas._late_imports
 
 
@@ -232,7 +232,7 @@ class ScreensMixin:
             if MpCanvas.loop_i > 1:
                 self.draw_number0_b((MpCanvas.center_x + 52), ((MpCanvas.center_y - 44) + (MpCanvas.loop_i * 17)), MpCanvas.stat_value)
             MpCanvas.loop_i = MpCanvas.loop_i + 1
-        self.draw_records_order()          # PORT-EXTRA: the order row (pow_mp/mp_canvas_order.py)
+        self.draw_records_order()          # PORT-EXTRA: the order row (pow/game/online/mp_canvas_order.py)
 
     def draw_attributes(self):  # g.java:5870
         self.draw_window(MpCanvas.screen_g)

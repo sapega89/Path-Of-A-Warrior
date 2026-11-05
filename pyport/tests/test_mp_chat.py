@@ -167,7 +167,7 @@ def test_clean():
 
 
 def test_client_wraps_long_messages():
-    from pow_mp.mp_canvas_chat import wrap
+    from pow.game.online.mp_canvas_chat import wrap
 
     class Font:
         @staticmethod
@@ -185,7 +185,7 @@ def test_client_wraps_long_messages():
 def test_client_forgets_the_last_accounts_chat_on_login():
     import os
     os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
-    from pow_mp.mp_canvas import MpCanvas
+    from pow.game.online.mp_canvas import MpCanvas
     MpCanvas.chat_unread = [3, 2, 1]
     MpCanvas.chat_rows = {(0, ""): [("A", "A", "hi")]}
     MpCanvas.chat_loaded = {(0, "")}

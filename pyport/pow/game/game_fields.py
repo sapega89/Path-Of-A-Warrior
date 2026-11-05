@@ -288,8 +288,7 @@ class GameFields:
     talk_lines = [None] * 5  # ag.java:544 static String[]
     painted = False  # ag.java:546 static boolean
     running = True  # ag.java:548 static boolean
-    suspended = False  # PORT-EXTRA: the loop stopped for the Multiplayer screens (main.py), the
-                       # state stays in memory and resume() continues it
+    online = None  # PORT-EXTRA: online_session.Session while the Multiplayer screens run (state 13)
     tick_start = 0  # ag.java:550 static long
     map_started = False  # ag.java:552 boolean
     ball_cover = None  # ag.java:554 static Image

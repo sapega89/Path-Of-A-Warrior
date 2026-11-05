@@ -3,7 +3,7 @@
 Generated once from pyport/mp_java/e.java (branch java-reference) by the old
 tools/j2py_mp.py; edited by hand since.
 """
-from pow_mp.rt import _arraycopy, _js, i8, ushr32
+from pow.game.online.rt import _arraycopy, _js, i8, ushr32
 
 
 class FrameWriter:
@@ -86,4 +86,4 @@ def _static_init():
 
 def _late_imports():
     global FrameReader
-    from pow_mp.frame_reader import FrameReader
+    from pow.game.online.frame_reader import FrameReader

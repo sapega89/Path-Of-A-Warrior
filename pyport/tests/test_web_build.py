@@ -3,7 +3,7 @@ import importlib.util
 import pathlib
 
 import config
-from pow_mp.player_pool import PlayerPool
+from pow.game.online.player_pool import PlayerPool
 
 PY = pathlib.Path(__file__).resolve().parents[1]
 
