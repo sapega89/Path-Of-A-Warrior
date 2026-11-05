@@ -177,7 +177,10 @@ class LiveScreen(Live):
         self.draw_list_screen()
 
     def draw_buy_kinds(self):  # m.java:215-224  (Buy: kinds)
-        i = 20 + (255 - 64 + GameCanvas.cursor[6] >> 1)
+        if config.ORIG_BUG["B9"]:      # ORIG-BUG B9: as m.bv(): gold box, caption and grid above the soft keys
+            i = 20 + (255 - (64 + GameCanvas.cursor[6]) >> 1)
+        else:
+            i = 20 + (255 - 64 + GameCanvas.cursor[6] >> 1)
         self.draw_hero_gold(i)
         i += 32
         self.draw_caption_box(Live.category_names[Live.category], i)
