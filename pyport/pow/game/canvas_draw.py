@@ -8,6 +8,7 @@ import config
 from pow.game import consts
 from pow.game.gfx import Gfx
 from pow.game.structs import Rect
+from pow.midp import canvas
 from pow.midp.jint import i16, idiv, imod
 
 F10 = config.DECOMP_FIX["F10"]
@@ -202,30 +203,31 @@ class DrawMixin:
         key_w = GameCanvas.softkey_bg.getWidth()
         key_h = GameCanvas.softkey_bg.getHeight()
         str_ = ""
+        left_hint, right_hint = canvas.key_hints()   # PORT-EXTRA: config.KEY_HINTS
         if left != -1:
             Gfx.set_font(GameCanvas.font_white)
             Gfx.draw_image(GameCanvas.softkey_bg, 0, GameCanvas.screen_h - key_h)
-            text_w = len(str_ + consts.softkey_labels[left]) * 10
+            text_w = len(str_ + left_hint + consts.softkey_labels[left]) * 10
             extra = text_w + 4 - GameCanvas.softkey_bg.getWidth()
             if extra > 0:
                 Gfx.fill_rect(key_w - 8, GameCanvas.screen_h - key_h + 2, 8, 13, 0)
                 Gfx.draw_image(GameCanvas.softkey_bg, extra, GameCanvas.screen_h - key_h)
                 Gfx.fill_rect(extra, GameCanvas.screen_h - key_h + 2, 8, 13, 0)
-                Gfx.draw_string(str_ + consts.softkey_labels[left], (key_w + extra) // 2, GameCanvas.screen_h - key_h, 1)
+                Gfx.draw_string(str_ + left_hint + consts.softkey_labels[left], (key_w + extra) // 2, GameCanvas.screen_h - key_h, 1)
             else:
-                Gfx.draw_string(str_ + consts.softkey_labels[left], key_w // 2, GameCanvas.screen_h - key_h, 1)
+                Gfx.draw_string(str_ + left_hint + consts.softkey_labels[left], key_w // 2, GameCanvas.screen_h - key_h, 1)
         if right != -1:
             Gfx.set_font(GameCanvas.font_white)
             Gfx.draw_image(GameCanvas.softkey_bg, GameCanvas.screen_w - key_w - 0, GameCanvas.screen_h - key_h)
-            text_w = len(str_ + consts.softkey_labels[right]) * 10
+            text_w = len(str_ + right_hint + consts.softkey_labels[right]) * 10
             extra = text_w + 15 - GameCanvas.softkey_bg.getWidth()
             if extra > 0:
                 Gfx.fill_rect(GameCanvas.screen_w - key_w - 0, GameCanvas.screen_h - key_h + 2, 8, 13, 0)
                 Gfx.draw_image(GameCanvas.softkey_bg, GameCanvas.screen_w - key_w - extra - 0, GameCanvas.screen_h - key_h)
                 Gfx.fill_rect(GameCanvas.screen_w - extra - 0 - 8, GameCanvas.screen_h - key_h + 2, 8, 13, 0)
-                Gfx.draw_string(str_ + consts.softkey_labels[right], GameCanvas.screen_w - (key_w + extra) // 2 - 0, GameCanvas.screen_h - key_h, 1)
+                Gfx.draw_string(str_ + right_hint + consts.softkey_labels[right], GameCanvas.screen_w - (key_w + extra) // 2 - 0, GameCanvas.screen_h - key_h, 1)
                 return
-            Gfx.draw_string(str_ + consts.softkey_labels[right], GameCanvas.screen_w - key_w // 2 - 0, GameCanvas.screen_h - key_h, 1)
+            Gfx.draw_string(str_ + right_hint + consts.softkey_labels[right], GameCanvas.screen_w - key_w // 2 - 0, GameCanvas.screen_h - key_h, 1)
 
     def set_color(self, r, g, b):  # ag.java:3201-3203
         GameCanvas.fill_color = GameCanvas.rgb(r, g, b)

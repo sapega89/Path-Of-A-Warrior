@@ -31,7 +31,9 @@ class NameBuffer:
                 self.move_cursor(-1)
             else:
                 return 1
-        elif 97 <= key <= 122 or 65 <= key <= 90:
+        elif 97 <= key <= 122 or 65 <= key <= 90 or 48 <= key <= 57:
+            # PORT-EXTRA: 48..57 = the digits of the UserID keyboard (pow/game/key_grid.py);
+            # the hero-name grid (ag.f) never sends them
             c = chr(key)
             if self.last_char != c:
                 self.changed = 0

@@ -41,6 +41,17 @@ BELT_KEYMAP = {pygame.K_z: -101, pygame.K_x: -102, pygame.K_c: -103, pygame.K_v:
 
 # mouse wheel -> key, decided by the game (pow/game/pointer.py); right button = BACK
 MOUSE_BACK = -7
+
+# PORT-EXTRA: the device of the last key, for the soft-key captions (config.KEY_HINTS):
+# "keyboard" or "gamepad" (the mouse changes nothing: its clicks need no key names)
+input_source = "keyboard"
+HINTS = {"keyboard": ("Q:", "ESC:"), "gamepad": ("SEL:", "B:")}
+
+
+def key_hints():
+    """PORT-EXTRA (config.KEY_HINTS): what goes before the left / right soft-key caption: the
+    key of the device last used (Q / Esc on the keyboard, Select / B on the gamepad)."""
+    return HINTS[input_source] if config.KEY_HINTS else ("", "")
 AUTO_TOGGLE = -100                      # PORT-EXTRA: Tab / the AUTO corner of the map
 DIRECTION_KEYS = (-1, -2, -3, -4, 50, 52, 54, 56)
 _IS_WEB = sys.platform == "emscripten"
@@ -100,6 +111,8 @@ class Canvas:
                     not ev.mod & (pygame.KMOD_CTRL | pygame.KMOD_ALT) and self.text_input(ev.unicode):
                 pass                                 # PORT-EXTRA: a text box took the key (MP chat)
             elif ev.type == pygame.KEYDOWN:
+                global input_source
+                input_source = "keyboard"           # PORT-EXTRA: config.KEY_HINTS
                 code = KEYMAP.get(ev.key)
                 if ev.key in BELT_KEYMAP and self.belt_active is not None and self.belt_active():
                     code = BELT_KEYMAP[ev.key]
@@ -150,10 +163,12 @@ class Canvas:
 
     def _pad_keys(self, keys):
         """PORT-EXTRA: (phone key, pressed) pairs of the gamepad, handled like the keyboard's."""
+        global input_source
         for code, down in keys:
             if not down:
                 self.release(code)
                 continue
+            input_source = "gamepad"                # PORT-EXTRA: config.KEY_HINTS
             if code in gamepad.BELT_CODES and not (self.belt_active is not None and self.belt_active()):
                 continue                    # the belt only while the hero acts on the map
             self.key_queue.clear()
