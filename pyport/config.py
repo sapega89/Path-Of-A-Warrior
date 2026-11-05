@@ -79,6 +79,14 @@ LIVE_SERVER = os.environ.get("POW_LIVE_SERVER", "local")
 # server of LIVE_SERVER at the path /save when LIVE_SERVER is ws(s)://; "off"; or a
 # ws(s)://host:28200/save URL. Browser: index.html?save=...
 SAVE_SERVER = os.environ.get("POW_SAVE_SERVER", "auto")
+# PORT-EXTRA (asked by Andrey): "always online". Continue and New Game log in to Gamevil Live
+# with the registered account at once, in the background, and the connection stays for the whole
+# game (pow/game/live_online.py); a hero without an account is offered the registration once. Game
+# Menu > Gamevil Live / Warehouse opens without the "Connect to Gamevil Live?" question, and
+# Management (Save / Load User Data) is gone: there is one hero, kept on the server by cloud_save.
+# Without the server the game plays as before. POW_ALWAYS_ONLINE=0 = the original (connect on every
+# Gamevil Live, disconnect on leaving it). tools/shot.py uses 0.
+ALWAYS_ONLINE = os.environ.get("POW_ALWAYS_ONLINE", "1") == "1"
 # PORT-EXTRA (PHASE_7 D3): the NPC market always sells these Rare items at these prices (the
 # data has 1 gold for both); without 502 / 504 only 71-82 of the 149 recipes can be crafted.
 LIVE_PRICE = {502: 3000, 504: 5000}

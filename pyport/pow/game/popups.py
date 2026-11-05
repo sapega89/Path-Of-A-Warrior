@@ -120,6 +120,8 @@ class Popups(GameCanvas):
                                     GameCanvas.menu[1] = 0
                                     self.load_hero_images()
                                     self.start_story(100, 0)
+                                    from pow.game.live_online import Online
+                                    Online.on_game_start(new_game=True)   # PORT-EXTRA: online
                                 else:
                                     GameCanvas.reset_base_stats()
                                     self.setup_popup(1)

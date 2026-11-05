@@ -21,6 +21,9 @@ list of steps, one per line:
                     quit, run the Multiplayer game as main.py does, N frames, and save the last as
                     NN_NAME.png; with BACK its Exit then starts the single player again as main.py
                     does (straight at the Main Menu) and saves its 5th frame as NN_BACK.png
+    account ID PWD  TEST-ONLY: register the Gamevil Live UserID / password on this device
+    logins N        TEST-ONLY: stop with an error if the game sent more than N background logins
+    online yes|no   TEST-ONLY: stop with an error unless the background login (ALWAYS_ONLINE) is that
     gold N          TEST-ONLY: set the hero's gold (ag.cz.E) to N, to try the Blacksmith
     generals N      TEST-ONLY: befriend the first N generals of the table (10, 30, 50... points)
                     and allow one visit (cz.S = 1), as after a mission
@@ -60,6 +63,7 @@ os.environ.setdefault("POW_AUTO_BUTTON", "0")   # the AUTO button only while on 
 os.environ.setdefault("POW_AUTO_AIM_HARD", "0")   # the original: no auto-aim on Hard
 os.environ.setdefault("POW_HOLD_TO_MOVE", "0")   # keys are taps, as on the phone (env line to change)   # Random() without the clock: repeatable runs
 os.environ.setdefault("POW_SKILL_BAR", "0")   # the original HUD (env line to turn the skill bar on)
+os.environ.setdefault("POW_ALWAYS_ONLINE", "0")   # Gamevil Live as in the original: connect on entry
 os.environ.setdefault("POW_SKILL_CARD", "0")  # the original description strip of Skills
 
 
@@ -207,6 +211,29 @@ def run(scenario, out, every=False):
                 if not ops[op](have, int(val)):
                     raise SystemExit(f"expect {field} {op} {val}: it is {have}")
                 print(f"expect {field} {op} {val}: {have}")
+                continue
+            if cmd == "account":           # TEST-ONLY: account ID PWD - the Gamevil Live registration
+                uid, pwd = arg.split()         # (RecordStore "gamevil_pow_regist", m.java:287-305)
+                from pow.midp.rms import RecordStore
+                rec = bytearray(28)
+                rec[0:len(pwd)] = pwd.encode()
+                rec[12:12 + len(uid)] = uid.encode()
+                rs = RecordStore.openRecordStore("gamevil_pow_regist", True)
+                if rs.getNumRecords() == 0:
+                    rs.addRecord(rec, 0, 28)
+                rs.setRecord(1, rec, 0, 28)
+                continue
+            if cmd == "logins":            # TEST-ONLY: logins N - stop if more than N background
+                from pow.game.live_online import Online
+                if Online.attempts > int(arg):
+                    raise SystemExit(f"logins {arg}: {Online.attempts} sent")
+                print(f"logins {arg}: {Online.attempts}")
+                continue
+            if cmd == "online":            # TEST-ONLY: online yes|no - stop unless the background
+                from pow.game.live_online import Online
+                if Online.logged_in != (arg == "yes"):
+                    raise SystemExit(f"online {arg}: logged_in is {Online.logged_in}")
+                print(f"online {arg}: ok")
                 continue
             if cmd == "skilllv":           # TEST-ONLY: skilllv ID LV - skill ID (12..30) at level LV
                 sid, lv = map(int, arg.split())
