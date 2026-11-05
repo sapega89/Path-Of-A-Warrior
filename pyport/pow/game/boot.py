@@ -15,6 +15,9 @@ class Boot(GameCanvas):
 
     def draw_boot(self):  # af.java:15-36  (paint)
         from pow.game.midlet import Midlet
+        if Boot.step == 0 and GameCanvas.midlet.resume_sound is not None:
+            self.resume()
+            return
         if Boot.step == 0:
             GameCanvas.fill_screen(16777215)
             if self.logo is not None:
@@ -39,22 +42,36 @@ class Boot(GameCanvas):
         if Boot.step == 1:
             i = GameCanvas.popups.popup_keys()
             if i != -1:
-                GameCanvas.sound_on = (i == 0)
-                if i == 0:
-                    if GameCanvas.volume == 0:
-                        GameCanvas.volume = 75
-                else:
-                    GameCanvas.volume = 0
-                self.play_sound(0)
-                Boot.step = 2
-                self.load_title_picture()
+                self.answer_sound(i == 0)
             return
         if Boot.step == 2 and Boot.is_any_key(GameCanvas.key):
-            GameCanvas.redraw = 1
-            GameCanvas.title_press = None
-            GameCanvas.title_logo = None
-            GameCanvas.menus.load_title_images()
-            self.tick_title()
+            self.leave_title()
+
+    def answer_sound(self, yes):  # af.java:44-55  (the YES / NO of "sound enabled?")
+        GameCanvas.sound_on = yes
+        if yes:
+            if GameCanvas.volume == 0:
+                GameCanvas.volume = 75
+        else:
+            GameCanvas.volume = 0
+        self.play_sound(0)
+        Boot.step = 2
+        self.load_title_picture()
+
+    def leave_title(self):  # af.java:57-63  (any key on the title -> Main Menu)
+        GameCanvas.redraw = 1
+        GameCanvas.title_press = None
+        GameCanvas.title_logo = None
+        GameCanvas.menus.load_title_images()
+        self.tick_title()
+
+    def resume(self):
+        """PORT-EXTRA: back from the Multiplayer game (main.py) the single player starts again in
+        the same process; the logo, the sound question and the title were already seen, so the
+        answer given then is used and the game goes straight to the Main Menu."""
+        self.logo = None
+        self.answer_sound(GameCanvas.midlet.resume_sound)
+        self.leave_title()
 
     @staticmethod
     def is_any_key(key):  # af.java:66-92  ("press any key": which keys count)

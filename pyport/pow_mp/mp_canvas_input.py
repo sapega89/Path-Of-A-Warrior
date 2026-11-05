@@ -509,7 +509,10 @@ class InputMixin:
             return
         if MpCanvas.key_in != (-5):
             return
-        if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
+        self.answer_sound_prompt(MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0)
+
+    def answer_sound_prompt(self, yes):  # the YES / NO of state 5 (g.java, split out for the logo)
+        if yes:
             if MpCanvas.volume == 0:
                 MpCanvas.volume = 4
         else:
@@ -617,6 +620,8 @@ class InputMixin:
                 self.push_state(161)
             elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 6:   # PORT-EXTRA: Order
                 self.open_order()
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 7:   # PORT-EXTRA: Chat
+                self.open_chat()
         elif MpCanvas.state == 11:
             if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
                 MpCanvas.room_mode = 0

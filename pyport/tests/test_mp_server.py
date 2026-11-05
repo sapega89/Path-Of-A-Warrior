@@ -28,7 +28,8 @@ def login(server, uid="ANDREY", pwd="1234"):
     assert ans["op"] == 279 and ans["st"] == 1 and len(ans["token"]) == 16
     first.session.close()                      # the client hangs up after 279 (g:1912-1920)
     c = Client(server)
-    prof = c.ask(M.LOGIN, id=uid, ver=M.GAME_VER, token=ans["token"])
+    c.ask(M.LOGIN, id=uid, ver=M.GAME_VER, token=ans["token"])
+    prof = next(m for m in c.got if m["op"] == M.LOGIN_ANS)   # a PORT-EXTRA 1815 may follow it
     assert prof["op"] == 263 and prof["st"] == 1
     return c, prof
 
