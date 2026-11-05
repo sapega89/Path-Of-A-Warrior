@@ -2,7 +2,7 @@
 
     u8 n ; n x {u8 srcX, u8 srcY, s8 w, s8 h, s8 anchorX, s8 anchorY}     (06 §5.1)
 """
-from pow_mp.res_reader import ResReader
+from pow.game.online.res_reader import ResReader
 
 
 def _s8(v):

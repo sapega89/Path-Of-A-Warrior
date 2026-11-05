@@ -16,9 +16,9 @@ States (unused numbers of the jar's menu range, so the menu music plays on):
     41  a private conversation
     42  the keyboard: a message, or the UserID of a new private conversation
 """
-from pow_mp.rt import imod
+from pow.game.online.rt import imod
 
-MpCanvas = None   # set by pow_mp/mp_canvas.py
+MpCanvas = None   # set by pow/game/online/mp_canvas.py
 Consts = Draw = NetThread = None   # set by mp_canvas._late_imports
 
 CHAT = 40
@@ -55,7 +55,7 @@ _err_first = None
 def install():
     """Adds the error texts to the jar's tables (once per run, after the Order window's)."""
     global _err_first
-    from pow_mp import mp_canvas_order
+    from pow.game.online import mp_canvas_order
     mp_canvas_order.install()
     if _err_first is None or len(Consts.error_line_counts) <= _err_first:
         _err_first = len(Consts.error_line_counts)

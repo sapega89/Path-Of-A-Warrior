@@ -4,7 +4,7 @@ import struct
 import pytest
 
 import config
-from pow_mp import sp_bridge as S
+from pow.game.online import sp_bridge as S
 from pow_server import codec_bin
 from pow_server import messages as M
 from pow_server.server import GameServer

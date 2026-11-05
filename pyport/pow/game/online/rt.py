@@ -6,7 +6,7 @@ from pow.midp.graphics import Graphics  # noqa: F401
 from pow.midp.jint import i8, i16, i32, i64, idiv, imod, ushr32  # noqa: F401
 from pow.midp.jrandom import Random  # noqa: F401
 from pow.midp.rms import RecordStore  # noqa: F401
-from pow_mp.image import Image  # noqa: F401
+from pow.game.online.image import Image  # noqa: F401
 
 
 def _js(*parts):

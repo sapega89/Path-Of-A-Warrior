@@ -116,7 +116,7 @@ def _records(name):
 
 class TextSocket:
     """A WebSocket of text messages with `websockets` on the desktop (like
-    pow_mp/net/transport.py's WebSocketTransport, which is binary). The browser uses
+    pow/midp/transport.py's WebSocketTransport, which is binary). The browser uses
     BrowserTextSocket."""
 
     def __init__(self, url):

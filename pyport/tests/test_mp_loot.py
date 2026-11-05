@@ -6,7 +6,7 @@ import pytest
 from test_mp_sp_bridge import make_save, store
 
 import config
-from pow_mp import sp_bridge as S
+from pow.game.online import sp_bridge as S
 from pow_server import loot
 
 
@@ -97,7 +97,7 @@ def test_no_save_no_loot(save_dir):
 
 
 def test_client_takes_the_item_from_1032(save_dir):
-    from pow_mp.net_thread import NetThread
+    from pow.game.online.net_thread import NetThread
     from pow_server import codec_bin
     from pow_server import messages as M
     store(make_save(gold=0, fame=0, exp=0))
