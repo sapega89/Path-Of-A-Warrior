@@ -158,3 +158,45 @@ def test_too_many_connections_and_messages_are_closed():
         finally:
             task.cancel()
     asyncio.run(go())
+
+
+def test_every_frame_counts_on_websocket_and_raw_tcp():
+    """Many protocol frames in one WebSocket message, or on the raw TCP port, count one by one."""
+    import struct
+
+    from websockets.asyncio.client import connect
+    from websockets.exceptions import ConnectionClosed
+
+    from pow_server import codec_bin
+
+    burst = b"".join(codec_bin.frame(struct.pack("<H", 288)) for _ in range(20))
+
+    async def go():
+        from pow_server.ws_server import serve
+        ready = asyncio.get_running_loop().create_future()
+        task = asyncio.ensure_future(serve("127.0.0.1", 0, ":memory:", tcp_port=0, ready=ready,
+                                           server_bots=False, guard=security.Guard(max_messages=5)))
+        _server, (ws_port, tcp_port) = await asyncio.wait_for(ready, 5)
+        try:
+            async with connect(f"ws://127.0.0.1:{ws_port}/") as ws:
+                await ws.send(burst)
+
+                async def read_all():
+                    while True:
+                        await asyncio.wait_for(ws.recv(), 5)
+                with pytest.raises(ConnectionClosed):
+                    await read_all()
+            reader, writer = await asyncio.open_connection("127.0.0.1", tcp_port)
+            writer.write(burst)
+            await writer.drain()
+            got = b""
+            while True:                                   # read until the server hangs up
+                chunk = await asyncio.wait_for(reader.read(4096), 5)
+                if not chunk:
+                    break
+                got += chunk
+            writer.close()
+            assert len(codec_bin.unframe(got)[0]) <= 5
+        finally:
+            task.cancel()
+    asyncio.run(go())

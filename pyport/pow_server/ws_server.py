@@ -79,12 +79,12 @@ async def handle_ws(server, ws, peer=None, meter=None):
         async for data in ws:
             if isinstance(data, str) or len(data) > MAX_FRAME:
                 break
-            if meter is not None and not meter.allow():
-                log.info("ws %s: too many messages", peer)
-                break
             try:
                 payloads, _rest = codec_bin.unframe(data)
             except codec_bin.CodecError:
+                break
+            if meter is not None and not all(meter.allow() for _ in payloads):
+                log.info("ws %s: too many messages", peer)   # every frame counts, not the message
                 break
             for p in payloads:
                 session.receive(p)
@@ -135,6 +135,7 @@ async def handle_tcp(server, reader, writer, guard=None):
         return
     session = server.connect(writer.write)
     session.peer = peer
+    meter = guard.message_meter() if guard is not None else None
     buf = b""
 
     async def close():
@@ -148,6 +149,8 @@ async def handle_tcp(server, reader, writer, guard=None):
                 break
             buf += chunk
             payloads, buf = codec_bin.unframe(buf)
+            if meter is not None and not all(meter.allow() for _ in payloads):
+                break                              # too many messages
             for p in payloads:
                 session.receive(p)
             await writer.drain()
