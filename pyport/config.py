@@ -63,7 +63,9 @@ ORIG_BUG = {
                  # kind: a general that was mid-skill leaves kind 2 -> the next enemy reads fn[..] -> NPE
     "B9": True,  # m.bv() 365 Gamevil Live Backpack / Warehouse grid: 255 - 38 + fK[6] puts the caption at
                  # y 194 under the description strip and the 3 rows at y 232..326, under the soft keys
-                 # -> 255 - (38 + fK[6] + 16 + 22): caption y 62, rows y 100..194, strip y 200
+                 # -> 255 - (38 + fK[6] + 16 + 22): caption y 62, rows y 100..194, strip y 200.
+                 # The same in m.br() (Buy: kinds after the category): 255 - 64 + fK[6] puts the gold
+                 # box at y 194 and the 5 rows at y 258..418 -> 255 - (64 + fK[6]): gold y 36, rows y 100
     "B10": True,  # m.java:257 Gamevil Live Buy, the lots of a page: the same 255 - 84 + fK[6] puts the
                   # 2 rows of lots at y 218..282 under the description strip (y 200)
                   # -> 255 - (84 + fK[6] + 10 + 32): gold y 52, rows y 136..200, strip y 200
@@ -168,10 +170,12 @@ AUTO_BUTTON = os.environ.get("POW_AUTO_BUTTON", "1") == "1"
 
 # PORT-EXTRA (asked by the player): the description of an item / skill / potion (Blacksmith,
 # Gear, Inventory, Skills, Assign Items; not Gamevil Live, whose grids leave no room) in a box as wide as the screen, in up to
-# WIDE_DESC_LINES lines, instead of the narrow strip whose one line runs by.
+# WIDE_DESC_LINES lines, instead of the narrow strip whose one line runs by. A longer text
+# grows the box, up to WIDE_DESC_MAX_LINES lines (nothing runs by; the rest is cut).
 # POW_WIDE_DESC=0 = the original strip.
 WIDE_DESC = os.environ.get("POW_WIDE_DESC", "1") == "1"
 WIDE_DESC_LINES = 3
+WIDE_DESC_MAX_LINES = 5
 
 # PORT-EXTRA (asked by the player): full screen. F11 or Alt+Enter switch it, and so does
 # Options > Screen; the choice is remembered (RecordStore "pow_display"). POW_FULLSCREEN=1 / 0

@@ -1300,7 +1300,11 @@ class Menus(GameCanvas):
             return
         x = Menus.WIDE_DESC_X
         w = GameCanvas.screen_w - 2 * x
-        rows = config.WIDE_DESC_LINES
+        Gfx.set_font(GameCanvas.font_white)
+        lines = Menus.wide_description_lines(info.text, w - 8)
+        # a longer text grows the box (up to WIDE_DESC_MAX_LINES rows): nothing runs by
+        rows = min(config.WIDE_DESC_MAX_LINES, max(config.WIDE_DESC_LINES, len(lines)))
+        lines = lines[:rows]
         h = rows * Menus.WIDE_DESC_LINE + 6
         y = info.rect.y + GameCanvas.view_y
         bottom = GameCanvas.screen_h - 20           # above the soft-key bar (BACK)
@@ -1309,18 +1313,6 @@ class Menus(GameCanvas):
         self.draw_box(x, y, w, h, False)
         if GameCanvas.popups.kind != 0:            # a popup covers the top of the box only
             return
-        Gfx.set_font(GameCanvas.font_white)
-        lines = Menus.wide_description_lines(info.text, w - 8)
-        if len(lines) > rows:                        # too long even so: the last row runs by
-            rest = " / ".join(lines[rows - 1:])
-            lines = lines[:rows - 1]
-            tw = GameCanvas.measure_text(rest)
-            info.text_x = i16(info.text_x - 5)
-            if info.text_x < x + 4 - tw - 20 or info.text_x > x + w:
-                info.text_x = i16(x + w - 20)
-            Gfx.push_clip(x + 1, y, w - 2, h)
-            Gfx.draw_string(rest, info.text_x, y + 3 + (rows - 1) * Menus.WIDE_DESC_LINE, 0)
-            Gfx.pop_clip()
         for idx, line in enumerate(lines):
             Gfx.draw_string(line, x + 4, y + 3 + idx * Menus.WIDE_DESC_LINE, 0)
 
