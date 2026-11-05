@@ -1,6 +1,6 @@
 env POW_ALWAYS_ONLINE=1
 save zero
-# PORT-EXTRA "always online": Continue with a registered account logs in to Gamevil Live in the
+# "always online": Continue with a registered account logs in to Gamevil Live in the
 # background (no popup, keys free), and Game Menu > Gamevil Live then opens at once.
 account TEST 1234
 wait 25

@@ -13,7 +13,7 @@ def test_hero_and_level_table():
 
 
 def test_soldiers_like_the_single_player():
-    # c.java:1017-1039, analysis/02 §2.3: swordsman 4/0/10, archer 3/0/8, squad 6/0/10 at L1
+    # , analysis/02 §2.3: swordsman 4/0/10, archer 3/0/8, squad 6/0/10 at L1
     assert [tuple(R.soldier_stats(t, 1).values()) for t in range(3)] == [(4, 0, 10), (3, 0, 8), (6, 0, 10)]
     rng = random.Random(1)
     assert all(1 <= R.soldier_level(rng, 5) <= 7 for _ in range(200))

@@ -15,7 +15,7 @@ def test_scr_counts():  # task 0.5 / PHASE_1 §6
     assert scr.load(RES / "uimenu.scr")[39] == "Buy Item|Sell Item|Enchant Item|Combine Items"
 
 
-def test_al_matches_loader():  # al.java reads the same strings as the stand-alone loader
+def test_al_matches_loader():  # reads the same strings as the stand-alone loader
     from pow.data import scr
     from pow.game.scr_table import ScrTable
     ref = scr.load(RES / "uimenu.scr")
@@ -23,7 +23,7 @@ def test_al_matches_loader():  # al.java reads the same strings as the stand-alo
     assert [a.get(i) for i in range(60)] == ref
 
 
-def test_crc_is_crc32():  # x.java:108-129
+def test_crc_is_crc32():
     from pow.game.gfx import Gfx
     data = bytearray(b"PLTE\x01\x02\x03\x04\x05\x06\x07")
     assert Gfx.crc32(data, 0, 10) == zlib.crc32(bytes(data[:10]))
@@ -57,7 +57,7 @@ def test_font_widths_and_colours(display):  # task 0.4
         assert surf.get_at((92, 15))[:3] == (0, 128, 0)   # nothing left of the centred text
 
 
-def test_clip_draw_restores_clip(display):  # x.java:63-67
+def test_clip_draw_restores_clip(display):
     from pow.game.gfx import Gfx
     from pow.midp.graphics import Graphics, Image
     surf = pygame.Surface((240, 320))

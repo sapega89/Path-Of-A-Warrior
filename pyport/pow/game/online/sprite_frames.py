@@ -1,4 +1,4 @@
-"""a.java - SP2 sprite frames (the byte version of the single player's SP3). Literal port.
+"""SP2 sprite frames (the byte version of the single player's SP3).
 
     u8 n ; n x {u8 srcX, u8 srcY, s8 w, s8 h, s8 anchorX, s8 anchorY}     (06 §5.1)
 """
@@ -10,7 +10,7 @@ def _s8(v):
 
 
 class SpriteFrames:
-    def __init__(self, path):  # a.java:14-33
+    def __init__(self, path):
         self.data = ResReader.read(path)
         self.count = _s8(self.data[0])
         self.src_x = [0] * self.count          # short[] srcX
@@ -27,7 +27,7 @@ class SpriteFrames:
             self.anchor_x[i] = _s8(self.data[5 + 6 * i])
             self.anchor_y[i] = _s8(self.data[6 + 6 * i])
 
-    def free(self):  # a.java:35-44
+    def free(self):
         self.data = None
         self.src_x = None
         self.src_y = None

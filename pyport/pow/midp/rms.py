@@ -12,10 +12,10 @@ import config
 
 _IS_WEB = sys.platform == "emscripten"
 
-# PORT-EXTRA (server saves, pow/game/cloud_save.py): called with the store name after every
+# (server saves, pow/game/cloud_save.py): called with the store name after every
 # write to a store, so its new records can go to the server too.
 on_write = []
-# PORT-EXTRA (asked by Andrey, cloud_save.SERVER_ONLY): stores kept only in memory, never in
+# stores kept only in memory, never in
 # the files / localStorage: the server has the only lasting copy. cloud_save fills them from
 # the server before the game reads them.
 memory_only = set()

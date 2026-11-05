@@ -1,6 +1,6 @@
 env POW_ALWAYS_ONLINE=1
 save zero
-# PORT-EXTRA "always online": a stored account with a wrong password. The server refuses the
+# "always online": a stored account with a wrong password. The server refuses the
 # background login (531 -1) but keeps the connection; the game stays silent and does not send a
 # 530 every frame: the next try waits (live_online.py RETRY_MS).
 account TEST 1234

@@ -2,7 +2,7 @@
 
 Headless mode (SDL_VIDEODRIVER=dummy) is used by tools/shot.py and tests.
 
-PORT-EXTRA full screen (F11 / Alt+Enter, Options > Screen): the 240x320 picture is scaled by the
+full screen (F11 / Alt+Enter, Options > Screen): the 240x320 picture is scaled by the
 biggest whole factor that fits the monitor and centred, with black bars around it. The choice is
 kept in RecordStore "pow_display" and comes back on the next start. In the browser the page itself
 goes full screen (Fullscreen API) and pygbag fits the canvas into it.

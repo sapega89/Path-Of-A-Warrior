@@ -1,4 +1,4 @@
-"""Main.java of the MP jar - the MIDlet. Hand-written (like pow/game/Main.py).
+"""of the multiplayer - the application shell. Hand-written (like pow/game/Main.py).
 
     from pow.game.online.Main import Main; await Main().startApp()
 """
@@ -36,7 +36,7 @@ class Midlet:
     canvas = None      # g (the canvas)
     started = False     # started
 
-    def __init__(self):  # Main.java:12-17
+    def __init__(self):
         from pow.game.online import game
         _digit_keys()
         game.load()
@@ -56,7 +56,7 @@ class Midlet:
     def notifyDestroyed(self):
         self.destroyed = True
 
-    def startApp(self):  # Main.java:19-27: the game thread -> the async loop
+    def startApp(self):  # the game thread -> the async loop
         from pow.game.online import game
         if Midlet.started:
             return None

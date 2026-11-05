@@ -1,4 +1,4 @@
-"""PORT-EXTRA: a bigger backpack (config.BACKPACK_SIZE) and Warehouse (config.WAREHOUSE_SIZE), old
+"""a bigger backpack (config.BACKPACK_SIZE) and Warehouse (config.WAREHOUSE_SIZE), old
 saves still load; above Lv69 the gear drops keep the odds of Lv45-69 (config.DROPS_AFTER_69)."""
 import random
 import struct
@@ -64,7 +64,7 @@ def test_full_backpack_survives_save_and_load(game, monkeypatch):
     from pow.midp.rms import RecordStore
     cz = GameCanvas.hero
     for b in range(config.BACKPACK_SIZE):
-        assert game.give_item(101 + b, 0) != 0, b               # ag.k(): the first free cell
+        assert game.give_item(101 + b, 0) != 0, b  # the first free cell
     assert game.give_item(150, 0) == 0                          # full
     cz.backpack[config.BACKPACK_SIZE - 1].enchant = 7
     assert game.save_game()
@@ -157,7 +157,7 @@ def test_mp_loot_uses_the_new_cells_of_an_old_save(tmp_path, monkeypatch):
 
 
 def test_live_grid_above_softkeys(monkeypatch):
-    """ORIG-BUG B9: the Backpack / Warehouse grid of Gamevil Live ends above the description strip
+    """the Backpack / Warehouse grid of Gamevil Live ends above the description strip
     (y 200) and the soft keys, also with the bigger Warehouse."""
     from pow.game.game_canvas import GameCanvas
     from pow.game.live import Live

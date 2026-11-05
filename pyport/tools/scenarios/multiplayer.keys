@@ -1,6 +1,6 @@
 env POW_ALWAYS_ONLINE=1
 save zero
-# Gamevil Live > Multiplayer (PORT-EXTRA, pow/game/online_session.py): the Multiplayer screens
+# Gamevil Live > Multiplayer (pow/game/online_session.py): the Multiplayer screens
 # are a state of the same canvas and loop; BACK in their main menu comes back to the Gamevil
 # Live menu. Registered on this device already (account), logged in by Continue.
 account TESTUSER 1234

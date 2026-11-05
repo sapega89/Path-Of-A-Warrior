@@ -1,6 +1,6 @@
-"""g.java, part of MpCanvas: options in the record store, text helpers, music and volume.
+""", part of MpCanvas: options in the record store, text helpers, music and volume.
 
-A mixin of MpCanvas (pow/game/online/mp_canvas.py); the methods keep their `# g.java:FROM-TO`
+A mixin of MpCanvas (pow/game/online/mp_canvas.py); the methods keep their `# :FROM-TO`
 comments. The module names below are set by mp_canvas.py: `MpCanvas` once the class exists,
 the others by its _late_imports().
 """
@@ -20,7 +20,7 @@ MpGame = None   # set by mp_canvas._late_imports
 
 class OptionsMixin:
     @staticmethod
-    def save_options():  # g.java:4740
+    def save_options():
         record = [0] * (28)
         i = 0
         while i < len(record):
@@ -48,7 +48,7 @@ class OptionsMixin:
 
     @staticmethod
     def use_sp_account():
-        """PORT-EXTRA (asked by Andrey, config.ALWAYS_ONLINE): one account for the whole game.
+        """(asked by Andrey, config.ALWAYS_ONLINE): one account for the whole game.
         The UserID / password of the single player's Gamevil Live registration
         ("gamevil_pow_regist", pow/game/cloud_save.read_login) log in to the Multiplayer game too,
         so its Login screen (state 2) is not shown; the title logs in with 278 at once. Without
@@ -68,7 +68,7 @@ class OptionsMixin:
         MpCanvas.sp_account = True
         return True
 
-    def load_options(self):  # g.java:4774
+    def load_options(self):
         record = [0] * (28)
         MpCanvas.speed = 0
         MpCanvas.volume = 4
@@ -90,7 +90,7 @@ class OptionsMixin:
         return False
 
     @staticmethod
-    def read_utf(data, start, end):  # g.java:4798
+    def read_utf(data, start, end):
         pos = start
         stop = end
         text = None
@@ -111,7 +111,7 @@ class OptionsMixin:
         return text
 
     @staticmethod
-    def cut_at_control(text):  # g.java:4819
+    def cut_at_control(text):
         i = 0
         size = len(text)
         i = 0
@@ -123,32 +123,32 @@ class OptionsMixin:
             return ""
         return text[0:i]
 
-    def start_music(self, music):  # g.java:6236
+    def start_music(self, music):
         MpCanvas.queue_music(music)
 
-    def start_sound(self, sound):  # g.java:6240
+    def start_sound(self, sound):
         MpCanvas.queue_music(sound)
 
     @staticmethod
-    def queue_music(music):  # g.java:6244
+    def queue_music(music):
         if MpCanvas.game is not None:
             MpGame.request_music(music)
 
-    def stop_music(self):  # g.java:6250
+    def stop_music(self):
         if MpCanvas.game is not None:
             MpCanvas.game.stop_music()
 
     @staticmethod
-    def get_volume():  # g.java:6256
+    def get_volume():
         return MpCanvas.volume
 
-    def volume_down(self):  # g.java:6260
+    def volume_down(self):
         MpCanvas.volume = imod((((MpCanvas.volume + 6) - 1)), 6)
         self.stop_music()
         if MpCanvas.volume != 0:
             self.start_sound(3)
 
-    def volume_up(self):  # g.java:6268
+    def volume_up(self):
         MpCanvas.volume = imod(((MpCanvas.volume + 1)), 6)
         self.stop_music()
         if MpCanvas.volume != 0:

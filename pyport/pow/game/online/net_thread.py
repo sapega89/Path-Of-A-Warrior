@@ -1,7 +1,7 @@
-"""h.java - the network thread. Hand-written replacement over pow/midp/transport.py.
+"""The network thread. Hand-written replacement over pow/midp/transport.py.
 
-h.java opened socket://GAMEVIL_SERVER:GAMEVIL_PORT in its own thread, read frames with d.b()
-and called g.a(k) for each, sleeping 100 ms after every frame; writing went through e.java
+ opened socket://GAMEVIL_SERVER:GAMEVIL_PORT in its own thread, read frames with d.b
+and called g.a(k) for each, sleeping 100 ms after every frame; writing went through
 (a byte buffer) and h.b() sent it. Here the game loop calls h.tick() once per frame: it
 connects when asked, delivers at most one received frame (like the 100 ms sleep did) and
 reports a dropped connection the way h.run() did (g.g(1..3)).
@@ -9,7 +9,7 @@ reports a dropped connection the way h.run() did (g.g(1..3)).
 Where it connects: config.MP_SERVER ("local" = the server inside the game, or ws(s)://...),
 not the manifest's GAMEVIL_SERVER (dead).
 
-PORT-EXTRA (pow_server/messages.py): the token of 279 is kept in RMS "pow_mp_token" and
+(pow_server/messages.py): the token of 279 is kept in RMS "pow_mp_token" and
 appended to every 262; a 263 with status -3 (token refused) forgets it and the saved UserID,
 so the next start shows the Login screen. After the token every 262 carries the hero of the
 single-player save (task 9.10, pow/game/online/sp_bridge.py), and a 1032 (battle end) adds its gold,
@@ -25,11 +25,11 @@ TOKEN_STORE = "pow_mp_token"   # noqa: S105 (the name of the RecordStore, not a 
 
 
 class NetThread:
-    last_opcode = 0          # opcode of the last received frame (h.java:12)
+    last_opcode = 0          # opcode of the last received frame
     conn = None       # StreamConnection -> the transport
     game = None       # the game (g)
-    free = True       # free to start a new message (h.a(int) waits for it)
-    idle_frames = 0          # frames since the last traffic (keepalive counter of g.d())
+    free = True  # free to start a new message
+    idle_frames = 0  # frames since the last traffic (keepalive counter)
     unused = 0
     connected = False      # connected
     running = True       # thread running
@@ -38,7 +38,7 @@ class NetThread:
     _inbox = []
     _token = None
 
-    def __init__(self):  # h.java:29
+    def __init__(self):
         NetThread.free = True
         NetThread.connected = False
         NetThread.running = True
@@ -52,13 +52,13 @@ class NetThread:
     def start(self):
         pass
 
-    def set_address(self, host, port):  # h.java:36  connect to (host, port)
+    def set_address(self, host, port):  # connect to (host, port)
         self.host = host
         self.port = port
         NetThread.connect_requested = True
 
     @staticmethod
-    def close():  # h.java:42  close
+    def close():  # close
         NetThread.idle_frames = 0
         NetThread.connected = False
         if NetThread.conn is not None:
@@ -66,7 +66,7 @@ class NetThread:
         NetThread.conn = None
 
     @staticmethod
-    def set_game(game):  # h.java:84
+    def set_game(game):
         NetThread.game = game
 
     # --- the thread's loop, one step per game frame ------------------------------
@@ -87,7 +87,7 @@ class NetThread:
                 NetThread._connecting = False
                 NetThread.idle_frames = 0
                 NetThread.connected = True
-                NetThread.game.login()                       # h.c(): connected -> g.l() sends 278 / 262
+                NetThread.game.login()  # connected sends 278 / 262
             elif t.failed:
                 NetThread._connecting = False
                 NetThread.game.on_net_error(0)
@@ -98,7 +98,7 @@ class NetThread:
         if NetThread._inbox:
             payload = NetThread._inbox.pop(0)
             NetThread._port_extra_in(payload)
-            data = [b - 256 if b > 127 else b for b in payload]   # Java bytes are signed
+            data = [b - 256 if b > 127 else b for b in payload]   # signed bytes are signed
             if len(data) < 2:
                 NetThread.game.on_net_error(3)
                 return
@@ -109,44 +109,44 @@ class NetThread:
                 NetThread.game.on_net_error(3)
             NetThread.idle_frames = 0
         elif not t.connected:
-            NetThread.game.on_net_error(2)                          # IOException in h.run()
+            NetThread.game.on_net_error(2)  # IOException
 
-    # --- sending (e.java's buffer) --------------------------------------------------------
-    def begin(self, opcode):  # h.java:131  start a message with opcode n2
+    # --- sending --------------------------------------------------------
+    def begin(self, opcode):  # start a message with opcode n2
         if NetThread.connected:
             NetThread.free = False
             NetThread._buf = bytearray(struct.pack("<H", opcode & 0xFFFF))
 
     @staticmethod
-    def write_byte(value):  # h.java:141
+    def write_byte(value):
         if NetThread.connected and NetThread._buf is not None:
             NetThread._buf.append(value & 0xFF)
 
     @staticmethod
-    def write_int(value):  # h.java:147  s32
+    def write_int(value):  # s32
         if NetThread.connected and NetThread._buf is not None:
             NetThread._buf += struct.pack("<I", value & 0xFFFFFFFF)
 
     @staticmethod
-    def write_string(text, size):  # h.java:153  fixed string
+    def write_string(text, size):  # fixed string
         if NetThread.connected and NetThread._buf is not None:
             raw = (text or "").encode("latin-1", "replace")[:size]
             NetThread._buf += raw + b"\0" * (size - len(raw))
 
     @staticmethod
-    def send():  # h.java:159  send
+    def send():  # send
         NetThread.idle_frames = 0
         buf, NetThread._buf = NetThread._buf, None
         NetThread.free = True
         if buf is None or NetThread.conn is None:
             return
-        if struct.unpack_from("<H", buf)[0] == 262:      # PORT-EXTRA: session token + SP hero
+        if struct.unpack_from("<H", buf)[0] == 262:      # session token + SP hero
             tok = (NetThread.token() or "").encode("ascii")[:16]
             buf += tok + b"\0" * (16 - len(tok))
             buf += NetThread._sp_hero()
         NetThread.conn.send(struct.pack("<H", len(buf) + 2) + bytes(buf))
 
-    # --- PORT-EXTRA: the session token -------------------------------------------------
+    # --- the session token -------------------------------------------------
     @staticmethod
     def token():
         if NetThread._token is None:
@@ -196,11 +196,11 @@ class NetThread:
             from pow.game.online import sp_bridge
             gold, _, fame, exp = struct.unpack_from("<hBhh", payload, 4)
             item = None
-            if len(payload) >= 46:                          # PORT-EXTRA loot (9.9)
+            if len(payload) >= 46:                          # loot (9.9)
                 item = struct.unpack_from("<Hhhhh", payload, 36)
                 if not item[0]:
                     item = None
-            if sp_bridge.embedded:                          # PORT-EXTRA: the hero is in memory
+            if sp_bridge.embedded:                          # the hero is in memory
                 sp_bridge.keep_rewards(gold, fame, exp, item)
                 return
             sp_bridge.add_rewards(gold, fame, exp)

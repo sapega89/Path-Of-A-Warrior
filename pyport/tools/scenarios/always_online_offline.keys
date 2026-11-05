@@ -1,7 +1,7 @@
 env POW_ALWAYS_ONLINE=1
 env POW_LIVE_SERVER=ws://127.0.0.1:9/live
 save zero
-# PORT-EXTRA "always online" without the server: Continue of a hero without an account offers the
+# "always online" without the server: Continue of a hero without an account offers the
 # registration once (BACK on the empty UserID skips it), and a background login that cannot reach
 # the server is silent: no popup, the Game Menu keeps working, the login is tried again later.
 wait 25

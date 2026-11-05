@@ -1,6 +1,6 @@
-"""Where the MP client's frames go (PHASE_9 §3): the replacement of h.java's socket.
+"""Where the MP client's frames go (PHASE_9 §3): the replacement of's socket.
 
-h.java opened socket://GAMEVIL_SERVER:GAMEVIL_PORT in its own thread and called g.a(k) for
+ opened socket://GAMEVIL_SERVER:GAMEVIL_PORT in its own thread and called g.a(k) for
 every frame. Here the game loop calls poll() once per tick and gets the payloads received
 since the last call (frame length removed, opcode first), and send() takes a whole frame
 (what e.b() wrote). These implementations with the same interface:
@@ -21,8 +21,8 @@ from pow_server import codec_bin
 
 
 class Transport:
-    connected = False   # h.j
-    failed = False      # connect failed or the connection dropped (-> g.g(n) in the client)
+    connected = False
+    failed = False  # connect failed or the connection dropped ( in the client)
 
     def open(self):
         """Start connecting; connected / failed tell the result on a later tick."""
@@ -176,7 +176,7 @@ class WebSocketTransport(Transport):
 
 
 class BrowserWebSocketTransport(Transport):
-    """PORT-EXTRA: WebSocketTransport of the browser build (pygbag): the page's WebSocket through
+    """WebSocketTransport of the browser build (pygbag): the page's WebSocket through
     pow/midp/webws.py, polled once per tick. connected / failed are read from the page."""
 
     def __init__(self, url):

@@ -1,4 +1,4 @@
-"""g.java - bitmap font (0_font.png). Literal port.
+"""Bitmap font (0_font.png).
 
 The first palette entry of the PNG is replaced by the wanted colour and the PLTE CRC
 is recomputed with x.a(byte[],int,int), exactly as on the phone.
@@ -9,9 +9,9 @@ from pow.midp.graphics import Image
 
 
 class Font:
-    plte_offset = 0  # private static int e = 0;   g.java:12 (offset of "PLTE")
+    plte_offset = 0  # offset of "PLTE"
 
-    def __init__(self, path, glyph_w, glyph_h, space_w, color):  # g.java:14-44
+    def __init__(self, path, glyph_w, glyph_h, space_w, color):
         self.image = None          # Image
         self.glyph_w = glyph_w     # glyph width
         self.glyph_h = glyph_h     # glyph height
@@ -39,24 +39,24 @@ class Font:
         except Exception:
             return
 
-    def height(self):  # g.java:46-48
+    def height(self):
         return self.glyph_h
 
     @staticmethod
-    def ascent():  # g.java:50-52
+    def ascent():
         return 9
 
     @staticmethod
-    def gap():  # g.java:54-56
+    def gap():
         return 1
 
-    def draw_char(self, ch, x, y):  # g.java:58-62
+    def draw_char(self, ch, x, y):
         if ch == " ":
             return
         Gfx.draw_image_part(self.image, x, y, self.glyph_w, self.glyph_h, Font.glyph_index(ch) * self.glyph_w, 0)
 
     @staticmethod
-    def glyph_index(ch):  # g.java:64-138  (glyph index in 0_font.png)
+    def glyph_index(ch):  # glyph index in 0_font.png
         i = 0
         code = ord(ch)
         if "A" <= ch <= "Z":
@@ -69,22 +69,22 @@ class Font:
             i = _PUNCT.get(ch, 0)
         return i
 
-    def char_width(self, ch):  # g.java:140-142
+    def char_width(self, ch):
         return self.space_w if ch == " " else (self.glyph_w + 1 - 0)
 
-    def chars_width(self, chars, start, count):  # g.java:144-150
+    def chars_width(self, chars, start, count):
         i = 0
         end = start + count
         for pos in range(start, end):
             i += self.char_width(chars[pos])
         return i
 
-    def string_width(self, text):  # g.java:152-155
+    def string_width(self, text):
         chars = list(text)
         return self.chars_width(chars, 0, len(chars))
 
 
-# g.java:71-135 - the if/else chain for punctuation, as a table (same values, same default 0)
+# - the if/else chain for punctuation, as a table (same values, same default 0)
 _PUNCT = {
     "!": 0, '"': 1, "#": 2, "$": 3, "%": 4, "&": 5, "'": 6, "(": 7, ")": 8, "*": 9,
     "+": 10, ",": 11, "-": 12, ".": 13, "/": 14, ":": 25, ";": 26, "<": 27, "=": 28,

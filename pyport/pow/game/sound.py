@@ -1,25 +1,25 @@
-"""k.java - sound manager (music snd0-2, SFX snd3-16). Literal port."""
+"""Sound manager (music snd0-2, SFX snd3-16)."""
 from pow.game.game_canvas import GameCanvas
 from pow.game.player_pool import PlayerPool
 from pow.midp import system
 
 
 class Sound(GameCanvas):
-    players = None     # public static aq a = null;     k.java:2
-    requested = -1       # requested sound                k.java:4
-    music = -1      # current music                  k.java:6
+    players = None
+    requested = -1       # requested sound
+    music = -1      # current music
     last = -1
     last_time = 0
     min_gap = [0] * 17
 
-    def __init__(self, main):  # k.java:14-20
+    def __init__(self, main):
         super().__init__(main)
         for b in range(17):
             Sound.min_gap[b] = 0
         Sound.min_gap[9] = 500
         Sound.players = PlayerPool(17, 1, True, True)
 
-    def play_sound(self, sound):  # k.java:22-33
+    def play_sound(self, sound):
         if Sound.players is None or not GameCanvas.sound_on:
             return
         since = system.currentTimeMillis() - Sound.last_time
@@ -31,7 +31,7 @@ class Sound(GameCanvas):
         Sound.last = sound
         Sound.last_time = system.currentTimeMillis()
 
-    def tick_sound(self):  # k.java:35-59  (called once per tick from ag.run)
+    def tick_sound(self):  # called once per tick
         if Sound.players is None or not GameCanvas.sound_on:
             return
         Sound.players.tick()
@@ -53,7 +53,7 @@ class Sound(GameCanvas):
             if start:
                 self.play_now(i, loop)
 
-    def play_now(self, sound, loop):  # k.java:61-73
+    def play_now(self, sound, loop):
         Sound.players.set_volume(GameCanvas.volume)
         if GameCanvas.volume == 0:
             Sound.stop_all()
@@ -65,7 +65,7 @@ class Sound(GameCanvas):
         Sound.players.play(sound, loop)
 
     @staticmethod
-    def stop_all():  # k.java:75-79
+    def stop_all():
         Sound.requested = -1
         Sound.music = -1
         Sound.players.stop()

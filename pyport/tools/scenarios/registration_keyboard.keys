@@ -4,7 +4,7 @@ env POW_LIVE_SERVER=ws://127.0.0.1:9/live
 env POW_REG_KEYBOARD=1
 env POW_KEY_HINTS=1
 save zero
-# PORT-EXTRA: the on-screen keyboards of the registration (pow/game/key_grid.py) and the
+# the on-screen keyboards of the registration (pow/game/key_grid.py) and the
 # soft-key captions naming the keys (config.KEY_HINTS): the UserID grid with its row of
 # digits, the password row 0..9 + OK.
 wait 25

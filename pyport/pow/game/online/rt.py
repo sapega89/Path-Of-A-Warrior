@@ -1,5 +1,4 @@
-"""Runtime of the MP client (code first machine-translated from Java): Java semantics helpers
-and the MIDP / java.* pieces the jar uses. Hand-written."""
+"""Runtime helpers of the multiplayer screens: integer semantics and string helpers."""
 from pow.midp import system  # noqa: F401
 from pow.midp.canvas import Canvas as _Canvas  # noqa: F401
 from pow.midp.graphics import Graphics  # noqa: F401

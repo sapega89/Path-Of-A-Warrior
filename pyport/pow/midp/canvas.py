@@ -21,13 +21,13 @@ KEYMAP = {
     pygame.K_RETURN: -5, pygame.K_KP_ENTER: -5, pygame.K_SPACE: -5, pygame.K_j: -5,
     pygame.K_q: -6, pygame.K_F1: -6,
     pygame.K_ESCAPE: -7, pygame.K_BACKSPACE: -7,
-    # PORT-EXTRA: number row 1..5 = the five skill slots (phone keys 1 3 7 9 0); the phone
+    # number row 1..5 = the five skill slots (phone keys 1 3 7 9 0); the phone
     # keypad (2 4 6 8 = arrows, 5 = OK) is on the numeric keypad
     pygame.K_1: 49, pygame.K_2: 51, pygame.K_3: 55, pygame.K_4: 57, pygame.K_5: 48,
     pygame.K_6: 54, pygame.K_7: 55, pygame.K_8: 56, pygame.K_9: 57, pygame.K_0: 48,
     pygame.K_u: 49, pygame.K_i: 51, pygame.K_o: 55, pygame.K_p: 57, pygame.K_k: 48,
     pygame.K_z: 42, pygame.K_x: 35,
-    pygame.K_TAB: -100,                 # PORT-EXTRA: auto-hunt on / off (pow/game/autopilot.py)
+    pygame.K_TAB: -100,                 # auto-hunt on / off (pow/game/autopilot.py)
     pygame.K_f: -100,                   # (F too: a browser may keep Tab for its own focus)
     # numeric keypad = phone keypad (8 up, 2 down, 4 left, 6 right, 5 OK)
     pygame.K_KP8: -1, pygame.K_KP2: -2, pygame.K_KP4: -3, pygame.K_KP6: -4, pygame.K_KP5: -5,
@@ -35,24 +35,24 @@ KEYMAP = {
     pygame.K_KP_MULTIPLY: 42, pygame.K_KP_DIVIDE: 35,
 }
 
-# PORT-EXTRA (config.SKILL_BAR): while the hero acts on the map, Z X C V B = belt slots 0..4
+# (config.SKILL_BAR): while the hero acts on the map, Z X C V B = belt slots 0..4
 # (key codes -101..-105); elsewhere Z and X stay * and # (Assign Items)
 BELT_KEYMAP = {pygame.K_z: -101, pygame.K_x: -102, pygame.K_c: -103, pygame.K_v: -104, pygame.K_b: -105}
 
 # mouse wheel -> key, decided by the game (pow/game/pointer.py); right button = BACK
 MOUSE_BACK = -7
 
-# PORT-EXTRA: the device of the last key, for the soft-key captions (config.KEY_HINTS):
+# the device of the last key, for the soft-key captions (config.KEY_HINTS):
 # "keyboard" or "gamepad" (the mouse changes nothing: its clicks need no key names)
 input_source = "keyboard"
 HINTS = {"keyboard": ("Q:", "ESC:"), "gamepad": ("SEL:", "B:")}
 
 
 def key_hints():
-    """PORT-EXTRA (config.KEY_HINTS): what goes before the left / right soft-key caption: the
+    """(config.KEY_HINTS): what goes before the left / right soft-key caption: the
     key of the device last used (Q / Esc on the keyboard, Select / B on the gamepad)."""
     return HINTS[input_source] if config.KEY_HINTS else ("", "")
-AUTO_TOGGLE = -100                      # PORT-EXTRA: Tab / the AUTO corner of the map
+AUTO_TOGGLE = -100                      # Tab / the AUTO corner of the map
 DIRECTION_KEYS = (-1, -2, -3, -4, 50, 52, 54, 56)
 _IS_WEB = sys.platform == "emscripten"
 PAD_POLL_MS = 20                        # browser: how often a sleeping game loop reads the gamepad
@@ -60,7 +60,7 @@ PAD_POLL_MS = 20                        # browser: how often a sleeping game loo
 # names used by scenario files (tools/shot.py)
 KEYNAMES = {"UP": -1, "DOWN": -2, "LEFT": -3, "RIGHT": -4, "FIRE": -5, "OK": -5,
             "LSOFT": -6, "RSOFT": -7, "BACK": -7, "STAR": 42, "POUND": 35,
-            "AUTO": -100}                       # PORT-EXTRA: Tab, auto-hunt / auto-battle
+            "AUTO": -100}                       # Tab, auto-hunt / auto-battle
 KEYNAMES.update({str(i): 48 + i for i in range(10)})
 KEYNAMES.update({"BELT%d" % (i + 1): -101 - i for i in range(5)})
 
@@ -74,10 +74,10 @@ class Canvas:
         self.hold_dir = None                    # callable(x, y) -> direction key while dragging
         self.held = []                          # direction keys held down, last pressed last
         self.mouse_dir = None                   # direction of the held left mouse button
-        self.autopilot = None                   # PORT-EXTRA: tick() -> key, .direction, player_key()
+        self.autopilot = None                   # tick -> key, .direction, player_key
         self.belt_active = None                 # callable() -> True: Z X C V B are belt keys
-        self.pads = gamepad.Gamepads() if config.GAMEPAD else None   # PORT-EXTRA: gamepad
-        self.text_input = None                  # PORT-EXTRA: callable(char) -> True: typed text
+        self.pads = gamepad.Gamepads() if config.GAMEPAD else None   # gamepad
+        self.text_input = None                  # callable(char) -> True: typed text
 
     def getWidth(self):
         return config.SCREEN_W
@@ -105,14 +105,14 @@ class Canvas:
                 self.quit_requested = True
             elif ev.type == pygame.KEYDOWN and (ev.key == pygame.K_F11 or (
                     ev.key in (pygame.K_RETURN, pygame.K_KP_ENTER) and ev.mod & pygame.KMOD_ALT)):
-                display.toggle_fullscreen()          # PORT-EXTRA: full screen
+                display.toggle_fullscreen()          # full screen
                 display.present()
             elif ev.type == pygame.KEYDOWN and self.text_input is not None and ev.unicode and \
                     not ev.mod & (pygame.KMOD_CTRL | pygame.KMOD_ALT) and self.text_input(ev.unicode):
-                pass                                 # PORT-EXTRA: a text box took the key (MP chat)
+                pass                                 # a text box took the key (MP chat)
             elif ev.type == pygame.KEYDOWN:
                 global input_source
-                input_source = "keyboard"           # PORT-EXTRA: config.KEY_HINTS
+                input_source = "keyboard"           # config.KEY_HINTS
                 code = KEYMAP.get(ev.key)
                 if ev.key in BELT_KEYMAP and self.belt_active is not None and self.belt_active():
                     code = BELT_KEYMAP[ev.key]
@@ -156,19 +156,19 @@ class Canvas:
         # a phone delivers one key per tick: queued mouse keys go one by one
         if self.key_queue:
             self.keyPressed(self.key_queue.popleft())
-        elif self.autopilot is not None:        # PORT-EXTRA: the auto-hunt presses its key
+        elif self.autopilot is not None:        # the auto-hunt presses its key
             key = self.autopilot.tick()
             if key is not None:
                 self.keyPressed(key)
 
     def _pad_keys(self, keys):
-        """PORT-EXTRA: (phone key, pressed) pairs of the gamepad, handled like the keyboard's."""
+        """(phone key, pressed) pairs of the gamepad, handled like the keyboard's."""
         global input_source
         for code, down in keys:
             if not down:
                 self.release(code)
                 continue
-            input_source = "gamepad"                # PORT-EXTRA: config.KEY_HINTS
+            input_source = "gamepad"                # config.KEY_HINTS
             if code in gamepad.BELT_CODES and not (self.belt_active is not None and self.belt_active()):
                 continue                    # the belt only while the hero acts on the map
             self.key_queue.clear()
@@ -185,7 +185,7 @@ class Canvas:
         elif self.pointer:
             self.key_queue.extend(self.pointer(x, y, kind))
 
-    # --- held direction keys (PORT-EXTRA config.HOLD_TO_MOVE: the phone had no key release) ---
+    # --- held direction keys (config.HOLD_TO_MOVE: the phone had no key release) ---
     def hold(self, code):
         if code in self.held:
             self.held.remove(code)
@@ -214,7 +214,7 @@ class Canvas:
             system.advance(ms)
             await asyncio.sleep(0)
         elif self.pads is not None and _IS_WEB and ms > PAD_POLL_MS:
-            # PORT-EXTRA: in the browser SDL reads the gamepad only when events are pumped, so a
+            # in the browser SDL reads the gamepad only when events are pumped, so a
             # short tap between two ticks was lost; pump it every PAD_POLL_MS while sleeping
             # (pump() keeps the events in the queue for pump_events)
             left = ms

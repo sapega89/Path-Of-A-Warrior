@@ -1,4 +1,4 @@
-"""e.java - menu screens (bb): every menu screen and its key routing
+"""Menu screens (bb): every menu screen and its key routing
 (a(), aB/aC/aD/aE = up/down/left/right, b() = fire, aF() = back).
 """
 import re
@@ -17,22 +17,9 @@ from pow.game.structs import Item, MissionDef, Point, Rect
 from pow.midp import display
 from pow.midp.jint import i8, i16, i32, idiv, imod
 
-F6 = config.DECOMP_FIX["F6"]
-F10 = config.DECOMP_FIX["F10"]
-F11 = config.DECOMP_FIX["F11"]
 
 
-def _dec_cmp(v):
-    """DECOMP-FIX F6: `cM[i] = cM[i] - 1; if (cM[i] - 1 < 0)` is a broken `if (--cM[i] < 0)`."""
-    return v if F6 else v - 1
-
-
-def _inc_cmp(v):
-    """DECOMP-FIX F6: `cM[i] = cM[i] + 1; if (cM[i] + 1 >= n)` is a broken `if (++cM[i] >= n)`."""
-    return v if F6 else v + 1
-
-
-def ar_c(paramInt):  # ar.java:249-261  (Assign Items: put potion slot cM[1] on key * (0) or # (1))
+def ar_c(paramInt):  # (Assign Items: put potion slot cM[1] on key * (0) or # (1))
     hero = GameCanvas.hero
     if hero.quick_slots[GameCanvas.menu[1]].item != 0 and hero.quick_keys[paramInt] != GameCanvas.menu[1]:
         if GameCanvas.menu[1] == hero.quick_keys[paramInt + 1 & 0x1]:
@@ -46,12 +33,12 @@ def ar_c(paramInt):  # ar.java:249-261  (Assign Items: put potion slot cM[1] on 
 
 
 class Menus(GameCanvas):
-    mix_table = None  # public static byte[] a;   e.java:4
+    mix_table = None
 
-    def __init__(self):  # e.java:6-8
+    def __init__(self):
         super().__init__(GameCanvas.midlet)
 
-    def draw_menu(self, mode):  # e.java:10-205  (draw the current menu; 1 = first frame, 2 = animation)
+    def draw_menu(self, mode):  # draw the current menu; 1 = first frame, 2 = animation
         menu = GameCanvas.menu
         if mode == 1:
             if menu[0] != 5:
@@ -76,7 +63,7 @@ class Menus(GameCanvas):
                 if consts.menu_parent[menu[0]] != -1 or (consts.menu_parent[menu[0]] == -1 and menu[0] == 15):
                     if menu[0] == 3:
                         GameCanvas.draw_softkeys(11, 2)
-                    elif menu[0] == 14:   # PORT-EXTRA: RESET the attributes (hero_classes)
+                    elif menu[0] == 14:   # RESET the attributes (hero_classes)
                         GameCanvas.draw_softkeys(12, 2)
                     else:
                         GameCanvas.draw_softkeys(-1, 2)
@@ -201,7 +188,7 @@ class Menus(GameCanvas):
                     self.tick_general_talk()
                     return
 
-    def menu_keys(self):  # e.java:207-302  (keys of the menus)
+    def menu_keys(self):  # keys of the menus
         if GameCanvas.debug_keys:
             GameCanvas.score = -1
         screen = GameCanvas.menu[0]
@@ -267,7 +254,7 @@ class Menus(GameCanvas):
             self.key_fire()
             return
         elif key == -6:
-            if GameCanvas.menu[0] == 14:    # PORT-EXTRA: attribute reset
+            if GameCanvas.menu[0] == 14:    # attribute reset
                 self.open_respec()
                 return
             if GameCanvas.menu[0] == 16 or GameCanvas.menu[0] == 17 or GameCanvas.menu[0] == 3:
@@ -277,10 +264,10 @@ class Menus(GameCanvas):
             self.key_back()
 
     @staticmethod
-    def menu_link(menu, item):  # e.java:304-307
+    def menu_link(menu, item):
         return consts.menu_links[menu][item]
 
-    def key_up(self):  # e.java:309-392  (UP)
+    def key_up(self):  # UP
         menu = GameCanvas.menu
         screen = menu[0]
         if screen == 0:
@@ -293,13 +280,13 @@ class Menus(GameCanvas):
         if screen in (8, 14):
             self.draw_stat_cursor(0)
             menu[1] = menu[1] - 1
-            if _dec_cmp(menu[1]) < 0:
+            if menu[1] < 0:
                 menu[1] = GameCanvas.menu_count - 1
             self.draw_stat_cursor(1)
             return
         if screen == 9:
             menu[1] = menu[1] - 1
-            if _dec_cmp(menu[1]) < 1:
+            if menu[1] < 1:
                 menu[1] = GameCanvas.menu_count - 1
             if not GameCanvas.sound_on and menu[1] == 1:
                 menu[1] = 0
@@ -318,7 +305,7 @@ class Menus(GameCanvas):
             return
         if screen == 16:
             menu[2] = menu[2] + 1
-            if _inc_cmp(menu[2]) >= GameCanvas.menu_count:
+            if menu[2] >= GameCanvas.menu_count:
                 menu[2] = 0
             GameCanvas.redraw = 1
             return
@@ -348,12 +335,12 @@ class Menus(GameCanvas):
             GameCanvas.redraw = 1
             return
         menu[1] = menu[1] - 1
-        if _dec_cmp(menu[1]) < 0:
+        if menu[1] < 0:
             menu[1] = GameCanvas.menu_count - 1
         GameCanvas.clamp_menu_scroll()
         GameCanvas.redraw = 1
 
-    def key_down_arrow(self):  # e.java:394-480  (DOWN)
+    def key_down_arrow(self):  # DOWN
         menu = GameCanvas.menu
         screen = menu[0]
         if screen == 0:
@@ -366,13 +353,13 @@ class Menus(GameCanvas):
         if screen in (8, 14):
             self.draw_stat_cursor(0)
             menu[1] = menu[1] + 1
-            if _inc_cmp(menu[1]) >= GameCanvas.menu_count:
+            if menu[1] >= GameCanvas.menu_count:
                 menu[1] = 0
             self.draw_stat_cursor(1)
             return
         if screen == 9:
             menu[1] = menu[1] + 1
-            if _inc_cmp(menu[1]) >= GameCanvas.menu_count:
+            if menu[1] >= GameCanvas.menu_count:
                 menu[2] = 0
                 menu[1] = 0
             if not GameCanvas.sound_on and menu[1] == 1:
@@ -391,7 +378,7 @@ class Menus(GameCanvas):
             return
         if screen == 16:
             menu[2] = menu[2] - 1
-            if _dec_cmp(menu[2]) < 0:
+            if menu[2] < 0:
                 menu[2] = GameCanvas.menu_count - 1
             GameCanvas.redraw = 1
             return
@@ -421,13 +408,13 @@ class Menus(GameCanvas):
             GameCanvas.redraw = 1
             return
         menu[1] = menu[1] + 1
-        if _inc_cmp(menu[1]) >= GameCanvas.menu_count:
+        if menu[1] >= GameCanvas.menu_count:
             menu[2] = 0
             menu[1] = 0
         GameCanvas.clamp_menu_scroll()
         GameCanvas.redraw = 1
 
-    def key_left(self):  # e.java:482-584  (LEFT)
+    def key_left(self):  # LEFT
         menu = GameCanvas.menu
         screen = menu[0]
         if screen == 1:
@@ -450,21 +437,21 @@ class Menus(GameCanvas):
                 return
             GameCanvas.redraw = 1
             menu[1] = menu[1] - 1
-            if _dec_cmp(menu[1]) < 0:
+            if menu[1] < 0:
                 menu[1] = consts.help_topic_start[GameCanvas.help_topic + 1] - consts.help_topic_start[GameCanvas.help_topic] - 1
                 return
             return
         if screen == 5:
             GameCanvas.redraw = 1
             menu[1] = menu[1] - 1
-            if _dec_cmp(menu[1]) < 0:
+            if menu[1] < 0:
                 menu[1] = 8
                 return
             return
         if screen == 18:
             GameCanvas.menu_part = 1
             menu[1] = menu[1] - 1
-            if _dec_cmp(menu[1]) < 0:
+            if menu[1] < 0:
                 menu[1] = GameCanvas.menu_count - 1
                 return
             return
@@ -494,13 +481,13 @@ class Menus(GameCanvas):
         if screen == 16:
             GameCanvas.redraw = 1
             menu[2] = menu[2] + 1
-            if _inc_cmp(menu[2]) >= GameCanvas.menu_count:
+            if menu[2] >= GameCanvas.menu_count:
                 menu[2] = 0
                 return
             return
         if screen == 17:
             menu[2] = menu[2] - 1
-            if _dec_cmp(menu[2]) < 0:
+            if menu[2] < 0:
                 menu[2] = GameCanvas.menu_count - 1
             GameCanvas.menu_part = 1
             return
@@ -517,7 +504,7 @@ class Menus(GameCanvas):
                 menu[1] = 20 + imod(menu[1] + 20, 5)
             GameCanvas.redraw = 1
 
-    def key_right(self):  # e.java:586-686  (RIGHT)
+    def key_right(self):  # RIGHT
         menu = GameCanvas.menu
         screen = menu[0]
         if screen == 1:
@@ -540,20 +527,20 @@ class Menus(GameCanvas):
                 return
             GameCanvas.redraw = 1
             menu[1] = menu[1] + 1
-            if _inc_cmp(menu[1]) >= consts.help_topic_start[GameCanvas.help_topic + 1] - consts.help_topic_start[GameCanvas.help_topic]:
+            if menu[1] >= consts.help_topic_start[GameCanvas.help_topic + 1] - consts.help_topic_start[GameCanvas.help_topic]:
                 menu[1] = 0
                 return
             return
         if screen == 5:
             GameCanvas.redraw = 1
             menu[1] = menu[1] + 1
-            if _inc_cmp(menu[1]) >= 9:
+            if menu[1] >= 9:
                 menu[1] = 0
                 return
             return
         if screen == 18:
             menu[1] = menu[1] + 1
-            if _inc_cmp(menu[1]) >= GameCanvas.menu_count:
+            if menu[1] >= GameCanvas.menu_count:
                 menu[1] = 0
             GameCanvas.menu_part = 1
             return
@@ -583,13 +570,13 @@ class Menus(GameCanvas):
         if screen == 16:
             GameCanvas.redraw = 1
             menu[2] = menu[2] - 1
-            if _dec_cmp(menu[2]) < 0:
+            if menu[2] < 0:
                 menu[2] = GameCanvas.menu_count - 1
                 return
             return
         if screen == 17:
             menu[2] = menu[2] + 1
-            if _inc_cmp(menu[2]) >= GameCanvas.menu_count:
+            if menu[2] >= GameCanvas.menu_count:
                 menu[2] = 0
             GameCanvas.menu_part = 1
             return
@@ -607,7 +594,7 @@ class Menus(GameCanvas):
                 menu[1] = imod(menu[1], 5)
             GameCanvas.redraw = 1
 
-    def key_fire(self):  # e.java:688-1000  (FIRE)
+    def key_fire(self):  # FIRE
         menu = GameCanvas.menu
         if menu[0] == 9:
             self.change_option(1)
@@ -699,7 +686,7 @@ class Menus(GameCanvas):
                 self.enter_submenu()
                 menu[0] = 19
                 GameCanvas.seal = i16(GameCanvas.backpack_slot_of(504))
-                if GameCanvas.seal != 0 and config.ORIG_BUG["B3"]:
+                if GameCanvas.seal != 0:
                     Menus.seal_list()
                 if GameCanvas.seal != 0:
                     GameCanvas.menu_count = 44
@@ -729,7 +716,7 @@ class Menus(GameCanvas):
                 if GameCanvas.live_saved != 0:
                     return
                 from pow.game.live_online import Online
-                Online.on_game_start()       # PORT-EXTRA: log in to Gamevil Live in the background
+                Online.on_game_start()       # log in to Gamevil Live in the background
                 GameCanvas.stop_sound()
                 self.load_menu_frames()
                 self.enter_submenu()
@@ -741,7 +728,7 @@ class Menus(GameCanvas):
                 menu[2] = 0
                 menu[1] = 0
                 self.load_hero_images()
-                if GameCanvas.save_flag != 0:  # e.java:856-866  (the save was made on the map: back into it)
+                if GameCanvas.save_flag != 0:  # the save was made on the map: back into it
                     self.load_chapter_lords()
                     self.load_lord_missions()
                     self.load_mission_text()
@@ -881,7 +868,7 @@ class Menus(GameCanvas):
         3: _fire_missions,
     }
 
-    def key_back(self):  # e.java:1002-1109  (BACK)
+    def key_back(self):  # BACK
         menu = GameCanvas.menu
         bool_ = False
         if consts.menu_parent[menu[0]] > -1:
@@ -915,7 +902,7 @@ class Menus(GameCanvas):
                         menu[1] = 2
                     elif menu[1] == 4:
                         menu[1] = 3
-                        if GameCanvas.prev_state == 3:  # e.java:1048-1056  (back to the map's pause menu)
+                        if GameCanvas.prev_state == 3:  # back to the map's pause menu
                             GameCanvas.state = GameCanvas.prev_state
                             GameCanvas.prev_state = -1
                             menu[0] = 10
@@ -929,7 +916,7 @@ class Menus(GameCanvas):
                     menu[1] = 4
                 if GameCanvas.menu_return == 27:
                     menu[1] = 3
-                    if GameCanvas.prev_state == 3:  # e.java:1066-1074
+                    if GameCanvas.prev_state == 3:
                         GameCanvas.state = GameCanvas.prev_state
                         GameCanvas.prev_state = -1
                         menu[0] = 10
@@ -967,14 +954,14 @@ class Menus(GameCanvas):
                 GameCanvas.set_menu_items()
 
     @staticmethod
-    def free_carousel():  # e.java:1111-1118
+    def free_carousel():
         GameCanvas.anim_step = 0
         while GameCanvas.anim_step < 4:
             GameCanvas.images[26 + GameCanvas.anim_step] = None
             GameCanvas.anim_step += 1
         GameCanvas.carousel_image = None
 
-    def enter_submenu(self):  # e.java:1120-1127  (remember cursor, go to the sub-menu)
+    def enter_submenu(self):  # remember cursor, go to the sub-menu
         menu = GameCanvas.menu
         GameCanvas.menu_return = menu[0]
         GameCanvas.menu_cursors[menu[0]] = i16(menu[1])
@@ -983,7 +970,7 @@ class Menus(GameCanvas):
         GameCanvas.redraw = 1
         GameCanvas.menu_part = 0
 
-    def free_shop_images(self):  # e.java:1129-1139
+    def free_shop_images(self):
         GameCanvas.images[17] = None
         GameCanvas.images[10] = None
         GameCanvas.gear_data = None
@@ -994,10 +981,10 @@ class Menus(GameCanvas):
         GameCanvas.sparkle = None
         Menus.free_carousel()
 
-    def draw_menu_frame(self):  # e.java:1141-1143  (menu background ct[7])
+    def draw_menu_frame(self):  # menu background ct[7]
         self.draw_view_region(GameCanvas.images[7], 0, 0, GameCanvas.canvas_size.x, GameCanvas.canvas_size.y, 0, 0)
 
-    def draw_list_menu(self):  # e.java:1145-1227  (vertical list menu: 1 2 10 11 12 13 25 27)
+    def draw_list_menu(self):  # vertical list menu: 1 2 10 11 12 13 25 27
         menu = GameCanvas.menu
         i = GameCanvas.view_cx - 90
         text_dx = [13, 34, 20, 0, 0, 0, 0, 0, 0, 0,
@@ -1059,11 +1046,11 @@ class Menus(GameCanvas):
             Gfx.fill_rect(GameCanvas.screen_w // 2 - 16, GameCanvas.screen_h - 17, 32, 17, 0)
             Gfx.draw_string("" + str(GameCanvas.chapter + 1), GameCanvas.screen_w // 2, GameCanvas.screen_h - 16, 1)
 
-    def draw_options(self):  # e.java:1471-1521  (Options: Sound / Volume / Speed)
+    def draw_options(self):  # Options: Sound / Volume / Speed
         i = GameCanvas.view_cy - 50
         if GameCanvas.menu[1] == 0:
             GameCanvas.menu[1] = 1
-        for b in range(1, consts.menu_sizes[9]):         # PORT-EXTRA config.SCREEN_OPTION: + row 3 Screen
+        for b in range(1, consts.menu_sizes[9]):         # config.SCREEN_OPTION: + row 3 Screen
             if GameCanvas.menu[1] == b:
                 bool_ = True
                 Gfx.set_font(GameCanvas.font_orange)
@@ -1100,7 +1087,7 @@ class Menus(GameCanvas):
             i += 10
             i += 20
 
-    def draw_help_page(self):  # e.java:2311-2348  (Help / About page cM[1] of topic ej)
+    def draw_help_page(self):  # Help / About page cM[1] of topic ej
         if GameCanvas.state == 3 or GameCanvas.prev_state == 3:
             GameCanvas.view_cy -= 30
         i = GameCanvas.menu[1] + consts.help_topic_start[GameCanvas.help_topic]
@@ -1133,7 +1120,7 @@ class Menus(GameCanvas):
         if GameCanvas.state == 3 or GameCanvas.prev_state == 3:
             GameCanvas.view_cy += 30
 
-    def draw_page_number(self, page, pages, y, wrap):  # e.java:2350-2372  (page "n / m" with arrows)
+    def draw_page_number(self, page, pages, y, wrap):  # page "n / m" with arrows
         if pages == 1:
             return
         i = GameCanvas.view_cx - 25 - 10
@@ -1155,12 +1142,12 @@ class Menus(GameCanvas):
         i += 9 + (18 if pages > 9 else 9)
         self.draw_small_number(pages, i, y + GameCanvas.view_y)
 
-    def draw_skills(self, mode):  # e.java:1523-1593  (Skills: 5 hot-key slots + skill tree pages)
+    def draw_skills(self, mode):  # Skills: 5 hot-key slots + skill tree pages
         hero = GameCanvas.hero
         menu = GameCanvas.menu
         slot_keys = [1, 3, 7, 9, 0]
         if config.SKILL_BAR or config.SKILL_CARD:
-            # PORT-EXTRA: the PC keys of the 5 slots are 1-5 (the phone's were 1 3 7 9 0)
+            # the PC keys of the 5 slots are 1-5 (the phone's were 1 3 7 9 0)
             slot_keys = [1, 2, 3, 4, 5]
         if mode == 0:
             for b in range(5):
@@ -1195,8 +1182,7 @@ class Menus(GameCanvas):
                         self.draw_map_region(image, 40 + (b + 2) * 34 + 1, 140 + 35 * line + 1, 28, 28,
                                        (consts.skill_menu_ids[base + b] - 12) * 28, 0)
             if menu[3] == 2:
-                # DECOMP-FIX F10: `35 * cM[2] % 6 / 3` -> `35 * (cM[2] % 6 / 3)`
-                row = 35 * (menu[2] % 6 // 3) if F10 else 35 * menu[2] % 6 // 3
+                row = 35 * (menu[2] % 6 // 3)
                 self.draw_round_outline(40 + (menu[2] % 3 + 2) * 34, 140 + row, 30, 30, 255, 255, 255)
             bar = Rect(210, 0, 3, 20)
             self.draw_box(210, 150, 3, 50, False)
@@ -1217,7 +1203,7 @@ class Menus(GameCanvas):
         GameCanvas.menu_part = 0
 
     def draw_skill_info(self):
-        """Skills menu (cM[0] == 15): the description strip, or (PORT-EXTRA config.SKILL_CARD)
+        """Skills menu (cM[0] == 15): the description strip, or (config.SKILL_CARD)
         the skill card of pow/game/skill_bar.py for the slot / tree skill under the cursor."""
         if not config.SKILL_CARD:
             self.draw_description_strip()
@@ -1227,7 +1213,7 @@ class Menus(GameCanvas):
         skill = GameCanvas.hero.hotkeys[menu[1]] if menu[3] == 1 else consts.skill_menu_ids[menu[2]]
         skill_bar.draw_card(skill)
 
-    def draw_description_strip(self):  # e.java:1595-1630  (description strip; scrolls when longer than the box)
+    def draw_description_strip(self):  # scrolls when longer than the box
         info = GameCanvas.info_box
         if config.WIDE_DESC:
             self.draw_wide_description()
@@ -1264,7 +1250,7 @@ class Menus(GameCanvas):
             GameCanvas.popups.draw_popup_frame(170)
             Gfx.pop_clip()
 
-    # PORT-EXTRA (config.WIDE_DESC): the description of an item / skill / potion in a box as wide
+    # (config.WIDE_DESC): the description of an item / skill / potion in a box as wide
     # as the screen, in up to WIDE_DESC_LINES lines, instead of the narrow strip whose one line
     # runs by. The box always has the same size, so a shorter text leaves nothing behind.
     WIDE_DESC_X = 4
@@ -1316,7 +1302,7 @@ class Menus(GameCanvas):
         for idx, line in enumerate(lines):
             Gfx.draw_string(line, x + 4, y + 3 + idx * Menus.WIDE_DESC_LINE, 0)
 
-    def draw_gear(self, slot, describe):  # e.java:1632-1654  (Gear: hero sprite + 9 equipment slots)
+    def draw_gear(self, slot, describe):  # Gear: hero sprite + 9 equipment slots
         hero = GameCanvas.hero
         slot_dx = [-77, -77, -77, -33, 3, 47, 47, 47, -15]
         slot_dy = [21, -15, -51, -79, -79, -51, -15, 21, 49]
@@ -1341,13 +1327,13 @@ class Menus(GameCanvas):
             return
         self.draw_description(slot + 1000, GameCanvas.view_cx - 79, GameCanvas.view_cy + 81 + 5, 158, 20)
 
-    def draw_inventory(self, mode):  # e.java:1656-1692  (Inventory: 5x5 grid in 2 pages + gold)
+    def draw_inventory(self, mode):  # Inventory: 5x5 grid in 2 pages + gold
         hero = GameCanvas.hero
         menu = GameCanvas.menu
         col_x = [GameCanvas.view_cx - 75, GameCanvas.view_cx - 45, GameCanvas.view_cx - 15, GameCanvas.view_cx + 15, GameCanvas.view_cx + 45]
         row_y = [GameCanvas.view_cy - 45, GameCanvas.view_cy - 15, GameCanvas.view_cy + 15]
         bar = Rect(GameCanvas.view_cx + 80, GameCanvas.view_cy - 40, 5, 80)
-        # PORT-EXTRA config.BACKPACK_SIZE: pages of 3 rows (15 cells), the last one may be shorter;
+        # config.BACKPACK_SIZE: pages of 3 rows (15 cells), the last one may be shorter;
         # with 25 cells this is the original's 3 + 2 rows
         pages = (config.BACKPACK_SIZE + 14) // 15
         page = menu[2] // 15
@@ -1375,7 +1361,7 @@ class Menus(GameCanvas):
             self.draw_gold_box()
         GameCanvas.menu_part = 0
 
-    def draw_assign_items(self, mode):  # e.java:3022-3058  (Assign Items: 5 potion slots, * and # quick keys)
+    def draw_assign_items(self, mode):  # Assign Items: 5 potion slots, * and # quick keys
         hero = GameCanvas.hero
         if GameCanvas.state == 3:
             GameCanvas.view_cy -= 30
@@ -1385,7 +1371,7 @@ class Menus(GameCanvas):
             for slot in range(5):
                 self.draw_box(GameCanvas.view_cx - 80 + 32 * slot, GameCanvas.view_cy - 40 + GameCanvas.view_y, 30, 22, False)
                 if config.SKILL_BAR:
-                    # PORT-EXTRA config.SKILL_BAR: every belt slot has its own key Z X C V B
+                    # config.SKILL_BAR: every belt slot has its own key Z X C V B
                     GameCanvas.draw_view_text(" " + "ZXCVB"[slot] + " ", GameCanvas.view_cx - 80 + 32 * slot - GameCanvas.view_x, GameCanvas.view_cy - 38)
                 elif hero.quick_keys[0] == slot:
                     GameCanvas.draw_view_text(" * ", GameCanvas.view_cx - 80 + 32 * slot - GameCanvas.view_x, GameCanvas.view_cy - 38)
@@ -1403,7 +1389,7 @@ class Menus(GameCanvas):
         else:
             self.draw_round_outline(GameCanvas.view_cx - 80 + 32 * GameCanvas.menu[1], GameCanvas.view_cy - 10, 30, 29, 255, 255, 255)
         GameCanvas.menu_part = 0
-        # PORT-EXTRA config.WIDE_DESC: the taller box goes under "*,# key Assign", not over it
+        # config.WIDE_DESC: the taller box goes under "*,# key Assign", not over it
         self.draw_description(GameCanvas.menu[1] + 1200, GameCanvas.view_cx - 80 - GameCanvas.view_x,
                               GameCanvas.view_cy + (88 if config.WIDE_DESC else 30), 160, 22)
         self.draw_box(GameCanvas.view_cx - 80, GameCanvas.view_cy + 60 + GameCanvas.view_y, 160, 22, False)
@@ -1412,7 +1398,7 @@ class Menus(GameCanvas):
         if GameCanvas.state == 3:
             GameCanvas.view_cy += 30
 
-    def draw_item_icon(self, item_id, x, y, slot):  # e.java:3060-3081  (item icon)
+    def draw_item_icon(self, item_id, x, y, slot):  # item icon
         i = -1
         b = 0
         if item_id > 500:
@@ -1436,7 +1422,7 @@ class Menus(GameCanvas):
     # fK[0] = mode (cM[0]-21), fK[9]/fK[10] = cursor col/row, fK[18] = cell, fK[19] = item id,
     # fK[20] = message for aV(), fK[21] = price, fK[26] = sparkle frame (-1 idle), fK[27] = 1 on Gear
 
-    def draw_item_grid(self, y, items, marks):  # e.java:1804-1861  (item grid)
+    def draw_item_grid(self, y, items, marks):  # item grid
         i = GameCanvas.cursor[8] * 5
         if GameCanvas.cursor[11] == 1:
             frame = Rect(0, 0, 0, 0)
@@ -1486,7 +1472,7 @@ class Menus(GameCanvas):
             y += 32
             cell += 1
 
-    def draw_grid_item(self, index, x, y, items):  # e.java:1863-1877
+    def draw_grid_item(self, index, x, y, items):
         if items is not None:
             item = items[index]
         else:
@@ -1497,10 +1483,10 @@ class Menus(GameCanvas):
             bool_ = 0
         self.draw_item_count_icon(item.id, x, y, bool_)
 
-    def draw_grid_cell(self, x, y, selected):  # e.java:1879-1881  (grid cell frame)
+    def draw_grid_cell(self, x, y, selected):  # grid cell frame
         GameCanvas.draw_frame_box(x + 1, y + 1, 26, 26, 0, 0, 16777215 if selected else 5263440, True)
 
-    def draw_item_count_icon(self, item_id, x, y, count):  # e.java:1883-1902  (item icon by id + count)
+    def draw_item_count_icon(self, item_id, x, y, count):  # item icon by id + count
         if item_id > 500:
             image = GameCanvas.images[3]
             i = item_id - 501
@@ -1517,14 +1503,14 @@ class Menus(GameCanvas):
         if count > 0:
             GameCanvas.draw_region(x, y, 9, 12, GameCanvas.images[20], count * 9, 0)
 
-    def draw_shop_grid(self):  # e.java:1904-1910  (gold + item grid + description)
+    def draw_shop_grid(self):  # gold + item grid + description
         i = GameCanvas.cursor[1] + 1
         self.draw_hero_gold(i)
         i += 29
         self.draw_item_grid(i, None, None)
         GameCanvas.describe_shop_item(self.item_under_cursor(-1), True, -1)
 
-    def draw_blacksmith(self, full):  # e.java:1912-2111  (decompiler gave bytecode only; rebuilt from it)
+    def draw_blacksmith(self, full):
         cursor = GameCanvas.cursor
         if full:
             if cursor[27] == 0:
@@ -1574,7 +1560,7 @@ class Menus(GameCanvas):
         self.save_game()
         Menus.blacksmith_message()
 
-    def roll_enchant(self):  # e.java:2113-2135  (Enchant: roll success / fail / lost)
+    def roll_enchant(self):  # Enchant: roll success / fail / lost
         success_pct = [100, 90, 80, 70, 60, 45, 30, 10, 1]
         lost_pct = [0, 10, 20, 40, 50, 60, 70, 80, 90]
         item = self.item_under_cursor(-1)
@@ -1594,7 +1580,7 @@ class Menus(GameCanvas):
             Item.clear(item)
             GameCanvas.cursor[23] = 1
 
-    def draw_sparkle(self, x, y):  # e.java:2137-2144  (sparkle frame)
+    def draw_sparkle(self, x, y):  # sparkle frame
         src_x = [0, 15, 30, 0, 20]
         src_y = [0, 0, 0, 16, 16]
         size = [16, 16, 16, 20, 24]
@@ -1603,7 +1589,7 @@ class Menus(GameCanvas):
         y -= side >> 1
         GameCanvas.draw_region(x, y, side, side, GameCanvas.sparkle, src_x[GameCanvas.cursor[26]], src_y[GameCanvas.cursor[26]])
 
-    def draw_sparkles(self):  # e.java:2146-2156
+    def draw_sparkles(self):
         if GameCanvas.cursor[0] == 2:
             self.draw_sparkle(GameCanvas.cursor[24], GameCanvas.cursor[25])
             return
@@ -1613,7 +1599,7 @@ class Menus(GameCanvas):
                     self.draw_sparkle(GameCanvas.combine_pos[b].x, GameCanvas.combine_pos[b].y)
 
     @staticmethod
-    def blacksmith_message():  # e.java:2396-2451  (Blacksmith message popup)
+    def blacksmith_message():  # Blacksmith message popup
         from pow.game.popups import Popups
         outcome = ["Success", "Fail"]
         str_ = ""
@@ -1658,7 +1644,7 @@ class Menus(GameCanvas):
             str_ = "1Compounding| " + outcome[cursor[22]]
         GameCanvas.popups.show_text(str_)
 
-    def blacksmith_keys(self):  # e.java:2453-2566  (Blacksmith keys)
+    def blacksmith_keys(self):  # Blacksmith keys
         cursor = GameCanvas.cursor
         bool_ = True
         if cursor[26] != -1:
@@ -1669,7 +1655,7 @@ class Menus(GameCanvas):
                 cursor[10] = cursor[10] - 1
             else:
                 cursor[18] = cursor[18] + 1
-                if _inc_cmp(cursor[18]) > 8:
+                if cursor[18] > 8:
                     cursor[18] = 0
             GameCanvas.info_box.text = ""
         elif key in (-2, 56):
@@ -1677,29 +1663,29 @@ class Menus(GameCanvas):
                 cursor[10] = cursor[10] + 1
             else:
                 cursor[18] = cursor[18] - 1
-                if _dec_cmp(cursor[18]) < 0:
+                if cursor[18] < 0:
                     cursor[18] = 8
             GameCanvas.info_box.text = ""
         elif key in (-3, 52):
             if cursor[27] == 0:
                 cursor[9] = cursor[9] - 1
-                if _dec_cmp(cursor[9]) < 0:
+                if cursor[9] < 0:
                     cursor[9] = 4
                     cursor[10] = cursor[10] - 1
             else:
                 cursor[18] = cursor[18] + 1
-                if _inc_cmp(cursor[18]) > 8:
+                if cursor[18] > 8:
                     cursor[18] = 0
             GameCanvas.info_box.text = ""
         elif key in (-4, 54):
             if cursor[27] == 0:
                 cursor[9] = cursor[9] + 1
-                if _inc_cmp(cursor[9]) >= 5:
+                if cursor[9] >= 5:
                     cursor[9] = 0
                     cursor[10] = cursor[10] + 1
             else:
                 cursor[18] = cursor[18] - 1
-                if _dec_cmp(cursor[18]) < 0:
+                if cursor[18] < 0:
                     cursor[18] = 8
             GameCanvas.info_box.text = ""
         elif key == -7:
@@ -1750,7 +1736,7 @@ class Menus(GameCanvas):
             self.update_shop_cursor()
             GameCanvas.menus.draw_blacksmith(True)
 
-    def combine_result_of(self):  # e.java:2568-2626  (Combine: work out the result of 3 items)
+    def combine_result_of(self):  # Combine: work out the result of 3 items
         ids = [0, 0, 0]
         i = 0
         for b in range(3):
@@ -1802,7 +1788,7 @@ class Menus(GameCanvas):
             Menus.blacksmith_message()
         Menus.mix_table = None
 
-    def enchant_item(self, item, times):  # e.java:2628-2668  (enchant paramInt times: raise stats)
+    def enchant_item(self, item, times):  # enchant paramInt times: raise stats
         odds = [30, 25, 20, 15, 9, 1]
         for b in range(times):
             i = 0
@@ -1834,10 +1820,10 @@ class Menus(GameCanvas):
         return item
 
     @staticmethod
-    def mix_entry(index):  # e.java:2670-2672
+    def mix_entry(index):
         return Menus.mix_table[index * 2] & 0xFF | (Menus.mix_table[index * 2 + 1] & 0xFF) << 8
 
-    def find_run(self, base, value, start, count):  # e.java:2674-2692  (find run of paramInt2)
+    def find_run(self, base, value, start, count):  # find run of paramInt2
         run = [start, count, 0]
         b = 0
         while b < run[1]:
@@ -1859,24 +1845,21 @@ class Menus(GameCanvas):
         run[2] = 0
         return run
 
-    def enter_blacksmith(self):  # e.java:2694-2707  (enter a Blacksmith screen)
+    def enter_blacksmith(self):  # enter a Blacksmith screen
         if GameCanvas.menu[0] == 24:
             Menus.count_items()
             if GameCanvas.cursor[16] < 3:
                 GameCanvas.popups.setup_popup(39)
                 GameCanvas.redraw = 1
                 GameCanvas.menu[1] = 3
-                if config.ORIG_BUG["B7"]:
-                    # ORIG-BUG B7: the grid behind this popup keeps the scroll / cursor of the last
-                    # grid screen; after the 9-row Warehouse of Gamevil Live they point past shop[24]
-                    GameCanvas.cursor[8] = 0
-                    GameCanvas.cursor[18] = 0
+                GameCanvas.cursor[8] = 0           # the grid behind the popup: its own scroll / cursor,
+                GameCanvas.cursor[18] = 0          # not the last grid screen's (the 9-row Warehouse)
                 return True
         GameCanvas.load_item_tables()
         self.blacksmith_layout()
         return True
 
-    def blacksmith_layout(self):  # e.java:2709-2754  (grid layout of the current Blacksmith mode)
+    def blacksmith_layout(self):  # grid layout of the current Blacksmith mode
         cursor = GameCanvas.cursor
         cursor[0] = GameCanvas.menu[0] - 21
         if cursor[0] == 0 or cursor[0] == 1:
@@ -1892,7 +1875,7 @@ class Menus(GameCanvas):
         gap = 173                     # '­'
         cursor[4] = 5
         if cursor[0] != 0:
-            cursor[4] = config.BACKPACK_SIZE // 5   # PORT-EXTRA config.BACKPACK_SIZE (the shop of mode 0 keeps 25)
+            cursor[4] = config.BACKPACK_SIZE // 5   # config.BACKPACK_SIZE (the shop of mode 0 keeps 25)
         if cursor[0] == 1:
             cursor[4] = cursor[4] + 1
         cursor[3] = 5
@@ -1920,7 +1903,7 @@ class Menus(GameCanvas):
         self.update_shop_cursor()
         cursor[26] = -1
 
-    def update_shop_cursor(self):  # e.java:2756-2772  (clamp cursor, scroll, item under cursor -> fK[19])
+    def update_shop_cursor(self):  # clamp cursor, scroll, item under cursor -> fK[19]
         cursor = GameCanvas.cursor
         if cursor[27] == 0:
             if cursor[10] < 0:
@@ -1936,7 +1919,7 @@ class Menus(GameCanvas):
         cursor[19] = item.id if item is not None else 0
 
     @staticmethod
-    def item_name(item_id):  # e.java:2774-2786  (item name)
+    def item_name(item_id):  # item name
         if item_id < 100:
             return consts.potion_names[item_id - 1]
         if item_id < 300:
@@ -1946,7 +1929,7 @@ class Menus(GameCanvas):
         return GameCanvas.item_tables[2].get_string(item_id - 501, 0)
 
     @staticmethod
-    def clear_combine():  # e.java:2788-2801  (clear the Combine selection)
+    def clear_combine():  # clear the Combine selection
         for b in range(len(GameCanvas.combine_slots)):
             GameCanvas.combine_slots[b] = 0
         for b in range(len(GameCanvas.combine_pos)):
@@ -1959,7 +1942,7 @@ class Menus(GameCanvas):
         Item.clear(GameCanvas.combine_result)
 
     @staticmethod
-    def count_items():  # e.java:2803-2815  (count items: fK[16] backpack, fK[17] potions)
+    def count_items():  # count items: fK[16] backpack, fK[17] potions
         GameCanvas.cursor[16] = 0
         for b in range(config.BACKPACK_SIZE):
             if GameCanvas.hero.backpack[b].id > 0:
@@ -1970,7 +1953,7 @@ class Menus(GameCanvas):
                 GameCanvas.cursor[17] = GameCanvas.cursor[17] + 1
 
     @staticmethod
-    def item_price(item):  # e.java:2817-2830  (price of an item)
+    def item_price(item):  # price of an item
         if item.id < 100:
             i = consts.item_prices[item.id - 1]
         elif item.id < 300:
@@ -1989,7 +1972,7 @@ class Menus(GameCanvas):
             i = GameCanvas.item_tables[2].get_int(item.id - 501, 6)
         return i
 
-    def buy_item(self):  # e.java:2832-2883  (Buy)
+    def buy_item(self):  # Buy
         hero = GameCanvas.hero
         cursor = GameCanvas.cursor
         item = GameCanvas.shop[cursor[18]]
@@ -2041,7 +2024,7 @@ class Menus(GameCanvas):
             hero.gold -= i
             self.save_game()
 
-    def sell_item(self):  # e.java:2885-2905  (Sell, half price)
+    def sell_item(self):  # Sell, half price
         hero = GameCanvas.hero
         cursor = GameCanvas.cursor
         item = self.item_under_cursor(-1)
@@ -2062,7 +2045,7 @@ class Menus(GameCanvas):
         hero.gold += idiv(i, 2)
         self.save_game()
 
-    def enchant_price(self):  # e.java:2907-2936  (Enchant: price and limit)
+    def enchant_price(self):  # Enchant: price and limit
         cursor = GameCanvas.cursor
         item = self.item_under_cursor(-1)
         if item.id == 0:
@@ -2088,7 +2071,7 @@ class Menus(GameCanvas):
         if cursor[22] != 0:
             cursor[23] = -1
 
-    def draw_shop_description(self, item, x, y, w, h, price, with_name):  # e.java:3083-3206  (shop description)
+    def draw_shop_description(self, item, x, y, w, h, price, with_name):  # shop description
         info = GameCanvas.info_box
         price_sep = "/ Price: "
         price_label = "Price: "
@@ -2175,11 +2158,11 @@ class Menus(GameCanvas):
             info.shown = 0
             info.text_x = i16(x + 1)
 
-    def load_title_images(self):  # e.java:1241-1244
+    def load_title_images(self):
         self.load_title_picture()
         GameCanvas.images[18] = self.load_image(GameCanvas.scr_ui.get(77))
 
-    def draw_main_menu(self):  # e.java:1370-1383  (Main Menu: caption strip + blinking arrows)
+    def draw_main_menu(self):  # Main Menu: caption strip + blinking arrows
         i = GameCanvas.menu[1]
         strip_x = GameCanvas.view_cx - 52 + GameCanvas.view_x
         if i == 0 and not GameCanvas.has_save():
@@ -2192,7 +2175,7 @@ class Menus(GameCanvas):
             return
         GameCanvas.lord_count += 1
 
-    def draw_hero_choice(self):  # e.java:1385-1404  (screen 6: choose the hero, 3 heads, the middle one is chosen)
+    def draw_hero_choice(self):  # screen 6: choose the hero, 3 heads, the middle one is chosen
         image = None
         i = GameCanvas.hero.head - 1 & 0x3
         Gfx.set_font(GameCanvas.font_white)
@@ -2208,12 +2191,12 @@ class Menus(GameCanvas):
         self.draw_selection(GameCanvas.view_cx - 27 + GameCanvas.view_x + 1, GameCanvas.view_cy + 8 + GameCanvas.view_y, 52, 52, 255, 182, 82)
         self.draw_arrow(0, GameCanvas.view_cx - 40, GameCanvas.view_cy + 23)
         self.draw_arrow(1, GameCanvas.view_cx + 30, GameCanvas.view_cy + 23)
-        # PORT-EXTRA: the heroes differ in base stats (hero_classes); show the chosen one's
+        # the heroes differ in base stats (hero_classes); show the chosen one's
         head = GameCanvas.hero.head
         self.draw_text_at(hero_classes.NAMES[head & 0x3], GameCanvas.view_cy + 72, 0)
         self.draw_text_at(hero_classes.stats_line(head), GameCanvas.view_cy + 92, 0)
 
-    # --- PORT-EXTRA: attribute reset (pow/game/hero_classes.py) ---------------------------------
+    # --- attribute reset (pow/game/hero_classes.py) ---------------------------------
     def open_respec(self):
         """Attributes screen, left soft key: pay gold or an elixir to get the stat points back."""
         hero = GameCanvas.hero
@@ -2258,14 +2241,14 @@ class Menus(GameCanvas):
         popups.popup_id = RESPEC_DONE_POPUP
         popups.show_text("3Attributes reset.|%d points are free." % free)
 
-    def draw_name_captions(self):  # e.java:1406-1413  (screen 7: the two caption lines)
+    def draw_name_captions(self):  # screen 7: the two caption lines
         Gfx.set_font(GameCanvas.font_white)
         GameCanvas.anim_step = 0
         while GameCanvas.anim_step < 2:
             self.draw_text_at(GameCanvas.gamestr(69 + GameCanvas.anim_step), GameCanvas.view_cy - 47 + GameCanvas.anim_step * 20, 0)
             GameCanvas.anim_step += 1
 
-    def draw_name_box(self):  # e.java:1415-1427  (screen 7: the name box)
+    def draw_name_box(self):  # screen 7: the name box
         i = GameCanvas.view_cx - 80 + GameCanvas.view_x
         box_y = GameCanvas.view_cy + 8 + GameCanvas.view_y
         Gfx.fill_rect(i, box_y, 160, 20, 0)
@@ -2277,7 +2260,7 @@ class Menus(GameCanvas):
             return
         GameCanvas.draw_softkeys(-1, 10)
 
-    def draw_stat_sheet(self, whole):  # e.java:1429-1469  (screen 8/14: stat sheet; 1 = whole, 0 = numbers only)
+    def draw_stat_sheet(self, whole):  # screen 8/14: stat sheet; 1 = whole, 0 = numbers only
         hero = GameCanvas.hero
         base = [hero.base_hp, hero.base_mp, hero.base_attack, hero.base_defense]
         image = None
@@ -2316,7 +2299,7 @@ class Menus(GameCanvas):
             self.draw_rect_outline(GameCanvas.sheet_x + 144, GameCanvas.sheet_y + 97 + 20 * GameCanvas.menu[1] + GameCanvas.view_y + 11, 14, 18, 255, 255, 255)
         GameCanvas.menu_part = 0
 
-    def draw_story_portraits(self, speaker):  # e.java:2158-2165  (story: speaker portrait top-left, hero bottom-right)
+    def draw_story_portraits(self, speaker):  # story: speaker portrait top-left, hero bottom-right
         self.draw_box(19 + GameCanvas.view_x + 2, GameCanvas.view_cy - 72 + 9 + GameCanvas.view_y, 46, 46, True)
         if speaker > -1:
             self.draw_image_file(GameCanvas.scr_char.get(0 + speaker), 19 + GameCanvas.view_x + 2, GameCanvas.view_cy - 73 + 10 + GameCanvas.view_y, 46, 46, 0, 0)
@@ -2324,14 +2307,14 @@ class Menus(GameCanvas):
         self.draw_image_file(GameCanvas.scr_char.get(38 + GameCanvas.hero.head), GameCanvas.canvas_size.x // 2 + 60 - GameCanvas.view_x, GameCanvas.view_cy - 73 + 110 + GameCanvas.view_y, 46, 46, 0, 0)
         self.draw_speech_boxes(3)
 
-    def draw_speech_boxes(self, boxes):  # e.java:2167-2172  (empty speech boxes: 1 = top, 2 = bottom)
+    def draw_speech_boxes(self, boxes):  # empty speech boxes: 1 = top, 2 = bottom
         if (boxes & 0x1) != 0:
             self.draw_box(GameCanvas.view_cx - 60 + 15 + GameCanvas.view_x, GameCanvas.view_cy - 73 + 7 + GameCanvas.view_y, 150, 53, False)
         if (boxes & 0x2) != 0:
             self.draw_box(GameCanvas.view_cx - 60 + -40 + GameCanvas.view_x, GameCanvas.view_cy - 73 + 107 + GameCanvas.view_y, 150, 53, False)
 
     @staticmethod
-    def type_speech(slot, pos, redraw):  # e.java:2216-2309  (type speech text fw[p1], max 3 lines)
+    def type_speech(slot, pos, redraw):  # type speech text fw[p1], max 3 lines
         # paramInt3 == 0: one tick of typing (state kept in fA/fx/fy/fz/fB/fC); 1: redraw all
         if slot == 0:
             left = GameCanvas.view_cx - 60 + 15 + 2 + GameCanvas.view_x
@@ -2345,7 +2328,7 @@ class Menus(GameCanvas):
             limit = 1000                    # a key shows the whole text at once
         else:
             limit = GameCanvas.speech_pos[slot]
-        # decompiled `if (!(n = (p2 != i1) ? 0 : p2))`: n == 0 -> start over, else continue
+        # n == 0 -> start over, else continue
         cur = 0 if pos != limit else pos
         if cur == 0:
             i = left
@@ -2412,7 +2395,7 @@ class Menus(GameCanvas):
             GameCanvas.speech_done[slot] = lines_done
         return True
 
-    def draw_difficulty(self):  # e.java:2374-2394  (screen 29: difficulty Hard / Normal)
+    def draw_difficulty(self):  # screen 29: difficulty Hard / Normal
         box_pos = [GameCanvas.view_cx - 80 + GameCanvas.view_x, GameCanvas.view_cy - 60 + GameCanvas.view_y]
         GameCanvas.difficulty = i16(GameCanvas.menu[1])
         for b in range(2):
@@ -2429,7 +2412,7 @@ class Menus(GameCanvas):
         for b in range(3):
             self.draw_text_at(consts.mode_texts[GameCanvas.menu[1]][b], GameCanvas.view_cy + 10 + b * 20, 17)
 
-    def load_item_def(self, item_id):  # e.java:3465-3531  (item record -> cX / cY / cZ)
+    def load_item_def(self, item_id):  # item record -> cX / cY / cZ
         name_utf = bytearray(16)
         if item_id < 100:
             return
@@ -2496,15 +2479,15 @@ class Menus(GameCanvas):
             if GameCanvas.state != 2:
                 GameCanvas.rare_data = None
 
-    def draw_stat_cursor(self, draw):  # e.java:3533-3545  (stat cursor: 0 = erase, 1 = draw)
+    def draw_stat_cursor(self, draw):  # stat cursor: 0 = erase, 1 = draw
         if GameCanvas.hero.stat_points > 0:
             if draw != 0:
-                color = 255 if F11 else 1   # DECOMP-FIX F11: decompiled `true` (= 1) as a colour
+                color = 255
             else:
                 color = 0
             self.draw_rect_outline(GameCanvas.sheet_x + 144, GameCanvas.sheet_y + 97 + 20 * GameCanvas.menu[1] + 11, 14, 18, color, color, color)
 
-    def load_exp_table(self):  # e.java:3547-3560  (exp table of the hero level from edat 45)
+    def load_exp_table(self):  # exp table of the hero level from edat 45
         data = GameCanvas.load_data_file(45)
         size = 40
         if GameCanvas.hero.level > 190:
@@ -2518,7 +2501,7 @@ class Menus(GameCanvas):
                                 | (data[pos + 1] & 0xFF) << 8 | data[pos] & 0xFF)
         return table
 
-    def draw_game_menu(self):  # e.java:3283-3364  (Game Menu carousel, 4 animation frames per step)
+    def draw_game_menu(self):  # Game Menu carousel, 4 animation frames per step
         menu = GameCanvas.menu
         anim = GameCanvas.menu_anim
         if GameCanvas.images[27] is None:
@@ -2538,7 +2521,7 @@ class Menus(GameCanvas):
                 GameCanvas.menu_anim = i16(GameCanvas.menu_anim + 1)
                 if GameCanvas.menu_anim == 3:
                     menu[1] = menu[1] + 1
-                    if _inc_cmp(menu[1]) >= GameCanvas.menu_count - 1:
+                    if menu[1] >= GameCanvas.menu_count - 1:
                         menu[2] = 0
                         menu[1] = 0
                     GameCanvas.clamp_menu_scroll()
@@ -2550,7 +2533,7 @@ class Menus(GameCanvas):
                 GameCanvas.menu_anim = i16(GameCanvas.menu_anim + 1)
                 if GameCanvas.menu_anim == 3:
                     menu[1] = menu[1] - 1
-                    if _dec_cmp(menu[1]) < 0:
+                    if menu[1] < 0:
                         menu[1] = GameCanvas.menu_count - 1 - 1
                     GameCanvas.clamp_menu_scroll()
                 elif GameCanvas.menu_anim > 3:
@@ -2583,7 +2566,7 @@ class Menus(GameCanvas):
 
     # ---- Missions: lords (1), missions (2), description (3), briefing (4) ------------------
 
-    def draw_mission_text(self):  # e.java:1229-1238  (mission description, 6 lines per page)
+    def draw_mission_text(self):  # mission description, 6 lines per page
         self.draw_box(GameCanvas.view_cx - 100 + GameCanvas.view_x, GameCanvas.view_cy - 80, 200, 40, False)
         self.draw_text_at(GameCanvas.lord_name, GameCanvas.view_cy - 80, 30)
         self.draw_text_at(GameCanvas.mission_name, GameCanvas.view_cy - 60, 30)
@@ -2593,12 +2576,12 @@ class Menus(GameCanvas):
                 GameCanvas.draw_text_left(GameCanvas.view_cx - 100 + GameCanvas.view_x, GameCanvas.view_cy - 28 + b * 20 + GameCanvas.view_y, GameCanvas.text_lines[0][GameCanvas.menu[2] * 6 + b])
         self.draw_page_number(GameCanvas.menu[2] + 1, idiv(GameCanvas.text_line_count[0], 6) + 1, GameCanvas.view_cy + 110, True)
 
-    def draw_briefing(self):  # e.java:1246-1250  (briefing: portraits + empty speech boxes)
+    def draw_briefing(self):  # briefing: portraits + empty speech boxes
         self.draw_story_portraits(GameCanvas.mission_portraits[GameCanvas.mission])
         self.draw_skip_key(1)
         self.draw_speech_boxes(3)
 
-    def draw_map_talk(self):  # e.java:1252-1264  (talk in the map: portrait bottom-left)
+    def draw_map_talk(self):  # talk in the map: portrait bottom-left
         if (GameCanvas.talk_box & 0x1) != 0:
             i = 0 + GameCanvas.general.portrait
         else:
@@ -2610,7 +2593,7 @@ class Menus(GameCanvas):
         self.draw_map_talk_box()
         self.draw_skip_key(1)
 
-    def tick_dialogue(self):  # e.java:1266-1361  (dialogue typewriter: dG 0 briefing, 1 map talk, 2 general)
+    def tick_dialogue(self):  # dialogue typewriter: dG 0 briefing, 1 map talk, 2 general
         box_steps = [2, 3, 5]
         rows_of = [2, 1, 1]
         if GameCanvas.state == 5 and GameCanvas.key != -6:
@@ -2698,7 +2681,7 @@ class Menus(GameCanvas):
                 return
             GameCanvas.wait_ticks = 1
 
-    def draw_briefing_boxes(self):  # e.java:2174-2205  (briefing: both speech boxes)
+    def draw_briefing_boxes(self):  # briefing: both speech boxes
         Gfx.set_font(GameCanvas.font_white)
         self.draw_speech_boxes(2 if GameCanvas.talk_side != 0 else 1)
         lines, talk_x, talk_y = GameCanvas.text_lines, GameCanvas.talk_x, GameCanvas.talk_y
@@ -2725,7 +2708,7 @@ class Menus(GameCanvas):
                 for b in range(3):
                     GameCanvas.draw_text(talk_x[1] + GameCanvas.view_x, talk_y[1] + 16 * b + GameCanvas.view_y, lines[1][b])
 
-    def draw_map_talk_box(self):  # e.java:2207-2214  (map talk: one speech box at the bottom)
+    def draw_map_talk_box(self):  # map talk: one speech box at the bottom
         self.draw_box(54 + GameCanvas.view_x, GameCanvas.view_size.y - 40 + GameCanvas.view_y, GameCanvas.view_size.x - 56, 38, True)
         Gfx.set_font(GameCanvas.font_white)
         for b in range(GameCanvas.talk_row):
@@ -2733,7 +2716,7 @@ class Menus(GameCanvas):
         str_ = GameCanvas.text_lines[0][GameCanvas.talk_row][0:GameCanvas.talk_chars]
         GameCanvas.draw_text(GameCanvas.talk_x[0] + GameCanvas.view_x, GameCanvas.talk_y[0] + 16 * GameCanvas.talk_row + GameCanvas.view_y, str_)
 
-    def load_lord_missions(self):  # e.java:3569-3603  (missions of lord dk -> dz / dA / dB, list dE = dA)
+    def load_lord_missions(self):  # missions of lord dk -> dz / dA / dB, list dE = dA
         i = 0
         GameCanvas.map_id = GameCanvas.lord_ids[GameCanvas.lord]
         GameCanvas.lord_name = GameCanvas.lord_names[GameCanvas.lord]
@@ -2768,7 +2751,7 @@ class Menus(GameCanvas):
 
     # ---- Visiting: generals (19 list, 20 talk) ---------------------------------------------
 
-    def draw_generals(self):  # e.java:1694-1748  (generals: Name / Points, 4 per page)
+    def draw_generals(self):  # generals: Name / Points, 4 per page
         header = ["Name", "Points"]
         i = idiv(GameCanvas.canvas_size.x - 208, 2) + 2
         points_x = i + 134 + 10
@@ -2816,7 +2799,7 @@ class Menus(GameCanvas):
         row_y += 6
         self.draw_page_number(GameCanvas.general_pages[1], GameCanvas.general_pages[0], row_y, True)
 
-    def tick_general_talk(self):  # e.java:1750-1802  (general talk: type the lines gf[], then popups 14 / 16)
+    def tick_general_talk(self):  # general talk: type the lines gf[], then popups 14 / 16
         if GameCanvas.wait_ticks > 0:
             GameCanvas.wait_ticks = i16(GameCanvas.wait_ticks - 1)
             if GameCanvas.key != 0 and GameCanvas.wait_ticks > 3:
@@ -2858,8 +2841,7 @@ class Menus(GameCanvas):
                         return
                     GameCanvas.wait_ticks = 15
 
-    def open_general_talk(self):  # e.java:3366-3393  (open the talk with general cM[1])
-        # the decompiler shows `j = 2;` as a field write; it is the local j declared below
+    def open_general_talk(self):  # open the talk with general cM[1]
         if GameCanvas.seal != 0:
             idx = 2
             b = 0
@@ -2888,7 +2870,7 @@ class Menus(GameCanvas):
         return False
 
     @staticmethod
-    def load_greeting(friendship, kind):  # e.java:3395-3430  (greeting lines of the general -> gf[])
+    def load_greeting(friendship, kind):  # greeting lines of the general -> gf[]
         if GameCanvas.visit_text is not None:
             GameCanvas.visit_text.free()
             GameCanvas.visit_text = None
@@ -2916,7 +2898,7 @@ class Menus(GameCanvas):
         return False
 
     @staticmethod
-    def add_friendship(general, amount):  # e.java:3432-3463  (add paramInt2 friendship to general paramInt1)
+    def add_friendship(general, amount):  # add paramInt2 friendship to general paramInt1
         b = 0
         while b < GameCanvas.general_count and GameCanvas.generals[0][b] != general:
             b += 1
@@ -2943,7 +2925,7 @@ class Menus(GameCanvas):
                 return 1
         return 0
 
-    def general_gift(self):  # e.java:3208-3281  (gift of the general after the talk -> fJ, cT[0])
+    def general_gift(self):  # gift of the general after the talk -> fJ, cT[0]
         gift_odds = [[[500, 800, 900, 960, 990, 995, 998], [60, 61, 91, 92, 392, 892, 992],
                          [100, 600, 900, 930, 990, 995, 996], [1, 2, 5, 305, 310, 410, 910]],
                         [[1, 101, 106, 606, 609, 610, 910], [30, 31, 91, 92, 592, 892, 992],
@@ -3007,21 +2989,21 @@ class Menus(GameCanvas):
 
     @staticmethod
     def seal_list():
-        """ORIG-BUG B3: the list of "all General Visiting" of 504 Emperor's Seal (fn[2], drawn
-        by e.java:1725 and visited by bg() 3366-3378) is never filled in the original, so the
+        """the list of "all General Visiting" of 504 Emperor's Seal (fn[2], drawn
+        by and visited by bg 3366-3378) is never filled in the original, so the
         Visiting screen showed 44 empty rows; the 44 generals one can visit are visitgen.arr."""
         vg = ArrTable("/visitgen.arr")
         for b in range(44):
             GameCanvas.generals[2][b] = i16(vg.get_int(b, 0))
 
     @staticmethod
-    def load_general_table():  # e.java:3562-3567
+    def load_general_table():
         GameCanvas.general_pages[0] = i16(idiv(GameCanvas.menu_count - 1, 4) + 1)
         if GameCanvas.general_table is None:
             GameCanvas.general_table = ArrTable("/" + GameCanvas.scr_data.get(46))
         return False
 
-    def draw_popup_extras(self):  # e.java:2938-2972  (popup extras on the map: experience bars of popups 11 / 12)
+    def draw_popup_extras(self):  # popup extras on the map: experience bars of popups 11 / 12
         i = 0
         if GameCanvas.popups.popup_id == 11:
             i = self.draw_exp_bar(GameCanvas.exp_bar_step, 0)
@@ -3050,7 +3032,7 @@ class Menus(GameCanvas):
             if GameCanvas.popups.timer > 100:
                 GameCanvas.popups.timer = 16
 
-    def draw_exp_bar(self, step, bar):  # e.java:2974-3017  (experience bar; 1 = full, 2 = done)
+    def draw_exp_bar(self, step, bar):  # 1 = full, 2 = done
         colors = [[GameCanvas.rgb(115, 142, 140), GameCanvas.rgb(181, 178, 181), 16777215],
                       [GameCanvas.rgb(99, 0, 0), GameCanvas.rgb(181, 0, 0), GameCanvas.rgb(247, 73, 0)],
                       [GameCanvas.rgb(0, 65, 255), GameCanvas.rgb(0, 146, 255), GameCanvas.rgb(0, 255, 173)],

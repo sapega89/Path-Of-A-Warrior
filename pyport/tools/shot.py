@@ -25,8 +25,8 @@ list of steps, one per line:
                     and allow one visit (cz.S = 1), as after a mission
     hero F N        TEST-ONLY: set the hero's field ag.cz.F to N (p = HP, r = MP, w = ATK, x = DEF)
     skill S ID      TEST-ONLY: learn skill ID (12..30) and put it on skill key slot S (0..4 = 1 3 7 9 0)
-    potion K ID N   TEST-ONLY: put N potions of kind ID on the quick slot K (0 = *, 1 = #)
-    auto on|off     PORT-EXTRA auto-hunt (pow/game/autopilot.py) on / off
+    potion K ID N   TEST-ONLY: put N potions of kind ID on the quick slot K (0 = *, 1 = # )
+    auto on|off     auto-hunt (pow/game/autopilot.py) on / off
     expect F OP N   TEST-ONLY: stop with an error unless the hero's field F OP N (OP: >= <= == > <)
     skilllv ID LV   TEST-ONLY: set the level of skill ID (12..30) to LV
     belt S ID N     TEST-ONLY: put N items of kind ID on belt slot S (0..4 = keys Z X C V B)
@@ -78,7 +78,7 @@ def parse(path):
 
 
 def make_zero_save():
-    """Smallest save U() accepts: length != 0, name 'HERO', everything else 0 (ag.java:2126-2214)."""
+    """Smallest save U accepts: length != 0, name 'HERO', everything else 0."""
     from pow.midp.rms import RecordStore
     data = bytearray(965)
     data[0] = 965 & 0xFF
@@ -212,7 +212,7 @@ def run(scenario, out, every=False):
                 print(f"expect {field} {op} {val}: {have}")
                 continue
             if cmd == "account":           # TEST-ONLY: account ID PWD - the Gamevil Live registration
-                uid, pwd = arg.split()         # (RecordStore "gamevil_pow_regist", m.java:287-305)
+                uid, pwd = arg.split()
                 from pow.midp.rms import RecordStore
                 rec = bytearray(28)
                 rec[0:len(pwd)] = pwd.encode()
@@ -245,8 +245,8 @@ def run(scenario, out, every=False):
                 z.count = cnt
                 continue
             if cmd == "win":
-                GameCanvas.boss_fight = 1                  # the mission's general was met on the map (c.java:986)
-                GameCanvas.scene.finish_mission(1)               # what the combat calls on victory (c.java:1516)
+                GameCanvas.boss_fight = 1                  # the mission's general was met on the map
+                GameCanvas.scene.finish_mission(1)               # what the combat calls on victory
                 continue
             if cmd == "generals":
                 from pow.game.arr_table import ArrTable

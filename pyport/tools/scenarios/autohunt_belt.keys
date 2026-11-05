@@ -1,6 +1,6 @@
 env POW_SKILL_BAR=1
 # The same with the skill bar and the belt (config.SKILL_BAR): the potion goes from a belt slot.
-# Fresh hero -> first mission -> the map, then the auto-hunt (PORT-EXTRA) fights alone:
+# Fresh hero -> first mission -> the map, then the auto-hunt  fights alone:
 # it walks to the enemies, attacks, casts the skills on keys 1-5 and drinks the potions
 wait 25
 key FIRE

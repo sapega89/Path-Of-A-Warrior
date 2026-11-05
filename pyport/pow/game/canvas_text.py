@@ -1,6 +1,6 @@
-"""ag.java, part of GameCanvas: text: tables, word wrap, numbers to text, byte strings.
+""", part of GameCanvas: text: tables, word wrap, numbers to text, byte strings.
 
-A mixin of GameCanvas (pow/game/game_canvas.py); the methods keep their `# ag.java:FROM-TO`
+A mixin of GameCanvas (pow/game/game_canvas.py); the methods keep their `# :FROM-TO`
 comments. `GameCanvas` below is the real class, set by game_canvas.py once it exists.
 """
 
@@ -14,7 +14,7 @@ GameCanvas = None   # set by pow/game/game_canvas.py
 
 class TextMixin:
     @staticmethod
-    def split_field(text, index):  # ag.java:1216-1240  (field #paramInt of "a|b|c")
+    def split_field(text, index):  # field #paramInt of "a|b|c"
         if text is None:
             return None
         bool_ = False
@@ -37,11 +37,11 @@ class TextMixin:
         return text[start:end]
 
     @staticmethod
-    def u16(lo, hi):  # ag.java:1275-1277
+    def u16(lo, hi):
         return i16(lo & 0xFF | (hi & 0xFF) << 8)
 
     @staticmethod
-    def load_menu_texts():  # ag.java:2321-2343  (menu captions from uimenu.scr = edat[69])
+    def load_menu_texts():  # menu captions from uimenu.scr = edat[69]
         table = ScrTable("/" + GameCanvas.scr_data.get(69))
         for b in range(30):
             GameCanvas.menu_titles[b] = table.get(b)
@@ -64,7 +64,7 @@ class TextMixin:
         table.free()
 
     @staticmethod
-    def read_utf(data, start, end):  # ag.java:3026-3043  (readUTF of bytes[from:to])
+    def read_utf(data, start, end):  # readUTF of bytes[from:to]
         begin = start
         stop = end
         str_ = None
@@ -80,41 +80,41 @@ class TextMixin:
         return str_
 
     @staticmethod
-    def gamestr(index):  # ag.java:3538-3540
+    def gamestr(index):
         return GameCanvas.scr_gamestr.get(index)
 
     @staticmethod
-    def key_digit(key):  # ag.java:3549-3574  (key code '0'..'9' -> digit, else -1)
+    def key_digit(key):  # key code '0'..'9' -> digit, else -1
         if 48 <= key <= 57:
             return key - 48
         return -1
 
     @staticmethod
-    def trim_right(text):  # ag.java:3148-3153  (trim trailing spaces; sic: one char left -> "")
+    def trim_right(text):  # trim trailing spaces; sic: one char left -> ""
         last = len(text) - 1
         while last >= 0 and text[last] == " ":
             last -= 1
         return "" if last == 0 else text[:last + 1]
 
     @staticmethod
-    def cut_at_control(text):  # ag.java:3155-3160  (up to the first control character)
+    def cut_at_control(text):  # up to the first control character
         b = 0
         while b < len(text) and text[b] >= " ":
             b += 1
         return "" if b == 0 else text[:b]
 
     @staticmethod
-    def cut_at_space(text):  # ag.java:3162-3167  (up to the first space)
+    def cut_at_space(text):  # up to the first space
         b = 0
         while b < len(text) and text[b] != " ":
             b += 1
         return "" if b == 0 else text[:b]
 
     @staticmethod
-    def char_width(ch):  # ag.java:3021-3024  (width of a character)
+    def char_width(ch):  # width of a character
         return GameCanvas.font_white.char_width(chr(ch & 0xFFFF))
 
-    def word_wrap(self, text, width, slot):  # ag.java:3100-3138  (word wrap into dp[paramInt2])
+    def word_wrap(self, text, width, slot):  # word wrap into dp[paramInt2]
         line_start = 0
         break_at = 0
         line_w = 0
@@ -156,7 +156,7 @@ class TextMixin:
         return 1
 
     @staticmethod
-    def parse_int(chars):  # ag.java:3542-3547  (Integer.parseInt of the leading digits)
+    def parse_int(chars):  # Integer.parseInt of the leading digits
         str_ = ""
         b = 0
         while b < len(chars) and "0" <= chars[b] <= "9":
@@ -166,18 +166,18 @@ class TextMixin:
 
     # ---- menus: Options / Help / Endings helpers -------------------------------------------
 
-    def edat_bytes(self, file, index):  # ag.java:1743-1745
+    def edat_bytes(self, file, index):
         return GameCanvas.edat_string(file, index).encode("latin-1")
 
     @staticmethod
-    def edat_string(file, index):  # ag.java:1747-1753  (string paramInt2 of edat file paramInt1)
+    def edat_string(file, index):  # string paramInt2 of edat file paramInt1
         table = ScrTable("/" + GameCanvas.scr_data.get(file))
         str_ = table.get(index)
         table.free()
         return str_
 
     @staticmethod
-    def digit_count(value):  # ag.java:1822-1826  (number of digits)
+    def digit_count(value):  # number of digits
         powers = [10, 100, 1000, 10000]
         b = 0
         while b < 4 and value >= powers[b]:
@@ -185,11 +185,11 @@ class TextMixin:
         return b + 1
 
     @staticmethod
-    def measure_text(text):  # ag.java:1755-1757  (text width)
+    def measure_text(text):  # text width
         return GameCanvas.font_white.string_width(text)
 
     @staticmethod
-    def format_thousands(value):  # ag.java:1437-1452  (12345 -> "12,345")
+    def format_thousands(value):  # 12345 -> "12,345"
         str_ = str(value)
         size = len(str_)
         digits = [0] * size
@@ -206,10 +206,10 @@ class TextMixin:
     # ---- Missions: lords, mission list, briefing text, general data ------------------------
 
     @staticmethod
-    def u8(value):  # ag.java:3484-3486
+    def u8(value):
         return i16(value & 0xFF)
 
-    def load_mission_text(self):  # ag.java:1064-1073  (mission description -> dp[0])
+    def load_mission_text(self):  # mission description -> dp[0]
         GameCanvas.mission_name = GameCanvas.mission_names[GameCanvas.mission]
         table = GameCanvas.load_data_file(56)
         text = self.table_text(table, GameCanvas.lord_missions[GameCanvas.lord] + GameCanvas.mission)
@@ -219,7 +219,7 @@ class TextMixin:
         line = bytearray(text[:b])
         self.word_wrap(line, 190, 0)
 
-    def table_text(self, table, index):  # ag.java:1075-1124  (text paramInt of a table, "(..)" macros)
+    def table_text(self, table, index):  # (text paramInt of a table, "(..)" macros)
         offsets = [0] * 110
         src = bytearray(1500)
         macro = bytearray(1500)
@@ -251,14 +251,7 @@ class TextMixin:
                 copied[1] = pos[1] + 1
                 if digit_count != 0:
                     pos[1] = GameCanvas.index_after(macro, pos[1], ")")
-                    # DECOMP-FIX F15: the source is `arrayOfInt2[1] = arrayOfInt3[1] = a(.., ')')`
-                    # (one call; JD split the dup_x2 into a second search). Literally the second
-                    # search skips the next "(..)" and the copy length is negative: every mission
-                    # description with a numbered template (Hellgate...) throws in arraycopy.
-                    if config.DECOMP_FIX["F15"]:
-                        copied[1] = pos[1]
-                    else:
-                        copied[1] = GameCanvas.index_after(macro, pos[1], ")")
+                    copied[1] = pos[1]
                     pos[0] = GameCanvas.index_after(src, pos[0], "|")
                     out = GameCanvas.append_bytes(out, src, copied[0], pos[0] - 1)
                     copied[0] = pos[0]
@@ -271,7 +264,7 @@ class TextMixin:
         return GameCanvas.append_bytes(out, macro, copied[1], pos[1])
 
     @staticmethod
-    def append_bytes(dst, src, start, end):  # ag.java:1126-1131  (append at the first 0)
+    def append_bytes(dst, src, start, end):  # append at the first 0
         b = 0
         while b < len(dst) and dst[b] != 0:
             b += 1
@@ -279,7 +272,7 @@ class TextMixin:
         return dst
 
     @staticmethod
-    def index_after(data, start, ch):  # ag.java:1133-1142  (index after the next paramChar)
+    def index_after(data, start, ch):  # index after the next paramChar
         code = ord(ch)
         b = 0
         while data[start + b] != code and data[start + b] != 0:
@@ -289,7 +282,7 @@ class TextMixin:
         return start + b + 1
 
     @staticmethod
-    def decimal_digits(value):  # ag.java:2842-2847  (number of decimal digits)
+    def decimal_digits(value):  # number of decimal digits
         b = 1
         limit = 10
         while value >= limit:

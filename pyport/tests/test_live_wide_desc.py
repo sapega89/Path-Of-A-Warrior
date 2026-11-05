@@ -1,5 +1,5 @@
 """Gamevil Live: the full (wide) description instead of the running strip, and the layouts
-that make room for it (ORIG-BUG B10 Buy lots, B11 Sell price from the warehouse)."""
+that make room for it (Buy lots, B11 Sell price from the warehouse)."""
 import os
 
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
@@ -19,7 +19,7 @@ def test_wide_description_in_gamevil_live(monkeypatch):
 
 
 def test_buy_lots_grid_above_the_description(monkeypatch):
-    """ORIG-BUG B10: the 2 rows of lots end at the description strip (y 200)."""
+    """the 2 rows of lots end at the description strip (y 200)."""
     from pow.game.game_canvas import GameCanvas
     from pow.game.live import Live
     from pow.game.live_screen import LiveScreen
@@ -44,7 +44,7 @@ def test_buy_lots_grid_above_the_description(monkeypatch):
 
 
 def test_sell_price_describes_the_warehouse_item(monkeypatch):
-    """ORIG-BUG B11: selling from the warehouse describes the warehouse item, and the wide box
+    """selling from the warehouse describes the warehouse item, and the wide box
     sits under the price box (y 210..232), not over the item."""
     from pow.game.game_canvas import GameCanvas
     from pow.game.live import Live

@@ -1,4 +1,4 @@
-"""Reward popup after an ending (l.e(27), DECOMP-FIX F19): no None lines, hidden mission name shown."""
+"""Reward popup after an ending (l.e(27), ): no None lines, hidden mission name shown."""
 import pytest
 
 

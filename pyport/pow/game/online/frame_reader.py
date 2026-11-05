@@ -1,21 +1,18 @@
-"""FrameReader (d.java): reads a frame from the stream.
-
-Generated once from pyport/mp_java/d.java (branch java-reference) by the old
-tools/j2py_mp.py; edited by hand since.
+"""FrameReader: reads a frame from the stream.
 """
 from pow.game.online.rt import DataInputStream, _js, i32
 
 
 class FrameReader:
 
-    def __init__(self, input_stream):  # d.java:13
+    def __init__(self, input_stream):
         self.stream = None
         self.length = 0
         self.header = [0] * (1024)
         self.stream = DataInputStream(input_stream)
         self.length = (-1)
 
-    def close(self):  # d.java:18
+    def close(self):
         try:
             if self.stream is not None:
                 self.stream.close()
@@ -23,7 +20,7 @@ class FrameReader:
         except Exception:
             return
 
-    def read_frame(self):  # d.java:30
+    def read_frame(self):
         body = None
         self.header[0] = 0
         self.header[1] = 0

@@ -1,4 +1,4 @@
-"""PORT-EXTRA: the chat of the online game (pow_server/chat.py): lobby, order, private."""
+"""the chat of the online game (pow_server/chat.py): lobby, order, private."""
 import random
 
 import pytest

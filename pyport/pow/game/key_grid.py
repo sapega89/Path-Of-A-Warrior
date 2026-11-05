@@ -1,15 +1,15 @@
-"""PORT-EXTRA (asked by the player): on-screen keyboards of the Gamevil Live registration
+"""Asked by the player: on-screen keyboards of the Gamevil Live registration
 (config.REG_KEYBOARD), so that a gamepad can type the UserID and the password too.
 
-The original (as.java:1271-1328) typed the UserID on the hero-name grid ag.f(int,int) (2 x 14
-letters + OK, ag.java:1794-1819) and the password from the number keys only. Here:
+The original typed the UserID on the hero-name grid ag.f(int,int) (2 x 14
+letters + OK) and the password from the number keys only. Here:
 
     UserID     A..N / O..Z + OK / 0..9    the original grid plus a row of digits
     password   0..9 + OK                  one row under the password box
 
 Arrows move the cursor (up / down keep the column, clamped to the row's end; left / right wrap
 in the row), OK types the cell, OK on the OK cell = the left soft key (CONFIRM). The cells are
-drawn as ag.f does: 10 x 17 px, the OK cell 19 px wide, the cursor blinks red every 2 frames.
+drawn: 10 x 17 px, the OK cell 19 px wide, the cursor blinks red every 2 frames.
 The hero-name grid itself stays the original's (pow/game/menus.py, pointer.py).
 """
 from pow.game.game_canvas import GameCanvas
@@ -23,7 +23,7 @@ RED, BLUE, BLACK = 0xFF0000, 0x0000FF, 0
 
 class KeyGrid:
     def __init__(self, rows):
-        self.rows = [list(r) for r in rows]      # the labels; "OK" = the confirm cell
+        self.rows = [list(r) for r in rows]      # "OK" = the confirm cell
         self.row = 0
         self.col = 0
 
@@ -60,7 +60,7 @@ class KeyGrid:
         self.col = min(self.col, len(self.rows[self.row]) - 1)
         return True
 
-    # --- drawing (as ag.f(int,int), ag.java:1794-1819) ---
+    # --- drawing ---
     @staticmethod
     def _row_width(row):
         return 2 + sum(OK_W if label == "OK" else CELL_W for label in row)

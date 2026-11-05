@@ -1,4 +1,4 @@
-"""Options volume -> pygame gain (pow/midp/media.py, PORT-EXTRA config.VOLUME_CURVE)."""
+"""Options volume -> pygame gain (pow/midp/media.py, config.VOLUME_CURVE)."""
 from conftest import ROOT  # noqa: F401  (sets sys.path and the dummy drivers)
 
 
@@ -35,7 +35,7 @@ def test_saved_volume_used_on_first_sound(tmp_path, monkeypatch):
 
 
 def test_mp_volume_applies_to_playing_sound():
-    """c.java a(int): setLevel also on the Player that is playing now."""
+    """a(int): setLevel also on the Player that is playing now."""
     from pow.midp.media import gain
     from pow.game.online.player_pool import PlayerPool
     pool = PlayerPool(4, 1, True, True)

@@ -1,4 +1,4 @@
-"""PORT-EXTRA: a WebSocket of the browser page for the pygbag build.
+"""a WebSocket of the browser page for the pygbag build.
 
 pygbag 0.9's JS bridge (`platform.window`) has no `WebSocket.new(...)` (that is pyodide's), and a
 Python function set as `ws.onmessage` is never called. So the socket lives on the JS side: a small

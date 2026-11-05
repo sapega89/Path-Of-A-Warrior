@@ -2,7 +2,7 @@ env POW_ALWAYS_ONLINE=1
 env POW_SERVER_ONLY_SAVE=1
 env POW_LIVE_SERVER=ws://127.0.0.1:9/live
 save zero
-# PORT-EXTRA "server only": a hero without an account cannot skip the registration offer.
+# "server only": a hero without an account cannot skip the registration offer.
 # BACK on the empty UserID closes it and the Game Menu opens it again at once.
 wait 25
 key FIRE           # sound: Yes

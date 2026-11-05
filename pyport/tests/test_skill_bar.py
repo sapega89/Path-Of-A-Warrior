@@ -1,4 +1,4 @@
-"""PORT-EXTRA skill bar, belt and skill card (pow/game/skill_bar.py, config.SKILL_BAR / SKILL_CARD)."""
+"""skill bar, belt and skill card (pow/game/skill_bar.py, config.SKILL_BAR / SKILL_CARD)."""
 import types
 
 

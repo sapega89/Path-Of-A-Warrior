@@ -1,17 +1,17 @@
-"""PORT-EXTRA (asked by Andrey): the Chat window of the online game.
+"""(asked by Andrey): the Chat window of the online game.
 
-Not in the original jar. An eighth picture of the main menu carousel opens it. Three tabs
+Not in the original. An eighth picture of the main menu carousel opens it. Three tabs
 (pow_server/chat.py): Lobby (everyone online), Order (my order) and Private (a list of my
 conversations; "New Message" asks for a UserID). Messages are up to 40 printable ASCII
-characters: the jar's bitmap font has no other glyphs.
+characters: the original's bitmap font has no other glyphs.
 
 Text is typed on a keyboard grid (A-Z, a-z, digits and signs, Space, Send) with the arrows
-and FIRE, like the jar's A-Z grid for the UserID, so it works on phone keys and on a gamepad;
+and FIRE, like the original's A-Z grid for the UserID, so it works on phone keys and on a gamepad;
 a PC or browser keyboard types straight into it (Canvas.text_input). The server pushes new
 messages (1812) to whoever reads the conversation; the others count them as unread: a badge
 on the main menu (order and private messages) and a number on each tab.
 
-States (unused numbers of the jar's menu range, so the menu music plays on):
+States (unused numbers of the original's menu range, so the menu music plays on):
     40  the tabs: Lobby / Order messages, the Private list
     41  a private conversation
     42  the keyboard: a message, or the UserID of a new private conversation
@@ -53,7 +53,7 @@ _err_first = None
 
 
 def install():
-    """Adds the error texts to the jar's tables (once per run, after the Order window's)."""
+    """Adds the error texts to the original's tables (once per run, after the Order window's)."""
     global _err_first
     from pow.game.online import mp_canvas_order
     mp_canvas_order.install()
@@ -276,7 +276,7 @@ class ChatMixin:
         MpCanvas.chat_unread[PRIVATE] = answer.read_s8() & 0xFF
 
     def on_chat_answer(self, answer):
-        """PORT-EXTRA pushes 1812 / 1815 come between the jar's own answers: they must not
+        """pushes 1812 / 1815 come between the original's own answers: they must not
         touch its state (answer_status, the wait timer, a pause)."""
         op = answer.read_s16()
         answer.read_s8()

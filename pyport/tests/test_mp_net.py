@@ -67,7 +67,7 @@ def test_websocket_and_tcp_end_to_end():
             assert got[0]["op"] == 263 and got[0]["st"] == 1 and got[1]["op"] == 1288
             t.close()
 
-            # raw TCP with the original framing (the jar's way); the server is not --legacy,
+            # raw TCP with the original framing (the original's way); the server is not --legacy,
             # so a 262 without a token is refused, which is what this server must do
             r, w = await asyncio.open_connection("127.0.0.1", tcp_port)
             w.write(enc(M.LOGIN, id="WEBUSER", ver="0111"))

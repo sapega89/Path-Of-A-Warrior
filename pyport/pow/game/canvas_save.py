@@ -1,6 +1,6 @@
-"""ag.java, part of GameCanvas: the save file: load / save gamevil_pow_data, options, byte readers and writers.
+""", part of GameCanvas: the save file: load / save gamevil_pow_data, options, byte readers and writers.
 
-A mixin of GameCanvas (pow/game/game_canvas.py); the methods keep their `# ag.java:FROM-TO`
+A mixin of GameCanvas (pow/game/game_canvas.py); the methods keep their `# :FROM-TO`
 comments. `GameCanvas` below is the real class, set by game_canvas.py once it exists.
 """
 
@@ -14,7 +14,7 @@ GameCanvas = None   # set by pow/game/game_canvas.py
 
 class SaveMixin:
     @staticmethod
-    def load_options():  # ag.java:1174-1186
+    def load_options():
         record = bytearray(2)
         try:
             recordStore = RecordStore.openRecordStore("gamevil_pow_env", False)
@@ -29,7 +29,7 @@ class SaveMixin:
             GameCanvas.speed = i8(record[1])
 
     @staticmethod
-    def save_options():  # ag.java:1188-1201
+    def save_options():
         record = bytearray(2)
         record[0] = GameCanvas.volume & 0xFF
         record[1] = GameCanvas.speed & 0xFF
@@ -41,7 +41,7 @@ class SaveMixin:
         except Exception:
             return
 
-    def load_game(self):  # ag.java:2126-2214  (load save "gamevil_pow_data")
+    def load_game(self):  # load save "gamevil_pow_data"
         hero = GameCanvas.hero
         GameCanvas.save_pos = 0
         try:
@@ -83,7 +83,7 @@ class SaveMixin:
             GameCanvas.chapter = GameCanvas.read_byte()
             hero.pos[0].x = GameCanvas.read_short()
             hero.pos[0].y = GameCanvas.read_short()
-            # Java int division (values are positions >= 0, so // == /)
+            # integer division (values are positions >= 0, so // == /)
             hero.pos[0].x = i16((hero.pos[0].x // 27 // 7 * 7 + 4) * 27 + 8)
             hero.pos[0].y = i16((hero.pos[0].y // 27 // 7 * 7 + 4) * 27 + 8)
             for i in range(22):
@@ -91,10 +91,7 @@ class SaveMixin:
             hero.live_stat1 = GameCanvas.read_byte()
             hero.live_stat2 = GameCanvas.read_byte()
             hero.level = GameCanvas.read_byte()
-            if config.ORIG_BUG["B2"]:
-                # ORIG-BUG B2: the level is one byte in the save (G(cz.l), ag.java:2908) read back
-                # signed, so Lv128+ loaded as -128..; the rest of the game keeps it as an int
-                hero.level &= 0xFF
+            hero.level &= 0xFF                 # one unsigned byte in the save: Lv128+ stays positive
             hero.base_attack = GameCanvas.read_short()
             hero.base_defense = GameCanvas.read_short()
             hero.base_hp = GameCanvas.read_short()
@@ -104,7 +101,7 @@ class SaveMixin:
             hero.gold = GameCanvas.read_int()
             if GameCanvas.cheat:
                 hero.gold = 555000
-            if config.GOLD is not None:   # PORT-EXTRA config.GOLD (POW_GOLD=N)
+            if config.GOLD is not None:   # config.GOLD (POW_GOLD=N)
                 hero.gold = i32(config.GOLD)
             hero.fame = GameCanvas.read_int()
             hero.exp = GameCanvas.read_int()
@@ -139,7 +136,7 @@ class SaveMixin:
             self.read_backpack_extra(save_end)
         self.compact_backpack()
 
-    # PORT-EXTRA config.BACKPACK_SIZE: the backpack cells past the original 25 follow the original
+    # config.BACKPACK_SIZE: the backpack cells past the original 25 follow the original
     # save as {u8 'B', u8 n, n items}. A save without the block (an old one, or the original game's)
     # loads with those cells empty; the header length (save_buf[0..1]) tells where the save ends.
     BACKPACK_EXTRA_MARK = 0x42
@@ -176,7 +173,7 @@ class SaveMixin:
             self.write_item(hero.backpack[b])
 
     @staticmethod
-    def read_long():  # ag.java:2216-2230  (u64 LE; bytes 4..7 are sign-extended then masked)
+    def read_long():  # bytes 4..7 are sign-extended then masked
         buf, pos = GameCanvas.save_buf, GameCanvas.save_pos
         value = 0
         for nth in range(8):
@@ -185,25 +182,25 @@ class SaveMixin:
         return value - (1 << 64) if value & (1 << 63) else value
 
     @staticmethod
-    def read_int():  # ag.java:2232-2237
+    def read_int():
         buf, pos = GameCanvas.save_buf, GameCanvas.save_pos
         value = buf[pos] & 0xFF | buf[pos + 1] << 8 & 0xFF00 | buf[pos + 2] << 16 & 0xFF0000 | buf[pos + 3] << 24 & 0xFF000000
         GameCanvas.save_pos += 4
         return i32(value)
 
     @staticmethod
-    def read_short():  # ag.java:2239-2244
+    def read_short():
         value = i16(GameCanvas.save_buf[GameCanvas.save_pos] & 0xFF | GameCanvas.save_buf[GameCanvas.save_pos + 1] << 8 & 0xFF00)
         GameCanvas.save_pos += 2
         return value
 
     @staticmethod
-    def read_byte():  # ag.java:2246-2250
+    def read_byte():
         b = i8(GameCanvas.save_buf[GameCanvas.save_pos] & 0xFF)
         GameCanvas.save_pos += 1
         return b
 
-    def read_item(self):  # ag.java:2252-2261
+    def read_item(self):
         item = Item()
         item.id = GameCanvas.read_short()
         item.attack = GameCanvas.read_short()
@@ -214,19 +211,19 @@ class SaveMixin:
         return item
 
     @staticmethod
-    def has_save():  # ag.java:2862-2869  (is there a saved game?)
+    def has_save():  # is there a saved game?
         try:
             recordStore = RecordStore.openRecordStore("gamevil_pow_data", True)
             return recordStore.getNumRecords() != 0
         except Exception:
             return False
 
-    def save_game(self):  # ag.java:2871-2961  (write the save "gamevil_pow_data")
+    def save_game(self):  # write the save "gamevil_pow_data"
         hero = GameCanvas.hero
         reserved = [0] * 16
         name = hero.name.encode("latin-1")
         if len(GameCanvas.save_buf) < 2000:
-            # PORT-EXTRA: a loaded save can be shorter than ag.cF (965 bytes, e.g. tools/shot.py's);
+            # a loaded save can be shorter than ag.cF (965 bytes, e.g. tools/shot.py's);
             # the backpack block written after it needs the room of the 2000-byte buffer
             GameCanvas.save_buf = bytearray(GameCanvas.save_buf) + bytearray(2000 - len(GameCanvas.save_buf))
         buf = GameCanvas.save_buf
@@ -309,15 +306,15 @@ class SaveMixin:
             pass
         return bool(GameCanvas.has_save())
 
-    # cF holds Java bytes; the port stores them masked to 0..255 (RecordStore takes bytearray)
+    # cF holds signed bytes; the port stores them masked to 0..255 (RecordStore takes bytearray)
     @staticmethod
-    def write_long(value):  # ag.java:2963-2973
+    def write_long(value):
         for nth in range(8):
             GameCanvas.save_buf[GameCanvas.save_pos + nth] = value >> (8 * nth) & 0xFF
         GameCanvas.save_pos += 8
 
     @staticmethod
-    def write_int(value):  # ag.java:2975-2981
+    def write_int(value):
         GameCanvas.save_buf[GameCanvas.save_pos] = value & 0xFF
         GameCanvas.save_buf[GameCanvas.save_pos + 1] = value >> 8 & 0xFF
         GameCanvas.save_buf[GameCanvas.save_pos + 2] = value >> 16 & 0xFF
@@ -325,17 +322,17 @@ class SaveMixin:
         GameCanvas.save_pos += 4
 
     @staticmethod
-    def write_short(value):  # ag.java:2983-2987
+    def write_short(value):
         GameCanvas.save_buf[GameCanvas.save_pos] = value & 0xFF
         GameCanvas.save_buf[GameCanvas.save_pos + 1] = value >> 8 & 0xFF
         GameCanvas.save_pos += 2
 
     @staticmethod
-    def write_byte(value):  # ag.java:2989-2992
+    def write_byte(value):
         GameCanvas.save_buf[GameCanvas.save_pos] = value & 0xFF
         GameCanvas.save_pos += 1
 
-    def write_item(self, item):  # ag.java:2994-3001
+    def write_item(self, item):
         GameCanvas.write_short(item.id)
         GameCanvas.write_short(item.attack)
         GameCanvas.write_short(item.defense)

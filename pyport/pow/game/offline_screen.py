@@ -1,4 +1,4 @@
-"""PORT-EXTRA (asked by Andrey): "No connection" before the game starts (cloud_save SERVER_ONLY).
+"""(asked by Andrey): "No connection" before the game starts (cloud_save SERVER_ONLY).
 
 The game starts only online. While cloud_save.boot() cannot reach the server (or the server
 refused the stored login), this screen is shown instead of the game: OK / a click tries again
@@ -20,7 +20,7 @@ KEYS_OK = (pygame.K_RETURN, pygame.K_KP_ENTER, pygame.K_SPACE, pygame.K_j, pygam
 KEYS_BACK = (pygame.K_ESCAPE, pygame.K_BACKSPACE)
 
 _font = None
-_pads = []              # PORT-EXTRA: the joysticks opened for their button events
+_pads = []              # the joysticks opened for their button events
 
 
 def _glyphs():
@@ -41,7 +41,7 @@ def _text(screen, text, y, font):
 
 
 def _keys():
-    """PORT-EXTRA (config.KEY_HINTS): the OK / BACK keys of the device last used."""
+    """(config.KEY_HINTS): the OK / BACK keys of the device last used."""
     if not config.KEY_HINTS:
         return "OK", "BACK"
     return ("A", "B") if canvas.input_source == "gamepad" else ("ENTER", "ESC")
@@ -57,7 +57,7 @@ def lines(sync):
 
 
 def _open_pads():
-    """PORT-EXTRA: a pad sends its button events only once opened (GameCanvas does it later)."""
+    """a pad sends its button events only once opened (GameCanvas does it later)."""
     if not config.GAMEPAD or _pads:
         return
     try:
@@ -96,13 +96,13 @@ async def show(sync):
         for ev in pygame.event.get():
             if ev.type == pygame.QUIT:
                 raise SystemExit
-            if ev.type in (pygame.KEYDOWN, pygame.JOYBUTTONDOWN):   # PORT-EXTRA: config.KEY_HINTS
+            if ev.type in (pygame.KEYDOWN, pygame.JOYBUTTONDOWN):   # config.KEY_HINTS
                 source = "keyboard" if ev.type == pygame.KEYDOWN else "gamepad"
                 if source != canvas.input_source:
                     canvas.input_source = source
                     draw(sync)
             back = (ev.type == pygame.KEYDOWN and ev.key in KEYS_BACK) or (
-                ev.type == pygame.JOYBUTTONDOWN and ev.button == 1)     # PORT-EXTRA: B of the pad
+                ev.type == pygame.JOYBUTTONDOWN and ev.button == 1)     # B of the pad
             if ev.type == pygame.KEYDOWN and ev.key == pygame.K_F11:
                 display.toggle_fullscreen()
                 draw(sync)

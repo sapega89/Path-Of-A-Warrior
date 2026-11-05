@@ -1,6 +1,6 @@
-"""g.java, part of MpCanvas: key handling: menus, yes/no, popups, the letter grid for names and ids.
+""", part of MpCanvas: key handling: menus, yes/no, popups, the letter grid for names and ids.
 
-A mixin of MpCanvas (pow/game/online/mp_canvas.py); the methods keep their `# g.java:FROM-TO`
+A mixin of MpCanvas (pow/game/online/mp_canvas.py); the methods keep their `# :FROM-TO`
 comments. The module names below are set by mp_canvas.py: `MpCanvas` once the class exists,
 the others by its _late_imports().
 """
@@ -19,7 +19,7 @@ NetThread = Consts = Draw = Gfx = None   # set by mp_canvas._late_imports
 
 
 class InputMixin:
-    def menu_keys(self, key):  # g.java:2589
+    def menu_keys(self, key):
         if MpCanvas.state_ticks < 2:
             return
         if key in (-3, -1):
@@ -35,7 +35,7 @@ class InputMixin:
         if key == (-5):
             self.menu_select()
 
-    def yes_no_keys(self, key):  # g.java:2613
+    def yes_no_keys(self, key):
         if MpCanvas.state_ticks < 2:
             return
         if key in (-3, -1):
@@ -57,10 +57,10 @@ class InputMixin:
             MpCanvas.cursor_stack[MpCanvas.stack_depth] = 1
             self.menu_select()
 
-    def keyPressed(self, key):  # g.java:2645
+    def keyPressed(self, key):
         if key in (-32, -33):
             return
-        if key == -100:                     # PORT-EXTRA: Tab = auto-battle on / off
+        if key == -100:                     # Tab = auto-battle on / off
             MpCanvas.auto_battle = not MpCanvas.auto_battle
             if MpCanvas.auto_battle and MpCanvas.state == 94 and MpCanvas.choose_secs > 1:
                 MpCanvas.choose_secs = 1            # this round too
@@ -71,7 +71,7 @@ class InputMixin:
                 MpCanvas.request_pause(2)
             MpCanvas.key = (-999)
 
-    def handle_key(self, key):  # g.java:2661
+    def handle_key(self, key):
         MpCanvas.ping_misses = 0
         MpCanvas.key_in = key
         handler = self._KEYS_BY_STATE.get(MpCanvas.state)
@@ -127,7 +127,7 @@ class InputMixin:
                 return
             MpCanvas.popup_shown = False
             return
-        if MpCanvas.key_in == (-6) and not MpCanvas.sp_account:   # PORT-EXTRA: one account
+        if MpCanvas.key_in == (-6) and not MpCanvas.sp_account:   # one account
             MpCanvas.disconnect()
             MpCanvas.popup_kind = 0
             MpCanvas.relogin_to_menu = True
@@ -135,7 +135,7 @@ class InputMixin:
             self.push_state(2)
             return
         if MpCanvas.key_in == (-7):
-            if MpCanvas.embedded:            # PORT-EXTRA: no "Would you like to exit?"
+            if MpCanvas.embedded:            # no "Would you like to exit?"
                 MpCanvas.set_state(300)
                 return
             MpCanvas.popup_shown = True
@@ -437,7 +437,7 @@ class InputMixin:
     def _keys_battle_result(self, key):  # state 105
         if (MpCanvas.state_ticks <= idiv(1000, MpCanvas.tick_ms)) or (MpCanvas.key_in != (-5)):
             return
-        if MpCanvas.order_invite:       # PORT-EXTRA: the battle started in the Order window
+        if MpCanvas.order_invite:       # the battle started in the Order window
             self.back_to_order()
             return
         self.reset_state_stack(10)
@@ -514,7 +514,7 @@ class InputMixin:
             return
         self.answer_sound_prompt(MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0)
 
-    def answer_sound_prompt(self, yes):  # the YES / NO of state 5 (g.java, split out for the logo)
+    def answer_sound_prompt(self, yes):  # the YES / NO of state 5
         if yes:
             if MpCanvas.volume == 0:
                 MpCanvas.volume = 4
@@ -535,7 +535,7 @@ class InputMixin:
             MpCanvas.set_state(4)
             return
         MpCanvas.loading_msg = 0
-        # PORT-EXTRA: the single player's account logs in with its password (278) every time
+        # the single player's account logs in with its password (278) every time
         MpCanvas.password_login = MpCanvas.sp_account
         MpCanvas.set_state(10000)
 
@@ -582,8 +582,8 @@ class InputMixin:
         160: _keys_name_confirm,
     }
 
-    def menu_select(self):  # g.java:3512
-        if MpCanvas.state in self.PAINT:     # PORT-EXTRA: the Order window (mp_canvas_order.py)
+    def menu_select(self):
+        if MpCanvas.state in self.PAINT:     # the Order window (mp_canvas_order.py)
             self.order_select()
         elif MpCanvas.state == 160:
             if MpCanvas.popup_style == 1:
@@ -622,9 +622,9 @@ class InputMixin:
                 self.push_state(87)
             elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 5:
                 self.push_state(161)
-            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 6:   # PORT-EXTRA: Order
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 6:   # Order
                 self.open_order()
-            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 7:   # PORT-EXTRA: Chat
+            elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 7:   # Chat
                 self.open_chat()
         elif MpCanvas.state == 11:
             if MpCanvas.cursor_stack[MpCanvas.stack_depth] == 0:
@@ -640,7 +640,7 @@ class InputMixin:
             elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 2:
                 self.push_state(20)
             elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 3:
-                # PORT-EXTRA: 2-on-2 Order (the jar's dead branch pushed Help here, menu_size 3)
+                # 2-on-2 Order (the original's dead branch pushed Help here, menu_size 3)
                 self.open_order(pick=3)
             elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 4:
                 self.push_state(161)
@@ -654,7 +654,7 @@ class InputMixin:
                 MpCanvas.room_mode = i8(2)
                 self.push_state(21)
             elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 2:
-                # PORT-EXTRA: Order Ally (the jar's dead branch pushed Help here, menu_size 2)
+                # Order Ally (the original's dead branch pushed Help here, menu_size 2)
                 self.open_order(pick=2)
             elif MpCanvas.cursor_stack[MpCanvas.stack_depth] == 3:
                 self.push_state(161)
@@ -731,7 +731,7 @@ class InputMixin:
                 MpCanvas.room_mode = 1
             self.push_state(21)
 
-    def draw_popup(self):  # g.java:4833
+    def draw_popup(self):
         top = 0
         if MpCanvas.popup_kind == 0:
             if MpCanvas.popup_shown:
@@ -772,7 +772,7 @@ class InputMixin:
                 return
             self.draw_softkeys((-1), 1)
 
-    def popup_keys(self, key):  # g.java:4888
+    def popup_keys(self, key):
         if MpCanvas.popup_kind == 0:
             if MpCanvas.popup_shown:
                 if MpCanvas.key_in in (-3, -4):
@@ -848,7 +848,7 @@ class InputMixin:
             MpCanvas.set_state(10000)
 
     @staticmethod
-    def draw_letter_grid(cursor, y):  # g.java:6002
+    def draw_letter_grid(cursor, y):
         left = (MpCanvas.center_x - 57)
         letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "OK"]
         Gfx.fill_rect(left, y, 115, 22, 0)
@@ -866,7 +866,7 @@ class InputMixin:
             i = i + 1
 
     @staticmethod
-    def letter_grid_keys(key):  # g.java:6023
+    def letter_grid_keys(key):
         result = key
         if (key not in (-7, -5)) and (key != (-6)):
             if key == (-1):
@@ -882,7 +882,7 @@ class InputMixin:
         return result
 
     @staticmethod
-    def draw_letter_grid_space(cursor, y):  # g.java:6042
+    def draw_letter_grid_space(cursor, y):
         left = (MpCanvas.center_x - 60)
         letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", " ", "OK"]
         Gfx.fill_rect(left, y, 120, 22, 0)
@@ -901,7 +901,7 @@ class InputMixin:
             i = i + 1
 
     @staticmethod
-    def letter_grid_space_keys(key):  # g.java:6064
+    def letter_grid_space_keys(key):
         result = key
         if (key not in (-7, -5)) and (key != (-6)):
             if key == (-1):
@@ -915,7 +915,7 @@ class InputMixin:
         return result
 
     @staticmethod
-    def trim_right(text):  # g.java:6080
+    def trim_right(text):
         size = len(text)
         i = (size - 1)
         while i >= 0:
@@ -926,14 +926,14 @@ class InputMixin:
             return ""
         return text[0:(i + 1)]
 
-    def draw_name_prompt(self, graphics):  # g.java:6093
+    def draw_name_prompt(self, graphics):
         self.draw_window(graphics)
         self.draw_box(graphics, (MpCanvas.center_x - 62), (MpCanvas.center_y + 7), 126, 16, 6)
         self.draw_text_centred_on(graphics, MpCanvas.center_x, (MpCanvas.center_y - 32), Consts.input_prompts[0], 0xFFFFFF)
         self.draw_text_centred_on(graphics, MpCanvas.center_x, (MpCanvas.center_y - 20), Consts.input_prompts[1], 0xFFFFFF)
         self.draw_text_centred_on(graphics, MpCanvas.center_x, (MpCanvas.center_y - 8), Consts.input_prompts[2], 0xFFFFFF)
 
-    def draw_input_line(self, graphics):  # g.java:6101
+    def draw_input_line(self, graphics):
         self.draw_text_centred_on(graphics, MpCanvas.center_x, (MpCanvas.center_y + 9), MpCanvas.input_text, 0x41FF41)
         if imod(MpCanvas.state_ticks, 4) < 2:
             text_w = MpCanvas.font_white.string_width(MpCanvas.input_text)
@@ -942,7 +942,7 @@ class InputMixin:
             MpCanvas.draw_line_color(graphics, (MpCanvas.center_x + idiv(text_w, 2)), (MpCanvas.center_y + 20), ((MpCanvas.center_x + idiv(text_w, 2)) + 4), (MpCanvas.center_y + 20), 0xFFFFFF)
         MpCanvas.draw_letter_grid(MpCanvas.letter_cursor, (MpCanvas.center_y + 27))
 
-    def draw_name_confirm(self, graphics):  # g.java:6113
+    def draw_name_confirm(self, graphics):
         self.draw_box(graphics, (MpCanvas.center_x - 60), ((MpCanvas.center_y - 35) - 5), 120, 94, 5)
         self.draw_text_centred_on(graphics, MpCanvas.center_x, (MpCanvas.center_y - 32), Consts.input_prompts[3], 0xFFFFFF)
         self.draw_text_centred_on(graphics, MpCanvas.center_x, (MpCanvas.center_y - 20), Consts.input_prompts[4], 0xFFFFFF)
@@ -957,7 +957,7 @@ class InputMixin:
                 self.draw_box(graphics, ((MpCanvas.center_x - 42) + (MpCanvas.loop_i * 55)), (MpCanvas.center_y + 35), 29, 14, 3)
             MpCanvas.loop_i = MpCanvas.loop_i + 1
 
-    def draw_user_id_prompt(self, graphics, y):  # g.java:6182
+    def draw_user_id_prompt(self, graphics, y):
         self.draw_window(graphics)
         i = 0
         while i < 5:
