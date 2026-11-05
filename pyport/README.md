@@ -320,14 +320,23 @@ platform»), тому `pow/midp/graphics.py` у браузері декодує 
 Game Menu → **Management** (Attributes, Skills, Gear, Inventory, Assign Items), **Blacksmith**
 (Buy, Sell, Enchant, Combine), Main Menu → **Options**, **Help**, **Endings**, **About**,
 **Multiplayer**. В оригіналі YES у Multiplayer закривав гру й відкривав браузер, щоб завантажити
-окремий jar; у порті (PORT-EXTRA, `l.py`, `main.py`) YES закриває одиночну гру і в тому ж вікні
-(у браузері — на тій самій сторінці) і в тому ж процесі запускає мультиплеєр (`mp_main.play`),
-без його лого й питання «sound enabled?» (береться відповідь одиночної гри). Exit мультиплеєра
-повертає в одиночну гру одразу в Main Menu, без лого, питання про звук і титулу: процес не
-перезапускається і сторінка не перезавантажується, а модулі `pow.game` і `pow_mp` імпортуються
-наново (`main.fresh_games`), тож гра починається з чистого стану, як раніше після перезапуску.
-Місцевий сервер (`pow_mp/net/transport.py`) і фонові збереження на сервер (`cloud_save`) живуть
-далі. Сценарій `tools/scenarios/multiplayer.keys`.
+окремий jar; у порті мультиплеєр — частина цієї гри (PORT-EXTRA, просив гравець; `main.py`,
+`docs/plans/one_engine_plan.md`): YES робить Continue і сам відкриває Gamevil Live → **Multiplayer**
+(без сейва нічого не робить). Пункт **Multiplayer** у меню Gamevil Live (замість Management, якого з
+«завжди онлайн» немає): одиночна гра зупиняє свій цикл, лишаючись у пам'яті (`GameCanvas.suspend`),
+і в тому ж вікні та процесі йдуть екрани мультиплеєра (`mp_main.play(embedded=True)`) без його
+лого, питання «sound enabled?», попапу «Would you like to exit?» і outro: BACK у його головному
+меню одразу повертає в меню Gamevil Live, цикл одиночної гри продовжується з того ж місця
+(`GameCanvas.loop`). Що заробили бої (1032: золото, слава, досвід, лут), не пишеться в сейв сирими
+байтами, а чекає в пам'яті (`sp_bridge.pending`) і при поверненні йде героєві через штатні
+`add_exp` (рівні) і рюкзак, з попапом «Exp N / Fame M / Level L» (той, що показував Gamevil Live
+після 259; `Live.after_multiplayer`). Попап «нема збережених Exp/Fame» (20) онлайн не
+показується. Модулі `pow_mp` імпортуються наново на кожен вхід (`main.fresh_games`), щоб їхні
+статичні поля були чисті; `pow.game` лишається. Сценарій `tools/scenarios/multiplayer.keys`.
+
+**Без лого й outro** (PORT-EXTRA, просив гравець): гра стартує одразу з питання «sound enabled?»
+(в оригіналі 2.5 с лого Gamevil, `af.java`), а Exit закриває вікно одразу (в оригіналі 3 с картинка
+outro, стан 12, `ag.java:3003-3019`).
 **Gamevil Live** (онлайн-магазин) — з нашим сервером, див. нижче.
 
 ### Gamevil Live (етап 7, `docs/plans/PHASE_7_LIVE_OFFLINE.md`)
@@ -506,8 +515,9 @@ Please select» на екрані 6 — дослівно з Java (`de - 90 - b*2
 
 ## Мультиплеєр (етап 9, `docs/plans/PHASE_9_ARENA.md`)
 
-Окрема гра «Path of a Warrior Multiplayer» (Duel 1-на-1 / 2-на-2, Challenge, місії, рейтинги).
-Запускається з Main Menu → Multiplayer одиночної гри або сама: `python mp_main.py`.
+Колись окрема гра «Path of a Warrior Multiplayer» (Duel 1-на-1 / 2-на-2, Challenge, місії, рейтинги),
+тепер екрани одиночної: Gamevil Live → Multiplayer (див. «Меню» вище); сама по собі ще запускається:
+`python mp_main.py`.
 Розбір jar: `docs/analysis/06_multiplayer.md`. Готові протокол, сервер для меню, ресурси і клієнт
 (логін, Main Menu, Character, Ranking, Options, Help), Duel 1-на-1 і 2-на-2 (з CPU-союзником) проти
 CPU-бійців (сервер рахує ходи в `pow_server/battle.py`). Ще немає: місій, Challenge і PvP між людьми.

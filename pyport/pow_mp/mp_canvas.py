@@ -44,6 +44,8 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
     # a second with action AUTO_ACTION, and the server's bot chooses (pow_server/battle.py cpu_choice)
     auto_battle = config.AUTO_HUNT
     sound_from_sp = None   # PORT-EXTRA: the single player's sound answer (mp_main.play), None = ask
+    embedded = False       # PORT-EXTRA: a part of the single player (main.py): BACK in the main
+                           # menu leaves at once, no exit popup, no outro picture
     AUTO_ACTION = 255
     app_version = None  # g.java:25 String
     game = None  # g.java:26 m
@@ -1184,6 +1186,12 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
             return
 
     def _paint_outro(self):  # state 300
+        if MpCanvas.embedded:                # PORT-EXTRA: back to the single player at once
+            MpCanvas.disconnect()
+            self.stop_music()
+            MpCanvas.midlet.destroyApp(True)
+            MpCanvas.midlet.notifyDestroyed()
+            return
         if MpCanvas.state_ticks < 2:
             MpCanvas.state_ticks = 2
             MpCanvas.disconnect()

@@ -39,6 +39,21 @@ OFF_BELT = 899           # cz.Z[5]: {u16 id, u8 count <= 5}, consumables 1..11
 BACKPACK_EXTRA_MARK = 0x42
 PENDING_STORE = "pow_mp_loot"   # loot that found the backpack full, delivered later
 
+# PORT-EXTRA: a part of the single player (main.py): the rewards of 1032 are not written into
+# the save (the hero is in memory there) but kept here for Live.after_multiplayer
+embedded = False
+pending = []                    # [{"gold", "fame", "exp", "loot": [(id, atk, def, hp, mp)]}]
+
+
+def keep_rewards(gold, fame, exp, item=None):
+    pending.append({"gold": gold, "fame": fame, "exp": exp, "loot": [item] if item else []})
+
+
+def take_rewards():
+    """What the battles earned since the last call (main.py, after the screens)."""
+    out, pending[:] = list(pending), []
+    return out
+
 # as.gG (as.java:84-86): SP skill index -> skill code; MP knows codes 3..13
 SKILL_CODES = (3, 4, 5, 9, 10, 11, 12, 13, 6, 7, 8, 14, 15, 16, 17, 18, 19, 20, 21)
 MP_SKILLS = tuple(range(3, 14))

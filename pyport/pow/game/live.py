@@ -54,6 +54,7 @@ class Live(GameCanvas):
     password = ""              # password
     user_id = ""              # UserID
     reg_from_popup = False           # the 530 is a registration from the screen (popups 48 / 44)
+    auto_mp = False            # PORT-EXTRA: open Multiplayer as soon as the Live menu is reached
     id_grid = None             # PORT-EXTRA: KeyGrid of the UserID (config.REG_KEYBOARD)
     pwd_grid = None            # PORT-EXTRA: KeyGrid of the password
     inited = False
@@ -560,9 +561,9 @@ class Live(GameCanvas):
         if GameCanvas.live_gifts == 0:
             self.save_game()
             if Live.values[15] == 0 and Live.values[14] == 0:
-                if Live.first_login:
-                    GameCanvas.popups.show(20)
-                else:
+                if Live.first_login and not Online.enabled():
+                    GameCanvas.popups.show(20)   # PORT-EXTRA: online, the Multiplayer screens
+                else:                             # pay the hero at once (after_multiplayer)
                     GameCanvas.popups.answered = True
             else:
                 GameCanvas.popups.arg1 = str(Live.values[14])
@@ -1000,7 +1001,8 @@ class Live(GameCanvas):
 
     def open_live_menu(self):  # as.java:1157-1176  (GAMEVIL LIVE menu)
         # PORT-EXTRA: one hero kept on the server, so no Management (Save / Load User Data)
-        Live.set_list_items("Trade|Warehouse|Safe|" if Online.enabled() else "Trade|Warehouse|Safe|Management|", 20, 255)
+        # PORT-EXTRA: online, the Multiplayer screens are a part of this game (main.py)
+        Live.set_list_items("Trade|Warehouse|Safe|Multiplayer|" if Online.enabled() else "Trade|Warehouse|Safe|Management|", 20, 255)
         Live.list_cursor = Live.saved_0
         Live.list_top = Live.saved_1
         Live.clamp_list_scroll()
@@ -1016,6 +1018,53 @@ class Live(GameCanvas):
             GameCanvas.popups.show(49)
         Live.request_redraw()
         Live.first_login = False
+        if Live.auto_mp:                     # PORT-EXTRA: Main Menu > Multiplayer > YES
+            Live.auto_mp = False
+            self.open_multiplayer()
+
+    # --- PORT-EXTRA: the Multiplayer screens (pow_mp) as a part of this game ---------------
+    def open_multiplayer(self):
+        """Gamevil Live > Multiplayer: the single player waits in memory while main.py runs the
+        Multiplayer screens in the same window; its Exit comes back here (after_multiplayer)."""
+        self.save_game()                     # the Multiplayer login (262) reads the hero from the save
+        self.suspend()
+
+    def after_multiplayer(self, rewards):
+        """Back in the Live menu: what the battles earned (1032: gold, fame, exp, loot) goes to
+        the hero in memory, as the Exp / Fame of Gamevil Live did (259 -> ag.H, popup 41)."""
+        hero = GameCanvas.hero
+        gold = fame = exp = 0
+        for r in rewards:
+            gold += r.get("gold", 0)
+            fame += r.get("fame", 0)
+            exp += r.get("exp", 0)
+            for item in r.get("loot", ()):
+                self.give_loot(item)
+        hero.gold = max(0, min(0x7FFFFFFF, hero.gold + gold))
+        hero.fame = max(0, min(0x7FFFFFFF, hero.fame + fame))
+        levels = GameCanvas.add_exp(exp) if exp > 0 else 0
+        self.save_game()
+        Live.request_redraw()
+        if gold or fame or exp:
+            GameCanvas.popups.arg1 = str(exp)
+            GameCanvas.popups.arg2 = str(fame)
+            GameCanvas.popups.arg3 = str(levels)
+            GameCanvas.popups.show(41)
+            Live.close_target = -1
+
+    def give_loot(self, item):
+        """One 1032 loot item (id, atk, def, hp, mp) into the hero: a consumable stacks on the
+        belt (ag.k), the rest takes the first free backpack cell with the stats the server
+        rolled. False when there is no room (the item is lost, as a drop on a full backpack)."""
+        item_id, atk, def_, hp, mp = item
+        if item_id < 100:
+            return self.give_item(item_id, 1) != 0
+        hero = GameCanvas.hero
+        for cell in hero.backpack:
+            if cell.id == 0:
+                cell.id, cell.attack, cell.defense, cell.hp, cell.mp, cell.enchant = item_id, atk, def_, hp, mp, 0
+                return True
+        return False
 
     def open_waiting(self):  # as.java:1178-1184  (waiting screen)
         Live.input_handler = 17
@@ -1713,7 +1762,10 @@ class Live(GameCanvas):
                 elif i == 2:
                     self.open_safe()
                 elif i == 3:
-                    self.open_management()
+                    if Online.enabled():         # PORT-EXTRA: Multiplayer instead of Management
+                        self.open_multiplayer()
+                    else:
+                        self.open_management()
                 return
             if i == -2:
                 Live.request_redraw()

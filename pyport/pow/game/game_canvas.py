@@ -150,6 +150,18 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
 
     async def run(self):  # ag.java:708-760  (Thread.run -> async loop for pygbag)
         self.init_game()
+        await self.loop()
+
+    def suspend(self):
+        """PORT-EXTRA: leave loop() with everything in memory; main.py runs the Multiplayer
+        screens in the same window and then calls loop() again (Gamevil Live > Multiplayer)."""
+        GameCanvas.stop_sound()
+        GameCanvas.suspended = True
+        GameCanvas.running = False
+
+    async def loop(self):  # ag.java:714-760  (the frames; PORT-EXTRA: re-entered after suspend())
+        GameCanvas.suspended = False
+        GameCanvas.running = True
         GameCanvas.tick_start = system.currentTimeMillis()
         while GameCanvas.running and not self.quit_requested:
             try:
@@ -269,9 +281,7 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         if GameCanvas.redraw == 1:
             GameCanvas.redraw = 0
             state = GameCanvas.state
-            if state == 12:
-                self.draw_outro()
-            elif state == 0:
+            if state == 0:
                 GameCanvas.start_boot()
             elif state == 2:
                 GameCanvas.menus.draw_menu(1)
@@ -346,12 +356,6 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         if display.screen_changed():         # PORT-EXTRA: the browser went full screen / back later
             GameCanvas.redraw = 1            # (Options shows Screen: Full / Window)
         state = GameCanvas.state
-        if state == 12:
-            self.paint_state()
-            if system.currentTimeMillis() - GameCanvas.key_time > 3000:
-                GameCanvas.midlet.destroyApp(True)
-                GameCanvas.midlet.notifyDestroyed()
-            return
         if state == 0:
             self.paint_state()
         elif state == 2:
@@ -548,12 +552,12 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         GameCanvas.menu[2] = GameCanvas.menu_tops[GameCanvas.menu[0]]
         GameCanvas.redraw = 1
 
-    def start_exit(self):  # ag.java:3003-3009  (exit: show outro, quit after 3 s)
-        GameCanvas.state = 12
-        GameCanvas.redraw = 1
-        GameCanvas.lord_count = 0
+    def start_exit(self):  # ag.java:3003-3009  (exit)
+        # PORT-EXTRA (asked by the player): no outro picture (state 12, ag.java:3011-3019, 3 s):
+        # the game closes at once
         GameCanvas.stop_sound()
-        GameCanvas.key_time = system.currentTimeMillis()
+        GameCanvas.midlet.destroyApp(True)
+        GameCanvas.midlet.notifyDestroyed()
 
     # ---- New Game: hero creation (screens 29 / 6 / 7 / 8) and the save writer ------------
 

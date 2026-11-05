@@ -36,6 +36,4 @@ wait 1
 shot exit_popup
 rclick             # right button = BACK: the Yes/No popup ignores BACK
 wait 1
-click 80 200       # click "Yes" side -> select Yes + confirm
-wait 3
-shot outro
+click 80 200       # click "Yes" side -> select Yes + confirm: the game quits at once (no outro)

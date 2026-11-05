@@ -1,18 +1,33 @@
-# Main Menu > Multiplayer > YES: the single player quits and the Multiplayer game starts
-# in the same window and process (main.py -> mp_main.play) without the sound question;
-# its Exit starts the single player again straight at the Main Menu
+env POW_ALWAYS_ONLINE=1
+save zero
+# Gamevil Live > Multiplayer (PORT-EXTRA, main.py): the Multiplayer screens run in the same
+# window and process while the single player waits in memory; their Exit comes back to the
+# Gamevil Live menu. Registered on this device already (account), logged in by Continue.
+account TESTUSER 1234
 wait 25
 key FIRE           # sound: Yes
 wait 2
-key FIRE           # title -> Main Menu (item 1 New Game)
+key FIRE           # title -> Main Menu
 wait 2
-key LEFT
-key LEFT
-key LEFT           # 1 -> 0 -> 8 Exit -> 7 Multiplayer
-shot main_menu_multiplayer
-key FIRE
+key FIRE           # Continue -> Game Menu (the background login)
+wait 6
+key DOWN
+wait 6
+key DOWN           # Mission -> Blacksmith -> Gamevil Live
+wait 6
+key FIRE           # opens at once (no question)
+wait 6
+key FIRE           # the welcome popup
+wait 6
+shot live_menu_multiplayer
+key DOWN
 wait 1
-shot multiplayer_popup
-multiplayer 40 mp_title back_main_menu   # after the game quits: MP title, Exit -> Main Menu
-key FIRE           # Yes -> the game quits, main.py starts the Multiplayer game
-wait 5
+key DOWN
+wait 1
+key DOWN           # Trade -> Warehouse -> Safe -> Multiplayer
+wait 2
+shot multiplayer_selected
+multiplayer 40 mp_title
+key FIRE           # the Multiplayer screens; their Exit -> back here
+wait 4
+shot live_menu_back

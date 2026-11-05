@@ -135,6 +135,9 @@ class InputMixin:
             self.push_state(2)
             return
         if MpCanvas.key_in == (-7):
+            if MpCanvas.embedded:            # PORT-EXTRA: no "Would you like to exit?"
+                MpCanvas.set_state(300)
+                return
             MpCanvas.popup_shown = True
             MpCanvas.popup_cursor = 1
             return
