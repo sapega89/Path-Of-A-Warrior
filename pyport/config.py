@@ -26,21 +26,21 @@ SCALE = int(os.environ.get("POW_SCALE", "2"))  # 2 -> 480x640, 3 -> 720x960
 # Where RecordStores are written on the desktop (browser uses localStorage).
 SAVE_DIR = os.environ.get("POW_SAVE_DIR") or str(pathlib.Path.home() / ".path_of_a_warrior")
 
-# Gamevil Live of the single player (pow_server/live.py): "local" = the server inside the game
+# Live of the single player (pow_server/live.py): "local" = the server inside the game
 # (shares the accounts of the in-game multiplayer server), or ws(s)://host:28200/live.
 LIVE_SERVER = os.environ.get("POW_LIVE_SERVER", "local")
 # : the single player's save also kept on the server
-# (pow/game/cloud_save.py, pow_server/cloud.py) for the Gamevil Live account. "auto" = the
+# (pow/game/cloud_save.py, pow_server/cloud.py) for the Live account. "auto" = the
 # server of LIVE_SERVER at the path /save when LIVE_SERVER is ws(s)://; "off"; or a
 # ws(s)://host:28200/save URL. Browser: index.html?save=...
 SAVE_SERVER = os.environ.get("POW_SAVE_SERVER", "auto")
-# : "always online". Continue and New Game log in to Gamevil Live
+# : "always online". Continue and New Game log in to Live
 # with the registered account at once, in the background, and the connection stays for the whole
 # game (pow/game/live_online.py); a hero without an account is offered the registration once. Game
-# Menu > Gamevil Live / Warehouse opens without the "Connect to Gamevil Live?" question, and
+# Menu > Live / Warehouse opens without the "Connect to Live?" question, and
 # Management (Save / Load User Data) is gone: there is one hero, kept on the server by cloud_save.
 # Without the server the game plays as before. POW_ALWAYS_ONLINE=0 = the original (connect on every
-# Gamevil Live, disconnect on leaving it). tools/shot.py uses 0.
+# Live, disconnect on leaving it). tools/shot.py uses 0.
 ALWAYS_ONLINE = os.environ.get("POW_ALWAYS_ONLINE", "1") == "1"
 # : the hero's save only on the server (pow/game/cloud_save.py
 # SERVER_ONLY), never on the device, and the game starts only online: without the server a
@@ -88,7 +88,7 @@ SKILL_BAR = os.environ.get("POW_SKILL_BAR", "1") == "1"
 SKILL_CARD = os.environ.get("POW_SKILL_CARD", "1") == "1"
 
 # POW_CHEAT=1 turns on the original developers' cheat, the JAD/manifest property
-# GAMEVIL_CHEAT: TRUE: loading a save sets gold to 555000;
+# POW_CHEAT: TRUE: loading a save sets gold to 555000;
 # a new hero gets 500000 gold, 2000 in every stat and all skills.
 CHEAT = os.environ.get("POW_CHEAT", "0") == "1"
 
@@ -122,7 +122,7 @@ AUTO_HUNT = os.environ.get("POW_AUTO_HUNT", "0") == "1"
 AUTO_BUTTON = os.environ.get("POW_AUTO_BUTTON", "1") == "1"
 
 # : the description of an item / skill / potion (Blacksmith,
-# Gear, Inventory, Skills, Assign Items; not Gamevil Live, whose grids leave no room) in a box as wide as the screen, in up to
+# Gear, Inventory, Skills, Assign Items; not Live, whose grids leave no room) in a box as wide as the screen, in up to
 # WIDE_DESC_LINES lines, instead of the narrow strip whose one line runs by. A longer text
 # grows the box, up to WIDE_DESC_MAX_LINES lines (nothing runs by; the rest is cut).
 # POW_WIDE_DESC=0 = the original strip.
@@ -143,7 +143,7 @@ SCREEN_OPTION = os.environ.get("POW_SCREEN_OPTION", "1") == "1"
 # turns it off.
 GAMEPAD = os.environ.get("POW_GAMEPAD", "1") == "1"
 
-# : on-screen keyboards of the Gamevil Live registration
+# : on-screen keyboards of the Live registration
 # (pow/game/key_grid.py): the UserID grid gets a row of digits and the password screen a row
 # 0..9 + OK, so a gamepad (or the mouse) can type them. POW_REG_KEYBOARD=0 = the original
 # (letters only, the password from the number keys). tools/shot.py uses 0 (baseline screenshots).
@@ -153,3 +153,7 @@ REG_KEYBOARD = os.environ.get("POW_REG_KEYBOARD", "1") == "1"
 # "Q:CONFIRM" / "ESC:BACK" after the keyboard, "SEL:CONFIRM" / "B:BACK" after the gamepad
 # (pow/midp/canvas.py input_source). POW_KEY_HINTS=0 = the plain captions; tools/shot.py uses 0.
 KEY_HINTS = os.environ.get("POW_KEY_HINTS", "1") == "1"
+
+# : in what the player sees, no name, logo or site of the original
+# publisher, and "Live" instead of the name of its online service (pow/game/rebrand.py). 0 = as in the original.
+REBRAND = os.environ.get("POW_REBRAND", "1") == "1"

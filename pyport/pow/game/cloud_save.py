@@ -6,8 +6,8 @@ save stores (pow_server/cloud.py STORES: the hero and the Options) to the server
 takes the server's copy back when it is newer: start the game on another computer or browser,
 and the hero is there.
 
-The account is the Gamevil Live one: Game Menu > Gamevil Live > register (UserID + password,
-kept in the store "gamevil_pow_regist"). Without it nothing is sent. The server
+The account is the Live one: Game Menu > Live > register (UserID + password,
+kept in the store "pow_regist"). Without it nothing is sent. The server
 is config.SAVE_SERVER ("auto" = the host of config.LIVE_SERVER when that is a ws(s):// server).
 
 Which copy wins:
@@ -40,8 +40,8 @@ from pow.midp import rms
 from pow_server.cloud import STORES
 
 META = "pow_cloud_meta"           # raw entry: {"user": UserID, "stores": {name: {rev, at, dirty}}}
-REGIST = "gamevil_pow_regist"
-SERVER_ONLY = ("gamevil_pow_data", "gamevil_pow_data_backup")   # kept only in memory + on the server
+REGIST = "pow_regist"
+SERVER_ONLY = ("pow_data", "pow_data_backup")   # kept only in memory + on the server
 RETRY_MS = 10000                  # reconnect after a failed connection
 STEP_SECONDS = 0.25
 _TASKS = set()                    # running sync tasks (asyncio keeps only weak references)
@@ -84,7 +84,7 @@ def now_ms():
 
 
 def read_login():
-    """(UserID, password) of the Gamevil Live registration, or None."""
+    """(UserID, password) of the Live registration, or None."""
     raw = rms._load_raw(REGIST)
     if raw is None:
         return None
@@ -397,7 +397,7 @@ class CloudSync:
         self._save_meta()
         if changed:
             print("Server saves: took the server's copy of", ", ".join(changed))
-        if "gamevil_pow_data" in changed and self.started:
+        if "pow_data" in changed and self.started:
             self.request_restart()
 
     def request_restart(self):

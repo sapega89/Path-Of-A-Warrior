@@ -1,4 +1,4 @@
-"""in the Gamevil Live Backpack / Warehouse grid (as.a(int, boolean)): LEFT / RIGHT
+"""in the Live Backpack / Warehouse grid (as.a(int, boolean)): LEFT / RIGHT
 step one cell; only past the edge cell the cursor goes to the row before / after."""
 import pytest
 from conftest import ROOT  # noqa: F401  (sets sys.path and the dummy video driver)

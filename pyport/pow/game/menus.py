@@ -716,7 +716,7 @@ class Menus(GameCanvas):
                 if GameCanvas.live_saved != 0:
                     return
                 from pow.game.live_online import Online
-                Online.on_game_start()       # log in to Gamevil Live in the background
+                Online.on_game_start()       # log in to Live in the background
                 GameCanvas.stop_sound()
                 self.load_menu_frames()
                 self.enter_submenu()
@@ -1213,7 +1213,7 @@ class Menus(GameCanvas):
         skill = GameCanvas.hero.hotkeys[menu[1]] if menu[3] == 1 else consts.skill_menu_ids[menu[2]]
         skill_bar.draw_card(skill)
 
-    def draw_description_strip(self):  # scrolls when longer than the box
+    def draw_description_strip(self):  # description strip; scrolls when longer than the box
         info = GameCanvas.info_box
         if config.WIDE_DESC:
             self.draw_wide_description()
@@ -3032,7 +3032,7 @@ class Menus(GameCanvas):
             if GameCanvas.popups.timer > 100:
                 GameCanvas.popups.timer = 16
 
-    def draw_exp_bar(self, step, bar):  # 1 = full, 2 = done
+    def draw_exp_bar(self, step, bar):  # experience bar; 1 = full, 2 = done
         colors = [[GameCanvas.rgb(115, 142, 140), GameCanvas.rgb(181, 178, 181), 16777215],
                       [GameCanvas.rgb(99, 0, 0), GameCanvas.rgb(181, 0, 0), GameCanvas.rgb(247, 73, 0)],
                       [GameCanvas.rgb(0, 65, 255), GameCanvas.rgb(0, 146, 255), GameCanvas.rgb(0, 255, 173)],

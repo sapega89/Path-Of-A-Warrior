@@ -74,14 +74,14 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         GameCanvas.scr_gamestr = ScrTable("/gamestr.scr")
         GameCanvas.reset_globals()
         GameCanvas.app_version = GameCanvas.midlet.getAppProperty("MIDlet-Version") or ""
-        GameCanvas.live_host = GameCanvas.midlet.getAppProperty("GAMEVIL_SERVER") or "ur.gamevil.net"
+        GameCanvas.live_host = GameCanvas.midlet.getAppProperty("POW_SERVER") or "localhost"
         try:
-            GameCanvas.live_port = int(GameCanvas.midlet.getAppProperty("GAMEVIL_PORT"))
+            GameCanvas.live_port = int(GameCanvas.midlet.getAppProperty("POW_PORT"))
         except Exception:
             GameCanvas.live_port = 28230
-        GameCanvas.more_games_url = GameCanvas.midlet.getAppProperty("GAMEVIL_MOREGAMES") or "http://usaapp1.gamevil.net/moregames/index2.php?bid=POW_"
-        GameCanvas.multiplay_url = GameCanvas.midlet.getAppProperty("GAMEVIL_MULTIPLAY") or "http://ur.gamevil.net/moregames/pow_multiplayer.php"
-        GameCanvas.cheat = GameCanvas.midlet.getAppProperty("GAMEVIL_CHEAT") == "TRUE"
+        GameCanvas.more_games_url = GameCanvas.midlet.getAppProperty("POW_MOREGAMES") or ""
+        GameCanvas.multiplay_url = GameCanvas.midlet.getAppProperty("POW_MULTIPLAY") or ""
+        GameCanvas.cheat = GameCanvas.midlet.getAppProperty("POW_CHEAT") == "TRUE"
         GameCanvas.debug_keys = False
         GameCanvas.canvas_size.x = i16(GameCanvas.screen_w)
         GameCanvas.canvas_size.y = i16(GameCanvas.screen_h)

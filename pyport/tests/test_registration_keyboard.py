@@ -1,4 +1,4 @@
-"""the on-screen keyboards of the Gamevil Live registration (pow/game/key_grid.py,
+"""the on-screen keyboards of the Live registration (pow/game/key_grid.py,
 config.REG_KEYBOARD) and the soft-key captions naming the key of the last device
 (config.KEY_HINTS, pow/midp/canvas.py key_hints)."""
 import pytest
@@ -12,7 +12,7 @@ def test_user_id_grid_has_the_letters_the_ok_cell_and_a_row_of_digits():
     g = KeyGrid.user_id()
     assert ["".join(r) for r in g.rows] == ["ABCDEFGHIJKLMN", "OPQRSTUVWXYZOK", "0123456789"]
     assert g.rows[1][12] == "OK" and len(g.rows[1]) == 13
-    assert g.width == 142  # as wide as the original ag.f grid
+    assert g.width == 142                      # as wide as the original ag.f grid
 
 
 def test_cursor_keeps_the_column_and_is_clamped_to_the_row_end():

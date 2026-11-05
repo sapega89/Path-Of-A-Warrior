@@ -1,6 +1,6 @@
 """Where the MP client's frames go (PHASE_9 §3): the replacement of's socket.
 
- opened socket://GAMEVIL_SERVER:GAMEVIL_PORT in its own thread and called g.a(k) for
+ opened socket://POW_SERVER:POW_PORT in its own thread and called g.a(k) for
 every frame. Here the game loop calls poll() once per tick and gets the payloads received
 since the last call (frame length removed, opcode first), and send() takes a whole frame
 (what e.b() wrote). These implementations with the same interface:
@@ -222,7 +222,7 @@ def _ws_transport(url):
 
 
 class LiveLocalTransport(LocalTransport):
-    """Gamevil Live of the single player (pow_server/live.py) inside the game, on the storage
+    """Live of the single player (pow_server/live.py) inside the game, on the storage
     of the in-game multiplayer server: the same accounts, Warehouse and Safe."""
     _live = None
 

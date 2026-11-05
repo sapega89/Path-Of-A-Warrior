@@ -1,4 +1,4 @@
-"""Asked by the player: on-screen keyboards of the Gamevil Live registration
+"""Asked by the player: on-screen keyboards of the Live registration
 (config.REG_KEYBOARD), so that a gamepad can type the UserID and the password too.
 
 The original typed the UserID on the hero-name grid ag.f(int,int) (2 x 14
@@ -23,7 +23,7 @@ RED, BLUE, BLACK = 0xFF0000, 0x0000FF, 0
 
 class KeyGrid:
     def __init__(self, rows):
-        self.rows = [list(r) for r in rows]      # "OK" = the confirm cell
+        self.rows = [list(r) for r in rows]      # the labels; "OK" = the confirm cell
         self.row = 0
         self.col = 0
 

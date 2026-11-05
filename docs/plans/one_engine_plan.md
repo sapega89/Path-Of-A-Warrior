@@ -135,7 +135,7 @@ Multiplayer. Малювання, стани (0…300), поля й методи 
 - Видалити `mp_main.py`, `tools/mp_shot.py` (сценарії `mp_*.keys` уже йдуть через `shot.py`),
   `build_web.py --mp` і сторінку `web-mp-src`; `tests/test_mp_client.py` → сценарії в
   `test_screens.py`.
-- `README.md`, `NAMES.md` (§MpCanvas → `pow/game/online/`), `JAVA_REFERENCE.md` (`` → де
+- `README.md` (модулі й опції).
   тепер), `docs/analysis`.
 
 ---

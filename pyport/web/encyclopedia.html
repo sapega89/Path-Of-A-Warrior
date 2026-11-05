@@ -160,7 +160,7 @@ function itemBody(i) {
   if (i.cat === "n") {
     h += `<p class="small">Кузня → Buy Item (випадковий асортимент, оновлюється після кожної місії). Дроп з ворогів: частка серед предметів, що випали, за рівнем героя:</p>
       <div class="links">${i.drop.map(([r, p]) => `<span class="tag">Lv ${r}: ${p}%</span>`).join("") || '<span class="muted">не випадає</span>'}</div>`;
-  } else if (!i.from.length) h += `<p class="small">Лише через Gamevil Live (обмін між гравцями).</p>`;
+  } else if (!i.from.length) h += `<p class="small">Лише через Live (обмін між гравцями).</p>`;
   if (i.from.length) h += `<p class="small">Combine Items у кузні (${i.from.length} ${i.from.length === 1 ? "рецепт" : "рецепти"}):</p>` + i.from.map(r => recRow(D.rec[r], false)).join("");
   if (i.use.length) h += `<h4>Інгредієнт у ${i.use.length} рецептах</h4>` + i.use.map(r => recRow(D.rec[r], true)).join("");
   return h;

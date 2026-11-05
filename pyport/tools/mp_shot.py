@@ -11,7 +11,7 @@ Steps: wait N | key NAME [COUNT] (UP DOWN LEFT RIGHT FIRE LSOFT RSOFT 0-9 STAR P
        bot_order NAME [N] (RIVAL creates the order NAME; N offline members MEMBERA.. join it) |
        bot_chat CHANNEL [TO] TEXT (RIVAL writes in the chat: 0 lobby, 1 order, 2 private to TO) |
        type TEXT (a PC keyboard types TEXT, one character per tick, into the chat's text box) |
-       sp_account ID PWD (before the game starts: the single player's Gamevil Live registration
+       sp_account ID PWD (before the game starts: the single player's Live registration
        on this device, which logs in to the Multiplayer game too - use_sp_account) |
        # comment
 The server runs inside the game (POW_MP_SERVER=local) with a fresh temporary save folder.
@@ -33,6 +33,7 @@ os.environ.setdefault("POW_SEED", "1")
 os.environ["POW_CHEAT"] = "0"   # a POW_CHEAT=1 left in the shell (500000 gold, all skills) breaks every baseline
 os.environ.setdefault("POW_AUTO_BUTTON", "0")   # the AUTO button only while on (original screenshots)
 os.environ.setdefault("POW_MP_SERVER", "local")
+os.environ.setdefault("POW_REBRAND", "0")   # the original texts and logos (env line to rebrand)
 
 
 def parse(path):
@@ -50,12 +51,12 @@ def parse(path):
 
 
 def sp_account(uid, pwd):
-    """The single player's "gamevil_pow_regist" record."""
+    """The single player's "pow_regist" record."""
     from pow.midp.rms import RecordStore
     rec = bytearray(28)
     rec[0:len(pwd)] = pwd.encode()
     rec[12:12 + len(uid)] = uid.encode()
-    rs = RecordStore.openRecordStore("gamevil_pow_regist", True)
+    rs = RecordStore.openRecordStore("pow_regist", True)
     if rs.getNumRecords() == 0:
         rs.addRecord(rec, 0, 28)
     rs.setRecord(1, rec, 0, 28)

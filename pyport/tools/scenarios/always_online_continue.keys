@@ -1,7 +1,7 @@
 env POW_ALWAYS_ONLINE=1
 save zero
-# "always online": Continue with a registered account logs in to Gamevil Live in the
-# background (no popup, keys free), and Game Menu > Gamevil Live then opens at once.
+# "always online": Continue with a registered account logs in to Live in the
+# background (no popup, keys free), and Game Menu > Live then opens at once.
 account TEST 1234
 wait 25
 key FIRE           # sound: Yes
@@ -17,7 +17,7 @@ key DOWN
 wait 6
 key DOWN
 wait 6
-key FIRE           # Gamevil Live: no "Connect to Gamevil Live?", no "Connecting..."
+key FIRE           # Live: no "Connect to Live?", no "Connecting..."
 wait 1
 shot live_at_once
 wait 8

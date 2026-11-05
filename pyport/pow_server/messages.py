@@ -1,6 +1,6 @@
 """Messages of POW Multiplayer with the original opcodes (PHASE_9 task 9.4).
 
-Source: docs/analysis/06_multiplayer.md §2.4, checked against pyport/mp_java/:
+Source: docs/analysis/06_multiplayer.md §2.4:
 the client writes in g.c(int) (g:1609-1704) and reads in g.a(k) (g:1888-2586).
 
 Field kinds: "b" s8, "B" u8, "h" s16, "H" u16, "i" s32, int N = char[N] (zero padded).
@@ -86,7 +86,7 @@ CHAT_UNREAD = 1815          # S->C push after the login: unread order / private 
 # order member fights a 2-on-2 duel on my side against two CPU fighters
 INVITE_TEAM = 3
 
-GAME_VER = "0111"           # GAMEVIL_GAME_VER of the MP manifest
+GAME_VER = "0111"           # POW_GAME_VER of the MP manifest
 EMPTY_SKILL = 99            # empty skill slot in 263 / 1291
 
 # 263 status codes the client knows (g:1936-2002): -2 -> cw1 "register in POW single",
@@ -115,7 +115,7 @@ ERR_SELF = -27              # private: a message to myself
 
 # --- C->S schemas ------------------------------------------------------------
 # tail of 262: the hero of the single-player save (task 9.10), what the original's
-# Gamevil Live "Save User Data" sent with opcode 256. sp = 0: no save.
+# Live "Save User Data" sent with opcode 256. sp = 0: no save.
 SP_HERO = (
     ("sp", "B"), ("sp_level", "B"), ("sp_hp", "H"), ("sp_mp", "H"), ("sp_atk", "H"), ("sp_def", "H"),
     ("sp_hp_bonus", "h"), ("sp_mp_bonus", "h"), ("sp_atk_bonus", "h"), ("sp_def_bonus", "h"),

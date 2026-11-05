@@ -87,8 +87,8 @@ def test_websocket_and_tcp_end_to_end():
     asyncio.run(run())
 
 
-def test_gamevil_live_on_the_ws_path_and_its_tcp_port():
-    """PHASE_7: /live is the single player's Gamevil Live (pow_server/live.py); it shares the
+def test_live_on_the_ws_path_and_its_tcp_port():
+    """PHASE_7: /live is the single player's Live (pow_server/live.py); it shares the
     accounts with the multiplayer server."""
     pytest.importorskip("websockets")
     import struct

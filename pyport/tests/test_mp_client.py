@@ -28,7 +28,7 @@ def test_scenario_runs(name, tmp_path):
 
 
 def test_single_player_account_logs_in_without_the_login_screen(tmp_path):
-    """use_sp_account: the Gamevil Live registration of the single player is the
+    """use_sp_account: the Live registration of the single player is the
     Multiplayer account: the title logs in at once, no Login screen (state 2) on the way."""
     mp_shot = _mp_shot()
     states = set()

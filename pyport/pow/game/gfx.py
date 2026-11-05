@@ -128,4 +128,4 @@ class Gfx:
             pos += 1
         return (i ^ 0xFFFFFFFF) & 0xFFFFFFFF
 
-    # static initializer builds two byte arrays and throws them away (dead code).
+    # two byte arrays and throws them away (dead code).

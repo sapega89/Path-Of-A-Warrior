@@ -83,10 +83,10 @@ def test_rms_roundtrip(tmp_path, monkeypatch):  # task 0.8 (desktop side)
     import config
     from pow.midp.rms import RecordStore
     monkeypatch.setattr(config, "SAVE_DIR", str(tmp_path))
-    rs = RecordStore.openRecordStore("gamevil_pow_env", True)
+    rs = RecordStore.openRecordStore("pow_env", True)
     data = bytearray([75, 2])
     rs.addRecord(data, 0, 2)
-    assert RecordStore.openRecordStore("gamevil_pow_env", False).getRecord(1) == data
+    assert RecordStore.openRecordStore("pow_env", False).getRecord(1) == data
 
 
 def test_rms_browser_branch(monkeypatch):  # task 0.8: the localStorage path, with a fake JS window
@@ -110,11 +110,11 @@ def test_rms_browser_branch(monkeypatch):  # task 0.8: the localStorage path, wi
     fake = types.SimpleNamespace(window=types.SimpleNamespace(localStorage=LS()))
     monkeypatch.setitem(sys.modules, "platform", fake)
     monkeypatch.setattr(rms, "_IS_WEB", True)
-    rs = rms.RecordStore.openRecordStore("gamevil_pow_data", True)
+    rs = rms.RecordStore.openRecordStore("pow_data", True)
     rs.addRecord(bytearray(range(256)) * 4, 0, 965)
-    again = rms.RecordStore.openRecordStore("gamevil_pow_data", False).getRecord(1)
+    again = rms.RecordStore.openRecordStore("pow_data", False).getRecord(1)
     assert len(again) == 965 and again[:256] == bytearray(range(256))
-    assert "rms_gamevil_pow_data" in store
+    assert "rms_pow_data" in store
 
 
 def test_window_scale(monkeypatch):  # task 0.2: 240x320 x2 / x3, nearest neighbour

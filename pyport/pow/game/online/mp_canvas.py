@@ -270,7 +270,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
     menu_icon_image = None  # Image
     title_image = None  # Image
     press_image = None  # Image
-    gamevil_image = None  # Image
+    copyright_image = None  # Image
     logo_image = None  # Image
     softkey_image = None  # Image
     body_images = None  # Image[]
@@ -331,9 +331,9 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
         MpCanvas.screen_h = height
         try:
             MpCanvas.app_version = MpCanvas.midlet.getAppProperty("MIDlet-Version")
-            MpCanvas.server_host = MpCanvas.midlet.getAppProperty("GAMEVIL_SERVER")
-            MpCanvas.server_port = int(MpCanvas.midlet.getAppProperty("GAMEVIL_PORT"))
-            MpCanvas.game_ver = MpCanvas.midlet.getAppProperty("GAMEVIL_GAME_VER")
+            MpCanvas.server_host = MpCanvas.midlet.getAppProperty("POW_SERVER")
+            MpCanvas.server_port = int(MpCanvas.midlet.getAppProperty("POW_PORT"))
+            MpCanvas.game_ver = MpCanvas.midlet.getAppProperty("POW_GAME_VER")
         except Exception:
             MpCanvas.app_version = ""
             MpCanvas.server_host = "64.14.246.182"
@@ -502,7 +502,10 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
             MpCanvas.logo_time = system.currentTimeMillis()
             Draw.fill_rect(MpCanvas.buffer_g, 0, 0, MpCanvas.canvas_w, MpCanvas.canvas_h, 0xFFFFFF)
         self.draw_buffer()
-        Draw.draw_image(MpCanvas.screen_g, MpCanvas.logo_image, idiv(MpCanvas.canvas_w, 2), MpCanvas.logo_y, 17)
+        if config.REBRAND:  # no logo screen of the original publisher (rebrand.py)
+            MpCanvas.logo_time = 0
+        else:
+            Draw.draw_image(MpCanvas.screen_g, MpCanvas.logo_image, idiv(MpCanvas.canvas_w, 2), MpCanvas.logo_y, 17)
         if MpCanvas.sound_from_sp is not None:
             # started from the single player's Main Menu (mp_main.play): it already
             # showed the logo and asked about the sound, so its answer goes straight on
@@ -1131,9 +1134,10 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
                 Draw.draw_image(MpCanvas.buffer_g, MpCanvas.title_image, (MpCanvas.center_x - idiv(MpCanvas.title_image.getWidth(), 2)), (top_y + (80 * i_title)), 0)
                 MpCanvas.title_image = None
                 i_title = i_title + 1
-            if MpCanvas.gamevil_image is None:
-                MpCanvas.gamevil_image = self.load_image("/gamevil.png")
-            Draw.draw_image(MpCanvas.buffer_g, MpCanvas.gamevil_image, idiv(MpCanvas.canvas_w, 2), (MpCanvas.canvas_h - 1), 33)
+            if not config.REBRAND:  # no copyright line (rebrand.py)
+                if MpCanvas.copyright_image is None:
+                    MpCanvas.copyright_image = self.load_image("/gamevil.png")
+                Draw.draw_image(MpCanvas.buffer_g, MpCanvas.copyright_image, idiv(MpCanvas.canvas_w, 2), (MpCanvas.canvas_h - 1), 33)
             if MpCanvas.press_image is None:
                 MpCanvas.press_image = self.load_image("/press.png")
         self.draw_buffer()

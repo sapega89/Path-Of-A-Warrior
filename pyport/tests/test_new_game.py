@@ -37,9 +37,9 @@ def test_new_hero_save_roundtrip(tmp_path, monkeypatch):
     game.fill_shop()
     shop = [GameCanvas.shop[8 + b].id for b in range(17)]
     assert shop == sorted(shop) and all(101 <= s < 300 for s in shop)
-    assert game.save_game()                    # -> RecordStore "gamevil_pow_data"
+    assert game.save_game()                    # -> RecordStore "pow_data"
     size = GameCanvas.save_pos
-    rec = RecordStore.openRecordStore("gamevil_pow_data", False).getRecord(1)
+    rec = RecordStore.openRecordStore("pow_data", False).getRecord(1)
     assert len(rec) == 2000 and rec[0] | rec[1] << 8 == size
     assert bytes(rec[2:10]) == b"Leo     "
 

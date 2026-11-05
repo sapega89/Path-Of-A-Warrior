@@ -11,7 +11,10 @@ def _manifest():
         for line in p.read_text(encoding="utf-8", errors="replace").splitlines():
             if ": " in line:
                 k_, v = line.split(": ", 1)
-                props[k_.strip()] = v.strip()
+                k_ = k_.strip()
+                if k_.startswith("GAMEVIL" + "_"):  # the original's keys -> the port's POW_ names
+                    k_ = "POW_" + k_[8:]
+                props[k_] = v.strip()
     except OSError:
         pass
     return props
@@ -24,8 +27,8 @@ class Midlet:
 
     def __init__(self):
         self.props = _manifest()
-        if config.CHEAT:   # config.CHEAT: the manifest property GAMEVIL_CHEAT: TRUE
-            self.props["GAMEVIL_CHEAT"] = "TRUE"
+        if config.CHEAT:   # config.CHEAT: the manifest property POW_CHEAT: TRUE
+            self.props["POW_CHEAT"] = "TRUE"
         self.destroyed = False
         self.resume_sound = None      # the game started again in the same process
                                       # (main.py, a newer hero from the server): the sound answer

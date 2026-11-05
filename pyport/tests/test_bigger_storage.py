@@ -69,7 +69,7 @@ def test_full_backpack_survives_save_and_load(game, monkeypatch):
     cz.backpack[config.BACKPACK_SIZE - 1].enchant = 7
     assert game.save_game()
     size = GameCanvas.save_pos
-    rec = RecordStore.openRecordStore("gamevil_pow_data", False).getRecord(1)
+    rec = RecordStore.openRecordStore("pow_data", False).getRecord(1)
     assert rec[0] | rec[1] << 8 == size == 965 + 2 + 11 * (config.BACKPACK_SIZE - 25)
 
     cz = _reload(game, monkeypatch)
@@ -86,7 +86,7 @@ def test_old_save_loads_with_the_new_cells_empty(game, monkeypatch):
     for b in range(25):
         game.give_item(101 + b, 0)
     assert game.save_game()
-    rs = RecordStore.openRecordStore("gamevil_pow_data", False)
+    rs = RecordStore.openRecordStore("pow_data", False)
     old = bytearray(rs.getRecord(1)[:965])
     old[0], old[1] = 965 & 0xFF, 965 >> 8
     rs.setRecord(1, old, 0, len(old))
@@ -157,7 +157,7 @@ def test_mp_loot_uses_the_new_cells_of_an_old_save(tmp_path, monkeypatch):
 
 
 def test_live_grid_above_softkeys(monkeypatch):
-    """the Backpack / Warehouse grid of Gamevil Live ends above the description strip
+    """the Backpack / Warehouse grid of Live ends above the description strip
     (y 200) and the soft keys, also with the bigger Warehouse."""
     from pow.game.game_canvas import GameCanvas
     from pow.game.live import Live

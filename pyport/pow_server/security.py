@@ -1,7 +1,7 @@
 """(asked by Andrey): the server's security settings (python -m pow_server --help).
 
-The original Gamevil server is lost; these limits are the port's own. One Guard is shared by
-the three servers of serve() (multiplayer /, Gamevil Live /live, saves /save), so a guessing
+The original server is lost; these limits are the port's own. One Guard is shared by
+the three servers of serve() (multiplayer /, Live /live, saves /save), so a guessing
 player cannot move to another path.
 
 - Logins: LOGIN_FAILS wrong passwords for one UserID, or from one address, within LOGIN_WINDOW
