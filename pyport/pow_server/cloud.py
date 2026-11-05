@@ -25,6 +25,8 @@ import binascii
 import json
 import re
 
+from pow_server import security
+
 STORES = ("gamevil_pow_data", "gamevil_pow_env")   # the hero and the Options
 MAX_STORE = 64 * 1024        # bytes of all records of one store
 MAX_RECORDS = 16
@@ -37,6 +39,7 @@ _PWD_RE = re.compile(r"^[0-9]{4,12}$")
 class CloudServer:
     def __init__(self, storage):
         self.storage = storage
+        self.guard = None          # security.Guard (ws_server.serve)
 
     def connect(self, send):
         """send(text) writes one message to the client."""
@@ -49,6 +52,7 @@ class CloudSession:
         self._send = send
         self.user = None
         self.closed = False
+        self.peer = None           # the client's address (ws_server.py), for security.Guard
 
     def send(self, **msg):
         if not self.closed:
@@ -83,7 +87,7 @@ class CloudSession:
         if not st.has_account(uid):
             # accounts are made by the Gamevil Live registration (530) or the MP login (278)
             return self.send(op="login", ok=False, err="no account")
-        if not st.check_password(uid, pwd):
+        if not security.check_password(self.server, self, uid, pwd):
             return self.send(op="login", ok=False, err="password")
         self.user = uid
         self.send(op="login", ok=True)

@@ -539,6 +539,25 @@ python -m pow_server --match-wait 20              # Duel чекає живого
 python -m pow_server --no-server-bots             # без ботів сервера (BLADE, RAVEN, ...)
 ```
 
+**Безпека сервера** (PORT-EXTRA, просив Andrey; `pow_server/security.py`, `python -m pow_server --help`).
+Сервер асинхронний (asyncio + websockets), одне спільне `Guard` на `/`, `/live` і `/save`:
+- 5 неправильних паролів за 10 хв для одного UserID або з однієї адреси — блок на 5 хв
+  (`--login-fails`, `--login-window`, `--login-block`); заблокований вхід виглядає як
+  неправильний пароль, навіть якщо пароль правильний;
+- не більше 5 нових акаунтів на годину з однієї адреси (`--new-accounts`);
+- не більше 10 з'єднань з однієї адреси (`--max-connections`) і 30 повідомлень на секунду на
+  з'єднання (`--max-messages`), інакше з'єднання закривається;
+- `--origin https://pow.example` (можна кілька) — у браузері пускає лише сторінки гри; ПК-клієнт
+  без заголовка Origin пускається завжди;
+- `--require-tls` — не запускатися без TLS: `--cert/--key` (мінімум TLS 1.2) або `--behind-proxy`,
+  коли TLS робить nginx / Caddy (адреса клієнта — останній запис `X-Forwarded-For`);
+- `--legacy` пише попередження в лог.
+
+```bash
+python -m pow_server --require-tls --cert cert.pem --key key.pem --origin https://pow.example
+python -m pow_server --require-tls --behind-proxy --host 127.0.0.1 --origin https://pow.example
+```
+
 Відмінності від оригіналу (PORT-EXTRA, у кінці пакетів, оригінальний jar їх ігнорує):
 - 279 повертає токен сесії, а наш клієнт додає його в 262. Оригінал після першого входу пускав за
   самим UserID; з `--legacy` сервер теж так робить (для jar в емуляторі).
