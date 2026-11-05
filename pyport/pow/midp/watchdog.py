@@ -23,7 +23,7 @@ path = None
 
 def start():
     global _file, path
-    if _file is not None or sys.platform == "emscripten" or os.environ.get("POW_WATCHDOG", "1") != "1":
+    if _file is not None or os.environ.get("POW_WATCHDOG", "1") != "1":
         return
     try:
         os.makedirs(config.SAVE_DIR, exist_ok=True)

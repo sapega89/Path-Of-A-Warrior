@@ -1,10 +1,7 @@
 """The sound player pool of the multiplayer screens, on pygame.mixer.
 
-WAV effects play straight from assets_mp; the menu music /snd1.mid is played with
-pygame.mixer.music when the platform can (desktop SDL_mixer usually can), else silence.
-the browser build has no WAV (pygbag refuses to pack them, tools/build_web.py
-leaves them out): there the effect is the OGG next to it (assets_mp/sndN.ogg, made by
-tools/convert_audio.py).
+WAV effects play straight from assets_mp (or the OGG next to one, made by tools/convert_audio.py);
+the menu music /snd1.mid is played with pygame.mixer.music when SDL_mixer can, else silence.
 """
 import pathlib
 
@@ -34,7 +31,7 @@ class PlayerPool:
         path = pathlib.Path(config.MP_RES_ROOT) / name.lstrip("/")
         ogg = path.with_suffix(".ogg")
         if path.suffix == ".wav" and not path.exists() and ogg.exists():
-            return ogg                     # the browser build (see the docstring)
+            return ogg
         return path
 
     def load(self, name, index):  # load

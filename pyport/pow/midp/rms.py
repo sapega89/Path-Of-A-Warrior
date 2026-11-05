@@ -6,17 +6,14 @@ Layout of one store: list of records (record id = index + 1), bytes kept 1:1.
 import base64
 import json
 import os
-import sys
 
 import config
-
-_IS_WEB = sys.platform == "emscripten"
 
 # (server saves, pow/game/cloud_save.py): called with the store name after every
 # write to a store, so its new records can go to the server too.
 on_write = []
 # stores kept only in memory, never in
-# the files / localStorage: the server has the only lasting copy. cloud_save fills them from
+# the files: the server has the only lasting copy. cloud_save fills them from
 # the server before the game reads them.
 memory_only = set()
 memory = {}
@@ -54,10 +51,6 @@ def disk_load(name):
 
 
 def _disk_read(name):
-    if _IS_WEB:
-        import platform  # pygbag: platform.window is the JS window
-        v = platform.window.localStorage.getItem("rms_" + name)
-        return None if v is None else str(v)
     p = os.path.join(config.SAVE_DIR, name + ".rms.json")
     if not os.path.isfile(p):
         return None
@@ -73,10 +66,6 @@ def _save_raw(name, text):
 
 
 def _disk_write(name, text):
-    if _IS_WEB:
-        import platform
-        platform.window.localStorage.setItem("rms_" + name, text)
-        return
     os.makedirs(config.SAVE_DIR, exist_ok=True)
     with open(os.path.join(config.SAVE_DIR, name + ".rms.json"), "w", encoding="utf-8") as fh:
         fh.write(text)
@@ -135,11 +124,7 @@ class RecordStore:
 
 
 def disk_delete(name):
-    """Removes the device's own copy of a store (files / localStorage)."""
-    if _IS_WEB:
-        import platform
-        platform.window.localStorage.removeItem("rms_" + name)
-        return
+    """Removes the device's own copy of a store."""
     p = os.path.join(config.SAVE_DIR, name + ".rms.json")
     if os.path.isfile(p):
         os.remove(p)
