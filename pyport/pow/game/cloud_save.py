@@ -18,6 +18,14 @@ Which copy wins:
   second device wants. The hero loaded already is the old one, so the game restarts;
 - while playing (another device saved meanwhile): this device's copy, the server's one is kept
   as the backup.
+
+PORT-EXTRA (asked by Andrey) "server only" (config.SERVER_ONLY_SAVE, when there is a server):
+the hero (SERVER_ONLY) is never kept on the device. It lives in memory (rms.memory_only), is
+taken from the server before the game loads it and every save goes to the server. The game
+starts only online: boot() waits for the server (main.py shows offline_screen.py meanwhile),
+and the server's copy always wins at the start. A hero left on the device from before is moved
+to the server (sent when the account has none there) and removed from the device once the
+server has it.
 """
 import asyncio
 import base64
@@ -33,6 +41,7 @@ from pow_server.cloud import STORES
 
 META = "pow_cloud_meta"           # raw entry: {"user": UserID, "stores": {name: {rev, at, dirty}}}
 REGIST = "gamevil_pow_regist"
+SERVER_ONLY = ("gamevil_pow_data", "gamevil_pow_data_backup")   # kept only in memory + on the server
 RETRY_MS = 10000                  # reconnect after a failed connection
 STEP_SECONDS = 0.25
 _TASKS = set()                    # running sync tasks (asyncio keeps only weak references)
@@ -50,6 +59,24 @@ def server_url():
         u = urllib.parse.urlsplit(live)
         return urllib.parse.urlunsplit((u.scheme, u.netloc, "/save", "", ""))
     return v
+
+
+def server_only():
+    """The hero kept only on the server: config.SERVER_ONLY_SAVE and a server to keep it."""
+    return bool(config.SERVER_ONLY_SAVE) and server_url() is not None
+
+
+def use_memory_only():
+    """rms keeps SERVER_ONLY in memory. The device's old copies are moved there (to be sent if
+    the server has none); returns their names, to be removed from the device later."""
+    found = []
+    for name in SERVER_ONLY:
+        text = rms.disk_load(name)
+        if text is not None and name not in rms.memory:
+            rms.memory[name] = text
+            found.append(name)
+    rms.memory_only.update(SERVER_ONLY)
+    return found
 
 
 def now_ms():
@@ -185,7 +212,7 @@ class BrowserTextSocket:
 class CloudSync:
     """The client side; step() does one bit of work, run by run() / boot() on the game loop."""
 
-    def __init__(self, url, make_socket=None, clock=now_ms):
+    def __init__(self, url, make_socket=None, clock=now_ms, server_only=False):
         if make_socket is None:
             make_socket = BrowserTextSocket if sys.platform == "emscripten" else TextSocket
         self.url = url
@@ -199,6 +226,9 @@ class CloudSync:
         self.applying = False      # writing the server's copy: not a change of this device
         self.started = False       # the game has loaded the hero (restart needed to change it)
         self.restart_requested = False
+        self.server_only = server_only
+        self.reachable = False     # server only, no account yet: the server answered
+        self.purge = []            # server only: the device's old copies, removed once sent
         self.meta = self._load_meta()
 
     # --- local bookkeeping ---------------------------------------------------------
@@ -239,8 +269,10 @@ class CloudSync:
     def step(self):
         login = read_login()
         if login is None:
-            if self.sock is not None:
-                self._drop()
+            if self.sock is not None and self.login is not None:
+                self._drop()               # the registration is gone
+            if self.server_only and not self.reachable:
+                self._probe()
             return
         if self.state == "off":
             if login == self.login:
@@ -273,7 +305,40 @@ class CloudSync:
                 return
         if self.state == "ready":
             self._push()
+            if self.purge and self.idle:
+                for name in self.purge:    # the server has it now: off the device
+                    rms.disk_delete(name)
+                self.purge = []
 
+    def _probe(self):
+        """Server only, no account yet: is the server there? (The game starts only online.)"""
+        if self.sock is None:
+            if self.clock() < self.retry_at:
+                return
+            self.login = None
+            self.sock = self.make_socket(self.url)
+            self.sock.open()
+            self.state = "probe"
+        if self.sock.failed:
+            self._drop()
+            self.retry_at = self.clock() + RETRY_MS
+        elif self.sock.connected:
+            self.reachable = True
+            self._drop()
+
+    @property
+    def online(self):
+        """Server only: the game may start (the hero came from the server, or no account yet
+        and the server is there)."""
+        if read_login() is None:
+            return self.reachable
+        return self.state == "ready"
+
+    def retry_now(self):
+        """The player asked to try again (offline_screen.py)."""
+        self.retry_at = 0
+        if self.state == "off":
+            self.state = "idle"
     def _answer(self, msg):
         op = msg.get("op")
         if op == "login":
@@ -319,7 +384,8 @@ class CloudSync:
             if s is None:                  # nothing on the server yet: send ours
                 m["rev"], m["dirty"] = 0, local is not None
                 continue
-            if first or (s["rev"] > m["rev"] and not (m["dirty"] and m["at"] > s["at"])):
+            if first or (self.server_only and name in SERVER_ONLY) or (
+                    s["rev"] > m["rev"] and not (m["dirty"] and m["at"] > s["at"])):
                 if self._take(name, s):
                     changed.append(name)
             elif s["rev"] > m["rev"]:      # ours is newer: keep it, overwrite the server's
@@ -383,26 +449,52 @@ class CloudSync:
 sync = None
 
 
-async def boot(timeout=4.0):
+async def boot(timeout=4.0, offline_screen=None):
     """main.py, before the game loads the hero: take a newer copy from the server, then keep
-    sending the saves in the background. Never blocks longer than `timeout`."""
+    sending the saves in the background. Never blocks longer than `timeout`; server only: waits
+    until online, `offline_screen(sync)` (offline_screen.py) is shown while the server is not
+    there and comes back when it is."""
     global sync
     url = server_url()
     if url is None:
         return None
-    sync = CloudSync(url)
+    only = server_only()
+    sync = CloudSync(url, server_only=only)
+    if only:
+        sync.purge = use_memory_only()
     rms.on_write.append(sync.on_write)
-    end = time.monotonic() + timeout
-    while time.monotonic() < end and read_login() is not None:
-        sync.step()
-        if sync.state in ("ready", "off") or sync.retry_at:
-            break
-        await asyncio.sleep(0.05)
+    if only:
+        while not await connect(sync):
+            if offline_screen is None:
+                break
+            await offline_screen(sync)
+    else:
+        end = time.monotonic() + timeout
+        while time.monotonic() < end and read_login() is not None:
+            sync.step()
+            if sync.state in ("ready", "off") or sync.retry_at:
+                break
+            await asyncio.sleep(0.05)
     sync.started = True
     task = asyncio.ensure_future(run(sync))
     _TASKS.add(task)                     # asyncio keeps only a weak reference to a task
     task.add_done_callback(_TASKS.discard)
     return sync
+
+
+async def connect(s, timeout=10.0):
+    """Server only: one try to get online. True when the game may start."""
+    end = time.monotonic() + timeout
+    s.retry_now()
+    while time.monotonic() < end:
+        s.step()
+        if s.online:
+            return True
+        if s.state == "off" or s.retry_at:
+            return False
+        await asyncio.sleep(0.05)
+    s._drop()
+    return False
 
 
 async def flush(timeout=3.0):

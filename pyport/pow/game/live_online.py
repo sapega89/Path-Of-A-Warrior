@@ -14,6 +14,9 @@ Gamevil Live?", "Connecting...", login 530) and closed the connection on leaving
 - A hero without an account gets the registration screen once on the Game Menu (after the
   prologue of a New Game, after Continue unless the player skipped it before): BACK on the empty
   UserID skips it, and a skip on Continue is remembered in SKIP_STORE.
+- Server only (cloud_save.server_only(), asked by Andrey): the hero is kept only on the server,
+  so it must have an account. The registration screen is offered after every Continue / New Game
+  of a hero without one and cannot be skipped: BACK closes it and it opens again at once.
 
 Gamevil Live itself (live.py) is unchanged apart from the guards marked `Online` there.
 """
@@ -45,6 +48,12 @@ class Online:
         return config.ALWAYS_ONLINE
 
     @staticmethod
+    def must_register():
+        """Server only: no hero without an account (the save lives on the server)."""
+        from pow.game import cloud_save
+        return config.ALWAYS_ONLINE and cloud_save.server_only()
+
+    @staticmethod
     def on_game_start(new_game=False):
         """Continue loaded the save / New Game created the hero."""
         if not config.ALWAYS_ONLINE:
@@ -54,7 +63,7 @@ class Online:
         Online.next_try = 0
         Online.retry_ms = RETRY_MS
         if not LiveScreen.is_registered():
-            Online.offer = new_game or not Online.skipped()
+            Online.offer = new_game or Online.must_register() or not Online.skipped()
 
     @staticmethod
     def skipped():
@@ -83,6 +92,8 @@ class Online:
             Online.wanted = True
             Online.logged_in = True
             Online.last_sent = system.currentTimeMillis()
+        elif Online.must_register():
+            Online.offer = True              # no skip: the screen opens again
         else:
             Online.remember_skip()
 

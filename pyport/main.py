@@ -103,9 +103,10 @@ async def main():
     rms_selftest()
     if (config.DEMO_SAVE or "--demo" in sys.argv) and "--no-demo" not in sys.argv:
         demo_save()
-    from pow.game import cloud_save
-    # PORT-EXTRA: a newer save of this account from the server, before the hero is loaded
-    await cloud_save.boot()
+    from pow.game import cloud_save, offline_screen
+    # PORT-EXTRA: a newer save of this account from the server, before the hero is loaded;
+    # server only: the game starts only online ("No connection" until it is)
+    await cloud_save.boot(offline_screen=offline_screen.show)
     resume_sound = None                    # None: the boot asks; True / False: straight to the menu
     try:
         while True:
