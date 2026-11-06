@@ -87,6 +87,10 @@
     "en": "Mission fail!",
     "uk": "Місію провалено!"
   },
+  "mission.lost": {
+    "en": "Lost!!",
+    "uk": "Втрачено!!"
+  },
   "mission.success": {
     "en": "Mission Success!",
     "uk": "Місію виконано!"

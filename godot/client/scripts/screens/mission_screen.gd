@@ -22,6 +22,7 @@ const MapHud := preload("res://scripts/ui/map_hud.gd")
 const Autopilot := preload("res://scripts/sim/autopilot.gd")
 const Effects := preload("res://scripts/world/effects.gd")
 const Profile := preload("res://scripts/core/profile.gd")
+const Items := preload("res://scripts/core/items.gd")
 const MissionPause := preload("res://scripts/ui/mission_pause.gd")
 
 ## One tick of the game, by the game speed of the settings (MapSim.TICK_MS at Med).
@@ -32,6 +33,8 @@ const ARROW_PATH := "res://assets/original/ui/arrow%d.png"
 var lord_id := 1
 var mission := 0
 var mission_info := {}
+var lost_gear := {}  # what the hero lost with the mission (Profile.lose_gear), shown on its banner
+var _fail_seen := false
 var lord_name := ""
 var sim: RefCounted
 var viewport: SubViewport
@@ -229,6 +232,9 @@ func _process(delta: float) -> void:
 		hud.tick()
 		_blink += 1
 		trails = sim.trails(_trail_pick)
+	if sim.failed and not _fail_seen:
+		_fail_seen = true
+		lost_gear = profile.lose_gear(sim.rng)
 	if sim.finished:
 		set_process(false)
 		profile.take_from(sim, lord_id, mission, int(mission_info.get("id", 0)))
@@ -353,6 +359,8 @@ func _show_banner() -> void:
 		stage += " " + tr("mission.complete")
 	elif sim.banner == MapSim.BANNER_FAILED:
 		stage = tr("mission.failed")
+		if not lost_gear.is_empty():
+			stage += "\n%s\n%s" % [tr("mission.lost"), Items.name_of(int(lost_gear.id))]
 	elif sim.banner == MapSim.BANNER_SUCCESS:
 		stage = "%s\n%s\n%d" % [tr("mission.success"), tr("mission.gold"), sim.gold_reward()]
 	elif sim.banner == MapSim.BANNER_TOTAL_EXP or sim.banner == MapSim.BANNER_TIME_EXP:
