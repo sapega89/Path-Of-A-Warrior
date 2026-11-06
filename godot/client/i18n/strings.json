@@ -1247,6 +1247,18 @@
     "en": "Auto-battle",
     "uk": "Автобій"
   },
+  "online.battle_auto_key": {
+    "en": "AUTO: Tab/F",
+    "uk": "AUTO: Tab/F"
+  },
+  "online.battle_auto_key_pad": {
+    "en": "AUTO: R3",
+    "uk": "AUTO: R3"
+  },
+  "online.battle_auto_key_touch": {
+    "en": "AUTO",
+    "uk": "AUTO"
+  },
   "online.battle_hint_choose": {
     "en": "Arrows: choose the action   Esc: exit the battle   Tab / F: auto-battle",
     "uk": "Стрілки: дія   Esc: вийти з бою   Tab / F: автобій"
