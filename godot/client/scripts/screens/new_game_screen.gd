@@ -1,7 +1,8 @@
 extends Control
 ## A new game, step by step as in the original: the difficulty (Hard: gold and exp x2; Normal:
 ## x1; on both the hero turns to the nearest enemy as he strikes; it cannot change later), the
-## hero's face (each face a hero with his own base stats), his name (up to 8 letters), and his
+## hero's face (each face a hero with his own base stats), his name (up to 8 letters, typed or
+## on the keys under the field, scripts/ui/key_grid.gd), and his
 ## 5 first stat points. Then the hero is saved over
 ## any old one and the opening story starts, then the campaign.
 ## Params: profile_path (optional), then (the screen after the opening, default campaign).
@@ -9,6 +10,7 @@ extends Control
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const Stories := preload("res://scripts/core/stories.gd")
+const KeyGrid := preload("res://scripts/ui/key_grid.gd")
 const PORTRAITS := "res://assets/original/portraits/%d.png"
 const HEADS := 4
 const NAME_MAX := 8
@@ -109,6 +111,7 @@ func show_step(s: int) -> void:
 			name_edit.text_submitted.connect(func(_t): submit_name())
 			name_edit.text_changed.connect(_name_changed)
 			body.add_child(name_edit)
+			body.add_child(KeyGrid.create(KeyGrid.LETTERS, name_edit))
 			_button("Ok", "newgame.ok", submit_name)
 			name_edit.grab_focus.call_deferred()
 		Step.POINTS:
