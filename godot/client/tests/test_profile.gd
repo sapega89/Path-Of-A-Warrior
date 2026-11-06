@@ -3,6 +3,7 @@ extends "res://tests/test_case.gd"
 const Profile := preload("res://scripts/core/profile.gd")
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
 const MapSim := preload("res://scripts/sim/map_sim.gd")
+const Items := preload("res://scripts/core/items.gd")
 const TEST_PATH := "user://test_hero.json"
 
 
@@ -24,6 +25,18 @@ func test_exp_and_levels() -> void:
 	eq(p.level, 3, "level 3")
 	eq(p.experience, 6, "6 exp into level 3")
 	eq(p.stat_points, 11, "3 points a level")
+
+
+## The mission knows the places left in the Inventory (a gear found with none stays on the floor).
+func test_the_mission_knows_the_places_left() -> void:
+	var p := Profile.new()
+	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	p.apply_to(sim)
+	var empty: int = sim.free_places
+	check(empty > 0 and empty <= p.backpack.size(), "the places left: %d" % empty)
+	p.add_item(Items.make(101))
+	p.apply_to(sim)
+	eq(sim.free_places, empty - 1, "a place less")
 
 
 func test_mission_goes_in_and_out() -> void:

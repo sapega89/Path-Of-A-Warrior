@@ -338,6 +338,8 @@ func apply_to(sim: RefCounted) -> void:
 	h.mp = h.max_mp
 	h.weapon_kind = weapon_kind()
 	sim.difficulty = difficulty
+	if not hero_name.is_empty():
+		sim.hero_name = hero_name
 	for i in mini(skill_levels.size(), sim.skill_levels.size()):
 		sim.skill_levels[i] = int(skill_levels[i])
 	for i in mini(hotkeys.size(), sim.hotkeys.size()):
@@ -348,6 +350,7 @@ func apply_to(sim: RefCounted) -> void:
 	sim.friendship = {}
 	for k in friendship:
 		sim.friendship[int(k)] = int(friendship[k])
+	sim.free_places = backpack.filter(func(it): return int(it.get("id", 0)) == 0).size()
 
 
 ## What the mission left: picked gold and things (a found gear gets its random extra from
@@ -727,6 +730,7 @@ func resume_on_map(sim: RefCounted) -> void:
 	sim.mission_exp = int(on_map.get("exp", 0))
 	sim.kills = int(on_map.get("kills", 0))
 	sim.play_ticks = int(on_map.get("ticks", 0))
+	sim.continue_in_clear_room()
 
 
 func _write(path: String) -> bool:
