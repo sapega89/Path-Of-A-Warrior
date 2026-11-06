@@ -2,7 +2,8 @@ extends Control
 ## Assign Items: the hero's gold and the five potion slots. Pick a slot, then one of the two
 ## potion keys to drink from that slot with that key (a slot the other key holds swaps the
 ## keys). Above each slot: its belt key (Z X C V B, used in a mission) and the mark of the
-## potion key (* or #) that drinks from it. Saved at once.
+## potion key (* or #) that drinks from it. Saved at once. Opened from a mission's pause
+## menu (sim set) it changes that mission's keys and saves nothing; close goes back there.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
@@ -18,11 +19,17 @@ var marks: Array[Label] = []
 var key_buttons: Array[Button] = []
 var gold: Label
 var info: Label
+var sim: RefCounted = null  # a mission's: its slots and keys are the ones changed
+var close := Callable()  # set by the pause menu: what Back does instead of Router.back()
 
 
 func _ready() -> void:
 	path = str(Router.params.get("profile_path", Profile.PATH))
 	profile = Profile.load_or_new(path)
+	if sim != null:
+		profile.quick_slots = sim.quick_slots
+		profile.quick_keys = sim.quick_keys
+		profile.gold += int(sim.gold)
 	var col := UiTheme.menu_column(self, 640)
 	col.add_child(UiTheme.heading("assign.title", 44))
 
@@ -94,7 +101,7 @@ func _ready() -> void:
 	var back := Button.new()
 	back.name = "Back"
 	back.text = "common.back"
-	back.pressed.connect(func(): Router.back())
+	back.pressed.connect(go_back)
 	col.add_child(back)
 	refresh()
 	_show_info(0)
@@ -121,9 +128,17 @@ func press_slot(i: int) -> void:
 func press_key(k: int) -> bool:
 	if not profile.assign_quick_key(k, slot):
 		return false
-	profile.save(path)
+	if sim == null:
+		profile.save(path)
 	refresh()
 	return true
+
+
+func go_back() -> void:
+	if close.is_valid():
+		close.call()
+	else:
+		Router.back()
 
 
 func refresh() -> void:
@@ -152,7 +167,7 @@ func _show_info(i: int) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
-		Router.back()
+		go_back()
 		return
 	for k in 2:
 		if event.is_action_pressed("potion_%d" % (k + 1)):

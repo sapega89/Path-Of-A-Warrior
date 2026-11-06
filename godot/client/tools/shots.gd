@@ -209,6 +209,12 @@ func _ready() -> void:
 	Router.current.pause_menu.open_help()
 	await _shot(out, "mission_1_pause_help")
 	Router.current.pause_menu.close_options()
+	Router.current.pause_menu.open_items()
+	await _shot(out, "mission_1_pause_items")
+	Router.current.pause_menu.close_options()
+	Router.current.pause_menu.buttons[4].pressed.emit()
+	await _shot(out, "mission_1_pause_exit_ask")
+	Router.current.pause_menu.ask.hide()
 	Router.current.resume()
 	# Fight: walk to the nearest soldier and strike, until the room is cleared.
 	var shot_fight := false

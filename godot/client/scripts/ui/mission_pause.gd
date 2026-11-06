@@ -1,7 +1,8 @@
 extends Control
-## The pause menu of a mission, over the stopped game: Resume, Options (the settings, shown
-## over it), Help (shown over it too), Exit to Menu (the mission is lost, back to the campaign) and Exit Game (not on
-## phones and the web). Back resumes.
+## The pause menu of a mission, over the stopped game, in pyport's order: Resume, Items (Assign
+## Items for this mission's potion keys), Options (the settings), Help, Exit to Menu (asked
+## first: the mission is lost, back to the campaign) and Exit Game (asked first; not on phones
+## and the web). Items, Options and Help show over the menu. Back resumes.
 
 signal resumed
 
@@ -9,10 +10,14 @@ const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const MainMenu := preload("res://scripts/screens/main_menu.gd")
 const SettingsScreen := preload("res://scripts/screens/settings_screen.gd")
 const HelpScreen := preload("res://scripts/screens/help_screen.gd")
+const AssignItems := preload("res://scripts/screens/assign_items_screen.gd")
 
 var buttons: Array[Button] = []
 var menu: Control
-var settings: Control  # the settings or the help shown over the menu
+var settings: Control  # the items, the settings or the help shown over the menu
+var sim: RefCounted  # the mission's (its potion keys)
+var ask: ConfirmationDialog
+var asked := ""  # "exit" or "quit"
 
 
 func _ready() -> void:
@@ -28,12 +33,39 @@ func _ready() -> void:
 	var col := UiTheme.menu_column(menu)
 	col.add_child(UiTheme.heading("pause.title", 44))
 	_add(col, "Resume", "pause.resume", func(): resumed.emit())
+	_add(col, "Items", "pause.items", open_items)
 	_add(col, "Options", "pause.options", open_options)
 	_add(col, "Help", "pause.help", open_help)
-	_add(col, "Exit", "pause.exit", func(): Router.back())
+	_add(col, "Exit", "pause.exit", func(): _ask("exit"))
 	if MainMenu.show_quit():
-		_add(col, "Quit", "pause.quit", func(): get_tree().quit())
+		_add(col, "Quit", "pause.quit", func(): _ask("quit"))
+	ask = ConfirmationDialog.new()
+	ask.name = "Ask"
+	ask.confirmed.connect(confirmed)
+	add_child(ask)
 	buttons[0].grab_focus.call_deferred()
+
+
+## "Exit Game and go to main menu?" / "Exit Game?", No first.
+func _ask(what: String) -> void:
+	asked = what
+	ask.dialog_text = tr("pause.ask_" + what)
+	ask.popup_centered()
+	ask.get_cancel_button().grab_focus.call_deferred()
+
+
+func confirmed() -> void:
+	if asked == "exit":
+		Router.back()
+	elif asked == "quit":
+		get_tree().quit()
+
+
+## Assign Items over the pause menu, for this mission's potion keys.
+func open_items() -> void:
+	var screen: Control = AssignItems.new()
+	screen.sim = sim
+	_open_over(screen, "Items")
 
 
 func _add(col: VBoxContainer, node_name: String, text_key: String, on_press: Callable) -> void:
@@ -70,7 +102,9 @@ func close_options() -> void:
 		settings.queue_free()
 		settings = null
 	menu.visible = true
-	buttons[2 if was == "Help" else 1].grab_focus.call_deferred()
+	for b in buttons:
+		if str(b.name) == ("Options" if was == "Settings" else was):
+			b.grab_focus.call_deferred()
 
 
 func _unhandled_input(event: InputEvent) -> void:

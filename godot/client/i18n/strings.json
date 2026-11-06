@@ -522,5 +522,17 @@
   "attributes.reset_done": {
     "en": "Attributes reset.\n%d points are free.",
     "uk": "Атрибути скинуто.\nВільних очок: %d."
+  },
+  "pause.items": {
+    "en": "Items",
+    "uk": "Предмети"
+  },
+  "pause.ask_exit": {
+    "en": "Exit Game and go to main menu?",
+    "uk": "Вийти з місії в головне меню?"
+  },
+  "pause.ask_quit": {
+    "en": "Exit Game?",
+    "uk": "Вийти з гри?"
   }
 }

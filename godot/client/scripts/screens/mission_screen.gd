@@ -376,6 +376,7 @@ func pause() -> void:
 	_release_keys()
 	pause_menu = MissionPause.new()
 	pause_menu.name = "Pause"
+	pause_menu.sim = sim
 	pause_menu.resumed.connect(resume)
 	add_child(pause_menu)
 
