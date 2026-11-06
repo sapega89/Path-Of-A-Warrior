@@ -4,7 +4,8 @@ extends Control
 ## godot/tools/import_original.py export_mp), and the HUD drawn over it. What happens is scripts/net/online_battle.gd, one step every TICK_MS; this screen
 ## shows it and passes the keys: arrows choose (Right Attack, Left Defend, Up Evade, Down a
 ## skill), Enter / Space confirms and stops the timing bar, Esc asks to leave the battle, Tab,
-## F or R3 (the "auto" action, as auto-hunt on the map) turn auto-battle on and off. The pad's
+## F, R3 (the "auto" action, as auto-hunt on the map) or a click on AUTO in the bottom-left
+## corner turn auto-battle on and off. The pad's
 ## buttons, the skills and the bar take the mouse too. The hint at the bottom names the keys of
 ## the device just used (InputSetup.hint: the keyboard's or the pad's).
 ## What the battle earned goes to the hero as soon as the result comes: gold, fame, exp (a
@@ -71,6 +72,7 @@ var skill_list: VBoxContainer
 var skill_buttons: Array[Button] = []
 var countdown: Label
 var hint: Label
+var auto_button: Button  # AUTO in the bottom-left corner
 var center: PanelContainer
 var center_text: Label
 var bar: Control
@@ -395,6 +397,17 @@ func _build_hud() -> void:
 	hint.add_theme_font_size_override("font_size", 22)
 	hint.add_theme_color_override("font_color", UiTheme.TEXT_DIM)
 	add_child(hint)
+	auto_button = Button.new()
+	auto_button.name = "Auto"
+	auto_button.flat = true
+	auto_button.focus_mode = Control.FOCUS_NONE
+	auto_button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	auto_button.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	auto_button.position = Vector2(12, -60)
+	auto_button.add_theme_font_size_override("font_size", 22)
+	auto_button.visible = false
+	auto_button.pressed.connect(press.bind("auto"))
+	add_child(auto_button)
 
 
 ## The fighters' boxes: my team at the top left, the
@@ -598,6 +611,7 @@ func _refresh() -> void:
 	center.reset_size()
 	center.position = Vector2((size.x - center.size.x) / 2.0, size.y * 0.36 - center.size.y / 2.0)
 	hint.text = hint_text()
+	_show_auto()
 	hud.queue_redraw()
 
 
@@ -680,6 +694,18 @@ func result_text() -> String:
 	lines.append("")
 	lines.append(tr("online.battle_ok"))
 	return "\n".join(lines)
+
+
+## pyport's AUTO in the bottom-left corner while the actions are chosen: orange AUTO while
+## auto-battle is on, white with its keys while it is off (named for the device in use). A click
+## or a tap turns it over, as Tab, F or R3.
+func _show_auto() -> void:
+	auto_button.visible = battle.state >= OnlineBattle.CHOOSE and battle.state <= OnlineBattle.SENT
+	auto_button.text = "AUTO" if battle.auto_battle else InputSetup.hint("online.battle_auto_key")
+	var c := ORANGE if battle.auto_battle else Color.WHITE
+	for k in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color",
+			"font_hover_pressed_color"]:
+		auto_button.add_theme_color_override(k, c)
 
 
 func hint_text() -> String:

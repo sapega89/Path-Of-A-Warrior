@@ -293,3 +293,38 @@ func test_battle_hints_name_the_pad_after_the_pad() -> void:
 	screen.free()
 	Router.params = old
 	ServerTests._rm(d)
+
+
+func test_auto_corner() -> void:
+	var d := _dir()
+	var net = ClientTests.Net.new(d)
+	net.o.match_wait = 0
+	var c: RefCounted = net.client("ANDREY", OnlineTests.HERO)
+	c.enter(func(_e): pass)
+	c.find_battle(0, func(_e): pass)
+	var old: Dictionary = Router.params
+	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
+	var screen: Control = BattleScreen.new()
+	root.add_child(screen)
+	var was: String = InputSetup.device
+	InputSetup.device = "keys"
+	c.battle.auto_battle = false
+	c.battle.state = OnlineBattle.QUOTES
+	screen._refresh()
+	check(not screen.auto_button.visible, "not over the quotes")
+	c.battle.state = OnlineBattle.CHOOSE
+	screen._refresh()
+	check(screen.auto_button.visible, "while the actions are chosen")
+	eq(screen.auto_button.text, "AUTO: Tab/F", "off: white, with its keys")
+	eq(screen.auto_button.get_theme_color("font_color"), Color.WHITE, "white")
+	InputSetup.device = "pad"
+	screen._refresh()
+	eq(screen.auto_button.text, "AUTO: R3", "the pad's key after the pad")
+	screen.auto_button.pressed.emit()
+	check(c.battle.auto_battle, "a click turns it on")
+	eq(screen.auto_button.text, "AUTO", "on")
+	eq(screen.auto_button.get_theme_color("font_color"), BattleScreen.ORANGE, "orange")
+	InputSetup.device = was
+	screen.free()
+	Router.params = old
+	ServerTests._rm(d)
