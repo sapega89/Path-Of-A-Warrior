@@ -25,5 +25,9 @@ to it.
 - Behaviour changes the player asked for are documented in `pyport/README.md`; an option that
   keeps the old behaviour (`POW_...` in `config.py`) only when the old one is still wanted
   (`tools/shot.py` sets the options so that the baseline screenshots stay)
+- Code for the Godot version goes into `godot/` (`godot/README.md`, `docs/GODOT_PLAN.md`): step 1
+  there is to move the game over as it is, a 3D world with the original 2D sprites;
+  `python godot/tools/import_original.py` makes its data. Godot tests:
+  `godot --headless --path godot/client res://tests/runner.tscn` (also in CI)
 - Do not modify existing working functionality unless explicitly asked
 - Run `python -m pytest` in `pyport/` before pushing

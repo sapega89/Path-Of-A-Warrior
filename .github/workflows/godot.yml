@@ -1,0 +1,54 @@
+name: godot
+
+on:
+  push:
+    branches: [main, dev]
+    paths: ["godot/**", ".github/workflows/godot.yml"]
+  pull_request:
+    paths: ["godot/**", ".github/workflows/godot.yml"]
+  workflow_dispatch:  # run by hand from the Actions tab
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: "4.5.1"
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1, the repo allows only pinned actions
+
+      - name: Install Godot
+        run: |
+          curl -sSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot"
+
+      - name: Converted data is up to date
+        run: |
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install -q pillow
+          "$RUNNER_TEMP/venv/bin/python" godot/tools/import_original.py
+          git diff --exit-code -- godot/client/data godot/client/assets/original/hero.json
+
+      - name: Import
+        run: timeout 300 "$RUNNER_TEMP/godot" --headless --path godot/client --import
+
+      - name: Tests
+        run: timeout 300 "$RUNNER_TEMP/godot" --headless --path godot/client res://tests/runner.tscn
+
+      - name: Screenshots
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgl1 libegl1 mesa-utils > /dev/null
+          mkdir -p "$RUNNER_TEMP/shots"
+          timeout 300 xvfb-run -a -s "-screen 0 1280x720x24" \
+            "$RUNNER_TEMP/godot" --path godot/client --rendering-driver opengl3 --resolution 1280x720 \
+            res://tools/shots.tscn -- "$RUNNER_TEMP/shots"
+          ls "$RUNNER_TEMP/shots"
+          # Also into the log (base64, one line each), for reviewers who cannot download artifacts.
+          for f in "$RUNNER_TEMP"/shots/*.png; do echo "SHOT $(basename "$f") $(base64 -w0 "$f")"; done
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: godot-shots
+          path: ${{ runner.temp }}/shots
