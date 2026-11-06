@@ -16,6 +16,7 @@ const JavaRandom := preload("res://scripts/sim/java_random.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const MapHud := preload("res://scripts/ui/map_hud.gd")
+const Autopilot := preload("res://scripts/sim/autopilot.gd")
 const Effects := preload("res://scripts/world/effects.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const MissionPause := preload("res://scripts/ui/mission_pause.gd")
@@ -55,6 +56,7 @@ var _fire := false
 var _hotkey := -1  # a skill key pressed since the last tick
 var _potion := -1  # a potion key pressed since the last tick
 var _belt := -1  # a belt slot used by its key or a click on the skill bar since the last tick
+var autopilot := Autopilot.new()
 var _keys_down := {}  # attack, skill and potion keys held at the last frame
 var _last_held := -1
 var _blink := 0
@@ -182,6 +184,8 @@ func _process(delta: float) -> void:
 	if held != -1 and held != _last_held:
 		_pressed = held  # a new direction this tick: the original's key press
 	_last_held = held
+	if _pressed_now("auto"):
+		toggle_auto()
 	if _pressed_now("attack"):
 		_fire = true
 	for i in 5:
@@ -193,9 +197,20 @@ func _process(delta: float) -> void:
 	for i in 5:
 		if _pressed_now("belt_%d" % (i + 1)):
 			_belt = i
+	if held != -1 or _fire or _hotkey != -1 or _potion != -1 or _belt != -1:
+		autopilot.player_key()
 	_acc += delta
 	while _acc >= tick:
 		_acc -= tick
+		var auto: Dictionary = autopilot.decide(sim)
+		if int(auto.held) != -1 and held == -1:
+			held = int(auto.held)
+		if bool(auto.fire):
+			_fire = true
+		if int(auto.hotkey) != -1 and _hotkey == -1:
+			_hotkey = int(auto.hotkey)
+		if int(auto.belt) != -1 and _belt == -1:
+			_belt = int(auto.belt)
 		sim.tick(held, _pressed, _fire, _hotkey, _potion, _belt)
 		for n in sim.sounds:
 			Audio.play_sound(n)
@@ -426,8 +441,19 @@ func _unhandled_input(event: InputEvent) -> void:
 		click_bar(event.position)
 
 
+## Auto-hunt on / off (Tab, F, R3 or a click on AUTO).
+func toggle_auto() -> void:
+	autopilot.toggle()
+	hud.auto_on = autopilot.on
+	hud.queue_redraw()
+
+
 ## A click on the skill bar: a belt slot is used, a skill cast. False when it missed the bar.
 func click_bar(at: Vector2) -> bool:
+	if hud.auto_at(at):
+		get_viewport().set_input_as_handled()
+		toggle_auto()
+		return true
 	var hit: Array = hud.slot_at(at)
 	if hit.is_empty():
 		return false

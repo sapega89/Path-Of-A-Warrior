@@ -6,7 +6,7 @@ extends Node
 ## Menus use Godot's built-in ui_* actions, which already cover all three.
 ## As in pyport: 1-5 (or U I O P K) the five skills, Z X C V B the five belt slots, * and #
 ## (the numeric keypad, RT and L3 of a pad) the two potion keys; the pad's right stick
-## up / right / down / left uses the belt slots Z X C V.
+## up / right / down / left uses the belt slots Z X C V. Tab, F or R3: auto-hunt on / off.
 
 const KEYS := {
 	"move_left": [KEY_A, KEY_LEFT],
@@ -27,6 +27,7 @@ const KEYS := {
 	"belt_4": [KEY_V],
 	"belt_5": [KEY_B],
 	"pause": [KEY_ESCAPE],
+	"auto": [KEY_TAB, KEY_F],
 }
 const PAD_BUTTONS := {
 	"move_left": JOY_BUTTON_DPAD_LEFT,
@@ -40,6 +41,7 @@ const PAD_BUTTONS := {
 	"skill_4": JOY_BUTTON_RIGHT_SHOULDER,
 	"potion_2": JOY_BUTTON_LEFT_STICK,
 	"pause": JOY_BUTTON_START,
+	"auto": JOY_BUTTON_RIGHT_STICK,
 }
 ## action: [axis, direction]
 const PAD_AXES := {
