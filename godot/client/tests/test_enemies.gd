@@ -208,9 +208,12 @@ func test_hero_falls() -> void:
 	sim.hero_is_hit(d[1])
 	eq(sim.hero.hp, 0, "no HP left")
 	eq(sim.hero.action, 10, "falls")
+	var heard := false
 	for t in 30:
 		sim.tick(-1, -1)
+		heard = heard or (sim.banner == MapSim.BANNER_FAILED and 6 in sim.sounds)
 	eq(sim.banner, MapSim.BANNER_FAILED, "Mission fail!")
+	check(heard, "with its sound (6)")
 	check(not sim.finished, "waits for a key")
 	sim.tick(-1, -1, true)
 	check(sim.finished, "a key ends the mission")
