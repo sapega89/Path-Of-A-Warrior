@@ -40,7 +40,7 @@ DECOMP_FIX = {
     "F17": True,  # lost parentheses: c.a(5 ints) room index `(ce+4)/7 * (W/7)`, c.a(int) rooms `(W/7) * (H/7)`
     "F18": True,  # ar.Z(int): archer's arrow start written to eC.b[1] while ar.j()/ad() fly eC.b[0]
     "F19": True,  # l.e(27) reward popup after an ending: `i = i + 1; l[i] = ...` -> `l[i++] = ...`
-    "F20": True,  # as.a(ab) (Gamevil Live): the answer status read into a local, gr never set -> gr = status
+    "F20": True,  # as.a(ab) (Live): the answer status read into a local, gr never set -> gr = status
     "F11": True,  # e.T(int) stat cursor: decompiled `a(.., bool, bool, bool)` = colour 0x010101 -> 255,255,255
 }
 
@@ -51,43 +51,43 @@ ORIG_BUG = {
     "B2": True,  # ag.Y() level read from the save as a signed byte: Lv128+ comes back negative
     "B3": True,  # e.java 790-801 Visiting with 504 Emperor's Seal: the list fn[2] of all 44 generals
                  # is never filled (visitgen.arr)
-    "B4": True,  # as.a(ab) 789 (Gamevil Live Buy into the Warehouse when the backpack is full):
+    "B4": True,  # as.a(ab) 789 (Live Buy into the Warehouse when the backpack is full):
                  # the item is put into cz.Y anyway, past slot 24 -> it goes into the Warehouse
-    "B5": True,  # m.bp() Gamevil Live registration: 3 frames after CONFIRM "Network connection has
+    "B5": True,  # m.bp() Live registration: 3 frames after CONFIRM "Network connection has
                  # failed" replaces the answer of the 531 -> the answer stops that count
     "B6": True,  # ar.java:179 pause menu: FIRE on the 5th slot of Items (cR.a == 2, cM[1] == 4) opens
                  # Help as the Help row of the list does; back in Items cN is 7 -> slots 6-7 -> AIOOBE
     "B7": True,  # e.java:2694-2707 Combine with < 3 items: popup 39 over a grid that keeps fK[8] / fK[18]
-                 # of the last grid screen (Gamevil Live: 9 rows) -> af[34] -> AIOOBE
+                 # of the last grid screen (Live: 9 rows) -> af[34] -> AIOOBE
     "B8": True,  # ag.java:872-967 entering the map clears the enemy effect data (fn = null) but not its
                  # kind: a general that was mid-skill leaves kind 2 -> the next enemy reads fn[..] -> NPE
-    "B9": True,  # m.bv() 365 Gamevil Live Backpack / Warehouse grid: 255 - 38 + fK[6] puts the caption at
+    "B9": True,  # m.bv() 365 Live Backpack / Warehouse grid: 255 - 38 + fK[6] puts the caption at
                  # y 194 under the description strip and the 3 rows at y 232..326, under the soft keys
                  # -> 255 - (38 + fK[6] + 16 + 22): caption y 62, rows y 100..194, strip y 200.
                  # The same in m.br() (Buy: kinds after the category): 255 - 64 + fK[6] puts the gold
                  # box at y 194 and the 5 rows at y 258..418 -> 255 - (64 + fK[6]): gold y 36, rows y 100
-    "B10": True,  # m.java:257 Gamevil Live Buy, the lots of a page: the same 255 - 84 + fK[6] puts the
+    "B10": True,  # m.java:257 Live Buy, the lots of a page: the same 255 - 84 + fK[6] puts the
                   # 2 rows of lots at y 218..282 under the description strip (y 200)
                   # -> 255 - (84 + fK[6] + 10 + 32): gold y 52, rows y 136..200, strip y 200
-    "B11": True,  # m.bl() Gamevil Live Sell, the price: the strip describes ag.cz.Y[fK[18]] (the backpack)
+    "B11": True,  # m.bl() Live Sell, the price: the strip describes ag.cz.Y[fK[18]] (the backpack)
                   # also when the item is sold from the warehouse -> empty or another item's text
 }
 
-# Gamevil Live of the single player (pow_server/live.py): "local" = the server inside the game
+# Live of the single player (pow_server/live.py): "local" = the server inside the game
 # (shares the accounts of the in-game multiplayer server), or ws(s)://host:28200/live.
 LIVE_SERVER = os.environ.get("POW_LIVE_SERVER", "local")
 # PORT-EXTRA (asked by Andrey): the single player's save also kept on the server
-# (pow/game/cloud_save.py, pow_server/cloud.py) for the Gamevil Live account. "auto" = the
+# (pow/game/cloud_save.py, pow_server/cloud.py) for the Live account. "auto" = the
 # server of LIVE_SERVER at the path /save when LIVE_SERVER is ws(s)://; "off"; or a
 # ws(s)://host:28200/save URL. Browser: index.html?save=...
 SAVE_SERVER = os.environ.get("POW_SAVE_SERVER", "auto")
-# PORT-EXTRA (asked by Andrey): "always online". Continue and New Game log in to Gamevil Live
+# PORT-EXTRA (asked by Andrey): "always online". Continue and New Game log in to Live
 # with the registered account at once, in the background, and the connection stays for the whole
 # game (pow/game/live_online.py); a hero without an account is offered the registration once. Game
-# Menu > Gamevil Live / Warehouse opens without the "Connect to Gamevil Live?" question, and
+# Menu > Live / Warehouse opens without the "Connect to Live?" question, and
 # Management (Save / Load User Data) is gone: there is one hero, kept on the server by cloud_save.
 # Without the server the game plays as before. POW_ALWAYS_ONLINE=0 = the original (connect on every
-# Gamevil Live, disconnect on leaving it). tools/shot.py uses 0.
+# Live, disconnect on leaving it). tools/shot.py uses 0.
 ALWAYS_ONLINE = os.environ.get("POW_ALWAYS_ONLINE", "1") == "1"
 # PORT-EXTRA (asked by Andrey): the hero's save only on the server (pow/game/cloud_save.py
 # SERVER_ONLY), never on the device, and the game starts only online: without the server a
@@ -135,7 +135,7 @@ SKILL_BAR = os.environ.get("POW_SKILL_BAR", "1") == "1"
 SKILL_CARD = os.environ.get("POW_SKILL_CARD", "1") == "1"
 
 # PORT-EXTRA: POW_CHEAT=1 turns on the original developers' cheat, the JAD/manifest property
-# GAMEVIL_CHEAT: TRUE (ag.java:626, ag.bi): loading a save sets gold to 555000 (ag.java:2179);
+# POW_CHEAT: TRUE (ag.java:626, ag.bi): loading a save sets gold to 555000 (ag.java:2179);
 # a new hero gets 500000 gold, 2000 in every stat and all skills (ag.java:916, 3260).
 CHEAT = os.environ.get("POW_CHEAT", "0") == "1"
 
@@ -169,7 +169,7 @@ AUTO_HUNT = os.environ.get("POW_AUTO_HUNT", "0") == "1"
 AUTO_BUTTON = os.environ.get("POW_AUTO_BUTTON", "1") == "1"
 
 # PORT-EXTRA (asked by the player): the description of an item / skill / potion (Blacksmith,
-# Gear, Inventory, Skills, Assign Items; not Gamevil Live, whose grids leave no room) in a box as wide as the screen, in up to
+# Gear, Inventory, Skills, Assign Items; not Live, whose grids leave no room) in a box as wide as the screen, in up to
 # WIDE_DESC_LINES lines, instead of the narrow strip whose one line runs by. A longer text
 # grows the box, up to WIDE_DESC_MAX_LINES lines (nothing runs by; the rest is cut).
 # POW_WIDE_DESC=0 = the original strip.
@@ -190,7 +190,7 @@ SCREEN_OPTION = os.environ.get("POW_SCREEN_OPTION", "1") == "1"
 # turns it off.
 GAMEPAD = os.environ.get("POW_GAMEPAD", "1") == "1"
 
-# PORT-EXTRA (asked by the player): on-screen keyboards of the Gamevil Live registration
+# PORT-EXTRA (asked by the player): on-screen keyboards of the Live registration
 # (pow/game/key_grid.py): the UserID grid gets a row of digits and the password screen a row
 # 0..9 + OK, so a gamepad (or the mouse) can type them. POW_REG_KEYBOARD=0 = the original
 # (letters only, the password from the number keys). tools/shot.py uses 0 (baseline screenshots).
@@ -201,6 +201,6 @@ REG_KEYBOARD = os.environ.get("POW_REG_KEYBOARD", "1") == "1"
 # (pow/midp/canvas.py input_source). POW_KEY_HINTS=0 = the plain captions; tools/shot.py uses 0.
 KEY_HINTS = os.environ.get("POW_KEY_HINTS", "1") == "1"
 
-# PORT-EXTRA (asked by Andrey): no Gamevil name, logo, site or "Gamevil Live" in what the player
-# sees (pow/game/rebrand.py). 0 = as in the original.
-NO_GAMEVIL = os.environ.get("POW_NO_GAMEVIL", "1") == "1"
+# PORT-EXTRA (asked by Andrey): in what the player sees, no name, logo or site of the original
+# publisher, and "Live" instead of the name of its online service (pow/game/rebrand.py). 0 = as in the original.
+REBRAND = os.environ.get("POW_REBRAND", "1") == "1"

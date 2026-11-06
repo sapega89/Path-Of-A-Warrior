@@ -1,4 +1,4 @@
-"""Binary codec of the original Gamevil protocol (PHASE_9 task 9.4).
+"""Binary codec of the original protocol (PHASE_9 task 9.4).
 
 Layout (docs/analysis/06_multiplayer.md §2.1, MP e.java / d.java / k.java):
 

@@ -729,7 +729,7 @@ class Menus(GameCanvas):
                 if GameCanvas.live_saved != 0:
                     return
                 from pow.game.live_online import Online
-                Online.on_game_start()       # PORT-EXTRA: log in to Gamevil Live in the background
+                Online.on_game_start()       # PORT-EXTRA: log in to Live in the background
                 GameCanvas.stop_sound()
                 self.load_menu_frames()
                 self.enter_submenu()
@@ -1868,7 +1868,7 @@ class Menus(GameCanvas):
                 GameCanvas.menu[1] = 3
                 if config.ORIG_BUG["B7"]:
                     # ORIG-BUG B7: the grid behind this popup keeps the scroll / cursor of the last
-                    # grid screen; after the 9-row Warehouse of Gamevil Live they point past shop[24]
+                    # grid screen; after the 9-row Warehouse of Live they point past shop[24]
                     GameCanvas.cursor[8] = 0
                     GameCanvas.cursor[18] = 0
                 return True

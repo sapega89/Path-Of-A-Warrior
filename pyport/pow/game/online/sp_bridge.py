@@ -1,10 +1,10 @@
 """Bridge to the single-player save (PHASE_9 task 9.10), on the client side.
 
-The original: POW single, Gamevil Live > Management > Save User Data, sent the hero to the
+The original: POW single, Live > Management > Save User Data, sent the hero to the
 server (as.java:475-528, opcode 256), and the multiplayer server played with that hero.
-Gamevil Live of the single-player port is not there yet (phase 7), so the multiplayer client
+Live of the single-player port is not there yet (phase 7), so the multiplayer client
 reads the hero itself from the single-player save on the same computer / in the same browser
-(RMS "gamevil_pow_data", one 965-byte record written by ag.java) and sends it with every login
+(RMS "pow_data", one 965-byte record written by ag.java) and sends it with every login
 (262, PORT-EXTRA). The gold, fame and experience of a won or lost battle (1032) go back into
 that save at once.
 
@@ -15,7 +15,7 @@ import struct
 
 import config
 
-SAVE_STORE = "gamevil_pow_data"
+SAVE_STORE = "pow_data"
 SAVE_LEN = 965
 
 # offsets in the record (see the module docstring)

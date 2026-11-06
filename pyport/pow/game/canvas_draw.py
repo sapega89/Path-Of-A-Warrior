@@ -58,7 +58,7 @@ class DrawMixin:
         if GameCanvas.images[30] is None:
             return
         GameCanvas.draw_region(0, 0, GameCanvas.canvas_size.x, GameCanvas.canvas_size.y, GameCanvas.images[30], 0, 0)
-        if not config.NO_GAMEVIL:  # PORT-EXTRA: no "(c) 2008 GAMEVIL INC." line (rebrand.py)
+        if not config.REBRAND:  # PORT-EXTRA: no copyright line (rebrand.py)
             if GameCanvas.title_press is None:
                 GameCanvas.title_press = self.load_image(GameCanvas.scr_ui.get(36))
             GameCanvas.draw_region(GameCanvas.view_cx - 66 + GameCanvas.view_x, GameCanvas.canvas_size.y - 20, 132, 14, GameCanvas.title_press, 0, 0)

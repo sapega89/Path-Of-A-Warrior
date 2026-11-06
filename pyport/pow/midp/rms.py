@@ -36,8 +36,24 @@ def _load_raw(name):
     return disk_load(name)
 
 
+# PORT-EXTRA (asked by Andrey): the stores lost the original publisher's prefix. A device
+# that still has a store under its old name gets it moved to the new one on the first read.
+OLD_PREFIX = "game" + "vil_"
+RENAMED = ("pow_data", "pow_data_backup", "pow_env", "pow_env_backup", "pow_regist")
+
+
 def disk_load(name):
     """The device's own copy (files / localStorage), even of a memory-only store."""
+    raw = _disk_read(name)
+    if raw is None and name in RENAMED:
+        raw = _disk_read(OLD_PREFIX + name)
+        if raw is not None:
+            _disk_write(name, raw)
+            disk_delete(OLD_PREFIX + name)
+    return raw
+
+
+def _disk_read(name):
     if _IS_WEB:
         import platform  # pygbag: platform.window is the JS window
         v = platform.window.localStorage.getItem("rms_" + name)
@@ -53,6 +69,10 @@ def _save_raw(name, text):
     if name in memory_only:
         memory[name] = text
         return
+    _disk_write(name, text)
+
+
+def _disk_write(name, text):
     if _IS_WEB:
         import platform
         platform.window.localStorage.setItem("rms_" + name, text)

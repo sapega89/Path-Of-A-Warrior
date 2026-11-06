@@ -1,15 +1,15 @@
 """PORT-EXTRA (asked by Andrey): "always online" (config.ALWAYS_ONLINE).
 
-The original connected to Gamevil Live only inside Game Menu > Gamevil Live (popup 2 "Connect to
-Gamevil Live?", "Connecting...", login 530) and closed the connection on leaving it. Here:
+The original connected to Live only inside Game Menu > Live (popup 2 "Connect to
+Live?", "Connecting...", login 530) and closed the connection on leaving it. Here:
 
-- Continue and New Game log in at once with the account of "gamevil_pow_regist", in the
+- Continue and New Game log in at once with the account of "pow_regist", in the
   background: no popup, no "Connecting...", no locked keys. Errors stay silent (the game is just
   offline) and the login is tried again later, up to every RETRY_MAX_MS.
-- Gamevil Live / Warehouse open at once: no popup 2, and over the open connection no
+- Live / Warehouse open at once: no popup 2, and over the open connection no
   "Connecting..." unless an answer takes longer than QUIET_MS (Live.quiet_request()).
-- The connection stays after leaving Gamevil Live; a 530 every KEEPALIVE_MS keeps the server
-  (pow_server/ws_server.py IDLE_TIMEOUT 300 s) from closing it. When it breaks, the next Gamevil
+- The connection stays after leaving Live; a 530 every KEEPALIVE_MS keeps the server
+  (pow_server/ws_server.py IDLE_TIMEOUT 300 s) from closing it. When it breaks, the next
   Live request logs in again by itself (as.l(): a request without a connection sends 530 first).
 - A hero without an account gets the registration screen once on the Game Menu (after the
   prologue of a New Game, after Continue unless the player skipped it before): BACK on the empty
@@ -18,7 +18,7 @@ Gamevil Live?", "Connecting...", login 530) and closed the connection on leaving
   so it must have an account. The registration screen is offered after every Continue / New Game
   of a hero without one and cannot be skipped: BACK closes it and it opens again at once.
 
-Gamevil Live itself (live.py) is unchanged apart from the guards marked `Online` there.
+Live itself (live.py) is unchanged apart from the guards marked `Online` there.
 """
 import config
 from pow.game.game_canvas import GameCanvas
@@ -42,7 +42,7 @@ class Online:
     retry_ms = RETRY_MS
     last_sent = 0           # ms: the last background 530
     attempts = 0            # background 530s sent (tools/shot.py `logins`)
-    mp_pending = False      # Main Menu > Multiplayer > YES: open Gamevil Live > Multiplayer on
+    mp_pending = False      # Main Menu > Multiplayer > YES: open Live > Multiplayer on
                             # the next free Game Menu frame (popups.py)
 
     @staticmethod
@@ -113,7 +113,7 @@ class Online:
         if Online.background:
             return                           # check_answer() ends it
         if GameCanvas.in_live or Live.waiting or Live.pending_request != -1:
-            return                           # Gamevil Live is on the screen: it owns the network
+            return                           # Live is on the screen: it owns the network
         from pow.game.live_screen import LiveScreen
         if Online.offer:
             if Online._game_menu_free():

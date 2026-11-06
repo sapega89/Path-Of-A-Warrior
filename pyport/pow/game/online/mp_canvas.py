@@ -273,7 +273,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
     menu_icon_image = None  # g.java:247 Image
     title_image = None  # g.java:248 Image
     press_image = None  # g.java:249 Image
-    gamevil_image = None  # g.java:250 Image
+    copyright_image = None  # g.java:250 Image
     logo_image = None  # g.java:251 Image
     softkey_image = None  # g.java:252 Image
     body_images = None  # g.java:253 Image[]
@@ -334,9 +334,9 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
         MpCanvas.screen_h = height
         try:
             MpCanvas.app_version = MpCanvas.midlet.getAppProperty("MIDlet-Version")
-            MpCanvas.server_host = MpCanvas.midlet.getAppProperty("GAMEVIL_SERVER")
-            MpCanvas.server_port = int(MpCanvas.midlet.getAppProperty("GAMEVIL_PORT"))
-            MpCanvas.game_ver = MpCanvas.midlet.getAppProperty("GAMEVIL_GAME_VER")
+            MpCanvas.server_host = MpCanvas.midlet.getAppProperty("POW_SERVER")
+            MpCanvas.server_port = int(MpCanvas.midlet.getAppProperty("POW_PORT"))
+            MpCanvas.game_ver = MpCanvas.midlet.getAppProperty("POW_GAME_VER")
         except Exception:
             MpCanvas.app_version = ""
             MpCanvas.server_host = "64.14.246.182"
@@ -505,7 +505,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
             MpCanvas.logo_time = system.currentTimeMillis()
             Draw.fill_rect(MpCanvas.buffer_g, 0, 0, MpCanvas.canvas_w, MpCanvas.canvas_h, 0xFFFFFF)
         self.draw_buffer()
-        if config.NO_GAMEVIL:  # PORT-EXTRA: no Gamevil logo screen (rebrand.py)
+        if config.REBRAND:  # PORT-EXTRA: no logo screen of the original publisher (rebrand.py)
             MpCanvas.logo_time = 0
         else:
             Draw.draw_image(MpCanvas.screen_g, MpCanvas.logo_image, idiv(MpCanvas.canvas_w, 2), MpCanvas.logo_y, 17)
@@ -1137,10 +1137,10 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
                 Draw.draw_image(MpCanvas.buffer_g, MpCanvas.title_image, (MpCanvas.center_x - idiv(MpCanvas.title_image.getWidth(), 2)), (top_y + (80 * i_title)), 0)
                 MpCanvas.title_image = None
                 i_title = i_title + 1
-            if not config.NO_GAMEVIL:  # PORT-EXTRA: no "(c) 2008 GAMEVIL INC." line (rebrand.py)
-                if MpCanvas.gamevil_image is None:
-                    MpCanvas.gamevil_image = self.load_image("/gamevil.png")
-                Draw.draw_image(MpCanvas.buffer_g, MpCanvas.gamevil_image, idiv(MpCanvas.canvas_w, 2), (MpCanvas.canvas_h - 1), 33)
+            if not config.REBRAND:  # PORT-EXTRA: no copyright line (rebrand.py)
+                if MpCanvas.copyright_image is None:
+                    MpCanvas.copyright_image = self.load_image("/gamevil.png")
+                Draw.draw_image(MpCanvas.buffer_g, MpCanvas.copyright_image, idiv(MpCanvas.canvas_w, 2), (MpCanvas.canvas_h - 1), 33)
             if MpCanvas.press_image is None:
                 MpCanvas.press_image = self.load_image("/press.png")
         self.draw_buffer()

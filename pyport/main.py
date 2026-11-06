@@ -2,17 +2,17 @@
 
     python pyport/main.py            # window 480x640 (POW_SCALE=3 -> 720x960)
     python -m pygbag build/web       # browser, see tools/build_web.py
-    POW_LIVE_SERVER=ws://host:28200/live   Gamevil Live on `python -m pow_server` (default: inside
+    POW_LIVE_SERVER=ws://host:28200/live   Live on `python -m pow_server` (default: inside
                                      the game); browser: index.html?live=wss://host:port/live
     POW_SAVE_SERVER=auto                 the save also kept on that server (path /save) for the
-                                     Gamevil Live account; off / ws(s)://host:port/save;
+                                     Live account; off / ws(s)://host:port/save;
                                      browser: index.html?save=...
 
-Gamevil Live > Multiplayer (and Main Menu > Multiplayer > YES, which is Continue + that) runs the
+Live > Multiplayer (and Main Menu > Multiplayer > YES, which is Continue + that) runs the
 Multiplayer screens (pow/game/online) as a state of the same canvas and loop
 (pow/game/online_session.py; the server choice is POW_MP_SERVER / index.html?server=...),
 without their logo, sound question, title, exit popup and outro. Their Exit comes back to the
-Gamevil Live menu, and what the battles earned goes to the hero (Live.after_multiplayer).
+Live menu, and what the battles earned goes to the hero (Live.after_multiplayer).
 """
 import asyncio
 import os
@@ -48,7 +48,7 @@ def demo_save():
     ag.U() accepts (hero "HERO", all values 0); then Main Menu -> Continue opens the Game Menu.
     Off by default; turn on with --demo or POW_DEMO_SAVE=1. An existing save is never touched."""
     from pow.midp.rms import RecordStore
-    rs = RecordStore.openRecordStore("gamevil_pow_data", True)
+    rs = RecordStore.openRecordStore("pow_data", True)
     if rs.getNumRecords() == 0:
         data = bytearray(965)
         data[0], data[1] = 965 & 0xFF, 965 >> 8
@@ -58,7 +58,7 @@ def demo_save():
 
 
 def live_from_page():
-    """Browser: ?live=ws(s)://host:port/live in the page address picks the Gamevil Live server."""
+    """Browser: ?live=ws(s)://host:port/live in the page address picks the Live server."""
     if sys.platform != "emscripten":
         return
     try:
@@ -69,12 +69,12 @@ def live_from_page():
         where = params.get("live", [""])[0]
         if where:
             config.LIVE_SERVER = where
-            print("Gamevil Live server:", config.LIVE_SERVER)
+            print("Live server:", config.LIVE_SERVER)
         save = params.get("save", [""])[0]
         if save:
             config.SAVE_SERVER = save
     except Exception as ex:
-        print(f"Gamevil Live server from the page address: {ex!r}")
+        print(f"Live server from the page address: {ex!r}")
 
 
 # the module whose state lives on between the games: the server saves (their background task);

@@ -13,7 +13,7 @@ def test_gain_curve(monkeypatch):
 
 
 def test_saved_volume_used_on_first_sound(tmp_path, monkeypatch):
-    """gamevil_pow_env (load_options) -> volume -> Sound.play_now -> PlayerPool: the first sound."""
+    """pow_env (load_options) -> volume -> Sound.play_now -> PlayerPool: the first sound."""
     import config
     from pow.game.game_canvas import GameCanvas
     from pow.game.player_pool import PlayerPool

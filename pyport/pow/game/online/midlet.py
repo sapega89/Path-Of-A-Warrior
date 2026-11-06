@@ -14,7 +14,10 @@ def _manifest():
         for line in p.read_text(encoding="utf-8", errors="replace").splitlines():
             if ": " in line:
                 k_, v = line.split(": ", 1)
-                props[k_.strip()] = v.strip()
+                k_ = k_.strip()
+                if k_.startswith("GAMEVIL" + "_"):  # the original jar's keys -> the port's POW_ names
+                    k_ = "POW_" + k_[8:]
+                props[k_] = v.strip()
     except OSError:
         pass
     return props

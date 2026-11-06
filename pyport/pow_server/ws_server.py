@@ -9,12 +9,12 @@ the same, so there is one protocol for both. Behind https the page needs wss://:
 server behind a TLS proxy (nginx / Caddy) or pass --cert/--key.
 
 --tcp-port: optional raw TCP gateway with the original framing, for the original jar in an
-emulator with GAMEVIL_SERVER/GAMEVIL_PORT pointed here (task 9.23, untested with the real jar).
+emulator with POW_SERVER/POW_PORT pointed here (task 9.23, untested with the real jar).
 The jar logs in again with a 262 without a token, so this needs --legacy (no token check).
 
-Gamevil Live of the single player (pow_server/live.py) is on the same port at the path /live
+Live of the single player (pow_server/live.py) is on the same port at the path /live
 (ws://host:28200/live), and with --live-tcp-port on raw TCP for the original single-player jar
-(its GAMEVIL_PORT was 28230). It shares the accounts with the multiplayer server.
+(its POW_PORT was 28230). It shares the accounts with the multiplayer server.
 
 PORT-EXTRA: the single player's saves (pow_server/cloud.py) are at the path /save
 (ws://host:28200/save), JSON text messages, on the same accounts.
@@ -269,7 +269,7 @@ def main(argv=None):
     ap.add_argument("--match-wait", type=float, default=None, metavar="SEC",
                     help="how long a Duel waits for a live opponent before a CPU (default 60)")
     ap.add_argument("--live-tcp-port", type=int, default=None,
-                    help="raw TCP Gamevil Live for the original single-player jar (was 28230)")
+                    help="raw TCP Live for the original single-player jar (was 28230)")
     ap.add_argument("--cert", help="TLS certificate (PEM): the server speaks wss://")
     ap.add_argument("--key", help="TLS private key (PEM)")
     sec = ap.add_argument_group("security (PORT-EXTRA, pow_server/security.py)")

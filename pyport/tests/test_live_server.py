@@ -1,4 +1,4 @@
-"""PHASE_7: the Gamevil Live server of the single player (pow_server/live.py), driven with the
+"""PHASE_7: the Live server of the single player (pow_server/live.py), driven with the
 byte layouts as.n() writes and as.a(ab) reads."""
 import random
 import struct

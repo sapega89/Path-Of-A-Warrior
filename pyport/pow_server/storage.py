@@ -70,6 +70,11 @@ class Storage:
         self.db = sqlite3.connect(path, check_same_thread=False, isolation_level=None)
         self.lock = threading.Lock()
         self.db.executescript(_SCHEMA)
+        # PORT-EXTRA (asked by Andrey): the save stores lost the original publisher's prefix
+        # (pow/midp/rms.py RENAMED); rows saved under the old names move to the new ones
+        old = "game" + "vil_"
+        self.db.execute("UPDATE OR IGNORE saves SET store = substr(store, ?) WHERE store LIKE ?",
+                        (len(old) + 1, old + "%"))
 
     # --- accounts ------------------------------------------------------------
     def has_account(self, user_id):
@@ -119,7 +124,7 @@ class Storage:
             rows = self.db.execute("SELECT data FROM characters").fetchall()
         return [Character.from_json(json.loads(r[0])) for r in rows]
 
-    # --- Gamevil Live (pow_server/live.py): JSON documents by key ---------------
+    # --- Live (pow_server/live.py): JSON documents by key ---------------
     def live_get(self, key):
         row = self._one("SELECT data FROM live WHERE key=?", key)
         return None if row is None else json.loads(row[0])
@@ -163,7 +168,7 @@ class MemoryStorage:
     def __init__(self, path=":memory:"):
         self.accounts = {}       # id -> [salt, hash, token]
         self.chars = {}          # id -> json dict
-        self.live = {}           # key -> json text (Gamevil Live)
+        self.live = {}           # key -> json text (Live)
         self.saves = {}          # (id, store) -> {"rev", "at", "records"}
 
     def has_account(self, user_id):

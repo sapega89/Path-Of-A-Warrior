@@ -1,4 +1,4 @@
-"""m.java - the drawing of Gamevil Live (PHASE_7) and its registration record. Literal port.
+"""m.java - the drawing of Live (PHASE_7) and its registration record. Literal port.
 
 as.a = m(); ag.L() calls as.aK() -> m.a() every frame while bV == 11. as.ho picks the screen.
 """
@@ -156,7 +156,7 @@ class LiveScreen(Live):
                 Live.blink = False
                 Gfx.set_font(GameCanvas.font_white)
                 Gfx.draw_string("In order to access", GameCanvas.screen_w // 2, i - 30, 1)
-                Gfx.draw_string(rebrand.text("Gamevil Live"), GameCanvas.screen_w // 2, i - 10, 1)
+                Gfx.draw_string(rebrand.text(rebrand.SERVICE), GameCanvas.screen_w // 2, i - 10, 1)
                 Gfx.draw_string("you must register first.", GameCanvas.screen_w // 2, i + 10, 1)
                 Gfx.draw_string("Please enter a UserID.", GameCanvas.screen_w // 2, i + 30, 1)
                 Gfx.draw_string("(4-12 characters)", GameCanvas.screen_w // 2, i + 50, 1)
@@ -238,7 +238,7 @@ class LiveScreen(Live):
     @staticmethod
     def is_registered():  # m.java:278-285  (registered already?)
         try:
-            rs = RecordStore.openRecordStore("gamevil_pow_regist", True)
+            rs = RecordStore.openRecordStore("pow_regist", True)
             return rs.getNumRecords() != 0
         except Exception:
             return False
@@ -253,7 +253,7 @@ class LiveScreen(Live):
         for b in range(len(chars)):
             record[12 + b] = chars[b]
         try:
-            rs = RecordStore.openRecordStore("gamevil_pow_regist", True)
+            rs = RecordStore.openRecordStore("pow_regist", True)
             if rs.getNumRecords() == 0:
                 rs.addRecord(bytes(record), 0, len(record))
             rs.setRecord(1, bytes(record), 0, len(record))
@@ -263,7 +263,7 @@ class LiveScreen(Live):
     def load_login(self):  # m.java:307-320  (read it back: l = [0..12), m = [12..26))
         record = bytes(26)
         try:
-            rs = RecordStore.openRecordStore("gamevil_pow_regist", False)
+            rs = RecordStore.openRecordStore("pow_regist", False)
             if rs is None or rs.getNumRecords() < 1:
                 Live.password = ""
                 Live.user_id = ""

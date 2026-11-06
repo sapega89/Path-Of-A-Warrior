@@ -1,14 +1,15 @@
 """PORT-EXTRA (asked by Andrey, 05.11.2026): no Gamevil in what the player sees.
 
 The original shows Gamevil's name, logo, site and "Gamevil Live" in its menus, help and
-texts. With config.NO_GAMEVIL (on by default, POW_NO_GAMEVIL=0 = as in the original):
+texts. With config.REBRAND (on by default, POW_REBRAND=0 = as in the original):
 - "Gamevil Live" / "GAMEVIL LIVE" reads "Live" / "LIVE" everywhere it is shown (the Game Menu
   labels txt_b.png / txt_m.png too: pyport/assets/rebrand, read by pow/midp/resources.py);
 - the strings that only advertise Gamevil (site, e-mail, copyright, credits) are replaced;
 - the logos (gamevil.png "(c) 2008 GAMEVIL INC." under the title, gamevillogo.png of the
   Multiplayer) are not drawn.
-Only what is shown changes: code names, save stores (gamevil_pow_data, ...) and the server
-protocol stay as they are.
+This module and pow_mp/consts.py are the only code that still holds the publisher's name: the
+original strings it looks for (with config.REBRAND = False the game shows them as they were).
+Code names, save stores (pow/midp/rms.py RENAMED) and manifest keys (POW_*) lost the name.
 """
 import config
 
@@ -21,12 +22,14 @@ SCR = {
     ("gamestr.scr", 17): "2Connect to\\the server?",
 }
 
+SERVICE = "Gamevil Live"   # the name of the original online service, as m.java draws it
+
 _WORDS = (("accessing the Gamevil Live", "going to Live"), ("GAMEVIL LIVE", "LIVE"),
           ("Gamevil Live", "Live"))
 
 
 def enabled():
-    return config.NO_GAMEVIL
+    return config.REBRAND
 
 
 def text(s):

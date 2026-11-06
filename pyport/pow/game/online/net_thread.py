@@ -1,13 +1,13 @@
 """h.java - the network thread. Hand-written replacement over pow/midp/transport.py.
 
-h.java opened socket://GAMEVIL_SERVER:GAMEVIL_PORT in its own thread, read frames with d.b()
+h.java opened socket://POW_SERVER:POW_PORT in its own thread, read frames with d.b()
 and called g.a(k) for each, sleeping 100 ms after every frame; writing went through e.java
 (a byte buffer) and h.b() sent it. Here the game loop calls h.tick() once per frame: it
 connects when asked, delivers at most one received frame (like the 100 ms sleep did) and
 reports a dropped connection the way h.run() did (g.g(1..3)).
 
 Where it connects: config.MP_SERVER ("local" = the server inside the game, or ws(s)://...),
-not the manifest's GAMEVIL_SERVER (dead).
+not the manifest's POW_SERVER (dead).
 
 PORT-EXTRA (pow_server/messages.py): the token of 279 is kept in RMS "pow_mp_token" and
 appended to every 262; a 263 with status -3 (token refused) forgets it and the saved UserID,

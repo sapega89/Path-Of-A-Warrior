@@ -1,4 +1,4 @@
-"""as.java - Gamevil Live of the single player (PHASE_7): its menus, the input and the
+"""as.java - Live of the single player (PHASE_7): its menus, the input and the
 requests / answers. Literal port; the drawing is m.java (pow/game/m.py).
 
 as is static state (every field is static in Java) plus an ag subclass instance (ag.be) whose
@@ -43,7 +43,7 @@ B5 = config.ORIG_BUG["B5"]
 class Live(GameCanvas):
     screen = None            # m (the drawing)
     net = None            # v (the network)
-    first_login = True            # first Gamevil Live since the game started / a new game
+    first_login = True            # first Live since the game started / a new game
     waiting = False           # waiting for an answer
     request_time = 0               # time of the request
     pending_request = -1              # request to send on the next i()
@@ -122,13 +122,13 @@ class Live(GameCanvas):
         if Live.warehouse_serials is None:
             Live.warehouse_serials = [0] * config.WAREHOUSE_SIZE
 
-    def open_live(self):  # as.java:180-190  (Game Menu > Gamevil Live)
+    def open_live(self):  # as.java:180-190  (Game Menu > Live)
         from pow.game.live_screen import LiveScreen
         Live.inited = True
         if LiveScreen.is_registered():
             Live.reg_from_popup = False
             Live.screen.load_login()
-            if Online.enabled():             # PORT-EXTRA: no "Connect to Gamevil Live?"
+            if Online.enabled():             # PORT-EXTRA: no "Connect to Live?"
                 self.connect_live()
                 return
             GameCanvas.popups.show(2)
@@ -220,7 +220,7 @@ class Live(GameCanvas):
                     Live.screen_redraw = True
         self._end_tick()
 
-    def connect_live(self):  # as.java:226-232  (popup 2 YES: into Gamevil Live, request 512)
+    def connect_live(self):  # as.java:226-232  (popup 2 YES: into Live, request 512)
         GameCanvas.in_live = True
         GameCanvas.stop_sound()
         self.load_live_images()
@@ -999,7 +999,7 @@ class Live(GameCanvas):
             Live.live_strings[b] = GameCanvas.gamestr(15 + b)
         return True
 
-    def open_live_menu(self):  # as.java:1157-1176  (GAMEVIL LIVE menu)
+    def open_live_menu(self):  # as.java:1157-1176  (LIVE menu)
         # PORT-EXTRA: one hero kept on the server, so no Management (Save / Load User Data)
         # PORT-EXTRA: online, the Multiplayer screens are a part of this game (main.py)
         Live.set_list_items("Trade|Warehouse|Safe|Multiplayer|" if Online.enabled() else "Trade|Warehouse|Safe|Management|", 20, 255)
@@ -1024,7 +1024,7 @@ class Live(GameCanvas):
 
     # --- PORT-EXTRA: the Multiplayer screens (pow.game.online) as a part of this game ---------------
     def open_multiplayer(self):
-        """Gamevil Live > Multiplayer: the Multiplayer screens as the next state of this canvas
+        """Live > Multiplayer: the Multiplayer screens as the next state of this canvas
         (online_session); their Exit comes back here (after_multiplayer)."""
         from pow.game import online_session
         self.save_game()                     # the Multiplayer login (262) reads the hero from the save
@@ -1032,7 +1032,7 @@ class Live(GameCanvas):
 
     def after_multiplayer(self, rewards):
         """Back in the Live menu: what the battles earned (1032: gold, fame, exp, loot) goes to
-        the hero in memory, as the Exp / Fame of Gamevil Live did (259 -> ag.H, popup 41)."""
+        the hero in memory, as the Exp / Fame of Live did (259 -> ag.H, popup 41)."""
         hero = GameCanvas.hero
         gold = fame = exp = 0
         for r in rewards:
@@ -1636,7 +1636,7 @@ class Live(GameCanvas):
         if bool_:
             Live.request_redraw()
 
-    def leave_live(self):  # as.java:1970-1978  (leave Gamevil Live -> Game Menu)
+    def leave_live(self):  # as.java:1970-1978  (leave Live -> Game Menu)
         if Online.offer_open:                # PORT-EXTRA: BACK on the offered registration = skip
             Online.on_registration_closed(False)
         GameCanvas.state = 2
@@ -1744,7 +1744,7 @@ class Live(GameCanvas):
         Live.title = Live.titles[3]
         Live.request_redraw()
 
-    def live_menu_keys(self, key):  # as.java:2095-2126  (GAMEVIL LIVE menu)
+    def live_menu_keys(self, key):  # as.java:2095-2126  (LIVE menu)
         if key == -7:
             self.leave_live()
             if GameCanvas.live_saved == 0:

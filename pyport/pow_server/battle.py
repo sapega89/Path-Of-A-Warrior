@@ -2,7 +2,7 @@
 
 The client only shows what the server decides (06 §3.3): it sends one 1027 {target, action,
 hit%} per round and plays the records of 1028 back. Everything here - turn order, damage,
-evasion, MP, skill effects, the CPU, rewards - was computed by the lost Gamevil server, so
+evasion, MP, skill effects, the CPU, rewards - was computed by the lost original server, so
 the numbers come from the single-player game where it has them (pow_server/sp_rules.py: hero
 stats, soldiers, damage ATK - DEF, skills, heals, souls, rewards); the rest is ours and says
 so. Pure Python, the random source is passed in so that tests are repeatable.

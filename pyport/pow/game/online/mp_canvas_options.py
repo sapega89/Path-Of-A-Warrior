@@ -49,8 +49,8 @@ class OptionsMixin:
     @staticmethod
     def use_sp_account():
         """PORT-EXTRA (asked by Andrey, config.ALWAYS_ONLINE): one account for the whole game.
-        The UserID / password of the single player's Gamevil Live registration
-        ("gamevil_pow_regist", pow/game/cloud_save.read_login) log in to the Multiplayer game too,
+        The UserID / password of the single player's Live registration
+        ("pow_regist", pow/game/cloud_save.read_login) log in to the Multiplayer game too,
         so its Login screen (state 2) is not shown; the title logs in with 278 at once. Without
         that registration the Multiplayer game asks as in the original."""
         MpCanvas.sp_account = False
