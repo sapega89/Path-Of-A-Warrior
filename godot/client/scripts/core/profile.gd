@@ -51,6 +51,7 @@ var done := {}  # "lord:mission" of the missions won
 var place := 0  # where the hero is: the lords of campaign chapter `place` can be fought for
 var lords_open := START_LORDS_OPEN  # bit (id - 1) set: that lord can be fought for
 var endings := 0  # bit i set: ending i was reached
+var shop: Array = []  # the Blacksmith's 25 things: the potions and scrolls, then 17 gears
 var reward_item := 0  # what the last ending gave (not saved)
 var opened_lord := 0  # the lord the last ending opened (not saved)
 
@@ -67,6 +68,7 @@ func _init() -> void:
 	for i in Items.BACKPACK:
 		backpack.append(Items.empty())
 	equipped[0] = Items.make(START_WEAPON)
+	fill_shop()
 
 
 ## The exp from level n to n + 1.
@@ -284,7 +286,9 @@ func take_from(sim: RefCounted, lord_id: int, mission: int, ruler_id: int,
 	var key := str(ruler_id)
 	progress[key] = mini(int(progress.get(key, 0)) + PROGRESS_PER_WIN, 100)
 	done["%d:%d" % [lord_id, mission]] = true
-	return gain_exp(int(sim.exp_reward()))
+	var levels := gain_exp(int(sim.exp_reward()))
+	fill_shop(rng)
+	return levels
 
 
 ## Where the campaign goes after a mission (info: its campaign.json record). A won mission
@@ -335,6 +339,115 @@ func advance(sim: RefCounted, lord_id: int, info: Dictionary, rng: RandomNumberG
 	return ending
 
 
+# ---- the Blacksmith ------------------------------------------------------------------------
+
+## New things in the shop (after a mission won): its potions and scrolls, and 17 gears of the
+## tiers the hero's level finds, the cheapest first.
+func fill_shop(rng: RandomNumberGenerator = null) -> void:
+	if rng == null:
+		rng = RandomNumberGenerator.new()
+	var ids: Array[int] = []
+	for i in Items.SHOP_GEAR:
+		ids.append(101 + 5 * rng.randi_range(0, 19) + Items.tier(level, rng.randi_range(0, 99)))
+	ids.sort()
+	shop = []
+	for id in Items.SHOP_POTIONS:
+		var it := Items.empty()
+		it.id = id
+		shop.append(it)
+	for id in ids:
+		shop.append(Items.make(id, rng))
+
+
+## Buys thing i of the shop: a potion goes to its quick slot (5 at most), a gear to the
+## backpack and out of the shop. Returns "bought", "no_gold", "no_more" or "full".
+func buy(i: int) -> String:
+	if i < 0 or i >= shop.size() or int(shop[i].id) == 0:
+		return ""
+	var item: Dictionary = shop[i]
+	var cost := Items.price(item)
+	if gold < cost:
+		return "no_gold"
+	var id := int(item.id)
+	if id < 100:
+		var at := -1
+		for s in quick_slots.size():
+			if int(quick_slots[s][0]) == id:
+				at = s
+				break
+		if at >= 0:
+			if int(quick_slots[at][1]) >= 5:
+				return "no_more"
+			quick_slots[at][1] = int(quick_slots[at][1]) + 1
+		else:
+			for s in quick_slots.size():
+				if int(quick_slots[s][0]) == 0:
+					at = s
+					break
+			if at < 0:
+				return "full"
+			quick_slots[at] = [id, 1]
+	else:
+		if not add_item(item.duplicate()):
+			return "full"
+		shop[i] = Items.empty()
+	gold -= cost
+	return "bought"
+
+
+## Sells a potion of quick slot i (where = "quick") or the thing in backpack place i, for
+## half its price. False when there is nothing there.
+func sell(where: String, i: int) -> bool:
+	if where == "quick":
+		if i < 0 or i >= quick_slots.size() or int(quick_slots[i][0]) == 0:
+			return false
+		gold += Items.price({"id": int(quick_slots[i][0])}) / 2
+		if int(quick_slots[i][1]) > 1:
+			quick_slots[i][1] = int(quick_slots[i][1]) - 1
+		else:
+			quick_slots[i] = [0, 0]
+		return true
+	if i < 0 or i >= backpack.size() or int(backpack[i].id) == 0:
+		return false
+	gold += Items.price(backpack[i]) / 2
+	backpack[i] = Items.empty()
+	return true
+
+
+## Whether a thing can be enchanted now: "ok", "not_possible" or "full" (enchanted as far
+## as it goes).
+func can_enchant(item: Dictionary) -> String:
+	var limit := Items.enchant_max(int(item.get("id", 0)))
+	if limit <= 0:
+		return "not_possible"
+	if int(item.enchant) >= limit:
+		return "full"
+	return "ok"
+
+
+## Enchants a thing of the backpack or the Gear page for its price: "success", "fail"
+## (nothing happens), "lost" (the thing is gone) or "no_gold".
+func enchant(item: Dictionary, rng: RandomNumberGenerator = null) -> String:
+	if can_enchant(item) != "ok":
+		return ""
+	var cost := Items.enchant_price(item)
+	if gold < cost:
+		return "no_gold"
+	if rng == null:
+		rng = RandomNumberGenerator.new()
+	gold -= cost
+	var n := int(item.enchant)
+	if rng.randi_range(1, 100) <= int(Items.ENCHANT_SUCCESS[n]):
+		Items.enchant(item, rng)
+		return "success"
+	if rng.randi_range(0, 99) <= int(Items.ENCHANT_LOST[n]):
+		var cleared := Items.empty()
+		for k in cleared:
+			item[k] = cleared[k]
+		return "lost"
+	return "fail"
+
+
 func is_lord_open(id: int) -> bool:
 	return id >= 1 and lords_open & (1 << (id - 1)) != 0
 
@@ -357,7 +470,7 @@ func to_dict() -> Dictionary:
 		"skill_levels": skill_levels, "hotkeys": hotkeys, "quick_slots": quick_slots,
 		"quick_keys": quick_keys, "friendship": friendship,
 		"progress": progress, "done": done, "place": place, "lords_open": lords_open,
-		"endings": endings}
+		"endings": endings, "shop": shop}
 
 
 func from_dict(d: Dictionary) -> void:
@@ -385,6 +498,7 @@ func from_dict(d: Dictionary) -> void:
 	place = int(d.get("place", place))
 	lords_open = int(d.get("lords_open", lords_open))
 	endings = int(d.get("endings", endings))
+	shop = _copy_items(d.get("shop", []), Items.SHOP_POTIONS.size() + Items.SHOP_GEAR, shop)
 
 
 func save(path: String = PATH) -> bool:

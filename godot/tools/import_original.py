@@ -399,7 +399,8 @@ def export_items(out):
     while 9 + 23 * (k + 1) <= len(d):
         i = 9 + 23 * k
         gear[101 + k] = {"name": cstr(d[i:i + 15]), "slot": s8(d[i + 15]), "stat": s8(d[i + 16]),
-                         "bonus": s8(d[i + 17]), "range": s8(d[i + 18]), "icon": s8(d[i + 22]),
+                         "bonus": s8(d[i + 17]), "range": s8(d[i + 18]), "enchant_max": d[i + 19],
+                         "price": d[i + 20] | d[i + 21] << 8, "icon": s8(d[i + 22]),
                          "level": GEAR_LEVELS[(101 + k) % 5]}
         k += 1
     d = (ROOT / edat[51]).read_bytes()
@@ -408,8 +409,8 @@ def export_items(out):
         i = 10 + 24 * k
         treasures[301 + k] = {"name": cstr(d[i:i + 15]), "slot": s8(d[i + 15]),
                               "attack": d[i + 16] | d[i + 17] << 8, "defense": s8(d[i + 18]),
-                              "hp": d[i + 19], "mp": s8(d[i + 20]), "icon": s8(d[i + 22]),
-                              "level": d[i + 23]}
+                              "hp": d[i + 19], "mp": s8(d[i + 20]), "enchant_max": d[i + 21],
+                              "icon": s8(d[i + 22]), "level": d[i + 23]}
         k += 1
     d = (ROOT / edat[49]).read_bytes()
     k = 0
@@ -417,7 +418,8 @@ def export_items(out):
         i = 9 + 27 * k
         rare[501 + k] = {"name": cstr(d[i:i + 15]), "slot": s8(d[i + 15]),
                          "attack": d[i + 16] | d[i + 17] << 8, "defense": s8(d[i + 18]),
-                         "hp": d[i + 19] | d[i + 20] << 8, "mp": s8(d[i + 21]), "icon": k,
+                         "hp": d[i + 19] | d[i + 20] << 8, "mp": s8(d[i + 21]),
+                         "price": int.from_bytes(d[i + 22:i + 26], "little"), "icon": k,
                          "level": d[i + 26]}
         k += 1
     (out / "items.json").write_text(json.dumps({"gear": gear, "treasures": treasures, "rare": rare},
@@ -623,8 +625,8 @@ SOUND_FONTS = ["/usr/share/sounds/sf2/FluidR3_GM.sf2", "/usr/share/sounds/sf2/de
 
 def export_sounds(out):
     """The effects snd3..16 as they are (sfx_N.wav); the three MIDI tunes snd0..2 played
-    through a General MIDI sound font into music_N.ogg (needs fluidsynth and ffmpeg; without
-    them the tunes already made are kept)."""
+    through a General MIDI sound font into music_N.ogg (needs fluidsynth and ffmpeg). A tune
+    already made is kept: delete it to make it again."""
     import shutil
     import subprocess
     import tempfile
@@ -637,6 +639,8 @@ def export_sounds(out):
         return
     with tempfile.TemporaryDirectory() as tmp:
         for n in range(3):
+            if (out / ("music_%d.ogg" % n)).exists():
+                continue
             wav = pathlib.Path(tmp) / ("music_%d.wav" % n)
             subprocess.run(["fluidsynth", "-ni", "-F", str(wav), "-r", "44100", font,
                             str(ROOT / ("snd%d.mid" % n))], check=True, capture_output=True)

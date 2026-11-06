@@ -6,6 +6,8 @@
 "stat": 0,
 "bonus": 2,
 "range": 3,
+"enchant_max": 5,
+"price": 120,
 "icon": 3,
 "level": 1
 },
@@ -15,6 +17,8 @@
 "stat": 0,
 "bonus": 5,
 "range": 4,
+"enchant_max": 6,
+"price": 220,
 "icon": 3,
 "level": 10
 },
@@ -24,6 +28,8 @@
 "stat": 0,
 "bonus": 10,
 "range": 5,
+"enchant_max": 7,
+"price": 360,
 "icon": 3,
 "level": 25
 },
@@ -33,6 +39,8 @@
 "stat": 0,
 "bonus": 16,
 "range": 6,
+"enchant_max": 8,
+"price": 500,
 "icon": 3,
 "level": 45
 },
@@ -42,6 +50,8 @@
 "stat": 0,
 "bonus": 23,
 "range": 7,
+"enchant_max": 9,
+"price": 700,
 "icon": 3,
 "level": 70
 },
@@ -51,6 +61,8 @@
 "stat": 0,
 "bonus": 3,
 "range": 2,
+"enchant_max": 5,
+"price": 160,
 "icon": 4,
 "level": 1
 },
@@ -60,6 +72,8 @@
 "stat": 0,
 "bonus": 6,
 "range": 3,
+"enchant_max": 6,
+"price": 320,
 "icon": 4,
 "level": 10
 },
@@ -69,6 +83,8 @@
 "stat": 0,
 "bonus": 10,
 "range": 4,
+"enchant_max": 7,
+"price": 480,
 "icon": 4,
 "level": 25
 },
@@ -78,6 +94,8 @@
 "stat": 0,
 "bonus": 15,
 "range": 5,
+"enchant_max": 8,
+"price": 640,
 "icon": 4,
 "level": 45
 },
@@ -87,6 +105,8 @@
 "stat": 0,
 "bonus": 21,
 "range": 6,
+"enchant_max": 9,
+"price": 840,
 "icon": 4,
 "level": 70
 },
@@ -96,6 +116,8 @@
 "stat": 0,
 "bonus": 1,
 "range": 4,
+"enchant_max": 5,
+"price": 80,
 "icon": 5,
 "level": 1
 },
@@ -105,6 +127,8 @@
 "stat": 0,
 "bonus": 6,
 "range": 5,
+"enchant_max": 6,
+"price": 120,
 "icon": 5,
 "level": 10
 },
@@ -114,6 +138,8 @@
 "stat": 0,
 "bonus": 12,
 "range": 6,
+"enchant_max": 7,
+"price": 220,
 "icon": 5,
 "level": 25
 },
@@ -123,6 +149,8 @@
 "stat": 0,
 "bonus": 19,
 "range": 7,
+"enchant_max": 8,
+"price": 320,
 "icon": 5,
 "level": 45
 },
@@ -132,6 +160,8 @@
 "stat": 0,
 "bonus": 27,
 "range": 8,
+"enchant_max": 9,
+"price": 480,
 "icon": 5,
 "level": 70
 },
@@ -141,6 +171,8 @@
 "stat": 0,
 "bonus": 1,
 "range": 2,
+"enchant_max": 5,
+"price": 80,
 "icon": 0,
 "level": 1
 },
@@ -150,6 +182,8 @@
 "stat": 0,
 "bonus": 3,
 "range": 3,
+"enchant_max": 6,
+"price": 120,
 "icon": 0,
 "level": 10
 },
@@ -159,6 +193,8 @@
 "stat": 0,
 "bonus": 6,
 "range": 4,
+"enchant_max": 7,
+"price": 220,
 "icon": 0,
 "level": 25
 },
@@ -168,6 +204,8 @@
 "stat": 0,
 "bonus": 10,
 "range": 5,
+"enchant_max": 8,
+"price": 320,
 "icon": 0,
 "level": 45
 },
@@ -177,6 +215,8 @@
 "stat": 0,
 "bonus": 15,
 "range": 6,
+"enchant_max": 9,
+"price": 480,
 "icon": 0,
 "level": 70
 },
@@ -186,6 +226,8 @@
 "stat": 0,
 "bonus": 2,
 "range": 2,
+"enchant_max": 5,
+"price": 120,
 "icon": 1,
 "level": 1
 },
@@ -195,6 +237,8 @@
 "stat": 0,
 "bonus": 4,
 "range": 3,
+"enchant_max": 6,
+"price": 220,
 "icon": 1,
 "level": 10
 },
@@ -204,6 +248,8 @@
 "stat": 0,
 "bonus": 7,
 "range": 4,
+"enchant_max": 7,
+"price": 360,
 "icon": 1,
 "level": 25
 },
@@ -213,6 +259,8 @@
 "stat": 0,
 "bonus": 11,
 "range": 5,
+"enchant_max": 8,
+"price": 500,
 "icon": 1,
 "level": 45
 },
@@ -222,6 +270,8 @@
 "stat": 0,
 "bonus": 16,
 "range": 6,
+"enchant_max": 9,
+"price": 700,
 "icon": 1,
 "level": 70
 },
@@ -231,6 +281,8 @@
 "stat": 0,
 "bonus": 3,
 "range": 2,
+"enchant_max": 5,
+"price": 120,
 "icon": 2,
 "level": 1
 },
@@ -240,6 +292,8 @@
 "stat": 0,
 "bonus": 5,
 "range": 3,
+"enchant_max": 6,
+"price": 220,
 "icon": 2,
 "level": 10
 },
@@ -249,6 +303,8 @@
 "stat": 0,
 "bonus": 8,
 "range": 4,
+"enchant_max": 7,
+"price": 360,
 "icon": 2,
 "level": 25
 },
@@ -258,6 +314,8 @@
 "stat": 0,
 "bonus": 12,
 "range": 5,
+"enchant_max": 8,
+"price": 500,
 "icon": 2,
 "level": 45
 },
@@ -267,6 +325,8 @@
 "stat": 0,
 "bonus": 17,
 "range": 6,
+"enchant_max": 9,
+"price": 700,
 "icon": 2,
 "level": 70
 },
@@ -276,6 +336,8 @@
 "stat": 1,
 "bonus": 1,
 "range": 2,
+"enchant_max": 5,
+"price": 80,
 "icon": 6,
 "level": 1
 },
@@ -285,6 +347,8 @@
 "stat": 1,
 "bonus": 4,
 "range": 3,
+"enchant_max": 6,
+"price": 140,
 "icon": 6,
 "level": 10
 },
@@ -294,6 +358,8 @@
 "stat": 1,
 "bonus": 8,
 "range": 4,
+"enchant_max": 7,
+"price": 200,
 "icon": 6,
 "level": 25
 },
@@ -303,6 +369,8 @@
 "stat": 1,
 "bonus": 13,
 "range": 5,
+"enchant_max": 8,
+"price": 260,
 "icon": 6,
 "level": 45
 },
@@ -312,6 +380,8 @@
 "stat": 1,
 "bonus": 19,
 "range": 6,
+"enchant_max": 9,
+"price": 340,
 "icon": 6,
 "level": 70
 },
@@ -321,6 +391,8 @@
 "stat": 1,
 "bonus": 3,
 "range": 3,
+"enchant_max": 5,
+"price": 160,
 "icon": 7,
 "level": 1
 },
@@ -330,6 +402,8 @@
 "stat": 1,
 "bonus": 7,
 "range": 4,
+"enchant_max": 6,
+"price": 240,
 "icon": 7,
 "level": 10
 },
@@ -339,6 +413,8 @@
 "stat": 1,
 "bonus": 12,
 "range": 5,
+"enchant_max": 7,
+"price": 320,
 "icon": 7,
 "level": 25
 },
@@ -348,6 +424,8 @@
 "stat": 1,
 "bonus": 18,
 "range": 6,
+"enchant_max": 8,
+"price": 400,
 "icon": 7,
 "level": 45
 },
@@ -357,6 +435,8 @@
 "stat": 1,
 "bonus": 25,
 "range": 7,
+"enchant_max": 9,
+"price": 500,
 "icon": 7,
 "level": 70
 },
@@ -366,6 +446,8 @@
 "stat": 2,
 "bonus": 15,
 "range": 15,
+"enchant_max": 5,
+"price": 260,
 "icon": 7,
 "level": 1
 },
@@ -375,6 +457,8 @@
 "stat": 2,
 "bonus": 35,
 "range": 20,
+"enchant_max": 6,
+"price": 400,
 "icon": 7,
 "level": 10
 },
@@ -384,6 +468,8 @@
 "stat": 2,
 "bonus": 60,
 "range": 25,
+"enchant_max": 7,
+"price": 540,
 "icon": 7,
 "level": 25
 },
@@ -393,6 +479,8 @@
 "stat": 2,
 "bonus": 90,
 "range": 30,
+"enchant_max": 8,
+"price": 680,
 "icon": 7,
 "level": 45
 },
@@ -402,6 +490,8 @@
 "stat": 2,
 "bonus": 125,
 "range": 35,
+"enchant_max": 9,
+"price": 880,
 "icon": 7,
 "level": 70
 },
@@ -411,6 +501,8 @@
 "stat": 2,
 "bonus": 5,
 "range": 10,
+"enchant_max": 5,
+"price": 60,
 "icon": 11,
 "level": 1
 },
@@ -420,6 +512,8 @@
 "stat": 2,
 "bonus": 20,
 "range": 15,
+"enchant_max": 6,
+"price": 120,
 "icon": 11,
 "level": 10
 },
@@ -429,6 +523,8 @@
 "stat": 2,
 "bonus": 40,
 "range": 20,
+"enchant_max": 7,
+"price": 180,
 "icon": 11,
 "level": 25
 },
@@ -438,6 +534,8 @@
 "stat": 2,
 "bonus": 65,
 "range": 25,
+"enchant_max": 8,
+"price": 240,
 "icon": 11,
 "level": 45
 },
@@ -447,6 +545,8 @@
 "stat": 2,
 "bonus": 95,
 "range": 30,
+"enchant_max": 9,
+"price": 320,
 "icon": 11,
 "level": 70
 },
@@ -456,6 +556,8 @@
 "stat": 2,
 "bonus": 5,
 "range": 10,
+"enchant_max": 5,
+"price": 60,
 "icon": 12,
 "level": 1
 },
@@ -465,6 +567,8 @@
 "stat": 2,
 "bonus": 20,
 "range": 15,
+"enchant_max": 6,
+"price": 120,
 "icon": 12,
 "level": 10
 },
@@ -474,6 +578,8 @@
 "stat": 2,
 "bonus": 40,
 "range": 20,
+"enchant_max": 7,
+"price": 180,
 "icon": 12,
 "level": 25
 },
@@ -483,6 +589,8 @@
 "stat": 2,
 "bonus": 65,
 "range": 25,
+"enchant_max": 8,
+"price": 240,
 "icon": 12,
 "level": 45
 },
@@ -492,6 +600,8 @@
 "stat": 2,
 "bonus": 95,
 "range": 30,
+"enchant_max": 9,
+"price": 320,
 "icon": 12,
 "level": 70
 },
@@ -501,6 +611,8 @@
 "stat": 2,
 "bonus": 5,
 "range": 10,
+"enchant_max": 5,
+"price": 80,
 "icon": 8,
 "level": 1
 },
@@ -510,6 +622,8 @@
 "stat": 2,
 "bonus": 20,
 "range": 15,
+"enchant_max": 6,
+"price": 130,
 "icon": 8,
 "level": 10
 },
@@ -519,6 +633,8 @@
 "stat": 2,
 "bonus": 40,
 "range": 20,
+"enchant_max": 7,
+"price": 180,
 "icon": 8,
 "level": 25
 },
@@ -528,6 +644,8 @@
 "stat": 2,
 "bonus": 65,
 "range": 25,
+"enchant_max": 8,
+"price": 230,
 "icon": 8,
 "level": 45
 },
@@ -537,6 +655,8 @@
 "stat": 2,
 "bonus": 95,
 "range": 30,
+"enchant_max": 9,
+"price": 300,
 "icon": 8,
 "level": 70
 },
@@ -546,6 +666,8 @@
 "stat": 1,
 "bonus": 1,
 "range": 1,
+"enchant_max": 5,
+"price": 60,
 "icon": 9,
 "level": 1
 },
@@ -555,6 +677,8 @@
 "stat": 1,
 "bonus": 2,
 "range": 2,
+"enchant_max": 6,
+"price": 120,
 "icon": 9,
 "level": 10
 },
@@ -564,6 +688,8 @@
 "stat": 1,
 "bonus": 4,
 "range": 2,
+"enchant_max": 7,
+"price": 180,
 "icon": 9,
 "level": 25
 },
@@ -573,6 +699,8 @@
 "stat": 1,
 "bonus": 6,
 "range": 2,
+"enchant_max": 8,
+"price": 240,
 "icon": 9,
 "level": 45
 },
@@ -582,6 +710,8 @@
 "stat": 1,
 "bonus": 8,
 "range": 2,
+"enchant_max": 9,
+"price": 320,
 "icon": 9,
 "level": 70
 },
@@ -591,6 +721,8 @@
 "stat": 0,
 "bonus": 1,
 "range": 2,
+"enchant_max": 5,
+"price": 160,
 "icon": 9,
 "level": 1
 },
@@ -600,6 +732,8 @@
 "stat": 0,
 "bonus": 4,
 "range": 3,
+"enchant_max": 6,
+"price": 320,
 "icon": 9,
 "level": 10
 },
@@ -609,6 +743,8 @@
 "stat": 0,
 "bonus": 8,
 "range": 4,
+"enchant_max": 7,
+"price": 480,
 "icon": 9,
 "level": 25
 },
@@ -618,6 +754,8 @@
 "stat": 0,
 "bonus": 13,
 "range": 5,
+"enchant_max": 8,
+"price": 640,
 "icon": 9,
 "level": 45
 },
@@ -627,6 +765,8 @@
 "stat": 0,
 "bonus": 19,
 "range": 6,
+"enchant_max": 9,
+"price": 840,
 "icon": 9,
 "level": 70
 },
@@ -636,6 +776,8 @@
 "stat": 2,
 "bonus": 5,
 "range": 10,
+"enchant_max": 5,
+"price": 80,
 "icon": 9,
 "level": 1
 },
@@ -645,6 +787,8 @@
 "stat": 2,
 "bonus": 20,
 "range": 10,
+"enchant_max": 6,
+"price": 130,
 "icon": 9,
 "level": 10
 },
@@ -654,6 +798,8 @@
 "stat": 2,
 "bonus": 35,
 "range": 10,
+"enchant_max": 7,
+"price": 180,
 "icon": 9,
 "level": 25
 },
@@ -663,6 +809,8 @@
 "stat": 2,
 "bonus": 50,
 "range": 10,
+"enchant_max": 8,
+"price": 230,
 "icon": 9,
 "level": 45
 },
@@ -672,6 +820,8 @@
 "stat": 2,
 "bonus": 65,
 "range": 10,
+"enchant_max": 9,
+"price": 300,
 "icon": 9,
 "level": 70
 },
@@ -681,6 +831,8 @@
 "stat": 3,
 "bonus": 3,
 "range": 6,
+"enchant_max": 5,
+"price": 80,
 "icon": 9,
 "level": 1
 },
@@ -690,6 +842,8 @@
 "stat": 3,
 "bonus": 10,
 "range": 9,
+"enchant_max": 6,
+"price": 130,
 "icon": 9,
 "level": 10
 },
@@ -699,6 +853,8 @@
 "stat": 3,
 "bonus": 20,
 "range": 12,
+"enchant_max": 7,
+"price": 180,
 "icon": 9,
 "level": 25
 },
@@ -708,6 +864,8 @@
 "stat": 3,
 "bonus": 33,
 "range": 15,
+"enchant_max": 8,
+"price": 230,
 "icon": 9,
 "level": 45
 },
@@ -717,6 +875,8 @@
 "stat": 3,
 "bonus": 49,
 "range": 18,
+"enchant_max": 9,
+"price": 300,
 "icon": 9,
 "level": 70
 },
@@ -726,6 +886,8 @@
 "stat": 1,
 "bonus": 1,
 "range": 1,
+"enchant_max": 5,
+"price": 60,
 "icon": 10,
 "level": 1
 },
@@ -735,6 +897,8 @@
 "stat": 1,
 "bonus": 2,
 "range": 2,
+"enchant_max": 6,
+"price": 120,
 "icon": 10,
 "level": 10
 },
@@ -744,6 +908,8 @@
 "stat": 1,
 "bonus": 4,
 "range": 2,
+"enchant_max": 7,
+"price": 180,
 "icon": 10,
 "level": 25
 },
@@ -753,6 +919,8 @@
 "stat": 1,
 "bonus": 6,
 "range": 2,
+"enchant_max": 8,
+"price": 240,
 "icon": 10,
 "level": 45
 },
@@ -762,6 +930,8 @@
 "stat": 1,
 "bonus": 8,
 "range": 2,
+"enchant_max": 9,
+"price": 320,
 "icon": 10,
 "level": 70
 },
@@ -771,6 +941,8 @@
 "stat": 0,
 "bonus": 2,
 "range": 2,
+"enchant_max": 5,
+"price": 160,
 "icon": 10,
 "level": 1
 },
@@ -780,6 +952,8 @@
 "stat": 0,
 "bonus": 5,
 "range": 3,
+"enchant_max": 6,
+"price": 320,
 "icon": 10,
 "level": 10
 },
@@ -789,6 +963,8 @@
 "stat": 0,
 "bonus": 9,
 "range": 4,
+"enchant_max": 7,
+"price": 480,
 "icon": 10,
 "level": 25
 },
@@ -798,6 +974,8 @@
 "stat": 0,
 "bonus": 14,
 "range": 5,
+"enchant_max": 8,
+"price": 640,
 "icon": 10,
 "level": 45
 },
@@ -807,6 +985,8 @@
 "stat": 0,
 "bonus": 20,
 "range": 6,
+"enchant_max": 9,
+"price": 840,
 "icon": 10,
 "level": 70
 },
@@ -816,6 +996,8 @@
 "stat": 2,
 "bonus": 10,
 "range": 10,
+"enchant_max": 5,
+"price": 80,
 "icon": 10,
 "level": 1
 },
@@ -825,6 +1007,8 @@
 "stat": 2,
 "bonus": 25,
 "range": 15,
+"enchant_max": 6,
+"price": 130,
 "icon": 10,
 "level": 10
 },
@@ -834,6 +1018,8 @@
 "stat": 2,
 "bonus": 45,
 "range": 20,
+"enchant_max": 7,
+"price": 180,
 "icon": 10,
 "level": 25
 },
@@ -843,6 +1029,8 @@
 "stat": 2,
 "bonus": 70,
 "range": 20,
+"enchant_max": 8,
+"price": 230,
 "icon": 10,
 "level": 45
 },
@@ -852,6 +1040,8 @@
 "stat": 2,
 "bonus": 95,
 "range": 20,
+"enchant_max": 9,
+"price": 300,
 "icon": 10,
 "level": 70
 },
@@ -861,6 +1051,8 @@
 "stat": 3,
 "bonus": 3,
 "range": 3,
+"enchant_max": 5,
+"price": 80,
 "icon": 10,
 "level": 1
 },
@@ -870,6 +1062,8 @@
 "stat": 3,
 "bonus": 7,
 "range": 6,
+"enchant_max": 6,
+"price": 130,
 "icon": 10,
 "level": 10
 },
@@ -879,6 +1073,8 @@
 "stat": 3,
 "bonus": 14,
 "range": 9,
+"enchant_max": 7,
+"price": 180,
 "icon": 10,
 "level": 25
 },
@@ -888,6 +1084,8 @@
 "stat": 3,
 "bonus": 24,
 "range": 12,
+"enchant_max": 8,
+"price": 230,
 "icon": 10,
 "level": 45
 },
@@ -897,6 +1095,8 @@
 "stat": 3,
 "bonus": 37,
 "range": 15,
+"enchant_max": 9,
+"price": 300,
 "icon": 10,
 "level": 70
 }
@@ -909,6 +1109,7 @@
 "defense": 1,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 3,
 "level": 62
 },
@@ -919,6 +1120,7 @@
 "defense": 1,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 5,
 "level": 72
 },
@@ -929,6 +1131,7 @@
 "defense": 2,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 3,
 "level": 68
 },
@@ -939,6 +1142,7 @@
 "defense": 3,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 5,
 "level": 82
 },
@@ -949,6 +1153,7 @@
 "defense": 2,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 3,
 "level": 68
 },
@@ -959,6 +1164,7 @@
 "defense": 5,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 3,
 "level": 100
 },
@@ -969,6 +1175,7 @@
 "defense": 3,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 4,
 "level": 62
 },
@@ -979,6 +1186,7 @@
 "defense": 1,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 4,
 "level": 62
 },
@@ -989,6 +1197,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 3,
 "level": 60
 },
@@ -999,6 +1208,7 @@
 "defense": 2,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 4,
 "level": 68
 },
@@ -1009,6 +1219,7 @@
 "defense": 3,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 3,
 "level": 66
 },
@@ -1019,6 +1230,7 @@
 "defense": 4,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 3,
 "level": 68
 },
@@ -1029,6 +1241,7 @@
 "defense": 5,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 4,
 "level": 74
 },
@@ -1039,6 +1252,7 @@
 "defense": 1,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 3,
 "level": 72
 },
@@ -1049,6 +1263,7 @@
 "defense": 8,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 3,
 "level": 66
 },
@@ -1059,6 +1274,7 @@
 "defense": 4,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 3,
 "level": 98
 },
@@ -1069,6 +1285,7 @@
 "defense": 2,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 5,
 "level": 74
 },
@@ -1079,6 +1296,7 @@
 "defense": 3,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 1,
 "level": 54
 },
@@ -1089,6 +1307,7 @@
 "defense": 4,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 1,
 "level": 56
 },
@@ -1099,6 +1318,7 @@
 "defense": 6,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 1,
 "level": 66
 },
@@ -1109,6 +1329,7 @@
 "defense": 8,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 0,
 "level": 70
 },
@@ -1119,6 +1340,7 @@
 "defense": 6,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 2,
 "level": 52
 },
@@ -1129,6 +1351,7 @@
 "defense": 6,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 1,
 "level": 60
 },
@@ -1139,6 +1362,7 @@
 "defense": 3,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 1,
 "level": 60
 },
@@ -1149,6 +1373,7 @@
 "defense": 3,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 2,
 "level": 50
 },
@@ -1159,6 +1384,7 @@
 "defense": 3,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 1,
 "level": 54
 },
@@ -1169,6 +1395,7 @@
 "defense": 3,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 2,
 "level": 70
 },
@@ -1179,6 +1406,7 @@
 "defense": 6,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 1,
 "level": 66
 },
@@ -1189,6 +1417,7 @@
 "defense": 9,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 0,
 "level": 72
 },
@@ -1199,6 +1428,7 @@
 "defense": 6,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 0,
 "level": 72
 },
@@ -1209,6 +1439,7 @@
 "defense": 6,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 0,
 "level": 76
 },
@@ -1219,6 +1450,7 @@
 "defense": 3,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 1,
 "level": 70
 },
@@ -1229,6 +1461,7 @@
 "defense": 3,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 1,
 "level": 66
 },
@@ -1239,6 +1472,7 @@
 "defense": 8,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 0,
 "level": 84
 },
@@ -1249,6 +1483,7 @@
 "defense": 3,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 1,
 "level": 80
 },
@@ -1259,6 +1494,7 @@
 "defense": 6,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 2,
 "level": 86
 },
@@ -1269,6 +1505,7 @@
 "defense": 3,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 2,
 "level": 60
 },
@@ -1279,6 +1516,7 @@
 "defense": 3,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 1,
 "level": 70
 },
@@ -1289,6 +1527,7 @@
 "defense": 8,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 1,
 "level": 84
 },
@@ -1299,6 +1538,7 @@
 "defense": 4,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 1,
 "level": 82
 },
@@ -1309,6 +1549,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 6,
 "level": 30
 },
@@ -1319,6 +1560,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 0,
+"enchant_max": 6,
 "icon": 6,
 "level": 24
 },
@@ -1329,6 +1571,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 0,
+"enchant_max": 7,
 "icon": 6,
 "level": 20
 },
@@ -1339,6 +1582,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 0,
+"enchant_max": 6,
 "icon": 6,
 "level": 16
 },
@@ -1349,6 +1593,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 0,
+"enchant_max": 9,
 "icon": 6,
 "level": 10
 },
@@ -1359,6 +1604,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 15,
+"enchant_max": 9,
 "icon": 6,
 "level": 16
 },
@@ -1369,6 +1615,7 @@
 "defense": 27,
 "hp": 0,
 "mp": 15,
+"enchant_max": 5,
 "icon": 7,
 "level": 64
 },
@@ -1379,6 +1626,7 @@
 "defense": 30,
 "hp": 0,
 "mp": 0,
+"enchant_max": 4,
 "icon": 7,
 "level": 60
 },
@@ -1389,6 +1637,7 @@
 "defense": 33,
 "hp": 25,
 "mp": 0,
+"enchant_max": 6,
 "icon": 7,
 "level": 76
 },
@@ -1399,6 +1648,7 @@
 "defense": 36,
 "hp": 0,
 "mp": 0,
+"enchant_max": 7,
 "icon": 7,
 "level": 72
 },
@@ -1409,6 +1659,7 @@
 "defense": 30,
 "hp": 0,
 "mp": 60,
+"enchant_max": 8,
 "icon": 7,
 "level": 100
 },
@@ -1419,6 +1670,7 @@
 "defense": 35,
 "hp": 150,
 "mp": 0,
+"enchant_max": 8,
 "icon": 8,
 "level": 130
 },
@@ -1429,6 +1681,7 @@
 "defense": 35,
 "hp": 150,
 "mp": 0,
+"enchant_max": 8,
 "icon": 8,
 "level": 130
 },
@@ -1439,6 +1692,7 @@
 "defense": 41,
 "hp": 150,
 "mp": 0,
+"enchant_max": 9,
 "icon": 8,
 "level": 142
 },
@@ -1449,6 +1703,7 @@
 "defense": 38,
 "hp": 145,
 "mp": 0,
+"enchant_max": 9,
 "icon": 8,
 "level": 134
 },
@@ -1459,6 +1714,7 @@
 "defense": 27,
 "hp": 0,
 "mp": 30,
+"enchant_max": 7,
 "icon": 8,
 "level": 74
 },
@@ -1469,6 +1725,7 @@
 "defense": 24,
 "hp": 0,
 "mp": 39,
+"enchant_max": 6,
 "icon": 8,
 "level": 74
 },
@@ -1479,6 +1736,7 @@
 "defense": 21,
 "hp": 0,
 "mp": 99,
+"enchant_max": 9,
 "icon": 8,
 "level": 108
 },
@@ -1489,6 +1747,7 @@
 "defense": 0,
 "hp": 130,
 "mp": 15,
+"enchant_max": 5,
 "icon": 9,
 "level": 69
 },
@@ -1499,6 +1758,7 @@
 "defense": 0,
 "hp": 145,
 "mp": 18,
+"enchant_max": 6,
 "icon": 9,
 "level": 78
 },
@@ -1509,6 +1769,7 @@
 "defense": 0,
 "hp": 160,
 "mp": 21,
+"enchant_max": 5,
 "icon": 9,
 "level": 87
 },
@@ -1519,6 +1780,7 @@
 "defense": 0,
 "hp": 175,
 "mp": 24,
+"enchant_max": 7,
 "icon": 9,
 "level": 96
 },
@@ -1529,6 +1791,7 @@
 "defense": 0,
 "hp": 230,
 "mp": 0,
+"enchant_max": 5,
 "icon": 9,
 "level": 102
 },
@@ -1539,6 +1802,7 @@
 "defense": 0,
 "hp": 145,
 "mp": 9,
+"enchant_max": 6,
 "icon": 9,
 "level": 71
 },
@@ -1549,6 +1813,7 @@
 "defense": 0,
 "hp": 130,
 "mp": 0,
+"enchant_max": 5,
 "icon": 9,
 "level": 58
 },
@@ -1559,6 +1824,7 @@
 "defense": 0,
 "hp": 255,
 "mp": 0,
+"enchant_max": 6,
 "icon": 9,
 "level": 113
 },
@@ -1569,6 +1835,7 @@
 "defense": 0,
 "hp": 155,
 "mp": 21,
+"enchant_max": 5,
 "icon": 9,
 "level": 84
 },
@@ -1579,6 +1846,7 @@
 "defense": 0,
 "hp": 180,
 "mp": 24,
+"enchant_max": 8,
 "icon": 9,
 "level": 98
 },
@@ -1589,6 +1857,7 @@
 "defense": 0,
 "hp": 150,
 "mp": 0,
+"enchant_max": 7,
 "icon": 10,
 "level": 60
 },
@@ -1599,6 +1868,7 @@
 "defense": 0,
 "hp": 135,
 "mp": 0,
+"enchant_max": 6,
 "icon": 10,
 "level": 54
 },
@@ -1609,6 +1879,7 @@
 "defense": 0,
 "hp": 120,
 "mp": 15,
+"enchant_max": 5,
 "icon": 10,
 "level": 58
 },
@@ -1619,6 +1890,7 @@
 "defense": 0,
 "hp": 150,
 "mp": 30,
+"enchant_max": 7,
 "icon": 10,
 "level": 80
 },
@@ -1629,6 +1901,7 @@
 "defense": 0,
 "hp": 165,
 "mp": 0,
+"enchant_max": 9,
 "icon": 10,
 "level": 66
 },
@@ -1639,6 +1912,7 @@
 "defense": 0,
 "hp": 125,
 "mp": 30,
+"enchant_max": 7,
 "icon": 10,
 "level": 70
 },
@@ -1649,6 +1923,7 @@
 "defense": 0,
 "hp": 150,
 "mp": 0,
+"enchant_max": 6,
 "icon": 10,
 "level": 60
 },
@@ -1659,6 +1934,7 @@
 "defense": 0,
 "hp": 125,
 "mp": 30,
+"enchant_max": 9,
 "icon": 10,
 "level": 70
 },
@@ -1669,6 +1945,7 @@
 "defense": 3,
 "hp": 25,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 16
 },
@@ -1679,6 +1956,7 @@
 "defense": 5,
 "hp": 50,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 30
 },
@@ -1689,6 +1967,7 @@
 "defense": 4,
 "hp": 75,
 "mp": 36,
+"enchant_max": 0,
 "icon": 11,
 "level": 62
 },
@@ -1699,6 +1978,7 @@
 "defense": 1,
 "hp": 35,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 16
 },
@@ -1709,6 +1989,7 @@
 "defense": 2,
 "hp": 40,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 20
 },
@@ -1719,6 +2000,7 @@
 "defense": 6,
 "hp": 100,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 52
 },
@@ -1729,6 +2011,7 @@
 "defense": 25,
 "hp": 50,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 70
 },
@@ -1739,6 +2022,7 @@
 "defense": 0,
 "hp": 75,
 "mp": 39,
+"enchant_max": 0,
 "icon": 11,
 "level": 56
 },
@@ -1749,6 +2033,7 @@
 "defense": 0,
 "hp": 65,
 "mp": 45,
+"enchant_max": 0,
 "icon": 11,
 "level": 56
 },
@@ -1759,6 +2044,7 @@
 "defense": 8,
 "hp": 40,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 32
 },
@@ -1769,6 +2055,7 @@
 "defense": 3,
 "hp": 35,
 "mp": 60,
+"enchant_max": 0,
 "icon": 11,
 "level": 60
 },
@@ -1779,6 +2066,7 @@
 "defense": 2,
 "hp": 90,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 40
 },
@@ -1789,6 +2077,7 @@
 "defense": 10,
 "hp": 40,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 36
 },
@@ -1799,6 +2088,7 @@
 "defense": 9,
 "hp": 30,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 30
 },
@@ -1809,6 +2099,7 @@
 "defense": 10,
 "hp": 30,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 32
 },
@@ -1819,6 +2110,7 @@
 "defense": 11,
 "hp": 50,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 42
 },
@@ -1829,6 +2121,7 @@
 "defense": 12,
 "hp": 100,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 64
 },
@@ -1839,6 +2132,7 @@
 "defense": 0,
 "hp": 55,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 22
 },
@@ -1849,6 +2143,7 @@
 "defense": 0,
 "hp": 60,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 24
 },
@@ -1859,6 +2154,7 @@
 "defense": 0,
 "hp": 60,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 24
 },
@@ -1869,6 +2165,7 @@
 "defense": 0,
 "hp": 65,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 26
 },
@@ -1879,6 +2176,7 @@
 "defense": 0,
 "hp": 70,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 28
 },
@@ -1889,6 +2187,7 @@
 "defense": 0,
 "hp": 75,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 30
 },
@@ -1899,6 +2198,7 @@
 "defense": 0,
 "hp": 10,
 "mp": 60,
+"enchant_max": 0,
 "icon": 11,
 "level": 44
 },
@@ -1909,6 +2209,7 @@
 "defense": 0,
 "hp": 75,
 "mp": 45,
+"enchant_max": 0,
 "icon": 11,
 "level": 60
 },
@@ -1919,6 +2220,7 @@
 "defense": 0,
 "hp": 80,
 "mp": 0,
+"enchant_max": 0,
 "icon": 11,
 "level": 32
 },
@@ -1929,6 +2231,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 84,
+"enchant_max": 0,
 "icon": 12,
 "level": 56
 },
@@ -1939,6 +2242,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 0,
+"enchant_max": 0,
 "icon": 12,
 "level": 20
 },
@@ -1949,6 +2253,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 15,
+"enchant_max": 0,
 "icon": 12,
 "level": 10
 },
@@ -1959,6 +2264,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 24,
+"enchant_max": 0,
 "icon": 12,
 "level": 16
 },
@@ -1969,6 +2275,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 30,
+"enchant_max": 0,
 "icon": 12,
 "level": 20
 },
@@ -1979,6 +2286,7 @@
 "defense": 5,
 "hp": 0,
 "mp": 0,
+"enchant_max": 0,
 "icon": 12,
 "level": 10
 },
@@ -1989,6 +2297,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 15,
+"enchant_max": 0,
 "icon": 12,
 "level": 10
 },
@@ -1999,6 +2308,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 36,
+"enchant_max": 0,
 "icon": 12,
 "level": 24
 },
@@ -2009,6 +2319,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 45,
+"enchant_max": 0,
 "icon": 12,
 "level": 30
 },
@@ -2019,6 +2330,7 @@
 "defense": 0,
 "hp": 105,
 "mp": 0,
+"enchant_max": 0,
 "icon": 12,
 "level": 42
 },
@@ -2029,6 +2341,7 @@
 "defense": 10,
 "hp": 0,
 "mp": 0,
+"enchant_max": 0,
 "icon": 12,
 "level": 20
 },
@@ -2039,6 +2352,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 120,
+"enchant_max": 0,
 "icon": 12,
 "level": 80
 },
@@ -2049,6 +2363,7 @@
 "defense": 15,
 "hp": 0,
 "mp": 0,
+"enchant_max": 0,
 "icon": 12,
 "level": 30
 },
@@ -2059,6 +2374,7 @@
 "defense": 0,
 "hp": 0,
 "mp": -121,
+"enchant_max": 0,
 "icon": 12,
 "level": 90
 },
@@ -2069,6 +2385,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 54,
+"enchant_max": 0,
 "icon": 12,
 "level": 36
 },
@@ -2079,6 +2396,7 @@
 "defense": 0,
 "hp": 210,
 "mp": 0,
+"enchant_max": 0,
 "icon": 12,
 "level": 84
 },
@@ -2089,6 +2407,7 @@
 "defense": 0,
 "hp": 0,
 "mp": -76,
+"enchant_max": 0,
 "icon": 12,
 "level": 120
 },
@@ -2099,6 +2418,7 @@
 "defense": 20,
 "hp": 0,
 "mp": 0,
+"enchant_max": 0,
 "icon": 12,
 "level": 40
 },
@@ -2109,6 +2429,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 60,
+"enchant_max": 0,
 "icon": 12,
 "level": 40
 },
@@ -2119,6 +2440,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 75,
+"enchant_max": 0,
 "icon": 12,
 "level": 50
 },
@@ -2129,6 +2451,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 90,
+"enchant_max": 0,
 "icon": 12,
 "level": 60
 },
@@ -2139,6 +2462,7 @@
 "defense": 0,
 "hp": 225,
 "mp": 0,
+"enchant_max": 0,
 "icon": 12,
 "level": 90
 },
@@ -2149,6 +2473,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 105,
+"enchant_max": 0,
 "icon": 12,
 "level": 70
 },
@@ -2159,6 +2484,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 120,
+"enchant_max": 0,
 "icon": 12,
 "level": 80
 },
@@ -2169,6 +2495,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 72,
+"enchant_max": 0,
 "icon": 12,
 "level": 48
 },
@@ -2179,6 +2506,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 45,
+"enchant_max": 0,
 "icon": 12,
 "level": 30
 },
@@ -2189,6 +2517,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 27,
+"enchant_max": 0,
 "icon": 12,
 "level": 18
 },
@@ -2199,6 +2528,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 18,
+"enchant_max": 0,
 "icon": 12,
 "level": 12
 },
@@ -2209,6 +2539,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 15,
+"enchant_max": 0,
 "icon": 12,
 "level": 10
 },
@@ -2219,6 +2550,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 90,
+"enchant_max": 0,
 "icon": 12,
 "level": 60
 },
@@ -2229,6 +2561,7 @@
 "defense": 20,
 "hp": 0,
 "mp": 0,
+"enchant_max": 0,
 "icon": 12,
 "level": 40
 },
@@ -2239,6 +2572,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 0,
+"enchant_max": 0,
 "icon": 13,
 "level": 0
 },
@@ -2249,6 +2583,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 0,
+"enchant_max": 0,
 "icon": 14,
 "level": 0
 },
@@ -2259,6 +2594,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 0,
+"enchant_max": 0,
 "icon": 15,
 "level": 0
 },
@@ -2269,6 +2605,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 0,
+"enchant_max": 0,
 "icon": 16,
 "level": 0
 }
@@ -2281,6 +2618,7 @@
 "defense": 0,
 "hp": 150,
 "mp": -106,
+"price": 150000,
 "icon": 0,
 "level": 130
 },
@@ -2291,6 +2629,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 0,
+"price": 1,
 "icon": 1,
 "level": 0
 },
@@ -2301,6 +2640,7 @@
 "defense": 36,
 "hp": 0,
 "mp": 0,
+"price": 256500,
 "icon": 2,
 "level": 135
 },
@@ -2311,6 +2651,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 0,
+"price": 1,
 "icon": 3,
 "level": 0
 },
@@ -2321,6 +2662,7 @@
 "defense": 90,
 "hp": 350,
 "mp": 0,
+"price": 310000,
 "icon": 4,
 "level": 145
 },
@@ -2331,6 +2673,7 @@
 "defense": 40,
 "hp": 300,
 "mp": -106,
+"price": 285000,
 "icon": 5,
 "level": 100
 },
@@ -2341,6 +2684,7 @@
 "defense": 80,
 "hp": 165,
 "mp": 0,
+"price": 217500,
 "icon": 6,
 "level": 99
 },
@@ -2351,6 +2695,7 @@
 "defense": 25,
 "hp": 0,
 "mp": 0,
+"price": 229500,
 "icon": 7,
 "level": 125
 },
@@ -2361,6 +2706,7 @@
 "defense": 30,
 "hp": 0,
 "mp": 0,
+"price": 180000,
 "icon": 8,
 "level": 90
 },
@@ -2371,6 +2717,7 @@
 "defense": 5,
 "hp": 0,
 "mp": 0,
+"price": 195000,
 "icon": 9,
 "level": 110
 },
@@ -2381,6 +2728,7 @@
 "defense": 5,
 "hp": 0,
 "mp": 0,
+"price": 202500,
 "icon": 10,
 "level": 130
 },
@@ -2391,6 +2739,7 @@
 "defense": 33,
 "hp": 0,
 "mp": 0,
+"price": 189000,
 "icon": 11,
 "level": 95
 },
@@ -2401,6 +2750,7 @@
 "defense": 4,
 "hp": 0,
 "mp": 0,
+"price": 198000,
 "icon": 12,
 "level": 115
 },
@@ -2411,6 +2761,7 @@
 "defense": 28,
 "hp": 0,
 "mp": 0,
+"price": 186000,
 "icon": 13,
 "level": 95
 },
@@ -2421,6 +2772,7 @@
 "defense": 0,
 "hp": 0,
 "mp": 0,
+"price": 82500,
 "icon": 14,
 "level": 92
 },
@@ -2431,6 +2783,7 @@
 "defense": 15,
 "hp": 0,
 "mp": 0,
+"price": 180000,
 "icon": 15,
 "level": 90
 },
@@ -2441,6 +2794,7 @@
 "defense": 30,
 "hp": 200,
 "mp": 0,
+"price": 145000,
 "icon": 16,
 "level": 100
 },
@@ -2451,6 +2805,7 @@
 "defense": 80,
 "hp": 150,
 "mp": 0,
+"price": 195000,
 "icon": 17,
 "level": 80
 }

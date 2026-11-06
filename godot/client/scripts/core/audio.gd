@@ -9,7 +9,7 @@ const MUSIC_PATH := "res://assets/original/sound/music_%d.ogg"
 const SFX_PATH := "res://assets/original/sound/sfx_%d.wav"
 const SCREEN_MUSIC := {
 	"title": 0, "main_menu": 0, "mission": 1, "campaign": 2, "settings": 2, "management": 2,
-	"attributes": 2, "skills": 2, "gear": 2, "inventory": 2, "assign_items": 2,
+	"attributes": 2, "skills": 2, "blacksmith": 2, "shop": 2, "gear": 2, "inventory": 2, "assign_items": 2,
 }
 const OVERLAPPING := [3, 4, 15, 16]
 const MIN_GAP_MS := {9: 500}
