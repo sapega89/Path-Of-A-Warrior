@@ -50,12 +50,48 @@ func _ready() -> void:
 	print("fight: kills ", mission.sim.kills, " hp ", mission.sim.hero.hp, " open ", mission.sim.exits_open(),
 		" failed ", mission.sim.failed, " s ", (Time.get_ticks_msec() - t0) / 1000)
 	await _shot(out, "mission_1_cleared")
+	Input.action_press("move_right")  # off the barrel's column
+	await _seconds(0.3)
+	Input.action_release("move_right")
 	Input.action_press("move_down")
 	await _seconds(6.0)
 	Input.action_release("move_down")
 	await _seconds(1.0)
 	print("room after walking down: ", mission.sim.cell, " stage ", mission.sim.rooms_visited)
 	await _shot(out, "mission_1_room_2")
+	# A general: he comes in with his talk, then the fight.
+	Router.go("mission", {"lord": 1, "mission": 0, "seed": 2})
+	mission = Router.current
+	var sim: RefCounted = mission.sim
+	sim.no_enemies = true
+	await _seconds(3.0)
+	_release_all()
+	sim.no_enemies = false
+	sim.waves[0] = 1
+	sim.waves[1] = 1
+	var spot: Vector3i = sim.spawn_spots[0]
+	sim.create_enemy(1, spot.x, spot.y, spot.z)
+	sim.waves[0] = 0  # he is the room's last enemy
+	sim.waves[1] = 0
+	sim.room_phase = 0
+	await _seconds(1.5)
+	await _shot(out, "mission_1_general_talk")
+	for i in 8:
+		Input.action_press("attack")
+		await _frames(2)
+		Input.action_release("attack")
+		await _seconds(0.15)
+	t0 = Time.get_ticks_msec()
+	var shot_general := false
+	while Time.get_ticks_msec() - t0 < 30000 and not sim.won and not sim.failed:
+		await _fight_step(sim)
+		if not shot_general and Time.get_ticks_msec() - t0 > 3000:
+			shot_general = true
+			await _shot(out, "mission_1_general_fight")
+	_release_all()
+	print("general: hp ", sim.hero.hp, " won ", sim.won, " failed ", sim.failed)
+	await _frames(10)
+	await _shot(out, "mission_1_general_end")
 	get_tree().quit()
 
 

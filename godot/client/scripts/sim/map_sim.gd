@@ -9,8 +9,10 @@ extends RefCounted
 ## room checks, and the soldiers: the room's waves come in through its exits, swordsmen
 ## (one or a squad of three) and archers walk, attack and shoot by the original AI, are hit,
 ## knocked back and die; the last one clears the room. Barrels and other objects break under
-## the sword; soldiers and objects drop gold and items that the hero picks up. Not yet:
-## generals (a room whose list reaches a general waits there), skills and potions in use.
+## the sword; soldiers and objects drop gold and items that the hero picks up. Generals come
+## with their talk, fight with their skills, and the mission's own general ends the mission
+## ("Mission Success!"). Not yet: the hero's skills and potions, the skill effects' pictures,
+## the talk after a cleared room and the mission's rewards.
 
 const Rooms := preload("res://scripts/world/rooms.gd")
 const JavaRandom := preload("res://scripts/sim/java_random.gd")
@@ -21,6 +23,7 @@ const END := 200  # animation frame numbers above this end the animation (222 = 
 ## Banners shown over the map (the original's popups 8 and 9).
 const BANNER_STAGE := 8
 const BANNER_STAGE_CLEAR := 9
+const BANNER_SUCCESS := 10  # "Mission Success!": waits for a key, then the mission ends
 const BANNER_FAILED := 22  # "Mission fail!": waits for a key, then the mission ends
 const BANNER_TICKS := 20
 
@@ -40,8 +43,15 @@ const HIT_FRAME := [0, 0, 0, 1, 1, 1, 1, 1, 1]  # the frame of a sword attack (3
 const SQUAD_SHIFT := {3: Vector2i(-20, 0), 1: Vector2i(-20, 20), 2: Vector2i(-20, 0),
 	0: Vector2i(0, 20), 5: Vector2i(20, 0), 7: Vector2i(20, 20), 6: Vector2i(20, 0)}
 const GENERAL_REACH := [60, 50]
+const CAMPAIGN_PATH := "res://data/campaign.json"
+const TALK_PATH := "res://data/talk.json"
+const BUFF_DIV := [20, 20, 25]
+const TALK_STEPS := 3  # a general met on the map: he, the hero, he
+const HERO_NAME := "Hero"
 
 static var _tables: Dictionary = {}
+static var _generals: Dictionary = {}
+static var _talk: Dictionary = {}
 
 
 class Actor:
@@ -68,6 +78,9 @@ class Actor:
 	var hurt_ticks := 0
 	var combo := 0
 	var weapon_kind := 0  # 0 long sword, 1 short sword
+	var skill_step := 0  # a general's heals so far
+	var attack_buff_ticks := 0
+	var defense_buff_ticks := 0
 
 
 ## A breakable object of the room (barrels, crates, ...): a cell of the objects layer.
@@ -120,7 +133,17 @@ var hold_to_move := true  # the port's option (the player asked for it): walk wh
 ## The map without enemies (pyport's POW_NO_ENEMIES): a room's list counts as defeated.
 var no_enemies := false
 var difficulty := 1  # 0 hard, 1 normal (turns the hero to the nearest enemy when he strikes)
-var general_side := 0
+var general_side := 0  # the side (weapon) of the last general met: 0 long, 1 short sword
+var general := {}  # the last general met (campaign.json generals)
+var boss_type := 0  # the mission's own general: defeating him wins the mission
+var boss_fight := false
+var boss_spawned := false
+var won := false
+## A talk over the map (the world waits): lines with their speaker, the line shown, how much.
+var talk: Array[String] = []
+var talk_line := 0
+var talk_chars := 0
+var talk_wait := 0
 var rng := JavaRandom.new()
 var enemies: Array[Actor] = []  # in drawing order (sorted by y each tick)
 var enemies_alive := 0  # archers do not count
@@ -150,6 +173,27 @@ static func tables() -> Dictionary:
 
 static func table(name: String) -> Array:
 	return tables().get(name, [])
+
+
+static func _load_json(path: String) -> Dictionary:
+	var f := FileAccess.open(path, FileAccess.READ)
+	if f == null:
+		return {}
+	var data: Variant = JSON.parse_string(f.get_as_text())
+	return data if typeof(data) == TYPE_DICTIONARY else {}
+
+
+## A general's data: name, look, side, skills, attack, defense, hp.
+static func general_data(id: int) -> Dictionary:
+	if _generals.is_empty():
+		_generals = _load_json(CAMPAIGN_PATH).get("generals", {})
+	return _generals.get(str(id), {})
+
+
+static func talk_lines(kind: String) -> Array:
+	if _talk.is_empty():
+		_talk = _load_json(TALK_PATH)
+	return _talk.get(kind, [])
 
 
 func _init(map_data: Dictionary = {}, mission: int = 0, start_tile: Vector2i = Vector2i(4, 4)) -> void:
@@ -265,6 +309,9 @@ func tick(held: int, pressed: int = -1, fire: bool = false) -> void:
 	if banner != 0:
 		_tick_banner(fire)
 		return
+	if not talk.is_empty():
+		_tick_talk(fire)
+		return
 	if scrolling:
 		_tick_scroll()
 		return
@@ -274,7 +321,7 @@ func tick(held: int, pressed: int = -1, fire: bool = false) -> void:
 
 
 func _tick_banner(fire: bool) -> void:
-	if banner == BANNER_FAILED:
+	if banner == BANNER_FAILED or banner == BANNER_SUCCESS:
 		if fire:
 			finished = true
 		return
@@ -460,6 +507,11 @@ func _end_tick() -> void:
 			3:
 				_show_banner(BANNER_STAGE_CLEAR)
 				room_phase = 0
+			4:
+				# the mission's general is defeated
+				won = true
+				banner = BANNER_SUCCESS
+				room_phase = 0
 		return
 	room_phase_timer -= 1
 
@@ -487,10 +539,8 @@ func _spawn_next_enemy() -> void:
 		return
 	if enemies_alive >= max_enemies() or waves[0] == 0:
 		return
-	if waves[0] < 200:
-		return  # a general: his talk and fight are not ported yet, the room waits here
-	if spawn_spots.is_empty():
-		return
+	if not (waves[0] >= 200 or not boss_spawned) or spawn_spots.is_empty():
+		return  # one general at a time
 	var spot: Vector3i = spawn_spots[rng.below(spawn_spots.size())]
 	create_enemy(waves[0], spot.x, spot.y, spot.z)
 	waves[1] -= 1
@@ -499,7 +549,7 @@ func _spawn_next_enemy() -> void:
 			waves[b] = waves[b + 2]
 
 
-## A soldier outside the room behind exit `side`, looking in.
+## A soldier or a general (kind < 200) outside the room behind exit `side`, looking in.
 func create_enemy(kind: int, tx: int, ty: int, side: int) -> Actor:
 	var e := Actor.new()
 	e.pos = Vector2i(tx * 27 + 12 + SPAWN_DX[side], ty * 27 + 20 + SPAWN_DY[side])
@@ -513,7 +563,16 @@ func create_enemy(kind: int, tx: int, ty: int, side: int) -> Actor:
 	if kind == KIND_ARCHERS:
 		e.alerted = 1
 		e.think_ticks = 15
-	enemy_stats(e, kind - 201)
+	if kind > 200:
+		enemy_stats(e, kind - 201)
+	else:
+		if kind == boss_type:
+			boss_fight = true
+		boss_spawned = true
+		set_general(kind)
+		_start_map_talk()
+		general_stats(e)
+		waves[1] = 1
 	enemies.append(e)
 	if kind != KIND_ARCHERS:
 		enemies_alive += 1
@@ -534,11 +593,47 @@ func enemy_stats(e: Actor, kind: int) -> void:
 	e.max_hp = e.hp
 
 
-## A soldier's frame list for its action (0 walk, 1 attack, 2 hurt, 3 dying).
+## A general's stats: his own, raised by his level (the hero's plus the list's count).
+func general_stats(e: Actor) -> void:
+	e.level = hero.level + waves[1]
+	e.attack = (int(general.get("attack", 0)) + e.level - 1) * 6 / 5
+	e.defense = (int(general.get("defense", 0)) + e.level - 1) * 6 / 5
+	e.hp = int(general.get("hp", 1)) + (e.level - 1) * 3
+	e.max_hp = e.hp
+
+
+func set_general(id: int) -> void:
+	general = general_data(id)
+	general_side = int(general.get("side", 0))
+
+
+## How many actions an enemy has (its animation table's size).
+func enemy_actions(e: Actor) -> int:
+	return 22 if e.type < 200 else 4
+
+
+## An enemy's frame list for its action. Soldiers: 0 walk, 1 attack, 2 hurt, 3 dying;
+## generals: the same, 4 and 5 strikes, 6..21 skills (the hero's skill animations).
 func enemy_anim(e: Actor, action: int) -> Array:
 	var dir4 := int(table("dir8_to_dir4")[e.dir])
-	var prefix := "body_anim_" if e.type == KIND_ARCHERS else "head_anim_"
-	return table(prefix + str(clampi(action, 0, 3)))[dir4]
+	if e.type > 200:
+		var prefix := "body_anim_" if e.type == KIND_ARCHERS else "head_anim_"
+		return table(prefix + str(clampi(action, 0, 3)))[dir4]
+	match clampi(action, 0, 21):
+		0: return table("head_anim_0")[dir4]
+		1, 4, 5: return table("weapon_anim_1")[dir4]
+		2: return table("weapon_anim_2")[dir4]
+		3: return table("weapon_anim_3")
+		6: return table("hero_anim_12")[dir4]
+		7: return table("hero_anim_13")[dir4]
+		8: return table("hero_anim_14")[dir4]
+		9, 10, 11, 12, 13: return table("hero_anim_15_19")
+		14: return table("hero_anim_20")[dir4]
+		15: return table("hero_anim_21")[dir4]
+		16: return table("hero_anim_22")[dir4]
+		17, 18: return table("hero_anim_23_24")
+		19: return table("hero_anim_25")[dir4]
+	return table("hero_anim_26_27")[dir4]
 
 
 ## The sprite frame an enemy shows now; 100 and more is not drawn (the dying blink).
@@ -644,6 +739,34 @@ func choose_enemy_action(e: Actor) -> void:
 		e.action = 1
 		e.think_ticks = 15
 		shoot_arrow(e)
+	elif roll < 150:
+		general_pick_skill(e, false)
+	elif roll < 350:
+		if i <= 60 and (hero.action != 9 or hero.frame >= 6) and hero.action != 10 and hero.action < 12:
+			e.action = 1
+			e.dir = dir4(e.pos, hero.pos)
+			e.facing = e.dir
+	else:
+		e.dir = to_hero
+		e.facing = to_hero
+
+
+## A general picks one of his four skills (an empty slot is a plain strike); a heal only
+## while below half HP and four times at most; force: no buff (he was just hit).
+func general_pick_skill(e: Actor, force: bool) -> void:
+	var skills: Array = general.get("skills", [0, 0, 0, 0])
+	e.action = 6 + int(skills[rng.below(4)]) - 1
+	if e.action == 9 or e.action == 10:
+		if e.skill_step > 3:
+			e.action = 1
+		elif e.max_hp >> 1 > e.hp:
+			e.skill_step += 1
+		else:
+			e.action = 1
+	elif e.action in [11, 12, 13] and force:
+		e.action = 1
+	e.dir = dir4(e.pos, hero.pos)
+	e.facing = e.dir
 
 
 func shoot_arrow(e: Actor) -> void:
@@ -674,18 +797,30 @@ func _tick_enemies() -> void:
 		if b >= enemies.size():
 			break
 		var e: Actor = enemies[b]
-		e.action = mini(e.action, 3)
+		e.action = mini(e.action, enemy_actions(e) - 1)
 		e.frame += 1
 		e.think_ticks -= 1
 		var anim := enemy_anim(e, e.action)
 		var anim_frame := int(anim[mini(e.frame, anim.size() - 1)])
+		if e.attack_buff_ticks > 0:
+			e.attack_buff_ticks -= 1
+			if e.attack_buff_ticks < 1:
+				e.attack_buff = 0
+		if e.defense_buff_ticks > 0:
+			e.defense_buff_ticks -= 1
+			if e.defense_buff_ticks < 1:
+				e.defense_buff = 0
 		if e.action == 3:
 			if anim_frame > END:
 				_enemy_dies(e)
 				# (the next enemy waits a tick, as in the original's loop)
 				if enemies_alive < 1 and waves[0] == 0 and e.type != KIND_ARCHERS:
-					room_phase = 3
-					room_phase_timer = 5
+					if boss_fight:
+						room_phase = 4
+						room_phase_timer = 22
+					else:
+						room_phase = 3
+						room_phase_timer = 5
 			continue
 		if anim_frame > END:
 			e.action = 3 if e.hp < 1 else 0
@@ -708,12 +843,40 @@ func _tick_enemies() -> void:
 		var step_y := 0
 		var action := e.action
 		var frame := e.frame
+		var dir := e.dir
 		if action == 0:
 			step_x = int(dx8[move_dir])
 			step_y = int(dy8[move_dir])
-		elif action == 1:
-			step_x = int(dx8[e.dir]) / 3
-			step_y = int(dy8[e.dir]) / 3
+		elif action in [1, 4, 5]:
+			step_x = int(dx8[dir]) / 3
+			step_y = int(dy8[dir]) / 3
+		elif action == 6:
+			if frame > 2 and frame < 6:
+				step_x = int(dx8[dir]) << 2
+				step_y = int(dy8[dir]) << 2
+		elif action == 7 or action == 8:
+			var lunge := action == 8
+			if action == 7 and frame > 4 and frame < 8:
+				# a dash: straight on until a wall, then the step of action 8 as well
+				var sx := int(dx8[dir]) << 2
+				var sy := int(dy8[dir]) << 2
+				if sx > 0:
+					sx = step_until_free(e.pos, sx, 6)
+				elif sx < 0:
+					sx = step_until_free(e.pos, sx, 2)
+				if sy > 0:
+					sy = step_until_free(e.pos, sy, 0)
+				elif sy < 0:
+					sy = step_until_free(e.pos, sy, 4)
+				e.pos += keep_in_room(e.pos, sx, sy)
+				lunge = true
+			if lunge and frame > 0 and frame < 9:
+				step_x = int(dx8[dir])
+				step_y = int(dy8[dir])
+		elif action == 14:
+			if (frame & 1) == 0:
+				step_x = int(dx8[dir])
+				step_y = int(dy8[dir])
 		elif action == 2 and e.ai_mode > 0:
 			e.ai_mode -= 1
 			move_dir = (move_dir + 4) & 7
@@ -736,19 +899,132 @@ func _tick_enemies() -> void:
 				i = slide_corner(e.pos, e.facing, e)
 				if i != -1:
 					move(e.pos, int(dx8[i]), int(dy8[i]), i, e)
-		if e.action == 1 and e.frame == 1:
-			_enemy_strikes_hero(e)
+		action = e.action
+		frame = e.frame
+		match action:
+			1, 4, 5:
+				if frame == 1:
+					_enemy_strikes_hero(e)
+			6:
+				if frame > 2 and frame < 6:
+					_enemy_strikes_hero(e)
+			7:
+				if frame > 4 and frame < 8:
+					_enemy_strikes_hero(e)
+			8:
+				if frame in [2, 4, 6, 8]:
+					_enemy_strikes_hero(e)
+			9, 10:
+				if frame == 11:  # heals 20 / 50 %
+					e.hp = mini(e.hp + e.max_hp * (20 if action == 9 else 50) / 100, e.max_hp)
+			11, 12, 13:
+				if frame == 11:  # attack / defence buffs for 50 ticks
+					if action != 12:
+						e.attack_buff = maxi(e.attack / int(BUFF_DIV[action - 11]), 1)
+						e.attack_buff_ticks = 50
+					if action != 11:
+						e.defense_buff = maxi(e.defense / int(BUFF_DIV[action - 11]), 1)
+						e.defense_buff_ticks = 50
+			14, 19:
+				if (frame & 1) != 0:
+					_enemy_strikes_hero(e)
+			15:
+				if frame == 5:
+					_enemy_strikes_hero(e)
+			16:
+				if frame == 6:
+					_enemy_strikes_hero(e)
+			17, 18:
+				if frame == 5:
+					_enemy_strikes_hero(e)
+			20, 21:
+				if frame == 8:
+					_enemy_strikes_hero(e)
 
 
+func _general_reach() -> int:
+	return GENERAL_REACH[general_side]
+
+
+## The enemy's strike or skill lands on the hero if he is where it reaches.
 func _enemy_strikes_hero(e: Actor) -> void:
-	if hero.action != 9 and hero.action != 10 and hero.action < 12:
-		if e.dir == dir4(e.pos, hero.pos) and distance(hero.pos, e.pos) <= GENERAL_REACH[general_side]:
-			hero_is_hit(e)
+	var action := e.action
+	if hero.action != 9 and hero.action != 10:
+		if hero.action >= 12:
+			return
+		match action:
+			7:
+				var side := e.dir >> 1
+				if boxes_touch(e.pos.x + int(table("hit_box_x")[side]), e.pos.y + int(table("hit_box_y")[side]),
+						int(table("hit_box_w")[side]), int(table("hit_box_h")[side]),
+						hero.pos.x - 8, hero.pos.y - 8, 17, 17):
+					hero_is_hit(e)
+				return
+			16:
+				if _is_in_front(e.pos, hero.pos, e.dir):
+					_general_strike_if_near(e, _general_reach())
+				return
+			17, 18:
+				_general_strike_if_near(e, 45)
+				return
+			19:
+				if ((e.dir + (e.frame >> 1 << 1)) & 7) == dir4(e.pos, hero.pos):
+					_general_strike_if_near(e, _general_reach())
+				return
+			20, 21:
+				if distance(_front_of(e.pos, e.dir), hero.pos) <= 35:
+					_general_skill_hits_hero(e)
+				return
+		if e.dir == dir4(e.pos, hero.pos):
+			_general_strike_if_near(e, _general_reach())
+	elif hero.action == 9:
+		if action == 8 or action == 14:
+			if e.dir == dir4(e.pos, hero.pos):
+				_general_strike_if_near(e, _general_reach())
+		elif action == 20 or action == 21:
+			if distance(_front_of(e.pos, hero.dir), hero.pos) <= 35:
+				_general_skill_hits_hero(e)
+
+
+func _front_of(p: Vector2i, d8: int) -> Vector2i:
+	return p + Vector2i(int(table("front_dx")[d8 >> 1]), int(table("front_dy")[d8 >> 1]))
+
+
+static func _is_in_front(a: Vector2i, b: Vector2i, d8: int) -> bool:
+	match d8:
+		2: return a.x > b.x
+		6: return a.x < b.x
+		0: return a.y < b.y
+		4: return a.y > b.y
+	return false
+
+
+func _general_strike_if_near(e: Actor, reach: int) -> void:
+	if distance(hero.pos, e.pos) <= reach:
+		_general_skill_hits_hero(e)
+
+
+## A skill pushes the hero back (hurt ticks) as well as hurting him.
+func _general_skill_hits_hero(e: Actor) -> void:
+	match e.action:
+		6:
+			e.frame = 5
+			hero.hurt_ticks = 2
+		8, 16, 19:
+			hero.hurt_ticks = 2
+		15, 18, 21:
+			hero.hurt_ticks = 5
+	hero_is_hit(e)
 
 
 func _enemy_dies(e: Actor) -> void:
-	mission_exp += e.level
-	drop_item(0, e.pos)
+	if e.type < 200:
+		mission_exp += e.level << 1
+		boss_spawned = false
+		drop_item(2 if boss_fight else 1, e.pos)
+	else:
+		mission_exp += e.level
+		drop_item(0, e.pos)
 	kills += 3 if e.type == KIND_SQUAD else 1
 	enemies.erase(e)
 	if e.type != KIND_ARCHERS:
@@ -770,6 +1046,8 @@ func hero_is_hit(e: Actor, a: Arrow = null) -> void:
 	if e != null:
 		hero.facing = dir8(hero.pos, e.pos)
 		dmg = e.attack + e.attack_buff - hero.defense - hero.defense_buff
+		if e.action in [6, 7, 8, 14, 15, 16, 17, 18, 19, 20, 21]:
+			dmg += e.attack / int(table("skill_attack_div")[e.action - 6])
 	else:
 		hero.facing = ((a.dir << 1) + 4) & 7
 		dmg = a.attack - hero.defense - hero.defense_buff
@@ -787,7 +1065,9 @@ func hero_is_hit(e: Actor, a: Arrow = null) -> void:
 
 func _show_target_info(e: Actor) -> void:
 	var names := table("troop_names")
-	target_info = {"name": str(names[e.type - 201]) if e.type - 201 < names.size() else "",
+	var name := str(general.get("name", "")) if e.type < 200 else \
+		(str(names[e.type - 201]) if e.type - 201 < names.size() else "")
+	target_info = {"name": name,
 		"level": e.level, "hp_bar": e.hp * 60 / maxi(e.max_hp, 1), "ticks": 10}
 
 
@@ -821,6 +1101,8 @@ func _hero_hits_enemy(e: Actor) -> void:
 		e.frame = 0
 	_show_target_info(e)
 	e.action = 2
+	if e.type < 200 and rng.below(1000) < 150 and e.hp > 0:
+		general_pick_skill(e, true)
 
 
 ## Normal difficulty: the hero turns to the nearest enemy (closer than 50 px) as he strikes.
@@ -858,6 +1140,53 @@ func _tick_arrows() -> void:
 			1: a.pos.x -= 12
 			2: a.pos.y -= 12
 			3: a.pos.x += 12
+
+
+# ---- talks over the map ------------------------------------------------------------------
+
+## A general met on the map: "<name> is here!!!", the hero's "...", his "Come on!".
+func _start_map_talk() -> void:
+	var lines := talk_lines("map")
+	talk.clear()
+	var name := str(general.get("name", ""))
+	for k in TALK_STEPS:
+		var speaker := name if (k & 1) == 0 else HERO_NAME
+		var text := str(lines[21 + k]) if 21 + k < lines.size() else ""
+		talk.append("[%s] %s" % [speaker, text.replace("&", speaker)])
+	talk_line = 0
+	talk_chars = 0
+	talk_wait = 0
+
+
+## The line shown now, as far as it is typed.
+func talk_text() -> String:
+	if talk.is_empty():
+		return ""
+	return talk[talk_line].substr(0, talk_chars)
+
+
+## A letter a tick; the key shows the whole line, or goes on once it is shown. A shown
+## line waits 15 ticks.
+func _tick_talk(fire: bool) -> void:
+	var line := talk[talk_line]
+	if talk_wait > 0:
+		talk_wait -= 1
+		if fire:
+			talk_wait = 0
+		if talk_wait < 1:
+			talk_line += 1
+			talk_chars = 0
+			if talk_line >= talk.size():
+				talk.clear()
+				talk_line = 0
+		return
+	if fire:
+		talk_chars = line.length()
+		talk_wait = 3
+		return
+	talk_chars += 1
+	if talk_chars >= line.length():
+		talk_wait = 15
 
 
 # ---- breakable objects and drops ----------------------------------------------------------

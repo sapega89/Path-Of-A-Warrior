@@ -16,10 +16,16 @@ Writes
                                          the soldiers' frames (n 0 swords, 1 archers) in cells
                                          like the hero's, one sheet per mission tint (0..3), the
                                          palette swapped as load_recoloured does
+  godot/client/assets/original/general_<look>_<side>_<base|sk>.png
+                                         a general (body, head of his look, weapon of his side,
+                                         the mark under him) as draw_enemy puts him together:
+                                         base = walk / strike frames, sk = skill frames
   godot/client/assets/original/ui/*.png  UI pictures used as they are (exit arrows, ...)
   godot/client/data/tables.json          the game's constant tables the map code uses (animation
                                          frame lists, direction steps, ...), copied from
                                          pyport/pow/game/consts.py by name
+  godot/client/data/talk.json            the dialogue lines (briefing, a general on the map,
+                                         after a victory), see TALK_FILES
   godot/client/data/campaign.json        chapters, lords (one map each) and missions, as the
                                          campaign screens read them (load_chapter_lords,
                                          load_lord_missions):
@@ -28,6 +34,7 @@ Writes
     sideinfo.arr missions of 11 bytes from 11: id, start x, start y (tiles), tint, boss type,
                  general, reward, gold, time limit (u16), level bonus
     ruler.arr    mission names, 15 bytes per id from 3: 14-byte name, portrait
+    general.arr  the generals (read_generals): name, look, side, skills, stats
 
 MAP FORMAT (N.MAP, as pyport/pow/game/map_scene.py load_map reads it):
   u8 w, u8 h, u8 n, n bytes (ids of the tiles the map uses),
@@ -109,12 +116,15 @@ def build_atlas(tile_names):
     return atlas, found
 
 
-# SP3 frame tables (as load_frames reads them): u8 count, per frame 6 x u16 LE
-# src_x, src_y, w, h, ox, oy; the part is drawn at (x - ox, y - oy).
+# SP3 frame tables (as load_frames reads them): u8 count, per frame 6 x s16 LE
+# src_x, src_y, w, h, ox, oy; the part is drawn at (x - ox, y - oy) (ox / oy can be < 0).
 def read_frames(path):
     d = path.read_bytes()
-    u = lambda p: d[p] | d[p + 1] << 8
-    return [tuple(u(1 + i * 12 + k * 2) for k in range(6)) for i in range(d[0])]
+
+    def s16(p):
+        v = d[p] | d[p + 1] << 8
+        return v - 0x10000 if v >= 0x8000 else v
+    return [tuple(s16(1 + i * 12 + k * 2) for k in range(6)) for i in range(d[0])]
 
 
 HERO_CELL = (96, 96)
@@ -216,6 +226,98 @@ def export_enemies(out):
             sheet.save(out / ("enemy_%d_%d.png" % (n, tint)))
 
 
+GENERAL_CELL = (96, 112)
+GENERAL_ORIGIN = (48, 88)  # the skill frames reach 75 px above the feet
+GENERAL_LOOKS = 6
+# weapon in front of the body: base frames by bit (side 1, side 0); skill frames by
+# general_frame_flags[(f >> 5 << 2) + (2 if side else 3)] bit (f & 31), as draw_enemy does
+GENERAL_WEAPON_FRONT = {1: 1310732, 0: 1053711}
+
+
+def build_general(mdat, chars, look, side, skill, flags):
+    body_img = Image.open(ROOT / (chars[44] + ".png")).convert("RGBA")
+    head_img = Image.open(ROOT / (chars[50 + look - 1] + ".png")).convert("RGBA")
+    wep_img = Image.open(ROOT / (chars[42 + side] + ".png")).convert("RGBA")
+    mark = Image.open(ROOT / (chars[45] + ".png")).convert("RGBA")
+    body = read_frames(ROOT / mdat[69 if skill else 68])
+    heads = read_frames(ROOT / mdat[(76 if skill else 70) + look - 1])
+    weps = read_frames(ROOT / mdat[(90 if skill else 88) + (side << 2)])
+    cw, ch = GENERAL_CELL
+    ox0, oy0 = GENERAL_ORIGIN
+    sheet = Image.new("RGBA", (cw * 16, ch * ((len(body) + 15) // 16)), (0, 0, 0, 0))
+
+    def paste(cell, img, f):
+        sx, sy, w, h, ox, oy = f
+        if w > 0 and h > 0:
+            sheet.alpha_composite(img.crop((sx, sy, sx + w, sy + h)),
+                                  ((cell % 16) * cw + ox0 - ox, (cell // 16) * ch + oy0 - oy))
+
+    for i in range(len(body)):
+        if i >= 180:
+            break
+        x0, y0 = (i % 16) * cw, (i // 16) * ch
+        bx, by, bw, bh, box, boy = body[i]
+        # the general's mark under his feet
+        mx, my = x0 + ox0 - box + bw // 2 - 13, y0 + oy0 - boy + bh - 5
+        if 0 <= mx and mx + mark.width <= sheet.width and 0 <= my and my + mark.height <= sheet.height:
+            sheet.alpha_composite(mark, (mx, my))
+        if skill:
+            front = flags[(i >> 5 << 2) + (2 if side else 3)] >> (i & 31) & 1
+        else:
+            front = GENERAL_WEAPON_FRONT[side] >> i & 1
+        if not front and i < len(weps):
+            paste(i, wep_img, weps[i])
+        paste(i, body_img, body[i])
+        if i < len(heads):
+            paste(i, head_img, heads[i])
+        if front and i < len(weps):
+            paste(i, wep_img, weps[i])
+    return sheet
+
+
+def export_generals(out):
+    from pow.game import consts
+    mdat = scr.load(ROOT / "mdat_QVGA.scr")
+    chars = scr.load(ROOT / "imgchar.scr")
+    for look in range(1, GENERAL_LOOKS + 1):
+        for side in range(2):
+            for skill in range(2):
+                build_general(mdat, chars, look, side, skill, consts.general_frame_flags).save(
+                    out / ("general_%d_%d_%s.png" % (look, side, "sk" if skill else "base")))
+
+
+# general.arr: 23 bytes per general from 14: 11-byte name, look, -, side (0 = short sword
+# as stored, the game flips it), 4 skills, portrait, gift table, attack, defence, HP
+def read_generals():
+    d = (ROOT / "general.arr").read_bytes()
+    out = {}
+    g = 1
+    while 23 * (g - 1) + 14 + 23 <= len(d):
+        o = 23 * (g - 1) + 14
+        b = d[o + 11:o + 23]
+        out[g] = {"name": cstr(d[o:o + 11]), "look": b[0], "side": (b[2] + 1) & 1,
+                  "skills": list(b[3:7]), "portrait": b[7], "gift_table": b[8],
+                  "attack": b[9], "defense": b[10], "hp": b[11]}
+        g += 1
+    return out
+
+
+# Dialogue files (edat 57 + kind): u16 count, count + 1 u16 offsets, UTF-8 lines.
+# Kind 0 the mission briefing, 1 a general met on the map, 2 the talk after a victory.
+TALK_FILES = {"briefing": 57, "map": 58, "general": 59}
+
+
+def export_talk(out):
+    edat = scr.load(ROOT / "edat.scr")
+    talk = {}
+    for name, index in TALK_FILES.items():
+        d = (ROOT / edat[index]).read_bytes()
+        n = d[0] | d[1] << 8
+        off = [d[2 + i * 2] | d[3 + i * 2] << 8 for i in range(n + 1)]
+        talk[name] = [d[off[i]:off[i + 1]].decode("utf-8", "replace") for i in range(n)]
+    (out / "talk.json").write_text(json.dumps(talk, ensure_ascii=False, indent=0))
+
+
 def cstr(b):
     return bytes(b).split(b"\0")[0].decode("utf-8", "replace")
 
@@ -248,7 +350,8 @@ def export_campaign(out):
         })
         i += 11
     (out / "campaign.json").write_text(json.dumps(
-        {"chapters": chapters, "lords": lords, "missions": missions}, ensure_ascii=False, indent=0))
+        {"chapters": chapters, "lords": lords, "missions": missions, "generals": read_generals()},
+        ensure_ascii=False, indent=0))
     return len(chapters), len(missions)
 
 
@@ -296,12 +399,14 @@ def main():
         (out_maps / ("%d.json" % (index + 1))).write_text(json.dumps(m, separators=(",", ":")))
     chapters, missions = export_campaign(CLIENT / "data")
     export_tables(CLIENT / "data")
+    export_talk(CLIENT / "data")
     atlas, found = build_atlas(tile_names)
     out_tiles = CLIENT / "assets" / "original"
     out_tiles.mkdir(parents=True, exist_ok=True)
     atlas.save(out_tiles / "tiles.png")
     export_hero(out_tiles)
     export_enemies(out_tiles)
+    export_generals(out_tiles)
     export_ui(out_tiles / "ui")
     print("maps: %d, tiles: %d, chapters: %d, missions: %d" % (len(map_files), found, chapters, missions))
 
