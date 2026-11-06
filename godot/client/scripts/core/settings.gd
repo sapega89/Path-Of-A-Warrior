@@ -12,7 +12,10 @@ const DEFAULTS := {
 	"sfx_volume": 0.8,
 	"fullscreen": false,
 	"server_url": "ws://127.0.0.1:28300",  # the game server (godot/server)
+	"game_speed": 2,  # the missions' speed: 0 Slow .. 4 Fast (SPEED_MS)
 }
+## One tick of a mission at each game speed, in ms (2, Med, is the simulation's own tick).
+const SPEED_MS := [250, 180, 120, 90, 50]
 const BUSES := {"music_volume": "Music", "sfx_volume": "SFX"}
 
 var path := DEFAULT_PATH
@@ -78,6 +81,11 @@ func current_locale() -> String:
 	return I18nScript.pick_locale(get_value("locale"), OS.get_locale_language())
 
 
+## A mission's tick at the chosen game speed, in seconds.
+func tick_seconds() -> float:
+	return SPEED_MS[int(get_value("game_speed"))] / 1000.0
+
+
 static func can_fullscreen() -> bool:
 	return not (OS.has_feature("mobile") or OS.has_feature("web")) \
 		and DisplayServer.get_name() != "headless"
@@ -91,6 +99,9 @@ func _coerce(key: String, value: Variant) -> Variant:
 		TYPE_BOOL:
 			if typeof(value) == TYPE_BOOL:
 				return value
+		TYPE_INT:
+			if typeof(value) in [TYPE_FLOAT, TYPE_INT]:
+				return clampi(int(value), 0, SPEED_MS.size() - 1)
 		TYPE_STRING:
 			if typeof(value) == TYPE_STRING:
 				return value

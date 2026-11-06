@@ -42,3 +42,21 @@ func test_bad_values() -> void:
 	eq(s.get_value("sfx_volume"), 1.0, "clamped, int accepted")
 	s.free()
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))
+
+
+func test_game_speed() -> void:
+	var s := _fresh()
+	eq(s.tick_seconds(), 0.12, "Med: the simulation's own 120 ms")
+	check(s.set_value("game_speed", 4), "Fast")
+	eq(s.tick_seconds(), 0.05, "50 ms a tick")
+	s.set_value("game_speed", 9)
+	eq(s.get_value("game_speed"), 4, "clamped")
+	s.set_value("game_speed", 0)
+	eq(s.tick_seconds(), 0.25, "Slow: 250 ms")
+	var s2: Node = SettingsScript.new()
+	s2.path = PATH
+	s2.load_from_disk()
+	eq(s2.get_value("game_speed"), 0, "saved")
+	s.free()
+	s2.free()
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))
