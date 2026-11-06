@@ -69,6 +69,22 @@ func _ready() -> void:
 	Router.current.press_slot(2)
 	Router.current.slots[2].grab_focus()
 	await _shot(out, "10_assign_items")
+	# A story: ending 2's first talk, its first picture and its numbers with the reward.
+	Router.go("main_menu")
+	Router.push("story", {"story": 2, "reward_item": 502, "opened_lord": 8,
+		"profile_path": "user://shot_hero.json"})
+	await _frames(2)
+	var story: Node = Router.current
+	story.press()
+	await _shot(out, "11_story_talk")
+	while story.pages[story.page].kind == "talk":
+		story.next_page()
+	story.press()
+	await _shot(out, "12_story_picture")
+	story.page = story.pages.size() - 2
+	story.next_page()
+	story.press()
+	await _shot(out, "13_story_end")
 	Router.go("map_viewer")
 	var viewer: Node = Router.current
 	for n in MAPS:
