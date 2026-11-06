@@ -10,6 +10,11 @@ extends RefCounted
 ## connection is tried again after RETRY_MS, then twice as long each time, up to RETRY_MAX_MS.
 ## A hero saved in a file before (legacy) goes to the server when the account has none there
 ## yet; either way the file is then removed (purge_legacy).
+##
+## The Options (options_store: the Settings autoload) are kept on the device and on the server,
+## as pyport keeps them: after each login the newer copy wins (the server's on a device the
+## account is new to), and every change goes to the server; a conflict while playing is won
+## by this device.
 
 const NetClient := preload("res://scripts/net/net_client.gd")
 const Protocol := preload("res://scripts/net/protocol.gd")
@@ -42,6 +47,12 @@ var restart_requested := false
 var retry_at := 0
 var retry_ms := RETRY_MS
 var _first := true  # the first hero_get of this account
+## The Options: cloud_values(), take_cloud(values), save_cloud() and `cloud`
+## {user, rev, at, dirty}; null: only the hero.
+var options_store: Object = null
+var options_in_flight := -1  # `at` of the options on their way, -1: none
+var _options_known := false  # the server's options were read since this login
+var _losing := false  # _lost() is closing the connection
 
 
 func setup(server_address: String, server_port: int, server_cert: X509Certificate) -> void:
@@ -94,12 +105,16 @@ func _drop(next := "idle") -> void:
 	client.close()  # waiting requests get "offline"
 	state = next
 	in_flight = -1
+	options_in_flight = -1
+	_options_known = false
 
 
 func _lost() -> void:
-	if state == "off":
-		return
+	if state == "off" or _losing or (state == "idle" and int(clock.call()) < retry_at):
+		return  # lost already: another answer said "offline" too
+	_losing = true
 	_drop()
+	_losing = false
 	retry_at = int(clock.call()) + retry_ms
 	retry_ms = mini(RETRY_MAX_MS, retry_ms * 2)
 
@@ -134,6 +149,7 @@ func step() -> void:
 	client.poll()
 	if state == "ready":
 		_push()
+		_push_options()
 
 
 func _probe_answer(r: Dictionary) -> void:
@@ -158,6 +174,8 @@ func _logged_in() -> void:
 	retry_ms = RETRY_MS
 	state = "get"
 	client.request({"t": "hero_get"}, _get_answer)
+	if options_store != null:
+		client.request({"t": "options_get"}, _options_get_answer)
 
 
 ## Registers a new account on the server; done(answer) once it is known. On "ok" the account is
@@ -239,7 +257,64 @@ func _put_answer(r: Dictionary) -> void:
 
 ## Nothing waits to be sent.
 func idle() -> bool:
-	return not dirty and in_flight < 0
+	return not dirty and in_flight < 0 and (options_store == null
+		or not options_store.cloud.dirty and options_in_flight < 0)
+
+
+func _options_get_answer(r: Dictionary) -> void:
+	if not r.get("ok", false):
+		if r.get("err") == "offline":
+			_lost()
+		return
+	var m: Dictionary = options_store.cloud
+	var s_rev := int(r.get("rev", 0))
+	var s_at := int(r.get("at", 0))
+	var theirs: Variant = r.get("options")
+	if not theirs is Dictionary:
+		m.rev = 0
+		m.dirty = true  # nothing on the server yet: ours go
+	elif str(m.user) != str(account[0]) or (s_rev > int(m.rev)
+			and not (m.dirty and int(m.at) > s_at)):
+		options_store.take_cloud(theirs)
+		m.rev = s_rev
+		m.at = s_at
+		m.dirty = false
+	elif s_rev != int(m.rev):
+		m.rev = s_rev  # ours are newer, or the server lost them: ours go on top
+		m.dirty = true
+	m.user = str(account[0])
+	options_store.save_cloud()
+	_options_known = true
+
+
+func _push_options() -> void:
+	if options_store == null or not _options_known or options_in_flight >= 0:
+		return
+	var m: Dictionary = options_store.cloud
+	if not m.dirty:
+		return
+	options_in_flight = int(m.at)
+	client.request({"t": "options_put", "base": int(m.rev), "at": int(m.at),
+		"options": options_store.cloud_values()}, _options_put_answer)
+
+
+func _options_put_answer(r: Dictionary) -> void:
+	var sent := options_in_flight
+	options_in_flight = -1
+	var m: Dictionary = options_store.cloud
+	if r.get("ok", false):
+		m.rev = int(r.rev)
+		if int(m.at) == sent:
+			m.dirty = false
+	elif r.get("err") == "conflict":
+		m.rev = int(r.get("rev", m.rev))  # another device changed them: ours go on top
+	elif r.get("err") == "offline":
+		_lost()
+		return
+	else:
+		push_warning("cloud: options not saved (%s)" % r.get("err"))
+		m.dirty = false
+	options_store.save_cloud()
 
 
 ## A save still has to reach the server and the connection is up or coming up: worth

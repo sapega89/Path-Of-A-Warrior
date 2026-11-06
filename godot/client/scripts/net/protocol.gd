@@ -9,6 +9,8 @@ extends RefCounted
 ##   login    {id, pwd, v}       -> {ok} / err "update" "bad id" "no account" "password"
 ##   hero_get {}                 -> {ok, rev, at, hero}          (rev 0 and hero null: none yet)
 ##   hero_put {base, at, hero}   -> {ok, rev} / err "conflict" with the server's {rev, at, hero}
+##   options_get {}              -> {ok, rev, at, options}       (the Options, kept like the hero)
+##   options_put {base, at, options} -> {ok, rev} / err "conflict" with {rev, at, options}
 ##
 ##   live_*                     -> Live: Warehouse, Safe, Trade (server/live.gd)
 ##   mp_*, order_*, chat_*      -> the online game: the character, Ranking, orders, chat
@@ -28,6 +30,7 @@ const PORT := 28310
 const CHANNELS := 3  # 0 requests, 1 chat and invitations, 2 arena battles (later)
 const MAX_PACKET := 64 * 1024
 const MAX_HERO := 48 * 1024  # bytes of the hero in the server's file
+const MAX_OPTIONS := 1024  # bytes of the Options in the server's file
 
 
 static func encode(msg: Dictionary) -> PackedByteArray:

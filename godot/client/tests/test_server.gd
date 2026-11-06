@@ -168,6 +168,30 @@ func test_requests_and_their_answers() -> void:
 	_rm(d)
 
 
+func test_the_options_are_kept_like_the_hero() -> void:
+	var d := _dir("opt")
+	var s := GameServer.new()
+	s.accounts = Accounts.new(d)
+	s.accounts.rounds = 20
+	var a := GameServer.Session.new()
+	eq(s.answer(a, {"t": "options_get"}).err, "login first")
+	check(s.answer(a, {"t": "register", "id": "ANDREY", "pwd": "1234", "v": Protocol.VERSION}).ok)
+	eq(s.answer(a, {"t": "options_get"}), {"t": "options_get", "ok": true, "rev": 0, "at": 0, "options": null},
+		"none yet")
+	eq(s.answer(a, {"t": "options_put", "base": 0, "at": 1, "options": []}).err, "bad message")
+	eq(s.answer(a, {"t": "options_put", "base": 0, "at": 1, "options": {"x": "a".repeat(Protocol.MAX_OPTIONS)}}).err,
+		"too big")
+	eq(s.answer(a, {"t": "options_put", "base": 0, "at": 5, "options": {"game_speed": 4}}),
+		{"t": "options_put", "ok": true, "rev": 1})
+	var c := s.answer(a, {"t": "options_put", "base": 0, "at": 6, "options": {"game_speed": 0}})
+	eq([c.err, c.rev, c.at, int(c.options.game_speed)], ["conflict", 1, 5, 4], "another device changed them first")
+	eq(s.answer(a, {"t": "hero_get"}).rev, 0, "the hero is apart")
+	var again := Accounts.new(d)  # as after a restart
+	eq([again.store_get("ANDREY", "options").rev, int(again.store_get("ANDREY", "options").data.game_speed)], [1, 4])
+	check(not again.store_put("ANDREY", "chat", 0, 1, {})[0], "only the hero and the options")
+	_rm(d)
+
+
 func test_register_and_save_over_enet_dtls() -> void:
 	var d := _dir("net")
 	var s := _server(d)

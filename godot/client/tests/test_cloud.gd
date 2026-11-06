@@ -7,6 +7,7 @@ const GameServer := preload("res://server/game_server.gd")
 const Online := preload("res://server/online.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const ServerTests := preload("res://tests/test_server.gd")
+const SettingsScript := preload("res://scripts/core/settings.gd")
 const PORT := 28398
 
 
@@ -154,6 +155,8 @@ func test_profile_lives_on_the_server_when_online() -> void:
 	cloud.account_path = d.path_join("account.cfg")
 	cloud.start("127.0.0.1", PORT, ServerTests.pair(0)[1])
 	cloud.sync.legacy = null
+	check(cloud.sync.options_store == root.get_node("/root/Settings"), "the Options go along")
+	cloud.sync.options_store = null  # this device's own Options stay out of the tests
 	check(not Profile.exists(), "no hero yet")
 	var p := Profile.new()
 	p.hero_name = "Andrey"
@@ -182,6 +185,7 @@ func test_live_goes_over_the_same_connection() -> void:
 	cloud.save_account("ANDREY", "1234")
 	cloud.start("127.0.0.1", PORT, ServerTests.pair(0)[1])
 	cloud.sync.legacy = null
+	cloud.sync.options_store = null  # this device's own Options stay out of the tests
 	var got := []
 	cloud.request({"t": "live_status"}, func(r): got.append(r))
 	eq(got[0].err if not got.is_empty() else "", "offline", "not before the login")
@@ -213,6 +217,7 @@ func test_the_online_game_goes_over_the_same_connection() -> void:
 	cloud.save_account("ANDREY", "1234")
 	cloud.start("127.0.0.1", PORT, ServerTests.pair(0)[1])
 	cloud.sync.legacy = null
+	cloud.sync.options_store = null  # this device's own Options stay out of the tests
 	check(_run(s, [cloud.sync], cloud.online), "logged in")
 	var mp: RefCounted = cloud.mp
 	var err := []
@@ -231,6 +236,63 @@ func test_the_online_game_goes_over_the_same_connection() -> void:
 	ServerTests._rm(d)
 
 
+## The Options of one device, in their own file.
+func _options(d: String, tag: String) -> Node:
+	var o: Node = SettingsScript.new()
+	o.path = d.path_join("settings_%s.cfg" % tag)
+	o.load_from_disk()
+	return o
+
+
+func test_the_options_follow_the_account() -> void:
+	var d := _dir()
+	var s := _server(d)
+	s.accounts.create_account("ANDREY", "1234")
+	var a := _sync(["ANDREY", "1234"])
+	a.options_store = _options(d, "a")
+	a.options_store.set_value("game_speed", 4)
+	check(_run(s, [a], func(): return a.online() and a.idle()), "logged in, sent")
+	eq(s.accounts.store_get("ANDREY", "options").data, {"music_volume": 0.8, "sfx_volume": 0.8, "game_speed": 4},
+		"the volumes and the speed")
+	var b := _sync(["ANDREY", "1234"])
+	b.options_store = _options(d, "b")
+	b.options_store.set_value("game_speed", 0)  # before this account was used here
+	check(_run(s, [b], func(): return b.online() and b.idle()), "the other device logged in")
+	eq(b.options_store.get_value("game_speed"), 4, "a device new to the account takes the server's")
+	eq(b.options_store.cloud.user, "ANDREY")
+	b.options_store.set_value("sfx_volume", 0.3)
+	check(_run(s, [b], b.idle), "sent")
+	a.client.close()
+	a.options_store.free()
+	a = _sync(["ANDREY", "1234"])  # the first device starts the game again
+	a.options_store = _options(d, "a")
+	eq([a.options_store.get_value("game_speed"), a.options_store.cloud.rev], [4, 1], "its own, from its file")
+	check(_run(s, [a], func(): return a.online() and a.idle()), "logged in")
+	eq(a.options_store.get_value("sfx_volume"), 0.3, "the newer copy wins")
+	var again := _options(d, "a")
+	eq([again.get_value("sfx_volume"), again.cloud.rev, again.cloud.dirty], [0.3, 2, false], "kept on the device")
+	again.free()
+	a.options_store.set_value("music_volume", 0.5)  # changed on both while both play
+	check(a.flushing(), "Quit waits for the options too")
+	b.options_store.set_value("music_volume", 0.1)
+	check(_run(s, [a, b], func(): return a.idle() and b.idle()), "both sent")
+	eq(s.accounts.store_get("ANDREY", "options").rev, 4, "the second one went on top of the first")
+	b.client.close()
+	b.options_store.set_value("game_speed", 1)  # changed while the connection is lost
+	b.step()
+	check(not b.online(), "offline")
+	a.options_store.set_value("game_speed", 2)
+	check(_run(s, [a], a.idle), "the other device sent its own meanwhile")
+	b.options_store.cloud.at = a.options_store.cloud.at + 1  # but this change came later
+	b.retry_now()
+	check(_run(s, [b], func(): return b.online() and b.idle()), "back online")
+	eq([b.options_store.get_value("game_speed"), int(s.accounts.store_get("ANDREY", "options").data.game_speed)],
+		[1, 1], "the later change wins")
+	_end(s, [a, b], d)
+	a.options_store.free()
+	b.options_store.free()
+
+
 func test_quitting_lets_the_last_save_reach_the_server() -> void:
 	var cloud: Node = root.get_node("/root/Cloud")
 	var d := _dir()
@@ -240,6 +302,7 @@ func test_quitting_lets_the_last_save_reach_the_server() -> void:
 	cloud.save_account("ANDREY", "1234")
 	cloud.start("127.0.0.1", PORT, ServerTests.pair(0)[1])
 	cloud.sync.legacy = null
+	cloud.sync.options_store = null  # this device's own Options stay out of the tests
 	var quits := []
 	cloud.quit_now = func() -> void: quits.append(true)
 	check(_run(s, [cloud.sync], cloud.online), "logged in")
