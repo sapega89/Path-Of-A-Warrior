@@ -7,7 +7,8 @@ extends Control
 ## left with their counts, the five skills (keys 1-5) on the right, grey when not learned
 ## or without the MP; the slot in use is framed white. A click on a slot uses it. With the
 ## bar the panel does not show the two potions (the belt shows all five). In the bottom-left
-## corner AUTO: white while the auto-hunt is on, grey while off; a click toggles it.
+## corner AUTO: white while the auto-hunt is on, grey while off; a click toggles it. In the
+## bottom-right corner PAUSE (pyport's soft key): a click pauses the game.
 
 const UI := "res://assets/original/ui/"
 const BALL := 35  # the balls' size
@@ -21,6 +22,7 @@ const BAR_H := 24
 const BELT_KEYS := "ZXCVB"
 const AUTO_W := 48  # the AUTO corner
 const AUTO_H := 17
+const PAUSE_W := 48  # the PAUSE corner
 const SKILL_KEYS := "12345"
 
 var sim: RefCounted
@@ -82,6 +84,7 @@ func _draw() -> void:
 			draw_texture_rect_region(_cover, Rect2(origin + Vector2(BALL_X[b], 0) * k,
 				Vector2(BALL, h) * k), Rect2(0, 0, BALL, h))
 	_auto(view, k)
+	_pause(view, k)
 	if show_bar:
 		_bar(origin + Vector2(0, -BAR_H) * k, k)
 		return
@@ -107,6 +110,29 @@ func _auto(view: Vector2, k: float) -> void:
 	var w := font.get_string_size("AUTO", HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
 	draw_string(font, Vector2(r.position.x + (r.size.x - w) / 2.0, r.end.y - 4 * k), "AUTO",
 		HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color.WHITE if auto_on else Color8(120, 120, 120))
+
+
+func _pause(view: Vector2, k: float) -> void:
+	var r := Rect2(Vector2(view.x - PAUSE_W * k, view.y - AUTO_H * k), Vector2(PAUSE_W, AUTO_H) * k)
+	draw_rect(r, Color.BLACK)
+	var font := get_theme_default_font()
+	var size := int(12 * k)
+	var w := font.get_string_size("PAUSE", HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+	draw_string(font, Vector2(r.position.x + (r.size.x - w) / 2.0, r.end.y - 4 * k), "PAUSE",
+		HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color.WHITE)
+
+
+## Is the point on the PAUSE corner?
+func pause_at(p: Vector2) -> bool:
+	var view := get_viewport_rect().size
+	var k := scale_of(view)
+	return p.x >= view.x - PAUSE_W * k and p.y >= view.y - AUTO_H * k
+
+
+## Is the point on the rows of the panel at the bottom?
+func panel_at(p: Vector2) -> bool:
+	var view := get_viewport_rect().size
+	return p.y >= view.y - PANEL_H * scale_of(view)
 
 
 ## Is the point on the AUTO corner?
