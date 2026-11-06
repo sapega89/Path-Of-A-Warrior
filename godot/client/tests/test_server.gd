@@ -136,7 +136,8 @@ func test_accounts_keep_the_hero_on_disk() -> void:
 	eq(int(again.hero_get("ANDREY").hero.level), 3)
 	check(not FileAccess.file_exists(d.path_join("ANDREY.json.tmp")), "no temporary file left")
 	var text := FileAccess.get_file_as_string(d.path_join("ANDREY.json"))
-	check(not text.contains("1234"), "the password is not in the file")
+	# as a JSON string: the hex of the salt and the hash may hold the digits 1234 by chance
+	check(not text.contains("\"1234\""), "the password is not in the file")
 	_rm(d)
 
 
