@@ -92,7 +92,11 @@ func _ready() -> void:
 	builder.name = "Map"
 	world.add_child(builder)
 	builder.build(map)
+	profile = Profile.load_or_new()
 	var s: Array = mission_info.get("start", [4, 4])
+	var resume := bool(p.get("resume", false)) and not profile.on_map.is_empty()
+	if resume:
+		s = [int(profile.on_map.get("x", s[0])), int(profile.on_map.get("y", s[1]))]
 	sim = MapSim.new(map, mission, Vector2i(int(s[0]), int(s[1])))
 	if p.has("seed"):
 		sim.rng = JavaRandom.new(int(p.seed))
@@ -101,8 +105,9 @@ func _ready() -> void:
 	sim.mission_gold = int(mission_info.get("gold", 0))
 	sim.mission_general = int(mission_info.get("general", 0))
 	sim.time_limit = int(mission_info.get("time_limit", 0))
-	profile = Profile.load_or_new()
 	profile.apply_to(sim)
+	if resume:
+		profile.resume_on_map(sim)
 
 	var arrow_mat := StandardMaterial3D.new()
 	arrow_mat.albedo_color = Color8(240, 142, 53)
@@ -392,6 +397,7 @@ func pause() -> void:
 	pause_menu = MissionPause.new()
 	pause_menu.name = "Pause"
 	pause_menu.sim = sim
+	pause_menu.save_game = save_on_map
 	pause_menu.resumed.connect(resume)
 	add_child(pause_menu)
 
@@ -404,6 +410,15 @@ func resume() -> void:
 	_acc = 0.0
 	_last_held = -1
 	set_process(not sim.finished)
+
+
+## Pause menu Save: the mission is saved on its map, once the room is cleared; Continue comes
+## back to this room. False (nothing saved) while an enemy is alive or still to come.
+func save_on_map() -> bool:
+	if not sim.can_save():
+		return false
+	profile = Profile.load_or_new()
+	return profile.save_on_map(sim, lord_id, mission, int(mission_info.get("id", 0)))
 
 
 ## Forgets the keys held when the game stopped, so the hero does not walk on by himself.

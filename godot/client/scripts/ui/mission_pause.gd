@@ -1,6 +1,7 @@
 extends Control
 ## The pause menu of a mission, over the stopped game, in pyport's order: Resume, Items (Assign
-## Items for this mission's potion keys), Options (the settings), Help, Exit to Menu (asked
+## Items for this mission's potion keys), Save (once the room is cleared; Continue comes back
+## to it), Options (the settings), Help, Exit to Menu (asked
 ## first: the mission is lost, back to the campaign) and Exit Game (asked first; not on phones
 ## and the web). Items, Options and Help show over the menu. Back resumes.
 
@@ -16,6 +17,8 @@ var buttons: Array[Button] = []
 var menu: Control
 var settings: Control  # the items, the settings or the help shown over the menu
 var sim: RefCounted  # the mission's (its potion keys)
+var save_game := Callable()  # the mission's save on its map: true when saved
+var note: AcceptDialog
 var ask: ConfirmationDialog
 var asked := ""  # "exit" or "quit"
 
@@ -34,11 +37,15 @@ func _ready() -> void:
 	col.add_child(UiTheme.heading("pause.title", 44))
 	_add(col, "Resume", "pause.resume", func(): resumed.emit())
 	_add(col, "Items", "pause.items", open_items)
+	_add(col, "Save", "pause.save", save)
 	_add(col, "Options", "pause.options", open_options)
 	_add(col, "Help", "pause.help", open_help)
 	_add(col, "Exit", "pause.exit", func(): _ask("exit"))
 	if MainMenu.show_quit():
 		_add(col, "Quit", "pause.quit", func(): _ask("quit"))
+	note = AcceptDialog.new()
+	note.name = "Note"
+	add_child(note)
 	ask = ConfirmationDialog.new()
 	ask.name = "Ask"
 	ask.confirmed.connect(confirmed)
@@ -59,6 +66,14 @@ func confirmed() -> void:
 		Router.back()
 	elif asked == "quit":
 		get_tree().quit()
+
+
+## Saves the mission on its map and says how it went ("Saving Success!" or "Can't Save!").
+func save() -> bool:
+	var ok: bool = save_game.is_valid() and save_game.call()
+	note.dialog_text = tr("pause.saved" if ok else "pause.cannot_save")
+	note.popup_centered()
+	return ok
 
 
 ## Assign Items over the pause menu, for this mission's potion keys.

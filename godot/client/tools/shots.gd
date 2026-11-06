@@ -212,7 +212,7 @@ func _ready() -> void:
 	Router.current.pause_menu.open_items()
 	await _shot(out, "mission_1_pause_items")
 	Router.current.pause_menu.close_options()
-	Router.current.pause_menu.buttons[4].pressed.emit()
+	Router.current.pause_menu.buttons[5].pressed.emit()
 	await _shot(out, "mission_1_pause_exit_ask")
 	Router.current.pause_menu.ask.hide()
 	Router.current.resume()
@@ -231,6 +231,17 @@ func _ready() -> void:
 	Router.current.toggle_auto()  # the AUTO corner lit (switched off again at once)
 	await _shot(out, "mission_1_auto_on")
 	Router.current.toggle_auto()
+	# Save on the map once the room is clear (the shots' own hero file is put back after).
+	var kept := FileAccess.get_file_as_string("user://hero.json")
+	Router.current.pause()
+	Router.current.pause_menu.save()
+	await _shot(out, "mission_1_pause_saved")
+	Router.current.pause_menu.note.hide()
+	Router.current.resume()
+	if kept.is_empty():
+		DirAccess.remove_absolute(ProjectSettings.globalize_path("user://hero.json"))
+	else:
+		FileAccess.open("user://hero.json", FileAccess.WRITE).store_string(kept)
 	Input.action_press("move_right")  # off the barrel's column
 	await _seconds(0.3)
 	Input.action_release("move_right")

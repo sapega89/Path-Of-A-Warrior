@@ -65,6 +65,10 @@ var endings := 0  # bit i set: ending i was reached
 var shop: Array = []  # the Blacksmith's 25 things: the potions and scrolls, then 17 gears
 var reward_item := 0  # what the last ending gave (not saved)
 var opened_lord := 0  # the lord the last ending opened (not saved)
+## A mission saved on its map (pause menu Save, once the room is cleared): lord, mission,
+## the room's middle tile (x, y), HP, MP, rooms visited, its exp so far, kills and ticks of
+## play. Continue goes back there. Any other save forgets it (as pyport's save flag).
+var on_map := {}
 
 static var _exp_table: Array = []
 
@@ -619,7 +623,7 @@ func to_dict() -> Dictionary:
 		"skill_levels": skill_levels, "hotkeys": hotkeys, "quick_slots": quick_slots,
 		"quick_keys": quick_keys, "friendship": friendship, "can_visit": can_visit,
 		"progress": progress, "done": done, "place": place, "lords_open": lords_open,
-		"endings": endings, "shop": shop}
+		"endings": endings, "shop": shop, "on_map": on_map}
 
 
 func from_dict(d: Dictionary) -> void:
@@ -651,9 +655,45 @@ func from_dict(d: Dictionary) -> void:
 	lords_open = int(d.get("lords_open", lords_open))
 	endings = int(d.get("endings", endings))
 	shop = _copy_items(d.get("shop", []), Items.SHOP_POTIONS.size() + Items.SHOP_GEAR, shop)
+	var m: Variant = d.get("on_map", {})
+	on_map = m if typeof(m) == TYPE_DICTIONARY else {}
 
 
+## Saves the hero; a mission saved on its map is forgotten (save_on_map keeps one).
 func save(path: String = PATH) -> bool:
+	on_map = {}
+	return _write(path)
+
+
+## Saves a mission on its map (its room cleared): what was picked up so far goes to the hero
+## (and is taken from the mission, so its end does not give it twice) and the place in it is
+## kept for Continue.
+func save_on_map(sim: RefCounted, lord_id: int, mission: int, ruler_id: int,
+		path: String = PATH) -> bool:
+	take_from(sim, lord_id, mission, ruler_id)
+	sim.gold = 0
+	sim.items.clear()
+	var at: Vector2i = sim.hero.pos
+	on_map = {"lord": lord_id, "mission": mission,
+		"x": at.x / 27 / 7 * 7 + 4, "y": at.y / 27 / 7 * 7 + 4,
+		"hp": int(sim.hero.hp), "mp": int(sim.hero.mp), "rooms": int(sim.rooms_visited),
+		"exp": int(sim.mission_exp), "kills": int(sim.kills), "ticks": int(sim.play_ticks)}
+	return _write(path)
+
+
+## The mission saved on its map goes on: its place and numbers into the new mission.
+func resume_on_map(sim: RefCounted) -> void:
+	if on_map.is_empty():
+		return
+	sim.hero.hp = clampi(int(on_map.get("hp", sim.hero.hp)), 1, sim.hero.max_hp)
+	sim.hero.mp = clampi(int(on_map.get("mp", sim.hero.mp)), 0, sim.hero.max_mp)
+	sim.rooms_visited = int(on_map.get("rooms", 1))
+	sim.mission_exp = int(on_map.get("exp", 0))
+	sim.kills = int(on_map.get("kills", 0))
+	sim.play_ticks = int(on_map.get("ticks", 0))
+
+
+func _write(path: String) -> bool:
 	var f := FileAccess.open(path, FileAccess.WRITE)
 	if f == null:
 		return false

@@ -848,6 +848,14 @@ func _end_tick() -> void:
 	room_phase_timer -= 1
 
 
+## The game can be saved on the map: no enemy alive, no general fighting, no wave to come.
+func can_save() -> bool:
+	for e in enemies:
+		if e.hp > 0:
+			return false
+	return not boss_fight and (waves.is_empty() or int(waves[0]) == 0)
+
+
 ## The exits are open and their arrows shown.
 func exits_open() -> bool:
 	return room_phase == 1 and room_phase_timer < 0
