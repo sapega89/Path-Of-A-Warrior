@@ -87,6 +87,29 @@ func test_sword_hits() -> void:
 	eq(sim.target_info.get("name", ""), "Swords", "the target's name is shown")
 
 
+
+func test_hit_spark_shows_two_ticks() -> void:
+	var d := _duel()
+	var sim: RefCounted = d[0]
+	var e = d[1]
+	eq(sim.sparks().size(), 0, "no spark before the strike")
+	sim.tick(-1, -1, true)
+	sim.tick(-1, -1)
+	var sp: Array = sim.sparks()
+	eq(sp.size(), 1, "the strike shows a spark")
+	if sp.size() == 1:
+		eq(int(sp[0][0]), 0, "its first picture")
+		eq(sp[0][1], e.pos, "where the soldier was hit")
+	sim.tick(-1, -1)
+	sp = sim.sparks()
+	if sp.size() == 1:
+		eq(int(sp[0][0]), 1, "then its second picture")
+	else:
+		check(false, "the spark shows a second tick: %d" % sp.size())
+	sim.tick(-1, -1)
+	sim.tick(-1, -1)
+	check(sim.sparks().filter(func(x): return x[1] == e.pos and int(x[0]) < 2).size() <= 1, "the spark ends")
+
 func test_last_enemy_clears_the_room() -> void:
 	var d := _duel()
 	var sim: RefCounted = d[0]
