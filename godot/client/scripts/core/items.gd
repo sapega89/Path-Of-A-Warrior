@@ -104,6 +104,25 @@ static func describe(item: Dictionary) -> String:
 	return text
 
 
+const POTION_NAMES := ["Red Potion (S)", "Red Potion (M)", "Red Potion (L)", "Blue Potion(S)",
+	"Blue Potion(M)", "Blue Potion(L)", "H.M.Potion(S)", "H.M.Potion(M)", "H.M.Potion(M)",
+	" Powerful Bomb", "Handy Dynamite"]
+const POTION_KINDS := ["HP", "MP", "HP&MP"]
+const POTION_PERCENTS := [30, 60, 100]
+## What the bomb and the dynamite do (the texts of skills 26 and 27; potions recover a share).
+const SCROLL_TEXTS := ["Ranged ATK", "Ranged ATK & Knocks back"]
+
+
+## "Red Potion (S) / Recover 30% of total HP", the line under the Assign Items page.
+static func describe_potion(potion: int) -> String:
+	var i := potion - 1
+	if i < 0 or i >= POTION_NAMES.size():
+		return ""
+	if i < 9:
+		return "%s / Recover %d%% of total %s" % [POTION_NAMES[i], POTION_PERCENTS[i % 3], POTION_KINDS[i / 3]]
+	return "%s / %s" % [POTION_NAMES[i], SCROLL_TEXTS[i - 9]]
+
+
 ## [sheet name, icon index] of a thing, or ["", -1] for none.
 static func icon(id: int) -> Array:
 	if id > 500:

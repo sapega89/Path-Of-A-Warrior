@@ -16,6 +16,7 @@ const SCREENS := {
 	"skills": "res://scripts/screens/skills_screen.gd",
 	"gear": "res://scripts/screens/gear_screen.gd",
 	"inventory": "res://scripts/screens/inventory_screen.gd",
+	"assign_items": "res://scripts/screens/assign_items_screen.gd",
 }
 
 var current: Control

@@ -1,6 +1,6 @@
 extends Control
-## Management: the hero's pages between missions. Attributes, Skills, Gear and
-## Inventory are open; Assign Items is shown greyed until it has its page.
+## Management: the hero's pages between missions: Attributes, Skills, Gear, Inventory and
+## Assign Items.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 ## Page button name, text key, screen (empty: not open yet).
@@ -9,7 +9,7 @@ const PAGES := [
 	["Skills", "management.skills", "skills"],
 	["Gear", "management.gear", "gear"],
 	["Inventory", "management.inventory", "inventory"],
-	["AssignItems", "management.assign_items", ""],
+	["AssignItems", "management.assign_items", "assign_items"],
 ]
 
 var buttons: Array[Button] = []

@@ -3,6 +3,8 @@ extends "res://tests/test_case.gd"
 const Profile := preload("res://scripts/core/profile.gd")
 const Attributes := preload("res://scripts/screens/attributes_screen.gd")
 const Skills := preload("res://scripts/screens/skills_screen.gd")
+const Items := preload("res://scripts/core/items.gd")
+const AssignItems := preload("res://scripts/screens/assign_items_screen.gd")
 const TEST_PATH := "user://test_attributes.json"
 
 
@@ -82,5 +84,43 @@ func test_skills_screen() -> void:
 		saved_keys.append(int(k))
 	eq(saved_keys, [0, 17, 17, 0, 0], "saved")
 	screen.free()
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
+
+
+func test_potion_keys() -> void:
+	var p := Profile.new()
+	p.quick_slots[0] = [1, 3]
+	p.quick_slots[2] = [4, 1]
+	check(not p.assign_quick_key(0, 1), "an empty slot")
+	check(not p.assign_quick_key(0, 0), "already on that key")
+	check(p.assign_quick_key(1, 2), "the blue potion on the second key")
+	eq(p.quick_keys, [0, 2], "keys")
+	check(p.assign_quick_key(0, 2), "the slot the other key holds")
+	eq(p.quick_keys, [2, 0], "the keys swapped")
+	eq(Items.describe_potion(1), "Red Potion (S) / Recover 30% of total HP", "a potion")
+	eq(Items.describe_potion(10), " Powerful Bomb / Ranged ATK", "the bomb")
+
+
+func test_assign_items_screen() -> void:
+	var p := Profile.new()
+	p.quick_slots[0] = [1, 3]
+	p.quick_slots[3] = [5, 2]
+	p.save(TEST_PATH)
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": TEST_PATH}
+	var screen: Control = AssignItems.new()
+	root.add_child(screen)
+	eq(screen.marks[0].text, AssignItems.key_name(0), "the first key drinks from slot 1")
+	eq(screen.marks[1].text, AssignItems.key_name(1), "the second from slot 2")
+	check(screen.slots[3].icon != null, "the blue potion's icon")
+	screen.press_slot(3)
+	check(screen.press_key(1), "slot 4 on the second key")
+	eq(screen.marks[3].text, AssignItems.key_name(1), "its mark moved")
+	eq(screen.marks[1].text, "", "slot 2 has no key now")
+	eq(screen.describe(3), "Blue Potion(M) / Recover 60% of total MP", "the line")
+	screen.free()
+	var saved: RefCounted = Profile.load_or_new(TEST_PATH)
+	eq(int(saved.quick_keys[1]), 3, "saved")
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
