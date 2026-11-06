@@ -10,6 +10,8 @@ var language: OptionButton
 var music: HSlider
 var sfx: HSlider
 var fullscreen: CheckBox
+## Shown over another screen (the mission's pause menu): what Back does instead of going back.
+var close := Callable()
 
 
 func _ready() -> void:
@@ -42,9 +44,16 @@ func _ready() -> void:
 	var back := Button.new()
 	back.name = "Back"
 	back.text = "common.back"
-	back.pressed.connect(func(): Router.back())
+	back.pressed.connect(_back)
 	col.add_child(back)
 	language.grab_focus.call_deferred()
+
+
+func _back() -> void:
+	if close.is_valid():
+		close.call()
+	else:
+		Router.back()
 
 
 func _slider(node_name: String, key: String) -> HSlider:
@@ -80,4 +89,4 @@ func _row(col: VBoxContainer, label_key: String, control: Control) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
-		Router.back()
+		_back()

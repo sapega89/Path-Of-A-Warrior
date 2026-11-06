@@ -164,6 +164,13 @@ func _ready() -> void:
 	await _shot(out, "mission_1_start")
 	await _seconds(3.0)  # the banner, then the first soldiers come in through the exit
 	await _shot(out, "mission_1_enemies")
+	# The pause menu over the mission, then its Options.
+	Router.current.pause()
+	await _shot(out, "mission_1_pause")
+	Router.current.pause_menu.open_options()
+	await _shot(out, "mission_1_pause_options")
+	Router.current.pause_menu.close_options()
+	Router.current.resume()
 	# Fight: walk to the nearest soldier and strike, until the room is cleared.
 	var shot_fight := false
 	var t0 := Time.get_ticks_msec()
