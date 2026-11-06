@@ -35,7 +35,7 @@ func test_mission_goes_in_and_out() -> void:
 	eq(int(sim.quick_slots[0][1]), 2, "his potions")
 	eq(sim.hero.weapon_kind, 1, "the claymore's sword type")
 	sim.quick_slots[0][1] = 1  # one drunk
-	sim.items = [131]
+	sim.items.append(131)
 	sim.gold = 30
 	sim.friendship[5] = 10
 	sim.won = true
