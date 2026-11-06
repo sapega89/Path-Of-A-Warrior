@@ -17,6 +17,10 @@ func test_go_push_back() -> void:
 	eq(r.current_name(), "title", "back on title")
 	check(not r.back(), "nothing to go back to")
 	check(not r.push("nope"), "unknown screen")
+	check(r.push("settings", {"a": 1}), "push with params")
+	eq(r.params, {"a": 1}, "params")
+	r.back()
+	eq(r.params, {}, "params of the screen below")
 	r.free()
 	host.free()
 

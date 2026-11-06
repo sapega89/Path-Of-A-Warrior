@@ -29,7 +29,26 @@ func _ready() -> void:
 		viewer.hero.step(Vector2.RIGHT, 1.0 / 60.0)
 		await get_tree().physics_frame
 	await _shot(out, "map_%02d_walk" % MAPS.back())
+	# The campaign: the mission list and the first mission, walking down into the next room.
+	Router.go("campaign", {"level": 2, "chapter": 0, "lord": 1})
+	await _shot(out, "04_missions")
+	Router.go("mission", {"lord": 1, "mission": 0})
+	var mission: Node = Router.current
+	await _frames(20)
+	await _shot(out, "mission_1_start")
+	await _seconds(0.8)  # the room opens after 5 ticks
+	await _shot(out, "mission_1_open")
+	Input.action_press("move_down")
+	await _seconds(6.0)
+	Input.action_release("move_down")
+	await _seconds(1.0)
+	print("room after walking down: ", mission.sim.cell, " stage ", mission.sim.rooms_visited)
+	await _shot(out, "mission_1_room_2")
 	get_tree().quit()
+
+
+func _seconds(t: float) -> void:
+	await get_tree().create_timer(t).timeout
 
 
 func _frames(n: int) -> void:

@@ -265,3 +265,23 @@ func start_cell(room: int = 0) -> Vector2i:
 
 static func cell_to_world(c: Vector2i) -> Vector3:
 	return Vector3(c.x + 0.5, 0.0, c.y + 0.5)
+
+
+## Light and background for a map: a sun with shadows and a strong white ambient, so the
+## original colours of the tiles and sprites stay close to how they were drawn.
+static func add_environment(parent: Node3D) -> void:
+	var sun := DirectionalLight3D.new()
+	sun.name = "Sun"
+	sun.rotation_degrees = Vector3(-60, -25, 0)
+	sun.shadow_enabled = true
+	sun.light_energy = 0.7
+	parent.add_child(sun)
+	var env := Environment.new()
+	env.background_mode = Environment.BG_COLOR
+	env.background_color = Color.BLACK
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = Color.WHITE
+	env.ambient_light_energy = 0.6
+	var we := WorldEnvironment.new()
+	we.environment = env
+	parent.add_child(we)

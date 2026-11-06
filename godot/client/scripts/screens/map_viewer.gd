@@ -34,7 +34,7 @@ func _ready() -> void:
 	world = Node3D.new()
 	world.name = "WorldRoot"
 	viewport.add_child(world)
-	_add_environment(world)
+	MapBuilder.add_environment(world)
 	builder = MapBuilder.new()
 	builder.name = "Map"
 	world.add_child(builder)
@@ -72,24 +72,6 @@ func show_map(number: int) -> bool:
 	camera.snap()
 	info.text = tr("viewer.info") % [map_number, map_total]
 	return true
-
-
-func _add_environment(parent: Node3D) -> void:
-	var sun := DirectionalLight3D.new()
-	sun.name = "Sun"
-	sun.rotation_degrees = Vector3(-60, -25, 0)
-	sun.shadow_enabled = true
-	sun.light_energy = 0.7
-	parent.add_child(sun)
-	var env := Environment.new()
-	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color.BLACK
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color.WHITE
-	env.ambient_light_energy = 0.6
-	var we := WorldEnvironment.new()
-	we.environment = env
-	parent.add_child(we)
 
 
 func _unhandled_input(event: InputEvent) -> void:

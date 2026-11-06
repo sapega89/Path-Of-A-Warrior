@@ -21,8 +21,14 @@ const LOOP := 222  # end-of-table marker of the original animation tables
 const FLASH_TIME := 0.15
 const FLASH_COLOR := Color(1.6, 1.5, 1.2)
 
+## Pixels of the sprite below the actor's position that still stand on the ground
+## (the original's body box reaches 6 px below the position).
+const FOOT_PX := 6
+
 ## Original 8-direction: 0 down, 2 left, 4 up, 6 right (clockwise on screen).
 var dir8 := 0
+## Driven by the map simulation (set_frame / world position) instead of reading the input.
+var external := false
 var walking := false
 var sprite: Sprite3D
 var info := {}
@@ -53,7 +59,7 @@ func _ready() -> void:
 	# The sprite is centred on its cell; the feet are (origin - cell / 2) px below the middle.
 	var cell: Array = info.get("cell", [96, 96])
 	var origin: Array = info.get("origin", [48, 72])
-	sprite.position.y = (float(origin[1]) - float(cell[1]) / 2.0) * PIXEL_SIZE
+	sprite.position.y = (float(origin[1]) - float(cell[1]) / 2.0 + FOOT_PX) * PIXEL_SIZE
 	add_child(sprite)
 	_show_frame(current_frame())
 
@@ -90,7 +96,19 @@ static func dir8_of(move: Vector2) -> int:
 	return posmod(roundi(a / (PI / 4.0)), 8)
 
 
+## Original pixel position to the world (the feet: 6 px below the position).
+static func px_to_world(p: Vector2) -> Vector3:
+	return Vector3(p.x / 27.0, 0.0, (p.y + FOOT_PX) / 27.0)
+
+
+## Shows a frame of the sheet (used when the simulation drives the hero).
+func set_frame(frame: int) -> void:
+	_show_frame(frame)
+
+
 func _physics_process(delta: float) -> void:
+	if external:
+		return
 	step(read_move(), delta)
 	if Input.is_action_just_pressed("attack"):
 		attack()
