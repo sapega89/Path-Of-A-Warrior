@@ -113,6 +113,37 @@ func test_hit_spark_shows_two_ticks() -> void:
 	sim.tick(-1, -1)
 	check(sim.sparks().filter(func(x): return x[1] == e.pos and int(x[0]) < 2).size() <= 1, "the spark ends")
 
+
+func test_weapon_trail_of_a_swing() -> void:
+	var sim := _sim(false)
+	var pick := RandomNumberGenerator.new()
+	eq(sim.trails(pick).size(), 0, "no trail standing")
+	sim.hero.dir = 4
+	sim.hero.action = 12
+	sim.hero.frame = 3
+	var t: Array = sim.trails(pick)
+	eq(t.size(), 1, "a skill swing leaves a trail")
+	if t.size() == 1:
+		eq(str(t[0][0]), "trail", "the trail sheet")
+		eq(int(t[0][1]), 2 * 3 + 1, "facing down, the middle step")
+		eq(t[0][2], sim.hero.pos, "at the hero")
+	sim.hero.action = 25
+	sim.hero.frame = 3
+	t = sim.trails(pick)
+	if t.size() == 1:
+		eq(int(t[0][1]), 3 * 3 + 2, "a whirl turns its trail (down + 2 = left)")
+	else:
+		check(false, "the whirl leaves a trail: %d" % t.size())
+	var seen := false
+	sim.hero.action = 0
+	sim.hero.frame = 0
+	sim.tick(-1, -1, true)
+	for i in 8:
+		if sim.trails(pick).size() > 0:
+			seen = true
+		sim.tick(-1, -1)
+	check(seen, "a sword strike leaves a trail")
+
 func test_last_enemy_clears_the_room() -> void:
 	var d := _duel()
 	var sim: RefCounted = d[0]
