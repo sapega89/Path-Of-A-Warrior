@@ -12,6 +12,10 @@ Writes
                                          the hero's frames, body + head + weapon put together as
                                          pyport draw_hero does, one cell per
                                          sprite frame; hero.json has the walk / idle tables
+  godot/client/assets/original/enemy_<n>_<tint>.png
+                                         the soldiers' frames (n 0 swords, 1 archers) in cells
+                                         like the hero's, one sheet per mission tint (0..3), the
+                                         palette swapped as load_recoloured does
   godot/client/assets/original/ui/*.png  UI pictures used as they are (exit arrows, ...)
   godot/client/data/tables.json          the game's constant tables the map code uses (animation
                                          frame lists, direction steps, ...), copied from
@@ -172,6 +176,46 @@ def export_hero(out):
     (out / "hero.json").write_text(json.dumps(info))
 
 
+ENEMY_SPRITES = [(56, 82), (57, 83)]  # (imgchar image, mdat frame table): swords, archers
+# Mission tint t replaces the 5 colours of palette 0 with those of palette t.
+ENEMY_PALETTES = [
+    [(236, 211, 197), (205, 143, 128), (129, 81, 69), (104, 60, 49), (79, 39, 29)],
+    [(226, 205, 178), (196, 179, 152), (180, 142, 122), (135, 111, 47), (93, 73, 49)],
+    [(174, 225, 242), (101, 156, 195), (61, 102, 139), (43, 78, 115), (45, 45, 84)],
+    [(162, 199, 159), (135, 156, 119), (86, 123, 98), (33, 98, 63), (51, 51, 51)],
+]
+
+
+def recolour(img, tint):
+    if tint == 0:
+        return img
+    swap = {ENEMY_PALETTES[0][b]: ENEMY_PALETTES[tint][b] for b in range(5)}
+    px = img.load()
+    for y in range(img.height):
+        for x in range(img.width):
+            r, g, b, a = px[x, y]
+            if a and (r, g, b) in swap:
+                px[x, y] = swap[(r, g, b)] + (a,)
+    return img
+
+
+def export_enemies(out):
+    mdat = scr.load(ROOT / "mdat_QVGA.scr")
+    chars = scr.load(ROOT / "imgchar.scr")
+    cw, ch = HERO_CELL
+    for n, (image, table) in enumerate(ENEMY_SPRITES):
+        frames = read_frames(ROOT / mdat[table])
+        for tint in range(len(ENEMY_PALETTES)):
+            img = recolour(Image.open(ROOT / (chars[image] + ".png")).convert("RGBA"), tint)
+            sheet = Image.new("RGBA", (cw * 16, ch * ((len(frames) + 15) // 16)), (0, 0, 0, 0))
+            for i, (sx, sy, w, h, ox, oy) in enumerate(frames):
+                if w and h:
+                    part = img.crop((sx, sy, sx + w, sy + h))
+                    sheet.alpha_composite(part, ((i % 16) * cw + HERO_ORIGIN[0] - ox,
+                                                 (i // 16) * ch + HERO_ORIGIN[1] - oy))
+            sheet.save(out / ("enemy_%d_%d.png" % (n, tint)))
+
+
 def cstr(b):
     return bytes(b).split(b"\0")[0].decode("utf-8", "replace")
 
@@ -227,6 +271,8 @@ TABLES = [
     "head_anim_0", "head_anim_1", "head_anim_2", "head_anim_3",
     "body_anim_0", "body_anim_1", "body_anim_2", "body_anim_3",
     "weapon_anim_1", "weapon_anim_2", "weapon_anim_3", "general_frame_flags",
+    "squad_offsets", "hit_box_x", "hit_box_y", "hit_box_w", "hit_box_h", "front_dx", "front_dy",
+    "weapon_reach", "skill_attack_div", "troop_names",
 ]
 
 
@@ -254,6 +300,7 @@ def main():
     out_tiles.mkdir(parents=True, exist_ok=True)
     atlas.save(out_tiles / "tiles.png")
     export_hero(out_tiles)
+    export_enemies(out_tiles)
     export_ui(out_tiles / "ui")
     print("maps: %d, tiles: %d, chapters: %d, missions: %d" % (len(map_files), found, chapters, missions))
 

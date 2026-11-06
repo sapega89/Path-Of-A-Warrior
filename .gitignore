@@ -35,3 +35,4 @@ desktop.ini
 
 # POW Multiplayer server data (pyport/pow_server)
 *.sqlite
+__pycache__/

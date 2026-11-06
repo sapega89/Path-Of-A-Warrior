@@ -70,5 +70,9 @@
   "mission.complete": {
     "en": "Complete.",
     "uk": "пройдено."
+  },
+  "mission.failed": {
+    "en": "Mission fail!",
+    "uk": "Місію провалено!"
   }
 }
