@@ -1,4 +1,4 @@
-"""PORT-EXTRA (asked by Andrey): the single player's saves kept on the server.
+"""(asked by Andrey): the single player's saves kept on the server.
 
 The phone kept the game only in its RecordStores; the port keeps them in ~/.path_of_a_warrior
 (desktop) or localStorage (browser), so a hero stayed on one computer / one browser. This
@@ -99,7 +99,7 @@ class CloudSession:
     def on_put(self, msg):
         store, base, at, records = msg.get("store"), msg.get("base"), msg.get("at"), msg.get("records")
         if isinstance(store, str) and store.startswith("game" + "vil_"):
-            store = store[8:]     # PORT-EXTRA: a client from before the rename (storage.py)
+            store = store[8:]     # a client from before the rename (storage.py)
         if store not in STORES:
             return self.send(op="put", ok=False, err="bad store", store=str(store))
         if not (isinstance(base, int) and isinstance(at, int) and isinstance(records, list)

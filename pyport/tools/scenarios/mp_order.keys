@@ -1,4 +1,4 @@
-# PORT-EXTRA Order window (pow/game/online/mp_canvas_order.py): the scripted player RIVAL creates the
+# Order window (pow/game/online/mp_canvas_order.py): the scripted player RIVAL creates the
 # order WOLF, TEST joins it from the main menu's Order picture, invites RIVAL to a 2-on-2 duel on
 # its side, comes back to the window after the battle and leaves the order.
 # States: 30 the order, 31 a member, 32 the order name, 33 leave? (Yes / No).

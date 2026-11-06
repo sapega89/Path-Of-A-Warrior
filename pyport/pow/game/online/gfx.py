@@ -1,22 +1,19 @@
-"""Gfx (i.java): drawing helpers, clip, text, CRC-32 for the font PLTE patch.
-
-Generated once from pyport/mp_java/i.java (branch java-reference) by the old
-tools/j2py_mp.py; edited by hand since.
+"""Gfx: drawing helpers, clip, text, CRC-32 for the font PLTE patch.
 """
 from pow.game.online.rt import i32, idiv, ushr32
 
 
 class Gfx:
-    g = None  # i.java:12 Graphics
-    clip_x = 0  # i.java:13 int
-    clip_y = 0  # i.java:14 int
-    clip_w = 0  # i.java:15 int
-    clip_h = 0  # i.java:16 int
-    font = None  # i.java:17 j
-    crc_table = None  # i.java:18 int[]
+    g = None  # Graphics
+    clip_x = 0  # int
+    clip_y = 0  # int
+    clip_w = 0  # int
+    clip_h = 0  # int
+    font = None  # j
+    crc_table = None  # int[]
 
     @staticmethod
-    def set_graphics(graphics):  # i.java:20
+    def set_graphics(graphics):
         Gfx.g = graphics
         Gfx.clip_x = Gfx.g.getClipX()
         Gfx.clip_y = Gfx.g.getClipY()
@@ -24,22 +21,22 @@ class Gfx:
         Gfx.clip_h = Gfx.g.getClipHeight()
 
     @staticmethod
-    def draw_image_part(image, x, y, w, h, src_x, src_y):  # i.java:28
+    def draw_image_part(image, x, y, w, h, src_x, src_y):
         Gfx.g.clipRect(x, y, w, h)
         Gfx.g.drawImage(image, (x - src_x), (y - src_y), 20)
         Gfx.g.setClip(Gfx.clip_x, Gfx.clip_y, Gfx.clip_w, Gfx.clip_h)
 
     @staticmethod
-    def fill_rect(x, y, w, h, color):  # i.java:34
+    def fill_rect(x, y, w, h, color):
         Gfx.g.setColor(color)
         Gfx.g.fillRect(x, y, w, h)
 
     @staticmethod
-    def set_font(font):  # i.java:39
+    def set_font(font):
         Gfx.font = font
 
     @staticmethod
-    def draw_chars(chars, start, count, x, y, anchor):  # i.java:43
+    def draw_chars(chars, start, count, x, y, anchor):
         if (anchor & 1) != 0:
             x = (x - idiv(Gfx.font.chars_width(chars, start, count), 2))
         elif (anchor & 8) != 0:
@@ -55,18 +52,18 @@ class Gfx:
             i = i + 1
 
     @staticmethod
-    def draw_string(text, x, y, anchor):  # i.java:61
+    def draw_string(text, x, y, anchor):
         Gfx.draw_chars([ord(_c) for _c in text], 0, len(text), x, y, anchor)
 
     @staticmethod
-    def draw_string_on(graphics, text, x, y, anchor):  # i.java:65
+    def draw_string_on(graphics, text, x, y, anchor):
         saved_g = Gfx.g
         Gfx.g = graphics
         Gfx.draw_chars([ord(_c) for _c in text], 0, len(text), x, y, anchor)
         Gfx.g = saved_g
 
     @staticmethod
-    def make_crc_table():  # i.java:72
+    def make_crc_table():
         Gfx.crc_table = [0] * (256)
         i = 0
         while i < 256:
@@ -81,7 +78,7 @@ class Gfx:
             i = i + 1
 
     @staticmethod
-    def crc32(data, pos, count):  # i.java:90
+    def crc32(data, pos, count):
         if Gfx.crc_table is None:
             Gfx.make_crc_table()
         crc = (-1)
@@ -91,7 +88,7 @@ class Gfx:
 
 
 def _static_init():
-    # DECOMP_FIX: the PNG header / IEND locals of the static initializer were never read
+    # the PNG header / IEND locals of the static initializer were never read
     pass
 
 

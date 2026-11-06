@@ -1,4 +1,4 @@
-# random keys (fuzzer seed 106, 800 steps) that crashed the game before ORIG-BUG B6
+# random keys (fuzzer seed 106, 800 steps) that crashed the game before
 # Fresh hero -> first mission -> the map with enemies (Random seeded by POW_SEED=1):
 # attacks, kills, gold drops, a potion, a skill, a bomb, then the hero dies -> Mission fail
 wait 25

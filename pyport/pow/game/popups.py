@@ -1,19 +1,19 @@
-"""l.java - popups (cS): drawing, text popups, choices and the key / timer logic."""
+"""Popups (cS): drawing, text popups, choices and the key / timer logic."""
 import config
 from pow.game import consts
 from pow.game.game_canvas import GameCanvas
 from pow.game.gfx import Gfx
 from pow.midp.jint import i16
 
-# PORT-EXTRA popup ids past the original 0..42: the attribute reset (Menus.open_respec)
+# popup ids past the original 0..42: the attribute reset (Menus.open_respec)
 RESPEC_POPUP = 90           # 3 choices: gold / elixir / cancel
 RESPEC_DONE_POPUP = 91      # its result (Ok); no action when it closes
 
 
 class Popups(GameCanvas):
-    image = None  # public static Image r = null;  l.java:38  (ui_popup)
+    image = None  # ui_popup
 
-    def __init__(self):  # l.java:42-44
+    def __init__(self):
         super().__init__(GameCanvas.midlet)
         self.from_gamestr = 0       # 1 = popup from d() (gamestr), 0 = from e()
         self.kind = 0       # popup kind: 0 none, 1 text, 2 yes/no, 3 4-choice, 4 result, 10 ok
@@ -33,9 +33,9 @@ class Popups(GameCanvas):
         self.arg4 = None
         self.answered = False
         self.drawn = False
-        self.choices = 4        # PORT-EXTRA: rows of a kind-3 popup (the original always has 4)
+        self.choices = 4        # rows of a kind-3 popup (the original always has 4)
 
-    def reset(self):  # l.java:46-60
+    def reset(self):
         self.kind = 0
         self.popup_id = 0
         self.timer = 0
@@ -50,7 +50,7 @@ class Popups(GameCanvas):
         for b in range(len(self.lines)):
             self.lines[b] = ""
 
-    def popup_keys(self):  # l.java:62-324  (keys + timer; returns the chosen button or -1)
+    def popup_keys(self):  # keys + timer; returns the chosen button or -1
         if GameCanvas.key != 0:
             self.popup_redraw = 1
             if self.extra != 0:
@@ -93,13 +93,13 @@ class Popups(GameCanvas):
                                     self.start_exit()
                                     return -1
                                 if self.popup_id in {41, 42}:
-                                    # platformRequest(ag.bm / ag.bn): the browser is not opened in the port
+                                    # platformRequest: the browser is not opened in the port
                                     if self.popup_id == 41:
                                         print("platformRequest:", GameCanvas.more_games_url)
                                         GameCanvas.midlet.destroyApp(True)
                                         GameCanvas.midlet.notifyDestroyed()
                                         return -1
-                                    # PORT-EXTRA: the Multiplayer screens are part of this game:
+                                    # the Multiplayer screens are part of this game:
                                     # Continue, then Live > Multiplayer opens by itself
                                     # (live_online.Online.mp_pending); nothing without a save
                                     from pow.game.live_online import Online
@@ -115,7 +115,7 @@ class Popups(GameCanvas):
                                 self.fill_shop()
                                 GameCanvas.live_time = GameCanvas.now()
                                 if GameCanvas.live is not None:
-                                    type(GameCanvas.live).first_login = True     # as.d = true (static)
+                                    type(GameCanvas.live).first_login = True  # = true (static)
                                 if self.save_game() != 0:
                                     GameCanvas.menus.enter_submenu()
                                     GameCanvas.menu_items = GameCanvas.game_menu_items
@@ -126,7 +126,7 @@ class Popups(GameCanvas):
                                     self.load_hero_images()
                                     self.start_story(100, 0)
                                     from pow.game.live_online import Online
-                                    Online.on_game_start(new_game=True)   # PORT-EXTRA: online
+                                    Online.on_game_start(new_game=True)   # online
                                 else:
                                     GameCanvas.reset_base_stats()
                                     self.setup_popup(1)
@@ -140,7 +140,7 @@ class Popups(GameCanvas):
                                 GameCanvas.menus.enter_submenu()
                                 GameCanvas.menu[0] = 6
                             # break -> leaves both switches, continues with the timer below
-                        elif GameCanvas.map_mode.mode == 1:  # l.java:172-182  (pause menu: Exit -> Game Menu)
+                        elif GameCanvas.map_mode.mode == 1:  # pause menu: Exit -> Game Menu
                             if GameCanvas.menu[1] == 5:
                                 self.free_map_images()
                                 self.open_menu(2)
@@ -180,7 +180,7 @@ class Popups(GameCanvas):
                 GameCanvas.redraw = 1
         return self._tick_timer()
 
-    def _tick_timer(self):  # l.java:229-323  (the part of b() after the key switch)
+    def _tick_timer(self):  # (the part of b() after the key switch)
         if self.extra != 0:
             self.extra_w = i16(self.extra_w - 1)
             if self.extra_w < 1:
@@ -201,7 +201,7 @@ class Popups(GameCanvas):
                         GameCanvas.talk_lines[b] = ""
                     GameCanvas.restore_menu_cursor()
                     GameCanvas.menu_items = GameCanvas.game_menu_items
-                elif popup == RESPEC_POPUP:     # PORT-EXTRA: attribute reset chosen
+                elif popup == RESPEC_POPUP:     # attribute reset chosen
                     self.choices = 4
                     GameCanvas.menus.finish_respec(self.button)
                 elif popup == 39:
@@ -230,19 +230,19 @@ class Popups(GameCanvas):
                     else:
                         GameCanvas.room_phase = 1
                         GameCanvas.room_phase_timer = 5
-                elif popup == 10:  # l.java:257-260  (Mission Success -> Total Exp)
+                elif popup == 10:  # Mission Success -> Total Exp
                     from pow.game.map_scene import MapScene
                     self.setup_popup(11)
                     MapScene.make_exp_bars()
-                elif popup == 11:  # l.java:261-268  (Total Exp -> Time Exp, if in time)
+                elif popup == 11:  # Total Exp -> Time Exp, if in time
                     if GameCanvas.mission_seconds < GameCanvas.lords[GameCanvas.mission].time_limit:
                         self.setup_popup(12)
                         GameCanvas.exp_bar_step = 0
                     else:
                         GameCanvas.scene.finish_mission(1)
-                elif popup == 12:  # l.java:269-271
+                elif popup == 12:
                     GameCanvas.scene.finish_mission(1)
-                elif popup == 22:  # l.java:300-315  (Mission fail -> Game Menu)
+                elif popup == 22:  # Mission fail -> Game Menu
                     if GameCanvas.lords[GameCanvas.mission].reward > 200:
                         GameCanvas.scene.finish_mission(0)
                     else:
@@ -257,7 +257,7 @@ class Popups(GameCanvas):
                         GameCanvas.menu_anim = 0
         return -1
 
-    def draw_popup(self):  # l.java:326-397  (draw)
+    def draw_popup(self):  # draw
         i = -(self.height >> 1)
         if self.kind == 4:
             i += 20
@@ -281,7 +281,7 @@ class Popups(GameCanvas):
                     Gfx.set_font(GameCanvas.font_white)
                 self.draw_text_at(self.lines[b + 2], GameCanvas.view_cy + i, 0)
                 i += 16
-        elif self.kind == 4:  # l.java:357-381  (mission result: gold / total exp / time exp)
+        elif self.kind == 4:  # mission result: gold / total exp / time exp
             if GameCanvas.state == 3:
                 GameCanvas.view_cy -= 30
             self.draw_text_at(GameCanvas.lord_name, GameCanvas.view_cy - 75, len(GameCanvas.lord_name) + 1)
@@ -310,7 +310,7 @@ class Popups(GameCanvas):
             self.draw_ok(GameCanvas.view_cy + i - 10)
         self.popup_redraw = 0
 
-    def draw_popup_frame(self, height):  # l.java:399-423  (popup frame)
+    def draw_popup_frame(self, height):  # popup frame
         i = GameCanvas.view_cy - (height >> 1) - 10
         if Popups.image is None:
             Popups.image = self.load_image(GameCanvas.scr_ui.get(33))
@@ -337,7 +337,7 @@ class Popups(GameCanvas):
         for b in range(26):
             self.draw_map_region(frame, GameCanvas.view_cx - 103 + b * 8 - GameCanvas.view_x, i, 8, 3, 10, 3)
 
-    def draw_tiled_back(self, x, y, w, h):  # l.java:425-446  (tiled ui_back)
+    def draw_tiled_back(self, x, y, w, h):  # tiled ui_back
         if GameCanvas.images[10] is None:
             GameCanvas.images[10] = self.load_image(GameCanvas.scr_ui.get(59))
         b = 0
@@ -357,7 +357,7 @@ class Popups(GameCanvas):
                 col += 1
             b += 1
 
-    def draw_yes_no(self, y):  # l.java:448-461  (Yes / No buttons)
+    def draw_yes_no(self, y):  # Yes / No buttons
         for b in range(2):
             if self.button == b:
                 Gfx.set_font(GameCanvas.font_white)
@@ -368,12 +368,12 @@ class Popups(GameCanvas):
             self.draw_box(GameCanvas.view_cx - 60 + b * 80, y + GameCanvas.view_y, 40, 17, bool_)
             GameCanvas.draw_view_text_centred(consts.yes_no_ok[b], GameCanvas.view_cx - 40 + b * 80, y + 1)
 
-    def draw_ok(self, y):  # l.java:463-467  (Ok button)
+    def draw_ok(self, y):  # Ok button
         Gfx.set_font(GameCanvas.font_white)
         self.draw_box(GameCanvas.view_cx - 60 + 40 + GameCanvas.view_x, y + GameCanvas.view_y, 40, 17, True)
         GameCanvas.draw_view_text_centred(consts.yes_no_ok[2], GameCanvas.view_cx, y)
 
-    def show_text(self, text):  # l.java:469-496  ("<kind>line|line|...")
+    def show_text(self, text):  # "<kind>line|line|..."
         self.drawn = False
         i = 1
         if text != "":
@@ -384,21 +384,11 @@ class Popups(GameCanvas):
             line = 0
             for b in range(len(text)):
                 if text[b] == "|":
-                    # DECOMP-FIX F9 (proposed): decompiled `s = s + 1; l[s] = ...` is `l[s++] = ...`;
-                    # literally, line 0 keeps stale text and the last line is never drawn.
-                    if config.DECOMP_FIX["F9"]:
-                        self.lines[line] = text[i:b]
-                        line = i16(line + 1)
-                    else:
-                        line = i16(line + 1)
-                        self.lines[line] = text[i:b]
+                    self.lines[line] = text[i:b]
+                    line = i16(line + 1)
                     i = b + 1
-            if config.DECOMP_FIX["F9"]:
-                self.lines[line] = text[i:]
-                line = i16(line + 1)
-            else:
-                line = i16(line + 1)
-                self.lines[line] = text[i:]
+            self.lines[line] = text[i:]
+            line = i16(line + 1)
             self.line_count = line
             self.height = i16(20 * line + (line - 1) * 2)
             if self.kind in {2, 10}:
@@ -407,7 +397,7 @@ class Popups(GameCanvas):
                 self.timer = 10
             self.popup_redraw = 1
 
-    def show(self, popup):  # l.java:506-598  (gamestr popup N: text gamestr[N+15], kind from its first digit)
+    def show(self, popup):  # gamestr popup N: text gamestr[N+15], kind from its first digit
         from pow.game.menus import Menus
         self.from_gamestr = 1
         self.drawn = False
@@ -481,17 +471,17 @@ class Popups(GameCanvas):
             Live.request_redraw()
 
     @staticmethod
-    def show_bought():  # l.java:498-500  (Blacksmith: bought)
+    def show_bought():  # Blacksmith: bought
         from pow.game.menus import Menus
         return " You bought|1 " + Menus.item_name(GameCanvas.cursor[19]) + "."
 
     @staticmethod
-    def show_sold():  # l.java:502-504  (Blacksmith: sold)
+    def show_sold():  # Blacksmith: sold
         from pow.game.menus import Menus
         return " You sold|" + Menus.item_name(GameCanvas.cursor[19]) + "."
 
     def setup_choice(self, popup_id, text, choices):
-        """PORT-EXTRA: a kind-3 popup (like e(14)) with its own text and 2..4 choice rows; the
+        """a kind-3 popup (like e(14)) with its own text and 2..4 choice rows; the
         chosen row comes to _tick_timer() under popup_id as self.button."""
         self.from_gamestr = 0
         self.drawn = False
@@ -509,7 +499,7 @@ class Popups(GameCanvas):
         self.popup_redraw = 1
         GameCanvas.redraw = 1
 
-    def setup_popup(self, popup):  # l.java:600-891
+    def setup_popup(self, popup):
         self.from_gamestr = 0
         self.choices = 4
         self.drawn = False
@@ -580,7 +570,7 @@ class Popups(GameCanvas):
             lines[1] = GameCanvas.popup_lines[0]
             GameCanvas.popup_lines[1] = GameCanvas.general.name + "."
             lines[2] = GameCanvas.popup_lines[1]
-        elif p in (8, 9):  # l.java:679-689  (room / stage banner on the map)
+        elif p in (8, 9):  # room / stage banner on the map
             GameCanvas.popup_lines[0] = "Stage " + str(GameCanvas.rooms_visited)
             if p == 9:
                 GameCanvas.popup_lines[0] = GameCanvas.popup_lines[0] + " Complete."
@@ -588,14 +578,14 @@ class Popups(GameCanvas):
             lines[0] = GameCanvas.lord_name
             lines[1] = GameCanvas.mission_name
             lines[2] = GameCanvas.popup_lines[0]
-        elif p == 10:  # l.java:690-693
+        elif p == 10:
             lines[0] = GameCanvas.mission_name
             lines[1] = "Mission Success"
-        elif p == 13:  # l.java:694-698  (item picked up)
+        elif p == 13:  # item picked up
             GameCanvas.popup_lines[0] = GameCanvas.gear_def.name
             lines[0] = GameCanvas.popup_lines[0]
             lines[1] = "Acquired!!"
-        elif p == 22:  # l.java:740-762  (mission failed: maybe an item is lost)
+        elif p == 22:  # mission failed: maybe an item is lost
             lines[0] = GameCanvas.lord_name
             lines[1] = GameCanvas.mission_name
             lines[2] = "Mission fail!"
@@ -614,7 +604,7 @@ class Popups(GameCanvas):
                     lines[4] = GameCanvas.popup_lines[0]
                     self.line_count = i16(self.line_count + 2)
             self.play_sound(6)
-        elif p == 27:  # l.java:779-809  (reward item / hidden mission after the ending)
+        elif p == 27:  # reward item / hidden mission after the ending
             if GameCanvas.reward_item != 0:
                 if GameCanvas.reward_item == 502:
                     GameCanvas.popup_lines[0] = " / Catherine's scarf"[3:]
@@ -626,37 +616,20 @@ class Popups(GameCanvas):
                 lines[1] = "received!"
                 self.line_count = i16(self.line_count + 1)
             if GameCanvas.reward_skill != 0:
-                # DECOMP-FIX F19: decompiled `i = i + 1; l[i] = ...` is `l[i++] = ...` (as in F9 and in
-                # the ef lines just above). Literally l[0] (eg only) or l[2] (ef and eg) is never
-                # written and stays None -> the popup's draw fails and the screen after the ending
-                # lore stays dark with only SKIP; the hidden mission's name is never drawn.
-                fix_f19 = config.DECOMP_FIX["F19"]
                 if GameCanvas.reward_item != 0:
-                    if fix_f19:
-                        lines[self.line_count] = ""
-                        self.line_count = i16(self.line_count + 1)
-                    else:
-                        self.line_count = i16(self.line_count + 1)
-                        lines[self.line_count] = ""
+                    lines[self.line_count] = ""
+                    self.line_count = i16(self.line_count + 1)
                 data = GameCanvas.load_data_file(48)
                 pos = 38 * GameCanvas.reward_skill + 10
                 b = 0
                 while b < 30 and data[pos + b] != 0:
                     b += 1
                 GameCanvas.lord_names[0] = GameCanvas.read_utf(data, pos, pos + b)
-                if fix_f19:
-                    lines[self.line_count] = "Hidden Mission!"
-                    self.line_count = i16(self.line_count + 1)
-                else:
-                    self.line_count = i16(self.line_count + 1)
-                    lines[self.line_count] = "Hidden Mission!"
+                lines[self.line_count] = "Hidden Mission!"
+                self.line_count = i16(self.line_count + 1)
                 GameCanvas.popup_lines[1] = GameCanvas.lord_names[0]
-                if fix_f19:
-                    lines[self.line_count] = GameCanvas.popup_lines[1]
-                    self.line_count = i16(self.line_count + 1)
-                else:
-                    self.line_count = i16(self.line_count + 1)
-                    lines[self.line_count] = GameCanvas.popup_lines[1]
+                lines[self.line_count] = GameCanvas.popup_lines[1]
+                self.line_count = i16(self.line_count + 1)
         self.height = i16(20 * self.line_count + (self.line_count - 1 << 1))
         if self.kind == 2:
             self.height = i16(self.height + 25)
@@ -669,7 +642,7 @@ class Popups(GameCanvas):
         GameCanvas.redraw = 1
 
 
-# l.java:640-868 - the plain-text cases of e(int), copied 1:1
+# - the plain-text cases of e(int), copied 1:1
 _E_TEXT = {
     0: ["Saving", "Success!"],
     1: ["Not enough", "FreeSpace."],
@@ -690,7 +663,7 @@ _E_TEXT = {
     39: ["You must have", "at least 3 items", "in order to have", "them combined.", ""],
     40: ["Would you like", "sound enabled?"],
     41: ["Accessing 'More Games'", "will exit the game", "and open the browser.", "Would you like", "to continue?"],
-    # PORT-EXTRA: the original text was "exit the game and open the browser to allow downloading of
+    # the original text was "exit the game and open the browser to allow downloading of
     # the Multiplayer version"; in the port YES starts the Multiplayer game itself (main.py)
     42: ["Selecting YES will", "exit the game and", "start the online", "game: Path of a",
          "Warrior Multiplayer.", "Continue?"],

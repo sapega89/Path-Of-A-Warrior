@@ -1,4 +1,4 @@
-"""PORT-EXTRA: own base stats for the four heroes and the attribute reset (pow/game/hero_classes.py)."""
+"""own base stats for the four heroes and the attribute reset (pow/game/hero_classes.py)."""
 import types
 
 import pytest
@@ -19,7 +19,7 @@ def _hero(head, hp, mp, atk, df, level=1, points=0, items=()):
 
 def test_every_hero_is_worth_the_original_points():
     orig = H.BASE_STATS[0]
-    assert orig == (30, 10, 5, 4)                       # ag.aw: head 0 keeps the original hero
+    assert orig == (30, 10, 5, 4)  # head 0 keeps the original hero
     assert len(set(H.BASE_STATS)) == 4
     for stats in H.BASE_STATS:
         diffs = [(s - o) / g for s, o, g in zip(stats, orig, H.POINT_GAIN, strict=True)]

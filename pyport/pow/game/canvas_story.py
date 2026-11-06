@@ -1,6 +1,6 @@
-"""ag.java, part of GameCanvas: story player, dialogues, generals and lords.
+""", part of GameCanvas: story player, dialogues, generals and lords.
 
-A mixin of GameCanvas (pow/game/game_canvas.py); the methods keep their `# ag.java:FROM-TO`
+A mixin of GameCanvas (pow/game/game_canvas.py); the methods keep their `# :FROM-TO`
 comments. `GameCanvas` below is the real class, set by game_canvas.py once it exists.
 """
 
@@ -14,7 +14,7 @@ GameCanvas = None   # set by pow/game/game_canvas.py
 
 
 class StoryMixin:
-    def start_story(self, story, ending):  # ag.java:3488-3528  (start the story player, bV = 10)
+    def start_story(self, story, ending):  # start the story player, bV = 10
         GameCanvas.story_id = i16(story)
         if story < 100:
             GameCanvas.story_ending = 0
@@ -54,7 +54,7 @@ class StoryMixin:
 
     # ---- story player (bV == 10): prologue / epilogue -------------------------------------
 
-    def tick_story(self):  # ag.java:1612-1692  (one tick of the story player)
+    def tick_story(self):  # one tick of the story player
         if GameCanvas.wait_ticks > 0:
             GameCanvas.wait_ticks = i16(GameCanvas.wait_ticks - 1)
             if GameCanvas.key != -999 and GameCanvas.wait_ticks > 3:
@@ -121,7 +121,7 @@ class StoryMixin:
             elif GameCanvas.story_page < GameCanvas.story_pages[1] - GameCanvas.story_pages[0]:
                 GameCanvas.story_page = GameCanvas.story_pages[1] - GameCanvas.story_pages[0] - 1
 
-    def draw_story(self):  # ag.java:1698-1737  (story picture + scrolling text)
+    def draw_story(self):  # story picture + scrolling text
         self.fill_screen_rgb(0, 0, 0)
         picture = GameCanvas.images[35]
         if GameCanvas.speech_line in (0, 2):
@@ -135,7 +135,7 @@ class StoryMixin:
                                picture.getWidth(), picture.getHeight(), 0, 0)
             line = GameCanvas.speech_done[0]
             while line <= GameCanvas.text_line_count[0] and line_y <= 230:
-                # char arithmetic, as decompiled: `255 - (m - de + 72 << 4)` (only ==255 / ==0 matter)
+                # char arithmetic: `255 - (m - de + 72 << 4)` (only ==255 / ==0 matter)
                 if line_y > GameCanvas.view_cy + 72:
                     alpha = 255 - (line_y - GameCanvas.view_cy + 72 << 4) & 0xFFFF
                 elif line_y < GameCanvas.view_cy - 72:
@@ -156,7 +156,7 @@ class StoryMixin:
                 line += 1
         self.draw_skip_key(2)
 
-    def load_chapter_lords(self):  # ag.java:1043-1062  (lords of chapter cq -> ds/dt/du/dv, list dE = dt)
+    def load_chapter_lords(self):  # lords of chapter cq -> ds/dt/du/dv, list dE = dt
         offset = 0
         data = GameCanvas.load_data_file(48)
         offset = 38 * GameCanvas.chapter + 40
@@ -175,7 +175,7 @@ class StoryMixin:
         GameCanvas.menu_count = GameCanvas.lord_count
         GameCanvas.menu_items = GameCanvas.lord_names
 
-    def start_dialogue(self):  # ag.java:2572-2582  (start a dialogue: briefing dG 0, map talk 1, general 2)
+    def start_dialogue(self):  # start a dialogue: briefing dG 0, map talk 1, general 2
         GameCanvas.talk_box = 0
         GameCanvas.talk_row = 0
         GameCanvas.talk_rows = 0
@@ -186,7 +186,7 @@ class StoryMixin:
         if GameCanvas.talk_line < 200:
             self.load_dialogue_line(GameCanvas.talk_line)
 
-    def load_dialogue_line(self, line):  # ag.java:2584-2637  (line paramInt of dialogue file 57+dG -> dp[dR])
+    def load_dialogue_line(self, line):  # line paramInt of dialogue file 57+dG -> dp[dR]
         speaker = ""
         offsets = [0] * 60
         parts = [None, None]
@@ -214,7 +214,7 @@ class StoryMixin:
         for i in range(GameCanvas.text_width):
             if parts[0][i] == "&":
                 if text_start != i:
-                    # System.arraycopy(String[], m, String, ...) would throw in Java; the game
+                    # System.arraycopy(String[], m, String, ...) would throw in the original; the game
                     # only prints this marker, so the texts never have '&' after other text
                     GameCanvas.log("=========================check this 96430jfds")
                 parts[1] = parts[1] + speaker
@@ -228,7 +228,7 @@ class StoryMixin:
             parts[1] = parts[1] + parts[0]
         self.word_wrap(bytearray(parts[1].encode("utf-8")), 150, side)
 
-    def start_dialogue_text(self):  # ag.java:2639-2681  (first line dI of the dialogue)
+    def start_dialogue_text(self):  # first line dI of the dialogue
         from pow.game.menus import Menus
         kind = GameCanvas.talk_kind
         if kind == 0:
@@ -268,14 +268,14 @@ class StoryMixin:
             GameCanvas.talk_line = i16(general // 10 * 5)
 
     @staticmethod
-    def friendship(general):  # ag.java:2683-2687  (friendship points of general paramInt)
+    def friendship(general):  # friendship points of general paramInt
         b = 0
         while b < GameCanvas.general_count and GameCanvas.generals[0][b] != general:
             b += 1
         return 0 if b == GameCanvas.general_count else GameCanvas.generals[1][b]
 
     @staticmethod
-    def next_speech_pos():  # ag.java:2689-2703  (position of the next speech box)
+    def next_speech_pos():  # position of the next speech box
         GameCanvas.talk_box = i16(GameCanvas.talk_box + 1)
         if GameCanvas.talk_kind != 0:
             GameCanvas.talk_x[GameCanvas.talk_side] = 60
@@ -289,7 +289,7 @@ class StoryMixin:
         GameCanvas.talk_chars = 0
         GameCanvas.talk_cursor_x = GameCanvas.talk_x[GameCanvas.talk_side]
 
-    def set_general(self, general):  # ag.java:2705-2726  (general paramInt -> dC)
+    def set_general(self, general):  # general paramInt -> dC
         data = None
         offset = 0
         data = GameCanvas.load_data_file(46)
@@ -313,7 +313,7 @@ class StoryMixin:
         gen.hp = _jchar(data[offset + 11 + 11])
         gen.side = gen.side + 1 & 0x1
 
-    def random_general_skill(self, force):  # ag.java:1494-1505  (random skill of general dC)
+    def random_general_skill(self, force):  # random skill of general dC
         b = 0
         while b < 4 and GameCanvas.general.skills[b] != 0:
             b += 1

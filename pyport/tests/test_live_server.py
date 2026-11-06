@@ -35,7 +35,7 @@ def item(iid, f=0, atk=5, def_=0, hp=0, mp=0):
 
 
 def sync(c, gold, items):
-    """768: gold and the backpack (serial = slot + 1, as.java 533-544)."""
+    """768: gold and the backpack."""
     body = struct.pack("<iB", gold, len(items))
     for n, it in enumerate(items):
         body += it[:2] + struct.pack("<H", n + 1) + it[2:]

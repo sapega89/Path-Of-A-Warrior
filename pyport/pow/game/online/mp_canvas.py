@@ -1,7 +1,4 @@
-"""MpCanvas (g.java): the canvas of the MP jar - screens, menus, battles.
-
-Generated once from pyport/mp_java/g.java (branch java-reference) by the old
-tools/j2py_mp.py; edited by hand since.
+"""MpCanvas: the canvas of the multiplayer - screens, menus, battles.
 """
 import config
 from pow.game.online import (
@@ -40,291 +37,291 @@ from pow.game.online.rt import (
 
 class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, AssetsMixin, OptionsMixin,
                OrderMixin, ChatMixin, _Canvas):
-    # PORT-EXTRA auto-battle: Tab (key -100) turns it on / off; the round's 1027 then goes out after
+    # auto-battle: Tab (key -100) turns it on / off; the round's 1027 then goes out after
     # a second with action AUTO_ACTION, and the server's bot chooses (pow_server/battle.py cpu_choice)
     auto_battle = config.AUTO_HUNT
-    sound_from_sp = None   # PORT-EXTRA: the single player's sound answer (mp_main.play), None = ask
-    embedded = False       # PORT-EXTRA: a part of the single player (main.py): BACK in the main
+    sound_from_sp = None   # the single player's sound answer (mp_main.play), None = ask
+    embedded = False       # a part of the single player (main.py): BACK in the main
                            # menu leaves at once, no exit popup, no outro picture
     AUTO_ACTION = 255
-    app_version = None  # g.java:25 String
-    game = None  # g.java:26 m
-    title = None  # g.java:27 String
-    timer_ticks = 0  # g.java:28 int
-    screen_g = None  # g.java:29 Graphics
-    buffer = None  # g.java:30 Image
-    buffer_g = None  # g.java:31 Graphics
-    rng = None  # g.java:32 Random
-    user_id = None  # g.java:33 String
-    password = None  # g.java:34 String
-    menu_size = 0  # g.java:35 int
-    midlet = None  # g.java:36 Main
-    key = 0  # g.java:37 int
-    font_white = None  # g.java:38 j
-    font_orange = None  # g.java:39 j
-    font_gray = None  # g.java:40 j
-    font_green = None  # g.java:41 j
-    server_host = None  # g.java:42 String
-    server_port = 0  # g.java:43 int
-    game_ver = None  # g.java:44 String
-    wait_started = False  # g.java:45 boolean
-    wait_start_time = 0  # g.java:46 long
-    painting_blocked = False  # g.java:47 boolean
-    popup_shown = False  # g.java:48 boolean
-    popup_cursor = 0  # g.java:49 int
-    popup_kind = 0  # g.java:50 int
-    password_login = False  # g.java:51 boolean
-    sp_account = False  # PORT-EXTRA: user_id / password are the single player's (use_sp_account)
-    quote_step = 0  # g.java:52 int
-    letter_cursor = 0  # g.java:53 int
-    exit_prompt = False  # g.java:54 boolean
-    exit_cursor = 0  # g.java:55 int
-    exit_prompt_time = 0  # g.java:56 long
-    exit_asked = False  # g.java:57 boolean
-    pause_request = 0  # g.java:58 int
-    music_to_resume = 0  # g.java:59 int
-    paused = False  # g.java:60 boolean
-    loop_started = False  # g.java:61 boolean
-    connecting = False  # g.java:62 boolean
-    logo_time = 0  # g.java:63 long
-    login_time = 0  # g.java:64 long
-    room_dirty = False  # g.java:65 boolean
-    relogin_to_menu = False  # g.java:66 boolean
-    anim_frame = 0  # g.java:67 int
-    anim_length = 0  # g.java:68 int
-    attacker = 0  # g.java:69 int
-    target = 0  # g.java:70 int
-    target2 = 0  # g.java:71 int
-    target_reaction = 0  # g.java:72 int
-    target2_reaction = 0  # g.java:73 int
-    damage_tick = 0  # g.java:74 int
-    rank_names = None  # g.java:75 String[]
-    rank_ranks = None  # g.java:76 int[]
-    rank_values = None  # g.java:77 int[]
-    rank_list_kind = 0  # g.java:78 int
-    my_ranks = None  # g.java:79 int[]
-    my_rank_value = 0  # g.java:80 int
-    rank_kind = 0  # g.java:81 byte
-    rank_list_state = 0  # g.java:82 int
-    popup_line1 = None  # g.java:83 String
-    popup_line2 = None  # g.java:84 String
-    popup_line3 = None  # g.java:85 String
-    popup_line4 = None  # g.java:86 String
-    popup_line5 = None  # g.java:87 String
-    popup_style = 0  # g.java:88 int
-    volume = 0  # g.java:89 int
-    speed = 0  # g.java:90 int
-    invitation_saved = 0  # g.java:91 int
-    invitation = 0  # g.java:92 int
-    skip_error_screen = False  # g.java:93 boolean
-    face = 0  # g.java:94 byte
-    level = 0  # g.java:95 int
-    wins = 0  # g.java:96 int
-    losses = 0  # g.java:97 int
-    hp = 0  # g.java:98 int
-    weapon = 0  # g.java:99 int
-    fame = 0  # g.java:100 int
-    exp = 0  # g.java:101 int
-    gold = 0  # g.java:102 int
-    duel_grade = 0  # g.java:103 int
-    mission_grade = 0  # g.java:104 int
-    attr_hp = 0  # g.java:105 int
-    attr_hp_bonus = 0  # g.java:106 int
-    attr_mp = 0  # g.java:107 int
-    attr_mp_bonus = 0  # g.java:108 int
-    attr_attack = 0  # g.java:109 int
-    attr_attack_bonus = 0  # g.java:110 int
-    attr_defense = 0  # g.java:111 int
-    attr_defense_bonus = 0  # g.java:112 int
-    profile_cr = 0  # g.java:113 int
-    profile_unused1 = 0  # g.java:114 int
-    profile_unused2 = 0  # g.java:115 int
-    notices_left = 0  # g.java:116 byte
-    notice_page = 0  # g.java:117 int
-    stage_count = 0  # g.java:118 int
-    stage = 0  # g.java:119 int
-    round_no = 0  # g.java:120 int
-    hit_score = 0  # g.java:121 int
-    turn_record_count = 0  # g.java:122 int
-    battle_won = 0  # g.java:123 int
-    reward_gold = 0  # g.java:124 int
-    reward_grade = 0  # g.java:125 byte
-    reward_fame = 0  # g.java:126 int
-    reward_exp = 0  # g.java:127 int
-    reward_rank = 0  # g.java:128 int
-    choose_secs = 0  # g.java:129 int
-    allies_alive = 0  # g.java:130 int
-    enemies_alive = 0  # g.java:131 int
-    notice_kind = 0  # g.java:132 int
-    help_page = 0  # g.java:133 int
-    skill_count = 0  # g.java:134 int
-    leaving_slot = 0  # g.java:135 int
-    my_slot = 0  # g.java:136 byte
-    slot_found = False  # g.java:137 boolean
-    hud_dirty = False  # g.java:138 boolean
-    show_record = False  # g.java:139 boolean
-    run_dx = 0  # g.java:140 int
-    run_dy = 0  # g.java:141 int
-    draw_mirrored = False  # g.java:142 boolean
-    saved_anim_frame = 0  # g.java:143 int
-    skill_id = 0  # g.java:144 int
-    skill_taken = False  # g.java:145 boolean
-    number_negative = False  # g.java:146 boolean
-    skill_ready = False  # g.java:147 boolean
-    bar_shown = False  # g.java:148 boolean
-    msg_first_line = 0  # g.java:149 int
-    help_first_line = 0  # g.java:150 int
-    msg_copy_line = False  # g.java:151 boolean
-    card_half = False  # g.java:152 boolean
-    room_bg = 0  # g.java:153 int
-    room_mode = 0  # g.java:154 byte
-    target_cursor = 0  # g.java:155 int
-    chosen_action = 0  # g.java:156 int
-    turn_rec = 0  # g.java:157 int
-    skill_slot_count = 0  # g.java:158 int
-    skill_slots = None  # g.java:159 byte[]
-    notice_lines = None  # g.java:160 String[]
-    input_text = None  # g.java:161 String
-    stage_title = None  # g.java:162 String
-    loot = None  # g.java:163 String
-    tmp = 0  # g.java:164 int
-    hp_bar_w = 0  # g.java:165 int
-    stage_text = None  # g.java:166 String
-    fighter_name = None  # g.java:167 String[]
-    fighter_quote_start = None  # g.java:168 String[]
-    fighter_quote_win = None  # g.java:169 String[]
-    fighter_alt_name = None  # g.java:170 String[]
-    fighter_present = None  # g.java:171 boolean[]
-    fighter_slot = None  # g.java:172 int[]
-    fighter_level = None  # g.java:173 int[]
-    fighter_wins = None  # g.java:174 int[]
-    fighter_losses = None  # g.java:175 int[]
-    fighter_max_hp = None  # g.java:176 int[]
-    fighter_hp = None  # g.java:177 int[]
-    fighter_mp = None  # g.java:178 int[]
-    fighter_weapon = None  # g.java:179 int[]
-    fighter_face = None  # g.java:180 byte[]
-    fighter_kind = None  # g.java:181 int[]
-    turn_actions = None  # g.java:182 int[]
-    fighter_anim = None  # g.java:183 int[]
-    fighter_anim_tick = None  # g.java:184 int[]
-    fighter_anim_len = None  # g.java:185 int[]
-    fighter_hp_target = None  # g.java:186 int[]
-    fighter_mp_target = None  # g.java:187 int[]
-    fighter_hp_step = None  # g.java:188 int[]
-    fighter_mp_step = None  # g.java:189 int[]
-    fighter_hp_delta = None  # g.java:190 int[]
-    fighter_x = None  # g.java:191 int[]
-    fighter_y = None  # g.java:192 int[]
-    fighter_fx_frame = None  # g.java:193 int[]
-    fighter_frame = None  # g.java:194 int[]
-    fighter_blink = None  # g.java:195 int[]
-    fighter_status = None  # g.java:196 int[]
-    fighter_status_ticks = None  # g.java:197 int[]
-    fighter_cr = None  # g.java:198 int[]
-    key_in = 0  # g.java:199 int
-    cur_slot = 0  # g.java:200 int
-    stat_value = 0  # g.java:201 int
-    loading_msg = 0  # g.java:202 int
-    error_msg = 0  # g.java:203 int
-    win_x = 0  # g.java:204 int
-    win_y = 0  # g.java:205 int
-    bar_speed = 0  # g.java:206 int
-    bar_x = 0  # g.java:207 int
-    skill_order = None  # g.java:208 byte[]
-    anim_id = 0  # g.java:209 int
-    card_face = 0  # g.java:210 int
-    name = None  # g.java:211 String
-    quote_start = None  # g.java:212 String
-    quote_win = None  # g.java:213 String
-    skill_levels = None  # g.java:214 int[]
-    skill_costs = None  # g.java:215 int[]
-    turn_hps = None  # g.java:216 int[]
-    turn_bytes = None  # g.java:217 byte[]
-    loop_i = 0  # g.java:218 int
-    loop_j = 0  # g.java:219 int
-    loop_k = 0  # g.java:220 int
-    box_x = 0  # g.java:221 int
-    box_y = 0  # g.java:222 int
-    canvas_w = 0  # g.java:223 int
-    canvas_h = 0  # g.java:224 int
-    screen_w = 0  # g.java:225 int
-    screen_h = 0  # g.java:226 int
-    draw_x = 0  # g.java:227 int
-    draw_y = 0  # g.java:228 int
-    center_x = 0  # g.java:229 int
-    center_y = 0  # g.java:230 int
-    state = 0  # g.java:231 int
-    prev_state = 0  # g.java:232 int
-    state_ticks = 0  # g.java:233 int
-    skill_cursor = 0  # g.java:234 int
-    tick_ms = 0  # g.java:235 int
-    mpic_images = None  # g.java:236 Image[]
-    face_images = None  # g.java:237 Image[]
-    ui_images = None  # g.java:238 Image[]
-    act_images = None  # g.java:239 Image[]
-    number_images = None  # g.java:240 Image[]
-    arrow_images = None  # g.java:241 Image[]
-    bg_images = None  # g.java:242 Image[]
-    border_v_image = None  # g.java:243 Image
-    back_image = None  # g.java:244 Image
-    border_h_image = None  # g.java:245 Image
-    titlebox_image = None  # g.java:246 Image
-    menu_icon_image = None  # g.java:247 Image
-    title_image = None  # g.java:248 Image
-    press_image = None  # g.java:249 Image
-    copyright_image = None  # g.java:250 Image
-    logo_image = None  # g.java:251 Image
-    softkey_image = None  # g.java:252 Image
-    body_images = None  # g.java:253 Image[]
-    body_frames = None  # g.java:254 a[]
-    head_images = None  # g.java:255 Image[][]
-    head_frames = None  # g.java:256 a[][]
-    weapon_images = None  # g.java:257 Image[][]
-    weapon_frames = None  # g.java:258 a[][]
-    sword_images = None  # g.java:259 Image[][]
-    sword_frames = None  # g.java:260 a[][]
-    effect_images = None  # g.java:261 Image[][]
-    effect_frames = None  # g.java:262 a[][]
-    effect3_frames = None  # g.java:263 a[]
-    shadow_images = None  # g.java:264 Image[]
-    shadow_frames = None  # g.java:265 a[]
-    monster_images = None  # g.java:266 Image[]
-    monster_frames = None  # g.java:267 a[]
-    mon_weapon_images = None  # g.java:268 Image[]
-    mon_weapon_frames = None  # g.java:269 a[]
-    mon_effect_images = None  # g.java:270 Image[]
-    mon_effect_frames = None  # g.java:271 a[]
-    mon_sword_images = None  # g.java:272 Image[]
-    mon_sword_frames = None  # g.java:273 a[]
-    net = None  # g.java:274 h
-    request_opcode = 0  # g.java:275 int
-    answer_status = 0  # g.java:276 int
-    logo_y = 0  # g.java:277 int
-    thread = None  # g.java:278 Thread
-    cursor_stack = None  # g.java:279 int[]
-    state_stack = None  # g.java:280 int[]
-    stack_depth = 0  # g.java:281 int
-    relogin = False  # g.java:282 boolean
-    painted = False  # g.java:283 boolean
-    ping_misses = 0  # g.java:284 int
-    disconnecting = False  # g.java:285 boolean
-    ping_off = False  # g.java:286 boolean
-    pending_state = 0  # g.java:287 int
-    text_lines = None  # g.java:288 String[]
-    frame_start = 0  # g.java:289 long
+    app_version = None  # String
+    game = None  # m
+    title = None  # String
+    timer_ticks = 0  # int
+    screen_g = None  # Graphics
+    buffer = None  # Image
+    buffer_g = None  # Graphics
+    rng = None  # Random
+    user_id = None  # String
+    password = None  # String
+    menu_size = 0  # int
+    midlet = None  # Main
+    key = 0  # int
+    font_white = None  # j
+    font_orange = None  # j
+    font_gray = None  # j
+    font_green = None  # j
+    server_host = None  # String
+    server_port = 0  # int
+    game_ver = None  # String
+    wait_started = False  # boolean
+    wait_start_time = 0  # long
+    painting_blocked = False  # boolean
+    popup_shown = False  # boolean
+    popup_cursor = 0  # int
+    popup_kind = 0  # int
+    password_login = False  # boolean
+    sp_account = False  # user_id / password are the single player's (use_sp_account)
+    quote_step = 0  # int
+    letter_cursor = 0  # int
+    exit_prompt = False  # boolean
+    exit_cursor = 0  # int
+    exit_prompt_time = 0  # long
+    exit_asked = False  # boolean
+    pause_request = 0  # int
+    music_to_resume = 0  # int
+    paused = False  # boolean
+    loop_started = False  # boolean
+    connecting = False  # boolean
+    logo_time = 0  # long
+    login_time = 0  # long
+    room_dirty = False  # boolean
+    relogin_to_menu = False  # boolean
+    anim_frame = 0  # int
+    anim_length = 0  # int
+    attacker = 0  # int
+    target = 0  # int
+    target2 = 0  # int
+    target_reaction = 0  # int
+    target2_reaction = 0  # int
+    damage_tick = 0  # int
+    rank_names = None  # String[]
+    rank_ranks = None  # int[]
+    rank_values = None  # int[]
+    rank_list_kind = 0  # int
+    my_ranks = None  # int[]
+    my_rank_value = 0  # int
+    rank_kind = 0  # byte
+    rank_list_state = 0  # int
+    popup_line1 = None  # String
+    popup_line2 = None  # String
+    popup_line3 = None  # String
+    popup_line4 = None  # String
+    popup_line5 = None  # String
+    popup_style = 0  # int
+    volume = 0  # int
+    speed = 0  # int
+    invitation_saved = 0  # int
+    invitation = 0  # int
+    skip_error_screen = False  # boolean
+    face = 0  # byte
+    level = 0  # int
+    wins = 0  # int
+    losses = 0  # int
+    hp = 0  # int
+    weapon = 0  # int
+    fame = 0  # int
+    exp = 0  # int
+    gold = 0  # int
+    duel_grade = 0  # int
+    mission_grade = 0  # int
+    attr_hp = 0  # int
+    attr_hp_bonus = 0  # int
+    attr_mp = 0  # int
+    attr_mp_bonus = 0  # int
+    attr_attack = 0  # int
+    attr_attack_bonus = 0  # int
+    attr_defense = 0  # int
+    attr_defense_bonus = 0  # int
+    profile_cr = 0  # int
+    profile_unused1 = 0  # int
+    profile_unused2 = 0  # int
+    notices_left = 0  # byte
+    notice_page = 0  # int
+    stage_count = 0  # int
+    stage = 0  # int
+    round_no = 0  # int
+    hit_score = 0  # int
+    turn_record_count = 0  # int
+    battle_won = 0  # int
+    reward_gold = 0  # int
+    reward_grade = 0  # byte
+    reward_fame = 0  # int
+    reward_exp = 0  # int
+    reward_rank = 0  # int
+    choose_secs = 0  # int
+    allies_alive = 0  # int
+    enemies_alive = 0  # int
+    notice_kind = 0  # int
+    help_page = 0  # int
+    skill_count = 0  # int
+    leaving_slot = 0  # int
+    my_slot = 0  # byte
+    slot_found = False  # boolean
+    hud_dirty = False  # boolean
+    show_record = False  # boolean
+    run_dx = 0  # int
+    run_dy = 0  # int
+    draw_mirrored = False  # boolean
+    saved_anim_frame = 0  # int
+    skill_id = 0  # int
+    skill_taken = False  # boolean
+    number_negative = False  # boolean
+    skill_ready = False  # boolean
+    bar_shown = False  # boolean
+    msg_first_line = 0  # int
+    help_first_line = 0  # int
+    msg_copy_line = False  # boolean
+    card_half = False  # boolean
+    room_bg = 0  # int
+    room_mode = 0  # byte
+    target_cursor = 0  # int
+    chosen_action = 0  # int
+    turn_rec = 0  # int
+    skill_slot_count = 0  # int
+    skill_slots = None  # byte[]
+    notice_lines = None  # String[]
+    input_text = None  # String
+    stage_title = None  # String
+    loot = None  # String
+    tmp = 0  # int
+    hp_bar_w = 0  # int
+    stage_text = None  # String
+    fighter_name = None  # String[]
+    fighter_quote_start = None  # String[]
+    fighter_quote_win = None  # String[]
+    fighter_alt_name = None  # String[]
+    fighter_present = None  # boolean[]
+    fighter_slot = None  # int[]
+    fighter_level = None  # int[]
+    fighter_wins = None  # int[]
+    fighter_losses = None  # int[]
+    fighter_max_hp = None  # int[]
+    fighter_hp = None  # int[]
+    fighter_mp = None  # int[]
+    fighter_weapon = None  # int[]
+    fighter_face = None  # byte[]
+    fighter_kind = None  # int[]
+    turn_actions = None  # int[]
+    fighter_anim = None  # int[]
+    fighter_anim_tick = None  # int[]
+    fighter_anim_len = None  # int[]
+    fighter_hp_target = None  # int[]
+    fighter_mp_target = None  # int[]
+    fighter_hp_step = None  # int[]
+    fighter_mp_step = None  # int[]
+    fighter_hp_delta = None  # int[]
+    fighter_x = None  # int[]
+    fighter_y = None  # int[]
+    fighter_fx_frame = None  # int[]
+    fighter_frame = None  # int[]
+    fighter_blink = None  # int[]
+    fighter_status = None  # int[]
+    fighter_status_ticks = None  # int[]
+    fighter_cr = None  # int[]
+    key_in = 0  # int
+    cur_slot = 0  # int
+    stat_value = 0  # int
+    loading_msg = 0  # int
+    error_msg = 0  # int
+    win_x = 0  # int
+    win_y = 0  # int
+    bar_speed = 0  # int
+    bar_x = 0  # int
+    skill_order = None  # byte[]
+    anim_id = 0  # int
+    card_face = 0  # int
+    name = None  # String
+    quote_start = None  # String
+    quote_win = None  # String
+    skill_levels = None  # int[]
+    skill_costs = None  # int[]
+    turn_hps = None  # int[]
+    turn_bytes = None  # byte[]
+    loop_i = 0  # int
+    loop_j = 0  # int
+    loop_k = 0  # int
+    box_x = 0  # int
+    box_y = 0  # int
+    canvas_w = 0  # int
+    canvas_h = 0  # int
+    screen_w = 0  # int
+    screen_h = 0  # int
+    draw_x = 0  # int
+    draw_y = 0  # int
+    center_x = 0  # int
+    center_y = 0  # int
+    state = 0  # int
+    prev_state = 0  # int
+    state_ticks = 0  # int
+    skill_cursor = 0  # int
+    tick_ms = 0  # int
+    mpic_images = None  # Image[]
+    face_images = None  # Image[]
+    ui_images = None  # Image[]
+    act_images = None  # Image[]
+    number_images = None  # Image[]
+    arrow_images = None  # Image[]
+    bg_images = None  # Image[]
+    border_v_image = None  # Image
+    back_image = None  # Image
+    border_h_image = None  # Image
+    titlebox_image = None  # Image
+    menu_icon_image = None  # Image
+    title_image = None  # Image
+    press_image = None  # Image
+    copyright_image = None  # Image
+    logo_image = None  # Image
+    softkey_image = None  # Image
+    body_images = None  # Image[]
+    body_frames = None  # a[]
+    head_images = None  # Image[][]
+    head_frames = None  # a[][]
+    weapon_images = None  # Image[][]
+    weapon_frames = None  # a[][]
+    sword_images = None  # Image[][]
+    sword_frames = None  # a[][]
+    effect_images = None  # Image[][]
+    effect_frames = None  # a[][]
+    effect3_frames = None  # a[]
+    shadow_images = None  # Image[]
+    shadow_frames = None  # a[]
+    monster_images = None  # Image[]
+    monster_frames = None  # a[]
+    mon_weapon_images = None  # Image[]
+    mon_weapon_frames = None  # a[]
+    mon_effect_images = None  # Image[]
+    mon_effect_frames = None  # a[]
+    mon_sword_images = None  # Image[]
+    mon_sword_frames = None  # a[]
+    net = None  # h
+    request_opcode = 0  # int
+    answer_status = 0  # int
+    logo_y = 0  # int
+    thread = None  # Thread
+    cursor_stack = None  # int[]
+    state_stack = None  # int[]
+    stack_depth = 0  # int
+    relogin = False  # boolean
+    painted = False  # boolean
+    ping_misses = 0  # int
+    disconnecting = False  # boolean
+    ping_off = False  # boolean
+    pending_state = 0  # int
+    text_lines = None  # String[]
+    frame_start = 0  # long
 
-    def __init__(self, main):  # g.java:295
+    def __init__(self, main):
         _Canvas.__init__(self)
-        self.text_input = self.chat_text_key   # PORT-EXTRA: a PC keyboard types into the chat
+        self.text_input = self.chat_text_key   # a PC keyboard types into the chat
         MpCanvas.midlet = main
         self.setFullScreenMode(True)
 
     @staticmethod
-    def log(text):  # g.java:291
+    def log(text):
         print(_js(text))
 
-    def init_screen(self):  # g.java:300
+    def init_screen(self):
         MpCanvas.state_stack[0] = 1
         width = self.getWidth()
         MpCanvas.canvas_w = width
@@ -357,12 +354,12 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
         MpCanvas.font_green = Font("/0_font.png", 5, 11, 6, 0x41FF41)
         self.load_ui_images()
         self.load_options()
-        self.use_sp_account()           # PORT-EXTRA: the single player's account, no Login screen
+        self.use_sp_account()           # the single player's account, no Login screen
         MpCanvas.game = MpGame(MpCanvas.midlet)
         MpCanvas.noop()
         MpCanvas.set_state(0)
 
-    def paint(self, graphics):  # g.java:364
+    def paint(self, graphics):
         MpCanvas.screen_g = graphics
         Gfx.set_graphics(graphics)
         if MpCanvas.painting_blocked:
@@ -370,7 +367,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
             return
         self.paint_screen()
         if 94 <= MpCanvas.state <= 98 and (MpCanvas.auto_battle or config.AUTO_BUTTON):
-            # PORT-EXTRA auto-battle button: orange AUTO = on, white with the keys = off (Tab / F / R3)
+            # auto-battle button: orange AUTO = on, white with the keys = off (Tab / F / R3)
             if MpCanvas.auto_battle:
                 self.draw_text_left_on(graphics, 4, MpCanvas.canvas_h - 30, "AUTO", 16400640)
             else:
@@ -380,7 +377,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
         MpCanvas.painted = True
 
     @staticmethod
-    def sleep(ms):  # g.java:378
+    def sleep(ms):
         if ms > 0:
             try:
                 system.sleep(ms)
@@ -388,10 +385,10 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
                 pass
 
     @staticmethod
-    def request_pause(kind):  # g.java:388
+    def request_pause(kind):
         MpCanvas.pause_request = kind
 
-    def apply_pause(self):  # g.java:392
+    def apply_pause(self):
         if (not MpCanvas.loop_started) or MpCanvas.connecting:
             MpCanvas.pause_request = 0
             return
@@ -407,12 +404,12 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
                     self.start_sound(MpCanvas.music_to_resume)
         MpCanvas.pause_request = 0
 
-    def run(self):  # g.java:414
+    def run(self):
         self.init_screen()
         self.main_loop()
         MpCanvas.sleep(250)
 
-    def main_loop(self):  # g.java:423
+    def main_loop(self):
         MpCanvas.frame_start = system.currentTimeMillis()
         while True:
             MpCanvas.frame_start = system.currentTimeMillis()
@@ -448,7 +445,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
             self.apply_pause()
             MpCanvas.loop_started = True
 
-    def paint_screen(self):  # g.java:474
+    def paint_screen(self):
         if MpCanvas.painted:
             return
         if MpCanvas.state not in {3, 10000}:
@@ -479,7 +476,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
                         MpCanvas.set_timer(1)
                 else:
                     if _inc(MpCanvas, "choose_secs", -1) == 0:
-                        # PORT-EXTRA: on auto-battle the time-out sends AUTO instead of Defend
+                        # on auto-battle the time-out sends AUTO instead of Defend
                         MpCanvas.chosen_action = MpCanvas.AUTO_ACTION if MpCanvas.auto_battle else 1
                         MpCanvas.bar_x = (((MpCanvas.center_x - 44) + 72) + MpCanvas.bar_speed)
                         self.stop_timing()
@@ -498,12 +495,12 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
                 MpCanvas.softkey_image = self.load_image("/softbg.png")
             except Exception:
                 pass
-            # PORT-EXTRA (asked by Andrey): no logo screen of the original publisher (3 s)
+            # : no logo screen of the original publisher (3 s)
             MpCanvas.logo_time = 0
             Draw.fill_rect(MpCanvas.buffer_g, 0, 0, MpCanvas.canvas_w, MpCanvas.canvas_h, 0xFFFFFF)
         self.draw_buffer()
         if MpCanvas.sound_from_sp is not None:
-            # PORT-EXTRA: started from the single player's Main Menu (mp_main.play): it already
+            # started from the single player's Main Menu (mp_main.play): it already
             # showed the logo and asked about the sound, so its answer goes straight on
             MpCanvas.logo_image = None
             self.answer_sound_prompt(MpCanvas.sound_from_sp)
@@ -884,7 +881,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
                 i_face = i_face + 1
             self.free_battle_images()
             MpCanvas.title = Consts.texts[9]
-            MpCanvas.menu_size = 8         # PORT-EXTRA: 6 = Order, 7 = Chat (mp_canvas_order / _chat)
+            MpCanvas.menu_size = 8         # 6 = Order, 7 = Chat (mp_canvas_order / _chat)
             MpCanvas.order_invite = False
             self.draw_menu_icons()
         self.draw_buffer()
@@ -892,12 +889,12 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
         Draw.draw_image(MpCanvas.screen_g, MpCanvas.mpic_images[item], (MpCanvas.center_x - 40), (MpCanvas.center_y - 59), 0)
         label = Consts.main_menu[item] if item < 6 else (mp_canvas_order.TEXTS[0] if item == 6 else mp_canvas_chat.TEXTS[0])
         self.draw_button(MpCanvas.screen_g, label, (MpCanvas.center_x - 39), (MpCanvas.center_y + 21), 78, 17, False, True)
-        self.draw_chat_badge()             # PORT-EXTRA: unread order / private messages
+        self.draw_chat_badge()             # unread order / private messages
         MpCanvas.draw_menu_cursor(MpCanvas.screen_g)
         if MpCanvas.popup_shown:
             self.draw_exit_confirm(MpCanvas.screen_g)
             return
-        # PORT-EXTRA: no LOGIN (another account) with the single player's account
+        # no LOGIN (another account) with the single player's account
         self.draw_softkeys(-1 if MpCanvas.sp_account else 5, 2)
 
     def _paint_duel_menu(self):  # state 11
@@ -905,7 +902,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
             MpCanvas.state_ticks = 2
             MpCanvas.title = Consts.main_menu[0]
             mp_canvas_order.install()
-            MpCanvas.menu_size = len(Consts.duel_menu)   # PORT-EXTRA: + 2-on-2 Order
+            MpCanvas.menu_size = len(Consts.duel_menu)   # + 2-on-2 Order
             self.draw_menu_icons()
         Draw.draw_image(MpCanvas.screen_g, MpCanvas.buffer, 0, 0, 0)
         self.draw_button(MpCanvas.screen_g, Consts.duel_menu[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 39), (MpCanvas.center_y - 19), 78, 17, False, True)
@@ -917,7 +914,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
             MpCanvas.state_ticks = 2
             MpCanvas.title = Consts.main_menu[1]
             mp_canvas_order.install()
-            MpCanvas.menu_size = len(Consts.mission_menu)   # PORT-EXTRA: + Order Ally
+            MpCanvas.menu_size = len(Consts.mission_menu)   # + Order Ally
             self.draw_menu_icons()
         self.draw_buffer()
         self.draw_button(MpCanvas.screen_g, Consts.mission_menu[MpCanvas.cursor_stack[MpCanvas.stack_depth]], (MpCanvas.center_x - 45), (MpCanvas.center_y - 19), 90, 17, False, True)
@@ -1130,7 +1127,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
                 Draw.draw_image(MpCanvas.buffer_g, MpCanvas.title_image, (MpCanvas.center_x - idiv(MpCanvas.title_image.getWidth(), 2)), (top_y + (80 * i_title)), 0)
                 MpCanvas.title_image = None
                 i_title = i_title + 1
-            # PORT-EXTRA (asked by Andrey): no copyright line of the original publisher here
+            # : no copyright line of the original publisher here
             if MpCanvas.press_image is None:
                 MpCanvas.press_image = self.load_image("/press.png")
         self.draw_buffer()
@@ -1180,7 +1177,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
             return
 
     def _paint_outro(self):  # state 300
-        # PORT-EXTRA (asked by Andrey): no outro picture of the original publisher (outro.png,
+        # : no outro picture of the original publisher (outro.png,
         # 3 s); the game ends (or, embedded, goes back to the single player) at once
         MpCanvas.disconnect()
         self.stop_music()
@@ -1279,28 +1276,28 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
     }
 
     @staticmethod
-    def set_timer(ticks):  # g.java:1467
+    def set_timer(ticks):
         MpCanvas.timer_ticks = ticks
 
-    def hideNotify(self):  # g.java:3433
+    def hideNotify(self):
         self.stop_music()
         MpCanvas.request_pause(1)
 
-    def showNotify(self):  # g.java:3438
+    def showNotify(self):
         MpCanvas.request_pause(1)
 
     @staticmethod
-    def set_state(state):  # g.java:4735
+    def set_state(state):
         MpCanvas.state = state
         MpCanvas.state_ticks = 0
 
-    def push_state(self, state):  # g.java:4996
+    def push_state(self, state):
         if state != MpCanvas.state_stack[MpCanvas.stack_depth]:
             MpCanvas.cursor_stack[_inc(MpCanvas, "stack_depth", 1)] = 0
             MpCanvas.state_stack[MpCanvas.stack_depth] = state
         MpCanvas.set_state(state)
 
-    def reset_state_stack(self, state):  # g.java:5004
+    def reset_state_stack(self, state):
         if state == 10:
             MpCanvas.relogin = True
         MpCanvas.stack_depth = 0
@@ -1308,16 +1305,16 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
         MpCanvas.state_stack[0] = state
         MpCanvas.set_state(state)
 
-    def pop_state(self):  # g.java:5014
+    def pop_state(self):
         if MpCanvas.stack_depth > 0:
             MpCanvas.set_state(MpCanvas.state_stack[_inc(MpCanvas, "stack_depth", -1)])
 
-    def pop_states(self, count):  # g.java:5020
+    def pop_states(self, count):
         if MpCanvas.stack_depth >= count:
             MpCanvas.set_state(MpCanvas.state_stack[_set(MpCanvas, "stack_depth", (MpCanvas.stack_depth - count))])
 
     @staticmethod
-    def noop():  # g.java:5599
+    def noop():
         pass
 
 
@@ -1391,7 +1388,7 @@ def _static_init():
     MpCanvas.turn_hps = [0] * (12)
     MpCanvas.turn_bytes = [0] * (44)
     MpCanvas.tick_ms = 100
-    MpCanvas.mpic_images = [None] * (8)   # PORT-EXTRA: mpic6 = Order, mpic7 = Chat
+    MpCanvas.mpic_images = [None] * (8)   # mpic6 = Order, mpic7 = Chat
     MpCanvas.face_images = [None] * (4)
     MpCanvas.ui_images = [None] * (57)
     MpCanvas.act_images = [None] * (18)
@@ -1454,12 +1451,12 @@ _PARTS = (mp_canvas_draw, mp_canvas_battle, mp_canvas_net, mp_canvas_input, mp_c
           mp_canvas_options, mp_canvas_order, mp_canvas_chat)
 for _part in _PARTS:
     _part.MpCanvas = MpCanvas
-# PORT-EXTRA: the Order window's states and answers (pow/game/online/mp_canvas_order.py)
+# the Order window's states and answers (pow/game/online/mp_canvas_order.py)
 MpCanvas._PAINT_BY_STATE.update(OrderMixin.PAINT)
 MpCanvas._KEYS_BY_STATE.update(OrderMixin.KEYS)
 MpCanvas._KEYS_BY_STATE[mp_canvas_order.MEMBER] = InputMixin._keys_duel_menu
 MpCanvas._ANSWER_BY_OPCODE.update(OrderMixin.ANSWERS)
-# PORT-EXTRA: the Chat window's states and answers (pow/game/online/mp_canvas_chat.py)
+# the Chat window's states and answers (pow/game/online/mp_canvas_chat.py)
 MpCanvas._PAINT_BY_STATE.update(ChatMixin.PAINT)
 MpCanvas._KEYS_BY_STATE.update(ChatMixin.KEYS)
 MpCanvas._ANSWER_BY_OPCODE.update(ChatMixin.ANSWERS)

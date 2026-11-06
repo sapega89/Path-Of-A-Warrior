@@ -1,4 +1,4 @@
-"""PORT-EXTRA: orders of the online game (pow_server/orders.py, plan item 22)."""
+"""orders of the online game (pow_server/orders.py, plan item 22)."""
 import random
 
 import pytest

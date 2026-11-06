@@ -1,4 +1,4 @@
-"""PORT-EXTRA (asked by Andrey): the single player's save kept on the server too.
+"""(asked by Andrey): the single player's save kept on the server too.
 
 The RecordStores stay where they were (files in config.SAVE_DIR / the browser's localStorage)
 and the game reads and writes only them, as on the phone. This module sends every write of the
@@ -7,7 +7,7 @@ takes the server's copy back when it is newer: start the game on another compute
 and the hero is there.
 
 The account is the Live one: Game Menu > Live > register (UserID + password,
-kept in the store "pow_regist", m.java:287-305). Without it nothing is sent. The server
+kept in the store "pow_regist"). Without it nothing is sent. The server
 is config.SAVE_SERVER ("auto" = the host of config.LIVE_SERVER when that is a ws(s):// server).
 
 Which copy wins:
@@ -19,7 +19,7 @@ Which copy wins:
 - while playing (another device saved meanwhile): this device's copy, the server's one is kept
   as the backup.
 
-PORT-EXTRA (asked by Andrey) "server only" (config.SERVER_ONLY_SAVE, when there is a server):
+(asked by Andrey) "server only" (config.SERVER_ONLY_SAVE, when there is a server):
 the hero (SERVER_ONLY) is never kept on the device. It lives in memory (rms.memory_only), is
 taken from the server before the game loads it and every save goes to the server. The game
 starts only online: boot() waits for the server (main.py shows offline_screen.py meanwhile),
@@ -176,7 +176,7 @@ class TextSocket:
 
 
 class BrowserTextSocket:
-    """PORT-EXTRA: TextSocket of the browser build: the page's WebSocket (pow/midp/webws.py)."""
+    """TextSocket of the browser build: the page's WebSocket (pow/midp/webws.py)."""
 
     def __init__(self, url):
         self.url = url

@@ -1,6 +1,6 @@
 """Messages of POW Multiplayer with the original opcodes (PHASE_9 task 9.4).
 
-Source: docs/analysis/06_multiplayer.md §2.4, checked against pyport/mp_java/g.java:
+Source: docs/analysis/06_multiplayer.md §2.4:
 the client writes in g.c(int) (g:1609-1704) and reads in g.a(k) (g:1888-2586).
 
 Field kinds: "b" s8, "B" u8, "h" s16, "H" u16, "i" s32, int N = char[N] (zero padded).
@@ -8,12 +8,12 @@ Field kinds: "b" s8, "B" u8, "h" s16, "H" u16, "i" s32, int N = char[N] (zero pa
 before; sub is a kind (list of values) or a schema (list of dicts).
 The client reads u16 with k.b() as a signed short, so "h"/"H" only differ in range checks.
 
-PORT-EXTRA fields are appended at the end: the original client ignores extra bytes, so a
-server that sends them still talks to the original jar (06 §6.2).
+fields are appended at the end: the original client ignores extra bytes, so a
+server that sends them still talks to the original client (06 §6.2).
 """
 
 # --- opcodes ---------------------------------------------------------------
-LOGIN = 262                 # C->S char[12] id, char[4] ver (+ PORT-EXTRA char[16] token)
+LOGIN = 262                 # C->S char[12] id, char[4] ver (+ char[16] token)
 LOGIN_ANS = 263
 LOGIN_FIRST = 278           # C->S char[12] id, char[16] pwd, char[4] ver
 LOGIN_FIRST_ANS = 279
@@ -64,7 +64,7 @@ RANK_MINE = 1300
 RANK_MINE_ANS = 1301
 SERVER_NOTICE = 1536        # S->C push
 KEEPALIVE = 39327           # C->S, no body, no answer
-# PORT-EXTRA: orders (pow_server/orders.py), opcodes the original never used
+# orders (pow_server/orders.py), opcodes the original never used
 ORDER_INFO = 1792           # C->S -> 1793: my order, its members and who is online
 ORDER_INFO_ANS = 1793
 ORDER_CREATE = 1794         # C->S char[12] name
@@ -73,7 +73,7 @@ ORDER_JOIN = 1796           # C->S char[12] name
 ORDER_JOIN_ANS = 1797
 ORDER_LEAVE = 1798          # C->S
 ORDER_LEAVE_ANS = 1799
-# PORT-EXTRA: the chat (pow_server/chat.py); channel 0 lobby, 1 my order, 2 private (peer)
+# the chat (pow_server/chat.py); channel 0 lobby, 1 my order, 2 private (peer)
 CHAT_READ = 1808            # C->S u8 channel, char[12] peer -> 1809: the last messages, marked read
 CHAT_READ_ANS = 1809
 CHAT_SEND = 1810            # C->S u8 channel, char[12] peer, char[40] text -> 1811
@@ -82,7 +82,7 @@ CHAT_PUSH = 1812            # S->C push: a new message of a conversation I read
 CHAT_PEERS = 1813           # C->S -> 1814: my private conversations, newest first
 CHAT_PEERS_ANS = 1814
 CHAT_UNREAD = 1815          # S->C push after the login: unread order / private messages
-# 768 modes: 0 Challenge 1:1, 1 Challenge 2:2, 2 Invite An Ally (mission); PORT-EXTRA 3: an
+# 768 modes: 0 Challenge 1:1, 1 Challenge 2:2, 2 Invite An Ally (mission); 3: an
 # order member fights a 2-on-2 duel on my side against two CPU fighters
 INVITE_TEAM = 3
 
@@ -91,7 +91,7 @@ EMPTY_SKILL = 99            # empty skill slot in 263 / 1291
 
 # 263 status codes the client knows (g:1936-2002): -2 -> cw1 "register in POW single",
 # -9 -> cw8 "too many users", anything else -> cw7 "network failure".
-# PORT-EXTRA -3: the session token is missing or wrong (the port's client goes back to Login).
+# -3: the session token is missing or wrong (the port's client goes back to Login).
 LOGIN_NOT_REGISTERED = -2
 LOGIN_BAD_TOKEN = -3
 LOGIN_FULL = -9
@@ -102,20 +102,20 @@ REASON_OTHER = 2
 # 1281 / 1283 / 1285: -6 -> cw6 "name already exists", -49 / -15 -> cw5 "not acceptable"
 ERR_NAME_EXISTS = -6
 ERR_NOT_ACCEPTABLE = -49
-# PORT-EXTRA order answers (1795 / 1797 / 768 mode 3)
+# order answers (1795 / 1797 / 768 mode 3)
 ERR_ORDER_NONE = -20        # no order with that name
 ERR_ORDER_FULL = -21        # 30 members already
 ERR_ORDER_IN = -22          # I am in an order already (create / join)
 ERR_NOT_MEMBER = -23        # 768 mode 3: the player is not in my order
-# PORT-EXTRA chat answers (1809 / 1811)
+# chat answers (1809 / 1811)
 ERR_TOO_FAST = -24          # too many messages in a short time
 ERR_NO_ORDER = -25          # the order channel without an order
 ERR_NO_PLAYER = -26         # private: no such UserID
 ERR_SELF = -27              # private: a message to myself
 
 # --- C->S schemas ------------------------------------------------------------
-# PORT-EXTRA tail of 262: the hero of the single-player save (task 9.10), what the original's
-# Live "Save User Data" sent with opcode 256 (as.java:475-528). sp = 0: no save.
+# tail of 262: the hero of the single-player save (task 9.10), what the original's
+# Live "Save User Data" sent with opcode 256. sp = 0: no save.
 SP_HERO = (
     ("sp", "B"), ("sp_level", "B"), ("sp_hp", "H"), ("sp_mp", "H"), ("sp_atk", "H"), ("sp_def", "H"),
     ("sp_hp_bonus", "h"), ("sp_mp_bonus", "h"), ("sp_atk_bonus", "h"), ("sp_def_bonus", "h"),
@@ -124,7 +124,7 @@ SP_HERO = (
 )
 
 C2S = {
-    # token and the hero: PORT-EXTRA, absent in the jar
+    # token and the hero: , absent in the original
     LOGIN: (("id", 12), ("ver", 4), ("token", 16), *SP_HERO),
     LOGIN_FIRST: (("id", 12), ("pwd", 16), ("ver", 4)),
     256: (("id", 12), ("ver", 4)),                       # rudiment, same body as 262 (g:1635)
@@ -229,7 +229,7 @@ FIGHTER = (
 _CHAT_ROW = (("id", 12), ("name", 8), ("text", 40))
 
 S2C = {
-    LOGIN_FIRST_ANS: (("token", 16),),          # PORT-EXTRA: the token for the next 262
+    LOGIN_FIRST_ANS: (("token", 16),),          # the token for the next 262
     LOGIN_ANS: PROFILE,
     KICKED: (),
     NOTICE_ANS: (("lines", "list", 4, 16), ("remaining", "B")),
@@ -243,12 +243,12 @@ S2C = {
     ROOM_LEAVE: (("slot", "B"),),
     STAGE_INFO: (("title", 14), ("stages", "B"), ("stage", "B")),
     ALL_READY: (),
-    ROUND_START: (("bar_speed", "B"),),         # PORT-EXTRA: server-chosen speed (9a, 06 §6.2)
+    ROUND_START: (("bar_speed", "B"),),         # server-chosen speed (9a, 06 §6.2)
     TURN_RESULT: (("turn", "rest", _enc_turn, _dec_turn),),
     STAGE_END: (("bg", "B"),),
     BATTLE_END: (("win", "B"), ("gold", "h"), ("grade", "B"), ("fame", "h"), ("exp", "h"),
                  ("loot", 15), ("rank", "i"), ("unk1", "B"), ("unk2", "i"), ("unk3", "B"),
-                 # PORT-EXTRA: the looted item for the single-player save (9.9), id 0 = none
+                 # the looted item for the single-player save (9.9), id 0 = none
                  ("item_id", "H"), ("item_atk", "h"), ("item_def", "h"), ("item_hp", "h"),
                  ("item_mp", "h")),
     MATCH_CANCEL: (),
@@ -259,19 +259,19 @@ S2C = {
                      ("atk", "h"), ("atk_bonus", "h"), ("def", "h"), ("def_bonus", "h")),
     SKILLS_ANS: (("n", "B"), ("skills", "list", "n", (("id", "B"), ("level", "B")))),
     SKILL_SLOTS_ANS: (),
-    # PORT-EXTRA tail: the name of my order ("" = none), shown under Character > Records
+    # tail: the name of my order ("" = none), shown under Character > Records
     RECORDS_ANS: (("fame", "i"), ("duel_grade", "i"), ("mission_grade", "i"), ("order", 12)),
     EXP_FAME_GOLD_ANS: (("exp", "i"), ("fame", "i"), ("gold", "i")),
     RANK_MINE_ANS: (("rank", "i"), ("value", "i")),
     RANK_LIST_ANS: (("n", "B"), ("rows", "list", "n", (("rank", "i"), ("id", 12), ("value", "i")))),
-    # PORT-EXTRA: name "" = in no order; rows: the leader, me, who is online, the others
+    # name "" = in no order; rows: the leader, me, who is online, the others
     ORDER_INFO_ANS: (("name", 12), ("n", "B"),
                      ("rows", "list", "n", (("id", 12), ("name", 8), ("level", "H"), ("online", "B"),
                                             ("leader", "B")))),
     ORDER_CREATE_ANS: (),
     ORDER_JOIN_ANS: (),
     ORDER_LEAVE_ANS: (),
-    # PORT-EXTRA chat: rows oldest first; peer_name = the private peer's display name
+    # chat: rows oldest first; peer_name = the private peer's display name
     CHAT_READ_ANS: (("channel", "B"), ("peer", 12), ("peer_name", 8), ("n", "B"),
                     ("rows", "list", "n", _CHAT_ROW)),
     CHAT_SEND_ANS: (),

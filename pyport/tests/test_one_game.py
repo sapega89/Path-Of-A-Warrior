@@ -1,4 +1,4 @@
-"""PORT-EXTRA: the Multiplayer screens as a part of the single player (main.py): Live >
+"""the Multiplayer screens as a part of the single player (main.py): Live >
 Multiplayer suspends the game loop with everything in memory, the Multiplayer client runs
 embedded (no exit popup, no outro, the rewards kept in memory) and Live.after_multiplayer pays
 the hero when the loop goes on."""

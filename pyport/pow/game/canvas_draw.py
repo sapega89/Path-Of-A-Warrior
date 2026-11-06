@@ -1,6 +1,6 @@
-"""ag.java, part of GameCanvas: drawing primitives: text, boxes, frames, numbers, soft keys, descriptions.
+""", part of GameCanvas: drawing primitives: text, boxes, frames, numbers, soft keys, descriptions.
 
-A mixin of GameCanvas (pow/game/game_canvas.py); the methods keep their `# ag.java:FROM-TO`
+A mixin of GameCanvas (pow/game/game_canvas.py); the methods keep their `# :FROM-TO`
 comments. `GameCanvas` below is the real class, set by game_canvas.py once it exists.
 """
 
@@ -11,8 +11,6 @@ from pow.game.structs import Rect
 from pow.midp import canvas
 from pow.midp.jint import i16, idiv, imod
 
-F10 = config.DECOMP_FIX["F10"]
-F12 = config.DECOMP_FIX["F12"]
 
 
 GameCanvas = None   # set by pow/game/game_canvas.py
@@ -20,23 +18,23 @@ GameCanvas = None   # set by pow/game/game_canvas.py
 
 class DrawMixin:
     @staticmethod
-    def draw_text_left(x, y, text):  # ag.java:1144-1147
+    def draw_text_left(x, y, text):
         if text is not None:
             Gfx.draw_string(text, x, y, 0)
 
     @staticmethod
-    def draw_text_centred(x, y, text):  # ag.java:1149-1152
+    def draw_text_centred(x, y, text):
         if text is not None:
             Gfx.draw_string(text, x, y, 1)
 
-    def draw_view_region(self, image, x, y, w, h, src_x, src_y):  # ag.java:1212-1214
+    def draw_view_region(self, image, x, y, w, h, src_x, src_y):
         GameCanvas.draw_region(x, y, w, h, image, src_x, src_y)
 
     @staticmethod
-    def draw_text(x, y, text):  # ag.java:1242-1244
+    def draw_text(x, y, text):
         Gfx.draw_string(text, x, y, 0)
 
-    def draw_view_background(self):  # ag.java:1418-1431
+    def draw_view_background(self):
         if GameCanvas.screen_fill == 0:
             self.fill_view(0, 0, 0)
             self.draw_view_region(GameCanvas.images[7], GameCanvas.view_x, GameCanvas.view_y, GameCanvas.view_size.x, GameCanvas.view_size.y, GameCanvas.view_offset.x, GameCanvas.view_offset.y)
@@ -47,30 +45,30 @@ class DrawMixin:
         if GameCanvas.screen_fill == 2:
             self.fill_view(255, 255, 255)
 
-    def fill_view(self, r, g, b):  # ag.java:1433-1435
+    def fill_view(self, r, g, b):
         Gfx.fill_rect(GameCanvas.view_x, GameCanvas.view_y, GameCanvas.view_size.x, GameCanvas.view_size.y, GameCanvas.rgb(r, g, b))
 
     @staticmethod
-    def fill_screen(color):  # ag.java:1981-1983
+    def fill_screen(color):
         Gfx.fill_rect(0, 0, GameCanvas.screen_w, GameCanvas.screen_h, color)
 
-    def draw_title(self):  # ag.java:1985-1996  (title screen)
+    def draw_title(self):  # title screen
         if GameCanvas.images[30] is None:
             return
         GameCanvas.draw_region(0, 0, GameCanvas.canvas_size.x, GameCanvas.canvas_size.y, GameCanvas.images[30], 0, 0)
-        # PORT-EXTRA (asked by Andrey): no copyright line of the original publisher under the
-        # title (ag.java:1988-1990 drew imgui 36 at the bottom; that image is removed)
+        # : no copyright line of the original publisher under the
+        # title
         if GameCanvas.title_logo is None:
             GameCanvas.title_logo = self.load_image(GameCanvas.scr_ui.get(42))
         if GameCanvas.frame % 6 < 3 and GameCanvas.state == 0:
             GameCanvas.draw_region(GameCanvas.view_cx - 55 + GameCanvas.view_x, GameCanvas.canvas_size.y - 60, 110, 14, GameCanvas.title_logo, 0, 0)
 
-    def draw_image_file(self, name, x, y, w, h, src_x, src_y):  # ag.java:1998-2002
+    def draw_image_file(self, name, x, y, w, h, src_x, src_y):
         image = self.load_image(name)
         if image is not None:
             GameCanvas.draw_region(x, y, w, h, image, src_x, src_y)
 
-    def draw_menu_background(self, mode):  # ag.java:2345-2370  (menu background into ct[7])
+    def draw_menu_background(self, mode):  # menu background into ct[7]
         if mode == 1:
             return
         Gfx.set_graphics(GameCanvas.buffer_g)
@@ -85,7 +83,7 @@ class DrawMixin:
             for col in range(4):
                 GameCanvas.draw_region_at(GameCanvas.images[9], 0, 0, (b & 0x1) * -31 + col * tile_w, b * tile_h, tile_w, tile_h)
             b += 1
-        # Java: (W - w) * b / 2 and H / 2 * b % 2 - all operands >= 0, so // matches Java /
+        # the original: (W - w) * b / 2 and H / 2 * b % 2 - all operands >= 0, so integer division
         for b in range(4):
             GameCanvas.draw_region_at(GameCanvas.images[12], 0, 0, (GameCanvas.canvas_size.x - GameCanvas.images[12].getWidth()) * b // 2, GameCanvas.canvas_size.y // 2 * b % 2,
                          GameCanvas.images[12].getWidth(), GameCanvas.images[12].getHeight())
@@ -101,10 +99,10 @@ class DrawMixin:
         Gfx.set_graphics(GameCanvas.screen_g)
 
     @staticmethod
-    def draw_region(x, y, w, h, image, src_x, src_y):  # ag.java:2438-2440
+    def draw_region(x, y, w, h, image, src_x, src_y):
         Gfx.draw_image_part(image, x, y, w, h, src_x, src_y)
 
-    def draw_map_region(self, image, x, y, w, h, src_x, src_y):  # ag.java:2442-2457
+    def draw_map_region(self, image, x, y, w, h, src_x, src_y):
         clip_top = y
         clip_top = min(clip_top, 0)
         clip_bottom = GameCanvas.view_size.y - y - h
@@ -118,30 +116,30 @@ class DrawMixin:
                          image, src_x - clip_left, src_y - clip_top)
 
     @staticmethod
-    def draw_region_at(image, src_x, src_y, x, y, w, h):  # ag.java:2459-2461
+    def draw_region_at(image, src_x, src_y, x, y, w, h):
         Gfx.draw_image_part(image, x, y, w, h, src_x, src_y)
 
     @staticmethod
-    def draw_text_centred_at(text, y, view_x):  # ag.java:2743-2746  (centred text)
+    def draw_text_centred_at(text, y, view_x):  # centred text
         y += 2
         Gfx.draw_string(text, GameCanvas.view_cx + GameCanvas.view_x + view_x, y + GameCanvas.view_y, 1)
 
-    def draw_text_at(self, text, y, unused):  # ag.java:2748-2750
+    def draw_text_at(self, text, y, unused):
         GameCanvas.draw_text_centred_at(text, y, 0)
 
     @staticmethod
-    def draw_view_text_centred(text, x, y):  # ag.java:2752-2754
+    def draw_view_text_centred(text, x, y):
         Gfx.draw_string(text, x + GameCanvas.view_x, y + GameCanvas.view_y, 1)
 
     @staticmethod
-    def draw_view_text(text, x, y):  # ag.java:2756-2758
+    def draw_view_text(text, x, y):
         Gfx.draw_string(text, x + GameCanvas.view_x, y + GameCanvas.view_y, 0)
 
-    def draw_box(self, x, y, w, h, selected):  # ag.java:2760-2762
+    def draw_box(self, x, y, w, h, selected):
         GameCanvas.draw_frame_box(x, y, w, h, 0, 5263440, 16777215, selected)
 
     @staticmethod
-    def draw_frame_box(x, y, w, h, fill, outer, inner, framed):  # ag.java:2764-2791
+    def draw_frame_box(x, y, w, h, fill, outer, inner, framed):
         rect = Rect(0, 0, 0, 0)
         if framed:
             rect.x = x - 2
@@ -169,12 +167,12 @@ class DrawMixin:
         Gfx.fill_rect(rect.x, rect.y, rect.w, rect.h, fill)
 
     @staticmethod
-    def rgb(r, g, b):  # ag.java:2857-2860
+    def rgb(r, g, b):
         return (r & 0xFF) << 16 | (g & 0xFF) << 8 | b & 0xFF
 
     @staticmethod
     def draw_auto_badge():
-        """PORT-EXTRA (pow/game/autopilot.py): the AUTO button in the bottom-left corner of the map
+        """(pow/game/autopilot.py): the AUTO button in the bottom-left corner of the map
         (the corner is empty on the map; a click on it, Tab or F toggles): white while the
         auto-hunt is on, grey while it is off (config.AUTO_BUTTON: only while it is on)."""
         from pow.game.autopilot import Autopilot
@@ -187,13 +185,13 @@ class DrawMixin:
         Gfx.draw_string("AUTO", 24, GameCanvas.screen_h - 17, 1)
 
     @staticmethod
-    def draw_softkeys(left, right):  # ag.java:3045-3079  (soft-key captions)
+    def draw_softkeys(left, right):  # soft-key captions
         if GameCanvas.popups.kind != 0:
             return
         key_w = GameCanvas.softkey_bg.getWidth()
         key_h = GameCanvas.softkey_bg.getHeight()
         str_ = ""
-        left_hint, right_hint = canvas.key_hints()   # PORT-EXTRA: config.KEY_HINTS
+        left_hint, right_hint = canvas.key_hints()   # config.KEY_HINTS
         if left != -1:
             Gfx.set_font(GameCanvas.font_white)
             Gfx.draw_image(GameCanvas.softkey_bg, 0, GameCanvas.screen_h - key_h)
@@ -219,11 +217,11 @@ class DrawMixin:
                 return
             Gfx.draw_string(str_ + right_hint + consts.softkey_labels[right], GameCanvas.screen_w - key_w // 2 - 0, GameCanvas.screen_h - key_h, 1)
 
-    def set_color(self, r, g, b):  # ag.java:3201-3203
+    def set_color(self, r, g, b):
         GameCanvas.fill_color = GameCanvas.rgb(r, g, b)
 
     @staticmethod
-    def draw_line(x1, y1, x2, y2):  # ag.java:3205-3207
+    def draw_line(x1, y1, x2, y2):
         Gfx.draw_line(x1, y1, x2, y2, GameCanvas.fill_color)
 
     _F_LETTERS = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J",
@@ -231,7 +229,7 @@ class DrawMixin:
                   "U", "V", "W", "X", "Y", "Z", "OK"]
 
     @staticmethod
-    def draw_letter_grid(cursor, y):  # ag.java:1794-1819  (letter grid A..Z + OK)
+    def draw_letter_grid(cursor, y):  # letter grid A..Z + OK
         left = GameCanvas.screen_cx - 71
         letters = GameCanvas._F_LETTERS
         Gfx.fill_rect(left, y, 142, 34, 0)
@@ -239,21 +237,18 @@ class DrawMixin:
         if GameCanvas.frame % 4 < 2:
             if cursor == 26:
                 Gfx.fill_rect(left + 123, y + 18, 19, 15, 16711680)
-            elif F10:
-                # DECOMP-FIX F10: `10 * p % 14`, `17 * p / 14` -> `10 * (p % 14)`, `17 * (p / 14)`
-                Gfx.fill_rect(left + 2 + 10 * (cursor % 14), y + 1 + 17 * (cursor // 14), 10, 15, 16711680)
             else:
-                Gfx.fill_rect(left + 2 + 10 * cursor % 14, y + 1 + 17 * cursor // 14, 10, 15, 16711680)
+                Gfx.fill_rect(left + 2 + 10 * (cursor % 14), y + 1 + 17 * (cursor // 14), 10, 15, 16711680)
         Gfx.set_font(GameCanvas.font_white)
         for b in range(len(letters)):
             if b in {8, 26}:
                 dx = 1
             else:
                 dx = 0
-            row = 17 * (b // 14) if F10 else 17 * b // 14   # DECOMP-FIX F10
+            row = 17 * (b // 14)
             Gfx.draw_string(letters[b], left + 3 + b % 14 * 10 + dx, y + row, 0)
 
-    def draw_arrow(self, direction, x, y):  # ag.java:1847-1880  (arrow from ct[17])
+    def draw_arrow(self, direction, x, y):  # arrow from ct[17]
         if direction == 0:
             src_x = src_y = 0
             w, h = 10, 16
@@ -270,7 +265,7 @@ class DrawMixin:
             return
         GameCanvas.draw_region(x + GameCanvas.view_x, y + GameCanvas.view_y, w, h, GameCanvas.images[17], src_x, src_y)
 
-    def draw_big_number(self, value, x, y, with_commas):  # ag.java:2810-2834  (number from ct[19])
+    def draw_big_number(self, value, x, y, with_commas):  # number from ct[19]
         if with_commas != 0:
             digits = 0
             rest = idiv(value, 10)
@@ -294,83 +289,82 @@ class DrawMixin:
             if value <= 0:
                 return end_x
 
-    def draw_rect_outline(self, x, y, w, h, r, g, b):  # ag.java:3140-3146  (rectangle outline)
+    def draw_rect_outline(self, x, y, w, h, r, g, b):  # rectangle outline
         self.set_color(r, g, b)
         GameCanvas.draw_line(x, y, x + w - 1, y)
         GameCanvas.draw_line(x, y + 1, x, y + h - 1)
         GameCanvas.draw_line(x + w - 1, y, x + w - 1, y + h - 1)
         GameCanvas.draw_line(x + 1, y + h - 1, x + w - 2, y + h - 1)
 
-    def draw_round_outline(self, x, y, w, h, r, g, b):  # ag.java:3181-3187  (outline, round corners)
+    def draw_round_outline(self, x, y, w, h, r, g, b):  # outline, round corners
         self.set_color(r, g, b)
         GameCanvas.draw_line(x + 1, y, x + w - 2, y)
         GameCanvas.draw_line(x, y + 1, x, y + h - 2)
         GameCanvas.draw_line(x + w - 1, y + 1, x + w - 1, y + h - 2)
         GameCanvas.draw_line(x + 1, y + h - 1, x + w - 2, y + h - 1)
 
-    def draw_selection(self, x, y, w, h, r, g, b):  # ag.java:3189-3199  (selection frame)
+    def draw_selection(self, x, y, w, h, r, g, b):  # selection frame
         self.draw_round_outline(x, y, w, h, r, g, b)
         self.draw_dot(x + 1, y + 1)
         self.draw_dot(x + w - 2, y + 1)
         self.draw_dot(x + 1, y + h - 2)
         self.draw_dot(x + w - 2, y + h - 2)
 
-    def draw_dot(self, x, y):  # ag.java:3209-3211
+    def draw_dot(self, x, y):
         GameCanvas.draw_line(x, y, x + 1, y + 1)
 
-    def fill_screen_rgb(self, r, g, b):  # ag.java:1694-1696  (fill the screen)
+    def fill_screen_rgb(self, r, g, b):  # fill the screen
         Gfx.fill_rect(0, 0, GameCanvas.canvas_size.x, GameCanvas.canvas_size.y, GameCanvas.rgb(r, g, b))
 
-    def draw_skip_key(self, unused):  # ag.java:1739-1741  (soft key "Skip")
+    def draw_skip_key(self, unused):  # soft key "Skip"
         GameCanvas.draw_softkeys(0, -1)
 
-    def draw_small_number(self, value, x, y):  # ag.java:1828-1830  (small number, ct[20])
+    def draw_small_number(self, value, x, y):  # small number, ct[20]
         self.draw_image_part(value, x, y, 9, 12, GameCanvas.images[20], 0, 0, 0)
 
     def draw_image_part(self, value, x, y, w, h, image,
-                    src_x, src_y, gap):  # ag.java:1832-1845  (number from a digit strip)
+                    src_x, src_y, gap):  # number from a digit strip
         if value < 0 or image is None:
             return
         x -= w
         if value > 0:
             while value > 0:
-                # DECOMP-FIX F10: `p6 + p4 * p1 % 10` -> `p6 + p4 * (p1 % 10)`
-                sx = src_x + w * (value % 10) if F10 else src_x + w * value % 10
+                sx = src_x + w * (value % 10)
                 GameCanvas.draw_region(x, y, w, h, image, sx, src_y)
                 value //= 10
                 x -= w + gap
             return
         GameCanvas.draw_region(x, y, w, h, image, src_x, src_y)
 
-    def draw_empty_slot(self, x, y):  # ag.java:3169-3173  (empty 30x30 item slot)
+    def draw_empty_slot(self, x, y):  # empty 30x30 item slot
         rect = Rect(x + 1, y + 1, 28, 28)
         self.draw_round_outline(x, y, 30, 30, 80, 80, 80)
         Gfx.fill_rect(rect.x, rect.y, rect.w, rect.h, 0)
 
-    def draw_grey_frame(self, x, y, w, h):  # ag.java:3175-3179  (grey frame, black inside)
+    def draw_grey_frame(self, x, y, w, h):  # grey frame, black inside
         rect = Rect(x + 1, y + 1, w - 2, h - 2)
         self.draw_round_outline(x, y, w, h, 152, 152, 152)
         Gfx.fill_rect(rect.x, rect.y, rect.w, rect.h, 0)
 
     @staticmethod
-    def fill_rect(rect, color):  # ag.java:1507-1510  (fill rect)
+    def fill_rect(rect, color):  # fill rect
         if rect is not None:
             Gfx.fill_rect(rect.x, rect.y, rect.w, rect.h, color)
 
     @staticmethod
-    def outline_rect(rect, color):  # ag.java:1512-1515  (outline rect)
+    def outline_rect(rect, color):  # outline rect
         if rect is not None:
             Gfx.draw_rect(rect.x, rect.y, rect.w, rect.h, color)
 
     @staticmethod
-    def draw_filled_rect(rect, outline, fill):  # ag.java:1517-1520
+    def draw_filled_rect(rect, outline, fill):
         Gfx.fill_rect(rect.x, rect.y, rect.w, rect.h, fill)
         Gfx.draw_rect(rect.x, rect.y, rect.w, rect.h, outline)
 
-    def draw_small_digit(self, x, y, digit):  # ag.java:1823-1825  (small digit from ct[20])
+    def draw_small_digit(self, x, y, digit):  # small digit from ct[20]
         self.draw_map_region(GameCanvas.images[20], x, y, 9, 12, digit * 9, 0)
 
-    def draw_gold_box(self):  # ag.java:1279-1291  (gold box)
+    def draw_gold_box(self):  # gold box
         widths = [7, 14, 21, 32, 39, 46, 57, 64, 71, 82]
         rest = GameCanvas.hero.gold
         self.draw_box(GameCanvas.view_cx - 70, GameCanvas.view_cy - 80 + GameCanvas.view_y, 140, 22, False)
@@ -383,7 +377,7 @@ class DrawMixin:
         self.draw_big_number(GameCanvas.hero.gold, GameCanvas.view_cx + (widths[b] >> 1) + 16 - GameCanvas.view_x, GameCanvas.view_cy - 76, 0)
         self.draw_map_region(GameCanvas.images[32], GameCanvas.view_cx - 69 - GameCanvas.view_x, GameCanvas.view_cy - 80, GameCanvas.images[32].getWidth(), GameCanvas.images[32].getHeight(), 0, 0)
 
-    def draw_description(self, what, x, y, w, h):  # ag.java:1293-1352  (description of item / skill)
+    def draw_description(self, what, x, y, w, h):  # description of item / skill
         hero = GameCanvas.hero
         info = GameCanvas.info_box
         attack = defense = hp = mp = enchant = min_level = 0
@@ -435,7 +429,7 @@ class DrawMixin:
             info.shown = 0
             info.text_x = i16(x + 1)
 
-    def describe_skill(self, skill):  # ag.java:1354-1368  (skill description)
+    def describe_skill(self, skill):  # skill description
         text = ""
         skill -= 12
         if skill < 0 or skill > 18:
@@ -451,15 +445,15 @@ class DrawMixin:
 
     # ---- Blacksmith helpers ----------------------------------------------------------------
 
-    def draw_panel(self, x, y, w, h):  # ag.java:1246-1248
+    def draw_panel(self, x, y, w, h):
         GameCanvas.draw_frame_box(x + 1, y + 1, w - 2, h - 2, 0, 0, 10000536, True)
 
-    def draw_centred_box(self, y, w, h):  # ag.java:1250-1254  (centred box, returns its x)
+    def draw_centred_box(self, y, w, h):  # centred box, returns its x
         box_x = 240 - w >> 1
         self.draw_panel(box_x, y, w, h)
         return box_x
 
-    def draw_gold_amount(self, gold, y):  # ag.java:1256-1269  (gold box with amount paramInt1)
+    def draw_gold_amount(self, gold, y):  # gold box with amount paramInt1
         text_x = self.draw_centred_box(y, 200, 22)
         b = 0
         rest = gold
@@ -475,29 +469,26 @@ class DrawMixin:
         self.draw_number_commas(gold, text_x + text_w + 10, y)
         self.draw_map_region(GameCanvas.images[32], GameCanvas.view_cx - 69, y - 5, GameCanvas.images[32].getWidth(), GameCanvas.images[32].getHeight(), 0, 0)
 
-    def draw_hero_gold(self, y):  # ag.java:1271-1273
+    def draw_hero_gold(self, y):
         self.draw_gold_amount(GameCanvas.hero.gold, y)
 
-    def draw_number_commas(self, value, x, y):  # ag.java:2797-2808  (number with thousands commas)
-        # DECOMP-FIX F12: the decompiled loop `do { if (!b || b % 3 != 0) continue; ... ++b; }`
-        # skips every digit (the number is never drawn). Restored: comma before every 3rd digit.
+    def draw_number_commas(self, value, x, y):  # number with thousands commas
         b = 0
-        while True:
-            if F12:
-                if b != 0 and b % 3 == 0:
-                    x -= 4
-                    GameCanvas.draw_region(x, y, 5, 14, GameCanvas.images[19], 100, 0)
-                x -= 10
-                GameCanvas.draw_region(x, y, 10, 14, GameCanvas.images[19], imod(value, 10) * 10, 0)
-                b += 1
+        while True:                         # a comma before every 3rd digit
+            if b != 0 and b % 3 == 0:
+                x -= 4
+                GameCanvas.draw_region(x, y, 5, 14, GameCanvas.images[19], 100, 0)
+            x -= 10
+            GameCanvas.draw_region(x, y, 10, 14, GameCanvas.images[19], imod(value, 10) * 10, 0)
+            b += 1
             value = idiv(value, 10)
             if not value > 0:
                 break
 
-    def draw_digit(self, digit, x, y):  # ag.java:2793-2795  (one digit of ct[19])
+    def draw_digit(self, digit, x, y):  # one digit of ct[19]
         self.draw_map_region(GameCanvas.images[19], x, y, 10, 14, 10 * digit, 0)
 
-    def draw_clock(self, x, y, secs):  # ag.java:2849-2855  (mission clock mm:ss)
+    def draw_clock(self, x, y, secs):  # mission clock mm:ss
         digit_x = [0, 9, 25, 34]
         digits = [idiv(secs, 600) % 10, idiv(secs, 60) % 10, secs % 60 // 10, secs % 10]
         for b in range(4):

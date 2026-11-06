@@ -59,6 +59,6 @@ class Bot:
             elif op == M.BATTLE_END:
                 self.results.append(m)
             elif op == M.CHAT_PUSH and m.get("channel") == 2 and m.get("id") != self.uid:
-                # PORT-EXTRA chat: a private message gets one of the bots' lines back
+                # chat: a private message gets one of the bots' lines back
                 from pow_server import chat
                 self._send(M.CHAT_SEND, channel=2, peer=m["id"], text=self.rng.choice(chat.BOT_LINES))

@@ -1,4 +1,4 @@
-# PORT-EXTRA "always online" (config.ALWAYS_ONLINE, pow/game/live_online.py): after the prologue
+# "always online" (config.ALWAYS_ONLINE, pow/game/live_online.py): after the prologue
 # of a New Game the Game Menu offers the Live registration; after it the game is back
 # on the Game Menu, logged in, and Live opens without "Connect to Live?" and
 # without Management. Hero made like newgame.keys.

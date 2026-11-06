@@ -1,4 +1,4 @@
-"""Regression: the cell-script hash ag.cH must never get a cycle (c.aC / c.a_III).
+"""Regression: the cell-script hash ag.cH must never get a cycle.
 
 Before the fix c.aC() kept the old links .b; after some map loads a_III() made a link to a lower
 index (even a node to itself) and the next a_III() into that bucket looped forever: the game froze.

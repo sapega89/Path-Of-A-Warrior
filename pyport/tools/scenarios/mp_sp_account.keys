@@ -1,4 +1,4 @@
-# PORT-EXTRA (always online): the single player's Live account logs in to the Multiplayer
+# (always online): the single player's Live account logs in to the Multiplayer
 # game too: no Login screen, the title goes straight to the login (278, 262) and the Main Menu.
 sp_account ANDREY 1234
 wait 35

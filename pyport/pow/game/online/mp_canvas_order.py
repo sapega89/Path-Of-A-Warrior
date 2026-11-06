@@ -1,18 +1,18 @@
-"""PORT-EXTRA (asked by Andrey, plan item 22): the Order window of the online game.
+"""(asked by Andrey, plan item 22): the Order window of the online game.
 
-Not in the original jar. A seventh picture of the main menu carousel opens it; "2-on-2 Order"
+Not in the original. A seventh picture of the main menu carousel opens it; "2-on-2 Order"
 in the Duel menu and "Order Ally" in the Mission menu open it as a pick list, where FIRE on a
 member invites them at once (2-on-2 Together / Mission Together). An order is a
 name and up to 30 players (pow_server/orders.py); the window shows who is in it and who is
-online, and invites a member to a mission (768 mode 2, the jar's Invite An Ally) or to a
+online, and invites a member to a mission (768 mode 2, the original's Invite An Ally) or to a
 2-on-2 duel on my side (768 mode 3). Nothing of it reaches the single player.
 
-States (unused numbers of the jar's menu range, so the menu music plays on):
+States (unused numbers of the original's menu range, so the menu music plays on):
     30  the order: its members, then "Leave Order"; without an order the Create / Join menu
     31  a member: Mission Together / 2-on-2 Together
     32  the order name on the A-Z grid (create or join)
     33  "Leave the order?" Yes / No
-The window is drawn with the jar's own pieces (window, panels, boxes, buttons, fonts).
+The window is drawn with the original's own pieces (window, panels, boxes, buttons, fonts).
 """
 from pow.game.online.rt import idiv, imod
 
@@ -44,7 +44,7 @@ STATUS_ERRORS = {-6: 6, -49: 5, -20: ERR_FIRST, -21: ERR_FIRST + 1, -22: ERR_FIR
 
 
 def install():
-    """Adds the texts the window needs to the jar's tables (once per run)."""
+    """Adds the texts the window needs to the original's tables (once per run)."""
     if DUEL_ITEM not in Consts.duel_menu:
         Consts.duel_menu.append(DUEL_ITEM)
         Consts.mission_menu.append(MISSION_ITEM)
@@ -111,7 +111,7 @@ class OrderMixin:
         self.open_order()
 
     def order_invite_error(self):
-        """769 errors of mode 3 the jar does not know."""
+        """769 errors of mode 3 the original does not know."""
         if MpCanvas.answer_status in STATUS_ERRORS and MpCanvas.answer_status <= -20:
             MpCanvas.error_msg = STATUS_ERRORS[MpCanvas.answer_status]
             return True
@@ -284,7 +284,7 @@ class OrderMixin:
 
     def invite_member(self, mode):
         """768 to the member under the cursor. From the window the battle goes back to it; from
-        the Duel / Mission menu item it goes back to that menu, like the jar's own modes."""
+        the Duel / Mission menu item it goes back to that menu, like the original's own modes."""
         MpCanvas.room_mode = mode
         MpCanvas.input_text = MpCanvas.order_rows[MpCanvas.order_cursor][0]
         MpCanvas.order_invite = not MpCanvas.order_pick

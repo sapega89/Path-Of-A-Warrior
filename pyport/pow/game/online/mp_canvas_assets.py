@@ -1,6 +1,6 @@
-"""g.java, part of MpCanvas: loading and freeing images and sprites.
+""", part of MpCanvas: loading and freeing images and sprites.
 
-A mixin of MpCanvas (pow/game/online/mp_canvas.py); the methods keep their `# g.java:FROM-TO`
+A mixin of MpCanvas (pow/game/online/mp_canvas.py); the methods keep their `# :FROM-TO`
 comments. The module names below are set by mp_canvas.py: `MpCanvas` once the class exists,
 the others by its _late_imports().
 """
@@ -15,7 +15,7 @@ SpriteFrames = None   # set by mp_canvas._late_imports
 
 
 class AssetsMixin:
-    def load_image(self, path):  # g.java:337
+    def load_image(self, path):
         image = None
         try:
             image = Image.createImage(path)
@@ -23,7 +23,7 @@ class AssetsMixin:
             MpCanvas.log(_js("--------createImage err:", exception))
         return image
 
-    def load_ui_images(self):  # g.java:1706
+    def load_ui_images(self):
         MpCanvas.ui_images[2] = self.load_image("/ui2.png")
         MpCanvas.ui_images[3] = self.load_image("/ui3.png")
         MpCanvas.ui_images[15] = self.load_image("/ui15.png")
@@ -42,7 +42,7 @@ class AssetsMixin:
             j = j + 1
         self.load_menu_images()
 
-    def load_ui_images2(self):  # g.java:1728
+    def load_ui_images2(self):
         MpCanvas.ui_images[34] = self.load_image("/ui34.png")
         MpCanvas.ui_images[35] = self.load_image("/ui35.png")
         MpCanvas.ui_images[36] = self.load_image("/ui36.png")
@@ -53,9 +53,9 @@ class AssetsMixin:
         MpCanvas.ui_images[52] = self.load_image("/ui52.png")
         MpCanvas.ui_images[53] = self.load_image("/ui53.png")
 
-    def load_menu_images(self):  # g.java:1740
+    def load_menu_images(self):
         i = 0
-        while i < 8:                   # PORT-EXTRA: mpic6 = Order, mpic7 = Chat
+        while i < 8:                   # mpic6 = Order, mpic7 = Chat
             if MpCanvas.mpic_images[i] is None:
                 MpCanvas.mpic_images[i] = self.load_image(_js(_js("/mpic", i), ".png"))
             i = i + 1
@@ -70,7 +70,7 @@ class AssetsMixin:
         if MpCanvas.menu_icon_image is None:
             MpCanvas.menu_icon_image = self.load_image("/ui_menuicon.png")
 
-    def free_battle_images(self):  # g.java:1765
+    def free_battle_images(self):
         j = 0
         MpCanvas.body_images[0] = None
         MpCanvas.body_images[1] = None
@@ -170,7 +170,7 @@ class AssetsMixin:
             MpCanvas.arrow_images[1] = self.load_image("/menuarrow1.png")
         self.load_menu_images()
 
-    def free_frame_images(self):  # g.java:5026
+    def free_frame_images(self):
         MpCanvas.border_h_image = None
         MpCanvas.border_v_image = None
         MpCanvas.titlebox_image = None
@@ -210,18 +210,18 @@ class AssetsMixin:
         self.stop_music()
         MpCanvas.room_dirty = True
 
-    def load_numbered_image(self, images, name, index):  # g.java:5497
+    def load_numbered_image(self, images, name, index):
         if images[index] is None:
             images[index] = self.load_image(_js(_js(_js("/", name), index), ".png"))
 
-    def load_named_image(self, images, name, index):  # g.java:5503
+    def load_named_image(self, images, name, index):
         if images[index] is None:
             images[index] = self.load_image(_js(_js("/", name), ".png"))
 
-    def load_sprite(self, images, sets, name):  # g.java:5509
+    def load_sprite(self, images, sets, name):
         self.load_sprite_dir(images, sets, name, 1)
 
-    def load_sprite_dir(self, images, sets, name, single):  # g.java:5513
+    def load_sprite_dir(self, images, sets, name, single):
         if MpCanvas.draw_mirrored:
             if images[1] is None:
                 images[1] = self.load_image(_js(_js("/", name), "_r.png"))
@@ -236,6 +236,6 @@ class AssetsMixin:
                 sets[1] = SpriteFrames(_js(_js("/", name), "_skill1.SP2"))
                 sets[2] = SpriteFrames(_js(_js("/", name), "_skill2.SP2"))
 
-    def load_bg(self, index):  # g.java:5603
+    def load_bg(self, index):
         if MpCanvas.bg_images[index] is None:
             MpCanvas.bg_images[index] = self.load_image(_js(_js("/gamebg", index), ".png"))

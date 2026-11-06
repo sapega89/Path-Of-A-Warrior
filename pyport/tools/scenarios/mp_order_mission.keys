@@ -1,4 +1,4 @@
-# PORT-EXTRA Order window: TEST joins the order of RIVAL and invites RIVAL to a mission
+# Order window: TEST joins the order of RIVAL and invites RIVAL to a mission
 # States: 30 the order, 31 a member, 32 the order name, 33 leave? (Yes / No).
 include _login.keys
 bot_order WOLF

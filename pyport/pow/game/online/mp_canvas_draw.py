@@ -1,6 +1,6 @@
-"""g.java, part of MpCanvas: drawing primitives: text, rectangles, lines, images and halves, numbers, boxes, buttons, borders.
+""", part of MpCanvas: drawing primitives: text, rectangles, lines, images and halves, numbers, boxes, buttons, borders.
 
-A mixin of MpCanvas (pow/game/online/mp_canvas.py); the methods keep their `# g.java:FROM-TO`
+A mixin of MpCanvas (pow/game/online/mp_canvas.py); the methods keep their `# :FROM-TO`
 comments. The module names below are set by mp_canvas.py: `MpCanvas` once the class exists,
 the others by its _late_imports().
 """
@@ -17,7 +17,7 @@ Consts = Draw = Gfx = None   # set by mp_canvas._late_imports
 
 class DrawMixin:
     @staticmethod
-    def draw_menu_cursor(graphics):  # g.java:348
+    def draw_menu_cursor(graphics):
         step = idiv(80, MpCanvas.menu_size)
         if step > 30:
             step = 30
@@ -30,19 +30,19 @@ class DrawMixin:
             dy = 40
         Draw.draw_image_part(graphics, MpCanvas.menu_icon_image, (idiv((((MpCanvas.canvas_w - (step * ((MpCanvas.menu_size - 1)))) - 11)), 2) + (step * MpCanvas.cursor_stack[MpCanvas.stack_depth])), ((MpCanvas.center_y + 6) + dy), 12, 15, 0, 0)
 
-    def draw_text_centred_on(self, graphics, x, y, text, color):  # g.java:1471
+    def draw_text_centred_on(self, graphics, x, y, text, color):
         self.draw_text_colored(graphics, text, x, y, 1, color)
 
-    def draw_text_centred(self, x, y, text, color):  # g.java:1475
+    def draw_text_centred(self, x, y, text, color):
         self.draw_text_colored(MpCanvas.screen_g, text, x, y, 1, color)
 
-    def draw_text_left_on(self, graphics, x, y, text, color):  # g.java:1479
+    def draw_text_left_on(self, graphics, x, y, text, color):
         self.draw_text_colored(graphics, text, x, y, 0, color)
 
-    def draw_text_left(self, x, y, text, color):  # g.java:1483
+    def draw_text_left(self, x, y, text, color):
         self.draw_text_colored(MpCanvas.screen_g, text, x, y, 0, color)
 
-    def draw_text_colored(self, graphics, text, x, y, anchor, color):  # g.java:1487
+    def draw_text_colored(self, graphics, text, x, y, anchor, color):
         if color == 0xFFFFFF:
             Gfx.set_font(MpCanvas.font_white)
         elif color == 16400640:
@@ -56,60 +56,60 @@ class DrawMixin:
         Gfx.draw_string_on(graphics, text, x, y, anchor)
 
     @staticmethod
-    def draw_rect(x, y, w, h, color):  # g.java:1512
+    def draw_rect(x, y, w, h, color):
         Draw.draw_rect(MpCanvas.screen_g, x, y, w, h, color)
 
     @staticmethod
-    def fill_rect(x, y, w, h, color):  # g.java:1516
+    def fill_rect(x, y, w, h, color):
         Draw.fill_rect(MpCanvas.screen_g, x, y, w, h, color)
 
     @staticmethod
-    def fill_rect_on(graphics, x, y, w, h, color):  # g.java:1520
+    def fill_rect_on(graphics, x, y, w, h, color):
         Draw.fill_rect(graphics, x, y, w, h, color)
 
     @staticmethod
-    def set_color(graphics, color):  # g.java:1524
+    def set_color(graphics, color):
         graphics.setColor(color)
 
     @staticmethod
-    def draw_line_color(graphics, x1, y1, x2, y2, color):  # g.java:1528
+    def draw_line_color(graphics, x1, y1, x2, y2, color):
         Draw.draw_line_color(graphics, x1, y1, x2, y2, color)
 
     @staticmethod
-    def draw_line(graphics, x1, y1, x2, y2):  # g.java:1532
+    def draw_line(graphics, x1, y1, x2, y2):
         Draw.draw_line(graphics, x1, y1, x2, y2)
 
     @staticmethod
-    def draw_dot(graphics, x, y, color):  # g.java:1536
+    def draw_dot(graphics, x, y, color):
         Draw.fill_rect(graphics, x, y, 1, 1, color)
 
     @staticmethod
-    def draw_image(x, y, image):  # g.java:1540
+    def draw_image(x, y, image):
         Draw.draw_image(MpCanvas.screen_g, image, x, y, 0)
 
     @staticmethod
-    def draw_image_on(graphics, x, y, image):  # g.java:1544
+    def draw_image_on(graphics, x, y, image):
         Draw.draw_image(graphics, image, x, y, 0)
 
     @staticmethod
-    def draw_right_half(x, y, image):  # g.java:1548
+    def draw_right_half(x, y, image):
         half_w = (idiv(image.getWidth(), 2) + 1)
         h = image.getHeight()
         Draw.draw_image_part(MpCanvas.screen_g, image, (x - half_w), y, half_w, h, (half_w - 1), 0)
 
     @staticmethod
-    def draw_right_half_on(graphics, x, y, image):  # g.java:1554
+    def draw_right_half_on(graphics, x, y, image):
         half_w = (idiv(image.getWidth(), 2) + 1)
         h = image.getHeight()
         Draw.draw_image_part(graphics, image, (x - half_w), y, half_w, h, (half_w - 1), 0)
 
     @staticmethod
-    def draw_right_half_h(graphics, x, y, h, image):  # g.java:1560
+    def draw_right_half_h(graphics, x, y, h, image):
         half_w = (idiv(image.getWidth(), 2) + 1)
         Draw.draw_image_part(graphics, image, (x - half_w), y, half_w, h, (half_w - 1), 0)
 
     @staticmethod
-    def draw_right_aligned(x, y, image, half):  # g.java:1565
+    def draw_right_aligned(x, y, image, half):
         if half:
             half_w = (idiv(image.getWidth(), 2) + 1)
             h = image.getHeight()
@@ -118,38 +118,38 @@ class DrawMixin:
         Draw.draw_image(MpCanvas.screen_g, image, (x - image.getWidth()), y, 0)
 
     @staticmethod
-    def draw_left_half_row(graphics, x, y, image, h, row):  # g.java:1575
+    def draw_left_half_row(graphics, x, y, image, h, row):
         half_w = (idiv(image.getWidth(), 2) + 1)
         Draw.draw_image_part(graphics, image, x, y, half_w, h, 0, (h * row))
 
     @staticmethod
-    def draw_right_half_row1(graphics, x, y, h, image):  # g.java:1580
+    def draw_right_half_row1(graphics, x, y, h, image):
         half_w = (idiv(image.getWidth(), 2) + 1)
         Draw.draw_image_part(graphics, image, (x - half_w), y, half_w, h, (half_w - 1), h)
 
     @staticmethod
-    def draw_left_half(x, y, image):  # g.java:1585
+    def draw_left_half(x, y, image):
         half_w = (idiv(image.getWidth(), 2) + 1)
         h = image.getHeight()
         Draw.draw_image_part(MpCanvas.screen_g, image, x, y, half_w, h, 0, 0)
 
     @staticmethod
-    def draw_left_half_on(graphics, x, y, image):  # g.java:1591
+    def draw_left_half_on(graphics, x, y, image):
         half_w = (idiv(image.getWidth(), 2) + 1)
         h = image.getHeight()
         Draw.draw_image_part(graphics, image, x, y, half_w, h, 0, 0)
 
     @staticmethod
-    def draw_left_half_h(graphics, x, y, h, image):  # g.java:1597
+    def draw_left_half_h(graphics, x, y, h, image):
         half_w = (idiv(image.getWidth(), 2) + 1)
         Draw.draw_image_part(graphics, image, x, y, half_w, h, 0, 0)
 
-    def draw_buffer(self):  # g.java:1602
+    def draw_buffer(self):
         Draw.draw_image(MpCanvas.screen_g, MpCanvas.buffer, 0, 0, 0)
         if (MpCanvas.state >= 90) and (MpCanvas.state <= 105):
             MpCanvas.draw_hp_bars(MpCanvas.screen_g)
 
-    def draw_box(self, graphics, x, y, w, h, style):  # g.java:3442
+    def draw_box(self, graphics, x, y, w, h, style):
         edge_color = 0x525152
         corner_color = 0xFFFFFF
         if style in (0, 7):
@@ -208,38 +208,38 @@ class DrawMixin:
             Draw.fill_rect(graphics, (x + MpCanvas.loop_j), (y + 1), 1, (h - 2), 0)
             MpCanvas.loop_j = MpCanvas.loop_j + 1
 
-    def draw_number1_on(self, graphics, x, y, value):  # g.java:4619
+    def draw_number1_on(self, graphics, x, y, value):
         MpCanvas.draw_number(graphics, x, y, value, 1)
 
-    def draw_number2_on(self, graphics, x, y, value):  # g.java:4623
+    def draw_number2_on(self, graphics, x, y, value):
         MpCanvas.draw_number(graphics, x, y, value, 2)
 
-    def draw_number3_on(self, graphics, x, y, value):  # g.java:4627
+    def draw_number3_on(self, graphics, x, y, value):
         MpCanvas.draw_number(graphics, x, y, value, 3)
 
-    def draw_damage_number(self, graphics, x, y, value):  # g.java:4631
+    def draw_damage_number(self, graphics, x, y, value):
         MpCanvas.draw_number(graphics, x, y, value, 4)
 
-    def draw_number5(self, x, y, value):  # g.java:4635
+    def draw_number5(self, x, y, value):
         MpCanvas.draw_number(MpCanvas.screen_g, x, y, value, 5)
 
-    def draw_number0_on(self, graphics, x, y, value):  # g.java:4639
+    def draw_number0_on(self, graphics, x, y, value):
         MpCanvas.draw_number(graphics, x, y, value, 0)
 
-    def draw_number0(self, x, y, value):  # g.java:4643
+    def draw_number0(self, x, y, value):
         MpCanvas.draw_number(MpCanvas.screen_g, x, y, value, 0)
 
-    def draw_number1(self, x, y, value):  # g.java:4647
+    def draw_number1(self, x, y, value):
         MpCanvas.draw_number(MpCanvas.screen_g, x, y, value, 1)
 
-    def draw_number0_b(self, x, y, value):  # g.java:4651
+    def draw_number0_b(self, x, y, value):
         MpCanvas.draw_number(MpCanvas.screen_g, x, y, value, 0)
 
-    def draw_number1_b(self, x, y, value):  # g.java:4655
+    def draw_number1_b(self, x, y, value):
         MpCanvas.draw_number(MpCanvas.screen_g, x, y, value, 1)
 
     @staticmethod
-    def draw_number(graphics, x, y, value, style):  # g.java:4659
+    def draw_number(graphics, x, y, value, style):
         place = 1
         digits = 0
         if style in (0, 1, 7):
@@ -289,7 +289,7 @@ class DrawMixin:
                 x = (x - 7)
                 place = (place * 10)
 
-    def draw_button(self, graphics, text, x, y, w, h, selected, enabled):  # g.java:5730
+    def draw_button(self, graphics, text, x, y, w, h, selected, enabled):
         if selected:
             Draw.draw_frame(graphics, (x - 1), (y - 1), (w + 2), (h + 2), 1, 0xFFFFFF)
             Draw.draw_rect(graphics, x, y, w, h, 0xFFFFFF)
@@ -300,12 +300,12 @@ class DrawMixin:
         self.draw_text_centred((x + idiv(w, 2)), (y + idiv(((h - 11)), 2)), text, 0xFFFFFF)
 
     @staticmethod
-    def draw_panel(graphics, x, y, w, h):  # g.java:5743
+    def draw_panel(graphics, x, y, w, h):
         Draw.draw_frame(graphics, x, y, w, h, 1, 0x949694)
         Draw.fill_rect(graphics, (x + 1), (y + 1), (w - 2), (h - 2), 0)
 
     @staticmethod
-    def draw_border_v(graphics, x, y, length, src_x):  # g.java:5783
+    def draw_border_v(graphics, x, y, length, src_x):
         count = (idiv(length, 11) + 1)
         i = 0
         while i < count:
@@ -313,7 +313,7 @@ class DrawMixin:
             i = i + 1
 
     @staticmethod
-    def draw_back_tiles(graphics):  # g.java:5792
+    def draw_back_tiles(graphics):
         cols = (idiv(MpCanvas.canvas_w, MpCanvas.back_image.getWidth()) + 1)
         rows = (idiv(MpCanvas.canvas_h, MpCanvas.back_image.getHeight()) + 1)
         col = 0
@@ -329,14 +329,14 @@ class DrawMixin:
             col = col + 1
 
     @staticmethod
-    def draw_border_h(graphics, x, y, length, src_y):  # g.java:5811
+    def draw_border_h(graphics, x, y, length, src_y):
         count = (idiv(length, 11) + 1)
         i = 0
         while i < count:
             Draw.draw_image_part(graphics, MpCanvas.border_h_image, (x + (11 * i)), y, 11, 5, 10, src_y)
             i = i + 1
 
-    def draw_softkeys(self, left, right):  # g.java:6220
+    def draw_softkeys(self, left, right):
         if left != (-1):
             MpCanvas.draw_image_on(MpCanvas.screen_g, 0, (MpCanvas.screen_h - 11), MpCanvas.softkey_image)
             self.draw_text_centred_on(MpCanvas.screen_g, 28, (MpCanvas.screen_h - 11), Consts.softkeys[left], 0xFFFFFF)
@@ -344,6 +344,6 @@ class DrawMixin:
             MpCanvas.draw_image_on(MpCanvas.screen_g, (MpCanvas.screen_w - 57), (MpCanvas.screen_h - 11), MpCanvas.softkey_image)
             self.draw_text_centred_on(MpCanvas.screen_g, (MpCanvas.screen_w - 28), (MpCanvas.screen_h - 11), Consts.softkeys[right], 0xFFFFFF)
 
-    def draw_ok_button(self, y):  # g.java:6231
+    def draw_ok_button(self, y):
         self.draw_box(MpCanvas.screen_g, (MpCanvas.center_x - 10), (y + 1), 18, 9, 3)
         self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, y, Consts.softkeys[0], 0xFFFFFF)

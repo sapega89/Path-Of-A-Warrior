@@ -1,6 +1,6 @@
 """javax.microedition.lcdui.Image / Graphics on top of pygame.
 
-Only what x.java uses (PHASE_0 task 0.3): drawImage (anchors), clipRect/setClip,
+Only what uses (PHASE_0 task 0.3): drawImage (anchors), clipRect/setClip,
 fillRect, drawRect, drawLine, setColor, getClip*.  No drawRegion/transforms -
 the game never calls them.
 """

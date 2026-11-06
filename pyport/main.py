@@ -83,7 +83,7 @@ _KEEP = ("pow.game.cloud_save",)
 
 
 def fresh_games(single_player=True):
-    """PORT-EXTRA: forget the Multiplayer modules (and the single-player ones too, for a restart
+    """forget the Multiplayer modules (and the single-player ones too, for a restart
     with a newer hero from the server), so that they start with the static fields of a new JVM
     (what the process restart used to give)."""
     kept = {m: sys.modules[m] for m in _KEEP if m in sys.modules}
@@ -106,7 +106,7 @@ async def main():
     if (config.DEMO_SAVE or "--demo" in sys.argv) and "--no-demo" not in sys.argv:
         demo_save()
     from pow.game import cloud_save, offline_screen
-    # PORT-EXTRA: a newer save of this account from the server, before the hero is loaded;
+    # a newer save of this account from the server, before the hero is loaded;
     # server only: the game starts only online ("No connection" until it is)
     await cloud_save.boot(offline_screen=offline_screen.show)
     resume_sound = None                    # None: the boot asks; True / False: straight to the menu

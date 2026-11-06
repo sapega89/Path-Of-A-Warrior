@@ -1,6 +1,6 @@
-"""PORT-EXTRA (asked by Andrey): the chat of the online game.
+"""(asked by Andrey): the chat of the online game.
 
-Not in the original jar (its nearest thing is the 20-character quote of state 84). Three
+Not in the original (its nearest thing is the 20-character quote of state 84). Three
 channels:
 
     0 LOBBY    everyone online with the port's client
@@ -20,7 +20,7 @@ JSON documents (Storage.live_get / live_put):
 The server pushes CHAT_PUSH to every online reader of the conversation (the writer too, so
 the clients only ever append what the server sent), and CHAT_UNREAD after the login when
 private or order messages wait. Pushes go only to the port's client (Session.port_client):
-the original jar never asked for them.
+the original client never asked for them.
 """
 import re
 

@@ -1,6 +1,6 @@
-"""ar.java - the map / combat engine (bc). Literal port: the frame loop, the hero's walls and
+"""The map / combat engine (bc).: the frame loop, the hero's walls and
 room exits, room scrolling, the HUD of the map, the pause menu, the enemy AI, hits, skills,
-potions and scrolls, deaths and drops. config.NO_ENEMIES / NO_COMBAT (PORT-EXTRA, off by
+potions and scrolls, deaths and drops. config.NO_ENEMIES / NO_COMBAT (off by
 default) give the map without enemies / without the attack keys."""
 import config
 from pow.game import consts
@@ -10,14 +10,13 @@ from pow.game.map_scene import MapScene
 from pow.game.structs import Point, Rect
 from pow.midp.jint import i8, i16, idiv
 
-F6 = config.DECOMP_FIX["F6"]
 
 
 class MapEngine(GameCanvas):
-    def __init__(self):  # ar.java:2-4
+    def __init__(self):
         super().__init__(GameCanvas.midlet)
 
-    def tick_map(self):  # ar.java:6-23  (one tick of the map)
+    def tick_map(self):  # one tick of the map
         if GameCanvas.popups.kind != 0:
             GameCanvas.popups.popup_keys()
             self.paint_state()
@@ -33,7 +32,7 @@ class MapEngine(GameCanvas):
                 return
         self.tick_mission_clock(0)
 
-    def draw_map(self, mode):  # ar.java:25-93  (draw the map, its pause menu and popups)
+    def draw_map(self, mode):  # draw the map, its pause menu and popups
         if mode == 1:
             self.draw_view_background()
             for b in range(9):
@@ -84,7 +83,7 @@ class MapEngine(GameCanvas):
         else:
             GameCanvas.scene.draw_frame()
 
-    def pause_menu_keys(self):  # ar.java:95-247  (keys of the pause menu cR.a: 1 menu, 2 items, 3 options, 4 help)
+    def pause_menu_keys(self):  # keys of the pause menu cR.a: 1 menu, 2 items, 3 options, 4 help
         sub_modes = [0, 3, 0, 2, 4, 0, 0]
         sub_sizes = [0, consts.menu_sizes[9], 0, 5, 3, 0, 0]    # Options: 3 rows (+1 with config.SCREEN_OPTION)
         key = GameCanvas.key
@@ -92,7 +91,7 @@ class MapEngine(GameCanvas):
         if key in (-1, 50):
             if GameCanvas.map_mode.mode in (1, 3):
                 GameCanvas.menu[1] = GameCanvas.menu[1] - 1
-                if (GameCanvas.menu[1] < 0) if F6 else (GameCanvas.menu[1] - 1 < 0):   # DECOMP-FIX F6
+                if GameCanvas.menu[1] < 0:
                     GameCanvas.menu[1] = GameCanvas.menu_count - 1
                 if GameCanvas.menu[1] == 1 and GameCanvas.map_mode.mode == 3 and not GameCanvas.sound_on:
                     GameCanvas.menu[1] = 0
@@ -104,7 +103,7 @@ class MapEngine(GameCanvas):
         if key in (-2, 56):
             if GameCanvas.map_mode.mode in (1, 3):
                 GameCanvas.menu[1] = GameCanvas.menu[1] + 1
-                if (GameCanvas.menu[1] >= GameCanvas.menu_count) if F6 else (GameCanvas.menu[1] + 1 >= GameCanvas.menu_count):   # DECOMP-FIX F6
+                if GameCanvas.menu[1] >= GameCanvas.menu_count:
                     GameCanvas.menu[1] = 0
                 if GameCanvas.menu[1] == 1 and GameCanvas.map_mode.mode == 3 and not GameCanvas.sound_on:
                     GameCanvas.menu[1] = 2
@@ -116,7 +115,7 @@ class MapEngine(GameCanvas):
         if key in (-3, 52):
             if GameCanvas.map_mode.mode in (2, 4):
                 GameCanvas.menu[1] = GameCanvas.menu[1] - 1
-                if (GameCanvas.menu[1] < 0) if F6 else (GameCanvas.menu[1] - 1 < 0):   # DECOMP-FIX F6
+                if GameCanvas.menu[1] < 0:
                     GameCanvas.menu[1] = GameCanvas.menu_count - 1
                 GameCanvas.map_mode.sub = 1
             elif GameCanvas.map_mode.mode == 3:
@@ -126,7 +125,7 @@ class MapEngine(GameCanvas):
         if key in (-4, 54):
             if GameCanvas.map_mode.mode in (2, 4):
                 GameCanvas.menu[1] = GameCanvas.menu[1] + 1
-                if (GameCanvas.menu[1] >= GameCanvas.menu_count) if F6 else (GameCanvas.menu[1] + 1 >= GameCanvas.menu_count):   # DECOMP-FIX F6
+                if GameCanvas.menu[1] >= GameCanvas.menu_count:
                     GameCanvas.menu[1] = 0
                 GameCanvas.map_mode.sub = 1
             elif GameCanvas.map_mode.mode == 3:
@@ -142,8 +141,7 @@ class MapEngine(GameCanvas):
                 GameCanvas.redraw = MapEngine.assign_quick_potion(1)
             return
         if key in (-5, 53):
-            # ORIG-BUG B6: the test misses `cR.a == 1`, so FIRE on the 5th slot of Items opens Help too
-            if GameCanvas.menu[0] == 10 and GameCanvas.menu[1] == 4 and (GameCanvas.map_mode.mode == 1 or not config.ORIG_BUG["B6"]):
+            if GameCanvas.menu[0] == 10 and GameCanvas.menu[1] == 4 and GameCanvas.map_mode.mode == 1:
                 GameCanvas.menu[0] = 5
                 GameCanvas.menu[1] = 3
                 GameCanvas.prev_state = GameCanvas.state
@@ -197,7 +195,7 @@ class MapEngine(GameCanvas):
             GameCanvas.menu_count = 7
 
     @staticmethod
-    def assign_quick_potion(key_slot):  # ar.java:249-261  (assign the potion under the cursor to * / #)
+    def assign_quick_potion(key_slot):  # assign the potion under the cursor to * / #
         hero = GameCanvas.hero
         if hero.quick_slots[GameCanvas.menu[1]].item != 0 and hero.quick_keys[key_slot] != GameCanvas.menu[1]:
             if GameCanvas.menu[1] == hero.quick_keys[key_slot + 1 & 0x1]:
@@ -210,15 +208,15 @@ class MapEngine(GameCanvas):
         return 0
 
     @staticmethod
-    def clamp_hero_hp_mp():  # ar.java:263-268
+    def clamp_hero_hp_mp():
         GameCanvas.hero.hp = min(GameCanvas.hero.hp, GameCanvas.hero.max_hp)
         GameCanvas.hero.mp = min(GameCanvas.hero.mp, GameCanvas.hero.max_mp)
 
     @staticmethod
-    def iabs(value):  # ar.java:270-272
+    def iabs(value):
         return -value if value < 0 else value
 
-    def boxes_touch(self, x1, y1, w1, h1, x2, y2, w2, h2):  # ar.java:274-282
+    def boxes_touch(self, x1, y1, w1, h1, x2, y2, w2, h2):
         max_dx = idiv(w1 + w2, 2)
         max_dy = idiv(h1 + h2, 2)
         dx = x1 + idiv(w1, 2) - x2 + idiv(w2, 2)
@@ -228,7 +226,7 @@ class MapEngine(GameCanvas):
         return abs_dx < max_dx and abs_dy < max_dy
 
     @staticmethod
-    def distance(a, b):  # ar.java:457-468  (distance, rounded)
+    def distance(a, b):  # distance, rounded
         dx = a.x - b.x
         dy = a.y - b.y
         dist2 = dx * dx + dy * dy
@@ -244,12 +242,12 @@ class MapEngine(GameCanvas):
 
     # ---- enemy waves of the room -------------------------------------------------------------
 
-    def spawn_next_enemy(self):  # ar.java:726-741  (spawn the next enemy of the room's wave list eD)
+    def spawn_next_enemy(self):  # spawn the next enemy of the room's wave list eD
         if config.NO_ENEMIES:
-            # PORT-EXTRA (map without combat): the whole wave list of the room counts as
+            # (map without combat): the whole wave list of the room counts as
             # defeated at once, and the room is cleared exactly as when its last enemy dies
-            # (ar.java:1326-1332): popup "Stage N Complete", then the exits open.
-            # A room whose list holds a general (id < 200, c.java:986-1010: talk + duel) stays
+            # popup "Stage N Complete", then the exits open.
+            # A room whose list holds a general stays
             # closed: the mission is won only by defeating him, which is the combat.
             if any(0 < GameCanvas.waves[k] < 200 for k in range(0, 14, 2)):
                 return
@@ -275,7 +273,7 @@ class MapEngine(GameCanvas):
                         GameCanvas.waves[b] = GameCanvas.waves[b + 2]
 
     @staticmethod
-    def skill_mp_cost(skill):  # ar.java:743-757  (MP cost of skill paramInt; 0 = not enough MP)
+    def skill_mp_cost(skill):  # MP cost of skill paramInt; 0 = not enough MP
         base_cost = [5, 6, 7, 10, 15, 7, 10, 10, 8, 9, 10, 5, 6, 7, 9, 12, 20, 20, 20]
         cost_per_level = [3, 4, 5, 3, 4, 3, 3, 5, 3, 4, 5, 3, 4, 5, 5, 6, 5, 5, 5]
         i = 0
@@ -287,7 +285,7 @@ class MapEngine(GameCanvas):
         return i
 
     @staticmethod
-    def check_run():  # ar.java:759-767  (direction pressed twice quickly -> run)
+    def check_run():  # direction pressed twice quickly -> run
         if GameCanvas.dir_history[0] > -1:
             if GameCanvas.speed >= 3:
                 return 1 if (GameCanvas.dir_history[0] == GameCanvas.dir_history[1] or GameCanvas.dir_history[0] == GameCanvas.dir_history[2] or GameCanvas.dir_history[0] == GameCanvas.dir_history[3]) else 0
@@ -297,7 +295,7 @@ class MapEngine(GameCanvas):
 
     # ---- walls -------------------------------------------------------------------------------
 
-    def step_until_free(self, pos, step, direction):  # ar.java:769-815  (step paramInt1 towards paramInt2 until no wall)
+    def step_until_free(self, pos, step, direction):  # step paramInt1 towards paramInt2 until no wall
         cols = [0, 0]
         rows = [0, 0]
         cells = [0, 0]
@@ -333,7 +331,7 @@ class MapEngine(GameCanvas):
             return step
 
     @staticmethod
-    def approach_zero(dx, dy):  # ar.java:817-832  (both one step closer to 0)
+    def approach_zero(dx, dy):  # both one step closer to 0
         if dx > 0:
             dx -= 1
         elif dx < 0:
@@ -344,7 +342,7 @@ class MapEngine(GameCanvas):
             dy += 1
         return [dx, dy]
 
-    def keep_in_room(self, pos, dx, dy):  # ar.java:834-865  (keep inside the room; touching an edge = exit)
+    def keep_in_room(self, pos, dx, dy):  # keep inside the room; touching an edge = exit
         edges = [18, 144, 270, 396, 522, 648, 774, 900, 1026, 1152, 1278]
         for b in range(11):
             edges[b] = i16(idiv(edges[b] * 3, 2))
@@ -370,7 +368,7 @@ class MapEngine(GameCanvas):
         return [dx, dy]
 
     @staticmethod
-    def leave_room(exit_no):  # ar.java:867-888  (leave the room through exit paramInt: 1 down 2 left 3 up 4 right)
+    def leave_room(exit_no):  # leave the room through exit paramInt: 1 down 2 left 3 up 4 right
         if GameCanvas.room_phase_timer < 0 and GameCanvas.cells[GameCanvas.cell].exits[exit_no - 1] != 0:
             GameCanvas.exit_dir = i16(exit_no)
             if exit_no == 1:
@@ -386,7 +384,7 @@ class MapEngine(GameCanvas):
             GameCanvas.exit_blink = 0
 
     @staticmethod
-    def slide_corner(pos, direction, actor):  # ar.java:890-1014  (slide around a corner: new direction or -1)
+    def slide_corner(pos, direction, actor):  # slide around a corner: new direction or -1
         game_map = GameCanvas.map
         side_dir = 0
         tx = idiv(pos.x, 27)
@@ -484,14 +482,14 @@ class MapEngine(GameCanvas):
         return -1
 
     @staticmethod
-    def straighten_step(delta, row):  # ar.java:1016-1023  (diagonal step -> straight step)
+    def straighten_step(delta, row):  # diagonal step -> straight step
         steps = [[0, 1, 1, 2, 3, 4, 4, 5, 6, 7, 7, 8, 8, 9, 10, 10, 11],
                        [0, 2, 3, 4, 6, 7, 8, 9, 11, 13, 14, 16, 17, 18, 20, 21, 23]]
         if delta < 0:
             return -steps[row][min(16, -delta)]
         return steps[row][min(16, delta)]
 
-    def move(self, pos, dx, dy, direction, actor):  # ar.java:1025-1153  (move; returns the direction, -1 blocked, 9 stopped)
+    def move(self, pos, dx, dy, direction, actor):  # move; returns the direction, -1 blocked, 9 stopped
         i = 0
         step_y = 0
         if direction == 8:
@@ -557,7 +555,7 @@ class MapEngine(GameCanvas):
         pos.y = i16(pos.y + step_y)
         return direction
 
-    def blocked_by_actor(self, pos, dx, dy, actor):  # ar.java:1155-1194  (do not walk into the hero / enemies)
+    def blocked_by_actor(self, pos, dx, dy, actor):  # do not walk into the hero / enemies
         b = 0
         dest = Point()
         dest.x = i16(pos.x + dx)
@@ -592,7 +590,7 @@ class MapEngine(GameCanvas):
 
     # ---- the combat: hits ---------------------------------------------------------------------
 
-    def hero_hits_enemy(self, index, action):  # ar.java:284-339  (the hero's action paramInt2 hits enemy paramInt1)
+    def hero_hits_enemy(self, index, action):  # the hero's action paramInt2 hits enemy paramInt1
         actor = GameCanvas.actors[index]
         hero = GameCanvas.hero
         actor.hit_fx_kind = 1
@@ -625,7 +623,7 @@ class MapEngine(GameCanvas):
         if actor.type < 200 and self.rand(1000) < 150 and actor.hp > 0:
             self.general_pick_skill(index, 1)
 
-    def general_pick_skill(self, index, force):  # ar.java:341-368  (a general picks a skill)
+    def general_pick_skill(self, index, force):  # a general picks a skill
         actor = GameCanvas.actors[index]
         actor.action[0] = i8(6 + GameCanvas.general.skills[self.rand(4)] - 1)
         if actor.action[0] < 6 and actor.action[0] > 21:
@@ -641,7 +639,7 @@ class MapEngine(GameCanvas):
             actor.action[0] = 1
         actor.dir[0] = actor.facing = MapEngine.dir4(actor.pos[0], GameCanvas.hero.pos[0])
 
-    def hero_hits_breakables(self):  # ar.java:370-408  (the hero's attack vs. breakable objects cA)
+    def hero_hits_breakables(self):  # the hero's attack vs. breakable objects cA
         hero = GameCanvas.hero
         front = Point()
         for b in range(GameCanvas.breakable_count):
@@ -671,7 +669,7 @@ class MapEngine(GameCanvas):
                     self.breakable_hit_if_facing(b, consts.weapon_reach[hero.weapon_kind])
 
     @staticmethod
-    def show_target_info(index):  # ar.java:410-421  (message box: enemy name and HP bar)
+    def show_target_info(index):  # message box: enemy name and HP bar
         actor = GameCanvas.actors[index]
         GameCanvas.message.shown = 1
         GameCanvas.message.ticks = 10
@@ -684,7 +682,7 @@ class MapEngine(GameCanvas):
         GameCanvas.message.name = consts.troop_names[actor.type - 201]
 
     @staticmethod
-    def is_in_front(a, b, direction):  # ar.java:423-443  (is paramh2 in front of paramh1?)
+    def is_in_front(a, b, direction):  # is paramh2 in front of paramh1?
         if direction == 2:
             if a.x > b.x:
                 return 1
@@ -699,7 +697,7 @@ class MapEngine(GameCanvas):
         return 0
 
     @staticmethod
-    def dir4(a, b):  # ar.java:445-449  (direction 0/2/4/6 from paramh1 to paramh2)
+    def dir4(a, b):  # direction 0/2/4/6 from paramh1 to paramh2
         i = b.x - a.x
         dy = b.y - a.y
         if dy > i:
@@ -707,7 +705,7 @@ class MapEngine(GameCanvas):
         return 6 if dy > -i else 4
 
     @staticmethod
-    def dir8(a, b):  # ar.java:451-455  (direction 0..7 from paramh1 to paramh2)
+    def dir8(a, b):  # direction 0..7 from paramh1 to paramh2
         i = b.x - a.x
         dy = b.y - a.y
         if i + i < dy:
@@ -726,31 +724,31 @@ class MapEngine(GameCanvas):
             return 6
         return 7
 
-    def hero_strike_if_facing(self, index, reach):  # ar.java:470-473
+    def hero_strike_if_facing(self, index, reach):
         if GameCanvas.hero.dir[0] == MapEngine.dir4(GameCanvas.hero.pos[0], GameCanvas.actors[index].pos[0]):
             self.hero_strike_if_near(index, reach)
 
-    def general_strike_if_facing(self, index, reach):  # ar.java:475-478
+    def general_strike_if_facing(self, index, reach):
         if GameCanvas.actors[index].dir[0] == MapEngine.dir4(GameCanvas.actors[index].pos[0], GameCanvas.hero.pos[0]):
             self.general_strike_if_near(index, reach)
 
-    def breakable_hit_if_facing(self, index, reach):  # ar.java:480-483
+    def breakable_hit_if_facing(self, index, reach):
         if GameCanvas.hero.dir[0] == MapEngine.dir4(GameCanvas.hero.pos[0], GameCanvas.breakables[index].pos):
             self.breakable_hit_if_near(index, reach)
 
-    def hero_strike_if_near(self, index, reach):  # ar.java:485-488
+    def hero_strike_if_near(self, index, reach):
         if MapEngine.distance(GameCanvas.hero.pos[0], GameCanvas.actors[index].pos[0]) <= reach:
             self.strike_enemy(index)
 
-    def general_strike_if_near(self, index, reach):  # ar.java:490-493
+    def general_strike_if_near(self, index, reach):
         if MapEngine.distance(GameCanvas.hero.pos[0], GameCanvas.actors[index].pos[0]) <= reach:
             self.general_skill_hits_hero(index)
 
-    def breakable_hit_if_near(self, index, reach):  # ar.java:495-498
+    def breakable_hit_if_near(self, index, reach):
         if MapEngine.distance(GameCanvas.hero.pos[0], GameCanvas.breakables[index].pos) <= reach:
             self.hit_breakable(index)
 
-    def strike_enemy(self, index):  # ar.java:500-544  (the hero hits enemy paramInt: knock-back A, effects)
+    def strike_enemy(self, index):  # the hero hits enemy paramInt: knock-back A, effects
         hero = GameCanvas.hero
         actor = GameCanvas.actors[index]
         front = Point()
@@ -787,7 +785,7 @@ class MapEngine(GameCanvas):
             self.set_enemy_on_fire(index)
         self.play_sound(16)                       # (`if (A != 0);` - the sound plays always)
 
-    def general_skill_hits_hero(self, index):  # ar.java:546-578  (a general's skill hits the hero)
+    def general_skill_hits_hero(self, index):  # a general's skill hits the hero
         hero = GameCanvas.hero
         action = GameCanvas.actors[index].action[0]
         if action == 6:
@@ -812,7 +810,7 @@ class MapEngine(GameCanvas):
             hero.hit_fx_kind = 2
         self.hero_is_hit(index)
 
-    def hero_is_hit(self, index):  # ar.java:580-638  (the hero is hit by enemy paramInt, or by arrow paramInt + 3)
+    def hero_is_hit(self, index):  # the hero is hit by enemy paramInt, or by arrow paramInt + 3
         hero = GameCanvas.hero
         if index > -1:
             actor = GameCanvas.actors[index]
@@ -850,7 +848,7 @@ class MapEngine(GameCanvas):
             hero.hp = 0
             hero.action[0] = 10
 
-    def set_enemy_on_fire(self, index):  # ar.java:640-651  (fire effect on an enemy)
+    def set_enemy_on_fire(self, index):  # fire effect on an enemy
         GameCanvas.actors[index].on_fire = 1
         GameCanvas.actors[index].fire_frame = 0
         GameCanvas.fire_ticks = 7
@@ -859,7 +857,7 @@ class MapEngine(GameCanvas):
             GameCanvas.fire_frames = self.load_frames(60)
             GameCanvas.fire_data = list(consts.fx_fire)
 
-    def set_hero_on_fire(self):  # ar.java:653-661  (fire effect on the hero)
+    def set_hero_on_fire(self):  # fire effect on the hero
         GameCanvas.hero.on_fire = 1
         GameCanvas.hero.fire_frame = 0
         self.play_sound(13)
@@ -867,7 +865,7 @@ class MapEngine(GameCanvas):
             GameCanvas.hero_fx_frames = self.load_frames(60)
             GameCanvas.hero_fx_data = consts.fx_fire
 
-    def hit_breakable(self, index):  # ar.java:663-672  (hit a breakable object)
+    def hit_breakable(self, index):  # hit a breakable object
         breakable = GameCanvas.breakables[index]
         breakable.hp = i16(breakable.hp - GameCanvas.hero.attack + GameCanvas.hero.attack_buff)
         self.play_sound(3)
@@ -877,7 +875,7 @@ class MapEngine(GameCanvas):
             i = breakable.tile.y * GameCanvas.map.size.w + breakable.tile.x
             GameCanvas.map.data[GameCanvas.map.layer_objects + i] = 0
 
-    def hero_attack(self, kind):  # ar.java:674-724  (the hero's attack (0) or a scroll (-1/-2) vs. enemies)
+    def hero_attack(self, kind):  # (the hero's attack (0) or a scroll (-1/-2) vs. enemies)
         hero = GameCanvas.hero
         front = Point()
         for b in range(GameCanvas.actor_count):
@@ -912,13 +910,13 @@ class MapEngine(GameCanvas):
                         self.hero_hits_enemy(slot, GameCanvas.effect.item)
                         self.play_sound(4)
 
-    def turn_to_nearest(self):  # ar.java:1196-1200  (Normal difficulty, ep = 1: turn to the nearest enemy before the attack)
-        if GameCanvas.difficulty != 0 or config.AUTO_AIM_HARD:   # PORT-EXTRA config.AUTO_AIM_HARD: also on Hard
+    def turn_to_nearest(self):  # Normal difficulty, ep = 1: turn to the nearest enemy before the attack
+        if GameCanvas.difficulty != 0 or config.AUTO_AIM_HARD:   # config.AUTO_AIM_HARD: also on Hard
             i = self.nearest_enemy()
             if i > -1:
                 GameCanvas.hero.dir[0] = GameCanvas.hero.facing = MapEngine.dir4(GameCanvas.hero.pos[0], GameCanvas.actors[i].pos[0])
 
-    def nearest_enemy(self):  # ar.java:1202-1214  (nearest living enemy closer than 50)
+    def nearest_enemy(self):  # nearest living enemy closer than 50
         found = -1
         best = 50
         for b in range(GameCanvas.actor_count):
@@ -931,7 +929,7 @@ class MapEngine(GameCanvas):
 
     # ---- the combat: enemy AI ----------------------------------------------------------------
 
-    def choose_enemy_action(self, index):  # ar.java:1216-1278  (choose the next action of enemy paramInt)
+    def choose_enemy_action(self, index):  # choose the next action of enemy paramInt
         turns = [-2, -1, 0, 0, 0, 0, 1, 2]
         hero = GameCanvas.hero
         actor = GameCanvas.actors[index]
@@ -981,7 +979,7 @@ class MapEngine(GameCanvas):
             actor.dir[0] = actor.facing = to_hero
 
     @staticmethod
-    def dir_to_hero(pos):  # ar.java:1280-1284  (direction 0..7 from paramh to the hero, 27 px dead zone)
+    def dir_to_hero(pos):  # direction 0..7 from paramh to the hero, 27 px dead zone
         i = GameCanvas.hero.pos[0].x - pos.x
         dy = GameCanvas.hero.pos[0].y - pos.y
         if i > 27:
@@ -991,7 +989,7 @@ class MapEngine(GameCanvas):
         return 0 if dy > 0 else 4
 
     @staticmethod
-    def shoot_arrow(index):  # ar.java:1286-1308  (an archer shoots an arrow eC)
+    def shoot_arrow(index):  # an archer shoots an arrow eC
         arrow_dx = [-1, -15, -1, 5]
         arrow_dy = [-5, -13, -30, -13]
         actor = GameCanvas.actors[index]
@@ -1002,15 +1000,8 @@ class MapEngine(GameCanvas):
                 arrow.active = 1
                 arrow.pos[1].x = i16(actor.pos[0].x + arrow_dx[i])
                 arrow.pos[1].y = i16(actor.pos[0].y + arrow_dy[i])
-                if config.DECOMP_FIX["F18"]:
-                    # DECOMP-FIX F18: the start goes into eC.b[1] (the "previous" position used
-                    # only for erasing, c.java:124-141), but ar.j() (ar.java:1734-1735) first
-                    # copies b[0] -> b[1] and then hits / moves b[0] (ar.ad). b[0] is a separate
-                    # h (f.java), so literally every arrow flies from (0, 0) or from where the
-                    # previous arrow of this slot vanished: never from the archer, never into
-                    # the hero. With F18 the arrow starts at the archer's bow.
-                    arrow.pos[0].x = arrow.pos[1].x
-                    arrow.pos[0].y = arrow.pos[1].y
+                arrow.pos[0].x = arrow.pos[1].x     # the arrow starts at the archer's bow
+                arrow.pos[0].y = arrow.pos[1].y
                 arrow.dir = i8(i)
                 arrow.ticks = 0
                 arrow.attack = actor.attack
@@ -1024,11 +1015,11 @@ class MapEngine(GameCanvas):
 
     _SHIFT203 = {3: (-10, 0), 1: (-10, 10), 2: (-10, 0), 0: (0, 10), 5: (10, 0), 7: (10, 10), 6: (10, 0)}
 
-    def tick_enemies(self):  # ar.java:1310-1604  (enemy AI: one tick of every enemy)
+    def tick_enemies(self):  # enemy AI: one tick of every enemy
         buff_div = [20, 20, 25]
         i = 0
         hero = GameCanvas.hero
-        # Java `for (b = 0; b < ag.ez; b++)` reads ez every time: ab() below removes the dead
+        # the original `for` reads ez every time: ab() below removes the dead
         # enemy from ey and decrements ez inside the loop (and the next enemy is skipped this tick)
         b = -1
         while True:
@@ -1196,7 +1187,7 @@ class MapEngine(GameCanvas):
             elif action in (20, 21) and frame == 8:
                 self.enemy_strikes_hero(slot)
 
-    def enemy_strikes_hero(self, index):  # ar.java:1606-1661  (enemy paramInt strikes the hero)
+    def enemy_strikes_hero(self, index):  # enemy paramInt strikes the hero
         hero = GameCanvas.hero
         actor = GameCanvas.actors[index]
         front = Point()
@@ -1238,7 +1229,7 @@ class MapEngine(GameCanvas):
                 if MapEngine.distance(front, hero.pos[0]) <= 35:
                     self.general_skill_hits_hero(index)
 
-    def enemy_dies(self, index):  # ar.java:1663-1698  (enemy paramInt is dead: exp, drop, remove)
+    def enemy_dies(self, index):  # enemy paramInt is dead: exp, drop, remove
         actor = GameCanvas.actors[index]
         for b in range(GameCanvas.actor_count):
             if GameCanvas.actor_slots[b] == index:
@@ -1270,7 +1261,7 @@ class MapEngine(GameCanvas):
     # ---- per-tick updates --------------------------------------------------------------------
 
     @staticmethod
-    def sort_actors():  # ar.java:1700-1711  (sort enemies by y)
+    def sort_actors():  # sort enemies by y
         if GameCanvas.actor_count != 0:
             for b in range(GameCanvas.actor_count - 1):
                 for i in range(b + 1, GameCanvas.actor_count):
@@ -1279,7 +1270,7 @@ class MapEngine(GameCanvas):
                         GameCanvas.actor_slots[b] = GameCanvas.actor_slots[i]
                         GameCanvas.actor_slots[i] = slot
 
-    def pick_up_drops(self):  # ar.java:1713-1729  (pick up dropped items)
+    def pick_up_drops(self):  # pick up dropped items
         for b in range(GameCanvas.drop_count):
             drop = GameCanvas.drops[b]
             if drop.item != 0:
@@ -1293,7 +1284,7 @@ class MapEngine(GameCanvas):
                 if drop.ticks < 1:
                     drop.item = 0
 
-    def tick_arrows(self):  # ar.java:1731-1749  (arrows: hit the hero or fly on)
+    def tick_arrows(self):  # arrows: hit the hero or fly on
         for b in range(3):
             arrow = GameCanvas.arrows[b]
             if arrow.active != 0:
@@ -1309,7 +1300,7 @@ class MapEngine(GameCanvas):
                 else:
                     self.hero_can_be_hit(b)
 
-    def hero_can_be_hit(self, index):  # ar.java:1751-1772
+    def hero_can_be_hit(self, index):
         action = GameCanvas.hero.action[1]
         frame = GameCanvas.hero.frame[1]
         if action in (26, 27):
@@ -1326,7 +1317,7 @@ class MapEngine(GameCanvas):
         MapEngine.move_arrow(index)
 
     @staticmethod
-    def move_arrow(index):  # ar.java:1774-1793  (move an arrow)
+    def move_arrow(index):  # move an arrow
         arrow = GameCanvas.arrows[index]
         arrow.ticks = arrow.ticks + 1
         if arrow.ticks > 22:
@@ -1341,7 +1332,7 @@ class MapEngine(GameCanvas):
         elif arrow.dir == 3:
             arrow.pos[0].x = i16(arrow.pos[0].x + 12)
 
-    def end_tick(self):  # ar.java:1795-1879  (end of tick: previous state, room-change timers)
+    def end_tick(self):  # end of tick: previous state, room-change timers
         hero = GameCanvas.hero
         hero.pos[1] = hero.pos[0]
         hero.room_pos[1] = hero.room_pos[0]
@@ -1414,7 +1405,7 @@ class MapEngine(GameCanvas):
             if GameCanvas.room_phase == 3 and GameCanvas.room_phase_timer == 0 and GameCanvas.sound is not None:
                 GameCanvas.stop_sound()
 
-    def tick_mission_clock(self, running):  # ar.java:1881-1890  (mission clock dX, paused while a popup / menu is open)
+    def tick_mission_clock(self, running):  # mission clock dX, paused while a popup / menu is open
         GameCanvas.clock[0] = GameCanvas.now()
         if running == 0 or GameCanvas.clock[0] - GameCanvas.clock[1] > 1000:
             GameCanvas.play_time += GameCanvas.clock[0] - GameCanvas.clock[1]
@@ -1423,7 +1414,7 @@ class MapEngine(GameCanvas):
             GameCanvas.mission_seconds = int(elapsed // 1000)
         GameCanvas.clock[1] = GameCanvas.clock[0]
 
-    def scroll_room(self):  # ar.java:1892-1932  (bV = 4: scroll to the next room, 6 steps)
+    def scroll_room(self):  # bV = 4: scroll to the next room, 6 steps
         exit_dir = GameCanvas.exit_dir
         if exit_dir == 1:
             GameCanvas.view_ty += 7
@@ -1455,15 +1446,15 @@ class MapEngine(GameCanvas):
 
     # ---- drawing helpers ---------------------------------------------------------------------
 
-    def draw_spark(self, frame, x, y):  # ar.java:1934-1936  (hit spark eV)
+    def draw_spark(self, frame, x, y):  # hit spark eV
         spark = GameCanvas.spark_frames[frame]
         self.draw_map_region(GameCanvas.images[43], x - spark.ox, y - spark.oy, spark.w, spark.h, spark.src_x, spark.src_y)
 
-    def draw_hero_weapon(self, x, y, frame):  # ar.java:1938-1941  (the hero's weapon)
+    def draw_hero_weapon(self, x, y, frame):  # the hero's weapon
         self.draw_map_region(GameCanvas.images[40 + GameCanvas.hero.weapon_kind], x - frame.ox, y - frame.oy, frame.w, frame.h, frame.src_x, frame.src_y)
         MapScene.mark_dirty(GameCanvas.hero.pos[0].x - frame.ox, GameCanvas.hero.pos[0].y - frame.oy, frame.w, frame.h)
 
-    def draw_weapon_trail(self, index, step):  # ar.java:1943-1969  (weapon trail of the hero (-1) or an enemy)
+    def draw_weapon_trail(self, index, step):  # (weapon trail of the hero (-1) or an enemy)
         if index > -1:
             pos = GameCanvas.actors[index].pos[0]
             if GameCanvas.actors[index].action[0] == 19:
@@ -1485,7 +1476,7 @@ class MapEngine(GameCanvas):
             MapScene.mark_dirty(pos.x - part.ox, pos.y - part.oy, part.w, part.h)
             frame += 1
 
-    def draw_object_layer(self):  # ar.java:1971-1983  (object layer over dirty cells)
+    def draw_object_layer(self):  # object layer over dirty cells
         game_map = GameCanvas.map
         for b in range(GameCanvas.view_tiles.x):
             for row in range(GameCanvas.view_tiles.y):
@@ -1495,7 +1486,7 @@ class MapEngine(GameCanvas):
                         image = GameCanvas.tile_slots[game_map.data[game_map.layer_objects + i] - 1] - 1
                         self.draw_map_region(GameCanvas.tile_images[image], (GameCanvas.view_tx + b) * 27 - GameCanvas.camera.x, (GameCanvas.view_ty + row) * 27 - GameCanvas.camera.y, 27, 27, 0, 0)
 
-    def draw_drops(self):  # ar.java:1985-2015  (dropped items; objects being broken)
+    def draw_drops(self):  # objects being broken
         for b in range(GameCanvas.drop_count):
             drop = GameCanvas.drops[b]
             if drop.item != 0:
@@ -1520,7 +1511,7 @@ class MapEngine(GameCanvas):
                     self.drop_item(3, breakable.pos)
                     breakable.active = 0
 
-    def drop_item(self, kind, pos):  # ar.java:2017-2053  (drop an item at paramh)
+    def drop_item(self, kind, pos):  # drop an item at paramh
         x = pos.x
         y = pos.y
         if y <= GameCanvas.camera.y + 27 or y >= GameCanvas.camera.y + 162 or x <= GameCanvas.camera.x + 27 or x >= GameCanvas.camera.x + 162:
@@ -1556,7 +1547,7 @@ class MapEngine(GameCanvas):
                 if b >= GameCanvas.drop_count:
                     GameCanvas.drop_count = i16(GameCanvas.drop_count + 1)
 
-    def random_drop(self, kind):  # ar.java:2055-2078  (random drop: item id, potion, or gold 10020/10040)
+    def random_drop(self, kind):  # random drop: item id, potion, or gold 10020/10040
         rand = self.rand
         drop_odds = [5, 10, 20, 5, 100]
         potion_odds = [10, 30, 60, 1, 100]
@@ -1566,7 +1557,7 @@ class MapEngine(GameCanvas):
         if rand(100) < drop_odds[kind]:
             i = rand(100)
             if i < potion_odds[kind]:
-                # PORT-EXTRA config.DROPS_AFTER_69: row 0 (above Lv69: no Lv1 / Lv10 gear) is skipped,
+                # config.DROPS_AFTER_69: row 0 (above Lv69: no Lv1 / Lv10 gear) is skipped,
                 # so a hero above Lv69 keeps the odds of Lv45-69
                 for b in range(1 if config.DROPS_AFTER_69 else 0, 5):
                     if GameCanvas.hero.level > tier_min_level[b]:
@@ -1580,7 +1571,7 @@ class MapEngine(GameCanvas):
             return i16(10020 + (GameCanvas.difficulty ^ 0x1) * 20)
         return 0
 
-    def draw_quick_potions(self):  # ar.java:2081-2089  (the two quick potions * and # of the HUD)
+    def draw_quick_potions(self):  # the two quick potions * and # of the HUD
         hero = GameCanvas.hero
         for b in range(2):
             slot = hero.quick_slots[hero.quick_keys[b]]
@@ -1589,16 +1580,16 @@ class MapEngine(GameCanvas):
                 GameCanvas.draw_region(GameCanvas.view_cx + (2 * b - 1) * (38 + 11 * (1 - b) + 0), GameCanvas.canvas_size.y - 16 - 0 - 17, 11, 12, GameCanvas.images[20], 98, 0)
                 self.draw_number_commas(slot.count, GameCanvas.view_cx + (2 * b - 1) * (28 + 10 * b + 0), GameCanvas.canvas_size.y - 18 - 0 - 17)
 
-    def draw_hud(self):  # ar.java:2091-2107  (HUD of the map: balls, gold, potions, clock, soft keys)
+    def draw_hud(self):  # HUD of the map: balls, gold, potions, clock, soft keys
         GameCanvas.scene.draw_hud_balls()
         if GameCanvas.message.shown != 0:
             self.draw_message()
         else:
             self.draw_number_commas(GameCanvas.hero.kills_shown, GameCanvas.view_size.x - 4 - 7, 20)
         if config.SKILL_BAR:
-            # PORT-EXTRA config.SKILL_BAR: the belt above shows all 5 slots, so the * / # boxes of
-            # the frame stay empty (ar.aD is not drawn)
-            from pow.game import skill_bar  # PORT-EXTRA config.SKILL_BAR: belt and skill slots
+            # config.SKILL_BAR: the belt above shows all 5 slots, so the * / # boxes of
+            # the frame stay empty
+            from pow.game import skill_bar  # config.SKILL_BAR: belt and skill slots
             skill_bar.draw_bar()
         else:
             self.draw_quick_potions()
@@ -1609,7 +1600,7 @@ class MapEngine(GameCanvas):
                 return
             GameCanvas.draw_softkeys(-1, 1)
 
-    def draw_message(self):  # ar.java:2109-2141  (message box dT: item picked up)
+    def draw_message(self):  # message box dT: item picked up
         GameCanvas.text_width = GameCanvas.measure_text(GameCanvas.message.name)
         i = GameCanvas.view_size.x - GameCanvas.font_white.chars_width(list(GameCanvas.message.name), 0, len(GameCanvas.message.name)) - 8
         Gfx.set_font(GameCanvas.font_black)

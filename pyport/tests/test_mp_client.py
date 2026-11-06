@@ -28,7 +28,7 @@ def test_scenario_runs(name, tmp_path):
 
 
 def test_single_player_account_logs_in_without_the_login_screen(tmp_path):
-    """PORT-EXTRA use_sp_account: the Live registration of the single player is the
+    """use_sp_account: the Live registration of the single player is the
     Multiplayer account: the title logs in at once, no Login screen (state 2) on the way."""
     mp_shot = _mp_shot()
     states = set()
@@ -92,7 +92,7 @@ def test_single_player_hero_plays_the_duel_and_gets_the_rewards(tmp_path, monkey
 
 
 def test_auto_battle_plays_the_duel_alone(tmp_path):
-    """PORT-EXTRA auto-battle: after Tab the client sends AUTO (255) in every 1027 and the
+    """auto-battle: after Tab the client sends AUTO (255) in every 1027 and the
     server's bot plays the hero; the duel ends without an action key."""
     mp_shot = _mp_shot()
     try:
@@ -108,7 +108,7 @@ def test_auto_battle_plays_the_duel_alone(tmp_path):
 
 
 def test_order_window_team_duel_and_leave(tmp_path):
-    """PORT-EXTRA: join RIVAL's order in the Order window, a 2-on-2 duel together, back to the
+    """join RIVAL's order in the Order window, a 2-on-2 duel together, back to the
     window, leave the order."""
     mp_shot = _mp_shot()
     saved, _ = mp_shot.run(mp_shot.parse(SCEN / "mp_order.keys"), tmp_path / "out",
@@ -125,7 +125,7 @@ def test_order_window_team_duel_and_leave(tmp_path):
 
 
 def test_chat_private_answer_and_lobby(tmp_path):
-    """PORT-EXTRA: the Chat window: RIVAL's private message waits (badge, Private tab), TEST
+    """the Chat window: RIVAL's private message waits (badge, Private tab), TEST
     answers on the keyboard grid and the PC keyboard, RIVAL answers back, then TEST writes in
     the Lobby (40 characters at most)."""
     mp_shot = _mp_shot()

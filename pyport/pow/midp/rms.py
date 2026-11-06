@@ -12,10 +12,10 @@ import config
 
 _IS_WEB = sys.platform == "emscripten"
 
-# PORT-EXTRA (server saves, pow/game/cloud_save.py): called with the store name after every
+# (server saves, pow/game/cloud_save.py): called with the store name after every
 # write to a store, so its new records can go to the server too.
 on_write = []
-# PORT-EXTRA (asked by Andrey, cloud_save.SERVER_ONLY): stores kept only in memory, never in
+# stores kept only in memory, never in
 # the files / localStorage: the server has the only lasting copy. cloud_save fills them from
 # the server before the game reads them.
 memory_only = set()
@@ -36,7 +36,7 @@ def _load_raw(name):
     return disk_load(name)
 
 
-# PORT-EXTRA (asked by Andrey): the stores lost the original publisher's prefix. A device
+# the stores lost the original publisher's prefix. A device
 # that still has a store under its old name gets it moved to the new one on the first read.
 OLD_PREFIX = "game" + "vil_"
 RENAMED = ("pow_data", "pow_data_backup", "pow_env", "pow_env_backup", "pow_regist")

@@ -1,8 +1,8 @@
-"""c.java - the MMAPI Player pool of the MP jar. SPIKE-SIMPLIFIED like SP aq.py: pygame.mixer.
+"""The sound player pool of the multiplayer screens, on pygame.mixer.
 
 WAV effects play straight from assets_mp; the menu music /snd1.mid is played with
 pygame.mixer.music when the platform can (desktop SDL_mixer usually can), else silence.
-PORT-EXTRA: the browser build has no WAV (pygbag refuses to pack them, tools/build_web.py
+the browser build has no WAV (pygbag refuses to pack them, tools/build_web.py
 leaves them out): there the effect is the OGG next to it (assets_mp/sndN.ogg, made by
 tools/convert_audio.py).
 """
@@ -15,7 +15,7 @@ from pow.midp.media import gain
 
 
 class PlayerPool:
-    def __init__(self, size, unused_count, unused_flag, unused_flag2):  # c.java:24
+    def __init__(self, size, unused_count, unused_flag, unused_flag2):
         self.size = size
         self.snd = [None] * size
         self.vol = 100
@@ -34,10 +34,10 @@ class PlayerPool:
         path = pathlib.Path(config.MP_RES_ROOT) / name.lstrip("/")
         ogg = path.with_suffix(".ogg")
         if path.suffix == ".wav" and not path.exists() and ogg.exists():
-            return ogg                     # PORT-EXTRA: the browser build (see the docstring)
+            return ogg                     # the browser build (see the docstring)
         return path
 
-    def load(self, name, index):  # c.java  load
+    def load(self, name, index):  # load
         if not self.ok or not 0 <= index < self.size:
             return False
         if name.endswith(".mid"):
@@ -51,7 +51,7 @@ class PlayerPool:
                 return False
         return True
 
-    def play(self, index, loop):  # c.java  play (bl = loop)
+    def play(self, index, loop):  # play (bl = loop)
         if not self.ok or self.vol <= 0 or not 0 <= index < self.size or self.snd[index] is None:
             return
         self.stop()
@@ -69,7 +69,7 @@ class PlayerPool:
         except Exception as ex:
             print("c: play err:", ex)
 
-    def stop(self):  # c.java  stop
+    def stop(self):  # stop
         if not self.ok:
             return
         if self.cur != -1 and not isinstance(self.snd[self.cur], tuple) and self.snd[self.cur] is not None:
@@ -82,9 +82,9 @@ class PlayerPool:
             self.music = False
         self.cur = -1
 
-    def set_volume(self, volume):  # c.java  volume 0..100
+    def set_volume(self, volume):  # volume 0..100
         self.vol = max(0, min(100, volume))
-        # c.java b(Player): setLevel on the playing Player too, not only on the next one
+        # b(Player): setLevel on the playing Player too, not only on the next one
         s = self.snd[self.cur] if 0 <= self.cur < self.size else None
         try:
             if self.music:
@@ -94,5 +94,5 @@ class PlayerPool:
         except Exception:
             pass
 
-    def tick(self):  # c.java  per tick
+    def tick(self):  # per tick
         pass

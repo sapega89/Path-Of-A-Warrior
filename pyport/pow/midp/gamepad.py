@@ -1,4 +1,4 @@
-"""PORT-EXTRA: a gamepad / joystick on the PC (config.GAMEPAD), as phone keys like the keyboard.
+"""a gamepad / joystick on the PC (config.GAMEPAD), as phone keys like the keyboard.
 
     left stick, d-pad    arrows (held = the hero keeps walking, as with the keys)
     A                    OK / attack            B          BACK
@@ -6,7 +6,7 @@
     RT                   *  (potion)            L3         #  (potion)
     R3                   AUTO: auto-hunt / auto-battle on / off
     right stick          the belt while the hero acts on the map (config.SKILL_BAR): up / right /
-                         down / left = slots Z X C V (one use per push; slot B: Assign Items on * / #)
+                         down / left = slots Z X C V (one use per push; slot B: Assign Items on * / # )
     Start                right soft key (PAUSE / BACK)
     Back / Select        left soft key (SKIP, EXCHANGE)
 
@@ -26,8 +26,8 @@ UP, DOWN, LEFT, RIGHT = -1, -2, -3, -4
 OK, LSOFT, BACK = -5, -6, -7
 SKILLS = (49, 51, 55, 57, 48)
 STAR, POUND = 42, 35
-AUTO = -100             # PORT-EXTRA: auto-hunt / auto-battle on / off (as Tab)
-# PORT-EXTRA: right stick of a game controller -> belt slots 0..3 (keys Z X C V, pow/game/skill_bar.py)
+AUTO = -100             # auto-hunt / auto-battle on / off (as Tab)
+# right stick of a game controller -> belt slots 0..3 (keys Z X C V, pow/game/skill_bar.py)
 BELT_BY_DIRECTION = {UP: -101, RIGHT: -102, DOWN: -103, LEFT: -104}
 BELT_CODES = tuple(BELT_BY_DIRECTION.values())
 
@@ -45,7 +45,7 @@ CONTROLLER_BUTTONS = {
     pygame.CONTROLLER_BUTTON_START: BACK,
     pygame.CONTROLLER_BUTTON_BACK: LSOFT,
     pygame.CONTROLLER_BUTTON_LEFTSTICK: POUND,
-    pygame.CONTROLLER_BUTTON_RIGHTSTICK: AUTO,      # PORT-EXTRA: auto-hunt / auto-battle
+    pygame.CONTROLLER_BUTTON_RIGHTSTICK: AUTO,      # auto-hunt / auto-battle
     pygame.CONTROLLER_BUTTON_DPAD_UP: UP,
     pygame.CONTROLLER_BUTTON_DPAD_DOWN: DOWN,
     pygame.CONTROLLER_BUTTON_DPAD_LEFT: LEFT,

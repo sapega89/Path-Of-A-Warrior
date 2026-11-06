@@ -1,24 +1,23 @@
-"""as.java - Live of the single player (PHASE_7): its menus, the input and the
-requests / answers. Literal port; the drawing is m.java (pow/game/m.py).
+"""Live of the single player (PHASE_7): its menus, the input and the
+requests / answers; the drawing is in live_screen.py.
 
-as is static state (every field is static in Java) plus an ag subclass instance (ag.be) whose
-methods ag.run / ag.t / ag.L call. The server it talks to is pow_server/live.py, through
-pow/game/v.py. Screens (ho, drawn by m.a()): 1 list, 2 Safe, 3 amount, 4 Backpack/Warehouse,
+Static state plus a GameCanvas subclass instance whose methods the game loop calls. The server it talks to is pow_server/live.py, through
+live_net.py. Screens: 1 list, 2 Safe, 3 amount, 4 Backpack/Warehouse,
 5 categories, 6 kinds, 7 enchant levels, 8 lots, 9 price, 10 Cancel, 11 Sale/Gift List,
 12 waiting, 13 registration. Input handlers (hp): see t(int).
 
 Fixes (config):
-- DECOMP_FIX F6: the Backpack / Warehouse grid cursor (as.a(int, boolean)) has the same broken
+- the Backpack / Warehouse grid cursor (as.a(int, boolean)) has the same broken
   `--fK[9] < 0` / `++fK[9] >= 5`: LEFT from column 1 and RIGHT from column 3 jumped over the
   edge cell to the next row, so columns 0 and 4 could not be reached sideways.
-- DECOMP_FIX F20: as.a(ab) reads the status byte into a local and never sets gr, but m()
+- as.a(ab) reads the status byte into a local and never sets gr, but m
   waits for gr == 1 after the login 530 to send the request that needed it, and the error
   path passes gr as the error code: the status is gr (analysis/03 §5.1).
-- ORIG_BUG B4: Buy with a full backpack asks "save it in Warehouse?" and then sends the item
+- Buy with a full backpack asks "save it in Warehouse?" and then sends the item
   to the warehouse (ht[7] = 1), but 789 always puts it into the backpack: the search for a
   free slot runs past cz.Y[24] (ArrayIndexOutOfBounds in the network thread). Fixed: it goes
   into the warehouse list.
-- ORIG_BUG B5: after CONFIRM on the password screen m.bp() counts frames (gE) and after 3 shows
+- after CONFIRM on the password screen m.bp counts frames (gE) and after 3 shows
   "Network connection has failed" and goes back to the UserID, even when the 531 has already
   answered (its popup is replaced) or is still on its way. Fixed: no count while the request
   is in flight (gu), and the 531 answer stops it.
@@ -34,10 +33,6 @@ from pow.midp import system
 from pow.midp.graphics import Image
 from pow.midp.jint import i8, i16, idiv
 
-F20 = config.DECOMP_FIX["F20"]
-F6 = config.DECOMP_FIX["F6"]
-B4 = config.ORIG_BUG["B4"]
-B5 = config.ORIG_BUG["B5"]
 
 
 class Live(GameCanvas):
@@ -54,9 +49,9 @@ class Live(GameCanvas):
     password = ""              # password
     user_id = ""              # UserID
     reg_from_popup = False           # the 530 is a registration from the screen (popups 48 / 44)
-    auto_mp = False            # PORT-EXTRA: open Multiplayer as soon as the Live menu is reached
-    id_grid = None             # PORT-EXTRA: KeyGrid of the UserID (config.REG_KEYBOARD)
-    pwd_grid = None            # PORT-EXTRA: KeyGrid of the password
+    auto_mp = False            # open Multiplayer as soon as the Live menu is reached
+    id_grid = None             # KeyGrid of the UserID (config.REG_KEYBOARD)
+    pwd_grid = None            # KeyGrid of the password
     inited = False
     loading0 = None            # netLoading0.png
     loading1 = None            # netLoading1.png
@@ -70,8 +65,8 @@ class Live(GameCanvas):
     answered = False          # an answer (or an error) came
     close_target = -1             # what the closing popup leads to (i())
     busy = False          # busy: "Connecting..." over the screen, keys ignored
-    backpack_serials = None           # short[25] backpack serials (PORT-EXTRA config.BACKPACK_SIZE)
-    warehouse = [None] * config.WAREHOUSE_SIZE   # z[100] warehouse (PORT-EXTRA config.WAREHOUSE_SIZE)
+    backpack_serials = None           # short[25] backpack serials (config.BACKPACK_SIZE)
+    warehouse = [None] * config.WAREHOUSE_SIZE   # z[100] warehouse (config.WAREHOUSE_SIZE)
     warehouse_serials = None           # short[100] warehouse serials
     safe_gold = 0              # gold in the Safe
     lots = [None] * 20    # z[20] lots of the page / Sale List / Gift List / my lots
@@ -115,20 +110,20 @@ class Live(GameCanvas):
     values = [0] * 16
     category_names = ["Normal Items", "Special Items", "Rare Items"]
 
-    def __init__(self):  # as.java:172-178
+    def __init__(self):
         super().__init__(GameCanvas.midlet)
         if Live.backpack_serials is None:
             Live.backpack_serials = [0] * config.BACKPACK_SIZE
         if Live.warehouse_serials is None:
             Live.warehouse_serials = [0] * config.WAREHOUSE_SIZE
 
-    def open_live(self):  # as.java:180-190  (Game Menu > Live)
+    def open_live(self):  # Game Menu > Live
         from pow.game.live_screen import LiveScreen
         Live.inited = True
         if LiveScreen.is_registered():
             Live.reg_from_popup = False
             Live.screen.load_login()
-            if Online.enabled():             # PORT-EXTRA: no "Connect to Live?"
+            if Online.enabled():             # no "Connect to Live?"
                 self.connect_live()
                 return
             GameCanvas.popups.show(2)
@@ -136,7 +131,7 @@ class Live(GameCanvas):
             return
         self.open_registration()
 
-    def open_registration(self):  # as.java:192-208  (registration screen)
+    def open_registration(self):  # registration screen
         from pow.game.name_buffer import NameBuffer
         GameCanvas.in_live = True
         GameCanvas.stop_sound()
@@ -145,7 +140,7 @@ class Live(GameCanvas):
         Live.input_handler = 18
         Live.reg_step = 1
         GameCanvas.letter_cursor = 0
-        if config.REG_KEYBOARD:        # PORT-EXTRA: the on-screen keyboards (pow/game/key_grid.py)
+        if config.REG_KEYBOARD:        # the on-screen keyboards (pow/game/key_grid.py)
             Live.id_grid, Live.pwd_grid = KeyGrid.user_id(), KeyGrid.password()
         Live.request_redraw()
         GameCanvas.state = 11
@@ -156,10 +151,10 @@ class Live(GameCanvas):
         self.load_live_images()
         Live.request_redraw()
 
-    def tick_live(self):  # as.java:210-299  (every frame from ag.run)
+    def tick_live(self):  # every frame
         if Live.net is not None:
             Live.net.pump()
-        Online.tick(self)                    # PORT-EXTRA: the background login (live_online.py)
+        Online.tick(self)                    # the background login (live_online.py)
         if Live.pending_request != -1 and not Online.background:
             self.queue_request(Live.pending_request)
         if GameCanvas.popups.answered:
@@ -220,7 +215,7 @@ class Live(GameCanvas):
                     Live.screen_redraw = True
         self._end_tick()
 
-    def connect_live(self):  # as.java:226-232  (popup 2 YES: into Live, request 512)
+    def connect_live(self):  # popup 2 YES: into Live, request 512
         GameCanvas.in_live = True
         GameCanvas.stop_sound()
         self.load_live_images()
@@ -233,7 +228,7 @@ class Live(GameCanvas):
             self.check_answer()
 
     @staticmethod
-    def show_error(code):  # as.java:301-353  (error code -> gamestr popup)
+    def show_error(code):  # error code -> gamestr popup
         b = {-1: 21, -2: 22, -4: 23, -12: 24, -13: 25, -15: 26, -16: 27, -18: 28, -20: 29,
              -22: 30, -23: 31, -26: 7, -49: 54}.get(code, -1)
         if code == -26:
@@ -245,12 +240,12 @@ class Live(GameCanvas):
 
     @staticmethod
     def quiet_request():
-        """PORT-EXTRA (config.ALWAYS_ONLINE): no "Connecting..." for a request over the connection
+        """(config.ALWAYS_ONLINE): no "Connecting..." for a request over the connection
         that is already open, unless its answer takes longer than QUIET_MS."""
         return (Online.enabled() and LiveNet.connected
                 and system.currentTimeMillis() - Live.request_time < Online.QUIET_MS)
 
-    def draw_connecting(self):  # as.java:355-364  ("Connecting..." over the screen)
+    def draw_connecting(self):  # "Connecting..." over the screen
         GameCanvas.popups.draw_popup_frame(96)
         i = GameCanvas.view_cy - 20 - 10
         j = Live.loading0.getWidth()
@@ -260,7 +255,7 @@ class Live(GameCanvas):
         Gfx.set_font(GameCanvas.font_white)
         Gfx.draw_string("Connecting...", GameCanvas.screen_w // 2, i + 50, 1)
 
-    def load_live_images(self):  # as.java:366-378
+    def load_live_images(self):
         try:
             if Live.loading0 is None:
                 Live.loading0 = Image.createImage("/netLoading0.png")
@@ -275,22 +270,22 @@ class Live(GameCanvas):
         Live.start_net()
 
     @staticmethod
-    def start_net():  # as.java:380-386
+    def start_net():
         if Live.net is None:
             Live.net = LiveNet()
             Live.net.setPriority(5)
             Live.net.start()
 
-    def on_connected(self):  # as.java:388-390  (s.f(): connected)
+    def on_connected(self):  # connected
         self.write_request()
 
-    def ask_request(self, opcode):  # as.java:392-397  (ask for a request on the next i())
+    def ask_request(self, opcode):  # (ask for a request on the next i())
         Live.answer_status = 0
         GameCanvas.lock_keys()
         Live.busy = True
         Live.pending_request = opcode
 
-    def queue_request(self, opcode):  # as.java:399-413
+    def queue_request(self, opcode):
         Live.pending_request = -1
         Live.login_request = 0
         if not LiveNet.connected:
@@ -304,8 +299,8 @@ class Live(GameCanvas):
         Live.request_redraw()
         Live.waiting = True
 
-    def check_answer(self):  # as.java:415-438  (answer came / timeout)
-        if Online.background:                # PORT-EXTRA: the background 530, no screen to update
+    def check_answer(self):  # answer came / timeout
+        if Online.background:                # the background 530, no screen to update
             self.check_background_answer()
             return
         if Live.answered:
@@ -328,7 +323,7 @@ class Live(GameCanvas):
             self.ask_request(Live.request_in_flight)
 
     def check_background_answer(self):
-        """PORT-EXTRA: check_answer() for the background login: silent, keys never locked."""
+        """check_answer for the background login: silent, keys never locked."""
         if Live.answered:
             if not Live.in_answer:
                 Live.waiting = False
@@ -340,7 +335,7 @@ class Live(GameCanvas):
             Live.waiting = False
             Online.on_login_answer(False)
 
-    def send_request(self, opcode):  # as.java:440-451
+    def send_request(self, opcode):
         Live.request_in_flight = opcode
         if not LiveNet.connected:
             if Live.net is None:
@@ -351,7 +346,7 @@ class Live(GameCanvas):
             self.write_request()
         Live.answered = False
 
-    def write_request(self):  # as.java:453-576  (write the request gq)
+    def write_request(self):  # write the request gq
         hero = GameCanvas.hero
         Live.answer_status = 0
         Live.net.begin_request(Live.request_in_flight)
@@ -452,8 +447,8 @@ class Live(GameCanvas):
             LiveNet.write_byte(0 if GameCanvas.cursor[16] < config.BACKPACK_SIZE else 1)
         Live.net.send_request()
 
-    def disconnect(self):  # as.java:578-591
-        if not (Online.enabled() and Online.wanted):   # PORT-EXTRA: else the connection stays
+    def disconnect(self):
+        if not (Online.enabled() and Online.wanted):   # else the connection stays
             self.close_net()
         if GameCanvas.state == 11:
             Live.close_target = 3
@@ -468,7 +463,7 @@ class Live(GameCanvas):
             Live.net.close()
             Live.drop_net()
 
-    def on_connection_failed(self):  # as.java:593-599  (s.e(): the connection failed / broke)
+    def on_connection_failed(self):  # the connection failed / broke
         if Live.net is not None:
             Live.net.close()
             Live.drop_net()
@@ -478,29 +473,28 @@ class Live(GameCanvas):
     def _copy_item(dst, src):
         dst.id, dst.attack, dst.defense, dst.hp, dst.mp, dst.enchant = src.id, src.attack, src.defense, src.hp, src.mp, src.enchant
 
-    def on_answer(self, answer):  # as.java:601-990  (s.a(ab): one answer)
+    def on_answer(self, answer):  # one answer
         Live.in_answer = True
         LiveNet.waiting = False
         op = answer.read_s16()
         b = answer.read_s8()
-        if F20:
-            Live.answer_status = b                      # DECOMP_FIX F20
+        Live.answer_status = b
         Live.answer_op = op
-        if B5 and op == 531:
-            Live.blink = False                  # ORIG-BUG B5
+        if op == 531:
+            Live.blink = False                  # the answer stops the registration's frame count
         if b == 1:
             handler = self._ANSWER_BY_OPCODE.get(op)
             if handler is not None:
                 handler(self, answer, op)
         else:
-            self.on_error_answer(Live.answer_op, Live.answer_status if F20 else 0, answer)
+            self.on_error_answer(Live.answer_op, Live.answer_status, answer)
         Live.in_answer = False
         LiveNet.waiting = True
         Live.answered = True
 
     def _on_login(self, answer, op):  # answer 531
         Live.session_id = Live.session_new
-        if not Online.background:            # PORT-EXTRA: the background login saves nothing
+        if not Online.background:            # the background login saves nothing
             self.save_game()
         answer.read_s8()
         answer.read_s8()
@@ -514,7 +508,7 @@ class Live(GameCanvas):
                 GameCanvas.popups.show(44)
             Live.close_target = 2
             Live.reg_from_popup = False
-            if Online.offer_open:            # PORT-EXTRA: the offered registration: back to the game
+            if Online.offer_open:            # the offered registration: back to the game
                 Online.on_registration_closed(True)
                 Live.close_target = 3
 
@@ -562,7 +556,7 @@ class Live(GameCanvas):
             self.save_game()
             if Live.values[15] == 0 and Live.values[14] == 0:
                 if Live.first_login and not Online.enabled():
-                    GameCanvas.popups.show(20)   # PORT-EXTRA: online, the Multiplayer screens
+                    GameCanvas.popups.show(20)   # online, the Multiplayer screens
                 else:                             # pay the hero at once (after_multiplayer)
                     GameCanvas.popups.answered = True
             else:
@@ -619,7 +613,7 @@ class Live(GameCanvas):
         i = answer.read_s32()
         GameCanvas.missions_done = answer.read_s32()
         GameCanvas.missions_done <<= 32
-        GameCanvas.missions_done |= i                  # sic: a negative low word fills the high one (Java long |)
+        GameCanvas.missions_done |= i                  # sic: a negative low word fills the high one (the original long |)
         GameCanvas.chapter = answer.read_s8()
         for idx in range(22):
             hero.mission_progress[idx] = i16(answer.read_s8())
@@ -735,7 +729,7 @@ class Live(GameCanvas):
     def _on_bought(self, answer, op):  # answer 789
         hero = GameCanvas.hero
         cursor = GameCanvas.cursor
-        if B4 and Live.flags[7] == 1:     # ORIG-BUG B4: bought into the warehouse
+        if Live.flags[7] == 1:            # bought into the warehouse
             Live.flags[6] = i16(Live.flags[6] + 1)
             idx = 0
             while idx < config.WAREHOUSE_SIZE and Live.warehouse[idx].id != 0:
@@ -860,8 +854,8 @@ class Live(GameCanvas):
         259: _on_exp_fame,
     }
 
-    def on_error_answer(self, opcode, code, answer):  # as.java:992-1056  (error answers)
-        if Online.background:                # PORT-EXTRA: the background login fails silently
+    def on_error_answer(self, opcode, code, answer):  # error answers
+        if Online.background:                # the background login fails silently
             return
         if opcode == 531:
             if answer is None:
@@ -910,21 +904,21 @@ class Live(GameCanvas):
         Live.show_error(code)
 
     @staticmethod
-    def clear_selected_lot():  # as.java:1058-1062
+    def clear_selected_lot():
         Item.clear(Live.lots[Live.selected_slot])
         Live.prices[Live.selected_slot] = 0
         Live.lot_ids[Live.selected_slot] = 0
 
-    def save_and_sync(self, saved):  # as.java:1064-1067  (save the game)
+    def save_and_sync(self, saved):  # save the game
         GameCanvas.live_saved = i16(saved)
         self.save_game()
 
     @staticmethod
-    def list_height():  # as.java:1069-1071
+    def list_height():
         return 32 * Live.list_rows - 12
 
     @staticmethod
-    def set_list_items(items, y, h):  # as.java:1073-1092  ("a|b|c|" -> list menu)
+    def set_list_items(items, y, h):  # "a|b|c|" -> list menu
         i = 0
         j = 0
         for b in range(len(items)):
@@ -941,7 +935,7 @@ class Live(GameCanvas):
         Live.list_y = i16(y + (h - 32 * Live.list_rows - 12 >> 1))
         Live.list_top = Live.list_cursor = 0
 
-    def list_keys(self, key):  # as.java:1094-1109  (list keys: -2 moved, index chosen, -1)
+    def list_keys(self, key):  # list keys: -2 moved, index chosen, -1
         i = -1
         if key in (-1, -2, 50, 56):
             if key in (-1, 50):
@@ -959,14 +953,14 @@ class Live(GameCanvas):
         return i
 
     @staticmethod
-    def clamp_list_scroll():  # as.java:1111-1118
+    def clamp_list_scroll():
         if Live.list_top > Live.list_cursor:
             Live.list_top = Live.list_cursor
             return
         if Live.list_cursor - Live.list_top >= Live.list_rows:
             Live.list_top = Live.list_cursor - Live.list_rows + 1
 
-    def draw_list(self):  # as.java:1120-1135  (draw the list menu)
+    def draw_list(self):  # draw the list menu
         i = Live.list_y
         b = 0
         j = Live.list_top
@@ -982,26 +976,26 @@ class Live(GameCanvas):
             b += 1
             j += 1
 
-    def enter_live(self):  # as.java:1137-1143
+    def enter_live(self):
         self.load_titles()
         self.load_live_strings()
         GameCanvas.load_item_tables()
         GameCanvas.state = 11
         Live.list_w = GameCanvas.view_size.x
 
-    def load_titles(self):  # as.java:1145-1149
+    def load_titles(self):
         for b in range(12):
             Live.titles[b] = GameCanvas.gamestr(2 + b)
         return True
 
-    def load_live_strings(self):  # as.java:1151-1155
+    def load_live_strings(self):
         for b in range(50):
             Live.live_strings[b] = GameCanvas.gamestr(15 + b)
         return True
 
-    def open_live_menu(self):  # as.java:1157-1176  (LIVE menu)
-        # PORT-EXTRA: one hero kept on the server, so no Management (Save / Load User Data)
-        # PORT-EXTRA: online, the Multiplayer screens are a part of this game (main.py)
+    def open_live_menu(self):  # LIVE menu
+        # one hero kept on the server, so no Management (Save / Load User Data)
+        # online, the Multiplayer screens are a part of this game (main.py)
         Live.set_list_items("Trade|Warehouse|Safe|Multiplayer|" if Online.enabled() else "Trade|Warehouse|Safe|Management|", 20, 255)
         Live.list_cursor = Live.saved_0
         Live.list_top = Live.saved_1
@@ -1018,11 +1012,11 @@ class Live(GameCanvas):
             GameCanvas.popups.show(49)
         Live.request_redraw()
         Live.first_login = False
-        if Live.auto_mp:                     # PORT-EXTRA: Main Menu > Multiplayer > YES
+        if Live.auto_mp:                     # Main Menu > Multiplayer > YES
             Live.auto_mp = False
             self.open_multiplayer()
 
-    # --- PORT-EXTRA: the Multiplayer screens (pow.game.online) as a part of this game ---------------
+    # --- the Multiplayer screens (pow.game.online) as a part of this game ---------------
     def open_multiplayer(self):
         """Live > Multiplayer: the Multiplayer screens as the next state of this canvas
         (online_session); their Exit comes back here (after_multiplayer)."""
@@ -1032,7 +1026,7 @@ class Live(GameCanvas):
 
     def after_multiplayer(self, rewards):
         """Back in the Live menu: what the battles earned (1032: gold, fame, exp, loot) goes to
-        the hero in memory, as the Exp / Fame of Live did (259 -> ag.H, popup 41)."""
+        the hero in memory, as the Exp / Fame of Live did (259, the level-up, popup 41)."""
         hero = GameCanvas.hero
         gold = fame = exp = 0
         for r in rewards:
@@ -1067,7 +1061,7 @@ class Live(GameCanvas):
                 return True
         return False
 
-    def open_waiting(self):  # as.java:1178-1184  (waiting screen)
+    def open_waiting(self):  # waiting screen
         Live.input_handler = 17
         Live.live_screen = 12
         Live.title = Live.titles[2]
@@ -1075,30 +1069,30 @@ class Live(GameCanvas):
         Live.request_redraw()
 
     @staticmethod
-    def request_redraw():  # as.java:1186-1188
+    def request_redraw():
         Live.screen_redraw = True
 
     @staticmethod
-    def draw_item_cell(item_id, x, y, selected):  # as.java:1190-1194  (item cell)
+    def draw_item_cell(item_id, x, y, selected):  # item cell
         GameCanvas.menus.draw_grid_cell(x, y, selected)
         if item_id > 0:
             GameCanvas.menus.draw_item_count_icon(item_id, x, y, 0)
 
     @staticmethod
-    def draw_text_centred_in(text, x, y, w):  # as.java:1196-1198
+    def draw_text_centred_in(text, x, y, w):
         Gfx.draw_string(text, x + idiv(w, 2), y, 1)
 
     @staticmethod
-    def draw_screen():  # as.java:1200-1202
+    def draw_screen():
         Live.screen.draw_live_screen()
 
-    def draw_caption_box(self, text, y):  # as.java:1204-1209  (caption box)
+    def draw_caption_box(self, text, y):  # caption box
         Gfx.set_font(GameCanvas.font_white)
         self.draw_centred_box(y, 200, 22)
         if text != "":
             self.draw_text_at(text, y + 1 - GameCanvas.view_y, 0)
 
-    def key_down(self, key):  # as.java:1211-1269  (keys)
+    def key_down(self, key):  # keys
         i = key
         if GameCanvas.popups.kind != 0:
             GameCanvas.popups.popup_keys()
@@ -1113,7 +1107,7 @@ class Live(GameCanvas):
             h(i)
 
     def keyboard_key(self, key):
-        """PORT-EXTRA (config.REG_KEYBOARD): the on-screen keyboards of key_grid.py in front of
+        """(config.REG_KEYBOARD): the on-screen keyboards of key_grid.py in front of
         registration_keys: arrows move (on the UserID step the phone's 2 4 6 8 too, as ag.r does),
         OK types the cell; -> the key for the original handler, None when taken here."""
         if Live.reg_step == 0:                   # the password: the number keys stay digits
@@ -1136,9 +1130,9 @@ class Live(GameCanvas):
             return None
         return key
 
-    def registration_keys(self, key):  # as.java:1271-1328  (registration: UserID, then password)
+    def registration_keys(self, key):  # registration: UserID, then password
         if config.REG_KEYBOARD:
-            key = self.keyboard_key(key)         # PORT-EXTRA
+            key = self.keyboard_key(key)
             if key is None:
                 return
         if Live.reg_step == 0:
@@ -1188,7 +1182,7 @@ class Live(GameCanvas):
                 Live.reg_step = 0
                 Live.request_redraw()
 
-    def sale_list_keys(self, key):  # as.java:1330-1357  (Sale / Gift List)
+    def sale_list_keys(self, key):  # Sale / Gift List
         if key == -3:
             Live.selected_slot = Live.selected_slot - 1 if Live.selected_slot > 0 else 4
             Live.request_redraw()
@@ -1201,7 +1195,7 @@ class Live(GameCanvas):
             else:
                 self.sync_gifts()
 
-    def cancel_sell_keys(self, key):  # as.java:1359-1394  (Cancel Sell: my 5 lots)
+    def cancel_sell_keys(self, key):  # Cancel Sell: my 5 lots
         from pow.game.menus import Menus
         if key == -7:
             self.open_trade()
@@ -1219,13 +1213,13 @@ class Live(GameCanvas):
             Live.selected_slot = Live.selected_slot + 1 if Live.selected_slot < 4 else 0
             Live.request_redraw()
 
-    def price_info_keys(self, key):  # as.java:1396-1403  (Price Info list)
+    def price_info_keys(self, key):  # Price Info list
         if key == -7:
             self.open_price_info()
             return
         self.draw_grid_cursor(key, False)
 
-    def sell_pick_keys(self, key):  # as.java:1405-1440  (Sell: pick an item)
+    def sell_pick_keys(self, key):  # Sell: pick an item
         if key == -7:
             self.open_trade()
             return
@@ -1254,7 +1248,7 @@ class Live(GameCanvas):
             return
         self.grid_keys(key)
 
-    def sell_price_keys(self, key):  # as.java:1442-1489  (Sell: the price)
+    def sell_price_keys(self, key):  # Sell: the price
         bool_ = True
         if 48 <= key <= 57:
             i = GameCanvas.key_digit(key)
@@ -1283,7 +1277,7 @@ class Live(GameCanvas):
         if bool_:
             Live.request_redraw()
 
-    def buy_kind_keys(self, key):  # as.java:1491-1518  (Buy: kind)
+    def buy_kind_keys(self, key):  # Buy: kind
         if key == -7:
             self.open_buy_category()
             return
@@ -1305,7 +1299,7 @@ class Live(GameCanvas):
             return
         self.draw_grid_cursor(key, False)
 
-    def buy_enchant_keys(self, key):  # as.java:1520-1556  (Buy: enchant level)
+    def buy_enchant_keys(self, key):  # Buy: enchant level
         bool_ = True
         if key == -7:
             self.open_sell_price()                      # falls through into case -3
@@ -1329,7 +1323,7 @@ class Live(GameCanvas):
         if bool_:
             Live.request_redraw()
 
-    def buy_lots_keys(self, key):  # as.java:1558-1608  (Buy: the lots)
+    def buy_lots_keys(self, key):  # Buy: the lots
         if key == -7:
             if Live.category == 2:
                 self.open_sell_price()
@@ -1368,7 +1362,7 @@ class Live(GameCanvas):
                 return
         Live.request_redraw()
 
-    def buy_category_keys(self, key):  # as.java:1610-1626  (Buy: category)
+    def buy_category_keys(self, key):  # Buy: category
         if key == -7:
             self.open_trade()
             return
@@ -1383,27 +1377,27 @@ class Live(GameCanvas):
         if i == -2:
             Live.request_redraw()
 
-    def open_sell_price(self):  # as.java:1628-1633
+    def open_sell_price(self):
         self.restore_grid_cursor(False)
         Live.live_screen = 6
         Live.input_handler = 5
         Live.request_redraw()
 
-    def open_cancel_sell(self):  # as.java:1635-1639
+    def open_cancel_sell(self):
         Live.live_screen = 7
         Live.input_handler = 6
         Live.request_redraw()
 
-    def open_sale_list(self):  # as.java:1641-1646
+    def open_sale_list(self):
         self.set_cancel_sell_grid()
         Live.live_screen = 8
         Live.input_handler = 7
         Live.request_redraw()
 
-    def set_cancel_sell_grid(self):  # as.java:1648-1650
+    def set_cancel_sell_grid(self):
         self.set_grid(4, 2, True)
 
-    def restore_grid_cursor(self, items_grid):  # as.java:1652-1666  (restore the grid cursor)
+    def restore_grid_cursor(self, items_grid):  # restore the grid cursor
         Live.flags[7] = Live.saved_11
         Live.category = Live.saved_6
         if items_grid:
@@ -1417,20 +1411,20 @@ class Live(GameCanvas):
         Live.values[5] = Live.saved_12
         Live.values[6] = Live.saved_13
 
-    def open_sell_grid(self):  # as.java:1668-1674  (Sell: Backpack / Warehouse grid)
+    def open_sell_grid(self):  # Sell: Backpack / Warehouse grid
         self.restore_grid_cursor(True)
         Live.input_handler = 8
         Live.live_screen = 4
         Live.title = Live.titles[5]
         Live.request_redraw()
 
-    def open_price_info(self):  # as.java:1676-1681
+    def open_price_info(self):
         Live.live_screen = 9
         Live.input_handler = 9
         Live.title = Live.titles[5]
         Live.request_redraw()
 
-    def open_buy_lots(self, request):  # as.java:1683-1695
+    def open_buy_lots(self, request):
         if request:
             Live.scroll = 0
             Live.page = 0
@@ -1442,7 +1436,7 @@ class Live(GameCanvas):
             Live.title = Live.titles[8]
         Live.request_redraw()
 
-    def after_login(self):  # as.java:1697-1705  (after 513: notices, Sale List, Gift List, Exp/Fame, sync)
+    def after_login(self):  # after 513: notices, Sale List, Gift List, Exp/Fame, sync
         Live.scroll = i16(Live.scroll + Live.scroll_step)
         if Live.flags[15] == 1 and Live.first_login:
             self.ask_request(516)
@@ -1450,7 +1444,7 @@ class Live(GameCanvas):
             return
         self.sync_sale_list()
 
-    def sync_sale_list(self):  # as.java:1707-1715
+    def sync_sale_list(self):
         Live.scroll = i16(Live.scroll + Live.scroll_step)
         if Live.flags[14] == 1:
             self.ask_request(518)
@@ -1458,14 +1452,14 @@ class Live(GameCanvas):
             return
         self.sync_gift_list()
 
-    def open_trade_list(self):  # as.java:1717-1723
+    def open_trade_list(self):
         Live.selected_slot = 0
         Live.input_handler = 1
         Live.live_screen = 11
         Live.title = Live.titles[0] if Live.list_kind == 0 else Live.titles[1]
         Live.request_redraw()
 
-    def sync_gift_list(self):  # as.java:1725-1733
+    def sync_gift_list(self):
         Live.scroll = i16(Live.scroll + Live.scroll_step)
         if Live.flags[13] == 1:
             self.ask_request(520)
@@ -1473,7 +1467,7 @@ class Live(GameCanvas):
             return
         self.sync_gifts()
 
-    def sync_gifts(self):  # as.java:1735-1744
+    def sync_gifts(self):
         Live.scroll = i16(Live.scroll + Live.scroll_step)
         if GameCanvas.live_gifts == 0:
             self.ask_request(258)
@@ -1482,17 +1476,17 @@ class Live(GameCanvas):
         GameCanvas.live_gifts = 2
         self.sync_exp_fame()
 
-    def sync_exp_fame(self):  # as.java:1746-1750
+    def sync_exp_fame(self):
         Live.scroll = i16(Live.scroll + Live.scroll_step)
         self.ask_request(260)
         Live.request_redraw()
 
-    def sync_done(self):  # as.java:1752-1756
+    def sync_done(self):
         Live.scroll = i16(Live.scroll + Live.scroll_step)
         self.ask_request(768)
         Live.request_redraw()
 
-    def trade_keys(self, key):  # as.java:1758-1785  (Trade: Buy / Sell / Cancel)
+    def trade_keys(self, key):  # Trade: Buy / Sell / Cancel
         if key == -7:
             self.open_live_menu()
             return
@@ -1513,7 +1507,7 @@ class Live(GameCanvas):
         if i == -2:
             Live.request_redraw()
 
-    def warehouse_keys(self, key):  # as.java:1787-1804  (Warehouse grid: move an item)
+    def warehouse_keys(self, key):  # Warehouse grid: move an item
         if key == -7:
             self.open_live_menu()
             return
@@ -1526,14 +1520,14 @@ class Live(GameCanvas):
             return
         self.grid_keys(key)
 
-    def open_buy_category(self):  # as.java:1806-1812
+    def open_buy_category(self):
         self.set_category_list()
         Live.input_handler = 4
         Live.live_screen = 5
         Live.title = Live.titles[4]
         Live.request_redraw()
 
-    def set_category_list(self):  # as.java:1814-1824
+    def set_category_list(self):
         Live.set_list_items("Normal Items|Special Items|Rare Items|", 20, 255)
         Live.list_cursor = Live.saved_4
         Live.list_top = Live.saved_5
@@ -1543,7 +1537,7 @@ class Live(GameCanvas):
         Live.values[15] = i
         Live.list_y = i + 22 + 10
 
-    def grid_keys(self, key):  # as.java:1826-1841  (grid keys, -6 switches Backpack / Warehouse)
+    def grid_keys(self, key):  # grid keys, -6 switches Backpack / Warehouse
         if key == -6:
             if Live.flags[7] == 1:
                 self.set_backpack_grid()
@@ -1556,7 +1550,7 @@ class Live(GameCanvas):
         else:
             self.draw_grid_cursor(key, True)
 
-    def draw_grid_cursor(self, key, wrap):  # as.java:1843-1877  (grid cursor)
+    def draw_grid_cursor(self, key, wrap):  # grid cursor
         cursor = GameCanvas.cursor
         i = 1
         if key in (-1, 50):
@@ -1565,12 +1559,12 @@ class Live(GameCanvas):
             cursor[10] = cursor[10] + 1
         elif key in (-3, 52):
             cursor[9] = cursor[9] - 1
-            if (cursor[9] < 0) if F6 else (cursor[9] - 1 < 0):     # DECOMP-FIX F6
+            if cursor[9] < 0:
                 cursor[9] = 4
                 cursor[10] = cursor[10] - 1
         elif key in (-4, 54):
             cursor[9] = cursor[9] + 1
-            if (cursor[9] >= 5) if F6 else (cursor[9] + 1 >= 5):   # DECOMP-FIX F6
+            if cursor[9] >= 5:
                 cursor[9] = 0
                 cursor[10] = cursor[10] + 1
         else:
@@ -1581,7 +1575,7 @@ class Live(GameCanvas):
                 Live.request_redraw()
         return i
 
-    def safe_keys(self, key):  # as.java:1879-1968  (Safe)
+    def safe_keys(self, key):  # Safe
         bool_ = True
         if Live.flags[14] == 0:
             if key in (-4, -3):
@@ -1636,8 +1630,8 @@ class Live(GameCanvas):
         if bool_:
             Live.request_redraw()
 
-    def leave_live(self):  # as.java:1970-1978  (leave Live -> Game Menu)
-        if Online.offer_open:                # PORT-EXTRA: BACK on the offered registration = skip
+    def leave_live(self):  # leave Live -> Game Menu
+        if Online.offer_open:                # BACK on the offered registration = skip
             Online.on_registration_closed(False)
         GameCanvas.state = 2
         self.disconnect()
@@ -1648,7 +1642,7 @@ class Live(GameCanvas):
         GameCanvas.in_live = False
 
     @staticmethod
-    def save_grid_cursor(reset):  # as.java:1980-1999  (remember / reset the grid cursor)
+    def save_grid_cursor(reset):  # remember / reset the grid cursor
         Live.saved_6 = Live.category
         if reset:
             Live.saved_7 = Live.saved_8 = Live.saved_9 = Live.saved_10 = Live.saved_11 = Live.saved_12 = Live.saved_13 = 0
@@ -1661,22 +1655,22 @@ class Live(GameCanvas):
         Live.saved_12 = i16(Live.values[5])
         Live.saved_13 = i16(Live.values[6])
 
-    def open_warehouse(self):  # as.java:2001-2007  (Warehouse screen)
+    def open_warehouse(self):  # Warehouse screen
         self.set_backpack_grid()
         Live.input_handler = 14
         Live.live_screen = 4
         Live.title = Live.titles[9]
         Live.request_redraw()
 
-    def set_backpack_grid(self):  # as.java:2009-2012
+    def set_backpack_grid(self):
         Live.flags[7] = 0
         self.set_grid(config.BACKPACK_SIZE // 5, 3, True)
 
-    def set_warehouse_grid(self):  # as.java:2014-2017
+    def set_warehouse_grid(self):
         Live.flags[7] = 1
         self.set_grid(config.WAREHOUSE_SIZE // 5, 3, True)
 
-    def set_grid(self, rows, visible_rows, reset):  # as.java:2019-2043  (grid geometry)
+    def set_grid(self, rows, visible_rows, reset):  # grid geometry
         cursor = GameCanvas.cursor
         cursor[3] = visible_rows
         cursor[6] = 32 * visible_rows - 4 + 2
@@ -1701,7 +1695,7 @@ class Live(GameCanvas):
             Live.clamp_grid_cursor(True)
 
     @staticmethod
-    def clamp_grid_cursor(wrap):  # as.java:2045-2072  (clamp the grid cursor; -1 / 1 = left the grid)
+    def clamp_grid_cursor(wrap):  # clamp the grid cursor; -1 / 1 = left the grid
         cursor = GameCanvas.cursor
         if cursor[10] < 0:
             if wrap:
@@ -1727,14 +1721,14 @@ class Live(GameCanvas):
         return 0
 
     @staticmethod
-    def selected_grid_item():  # as.java:2074-2081  (the selected item of the Backpack / Warehouse grid)
+    def selected_grid_item():  # the selected item of the Backpack / Warehouse grid
         if Live.flags[7] == 0:
             Live.selected_serial = Live.backpack_serials[GameCanvas.cursor[18]]
             return GameCanvas.hero.backpack[GameCanvas.cursor[18]]
         Live.selected_serial = Live.warehouse_serials[GameCanvas.cursor[18]]
         return Live.warehouse[GameCanvas.cursor[18]]
 
-    def open_trade(self):  # as.java:2083-2093  (Trade menu)
+    def open_trade(self):  # Trade menu
         Live.set_list_items("Buy Item|Sell Item|Cancel Sell|", 26, 243)
         Live.list_cursor = Live.saved_2
         Live.list_top = Live.saved_3
@@ -1744,7 +1738,7 @@ class Live(GameCanvas):
         Live.title = Live.titles[3]
         Live.request_redraw()
 
-    def live_menu_keys(self, key):  # as.java:2095-2126  (LIVE menu)
+    def live_menu_keys(self, key):  # LIVE menu
         if key == -7:
             self.leave_live()
             if GameCanvas.live_saved == 0:
@@ -1763,7 +1757,7 @@ class Live(GameCanvas):
                 elif i == 2:
                     self.open_safe()
                 elif i == 3:
-                    if Online.enabled():         # PORT-EXTRA: Multiplayer instead of Management
+                    if Online.enabled():         # Multiplayer instead of Management
                         self.open_multiplayer()
                     else:
                         self.open_management()
@@ -1771,7 +1765,7 @@ class Live(GameCanvas):
             if i == -2:
                 Live.request_redraw()
 
-    def open_safe(self):  # as.java:2128-2135  (Safe)
+    def open_safe(self):  # Safe
         Live.flags[15] = 0
         Live.flags[14] = 0
         Live.input_handler = 15
@@ -1779,13 +1773,13 @@ class Live(GameCanvas):
         Live.title = Live.titles[10]
         Live.request_redraw()
 
-    def open_management(self):  # as.java:2137-2143  (Management)
+    def open_management(self):  # Management
         Live.set_list_items("Save User Data|Load User Data|", 26, 243)
         Live.input_handler = 16
         Live.title = Live.titles[11]
         Live.request_redraw()
 
-    def management_keys(self, key):  # as.java:2145-2159  (Management keys)
+    def management_keys(self, key):  # Management keys
         if key == -7:
             self.open_live_menu()
             return
@@ -1799,6 +1793,6 @@ class Live(GameCanvas):
             Live.request_redraw()
 
     @staticmethod
-    def drop_net():  # as.java:2161-2164
+    def drop_net():
         LiveNet.running = False
         Live.net = None

@@ -1,4 +1,4 @@
-"""PORT-EXTRA auto-hunt (pow/game/autopilot.py) on the real game loop: tools/scenarios/autohunt.keys
+"""auto-hunt (pow/game/autopilot.py) on the real game loop: tools/scenarios/autohunt.keys
 turns it on in the first mission and checks with `expect` steps that it kills, drinks the HP potion
 without MP, casts the heal with MP and clears rooms one after another."""
 import os

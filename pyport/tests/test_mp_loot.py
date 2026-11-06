@@ -38,7 +38,7 @@ def test_normal_tier_follows_the_hero_level():
         return [(g - 101) % 5 for g in (loot.sp_drop(rng, lv, 2) for _ in range(6000)) if g > 100]
 
     assert set(tiers(5)) == {0, 1}                       # level <= 9: {80, 100} -> tiers 0-1
-    assert set(tiers(80)) == set(tiers(50)) == {0, 1, 2, 3, 4}   # PORT-EXTRA DROPS_AFTER_69
+    assert set(tiers(80)) == set(tiers(50)) == {0, 1, 2, 3, 4}   # DROPS_AFTER_69
     import config
     old, config.DROPS_AFTER_69 = config.DROPS_AFTER_69, False
     try:

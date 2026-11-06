@@ -1,4 +1,4 @@
-"""PORT-EXTRA: the server's security settings (pow_server/security.py, ws_server.py)."""
+"""the server's security settings (pow_server/security.py, ws_server.py)."""
 import asyncio
 import json
 

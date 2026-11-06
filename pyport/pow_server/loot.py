@@ -6,13 +6,13 @@ Live (Gift List 520 / Warehouse, analysis/03 §5.2). That server is lost, so the
 made up. What is not: the items and their stats come from the single-player tables, and the
 Special (301-437) and Rare (501-518) ones are what the single player cannot get offline except
 by Combine (analysis/03 §1.2). Our client puts the item into the single-player backpack
-(pow/game/online/sp_bridge.add_item); 1032 carries it as PORT-EXTRA.
+(pow/game/online/sp_bridge.add_item); 1032 carries it as .
 """
 import pathlib
 
 import config
 
-NORMAL_TIER_LEVEL = (1, 10, 25, 45, 70)   # ae.w: the 5 tiers of every kind of kibo.arr
+NORMAL_TIER_LEVEL = (1, 10, 25, 45, 70)  # the 5 tiers of every kind of kibo.arr
 STORY_ONLY = {502}                         # Silk Towel: the ending-2 reward, never a drop
 _tables = None
 
@@ -27,7 +27,7 @@ class Item:
 
     def roll(self, rng):
         """The record z {id, atk, def, hp, mp} of one drop: a Normal item gets base + 0..spread
-        on its stat like a drop in the single player (ag.k(id, 1))."""
+        on its stat like a drop in the single player."""
         stats = [self.atk, self.def_, self.hp, self.mp]
         if self.stat is not None:
             stats[self.stat] += rng.randint(0, self.spread)
@@ -36,7 +36,7 @@ class Item:
 
 
 def _read_arr(name):
-    """d.java: u8 column count, the column widths, then fixed-size rows (little-endian)."""
+    """U8 column count, the column widths, then fixed-size rows (little-endian)."""
     data = (pathlib.Path(config.RES_ROOT) / name).read_bytes()
     n = data[0]
     widths = list(data[1:1 + n])
@@ -75,9 +75,9 @@ def tables():
 
 CONSUMABLES = ("Red Potion (S)", "Red Potion (M)", "Red Potion (L)", "Blue Potion(S)",
                "Blue Potion(M)", "Blue Potion(L)", "H.M.Potion(S)", "H.M.Potion(M)",
-               "H.M.Potion(M)", "Powerful Bomb", "Handy Dynamite")   # ae.aN, ids 1..11 (sic)
+               "H.M.Potion(M)", "Powerful Bomb", "Handy Dynamite")   # ids 1..11 (sic)
 
-# ar.P(type) (ar.java:2055-2079): 0 soldier, 1 general, 2 boss
+# 0 soldier, 1 general, 2 boss
 DROP_CHANCE = (5, 10, 20)          # % that something drops
 EQUIP_CHANCE = (10, 30, 60)        # % of a drop that is equipment (else a consumable 1..11)
 TIER_LEVELS = (69, 44, 24, 9, 0)   # hero level above -> the row of TIER_ODDS
@@ -89,14 +89,14 @@ SPECIAL_SHARE, RARE_SHARE = 20, 2
 
 
 def sp_drop(rng, level, kind):
-    """The item id ar.P(kind) drops for a hero of `level`, or 0 (the gold bag of P() is left
+    """The item id a drop of `kind` gives a hero of `level`, or 0 (the gold bag is left
     out: the battle pays gold anyway)."""
     if rng.randrange(100) >= DROP_CHANCE[kind]:
         return 0
     if rng.randrange(100) >= EQUIP_CHANCE[kind]:
         return rng.randrange(11) + 1
     row = next(i for i, lv in enumerate(TIER_LEVELS) if level > lv or lv == 0)
-    if row == 0 and config.DROPS_AFTER_69:   # PORT-EXTRA: above Lv69 the odds of Lv45-69
+    if row == 0 and config.DROPS_AFTER_69:   # above Lv69 the odds of Lv45-69
         row = 1
     r = rng.randrange(100)
     tier = next(t for t, odds in enumerate(TIER_ODDS[row]) if r < odds)
@@ -121,7 +121,7 @@ def item(rng, item_id):
 
 
 def roll(rng, level, kills):
-    """The loot of one battle: one ar.P() roll per foe beaten (kinds 0 soldier / 1 general /
+    """The loot of one battle: one drop roll per foe beaten (kinds 0 soldier / 1 general /
     2 boss), the best item kept; equipment can come out Special or Rare. None = nothing."""
     best = 0
     for kind in kills:

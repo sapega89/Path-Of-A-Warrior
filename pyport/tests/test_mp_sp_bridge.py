@@ -13,7 +13,7 @@ from pow_server.storage import MemoryStorage
 
 def make_save(level=12, atk=40, def_=30, hp=250, mp=90, gold=1000, fame=50, exp=7,
               face=2, weapon_id=118, skills=None, slots=(12 + 0, 12 + 3, 0, 0, 0)):
-    """A 965-byte record laid out like ag.java:2865-2950 (the writer of ag.U)."""
+    """A 965-byte record laid out like."""
     d = bytearray(S.SAVE_LEN)
     d[0], d[1] = S.SAVE_LEN & 0xFF, S.SAVE_LEN >> 8
     d[2:10] = b"HERO    "
@@ -51,7 +51,7 @@ def test_hero_from_save():
     assert h["face"] == 2 and h["weapon"] == 0                 # 118 War Claymore: long
     assert S.hero(make_save(weapon_id=103))["weapon"] == 1     # 103 War Blade: short
     assert h["skills"][3 - 3] == 3 and h["skills"][9 - 3] == 2 and sum(h["skills"]) == 5
-    assert h["slots"] == [3, 9, 99, 99]                        # V[] index + 12 -> as.gG
+    assert h["slots"] == [3, 9, 99, 99]  # V[] index + 12
     assert h["progress"] == 3
     assert S.hero(None) is None
 

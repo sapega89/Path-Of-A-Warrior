@@ -1,4 +1,4 @@
-"""PORT-EXTRA: hang / crash log for the desktop.
+"""hang / crash log for the desktop.
 
 If the game loop stops ticking for HANG_SECONDS (an endless loop somewhere in the game code:
 the window stops responding and Windows closes it), Python's faulthandler writes the stack of

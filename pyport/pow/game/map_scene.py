@@ -1,4 +1,4 @@
-"""c.java - map, combat and the story player (bd). Literal port, partial:
+"""Map, combat and the story player (bd)., partial:
 c(int) (one page of a prologue / epilogue) and d(int) / g() (end of a mission) are ported;
 the map and combat (phases 3-4) are not."""
 import config
@@ -22,22 +22,21 @@ from pow.game.structs import (
 )
 from pow.midp.jint import i8, i16, i32, idiv
 
-F14 = config.DECOMP_FIX["F14"]
 
 
-# direction key -> cz.c, as c.i_v reads ag.cj (used by the PORT-EXTRA HOLD_TO_MOVE)
-from pow.game.autopilot import Autopilot  # noqa: E402  PORT-EXTRA auto-hunt walks like HOLD_TO_MOVE
+# direction key (used by the HOLD_TO_MOVE)
+from pow.game.autopilot import Autopilot  # noqa: E402  auto-hunt walks like HOLD_TO_MOVE
 
-_BUFF_DIV = [20, 20, 25]   # c.java tick: buff = stat * skill level / this, skills 17..19
+_BUFF_DIV = [20, 20, 25]   # tick: buff = stat * skill level / this, skills 17..19
 _HIT_FRAME = [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 5, 5]   # the frame that hits, by action
 _HELD_DIR = {-1: 4, 50: 4, -3: 2, 52: 2, -4: 6, 54: 6, -2: 0, 56: 0}
 
 
 class MapScene(GameCanvas):
-    def __init__(self):  # c.java:4-6
+    def __init__(self):
         super().__init__(GameCanvas.midlet)
 
-    def load_story_page(self, page):  # c.java:1393-1514  (load story page paramInt)
+    def load_story_page(self, page):  # load story page paramInt
         digits = ["\0"] * 10
         picture = 0
         str_ = GameCanvas.scr_story.get(GameCanvas.story_pages[0] + page)
@@ -148,7 +147,7 @@ class MapScene(GameCanvas):
 
     # ---- end of a mission (called by the combat when the mission is won / lost) -----------
 
-    def finish_mission(self, won):  # c.java:1516-1607  (mission result: rewards, next chapter cq, ending)
+    def finish_mission(self, won):  # mission result: rewards, next chapter cq, ending
         next_chapter = [0, 0, 0, 0, 0, 0, 11, 8, 0, 15,
                       15, 20, 17, 19, 19, 0, 30, 22, 35, 38,
                       39, 33, 33, 44]
@@ -226,18 +225,18 @@ class MapScene(GameCanvas):
         GameCanvas.save_flag = 0
         self.save_game()
 
-    def start_victory_talk(self):  # c.java:1609-1614  (after a won mission: talk with general dz.f, on the map)
+    def start_victory_talk(self):  # after a won mission: talk with the general, on the map
         GameCanvas.talk_kind = 2
         GameCanvas.state = 5
         self.start_dialogue()
         GameCanvas.redraw = 1
 
     # =========================================================================================
-    # The mission map (bV = 3) and its combat. With config.NO_ENEMIES (PORT-EXTRA, off by
+    # The mission map (bV = 3) and its combat. With config.NO_ENEMIES (off by
     # default) no enemy is created: ez == 0 and every enemy loop below runs zero times.
     # =========================================================================================
 
-    def draw_hud_balls(self):  # c.java:8-18  (HP / MP balls of the HUD: black cover from the top)
+    def draw_hud_balls(self):  # HP / MP balls of the HUD: black cover from the top
         cover = [idiv(35 * GameCanvas.hero.hp, GameCanvas.hero.max_hp), idiv(35 * GameCanvas.hero.mp, GameCanvas.hero.max_mp)]
         ball_pos = [[4, GameCanvas.canvas_size.y - 61], [201, GameCanvas.canvas_size.y - 61]]
         if GameCanvas.ball_cover is None:
@@ -249,7 +248,7 @@ class MapScene(GameCanvas):
                          GameCanvas.ball_cover, 0, 0)
 
     @staticmethod
-    def mark_dirty(x, y, w, h):  # c.java:20-37  (mark map cells dirty)
+    def mark_dirty(x, y, w, h):  # mark map cells dirty
         col0 = idiv(x, 27) - GameCanvas.view_tx
         row0 = idiv(y, 27) - GameCanvas.view_ty
         col1 = idiv(x + w - 1, 27) - GameCanvas.view_tx
@@ -262,7 +261,7 @@ class MapScene(GameCanvas):
             for row in range(row0, row1 + 1):
                 GameCanvas.dirty[row][i] = 1
 
-    def draw_hud_frame(self):  # c.java:39-46  (HUD frame)
+    def draw_hud_frame(self):  # HUD frame
         hud = GameCanvas.hud_frame
         GameCanvas.draw_region(0, 0, hud[1].getWidth(), hud[1].getHeight(), hud[1], 0, 0)
         GameCanvas.draw_region(GameCanvas.canvas_size.x - hud[1].getWidth(), 0, hud[1].getWidth(), hud[1].getHeight(), hud[1], 0, 0)
@@ -271,7 +270,7 @@ class MapScene(GameCanvas):
         GameCanvas.draw_region(GameCanvas.canvas_size.x // 2 - 120, GameCanvas.canvas_size.y - 61, 120, 61, hud[0], 0, 0)
         GameCanvas.draw_region(GameCanvas.canvas_size.x // 2, GameCanvas.canvas_size.y - 61, 120, 61, hud[2], 0, 0)
 
-    def draw_frame(self):  # c.java:48-64  (draw one map frame)
+    def draw_frame(self):  # draw one map frame
         if GameCanvas.screen_fill == 0:
             GameCanvas.engine.draw_object_layer()
         for b in range(81):
@@ -288,7 +287,7 @@ class MapScene(GameCanvas):
         if GameCanvas.room_phase == 1:
             self.draw_exit_arrows()
 
-    def draw_exit_arrows(self):  # c.java:66-79  (blinking exit arrows of the room)
+    def draw_exit_arrows(self):  # blinking exit arrows of the room
         arrow_x = [GameCanvas.view_cx - 9, 5, GameCanvas.view_cx - 9, GameCanvas.view_size.x - 31]
         arrow_y = [GameCanvas.view_size.y - 31, GameCanvas.view_cy - 13, 5, GameCanvas.view_cy - 13]
         if GameCanvas.room_phase_timer < 1:
@@ -300,7 +299,7 @@ class MapScene(GameCanvas):
                         self.draw_map_region(img, arrow_x[b], arrow_y[b], img.getWidth(), img.getHeight(), 0, 0)
                         MapScene.mark_dirty(GameCanvas.camera.x + arrow_x[b], GameCanvas.camera.y + arrow_y[b], img.getWidth(), img.getHeight())
 
-    def draw_arrows(self):  # c.java:81-122  (arrows flying: eC; only enemies shoot them)
+    def draw_arrows(self):  # arrows flying: eC; only enemies shoot them
         rect = Rect(0, 0, 0, 0)
         for b in range(3):
             arrow = GameCanvas.arrows[b]
@@ -337,7 +336,7 @@ class MapScene(GameCanvas):
                     GameCanvas.fill_rect(rect, 0)
                     MapScene.mark_dirty(arrow.pos[0].x, arrow.pos[0].y, arrow.w, arrow.h)
 
-    def erase_arrows(self):  # c.java:124-141  (erase the arrows)
+    def erase_arrows(self):  # erase the arrows
         for b in range(3):
             arrow = GameCanvas.arrows[b]
             if arrow.active != 0:
@@ -351,7 +350,7 @@ class MapScene(GameCanvas):
                     h = 11
                 self.draw_map_region(GameCanvas.images[7], i, sy, w, h, i + GameCanvas.view_offset.x, sy + GameCanvas.view_offset.y)
 
-    def draw_upper_layer(self):  # c.java:143-156  (upper tile layer over dirty cells)
+    def draw_upper_layer(self):  # upper tile layer over dirty cells
         game_map = GameCanvas.map
         for b in range(GameCanvas.view_tiles.x):
             for row in range(GameCanvas.view_tiles.y):
@@ -361,7 +360,7 @@ class MapScene(GameCanvas):
                         image = GameCanvas.tile_slots[game_map.data[game_map.layer_upper + i] - 1] - 1
                         self.draw_map_region(GameCanvas.tile_images[image], (GameCanvas.view_tx + b) * 27 - GameCanvas.camera.x, (GameCanvas.view_ty + row) * 27 - GameCanvas.camera.y, 27, 27, 0, 0)
 
-    def draw_effects(self):  # c.java:158-226  (skill effects fh == 3 and potion / scroll effect dU)
+    def draw_effects(self):  # skill effects fh == 3 and potion / scroll effect dU
         fx_dx = [3, -10, 10]
         fx_dy = [-6, 0, 5]
         hero = GameCanvas.hero
@@ -420,10 +419,10 @@ class MapScene(GameCanvas):
                 MapScene.mark_dirty(effect.pos.x - effect.frames[effect.frame].ox, effect.pos.y - effect.frames[effect.frame].oy, effect.frames[effect.frame].w, effect.frames[effect.frame].h)
                 part += 1
 
-    def draw_effect_frame(self, frame, image_id, x, y):  # c.java:228-234
+    def draw_effect_frame(self, frame, image_id, x, y):
         self.draw_effect_frames([frame], [image_id], 1, x, y)
 
-    def draw_effect_frames(self, frames, image_ids, count, x, y):  # c.java:236-245
+    def draw_effect_frames(self, frames, image_ids, count, x, y):
         loaded = 0
         image = None
         for b in range(count):
@@ -435,7 +434,7 @@ class MapScene(GameCanvas):
                 self.draw_map_region(image, x - frames[b].ox, y - frames[b].oy,
                                image.getWidth(), image.getHeight(), 0, 0)
 
-    def draw_actors(self):  # c.java:247-260  (hero and enemies, sorted by y)
+    def draw_actors(self):  # hero and enemies, sorted by y
         bool_ = True
         hero = GameCanvas.hero
         hero.sprite_frame = hero.anims[hero.action[0]][hero.dir[0]][hero.frame[0]]
@@ -449,7 +448,7 @@ class MapScene(GameCanvas):
             self.draw_hero()
         self.draw_breaking()
 
-    def draw_breaking(self):  # c.java:262-279  (breaking-object animation)
+    def draw_breaking(self):  # breaking-object animation
         for b in range(GameCanvas.breakable_count):
             breakable = GameCanvas.breakables[b]
             if breakable.active != 0 and breakable.break_frame != 0:
@@ -469,7 +468,7 @@ class MapScene(GameCanvas):
             raise ValueError("NegativeArraySizeException")
         GameCanvas.enemy_fx_parts = src[n:]
 
-    def draw_enemy(self, index):  # c.java:287-566  (draw an enemy: soldier 201-203 or general)
+    def draw_enemy(self, index):  # draw an enemy: soldier 201-203 or general
         actor = GameCanvas.actors[index]
         actor.action[0] = min(actor.action[0], len(actor.anims[actor.dir[0]]) - 1)
         i = actor.pos[0].x - GameCanvas.camera.x
@@ -668,7 +667,7 @@ class MapScene(GameCanvas):
             spark = GameCanvas.spark_frames[weapon_front]
             MapScene.mark_dirty(actor.hit_fx_pos.x - spark.ox, actor.hit_fx_pos.y - spark.oy, spark.w, spark.h)
 
-    def draw_general_weapon(self, x, y, frame, index):  # c.java:568-571  (a general's weapon)
+    def draw_general_weapon(self, x, y, frame, index):  # a general's weapon
         self.draw_map_region(GameCanvas.images[40 + GameCanvas.general.side], x - frame.ox, y - frame.oy, frame.w, frame.h, frame.src_x, frame.src_y)
         MapScene.mark_dirty(GameCanvas.actors[index].pos[0].x - frame.ox, GameCanvas.actors[index].pos[0].y - frame.oy, frame.w, frame.h)
 
@@ -677,7 +676,7 @@ class MapScene(GameCanvas):
             raise ValueError("NegativeArraySizeException")
         GameCanvas.hero_fx_parts = src[n:]
 
-    def draw_hero(self):  # c.java:575-892  (draw the hero: shadow, body, weapon, effects)
+    def draw_hero(self):  # draw the hero: shadow, body, weapon, effects
         hero = GameCanvas.hero
         trail = -1
         fx_data = None
@@ -697,7 +696,7 @@ class MapScene(GameCanvas):
             weapon_set = GameCanvas.hero_body_frames[hero.weapon_kind]
         action = hero.action[0]
         frame = hero.frame[0]
-        # switch (cz.e[0]) - case 27 falls through into case 26 (no break in the original)
+        # switch - case 27 falls through into case 26 (no break in the original)
         if action == 2:
             GameCanvas.hero_fx_kind = 1
             GameCanvas.hero_fx_image = GameCanvas.images[44]
@@ -890,7 +889,7 @@ class MapScene(GameCanvas):
             spark = GameCanvas.spark_frames[shadow]
             MapScene.mark_dirty(hero.hit_fx_pos.x - spark.ox, hero.hit_fx_pos.y - spark.oy, spark.w, spark.h)
 
-    def run_cell_scripts(self, tx, ty, tw, th):  # c.java:894-915  (run the scripts of cells)
+    def run_cell_scripts(self, tx, ty, tw, th):  # run the scripts of cells
         for b in range(th):
             for col in range(tw):
                 i = tx + col + ty + b & 0x7
@@ -910,16 +909,16 @@ class MapScene(GameCanvas):
                     if i == 0:
                         break
 
-    def run_cell_script(self, op, mission, enemy, tx, ty):  # c.java:917-926
+    def run_cell_script(self, op, mission, enemy, tx, ty):
         if op == 0:
             if GameCanvas.mission == mission - 1:
                 self.create_enemy(enemy + 200, tx, ty, 4)
             return 3
         return 0
 
-    def create_enemy(self, kind, tx, ty, direction):  # c.java:928-1015  (create an enemy)
+    def create_enemy(self, kind, tx, ty, direction):  # create an enemy
         if config.NO_ENEMIES:
-            # PORT-EXTRA (POW_NO_ENEMIES=1): the map without the combat - nobody is created
+            # (POW_NO_ENEMIES=1): the map without the combat - nobody is created
             return
         spawn_dx = [0, -56, 0, 56, 0]
         spawn_dy = [56, 0, -56, 0, 0]
@@ -928,10 +927,9 @@ class MapScene(GameCanvas):
             b += 1
         actor = GameCanvas.actors[b]
         actor.active = 1
-        if config.DECOMP_FIX["F16"] and actor.pos[1] is not actor.pos[0]:
-            # DECOMP-FIX F16: the start position is written into ex.a[1], but the enemy AI
-            # (ar.java:1340-1600) moves ex.a[0]. Both are the same object once ar.aC()
-            # (ex.a[1] = ex.a[0], ar.java:1831) has run for this slot; a slot used for the
+        if actor.pos[1] is not actor.pos[0]:    # the enemy AI moves pos[0]: one object for both
+            # the start position is written into pos[1], but the enemy AI moves pos[0]
+            # has run for this slot; a slot used for the
             # first time keeps a[0] at (0, 0), the enemy is pushed into the top-left corner
             # of the room and can stay stuck there behind a tent or a wall.
             actor.pos[1] = actor.pos[0]
@@ -997,7 +995,7 @@ class MapScene(GameCanvas):
         if kind != 202:
             GameCanvas.enemies_alive = i16(GameCanvas.enemies_alive + 1)
 
-    def enemy_stats(self, kind, index):  # c.java:1017-1041  (level, attack, defence, HP of a new enemy)
+    def enemy_stats(self, kind, index):  # level, attack, defence, HP of a new enemy
         attack_pct = [100, 100, 150]
         base_attack = [3, 2, 3]
         base_hp = [7, 5, 7]
@@ -1020,7 +1018,7 @@ class MapScene(GameCanvas):
         actor.hp = actor.max_hp = i16(base_hp[kind] + 3 * actor.level)
 
     @staticmethod
-    def reset_actors():  # c.java:1043-1050
+    def reset_actors():
         GameCanvas.actor_count = 0
         GameCanvas.enemies_alive = 0
         for b in range(7):
@@ -1028,7 +1026,7 @@ class MapScene(GameCanvas):
                 GameCanvas.actors[b] = Actor()
             GameCanvas.actors[b].active = 0
 
-    def find_reachable(self, room_tx, room_ty, px, py):  # c.java:1052-1075  (reachable cells of the room)
+    def find_reachable(self, room_tx, room_ty, px, py):  # reachable cells of the room
         i = idiv(px, 27)
         ty = idiv(py, 27)
         if i < room_tx:
@@ -1049,7 +1047,7 @@ class MapScene(GameCanvas):
                     GameCanvas.reachable[b][row] = -1
         self.flood_fill(i - room_tx, ty - room_ty)
 
-    def flood_fill(self, cx, cy):  # c.java:1077-1086  (flood fill)
+    def flood_fill(self, cx, cy):  # flood fill
         dx = [0, -1, 0, 1]
         dy = [1, 0, -1, 0]
         GameCanvas.reachable[cx][cy] = 1
@@ -1059,14 +1057,8 @@ class MapScene(GameCanvas):
             if -1 < nx < 7 and -1 < ny < 7 and GameCanvas.reachable[nx][ny] == 0:
                 self.flood_fill(nx, ny)
 
-    def load_rooms(self, map_no):  # c.java:1089-1115  (rooms of the map: exits, enemy waves)
-        if config.DECOMP_FIX["F17"]:
-            # DECOMP-FIX F17 (also here): `cE.b.a / 7 * cE.b.b / 7` is (width / 7) * (height / 7);
-            # every N.arr holds exactly a whole number of missions of that many rooms. Literal,
-            # maps 30 / 37 wide (Vengeance, ...) read past the end of the room data.
-            room_count = idiv(GameCanvas.map.size.w, 7) * idiv(GameCanvas.map.size.h, 7)
-        else:
-            room_count = idiv(idiv(GameCanvas.map.size.w, 7) * GameCanvas.map.size.h, 7)
+    def load_rooms(self, map_no):  # rooms of the map: exits, enemy waves
+        room_count = idiv(GameCanvas.map.size.w, 7) * idiv(GameCanvas.map.size.h, 7)
         data = GameCanvas.load_data_file(map_no - 1)
         i = 20 + room_count * GameCanvas.mission * 19
         u8 = GameCanvas.u8
@@ -1095,16 +1087,16 @@ class MapScene(GameCanvas):
             i += 19
 
     @staticmethod
-    def hero_cell():  # c.java:1117-1120  (hero pixel position -> cell)
+    def hero_cell():  # hero pixel position -> cell
         GameCanvas.hero.room_pos[0].x = i16(idiv(GameCanvas.hero.pos[0].x, 27))
         GameCanvas.hero.room_pos[0].y = i16(idiv(GameCanvas.hero.pos[0].y - 6, 27))
 
     @staticmethod
-    def free_map():  # c.java:1122-1125
+    def free_map():
         if GameCanvas.map is not None:
             GameCanvas.map.free()
 
-    def load_map(self, map_no):  # c.java:1127-1162  (load map file #paramInt of mdat)
+    def load_map(self, map_no):  # load map file #paramInt of mdat
         map_data = MapData()
         MapScene.free_map()
         data = ResReader.read("/" + GameCanvas.scr_maps.get(map_no - 1))
@@ -1139,22 +1131,22 @@ class MapScene(GameCanvas):
         return map_data
 
     @staticmethod
-    def reset_cell_scripts():  # c.java:1164-1171
+    def reset_cell_scripts():
         GameCanvas.cell_script_next = 8
         for b in range(50):
             if GameCanvas.cell_scripts[b] is None:
                 GameCanvas.cell_scripts[b] = ScriptSlot()
             GameCanvas.cell_scripts[b].used = 0
-            # PORT-EXTRA (hang fix): the original clears only .c and keeps the links .b of the
+            # (hang fix): the original clears only .c and keeps the links .b of the
             # previous map. a_III() walks .b without looking at .c, so on a later map it can follow
             # an old link and set a node's .b to a lower index (even to itself): a cycle, and the
             # next a_III() into that bucket loops forever (the game freezes on a map load after
-            # some missions; the Java code has the same bug). A cleared link ends every walk at a
+            # the original has the same bug). A cleared link ends every walk at a
             # node of this map, so a link always points to a higher index and cannot cycle.
             GameCanvas.cell_scripts[b].next = 0
 
     @staticmethod
-    def cell_script_slot(offset, tx, ty):  # c.java:1173-1190  (hash of cell scripts by (x + y) & 7)
+    def cell_script_slot(offset, tx, ty):  # (hash of cell scripts by (x + y) & 7)
         i = tx + ty & 0x7
         if GameCanvas.cell_scripts[i] is None:
             GameCanvas.cell_scripts[i] = ScriptSlot()
@@ -1170,11 +1162,11 @@ class MapScene(GameCanvas):
         GameCanvas.cell_scripts[i].used = 1
         GameCanvas.cell_scripts[i].offset = offset
         GameCanvas.cell_scripts[i].next = 0
-    # NOTE: in a_III the decompiled order sets cH[i].b = cI *after* cI++, so it points one past
+    # NOTE: the order sets cH[i].b = cI *after* cI++, so it points one past
     # the entry just filled and the second script of a bucket is never found by g_IIII (that
     # script's cell enemies are not spawned). Kept literal: it is the order of the bytecode.
 
-    def draw_tiles(self, tiles_w, tiles_h, tx, ty, full):  # c.java:1197-1391
+    def draw_tiles(self, tiles_w, tiles_h, tx, ty, full):
         # (draw the visible tiles into ct[7], load the tile images, set up the room the hero is in)
         game_map = GameCanvas.map
         Gfx.set_graphics(GameCanvas.buffer_g)
@@ -1283,14 +1275,8 @@ class MapScene(GameCanvas):
         exit_dx = [0, 0, 0, 6]
         exit_dy = [6, 0, 0, 0]
         exit_step = [1, -1, -1, 1]
-        if config.DECOMP_FIX["F17"]:
-            # DECOMP-FIX F17: lost parentheses, `(ce + 4) / 7 * cE.b.a / 7` is row * (width / 7),
-            # as ar.X() steps the rows (eP +- width / 7). Literal, the 5th room row of a map
-            # 9 wide gives eP 6 instead of 5: a room that does not exist (crash) or a stale
-            # room of an earlier map.
-            GameCanvas.cell = i16(idiv(GameCanvas.view_ty + 4, 7) * idiv(game_map.size.w, 7) + idiv(GameCanvas.view_tx + 4, 7))
-        else:
-            GameCanvas.cell = i16(idiv(idiv(GameCanvas.view_ty + 4, 7) * game_map.size.w, 7) + idiv(GameCanvas.view_tx + 4, 7))
+        # the room index: row * (width / 7) + column
+        GameCanvas.cell = i16(idiv(GameCanvas.view_ty + 4, 7) * idiv(game_map.size.w, 7) + idiv(GameCanvas.view_tx + 4, 7))
         MapScene.reset_actors()
         for row in range(14):
             GameCanvas.waves[row] = 0
@@ -1351,7 +1337,7 @@ class MapScene(GameCanvas):
         Gfx.set_graphics(GameCanvas.screen_g)
 
     @staticmethod
-    def make_exp_bars():  # c.java:1616-1641  (mission experience -> dZ bars)
+    def make_exp_bars():  # mission experience -> dZ bars
         exp_table = GameCanvas.menus.load_exp_table()
         hero = GameCanvas.hero
         lord = GameCanvas.lords[GameCanvas.mission]
@@ -1374,7 +1360,7 @@ class MapScene(GameCanvas):
                     break
         GameCanvas.exp_bar_step = 0
 
-    def tick_scene(self):  # c.java:1643-2136  (one map tick: erase, input, hero movement / actions)
+    def tick_scene(self):  # one map tick: erase, input, hero movement / actions
         from pow.game.map_engine import MapEngine
         hero = GameCanvas.hero
         self._erase_actors()
@@ -1442,11 +1428,11 @@ class MapScene(GameCanvas):
         skill = 0
         key = GameCanvas.key
         if config.NO_COMBAT and key in (49, 51, 55, 57, 48, -5, 53, 35, 42, -101, -102, -103, -104, -105):
-            # PORT-EXTRA (POW_NO_COMBAT=1): attack, skill and potion keys do nothing
+            # (POW_NO_COMBAT=1): attack, skill and potion keys do nothing
             key = None
         belt = -1
         if key in (-101, -102, -103, -104, -105) and config.SKILL_BAR:
-            # PORT-EXTRA config.SKILL_BAR: Z X C V B (or a click on the belt) = belt slot 0..4,
+            # config.SKILL_BAR: Z X C V B (or a click on the belt) = belt slot 0..4,
             # used exactly like the slot of * / # below
             belt = -101 - key
             key = 42
@@ -1507,8 +1493,8 @@ class MapScene(GameCanvas):
         GameCanvas.save_flag = 0
         self.save_game()
 
-    def _hold_to_move(self, hero):  # tick_scene: PORT-EXTRA config.HOLD_TO_MOVE / auto-hunt
-        # PORT-EXTRA (config.HOLD_TO_MOVE): the hero walks only while a direction key or the
+    def _hold_to_move(self, hero):  # tick_scene: config.HOLD_TO_MOVE / auto-hunt
+        # (config.HOLD_TO_MOVE): the hero walks only while a direction key or the
         # mouse button is held; released = stand, still held after an attack = walk again
         from pow.game.midlet import Midlet
         held = Midlet.canvas.held_direction() if Midlet.canvas is not None else None
@@ -1619,30 +1605,14 @@ class MapScene(GameCanvas):
             i = GameCanvas.engine.move(hero.pos[0], step_x, step_y, move_dir, -1)
             if hero.action[0] == 1:
                 if hero.facing in (0, 2, 4, 6):
-                    if F14:
-                        # DECOMP-FIX F14: decompiled as `k = aw[i]; m = ax[i]; if (i == -1 &&
-                        # (i = ar.c(..)) != -1 && (i = bc.a(.., k, m, i, -1)) > -1 && i < 8)`:
-                        # aw[-1] when the hero walks into a wall. The step must use the new
-                        # direction returned by ar.c() (slide around the corner).
-                        if i == -1:
-                            i = MapEngine.slide_corner(hero.pos[0], hero.dir[0], -1)
-                            if i != -1:
-                                step_x = consts.dir_dx8[i]
-                                step_y = consts.dir_dy8[i]
-                                i = GameCanvas.engine.move(hero.pos[0], step_x, step_y, i, -1)
-                                if -1 < i < 8:
-                                    hero.dir[0] = i
-                    else:
-                        if i < 0:
-                            raise IndexError("ArrayIndexOutOfBoundsException: aw[%d]" % i)
-                        step_x = consts.dir_dx8[i]
-                        step_y = consts.dir_dy8[i]
-                        if i == -1:
-                            i = MapEngine.slide_corner(hero.pos[0], hero.dir[0], -1)
-                            if i != -1:
-                                i = GameCanvas.engine.move(hero.pos[0], step_x, step_y, i, -1)
-                                if -1 < i < 8:
-                                    hero.dir[0] = i
+                    if i == -1:                  # a wall: slide around the corner
+                        i = MapEngine.slide_corner(hero.pos[0], hero.dir[0], -1)
+                        if i != -1:
+                            step_x = consts.dir_dx8[i]
+                            step_y = consts.dir_dy8[i]
+                            i = GameCanvas.engine.move(hero.pos[0], step_x, step_y, i, -1)
+                            if -1 < i < 8:
+                                hero.dir[0] = i
                 elif hero.facing in (1, 3, 5, 7) and i not in (-1, 9):
                     hero.dir[0] = i
 
@@ -1776,7 +1746,7 @@ class MapScene(GameCanvas):
                     GameCanvas.engine.hero_hits_breakables()
         return world_runs
 
-    def erase_breaking(self):  # c.java:2138-2148  (erase the breaking-object animation)
+    def erase_breaking(self):  # erase the breaking-object animation
         for b in range(GameCanvas.breakable_count):
             breakable = GameCanvas.breakables[b]
             if breakable.active != 0 and breakable.break_frame != 0:
@@ -1786,12 +1756,12 @@ class MapScene(GameCanvas):
                 breakable.break_frame = i16(breakable.break_frame - 1)
                 self.erase_spark(spark, i, sy)
 
-    def erase_spark(self, frame, x, y):  # c.java:2150-2152  (erase an eV frame from ct[7])
+    def erase_spark(self, frame, x, y):  # erase an eV frame from ct[7]
         spark = GameCanvas.spark_frames[frame]
         self.draw_map_region(GameCanvas.images[7], x - spark.ox, y - spark.oy, spark.w, spark.h,
                        x - spark.ox + GameCanvas.view_offset.x, y - spark.oy + GameCanvas.view_offset.y)
 
-    def erase_exit_arrows(self):  # c.java:2154-2162  (erase the exit arrows)
+    def erase_exit_arrows(self):  # erase the exit arrows
         arrow_x = [GameCanvas.view_cx - 9, 5, GameCanvas.view_cx - 9, GameCanvas.view_size.x - 31]
         arrow_y = [GameCanvas.view_size.y - 31, GameCanvas.view_cy - 13, 5, GameCanvas.view_cy - 13]
         if GameCanvas.room_phase_timer < 1 and (GameCanvas.exit_blink & 0x2) != 0:
@@ -1800,7 +1770,7 @@ class MapScene(GameCanvas):
                     self.draw_map_region(GameCanvas.images[7], arrow_x[b], arrow_y[b], GameCanvas.images[21 + b].getWidth(),
                                    GameCanvas.images[21 + b].getHeight(), arrow_x[b] + GameCanvas.view_offset.x, arrow_y[b] + GameCanvas.view_offset.y)
 
-    def erase_hero(self):  # c.java:2164-2253  (erase the hero at its previous position)
+    def erase_hero(self):  # erase the hero at its previous position
         hero = GameCanvas.hero
         if hero.action[1] < 12:
             head_set = hero.head_frames
@@ -1872,7 +1842,7 @@ class MapScene(GameCanvas):
             step = hero.hit_fx_frame
             self.erase_spark(step, i, sy)
 
-    def erase_weapon_trail(self, index, step):  # c.java:2255-2281  (erase a weapon trail)
+    def erase_weapon_trail(self, index, step):  # erase a weapon trail
         if index > -1:
             pos = GameCanvas.actors[index].pos[1]
             if GameCanvas.actors[index].action[1] == 19:
@@ -1893,7 +1863,7 @@ class MapScene(GameCanvas):
             self.draw_map_region(GameCanvas.images[7], sx - part.ox, sy - part.oy, part.w, part.h, sx - part.ox + GameCanvas.view_offset.x, sy - part.oy + GameCanvas.view_offset.y)
             frame += 1
 
-    def erase_enemies(self):  # c.java:2283-2340  (erase the enemies)
+    def erase_enemies(self):  # erase the enemies
         cc_a = GameCanvas.view_offset.x
         cc_b = GameCanvas.view_offset.y
         back = GameCanvas.images[7]
@@ -1953,7 +1923,7 @@ class MapScene(GameCanvas):
                 frame = actor.hit_fx_frame + (actor.hit_fx_kind - 1 << 1)
                 self.erase_spark(frame, i, sy)
 
-    def erase_general_weapon(self, index):  # c.java:2350-2421  (erase a general's weapon effect)
+    def erase_general_weapon(self, index):  # erase a general's weapon effect
         actor = GameCanvas.actors[index]
         pos = actor.pos[1]          # (the same object: case 21 moves it, as in the original)
         GameCanvas.enemy_fx_kind = 0
@@ -2010,10 +1980,10 @@ class MapScene(GameCanvas):
                            i - fx_part.ox - 8 + GameCanvas.view_offset.x, sy - fx_part.oy - 8 + GameCanvas.view_offset.y)
 
     @staticmethod
-    def frames_from(frames, start):  # c.java:2342-2348
+    def frames_from(frames, start):
         return frames[start:]
 
-    def erase_drops(self):  # c.java:2423-2428  (erase the dropped items)
+    def erase_drops(self):  # erase the dropped items
         for b in range(GameCanvas.drop_count):
             drop = GameCanvas.drops[b]
             if drop.item != 0:
@@ -2021,7 +1991,7 @@ class MapScene(GameCanvas):
                 y = drop.pos.y - GameCanvas.camera.y - (drop.h >> 1)
                 self.draw_map_region(GameCanvas.images[7], x, y, drop.w, drop.h, x + GameCanvas.view_offset.x, y + GameCanvas.view_offset.y)
 
-    def erase_hero_effects(self):  # c.java:2430-2514  (erase the hero's weapon effects)
+    def erase_hero_effects(self):  # erase the hero's weapon effects
         hero = GameCanvas.hero
         pos = Point()
         pos.x = hero.pos[1].x
@@ -2084,7 +2054,7 @@ class MapScene(GameCanvas):
             GameCanvas.hero_fx_kind = 0
             GameCanvas.hero_fx_count = 1
 
-    def erase_message(self):  # c.java:2516-2523  (erase the message box dT)
+    def erase_message(self):  # erase the message box dT
         i = (Font.ascent() + Font.gap()) * len(GameCanvas.message.name) + 3
         self.draw_map_region(GameCanvas.images[7], GameCanvas.view_size.x - i - 7, 0, i + 7, 40, GameCanvas.view_size.x - i + GameCanvas.view_offset.x - 7, GameCanvas.view_offset.y)
         MapScene.mark_dirty(GameCanvas.camera.x + GameCanvas.view_size.x - i - 7, GameCanvas.camera.y, i + 7, 40)
@@ -2092,7 +2062,7 @@ class MapScene(GameCanvas):
         if GameCanvas.message.ticks < 1:
             GameCanvas.message.shown = 0
 
-    def erase_gold_and_clock(self):  # c.java:2525-2537  (erase the gold counter and the clock)
+    def erase_gold_and_clock(self):  # erase the gold counter and the clock
         if GameCanvas.message.shown != 0:
             self.erase_message()
         else:
@@ -2104,7 +2074,7 @@ class MapScene(GameCanvas):
         self.draw_map_region(GameCanvas.images[7], 0, 0, 60, 20, GameCanvas.view_offset.x, GameCanvas.view_offset.y)
         MapScene.mark_dirty(GameCanvas.camera.x, GameCanvas.camera.y, 60, 20)
 
-    def draw_potion_effect(self):  # c.java:2539-2590  (potion / scroll effect dU)
+    def draw_potion_effect(self):  # potion / scroll effect dU
         steps = [2, 10, 100, 2, 2, 2, 2, 2, 2, 2, 2, 2, 100, 100]
         frames_file = [63, 60]
         restores = [1, 1, 1, 2, 2, 2, 3, 3, 3]

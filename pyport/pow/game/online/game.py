@@ -1,14 +1,13 @@
-"""Glue of the MP client: loading order and the async main loop.
+"""Glue of the multiplayer screens: the loading order, one frame, the loop of the standalone client.
 
-g.run() / g.c() of the jar is a thread with Thread.sleep; the browser needs one asyncio loop,
-so run() below is g.c() with `await` (same order of steps, g.java:414-469), plus one step of
-the network "thread" (pow/game/online/net_thread.py) per frame.
+The game loop is one asyncio loop (the browser needs it), so a frame is an `async` step with
+one step of the network "thread" (pow/game/online/net_thread.py).
 """
 import importlib
 
 from pow.midp import system
 
-# static initialisers in the JVM order (interface l = consts first)
+# the JVM order (interface l = consts first)
 MODS = ["consts", "draw", "gfx", "font", "answer", "frame_writer", "frame_reader", "mp_canvas", "mp_game"]
 _loaded = None
 
@@ -29,7 +28,7 @@ def load():
 
 
 async def frame(self, midlet):
-    """One pass of g.c() (g.java:423-469): keys, paint, music, the frame's wait. False once the
+    """One frame: keys, paint, music, the frame's wait. False once the
     screens are over (the Exit of the main menu, or the window closed)."""
     from pow.game.online.consts import Consts
     from pow.game.online.mp_canvas import MpCanvas
@@ -37,7 +36,7 @@ async def frame(self, midlet):
     if self.quit_requested or midlet.destroyed:
         return False
     MpCanvas.frame_start = system.currentTimeMillis()
-    NetThread.tick()                                   # the network thread (h.run)
+    NetThread.tick()                                   # the network thread
     if MpCanvas.paused:
         if MpCanvas.key != -999:
             self.handle_key(MpCanvas.key)
@@ -81,7 +80,7 @@ def close(self):
 
 
 async def run(self, midlet):
-    """g.run() + g.c() (g.java:414-469): the standalone client (mp_main.py)."""
+    """The loop of the standalone client (mp_main.py)."""
     self.init_screen()
     while await frame(self, midlet):
         pass

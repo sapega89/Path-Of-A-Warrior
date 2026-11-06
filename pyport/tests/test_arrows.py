@@ -1,4 +1,4 @@
-"""Archers' arrows (ar.Z / ar.j / ar.ad, DECOMP-FIX F18)."""
+"""Archers' arrows."""
 
 
 def _setup(monkeypatch):

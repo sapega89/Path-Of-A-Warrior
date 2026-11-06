@@ -1,4 +1,4 @@
-# random keys (fuzzer seed 1363, 1500 steps) that crashed the game before ORIG-BUG B8
+# random keys (fuzzer seed 1363, 1500 steps) that crashed the game before
 # Mission list -> lord -> mission -> description -> accept -> briefing (fresh hero)
 wait 25
 key FIRE

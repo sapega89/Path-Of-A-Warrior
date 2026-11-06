@@ -1,4 +1,4 @@
-"""PORT-EXTRA (asked by Andrey): the server's security settings (python -m pow_server --help).
+"""(asked by Andrey): the server's security settings (python -m pow_server --help).
 
 The original server is lost; these limits are the port's own. One Guard is shared by
 the three servers of serve() (multiplayer /, Live /live, saves /save), so a guessing

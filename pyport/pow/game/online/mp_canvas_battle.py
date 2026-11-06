@@ -1,6 +1,6 @@
-"""g.java, part of MpCanvas: the battle: turns, fighters and their animations, timing bar, damage, HP bars, action cards.
+""", part of MpCanvas: the battle: turns, fighters and their animations, timing bar, damage, HP bars, action cards.
 
-A mixin of MpCanvas (pow/game/online/mp_canvas.py); the methods keep their `# g.java:FROM-TO`
+A mixin of MpCanvas (pow/game/online/mp_canvas.py); the methods keep their `# :FROM-TO`
 comments. The module names below are set by mp_canvas.py: `MpCanvas` once the class exists,
 the others by its _late_imports().
 """
@@ -16,7 +16,7 @@ SpriteFrames = Consts = Draw = None   # set by mp_canvas._late_imports
 
 class BattleMixin:
     @staticmethod
-    def update_bars():  # g.java:3263
+    def update_bars():
         MpCanvas.fighter_hp_delta[MpCanvas.loop_i] = (MpCanvas.fighter_hp_target[MpCanvas.loop_i] - MpCanvas.fighter_hp[MpCanvas.loop_i])
         MpCanvas.fighter_hp_step[MpCanvas.loop_i] = idiv(MpCanvas.fighter_hp_delta[MpCanvas.loop_i], 5)
         if MpCanvas.fighter_hp_step[MpCanvas.loop_i] == 0:
@@ -32,7 +32,7 @@ class BattleMixin:
             if MpCanvas.fighter_mp_target[MpCanvas.loop_i] < MpCanvas.fighter_mp[MpCanvas.loop_i]:
                 MpCanvas.fighter_mp_step[MpCanvas.loop_i] = (-1)
 
-    def reset_turn(self):  # g.java:3285
+    def reset_turn(self):
         MpCanvas.anim_frame = 0
         MpCanvas.target2 = (-1)
         MpCanvas.damage_tick = (-1)
@@ -89,7 +89,7 @@ class BattleMixin:
             MpCanvas.run_dy = (0 if (MpCanvas.room_mode == 0) else (0 if (idiv(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == idiv(MpCanvas.turn_bytes[(12 + MpCanvas.turn_rec)], 2)) else (idiv(46, Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]]) if (idiv(MpCanvas.fighter_slot[MpCanvas.attacker], 2) == 0) else idiv((-46), Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]]))))
         MpCanvas.anim_length = Consts.anim_length[MpCanvas.fighter_anim[MpCanvas.attacker]]
 
-    def draw_notice(self):  # g.java:3746
+    def draw_notice(self):
         self.draw_buffer()
         self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 116, 76, 0)
         i = 0
@@ -98,7 +98,7 @@ class BattleMixin:
             i = i + 1
         self.draw_ok_button(MpCanvas.center_y + 22)
 
-    def draw_turn_fighters(self):  # g.java:3757
+    def draw_turn_fighters(self):
         MpCanvas.loop_i = 0
         while MpCanvas.loop_i < 4:
             if MpCanvas.fighter_present[MpCanvas.loop_i] and (MpCanvas.loop_i != MpCanvas.attacker):
@@ -122,7 +122,7 @@ class BattleMixin:
             return
         self.draw_fighter_anim()
 
-    def draw_fighter_hit(self):  # g.java:3801
+    def draw_fighter_hit(self):
         MpCanvas.anim_id = MpCanvas.fighter_anim[MpCanvas.loop_i]
         if MpCanvas.fighter_kind[MpCanvas.loop_i] == 2:
             MpCanvas.anim_id = (MpCanvas.anim_id + 21)
@@ -131,7 +131,7 @@ class BattleMixin:
         MpCanvas.fighter_fx_frame[MpCanvas.loop_i] = (-1)
         self.draw_fighter(MpCanvas.screen_g, MpCanvas.loop_i)
 
-    def draw_fighter_evade(self):  # g.java:3813
+    def draw_fighter_evade(self):
         MpCanvas.anim_id = (26 if (MpCanvas.fighter_kind[MpCanvas.loop_i] == 2) else 5)
         MpCanvas.fighter_frame[MpCanvas.loop_i] = Consts.anim_first_frame[MpCanvas.anim_id]
         if MpCanvas.fighter_anim_tick[MpCanvas.loop_i] == 0:
@@ -142,20 +142,20 @@ class BattleMixin:
         MpCanvas.fighter_fx_frame[MpCanvas.loop_i] = (-1)
         self.draw_fighter(MpCanvas.screen_g, MpCanvas.loop_i)
 
-    def draw_fighter_dying(self):  # g.java:3828
+    def draw_fighter_dying(self):
         MpCanvas.anim_id = (27 if (MpCanvas.fighter_kind[MpCanvas.loop_i] == 2) else 6)
         MpCanvas.fighter_frame[MpCanvas.loop_i] = (Consts.anim_first_frame[MpCanvas.anim_id] + MpCanvas.anim_frame)
         MpCanvas.fighter_fx_frame[MpCanvas.loop_i] = (-1)
         self.draw_fighter(MpCanvas.screen_g, MpCanvas.loop_i)
 
-    def draw_fighter_run(self):  # g.java:3835
+    def draw_fighter_run(self):
         MpCanvas.fighter_frame[MpCanvas.loop_i] = (Consts.anim_first_frame[23] if (MpCanvas.fighter_kind[MpCanvas.loop_i] == 2) else Consts.anim_first_frame[2])
         MpCanvas.fighter_x[MpCanvas.loop_i] += MpCanvas.run_dx
         MpCanvas.fighter_y[MpCanvas.loop_i] += MpCanvas.run_dy
         MpCanvas.fighter_fx_frame[MpCanvas.loop_i] = (-1)
         self.draw_fighter(MpCanvas.screen_g, MpCanvas.loop_i)
 
-    def draw_fighter_anim(self):  # g.java:3845
+    def draw_fighter_anim(self):
         MpCanvas.anim_id = MpCanvas.fighter_anim[MpCanvas.loop_i]
         if (MpCanvas.fighter_kind[MpCanvas.loop_i] == 2) and (MpCanvas.anim_id == 3):
             MpCanvas.anim_id = 24
@@ -171,7 +171,7 @@ class BattleMixin:
         if (MpCanvas.anim_id == 12) and (MpCanvas.anim_frame >= 4):
             MpCanvas.anim_frame = MpCanvas.saved_anim_frame
 
-    def draw_fighter_idle(self, graphics):  # g.java:3867
+    def draw_fighter_idle(self, graphics):
         if MpCanvas.fighter_hp[MpCanvas.loop_i] > 0:
             if (((MpCanvas.state in {104, 105})) and (MpCanvas.fighter_kind[MpCanvas.loop_i] != 2)) and (MpCanvas.battle_won == 1):
                 if MpCanvas.state_ticks < 3:
@@ -190,7 +190,7 @@ class BattleMixin:
             MpCanvas.fighter_fx_frame[MpCanvas.loop_i] = ((10 + MpCanvas.anim_frame) - 4)
         self.draw_fighter(graphics, MpCanvas.loop_i)
 
-    def draw_quotes(self, graphics, side):  # g.java:3895
+    def draw_quotes(self, graphics, side):
         MpCanvas.loop_i = 0
         while MpCanvas.loop_i < 4:
             if MpCanvas.fighter_present[MpCanvas.loop_i] and (
@@ -203,7 +203,7 @@ class BattleMixin:
                 self.draw_text_centred(MpCanvas.box_x, (MpCanvas.box_y - 5), (MpCanvas.fighter_quote_win[MpCanvas.loop_i] if (side == 2) else MpCanvas.fighter_quote_start[MpCanvas.loop_i]), 0xFFFFFF)
             MpCanvas.loop_i = MpCanvas.loop_i + 1
 
-    def draw_fighter_record(self):  # g.java:3917
+    def draw_fighter_record(self):
         self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 78, 86, 0)
         self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (MpCanvas.center_y - 34), MpCanvas.fighter_name[MpCanvas.cur_slot], 0xFFFFFF)
         self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (MpCanvas.center_y - 20), _js(_js(Consts.texts[27], "."), MpCanvas.fighter_level[MpCanvas.cur_slot]), 0xFFFFFF)
@@ -212,14 +212,14 @@ class BattleMixin:
         self.draw_number0_on(MpCanvas.screen_g, (MpCanvas.center_x + 22), (MpCanvas.center_y + 24), MpCanvas.fighter_losses[MpCanvas.cur_slot])
         self.draw_text_left_on(MpCanvas.screen_g, (MpCanvas.center_x - 27), (MpCanvas.center_y + 23), Consts.texts[50], 0xFFFFFF)
 
-    def draw_fighters(self, graphics):  # g.java:3927
+    def draw_fighters(self, graphics):
         MpCanvas.loop_i = 0
         while MpCanvas.loop_i < 4:
             if MpCanvas.fighter_present[MpCanvas.loop_i]:
                 self.draw_fighter_idle(graphics)
             MpCanvas.loop_i = MpCanvas.loop_i + 1
 
-    def draw_target_marker(self, graphics):  # g.java:3937
+    def draw_target_marker(self, graphics):
         if imod(MpCanvas.fighter_slot[MpCanvas.target_cursor], 2) == 0:
             self.draw_text_centred_on(graphics, 30, (14 if (idiv(MpCanvas.fighter_slot[MpCanvas.target_cursor], 2) == 0) else (((MpCanvas.canvas_h - 12) - 15) + 2)), (MpCanvas.fighter_name[MpCanvas.target_cursor] if ((len(MpCanvas.fighter_alt_name[MpCanvas.target_cursor]) == 0) or (imod(MpCanvas.round_no, 2) == 0)) else MpCanvas.fighter_alt_name[MpCanvas.target_cursor]), 16400640)
             if imod(MpCanvas.state_ticks, 2) == 0:
@@ -233,7 +233,7 @@ class BattleMixin:
             return
         MpCanvas.draw_right_half_row1(graphics, (MpCanvas.canvas_w - (2 + Consts.ui_dx[48])), (((19 if (idiv(MpCanvas.fighter_slot[MpCanvas.target_cursor], 2) == 0) else (MpCanvas.canvas_h - 19))) + Consts.ui_dy[48]), 12, MpCanvas.ui_images[48])
 
-    def draw_stage_intro(self):  # g.java:3955
+    def draw_stage_intro(self):
         self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 102, 86, 0)
         self.draw_text_centred(MpCanvas.center_x, (MpCanvas.center_y - 30), MpCanvas.stage_title, 0xFFFFFF)
         self.draw_text_centred(MpCanvas.center_x, (MpCanvas.center_y - 15), _js(_js(_js(Consts.texts[26], MpCanvas.stage), "/"), MpCanvas.stage_count), 0xFFFFFF)
@@ -249,7 +249,7 @@ class BattleMixin:
             MpCanvas.loop_i = MpCanvas.loop_i + 1
 
     @staticmethod
-    def start_timing_bar():  # g.java:3974
+    def start_timing_bar():
         MpCanvas.tmp = imod(abs(MpCanvas.rng.nextInt()), 3)
         if MpCanvas.tmp == 0:
             MpCanvas.bar_speed = 4
@@ -261,7 +261,7 @@ class BattleMixin:
         MpCanvas.bar_x = (MpCanvas.center_x - 44)
         MpCanvas.bar_shown = True
 
-    def draw_timing_bar(self, graphics):  # g.java:3994
+    def draw_timing_bar(self, graphics):
         if MpCanvas.bar_shown:
             bar_y = MpCanvas.center_y
             if MpCanvas.room_mode == 0:
@@ -271,7 +271,7 @@ class BattleMixin:
             Draw.draw_image(graphics, MpCanvas.ui_images[36], ((MpCanvas.center_x - 44) + Consts.ui_dx[36]), (bar_y + Consts.ui_dy[36]), 0)
             Draw.draw_image(graphics, MpCanvas.ui_images[37], ((MpCanvas.center_x - 44) + Consts.ui_dx[37]), (bar_y + Consts.ui_dy[37]), 0)
 
-    def draw_timing_cursor(self, graphics):  # g.java:4007
+    def draw_timing_cursor(self, graphics):
         bar_y = MpCanvas.center_y
         if MpCanvas.room_mode == 0:
             bar_y = (MpCanvas.screen_h - 26)
@@ -290,11 +290,11 @@ class BattleMixin:
         if (MpCanvas.state == 97) and (MpCanvas.bar_x > ((MpCanvas.center_x - 44) + 72)):
             self.stop_timing()
 
-    def start_timing(self):  # g.java:4032
+    def start_timing(self):
         MpCanvas.timer_ticks = 0
         MpCanvas.set_state(97)
 
-    def stop_timing(self):  # g.java:4037
+    def stop_timing(self):
         MpCanvas.timer_ticks = 0
         if MpCanvas.chosen_action > 2:
             MpCanvas.hit_score = 0
@@ -305,7 +305,7 @@ class BattleMixin:
         MpCanvas.set_state(98)
 
     @staticmethod
-    def draw_sprite_frame(graphics, images, sets, frame):  # g.java:4050
+    def draw_sprite_frame(graphics, images, sets, frame):
         frames = sets[0]
         idx = 0
         if frame >= 400:
@@ -325,7 +325,7 @@ class BattleMixin:
             return
         Draw.draw_image_part(graphics, images[0], (MpCanvas.draw_x - frames.anchor_x[idx]), (MpCanvas.draw_y - frames.anchor_y[idx]), frames.w[idx], frames.h[idx], frames.src_x[idx], frames.src_y[idx])
 
-    def draw_fighter(self, graphics, index):  # g.java:4073
+    def draw_fighter(self, graphics, index):
         pose = 0
         MpCanvas.draw_mirrored = (imod(MpCanvas.fighter_slot[index], 2) != 0)
         MpCanvas.draw_x = MpCanvas.fighter_x[index]
@@ -383,7 +383,7 @@ class BattleMixin:
                 MpCanvas.draw_sprite_frame(graphics, MpCanvas.weapon_images[MpCanvas.fighter_weapon[index]], MpCanvas.weapon_frames[MpCanvas.fighter_weapon[index]], MpCanvas.fighter_frame[index])
         self.draw_fighter_effects(index, False)
 
-    def draw_fighter_effects(self, index, behind):  # g.java:4151
+    def draw_fighter_effects(self, index, behind):
         if MpCanvas.fighter_kind[index] == 2:
             if not behind:
                 self.load_sprite_dir(MpCanvas.mon_sword_images, MpCanvas.mon_sword_frames, "spr_sword_mon", 0)
@@ -401,7 +401,7 @@ class BattleMixin:
                 self.load_sprite(MpCanvas.effect_images[1], MpCanvas.effect_frames[1], "spreff2")
                 MpCanvas.draw_sprite_frame(MpCanvas.screen_g, MpCanvas.effect_images[1], MpCanvas.effect_frames[1], MpCanvas.fighter_frame[index])
 
-    def step_turn_anim(self):  # g.java:4176
+    def step_turn_anim(self):
         if MpCanvas.damage_tick >= 5:
             MpCanvas.damage_tick = (-1)
             MpCanvas.loop_i = 0
@@ -539,7 +539,7 @@ class BattleMixin:
         MpCanvas.turn_rec = MpCanvas.turn_rec + 1
         self.next_turn_record()
 
-    def next_turn_record(self):  # g.java:4372
+    def next_turn_record(self):
         if MpCanvas.turn_record_count == 0:
             MpCanvas.set_state(100)
             return
@@ -548,7 +548,7 @@ class BattleMixin:
             return
         MpCanvas.set_state(93)
 
-    def update_reactions(self):  # g.java:4388
+    def update_reactions(self):
         if ((MpCanvas.fighter_anim[MpCanvas.attacker] != 12) and (MpCanvas.fighter_anim[MpCanvas.attacker] != 13)) and (MpCanvas.turn_bytes[(28 + MpCanvas.turn_rec)] != 3):
             if (MpCanvas.target != (-1)) and (MpCanvas.fighter_anim[MpCanvas.target] != 0):
                 MpCanvas.fighter_anim_tick[MpCanvas.target] += 1
@@ -627,7 +627,7 @@ class BattleMixin:
                 return
             MpCanvas.damage_tick = 0
 
-    def start_reaction(self):  # g.java:4501
+    def start_reaction(self):
         MpCanvas.fighter_anim[MpCanvas.target] = MpCanvas.target_reaction
         MpCanvas.fighter_anim_tick[MpCanvas.target] = 0
         if (MpCanvas.fighter_anim[MpCanvas.attacker] == 16) or (MpCanvas.fighter_anim[MpCanvas.attacker] == 15):
@@ -635,14 +635,14 @@ class BattleMixin:
             return
         self.start_sound(0)
 
-    def draw_stage_complete(self):  # g.java:4511
+    def draw_stage_complete(self):
         self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 88, 72, 0)
         self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (MpCanvas.center_y - 20), MpCanvas.stage_title, 0xFFFFFF)
         MpCanvas.stage_text = _js(_js(Consts.texts[26], " "), MpCanvas.stage)
         self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (MpCanvas.center_y - 4), MpCanvas.stage_text, 0xFFFFFF)
         self.draw_text_centred_on(MpCanvas.screen_g, MpCanvas.center_x, (MpCanvas.center_y + 12), Consts.texts[28], 0xFFFFFF)
 
-    def draw_damage(self):  # g.java:4519
+    def draw_damage(self):
         if MpCanvas.damage_tick < 0:
             return
         MpCanvas.loop_i = 0
@@ -670,7 +670,7 @@ class BattleMixin:
         MpCanvas.damage_tick = MpCanvas.damage_tick + 1
 
     @staticmethod
-    def draw_hp_bars(graphics):  # g.java:4562
+    def draw_hp_bars(graphics):
         MpCanvas.loop_i = 0
         while MpCanvas.loop_i < 4:
             if MpCanvas.fighter_present[MpCanvas.loop_i]:
@@ -709,7 +709,7 @@ class BattleMixin:
             MpCanvas.loop_i = MpCanvas.loop_i + 1
 
     @staticmethod
-    def clear_fighters():  # g.java:4609
+    def clear_fighters():
         MpCanvas.loop_i = 0
         while MpCanvas.loop_i < 4:
             MpCanvas.fighter_present[MpCanvas.loop_i] = False
@@ -718,13 +718,13 @@ class BattleMixin:
         MpCanvas.enemies_alive = 0
 
     @staticmethod
-    def place_fighter(index):  # g.java:4726
+    def place_fighter(index):
         MpCanvas.fighter_x[index] = 42
         MpCanvas.fighter_y[index] = (MpCanvas.center_y + 65)
         if MpCanvas.room_mode != 0:
             MpCanvas.fighter_y[index] += ((((-1) if (idiv(MpCanvas.fighter_slot[index], 2) == 0) else 1)) * 23)
 
-    def draw_skill_menu(self, graphics):  # g.java:5068
+    def draw_skill_menu(self, graphics):
         self.draw_box(graphics, MpCanvas.center_x, (MpCanvas.center_y - 26), 110, 60, 0)
         Draw.fill_rect(graphics, (MpCanvas.center_x - 51), ((MpCanvas.center_y - 51) + (MpCanvas.skill_cursor * 12)), 102, 12, 12956683)
         MpCanvas.loop_i = 0
@@ -737,7 +737,7 @@ class BattleMixin:
                 self.draw_text_centred_on(graphics, MpCanvas.center_x, ((MpCanvas.center_y - 51) + (MpCanvas.loop_i * 12)), Consts.skill_names[(MpCanvas.skill_slots[MpCanvas.loop_i] - 3)], 0xFFFFFF)
             MpCanvas.loop_i = MpCanvas.loop_i + 1
 
-    def draw_battle_result(self):  # g.java:5085
+    def draw_battle_result(self):
         if MpCanvas.room_mode in (0, 1):
             top = (MpCanvas.center_y - 62)
             self.draw_box(MpCanvas.screen_g, MpCanvas.center_x, MpCanvas.center_y, 102, 124, 0)
@@ -777,7 +777,7 @@ class BattleMixin:
             self.draw_ok_button(top2 + 109)
 
     @staticmethod
-    def tick_status_effects():  # g.java:5133
+    def tick_status_effects():
         MpCanvas.loop_i = 0
         while MpCanvas.loop_i < 4:
             if MpCanvas.fighter_present[MpCanvas.loop_i]:
@@ -790,7 +790,7 @@ class BattleMixin:
                     break
             MpCanvas.loop_i = MpCanvas.loop_i + 1
 
-    def draw_action_cards(self):  # g.java:5152
+    def draw_action_cards(self):
         MpCanvas.box_x = 0
         if MpCanvas.state_ticks == 0:
             MpCanvas.box_x = (-40)
@@ -849,7 +849,7 @@ class BattleMixin:
                     MpCanvas.draw_image(((((MpCanvas.canvas_w - MpCanvas.box_x) - 60) + 10) + Consts.act_dx[(2 + MpCanvas.tmp)]), ((0 + MpCanvas.box_y) + Consts.act_dy[(2 + MpCanvas.tmp)]), MpCanvas.act_images[(2 + MpCanvas.tmp)])
             MpCanvas.loop_i = MpCanvas.loop_i + 1
 
-    def draw_round(self, graphics):  # g.java:5246
+    def draw_round(self, graphics):
         if MpCanvas.round_no < 10:
             Draw.draw_image_part(graphics, MpCanvas.number_images[3], (MpCanvas.center_x - 33), (MpCanvas.center_y - 31), 52, 13, 120, 0)
             self.draw_number3_on(graphics, (MpCanvas.center_x + 21), (MpCanvas.center_y - 31), MpCanvas.round_no)
@@ -858,7 +858,7 @@ class BattleMixin:
         self.draw_number3_on(graphics, (MpCanvas.center_x + 27), (MpCanvas.center_y - 31), MpCanvas.round_no)
 
     @staticmethod
-    def draw_action_pad(graphics):  # g.java:5256
+    def draw_action_pad(graphics):
         MpCanvas.box_x = MpCanvas.center_x
         MpCanvas.box_y = (MpCanvas.center_y - 40)
         if MpCanvas.room_mode == 0:
@@ -892,7 +892,7 @@ class BattleMixin:
             Draw.draw_rect(graphics, (pad_x - 1), (pad_y - 1), 24, 24, 15721306)
             Draw.draw_rect(graphics, pad_x, pad_y, 23, 23, 15721306)
 
-    def draw_battle_prompt(self, graphics, kind):  # g.java:5297
+    def draw_battle_prompt(self, graphics, kind):
         dy = 0
         if MpCanvas.room_mode == 0:
             dy = 25
@@ -918,7 +918,7 @@ class BattleMixin:
             self.draw_box(graphics, MpCanvas.center_x, ((MpCanvas.center_y + 28) + dy), 80, 24, 0)
             self.draw_text_left((MpCanvas.center_x - 30), ((MpCanvas.center_y + 23) + dy), _js(Consts.texts[7], dots), 0xFFFFFF)
 
-    def load_status_effect(self):  # g.java:5477
+    def load_status_effect(self):
         if MpCanvas.draw_mirrored:
             self.load_named_image(MpCanvas.effect_images[1], "spreff2_r", 1)
         else:
@@ -927,14 +927,14 @@ class BattleMixin:
             MpCanvas.effect3_frames[0] = SpriteFrames("/spreff3.SP2")
 
     @staticmethod
-    def draw_status_effect(graphics, kind):  # g.java:5488
+    def draw_status_effect(graphics, kind):
         frame = ((kind * 2) + imod(MpCanvas.state_ticks, 2))
         if MpCanvas.draw_mirrored:
             Draw.draw_image_part(graphics, MpCanvas.effect_images[1][1], (MpCanvas.canvas_w - ((MpCanvas.draw_x - MpCanvas.effect3_frames[0].anchor_x[frame]) + MpCanvas.effect3_frames[0].w[frame])), (MpCanvas.draw_y - MpCanvas.effect3_frames[0].anchor_y[frame]), MpCanvas.effect3_frames[0].w[frame], MpCanvas.effect3_frames[0].h[frame], MpCanvas.effect3_frames[0].src_x[frame], MpCanvas.effect3_frames[0].src_y[frame])
             return
         Draw.draw_image_part(graphics, MpCanvas.effect_images[1][0], (MpCanvas.draw_x - MpCanvas.effect3_frames[0].anchor_x[frame]), (MpCanvas.draw_y - MpCanvas.effect3_frames[0].anchor_y[frame]), MpCanvas.effect3_frames[0].w[frame], MpCanvas.effect3_frames[0].h[frame], MpCanvas.effect3_frames[0].src_x[frame], MpCanvas.effect3_frames[0].src_y[frame])
 
-    def draw_hp_bar_frames(self):  # g.java:5609
+    def draw_hp_bar_frames(self):
         Draw.fill_rect(MpCanvas.buffer_g, 0, 0, MpCanvas.canvas_w, 12, 0)
         MpCanvas.draw_hp_bar_frame(0)
         x = 0
@@ -987,7 +987,7 @@ class BattleMixin:
             Draw.draw_vline(MpCanvas.buffer_g, x, (MpCanvas.canvas_h - 10), 1, 8429760)
 
     @staticmethod
-    def draw_hp_bar_frame(slot):  # g.java:5663
+    def draw_hp_bar_frame(slot):
         x = (28 if (imod(slot, 2) == 0) else ((((MpCanvas.canvas_w - 28) - 1) - MpCanvas.hp_bar_w) + 2))
         y = (0 if (idiv(slot, 2) == 0) else ((MpCanvas.canvas_h - 3) - 6))
         i = 0
@@ -999,7 +999,7 @@ class BattleMixin:
             Draw.draw_hline(MpCanvas.buffer_g, x, (y + 2), (MpCanvas.hp_bar_w - 1), 0xC0C0C0)
             i = i + 1
 
-    def draw_battle_hud(self, graphics):  # g.java:5748
+    def draw_battle_hud(self, graphics):
         MpCanvas.loop_i = 0
         while MpCanvas.loop_i < 4:
             if MpCanvas.fighter_present[MpCanvas.loop_i]:

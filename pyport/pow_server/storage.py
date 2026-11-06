@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS saves (
 
 
 def _pbkdf2_sha256(password, salt, rounds):
-    """PBKDF2-HMAC-SHA256 with a 32-byte key, the same bytes as hashlib.pbkdf2_hmac. PORT-EXTRA:
+    """PBKDF2-HMAC-SHA256 with a 32-byte key, the same bytes as hashlib.pbkdf2_hmac. 
     the Python of the browser build (pygbag) has no hashlib.pbkdf2_hmac (no OpenSSL), and the
     server inside the page logs players in with it."""
     inner, outer = hashlib.sha256(), hashlib.sha256()
@@ -70,7 +70,7 @@ class Storage:
         self.db = sqlite3.connect(path, check_same_thread=False, isolation_level=None)
         self.lock = threading.Lock()
         self.db.executescript(_SCHEMA)
-        # PORT-EXTRA (asked by Andrey): the save stores lost the original publisher's prefix
+        # the save stores lost the original publisher's prefix
         # (pow/midp/rms.py RENAMED); rows saved under the old names move to the new ones
         old = "game" + "vil_"
         self.db.execute("UPDATE OR IGNORE saves SET store = substr(store, ?) WHERE store LIKE ?",
@@ -134,7 +134,7 @@ class Storage:
             self.db.execute("INSERT INTO live VALUES (?,?) ON CONFLICT(key) DO UPDATE SET "
                             "data=excluded.data", (key, json.dumps(value)))
 
-    # --- PORT-EXTRA: single-player saves kept on the server (pow_server/cloud.py) -------
+    # --- single-player saves kept on the server (pow_server/cloud.py) -------
     def saves_get(self, user_id):
         """{store: {"rev", "at", "records"}} of one account."""
         with self.lock:

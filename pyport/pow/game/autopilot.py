@@ -1,8 +1,8 @@
-"""Auto-hunt on the mission map (PORT-EXTRA, config.AUTO_HUNT: the phone game had no such thing).
+"""Auto-hunt on the mission map (config.AUTO_HUNT: the phone game had no such thing).
 
 The autopilot plays like a player: every tick it may hold a direction (the HOLD_TO_MOVE walk) and
 press one phone key (attack, a skill key 1-5, the potion keys * / # or the belt Z X C V B), so the game logic stays the
-Java one. Its choices:
+the original one. Its choices:
   - potions: an HP potion below 30 % HP when no heal skill can be cast, an MP potion when the MP
     is too low for any skill while enemies are around;
   - heal (Medium / Maximum Heal) below 40 % HP; the MP of a heal is kept for it otherwise;
@@ -31,7 +31,7 @@ NEAR = (23, 24, 25)                    # a circle of 45 px
 RANGED = (26, 27)                      # a point 60 px ahead, radius 35
 STRIKES = (12, 13, 14, 20, 21, 22)     # in front, like the attack
 
-# ar.e(int) (map_engine.skill_mp_cost) without spending the MP
+# (map_engine.skill_mp_cost) without spending the MP
 MP_BASE = (5, 6, 7, 10, 15, 7, 10, 10, 8, 9, 10, 5, 6, 7, 9, 12, 20, 20, 20)
 MP_INC = (3, 4, 5, 3, 4, 3, 3, 5, 3, 4, 5, 3, 4, 5, 5, 6, 5, 5, 5)
 
@@ -137,7 +137,7 @@ class Autopilot:
         key = cls._skill(cz, foes, target, dist, reach)
         if key is not None or dist <= reach:
             cls.direction = None
-            cz.dir[0] = cz.facing = dir4(cz.pos[0], target.pos[0])     # as ar.f() turns the hero
+            cz.dir[0] = cz.facing = dir4(cz.pos[0], target.pos[0])  # turns the hero
             return key if key is not None else FIRE
         cls.direction = cls._walk(cz, target)
         return None

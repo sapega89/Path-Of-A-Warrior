@@ -1,4 +1,4 @@
-"""PORT-EXTRA (asked by Andrey): no name of the original publisher in the game's files and code,
+"""(asked by Andrey): no name of the original publisher in the game's files and code,
 and the stores renamed from its prefix move to the new names."""
 import pathlib
 

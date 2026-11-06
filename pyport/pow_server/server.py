@@ -4,14 +4,14 @@ Pure Python, no pygame and no I/O: a transport (pow_server/ws_server.py, or the 
 LocalTransport of pow/midp/transport.py) hands every received frame payload to
 Session.receive() and writes the frames the session passes to its `send` callback.
 
-Done here: login 278/262 (+ PORT-EXTRA session token), duplicate login (280), notices
+Done here: login 278/262 (+ session token), duplicate login (280), notices
 258/259, Options 288-291, Character 1280-1299, Ranking 1293/1300, keepalive.
 Battles (Room below, resolved in pow_server/battle.py): Duel 1-on-1 / 2-on-2 against CPU
 fighters and Solo Mission (512 mode 0/1/2 -> 513, 514, 1024 or 1037), Challenge 1:1 / 2:2 and
 Invite An Ally between two players (768 -> 769 to me, 770 to the other player); 1025/1026,
 1027/1028 per round; stages 1031/1036/1037/1038; 1025 after the end -> 1032.
 
-PORT-EXTRA (asked by Andrey: bots when nobody is online): server bots (add_bots). They are
+(asked by Andrey: bots when nobody is online): server bots (add_bots). They are
 accounts nobody can log in to, always "online" with Invitation: Accept, listed in the Ranking,
 so a player alone on the server can Challenge one or Invite one as an ally by its UserID. A bot
 fights as a CPU fighter of about the inviter's level (battle.cpu_fighter) under its own name.
@@ -28,7 +28,7 @@ from pow_server.storage import open_storage
 
 MATCH_WAIT = 60                                # Andrey: a whole minute for a live opponent
 MATCH_LEVELS = (10, 20)                        # level reach at first / after half the wait
-# PORT-EXTRA: the standalone server's bots (UserID, display name, Ranking Fame / grades)
+# the standalone server's bots (UserID, display name, Ranking Fame / grades)
 DEFAULT_BOTS = (("BLADE", "Blade", 900), ("RAVEN", "Raven", 600), ("TIGER", "Tiger", 400),
                 ("SHADOW", "Shadow", 250), ("IRONFIST", "Ironfist", 100))
 _ID_RE = re.compile(r"^[A-Z]{4,12}$")          # Login screen: A-Z, 4..12 (g:4888-4926)
@@ -41,8 +41,8 @@ class GameServer:
     def __init__(self, storage=None, *, require_token=True, auto_register=True,
                  notices=(), notices_version=1, clock=time.monotonic, rng=None,
                  match_wait=MATCH_WAIT):
-        """require_token: 262 must carry the token of the last 278 (PORT-EXTRA). False lets the
-        original jar in, which logs in again with 262 and its UserID only (06 §2.3).
+        """require_token: 262 must carry the token of the last 278 . False lets the
+        original client in, which logs in again with 262 and its UserID only (06 §2.3).
         auto_register: a 278 with an unknown UserID creates the account. The original only let
         in IDs registered in POW single ("Save User Data"); that bridge is task 9.10.
         notices: pages of 4 lines (16 characters each) shown once after login (258/259)."""
@@ -56,10 +56,10 @@ class GameServer:
         self.online = {}               # user id -> Session
         self.match_wait = match_wait   # seconds a Duel waits for a live opponent, then a CPU
         self.queue = []                # [Session] waiting in 512 (oldest first)
-        self.bots = {}                 # PORT-EXTRA: UserID -> Character of a server bot
-        self.guard = None              # PORT-EXTRA: security.Guard (ws_server.serve)
+        self.bots = {}                 # UserID -> Character of a server bot
+        self.guard = None              # security.Guard (ws_server.serve)
 
-    # --- PORT-EXTRA: server bots ---------------------------------------------------------
+    # --- server bots ---------------------------------------------------------
     def add_bots(self, bots=DEFAULT_BOTS):
         """Makes (or finds) the bot accounts. An ID a player already owns is skipped."""
         import secrets
@@ -124,7 +124,7 @@ class Session:
         self.server = server
         self._send = send
         self.user = None               # user id after a good 262
-        self.peer = None               # PORT-EXTRA: the client's address, for security.Guard
+        self.peer = None               # the client's address, for security.Guard
         self.char = None
         self.closed = False
         self.last_seen = server.clock()
@@ -133,7 +133,7 @@ class Session:
         self.queued_mode = None        # 512 mode while waiting for an opponent
         self.queued_at = 0
         self.slot = 0                  # my slot in it
-        self.port_client = False       # PORT-EXTRA: logged in with the port's token (chat pushes)
+        self.port_client = False       # logged in with the port's token (chat pushes)
         self.chat_rate = chat.RateLimit()
 
     # --- I/O -----------------------------------------------------------------
@@ -183,7 +183,7 @@ class Session:
         if not st.has_account(uid):
             if not self.server.auto_register:
                 return self.send(M.LOGIN_FIRST_ANS, st=-1, reason=M.REASON_NO_ID)
-            if not security.may_create(self.server, self):      # PORT-EXTRA: too many new accounts
+            if not security.may_create(self.server, self):      # too many new accounts
                 return self.send(M.LOGIN_FIRST_ANS, st=-1, reason=M.REASON_OTHER)
             st.create_account(uid, pwd)
             st.save(default_character(uid))
@@ -205,7 +205,7 @@ class Session:
             del self.server.online[self.user]   # a second 262 as another UserID on this session
         self.user = uid
         self.char = st.load(uid) or default_character(uid)
-        if apply_sp_hero(self.char, msg):        # PORT-EXTRA: the single-player hero (9.10)
+        if apply_sp_hero(self.char, msg):        # the single-player hero (9.10)
             self.save()
         self.server.online[uid] = self
         pages = 0
@@ -213,7 +213,7 @@ class Session:
             pages = len(self.server.notices)   # marked seen when the last page is delivered
         self.send(M.LOGIN_ANS, st=1, **self.char.profile(notices=pages))
         self.port_client = bool(msg.get("token"))
-        if self.port_client:                   # PORT-EXTRA: chat messages that wait for me
+        if self.port_client:                   # chat messages that wait for me
             order, private = chat.unread(st, uid, self.char.order)
             if order or private:
                 self.send(M.CHAT_UNREAD, st=1, order=order, private=private)
@@ -244,7 +244,7 @@ class Session:
         else:
             res = B.duel_rewards(self.char, b, self.slot, self.server.rng)
             cat = 2
-        # loot (9.9): one single-player drop roll per foe beaten, ar.P() kinds 0 soldier /
+        # loot (9.9): one single-player drop roll per foe beaten, kinds 0 soldier /
         # 1 general / 2 boss; mission monsters are soldiers, the fighter of the last stage a boss
         if m:
             kills = [0, 0] * min(cleared, m["stages"] - 1) + ([2, 0] if cleared == m["stages"] else [])
@@ -312,7 +312,7 @@ class Session:
 
     def on_records(self, msg):         # 1296 -> 1297
         c = self.char
-        doc = self._my_order()                 # PORT-EXTRA: the order's name
+        doc = self._my_order()                 # the order's name
         self.send(M.RECORDS_ANS, st=1, fame=c.mp_fame, duel_grade=c.duel_grade,
                   mission_grade=c.mission_grade, order=doc["name"] if doc else "")
 
@@ -355,7 +355,7 @@ class Session:
         rows += [{"rank": 0, "id": "", "value": 0}] * (3 - len(rows))
         self.send(M.RANK_LIST_ANS, st=1, rows=rows)
 
-    # --- PORT-EXTRA: orders (pow_server/orders.py) -------------------------------------
+    # --- orders (pow_server/orders.py) -------------------------------------
     def _my_order(self):
         """My order document; a stale Character.order (the order is gone) is cleared."""
         doc = orders.get(self.server.storage, self.char.order)
@@ -383,7 +383,7 @@ class Session:
         rows.sort(key=lambda r: (not r["leader"], r["id"] != self.user, not r["online"]))
         self.send(M.ORDER_INFO_ANS, st=1, name=doc["name"], rows=rows[:orders.MAX_MEMBERS])
 
-    # --- PORT-EXTRA: the chat (pow_server/chat.py) ---------------------------------------
+    # --- the chat (pow_server/chat.py) ---------------------------------------
     def _display_name(self, uid):
         if uid == self.user:
             return self.char.name or uid[:8]
@@ -483,7 +483,7 @@ class Session:
         if res == 1:
             self.char.order = name
             self.save()
-            if fn is orders.create:            # PORT-EXTRA chat: a new order starts a new chat
+            if fn is orders.create:            # chat: a new order starts a new chat
                 chat.clear(self.server.storage, chat.order_key(name))
             me = chat.me_doc(self.server.storage, self.user)   # earlier messages count as read
             me["order_seen"] = chat.history(self.server.storage, chat.order_key(name))["seq"]
@@ -591,7 +591,7 @@ class Session:
         Room(self.server, mode, fighters, {0: self, them.slot: other}, progress).start()
 
     def _invite_team(self, other):
-        """PORT-EXTRA (orders): the order member fights next to me (slots 0 and 2) against two
+        """(orders): the order member fights next to me (slots 0 and 2) against two
         CPU fighters, each of about the level of the player it faces. On the wire and on the
         server it is a 2-on-2 Duel (mode 1): the clients, rewards and a player leaving work as
         in any 2-on-2."""
@@ -602,7 +602,7 @@ class Session:
         Room(self.server, 1, fighters, {0: self, 2: other}).start()
 
     def _invite_bot(self, mode, uid):
-        """PORT-EXTRA: Challenge / Invite An Ally a server bot. The same room as against the
+        """Challenge / Invite An Ally a server bot. The same room as against the
         CPU (start_vs_cpu), the bot in the invited player's place."""
         srv, rng = self.server, self.server.rng
         me = B.from_character(self.char, 0)

@@ -1,4 +1,4 @@
-"""GameCanvas (ag.java) and MpCanvas (g.java) are split into mixin modules
+"""GameCanvas and MpCanvas are split into mixin modules
 (pow/game/canvas_*.py, pow/game/online/mp_canvas_*.py). Edge cases of that split:
 a method defined in two parts would silently shadow the other one (MRO), and a part whose module
 globals were not wired up would only fail when that code path runs."""

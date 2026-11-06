@@ -1,4 +1,4 @@
-"""PORT-EXTRA: the single player's save kept on the server (pow_server/cloud.py,
+"""the single player's save kept on the server (pow_server/cloud.py,
 pow/game/cloud_save.py)."""
 import base64
 import json

@@ -1,26 +1,23 @@
-"""MpGame (m.java): the concrete canvas of the MP jar, plays the menu music.
-
-Generated once from pyport/mp_java/m.java (branch java-reference) by the old
-tools/j2py_mp.py; edited by hand since.
+"""MpGame: the concrete canvas of the multiplayer, plays the menu music.
 """
 from pow.game.online.mp_canvas import MpCanvas
 from pow.game.online.rt import _js
 
 
 class MpGame(MpCanvas):
-    players = None  # m.java:6 c
-    requested_music = (-1)  # m.java:7 int
-    music = (-1)  # m.java:8 int
+    players = None  # c
+    requested_music = (-1)  # int
+    music = (-1)  # int
 
-    def __init__(self, main):  # m.java:10
+    def __init__(self, main):
         super().__init__(main)
         MpGame.players = PlayerPool(7, 1, True, True)
 
     @staticmethod
-    def request_music(music):  # m.java:15
+    def request_music(music):
         MpGame.requested_music = music
 
-    def tick_music(self):  # m.java:19
+    def tick_music(self):
         MpGame.players.tick()
         loop = False
         restart = True
@@ -40,7 +37,7 @@ class MpGame(MpCanvas):
             if restart:
                 self.play_music(music, loop)
 
-    def play_music(self, music, loop):  # m.java:44
+    def play_music(self, music, loop):
         MpGame.players.set_volume(MpCanvas.volume * 20)
         if MpCanvas.volume == 0:
             self.stop_music()
@@ -51,7 +48,7 @@ class MpGame(MpCanvas):
             MpGame.players.load(_js(_js("/snd", music), ".wav"), music)
         MpGame.players.play(music, loop)
 
-    def stop_music(self):  # m.java:58
+    def stop_music(self):
         MpGame.requested_music = (-1)
         MpGame.music = (-1)
         MpGame.players.stop()

@@ -12,7 +12,7 @@ Steps: wait N | key NAME [COUNT] (UP DOWN LEFT RIGHT FIRE LSOFT RSOFT 0-9 STAR P
        bot_chat CHANNEL [TO] TEXT (RIVAL writes in the chat: 0 lobby, 1 order, 2 private to TO) |
        type TEXT (a PC keyboard types TEXT, one character per tick, into the chat's text box) |
        sp_account ID PWD (before the game starts: the single player's Live registration
-       on this device, which logs in to the Multiplayer game too - PORT-EXTRA use_sp_account) |
+       on this device, which logs in to the Multiplayer game too - use_sp_account) |
        # comment
 The server runs inside the game (POW_MP_SERVER=local) with a fresh temporary save folder.
 """
@@ -50,7 +50,7 @@ def parse(path):
 
 
 def sp_account(uid, pwd):
-    """The single player's "pow_regist" record (m.java:287-305: password, then UserID)."""
+    """The single player's "pow_regist" record."""
     from pow.midp.rms import RecordStore
     rec = bytearray(28)
     rec[0:len(pwd)] = pwd.encode()

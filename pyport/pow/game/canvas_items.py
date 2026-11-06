@@ -1,6 +1,6 @@
-"""ag.java, part of GameCanvas: items, backpack, shop, hero stats.
+""", part of GameCanvas: items, backpack, shop, hero stats.
 
-A mixin of GameCanvas (pow/game/game_canvas.py); the methods keep their `# ag.java:FROM-TO`
+A mixin of GameCanvas (pow/game/game_canvas.py); the methods keep their `# :FROM-TO`
 comments. `GameCanvas` below is the real class, set by game_canvas.py once it exists.
 """
 
@@ -14,7 +14,7 @@ GameCanvas = None   # set by pow/game/game_canvas.py
 
 
 class ItemsMixin:
-    def compact_backpack(self):  # ag.java:2372-2382  (compact inventory cz.Y)
+    def compact_backpack(self):  # compact the inventory
         for b in range(config.BACKPACK_SIZE - 1):
             if GameCanvas.hero.backpack[b].id == 0:
                 for other in range(b + 1, config.BACKPACK_SIZE):
@@ -22,14 +22,14 @@ class ItemsMixin:
                         self.swap_items(GameCanvas.hero.backpack[b], GameCanvas.hero.backpack[other])
                         break
 
-    def swap_items(self, a, b):  # ag.java:2384-2389
+    def swap_items(self, a, b):
         tmp = Item()
         GameCanvas.copy_item(tmp, a)
         GameCanvas.copy_item(a, b)
         GameCanvas.copy_item(b, tmp)
 
     @staticmethod
-    def copy_item(dst, src):  # ag.java:2391-2398
+    def copy_item(dst, src):
         dst.id = src.id
         dst.attack = src.attack
         dst.defense = src.defense
@@ -38,7 +38,7 @@ class ItemsMixin:
         dst.enchant = src.enchant
 
     @staticmethod
-    def add_exp(exp):  # ag.java:3081-3098  (add exp; returns the levels gained)
+    def add_exp(exp):  # returns the levels gained
         exp_table = [0] * 10
         b = 0
         exp += GameCanvas.hero.exp
@@ -56,7 +56,7 @@ class ItemsMixin:
             b += 1
 
     @staticmethod
-    def update_hero_stats():  # ag.java:1759-1773  (equipment bonuses -> derived stats)
+    def update_hero_stats():  # equipment bonuses -> derived stats
         hero = GameCanvas.hero
         hero.gear_attack = hero.gear_defense = hero.gear_hp = hero.gear_mp = 0
         for b in range(9):
@@ -70,7 +70,7 @@ class ItemsMixin:
         hero.max_hp = hero.hp = hero.base_hp + hero.gear_hp
         hero.max_mp = hero.mp = hero.base_mp + hero.gear_mp
 
-    def new_hero(self):  # ag.java:3222-3273  (fresh hero)
+    def new_hero(self):  # fresh hero
         hero = GameCanvas.hero
         GameCanvas.save_flag = 0
         GameCanvas.talk_count = 0
@@ -110,7 +110,7 @@ class ItemsMixin:
             for b in range(19):
                 hero.skill_levels[b] = 1
             hero.skill_levels[18] = 1
-        # z.a(): called through the class (in Java the field z.a shadowed it)
+        # called through the class
         for b in range(9):
             Item.clear(hero.equipped[b])
         for b in range(config.BACKPACK_SIZE):
@@ -121,16 +121,16 @@ class ItemsMixin:
         hero.quick_keys[1] = 1
 
     @staticmethod
-    def reset_base_stats():  # ag.java:3275-3284  (base stats, 5 free points)
+    def reset_base_stats():  # base stats, 5 free points
         from pow.game import hero_classes
         hero = GameCanvas.hero
-        # PORT-EXTRA: the stats of the chosen head (pow/game/hero_classes.py); the original
+        # the stats of the chosen head (pow/game/hero_classes.py); the original
         # gave every head ATK 5 / DEF 4 / HP 30 / MP 10, which is still head 0
         hero_classes.set_base_stats(hero)
         hero.stat_points = 5
         GameCanvas.redraw = 1
 
-    def give_item(self, item_id, count):  # ag.java:3286-3360  (give an item / potion / gold)
+    def give_item(self, item_id, count):  # give an item / potion / gold
         hero = GameCanvas.hero
         b = 0
         if item_id < 100:
@@ -199,7 +199,7 @@ class ItemsMixin:
         return 1
 
     @staticmethod
-    def reset_quick_items():  # ag.java:3362-3375  (starting quick items)
+    def reset_quick_items():  # starting quick items
         for b in range(8):
             if GameCanvas.shop[b] is None:
                 GameCanvas.shop[b] = Item()
@@ -212,7 +212,7 @@ class ItemsMixin:
         GameCanvas.shop[6].id = 10
         GameCanvas.shop[7].id = 11
 
-    def fill_shop(self):  # ag.java:3377-3398  (17 random shop items, sorted)
+    def fill_shop(self):  # 17 random shop items, sorted
         ids = [0] * 17
         GameCanvas.load_item_tables()
         for b in range(17):
@@ -231,7 +231,7 @@ class ItemsMixin:
             GameCanvas.shop[8 + b] = self.make_item(ids[b])
 
     @staticmethod
-    def load_item_tables():  # ag.java:3400-3412
+    def load_item_tables():
         files = [47, 51, 49]
         if not GameCanvas.tables_loaded[1]:
             for b in range(3):
@@ -243,7 +243,7 @@ class ItemsMixin:
         return True
 
     @staticmethod
-    def item_tier(roll):  # ag.java:3414-3422  (item tier by hero level)
+    def item_tier(roll):  # item tier by hero level
         limit = 0
         b = 0
         while b < 5 and GameCanvas.hero.level >= consts.tier_levels[b]:
@@ -258,7 +258,7 @@ class ItemsMixin:
             b += 1
         return b
 
-    def make_item(self, item_id):  # ag.java:3424-3457  (make item paramInt with random bonus)
+    def make_item(self, item_id):  # make item paramInt with random bonus
         item = Item()
         stats = [0] * 5
         item.id = i16(item_id)
@@ -276,9 +276,7 @@ class ItemsMixin:
                 item.mp = i16(stats[1] + self.rand(stats[2]))
         else:
             tbl = GameCanvas.item_tables[1] if item_id < 500 else GameCanvas.item_tables[2]
-            # ORIG-BUG B1: the original reads both tables at id - 301, so a Rare item (shinki.arr,
-            # ids 501-518) gets row 200+ -> all 0; its own row is id - 501
-            first = 501 if item_id >= 500 and config.ORIG_BUG["B1"] else 301
+            first = 501 if item_id >= 500 else 301     # Rare items (501-518) have their own table
             for b in range(4):
                 stats[b] = tbl.get_int(item_id - first, 2 + b)
             item.attack = i16(stats[0])
@@ -288,7 +286,7 @@ class ItemsMixin:
         return item
 
     @staticmethod
-    def backpack_slot_of(item_id):  # ag.java:3530-3536  (inventory slot of item, 1-based; 0 = none)
+    def backpack_slot_of(item_id):  # inventory slot of item, 1-based; 0 = none
         for b in range(config.BACKPACK_SIZE):
             if GameCanvas.hero.backpack[b].id == item_id:
                 return b + 1
@@ -297,7 +295,7 @@ class ItemsMixin:
     # ---- Management: items, descriptions ---------------------------------------------------
 
     @staticmethod
-    def item_slot_type(item_id):  # ag.java:867-870  (equipment slot type of an item)
+    def item_slot_type(item_id):  # equipment slot type of an item
         GameCanvas.menus.load_item_def(item_id)
         if item_id < 100:
             return 1
@@ -308,8 +306,7 @@ class ItemsMixin:
         return GameCanvas.rare_def.slot
 
     @staticmethod
-    def describe_shop_item(item, with_name, price):  # ag.java:1454-1457  (item description in the shop)
-        # dF.a() (ak.java:10-17) - the method is shadowed by the field ak.a in Python
+    def describe_shop_item(item, with_name, price):  # item description in the shop
         info = GameCanvas.info_box
         info.shown = 0
         info.rect.x = info.rect.y = info.rect.w = info.rect.h = 0
@@ -317,14 +314,14 @@ class ItemsMixin:
         GameCanvas.menus.draw_shop_description(item, 0, 0, 200, 22, price, with_name)
 
     @staticmethod
-    def quick_slot_item(slot):  # ag.java:1459-1465  (potion slot -> item)
+    def quick_slot_item(slot):  # potion slot -> item
         item = Item()
         Item.clear(item)
         item.id = slot.item
         item.attack = slot.count
         return item
 
-    def item_under_cursor(self, index):  # ag.java:1467-1492  (item under the cursor of the item grid)
+    def item_under_cursor(self, index):  # item under the cursor of the item grid
         item = Item()
         if index == -1:
             index = GameCanvas.cursor[18]
@@ -344,7 +341,7 @@ class ItemsMixin:
         return item
 
     @staticmethod
-    def describe_potion(potion):  # ag.java:1370-1381  (potion description)
+    def describe_potion(potion):  # potion description
         str_ = ""
         potion -= 1
         if potion < 0 or potion > 10:
@@ -358,13 +355,13 @@ class ItemsMixin:
         return str_
 
     @staticmethod
-    def special_suffix(item_id):  # ag.java:1383-1399  (special item suffix)
+    def special_suffix(item_id):  # special item suffix
         return {434: " / Hp 5 Increased", 435: " / MP 3 Increased", 436: " / DEF 1 Increased",
                 437: " / ATK 1 Increased", 502: " / Catherine's scarf",
                 504: " / all General Visiting"}.get(item_id, "")
 
     @staticmethod
-    def set_item_name(item_id):  # ag.java:1401-1416  (item name -> dF.c, returns the level needed)
+    def set_item_name(item_id):  # item name, returns the level needed
         GameCanvas.menus.load_item_def(item_id)
         if item_id > 500:
             GameCanvas.info_box.text = GameCanvas.rare_def.name
