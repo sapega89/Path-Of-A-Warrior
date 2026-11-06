@@ -34,6 +34,7 @@ func _ready() -> void:
 	var bg := ColorRect.new()
 	bg.color = Color.BLACK
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE  # a click goes to the screen
 	add_child(bg)
 	var col := UiTheme.menu_column(self, 900)
 	var row := HBoxContainer.new()
@@ -144,7 +145,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		page = pages.size() - 2 if story != Stories.OPENING and page < pages.size() - 1 else pages.size()
 		next_page()
-	elif event.is_action_pressed("attack") or event.is_action_pressed("ui_accept") \
-			or (event is InputEventMouseButton and event.pressed):
+	elif event.is_action_pressed("attack") or event.is_action_pressed("ui_accept"):
 		get_viewport().set_input_as_handled()
+		press()
+
+
+## A click anywhere, as attack / accept (in a window the screen itself takes the click).
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		accept_event()
 		press()

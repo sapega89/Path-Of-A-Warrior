@@ -64,3 +64,26 @@ func test_story_screen() -> void:
 	check(screen.text.text.contains("Hidden Mission!"), "the lord opened")
 	screen.free()
 	Router.params = old
+
+
+## A click anywhere is attack / accept: the screen takes it in _gui_input (in a window a click
+## never reaches _unhandled_input).
+func test_story_screen_click() -> void:
+	var old: Dictionary = Router.params
+	Router.params = {"story": 2, "reward_item": 502, "opened_lord": 8, "profile_path": "user://no_such_hero.json"}
+	var screen: Control = Story.new()
+	root.add_child(screen)
+	eq(screen.get_child(0).mouse_filter, Control.MOUSE_FILTER_IGNORE, "the black background lets clicks through")
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.pressed = true
+	screen._gui_input(click)
+	eq(screen.text.visible_characters, -1, "a click: the whole line")
+	screen._gui_input(click)
+	eq(screen.page, 1, "another: the next page")
+	click.pressed = false
+	screen._gui_input(click)
+	eq(screen.page, 1, "a release does nothing")
+	screen.free()
+	Router.params = old
+

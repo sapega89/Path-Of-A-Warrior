@@ -99,9 +99,12 @@ func test_offline_screen_and_map_viewer_follow_the_device() -> void:
 	InputSetup._input(_pad_press(JOY_BUTTON_B))
 	check(offline.text.text.ends_with("A: try again"), "the pad's OK")
 	eq(viewer.info.text, "Map 1 / %d   [LB] [RB] change map   [B] back" % viewer.map_total, "pad")
-	offline.try_again()
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.pressed = true
+	offline._gui_input(click)  # a click anywhere tries again
 	InputSetup._input(_key_press(KEY_ENTER))
-	eq(offline.text.text, tr("offline.connecting"), "Connecting... stays")
+	eq(offline.text.text, tr("offline.connecting"), "a click tried again; Connecting... stays")
 	offline.free()
 	viewer.free()
 	InputSetup.device = was

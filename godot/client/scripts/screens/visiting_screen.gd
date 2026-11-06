@@ -295,6 +295,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		if step == Step.LIST:
 			Router.back()
 	elif step in [Step.GREETING, Step.TALK] and (event.is_action_pressed("attack")
-			or event.is_action_pressed("ui_accept") or (event is InputEventMouseButton and event.pressed)):
+			or event.is_action_pressed("ui_accept")):
 		get_viewport().set_input_as_handled()
+		press()
+
+
+## A click beside the buttons while the general talks, as OK (in a window the screen itself
+## takes the click).
+func _gui_input(event: InputEvent) -> void:
+	if step in [Step.GREETING, Step.TALK] and event is InputEventMouseButton and event.pressed:
+		accept_event()
 		press()
