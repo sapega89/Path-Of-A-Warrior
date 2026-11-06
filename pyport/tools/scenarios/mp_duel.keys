@@ -1,6 +1,6 @@
 # Duel 1-on-1 against a CPU fighter on the in-game server, played to the result screen.
 # States (06 §1.2): 92 quotes, 94 choose action, 97 timing bar, 99 reveal, 103 end, 105 result.
-include _login.keys
+include _enter.keys
 key FIRE          # Duel
 wait 5
 key FIRE          # 1-on-1 Duel

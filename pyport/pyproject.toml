@@ -4,16 +4,46 @@ target-version = "py311"
 extend-exclude = ["build", "web"]
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "B"]
+# Every ruff rule, minus the ones that fight a literal port of the Java game (reasons below).
+select = ["ALL"]
 ignore = [
-    "E501",  # long lines: the ported code keeps the Java line layout
-    "E741",  # `l` / `O` / `I`: names that come from the Java source
-    "B007",  # unused loop variables of ported `for` loops
+    # --- the Java structure and API the port keeps on purpose (CLAUDE.md) ---
+    "ANN",      # no type annotations: the port mirrors untyped decompiled Java signatures
+    "D",        # docstrings: every method carries a `# file.java:FROM-TO` comment instead
+    "N",        # Java API names (startApp, getWidth, keyPressed) and Java-style constants
+    "C901", "PLR0911", "PLR0912", "PLR0913", "PLR0915", "PLR0917",  # Java method sizes
+    "PLR2004",  # magic numbers: the game's own constants (key codes, sprite offsets)
+    "FBT",      # boolean positional arguments of the Java signatures
+    "ARG",      # unused arguments kept for the Java signatures
+    "PLW0603",  # `global` for the late imports that break the Java class cycles
+    "PLC0415",  # imports inside functions: the same cycles
+    "RUF012",   # mutable class attributes = Java static fields
+    "SLF001",   # access to "private" members: Java package-private fields
+    "BLE001", "S110", "SIM105",  # `except Exception` / empty catch blocks as in the Java source
+    "SIM108",   # if/else instead of a ternary: keeps the Java statements line by line
+    "RET503",   # no explicit `return None` at the end of void-like Java methods
+    "T201",     # print() is the port's System.out
+    "S311",     # java.util.Random: a game, not cryptography
+    "E501",     # long lines: the ported code keeps the Java line layout
+    "E741",     # `l` / `O` / `I`: names that come from the Java source
+    "B007",     # unused loop variables of ported `for` loops
+    "RUF001", "RUF003",  # non-ASCII text in strings / comments (game texts, Ukrainian notes)
+    # --- project / tooling choices ---
+    "CPY001",   # no copyright header
+    "EM", "TRY003",  # exception messages written inline
+    "COM812",   # trailing commas (conflicts with the formatter style used here)
+    "ERA001",   # commented-out code: Java fragments quoted next to the port
+    "UP031",    # `%d` formatting: it also truncates floats, an f-string would not
+    "PTH",      # os.path in the MIDP layer and the tools: same behaviour, no gain from pathlib
+    "TRY300", "TRY301",  # try / except blocks keep the shape of the Java ones
+    "ASYNC109", # `timeout` parameters of the network helpers are passed to asyncio.wait_for
 ]
 
 [tool.ruff.lint.per-file-ignores]
-# the MP client was machine-translated from Java: dead locals and bare `None` statements stay as in g.java
-"pow_mp/*.py" = ["F841", "B018"]
+"tests/*" = ["S101", "PT018", "INP001", "S603", "S105", "S106", "S107", "S108", "PLR0904"]
+"tools/*" = ["INP001", "S603", "S607", "S324"]
+"pow_server/*" = ["S104"]   # the game server listens on all interfaces
+
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

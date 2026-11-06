@@ -1,10 +1,10 @@
-"""PHASE_9 task 9.1: all 59 SP2 files of the MP jar load, every frame lies on its sheet (06 §5.1)."""
+"""PHASE_9 task 9.1: all 59 SP2 files of the multiplayer load, every frame lies on its sheet (06 §5.1)."""
 import pathlib
 
 import pygame
 
 import config
-from pow_mp.sprite_frames import SpriteFrames
+from pow.game.online.sprite_frames import SpriteFrames
 
 ROOT = pathlib.Path(config.MP_RES_ROOT)
 

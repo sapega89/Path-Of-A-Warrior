@@ -11,10 +11,10 @@ import dataclasses
 
 from pow_server import messages as M
 
-SKILL_IDS = tuple(range(3, 14))        # MP skill codes 3..13 = SP as.gG (06 §3.1)
+SKILL_IDS = tuple(range(3, 14))  # MP skill codes 3..13 = the single player's skill table
 
 
-# Grade index 0..9 = l.eL {"D+", "C-", ..., "A+"}
+# Grade index 0..9 = {"D+", "C-", ..., "A+"}
 GRADES = ("D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+")
 
 
@@ -27,7 +27,7 @@ class Character:
     level: int = 1
     wins: int = 0
     losses: int = 0
-    hp: int = 40                       # a new single-player hero (ag.aw) with its 5
+    hp: int = 40                       # a new single-player hero with its 5
     hp_bonus: int = 0
     mp: int = 10                       # free points in ATK 2 / DEF 1 / HP 2
     mp_bonus: int = 0
@@ -35,7 +35,7 @@ class Character:
     atk_bonus: int = 0
     def_: int = 5
     def_bonus: int = 0
-    skills: dict = dataclasses.field(default_factory=lambda: {3: 1, 11: 1})   # Wind, Devil Soul (ag.java new game)
+    skills: dict = dataclasses.field(default_factory=lambda: {3: 1, 11: 1})   # Wind, Devil Soul
     slots: list = dataclasses.field(default_factory=lambda: [3, 11, 99, 99])
     quote_start: str = "Prepare yourself!"
     quote_win: str = "Too easy."
@@ -48,7 +48,8 @@ class Character:
     notices_seen: int = 0              # version of the notices last shown to this player
     sp_linked: bool = False            # the hero comes from the single-player save (9.10)
     sp_progress: int = 0               # single-player missions done (dy bits), for missions later
-    bot: bool = False                  # PORT-EXTRA: a server bot (server.py GameServer.add_bots)
+    bot: bool = False                  # a server bot (server.py GameServer.add_bots)
+    order: str = ""                    # the name of my order (pow_server/orders.py)
 
     # --- what goes on the wire -------------------------------------------------
     def max_hp(self):
@@ -104,7 +105,7 @@ class Character:
 
 
 def apply_sp_hero(ch, msg):
-    """262 PORT-EXTRA: the hero of the single-player save replaces the SP-side fields, like the
+    """262 the hero of the single-player save replaces the SP-side fields, like the
     original "Save User Data" (opcode 256) did. MP-only data (name, quotes, wins, exp, fame,
     gold, grades) stays. Returns False when the message carries no usable hero."""
     if msg.get("sp") != 1 or msg.get("_short") or not 1 <= msg.get("sp_level", 0) <= 255:
@@ -130,7 +131,7 @@ def apply_sp_hero(ch, msg):
 
 
 def default_character(user_id):
-    """A new hero (ag.aw, 5 points in ATK 2 / DEF 1 / HP 2) wearing the shop's level-1 kit."""
+    """A new hero wearing the shop's level-1 kit."""
     from pow_server.sp_rules import shop_kit
     kit = shop_kit(1)
     return Character(user_id=user_id, atk_bonus=kit["atk"], def_bonus=kit["def"], hp_bonus=kit["hp"])

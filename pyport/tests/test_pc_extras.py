@@ -1,6 +1,5 @@
-"""PORT-EXTRA PC controls: full screen, the wide description box, the gamepad."""
+"""PC controls: full screen, the wide description box, the gamepad."""
 import pygame
-
 
 # ---- full screen ---------------------------------------------------------------------------------
 
@@ -37,7 +36,7 @@ def test_description_parts_are_packed_into_lines(monkeypatch):
     monkeypatch.setattr(GameCanvas, "measure_text", staticmethod(lambda s: 8 * len(s)))
     lines = Menus.wide_description_lines("Iron Claymore / ATK+12 / Available at Lv1", 224)
     assert lines == ["Iron Claymore / ATK+12", "Available at Lv1"]
-    # "/ Price" without a space before the slash (e.java shop text) splits too
+    # "/ Price" without a space before the slash splits too
     assert Menus.wide_description_lines("Recover 30% of total HP/ Price: 60", 224) == [
         "Recover 30% of total HP", "Price: 60"]
     # a part longer than the line breaks between words
@@ -104,8 +103,8 @@ def test_plain_joystick_and_unplugging():
 
 
 def test_canvas_walks_while_the_stick_is_held(display):
-    from pow.midp.canvas import Canvas
     from pow.midp import gamepad
+    from pow.midp.canvas import Canvas
     c = Canvas()
     got = []
     c.keyPressed = got.append
@@ -116,3 +115,84 @@ def test_canvas_walks_while_the_stick_is_held(display):
     pygame.event.post(_ev(pygame.CONTROLLERAXISMOTION, axis=pygame.CONTROLLER_AXIS_LEFTX, value=0))
     c.pump_events()
     assert c.held_direction() is None
+
+
+def test_right_stick_uses_the_belt_once_per_push():
+    g = _pads(True)
+    move = lambda a, v: g.handle(_ev(pygame.CONTROLLERAXISMOTION, axis=a, value=v))  # noqa: E731
+    assert move(pygame.CONTROLLER_AXIS_RIGHTY, -32000) == [(-101, True)]          # up = Z
+    assert move(pygame.CONTROLLER_AXIS_RIGHTY, -32767) == []                      # still up: once
+    assert move(pygame.CONTROLLER_AXIS_RIGHTY, 0) == []
+    assert move(pygame.CONTROLLER_AXIS_RIGHTX, 32000) == [(-102, True)]           # right = X
+    assert move(pygame.CONTROLLER_AXIS_RIGHTX, 0) == []
+    assert move(pygame.CONTROLLER_AXIS_RIGHTY, 32000) == [(-103, True)]           # down = C
+    assert move(pygame.CONTROLLER_AXIS_RIGHTY, 0) == []
+    assert move(pygame.CONTROLLER_AXIS_RIGHTX, -32000) == [(-104, True)]          # left = V
+    assert g.pads[7].stick is None                                               # no walking
+
+
+def test_canvas_belt_only_on_the_map_and_pad_pauses_autohunt(display):
+    from pow.midp import gamepad
+    from pow.midp.canvas import Canvas
+    c = Canvas()
+    got = []
+    c.keyPressed = got.append
+    c.pads.pads[7] = gamepad.Pad(None, True)
+    paused = []
+
+    class Auto:
+        direction = None
+
+        def player_key(self):
+            paused.append(1)
+
+        def tick(self):
+            return None
+    c.autopilot = Auto()
+    push = lambda v: pygame.event.post(_ev(pygame.CONTROLLERAXISMOTION,           # noqa: E731
+                                           axis=pygame.CONTROLLER_AXIS_RIGHTY, value=v))
+    push(-32767)
+    c.pump_events()
+    assert got == [] and paused == []               # not on the map: nothing
+    push(0)
+    c.belt_active = lambda: True
+    push(-32767)
+    c.pump_events()
+    assert got == [-101] and paused == [1]
+    pygame.event.post(_ev(pygame.CONTROLLERBUTTONDOWN, button=pygame.CONTROLLER_BUTTON_RIGHTSTICK))
+    c.pump_events()
+    assert got == [-101, -100] and paused == [1]   # AUTO itself does not pause it
+
+
+def test_poll_reads_the_sticks_sdl_did_not_report():
+    """Browser: SDL keeps the first move of an axis as its resting value, without an event."""
+    from pow.midp import gamepad
+
+    class Dev:
+        axes = {}
+
+        def get_axis(self, a):
+            return self.axes.get(a, 0)
+    g = gamepad.Gamepads()
+    dev = Dev()
+    g.pads[7] = gamepad.Pad(dev, True)
+    assert g.poll() == []
+    dev.axes = {pygame.CONTROLLER_AXIS_RIGHTY: 32767}
+    assert g.poll() == [(-103, True)]                      # right stick down = belt slot C
+    assert g.poll() == []                                  # once
+    dev.axes = {pygame.CONTROLLER_AXIS_LEFTX: -32767}
+    assert g.poll() == [(-3, True)]                        # left stick = walk left, held
+    assert g.handle(_ev(pygame.CONTROLLERAXISMOTION, axis=pygame.CONTROLLER_AXIS_LEFTX,
+                        value=-32767)) == []               # the event later: no second press
+    dev.axes = {}
+    assert g.poll() == [(-3, False)]
+
+
+def test_a_new_canvas_opens_the_pads_plugged_in_before(monkeypatch):
+    """Main Menu > Multiplayer: the MP canvas is new, SDL does not send JOYDEVICEADDED again."""
+    from pow.midp import gamepad
+    added = []
+    monkeypatch.setattr(pygame.joystick, "get_count", lambda: 2)
+    monkeypatch.setattr(gamepad.Gamepads, "_add", lambda self, i: added.append(i))
+    gamepad.Gamepads()
+    assert added == [0, 1]

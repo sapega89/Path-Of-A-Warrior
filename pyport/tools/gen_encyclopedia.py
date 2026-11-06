@@ -5,14 +5,13 @@
 Everything on the page is read from the resource files in the repository root (kibo / sungbo /
 shinki / general / mission / sideinfo / ruler / N.arr / *.scr / item-mixing-table.bin and the
 PNG sheets), so after a data change it is enough to run the script again. The few numbers the
-Java code keeps as constants (consumables, skill MP, the drop table, soldier stats) are taken
-from pow.game.consts (ae.java) or copied here with the Java line they come from.
+game keeps as constants (consumables, skill MP, the drop table, soldier stats) are taken
+from pow.game.consts or copied here with a note where they come from.
 
 Needs Pillow (icons are cut from the sheets and embedded as data: URIs, the page is one file).
 build_web.py copies the page next to the game, like guide.html.
 """
 import base64
-import html
 import io
 import json
 import pathlib
@@ -23,7 +22,7 @@ from PIL import Image
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 PY = ROOT / "pyport"
 sys.path.insert(0, str(PY))
-from pow.game import consts as ae  # noqa: E402  (ae.java constants, no pygame)
+from pow.game import consts as ae  # noqa: E402
 
 OUT = PY / "web" / "encyclopedia.html"
 
@@ -35,7 +34,7 @@ def raw(name):
 
 
 def strings(name):
-    """.scr string table (al.java): u16 count, (count+1) u16 offsets, UTF-8 bodies."""
+    """.scr string table: u16 count, (count+1) u16 offsets, UTF-8 bodies."""
     a = raw(name)
     n = a[0] | a[1] << 8
     off = [a[2 + i * 2] | a[3 + i * 2] << 8 for i in range(n + 1)]
@@ -45,7 +44,7 @@ def strings(name):
 
 
 class Table:
-    """Fixed-width .arr table (d.java): u8 columns, u8 widths, rows of LE cells."""
+    """Fixed-width.arr table: u8 columns, u8 widths, rows of LE cells."""
 
     def __init__(self, name):
         b = raw(name)
@@ -118,7 +117,7 @@ def head(b):
     return key
 
 
-# ag.java:973-1023: soldiers of a mission are recoloured by sideinfo byte 3 (palette 1..3)
+# soldiers of a mission are recoloured by sideinfo byte 3 (palette 1..3)
 PAL = [[(236, 211, 197), (205, 143, 128), (129, 81, 69), (104, 60, 49), (79, 39, 29)],
        [(226, 205, 178), (196, 179, 152), (180, 142, 122), (135, 111, 47), (93, 73, 49)],
        [(174, 225, 242), (101, 156, 195), (61, 102, 139), (43, 78, 115), (45, 45, 84)],
@@ -147,9 +146,9 @@ def soldier(mon, pal, frame=0):
 TYPE = ["Зброя (довга)", "Зброя (коротка)", "Шолом", "Броня", "Рукавиці", "Чоботи", "Пояс",
         "Наруч", "Амулет", "Особливе"]
 STAT = ["ATK", "DEF", "HP", "MP"]
-TIER_LV = ae.tier_levels                    # ae.java:16 reqLevel of the 5 tiers of Normal items
+TIER_LV = ae.tier_levels                    # reqLevel of the 5 tiers of Normal items
 
-# ar.java:2055-2078 (ar.P): drop class 0 soldier / 1 general / 2 mission target
+# drop class 0 soldier / 1 general / 2 mission target
 DROP_CHANCE = [5, 10, 20]         # % that the enemy drops anything but gold
 DROP_ITEM = [10, 30, 60]          # % of those drops that are a Normal item (else a consumable)
 DROP_LV = [69, 44, 24, 9, 0]      # hero level > value -> row of DROP_TIER
@@ -174,22 +173,22 @@ def load_items():
     for r in range(kibo.rows):                                  # Normal 101..200
         iid = 101 + r
         st, base, spr = kibo.int(r, 2), kibo.int(r, 3), kibo.int(r, 4)
-        items[iid] = dict(id=iid, n=kibo.str(r, 0), cat="n", t=kibo.int(r, 1),
-                          ic=cell("kibo.png", kibo.int(r, 7)), lv=TIER_LV[r % 5],
-                          s={STAT[st]: "%d–%d" % (base, base + spr)}, me=kibo.int(r, 5),
-                          p=kibo.int(r, 6), tier=r % 5)
+        items[iid] = {"id": iid, "n": kibo.str(r, 0), "cat": "n", "t": kibo.int(r, 1),
+                          "ic": cell("kibo.png", kibo.int(r, 7)), "lv": TIER_LV[r % 5],
+                          "s": {STAT[st]: "%d–%d" % (base, base + spr)}, "me": kibo.int(r, 5),
+                          "p": kibo.int(r, 6), "tier": r % 5}
     for r in range(sungbo.rows):                                # Special 301..437
         iid = 301 + r
         s = {STAT[k]: sungbo.int(r, 2 + k) for k in range(4) if sungbo.int(r, 2 + k)}
-        items[iid] = dict(id=iid, n=sungbo.str(r, 0), cat="s", t=sungbo.int(r, 1),
-                          ic=cell("sungbo.png", sungbo.int(r, 7)), lv=sungbo.int(r, 8), s=s,
-                          me=sungbo.int(r, 6))
+        items[iid] = {"id": iid, "n": sungbo.str(r, 0), "cat": "s", "t": sungbo.int(r, 1),
+                          "ic": cell("sungbo.png", sungbo.int(r, 7)), "lv": sungbo.int(r, 8), "s": s,
+                          "me": sungbo.int(r, 6)}
     for r in range(shinki.rows):                                # Rare 501..518
         iid = 501 + r
         s = {STAT[k]: shinki.int(r, 2 + k) for k in range(4) if shinki.int(r, 2 + k)}
-        items[iid] = dict(id=iid, n=shinki.str(r, 0), cat="r", t=shinki.int(r, 1),
-                          ic=cell("shinki.png", r), lv=shinki.int(r, 7), s=s, me=0,
-                          p=shinki.int(r, 6))   # shinki.png holds the 18 icons in id order
+        items[iid] = {"id": iid, "n": shinki.str(r, 0), "cat": "r", "t": shinki.int(r, 1),
+                          "ic": cell("shinki.png", r), "lv": shinki.int(r, 7), "s": s, "me": 0,
+                          "p": shinki.int(r, 6)}   # shinki.png holds the 18 icons in id order
     for iid, it in items.items():
         if iid in SPECIAL_NOTE:
             it["note"] = SPECIAL_NOTE[iid]
@@ -198,7 +197,7 @@ def load_items():
 
 def load_consumables():
     out = []
-    for k, name in enumerate(ae.potion_names):                            # ae.java:230-238
+    for k, name in enumerate(ae.potion_names):
         cid = k + 1
         if cid <= 9:
             e = "%s +%d%%" % (ae.potion_kinds[k // 3], ae.potion_percents[k % 3])
@@ -206,8 +205,8 @@ def load_consumables():
             e = "Кидок на 60 px, вибух r=35: шкода min(50, 2·рівень героя), відкидає"
         else:
             e = "Кидок на 60 px, вибух r=35: 3 удари по min(30, рівень героя)"
-        out.append(dict(id=cid, n=name.strip(), e=e, p=ae.item_prices[k], shop=cid in (1, 2, 3, 4, 5, 6, 10, 11),
-                        ic=cell("tool.png", k)))
+        out.append({"id": cid, "n": name.strip(), "e": e, "p": ae.item_prices[k], "shop": cid in (1, 2, 3, 4, 5, 6, 10, 11),
+                        "ic": cell("tool.png", k)})
     return out
 
 
@@ -215,12 +214,12 @@ def load_recipes():
     b = raw("item-mixing-table.bin")
     n = len(b) // 8
     u = lambda i: b[2 * i] | b[2 * i + 1] << 8                  # noqa: E731
-    return [dict(a=[u(r), u(n + r), u(2 * n + r)], r=u(3 * n + r)) for r in range(n)]
+    return [{"a": [u(r), u(n + r), u(2 * n + r)], "r": u(3 * n + r)} for r in range(n)]
 
 
 # ---- skills --------------------------------------------------------------------------------
 
-# ar.java:743-757: MP = base + (level - 1) * inc;  ae.skill_attack_div: damage bonus ATK*lvl/aU
+# MP = base + (level - 1) * inc;  ae.skill_attack_div: damage bonus ATK*lvl/aU
 SKILL_MP = [(5, 3), (6, 4), (7, 5), (10, 3), (15, 4), (7, 3), (10, 3), (10, 5), (8, 3), (9, 4),
             (10, 5), (5, 3), (6, 4), (7, 5), (9, 5), (12, 6), (20, 5), (20, 5), (20, 5)]
 SKILL_CAT = ["MOVE", "MOVE", "MOVE", "HEAL", "HEAL", "PASV", "PASV", "PASV", "FWD", "FWD", "FWD",
@@ -256,9 +255,9 @@ def load_skills(text):
         base, inc = SKILL_MP[i]
         cat = SKILL_CAT[i]
         bonus = ae.skill_attack_div[i]
-        out.append(dict(id=i + 1, n=text[i], d=text[19 + i], cat=cat, catn=CAT_UA[cat],
-                        mp1=base, mp10=base + 9 * inc, bonus=("ATK·рівень/%d" % bonus) if bonus else "",
-                        e=SKILL_EFFECT[i], ic=cell("skill.png", i), icg=cell("skillgray.png", i)))
+        out.append({"id": i + 1, "n": text[i], "d": text[19 + i], "cat": cat, "catn": CAT_UA[cat],
+                        "mp1": base, "mp10": base + 9 * inc, "bonus": ("ATK·рівень/%d" % bonus) if bonus else "",
+                        "e": SKILL_EFFECT[i], "ic": cell("skill.png", i), "icg": cell("skillgray.png", i)})
     return out
 
 
@@ -269,11 +268,11 @@ def load_generals():
     out = {}
     for r in range(g.rows):
         gid = r + 1
-        out[gid] = dict(id=gid, n=g.str(r, 0), head=g.int(r, 1),
-                        wep="коротка" if (g.int(r, 3) + 1) & 1 else "довга",
-                        sk=[g.int(r, 4 + k) for k in range(4) if g.int(r, 4 + k)],
-                        por=g.int(r, 8), ty=g.int(r, 9), atk=g.int(r, 10), df=g.int(r, 11),
-                        hp=g.int(r, 12))
+        out[gid] = {"id": gid, "n": g.str(r, 0), "head": g.int(r, 1),
+                        "wep": "коротка" if (g.int(r, 3) + 1) & 1 else "довга",
+                        "sk": [g.int(r, 4 + k) for k in range(4) if g.int(r, 4 + k)],
+                        "por": g.int(r, 8), "ty": g.int(r, 9), "atk": g.int(r, 10), "df": g.int(r, 11),
+                        "hp": g.int(r, 12)}
     vg = Table("visitgen.arr")
     visit = [vg.int(r, 0) for r in range(vg.rows)]
     for gid in visit:
@@ -286,7 +285,7 @@ def load_generals():
 
 
 def brief_text(table, i):
-    """brief.scr record i (ag.java:1075-1124): "N|v1|v2" fills the (..) of record N in order."""
+    """brief.scr record i: "N|v1|v2" fills the (..) of record N in order."""
     s = table[i]
     parts = s.split("|")
     if parts[0].isdigit():
@@ -317,8 +316,8 @@ def load_missions(gens, text):
     rulers = {}
     for a in range(1, (len(ruler) - 3) // 15 + 1):
         rec = ruler[3 + (a - 1) * 15:3 + a * 15]
-        rulers[a] = dict(n=rec[:14].split(b"\0")[0].decode("latin-1").strip(), por=portrait(rec[14]))
-    # ag.java:3225 - scenarios closed at a new game ("Hidden Mission", opened by an ending)
+        rulers[a] = {"n": rec[:14].split(b"\0")[0].decode("latin-1").strip(), "por": portrait(rec[14])}
+    # - scenarios closed at a new game ("Hidden Mission", opened by an ending)
     hidden = {5, 8, 9, 16, 25, 26, 28, 29, 32, 37}
     scen, missions = [], []
     count = (len(m) - 10) // 38 - 1
@@ -330,8 +329,8 @@ def load_missions(gens, text):
         mp = raw(mdat[sid - 1])
         rooms = (mp[0] // 7) * (mp[1] // 7)
         level = raw("%d.arr" % sid)
-        scen.append(dict(id=sid, n=name, next=nxt, hidden=sid in hidden, rooms=rooms,
-                         ms=list(range(du, du + dv))))
+        scen.append({"id": sid, "n": name, "next": nxt, "hidden": sid in hidden, "rooms": rooms,
+                         "ms": list(range(du, du + dv))})
         for k in range(dv):
             gi = du + k
             r = side[11 * gi + 11:11 * gi + 22]
@@ -349,11 +348,11 @@ def load_missions(gens, text):
                 if level[q + 18] and level[q + 18] not in friends:
                     friends.append(level[q + 18])
             succ, fail = r[5], r[6]
-            mis = dict(id=gi, no=gi + 1, sc=sid, scn=name, k=k, ru=r[0], rn=rulers[r[0]]["n"],
-                       rp=rulers[r[0]]["por"], pal=r[3], boss=r[4], bl=r[10],
-                       gold=r[7] * 150, time=r[8],         # Java reads only the low byte (e.java:3588)
-                       succ=succ, fail=fail, sold=soldiers, foes=foes, fr=friends,
-                       brief=brief_text(briefs, gi), hidden=sid in hidden)
+            mis = {"id": gi, "no": gi + 1, "sc": sid, "scn": name, "k": k, "ru": r[0], "rn": rulers[r[0]]["n"],
+                       "rp": rulers[r[0]]["por"], "pal": r[3], "boss": r[4], "bl": r[10],
+                       "gold": r[7] * 150, "time": r[8],         # only the low byte is read
+                       "succ": succ, "fail": fail, "sold": soldiers, "foes": foes, "fr": friends,
+                       "brief": brief_text(briefs, gi), "hidden": sid in hidden}
             if succ >= 200:
                 mis["end"] = text[38 + succ - 200]
             elif succ:
@@ -373,7 +372,7 @@ def link_up(items, recipes, gens, missions, skills):
         res = items[rc["r"]]
         lv = res["lv"]
         rc["lv"] = lv
-        rc["p"] = round(((200 - lv) // 12 + 1) / 101 * 100, 1)    # e.java aX(): success chance
+        rc["p"] = round(((200 - lv) // 12 + 1) / 101 * 100, 1)    # aX(): success chance
         res["from"].append(i)
         for a in sorted(set(rc["a"])):
             items[a]["use"].append(i)
@@ -405,7 +404,7 @@ def link_up(items, recipes, gens, missions, skills):
 
 
 def soldier_table():
-    """c.java:1028-1038 (c.a): soldier level L around the hero level Lp, ATK/DEF/HP."""
+    """1038: soldier level L around the hero level Lp, ATK/DEF/HP."""
     base, mult, hpb = [3, 2, 3], [100, 100, 150], [7, 5, 7]
 
     def lv_range(lp):
@@ -418,9 +417,9 @@ def soldier_table():
     rows = []
     for lp in (1, 10, 20, 30, 50, 70, 100, 150):
         lo, hi = lv_range(lp)
-        row = dict(lp=lp, lv="%d–%d" % (lo, hi), u=[])
+        row = {"lp": lp, "lv": "%d–%d" % (lo, hi), "u": []}
         for t in range(3):
-            f = lambda L: ((base[t] + L) * mult[t] // 100, L - 1, hpb[t] + 3 * L)   # noqa: E731
+            f = lambda L, t=t: ((base[t] + L) * mult[t] // 100, L - 1, hpb[t] + 3 * L)   # noqa: E731
             a, b = f(lo), f(hi)
             row["u"].append(["%d–%d" % (a[k], b[k]) for k in range(3)])
         rows.append(row)
@@ -439,18 +438,15 @@ def main():
     scen, missions, rulers = load_missions(gens, text)
     link_up(items, recipes, gens, missions, skills)
     enemies = [
-        dict(id=201, n="Мечник", en="Swords", ic=soldier("mon1", 0), mult=100, note=
-             "Ходить кімнатою і б'є впритул. З імовірністю 50% замість нього з'являється загін (203)."),
-        dict(id=202, n="Лучник", en="Archers", ic=soldier("mon2", 0), mult=100, note=
-             "Стоїть на місці (його ставить скрипт карти), стріляє. Не рахується для зачистки кімнати."),
-        dict(id=203, n="Загін мечників", en="Swords", ic=soldier("mon1", 0), mult=150, note=
-             "Троє мечників як один юніт, ATK ×1.5. За вбивство рахується 3 вороги."),
+        {"id": 201, "n": "Мечник", "en": "Swords", "ic": soldier("mon1", 0), "mult": 100, "note": "Ходить кімнатою і б'є впритул. З імовірністю 50% замість нього з'являється загін (203)."},
+        {"id": 202, "n": "Лучник", "en": "Archers", "ic": soldier("mon2", 0), "mult": 100, "note": "Стоїть на місці (його ставить скрипт карти), стріляє. Не рахується для зачистки кімнати."},
+        {"id": 203, "n": "Загін мечників", "en": "Swords", "ic": soldier("mon1", 0), "mult": 150, "note": "Троє мечників як один юніт, ATK ×1.5. За вбивство рахується 3 вороги."},
     ]
     pals = [[soldier("mon1", p), soldier("mon2", p)] for p in range(4)]
-    data = dict(items=list(items.values()), cons=cons, rec=recipes, skills=skills,
-                gens=list(gens.values()), scen=scen, mis=missions, enemies=enemies, pals=pals,
-                stable=soldier_table(), types=TYPE, img=IMG,
-                rulers={k: v for k, v in rulers.items()})
+    data = {"items": list(items.values()), "cons": cons, "rec": recipes, "skills": skills,
+                "gens": list(gens.values()), "scen": scen, "mis": missions, "enemies": enemies, "pals": pals,
+                "stable": soldier_table(), "types": TYPE, "img": IMG,
+                "rulers": dict(rulers.items())}
     blob = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
     page = (PY / "tools" / "encyclopedia_template.html").read_text(encoding="utf-8")
     page = page.replace("/*DATA*/null", blob)

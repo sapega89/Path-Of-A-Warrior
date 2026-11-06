@@ -1,4 +1,4 @@
-"""PORT-EXTRA: hang / crash log for the desktop.
+"""hang / crash log for the desktop.
 
 If the game loop stops ticking for HANG_SECONDS (an endless loop somewhere in the game code:
 the window stops responding and Windows closes it), Python's faulthandler writes the stack of
@@ -23,13 +23,13 @@ path = None
 
 def start():
     global _file, path
-    if _file is not None or sys.platform == "emscripten" or os.environ.get("POW_WATCHDOG", "1") != "1":
+    if _file is not None or os.environ.get("POW_WATCHDOG", "1") != "1":
         return
     try:
         os.makedirs(config.SAVE_DIR, exist_ok=True)
         path = os.path.join(config.SAVE_DIR, "hang.log")
-        _file = open(path, "a", encoding="utf-8")
-        _file.write("\n=== start %s, Python %s ===\n" % (time.strftime("%Y-%m-%d %H:%M:%S"), sys.version.split()[0]))
+        _file = open(path, "a", encoding="utf-8")  # noqa: SIM115 (the log stays open for the whole run)
+        _file.write("\n=== start {}, Python {} ===\n".format(time.strftime("%Y-%m-%d %H:%M:%S"), sys.version.split()[0]))
         _file.flush()
         faulthandler.enable(file=_file, all_threads=True)
     except Exception as ex:   # never stop the game because of the log
@@ -45,7 +45,7 @@ def tick():
 
 def log_exception():
     if _file is not None:
-        _file.write("--- exception %s ---\n" % time.strftime("%Y-%m-%d %H:%M:%S"))
+        _file.write("--- exception {} ---\n".format(time.strftime("%Y-%m-%d %H:%M:%S")))
         traceback.print_exc(file=_file)
         _file.flush()
 

@@ -1,8 +1,8 @@
-"""PORT-EXTRA (config.SKILL_BAR, config.SKILL_CARD): the skill bar and the belt in combat, and the
+"""(config.SKILL_BAR, config.SKILL_CARD): the skill bar and the belt in combat, and the
 skill card of the Skills menu (like the HUD of Dragon Nest).
 
 The phone game has no skills on the screen (keys 1 3 7 9 0 only) and only 2 of the 5 belt slots
-in combat (keys * and #, chosen in Assign Items). With config.SKILL_BAR a strip above the HUD
+in combat (keys * and # , chosen in Assign Items). With config.SKILL_BAR a strip above the HUD
 frame shows
 
     Z X C V B  the 5 belt slots (cz.Z): icon and count; the key or a click uses that slot
@@ -10,11 +10,11 @@ frame shows
                learned or the hero lacks the MP; a click uses the skill
 
 Belt keys are new key codes BELT_CODES (-101..-105 = slot 0..4) that only the map reads; they
-use a slot exactly like * / # do (c.java, ag.u_I), so the combat logic stays the Java one.
+use a slot exactly like * / # do, so the combat logic stays the original.
 
 With config.SKILL_CARD the Skills menu shows a card instead of the one-line strip: name, level,
 MP, what the skill does at this level (damage, strikes, heal, buff) and at the next level. The
-numbers come from the formulas of the combat (ar.java hero_hits_enemy, c.java hero actions).
+numbers come from the formulas of the combat.
 Only the existing art is used: skill.png / skillgray.png, tool.png and the bitmap font.
 """
 import config
@@ -63,10 +63,10 @@ def playing():
 
 # ---- numbers of a skill ------------------------------------------------------------------------
 
-_MP_BASE = [5, 6, 7, 10, 15, 7, 10, 10, 8, 9, 10, 5, 6, 7, 9, 12, 20, 20, 20]   # ar.java:743-757
+_MP_BASE = [5, 6, 7, 10, 15, 7, 10, 10, 8, 9, 10, 5, 6, 7, 9, 12, 20, 20, 20]
 _MP_STEP = [3, 4, 5, 3, 4, 3, 3, 5, 3, 4, 5, 3, 4, 5, 5, 6, 5, 5, 5]
-_HIT_FRAME = {21: 5, 22: 6, 23: 5, 24: 5}         # c.java: frame of the one hit (arrayOfByte2)
-_BUFF_DIV = {17: 20, 18: 20, 19: 25}              # c.java: ATK / DEF buff = stat * lv / div
+_HIT_FRAME = {21: 5, 22: 6, 23: 5, 24: 5}         # frame of the one hit (arrayOfByte2)
+_BUFF_DIV = {17: 20, 18: 20, 19: 25}              # ATK / DEF buff = stat * lv / div
 
 
 def mp_need(skill, lv):
@@ -90,9 +90,9 @@ def anim_frames(skill):
 
 
 def strikes(skill):
-    """How many times the action calls hero_attack(0) (c.java hero actions 12-30)."""
+    """How many times the action calls hero_attack(0)."""
     n = anim_frames(skill)
-    frames = range(n if n else 30)
+    frames = range(n or 30)
     if skill == 12:
         return sum(1 for f in frames if 2 < f < 6)
     if skill == 13:

@@ -1,4 +1,4 @@
-"""Java integer semantics (spike subset; full version = PHASE_1 task 1.2)."""
+"""the original integer semantics (spike subset; full version = PHASE_1 task 1.2)."""
 
 
 def i8(x: int) -> int:
@@ -26,13 +26,13 @@ def i64(x: int) -> int:
 
 
 def idiv(a: int, b: int) -> int:
-    """Java int division: truncates toward zero."""
+    """integer division: truncates toward zero."""
     q = abs(a) // abs(b)
     return q if (a >= 0) == (b >= 0) else -q
 
 
 def imod(a: int, b: int) -> int:
-    """Java %: the sign follows the dividend."""
+    """the original %: the sign follows the dividend."""
     return a - idiv(a, b) * b
 
 
@@ -40,7 +40,3 @@ def ushr32(x: int, n: int) -> int:
     """x >>> n for int."""
     return i32((x & 0xFFFFFFFF) >> (n & 31))
 
-
-def sbyte(b: int) -> int:
-    """Signed value of an unsigned byte read from bytes/bytearray."""
-    return b - 0x100 if b & 0x80 else b

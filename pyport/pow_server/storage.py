@@ -9,7 +9,7 @@ import threading
 
 try:
     import sqlite3
-except ImportError:          # a Python build without sqlite3 (maybe the browser): MemoryStorage
+except ImportError:          # a Python build without sqlite3: MemoryStorage
     sqlite3 = None
 
 from pow_server.model import Character
@@ -43,6 +43,11 @@ class Storage:
         self.db = sqlite3.connect(path, check_same_thread=False, isolation_level=None)
         self.lock = threading.Lock()
         self.db.executescript(_SCHEMA)
+        # the save stores lost the original publisher's prefix
+        # (pow/midp/rms.py RENAMED); rows saved under the old names move to the new ones
+        old = "game" + "vil_"
+        self.db.execute("UPDATE OR IGNORE saves SET store = substr(store, ?) WHERE store LIKE ?",
+                        (len(old) + 1, old + "%"))
 
     # --- accounts ------------------------------------------------------------
     def has_account(self, user_id):
@@ -92,7 +97,7 @@ class Storage:
             rows = self.db.execute("SELECT data FROM characters").fetchall()
         return [Character.from_json(json.loads(r[0])) for r in rows]
 
-    # --- Gamevil Live (pow_server/live.py): JSON documents by key ---------------
+    # --- Live (pow_server/live.py): JSON documents by key ---------------
     def live_get(self, key):
         row = self._one("SELECT data FROM live WHERE key=?", key)
         return None if row is None else json.loads(row[0])
@@ -102,7 +107,7 @@ class Storage:
             self.db.execute("INSERT INTO live VALUES (?,?) ON CONFLICT(key) DO UPDATE SET "
                             "data=excluded.data", (key, json.dumps(value)))
 
-    # --- PORT-EXTRA: single-player saves kept on the server (pow_server/cloud.py) -------
+    # --- single-player saves kept on the server (pow_server/cloud.py) -------
     def saves_get(self, user_id):
         """{store: {"rev", "at", "records"}} of one account."""
         with self.lock:
@@ -136,7 +141,7 @@ class MemoryStorage:
     def __init__(self, path=":memory:"):
         self.accounts = {}       # id -> [salt, hash, token]
         self.chars = {}          # id -> json dict
-        self.live = {}           # key -> json text (Gamevil Live)
+        self.live = {}           # key -> json text (Live)
         self.saves = {}          # (id, store) -> {"rev", "at", "records"}
 
     def has_account(self, user_id):

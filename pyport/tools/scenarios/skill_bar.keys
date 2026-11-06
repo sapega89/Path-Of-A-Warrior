@@ -1,6 +1,6 @@
 env POW_SKILL_BAR=1
 env POW_SKILL_CARD=1
-# PORT-EXTRA skill bar and belt in combat (config.SKILL_BAR); made like combat.keys
+# skill bar and belt in combat (config.SKILL_BAR); made like combat.keys
 wait 25
 key FIRE
 wait 2

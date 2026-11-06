@@ -1,5 +1,5 @@
 # Fresh hero -> first mission -> briefing SKIP -> the map (no enemies yet)
-env POW_NO_ENEMIES=1     # PORT-EXTRA: the map without enemies (walking, rooms, pause, save)
+env POW_NO_ENEMIES=1     # the map without enemies (walking, rooms, pause, save)
 wait 25
 key FIRE
 wait 2

@@ -1,4 +1,4 @@
-"""Options volume -> pygame gain (pow/midp/media.py, PORT-EXTRA config.VOLUME_CURVE)."""
+"""Options volume -> pygame gain (pow/midp/media.py, config.VOLUME_CURVE)."""
 from conftest import ROOT  # noqa: F401  (sets sys.path and the dummy drivers)
 
 
@@ -13,7 +13,7 @@ def test_gain_curve(monkeypatch):
 
 
 def test_saved_volume_used_on_first_sound(tmp_path, monkeypatch):
-    """gamevil_pow_env (load_options) -> volume -> Sound.play_now -> PlayerPool: the first sound."""
+    """pow_env (load_options) -> volume -> Sound.play_now -> PlayerPool: the first sound."""
     import config
     from pow.game.game_canvas import GameCanvas
     from pow.game.player_pool import PlayerPool
@@ -35,9 +35,9 @@ def test_saved_volume_used_on_first_sound(tmp_path, monkeypatch):
 
 
 def test_mp_volume_applies_to_playing_sound():
-    """c.java a(int): setLevel also on the Player that is playing now."""
+    """a(int): setLevel also on the Player that is playing now."""
     from pow.midp.media import gain
-    from pow_mp.player_pool import PlayerPool
+    from pow.game.online.player_pool import PlayerPool
     pool = PlayerPool(4, 1, True, True)
     assert pool.load("/snd3.wav", 3)
     pool.play(3, True)

@@ -1,9 +1,9 @@
-"""PORT-EXTRA: the four heroes get their own base stats, and the attributes can be reset (respec).
+"""the four heroes get their own base stats, and the attributes can be reset (respec).
 
-In the original every hero starts with HP 30 / MP 10 / ATK 5 / DEF 4 (ag.aw, ag.java:3275-3284)
+In the original every hero starts with HP 30 / MP 10 / ATK 5 / DEF 4
 and the head (`Hero.head`, chosen on screen 6) is only a portrait. Here each head has its own
 base stats. Every set is worth the same number of stat points as the original one (a point gives
-HP +5 / MP +3 / ATK +1 / DEF +1, e.java:882-907), so no hero is stronger, only different.
+HP +5 / MP +3 / ATK +1 / DEF +1), so no hero is stronger, only different.
 
 Because of that, the points a hero has put into its stats (and the elixirs 434-437 it drank,
 each worth one point) are always `spent_points()`, whatever head it has and even for a save made
@@ -14,7 +14,7 @@ The multiplayer server keeps the same table (pow_server/sp_rules.HERO_BASES); a 
 that the two stay equal.
 """
 
-# HP, MP, ATK, DEF given by one stat point (e.java:882-907)
+# HP, MP, ATK, DEF given by one stat point
 POINT_GAIN = (5, 3, 1, 1)
 
 # (HP, MP, ATK, DEF) of a new hero per head; head 0 keeps the original numbers
@@ -43,7 +43,7 @@ def stats_line(head):
 def spent_points(hero):
     """Stat points in the hero's base stats over its head's set (elixirs included)."""
     stats = (hero.base_hp, hero.base_mp, hero.base_attack, hero.base_defense)
-    return max(0, sum((s - b) // g for s, b, g in zip(stats, base_stats(hero.head), POINT_GAIN)))
+    return max(0, sum((s - b) // g for s, b, g in zip(stats, base_stats(hero.head), POINT_GAIN, strict=True)))
 
 
 def respec_gold(hero):
@@ -59,7 +59,7 @@ def respec_item_slot(hero):
 
 
 def set_base_stats(hero):
-    """The head's base stats, full HP / MP (what ag.aw did with the original numbers)."""
+    """The head's base stats, full HP / MP."""
     hero.base_hp, hero.base_mp, hero.base_attack, hero.base_defense = base_stats(hero.head)
     hero.hp = hero.base_hp
     hero.mp = hero.base_mp

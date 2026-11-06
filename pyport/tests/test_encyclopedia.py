@@ -32,5 +32,5 @@ def test_tables():
 
 def test_page_is_current():
     page = (PY / "web" / "encyclopedia.html").read_text(encoding="utf-8")
-    data = json.loads(re.search(r'<script id="data" type="application/json">(.*?)</script>', page, re.S).group(1))
+    data = json.loads(re.search(r'<script id="data" type="application/json">(.*?)</script>', page, re.DOTALL).group(1))
     assert len(data["items"]) == 255 and len(data["gens"]) == 141 and len(data["mis"]) == 102

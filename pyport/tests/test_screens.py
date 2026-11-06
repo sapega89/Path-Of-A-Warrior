@@ -7,24 +7,21 @@ and tools/compare_ref.py reports the difference.
 
 import pygame
 import pytest
-
 from conftest import ROOT
 
 SCEN = ROOT / "tools" / "scenarios"
 
-# tools/shot.py seeds every java.util.Random with POW_SEED=1 instead of the clock, so the enemy AI,
+# tools/shot.py seeds every random generator with POW_SEED=1 instead of the clock, so the enemy AI,
 # the Blacksmith stock and the gifts of the generals repeat exactly: every shot is compared.
-# scenarios that may reach a NotPorted screen on purpose (none at the moment)
-NOT_STRICT = set()
 
 
 def _run(name, out):
     import os
     import subprocess
     import sys
-    env = dict(os.environ, POW_STRICT="0" if name in NOT_STRICT else "1")   # NotPorted fails the test
+    env = dict(os.environ, POW_DEBUG="1")   # an exception in the game loop fails the test
     r = subprocess.run([sys.executable, str(ROOT / "tools" / "shot.py"), str(SCEN / (name + ".keys")),
-                        "--out", str(out)], capture_output=True, text=True, timeout=300, env=env)
+                        "--out", str(out)], capture_output=True, text=True, check=False, timeout=300, env=env)
     assert r.returncode == 0, r.stderr
 
 
@@ -32,7 +29,10 @@ def _run(name, out):
                                   "options_help", "management", "menus_mouse",
                                   "missions", "missions_mouse", "visiting",
                                   "map", "map_mouse", "combat", "combat_mouse", "victory", "blacksmith",
-                                  "gamevil_live", "multiplayer", "skill_bar", "skill_card", "respec"])
+                                  "live", "multiplayer", "skill_bar", "skill_card", "respec",
+                                  "always_online", "always_online_continue",
+                                  "always_online_offline", "always_online_badpwd",
+                                  "server_only_register", "registration_keyboard"])
 def test_scenario_matches_baseline(name, tmp_path):
     out = tmp_path / name
     _run(name, out)

@@ -1,0 +1,33 @@
+env POW_ALWAYS_ONLINE=1
+save zero
+# Into the multiplayer screens: a registered account on this device (TEST), Continue (the
+# background login), Game Menu > Live > Multiplayer, the title, the login with that account, the
+# welcome; ends on the Main Menu, on Duel.
+account TEST 1234
+wait 25
+key FIRE          # sound: Yes
+wait 2
+key FIRE          # title -> Main Menu
+wait 2
+key FIRE          # Continue -> Game Menu
+wait 6
+key DOWN
+wait 6
+key DOWN          # Mission -> Blacksmith -> Live
+wait 6
+key FIRE          # Live opens at once
+wait 6
+key FIRE          # the welcome popup
+wait 6
+key DOWN
+wait 1
+key DOWN
+wait 1
+key DOWN          # Trade -> Warehouse -> Safe -> Multiplayer
+wait 2
+key FIRE          # the multiplayer screens: the title
+wait 10
+key FIRE          # press any key -> the login with the account
+wait 40           # 278/279, reconnect, 262/263
+key FIRE          # Welcome OK
+wait 20           # Main Menu, on Duel

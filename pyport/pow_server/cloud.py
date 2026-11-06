@@ -1,8 +1,8 @@
-"""PORT-EXTRA (asked by Andrey): the single player's saves kept on the server.
+"""(asked by Andrey): the single player's saves kept on the server.
 
 The phone kept the game only in its RecordStores; the port keeps them in ~/.path_of_a_warrior
 (desktop) or localStorage (browser), so a hero stayed on one computer / one browser. This
-server keeps a copy of the save stores per account (the Gamevil Live / Multiplayer accounts:
+server keeps a copy of the save stores per account (the Live / Multiplayer accounts:
 UserID + password), and pow/game/cloud_save.py on the client sends every save here and takes
 the newer copy back when the game starts on another device.
 
@@ -25,7 +25,9 @@ import binascii
 import json
 import re
 
-STORES = ("gamevil_pow_data", "gamevil_pow_env")   # the hero and the Options
+from pow_server import security
+
+STORES = ("pow_data", "pow_env")   # the hero and the Options
 MAX_STORE = 64 * 1024        # bytes of all records of one store
 MAX_RECORDS = 16
 MAX_MESSAGE = 128 * 1024     # one text message (base64 + JSON)
@@ -37,6 +39,7 @@ _PWD_RE = re.compile(r"^[0-9]{4,12}$")
 class CloudServer:
     def __init__(self, storage):
         self.storage = storage
+        self.guard = None          # security.Guard (ws_server.serve)
 
     def connect(self, send):
         """send(text) writes one message to the client."""
@@ -49,6 +52,7 @@ class CloudSession:
         self._send = send
         self.user = None
         self.closed = False
+        self.peer = None           # the client's address (ws_server.py), for security.Guard
 
     def send(self, **msg):
         if not self.closed:
@@ -59,7 +63,7 @@ class CloudSession:
 
     def receive(self, text):
         if self.closed:
-            return
+            return None
         try:
             msg = json.loads(text)
         except (ValueError, TypeError):
@@ -81,9 +85,9 @@ class CloudSession:
                 and _ID_RE.match(uid) and _PWD_RE.match(pwd)):
             return self.send(op="login", ok=False, err="bad id")
         if not st.has_account(uid):
-            # accounts are made by the Gamevil Live registration (530) or the MP login (278)
+            # accounts are made by the Live registration (530) or the MP login (278)
             return self.send(op="login", ok=False, err="no account")
-        if not st.check_password(uid, pwd):
+        if not security.check_password(self.server, self, uid, pwd):
             return self.send(op="login", ok=False, err="password")
         self.user = uid
         self.send(op="login", ok=True)
@@ -94,6 +98,8 @@ class CloudSession:
 
     def on_put(self, msg):
         store, base, at, records = msg.get("store"), msg.get("base"), msg.get("at"), msg.get("records")
+        if isinstance(store, str) and store.startswith("game" + "vil_"):
+            store = store[8:]     # a client from before the rename (storage.py)
         if store not in STORES:
             return self.send(op="put", ok=False, err="bad store", store=str(store))
         if not (isinstance(base, int) and isinstance(at, int) and isinstance(records, list)

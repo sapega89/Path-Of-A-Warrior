@@ -2,6 +2,7 @@
 
     snd0-2.mid -> FluidSynth + FluidR3_GM.sf2 -> WAV -> OGG (music)
     snd3-16.wav -> OGG (effects)
+    pyport/assets_mp/snd0, 2-6.wav -> OGG next to them (the multiplayer effects of the browser build)
 
 Needs: fluidsynth, a GM soundfont (apt: fluidsynth fluid-soundfont-gm), ffmpeg.
 Output goes to pyport/assets/audio/ and is committed, so players do not need these tools.
@@ -17,9 +18,9 @@ SF2 = pathlib.Path("/usr/share/sounds/sf2/FluidR3_GM.sf2")
 
 
 def run(cmd):
-    r = subprocess.run(cmd, capture_output=True, text=True)
+    r = subprocess.run(cmd, capture_output=True, text=True, check=False)
     if r.returncode != 0:
-        sys.exit("failed: %s\n%s" % (" ".join(map(str, cmd)), r.stderr[-2000:]))
+        sys.exit("failed: {}\n{}".format(" ".join(map(str, cmd)), r.stderr[-2000:]))
 
 
 def main():
@@ -33,6 +34,10 @@ def main():
     for n in range(3, 17):
         run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(ROOT / ("snd%d.wav" % n)), "-c:a", "libvorbis", "-q:a", "3",
              str(OUT / ("snd%d.ogg" % n))])
+    mp = ROOT / "pyport" / "assets_mp"
+    for wav in sorted(mp.glob("snd*.wav")):
+        run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(wav), "-c:a", "libvorbis", "-q:a", "3",
+             str(wav.with_suffix(".ogg"))])
     for p in sorted(OUT.glob("*.ogg")):
         print("%-10s %6d bytes" % (p.name, p.stat().st_size))
 

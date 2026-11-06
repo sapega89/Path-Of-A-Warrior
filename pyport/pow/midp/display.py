@@ -2,13 +2,11 @@
 
 Headless mode (SDL_VIDEODRIVER=dummy) is used by tools/shot.py and tests.
 
-PORT-EXTRA full screen (F11 / Alt+Enter, Options > Screen): the 240x320 picture is scaled by the
+full screen (F11 / Alt+Enter, Options > Screen): the 240x320 picture is scaled by the
 biggest whole factor that fits the monitor and centred, with black bars around it. The choice is
-kept in RecordStore "pow_display" and comes back on the next start. In the browser the page itself
-goes full screen (Fullscreen API) and pygbag fits the canvas into it.
+kept in RecordStore "pow_display" and comes back on the next start.
 """
 import os
-import sys
 
 import pygame
 
@@ -31,14 +29,10 @@ def init(headless=False):
         os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
     pygame.init()
     want = config.FULLSCREEN if config.FULLSCREEN is not None else _load()
-    _set_mode(bool(want) and not headless and not _browser())
+    _set_mode(bool(want) and not headless)
     pygame.display.set_caption("Path of a Warrior")
     screen = pygame.Surface((config.SCREEN_W, config.SCREEN_H)).convert()
     screen.fill((0, 0, 0))
-
-
-def _browser():
-    return sys.platform == "emscripten"
 
 
 def _set_mode(full):
@@ -48,7 +42,7 @@ def _set_mode(full):
         try:
             window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         except pygame.error as ex:
-            print("full screen failed: %r" % ex)
+            print(f"full screen failed: {ex!r}")
             full = False
     if not full:
         window = pygame.display.set_mode((w, h))
@@ -66,32 +60,23 @@ def fit(size):
 
 
 def is_fullscreen():
-    if _browser():
-        try:
-            import platform
-            return bool(platform.window.document.fullscreenElement)
-        except Exception:
-            return False
     return fullscreen
 
 
 def set_fullscreen(full):
     """Turns full screen on or off and remembers the choice."""
     full = bool(full)
-    if _browser():
-        try:
-            import platform
-            doc = platform.window.document
-            if full and not doc.fullscreenElement:
-                doc.documentElement.requestFullscreen()
-            elif not full and doc.fullscreenElement:
-                doc.exitFullscreen()
-        except Exception as ex:
-            print("Fullscreen API: %r" % ex)
-        return
     if window is not None and full != fullscreen:
         _set_mode(full)
     _save(full)
+
+
+_seen = None
+
+
+def screen_changed():
+    """True once after full screen went on or off outside set_fullscreen (never on the desktop)."""
+    return False
 
 
 def toggle_fullscreen():
@@ -119,7 +104,7 @@ def _save(full):
         else:
             rs.setRecord(1, data, 0, 1)
     except Exception as ex:
-        print("pow_display: %r" % ex)
+        print(f"pow_display: {ex!r}")
 
 
 def to_screen(pos):

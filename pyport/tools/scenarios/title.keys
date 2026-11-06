@@ -1,7 +1,5 @@
-# logo -> "sound enabled?" -> title -> Main Menu (no saved game)
-wait 5
-shot logo
-wait 20            # logo stays 2.5 s = ~21 ticks of 120 ms
+# "sound enabled?" (no logo screen: ) -> title -> Main Menu (no saved game)
+wait 25
 shot sound_question
 key RIGHT
 shot sound_no_selected
@@ -50,6 +48,4 @@ key FIRE
 wait 1
 key RIGHT          # select Yes
 shot exit_popup_yes
-key FIRE           # Yes -> ag.as(): outro screen, the game quits after 3 s
-wait 3
-shot outro
+key FIRE           # Yes -> the game quits at once (no outro: )

@@ -1,14 +1,15 @@
 """A scripted player for trying Challenge / Invite An Ally alone (PHASE_9): it logs in like a
 client, accepts every invitation (Options > Invitation: Accept) and plays its battles with
-plain attacks. tools/mp_shot.py uses it (`bot` steps); `python -m pow_server --bot NAME` keeps
+plain attacks. tools/shot.py uses it (`bot` steps); `python -m pow_server --bot NAME` keeps
 one online on a server."""
 import random
 
-from pow_server import codec_bin, messages as M
+from pow_server import codec_bin
+from pow_server import messages as M
 
 
 class Bot:
-    def __init__(self, server, uid, pwd="0000", hit=(40, 88), rng=None):
+    def __init__(self, server, uid, pwd="0000", hit=(40, 88), rng=None):   # noqa: S107 (bot accounts)
         self.server, self.uid = server, uid
         self.hit = hit
         self.rng = rng or random.Random(1)
@@ -18,7 +19,7 @@ class Bot:
         s.receive(self._frame(M.LOGIN_FIRST, id=uid, pwd=pwd, ver=M.GAME_VER))
         ans = self.inbox.pop() if self.inbox else {}
         if ans.get("st") != 1:
-            raise ValueError("bot %s: login refused (%s)" % (uid, ans))
+            raise ValueError(f"bot {uid}: login refused ({ans})")
         token = ans["token"]
         s.close()
         self.session = server.connect(self._recv)
@@ -57,3 +58,7 @@ class Bot:
                 self._send(M.STAGE_INTRO_DONE)
             elif op == M.BATTLE_END:
                 self.results.append(m)
+            elif op == M.CHAT_PUSH and m.get("channel") == 2 and m.get("id") != self.uid:
+                # chat: a private message gets one of the bots' lines back
+                from pow_server import chat
+                self._send(M.CHAT_SEND, channel=2, peer=m["id"], text=self.rng.choice(chat.BOT_LINES))

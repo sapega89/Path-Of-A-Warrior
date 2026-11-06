@@ -1,6 +1,6 @@
-"""Binary codec of the original Gamevil protocol (PHASE_9 task 9.4).
+"""Binary codec of the original protocol (PHASE_9 task 9.4).
 
-Layout (docs/analysis/06_multiplayer.md §2.1, MP e.java / d.java / k.java):
+Layout:
 
     frame    = u16 LE total length (these 2 bytes included) + payload
     C->S     = u16 LE opcode + fields                    (no status byte)
@@ -47,7 +47,7 @@ def unframe(data: bytes):
 
 # --- fields --------------------------------------------------------------------
 def _put(buf, kind, value):
-    if isinstance(kind, int):          # fixed string, e.e.a(String,int)
+    if isinstance(kind, int):  # fixed string
         raw = (value or "").encode("ascii", "replace")[:kind]
         buf += raw + b"\0" * (kind - len(raw))
     elif kind in _NUM:
@@ -58,10 +58,10 @@ def _put(buf, kind, value):
         else:
             lo, hi = 0, (1 << (8 * _NUM[kind])) - 1
         if not lo <= v <= hi:
-            raise CodecError("value %r does not fit %s" % (v, kind))
+            raise CodecError(f"value {v!r} does not fit {kind}")
         buf += struct.pack("<" + kind, v)
     else:
-        raise CodecError("unknown field kind %r" % (kind,))
+        raise CodecError(f"unknown field kind {kind!r}")
 
 
 def _get(data, pos, kind):
@@ -100,7 +100,7 @@ def _encode_fields(buf, schema, msg):
 
 
 def _encode_row(buf, sub, row):
-    if isinstance(sub, str) or isinstance(sub, int):   # list of plain values
+    if isinstance(sub, (str, int)):   # list of plain values
         _put(buf, sub, row if row is not None else (99 if sub == "B" else 0))
     else:
         _encode_fields(buf, sub, row or {})

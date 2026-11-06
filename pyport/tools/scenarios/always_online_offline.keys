@@ -1,0 +1,24 @@
+env POW_ALWAYS_ONLINE=1
+env POW_LIVE_SERVER=ws://127.0.0.1:9/live
+save zero
+# "always online" without the server: Continue of a hero without an account offers the
+# registration once (BACK on the empty UserID skips it), and a background login that cannot reach
+# the server is silent: no popup, the Game Menu keeps working, the login is tried again later.
+wait 25
+key FIRE           # sound: Yes
+wait 2
+key FIRE           # title -> Main Menu
+wait 2
+key FIRE           # Continue -> Game Menu -> the registration offer
+wait 4
+shot registration_offer
+key BACK           # skip
+wait 4
+shot game_menu_skipped
+account TEST 1234
+wait 40
+online no
+shot game_menu_no_popup
+key DOWN
+wait 6
+shot game_menu_keys_work

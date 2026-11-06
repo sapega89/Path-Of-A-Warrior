@@ -5,8 +5,8 @@ from conftest import ROOT  # noqa: F401  (sets sys.path and the dummy video driv
 def test_new_hero_save_roundtrip(tmp_path, monkeypatch):
     import config
     from pow.game.game_canvas import GameCanvas
-    from pow.game.scr_table import ScrTable
     from pow.game.menus import Menus
+    from pow.game.scr_table import ScrTable
     from pow.game.structs import Hero
     from pow.midp.jrandom import Random
     from pow.midp.rms import RecordStore
@@ -25,8 +25,8 @@ def test_new_hero_save_roundtrip(tmp_path, monkeypatch):
     monkeypatch.setattr(GameCanvas, "tables_loaded", [False] * 16)
     monkeypatch.setattr(GameCanvas, "shop", [None] * 25)
 
-    GameCanvas.hero.reset_inventory()                         # n.a(): allocates X / Y / Z (ag.java:600)
-    game.new_hero()                           # ag.java:3222 fresh hero, gets item 116 equipped
+    GameCanvas.hero.reset_inventory()  # allocates X / Y / Z
+    game.new_hero()                           # fresh hero, gets item 116 equipped
     assert GameCanvas.hero.equipped[0].id == 116 and GameCanvas.hero.backpack[0].id == 0
     GameCanvas.hero.name = "Leo"
     GameCanvas.hero.head = 2
@@ -37,9 +37,9 @@ def test_new_hero_save_roundtrip(tmp_path, monkeypatch):
     game.fill_shop()
     shop = [GameCanvas.shop[8 + b].id for b in range(17)]
     assert shop == sorted(shop) and all(101 <= s < 300 for s in shop)
-    assert game.save_game()                    # ag.java:2871 -> RecordStore "gamevil_pow_data"
+    assert game.save_game()                    # -> RecordStore "pow_data"
     size = GameCanvas.save_pos
-    rec = RecordStore.openRecordStore("gamevil_pow_data", False).getRecord(1)
+    rec = RecordStore.openRecordStore("pow_data", False).getRecord(1)
     assert len(rec) == 2000 and rec[0] | rec[1] << 8 == size
     assert bytes(rec[2:10]) == b"Leo     "
 
@@ -47,7 +47,7 @@ def test_new_hero_save_roundtrip(tmp_path, monkeypatch):
     GameCanvas.hero.reset_inventory()
     monkeypatch.setattr(GameCanvas, "shop", [None] * 25)
     GameCanvas.difficulty = 1
-    game.load_game()                          # ag.java:2126 Continue
+    game.load_game()                          # Continue
     assert GameCanvas.hero.name == "Leo"
     assert (GameCanvas.hero.level, GameCanvas.hero.base_hp, GameCanvas.hero.base_mp, GameCanvas.hero.base_attack, GameCanvas.hero.base_defense, GameCanvas.hero.stat_points, GameCanvas.hero.head) == (1, 40, 10, 5, 4, 0, 2)
     assert GameCanvas.hero.equipped[0].id == 116 and GameCanvas.hero.equipped[0].attack == 1

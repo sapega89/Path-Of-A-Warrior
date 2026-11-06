@@ -1,17 +1,17 @@
 """The POW Multiplayer server: sessions and the menu-side messages (PHASE_9 tasks 9.13, 9.14, 9.18).
 
 Pure Python, no pygame and no I/O: a transport (pow_server/ws_server.py, or the in-game
-LocalTransport of pow_mp/net/transport.py) hands every received frame payload to
+LocalTransport of pow/midp/transport.py) hands every received frame payload to
 Session.receive() and writes the frames the session passes to its `send` callback.
 
-Done here: login 278/262 (+ PORT-EXTRA session token), duplicate login (280), notices
+Done here: login 278/262 (+ session token), duplicate login (280), notices
 258/259, Options 288-291, Character 1280-1299, Ranking 1293/1300, keepalive.
 Battles (Room below, resolved in pow_server/battle.py): Duel 1-on-1 / 2-on-2 against CPU
 fighters and Solo Mission (512 mode 0/1/2 -> 513, 514, 1024 or 1037), Challenge 1:1 / 2:2 and
 Invite An Ally between two players (768 -> 769 to me, 770 to the other player); 1025/1026,
 1027/1028 per round; stages 1031/1036/1037/1038; 1025 after the end -> 1032.
 
-PORT-EXTRA (asked by Andrey: bots when nobody is online): server bots (add_bots). They are
+(asked by Andrey: bots when nobody is online): server bots (add_bots). They are
 accounts nobody can log in to, always "online" with Invitation: Accept, listed in the Ranking,
 so a player alone on the server can Challenge one or Invite one as an ally by its UserID. A bot
 fights as a CPU fighter of about the inviter's level (battle.cpu_fighter) under its own name.
@@ -20,13 +20,15 @@ import random
 import re
 import time
 
-from pow_server import battle as B, codec_bin, loot, messages as M
+from pow_server import battle as B
+from pow_server import chat, codec_bin, loot, orders, security
+from pow_server import messages as M
 from pow_server.model import apply_sp_hero, default_character, valid_slots
 from pow_server.storage import open_storage
 
 MATCH_WAIT = 60                                # Andrey: a whole minute for a live opponent
 MATCH_LEVELS = (10, 20)                        # level reach at first / after half the wait
-# PORT-EXTRA: the standalone server's bots (UserID, display name, Ranking Fame / grades)
+# the standalone server's bots (UserID, display name, Ranking Fame / grades)
 DEFAULT_BOTS = (("BLADE", "Blade", 900), ("RAVEN", "Raven", 600), ("TIGER", "Tiger", 400),
                 ("SHADOW", "Shadow", 250), ("IRONFIST", "Ironfist", 100))
 _ID_RE = re.compile(r"^[A-Z]{4,12}$")          # Login screen: A-Z, 4..12 (g:4888-4926)
@@ -39,8 +41,8 @@ class GameServer:
     def __init__(self, storage=None, *, require_token=True, auto_register=True,
                  notices=(), notices_version=1, clock=time.monotonic, rng=None,
                  match_wait=MATCH_WAIT):
-        """require_token: 262 must carry the token of the last 278 (PORT-EXTRA). False lets the
-        original jar in, which logs in again with 262 and its UserID only (06 §2.3).
+        """require_token: 262 must carry the token of the last 278 . False lets the
+        original client in, which logs in again with 262 and its UserID only (06 §2.3).
         auto_register: a 278 with an unknown UserID creates the account. The original only let
         in IDs registered in POW single ("Save User Data"); that bridge is task 9.10.
         notices: pages of 4 lines (16 characters each) shown once after login (258/259)."""
@@ -54,9 +56,10 @@ class GameServer:
         self.online = {}               # user id -> Session
         self.match_wait = match_wait   # seconds a Duel waits for a live opponent, then a CPU
         self.queue = []                # [Session] waiting in 512 (oldest first)
-        self.bots = {}                 # PORT-EXTRA: UserID -> Character of a server bot
+        self.bots = {}                 # UserID -> Character of a server bot
+        self.guard = None              # security.Guard (ws_server.serve)
 
-    # --- PORT-EXTRA: server bots ---------------------------------------------------------
+    # --- server bots ---------------------------------------------------------
     def add_bots(self, bots=DEFAULT_BOTS):
         """Makes (or finds) the bot accounts. An ID a player already owns is skipped."""
         import secrets
@@ -71,9 +74,7 @@ class GameServer:
                 st.create_account(uid, "".join(secrets.choice("0123456789") for _ in range(12)))
                 ch = default_character(uid)
                 ch.bot = True
-                if st.name_taken(name, uid):
-                    name = ""
-                ch.name, ch.mp_fame = name, fame
+                ch.name, ch.mp_fame = ("" if st.name_taken(name, uid) else name), fame
                 ch.duel_grade = ch.mission_grade = min(9, fame // 100)
                 ch.wins, ch.losses = fame // 10, fame // 25
                 ch.quote_start, ch.quote_win = "Nobody else? Fight me!", "Come back stronger."
@@ -123,6 +124,7 @@ class Session:
         self.server = server
         self._send = send
         self.user = None               # user id after a good 262
+        self.peer = None               # the client's address, for security.Guard
         self.char = None
         self.closed = False
         self.last_seen = server.clock()
@@ -131,6 +133,8 @@ class Session:
         self.queued_mode = None        # 512 mode while waiting for an opponent
         self.queued_at = 0
         self.slot = 0                  # my slot in it
+        self.port_client = False       # logged in with the port's token (chat pushes)
+        self.chat_rate = chat.RateLimit()
 
     # --- I/O -----------------------------------------------------------------
     def send(self, op, **fields):
@@ -179,9 +183,11 @@ class Session:
         if not st.has_account(uid):
             if not self.server.auto_register:
                 return self.send(M.LOGIN_FIRST_ANS, st=-1, reason=M.REASON_NO_ID)
+            if not security.may_create(self.server, self):      # too many new accounts
+                return self.send(M.LOGIN_FIRST_ANS, st=-1, reason=M.REASON_OTHER)
             st.create_account(uid, pwd)
             st.save(default_character(uid))
-        elif not st.check_password(uid, pwd):
+        elif not security.check_password(self.server, self, uid, pwd):
             return self.send(M.LOGIN_FIRST_ANS, st=-1, reason=M.REASON_BAD_PASSWORD)
         self.send(M.LOGIN_FIRST_ANS, st=1, token=st.new_token(uid))
 
@@ -199,13 +205,18 @@ class Session:
             del self.server.online[self.user]   # a second 262 as another UserID on this session
         self.user = uid
         self.char = st.load(uid) or default_character(uid)
-        if apply_sp_hero(self.char, msg):        # PORT-EXTRA: the single-player hero (9.10)
+        if apply_sp_hero(self.char, msg):        # the single-player hero (9.10)
             self.save()
         self.server.online[uid] = self
         pages = 0
         if self.server.notices and self.char.notices_seen < self.server.notices_version:
             pages = len(self.server.notices)   # marked seen when the last page is delivered
         self.send(M.LOGIN_ANS, st=1, **self.char.profile(notices=pages))
+        self.port_client = bool(msg.get("token"))
+        if self.port_client:                   # chat messages that wait for me
+            order, private = chat.unread(st, uid, self.char.order)
+            if order or private:
+                self.send(M.CHAT_UNREAD, st=1, order=order, private=private)
 
     def on_notice(self, msg):          # 258 -> 259 (page 1, 2, ...)
         page = msg.get("page", 0)
@@ -233,7 +244,7 @@ class Session:
         else:
             res = B.duel_rewards(self.char, b, self.slot, self.server.rng)
             cat = 2
-        # loot (9.9): one single-player drop roll per foe beaten, ar.P() kinds 0 soldier /
+        # loot (9.9): one single-player drop roll per foe beaten, kinds 0 soldier /
         # 1 general / 2 boss; mission monsters are soldiers, the fighter of the last stage a boss
         if m:
             kills = [0, 0] * min(cleared, m["stages"] - 1) + ([2, 0] if cleared == m["stages"] else [])
@@ -301,8 +312,9 @@ class Session:
 
     def on_records(self, msg):         # 1296 -> 1297
         c = self.char
+        doc = self._my_order()                 # the order's name
         self.send(M.RECORDS_ANS, st=1, fame=c.mp_fame, duel_grade=c.duel_grade,
-                  mission_grade=c.mission_grade)
+                  mission_grade=c.mission_grade, order=doc["name"] if doc else "")
 
     def on_exp_fame_gold(self, msg):   # 1298 -> 1299
         c = self.char
@@ -343,6 +355,154 @@ class Session:
         rows += [{"rank": 0, "id": "", "value": 0}] * (3 - len(rows))
         self.send(M.RANK_LIST_ANS, st=1, rows=rows)
 
+    # --- orders (pow_server/orders.py) -------------------------------------
+    def _my_order(self):
+        """My order document; a stale Character.order (the order is gone) is cleared."""
+        doc = orders.get(self.server.storage, self.char.order)
+        if doc is None or self.user not in doc["members"]:
+            if self.char.order:
+                self.char.order = ""
+                self.save()
+            return None
+        return doc
+
+    def on_order_info(self, msg):      # 1792 -> 1793
+        doc = self._my_order()
+        if doc is None:
+            return self.send(M.ORDER_INFO_ANS, st=1, name="", rows=[])
+        st, online, rows = self.server.storage, self.server.online, []
+        for uid in doc["members"]:
+            ch = self.char if uid == self.user else st.load(uid)
+            if ch is None:
+                continue
+            s = online.get(uid)
+            rows.append({"id": uid, "name": ch.name or uid[:8], "level": ch.level,
+                         "online": int(s is not None and not s.closed),
+                         "leader": int(uid == orders.leader(doc))})
+        # the leader, me, who is online, the others
+        rows.sort(key=lambda r: (not r["leader"], r["id"] != self.user, not r["online"]))
+        self.send(M.ORDER_INFO_ANS, st=1, name=doc["name"], rows=rows[:orders.MAX_MEMBERS])
+
+    # --- the chat (pow_server/chat.py) ---------------------------------------
+    def _display_name(self, uid):
+        if uid == self.user:
+            return self.char.name or uid[:8]
+        s = self.server.online.get(uid)
+        ch = s.char if s is not None and s.char is not None else self.server.storage.load(uid)
+        return (ch.name or uid[:8]) if ch is not None else uid[:8]
+
+    def _chat_target(self, channel, peer):
+        """(storage key, error status or 1) of a conversation."""
+        st = self.server.storage
+        if channel == chat.LOBBY:
+            return "chat:lobby", 1
+        if channel == chat.ORDER:
+            doc = self._my_order()
+            return (chat.order_key(doc["name"]), 1) if doc else (None, M.ERR_NO_ORDER)
+        if channel == chat.PRIVATE:
+            if peer == self.user:
+                return None, M.ERR_SELF
+            if not _ID_RE.match(peer or "") or not st.has_account(peer):
+                return None, M.ERR_NO_PLAYER
+            return chat.pm_key(self.user, peer), 1
+        return None, -1
+
+    def on_chat_read(self, msg):       # 1808 -> 1809
+        channel, peer = msg.get("channel"), (msg.get("peer") or "").upper()
+        key, res = self._chat_target(channel, peer)
+        if res != 1:
+            return self.send(M.CHAT_READ_ANS, st=res)
+        st = self.server.storage
+        doc = chat.history(st, key)
+        if channel == chat.ORDER:
+            me = chat.me_doc(st, self.user)
+            me["order_seen"] = doc["seq"]
+            chat.put_me(st, self.user, me)
+        elif channel == chat.PRIVATE:
+            chat.mark_peer_read(st, self.user, peer)
+        else:
+            peer = ""
+        self.send(M.CHAT_READ_ANS, st=1, channel=channel, peer=peer,
+                  peer_name=self._display_name(peer) if peer else "", rows=chat.rows_out(doc["rows"]))
+
+    def on_chat_send(self, msg):       # 1810 -> 1811, 1812 to every online reader
+        channel, peer = msg.get("channel"), (msg.get("peer") or "").upper()
+        key, res = self._chat_target(channel, peer)
+        if res != 1:
+            return self.send(M.CHAT_SEND_ANS, st=res)
+        text = chat.clean(msg.get("text"))
+        if text is None:
+            return self.send(M.CHAT_SEND_ANS, st=M.ERR_NOT_ACCEPTABLE)
+        if not self.chat_rate.allow(self.server.clock()):
+            return self.send(M.CHAT_SEND_ANS, st=M.ERR_TOO_FAST)
+        st, online = self.server.storage, self.server.online
+        name = self._display_name(self.user)
+        doc = chat.append(st, key, self.user, name, text)
+        row = {"id": self.user, "name": name, "text": text}
+        if channel == chat.LOBBY:
+            readers = [(uid, "") for uid in online]
+        elif channel == chat.ORDER:
+            readers = [(uid, "") for uid in self._my_order()["members"]]
+            me = chat.me_doc(st, self.user)
+            me["order_seen"] = doc["seq"]      # my own message is read
+            chat.put_me(st, self.user, me)
+        else:
+            readers = [(self.user, peer), (peer, self.user)]
+            chat.touch_peer(st, self.user, peer, 0)
+            chat.touch_peer(st, peer, self.user, 1)
+        self.send(M.CHAT_SEND_ANS, st=1)
+        for uid, their_peer in readers:
+            s = online.get(uid)
+            if s is not None and not s.closed and s.port_client:
+                s.send(M.CHAT_PUSH, st=1, channel=channel, peer=their_peer, **row)
+        if channel == chat.PRIVATE and peer in self.server.bots:
+            self._bot_answers(peer)
+
+    def _bot_answers(self, bot):
+        """A server bot answers a private message with one of its lines."""
+        st, line = self.server.storage, self.server.rng.choice(chat.BOT_LINES)
+        name = self._display_name(bot)
+        chat.append(st, chat.pm_key(self.user, bot), bot, name, line)
+        chat.touch_peer(st, self.user, bot, 1)
+        if self.port_client:
+            self.send(M.CHAT_PUSH, st=1, channel=chat.PRIVATE, peer=bot, id=bot, name=name, text=line)
+
+    def on_chat_peers(self, msg):      # 1813 -> 1814
+        st, online, rows = self.server.storage, self.server.online, []
+        for uid, unread in chat.me_doc(st, self.user)["peers"]:
+            s = online.get(uid)
+            live = (s is not None and not s.closed) or uid in self.server.bots
+            rows.append({"id": uid, "name": self._display_name(uid), "unread": unread, "online": int(live)})
+        self.send(M.CHAT_PEERS_ANS, st=1, rows=rows)
+
+    def _order_enter(self, msg, answer, fn):
+        if self._my_order() is not None:
+            return self.send(answer, st=M.ERR_ORDER_IN)
+        name = (msg.get("name") or "").upper()
+        res = fn(self.server.storage, name, self.user)
+        if res == 1:
+            self.char.order = name
+            self.save()
+            if fn is orders.create:            # chat: a new order starts a new chat
+                chat.clear(self.server.storage, chat.order_key(name))
+            me = chat.me_doc(self.server.storage, self.user)   # earlier messages count as read
+            me["order_seen"] = chat.history(self.server.storage, chat.order_key(name))["seq"]
+            chat.put_me(self.server.storage, self.user, me)
+        self.send(answer, st=res)
+
+    def on_order_create(self, msg):    # 1794 -> 1795
+        self._order_enter(msg, M.ORDER_CREATE_ANS, orders.create)
+
+    def on_order_join(self, msg):      # 1796 -> 1797
+        self._order_enter(msg, M.ORDER_JOIN_ANS, orders.join)
+
+    def on_order_leave(self, msg):     # 1798 -> 1799
+        if self.char.order:
+            orders.leave(self.server.storage, self.char.order, self.user)
+            self.char.order = ""
+            self.save()
+        self.send(M.ORDER_LEAVE_ANS, st=1)
+
     # --- rooms and battles ----------------------------------------------------------
     @property
     def battle(self):
@@ -350,7 +510,8 @@ class Session:
 
     @battle.setter
     def battle(self, value):           # tests: None drops the room
-        assert value is None
+        if value is not None:
+            raise ValueError("only None (drop the room) can be set")
         self.room = None
 
     @property
@@ -370,7 +531,7 @@ class Session:
         if other is None:
             self.queued_mode, self.queued_at = mode, self.server.clock()
             self.server.queue.append(self)
-            return
+            return None
         self.server.queue.remove(other)
         rng = self.server.rng
         first = B.from_character(other.char, 0)      # the one who waited takes the left side
@@ -391,7 +552,7 @@ class Session:
             others = [B.cpu_fighter(rng, me, 1)]
             if mode == 1:
                 others += [B.cpu_fighter(rng, me, 2, ally=True), B.cpu_fighter(rng, me, 3)]
-        Room(self.server, mode, [me] + others, {0: self}, self.char.sp_progress).start()
+        Room(self.server, mode, [me, *others], {0: self}, self.char.sp_progress).start()
 
     def on_invite(self, msg):          # 768 -> 769 to me, 770 pushed to the other player
         """Challenge 1:1 / 2:2 (bz 0/1, the other player is the foe) and Invite An Ally (bz 2,
@@ -399,12 +560,16 @@ class Session:
         Options > Invitation decides (06 §2.6). Errors as the client shows them (g:2110-2146):
         -3 not online, -4 unregistered, -5 cannot be replied (busy), -12 yourself, -16 denied."""
         mode, uid = msg.get("mode"), msg.get("id", "")
-        if mode not in (0, 1, 2) or self.room is not None or self in self.server.queue:
+        if mode not in (0, 1, 2, M.INVITE_TEAM) or self.room is not None or self in self.server.queue:
             return self.send(M.INVITE_ANS, st=-1)    # busy: in a battle or waiting for a Duel
         if uid == self.user:
             return self.send(M.INVITE_ANS, st=-12)
         if not self.server.storage.has_account(uid):
             return self.send(M.INVITE_ANS, st=-4)
+        live = self.server.online.get(uid)
+        them = live.char if live is not None and live.char is not None else self.server.storage.load(uid)
+        if mode == M.INVITE_TEAM and not orders.same_order(self.server.storage, self.char, them):
+            return self.send(M.INVITE_ANS, st=M.ERR_NOT_MEMBER)
         if uid in self.server.bots and uid not in self.server.online:
             return self._invite_bot(mode, uid)
         other = self.server.online.get(uid)
@@ -414,6 +579,8 @@ class Session:
             return self.send(M.INVITE_ANS, st=-5)
         if not other.char.invitation:
             return self.send(M.INVITE_ANS, st=-16)
+        if mode == M.INVITE_TEAM:
+            return self._invite_team(other)
         rng = self.server.rng
         me = B.from_character(self.char, 0)
         them = B.from_character(other.char, 2 if mode == 2 else 1)
@@ -423,8 +590,19 @@ class Session:
         progress = max(self.char.sp_progress, other.char.sp_progress)
         Room(self.server, mode, fighters, {0: self, them.slot: other}, progress).start()
 
+    def _invite_team(self, other):
+        """(orders): the order member fights next to me (slots 0 and 2) against two
+        CPU fighters, each of about the level of the player it faces. On the wire and on the
+        server it is a 2-on-2 Duel (mode 1): the clients, rewards and a player leaving work as
+        in any 2-on-2."""
+        rng = self.server.rng
+        me = B.from_character(self.char, 0)
+        them = B.from_character(other.char, 2)
+        fighters = [me, them, B.cpu_fighter(rng, me, 1), B.cpu_fighter(rng, them, 3)]
+        Room(self.server, 1, fighters, {0: self, 2: other}).start()
+
     def _invite_bot(self, mode, uid):
-        """PORT-EXTRA: Challenge / Invite An Ally a server bot. The same room as against the
+        """Challenge / Invite An Ally a server bot. The same room as against the
         CPU (start_vs_cpu), the bot in the invited player's place."""
         srv, rng = self.server, self.server.rng
         me = B.from_character(self.char, 0)
@@ -563,7 +741,7 @@ class Room:
 
     def turn(self, s, choice):         # 1027
         if s.slot not in self.fighting():
-            return
+            return None
         if self.battle.over:           # the other side hung up while I was choosing
             return s.send(M.TURN_RESULT, st=1, actions=[0] * 4, records=[])
         self.turns[s.slot] = choice
@@ -572,7 +750,7 @@ class Room:
     def _resolve_if_ready(self):
         playing = self.fighting()
         if not self.turns or not (self.battle.over or set(self.turns) >= playing):
-            return
+            return None
         if self.battle.over:           # someone hung up: answer those who already chose
             for slot in sorted(self.turns):
                 self.players[slot].send(M.TURN_RESULT, st=1, actions=[0] * 4, records=[])
@@ -661,4 +839,11 @@ _HANDLERS = {
     M.STAGE_NEXT: Session.on_stage_next,
     M.STAGE_INTRO_DONE: Session.on_stage_intro_done,
     M.INVITE: Session.on_invite,
+    M.ORDER_INFO: Session.on_order_info,
+    M.ORDER_CREATE: Session.on_order_create,
+    M.ORDER_JOIN: Session.on_order_join,
+    M.ORDER_LEAVE: Session.on_order_leave,
+    M.CHAT_READ: Session.on_chat_read,
+    M.CHAT_SEND: Session.on_chat_send,
+    M.CHAT_PEERS: Session.on_chat_peers,
 }

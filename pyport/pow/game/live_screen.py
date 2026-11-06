@@ -1,16 +1,17 @@
-"""m.java - the drawing of Gamevil Live (PHASE_7) and its registration record. Literal port.
+"""The drawing of Live (PHASE_7) and its registration record.
 
 as.a = m(); ag.L() calls as.aK() -> m.a() every frame while bV == 11. as.ho picks the screen.
 """
+import config
 from pow.game.game_canvas import GameCanvas
-from pow.game.live import Live, B5
 from pow.game.gfx import Gfx
+from pow.game.live import Live
 from pow.midp.rms import RecordStore
 
 
 class LiveScreen(Live):
 
-    def draw_live_screen(self):  # m.java:4-56
+    def draw_live_screen(self):
         if Live.screen_redraw:
             GameCanvas.menus.draw_menu_frame()
             if Live.title is not None:
@@ -25,11 +26,11 @@ class LiveScreen(Live):
         if GameCanvas.popups.kind != 0:
             GameCanvas.popups.draw_popup()
 
-    def draw_list_screen(self):  # m.java:58-61  (list menu)
+    def draw_list_screen(self):  # list menu
         self.draw_list()
         GameCanvas.draw_softkeys(-1, 2)
 
-    def draw_safe(self):  # m.java:63-77  (Safe: Local <-> Server)
+    def draw_safe(self):  # Safe: Local <-> Server
         self.draw_caption_box("Local", 85)
         self.draw_gold_amount(GameCanvas.hero.gold, 108)
         GameCanvas.draw_region(85, 138, 70, 21, GameCanvas.images[7], 45, 138)
@@ -43,29 +44,34 @@ class LiveScreen(Live):
         self.draw_gold_amount(Live.safe_gold, 190)
         GameCanvas.draw_softkeys(-1, 2)
 
-    def draw_sell_price(self):  # m.java:79-101  (Sell: the price)
+    def draw_sell_price(self):  # Sell: the price
         from pow.game.menus import Menus
-        arrayOfString = ["Enter your selling", "price. " + str(Live.flags[4]) + "% of total", "will go to taxes."]
-        str1 = "EnchantLv"
-        b1 = 101
+        lines = ["Enter your selling", "price. " + str(Live.flags[4]) + "% of total", "will go to taxes."]
+        label = "EnchantLv"
+        line_y = 101
         Gfx.set_font(GameCanvas.font_white)
-        for b2 in range(3):
-            Live.draw_text_centred_in(arrayOfString[b2], 0, b1, 240)
-            b1 += 13
+        for i in range(3):
+            Live.draw_text_centred_in(lines[i], 0, line_y, 240)
+            line_y += 13
         Live.draw_item_cell(Live.shown_item, 39, 180, False)
         self.draw_panel(71, 183, 130, 17)
         Gfx.set_font(GameCanvas.font_white)
         Menus.item_name(Live.shown_item)
-        Live.draw_text_centred_in(str1 + str(Live.enchant), 141, 180, 0)
+        Live.draw_text_centred_in(label + str(Live.enchant), 141, 180, 0)
         self.draw_input_box(45, 210, 150, 22)
         Gfx.set_font(GameCanvas.font_black)
         Live.draw_text_centred_in(GameCanvas.format_thousands(Live.values[14]), 0, 212, 240)
-        GameCanvas.describe_shop_item(GameCanvas.hero.backpack[GameCanvas.cursor[18]], True, -1)
+        items = GameCanvas.hero.backpack
+        if Live.flags[7] == 1:                              # sold from the warehouse
+            items = Live.warehouse
+        GameCanvas.describe_shop_item(items[GameCanvas.cursor[18]], True, -1)
         GameCanvas.info_box.rect.y = 155 - GameCanvas.view_y
+        if config.WIDE_DESC:            # the tall box under the price box, not over the item
+            GameCanvas.info_box.rect.y = 238 - GameCanvas.view_y
         GameCanvas.menus.draw_description_strip()
         GameCanvas.draw_softkeys(7, 2)
 
-    def draw_cancel_sell(self):  # m.java:103-120  (Cancel Sell: my 5 lots)
+    def draw_cancel_sell(self):  # Cancel Sell: my 5 lots
         from pow.game.menus import Menus
         GameCanvas.draw_softkeys(-1, 2)
         self.draw_hero_gold(83)
@@ -80,15 +86,15 @@ class LiveScreen(Live):
             Live.draw_text_centred_in("Price " + GameCanvas.format_thousands(Live.prices[Live.selected_slot]), i, 178, 200)
             GameCanvas.describe_shop_item(Live.lots[Live.selected_slot], False, -1)
 
-    def draw_sale_list(self):  # m.java:122-148  (Sale List / Gift List)
+    def draw_sale_list(self):  # Sale List / Gift List
         from pow.game.menus import Menus
-        arrayOfString1 = ["Listed Items", "has been sold."]
-        arrayOfString2 = ["Listed Items", "has been recieved."]
-        s = arrayOfString1[0] if Live.list_kind == 0 else arrayOfString2[0]
+        sold_lines = ["Listed Items", "has been sold."]
+        gift_lines = ["Listed Items", "has been recieved."]
+        line = sold_lines[0] if Live.list_kind == 0 else gift_lines[0]
         Gfx.set_font(GameCanvas.font_white)
-        Live.draw_text_centred_in(s, 0, 100, 240)
-        s = arrayOfString1[1] if Live.list_kind == 0 else arrayOfString2[1]
-        Live.draw_text_centred_in(s, 0, 113, 240)
+        Live.draw_text_centred_in(line, 0, 100, 240)
+        line = sold_lines[1] if Live.list_kind == 0 else gift_lines[1]
+        Live.draw_text_centred_in(line, 0, 113, 240)
         i = 42
         for b in range(5):
             Live.draw_item_cell(Live.lots[b].id, i, 130, b == Live.selected_slot)
@@ -104,10 +110,12 @@ class LiveScreen(Live):
             Live.draw_text_centred_in(Live.gift_from[Live.selected_slot], i, 170, 100)
             Live.draw_text_centred_in(Menus.item_name(Live.lots[Live.selected_slot].id), i, 183, 100)
             GameCanvas.describe_shop_item(Live.lots[Live.selected_slot], False, -1)
+            if config.WIDE_DESC:        # the tall box under the gift box (y 166..211)
+                GameCanvas.info_box.rect.y = 216 - GameCanvas.view_y
             GameCanvas.menus.draw_description_strip()
 
     @staticmethod
-    def draw_waiting():  # m.java:150-156  (waiting: no answer for ~10 frames after the request -> "failed")
+    def draw_waiting():  # waiting: no answer for ~10 frames after the request -> "failed"
         if GameCanvas.popups.kind == 0 and not Live.busy:
             Live.anim_ticks += 1
             if Live.anim_ticks - 1 > 10:
@@ -115,7 +123,7 @@ class LiveScreen(Live):
                 GameCanvas.popups.show(29)
                 Live.anim_ticks = 0
 
-    def draw_registration(self):  # m.java:158-208  (registration: UserID, then the password)
+    def draw_registration(self):  # registration: UserID, then the password
         i = GameCanvas.screen_h // 2 - 45
         if Live.reg_step == 0:
             Gfx.set_font(GameCanvas.font_white)
@@ -125,7 +133,9 @@ class LiveScreen(Live):
             Gfx.fill_rect(GameCanvas.screen_w // 2 - 65, i + 65, 130, 20, 13421772)
             Gfx.set_font(GameCanvas.font_black)
             Gfx.draw_string(Live.password, GameCanvas.screen_w // 2, i + 67, 1)
-            if Live.blink and not (B5 and Live.busy):     # ORIG-BUG B5: not while the 530 is on its way
+            if config.REG_KEYBOARD:          # 0..9 + OK under the box (key_grid.py)
+                Live.pwd_grid.draw(i + 90)
+            if Live.blink and not Live.busy:              # not while the 530 is on its way
                 Live.blink_count += 1
                 if Live.blink_count - 1 > 2:
                     Live.reg_step = 1
@@ -133,38 +143,41 @@ class LiveScreen(Live):
                     Live.blink_count = 0
                     Live.blink = False
             self.draw_view_region(GameCanvas.images[7], 0, GameCanvas.screen_h - 20, GameCanvas.screen_w, 20, 0, GameCanvas.screen_h - 20)
-            b1 = 2
+            right_key = 2
             if len(Live.password) > 0:
-                b1 = 10
+                right_key = 10
             if len(Live.password) >= 4:
-                GameCanvas.draw_softkeys(8, b1)
+                GameCanvas.draw_softkeys(8, right_key)
                 return
-            GameCanvas.draw_softkeys(-1, b1)
+            GameCanvas.draw_softkeys(-1, right_key)
         elif Live.reg_step == 1:
             if GameCanvas.popups.kind == 0:
                 Live.blink = False
                 Gfx.set_font(GameCanvas.font_white)
                 Gfx.draw_string("In order to access", GameCanvas.screen_w // 2, i - 30, 1)
-                Gfx.draw_string("Gamevil Live", GameCanvas.screen_w // 2, i - 10, 1)
+                Gfx.draw_string("Live", GameCanvas.screen_w // 2, i - 10, 1)
                 Gfx.draw_string("you must register first.", GameCanvas.screen_w // 2, i + 10, 1)
                 Gfx.draw_string("Please enter a UserID.", GameCanvas.screen_w // 2, i + 30, 1)
                 Gfx.draw_string("(4-12 characters)", GameCanvas.screen_w // 2, i + 50, 1)
                 Gfx.fill_rect(GameCanvas.screen_w // 2 - 60, i + 70, 120, 20, 13421772)
                 Gfx.set_font(GameCanvas.font_black)
                 Gfx.draw_string(GameCanvas.name_buf.get_text(), GameCanvas.screen_w // 2, i + 72, 1)
-                GameCanvas.draw_letter_grid(GameCanvas.letter_cursor, i + 90)
+                if config.REG_KEYBOARD:      # the letters + a row of digits (key_grid.py)
+                    Live.id_grid.draw(i + 90)
+                else:
+                    GameCanvas.draw_letter_grid(GameCanvas.letter_cursor, i + 90)
             self.draw_view_region(GameCanvas.images[7], 0, GameCanvas.screen_h - 20, GameCanvas.screen_w, 20, 0, GameCanvas.screen_h - 20)
             j = GameCanvas.name_buf.length()
             bool_ = 1                        # sic: (j >= 4 && j <= 12) ? true : true
-            b2 = 2 if j == 0 else 10
-            GameCanvas.draw_softkeys(bool_, b2)
+            right_key2 = 2 if j == 0 else 10
+            GameCanvas.draw_softkeys(bool_, right_key2)
 
-    def draw_buy_categories(self):  # m.java:210-213  (Buy: categories)
+    def draw_buy_categories(self):  # Buy: categories
         self.draw_hero_gold(Live.values[15])
         self.draw_list_screen()
 
-    def draw_buy_kinds(self):  # m.java:215-224  (Buy: kinds)
-        i = 20 + (255 - 64 + GameCanvas.cursor[6] >> 1)
+    def draw_buy_kinds(self):  # Buy: kinds
+        i = 20 + (255 - (64 + GameCanvas.cursor[6]) >> 1)   # gold box, caption and grid above the soft keys
         self.draw_hero_gold(i)
         i += 32
         self.draw_caption_box(Live.category_names[Live.category], i)
@@ -172,7 +185,7 @@ class LiveScreen(Live):
         GameCanvas.menus.draw_item_grid(i, None, Live.kind_items[Live.category])
         GameCanvas.draw_softkeys(-1, 2)
 
-    def draw_buy_enchants(self):  # m.java:226-254  (Buy: how many lots at each enchant level)
+    def draw_buy_enchants(self):  # Buy: how many lots at each enchant level
         i_ = 0
         self.draw_hero_gold(47)
         i = self.draw_centred_box(89, 200, 32)
@@ -180,24 +193,24 @@ class LiveScreen(Live):
         Live.draw_text_centred_in(Live.category_names[Live.category], i, 99, 167)
         Live.draw_item_cell(Live.kind_items[Live.category][Live.kind], i + 167, 91, False)
         j = 131
-        b2 = 0
-        for b1 in range(2):
+        enchant = 0
+        for row in range(2):
             i = 32
             for b in range(5):
-                Live.draw_item_cell(0, i, j, b2 == Live.enchant)
+                Live.draw_item_cell(0, i, j, enchant == Live.enchant)
                 Gfx.draw_image_anchored(Live.level_image, i + 1, j + 8, 0)
-                self.draw_number_commas(b2, i + 27, j + 6)
-                Live.draw_item_cell(0, i, j + 28 + 1, b2 == Live.enchant)
-                self.draw_number_commas(Live.counts[15 - b2] // 10, i + 13, j + 28 + 8)
-                self.draw_number_commas(Live.counts[15 - b2] % 10, i + 22, j + 28 + 8)
+                self.draw_number_commas(enchant, i + 27, j + 6)
+                Live.draw_item_cell(0, i, j + 28 + 1, enchant == Live.enchant)
+                self.draw_number_commas(Live.counts[15 - enchant] // 10, i + 13, j + 28 + 8)
+                self.draw_number_commas(Live.counts[15 - enchant] % 10, i + 22, j + 28 + 8)
                 i += 37
-                b2 += 1
+                enchant += 1
             j += 60
         del i_
         GameCanvas.draw_softkeys(-1, 2)
 
-    def draw_buy_lots(self):  # m.java:256-276  (Buy: the lots of a page)
-        j = 20 + (255 - 84 + GameCanvas.cursor[6] + 10 + 32 >> 1)
+    def draw_buy_lots(self):  # Buy: the lots of a page
+        j = 20 + (255 - (84 + GameCanvas.cursor[6] + 10 + 32) >> 1)   # gold + box + grid + strip centred
         self.draw_hero_gold(j)
         j += 42
         i = self.draw_centred_box(j, 200, 32)
@@ -216,45 +229,45 @@ class LiveScreen(Live):
         GameCanvas.draw_softkeys(-1, 2)
 
     @staticmethod
-    def is_registered():  # m.java:278-285  (registered already?)
+    def is_registered():  # registered already?
         try:
-            rs = RecordStore.openRecordStore("gamevil_pow_regist", True)
-            return not (rs.getNumRecords() == 0)
+            rs = RecordStore.openRecordStore("pow_regist", True)
+            return rs.getNumRecords() != 0
         except Exception:
             return False
 
     @staticmethod
-    def save_login():  # m.java:287-305  (keep UserID [0..12) and password [12..28))
-        arrayOfByte1 = bytearray(28)
-        arrayOfByte2 = Live.password.encode("latin-1")
-        for b in range(len(arrayOfByte2)):
-            arrayOfByte1[b] = arrayOfByte2[b]
-        arrayOfByte2 = Live.user_id.encode("latin-1")
-        for b in range(len(arrayOfByte2)):
-            arrayOfByte1[12 + b] = arrayOfByte2[b]
+    def save_login():  # keep UserID [0..12) and password [12..28)
+        record = bytearray(28)
+        chars = Live.password.encode("latin-1")
+        for b in range(len(chars)):
+            record[b] = chars[b]
+        chars = Live.user_id.encode("latin-1")
+        for b in range(len(chars)):
+            record[12 + b] = chars[b]
         try:
-            rs = RecordStore.openRecordStore("gamevil_pow_regist", True)
+            rs = RecordStore.openRecordStore("pow_regist", True)
             if rs.getNumRecords() == 0:
-                rs.addRecord(bytes(arrayOfByte1), 0, len(arrayOfByte1))
-            rs.setRecord(1, bytes(arrayOfByte1), 0, len(arrayOfByte1))
+                rs.addRecord(bytes(record), 0, len(record))
+            rs.setRecord(1, bytes(record), 0, len(record))
         except Exception:
             return
 
-    def load_login(self):  # m.java:307-320  (read it back: l = [0..12), m = [12..26))
-        arrayOfByte = bytes(26)
+    def load_login(self):  # read it back: l = [0..12), m = [12..26)
+        record = bytes(26)
         try:
-            rs = RecordStore.openRecordStore("gamevil_pow_regist", False)
+            rs = RecordStore.openRecordStore("pow_regist", False)
             if rs is None or rs.getNumRecords() < 1:
                 Live.password = ""
                 Live.user_id = ""
                 return
-            arrayOfByte = rs.getRecord(1)
+            record = rs.getRecord(1)
         except Exception:
             pass
-        Live.password = GameCanvas.cut_at_control(GameCanvas.read_utf(arrayOfByte, 0, 12))
-        Live.user_id = GameCanvas.cut_at_control(GameCanvas.read_utf(arrayOfByte, 12, 26))
+        Live.password = GameCanvas.cut_at_control(GameCanvas.read_utf(record, 0, 12))
+        Live.user_id = GameCanvas.cut_at_control(GameCanvas.read_utf(record, 12, 26))
 
-    def draw_safe_amount(self):  # m.java:322-341  (Safe: the amount)
+    def draw_safe_amount(self):  # Safe: the amount
         if GameCanvas.images[22] is None:
             GameCanvas.images[22] = self.load_image(GameCanvas.scr_ui.get(18))
         if GameCanvas.images[24] is None:
@@ -274,7 +287,7 @@ class LiveScreen(Live):
         GameCanvas.draw_softkeys(-1, 2)
         GameCanvas.popups.draw_ok(200)
 
-    def draw_input_box(self, x, y, w, h):  # m.java:343-356  (input box)
+    def draw_input_box(self, x, y, w, h):  # input box
         GameCanvas.input_box.w = w + 1
         GameCanvas.input_box.x = x - 1
         GameCanvas.input_box.h = h + 1
@@ -287,19 +300,19 @@ class LiveScreen(Live):
         GameCanvas.input_box.h -= 1
         GameCanvas.fill_rect(GameCanvas.input_box, GameCanvas.rgb(192, 192, 192))
 
-    def draw_grid(self):  # m.java:358-380  (Backpack / Warehouse grid)
+    def draw_grid(self):  # Backpack / Warehouse grid
         if Live.flags[7] == 0:
-            s = "Backpack"
-            arrayOfZ = GameCanvas.hero.backpack
+            caption = "Backpack"
+            items = GameCanvas.hero.backpack
         else:
-            s = "Warehouse"
-            arrayOfZ = Live.warehouse
-        i = 20 + (255 - 38 + GameCanvas.cursor[6] + 16 + 22 >> 1)
-        self.draw_caption_box(s, i)
+            caption = "Warehouse"
+            items = Live.warehouse
+        i = 20 + (255 - (38 + GameCanvas.cursor[6] + 16 + 22) >> 1)   # caption + grid + strip centred
+        self.draw_caption_box(caption, i)
         i += 38
-        GameCanvas.menus.draw_item_grid(i, arrayOfZ, None)
+        GameCanvas.menus.draw_item_grid(i, items, None)
         GameCanvas.cursor[14] = 0
-        GameCanvas.describe_shop_item(arrayOfZ[GameCanvas.cursor[18]], True, -1)
+        GameCanvas.describe_shop_item(items[GameCanvas.cursor[18]], True, -1)
         GameCanvas.menus.draw_description_strip()
         if Live.flags[7] == 0:
             GameCanvas.draw_softkeys(4, 2)

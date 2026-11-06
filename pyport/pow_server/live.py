@@ -1,7 +1,7 @@
-"""Gamevil Live of the single-player game: the "online shop" (PHASE_7, server side).
+"""Live of the single-player game: the "online shop" (PHASE_7, server side).
 
-The single player's Gamevil Live (as.java / m.java, analysis/03 §1.8, §5) talked to
-ur.gamevil.net:28230: a market where players sold items to each other (Trade), a Warehouse of
+The single player's Live talked to
+the original server (port 28230): a market where players sold items to each other (Trade), a Warehouse of
 100 slots, a Safe for gold, a Gift List, server-kept Exp/Fame and a backup of the hero
 (Management). That server is lost; this one speaks the same protocol, so the ported screens
 work as they did. Accounts are the multiplayer ones (the original registered the UserID here
@@ -9,7 +9,7 @@ and the MP game let in only IDs registered in POW single).
 
 Frame: u16 LE length (these 2 bytes included) + payload. C->S payload = u16 opcode + fields,
 S->C = u16 opcode+1, s8 status (1 = OK, < 0 = error shown by as.b(int)), fields. Field layouts
-are those as.n() writes and as.a(ab) reads (as.java 453-990); see the handlers below.
+are those as.n writes and as.a(ab) reads; see the handlers below.
 
 Made up (the server logic is lost, analysis/03 §5.5):
 - the NPC stock: Normal / Special items regenerated every NPC_REFRESH seconds, and the Rare
@@ -24,15 +24,15 @@ import struct
 import time
 
 import config
-from pow_server import codec_bin
+from pow_server import codec_bin, security
 from pow_server.loot import _read_arr
 
 TAX_PERCENT = 10              # ht[4], shown in "Enter your selling price. N% of total ..."
 GIFT_TAX_PERCENT = 0          # ht[5] (the Gift menu is not in this client)
-WAREHOUSE = config.WAREHOUSE_SIZE   # as.gw: 100 (PORT-EXTRA config.WAREHOUSE_SIZE)
-BACKPACK = config.BACKPACK_SIZE     # cz.Y: 25 (PORT-EXTRA config.BACKPACK_SIZE)
+WAREHOUSE = config.WAREHOUSE_SIZE  # 100 (config.WAREHOUSE_SIZE)
+BACKPACK = config.BACKPACK_SIZE  # 25 (config.BACKPACK_SIZE)
 MAX_SALES = 5                 # gamestr 27 "Item sales are limited up to 5 per user"
-PAGE = 20                     # lots per page (as.gz)
+PAGE = 20                     # lots per page
 NPC_REFRESH = 3600            # seconds between new NPC stock
 MAX_GOLD = 999999999          # 9 digits of the price / amount fields
 ELIXIRS = range(434, 438)     # U(): "Not possible for sale"
@@ -40,7 +40,7 @@ ELIXIRS = range(434, 438)     # U(): "Not possible for sale"
 _ID_RE = re.compile(r"^[A-Z]{4,12}$")
 _PWD_RE = re.compile(r"^[0-9]{4,12}$")
 
-# as.gF: the kinds of every category in the Buy menu (a representative item id per kind)
+# the kinds of every category in the Buy menu (a representative item id per kind)
 KINDS = (
     (116, 121, 126, 101, 106, 111, 131, 136, 156, 161, 181, 146, 151),
     (331, 324, 322, 301, 308, 302, 341, 350, 357, 363, 370, 380, 415),
@@ -66,13 +66,13 @@ def category(item_id):
 
 
 def kind(item_id):
-    """The Buy-menu kind: column 7 of kibo / sungbo (the icon frame, as.U() 1421-1430), id-501
+    """The Buy-menu kind: column 7 of kibo / sungbo (the icon frame), id-501
     for Rare."""
     return item_id - 501 if item_id > 500 else data()[item_id][7]
 
 
 def base_item(item_id, rng=None):
-    """z of a fresh item: kibo = base (+ 0..spread with rng, like ag.k(id, 1)), sungbo / shinki
+    """z of a fresh item: kibo = base (+ 0..spread with rng, like a drop), sungbo / shinki
     stats as they are."""
     row = data()[item_id]
     it = {"id": item_id, "f": 0, "atk": 0, "def": 0, "hp": 0, "mp": 0}
@@ -80,8 +80,7 @@ def base_item(item_id, rng=None):
     if item_id < 300:
         it[keys[row[2]]] = row[3] + (rng.randint(0, row[4]) if rng else 0)
     else:
-        for k, v in zip(keys, row[2:6], strict=True):
-            it[k] = v
+        it.update(zip(keys, row[2:6], strict=True))
     return it
 
 
@@ -94,7 +93,7 @@ def max_enchant(item_id):
 
 
 def enchant(it, n, rng):
-    """e.a(z, n) (e.java 2628-2668): n successful enchants."""
+    """n successful enchants."""
     odds = (30, 25, 20, 15, 9, 1)
     for _ in range(n):
         j, acc, b = rng.randint(0, 100), 0, 0
@@ -112,7 +111,7 @@ def enchant(it, n, rng):
 
 
 def sp_price(it):
-    """e.b(z) (e.java 2817-2830): the single player's shop price of an item."""
+    """The single player's shop price of an item."""
     i = it["id"]
     if i < 300:
         return data()[i][6] + it["atk"] * 100 + it["def"] * 100 + it["hp"] // 5 * 100 + it["mp"] // 3 * 100
@@ -124,7 +123,7 @@ def sp_price(it):
 
 # --- payload reader / writer ---------------------------------------------------------------
 class Reader:
-    """ab.java: a() s8, b() s16, c() s32, a(n) fixed string."""
+    """A() s8, b() s16, c() s32, a(n) fixed string."""
 
     def __init__(self, data):
         self.d, self.p = data, 0
@@ -168,6 +167,7 @@ class LiveServer:
         self.rng = rng or random.Random()
         self.clock = clock
         self.notices = [list(p)[:4] for p in notices]
+        self.guard = None              # security.Guard (ws_server.serve)
 
     def connect(self, send):
         return LiveSession(self, send)
@@ -236,7 +236,8 @@ class LiveSession:
         self._send = send
         self.user = None
         self.closed = False
-        self.gold = 0                  # cz.E as the last 768 / answer said
+        self.peer = None               # the client's address (ws_server.py), for security.Guard
+        self.gold = 0  # as the last 768 / answer said
         self.backpack = {}             # serial -> item (the backpack the client sent in 768)
         self.notice_page = 0
         self.page = None               # (cat, kind, enchant, [lot ids], start) of the last 787
@@ -254,7 +255,7 @@ class LiveSession:
     def receive(self, payload):
         self.last_seen = self.server.clock()
         if len(payload) < 2:
-            return
+            return None
         op = payload[0] | payload[1] << 8
         r = Reader(payload[2:])
         h = getattr(self, "op_%d" % op, None)
@@ -295,10 +296,12 @@ class LiveSession:
         if not _ID_RE.match(uid) or not _PWD_RE.match(pwd):
             return self.send(531, -49, b"\0\0\3")
         if st.has_account(uid):
-            if not st.check_password(uid, pwd):
+            if not security.check_password(self.server, self, uid, pwd):
                 return self.send(531, -1, b"\0\0\1")
             result = 2
         else:
+            if not security.may_create(self.server, self):
+                return self.send(531, -49, b"\0\0\3")    # too many new accounts
             st.create_account(uid, pwd)
             result = 0
         self.user = uid
@@ -424,7 +427,7 @@ class LiveSession:
         """{cat+1, kind+1, enchant, u32 lot under the cursor, ...} -> u8 n, n x {u32 lot,
         u16 id, u32 price, u8 f, 4 x u16}. The client keeps the page number (gS += gT) and
         sends only the lot under the cursor: on the top row it asks for the page before, on
-        the bottom row for the next one (as.Y()), otherwise for the first."""
+        the bottom row for the next one, otherwise for the first."""
         cat, k, ench, cursor = r.take("<BBBi")
         cat, k = cat - 1, k - 1
         m = self.server.market()
@@ -560,8 +563,8 @@ class LiveSession:
         self.send(257, 1)
 
     def op_262(self, r):
-        """263 reads what 256 wrote without cz.s/t/u/v (the item bonuses, 4 x u16 after cz.J,
-        bytes 22..30): as.java 476-490 vs 698-708."""
+        """263 reads what 256 wrote without the item bonuses (4 x u16 after the level,
+        bytes 22..30): 476-490 vs 698-708."""
         b = self._u()["backup"]
         if not b:
             return self.send(263, -4)

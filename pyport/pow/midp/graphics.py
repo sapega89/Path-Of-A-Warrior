@@ -1,12 +1,10 @@
 """javax.microedition.lcdui.Image / Graphics on top of pygame.
 
-Only what x.java uses (PHASE_0 task 0.3): drawImage (anchors), clipRect/setClip,
+Only what uses (PHASE_0 task 0.3): drawImage (anchors), clipRect/setClip,
 fillRect, drawRect, drawLine, setColor, getClip*.  No drawRegion/transforms -
 the game never calls them.
 """
 import io
-import os
-import sys
 
 import pygame
 
@@ -21,29 +19,14 @@ TOP = 16
 BOTTOM = 32
 BASELINE = 64
 
-_IS_WEB = sys.platform == "emscripten"
-_TMP_PNG = "/tmp/pow_image.png"
-
 
 def _load_png(data, hint):
-    """PNG bytes -> Surface. pygbag's pygame cannot decode from a file object
-    ("can't access resource on platform"), only from a path, so in the browser the
-    bytes go through a temporary file in the in-memory FS."""
-    if _IS_WEB:
-        with open(_TMP_PNG, "wb") as fh:
-            fh.write(data)
-        try:
-            return pygame.image.load(_TMP_PNG)
-        finally:
-            try:
-                os.remove(_TMP_PNG)
-            except OSError:
-                pass
+    """PNG bytes -> Surface."""
     return pygame.image.load(io.BytesIO(data), hint)
 
 
 class Image:
-    __slots__ = ("surface", "mutable")
+    __slots__ = ("mutable", "surface")
 
     def __init__(self, surface, mutable=False):
         self.surface = surface
@@ -62,7 +45,7 @@ class Image:
         if len(args) == 1 and isinstance(args[0], str):
             data = resources.read(args[0])
             if data is None:
-                raise IOError("resource not found: " + args[0])
+                raise OSError("resource not found: " + args[0])
             return Image(Image._prepare(_load_png(data, args[0])))
         if len(args) == 3 and isinstance(args[0], (bytes, bytearray)):
             data, off, ln = args

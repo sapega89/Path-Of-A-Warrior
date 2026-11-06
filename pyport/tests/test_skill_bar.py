@@ -1,4 +1,4 @@
-"""PORT-EXTRA skill bar, belt and skill card (pow/game/skill_bar.py, config.SKILL_BAR / SKILL_CARD)."""
+"""skill bar, belt and skill card (pow/game/skill_bar.py, config.SKILL_BAR / SKILL_CARD)."""
 import types
 
 
@@ -37,7 +37,6 @@ def test_click_on_the_bar(monkeypatch):
     import config
     from pow.game import skill_bar
     from pow.game.game_canvas import GameCanvas
-    from pow.game.structs import Point
     monkeypatch.setattr(config, "SKILL_BAR", True)
     monkeypatch.setattr(GameCanvas, "canvas_size", types.SimpleNamespace(x=240, y=320))
     y = skill_bar.bar_top() + 10

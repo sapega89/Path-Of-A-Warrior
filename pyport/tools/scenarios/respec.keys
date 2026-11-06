@@ -1,4 +1,4 @@
-# PORT-EXTRA attribute reset: Attributes -> RESET, pay gold, the points are free again (made like management.keys)
+# attribute reset: Attributes -> RESET, pay gold, the points are free again (made like management.keys)
 wait 25
 key FIRE
 wait 2

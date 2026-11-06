@@ -1,10 +1,12 @@
-"""PORT-EXTRA: a gamepad / joystick on the PC (config.GAMEPAD), as phone keys like the keyboard.
+"""a gamepad / joystick on the PC (config.GAMEPAD), as phone keys like the keyboard.
 
     left stick, d-pad    arrows (held = the hero keeps walking, as with the keys)
     A                    OK / attack            B          BACK
     X  Y  LB  RB  LT     the 5 skill keys (phone 1 3 7 9 0)
     RT                   *  (potion)            L3         #  (potion)
     R3                   AUTO: auto-hunt / auto-battle on / off
+    right stick          the belt while the hero acts on the map (config.SKILL_BAR): up / right /
+                         down / left = slots Z X C V (one use per push; slot B: Assign Items on * / # )
     Start                right soft key (PAUSE / BACK)
     Back / Select        left soft key (SKIP, EXCHANGE)
 
@@ -24,7 +26,10 @@ UP, DOWN, LEFT, RIGHT = -1, -2, -3, -4
 OK, LSOFT, BACK = -5, -6, -7
 SKILLS = (49, 51, 55, 57, 48)
 STAR, POUND = 42, 35
-AUTO = -100             # PORT-EXTRA: auto-hunt / auto-battle on / off (as Tab)
+AUTO = -100             # auto-hunt / auto-battle on / off (as Tab)
+# right stick of a game controller -> belt slots 0..3 (keys Z X C V, pow/game/skill_bar.py)
+BELT_BY_DIRECTION = {UP: -101, RIGHT: -102, DOWN: -103, LEFT: -104}
+BELT_CODES = tuple(BELT_BY_DIRECTION.values())
 
 DEADZONE = 0.5          # how far a stick goes before it counts as a direction
 TRIGGER = 0.5           # how far a trigger goes before it counts as pressed
@@ -40,7 +45,7 @@ CONTROLLER_BUTTONS = {
     pygame.CONTROLLER_BUTTON_START: BACK,
     pygame.CONTROLLER_BUTTON_BACK: LSOFT,
     pygame.CONTROLLER_BUTTON_LEFTSTICK: POUND,
-    pygame.CONTROLLER_BUTTON_RIGHTSTICK: AUTO,      # PORT-EXTRA: auto-hunt / auto-battle
+    pygame.CONTROLLER_BUTTON_RIGHTSTICK: AUTO,      # auto-hunt / auto-battle
     pygame.CONTROLLER_BUTTON_DPAD_UP: UP,
     pygame.CONTROLLER_BUTTON_DPAD_DOWN: DOWN,
     pygame.CONTROLLER_BUTTON_DPAD_LEFT: LEFT,
@@ -88,6 +93,8 @@ class Pad:
         self.stick = None                    # direction held by the stick
         self.hat = None                      # direction held by the hat / d-pad
         self.triggers = set()                # trigger axes pressed now
+        self.raxes = {}                      # right stick axis -> value -1..1
+        self.rstick = None                   # direction the right stick is pushed to
         self.dpad = []                       # d-pad buttons held now, last pressed last
 
 
@@ -101,8 +108,12 @@ class Gamepads:
                 pygame.joystick.init()
             if sdl_controller is not None and not sdl_controller.get_init():
                 sdl_controller.init()
+            # pads plugged in before: SDL sent their JOYDEVICEADDED to the canvas that was there
+            # then (Main Menu > Multiplayer makes a new canvas in the same process)
+            for index in range(pygame.joystick.get_count()):
+                self._add(index)
         except Exception as ex:
-            print("gamepad: %r" % ex)
+            print(f"gamepad: {ex!r}")
 
     # -- devices --
     def _add(self, index):
@@ -111,12 +122,12 @@ class Gamepads:
                 dev = sdl_controller.Controller(index)
                 iid = dev.as_joystick().get_instance_id()
                 self.pads[iid] = Pad(dev, True)
-                print("gamepad: %s" % dev.name)
+                print(f"gamepad: {dev.name}")
             else:
                 dev = pygame.joystick.Joystick(index)
                 dev.init()
                 self.pads[dev.get_instance_id()] = Pad(dev, False)
-                print("joystick: %s" % dev.get_name())
+                print(f"joystick: {dev.get_name()}")
         except Exception as ex:
             print("gamepad %d: %r" % (index, ex))
 
@@ -158,6 +169,8 @@ class Gamepads:
                     return self._trigger(pad, ev.axis, value, CONTROLLER_TRIGGERS[ev.axis])
                 if ev.axis in (pygame.CONTROLLER_AXIS_LEFTX, pygame.CONTROLLER_AXIS_LEFTY):
                     return self._axis(pad, 0 if ev.axis == pygame.CONTROLLER_AXIS_LEFTX else 1, value)
+                if ev.axis in (pygame.CONTROLLER_AXIS_RIGHTX, pygame.CONTROLLER_AXIS_RIGHTY):
+                    return self._right_axis(pad, 0 if ev.axis == pygame.CONTROLLER_AXIS_RIGHTX else 1, value)
             return []                        # the same pad's JOY* events are not used twice
         if t == pygame.JOYBUTTONDOWN:
             code = JOYSTICK_BUTTONS.get(ev.button)
@@ -167,6 +180,32 @@ class Gamepads:
         if t == pygame.JOYAXISMOTION and ev.axis in (0, 1):
             return self._axis(pad, ev.axis, ev.value)
         return []
+
+    def poll(self):
+        """-> (phone key, pressed) from where the sticks and triggers are now. SDL in the browser
+        swallows the first move of every axis (it takes it for the resting value), so a pad that
+        was just plugged in would miss its first push; the state it keeps is right, so it is also
+        read once per tick. Nothing new comes out while nothing changed."""
+        out = []
+        for pad in self.pads.values():
+            dev = pad.device
+            if dev is None:
+                continue
+            try:
+                if pad.is_controller:
+                    get = lambda a, d=dev: d.get_axis(a) / 32767.0      # noqa: E731
+                    out += self._axis(pad, 0, get(pygame.CONTROLLER_AXIS_LEFTX))
+                    out += self._axis(pad, 1, get(pygame.CONTROLLER_AXIS_LEFTY))
+                    out += self._right_axis(pad, 0, get(pygame.CONTROLLER_AXIS_RIGHTX))
+                    out += self._right_axis(pad, 1, get(pygame.CONTROLLER_AXIS_RIGHTY))
+                    for axis, code in CONTROLLER_TRIGGERS.items():
+                        out += self._trigger(pad, axis, get(axis), code)
+                elif dev.get_numaxes() >= 2:
+                    out += self._axis(pad, 0, dev.get_axis(0))
+                    out += self._axis(pad, 1, dev.get_axis(1))
+            except Exception:         # noqa: S112  unplugged a moment ago: JOYDEVICEREMOVED comes next
+                continue
+        return out
 
     @staticmethod
     def _set_hat(pad, d):
@@ -185,6 +224,16 @@ class Gamepads:
         out = [(pad.stick, False)] if pad.stick is not None else []
         pad.stick = d
         return out + ([(d, True)] if d is not None else [])
+
+    @staticmethod
+    def _right_axis(pad, axis, value):
+        """Right stick: one belt key each time it is pushed to a new direction (no hold)."""
+        pad.raxes[axis] = value
+        d = stick_direction(pad.raxes.get(0, 0.0), pad.raxes.get(1, 0.0))
+        if d == pad.rstick:
+            return []
+        pad.rstick = d
+        return [(BELT_BY_DIRECTION[d], True)] if d is not None else []
 
     @staticmethod
     def _trigger(pad, axis, value, code):

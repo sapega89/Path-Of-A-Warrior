@@ -6,15 +6,17 @@ Layout of one store: list of records (record id = index + 1), bytes kept 1:1.
 import base64
 import json
 import os
-import sys
 
 import config
 
-_IS_WEB = sys.platform == "emscripten"
-
-# PORT-EXTRA (server saves, pow/game/cloud_save.py): called with the store name after every
+# (server saves, pow/game/cloud_save.py): called with the store name after every
 # write to a store, so its new records can go to the server too.
 on_write = []
+# stores kept only in memory, never in
+# the files: the server has the only lasting copy. cloud_save fills them from
+# the server before the game reads them.
+memory_only = set()
+memory = {}
 
 
 class RecordStoreException(Exception):
@@ -26,22 +28,44 @@ class RecordStoreNotFoundException(RecordStoreException):
 
 
 def _load_raw(name):
-    if _IS_WEB:
-        import platform  # pygbag: platform.window is the JS window
-        v = platform.window.localStorage.getItem("rms_" + name)
-        return None if v is None else str(v)
+    if name in memory_only:
+        return memory.get(name)
+    return disk_load(name)
+
+
+# the stores lost the original publisher's prefix. A device
+# that still has a store under its old name gets it moved to the new one on the first read.
+OLD_PREFIX = "game" + "vil_"
+RENAMED = ("pow_data", "pow_data_backup", "pow_env", "pow_env_backup", "pow_regist")
+
+
+def disk_load(name):
+    """The device's own copy (files / localStorage), even of a memory-only store."""
+    raw = _disk_read(name)
+    if raw is None and name in RENAMED:
+        raw = _disk_read(OLD_PREFIX + name)
+        if raw is not None:
+            _disk_write(name, raw)
+            disk_delete(OLD_PREFIX + name)
+    return raw
+
+
+def _disk_read(name):
     p = os.path.join(config.SAVE_DIR, name + ".rms.json")
     if not os.path.isfile(p):
         return None
-    with open(p, "r", encoding="utf-8") as fh:
+    with open(p, encoding="utf-8") as fh:
         return fh.read()
 
 
 def _save_raw(name, text):
-    if _IS_WEB:
-        import platform
-        platform.window.localStorage.setItem("rms_" + name, text)
+    if name in memory_only:
+        memory[name] = text
         return
+    _disk_write(name, text)
+
+
+def _disk_write(name, text):
     os.makedirs(config.SAVE_DIR, exist_ok=True)
     with open(os.path.join(config.SAVE_DIR, name + ".rms.json"), "w", encoding="utf-8") as fh:
         fh.write(text)
@@ -93,10 +117,14 @@ class RecordStore:
 
     @staticmethod
     def deleteRecordStore(name):
-        if _IS_WEB:
-            import platform
-            platform.window.localStorage.removeItem("rms_" + name)
+        if name in memory_only:
+            memory.pop(name, None)
             return
-        p = os.path.join(config.SAVE_DIR, name + ".rms.json")
-        if os.path.isfile(p):
-            os.remove(p)
+        disk_delete(name)
+
+
+def disk_delete(name):
+    """Removes the device's own copy of a store."""
+    p = os.path.join(config.SAVE_DIR, name + ".rms.json")
+    if os.path.isfile(p):
+        os.remove(p)

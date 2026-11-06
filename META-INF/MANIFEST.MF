@@ -10,11 +10,11 @@ MIDlet-Name: Path of a Warrior
 MicroEdition-Profile: MIDP-1.0
 MIDlet-Permissions: javax.microedition.io.Connector.socket,javax.microedition.io.Connector.http
 BUILD_ID: POW_CIN_NK_N75
-GAMEVIL_CHEAT: NO
-GAMEVIL_SERVER: gamehub.pro
-GAMEVIL_PORT: 28230
-GAMEVIL_MOREGAMES: http://gamehub.pro
-GAMEVIL_MULTIPLAY: http://gamehub.pro
+POW_CHEAT: NO
+POW_SERVER: gamehub.pro
+POW_PORT: 28230
+POW_MOREGAMES: http://gamehub.pro
+POW_MULTIPLAY: http://gamehub.pro
 MIDlet-Delete-Confirm: GameHub.Pro - Tai Game Java Hack !
 MIDlet-Description: http://gamehub.pro
 MIDlet-Info-URL: http://gamehub.pro

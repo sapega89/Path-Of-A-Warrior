@@ -1,4 +1,4 @@
-"""Reward popup after an ending (l.e(27), DECOMP-FIX F19): no None lines, hidden mission name shown."""
+"""Reward popup after an ending (l.e(27), ): no None lines, hidden mission name shown."""
 import pytest
 
 
@@ -16,7 +16,7 @@ def _popup(monkeypatch, ef, eg):
     return p.lines[:p.line_count]
 
 
-@pytest.mark.parametrize("ef,eg,lines", [
+@pytest.mark.parametrize(("ef", "eg", "lines"), [
     (502, 0, ["Catherine's scarf", "received!"]),
     (0, 1, ["Hidden Mission!", "Royal Seal"]),
     (502, 1, ["Catherine's scarf", "received!", "", "Hidden Mission!", "Royal Seal"]),

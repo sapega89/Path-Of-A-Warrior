@@ -1,4 +1,4 @@
-"""PHASE_7: the Gamevil Live server of the single player (pow_server/live.py), driven with the
+"""PHASE_7: the Live server of the single player (pow_server/live.py), driven with the
 byte layouts as.n() writes and as.a(ab) reads."""
 import random
 import struct
@@ -6,7 +6,7 @@ import struct
 import pytest
 
 from pow_server import codec_bin
-from pow_server.live import LiveServer, give_gift, TAX_PERCENT
+from pow_server.live import TAX_PERCENT, LiveServer, give_gift
 from pow_server.storage import MemoryStorage, Storage
 
 
@@ -35,7 +35,7 @@ def item(iid, f=0, atk=5, def_=0, hp=0, mp=0):
 
 
 def sync(c, gold, items):
-    """768: gold and the backpack (serial = slot + 1, as.java 533-544)."""
+    """768: gold and the backpack."""
     body = struct.pack("<iB", gold, len(items))
     for n, it in enumerate(items):
         body += it[:2] + struct.pack("<H", n + 1) + it[2:]
@@ -137,7 +137,7 @@ def test_sell_buy_between_players_pays_the_seller_into_the_safe(server):
     assert counts[2] >= 1
     st, body = b.ask(786, bytes([1, kind + 1, 2]) + struct.pack("<i", 0) + bytes(7))
     lots = [struct.unpack_from("<iHi", body, 1 + 17 * i) for i in range(body[0])]
-    mine = [x for x in lots if x[2] == 7000][0]
+    mine = next(x for x in lots if x[2] == 7000)
     st, body = b.ask(788, struct.pack("<iB", mine[0], 0) + bytes(6))
     assert st == 1 and struct.unpack("<Hii", body)[1] == 1000
     a2, _, _ = login(server, "ANDREY")
@@ -176,9 +176,9 @@ def test_save_and_load_user_data(server):
 def test_gift_lands_in_the_warehouse(server):
     a, _, _ = login(server)
     assert give_gift(server.storage, "ANDREY", "RIVAL", {"id": 504, "f": 0, "atk": 0, "def": 0, "hp": 0, "mp": 0})
-    st, body = a.ask(512)
+    _st, body = a.ask(512)
     assert body[2] == 1
-    st, body = a.ask(520)
+    _st, body = a.ask(520)
     assert body[0] == 1 and body[1:6] == b"RIVAL" and struct.unpack_from("<H", body, 9)[0] == 504
     assert len(sync(a, 0, [])[1]) == 1
 

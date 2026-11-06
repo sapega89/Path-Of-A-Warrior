@@ -60,7 +60,7 @@
 59	Agnes' Story
 60	Lord Aaron
 61	Battle Dragon
-62	Gamevil USA Developer Team
+62	Developer Team
 63	Do you want to connect to the server and restore your data?
 64	Data restoration - Successful.
 65	Data restoration - Failed.
@@ -69,4 +69,4 @@
 68	Do you want to download?
 69	.
 70	Do you want to connect to the server and check your ranking?
-71	http://s.gamevil.com/r/sj/r1.asp
+71	

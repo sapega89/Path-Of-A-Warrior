@@ -1,7 +1,7 @@
-"""Mouse control (PORT-EXTRA: the phone had no pointer).
+"""Mouse control (the phone had no pointer).
 
 A click is translated into the phone keys a player would press, so the game logic stays
-exactly the Java one. Hit zones follow what is drawn on each screen (coordinates 240x320):
+exactly the same. Hit zones follow what is drawn on each screen (coordinates 240x320):
 
   title "PRESS ANY KEY"      click anywhere            -> FIRE
   popup Yes/No               click on the left / right -> select Yes / No, then FIRE
@@ -31,7 +31,7 @@ exactly the Java one. Hit zones follow what is drawn on each screen (coordinates
                              (skills: keyboard 1..5 only; with config.SKILL_BAR a click
                              on the strip above the HUD = belt slot Z X C V B / skill 1..5);
                              soft key PAUSE -> BACK (-7); bottom-left corner -> auto-hunt
-                             on / off (PORT-EXTRA, AUTO); talk on the map (bV 5):
+                             on / off (AUTO); talk on the map (bV 5):
                              soft key SKIP (bottom left) -> LSOFT (-6);
                              pause menu: click a row -> UP/DOWN to it, then FIRE
   soft key BACK (bottom right)                         -> BACK (-7)
@@ -42,30 +42,29 @@ exactly the Java one. Hit zones follow what is drawn on each screen (coordinates
 import collections
 
 import config
-
 from pow.game import consts, skill_bar
 from pow.game.game_canvas import GameCanvas
 from pow.midp.jint import idiv
 
 UP, DOWN, LEFT, RIGHT, FIRE, BACK = -1, -2, -3, -4, -5, -7
 STAR, POUND = 42, 35
-AUTO = -100                            # PORT-EXTRA: auto-hunt on / off (pow/game/autopilot.py)
+AUTO = -100                            # auto-hunt on / off (pow/game/autopilot.py)
 
 
 def _popup_keys(x, y, kind):
     cs = GameCanvas.popups
-    if cs.kind == 2:                       # Yes / No  (l.O_I: Yes left of centre, No right)
+    if cs.kind == 2:  # Yes / No
         if kind != "click":
-            return [LEFT]               # LEFT/RIGHT both toggle l.k
+            return [LEFT]  # LEFT/RIGHT both toggle the choice
         want = 0 if x < GameCanvas.view_cx else 1
         return ([LEFT] if cs.button != want else []) + [FIRE]
-    if cs.kind == 3:                       # 4 choices (l.c: rows of 16 px below the text)
+    if cs.kind == 3:  # 4 choices
         if kind != "click":
             return [UP if kind == "wheel_up" else DOWN]
         top = GameCanvas.view_cy - (cs.height >> 1) + 20 * cs.line_count + 5
-        if top <= y < top + 16 * cs.choices:       # PORT-EXTRA choices: 4 in the original
+        if top <= y < top + 16 * cs.choices:       # choices: 4 in the original
             want = (y - top) // 16
-            return _steps(want - cs.button, UP, DOWN) + [FIRE]
+            return [*_steps(want - cs.button, UP, DOWN), FIRE]
         return []
     if kind != "click":
         return []
@@ -73,7 +72,7 @@ def _popup_keys(x, y, kind):
 
 
 def _name_step(p, key):
-    """ag.r(int) on a cursor value (ag.java:1775-1792), without touching ag.bP."""
+    """The name cursor's move on a cursor value, without touching the real cursor."""
     if key == UP:
         p = (p + 28 - 14) % 28
     elif key == DOWN:
@@ -109,7 +108,7 @@ def _name_path(src, dst):
 
 
 def _name_cell(x, y):
-    """Cell of the letter grid ag.f(int,int) under (x, y): 0..25 letters, 26 OK, None outside."""
+    """Cell of the letter grid under (x, y): 0..25 letters, 26 OK, None outside."""
     j_ = GameCanvas.screen_cx - 71
     top = GameCanvas.view_cy + 32 + GameCanvas.view_y
     if not (j_ + 2 <= x < j_ + 142 and top <= y < top + 34):
@@ -120,10 +119,10 @@ def _name_cell(x, y):
     return min(row * 14 + (x - j_ - 2) // 10, 25)
 
 
-def _new_game_keys(c0, x, y, kind):
-    """Hero creation screens (e.aU, e.aK, ag.f, e.O)."""
+def _new_game_keys(menu_id, x, y, kind):
+    """Hero creation screens."""
     dd, de = GameCanvas.view_cx, GameCanvas.view_cy
-    if c0 == 29:                        # e.aU: buttons at y = de-60 + b*25, h 20
+    if menu_id == 29:  # buttons at y = de-60 + b*25, h 20
         if kind != "click":
             return [UP]
         for b in range(2):
@@ -131,7 +130,7 @@ def _new_game_keys(c0, x, y, kind):
             if dd - 80 <= x < dd + 80 and top - 2 <= y < top + 22:
                 return ([UP] if GameCanvas.menu[1] != b else []) + [FIRE]
         return []
-    if c0 == 6:                         # e.aK: heads at x = dd-94 + 69*b, y = de+9, 50x50
+    if menu_id == 6:  # heads at x = dd-94 + 69*b, y = de+9, 50x50
         if kind != "click":
             return [LEFT if kind == "wheel_up" else RIGHT]
         if de + 4 <= y < de + 64:
@@ -141,14 +140,14 @@ def _new_game_keys(c0, x, y, kind):
                 return [RIGHT]
             return [FIRE]
         return []
-    if c0 == 7:                         # ag.f: 2 x 14 letters + OK
+    if menu_id == 7:  # 2 x 14 letters + OK
         if kind != "click":
             return []
         cell = _name_cell(x, y)
         if cell is None:
             return []
-        return _name_path(GameCanvas.letter_cursor, cell) + [FIRE]
-    if c0 == 8:                         # e.O: rows HP MP ATK DEF at y = eN+108 + b*20, h 18
+        return [*_name_path(GameCanvas.letter_cursor, cell), FIRE]
+    if menu_id == 8:  # rows HP MP ATK DEF at y = eN+108 + b*20, h 18
         if kind != "click":
             return [UP if kind == "wheel_up" else DOWN]
         for b in range(4):
@@ -164,14 +163,14 @@ def _steps(d, minus, plus):
     return [plus] * d if d > 0 else [minus] * -d
 
 
-def _menu_keys(c0, x, y, kind):
-    """Menu screens reached from the Game Menu (e.f, e.j, e.l, e.c(boolean))."""
+def _menu_keys(menu_id, x, y, kind):
+    """Menu screens reached from the Game Menu."""
     cM, dd, de, dc = GameCanvas.menu, GameCanvas.view_cx, GameCanvas.view_cy, GameCanvas.view_y
     if kind != "click":
         return [UP if kind == "wheel_up" else DOWN]
-    if c0 == 3 and GameCanvas.view_cy + 102 <= y < GameCanvas.view_cy + 132:             # e.aH: pages at de+110
+    if menu_id == 3 and GameCanvas.view_cy + 102 <= y < GameCanvas.view_cy + 132:  # pages at de+110
         return [LEFT if x < dd else RIGHT]
-    if c0 == 19:                                               # e.aN: 4 rows of 22 px, 31 apart
+    if menu_id == 19:  # 4 rows of 22 px, 31 apart
         m = 20 + idiv(GameCanvas.view_size.y - 30 - 177, 2) + 2
         top = m + 31
         pages = top + 4 * 31 + 6
@@ -180,21 +179,21 @@ def _menu_keys(c0, x, y, kind):
         if 18 <= x < 222 and top <= y < top + 4 * 31 and (y - top) % 31 < 22:
             want = cM[1] // 4 * 4 + (y - top) // 31
             if want < GameCanvas.menu_count:
-                return _steps(want - cM[1], UP, DOWN) + [FIRE]
+                return [*_steps(want - cM[1], UP, DOWN), FIRE]
         return []
-    if c0 in (25, 28) and GameCanvas.canvas_size.y - 43 <= y < GameCanvas.canvas_size.y - 13:   # e.a(int,int,int,boolean) at bZ.b-35      # e.a(int,int,int,boolean)
+    if menu_id in (25, 28) and GameCanvas.canvas_size.y - 43 <= y < GameCanvas.canvas_size.y - 13:  # the page strip 35 px above the bottom
         return [LEFT if x < dd else RIGHT]
-    if c0 in (1, 2, 10, 11, 12, 13, 25, 27):                   # e.f(): rows of 180x20, 30 apart
-        rows = 5 if GameCanvas.menu_count > 5 else GameCanvas.menu_count
-        if c0 == 25 and cM[2] >= 20:
+    if menu_id in (1, 2, 10, 11, 12, 13, 25, 27):  # rows of 180x20, 30 apart
+        rows = min(GameCanvas.menu_count, 5)
+        if menu_id == 25 and cM[2] >= 20:
             rows = 4
         top = de - (rows * 30 - 10) // 2 + dc
         if GameCanvas.state == 3 or GameCanvas.prev_state == 3:                           # the map's pause menu: 30 px higher
             top -= 30
         if dd - 90 <= x < dd + 90 and top <= y < top + rows * 30 and (y - top) % 30 < 20:
-            return _steps((y - top) // 30 - (cM[1] - cM[2]), UP, DOWN) + [FIRE]
+            return [*_steps((y - top) // 30 - (cM[1] - cM[2]), UP, DOWN), FIRE]
         return []
-    if c0 == 9:                                                # e.j(): rows 1, 2 at de-50 + 30*(b-1)
+    if menu_id == 9:  # rows 1, 2 at de-50 + 30*(b-1)
         for b in range(1, consts.menu_sizes[9]):                      # + row 3 Screen (config.SCREEN_OPTION)
             top = de - 50 + (b - 1) * 30 + dc
             if top <= y < top + 20 and dd - 100 <= x < dd + 100:
@@ -203,7 +202,7 @@ def _menu_keys(c0, x, y, kind):
                     keys.append(LEFT if x < dd + 45 else RIGHT)
                 return keys
         return []
-    if c0 in (21, 22, 23, 24) and GameCanvas.cursor[27] == 0:              # e.a(int, z[], int[]): 5 x fK[3] cells, 32 px
+    if menu_id in (21, 22, 23, 24) and GameCanvas.cursor[27] == 0:  # 5 x fK[3] cells, 32 px
         fK = GameCanvas.cursor
         x0, y0 = fK[5], fK[1] + 31
         if x0 <= x < x0 + 160 and y0 <= y < y0 + 32 * fK[3]:
@@ -228,7 +227,7 @@ def _hero_dir_key(x, y):
 
 
 def _hud_potion(x, y):
-    """* / # quick potion boxes of the HUD (ar.aD: 28x28 at dd-72 / dd+44, y = bottom - 50)."""
+    """* / # quick potion boxes of the HUD."""
     top = GameCanvas.canvas_size.y - 50
     if top <= y < top + 28:
         if GameCanvas.view_cx - 72 <= x < GameCanvas.view_cx - 44:
@@ -244,7 +243,7 @@ def hold_dir(x, y):
         return None
     if y >= GameCanvas.canvas_size.y - 50:
         return None
-    if skill_bar.key_at(x, y) is not None:            # PORT-EXTRA: the skill bar / belt strip
+    if skill_bar.key_at(x, y) is not None:            # the skill bar / belt strip
         return None
     return _hero_dir_key(x, y)
 
@@ -261,15 +260,15 @@ def _map_keys(x, y, kind):
     if x >= GameCanvas.screen_w - 60 and y >= GameCanvas.screen_h - 20:            # soft key PAUSE / BACK (bottom right)
         return [BACK]
     if (kind == "click" and GameCanvas.state == 3 and GameCanvas.map_mode.mode == 0 and x < 48
-            and y >= GameCanvas.screen_h - 17):          # PORT-EXTRA: the AUTO corner = auto-hunt
+            and y >= GameCanvas.screen_h - 17):          # the AUTO corner = auto-hunt
         return [AUTO]
     if GameCanvas.state == 5:                                     # talk on the map: only SKIP (-6) works
-        if kind == "click" and x < 60 and y >= GameCanvas.screen_h - 20:     # (e.i_v drops every other key)
+        if kind == "click" and x < 60 and y >= GameCanvas.screen_h - 20:
             return [-6]
         return []
     if GameCanvas.state != 3:
         return [FIRE] if kind == "click" else []
-    if GameCanvas.map_mode.mode == 1:                                   # pause menu: e.f() list, cM[0] == 10
+    if GameCanvas.map_mode.mode == 1:  # pause menu: the list, menu 10
         return _menu_keys(10, x, y, kind)
     if GameCanvas.map_mode.mode != 0:                                   # Assign Items / Options / Help of the pause
         if kind != "click":
@@ -277,10 +276,10 @@ def _map_keys(x, y, kind):
         return [FIRE]
     if kind != "click":
         return []
-    slot = skill_bar.key_at(x, y)                     # PORT-EXTRA config.SKILL_BAR: belt / skill slot
+    slot = skill_bar.key_at(x, y)                     # config.SKILL_BAR: belt / skill slot
     if slot is not None:
         return [] if slot == -999 else [slot]
-    potion = None if config.SKILL_BAR else _hud_potion(x, y)   # PORT-EXTRA: no * / # boxes with the belt
+    potion = None if config.SKILL_BAR else _hud_potion(x, y)   # no * / # boxes with the belt
     if potion is not None:                             # * / # boxes of the HUD: drink / throw
         return [potion]
     # a click on the hero = attack; beside the hero = a tap on that direction
@@ -302,7 +301,7 @@ def keys_for(x, y, kind="click"):
         if Boot.step == 1:                   # "Would you like sound enabled?"
             return _popup_keys(x, y, kind)
         return [FIRE] if kind == "click" else []      # title: any key
-    if bv == 10:                        # story player ag.M(): FIRE shows the text, -6 skips
+    if bv == 10:  # story player: FIRE shows the text, -6 skips
         if GameCanvas.popups.kind != 0:
             return _popup_keys(x, y, kind)
         if kind != "click":
@@ -315,9 +314,9 @@ def keys_for(x, y, kind="click"):
     if bv == 2 and GameCanvas.popups.kind != 0:
         return _popup_keys(x, y, kind)
     if bv == 2:
-        c0 = GameCanvas.menu[0]
+        menu_id = GameCanvas.menu[0]
         soft_back = x >= GameCanvas.screen_w - GameCanvas.softkey_bg.getWidth() and y >= GameCanvas.screen_h - GameCanvas.softkey_bg.getHeight()
-        if c0 == 5:                     # Main Menu, e.aJ: strip at y = 320-65, x = dd-52 .. dd+64
+        if menu_id == 5:  # Main Menu: strip at y = 320-65, x = dd-52 .. dd+64
             if kind == "wheel_up":
                 return [LEFT]
             if kind == "wheel_down":
@@ -331,7 +330,7 @@ def keys_for(x, y, kind="click"):
                     return [RIGHT]
                 return [FIRE]
             return []
-        if c0 == 0:                     # Game Menu, e.bf: buttons at y 164 / 200 / 244
+        if menu_id == 0:  # Game Menu: buttons at y 164 / 200 / 244
             if kind == "wheel_up":
                 return [UP]
             if kind == "wheel_down":
@@ -349,12 +348,12 @@ def keys_for(x, y, kind="click"):
             return []
         if soft_back:
             return [BACK]
-        if c0 == 4 and kind == "click" and x < GameCanvas.softkey_bg.getWidth() and y >= GameCanvas.screen_h - GameCanvas.softkey_bg.getHeight():
+        if menu_id == 4 and kind == "click" and x < GameCanvas.softkey_bg.getWidth() and y >= GameCanvas.screen_h - GameCanvas.softkey_bg.getHeight():
             return [-6]                 # briefing: soft key "SKIP"
-        if c0 == 14 and kind == "click" and x < GameCanvas.softkey_bg.getWidth() and y >= GameCanvas.screen_h - GameCanvas.softkey_bg.getHeight():
-            return [-6]                 # PORT-EXTRA: Attributes, soft key "RESET"
-        keys = _new_game_keys(c0, x, y, kind)
+        if menu_id == 14 and kind == "click" and x < GameCanvas.softkey_bg.getWidth() and y >= GameCanvas.screen_h - GameCanvas.softkey_bg.getHeight():
+            return [-6]                 # Attributes, soft key "RESET"
+        keys = _new_game_keys(menu_id, x, y, kind)
         if keys is not None:
             return keys
-        return _menu_keys(c0, x, y, kind)
+        return _menu_keys(menu_id, x, y, kind)
     return [FIRE] if kind == "click" else []

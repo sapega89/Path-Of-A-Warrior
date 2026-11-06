@@ -1,0 +1,47 @@
+"""Answer: one server answer, read field by field (little-endian).
+"""
+from pow.game.online.rt import _inc_post, _jstring, _jtrim, i16, i32
+
+
+class Answer:
+
+    def __init__(self, data):
+        self.data = None
+        self.pos = 0
+        self.data = data
+
+    def read_s8(self):
+        return self.data[_inc_post(self, "pos", 1)]
+
+    def read_s16(self):
+        lo = self.data[_inc_post(self, "pos", 1)]
+        hi = self.data[_inc_post(self, "pos", 1)]
+        return i16(i32((((lo & 0xFF))) << (0)) | i32((((hi & 0xFF))) << (8)))
+
+    def read_s32(self):
+        b0 = self.data[_inc_post(self, "pos", 1)]
+        b1 = self.data[_inc_post(self, "pos", 1)]
+        b2 = self.data[_inc_post(self, "pos", 1)]
+        b3 = self.data[_inc_post(self, "pos", 1)]
+        return (((i32((((b0 & 0xFF))) << (0)) | i32((((b1 & 0xFF))) << (8))) | i32((((b2 & 0xFF))) << (16))) | i32((((b3 & 0xFF))) << (24)))
+
+    def read_string(self, size):
+        if self.data[self.pos] == 0:
+            self.pos = (self.pos + size)
+            return ""
+        length = 0
+        while length < size:
+            if self.data[(self.pos + length)] == 0:
+                break
+            length = length + 1
+        text = _jstring(self.data, self.pos, length)
+        self.pos = (self.pos + size)
+        return _jtrim(text)
+
+
+def _static_init():
+    pass
+
+
+def _late_imports():
+    pass

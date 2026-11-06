@@ -3,21 +3,22 @@ import struct
 
 import pytest
 
-from pow_server import codec_bin, messages as M
+from pow_server import codec_bin
+from pow_server import messages as M
 from pow_server.model import default_character
 
 
 class K:
-    """k.java: what the original client uses to read a payload."""
+    """What the original client uses to read a payload."""
     def __init__(self, data):
         self.a_, self.b_ = data, 0
 
     def a(self, n=None):
-        if n is None:                                  # k.a(): s8
+        if n is None:  # s8
             v = struct.unpack_from("<b", self.a_, self.b_)[0]
             self.b_ += 1
             return v
-        raw = self.a_[self.b_:self.b_ + n]             # k.a(int): fixed string
+        raw = self.a_[self.b_:self.b_ + n]  # fixed string
         self.b_ += n
         return "" if raw[:1] == b"\0" else raw.split(b"\0")[0].decode().strip()
 
@@ -78,7 +79,7 @@ def test_fighter_is_72_bytes():
 
 def test_battle_end_is_33_bytes_and_the_loot_item():
     p = payload(M.BATTLE_END, st=1, win=1, gold=120, grade=4, fame=7, exp=33, loot="NONE", rank=5)
-    assert len(p) == 3 + 33 + 10                # PORT-EXTRA item {u16 id, 4 x s16} after the 33
+    assert len(p) == 3 + 33 + 10                # item {u16 id, 4 x s16} after the 33
     p = payload(M.BATTLE_END, st=1, win=1, loot="War Claymore", item_id=118, item_atk=9)
     msg = codec_bin.decode(p, from_client=False)
     assert msg["loot"] == "War Claymore" and (msg["item_id"], msg["item_atk"]) == (118, 9)
@@ -98,7 +99,7 @@ def test_turn_result_layout():
     msg = codec_bin.decode(p, from_client=False)
     assert msg["actions"] == [0, 8, 99, 99]
     assert msg["records"][1]["target2_hp"] == 50 and msg["records"][0]["target_hp"] == 77
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="at most 4 records"):
         payload(M.TURN_RESULT, st=1, actions=[0] * 4, records=recs * 3)
 
 
@@ -112,7 +113,7 @@ def test_client_messages():
 
 
 def test_original_262_without_token_decodes_short():
-    """The jar sends 262 without the PORT-EXTRA token: the field is just missing."""
+    """The original client sends 262 without the token: the field is just missing."""
     raw = struct.pack("<H", 262) + b"ANDREY".ljust(12, b"\0") + b"0111"
     msg = codec_bin.decode(raw, from_client=True)
     assert msg["id"] == "ANDREY" and msg["ver"] == "0111" and "token" not in msg
@@ -126,7 +127,7 @@ def test_error_answers_carry_only_the_status():
 
 
 def test_rank_list_counts_rows():
-    rows = [{"rank": i, "id": "PLAYER%s" % "ABC"[i - 1], "value": 10 - i} for i in (1, 2, 3)]
+    rows = [{"rank": i, "id": "PLAYER{}".format("ABC"[i - 1]), "value": 10 - i} for i in (1, 2, 3)]
     msg = codec_bin.decode(payload(M.RANK_LIST_ANS, st=1, rows=rows), from_client=False)
     assert msg["n"] == 3 and msg["rows"] == rows
 

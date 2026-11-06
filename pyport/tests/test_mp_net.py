@@ -3,8 +3,9 @@ import asyncio
 
 import pytest
 
-from pow_mp.net.transport import LocalTransport, WebSocketTransport, make_transport
-from pow_server import codec_bin, messages as M
+from pow.midp.transport import LocalTransport, WebSocketTransport, make_transport
+from pow_server import codec_bin
+from pow_server import messages as M
 from pow_server.server import GameServer
 
 
@@ -47,7 +48,7 @@ def test_websocket_and_tcp_end_to_end():
     async def run():
         ready = asyncio.get_running_loop().create_future()
         task = asyncio.ensure_future(serve("127.0.0.1", 0, ":memory:", tcp_port=0, ready=ready))
-        server, (ws_port, tcp_port) = await asyncio.wait_for(ready, 5)
+        _server, (ws_port, tcp_port) = await asyncio.wait_for(ready, 5)
         try:
             t = WebSocketTransport("ws://127.0.0.1:%d" % ws_port)
             t.open()
@@ -66,7 +67,7 @@ def test_websocket_and_tcp_end_to_end():
             assert got[0]["op"] == 263 and got[0]["st"] == 1 and got[1]["op"] == 1288
             t.close()
 
-            # raw TCP with the original framing (the jar's way); the server is not --legacy,
+            # raw TCP with the original framing (the original's way); the server is not --legacy,
             # so a 262 without a token is refused, which is what this server must do
             r, w = await asyncio.open_connection("127.0.0.1", tcp_port)
             w.write(enc(M.LOGIN, id="WEBUSER", ver="0111"))
@@ -86,11 +87,12 @@ def test_websocket_and_tcp_end_to_end():
     asyncio.run(run())
 
 
-def test_gamevil_live_on_the_ws_path_and_its_tcp_port():
-    """PHASE_7: /live is the single player's Gamevil Live (pow_server/live.py); it shares the
+def test_live_on_the_ws_path_and_its_tcp_port():
+    """PHASE_7: /live is the single player's Live (pow_server/live.py); it shares the
     accounts with the multiplayer server."""
     pytest.importorskip("websockets")
     import struct
+
     from pow_server.ws_server import serve
     login = struct.pack("<H", 530) + b"WEBUSER".ljust(12, b"\0") + b"5678".ljust(16, b"\0") + b"1501" + bytes(8)
 

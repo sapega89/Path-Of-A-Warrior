@@ -1,5 +1,5 @@
 """Numbers of the single-player game the multiplayer battles use (Andrey: "the balance from the
-offline game"). Sources: analysis/02 §2.3-2.9 and 03 §2; the lines of the Java are given at
+offline game"). Sources: analysis/02 §2.3-2.9 and 03 §2; the lines of the the original are given at
 every rule. What the single player does not have (the timing bar, Defend / Evade, the MP gauge
 of the multiplayer client, grades) stays in battle.py and is marked there as made up.
 """
@@ -8,10 +8,10 @@ import pathlib
 import config
 
 # --- the hero ----------------------------------------------------------------------------
-# ag.aw() (ag.java:3275-3284): a new hero; 5 free points, +3 per level (e.java:2877-2878);
-# a point gives HP +5 / MP +3 / ATK +1 / DEF +1 (e.java:882-907)
+# a new hero; 5 free points, +3 per level;
+# a point gives HP +5 / MP +3 / ATK +1 / DEF +1
 HERO_BASE = {"atk": 5, "def": 4, "hp": 30, "mp": 10}
-# PORT-EXTRA: the four heroes (face = SP head 0..3) have their own base stats, each worth the
+# the four heroes (face = SP head 0..3) have their own base stats, each worth the
 # points of the original one; the same table as the single player's pow/game/hero_classes.py
 HERO_BASES = (
     HERO_BASE,                                          # 0 Warrior (the original numbers)
@@ -44,7 +44,7 @@ _exp = None
 
 
 def exp_to_next(level):
-    """exp.arr (e.java:3547-3560): EXP from level L to L+1; u16 then 199 u32."""
+    """exp.arr: EXP from level L to L+1; u16 then 199 u32."""
     global _exp
     if _exp is None:
         data = (pathlib.Path(config.RES_ROOT) / "exp.arr").read_bytes()
@@ -53,7 +53,7 @@ def exp_to_next(level):
 
 
 # --- foes --------------------------------------------------------------------------------
-# soldiers, c.a(int,int) (c.java:1017-1039): t 0 swordsman, 1 archer, 2 squad
+# soldiers: t 0 swordsman, 1 archer, 2 squad
 SOLDIER_BASE = (3, 2, 3)
 SOLDIER_MULT = (100, 100, 150)
 SOLDIER_HP = (7, 5, 7)
@@ -73,9 +73,9 @@ def soldier_stats(t, level):
 
 
 # --- skills --------------------------------------------------------------------------------
-# multiplayer code -> single-player skill index (as.gG, as.java:84-86)
+# multiplayer code -> single-player skill index
 SP_INDEX = {3: 0, 4: 1, 5: 2, 9: 3, 10: 4, 11: 5, 12: 6, 13: 7, 6: 8, 7: 9, 8: 10}
-# ar.e(int) (ar.java:743-756): MP a skill takes in the single player, base + (level - 1) * inc,
+# MP a skill takes in the single player, base + (level - 1) * inc,
 # indexed by the single-player skill id - 12
 SKILL_MP_BASE = (5, 6, 7, 10, 15, 7, 10, 10, 8, 9, 10, 5, 6, 7, 9, 12, 20, 20, 20)
 SKILL_MP_INC = (3, 4, 5, 3, 4, 3, 3, 5, 3, 4, 5, 3, 4, 5, 5, 6, 5, 5, 5)
@@ -94,9 +94,9 @@ def skill_cost(skill, level, max_mp):
     return max(1, min(100, -(-100 * skill_mp(skill, level) // max(1, max_mp))))
 
 
-# ae.aU (ae.java:246-248): an attack skill adds ATK * level / aU to every hit (ar.java:301-316)
+# an attack skill adds ATK * level / aU to every hit
 AU = (20, 20, 20, 0, 0, 0, 0, 0, 30, 25, 20)
-# hit frames of the player's skill animations (c.java:1920-2126): Wind f3-5, Storm f5-7,
+# hit frames of the player's skill animations: Wind f3-5, Storm f5-7,
 # Thunder f2,4,6,8, Tide the odd frames of 12, Wave f5, Tidal f6
 SKILL_HITS = {3: 3, 4: 3, 5: 4, 6: 6, 7: 1, 8: 1}
 
@@ -124,8 +124,8 @@ def soul(skill, atk, def_, level):
 
 
 # --- rewards -------------------------------------------------------------------------------
-# ar.ab() (ar.java:1663-1698): dY += L for a soldier, 2L for a general; at the end of a mission
-# (c.java:1603, 1616-1641) Fame += dY, EXP = (dY + bonus) * 2 (Normal), bonus = dY / 20 in time,
+# dY += L for a soldier, 2L for a general; at the end of a mission
+# Fame += dY, EXP = (dY + bonus) * 2 (Normal), bonus = dY / 20 in time,
 # gold = h * 150 with h the mission's gold multiplier (sideinfo.arr, 3..15)
 
 
@@ -149,7 +149,7 @@ def shop_kit(level):
     single-player save, and a CPU fighter, wears."""
     from pow_server import loot
     if level < loot.NORMAL_TIER_LEVEL[1]:
-        # a new hero starts with 0 gold and the Iron Claymore (116, base ATK 1, ag.java new
+        # a new hero starts with 0 gold and the Iron Claymore (116, base ATK 1 new
         # game); the kit counts from the second tier on
         return {"atk": 1, "def": 0, "hp": 0}
     tier = sum(1 for lv in loot.NORMAL_TIER_LEVEL if level >= lv) - 1
