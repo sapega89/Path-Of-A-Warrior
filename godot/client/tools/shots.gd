@@ -6,6 +6,14 @@ extends Node
 const MAPS: Array[int] = [1, 5, 10, 20, 30, 40]
 const LiveServer := preload("res://server/live.gd")
 const LiveClient := preload("res://scripts/net/live_client.gd")
+const OnlineServer := preload("res://server/online.gd")
+const OnlineAccounts := preload("res://server/accounts.gd")
+const OnlineClient := preload("res://scripts/net/online_client.gd")
+## The multiplayer shots' hero, as the server keeps it (Profile.to_dict()).
+const ONLINE_HERO := {"level": 12, "head": 2, "base": [60, 31, 9, 8],
+	"equipped": [{"id": 105, "attack": 6, "defense": 0, "hp": 0, "mp": 0, "enchant": 0},
+		{"id": 201, "attack": 0, "defense": 3, "hp": 5, "mp": 2, "enchant": 0}],
+	"skill_levels": [2, 0, 0, 1, 0, 3], "hotkeys": [17, 15, 12, 0, 0]}
 
 
 func _ready() -> void:
@@ -209,6 +217,104 @@ func _ready() -> void:
 	await _frames(2)
 	await _shot(out, "10s_live_fame")
 	Router.current.note.hide()
+	# Multiplayer: the menu, the Character pages, Skills, Ranking, the Order, the Chat and the
+	# Options. The server's online game runs in this process (server/online.gd) with its bots;
+	# Maria is in my order and wrote while I was away.
+	_rm_dir("user://shot_online")
+	var accounts: RefCounted = OnlineAccounts.new("user://shot_online/accounts")
+	accounts.rounds = 20
+	var game: RefCounted = OnlineServer.new("user://shot_online", accounts)
+	game.rng.seed = 7
+	var now := [100.0]
+	game.clock = func() -> float: return now[0]
+	game.add_bots()
+	accounts.create_account("ANDREY", "1234")
+	accounts.hero_put("ANDREY", 0, 1, ONLINE_HERO)
+	accounts.create_account("MARIA", "1234")
+	var me_part: Dictionary = game.online_part("ANDREY")
+	me_part.merge({"name": "Andrey", "wins": 7, "losses": 3, "mp_fame": 320, "duel_grade": 5,
+		"mission_grade": 3, "gold": 1800, "mp_exp": 950}, true)
+	game.save_char("ANDREY")
+	var mine: RefCounted = OnlineServer.Session.new()
+	var pushes: Array = []
+	mine.send = func(m: Dictionary) -> void: pushes.append(bytes_to_var(var_to_bytes(m)))
+	var maria: RefCounted = OnlineServer.Session.new()
+	maria.send = func(_m: Dictionary) -> void: pass
+	game.enter(mine, "ANDREY")
+	game.answer(mine, "order_create", {"name": "WOLVES"})
+	game.leave(mine)
+	game.enter(maria, "MARIA")
+	game.answer(maria, "mp_name", {"name": "Maria"})
+	game.answer(maria, "order_join", {"name": "WOLVES"})
+	for m in [[OnlineServer.LOBBY, "", "Anyone up for a duel?"],
+			[OnlineServer.ORDER, "", "Wolves, meet at the arena!"],
+			[OnlineServer.PRIVATE, "ANDREY", "Want to do a mission together?"]]:
+		now[0] += 2.0
+		game.answer(maria, "chat_send", {"channel": m[0], "peer": m[1], "text": m[2]})
+	pushes.clear()
+	var holder: Array = []  # the client, for its own request's pushes
+	var mp: RefCounted = OnlineClient.new(func(msg: Dictionary, done: Callable) -> void:
+		now[0] += 2.0
+		var r: Dictionary = game.enter(mine, "ANDREY") if msg.t == "mp_enter" \
+			else game.answer(mine, str(msg.t), bytes_to_var(var_to_bytes(msg)))
+		done.call(bytes_to_var(var_to_bytes(r)))
+		while not pushes.is_empty():
+			holder[0].on_push(pushes.pop_front()))
+	holder.append(mp)
+	var mp_params := {"online": mp}
+	Router.go("main_menu")
+	Router.push("online", mp_params)
+	await _frames(2)
+	await _shot(out, "11a_online")
+	Router.push("online_character", mp_params)
+	await _frames(2)
+	Router.current.open("records")
+	await _frames(2)
+	await _shot(out, "11b_online_records")
+	Router.current.open("attributes")
+	Router.current.buttons[1].grab_focus()
+	await _frames(2)
+	await _shot(out, "11c_online_attributes")
+	Router.push("online_skills", mp_params)
+	await _frames(2)
+	await _shot(out, "11d_online_skills")
+	Router.back()
+	Router.back()
+	Router.push("online_ranking", mp_params)
+	await _frames(2)
+	Router.current.choose(1, true)
+	await _frames(2)
+	await _shot(out, "11e_online_ranking")
+	Router.back()
+	Router.push("online_order", mp_params)
+	await _frames(2)
+	await _shot(out, "11f_online_order")
+	Router.back()
+	Router.push("online_chat", mp_params)
+	await _frames(2)
+	Router.current.line.text = "Me! Level 12 here."
+	Router.current.submit()
+	await _frames(2)
+	await _shot(out, "11g_online_chat_lobby")
+	mp.send_chat(OnlineClient.PRIVATE, "RAVEN", "Hello Raven!", func(_e: String) -> void: pass)
+	Router.current.open(OnlineClient.PRIVATE, "")
+	await _frames(2)
+	await _shot(out, "11h_online_chat_private")
+	Router.push("online_chat", {"online": mp, "channel": OnlineClient.PRIVATE, "peer": "MARIA"})
+	await _frames(2)
+	Router.current.line.text = "Sure, after my duel."
+	await _shot(out, "11i_online_chat_with")
+	Router.back()
+	Router.back()
+	Router.push("online_text", {"online": mp, "kind": "quote"})
+	await _frames(2)
+	await _shot(out, "11j_online_quote")
+	Router.back()
+	Router.push("online_options", mp_params)
+	await _frames(2)
+	await _shot(out, "11k_online_options")
+	Router.back()
+	mp.leave()
 	# The Blacksmith: buying from the shop, and enchanting the sword in hand.
 	Router.go("main_menu")
 	Router.push("blacksmith", {"profile_path": "user://shot_hero.json"})
@@ -513,12 +619,12 @@ func _fight_step(sim: RefCounted) -> void:
 	await _frames(4)
 
 
-## Empties a folder of the shots' own data (only user://shot_*).
+## Empties a folder of the shots' own data and the folders in it (only user://shot_*).
 func _rm_dir(d: String) -> void:
-	if not d.begins_with("user://shot_"):
+	if not d.begins_with("user://shot_") or not DirAccess.dir_exists_absolute(d):
 		return
-	for f in DirAccess.get_files_at(d.path_join("live")):
-		DirAccess.remove_absolute(d.path_join("live").path_join(f))
+	for sub in DirAccess.get_directories_at(d):
+		_rm_dir(d.path_join(sub))
 	for f in DirAccess.get_files_at(d):
 		DirAccess.remove_absolute(d.path_join(f))
 

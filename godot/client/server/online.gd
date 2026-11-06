@@ -15,7 +15,7 @@ extends RefCounted
 ## The Multiplayer menu of a client sends mp_enter first (the player is online from then on,
 ## until mp_leave or the connection closes); every other request needs it. Each is answered
 ## {t, ok, err?}:
-##   mp_enter / mp_profile            -> the character (name, face, level, wins, losses, hp,
+##   mp_enter / mp_profile            -> the character (id, name, face, level, wins, losses, hp,
 ##                                       weapon, slots, quotes, skill_cost), unread: [order, private]
 ##   mp_options / mp_options_set {invitation: 0 Deny, 1 Accept}
 ##   mp_name {name}                   -> err "not acceptable", "name exists"
@@ -264,7 +264,7 @@ func profile(uid: String) -> Dictionary:
 	var costs: Array = []
 	for id in SKILL_IDS:
 		costs.append(Rules.skill_cost(id, int(c.skills.get(id, 1)), max_mp(c)))
-	return {"name": display_name(c), "face": c.face, "level": c.level, "wins": int(c.wins),
+	return {"id": uid, "name": display_name(c), "face": c.face, "level": c.level, "wins": int(c.wins),
 		"losses": int(c.losses), "hp": max_hp(c), "weapon": c.weapon, "slots": c.slots,
 		"quote_start": c.quote_start, "quote_win": c.quote_win, "skill_cost": costs}
 

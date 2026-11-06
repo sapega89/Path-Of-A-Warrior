@@ -190,8 +190,8 @@ func test_live_menu_opens_its_pages_once_synced() -> void:
 	var screen: Control = LiveScreen.new()
 	root.add_child(screen)
 	eq(screen.status.text, "", "connected")
-	eq(screen.buttons.map(func(b): return b.disabled), [false, false, false, true],
-		"Trade, Warehouse and Safe (Multiplayer not yet)")
+	eq(screen.buttons.map(func(b): return b.disabled), [false, false, false, false],
+		"Trade, Warehouse, Safe and Multiplayer")
 	screen.free()
 	Router.params = {"profile_path": TEST_PATH}
 	screen = LiveScreen.new()

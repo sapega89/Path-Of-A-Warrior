@@ -20,7 +20,7 @@ const PAGES := [
 	["Trade", "live.trade", "live_trade"],
 	["Warehouse", "live.warehouse", "live_warehouse"],
 	["Safe", "live.safe", "live_safe"],
-	["Multiplayer", "live.multiplayer", ""],
+	["Multiplayer", "live.multiplayer", "online"],
 ]
 const LIST_PLACES := 20
 

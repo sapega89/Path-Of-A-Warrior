@@ -826,5 +826,305 @@
   "live.level_up": {
     "en": "%d Level up",
     "uk": "Нових рівнів: %d"
+  },
+  "online.title": {
+    "en": "MULTIPLAYER",
+    "uk": "МУЛЬТИПЛЕЄР"
+  },
+  "online.who": {
+    "en": "%s  Lv%d  Wins %d / Losses %d",
+    "uk": "%s  Рівень %d  Перемог %d / Поразок %d"
+  },
+  "online.kicked": {
+    "en": "Another player has connected using your UserID.",
+    "uk": "Під вашим UserID зайшли з іншого пристрою."
+  },
+  "online.duel": {
+    "en": "Duel",
+    "uk": "Дуель"
+  },
+  "online.mission": {
+    "en": "Mission",
+    "uk": "Місія"
+  },
+  "online.character": {
+    "en": "Character",
+    "uk": "Персонаж"
+  },
+  "online.ranking": {
+    "en": "Ranking",
+    "uk": "Рейтинг"
+  },
+  "online.order": {
+    "en": "Order",
+    "uk": "Орден"
+  },
+  "online.chat": {
+    "en": "Chat",
+    "uk": "Чат"
+  },
+  "online.options": {
+    "en": "Options",
+    "uk": "Налаштування"
+  },
+  "online.records": {
+    "en": "Records",
+    "uk": "Досягнення"
+  },
+  "online.attributes": {
+    "en": "Attributes",
+    "uk": "Характеристики"
+  },
+  "online.skills": {
+    "en": "Skills",
+    "uk": "Скіли"
+  },
+  "online.purse": {
+    "en": "Exp/Fame/Gold",
+    "uk": "Досвід / Слава / Золото"
+  },
+  "online.quote": {
+    "en": "Change Quote",
+    "uk": "Змінити фрази"
+  },
+  "online.name": {
+    "en": "Display Name",
+    "uk": "Ім'я в грі"
+  },
+  "online.level": {
+    "en": "Level %d",
+    "uk": "Рівень %d"
+  },
+  "online.fame": {
+    "en": "Fame %d",
+    "uk": "Слава %d"
+  },
+  "online.duel_grade": {
+    "en": "Duel Grade %s",
+    "uk": "Оцінка дуелей %s"
+  },
+  "online.wins": {
+    "en": "Wins %d / Losses %d",
+    "uk": "Перемог %d / Поразок %d"
+  },
+  "online.mission_grade": {
+    "en": "Mission Grade %s",
+    "uk": "Оцінка місій %s"
+  },
+  "online.order_line": {
+    "en": "Order %s",
+    "uk": "Орден %s"
+  },
+  "online.mp_exp": {
+    "en": "Multiplayer Exp %d",
+    "uk": "Досвід у мультиплеєрі %d"
+  },
+  "online.mp_fame": {
+    "en": "Multiplayer Fame %d",
+    "uk": "Слава в мультиплеєрі %d"
+  },
+  "online.mp_gold": {
+    "en": "Gold In Server %d",
+    "uk": "Золото на сервері %d"
+  },
+  "online.title_name": {
+    "en": "Display Name",
+    "uk": "Ім'я в грі"
+  },
+  "online.hint_name": {
+    "en": "Enter your display name. (8 characters max)",
+    "uk": "Введіть ім'я, яке бачитимуть інші. (до 8 літер і цифр)"
+  },
+  "online.name_sure": {
+    "en": "Are you sure you want to use this display name?",
+    "uk": "Точно взяти це ім'я?"
+  },
+  "online.title_quote": {
+    "en": "Change Quote",
+    "uk": "Змінити фрази"
+  },
+  "online.hint_quote": {
+    "en": "Change your starting battle quote and your victory quote. (1-20 Characters)",
+    "uk": "Перша фраза в бою і фраза перемоги. (1-20 символів)"
+  },
+  "online.title_order_create": {
+    "en": "Create Order",
+    "uk": "Створити орден"
+  },
+  "online.hint_order_create": {
+    "en": "Enter the name of your new order. (4-12 letters)",
+    "uk": "Назва нового ордену. (4-12 літер)"
+  },
+  "online.title_order_join": {
+    "en": "Join Order",
+    "uk": "Вступити в орден"
+  },
+  "online.hint_order_join": {
+    "en": "Enter the name of the order you wish to join. (4-12 letters)",
+    "uk": "Назва ордену, до якого вступаєте. (4-12 літер)"
+  },
+  "online.title_peer": {
+    "en": "New Message",
+    "uk": "Нове повідомлення"
+  },
+  "online.hint_peer": {
+    "en": "Enter the UserID of the player. (4-12 letters)",
+    "uk": "UserID гравця. (4-12 літер)"
+  },
+  "online.err_not_acceptable": {
+    "en": "This is not acceptable.",
+    "uk": "Так не можна."
+  },
+  "online.err_name_exists": {
+    "en": "The name already exists.",
+    "uk": "Таке ім'я вже є."
+  },
+  "online.err_none": {
+    "en": "No such order.",
+    "uk": "Такого ордену немає."
+  },
+  "online.err_full": {
+    "en": "The order is full. (30 members)",
+    "uk": "В ордені вже 30 членів."
+  },
+  "online.err_in_order": {
+    "en": "You are already in an order.",
+    "uk": "Ви вже в ордені."
+  },
+  "online.err_too_fast": {
+    "en": "Not so fast! Wait a moment.",
+    "uk": "Не так швидко! Зачекайте трохи."
+  },
+  "online.err_no_player": {
+    "en": "No such player.",
+    "uk": "Такого гравця немає."
+  },
+  "online.err_self": {
+    "en": "You cannot write to yourself.",
+    "uk": "Собі писати не можна."
+  },
+  "online.err_no_order": {
+    "en": "You are not in an order.",
+    "uk": "Ви не в ордені."
+  },
+  "online.skills_hint": {
+    "en": "Pick a skill, then the slot to put it in. A slot picked with no skill is emptied.",
+    "uk": "Виберіть скіл, потім слот для нього. Слот без вибраного скіла звільняється."
+  },
+  "online.no_skills": {
+    "en": "No skills learned yet.",
+    "uk": "Скілів ще немає."
+  },
+  "online.pick_slot": {
+    "en": "Now pick a slot.",
+    "uk": "Тепер виберіть слот."
+  },
+  "online.saved": {
+    "en": "Saved.",
+    "uk": "Збережено."
+  },
+  "online.rank_fame": {
+    "en": "Fame",
+    "uk": "Слава"
+  },
+  "online.rank_duel": {
+    "en": "Duel",
+    "uk": "Дуелі"
+  },
+  "online.rank_mission": {
+    "en": "Mission",
+    "uk": "Місії"
+  },
+  "online.rank_top": {
+    "en": "Top Rankers",
+    "uk": "Найкращі"
+  },
+  "online.rank_near": {
+    "en": "Ranks Near Me",
+    "uk": "Поруч зі мною"
+  },
+  "online.my_rank": {
+    "en": "My rank: %d (%s)",
+    "uk": "Моє місце: %d (%s)"
+  },
+  "online.no_rank": {
+    "en": "No rank yet.",
+    "uk": "Місця ще немає."
+  },
+  "online.no_order": {
+    "en": "You are not in an order.",
+    "uk": "Ви не в ордені."
+  },
+  "online.order_create": {
+    "en": "Create Order",
+    "uk": "Створити орден"
+  },
+  "online.order_join": {
+    "en": "Join Order",
+    "uk": "Вступити в орден"
+  },
+  "online.order_leave": {
+    "en": "Leave Order",
+    "uk": "Вийти з ордену"
+  },
+  "online.order_leave_ask": {
+    "en": "Leave the order?",
+    "uk": "Вийти з ордену?"
+  },
+  "online.online": {
+    "en": "Online",
+    "uk": "онлайн"
+  },
+  "online.invitation": {
+    "en": "Invitation",
+    "uk": "Запрошення"
+  },
+  "online.accept": {
+    "en": "Accept",
+    "uk": "Приймати"
+  },
+  "online.deny": {
+    "en": "Deny",
+    "uk": "Відмовляти"
+  },
+  "online.invitation_accept": {
+    "en": "A Challenge or Invite An Ally of another player takes you into the battle.",
+    "uk": "Виклик або запрошення іншого гравця одразу веде вас у бій."
+  },
+  "online.invitation_deny": {
+    "en": "Other players' invitations are denied.",
+    "uk": "Запрошення інших гравців відхиляються."
+  },
+  "online.lobby": {
+    "en": "Lobby",
+    "uk": "Лобі"
+  },
+  "online.private": {
+    "en": "Private",
+    "uk": "Особисті"
+  },
+  "online.new_message": {
+    "en": "New Message",
+    "uk": "Нове повідомлення"
+  },
+  "online.write_hint": {
+    "en": "Write a message (40 characters, Latin letters)",
+    "uk": "Повідомлення (до 40 символів, латиниця)"
+  },
+  "online.send": {
+    "en": "Send",
+    "uk": "Надіслати"
+  },
+  "online.with": {
+    "en": "Private: %s",
+    "uk": "Особисті: %s"
+  },
+  "online.no_messages": {
+    "en": "No messages yet.",
+    "uk": "Повідомлень ще немає."
+  },
+  "online.no_conversations": {
+    "en": "No conversations yet.",
+    "uk": "Розмов ще немає."
   }
 }
