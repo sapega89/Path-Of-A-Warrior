@@ -605,6 +605,20 @@ func combine(places: Array, plan: Dictionary) -> String:
 	return "fail"
 
 
+## A mission lost, as the original: from level 10 on, with a chance of level / 4 in 100, one of
+## the 9 places of the Gear page is picked at random and what is worn there is lost. rng: the
+## mission's JavaRandom (below). Returns the thing lost, or {} (nothing, or the place empty).
+func lose_gear(rng: RefCounted) -> Dictionary:
+	if level <= 9 or rng.below(100) >= level >> 2:
+		return {}
+	var i: int = rng.below(Items.EQUIPPED)
+	var it: Dictionary = equipped[i]
+	if int(it.get("id", 0)) == 0:
+		return {}
+	equipped[i] = Items.empty()
+	return it
+
+
 func is_lord_open(id: int) -> bool:
 	return id >= 1 and lords_open & (1 << (id - 1)) != 0
 
