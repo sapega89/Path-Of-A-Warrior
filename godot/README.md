@@ -18,6 +18,9 @@ godot/
                           assign_items, story, blacksmith, shop, visiting, endings, help, new_game (герой у user://hero.json)
     scripts/world/        3D-світ: map_builder (карта з оригінальних шарів), hero, follow_camera
     scripts/ui/           тема, сенсорні кнопки
+    scripts/net/          зв'язок із сервером: protocol (повідомлення), net_client (ENet + DTLS)
+    server/               сервер гри (той самий проєкт, без графіки): main.tscn, game_server,
+                          accounts (файл JSON на акаунт), guard (ліміти)
     i18n/strings.json     тексти українською й англійською
     data/maps/N.json      45 оригінальних карт (робить tools/import_original.py)
     assets/original/      тайли й кадри героя з оригіналу (теж import_original.py)
@@ -35,7 +38,31 @@ python godot/tools/import_original.py                       # після змі�
 godot --path godot/client                                   # гра
 godot --headless --path godot/client --import               # один раз після клонування
 godot --headless --path godot/client res://tests/runner.tscn  # тести
+godot --headless --path godot/client res://server/main.tscn -- --port 28310 --data user://server
+                                                            # сервер (UDP, ENet + DTLS)
+godot --headless --path godot/client -s res://tools/net_check.gd -- 127.0.0.1 28310 CERT.crt
+                                                            # перевірка сервера: вхід, сейв героя
 ```
+
+## Сервер
+
+Сервер — той самий проєкт Godot, запущений без графіки (`server/main.tscn`). Зв'язок — ENet по
+UDP, зашифрований DTLS; кожен пакет — словник Godot (`var_to_bytes`, без об'єктів), опис
+повідомлень — у `scripts/net/protocol.gd`. Поки що він уміє те, що потрібно для «завжди онлайн»
+з pyport: акаунт UserID (4–12 літер A–Z) + пароль (4–12 цифр), реєстрація й вхід, герой на сервері
+з ревізією (`hero_get` / `hero_put`; пристрій, що пропустив чужий сейв, отримує `conflict` із
+серверною копією).
+
+- Дані: `--data` (типово `user://server`), у `accounts/` по файлу JSON на акаунт; запис
+  атомарний (спершу `.tmp`). Пароль зберігається лише як PBKDF2-HMAC-SHA256 із сіллю.
+- Сертифікат: `--key` і `--cert` (PEM); без них сервер на першому старті сам робить
+  self-signed пару в теці даних (`server.key`, `server.crt`). Клієнт довіряє лише сертифікату,
+  який йому дали, тож чужий сервер не пройде рукостискання DTLS.
+- Ліміти (`server/guard.gd`, як у `pyport/pow_server/security.py`): 5 неправильних паролів за
+  10 хв для UserID або адреси — блок на 5 хв (і виглядає як неправильний пароль); не більше
+  5 нових акаунтів на годину з адреси, 10 з'єднань з адреси, 30 повідомлень на секунду на
+  з'єднання; пакет до 64 КБ, герой до 48 КБ.
+- CI запускає сервер headless і проганяє `tools/net_check.gd` (реєстрація, сейв, читання).
 
 Тести також ганяє GitHub Actions (`.github/workflows/godot.yml`) на кожен PR, що змінює `godot/`.
 
