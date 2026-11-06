@@ -1,5 +1,6 @@
 extends RefCounted
-## The game's server: accounts and the hero kept on the server (scripts/net/protocol.gd).
+## The game's server: accounts and the hero kept on the server (scripts/net/protocol.gd), Live
+## (server/live.gd) and the online game (server/online.gd).
 ## start() binds the UDP port with DTLS, then poll() is called every frame (server/main.gd)
 ## or in a loop (tests).
 
@@ -7,10 +8,12 @@ const Protocol := preload("res://scripts/net/protocol.gd")
 const Accounts := preload("res://server/accounts.gd")
 const Guard := preload("res://server/guard.gd")
 const Live := preload("res://server/live.gd")
+const Online := preload("res://server/online.gd")
 
 var host := ENetConnection.new()
 var accounts: Accounts
 var live: Live
+var online: Online
 var guard := Guard.new()
 var running := false
 ## ENetPacketPeer -> Session.
@@ -25,6 +28,7 @@ class Session:
 	var user := ""
 	var meter: RefCounted
 	var live := Live.Session.new()
+	var online := Online.Session.new()
 
 
 ## Error code of the bind / DTLS setup, OK when the server is listening.
@@ -32,6 +36,8 @@ func start(port: int, key: CryptoKey, cert: X509Certificate, data_dir: String,
 		bind_address := "*", max_peers := 256) -> int:
 	accounts = Accounts.new(data_dir.path_join("accounts"))
 	live = Live.new(data_dir)
+	online = Online.new(data_dir, accounts)
+	online.add_bots()
 	var err := host.create_host_bound(bind_address, port, max_peers, Protocol.CHANNELS)
 	if err != OK:
 		return err
@@ -49,6 +55,8 @@ func stop() -> void:
 	for p: ENetPacketPeer in sessions.keys():
 		p.peer_disconnect_now()
 	sessions.clear()
+	if online != null:
+		online.online.clear()
 	host.destroy()
 	running = false
 
@@ -77,11 +85,14 @@ func _event(ev: Array) -> void:
 				peer.peer_disconnect_now()
 				return
 			s.meter = guard.meter()
+			s.online.send = func(m: Dictionary) -> void:  # a push, no request waits for it
+				peer.send(1, Protocol.encode(m), ENetPacketPeer.FLAG_RELIABLE)
 			sessions[peer] = s
 		ENetConnection.EVENT_DISCONNECT:
 			var s: Session = sessions.get(peer)
 			if s != null:
 				guard.close_connection(s.address)
+				_leave_online(s)
 				sessions.erase(peer)
 		ENetConnection.EVENT_RECEIVE:
 			var data := peer.get_packet()
@@ -100,8 +111,14 @@ func _event(ev: Array) -> void:
 
 func _drop(s: Session) -> void:
 	guard.close_connection(s.address)
+	_leave_online(s)
 	sessions.erase(s.peer)
 	s.peer.peer_disconnect_later()
+
+
+func _leave_online(s: Session) -> void:
+	if online != null:
+		online.leave(s.online)
 
 
 func _send(s: Session, msg: Dictionary) -> void:
@@ -125,6 +142,11 @@ func answer(s: Session, msg: Dictionary) -> Dictionary:
 			_:
 				if t.begins_with("live_") and live != null:
 					reply = live.answer(s.live, t, msg)
+				elif t == "mp_enter" and online != null:
+					reply = online.enter(s.online, s.user)
+				elif online != null and (t.begins_with("mp_") or t.begins_with("order_")
+						or t.begins_with("chat_")):
+					reply = online.answer(s.online, t, msg)
 				else:
 					reply = _fail(t, "unknown")
 	if msg.get("q") is int:
@@ -149,6 +171,7 @@ func _register(s: Session, msg: Dictionary) -> Dictionary:
 		return _fail("register", "limit")
 	if not accounts.create_account(uid, pwd):
 		return _fail("register", "taken")
+	_leave_online(s)
 	s.user = uid
 	s.live.user = uid
 	log_line.call("new account %s from %s" % [uid, s.address])
@@ -166,6 +189,7 @@ func _login(s: Session, msg: Dictionary) -> Dictionary:
 		return _fail("login", "no account")
 	if not guard.check_password(uid, s.address, accounts.check_password.bind(uid, pwd)):
 		return _fail("login", "password")
+	_leave_online(s)
 	s.user = uid
 	s.live.user = uid
 	return {"t": "login", "ok": true}

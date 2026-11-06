@@ -11,6 +11,11 @@ extends RefCounted
 ##   hero_put {base, at, hero}   -> {ok, rev} / err "conflict" with the server's {rev, at, hero}
 ##
 ##   live_*                     -> Live: Warehouse, Safe, Trade (server/live.gd)
+##   mp_*, order_*, chat_*      -> the online game: the character, Ranking, orders, chat
+##                                 (server/online.gd); mp_enter first
+##
+## The server also sends messages nobody asked for, without "q", on channel 1 (pushes):
+## {t: "chat_push", ...} a chat message, {t: "kicked"} the same UserID went online elsewhere.
 ##
 ## Any request before a login answers err "login first"; a wrong one "bad message", an unknown
 ## type "unknown", a packet over MAX_PACKET "too big". `base` is the revision of the hero the
