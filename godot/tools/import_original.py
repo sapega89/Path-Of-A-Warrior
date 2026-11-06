@@ -26,6 +26,8 @@ Writes
                                          pyport/pow/game/consts.py by name
   godot/client/data/talk.json            the dialogue lines (briefing, a general on the map,
                                          after a victory), see TALK_FILES
+  godot/client/data/visit.json           visiting a general: the greetings and talks, and
+                                         the 44 generals one can visit (export_visit)
   godot/client/data/campaign.json        chapters, lords (one map each) and missions, as the
                                          campaign screens read them (load_chapter_lords,
                                          load_lord_missions):
@@ -357,6 +359,21 @@ def export_talk(out):
     (out / "talk.json").write_text(json.dumps(talk, ensure_ascii=False, indent=0))
 
 
+# Visiting a general (edat 62 visit.scr, 52 visitgen.arr): the greetings, ten points of
+# friendship to three lines (0..29 a general of topic 0, 30..59 of topic 1), then per topic
+# the four things to talk about, two lines each (60.. topic 0, 68.. topic 1); and the 44
+# generals one can visit (the Emperor's Seal lists them all).
+def export_visit(out):
+    edat = scr.load(ROOT / "edat.scr")
+    d = (ROOT / edat[52]).read_bytes()
+    n = d[0]
+    width = d[1]
+    generals = [int.from_bytes(d[1 + n + width * i:1 + n + width * (i + 1)], "little")
+                for i in range((len(d) - 1 - n) // width)]
+    visit = {"lines": read_table(ROOT / edat[62]), "generals": generals}
+    (out / "visit.json").write_text(json.dumps(visit, ensure_ascii=False, indent=0))
+
+
 def read_table(path):
     """A text table: u16 count, count + 1 u16 offsets, UTF-8 strings."""
     d = path.read_bytes()
@@ -675,6 +692,7 @@ def main():
     chapters, missions = export_campaign(CLIENT / "data")
     export_tables(CLIENT / "data")
     export_talk(CLIENT / "data")
+    export_visit(CLIENT / "data")
     export_skills(CLIENT / "data")
     export_items(CLIENT / "data")
     export_mixing(CLIENT / "data")

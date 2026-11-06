@@ -46,6 +46,7 @@ var hotkeys: Array = [12, 17, 0, 0, 0]
 var quick_slots: Array = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]
 var quick_keys: Array = [0, 1]
 var friendship := {}  # general id (as text) -> points
+var can_visit := false  # a mission was won since the last visit of a general (Visits)
 var progress := {}  # ruler id (as text) -> 0..100, 5 a won mission
 var done := {}  # "lord:mission" of the missions won
 var place := 0  # where the hero is: the lords of campaign chapter `place` can be fought for
@@ -286,6 +287,8 @@ func take_from(sim: RefCounted, lord_id: int, mission: int, ruler_id: int,
 	var key := str(ruler_id)
 	progress[key] = mini(int(progress.get(key, 0)) + PROGRESS_PER_WIN, 100)
 	done["%d:%d" % [lord_id, mission]] = true
+	if not friendship.is_empty():
+		can_visit = true
 	var levels := gain_exp(int(sim.exp_reward()))
 	fill_shop(rng)
 	return levels
@@ -393,6 +396,22 @@ func buy(i: int) -> String:
 		shop[i] = Items.empty()
 	gold -= cost
 	return "bought"
+
+
+## Puts one potion into its quick slot, or the first free one (five at most in a slot).
+## False when there is no room.
+func add_potion(id: int) -> bool:
+	for s in quick_slots.size():
+		if int(quick_slots[s][0]) == id:
+			if int(quick_slots[s][1]) >= 5:
+				return false
+			quick_slots[s][1] = int(quick_slots[s][1]) + 1
+			return true
+	for s in quick_slots.size():
+		if int(quick_slots[s][0]) == 0:
+			quick_slots[s] = [id, 1]
+			return true
+	return false
 
 
 ## Sells a potion of quick slot i (where = "quick") or the thing in backpack place i, for
@@ -523,7 +542,7 @@ func to_dict() -> Dictionary:
 		"base": [base_hp, base_mp, base_attack, base_defense], "equipped": equipped,
 		"backpack": backpack,
 		"skill_levels": skill_levels, "hotkeys": hotkeys, "quick_slots": quick_slots,
-		"quick_keys": quick_keys, "friendship": friendship,
+		"quick_keys": quick_keys, "friendship": friendship, "can_visit": can_visit,
 		"progress": progress, "done": done, "place": place, "lords_open": lords_open,
 		"endings": endings, "shop": shop}
 
@@ -548,6 +567,7 @@ func from_dict(d: Dictionary) -> void:
 	quick_slots = _copy_slots(d.get("quick_slots", quick_slots))
 	quick_keys = d.get("quick_keys", quick_keys)
 	friendship = d.get("friendship", friendship)
+	can_visit = bool(d.get("can_visit", can_visit))
 	progress = d.get("progress", progress)
 	done = d.get("done", done)
 	place = int(d.get("place", place))

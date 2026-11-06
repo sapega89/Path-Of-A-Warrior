@@ -274,5 +274,65 @@
   "combine.fail": {
     "en": "Compounding Fail",
     "uk": "Поєднання не вдалося"
+  },
+  "menu.visiting": {
+    "en": "Visiting",
+    "uk": "Візити"
+  },
+  "visit.title": {
+    "en": "Visiting",
+    "uk": "Візити"
+  },
+  "visit.name": {
+    "en": "Name",
+    "uk": "Ім'я"
+  },
+  "visit.points": {
+    "en": "Points",
+    "uk": "Дружба"
+  },
+  "visit.not_now": {
+    "en": "Generals can not be visited at this time. Try again after completing a mission.",
+    "uk": "Зараз генералів не можна запросити. Спробуйте після виконаної місії."
+  },
+  "visit.which_topic": {
+    "en": "What do you want to talk about?",
+    "uk": "Про що ви хочете поговорити?"
+  },
+  "visit.topic_0": {
+    "en": "Sword",
+    "uk": "Меч"
+  },
+  "visit.topic_1": {
+    "en": "Books",
+    "uk": "Книги"
+  },
+  "visit.topic_2": {
+    "en": "Tactics",
+    "uk": "Тактика"
+  },
+  "visit.topic_3": {
+    "en": "People",
+    "uk": "Люди"
+  },
+  "visit.discussed": {
+    "en": "You discussed %s with %s.",
+    "uk": "Ви обговорили тему «%s» з %s."
+  },
+  "visit.visited": {
+    "en": "You visited %s.",
+    "uk": "Вас відвідав %s."
+  },
+  "visit.more": {
+    "en": "Friendship increased by 5.",
+    "uk": "Дружба зросла на 5."
+  },
+  "visit.full": {
+    "en": "Friendship:100%",
+    "uk": "Дружба: 100%"
+  },
+  "visit.ok": {
+    "en": "OK",
+    "uk": "OK"
   }
 }

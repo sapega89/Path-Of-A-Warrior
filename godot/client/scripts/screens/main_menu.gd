@@ -1,9 +1,10 @@
 extends Control
-## Main menu: play, blacksmith, management, maps, settings, quit (no quit button on phones and the web).
+## Main menu: play, blacksmith, management, visiting, maps, settings, quit (no quit button on phones and the web).
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const Stories := preload("res://scripts/core/stories.gd")
+const Visits := preload("res://scripts/core/visits.gd")
 
 var buttons: Array[Button] = []
 
@@ -14,6 +15,9 @@ func _ready() -> void:
 	_add(col, "Play", "menu.play", play)
 	_add(col, "Blacksmith", "menu.blacksmith", func(): Router.push("blacksmith"))
 	_add(col, "Management", "menu.management", func(): Router.push("management"))
+	_add(col, "Visiting", "menu.visiting", func(): Router.push("visiting"))
+	if not Visits.can_visit(Profile.load_or_new()):
+		buttons[-1].modulate = Color(1, 1, 1, 0.5)  # greyed: it only says when one can visit
 	_add(col, "Maps", "menu.maps", func(): Router.push("map_viewer"))
 	_add(col, "Settings", "menu.settings", func(): Router.push("settings"))
 	if show_quit():
