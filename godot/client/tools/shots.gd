@@ -16,6 +16,23 @@ func _ready() -> void:
 	await _shot(out, "01_title")
 	Router.go("main_menu")
 	await _shot(out, "02_main_menu")
+	# A new game: the difficulty, the face, the name, the points.
+	Router.push("new_game", {"profile_path": "user://shot_new.json"})
+	var ng: Node = Router.current
+	await _shot(out, "02a_new_difficulty")
+	ng.choose_difficulty(1)
+	ng.ask.hide()
+	ng.show_step(ng.Step.HERO)
+	await _frames(2)
+	ng.body.get_child(0).get_child(2).grab_focus()
+	await _shot(out, "02b_new_hero")
+	ng.choose_head(2)
+	ng.name_edit.text = "Andrey"
+	await _shot(out, "02c_new_name")
+	ng.submit_name()
+	for i in 3:
+		ng.spend(0)
+	await _shot(out, "02d_new_points")
 	Router.push("settings")
 	await _shot(out, "03_settings")
 	# Management and Attributes, with a hero who has put three points into HP.

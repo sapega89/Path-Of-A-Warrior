@@ -1,18 +1,20 @@
 extends Control
-## Main menu: play, blacksmith, management, visiting, endings, maps, settings, quit (no quit button on phones and the web).
+## Main menu: continue (or play), new game, blacksmith, management, visiting, endings, maps, settings, quit (no quit button on phones and the web).
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
-const Stories := preload("res://scripts/core/stories.gd")
 const Visits := preload("res://scripts/core/visits.gd")
 
 var buttons: Array[Button] = []
+var ask: ConfirmationDialog  # "Starting a new game will cause your saved game to be deleted."
 
 
 func _ready() -> void:
 	var col := UiTheme.menu_column(self)
 	col.add_child(UiTheme.heading("game.title", 44))
-	_add(col, "Play", "menu.play", play)
+	var saved := FileAccess.file_exists(Profile.PATH)
+	_add(col, "Play", "menu.continue" if saved else "menu.play", play)
+	_add(col, "NewGame", "menu.new_game", new_game)
 	_add(col, "Blacksmith", "menu.blacksmith", func(): Router.push("blacksmith"))
 	_add(col, "Management", "menu.management", func(): Router.push("management"))
 	_add(col, "Visiting", "menu.visiting", func(): Router.push("visiting"))
@@ -23,16 +25,28 @@ func _ready() -> void:
 	_add(col, "Settings", "menu.settings", func(): Router.push("settings"))
 	if show_quit():
 		_add(col, "Quit", "menu.quit", func(): get_tree().quit())
+	ask = ConfirmationDialog.new()
+	ask.name = "Ask"
+	ask.dialog_text = tr("newgame.ask_delete")
+	ask.confirmed.connect(func(): Router.push("new_game", {}))
+	add_child(ask)
 	buttons[0].grab_focus.call_deferred()
 
 
-## A new hero first hears the opening story, then goes to the campaign.
+## The saved hero goes on with the campaign; without one a new game starts.
 func play() -> void:
 	if FileAccess.file_exists(Profile.PATH):
 		Router.push("campaign")
 		return
-	Profile.new().save()
-	Router.push("story", {"story": Stories.OPENING, "then": "campaign"})
+	Router.push("new_game", {})
+
+
+## A new hero (difficulty, face, name, points); over a saved one only when that is confirmed.
+func new_game() -> void:
+	if FileAccess.file_exists(Profile.PATH):
+		ask.popup_centered()
+		return
+	Router.push("new_game", {})
 
 
 static func show_quit() -> bool:

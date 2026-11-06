@@ -366,5 +366,81 @@
   "endings.locked": {
     "en": "You must first complete the missions needed to view this ending.",
     "uk": "Спершу пройдіть місії, що ведуть до цієї кінцівки."
+  },
+  "menu.continue": {
+    "en": "Continue",
+    "uk": "Продовжити"
+  },
+  "menu.new_game": {
+    "en": "New Game",
+    "uk": "Нова гра"
+  },
+  "newgame.ask_delete": {
+    "en": "Starting a new game will cause your saved game to be deleted. Continue?",
+    "uk": "Нова гра видалить збережену. Продовжити?"
+  },
+  "newgame.difficulty": {
+    "en": "Difficulty",
+    "uk": "Складність"
+  },
+  "newgame.difficulty_0": {
+    "en": "Hard",
+    "uk": "Важко"
+  },
+  "newgame.difficulty_1": {
+    "en": "Normal",
+    "uk": "Нормально"
+  },
+  "newgame.mode_0": {
+    "en": "Manual Targetting\nGold/Exp x2",
+    "uk": "Ручне прицілювання\nЗолото й досвід x2"
+  },
+  "newgame.mode_1": {
+    "en": "Auto Targetting\nGold/Exp x1",
+    "uk": "Автоприцілювання\nЗолото й досвід x1"
+  },
+  "newgame.ask_difficulty": {
+    "en": "Difficulty will not change after starting. Continue?",
+    "uk": "Складність не зміниться після початку. Продовжити?"
+  },
+  "newgame.hero": {
+    "en": "Character",
+    "uk": "Герой"
+  },
+  "newgame.select_1": {
+    "en": "Please select",
+    "uk": "Оберіть"
+  },
+  "newgame.select_2": {
+    "en": "a character for battle.",
+    "uk": "героя для бою."
+  },
+  "newgame.name": {
+    "en": "Name",
+    "uk": "Ім'я"
+  },
+  "newgame.name_hint": {
+    "en": "up to 8 letters",
+    "uk": "до 8 літер"
+  },
+  "newgame.name_empty": {
+    "en": "Enter a name.",
+    "uk": "Введіть ім'я."
+  },
+  "newgame.ok": {
+    "en": "OK",
+    "uk": "OK"
+  },
+  "newgame.points": {
+    "en": "Attributes",
+    "uk": "Характеристики"
+  },
+  "newgame.points_left": {
+    "en": "Points: %d",
+    "uk": "Очки: %d"
+  },
+  "newgame.ask_done": {
+    "en": "Character settings are complete. Continue?",
+    "uk": "Героя створено. Продовжити?"
   }
 }
