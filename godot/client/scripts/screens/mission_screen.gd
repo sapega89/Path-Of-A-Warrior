@@ -50,7 +50,7 @@ var _pressed := -1
 var _fire := false
 var _hotkey := -1  # a skill key pressed since the last tick
 var _potion := -1  # a potion key pressed since the last tick
-var _keys_down := {}  # skill and potion keys held at the last frame
+var _keys_down := {}  # attack, skill and potion keys held at the last frame
 var _last_held := -1
 var _blink := 0
 
@@ -169,7 +169,7 @@ func _process(delta: float) -> void:
 	if held != -1 and held != _last_held:
 		_pressed = held  # a new direction this tick: the original's key press
 	_last_held = held
-	if Input.is_action_just_pressed("attack"):
+	if _pressed_now("attack"):
 		_fire = true
 	for i in 4:
 		if _pressed_now("skill_%d" % (i + 1)):
