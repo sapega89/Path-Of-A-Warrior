@@ -9,6 +9,14 @@ extends RefCounted
 ##
 ## Every call ends in done(err): "" when it went through, else the server's error ("name
 ## exists", "too fast", ...) or "offline". While a request is on its way busy is true.
+##
+## A battle (scripts/net/online_battle.gd) starts with the server's "room" message, after
+## find_battle() or invite(), or when another player's invitation takes me in: it is `battle`
+## until the screen is done with it, and the battle's messages go to it.
+
+const OnlineBattle := preload("res://scripts/net/online_battle.gd")
+const BATTLE_PUSHES := ["room", "stage_info", "all_ready", "round_start", "turn_result",
+	"stage_end", "room_join", "battle_end"]
 
 const SKILL_IDS := [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 const EMPTY_SKILL := 99
@@ -46,6 +54,8 @@ var chat := {}  # conversation key -> [{id, name, text}]
 var peer_name := ""  # the display name of the private conversation read last
 var peers: Array = []  # [{id, name, unread, online}]
 var reading := ""  # the conversation a screen shows (its pushes are not unread)
+var battle: RefCounted = null  # the battle on, from its "room" message
+var waiting := false  # a duel waits for an opponent
 var _listeners: Array = []  # [WeakRef, method]
 
 
@@ -112,6 +122,13 @@ func on_push(m: Dictionary) -> void:
 		"kicked":
 			kicked = true
 			entered = false
+			battle = null
+		var t when BATTLE_PUSHES.has(t):
+			if t == "room":
+				waiting = false
+				battle = OnlineBattle.new(battle_request, me)
+			if battle != null:
+				battle.on_push(m)
 	var alive: Array = []
 	for l in _listeners:
 		var s: Object = l[0].get_ref()
@@ -291,3 +308,32 @@ func ask_peers(done: Callable) -> void:
 		peers = []
 		for p in r.get("rows", []):
 			peers.append({"id": str(p.id), "name": str(p.name), "unread": int(p.unread), "online": int(p.online)}))
+
+
+# --- battles --------------------------------------------------------------------------------
+## Duel 1-on-1 (mode 0), 2-on-2 (1) or a Solo Mission (2): the battle comes as a push, now or
+## when an opponent is found (waiting).
+func find_battle(mode: int, done: Callable) -> void:
+	_send({"t": "mp_match", "mode": mode}, done, func(r: Dictionary) -> void:
+		waiting = bool(r.get("waiting", false)))
+
+
+## No more waiting for an opponent.
+func cancel_battle(done: Callable) -> void:
+	_send({"t": "mp_cancel"}, done, func(_r: Dictionary) -> void: waiting = false)
+
+
+## Challenge 1-on-1 (mode 0) or 2-on-2 (1), Invite An Ally (2), side by side with a member of
+## my order (3); errors "no player", "self", "not online", "playing", "denied", "not member".
+func invite(mode: int, uid: String, done: Callable) -> void:
+	_send({"t": "mp_invite", "mode": mode, "id": uid}, done, func(_r: Dictionary) -> void: pass)
+
+
+## A message of the battle (mp_ready, mp_turn, ...): its answer says nothing the battle needs.
+func battle_request(msg: Dictionary) -> void:
+	request.call(msg, func(_r: Dictionary) -> void: pass)
+
+
+## The battle screen is done with the battle.
+func battle_over() -> void:
+	battle = null

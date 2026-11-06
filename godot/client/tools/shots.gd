@@ -9,6 +9,7 @@ const LiveClient := preload("res://scripts/net/live_client.gd")
 const OnlineServer := preload("res://server/online.gd")
 const OnlineAccounts := preload("res://server/accounts.gd")
 const OnlineClient := preload("res://scripts/net/online_client.gd")
+const OnlineBattle := preload("res://scripts/net/online_battle.gd")
 ## The multiplayer shots' hero, as the server keeps it (Profile.to_dict()).
 const ONLINE_HERO := {"level": 12, "head": 2, "base": [60, 31, 9, 8],
 	"equipped": [{"id": 105, "attack": 6, "defense": 0, "hp": 0, "mp": 0, "enchant": 0},
@@ -314,6 +315,7 @@ func _ready() -> void:
 	await _frames(2)
 	await _shot(out, "11k_online_options")
 	Router.back()
+	await _battle_shots(out, game, mp)
 	mp.leave()
 	# The Blacksmith: buying from the shop, and enchanting the sword in hand.
 	Router.go("main_menu")
@@ -591,6 +593,92 @@ func _ready() -> void:
 
 
 const DIR_ACTIONS := {0: "move_down", 2: "move_left", 4: "move_up", 6: "move_right"}
+
+
+## The multiplayer battles against the server's CPU fighters: a duel from the quotes to the
+## result; a 2-on-2 (Exit Battle?, choosing the target, a blow); a Solo Mission (the stage, a
+## blow at a monster).
+func _battle_shots(out: String, game: RefCounted, mp: RefCounted) -> void:
+	game.match_wait = 0
+	var params := {"online": mp}
+	var none := func(_e: String) -> void: pass
+	mp.find_battle(0, none)
+	Router.push("online_battle", params)
+	var screen: Node = Router.current
+	screen.set_process(false)
+	await _battle_until(screen, func(b: RefCounted) -> bool: return b.state == OnlineBattle.QUOTES and b.state_ticks >= 8)
+	await _shot(out, "12a_battle_quotes")
+	await _battle_until(screen, func(b: RefCounted) -> bool: return b.state == OnlineBattle.CHOOSE and b.state_ticks == 3)
+	await _shot(out, "12b_battle_choose")
+	await _battle_until(screen, func(b: RefCounted) -> bool: return b.state == OnlineBattle.BAR and b.state_ticks == 5)
+	await _shot(out, "12c_battle_bar")
+	await _battle_until(screen, _blow_shown)
+	await _shot(out, "12d_battle_blow")
+	await _battle_until(screen, func(_b: RefCounted) -> bool: return false)
+	await _shot(out, "12e_battle_result")
+	await _battle_leave(screen)
+	mp.find_battle(1, none)
+	Router.push("online_battle", params)
+	screen = Router.current
+	screen.set_process(false)
+	await _battle_until(screen, func(b: RefCounted) -> bool: return b.state == OnlineBattle.CHOOSE and b.state_ticks == 3)
+	screen.press("back")
+	await _shot(out, "12f_battle_exit")
+	screen.press("fire")  # No
+	await _battle_until(screen, func(b: RefCounted) -> bool:
+		return b.state == OnlineBattle.TARGET and b.state_ticks >= 4 and b.state_ticks % 2 == 0)
+	screen.press("down")
+	await _shot(out, "12g_battle_2v2_target")
+	await _battle_until(screen, _blow_shown)
+	await _shot(out, "12h_battle_2v2_blow")
+	await _battle_leave(screen)
+	mp.find_battle(2, none)
+	Router.push("online_battle", params)
+	screen = Router.current
+	screen.set_process(false)
+	await _battle_until(screen, func(b: RefCounted) -> bool: return b.state == OnlineBattle.STAGE_INTRO and b.state_ticks >= 4)
+	await _shot(out, "12i_mission_stage")
+	await _battle_until(screen, _blow_shown)
+	await _shot(out, "12j_mission_blow")
+	await _battle_leave(screen)
+
+
+## A blow's change of HP shown over a fighter.
+func _blow_shown(b: RefCounted) -> bool:
+	return b.state == OnlineBattle.TURN and b.damage_shown.size() > 0 and b.damage_tick == 2
+
+
+## Plays the battle shown on screen step by step as a player would (Attack, the bar stopped
+## near the mark, the first foe) until done(battle) holds after a step, or the result shows.
+func _battle_until(screen: Node, done: Callable, limit := 5000) -> void:
+	var b: RefCounted = screen.battle
+	for i in limit:
+		b.tick()
+		if done.call(b) or (b.state == OnlineBattle.RESULT and b.result_shown()):
+			break
+		match b.state:
+			OnlineBattle.CHOOSE:
+				if not b.exit_prompt and b.state_ticks >= 3:
+					b.key("right")
+			OnlineBattle.TARGET:
+				if b.state_ticks >= 5:
+					b.key("fire")
+			OnlineBattle.BAR:
+				if b.state_ticks == 6:
+					b.key("fire")
+	screen._refresh()
+	await _frames(2)
+
+
+## Out of the battle: OK on the result, or Exit Battle when it goes on.
+func _battle_leave(screen: Node) -> void:
+	await _battle_until(screen, func(b: RefCounted) -> bool:
+		return b.state == OnlineBattle.CHOOSE and b.state_ticks == 3 and not b.exit_asked)
+	if screen.battle.state == OnlineBattle.CHOOSE:
+		screen.press("back")
+		screen.press("left")
+	screen.press("fire")
+	await _frames(2)
 
 
 func _release_all() -> void:

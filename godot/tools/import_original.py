@@ -21,6 +21,10 @@ Writes
                                          the mark under him) as draw_enemy puts him together:
                                          base = walk / strike frames, sk = skill frames
   godot/client/assets/original/ui/*.png  UI pictures used as they are (exit arrows, ...)
+  godot/client/assets/original/mp/*.png  the multiplayer battle (pyport/assets_mp): fighter
+                                         sheets per head, weapon and side, the monster, the
+                                         status effects, backgrounds, HUD pieces (export_mp);
+                                         godot/client/data/mp.json their cells and tables
   godot/client/data/tables.json          the game's constant tables the map code uses (animation
                                          frame lists, direction steps, ...), copied from
                                          pyport/pow/game/consts.py by name
@@ -653,6 +657,181 @@ def export_effects(out):
     (out / "effects.json").write_text(json.dumps(info, separators=(",", ":")))
 
 
+MP = ROOT / "pyport" / "assets_mp"
+## A fighter of the multiplayer battles in a cell: its feet (the point of its frames) at
+## MP_ORIGIN; the frames reach 53 px back, 84 px forward, 110 px up (the skills' swings).
+MP_CELL = (172, 124)
+MP_ORIGIN = (86, 112)
+MP_MONSTER_CELL = (120, 56)
+MP_MONSTER_ORIGIN = (60, 44)
+MP_COLUMNS = 16
+## The battle's tables (pyport/pow/game/online/consts.py) the client's battle reads.
+MP_TABLES = [
+    "speed_frame_ms", "anim_first_frame", "anim_length", "anim_steps", "ui_dx", "ui_dy",
+    "act_dx", "act_dy", "ui_dx2", "ui_dy2", "texts", "grades",
+]
+## Pictures of the battle used as they are: the battle's background pieces, the faces of the
+## HUD, the action cards, the HUD pieces and number fonts, the text font.
+MP_PICTURES = (["gamebg%d" % i for i in range(18)] + ["face%d" % i for i in range(4)]
+               + ["act%d" % i for i in range(18)] + ["gnum%d" % i for i in range(8)]
+               + ["ui%d" % i for i in (0, 1, 2, 3, 15, 16, 17, 18, 19, 34, 35, 36, 37, 38, 48, 49, 52, 53)]
+               + ["0_font", "ui_borderh", "ui_borderv", "ui_titlebox", "softbg", "press"])
+## The battle's sounds: 0 a blow, 2 a skill's blow, 3 an evade, 4 a loss, 5 a soul's power and
+## a win, 6 a heal.
+MP_SOUNDS = (0, 2, 3, 4, 5, 6)
+
+
+def read_sp2(name):
+    """SP2 frames: u8 n, then n x (u8 src x, u8 src y, s8 w, s8 h, s8 point x, s8 point y)."""
+    d = (MP / name).read_bytes()
+    n = s8(d[0])
+    return [(d[1 + 6 * i], d[2 + 6 * i], s8(d[3 + 6 * i]), s8(d[4 + 6 * i]), s8(d[5 + 6 * i]),
+             s8(d[6 + 6 * i])) for i in range(n)]
+
+
+class MpPart:
+    """One sprite part of the battle (body, a head, a weapon, ...): its picture for the left
+    side (as drawn) and the right side (*_r.png, each frame turned in place), and its frame
+    sets (basic, skill1, skill2, or one set)."""
+
+    def __init__(self, name, single=False):
+        self.images = []
+        for suffix in (".png", "_r.png"):
+            path = MP / (name + suffix)
+            self.images.append(Image.open(path).convert("RGBA") if path.exists() else None)
+        if single:
+            self.sets = [read_sp2(name + ".SP2")]
+        else:
+            self.sets = [read_sp2(name + s + ".SP2") for s in ("_basic", "_skill1", "_skill2")]
+
+    def paste(self, sheet, cell_xy, origin, frame, right):
+        """Frame `frame` (100 * set + index, as the battle numbers them) with its point at
+        cell_xy + origin; the right side is drawn turned, as pyport draw_sprite_frame does."""
+        frames = self.sets[min(frame // 100, len(self.sets) - 1)] if frame < 300 else self.sets[0]
+        idx = frame % 100
+        if idx >= len(frames):
+            return
+        sx, sy, w, h, ax, ay = frames[idx]
+        if w <= 0 or h <= 0:
+            return
+        img = self.images[1 if right else 0]
+        x = (ax - w) if right else -ax
+        sheet.alpha_composite(img.crop((sx, sy, sx + w, sy + h)),
+                              (cell_xy[0] + origin[0] + x, cell_xy[1] + origin[1] - ay))
+
+
+def build_mp_fighter(parts, head, weapon, right, frames, tables):
+    """A fighter (head 0..3, weapon 0 or 1) on one side, every frame put together in the
+    order pyport draw_fighter draws them; the status effects are drawn apart."""
+    cw, ch = MP_CELL
+    sheet = Image.new("RGBA", (cw * MP_COLUMNS, ch * ((len(frames) + MP_COLUMNS - 1) // MP_COLUMNS)),
+                      (0, 0, 0, 0))
+    behind_tables = {0: tables["weapon_behind_pose0"], 1: tables["weapon_behind_pose1"],
+                     2: tables["weapon_behind_pose2"]}
+    for cell, f in enumerate(frames):
+        pose, i = f // 100, f % 100
+        xy = ((cell % MP_COLUMNS) * cw, (cell // MP_COLUMNS) * ch)
+        if weapon == 0:
+            weapon_behind = pose == 2 and tables["bare_weapon_behind_pose2"][i]
+        else:
+            weapon_behind = behind_tables[pose][i]
+        eff2_behind = ((pose == 1 and tables["eff2_behind_pose1"][i])
+                       or (pose == 2 and tables["eff2_behind_pose2"][i]))
+        order = []
+        if eff2_behind:
+            order.append("eff2")
+        order.append("shadow")
+        if weapon_behind:
+            order.append("weapon")
+        order += ["shadow", "body", "head"]
+        if not weapon_behind:
+            order.append("weapon")
+        order += ["sword", "eff1"]
+        if not eff2_behind:
+            order.append("eff2")
+        for name in order:
+            part = {"head": parts["head%d" % head], "weapon": parts["weapon%d" % weapon],
+                    "sword": parts["sword%d" % weapon]}.get(name) or parts[name]
+            part.paste(sheet, xy, MP_ORIGIN, f, right)
+    return sheet
+
+
+def build_mp_monster(parts, frames, tables):
+    """A mission's monster, always on the right side (it has only the turned pictures)."""
+    cw, ch = MP_MONSTER_CELL
+    sheet = Image.new("RGBA", (cw * MP_COLUMNS, ch * ((len(frames) + MP_COLUMNS - 1) // MP_COLUMNS)),
+                      (0, 0, 0, 0))
+    for cell, f in enumerate(frames):
+        xy = ((cell % MP_COLUMNS) * cw, (cell // MP_COLUMNS) * ch)
+        behind = tables["mon_weapon_behind"][f % 100]
+        order = (["mon_weapon"] if behind else []) + ["monster"] + ([] if behind else ["mon_weapon"])
+        order += ["mon_sword", "mon_effect"]
+        for name in order:
+            parts[name].paste(sheet, xy, MP_MONSTER_ORIGIN, f, True)
+    return sheet
+
+
+def export_mp(out, data):
+    """The multiplayer battle: fighter sheets mp/fighter_<head>_<weapon>_<l|r>.png, the
+    monster mp/monster_r.png, the status effects mp/status_<l|r>.png, the pictures in
+    MP_PICTURES and the battle's sounds MP_SOUNDS (mp/snd<n>.ogg) as they are, and
+    data/mp.json (cells, frame numbers, tables)."""
+    import shutil
+    sys.path.insert(0, str(ROOT / "pyport"))
+    from pow.game.online import consts as mp_consts
+    mp_consts._static_init()
+    c = mp_consts.Consts
+    tables = {name: getattr(c, name) for name in (
+        "weapon_behind_pose0", "weapon_behind_pose1", "weapon_behind_pose2",
+        "bare_weapon_behind_pose2", "eff2_behind_pose1", "eff2_behind_pose2", "mon_weapon_behind")}
+    out.mkdir(parents=True, exist_ok=True)
+    parts = {"shadow": MpPart("sprshadow"), "body": MpPart("sprbody"), "eff1": MpPart("spreff1"),
+             "eff2": MpPart("spreff2")}
+    for i in range(4):
+        parts["head%d" % i] = MpPart("sprhead%d" % (i + 1))
+    for w in range(2):
+        parts["weapon%d" % w] = MpPart("sprwp%d" % (w + 1))
+        parts["sword%d" % w] = MpPart("sprsword%d" % (w + 1))
+    counts = [len(s) for s in parts["body"].sets]
+    frames = [100 * k + i for k in range(3) for i in range(counts[k])]
+    for head in range(4):
+        for weapon in range(2):
+            for right in (False, True):
+                build_mp_fighter(parts, head, weapon, right, frames, tables).save(
+                    out / ("fighter_%d_%d_%s.png" % (head, weapon, "r" if right else "l")))
+    monster = {"monster": MpPart("spr_mon", True), "mon_weapon": MpPart("spr_wp_mon", True),
+               "mon_sword": MpPart("spr_sword_mon", True), "mon_effect": MpPart("spr_eff_mon", True)}
+    monster_frames = list(range(len(monster["monster"].sets[0])))
+    build_mp_monster(monster, monster_frames, tables).save(out / "monster_r.png")
+    status = read_sp2("spreff3.SP2")  # three effects x two frames, cut from spreff2's pictures
+    for right in (False, True):
+        img = parts["eff2"].images[1 if right else 0]
+        cells = []
+        for sx, sy, w, h, ax, ay in status:
+            cells.append((img.crop((sx, sy, sx + w, sy + h)), (ax - w) if right else -ax, -ay))
+        cw = max(x.width for x, _, _ in cells)
+        ch = max(x.height for x, _, _ in cells)
+        sheet = Image.new("RGBA", (cw * len(cells), ch), (0, 0, 0, 0))
+        for k, (x, _, _) in enumerate(cells):
+            sheet.alpha_composite(x, (k * cw, 0))
+        sheet.save(out / ("status_%s.png" % ("r" if right else "l")))
+    for name in MP_PICTURES:
+        Image.open(MP / (name + ".png")).convert("RGBA").save(out / (name + ".png"))
+    for n in MP_SOUNDS:
+        shutil.copyfile(MP / ("snd%d.ogg" % n), out / ("snd%d.ogg" % n))
+    info = {
+        "cell": list(MP_CELL), "origin": list(MP_ORIGIN), "columns": MP_COLUMNS,
+        "set_first_cell": [sum(counts[:k]) for k in range(3)], "set_frames": counts,
+        "monster_cell": list(MP_MONSTER_CELL), "monster_origin": list(MP_MONSTER_ORIGIN),
+        "monster_frames": len(monster_frames),
+        # a status effect k (0..2) shows frames 2k, 2k + 1 with their points here (left side)
+        "status_cell": [max(w for _, _, w, _, _, _ in status), max(h for _, _, _, h, _, _ in status)],
+        "status_points": [[ax, ay] for _, _, _, _, ax, ay in status],
+    }
+    info.update({name: getattr(c, name) for name in MP_TABLES})
+    (data / "mp.json").write_text(json.dumps(info, separators=(",", ":")))
+
+
 MIX_ROWS = 149
 
 
@@ -724,6 +903,7 @@ def main():
     export_ui(out_tiles / "ui")
     export_effects(out_tiles)
     export_sounds(out_tiles / "sound")
+    export_mp(out_tiles / "mp", CLIENT / "data")
     print("maps: %d, tiles: %d, chapters: %d, missions: %d" % (len(map_files), found, chapters, missions))
 
 

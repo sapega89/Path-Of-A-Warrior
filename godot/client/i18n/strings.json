@@ -1126,5 +1126,133 @@
   "online.no_conversations": {
     "en": "No conversations yet.",
     "uk": "Розмов ще немає."
+  },
+  "online.battle_waiting": {
+    "en": "Waiting",
+    "uk": "Очікування"
+  },
+  "online.battle_stage": {
+    "en": "Stage %d/%d",
+    "uk": "Етап %d/%d"
+  },
+  "online.battle_round": {
+    "en": "Round %d",
+    "uk": "Раунд %d"
+  },
+  "online.battle_exit_ask": {
+    "en": "Would you like to go to the main menu?",
+    "uk": "Вийти з бою в меню?"
+  },
+  "online.yes": {
+    "en": "Yes",
+    "uk": "Так"
+  },
+  "online.no": {
+    "en": "No",
+    "uk": "Ні"
+  },
+  "online.battle_remain": {
+    "en": "Remain time: %d",
+    "uk": "Залишилось: %d"
+  },
+  "online.battle_no_battle": {
+    "en": "No Battle!",
+    "uk": "Бою немає!"
+  },
+  "online.battle_stage_n": {
+    "en": "Stage %d",
+    "uk": "Етап %d"
+  },
+  "online.battle_complete": {
+    "en": "Complete!",
+    "uk": "Пройдено!"
+  },
+  "online.battle_win": {
+    "en": "You Win!",
+    "uk": "Перемога!"
+  },
+  "online.battle_lose": {
+    "en": "You Lose!",
+    "uk": "Поразка!"
+  },
+  "online.battle_wins": {
+    "en": "Wins  %d",
+    "uk": "Перемог  %d"
+  },
+  "online.battle_losses": {
+    "en": "Losses  %d",
+    "uk": "Поразок  %d"
+  },
+  "online.battle_gold": {
+    "en": "Gold  +%d",
+    "uk": "Золото  +%d"
+  },
+  "online.battle_fame": {
+    "en": "Fame  +%d",
+    "uk": "Слава  +%d"
+  },
+  "online.battle_exp": {
+    "en": "Exp.  +%d",
+    "uk": "Досвід  +%d"
+  },
+  "online.battle_loot": {
+    "en": "Loot: %s!!!",
+    "uk": "Здобич: %s!!!"
+  },
+  "online.battle_rank": {
+    "en": "Rank  %d",
+    "uk": "Місце  %d"
+  },
+  "online.battle_ok": {
+    "en": "[ OK ]",
+    "uk": "[ OK ]"
+  },
+  "online.battle_failed": {
+    "en": "Mission Failed",
+    "uk": "Місію провалено"
+  },
+  "online.battle_auto_on": {
+    "en": "Auto-battle",
+    "uk": "Автобій"
+  },
+  "online.battle_hint_choose": {
+    "en": "Arrows: choose the action   Esc: exit the battle   Tab: auto-battle",
+    "uk": "Стрілки: дія   Esc: вийти з бою   Tab: автобій"
+  },
+  "online.battle_hint_skills": {
+    "en": "Up / Down: a skill   Enter: use it   Esc: back",
+    "uk": "Вгору / вниз: вміння   Enter: застосувати   Esc: назад"
+  },
+  "online.battle_hint_target": {
+    "en": "Arrows: the target   Enter: strike   Esc: back",
+    "uk": "Стрілки: ціль   Enter: удар   Esc: назад"
+  },
+  "online.battle_hint_bar": {
+    "en": "Enter / Space: stop the bar at the mark",
+    "uk": "Enter / пробіл: зупини смугу на позначці"
+  },
+  "online.battle_hit": {
+    "en": "Hit",
+    "uk": "Влучив"
+  },
+  "online.battle_evaded": {
+    "en": "Evaded",
+    "uk": "Ухилився"
+  },
+  "online.battle_attack": {
+    "en": "Attack",
+    "uk": "Атака"
+  },
+  "online.battle_defend": {
+    "en": "Defend",
+    "uk": "Захист"
+  },
+  "online.battle_evade": {
+    "en": "Evade",
+    "uk": "Ухилення"
+  },
+  "online.battle_auto": {
+    "en": "Auto",
+    "uk": "Авто"
   }
 }
