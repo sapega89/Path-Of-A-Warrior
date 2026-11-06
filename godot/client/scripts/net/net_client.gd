@@ -104,4 +104,6 @@ func poll(wait_ms := 0) -> void:
 					var done: Callable = _waiting[q][1]
 					_waiting.erase(q)
 					done.call(reply)
+		if host == null:
+			return  # an answer closed the connection
 		ev = host.service(0)

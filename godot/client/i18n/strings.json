@@ -546,5 +546,81 @@
   "pause.cannot_save": {
     "en": "Can't Save!\nIt needs all enemies dead.",
     "uk": "Не можна зберегти!\nСпершу переможіть усіх ворогів."
+  },
+  "offline.no_connection": {
+    "en": "No connection to the server",
+    "uk": "Немає зв'язку з сервером"
+  },
+  "offline.only_online": {
+    "en": "The game starts only online",
+    "uk": "Гра запускається лише онлайн"
+  },
+  "offline.try_again": {
+    "en": "OK: try again",
+    "uk": "OK: ще раз"
+  },
+  "offline.refused": {
+    "en": "Login refused",
+    "uk": "Сервер не прийняв вхід"
+  },
+  "offline.other_account": {
+    "en": "Back: other account",
+    "uk": "Назад: інший акаунт"
+  },
+  "offline.connecting": {
+    "en": "Connecting...",
+    "uk": "З'єднання..."
+  },
+  "register.title": {
+    "en": "Registration",
+    "uk": "Реєстрація"
+  },
+  "register.hint": {
+    "en": "Your hero is kept on the server under this account (also for Live and multiplayer).",
+    "uk": "Герой зберігається на сервері під цим акаунтом (він же для Live і мультиплеєра)."
+  },
+  "register.user_id": {
+    "en": "UserID (4-12 letters)",
+    "uk": "UserID (4-12 літер)"
+  },
+  "register.password": {
+    "en": "Password (4-12 numbers)",
+    "uk": "Пароль (4-12 цифр)"
+  },
+  "register.ok": {
+    "en": "OK",
+    "uk": "OK"
+  },
+  "register.bad_id": {
+    "en": "The UserID is 4-12 letters A-Z.",
+    "uk": "UserID: 4-12 літер A-Z."
+  },
+  "register.bad_password": {
+    "en": "The password is 4-12 numbers.",
+    "uk": "Пароль: 4-12 цифр."
+  },
+  "register.must": {
+    "en": "The hero is kept on the server: register first.",
+    "uk": "Герой зберігається на сервері: спершу реєстрація."
+  },
+  "register.err_taken": {
+    "en": "This UserID is taken.",
+    "uk": "Цей UserID уже зайнятий."
+  },
+  "register.err_limit": {
+    "en": "Too many new accounts from here. Try later.",
+    "uk": "Забагато нових акаунтів звідси. Спробуйте пізніше."
+  },
+  "register.err_update": {
+    "en": "Please update the game.",
+    "uk": "Оновіть гру."
+  },
+  "register.err_bad_id": {
+    "en": "The UserID is 4-12 letters A-Z.",
+    "uk": "UserID: 4-12 літер A-Z."
+  },
+  "register.err_offline": {
+    "en": "Network connection has failed.",
+    "uk": "Немає зв'язку з сервером."
   }
 }

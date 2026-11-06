@@ -10,9 +10,11 @@ var ask: ConfirmationDialog  # "Starting a new game will cause your saved game t
 
 
 func _ready() -> void:
+	if Cloud.enabled() and not Cloud.online():
+		Router.go.call_deferred("offline")  # the game starts only online
 	var col := UiTheme.menu_column(self)
 	col.add_child(UiTheme.heading("game.title", 44))
-	var saved := FileAccess.file_exists(Profile.PATH)
+	var saved := Profile.exists()
 	_add(col, "Play", "menu.continue" if saved else "menu.play", play)
 	_add(col, "NewGame", "menu.new_game", new_game)
 	_add(col, "Blacksmith", "menu.blacksmith", func(): Router.push("blacksmith"))
@@ -37,7 +39,7 @@ func _ready() -> void:
 ## The saved hero goes on with the campaign (back into the mission saved on its map, if
 ## any); without one a new game starts.
 func play() -> void:
-	if FileAccess.file_exists(Profile.PATH):
+	if Profile.exists():
 		Router.push("campaign")
 		var on_map: Dictionary = Profile.load_or_new().on_map
 		if not on_map.is_empty():
@@ -49,7 +51,7 @@ func play() -> void:
 
 ## A new hero (difficulty, face, name, points); over a saved one only when that is confirmed.
 func new_game() -> void:
-	if FileAccess.file_exists(Profile.PATH):
+	if Profile.exists():
 		ask.popup_centered()
 		return
 	Router.push("new_game", {})
