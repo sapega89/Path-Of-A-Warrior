@@ -347,6 +347,7 @@ func apply_to(sim: RefCounted) -> void:
 	sim.friendship = {}
 	for k in friendship:
 		sim.friendship[int(k)] = int(friendship[k])
+	sim.free_places = backpack.filter(func(it): return int(it.get("id", 0)) == 0).size()
 
 
 ## What the mission left: picked gold and things (a found gear gets its random extra from

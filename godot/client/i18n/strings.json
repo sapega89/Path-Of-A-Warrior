@@ -75,6 +75,10 @@
     "en": "Skip",
     "uk": "Пропустити"
   },
+  "mission.acquired": {
+    "en": "Acquired!!",
+    "uk": "Отримано!!"
+  },
   "story.prologue": {
     "en": "Prologue",
     "uk": "Пролог"
