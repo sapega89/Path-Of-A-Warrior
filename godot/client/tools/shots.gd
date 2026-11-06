@@ -360,6 +360,11 @@ func _ready() -> void:
 	await _frames(2)
 	await _shot(out, "16_enchant_ask")
 	Router.current.ask.hide()
+	Router.current.sparkle = 3  # the sparkle after Yes, without the outcome
+	Router.current.sparkle_cells = [25] as Array[int]
+	Router.current.get_node("Sparkle").queue_redraw()
+	await _shot(out, "16_enchant_sparkle")
+	Router.current.sparkle = -1
 	Router.back()
 	Router.current.open_page("combine")
 	await _frames(2)
@@ -405,22 +410,28 @@ func _ready() -> void:
 	await _shot(out, "24_help_page")
 	Router.current.open(Router.current.control_topic)  # Control: this version's keys
 	await _shot(out, "24b_help_control")
-	# A story: ending 2's first talk, its first picture and its numbers with the reward.
+	# A story: ending 2's talk, its first picture with its text floating up, its numbers and the
+	# reward.
 	Router.go("main_menu")
 	Router.push("story", {"story": 2, "reward_item": 502, "opened_lord": 8,
 		"profile_path": "user://shot_hero.json"})
 	await _frames(2)
 	var story: Node = Router.current
+	for i in 5:
+		story.next_page()
 	story.press()
 	await _shot(out, "11_story_talk")
 	while story.pages[story.page].kind == "talk":
 		story.next_page()
-	story.press()
+	for i in 50:
+		story.tick()
 	await _shot(out, "12_story_picture")
 	story.page = story.pages.size() - 2
 	story.next_page()
-	story.press()
+	for i in 120:
+		story.tick()
 	await _shot(out, "13_story_end")
+	story.reward.hide()
 	Router.go("map_viewer")
 	var viewer: Node = Router.current
 	for n in MAPS:
@@ -566,6 +577,18 @@ func _ready() -> void:
 	await _frames(3)
 	await _shot(out, "mission_1_fx_spark")
 	msim.hero.hit_fx_kind = 0
+	# The fire held still on the soldier nearest the camera: a fire skill hit him.
+	var burning = null
+	for e in msim.enemies:
+		if burning == null or e.pos.y > burning.pos.y:
+			burning = e
+	if burning != null:
+		burning.on_fire = true
+		burning.fire_frame = 3
+		mission._update_view(1.0)
+		await _frames(3)
+		await _shot(out, "mission_1_fx_fire")
+		burning.on_fire = false
 	# A weapon trail held still: the whirling strike.
 	msim.hero.action = 25
 	msim.hero.frame = 3
@@ -627,13 +650,13 @@ func _ready() -> void:
 	print("general: hp ", sim.hero.hp, " won ", sim.won, " failed ", sim.failed)
 	await _frames(10)
 	await _shot(out, "mission_1_general_end")
-	# The pages after the mission: the exp, the exp for time, then the general's talk.
-	for page in ["mission_1_total_exp", "mission_1_time_exp", "mission_1_victory_talk"]:
-		Input.action_press("attack")
-		await _frames(2)
-		Input.action_release("attack")
+	# The pages after the mission go on by themselves: the exp, the exp for time, then the
+	# general's talk.
+	for page in [[11, "mission_1_total_exp"], [12, "mission_1_time_exp"], [0, "mission_1_victory_talk"]]:
+		while sim.banner != page[0] and not sim.finished:
+			await _frames(1)
 		await _seconds(1.0)
-		await _shot(out, page)
+		await _shot(out, page[1])
 	get_tree().quit()
 
 

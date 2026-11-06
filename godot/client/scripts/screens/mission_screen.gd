@@ -2,8 +2,11 @@ extends Control
 ## A mission of the original campaign on its map. The game itself runs in MapSim
 ## (original pixels and ticks); this screen reads the input, ticks the simulation every
 ## 120 ms and draws its state in 3D: the hero sprite, the camera on the current room,
-## the exit arrows and the "Stage" banners, the soldiers and their arrows, the effects of
-## skills, potions and scrolls, and the HUD.
+## the exit arrows and the "Stage" banners (after a won mission the exp bar of pyport on the
+## pages Total Exp and Time Exp, the level gone up on it), the soldiers and their arrows, the
+## effects of skills, potions and scrolls, the fire on whoever a fire skill hits, the auras of
+## buffs, and the HUD. A talk on the map shows the portrait of who speaks beside the line, just
+## above the HUD, as pyport's.
 ## Params: {lord, mission, seed (optional: the same enemies every run)}.
 ## The mouse, as pyport's: the left button beside the hero walks that way while it is held
 ## (dragging turns him, two quick clicks run), a click on the hero or the right button attacks,
@@ -26,11 +29,14 @@ const Effects := preload("res://scripts/world/effects.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const Items := preload("res://scripts/core/items.gd")
 const MissionPause := preload("res://scripts/ui/mission_pause.gd")
+const ExpBar := preload("res://scripts/ui/exp_bar.gd")
+const Stories := preload("res://scripts/core/stories.gd")
 
 ## One tick of the game, by the game speed of the settings (MapSim.TICK_MS at Med).
 var tick := MapSim.TICK_MS / 1000.0
 const ARROW_SCALE := 3.0
 const ARROW_PATH := "res://assets/original/ui/arrow%d.png"
+const PORTRAITS := "res://assets/original/portraits/%d.png"
 
 var lord_id := 1
 var mission := 0
@@ -49,6 +55,14 @@ var profile: Profile
 var effects: Effects
 var banner: PanelContainer
 var banner_text: Label
+var exp_bar: ExpBar  # under the text of the pages Total Exp and Time Exp
+## A talk over the map, as pyport's: the portrait of who speaks and the line beside it, just
+## above the HUD.
+var talk_box: Control
+var talk_face: PanelContainer
+var talk_portrait: TextureRect
+var talk_panel: PanelContainer
+var talk_text: Label
 var arrows: Array[TextureRect] = []
 var soldiers := {}  # sim actor -> Soldier node
 var shots: Array[MeshInstance3D] = []  # the archers' arrows
@@ -171,8 +185,18 @@ func _ready() -> void:
 	banner_text = Label.new()
 	banner_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	banner_text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	banner.add_child(banner_text)
+	var lines := VBoxContainer.new()
+	lines.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	lines.add_child(banner_text)
+	exp_bar = ExpBar.new()
+	exp_bar.name = "ExpBar"
+	exp_bar.visible = false
+	exp_bar.bars = sim.exp_bars
+	exp_bar.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	lines.add_child(exp_bar)
+	banner.add_child(lines)
 	add_child(banner)
+	_make_talk_box()
 
 	var touch := TouchControls.new()
 	touch.name = "Touch"
@@ -278,7 +302,9 @@ func _update_view(t: float) -> void:
 	hud.queue_redraw()
 	_place_soldiers(t)
 	_place_shots()
-	var shown: Array = sim.effects()
+	var shown: Array = sim.auras()
+	shown.append_array(sim.effects())
+	shown.append_array(sim.fires())
 	for sp in sim.sparks():
 		shown.append(["spark", sp[0], sp[1]])
 	shown.append_array(trails)
@@ -354,13 +380,17 @@ func _place_shots() -> void:
 
 
 func _show_banner() -> void:
-	var talk: String = sim.talk_text()
-	banner.visible = sim.banner != 0 or not sim.talk.is_empty()
+	talk_box.visible = sim.banner == 0 and not sim.talk.is_empty()
+	if talk_box.visible:
+		_place_talk()
+	banner.visible = sim.banner != 0
+	exp_bar.visible = sim.banner == MapSim.BANNER_TOTAL_EXP or sim.banner == MapSim.BANNER_TIME_EXP
+	exp_bar.queue_redraw()
 	if not banner.visible:
 		return
-	if sim.banner == 0:
-		banner_text.text = talk
-		_place_banner(0.72)  # the talk box sits low, over the map
+	if sim.banner == MapSim.BANNER_ACQUIRED:
+		banner_text.text = "%s\n%s" % [Items.name_of(sim.acquired), tr("mission.acquired")]
+		_place_banner(0.3)
 		return
 	var stage := tr("mission.stage") + " " + str(sim.rooms_visited)
 	if sim.banner == MapSim.BANNER_STAGE_CLEAR:
@@ -377,9 +407,8 @@ func _show_banner() -> void:
 		else:
 			stage = "%s\n%s %s\n%s %s" % [tr("mission.time_exp"), tr("mission.time_limit"),
 				clock(sim.time_limit), tr("mission.time_taken"), clock(sim.play_seconds())]
-		var lv := profile.level_with(sim.exp_reward())
-		if lv > profile.level:
-			stage += "\n" + tr("mission.level_up") % lv
+		if sim.exp_bars.level_up_ticks > 0:
+			stage += "\n" + tr("mission.level_up") % sim.exp_bars.level
 	banner_text.text = "%s\n%s\n%s" % [lord_name, mission_info.get("name", ""), stage]
 	_place_banner(0.3)
 
@@ -387,6 +416,69 @@ func _show_banner() -> void:
 ## mm:ss
 static func clock(secs: int) -> String:
 	return "%02d:%02d" % [secs / 60, secs % 60]
+
+
+func _make_talk_box() -> void:
+	talk_box = Control.new()
+	talk_box.name = "Talk"
+	talk_box.visible = false
+	talk_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	talk_box.set_anchors_preset(Control.PRESET_FULL_RECT)
+	var style := UiTheme.box(Color(0, 0, 0, 0.85), UiTheme.TEXT_DIM, 2)
+	talk_face = PanelContainer.new()
+	talk_face.name = "Face"
+	talk_face.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var face_style := style.duplicate()
+	face_style.set_content_margin_all(2)
+	talk_face.add_theme_stylebox_override("panel", face_style)
+	talk_portrait = TextureRect.new()
+	talk_portrait.name = "Portrait"
+	talk_portrait.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	talk_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	talk_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	talk_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	talk_face.add_child(talk_portrait)
+	talk_box.add_child(talk_face)
+	talk_panel = PanelContainer.new()
+	talk_panel.name = "Box"
+	talk_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var box_style := style.duplicate()
+	box_style.set_content_margin_all(8)
+	talk_panel.add_theme_stylebox_override("panel", box_style)
+	talk_text = Label.new()
+	talk_text.name = "Line"
+	talk_text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	talk_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	talk_text.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	talk_panel.add_child(talk_text)
+	talk_box.add_child(talk_panel)
+	add_child(talk_box)
+
+
+## The portrait of who speaks the line shown now: the general's, or the hero's for his own lines.
+func talk_portrait_id() -> int:
+	if sim.hero_talks():
+		return Stories.HERO_PORTRAIT + int(profile.head)
+	return int(sim.general.get("portrait", 0))
+
+
+## As pyport's map talk (in its pixels, over the HUD's width): a 48 px portrait box at the left
+## and the speech box from x 54, 38 high, both just above the HUD (and its skill bar).
+func _place_talk() -> void:
+	var view := get_viewport_rect().size
+	var k := hud.scale_of(view)
+	var top := view.y - (MapHud.PANEL_H + (MapHud.BAR_H if hud.show_bar else 0)) * k
+	var left := view.x / 2.0 - 120.0 * k
+	talk_portrait.texture = load(PORTRAITS % talk_portrait_id())
+	talk_portrait.custom_minimum_size = Vector2(46, 46) * k
+	talk_face.position = Vector2(left + 2 * k, top - 50 * k)
+	talk_face.size = Vector2(48, 48) * k
+	talk_text.text = sim.talk_text()
+	talk_text.add_theme_font_size_override("font_size", int(11 * k))
+	talk_panel.custom_minimum_size = Vector2(184, 38) * k
+	talk_panel.size = talk_panel.custom_minimum_size
+	talk_panel.reset_size()
+	talk_panel.position = Vector2(left + 54 * k, top - 2 * k - talk_panel.size.y)
 
 
 func _place_banner(y: float) -> void:

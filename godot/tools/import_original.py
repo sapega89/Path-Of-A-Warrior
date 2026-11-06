@@ -564,7 +564,9 @@ UI_IMAGES = ["arrow0", "arrow1", "arrow2", "arrow3",  # exit arrows: down, left,
              # the skills' icons (28 px, skill 12 first), learned and not yet learned
              "skill", "skillgray",
              # the icons of gear, treasures and rare things (28 px), the Gear page's frame
-             "kibo", "sungbo", "shinki", "ui_equipbox"]
+             "kibo", "sungbo", "shinki", "ui_equipbox",
+             # the Blacksmith's sparkle over what is enchanted or combined (5 frames)
+             "itemReinforce"]
 
 
 def export_ui(out):
@@ -613,9 +615,11 @@ EFFECTS = [
     ("scroll", 67, "fx_item_10_11", None),
     ("spark", 55, None, None),
     ("trail", 86, None, None),
+    ("aura", 98, None, None),
 ]
-## The sheets cut as regions of one picture: imgeff entry 1, or the entry named here.
-EFFECT_IMAGE = {"spark": 0, "trail": 2}
+## The sheets cut as regions of one picture: imgeff entry 1, or the entry named here (the
+## aura of a buff: 3 glowing rings on the ground, then 3 pictures of the light rising).
+EFFECT_IMAGE = {"spark": 0, "trail": 2, "aura": 44}
 ## Sheets whose pictures are made of several parts drawn together: the weapon trail is two
 ## parts a picture (4 directions x 3 steps).
 EFFECT_GROUP = {"trail": 2}

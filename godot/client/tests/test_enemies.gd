@@ -14,6 +14,17 @@ func _sim(enemies: bool = true) -> RefCounted:
 	return sim
 
 
+## Ticks with no key until the page changes or the mission is over; the ticks it took
+## (-1: not within n).
+func _next_page(sim: RefCounted, n: int = 400) -> int:
+	var b: int = sim.banner
+	for t in n:
+		sim.tick(-1, -1)
+		if sim.banner != b or sim.finished:
+			return t + 1
+	return -1
+
+
 ## An empty, open room with one swordsman standing below the hero.
 func _duel() -> Array:
 	var sim := _sim(false)
@@ -29,6 +40,24 @@ func _duel() -> Array:
 	sim.hero.facing = 0
 	sim.hero.dir = 0
 	return [sim, e]
+
+
+func test_archers_stand_on_their_cells() -> void:
+	# Map 1 puts an archer on cell (3, 1) of its first room in its fourth mission.
+	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 3, Vector2i(4, 2))
+	var archers: Array = sim.enemies.filter(func(e): return e.type == MapSim.KIND_ARCHERS)
+	eq(archers.size(), 1, "the archer of the room's script")
+	if archers.size() == 1:
+		eq(archers[0].pos, Vector2i(3 * 27 + 12, 1 * 27 + 20), "on his cell")
+		eq(archers[0].alerted, 1, "on guard at once")
+	eq(sim.enemies_alive, 0, "archers do not count for clearing the room")
+	sim = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	eq(sim.enemies.size(), 0, "another mission: nobody there")
+	sim = MapSim.new(MapBuilder.load_map(1), 3, Vector2i(4, 2))
+	sim.no_enemies = true
+	sim.enemies.clear()
+	sim.enter_room()
+	eq(sim.enemies.size(), 0, "the map without enemies: no archers either")
 
 
 func test_random_numbers() -> void:
@@ -212,11 +241,20 @@ func test_hero_falls() -> void:
 	for t in 30:
 		sim.tick(-1, -1)
 		heard = heard or (sim.banner == MapSim.BANNER_FAILED and 6 in sim.sounds)
+		if sim.banner == MapSim.BANNER_FAILED:
+			break
 	eq(sim.banner, MapSim.BANNER_FAILED, "Mission fail!")
 	check(heard, "with its sound (6)")
-	check(not sim.finished, "waits for a key")
+	eq(_next_page(sim), MapSim.BANNER_TICKS, "20 ticks, then the mission is over")
+	check(sim.finished, "over")
+	sim = _duel()[0]
+	sim.hero.hp = 0
+	sim.failed = true
+	sim._show_banner(MapSim.BANNER_FAILED)
 	sim.tick(-1, -1, true)
-	check(sim.finished, "a key ends the mission")
+	check(not sim.finished, "a key: two more ticks")
+	sim.tick(-1, -1)
+	check(sim.finished, "then it is over")
 
 
 func test_barrel_breaks() -> void:
@@ -257,6 +295,40 @@ func test_gold_is_picked_up() -> void:
 	sim.tick(-1, -1)
 	eq(sim.gold, 20, "20 gold")
 	check(sim.drops.is_empty(), "nothing left on the floor")
+
+
+## As pyport's popup 13: a gear picked up shows "<its name> Acquired!!" for 20 ticks while the
+## map waits (a key: 2); with no place left in the Inventory it stays on the floor.
+func test_a_gear_picked_up_is_acquired() -> void:
+	var sim := _sim(false)
+	for t in 60:
+		if sim.banner == 0 and sim.room_phase == 0:
+			break
+		sim.tick(-1, -1)
+	sim.free_places = 1
+	for k in 2:
+		var d = MapSim.Drop.new()
+		d.item = 131 + k
+		d.pos = sim.hero.pos
+		sim.drops.append(d)
+	sim.tick(-1, -1)
+	eq([sim.items.size(), sim.banner, sim.acquired], [1, MapSim.BANNER_ACQUIRED, 131], "Acquired!!")
+	eq(sim.free_places, 0, "the last place taken")
+	eq(sim.drops.size(), 1, "the other stays on the floor")
+	var ticks: int = sim.play_ticks
+	for t in 19:
+		sim.tick(-1, -1)
+	eq([sim.banner, sim.play_ticks], [MapSim.BANNER_ACQUIRED, ticks], "the map waits")
+	sim.tick(-1, -1)
+	eq(sim.banner, 0, "gone after 20 ticks")
+	sim.tick(-1, -1)
+	eq(sim.items.size(), 1, "still no place")
+	sim.free_places = 1
+	sim.tick(-1, -1)
+	eq([sim.items.size(), sim.acquired], [2, 132], "a place: picked up")
+	sim.tick(-1, -1, true)
+	sim.tick(-1, -1)
+	eq(sim.banner, 0, "a key closes it sooner")
 
 
 ## A general met in an open room, with the hero next to him.
@@ -314,10 +386,14 @@ func test_mission_won_when_his_general_falls() -> void:
 			break
 	eq(sim.banner, MapSim.BANNER_SUCCESS, "Mission Success!")
 	check(sim.won, "won")
-	sim.tick(-1, -1, true)
+	for t in 5:
+		sim.tick(-1, -1, true)
+	eq(sim.banner, MapSim.BANNER_SUCCESS, "a key does not end it")
+	eq(_next_page(sim), MapSim.BANNER_TICKS - 5, "it shows 20 ticks")
 	eq(sim.banner, MapSim.BANNER_TOTAL_EXP, "then the exp")
-	sim.tick(-1, -1, true)
+	var ticks := _next_page(sim)
 	check(sim.finished, "no time limit, no general to talk: the mission is over")
+	check(ticks > MapSim.EXP_PAGE_TICKS, "after the bar and 16 ticks (%d)" % ticks)
 
 
 func test_rewards_and_the_talk_after_the_mission() -> void:
@@ -326,15 +402,18 @@ func test_rewards_and_the_talk_after_the_mission() -> void:
 	sim.mission_exp = 40
 	sim.time_limit = 192
 	sim.mission_general = 5
-	sim.banner = MapSim.BANNER_SUCCESS
+	sim._show_banner(MapSim.BANNER_SUCCESS)
 	eq(sim.gold_reward(), 450, "gold: 3 x 150 on normal")
-	sim.tick(-1, -1, true)
+	_next_page(sim)
 	eq(sim.banner, MapSim.BANNER_TOTAL_EXP, "the exp")
 	eq(sim.exp_reward(), 80, "exp: twice on normal")
-	sim.tick(-1, -1, true)
+	sim.hero_exp = 0
+	# 80 exp from 0: the bar's 100 px in 26 ticks, the level up, "Level Up" 20 ticks, the
+	# 28 px of the 30 / 104 left in 8, then the page stays 16
+	eq(_next_page(sim), 26 + 1 + 20 + 8 + MapSim.EXP_PAGE_TICKS, "the exp page goes on by itself")
 	eq(sim.banner, MapSim.BANNER_TIME_EXP, "in time: the exp for time")
 	eq(sim.mission_exp, 42, "a twentieth more")
-	sim.tick(-1, -1, true)
+	_next_page(sim)
 	eq(sim.banner, 0, "the pages are over")
 	eq(sim.talk.size(), 5, "the general talks")
 	check(sim.talk[0].begins_with("[Reeve] Not bad, warrior."), "his first words: %s" % sim.talk[0])
@@ -412,6 +491,47 @@ func test_attack_buff_skill() -> void:
 	check(sim.hero.attack_buff_ticks > 0, "for a while")
 
 
+func test_a_buff_shows_its_aura() -> void:
+	var sim: RefCounted = _duel()[0]
+	sim.enemies.clear()
+	sim.tick(-1, -1)
+	eq(sim.auras().size(), 0, "no aura without a buff")
+	sim.hero.attack_buff = 3
+	sim.hero.attack_buff_ticks = 2
+	sim.tick(-1, -1)
+	eq(sim.auras().size(), 0, "the buff shows from the next tick")
+	var seen: Array = []
+	for t in 3:
+		sim.tick(-1, -1)
+		var a: Array = sim.auras()
+		if a.size() == 2:
+			eq([a[0][0], a[0][2], a[0][3], a[1][2]], ["aura", sim.hero.pos + Vector2i(0, 3), true,
+				sim.hero.pos + Vector2i(0, 3)], "a ring behind him and the light in front, at his feet")
+			eq(int(a[1][1]), int(a[0][1]) + 3, "the same step of both")
+		seen.append(a.size())
+	eq(seen, [2, 2, 0], "while it lasts, and the tick it ends")
+	var d = MapSim.Drop.new()
+	d.item = 10020
+	d.pos = sim.hero.pos
+	sim.drops.append(d)
+	sim.tick(-1, -1)
+	eq(sim.auras().size(), 2, "he glows as he picks something up")
+	sim.tick(-1, -1)
+	eq(sim.auras().size(), 0, "for that tick")
+	var sim2: RefCounted = _general_duel()[0]
+	var g = sim2.enemies[0]
+	g.defense_buff_ticks = 5
+	eq(sim2.auras().size(), 2, "a general's buff too")
+	eq(sim2.auras()[0][2], g.pos + Vector2i(0, 3), "on him")
+	var node := Effects.new()
+	node._ready()
+	node.show_effects(sim2.auras())
+	eq(node.shown(), 2, "both pictures are drawn")
+	check(not node.get_child(0).no_depth_test and node.get_child(1).no_depth_test,
+		"the ring stands behind him, the light over him")
+	node.free()
+
+
 func test_potion_restores_hp() -> void:
 	var sim: RefCounted = _duel()[0]
 	check(sim.add_quick_item(1), "a small HP potion goes to a quick slot")
@@ -476,6 +596,81 @@ func test_effects_of_skills_and_potions() -> void:
 	node.free()
 
 
+func test_effects_of_a_generals_skills() -> void:
+	var d := _general_duel()
+	var sim: RefCounted = d[0]
+	var g = d[1]
+	g.dir = 2
+	# action, frame -> the picture shown on him (or in front of him, the blast)
+	var cases := [
+		[6, 3, ["slash", 3, g.pos]], [8, 2, ["slash", 2, g.pos]], [10, 5, ["heal", 1, g.pos]],
+		[12, 4, ["buff", 0, g.pos]], [15, 6, ["whirl", 1, g.pos]], [16, 3, ["slash", 1, g.pos]],
+		[17, 5, ["slash", 0, g.pos]], [18, 6, ["burst", 1, g.pos]],
+		[18, 5, ["burst", 0, g.pos + MapSim.BURST_FIRST_SHIFT]],
+		[20, 3, ["wave", 8, g.pos]], [21, 9, ["blast", 1, sim._front_of(g.pos, 2)]]]
+	for c in cases:
+		g.action = c[0]
+		g.frame = c[1]
+		eq(sim.effects(), [c[2]], "general action %d frame %d" % [c[0], c[1]])
+	for c in [[6, 2], [7, 8], [14, 3], [19, 3], [1, 0]]:
+		g.action = c[0]
+		g.frame = c[1]
+		eq(sim.effects().size(), 0, "nothing at action %d frame %d" % [c[0], c[1]])
+	var e = sim.create_enemy(MapSim.KIND_SWORDS, 4, 7, 0)
+	e.action = 6
+	e.frame = 3
+	g.action = 0
+	eq(sim.effects().size(), 0, "a soldier's actions are not skills")
+
+
+func test_fire_skills_set_on_fire() -> void:
+	for skill in [23, 24, 29]:
+		var d := _duel()
+		var sim: RefCounted = d[0]
+		var e = d[1]
+		sim.hero.action = skill
+		sim._strike_enemy(e)
+		check(sim.sounds.has(13), "%d: the fire's sound" % skill)
+		eq(sim.fires().size(), 0, "%d: it shows from the end of the tick" % skill)
+		sim.hero.action = 0
+		var shown: Array = []
+		for t in 7:
+			sim.tick(-1, -1)
+			for f in sim.fires():
+				shown.append(int(f[1]))
+				eq(f[0], "fire", "from the fire sheet")
+				eq(f[2], e.pos, "on the soldier")
+		eq(shown, [0, 1, 2, 3, 4, 5], "%d: six pictures, then it is out" % skill)
+	var d := _duel()
+	var sim: RefCounted = d[0]
+	sim.hero.action = 22
+	sim._strike_enemy(d[1])
+	sim.tick(-1, -1)
+	eq(sim.fires().size(), 0, "other skills do not burn")
+
+
+func test_a_general_sets_the_hero_on_fire() -> void:
+	for skill in [17, 18, 19]:
+		var d := _general_duel()
+		var sim: RefCounted = d[0]
+		var g = d[1]
+		g.action = skill
+		sim._general_skill_hits_hero(g)
+		check(sim.sounds.has(13), "%d: the fire's sound" % skill)
+		sim._end_tick()
+		var f: Array = sim.fires()
+		eq(f.size(), 1, "%d: the hero burns" % skill)
+		if f.size() == 1:
+			eq([f[0][1], f[0][2]], [0, sim.hero.pos], "its first picture on him")
+		eq(sim.hero.hurt_ticks, 2 if skill == 19 else (5 if skill == 18 else 0), "%d: he reels" % skill)
+	var d := _general_duel()
+	var sim: RefCounted = d[0]
+	d[1].action = 16
+	sim._general_skill_hits_hero(d[1])
+	sim._end_tick()
+	eq(sim.fires().size(), 0, "other skills do not burn")
+
+
 func test_skip_ends_a_talk_and_what_follows_comes() -> void:
 	var d := _general_duel()
 	var sim: RefCounted = d[0]
@@ -491,7 +686,7 @@ func test_skip_ends_a_talk_and_what_follows_comes() -> void:
 	sim = _sim(false)
 	sim.mission_general = 5
 	sim.banner = MapSim.BANNER_TIME_EXP
-	sim.tick(-1, -1, true)
+	_next_page(sim)
 	eq(sim.talk.size(), 5, "the general's words after the mission")
 	sim.skip_talk()
 	check(sim.finished, "skipped: the mission is over")
