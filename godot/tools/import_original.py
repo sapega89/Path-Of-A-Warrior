@@ -829,7 +829,27 @@ def export_mp(out, data):
         "status_points": [[ax, ay] for _, _, _, _, ax, ay in status],
     }
     info.update({name: getattr(c, name) for name in MP_TABLES})
+    info["help"] = mp_help(c)
     (data / "mp.json").write_text(json.dumps(info, separators=(",", ":")))
+
+
+## The multiplayer's Help (pyport/pow/game/online/consts.py): its topics, each page lines of
+## text whose first is the page's title.
+MP_HELP = ["help_controls", "help_menu", "help_duel", "help_mission", "help_about", "help_network"]
+
+
+def mp_help(c):
+    """[{"name", "pages"}] with a page "<title>\n\n<its lines as one text>"."""
+    topics = []
+    for name, key in zip(c.help_topics, MP_HELP):
+        lines, at, pages = getattr(c, key), 0, []
+        for n in getattr(c, key + "_lines"):
+            page = lines[at:at + n]
+            at += n
+            text = " ".join(line.strip() for line in page[1:] if line.strip())
+            pages.append(page[0].strip() + "\n\n" + text)
+        topics.append({"name": name, "pages": pages})
+    return topics
 
 
 MIX_ROWS = 149

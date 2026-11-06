@@ -3,13 +3,19 @@ extends Control
 ## Saving, Control), each a few pages, ◄ n / m ►. The Control pages tell this version's
 ## keys, buttons and touch controls (the original's were the phone keypad).
 ## Up / down pick a topic, left / right turn the page, back returns to the topics, then leaves.
+## Multiplayer > Help (Router.params.kind "mp"): the online game's topics (Controls, Menu, Duel,
+## Missions, About, Network; data/mp.json), its Controls pages this version's battle keys.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const PATH := "res://data/help.json"
 const CONTROL_TOPIC := 7
 const CONTROL_PAGES := ["help.control_1", "help.control_2"]
+const MP_PATH := "res://data/mp.json"
+const MP_CONTROL_PAGES := ["help.mp_control_1", "help.mp_control_2"]
 
 var topics: Array = []
+var control_topic := CONTROL_TOPIC
+var control_pages: Array = CONTROL_PAGES
 var topic := -1  # -1: the list of topics
 var page := 0
 var list: VBoxContainer
@@ -22,11 +28,18 @@ var close := Callable()
 
 
 func _ready() -> void:
-	var f := FileAccess.open(PATH, FileAccess.READ)
+	var path := PATH
+	var key := "topics"
+	if str(Router.params.get("kind", "")) == "mp":
+		path = MP_PATH
+		key = "help"
+		control_topic = 0
+		control_pages = MP_CONTROL_PAGES
+	var f := FileAccess.open(path, FileAccess.READ)
 	if f != null:
 		var d: Variant = JSON.parse_string(f.get_as_text())
 		if typeof(d) == TYPE_DICTIONARY:
-			topics = d.get("topics", [])
+			topics = d.get(key, [])
 	var col := UiTheme.menu_column(self, 640)
 	heading = UiTheme.heading("help.title", 40)
 	col.add_child(heading)
@@ -92,8 +105,8 @@ func show_topics() -> void:
 
 
 func pages_of(i: int) -> Array:
-	if i == CONTROL_TOPIC:
-		return CONTROL_PAGES.map(func(k): return tr(k))
+	if i == control_topic:
+		return control_pages.map(func(k): return tr(k))
 	return topics[i].get("pages", []) if i >= 0 and i < topics.size() else []
 
 

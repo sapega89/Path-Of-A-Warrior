@@ -143,8 +143,12 @@ func test_menu_and_character_pages() -> void:
 	var menu := _screen(MenuScreen, {"online": c})
 	eq(menu.status.text, "", "online")
 	eq(menu.who.text, tr("online.who") % ["ANDREY", 12, 0, 0])
-	eq(menu.buttons.map(func(b): return b.disabled), [false, false, false, false, false, false, false],
+	eq(menu.buttons.map(func(b): return b.disabled), [false, false, false, false, false, false, false, false],
 		"all open")
+	menu.free()
+	menu = _screen(MenuScreen, {})
+	eq(menu.buttons.map(func(b): return b.disabled), [true, true, true, true, true, true, true, false],
+		"no server: only Help")
 	menu.free()
 	var page := _screen(CharacterScreen, {"online": c})
 	page.open("records")
