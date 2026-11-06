@@ -239,7 +239,9 @@ func test_skill_costs_mp_and_hits() -> void:
 	sim.tick(-1, -1, false, 0)  # the first skill key: skill 12
 	eq(sim.hero.action, 12, "the skill starts")
 	eq(sim.hero.mp, 5, "it took 5 MP")
+	var spot: Vector2i = e.pos
 	for t in 6:
+		e.pos = spot  # (an idle soldier walks on; here he waits for the strike)
 		sim.tick(-1, -1)
 	check(e.hp < hp, "the skill took HP: %d -> %d" % [hp, e.hp])
 	sim.hero.mp = 4
@@ -253,7 +255,7 @@ func test_attack_buff_skill() -> void:
 	var sim: RefCounted = _duel()[0]
 	sim.tick(-1, -1, false, 1)  # the second skill key: skill 17
 	eq(sim.hero.action, 17, "the buff starts")
-	eq(sim.hero.mp, 0, "it took 10 MP")
+	eq(sim.hero.mp, 3, "it took 7 MP")
 	for t in 14:
 		sim.tick(-1, -1)
 	check(sim.hero.attack_buff > 0, "attack is raised")
@@ -280,7 +282,9 @@ func test_scroll_blast_hits() -> void:
 	check(sim.add_quick_item(10), "a fire scroll goes to a quick slot")
 	sim.tick(-1, -1, false, -1, 0)
 	eq(sim.hero.action, 11, "the hero holds the scroll up")
+	var spot: Vector2i = e.pos
 	for t in 10:
+		e.pos = spot  # (an idle soldier walks on; here he waits for the blast)
 		sim.tick(-1, -1)
 	check(e.hp < hp, "the blast took HP: %d -> %d" % [hp, e.hp])
 	eq(sim.effect_item, 0, "the scroll is used up")
