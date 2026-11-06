@@ -405,22 +405,28 @@ func _ready() -> void:
 	await _shot(out, "24_help_page")
 	Router.current.open(Router.current.control_topic)  # Control: this version's keys
 	await _shot(out, "24b_help_control")
-	# A story: ending 2's first talk, its first picture and its numbers with the reward.
+	# A story: ending 2's talk, its first picture with its text floating up, its numbers and the
+	# reward.
 	Router.go("main_menu")
 	Router.push("story", {"story": 2, "reward_item": 502, "opened_lord": 8,
 		"profile_path": "user://shot_hero.json"})
 	await _frames(2)
 	var story: Node = Router.current
+	for i in 5:
+		story.next_page()
 	story.press()
 	await _shot(out, "11_story_talk")
 	while story.pages[story.page].kind == "talk":
 		story.next_page()
-	story.press()
+	for i in 50:
+		story.tick()
 	await _shot(out, "12_story_picture")
 	story.page = story.pages.size() - 2
 	story.next_page()
-	story.press()
+	for i in 120:
+		story.tick()
 	await _shot(out, "13_story_end")
+	story.reward.hide()
 	Router.go("map_viewer")
 	var viewer: Node = Router.current
 	for n in MAPS:
