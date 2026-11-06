@@ -150,3 +150,18 @@ func test_right_click_is_back() -> void:
 	mission.free()
 	Router.params = old
 
+
+## The phone's Back button is BACK, and the game does not quit on it.
+func test_phone_back_button() -> void:
+	eq(ProjectSettings.get_setting("application/config/quit_on_go_back"), false, "no quitting on Back")
+	var old: Dictionary = Router.params
+	Router.params = {}
+	var help: Control = Help.new()
+	root.add_child(help)
+	help.open(2)
+	InputSetup._notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	Input.flush_buffered_events()
+	eq(help.topic, -1, "Help: back from a topic, as Esc")
+	help.free()
+	Router.params = old
+

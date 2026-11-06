@@ -273,6 +273,8 @@ mark»…; рядок переглядача карт — «[LB] [RB] change map
 Права кнопка миші — BACK (як Esc) на будь-якому екрані й над будь-якою кнопкою, як у pyport
 (`InputSetup._input`), крім карти місії, поки герой грає: там вона б'є (вузли групи `right_button`
 кажуть `uses_right_button()`); у паузі й після кінця місії — знову BACK.
+Кнопка «Назад» телефона — теж BACK (`NOTIFICATION_WM_GO_BACK_REQUEST`), а не вихід із гри
+(`application/config/quit_on_go_back=false`).
 
 ## Звук
 
