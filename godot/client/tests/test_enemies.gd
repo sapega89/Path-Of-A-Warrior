@@ -14,6 +14,17 @@ func _sim(enemies: bool = true) -> RefCounted:
 	return sim
 
 
+## Ticks with no key until the page changes or the mission is over; the ticks it took
+## (-1: not within n).
+func _next_page(sim: RefCounted, n: int = 400) -> int:
+	var b: int = sim.banner
+	for t in n:
+		sim.tick(-1, -1)
+		if sim.banner != b or sim.finished:
+			return t + 1
+	return -1
+
+
 ## An empty, open room with one swordsman standing below the hero.
 func _duel() -> Array:
 	var sim := _sim(false)
@@ -210,10 +221,19 @@ func test_hero_falls() -> void:
 	eq(sim.hero.action, 10, "falls")
 	for t in 30:
 		sim.tick(-1, -1)
+		if sim.banner == MapSim.BANNER_FAILED:
+			break
 	eq(sim.banner, MapSim.BANNER_FAILED, "Mission fail!")
-	check(not sim.finished, "waits for a key")
+	eq(_next_page(sim), MapSim.BANNER_TICKS, "20 ticks, then the mission is over")
+	check(sim.finished, "over")
+	sim = _duel()[0]
+	sim.hero.hp = 0
+	sim.failed = true
+	sim._show_banner(MapSim.BANNER_FAILED)
 	sim.tick(-1, -1, true)
-	check(sim.finished, "a key ends the mission")
+	check(not sim.finished, "a key: two more ticks")
+	sim.tick(-1, -1)
+	check(sim.finished, "then it is over")
 
 
 func test_barrel_breaks() -> void:
@@ -311,10 +331,14 @@ func test_mission_won_when_his_general_falls() -> void:
 			break
 	eq(sim.banner, MapSim.BANNER_SUCCESS, "Mission Success!")
 	check(sim.won, "won")
-	sim.tick(-1, -1, true)
+	for t in 5:
+		sim.tick(-1, -1, true)
+	eq(sim.banner, MapSim.BANNER_SUCCESS, "a key does not end it")
+	eq(_next_page(sim), MapSim.BANNER_TICKS - 5, "it shows 20 ticks")
 	eq(sim.banner, MapSim.BANNER_TOTAL_EXP, "then the exp")
-	sim.tick(-1, -1, true)
+	var ticks := _next_page(sim)
 	check(sim.finished, "no time limit, no general to talk: the mission is over")
+	check(ticks > MapSim.EXP_PAGE_TICKS, "after the bar and 16 ticks (%d)" % ticks)
 
 
 func test_rewards_and_the_talk_after_the_mission() -> void:
@@ -323,15 +347,18 @@ func test_rewards_and_the_talk_after_the_mission() -> void:
 	sim.mission_exp = 40
 	sim.time_limit = 192
 	sim.mission_general = 5
-	sim.banner = MapSim.BANNER_SUCCESS
+	sim._show_banner(MapSim.BANNER_SUCCESS)
 	eq(sim.gold_reward(), 450, "gold: 3 x 150 on normal")
-	sim.tick(-1, -1, true)
+	_next_page(sim)
 	eq(sim.banner, MapSim.BANNER_TOTAL_EXP, "the exp")
 	eq(sim.exp_reward(), 80, "exp: twice on normal")
-	sim.tick(-1, -1, true)
+	sim.hero_exp = 0
+	# 80 exp from 0: the bar's 100 px in 26 ticks, the level up, "Level Up" 20 ticks, the
+	# 28 px of the 30 / 104 left in 8, then the page stays 16
+	eq(_next_page(sim), 26 + 1 + 20 + 8 + MapSim.EXP_PAGE_TICKS, "the exp page goes on by itself")
 	eq(sim.banner, MapSim.BANNER_TIME_EXP, "in time: the exp for time")
 	eq(sim.mission_exp, 42, "a twentieth more")
-	sim.tick(-1, -1, true)
+	_next_page(sim)
 	eq(sim.banner, 0, "the pages are over")
 	eq(sim.talk.size(), 5, "the general talks")
 	check(sim.talk[0].begins_with("[Reeve] Not bad, warrior."), "his first words: %s" % sim.talk[0])
@@ -488,7 +515,7 @@ func test_skip_ends_a_talk_and_what_follows_comes() -> void:
 	sim = _sim(false)
 	sim.mission_general = 5
 	sim.banner = MapSim.BANNER_TIME_EXP
-	sim.tick(-1, -1, true)
+	_next_page(sim)
 	eq(sim.talk.size(), 5, "the general's words after the mission")
 	sim.skip_talk()
 	check(sim.finished, "skipped: the mission is over")

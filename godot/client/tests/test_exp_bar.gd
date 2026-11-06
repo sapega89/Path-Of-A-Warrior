@@ -56,8 +56,9 @@ func test_the_exp_pages_show_the_bar() -> void:
 	sim.mission_exp = 10
 	sim.difficulty = 1
 	sim.time_limit = 0
-	sim.banner = MapSim.BANNER_SUCCESS
-	sim.tick(-1, -1, true)
+	sim._show_banner(MapSim.BANNER_SUCCESS)
+	for t in MapSim.BANNER_TICKS:
+		sim.tick(-1)
 	eq(sim.banner, MapSim.BANNER_TOTAL_EXP, "Total Exp")
 	screen._show_banner()
 	check(screen.exp_bar.visible, "the bar under the text")
@@ -66,6 +67,9 @@ func test_the_exp_pages_show_the_bar() -> void:
 	for t in 4:
 		sim.tick(-1)
 	eq(sim.exp_bars.level, 2, "the bar went past its end")
+	eq(sim.exp_bars.level_up_ticks, 20, "Level Up shows")
+	sim.tick(-1, -1, true)
+	eq(sim.exp_bars.level_up_ticks, 1, "a key cuts it short")
 	screen._show_banner()
 	check(screen.banner_text.text.ends_with(screen.tr("mission.level_up") % 2), screen.banner_text.text)
 	sim.banner = MapSim.BANNER_STAGE_CLEAR

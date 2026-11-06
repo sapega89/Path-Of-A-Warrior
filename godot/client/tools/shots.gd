@@ -627,13 +627,13 @@ func _ready() -> void:
 	print("general: hp ", sim.hero.hp, " won ", sim.won, " failed ", sim.failed)
 	await _frames(10)
 	await _shot(out, "mission_1_general_end")
-	# The pages after the mission: the exp, the exp for time, then the general's talk.
-	for page in ["mission_1_total_exp", "mission_1_time_exp", "mission_1_victory_talk"]:
-		Input.action_press("attack")
-		await _frames(2)
-		Input.action_release("attack")
+	# The pages after the mission go on by themselves: the exp, the exp for time, then the
+	# general's talk.
+	for page in [[11, "mission_1_total_exp"], [12, "mission_1_time_exp"], [0, "mission_1_victory_talk"]]:
+		while sim.banner != page[0] and not sim.finished:
+			await _frames(1)
 		await _seconds(1.0)
-		await _shot(out, page)
+		await _shot(out, page[1])
 	get_tree().quit()
 
 
