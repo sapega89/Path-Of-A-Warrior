@@ -802,5 +802,29 @@
   "live.canceled": {
     "en": "%s\nSales canceled.",
     "uk": "%s\nЗнято з продажу."
+  },
+  "live.sale_list": {
+    "en": "Sale List",
+    "uk": "Продано"
+  },
+  "live.gift_list": {
+    "en": "Gift List",
+    "uk": "Подарунки"
+  },
+  "live.sold_lines": {
+    "en": "Listed Items has been sold.",
+    "uk": "Ці речі купили інші гравці."
+  },
+  "live.gift_lines": {
+    "en": "Listed Items has been received.",
+    "uk": "Ці речі вам подарували (вони на складі)."
+  },
+  "live.fame_applied": {
+    "en": "Saved Exp (%d) and Fame (%d) in Server has been applied.",
+    "uk": "Досвід (%d) і славу (%d), збережені на сервері, отримано."
+  },
+  "live.level_up": {
+    "en": "%d Level up",
+    "uk": "Нових рівнів: %d"
   }
 }

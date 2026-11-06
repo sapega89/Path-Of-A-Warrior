@@ -184,6 +184,31 @@ func _ready() -> void:
 	Router.push("live_cancel", live_params)
 	await _frames(2)
 	await _shot(out, "10o_live_cancel")
+	# Opening Live with something new on the server: a notice, the Sale List, the Gift List,
+	# the Exp and Fame kept there.
+	market.notices = [["Welcome to Live!", "Sell what you", "do not need."]]
+	var on_server: Dictionary = market.user("ANDREY")
+	on_server.sold.append({"item": items.make(146), "price": 1800})
+	on_server.sold.append({"item": items.make(161), "price": 950})
+	market.give_gift("ANDREY", "MARIA", items.make(503))
+	on_server.fame = 12
+	on_server.exp = 300
+	client.notices_seen = false
+	Router.go("main_menu")
+	Router.push("live", live_params)
+	await _frames(2)
+	await _shot(out, "10p_live_notice")
+	Router.current.note.hide()
+	Router.current.note.confirmed.emit()
+	await _frames(2)
+	await _shot(out, "10q_live_sale_list")
+	Router.current.list_done()
+	await _frames(2)
+	await _shot(out, "10r_live_gift_list")
+	Router.current.list_done()
+	await _frames(2)
+	await _shot(out, "10s_live_fame")
+	Router.current.note.hide()
 	# The Blacksmith: buying from the shop, and enchanting the sword in hand.
 	Router.go("main_menu")
 	Router.push("blacksmith", {"profile_path": "user://shot_hero.json"})

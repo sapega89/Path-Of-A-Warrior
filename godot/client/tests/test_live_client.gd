@@ -334,3 +334,49 @@ func test_sell_and_cancel_screens() -> void:
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
 	ServerTests._rm(d)
+
+
+func test_live_opens_with_notices_sale_list_gifts_and_fame() -> void:
+	var d := _dir()
+	var t := _client(d)
+	var l: Live = t[1]
+	l.notices = [["Welcome", "to Live"], ["Second", "page"]]
+	var u := l.user("ANDREY")
+	u.sold.append({"item": Items.make(101), "price": 700})
+	l.give_gift("ANDREY", "FRIEND", Items.make(131))
+	u.fame = 7
+	u.exp = 5
+	_hero(0).save(TEST_PATH)
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": TEST_PATH, "live": t[0]}
+	var screen: Control = LiveScreen.new()
+	root.add_child(screen)
+	check(screen.note.visible, "a page of notices")
+	check(screen.note.dialog_text.begins_with("Welcome\nto Live"), screen.note.dialog_text)
+	check(screen.buttons.all(func(b): return b.disabled), "no menu yet")
+	screen.note.confirmed.emit()
+	check(screen.note.dialog_text.begins_with("Second"), "the next page")
+	screen.note.confirmed.emit()
+	check(screen.list.visible, "then the Sale List")
+	eq(screen.list_kind, "sold")
+	check(screen.list_info.text.contains("700"), screen.list_info.text)
+	screen.list_done()
+	eq(screen.list_kind, "gifts", "then the Gift List")
+	check(screen.list_info.text.begins_with("FRIEND"), screen.list_info.text)
+	eq(t[0].warehouse.size(), 1, "the gift is in the Warehouse")
+	screen.list_done()
+	eq(screen.note.dialog_text, tr("live.fame_applied") % [5, 7], "then the Exp and Fame")
+	screen.note.confirmed.emit()
+	eq(screen.stage, "", "done")
+	check(not screen.buttons[0].disabled, "the menu")
+	var hero: RefCounted = Profile.load_or_new(TEST_PATH)
+	eq([int(hero.fame), int(hero.experience)], [7, 5], "the hero got them, saved")
+	screen.free()
+	screen = LiveScreen.new()
+	root.add_child(screen)
+	check(not screen.note.visible and not screen.list.visible, "nothing new the second time")
+	check(not screen.buttons[0].disabled, "the menu at once")
+	screen.free()
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
+	ServerTests._rm(d)

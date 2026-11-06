@@ -34,6 +34,18 @@ var tax := TAX_PERCENT  # the share of a sale the server keeps
 var counts: Array = []  # Buy: lots of a kind at enchant 0..9
 var lots: Array = []  # Buy: the lots of a page, Price Info, my lots: [{lot, item, price}]
 var pages := 0  # Buy: pages of the kind and enchant asked for
+## What the server has for this player when Live opens (ask_status), and what was read of it.
+var has_notice := false
+var has_sold := false
+var has_gifts := false
+var notices_seen := false  # the notices are shown once a game
+var notice: Array = []  # the lines of a page of notices
+var more_notices := false
+var sold: Array = []  # Sale List: [{item, price}] (what others bought from me)
+var gifts: Array = []  # Gift List: [{from, item}] (already in the Warehouse)
+var more_gifts := false
+var fame := 0  # Exp / Fame kept on the server for the hero
+var exp_points := 0
 
 
 func _init(send: Callable) -> void:
@@ -157,6 +169,52 @@ static func _lots_of(r: Dictionary) -> Array:
 		out.append({"lot": int(x.get("lot", 0)), "item": thing(x.get("item")),
 			"price": int(x.get("price", 0))})
 	return out
+
+
+## What is new on the server for this player: notices, things sold, gifts; and the tax.
+func ask_status(done: Callable) -> void:
+	_send({"t": "live_status"}, done, func(r: Dictionary) -> void:
+		has_notice = bool(r.get("notice", false))
+		has_sold = bool(r.get("sold", false))
+		has_gifts = bool(r.get("gifts", false))
+		tax = int(r.get("tax", TAX_PERCENT)))
+
+
+## The next page of the notices.
+func ask_notices(done: Callable) -> void:
+	_send({"t": "live_notices"}, done, func(r: Dictionary) -> void:
+		notice = []
+		for line in r.get("lines", []):
+			notice.append(str(line))
+		more_notices = bool(r.get("more", false))
+		if not more_notices:
+			notices_seen = true)
+
+
+## The Sale List; the server forgets what it gave.
+func ask_sold(done: Callable) -> void:
+	_send({"t": "live_sold"}, done, func(r: Dictionary) -> void:
+		sold = []
+		for x in r.get("sold", []):
+			sold.append({"item": thing(x.get("item")), "price": int(x.get("price", 0))})
+		has_sold = false)
+
+
+## The next five of the Gift List.
+func ask_gifts(done: Callable) -> void:
+	_send({"t": "live_gifts"}, done, func(r: Dictionary) -> void:
+		gifts = []
+		for x in r.get("gifts", []):
+			gifts.append({"from": str(x.get("from", "")), "item": thing(x.get("item"))})
+		more_gifts = bool(r.get("more", false))
+		has_gifts = more_gifts)
+
+
+## The Exp and Fame kept on the server; it keeps them no more.
+func ask_fame(done: Callable) -> void:
+	_send({"t": "live_fame"}, done, func(r: Dictionary) -> void:
+		fame = int(r.get("fame", 0))
+		exp_points = int(r.get("exp", 0)))
 
 
 ## Buy: how many lots of a kind there are at each enchant level.
