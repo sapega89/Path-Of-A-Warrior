@@ -382,5 +382,9 @@
   "help.control_2": {
     "en": "Pause: Esc (Start). On a phone: the stick on the left, the buttons on the right, pause at the top. The menus also work with the mouse and touch.",
     "uk": "Пауза: Esc (Start). На телефоні: стік зліва, кнопки справа, пауза вгорі. Меню працюють і з мишею та дотиком."
+  },
+  "pause.help": {
+    "en": "Help",
+    "uk": "Довідка"
   }
 }
