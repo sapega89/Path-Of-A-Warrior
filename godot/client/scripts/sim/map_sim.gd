@@ -2071,6 +2071,96 @@ func effects() -> Array:
 	return out
 
 
+## The weapon trails to draw: ["trail", picture, position]. The picture is the direction
+## (4 of them) times 3 steps. pick gives the steps that are chosen at random each time the
+## trail is drawn (a swing that whirls, a general's strike).
+func trails(pick: RandomNumberGenerator) -> Array:
+	var out: Array = []
+	var step := hero_trail_step(pick)
+	if step > -1:
+		out.append(["trail", _trail_picture(hero.dir, hero.action == 25, hero.frame, step), hero.pos])
+	for e in enemies:
+		if e.type >= 200:
+			continue
+		step = general_trail_step(e, pick)
+		if step > -1:
+			out.append(["trail", _trail_picture(e.dir, e.action == 19, e.frame, step), e.pos])
+	return out
+
+
+## The step of the hero's weapon trail now, or -1 for none.
+func hero_trail_step(_pick: RandomNumberGenerator = null) -> int:
+	var a := hero.action
+	var f := hero.frame
+	if a < 12:
+		var sf := hero_sprite_frame()
+		if sf > 11 and sf < 36 and (sf & 1) != 0:
+			return ((sf - 12) & 0xFFFE) % 6 >> 1
+		return -1
+	match a:
+		12:
+			if f > 2 and f < 6:
+				return 1
+		13:
+			if f > 4 and f < 8:
+				return 1
+		14:
+			if f > 0 and f < 9 and (f & 1) == 0:
+				return 1
+		20:
+			if (f & 1) != 0:
+				return hero.combo
+		21:
+			if f == 5:
+				return 2
+		22:
+			if f == 6:
+				return 2
+		25:
+			if (f & 1) != 0:
+				return 2
+	return -1
+
+
+## The step of a general's weapon trail now, or -1 for none.
+func general_trail_step(e: Actor, pick: RandomNumberGenerator) -> int:
+	var f := e.frame
+	match e.action:
+		6:
+			if f > 2 and f < 6:
+				return 1
+		7:
+			if f > 4 and f < 8:
+				return 1
+		8:
+			if f in [2, 4, 6, 8]:
+				return 1
+		14:
+			if (f & 1) == 0:
+				return pick.randi_range(0, 2)
+		15:
+			if f == 5:
+				return 2
+		16:
+			if f == 6:
+				return 2
+		19:
+			if (f & 1) != 0:
+				return 2
+		_:
+			if e.action < 6:
+				var sf := enemy_sprite_frame(e)
+				if sf > 8 and sf < 16 and (sf & 1) != 0:
+					return pick.randi_range(0, 2)
+	return -1
+
+
+## A whirling swing turns its trail round with the frames.
+static func _trail_picture(dir: int, whirl: bool, frame: int, step: int) -> int:
+	var i := (dir + (frame >> 1 << 1)) & 7 if whirl else dir
+	return (i >> 1) * 3 + step
+
+
 ## The middle of the room on the screen, where the big skills show.
 func _room_middle() -> Vector2i:
 	var o := room_origin()

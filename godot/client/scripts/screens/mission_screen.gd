@@ -43,6 +43,8 @@ var soldiers := {}  # sim actor -> Soldier node
 var shots: Array[MeshInstance3D] = []  # the archers' arrows
 var tint := 0
 var loot := {}  # sim drop -> Sprite3D
+var trails: Array = []  # the weapon trails of this tick
+var _trail_pick := RandomNumberGenerator.new()
 var _tool_tex: Texture2D = preload("res://assets/original/ui/tool.png")
 var _gold_tex: Texture2D = preload("res://assets/original/ui/gold.png")
 var _acc := 0.0
@@ -188,6 +190,7 @@ func _process(delta: float) -> void:
 		_potion = -1
 		hud.tick()
 		_blink += 1
+		trails = sim.trails(_trail_pick)
 	if sim.finished:
 		set_process(false)
 		profile.take_from(sim, lord_id, mission, int(mission_info.get("id", 0)))
@@ -226,6 +229,7 @@ func _update_view(t: float) -> void:
 	var shown: Array = sim.effects()
 	for sp in sim.sparks():
 		shown.append(["spark", sp[0], sp[1]])
+	shown.append_array(trails)
 	effects.show_effects(shown)
 	_place_objects()
 	_place_loot()

@@ -184,6 +184,16 @@ func _ready() -> void:
 	await _frames(3)
 	await _shot(out, "mission_1_fx_spark")
 	msim.hero.hit_fx_kind = 0
+	# A weapon trail held still: the whirling strike.
+	msim.hero.action = 25
+	msim.hero.frame = 3
+	mission.trails = msim.trails(RandomNumberGenerator.new())
+	mission._update_view(1.0)
+	await _frames(3)
+	await _shot(out, "mission_1_fx_trail")
+	msim.hero.action = 0
+	msim.hero.frame = 0
+	mission.trails = []
 	mission.set_process(true)
 	# A general: he comes in with his talk, then the fight.
 	Router.go("mission", {"lord": 1, "mission": 0, "seed": 2})

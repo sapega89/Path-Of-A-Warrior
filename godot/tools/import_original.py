@@ -555,10 +555,26 @@ EFFECTS = [
     ("rain", 66, "fx_anim_30", None),
     ("scroll", 67, "fx_item_10_11", None),
     ("spark", 55, None, None),
+    ("trail", 86, None, None),
 ]
-## The sheets cut as regions of one picture: imgeff entry 1, or for the hit sparks entry 0.
-EFFECT_IMAGE = {"spark": 0}
+## The sheets cut as regions of one picture: imgeff entry 1, or the entry named here.
+EFFECT_IMAGE = {"spark": 0, "trail": 2}
+## Sheets whose pictures are made of several parts drawn together: the weapon trail is two
+## parts a picture (4 directions x 3 steps).
+EFFECT_GROUP = {"trail": 2}
 EFFECT_COLUMNS = 8
+
+
+def _merge_cells(parts):
+    """One picture of parts (image, x, y) drawn over each other, with its own x, y."""
+    x0 = min(p[1] for p in parts)
+    y0 = min(p[2] for p in parts)
+    x1 = max(p[1] + p[0].width for p in parts)
+    y1 = max(p[2] + p[0].height for p in parts)
+    img = Image.new("RGBA", (x1 - x0, y1 - y0), (0, 0, 0, 0))
+    for p in parts:
+        img.alpha_composite(p[0], (p[1] - x0, p[2] - y0))
+    return img, x0, y0
 
 
 def export_effects(out):
@@ -582,6 +598,9 @@ def export_effects(out):
                 cells.append((Image.open(ROOT / (eff[pics[pic] - 27] + ".png")).convert("RGBA"), -ox, -oy))
             else:
                 cells.append((None, 0, 0))
+        group = EFFECT_GROUP.get(name, 1)
+        if group > 1:
+            cells = [_merge_cells(cells[i:i + group]) for i in range(0, len(cells), group)]
         drawn = [c for c in cells if c[0] is not None]
         x0 = min(c[1] for c in drawn)
         y0 = min(c[2] for c in drawn)
