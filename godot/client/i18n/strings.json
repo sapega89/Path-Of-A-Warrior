@@ -464,8 +464,8 @@
     "uk": "У бою: вправо — атака, вліво — захист, вгору — ухилення, вниз — особливі вміння (стрілки, хрестовина або лівий стік). Enter чи пробіл (A) зупиняє смугу біля позначки й вибирає ціль."
   },
   "help.mp_control_2": {
-    "en": "Esc (B) goes back or asks to leave the battle; Tab turns auto-battle on. The buttons under the fighters work with the mouse and touch, as do the menus.",
-    "uk": "Esc (B) — назад або вийти з бою; Tab вмикає автобій. Кнопки під бійцями, як і меню, працюють із мишею та дотиком."
+    "en": "Esc (B) goes back or asks to leave the battle; Tab or F (R3) turns auto-battle on. The buttons under the fighters work with the mouse and touch, as do the menus.",
+    "uk": "Esc (B) — назад або вийти з бою; Tab або F (R3) вмикає автобій. Кнопки під бійцями, як і меню, працюють із мишею та дотиком."
   },
   "pause.help": {
     "en": "Help",
@@ -1228,8 +1228,8 @@
     "uk": "Автобій"
   },
   "online.battle_hint_choose": {
-    "en": "Arrows: choose the action   Esc: exit the battle   Tab: auto-battle",
-    "uk": "Стрілки: дія   Esc: вийти з бою   Tab: автобій"
+    "en": "Arrows: choose the action   Esc: exit the battle   Tab / F: auto-battle",
+    "uk": "Стрілки: дія   Esc: вийти з бою   Tab / F: автобій"
   },
   "online.battle_hint_skills": {
     "en": "Up / Down: a skill   Enter: use it   Esc: back",

@@ -3,8 +3,9 @@ extends Control
 ## stage, the fighters as flat sprites standing on it (assets/original/mp, made by
 ## godot/tools/import_original.py export_mp), and the HUD drawn over it. What happens is scripts/net/online_battle.gd, one step every TICK_MS; this screen
 ## shows it and passes the keys: arrows choose (Right Attack, Left Defend, Up Evade, Down a
-## skill), Enter / Space confirms and stops the timing bar, Esc asks to leave the battle, Tab
-## turns auto-battle on and off. The pad's buttons, the skills and the bar take the mouse too.
+## skill), Enter / Space confirms and stops the timing bar, Esc asks to leave the battle, Tab,
+## F or R3 (the "auto" action, as auto-hunt on the map) turn auto-battle on and off. The pad's
+## buttons, the skills and the bar take the mouse too.
 ## What the battle earned goes to the hero as soon as the result comes: gold, fame, exp (a
 ## level maybe), the loot into the backpack (a potion onto the belt).
 ## Router.params: online (the client, tests), profile_path (tests); the battle is the
@@ -742,7 +743,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 			press(keys[action])
 			return
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_TAB:
+	if event.is_action_pressed("auto"):
 		get_viewport().set_input_as_handled()
 		press("auto")
 
