@@ -41,6 +41,9 @@ func _ready() -> void:
 	await _shot(out, "02b_new_hero_guardian")
 	ng.choose_head(2)
 	ng.name_edit.text = "Andrey"
+	await _frames(1)
+	ng.body.get_node("Keys").key("d").grab_focus()  # the keys under the name, as with a gamepad
+	await _frames(2)
 	await _shot(out, "02c_new_name")
 	ng.submit_name()
 	for i in 3:

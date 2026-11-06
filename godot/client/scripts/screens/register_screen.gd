@@ -3,14 +3,16 @@ extends Control
 ## password 4-12 digits), the same account for Live and multiplayer. Opened by the campaign
 ## when the game is always online and this device has no account yet; it cannot be skipped
 ## (no hero without an account), so Back does nothing. OK registers on the server, then the
-## game goes on.
+## game goes on. The keys under the fields (scripts/ui/key_grid.gd) type with a gamepad too.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Protocol := preload("res://scripts/net/protocol.gd")
+const KeyGrid := preload("res://scripts/ui/key_grid.gd")
 
 var user_id: LineEdit
 var password: LineEdit
 var info: Label
+var keys: VBoxContainer
 var busy := false
 
 
@@ -29,6 +31,10 @@ func _ready() -> void:
 	password.text_changed.connect(func(t: String) -> void: _keep(password, t, "0", "9", false))
 	user_id.text_submitted.connect(func(_t: String) -> void: password.grab_focus())
 	password.text_submitted.connect(func(_t: String) -> void: submit())
+	keys = KeyGrid.create(KeyGrid.ACCOUNT, user_id)
+	keys.follow(user_id)
+	keys.follow(password)
+	col.add_child(keys)
 	var ok := Button.new()
 	ok.name = "Ok"
 	ok.text = "register.ok"
