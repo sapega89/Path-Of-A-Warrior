@@ -52,7 +52,6 @@ var effects: Effects
 var banner: PanelContainer
 var banner_text: Label
 var exp_bar: ExpBar  # under the text of the pages Total Exp and Time Exp
-var _exp_page := 0  # the page the exp bar was started for
 var arrows: Array[TextureRect] = []
 var soldiers := {}  # sim actor -> Soldier node
 var shots: Array[MeshInstance3D] = []  # the archers' arrows
@@ -181,6 +180,7 @@ func _ready() -> void:
 	exp_bar = ExpBar.new()
 	exp_bar.name = "ExpBar"
 	exp_bar.visible = false
+	exp_bar.bars = sim.exp_bars
 	exp_bar.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	lines.add_child(exp_bar)
 	banner.add_child(lines)
@@ -250,7 +250,6 @@ func _process(delta: float) -> void:
 		_potion = -1
 		_belt = -1
 		hud.tick()
-		tick_exp_bar()
 		_blink += 1
 		trails = sim.trails(_trail_pick)
 	if sim.failed and not _fail_seen:
@@ -370,6 +369,7 @@ func _show_banner() -> void:
 	var talk: String = sim.talk_text()
 	banner.visible = sim.banner != 0 or not sim.talk.is_empty()
 	exp_bar.visible = sim.banner == MapSim.BANNER_TOTAL_EXP or sim.banner == MapSim.BANNER_TIME_EXP
+	exp_bar.queue_redraw()
 	if not banner.visible:
 		return
 	if sim.banner == 0:
@@ -391,26 +391,10 @@ func _show_banner() -> void:
 		else:
 			stage = "%s\n%s %s\n%s %s" % [tr("mission.time_exp"), tr("mission.time_limit"),
 				clock(sim.time_limit), tr("mission.time_taken"), clock(sim.play_seconds())]
-		if exp_bar.level_up_ticks > 0:
-			stage += "\n" + tr("mission.level_up") % exp_bar.level
+		if sim.exp_bars.level_up_ticks > 0:
+			stage += "\n" + tr("mission.level_up") % sim.exp_bars.level
 	banner_text.text = "%s\n%s\n%s" % [lord_name, mission_info.get("name", ""), stage]
 	_place_banner(0.3)
-
-
-## The exp bar: started on Total Exp from the hero before the mission, again on Time Exp
-## with the exp for the time; grows a tick at a time.
-func tick_exp_bar() -> void:
-	if sim.banner != MapSim.BANNER_TOTAL_EXP and sim.banner != MapSim.BANNER_TIME_EXP:
-		return
-	if _exp_page == sim.banner:
-		exp_bar.tick()
-	elif sim.banner == MapSim.BANNER_TOTAL_EXP:
-		exp_bar.begin(profile.level, profile.experience, sim.exp_reward())
-	else:
-		if _exp_page != MapSim.BANNER_TOTAL_EXP:
-			exp_bar.begin(profile.level, profile.experience, sim.exp_reward())
-		exp_bar.begin_time(sim.exp_reward())
-	_exp_page = sim.banner
 
 
 ## mm:ss

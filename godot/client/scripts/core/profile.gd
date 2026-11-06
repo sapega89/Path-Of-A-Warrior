@@ -329,6 +329,7 @@ func assign_quick_key(key: int, slot: int) -> bool:
 func apply_to(sim: RefCounted) -> void:
 	var h = sim.hero
 	h.level = level
+	sim.hero_exp = experience
 	h.attack = attack()
 	h.defense = defense()
 	h.max_hp = max_hp()

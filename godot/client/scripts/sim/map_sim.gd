@@ -17,6 +17,7 @@ extends RefCounted
 
 const Rooms := preload("res://scripts/world/rooms.gd")
 const JavaRandom := preload("res://scripts/sim/java_random.gd")
+const ExpBars := preload("res://scripts/sim/exp_bars.gd")
 const TABLES_PATH := "res://data/tables.json"
 const TICK_MS := 120  # speed 2 of the original (speed_frame_ms)
 const END := 200  # animation frame numbers above this end the animation (222 = loop end)
@@ -180,6 +181,8 @@ var mission_gold := 0
 var mission_general := 0
 var time_limit := 0  # seconds; in time the exp grows
 var time_exp := 0  # the exp for time, given when the mission was won in time
+var hero_exp := 0  # the hero's exp into his level before the mission
+var exp_bars := ExpBars.new()  # the exp bar of the pages Total Exp and Time Exp
 ## Friendship points of the generals the hero talked with (general id -> points).
 var friendship := {}
 ## What follows the talk: 0 the map goes on, 1 the exits open, 2 the mission is over.
@@ -386,6 +389,8 @@ func _tick_banner(fire: bool) -> void:
 			finished = true
 		return
 	if banner == BANNER_SUCCESS or banner == BANNER_TOTAL_EXP or banner == BANNER_TIME_EXP:
+		if banner != BANNER_SUCCESS:
+			exp_bars.tick()
 		if fire:
 			_next_result_page()
 		return
@@ -1659,11 +1664,13 @@ func _next_result_page() -> void:
 	match banner:
 		BANNER_SUCCESS:
 			banner = BANNER_TOTAL_EXP
+			exp_bars.begin(hero.level, hero_exp, exp_reward())
 		BANNER_TOTAL_EXP:
 			if play_seconds() < time_limit:
 				time_exp = ((time_limit - play_seconds()) / time_limit / 10 + 1) * mission_exp / 20
 				mission_exp += time_exp
 				banner = BANNER_TIME_EXP
+				exp_bars.begin_time(exp_reward())
 			else:
 				_mission_over()
 		_:
