@@ -214,6 +214,20 @@ func assign_hotkey(slot: int, skill: int) -> bool:
 	return true
 
 
+## Puts the potion slot (0..4) on potion key 0 or 1. A slot the other key holds swaps the two
+## keys. False when the slot is empty or already on that key.
+func assign_quick_key(key: int, slot: int) -> bool:
+	if key < 0 or key > 1 or slot < 0 or slot >= quick_slots.size():
+		return false
+	if int(quick_slots[slot][0]) == 0 or int(quick_keys[key]) == slot:
+		return false
+	var other := (key + 1) & 1
+	if int(quick_keys[other]) == slot:
+		quick_keys[other] = quick_keys[key]
+	quick_keys[key] = slot
+	return true
+
+
 ## The hero of a mission starts with this hero's numbers, full HP and MP.
 func apply_to(sim: RefCounted) -> void:
 	var h = sim.hero

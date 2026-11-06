@@ -59,6 +59,16 @@ func _ready() -> void:
 	await _frames(2)
 	Router.current.cells[1].grab_focus()
 	await _shot(out, "09_inventory")
+	# Assign Items: three kinds of potion, the second key on the blue ones.
+	Router.back()
+	hero.quick_slots = [[1, 3], [4, 2], [7, 1], [0, 0], [0, 0]]
+	hero.quick_keys = [0, 1]
+	hero.save("user://shot_hero.json")
+	Router.push("assign_items", Router.params)
+	await _frames(2)
+	Router.current.press_slot(2)
+	Router.current.slots[2].grab_focus()
+	await _shot(out, "10_assign_items")
 	Router.go("map_viewer")
 	var viewer: Node = Router.current
 	for n in MAPS:
