@@ -6,7 +6,8 @@ extends Control
 ## Above the panel the skill bar (as in pyport): the five belt slots (keys Z X C V B) on the
 ## left with their counts, the five skills (keys 1-5) on the right, grey when not learned
 ## or without the MP; the slot in use is framed white. A click on a slot uses it. With the
-## bar the panel does not show the two potions (the belt shows all five).
+## bar the panel does not show the two potions (the belt shows all five). In the bottom-left
+## corner AUTO: white while the auto-hunt is on, grey while off; a click toggles it.
 
 const UI := "res://assets/original/ui/"
 const BALL := 35  # the balls' size
@@ -18,6 +19,8 @@ const CELL := 23  # a slot of the bar: 1 px shared border and a 22 px icon
 const ICON := 22  # the middle of a 28 px icon
 const BAR_H := 24
 const BELT_KEYS := "ZXCVB"
+const AUTO_W := 48  # the AUTO corner
+const AUTO_H := 17
 const SKILL_KEYS := "12345"
 
 var sim: RefCounted
@@ -34,6 +37,7 @@ var _items: Texture2D = preload(UI + "tool.png")
 var _skills: Texture2D = preload(UI + "skill.png")
 var _skills_gray: Texture2D = preload(UI + "skillgray.png")
 var show_bar := true
+var auto_on := false
 
 
 func _ready() -> void:
@@ -77,6 +81,7 @@ func _draw() -> void:
 		if h > 0:
 			draw_texture_rect_region(_cover, Rect2(origin + Vector2(BALL_X[b], 0) * k,
 				Vector2(BALL, h) * k), Rect2(0, 0, BALL, h))
+	_auto(view, k)
 	if show_bar:
 		_bar(origin + Vector2(0, -BAR_H) * k, k)
 		return
@@ -92,6 +97,23 @@ func _draw() -> void:
 		p = origin + Vector2(120 + side * (38 + 11 * (1 - b)), PANEL_H - 33) * k
 		draw_texture_rect_region(_small, Rect2(p, Vector2(11, 12) * k), Rect2(98, 0, 11, 12))
 		_number(int(slot[1]), origin + Vector2(120 + side * (28 + 10 * b), PANEL_H - 35) * k, k)
+
+
+func _auto(view: Vector2, k: float) -> void:
+	var r := Rect2(Vector2(0, view.y - AUTO_H * k), Vector2(AUTO_W, AUTO_H) * k)
+	draw_rect(r, Color.BLACK)
+	var font := get_theme_default_font()
+	var size := int(12 * k)
+	var w := font.get_string_size("AUTO", HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+	draw_string(font, Vector2(r.position.x + (r.size.x - w) / 2.0, r.end.y - 4 * k), "AUTO",
+		HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color.WHITE if auto_on else Color8(120, 120, 120))
+
+
+## Is the point on the AUTO corner?
+func auto_at(p: Vector2) -> bool:
+	var view := get_viewport_rect().size
+	var k := scale_of(view)
+	return p.x < AUTO_W * k and p.y >= view.y - AUTO_H * k
 
 
 ## The x of slot i of the belt (left) or the skills (right) in the 240 px panel.

@@ -228,6 +228,9 @@ func _ready() -> void:
 	print("fight: kills ", mission.sim.kills, " hp ", mission.sim.hero.hp, " open ", mission.sim.exits_open(),
 		" failed ", mission.sim.failed, " s ", (Time.get_ticks_msec() - t0) / 1000)
 	await _shot(out, "mission_1_cleared")
+	Router.current.toggle_auto()  # the AUTO corner lit (switched off again at once)
+	await _shot(out, "mission_1_auto_on")
+	Router.current.toggle_auto()
 	# Save on the map once the room is clear (the shots' own hero file is put back after).
 	var kept := FileAccess.get_file_as_string("user://hero.json")
 	Router.current.pause()
