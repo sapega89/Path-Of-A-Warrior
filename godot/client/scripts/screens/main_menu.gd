@@ -30,7 +30,7 @@ func _ready() -> void:
 	_add(col, "Settings", "menu.settings", func(): Router.push("settings"))
 	_add(col, "Help", "menu.help", func(): Router.push("help"))
 	if show_quit():
-		_add(col, "Quit", "menu.quit", func(): get_tree().quit())
+		_add(col, "Quit", "menu.quit", func(): Cloud.quit_game())
 	ask = ConfirmationDialog.new()
 	ask.name = "Ask"
 	ask.dialog_text = tr("newgame.ask_delete")
