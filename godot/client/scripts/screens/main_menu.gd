@@ -1,5 +1,5 @@
 extends Control
-## Main menu: play, blacksmith, management, visiting, maps, settings, quit (no quit button on phones and the web).
+## Main menu: play, blacksmith, management, visiting, endings, maps, settings, quit (no quit button on phones and the web).
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
@@ -18,6 +18,7 @@ func _ready() -> void:
 	_add(col, "Visiting", "menu.visiting", func(): Router.push("visiting"))
 	if not Visits.can_visit(Profile.load_or_new()):
 		buttons[-1].modulate = Color(1, 1, 1, 0.5)  # greyed: it only says when one can visit
+	_add(col, "Endings", "menu.endings", func(): Router.push("endings", {}))
 	_add(col, "Maps", "menu.maps", func(): Router.push("map_viewer"))
 	_add(col, "Settings", "menu.settings", func(): Router.push("settings"))
 	if show_quit():

@@ -354,5 +354,17 @@
   "pause.quit": {
     "en": "Exit Game",
     "uk": "Вийти з гри"
+  },
+  "menu.endings": {
+    "en": "Endings",
+    "uk": "Кінцівки"
+  },
+  "endings.title": {
+    "en": "Endings",
+    "uk": "Кінцівки"
+  },
+  "endings.locked": {
+    "en": "You must first complete the missions needed to view this ending.",
+    "uk": "Спершу пройдіть місії, що ведуть до цієї кінцівки."
   }
 }
