@@ -462,5 +462,57 @@
   "pause.help": {
     "en": "Help",
     "uk": "Довідка"
+  },
+  "menu.live": {
+    "en": "Live",
+    "uk": "Live"
+  },
+  "live.title": {
+    "en": "Live",
+    "uk": "Live"
+  },
+  "live.save": {
+    "en": "Save to server",
+    "uk": "Зберегти на сервер"
+  },
+  "live.load": {
+    "en": "Load from server",
+    "uk": "Завантажити з сервера"
+  },
+  "live.connecting": {
+    "en": "Connecting...",
+    "uk": "З'єднання..."
+  },
+  "live.online": {
+    "en": "Connected: %s",
+    "uk": "Підключено: %s"
+  },
+  "live.offline": {
+    "en": "No connection to the server.",
+    "uk": "Немає з'єднання з сервером."
+  },
+  "live.ask_save": {
+    "en": "Do you want to save your user data to the server?",
+    "uk": "Зберегти вашого героя на сервері?"
+  },
+  "live.ask_load": {
+    "en": "Do you want to load your user data from the server and overwrite your current data?",
+    "uk": "Завантажити героя з сервера замість поточного?"
+  },
+  "live.saved": {
+    "en": "Save succeeded.",
+    "uk": "Збережено."
+  },
+  "live.loaded": {
+    "en": "Load Succeeded.",
+    "uk": "Завантажено."
+  },
+  "live.nothing": {
+    "en": "No saved data.",
+    "uk": "На сервері немає збереження."
+  },
+  "live.error": {
+    "en": "Server error: %s",
+    "uk": "Помилка сервера: %s"
   }
 }

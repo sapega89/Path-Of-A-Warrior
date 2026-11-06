@@ -30,10 +30,21 @@ jobs:
           "$RUNNER_TEMP/venv/bin/python" godot/tools/import_original.py
           git diff --exit-code -- godot/client/data godot/client/assets/original/hero.json
 
+      - name: Game server tests, then the server for the client's tests
+        run: |
+          "$RUNNER_TEMP/venv/bin/pip" install -q -r godot/server/requirements.txt
+          cd godot/server
+          "$RUNNER_TEMP/venv/bin/python" -m pytest -q
+          nohup "$RUNNER_TEMP/venv/bin/python" -m game_server --host 127.0.0.1 --port 28300 --db :memory: \
+            > "$RUNNER_TEMP/server.log" 2>&1 &
+          sleep 1
+
       - name: Import
         run: timeout 300 "$RUNNER_TEMP/godot" --headless --path godot/client --import
 
       - name: Tests
+        env:
+          POW_TEST_SERVER: ws://127.0.0.1:28300
         run: timeout 300 "$RUNNER_TEMP/godot" --headless --path godot/client res://tests/runner.tscn
 
       - name: Screenshots

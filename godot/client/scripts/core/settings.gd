@@ -11,6 +11,7 @@ const DEFAULTS := {
 	"music_volume": 0.8,
 	"sfx_volume": 0.8,
 	"fullscreen": false,
+	"server_url": "ws://127.0.0.1:28300",  # the game server (godot/server)
 }
 const BUSES := {"music_volume": "Music", "sfx_volume": "SFX"}
 

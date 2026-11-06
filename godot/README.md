@@ -15,7 +15,7 @@ godot/
     scripts/core/         автозавантаження: I18n, Settings, InputSetup, Router, Audio
     scripts/screens/      екрани: title, main_menu, settings, map_viewer, campaign, mission,
                           management, attributes, skills, gear, inventory,
-                          assign_items, story, blacksmith, shop, visiting, endings, help, new_game (герой у user://hero.json)
+                          assign_items, story, blacksmith, shop, visiting, endings, help, new_game, live (герой у user://hero.json)
     scripts/world/        3D-світ: map_builder (карта з оригінальних шарів), hero, follow_camera
     scripts/ui/           тема, сенсорні кнопки
     i18n/strings.json     тексти українською й англійською
@@ -25,6 +25,7 @@ godot/
                           fluidsynth і General MIDI sound font у .ogg (scripts/core/audio.gd)
     tests/                тести: test_*.gd, запуск runner.tscn
   tools/import_original.py  конвертер оригінальних ресурсів з кореня репо
+  server/                 сервер гри (Python, JSON через WebSocket): server/README.md
 ```
 
 ## Запуск

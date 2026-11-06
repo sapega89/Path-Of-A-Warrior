@@ -138,6 +138,13 @@ func _ready() -> void:
 	Router.current.list.get_child(1).grab_focus()
 	Router.current.open(1)
 	await _shot(out, "22_endings")
+	# Live: connected to the game server (CI runs one), then the hero saved there.
+	Router.go("main_menu")
+	Router.push("live", {"profile_path": "user://shot_hero.json"})
+	await _seconds(1.5)
+	await _shot(out, "22a_live")
+	await Router.current.run("save")
+	await _shot(out, "22b_live_saved")
 	# Help: the topics, then the second page of Blacksmith.
 	Router.go("main_menu")
 	Router.push("help")
