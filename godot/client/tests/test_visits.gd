@@ -88,7 +88,11 @@ func test_visiting_screen() -> void:
 	screen.open(4)
 	eq(screen.step, Visiting.Step.GREETING, "he greets")
 	eq(screen.hero_says.visible_characters, 0, "typed out")
-	for i in 6:
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.pressed = true
+	screen._gui_input(click)  # a click beside the buttons, as OK
+	for i in 5:
 		screen.press()
 	eq(screen.step, Visiting.Step.TOPIC, "then the question")
 	check(screen.topics.visible, "with four topics")

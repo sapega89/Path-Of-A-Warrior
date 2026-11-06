@@ -63,6 +63,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		Cloud.forget_account()
 		try_again()
-	elif event.is_action_pressed("ui_accept") or (event is InputEventMouseButton and event.pressed):
+	elif event.is_action_pressed("ui_accept"):
 		get_viewport().set_input_as_handled()
+		try_again()
+
+
+## A click anywhere tries again (in a window the screen itself takes the click).
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		accept_event()
 		try_again()

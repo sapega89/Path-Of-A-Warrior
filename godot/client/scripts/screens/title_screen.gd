@@ -11,6 +11,7 @@ func _ready() -> void:
 	col.add_child(UiTheme.heading("game.title", 72))
 	var spacer := Control.new()
 	spacer.custom_minimum_size = Vector2(0, 80)
+	spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE  # a click there reaches the screen too
 	col.add_child(spacer)
 	_prompt = Label.new()
 	_prompt.name = "Prompt"
@@ -26,6 +27,14 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if is_start_event(event):
 		get_viewport().set_input_as_handled()
+		Router.go("main_menu")
+
+
+## A click or a tap anywhere: in a window the screen itself takes it (it never reaches
+## _unhandled_input).
+func _gui_input(event: InputEvent) -> void:
+	if is_start_event(event):
+		accept_event()
 		Router.go("main_menu")
 
 
