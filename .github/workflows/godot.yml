@@ -25,8 +25,9 @@ jobs:
 
       - name: Converted data is up to date
         run: |
-          pip install pillow
-          python godot/tools/import_original.py
+          python3 -m venv "$RUNNER_TEMP/venv"
+          "$RUNNER_TEMP/venv/bin/pip" install -q pillow
+          "$RUNNER_TEMP/venv/bin/python" godot/tools/import_original.py
           git diff --exit-code -- godot/client/data godot/client/assets/original/hero.json
 
       - name: Import
