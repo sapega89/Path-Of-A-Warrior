@@ -51,14 +51,6 @@
     "en": "Maps",
     "uk": "Карти"
   },
-  "campaign.chapters": {
-    "en": "Chapters",
-    "uk": "Розділи"
-  },
-  "campaign.chapter": {
-    "en": "Chapter %d",
-    "uk": "Розділ %d"
-  },
   "campaign.mission": {
     "en": "Mission %d: %s",
     "uk": "Місія %d: %s"
@@ -194,5 +186,9 @@
   "assign.key": {
     "en": "Key %s",
     "uk": "Клавіша %s"
+  },
+  "campaign.lords": {
+    "en": "Lords",
+    "uk": "Володарі"
   }
 }

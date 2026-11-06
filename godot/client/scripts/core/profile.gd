@@ -18,6 +18,13 @@ const POINTS_PER_LEVEL := 3
 ## The weapon a new hero holds: the Iron Claymore (attack +1).
 const START_WEAPON := 116
 const PROGRESS_PER_WIN := 5
+## The lords a new hero can fight for: bit (id - 1) set.
+const START_LORDS_OPEN := 35113052110447
+const LORD_COUNT := 45
+## Where the hero goes after ending i (0: back to the start, the progress of the rulers lost).
+const NEXT_PLACE := [0, 0, 0, 0, 0, 0, 11, 8, 0, 15, 15, 20, 17, 19, 19, 0, 30, 22, 35, 38, 39, 33, 33, 44]
+const ENDING_BASE := 200
+const SCARF := 502  # Catherine's scarf: the reward of ending 2, needed to see ending 3
 ## What one stat point adds: HP, MP, attack, defence.
 const POINT_GAINS := [5, 3, 1, 1]
 enum Stat { HP, MP, ATTACK, DEFENSE }
@@ -41,6 +48,9 @@ var quick_keys: Array = [0, 1]
 var friendship := {}  # general id (as text) -> points
 var progress := {}  # ruler id (as text) -> 0..100, 5 a won mission
 var done := {}  # "lord:mission" of the missions won
+var place := 0  # where the hero is: the lords of campaign chapter `place` can be fought for
+var lords_open := START_LORDS_OPEN  # bit (id - 1) set: that lord can be fought for
+var endings := 0  # bit i set: ending i was reached
 
 static var _exp_table: Array = []
 
@@ -275,6 +285,61 @@ func take_from(sim: RefCounted, lord_id: int, mission: int, ruler_id: int,
 	return gain_exp(int(sim.exp_reward()))
 
 
+## Where the campaign goes after a mission (info: its campaign.json record). A won mission
+## takes the hero to the lord's place. A mission whose general is 200 + i (won) or whose
+## reward is 200 + i (lost) ends the story with ending i: the hero goes to that ending's
+## place, gets the mission's gold anyway when lost, sometimes a gear (Catherine's scarf
+## after ending 2), and one more lord opens. Returns the ending reached, or -1.
+func advance(sim: RefCounted, lord_id: int, info: Dictionary, rng: RandomNumberGenerator = null) -> int:
+	if rng == null:
+		rng = RandomNumberGenerator.new()
+	var general := int(info.get("general", 0))
+	var reward := int(info.get("reward", 0))
+	var ending := -1
+	if sim.won:
+		place = lord_id
+		if general >= ENDING_BASE:
+			ending = general - ENDING_BASE
+	elif reward > ENDING_BASE:
+		place = lord_id
+		ending = reward - ENDING_BASE
+		gold += int(sim.gold_reward())
+	if ending < 0:
+		return -1
+	if ending != 3 or has_item(SCARF):
+		endings |= 1 << ending
+	place = NEXT_PLACE[ending] if ending < NEXT_PLACE.size() else 0
+	if place == 0:
+		progress = {}
+	var item := 0
+	if ending == 2:
+		item = SCARF
+	elif rng.randi_range(0, 9) == 0:
+		item = 101 + (4 if level / 20 > 4 else level / 20) + 5 * rng.randi_range(0, 19)
+	var closed: Array = []
+	for i in LORD_COUNT:
+		if lords_open & (1 << i) == 0:
+			closed.append(i)
+	if not closed.is_empty():
+		lords_open |= 1 << int(closed[rng.randi_range(0, closed.size() - 1)])
+	if item != 0:
+		add_item(Items.make(item, rng))
+	if ending == 3 and not has_item(SCARF):
+		place = 4  # without the scarf the story of ending 3 is not told: back to chapter 4
+	return ending
+
+
+func is_lord_open(id: int) -> bool:
+	return id >= 1 and lords_open & (1 << (id - 1)) != 0
+
+
+func has_item(id: int) -> bool:
+	for it in backpack:
+		if int(it.id) == id:
+			return true
+	return false
+
+
 func is_done(lord_id: int, mission: int) -> bool:
 	return done.has("%d:%d" % [lord_id, mission])
 
@@ -285,7 +350,8 @@ func to_dict() -> Dictionary:
 		"backpack": backpack,
 		"skill_levels": skill_levels, "hotkeys": hotkeys, "quick_slots": quick_slots,
 		"quick_keys": quick_keys, "friendship": friendship,
-		"progress": progress, "done": done}
+		"progress": progress, "done": done, "place": place, "lords_open": lords_open,
+		"endings": endings}
 
 
 func from_dict(d: Dictionary) -> void:
@@ -310,6 +376,9 @@ func from_dict(d: Dictionary) -> void:
 	friendship = d.get("friendship", friendship)
 	progress = d.get("progress", progress)
 	done = d.get("done", done)
+	place = int(d.get("place", place))
+	lords_open = int(d.get("lords_open", lords_open))
+	endings = int(d.get("endings", endings))
 
 
 func save(path: String = PATH) -> bool:

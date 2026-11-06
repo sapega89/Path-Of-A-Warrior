@@ -64,3 +64,44 @@ func test_saved_and_loaded() -> void:
 	eq(q.experience, 10, "exp")
 	eq(int(q.friendship["5"]), 15, "friendship")
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
+
+
+func _sim_won(won: bool) -> RefCounted:
+	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	sim.won = won
+	sim.mission_gold = 2
+	return sim
+
+
+func test_campaign_moves_on() -> void:
+	var p := Profile.new()
+	eq(p.place, 0, "a new hero starts at chapter 0")
+	check(p.is_lord_open(1), "The Rise is open")
+	check(not p.is_lord_open(8), "lord 8 is not open yet")
+	eq(p.advance(_sim_won(false), 2, {"general": 6, "reward": 0}), -1, "a lost mission")
+	eq(p.place, 0, "stays")
+	eq(p.advance(_sim_won(true), 2, {"general": 6, "reward": 0}), -1, "a won mission")
+	eq(p.place, 2, "goes to the lord's place")
+
+
+func test_endings() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 3
+	var p := Profile.new()
+	var open_before := p.lords_open
+	eq(p.advance(_sim_won(true), 5, {"general": 202, "reward": 0}, rng), 2, "ending 2")
+	check(p.endings & (1 << 2) != 0, "seen")
+	eq(p.place, 0, "back to the start")
+	check(p.has_item(Profile.SCARF), "Catherine's scarf")
+	check(p.lords_open != open_before, "one more lord open")
+	eq(p.advance(_sim_won(true), 9, {"general": 206, "reward": 0}, rng), 6, "ending 6")
+	eq(p.place, 11, "its place")
+	var q := Profile.new()
+	q.gold = 0
+	eq(q.advance(_sim_won(false), 1, {"general": 6, "reward": 210}, rng), 10, "ending 10 by losing")
+	eq(q.gold, 300, "the mission's gold anyway (2 x 150 on normal)")
+	eq(q.place, 15, "its place")
+	var r := Profile.new()
+	eq(r.advance(_sim_won(true), 5, {"general": 203, "reward": 0}, rng), 3, "ending 3")
+	check(r.endings & (1 << 3) == 0, "not seen without the scarf")
+	eq(r.place, 4, "back to chapter 4")

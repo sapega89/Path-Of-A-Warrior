@@ -191,6 +191,7 @@ func _process(delta: float) -> void:
 	if sim.finished:
 		set_process(false)
 		profile.take_from(sim, lord_id, mission, int(mission_info.get("id", 0)))
+		profile.advance(sim, lord_id, mission_info)
 		profile.save()
 		Router.back()
 		return

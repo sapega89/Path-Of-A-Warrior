@@ -81,7 +81,14 @@ func _ready() -> void:
 		await get_tree().physics_frame
 	await _shot(out, "map_%02d_walk" % MAPS.back())
 	# The campaign: the mission list and the first mission, walking down into the next room.
-	Router.go("campaign", {"level": 2, "chapter": 0, "lord": 1})
+	# The lords to fight for from chapter 5: Assassin and Brotherhood are not open yet.
+	var walker: RefCounted = load("res://scripts/core/profile.gd").new()
+	walker.place = 5
+	walker.done["1:0"] = true
+	walker.save("user://shot_walker.json")
+	Router.go("campaign", {"profile_path": "user://shot_walker.json"})
+	await _shot(out, "04_lords")
+	Router.go("campaign", {"level": 2, "lord": 1, "profile_path": "user://shot_walker.json"})
 	await _shot(out, "04_missions")
 	Router.go("mission", {"lord": 1, "mission": 0, "seed": 1})
 	var mission: Node = Router.current
