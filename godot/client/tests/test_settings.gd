@@ -60,3 +60,14 @@ func test_game_speed() -> void:
 	s.free()
 	s2.free()
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))
+
+
+func test_volume_by_ear() -> void:
+	eq([0.25, 0.5, 0.75, 1.0].map(func(v): return roundi(SettingsScript.volume_db(v))), [-24, -12, -5, 0],
+		"the amplitude is the volume squared, as in pyport")
+	var s := _fresh()
+	s.set_value("music_volume", 0.5)
+	eq(roundi(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Music"))), -12, "on the Music bus")
+	s.free()
+	root.get_node("/root/Settings").apply_all()  # the game's own volumes again
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))

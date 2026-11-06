@@ -159,13 +159,19 @@ func _apply(key: String) -> void:
 			var bus := AudioServer.get_bus_index(BUSES[key])
 			if bus >= 0:
 				var v: float = get_value(key)
-				AudioServer.set_bus_volume_db(bus, linear_to_db(maxf(v, 0.0001)))
+				AudioServer.set_bus_volume_db(bus, volume_db(v))
 				AudioServer.set_bus_mute(bus, v <= 0.0)
 		"fullscreen":
 			if can_fullscreen():
 				DisplayServer.window_set_mode(
 					DisplayServer.WINDOW_MODE_FULLSCREEN if get_value(key)
 					else DisplayServer.WINDOW_MODE_WINDOWED)
+
+
+## A volume (0..1) as its bus's dB, by ear as in pyport: the amplitude is the volume squared,
+## so a quarter is -24 dB, a half -12 dB, three quarters -5 dB.
+static func volume_db(volume: float) -> float:
+	return linear_to_db(maxf(volume * volume, 0.000001))
 
 
 static func _ensure_buses() -> void:
