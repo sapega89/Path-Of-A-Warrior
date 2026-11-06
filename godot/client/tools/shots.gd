@@ -74,10 +74,16 @@ func _ready() -> void:
 	msim.hero.mp = msim.hero.max_mp / 3
 	await _seconds(0.3)
 	await _shot(out, "mission_1_potions")
+	while msim.banner != 0:
+		Input.action_press("attack")
+		await _frames(2)
+		Input.action_release("attack")
+		await _seconds(0.2)
 	Input.action_press("potion_1")
 	await _frames(2)
 	Input.action_release("potion_1")
 	await _seconds(0.1)
+	print("potion: effect ", msim.effect_item, " step ", msim.effect_step, " hp ", msim.hero.hp)
 	await _shot(out, "mission_1_potion_drunk")
 	# A general: he comes in with his talk, then the fight.
 	Router.go("mission", {"lord": 1, "mission": 0, "seed": 2})
@@ -120,6 +126,8 @@ func _ready() -> void:
 				await _frames(2)
 				Input.action_release("skill_1")
 				await _seconds(0.1)
+				print("skill try: action ", sim.hero.action, " mp ", sim.hero.mp, " banner ", sim.banner,
+					" talk ", sim.talk.size(), " effect ", sim.effect_item)
 				if sim.hero.action == 12:
 					break
 			await _seconds(0.3)
