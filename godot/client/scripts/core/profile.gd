@@ -35,6 +35,9 @@ const HERO_CLASSES := ["Warrior", "Guardian", "Mystic", "Berserker"]
 ## Resetting the attributes costs gold per hero level, or one of these elixirs.
 const RESPEC_GOLD_PER_LEVEL := 100
 const RESPEC_ITEMS := [434, 435, 436, 437]  # Rise Potion, Azure Potion, Falls / Forest Medicine
+## The briefing's advice: 28 pairs of lines (talk.json "briefing"), the first 10 in turn.
+const BRIEFING_PAIRS := 28
+const BRIEFINGS_IN_TURN := 10
 enum Stat { HP, MP, ATTACK, DEFENSE }
 
 var hero_name := "Hero"
@@ -62,6 +65,7 @@ var done := {}  # "lord:mission" of the missions won
 var place := 0  # where the hero is: the lords of campaign chapter `place` can be fought for
 var lords_open := START_LORDS_OPEN  # bit (id - 1) set: that lord can be fought for
 var endings := 0  # bit i set: ending i was reached
+var briefings := 0  # missions accepted (1..11): which advice the briefing gives
 var shop: Array = []  # the Blacksmith's 25 things: the potions and scrolls, then 17 gears
 var reward_item := 0  # what the last ending gave (not saved)
 var opened_lord := 0  # the lord the last ending opened (not saved)
@@ -612,6 +616,16 @@ func has_item(id: int) -> bool:
 	return false
 
 
+## A mission accepted: the first line of its briefing (the lord's advice; the hero answers with
+## the next line). The first ten missions give the advice in turn, then a random one of the rest.
+func next_briefing(rng: RandomNumberGenerator) -> int:
+	briefings += 1
+	if briefings > BRIEFINGS_IN_TURN:
+		briefings = BRIEFINGS_IN_TURN + 1
+		return (rng.randi_range(0, BRIEFING_PAIRS - BRIEFINGS_IN_TURN - 1) + BRIEFINGS_IN_TURN) * 2
+	return (briefings - 1) * 2
+
+
 func is_done(lord_id: int, mission: int) -> bool:
 	return done.has("%d:%d" % [lord_id, mission])
 
@@ -623,7 +637,7 @@ func to_dict() -> Dictionary:
 		"skill_levels": skill_levels, "hotkeys": hotkeys, "quick_slots": quick_slots,
 		"quick_keys": quick_keys, "friendship": friendship, "can_visit": can_visit,
 		"progress": progress, "done": done, "place": place, "lords_open": lords_open,
-		"endings": endings, "shop": shop, "on_map": on_map}
+		"endings": endings, "briefings": briefings, "shop": shop, "on_map": on_map}
 
 
 func from_dict(d: Dictionary) -> void:
@@ -654,6 +668,7 @@ func from_dict(d: Dictionary) -> void:
 	place = int(d.get("place", place))
 	lords_open = int(d.get("lords_open", lords_open))
 	endings = int(d.get("endings", endings))
+	briefings = clampi(int(d.get("briefings", briefings)), 0, BRIEFINGS_IN_TURN + 1)
 	shop = _copy_items(d.get("shop", []), Items.SHOP_POTIONS.size() + Items.SHOP_GEAR, shop)
 	var m: Variant = d.get("on_map", {})
 	on_map = m if typeof(m) == TYPE_DICTIONARY else {}
@@ -662,6 +677,12 @@ func from_dict(d: Dictionary) -> void:
 ## Saves the hero; a mission saved on its map is forgotten (save_on_map keeps one).
 func save(path: String = PATH) -> bool:
 	on_map = {}
+	return _write(path)
+
+
+## Saves the hero and keeps a mission saved on its map (a mission accepted counts its briefing,
+## Continue still goes back to that map).
+func save_keeping_map(path: String = PATH) -> bool:
 	return _write(path)
 
 

@@ -11,6 +11,7 @@ const SCREENS := {
 	"map_viewer": "res://scripts/screens/map_viewer.gd",
 	"campaign": "res://scripts/screens/campaign_screen.gd",
 	"mission": "res://scripts/screens/mission_screen.gd",
+	"briefing": "res://scripts/screens/briefing_screen.gd",
 	"management": "res://scripts/screens/management_screen.gd",
 	"attributes": "res://scripts/screens/attributes_screen.gd",
 	"skills": "res://scripts/screens/skills_screen.gd",
@@ -75,6 +76,18 @@ func push(screen_name: String, screen_params: Dictionary = {}) -> bool:
 		return false
 	_stack.append(screen_name)
 	_params_stack.append(screen_params)
+	return true
+
+
+## Shows a screen in place of the current one: back() then goes where the current one would
+## have gone (e.g. briefing -> mission, and after the mission back to the campaign).
+func replace(screen_name: String, screen_params: Dictionary = {}) -> bool:
+	if _stack.is_empty():
+		return go(screen_name, screen_params)
+	if not _show(screen_name, screen_params):
+		return false
+	_stack[-1] = screen_name
+	_params_stack[-1] = screen_params
 	return true
 
 

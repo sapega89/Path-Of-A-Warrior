@@ -13,7 +13,7 @@ godot/
     project.godot
     scenes/main.tscn      корінь: тема + роутер екранів
     scripts/core/         автозавантаження: I18n, Settings, InputSetup, Router, Audio
-    scripts/screens/      екрани: title, main_menu, settings, map_viewer, campaign, mission,
+    scripts/screens/      екрани: title, main_menu, settings, map_viewer, campaign, briefing, mission,
                           management, attributes, skills, gear, inventory,
                           assign_items, story, blacksmith, shop, visiting, endings, help, new_game (герой у user://hero.json)
     scripts/world/        3D-світ: map_builder (карта з оригінальних шарів), hero, follow_camera
@@ -222,6 +222,20 @@ UserID.», меню гасне. Якщо сервер забув гравця (�
 - Звуки бою — оригінальні (`mp/snd*.ogg`), музика мовчить, як у меню мультиплеєра.
 
 Тести також ганяє GitHub Actions (`.github/workflows/godot.yml`) на кожен PR, що змінює `godot/`.
+
+## Перед місією
+
+Як у pyport: місія зі списку володаря спершу показує свій опис (`campaign_screen.gd`, рівень 3):
+ім'я володаря, назву місії й текст з `brief.scr` (імпортер кладе його в `campaign.json`,
+`description`, з підставленими макросами «(..)»); вгору / вниз гортають текст. OK питає
+«Do you want to accept this mission?» з генералом, якого треба побити, рівнем (герой + бонус
+місії) і золотом місії (удвічі на Hard); «Ні» чи Назад лишають опис, Назад з опису — до списку
+місій. «Так» рахує прийняту місію (`briefings` у сейві героя; сейв на карті лишається) і відкриває
+брифінг (`briefing_screen.gd`): портрет місії згори радить, герой знизу відповідає, рядки
+друкуються, кожен за 15 тіків іде далі сам. Перші 10 місій дають поради по черзі, далі —
+випадкова з решти 18 (`talk.json`, `briefing`). Атака / Enter / клік показують рядок цілим або
+одразу йдуть далі; Назад чи Skip — одразу на карту. Карта стає на місце брифінгу
+(`Router.replace`), тож після місії Назад веде в кампанію.
 
 ## Як карта стає 3D
 

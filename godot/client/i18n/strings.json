@@ -59,6 +59,22 @@
     "en": "Mission %d: %s",
     "uk": "Місія %d: %s"
   },
+  "campaign.ok": {
+    "en": "OK",
+    "uk": "OK"
+  },
+  "campaign.level_gold": {
+    "en": "Lv%d / Gold: %d",
+    "uk": "Рів. %d / Золото: %d"
+  },
+  "campaign.accept": {
+    "en": "Do you want to accept this mission?",
+    "uk": "Прийняти цю місію?"
+  },
+  "briefing.skip": {
+    "en": "Skip",
+    "uk": "Пропустити"
+  },
   "mission.stage": {
     "en": "Stage",
     "uk": "Етап"

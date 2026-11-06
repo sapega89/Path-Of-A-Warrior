@@ -41,6 +41,8 @@ Writes
     sideinfo.arr missions of 11 bytes from 11: id, start x, start y (tiles), tint, boss type,
                  general, reward, gold, time limit (u16), level bonus
     ruler.arr    mission names, 15 bytes per id from 3: 14-byte name, portrait
+    brief.scr    (edat 56) the description of mission k, with the "(..)" macros put in
+                 (expand_text, as pyport table_text)
     general.arr  the generals (read_generals): name, look, side, skills, stats
 
 MAP FORMAT (N.MAP, as pyport/pow/game/map_scene.py load_map reads it):
@@ -57,6 +59,7 @@ ROOMS (N.arr, as load_rooms reads it): the map is a grid of 7x7-tile rooms,
 """
 import json
 import pathlib
+import re
 import sys
 
 from PIL import Image
@@ -504,6 +507,18 @@ def read_exp_table():
     return [int.from_bytes(d[2 + 4 * k:6 + 4 * k], "little", signed=True) for k in range((len(d) - 2) // 4)]
 
 
+def expand_text(table, i):
+    """Text i of a table with its macros put in, as pyport table_text does: a text that starts
+    with a number and "|" is that text of the table with each "(..)" replaced by the next of
+    its own "|" parts; any other text just loses the brackets of its "(..)"."""
+    src = table[i]
+    head = re.match(r"(\d{1,3})\|", src)
+    if head is None:
+        return re.sub(r"\(([^)]*)\)", r"\1", src)
+    parts = src[head.end():].split("|")
+    return re.sub(r"\([^)]*\)", lambda m: parts.pop(0) if parts else "", table[int(head.group(1))])
+
+
 def export_campaign(out):
     rows = (ROOT / "mission.arr").read_bytes()
     side = (ROOT / "sideinfo.arr").read_bytes()
@@ -518,6 +533,8 @@ def export_campaign(out):
         r += 1
     while chapters and not chapters[-1]:
         chapters.pop()
+    edat = scr.load(ROOT / "edat.scr")
+    descriptions = read_table(ROOT / edat[56])
     missions = []
     i = 11
     while i + 11 <= len(side):
@@ -529,6 +546,7 @@ def export_campaign(out):
             "reward": m[6], "gold": m[7], "time_limit": m[8] | m[9] << 8, "level_bonus": m[10],
             "name": cstr(names[n:n + 14]) if mid > 0 else "",
             "portrait": int.from_bytes(names[n + 14:n + 15], "little", signed=True) if mid > 0 else 0,
+            "description": expand_text(descriptions, len(missions)) if len(missions) < len(descriptions) else "",
         })
         i += 11
     (out / "campaign.json").write_text(json.dumps(
