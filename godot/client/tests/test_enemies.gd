@@ -60,6 +60,28 @@ func test_archers_stand_on_their_cells() -> void:
 	eq(sim.enemies.size(), 0, "the map without enemies: no archers either")
 
 
+func test_arrows_wait_while_a_big_skill_holds_the_room() -> void:
+	var sim := _sim(false)
+	var a = sim.arrows[0]
+	# [the hero's action and frame of the last tick, the arrow flies on]
+	for c in [[0, 0, true], [12, 5, true], [26, 1, true], [26, 2, false], [27, 8, false],
+			[26, 9, true], [28, 3, true], [28, 4, false], [28, 30, false], [29, 6, true],
+			[29, 7, false], [30, 3, true], [30, 4, false], [30, 14, false], [30, 15, true]]:
+		a.active = true
+		a.pos = sim.hero.pos + Vector2i(0, 120)
+		a.dir = 2  # up, toward the hero
+		a.ticks = 0
+		sim.hero.last_action = c[0]
+		sim.hero.last_frame = c[1]
+		sim._tick_arrows()
+		eq(a.pos.y, sim.hero.pos.y + (108 if c[2] else 120), "skill %d, frame %d" % [c[0], c[1]])
+		eq(a.ticks, 1 if c[2] else 0, "its time goes on only while it flies")
+	sim.hero.action = 28
+	sim.hero.frame = 6
+	sim._end_tick()
+	eq([sim.hero.last_action, sim.hero.last_frame], [28, 6], "the end of a tick keeps them")
+
+
 func test_random_numbers() -> void:
 	var r := JavaRandom.new(42)
 	eq(r.next_int(), -1170105035, "first number of seed 42")
