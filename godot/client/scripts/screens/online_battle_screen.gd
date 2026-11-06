@@ -5,7 +5,8 @@ extends Control
 ## shows it and passes the keys: arrows choose (Right Attack, Left Defend, Up Evade, Down a
 ## skill), Enter / Space confirms and stops the timing bar, Esc asks to leave the battle, Tab,
 ## F or R3 (the "auto" action, as auto-hunt on the map) turn auto-battle on and off. The pad's
-## buttons, the skills and the bar take the mouse too.
+## buttons, the skills and the bar take the mouse too. The hint at the bottom names the keys of
+## the device just used (InputSetup.hint: the keyboard's or the pad's).
 ## What the battle earned goes to the hero as soon as the result comes: gold, fame, exp (a
 ## level maybe), the loot into the backpack (a potion onto the belt).
 ## Router.params: online (the client, tests), profile_path (tests); the battle is the
@@ -685,13 +686,13 @@ func hint_text() -> String:
 	var auto := "   " + tr("online.battle_auto_on") if battle.auto_battle else ""
 	match battle.state:
 		OnlineBattle.CHOOSE:
-			return ("" if battle.exit_prompt else tr("online.battle_hint_choose")) + auto
+			return ("" if battle.exit_prompt else InputSetup.hint("online.battle_hint_choose")) + auto
 		OnlineBattle.SKILLS:
-			return tr("online.battle_hint_skills") + auto
+			return InputSetup.hint("online.battle_hint_skills") + auto
 		OnlineBattle.TARGET:
-			return tr("online.battle_hint_target") + auto
+			return InputSetup.hint("online.battle_hint_target") + auto
 		OnlineBattle.BAR:
-			return tr("online.battle_hint_bar") + auto
+			return InputSetup.hint("online.battle_hint_bar") + auto
 	return auto.strip_edges()
 
 

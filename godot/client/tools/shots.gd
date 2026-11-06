@@ -430,6 +430,10 @@ func _ready() -> void:
 		viewer.hero.step(Vector2.RIGHT, 1.0 / 60.0)
 		await get_tree().physics_frame
 	await _shot(out, "map_%02d_walk" % MAPS.back())
+	InputSetup.device = "pad"  # the top line names LB / RB and B
+	viewer.show_info()
+	await _shot(out, "map_%02d_pad" % MAPS.back())
+	InputSetup.device = "keys"
 	# The campaign: the mission list and the first mission, walking down into the next room.
 	# The lords to fight for from chapter 5: Assassin and Brotherhood are not open yet.
 	var walker: RefCounted = load("res://scripts/core/profile.gd").new()
@@ -655,6 +659,11 @@ func _battle_shots(out: String, game: RefCounted, mp: RefCounted) -> void:
 		return b.state == OnlineBattle.TARGET and b.state_ticks >= 4 and b.state_ticks % 2 == 0)
 	screen.press("down")
 	await _shot(out, "12g_battle_2v2_target")
+	InputSetup.device = "pad"  # the hint names the pad's buttons after a pad button
+	screen._refresh()
+	await _shot(out, "12g_battle_2v2_target_pad")
+	InputSetup.device = "keys"
+	screen._refresh()
 	await _battle_until(screen, _blow_shown)
 	await _shot(out, "12h_battle_2v2_blow")
 	await _battle_leave(screen)

@@ -262,3 +262,34 @@ func test_auto_battle_by_tab_f_or_r3() -> void:
 	screen.free()
 	Router.params = old
 	ServerTests._rm(d)
+
+
+func test_battle_hints_name_the_pad_after_the_pad() -> void:
+	var d := _dir()
+	var net = ClientTests.Net.new(d)
+	net.o.match_wait = 0
+	var c: RefCounted = net.client("ANDREY", OnlineTests.HERO)
+	c.enter(func(_e): pass)
+	c.find_battle(0, func(_e): pass)
+	var old: Dictionary = Router.params
+	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
+	var screen: Control = BattleScreen.new()
+	root.add_child(screen)
+	var was: String = InputSetup.device
+	var states := {OnlineBattle.CHOOSE: "choose", OnlineBattle.SKILLS: "skills",
+		OnlineBattle.TARGET: "target", OnlineBattle.BAR: "bar"}
+	c.battle.auto_battle = false
+	c.battle.exit_prompt = false
+	for device in ["keys", "pad"]:
+		InputSetup.device = device
+		for st in states:
+			c.battle.state = st
+			var key: String = "online.battle_hint_" + states[st]
+			eq(screen.hint_text(), tr(key + ("_pad" if device == "pad" else "")), "%s: %s" % [device, key])
+	c.battle.state = OnlineBattle.BAR
+	InputSetup.device = "pad"
+	eq(screen.hint_text(), "A: stop the bar at the mark", "the pad's A")
+	InputSetup.device = was
+	screen.free()
+	Router.params = old
+	ServerTests._rm(d)
