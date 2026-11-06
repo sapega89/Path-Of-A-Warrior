@@ -87,6 +87,9 @@ func _ready() -> void:
 		sim.rng = JavaRandom.new(int(p.seed))
 	tint = int(mission_info.get("tint", 0))
 	sim.boss_type = int(mission_info.get("boss_type", 0))
+	sim.mission_gold = int(mission_info.get("gold", 0))
+	sim.mission_general = int(mission_info.get("general", 0))
+	sim.time_limit = int(mission_info.get("time_limit", 0))
 
 	var arrow_mat := StandardMaterial3D.new()
 	arrow_mat.albedo_color = Color8(240, 142, 53)
@@ -295,9 +298,19 @@ func _show_banner() -> void:
 	elif sim.banner == MapSim.BANNER_FAILED:
 		stage = tr("mission.failed")
 	elif sim.banner == MapSim.BANNER_SUCCESS:
-		stage = tr("mission.success")
+		stage = "%s\n%s\n%d" % [tr("mission.success"), tr("mission.gold"), sim.gold_reward()]
+	elif sim.banner == MapSim.BANNER_TOTAL_EXP:
+		stage = "%s\n%d" % [tr("mission.total_exp"), sim.exp_reward()]
+	elif sim.banner == MapSim.BANNER_TIME_EXP:
+		stage = "%s\n%s %s\n%s %s" % [tr("mission.time_exp"), tr("mission.time_limit"),
+			clock(sim.time_limit), tr("mission.time_taken"), clock(sim.play_seconds())]
 	banner_text.text = "%s\n%s\n%s" % [lord_name, mission_info.get("name", ""), stage]
 	_place_banner(0.3)
+
+
+## mm:ss
+static func clock(secs: int) -> String:
+	return "%02d:%02d" % [secs / 60, secs % 60]
 
 
 func _place_banner(y: float) -> void:
