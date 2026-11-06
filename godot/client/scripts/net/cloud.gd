@@ -5,16 +5,19 @@ extends Node
 ## or the project settings pow/net/server and pow/net/cert. Off (no server given, as in the
 ## tests and the screenshots) the hero stays in user://hero.json as before.
 ## The account (UserID + password) stays on this device in user://account.cfg.
-## Live (scripts/net/live_client.gd) goes over the same logged-in connection (request()).
+## Live (scripts/net/live_client.gd) and the online game (scripts/net/online_client.gd) go
+## over the same logged-in connection (request()); the server's pushes go to the online game.
 
 const CloudSync := preload("res://scripts/net/cloud_sync.gd")
 const LiveClient := preload("res://scripts/net/live_client.gd")
+const OnlineClient := preload("res://scripts/net/online_client.gd")
 const Protocol := preload("res://scripts/net/protocol.gd")
 const ACCOUNT_PATH := "user://account.cfg"
 const LEGACY_PATH := "user://hero.json"
 
 var sync: CloudSync = null
 var live: LiveClient = null
+var mp: OnlineClient = null  # the online game, while connected
 var account_path := ACCOUNT_PATH
 
 
@@ -52,6 +55,8 @@ func start(address: String, port: int, cert: X509Certificate) -> void:
 	sync = CloudSync.new()
 	sync.setup(address, port, cert)
 	live = LiveClient.new(request)
+	mp = OnlineClient.new(request)
+	sync.client.on_push = _push
 	var acc := load_account()
 	if not acc.is_empty():
 		sync.account = acc
@@ -66,6 +71,7 @@ func stop() -> void:
 		sync.client.close()
 	sync = null
 	live = null
+	mp = null
 
 
 func enabled() -> bool:
@@ -95,6 +101,11 @@ func request(msg: Dictionary, done: Callable) -> void:
 		done.call({"t": msg.get("t", "?"), "ok": false, "err": "offline"})
 		return
 	sync.client.request(msg, done)
+
+
+func _push(m: Dictionary) -> void:
+	if mp != null:
+		mp.on_push(m)
 
 
 func save_hero(d: Dictionary) -> void:

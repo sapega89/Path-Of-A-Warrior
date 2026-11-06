@@ -33,6 +33,14 @@ const SCREENS := {
 	"live_buy": "res://scripts/screens/live_buy_screen.gd",
 	"live_sell": "res://scripts/screens/live_sell_screen.gd",
 	"live_cancel": "res://scripts/screens/live_cancel_screen.gd",
+	"online": "res://scripts/screens/online_screen.gd",
+	"online_character": "res://scripts/screens/online_character_screen.gd",
+	"online_skills": "res://scripts/screens/online_skills_screen.gd",
+	"online_text": "res://scripts/screens/online_text_screen.gd",
+	"online_ranking": "res://scripts/screens/online_ranking_screen.gd",
+	"online_order": "res://scripts/screens/online_order_screen.gd",
+	"online_chat": "res://scripts/screens/online_chat_screen.gd",
+	"online_options": "res://scripts/screens/online_options_screen.gd",
 }
 
 var current: Control

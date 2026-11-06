@@ -11,7 +11,8 @@ const SCREEN_MUSIC := {
 	"title": 0, "main_menu": 0, "mission": 1, "campaign": 2, "settings": 2, "management": 2,
 	"attributes": 2, "skills": 2, "blacksmith": 2, "shop": 2, "gear": 2, "inventory": 2, "assign_items": 2,
 	"live": -1, "live_warehouse": -1, "live_safe": -1, "live_trade": -1, "live_buy": -1,  # Live is quiet
-	"live_sell": -1, "live_cancel": -1,
+	"live_sell": -1, "live_cancel": -1, "online": -1, "online_character": -1, "online_skills": -1,
+	"online_text": -1, "online_ranking": -1, "online_order": -1, "online_chat": -1, "online_options": -1,
 }
 const OVERLAPPING := [3, 4, 15, 16]
 const MIN_GAP_MS := {9: 500}

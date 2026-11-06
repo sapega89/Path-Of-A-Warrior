@@ -4,6 +4,7 @@ extends "res://tests/test_case.gd"
 
 const CloudSync := preload("res://scripts/net/cloud_sync.gd")
 const GameServer := preload("res://server/game_server.gd")
+const Online := preload("res://server/online.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const ServerTests := preload("res://tests/test_server.gd")
 const PORT := 28398
@@ -198,5 +199,33 @@ func test_live_goes_over_the_same_connection() -> void:
 	eq(int(s.live.user("ANDREY").safe), 100)
 	cloud.stop()
 	check(cloud.live == null, "no Live without the server")
+	s.stop()
+	ServerTests._rm(d)
+
+
+func test_the_online_game_goes_over_the_same_connection() -> void:
+	var cloud: Node = root.get_node("/root/Cloud")
+	var d := _dir()
+	var s := _server(d)
+	s.accounts.create_account("ANDREY", "1234")
+	s.accounts.create_account("MARIA", "1234")
+	cloud.account_path = d.path_join("account.cfg")
+	cloud.save_account("ANDREY", "1234")
+	cloud.start("127.0.0.1", PORT, ServerTests.pair(0)[1])
+	cloud.sync.legacy = null
+	check(_run(s, [cloud.sync], cloud.online), "logged in")
+	var mp: RefCounted = cloud.mp
+	var err := []
+	mp.enter(func(e): err.append(e))
+	check(_run(s, [cloud.sync], func(): return not err.is_empty()), "answered")
+	eq([err, mp.entered, s.online.is_online("ANDREY")], [[""], true, true], "online")
+	var maria := Online.Session.new()  # another player, on the server
+	maria.send = func(_m: Dictionary) -> void: pass
+	s.online.enter(maria, "MARIA")
+	eq(s.online.answer(maria, "chat_send", {"channel": Online.PRIVATE, "peer": "ANDREY", "text": "hi"}).ok, true)
+	check(_run(s, [cloud.sync], func(): return int(mp.unread[1]) == 1), "her message pushed here, waiting")
+	eq(mp.chat["pm:MARIA"].map(func(r): return r.text), ["hi"])
+	cloud.stop()
+	check(cloud.mp == null, "no online game without the server")
 	s.stop()
 	ServerTests._rm(d)
