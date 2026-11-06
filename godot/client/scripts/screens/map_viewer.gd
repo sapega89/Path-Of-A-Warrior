@@ -1,6 +1,7 @@
 extends Control
 ## Walks the hero around the original maps in 3D. skill_3 / skill_4 (keys 3 / 4,
-## gamepad LB / RB) switch to the previous / next map. Grows into the real map
+## gamepad LB / RB) switch to the previous / next map; the line at the top names the keys of
+## the device in use. Grows into the real map
 ## screen when the map logic (rooms, exits, enemies) is ported.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
@@ -52,6 +53,7 @@ func _ready() -> void:
 	info.position = Vector2(24, 16)
 	info.add_theme_font_size_override("font_size", 20)
 	add_child(info)
+	InputSetup.device_changed.connect(show_info)
 
 	touch = TouchControls.new()
 	touch.name = "Touch"
@@ -70,8 +72,13 @@ func show_map(number: int) -> bool:
 	hero.global_position = MapBuilder.cell_to_world(builder.start_cell(0)) + Vector3(0, 0.05, 0)
 	hero.velocity = Vector3.ZERO
 	camera.snap()
-	info.text = tr("viewer.info") % [map_number, map_total]
+	show_info()
 	return true
+
+
+## "Map n / N" and the keys that change it, named for the device in use.
+func show_info(_device := "") -> void:
+	info.text = InputSetup.hint("viewer.info") % [map_number, map_total]
 
 
 func _unhandled_input(event: InputEvent) -> void:

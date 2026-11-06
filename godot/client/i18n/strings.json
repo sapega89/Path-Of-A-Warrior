@@ -47,6 +47,10 @@
     "en": "Map %d / %d   [3] [4] change map   [Esc] back",
     "uk": "Карта %d / %d   [3] [4] інша карта   [Esc] назад"
   },
+  "viewer.info_pad": {
+    "en": "Map %d / %d   [LB] [RB] change map   [B] back",
+    "uk": "Карта %d / %d   [LB] [RB] інша карта   [B] назад"
+  },
   "menu.maps": {
     "en": "Maps",
     "uk": "Карти"
@@ -567,6 +571,14 @@
     "en": "OK: try again",
     "uk": "OK: ще раз"
   },
+  "offline.try_again_keys": {
+    "en": "Enter: try again",
+    "uk": "Enter: ще раз"
+  },
+  "offline.try_again_pad": {
+    "en": "A: try again",
+    "uk": "A: ще раз"
+  },
   "offline.refused": {
     "en": "Login refused",
     "uk": "Сервер не прийняв вхід"
@@ -574,6 +586,14 @@
   "offline.other_account": {
     "en": "Back: other account",
     "uk": "Назад: інший акаунт"
+  },
+  "offline.other_account_keys": {
+    "en": "Esc: other account",
+    "uk": "Esc: інший акаунт"
+  },
+  "offline.other_account_pad": {
+    "en": "B: other account",
+    "uk": "B: інший акаунт"
   },
   "offline.connecting": {
     "en": "Connecting...",
@@ -1231,17 +1251,33 @@
     "en": "Arrows: choose the action   Esc: exit the battle   Tab / F: auto-battle",
     "uk": "Стрілки: дія   Esc: вийти з бою   Tab / F: автобій"
   },
+  "online.battle_hint_choose_pad": {
+    "en": "D-pad: choose the action   B: exit the battle   R3: auto-battle",
+    "uk": "Хрестовина: дія   B: вийти з бою   R3: автобій"
+  },
   "online.battle_hint_skills": {
     "en": "Up / Down: a skill   Enter: use it   Esc: back",
     "uk": "Вгору / вниз: вміння   Enter: застосувати   Esc: назад"
+  },
+  "online.battle_hint_skills_pad": {
+    "en": "Up / Down: a skill   A: use it   B: back",
+    "uk": "Вгору / вниз: вміння   A: застосувати   B: назад"
   },
   "online.battle_hint_target": {
     "en": "Arrows: the target   Enter: strike   Esc: back",
     "uk": "Стрілки: ціль   Enter: удар   Esc: назад"
   },
+  "online.battle_hint_target_pad": {
+    "en": "D-pad: the target   A: strike   B: back",
+    "uk": "Хрестовина: ціль   A: удар   B: назад"
+  },
   "online.battle_hint_bar": {
     "en": "Enter / Space: stop the bar at the mark",
     "uk": "Enter / пробіл: зупини смугу на позначці"
+  },
+  "online.battle_hint_bar_pad": {
+    "en": "A: stop the bar at the mark",
+    "uk": "A: зупини смугу на позначці"
   },
   "online.battle_hit": {
     "en": "Hit",

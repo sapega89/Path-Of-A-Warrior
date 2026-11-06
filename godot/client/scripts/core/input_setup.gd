@@ -7,6 +7,10 @@ extends Node
 ## As in pyport: 1-5 (or U I O P K) the five skills, Z X C V B the five belt slots, * and #
 ## (the numeric keypad, RT and L3 of a pad) the two potion keys; the pad's right stick
 ## up / right / down / left uses the belt slots Z X C V. Tab, F or R3: auto-hunt on / off.
+##
+## Key hints, as pyport's: `device` is what the last key came from ("keys", "pad"; "touch" on a
+## phone or after a touch; the mouse changes nothing), and hint(key) is the text `key` + "_" +
+## device when the strings have one (Enter / Esc after the keyboard, A / B after the pad).
 
 const KEYS := {
 	"move_left": [KEY_A, KEY_LEFT],
@@ -57,10 +61,45 @@ const PAD_AXES := {
 	"belt_4": [JOY_AXIS_RIGHT_X, -1.0],
 }
 const DEADZONE := 0.3
+## A stick or trigger moved this far counts as the pad being used.
+const PAD_MOTION := 0.5
+
+signal device_changed(device: String)
+
+var device := "touch" if OS.has_feature("mobile") else "keys"
 
 
 func _ready() -> void:
 	register()
+
+
+func _input(event: InputEvent) -> void:
+	var from := device_of(event)
+	if not from.is_empty() and from != device:
+		device = from
+		device_changed.emit(device)
+
+
+## "keys", "pad" or "touch" for a press, "" for anything else (the mouse, a release, a stick
+## at rest).
+static func device_of(event: InputEvent) -> String:
+	if event is InputEventKey:
+		return "keys" if event.pressed and not event.echo else ""
+	if event is InputEventJoypadButton:
+		return "pad" if event.pressed else ""
+	if event is InputEventJoypadMotion:
+		return "pad" if absf(event.axis_value) >= PAD_MOTION else ""
+	if event is InputEventScreenTouch:
+		return "touch" if event.pressed else ""
+	return ""
+
+
+## The text of `key` for the device in use: `key`_pad, `key`_keys or `key`_touch when the
+## strings have it, `key` itself otherwise.
+func hint(key: String) -> String:
+	var own := key + "_" + device
+	var text := tr(own)
+	return tr(key) if text == own else text
 
 
 static func actions() -> Array:

@@ -252,6 +252,13 @@ UserID.», меню гасне. Якщо сервер забув гравця (�
 У переглядачі карт 3 / 4 (LB / RB) — попередня / наступна карта.
 Help → Control називає саме ці клавіші (`help.control_1`, `help.control_2`).
 
+Підказки клавіш, як у pyport: гра пам'ятає пристрій останнього натиску (`InputSetup.device`:
+клавіатура, геймпад або дотик на телефоні; миша нічого не змінює) і `InputSetup.hint(key)` бере
+рядок `key_pad` / `key_keys` / `key_touch`, якщо такий є. Підказка внизу бою мультиплеєра після
+геймпада — «D-pad: choose the action   B: exit the battle   R3: auto-battle», «A: stop the bar at the
+mark»…; рядок переглядача карт — «[LB] [RB] change map   [B] back»; екран «No connection» — `Enter` /
+`Esc` після клавіатури, `A` / `B` після геймпада, а на телефоні як і було `OK` / `Back`.
+
 ## Звук
 
 Повзунки гучності в Settings (і в паузі) — на слух, як крива гучності pyport: гучність каналу —

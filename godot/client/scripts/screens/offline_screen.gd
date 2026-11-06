@@ -3,6 +3,8 @@ extends Control
 ## menu while the server is not there, or refused the stored login. OK (or a click) tries
 ## again, and so does the screen itself every AUTO_RETRY_MS; on a refused login BACK forgets
 ## the stored account (the game asks for one again). Once online, the main menu comes back.
+## OK and BACK are named for the device just used, as pyport's: Enter / Esc, A / B, or OK / Back
+## on a phone.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const AUTO_RETRY_MS := 10000
@@ -21,16 +23,23 @@ func _ready() -> void:
 	col.add_child(text)
 	shown_at = Time.get_ticks_msec()
 	refresh()
+	InputSetup.device_changed.connect(_on_device)
 
 
 func lines() -> String:
 	if Cloud.refused():
-		return "%s\n\n%s\n%s" % [tr("offline.refused"), tr("offline.try_again"), tr("offline.other_account")]
-	return "%s\n\n%s\n\n%s" % [tr("offline.no_connection"), tr("offline.only_online"), tr("offline.try_again")]
+		return "%s\n\n%s\n%s" % [tr("offline.refused"), InputSetup.hint("offline.try_again"), InputSetup.hint("offline.other_account")]
+	return "%s\n\n%s\n\n%s" % [tr("offline.no_connection"), tr("offline.only_online"), InputSetup.hint("offline.try_again")]
 
 
 func refresh() -> void:
 	text.text = lines()
+
+
+## The keys are named for the device just used (Enter / Esc or A / B).
+func _on_device(_device: String) -> void:
+	if text.text != tr("offline.connecting"):
+		refresh()
 
 
 func try_again() -> void:
