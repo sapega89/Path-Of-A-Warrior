@@ -726,6 +726,7 @@ func resume_on_map(sim: RefCounted) -> void:
 	sim.mission_exp = int(on_map.get("exp", 0))
 	sim.kills = int(on_map.get("kills", 0))
 	sim.play_ticks = int(on_map.get("ticks", 0))
+	sim.continue_in_clear_room()
 
 
 func _write(path: String) -> bool:

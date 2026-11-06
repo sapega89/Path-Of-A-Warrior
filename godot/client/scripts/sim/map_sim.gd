@@ -873,6 +873,17 @@ func _end_tick() -> void:
 	room_phase_timer -= 1
 
 
+## Continuing a save on the map, as pyport's: the room was clear when it was saved, so it
+## stays clear (no waves, no archers, no "Stage" banner) and its exits open.
+func continue_in_clear_room() -> void:
+	enemies.clear()
+	enemies_alive = 0
+	for i in waves.size():
+		waves[i] = 0
+	room_phase = 1
+	room_phase_timer = 5
+
+
 ## The game can be saved on the map: no enemy alive, no general fighting, no wave to come.
 func can_save() -> bool:
 	for e in enemies:
