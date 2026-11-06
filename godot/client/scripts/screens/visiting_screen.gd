@@ -77,7 +77,7 @@ func _ready() -> void:
 	general_says = top.get_child(1)
 	hero_portrait = bottom.get_child(1)
 	hero_says = bottom.get_child(0)
-	hero_portrait.texture = load(PORTRAITS % Stories.HERO_PORTRAIT)
+	hero_portrait.texture = load(PORTRAITS % (Stories.HERO_PORTRAIT + int(profile.head)))
 	text = Label.new()
 	text.name = "Text"
 	text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED

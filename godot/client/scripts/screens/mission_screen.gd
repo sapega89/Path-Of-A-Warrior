@@ -115,7 +115,7 @@ func _ready() -> void:
 	hero.name = "Hero"
 	hero.external = true
 	world.add_child(hero)
-	hero.set_look(0, sim.hero.weapon_kind)
+	hero.set_look(profile.head, sim.hero.weapon_kind)
 	effects = Effects.new()
 	effects.name = "Effects"
 	world.add_child(effects)
