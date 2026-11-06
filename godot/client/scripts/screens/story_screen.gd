@@ -2,7 +2,8 @@ extends Control
 ## The story player: the opening of a new game and the endings. Talk pages show the
 ## speaker's portrait and the line typed out; picture pages show the story picture with its
 ## text; an ending ends with how much of the game is done and what the ending gave.
-## Attack / accept shows the whole line, then the next page; back skips to the end.
+## Attack / accept shows the whole line, then the next page; back or SKIP (Q, F1, the pad's
+## Back, the Skip button) skips to the end.
 ## Params: story (Stories.OPENING or an ending), reward_item, opened_lord, then (a screen to
 ## open when the story is over, instead of going back).
 
@@ -23,6 +24,7 @@ var page := -1
 var portrait: TextureRect
 var picture: TextureRect
 var text: Label
+var skip_button: Button
 var _typed := 0.0
 
 
@@ -59,6 +61,15 @@ func _ready() -> void:
 	text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	text.custom_minimum_size = Vector2(900, 200)
 	col.add_child(text)
+	skip_button = Button.new()
+	skip_button.name = "Skip"
+	skip_button.text = "common.skip"
+	skip_button.flat = true
+	skip_button.focus_mode = Control.FOCUS_NONE
+	skip_button.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	skip_button.position = Vector2(12, -60)
+	skip_button.pressed.connect(skip)
+	add_child(skip_button)
 	next_page()
 
 
@@ -140,11 +151,16 @@ func _end() -> void:
 		Router.push(then)
 
 
+## Skips to the end: of an ending to its numbers, then out.
+func skip() -> void:
+	page = pages.size() - 2 if story != Stories.OPENING and page < pages.size() - 1 else pages.size()
+	next_page()
+
+
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
+	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("skip"):
 		get_viewport().set_input_as_handled()
-		page = pages.size() - 2 if story != Stories.OPENING and page < pages.size() - 1 else pages.size()
-		next_page()
+		skip()
 	elif event.is_action_pressed("attack") or event.is_action_pressed("ui_accept"):
 		get_viewport().set_input_as_handled()
 		press()

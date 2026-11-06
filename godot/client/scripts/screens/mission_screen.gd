@@ -8,6 +8,8 @@ extends Control
 ## The mouse, as pyport's: the left button beside the hero walks that way while it is held
 ## (dragging turns him, two quick clicks run), a click on the hero or the right button attacks,
 ## a click on the skill bar uses the slot, on AUTO toggles the auto-hunt, on PAUSE pauses.
+## While someone talks on the map, SKIP (Q, F1, the pad's Back, a click on SKIP in AUTO's
+## corner) skips the talk.
 
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
 const MapSim := preload("res://scripts/sim/map_sim.gd")
@@ -62,6 +64,7 @@ var _fire := false
 var _hotkey := -1  # a skill key pressed since the last tick
 var _potion := -1  # a potion key pressed since the last tick
 var _belt := -1  # a belt slot used by its key or a click on the skill bar since the last tick
+var _skip := false  # SKIP since the last tick: the talk on the map is skipped
 var autopilot := Autopilot.new()
 var _keys_down := {}  # attack, skill and potion keys held at the last frame
 var _last_held := -1
@@ -196,6 +199,8 @@ func _process(delta: float) -> void:
 	_last_held = held
 	if _pressed_now("auto"):
 		toggle_auto()
+	if _pressed_now("skip"):
+		_skip = true
 	if _pressed_now("attack"):
 		_fire = true
 	for i in 5:
@@ -221,6 +226,9 @@ func _process(delta: float) -> void:
 			_hotkey = int(auto.hotkey)
 		if int(auto.belt) != -1 and _belt == -1:
 			_belt = int(auto.belt)
+		if _skip:
+			sim.skip_talk()
+			_skip = false
 		sim.tick(held, _pressed, _fire, _hotkey, _potion, _belt)
 		for n in sim.sounds:
 			Audio.play_sound(n)
@@ -527,8 +535,13 @@ func toggle_auto() -> void:
 	hud.queue_redraw()
 
 
-## A click on the skill bar: a belt slot is used, a skill cast. False when it missed the bar.
+## A click on the skill bar: a belt slot is used, a skill cast; on the corner AUTO / SKIP. False
+## when it missed them.
 func click_bar(at: Vector2) -> bool:
+	if hud.skip_at(at):
+		get_viewport().set_input_as_handled()
+		_skip = true
+		return true
 	if hud.auto_at(at):
 		get_viewport().set_input_as_handled()
 		toggle_auto()

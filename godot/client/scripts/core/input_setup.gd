@@ -7,6 +7,8 @@ extends Node
 ## As in pyport: 1-5 (or U I O P K) the five skills, Z X C V B the five belt slots, * and #
 ## (the numeric keypad, RT and L3 of a pad) the two potion keys; the pad's right stick
 ## up / right / down / left uses the belt slots Z X C V. Tab, F or R3: auto-hunt on / off.
+## Q, F1 or the pad's Back / Select: SKIP (pyport's left soft key), the talk on the map, the
+## briefing and the story skipped.
 ##
 ## Key hints, as pyport's: `device` is what the last key came from ("keys", "pad"; "touch" on a
 ## phone or after a touch; the mouse changes nothing), and hint(key) is the text `key` + "_" +
@@ -37,6 +39,7 @@ const KEYS := {
 	"belt_5": [KEY_B],
 	"pause": [KEY_ESCAPE],
 	"auto": [KEY_TAB, KEY_F],
+	"skip": [KEY_Q, KEY_F1],
 }
 const PAD_BUTTONS := {
 	"move_left": JOY_BUTTON_DPAD_LEFT,
@@ -51,6 +54,7 @@ const PAD_BUTTONS := {
 	"potion_2": JOY_BUTTON_LEFT_STICK,
 	"pause": JOY_BUTTON_START,
 	"auto": JOY_BUTTON_RIGHT_STICK,
+	"skip": JOY_BUTTON_BACK,
 }
 ## action: [axis, direction]
 const PAD_AXES := {

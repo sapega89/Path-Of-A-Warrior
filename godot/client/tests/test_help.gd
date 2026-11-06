@@ -65,3 +65,5 @@ func test_control_names_the_bound_keys() -> void:
 	eq(Keys.PAD_AXES["skill_5"][0], JOY_AXIS_TRIGGER_LEFT, "LT")
 	eq(Keys.KEYS["auto"], [KEY_TAB, KEY_F], "auto-hunt keys")
 	check(tr("help.control_2").contains("Auto-hunt: Tab or F (R3)"), "auto-hunt")
+	eq([Keys.KEYS["skip"], Keys.PAD_BUTTONS["skip"]], [[KEY_Q, KEY_F1], JOY_BUTTON_BACK], "skip keys")
+	check(tr("help.control_2").contains("Skip a talk, the briefing or the story: Q or F1 (Back)"), "skip")

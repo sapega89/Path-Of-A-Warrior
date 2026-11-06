@@ -7,8 +7,9 @@ extends Control
 ## left with their counts, the five skills (keys 1-5) on the right, grey when not learned
 ## or without the MP; the slot in use is framed white. A click on a slot uses it. With the
 ## bar the panel does not show the two potions (the belt shows all five). In the bottom-left
-## corner AUTO: white while the auto-hunt is on, grey while off; a click toggles it. In the
-## bottom-right corner PAUSE (pyport's soft key): a click pauses the game.
+## corner AUTO: white while the auto-hunt is on, grey while off; a click toggles it. While
+## someone talks on the map that corner is SKIP (pyport's left soft key): a click skips the
+## talk. In the bottom-right corner PAUSE (pyport's soft key): a click pauses the game.
 
 const UI := "res://assets/original/ui/"
 const BALL := 35  # the balls' size
@@ -83,7 +84,10 @@ func _draw() -> void:
 		if h > 0:
 			draw_texture_rect_region(_cover, Rect2(origin + Vector2(BALL_X[b], 0) * k,
 				Vector2(BALL, h) * k), Rect2(0, 0, BALL, h))
-	_auto(view, k)
+	if talking():
+		_corner(Rect2(Vector2(0, view.y - AUTO_H * k), Vector2(AUTO_W, AUTO_H) * k), "SKIP", Color.WHITE, k)
+	else:
+		_auto(view, k)
 	_pause(view, k)
 	if show_bar:
 		_bar(origin + Vector2(0, -BAR_H) * k, k)
@@ -103,23 +107,23 @@ func _draw() -> void:
 
 
 func _auto(view: Vector2, k: float) -> void:
-	var r := Rect2(Vector2(0, view.y - AUTO_H * k), Vector2(AUTO_W, AUTO_H) * k)
-	draw_rect(r, Color.BLACK)
-	var font := get_theme_default_font()
-	var size := int(12 * k)
-	var w := font.get_string_size("AUTO", HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
-	draw_string(font, Vector2(r.position.x + (r.size.x - w) / 2.0, r.end.y - 4 * k), "AUTO",
-		HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color.WHITE if auto_on else Color8(120, 120, 120))
+	_corner(Rect2(Vector2(0, view.y - AUTO_H * k), Vector2(AUTO_W, AUTO_H) * k), "AUTO",
+		Color.WHITE if auto_on else Color8(120, 120, 120), k)
 
 
 func _pause(view: Vector2, k: float) -> void:
-	var r := Rect2(Vector2(view.x - PAUSE_W * k, view.y - AUTO_H * k), Vector2(PAUSE_W, AUTO_H) * k)
+	_corner(Rect2(Vector2(view.x - PAUSE_W * k, view.y - AUTO_H * k), Vector2(PAUSE_W, AUTO_H) * k),
+		"PAUSE", Color.WHITE, k)
+
+
+## A black corner with its word in the middle.
+func _corner(r: Rect2, text: String, color: Color, k: float) -> void:
 	draw_rect(r, Color.BLACK)
 	var font := get_theme_default_font()
 	var size := int(12 * k)
-	var w := font.get_string_size("PAUSE", HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
-	draw_string(font, Vector2(r.position.x + (r.size.x - w) / 2.0, r.end.y - 4 * k), "PAUSE",
-		HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color.WHITE)
+	var w := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
+	draw_string(font, Vector2(r.position.x + (r.size.x - w) / 2.0, r.end.y - 4 * k), text,
+		HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
 
 
 ## Is the point on the PAUSE corner?
@@ -135,11 +139,25 @@ func panel_at(p: Vector2) -> bool:
 	return p.y >= view.y - PANEL_H * scale_of(view)
 
 
-## Is the point on the AUTO corner?
-func auto_at(p: Vector2) -> bool:
+## Someone talks on the map (the general who comes, his words after the fight).
+func talking() -> bool:
+	return sim != null and not sim.talk.is_empty()
+
+
+func _left_corner_at(p: Vector2) -> bool:
 	var view := get_viewport_rect().size
 	var k := scale_of(view)
 	return p.x < AUTO_W * k and p.y >= view.y - AUTO_H * k
+
+
+## Is the point on the AUTO corner (not while someone talks: then it is SKIP)?
+func auto_at(p: Vector2) -> bool:
+	return not talking() and _left_corner_at(p)
+
+
+## Is the point on the SKIP corner of a talk?
+func skip_at(p: Vector2) -> bool:
+	return talking() and _left_corner_at(p)
 
 
 ## The x of slot i of the belt (left) or the skills (right) in the 240 px panel.
