@@ -315,3 +315,10 @@ func _options_put_answer(r: Dictionary) -> void:
 		push_warning("cloud: options not saved (%s)" % r.get("err"))
 		m.dirty = false
 	options_store.save_cloud()
+
+
+## A save still has to reach the server and the connection is up or coming up: worth
+## waiting for when the game quits.
+func flushing() -> bool:
+	return not account.is_empty() and state != "off" and client.state != NetClient.State.CLOSED \
+		and not idle()

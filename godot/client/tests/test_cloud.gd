@@ -273,6 +273,7 @@ func test_the_options_follow_the_account() -> void:
 	eq([again.get_value("sfx_volume"), again.cloud.rev, again.cloud.dirty], [0.3, 2, false], "kept on the device")
 	again.free()
 	a.options_store.set_value("music_volume", 0.5)  # changed on both while both play
+	check(a.flushing(), "Quit waits for the options too")
 	b.options_store.set_value("music_volume", 0.1)
 	check(_run(s, [a, b], func(): return a.idle() and b.idle()), "both sent")
 	eq(s.accounts.store_get("ANDREY", "options").rev, 4, "the second one went on top of the first")
@@ -290,3 +291,48 @@ func test_the_options_follow_the_account() -> void:
 	_end(s, [a, b], d)
 	a.options_store.free()
 	b.options_store.free()
+
+
+func test_quitting_lets_the_last_save_reach_the_server() -> void:
+	var cloud: Node = root.get_node("/root/Cloud")
+	var d := _dir()
+	var s := _server(d)
+	s.accounts.create_account("ANDREY", "1234")
+	cloud.account_path = d.path_join("account.cfg")
+	cloud.save_account("ANDREY", "1234")
+	cloud.start("127.0.0.1", PORT, ServerTests.pair(0)[1])
+	cloud.sync.legacy = null
+	cloud.sync.options_store = null  # this device's own Options stay out of the tests
+	var quits := []
+	cloud.quit_now = func() -> void: quits.append(true)
+	check(_run(s, [cloud.sync], cloud.online), "logged in")
+	cloud.quit_game()
+	eq(quits.size(), 1, "nothing waits: at once")
+	cloud.save_hero({"name": "Andrey", "level": 7})
+	cloud.quit_game()
+	cloud._process(0.0)
+	eq(quits.size(), 1, "not before the last save is on the server")
+	var t0 := Time.get_ticks_msec()
+	while quits.size() < 2 and Time.get_ticks_msec() - t0 < 5000:
+		s.poll(1)
+		cloud._process(0.0)
+		OS.delay_msec(1)
+	eq(quits.size(), 2, "then the game ends")
+	eq(int(s.accounts.hero_get("ANDREY").hero.level), 7, "with the save on the server")
+	cloud.save_hero({"name": "Andrey", "level": 8})
+	cloud.quit_game()
+	cloud._process(0.0)  # the server does not answer
+	eq(quits.size(), 2, "waiting")
+	cloud.quit_at = Time.get_ticks_msec()  # FLUSH_MS later
+	cloud._process(0.0)
+	eq(quits.size(), 3, "no longer than FLUSH_MS")
+	cloud.save_hero({"name": "Andrey", "level": 9})
+	cloud.sync.client.close()
+	cloud.quit_game()
+	eq(quits.size(), 4, "no connection: at once")
+	cloud.stop()
+	cloud.quit_game()
+	eq(quits.size(), 5, "without the server: at once")
+	cloud.quit_now = Callable()
+	s.stop()
+	ServerTests._rm(d)
