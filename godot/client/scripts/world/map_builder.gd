@@ -9,7 +9,9 @@ extends Node3D
 ##   blocked / overlay -> stood up: a column of cells with flags bit 0 (blocked) or bit 1
 ##                        (drawn over the actors) is a front view of a wall, tree or house
 ##                        in the original art, so it is raised as a vertical picture at the
-##                        front (largest y) cell of the run, stacking upward
+##                        front (largest y) cell of the run, stacking upward. Only runs of up to
+##                        MAX_STAND_RUN cells (houses, tents, trees, walls); longer blocked areas are
+##                        cliffs, water or forest drawn from above and stay flat
 ##   objects layer     -> breakable things as sprites facing the camera
 ## Collision is per cell as in the original: a blocked cell or an object is a solid box.
 
@@ -21,6 +23,7 @@ const FLAG_BLOCKED := 1
 const FLAG_OVER := 2
 const WALL_HEIGHT := 1.5  # collision height of a blocked cell
 const DECAL_LIFT := 0.002
+const MAX_STAND_RUN := 3
 
 var map: Dictionary
 var w := 0
@@ -29,6 +32,7 @@ var atlas: Texture2D
 var floor_mat: StandardMaterial3D
 var stand_mat: StandardMaterial3D
 var breakables: Array[Node3D] = []
+var _standing := {}  # Vector2i -> true, cells drawn standing up
 
 
 static func map_path(number: int) -> String:
@@ -69,22 +73,28 @@ func is_blocked(x: int, y: int) -> bool:
 	return (cell("flags", x, y) & FLAG_BLOCKED) != 0 or cell("objects", x, y) != 0
 
 
-## Cells that are shown standing up: blocked or overlay, with an upper tile.
-func is_standing(x: int, y: int) -> bool:
+## Blocked or overlay cells with an upper tile: candidates to stand up.
+func is_raised(x: int, y: int) -> bool:
 	return cell("upper", x, y) != 0 and (cell("flags", x, y) & (FLAG_BLOCKED | FLAG_OVER)) != 0
 
 
-## Runs of standing cells per column: [{x, top, bottom}], bottom = the front cell.
+## Cells drawn standing up (after build()).
+func is_standing(x: int, y: int) -> bool:
+	return _standing.has(Vector2i(x, y))
+
+
+## Runs of raised cells per column that stand up: [{x, top, bottom}], bottom = the front cell.
 func standing_runs() -> Array[Dictionary]:
 	var runs: Array[Dictionary] = []
 	for x in w:
 		var y := 0
 		while y < h:
-			if is_standing(x, y):
+			if is_raised(x, y):
 				var top := y
-				while y + 1 < h and is_standing(x, y + 1):
+				while y + 1 < h and is_raised(x, y + 1):
 					y += 1
-				runs.append({"x": x, "top": top, "bottom": y})
+				if y - top + 1 <= MAX_STAND_RUN:
+					runs.append({"x": x, "top": top, "bottom": y})
 			y += 1
 	return runs
 
@@ -96,6 +106,10 @@ func build(data: Dictionary) -> void:
 	for child in get_children():
 		child.queue_free()
 	breakables.clear()
+	_standing.clear()
+	for run in standing_runs():
+		for y in range(run.top, run.bottom + 1):
+			_standing[Vector2i(run.x, y)] = true
 	atlas = load(ATLAS_PATH)
 	floor_mat = _material(false)
 	stand_mat = _material(true)

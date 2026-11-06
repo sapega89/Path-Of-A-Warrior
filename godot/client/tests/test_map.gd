@@ -21,6 +21,9 @@ func test_map_1_layout() -> void:
 	eq(b.h, 23, "height")
 	# The house at x 7..8, y 10..12 of map 1 stands up from its front row y = 12.
 	check(b.standing_runs().has({"x": 7, "top": 10, "bottom": 12}), "house column")
+	check(b.is_standing(7, 11), "house cell stands")
+	for run in b.standing_runs():
+		check(run.bottom - run.top < MapBuilder.MAX_STAND_RUN, "long runs stay flat")
 	# One collision box per blocked cell or object, plus 4 edges and the ground.
 	var blocked := 0
 	for y in b.h:
