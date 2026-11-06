@@ -76,11 +76,13 @@ func next_page() -> bool:
 			if who == Stories.HERO:
 				who = Stories.HERO_PORTRAIT
 			portrait.texture = load(PORTRAITS % who)
+			Audio.play_music(0)
 			portrait.visible = true
 			text.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 			text.text = str(pg.text)
 		"picture":
 			picture.texture = load(PICTURES % (int(pg.picture) + 1))
+			Audio.play_music(2)
 			picture.visible = picture.texture != null
 			text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			text.text = str(pg.text)

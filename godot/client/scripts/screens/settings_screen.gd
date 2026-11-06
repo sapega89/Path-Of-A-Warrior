@@ -55,8 +55,15 @@ func _slider(node_name: String, key: String) -> HSlider:
 	s.step = 0.05
 	s.value = Settings.get_value(key)
 	s.custom_minimum_size = Vector2(260, 28)
-	s.value_changed.connect(func(v: float): Settings.set_value(key, v))
+	s.value_changed.connect(_volume_changed.bind(key))
 	return s
+
+
+## A volume is set, and the sound of the setting plays at it.
+func _volume_changed(v: float, key: String) -> void:
+	Settings.set_value(key, v)
+	if v > 0.0:
+		Audio.play_sound(8)
 
 
 func _row(col: VBoxContainer, label_key: String, control: Control) -> void:

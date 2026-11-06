@@ -184,6 +184,8 @@ func _process(delta: float) -> void:
 	while _acc >= TICK:
 		_acc -= TICK
 		sim.tick(held, _pressed, _fire, _hotkey, _potion)
+		for n in sim.sounds:
+			Audio.play_sound(n)
 		_pressed = -1
 		_fire = false
 		_hotkey = -1

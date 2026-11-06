@@ -21,6 +21,8 @@ godot/
     i18n/strings.json     тексти українською й англійською
     data/maps/N.json      45 оригінальних карт (робить tools/import_original.py)
     assets/original/      тайли й кадри героя з оригіналу (теж import_original.py)
+    assets/original/sound/  звуки snd3..16 як є; три мелодії MIDI, зіграні через
+                          fluidsynth і General MIDI sound font у .ogg (scripts/core/audio.gd)
     tests/                тести: test_*.gd, запуск runner.tscn
   tools/import_original.py  конвертер оригінальних ресурсів з кореня репо
 ```
@@ -29,6 +31,7 @@ godot/
 
 ```
 python godot/tools/import_original.py                       # після змін у конвертері
+                              # (мелодії: потрібні fluidsynth, fluid-soundfont-gm, ffmpeg)
 godot --path godot/client                                   # гра
 godot --headless --path godot/client --import               # один раз після клонування
 godot --headless --path godot/client res://tests/runner.tscn  # тести
