@@ -2,10 +2,11 @@ extends Control
 ## A mission of the original campaign on its map. The game itself runs in MapSim
 ## (original pixels and ticks); this screen reads the input, ticks the simulation every
 ## 120 ms and draws its state in 3D: the hero sprite, the camera on the current room,
-## the exit arrows and the "Stage" banners, the soldiers and their arrows, the effects of
-## skills, potions and scrolls, the fire on whoever a fire skill hits, the auras of buffs, and
-## the HUD. A talk on the map shows the portrait of who speaks beside the line, just above the
-## HUD, as pyport's.
+## the exit arrows and the "Stage" banners (after a won mission the exp bar of pyport on the
+## pages Total Exp and Time Exp, the level gone up on it), the soldiers and their arrows, the
+## effects of skills, potions and scrolls, the fire on whoever a fire skill hits, the auras of
+## buffs, and the HUD. A talk on the map shows the portrait of who speaks beside the line, just
+## above the HUD, as pyport's.
 ## Params: {lord, mission, seed (optional: the same enemies every run)}.
 ## The mouse, as pyport's: the left button beside the hero walks that way while it is held
 ## (dragging turns him, two quick clicks run), a click on the hero or the right button attacks,
@@ -28,6 +29,7 @@ const Effects := preload("res://scripts/world/effects.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const Items := preload("res://scripts/core/items.gd")
 const MissionPause := preload("res://scripts/ui/mission_pause.gd")
+const ExpBar := preload("res://scripts/ui/exp_bar.gd")
 const Stories := preload("res://scripts/core/stories.gd")
 
 ## One tick of the game, by the game speed of the settings (MapSim.TICK_MS at Med).
@@ -53,6 +55,7 @@ var profile: Profile
 var effects: Effects
 var banner: PanelContainer
 var banner_text: Label
+var exp_bar: ExpBar  # under the text of the pages Total Exp and Time Exp
 ## A talk over the map, as pyport's: the portrait of who speaks and the line beside it, just
 ## above the HUD.
 var talk_box: Control
@@ -182,7 +185,16 @@ func _ready() -> void:
 	banner_text = Label.new()
 	banner_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	banner_text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	banner.add_child(banner_text)
+	var lines := VBoxContainer.new()
+	lines.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	lines.add_child(banner_text)
+	exp_bar = ExpBar.new()
+	exp_bar.name = "ExpBar"
+	exp_bar.visible = false
+	exp_bar.bars = sim.exp_bars
+	exp_bar.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	lines.add_child(exp_bar)
+	banner.add_child(lines)
 	add_child(banner)
 	_make_talk_box()
 
@@ -372,6 +384,8 @@ func _show_banner() -> void:
 	if talk_box.visible:
 		_place_talk()
 	banner.visible = sim.banner != 0
+	exp_bar.visible = sim.banner == MapSim.BANNER_TOTAL_EXP or sim.banner == MapSim.BANNER_TIME_EXP
+	exp_bar.queue_redraw()
 	if not banner.visible:
 		return
 	if sim.banner == MapSim.BANNER_ACQUIRED:
@@ -393,9 +407,8 @@ func _show_banner() -> void:
 		else:
 			stage = "%s\n%s %s\n%s %s" % [tr("mission.time_exp"), tr("mission.time_limit"),
 				clock(sim.time_limit), tr("mission.time_taken"), clock(sim.play_seconds())]
-		var lv := profile.level_with(sim.exp_reward())
-		if lv > profile.level:
-			stage += "\n" + tr("mission.level_up") % lv
+		if sim.exp_bars.level_up_ticks > 0:
+			stage += "\n" + tr("mission.level_up") % sim.exp_bars.level
 	banner_text.text = "%s\n%s\n%s" % [lord_name, mission_info.get("name", ""), stage]
 	_place_banner(0.3)
 
