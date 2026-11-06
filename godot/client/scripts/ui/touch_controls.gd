@@ -2,6 +2,8 @@ extends Control
 ## On-screen controls for phones: a floating stick on the left half and action
 ## buttons on the right. They press the same actions as keys and gamepads, so
 ## game code does not know which device is used. Shown only on touch screens.
+## A button sends its action as an input event (press_action), as a key does: the screens that
+## wait for the event (PAUSE) get it, and the action is held for the ones that poll it.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const STICK_RADIUS := 90.0
@@ -78,20 +80,28 @@ func _touch(finger: int, pos: Vector2, pressed: bool) -> void:
 		var action := button_at(pos)
 		if action != "":
 			_button_fingers[finger] = action
-			Input.action_press(action)
+			press_action(action, true)
 		elif pos.x < size.x / 2.0 and _stick_finger < 0:
 			_stick_finger = finger
 			_stick_origin = pos
 			_stick_pos = pos
 	else:
 		if _button_fingers.has(finger):
-			Input.action_release(_button_fingers[finger])
+			press_action(_button_fingers[finger], false)
 			_button_fingers.erase(finger)
 		elif finger == _stick_finger:
 			_stick_finger = -1
 			stick_vector = Vector2.ZERO
 			apply_move(stick_vector)
 	queue_redraw()
+
+
+## An action pressed or let go as an input event, as from a key.
+static func press_action(action: String, pressed: bool) -> void:
+	var ev := InputEventAction.new()
+	ev.action = action
+	ev.pressed = pressed
+	Input.parse_input_event(ev)
 
 
 func _exit_tree() -> void:
