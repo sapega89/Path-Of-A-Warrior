@@ -40,6 +40,25 @@ func _ready() -> void:
 	Router.current.refresh()
 	Router.current.skills[20].grab_focus()
 	await _shot(out, "07_skills")
+	# Gear and Inventory: a helmet and armour worn, a few things and some gold in the backpack.
+	Router.back()
+	var items: GDScript = load("res://scripts/core/items.gd")
+	for id in [131, 136]:
+		hero.add_item(items.make(id))
+		hero.use_item(0)
+	for id in [126, 146, 102, 434, 503]:
+		hero.add_item(items.make(id))
+	hero.gold = 1250
+	hero.save("user://shot_hero.json")
+	Router.push("gear", Router.params)
+	await _frames(2)
+	Router.current.places[5].grab_focus()
+	await _shot(out, "08_gear")
+	Router.back()
+	Router.push("inventory", Router.params)
+	await _frames(2)
+	Router.current.cells[1].grab_focus()
+	await _shot(out, "09_inventory")
 	Router.go("map_viewer")
 	var viewer: Node = Router.current
 	for n in MAPS:

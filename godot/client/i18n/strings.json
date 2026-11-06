@@ -174,5 +174,17 @@
   "skills.not_available": {
     "en": "(Not Available)",
     "uk": "(Недоступно)"
+  },
+  "gear.title": {
+    "en": "Gear",
+    "uk": "Спорядження"
+  },
+  "inventory.title": {
+    "en": "Inventory",
+    "uk": "Торба"
+  },
+  "inventory.cannot_take": {
+    "en": "You can't take this equipment.",
+    "uk": "Ви не можете взяти це спорядження."
   }
 }

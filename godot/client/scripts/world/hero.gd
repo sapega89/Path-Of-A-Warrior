@@ -78,7 +78,7 @@ static func load_info() -> Dictionary:
 	return data if typeof(data) == TYPE_DICTIONARY else {}
 
 
-## Uses another head (0..3) and weapon (0 long, 1 short) sheet.
+## Uses another head (0..3) and weapon (sword type 0 or 1, the weapon's slot type) sheet.
 func set_look(head: int, weapon: int) -> void:
 	var tex: Texture2D = load(SHEET_PATH % [head, weapon])
 	if tex != null:

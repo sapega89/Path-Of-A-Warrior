@@ -33,7 +33,9 @@ func test_mission_goes_in_and_out() -> void:
 	p.apply_to(sim)
 	eq(sim.hero.attack, 6, "the hero's attack")
 	eq(int(sim.quick_slots[0][1]), 2, "his potions")
+	eq(sim.hero.weapon_kind, 1, "the claymore's sword type")
 	sim.quick_slots[0][1] = 1  # one drunk
+	sim.items = [131]
 	sim.gold = 30
 	sim.friendship[5] = 10
 	sim.won = true
@@ -42,6 +44,9 @@ func test_mission_goes_in_and_out() -> void:
 	eq(p.take_from(sim, 1, 0, 1), 1, "60 exp: a level")
 	eq(p.gold, 30 + 450, "picked up and the mission's gold")
 	eq(int(p.quick_slots[0][1]), 1, "one potion left")
+	eq(int(p.backpack[0].id), 131, "the helmet found")
+	var def_bonus := int(p.backpack[0].defense)
+	check(def_bonus >= 1 and def_bonus <= 3, "with its bonus and the random extra: %d" % def_bonus)
 	eq(int(p.friendship["5"]), 10, "friendship kept")
 	check(p.is_done(1, 0), "the mission is done")
 	eq(int(p.progress["1"]), 5, "progress for the ruler")

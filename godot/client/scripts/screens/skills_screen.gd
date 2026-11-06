@@ -7,9 +7,8 @@ extends Control
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
+const ItemSlot := preload("res://scripts/ui/item_slot.gd")
 const SKILLS_PATH := "res://data/skills.json"
-const ICON := 28
-const ICON_SCALE := 2
 const KEY_COUNT := 5
 
 var profile: RefCounted
@@ -19,9 +18,6 @@ var slot := 0  # the skill key being set
 var keys: Array[Button] = []
 var skills := {}  # skill id -> its Button
 var info: Label
-
-var _icons: Texture2D = preload("res://assets/original/ui/skill.png")
-var _grey_icons: Texture2D = preload("res://assets/original/ui/skillgray.png")
 
 
 func _ready() -> void:
@@ -145,7 +141,7 @@ func refresh() -> void:
 	for i in keys.size():
 		var skill := int(profile.hotkeys[i])
 		keys[i].icon = _icon(skill, true) if skill != 0 else null
-		keys[i].add_theme_stylebox_override("normal", _box(i == slot))
+		keys[i].add_theme_stylebox_override("normal", ItemSlot.box(i == slot))
 	for skill in skills:
 		skills[skill].icon = _icon(skill, profile.skill_level(skill) > 0)
 
@@ -168,28 +164,11 @@ func _show_info(skill: int) -> void:
 
 
 func _icon(skill: int, learned: bool) -> Texture2D:
-	var t := AtlasTexture.new()
-	t.atlas = _icons if learned else _grey_icons
-	t.region = Rect2((skill - 12) * ICON, 0, ICON, ICON)
-	return t
+	return ItemSlot.icon("skill" if learned else "skillgray", skill - 12)
 
 
 func _icon_button(node_name: String) -> Button:
-	var b := Button.new()
-	b.name = node_name
-	b.custom_minimum_size = Vector2(ICON * ICON_SCALE + 8, ICON * ICON_SCALE + 8)
-	b.expand_icon = true
-	b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	b.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	b.add_theme_stylebox_override("normal", _box(false))
-	return b
-
-
-## The look of a skill place; the key being set has a gold border.
-static func _box(selected: bool) -> StyleBoxFlat:
-	var box := UiTheme.box(UiTheme.BUTTON, UiTheme.ACCENT if selected else Color.TRANSPARENT, 3 if selected else 0)
-	box.set_content_margin_all(4)
-	return box
+	return ItemSlot.button(node_name)
 
 
 func _unhandled_input(event: InputEvent) -> void:

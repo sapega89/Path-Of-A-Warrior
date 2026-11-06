@@ -94,7 +94,7 @@ class Actor:
 	var ai_mode := 0  # > 0: knocked back that many ticks
 	var hurt_ticks := 0
 	var combo := 0
-	var weapon_kind := 0  # 0 long sword, 1 short sword
+	var weapon_kind := 0  # the sword type, 0 or 1 (the weapon's slot type; the Iron Claymore 1)
 	var skill_step := 0  # a general's heals so far
 	var mp := 0
 	var max_mp := 0
