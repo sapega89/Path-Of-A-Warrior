@@ -223,6 +223,12 @@ UserID.», меню гасне. Якщо сервер забув гравця (�
 
 Тести також ганяє GitHub Actions (`.github/workflows/godot.yml`) на кожен PR, що змінює `godot/`.
 
+## Blacksmith
+
+Buy, Sell, Enchant і Combine — сторінки `shop_screen.gd`. Як у pyport (попап 39), Combine відкривається
+лише з 3 речами або більше в Inventory; інакше попап «You must have at least 3 items in order to have
+them combined.» і Blacksmith лишається.
+
 ## Перед місією
 
 Як у pyport: місія зі списку володаря спершу показує свій опис (`campaign_screen.gd`, рівень 3):

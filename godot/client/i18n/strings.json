@@ -283,6 +283,10 @@
     "en": "Please select 3 items to combine into one.",
     "uk": "Виберіть 3 речі, щоб поєднати їх в одну."
   },
+  "combine.too_few": {
+    "en": "You must have at least 3 items in order to have them combined.",
+    "uk": "Щоб поєднати речі, потрібно мати принаймні 3."
+  },
   "combine.not_possible": {
     "en": "Not possible.",
     "uk": "Не вийде."
