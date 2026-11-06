@@ -5,6 +5,9 @@ extends Control
 ## the exit arrows and the "Stage" banners, the soldiers and their arrows, the effects of
 ## skills, potions and scrolls, and the HUD.
 ## Params: {lord, mission, seed (optional: the same enemies every run)}.
+## The mouse, as pyport's: the left button beside the hero walks that way while it is held
+## (dragging turns him, two quick clicks run), a click on the hero or the right button attacks,
+## a click on the skill bar uses the slot, on AUTO toggles the auto-hunt, on PAUSE pauses.
 
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
 const MapSim := preload("res://scripts/sim/map_sim.gd")
@@ -59,6 +62,7 @@ var _belt := -1  # a belt slot used by its key or a click on the skill bar since
 var autopilot := Autopilot.new()
 var _keys_down := {}  # attack, skill and potion keys held at the last frame
 var _last_held := -1
+var _mouse_dir := -1  # the direction the left mouse button holds, -1: none
 var _blink := 0
 var pause_menu: MissionPause  # shown while the game is paused
 
@@ -181,6 +185,8 @@ static func dir4_of(v: Vector2) -> int:
 
 func _process(delta: float) -> void:
 	var held := dir4_of(Input.get_vector("move_left", "move_right", "move_up", "move_down"))
+	if held == -1:
+		held = _mouse_dir
 	if held != -1 and held != _last_held:
 		_pressed = held  # a new direction this tick: the original's key press
 	_last_held = held
@@ -428,6 +434,7 @@ func _release_keys() -> void:
 	_hotkey = -1
 	_potion = -1
 	_belt = -1
+	_mouse_dir = -1
 	_keys_down.clear()
 
 
@@ -437,8 +444,58 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
 		pause()
-	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		click_bar(event.position)
+	elif event is InputEventMouseButton:
+		_mouse_button(event)
+	elif event is InputEventMouseMotion and _mouse_dir != -1:
+		var d := pointer_dir(event.position)
+		if d != -1 and not hud.panel_at(event.position) and hud.slot_at(event.position).is_empty():
+			_mouse_dir = d  # dragging turns the hero
+
+
+func _mouse_button(event: InputEventMouseButton) -> void:
+	if event.button_index == MOUSE_BUTTON_LEFT and not event.pressed:
+		_mouse_dir = -1
+		return
+	if not event.pressed:
+		return
+	if event.button_index == MOUSE_BUTTON_LEFT:
+		if click_bar(event.position):
+			return
+		if hud.pause_at(event.position):
+			get_viewport().set_input_as_handled()
+			pause()
+			return
+	# a touch comes as a click too: on a phone the touch controls walk and attack
+	if event.device == InputEvent.DEVICE_ID_EMULATION or not is_processing():
+		return
+	if event.button_index == MOUSE_BUTTON_RIGHT:
+		get_viewport().set_input_as_handled()
+		_fire = true  # attack where the hero faces
+	elif event.button_index == MOUSE_BUTTON_LEFT:
+		get_viewport().set_input_as_handled()
+		var d := pointer_dir(event.position)
+		if d == -1:
+			_fire = true  # a click on the hero
+		else:
+			_pressed = d  # a press of that direction, held while the button is
+			_mouse_dir = d
+
+
+## The direction from the hero to a point of the screen (6 right, 2 left, 4 up, 0 down), or -1
+## on the hero himself: within 14 x 20 original pixels of the middle of his body, 20 px above
+## his position, as pyport's pointer.
+func pointer_dir(at: Vector2) -> int:
+	var middle := hero.global_position + Vector3(0, (20 + Hero.FOOT_PX) * Hero.PIXEL_SIZE, 0)
+	var c := camera.unproject_position(middle)
+	var box := Vector2(
+		absf(camera.unproject_position(middle + Vector3(14 * Hero.PIXEL_SIZE, 0, 0)).x - c.x),
+		absf(camera.unproject_position(middle + Vector3(0, 20 * Hero.PIXEL_SIZE, 0)).y - c.y))
+	var d := at - c
+	if absf(d.x) < box.x and absf(d.y) < box.y:
+		return -1
+	if absf(d.x) >= absf(d.y):
+		return 6 if d.x > 0.0 else 2
+	return 0 if d.y > 0.0 else 4
 
 
 ## Auto-hunt on / off (Tab, F, R3 or a click on AUTO).
