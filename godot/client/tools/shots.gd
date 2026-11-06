@@ -123,7 +123,10 @@ func _ready() -> void:
 			sim.hero.mp = sim.hero.max_mp  # the first skill, a dash, against the general
 			for i in 20:  # (it starts when the hero stands or walks)
 				Input.action_press("skill_1")
-				await _frames(2)
+				await _frames(1)
+				print("skill key: has ", InputMap.has_action("skill_1"), " pressed ", Input.is_action_pressed("skill_1"),
+					" hotkey ", mission.get("_hotkey"), " events ", InputMap.action_get_events("skill_1").size())
+				await _frames(1)
 				Input.action_release("skill_1")
 				await _seconds(0.1)
 				print("skill try: action ", sim.hero.action, " mp ", sim.hero.mp, " banner ", sim.banner,
