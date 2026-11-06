@@ -78,3 +78,35 @@ static func heading(text_key: String, size: int = TITLE_SIZE) -> Label:
 	l.add_theme_font_size_override("font_size", size)
 	l.add_theme_color_override("font_color", ACCENT)
 	return l
+
+
+## A centred line of text set from code (already translated), wrapped when long.
+static func note(node_name: String, min_height: int = 0) -> Label:
+	var l := Label.new()
+	l.name = node_name
+	l.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.custom_minimum_size = Vector2(0, min_height)
+	return l
+
+
+## The gold coin and a number after it (the row's child "Value"), centred.
+static func gold_row(node_name: String) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.name = node_name
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	var coin := TextureRect.new()
+	coin.texture = load("res://assets/original/ui/gold.png")
+	coin.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	coin.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	coin.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	coin.custom_minimum_size = Vector2(56, 40)
+	row.add_child(coin)
+	var value := Label.new()
+	value.name = "Value"
+	value.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	value.custom_minimum_size = Vector2(160, 0)
+	value.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	row.add_child(value)
+	return row

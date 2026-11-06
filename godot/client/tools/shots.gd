@@ -4,6 +4,8 @@ extends Node
 ## Opens the main scene, walks through the screens and some maps, saves PNGs to OUT_DIR.
 
 const MAPS: Array[int] = [1, 5, 10, 20, 30, 40]
+const LiveServer := preload("res://server/live.gd")
+const LiveClient := preload("res://scripts/net/live_client.gd")
 
 
 func _ready() -> void:
@@ -112,6 +114,39 @@ func _ready() -> void:
 	Router.current.submit()
 	await _shot(out, "10c_register")
 	cloud.stop()
+	# Live: the menu, the Warehouse (two things moved there), the Safe; the server's Live runs
+	# in this process (server/live.gd), the hero is a copy.
+	_rm_dir("user://shot_live")
+	var market: RefCounted = LiveServer.new("user://shot_live")
+	market.rng.seed = 7
+	var session: RefCounted = LiveServer.Session.new()
+	session.user = "ANDREY"
+	var client: RefCounted = LiveClient.new(func(msg: Dictionary, done: Callable) -> void:
+		done.call(bytes_to_var(var_to_bytes(market.answer(session, str(msg.t), msg)))))
+	hero.save("user://shot_live_hero.json")
+	var live_params := {"profile_path": "user://shot_live_hero.json", "live": client}
+	Router.go("main_menu")
+	Router.push("live", live_params)
+	await _frames(2)
+	await _shot(out, "10d_live")
+	Router.push("live_warehouse", live_params)
+	await _frames(2)
+	Router.current.cells[2].grab_focus()
+	await _shot(out, "10e_live_backpack")
+	Router.current.press_cell(0)
+	Router.current.press_cell(1)
+	Router.current.show_side(true)
+	await _frames(2)
+	Router.current.cells[1].grab_focus()
+	await _shot(out, "10f_live_warehouse")
+	Router.back()
+	Router.push("live_safe", live_params)
+	await _frames(2)
+	Router.current.turn()
+	Router.current.amount.text = "500"
+	Router.current.submit()
+	Router.current.amount.text = "250"
+	await _shot(out, "10g_live_safe")
 	# The Blacksmith: buying from the shop, and enchanting the sword in hand.
 	Router.go("main_menu")
 	Router.push("blacksmith", {"profile_path": "user://shot_hero.json"})
@@ -414,6 +449,16 @@ func _fight_step(sim: RefCounted) -> void:
 	await _frames(4)
 	Input.action_release("attack")
 	await _frames(4)
+
+
+## Empties a folder of the shots' own data (only user://shot_*).
+func _rm_dir(d: String) -> void:
+	if not d.begins_with("user://shot_"):
+		return
+	for f in DirAccess.get_files_at(d.path_join("live")):
+		DirAccess.remove_absolute(d.path_join("live").path_join(f))
+	for f in DirAccess.get_files_at(d):
+		DirAccess.remove_absolute(d.path_join(f))
 
 
 func _seconds(t: float) -> void:

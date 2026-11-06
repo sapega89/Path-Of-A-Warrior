@@ -1,5 +1,5 @@
 extends Control
-## Main menu: continue (or play), new game, blacksmith, management, visiting, endings, maps, settings, help, quit (no quit button on phones and the web).
+## Main menu: continue (or play), new game, blacksmith, management, Live, visiting, endings, maps, settings, help, quit (no quit button on phones and the web).
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
@@ -13,12 +13,15 @@ func _ready() -> void:
 	if Cloud.enabled() and not Cloud.online():
 		Router.go.call_deferred("offline")  # the game starts only online
 	var col := UiTheme.menu_column(self)
+	col.theme = compact_theme()  # eleven buttons in a 720 px high screen
+	col.add_theme_constant_override("separation", 4)
 	col.add_child(UiTheme.heading("game.title", 44))
 	var saved := Profile.exists()
 	_add(col, "Play", "menu.continue" if saved else "menu.play", play)
 	_add(col, "NewGame", "menu.new_game", new_game)
 	_add(col, "Blacksmith", "menu.blacksmith", func(): Router.push("blacksmith"))
 	_add(col, "Management", "menu.management", func(): Router.push("management"))
+	_add(col, "Live", "menu.live", func(): Router.push("live"))
 	_add(col, "Visiting", "menu.visiting", func(): Router.push("visiting"))
 	if not Visits.can_visit(Profile.load_or_new()):
 		buttons[-1].modulate = Color(1, 1, 1, 0.5)  # greyed: it only says when one can visit
@@ -55,6 +58,17 @@ func new_game() -> void:
 		ask.popup_centered()
 		return
 	Router.push("new_game", {})
+
+
+## The game's theme with lower buttons.
+static func compact_theme() -> Theme:
+	var t := UiTheme.build()
+	for style in ["normal", "hover", "pressed", "disabled", "focus"]:
+		var sb := t.get_stylebox(style, "Button").duplicate() as StyleBoxFlat
+		sb.content_margin_top = 4
+		sb.content_margin_bottom = 4
+		t.set_stylebox(style, "Button", sb)
+	return t
 
 
 static func show_quit() -> bool:
