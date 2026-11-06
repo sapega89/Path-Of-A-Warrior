@@ -6,9 +6,10 @@ extends RefCounted
 ##
 ## Ported so far: rooms and their phases (banners, cleared, exits, scrolling to the next
 ## room), the hero's walking, running and sword attacks with the original wall, corner and
-## room checks, and the soldiers: the room's waves come in through its exits, swordsmen
-## (one or a squad of three) and archers walk, attack and shoot by the original AI, are hit,
-## knocked back and die; the last one clears the room. Barrels and other objects break under
+## room checks, and the soldiers: the room's waves come in through its exits and the cells'
+## scripts put archers on their cells; swordsmen (one or a squad of three) and archers walk,
+## attack and shoot by the original AI, are hit, knocked back and die; the last one of the
+## waves clears the room. Barrels and other objects break under
 ## the sword; soldiers and objects drop gold and items that the hero picks up. Generals come
 ## with their talk, fight with their skills, and the mission's own general ends the mission
 ## ("Mission Success!"). The hero's skills (on their keys, for MP) and his potions and
@@ -149,6 +150,7 @@ var exit_dir := 0  # 1 down 2 left 3 up 4 right while scrolling to the next room
 var exit_blink := 0
 var scrolling := false
 var rooms_visited := 1
+var mission := 0  # the mission of the map (its rooms' lists and the archers of its cells)
 var waves: Array = []  # the current room's enemy list, flat: kind, count, kind, count, ...
 var banner := 0
 var banner_timer := 0
@@ -247,10 +249,11 @@ static func talk_lines(kind: String) -> Array:
 	return _talk.get(kind, [])
 
 
-func _init(map_data: Dictionary = {}, mission: int = 0, start_tile: Vector2i = Vector2i(4, 4)) -> void:
+func _init(map_data: Dictionary = {}, mission_no: int = 0, start_tile: Vector2i = Vector2i(4, 4)) -> void:
 	if map_data.is_empty():
 		return
 	map = map_data
+	mission = mission_no
 	w = int(map.w)
 	h = int(map.h)
 	flags = map.flags
@@ -293,9 +296,31 @@ func enter_room() -> void:
 	while waves.size() < 14:
 		waves.append(0)
 	_find_spawn_spots()
+	_run_cell_scripts()
 	_find_breakables()
 	room_phase = 2
 	room_phase_timer = 1
+
+
+## The scripts of the room's cells (the map's `scripts`): an op [0, mission + 1, kind] puts an
+## enemy of kind 200 + kind on its cell in that mission, the archers standing in the room. A
+## cell runs its first script, row by row.
+func _run_cell_scripts() -> void:
+	if no_enemies:
+		return
+	var o := room_origin()
+	var rtx := o.x * 7 + 1
+	var rty := o.y * 7 + 1
+	var cells := {}
+	for sc in map.get("scripts", []):
+		var at := Vector2i(int(sc.x), int(sc.y))
+		if not cells.has(at):
+			cells[at] = sc.ops
+	for y in range(rty, rty + 7):
+		for x in range(rtx, rtx + 7):
+			for op in cells.get(Vector2i(x, y), []):
+				if int(op[0]) == 0 and int(op[1]) - 1 == mission:
+					create_enemy(int(op[2]) + 200, x, y, 4)
 
 
 func max_enemies() -> int:
@@ -852,6 +877,17 @@ func _end_tick() -> void:
 				room_phase = 0
 		return
 	room_phase_timer -= 1
+
+
+## Continuing a save on the map, as pyport's: the room was clear when it was saved, so it
+## stays clear (no waves, no archers, no "Stage" banner) and its exits open.
+func continue_in_clear_room() -> void:
+	enemies.clear()
+	enemies_alive = 0
+	for i in waves.size():
+		waves[i] = 0
+	room_phase = 1
+	room_phase_timer = 5
 
 
 ## The game can be saved on the map: no enemy alive, no general fighting, no wave to come.
