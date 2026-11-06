@@ -9,7 +9,7 @@ const Profile := preload("res://scripts/core/profile.gd")
 const LiveClient := preload("res://scripts/net/live_client.gd")
 ## Page button name, text key, screen (empty: not open yet).
 const PAGES := [
-	["Trade", "live.trade", ""],
+	["Trade", "live.trade", "live_trade"],
 	["Warehouse", "live.warehouse", "live_warehouse"],
 	["Safe", "live.safe", "live_safe"],
 	["Multiplayer", "live.multiplayer", ""],

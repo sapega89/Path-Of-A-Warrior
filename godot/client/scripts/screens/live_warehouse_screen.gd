@@ -7,8 +7,8 @@ const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const Items := preload("res://scripts/core/items.gd")
 const ItemSlot := preload("res://scripts/ui/item_slot.gd")
+const ItemGrid := preload("res://scripts/ui/item_grid.gd")
 const LiveClient := preload("res://scripts/net/live_client.gd")
-const COLUMNS := 5
 
 var live: RefCounted
 var profile: RefCounted
@@ -26,49 +26,10 @@ func _ready() -> void:
 	live = LiveClient.of(Router.params)
 	var col := UiTheme.menu_column(self, 640)
 	col.add_child(UiTheme.heading("live.warehouse", 44))
-	var row := HBoxContainer.new()
-	row.name = "Tabs"
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	var group := ButtonGroup.new()
-	for t in [["Backpack", "live.backpack"], ["Warehouse", "live.warehouse"]]:
-		var b := Button.new()
-		b.name = t[0]
-		b.text = t[1]
-		b.toggle_mode = true
-		b.button_group = group
-		b.custom_minimum_size = Vector2(220, 0)
-		var wh: bool = t[0] == "Warehouse"
-		b.pressed.connect(func(): show_side(wh))
-		row.add_child(b)
-		tabs.append(b)
-	col.add_child(row)
+	tabs = ItemGrid.sides(col, show_side)
 	count = UiTheme.note("Count")
 	col.add_child(count)
-
-	var grid := GridContainer.new()
-	grid.name = "Things"
-	grid.columns = COLUMNS
-	grid.add_theme_constant_override("h_separation", 6)
-	grid.add_theme_constant_override("v_separation", 6)
-	for i in LiveClient.WAREHOUSE:
-		var b := ItemSlot.button("Cell%d" % i)
-		var at := i
-		b.pressed.connect(func(): press_cell(at))
-		b.focus_entered.connect(func(): _show_info(at))
-		b.mouse_entered.connect(func(): _show_info(at))
-		grid.add_child(b)
-		cells.append(b)
-	var scroll := ScrollContainer.new()
-	scroll.name = "Scroll"
-	scroll.custom_minimum_size = Vector2(0, 290)
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	scroll.follow_focus = true
-	var center := CenterContainer.new()
-	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	center.add_child(grid)
-	scroll.add_child(center)
-	col.add_child(scroll)
-
+	cells = ItemGrid.add(col, LiveClient.WAREHOUSE, 290, press_cell, _show_info)
 	info = UiTheme.note("Info", 72)
 	col.add_child(info)
 	var back := Button.new()
@@ -76,7 +37,6 @@ func _ready() -> void:
 	back.text = "common.back"
 	back.pressed.connect(func(): Router.back())
 	col.add_child(back)
-	tabs[0].button_pressed = true
 	refresh()
 	cells[0].grab_focus.call_deferred()
 	if live == null:

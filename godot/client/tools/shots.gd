@@ -123,7 +123,9 @@ func _ready() -> void:
 	session.user = "ANDREY"
 	var client: RefCounted = LiveClient.new(func(msg: Dictionary, done: Callable) -> void:
 		done.call(bytes_to_var(var_to_bytes(market.answer(session, str(msg.t), msg)))))
+	hero.gold = 5000
 	hero.save("user://shot_live_hero.json")
+	hero.gold = 1250
 	var live_params := {"profile_path": "user://shot_live_hero.json", "live": client}
 	Router.go("main_menu")
 	Router.push("live", live_params)
@@ -147,6 +149,41 @@ func _ready() -> void:
 	Router.current.submit()
 	Router.current.amount.text = "250"
 	await _shot(out, "10g_live_safe")
+	# Trade: Buy (kinds of Normal Items, the enchant levels, a page of lots, "Buy for?"), Sell
+	# (the price, Price Info), Cancel Sale with the lot just put on sale.
+	Router.back()
+	Router.push("live_trade", live_params)
+	await _shot(out, "10h_live_trade")
+	Router.push("live_buy", live_params)
+	await _frames(2)
+	Router.current.choose_category(0)
+	await _frames(2)
+	Router.current.cells[2].grab_focus()
+	await _shot(out, "10i_live_buy_kinds")
+	Router.current.choose_kind(2)
+	await _shot(out, "10j_live_buy_enchant")
+	Router.current.choose_enchant(0)
+	await _frames(2)
+	Router.current.cells[1].grab_focus()
+	await _shot(out, "10k_live_buy_lots")
+	Router.current.press_lot(1)
+	await _shot(out, "10l_live_buy_ask")
+	Router.current.ask.hide()
+	Router.back()
+	Router.push("live_sell", live_params)
+	await _frames(2)
+	Router.current.pick(2)  # the first two things are in the Warehouse now
+	Router.current.price.text = "1500"
+	await _shot(out, "10m_live_sell_price")
+	Router.current.price_info()
+	await _frames(2)
+	await _shot(out, "10n_live_price_info")
+	Router.current.go_back()
+	Router.current.put_on_sale()
+	Router.back()
+	Router.push("live_cancel", live_params)
+	await _frames(2)
+	await _shot(out, "10o_live_cancel")
 	# The Blacksmith: buying from the shop, and enchanting the sword in hand.
 	Router.go("main_menu")
 	Router.push("blacksmith", {"profile_path": "user://shot_hero.json"})

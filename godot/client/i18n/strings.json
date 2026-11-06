@@ -694,5 +694,113 @@
   "live.warehouse_full": {
     "en": "Need a space in warehouse. Empty some space in the Warehouse and try again.",
     "uk": "На складі немає місця. Звільніть місце на складі й спробуйте знову."
+  },
+  "live.buy": {
+    "en": "Buy Item",
+    "uk": "Купити"
+  },
+  "live.sell": {
+    "en": "Sell Item",
+    "uk": "Продати"
+  },
+  "live.cancel": {
+    "en": "Cancel Sale",
+    "uk": "Зняти з продажу"
+  },
+  "live.normal": {
+    "en": "Normal Items",
+    "uk": "Звичайні речі"
+  },
+  "live.special": {
+    "en": "Special Items",
+    "uk": "Особливі речі"
+  },
+  "live.rare": {
+    "en": "Rare Items",
+    "uk": "Рідкісні речі"
+  },
+  "live.enchant_lv": {
+    "en": "EnchantLv %d",
+    "uk": "Заточка %d"
+  },
+  "live.page": {
+    "en": "Page %d / %d",
+    "uk": "Сторінка %d / %d"
+  },
+  "live.prev": {
+    "en": "Previous",
+    "uk": "Попередня"
+  },
+  "live.next": {
+    "en": "Next",
+    "uk": "Наступна"
+  },
+  "live.price": {
+    "en": "Price %d",
+    "uk": "Ціна %d"
+  },
+  "live.buy_ask": {
+    "en": "%s\nBuy for %d Gold?",
+    "uk": "%s\nКупити за %d золота?"
+  },
+  "live.bought": {
+    "en": "You bought %s",
+    "uk": "Куплено: %s"
+  },
+  "live.need_gold": {
+    "en": "Need Gold.",
+    "uk": "Бракує золота."
+  },
+  "live.to_warehouse_ask": {
+    "en": "No Space in Backpack. Do you want to save it in Warehouse?",
+    "uk": "У рюкзаку немає місця. Покласти на склад?"
+  },
+  "live.no_items": {
+    "en": "You currently do not have any items for sale.",
+    "uk": "Зараз немає речей на продаж."
+  },
+  "live.top": {
+    "en": "Top of list.",
+    "uk": "Це початок списку."
+  },
+  "live.no_more": {
+    "en": "No more data.",
+    "uk": "Більше нічого немає."
+  },
+  "live.sold_out": {
+    "en": "The item is already sold out.",
+    "uk": "Цю річ уже продано."
+  },
+  "live.not_for_sale": {
+    "en": "Not possible for sale.",
+    "uk": "Це не можна продати."
+  },
+  "live.sell_price": {
+    "en": "Enter your selling price. %d%% of total will go to taxes.",
+    "uk": "Введіть ціну продажу. %d%% від суми піде на податок."
+  },
+  "live.price_info": {
+    "en": "Price Info",
+    "uk": "Ціни"
+  },
+  "live.on_sale": {
+    "en": "If another user buys your item, the money earned will automatically be placed in your safe.",
+    "uk": "Коли інший гравець купить вашу річ, гроші самі прийдуть у ваш сейф."
+  },
+  "live.limit": {
+    "en": "Item sales are limited up to 5 per user at the same time.",
+    "uk": "Одночасно можна продавати не більше 5 речей."
+  },
+  "live.bad_price": {
+    "en": "The number you input is not available.",
+    "uk": "Таке число не підходить."
+  },
+  "live.cancel_ask": {
+    "en": "Do you want to cancel sales of %s?",
+    "uk": "Зняти з продажу %s?"
+  },
+  "live.canceled": {
+    "en": "%s\nSales canceled.",
+    "uk": "%s\nЗнято з продажу."
   }
 }
