@@ -572,6 +572,18 @@ func _ready() -> void:
 	await _frames(3)
 	await _shot(out, "mission_1_fx_spark")
 	msim.hero.hit_fx_kind = 0
+	# The fire held still on the soldier nearest the camera: a fire skill hit him.
+	var burning = null
+	for e in msim.enemies:
+		if burning == null or e.pos.y > burning.pos.y:
+			burning = e
+	if burning != null:
+		burning.on_fire = true
+		burning.fire_frame = 3
+		mission._update_view(1.0)
+		await _frames(3)
+		await _shot(out, "mission_1_fx_fire")
+		burning.on_fire = false
 	# A weapon trail held still: the whirling strike.
 	msim.hero.action = 25
 	msim.hero.frame = 3
