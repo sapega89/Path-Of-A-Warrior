@@ -10,8 +10,11 @@ extends RefCounted
 ##   - a ranged skill when the target stands about 60 px ahead, out of the sword's reach;
 ##   - a strike skill on a general, on 2+ enemies in reach or with the MP nearly full, else the
 ##     attack combo;
-##   - it walks to the nearest living enemy, and around a wall when it stops moving;
-##   - a cleared room: out through an open exit, to a room not seen yet when it can.
+##   - it walks to the nearest living enemy, and around a wall when it stops moving or comes
+##     no closer (each way around longer than the one before, to the other side); an enemy that
+##     four ways around bring no closer (an archer up on a wall) it leaves alone in this room;
+##   - a cleared room (or one where only such enemies are left): out through an open exit, to
+##     a room not seen yet when it can.
 ## Talks, banners and the pause menu stay the player's; any key of the player hands off for a
 ## moment.
 
@@ -25,7 +28,10 @@ const HP_POTIONS := [1, 2, 3, 7, 8, 9]
 const MP_POTIONS := [4, 5, 6, 7, 8, 9]
 const MANUAL_PAUSE := 12  # ticks it waits after a key of the player
 const STUCK_TICKS := 4  # ticks without moving: go around
-const DETOUR_TICKS := 8
+const NO_CLOSER_TICKS := 16  # ticks without coming closer to the target: go around
+const DETOUR_TICKS := 8  # the first way around; the n-th is n times as long
+const GIVE_UP_TRIES := 4  # ways around that bring it no closer: the target is out of reach
+const CLOSER := 27  # px closer than where the ways around began: they worked
 const DOWN := 0
 const LEFT := 2
 const UP := 4
@@ -37,6 +43,13 @@ var _last := Vector2i(-1, -1)
 var _still := 0
 var _detour := -1
 var _detour_ticks := 0
+var _target = null  # the enemy it walks to
+var _closest := 0  # its nearest distance to the target so far
+var _no_closer := 0  # ticks since it last came closer
+var _tries := 0  # ways around the target in a row
+var _try_from := 0  # the nearest distance when they began
+var _out_of_reach: Array = []  # the enemies of this room it leaves alone
+var _hunt_cell := -1  # the room _out_of_reach belongs to
 var _seen := {}
 var _exit_cell := -1
 var _exit := -1
@@ -74,12 +87,15 @@ func decide(sim: RefCounted) -> Dictionary:
 	if key >= 0:
 		out.hotkey = key
 		return out
-	if foes.is_empty():
+	var hunt := _hunted(sim, foes)
+	if hunt.is_empty():
+		if not sim.exits_open():
+			_out_of_reach.clear()  # no way out yet: it tries them again
 		out.held = _to_exit(sim)
 		return out
-	var target = foes[0]
+	var target = hunt[0]
 	var dist := MapSim.distance(h.pos, target.pos)
-	for e in foes:
+	for e in hunt:
 		var d := MapSim.distance(h.pos, e.pos)
 		if d < dist:
 			dist = d
@@ -98,25 +114,61 @@ func decide(sim: RefCounted) -> Dictionary:
 	return out
 
 
+## The enemies it goes for: the living ones, but those it left alone in this room.
+func _hunted(sim: RefCounted, foes: Array) -> Array:
+	if _hunt_cell != sim.cell:
+		_hunt_cell = sim.cell
+		_out_of_reach.clear()
+		_target = null
+	_out_of_reach = _out_of_reach.filter(func(e): return e in foes)
+	return foes.filter(func(e): return not e in _out_of_reach)
+
+
 func _walk(sim: RefCounted, target) -> int:
 	var h = sim.hero
 	_still = _still + 1 if h.pos == _last and h.action == 1 else 0
 	_last = h.pos
-	var want := MapSim.dir4(h.pos, target.pos)
+	var dist := MapSim.distance(h.pos, target.pos)
+	if target != _target:
+		_target = target
+		_closest = dist
+		_no_closer = 0
+		_tries = 0
+	elif dist < _closest:
+		_closest = dist
+		_no_closer = 0
+		if _tries > 0 and dist <= _try_from - CLOSER:
+			_tries = 0
+	else:
+		_no_closer += 1
 	if _detour_ticks > 0:
 		_detour_ticks -= 1
+		_no_closer = 0
 		return _detour
-	if _still >= STUCK_TICKS:  # a wall: along it, toward the target's other axis
-		_still = 0
-		var dx: int = target.pos.x - h.pos.x
-		var dy: int = target.pos.y - h.pos.y
-		if want == DOWN or want == UP:
-			_detour = RIGHT if dx > 0 else LEFT
-		else:
-			_detour = DOWN if dy > 0 else UP
-		_detour_ticks = DETOUR_TICKS
-		return _detour
-	return want
+	var want := MapSim.dir4(h.pos, target.pos)
+	if _still < STUCK_TICKS and _no_closer < NO_CLOSER_TICKS:
+		return want
+	# a wall, or a corner it goes to and fro at: along it, toward the target's other axis first,
+	# then to the other side
+	_still = 0
+	_no_closer = 0
+	_tries += 1
+	if _tries == 1:
+		_try_from = _closest
+	if _tries > GIVE_UP_TRIES:
+		_out_of_reach.append(target)
+		_target = null
+		return -1
+	var dx: int = target.pos.x - h.pos.x
+	var dy: int = target.pos.y - h.pos.y
+	if want == DOWN or want == UP:
+		_detour = RIGHT if dx > 0 else LEFT
+	else:
+		_detour = DOWN if dy > 0 else UP
+	if _tries % 2 == 0:
+		_detour = (_detour + 4) & 7
+	_detour_ticks = DETOUR_TICKS * _tries
+	return _detour
 
 
 ## A belt slot to drink from, or -1.
