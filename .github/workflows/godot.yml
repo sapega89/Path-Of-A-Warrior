@@ -6,6 +6,7 @@ on:
     paths: ["godot/**", ".github/workflows/godot.yml"]
   pull_request:
     paths: ["godot/**", ".github/workflows/godot.yml"]
+  workflow_dispatch:  # run by hand from the Actions tab
 
 jobs:
   test:
