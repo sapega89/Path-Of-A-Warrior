@@ -1554,7 +1554,7 @@ func _mission_over() -> void:
 		finished = true
 
 
-## The gold of the mission (twice on normal difficulty).
+## The gold of the mission (twice on hard difficulty, 0).
 func gold_reward() -> int:
 	return mission_gold * 150 * (1 + (difficulty ^ 1))
 

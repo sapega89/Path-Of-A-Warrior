@@ -230,10 +230,10 @@ func test_rewards_and_the_talk_after_the_mission() -> void:
 	sim.time_limit = 192
 	sim.mission_general = 5
 	sim.banner = MapSim.BANNER_SUCCESS
-	eq(sim.gold_reward(), 900, "gold: 3 x 150, twice on normal")
+	eq(sim.gold_reward(), 450, "gold: 3 x 150 on normal")
 	sim.tick(-1, -1, true)
 	eq(sim.banner, MapSim.BANNER_TOTAL_EXP, "the exp")
-	eq(sim.exp_reward(), 160, "exp: four times on normal")
+	eq(sim.exp_reward(), 80, "exp: twice on normal")
 	sim.tick(-1, -1, true)
 	eq(sim.banner, MapSim.BANNER_TIME_EXP, "in time: the exp for time")
 	eq(sim.mission_exp, 42, "a twentieth more")
