@@ -1,0 +1,2458 @@
+{
+"gear": {
+"101": {
+"name": "Iron Blade",
+"slot": 0,
+"stat": 0,
+"bonus": 2,
+"range": 3,
+"icon": 3,
+"level": 1
+},
+"102": {
+"name": "Steel Blade",
+"slot": 0,
+"stat": 0,
+"bonus": 5,
+"range": 4,
+"icon": 3,
+"level": 10
+},
+"103": {
+"name": "War Blade",
+"slot": 0,
+"stat": 0,
+"bonus": 10,
+"range": 5,
+"icon": 3,
+"level": 25
+},
+"104": {
+"name": "Great Blade",
+"slot": 0,
+"stat": 0,
+"bonus": 16,
+"range": 6,
+"icon": 3,
+"level": 45
+},
+"105": {
+"name": "Fleet Blade",
+"slot": 0,
+"stat": 0,
+"bonus": 23,
+"range": 7,
+"icon": 3,
+"level": 70
+},
+"106": {
+"name": "Spontoon Pike",
+"slot": 0,
+"stat": 0,
+"bonus": 3,
+"range": 2,
+"icon": 4,
+"level": 1
+},
+"107": {
+"name": "Iron Pike",
+"slot": 0,
+"stat": 0,
+"bonus": 6,
+"range": 3,
+"icon": 4,
+"level": 10
+},
+"108": {
+"name": "Steel Pike",
+"slot": 0,
+"stat": 0,
+"bonus": 10,
+"range": 4,
+"icon": 4,
+"level": 25
+},
+"109": {
+"name": "Thrust Pike",
+"slot": 0,
+"stat": 0,
+"bonus": 15,
+"range": 5,
+"icon": 4,
+"level": 45
+},
+"110": {
+"name": "Impaling Pike",
+"slot": 0,
+"stat": 0,
+"bonus": 21,
+"range": 6,
+"icon": 4,
+"level": 70
+},
+"111": {
+"name": "Brawn Blade",
+"slot": 0,
+"stat": 0,
+"bonus": 1,
+"range": 4,
+"icon": 5,
+"level": 1
+},
+"112": {
+"name": "Lead Blade",
+"slot": 0,
+"stat": 0,
+"bonus": 6,
+"range": 5,
+"icon": 5,
+"level": 10
+},
+"113": {
+"name": "Fealty Blade",
+"slot": 0,
+"stat": 0,
+"bonus": 12,
+"range": 6,
+"icon": 5,
+"level": 25
+},
+"114": {
+"name": "Salvo Blade",
+"slot": 0,
+"stat": 0,
+"bonus": 19,
+"range": 7,
+"icon": 5,
+"level": 45
+},
+"115": {
+"name": "A. Blade",
+"slot": 0,
+"stat": 0,
+"bonus": 27,
+"range": 8,
+"icon": 5,
+"level": 70
+},
+"116": {
+"name": "Iron Claymore",
+"slot": 1,
+"stat": 0,
+"bonus": 1,
+"range": 2,
+"icon": 0,
+"level": 1
+},
+"117": {
+"name": "Steel Claymore",
+"slot": 1,
+"stat": 0,
+"bonus": 3,
+"range": 3,
+"icon": 0,
+"level": 10
+},
+"118": {
+"name": "War Claymore",
+"slot": 1,
+"stat": 0,
+"bonus": 6,
+"range": 4,
+"icon": 0,
+"level": 25
+},
+"119": {
+"name": "Great Claymore",
+"slot": 1,
+"stat": 0,
+"bonus": 10,
+"range": 5,
+"icon": 0,
+"level": 45
+},
+"120": {
+"name": "Fleet Claymore",
+"slot": 1,
+"stat": 0,
+"bonus": 15,
+"range": 6,
+"icon": 0,
+"level": 70
+},
+"121": {
+"name": "Strong Sword",
+"slot": 1,
+"stat": 0,
+"bonus": 2,
+"range": 2,
+"icon": 1,
+"level": 1
+},
+"122": {
+"name": "Steel Sword",
+"slot": 1,
+"stat": 0,
+"bonus": 4,
+"range": 3,
+"icon": 1,
+"level": 10
+},
+"123": {
+"name": "War Sword",
+"slot": 1,
+"stat": 0,
+"bonus": 7,
+"range": 4,
+"icon": 1,
+"level": 25
+},
+"124": {
+"name": "Bastard Sword",
+"slot": 1,
+"stat": 0,
+"bonus": 11,
+"range": 5,
+"icon": 1,
+"level": 45
+},
+"125": {
+"name": "Great Sword",
+"slot": 1,
+"stat": 0,
+"bonus": 16,
+"range": 6,
+"icon": 1,
+"level": 70
+},
+"126": {
+"name": "Half-Axe",
+"slot": 1,
+"stat": 0,
+"bonus": 3,
+"range": 2,
+"icon": 2,
+"level": 1
+},
+"127": {
+"name": "Steel Axe",
+"slot": 1,
+"stat": 0,
+"bonus": 5,
+"range": 3,
+"icon": 2,
+"level": 10
+},
+"128": {
+"name": "Battle Axe",
+"slot": 1,
+"stat": 0,
+"bonus": 8,
+"range": 4,
+"icon": 2,
+"level": 25
+},
+"129": {
+"name": "Crusader's Axe",
+"slot": 1,
+"stat": 0,
+"bonus": 12,
+"range": 5,
+"icon": 2,
+"level": 45
+},
+"130": {
+"name": "War Hammer Axe",
+"slot": 1,
+"stat": 0,
+"bonus": 17,
+"range": 6,
+"icon": 2,
+"level": 70
+},
+"131": {
+"name": "Leather Helmet",
+"slot": 2,
+"stat": 1,
+"bonus": 1,
+"range": 2,
+"icon": 6,
+"level": 1
+},
+"132": {
+"name": "Steel Helmet",
+"slot": 2,
+"stat": 1,
+"bonus": 4,
+"range": 3,
+"icon": 6,
+"level": 10
+},
+"133": {
+"name": "Demon Helmet",
+"slot": 2,
+"stat": 1,
+"bonus": 8,
+"range": 4,
+"icon": 6,
+"level": 25
+},
+"134": {
+"name": "Sage Helmet",
+"slot": 2,
+"stat": 1,
+"bonus": 13,
+"range": 5,
+"icon": 6,
+"level": 45
+},
+"135": {
+"name": "Great Helmet",
+"slot": 2,
+"stat": 1,
+"bonus": 19,
+"range": 6,
+"icon": 6,
+"level": 70
+},
+"136": {
+"name": "Leather Armour",
+"slot": 3,
+"stat": 1,
+"bonus": 3,
+"range": 3,
+"icon": 7,
+"level": 1
+},
+"137": {
+"name": "Enforced Armour",
+"slot": 3,
+"stat": 1,
+"bonus": 7,
+"range": 4,
+"icon": 7,
+"level": 10
+},
+"138": {
+"name": "Chain Armour",
+"slot": 3,
+"stat": 1,
+"bonus": 12,
+"range": 5,
+"icon": 7,
+"level": 25
+},
+"139": {
+"name": "Fierce Armour",
+"slot": 3,
+"stat": 1,
+"bonus": 18,
+"range": 6,
+"icon": 7,
+"level": 45
+},
+"140": {
+"name": "Demon Armour",
+"slot": 3,
+"stat": 1,
+"bonus": 25,
+"range": 7,
+"icon": 7,
+"level": 70
+},
+"141": {
+"name": "Lord Armour",
+"slot": 3,
+"stat": 2,
+"bonus": 15,
+"range": 15,
+"icon": 7,
+"level": 1
+},
+"142": {
+"name": "Emperor Armour",
+"slot": 3,
+"stat": 2,
+"bonus": 35,
+"range": 20,
+"icon": 7,
+"level": 10
+},
+"143": {
+"name": "Sage Armour",
+"slot": 3,
+"stat": 2,
+"bonus": 60,
+"range": 25,
+"icon": 7,
+"level": 25
+},
+"144": {
+"name": "Scrybe Armour",
+"slot": 3,
+"stat": 2,
+"bonus": 90,
+"range": 30,
+"icon": 7,
+"level": 45
+},
+"145": {
+"name": "Vast Armour",
+"slot": 3,
+"stat": 2,
+"bonus": 125,
+"range": 35,
+"icon": 7,
+"level": 70
+},
+"146": {
+"name": "Steel Gauntlets",
+"slot": 4,
+"stat": 2,
+"bonus": 5,
+"range": 10,
+"icon": 11,
+"level": 1
+},
+"147": {
+"name": "Cross Gauntlets",
+"slot": 4,
+"stat": 2,
+"bonus": 20,
+"range": 15,
+"icon": 11,
+"level": 10
+},
+"148": {
+"name": "Demon Gauntlets",
+"slot": 4,
+"stat": 2,
+"bonus": 40,
+"range": 20,
+"icon": 11,
+"level": 25
+},
+"149": {
+"name": "Sage Gauntlets",
+"slot": 4,
+"stat": 2,
+"bonus": 65,
+"range": 25,
+"icon": 11,
+"level": 45
+},
+"150": {
+"name": "Sky Gauntlets",
+"slot": 4,
+"stat": 2,
+"bonus": 95,
+"range": 30,
+"icon": 11,
+"level": 70
+},
+"151": {
+"name": "Leather Boots",
+"slot": 5,
+"stat": 2,
+"bonus": 5,
+"range": 10,
+"icon": 12,
+"level": 1
+},
+"152": {
+"name": "Steel Boots",
+"slot": 5,
+"stat": 2,
+"bonus": 20,
+"range": 15,
+"icon": 12,
+"level": 10
+},
+"153": {
+"name": "Fierce Boots",
+"slot": 5,
+"stat": 2,
+"bonus": 40,
+"range": 20,
+"icon": 12,
+"level": 25
+},
+"154": {
+"name": "Demon Boots",
+"slot": 5,
+"stat": 2,
+"bonus": 65,
+"range": 25,
+"icon": 12,
+"level": 45
+},
+"155": {
+"name": "Alpha Boots",
+"slot": 5,
+"stat": 2,
+"bonus": 95,
+"range": 30,
+"icon": 12,
+"level": 70
+},
+"156": {
+"name": "Leather Belt",
+"slot": 6,
+"stat": 2,
+"bonus": 5,
+"range": 10,
+"icon": 8,
+"level": 1
+},
+"157": {
+"name": "Steel Belt",
+"slot": 6,
+"stat": 2,
+"bonus": 20,
+"range": 15,
+"icon": 8,
+"level": 10
+},
+"158": {
+"name": "Fierce Belt",
+"slot": 6,
+"stat": 2,
+"bonus": 40,
+"range": 20,
+"icon": 8,
+"level": 25
+},
+"159": {
+"name": "Sage Belt",
+"slot": 6,
+"stat": 2,
+"bonus": 65,
+"range": 25,
+"icon": 8,
+"level": 45
+},
+"160": {
+"name": "Enchanted Belt",
+"slot": 6,
+"stat": 2,
+"bonus": 95,
+"range": 30,
+"icon": 8,
+"level": 70
+},
+"161": {
+"name": "Hawk Armlet",
+"slot": 7,
+"stat": 1,
+"bonus": 1,
+"range": 1,
+"icon": 9,
+"level": 1
+},
+"162": {
+"name": "Mystic Armlet",
+"slot": 7,
+"stat": 1,
+"bonus": 2,
+"range": 2,
+"icon": 9,
+"level": 10
+},
+"163": {
+"name": "Phoenix Armlet",
+"slot": 7,
+"stat": 1,
+"bonus": 4,
+"range": 2,
+"icon": 9,
+"level": 25
+},
+"164": {
+"name": "Tiger Armlet",
+"slot": 7,
+"stat": 1,
+"bonus": 6,
+"range": 2,
+"icon": 9,
+"level": 45
+},
+"165": {
+"name": "Demon Armlet",
+"slot": 7,
+"stat": 1,
+"bonus": 8,
+"range": 2,
+"icon": 9,
+"level": 70
+},
+"166": {
+"name": "Energy Armlet",
+"slot": 7,
+"stat": 0,
+"bonus": 1,
+"range": 2,
+"icon": 9,
+"level": 1
+},
+"167": {
+"name": "Fire Armlet",
+"slot": 7,
+"stat": 0,
+"bonus": 4,
+"range": 3,
+"icon": 9,
+"level": 10
+},
+"168": {
+"name": "Thunder Armlet",
+"slot": 7,
+"stat": 0,
+"bonus": 8,
+"range": 4,
+"icon": 9,
+"level": 25
+},
+"169": {
+"name": "Flame Armlet",
+"slot": 7,
+"stat": 0,
+"bonus": 13,
+"range": 5,
+"icon": 9,
+"level": 45
+},
+"170": {
+"name": "Light Armlet",
+"slot": 7,
+"stat": 0,
+"bonus": 19,
+"range": 6,
+"icon": 9,
+"level": 70
+},
+"171": {
+"name": "Lord Armlet",
+"slot": 7,
+"stat": 2,
+"bonus": 5,
+"range": 10,
+"icon": 9,
+"level": 1
+},
+"172": {
+"name": "Emperor Armlet",
+"slot": 7,
+"stat": 2,
+"bonus": 20,
+"range": 10,
+"icon": 9,
+"level": 10
+},
+"173": {
+"name": "Sage Armlet",
+"slot": 7,
+"stat": 2,
+"bonus": 35,
+"range": 10,
+"icon": 9,
+"level": 25
+},
+"174": {
+"name": "Bliss Armlet",
+"slot": 7,
+"stat": 2,
+"bonus": 50,
+"range": 10,
+"icon": 9,
+"level": 45
+},
+"175": {
+"name": "Heaven's Armlet",
+"slot": 7,
+"stat": 2,
+"bonus": 65,
+"range": 10,
+"icon": 9,
+"level": 70
+},
+"176": {
+"name": "Zero Armlet",
+"slot": 7,
+"stat": 3,
+"bonus": 3,
+"range": 6,
+"icon": 9,
+"level": 1
+},
+"177": {
+"name": "Dead Armlet",
+"slot": 7,
+"stat": 3,
+"bonus": 10,
+"range": 9,
+"icon": 9,
+"level": 10
+},
+"178": {
+"name": "Ancient Armlet",
+"slot": 7,
+"stat": 3,
+"bonus": 20,
+"range": 12,
+"icon": 9,
+"level": 25
+},
+"179": {
+"name": "Vision Armlet",
+"slot": 7,
+"stat": 3,
+"bonus": 33,
+"range": 15,
+"icon": 9,
+"level": 45
+},
+"180": {
+"name": "Majestic Armlet",
+"slot": 7,
+"stat": 3,
+"bonus": 49,
+"range": 18,
+"icon": 9,
+"level": 70
+},
+"181": {
+"name": "Hawk Amulet",
+"slot": 8,
+"stat": 1,
+"bonus": 1,
+"range": 1,
+"icon": 10,
+"level": 1
+},
+"182": {
+"name": "Mystic Amulet",
+"slot": 8,
+"stat": 1,
+"bonus": 2,
+"range": 2,
+"icon": 10,
+"level": 10
+},
+"183": {
+"name": "Phoenix Amulet",
+"slot": 8,
+"stat": 1,
+"bonus": 4,
+"range": 2,
+"icon": 10,
+"level": 25
+},
+"184": {
+"name": "Tiger Amulet",
+"slot": 8,
+"stat": 1,
+"bonus": 6,
+"range": 2,
+"icon": 10,
+"level": 45
+},
+"185": {
+"name": "Demon Amulet",
+"slot": 8,
+"stat": 1,
+"bonus": 8,
+"range": 2,
+"icon": 10,
+"level": 70
+},
+"186": {
+"name": "Energy Amulet",
+"slot": 8,
+"stat": 0,
+"bonus": 2,
+"range": 2,
+"icon": 10,
+"level": 1
+},
+"187": {
+"name": "Fire Amulet",
+"slot": 8,
+"stat": 0,
+"bonus": 5,
+"range": 3,
+"icon": 10,
+"level": 10
+},
+"188": {
+"name": "Thunder Amulet",
+"slot": 8,
+"stat": 0,
+"bonus": 9,
+"range": 4,
+"icon": 10,
+"level": 25
+},
+"189": {
+"name": "Flame Amulet",
+"slot": 8,
+"stat": 0,
+"bonus": 14,
+"range": 5,
+"icon": 10,
+"level": 45
+},
+"190": {
+"name": "Light Amulet",
+"slot": 8,
+"stat": 0,
+"bonus": 20,
+"range": 6,
+"icon": 10,
+"level": 70
+},
+"191": {
+"name": "Lord Amulet",
+"slot": 8,
+"stat": 2,
+"bonus": 10,
+"range": 10,
+"icon": 10,
+"level": 1
+},
+"192": {
+"name": "Emperor Amulet",
+"slot": 8,
+"stat": 2,
+"bonus": 25,
+"range": 15,
+"icon": 10,
+"level": 10
+},
+"193": {
+"name": "Sage Amulet",
+"slot": 8,
+"stat": 2,
+"bonus": 45,
+"range": 20,
+"icon": 10,
+"level": 25
+},
+"194": {
+"name": "Bliss Amulet",
+"slot": 8,
+"stat": 2,
+"bonus": 70,
+"range": 20,
+"icon": 10,
+"level": 45
+},
+"195": {
+"name": "Heaven's Amulet",
+"slot": 8,
+"stat": 2,
+"bonus": 95,
+"range": 20,
+"icon": 10,
+"level": 70
+},
+"196": {
+"name": "Zero Amulet",
+"slot": 8,
+"stat": 3,
+"bonus": 3,
+"range": 3,
+"icon": 10,
+"level": 1
+},
+"197": {
+"name": "Dead Amulet",
+"slot": 8,
+"stat": 3,
+"bonus": 7,
+"range": 6,
+"icon": 10,
+"level": 10
+},
+"198": {
+"name": "Ancient Amulet",
+"slot": 8,
+"stat": 3,
+"bonus": 14,
+"range": 9,
+"icon": 10,
+"level": 25
+},
+"199": {
+"name": "Vision Amulet",
+"slot": 8,
+"stat": 3,
+"bonus": 24,
+"range": 12,
+"icon": 10,
+"level": 45
+},
+"200": {
+"name": "Majestic Amulet",
+"slot": 8,
+"stat": 3,
+"bonus": 37,
+"range": 15,
+"icon": 10,
+"level": 70
+}
+},
+"treasures": {
+"301": {
+"name": "Steel Spear",
+"slot": 0,
+"attack": 30,
+"defense": 1,
+"hp": 0,
+"mp": 0,
+"icon": 3,
+"level": 62
+},
+"302": {
+"name": "Impale Pike",
+"slot": 0,
+"attack": 35,
+"defense": 1,
+"hp": 0,
+"mp": 0,
+"icon": 5,
+"level": 72
+},
+"303": {
+"name": "Shadow Spear",
+"slot": 0,
+"attack": 32,
+"defense": 2,
+"hp": 0,
+"mp": 0,
+"icon": 3,
+"level": 68
+},
+"304": {
+"name": "Lunar Pike",
+"slot": 0,
+"attack": 38,
+"defense": 3,
+"hp": 0,
+"mp": 0,
+"icon": 5,
+"level": 82
+},
+"305": {
+"name": "Light Spear",
+"slot": 0,
+"attack": 32,
+"defense": 2,
+"hp": 0,
+"mp": 0,
+"icon": 3,
+"level": 68
+},
+"306": {
+"name": "Slayer Spear",
+"slot": 0,
+"attack": 45,
+"defense": 5,
+"hp": 0,
+"mp": 0,
+"icon": 3,
+"level": 100
+},
+"307": {
+"name": "Upshot Pike",
+"slot": 0,
+"attack": 28,
+"defense": 3,
+"hp": 0,
+"mp": 0,
+"icon": 4,
+"level": 62
+},
+"308": {
+"name": "Sarissa Spear",
+"slot": 0,
+"attack": 30,
+"defense": 1,
+"hp": 0,
+"mp": 0,
+"icon": 4,
+"level": 62
+},
+"309": {
+"name": "Barchi Spear",
+"slot": 0,
+"attack": 30,
+"defense": 0,
+"hp": 0,
+"mp": 0,
+"icon": 3,
+"level": 60
+},
+"310": {
+"name": "Raze Pike",
+"slot": 0,
+"attack": 32,
+"defense": 2,
+"hp": 0,
+"mp": 0,
+"icon": 4,
+"level": 68
+},
+"311": {
+"name": "Boar Spear",
+"slot": 0,
+"attack": 30,
+"defense": 3,
+"hp": 0,
+"mp": 0,
+"icon": 3,
+"level": 66
+},
+"312": {
+"name": "Piercing Spear",
+"slot": 0,
+"attack": 30,
+"defense": 4,
+"hp": 0,
+"mp": 0,
+"icon": 3,
+"level": 68
+},
+"313": {
+"name": "Piercing Pike",
+"slot": 0,
+"attack": 32,
+"defense": 5,
+"hp": 0,
+"mp": 0,
+"icon": 4,
+"level": 74
+},
+"314": {
+"name": "Dawn Pike",
+"slot": 0,
+"attack": 35,
+"defense": 1,
+"hp": 0,
+"mp": 0,
+"icon": 3,
+"level": 72
+},
+"315": {
+"name": "Arete Pike",
+"slot": 0,
+"attack": 25,
+"defense": 8,
+"hp": 0,
+"mp": 0,
+"icon": 3,
+"level": 66
+},
+"316": {
+"name": "Godendag Pike",
+"slot": 0,
+"attack": 45,
+"defense": 4,
+"hp": 0,
+"mp": 0,
+"icon": 3,
+"level": 98
+},
+"317": {
+"name": "Holy Pike",
+"slot": 0,
+"attack": 35,
+"defense": 2,
+"hp": 0,
+"mp": 0,
+"icon": 5,
+"level": 74
+},
+"318": {
+"name": "Amethyst Sword",
+"slot": 1,
+"attack": 24,
+"defense": 3,
+"hp": 0,
+"mp": 0,
+"icon": 1,
+"level": 54
+},
+"319": {
+"name": "Demon Sword",
+"slot": 1,
+"attack": 24,
+"defense": 4,
+"hp": 0,
+"mp": 0,
+"icon": 1,
+"level": 56
+},
+"320": {
+"name": "Myriad Claymore",
+"slot": 1,
+"attack": 27,
+"defense": 6,
+"hp": 0,
+"mp": 0,
+"icon": 1,
+"level": 66
+},
+"321": {
+"name": "Pyrrhic Sword",
+"slot": 1,
+"attack": 27,
+"defense": 8,
+"hp": 0,
+"mp": 0,
+"icon": 0,
+"level": 70
+},
+"322": {
+"name": "Command Axe",
+"slot": 1,
+"attack": 20,
+"defense": 6,
+"hp": 0,
+"mp": 0,
+"icon": 2,
+"level": 52
+},
+"323": {
+"name": "Savoir Sword",
+"slot": 1,
+"attack": 24,
+"defense": 6,
+"hp": 0,
+"mp": 0,
+"icon": 1,
+"level": 60
+},
+"324": {
+"name": "Ballistic Sword",
+"slot": 1,
+"attack": 27,
+"defense": 3,
+"hp": 0,
+"mp": 0,
+"icon": 1,
+"level": 60
+},
+"325": {
+"name": "Templar Axe",
+"slot": 1,
+"attack": 22,
+"defense": 3,
+"hp": 0,
+"mp": 0,
+"icon": 2,
+"level": 50
+},
+"326": {
+"name": "Suffuse Sword",
+"slot": 1,
+"attack": 24,
+"defense": 3,
+"hp": 0,
+"mp": 0,
+"icon": 1,
+"level": 54
+},
+"327": {
+"name": "Lucent Axe",
+"slot": 1,
+"attack": 32,
+"defense": 3,
+"hp": 0,
+"mp": 0,
+"icon": 2,
+"level": 70
+},
+"328": {
+"name": "Vestige Sword",
+"slot": 1,
+"attack": 27,
+"defense": 6,
+"hp": 0,
+"mp": 0,
+"icon": 1,
+"level": 66
+},
+"329": {
+"name": "Excel Claymore",
+"slot": 1,
+"attack": 27,
+"defense": 9,
+"hp": 0,
+"mp": 0,
+"icon": 0,
+"level": 72
+},
+"330": {
+"name": "Celest Claymore",
+"slot": 1,
+"attack": 30,
+"defense": 6,
+"hp": 0,
+"mp": 0,
+"icon": 0,
+"level": 72
+},
+"331": {
+"name": "Triton Claymore",
+"slot": 1,
+"attack": 32,
+"defense": 6,
+"hp": 0,
+"mp": 0,
+"icon": 0,
+"level": 76
+},
+"332": {
+"name": "Bane Sword",
+"slot": 1,
+"attack": 32,
+"defense": 3,
+"hp": 0,
+"mp": 0,
+"icon": 1,
+"level": 70
+},
+"333": {
+"name": "Sear Sword",
+"slot": 1,
+"attack": 30,
+"defense": 3,
+"hp": 0,
+"mp": 0,
+"icon": 1,
+"level": 66
+},
+"334": {
+"name": "Fervor Claymore",
+"slot": 1,
+"attack": 34,
+"defense": 8,
+"hp": 0,
+"mp": 0,
+"icon": 0,
+"level": 84
+},
+"335": {
+"name": "Saint Claymore",
+"slot": 1,
+"attack": 37,
+"defense": 3,
+"hp": 0,
+"mp": 0,
+"icon": 1,
+"level": 80
+},
+"336": {
+"name": "Carmine Axe",
+"slot": 1,
+"attack": 37,
+"defense": 6,
+"hp": 0,
+"mp": 0,
+"icon": 2,
+"level": 86
+},
+"337": {
+"name": "Liege Axe",
+"slot": 1,
+"attack": 27,
+"defense": 3,
+"hp": 0,
+"mp": 0,
+"icon": 2,
+"level": 60
+},
+"338": {
+"name": "Fierce Sword",
+"slot": 1,
+"attack": 32,
+"defense": 3,
+"hp": 0,
+"mp": 0,
+"icon": 1,
+"level": 70
+},
+"339": {
+"name": "Sage Sword",
+"slot": 1,
+"attack": 34,
+"defense": 8,
+"hp": 0,
+"mp": 0,
+"icon": 1,
+"level": 84
+},
+"340": {
+"name": "Austere Sword",
+"slot": 1,
+"attack": 37,
+"defense": 4,
+"hp": 0,
+"mp": 0,
+"icon": 1,
+"level": 82
+},
+"341": {
+"name": "Flatbow",
+"slot": 9,
+"attack": 15,
+"defense": 0,
+"hp": 0,
+"mp": 0,
+"icon": 6,
+"level": 30
+},
+"342": {
+"name": "Longbow",
+"slot": 9,
+"attack": 12,
+"defense": 0,
+"hp": 0,
+"mp": 0,
+"icon": 6,
+"level": 24
+},
+"343": {
+"name": "Mongol Bow",
+"slot": 9,
+"attack": 10,
+"defense": 0,
+"hp": 0,
+"mp": 0,
+"icon": 6,
+"level": 20
+},
+"344": {
+"name": "Perso Bow",
+"slot": 9,
+"attack": 8,
+"defense": 0,
+"hp": 0,
+"mp": 0,
+"icon": 6,
+"level": 16
+},
+"345": {
+"name": "Hungarian Bow",
+"slot": 9,
+"attack": 5,
+"defense": 0,
+"hp": 0,
+"mp": 0,
+"icon": 6,
+"level": 10
+},
+"346": {
+"name": "Hun Bow",
+"slot": 9,
+"attack": 3,
+"defense": 0,
+"hp": 0,
+"mp": 15,
+"icon": 6,
+"level": 16
+},
+"347": {
+"name": "Weald Crown",
+"slot": 2,
+"attack": 0,
+"defense": 27,
+"hp": 0,
+"mp": 15,
+"icon": 7,
+"level": 64
+},
+"348": {
+"name": "Venerable Crown",
+"slot": 2,
+"attack": 0,
+"defense": 30,
+"hp": 0,
+"mp": 0,
+"icon": 7,
+"level": 60
+},
+"349": {
+"name": "Lucent Crown",
+"slot": 2,
+"attack": 0,
+"defense": 33,
+"hp": 25,
+"mp": 0,
+"icon": 7,
+"level": 76
+},
+"350": {
+"name": "Triple Crown",
+"slot": 2,
+"attack": 0,
+"defense": 36,
+"hp": 0,
+"mp": 0,
+"icon": 7,
+"level": 72
+},
+"351": {
+"name": "Mystic Crown",
+"slot": 2,
+"attack": 0,
+"defense": 30,
+"hp": 0,
+"mp": 60,
+"icon": 7,
+"level": 100
+},
+"352": {
+"name": "Plate Armour",
+"slot": 3,
+"attack": 0,
+"defense": 35,
+"hp": 150,
+"mp": 0,
+"icon": 8,
+"level": 130
+},
+"353": {
+"name": "Plate Armour",
+"slot": 3,
+"attack": 0,
+"defense": 35,
+"hp": 150,
+"mp": 0,
+"icon": 8,
+"level": 130
+},
+"354": {
+"name": "Brute Armour",
+"slot": 3,
+"attack": 0,
+"defense": 41,
+"hp": 150,
+"mp": 0,
+"icon": 8,
+"level": 142
+},
+"355": {
+"name": "Bliss Armour",
+"slot": 3,
+"attack": 0,
+"defense": 38,
+"hp": 145,
+"mp": 0,
+"icon": 8,
+"level": 134
+},
+"356": {
+"name": "Azul Armour",
+"slot": 3,
+"attack": 0,
+"defense": 27,
+"hp": 0,
+"mp": 30,
+"icon": 8,
+"level": 74
+},
+"357": {
+"name": "Auric Armour",
+"slot": 3,
+"attack": 0,
+"defense": 24,
+"hp": 0,
+"mp": 39,
+"icon": 8,
+"level": 74
+},
+"358": {
+"name": "Herald Armour",
+"slot": 3,
+"attack": 0,
+"defense": 21,
+"hp": 0,
+"mp": 99,
+"icon": 8,
+"level": 108
+},
+"359": {
+"name": "Omega Boots",
+"slot": 5,
+"attack": 0,
+"defense": 0,
+"hp": 130,
+"mp": 15,
+"icon": 9,
+"level": 69
+},
+"360": {
+"name": "Stalwart Boots",
+"slot": 5,
+"attack": 0,
+"defense": 0,
+"hp": 145,
+"mp": 18,
+"icon": 9,
+"level": 78
+},
+"361": {
+"name": "Excel Boots",
+"slot": 5,
+"attack": 0,
+"defense": 0,
+"hp": 160,
+"mp": 21,
+"icon": 9,
+"level": 87
+},
+"362": {
+"name": "Faith Boots",
+"slot": 5,
+"attack": 0,
+"defense": 0,
+"hp": 175,
+"mp": 24,
+"icon": 9,
+"level": 96
+},
+"363": {
+"name": "War Boots",
+"slot": 5,
+"attack": 0,
+"defense": 0,
+"hp": 230,
+"mp": 0,
+"icon": 9,
+"level": 102
+},
+"364": {
+"name": "Vim Boots",
+"slot": 5,
+"attack": 0,
+"defense": 0,
+"hp": 145,
+"mp": 9,
+"icon": 9,
+"level": 71
+},
+"365": {
+"name": "Azul Boots",
+"slot": 5,
+"attack": 0,
+"defense": 0,
+"hp": 130,
+"mp": 0,
+"icon": 9,
+"level": 58
+},
+"366": {
+"name": "Havoc Boots",
+"slot": 5,
+"attack": 0,
+"defense": 0,
+"hp": 255,
+"mp": 0,
+"icon": 9,
+"level": 113
+},
+"367": {
+"name": "Lancer Boots",
+"slot": 5,
+"attack": 0,
+"defense": 0,
+"hp": 155,
+"mp": 21,
+"icon": 9,
+"level": 84
+},
+"368": {
+"name": "Virtue Boots",
+"slot": 5,
+"attack": 0,
+"defense": 0,
+"hp": 180,
+"mp": 24,
+"icon": 9,
+"level": 98
+},
+"369": {
+"name": "Scabre Belt",
+"slot": 6,
+"attack": 0,
+"defense": 0,
+"hp": 150,
+"mp": 0,
+"icon": 10,
+"level": 60
+},
+"370": {
+"name": "Palisade Belt",
+"slot": 6,
+"attack": 0,
+"defense": 0,
+"hp": 135,
+"mp": 0,
+"icon": 10,
+"level": 54
+},
+"371": {
+"name": "Belvedere Belt",
+"slot": 6,
+"attack": 0,
+"defense": 0,
+"hp": 120,
+"mp": 15,
+"icon": 10,
+"level": 58
+},
+"372": {
+"name": "Enchanted Belt",
+"slot": 6,
+"attack": 0,
+"defense": 0,
+"hp": 150,
+"mp": 30,
+"icon": 10,
+"level": 80
+},
+"373": {
+"name": "Heartfire Belt",
+"slot": 6,
+"attack": 0,
+"defense": 0,
+"hp": 165,
+"mp": 0,
+"icon": 10,
+"level": 66
+},
+"374": {
+"name": "Iron Will Belt",
+"slot": 6,
+"attack": 0,
+"defense": 0,
+"hp": 125,
+"mp": 30,
+"icon": 10,
+"level": 70
+},
+"375": {
+"name": "Ardent Belt",
+"slot": 6,
+"attack": 0,
+"defense": 0,
+"hp": 150,
+"mp": 0,
+"icon": 10,
+"level": 60
+},
+"376": {
+"name": "Galvanic Belt",
+"slot": 6,
+"attack": 0,
+"defense": 0,
+"hp": 125,
+"mp": 30,
+"icon": 10,
+"level": 70
+},
+"377": {
+"name": "Palomino Rouncy",
+"slot": 9,
+"attack": 0,
+"defense": 3,
+"hp": 25,
+"mp": 0,
+"icon": 11,
+"level": 16
+},
+"378": {
+"name": "Gray Garron",
+"slot": 9,
+"attack": 0,
+"defense": 5,
+"hp": 50,
+"mp": 0,
+"icon": 11,
+"level": 30
+},
+"379": {
+"name": "Black Barb",
+"slot": 9,
+"attack": 0,
+"defense": 4,
+"hp": 75,
+"mp": 36,
+"icon": 11,
+"level": 62
+},
+"380": {
+"name": "Dun Sumpter",
+"slot": 9,
+"attack": 0,
+"defense": 1,
+"hp": 35,
+"mp": 0,
+"icon": 11,
+"level": 16
+},
+"381": {
+"name": "Light Palfrey",
+"slot": 9,
+"attack": 0,
+"defense": 2,
+"hp": 40,
+"mp": 0,
+"icon": 11,
+"level": 20
+},
+"382": {
+"name": "Gray Clydesdale",
+"slot": 9,
+"attack": 0,
+"defense": 6,
+"hp": 100,
+"mp": 0,
+"icon": 11,
+"level": 52
+},
+"383": {
+"name": "Black Garron",
+"slot": 9,
+"attack": 0,
+"defense": 25,
+"hp": 50,
+"mp": 0,
+"icon": 11,
+"level": 70
+},
+"384": {
+"name": "White Barb",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 75,
+"mp": 39,
+"icon": 11,
+"level": 56
+},
+"385": {
+"name": "Black Courser",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 65,
+"mp": 45,
+"icon": 11,
+"level": 56
+},
+"386": {
+"name": "Dark Palfrey",
+"slot": 9,
+"attack": 0,
+"defense": 8,
+"hp": 40,
+"mp": 0,
+"icon": 11,
+"level": 32
+},
+"387": {
+"name": "Dark Sumpter",
+"slot": 9,
+"attack": 0,
+"defense": 3,
+"hp": 35,
+"mp": 60,
+"icon": 11,
+"level": 60
+},
+"388": {
+"name": "Black Destrier",
+"slot": 9,
+"attack": 0,
+"defense": 2,
+"hp": 90,
+"mp": 0,
+"icon": 11,
+"level": 40
+},
+"389": {
+"name": "Black Palfrey",
+"slot": 9,
+"attack": 0,
+"defense": 10,
+"hp": 40,
+"mp": 0,
+"icon": 11,
+"level": 36
+},
+"390": {
+"name": "Chestnut Rouncy",
+"slot": 9,
+"attack": 0,
+"defense": 9,
+"hp": 30,
+"mp": 0,
+"icon": 11,
+"level": 30
+},
+"391": {
+"name": "Gray Sumpter",
+"slot": 9,
+"attack": 0,
+"defense": 10,
+"hp": 30,
+"mp": 0,
+"icon": 11,
+"level": 32
+},
+"392": {
+"name": "White Garron",
+"slot": 9,
+"attack": 0,
+"defense": 11,
+"hp": 50,
+"mp": 0,
+"icon": 11,
+"level": 42
+},
+"393": {
+"name": "Dark Clydesdale",
+"slot": 9,
+"attack": 0,
+"defense": 12,
+"hp": 100,
+"mp": 0,
+"icon": 11,
+"level": 64
+},
+"394": {
+"name": "Chestnut Garron",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 55,
+"mp": 0,
+"icon": 11,
+"level": 22
+},
+"395": {
+"name": "Dark Courser",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 60,
+"mp": 0,
+"icon": 11,
+"level": 24
+},
+"396": {
+"name": "Light Courser",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 60,
+"mp": 0,
+"icon": 11,
+"level": 24
+},
+"397": {
+"name": "White Courser",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 65,
+"mp": 0,
+"icon": 11,
+"level": 26
+},
+"398": {
+"name": "Chestnut Barb",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 70,
+"mp": 0,
+"icon": 11,
+"level": 28
+},
+"399": {
+"name": "Dark Barb",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 75,
+"mp": 0,
+"icon": 11,
+"level": 30
+},
+"400": {
+"name": "Albino Rouncy",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 10,
+"mp": 60,
+"icon": 11,
+"level": 44
+},
+"401": {
+"name": "Light Barb",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 75,
+"mp": 45,
+"icon": 11,
+"level": 60
+},
+"402": {
+"name": "White Destrier",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 80,
+"mp": 0,
+"icon": 11,
+"level": 32
+},
+"403": {
+"name": "Element Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 84,
+"icon": 12,
+"level": 56
+},
+"404": {
+"name": "Tactical Scroll",
+"slot": 9,
+"attack": 10,
+"defense": 0,
+"hp": 0,
+"mp": 0,
+"icon": 12,
+"level": 20
+},
+"405": {
+"name": "Royalty Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 15,
+"icon": 12,
+"level": 10
+},
+"406": {
+"name": "A-Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 24,
+"icon": 12,
+"level": 16
+},
+"407": {
+"name": "Turn Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 30,
+"icon": 12,
+"level": 20
+},
+"408": {
+"name": "History Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 5,
+"hp": 0,
+"mp": 0,
+"icon": 12,
+"level": 10
+},
+"409": {
+"name": "Ethics Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 15,
+"icon": 12,
+"level": 10
+},
+"410": {
+"name": "Fiber Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 36,
+"icon": 12,
+"level": 24
+},
+"411": {
+"name": "Far East Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 45,
+"icon": 12,
+"level": 30
+},
+"412": {
+"name": "Morality Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 105,
+"mp": 0,
+"icon": 12,
+"level": 42
+},
+"413": {
+"name": "Feoff Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 10,
+"hp": 0,
+"mp": 0,
+"icon": 12,
+"level": 20
+},
+"414": {
+"name": "Mana Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 120,
+"icon": 12,
+"level": 80
+},
+"415": {
+"name": "Western Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 15,
+"hp": 0,
+"mp": 0,
+"icon": 12,
+"level": 30
+},
+"416": {
+"name": "Dutiful Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": -121,
+"icon": 12,
+"level": 90
+},
+"417": {
+"name": "Duty Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 54,
+"icon": 12,
+"level": 36
+},
+"418": {
+"name": "Rapture Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 210,
+"mp": 0,
+"icon": 12,
+"level": 84
+},
+"419": {
+"name": "Sire Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": -76,
+"icon": 12,
+"level": 120
+},
+"420": {
+"name": "Signory Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 20,
+"hp": 0,
+"mp": 0,
+"icon": 12,
+"level": 40
+},
+"421": {
+"name": "Heart Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 60,
+"icon": 12,
+"level": 40
+},
+"422": {
+"name": "Insight Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 75,
+"icon": 12,
+"level": 50
+},
+"423": {
+"name": "Autumn Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 90,
+"icon": 12,
+"level": 60
+},
+"424": {
+"name": "Peace Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 225,
+"mp": 0,
+"icon": 12,
+"level": 90
+},
+"425": {
+"name": "Soul Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 105,
+"icon": 12,
+"level": 70
+},
+"426": {
+"name": "Sprint Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 120,
+"icon": 12,
+"level": 80
+},
+"427": {
+"name": "Ferver Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 72,
+"icon": 12,
+"level": 48
+},
+"428": {
+"name": "Ardor Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 45,
+"icon": 12,
+"level": 30
+},
+"429": {
+"name": "Trial Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 27,
+"icon": 12,
+"level": 18
+},
+"430": {
+"name": "Chastity Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 18,
+"icon": 12,
+"level": 12
+},
+"431": {
+"name": "Dogma Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 15,
+"icon": 12,
+"level": 10
+},
+"432": {
+"name": "Pith Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 90,
+"icon": 12,
+"level": 60
+},
+"433": {
+"name": "Nature Scroll",
+"slot": 9,
+"attack": 0,
+"defense": 20,
+"hp": 0,
+"mp": 0,
+"icon": 12,
+"level": 40
+},
+"434": {
+"name": "Rise Potion",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 0,
+"icon": 13,
+"level": 0
+},
+"435": {
+"name": "Azure Potion",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 0,
+"icon": 14,
+"level": 0
+},
+"436": {
+"name": "Falls Medicine",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 0,
+"icon": 15,
+"level": 0
+},
+"437": {
+"name": "Forest Medicine",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 0,
+"icon": 16,
+"level": 0
+}
+},
+"rare": {
+"501": {
+"name": "Book of Valor",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 150,
+"mp": -106,
+"icon": 0,
+"level": 130
+},
+"502": {
+"name": "Silk Towel",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 0,
+"icon": 1,
+"level": 0
+},
+"503": {
+"name": "Heaven's Pike",
+"slot": 0,
+"attack": 135,
+"defense": 36,
+"hp": 0,
+"mp": 0,
+"icon": 2,
+"level": 135
+},
+"504": {
+"name": "Emperor's Seal",
+"slot": 9,
+"attack": 0,
+"defense": 0,
+"hp": 0,
+"mp": 0,
+"icon": 3,
+"level": 0
+},
+"505": {
+"name": "Heaven's Armour",
+"slot": 3,
+"attack": 0,
+"defense": 90,
+"hp": 350,
+"mp": 0,
+"icon": 4,
+"level": 145
+},
+"506": {
+"name": "Great Stallion",
+"slot": 9,
+"attack": 0,
+"defense": 40,
+"hp": 300,
+"mp": -106,
+"icon": 5,
+"level": 100
+},
+"507": {
+"name": "Heaven's Boots",
+"slot": 5,
+"attack": 10,
+"defense": 80,
+"hp": 165,
+"mp": 0,
+"icon": 6,
+"level": 99
+},
+"508": {
+"name": "Heaven's Sword",
+"slot": 0,
+"attack": 128,
+"defense": 25,
+"hp": 0,
+"mp": 0,
+"icon": 7,
+"level": 125
+},
+"509": {
+"name": "Next Claymore",
+"slot": 1,
+"attack": 90,
+"defense": 30,
+"hp": 0,
+"mp": 0,
+"icon": 8,
+"level": 90
+},
+"510": {
+"name": "Swift Falchion",
+"slot": 0,
+"attack": 125,
+"defense": 5,
+"hp": 0,
+"mp": 0,
+"icon": 9,
+"level": 110
+},
+"511": {
+"name": "Tragedy Blade",
+"slot": 0,
+"attack": 130,
+"defense": 5,
+"hp": 0,
+"mp": 0,
+"icon": 10,
+"level": 130
+},
+"512": {
+"name": "Canon Claymore",
+"slot": 1,
+"attack": 93,
+"defense": 33,
+"hp": 0,
+"mp": 0,
+"icon": 11,
+"level": 95
+},
+"513": {
+"name": "Heaven's Sabre",
+"slot": 0,
+"attack": 128,
+"defense": 4,
+"hp": 0,
+"mp": 0,
+"icon": 12,
+"level": 115
+},
+"514": {
+"name": "Sky Claymore",
+"slot": 1,
+"attack": 96,
+"defense": 28,
+"hp": 0,
+"mp": 0,
+"icon": 13,
+"level": 95
+},
+"515": {
+"name": "Sky Sword",
+"slot": 9,
+"attack": 55,
+"defense": 0,
+"hp": 0,
+"mp": 0,
+"icon": 14,
+"level": 92
+},
+"516": {
+"name": "Heaven's Sword",
+"slot": 1,
+"attack": 105,
+"defense": 15,
+"hp": 0,
+"mp": 0,
+"icon": 15,
+"level": 90
+},
+"517": {
+"name": "Heaven's Crown",
+"slot": 2,
+"attack": 0,
+"defense": 30,
+"hp": 200,
+"mp": 0,
+"icon": 16,
+"level": 100
+},
+"518": {
+"name": "Heaven's Belt",
+"slot": 6,
+"attack": 0,
+"defense": 80,
+"hp": 150,
+"mp": 0,
+"icon": 17,
+"level": 80
+}
+}
+}

@@ -379,6 +379,52 @@ def export_skills(out):
     (out / "skills.json").write_text(json.dumps(skills, ensure_ascii=False, indent=0))
 
 
+# The things the hero can carry (edat 47 / 51 / 49). Gear 101..300 (23 bytes each from 9):
+# name, slot, the stat its bonus goes to (0 ATK, 1 DEF, 2 HP, 3 MP), bonus, the random extra
+# a found one may get, icon. Treasures 301..500 (24 bytes from 10) and rare things 501..
+# (27 bytes from 9): name, slot, ATK (u16), DEF, HP (u8 / u16), MP, icon, the level needed.
+# A gear's level needed comes from its tier (id % 5). A rare thing's icon is id - 501.
+GEAR_LEVELS = [70, 1, 10, 25, 45]
+
+
+def s8(v):
+    return v - 256 if v > 127 else v
+
+
+def export_items(out):
+    edat = scr.load(ROOT / "edat.scr")
+    gear, treasures, rare = {}, {}, {}
+    d = (ROOT / edat[47]).read_bytes()
+    k = 0
+    while 9 + 23 * (k + 1) <= len(d):
+        i = 9 + 23 * k
+        gear[101 + k] = {"name": cstr(d[i:i + 15]), "slot": s8(d[i + 15]), "stat": s8(d[i + 16]),
+                         "bonus": s8(d[i + 17]), "range": s8(d[i + 18]), "icon": s8(d[i + 22]),
+                         "level": GEAR_LEVELS[(101 + k) % 5]}
+        k += 1
+    d = (ROOT / edat[51]).read_bytes()
+    k = 0
+    while 10 + 24 * (k + 1) <= len(d):
+        i = 10 + 24 * k
+        treasures[301 + k] = {"name": cstr(d[i:i + 15]), "slot": s8(d[i + 15]),
+                              "attack": d[i + 16] | d[i + 17] << 8, "defense": s8(d[i + 18]),
+                              "hp": d[i + 19], "mp": s8(d[i + 20]), "icon": s8(d[i + 22]),
+                              "level": d[i + 23]}
+        k += 1
+    d = (ROOT / edat[49]).read_bytes()
+    k = 0
+    while 9 + 27 * (k + 1) <= len(d):
+        i = 9 + 27 * k
+        rare[501 + k] = {"name": cstr(d[i:i + 15]), "slot": s8(d[i + 15]),
+                         "attack": d[i + 16] | d[i + 17] << 8, "defense": s8(d[i + 18]),
+                         "hp": d[i + 19] | d[i + 20] << 8, "mp": s8(d[i + 21]), "icon": k,
+                         "level": d[i + 26]}
+        k += 1
+    (out / "items.json").write_text(json.dumps({"gear": gear, "treasures": treasures, "rare": rare},
+                                               ensure_ascii=False, indent=0))
+    return len(gear) + len(treasures) + len(rare)
+
+
 def cstr(b):
     return bytes(b).split(b"\0")[0].decode("utf-8", "replace")
 
@@ -429,7 +475,9 @@ UI_IMAGES = ["arrow0", "arrow1", "arrow2", "arrow3",  # exit arrows: down, left,
              # that empties a ball, digits (0-9 , + :) and small digits (0-9 / x)
              "box_01", "box_01_R", "box_02", "box_02R", "ball_black", "number1", "number2",
              # the skills' icons (28 px, skill 12 first), learned and not yet learned
-             "skill", "skillgray"]
+             "skill", "skillgray",
+             # the icons of gear, treasures and rare things (28 px), the Gear page's frame
+             "kibo", "sungbo", "shinki", "ui_equipbox"]
 
 
 def export_ui(out):
@@ -533,6 +581,7 @@ def main():
     export_tables(CLIENT / "data")
     export_talk(CLIENT / "data")
     export_skills(CLIENT / "data")
+    export_items(CLIENT / "data")
     atlas, found = build_atlas(tile_names)
     out_tiles = CLIENT / "assets" / "original"
     out_tiles.mkdir(parents=True, exist_ok=True)

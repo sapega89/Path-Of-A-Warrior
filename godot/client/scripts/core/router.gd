@@ -14,6 +14,8 @@ const SCREENS := {
 	"management": "res://scripts/screens/management_screen.gd",
 	"attributes": "res://scripts/screens/attributes_screen.gd",
 	"skills": "res://scripts/screens/skills_screen.gd",
+	"gear": "res://scripts/screens/gear_screen.gd",
+	"inventory": "res://scripts/screens/inventory_screen.gd",
 }
 
 var current: Control

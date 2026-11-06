@@ -1,11 +1,13 @@
 extends RefCounted
-## The hero between missions: level, exp, gold, stats, skills, quick slots, the friendship of
-## the generals and the missions done. Kept in user://hero.json. A mission starts from it
-## (apply_to) and gives it back what happened (take_from): the gold and potions picked up and
-## used, the friendship of the talks and, when won, the mission's gold and exp.
+## The hero between missions: level, exp, gold, stats, skills, gear and backpack, quick slots,
+## the friendship of the generals and the missions done. Kept in user://hero.json. A mission
+## starts from it (apply_to) and gives it back what happened (take_from): the gold, gear and
+## potions picked up and used, the friendship of the talks and, when won, the mission's gold
+## and exp.
 
 const PATH := "user://hero.json"
 const CAMPAIGN_PATH := "res://data/campaign.json"
+const Items := preload("res://scripts/core/items.gd")
 ## A new hero: HP, MP, attack, defence, and the free stat points.
 const BASE_HP := 30
 const BASE_MP := 10
@@ -13,8 +15,8 @@ const BASE_ATTACK := 5
 const BASE_DEFENSE := 4
 const START_POINTS := 5
 const POINTS_PER_LEVEL := 3
-## The weapon a new hero holds: the Iron Claymore (a long sword, attack +1).
-const START_WEAPON := {"id": 116, "name": "Iron Claymore", "attack": 1, "kind": 0}
+## The weapon a new hero holds: the Iron Claymore (attack +1).
+const START_WEAPON := 116
 const PROGRESS_PER_WIN := 5
 ## What one stat point adds: HP, MP, attack, defence.
 const POINT_GAINS := [5, 3, 1, 1]
@@ -30,12 +32,12 @@ var base_hp := BASE_HP
 var base_mp := BASE_MP
 var base_attack := BASE_ATTACK
 var base_defense := BASE_DEFENSE
-var weapon: Dictionary = START_WEAPON.duplicate()
+var equipped: Array = []  # the 9 places of the Gear page, 0 the weapon (Items dictionaries)
+var backpack: Array = []  # the 25 places of the Inventory
 var skill_levels: Array = []
 var hotkeys: Array = [12, 17, 0, 0, 0]
 var quick_slots: Array = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]
 var quick_keys: Array = [0, 1]
-var items: Array = []  # things picked up on the maps (ids), for the backpack
 var friendship := {}  # general id (as text) -> points
 var progress := {}  # ruler id (as text) -> 0..100, 5 a won mission
 var done := {}  # "lord:mission" of the missions won
@@ -48,6 +50,11 @@ func _init() -> void:
 		skill_levels.append(0)
 	skill_levels[0] = 1  # the first skills: 12 (on key 1) and 17 (on key 2)
 	skill_levels[5] = 1
+	for i in Items.EQUIPPED:
+		equipped.append(Items.empty())
+	for i in Items.BACKPACK:
+		backpack.append(Items.empty())
+	equipped[0] = Items.make(START_WEAPON)
 
 
 ## The exp from level n to n + 1.
@@ -88,19 +95,91 @@ func level_with(amount: int) -> int:
 
 
 func attack() -> int:
-	return base_attack + int(weapon.get("attack", 0))
+	return base_attack + gear("attack")
 
 
 func defense() -> int:
-	return base_defense + int(weapon.get("defense", 0))
+	return base_defense + gear("defense")
 
 
 func max_hp() -> int:
-	return base_hp + int(weapon.get("hp", 0))
+	return base_hp + gear("hp")
 
 
 func max_mp() -> int:
-	return base_mp + int(weapon.get("mp", 0))
+	return base_mp + gear("mp")
+
+
+## What the worn gear adds to a stat ("attack", "defense", "hp", "mp").
+func gear(stat: String) -> int:
+	var total := 0
+	for it in equipped:
+		if int(it.id) != 0:
+			total += int(it.get(stat, 0))
+	return total
+
+
+## The sword the hero fights with: 0 or 1, the slot type of the weapon worn.
+func weapon_kind() -> int:
+	var id := int(equipped[0].id)
+	return clampi(Items.slot_type(id), 0, 1) if id != 0 else 1
+
+
+## Puts a found thing into the first free place of the backpack. False when it is full.
+func add_item(item: Dictionary) -> bool:
+	for i in backpack.size():
+		if int(backpack[i].id) == 0:
+			backpack[i] = item
+			return true
+	return false
+
+
+## Moves the backpack's things up so there are no holes between them.
+func compact_backpack() -> void:
+	var things: Array = []
+	for it in backpack:
+		if int(it.id) != 0:
+			things.append(it)
+	for i in backpack.size():
+		backpack[i] = things[i] if i < things.size() else Items.empty()
+
+
+## Takes off what is worn in a place of the Gear page into the backpack. False when there is
+## nothing there or the backpack is full.
+func unequip(place: int) -> bool:
+	if place < 0 or place >= equipped.size() or int(equipped[place].id) == 0:
+		return false
+	if not add_item(equipped[place]):
+		return false
+	equipped[place] = Items.empty()
+	return true
+
+
+## Uses the backpack's thing at i: gear is worn (what was worn in its place takes its place in
+## the backpack), a stat item is used up. Returns the line to show: "" when worn, the stat's
+## line when used, "cannot" when the hero cannot take it (too low a level or not wearable).
+func use_item(i: int) -> String:
+	if i < 0 or i >= backpack.size():
+		return "cannot"
+	var it: Dictionary = backpack[i]
+	var id := int(it.id)
+	if id == 0:
+		return ""
+	if Items.level_needed(id) > level or id in Items.NOT_WORN:
+		return "cannot"
+	if Items.STAT_ITEMS.has(id):
+		var s: Dictionary = Items.STAT_ITEMS[id]
+		match str(s.stat):
+			"hp": base_hp += int(s.add)
+			"mp": base_mp += int(s.add)
+			"defense": base_defense += int(s.add)
+			"attack": base_attack += int(s.add)
+		backpack[i] = Items.empty()
+		return str(s.text)
+	var place := Items.place(id)
+	backpack[i] = equipped[place]
+	equipped[place] = it
+	return ""
 
 
 ## Spends a free stat point on HP (+5), MP (+3), attack (+1) or defence (+1).
@@ -145,7 +224,7 @@ func apply_to(sim: RefCounted) -> void:
 	h.hp = h.max_hp
 	h.max_mp = max_mp()
 	h.mp = h.max_mp
-	h.weapon_kind = int(weapon.get("kind", 0))
+	h.weapon_kind = weapon_kind()
 	for i in mini(skill_levels.size(), sim.skill_levels.size()):
 		sim.skill_levels[i] = int(skill_levels[i])
 	for i in mini(hotkeys.size(), sim.hotkeys.size()):
@@ -158,12 +237,17 @@ func apply_to(sim: RefCounted) -> void:
 		sim.friendship[int(k)] = int(friendship[k])
 
 
-## What the mission left: picked gold and things, used potions, friendship; if won, the
+## What the mission left: picked gold and things (a found gear gets its random extra from
+## rng; what does not fit in the backpack is lost), used potions, friendship; if won, the
 ## mission's gold and exp, its progress and its place among the missions done.
 ## Returns the levels gained.
-func take_from(sim: RefCounted, lord_id: int, mission: int, ruler_id: int) -> int:
+func take_from(sim: RefCounted, lord_id: int, mission: int, ruler_id: int,
+		rng: RandomNumberGenerator = null) -> int:
 	gold += int(sim.gold)
-	items.append_array(sim.items)
+	if rng == null:
+		rng = RandomNumberGenerator.new()
+	for id in sim.items:
+		add_item(Items.make(int(id), rng))
 	quick_slots = _copy_slots(sim.quick_slots)
 	for k in sim.friendship:
 		friendship[str(k)] = int(sim.friendship[k])
@@ -183,9 +267,10 @@ func is_done(lord_id: int, mission: int) -> bool:
 
 func to_dict() -> Dictionary:
 	return {"name": hero_name, "level": level, "exp": experience, "fame": fame, "gold": gold, "stat_points": stat_points,
-		"base": [base_hp, base_mp, base_attack, base_defense], "weapon": weapon,
+		"base": [base_hp, base_mp, base_attack, base_defense], "equipped": equipped,
+		"backpack": backpack,
 		"skill_levels": skill_levels, "hotkeys": hotkeys, "quick_slots": quick_slots,
-		"quick_keys": quick_keys, "items": items, "friendship": friendship,
+		"quick_keys": quick_keys, "friendship": friendship,
 		"progress": progress, "done": done}
 
 
@@ -202,12 +287,12 @@ func from_dict(d: Dictionary) -> void:
 		base_mp = int(b[1])
 		base_attack = int(b[2])
 		base_defense = int(b[3])
-	weapon = d.get("weapon", weapon)
+	equipped = _copy_items(d.get("equipped", []), Items.EQUIPPED, equipped)
+	backpack = _copy_items(d.get("backpack", []), Items.BACKPACK, backpack)
 	skill_levels = d.get("skill_levels", skill_levels)
 	hotkeys = d.get("hotkeys", hotkeys)
 	quick_slots = _copy_slots(d.get("quick_slots", quick_slots))
 	quick_keys = d.get("quick_keys", quick_keys)
-	items = d.get("items", items)
 	friendship = d.get("friendship", friendship)
 	progress = d.get("progress", progress)
 	done = d.get("done", done)
@@ -230,6 +315,20 @@ static func load_or_new(path: String = PATH) -> RefCounted:
 		if typeof(data) == TYPE_DICTIONARY:
 			p.from_dict(data)
 	return p
+
+
+## A saved list of things, as many places as the hero has; the default when none was saved.
+static func _copy_items(saved: Array, size: int, default: Array) -> Array:
+	if saved.is_empty():
+		return default
+	var out: Array = []
+	for i in size:
+		var it := Items.empty()
+		if i < saved.size() and typeof(saved[i]) == TYPE_DICTIONARY:
+			for k in it:
+				it[k] = int(saved[i].get(k, 0))
+		out.append(it)
+	return out
 
 
 static func _copy_slots(slots: Array) -> Array:
