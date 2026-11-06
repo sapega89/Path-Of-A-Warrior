@@ -461,6 +461,47 @@ func test_attack_buff_skill() -> void:
 	check(sim.hero.attack_buff_ticks > 0, "for a while")
 
 
+func test_a_buff_shows_its_aura() -> void:
+	var sim: RefCounted = _duel()[0]
+	sim.enemies.clear()
+	sim.tick(-1, -1)
+	eq(sim.auras().size(), 0, "no aura without a buff")
+	sim.hero.attack_buff = 3
+	sim.hero.attack_buff_ticks = 2
+	sim.tick(-1, -1)
+	eq(sim.auras().size(), 0, "the buff shows from the next tick")
+	var seen: Array = []
+	for t in 3:
+		sim.tick(-1, -1)
+		var a: Array = sim.auras()
+		if a.size() == 2:
+			eq([a[0][0], a[0][2], a[0][3], a[1][2]], ["aura", sim.hero.pos + Vector2i(0, 3), true,
+				sim.hero.pos + Vector2i(0, 3)], "a ring behind him and the light in front, at his feet")
+			eq(int(a[1][1]), int(a[0][1]) + 3, "the same step of both")
+		seen.append(a.size())
+	eq(seen, [2, 2, 0], "while it lasts, and the tick it ends")
+	var d = MapSim.Drop.new()
+	d.item = 10020
+	d.pos = sim.hero.pos
+	sim.drops.append(d)
+	sim.tick(-1, -1)
+	eq(sim.auras().size(), 2, "he glows as he picks something up")
+	sim.tick(-1, -1)
+	eq(sim.auras().size(), 0, "for that tick")
+	var sim2: RefCounted = _general_duel()[0]
+	var g = sim2.enemies[0]
+	g.defense_buff_ticks = 5
+	eq(sim2.auras().size(), 2, "a general's buff too")
+	eq(sim2.auras()[0][2], g.pos + Vector2i(0, 3), "on him")
+	var node := Effects.new()
+	node._ready()
+	node.show_effects(sim2.auras())
+	eq(node.shown(), 2, "both pictures are drawn")
+	check(not node.get_child(0).no_depth_test and node.get_child(1).no_depth_test,
+		"the ring stands behind him, the light over him")
+	node.free()
+
+
 func test_potion_restores_hp() -> void:
 	var sim: RefCounted = _duel()[0]
 	check(sim.add_quick_item(1), "a small HP potion goes to a quick slot")

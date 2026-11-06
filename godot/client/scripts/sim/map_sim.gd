@@ -187,6 +187,11 @@ var spawn_spots: Array[Vector3i] = []  # tile x, tile y, exit side (0 down 1 lef
 var arrows: Array[Arrow] = [Arrow.new(), Arrow.new(), Arrow.new()]
 var kills := 0
 var play_ticks := 0  # ticks of play on the map (not banners, talks or room scrolls)
+var ticks := 0  # every tick of the map: the aura's pictures go round with it
+## The aura shows on the hero: a buff of his was on at the end of the last tick of play, or
+## he picked something up in this one.
+var hero_glows := false
+var _buffed := false
 var mission_exp := 0
 ## The mission's rewards and its general who talks after it (0 none, >= 200 none).
 var mission_gold := 0
@@ -394,6 +399,7 @@ func _find_spawn_spots() -> void:
 func tick(held: int, pressed: int = -1, fire: bool = false, hotkey: int = -1, potion: int = -1,
 		belt: int = -1) -> void:
 	sounds.clear()
+	ticks += 1
 	hero.prev_pos = hero.pos
 	for e in enemies:
 		e.prev_pos = e.pos
@@ -448,6 +454,7 @@ func _show_banner(kind: int) -> void:
 
 func _tick_scene(held: int, pressed: int, skill: int, potion: int = -1) -> void:
 	play_ticks += 1
+	hero_glows = _buffed
 	for o in breakables:
 		if o.active and o.break_frame != 0:
 			o.break_frame -= 1
@@ -841,6 +848,7 @@ func _end_tick() -> void:
 	hero.shown_dir = hero.dir
 	hero.dir = hero.facing
 	hero.idle_ticks += 1
+	_buffed = hero.attack_buff_ticks > 0 or hero.defense_buff_ticks > 0
 	if hero.attack_buff_ticks > 0:
 		hero.attack_buff_ticks -= 1
 		if hero.attack_buff_ticks < 1:
@@ -1488,6 +1496,23 @@ func fires() -> Array:
 	return out
 
 
+## The auras of buffs: on the hero while he glows, on a general while a buff of his lasts. A
+## glowing ring on the ground behind him (pictures 0-2, the 4th value true: behind) and the
+## light rising in front of him (3-5), the next picture each tick.
+func auras() -> Array:
+	var out: Array = []
+	var who: Array = [hero] if hero_glows else []
+	for e in enemies:
+		if e.type < 200 and (e.attack_buff_ticks > 0 or e.defense_buff_ticks > 0) \
+				and enemy_sprite_frame(e) < 180:
+			who.append(e)
+	for a in who:
+		var at: Vector2i = a.pos + Vector2i(0, 3)
+		out.append(["aura", ticks % 3, at, true])
+		out.append(["aura", 3 + ticks % 3, at])
+	return out
+
+
 ## The hit sparks to draw: [frame, position]. An enemy's pair of pictures is chosen by the
 ## hit (frames 0-1 or 2-3); the hero's are always the first pair.
 func sparks() -> Array:
@@ -1941,6 +1966,7 @@ func _pick_up_drops() -> void:
 				acquired = d.item
 				_show_banner(BANNER_ACQUIRED)
 			d.item = 0
+			hero_glows = true
 		d.ticks -= 1
 		if d.ticks < 1 or d.item == 0:
 			drops.erase(d)
