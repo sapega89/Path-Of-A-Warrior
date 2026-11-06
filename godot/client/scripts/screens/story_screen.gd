@@ -86,10 +86,17 @@ func next_page() -> bool:
 			text.text = str(pg.text)
 		"stats":
 			text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			text.text = "\n".join(PackedStringArray(Stories.stats_lines(profile) + reward_lines()))
+			text.text = "\n".join(PackedStringArray(stats_rows() + reward_lines()))
 	_typed = 0.0
 	text.visible_characters = 0
 	return true
+
+
+## The numbers of the game done, a row each: "Mission Accomplished  50 %".
+func stats_rows() -> Array:
+	var l: Array = Stories.stats_lines(profile)
+	return ["%s %s  %s" % [l[0], l[1], l[2]], "%s %s  %s" % [l[3], l[4], l[5]],
+		"%s  %s" % [l[6], l[7]], "%s  %s" % [l[8], l[9]], "%s  %s" % [l[10], l[11]]]
 
 
 ## What the ending gave: the item received, the hidden mission (lord) opened.

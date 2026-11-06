@@ -60,6 +60,7 @@ func test_story_screen() -> void:
 	screen.page = screen.pages.size() - 2
 	screen.next_page()
 	check(screen.text.text.contains("Catherine's scarf\nreceived!"), "the reward")
+	check(screen.text.text.begins_with("Mission Accomplished  0 %"), "the numbers a row each")
 	check(screen.text.text.contains("Hidden Mission!"), "the lord opened")
 	screen.free()
 	Router.params = old
