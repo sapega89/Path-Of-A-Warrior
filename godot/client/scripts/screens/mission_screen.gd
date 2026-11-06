@@ -3,7 +3,7 @@ extends Control
 ## (original pixels and ticks); this screen reads the input, ticks the simulation every
 ## 120 ms and draws its state in 3D: the hero sprite, the camera on the current room,
 ## the exit arrows and the "Stage" banners, the soldiers and their arrows, the effects of
-## skills, potions and scrolls, and the HUD.
+## skills, potions and scrolls, the auras of buffs, and the HUD.
 ## Params: {lord, mission, seed (optional: the same enemies every run)}.
 ## The mouse, as pyport's: the left button beside the hero walks that way while it is held
 ## (dragging turns him, two quick clicks run), a click on the hero or the right button attacks,
@@ -278,7 +278,8 @@ func _update_view(t: float) -> void:
 	hud.queue_redraw()
 	_place_soldiers(t)
 	_place_shots()
-	var shown: Array = sim.effects()
+	var shown: Array = sim.auras()
+	shown.append_array(sim.effects())
 	for sp in sim.sparks():
 		shown.append(["spark", sp[0], sp[1]])
 	shown.append_array(trails)
