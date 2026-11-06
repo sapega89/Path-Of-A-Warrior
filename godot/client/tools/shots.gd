@@ -85,6 +85,24 @@ func _ready() -> void:
 	await _seconds(0.13)
 	print("potion: effect ", msim.effect_item, " mp ", msim.hero.mp)
 	await _shot(out, "mission_1_potion_drunk")
+	# Frames of effects held still: a buff skill, the dash, a fire scroll's blast.
+	mission.set_process(false)
+	for fx in [["buff", 17, 6], ["dash", 12, 4], ["heal", 15, 8]]:
+		msim.hero.action = fx[1]
+		msim.hero.frame = fx[2]
+		mission._update_view(1.0)
+		await _frames(3)
+		await _shot(out, "mission_1_fx_%s" % fx[0])
+	msim.hero.action = 0
+	msim.hero.frame = 0
+	msim.effect_item = -2
+	msim.effect_step = 1
+	msim.effect_pos = msim.hero.pos + Vector2i(0, 60)
+	mission._update_view(1.0)
+	await _frames(3)
+	await _shot(out, "mission_1_fx_blast")
+	msim.effect_item = 0
+	mission.set_process(true)
 	# A general: he comes in with his talk, then the fight.
 	Router.go("mission", {"lord": 1, "mission": 0, "seed": 2})
 	mission = Router.current
