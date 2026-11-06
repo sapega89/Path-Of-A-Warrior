@@ -89,6 +89,11 @@ func _ready() -> void:
 			shot_general = true
 			await _shot(out, "mission_1_general_fight")
 			_release_all()
+			while not sim.talk.is_empty():  # (a skill waits for the end of his words)
+				Input.action_press("attack")
+				await _frames(2)
+				Input.action_release("attack")
+				await _seconds(0.15)
 			sim.hero.mp = sim.hero.max_mp  # the first skill, a dash, against the general
 			Input.action_press("skill_1")
 			await _frames(2)

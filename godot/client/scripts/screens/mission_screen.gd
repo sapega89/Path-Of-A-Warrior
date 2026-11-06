@@ -2,7 +2,7 @@ extends Control
 ## A mission of the original campaign on its map. The game itself runs in MapSim
 ## (original pixels and ticks); this screen reads the input, ticks the simulation every
 ## 120 ms and draws its state in 3D: the hero sprite, the camera on the current room,
-## the exit arrows and the "Stage" banners, the soldiers and their arrows.
+## the exit arrows and the "Stage" banners, the soldiers and their arrows, and the HUD.
 ## Params: {lord, mission, seed (optional: the same enemies every run)}.
 
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
@@ -14,6 +14,7 @@ const Soldier := preload("res://scripts/world/soldier.gd")
 const JavaRandom := preload("res://scripts/sim/java_random.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
+const MapHud := preload("res://scripts/ui/map_hud.gd")
 
 const TICK := MapSim.TICK_MS / 1000.0
 const ARROW_SCALE := 3.0
@@ -29,7 +30,7 @@ var world: Node3D
 var builder: Node3D
 var hero: CharacterBody3D
 var camera: Camera3D
-var info: Label
+var hud: MapHud
 var banner: PanelContainer
 var banner_text: Label
 var arrows: Array[TextureRect] = []
@@ -119,12 +120,10 @@ func _ready() -> void:
 		add_child(a)
 		arrows.append(a)
 
-	info = Label.new()
-	info.name = "Info"
-	info.position = Vector2(24, 16)
-	info.add_theme_font_size_override("font_size", 20)
-	info.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	add_child(info)
+	hud = MapHud.new()
+	hud.name = "Hud"
+	hud.sim = sim
+	add_child(hud)
 
 	banner = PanelContainer.new()
 	banner.name = "Banner"
@@ -172,6 +171,7 @@ func _process(delta: float) -> void:
 		_fire = false
 		_hotkey = -1
 		_potion = -1
+		hud.tick()
 		_blink += 1
 	if sim.finished:
 		set_process(false)
@@ -191,12 +191,7 @@ func _update_view(t: float) -> void:
 	hero.global_position = Hero.px_to_world(smooth(sim.hero.prev_pos, sim.hero.pos, t))
 	hero.set_frame(sim.hero_sprite_frame(), sim.hero.action >= 12)
 	camera.focus = sim.rooms.center(sim.cell)
-	var line := "%s: %s   %s %d   HP %d/%d   MP %d/%d   G %d" % [lord_name,
-		mission_info.get("name", ""), tr("mission.stage"), sim.rooms_visited, sim.hero.hp,
-		sim.hero.max_hp, sim.hero.mp, sim.hero.max_mp, sim.gold]
-	if not sim.target_info.is_empty():
-		line += "   %s Lv %d" % [sim.target_info.name, sim.target_info.level]
-	info.text = line
+	hud.queue_redraw()
 	_place_soldiers(t)
 	_place_shots()
 	_place_objects()

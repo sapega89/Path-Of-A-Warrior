@@ -395,7 +395,10 @@ def export_campaign(out):
 
 
 UI_IMAGES = ["arrow0", "arrow1", "arrow2", "arrow3",  # exit arrows: down, left, up, right
-             "tool", "gold"]  # things on the floor: potions and gear (28 px frames), gold
+             "tool", "gold",  # things on the floor: potions and gear (28 px frames), gold
+             # the map's HUD: top bars, bottom panel with the HP / MP balls, the cover
+             # that empties a ball, digits (0-9 , + :) and small digits (0-9 / x)
+             "box_01", "box_01_R", "box_02", "box_02R", "ball_black", "number1", "number2"]
 
 
 def export_ui(out):

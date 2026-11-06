@@ -162,6 +162,7 @@ var enemies_alive := 0  # archers do not count
 var spawn_spots: Array[Vector3i] = []  # tile x, tile y, exit side (0 down 1 left 2 up 3 right)
 var arrows: Array[Arrow] = [Arrow.new(), Arrow.new(), Arrow.new()]
 var kills := 0
+var play_ticks := 0  # ticks of play on the map (not banners, talks or room scrolls)
 var mission_exp := 0
 var failed := false
 var finished := false  # the mission is over: the screen leaves
@@ -377,6 +378,7 @@ func _show_banner(kind: int) -> void:
 
 
 func _tick_scene(held: int, pressed: int, skill: int, potion: int = -1) -> void:
+	play_ticks += 1
 	for o in breakables:
 		if o.active and o.break_frame != 0:
 			o.break_frame -= 1
@@ -474,6 +476,11 @@ func skill_mp_cost(skill: int) -> int:
 		return 0
 	hero.mp -= cost
 	return cost
+
+
+## The mission clock: seconds of play.
+func play_seconds() -> int:
+	return play_ticks * TICK_MS / 1000
 
 
 ## A direction pressed twice quickly: run.
