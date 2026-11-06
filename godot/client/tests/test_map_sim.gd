@@ -4,8 +4,11 @@ const MapBuilder := preload("res://scripts/world/map_builder.gd")
 const MapSim := preload("res://scripts/sim/map_sim.gd")
 
 
+## The map without enemies (the rooms open at once), for the walking tests.
 func _sim() -> RefCounted:
-	return MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	sim.no_enemies = true
+	return sim
 
 
 ## Ticks until the room's exits are open (banners skipped with fire).
@@ -53,6 +56,7 @@ func test_walk_down_into_the_next_room() -> void:
 	# barrel at (4, 6): the original's corner slide lines him up at 27 * 5 + 8 px, where his
 	# body still overlaps column 4 - the same happens in the original when holding down.)
 	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(5, 2))
+	sim.no_enemies = true
 	_open(sim)
 	for t in 200:
 		sim.tick(0, -1, true)

@@ -2,13 +2,16 @@ extends Control
 ## A mission of the original campaign on its map. The game itself runs in MapSim
 ## (original pixels and ticks); this screen reads the input, ticks the simulation every
 ## 120 ms and draws its state in 3D: the hero sprite, the camera on the current room,
-## the exit arrows and the "Stage" banners. Params: {lord, mission}.
+## the exit arrows and the "Stage" banners, the soldiers and their arrows.
+## Params: {lord, mission, seed (optional: the same enemies every run)}.
 
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
 const MapSim := preload("res://scripts/sim/map_sim.gd")
 const Campaign := preload("res://scripts/core/campaign.gd")
 const Hero := preload("res://scripts/world/hero.gd")
 const FollowCamera := preload("res://scripts/world/follow_camera.gd")
+const Soldier := preload("res://scripts/world/soldier.gd")
+const JavaRandom := preload("res://scripts/sim/java_random.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 
@@ -30,8 +33,10 @@ var info: Label
 var banner: PanelContainer
 var banner_text: Label
 var arrows: Array[TextureRect] = []
+var soldiers := {}  # sim actor -> Soldier node
+var shots: Array[MeshInstance3D] = []  # the archers' arrows
+var tint := 0
 var _acc := 0.0
-var _prev_pos := Vector2i.ZERO
 var _pressed := -1
 var _fire := false
 var _last_held := -1
@@ -68,7 +73,21 @@ func _ready() -> void:
 	builder.build(map)
 	var s: Array = mission_info.get("start", [4, 4])
 	sim = MapSim.new(map, mission, Vector2i(int(s[0]), int(s[1])))
-	_prev_pos = sim.hero.pos
+	if p.has("seed"):
+		sim.rng = JavaRandom.new(int(p.seed))
+	tint = int(mission_info.get("tint", 0))
+
+	var arrow_mat := StandardMaterial3D.new()
+	arrow_mat.albedo_color = Color8(240, 142, 53)
+	arrow_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	for i in sim.arrows.size():
+		var m := MeshInstance3D.new()
+		m.name = "Shot%d" % i
+		m.mesh = BoxMesh.new()
+		m.material_override = arrow_mat
+		m.visible = false
+		world.add_child(m)
+		shots.append(m)
 
 	hero = Hero.new()
 	hero.name = "Hero"
@@ -136,24 +155,65 @@ func _process(delta: float) -> void:
 	_acc += delta
 	while _acc >= TICK:
 		_acc -= TICK
-		_prev_pos = sim.hero.pos
 		sim.tick(held, _pressed, _fire)
 		_pressed = -1
 		_fire = false
 		_blink += 1
+	if sim.finished:
+		set_process(false)
+		Router.back()
+		return
 	_update_view(_acc / TICK)
 
 
+## The position between the last two ticks (a jump, such as a new room, is not smoothed).
+static func smooth(prev: Vector2i, now: Vector2i, t: float) -> Vector2:
+	if (now - prev).length() > 40:
+		return Vector2(now)
+	return Vector2(prev).lerp(Vector2(now), clampf(t, 0.0, 1.0))
+
+
 func _update_view(t: float) -> void:
-	var p := Vector2(_prev_pos).lerp(Vector2(sim.hero.pos), clampf(t, 0.0, 1.0))
-	if (sim.hero.pos - _prev_pos).length() > 40:
-		p = Vector2(sim.hero.pos)
-	hero.global_position = Hero.px_to_world(p)
+	hero.global_position = Hero.px_to_world(smooth(sim.hero.prev_pos, sim.hero.pos, t))
 	hero.set_frame(sim.hero_sprite_frame())
 	camera.focus = sim.rooms.center(sim.cell)
-	info.text = "%s: %s   %s %d" % [lord_name, mission_info.get("name", ""), tr("mission.stage"), sim.rooms_visited]
+	var line := "%s: %s   %s %d   HP %d/%d" % [lord_name, mission_info.get("name", ""),
+		tr("mission.stage"), sim.rooms_visited, sim.hero.hp, sim.hero.max_hp]
+	if not sim.target_info.is_empty():
+		line += "   %s Lv %d" % [sim.target_info.name, sim.target_info.level]
+	info.text = line
+	_place_soldiers(t)
+	_place_shots()
 	_place_arrows()
 	_show_banner()
+
+
+func _place_soldiers(t: float) -> void:
+	for e in soldiers.keys():
+		if not sim.enemies.has(e):
+			soldiers[e].queue_free()
+			soldiers.erase(e)
+	var map4 := MapSim.table("dir8_to_dir4")
+	for e in sim.enemies:
+		var node = soldiers.get(e)
+		if node == null:
+			node = Soldier.new()
+			node.name = "Soldier"
+			world.add_child(node)
+			node.setup(e.type, tint, MapSim.table("squad_offsets"))
+			soldiers[e] = node
+		node.global_position = Hero.px_to_world(smooth(e.prev_pos, e.pos, t))
+		node.set_frame(sim.enemy_sprite_frame(e), int(map4[e.dir]))
+
+
+func _place_shots() -> void:
+	for i in shots.size():
+		var a = sim.arrows[i]
+		shots[i].visible = a.active
+		if a.active:
+			(shots[i].mesh as BoxMesh).size = Vector3(a.w / 27.0, 0.07, a.h / 27.0)
+			shots[i].global_position = Vector3((a.pos.x + a.w / 2.0) / 27.0, 0.6,
+				(a.pos.y + 8 + a.h / 2.0 + Hero.FOOT_PX) / 27.0)
 
 
 func _show_banner() -> void:
@@ -163,6 +223,8 @@ func _show_banner() -> void:
 	var stage := tr("mission.stage") + " " + str(sim.rooms_visited)
 	if sim.banner == MapSim.BANNER_STAGE_CLEAR:
 		stage += " " + tr("mission.complete")
+	elif sim.banner == MapSim.BANNER_FAILED:
+		stage = tr("mission.failed")
 	banner_text.text = "%s\n%s\n%s" % [lord_name, mission_info.get("name", ""), stage]
 	var view := get_viewport_rect().size
 	banner.size = Vector2(520, 0)
