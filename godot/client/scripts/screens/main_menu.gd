@@ -1,5 +1,5 @@
 extends Control
-## Main menu: continue (or play), new game, blacksmith, management, visiting, endings, maps, settings, quit (no quit button on phones and the web).
+## Main menu: continue (or play), new game, blacksmith, management, visiting, endings, maps, settings, help, quit (no quit button on phones and the web).
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
@@ -23,6 +23,7 @@ func _ready() -> void:
 	_add(col, "Endings", "menu.endings", func(): Router.push("endings", {}))
 	_add(col, "Maps", "menu.maps", func(): Router.push("map_viewer"))
 	_add(col, "Settings", "menu.settings", func(): Router.push("settings"))
+	_add(col, "Help", "menu.help", func(): Router.push("help"))
 	if show_quit():
 		_add(col, "Quit", "menu.quit", func(): get_tree().quit())
 	ask = ConfirmationDialog.new()

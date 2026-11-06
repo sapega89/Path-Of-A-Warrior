@@ -26,6 +26,7 @@ Writes
                                          pyport/pow/game/consts.py by name
   godot/client/data/talk.json            the dialogue lines (briefing, a general on the map,
                                          after a victory), see TALK_FILES
+  godot/client/data/help.json            the Help topics and their pages (export_help)
   godot/client/data/visit.json           visiting a general: the greetings and talks, and
                                          the 44 generals one can visit (export_visit)
   godot/client/data/campaign.json        chapters, lords (one map each) and missions, as the
@@ -374,6 +375,20 @@ def export_visit(out):
     (out / "visit.json").write_text(json.dumps(visit, ensure_ascii=False, indent=0))
 
 
+# Help (edat 61 help.scr): its pages, the first page of each topic (the last two pages are the
+# About box, not a topic), and the topic names (uimenu.scr 38, "Missions|Visiting|...").
+HELP_TOPIC_START = [0, 5, 8, 14, 17, 22, 28, 35, 37]
+
+
+def export_help(out):
+    edat = scr.load(ROOT / "edat.scr")
+    pages = read_table(ROOT / edat[61])
+    names = read_table(ROOT / "uimenu.scr")[38].split("|")
+    topics = [{"name": names[i], "pages": pages[HELP_TOPIC_START[i]:HELP_TOPIC_START[i + 1]]}
+              for i in range(len(HELP_TOPIC_START) - 1)]
+    (out / "help.json").write_text(json.dumps({"topics": topics}, ensure_ascii=False, indent=0))
+
+
 def read_table(path):
     """A text table: u16 count, count + 1 u16 offsets, UTF-8 strings."""
     d = path.read_bytes()
@@ -694,6 +709,7 @@ def main():
     export_tables(CLIENT / "data")
     export_talk(CLIENT / "data")
     export_visit(CLIENT / "data")
+    export_help(CLIENT / "data")
     export_skills(CLIENT / "data")
     export_items(CLIENT / "data")
     export_mixing(CLIENT / "data")
