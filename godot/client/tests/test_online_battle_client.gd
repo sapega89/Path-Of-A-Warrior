@@ -230,3 +230,35 @@ func test_the_battle_screen_leaves_when_kicked() -> void:
 	screen.free()
 	Router.params = old
 	ServerTests._rm(d)
+
+
+func _key(code: Key) -> InputEventKey:
+	var ev := InputEventKey.new()
+	ev.physical_keycode = code
+	ev.keycode = code
+	ev.pressed = true
+	return ev
+
+
+func test_auto_battle_by_tab_f_or_r3() -> void:
+	var d := _dir()
+	var net = ClientTests.Net.new(d)
+	net.o.match_wait = 0
+	var c: RefCounted = net.client("ANDREY", OnlineTests.HERO)
+	c.enter(func(_e): pass)
+	c.find_battle(0, func(_e): pass)
+	var old: Dictionary = Router.params
+	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
+	var screen: Control = BattleScreen.new()
+	root.add_child(screen)
+	var r3 := InputEventJoypadButton.new()
+	r3.button_index = JOY_BUTTON_RIGHT_STICK
+	r3.pressed = true
+	var seen := []
+	for ev in [_key(KEY_TAB), _key(KEY_F), r3]:
+		screen._unhandled_input(ev)
+		seen.append(c.battle.auto_battle)
+	eq(seen, [true, false, true], "Tab, F and R3 each turn it over, as auto-hunt on the map")
+	screen.free()
+	Router.params = old
+	ServerTests._rm(d)
