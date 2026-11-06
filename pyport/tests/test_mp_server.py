@@ -682,15 +682,3 @@ def test_server_bots_skip_a_players_id(server):
     server.add_bots()
     assert "BLADE" not in server.bots and "RAVEN" in server.bots
     assert not server.storage.load("BLADE").bot
-
-
-def test_password_hash_without_pbkdf2_hmac(monkeypatch):
-    """The browser's Python has no hashlib.pbkdf2_hmac: the pure-Python one gives the same bytes."""
-    import hashlib
-
-    from pow_server import storage
-    salt = b"0123456789abcdef"
-    want = storage.hash_password("1379", salt)
-    assert storage._pbkdf2_sha256(b"1379", salt, storage.PBKDF2_ROUNDS) == want
-    monkeypatch.delattr(hashlib, "pbkdf2_hmac")
-    assert storage.hash_password("1379", salt) == want

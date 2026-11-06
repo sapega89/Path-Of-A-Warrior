@@ -1,6 +1,6 @@
 """A scripted player for trying Challenge / Invite An Ally alone (PHASE_9): it logs in like a
 client, accepts every invitation (Options > Invitation: Accept) and plays its battles with
-plain attacks. tools/mp_shot.py uses it (`bot` steps); `python -m pow_server --bot NAME` keeps
+plain attacks. tools/shot.py uses it (`bot` steps); `python -m pow_server --bot NAME` keeps
 one online on a server."""
 import random
 

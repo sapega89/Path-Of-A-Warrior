@@ -89,33 +89,6 @@ def test_rms_roundtrip(tmp_path, monkeypatch):  # task 0.8 (desktop side)
     assert RecordStore.openRecordStore("pow_env", False).getRecord(1) == data
 
 
-def test_rms_browser_branch(monkeypatch):  # task 0.8: the localStorage path, with a fake JS window
-    import sys
-    import types
-
-    from pow.midp import rms
-
-    store = {}
-
-    class LS:
-        def getItem(self, k):
-            return store.get(k)
-
-        def setItem(self, k, v):
-            store[k] = v
-
-        def removeItem(self, k):
-            store.pop(k, None)
-
-    fake = types.SimpleNamespace(window=types.SimpleNamespace(localStorage=LS()))
-    monkeypatch.setitem(sys.modules, "platform", fake)
-    monkeypatch.setattr(rms, "_IS_WEB", True)
-    rs = rms.RecordStore.openRecordStore("pow_data", True)
-    rs.addRecord(bytearray(range(256)) * 4, 0, 965)
-    again = rms.RecordStore.openRecordStore("pow_data", False).getRecord(1)
-    assert len(again) == 965 and again[:256] == bytearray(range(256))
-    assert "rms_pow_data" in store
-
 
 def test_window_scale(monkeypatch):  # task 0.2: 240x320 x2 / x3, nearest neighbour
     import subprocess

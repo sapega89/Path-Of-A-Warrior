@@ -4,11 +4,9 @@ Headless mode (SDL_VIDEODRIVER=dummy) is used by tools/shot.py and tests.
 
 full screen (F11 / Alt+Enter, Options > Screen): the 240x320 picture is scaled by the
 biggest whole factor that fits the monitor and centred, with black bars around it. The choice is
-kept in RecordStore "pow_display" and comes back on the next start. In the browser the page itself
-goes full screen (Fullscreen API) and pygbag fits the canvas into it.
+kept in RecordStore "pow_display" and comes back on the next start.
 """
 import os
-import sys
 
 import pygame
 
@@ -31,14 +29,10 @@ def init(headless=False):
         os.environ.setdefault("SDL_AUDIODRIVER", "dummy")
     pygame.init()
     want = config.FULLSCREEN if config.FULLSCREEN is not None else _load()
-    _set_mode(bool(want) and not headless and not _browser())
+    _set_mode(bool(want) and not headless)
     pygame.display.set_caption("Path of a Warrior")
     screen = pygame.Surface((config.SCREEN_W, config.SCREEN_H)).convert()
     screen.fill((0, 0, 0))
-
-
-def _browser():
-    return sys.platform == "emscripten"
 
 
 def _set_mode(full):
@@ -66,31 +60,12 @@ def fit(size):
 
 
 def is_fullscreen():
-    if _browser():
-        try:
-            import platform
-            # a JS object in pygbag has no truth value (bool() raises): compare with None
-            return platform.window.document.fullscreenElement is not None
-        except Exception:
-            return False
     return fullscreen
 
 
 def set_fullscreen(full):
     """Turns full screen on or off and remembers the choice."""
     full = bool(full)
-    if _browser():
-        try:
-            import platform
-            doc = platform.window.document
-            now = doc.fullscreenElement is not None
-            if full and not now:
-                doc.documentElement.requestFullscreen()
-            elif not full and now:
-                doc.exitFullscreen()
-        except Exception as ex:
-            print(f"Fullscreen API: {ex!r}")
-        return
     if window is not None and full != fullscreen:
         _set_mode(full)
     _save(full)
@@ -100,15 +75,8 @@ _seen = None
 
 
 def screen_changed():
-    """True once after full screen went on or off. In the browser that happens a moment after the
-    request (or not at all: a page may go full screen only right after a key or a click)."""
-    global _seen
-    if not _browser():
-        return False
-    now = is_fullscreen()
-    changed = _seen is not None and now != _seen
-    _seen = now
-    return changed
+    """True once after full screen went on or off outside set_fullscreen (never on the desktop)."""
+    return False
 
 
 def toggle_fullscreen():

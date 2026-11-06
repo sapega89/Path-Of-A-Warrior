@@ -1,6 +1,6 @@
 # Duel 1-on-1 on auto-battle (Tab = key AUTO): no action keys, the server's bot
 # chooses every round until the result screen.
-include _login.keys
+include _enter.keys
 key FIRE          # Duel
 wait 5
 key FIRE          # 1-on-1 Duel

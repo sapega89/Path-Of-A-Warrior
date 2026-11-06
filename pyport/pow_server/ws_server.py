@@ -4,9 +4,8 @@
     python -m pow_server --port 8765 --db x.sqlite --tcp-port 28200 --legacy
 
 WebSocket: one binary message = one whole frame (u16 length + payload), exactly the bytes the
-original sent over TCP. The browser can only open WebSockets (pygbag), the desktop client uses
-the same, so there is one protocol for both. Behind https the page needs wss://: put the
-server behind a TLS proxy (nginx / Caddy) or pass --cert/--key.
+original sent over TCP. Behind TLS use wss://: put the server behind a TLS proxy (nginx /
+Caddy) or pass --cert/--key.
 
 --tcp-port: optional raw TCP gateway with the original framing, for the original client in an
 emulator with POW_SERVER/POW_PORT pointed here (task 9.23, untested with the real client).

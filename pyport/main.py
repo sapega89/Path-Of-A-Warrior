@@ -1,16 +1,14 @@
-"""Entry point for the PC and for the browser (pygbag needs `asyncio.run(main())` here).
+"""Entry point.
 
     python pyport/main.py            # window 480x640 (POW_SCALE=3 -> 720x960)
-    python -m pygbag build/web       # browser, see tools/build_web.py
     POW_LIVE_SERVER=ws://host:28200/live   Live on `python -m pow_server` (default: inside
-                                     the game); browser: index.html?live=wss://host:port/live
+                                     the game)
     POW_SAVE_SERVER=auto                 the save also kept on that server (path /save) for the
-                                     Live account; off / ws(s)://host:port/save;
-                                     browser: index.html?save=...
+                                     Live account; off / ws(s)://host:port/save
 
 Live > Multiplayer (and Main Menu > Multiplayer > YES, which is Continue + that) runs the
 Multiplayer screens (pow/game/online) as a state of the same canvas and loop
-(pow/game/online_session.py; the server choice is POW_MP_SERVER / index.html?server=...),
+(pow/game/online_session.py; the server choice is POW_MP_SERVER),
 without their logo, sound question, title, exit popup and outro. Their Exit comes back to the
 Live menu, and what the battles earned goes to the hero (Live.after_multiplayer).
 """
@@ -57,26 +55,6 @@ def demo_save():
         print("demo save created (Continue -> Game Menu)")
 
 
-def live_from_page():
-    """Browser: ?live=ws(s)://host:port/live in the page address picks the Live server."""
-    if sys.platform != "emscripten":
-        return
-    try:
-        import platform
-        from urllib.parse import parse_qs
-        # parsed here: pygbag's JS bridge has no URLSearchParams.new(...)
-        params = parse_qs(str(platform.window.location.search).lstrip("?"))
-        where = params.get("live", [""])[0]
-        if where:
-            config.LIVE_SERVER = where
-            print("Live server:", config.LIVE_SERVER)
-        save = params.get("save", [""])[0]
-        if save:
-            config.SAVE_SERVER = save
-    except Exception as ex:
-        print(f"Live server from the page address: {ex!r}")
-
-
 # the module whose state lives on between the games: the server saves (their background task);
 # the transports (the in-game server with its accounts) are in pow/midp, never purged
 _KEEP = ("pow.game.cloud_save",)
@@ -99,7 +77,6 @@ def fresh_games(single_player=True):
 
 
 async def main():
-    live_from_page()
     display.init(headless=os.environ.get("SDL_VIDEODRIVER") == "dummy")
     watchdog.start()
     rms_selftest()

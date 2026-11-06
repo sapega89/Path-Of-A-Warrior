@@ -176,8 +176,7 @@ class NetThread:
         from pow.game.online import sp_bridge
         from pow_server import codec_bin
         from pow_server import messages as M
-        sp_bridge.add_item()                 # loot still waiting for a free backpack cell
-        hero = sp_bridge.hero(sp_bridge.read_save())
+        hero = sp_bridge.hero()
         msg = {"sp": 0} if hero is None else dict({"sp": 1}, **{"sp_" + k: v for k, v in hero.items()})
         buf = bytearray()
         try:
@@ -200,12 +199,7 @@ class NetThread:
                 item = struct.unpack_from("<Hhhhh", payload, 36)
                 if not item[0]:
                     item = None
-            if sp_bridge.embedded:                          # the hero is in memory
-                sp_bridge.keep_rewards(gold, fame, exp, item)
-                return
-            sp_bridge.add_rewards(gold, fame, exp)
-            if item:
-                sp_bridge.add_item(*item)
+            sp_bridge.keep_rewards(gold, fame, exp, item)   # paid when the screens are left
         if op == 279 and st == 1 and len(payload) >= 19:
             NetThread._save_token(payload[3:19].split(b"\0")[0].decode("ascii", "replace"))
         elif op == 263 and st == -3:

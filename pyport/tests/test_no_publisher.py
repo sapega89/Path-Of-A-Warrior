@@ -13,9 +13,9 @@ def test_no_publisher_in_resources_and_code():
     found = []
     for root in roots:
         for p in root.rglob("*"):
-            if not p.is_file() or ".git" in p.parts or "__pycache__" in p.parts or "docs" in p.parts or "vault" in p.parts\
-                    or p.name == "JAVA_REFERENCE.md":   # notes about the original, not the game
-                continue
+            skip = {".git", "__pycache__", "docs", "vault", ".pytest_cache", ".idea", ".venv", "build"}
+            if not p.is_file() or skip & set(p.parts) or p.suffix.lower() in (".sqlite", ".log"):
+                continue        # notes about the original and local files, not the game
             if p.suffix.lower() in (".png", ".mid", ".wav", ".ogg", ".pal", ".ft2", ".pyc"):
                 if OLD in p.name.lower():
                     found.append(str(p))

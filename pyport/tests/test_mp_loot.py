@@ -1,9 +1,7 @@
 """PHASE_9 task 9.9: loot of the multiplayer battles, by the single-player drop rules."""
 import random
-import struct
 
 import pytest
-from test_mp_sp_bridge import make_save, store
 
 import config
 from pow.game.online import sp_bridge as S
@@ -59,52 +57,15 @@ def test_roll_keeps_the_best_and_can_give_special_or_rare():
     assert {0, 1, 3, 5} <= seen
 
 
-@pytest.fixture
-def save_dir(tmp_path, monkeypatch):
-    monkeypatch.setattr(config, "SAVE_DIR", str(tmp_path))
-    return tmp_path
 
 
-def _cell(d, i):
-    return struct.unpack_from("<hhhhhB", d, S.OFF_BACKPACK + 11 * i)
-
-
-def test_item_goes_into_the_backpack_and_potions_onto_the_belt(save_dir):
-    store(make_save())
-    assert S.add_item(118, 9, 0, 0, 0) == 0
-    assert S.add_item(3) == 0 and S.add_item(3) == 0
-    d = S.read_save()
-    assert _cell(d, 0) == (118, 9, 0, 0, 0, 0)
-    assert struct.unpack_from("<hB", d, S.OFF_BELT) == (3, 2)
-
-
-def test_full_backpack_keeps_the_loot_waiting(save_dir):
-    data = bytearray(make_save())
-    for o in S._backpack_offsets(data):                  # the 25 cells and the extra block
-        struct.pack_into("<h", data, o, 101)
-    store(data)
-    assert S.add_item(504) == 1                          # waiting
-    d = bytearray(S.read_save())
-    struct.pack_into("<h", d, S.OFF_BACKPACK + 11 * 7, 0)   # the player sold something
-    from pow.midp.rms import RecordStore
-    RecordStore.openRecordStore(S.SAVE_STORE, False).setRecord(1, d, 0, len(d))
-    assert S.add_item() == 0                             # the next login delivers it
-    assert _cell(S.read_save(), 7)[0] == 504
-
-
-def test_no_save_no_loot(save_dir):
-    assert S.add_item(118) is None
-
-
-def test_client_takes_the_item_from_1032(save_dir):
+def test_client_keeps_the_item_of_1032_for_the_single_player():
     from pow.game.online.net_thread import NetThread
     from pow_server import codec_bin
     from pow_server import messages as M
-    store(make_save(gold=0, fame=0, exp=0))
+    S.pending.clear()
     frame = codec_bin.encode(M.BATTLE_END, {"st": 1, "win": 1, "gold": 50, "fame": 3, "exp": 9,
                                             "loot": "Black Barb", "item_id": 379, "item_def": 4,
                                             "item_hp": 75, "item_mp": 36}, to_client=True)
     NetThread._port_extra_in(codec_bin.unframe(frame)[0][0])
-    d = S.read_save()
-    assert _cell(d, 0) == (379, 0, 4, 75, 36, 0)
-    assert struct.unpack_from("<iii", d, S.OFF_GOLD) == (50, 3, 9)
+    assert S.take_rewards() == [{"gold": 50, "fame": 3, "exp": 9, "loot": [(379, 0, 4, 75, 36)]}]

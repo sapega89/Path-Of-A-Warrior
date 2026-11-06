@@ -77,10 +77,3 @@ def close(self):
     if MpCanvas.game is not None:
         MpCanvas.game.stop_music()     # the outro stops it; a closed window does not
     return sp_bridge.take_rewards(), self.quit_requested
-
-
-async def run(self, midlet):
-    """The loop of the standalone client (mp_main.py)."""
-    self.init_screen()
-    while await frame(self, midlet):
-        pass

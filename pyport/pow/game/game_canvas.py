@@ -151,7 +151,7 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         GameCanvas.draw_auto_badge()
         GameCanvas.painted = True
 
-    async def run(self):  # Thread.run -> async loop for pygbag
+    async def run(self):
         self.init_game()
         await self.loop()
 
@@ -348,7 +348,7 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
 
     def tick_state(self):
         from pow.game.sound import Sound
-        if display.screen_changed():         # the browser went full screen / back later
+        if display.screen_changed():
             GameCanvas.redraw = 1            # (Options shows Screen: Full / Window)
         state = GameCanvas.state
         if state == 0:
