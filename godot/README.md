@@ -53,6 +53,7 @@ godot --headless --path godot/client res://tests/runner.tscn  # тести
 | рух | WASD / стрілки | лівий стік / хрестовина |
 | атака | J / пробіл | A |
 | скіли 1–4 | 1–4 / U I O P | X, Y, LB, RB |
+| зілля 1–2 | 5 6 / K L | натиск лівого і правого стіків |
 | пауза / назад | Esc | Start |
 
 На телефоні — стік зліва і кнопки справа (`scripts/ui/touch_controls.gd`).

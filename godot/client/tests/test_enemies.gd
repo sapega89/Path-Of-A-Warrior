@@ -229,3 +229,64 @@ func test_general_skills_are_actions() -> void:
 		sim.general_pick_skill(g, false)
 		check(g.action == 1 or (g.action >= 5 and g.action <= 21), "a skill action: %d" % g.action)
 		check(sim.enemy_anim(g, g.action).size() > 1, "with frames")
+
+
+func test_skill_costs_mp_and_hits() -> void:
+	var d := _duel()
+	var sim: RefCounted = d[0]
+	var e = d[1]
+	var hp: int = e.hp
+	sim.tick(-1, -1, false, 0)  # the first skill key: skill 12
+	eq(sim.hero.action, 12, "the skill starts")
+	eq(sim.hero.mp, 5, "it took 5 MP")
+	# The dash goes 24 px a frame through anyone: he stands 40 px ahead, where the first
+	# dashing frame ends in front of him (an idle soldier walks on; here he waits).
+	var spot: Vector2i = sim.hero.pos + Vector2i(0, 40)
+	for t in 6:
+		e.pos = spot
+		sim.tick(-1, -1)
+	check(e.hp < hp, "the skill took HP: %d -> %d" % [hp, e.hp])
+	sim.hero.mp = 4
+	sim.hero.action = 0
+	sim.tick(-1, -1, false, 0)
+	check(sim.hero.action != 12, "no skill without MP")
+	eq(sim.hero.mp, 4, "nothing is taken")
+
+
+func test_attack_buff_skill() -> void:
+	var sim: RefCounted = _duel()[0]
+	sim.tick(-1, -1, false, 1)  # the second skill key: skill 17
+	eq(sim.hero.action, 17, "the buff starts")
+	eq(sim.hero.mp, 3, "it took 7 MP")
+	for t in 14:
+		sim.tick(-1, -1)
+	check(sim.hero.attack_buff > 0, "attack is raised")
+	check(sim.hero.attack_buff_ticks > 0, "for a while")
+
+
+func test_potion_restores_hp() -> void:
+	var sim: RefCounted = _duel()[0]
+	check(sim.add_quick_item(1), "a small HP potion goes to a quick slot")
+	sim.hero.hp = 10
+	sim.tick(-1, -1, false, -1, 0)
+	for t in 3:
+		sim.tick(-1, -1)
+	eq(sim.hero.hp, 19, "30 % of 30 HP")
+	eq(int(sim.quick_slots[0][0]), 0, "the slot is empty again")
+	eq(sim.effect_item, 0, "nothing in use")
+
+
+func test_scroll_blast_hits() -> void:
+	var d := _duel()
+	var sim: RefCounted = d[0]
+	var e = d[1]
+	var hp: int = e.hp
+	check(sim.add_quick_item(10), "a fire scroll goes to a quick slot")
+	sim.tick(-1, -1, false, -1, 0)
+	eq(sim.hero.action, 11, "the hero holds the scroll up")
+	var spot: Vector2i = e.pos
+	for t in 10:
+		e.pos = spot  # (an idle soldier walks on; here he waits for the blast)
+		sim.tick(-1, -1)
+	check(e.hp < hp, "the blast took HP: %d -> %d" % [hp, e.hp])
+	eq(sim.effect_item, 0, "the scroll is used up")

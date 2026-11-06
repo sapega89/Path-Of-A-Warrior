@@ -88,6 +88,13 @@ func _ready() -> void:
 		if not shot_general and Time.get_ticks_msec() - t0 > 3000:
 			shot_general = true
 			await _shot(out, "mission_1_general_fight")
+			_release_all()
+			sim.hero.mp = sim.hero.max_mp  # the first skill, a dash, against the general
+			Input.action_press("skill_1")
+			await _frames(2)
+			Input.action_release("skill_1")
+			await _seconds(0.45)
+			await _shot(out, "mission_1_skill")
 	_release_all()
 	print("general: hp ", sim.hero.hp, " won ", sim.won, " failed ", sim.failed)
 	await _frames(10)
