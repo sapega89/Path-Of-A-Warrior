@@ -175,7 +175,7 @@ var mission_exp := 0
 var mission_gold := 0
 var mission_general := 0
 var time_limit := 0  # seconds; in time the exp grows
-var time_bonus := false  # the exp for time was given
+var time_exp := 0  # the exp for time, given when the mission was won in time
 ## Friendship points of the generals the hero talked with (general id -> points).
 var friendship := {}
 ## What follows the talk: 0 the map goes on, 1 the exits open, 2 the mission is over.
@@ -1537,8 +1537,8 @@ func _next_result_page() -> void:
 			banner = BANNER_TOTAL_EXP
 		BANNER_TOTAL_EXP:
 			if play_seconds() < time_limit:
-				mission_exp += ((time_limit - play_seconds()) / time_limit / 10 + 1) * mission_exp / 20
-				time_bonus = true
+				time_exp = ((time_limit - play_seconds()) / time_limit / 10 + 1) * mission_exp / 20
+				mission_exp += time_exp
 				banner = BANNER_TIME_EXP
 			else:
 				_mission_over()

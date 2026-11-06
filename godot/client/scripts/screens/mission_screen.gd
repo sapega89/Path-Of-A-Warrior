@@ -17,6 +17,7 @@ const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const MapHud := preload("res://scripts/ui/map_hud.gd")
 const Effects := preload("res://scripts/world/effects.gd")
+const Profile := preload("res://scripts/core/profile.gd")
 
 const TICK := MapSim.TICK_MS / 1000.0
 const ARROW_SCALE := 3.0
@@ -33,6 +34,7 @@ var builder: Node3D
 var hero: CharacterBody3D
 var camera: Camera3D
 var hud: MapHud
+var profile: Profile
 var effects: Effects
 var banner: PanelContainer
 var banner_text: Label
@@ -90,6 +92,8 @@ func _ready() -> void:
 	sim.mission_gold = int(mission_info.get("gold", 0))
 	sim.mission_general = int(mission_info.get("general", 0))
 	sim.time_limit = int(mission_info.get("time_limit", 0))
+	profile = Profile.load_or_new()
+	profile.apply_to(sim)
 
 	var arrow_mat := StandardMaterial3D.new()
 	arrow_mat.albedo_color = Color8(240, 142, 53)
@@ -185,6 +189,8 @@ func _process(delta: float) -> void:
 		_blink += 1
 	if sim.finished:
 		set_process(false)
+		profile.take_from(sim, lord_id, mission, int(mission_info.get("id", 0)))
+		profile.save()
 		Router.back()
 		return
 	_update_view(_acc / TICK)
@@ -299,11 +305,15 @@ func _show_banner() -> void:
 		stage = tr("mission.failed")
 	elif sim.banner == MapSim.BANNER_SUCCESS:
 		stage = "%s\n%s\n%d" % [tr("mission.success"), tr("mission.gold"), sim.gold_reward()]
-	elif sim.banner == MapSim.BANNER_TOTAL_EXP:
-		stage = "%s\n%d" % [tr("mission.total_exp"), sim.exp_reward()]
-	elif sim.banner == MapSim.BANNER_TIME_EXP:
-		stage = "%s\n%s %s\n%s %s" % [tr("mission.time_exp"), tr("mission.time_limit"),
-			clock(sim.time_limit), tr("mission.time_taken"), clock(sim.play_seconds())]
+	elif sim.banner == MapSim.BANNER_TOTAL_EXP or sim.banner == MapSim.BANNER_TIME_EXP:
+		if sim.banner == MapSim.BANNER_TOTAL_EXP:
+			stage = "%s\n%d" % [tr("mission.total_exp"), sim.exp_reward()]
+		else:
+			stage = "%s\n%s %s\n%s %s" % [tr("mission.time_exp"), tr("mission.time_limit"),
+				clock(sim.time_limit), tr("mission.time_taken"), clock(sim.play_seconds())]
+		var lv := profile.level_with(sim.exp_reward())
+		if lv > profile.level:
+			stage += "\n" + tr("mission.level_up") % lv
 	banner_text.text = "%s\n%s\n%s" % [lord_name, mission_info.get("name", ""), stage]
 	_place_banner(0.3)
 
