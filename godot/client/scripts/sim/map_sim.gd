@@ -8,8 +8,9 @@ extends RefCounted
 ## room), the hero's walking, running and sword attacks with the original wall, corner and
 ## room checks, and the soldiers: the room's waves come in through its exits, swordsmen
 ## (one or a squad of three) and archers walk, attack and shoot by the original AI, are hit,
-## knocked back and die; the last one clears the room. Not yet: generals (a room whose list
-## reaches a general waits there), skills, potions, drops and breakable objects.
+## knocked back and die; the last one clears the room. Barrels and other objects break under
+## the sword; soldiers and objects drop gold and items that the hero picks up. Not yet:
+## generals (a room whose list reaches a general waits there), skills and potions in use.
 
 const Rooms := preload("res://scripts/world/rooms.gd")
 const JavaRandom := preload("res://scripts/sim/java_random.gd")
@@ -69,6 +70,24 @@ class Actor:
 	var weapon_kind := 0  # 0 long sword, 1 short sword
 
 
+## A breakable object of the room (barrels, crates, ...): a cell of the objects layer.
+class Breakable:
+	var active := true
+	var tile := Vector2i.ZERO
+	var pos := Vector2i.ZERO
+	var kind := 0
+	var hp := 21
+	var break_frame := 0  # > 0: the hit spark shows
+	var break_ticks := 0  # > 0: broken, blinking out
+
+
+## Something lying on the floor: an item id (< 100 potion, < 10000 gear, 10000 + n = n gold).
+class Drop:
+	var item := 0
+	var pos := Vector2i.ZERO
+	var ticks := 75
+
+
 class Arrow:
 	var active := false
 	var pos := Vector2i.ZERO
@@ -113,6 +132,10 @@ var failed := false
 var finished := false  # the mission is over: the screen leaves
 ## The last enemy hit or hitting: {name, level, hp_bar (0..60), ticks}.
 var target_info := {}
+var breakables: Array[Breakable] = []
+var drops: Array[Drop] = []
+var gold := 0
+var items: Array[int] = []  # picked up this mission (potions and gear), in order
 
 
 static func tables() -> Dictionary:
@@ -169,6 +192,7 @@ func enter_room() -> void:
 	while waves.size() < 14:
 		waves.append(0)
 	_find_spawn_spots()
+	_find_breakables()
 	room_phase = 2
 	room_phase_timer = 1
 
@@ -272,6 +296,9 @@ func _show_banner(kind: int) -> void:
 
 
 func _tick_scene(held: int, pressed: int, skill: int) -> void:
+	for o in breakables:
+		if o.active and o.break_frame != 0:
+			o.break_frame -= 1
 	_spawn_next_enemy()
 	hero.frame += 1
 	dir_history[0] = pressed
@@ -297,8 +324,10 @@ func _tick_scene(held: int, pressed: int, skill: int) -> void:
 	_move_hero()
 	_hero_action_hits()
 	_tick_arrows()
+	_pick_up_drops()
 	_tick_enemies()
 	_sort_enemies()
+	_tick_broken()
 
 
 func _hold_to_move(held: int) -> void:
@@ -397,6 +426,7 @@ func _hero_action_hits() -> void:
 	if action >= 3 and action <= 8 and hero.frame == HIT_FRAME[action]:
 		_turn_to_nearest()
 		_hero_attack()
+		_hero_hits_breakables()
 
 
 func _end_tick() -> void:
@@ -718,6 +748,7 @@ func _enemy_strikes_hero(e: Actor) -> void:
 
 func _enemy_dies(e: Actor) -> void:
 	mission_exp += e.level
+	drop_item(0, e.pos)
 	kills += 3 if e.type == KIND_SQUAD else 1
 	enemies.erase(e)
 	if e.type != KIND_ARCHERS:
@@ -827,6 +858,113 @@ func _tick_arrows() -> void:
 			1: a.pos.x -= 12
 			2: a.pos.y -= 12
 			3: a.pos.x += 12
+
+
+# ---- breakable objects and drops ----------------------------------------------------------
+
+## The objects of the room's 9x9-tile view.
+func _find_breakables() -> void:
+	breakables.clear()
+	var o := room_origin()
+	for y in range(o.y * 7, mini(o.y * 7 + 9, h)):
+		for x in range(o.x * 7, mini(o.x * 7 + 9, w)):
+			var kind := int(objects[y * w + x])
+			if kind == 0:
+				continue
+			var b := Breakable.new()
+			b.tile = Vector2i(x, y)
+			b.pos = Vector2i(x * 27 + 12, y * 27 + 20)
+			b.kind = kind
+			b.hp = 41 if kind in [101, 113] else 21
+			breakables.append(b)
+
+
+func _hero_hits_breakables() -> void:
+	var reach := int(table("weapon_reach")[hero.weapon_kind])
+	for b in breakables:
+		if b.active and b.hp > 0:
+			if hero.dir == dir4(hero.pos, b.pos) and distance(hero.pos, b.pos) <= reach:
+				hit_breakable(b)
+
+
+func hit_breakable(b: Breakable) -> void:
+	b.hp = b.hp - hero.attack + hero.attack_buff
+	b.break_frame = 2
+	if b.hp < 1:
+		b.break_ticks = 12
+		objects[b.tile.y * w + b.tile.x] = 0  # the cell is free from now on
+
+
+## A broken object blinks for 12 ticks, then is gone and may leave something behind.
+func _tick_broken() -> void:
+	for b in breakables:
+		if b.active and b.break_ticks != 0:
+			b.break_ticks -= 1
+			if b.break_ticks == 0:
+				drop_item(3, b.pos)
+				b.active = false
+
+
+## The object shows this tick (it blinks while breaking).
+func breakable_shown(b: Breakable) -> bool:
+	return b.active and (b.break_ticks == 0 or (b.break_ticks & 2) != 0)
+
+
+## Something may drop at p: kind 0 soldier, 1 general, 2 the mission's general, 3 object.
+## Only in the part of the room the game's view checks (its upper left), as the original.
+func drop_item(kind: int, p: Vector2i) -> void:
+	var o := room_origin()
+	var cam := Vector2i(o.x * 7 * 27 + 1, o.y * 7 * 27)
+	if p.y <= cam.y + 27 or p.y >= cam.y + 162 or p.x <= cam.x + 27 or p.x >= cam.x + 162:
+		return
+	var item := random_drop(kind)
+	if item == 0 or (int(flags[(p.y / 27) * w + p.x / 27]) & 1) != 0:
+		return
+	var live := 0
+	for d in drops:
+		if d.item != 0:
+			live += 1
+	if live > 9:
+		return
+	var d := Drop.new()
+	d.item = item
+	d.pos = p
+	drops.append(d)
+
+
+func random_drop(kind: int) -> int:
+	const DROP_ODDS := [5, 10, 20, 5, 100]
+	const POTION_ODDS := [10, 30, 60, 1, 100]
+	const TIER_MIN_LEVEL := [69, 44, 24, 9, 0]
+	const TIER_ODDS := [[0, 0, 33, 77, 100], [5, 30, 55, 80, 100], [30, 60, 90, 100, 100],
+		[40, 80, 100, 100, 100], [80, 100, 100, 100, 100]]
+	if rng.below(100) < DROP_ODDS[kind]:
+		var i := rng.below(100)
+		if i < POTION_ODDS[kind]:
+			for b in range(1, 5):  # above Lv69 the odds of Lv45-69 (pyport's DROPS_AFTER_69)
+				if hero.level > TIER_MIN_LEVEL[b]:
+					i = rng.below(100)
+					for tier in 5:
+						if i < TIER_ODDS[b][tier]:
+							return 101 + tier + 5 * rng.below(20)
+		else:
+			return rng.below(11) + 1
+	elif rng.below(100) < 25:
+		return 10020 + (difficulty ^ 1) * 20
+	return 0
+
+
+func _pick_up_drops() -> void:
+	for d in drops.duplicate():
+		if d.item != 0 and distance(hero.pos, d.pos) < 20:
+			if d.item > 10000:
+				gold += d.item - 10000
+			else:
+				items.append(d.item)
+			d.item = 0
+		d.ticks -= 1
+		if d.ticks < 1 or d.item == 0:
+			drops.erase(d)
 
 
 # ---- rooms and walls (map_engine) ------------------------------------------------------------

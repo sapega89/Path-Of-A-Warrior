@@ -36,6 +36,9 @@ var arrows: Array[TextureRect] = []
 var soldiers := {}  # sim actor -> Soldier node
 var shots: Array[MeshInstance3D] = []  # the archers' arrows
 var tint := 0
+var loot := {}  # sim drop -> Sprite3D
+var _tool_tex: Texture2D = preload("res://assets/original/ui/tool.png")
+var _gold_tex: Texture2D = preload("res://assets/original/ui/gold.png")
 var _acc := 0.0
 var _pressed := -1
 var _fire := false
@@ -177,13 +180,15 @@ func _update_view(t: float) -> void:
 	hero.global_position = Hero.px_to_world(smooth(sim.hero.prev_pos, sim.hero.pos, t))
 	hero.set_frame(sim.hero_sprite_frame())
 	camera.focus = sim.rooms.center(sim.cell)
-	var line := "%s: %s   %s %d   HP %d/%d" % [lord_name, mission_info.get("name", ""),
-		tr("mission.stage"), sim.rooms_visited, sim.hero.hp, sim.hero.max_hp]
+	var line := "%s: %s   %s %d   HP %d/%d   G %d" % [lord_name, mission_info.get("name", ""),
+		tr("mission.stage"), sim.rooms_visited, sim.hero.hp, sim.hero.max_hp, sim.gold]
 	if not sim.target_info.is_empty():
 		line += "   %s Lv %d" % [sim.target_info.name, sim.target_info.level]
 	info.text = line
 	_place_soldiers(t)
 	_place_shots()
+	_place_objects()
+	_place_loot()
 	_place_arrows()
 	_show_banner()
 
@@ -204,6 +209,42 @@ func _place_soldiers(t: float) -> void:
 			soldiers[e] = node
 		node.global_position = Hero.px_to_world(smooth(e.prev_pos, e.pos, t))
 		node.set_frame(sim.enemy_sprite_frame(e), int(map4[e.dir]))
+
+
+## Breakable objects: they blink while breaking and are gone once broken.
+func _place_objects() -> void:
+	for b in sim.breakables:
+		var node := builder.get_node_or_null("Object_%d_%d" % [b.tile.x, b.tile.y]) as Node3D
+		if node != null:
+			node.visible = sim.breakable_shown(b)
+
+
+## Gold and items on the floor.
+func _place_loot() -> void:
+	for d in loot.keys():
+		if not sim.drops.has(d):
+			loot[d].queue_free()
+			loot.erase(d)
+	for d in sim.drops:
+		if loot.has(d):
+			continue
+		var s := Sprite3D.new()
+		s.name = "Loot"
+		s.region_enabled = true
+		if d.item > 10000:
+			s.texture = _gold_tex
+			s.region_rect = Rect2(Vector2.ZERO, _gold_tex.get_size())
+		else:
+			s.texture = _tool_tex
+			var f: int = 11 if d.item > 100 else d.item - 1
+			s.region_rect = Rect2(f * 28, 0, 28, 28)
+		s.pixel_size = 1.0 / 27.0
+		s.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
+		s.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		s.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+		world.add_child(s)
+		s.global_position = Hero.px_to_world(Vector2(d.pos)) + Vector3(0.0, s.region_rect.size.y / 54.0, 0.0)
+		loot[d] = s
 
 
 func _place_shots() -> void:
