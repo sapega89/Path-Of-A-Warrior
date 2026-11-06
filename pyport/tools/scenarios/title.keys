@@ -1,4 +1,4 @@
-# "sound enabled?" (no logo screen: PORT-EXTRA) -> title -> Main Menu (no saved game)
+# "sound enabled?" (no logo screen: ) -> title -> Main Menu (no saved game)
 wait 25
 shot sound_question
 key RIGHT
@@ -48,4 +48,4 @@ key FIRE
 wait 1
 key RIGHT          # select Yes
 shot exit_popup_yes
-key FIRE           # Yes -> the game quits at once (no outro: PORT-EXTRA)
+key FIRE           # Yes -> the game quits at once (no outro: )

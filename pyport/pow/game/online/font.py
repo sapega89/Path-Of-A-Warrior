@@ -1,14 +1,11 @@
-"""Font (j.java): the bitmap font 0_font.png, recoloured by a PLTE patch.
-
-Generated once from pyport/mp_java/j.java (branch java-reference) by the old
-tools/j2py_mp.py; edited by hand since.
+"""Font: the bitmap font 0_font.png, recoloured by a PLTE patch.
 """
 from pow.game.online.rt import Image, _js, i8
 
 
 class Font:
 
-    def __init__(self, path, glyph_w, glyph_h, space_w, color):  # j.java:16
+    def __init__(self, path, glyph_w, glyph_h, space_w, color):
         self.image = None
         self.glyph_w = 0
         self.glyph_h = 0
@@ -43,13 +40,13 @@ class Font:
             print(_js(_js("font fail : ", path)))
             return
 
-    def draw_char(self, ch, x, y):  # j.java:53
+    def draw_char(self, ch, x, y):
         if ch == 32:
             return
         Gfx.draw_image_part(self.image, x, y, self.glyph_w, self.glyph_h, (Font.glyph_index(ch) * self.glyph_w), 0)
 
     @staticmethod
-    def glyph_index(ch):  # j.java:60
+    def glyph_index(ch):
         index = 0
         if (ch >= 65) and (ch <= 90):
             index = (32 + (ch - 65))
@@ -123,12 +120,12 @@ class Font:
             index = 99
         return index
 
-    def char_width(self, ch):  # j.java:136
+    def char_width(self, ch):
         if ch == 32:
             return self.space_w
         return ((self.glyph_w + 1) - 0)
 
-    def chars_width(self, chars, start, count):  # j.java:143
+    def chars_width(self, chars, start, count):
         width = 0
         end = (start + count)
         i = start
@@ -137,7 +134,7 @@ class Font:
             i = i + 1
         return width
 
-    def string_width(self, text):  # j.java:154
+    def string_width(self, text):
         chars = [ord(_c) for _c in text]
         return self.chars_width(chars, 0, len(chars))
 

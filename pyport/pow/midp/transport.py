@@ -1,6 +1,6 @@
-"""Where the MP client's frames go (PHASE_9 §3): the replacement of h.java's socket.
+"""Where the MP client's frames go (PHASE_9 §3): the replacement of's socket.
 
-h.java opened socket://POW_SERVER:POW_PORT in its own thread and called g.a(k) for
+ opened socket://POW_SERVER:POW_PORT in its own thread and called g.a(k) for
 every frame. Here the game loop calls poll() once per tick and gets the payloads received
 since the last call (frame length removed, opcode first), and send() takes a whole frame
 (what e.b() wrote). These implementations with the same interface:
@@ -8,21 +8,18 @@ since the last call (frame length removed, opcode first), and send() takes a who
 - LocalTransport: the server runs inside the game (9a: bots, no network).
 - WebSocketTransport: ws:// or wss:// to `python -m pow_server` (9b). Desktop: the
   `websockets` package on the game's asyncio loop.
-- BrowserWebSocketTransport: the same in the browser build (pygbag), the page's JS WebSocket
-  (pow/midp/webws.py).
 
 make_transport(config.MP_SERVER) picks one: "local" or a ws(s):// URL.
 """
 import asyncio
 import collections
-import sys
 
 from pow_server import codec_bin
 
 
 class Transport:
-    connected = False   # h.j
-    failed = False      # connect failed or the connection dropped (-> g.g(n) in the client)
+    connected = False
+    failed = False  # connect failed or the connection dropped ( in the client)
 
     def open(self):
         """Start connecting; connected / failed tell the result on a later tick."""
@@ -58,11 +55,10 @@ class LocalTransport(Transport):
             from pow_server.server import GameServer
             from pow_server.storage import open_storage
             path = ":memory:"
-            if sys.platform != "emscripten":
-                os.makedirs(config.SAVE_DIR, exist_ok=True)
-                path = os.path.join(config.SAVE_DIR, "mp_local.sqlite")
+            os.makedirs(config.SAVE_DIR, exist_ok=True)
+            path = os.path.join(config.SAVE_DIR, "mp_local.sqlite")
             rng = None
-            if os.environ.get("POW_SEED"):        # headless runs (tools/mp_shot.py) repeat exactly
+            if os.environ.get("POW_SEED"):        # headless runs (tools/shot.py) repeat exactly
                 import random
                 rng = random.Random(int(os.environ["POW_SEED"]))
             # the offline game has nobody to wait for: a Duel gets its CPU fighter at once
@@ -175,50 +171,8 @@ class WebSocketTransport(Transport):
         self.connected = False
 
 
-class BrowserWebSocketTransport(Transport):
-    """PORT-EXTRA: WebSocketTransport of the browser build (pygbag): the page's WebSocket through
-    pow/midp/webws.py, polled once per tick. connected / failed are read from the page."""
-
-    def __init__(self, url):
-        self.url = url
-        self.inbox = collections.deque()
-        self._ws = None
-
-    @property
-    def connected(self):
-        return self._ws is not None and self._ws.connected
-
-    @property
-    def failed(self):
-        return self._ws is not None and self._ws.failed
-
-    def open(self):
-        from pow.midp.webws import BrowserSocket
-        self.close()
-        self.inbox.clear()
-        self._ws = BrowserSocket(self.url, binary=True)
-
-    def send(self, frame):
-        if self.connected:
-            self._ws.send(bytes(frame))
-
-    def poll(self):
-        if self._ws is not None:
-            for data in self._ws.recv():
-                if isinstance(data, bytes):
-                    self.inbox.extend(codec_bin.unframe(data)[0])
-        out = list(self.inbox)
-        self.inbox.clear()
-        return out
-
-    def close(self):
-        if self._ws is not None:
-            self._ws.close()
-        self._ws = None
-
-
 def _ws_transport(url):
-    return BrowserWebSocketTransport(url) if sys.platform == "emscripten" else WebSocketTransport(url)
+    return WebSocketTransport(url)
 
 
 class LiveLocalTransport(LocalTransport):

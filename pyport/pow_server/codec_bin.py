@@ -1,6 +1,6 @@
 """Binary codec of the original protocol (PHASE_9 task 9.4).
 
-Layout (docs/analysis/06_multiplayer.md §2.1, MP e.java / d.java / k.java):
+Layout:
 
     frame    = u16 LE total length (these 2 bytes included) + payload
     C->S     = u16 LE opcode + fields                    (no status byte)
@@ -47,7 +47,7 @@ def unframe(data: bytes):
 
 # --- fields --------------------------------------------------------------------
 def _put(buf, kind, value):
-    if isinstance(kind, int):          # fixed string, e.e.a(String,int)
+    if isinstance(kind, int):  # fixed string
         raw = (value or "").encode("ascii", "replace")[:kind]
         buf += raw + b"\0" * (kind - len(raw))
     elif kind in _NUM:

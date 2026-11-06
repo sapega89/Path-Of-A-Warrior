@@ -1,4 +1,4 @@
-"""al.java - string table (.scr) reader. Literal port."""
+"""String table (.scr) reader."""
 from pow.game.res_reader import ResReader
 
 
@@ -9,10 +9,10 @@ def _read_utf(buf: bytes) -> str:
 
 
 class ScrTable:
-    def __init__(self, path):  # al.java:7-9
+    def __init__(self, path):
         self.data = ResReader.read(path)
 
-    def get(self, index):  # al.java:11-29
+    def get(self, index):
         i = 2 + index * 2
         start = self.data[i] & 0xFF | (self.data[i + 1] & 0xFF) << 8
         end = self.data[i + 2] & 0xFF | (self.data[i + 3] & 0xFF) << 8
@@ -30,5 +30,5 @@ class ScrTable:
             pass
         return str_
 
-    def free(self):  # al.java:31-33
+    def free(self):
         self.data = None

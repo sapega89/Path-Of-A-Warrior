@@ -1,7 +1,7 @@
-"""ag.java - the main Canvas class (game loop, state machine, shared helpers).
+"""The main Canvas class (game loop, state machine, shared helpers).
 
-Method names follow pyport/NAMES.md (signature suffix when the Java name is overloaded).
-Every method has a `# ag.java:FROM-TO` comment.
+Method names say what the method does.
+Every method has a `# :FROM-TO` comment.
 """
 import traceback
 
@@ -23,20 +23,19 @@ from pow.midp.canvas import Canvas
 from pow.midp.graphics import Image
 from pow.midp.jint import i16, i32, imod
 
-F13 = config.DECOMP_FIX["F13"]
 
 
 class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, AssetsMixin, GameFields, Canvas):
 
-    def __init__(self, main):  # ag.java:560-564
+    def __init__(self, main):
         Canvas.__init__(self)
         GameCanvas.midlet = main
-        self.map_started = False  # public boolean gj = false;  ag.java:552 (instance field)
+        self.map_started = False  # instance field
         self.setFullScreenMode(True)
         self.read_screen_size()
 
     @staticmethod
-    def reset_globals():  # ag.java:566-576
+    def reset_globals():
         GameCanvas.map_id = 1
         GameCanvas.key = -999
         GameCanvas.redraw = 1
@@ -47,13 +46,13 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         GameCanvas.dir_history[1] = -1
         GameCanvas.dir_history[0] = -1
 
-    def read_screen_size(self):  # ag.java:578-583
+    def read_screen_size(self):
         GameCanvas.screen_w = self.getWidth()
         GameCanvas.screen_h = self.getHeight()
         GameCanvas.screen_cx = GameCanvas.screen_w // 2
         GameCanvas.screen_cy = GameCanvas.screen_h // 2
 
-    def init_game(self):  # ag.java:585-658
+    def init_game(self):
         from pow.game.live import Live
         from pow.game.live_screen import LiveScreen
         from pow.game.map_engine import MapEngine
@@ -106,16 +105,16 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         GameCanvas.live = Live()
         Live.screen = LiveScreen()
         GameCanvas.menus = Menus()
-        GameCanvas.engine = MapEngine()               # ar.java: map engine (movement, combat)
-        GameCanvas.scene = MapScene()                # c.java: story player, map scene
+        GameCanvas.engine = MapEngine()               # map engine (movement, combat)
+        GameCanvas.scene = MapScene()                # story player, map scene
 
-    def keyPressed(self, key):  # ag.java:660-662
+    def keyPressed(self, key):
         if GameCanvas.state == online_session.ONLINE and GameCanvas.online is not None:
-            GameCanvas.online.mp.keyPressed(key)   # PORT-EXTRA: the Multiplayer screens' key
+            GameCanvas.online.mp.keyPressed(key)   # the Multiplayer screens' key
             return
         self.key_down(key)
 
-    def handle_key(self):  # ag.java:664-685
+    def handle_key(self):
         if GameCanvas.key == -999:
             return
         if GameCanvas.paused:
@@ -133,10 +132,10 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
                 GameCanvas.live.key_down(GameCanvas.key)
 
     @staticmethod
-    def log(text):  # ag.java:687-689
+    def log(text):
         print(" " + text)
 
-    def paint(self, graphics):  # ag.java:691-706  (synchronized)
+    def paint(self, graphics):  # synchronized
         GameCanvas.painted = False
         GameCanvas.screen_g = graphics
         Gfx.set_graphics(graphics)
@@ -152,16 +151,16 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         GameCanvas.draw_auto_badge()
         GameCanvas.painted = True
 
-    async def run(self):  # ag.java:708-760  (Thread.run -> async loop for pygbag)
+    async def run(self):
         self.init_game()
         await self.loop()
 
-    async def loop(self):  # ag.java:714-760  (the frames)
+    async def loop(self):  # the frames
         GameCanvas.tick_start = system.currentTimeMillis()
         while GameCanvas.running and not self.quit_requested:
             try:
                 GameCanvas.tick_start = system.currentTimeMillis()
-                if GameCanvas.state == online_session.ONLINE:   # PORT-EXTRA: the Multiplayer
+                if GameCanvas.state == online_session.ONLINE:   # the Multiplayer
                     if not await GameCanvas.online.frame():     # screens, one frame per tick
                         GameCanvas.online.leave()
                     continue
@@ -182,7 +181,7 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
                 GameCanvas.key_pressed = -999
                 GameCanvas.frame = i32(GameCanvas.frame + 1)
                 GameCanvas.frame = max(GameCanvas.frame, 0)
-                if GameFields.key_delay > 0:   # private static int a  (ag.java:98)
+                if GameFields.key_delay > 0:
                     GameFields.key_delay -= 1
                 self.handle_key()
                 if GameCanvas.sound is not None:
@@ -209,23 +208,23 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
                     raise
                 await self.sleep_ms(20)
 
-    def repaint_and_wait(self):  # ag.java:762-767
+    def repaint_and_wait(self):
         self.repaint()
         self.serviceRepaints()
         while not GameCanvas.painted:
             GameCanvas.sleep(20)
 
     @staticmethod
-    def sleep(ms):  # ag.java:769-777
+    def sleep(ms):
         system.sleep(ms)
 
-    def hideNotify(self):  # ag.java:779-781
+    def hideNotify(self):
         self.set_paused(True)
 
-    def showNotify(self):  # ag.java:783-785
+    def showNotify(self):
         self.set_paused(True)
 
-    def set_paused(self, paused):  # ag.java:787-799
+    def set_paused(self, paused):
         from pow.game.midlet import Midlet
         if paused and GameCanvas.state == 3:
             self.map_started = True
@@ -238,7 +237,7 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         GameCanvas.pause_pending = True
         GameCanvas.pause_pending_value = paused
 
-    def apply_pause(self, paused):  # ag.java:801-818
+    def apply_pause(self, paused):
         from pow.game.sound import Sound
         GameCanvas.paused = paused
         if GameCanvas.paused:
@@ -257,26 +256,23 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
                 GameCanvas.redraw = 2
 
     @staticmethod
-    def lock_keys():  # ag.java:820-822
+    def lock_keys():
         GameFields.key_lock = True
 
     @staticmethod
-    def unlock_keys():  # ag.java:824-827
+    def unlock_keys():
         GameFields.key_lock = False
         GameFields.key_delay = 3
 
     @staticmethod
-    def clamp_menu_scroll():  # ag.java:1203-1210
+    def clamp_menu_scroll():
         if GameCanvas.menu[1] < GameCanvas.menu[2]:
             GameCanvas.menu[2] = GameCanvas.menu[1]
             return
         if GameCanvas.menu[1] > GameCanvas.menu[2] + 4:
             GameCanvas.menu[2] = GameCanvas.menu[1] - 4
 
-    def paint_state(self):  # ag.java:1522-1610
-        # DECOMP-FIX F8: the decompiled switch at ag.java:1526-1546 has no `break`s, so every case
-        # would fall through into the next (bV==0 would also run bb.a(1), bc.b(1), ...).
-        # The original had one branch per state.
+    def paint_state(self):
         if GameCanvas.redraw == 1:
             GameCanvas.redraw = 0
             state = GameCanvas.state
@@ -346,13 +342,13 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
                 return
             self.tick_story()
 
-    def play_sound(self, sound):  # ag.java:1882-1885
+    def play_sound(self, sound):
         if GameCanvas.sound is not None:
             GameCanvas.sound.play_sound(sound)
 
-    def tick_state(self):  # ag.java:1887-1933
+    def tick_state(self):
         from pow.game.sound import Sound
-        if display.screen_changed():         # PORT-EXTRA: the browser went full screen / back later
+        if display.screen_changed():
             GameCanvas.redraw = 1            # (Options shows Screen: Full / Window)
         state = GameCanvas.state
         if state == 0:
@@ -379,21 +375,21 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
             Live.draw_screen()
         if GameCanvas.live is not None:
             from pow.game.live import Live
-            if Live.busy and not Live.quiet_request():   # PORT-EXTRA: live_online.py
+            if Live.busy and not Live.quiet_request():   # live_online.py
                 GameCanvas.live.draw_connecting()
         GameCanvas.key_held = -999
 
     @staticmethod
-    def start_boot():  # ag.java:1935-1939
+    def start_boot():
         from pow.game.boot import Boot
         if GameCanvas.boot is None:
             GameCanvas.boot = Boot()
         GameCanvas.boot.draw_boot()
 
-    def key_down(self, key):  # ag.java:1941-1961
+    def key_down(self, key):
         if key == -10:
             return
-        if key == -100:               # PORT-EXTRA: Tab / the AUTO corner (pow/game/autopilot.py)
+        if key == -100:               # Tab / the AUTO corner (pow/game/autopilot.py)
             from pow.game.autopilot import Autopilot
             Autopilot.toggle()
             return
@@ -404,7 +400,7 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         if key in (-4, -3, -2, -1, 50, 52, 54, 56):
             GameCanvas.key_held = key
 
-    def tick_title(self):  # ag.java:2004-2124  (title -> Main Menu)
+    def tick_title(self):  # title -> Main Menu
         hero = GameCanvas.hero
         for b in range(8):
             dir4 = consts.dir8_to_dir4[b]
@@ -502,7 +498,7 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         if not GameCanvas.has_save():
             GameCanvas.menu[1] = 1
 
-    def open_menu(self, mode):  # ag.java:2287-2304
+    def open_menu(self, mode):
         self.free_hero_sprites()
         self.free_menu_images()
         if GameCanvas.images[7] is None:
@@ -521,12 +517,12 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         self.compact_backpack()
 
     @staticmethod
-    def stop_sound():  # ag.java:2463-2465
+    def stop_sound():
         from pow.game.sound import Sound
         Sound.stop_all()
 
     @staticmethod
-    def set_menu_items():  # ag.java:2522-2546
+    def set_menu_items():
         menu = GameCanvas.menu[0]
         if menu == 0:
             GameCanvas.menu_items = GameCanvas.game_menu_items
@@ -545,15 +541,14 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
             GameCanvas.images[39] = None
 
     @staticmethod
-    def restore_menu_cursor():  # ag.java:2728-2733
+    def restore_menu_cursor():
         GameCanvas.menu_count = consts.menu_sizes[GameCanvas.menu[0]]
         GameCanvas.menu[1] = GameCanvas.menu_cursors[GameCanvas.menu[0]]
         GameCanvas.menu[2] = GameCanvas.menu_tops[GameCanvas.menu[0]]
         GameCanvas.redraw = 1
 
-    def start_exit(self):  # ag.java:3003-3009  (exit)
-        # PORT-EXTRA (asked by the player): no outro picture (state 12, ag.java:3011-3019, 3 s):
-        # the game closes at once
+    def start_exit(self):
+        # asked by the player: no outro picture, the game closes at once
         GameCanvas.stop_sound()
         GameCanvas.midlet.destroyApp(True)
         GameCanvas.midlet.notifyDestroyed()
@@ -561,11 +556,11 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
     # ---- New Game: hero creation (screens 29 / 6 / 7 / 8) and the save writer ------------
 
     @staticmethod
-    def now():  # ag.java:1039-1041
+    def now():
         return system.currentTimeMillis()
 
     @staticmethod
-    def move_letter_cursor(key):  # ag.java:1775-1792  (name entry: move the cursor over the 2x14 letter grid)
+    def move_letter_cursor(key):  # name entry: move the cursor over the 2x14 letter grid
         result = key
         if key not in (-7, -5, 53):
             if key in (-1, 50):
@@ -583,14 +578,14 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         return result
 
     @staticmethod
-    def rand_range(lo, hi):  # ag.java:2735-2737
+    def rand_range(lo, hi):
         hi -= 1
         return lo + abs(imod(GameCanvas.rng.nextInt(), abs(hi - lo) + 1))
 
-    def rand(self, hi):  # ag.java:2739-2741
+    def rand(self, hi):
         return GameCanvas.rand_range(0, hi)
 
-    def start_new_game(self):  # ag.java:3213-3220  (New Game -> difficulty screen 29)
+    def start_new_game(self):  # New Game -> difficulty screen 29
         GameCanvas.menus.enter_submenu()
         GameCanvas.menu[0] = 29
         GameCanvas.menu_count = consts.menu_sizes[GameCanvas.menu[0]]
@@ -598,7 +593,7 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         GameCanvas.hero.head = 0
         self.new_hero()
 
-    def change_option(self, step):  # ag.java:2474-2520  (Options: change the value of row cM[1])
+    def change_option(self, step):  # Options: change the value of row cM[1]
         row = GameCanvas.menu[1]
         if row == 0:
             GameCanvas.sound_on = not GameCanvas.sound_on
@@ -632,12 +627,12 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
                 GameCanvas.speed = i16(GameCanvas.speed - 1)
                 if GameCanvas.speed < 0:
                     GameCanvas.speed = 4
-        elif row == 3 and config.SCREEN_OPTION:      # PORT-EXTRA: Screen = full screen / window
+        elif row == 3 and config.SCREEN_OPTION:      # Screen = full screen / window
             display.toggle_fullscreen()
             return
         GameCanvas.save_options()
 
-    def enter_map(self):  # ag.java:872-967  (enter the map: bV = 3)
+    def enter_map(self):  # enter the map: bV = 3
         hero = GameCanvas.hero
         hero.weapon_kind = GameCanvas.item_slot_type(hero.equipped[0].id)
         GameCanvas.stop_sound()
@@ -657,11 +652,7 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         if GameCanvas.save_flag != 0:
             bool_ = 1
         else:
-            if F13 and hero.pos[1] is not hero.pos[0]:
-                # DECOMP-FIX F13: the start position is written into cz.a[1], but the map
-                # (c.f(), c.a(5 ints)) reads cz.a[0]. Both are the same object once ar.aC()
-                # (cz.a[1] = cz.a[0]) has run; on the first map after start-up they are not,
-                # and the hero would stand at (0, 0).
+            if hero.pos[1] is not hero.pos[0]:      # the map reads pos[0]: one object for both
                 hero.pos[1] = hero.pos[0]
             hero.pos[1].x = i16(GameCanvas.lords[GameCanvas.mission].start_x * 27 + 12)
             hero.pos[1].y = i16(GameCanvas.lords[GameCanvas.mission].start_y * 27 + 20)
@@ -698,8 +689,7 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
         GameCanvas.boss_spawned = 0
         GameCanvas.hero_fx_data = None
         GameCanvas.enemy_fx_data = None
-        if config.ORIG_BUG["B8"]:
-            GameCanvas.enemy_fx_kind = 0   # ORIG-BUG B8: reset like hero_fx_kind above, or a general's effect outlives its data
+        GameCanvas.enemy_fx_kind = 0       # reset like hero_fx_kind above, or a general's effect outlives its data
         GameCanvas.fire_data = None
         for b in range(2):
             if GameCanvas.enemy_frames[b] is None:
@@ -731,7 +721,7 @@ class GameCanvas(SaveMixin, ItemsMixin, TextMixin, DrawMixin, StoryMixin, Assets
 
 
 def _late_init():
-    """Static initialisers that create ag subclasses (ag.java:206  `cS = new l()`)."""
+    """Static initialisers that create ag subclasses (  `cS = new l`)."""
     from pow.game.popups import Popups
     GameCanvas.popups = Popups()
 

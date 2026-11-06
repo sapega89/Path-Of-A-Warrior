@@ -29,7 +29,7 @@ def login(server, uid="ANDREY", pwd="1234"):
     first.session.close()                      # the client hangs up after 279 (g:1912-1920)
     c = Client(server)
     c.ask(M.LOGIN, id=uid, ver=M.GAME_VER, token=ans["token"])
-    prof = next(m for m in c.got if m["op"] == M.LOGIN_ANS)   # a PORT-EXTRA 1815 may follow it
+    prof = next(m for m in c.got if m["op"] == M.LOGIN_ANS)   # a 1815 may follow it
     assert prof["op"] == 263 and prof["st"] == 1
     return c, prof
 
@@ -632,7 +632,7 @@ def test_no_invite_while_queued():
     assert a.session.room is None
 
 
-# --- PORT-EXTRA: server bots (bots when nobody is online) -----------------------------------
+# --- server bots (bots when nobody is online) -----------------------------------
 def test_server_bots_can_be_challenged_alone(server):
     server.add_bots()
     server.add_bots()                                  # a restart finds the same accounts
@@ -682,15 +682,3 @@ def test_server_bots_skip_a_players_id(server):
     server.add_bots()
     assert "BLADE" not in server.bots and "RAVEN" in server.bots
     assert not server.storage.load("BLADE").bot
-
-
-def test_password_hash_without_pbkdf2_hmac(monkeypatch):
-    """The browser's Python has no hashlib.pbkdf2_hmac: the pure-Python one gives the same bytes."""
-    import hashlib
-
-    from pow_server import storage
-    salt = b"0123456789abcdef"
-    want = storage.hash_password("1379", salt)
-    assert storage._pbkdf2_sha256(b"1379", salt, storage.PBKDF2_ROUNDS) == want
-    monkeypatch.delattr(hashlib, "pbkdf2_hmac")
-    assert storage.hash_password("1379", salt) == want

@@ -10,18 +10,18 @@ Writes
   godot/client/assets/original/tiles.png the 240 map tiles in one atlas, 16 x 15 tiles of 27 px
   godot/client/assets/original/hero_<head>_<weapon>.png + hero.json
                                          the hero's frames, body + head + weapon put together as
-                                         map_scene.py draw_hero does (c.java:575-892), one cell per
+                                         pyport draw_hero does, one cell per
                                          sprite frame; hero.json has the walk / idle tables
 
-MAP FORMAT (N.MAP, as pyport/pow/game/map_scene.py load_map, c.java:1127-1162):
+MAP FORMAT (N.MAP, as pyport/pow/game/map_scene.py load_map reads it):
   u8 w, u8 h, u8 n, n bytes (ids of the tiles the map uses),
   then 4 layers of w*h bytes: ground, upper, objects, flags,
   then optional cell scripts: u8 count, 2 bytes, per script u8 x, u8 y, u16 LE length, bytes.
   Tile id t (1..240) is image imgtile[(t-1) // 16] + "_" + "%02d" % ((t-1) % 16 + 1).
   flags bit 0 = blocked, bit 1 = the upper tile is drawn over the actors.
   objects = breakable things; kind k uses tile k (whole) and k+1 (broken), hp 41 for 101 / 113 else 21.
-ROOMS (N.arr, load_rooms c.java:1089-1115): the map is a grid of 7x7-tile rooms,
-  (w // 7) * (h // 7) of them (DECOMP_FIX F17). Per mission m the rooms start at
+ROOMS (N.arr, as load_rooms reads it): the map is a grid of 7x7-tile rooms,
+  (w // 7) * (h // 7) of them. Per mission m the rooms start at
   20 + rooms * m * 19; per room: 4 exits (down, left, up, right), max enemies,
   12 wave enemy kinds, 1 unused byte, general.
 """
@@ -93,7 +93,7 @@ def build_atlas(tile_names):
     return atlas, found
 
 
-# SP3 frame tables (load_frames, ag.java:3467-3482): u8 count, per frame 6 x u16 LE
+# SP3 frame tables (as load_frames reads them): u8 count, per frame 6 x u16 LE
 # src_x, src_y, w, h, ox, oy; the part is drawn at (x - ox, y - oy).
 def read_frames(path):
     d = path.read_bytes()
@@ -103,7 +103,7 @@ def read_frames(path):
 
 HERO_CELL = (96, 96)
 HERO_ORIGIN = (48, 72)  # the hero's position (feet) inside a cell: centred across, 24 px under the middle
-# weapon drawn behind the body when bit `sprite_frame` is set (draw_hero, c.java)
+# weapon drawn behind the body when bit `sprite_frame` is set (as draw_hero does)
 WEAPON_BEHIND_BITS = {0: 8263870709823, 1: 5789684072952}
 HEADS = 4
 WEAPONS = 2  # 0 long sword, 1 short sword

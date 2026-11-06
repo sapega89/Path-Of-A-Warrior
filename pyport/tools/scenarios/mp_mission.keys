@@ -1,7 +1,7 @@
 # Solo Mission (me + a CPU ally against waves of monsters, a CPU fighter last), played to the result.
 # States (06 §1.2): 91 stage intro, 92 quotes, 94 choose action, 96 choose target, 97 timing bar,
 # 103 end (also between stages), 104 stage complete, 105 result.
-include _login.keys
+include _enter.keys
 watch 104 stage_complete 5
 key RIGHT         # Mission
 wait 3

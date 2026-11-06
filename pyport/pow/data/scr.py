@@ -1,4 +1,4 @@
-"""Stand-alone .scr loader (PHASE_0 task 0.5) for tools/tests - same rules as al.java:11-31.
+"""Stand-alone.scr loader (PHASE_0 task 0.5) for tools/tests - same rules as.
 
 Format: u16 LE count, then (count+1) x u16 LE offsets, then UTF-8 bytes.
 String i = bytes[off[i]:off[i+1]]. Empty entries do NOT stop reading.

@@ -11,7 +11,7 @@ from conftest import ROOT
 
 SCEN = ROOT / "tools" / "scenarios"
 
-# tools/shot.py seeds every java.util.Random with POW_SEED=1 instead of the clock, so the enemy AI,
+# tools/shot.py seeds every random generator with POW_SEED=1 instead of the clock, so the enemy AI,
 # the Blacksmith stock and the gifts of the generals repeat exactly: every shot is compared.
 
 

@@ -166,7 +166,7 @@ wait 2
 key RIGHT
 wait 2
 shot buy_cursor_weapon
-key FIRE           # weapons are single items: each shop slot empties after buying (e.java:2870)
+key FIRE           # weapons are single items: each shop slot empties after buying
 wait 3
 key FIRE
 wait 12
@@ -245,7 +245,7 @@ wait 2
 shot combine_two_selected
 key RIGHT
 wait 2
-key FIRE           # the 3rd item opens the fee popup (e.aX)
+key FIRE           # the 3rd item opens the fee popup
 wait 3
 shot combine_popup
 key FIRE

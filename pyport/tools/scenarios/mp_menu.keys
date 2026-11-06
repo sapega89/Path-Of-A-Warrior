@@ -1,5 +1,5 @@
 # Login with a new account (auto-registered by the local server), then the main menu items.
-include _login.keys
+include _enter.keys
 shot main_duel
 key FIRE
 wait 5
@@ -21,3 +21,4 @@ shot main_help
 key RIGHT
 wait 3
 shot main_ranking
+mp_online TEST     # the account of the single player is the one logged in

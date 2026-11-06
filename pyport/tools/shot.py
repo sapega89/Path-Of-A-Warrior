@@ -18,6 +18,16 @@ list of steps, one per line:
     mousedown X Y   left button pressed and held at X Y; mouseup = let it go
     shot NAME       save the last frame as NN_NAME.png
     account ID PWD  TEST-ONLY: register the Live UserID / password on this device
+    include FILE    the steps of another .keys file of this folder (e.g. _enter.keys: into the
+                    multiplayer screens, Live > Multiplayer, logged in, on their Main Menu)
+    key NAME N      the key N times, one per tick
+    until S[,S] [MAX]  wait until the multiplayer screens are in one of the states S
+    goto_if S[,S] LABEL / label LABEL / key_if S[,S] KEY   branch on their state
+    watch S NAME [FRAMES]   one shot FRAMES after the state S is first entered
+    digits 1234     the number keys, one per tick; type TEXT   the PC keyboard into a text box
+    bot_invite MODE / bot_order NAME [N] / bot_chat CHANNEL [TO] TEXT   the in-game server's
+                    bot RIVAL invites TEST (0/1 Challenge, 2 mission), creates an order, chats
+    mp_online ID    TEST-ONLY: stop unless ID is logged in on the in-game multiplayer server
     logins N        TEST-ONLY: stop with an error if the game sent more than N background logins
     online yes|no   TEST-ONLY: stop with an error unless the background login (ALWAYS_ONLINE) is that
     gold N          TEST-ONLY: set the hero's gold (ag.cz.E) to N, to try the Blacksmith
@@ -25,8 +35,8 @@ list of steps, one per line:
                     and allow one visit (cz.S = 1), as after a mission
     hero F N        TEST-ONLY: set the hero's field ag.cz.F to N (p = HP, r = MP, w = ATK, x = DEF)
     skill S ID      TEST-ONLY: learn skill ID (12..30) and put it on skill key slot S (0..4 = 1 3 7 9 0)
-    potion K ID N   TEST-ONLY: put N potions of kind ID on the quick slot K (0 = *, 1 = #)
-    auto on|off     PORT-EXTRA auto-hunt (pow/game/autopilot.py) on / off
+    potion K ID N   TEST-ONLY: put N potions of kind ID on the quick slot K (0 = *, 1 = # )
+    auto on|off     auto-hunt (pow/game/autopilot.py) on / off
     expect F OP N   TEST-ONLY: stop with an error unless the hero's field F OP N (OP: >= <= == > <)
     skilllv ID LV   TEST-ONLY: set the level of skill ID (12..30) to LV
     belt S ID N     TEST-ONLY: put N items of kind ID on belt slot S (0..4 = keys Z X C V B)
@@ -67,18 +77,22 @@ os.environ.setdefault("POW_KEY_HINTS", "0")   # plain soft-key captions (env lin
 
 
 def parse(path):
+    path = pathlib.Path(path)
     steps = []
-    for raw in pathlib.Path(path).read_text(encoding="utf-8").splitlines():
+    for raw in path.read_text(encoding="utf-8").splitlines():
         line = raw.split("#", 1)[0].strip()
         if not line:
             continue
         cmd, _, arg = line.partition(" ")
-        steps.append((cmd.lower(), arg.strip()))
+        if cmd.lower() == "include":           # include other.keys (same folder)
+            steps += parse(path.parent / arg.strip())
+        else:
+            steps.append((cmd.lower(), arg.strip()))
     return steps
 
 
 def make_zero_save():
-    """Smallest save U() accepts: length != 0, name 'HERO', everything else 0 (ag.java:2126-2214)."""
+    """Smallest save U accepts: length != 0, name 'HERO', everything else 0."""
     from pow.midp.rms import RecordStore
     data = bytearray(965)
     data[0] = 965 & 0xFF
@@ -118,7 +132,8 @@ def run(scenario, out, every=False):
     from pow.game.game_canvas import GameCanvas
     from pow.game.midlet import Midlet
 
-    state = {"frame": 0, "i": 0, "wait": 0, "n": 0, "last": None}
+    state = {"frame": 0, "i": 0, "wait": 0, "n": 0, "last": None, "queue": [], "until": None,
+             "watch": {}}
     saved = []
 
     def on_frame(screen):
@@ -126,6 +141,31 @@ def run(scenario, out, every=False):
         state["last"] = screen.copy()
         if every:
             pygame.image.save(screen, str(out / ("tick_%04d.png" % state["frame"])))
+        if state["watch"]:                  # the multiplayer screens: a shot once a state is reached
+            w = state["watch"].get(_mp_state())
+            if w and not w["done"]:
+                w["seen"] += 1
+                if w["seen"] > w["delay"]:
+                    w["done"] = True
+                    state["n"] += 1
+                    name = "%02d_%s.png" % (state["n"], w["name"])
+                    pygame.image.save(screen, str(out / name))
+                    saved.append(name)
+        if state["queue"]:                  # keys / typed characters, one per tick
+            item = state["queue"].pop(0)
+            if isinstance(item, tuple):
+                _mp_canvas().text_input(item[1])
+            else:
+                Midlet.canvas.keyPressed(item)
+            return
+        if state["until"] is not None:
+            states, left = state["until"]
+            if _mp_state() not in states and left > 0:
+                state["until"] = (states, left - 1)
+                return
+            if _mp_state() not in states:
+                raise SystemExit("until %s: still in state %s" % (states, _mp_state()))
+            state["until"] = None
         if state["wait"] > 0:
             state["wait"] -= 1
             if state["wait"] > 0:
@@ -136,8 +176,11 @@ def run(scenario, out, every=False):
             if cmd == "wait":
                 state["wait"] = int(arg)
                 return
-            if cmd == "key":
-                Midlet.canvas.keyPressed(KEYNAMES[arg.upper()])
+            if cmd == "key":                    # key NAME [COUNT]
+                name, _, count = arg.partition(" ")
+                code = KEYNAMES[name.upper()]
+                Midlet.canvas.keyPressed(code)
+                state["queue"] = [code] * (int(count or 1) - 1)
                 state["wait"] = 1          # the key is consumed on the next tick
                 return
             if cmd in ("hold", "release"):     # a direction key held down / let go
@@ -212,7 +255,7 @@ def run(scenario, out, every=False):
                 print(f"expect {field} {op} {val}: {have}")
                 continue
             if cmd == "account":           # TEST-ONLY: account ID PWD - the Live registration
-                uid, pwd = arg.split()         # (RecordStore "pow_regist", m.java:287-305)
+                uid, pwd = arg.split()
                 from pow.midp.rms import RecordStore
                 rec = bytearray(28)
                 rec[0:len(pwd)] = pwd.encode()
@@ -245,8 +288,8 @@ def run(scenario, out, every=False):
                 z.count = cnt
                 continue
             if cmd == "win":
-                GameCanvas.boss_fight = 1                  # the mission's general was met on the map (c.java:986)
-                GameCanvas.scene.finish_mission(1)               # what the combat calls on victory (c.java:1516)
+                GameCanvas.boss_fight = 1                  # the mission's general was met on the map
+                GameCanvas.scene.finish_mission(1)               # what the combat calls on victory
                 continue
             if cmd == "generals":
                 from pow.game.arr_table import ArrTable
@@ -262,8 +305,89 @@ def run(scenario, out, every=False):
                 pygame.image.save(state["last"], str(out / name))
                 saved.append(name)
                 continue
+            # --- the multiplayer screens (Live > Multiplayer) ---
+            if cmd == "watch":                  # watch STATE NAME [FRAMES]: shot once, FRAMES in
+                mp_state, _, rest = arg.partition(" ")
+                name, _, delay = rest.partition(" ")
+                state["watch"][int(mp_state)] = {"name": name, "delay": int(delay or 0), "seen": 0,
+                                                  "done": False}
+                continue
+            if cmd == "label":
+                continue
+            if cmd == "goto_if":                # goto_if STATE[,STATE...] LABEL
+                states, _, label = arg.partition(" ")
+                if _mp_state() in {int(x) for x in states.split(",")}:
+                    state["i"] = steps.index(("label", label.strip())) + 1
+                continue
+            if cmd == "key_if":                 # key_if STATE[,STATE...] KEY: press only there
+                states, _, name = arg.partition(" ")
+                if _mp_state() in {int(x) for x in states.split(",")}:
+                    Midlet.canvas.keyPressed(KEYNAMES[name.strip().upper()])
+                    state["wait"] = 1
+                    return
+                continue
+            if cmd == "until":                  # until STATE[,STATE...] [MAX_FRAMES]
+                states, _, limit = arg.partition(" ")
+                state["until"] = ({int(x) for x in states.split(",")}, int(limit or 3000))
+                return
+            if cmd == "digits":                 # digits 1234: the number keys, one per tick
+                state["queue"] = [48 + int(ch) for ch in arg]
+                return
+            if cmd == "type":                   # type TEXT: the PC keyboard (Canvas.text_input)
+                state["queue"] = [("text", ch) for ch in arg]
+                return
+            if cmd == "bot_invite":             # bot_invite MODE: the first bot invites TEST
+                from pow.midp.transport import LocalTransport
+                LocalTransport._bots[0].invite("TEST", int(arg or 0))
+                continue
+            if cmd == "bot_order":              # bot_order NAME [N]: the first bot creates an order
+                from pow.midp.transport import LocalTransport
+                from pow_server import messages as M
+                from pow_server import orders
+                from pow_server.model import default_character
+                name, _, fill = arg.partition(" ")
+                LocalTransport._bots[0]._send(M.ORDER_CREATE, name=name)
+                srv = LocalTransport._server
+                doc = orders.get(srv.storage, name)
+                for i in range(int(fill or 0)):
+                    uid = "MEMBER" + chr(65 + i)
+                    srv.storage.create_account(uid, "0000")
+                    ch = default_character(uid)
+                    ch.level, ch.order = 1 + 3 * i, name
+                    srv.storage.save(ch)
+                    doc["members"].append(uid)
+                srv.storage.live_put("order:" + name, doc)
+                continue
+            if cmd == "bot_chat":                # bot_chat CHANNEL [TO] TEXT
+                from pow.midp.transport import LocalTransport
+                from pow_server import messages as M
+                channel, _, text = arg.partition(" ")
+                peer = ""
+                if channel == "2":
+                    peer, _, text = text.partition(" ")
+                bot = LocalTransport._bots[0]
+                bot.session.chat_rate.times.clear()
+                bot._send(M.CHAT_SEND, channel=int(channel), peer=peer, text=text)
+                continue
+            if cmd == "mp_online":              # TEST-ONLY: mp_online ID - stop unless ID is logged in
+                from pow.midp.transport import LocalTransport
+                srv = LocalTransport._server
+                if srv is None or arg not in srv.online or not srv.storage.has_account(arg):
+                    raise SystemExit(f"mp_online {arg}: not logged in on the in-game server")
+                print(f"mp_online {arg}: ok")
+                continue
             raise SystemExit(f"unknown step: {cmd} {arg}")
         GameCanvas.running = False
+
+    def _mp_canvas():
+        return GameCanvas.online.mp if GameCanvas.online is not None else Midlet.canvas
+
+    def _mp_state():
+        """The state of the multiplayer screens, None outside them."""
+        if GameCanvas.online is None:
+            return None
+        from pow.game.online.mp_canvas import MpCanvas
+        return MpCanvas.state
 
     display.frame_hooks.append(on_frame)
     midlet = Midlet()

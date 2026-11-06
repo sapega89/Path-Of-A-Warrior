@@ -1,4 +1,4 @@
-"""PORT-EXTRA: the "No connection" screen of the server-only save (pow/game/offline_screen.py)."""
+"""the "No connection" screen of the server-only save (pow/game/offline_screen.py)."""
 import asyncio
 
 import pygame

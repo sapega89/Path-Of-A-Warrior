@@ -1,6 +1,6 @@
-"""ag.java, part of GameCanvas: loading and freeing images, sprites and data files.
+""", part of GameCanvas: loading and freeing images, sprites and data files.
 
-A mixin of GameCanvas (pow/game/game_canvas.py); the methods keep their `# ag.java:FROM-TO`
+A mixin of GameCanvas (pow/game/game_canvas.py); the methods keep their `# :FROM-TO`
 comments. `GameCanvas` below is the real class, set by game_canvas.py once it exists.
 """
 
@@ -15,7 +15,7 @@ GameCanvas = None   # set by pow/game/game_canvas.py
 
 class AssetsMixin:
     @staticmethod
-    def free_images():  # ag.java:829-865
+    def free_images():
         for b in range(2):
             GameCanvas.boss_images[b] = None
         for b in range(9):
@@ -50,7 +50,7 @@ class AssetsMixin:
         GameCanvas.treasure_def = TreasureDef()
         GameCanvas.rare_def = RareDef()
 
-    def load_title_picture(self):  # ag.java:1154-1163  (title picture = title_1..4 stacked)
+    def load_title_picture(self):  # title picture = title_1..4 stacked
         if GameCanvas.images[30] is None:
             GameCanvas.images[30] = Image.createImage(240, 320)
             graphics = GameCanvas.images[30].getGraphics()
@@ -58,14 +58,14 @@ class AssetsMixin:
                 image = self.load_image("title_" + str(b + 1))
                 graphics.drawImage(image, 0, 80 * b, 20)
 
-    def load_menu_frames(self):  # ag.java:1165-1172
+    def load_menu_frames(self):
         GameCanvas.anim_step = 0
         while GameCanvas.anim_step < 4:
             GameCanvas.images[26 + GameCanvas.anim_step] = self.load_image(GameCanvas.scr_ui.get(73 + GameCanvas.anim_step))
             GameCanvas.anim_step += 1
         self.load_menu_images()
 
-    def load_image(self, name):  # ag.java:1963-1975
+    def load_image(self, name):
         GameCanvas.gc()
         str_ = "/" + name + ".png"
         image = None
@@ -78,10 +78,10 @@ class AssetsMixin:
         return image
 
     @staticmethod
-    def gc():  # ag.java:1977-1979  (System.gc)
+    def gc():  # System.gc
         pass
 
-    def load_ui_images(self):  # ag.java:2263-2269
+    def load_ui_images(self):
         GameCanvas.images[34] = self.load_image(GameCanvas.scr_ui.get(22))
         GameCanvas.images[19] = self.load_image(GameCanvas.scr_ui.get(24))
         GameCanvas.images[20] = self.load_image(GameCanvas.scr_ui.get(25))
@@ -89,23 +89,23 @@ class AssetsMixin:
         GameCanvas.images[32] = self.load_image(GameCanvas.scr_ui.get(37))
 
     @staticmethod
-    def load_data_file(index):  # ag.java:2283-2285
+    def load_data_file(index):
         return ResReader.read("/" + GameCanvas.scr_data.get(index))
 
-    def load_menu_images(self):  # ag.java:2306-2311
+    def load_menu_images(self):
         GameCanvas.images[1] = self.load_image(GameCanvas.scr_ui.get(21))
         GameCanvas.images[2] = self.load_image(GameCanvas.scr_ui.get(46))
         GameCanvas.images[3] = self.load_image(GameCanvas.scr_ui.get(43))
         GameCanvas.sparkle = self.load_image(GameCanvas.scr_ui.get(38))
 
-    def free_menu_images(self):  # ag.java:2313-2319
+    def free_menu_images(self):
         GameCanvas.images[1] = None
         GameCanvas.images[2] = None
         GameCanvas.images[3] = None
         GameCanvas.sparkle = None
         GameCanvas.gc()
 
-    def free_hero_sprites(self):  # ag.java:2400-2436
+    def free_hero_sprites(self):
         GameCanvas.hero_weapon_frames[0] = None
         GameCanvas.hero_weapon_frames[1] = None
         GameCanvas.hero.head_frames2 = None
@@ -141,20 +141,20 @@ class AssetsMixin:
         GameCanvas.view_y = 0
 
     @staticmethod
-    def free_hero_images():  # ag.java:2467-2472
+    def free_hero_images():
         GameCanvas.hero.head_frames = None
         GameCanvas.hero.body_frames = None
         GameCanvas.hero.head_image = None
         GameCanvas.hero.body_image = None
 
-    def load_hero_images(self):  # ag.java:3459-3465
+    def load_hero_images(self):
         GameCanvas.free_hero_images()
         GameCanvas.hero.head_image = self.load_image(GameCanvas.scr_char.get(46 + GameCanvas.hero.head))
         GameCanvas.hero.head_frames = self.load_frames(47 + GameCanvas.hero.head)
         GameCanvas.hero.body_image = self.load_image(GameCanvas.scr_char.get(44))
         GameCanvas.hero.body_frames = self.load_frames(45)
 
-    def load_frames(self, index):  # ag.java:3467-3482  (frame table from mdat_QVGA)
+    def load_frames(self, index):  # frame table from mdat_QVGA
         pos = 1
         data = ResReader.read("/" + GameCanvas.scr_maps.get(index))
         count = data[0] & 0xFF
@@ -170,15 +170,15 @@ class AssetsMixin:
             pos += 12
         return frames
 
-    def free_hud(self):  # ag.java:2277-2281
+    def free_hud(self):
         for b in range(6):
             GameCanvas.hud_frame[b] = None
         GameCanvas.gc()
 
-    def load_effect_image(self):  # ag.java:969-971
+    def load_effect_image(self):
         GameCanvas.images[42] = self.load_image(GameCanvas.scr_effect.get(2))
 
-    def load_enemy_sprites(self):  # ag.java:973-988  (enemy sprites, recoloured by dz.d)
+    def load_enemy_sprites(self):  # enemy sprites, recoloured
         sprites = [56, 57]
         for b in range(len(sprites)):
             if GameCanvas.lords[GameCanvas.mission].tint != 0:
@@ -198,7 +198,7 @@ class AssetsMixin:
             [[162, 199, 159], [135, 156, 119], [86, 123, 98], [33, 98, 63], [51, 51, 51]]]
 
     @staticmethod
-    def load_recoloured(name, palette):  # ag.java:990-1023  (PNG with palette 0 replaced by palette paramInt)
+    def load_recoloured(name, palette):  # PNG with palette 0 replaced by palette paramInt
         str_ = "/" + name + ".png"
         png = bytearray(ResReader.read(str_))
         if palette == 0:
@@ -226,7 +226,7 @@ class AssetsMixin:
         png[plte + plte_len + 7] = crc & 0xFF
         return Image.createImage(png, 0, len(png))
 
-    def load_lord_map(self, full):  # ag.java:1025-1037  (load the map of the current lord, room around the hero)
+    def load_lord_map(self, full):  # load the map of the current lord, room around the hero
         from pow.game.map_scene import MapScene
         self.fill_screen_rgb(0, 0, 0)
         map_image = GameCanvas.images[34]
@@ -242,12 +242,12 @@ class AssetsMixin:
         GameCanvas.scene.load_rooms(GameCanvas.lord_ids[GameCanvas.lord])
         GameCanvas.scene.draw_tiles(GameCanvas.view_tiles.x, GameCanvas.view_tiles.y, GameCanvas.view_tx, GameCanvas.view_ty, full)
 
-    def load_hud(self):  # ag.java:2271-2275  (HUD frame pieces)
+    def load_hud(self):  # HUD frame pieces
         pieces = [79, 61, 82, 78, 83, 81]
         for b in range(6):
             GameCanvas.hud_frame[b] = self.load_image(GameCanvas.scr_ui.get(pieces[b]))
 
-    def free_map_images(self):  # ag.java:2548-2570  (free the map images; `al` would hide the al class)
+    def free_map_images(self):  # free the map images; `al` would hide the al class
         GameCanvas.free_hero_images()
         GameCanvas.images[4] = None
         if GameCanvas.tile_images is not None:

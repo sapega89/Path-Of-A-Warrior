@@ -1,4 +1,4 @@
-"""Image.createImage for the MP jar: same as pow.midp.graphics.Image, but a resource path is
+"""Image.createImage for the multiplayer: same as pow.midp.graphics.Image, but a resource path is
 read from the MP resources (config.MP_RES_ROOT)."""
 from pow.midp.graphics import Image as _Image
 from pow.game.online.res_reader import ResReader

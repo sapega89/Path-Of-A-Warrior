@@ -1,8 +1,8 @@
-# PORT-EXTRA Chat window (pow/game/online/mp_canvas_chat.py): RIVAL writes in the lobby and to TEST in
+# Chat window (pow/game/online/mp_canvas_chat.py): RIVAL writes in the lobby and to TEST in
 # private; TEST opens the Chat picture (the badge counts the private message), answers RIVAL on
 # the keyboard grid and the PC keyboard, RIVAL answers back; then the Lobby and the Order tab.
 # States: 40 the tabs, 41 a private conversation, 42 the keyboard.
-include _login.keys
+include _enter.keys
 bot_chat 0 Anyone up for a duel?
 bot_chat 2 TEST Hi TEST, fancy a fight at the castle?
 wait 3

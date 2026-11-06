@@ -1,4 +1,4 @@
-"""Random key sequences that once crashed the game loop (ORIG-BUG B6-B8); each must now run to the end."""
+"""Random key sequences that once crashed the game loop (-B8); each must now run to the end."""
 import os
 import subprocess
 import sys

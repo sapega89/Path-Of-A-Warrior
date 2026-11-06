@@ -1,6 +1,6 @@
-"""g.java, part of MpCanvas: the server connection: requests, answers, login, disconnects and errors.
+""", part of MpCanvas: the server connection: requests, answers, login, disconnects and errors.
 
-A mixin of MpCanvas (pow/game/online/mp_canvas.py); the methods keep their `# g.java:FROM-TO`
+A mixin of MpCanvas (pow/game/online/mp_canvas.py); the methods keep their `# :FROM-TO`
 comments. The module names below are set by mp_canvas.py: `MpCanvas` once the class exists,
 the others by its _late_imports().
 """
@@ -16,7 +16,7 @@ NetThread = None   # set by mp_canvas._late_imports
 
 
 class NetMixin:
-    def send_request(self, opcode):  # g.java:1609
+    def send_request(self, opcode):
         if opcode in {262, 278}:
             MpCanvas.login_time = system.currentTimeMillis()
         if NetThread.connected and (idiv(((system.currentTimeMillis() - MpCanvas.login_time)), 1000) > 45):
@@ -73,14 +73,14 @@ class NetMixin:
             pass
         elif MpCanvas.request_opcode == 290:
             NetThread.write_int(MpCanvas.invitation)
-        elif MpCanvas.request_opcode in (1794, 1796):    # PORT-EXTRA: create / join an order
+        elif MpCanvas.request_opcode in (1794, 1796):    # create / join an order
             NetThread.write_string(MpCanvas.input_text, 12)
-        elif MpCanvas.request_opcode in (1808, 1810):    # PORT-EXTRA: read / write the chat
+        elif MpCanvas.request_opcode in (1808, 1810):    # read / write the chat
             self.chat_write_request()
         NetThread.send()
 
-    def on_answer(self, answer):  # g.java:1888
-        if NetThread.last_opcode in (1812, 1815):     # PORT-EXTRA: chat pushes (mp_canvas_chat.py)
+    def on_answer(self, answer):
+        if NetThread.last_opcode in (1812, 1815):     # chat pushes (mp_canvas_chat.py)
             if NetThread.connected:
                 self.on_chat_answer(answer)
             return
@@ -130,7 +130,7 @@ class NetMixin:
 
     def _on_hero_data(self, answer):  # answer 263
         if MpCanvas.answer_status == 1:
-            self.chat_reset()                 # PORT-EXTRA: another account keeps no chat of the last one
+            self.chat_reset()                 # another account keeps no chat of the last one
             MpCanvas.name = answer.read_string(8)
             MpCanvas.face = answer.read_s8()
             MpCanvas.level = answer.read_s16()
@@ -276,7 +276,7 @@ class NetMixin:
             MpCanvas.error_msg = 9
         elif MpCanvas.answer_status == (-16):
             MpCanvas.error_msg = 18
-        elif self.order_invite_error():   # PORT-EXTRA: "not in your order" (768 mode 3)
+        elif self.order_invite_error():   # "not in your order" (768 mode 3)
             pass
         else:
             MpCanvas.error_msg = 0
@@ -353,7 +353,7 @@ class NetMixin:
         if MpCanvas.answer_status == 1:
             MpCanvas.chosen_action = 99
             MpCanvas.set_timer(10 - MpCanvas.speed)
-            MpCanvas.choose_secs = 1 if MpCanvas.auto_battle else 10   # PORT-EXTRA auto-battle
+            MpCanvas.choose_secs = 1 if MpCanvas.auto_battle else 10   # auto-battle
             MpCanvas.exit_asked = False
             MpCanvas.set_state(94)
 
@@ -567,7 +567,7 @@ class NetMixin:
             MpCanvas.fame = answer.read_s32()
             MpCanvas.duel_grade = answer.read_s32()
             MpCanvas.mission_grade = answer.read_s32()
-            # PORT-EXTRA: my order's name after the jar's fields (absent from an older server)
+            # my order's name after the original's fields (absent from an older server)
             MpCanvas.order_name = answer.read_string(12) if len(answer.data) - answer.pos >= 12 else ""
             self.push_state(80)
             return
@@ -642,13 +642,13 @@ class NetMixin:
         291: _on_options_saved,
     }
 
-    def login(self):  # g.java:3374
+    def login(self):
         if MpCanvas.password_login:
             self.send_request(278)
             return
         self.send_request(262)
 
-    def connect(self):  # g.java:3382
+    def connect(self):
         MpCanvas.ping_off = False
         if not NetThread.connected:
             if MpCanvas.net is None:
@@ -660,7 +660,7 @@ class NetMixin:
             MpCanvas.net.set_address(MpCanvas.server_host, MpCanvas.server_port)
 
     @staticmethod
-    def disconnect():  # g.java:3396
+    def disconnect():
         MpCanvas.disconnecting = True
         NetThread.connected = False
         MpCanvas.rng.k = False
@@ -672,24 +672,24 @@ class NetMixin:
         MpCanvas.set_timer(-1)
         MpCanvas.sleep(100)
 
-    def on_disconnect(self):  # g.java:3410
+    def on_disconnect(self):
         MpCanvas.disconnect()
         if MpCanvas.error_msg > (-1):
             self.show_error_screen()
 
-    def show_error_screen(self):  # g.java:3417
+    def show_error_screen(self):
         if MpCanvas.skip_error_screen:
             MpCanvas.skip_error_screen = False
             return
         MpCanvas.set_state(4)
 
-    def on_net_error(self, code):  # g.java:3425
+    def on_net_error(self, code):
         if not MpCanvas.disconnecting:
             MpCanvas.error_msg = (7 if (code < 10) else code)
             self.on_disconnect()
         MpCanvas.disconnecting = False
 
-    def check_invite_timeout(self):  # g.java:5334
+    def check_invite_timeout(self):
         if MpCanvas.wait_started:
             if idiv(((MpCanvas.wait_start_time - system.currentTimeMillis())), 1000) >= 80:
                 MpCanvas.wait_started = False

@@ -1,4 +1,4 @@
-"""PORT-EXTRA (asked by Andrey, plan item 22): orders of the online game.
+"""(asked by Andrey, plan item 22): orders of the online game.
 
 An order is a name and up to MAX_MEMBERS players, nothing in the single player: create one,
 join one by its name, leave it, see who is in it and who is online, and invite a member to a mission (768 mode 2) or to a 2-on-2 duel on my side (768 mode 3,

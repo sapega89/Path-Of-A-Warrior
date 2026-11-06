@@ -1,4 +1,4 @@
-"""PORT-EXTRA (asked by Andrey): "always online" (config.ALWAYS_ONLINE).
+"""(asked by Andrey): "always online" (config.ALWAYS_ONLINE).
 
 The original connected to Live only inside Game Menu > Live (popup 2 "Connect to
 Live?", "Connecting...", login 530) and closed the connection on leaving it. Here:
@@ -142,7 +142,7 @@ class Online:
 
     @staticmethod
     def login(live):
-        """530 without the screen: as.l(530) with the stored UserID / password."""
+        """530 without the screen, with the stored UserID / password."""
         from pow.game.live import Live
         Live.screen.load_login()
         if not Live.user_id or not Live.password:

@@ -1,6 +1,6 @@
 # Duel 2-on-2 (me + a CPU ally against two CPU fighters), played to the result screen.
 # States (06 §1.2): 92 quotes, 96 choose target, 94 choose action, 97 timing bar, 99 reveal, 103 end, 105 result.
-include _login.keys
+include _enter.keys
 key FIRE          # Duel
 wait 5
 key RIGHT         # 2-on-2 Duel

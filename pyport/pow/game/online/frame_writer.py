@@ -1,14 +1,11 @@
-"""FrameWriter (e.java): writes a request frame (same as SP u.java).
-
-Generated once from pyport/mp_java/e.java (branch java-reference) by the old
-tools/j2py_mp.py; edited by hand since.
+"""FrameWriter: writes a request frame.
 """
 from pow.game.online.rt import _arraycopy, _js, i8, ushr32
 
 
 class FrameWriter:
 
-    def __init__(self, output_stream):  # e.java:15
+    def __init__(self, output_stream):
         self.stream = None
         self.buf = ByteArrayOutputStream()  # noqa: F821 - never constructed: NetThread writes the frames
         self.length = 0
@@ -20,7 +17,7 @@ class FrameWriter:
         self.unused[2] = 117
         self.unused[3] = 126
 
-    def close(self):  # e.java:23
+    def close(self):
         try:
             if self.buf is not None:
                 self.buf.close()
@@ -30,20 +27,20 @@ class FrameWriter:
         except Exception:
             return
 
-    def write_short(self, value):  # e.java:38
+    def write_short(self, value):
         self.buf.write(i8(ushr32(value, 0) & 0xFF))
         self.buf.write(i8(ushr32(value, 8) & 0xFF))
 
-    def write_byte(self, value):  # e.java:43
+    def write_byte(self, value):
         self.buf.write(value)
 
-    def write_int(self, value):  # e.java:47
+    def write_int(self, value):
         self.buf.write(i8(ushr32(value, 0) & 0xFF))
         self.buf.write(i8(ushr32(value, 8) & 0xFF))
         self.buf.write(i8(ushr32(value, 16) & 0xFF))
         self.buf.write(i8(ushr32(value, 24) & 0xFF))
 
-    def write_string(self, text, size):  # e.java:54
+    def write_string(self, text, size):
         raw = bytearray(text.encode("latin-1", "replace"))
         i = 0
         while i < size:
@@ -53,7 +50,7 @@ class FrameWriter:
                 self.buf.write(0)
             i = i + 1
 
-    def send(self):  # e.java:67
+    def send(self):
         try:
             sent = 0
             body = self.buf.toByteArray()

@@ -1,13 +1,13 @@
-"""PORT-EXTRA (asked by Andrey): the single player's save kept on the server too.
+"""(asked by Andrey): the single player's save kept on the server too.
 
-The RecordStores stay where they were (files in config.SAVE_DIR / the browser's localStorage)
+The RecordStores stay where they were (files in config.SAVE_DIR)
 and the game reads and writes only them, as on the phone. This module sends every write of the
 save stores (pow_server/cloud.py STORES: the hero and the Options) to the server path /save, and
-takes the server's copy back when it is newer: start the game on another computer or browser,
+takes the server's copy back when it is newer: start the game on another computer,
 and the hero is there.
 
 The account is the Live one: Game Menu > Live > register (UserID + password,
-kept in the store "pow_regist", m.java:287-305). Without it nothing is sent. The server
+kept in the store "pow_regist"). Without it nothing is sent. The server
 is config.SAVE_SERVER ("auto" = the host of config.LIVE_SERVER when that is a ws(s):// server).
 
 Which copy wins:
@@ -19,7 +19,7 @@ Which copy wins:
 - while playing (another device saved meanwhile): this device's copy, the server's one is kept
   as the backup.
 
-PORT-EXTRA (asked by Andrey) "server only" (config.SERVER_ONLY_SAVE, when there is a server):
+(asked by Andrey) "server only" (config.SERVER_ONLY_SAVE, when there is a server):
 the hero (SERVER_ONLY) is never kept on the device. It lives in memory (rms.memory_only), is
 taken from the server before the game loads it and every save goes to the server. The game
 starts only online: boot() waits for the server (main.py shows offline_screen.py meanwhile),
@@ -31,7 +31,6 @@ import asyncio
 import base64
 import hashlib
 import json
-import sys
 import time
 import urllib.parse
 
@@ -116,8 +115,7 @@ def _records(name):
 
 class TextSocket:
     """A WebSocket of text messages with `websockets` on the desktop (like
-    pow/midp/transport.py's WebSocketTransport, which is binary). The browser uses
-    BrowserTextSocket."""
+    pow/midp/transport.py's WebSocketTransport, which is binary)."""
 
     def __init__(self, url):
         self.url = url
@@ -175,46 +173,12 @@ class TextSocket:
         self.connected = False
 
 
-class BrowserTextSocket:
-    """PORT-EXTRA: TextSocket of the browser build: the page's WebSocket (pow/midp/webws.py)."""
-
-    def __init__(self, url):
-        self.url = url
-        self._ws = None
-
-    @property
-    def connected(self):
-        return self._ws is not None and self._ws.connected
-
-    @property
-    def failed(self):
-        return self._ws is not None and self._ws.failed
-
-    def open(self):
-        from pow.midp.webws import BrowserSocket
-        self._ws = BrowserSocket(self.url, binary=False)
-
-    def send(self, text):
-        if self.connected:
-            self._ws.send(str(text))
-
-    def poll(self):
-        if self._ws is None:
-            return []
-        return [m for m in self._ws.recv() if isinstance(m, str)]
-
-    def close(self):
-        if self._ws is not None:
-            self._ws.close()
-            self._ws = None
-
-
 class CloudSync:
     """The client side; step() does one bit of work, run by run() / boot() on the game loop."""
 
     def __init__(self, url, make_socket=None, clock=now_ms, server_only=False):
         if make_socket is None:
-            make_socket = BrowserTextSocket if sys.platform == "emscripten" else TextSocket
+            make_socket = TextSocket
         self.url = url
         self.make_socket = make_socket
         self.clock = clock

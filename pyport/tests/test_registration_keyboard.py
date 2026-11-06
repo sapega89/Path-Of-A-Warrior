@@ -1,4 +1,4 @@
-"""PORT-EXTRA: the on-screen keyboards of the Live registration (pow/game/key_grid.py,
+"""the on-screen keyboards of the Live registration (pow/game/key_grid.py,
 config.REG_KEYBOARD) and the soft-key captions naming the key of the last device
 (config.KEY_HINTS, pow/midp/canvas.py key_hints)."""
 import pytest

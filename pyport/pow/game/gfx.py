@@ -1,26 +1,26 @@
-"""x.java - the single drawing gateway of the game. Literal port.
+"""The single drawing gateway of the game.
 
 Every drawing call of the game goes through these static methods.
-Overloaded Java names get a signature suffix (see pyport/NAMES.md).
+One drawing gateway for the whole game.
 """
 from pow.midp.jint import i32, ushr32
 
 
 class Gfx:
-    g = None   # private static Graphics b;          x.java:5
-    saved_clip_x = 0      # saved clip x                        x.java:7
+    g = None
+    saved_clip_x = 0      # saved clip x
     saved_clip_y = 0
     saved_clip_w = 0
     saved_clip_h = 0
-    clip_x = 0      # current clip x                      x.java:15
+    clip_x = 0      # current clip x
     clip_y = 0
     clip_w = 0
     clip_h = 0
-    font = None   # private static g k;  (current font)  x.java:23
-    crc_table = None   # static int[] a;      (CRC table)    x.java:25
+    font = None   # current font
+    crc_table = None   # CRC table
 
     @staticmethod
-    def set_graphics(graphics):  # x.java:27-33
+    def set_graphics(graphics):
         Gfx.g = graphics
         Gfx.clip_x = Gfx.g.getClipX()
         Gfx.clip_y = Gfx.g.getClipY()
@@ -28,7 +28,7 @@ class Gfx:
         Gfx.clip_h = Gfx.g.getClipHeight()
 
     @staticmethod
-    def push_clip(x, y, w, h):  # x.java:35-45
+    def push_clip(x, y, w, h):
         Gfx.saved_clip_x = Gfx.clip_x
         Gfx.saved_clip_y = Gfx.clip_y
         Gfx.saved_clip_w = Gfx.clip_w
@@ -40,7 +40,7 @@ class Gfx:
         Gfx.g.clipRect(x, y, w, h)
 
     @staticmethod
-    def pop_clip():  # x.java:47-53
+    def pop_clip():
         Gfx.clip_x = Gfx.saved_clip_x
         Gfx.clip_y = Gfx.saved_clip_y
         Gfx.clip_w = Gfx.saved_clip_w
@@ -48,42 +48,42 @@ class Gfx:
         Gfx.g.setClip(Gfx.saved_clip_x, Gfx.saved_clip_y, Gfx.saved_clip_w, Gfx.saved_clip_h)
 
     @staticmethod
-    def draw_image(image, x, y):  # x.java:55-57
+    def draw_image(image, x, y):
         Gfx.g.drawImage(image, x, y, 20)
 
     @staticmethod
-    def draw_image_anchored(image, x, y, anchor):  # x.java:59-61
+    def draw_image_anchored(image, x, y, anchor):
         Gfx.g.drawImage(image, x, y, anchor)
 
     @staticmethod
-    def draw_image_part(image, x, y, w, h, src_x, src_y):  # x.java:63-67
+    def draw_image_part(image, x, y, w, h, src_x, src_y):
         Gfx.g.clipRect(x, y, w, h)
         Gfx.g.drawImage(image, x - src_x, y - src_y, 20)
         Gfx.g.setClip(Gfx.clip_x, Gfx.clip_y, Gfx.clip_w, Gfx.clip_h)
 
     @staticmethod
-    def draw_rect(x, y, w, h, color):  # x.java:69-72
+    def draw_rect(x, y, w, h, color):
         Gfx.g.setColor(color)
         Gfx.g.drawRect(x, y, w - 1, h - 1)
 
     @staticmethod
-    def fill_rect(x, y, w, h, color):  # x.java:74-77
+    def fill_rect(x, y, w, h, color):
         Gfx.g.setColor(color)
         Gfx.g.fillRect(x, y, w, h)
 
     @staticmethod
-    def draw_line(x1, y1, x2, y2, color):  # x.java:79-82
+    def draw_line(x1, y1, x2, y2, color):
         Gfx.g.setColor(color)
         Gfx.g.drawLine(x1, y1, x2, y2)
 
     @staticmethod
-    def set_font(font):  # x.java:84-86
+    def set_font(font):
         Gfx.font = font
 
     @staticmethod
-    def draw_chars(chars, start, count, x, y, anchor):  # x.java:88-102
+    def draw_chars(chars, start, count, x, y, anchor):
         if (anchor & 0x1) != 0:
-            x -= Gfx.font.chars_width(chars, start, count) // 2  # width >= 0: // == Java /
+            x -= Gfx.font.chars_width(chars, start, count) // 2  # width >= 0: integer division
         elif (anchor & 0x8) != 0:
             x -= Gfx.font.chars_width(chars, start, count)
         i = start + count
@@ -95,11 +95,11 @@ class Gfx:
             j += ch_w
 
     @staticmethod
-    def draw_string(text, x, y, anchor):  # x.java:104-106
+    def draw_string(text, x, y, anchor):
         Gfx.draw_chars(list(text), 0, len(text), x, y, anchor)
 
     @staticmethod
-    def make_crc_table():  # x.java:108-122  (CRC-32 table, polynomial 0xEDB88320)
+    def make_crc_table():  # CRC-32 table, polynomial 0xEDB88320
         Gfx.crc_table = [0] * 256
         for b in range(256):
             i = b
@@ -115,7 +115,7 @@ class Gfx:
             Gfx.crc_table[b] = i
 
     @staticmethod
-    def crc32(data, pos, count):  # x.java:124-129  (CRC-32)
+    def crc32(data, pos, count):  # CRC-32
         if Gfx.crc_table is None:
             Gfx.make_crc_table()
         i = -1
@@ -123,9 +123,9 @@ class Gfx:
             count -= 1
             if count < 0:
                 break
-            # Java: a[(i ^ bytes[p++]) & 0xFF] ^ i >>> 8 ; the byte is signed but only & 0xFF matters
+            # the original: a[(i ^ bytes[p++]) & 0xFF] ^ i >>> 8 ; the byte is signed but only & 0xFF matters
             i = i32(Gfx.crc_table[(i ^ data[pos]) & 0xFF] ^ ushr32(i, 8))
             pos += 1
         return (i ^ 0xFFFFFFFF) & 0xFFFFFFFF
 
-    # x.java:131-173: static initializer builds two byte arrays and throws them away (dead code).
+    # two byte arrays and throws them away (dead code).

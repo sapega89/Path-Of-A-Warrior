@@ -1,6 +1,6 @@
 """A scripted player for trying Challenge / Invite An Ally alone (PHASE_9): it logs in like a
 client, accepts every invitation (Options > Invitation: Accept) and plays its battles with
-plain attacks. tools/mp_shot.py uses it (`bot` steps); `python -m pow_server --bot NAME` keeps
+plain attacks. tools/shot.py uses it (`bot` steps); `python -m pow_server --bot NAME` keeps
 one online on a server."""
 import random
 
@@ -59,6 +59,6 @@ class Bot:
             elif op == M.BATTLE_END:
                 self.results.append(m)
             elif op == M.CHAT_PUSH and m.get("channel") == 2 and m.get("id") != self.uid:
-                # PORT-EXTRA chat: a private message gets one of the bots' lines back
+                # chat: a private message gets one of the bots' lines back
                 from pow_server import chat
                 self._send(M.CHAT_SEND, channel=2, peer=m["id"], text=self.rng.choice(chat.BOT_LINES))

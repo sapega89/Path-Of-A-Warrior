@@ -4,22 +4,21 @@
     python -m pow_server --port 8765 --db x.sqlite --tcp-port 28200 --legacy
 
 WebSocket: one binary message = one whole frame (u16 length + payload), exactly the bytes the
-original sent over TCP. The browser can only open WebSockets (pygbag), the desktop client uses
-the same, so there is one protocol for both. Behind https the page needs wss://: put the
-server behind a TLS proxy (nginx / Caddy) or pass --cert/--key.
+original sent over TCP. Behind TLS use wss://: put the server behind a TLS proxy (nginx /
+Caddy) or pass --cert/--key.
 
---tcp-port: optional raw TCP gateway with the original framing, for the original jar in an
-emulator with POW_SERVER/POW_PORT pointed here (task 9.23, untested with the real jar).
-The jar logs in again with a 262 without a token, so this needs --legacy (no token check).
+--tcp-port: optional raw TCP gateway with the original framing, for the original client in an
+emulator with POW_SERVER/POW_PORT pointed here (task 9.23, untested with the real client).
+The original client logs in again with a 262 without a token, so this needs --legacy (no token check).
 
 Live of the single player (pow_server/live.py) is on the same port at the path /live
-(ws://host:28200/live), and with --live-tcp-port on raw TCP for the original single-player jar
+(ws://host:28200/live), and with --live-tcp-port on raw TCP for the original single-player client
 (its POW_PORT was 28230). It shares the accounts with the multiplayer server.
 
-PORT-EXTRA: the single player's saves (pow_server/cloud.py) are at the path /save
+the single player's saves (pow_server/cloud.py) are at the path /save
 (ws://host:28200/save), JSON text messages, on the same accounts.
 
-PORT-EXTRA (asked by Andrey): security settings (pow_server/security.py): limits on wrong
+(asked by Andrey): security settings (pow_server/security.py): limits on wrong
 passwords, new accounts, connections and messages per address; --origin lets in only the pages
 of the game; --require-tls refuses to start without TLS (--cert/--key, or --behind-proxy when a
 proxy such as nginx / Caddy does TLS and adds X-Forwarded-For).
@@ -60,7 +59,7 @@ def peer_address(ws, behind_proxy=False):
     return addr[0] if isinstance(addr, (tuple, list)) and addr else None
 
 def drop(ws):
-    """PORT-EXTRA: cut a flooding connection without the close handshake. Its unread messages
+    """cut a flooding connection without the close handshake. Its unread messages
     fill websockets' receive queue, which pauses reading, so a normal close() would only end
     after close_timeout (10 s) and the flooder would keep the slot that long."""
     transport = getattr(ws, "transport", None)
@@ -186,12 +185,12 @@ async def serve(host="0.0.0.0", port=28200, db="mp_server.sqlite", tcp_port=None
     from websockets.asyncio.server import serve as ws_serve
     if legacy:
         log.warning("--legacy: the session token is not checked (anyone who knows a UserID "
-                    "can log in with 262); use it only for the original jar on a private network")
+                    "can log in with 262); use it only for the original client on a private network")
     guard = guard or security.Guard()
     server = GameServer(Storage(db), require_token=not legacy, notices=notices)
     if match_wait is not None:
         server.match_wait = match_wait
-    if server_bots:                             # PORT-EXTRA: someone to Challenge when alone
+    if server_bots:                             # someone to Challenge when alone
         server.add_bots()
     live = LiveServer(server.storage, notices=notices)
     saves = cloud.CloudServer(server.storage)
@@ -260,8 +259,8 @@ def main(argv=None):
     ap.add_argument("--host", default="0.0.0.0")
     ap.add_argument("--port", type=int, default=28200, help="WebSocket port")
     ap.add_argument("--db", default="mp_server.sqlite", help="SQLite file (:memory: = nothing kept)")
-    ap.add_argument("--tcp-port", type=int, default=None, help="raw TCP gateway for the original jar")
-    ap.add_argument("--legacy", action="store_true", help="no session token check (original jar)")
+    ap.add_argument("--tcp-port", type=int, default=None, help="raw TCP gateway for the original client")
+    ap.add_argument("--legacy", action="store_true", help="no session token check (original client)")
     ap.add_argument("--bot", action="append", default=[], metavar="ID",
                     help="keep a scripted player online that accepts every Challenge (A-Z, 4-12)")
     ap.add_argument("--no-server-bots", action="store_true",
@@ -269,10 +268,10 @@ def main(argv=None):
     ap.add_argument("--match-wait", type=float, default=None, metavar="SEC",
                     help="how long a Duel waits for a live opponent before a CPU (default 60)")
     ap.add_argument("--live-tcp-port", type=int, default=None,
-                    help="raw TCP Live for the original single-player jar (was 28230)")
+                    help="raw TCP Live for the original single-player client (was 28230)")
     ap.add_argument("--cert", help="TLS certificate (PEM): the server speaks wss://")
     ap.add_argument("--key", help="TLS private key (PEM)")
-    sec = ap.add_argument_group("security (PORT-EXTRA, pow_server/security.py)")
+    sec = ap.add_argument_group("security (pow_server/security.py)")
     sec.add_argument("--require-tls", action="store_true",
                      help="refuse to start without TLS: --cert/--key, or --behind-proxy")
     sec.add_argument("--behind-proxy", action="store_true",

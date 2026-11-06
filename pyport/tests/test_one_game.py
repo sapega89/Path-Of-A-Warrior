@@ -1,6 +1,6 @@
-"""PORT-EXTRA: the Multiplayer screens as a part of the single player (main.py): Live >
+"""the Multiplayer screens as a part of the single player (main.py): Live >
 Multiplayer suspends the game loop with everything in memory, the Multiplayer client runs
-embedded (no exit popup, no outro, the rewards kept in memory) and Live.after_multiplayer pays
+(no exit popup, no outro, the rewards kept in memory) and Live.after_multiplayer pays
 the hero when the loop goes on."""
 import asyncio
 import struct
@@ -96,11 +96,10 @@ def test_loot_on_a_full_backpack_is_lost(live):
     assert all(cell.id == 200 for cell in hero.backpack)
 
 
-def test_embedded_multiplayer_leaves_without_the_exit_popup_or_the_outro(monkeypatch):
+def test_multiplayer_leaves_without_the_exit_popup_or_the_outro(monkeypatch):
     from pow.game.online.mp_canvas import MpCanvas
     states = []
     monkeypatch.setattr(MpCanvas, "set_state", staticmethod(states.append))
-    monkeypatch.setattr(MpCanvas, "embedded", True)
     monkeypatch.setattr(MpCanvas, "sp_account", True)
     monkeypatch.setattr(MpCanvas, "popup_shown", False)
     monkeypatch.setattr(MpCanvas, "key_in", -7)
@@ -118,10 +117,9 @@ def test_embedded_multiplayer_leaves_without_the_exit_popup_or_the_outro(monkeyp
     assert MpCanvas.state_ticks == 0                 # the outro picture never started
 
 
-def test_rewards_of_1032_wait_in_memory_when_embedded(monkeypatch):
+def test_rewards_of_1032_wait_in_memory(monkeypatch):
     from pow.game.online import sp_bridge
     from pow.game.online.net_thread import NetThread
-    monkeypatch.setattr(sp_bridge, "embedded", True)
     sp_bridge.pending.clear()
     head = struct.pack("<HbB", 1032, 1, 1) + struct.pack("<hBhh", 20, 2, 3, 120)
     NetThread._port_extra_in(head.ljust(12, b"\0"))

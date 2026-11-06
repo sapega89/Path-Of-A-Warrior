@@ -5,8 +5,8 @@
 Everything on the page is read from the resource files in the repository root (kibo / sungbo /
 shinki / general / mission / sideinfo / ruler / N.arr / *.scr / item-mixing-table.bin and the
 PNG sheets), so after a data change it is enough to run the script again. The few numbers the
-Java code keeps as constants (consumables, skill MP, the drop table, soldier stats) are taken
-from pow.game.consts (ae.java) or copied here with the Java line they come from.
+game keeps as constants (consumables, skill MP, the drop table, soldier stats) are taken
+from pow.game.consts or copied here with a note where they come from.
 
 Needs Pillow (icons are cut from the sheets and embedded as data: URIs, the page is one file).
 build_web.py copies the page next to the game, like guide.html.
@@ -22,7 +22,7 @@ from PIL import Image
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 PY = ROOT / "pyport"
 sys.path.insert(0, str(PY))
-from pow.game import consts as ae  # noqa: E402  (ae.java constants, no pygame)
+from pow.game import consts as ae  # noqa: E402
 
 OUT = PY / "web" / "encyclopedia.html"
 
@@ -34,7 +34,7 @@ def raw(name):
 
 
 def strings(name):
-    """.scr string table (al.java): u16 count, (count+1) u16 offsets, UTF-8 bodies."""
+    """.scr string table: u16 count, (count+1) u16 offsets, UTF-8 bodies."""
     a = raw(name)
     n = a[0] | a[1] << 8
     off = [a[2 + i * 2] | a[3 + i * 2] << 8 for i in range(n + 1)]
@@ -44,7 +44,7 @@ def strings(name):
 
 
 class Table:
-    """Fixed-width .arr table (d.java): u8 columns, u8 widths, rows of LE cells."""
+    """Fixed-width.arr table: u8 columns, u8 widths, rows of LE cells."""
 
     def __init__(self, name):
         b = raw(name)
@@ -117,7 +117,7 @@ def head(b):
     return key
 
 
-# ag.java:973-1023: soldiers of a mission are recoloured by sideinfo byte 3 (palette 1..3)
+# soldiers of a mission are recoloured by sideinfo byte 3 (palette 1..3)
 PAL = [[(236, 211, 197), (205, 143, 128), (129, 81, 69), (104, 60, 49), (79, 39, 29)],
        [(226, 205, 178), (196, 179, 152), (180, 142, 122), (135, 111, 47), (93, 73, 49)],
        [(174, 225, 242), (101, 156, 195), (61, 102, 139), (43, 78, 115), (45, 45, 84)],
@@ -146,9 +146,9 @@ def soldier(mon, pal, frame=0):
 TYPE = ["Зброя (довга)", "Зброя (коротка)", "Шолом", "Броня", "Рукавиці", "Чоботи", "Пояс",
         "Наруч", "Амулет", "Особливе"]
 STAT = ["ATK", "DEF", "HP", "MP"]
-TIER_LV = ae.tier_levels                    # ae.java:16 reqLevel of the 5 tiers of Normal items
+TIER_LV = ae.tier_levels                    # reqLevel of the 5 tiers of Normal items
 
-# ar.java:2055-2078 (ar.P): drop class 0 soldier / 1 general / 2 mission target
+# drop class 0 soldier / 1 general / 2 mission target
 DROP_CHANCE = [5, 10, 20]         # % that the enemy drops anything but gold
 DROP_ITEM = [10, 30, 60]          # % of those drops that are a Normal item (else a consumable)
 DROP_LV = [69, 44, 24, 9, 0]      # hero level > value -> row of DROP_TIER
@@ -197,7 +197,7 @@ def load_items():
 
 def load_consumables():
     out = []
-    for k, name in enumerate(ae.potion_names):                            # ae.java:230-238
+    for k, name in enumerate(ae.potion_names):
         cid = k + 1
         if cid <= 9:
             e = "%s +%d%%" % (ae.potion_kinds[k // 3], ae.potion_percents[k % 3])
@@ -219,7 +219,7 @@ def load_recipes():
 
 # ---- skills --------------------------------------------------------------------------------
 
-# ar.java:743-757: MP = base + (level - 1) * inc;  ae.skill_attack_div: damage bonus ATK*lvl/aU
+# MP = base + (level - 1) * inc;  ae.skill_attack_div: damage bonus ATK*lvl/aU
 SKILL_MP = [(5, 3), (6, 4), (7, 5), (10, 3), (15, 4), (7, 3), (10, 3), (10, 5), (8, 3), (9, 4),
             (10, 5), (5, 3), (6, 4), (7, 5), (9, 5), (12, 6), (20, 5), (20, 5), (20, 5)]
 SKILL_CAT = ["MOVE", "MOVE", "MOVE", "HEAL", "HEAL", "PASV", "PASV", "PASV", "FWD", "FWD", "FWD",
@@ -285,7 +285,7 @@ def load_generals():
 
 
 def brief_text(table, i):
-    """brief.scr record i (ag.java:1075-1124): "N|v1|v2" fills the (..) of record N in order."""
+    """brief.scr record i: "N|v1|v2" fills the (..) of record N in order."""
     s = table[i]
     parts = s.split("|")
     if parts[0].isdigit():
@@ -317,7 +317,7 @@ def load_missions(gens, text):
     for a in range(1, (len(ruler) - 3) // 15 + 1):
         rec = ruler[3 + (a - 1) * 15:3 + a * 15]
         rulers[a] = {"n": rec[:14].split(b"\0")[0].decode("latin-1").strip(), "por": portrait(rec[14])}
-    # ag.java:3225 - scenarios closed at a new game ("Hidden Mission", opened by an ending)
+    # - scenarios closed at a new game ("Hidden Mission", opened by an ending)
     hidden = {5, 8, 9, 16, 25, 26, 28, 29, 32, 37}
     scen, missions = [], []
     count = (len(m) - 10) // 38 - 1
@@ -350,7 +350,7 @@ def load_missions(gens, text):
             succ, fail = r[5], r[6]
             mis = {"id": gi, "no": gi + 1, "sc": sid, "scn": name, "k": k, "ru": r[0], "rn": rulers[r[0]]["n"],
                        "rp": rulers[r[0]]["por"], "pal": r[3], "boss": r[4], "bl": r[10],
-                       "gold": r[7] * 150, "time": r[8],         # Java reads only the low byte (e.java:3588)
+                       "gold": r[7] * 150, "time": r[8],         # only the low byte is read
                        "succ": succ, "fail": fail, "sold": soldiers, "foes": foes, "fr": friends,
                        "brief": brief_text(briefs, gi), "hidden": sid in hidden}
             if succ >= 200:
@@ -372,7 +372,7 @@ def link_up(items, recipes, gens, missions, skills):
         res = items[rc["r"]]
         lv = res["lv"]
         rc["lv"] = lv
-        rc["p"] = round(((200 - lv) // 12 + 1) / 101 * 100, 1)    # e.java aX(): success chance
+        rc["p"] = round(((200 - lv) // 12 + 1) / 101 * 100, 1)    # aX(): success chance
         res["from"].append(i)
         for a in sorted(set(rc["a"])):
             items[a]["use"].append(i)
@@ -404,7 +404,7 @@ def link_up(items, recipes, gens, missions, skills):
 
 
 def soldier_table():
-    """c.java:1028-1038 (c.a): soldier level L around the hero level Lp, ATK/DEF/HP."""
+    """1038: soldier level L around the hero level Lp, ATK/DEF/HP."""
     base, mult, hpb = [3, 2, 3], [100, 100, 150], [7, 5, 7]
 
     def lv_range(lp):

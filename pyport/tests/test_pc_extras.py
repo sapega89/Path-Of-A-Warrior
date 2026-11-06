@@ -1,4 +1,4 @@
-"""PORT-EXTRA PC controls: full screen, the wide description box, the gamepad."""
+"""PC controls: full screen, the wide description box, the gamepad."""
 import pygame
 
 # ---- full screen ---------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ def test_description_parts_are_packed_into_lines(monkeypatch):
     monkeypatch.setattr(GameCanvas, "measure_text", staticmethod(lambda s: 8 * len(s)))
     lines = Menus.wide_description_lines("Iron Claymore / ATK+12 / Available at Lv1", 224)
     assert lines == ["Iron Claymore / ATK+12", "Available at Lv1"]
-    # "/ Price" without a space before the slash (e.java shop text) splits too
+    # "/ Price" without a space before the slash splits too
     assert Menus.wide_description_lines("Recover 30% of total HP/ Price: 60", 224) == [
         "Recover 30% of total HP", "Price: 60"]
     # a part longer than the line breaks between words

@@ -1,5 +1,5 @@
 # Character submenu: Records, Attributes, Exp/Fame/Gold, Skills, Change Quote, Display Name
-include _login.keys
+include _enter.keys
 key RIGHT 2
 wait 3
 key FIRE

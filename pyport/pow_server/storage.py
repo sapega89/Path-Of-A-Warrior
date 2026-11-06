@@ -9,7 +9,7 @@ import threading
 
 try:
     import sqlite3
-except ImportError:          # a Python build without sqlite3 (maybe the browser): MemoryStorage
+except ImportError:          # a Python build without sqlite3: MemoryStorage
     sqlite3 = None
 
 from pow_server.model import Character
@@ -33,35 +33,8 @@ CREATE TABLE IF NOT EXISTS saves (
 """
 
 
-def _pbkdf2_sha256(password, salt, rounds):
-    """PBKDF2-HMAC-SHA256 with a 32-byte key, the same bytes as hashlib.pbkdf2_hmac. PORT-EXTRA:
-    the Python of the browser build (pygbag) has no hashlib.pbkdf2_hmac (no OpenSSL), and the
-    server inside the page logs players in with it."""
-    inner, outer = hashlib.sha256(), hashlib.sha256()
-    if len(password) > inner.block_size:
-        password = hashlib.sha256(password).digest()
-    password = password.ljust(inner.block_size, b"\0")
-    inner.update(bytes(b ^ 0x36 for b in password))
-    outer.update(bytes(b ^ 0x5C for b in password))
-
-    def prf(msg):
-        i, o = inner.copy(), outer.copy()
-        i.update(msg)
-        o.update(i.digest())
-        return o.digest()
-    u = prf(salt + b"\0\0\0\1")
-    acc = int.from_bytes(u, "big")
-    for _ in range(rounds - 1):
-        u = prf(u)
-        acc ^= int.from_bytes(u, "big")
-    return acc.to_bytes(len(u), "big")
-
-
 def hash_password(password, salt):
-    pw = password.encode("ascii", "replace")
-    if hasattr(hashlib, "pbkdf2_hmac"):
-        return hashlib.pbkdf2_hmac("sha256", pw, salt, PBKDF2_ROUNDS)
-    return _pbkdf2_sha256(pw, salt, PBKDF2_ROUNDS)
+    return hashlib.pbkdf2_hmac("sha256", password.encode("ascii", "replace"), salt, PBKDF2_ROUNDS)
 
 
 class Storage:
@@ -70,7 +43,7 @@ class Storage:
         self.db = sqlite3.connect(path, check_same_thread=False, isolation_level=None)
         self.lock = threading.Lock()
         self.db.executescript(_SCHEMA)
-        # PORT-EXTRA (asked by Andrey): the save stores lost the original publisher's prefix
+        # the save stores lost the original publisher's prefix
         # (pow/midp/rms.py RENAMED); rows saved under the old names move to the new ones
         old = "game" + "vil_"
         self.db.execute("UPDATE OR IGNORE saves SET store = substr(store, ?) WHERE store LIKE ?",
@@ -134,7 +107,7 @@ class Storage:
             self.db.execute("INSERT INTO live VALUES (?,?) ON CONFLICT(key) DO UPDATE SET "
                             "data=excluded.data", (key, json.dumps(value)))
 
-    # --- PORT-EXTRA: single-player saves kept on the server (pow_server/cloud.py) -------
+    # --- single-player saves kept on the server (pow_server/cloud.py) -------
     def saves_get(self, user_id):
         """{store: {"rev", "at", "records"}} of one account."""
         with self.lock:
