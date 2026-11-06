@@ -27,10 +27,12 @@ const END := 200  # animation frame numbers above this end the animation (222 = 
 ## Banners shown over the map (the original's popups 8 and 9).
 const BANNER_STAGE := 8
 const BANNER_STAGE_CLEAR := 9
-const BANNER_SUCCESS := 10  # "Mission Success!": waits for a key, then the mission ends
-const BANNER_FAILED := 22  # "Mission fail!": waits for a key, then the mission ends
+const BANNER_SUCCESS := 10  # "Mission Success!": 20 ticks, a key does not end it
+const BANNER_FAILED := 22  # "Mission fail!": 20 ticks (a key: 2 more), then the mission ends
 const BANNER_ACQUIRED := 13  # a gear picked up: "<its name> Acquired!!"
 const BANNER_TICKS := 20
+const EXP_PAGE_TICKS := 16  # an exp page stays after its bar is all shown
+const EXP_PAGE_WAITS := 200  # the timer of an exp page while its bar grows
 
 const KIND_SWORDS := 201
 const KIND_ARCHERS := 202
@@ -425,22 +427,24 @@ func tick(held: int, pressed: int = -1, fire: bool = false, hotkey: int = -1, po
 		_end_tick()
 
 
+## The banners go on by themselves, as pyport's popups: a key shortens a "Stage" banner
+## and "Mission fail!" to 2 more ticks, and "Level Up" on an exp bar, but not "Mission
+## Success!" nor the exp pages.
 func _tick_banner(fire: bool) -> void:
-	if banner == BANNER_FAILED:
-		if fire:
-			finished = true
+	if banner == BANNER_TOTAL_EXP or banner == BANNER_TIME_EXP:
+		_tick_exp_page(fire)
 		return
-	if banner == BANNER_SUCCESS or banner == BANNER_TOTAL_EXP or banner == BANNER_TIME_EXP:
-		if banner != BANNER_SUCCESS:
-			exp_bars.tick()
-		if fire:
-			_next_result_page()
-		return
-	if fire and banner_timer > 2:
+	if fire and banner_timer > 2 and banner != BANNER_SUCCESS:
 		banner_timer = 2
 	banner_timer -= 1
 	if banner_timer <= 0:
 		var b := banner
+		if b == BANNER_FAILED:
+			finished = true
+			return
+		if b == BANNER_SUCCESS:
+			_next_result_page()
+			return
 		banner = 0
 		if b == BANNER_STAGE_CLEAR:
 			# Room cleared: the exits open (a room with a general: he talks first).
@@ -486,7 +490,7 @@ func _tick_scene(held: int, pressed: int, skill: int, potion: int = -1) -> void:
 			# The hero fell: "Mission fail!", then back to the menu.
 			hero.frame = 10
 			failed = true
-			banner = BANNER_FAILED
+			_show_banner(BANNER_FAILED)
 			return
 		hero.frame = 0
 		if hero.action != 1:
@@ -891,7 +895,7 @@ func _end_tick() -> void:
 			4:
 				# the mission's general is defeated
 				won = true
-				banner = BANNER_SUCCESS
+				_show_banner(BANNER_SUCCESS)
 				room_phase = 0
 		return
 	room_phase_timer -= 1
@@ -1775,17 +1779,35 @@ func _next_result_page() -> void:
 	match banner:
 		BANNER_SUCCESS:
 			banner = BANNER_TOTAL_EXP
+			banner_timer = EXP_PAGE_WAITS
 			exp_bars.begin(hero.level, hero_exp, exp_reward())
 		BANNER_TOTAL_EXP:
 			if play_seconds() < time_limit:
 				time_exp = ((time_limit - play_seconds()) / time_limit / 10 + 1) * mission_exp / 20
 				mission_exp += time_exp
 				banner = BANNER_TIME_EXP
+				banner_timer = EXP_PAGE_WAITS
 				exp_bars.begin_time(exp_reward())
 			else:
 				_mission_over()
 		_:
 			_mission_over()
+
+
+## An exp page: its bar grows; all shown, the page stays 16 ticks more and the next one
+## comes. A key cuts a "Level Up" short.
+func _tick_exp_page(fire: bool) -> void:
+	if fire and exp_bars.level_up_ticks > 2:
+		exp_bars.level_up_ticks = 2
+	var all_shown := exp_bars.done()
+	exp_bars.tick()
+	if not all_shown:
+		return
+	if banner_timer > EXP_PAGE_TICKS:
+		banner_timer = EXP_PAGE_TICKS
+	banner_timer -= 1
+	if banner_timer <= 0:
+		_next_result_page()
 
 
 func _mission_over() -> void:
