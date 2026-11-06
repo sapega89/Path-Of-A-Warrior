@@ -121,6 +121,13 @@ func _ready() -> void:
 	Router.current.list.get_child(1).grab_focus()
 	Router.current.open(1)
 	await _shot(out, "22_endings")
+	# Help: the topics, then the second page of Blacksmith.
+	Router.go("main_menu")
+	Router.push("help")
+	await _shot(out, "23_help")
+	Router.current.open(2)
+	Router.current.turn_page(1)
+	await _shot(out, "24_help_page")
 	# A story: ending 2's first talk, its first picture and its numbers with the reward.
 	Router.go("main_menu")
 	Router.push("story", {"story": 2, "reward_item": 502, "opened_lord": 8,

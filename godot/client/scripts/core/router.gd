@@ -22,6 +22,7 @@ const SCREENS := {
 	"shop": "res://scripts/screens/shop_screen.gd",
 	"visiting": "res://scripts/screens/visiting_screen.gd",
 	"endings": "res://scripts/screens/endings_screen.gd",
+	"help": "res://scripts/screens/help_screen.gd",
 }
 
 var current: Control
