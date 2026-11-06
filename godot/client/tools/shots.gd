@@ -403,6 +403,8 @@ func _ready() -> void:
 	Router.current.open(2)
 	Router.current.turn_page(1)
 	await _shot(out, "24_help_page")
+	Router.current.open(Router.current.control_topic)  # Control: this version's keys
+	await _shot(out, "24b_help_control")
 	# A story: ending 2's first talk, its first picture and its numbers with the reward.
 	Router.go("main_menu")
 	Router.push("story", {"story": 2, "reward_item": 502, "opened_lord": 8,
