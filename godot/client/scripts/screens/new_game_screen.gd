@@ -1,7 +1,7 @@
 extends Control
 ## A new game, step by step as in the original: the difficulty (Hard: manual aim, gold and
 ## exp x2; Normal: the hero turns to the nearest enemy, x1; it cannot change later), the hero's
-## face, his name (up to 8 letters), and his 5 first stat points. Then the hero is saved over
+## face (each face a hero with his own base stats), his name (up to 8 letters), and his 5 first stat points. Then the hero is saved over
 ## any old one and the opening story starts, then the campaign.
 ## Params: profile_path (optional), then (the screen after the opening, default campaign).
 
@@ -92,9 +92,11 @@ func show_step(s: int) -> void:
 				b.expand_icon = true
 				b.custom_minimum_size = Vector2(46, 46) * SCALE + Vector2(12, 12)
 				b.pressed.connect(choose_head.bind(h))
+				b.focus_entered.connect(show_class.bind(h))
+				b.mouse_entered.connect(show_class.bind(h))
 				row.add_child(b)
 			body.add_child(row)
-			info.text = "%s\n%s" % [tr("newgame.select_1"), tr("newgame.select_2")]
+			show_class(profile.head)
 			(row.get_child(profile.head) as Button).grab_focus.call_deferred()
 		Step.NAME:
 			heading.text = "newgame.name"
@@ -139,8 +141,14 @@ func choose_difficulty(d: int) -> void:
 	_ask("newgame.ask_difficulty")
 
 
+## Under the faces: the hint, and the hero of face h with his base stats.
+func show_class(h: int) -> void:
+	info.text = "%s\n%s\n\n%s\n%s" % [tr("newgame.select_1"), tr("newgame.select_2"),
+		Profile.HERO_CLASSES[h], Profile.stats_line(h)]
+
+
 func choose_head(h: int) -> void:
-	profile.head = h
+	profile.set_head(h)
 	show_step(Step.NAME)
 
 
@@ -210,7 +218,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			Step.POINTS:  # the points back, then the name again
 				var fresh: RefCounted = Profile.new()
 				fresh.difficulty = profile.difficulty
-				fresh.head = profile.head
+				fresh.set_head(profile.head)
 				profile = fresh
 				show_step(Step.NAME)
 			_:
