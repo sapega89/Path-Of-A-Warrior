@@ -1,10 +1,9 @@
 extends Control
-## Assign Items: the hero's gold and the five potion slots. Pick a slot, then one of the two
-## potion keys to drink from that slot with that key (a slot the other key holds swaps the
-## keys). Above each slot: its belt key (Z X C V B, used in a mission) and the mark of the
-## potion key (* or #) that drinks from it. Saved at once. Opened from a mission's pause
-## menu (sim set) it changes that mission's keys and saves nothing; close goes back there.
-
+## Assign Items: the hero's gold and the five potion slots of the belt, each with its key above
+## it (Z X C V B, used in a mission) and "Keys Z X C V B" under them, as in pyport with the skill
+## bar. The keypad's * and / still put the chosen slot on the old potion keys (no buttons or
+## marks for them). Saved at once. Opened from a mission's pause menu (sim set) it changes that
+## mission's slots and saves nothing; close goes back there.
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const Items := preload("res://scripts/core/items.gd")
@@ -16,7 +15,6 @@ var path: String = Profile.PATH
 var slot := 0
 var slots: Array[Button] = []
 var marks: Array[Label] = []
-var key_buttons: Array[Button] = []
 var gold: Label
 var info: Label
 var sim: RefCounted = null  # a mission's: its slots and keys are the ones changed
@@ -76,20 +74,12 @@ func _ready() -> void:
 		slots.append(b)
 	col.add_child(row)
 
-	var keys_row := HBoxContainer.new()
-	keys_row.name = "Keys"
-	keys_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	keys_row.add_theme_constant_override("separation", 16)
-	for k in 2:
-		var b := Button.new()
-		b.name = "Key%d" % (k + 1)
-		b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-		b.text = tr("assign.key") % key_name(k)
-		var at := k
-		b.pressed.connect(func(): press_key(at))
-		keys_row.add_child(b)
-		key_buttons.append(b)
-	col.add_child(keys_row)
+	var keys := Label.new()
+	keys.name = "Keys"
+	keys.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	keys.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	keys.text = tr("assign.keys")
+	col.add_child(keys)
 
 	info = Label.new()
 	info.name = "Info"
@@ -106,11 +96,6 @@ func _ready() -> void:
 	refresh()
 	_show_info(0)
 	slots[0].grab_focus.call_deferred()
-
-
-## The mark of potion key k: "*" or "#" (the keypad's * and /, a pad's RT and L3).
-static func key_name(k: int) -> String:
-	return "*" if k == 0 else "#"
 
 
 ## The belt key of slot i ("Z" .. "B").
@@ -149,11 +134,7 @@ func refresh() -> void:
 		slots[i].icon = ItemSlot.item_icon(id) if id != 0 else null
 		slots[i].add_theme_stylebox_override("normal", ItemSlot.box(i == slot))
 		slots[i].get_parent().get_node("Count").text = "x%d" % int(s[1]) if id != 0 else ""
-		var mark := belt_key(i)
-		for k in 2:
-			if int(profile.quick_keys[k]) == i:
-				mark += " " + key_name(k)
-		marks[i].text = mark
+		marks[i].text = belt_key(i)
 
 
 func describe(i: int) -> String:
