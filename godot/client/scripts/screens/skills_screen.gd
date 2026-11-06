@@ -2,12 +2,14 @@ extends Control
 ## Skills: the five skill keys and the skills by group (MOVE, HEAL, PASV, FWD, NEAR, RANGE,
 ## WHOLE). A learned skill has its coloured icon, one not yet learned its grey icon.
 ## Pick a key, then a learned skill to put it on that key; picking a key that holds a skill
-## takes the skill off. The line at the bottom says what the skill under the cursor does.
+## takes the skill off. Beside the groups, the card of the skill under the cursor (as in
+## pyport): name and level, what it is, MP and what it does now and at the next level.
 ## Every change is saved at once.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const ItemSlot := preload("res://scripts/ui/item_slot.gd")
+const SkillCard := preload("res://scripts/core/skill_card.gd")
 const SKILLS_PATH := "res://data/skills.json"
 const KEY_COUNT := 5
 
@@ -17,7 +19,8 @@ var data: Dictionary = {}
 var slot := 0  # the skill key being set
 var keys: Array[Button] = []
 var skills := {}  # skill id -> its Button
-var info: Label
+var info: Label  # the card's heading line (name and level)
+var card: VBoxContainer
 
 
 func _ready() -> void:
@@ -77,16 +80,19 @@ func _ready() -> void:
 				skills[skill] = b
 			row.add_child(b)
 		grid.add_child(row)
+	var middle := HBoxContainer.new()
+	middle.add_theme_constant_override("separation", 24)
+	middle.add_child(grid)
+	var panel := PanelContainer.new()
+	panel.name = "Card"
+	panel.custom_minimum_size = Vector2(330, 0)
+	panel.add_theme_stylebox_override("panel", UiTheme.box(UiTheme.PANEL, UiTheme.ACCENT, 2))
+	card = VBoxContainer.new()
+	panel.add_child(card)
+	middle.add_child(panel)
 	var center := CenterContainer.new()
-	center.add_child(grid)
+	center.add_child(middle)
 	col.add_child(center)
-
-	info = Label.new()
-	info.name = "Info"
-	info.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	info.custom_minimum_size = Vector2(0, 40)
-	col.add_child(info)
 
 	var back := Button.new()
 	back.name = "Back"
@@ -159,8 +165,29 @@ func describe(skill: int) -> String:
 	return "%s / Lv%d %s" % [names[i], level, effects[i] if i < effects.size() else ""]
 
 
+## The card's lines of a skill ([text, heading?]).
+func card_lines(skill: int) -> Array:
+	return SkillCard.lines(skill, profile.skill_level(skill), data.get("names", []),
+		data.get("effects", []), profile.attack(), profile.defense(), profile.max_hp(),
+		Settings.tick_seconds())
+
+
 func _show_info(skill: int) -> void:
-	info.text = describe(skill)
+	for c in card.get_children():
+		card.remove_child(c)
+		c.queue_free()
+	info = null
+	for line in card_lines(skill):
+		var l := Label.new()
+		l.text = str(line[0])
+		l.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		l.custom_minimum_size = Vector2(310, 0)
+		l.add_theme_font_size_override("font_size", 22)
+		if line[1]:
+			l.add_theme_color_override("font_color", UiTheme.ACCENT)
+			info = l
+		card.add_child(l)
 
 
 func _icon(skill: int, learned: bool) -> Texture2D:

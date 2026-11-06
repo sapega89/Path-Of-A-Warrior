@@ -2239,7 +2239,7 @@ func _room_middle() -> Vector2i:
 # ---- the hero's animation tables ---------------------------------------------------------------
 
 ## The hero's frame list for an action and 8-direction (as the original builds hero.anims).
-func hero_anim(action: int, dir8: int) -> Array:
+static func hero_anim(action: int, dir8: int) -> Array:
 	var dir4: int = int(table("dir8_to_dir4")[dir8])
 	var names := {0: "hero_anim_0", 1: "hero_anim_1", 2: "hero_anim_2", 9: "hero_anim_9",
 		3: "hero_anim_3", 4: "hero_anim_4", 5: "hero_anim_5", 6: "hero_anim_6", 7: "hero_anim_7",
