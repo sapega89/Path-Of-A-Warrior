@@ -18,6 +18,7 @@ const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const MapHud := preload("res://scripts/ui/map_hud.gd")
 const Effects := preload("res://scripts/world/effects.gd")
 const Profile := preload("res://scripts/core/profile.gd")
+const MissionPause := preload("res://scripts/ui/mission_pause.gd")
 
 const TICK := MapSim.TICK_MS / 1000.0
 const ARROW_SCALE := 3.0
@@ -55,6 +56,7 @@ var _potion := -1  # a potion key pressed since the last tick
 var _keys_down := {}  # attack, skill and potion keys held at the last frame
 var _last_held := -1
 var _blink := 0
+var pause_menu: MissionPause  # shown while the game is paused
 
 
 func _ready() -> void:
@@ -359,7 +361,40 @@ func _place_arrows() -> void:
 			3: a.position = Vector2(view.x - s.x - 16, (view.y - s.y) / 2.0)
 
 
+## Stops the mission and shows the pause menu (Resume, Options, Exit to Menu, Exit Game).
+func pause() -> void:
+	if pause_menu != null:
+		return
+	set_process(false)
+	_release_keys()
+	pause_menu = MissionPause.new()
+	pause_menu.name = "Pause"
+	pause_menu.resumed.connect(resume)
+	add_child(pause_menu)
+
+
+func resume() -> void:
+	if pause_menu == null:
+		return
+	pause_menu.queue_free()
+	pause_menu = null
+	_acc = 0.0
+	_last_held = -1
+	set_process(not sim.finished)
+
+
+## Forgets the keys held when the game stopped, so the hero does not walk on by himself.
+func _release_keys() -> void:
+	_pressed = -1
+	_fire = false
+	_hotkey = -1
+	_potion = -1
+	_keys_down.clear()
+
+
 func _unhandled_input(event: InputEvent) -> void:
+	if pause_menu != null:
+		return
 	if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
-		Router.back()
+		pause()
