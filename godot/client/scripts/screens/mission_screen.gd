@@ -171,6 +171,7 @@ func _ready() -> void:
 	var touch := TouchControls.new()
 	touch.name = "Touch"
 	add_child(touch)
+	add_to_group(InputSetup.RIGHT_BUTTON)  # the right button attacks, not BACK
 	_update_view(0.0)
 
 
@@ -486,6 +487,12 @@ func _mouse_button(event: InputEventMouseButton) -> void:
 		else:
 			_pressed = d  # a press of that direction, held while the button is
 			_mouse_dir = d
+
+
+## The right mouse button attacks while the hero plays; in the pause menu or after the end it is
+## BACK, as everywhere (InputSetup).
+func uses_right_button() -> bool:
+	return pause_menu == null and is_processing()
 
 
 ## The direction from the hero to a point of the screen (6 right, 2 left, 4 up, 0 down), or -1
