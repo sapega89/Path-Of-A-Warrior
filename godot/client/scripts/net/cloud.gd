@@ -58,6 +58,7 @@ func start(address: String, port: int, cert: X509Certificate) -> void:
 	mp = OnlineClient.new(request)
 	mp.on_battle = func() -> void: Router.push("online_battle")
 	sync.client.on_push = _push
+	sync.options_store = Settings
 	var acc := load_account()
 	if not acc.is_empty():
 		sync.account = acc

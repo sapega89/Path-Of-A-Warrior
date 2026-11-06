@@ -159,6 +159,8 @@ func answer(s: Session, msg: Dictionary) -> Dictionary:
 			"login": reply = _login(s, msg)
 			"hero_get": reply = _hero_get(s)
 			"hero_put": reply = _hero_put(s, msg)
+			"options_get": reply = _options_get(s)
+			"options_put": reply = _options_put(s, msg)
 			_:
 				if t.begins_with("live_") and live != null:
 					reply = live.answer(s.live, t, msg)
@@ -234,3 +236,24 @@ func _hero_put(s: Session, msg: Dictionary) -> Dictionary:
 		return {"t": "hero_put", "ok": true, "rev": entry.rev}
 	return {"t": "hero_put", "ok": false, "err": "conflict",
 		"rev": entry.rev, "at": entry.at, "hero": entry.hero}
+
+
+func _options_get(s: Session) -> Dictionary:
+	var e := accounts.store_get(s.user, "options")
+	return {"t": "options_get", "ok": true, "rev": e.rev, "at": e.at, "options": e.data}
+
+
+func _options_put(s: Session, msg: Dictionary) -> Dictionary:
+	var base: Variant = msg.get("base")
+	var at: Variant = msg.get("at")
+	var options: Variant = msg.get("options")
+	if not (base is int and at is int and options is Dictionary):
+		return _fail("options_put", "bad message")
+	if JSON.stringify(options).length() > Protocol.MAX_OPTIONS:
+		return _fail("options_put", "too big")
+	var r: Array = accounts.store_put(s.user, "options", base, at, options)
+	var entry: Dictionary = r[1]
+	if r[0]:
+		return {"t": "options_put", "ok": true, "rev": entry.rev}
+	return {"t": "options_put", "ok": false, "err": "conflict",
+		"rev": entry.rev, "at": entry.at, "options": entry.data}

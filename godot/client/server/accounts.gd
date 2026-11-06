@@ -1,10 +1,14 @@
 extends RefCounted
 ## The server's accounts, one JSON file each (<dir>/<UserID>.json), written whole to a .tmp
 ## file first and then renamed over the old one, so a crash never leaves half a file.
-##   {"id", "salt", "hash", "rounds", "created", "hero": {"rev", "at", "data"}}
+##   {"id", "salt", "hash", "rounds", "created", "hero": {"rev", "at", "data"},
+##    "options": {"rev", "at", "data"}}
+## The hero and the Options (STORES) each keep a revision: a write based on an older one is
+## refused, so a device that missed another device's save learns of it.
 ## The password is kept only as PBKDF2-HMAC-SHA256 of a random salt.
 
 const ROUNDS := 10000
+const STORES := ["hero", "options"]
 
 var dir: String
 ## PBKDF2 rounds of new accounts (tests use fewer).
@@ -74,25 +78,40 @@ func check_password(uid: String, pwd: String) -> bool:
 	return same_bytes(h, str(acc.hash).hex_decode())
 
 
+## {"rev", "at", "data"} of one of the account's STORES (rev 0, data null: none yet).
+func store_get(uid: String, store: String) -> Dictionary:
+	var h: Dictionary = _account(uid).get(store, {})
+	return {"rev": int(h.get("rev", 0)), "at": int(h.get("at", 0)), "data": h.get("data")}
+
+
+## Writes a store when `base` is its current revision. Returns [true, the new entry] or
+## [false, the current entry] when another device saved first.
+func store_put(uid: String, store: String, base: int, at: int, data: Dictionary) -> Array:
+	var acc := _account(uid)
+	var cur := store_get(uid, store)
+	if acc.is_empty() or not store in STORES or base != int(cur.rev):
+		return [false, cur]
+	var old: Variant = acc.get(store)
+	acc[store] = {"rev": int(cur.rev) + 1, "at": at, "data": data}
+	if not _write(acc):
+		if old == null:
+			acc.erase(store)
+		else:
+			acc[store] = old
+		return [false, cur]
+	return [true, store_get(uid, store)]
+
+
 ## {"rev", "at", "hero"} of the account (rev 0, hero null: none yet).
 func hero_get(uid: String) -> Dictionary:
-	var h: Dictionary = _account(uid).get("hero", {})
-	return {"rev": int(h.get("rev", 0)), "at": int(h.get("at", 0)), "hero": h.get("data")}
+	var e := store_get(uid, "hero")
+	return {"rev": e.rev, "at": e.at, "hero": e.data}
 
 
-## Writes the hero when `base` is its current revision. Returns [true, the new entry] or
-## [false, the current entry] when another device saved first.
+## store_put() of the hero, the entries as hero_get() gives them.
 func hero_put(uid: String, base: int, at: int, hero: Dictionary) -> Array:
-	var acc := _account(uid)
-	var cur := hero_get(uid)
-	if acc.is_empty() or base != int(cur.rev):
-		return [false, cur]
-	var old: Variant = acc.hero
-	acc.hero = {"rev": int(cur.rev) + 1, "at": at, "data": hero}
-	if not _write(acc):
-		acc.hero = old
-		return [false, cur]
-	return [true, hero_get(uid)]
+	var r := store_put(uid, "hero", base, at, hero)
+	return [r[0], hero_get(uid)]
 
 
 ## PBKDF2-HMAC-SHA256 with one 32-byte block (RFC 8018).
