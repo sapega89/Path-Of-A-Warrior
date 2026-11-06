@@ -218,7 +218,57 @@ func test_mission_won_when_his_general_falls() -> void:
 	eq(sim.banner, MapSim.BANNER_SUCCESS, "Mission Success!")
 	check(sim.won, "won")
 	sim.tick(-1, -1, true)
-	check(sim.finished, "a key ends the mission")
+	eq(sim.banner, MapSim.BANNER_TOTAL_EXP, "then the exp")
+	sim.tick(-1, -1, true)
+	check(sim.finished, "no time limit, no general to talk: the mission is over")
+
+
+func test_rewards_and_the_talk_after_the_mission() -> void:
+	var sim := _sim(false)
+	sim.mission_gold = 3
+	sim.mission_exp = 40
+	sim.time_limit = 192
+	sim.mission_general = 5
+	sim.banner = MapSim.BANNER_SUCCESS
+	eq(sim.gold_reward(), 450, "gold: 3 x 150 on normal")
+	sim.tick(-1, -1, true)
+	eq(sim.banner, MapSim.BANNER_TOTAL_EXP, "the exp")
+	eq(sim.exp_reward(), 80, "exp: twice on normal")
+	sim.tick(-1, -1, true)
+	eq(sim.banner, MapSim.BANNER_TIME_EXP, "in time: the exp for time")
+	eq(sim.mission_exp, 42, "a twentieth more")
+	sim.tick(-1, -1, true)
+	eq(sim.banner, 0, "the pages are over")
+	eq(sim.talk.size(), 5, "the general talks")
+	check(sim.talk[0].begins_with("[Reeve] Not bad, warrior."), "his first words: %s" % sim.talk[0])
+	check(sim.talk[1].begins_with("[Hero]"), "then the hero")
+	eq(sim.friendship.get(5, 0), 5, "friendship grows")
+	for t in 400:
+		if sim.finished:
+			break
+		sim.tick(-1, -1, true)
+	check(sim.finished, "after the talk the mission is over")
+
+
+func test_room_general_talks_when_his_room_is_cleared() -> void:
+	var sim := _sim(false)
+	for t in 200:
+		if sim.exits_open():
+			break
+		sim.tick(-1, -1, sim.banner != 0)
+	sim.rooms.cells = sim.rooms.cells.duplicate(true)  # (the map's data stays as it is)
+	sim.rooms.cells[sim.cell]["general"] = 5
+	sim.room_phase = 0
+	sim.banner = MapSim.BANNER_STAGE_CLEAR
+	sim.banner_timer = 1
+	sim.tick(-1, -1)
+	eq(sim.talk.size(), 5, "he talks")
+	check(not sim.exits_open(), "the exits wait for the talk")
+	for t in 400:
+		if sim.exits_open():
+			break
+		sim.tick(-1, -1, true)
+	check(sim.exits_open(), "then they open")
 
 
 func test_general_skills_are_actions() -> void:

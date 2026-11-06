@@ -59,6 +59,11 @@ const CAMPAIGN_PATH := "res://data/campaign.json"
 const TALK_PATH := "res://data/talk.json"
 const BUFF_DIV := [20, 20, 25]
 const TALK_STEPS := 3  # a general met on the map: he, the hero, he
+const VICTORY_TALK_STEPS := 5  # a general after his room or mission: he, the hero, ...
+const FRIENDSHIP_PER_TALK := 5
+## The pages after "Mission Success!" (which shows the gold): the exp, the exp for time.
+const BANNER_TOTAL_EXP := 11
+const BANNER_TIME_EXP := 12
 const HERO_NAME := "Hero"
 
 static var _tables: Dictionary = {}
@@ -166,6 +171,15 @@ var arrows: Array[Arrow] = [Arrow.new(), Arrow.new(), Arrow.new()]
 var kills := 0
 var play_ticks := 0  # ticks of play on the map (not banners, talks or room scrolls)
 var mission_exp := 0
+## The mission's rewards and its general who talks after it (0 none, >= 200 none).
+var mission_gold := 0
+var mission_general := 0
+var time_limit := 0  # seconds; in time the exp grows
+var time_bonus := false  # the exp for time was given
+## Friendship points of the generals the hero talked with (general id -> points).
+var friendship := {}
+## What follows the talk: 0 the map goes on, 1 the exits open, 2 the mission is over.
+var talk_after := 0
 var failed := false
 var finished := false  # the mission is over: the screen leaves
 ## The hero's skill levels (skills 12..30), the skills on his keys, his quick slots
@@ -358,9 +372,13 @@ func tick(held: int, pressed: int = -1, fire: bool = false, hotkey: int = -1, po
 
 
 func _tick_banner(fire: bool) -> void:
-	if banner == BANNER_FAILED or banner == BANNER_SUCCESS:
+	if banner == BANNER_FAILED:
 		if fire:
 			finished = true
+		return
+	if banner == BANNER_SUCCESS or banner == BANNER_TOTAL_EXP or banner == BANNER_TIME_EXP:
+		if fire:
+			_next_result_page()
 		return
 	if fire and banner_timer > 2:
 		banner_timer = 2
@@ -369,9 +387,13 @@ func _tick_banner(fire: bool) -> void:
 		var b := banner
 		banner = 0
 		if b == BANNER_STAGE_CLEAR:
-			# Room cleared: the exits open (a room with the mission's general talks instead).
-			room_phase = 1
-			room_phase_timer = 5
+			# Room cleared: the exits open (a room with a general: he talks first).
+			var g := room_general()
+			if g != 0:
+				_start_general_talk(g, 1)
+			else:
+				room_phase = 1
+				room_phase_timer = 5
 
 
 func _show_banner(kind: int) -> void:
@@ -1489,6 +1511,7 @@ func _tick_talk(fire: bool) -> void:
 			if talk_line >= talk.size():
 				talk.clear()
 				talk_line = 0
+				_talk_done()
 		return
 	if fire:
 		talk_chars = line.length()
@@ -1497,6 +1520,78 @@ func _tick_talk(fire: bool) -> void:
 	talk_chars += 1
 	if talk_chars >= line.length():
 		talk_wait = 15
+
+
+# ---- after a room or the mission: the general's talk, the rewards ------------------------
+
+## The general of the room (0 none), who talks once it is cleared.
+func room_general() -> int:
+	return int(rooms.cells[cell].get("general", 0)) if cell < rooms.cells.size() else 0
+
+
+## "Mission Success!" (with the gold) -> the exp -> the exp for time if in time -> the
+## general's talk -> the mission is over.
+func _next_result_page() -> void:
+	match banner:
+		BANNER_SUCCESS:
+			banner = BANNER_TOTAL_EXP
+		BANNER_TOTAL_EXP:
+			if play_seconds() < time_limit:
+				mission_exp += ((time_limit - play_seconds()) / time_limit / 10 + 1) * mission_exp / 20
+				time_bonus = true
+				banner = BANNER_TIME_EXP
+			else:
+				_mission_over()
+		_:
+			_mission_over()
+
+
+func _mission_over() -> void:
+	banner = 0
+	if mission_general > 0 and mission_general < 200:
+		_start_general_talk(mission_general, 2)
+	else:
+		finished = true
+
+
+## The gold of the mission (twice on hard difficulty, 0).
+func gold_reward() -> int:
+	return mission_gold * 150 * (1 + (difficulty ^ 1))
+
+
+## The exp the mission gives (twice its kills' worth, four times on hard difficulty).
+func exp_reward() -> int:
+	return mission_exp << (1 + (difficulty ^ 1))
+
+
+## A general's words after his room or the mission; the more friendship, the warmer
+## (five lines for every ten points). after: what follows (talk_after).
+func _start_general_talk(id: int, after: int) -> void:
+	set_general(id)
+	var points := mini(int(friendship.get(id, 0)) + FRIENDSHIP_PER_TALK, 100)
+	friendship[id] = points
+	var first := mini(points, 95) / 10 * VICTORY_TALK_STEPS
+	var lines := talk_lines("general")
+	var name := str(general.get("name", ""))
+	talk.clear()
+	for k in VICTORY_TALK_STEPS:
+		var speaker := name if (k & 1) == 0 else HERO_NAME
+		var text := str(lines[first + k]) if first + k < lines.size() else ""
+		talk.append("[%s] %s" % [speaker, text.replace("&", speaker)])
+	talk_line = 0
+	talk_chars = 0
+	talk_wait = 0
+	talk_after = after
+
+
+func _talk_done() -> void:
+	var after := talk_after
+	talk_after = 0
+	if after == 1:
+		room_phase = 1
+		room_phase_timer = 5
+	elif after == 2:
+		finished = true
 
 
 # ---- breakable objects and drops ----------------------------------------------------------

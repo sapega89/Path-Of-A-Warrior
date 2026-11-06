@@ -78,5 +78,25 @@
   "mission.success": {
     "en": "Mission Success!",
     "uk": "Місію виконано!"
+  },
+  "mission.gold": {
+    "en": "Gold Acquired!",
+    "uk": "Здобуто золота!"
+  },
+  "mission.total_exp": {
+    "en": "Total Exp",
+    "uk": "Усього досвіду"
+  },
+  "mission.time_exp": {
+    "en": "Time Exp",
+    "uk": "Досвід за час"
+  },
+  "mission.time_limit": {
+    "en": "Time Limit:",
+    "uk": "Ліміт часу:"
+  },
+  "mission.time_taken": {
+    "en": "Ested Time:",
+    "uk": "Витрачено:"
   }
 }
