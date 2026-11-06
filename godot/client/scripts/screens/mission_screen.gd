@@ -54,6 +54,7 @@ var _pressed := -1
 var _fire := false
 var _hotkey := -1  # a skill key pressed since the last tick
 var _potion := -1  # a potion key pressed since the last tick
+var _belt := -1  # a belt slot used by its key or a click on the skill bar since the last tick
 var _keys_down := {}  # attack, skill and potion keys held at the last frame
 var _last_held := -1
 var _blink := 0
@@ -184,16 +185,20 @@ func _process(delta: float) -> void:
 	for i in 2:
 		if _pressed_now("potion_%d" % (i + 1)):
 			_potion = i
+	for i in 5:
+		if _pressed_now("belt_%d" % (i + 1)):
+			_belt = i
 	_acc += delta
 	while _acc >= tick:
 		_acc -= tick
-		sim.tick(held, _pressed, _fire, _hotkey, _potion)
+		sim.tick(held, _pressed, _fire, _hotkey, _potion, _belt)
 		for n in sim.sounds:
 			Audio.play_sound(n)
 		_pressed = -1
 		_fire = false
 		_hotkey = -1
 		_potion = -1
+		_belt = -1
 		hud.tick()
 		_blink += 1
 		trails = sim.trails(_trail_pick)
@@ -391,6 +396,7 @@ func _release_keys() -> void:
 	_fire = false
 	_hotkey = -1
 	_potion = -1
+	_belt = -1
 	_keys_down.clear()
 
 
@@ -400,3 +406,18 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
 		pause()
+	elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		click_bar(event.position)
+
+
+## A click on the skill bar: a belt slot is used, a skill cast. False when it missed the bar.
+func click_bar(at: Vector2) -> bool:
+	var hit: Array = hud.slot_at(at)
+	if hit.is_empty():
+		return false
+	get_viewport().set_input_as_handled()
+	if hit[0] == "belt":
+		_belt = hit[1]
+	elif hit[0] == "skill":
+		_hotkey = hit[1]
+	return true

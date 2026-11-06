@@ -1,7 +1,8 @@
 extends Control
 ## Assign Items: the hero's gold and the five potion slots. Pick a slot, then one of the two
 ## potion keys to drink from that slot with that key (a slot the other key holds swaps the
-## keys). The keys' marks are shown above the slots they drink from. Saved at once.
+## keys). Above each slot: its belt key (Z X C V B, used in a mission) and the mark of the
+## potion key (* or #) that drinks from it. Saved at once.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
@@ -100,14 +101,14 @@ func _ready() -> void:
 	slots[0].grab_focus.call_deferred()
 
 
-## The first keyboard key of potion key k ("5", "6").
+## The mark of potion key k: "*" or "#" (the keypad's * and /, a pad's RT and L3).
 static func key_name(k: int) -> String:
-	var action := "potion_%d" % (k + 1)
-	if InputMap.has_action(action):
-		for ev in InputMap.action_get_events(action):
-			if ev is InputEventKey:
-				return OS.get_keycode_string(ev.physical_keycode)
-	return str(k + 1)
+	return "*" if k == 0 else "#"
+
+
+## The belt key of slot i ("Z" .. "B").
+static func belt_key(i: int) -> String:
+	return "ZXCVB"[i]
 
 
 func press_slot(i: int) -> void:
@@ -133,10 +134,10 @@ func refresh() -> void:
 		slots[i].icon = ItemSlot.item_icon(id) if id != 0 else null
 		slots[i].add_theme_stylebox_override("normal", ItemSlot.box(i == slot))
 		slots[i].get_parent().get_node("Count").text = "x%d" % int(s[1]) if id != 0 else ""
-		var mark := ""
+		var mark := belt_key(i)
 		for k in 2:
 			if int(profile.quick_keys[k]) == i:
-				mark = key_name(k)
+				mark += " " + key_name(k)
 		marks[i].text = mark
 
 

@@ -4,6 +4,9 @@ extends Node
 ## Game code reads only actions ("attack", "skill_1"), never keys, so the
 ## same code works with a keyboard, a gamepad and the touch buttons.
 ## Menus use Godot's built-in ui_* actions, which already cover all three.
+## As in pyport: 1-5 (or U I O P K) the five skills, Z X C V B the five belt slots, * and #
+## (the numeric keypad, RT and L3 of a pad) the two potion keys; the pad's right stick
+## up / right / down / left uses the belt slots Z X C V.
 
 const KEYS := {
 	"move_left": [KEY_A, KEY_LEFT],
@@ -15,9 +18,14 @@ const KEYS := {
 	"skill_2": [KEY_2, KEY_I],
 	"skill_3": [KEY_3, KEY_O],
 	"skill_4": [KEY_4, KEY_P],
-	"skill_5": [KEY_7, KEY_Y],
-	"potion_1": [KEY_5, KEY_K],
-	"potion_2": [KEY_6, KEY_L],
+	"skill_5": [KEY_5, KEY_K],
+	"potion_1": [KEY_KP_MULTIPLY],
+	"potion_2": [KEY_KP_DIVIDE],
+	"belt_1": [KEY_Z],
+	"belt_2": [KEY_X],
+	"belt_3": [KEY_C],
+	"belt_4": [KEY_V],
+	"belt_5": [KEY_B],
 	"pause": [KEY_ESCAPE],
 }
 const PAD_BUTTONS := {
@@ -30,9 +38,7 @@ const PAD_BUTTONS := {
 	"skill_2": JOY_BUTTON_Y,
 	"skill_3": JOY_BUTTON_LEFT_SHOULDER,
 	"skill_4": JOY_BUTTON_RIGHT_SHOULDER,
-	"skill_5": JOY_BUTTON_BACK,
-	"potion_1": JOY_BUTTON_LEFT_STICK,
-	"potion_2": JOY_BUTTON_RIGHT_STICK,
+	"potion_2": JOY_BUTTON_LEFT_STICK,
 	"pause": JOY_BUTTON_START,
 }
 ## action: [axis, direction]
@@ -41,6 +47,12 @@ const PAD_AXES := {
 	"move_right": [JOY_AXIS_LEFT_X, 1.0],
 	"move_up": [JOY_AXIS_LEFT_Y, -1.0],
 	"move_down": [JOY_AXIS_LEFT_Y, 1.0],
+	"skill_5": [JOY_AXIS_TRIGGER_LEFT, 1.0],
+	"potion_1": [JOY_AXIS_TRIGGER_RIGHT, 1.0],
+	"belt_1": [JOY_AXIS_RIGHT_Y, -1.0],
+	"belt_2": [JOY_AXIS_RIGHT_X, 1.0],
+	"belt_3": [JOY_AXIS_RIGHT_Y, 1.0],
+	"belt_4": [JOY_AXIS_RIGHT_X, -1.0],
 }
 const DEADZONE := 0.3
 

@@ -421,6 +421,19 @@ func test_potion_restores_hp() -> void:
 	eq(sim.effect_item, 0, "nothing in use")
 
 
+## A belt key uses its own slot, whatever slots the * and # keys drink from.
+func test_belt_slot_by_its_key() -> void:
+	var sim: RefCounted = _duel()[0]
+	sim.quick_slots[3] = [1, 2]
+	sim.hero.hp = 10
+	sim.tick(-1, -1, false, -1, -1, 3)
+	for t in 3:
+		sim.tick(-1, -1)
+	eq(sim.hero.hp, 19, "the potion of the fourth slot (V)")
+	eq(int(sim.quick_slots[3][1]), 1, "one left there")
+	eq(sim.skill_mp_need(12, 1), 5, "a skill's MP at level 1")
+
+
 func test_scroll_blast_hits() -> void:
 	var d := _duel()
 	var sim: RefCounted = d[0]

@@ -16,4 +16,5 @@ func test_actions_have_keys_and_pad() -> void:
 			elif ev is InputEventJoypadButton or ev is InputEventJoypadMotion:
 				pad += 1
 		eq(keys, InputSetupScript.KEYS[action].size(), "%s keys" % action)
-		check(pad >= 1, "%s has no gamepad binding" % action)
+		if action != "belt_5":  # the fifth belt slot only by key (or put on * / #)
+			check(pad >= 1, "%s has no gamepad binding" % action)

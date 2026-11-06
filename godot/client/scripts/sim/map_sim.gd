@@ -353,8 +353,10 @@ func _find_spawn_spots() -> void:
 ## One tick. held: the 8-direction of the held direction key (0, 2, 4, 6) or -1.
 ## pressed: a direction key pressed this tick (-1 none), for the original's tap-to-walk.
 ## fire: the attack key was pressed (it also closes a banner). hotkey: a skill key (0..4)
-## pressed, -1 none; potion: a potion key (0, 1), -1 none.
-func tick(held: int, pressed: int = -1, fire: bool = false, hotkey: int = -1, potion: int = -1) -> void:
+## pressed, -1 none; potion: a potion key (0, 1), -1 none; belt: a belt slot (0..4) used by
+## its own key (the skill bar's Z X C V B), -1 none.
+func tick(held: int, pressed: int = -1, fire: bool = false, hotkey: int = -1, potion: int = -1,
+		belt: int = -1) -> void:
 	sounds.clear()
 	hero.prev_pos = hero.pos
 	for e in enemies:
@@ -371,6 +373,8 @@ func tick(held: int, pressed: int = -1, fire: bool = false, hotkey: int = -1, po
 	var skill := 3 if fire else 0
 	if hotkey >= 0 and hotkey < hotkeys.size():
 		skill = hotkeys[hotkey]
+	if belt >= 0 and belt < quick_slots.size():
+		potion = 10 + belt
 	_tick_scene(held, pressed, skill, potion)
 	if banner == 0:
 		_end_tick()
@@ -412,8 +416,10 @@ func _tick_scene(held: int, pressed: int, skill: int, potion: int = -1) -> void:
 		if o.active and o.break_frame != 0:
 			o.break_frame -= 1
 	_tick_effect()
-	if potion >= 0:
-		_use_quick_slot(potion)
+	if potion >= 10:
+		_use_slot(potion - 10)
+	elif potion >= 0 and potion < quick_keys.size():
+		_use_slot(quick_keys[potion])
 	if effect_item > 0:
 		# a potion being drunk or a scroll being read: the world waits
 		if effect_item > 9:
@@ -497,12 +503,19 @@ func _start_hero_action(pressed: int, skill: int = 0) -> void:
 			_sound(11)
 
 
+## The MP a skill (12..30) costs at a level (at its own level when level is -1).
+func skill_mp_need(skill: int, level: int = -1) -> int:
+	if skill < 12 or skill > 30:
+		return 0
+	var k := skill - 12
+	if level < 0:
+		level = skill_levels[k]
+	return SKILL_BASE_COST[k] + (level - 1) * SKILL_COST_PER_LEVEL[k]
+
+
 ## Takes the MP of a skill (12..30) at its level; 0 = not enough MP (nothing is taken).
 func skill_mp_cost(skill: int) -> int:
-	var cost := 0
-	if skill >= 12 and skill <= 30:
-		var k := skill - 12
-		cost = SKILL_BASE_COST[k] + (skill_levels[k] - 1) * SKILL_COST_PER_LEVEL[k]
+	var cost := skill_mp_need(skill)
 	if cost > hero.mp:
 		return 0
 	hero.mp -= cost
@@ -714,12 +727,11 @@ func _clamp_hero() -> void:
 
 # ---- potions and scrolls -------------------------------------------------------------------
 
-## A potion key: the item of its quick slot goes into use (a scroll only while standing
-## or walking: the hero holds it up first).
-func _use_quick_slot(key: int) -> void:
-	if effect_item != 0 or hero.action >= 10 or key < 0 or key >= quick_keys.size():
+## The item of a quick slot (0..4) goes into use, by a potion key or the slot's belt key (a
+## scroll only while standing or walking: the hero holds it up first).
+func _use_slot(sel: int) -> void:
+	if effect_item != 0 or hero.action >= 10 or sel < 0 or sel >= quick_slots.size():
 		return
-	var sel := quick_keys[key]
 	var item := int(quick_slots[sel][0])
 	if item == 0:
 		return
