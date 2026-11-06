@@ -59,6 +59,26 @@ func _ready() -> void:
 	await _seconds(1.0)
 	print("room after walking down: ", mission.sim.cell, " stage ", mission.sim.rooms_visited)
 	await _shot(out, "mission_1_room_2")
+	# Potions in the quick slots of the HUD, then one drunk.
+	var msim: RefCounted = mission.sim
+	msim.no_enemies = true
+	while msim.banner != 0 or not msim.talk.is_empty():
+		Input.action_press("attack")
+		await _frames(2)
+		Input.action_release("attack")
+		await _seconds(0.2)
+	msim.add_quick_item(4)
+	msim.add_quick_item(4)
+	msim.add_quick_item(1)
+	msim.hero.hp = msim.hero.max_hp / 2
+	msim.hero.mp = msim.hero.max_mp / 3
+	await _seconds(0.3)
+	await _shot(out, "mission_1_potions")
+	Input.action_press("potion_1")
+	await _frames(2)
+	Input.action_release("potion_1")
+	await _seconds(0.1)
+	await _shot(out, "mission_1_potion_drunk")
 	# A general: he comes in with his talk, then the fight.
 	Router.go("mission", {"lord": 1, "mission": 0, "seed": 2})
 	mission = Router.current
@@ -95,10 +115,14 @@ func _ready() -> void:
 				Input.action_release("attack")
 				await _seconds(0.15)
 			sim.hero.mp = sim.hero.max_mp  # the first skill, a dash, against the general
-			Input.action_press("skill_1")
-			await _frames(2)
-			Input.action_release("skill_1")
-			await _seconds(0.45)
+			for i in 20:  # (it starts when the hero stands or walks)
+				Input.action_press("skill_1")
+				await _frames(2)
+				Input.action_release("skill_1")
+				await _seconds(0.1)
+				if sim.hero.action == 12:
+					break
+			await _seconds(0.3)
 			await _shot(out, "mission_1_skill")
 	_release_all()
 	print("general: hp ", sim.hero.hp, " won ", sim.won, " failed ", sim.failed)
