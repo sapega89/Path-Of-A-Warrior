@@ -425,6 +425,36 @@ def export_items(out):
     return len(gear) + len(treasures) + len(rare)
 
 
+# The stories (edat 63 the opening, 64.. the endings, six to a file). Ending s: its lines
+# from story_offsets[2s] - the file's first, talk pages up to story_offsets[2s + 1], picture
+# pages up to story_offsets[2s + 2]. Story pictures are imgui e1..e15, portraits imgchar
+# 0..41 (noface, the generals jang_1..37, the hero's heads ju_1..4).
+STORY_PICTURES = ["e%d" % i for i in range(1, 16)]
+
+
+def export_stories(out, assets):
+    sys.path.insert(0, str(ROOT / "pyport"))
+    from pow.game import consts
+    edat = scr.load(ROOT / "edat.scr")
+    offsets = consts.story_offsets
+    endings = []
+    for s in range(24):
+        lines = read_table(ROOT / edat[64 + s // 6])
+        base = offsets[s // 6 * 12]
+        p0, p1, p2 = (offsets[2 * s + i] - base for i in range(3))
+        endings.append({"talk": lines[p0:p1], "pictures": lines[p1:p2]})
+    stories = {"opening": read_table(ROOT / edat[63]), "endings": endings,
+               "gamestr": read_table(ROOT / "gamestr.scr")[:2]}
+    (out / "stories.json").write_text(json.dumps(stories, ensure_ascii=False, indent=0))
+    (assets / "story").mkdir(parents=True, exist_ok=True)
+    for name in STORY_PICTURES:
+        Image.open(ROOT / (name + ".png")).convert("RGBA").save(assets / "story" / (name + ".png"))
+    chars = scr.load(ROOT / "imgchar.scr")
+    (assets / "portraits").mkdir(parents=True, exist_ok=True)
+    for i in range(42):
+        Image.open(ROOT / (chars[i] + ".png")).convert("RGBA").save(assets / "portraits" / ("%d.png" % i))
+
+
 def cstr(b):
     return bytes(b).split(b"\0")[0].decode("utf-8", "replace")
 
@@ -582,6 +612,7 @@ def main():
     export_talk(CLIENT / "data")
     export_skills(CLIENT / "data")
     export_items(CLIENT / "data")
+    export_stories(CLIENT / "data", CLIENT / "assets" / "original")
     atlas, found = build_atlas(tile_names)
     out_tiles = CLIENT / "assets" / "original"
     out_tiles.mkdir(parents=True, exist_ok=True)

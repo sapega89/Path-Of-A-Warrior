@@ -51,6 +51,8 @@ var done := {}  # "lord:mission" of the missions won
 var place := 0  # where the hero is: the lords of campaign chapter `place` can be fought for
 var lords_open := START_LORDS_OPEN  # bit (id - 1) set: that lord can be fought for
 var endings := 0  # bit i set: ending i was reached
+var reward_item := 0  # what the last ending gave (not saved)
+var opened_lord := 0  # the lord the last ending opened (not saved)
 
 static var _exp_table: Array = []
 
@@ -304,6 +306,8 @@ func advance(sim: RefCounted, lord_id: int, info: Dictionary, rng: RandomNumberG
 		place = lord_id
 		ending = reward - ENDING_BASE
 		gold += int(sim.gold_reward())
+	reward_item = 0
+	opened_lord = 0
 	if ending < 0:
 		return -1
 	if ending != 3 or has_item(SCARF):
@@ -321,9 +325,11 @@ func advance(sim: RefCounted, lord_id: int, info: Dictionary, rng: RandomNumberG
 		if lords_open & (1 << i) == 0:
 			closed.append(i)
 	if not closed.is_empty():
-		lords_open |= 1 << int(closed[rng.randi_range(0, closed.size() - 1)])
-	if item != 0:
-		add_item(Items.make(item, rng))
+		var i := int(closed[rng.randi_range(0, closed.size() - 1)])
+		lords_open |= 1 << i
+		opened_lord = i + 1
+	if item != 0 and add_item(Items.make(item, rng)):
+		reward_item = item
 	if ending == 3 and not has_item(SCARF):
 		place = 4  # without the scarf the story of ending 3 is not told: back to chapter 4
 	return ending

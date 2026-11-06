@@ -191,9 +191,12 @@ func _process(delta: float) -> void:
 	if sim.finished:
 		set_process(false)
 		profile.take_from(sim, lord_id, mission, int(mission_info.get("id", 0)))
-		profile.advance(sim, lord_id, mission_info)
+		var ending: int = profile.advance(sim, lord_id, mission_info)
 		profile.save()
 		Router.back()
+		if ending >= 0:
+			Router.push("story", {"story": ending, "reward_item": profile.reward_item,
+				"opened_lord": profile.opened_lord})
 		return
 	_update_view(_acc / TICK)
 
