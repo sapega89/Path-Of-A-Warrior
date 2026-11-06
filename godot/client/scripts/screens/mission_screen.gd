@@ -20,7 +20,8 @@ const Effects := preload("res://scripts/world/effects.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const MissionPause := preload("res://scripts/ui/mission_pause.gd")
 
-const TICK := MapSim.TICK_MS / 1000.0
+## One tick of the game, by the game speed of the settings (MapSim.TICK_MS at Med).
+var tick := MapSim.TICK_MS / 1000.0
 const ARROW_SCALE := 3.0
 const ARROW_PATH := "res://assets/original/ui/arrow%d.png"
 
@@ -61,6 +62,7 @@ var pause_menu: MissionPause  # shown while the game is paused
 
 func _ready() -> void:
 	var p: Dictionary = Router.params
+	tick = Settings.tick_seconds()
 	lord_id = int(p.get("lord", 1))
 	mission = int(p.get("mission", 0))
 	var campaign := Campaign.new()
@@ -183,8 +185,8 @@ func _process(delta: float) -> void:
 		if _pressed_now("potion_%d" % (i + 1)):
 			_potion = i
 	_acc += delta
-	while _acc >= TICK:
-		_acc -= TICK
+	while _acc >= tick:
+		_acc -= tick
 		sim.tick(held, _pressed, _fire, _hotkey, _potion)
 		for n in sim.sounds:
 			Audio.play_sound(n)
@@ -205,7 +207,7 @@ func _process(delta: float) -> void:
 			Router.push("story", {"story": ending, "reward_item": profile.reward_item,
 				"opened_lord": profile.opened_lord})
 		return
-	_update_view(_acc / TICK)
+	_update_view(_acc / tick)
 
 
 ## The key went down since the last frame (a press seen once, whenever the frame runs).
