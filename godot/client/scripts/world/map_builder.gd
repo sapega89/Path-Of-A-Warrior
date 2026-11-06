@@ -13,6 +13,9 @@ extends Node3D
 ##                        MAX_STAND_RUN cells (houses, tents, trees, walls); longer blocked areas are
 ##                        cliffs, water or forest drawn from above and stay flat
 ##   objects layer     -> breakable things as sprites facing the camera
+##   around the map    -> the ground goes on OUTSIDE cells past each edge, each cell with the
+##                        ground of the nearest edge cell and darker (OUTSIDE_SHADE), so the
+##                        camera sees no black there and the map stands out
 ## Collision is per cell as in the original: a blocked cell or an object is a solid box.
 
 const ATLAS_PATH := "res://assets/original/tiles.png"
@@ -24,6 +27,8 @@ const FLAG_OVER := 2
 const WALL_HEIGHT := 1.5  # collision height of a blocked cell
 const DECAL_LIFT := 0.002
 const MAX_STAND_RUN := 3
+const OUTSIDE := 16  # cells of ground around the map: as far as the camera sees past an edge
+const OUTSIDE_SHADE := Color(0.55, 0.55, 0.55)
 
 var map: Dictionary
 var w := 0
@@ -114,6 +119,7 @@ func build(data: Dictionary) -> void:
 	floor_mat = _material(false)
 	stand_mat = _material(true)
 	_build_floor()
+	_build_outside()
 	_build_standing()
 	_build_objects()
 	_build_collision()
@@ -142,6 +148,24 @@ func _build_floor() -> void:
 			if u != 0 and not is_standing(x, y):
 				_flat_quad(st, x, y, DECAL_LIFT, u)
 	_add_mesh("Floor", st, stand_mat)  # decals have transparent pixels
+
+
+## The ground around the map: a cell outside shows the ground of the nearest edge cell.
+func _build_outside() -> void:
+	if w < 1 or h < 1:
+		return
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	for y in range(-OUTSIDE, h + OUTSIDE):
+		for x in range(-OUTSIDE, w + OUTSIDE):
+			if x >= 0 and y >= 0 and x < w and y < h:
+				continue
+			var g := cell("ground", clampi(x, 0, w - 1), clampi(y, 0, h - 1))
+			if g != 0:
+				_flat_quad(st, x, y, 0.0, g)
+	var m := _material(false)
+	m.albedo_color = OUTSIDE_SHADE
+	_add_mesh("Outside", st, m)
 
 
 func _build_standing() -> void:
