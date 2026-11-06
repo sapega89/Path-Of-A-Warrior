@@ -315,6 +315,25 @@ func _ready() -> void:
 	await _frames(2)
 	await _shot(out, "11k_online_options")
 	Router.back()
+	# Duel and Mission: the menu, searching for an opponent, a Challenge, the order's members.
+	var duel := {"online": mp, "kind": "duel"}
+	Router.push("online_battles", duel)
+	await _frames(2)
+	await _shot(out, "11l_online_duel")
+	Router.current.buttons[0].pressed.emit()
+	await _frames(2)
+	await _shot(out, "11m_online_searching")
+	Router.current.cancel.pressed.emit()
+	Router.push("online_text", {"online": mp, "kind": "challenge1"})
+	await _frames(2)
+	Router.current.fields[0].text = "RAVEN"
+	await _shot(out, "11n_online_challenge")
+	Router.back()
+	Router.push("online_order", {"online": mp, "pick": OnlineClient.TOGETHER})
+	await _frames(2)
+	await _shot(out, "11o_online_order_pick")
+	Router.back()
+	Router.back()
 	await _battle_shots(out, game, mp)
 	mp.leave()
 	# The Blacksmith: buying from the shop, and enchanting the sword in hand.
@@ -600,10 +619,10 @@ const DIR_ACTIONS := {0: "move_down", 2: "move_left", 4: "move_up", 6: "move_rig
 ## blow at a monster).
 func _battle_shots(out: String, game: RefCounted, mp: RefCounted) -> void:
 	game.match_wait = 0
-	var params := {"online": mp}
-	var none := func(_e: String) -> void: pass
-	mp.find_battle(0, none)
-	Router.push("online_battle", params)
+	var params := {"online": mp, "profile_path": "user://shot_online/hero.json"}
+	mp.on_battle = func() -> void: Router.push("online_battle", params)
+	Router.push("online_battles", {"online": mp, "kind": "duel"})
+	Router.current.buttons[0].pressed.emit()  # 1-on-1 Duel
 	var screen: Node = Router.current
 	screen.set_process(false)
 	await _battle_until(screen, func(b: RefCounted) -> bool: return b.state == OnlineBattle.QUOTES and b.state_ticks >= 8)
@@ -617,8 +636,7 @@ func _battle_shots(out: String, game: RefCounted, mp: RefCounted) -> void:
 	await _battle_until(screen, func(_b: RefCounted) -> bool: return false)
 	await _shot(out, "12e_battle_result")
 	await _battle_leave(screen)
-	mp.find_battle(1, none)
-	Router.push("online_battle", params)
+	Router.current.buttons[1].pressed.emit()  # 2-on-2 Duel
 	screen = Router.current
 	screen.set_process(false)
 	await _battle_until(screen, func(b: RefCounted) -> bool: return b.state == OnlineBattle.CHOOSE and b.state_ticks == 3)
@@ -632,8 +650,9 @@ func _battle_shots(out: String, game: RefCounted, mp: RefCounted) -> void:
 	await _battle_until(screen, _blow_shown)
 	await _shot(out, "12h_battle_2v2_blow")
 	await _battle_leave(screen)
-	mp.find_battle(2, none)
-	Router.push("online_battle", params)
+	Router.back()
+	Router.push("online_battles", {"online": mp, "kind": "mission"})
+	Router.current.buttons[0].pressed.emit()  # Solo Mission
 	screen = Router.current
 	screen.set_process(false)
 	await _battle_until(screen, func(b: RefCounted) -> bool: return b.state == OnlineBattle.STAGE_INTRO and b.state_ticks >= 4)
@@ -641,6 +660,8 @@ func _battle_shots(out: String, game: RefCounted, mp: RefCounted) -> void:
 	await _battle_until(screen, _blow_shown)
 	await _shot(out, "12j_mission_blow")
 	await _battle_leave(screen)
+	Router.back()
+	mp.on_battle = Callable()
 
 
 ## A blow's change of HP shown over a fighter.

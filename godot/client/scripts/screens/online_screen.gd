@@ -8,10 +8,10 @@ extends Control
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const OnlineClient := preload("res://scripts/net/online_client.gd")
-## Page button name, text key, screen (empty: not open yet).
+## Page button name, text key, screen (empty: not open yet), and its kind for the screen.
 const PAGES := [
-	["Duel", "online.duel", ""],
-	["Mission", "online.mission", ""],
+	["Duel", "online.duel", "online_battles", "duel"],
+	["Mission", "online.mission", "online_battles", "mission"],
 	["Character", "online.character", "online_character"],
 	["Ranking", "online.ranking", "online_ranking"],
 	["Order", "online.order", "online_order"],
@@ -40,8 +40,11 @@ func _ready() -> void:
 		b.text = page[1]
 		b.disabled = true
 		var screen: String = page[2]
+		var params: Dictionary = Router.params.duplicate()
+		if page.size() > 3:
+			params.kind = page[3]
 		if not screen.is_empty():
-			b.pressed.connect(func(): Router.push(screen, Router.params))
+			b.pressed.connect(func(): Router.push(screen, params))
 		col.add_child(b)
 		buttons.append(b)
 	chat = buttons[5]

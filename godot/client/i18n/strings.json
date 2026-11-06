@@ -1254,5 +1254,121 @@
   "online.battle_auto": {
     "en": "Auto",
     "uk": "Авто"
+  },
+  "online.duel_1on1": {
+    "en": "1-on-1 Duel",
+    "uk": "Дуель 1 на 1"
+  },
+  "online.duel_2on2": {
+    "en": "2-on-2 Duel",
+    "uk": "Дуель 2 на 2"
+  },
+  "online.challenge_1": {
+    "en": "Challenge 1:1",
+    "uk": "Виклик 1:1"
+  },
+  "online.challenge_2": {
+    "en": "Challenge 2:2",
+    "uk": "Виклик 2:2"
+  },
+  "online.duel_order": {
+    "en": "2-on-2 Order",
+    "uk": "2 на 2 з орденом"
+  },
+  "online.mission_solo": {
+    "en": "Solo Mission",
+    "uk": "Соло-місія"
+  },
+  "online.mission_ally": {
+    "en": "Invite An Ally",
+    "uk": "Запросити союзника"
+  },
+  "online.mission_order": {
+    "en": "Order Ally",
+    "uk": "Союзник з ордену"
+  },
+  "online.searching": {
+    "en": "Searching for opponent",
+    "uk": "Шукаю суперника"
+  },
+  "online.cancel_search": {
+    "en": "Cancel",
+    "uk": "Скасувати"
+  },
+  "online.title_challenge1": {
+    "en": "Challenge 1:1",
+    "uk": "Виклик 1:1"
+  },
+  "online.hint_challenge1": {
+    "en": "The UserID of the player to fight (4-12 letters).",
+    "uk": "UserID гравця, з яким битися (4-12 літер)."
+  },
+  "online.title_challenge2": {
+    "en": "Challenge 2:2",
+    "uk": "Виклик 2:2"
+  },
+  "online.hint_challenge2": {
+    "en": "The UserID of the player to fight, each with a CPU ally (4-12 letters).",
+    "uk": "UserID гравця, з яким битися, у кожного CPU-союзник (4-12 літер)."
+  },
+  "online.title_ally": {
+    "en": "Invite An Ally",
+    "uk": "Запросити союзника"
+  },
+  "online.hint_ally": {
+    "en": "The UserID of the player to take on the mission (4-12 letters).",
+    "uk": "UserID гравця, якого взяти в місію (4-12 літер)."
+  },
+  "online.together_2on2": {
+    "en": "2-on-2 Together",
+    "uk": "2 на 2 разом"
+  },
+  "online.together_mission": {
+    "en": "Mission Together",
+    "uk": "Місія разом"
+  },
+  "online.together_ask": {
+    "en": "A battle with %s:",
+    "uk": "Бій разом із %s:"
+  },
+  "online.pick_together": {
+    "en": "Choose a member online: 2-on-2 Together.",
+    "uk": "Оберіть учасника онлайн: 2 на 2 разом."
+  },
+  "online.pick_ally": {
+    "en": "Choose a member online: Mission Together.",
+    "uk": "Оберіть учасника онлайн: місія разом."
+  },
+  "online.err_self_invite": {
+    "en": "You cannot invite yourself.",
+    "uk": "Не можна запросити себе."
+  },
+  "online.err_not_online": {
+    "en": "The user is not online.",
+    "uk": "Гравець не в мережі."
+  },
+  "online.err_playing": {
+    "en": "The invitation cannot be replied. Please try again later.",
+    "uk": "Гравець зараз у бою. Спробуйте пізніше."
+  },
+  "online.err_denied": {
+    "en": "Your invitation is denied.",
+    "uk": "Запрошення відхилено."
+  },
+  "online.err_not_member": {
+    "en": "The player is not in your order.",
+    "uk": "Гравець не з вашого ордену."
+  },
+  "online.err_busy": {
+    "en": "You are already in a battle or waiting for one.",
+    "uk": "Ви вже в бою або чекаєте на нього."
+  },
+  "online.battle_level_up": {
+    "en": "Level Up! (+%d)",
+    "uk": "Новий рівень! (+%d)"
+  },
+  "online.battle_bag_full": {
+    "en": "No room for the loot!",
+    "uk": "Немає місця для здобичі!"
   }
 }

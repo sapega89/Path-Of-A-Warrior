@@ -12,11 +12,19 @@ extends RefCounted
 ##
 ## A battle (scripts/net/online_battle.gd) starts with the server's "room" message, after
 ## find_battle() or invite(), or when another player's invitation takes me in: it is `battle`
-## until the screen is done with it, and the battle's messages go to it.
+## until the screen is done with it, and the battle's messages go to it. on_battle() is
+## called when one starts, to show it (the Cloud pushes the battle screen).
 
 const OnlineBattle := preload("res://scripts/net/online_battle.gd")
 const BATTLE_PUSHES := ["room", "stage_info", "all_ready", "round_start", "turn_result",
 	"stage_end", "room_join", "battle_end"]
+
+## invite() modes: Challenge 1:1, Challenge 2:2, Invite An Ally (a mission), 2-on-2 side by
+## side with a member of my order against two CPU fighters.
+const CHALLENGE_1 := 0
+const CHALLENGE_2 := 1
+const ALLY := 2
+const TOGETHER := 3
 
 const SKILL_IDS := [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 const EMPTY_SKILL := 99
@@ -56,6 +64,7 @@ var peers: Array = []  # [{id, name, unread, online}]
 var reading := ""  # the conversation a screen shows (its pushes are not unread)
 var battle: RefCounted = null  # the battle on, from its "room" message
 var waiting := false  # a duel waits for an opponent
+var on_battle := Callable()  # a battle started: show it
 var _listeners: Array = []  # [WeakRef, method]
 
 
@@ -124,11 +133,14 @@ func on_push(m: Dictionary) -> void:
 			entered = false
 			battle = null
 		var t when BATTLE_PUSHES.has(t):
-			if t == "room":
+			var started: bool = t == "room"
+			if started:
 				waiting = false
 				battle = OnlineBattle.new(battle_request, me)
 			if battle != null:
 				battle.on_push(m)
+			if started and on_battle.is_valid():
+				on_battle.call()
 	var alive: Array = []
 	for l in _listeners:
 		var s: Object = l[0].get_ref()

@@ -5,12 +5,16 @@ extends Control
 ## shows it and passes the keys: arrows choose (Right Attack, Left Defend, Up Evade, Down a
 ## skill), Enter / Space confirms and stops the timing bar, Esc asks to leave the battle, Tab
 ## turns auto-battle on and off. The pad's buttons, the skills and the bar take the mouse too.
-## Router.params: online (the client, tests); the battle is the client's `battle`.
+## What the battle earned goes to the hero as soon as the result comes: gold, fame, exp (a
+## level maybe), the loot into the backpack (a potion onto the belt).
+## Router.params: online (the client, tests), profile_path (tests); the battle is the
+## client's `battle`.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const OnlineClient := preload("res://scripts/net/online_client.gd")
 const OnlineBattle := preload("res://scripts/net/online_battle.gd")
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
+const Profile := preload("res://scripts/core/profile.gd")
 const MP := "res://assets/original/mp/"
 ## World units per original pixel: one 27 px map tile is one unit, as on the map.
 const PX := 1.0 / 27.0
@@ -44,6 +48,10 @@ const GREEN := Color8(65, 255, 65)
 
 var online: RefCounted
 var battle: RefCounted
+var profile_path: String = Profile.PATH
+var rewarded := false  # the result's rewards went to the hero
+var levels_gained := 0
+var loot_lost := false  # no room for it
 var info := {}
 var viewport: SubViewport
 var camera: Camera3D
@@ -82,6 +90,7 @@ class Layer extends Control:
 func _ready() -> void:
 	online = OnlineClient.of(Router.params)
 	battle = null if online == null else online.battle
+	profile_path = str(Router.params.get("profile_path", Profile.PATH))
 	var f := FileAccess.open(OnlineBattle.DATA, FileAccess.READ)
 	if f != null:
 		info = JSON.parse_string(f.get_as_text())
@@ -561,6 +570,8 @@ func play_sound(n: int) -> void:
 
 ## Shows the battle as it is now.
 func _refresh() -> void:
+	if battle.state == OnlineBattle.RESULT and not rewarded:
+		take_rewards()
 	if battle.bg != _bg_shown:
 		show_background(battle.bg)
 	_show_fighters()
@@ -623,6 +634,23 @@ func center_message() -> String:
 	return ""
 
 
+## The rewards of battle_end to the hero, once.
+func take_rewards() -> void:
+	rewarded = true
+	var r: Dictionary = battle.result
+	var p: RefCounted = Profile.load_or_new(profile_path)
+	p.gold = clampi(int(p.gold) + int(r.get("gold", 0)), 0, 0x7FFFFFFF)
+	p.fame = clampi(int(p.fame) + int(r.get("fame", 0)), 0, 0x7FFFFFFF)
+	levels_gained = p.gain_exp(int(r.get("exp", 0))) if int(r.get("exp", 0)) > 0 else 0
+	var loot: Variant = r.get("loot", {})
+	if loot is Dictionary and int((loot as Dictionary).get("id", 0)) > 0:
+		var item: Dictionary = (loot as Dictionary).duplicate()
+		item.erase("name")
+		var id := int(item.id)
+		loot_lost = not (p.add_potion(id) if id <= 11 else p.add_item(item))
+	p.save(profile_path)
+
+
 func result_text() -> String:
 	var b: RefCounted = battle
 	var r: Dictionary = b.result
@@ -639,10 +667,14 @@ func result_text() -> String:
 		lines.append(tr("online.battle_gold") % int(r.get("gold", 0)))
 		lines.append(tr("online.battle_exp") % int(r.get("exp", 0)))
 		lines.append(tr("online.battle_fame") % int(r.get("fame", 0)))
-		var loot: Variant = r.get("loot", {})
-		if loot is Dictionary and not (loot as Dictionary).is_empty():
-			lines.append(tr("online.battle_loot") % str(loot.get("name", "")))
+	var loot: Variant = r.get("loot", {})
+	if loot is Dictionary and not (loot as Dictionary).is_empty():
+		lines.append(tr("online.battle_loot") % str(loot.get("name", "")))
+		if loot_lost:
+			lines.append(tr("online.battle_bag_full"))
 	lines.append(tr("online.battle_rank") % int(r.get("rank", 0)))
+	if levels_gained > 0:
+		lines.append(tr("online.battle_level_up") % levels_gained)
 	lines.append("")
 	lines.append(tr("online.battle_ok"))
 	return "\n".join(lines)
