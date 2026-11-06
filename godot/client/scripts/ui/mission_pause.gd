@@ -1,6 +1,6 @@
 extends Control
 ## The pause menu of a mission, over the stopped game: Resume, Options (the settings, shown
-## over it), Exit to Menu (the mission is lost, back to the campaign) and Exit Game (not on
+## over it), Help (shown over it too), Exit to Menu (the mission is lost, back to the campaign) and Exit Game (not on
 ## phones and the web). Back resumes.
 
 signal resumed
@@ -8,10 +8,11 @@ signal resumed
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const MainMenu := preload("res://scripts/screens/main_menu.gd")
 const SettingsScreen := preload("res://scripts/screens/settings_screen.gd")
+const HelpScreen := preload("res://scripts/screens/help_screen.gd")
 
 var buttons: Array[Button] = []
 var menu: Control
-var settings: Control
+var settings: Control  # the settings or the help shown over the menu
 
 
 func _ready() -> void:
@@ -28,6 +29,7 @@ func _ready() -> void:
 	col.add_child(UiTheme.heading("pause.title", 44))
 	_add(col, "Resume", "pause.resume", func(): resumed.emit())
 	_add(col, "Options", "pause.options", open_options)
+	_add(col, "Help", "pause.help", open_help)
 	_add(col, "Exit", "pause.exit", func(): Router.back())
 	if MainMenu.show_quit():
 		_add(col, "Quit", "pause.quit", func(): get_tree().quit())
@@ -45,20 +47,30 @@ func _add(col: VBoxContainer, node_name: String, text_key: String, on_press: Cal
 
 ## The settings over the pause menu; their Back comes back here.
 func open_options() -> void:
+	_open_over(SettingsScreen.new(), "Settings")
+
+
+## The help over the pause menu; leaving it comes back here.
+func open_help() -> void:
+	_open_over(HelpScreen.new(), "Help")
+
+
+func _open_over(screen: Control, node_name: String) -> void:
 	menu.visible = false
-	settings = SettingsScreen.new()
-	settings.name = "Settings"
+	settings = screen
+	settings.name = node_name
 	settings.set_anchors_preset(Control.PRESET_FULL_RECT)
 	settings.close = close_options
 	add_child(settings)
 
 
 func close_options() -> void:
+	var was := "" if settings == null else str(settings.name)
 	if settings != null:
 		settings.queue_free()
 		settings = null
 	menu.visible = true
-	buttons[1].grab_focus.call_deferred()
+	buttons[2 if was == "Help" else 1].grab_focus.call_deferred()
 
 
 func _unhandled_input(event: InputEvent) -> void:
