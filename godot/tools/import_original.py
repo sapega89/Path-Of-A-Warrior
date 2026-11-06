@@ -564,7 +564,9 @@ UI_IMAGES = ["arrow0", "arrow1", "arrow2", "arrow3",  # exit arrows: down, left,
              # the skills' icons (28 px, skill 12 first), learned and not yet learned
              "skill", "skillgray",
              # the icons of gear, treasures and rare things (28 px), the Gear page's frame
-             "kibo", "sungbo", "shinki", "ui_equipbox"]
+             "kibo", "sungbo", "shinki", "ui_equipbox",
+             # the Blacksmith's sparkle over what is enchanted or combined (5 frames)
+             "itemReinforce"]
 
 
 def export_ui(out):
