@@ -90,7 +90,7 @@ static func describe(item: Dictionary) -> String:
 	var id := int(item.get("id", 0))
 	if id == 0:
 		return ""
-	var text := name_of(id) + SUFFIX.get(id, "")
+	var text: String = name_of(id) + str(SUFFIX.get(id, ""))
 	for k in [["attack", "ATK"], ["defense", "DEF"], ["hp", "HP"], ["mp", "MP"]]:
 		var v := int(item.get(k[0], 0))
 		if v != 0:
