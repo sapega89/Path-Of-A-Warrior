@@ -35,3 +35,18 @@ jobs:
 
       - name: Tests
         run: timeout 300 "$RUNNER_TEMP/godot" --headless --path godot/client res://tests/runner.tscn
+
+      - name: Screenshots
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgl1 libegl1 mesa-utils > /dev/null
+          mkdir -p "$RUNNER_TEMP/shots"
+          timeout 300 xvfb-run -a -s "-screen 0 1280x720x24" \
+            "$RUNNER_TEMP/godot" --path godot/client --rendering-driver opengl3 --resolution 1280x720 \
+            res://tools/shots.tscn -- "$RUNNER_TEMP/shots"
+          ls "$RUNNER_TEMP/shots"
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: godot-shots
+          path: ${{ runner.temp }}/shots
