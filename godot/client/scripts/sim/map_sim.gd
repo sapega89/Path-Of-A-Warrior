@@ -90,6 +90,8 @@ class Actor:
 	var shown_dir := 0  # the direction of the last drawn tick
 	var idle_ticks := 20
 	var prev_pos := Vector2i.ZERO  # the position at the start of the tick (for drawing)
+	var last_action := 0  # the action and frame at the end of the last tick
+	var last_frame := 0
 	var type := 0  # enemies: 201 swords, 202 archers, 203 a squad of swords
 	var level := 1
 	var attack := 0
@@ -857,6 +859,8 @@ func _end_tick() -> void:
 	# hero looks where he faces again.
 	hero.shown_dir = hero.dir
 	hero.dir = hero.facing
+	hero.last_action = hero.action
+	hero.last_frame = hero.frame
 	hero.idle_ticks += 1
 	_buffed = hero.attack_buff_ticks > 0 or hero.defense_buff_ticks > 0
 	if hero.attack_buff_ticks > 0:
@@ -1691,6 +1695,8 @@ func _tick_arrows() -> void:
 			a.active = false
 			hero_is_hit(null, a)
 			continue
+		if arrows_wait():
+			continue
 		a.ticks += 1
 		if a.ticks > 22:
 			a.active = false
@@ -1700,6 +1706,21 @@ func _tick_arrows() -> void:
 			1: a.pos.x -= 12
 			2: a.pos.y -= 12
 			3: a.pos.x += 12
+
+
+## The arrows stand still while a big skill of the hero holds the room, as in pyport
+## (hero_can_be_hit; the hero's action and frame of the last tick): skills 26 and 27 on their
+## frames 2 to 8, 28 from frame 4 on, 29 from frame 7 on, 30 on frames 4 to 14.
+func arrows_wait() -> bool:
+	var action := hero.last_action
+	var frame := hero.last_frame
+	if action == 26 or action == 27:
+		return frame > 1 and frame < 9
+	if action == 28:
+		return frame > 3
+	if action == 29:
+		return frame > 6
+	return action == 30 and frame > 3 and frame < 15
 
 
 # ---- talks over the map ------------------------------------------------------------------
