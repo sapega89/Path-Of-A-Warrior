@@ -191,3 +191,34 @@ func test_combine_screen() -> void:
 	screen.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
+
+
+## As pyport's popup 39: Combine with fewer than 3 things in the Inventory only says so.
+func test_combine_needs_three_things() -> void:
+	var p := Profile.new()
+	for id in [101, 156]:
+		p.add_item(Items.make(id))
+	p.save(TEST_PATH)
+	var old: Dictionary = Router.params
+	var host := Control.new()
+	root.add_child(host)
+	Router.attach(host)
+	Router.go("blacksmith", {"profile_path": TEST_PATH})
+	var smith: Control = Router.current
+	eq(smith.things(), 2, "two things")
+	check(not smith.open_page("combine"), "Combine does not open")
+	check(smith.notice.visible, "it says why")
+	eq(smith.notice.dialog_text, "combine.too_few", "\"at least 3 items\"")
+	eq(Router.current_name(), "blacksmith", "still the Blacksmith")
+	smith.notice.hide()
+	check(smith.open_page("sell"), "the other pages open")
+	Router.back()
+	p.add_item(Items.make(186))
+	p.save(TEST_PATH)
+	smith = Router.current
+	check(smith.open_page("combine"), "three: Combine opens")
+	eq(Router.current_name(), "shop", "the Combine page")
+	Router.attach(null)
+	host.free()
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))

@@ -99,13 +99,14 @@ func turn_page(step: int) -> void:
 	show_page()
 
 
-## Plays an ending reached; one not reached only says why.
+## Plays an ending reached (again: without the numbers at its end); one not reached only says
+## why.
 func open(i: int) -> bool:
 	if not reached(i):
 		info.text = "endings.locked"
 		return false
 	Router.params["page"] = page
-	Router.push("story", {"story": i, "profile_path": path})
+	Router.push("story", {"story": i, "replay": true, "profile_path": path})
 	return true
 
 

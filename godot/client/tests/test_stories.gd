@@ -3,6 +3,9 @@ extends "res://tests/test_case.gd"
 const Stories := preload("res://scripts/core/stories.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const Story := preload("res://scripts/screens/story_screen.gd")
+const UiTheme := preload("res://scripts/ui/ui_theme.gd")
+const Campaign := preload("res://scripts/core/campaign.gd")
+const ENDING_2 := {"story": 2, "reward_item": 502, "opened_lord": 8, "profile_path": "user://no_such_hero.json"}
 
 
 func test_opening_pages() -> void:
@@ -45,23 +48,120 @@ func test_stats() -> void:
 	eq(lines[11], "5 %", "the average")
 
 
-func test_story_screen() -> void:
-	var old: Dictionary = Router.params
-	Router.params = {"story": 2, "reward_item": 502, "opened_lord": 8, "profile_path": "user://no_such_hero.json"}
+func _story(params: Dictionary) -> Control:
+	Router.params = params
 	var screen: Control = Story.new()
 	root.add_child(screen)
-	eq(screen.page, 0, "the first page")
-	check(screen.portrait.visible, "a talk page shows a portrait")
-	eq(screen.text.visible_characters, 0, "typing")
+	return screen
+
+
+
+## A talk, as pyport's: two boxes under "Epilogue", the one who speaks at the top, the hero at
+## the bottom; each keeps its last line.
+func test_story_talk() -> void:
+	var old: Dictionary = Router.params
+	var screen := _story(ENDING_2)
+	eq(screen.title.text, "story.epilogue", "an ending: the epilogue")
+	check(screen.talk_box.visible and not screen.background.visible, "the talk on the menu's background")
+	eq(screen.typing, screen.speaker_says, "Catherine speaks at the top")
+	eq(screen.speaker_says.text, "[Catherine] It's cold... so cold. I'm... slipping... away...", "her line")
+	check(screen.speaker_portrait.texture.resource_path.ends_with("/37.png"), "beside her portrait")
+	check(screen.hero_portrait.texture.resource_path.ends_with("/38.png"), "the hero's at the bottom")
+	eq(screen.typing.visible_characters, 0, "typed out")
 	screen.press()
-	eq(screen.text.visible_characters, -1, "the whole line at once")
+	eq(screen.typing.visible_characters, -1, "a press: the whole line")
 	screen.press()
-	eq(screen.page, 1, "the next page")
+	eq(screen.page, 1, "another: the next page")
+	check(screen.speaker_portrait.texture.resource_path.ends_with("/1.png"), "General Augustine's portrait")
+	for i in 4:
+		screen.next_page()
+	eq([screen.page, screen.typing], [5, screen.hero_says], "the hero answers at the bottom")
+	eq([screen.speaker_says.text, screen.speaker_says.visible_characters], ["[Soldier] Run! Run!", -1],
+		"the top box keeps its last line")
+	screen.free()
+	screen = _story({"profile_path": "user://no_such_hero.json"})
+	eq(screen.title.text, "story.prologue", "the opening: the prologue")
+	screen.free()
+	Router.params = old
+
+
+## A picture, as pyport's: the picture comes, its text floats up over it 2 a tick (a line every
+## 22, from y 230, white within 72 of the middle), the picture goes and the next page comes.
+func test_story_picture_floats() -> void:
+	var old: Dictionary = Router.params
+	var screen := _story(ENDING_2)
+	screen.page = 13
+	screen.next_page()
+	eq(screen.pages[screen.page].kind, "picture", "a picture")
+	check(screen.background.visible and not screen.talk_box.visible, "on black")
+	check(screen.lines.size() > 1, "its text in lines: %s" % [screen.lines])
+	check(screen.lines[0].begins_with("Lord Geoffrey's forces"), screen.lines[0])
+	check(not screen.picture.visible, "the picture comes")
+	screen.tick()
+	check(screen.picture.visible, "it is there")
+	eq(screen.line_y(0), -1000, "the text not yet")
+	for i in 3:
+		screen.tick()
+	eq([screen.phase, screen.line_y(0), screen.line_y(1)], [1, 230, -1000], "the first line at 230, the next below")
+	eq(screen.line_color(230), Color(UiTheme.TEXT), "white in the middle")
+	screen.tick()
+	eq(screen.line_y(0), 228, "up 2 a tick")
+	for i in 10:
+		screen.tick()
+	eq([screen.line_y(0), screen.line_y(1)], [208, 230], "the next line 22 below")
+	eq(screen.line_color(60), Color(UiTheme.TEXT_DIM), "grey above the middle")
+	screen.press()
+	eq(screen.page, 14, "a press does nothing there")
+	var guard := 0
+	while screen.phase == 1 and guard < 2000:
+		screen.tick()
+		guard += 1
+	eq([screen.phase, screen.line_y(screen.lines.size() - 1)], [2, -1000], "all gone up: the picture goes")
+	for i in 7:
+		screen.tick()
+	eq(screen.page, 15, "then the next page")
+	screen.free()
+	Router.params = old
+
+
+## The numbers float up from below the screen, without a picture, and what the ending gave
+## comes in a popup; the story ends after them, once the popup is closed.
+func test_story_numbers_and_reward() -> void:
+	var old: Dictionary = Router.params
+	var host := Control.new()
+	root.add_child(host)
+	Router.attach(host)
+	Router.go("title")
+	Router.push("story", ENDING_2)
+	var screen: Control = Router.current
 	screen.page = screen.pages.size() - 2
 	screen.next_page()
-	check(screen.text.text.contains("Catherine's scarf\nreceived!"), "the reward")
-	check(screen.text.text.begins_with("Mission Accomplished  0 %"), "the numbers a row each")
-	check(screen.text.text.contains("Hidden Mission!"), "the lord opened")
+	eq(screen.pages[screen.page].kind, "stats", "the numbers")
+	check(not screen.picture.visible, "no picture")
+	eq(Array(screen.lines.slice(0, 3)), ["Mission", "Accomplished", "0 %"], "a line each, as pyport's")
+	eq(screen.lines.size(), 12, "missions, hidden missions, endings, generals, the total")
+	eq(screen.line_y(0), -1000, "below the screen")
+	for i in 45:
+		screen.tick()
+	eq(screen.line_y(0), 230, "then up")
+	check(screen.reward.visible, "the reward popup")
+	eq(screen.reward.dialog_text, "Catherine's scarf\nreceived!\n\nHidden Mission!\n%s" % Campaign.new().lord_name(8), "what the ending gave")
+	screen.skip()
+	eq(Router.current, screen, "the story waits for the popup")
+	screen.reward.hide()
+	eq(Router.current_name(), "title", "then it is over")
+	Router.attach(null)
+	host.free()
+	Router.params = old
+
+
+## Played again from Endings: no numbers, no popup.
+func test_story_replay() -> void:
+	var old: Dictionary = Router.params
+	var params := ENDING_2.duplicate()
+	params["replay"] = true
+	var screen := _story(params)
+	eq(screen.pages[screen.pages.size() - 1].kind, "picture", "it ends with its last picture")
 	screen.free()
 	Router.params = old
 
@@ -70,15 +170,13 @@ func test_story_screen() -> void:
 ## never reaches _unhandled_input).
 func test_story_screen_click() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"story": 2, "reward_item": 502, "opened_lord": 8, "profile_path": "user://no_such_hero.json"}
-	var screen: Control = Story.new()
-	root.add_child(screen)
+	var screen := _story(ENDING_2)
 	eq(screen.get_child(0).mouse_filter, Control.MOUSE_FILTER_IGNORE, "the black background lets clicks through")
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
 	click.pressed = true
 	screen._gui_input(click)
-	eq(screen.text.visible_characters, -1, "a click: the whole line")
+	eq(screen.typing.visible_characters, -1, "a click: the whole line")
 	screen._gui_input(click)
 	eq(screen.page, 1, "another: the next page")
 	click.pressed = false
@@ -88,16 +186,14 @@ func test_story_screen_click() -> void:
 	Router.params = old
 
 
-## As pyport's: a talk or picture page shown whole goes on by itself after 15 ticks; the
-## numbers at the end wait for a key.
+## As pyport's: a talk typed out goes on by itself after 15 ticks; a picture goes on by itself
+## in ticks of the game's speed.
 func test_story_goes_on_by_itself() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"story": 2, "reward_item": 502, "opened_lord": 8, "profile_path": "user://no_such_hero.json"}
-	var screen: Control = Story.new()
-	root.add_child(screen)
+	var screen := _story(ENDING_2)
 	var wait: float = Story.WAIT_TICKS * Settings.tick_seconds()
 	screen._process(100.0)
-	eq(screen.text.visible_characters, -1, "the page typed out")
+	eq(screen.typing.visible_characters, -1, "the line typed out")
 	screen._process(wait * 0.5)
 	eq(screen.page, 0, "it stays a moment")
 	screen._process(wait)
@@ -107,10 +203,9 @@ func test_story_goes_on_by_itself() -> void:
 	eq(screen.page, 1, "shown whole by a press: it stays a moment too")
 	screen._process(wait)
 	eq(screen.page, 2, "then goes on")
-	screen.page = screen.pages.size() - 2
+	screen.page = 13
 	screen.next_page()
-	for i in 3:
-		screen._process(100.0)
-	eq(screen.page, screen.pages.size() - 1, "the numbers wait for a key")
+	screen._process(Settings.tick_seconds() * 5.5)
+	eq([screen.phase, screen.line_y(0)], [1, 228], "a picture: a tick at a time")
 	screen.free()
 	Router.params = old
