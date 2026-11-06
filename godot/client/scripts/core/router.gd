@@ -24,6 +24,8 @@ const SCREENS := {
 	"new_game": "res://scripts/screens/new_game_screen.gd",
 	"endings": "res://scripts/screens/endings_screen.gd",
 	"help": "res://scripts/screens/help_screen.gd",
+	"offline": "res://scripts/screens/offline_screen.gd",
+	"register": "res://scripts/screens/register_screen.gd",
 }
 
 var current: Control

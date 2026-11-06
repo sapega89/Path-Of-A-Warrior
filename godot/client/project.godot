@@ -17,6 +17,7 @@ Settings="*res://scripts/core/settings.gd"
 InputSetup="*res://scripts/core/input_setup.gd"
 Router="*res://scripts/core/router.gd"
 Audio="*res://scripts/core/audio.gd"
+Cloud="*res://scripts/net/cloud.gd"
 
 [display]
 
