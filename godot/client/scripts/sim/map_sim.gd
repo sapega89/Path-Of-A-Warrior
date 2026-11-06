@@ -1559,7 +1559,7 @@ func gold_reward() -> int:
 	return mission_gold * 150 * (1 + (difficulty ^ 1))
 
 
-## The exp the mission gives (four times its kills' worth on normal difficulty).
+## The exp the mission gives (twice its kills' worth, four times on hard difficulty).
 func exp_reward() -> int:
 	return mission_exp << (1 + (difficulty ^ 1))
 
