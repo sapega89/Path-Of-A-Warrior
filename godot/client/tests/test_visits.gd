@@ -115,3 +115,42 @@ func test_visiting_screen() -> void:
 	eq(str(screen.list.get_child(0).name), "Notice", "not now")
 	screen.free()
 	Router.params = old
+
+
+## As pyport's: a line typed out goes on by itself after 15 ticks, the last greeting to the
+## topics and the last line of the talk to what was discussed.
+func test_visiting_talk_goes_on_by_itself() -> void:
+	var p := Profile.new()
+	p.friendship["4"] = 100
+	p.can_visit = true
+	p.save(TEST_PATH)
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": TEST_PATH, "seed": 1}
+	var screen: Control = Visiting.new()
+	root.add_child(screen)
+	var wait: float = Visiting.WAIT_TICKS * Settings.tick_seconds()
+	screen.open(4)
+	screen._process(100.0)
+	eq(screen.hero_says.visible_characters, -1, "the line typed out")
+	screen._process(wait * 0.5)
+	eq(screen.line_at, 0, "it stays a moment")
+	screen._process(wait)
+	eq([screen.line_at, screen.typing], [1, screen.general_says], "then the general's line")
+	for i in 10:
+		screen._process(100.0)
+	eq(screen.step, Visiting.Step.TOPIC, "the greeting over: the question")
+	screen._process(100.0)
+	eq(screen.step, Visiting.Step.TOPIC, "which waits for a topic")
+	screen.choose(2)
+	screen.press()
+	eq(screen.typing.visible_characters, -1, "a press: the whole line")
+	screen.press()
+	eq(screen.line_at, 1, "another: the next one at once")
+	for i in 10:
+		screen._process(100.0)
+	eq(screen.step, Visiting.Step.DISCUSSED, "the talk over: what was discussed")
+	screen._process(100.0)
+	eq(screen.step, Visiting.Step.DISCUSSED, "which waits for OK")
+	screen.free()
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))

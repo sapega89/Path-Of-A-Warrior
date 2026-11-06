@@ -87,3 +87,30 @@ func test_story_screen_click() -> void:
 	screen.free()
 	Router.params = old
 
+
+## As pyport's: a talk or picture page shown whole goes on by itself after 15 ticks; the
+## numbers at the end wait for a key.
+func test_story_goes_on_by_itself() -> void:
+	var old: Dictionary = Router.params
+	Router.params = {"story": 2, "reward_item": 502, "opened_lord": 8, "profile_path": "user://no_such_hero.json"}
+	var screen: Control = Story.new()
+	root.add_child(screen)
+	var wait: float = Story.WAIT_TICKS * Settings.tick_seconds()
+	screen._process(100.0)
+	eq(screen.text.visible_characters, -1, "the page typed out")
+	screen._process(wait * 0.5)
+	eq(screen.page, 0, "it stays a moment")
+	screen._process(wait)
+	eq(screen.page, 1, "then the next page")
+	screen.press()
+	screen._process(wait * 0.5)
+	eq(screen.page, 1, "shown whole by a press: it stays a moment too")
+	screen._process(wait)
+	eq(screen.page, 2, "then goes on")
+	screen.page = screen.pages.size() - 2
+	screen.next_page()
+	for i in 3:
+		screen._process(100.0)
+	eq(screen.page, screen.pages.size() - 1, "the numbers wait for a key")
+	screen.free()
+	Router.params = old

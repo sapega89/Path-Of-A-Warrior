@@ -2,8 +2,9 @@ extends Control
 ## The story player: the opening of a new game and the endings. Talk pages show the
 ## speaker's portrait and the line typed out; picture pages show the story picture with its
 ## text; an ending ends with how much of the game is done and what the ending gave.
-## Attack / accept shows the whole line, then the next page; back or SKIP (Q, F1, the pad's
-## Back, the Skip button) skips to the end.
+## A talk or picture page shown whole goes on by itself after 15 ticks, as pyport's (the last
+## page, with the numbers, waits for a key). Attack / accept shows the whole line, or goes on at
+## once; back or SKIP (Q, F1, the pad's Back, the Skip button) skips to the end.
 ## Params: story (Stories.OPENING or an ending), reward_item, opened_lord, then (a screen to
 ## open when the story is over, instead of going back).
 
@@ -16,6 +17,8 @@ const PORTRAITS := "res://assets/original/portraits/%d.png"
 const PICTURES := "res://assets/original/story/e%d.png"
 const SCALE := 3
 const CHARS_PER_SECOND := 40.0
+## Ticks a page shown whole stays before the story goes on by itself.
+const WAIT_TICKS := 15
 
 var profile: RefCounted
 var story := Stories.OPENING
@@ -26,6 +29,7 @@ var picture: TextureRect
 var text: Label
 var skip_button: Button
 var _typed := 0.0
+var _wait := -1.0  # seconds before the next page comes by itself, -1: it waits for a key
 
 
 func _ready() -> void:
@@ -76,6 +80,7 @@ func _ready() -> void:
 ## Shows the next page, or ends the story. False when it is over.
 func next_page() -> bool:
 	page += 1
+	_wait = -1.0
 	if page >= pages.size():
 		_end()
 		return false
@@ -130,17 +135,30 @@ func reward_lines() -> Array:
 func press() -> void:
 	if text.visible_characters >= 0 and text.visible_characters < text.text.length():
 		text.visible_characters = -1
+		_shown()
 	else:
 		next_page()
 
 
+## The page is shown whole: a talk or a picture goes on by itself after a moment.
+func _shown() -> void:
+	if page < pages.size() and str(pages[page].kind) != "stats":
+		_wait = WAIT_TICKS * Settings.tick_seconds()
+
+
 func _process(delta: float) -> void:
+	if _wait >= 0.0:
+		_wait -= delta
+		if _wait < 0.0:
+			next_page()
+		return
 	if text.visible_characters < 0:
 		return
 	_typed += delta * CHARS_PER_SECOND
 	text.visible_characters = mini(int(_typed), text.text.length())
 	if text.visible_characters >= text.text.length():
 		text.visible_characters = -1
+		_shown()
 
 
 func _end() -> void:

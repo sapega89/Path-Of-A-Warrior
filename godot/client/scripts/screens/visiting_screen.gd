@@ -4,7 +4,8 @@ extends Control
 ## thing to talk about, they talk, and the visit ends with the friendship gained and the
 ## general's gift. Saved at once. Without a mission won since the last visit (or without a
 ## friend) only a notice is shown.
-## Attack / accept shows the whole line, then the next one; back leaves the list.
+## A line typed out goes on by itself after 15 ticks, as pyport's; attack / accept shows the
+## whole line, or goes on at once; back leaves the list.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
@@ -14,6 +15,8 @@ const MapSim := preload("res://scripts/sim/map_sim.gd")
 const PORTRAITS := "res://assets/original/portraits/%d.png"
 const SCALE := 3
 const CHARS_PER_SECOND := 40.0
+## Ticks a line shown whole stays before the talk goes on by itself.
+const WAIT_TICKS := 15
 enum Step { LIST, GREETING, TOPIC, TALK, DISCUSSED, VISITED, CLOSED }
 
 var profile: RefCounted
@@ -38,6 +41,7 @@ var line_at := 0
 var gift := {}
 var rng := RandomNumberGenerator.new()
 var _typed := 0.0
+var _wait := -1.0  # seconds before the talk goes on by itself, -1: it waits for a key
 
 
 func _ready() -> void:
@@ -240,10 +244,12 @@ func choose(i: int) -> void:
 
 ## Attack / accept / OK: the whole line, the next line, the next page.
 func press() -> void:
+	_wait = -1.0
 	match step:
 		Step.GREETING, Step.TALK:
 			if typing != null and typing.visible_characters >= 0:
 				typing.visible_characters = -1
+				_wait = WAIT_TICKS * Settings.tick_seconds()
 				return
 			line_at += 1
 			if line_at < lines.size():
@@ -281,12 +287,18 @@ func visited_text() -> String:
 
 
 func _process(delta: float) -> void:
+	if _wait >= 0.0:
+		_wait -= delta
+		if _wait < 0.0:
+			press()
+		return
 	if typing == null or typing.visible_characters < 0:
 		return
 	_typed += delta * CHARS_PER_SECOND
 	typing.visible_characters = mini(int(_typed), typing.text.length())
 	if typing.visible_characters >= typing.text.length():
 		typing.visible_characters = -1
+		_wait = WAIT_TICKS * Settings.tick_seconds()
 
 
 func _unhandled_input(event: InputEvent) -> void:
