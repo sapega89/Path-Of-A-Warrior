@@ -34,10 +34,15 @@ func _ready() -> void:
 	buttons[0].grab_focus.call_deferred()
 
 
-## The saved hero goes on with the campaign; without one a new game starts.
+## The saved hero goes on with the campaign (back into the mission saved on its map, if
+## any); without one a new game starts.
 func play() -> void:
 	if FileAccess.file_exists(Profile.PATH):
 		Router.push("campaign")
+		var on_map: Dictionary = Profile.load_or_new().on_map
+		if not on_map.is_empty():
+			Router.push("mission", {"lord": int(on_map.get("lord", 1)),
+				"mission": int(on_map.get("mission", 0)), "resume": true})
 		return
 	Router.push("new_game", {})
 
