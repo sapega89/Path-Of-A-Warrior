@@ -48,6 +48,7 @@ var _pressed := -1
 var _fire := false
 var _hotkey := -1  # a skill key pressed since the last tick
 var _potion := -1  # a potion key pressed since the last tick
+var _keys_down := {}  # skill and potion keys held at the last frame
 var _last_held := -1
 var _blink := 0
 
@@ -164,10 +165,10 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("attack"):
 		_fire = true
 	for i in 4:
-		if Input.is_action_just_pressed("skill_%d" % (i + 1)):
+		if _pressed_now("skill_%d" % (i + 1)):
 			_hotkey = i
 	for i in 2:
-		if Input.is_action_just_pressed("potion_%d" % (i + 1)):
+		if _pressed_now("potion_%d" % (i + 1)):
 			_potion = i
 	_acc += delta
 	while _acc >= TICK:
@@ -184,6 +185,14 @@ func _process(delta: float) -> void:
 		Router.back()
 		return
 	_update_view(_acc / TICK)
+
+
+## The key went down since the last frame (a press seen once, whenever the frame runs).
+func _pressed_now(action: String) -> bool:
+	var down := Input.is_action_pressed(action)
+	var was: bool = _keys_down.get(action, false)
+	_keys_down[action] = down
+	return down and not was
 
 
 ## The position between the last two ticks (a jump, such as a new room, is not smoothed).

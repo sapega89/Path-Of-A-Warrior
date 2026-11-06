@@ -82,8 +82,8 @@ func _ready() -> void:
 	Input.action_press("potion_1")
 	await _frames(2)
 	Input.action_release("potion_1")
-	await _seconds(0.1)
-	print("potion: effect ", msim.effect_item, " step ", msim.effect_step, " hp ", msim.hero.hp)
+	await _seconds(0.13)
+	print("potion: effect ", msim.effect_item, " mp ", msim.hero.mp)
 	await _shot(out, "mission_1_potion_drunk")
 	# A general: he comes in with his talk, then the fight.
 	Router.go("mission", {"lord": 1, "mission": 0, "seed": 2})
@@ -123,17 +123,13 @@ func _ready() -> void:
 			sim.hero.mp = sim.hero.max_mp  # the first skill, a dash, against the general
 			for i in 20:  # (it starts when the hero stands or walks)
 				Input.action_press("skill_1")
-				await _frames(1)
-				print("skill key: has ", InputMap.has_action("skill_1"), " pressed ", Input.is_action_pressed("skill_1"),
-					" hotkey ", mission.get("_hotkey"), " events ", InputMap.action_get_events("skill_1").size())
-				await _frames(1)
+				await _frames(2)
 				Input.action_release("skill_1")
 				await _seconds(0.1)
-				print("skill try: action ", sim.hero.action, " mp ", sim.hero.mp, " banner ", sim.banner,
-					" talk ", sim.talk.size(), " effect ", sim.effect_item)
 				if sim.hero.action == 12:
 					break
 			await _seconds(0.3)
+			print("skill: action ", sim.hero.action, " mp ", sim.hero.mp)
 			await _shot(out, "mission_1_skill")
 	_release_all()
 	print("general: hp ", sim.hero.hp, " won ", sim.won, " failed ", sim.failed)
