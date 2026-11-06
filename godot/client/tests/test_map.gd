@@ -37,6 +37,26 @@ func test_map_1_layout() -> void:
 	b.free()
 
 
+func test_ground_around_the_map() -> void:
+	var b: Node3D = MapBuilder.new()
+	root.add_child(b)
+	b.build(MapBuilder.load_map(1))
+	var mi: MeshInstance3D = b.get_node("Outside")
+	var verts: PackedVector3Array = mi.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+	var o := MapBuilder.OUTSIDE
+	eq(verts.size(), 6 * ((b.w + 2 * o) * (b.h + 2 * o) - b.w * b.h), "a quad on every cell around")
+	var lo := Vector3(INF, INF, INF)
+	var hi := -lo
+	for v in verts:
+		lo = lo.min(v)
+		hi = hi.max(v)
+	eq([lo, hi], [Vector3(-o, 0, -o), Vector3(b.w + o, 0, b.h + o)], "OUTSIDE cells past each edge")
+	var uv: PackedVector2Array = mi.mesh.surface_get_arrays(0)[Mesh.ARRAY_TEX_UV]
+	eq(uv[0], MapBuilder.tile_uv(b.cell("ground", 0, 0)).position, "the corner: the corner cell's ground")
+	eq(mi.mesh.surface_get_material(0).albedo_color, MapBuilder.OUTSIDE_SHADE, "darker than the map")
+	b.free()
+
+
 func test_tile_uv() -> void:
 	var uv := MapBuilder.tile_uv(1)
 	check(uv.position.x < 0.001 and uv.position.y < 0.001, "tile 1 top-left")
