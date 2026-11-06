@@ -534,5 +534,17 @@
   "pause.ask_quit": {
     "en": "Exit Game?",
     "uk": "Вийти з гри?"
+  },
+  "pause.save": {
+    "en": "Save",
+    "uk": "Зберегти"
+  },
+  "pause.saved": {
+    "en": "Saving Success!",
+    "uk": "Збережено!"
+  },
+  "pause.cannot_save": {
+    "en": "Can't Save!\nIt needs all enemies dead.",
+    "uk": "Не можна зберегти!\nСпершу переможіть усіх ворогів."
   }
 }
