@@ -85,6 +85,9 @@ func _ready() -> void:
 	await _frames(2)
 	Router.current.cells[1].grab_focus()
 	await _shot(out, "09_inventory")
+	Router.current.cells[42].grab_focus()
+	await _frames(2)
+	await _shot(out, "09a_inventory_last_rows")
 	# Assign Items: three kinds of potion, the second key on the blue ones.
 	Router.back()
 	hero.quick_slots = [[1, 3], [4, 2], [7, 1], [0, 0], [0, 0]]

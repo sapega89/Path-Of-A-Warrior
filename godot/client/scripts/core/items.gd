@@ -5,7 +5,7 @@ extends RefCounted
 
 const DATA_PATH := "res://data/items.json"
 const EQUIPPED := 9
-const BACKPACK := 25
+const BACKPACK := 45  # 25 in the original; more room, as in pyport (BACKPACK_SIZE)
 ## Slot type of a thing -> its place on the Gear page (0 the weapon: both sword types).
 const EQUIP_PLACE := [0, 0, 3, 5, 2, 8, 6, 1, 4, 7]
 ## Things that are used up from the backpack: what each adds to the hero.

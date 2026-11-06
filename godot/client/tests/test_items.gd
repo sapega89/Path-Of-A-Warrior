@@ -28,7 +28,7 @@ func test_new_hero_gear() -> void:
 	eq(int(p.equipped[0].id), 116, "the claymore in hand")
 	eq(p.weapon_kind(), 1, "its sword type")
 	eq(p.attack(), 6, "5 + 1")
-	eq(p.backpack.size(), 25, "25 places")
+	eq(p.backpack.size(), 45, "45 places")
 
 
 func test_wear_and_take_off() -> void:
@@ -95,3 +95,18 @@ func test_gear_and_inventory_pages() -> void:
 	eq(int(saved.equipped[3].id), 131, "saved")
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
+
+
+## A save from when the backpack had 25 places: the 20 new ones are empty.
+func test_old_backpack_of_25() -> void:
+	var p := Profile.new()
+	var d: Dictionary = p.to_dict()
+	var old: Array = d.backpack.slice(0, 25)
+	old[24] = Items.make(131, RandomNumberGenerator.new())
+	d.backpack = old
+	var q := Profile.new()
+	q.from_dict(d)
+	eq(q.backpack.size(), Items.BACKPACK, "45 places")
+	eq(int(q.backpack[24].id), 131, "the old last place kept")
+	eq(int(q.backpack[44].id), 0, "the new ones empty")
+	check(q.add_item(Items.make(102, RandomNumberGenerator.new())), "room for more")
