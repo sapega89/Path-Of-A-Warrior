@@ -2,10 +2,13 @@ extends Control
 ## Attributes: the hero's name, level, fame and free stat points, and HP, MP, attack and
 ## defence, each with a "+" that spends a point on it (HP +5, MP +3, attack +1, defence +1).
 ## Attack and defence show the hero's own part and the gear's part ("4+1").
-## Every point spent is saved at once.
+## Every point spent is saved at once. Reset gives the points back: the base stats go back to
+## the hero's face, paid with 100 gold per level or an elixir (Rise / Azure Potion, Falls /
+## Forest Medicine).
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
+const Items := preload("res://scripts/core/items.gd")
 ## Stat row name, text key, Profile.Stat.
 const STATS := [
 	["HP", "attributes.hp", Profile.Stat.HP],
@@ -18,6 +21,10 @@ var profile: RefCounted
 var path: String = Profile.PATH
 var values := {}  # row name -> its value Label
 var plus := {}  # stat row name -> its "+" Button
+var reset: Button
+var ask: ConfirmationDialog  # pay with gold (OK), an elixir ("item") or cancel
+var pay_item: Button
+var note: AcceptDialog
 
 
 func _ready() -> void:
@@ -37,6 +44,20 @@ func _ready() -> void:
 		b.pressed.connect(func(): spend(stat))
 		_row(col, s[0], s[1], b)
 		plus[s[0]] = b
+	reset = Button.new()
+	reset.name = "Reset"
+	reset.text = "attributes.reset"
+	reset.pressed.connect(open_reset)
+	col.add_child(reset)
+	ask = ConfirmationDialog.new()
+	ask.name = "Ask"
+	ask.confirmed.connect(func(): finish_reset(false))
+	ask.custom_action.connect(func(_a): ask.hide(); finish_reset(true))
+	pay_item = ask.add_button("", false, "item")
+	add_child(ask)
+	note = AcceptDialog.new()
+	note.name = "Note"
+	add_child(note)
 	var back := Button.new()
 	back.name = "Back"
 	back.text = "common.back"
@@ -70,6 +91,36 @@ func refresh() -> void:
 	values["DEF"].text = _with_gear(profile.base_defense, profile.defense())
 	for b in plus.values():
 		b.disabled = profile.stat_points <= 0
+
+
+## Asks how to pay for the reset; says so when there is nothing to reset.
+func open_reset() -> void:
+	if profile.spent_points() == 0:
+		_note(tr("attributes.reset_nothing"))
+		return
+	ask.dialog_text = tr("attributes.reset_ask") % profile.spent_points()
+	ask.ok_button_text = tr("attributes.pay_gold") % profile.respec_gold()
+	var slot: int = profile.respec_item_slot()
+	pay_item.disabled = slot < 0
+	pay_item.text = tr("attributes.no_elixir") if slot < 0 else tr("attributes.use_item") % Items.name_of(int(profile.backpack[slot].id))
+	ask.popup_centered()
+
+
+## Resets, paid with gold or an elixir, saves and says how it went. Returns the line said.
+func finish_reset(by_item: bool) -> String:
+	var free: int = profile.spent_points()
+	var why: String = profile.respec(by_item)
+	var said := tr("attributes.reset_done") % free if why.is_empty() else tr("attributes.reset_" + why)
+	if why.is_empty():
+		profile.save(path)
+		refresh()
+	_note(said)
+	return said
+
+
+func _note(text: String) -> void:
+	note.dialog_text = text
+	note.popup_centered()
 
 
 ## "4+1" when the gear adds to the hero's own number, else just the number.

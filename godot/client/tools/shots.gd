@@ -26,6 +26,8 @@ func _ready() -> void:
 	await _frames(2)
 	ng.body.get_child(0).get_child(2).grab_focus()
 	await _shot(out, "02b_new_hero")
+	ng.body.get_child(0).get_child(1).grab_focus()
+	await _shot(out, "02b_new_hero_guardian")
 	ng.choose_head(2)
 	ng.name_edit.text = "Andrey"
 	await _shot(out, "02c_new_name")
@@ -42,9 +44,16 @@ func _ready() -> void:
 	var hero: RefCounted = load("res://scripts/core/profile.gd").new()
 	for i in 3:
 		hero.spend_point(0)
+	hero.gold = 300
 	hero.save("user://shot_hero.json")
 	Router.push("attributes", Router.params)
 	await _shot(out, "06_attributes")
+	Router.current.open_reset()
+	await _shot(out, "06a_attributes_reset")
+	Router.current.ask.hide()
+	Router.current.finish_reset(false)
+	await _shot(out, "06b_attributes_reset_done")
+	Router.current.note.hide()
 	# Skills: four learned skills, Storm Slasher on the third key, the cursor on the third key.
 	Router.back()
 	for i in [1, 5, 8]:
@@ -76,6 +85,9 @@ func _ready() -> void:
 	await _frames(2)
 	Router.current.cells[1].grab_focus()
 	await _shot(out, "09_inventory")
+	Router.current.cells[42].grab_focus()
+	await _frames(2)
+	await _shot(out, "09a_inventory_last_rows")
 	# Assign Items: three kinds of potion, the second key on the blue ones.
 	Router.back()
 	hero.quick_slots = [[1, 3], [4, 2], [7, 1], [0, 0], [0, 0]]

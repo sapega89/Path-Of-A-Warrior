@@ -1,7 +1,7 @@
 extends Control
-## Inventory: the hero's gold and the 25 places of the backpack. Picking gear wears it (what
-## was worn in its place comes into the backpack instead); a stat item (HP, MP, ATK, DEF up)
-## is used up. Gear above the hero's level cannot be taken. Every change is saved at once.
+## Inventory: the hero's gold and the 45 places of the backpack (it scrolls).
+## Picking gear wears it (what was worn in its place comes into the backpack instead); a stat
+## item (HP, MP, ATK, DEF up) is used up. Gear above the hero's level cannot be taken. Every change is saved at once.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
@@ -54,9 +54,16 @@ func _ready() -> void:
 		b.mouse_entered.connect(func(): _show_info(at))
 		grid.add_child(b)
 		cells.append(b)
+	var scroll := ScrollContainer.new()
+	scroll.name = "Scroll"
+	scroll.custom_minimum_size = Vector2(0, 340)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.follow_focus = true
 	var center := CenterContainer.new()
+	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	center.add_child(grid)
-	col.add_child(center)
+	scroll.add_child(center)
+	col.add_child(scroll)
 
 	info = Label.new()
 	info.name = "Info"
