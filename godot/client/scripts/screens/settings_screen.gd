@@ -1,5 +1,5 @@
 extends Control
-## Settings: language, music and sound volume, fullscreen (desktop only).
+## Settings: language, music and sound volume, the game speed, fullscreen (desktop only).
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const I18nScript := preload("res://scripts/core/i18n.gd")
@@ -10,6 +10,7 @@ var language: OptionButton
 var music: HSlider
 var sfx: HSlider
 var fullscreen: CheckBox
+var speed: OptionButton  # the game speed of the missions
 ## Shown over another screen (the mission's pause menu): what Back does instead of going back.
 var close := Callable()
 
@@ -33,6 +34,14 @@ func _ready() -> void:
 	_row(col, "settings.music", music)
 	sfx = _slider("Sfx", "sfx_volume")
 	_row(col, "settings.sfx", sfx)
+
+	speed = OptionButton.new()
+	speed.name = "Speed"
+	for i in Settings.SPEED_MS.size():
+		speed.add_item(tr("settings.speed_%d" % i), i)
+	speed.select(int(Settings.get_value("game_speed")))
+	speed.item_selected.connect(func(i: int): Settings.set_value("game_speed", i))
+	_row(col, "settings.speed", speed)
 
 	if Settings.can_fullscreen():
 		fullscreen = CheckBox.new()

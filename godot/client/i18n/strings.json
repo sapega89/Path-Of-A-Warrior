@@ -462,5 +462,29 @@
   "pause.help": {
     "en": "Help",
     "uk": "Довідка"
+  },
+  "settings.speed": {
+    "en": "Speed",
+    "uk": "Швидкість"
+  },
+  "settings.speed_0": {
+    "en": "Slow",
+    "uk": "Повільно"
+  },
+  "settings.speed_1": {
+    "en": "Med-Slow",
+    "uk": "Трохи повільно"
+  },
+  "settings.speed_2": {
+    "en": "Med",
+    "uk": "Середньо"
+  },
+  "settings.speed_3": {
+    "en": "Med-Fast",
+    "uk": "Трохи швидко"
+  },
+  "settings.speed_4": {
+    "en": "Fast",
+    "uk": "Швидко"
   }
 }
