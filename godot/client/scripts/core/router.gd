@@ -9,32 +9,40 @@ const SCREENS := {
 	"main_menu": "res://scripts/screens/main_menu.gd",
 	"settings": "res://scripts/screens/settings_screen.gd",
 	"map_viewer": "res://scripts/screens/map_viewer.gd",
+	"campaign": "res://scripts/screens/campaign_screen.gd",
+	"mission": "res://scripts/screens/mission_screen.gd",
 }
 
 var current: Control
+## Parameters of the screen being shown (e.g. which mission), read by the screen in _ready.
+var params: Dictionary = {}
 var _host: Node
 var _stack: Array[String] = []
+var _params_stack: Array[Dictionary] = []
 
 
 func attach(host: Node) -> void:
 	_host = host
 	_stack.clear()
+	_params_stack.clear()
 	current = null
 
 
 ## Shows a screen and forgets the history (e.g. title -> main menu).
-func go(screen_name: String) -> bool:
-	if not _show(screen_name):
+func go(screen_name: String, screen_params: Dictionary = {}) -> bool:
+	if not _show(screen_name, screen_params):
 		return false
 	_stack = [screen_name]
+	_params_stack = [screen_params]
 	return true
 
 
 ## Shows a screen on top of the current one; back() returns to it.
-func push(screen_name: String) -> bool:
-	if not _show(screen_name):
+func push(screen_name: String, screen_params: Dictionary = {}) -> bool:
+	if not _show(screen_name, screen_params):
 		return false
 	_stack.append(screen_name)
+	_params_stack.append(screen_params)
 	return true
 
 
@@ -43,7 +51,8 @@ func back() -> bool:
 	if _stack.size() < 2:
 		return false
 	_stack.pop_back()
-	return _show(_stack.back())
+	_params_stack.pop_back()
+	return _show(_stack.back(), _params_stack.back())
 
 
 func current_name() -> String:
@@ -54,10 +63,11 @@ func depth() -> int:
 	return _stack.size()
 
 
-func _show(screen_name: String) -> bool:
+func _show(screen_name: String, screen_params: Dictionary = {}) -> bool:
 	if _host == null or not SCREENS.has(screen_name):
 		push_error("router: cannot show %s" % screen_name)
 		return false
+	params = screen_params
 	var script: Script = load(SCREENS[screen_name])
 	var screen: Control = script.new()
 	screen.name = screen_name

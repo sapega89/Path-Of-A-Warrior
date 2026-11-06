@@ -1,14 +1,70 @@
 {
-  "game.title": {"en": "Mercenary's Path", "uk": "Шлях найманця"},
-  "title.press_any": {"en": "Press any key", "uk": "Натисніть будь-яку клавішу"},
-  "menu.play": {"en": "Play", "uk": "Грати"},
-  "menu.settings": {"en": "Settings", "uk": "Налаштування"},
-  "menu.quit": {"en": "Quit", "uk": "Вийти"},
-  "settings.title": {"en": "Settings", "uk": "Налаштування"},
-  "settings.language": {"en": "Language", "uk": "Мова"},
-  "settings.music": {"en": "Music", "uk": "Музика"},
-  "settings.sfx": {"en": "Sound", "uk": "Звуки"},
-  "settings.fullscreen": {"en": "Fullscreen", "uk": "На весь екран"},
-  "common.back": {"en": "Back", "uk": "Назад"},
-  "viewer.info": {"en": "Map %d / %d   [3] [4] change map   [Esc] back", "uk": "Карта %d / %d   [3] [4] інша карта   [Esc] назад"}
+  "game.title": {
+    "en": "Mercenary's Path",
+    "uk": "Шлях найманця"
+  },
+  "title.press_any": {
+    "en": "Press any key",
+    "uk": "Натисніть будь-яку клавішу"
+  },
+  "menu.play": {
+    "en": "Play",
+    "uk": "Грати"
+  },
+  "menu.settings": {
+    "en": "Settings",
+    "uk": "Налаштування"
+  },
+  "menu.quit": {
+    "en": "Quit",
+    "uk": "Вийти"
+  },
+  "settings.title": {
+    "en": "Settings",
+    "uk": "Налаштування"
+  },
+  "settings.language": {
+    "en": "Language",
+    "uk": "Мова"
+  },
+  "settings.music": {
+    "en": "Music",
+    "uk": "Музика"
+  },
+  "settings.sfx": {
+    "en": "Sound",
+    "uk": "Звуки"
+  },
+  "settings.fullscreen": {
+    "en": "Fullscreen",
+    "uk": "На весь екран"
+  },
+  "common.back": {
+    "en": "Back",
+    "uk": "Назад"
+  },
+  "viewer.info": {
+    "en": "Map %d / %d   [3] [4] change map   [Esc] back",
+    "uk": "Карта %d / %d   [3] [4] інша карта   [Esc] назад"
+  },
+  "menu.maps": {
+    "en": "Maps",
+    "uk": "Карти"
+  },
+  "campaign.chapters": {
+    "en": "Chapters",
+    "uk": "Розділи"
+  },
+  "campaign.chapter": {
+    "en": "Chapter %d",
+    "uk": "Розділ %d"
+  },
+  "campaign.mission": {
+    "en": "Mission %d: %s",
+    "uk": "Місія %d: %s"
+  },
+  "mission.room": {
+    "en": "Room",
+    "uk": "Кімната"
+  }
 }

@@ -9,7 +9,8 @@ var buttons: Array[Button] = []
 func _ready() -> void:
 	var col := UiTheme.menu_column(self)
 	col.add_child(UiTheme.heading("game.title", 44))
-	_add(col, "Play", "menu.play", func(): Router.push("map_viewer"))
+	_add(col, "Play", "menu.play", func(): Router.push("campaign"))
+	_add(col, "Maps", "menu.maps", func(): Router.push("map_viewer"))
 	_add(col, "Settings", "menu.settings", func(): Router.push("settings"))
 	if show_quit():
 		_add(col, "Quit", "menu.quit", func(): get_tree().quit())

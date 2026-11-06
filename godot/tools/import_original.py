@@ -12,6 +12,15 @@ Writes
                                          the hero's frames, body + head + weapon put together as
                                          pyport draw_hero does, one cell per
                                          sprite frame; hero.json has the walk / idle tables
+  godot/client/assets/original/ui/*.png  UI pictures used as they are (exit arrows, ...)
+  godot/client/data/campaign.json        chapters, lords (one map each) and missions, as the
+                                         campaign screens read them (load_chapter_lords,
+                                         load_lord_missions):
+    mission.arr  rows of 38 bytes from 10: row r = 30-byte name of lord r (r >= 1),
+                 6 lord ids of chapter r (r >= 0), first mission and mission count of lord r
+    sideinfo.arr missions of 11 bytes from 11: id, start x, start y (tiles), tint, boss type,
+                 general, reward, gold, time limit (u16), level bonus
+    ruler.arr    mission names, 15 bytes per id from 3: 14-byte name, portrait
 
 MAP FORMAT (N.MAP, as pyport/pow/game/map_scene.py load_map reads it):
   u8 w, u8 h, u8 n, n bytes (ids of the tiles the map uses),
@@ -160,6 +169,51 @@ def export_hero(out):
     (out / "hero.json").write_text(json.dumps(info))
 
 
+def cstr(b):
+    return bytes(b).split(b"\0")[0].decode("utf-8", "replace")
+
+
+def export_campaign(out):
+    rows = (ROOT / "mission.arr").read_bytes()
+    side = (ROOT / "sideinfo.arr").read_bytes()
+    names = (ROOT / "ruler.arr").read_bytes()
+    chapters, lords = [], {}
+    r = 0
+    while 38 * r + 10 + 38 <= len(rows):
+        o = 38 * r + 10
+        chapters.append([b for b in rows[o + 30:o + 36] if b > 0])  # chapter r
+        if r > 0:
+            lords[r] = {"name": cstr(rows[o:o + 30]), "first_mission": rows[o + 36], "missions": rows[o + 37]}
+        r += 1
+    while chapters and not chapters[-1]:
+        chapters.pop()
+    missions = []
+    i = 11
+    while i + 11 <= len(side):
+        m = side[i:i + 11]
+        mid = m[0]
+        n = 3 + (mid - 1) * 15
+        missions.append({
+            "id": mid, "start": [m[1], m[2]], "tint": m[3], "boss_type": m[4], "general": m[5],
+            "reward": m[6], "gold": m[7], "time_limit": m[8] | m[9] << 8, "level_bonus": m[10],
+            "name": cstr(names[n:n + 14]) if mid > 0 else "",
+            "portrait": int.from_bytes(names[n + 14:n + 15], "little", signed=True) if mid > 0 else 0,
+        })
+        i += 11
+    (out / "campaign.json").write_text(json.dumps(
+        {"chapters": chapters, "lords": lords, "missions": missions}, ensure_ascii=False, indent=0))
+    return len(chapters), len(missions)
+
+
+UI_IMAGES = ["arrow0", "arrow1", "arrow2", "arrow3"]  # exit arrows: down, left, up, right
+
+
+def export_ui(out):
+    out.mkdir(parents=True, exist_ok=True)
+    for name in UI_IMAGES:
+        Image.open(ROOT / (name + ".png")).convert("RGBA").save(out / (name + ".png"))
+
+
 def main():
     tile_names = scr.load(ROOT / "imgtile.scr")
     map_files = [n for n in scr.load(ROOT / "mdat_QVGA.scr") if n.endswith(".MAP")]
@@ -171,12 +225,14 @@ def main():
         m["number"] = index + 1
         m["rooms"] = parse_rooms((ROOT / room_files[index]).read_bytes(), m["w"], m["h"])
         (out_maps / ("%d.json" % (index + 1))).write_text(json.dumps(m, separators=(",", ":")))
+    chapters, missions = export_campaign(CLIENT / "data")
     atlas, found = build_atlas(tile_names)
     out_tiles = CLIENT / "assets" / "original"
     out_tiles.mkdir(parents=True, exist_ok=True)
     atlas.save(out_tiles / "tiles.png")
     export_hero(out_tiles)
-    print("maps: %d, tiles: %d" % (len(map_files), found))
+    export_ui(out_tiles / "ui")
+    print("maps: %d, tiles: %d, chapters: %d, missions: %d" % (len(map_files), found, chapters, missions))
 
 
 if __name__ == "__main__":
