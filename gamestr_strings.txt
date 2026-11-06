@@ -2,7 +2,7 @@
 1	[Messenger] The country will need you..
 2	Sale List
 3	Gift List
-4	GAMEVIL LIVE
+4	LIVE
 5	Trade
 6	Buy Item
 7	Sell Item
@@ -15,7 +15,7 @@
 14	Gamestring : shopstrings
 15	2Connect server\to restore\data?
 16	1Restoring\data successed.\ \
-17	2Connect to\Gamevil Live?
+17	2Connect to\the server?
 18	2Connection\failed.\Do you want\to reconnect?
 19	2Net connection\Failed.\try to connect\again?
 20	2Connection\with Server\Broke.\Do you want\to reconnect?

@@ -34,7 +34,7 @@
 33	ui_popup
 34	ui_infoLineH
 35	ui_infoLineV
-36	gamevil
+36	copyright
 37	gold
 38	itemReinforce
 39	m_logo
