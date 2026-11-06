@@ -1,12 +1,12 @@
 extends Control
-## Management: the hero's pages between missions. Attributes is open; Skills, Gear,
+## Management: the hero's pages between missions. Attributes and Skills are open; Gear,
 ## Inventory and Assign Items are shown greyed until they have their pages.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 ## Page button name, text key, screen (empty: not open yet).
 const PAGES := [
 	["Attributes", "management.attributes", "attributes"],
-	["Skills", "management.skills", ""],
+	["Skills", "management.skills", "skills"],
 	["Gear", "management.gear", ""],
 	["Inventory", "management.inventory", ""],
 	["AssignItems", "management.assign_items", ""],

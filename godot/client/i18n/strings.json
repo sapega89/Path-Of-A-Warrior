@@ -166,5 +166,13 @@
   "attributes.defense": {
     "en": "DEF:",
     "uk": "ЗАХ:"
+  },
+  "skills.title": {
+    "en": "Skills",
+    "uk": "Уміння"
+  },
+  "skills.not_available": {
+    "en": "(Not Available)",
+    "uk": "(Недоступно)"
   }
 }
