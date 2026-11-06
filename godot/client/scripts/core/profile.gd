@@ -16,7 +16,11 @@ const POINTS_PER_LEVEL := 3
 ## The weapon a new hero holds: the Iron Claymore (a long sword, attack +1).
 const START_WEAPON := {"id": 116, "name": "Iron Claymore", "attack": 1, "kind": 0}
 const PROGRESS_PER_WIN := 5
+## What one stat point adds: HP, MP, attack, defence.
+const POINT_GAINS := [5, 3, 1, 1]
+enum Stat { HP, MP, ATTACK, DEFENSE }
 
+var hero_name := "Hero"
 var level := 1
 var experience := 0  # exp into the current level
 var fame := 0
@@ -99,6 +103,24 @@ func max_mp() -> int:
 	return base_mp + int(weapon.get("mp", 0))
 
 
+## Spends a free stat point on HP (+5), MP (+3), attack (+1) or defence (+1).
+## False when there is no point left.
+func spend_point(stat: int) -> bool:
+	if stat_points <= 0 or stat < 0 or stat >= POINT_GAINS.size():
+		return false
+	stat_points -= 1
+	match stat:
+		Stat.HP:
+			base_hp += POINT_GAINS[stat]
+		Stat.MP:
+			base_mp += POINT_GAINS[stat]
+		Stat.ATTACK:
+			base_attack += POINT_GAINS[stat]
+		Stat.DEFENSE:
+			base_defense += POINT_GAINS[stat]
+	return true
+
+
 ## The hero of a mission starts with this hero's numbers, full HP and MP.
 func apply_to(sim: RefCounted) -> void:
 	var h = sim.hero
@@ -146,7 +168,7 @@ func is_done(lord_id: int, mission: int) -> bool:
 
 
 func to_dict() -> Dictionary:
-	return {"level": level, "exp": experience, "fame": fame, "gold": gold, "stat_points": stat_points,
+	return {"name": hero_name, "level": level, "exp": experience, "fame": fame, "gold": gold, "stat_points": stat_points,
 		"base": [base_hp, base_mp, base_attack, base_defense], "weapon": weapon,
 		"skill_levels": skill_levels, "hotkeys": hotkeys, "quick_slots": quick_slots,
 		"quick_keys": quick_keys, "items": items, "friendship": friendship,
@@ -154,6 +176,7 @@ func to_dict() -> Dictionary:
 
 
 func from_dict(d: Dictionary) -> void:
+	hero_name = str(d.get("name", hero_name))
 	level = int(d.get("level", level))
 	experience = int(d.get("exp", experience))
 	fame = int(d.get("fame", fame))

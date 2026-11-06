@@ -18,6 +18,16 @@ func _ready() -> void:
 	await _shot(out, "02_main_menu")
 	Router.push("settings")
 	await _shot(out, "03_settings")
+	# Management and Attributes, with a hero who has put three points into HP.
+	Router.go("main_menu")
+	Router.push("management", {"profile_path": "user://shot_hero.json"})
+	await _shot(out, "05_management")
+	var hero: RefCounted = load("res://scripts/core/profile.gd").new()
+	for i in 3:
+		hero.spend_point(0)
+	hero.save("user://shot_hero.json")
+	Router.push("attributes", Router.params)
+	await _shot(out, "06_attributes")
 	Router.go("map_viewer")
 	var viewer: Node = Router.current
 	for n in MAPS:

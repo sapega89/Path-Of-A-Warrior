@@ -1,5 +1,5 @@
 extends Control
-## Main menu: play, settings, quit (no quit button on phones and the web).
+## Main menu: play, management, maps, settings, quit (no quit button on phones and the web).
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 
@@ -10,6 +10,7 @@ func _ready() -> void:
 	var col := UiTheme.menu_column(self)
 	col.add_child(UiTheme.heading("game.title", 44))
 	_add(col, "Play", "menu.play", func(): Router.push("campaign"))
+	_add(col, "Management", "menu.management", func(): Router.push("management"))
 	_add(col, "Maps", "menu.maps", func(): Router.push("map_viewer"))
 	_add(col, "Settings", "menu.settings", func(): Router.push("settings"))
 	if show_quit():
