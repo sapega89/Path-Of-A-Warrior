@@ -42,6 +42,11 @@ func test_save_on_the_map_and_continue() -> void:
 	eq(again.sim.hero.hp, 10, "Continue: the HP of the save")
 	eq(again.sim.kills, 7, "and its kills")
 	eq(again.sim.cell, room, "in the room saved")
+	eq([again.sim.enemies.size(), again.sim.waves[0]], [0, 0], "the room stays clear")
+	for t in 8:
+		again.sim.tick(-1)
+	eq(again.sim.banner, 0, "no Stage banner")
+	check(again.sim.exits_open(), "its exits open")
 	again.free()
 
 	saved.save()
