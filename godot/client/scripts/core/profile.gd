@@ -448,6 +448,61 @@ func enchant(item: Dictionary, rng: RandomNumberGenerator = null) -> String:
 	return "fail"
 
 
+## Combine: what three things of the backpack (places) would make, worked out when the third
+## is chosen, as the Blacksmith tells it before asking: {} when they make nothing, else
+## {"result": the new thing, "price": the fee, "success": whether it works (the new thing is
+## then enchanted a third of their enchantings), "lost": the place lost when it fails, or -1}.
+## A thing of a higher level is harder to make, and its failure loses more.
+func combine_plan(places: Array, rng: RandomNumberGenerator = null) -> Dictionary:
+	if places.size() != 3:
+		return {}
+	if rng == null:
+		rng = RandomNumberGenerator.new()
+	var ids: Array = []
+	var enchants := 0
+	for p in places:
+		var it: Dictionary = backpack[int(p)]
+		if int(it.id) <= 100:
+			return {}
+		ids.append(int(it.id))
+		enchants += int(it.enchant)
+	var results := Items.mixes(ids)
+	if results.is_empty():
+		return {}
+	var id := int(results[rng.randi_range(0, results.size() - 1)])
+	var result := Items.make(id, rng)
+	var plan := {"result": result, "price": Items.price(result) / 4, "success": false, "lost": -1}
+	var chance := (200 - Items.level_needed(id)) / 12
+	if chance >= rng.randi_range(0, 100):
+		plan.success = true
+		for i in enchants / 3:
+			Items.enchant(result, rng)
+	else:
+		var div := 15 if id < 500 else 12
+		var lose := (100 - chance) * 10 / div
+		if lose >= rng.randi_range(0, 100):
+			plan.lost = int(places[rng.randi_range(0, 2)])
+	return plan
+
+
+## Pays for a planned Combine: the three things become the new one (in the third's place),
+## or when it fails one of them may be lost. "success", "fail" or "no_gold".
+func combine(places: Array, plan: Dictionary) -> String:
+	if plan.is_empty():
+		return ""
+	if gold < int(plan.price):
+		return "no_gold"
+	gold -= int(plan.price)
+	if plan.success:
+		for p in places:
+			backpack[int(p)] = Items.empty()
+		backpack[int(places[2])] = (plan.result as Dictionary).duplicate()
+		return "success"
+	if int(plan.lost) >= 0:
+		backpack[int(plan.lost)] = Items.empty()
+	return "fail"
+
+
 func is_lord_open(id: int) -> bool:
 	return id >= 1 and lords_open & (1 << (id - 1)) != 0
 

@@ -2,7 +2,9 @@ extends Control
 ## A page of the Blacksmith (Router.params "mode"): the hero's gold over a grid of things.
 ## Buy: the shop's potions, scrolls and gears. Sell: the quick slots' potions, then the
 ## backpack, for half the price. Enchant: the backpack, then what the hero wears; enchanting
-## costs gold, asks first, and can fail or lose the thing. Every change is saved at once.
+## costs gold, asks first, and can fail or lose the thing. Combine: three things of the
+## backpack chosen (a gold border) make one new thing, for a fee, or fail and maybe lose
+## one of them. Every change is saved at once.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
@@ -19,6 +21,8 @@ var gold: Label
 var info: Label
 var ask: ConfirmationDialog
 var asked := -1  # the cell waiting for the answer to "Continue?"
+var chosen: Array[int] = []  # Combine: the backpack places chosen
+var plan := {}  # Combine: what the three chosen make (Profile.combine_plan)
 var rng := RandomNumberGenerator.new()
 
 
@@ -88,10 +92,12 @@ func _ready() -> void:
 	ask = ConfirmationDialog.new()
 	ask.name = "Ask"
 	ask.confirmed.connect(confirm)
-	ask.canceled.connect(func(): asked = -1)
+	ask.canceled.connect(_cancel)
 	add_child(ask)
 	refresh()
 	_show_info(0)
+	if mode == "combine":
+		info.text = tr("combine.select")
 	cells[0].grab_focus.call_deferred()
 
 
@@ -101,6 +107,8 @@ func cell_count() -> int:
 			return QUICK + Items.BACKPACK
 		"enchant":
 			return Items.BACKPACK + Items.EQUIPPED
+		"combine":
+			return Items.BACKPACK
 	return profile.shop.size()
 
 
@@ -117,6 +125,8 @@ func item_at(i: int) -> Dictionary:
 			if i < Items.BACKPACK:
 				return profile.backpack[i]
 			return profile.equipped[i - Items.BACKPACK]
+		"combine":
+			return profile.backpack[i]
 	return profile.shop[i]
 
 
@@ -148,15 +158,57 @@ func press_cell(i: int) -> String:
 				ask.dialog_text = tr("enchant.ask").replace("%d", str(Items.enchant_price(item)))
 				ask.popup_centered()
 				said = ask.dialog_text
+		"combine":
+			said = _choose(i)
 	refresh()
 	info.text = said
 	return said
 
 
-## The answer Yes to "Continue?": the thing is enchanted (or not). Returns the line shown.
+## Combine: a thing chosen, or chosen no more. With three, what they make is worked out
+## and the fee asked.
+func _choose(i: int) -> String:
+	if int(profile.backpack[i].id) <= 100:
+		return ""
+	if i in chosen:
+		chosen.erase(i)
+		return Items.describe(profile.backpack[i])
+	chosen.append(i)
+	if chosen.size() < 3:
+		return Items.describe(profile.backpack[i])
+	plan = profile.combine_plan(chosen, rng)
+	if plan.is_empty():
+		chosen.clear()
+		return tr("combine.not_possible")
+	asked = i
+	ask.dialog_text = tr("combine.ask").replace("%d", str(int(plan.price)))
+	ask.popup_centered()
+	return ask.dialog_text
+
+
+func _cancel() -> void:
+	asked = -1
+	chosen.clear()
+	plan = {}
+	refresh()
+
+
+## The answer Yes to "Continue?": the thing is enchanted, or the three combined (or not).
+## Returns the line shown.
 func confirm() -> String:
 	if asked < 0:
 		return ""
+	if mode == "combine":
+		var c: String = profile.combine(chosen, plan)
+		asked = -1
+		chosen.clear()
+		plan = {}
+		if c != "no_gold":
+			profile.save(path)
+		var line := tr("shop.no_gold") if c == "no_gold" else tr("combine." + c)
+		refresh()
+		info.text = line
+		return line
 	var r: String = profile.enchant(item_at(asked), rng)
 	asked = -1
 	if r != "no_gold":
@@ -176,11 +228,12 @@ func refresh() -> void:
 			cells[i].text = str(int(profile.quick_slots[i][1]))
 		else:
 			cells[i].text = ""
+		cells[i].add_theme_stylebox_override("normal", ItemSlot.box(i in chosen))
 
 
 func describe(i: int) -> String:
 	var item := item_at(i)
-	if mode == "enchant":
+	if mode == "enchant" or mode == "combine":
 		return Items.describe(item)
 	return Items.describe_for_sale(item, mode == "sell")
 

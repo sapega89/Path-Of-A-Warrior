@@ -7,7 +7,7 @@ const PAGES := [
 	["Buy", "blacksmith.buy", "buy"],
 	["Sell", "blacksmith.sell", "sell"],
 	["Enchant", "blacksmith.enchant", "enchant"],
-	["Combine", "blacksmith.combine", ""],
+	["Combine", "blacksmith.combine", "combine"],
 ]
 
 var buttons: Array[Button] = []

@@ -254,5 +254,25 @@
   "enchant.fail": {
     "en": "Enchant Fail",
     "uk": "Зачарування не вдалося"
+  },
+  "combine.select": {
+    "en": "Please select 3 items to combine into one.",
+    "uk": "Виберіть 3 речі, щоб поєднати їх в одну."
+  },
+  "combine.not_possible": {
+    "en": "Not possible.",
+    "uk": "Не вийде."
+  },
+  "combine.ask": {
+    "en": "Compounding fee is %d. Selected items could be lost when it fails. Continue?",
+    "uk": "Плата %d. Якщо не вийде, вибрані речі можна втратити. Продовжити?"
+  },
+  "combine.success": {
+    "en": "Compounding Success",
+    "uk": "Поєднання вдалося"
+  },
+  "combine.fail": {
+    "en": "Compounding Fail",
+    "uk": "Поєднання не вдалося"
   }
 }
