@@ -622,5 +622,77 @@
   "register.err_offline": {
     "en": "Network connection has failed.",
     "uk": "Немає зв'язку з сервером."
+  },
+  "menu.live": {
+    "en": "Live",
+    "uk": "Live"
+  },
+  "live.title": {
+    "en": "LIVE",
+    "uk": "LIVE"
+  },
+  "live.trade": {
+    "en": "Trade",
+    "uk": "Торгівля"
+  },
+  "live.warehouse": {
+    "en": "Warehouse",
+    "uk": "Склад"
+  },
+  "live.safe": {
+    "en": "Safe",
+    "uk": "Сейф"
+  },
+  "live.multiplayer": {
+    "en": "Multiplayer",
+    "uk": "Мультиплеєр"
+  },
+  "live.backpack": {
+    "en": "Backpack",
+    "uk": "Рюкзак"
+  },
+  "live.connecting": {
+    "en": "Connecting...",
+    "uk": "З'єднання..."
+  },
+  "live.failed": {
+    "en": "Network connection has failed. Please try again later.",
+    "uk": "Не вдалося з'єднатися з сервером. Спробуйте пізніше."
+  },
+  "live.local": {
+    "en": "Local",
+    "uk": "У героя"
+  },
+  "live.server": {
+    "en": "Server",
+    "uk": "У сейфі"
+  },
+  "live.how_much": {
+    "en": "How much do you want to move?",
+    "uk": "Скільки перекласти?"
+  },
+  "live.ok": {
+    "en": "OK",
+    "uk": "OK"
+  },
+  "live.no_safe_gold": {
+    "en": "No Gold in Safe.",
+    "uk": "У сейфі немає золота."
+  },
+  "live.no_gold": {
+    "en": "No gold for transfer to Safe.",
+    "uk": "Немає золота, щоб покласти в сейф."
+  },
+  "live.out_of_range": {
+    "en": "Amount of Gold you input is out of range.",
+    "uk": "Стільки золота перекласти не можна."
+  },
+  "live.backpack_full": {
+    "en": "No Space in Backpack.",
+    "uk": "У рюкзаку немає місця."
+  },
+  "live.warehouse_full": {
+    "en": "Need a space in warehouse. Empty some space in the Warehouse and try again.",
+    "uk": "На складі немає місця. Звільніть місце на складі й спробуйте знову."
   }
 }

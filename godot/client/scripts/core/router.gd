@@ -26,6 +26,9 @@ const SCREENS := {
 	"help": "res://scripts/screens/help_screen.gd",
 	"offline": "res://scripts/screens/offline_screen.gd",
 	"register": "res://scripts/screens/register_screen.gd",
+	"live": "res://scripts/screens/live_screen.gd",
+	"live_warehouse": "res://scripts/screens/live_warehouse_screen.gd",
+	"live_safe": "res://scripts/screens/live_safe_screen.gd",
 }
 
 var current: Control

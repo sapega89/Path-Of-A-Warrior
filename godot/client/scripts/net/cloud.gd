@@ -5,13 +5,16 @@ extends Node
 ## or the project settings pow/net/server and pow/net/cert. Off (no server given, as in the
 ## tests and the screenshots) the hero stays in user://hero.json as before.
 ## The account (UserID + password) stays on this device in user://account.cfg.
+## Live (scripts/net/live_client.gd) goes over the same logged-in connection (request()).
 
 const CloudSync := preload("res://scripts/net/cloud_sync.gd")
+const LiveClient := preload("res://scripts/net/live_client.gd")
 const Protocol := preload("res://scripts/net/protocol.gd")
 const ACCOUNT_PATH := "user://account.cfg"
 const LEGACY_PATH := "user://hero.json"
 
 var sync: CloudSync = null
+var live: LiveClient = null
 var account_path := ACCOUNT_PATH
 
 
@@ -48,6 +51,7 @@ static func server_config(argv: PackedStringArray) -> Dictionary:
 func start(address: String, port: int, cert: X509Certificate) -> void:
 	sync = CloudSync.new()
 	sync.setup(address, port, cert)
+	live = LiveClient.new(request)
 	var acc := load_account()
 	if not acc.is_empty():
 		sync.account = acc
@@ -61,6 +65,7 @@ func stop() -> void:
 	if sync != null:
 		sync.client.close()
 	sync = null
+	live = null
 
 
 func enabled() -> bool:
@@ -82,6 +87,14 @@ func has_account() -> bool:
 ## The hero's dictionary from the server (or saved since), null when there is none.
 func hero() -> Variant:
 	return null if sync == null else sync.hero
+
+
+## One request over the logged-in connection, done(answer); offline: {ok: false, err: "offline"}.
+func request(msg: Dictionary, done: Callable) -> void:
+	if not online():
+		done.call({"t": msg.get("t", "?"), "ok": false, "err": "offline"})
+		return
+	sync.client.request(msg, done)
 
 
 func save_hero(d: Dictionary) -> void:

@@ -170,3 +170,33 @@ func test_profile_lives_on_the_server_when_online() -> void:
 	check(not cloud.enabled(), "off again: the hero file as before")
 	s.stop()
 	ServerTests._rm(d)
+
+
+func test_live_goes_over_the_same_connection() -> void:
+	var cloud: Node = root.get_node("/root/Cloud")
+	var d := _dir()
+	var s := _server(d)
+	s.accounts.create_account("ANDREY", "1234")
+	cloud.account_path = d.path_join("account.cfg")
+	cloud.save_account("ANDREY", "1234")
+	cloud.start("127.0.0.1", PORT, ServerTests.pair(0)[1])
+	cloud.sync.legacy = null
+	var got := []
+	cloud.request({"t": "live_status"}, func(r): got.append(r))
+	eq(got[0].err if not got.is_empty() else "", "offline", "not before the login")
+	check(_run(s, [cloud.sync], cloud.online), "logged in")
+	var p := Profile.new()
+	p.gold = 300
+	p.add_item(load("res://scripts/core/items.gd").make(101))
+	var err := []
+	cloud.live.sync(p, func(e): err.append(e))
+	check(_run(s, [cloud.sync], func(): return not err.is_empty()), "answered")
+	eq(err, [""], "synced")
+	cloud.live.move_gold(p, true, 100, func(e): err.append(e))
+	check(_run(s, [cloud.sync], func(): return err.size() > 1), "answered")
+	eq([err[-1], int(p.gold), cloud.live.safe], ["", 200, 100], "gold into the Safe on the server")
+	eq(int(s.live.user("ANDREY").safe), 100)
+	cloud.stop()
+	check(cloud.live == null, "no Live without the server")
+	s.stop()
+	ServerTests._rm(d)
