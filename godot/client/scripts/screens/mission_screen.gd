@@ -42,6 +42,8 @@ var _gold_tex: Texture2D = preload("res://assets/original/ui/gold.png")
 var _acc := 0.0
 var _pressed := -1
 var _fire := false
+var _hotkey := -1  # a skill key pressed since the last tick
+var _potion := -1  # a potion key pressed since the last tick
 var _last_held := -1
 var _blink := 0
 
@@ -156,12 +158,20 @@ func _process(delta: float) -> void:
 	_last_held = held
 	if Input.is_action_just_pressed("attack"):
 		_fire = true
+	for i in 4:
+		if Input.is_action_just_pressed("skill_%d" % (i + 1)):
+			_hotkey = i
+	for i in 2:
+		if Input.is_action_just_pressed("potion_%d" % (i + 1)):
+			_potion = i
 	_acc += delta
 	while _acc >= TICK:
 		_acc -= TICK
-		sim.tick(held, _pressed, _fire)
+		sim.tick(held, _pressed, _fire, _hotkey, _potion)
 		_pressed = -1
 		_fire = false
+		_hotkey = -1
+		_potion = -1
 		_blink += 1
 	if sim.finished:
 		set_process(false)
@@ -179,10 +189,11 @@ static func smooth(prev: Vector2i, now: Vector2i, t: float) -> Vector2:
 
 func _update_view(t: float) -> void:
 	hero.global_position = Hero.px_to_world(smooth(sim.hero.prev_pos, sim.hero.pos, t))
-	hero.set_frame(sim.hero_sprite_frame())
+	hero.set_frame(sim.hero_sprite_frame(), sim.hero.action >= 12)
 	camera.focus = sim.rooms.center(sim.cell)
-	var line := "%s: %s   %s %d   HP %d/%d   G %d" % [lord_name, mission_info.get("name", ""),
-		tr("mission.stage"), sim.rooms_visited, sim.hero.hp, sim.hero.max_hp, sim.gold]
+	var line := "%s: %s   %s %d   HP %d/%d   MP %d/%d   G %d" % [lord_name,
+		mission_info.get("name", ""), tr("mission.stage"), sim.rooms_visited, sim.hero.hp,
+		sim.hero.max_hp, sim.hero.mp, sim.hero.max_mp, sim.gold]
 	if not sim.target_info.is_empty():
 		line += "   %s Lv %d" % [sim.target_info.name, sim.target_info.level]
 	info.text = line

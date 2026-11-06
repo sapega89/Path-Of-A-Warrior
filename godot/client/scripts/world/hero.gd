@@ -11,6 +11,7 @@ extends CharacterBody3D
 signal attacked
 
 const SHEET_PATH := "res://assets/original/hero_%d_%d.png"
+const SKILL_SHEET_PATH := "res://assets/original/hero_%d_%d_sk.png"
 const INFO_PATH := "res://assets/original/hero.json"
 const SPEED := 4.0  # tiles per second
 const GRAVITY := 20.0
@@ -35,6 +36,9 @@ var info := {}
 var _anim_pos := 0
 var _anim_time := 0.0
 var _flash := 0.0
+var _base: Texture2D
+var _skill: Texture2D
+var _showing_skill := false
 
 
 func _ready() -> void:
@@ -49,7 +53,9 @@ func _ready() -> void:
 	info = load_info()
 	sprite = Sprite3D.new()
 	sprite.name = "Sprite"
-	sprite.texture = load(SHEET_PATH % [0, 0])
+	_base = load(SHEET_PATH % [0, 0])
+	_skill = load(SKILL_SHEET_PATH % [0, 0])
+	sprite.texture = _base
 	sprite.region_enabled = true
 	sprite.pixel_size = PIXEL_SIZE
 	sprite.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
@@ -76,7 +82,9 @@ static func load_info() -> Dictionary:
 func set_look(head: int, weapon: int) -> void:
 	var tex: Texture2D = load(SHEET_PATH % [head, weapon])
 	if tex != null:
-		sprite.texture = tex
+		_base = tex
+		_skill = load(SKILL_SHEET_PATH % [head, weapon])
+		sprite.texture = _skill if _showing_skill else _base
 
 
 ## Input as a 2D vector (x = right, y = down on screen), length 0..1.
@@ -101,8 +109,15 @@ static func px_to_world(p: Vector2) -> Vector3:
 	return Vector3(p.x / 27.0, 0.0, (p.y + FOOT_PX) / 27.0)
 
 
-## Shows a frame of the sheet (used when the simulation drives the hero).
-func set_frame(frame: int) -> void:
+## Shows a frame of the sheet (used when the simulation drives the hero); skill: a frame
+## of the skill sheet (actions 12 and up).
+func set_frame(frame: int, skill: bool = false) -> void:
+	if skill != _showing_skill:
+		_showing_skill = skill
+		sprite.texture = _skill if skill else _base
+		var cell: Array = info.get("skill_cell" if skill else "cell", [96, 96])
+		var origin: Array = info.get("skill_origin" if skill else "origin", [48, 72])
+		sprite.position.y = (float(origin[1]) - float(cell[1]) / 2.0 + FOOT_PX) * PIXEL_SIZE
 	_show_frame(frame)
 
 
@@ -161,7 +176,7 @@ func _animate(delta: float) -> void:
 
 
 func _show_frame(frame: int) -> void:
-	var cell: Array = info.get("cell", [96, 96])
+	var cell: Array = info.get("skill_cell" if _showing_skill else "cell", [96, 96])
 	var cols: int = int(info.get("columns", 16))
 	var cw := float(cell[0])
 	var ch := float(cell[1])

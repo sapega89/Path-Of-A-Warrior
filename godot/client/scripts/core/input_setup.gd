@@ -15,6 +15,8 @@ const KEYS := {
 	"skill_2": [KEY_2, KEY_I],
 	"skill_3": [KEY_3, KEY_O],
 	"skill_4": [KEY_4, KEY_P],
+	"potion_1": [KEY_5, KEY_K],
+	"potion_2": [KEY_6, KEY_L],
 	"pause": [KEY_ESCAPE],
 }
 const PAD_BUTTONS := {
@@ -27,6 +29,8 @@ const PAD_BUTTONS := {
 	"skill_2": JOY_BUTTON_Y,
 	"skill_3": JOY_BUTTON_LEFT_SHOULDER,
 	"skill_4": JOY_BUTTON_RIGHT_SHOULDER,
+	"potion_1": JOY_BUTTON_LEFT_STICK,
+	"potion_2": JOY_BUTTON_RIGHT_STICK,
 	"pause": JOY_BUTTON_START,
 }
 ## action: [axis, direction]

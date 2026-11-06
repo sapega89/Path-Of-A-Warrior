@@ -8,7 +8,7 @@ original data and art for now. Run from the repo root:
 Writes
   godot/client/data/maps/<n>.json        one per map (1..45), see MAP FORMAT below
   godot/client/assets/original/tiles.png the 240 map tiles in one atlas, 16 x 15 tiles of 27 px
-  godot/client/assets/original/hero_<head>_<weapon>.png + hero.json
+  godot/client/assets/original/hero_<head>_<weapon>[_sk].png + hero.json
                                          the hero's frames, body + head + weapon put together as
                                          pyport draw_hero does, one cell per
                                          sprite frame; hero.json has the walk / idle tables
@@ -167,6 +167,40 @@ def build_hero(mdat, chars, head, weapon):
     return sheet, count
 
 
+HERO_SKILL_CELL = (128, 112)
+HERO_SKILL_ORIGIN = (64, 88)  # the skill swings reach 55 px aside and 76 px up
+
+
+def build_hero_skills(mdat, chars, head, weapon, flags):
+    """The hero's skill frames (actions 12 and up), as draw_hero puts them together."""
+    body_img = Image.open(ROOT / (chars[44] + ".png")).convert("RGBA")
+    head_img = Image.open(ROOT / (chars[46 + head] + ".png")).convert("RGBA")
+    wep_img = Image.open(ROOT / (chars[42 + weapon] + ".png")).convert("RGBA")
+    body = read_frames(ROOT / mdat[46])
+    heads = read_frames(ROOT / mdat[51 + head])
+    weps = read_frames(ROOT / mdat[89 + (weapon << 2)])
+    cw, ch = HERO_SKILL_CELL
+    ox0, oy0 = HERO_SKILL_ORIGIN
+    sheet = Image.new("RGBA", (cw * 16, ch * ((len(body) + 15) // 16)), (0, 0, 0, 0))
+
+    def paste(cell, img, f):
+        sx, sy, w, h, ox, oy = f
+        if w > 0 and h > 0:
+            sheet.alpha_composite(img.crop((sx, sy, sx + w, sy + h)),
+                                  ((cell % 16) * cw + ox0 - ox, (cell // 16) * ch + oy0 - oy))
+
+    for i in range(len(body)):
+        behind = flags[(i >> 5 << 2) + (0 if weapon else 1)] >> (i & 31) & 1
+        if behind and i < len(weps):
+            paste(i, wep_img, weps[i])
+        paste(i, body_img, body[i])
+        if i < len(heads):
+            paste(i, head_img, heads[i])
+        if not behind and i < len(weps):
+            paste(i, wep_img, weps[i])
+    return sheet
+
+
 def export_hero(out):
     mdat = scr.load(ROOT / "mdat_QVGA.scr")
     chars = scr.load(ROOT / "imgchar.scr")
@@ -177,8 +211,13 @@ def export_hero(out):
             sheet.save(out / ("hero_%d_%d.png" % (head, weapon)))
     sys.path.insert(0, str(ROOT / "pyport"))
     from pow.game import consts
+    for head in range(HEADS):
+        for weapon in range(WEAPONS):
+            build_hero_skills(mdat, chars, head, weapon, consts.general_frame_flags).save(
+                out / ("hero_%d_%d_sk.png" % (head, weapon)))
     info = {
         "cell": list(HERO_CELL), "origin": list(HERO_ORIGIN), "frames": count, "columns": 16,
+        "skill_cell": list(HERO_SKILL_CELL), "skill_origin": list(HERO_SKILL_ORIGIN),
         # tables per dir4 (consts.dir8_to_dir4), frame lists end with 222 (loop)
         "dir8_to_dir4": consts.dir8_to_dir4,
         "idle": consts.hero_anim_0, "walk": consts.hero_anim_1,
@@ -229,9 +268,9 @@ def export_enemies(out):
 GENERAL_CELL = (96, 112)
 GENERAL_ORIGIN = (48, 88)  # the skill frames reach 75 px above the feet
 GENERAL_LOOKS = 6
-# weapon in front of the body: base frames by bit (side 1, side 0); skill frames by
+# weapon behind the body (drawn first): base frames by bit (side 1, side 0); skill frames by
 # general_frame_flags[(f >> 5 << 2) + (2 if side else 3)] bit (f & 31), as draw_enemy does
-GENERAL_WEAPON_FRONT = {1: 1310732, 0: 1053711}
+GENERAL_WEAPON_BEHIND = {1: 1310732, 0: 1053711}
 
 
 def build_general(mdat, chars, look, side, skill, flags):
@@ -262,15 +301,15 @@ def build_general(mdat, chars, look, side, skill, flags):
         if 0 <= mx and mx + mark.width <= sheet.width and 0 <= my and my + mark.height <= sheet.height:
             sheet.alpha_composite(mark, (mx, my))
         if skill:
-            front = flags[(i >> 5 << 2) + (2 if side else 3)] >> (i & 31) & 1
+            behind = flags[(i >> 5 << 2) + (2 if side else 3)] >> (i & 31) & 1
         else:
-            front = GENERAL_WEAPON_FRONT[side] >> i & 1
-        if not front and i < len(weps):
+            behind = GENERAL_WEAPON_BEHIND[side] >> i & 1
+        if behind and i < len(weps):
             paste(i, wep_img, weps[i])
         paste(i, body_img, body[i])
         if i < len(heads):
             paste(i, head_img, heads[i])
-        if front and i < len(weps):
+        if not behind and i < len(weps):
             paste(i, wep_img, weps[i])
     return sheet
 

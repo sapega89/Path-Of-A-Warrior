@@ -11,8 +11,9 @@ extends RefCounted
 ## knocked back and die; the last one clears the room. Barrels and other objects break under
 ## the sword; soldiers and objects drop gold and items that the hero picks up. Generals come
 ## with their talk, fight with their skills, and the mission's own general ends the mission
-## ("Mission Success!"). Not yet: the hero's skills and potions, the skill effects' pictures,
-## the talk after a cleared room and the mission's rewards.
+## ("Mission Success!"). The hero's skills (on their keys, for MP) and his potions and
+## scrolls work. Not yet: the pictures of the effects, the talk after a cleared room and the
+## mission's rewards.
 
 const Rooms := preload("res://scripts/world/rooms.gd")
 const JavaRandom := preload("res://scripts/sim/java_random.gd")
@@ -38,7 +39,16 @@ const BASE_ATTACK := [3, 2, 3]
 const BASE_HP := [7, 5, 7]
 const ARROW_DX := [-1, -15, -1, 5]
 const ARROW_DY := [-5, -13, -30, -13]
-const HIT_FRAME := [0, 0, 0, 1, 1, 1, 1, 1, 1]  # the frame of a sword attack (3..8) that hits
+## The frame of an attack that hits, by action (sword 3..8, skills 21..24).
+const HIT_FRAME := [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 5, 5]
+## MP of skill 12..30 at level 1, and per level above.
+const SKILL_BASE_COST := [5, 6, 7, 10, 15, 7, 10, 10, 8, 9, 10, 5, 6, 7, 9, 12, 20, 20, 20]
+const SKILL_COST_PER_LEVEL := [3, 4, 5, 3, 4, 3, 3, 5, 3, 4, 5, 3, 4, 5, 5, 6, 5, 5, 5]
+## Potions 1..9 restore HP (1), MP (2) or both (3) by 30 / 60 / 100 %.
+const RESTORES := [1, 1, 1, 2, 2, 2, 3, 3, 3]
+const RESTORE_PCT := [30, 60, 100, 30, 60, 100, 30, 60, 100]
+## How many ticks an effect lasts, by effect item + 2 (-2, -1 scrolls in flight, 1..9 potions).
+const EFFECT_STEPS := [2, 10, 100, 2, 2, 2, 2, 2, 2, 2, 2, 2, 100, 100]
 ## A squad moves as if it stood this far aside (the side its men stand on), by direction.
 const SQUAD_SHIFT := {3: Vector2i(-20, 0), 1: Vector2i(-20, 20), 2: Vector2i(-20, 0),
 	0: Vector2i(0, 20), 5: Vector2i(20, 0), 7: Vector2i(20, 20), 6: Vector2i(20, 0)}
@@ -79,6 +89,8 @@ class Actor:
 	var combo := 0
 	var weapon_kind := 0  # 0 long sword, 1 short sword
 	var skill_step := 0  # a general's heals so far
+	var mp := 0
+	var max_mp := 0
 	var attack_buff_ticks := 0
 	var defense_buff_ticks := 0
 
@@ -153,6 +165,18 @@ var kills := 0
 var mission_exp := 0
 var failed := false
 var finished := false  # the mission is over: the screen leaves
+## The hero's skill levels (skills 12..30), the skills on his keys, his quick slots
+## ([item, count], potions and scrolls) and which slots the two potion keys use.
+var skill_levels: Array[int] = []
+var hotkeys: Array[int] = [12, 17, 0, 0, 0]
+var quick_slots: Array = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]
+var quick_keys: Array[int] = [0, 1]
+## A potion or scroll in use: item (> 9 scroll in the hero's hand, < 0 its blast), step.
+var effect_item := 0
+var effect_step := 0
+var effect_slot := 0
+var effect_pos := Vector2i.ZERO
+var effect_dir := 0
 ## The last enemy hit or hitting: {name, level, hp_bar (0..60), ticks}.
 var target_info := {}
 var breakables: Array[Breakable] = []
@@ -213,6 +237,12 @@ func _init(map_data: Dictionary = {}, mission: int = 0, start_tile: Vector2i = V
 	hero.defense = 4
 	hero.hp = 30
 	hero.max_hp = 30
+	hero.mp = 10
+	hero.max_mp = 10
+	for i in 19:
+		skill_levels.append(0)
+	skill_levels[0] = 1  # the first skills of a new hero: 12 and 17
+	skill_levels[5] = 1
 	cell = room_of(hero.pos)
 	enter_room()
 
@@ -301,8 +331,9 @@ func _find_spawn_spots() -> void:
 
 ## One tick. held: the 8-direction of the held direction key (0, 2, 4, 6) or -1.
 ## pressed: a direction key pressed this tick (-1 none), for the original's tap-to-walk.
-## fire: the attack key was pressed (it also closes a banner).
-func tick(held: int, pressed: int = -1, fire: bool = false) -> void:
+## fire: the attack key was pressed (it also closes a banner). hotkey: a skill key (0..4)
+## pressed, -1 none; potion: a potion key (0, 1), -1 none.
+func tick(held: int, pressed: int = -1, fire: bool = false, hotkey: int = -1, potion: int = -1) -> void:
 	hero.prev_pos = hero.pos
 	for e in enemies:
 		e.prev_pos = e.pos
@@ -315,7 +346,10 @@ func tick(held: int, pressed: int = -1, fire: bool = false) -> void:
 	if scrolling:
 		_tick_scroll()
 		return
-	_tick_scene(held, pressed, 3 if fire else 0)
+	var skill := 3 if fire else 0
+	if hotkey >= 0 and hotkey < hotkeys.size():
+		skill = hotkeys[hotkey]
+	_tick_scene(held, pressed, skill, potion)
 	if banner == 0:
 		_end_tick()
 
@@ -342,10 +376,18 @@ func _show_banner(kind: int) -> void:
 	banner_timer = BANNER_TICKS
 
 
-func _tick_scene(held: int, pressed: int, skill: int) -> void:
+func _tick_scene(held: int, pressed: int, skill: int, potion: int = -1) -> void:
 	for o in breakables:
 		if o.active and o.break_frame != 0:
 			o.break_frame -= 1
+	_tick_effect()
+	if potion >= 0:
+		_use_quick_slot(potion)
+	if effect_item > 0:
+		# a potion being drunk or a scroll being read: the world waits
+		if effect_item > 9:
+			hero.frame = effect_step
+		return
 	_spawn_next_enemy()
 	hero.frame += 1
 	dir_history[0] = pressed
@@ -369,11 +411,11 @@ func _tick_scene(held: int, pressed: int, skill: int) -> void:
 	if hero.action < 2:
 		_start_hero_action(pressed, skill)
 	_move_hero()
-	_hero_action_hits()
-	_tick_arrows()
-	_pick_up_drops()
-	_tick_enemies()
-	_sort_enemies()
+	if _hero_action_hits():
+		_tick_arrows()
+		_pick_up_drops()
+		_tick_enemies()
+		_sort_enemies()
 	_tick_broken()
 
 
@@ -415,6 +457,23 @@ func _start_hero_action(pressed: int, skill: int = 0) -> void:
 		hero.frame = 0
 		hero.facing = int(table("dir8_to_dir4")[hero.facing]) << 1
 		hero.dir = hero.facing
+	elif skill > 0 and skill_mp_cost(skill) != 0:
+		hero.facing = int(table("dir8_to_dir4")[hero.facing]) << 1
+		hero.dir = hero.facing
+		hero.action = skill
+		hero.frame = 0
+
+
+## Takes the MP of a skill (12..30) at its level; 0 = not enough MP (nothing is taken).
+func skill_mp_cost(skill: int) -> int:
+	var cost := 0
+	if skill >= 12 and skill <= 30:
+		var k := skill - 12
+		cost = SKILL_BASE_COST[k] + (skill_levels[k] - 1) * SKILL_COST_PER_LEVEL[k]
+	if cost > hero.mp:
+		return 0
+	hero.mp -= cost
+	return cost
 
 
 ## A direction pressed twice quickly: run.
@@ -441,6 +500,32 @@ func _move_hero() -> void:
 	elif action >= 3 and action <= 8:
 		step_x = int(dx8[move_dir]) / 3
 		step_y = int(dy8[move_dir]) / 3
+	elif action == 12:
+		if frame > 2 and frame < 6:
+			step_x = int(dx8[move_dir]) << 2
+			step_y = int(dy8[move_dir]) << 2
+	elif action == 13 or action == 14:
+		var lunge := action == 14
+		if action == 13 and frame > 4 and frame < 8:
+			var sx := int(dx8[move_dir]) << 2
+			var sy := int(dy8[move_dir]) << 2
+			if sx > 0:
+				sx = step_until_free(hero.pos, sx, 6)
+			elif sx < 0:
+				sx = step_until_free(hero.pos, sx, 2)
+			if sy > 0:
+				sy = step_until_free(hero.pos, sy, 0)
+			elif sy < 0:
+				sy = step_until_free(hero.pos, sy, 4)
+			hero.pos += keep_in_room(hero.pos, sx, sy)
+			lunge = true
+		if lunge and frame > 0 and frame < 9:
+			step_x = int(dx8[move_dir])
+			step_y = int(dy8[move_dir])
+	elif action == 20:
+		if (frame & 1) == 0:
+			step_x = int(dx8[move_dir])
+			step_y = int(dy8[move_dir])
 	elif action == 10:
 		if frame < 10:
 			hero.pos.x += -1 if (frame & 1) != 0 else 1
@@ -467,13 +552,158 @@ func _move_hero() -> void:
 				hero.dir = i
 
 
-## The frame of the hero's action that hits: the enemies in reach are struck.
-func _hero_action_hits() -> void:
+## The frames of the hero's action that hit, heal or buff. False: a skill's cinematic
+## stops the world this tick (arrows and enemies wait).
+func _hero_action_hits() -> bool:
+	var world_runs := true
 	var action := hero.action
-	if action >= 3 and action <= 8 and hero.frame == HIT_FRAME[action]:
-		_turn_to_nearest()
-		_hero_attack()
-		_hero_hits_breakables()
+	var frame := hero.frame
+	if (action >= 3 and action <= 8) or (action >= 21 and action <= 24):
+		if frame == HIT_FRAME[action]:
+			if action <= 8:
+				_turn_to_nearest()
+			_hero_attack(0)
+			_hero_hits_breakables()
+	elif action == 12:
+		if frame > 2 and frame < 6:
+			_hero_attack(0)
+			_hero_hits_breakables()
+	elif action == 13:
+		if frame > 4 and frame < 8:
+			_hero_attack(0)
+			_hero_hits_breakables()
+	elif action == 14:
+		if frame in [2, 4, 6, 8]:
+			_hero_attack(0)
+			_hero_hits_breakables()
+	elif action == 15 or action == 16:
+		if frame == 11:  # heals
+			if action == 15:
+				hero.hp += hero.max_hp * (4 + skill_levels[3]) / 25
+			else:
+				hero.hp += hero.max_hp * (9 + skill_levels[4]) / 20
+			_clamp_hero()
+	elif action >= 17 and action <= 19:
+		if frame == 11:  # buffs: attack (17), defence (18), both (19)
+			var lv := skill_levels[action - 12]
+			var ticks := 50 if lv < 4 else (100 if lv < 8 else 150)
+			if action != 18:
+				hero.attack_buff = maxi(hero.attack * lv / int(BUFF_DIV[action - 17]), 1)
+				hero.attack_buff_ticks = ticks
+			if action != 17:
+				hero.defense_buff = maxi(hero.defense * lv / int(BUFF_DIV[action - 17]), 1)
+				hero.defense_buff_ticks = ticks
+	elif action == 20:
+		if (frame & 1) != 0:
+			hero.combo = 0 if frame in [1, 5, 9] else 2
+			_hero_attack(0)
+			_hero_hits_breakables()
+	elif action == 25:
+		if (frame & 1) != 0:
+			_hero_attack(0)
+			_hero_hits_breakables()
+	elif action == 26 or action == 27:
+		if frame == 8:
+			_hero_attack(0)
+			_hero_hits_breakables()
+		if frame > 1 and frame < 9:
+			world_runs = false
+	elif action == 28:
+		if frame == 22:
+			_hero_attack(0)
+			_hero_hits_breakables()
+		elif frame > 3:
+			world_runs = false
+	elif action == 29:
+		if frame == 22:
+			_hero_attack(0)
+			_hero_hits_breakables()
+		elif frame > 6:
+			world_runs = false
+	elif action == 30:
+		if frame > 3:
+			if frame < 15:
+				world_runs = false
+			elif frame == 15:
+				_hero_attack(0)
+				_hero_hits_breakables()
+	return world_runs
+
+
+func _clamp_hero() -> void:
+	hero.hp = mini(hero.hp, hero.max_hp)
+	hero.mp = mini(hero.mp, hero.max_mp)
+
+
+# ---- potions and scrolls -------------------------------------------------------------------
+
+## A potion key: the item of its quick slot goes into use (a scroll only while standing
+## or walking: the hero holds it up first).
+func _use_quick_slot(key: int) -> void:
+	if effect_item != 0 or hero.action >= 10 or key < 0 or key >= quick_keys.size():
+		return
+	var sel := quick_keys[key]
+	var item := int(quick_slots[sel][0])
+	if item == 0:
+		return
+	if item > 9:
+		if hero.action > 1:
+			return
+		hero.action = 11
+	effect_item = item
+	effect_slot = sel
+	effect_step = 0
+	effect_pos = hero.pos
+	effect_dir = int(table("dir8_to_dir4")[hero.dir])
+
+
+## One tick of the item in use: a potion restores after 2 ticks; a scroll is read for 5
+## ticks, then its blast flies in front of the hero and strikes (-2 fire once, -1 lightning
+## three times) everyone within 35 px.
+func _tick_effect() -> void:
+	if effect_item == 0:
+		return
+	if effect_item == -1:
+		if effect_step in [1, 4, 7]:
+			_hero_attack(-1)
+	elif effect_item == -2 and effect_step == 1:
+		_hero_attack(-2)
+	effect_step += 1
+	if effect_item > 9 and effect_step > 4:
+		effect_pos = _front_of(effect_pos, effect_dir << 1)
+		effect_item -= 12
+		effect_step = 0
+	if effect_step >= EFFECT_STEPS[effect_item + 2]:
+		if effect_item > 0:
+			var k := effect_item - 1
+			if (RESTORES[k] & 1) != 0:
+				hero.hp += hero.max_hp * RESTORE_PCT[k] / 100
+			if (RESTORES[k] & 2) != 0:
+				hero.mp += hero.max_mp * RESTORE_PCT[k] / 100
+			_clamp_hero()
+		var slot: Array = quick_slots[effect_slot]
+		slot[1] -= 1
+		if slot[1] < 1:
+			slot[0] = 0
+			slot[1] = 0
+		effect_item = 0
+
+
+## A potion or scroll picked up goes to its quick slot (5 of a kind at most); false if full.
+func add_quick_item(item: int) -> bool:
+	var free := -1
+	for b in quick_slots.size():
+		if int(quick_slots[b][0]) == item:
+			if int(quick_slots[b][1]) > 4:
+				return false
+			quick_slots[b][1] += 1
+			return true
+		if int(quick_slots[b][0]) == 0 and free < 0:
+			free = b
+	if free < 0:
+		return false
+	quick_slots[free] = [item, 1]
+	return true
 
 
 func _end_tick() -> void:
@@ -482,6 +712,14 @@ func _end_tick() -> void:
 	hero.shown_dir = hero.dir
 	hero.dir = hero.facing
 	hero.idle_ticks += 1
+	if hero.attack_buff_ticks > 0:
+		hero.attack_buff_ticks -= 1
+		if hero.attack_buff_ticks < 1:
+			hero.attack_buff = 0
+	if hero.defense_buff_ticks > 0:
+		hero.defense_buff_ticks -= 1
+		if hero.defense_buff_ticks < 1:
+			hero.defense_buff = 0
 	if not target_info.is_empty():
 		target_info.ticks -= 1
 		if target_info.ticks < 1:
@@ -1071,29 +1309,92 @@ func _show_target_info(e: Actor) -> void:
 		"level": e.level, "hp_bar": e.hp * 60 / maxi(e.max_hp, 1), "ticks": 10}
 
 
-## The hero's sword: every enemy in front of him and in reach is struck.
-func _hero_attack() -> void:
+## The hero's attack (kind 0, by his action) or a scroll's blast (-1, -2) against the enemies.
+func _hero_attack(kind: int) -> void:
 	var reach := int(table("weapon_reach")[hero.weapon_kind])
 	for e in enemies.duplicate():
-		if e.hp > 0 and e.alerted != 0 and e.action < 6:
-			if hero.dir == dir4(hero.pos, e.pos) and distance(hero.pos, e.pos) <= reach:
-				_strike_enemy(e)
+		if not (e.hp > 0 and e.alerted != 0 and e.action < 6):
+			continue
+		if kind == 0:
+			match hero.action:
+				13:
+					var side := hero.dir >> 1
+					if boxes_touch(hero.pos.x + int(table("hit_box_x")[side]), hero.pos.y + int(table("hit_box_y")[side]),
+							int(table("hit_box_w")[side]), int(table("hit_box_h")[side]),
+							e.pos.x - 8, e.pos.y - 8, 17, 17):
+						_hero_hits_enemy(e, hero.action)
+				22:
+					if _is_in_front(hero.pos, e.pos, hero.dir):
+						_hero_strike_if_near(e, reach)
+				23, 24:
+					_hero_strike_if_near(e, 45)
+				25:
+					if ((hero.dir + (hero.frame >> 1 << 1)) & 7) == dir4(hero.pos, e.pos):
+						_hero_strike_if_near(e, reach)
+				26, 27:
+					if distance(_front_of(hero.pos, hero.dir), e.pos) <= 35:
+						_strike_enemy(e)
+				28, 29, 30:
+					_strike_enemy(e)
+			# (every action also strikes what is straight in front, as the original does)
+			if hero.dir == dir4(hero.pos, e.pos):
+				_hero_strike_if_near(e, reach)
+		elif distance(effect_pos, e.pos) <= 35:
+			_hero_hits_enemy(e, effect_item)
 
 
+func _hero_strike_if_near(e: Actor, reach: int) -> void:
+	if distance(hero.pos, e.pos) <= reach:
+		_strike_enemy(e)
+
+
+## A strike of the hero lands: the damage, and what the skill does to the enemy.
 func _strike_enemy(e: Actor) -> void:
 	if e.action > 5:
 		return
-	_hero_hits_enemy(e)
+	_hero_hits_enemy(e, hero.action)
 	if hero.combo > 1 and hero.action < 12:
 		e.ai_mode = 1  # the third strike of a combo knocks back
+	match hero.action:
+		12:
+			hero.frame = 5
+			e.ai_mode = 2
+		14, 22:
+			e.ai_mode = 2
+		20:
+			e.ai_mode = 0
+		21, 24:
+			e.ai_mode = 5
+		25, 27:
+			e.ai_mode = 5
+		26:
+			pass
+	if hero.action >= 25 and hero.action <= 27:
+		var f := _front_of(hero.pos, hero.dir)
+		e.dir = dir8(e.pos, f)
+		e.facing = e.dir
 
 
-func _hero_hits_enemy(e: Actor) -> void:
-	e.dir = dir8(e.pos, hero.pos)
+## The damage of a hit: a strike (3..8), a skill (its level adds attack), or a scroll.
+func _hero_hits_enemy(e: Actor, action: int) -> void:
+	if action > -1:
+		e.dir = dir8(e.pos, hero.pos)
+	else:
+		e.dir = dir8(e.pos, effect_pos)
 	e.facing = e.dir
-	if hero.action >= 3 and hero.action <= 8:
+	if action >= 3 and action <= 8:
 		var dmg := hero.attack + hero.attack_buff - e.defense - e.defense_buff
 		e.hp -= maxi(dmg, 1)
+	elif action in [12, 13, 14] or (action >= 20 and action <= 30):
+		var k := action - 12
+		var dmg := hero.attack + hero.attack_buff + hero.attack * skill_levels[k] / int(table("skill_attack_div")[k]) \
+			- e.defense - e.defense_buff
+		e.hp -= maxi(dmg, 1)
+	elif action == -2:
+		e.ai_mode = 2
+		e.hp -= mini(hero.level << 1, 50)
+	elif action == -1:
+		e.hp -= mini(hero.level, 30)
 	if e.hp < 1:
 		e.hp = 0
 		e.frame = 3
@@ -1211,9 +1512,33 @@ func _find_breakables() -> void:
 func _hero_hits_breakables() -> void:
 	var reach := int(table("weapon_reach")[hero.weapon_kind])
 	for b in breakables:
-		if b.active and b.hp > 0:
-			if hero.dir == dir4(hero.pos, b.pos) and distance(hero.pos, b.pos) <= reach:
+		if not (b.active and b.hp > 0):
+			continue
+		match hero.action:
+			13:
+				var side := hero.dir >> 1
+				if boxes_touch(hero.pos.x + int(table("hit_box_x")[side]), hero.pos.y + int(table("hit_box_y")[side]),
+						int(table("hit_box_w")[side]), int(table("hit_box_h")[side]),
+						b.pos.x - 8, b.pos.y - 8, 18, 18):
+					hit_breakable(b)
+			22:
+				if _is_in_front(hero.pos, b.pos, hero.dir) and distance(hero.pos, b.pos) <= reach:
+					hit_breakable(b)
+			23, 24:
+				if distance(hero.pos, b.pos) <= 45:
+					hit_breakable(b)
+			25:
+				if ((hero.dir + (hero.frame >> 1 << 1)) & 7) == dir4(hero.pos, b.pos) \
+						and distance(hero.pos, b.pos) <= reach:
+					hit_breakable(b)
+			26, 27:
+				if distance(_front_of(hero.pos, hero.dir), b.pos) <= 35:
+					hit_breakable(b)
+			28, 29, 30:
 				hit_breakable(b)
+			_:
+				if hero.dir == dir4(hero.pos, b.pos) and distance(hero.pos, b.pos) <= reach:
+					hit_breakable(b)
 
 
 func hit_breakable(b: Breakable) -> void:
@@ -1288,6 +1613,10 @@ func _pick_up_drops() -> void:
 		if d.item != 0 and distance(hero.pos, d.pos) < 20:
 			if d.item > 10000:
 				gold += d.item - 10000
+			elif d.item < 100:
+				if not add_quick_item(d.item):
+					d.ticks -= 1
+					continue  # no room: it stays on the floor
 			else:
 				items.append(d.item)
 			d.item = 0
