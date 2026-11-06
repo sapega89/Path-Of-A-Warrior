@@ -10,6 +10,8 @@ extends RefCounted
 ##   hero_get {}                 -> {ok, rev, at, hero}          (rev 0 and hero null: none yet)
 ##   hero_put {base, at, hero}   -> {ok, rev} / err "conflict" with the server's {rev, at, hero}
 ##
+##   live_*                     -> Live: Warehouse, Safe, Trade (server/live.gd)
+##
 ## Any request before a login answers err "login first"; a wrong one "bad message", an unknown
 ## type "unknown", a packet over MAX_PACKET "too big". `base` is the revision of the hero the
 ## client last saw: a device that missed another device's save gets "conflict".
