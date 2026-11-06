@@ -229,3 +229,47 @@ func test_the_online_game_goes_over_the_same_connection() -> void:
 	check(cloud.mp == null, "no online game without the server")
 	s.stop()
 	ServerTests._rm(d)
+
+
+func test_quitting_lets_the_last_save_reach_the_server() -> void:
+	var cloud: Node = root.get_node("/root/Cloud")
+	var d := _dir()
+	var s := _server(d)
+	s.accounts.create_account("ANDREY", "1234")
+	cloud.account_path = d.path_join("account.cfg")
+	cloud.save_account("ANDREY", "1234")
+	cloud.start("127.0.0.1", PORT, ServerTests.pair(0)[1])
+	cloud.sync.legacy = null
+	var quits := []
+	cloud.quit_now = func() -> void: quits.append(true)
+	check(_run(s, [cloud.sync], cloud.online), "logged in")
+	cloud.quit_game()
+	eq(quits.size(), 1, "nothing waits: at once")
+	cloud.save_hero({"name": "Andrey", "level": 7})
+	cloud.quit_game()
+	cloud._process(0.0)
+	eq(quits.size(), 1, "not before the last save is on the server")
+	var t0 := Time.get_ticks_msec()
+	while quits.size() < 2 and Time.get_ticks_msec() - t0 < 5000:
+		s.poll(1)
+		cloud._process(0.0)
+		OS.delay_msec(1)
+	eq(quits.size(), 2, "then the game ends")
+	eq(int(s.accounts.hero_get("ANDREY").hero.level), 7, "with the save on the server")
+	cloud.save_hero({"name": "Andrey", "level": 8})
+	cloud.quit_game()
+	cloud._process(0.0)  # the server does not answer
+	eq(quits.size(), 2, "waiting")
+	cloud.quit_at = Time.get_ticks_msec()  # FLUSH_MS later
+	cloud._process(0.0)
+	eq(quits.size(), 3, "no longer than FLUSH_MS")
+	cloud.save_hero({"name": "Andrey", "level": 9})
+	cloud.sync.client.close()
+	cloud.quit_game()
+	eq(quits.size(), 4, "no connection: at once")
+	cloud.stop()
+	cloud.quit_game()
+	eq(quits.size(), 5, "without the server: at once")
+	cloud.quit_now = Callable()
+	s.stop()
+	ServerTests._rm(d)

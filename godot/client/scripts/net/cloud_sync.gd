@@ -240,3 +240,10 @@ func _put_answer(r: Dictionary) -> void:
 ## Nothing waits to be sent.
 func idle() -> bool:
 	return not dirty and in_flight < 0
+
+
+## A save still has to reach the server and the connection is up or coming up: worth
+## waiting for when the game quits.
+func flushing() -> bool:
+	return not account.is_empty() and state != "off" and client.state != NetClient.State.CLOSED \
+		and not idle()

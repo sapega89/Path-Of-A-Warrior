@@ -7,6 +7,7 @@ extends Node
 ## The account (UserID + password) stays on this device in user://account.cfg.
 ## Live (scripts/net/live_client.gd) and the online game (scripts/net/online_client.gd) go
 ## over the same logged-in connection (request()); the server's pushes go to the online game.
+## Quit (or the window closed) waits up to FLUSH_MS for the last save to reach the server.
 
 const CloudSync := preload("res://scripts/net/cloud_sync.gd")
 const LiveClient := preload("res://scripts/net/live_client.gd")
@@ -14,14 +15,18 @@ const OnlineClient := preload("res://scripts/net/online_client.gd")
 const Protocol := preload("res://scripts/net/protocol.gd")
 const ACCOUNT_PATH := "user://account.cfg"
 const LEGACY_PATH := "user://hero.json"
+const FLUSH_MS := 3000
 
 var sync: CloudSync = null
 var live: LiveClient = null
 var mp: OnlineClient = null  # the online game, while connected
 var account_path := ACCOUNT_PATH
+var quit_at := -1  # ms by which the game quits while the last save goes, -1: not quitting
+var quit_now := Callable()  # what quitting does; empty: the game ends
 
 
 func _ready() -> void:
+	get_tree().auto_accept_quit = false  # the window's close goes through quit_game()
 	var cfg := server_config(OS.get_cmdline_user_args())
 	if cfg.is_empty():
 		return
@@ -161,10 +166,37 @@ func save_account(id: String, pwd: String) -> void:
 	cf.save(account_path)
 
 
+## Quit Game, or the window closed: the game ends once the last save has reached the server,
+## at most FLUSH_MS from now; at once when nothing waits or there is no connection.
+func quit_game() -> void:
+	if sync == null or not sync.flushing():
+		_quit()
+	elif quit_at < 0:
+		quit_at = Time.get_ticks_msec() + FLUSH_MS
+
+
+func _quit() -> void:
+	quit_at = -1
+	if quit_now.is_valid():
+		quit_now.call()
+	else:
+		get_tree().quit()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		quit_game()
+
+
 func _process(_delta: float) -> void:
 	if sync == null:
+		if quit_at >= 0:
+			_quit()
 		return
 	sync.step()
+	if quit_at >= 0 and (not sync.flushing() or Time.get_ticks_msec() >= quit_at):
+		_quit()
+		return
 	if sync.purge_legacy:
 		sync.purge_legacy = false
 		sync.legacy = null
