@@ -620,6 +620,19 @@ def export_effects(out):
     (out / "effects.json").write_text(json.dumps(info, separators=(",", ":")))
 
 
+MIX_ROWS = 149
+
+
+def export_mixing(out):
+    """The Blacksmith's Combine: item-mixing-table.bin is four columns of 149 numbers (16 bit):
+    three things (their ids, smallest first) and what they make. Rows for the same three are
+    next to each other; one of them is chosen at random."""
+    d = (ROOT / "item-mixing-table.bin").read_bytes()
+    e = [d[i] | d[i + 1] << 8 for i in range(0, len(d), 2)]
+    rows = [[e[i], e[MIX_ROWS + i], e[2 * MIX_ROWS + i], e[3 * MIX_ROWS + i]] for i in range(MIX_ROWS)]
+    (out / "mixing.json").write_text(json.dumps(rows, separators=(",", ":")))
+
+
 SOUND_FONTS = ["/usr/share/sounds/sf2/FluidR3_GM.sf2", "/usr/share/sounds/sf2/default-GM.sf2"]
 
 
@@ -664,6 +677,7 @@ def main():
     export_talk(CLIENT / "data")
     export_skills(CLIENT / "data")
     export_items(CLIENT / "data")
+    export_mixing(CLIENT / "data")
     export_stories(CLIENT / "data", CLIENT / "assets" / "original")
     atlas, found = build_atlas(tile_names)
     out_tiles = CLIENT / "assets" / "original"

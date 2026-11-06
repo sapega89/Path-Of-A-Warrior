@@ -121,3 +121,60 @@ func test_shop_screen() -> void:
 	eq(int(saved.quick_slots[0][0]), 1, "the potion bought is kept")
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
+
+
+func test_combine() -> void:
+	eq(Items.mixes([186, 101, 156]), [342], "an Iron Blade and two more make a treasure")
+	eq(Items.mixes([101, 101, 101]), [], "three blades make nothing")
+	var p := Profile.new()
+	for id in [101, 156, 186]:
+		p.add_item(Items.make(id))
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 5
+	var plan: Dictionary = p.combine_plan([0, 1, 2], rng)
+	eq(int(plan.result.id), 342, "what they make")
+	eq(int(plan.price), Items.price(plan.result) / 4, "a quarter of its price")
+	eq(p.combine_plan([0, 1, 3], rng), {}, "an empty place: nothing")
+	p.gold = 0
+	eq(p.combine([0, 1, 2], plan), "no_gold", "the fee first")
+	p.gold = 100000
+	plan.success = true
+	eq(p.combine([0, 1, 2], plan), "success", "combined")
+	eq(int(p.backpack[0].id), 0, "the first is used up")
+	eq(int(p.backpack[1].id), 0, "the second too")
+	eq(int(p.backpack[2].id), 342, "the new thing in the third's place")
+	for id in [101, 156, 186]:
+		p.add_item(Items.make(id))
+	plan.success = false
+	plan.lost = 1
+	eq(p.combine([0, 1, 3], plan), "fail", "it failed")
+	eq(int(p.backpack[1].id), 0, "and lost one")
+	eq(int(p.backpack[0].id), 101, "the others stay")
+
+
+func test_combine_screen() -> void:
+	var p := Profile.new()
+	p.gold = 100000
+	for id in [101, 156, 186]:
+		p.add_item(Items.make(id))
+	p.save(TEST_PATH)
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": TEST_PATH, "mode": "combine"}
+	var screen: Control = Shop.new()
+	root.add_child(screen)
+	eq(screen.info.text, screen.tr("combine.select"), "choose three")
+	screen.press_cell(0)
+	screen.press_cell(1)
+	eq(screen.chosen, [0, 1] as Array[int], "two chosen")
+	screen.press_cell(1)
+	eq(screen.chosen.size(), 1, "the second chosen no more")
+	screen.press_cell(1)
+	screen.press_cell(2)
+	eq(screen.asked, 2, "three: the fee is asked")
+	screen.plan.success = true
+	screen.confirm()
+	eq(int(screen.profile.backpack[2].id), 342, "combined")
+	eq(screen.chosen.size(), 0, "nothing chosen now")
+	screen.free()
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))

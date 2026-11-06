@@ -228,3 +228,25 @@ static func describe_for_sale(item: Dictionary, selling: bool) -> String:
 	if id < 100:
 		return "%s / Price: %d" % [describe_potion(id), p]
 	return "%s / Price: %d" % [describe(item), p]
+
+
+## The Combine table: [id, id, id (smallest first), what they make], data/mixing.json.
+const MIXING_PATH := "res://data/mixing.json"
+static var _mixing: Array = []
+
+
+## What three things can make (one of them, at random): their ids in any order.
+static func mixes(ids: Array) -> Array:
+	if _mixing.is_empty():
+		var f := FileAccess.open(MIXING_PATH, FileAccess.READ)
+		if f != null:
+			var d: Variant = JSON.parse_string(f.get_as_text())
+			if typeof(d) == TYPE_ARRAY:
+				_mixing = d
+	var key := ids.duplicate()
+	key.sort()
+	var out: Array = []
+	for row in _mixing:
+		if int(row[0]) == int(key[0]) and int(row[1]) == int(key[1]) and int(row[2]) == int(key[2]):
+			out.append(int(row[3]))
+	return out

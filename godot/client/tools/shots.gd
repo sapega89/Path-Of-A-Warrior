@@ -85,6 +85,13 @@ func _ready() -> void:
 	await _frames(2)
 	await _shot(out, "16_enchant_ask")
 	Router.current.ask.hide()
+	Router.back()
+	Router.current.open_page("combine")
+	await _frames(2)
+	Router.current.press_cell(0)
+	Router.current.press_cell(2)
+	Router.current.cells[2].grab_focus()
+	await _shot(out, "17_combine")
 	# A story: ending 2's first talk, its first picture and its numbers with the reward.
 	Router.go("main_menu")
 	Router.push("story", {"story": 2, "reward_item": 502, "opened_lord": 8,
