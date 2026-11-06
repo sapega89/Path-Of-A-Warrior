@@ -6,9 +6,11 @@ extends RefCounted
 const Protocol := preload("res://scripts/net/protocol.gd")
 const Accounts := preload("res://server/accounts.gd")
 const Guard := preload("res://server/guard.gd")
+const Live := preload("res://server/live.gd")
 
 var host := ENetConnection.new()
 var accounts: Accounts
+var live: Live
 var guard := Guard.new()
 var running := false
 ## ENetPacketPeer -> Session.
@@ -22,12 +24,14 @@ class Session:
 	var address := ""
 	var user := ""
 	var meter: RefCounted
+	var live := Live.Session.new()
 
 
 ## Error code of the bind / DTLS setup, OK when the server is listening.
 func start(port: int, key: CryptoKey, cert: X509Certificate, data_dir: String,
 		bind_address := "*", max_peers := 256) -> int:
 	accounts = Accounts.new(data_dir.path_join("accounts"))
+	live = Live.new(data_dir)
 	var err := host.create_host_bound(bind_address, port, max_peers, Protocol.CHANNELS)
 	if err != OK:
 		return err
@@ -118,7 +122,11 @@ func answer(s: Session, msg: Dictionary) -> Dictionary:
 			"login": reply = _login(s, msg)
 			"hero_get": reply = _hero_get(s)
 			"hero_put": reply = _hero_put(s, msg)
-			_: reply = _fail(t, "unknown")
+			_:
+				if t.begins_with("live_") and live != null:
+					reply = live.answer(s.live, t, msg)
+				else:
+					reply = _fail(t, "unknown")
 	if msg.get("q") is int:
 		reply["q"] = msg["q"]
 	return reply
@@ -142,6 +150,7 @@ func _register(s: Session, msg: Dictionary) -> Dictionary:
 	if not accounts.create_account(uid, pwd):
 		return _fail("register", "taken")
 	s.user = uid
+	s.live.user = uid
 	log_line.call("new account %s from %s" % [uid, s.address])
 	return {"t": "register", "ok": true}
 
@@ -158,6 +167,7 @@ func _login(s: Session, msg: Dictionary) -> Dictionary:
 	if not guard.check_password(uid, s.address, accounts.check_password.bind(uid, pwd)):
 		return _fail("login", "password")
 	s.user = uid
+	s.live.user = uid
 	return {"t": "login", "ok": true}
 
 
