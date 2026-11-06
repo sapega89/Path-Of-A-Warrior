@@ -1,6 +1,7 @@
 extends Control
 ## Live > Multiplayer: the online game's main menu (pyport pow/game/online: Duel, Mission,
-## Character, Options, Ranking, and the Order and Chat windows). Opening it puts the player
+## Character, Options, Help, Ranking, and the Order and Chat windows). Help is open even
+## without the server; the rest once the player is online. Opening it puts the player
 ## online (scripts/net/online_client.gd enter); until the server answers it says
 ## "Connecting...", without an answer "Network connection has failed" with only Back. The line
 ## under the title is the character: display name, level, wins and losses. Chat shows the
@@ -8,6 +9,7 @@ extends Control
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const OnlineClient := preload("res://scripts/net/online_client.gd")
+const MainMenu := preload("res://scripts/screens/main_menu.gd")
 ## Page button name, text key, screen (empty: not open yet), and its kind for the screen.
 const PAGES := [
 	["Duel", "online.duel", "online_battles", "duel"],
@@ -17,6 +19,7 @@ const PAGES := [
 	["Order", "online.order", "online_order"],
 	["Chat", "online.chat", "online_chat"],
 	["Options", "online.options", "online_options"],
+	["Help", "online.help", "help", "mp"],
 ]
 
 var online: RefCounted
@@ -29,6 +32,8 @@ var chat: Button
 func _ready() -> void:
 	online = OnlineClient.of(Router.params)
 	var col := UiTheme.menu_column(self, 560)
+	col.theme = MainMenu.compact_theme()  # nine buttons in a 720 px high screen
+	col.add_theme_constant_override("separation", 4)
 	col.add_child(UiTheme.heading("online.title", 44))
 	who = UiTheme.note("Who")
 	col.add_child(who)
@@ -38,7 +43,7 @@ func _ready() -> void:
 		var b := Button.new()
 		b.name = page[0]
 		b.text = page[1]
-		b.disabled = true
+		b.disabled = page[0] != "Help"
 		var screen: String = page[2]
 		var params: Dictionary = Router.params.duplicate()
 		if page.size() > 3:
@@ -90,7 +95,7 @@ func pushed(m: Dictionary) -> void:
 	if m.t == "kicked":
 		status.text = tr("online.kicked")
 		for b in buttons:
-			b.disabled = true
+			b.disabled = str(b.name) != "Help"
 	elif m.t == "chat_push" and not online.me.is_empty():
 		show_me()
 

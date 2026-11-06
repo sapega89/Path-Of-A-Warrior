@@ -4,6 +4,8 @@ const Help := preload("res://scripts/screens/help_screen.gd")
 
 
 func test_help_screen() -> void:
+	var old: Dictionary = Router.params
+	Router.params = {}
 	var screen: Control = Help.new()
 	root.add_child(screen)
 	eq(screen.topics.size(), 8, "eight topics")
@@ -24,3 +26,21 @@ func test_help_screen() -> void:
 	screen.go_back()
 	check(closed[0], "and then out")
 	screen.free()
+	Router.params = old
+
+
+func test_multiplayer_help() -> void:
+	var old: Dictionary = Router.params
+	Router.params = {"kind": "mp"}
+	var screen: Control = Help.new()
+	root.add_child(screen)
+	eq(screen.topics.map(func(t): return t.name), ["Controls", "Menu", "Duel", "Missions", "About", "Network"])
+	screen.open(1)
+	eq(screen.page_label.text, "1 / 8", "Menu: its pages")
+	eq(screen.text.text, "Duel\n\nDuel mode allows you to battle against enemies in a '1-on-1' or '2-on-2' battle.")
+	screen.open(2)
+	eq(screen.pages_of(2).size(), 18, "Duel")
+	screen.open(0)
+	eq(screen.pages_of(0), [tr("help.mp_control_1"), tr("help.mp_control_2")], "Controls: this version's battle keys")
+	screen.free()
+	Router.params = old

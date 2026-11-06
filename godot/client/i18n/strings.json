@@ -459,6 +459,14 @@
     "en": "Pause: Esc (Start). On a phone: the stick on the left, the buttons on the right, pause at the top. The menus also work with the mouse and touch.",
     "uk": "Пауза: Esc (Start). На телефоні: стік зліва, кнопки справа, пауза вгорі. Меню працюють і з мишею та дотиком."
   },
+  "help.mp_control_1": {
+    "en": "In battle: Right attacks, Left defends, Up evades, Down opens the special skills (the arrows, the d-pad or the left stick). Enter or Space (A) stops the timing bar near its mark and picks the target.",
+    "uk": "У бою: вправо — атака, вліво — захист, вгору — ухилення, вниз — особливі вміння (стрілки, хрестовина або лівий стік). Enter чи пробіл (A) зупиняє смугу біля позначки й вибирає ціль."
+  },
+  "help.mp_control_2": {
+    "en": "Esc (B) goes back or asks to leave the battle; Tab turns auto-battle on. The buttons under the fighters work with the mouse and touch, as do the menus.",
+    "uk": "Esc (B) — назад або вийти з бою; Tab вмикає автобій. Кнопки під бійцями, як і меню, працюють із мишею та дотиком."
+  },
   "pause.help": {
     "en": "Help",
     "uk": "Довідка"
@@ -866,6 +874,10 @@
   "online.options": {
     "en": "Options",
     "uk": "Налаштування"
+  },
+  "online.help": {
+    "en": "Help",
+    "uk": "Довідка"
   },
   "online.records": {
     "en": "Records",

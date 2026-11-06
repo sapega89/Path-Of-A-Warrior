@@ -186,6 +186,9 @@ UserID.», меню гасне. Якщо сервер забув гравця (�
   40 символів (лише латиниця й ASCII, як на сервері); нові повідомлення приходять самі
   (`chat_push`), відкрита розмова вважається прочитаною.
 - **Options**: Invitation — Accept або Deny (чи бере мене чужий Challenge / Invite An Ally в бій).
+- **Help** (є й без сервера): теми мультиплеєра Controls, Menu, Duel, Missions, About, Network
+  (тексти оригіналу з pyport, `import_original.py` кладе їх у `data/mp.json`); Controls — клавіші
+  бою цієї версії (стрілки, Enter / пробіл, Esc, Tab, кнопки й дотик).
 
 ### Бій мультиплеєра
 
