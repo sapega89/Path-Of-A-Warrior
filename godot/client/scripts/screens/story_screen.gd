@@ -74,7 +74,7 @@ func next_page() -> bool:
 		"talk":
 			var who := int(pg.speaker)
 			if who == Stories.HERO:
-				who = Stories.HERO_PORTRAIT
+				who = Stories.HERO_PORTRAIT + int(profile.head)
 			portrait.texture = load(PORTRAITS % who)
 			Audio.play_music(0)
 			portrait.visible = true

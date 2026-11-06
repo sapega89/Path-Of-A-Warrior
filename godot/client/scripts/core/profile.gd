@@ -30,6 +30,8 @@ const POINT_GAINS := [5, 3, 1, 1]
 enum Stat { HP, MP, ATTACK, DEFENSE }
 
 var hero_name := "Hero"
+var head := 0  # the hero's face (0..3): his portrait and his look on the map
+var difficulty := 1  # 1 normal, 0 hard (chosen for a new game, kept until the next)
 var level := 1
 var experience := 0  # exp into the current level
 var fame := 0
@@ -254,6 +256,7 @@ func apply_to(sim: RefCounted) -> void:
 	h.max_mp = max_mp()
 	h.mp = h.max_mp
 	h.weapon_kind = weapon_kind()
+	sim.difficulty = difficulty
 	for i in mini(skill_levels.size(), sim.skill_levels.size()):
 		sim.skill_levels[i] = int(skill_levels[i])
 	for i in mini(hotkeys.size(), sim.hotkeys.size()):
@@ -538,7 +541,7 @@ func is_done(lord_id: int, mission: int) -> bool:
 
 
 func to_dict() -> Dictionary:
-	return {"name": hero_name, "level": level, "exp": experience, "fame": fame, "gold": gold, "stat_points": stat_points,
+	return {"name": hero_name, "head": head, "difficulty": difficulty, "level": level, "exp": experience, "fame": fame, "gold": gold, "stat_points": stat_points,
 		"base": [base_hp, base_mp, base_attack, base_defense], "equipped": equipped,
 		"backpack": backpack,
 		"skill_levels": skill_levels, "hotkeys": hotkeys, "quick_slots": quick_slots,
@@ -549,6 +552,8 @@ func to_dict() -> Dictionary:
 
 func from_dict(d: Dictionary) -> void:
 	hero_name = str(d.get("name", hero_name))
+	head = clampi(int(d.get("head", head)), 0, 3)
+	difficulty = clampi(int(d.get("difficulty", difficulty)), 0, 1)
 	level = int(d.get("level", level))
 	experience = int(d.get("exp", experience))
 	fame = int(d.get("fame", fame))

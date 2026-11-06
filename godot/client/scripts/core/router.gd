@@ -21,6 +21,7 @@ const SCREENS := {
 	"blacksmith": "res://scripts/screens/blacksmith_screen.gd",
 	"shop": "res://scripts/screens/shop_screen.gd",
 	"visiting": "res://scripts/screens/visiting_screen.gd",
+	"new_game": "res://scripts/screens/new_game_screen.gd",
 	"endings": "res://scripts/screens/endings_screen.gd",
 	"help": "res://scripts/screens/help_screen.gd",
 }
