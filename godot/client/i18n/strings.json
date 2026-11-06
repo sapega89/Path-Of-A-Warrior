@@ -98,5 +98,9 @@
   "mission.time_taken": {
     "en": "Ested Time:",
     "uk": "Витрачено:"
+  },
+  "mission.level_up": {
+    "en": "Level Up : Lv %d",
+    "uk": "Новий рівень: %d"
   }
 }

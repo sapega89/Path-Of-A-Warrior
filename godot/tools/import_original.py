@@ -361,6 +361,12 @@ def cstr(b):
     return bytes(b).split(b"\0")[0].decode("utf-8", "replace")
 
 
+def read_exp_table():
+    """The exp the hero needs to go from level n + 1 to n + 2 (exp.arr: u16 count, s32 each)."""
+    d = (ROOT / "exp.arr").read_bytes()
+    return [int.from_bytes(d[2 + 4 * k:6 + 4 * k], "little", signed=True) for k in range((len(d) - 2) // 4)]
+
+
 def export_campaign(out):
     rows = (ROOT / "mission.arr").read_bytes()
     side = (ROOT / "sideinfo.arr").read_bytes()
@@ -389,7 +395,8 @@ def export_campaign(out):
         })
         i += 11
     (out / "campaign.json").write_text(json.dumps(
-        {"chapters": chapters, "lords": lords, "missions": missions, "generals": read_generals()},
+        {"chapters": chapters, "lords": lords, "missions": missions, "generals": read_generals(),
+         "exp_table": read_exp_table()},
         ensure_ascii=False, indent=0))
     return len(chapters), len(missions)
 

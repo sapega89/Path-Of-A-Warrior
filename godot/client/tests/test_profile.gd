@@ -1,0 +1,61 @@
+extends "res://tests/test_case.gd"
+
+const Profile := preload("res://scripts/core/profile.gd")
+const MapBuilder := preload("res://scripts/world/map_builder.gd")
+const MapSim := preload("res://scripts/sim/map_sim.gd")
+const TEST_PATH := "user://test_hero.json"
+
+
+func test_new_hero() -> void:
+	var p := Profile.new()
+	eq(p.level, 1, "level 1")
+	eq(p.attack(), 6, "attack 5 and the claymore's 1")
+	eq(p.defense(), 4, "defence 4")
+	eq(p.max_hp(), 30, "30 HP")
+	eq(p.max_mp(), 10, "10 MP")
+	eq(p.stat_points, 5, "5 free points")
+
+
+func test_exp_and_levels() -> void:
+	var p := Profile.new()
+	eq(Profile.exp_needed(1), 50, "50 exp to level 2")
+	eq(p.level_with(160), 3, "50 + 104 exp: level 3")
+	eq(p.gain_exp(160), 2, "two levels")
+	eq(p.level, 3, "level 3")
+	eq(p.experience, 6, "6 exp into level 3")
+	eq(p.stat_points, 11, "3 points a level")
+
+
+func test_mission_goes_in_and_out() -> void:
+	var p := Profile.new()
+	p.quick_slots[0] = [4, 2]
+	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	p.apply_to(sim)
+	eq(sim.hero.attack, 6, "the hero's attack")
+	eq(int(sim.quick_slots[0][1]), 2, "his potions")
+	sim.quick_slots[0][1] = 1  # one drunk
+	sim.gold = 30
+	sim.friendship[5] = 10
+	sim.won = true
+	sim.mission_gold = 3
+	sim.mission_exp = 30
+	eq(p.take_from(sim, 1, 0, 1), 1, "60 exp: a level")
+	eq(p.gold, 30 + 450, "picked up and the mission's gold")
+	eq(int(p.quick_slots[0][1]), 1, "one potion left")
+	eq(int(p.friendship["5"]), 10, "friendship kept")
+	check(p.is_done(1, 0), "the mission is done")
+	eq(int(p.progress["1"]), 5, "progress for the ruler")
+
+
+func test_saved_and_loaded() -> void:
+	var p := Profile.new()
+	p.gold = 123
+	p.gain_exp(60)
+	p.friendship["5"] = 15
+	check(p.save(TEST_PATH), "saved")
+	var q: RefCounted = Profile.load_or_new(TEST_PATH)
+	eq(q.gold, 123, "gold")
+	eq(q.level, 2, "level")
+	eq(q.experience, 10, "exp")
+	eq(int(q.friendship["5"]), 15, "friendship")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
