@@ -13,7 +13,8 @@ godot/
     project.godot
     scenes/main.tscn      корінь: тема + роутер екранів
     scripts/core/         автозавантаження: I18n, Settings, InputSetup, Router
-    scripts/screens/      екрани: title, main_menu, settings, map_viewer
+    scripts/screens/      екрани: title, main_menu, settings, map_viewer, campaign, mission,
+                          management, attributes (герой у user://hero.json)
     scripts/world/        3D-світ: map_builder (карта з оригінальних шарів), hero, follow_camera
     scripts/ui/           тема, сенсорні кнопки
     i18n/strings.json     тексти українською й англійською

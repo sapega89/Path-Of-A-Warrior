@@ -102,5 +102,69 @@
   "mission.level_up": {
     "en": "Level Up : Lv %d",
     "uk": "Новий рівень: %d"
+  },
+  "menu.management": {
+    "en": "Management",
+    "uk": "Керування"
+  },
+  "management.title": {
+    "en": "Management",
+    "uk": "Керування"
+  },
+  "management.attributes": {
+    "en": "Attributes",
+    "uk": "Характеристики"
+  },
+  "management.skills": {
+    "en": "Skills",
+    "uk": "Уміння"
+  },
+  "management.gear": {
+    "en": "Gear",
+    "uk": "Спорядження"
+  },
+  "management.inventory": {
+    "en": "Inventory",
+    "uk": "Торба"
+  },
+  "management.assign_items": {
+    "en": "Assign Items",
+    "uk": "Швидкі предмети"
+  },
+  "attributes.title": {
+    "en": "Attributes",
+    "uk": "Характеристики"
+  },
+  "attributes.name": {
+    "en": "Name",
+    "uk": "Ім'я"
+  },
+  "attributes.level": {
+    "en": "Lev:",
+    "uk": "Рів.:"
+  },
+  "attributes.fame": {
+    "en": "Fame:",
+    "uk": "Слава:"
+  },
+  "attributes.points": {
+    "en": "Stat Pts:",
+    "uk": "Очки:"
+  },
+  "attributes.hp": {
+    "en": "HP:",
+    "uk": "HP:"
+  },
+  "attributes.mp": {
+    "en": "MP:",
+    "uk": "MP:"
+  },
+  "attributes.attack": {
+    "en": "ATK:",
+    "uk": "АТК:"
+  },
+  "attributes.defense": {
+    "en": "DEF:",
+    "uk": "ЗАХ:"
   }
 }
