@@ -487,7 +487,8 @@ func _tick_scene(held: int, pressed: int, skill: int, potion: int = -1) -> void:
 				dir_history[i] = -1
 			pressed = -1
 		elif hero.action == 10:
-			# The hero fell: "Mission fail!", then back to the menu.
+			# The hero fell: "Mission fail!" with its sound, then back to the menu.
+			_sound(6)
 			hero.frame = 10
 			failed = true
 			_show_banner(BANNER_FAILED)

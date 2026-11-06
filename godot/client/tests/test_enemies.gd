@@ -237,11 +237,14 @@ func test_hero_falls() -> void:
 	sim.hero_is_hit(d[1])
 	eq(sim.hero.hp, 0, "no HP left")
 	eq(sim.hero.action, 10, "falls")
+	var heard := false
 	for t in 30:
 		sim.tick(-1, -1)
+		heard = heard or (sim.banner == MapSim.BANNER_FAILED and 6 in sim.sounds)
 		if sim.banner == MapSim.BANNER_FAILED:
 			break
 	eq(sim.banner, MapSim.BANNER_FAILED, "Mission fail!")
+	check(heard, "with its sound (6)")
 	eq(_next_page(sim), MapSim.BANNER_TICKS, "20 ticks, then the mission is over")
 	check(sim.finished, "over")
 	sim = _duel()[0]
