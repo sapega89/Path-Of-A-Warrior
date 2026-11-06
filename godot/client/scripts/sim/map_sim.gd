@@ -12,8 +12,8 @@ extends RefCounted
 ## the sword; soldiers and objects drop gold and items that the hero picks up. Generals come
 ## with their talk, fight with their skills, and the mission's own general ends the mission
 ## ("Mission Success!"). The hero's skills (on their keys, for MP) and his potions and
-## scrolls work. Not yet: the pictures of the effects, the talk after a cleared room and the
-## mission's rewards.
+## scrolls work, and effects() tells which pictures of their effects show. Not yet: the
+## talk after a cleared room and the mission's rewards.
 
 const Rooms := preload("res://scripts/world/rooms.gd")
 const JavaRandom := preload("res://scripts/sim/java_random.gd")
@@ -42,6 +42,8 @@ const ARROW_DY := [-5, -13, -30, -13]
 ## The frame of an attack that hits, by action (sword 3..8, skills 21..24).
 const HIT_FRAME := [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 6, 5, 5]
 ## MP of skill 12..30 at level 1, and per level above.
+## The three flames of a fire scroll around its point.
+const FIRE_SHIFT := [Vector2i(3, -6), Vector2i(-10, 0), Vector2i(10, 5)]
 const SKILL_BASE_COST := [5, 6, 7, 10, 15, 7, 10, 10, 8, 9, 10, 5, 6, 7, 9, 12, 20, 20, 20]
 const SKILL_COST_PER_LEVEL := [3, 4, 5, 3, 4, 3, 3, 5, 3, 4, 5, 3, 4, 5, 5, 6, 5, 5, 5]
 ## Potions 1..9 restore HP (1), MP (2) or both (3) by 30 / 60 / 100 %.
@@ -1858,6 +1860,90 @@ func slide_corner(pos: Vector2i, direction: int, actor: Actor) -> int:
 			if free_side[1]:
 				return 4
 	return -1
+
+
+# ---- the pictures of the effects ---------------------------------------------------------
+
+## The effects to draw now: [sheet, frame, point in map pixels] (sheets fx_<name>.png). The
+## hero's skill shows its effect on him (the big skills 28-30 over the middle of the room),
+## a potion or scroll shows where it is in use.
+func effects() -> Array:
+	var out: Array = []
+	var a := hero.action
+	var f := hero.frame
+	var p := hero.pos
+	match a:
+		2:
+			out.append(["slash", hero.dir + (f & 1), p])
+		12:
+			if f > 2 and f < 6:
+				out.append(["slash", hero.dir + (f & 1), p])
+		13:
+			if f > 4 and f < 8:
+				out.append(["slash", hero.dir + (f & 1), p])
+		14:
+			if f > 0 and f < 9:
+				out.append(["slash", hero.dir + (f & 1), p])
+		15, 16:
+			if f > 3:
+				out.append(["heal", f - 4, p])
+		17, 18, 19:
+			if f > 3 and f < 10:
+				out.append(["buff", f - 4, p])
+		21:
+			if f == 5 or f == 6:
+				out.append(["whirl", f - 5, p])
+		22:
+			if f > 1 and f < 6:
+				out.append(["slash", f & 1, p])
+		23:
+			if f == 5 or f == 6:
+				out.append(["slash", f - 5, p])
+		24:
+			if f == 5 or f == 6:
+				out.append(["burst", f - 5, p])
+		26, 27:
+			if a == 27 and f == 9:
+				out.append(["blast", 1, _front_of(p, hero.shown_dir)])
+			elif f > 1 and f < 9:
+				out.append(["wave", f - 2 + (hero.dir >> 1) * 7, p])
+		28:
+			if f > 3 and f < 22:
+				if f > 9:
+					for i in 3:
+						out.append(["storm", (f - 10) * 3 + 6 + i, _room_middle()])
+				else:
+					out.append(["storm", f - 4, _room_middle()])
+		29:
+			if f > 6 and f < 22:
+				out.append(["quake", f - 7, _room_middle()])
+		30:
+			if f > 3 and f < 9:
+				for i in 5:
+					out.append(["rain", (f - 4) * 5 + i, _room_middle()])
+			elif f > 12 and f < 15:
+				for i in 3:
+					out.append(["blast", (f - 13) * 5 + 2 + i, _room_middle()])
+	match effect_item:
+		0:
+			pass
+		-2:
+			out.append(["blast", effect_step, effect_pos])
+		-1:
+			for i in 3:
+				out.append(["fire", effect_step, effect_pos + FIRE_SHIFT[i]])
+		10, 11:
+			if effect_step > 0:
+				out.append(["scroll", effect_step - 1 + (effect_dir << 2), effect_pos])
+		_:
+			out.append(["buff", effect_step + 4, effect_pos])
+	return out
+
+
+## The middle of the room on the screen, where the big skills show.
+func _room_middle() -> Vector2i:
+	var o := room_origin()
+	return Vector2i(o.x * 7 * 27 + 120, o.y * 7 * 27 + 131)
 
 
 # ---- the hero's animation tables ---------------------------------------------------------------
