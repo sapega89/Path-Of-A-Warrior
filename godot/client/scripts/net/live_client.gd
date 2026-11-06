@@ -13,6 +13,15 @@ extends RefCounted
 
 const Items := preload("res://scripts/core/items.gd")
 const WAREHOUSE := 200
+const MAX_SALES := 5
+const TAX_PERCENT := 10
+const ELIXIRS := [434, 435, 436, 437]
+## The kinds of the Buy menu by category (Normal, Special, Rare): the thing shown for each.
+const KINDS := [
+	[116, 121, 126, 101, 106, 111, 131, 136, 156, 161, 181, 146, 151],
+	[331, 324, 322, 301, 308, 302, 341, 350, 357, 363, 370, 380, 415],
+	[501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 514, 515, 516, 517, 518],
+]
 
 ## request(msg, done): one request to the server, done(answer) (Cloud.request, or a test's).
 var request: Callable
@@ -21,6 +30,10 @@ var warehouse: Array = []  # [{serial, item}], in the server's order
 var serials: Array = []  # backpack place -> the serial of its thing, 0 for an empty place
 var synced := false
 var busy := false
+var tax := TAX_PERCENT  # the share of a sale the server keeps
+var counts: Array = []  # Buy: lots of a kind at enchant 0..9
+var lots: Array = []  # Buy: the lots of a page, Price Info, my lots: [{lot, item, price}]
+var pages := 0  # Buy: pages of the kind and enchant asked for
 
 
 func _init(send: Callable) -> void:
@@ -123,6 +136,122 @@ func take(profile: RefCounted, index: int, done: Callable) -> void:
 		profile.backpack[place] = thing(entry.item)
 		serials[place] = int(r.serial)
 		warehouse.erase(entry))
+
+
+## The Buy menu's category of a thing (0 Normal, 1 Special, 2 Rare) and its kind there.
+static func category(id: int) -> int:
+	return 2 if id > 500 else (1 if id > 300 else 0)
+
+
+static func kind(id: int) -> int:
+	return id - 501 if id > 500 else int(Items.info(id).get("icon", 0))
+
+
+static func for_sale(id: int) -> bool:
+	return id >= 100 and not ELIXIRS.has(id)
+
+
+static func _lots_of(r: Dictionary) -> Array:
+	var out: Array = []
+	for x in r.get("lots", []):
+		out.append({"lot": int(x.get("lot", 0)), "item": thing(x.get("item")),
+			"price": int(x.get("price", 0))})
+	return out
+
+
+## Buy: how many lots of a kind there are at each enchant level.
+func ask_counts(cat: int, k: int, done: Callable) -> void:
+	_send({"t": "live_counts", "cat": cat, "kind": k}, done, func(r: Dictionary) -> void:
+		counts = []
+		for n in r.get("counts", []):
+			counts.append(int(n)))
+
+
+## Buy: a page of the lots of a kind (cheapest first); err "none" past the last one.
+func ask_page(cat: int, k: int, enchant: int, page: int, done: Callable) -> void:
+	var msg := {"t": "live_page", "cat": cat, "kind": k, "enchant": enchant, "page": page}
+	_send(msg, done, func(r: Dictionary) -> void:
+		lots = _lots_of(r)
+		pages = int(r.get("pages", 0)))
+
+
+## Sell > Price Info: the cheapest lots of a kind; err "none" when there are none.
+func ask_prices(cat: int, k: int, done: Callable) -> void:
+	_send({"t": "live_prices", "cat": cat, "kind": k}, done, func(r: Dictionary) -> void:
+		lots = _lots_of(r))
+
+
+## Cancel Sale: this player's lots on sale; err "none" when there are none.
+func ask_mine(done: Callable) -> void:
+	_send({"t": "live_mine"}, done, func(r: Dictionary) -> void:
+		lots = _lots_of(r))
+
+
+## Buys a lot into the first free place of the backpack, or into the Warehouse.
+func buy(profile: RefCounted, lot: Dictionary, to_warehouse: bool, done: Callable) -> void:
+	var place := -1 if to_warehouse else free_place(profile)
+	if not to_warehouse and place < 0:
+		done.call("full")
+		return
+	if int(lot.price) > int(profile.gold):
+		done.call("gold")
+		return
+	var msg := {"t": "live_buy", "lot": int(lot.lot), "to_warehouse": to_warehouse}
+	_send(msg, done, func(r: Dictionary) -> void:
+		_receive(profile, place, thing(lot.item), int(r.serial))
+		profile.gold = int(r.gold)
+		safe = int(r.safe)
+		lots.erase(lot))
+
+
+## Puts a thing of a backpack place (or of the Warehouse) on sale for a price.
+func sell(profile: RefCounted, from_warehouse: bool, at: int, price: int, done: Callable) -> void:
+	var it := _at(profile, from_warehouse, at)
+	if it.is_empty():
+		done.call("gone")
+		return
+	if not for_sale(int(it.id)):
+		done.call("not for sale")
+		return
+	var serial := int(warehouse[at].serial) if from_warehouse else int(serials[at])
+	var msg := {"t": "live_sell", "from_warehouse": from_warehouse, "serial": serial, "price": price}
+	_send(msg, done, func(_r: Dictionary) -> void:
+		if from_warehouse:
+			warehouse.remove_at(at)
+		else:
+			profile.backpack[at] = Items.empty()
+			serials[at] = 0)
+
+
+## Takes one of my lots off the market: into the backpack, or the Warehouse when it is full.
+func cancel(profile: RefCounted, lot: Dictionary, done: Callable) -> void:
+	var place := free_place(profile)
+	if place < 0 and warehouse.size() >= WAREHOUSE:
+		done.call("full")
+		return
+	var msg := {"t": "live_cancel", "lot": int(lot.lot), "to_warehouse": place < 0}
+	_send(msg, done, func(r: Dictionary) -> void:
+		_receive(profile, place, thing(lot.item), int(r.serial))
+		lots.erase(lot))
+
+
+## A thing of the backpack place `at` (or of the Warehouse), {} when there is none.
+func _at(profile: RefCounted, from_warehouse: bool, at: int) -> Dictionary:
+	if from_warehouse:
+		return warehouse[at].item if at >= 0 and at < warehouse.size() else {}
+	if serials.size() != profile.backpack.size() or at < 0 or at >= serials.size() \
+			or int(serials[at]) == 0:
+		return {}
+	return profile.backpack[at] if int(profile.backpack[at].id) != 0 else {}
+
+
+## A thing from the server into a backpack place with its serial, or (place -1) the Warehouse.
+func _receive(profile: RefCounted, place: int, it: Dictionary, serial: int) -> void:
+	if place < 0:
+		warehouse.append({"serial": serial, "item": it})
+	else:
+		profile.backpack[place] = it
+		serials[place] = serial
 
 
 static func free_place(profile: RefCounted) -> int:

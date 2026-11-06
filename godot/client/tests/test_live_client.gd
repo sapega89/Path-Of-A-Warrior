@@ -10,6 +10,9 @@ const ServerTests := preload("res://tests/test_server.gd")
 const WarehouseScreen := preload("res://scripts/screens/live_warehouse_screen.gd")
 const SafeScreen := preload("res://scripts/screens/live_safe_screen.gd")
 const LiveScreen := preload("res://scripts/screens/live_screen.gd")
+const BuyScreen := preload("res://scripts/screens/live_buy_screen.gd")
+const SellScreen := preload("res://scripts/screens/live_sell_screen.gd")
+const CancelScreen := preload("res://scripts/screens/live_cancel_screen.gd")
 const TEST_PATH := "user://test_live_client_hero.json"
 
 
@@ -24,8 +27,13 @@ func _client(d: String) -> Array:
 	var l := Live.new(d)
 	l.rng.seed = 7
 	l.clock = func() -> float: return 1000.0
+	return _player(l, "ANDREY")
+
+
+## Another player's client on the same server.
+func _player(l: Live, uid: String) -> Array:
 	var s := Live.Session.new()
-	s.user = "ANDREY"
+	s.user = uid
 	var c := LiveClient.new(func(msg: Dictionary, done: Callable) -> void:
 		var r := l.answer(s, str(msg.t), bytes_to_var(var_to_bytes(msg)))  # as over the wire
 		done.call(bytes_to_var(var_to_bytes(r))))
@@ -182,8 +190,8 @@ func test_live_menu_opens_its_pages_once_synced() -> void:
 	var screen: Control = LiveScreen.new()
 	root.add_child(screen)
 	eq(screen.status.text, "", "connected")
-	eq(screen.buttons.map(func(b): return b.disabled), [true, false, false, true],
-		"Warehouse and Safe (Trade and Multiplayer not yet)")
+	eq(screen.buttons.map(func(b): return b.disabled), [false, false, false, true],
+		"Trade, Warehouse and Safe (Multiplayer not yet)")
 	screen.free()
 	Router.params = {"profile_path": TEST_PATH}
 	screen = LiveScreen.new()
@@ -192,4 +200,137 @@ func test_live_menu_opens_its_pages_once_synced() -> void:
 	check(screen.buttons.all(func(b): return b.disabled))
 	screen.free()
 	Router.params = old
+	ServerTests._rm(d)
+
+
+func test_sell_buy_and_cancel() -> void:
+	var d := _dir()
+	var t := _client(d)
+	var seller: RefCounted = t[0]
+	var b := _player(t[1], "BUYER")
+	var buyer: RefCounted = b[0]
+	var p := _hero(0)
+	seller.sync(p, func(_e): pass)
+	var got := []
+	seller.sell(p, false, 1, 0, func(e): got.append(e))
+	eq(got[-1], "price", "no price")
+	seller.sell(p, false, 1, 10, func(e): got.append(e))
+	eq(got[-1], "", "on sale")
+	eq(int(p.backpack[1].id), 0, "out of the backpack")
+	seller.ask_mine(func(e): got.append(e))
+	eq(seller.lots.size(), 1, "my lot")
+	var q := _hero(1000)
+	buyer.sync(q, func(_e): pass)
+	buyer.ask_counts(LiveClient.category(131), LiveClient.kind(131), func(e): got.append(e))
+	check(int(buyer.counts[0]) >= 1, "counted at enchant 0")
+	buyer.ask_page(LiveClient.category(131), LiveClient.kind(131), 0, 0, func(e): got.append(e))
+	var mine: Array = buyer.lots.filter(func(x): return int(x.price) == 10)
+	eq(mine.size(), 1, "the seller's lot on the page")
+	buyer.buy(q, mine[0], false, func(e): got.append(e))
+	eq(got[-1], "", "bought")
+	eq(int(q.gold), 990)
+	eq(int(q.backpack[2].id), 131, "into the first free place")
+	eq(int(t[1].user("ANDREY").safe), 9, "the price less 10% in the seller's Safe")
+	seller.ask_mine(func(e): got.append(e))
+	eq(got[-1], "none", "nothing on sale any more")
+	seller.sell(p, false, 0, 50, func(e): got.append(e))
+	seller.ask_mine(func(e): got.append(e))
+	seller.cancel(p, seller.lots[0], func(e): got.append(e))
+	eq(got[-1], "", "taken back")
+	eq(int(p.backpack[0].id), 101, "into the backpack")
+	ServerTests._rm(d)
+
+
+func test_elixirs_and_the_warehouse_on_sale() -> void:
+	var d := _dir()
+	var t := _client(d)
+	var c: RefCounted = t[0]
+	var p := _hero()
+	p.backpack[2] = Items.make(434)
+	c.sync(p, func(_e): pass)
+	var got := []
+	c.sell(p, false, 2, 10, func(e): got.append(e))
+	eq(got, ["not for sale"], "an elixir")
+	c.store(p, 0, func(_e): pass)
+	c.sell(p, true, 0, 10, func(e): got.append(e))
+	eq(got[-1], "", "from the Warehouse")
+	eq(c.warehouse.size(), 0)
+	c.ask_prices(0, LiveClient.kind(101), func(e): got.append(e))
+	eq(got[-1], "", "price info")
+	check(c.lots.size() > 0)
+	check(c.lots.all(func(x): return LiveClient.kind(int(x.item.id)) == LiveClient.kind(101)), "of that kind")
+	ServerTests._rm(d)
+
+
+func test_buy_screen() -> void:
+	var d := _dir()
+	var t := _client(d)
+	var p := _hero(10000)
+	p.save(TEST_PATH)
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": TEST_PATH, "live": t[0]}
+	var screen: Control = BuyScreen.new()
+	root.add_child(screen)
+	eq(screen.step, BuyScreen.Step.CATEGORY)
+	screen.choose_category(2)
+	eq(screen.step, BuyScreen.Step.KIND)
+	eq(screen.cells.size(), 18, "the Rare kinds")
+	screen.choose_kind(1)  # 502 Silk Towel: always for sale
+	eq(screen.step, BuyScreen.Step.LOTS, "Rare: straight to the lots")
+	eq(int(screen.live.lots[0].item.id), 502)
+	check(screen.press_lot(0).contains("3000"), "asks: %s" % screen.ask.dialog_text)
+	screen.ask.hide()
+	screen.confirm()
+	eq(int(screen.profile.gold), 7000, "bought")
+	eq(int(Profile.load_or_new(TEST_PATH).gold), 7000, "the hero saved")
+	check(Profile.load_or_new(TEST_PATH).has_item(502), "with the towel")
+	eq(screen.step, BuyScreen.Step.LOTS, "the towel is still there")
+	screen.go_back()
+	screen.go_back()
+	screen.choose_category(0)
+	screen.choose_kind(0)
+	eq(screen.step, BuyScreen.Step.ENCHANT, "Normal: the enchant levels")
+	eq(screen.cells.size(), 10)
+	screen.choose_enchant(9)
+	eq(screen.info.text, tr("live.no_items"), "none at +9")
+	screen.free()
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
+	ServerTests._rm(d)
+
+
+func test_sell_and_cancel_screens() -> void:
+	var d := _dir()
+	var t := _client(d)
+	_hero().save(TEST_PATH)
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": TEST_PATH, "live": t[0]}
+	var screen: Control = SellScreen.new()
+	root.add_child(screen)
+	check(screen.pick(0), "the sword picked")
+	eq(screen.step, SellScreen.Step.PRICE)
+	screen.price.text = "x12a"
+	screen._typed(screen.price.text)
+	eq(screen.price.text, "12", "digits only")
+	screen.price_info()
+	eq(screen.step, SellScreen.Step.PRICES, "the cheapest of its kind")
+	screen.go_back()
+	eq(screen.price.text, "12", "the price typed is kept")
+	check(screen.put_on_sale(), "on sale")
+	eq(screen.step, SellScreen.Step.PICK)
+	eq(screen.info.text, tr("live.on_sale"))
+	eq(int(Profile.load_or_new(TEST_PATH).backpack[0].id), 0, "the hero saved")
+	screen.free()
+	screen = CancelScreen.new()
+	root.add_child(screen)
+	check(screen.cells[0].icon != null, "my lot")
+	check(screen.press_lot(0).contains(Items.name_of(101)), "asks")
+	screen.ask.hide()
+	screen.confirm()
+	eq(screen.info.text, tr("live.canceled") % Items.name_of(101))
+	check(screen.cells[0].icon == null, "nothing on sale")
+	eq(int(Profile.load_or_new(TEST_PATH).backpack[0].id), 101, "back in the backpack, saved")
+	screen.free()
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
 	ServerTests._rm(d)

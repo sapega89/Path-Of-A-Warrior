@@ -29,6 +29,10 @@ const SCREENS := {
 	"live": "res://scripts/screens/live_screen.gd",
 	"live_warehouse": "res://scripts/screens/live_warehouse_screen.gd",
 	"live_safe": "res://scripts/screens/live_safe_screen.gd",
+	"live_trade": "res://scripts/screens/live_trade_screen.gd",
+	"live_buy": "res://scripts/screens/live_buy_screen.gd",
+	"live_sell": "res://scripts/screens/live_sell_screen.gd",
+	"live_cancel": "res://scripts/screens/live_cancel_screen.gd",
 }
 
 var current: Control
