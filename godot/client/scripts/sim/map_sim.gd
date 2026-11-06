@@ -103,6 +103,8 @@ class Actor:
 	var hit_fx_kind := 0  # > 0: a hit spark shows (1 or 2: which pair of spark pictures)
 	var hit_fx_frame := 0
 	var hit_fx_pos := Vector2i.ZERO  # where it was hit
+	var on_fire := false  # burning: the fire shows on him six ticks
+	var fire_frame := 0  # the picture of the fire shown now (-1: from the end of this tick)
 
 
 ## A breakable object of the room (barrels, crates, ...): a cell of the objects layer.
@@ -1350,10 +1352,18 @@ func _general_skill_hits_hero(e: Actor) -> void:
 		6:
 			e.frame = 5
 			hero.hurt_ticks = 2
-		8, 16, 19:
+		8, 16:
 			hero.hurt_ticks = 2
-		15, 18, 21:
+		15, 21:
 			hero.hurt_ticks = 5
+		17:
+			_set_on_fire(hero)
+		18:
+			hero.hurt_ticks = 5
+			_set_on_fire(hero)
+		19:
+			hero.hurt_ticks = 2
+			_set_on_fire(hero)
 	hero_is_hit(e)
 
 
@@ -1418,6 +1428,19 @@ func _advance_sparks() -> void:
 			a.hit_fx_frame += 1
 			if a.hit_fx_frame > 1:
 				a.hit_fx_kind = 0
+		if a.on_fire:
+			a.fire_frame += 1
+			if a.fire_frame > 5:
+				a.on_fire = false
+
+
+## The fires burning on the hero and the enemies: ["fire", picture 0..5, where he stands].
+func fires() -> Array:
+	var out: Array = []
+	for a in [hero] + enemies:
+		if a.on_fire and a.fire_frame >= 0:
+			out.append(["fire", a.fire_frame, a.pos])
+	return out
 
 
 ## The hit sparks to draw: [frame, position]. An enemy's pair of pictures is chosen by the
@@ -1497,20 +1520,33 @@ func _strike_enemy(e: Actor) -> void:
 		20:
 			e.hit_fx_kind = rng.below(2) + 1
 			e.ai_mode = 0
-		21, 24:
+		21:
 			e.ai_mode = 5
+		23:
+			_set_on_fire(e)
+		24:
+			e.ai_mode = 5
+			_set_on_fire(e)
 		25, 27:
 			e.ai_mode = 5
 		26:
 			pass
+		29:
+			_set_on_fire(e)
 	if hero.action >= 25 and hero.action <= 27:
 		e.hit_fx_kind = 2
 		var f := _front_of(hero.pos, hero.dir)
 		e.dir = dir8(e.pos, f)
 		e.facing = e.dir
-	if hero.action == 29:
-		_sound(13)  # it sets the enemy on fire
 	_sound(16)
+
+
+## A fire skill hits him (Flame Twister, Fire Tornado, Dragon Breath; a general's fire
+## skills on the hero): the fire burns on him from this tick's picture on.
+func _set_on_fire(a: Actor) -> void:
+	a.on_fire = true
+	a.fire_frame = -1
+	_sound(13)
 
 
 ## The damage of a hit: a strike (3..8), a skill (its level adds attack), or a scroll.

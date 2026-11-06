@@ -473,6 +473,54 @@ func test_effects_of_skills_and_potions() -> void:
 	node.free()
 
 
+func test_fire_skills_set_on_fire() -> void:
+	for skill in [23, 24, 29]:
+		var d := _duel()
+		var sim: RefCounted = d[0]
+		var e = d[1]
+		sim.hero.action = skill
+		sim._strike_enemy(e)
+		check(sim.sounds.has(13), "%d: the fire's sound" % skill)
+		eq(sim.fires().size(), 0, "%d: it shows from the end of the tick" % skill)
+		sim.hero.action = 0
+		var shown: Array = []
+		for t in 7:
+			sim.tick(-1, -1)
+			for f in sim.fires():
+				shown.append(int(f[1]))
+				eq(f[0], "fire", "from the fire sheet")
+				eq(f[2], e.pos, "on the soldier")
+		eq(shown, [0, 1, 2, 3, 4, 5], "%d: six pictures, then it is out" % skill)
+	var d := _duel()
+	var sim: RefCounted = d[0]
+	sim.hero.action = 22
+	sim._strike_enemy(d[1])
+	sim.tick(-1, -1)
+	eq(sim.fires().size(), 0, "other skills do not burn")
+
+
+func test_a_general_sets_the_hero_on_fire() -> void:
+	for skill in [17, 18, 19]:
+		var d := _general_duel()
+		var sim: RefCounted = d[0]
+		var g = d[1]
+		g.action = skill
+		sim._general_skill_hits_hero(g)
+		check(sim.sounds.has(13), "%d: the fire's sound" % skill)
+		sim._end_tick()
+		var f: Array = sim.fires()
+		eq(f.size(), 1, "%d: the hero burns" % skill)
+		if f.size() == 1:
+			eq([f[0][1], f[0][2]], [0, sim.hero.pos], "its first picture on him")
+		eq(sim.hero.hurt_ticks, 2 if skill == 19 else (5 if skill == 18 else 0), "%d: he reels" % skill)
+	var d := _general_duel()
+	var sim: RefCounted = d[0]
+	d[1].action = 16
+	sim._general_skill_hits_hero(d[1])
+	sim._end_tick()
+	eq(sim.fires().size(), 0, "other skills do not burn")
+
+
 func test_skip_ends_a_talk_and_what_follows_comes() -> void:
 	var d := _general_duel()
 	var sim: RefCounted = d[0]
