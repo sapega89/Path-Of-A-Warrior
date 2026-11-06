@@ -1609,6 +1609,18 @@ func talk_text() -> String:
 	return talk[talk_line].substr(0, talk_chars)
 
 
+## SKIP: the talk is over at once, and what follows it comes (the fight, the exits, the end
+## of the mission).
+func skip_talk() -> void:
+	if talk.is_empty():
+		return
+	talk.clear()
+	talk_line = 0
+	talk_chars = 0
+	talk_wait = 0
+	_talk_done()
+
+
 ## A letter a tick; the key shows the whole line, or goes on once it is shown. A shown
 ## line waits 15 ticks.
 func _tick_talk(fire: bool) -> void:

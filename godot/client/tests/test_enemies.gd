@@ -471,3 +471,41 @@ func test_effects_of_skills_and_potions() -> void:
 	node.show_effects(fx + [["storm", 99, Vector2i.ZERO], ["nothing", 0, Vector2i.ZERO]])
 	eq(node.shown(), 1, "only frames the sheets have are drawn")
 	node.free()
+
+
+func test_skip_ends_a_talk_and_what_follows_comes() -> void:
+	var d := _general_duel()
+	var sim: RefCounted = d[0]
+	eq(sim.talk.size(), 3, "the general who comes talks")
+	sim.skip_talk()
+	check(sim.talk.is_empty(), "SKIP: the talk is over")
+	var x: int = sim.hero.pos.x
+	sim.tick(1, 1)
+	check(sim.hero.pos.x != x, "and the hero plays at once")
+	sim.skip_talk()
+	check(sim.talk.is_empty(), "with no talk it does nothing")
+
+	sim = _sim(false)
+	sim.mission_general = 5
+	sim.banner = MapSim.BANNER_TIME_EXP
+	sim.tick(-1, -1, true)
+	eq(sim.talk.size(), 5, "the general's words after the mission")
+	sim.skip_talk()
+	check(sim.finished, "skipped: the mission is over")
+
+	sim = _sim(false)
+	for t in 200:
+		if sim.exits_open():
+			break
+		sim.tick(-1, -1, sim.banner != 0)
+	sim.rooms.cells = sim.rooms.cells.duplicate(true)
+	sim.rooms.cells[sim.cell]["general"] = 5
+	sim.room_phase = 0
+	sim.banner = MapSim.BANNER_STAGE_CLEAR
+	sim.banner_timer = 1
+	sim.tick(-1, -1)
+	eq(sim.talk.size(), 5, "the general of the room talks")
+	sim.skip_talk()
+	for t in 20:
+		sim.tick(-1, -1)
+	check(sim.exits_open(), "skipped: the exits open")

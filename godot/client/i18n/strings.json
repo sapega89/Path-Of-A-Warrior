@@ -71,7 +71,7 @@
     "en": "Do you want to accept this mission?",
     "uk": "Прийняти цю місію?"
   },
-  "briefing.skip": {
+  "common.skip": {
     "en": "Skip",
     "uk": "Пропустити"
   },
@@ -476,8 +476,8 @@
     "uk": "Рух: WASD або стрілки (лівий стік, хрестовина). Атака: J або пробіл (A). Скіли 1–5: 1–5 або U I O P K (X, Y, LB, RB, LT). Пояс: Z X C V B (правий стік вгору, вправо, вниз, вліво). Зілля * і #: Num * і Num / (RT, L3)."
   },
   "help.control_2": {
-    "en": "Pause: Esc (Start). Auto-hunt: Tab or F (R3). On a phone: the stick on the left, the buttons on the right, pause at the top. The menus also work with the mouse and touch.",
-    "uk": "Пауза: Esc (Start). Автополювання: Tab або F (R3). На телефоні: стік зліва, кнопки справа, пауза вгорі. Меню працюють і з мишею та дотиком."
+    "en": "Pause: Esc (Start). Auto-hunt: Tab or F (R3). Skip a talk, the briefing or the story: Q or F1 (Back). On a phone: the stick on the left, the buttons on the right, pause at the top. The menus also work with the mouse and touch.",
+    "uk": "Пауза: Esc (Start). Автополювання: Tab або F (R3). Пропустити розмову, брифінг чи сюжет: Q або F1 (Back). На телефоні: стік зліва, кнопки справа, пауза вгорі. Меню працюють і з мишею та дотиком."
   },
   "help.mp_control_1": {
     "en": "In battle: Right attacks, Left defends, Up evades, Down opens the special skills (the arrows, the d-pad or the left stick). Enter or Space (A) stops the timing bar near its mark and picks the target.",

@@ -2,8 +2,9 @@ extends Control
 ## The briefing of an accepted mission: the one who gives it (the mission's portrait, at the
 ## top) advises the hero and the hero (at the bottom) answers. Each line is typed out into its
 ## box and stays there; a line typed out goes on by itself after a moment. Attack / accept or a
-## click shows the whole line, or goes on at once; back or Skip goes straight to the map. The
-## mission then takes the briefing's place, so back from the mission goes to the campaign.
+## click shows the whole line, or goes on at once; back or SKIP (Q, F1, the pad's Back, the
+## Skip button) goes straight to the map. The mission then takes the briefing's place, so back
+## from the mission goes to the campaign.
 ## Params: lord, mission, line (the advice's line of talk.json "briefing", the hero answers
 ## with the next one), profile_path.
 
@@ -64,7 +65,7 @@ func _ready() -> void:
 
 	skip = Button.new()
 	skip.name = "Skip"
-	skip.text = "briefing.skip"
+	skip.text = "common.skip"
 	skip.flat = true
 	skip.focus_mode = Control.FOCUS_NONE
 	skip.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
@@ -161,7 +162,7 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
+	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("skip"):
 		get_viewport().set_input_as_handled()
 		finish()
 	elif event.is_action_pressed("attack") or event.is_action_pressed("ui_accept"):
