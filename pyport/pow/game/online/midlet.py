@@ -1,6 +1,6 @@
 """Main.java of the MP jar - the MIDlet. Hand-written (like pow/game/Main.py).
 
-    from pow_mp.Main import Main; await Main().startApp()
+    from pow.game.online.Main import Main; await Main().startApp()
 """
 import pathlib
 
@@ -40,10 +40,10 @@ class Midlet:
     started = False     # started
 
     def __init__(self):  # Main.java:12-17
-        from pow_mp import game
+        from pow.game.online import game
         _digit_keys()
         game.load()
-        from pow_mp.mp_canvas import MpCanvas
+        from pow.game.online.mp_canvas import MpCanvas
         self.props = _manifest()
         self.destroyed = False
         Midlet.started = False
@@ -60,7 +60,7 @@ class Midlet:
         self.destroyed = True
 
     def startApp(self):  # Main.java:19-27: the game thread -> the async loop
-        from pow_mp import game
+        from pow.game.online import game
         if Midlet.started:
             return None
         Midlet.started = True

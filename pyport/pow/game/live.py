@@ -1022,12 +1022,13 @@ class Live(GameCanvas):
             Live.auto_mp = False
             self.open_multiplayer()
 
-    # --- PORT-EXTRA: the Multiplayer screens (pow_mp) as a part of this game ---------------
+    # --- PORT-EXTRA: the Multiplayer screens (pow.game.online) as a part of this game ---------------
     def open_multiplayer(self):
-        """Live > Multiplayer: the single player waits in memory while main.py runs the
-        Multiplayer screens in the same window; its Exit comes back here (after_multiplayer)."""
+        """Live > Multiplayer: the Multiplayer screens as the next state of this canvas
+        (online_session); their Exit comes back here (after_multiplayer)."""
+        from pow.game import online_session
         self.save_game()                     # the Multiplayer login (262) reads the hero from the save
-        self.suspend()
+        online_session.enter(self)
 
     def after_multiplayer(self, rewards):
         """Back in the Live menu: what the battles earned (1032: gold, fame, exp, loot) goes to

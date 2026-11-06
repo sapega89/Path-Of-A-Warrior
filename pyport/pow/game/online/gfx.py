@@ -3,7 +3,7 @@
 Generated once from pyport/mp_java/i.java (branch java-reference) by the old
 tools/j2py_mp.py; edited by hand since.
 """
-from pow_mp.rt import i32, idiv, ushr32
+from pow.game.online.rt import i32, idiv, ushr32
 
 
 class Gfx:
@@ -97,8 +97,8 @@ def _static_init():
 
 def _late_imports():
     global Draw, Font, FrameWriter, FrameReader, MpCanvas
-    from pow_mp.draw import Draw
-    from pow_mp.font import Font
-    from pow_mp.frame_reader import FrameReader
-    from pow_mp.frame_writer import FrameWriter
-    from pow_mp.mp_canvas import MpCanvas
+    from pow.game.online.draw import Draw
+    from pow.game.online.font import Font
+    from pow.game.online.frame_reader import FrameReader
+    from pow.game.online.frame_writer import FrameWriter
+    from pow.game.online.mp_canvas import MpCanvas

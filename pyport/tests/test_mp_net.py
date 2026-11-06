@@ -3,7 +3,7 @@ import asyncio
 
 import pytest
 
-from pow_mp.net.transport import LocalTransport, WebSocketTransport, make_transport
+from pow.midp.transport import LocalTransport, WebSocketTransport, make_transport
 from pow_server import codec_bin
 from pow_server import messages as M
 from pow_server.server import GameServer

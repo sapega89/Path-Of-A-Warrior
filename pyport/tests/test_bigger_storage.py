@@ -142,7 +142,7 @@ def test_drops_above_lv69_keep_the_lv45_69_odds(monkeypatch):
 def test_mp_loot_uses_the_new_cells_of_an_old_save(tmp_path, monkeypatch):
     from test_mp_sp_bridge import make_save, store
 
-    from pow_mp import sp_bridge as S
+    from pow.game.online import sp_bridge as S
     monkeypatch.setattr(config, "SAVE_DIR", str(tmp_path))
     data = bytearray(make_save())
     assert data[0] | data[1] << 8 == S.SAVE_LEN                 # a save of before the change

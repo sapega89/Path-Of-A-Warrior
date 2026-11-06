@@ -1,7 +1,7 @@
 """Image.createImage for the MP jar: same as pow.midp.graphics.Image, but a resource path is
 read from the MP resources (config.MP_RES_ROOT)."""
 from pow.midp.graphics import Image as _Image
-from pow_mp.res_reader import ResReader
+from pow.game.online.res_reader import ResReader
 
 
 class Image(_Image):

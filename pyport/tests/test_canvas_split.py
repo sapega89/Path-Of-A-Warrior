@@ -1,11 +1,11 @@
 """GameCanvas (ag.java) and MpCanvas (g.java) are split into mixin modules
-(pow/game/canvas_*.py, pow_mp/mp_canvas_*.py). Edge cases of that split:
+(pow/game/canvas_*.py, pow/game/online/mp_canvas_*.py). Edge cases of that split:
 a method defined in two parts would silently shadow the other one (MRO), and a part whose module
 globals were not wired up would only fail when that code path runs."""
 import inspect
 
 from pow.game import game_canvas
-from pow_mp import game, mp_canvas
+from pow.game.online import game, mp_canvas
 
 GC_PARTS = ("pow.game.game_canvas", "pow.game.canvas_")
 
@@ -22,7 +22,7 @@ def _assert_no_method_defined_twice(canvas, prefixes):
 
 
 def test_no_method_is_defined_twice():
-    assert len(_assert_no_method_defined_twice(mp_canvas.MpCanvas, "pow_mp.mp_canvas")) > 150
+    assert len(_assert_no_method_defined_twice(mp_canvas.MpCanvas, "pow.game.online.mp_canvas")) > 150
     assert len(_assert_no_method_defined_twice(game_canvas.GameCanvas, GC_PARTS)) > 150
 
 

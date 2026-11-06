@@ -485,7 +485,7 @@ POINT_ORDER = "ADHAHAHADHAHAHAADHAHAHADHAHAHA"
 def _level_up(ch):
     """A hero without a single-player save levels up here by exp.arr, +3 points a level
     (POINT_ORDER); an imported hero levels up in the single player, which gets the exp
-    (pow_mp/sp_bridge)."""
+    (pow/game/online/sp_bridge)."""
     while not ch.sp_linked and ch.mp_exp >= R.exp_to_next(ch.level):
         ch.mp_exp -= R.exp_to_next(ch.level)
         level_up(ch)

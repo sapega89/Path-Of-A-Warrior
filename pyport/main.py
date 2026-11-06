@@ -8,13 +8,11 @@
                                      Live account; off / ws(s)://host:port/save;
                                      browser: index.html?save=...
 
-Live > Multiplayer (and Main Menu > Multiplayer > YES, which is Continue + that) suspends
-the single player with everything in memory and runs the Multiplayer screens (pow_mp) in the
-same window and process (mp_main.play; the server choice is POW_MP_SERVER /
-index.html?server=...), without their logo, sound question, exit popup and outro. Their Exit
-comes back here: the single player goes on in the Live menu, and what the battles
-earned goes to the hero (Live.after_multiplayer). Only the pow_mp modules are imported anew on
-every visit (their static fields start clean, as when the phone started the other jar).
+Live > Multiplayer (and Main Menu > Multiplayer > YES, which is Continue + that) runs the
+Multiplayer screens (pow/game/online) as a state of the same canvas and loop
+(pow/game/online_session.py; the server choice is POW_MP_SERVER / index.html?server=...),
+without their logo, sound question, title, exit popup and outro. Their Exit comes back to the
+Live menu, and what the battles earned goes to the hero (Live.after_multiplayer).
 """
 import asyncio
 import os
@@ -79,9 +77,9 @@ def live_from_page():
         print(f"Live server from the page address: {ex!r}")
 
 
-# the modules whose state lives on between the games: the server saves (their background task)
-# and the transports (the in-game server with its accounts, pow_mp/net/transport.py)
-_KEEP = ("pow.game.cloud_save", "pow_mp.net", "pow_mp.net.transport")
+# the module whose state lives on between the games: the server saves (their background task);
+# the transports (the in-game server with its accounts) are in pow/midp, never purged
+_KEEP = ("pow.game.cloud_save",)
 
 
 def fresh_games(single_player=True):
@@ -89,7 +87,7 @@ def fresh_games(single_player=True):
     with a newer hero from the server), so that they start with the static fields of a new JVM
     (what the process restart used to give)."""
     kept = {m: sys.modules[m] for m in _KEEP if m in sys.modules}
-    roots = ("pow.game", "pow_mp") if single_player else ("pow_mp",)
+    roots = ("pow.game", "pow.game.online") if single_player else ("pow.game.online",)
     for m in list(sys.modules):
         if m in roots or m.startswith(tuple(r + "." for r in roots)):
             del sys.modules[m]
@@ -98,26 +96,6 @@ def fresh_games(single_player=True):
     for name, mod in kept.items():         # `from pow.game import cloud_save` finds the kept one
         parent, _, leaf = name.rpartition(".")
         setattr(importlib.import_module(parent), leaf, mod)
-
-
-async def multiplayer():
-    """PORT-EXTRA: the Multiplayer screens while the single player waits in memory (Live
-    > Multiplayer). False when the window was closed there."""
-    import mp_main
-    from pow.game.game_canvas import GameCanvas
-    from pow.midp import canvas
-    keymap = dict(canvas.KEYMAP)                 # the MP number row types digits
-    try:
-        back = await mp_main.play(sound_on=GameCanvas.sound_on, embedded=True)
-        rewards = mp_main.take_rewards()
-    finally:
-        canvas.KEYMAP.clear()
-        canvas.KEYMAP.update(keymap)
-    fresh_games(single_player=False)         # pow_mp starts clean on the next visit
-    if not back:
-        return False
-    GameCanvas.live.after_multiplayer(rewards)
-    return True
 
 
 async def main():
@@ -141,10 +119,6 @@ async def main():
             midlet = Midlet()
             midlet.resume_sound = resume_sound
             await midlet.startApp()
-            while GameCanvas.suspended:    # Live > Multiplayer: the screens of pow_mp
-                if not await multiplayer():
-                    return                 # the window was closed there
-                await Midlet.canvas.loop()
             await cloud_save.flush()
             if Midlet.canvas is not None and Midlet.canvas.quit_requested:
                 break                      # the window was closed

@@ -86,7 +86,7 @@ R3 геймпада вмикає й вимикає режим. Герой сам
 45 комірок замість 25 (Inventory — 3 сторінки по 3 ряди; Blacksmith і Live гортають ряди), у
 складі Live 200 замість 100. Комірки після 25-ї пишуться в сейв окремим блоком після
 оригінального (`{u8 'B', u8 n, n предметів}`), тож старі сейви завантажуються з порожніми новими
-комірками, а мультиплеєрний лут (`pow_mp/sp_bridge.py`) теж кладе предмети в нові комірки.
+комірками, а мультиплеєрний лут (`pow/game/online/sp_bridge.py`) теж кладе предмети в нові комірки.
 
 **Звичайні речі після Lv69** (PORT-EXTRA `config.DROPS_AFTER_69`, за замовчуванням увімкнено): в
 оригіналі (`ar.P()`) від Lv70 речі рівнів 1 і 10 більше не випадали; тепер вище Lv69 шанси такі ж,
@@ -257,7 +257,7 @@ platform»), тому `pow/midp/graphics.py` у браузері декодує 
 | `e.java` (частина) | `pow/game/menus.py` (`Menus`) | Main Menu (`aJ`), карусель Game Menu (`bf`), клавіші `a/aB/aC/aD/aE/b/aF`; створення героя: складність `aU`, герой `aK`, ім'я `aL/aM`, очки `O/T`, предмети `e(int)`, `p()`; меню: списки `f`, Options `j`, Help/About `l`, Endings, Attributes `O`, Skills `P`, Gear `n(int,int)`, Inventory `Q`, Assign Items `d(int)`, Blacksmith `c(boolean)/aW/aX/bc/bd/be` (Buy, Sell, Enchant, Combine) |
 | `l.java` (частина) | `pow/game/popups.py` (`Popups`) | попапи: рамка, кнопки Yes/No/Ok, усі текстові `e(int)`, підсумок місії (вид 4: золото, Total Exp, Time Exp), клавіші й таймер, gamestr-попапи `d(int)` (Live) |
 | `as.java`, `m.java` | `pow/game/live.py` (`Live`), `live_screen.py` (`LiveScreen`) | Live: реєстрація, ланцюжок після входу, Trade (Buy / Sell / Cancel, Price Info), Warehouse, Safe, Management (Save / Load User Data) |
-| `v.java`, `u.java`, `b.java`, `ab.java` | `pow/game/live_net.py` (`LiveNet`, `LiveAnswer`) | мережа Live: замість потоку й сокета `pump()` раз на кадр через транспорт `pow_mp/net/transport.py` |
+| `v.java`, `u.java`, `b.java`, `ab.java` | `pow/game/live_net.py` (`LiveNet`, `LiveAnswer`) | мережа Live: замість потоку й сокета `pump()` раз на кадр через транспорт `pow/midp/transport.py` |
 | `k.java` | `pow/game/sound.py` (`Sound`) | менеджер звуку (дослівно) |
 | `aq.java` | `pow/game/player_pool.py` (`PlayerPool`) | **спрощено** на pygame.mixer (дослівно — таск 1.5) |
 | `Main.java` | `pow/game/midlet.py` (`Midlet`) | MIDlet; `com/movaya` не переноситься |
@@ -335,16 +335,19 @@ Game Menu → **Management** (Attributes, Skills, Gear, Inventory, Assign Items)
 окремий jar; у порті мультиплеєр — частина цієї гри (PORT-EXTRA, просив гравець; `main.py`,
 `docs/plans/one_engine_plan.md`): YES робить Continue і сам відкриває Live → **Multiplayer**
 (без сейва нічого не робить). Пункт **Multiplayer** у меню Live (замість Management, якого з
-«завжди онлайн» немає): одиночна гра зупиняє свій цикл, лишаючись у пам'яті (`GameCanvas.suspend`),
-і в тому ж вікні та процесі йдуть екрани мультиплеєра (`mp_main.play(embedded=True)`) без його
-лого, питання «sound enabled?», попапу «Would you like to exit?» і outro: BACK у його головному
-меню одразу повертає в меню Live, цикл одиночної гри продовжується з того ж місця
-(`GameCanvas.loop`). Що заробили бої (1032: золото, слава, досвід, лут), не пишеться в сейв сирими
+«завжди онлайн» немає): екрани мультиплеєра стають станом тієї ж канви й того ж циклу
+(`GameCanvas.state` 13, `pow/game/online_session.py`): `GameCanvas.loop` крутить по одному кадру
+`MpCanvas` (`online/game.py frame`, те, що робив `g.c()`), клавіші йдуть у неї (`keyPressed`), без
+її лого, питання «sound enabled?», попапу «Would you like to exit?» і
+outro: BACK у її головному меню повертає в меню Live. Окремого циклу, `Midlet` і вікна в
+мультиплеєра більше немає; сам по собі він ще запускається (`mp_main.py`, `online/game.py run`).
+Що заробили бої (1032: золото, слава, досвід, лут), не пишеться в сейв сирими
 байтами, а чекає в пам'яті (`sp_bridge.pending`) і при поверненні йде героєві через штатні
 `add_exp` (рівні) і рюкзак, з попапом «Exp N / Fame M / Level L» (той, що показував Live
 після 259; `Live.after_multiplayer`). Попап «нема збережених Exp/Fame» (20) онлайн не
-показується. Модулі `pow_mp` імпортуються наново на кожен вхід (`main.fresh_games`), щоб їхні
-статичні поля були чисті; `pow.game` лишається. Сценарій `tools/scenarios/multiplayer.keys`.
+показується. Модулі `pow/game/online` (до PR #68 — `pow_mp/`) імпортуються наново на кожен вхід
+(`online_session._fresh`), щоб їхні статичні поля були чисті, як у jar. Сценарій
+`tools/scenarios/multiplayer.keys`.
 
 **Без лого й outro** (PORT-EXTRA, просив гравець): гра стартує одразу з питання «sound enabled?»
 (в оригіналі 2.5 с лого видавця, `af.java`), а Exit закриває вікно одразу (в оригіналі 3 с картинка
@@ -537,7 +540,7 @@ CPU-бійців (сервер рахує ходи в `pow_server/battle.py`). �
 - `assets_mp/` — ресурси з jar мультиплеєра (PNG, SP2, звук, маніфест; без класів і DRM Movaya).
 - `mp_java/` (лише в гілці `java-reference`) — декомпільований клієнт (CFR 0.152), довідка для дослівного переносу; рядки `g:NNNN`
   в `06_multiplayer.md` посилаються саме на цей `g.java`.
-- `pow_mp/` — клієнт: `sprite_frames.py` (SP2), `res_reader.py` (ресурси), `net/transport.py` — заміна
+- `pow/game/online/` — клієнт: `sprite_frames.py` (SP2), `res_reader.py` (ресурси), `net/transport.py` — заміна
   сокета `h.java`: `LocalTransport` (сервер усередині гри) або `WebSocketTransport` (окремий сервер).
   `mp_canvas.py` (g.java: цикл, стани, `paint_screen`; решту методів розкладено по міксинах `mp_canvas_*.py` — малювання, бій, мережа, клавіші, екрани, ресурси, опції), `mp_game.py`, `consts.py`, `gfx.py`, `font.py`, `draw.py`,
   `answer.py`, `frame_reader.py`, `frame_writer.py` колись згенеровано з `mp_java/` (гілка
@@ -600,7 +603,7 @@ python -m pow_server --require-tls --behind-proxy --host 127.0.0.1 --origin http
 - 263 зі статусом -3 означає «токен не підходить» (наш клієнт повертає на екран Login).
 - 278 з новим UserID сам створює акаунт (`auto_register`): реєстрації в Live одиночної гри
   більше немає.
-- Герой з одиночної гри (таск 9.10, `pow_mp/sp_bridge.py`): у кінці кожного 262 клієнт додає героя
+- Герой з одиночної гри (таск 9.10, `pow/game/online/sp_bridge.py`): у кінці кожного 262 клієнт додає героя
   із сейва одиночної гри на тому ж ПК / в тому ж браузері (рівень, HP/MP/Atk/Def, бонуси речей,
   навички та призначені слоти, зброя, обличчя, прогрес місій), як колись «Save User Data» (опкод 256).
   Без сейва — стандартний герой 1-го рівня. Після 1032 клієнт сам дописує gold / fame / exp у сейв
@@ -631,7 +634,7 @@ python -m pow_server --require-tls --behind-proxy --host 127.0.0.1 --origin http
   одного бота одночасно. Увійти під ID бота не можна (випадковий пароль); ID, який уже зайняв
   гравець, бот не забирає. Duel без живих суперників і так отримує CPU через хвилину (PR #12),
   а Solo Mission — одразу з CPU-союзником.
-- Орден (просив Andrey, пункт 22 плану; `pow_server/orders.py`, `pow_mp/mp_canvas_order.py`): лише в
+- Орден (просив Andrey, пункт 22 плану; `pow_server/orders.py`, `pow/game/online/mp_canvas_order.py`): лише в
   онлайні, в одиночній грі нічого не змінюється. Сьома картинка головного меню **Order**. Орден — це
   назва (A–Z, 4–12 літер) і до 30 гравців; без рангів і вірності. Лідер — лише позначка без прав
   (емблема-щит з крапок меню біля імені, нагорі списку): засновник, а коли він виходить —
@@ -651,7 +654,7 @@ python -m pow_server --require-tls --behind-proxy --host 127.0.0.1 --origin http
   -22 я вже в ордені. Зберігається в `live`-документах сховища (`order:<NAME>`) і в
   `Character.order`. Картинка `assets_mp/mpic6.png` зібрана з оригінальних `mpic0` (замок) і
   `mpic5` (емблема).
-- Чат (просив Andrey; `pow_server/chat.py`, `pow_mp/mp_canvas_chat.py`): лише в онлайні. Восьма
+- Чат (просив Andrey; `pow_server/chat.py`, `pow/game/online/mp_canvas_chat.py`): лише в онлайні. Восьма
   картинка головного меню **Chat** (`assets_mp/mpic7.png`: оригінальна `mpic2` з двома
   хмарками-репліками) з червоним значком, скільки непрочитаних повідомлень ордену й особистих.
   Три вкладки (LEFT / RIGHT): **Lobby** — усі онлайн, **Order** — мій орден («You are not in an

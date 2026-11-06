@@ -1,4 +1,4 @@
-"""h.java - the network thread. Hand-written replacement over pow_mp/net/transport.py.
+"""h.java - the network thread. Hand-written replacement over pow/midp/transport.py.
 
 h.java opened socket://POW_SERVER:POW_PORT in its own thread, read frames with d.b()
 and called g.a(k) for each, sleeping 100 ms after every frame; writing went through e.java
@@ -12,14 +12,14 @@ not the manifest's POW_SERVER (dead).
 PORT-EXTRA (pow_server/messages.py): the token of 279 is kept in RMS "pow_mp_token" and
 appended to every 262; a 263 with status -3 (token refused) forgets it and the saved UserID,
 so the next start shows the Login screen. After the token every 262 carries the hero of the
-single-player save (task 9.10, pow_mp/sp_bridge.py), and a 1032 (battle end) adds its gold,
+single-player save (task 9.10, pow/game/online/sp_bridge.py), and a 1032 (battle end) adds its gold,
 fame and exp to that save.
 """
 import struct
 
 import config
 from pow.midp.rms import RecordStore
-from pow_mp.net.transport import make_transport
+from pow.midp.transport import make_transport
 
 TOKEN_STORE = "pow_mp_token"   # noqa: S105 (the name of the RecordStore, not a secret)
 
@@ -72,7 +72,7 @@ class NetThread:
     # --- the thread's loop, one step per game frame ------------------------------
     @staticmethod
     def tick():
-        from pow_mp.answer import Answer
+        from pow.game.online.answer import Answer
         if NetThread.connect_requested:
             NetThread.connect_requested = False
             if NetThread.conn is None:
@@ -173,7 +173,7 @@ class NetThread:
     @staticmethod
     def _sp_hero():
         """The SP_HERO tail of 262 (pow_server/messages.py); sp = 0 without a single-player save."""
-        from pow_mp import sp_bridge
+        from pow.game.online import sp_bridge
         from pow_server import codec_bin
         from pow_server import messages as M
         sp_bridge.add_item()                 # loot still waiting for a free backpack cell
@@ -193,7 +193,7 @@ class NetThread:
             return
         op, st = struct.unpack_from("<Hb", payload)
         if op == 1032 and st == 1 and len(payload) >= 12:   # win u8, gold s16, grade u8, fame s16, exp s16
-            from pow_mp import sp_bridge
+            from pow.game.online import sp_bridge
             gold, _, fame, exp = struct.unpack_from("<hBhh", payload, 4)
             item = None
             if len(payload) >= 46:                          # PORT-EXTRA loot (9.9)

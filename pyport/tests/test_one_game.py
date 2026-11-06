@@ -10,17 +10,37 @@ import pytest
 from conftest import ROOT  # noqa: F401  (sets sys.path and the dummy video driver)
 
 
-def test_suspend_stops_the_loop_and_loop_clears_it(monkeypatch):
+def test_the_loop_runs_the_multiplayer_frames_and_leaves_when_they_end(monkeypatch):
+    from pow.game import online_session
     from pow.game.game_canvas import GameCanvas
-    monkeypatch.setattr(GameCanvas, "stop_sound", staticmethod(lambda: None))
+    frames = []
+
+    class FakeSession:
+        async def frame(self):
+            frames.append(1)
+            return len(frames) < 3                  # three frames, then its Exit
+
+        def leave(self):
+            frames.append("left")
+            GameCanvas.running = False
+    monkeypatch.setattr(GameCanvas, "online", FakeSession())
+    monkeypatch.setattr(GameCanvas, "state", online_session.ONLINE)
+    monkeypatch.setattr(GameCanvas, "running", True)
     canvas = GameCanvas.__new__(GameCanvas)
-    canvas.quit_requested = True                    # loop() ends at once
-    GameCanvas.suspended = False
-    GameCanvas.running = True
-    canvas.suspend()
-    assert GameCanvas.suspended and not GameCanvas.running
+    canvas.quit_requested = False
     asyncio.run(canvas.loop())
-    assert not GameCanvas.suspended and GameCanvas.running
+    assert frames == [1, 1, 1, "left"]
+
+
+def test_keys_go_to_the_multiplayer_screens_while_they_run(monkeypatch):
+    from pow.game import online_session
+    from pow.game.game_canvas import GameCanvas
+    got = []
+    monkeypatch.setattr(GameCanvas, "online", SimpleNamespace(mp=SimpleNamespace(keyPressed=got.append)))
+    monkeypatch.setattr(GameCanvas, "state", online_session.ONLINE)
+    canvas = GameCanvas.__new__(GameCanvas)
+    canvas.keyPressed(-7)
+    assert got == [-7]
 
 
 @pytest.fixture
@@ -77,7 +97,7 @@ def test_loot_on_a_full_backpack_is_lost(live):
 
 
 def test_embedded_multiplayer_leaves_without_the_exit_popup_or_the_outro(monkeypatch):
-    from pow_mp.mp_canvas import MpCanvas
+    from pow.game.online.mp_canvas import MpCanvas
     states = []
     monkeypatch.setattr(MpCanvas, "set_state", staticmethod(states.append))
     monkeypatch.setattr(MpCanvas, "embedded", True)
@@ -99,8 +119,8 @@ def test_embedded_multiplayer_leaves_without_the_exit_popup_or_the_outro(monkeyp
 
 
 def test_rewards_of_1032_wait_in_memory_when_embedded(monkeypatch):
-    from pow_mp import sp_bridge
-    from pow_mp.net_thread import NetThread
+    from pow.game.online import sp_bridge
+    from pow.game.online.net_thread import NetThread
     monkeypatch.setattr(sp_bridge, "embedded", True)
     sp_bridge.pending.clear()
     head = struct.pack("<HbB", 1032, 1, 1) + struct.pack("<hBhh", 20, 2, 3, 120)

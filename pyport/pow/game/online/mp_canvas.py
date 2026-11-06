@@ -4,7 +4,7 @@ Generated once from pyport/mp_java/g.java (branch java-reference) by the old
 tools/j2py_mp.py; edited by hand since.
 """
 import config
-from pow_mp import (
+from pow.game.online import (
     mp_canvas_assets,
     mp_canvas_battle,
     mp_canvas_chat,
@@ -15,16 +15,16 @@ from pow_mp import (
     mp_canvas_order,
     mp_canvas_screens,
 )
-from pow_mp.mp_canvas_assets import AssetsMixin
-from pow_mp.mp_canvas_battle import BattleMixin
-from pow_mp.mp_canvas_chat import ChatMixin
-from pow_mp.mp_canvas_draw import DrawMixin
-from pow_mp.mp_canvas_input import InputMixin
-from pow_mp.mp_canvas_net import NetMixin
-from pow_mp.mp_canvas_options import OptionsMixin
-from pow_mp.mp_canvas_order import OrderMixin
-from pow_mp.mp_canvas_screens import ScreensMixin
-from pow_mp.rt import (
+from pow.game.online.mp_canvas_assets import AssetsMixin
+from pow.game.online.mp_canvas_battle import BattleMixin
+from pow.game.online.mp_canvas_chat import ChatMixin
+from pow.game.online.mp_canvas_draw import DrawMixin
+from pow.game.online.mp_canvas_input import InputMixin
+from pow.game.online.mp_canvas_net import NetMixin
+from pow.game.online.mp_canvas_options import OptionsMixin
+from pow.game.online.mp_canvas_order import OrderMixin
+from pow.game.online.mp_canvas_screens import ScreensMixin
+from pow.game.online.rt import (
     Image,
     Random,
     _Canvas,
@@ -1456,18 +1456,18 @@ def _static_init():
 
 def _late_imports():
     global SpriteFrames, PlayerPool, NetThread, ResReader, Consts, Draw, Gfx, Font, Answer, FrameWriter, FrameReader, MpGame
-    from pow_mp.answer import Answer
-    from pow_mp.consts import Consts
-    from pow_mp.draw import Draw
-    from pow_mp.font import Font
-    from pow_mp.frame_reader import FrameReader
-    from pow_mp.frame_writer import FrameWriter
-    from pow_mp.gfx import Gfx
-    from pow_mp.mp_game import MpGame
-    from pow_mp.net_thread import NetThread
-    from pow_mp.player_pool import PlayerPool
-    from pow_mp.res_reader import ResReader
-    from pow_mp.sprite_frames import SpriteFrames
+    from pow.game.online.answer import Answer
+    from pow.game.online.consts import Consts
+    from pow.game.online.draw import Draw
+    from pow.game.online.font import Font
+    from pow.game.online.frame_reader import FrameReader
+    from pow.game.online.frame_writer import FrameWriter
+    from pow.game.online.gfx import Gfx
+    from pow.game.online.mp_game import MpGame
+    from pow.game.online.net_thread import NetThread
+    from pow.game.online.player_pool import PlayerPool
+    from pow.game.online.res_reader import ResReader
+    from pow.game.online.sprite_frames import SpriteFrames
     for _part in _PARTS:
         vars(_part).update({_name: globals()[_name] for _name in _LATE_NAMES if _name in vars(_part)})
 
@@ -1477,12 +1477,12 @@ _PARTS = (mp_canvas_draw, mp_canvas_battle, mp_canvas_net, mp_canvas_input, mp_c
           mp_canvas_options, mp_canvas_order, mp_canvas_chat)
 for _part in _PARTS:
     _part.MpCanvas = MpCanvas
-# PORT-EXTRA: the Order window's states and answers (pow_mp/mp_canvas_order.py)
+# PORT-EXTRA: the Order window's states and answers (pow/game/online/mp_canvas_order.py)
 MpCanvas._PAINT_BY_STATE.update(OrderMixin.PAINT)
 MpCanvas._KEYS_BY_STATE.update(OrderMixin.KEYS)
 MpCanvas._KEYS_BY_STATE[mp_canvas_order.MEMBER] = InputMixin._keys_duel_menu
 MpCanvas._ANSWER_BY_OPCODE.update(OrderMixin.ANSWERS)
-# PORT-EXTRA: the Chat window's states and answers (pow_mp/mp_canvas_chat.py)
+# PORT-EXTRA: the Chat window's states and answers (pow/game/online/mp_canvas_chat.py)
 MpCanvas._PAINT_BY_STATE.update(ChatMixin.PAINT)
 MpCanvas._KEYS_BY_STATE.update(ChatMixin.KEYS)
 MpCanvas._ANSWER_BY_OPCODE.update(ChatMixin.ANSWERS)
