@@ -97,13 +97,16 @@ func test_hit_spark_shows_two_ticks() -> void:
 	sim.tick(-1, -1)
 	var sp: Array = sim.sparks()
 	eq(sp.size(), 1, "the strike shows a spark")
+	var at := Vector2i.ZERO
 	if sp.size() == 1:
 		eq(int(sp[0][0]), 0, "its first picture")
-		eq(sp[0][1], e.pos, "where the soldier was hit")
+		at = sp[0][1]
+		check(MapSim.distance(at, e.pos) <= 8, "where the soldier was hit: %s, %s" % [at, e.pos])
 	sim.tick(-1, -1)
 	sp = sim.sparks()
 	if sp.size() == 1:
 		eq(int(sp[0][0]), 1, "then its second picture")
+		eq(sp[0][1], at, "in the same place, as the soldier reels back")
 	else:
 		check(false, "the spark shows a second tick: %d" % sp.size())
 	sim.tick(-1, -1)
