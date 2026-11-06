@@ -27,6 +27,14 @@ const ENDING_BASE := 200
 const SCARF := 502  # Catherine's scarf: the reward of ending 2, needed to see ending 3
 ## What one stat point adds: HP, MP, attack, defence.
 const POINT_GAINS := [5, 3, 1, 1]
+## The four heroes (the faces) start with their own HP, MP, attack and defence. Every set is
+## worth the same stat points (POINT_GAINS), so no hero is stronger, only different. Face 0
+## has the numbers every hero had in the original.
+const HERO_BASES := [[30, 10, 5, 4], [40, 7, 3, 5], [25, 16, 4, 4], [25, 10, 7, 3]]
+const HERO_CLASSES := ["Warrior", "Guardian", "Mystic", "Berserker"]
+## Resetting the attributes costs gold per hero level, or one of these elixirs.
+const RESPEC_GOLD_PER_LEVEL := 100
+const RESPEC_ITEMS := [434, 435, 436, 437]  # Rise Potion, Azure Potion, Falls / Forest Medicine
 enum Stat { HP, MP, ATTACK, DEFENSE }
 
 var hero_name := "Hero"
@@ -196,6 +204,70 @@ func use_item(i: int) -> String:
 	var place := Items.place(id)
 	backpack[i] = equipped[place]
 	equipped[place] = it
+	return ""
+
+
+## The face's base stats: [HP, MP, attack, defence].
+static func hero_base(face: int) -> Array:
+	return HERO_BASES[face & 3]
+
+
+## "HP30 MP10 ATK5 DEF4": a face's base stats.
+static func stats_line(face: int) -> String:
+	var b := hero_base(face)
+	return "HP%d MP%d ATK%d DEF%d" % b
+
+
+## A new hero's face: his base stats become that face's.
+func set_head(face: int) -> void:
+	head = face & 3
+	var b := hero_base(head)
+	base_hp = b[0]
+	base_mp = b[1]
+	base_attack = b[2]
+	base_defense = b[3]
+
+
+## The stat points in the base stats over the face's set (the elixirs drunk too).
+func spent_points() -> int:
+	var b := hero_base(head)
+	var own := [base_hp, base_mp, base_attack, base_defense]
+	var n := 0
+	for i in 4:
+		n += (int(own[i]) - int(b[i])) / int(POINT_GAINS[i])
+	return maxi(0, n)
+
+
+func respec_gold() -> int:
+	return RESPEC_GOLD_PER_LEVEL * maxi(1, level)
+
+
+## The backpack place of the first elixir that pays for a reset, or -1.
+func respec_item_slot() -> int:
+	for i in backpack.size():
+		if int(backpack[i].id) in RESPEC_ITEMS:
+			return i
+	return -1
+
+
+## Resets the attributes, paid with gold (by_item false) or an elixir: the base stats go back
+## to the face's set and the points spent are free again. Returns "" when done, else why not:
+## "nothing", "gold", "item".
+func respec(by_item: bool) -> String:
+	var n := spent_points()
+	if n == 0:
+		return "nothing"
+	if by_item:
+		var i := respec_item_slot()
+		if i < 0:
+			return "item"
+		backpack[i] = Items.empty()
+	else:
+		if gold < respec_gold():
+			return "gold"
+		gold -= respec_gold()
+	set_head(head)
+	stat_points += n
 	return ""
 
 

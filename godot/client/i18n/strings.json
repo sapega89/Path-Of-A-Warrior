@@ -486,5 +486,41 @@
   "settings.speed_4": {
     "en": "Fast",
     "uk": "Швидко"
+  },
+  "attributes.reset": {
+    "en": "Reset",
+    "uk": "Скинути"
+  },
+  "attributes.reset_ask": {
+    "en": "Reset attributes?\nRefund: %d points",
+    "uk": "Скинути атрибути?\nПовернеться очок: %d"
+  },
+  "attributes.pay_gold": {
+    "en": "Pay %d gold",
+    "uk": "Заплатити %d золота"
+  },
+  "attributes.use_item": {
+    "en": "Use %s",
+    "uk": "Віддати %s"
+  },
+  "attributes.no_elixir": {
+    "en": "No elixir",
+    "uk": "Немає еліксиру"
+  },
+  "attributes.reset_nothing": {
+    "en": "Nothing to reset.",
+    "uk": "Нічого скидати."
+  },
+  "attributes.reset_gold": {
+    "en": "Not enough gold.",
+    "uk": "Бракує золота."
+  },
+  "attributes.reset_item": {
+    "en": "You have no elixir.\nRise Potion, Azure Potion, Falls or Forest Medicine.",
+    "uk": "У рюкзаку немає еліксиру.\nRise Potion, Azure Potion, Falls або Forest Medicine."
+  },
+  "attributes.reset_done": {
+    "en": "Attributes reset.\n%d points are free.",
+    "uk": "Атрибути скинуто.\nВільних очок: %d."
   }
 }
