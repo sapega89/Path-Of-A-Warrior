@@ -112,6 +112,15 @@ func _ready() -> void:
 		visit.press()
 	visit.press()
 	await _shot(out, "21_visiting_gift")
+	# Endings: three reached, the cursor on one that is not.
+	hero.endings = (1 << 0) | (1 << 2) | (1 << 3)
+	hero.save("user://shot_hero.json")
+	Router.go("main_menu")
+	Router.push("endings", {"profile_path": "user://shot_hero.json"})
+	await _frames(2)
+	Router.current.list.get_child(1).grab_focus()
+	Router.current.open(1)
+	await _shot(out, "22_endings")
 	# A story: ending 2's first talk, its first picture and its numbers with the reward.
 	Router.go("main_menu")
 	Router.push("story", {"story": 2, "reward_item": 502, "opened_lord": 8,

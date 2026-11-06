@@ -463,7 +463,8 @@ def export_stories(out, assets):
         p0, p1, p2 = (offsets[2 * s + i] - base for i in range(3))
         endings.append({"talk": lines[p0:p1], "pictures": lines[p1:p2]})
     stories = {"opening": read_table(ROOT / edat[63]), "endings": endings,
-               "gamestr": read_table(ROOT / "gamestr.scr")[:2]}
+               "gamestr": read_table(ROOT / "gamestr.scr")[:2],
+               "titles": read_table(ROOT / edat[54])[38:62]}  # the Endings menu
     (out / "stories.json").write_text(json.dumps(stories, ensure_ascii=False, indent=0))
     (assets / "story").mkdir(parents=True, exist_ok=True)
     for name in STORY_PICTURES:
