@@ -11,6 +11,10 @@ extends Node
 ## Key hints, as pyport's: `device` is what the last key came from ("keys", "pad"; "touch" on a
 ## phone or after a touch; the mouse changes nothing), and hint(key) is the text `key` + "_" +
 ## device when the strings have one (Enter / Esc after the keyboard, A / B after the pad).
+##
+## The right mouse button is BACK (ui_cancel), as pyport's, on every screen and over any control,
+## except where a node of the group RIGHT_BUTTON uses it itself (the mission's map attacks with
+## it while the hero plays).
 
 const KEYS := {
 	"move_left": [KEY_A, KEY_LEFT],
@@ -63,6 +67,8 @@ const PAD_AXES := {
 const DEADZONE := 0.3
 ## A stick or trigger moved this far counts as the pad being used.
 const PAD_MOTION := 0.5
+## Nodes that use the right mouse button themselves: uses_right_button() says when.
+const RIGHT_BUTTON := "right_button"
 
 signal device_changed(device: String)
 
@@ -78,6 +84,32 @@ func _input(event: InputEvent) -> void:
 	if not from.is_empty() and from != device:
 		device = from
 		device_changed.emit(device)
+	if is_back_click(event) and not right_button_taken():
+		get_viewport().set_input_as_handled()
+		send_back()
+
+
+## A node of the group RIGHT_BUTTON uses the right button now.
+func right_button_taken() -> bool:
+	for n in get_tree().get_nodes_in_group(RIGHT_BUTTON):
+		if n.uses_right_button():
+			return true
+	return false
+
+
+## A press of the right mouse button (not a touch).
+static func is_back_click(event: InputEvent) -> bool:
+	return event is InputEventMouseButton and event.pressed \
+		and event.button_index == MOUSE_BUTTON_RIGHT and event.device != InputEvent.DEVICE_ID_EMULATION
+
+
+## BACK: ui_cancel pressed and let go, as from Esc.
+static func send_back() -> void:
+	for pressed in [true, false]:
+		var ev := InputEventAction.new()
+		ev.action = "ui_cancel"
+		ev.pressed = pressed
+		Input.parse_input_event(ev)
 
 
 ## "keys", "pad" or "touch" for a press, "" for anything else (the mouse, a release, a stick

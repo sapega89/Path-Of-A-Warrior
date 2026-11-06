@@ -3,6 +3,8 @@ extends "res://tests/test_case.gd"
 const InputSetupScript := preload("res://scripts/core/input_setup.gd")
 const Offline := preload("res://scripts/screens/offline_screen.gd")
 const MapViewer := preload("res://scripts/screens/map_viewer.gd")
+const Help := preload("res://scripts/screens/help_screen.gd")
+const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
 
 
 func test_actions_have_keys_and_pad() -> void:
@@ -108,3 +110,43 @@ func test_offline_screen_and_map_viewer_follow_the_device() -> void:
 	offline.free()
 	viewer.free()
 	InputSetup.device = was
+
+
+func _right_click() -> InputEventMouseButton:
+	var ev := InputEventMouseButton.new()
+	ev.button_index = MOUSE_BUTTON_RIGHT
+	ev.pressed = true
+	return ev
+
+
+func test_right_click_is_back() -> void:
+	check(InputSetupScript.is_back_click(_right_click()), "the right button")
+	var up := _right_click()
+	up.pressed = false
+	check(not InputSetupScript.is_back_click(up), "not its release")
+	var left := _right_click()
+	left.button_index = MOUSE_BUTTON_LEFT
+	check(not InputSetupScript.is_back_click(left), "not the left button")
+	var old: Dictionary = Router.params
+	Router.params = {}
+	var help: Control = Help.new()
+	root.add_child(help)
+	help.open(2)
+	help.get_viewport().push_input(_right_click())
+	Input.flush_buffered_events()
+	eq(help.topic, -1, "Help: back from a topic to the topics, as Esc")
+	help.free()
+	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	var mission: Control = MissionScreen.new()
+	root.add_child(mission)
+	mission.get_viewport().push_input(_right_click())
+	Input.flush_buffered_events()
+	check(mission.pause_menu == null, "on the map the right button is not BACK (it attacks)")
+	mission.pause()
+	check(mission.pause_menu != null, "paused")
+	mission.get_viewport().push_input(_right_click())
+	Input.flush_buffered_events()
+	check(mission.pause_menu == null, "in the pause menu it is BACK: the game goes on")
+	mission.free()
+	Router.params = old
+
