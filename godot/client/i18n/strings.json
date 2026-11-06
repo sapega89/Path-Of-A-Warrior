@@ -334,5 +334,25 @@
   "visit.ok": {
     "en": "OK",
     "uk": "OK"
+  },
+  "pause.title": {
+    "en": "PAUSE",
+    "uk": "ПАУЗА"
+  },
+  "pause.resume": {
+    "en": "Resume",
+    "uk": "Продовжити"
+  },
+  "pause.options": {
+    "en": "Options",
+    "uk": "Налаштування"
+  },
+  "pause.exit": {
+    "en": "Exit to Menu",
+    "uk": "Вийти в меню"
+  },
+  "pause.quit": {
+    "en": "Exit Game",
+    "uk": "Вийти з гри"
   }
 }
