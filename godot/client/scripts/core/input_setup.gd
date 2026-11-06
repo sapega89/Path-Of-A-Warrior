@@ -14,7 +14,8 @@ extends Node
 ##
 ## The right mouse button is BACK (ui_cancel), as pyport's, on every screen and over any control,
 ## except where a node of the group RIGHT_BUTTON uses it itself (the mission's map attacks with
-## it while the hero plays).
+## it while the hero plays). The phone's own Back button is BACK too (the game does not quit on
+## it: application/config/quit_on_go_back is off).
 
 const KEYS := {
 	"move_left": [KEY_A, KEY_LEFT],
@@ -86,6 +87,11 @@ func _input(event: InputEvent) -> void:
 		device_changed.emit(device)
 	if is_back_click(event) and not right_button_taken():
 		get_viewport().set_input_as_handled()
+		send_back()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
 		send_back()
 
 
