@@ -239,14 +239,13 @@ func test_skill_costs_mp_and_hits() -> void:
 	sim.tick(-1, -1, false, 0)  # the first skill key: skill 12
 	eq(sim.hero.action, 12, "the skill starts")
 	eq(sim.hero.mp, 5, "it took 5 MP")
-	var spot: Vector2i = e.pos
-	var trace := ""
+	# The dash goes 24 px a frame through anyone: he stands 40 px ahead, where the first
+	# dashing frame ends in front of him (an idle soldier walks on; here he waits).
+	var spot: Vector2i = sim.hero.pos + Vector2i(0, 40)
 	for t in 6:
-		e.pos = spot  # (an idle soldier walks on; here he waits for the strike)
+		e.pos = spot
 		sim.tick(-1, -1)
-		trace += " [a%d f%d d%d %s | a%d %s al%d]" % [sim.hero.action, sim.hero.frame, sim.hero.dir,
-			sim.hero.pos, e.action, e.pos, e.alerted]
-	check(e.hp < hp, "the skill took HP: %d -> %d%s" % [hp, e.hp, trace])
+	check(e.hp < hp, "the skill took HP: %d -> %d" % [hp, e.hp])
 	sim.hero.mp = 4
 	sim.hero.action = 0
 	sim.tick(-1, -1, false, 0)
