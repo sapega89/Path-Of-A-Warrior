@@ -63,8 +63,12 @@
     "en": "Mission %d: %s",
     "uk": "Місія %d: %s"
   },
-  "mission.room": {
-    "en": "Room",
-    "uk": "Кімната"
+  "mission.stage": {
+    "en": "Stage",
+    "uk": "Етап"
+  },
+  "mission.complete": {
+    "en": "Complete.",
+    "uk": "пройдено."
   }
 }

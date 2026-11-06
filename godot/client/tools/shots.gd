@@ -39,10 +39,10 @@ func _ready() -> void:
 	await _seconds(0.8)  # the room opens after 5 ticks
 	await _shot(out, "mission_1_open")
 	Input.action_press("move_down")
-	await _seconds(2.5)
+	await _seconds(6.0)
 	Input.action_release("move_down")
 	await _seconds(1.0)
-	print("room after walking down: ", mission.room)
+	print("room after walking down: ", mission.sim.cell, " stage ", mission.sim.rooms_visited)
 	await _shot(out, "mission_1_room_2")
 	get_tree().quit()
 

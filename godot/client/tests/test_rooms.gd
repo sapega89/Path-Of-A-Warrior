@@ -3,7 +3,7 @@ extends "res://tests/test_case.gd"
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
 const Rooms := preload("res://scripts/world/rooms.gd")
 const Campaign := preload("res://scripts/core/campaign.gd")
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
+const MapSim := preload("res://scripts/sim/map_sim.gd")
 
 
 func test_map_1_rooms() -> void:
@@ -47,8 +47,8 @@ func test_campaign_tables() -> void:
 	var ms: Array = c.lord_missions(1)
 	eq(ms.size(), 4, "lord 1 has 4 missions")
 	eq(ms[0].name, "Lord Gabriel", "first mission")
-	var start: Vector3 = MissionScreen.start_position(ms[0])
-	check(absf(start.x - (4 * 27 + 12) / 27.0) < 0.001, "start x")
+	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(int(ms[0].start[0]), int(ms[0].start[1])))
+	eq(sim.hero.pos, Vector2i(4 * 27 + 12, 2 * 27 + 20), "start position in pixels")
 	# Every lord's map exists and its missions have room data.
 	for id in c.lords:
 		var map := MapBuilder.load_map(Campaign.lord_map(int(id)))

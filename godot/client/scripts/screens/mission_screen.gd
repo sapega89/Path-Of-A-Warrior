@@ -1,42 +1,40 @@
 extends Control
-## A mission of the original campaign on its map: the hero starts where the mission says,
-## the camera shows the current room, and the rooms open and lead to each other as in the
-## original. Params: {lord, mission}.
-##
-## Enemies and combat are not ported yet, so every room is cleared as soon as it is
-## entered, like the original's "map without enemies" mode; a room with a general stays
-## closed (the mission is won only by defeating him).
+## A mission of the original campaign on its map. The game itself runs in MapSim
+## (original pixels and ticks); this screen reads the input, ticks the simulation every
+## 120 ms and draws its state in 3D: the hero sprite, the camera on the current room,
+## the exit arrows and the "Stage" banners. Params: {lord, mission}.
 
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const Rooms := preload("res://scripts/world/rooms.gd")
+const MapSim := preload("res://scripts/sim/map_sim.gd")
 const Campaign := preload("res://scripts/core/campaign.gd")
 const Hero := preload("res://scripts/world/hero.gd")
 const FollowCamera := preload("res://scripts/world/follow_camera.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
+const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 
-const TICK := 0.1  # one original map tick
-const CLEAR_DELAY := 5  # ticks from "cleared" to the exits opening (popup time in the original)
-const SCROLL_TIME := 0.6  # 6 ticks
+const TICK := MapSim.TICK_MS / 1000.0
 const ARROW_SCALE := 3.0
 const ARROW_PATH := "res://assets/original/ui/arrow%d.png"
-
-enum Phase { CLOSED, CLEARING, OPEN, SCROLLING }
 
 var lord_id := 1
 var mission := 0
 var mission_info := {}
+var lord_name := ""
+var sim: RefCounted
 var viewport: SubViewport
 var world: Node3D
 var builder: Node3D
 var hero: CharacterBody3D
 var camera: Camera3D
-var rooms: RefCounted
-var room := 0
-var phase := Phase.CLOSED
-var rooms_visited := 1
 var info: Label
+var banner: PanelContainer
+var banner_text: Label
 var arrows: Array[TextureRect] = []
-var _timer := 0.0
+var _acc := 0.0
+var _prev_pos := Vector2i.ZERO
+var _pressed := -1
+var _fire := false
+var _last_held := -1
 var _blink := 0
 
 
@@ -47,6 +45,7 @@ func _ready() -> void:
 	var campaign := Campaign.new()
 	var ms := campaign.lord_missions(lord_id)
 	mission_info = ms[mission] if mission < ms.size() else {}
+	lord_name = campaign.lord_name(lord_id)
 
 	var container := SubViewportContainer.new()
 	container.name = "World"
@@ -67,18 +66,20 @@ func _ready() -> void:
 	builder.name = "Map"
 	world.add_child(builder)
 	builder.build(map)
-	rooms = Rooms.new(map, mission)
+	var s: Array = mission_info.get("start", [4, 4])
+	sim = MapSim.new(map, mission, Vector2i(int(s[0]), int(s[1])))
+	_prev_pos = sim.hero.pos
 
 	hero = Hero.new()
 	hero.name = "Hero"
+	hero.external = true
 	world.add_child(hero)
-	hero.global_position = start_position(mission_info)
-	room = rooms.room_at(hero.global_position)
+	hero.global_position = Hero.px_to_world(Vector2(sim.hero.pos))
 
 	camera = FollowCamera.new()
 	camera.name = "Camera"
 	world.add_child(camera)
-	camera.focus = rooms.center(room)
+	camera.focus = sim.rooms.center(sim.cell)
 	camera.make_current()
 	camera.snap()
 
@@ -100,72 +101,81 @@ func _ready() -> void:
 	info.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	add_child(info)
 
+	banner = PanelContainer.new()
+	banner.name = "Banner"
+	banner.visible = false
+	banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	banner_text = Label.new()
+	banner_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	banner_text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	banner.add_child(banner_text)
+	add_child(banner)
+
 	var touch := TouchControls.new()
 	touch.name = "Touch"
 	add_child(touch)
-	enter_room(room)
+	_update_view(0.0)
 
 
-## The mission's start tile to a world position (the original puts the hero at
-## tile * 27 + (12, 20) px).
-static func start_position(m: Dictionary) -> Vector3:
-	var s: Array = m.get("start", [4, 4])
-	return Vector3((float(s[0]) * 27.0 + 12.0) / 27.0, 0.05, (float(s[1]) * 27.0 + 20.0) / 27.0)
-
-
-func enter_room(r: int) -> void:
-	room = r
-	phase = Phase.CLOSED
-	_timer = 0.0
-	if not rooms.has_general(room):
-		phase = Phase.CLEARING  # no enemies yet: the room is cleared at once
-	_update_info()
-
-
-func _physics_process(_delta: float) -> void:
-	if phase == Phase.SCROLLING:
-		return
-	var kept: Dictionary = rooms.keep_inside(room, hero.global_position)
-	var pos: Vector3 = kept.pos
-	pos.y = hero.global_position.y
-	hero.global_position = pos
-	var edge: int = kept.edge
-	if phase == Phase.OPEN and edge != 0 and rooms.has_exit(room, edge) and hero.walking:
-		leave_room(edge)
+## The 4-direction of a stick or keys (the original hero walks in 4 directions), or -1.
+static func dir4_of(v: Vector2) -> int:
+	if v.length() < 0.3:
+		return -1
+	if absf(v.x) > absf(v.y):
+		return 6 if v.x > 0.0 else 2
+	return 0 if v.y > 0.0 else 4
 
 
 func _process(delta: float) -> void:
-	_timer += delta
-	if phase == Phase.CLEARING and _timer >= CLEAR_DELAY * TICK:
-		phase = Phase.OPEN
-		_timer = 0.0
-	_blink = int(_timer / TICK)
+	var held := dir4_of(Input.get_vector("move_left", "move_right", "move_up", "move_down"))
+	if held != -1 and held != _last_held:
+		_pressed = held  # a new direction this tick: the original's key press
+	_last_held = held
+	if Input.is_action_just_pressed("attack"):
+		_fire = true
+	_acc += delta
+	while _acc >= TICK:
+		_acc -= TICK
+		_prev_pos = sim.hero.pos
+		sim.tick(held, _pressed, _fire)
+		_pressed = -1
+		_fire = false
+		_blink += 1
+	_update_view(_acc / TICK)
+
+
+func _update_view(t: float) -> void:
+	var p := Vector2(_prev_pos).lerp(Vector2(sim.hero.pos), clampf(t, 0.0, 1.0))
+	if (sim.hero.pos - _prev_pos).length() > 40:
+		p = Vector2(sim.hero.pos)
+	hero.global_position = Hero.px_to_world(p)
+	hero.set_frame(sim.hero_sprite_frame())
+	camera.focus = sim.rooms.center(sim.cell)
+	info.text = "%s: %s   %s %d" % [lord_name, mission_info.get("name", ""), tr("mission.stage"), sim.rooms_visited]
 	_place_arrows()
+	_show_banner()
 
 
-func leave_room(exit_no: int) -> void:
-	var next: int = rooms.neighbour(room, exit_no)
-	if next < 0 or next >= rooms.count():
+func _show_banner() -> void:
+	banner.visible = sim.banner != 0
+	if not banner.visible:
 		return
-	phase = Phase.SCROLLING
-	hero.set_physics_process(false)
-	var tw := create_tween()
-	tw.tween_property(camera, "focus", rooms.center(next), SCROLL_TIME).set_trans(Tween.TRANS_SINE)
-	# The hero steps over the edge into the new room.
-	var kept: Dictionary = rooms.keep_inside(next, hero.global_position)
-	tw.parallel().tween_property(hero, "global_position", kept.pos, SCROLL_TIME)
-	tw.tween_callback(func():
-		hero.set_physics_process(true)
-		rooms_visited += 1
-		enter_room(next))
+	var stage := tr("mission.stage") + " " + str(sim.rooms_visited)
+	if sim.banner == MapSim.BANNER_STAGE_CLEAR:
+		stage += " " + tr("mission.complete")
+	banner_text.text = "%s\n%s\n%s" % [lord_name, mission_info.get("name", ""), stage]
+	var view := get_viewport_rect().size
+	banner.size = Vector2(520, 0)
+	banner.reset_size()
+	banner.position = Vector2((view.x - banner.size.x) / 2.0, view.y * 0.3)
 
 
 func _place_arrows() -> void:
 	var view := get_viewport_rect().size
-	var lit := phase == Phase.OPEN and (_blink & 2) != 0
+	var lit: bool = sim.exits_open() and (_blink & 2) != 0
 	for i in 4:
 		var a := arrows[i]
-		a.visible = lit and rooms.has_exit(room, i + 1)
+		a.visible = lit and sim.rooms.has_exit(sim.cell, i + 1)
 		var s := a.texture.get_size() * ARROW_SCALE
 		a.size = s
 		match i:
@@ -173,12 +183,6 @@ func _place_arrows() -> void:
 			1: a.position = Vector2(16, (view.y - s.y) / 2.0)
 			2: a.position = Vector2((view.x - s.x) / 2.0, 16)
 			3: a.position = Vector2(view.x - s.x - 16, (view.y - s.y) / 2.0)
-
-
-func _update_info() -> void:
-	var p: Vector2i = rooms.room_xy(room)
-	info.text = "%s: %s   %s %d,%d" % [Campaign.new().lord_name(lord_id), mission_info.get("name", ""),
-		tr("mission.room"), p.x + 1, p.y + 1]
 
 
 func _unhandled_input(event: InputEvent) -> void:

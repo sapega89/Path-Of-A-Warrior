@@ -13,6 +13,9 @@ Writes
                                          pyport draw_hero does, one cell per
                                          sprite frame; hero.json has the walk / idle tables
   godot/client/assets/original/ui/*.png  UI pictures used as they are (exit arrows, ...)
+  godot/client/data/tables.json          the game's constant tables the map code uses (animation
+                                         frame lists, direction steps, ...), copied from
+                                         pyport/pow/game/consts.py by name
   godot/client/data/campaign.json        chapters, lords (one map each) and missions, as the
                                          campaign screens read them (load_chapter_lords,
                                          load_lord_missions):
@@ -214,6 +217,25 @@ def export_ui(out):
         Image.open(ROOT / (name + ".png")).convert("RGBA").save(out / (name + ".png"))
 
 
+TABLES = [
+    "dir8_to_dir4", "dir_dx8", "dir_dy8", "speed_frame_ms",
+    "hero_anim_0", "hero_anim_1", "hero_anim_2", "hero_anim_3", "hero_anim_4", "hero_anim_5",
+    "hero_anim_6", "hero_anim_7", "hero_anim_8", "hero_anim_9", "hero_anim_10", "hero_anim_11",
+    "hero_anim_12", "hero_anim_13", "hero_anim_14", "hero_anim_15_19", "hero_anim_20",
+    "hero_anim_21", "hero_anim_22", "hero_anim_23_24", "hero_anim_25", "hero_anim_26_27",
+    "hero_anim_28", "hero_anim_29", "hero_anim_30",
+    "head_anim_0", "head_anim_1", "head_anim_2", "head_anim_3",
+    "body_anim_0", "body_anim_1", "body_anim_2", "body_anim_3",
+    "weapon_anim_1", "weapon_anim_2", "weapon_anim_3", "general_frame_flags",
+]
+
+
+def export_tables(out):
+    from pow.game import consts
+    tables = {name: getattr(consts, name) for name in TABLES}
+    (out / "tables.json").write_text(json.dumps(tables, separators=(",", ":")))
+
+
 def main():
     tile_names = scr.load(ROOT / "imgtile.scr")
     map_files = [n for n in scr.load(ROOT / "mdat_QVGA.scr") if n.endswith(".MAP")]
@@ -226,6 +248,7 @@ def main():
         m["rooms"] = parse_rooms((ROOT / room_files[index]).read_bytes(), m["w"], m["h"])
         (out_maps / ("%d.json" % (index + 1))).write_text(json.dumps(m, separators=(",", ":")))
     chapters, missions = export_campaign(CLIENT / "data")
+    export_tables(CLIENT / "data")
     atlas, found = build_atlas(tile_names)
     out_tiles = CLIENT / "assets" / "original"
     out_tiles.mkdir(parents=True, exist_ok=True)
