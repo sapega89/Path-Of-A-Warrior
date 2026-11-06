@@ -6,9 +6,10 @@ extends RefCounted
 ##
 ## Ported so far: rooms and their phases (banners, cleared, exits, scrolling to the next
 ## room), the hero's walking, running and sword attacks with the original wall, corner and
-## room checks, and the soldiers: the room's waves come in through its exits, swordsmen
-## (one or a squad of three) and archers walk, attack and shoot by the original AI, are hit,
-## knocked back and die; the last one clears the room. Barrels and other objects break under
+## room checks, and the soldiers: the room's waves come in through its exits and the cells'
+## scripts put archers on their cells; swordsmen (one or a squad of three) and archers walk,
+## attack and shoot by the original AI, are hit, knocked back and die; the last one of the
+## waves clears the room. Barrels and other objects break under
 ## the sword; soldiers and objects drop gold and items that the hero picks up. Generals come
 ## with their talk, fight with their skills, and the mission's own general ends the mission
 ## ("Mission Success!"). The hero's skills (on their keys, for MP) and his potions and
@@ -27,6 +28,7 @@ const BANNER_STAGE := 8
 const BANNER_STAGE_CLEAR := 9
 const BANNER_SUCCESS := 10  # "Mission Success!": waits for a key, then the mission ends
 const BANNER_FAILED := 22  # "Mission fail!": waits for a key, then the mission ends
+const BANNER_ACQUIRED := 13  # a gear picked up: "<its name> Acquired!!"
 const BANNER_TICKS := 20
 
 const KIND_SWORDS := 201
@@ -107,6 +109,8 @@ class Actor:
 	var hit_fx_kind := 0  # > 0: a hit spark shows (1 or 2: which pair of spark pictures)
 	var hit_fx_frame := 0
 	var hit_fx_pos := Vector2i.ZERO  # where it was hit
+	var on_fire := false  # burning: the fire shows on him six ticks
+	var fire_frame := 0  # the picture of the fire shown now (-1: from the end of this tick)
 
 
 ## A breakable object of the room (barrels, crates, ...): a cell of the objects layer.
@@ -150,9 +154,13 @@ var exit_dir := 0  # 1 down 2 left 3 up 4 right while scrolling to the next room
 var exit_blink := 0
 var scrolling := false
 var rooms_visited := 1
+var mission := 0  # the mission of the map (its rooms' lists and the archers of its cells)
 var waves: Array = []  # the current room's enemy list, flat: kind, count, kind, count, ...
 var banner := 0
 var banner_timer := 0
+var acquired := 0  # the gear of the BANNER_ACQUIRED banner
+## Places left in the hero's Inventory: a gear with no place stays on the floor.
+var free_places := 45
 var hero := Actor.new()
 var dir_history: Array[int] = [-1, -1, -1, -1, -1]
 var hold_to_move := true  # the port's option (the player asked for it): walk while held
@@ -162,6 +170,7 @@ var difficulty := 1  # 0 hard (gold and exp x2), 1 normal
 var auto_aim_hard := true  # the port's option: the hero turns to the nearest enemy on hard too
 var general_side := 0  # the side (weapon) of the last general met: 0 long, 1 short sword
 var general := {}  # the last general met (campaign.json generals)
+var hero_name := HERO_NAME  # how the hero is called in the talks (the hero's own name)
 var boss_type := 0  # the mission's own general: defeating him wins the mission
 var boss_fight := false
 var boss_spawned := false
@@ -245,10 +254,11 @@ static func talk_lines(kind: String) -> Array:
 	return _talk.get(kind, [])
 
 
-func _init(map_data: Dictionary = {}, mission: int = 0, start_tile: Vector2i = Vector2i(4, 4)) -> void:
+func _init(map_data: Dictionary = {}, mission_no: int = 0, start_tile: Vector2i = Vector2i(4, 4)) -> void:
 	if map_data.is_empty():
 		return
 	map = map_data
+	mission = mission_no
 	w = int(map.w)
 	h = int(map.h)
 	flags = map.flags
@@ -291,9 +301,31 @@ func enter_room() -> void:
 	while waves.size() < 14:
 		waves.append(0)
 	_find_spawn_spots()
+	_run_cell_scripts()
 	_find_breakables()
 	room_phase = 2
 	room_phase_timer = 1
+
+
+## The scripts of the room's cells (the map's `scripts`): an op [0, mission + 1, kind] puts an
+## enemy of kind 200 + kind on its cell in that mission, the archers standing in the room. A
+## cell runs its first script, row by row.
+func _run_cell_scripts() -> void:
+	if no_enemies:
+		return
+	var o := room_origin()
+	var rtx := o.x * 7 + 1
+	var rty := o.y * 7 + 1
+	var cells := {}
+	for sc in map.get("scripts", []):
+		var at := Vector2i(int(sc.x), int(sc.y))
+		if not cells.has(at):
+			cells[at] = sc.ops
+	for y in range(rty, rty + 7):
+		for x in range(rtx, rtx + 7):
+			for op in cells.get(Vector2i(x, y), []):
+				if int(op[0]) == 0 and int(op[1]) - 1 == mission:
+					create_enemy(int(op[2]) + 200, x, y, 4)
 
 
 func max_enemies() -> int:
@@ -380,7 +412,7 @@ func tick(held: int, pressed: int = -1, fire: bool = false, hotkey: int = -1, po
 	if belt >= 0 and belt < quick_slots.size():
 		potion = 10 + belt
 	_tick_scene(held, pressed, skill, potion)
-	if banner == 0:
+	if banner == 0 or banner == BANNER_ACQUIRED:
 		_end_tick()
 
 
@@ -850,6 +882,17 @@ func _end_tick() -> void:
 				room_phase = 0
 		return
 	room_phase_timer -= 1
+
+
+## Continuing a save on the map, as pyport's: the room was clear when it was saved, so it
+## stays clear (no waves, no archers, no "Stage" banner) and its exits open.
+func continue_in_clear_room() -> void:
+	enemies.clear()
+	enemies_alive = 0
+	for i in waves.size():
+		waves[i] = 0
+	room_phase = 1
+	room_phase_timer = 5
 
 
 ## The game can be saved on the map: no enemy alive, no general fighting, no wave to come.
@@ -1354,10 +1397,18 @@ func _general_skill_hits_hero(e: Actor) -> void:
 		6:
 			e.frame = 5
 			hero.hurt_ticks = 2
-		8, 16, 19:
+		8, 16:
 			hero.hurt_ticks = 2
-		15, 18, 21:
+		15, 21:
 			hero.hurt_ticks = 5
+		17:
+			_set_on_fire(hero)
+		18:
+			hero.hurt_ticks = 5
+			_set_on_fire(hero)
+		19:
+			hero.hurt_ticks = 2
+			_set_on_fire(hero)
 	hero_is_hit(e)
 
 
@@ -1422,6 +1473,19 @@ func _advance_sparks() -> void:
 			a.hit_fx_frame += 1
 			if a.hit_fx_frame > 1:
 				a.hit_fx_kind = 0
+		if a.on_fire:
+			a.fire_frame += 1
+			if a.fire_frame > 5:
+				a.on_fire = false
+
+
+## The fires burning on the hero and the enemies: ["fire", picture 0..5, where he stands].
+func fires() -> Array:
+	var out: Array = []
+	for a in [hero] + enemies:
+		if a.on_fire and a.fire_frame >= 0:
+			out.append(["fire", a.fire_frame, a.pos])
+	return out
 
 
 ## The hit sparks to draw: [frame, position]. An enemy's pair of pictures is chosen by the
@@ -1501,20 +1565,33 @@ func _strike_enemy(e: Actor) -> void:
 		20:
 			e.hit_fx_kind = rng.below(2) + 1
 			e.ai_mode = 0
-		21, 24:
+		21:
 			e.ai_mode = 5
+		23:
+			_set_on_fire(e)
+		24:
+			e.ai_mode = 5
+			_set_on_fire(e)
 		25, 27:
 			e.ai_mode = 5
 		26:
 			pass
+		29:
+			_set_on_fire(e)
 	if hero.action >= 25 and hero.action <= 27:
 		e.hit_fx_kind = 2
 		var f := _front_of(hero.pos, hero.dir)
 		e.dir = dir8(e.pos, f)
 		e.facing = e.dir
-	if hero.action == 29:
-		_sound(13)  # it sets the enemy on fire
 	_sound(16)
+
+
+## A fire skill hits him (Flame Twister, Fire Tornado, Dragon Breath; a general's fire
+## skills on the hero): the fire burns on him from this tick's picture on.
+func _set_on_fire(a: Actor) -> void:
+	a.on_fire = true
+	a.fire_frame = -1
+	_sound(13)
 
 
 ## The damage of a hit: a strike (3..8), a skill (its level adds attack), or a scroll.
@@ -1598,12 +1675,17 @@ func _start_map_talk() -> void:
 	talk.clear()
 	var name := str(general.get("name", ""))
 	for k in TALK_STEPS:
-		var speaker := name if (k & 1) == 0 else HERO_NAME
+		var speaker := name if (k & 1) == 0 else hero_name
 		var text := str(lines[21 + k]) if 21 + k < lines.size() else ""
 		talk.append("[%s] %s" % [speaker, text.replace("&", speaker)])
 	talk_line = 0
 	talk_chars = 0
 	talk_wait = 0
+
+
+## Who says the line shown now: true for the hero (the odd lines), false for the general.
+func hero_talks() -> bool:
+	return (talk_line & 1) == 1
 
 
 ## The line shown now, as far as it is typed.
@@ -1703,7 +1785,7 @@ func _start_general_talk(id: int, after: int) -> void:
 	var name := str(general.get("name", ""))
 	talk.clear()
 	for k in VICTORY_TALK_STEPS:
-		var speaker := name if (k & 1) == 0 else HERO_NAME
+		var speaker := name if (k & 1) == 0 else hero_name
 		var text := str(lines[first + k]) if first + k < lines.size() else ""
 		talk.append("[%s] %s" % [speaker, text.replace("&", speaker)])
 	talk_line = 0
@@ -1851,7 +1933,13 @@ func _pick_up_drops() -> void:
 					d.ticks -= 1
 					continue  # no room: it stays on the floor
 			else:
+				if free_places < 1:
+					d.ticks -= 1
+					continue  # no place in the Inventory: it stays on the floor
 				items.append(d.item)
+				free_places -= 1
+				acquired = d.item
+				_show_banner(BANNER_ACQUIRED)
 			d.item = 0
 		d.ticks -= 1
 		if d.ticks < 1 or d.item == 0:

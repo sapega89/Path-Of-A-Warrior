@@ -55,7 +55,11 @@ func test_control_names_the_bound_keys() -> void:
 	for i in 5:
 		skills.append(OS.get_keycode_string(Keys.KEYS["skill_%d" % (i + 1)][1]))
 		belt.append(OS.get_keycode_string(Keys.KEYS["belt_%d" % (i + 1)][0]))
-	check(page.contains("Skills 1-5: 1-5, or %s (X, Y, LB, RB, LT)" % " ".join(skills)), "skills")
+	check(page.contains("Skills 1-5: 1-5, or %s, or Num 1 3 7 9 0 (X, Y, LB, RB, LT)" % " ".join(skills)), "skills")
+	var pad := []
+	for i in 5:
+		pad.append(OS.get_keycode_string(Keys.KEYS["skill_%d" % (i + 1)][2]))
+	eq(pad, ["Kp 1", "Kp 3", "Kp 7", "Kp 9", "Kp 0"], "the phone's keys on the numeric keypad")
 	check(page.contains("Belt: %s" % " ".join(belt)), "belt")
 	eq(Keys.KEYS["potion_1"], [KEY_KP_MULTIPLY], "potion *")
 	eq(Keys.KEYS["potion_2"], [KEY_KP_DIVIDE], "potion #")

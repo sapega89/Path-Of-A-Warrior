@@ -53,19 +53,32 @@ func test_skip_corner_on_the_map() -> void:
 	Router.params = old
 
 
+## As pyport's: on a talk of an ending SKIP goes to its pictures, on a picture to the next
+## page; on a talk of the opening it ends the story.
 func test_skip_the_story() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"story": 2, "reward_item": 502, "opened_lord": 8, "profile_path": "user://no_such_hero.json"}
 	var screen: Control = Story.new()
 	root.add_child(screen)
 	screen._unhandled_input(_skip_key())
-	eq(screen.page, screen.pages.size() - 1, "an ending: on to its numbers")
-	screen.free()
-	screen = Story.new()
-	root.add_child(screen)
+	eq([screen.page, screen.pages[screen.page].kind], [14, "picture"], "an ending: on to its pictures")
 	screen.skip_button.pressed.emit()
-	eq(screen.page, screen.pages.size() - 1, "the Skip button too")
+	eq(screen.pages[screen.page].kind, "stats", "on a picture: the next page (the Skip button too)")
 	screen.free()
+	var host := Control.new()
+	root.add_child(host)
+	Router.attach(host)
+	Router.go("title")
+	Router.push("story", {"profile_path": "user://no_such_hero.json"})
+	screen = Router.current
+	screen.skip()
+	eq(screen.page, 1, "the opening: a picture, the next one")
+	screen.skip()
+	eq(screen.pages[screen.page].kind, "talk", "then the talk")
+	screen.skip()
+	eq(Router.current_name(), "title", "on a talk: the end")
+	Router.attach(null)
+	host.free()
 	Router.params = old
 
 
