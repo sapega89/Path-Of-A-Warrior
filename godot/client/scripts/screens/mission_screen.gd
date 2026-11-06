@@ -371,6 +371,10 @@ func _show_banner() -> void:
 	banner.visible = sim.banner != 0
 	if not banner.visible:
 		return
+	if sim.banner == MapSim.BANNER_ACQUIRED:
+		banner_text.text = "%s\n%s" % [Items.name_of(sim.acquired), tr("mission.acquired")]
+		_place_banner(0.3)
+		return
 	var stage := tr("mission.stage") + " " + str(sim.rooms_visited)
 	if sim.banner == MapSim.BANNER_STAGE_CLEAR:
 		stage += " " + tr("mission.complete")

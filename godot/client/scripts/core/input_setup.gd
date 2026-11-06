@@ -3,12 +3,13 @@ extends Node
 ##
 ## Game code reads only actions ("attack", "skill_1"), never keys, so the
 ## same code works with a keyboard, a gamepad and the touch buttons.
-## Menus use Godot's built-in ui_* actions, which already cover all three.
+## Menus use Godot's built-in ui_* actions, which already cover all three (with MENU_KEYS added).
 ## As in pyport: 1-5 (or U I O P K) the five skills, Z X C V B the five belt slots, * and #
 ## (the numeric keypad, RT and L3 of a pad) the two potion keys; the pad's right stick
 ## up / right / down / left uses the belt slots Z X C V. Tab, F or R3: auto-hunt on / off.
 ## Q, F1 or the pad's Back / Select: SKIP (pyport's left soft key), the talk on the map, the
-## briefing and the story skipped.
+## briefing and the story skipped. The numeric keypad is the phone's, as in pyport: 8 2 4 6 move,
+## 5 attacks (Enter too), 1 3 7 9 0 are the five skills.
 ##
 ## Key hints, as pyport's: `device` is what the last key came from ("keys", "pad"; "touch" on a
 ## phone or after a touch; the mouse changes nothing), and hint(key) is the text `key` + "_" +
@@ -20,16 +21,16 @@ extends Node
 ## it: application/config/quit_on_go_back is off).
 
 const KEYS := {
-	"move_left": [KEY_A, KEY_LEFT],
-	"move_right": [KEY_D, KEY_RIGHT],
-	"move_up": [KEY_W, KEY_UP],
-	"move_down": [KEY_S, KEY_DOWN],
-	"attack": [KEY_J, KEY_SPACE],
-	"skill_1": [KEY_1, KEY_U],
-	"skill_2": [KEY_2, KEY_I],
-	"skill_3": [KEY_3, KEY_O],
-	"skill_4": [KEY_4, KEY_P],
-	"skill_5": [KEY_5, KEY_K],
+	"move_left": [KEY_A, KEY_LEFT, KEY_KP_4],
+	"move_right": [KEY_D, KEY_RIGHT, KEY_KP_6],
+	"move_up": [KEY_W, KEY_UP, KEY_KP_8],
+	"move_down": [KEY_S, KEY_DOWN, KEY_KP_2],
+	"attack": [KEY_J, KEY_SPACE, KEY_ENTER, KEY_KP_ENTER, KEY_KP_5],
+	"skill_1": [KEY_1, KEY_U, KEY_KP_1],
+	"skill_2": [KEY_2, KEY_I, KEY_KP_3],
+	"skill_3": [KEY_3, KEY_O, KEY_KP_7],
+	"skill_4": [KEY_4, KEY_P, KEY_KP_9],
+	"skill_5": [KEY_5, KEY_K, KEY_KP_0],
 	"potion_1": [KEY_KP_MULTIPLY],
 	"potion_2": [KEY_KP_DIVIDE],
 	"belt_1": [KEY_Z],
@@ -40,6 +41,15 @@ const KEYS := {
 	"pause": [KEY_ESCAPE],
 	"auto": [KEY_TAB, KEY_F],
 	"skip": [KEY_Q, KEY_F1],
+}
+## The menus' own keys besides Godot's (the arrows, Enter, Space, Esc), as pyport's: WASD and the
+## numeric keypad (8 2 4 6, 5 OK) move and choose, J is OK too. Backspace is BACK (see _input).
+const MENU_KEYS := {
+	"ui_up": [KEY_W, KEY_KP_8],
+	"ui_down": [KEY_S, KEY_KP_2],
+	"ui_left": [KEY_A, KEY_KP_4],
+	"ui_right": [KEY_D, KEY_KP_6],
+	"ui_accept": [KEY_J, KEY_KP_5],
 }
 const PAD_BUTTONS := {
 	"move_left": JOY_BUTTON_DPAD_LEFT,
@@ -89,7 +99,7 @@ func _input(event: InputEvent) -> void:
 	if not from.is_empty() and from != device:
 		device = from
 		device_changed.emit(device)
-	if is_back_click(event) and not right_button_taken():
+	if (is_back_click(event) and not right_button_taken()) or (is_back_key(event) and not typing()):
 		get_viewport().set_input_as_handled()
 		send_back()
 
@@ -105,6 +115,18 @@ func right_button_taken() -> bool:
 		if n.uses_right_button():
 			return true
 	return false
+
+
+## Backspace pressed: BACK, as pyport's (Esc is BACK through ui_cancel itself).
+static func is_back_key(event: InputEvent) -> bool:
+	return event is InputEventKey and event.pressed and not event.echo \
+		and event.physical_keycode == KEY_BACKSPACE
+
+
+## A text field has the focus: Backspace deletes there.
+func typing() -> bool:
+	var f := get_viewport().gui_get_focus_owner()
+	return f is LineEdit or f is TextEdit
 
 
 ## A press of the right mouse button (not a touch).
@@ -150,6 +172,11 @@ static func actions() -> Array:
 
 ## Adds the actions and default bindings to InputMap. Safe to call twice.
 static func register() -> void:
+	for action in MENU_KEYS:
+		for key in MENU_KEYS[action]:
+			var mk := InputEventKey.new()
+			mk.physical_keycode = key
+			_add(action, mk)
 	for action in KEYS:
 		if not InputMap.has_action(action):
 			InputMap.add_action(action, DEADZONE)

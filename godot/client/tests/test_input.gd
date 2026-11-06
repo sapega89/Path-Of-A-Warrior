@@ -151,6 +151,38 @@ func test_right_click_is_back() -> void:
 	Router.params = old
 
 
+## The keyboard as pyport's: WASD and the numeric keypad move and choose in menus (5 and J are
+## OK), Enter and Num 5 attack, Num 1 3 7 9 0 are the skills, and Backspace is BACK, except in
+## a text field, where it deletes.
+func test_keyboard_as_pyport() -> void:
+	InputSetupScript.register()
+	for pair in [[KEY_W, "ui_up"], [KEY_S, "ui_down"], [KEY_A, "ui_left"], [KEY_D, "ui_right"],
+			[KEY_KP_8, "ui_up"], [KEY_KP_2, "ui_down"], [KEY_KP_4, "ui_left"], [KEY_KP_6, "ui_right"],
+			[KEY_J, "ui_accept"], [KEY_KP_5, "ui_accept"], [KEY_ENTER, "attack"], [KEY_KP_5, "attack"],
+			[KEY_KP_8, "move_up"], [KEY_KP_1, "skill_1"], [KEY_KP_0, "skill_5"]]:
+		check(_key_press(pair[0]).is_action_pressed(pair[1]), "%s: %s" % [OS.get_keycode_string(pair[0]), pair[1]])
+	check(InputSetupScript.is_back_key(_key_press(KEY_BACKSPACE)), "Backspace")
+	check(not InputSetupScript.is_back_key(_key_press(KEY_ESCAPE)), "(Esc is ui_cancel itself)")
+	var old: Dictionary = Router.params
+	Router.params = {}
+	var help: Control = Help.new()
+	root.add_child(help)
+	help.open(2)
+	help.get_viewport().push_input(_key_press(KEY_BACKSPACE))
+	Input.flush_buffered_events()
+	eq(help.topic, -1, "Help: Backspace goes back, as Esc")
+	help.open(2)
+	var field := LineEdit.new()
+	help.add_child(field)
+	field.grab_focus()
+	check(InputSetup.typing(), "a text field has the focus")
+	help.get_viewport().push_input(_key_press(KEY_BACKSPACE))
+	Input.flush_buffered_events()
+	eq(help.topic, 2, "there Backspace deletes")
+	help.free()
+	Router.params = old
+
+
 ## The phone's Back button is BACK, and the game does not quit on it.
 func test_phone_back_button() -> void:
 	eq(ProjectSettings.get_setting("application/config/quit_on_go_back"), false, "no quitting on Back")
