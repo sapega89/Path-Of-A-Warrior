@@ -110,7 +110,7 @@ func test_shop_screen() -> void:
 	Router.params = {"profile_path": TEST_PATH, "mode": "enchant"}
 	screen = Shop.new()
 	root.add_child(screen)
-	eq(screen.cells.size(), 34, "the backpack and the Gear page")
+	eq(screen.cells.size(), Items.BACKPACK + Items.EQUIPPED, "the backpack and the Gear page")
 	screen.press_cell(0)
 	eq(screen.asked, 0, "asks first")
 	screen.confirm()
