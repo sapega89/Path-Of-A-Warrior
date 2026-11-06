@@ -337,6 +337,8 @@ func apply_to(sim: RefCounted) -> void:
 	h.mp = h.max_mp
 	h.weapon_kind = weapon_kind()
 	sim.difficulty = difficulty
+	if not hero_name.is_empty():
+		sim.hero_name = hero_name
 	for i in mini(skill_levels.size(), sim.skill_levels.size()):
 		sim.skill_levels[i] = int(skill_levels[i])
 	for i in mini(hotkeys.size(), sim.hotkeys.size()):
