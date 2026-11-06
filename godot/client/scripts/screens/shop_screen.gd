@@ -4,7 +4,8 @@ extends Control
 ## backpack, for half the price. Enchant: the backpack, then what the hero wears; enchanting
 ## costs gold, asks first, and can fail or lose the thing. Combine: three things of the
 ## backpack chosen (a gold border) make one new thing, for a fee, or fail and maybe lose
-## one of them. Every change is saved at once.
+## one of them. Every change is saved at once. After Yes to Enchant or Combine a sparkle plays
+## on the thing (on each of the three) for five frames of 120 ms, then comes the outcome.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
@@ -12,6 +13,9 @@ const Items := preload("res://scripts/core/items.gd")
 const ItemSlot := preload("res://scripts/ui/item_slot.gd")
 const COLUMNS := 5
 const QUICK := 5
+## The sparkle's frames in itemReinforce.png: x, y and the side of the square.
+const SPARKLE := [[0, 0, 16], [15, 0, 16], [30, 0, 16], [0, 16, 20], [20, 16, 24]]
+const SPARKLE_FRAME := 0.12  # seconds a frame shows, as a frame of the menus
 
 var profile: RefCounted
 var path: String = Profile.PATH
@@ -24,6 +28,11 @@ var asked := -1  # the cell waiting for the answer to "Continue?"
 var chosen: Array[int] = []  # Combine: the backpack places chosen
 var plan := {}  # Combine: what the three chosen make (Profile.combine_plan)
 var rng := RandomNumberGenerator.new()
+var sparkle := -1  # the sparkle's frame shown now, -1: none
+var sparkle_cells: Array[int] = []  # the cells it plays on
+var _sparkle_time := 0.0
+var _sparkle_view: Control
+var _sparkle_sheet: Texture2D = preload("res://assets/original/ui/itemReinforce.png")
 
 
 func _ready() -> void:
@@ -94,6 +103,15 @@ func _ready() -> void:
 	ask.confirmed.connect(confirm)
 	ask.canceled.connect(_cancel)
 	add_child(ask)
+	_sparkle_view = Control.new()
+	_sparkle_view.name = "Sparkle"
+	_sparkle_view.top_level = true
+	_sparkle_view.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_sparkle_view.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_sparkle_view.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_sparkle_view.draw.connect(_draw_sparkle)
+	add_child(_sparkle_view)
+	set_process(false)
 	refresh()
 	_show_info(0)
 	if mode == "combine":
@@ -132,6 +150,8 @@ func item_at(i: int) -> Dictionary:
 
 ## Buys, sells, or asks to enchant the thing of the cell. Returns the line shown.
 func press_cell(i: int) -> String:
+	if sparkle >= 0:
+		return ""
 	var item := item_at(i)
 	var id := int(item.id)
 	if id == 0:
@@ -193,9 +213,45 @@ func _cancel() -> void:
 	refresh()
 
 
-## The answer Yes to "Continue?": the thing is enchanted, or the three combined (or not).
-## Returns the line shown.
-func confirm() -> String:
+## The answer Yes to "Continue?": the sparkle starts on the thing, or on the three chosen.
+func confirm() -> void:
+	if asked < 0 or sparkle >= 0:
+		return
+	sparkle_cells.clear()
+	if mode == "combine":
+		sparkle_cells.append_array(chosen)
+	else:
+		sparkle_cells.append(asked)
+	sparkle = 0
+	_sparkle_time = 0.0
+	set_process(true)
+	_sparkle_view.queue_redraw()
+
+
+func _process(delta: float) -> void:
+	_sparkle_time += delta
+	while sparkle >= 0 and _sparkle_time >= SPARKLE_FRAME:
+		_sparkle_time -= SPARKLE_FRAME
+		next_sparkle()
+
+
+## The sparkle's next frame; after the fifth the outcome. Returns the line shown then.
+func next_sparkle() -> String:
+	if sparkle < 0:
+		return ""
+	sparkle += 1
+	_sparkle_view.queue_redraw()
+	if sparkle < SPARKLE.size():
+		return ""
+	sparkle = -1
+	sparkle_cells.clear()
+	set_process(false)
+	return finish()
+
+
+## After the sparkle: the thing is enchanted, or the three combined (or not). Returns the
+## line shown.
+func finish() -> String:
 	if asked < 0:
 		return ""
 	if mode == "combine":
@@ -217,6 +273,19 @@ func confirm() -> String:
 	refresh()
 	info.text = said
 	return said
+
+
+## The sparkle's frame over the middle of each of its cells, twice as big as the icons.
+func _draw_sparkle() -> void:
+	if sparkle < 0:
+		return
+	var f: Array = SPARKLE[sparkle]
+	var side := float(f[2])
+	for i in sparkle_cells:
+		var mid := cells[i].get_global_rect().get_center()
+		var half := side * ItemSlot.SCALE / 2.0
+		_sparkle_view.draw_texture_rect_region(_sparkle_sheet,
+			Rect2(mid - Vector2(half, half), Vector2(half, half) * 2.0), Rect2(f[0], f[1], side, side))
 
 
 func refresh() -> void:

@@ -360,6 +360,11 @@ func _ready() -> void:
 	await _frames(2)
 	await _shot(out, "16_enchant_ask")
 	Router.current.ask.hide()
+	Router.current.sparkle = 3  # the sparkle after Yes, without the outcome
+	Router.current.sparkle_cells = [25] as Array[int]
+	Router.current.get_node("Sparkle").queue_redraw()
+	await _shot(out, "16_enchant_sparkle")
+	Router.current.sparkle = -1
 	Router.back()
 	Router.current.open_page("combine")
 	await _frames(2)
