@@ -444,7 +444,14 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
 		pause()
-	elif event is InputEventMouseButton:
+
+
+## The mouse (and a touch, which comes as a click too) over the map: the screen itself takes
+## it, as the controls over the map let it through.
+func _gui_input(event: InputEvent) -> void:
+	if pause_menu != null:
+		return
+	if event is InputEventMouseButton:
 		_mouse_button(event)
 	elif event is InputEventMouseMotion and _mouse_dir != -1:
 		var d := pointer_dir(event.position)

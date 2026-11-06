@@ -34,7 +34,7 @@ func test_click_beside_the_hero_walks_that_way() -> void:
 	eq(screen.pointer_dir(c + Vector2(30, -200)), 4, "up")
 	eq(screen.pointer_dir(c + Vector2(30, 200)), 0, "down")
 	var start: Vector2i = screen.sim.hero.pos
-	screen._unhandled_input(_click(c + Vector2(200, 0)))
+	screen._gui_input(_click(c + Vector2(200, 0)))
 	eq(screen._mouse_dir, 6, "the button holds right")
 	eq(screen._pressed, 6, "a press of right")
 	for i in 6:
@@ -42,9 +42,9 @@ func test_click_beside_the_hero_walks_that_way() -> void:
 	check(screen.sim.hero.pos.x > start.x, "the hero walked right while the button was held")
 	var drag := InputEventMouseMotion.new()
 	drag.position = c + Vector2(0, -200)
-	screen._unhandled_input(drag)
+	screen._gui_input(drag)
 	eq(screen._mouse_dir, 4, "dragging turns him")
-	screen._unhandled_input(_click(c + Vector2(0, -200), MOUSE_BUTTON_LEFT, false))
+	screen._gui_input(_click(c + Vector2(0, -200), MOUSE_BUTTON_LEFT, false))
 	eq(screen._mouse_dir, -1, "the button let go: he stops")
 	screen.free()
 	Router.params = old
@@ -54,17 +54,17 @@ func test_click_on_the_hero_or_right_button_attacks() -> void:
 	var old: Dictionary = Router.params
 	var screen := _screen()
 	var c := _hero_middle(screen)
-	screen._unhandled_input(_click(c))
+	screen._gui_input(_click(c))
 	check(screen._fire, "a click on the hero")
 	eq(screen._mouse_dir, -1, "and no walking")
 	screen._fire = false
-	screen._unhandled_input(_click(c + Vector2(300, -100), MOUSE_BUTTON_RIGHT))
+	screen._gui_input(_click(c + Vector2(300, -100), MOUSE_BUTTON_RIGHT))
 	check(screen._fire, "the right button: where he faces")
 	eq(screen._mouse_dir, -1, "the right button does not walk")
 	screen._fire = false
 	var touch := _click(c + Vector2(200, 0))
 	touch.device = InputEvent.DEVICE_ID_EMULATION
-	screen._unhandled_input(touch)
+	screen._gui_input(touch)
 	eq(screen._mouse_dir, -1, "a touch: the touch controls walk, not the tap")
 	check(not screen._fire, "nor attack")
 	screen.free()
@@ -77,7 +77,7 @@ func test_pause_corner() -> void:
 	var view: Vector2 = screen.hud.get_viewport_rect().size
 	check(not screen.hud.pause_at(view - Vector2(200, 2)), "not left of the corner")
 	check(screen.hud.pause_at(view - Vector2(4, 4)), "the bottom-right corner")
-	screen._unhandled_input(_click(view - Vector2(4, 4)))
+	screen._gui_input(_click(view - Vector2(4, 4)))
 	check(screen.pause_menu != null, "PAUSE pauses")
 	screen.free()
 	Router.params = old
