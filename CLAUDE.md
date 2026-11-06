@@ -5,7 +5,7 @@
 - **Language:** Python 3 + pygame-ce (`pyport/`); browser build via pygbag
 - **Target resolution:** 240×320 (QVGA)
 - **Tile size:** 27×27 px
-- **Multiplayer / Gamevil Live server:** `pyport/pow_server` (WebSocket / TCP)
+- **Multiplayer / Live server:** `pyport/pow_server` (WebSocket / TCP)
 
 ## Project Context
 

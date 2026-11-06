@@ -495,20 +495,13 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
         if MpCanvas.state_ticks < 2:
             MpCanvas.state_ticks = 2
             try:
-                MpCanvas.logo_image = self.load_image("/gamevillogo.png")
                 MpCanvas.softkey_image = self.load_image("/softbg.png")
-                MpCanvas.logo_y = idiv(((MpCanvas.canvas_h - ((MpCanvas.logo_image.getHeight() + 12)))), 2)
-                MpCanvas.logo_image.getHeight()
-                MpCanvas.logo_image.getWidth()
             except Exception:
                 pass
-            MpCanvas.logo_time = system.currentTimeMillis()
+            # PORT-EXTRA (asked by Andrey): no logo screen of the original publisher (3 s)
+            MpCanvas.logo_time = 0
             Draw.fill_rect(MpCanvas.buffer_g, 0, 0, MpCanvas.canvas_w, MpCanvas.canvas_h, 0xFFFFFF)
         self.draw_buffer()
-        if config.REBRAND:  # PORT-EXTRA: no logo screen of the original publisher (rebrand.py)
-            MpCanvas.logo_time = 0
-        else:
-            Draw.draw_image(MpCanvas.screen_g, MpCanvas.logo_image, idiv(MpCanvas.canvas_w, 2), MpCanvas.logo_y, 17)
         if MpCanvas.sound_from_sp is not None:
             # PORT-EXTRA: started from the single player's Main Menu (mp_main.play): it already
             # showed the logo and asked about the sound, so its answer goes straight on
@@ -1137,10 +1130,7 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
                 Draw.draw_image(MpCanvas.buffer_g, MpCanvas.title_image, (MpCanvas.center_x - idiv(MpCanvas.title_image.getWidth(), 2)), (top_y + (80 * i_title)), 0)
                 MpCanvas.title_image = None
                 i_title = i_title + 1
-            if not config.REBRAND:  # PORT-EXTRA: no copyright line (rebrand.py)
-                if MpCanvas.copyright_image is None:
-                    MpCanvas.copyright_image = self.load_image("/gamevil.png")
-                Draw.draw_image(MpCanvas.buffer_g, MpCanvas.copyright_image, idiv(MpCanvas.canvas_w, 2), (MpCanvas.canvas_h - 1), 33)
+            # PORT-EXTRA (asked by Andrey): no copyright line of the original publisher here
             if MpCanvas.press_image is None:
                 MpCanvas.press_image = self.load_image("/press.png")
         self.draw_buffer()
@@ -1190,23 +1180,10 @@ class MpCanvas(DrawMixin, BattleMixin, NetMixin, InputMixin, ScreensMixin, Asset
             return
 
     def _paint_outro(self):  # state 300
-        if MpCanvas.embedded:                # PORT-EXTRA: back to the single player at once
-            MpCanvas.disconnect()
-            self.stop_music()
-            MpCanvas.midlet.destroyApp(True)
-            MpCanvas.midlet.notifyDestroyed()
-            return
-        if MpCanvas.state_ticks < 2:
-            MpCanvas.state_ticks = 2
-            MpCanvas.disconnect()
-            self.stop_music()
-            MpCanvas.logo_image = self.load_image("/outro.png")
-        Draw.fill_rect(MpCanvas.screen_g, 0, 0, MpCanvas.screen_w, MpCanvas.screen_h, 0)
-        logo_w = MpCanvas.logo_image.getWidth()
-        Gfx.draw_image_part(MpCanvas.logo_image, (MpCanvas.center_x - idiv(logo_w, 2)), (MpCanvas.center_y - 10), logo_w, 19, 0, 0)
-        Gfx.draw_image_part(MpCanvas.logo_image, (MpCanvas.center_x - idiv(logo_w, 2)), (MpCanvas.screen_h - 26), logo_w, 23, 0, 19)
-        if MpCanvas.state_ticks <= 30:
-            return
+        # PORT-EXTRA (asked by Andrey): no outro picture of the original publisher (outro.png,
+        # 3 s); the game ends (or, embedded, goes back to the single player) at once
+        MpCanvas.disconnect()
+        self.stop_music()
         MpCanvas.midlet.destroyApp(True)
         MpCanvas.midlet.notifyDestroyed()
 

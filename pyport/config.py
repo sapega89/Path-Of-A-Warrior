@@ -201,6 +201,3 @@ REG_KEYBOARD = os.environ.get("POW_REG_KEYBOARD", "1") == "1"
 # (pow/midp/canvas.py input_source). POW_KEY_HINTS=0 = the plain captions; tools/shot.py uses 0.
 KEY_HINTS = os.environ.get("POW_KEY_HINTS", "1") == "1"
 
-# PORT-EXTRA (asked by Andrey): in what the player sees, no name, logo or site of the original
-# publisher, and "Live" instead of the name of its online service (pow/game/rebrand.py). 0 = as in the original.
-REBRAND = os.environ.get("POW_REBRAND", "1") == "1"
