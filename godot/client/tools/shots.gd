@@ -446,6 +446,18 @@ func _ready() -> void:
 	await _shot(out, "04_lords")
 	Router.go("campaign", {"level": 2, "lord": 1, "profile_path": "user://shot_walker.json"})
 	await _shot(out, "04_missions")
+	# A mission's description, the question whether to accept it, the briefing typed out.
+	Router.go("campaign", {"level": 3, "lord": 1, "mission": 0, "profile_path": "user://shot_walker.json"})
+	await _shot(out, "04b_mission_description")
+	Router.current.ask_accept()
+	await _shot(out, "04c_mission_accept")
+	Router.current.ask.hide()
+	Router.go("briefing", {"lord": 1, "mission": 0, "line": 0, "profile_path": "user://shot_walker.json"})
+	Router.current.set_process(false)
+	Router.current.press()
+	Router.current.next_line()
+	Router.current.press()
+	await _shot(out, "04d_briefing")
 	Router.go("mission", {"lord": 1, "mission": 0, "seed": 1})
 	var mission: Node = Router.current
 	await _frames(20)
