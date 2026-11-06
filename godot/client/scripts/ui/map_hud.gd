@@ -3,6 +3,10 @@ extends Control
 ## scale: the bars at the top with the mission clock (left) and the kills or the last enemy
 ## hit (right), and the panel at the bottom with the HP ball (left), the MP ball (right) and
 ## the two potions on the potion keys. A ball empties from the top as HP or MP goes.
+## Above the panel the skill bar (as in pyport): the five belt slots (keys Z X C V B) on the
+## left with their counts, the five skills (keys 1-5) on the right, grey when not learned
+## or without the MP; the slot in use is framed white. A click on a slot uses it. With the
+## bar the panel does not show the two potions (the belt shows all five).
 
 const UI := "res://assets/original/ui/"
 const BALL := 35  # the balls' size
@@ -10,6 +14,11 @@ const BALL_X := [4, 201]  # in the 240 px wide panel
 const PANEL_H := 61
 const TOP_Y := 16  # the clock and the kills, below the top bars
 const ITEM := 28  # a frame of tool.png
+const CELL := 23  # a slot of the bar: 1 px shared border and a 22 px icon
+const ICON := 22  # the middle of a 28 px icon
+const BAR_H := 24
+const BELT_KEYS := "ZXCVB"
+const SKILL_KEYS := "12345"
 
 var sim: RefCounted
 var kills_shown := 0  # counts up to the kills one a tick
@@ -22,6 +31,9 @@ var _cover: Texture2D = preload(UI + "ball_black.png")
 var _digits: Texture2D = preload(UI + "number1.png")
 var _small: Texture2D = preload(UI + "number2.png")
 var _items: Texture2D = preload(UI + "tool.png")
+var _skills: Texture2D = preload(UI + "skill.png")
+var _skills_gray: Texture2D = preload(UI + "skillgray.png")
+var show_bar := true
 
 
 func _ready() -> void:
@@ -65,6 +77,9 @@ func _draw() -> void:
 		if h > 0:
 			draw_texture_rect_region(_cover, Rect2(origin + Vector2(BALL_X[b], 0) * k,
 				Vector2(BALL, h) * k), Rect2(0, 0, BALL, h))
+	if show_bar:
+		_bar(origin + Vector2(0, -BAR_H) * k, k)
+		return
 	for b in 2:
 		var slot: Array = sim.quick_slots[sim.quick_keys[b]]
 		var item := int(slot[0])
@@ -77,6 +92,64 @@ func _draw() -> void:
 		p = origin + Vector2(120 + side * (38 + 11 * (1 - b)), PANEL_H - 33) * k
 		draw_texture_rect_region(_small, Rect2(p, Vector2(11, 12) * k), Rect2(98, 0, 11, 12))
 		_number(int(slot[1]), origin + Vector2(120 + side * (28 + 10 * b), PANEL_H - 35) * k, k)
+
+
+## The x of slot i of the belt (left) or the skills (right) in the 240 px panel.
+static func slot_x(skill: bool, i: int) -> int:
+	return (240 - CELL * 5 - 1 if skill else 0) + i * CELL
+
+
+func _bar(top: Vector2, k: float) -> void:
+	draw_rect(Rect2(top, Vector2(240, BAR_H) * k), Color.BLACK)
+	for b in 5:
+		var at := top + Vector2(slot_x(false, b), 0) * k
+		var slot: Array = sim.quick_slots[b]
+		_slot_box(at, k, sim.effect_item != 0 and sim.effect_slot == b)
+		var item := int(slot[0])
+		if item != 0:
+			draw_texture_rect_region(_items, Rect2(at + Vector2(1, 1) * k, Vector2(ICON, ICON) * k),
+				Rect2((item - 1) * ITEM + 3, 3, ICON, ICON))
+			if int(slot[1]) > 1:
+				draw_texture_rect_region(_small, Rect2(at + Vector2(CELL - 9, BAR_H - 13) * k,
+					Vector2(9, 12) * k), Rect2(int(slot[1]) * 9, 0, 9, 12))
+		_key_label(BELT_KEYS[b], at, k)
+	for b in 5:
+		var at := top + Vector2(slot_x(true, b), 0) * k
+		var s := int(sim.hotkeys[b])
+		_slot_box(at, k, s != 0 and sim.hero.action == s)
+		if s >= 12 and s <= 30:
+			var ready: bool = sim.skill_levels[s - 12] > 0 and sim.skill_mp_need(s) <= sim.hero.mp
+			draw_texture_rect_region(_skills if ready else _skills_gray,
+				Rect2(at + Vector2(1, 1) * k, Vector2(ICON, ICON) * k), Rect2((s - 12) * ITEM + 3, 3, ICON, ICON))
+		_key_label(SKILL_KEYS[b], at, k)
+
+
+func _slot_box(at: Vector2, k: float, hot: bool) -> void:
+	draw_rect(Rect2(at, Vector2(CELL + 1, BAR_H) * k), Color.WHITE if hot else Color8(90, 90, 90), false, k)
+
+
+func _key_label(text: String, at: Vector2, k: float) -> void:
+	var font := get_theme_default_font()
+	var p := at + Vector2(2, 9) * k
+	draw_string_outline(font, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, int(9 * k), int(k), Color.BLACK)
+	draw_string(font, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, int(9 * k), Color.WHITE)
+
+
+## The bar's slot under a point of the screen: ["belt", 0..4], ["skill", 0..4], or [].
+func slot_at(p: Vector2) -> Array:
+	if not show_bar or sim == null:
+		return []
+	var view := get_viewport_rect().size
+	var k := scale_of(view)
+	var top := view.y - (PANEL_H + BAR_H) * k
+	if p.y < top or p.y >= top + BAR_H * k:
+		return []
+	var x := (p.x - (view.x / 2.0 - 120.0 * k)) / k
+	for b in 5:
+		for skill in [false, true]:
+			if x >= slot_x(skill, b) and x < slot_x(skill, b) + CELL + 1:
+				return ["skill" if skill else "belt", b]
+	return []
 
 
 ## How much of a ball (0..35) is full; a little is always seen while anything is left.
