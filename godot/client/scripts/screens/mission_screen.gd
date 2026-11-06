@@ -223,7 +223,10 @@ func _update_view(t: float) -> void:
 	hud.queue_redraw()
 	_place_soldiers(t)
 	_place_shots()
-	effects.show_effects(sim.effects())
+	var shown: Array = sim.effects()
+	for sp in sim.sparks():
+		shown.append(["spark", sp[0], sp[1]])
+	effects.show_effects(shown)
 	_place_objects()
 	_place_loot()
 	_place_arrows()

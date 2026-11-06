@@ -554,7 +554,10 @@ EFFECTS = [
     ("quake", 65, "fx_anim_29", None),
     ("rain", 66, "fx_anim_30", None),
     ("scroll", 67, "fx_item_10_11", None),
+    ("spark", 55, None, None),
 ]
+## The sheets cut as regions of one picture: imgeff entry 1, or for the hit sparks entry 0.
+EFFECT_IMAGE = {"spark": 0}
 EFFECT_COLUMNS = 8
 
 
@@ -573,7 +576,7 @@ def export_effects(out):
         for part, pic in pairs:
             sx, sy, w, h, ox, oy = parts[part]
             if pics is None:
-                src = Image.open(ROOT / (eff[1] + ".png")).convert("RGBA")
+                src = Image.open(ROOT / (eff[EFFECT_IMAGE.get(name, 1)] + ".png")).convert("RGBA")
                 cells.append((src.crop((sx, sy, sx + w, sy + h)), -ox, -oy))
             elif pics[pic] != 0:
                 cells.append((Image.open(ROOT / (eff[pics[pic] - 27] + ".png")).convert("RGBA"), -ox, -oy))

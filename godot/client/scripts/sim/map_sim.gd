@@ -100,6 +100,9 @@ class Actor:
 	var max_mp := 0
 	var attack_buff_ticks := 0
 	var defense_buff_ticks := 0
+	var hit_fx_kind := 0  # > 0: a hit spark shows (1 or 2: which pair of spark pictures)
+	var hit_fx_frame := 0
+	var hit_fx_pos := Vector2i.ZERO  # where it was hit
 
 
 ## A breakable object of the room (barrels, crates, ...): a cell of the objects layer.
@@ -738,6 +741,7 @@ func add_quick_item(item: int) -> bool:
 
 
 func _end_tick() -> void:
+	_advance_sparks()
 	# The tick is drawn with the direction it moved in (a slide can turn it), then the
 	# hero looks where he faces again.
 	hero.shown_dir = hero.dir
@@ -1325,11 +1329,39 @@ func hero_is_hit(e: Actor, a: Arrow = null) -> void:
 	hero.hp = hero.hp - dmg if hero.hp > dmg else 0
 	if e != null:
 		_show_target_info(e)
+	hero.hit_fx_kind = 1
+	_spark_at(hero)
 	hero.frame = 0
 	hero.action = 9
 	if hero.hp < 1:
 		hero.hp = 0
 		hero.action = 10
+
+
+## A hit spark starts where the actor stands; it shows the next two ticks.
+func _spark_at(a: Actor) -> void:
+	a.hit_fx_pos = a.pos
+	a.hit_fx_frame = -1
+
+
+func _advance_sparks() -> void:
+	for a in [hero] + enemies:
+		if a.hit_fx_kind != 0:
+			a.hit_fx_frame += 1
+			if a.hit_fx_frame > 1:
+				a.hit_fx_kind = 0
+
+
+## The hit sparks to draw: [frame, position]. An enemy's pair of pictures is chosen by the
+## hit (frames 0-1 or 2-3); the hero's are always the first pair.
+func sparks() -> Array:
+	var out: Array = []
+	if hero.hit_fx_kind != 0 and hero.hit_fx_frame >= 0:
+		out.append([hero.hit_fx_frame, hero.hit_fx_pos])
+	for e in enemies:
+		if e.hit_fx_kind != 0 and e.hit_fx_frame >= 0:
+			out.append([e.hit_fx_frame + ((e.hit_fx_kind - 1) << 1), e.hit_fx_pos])
+	return out
 
 
 func _show_target_info(e: Actor) -> void:
@@ -1393,6 +1425,7 @@ func _strike_enemy(e: Actor) -> void:
 		14, 22:
 			e.ai_mode = 2
 		20:
+			e.hit_fx_kind = rng.below(2) + 1
 			e.ai_mode = 0
 		21, 24:
 			e.ai_mode = 5
@@ -1401,6 +1434,7 @@ func _strike_enemy(e: Actor) -> void:
 		26:
 			pass
 	if hero.action >= 25 and hero.action <= 27:
+		e.hit_fx_kind = 2
 		var f := _front_of(hero.pos, hero.dir)
 		e.dir = dir8(e.pos, f)
 		e.facing = e.dir
@@ -1408,6 +1442,7 @@ func _strike_enemy(e: Actor) -> void:
 
 ## The damage of a hit: a strike (3..8), a skill (its level adds attack), or a scroll.
 func _hero_hits_enemy(e: Actor, action: int) -> void:
+	e.hit_fx_kind = 1
 	if action > -1:
 		e.dir = dir8(e.pos, hero.pos)
 	else:
@@ -1432,6 +1467,7 @@ func _hero_hits_enemy(e: Actor, action: int) -> void:
 	else:
 		e.frame = 0
 	_show_target_info(e)
+	_spark_at(e)
 	e.action = 2
 	if e.type < 200 and rng.below(1000) < 150 and e.hp > 0:
 		general_pick_skill(e, true)

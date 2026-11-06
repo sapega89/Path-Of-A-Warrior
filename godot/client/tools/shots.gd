@@ -176,6 +176,14 @@ func _ready() -> void:
 	await _frames(3)
 	await _shot(out, "mission_1_fx_blast")
 	msim.effect_item = 0
+	# A hit spark held still on the hero.
+	msim.hero.hit_fx_kind = 1
+	msim.hero.hit_fx_frame = 0
+	msim.hero.hit_fx_pos = msim.hero.pos
+	mission._update_view(1.0)
+	await _frames(3)
+	await _shot(out, "mission_1_fx_spark")
+	msim.hero.hit_fx_kind = 0
 	mission.set_process(true)
 	# A general: he comes in with his talk, then the fight.
 	Router.go("mission", {"lord": 1, "mission": 0, "seed": 2})
