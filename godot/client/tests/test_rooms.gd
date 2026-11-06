@@ -12,7 +12,7 @@ func test_map_1_rooms() -> void:
 	eq(r.room_at(Vector3(4.5, 0, 4.5)), 0, "top room")
 	eq(r.room_at(Vector3(4.5, 0, 11.5)), 1, "middle room")
 	eq(r.room_at(Vector3(4.5, 0, 20.0)), 2, "bottom room")
-	eq(r.exits(0), [1, 0, 0, 0], "room 1 exits down")
+	eq(r.exits(0), [1.0, 0.0, 0.0, 0.0], "room 1 exits down (JSON numbers)")
 	eq(r.neighbour(0, Rooms.EXIT_DOWN), 1, "down = next row")
 	eq(r.waves(0), [[201, 5]], "five soldiers 201")
 	check(not r.has_general(0), "no general")
