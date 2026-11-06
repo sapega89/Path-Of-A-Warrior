@@ -618,6 +618,32 @@ def export_effects(out):
     (out / "effects.json").write_text(json.dumps(info, separators=(",", ":")))
 
 
+SOUND_FONTS = ["/usr/share/sounds/sf2/FluidR3_GM.sf2", "/usr/share/sounds/sf2/default-GM.sf2"]
+
+
+def export_sounds(out):
+    """The effects snd3..16 as they are (sfx_N.wav); the three MIDI tunes snd0..2 played
+    through a General MIDI sound font into music_N.ogg (needs fluidsynth and ffmpeg; without
+    them the tunes already made are kept)."""
+    import shutil
+    import subprocess
+    import tempfile
+    out.mkdir(parents=True, exist_ok=True)
+    for n in range(3, 17):
+        shutil.copyfile(ROOT / ("snd%d.wav" % n), out / ("sfx_%d.wav" % n))
+    font = next((f for f in SOUND_FONTS if pathlib.Path(f).exists()), None)
+    if font is None or not shutil.which("fluidsynth") or not shutil.which("ffmpeg"):
+        print("music: fluidsynth, ffmpeg or a sound font missing, the tunes are kept")
+        return
+    with tempfile.TemporaryDirectory() as tmp:
+        for n in range(3):
+            wav = pathlib.Path(tmp) / ("music_%d.wav" % n)
+            subprocess.run(["fluidsynth", "-ni", "-F", str(wav), "-r", "44100", font,
+                            str(ROOT / ("snd%d.mid" % n))], check=True, capture_output=True)
+            subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(wav), "-c:a", "libvorbis",
+                            "-q:a", "3", str(out / ("music_%d.ogg" % n))], check=True)
+
+
 def main():
     tile_names = scr.load(ROOT / "imgtile.scr")
     map_files = [n for n in scr.load(ROOT / "mdat_QVGA.scr") if n.endswith(".MAP")]
@@ -644,6 +670,7 @@ def main():
     export_generals(out_tiles)
     export_ui(out_tiles / "ui")
     export_effects(out_tiles)
+    export_sounds(out_tiles / "sound")
     print("maps: %d, tiles: %d, chapters: %d, missions: %d" % (len(map_files), found, chapters, missions))
 
 

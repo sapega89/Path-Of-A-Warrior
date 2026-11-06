@@ -354,6 +354,7 @@ func _find_spawn_spots() -> void:
 ## fire: the attack key was pressed (it also closes a banner). hotkey: a skill key (0..4)
 ## pressed, -1 none; potion: a potion key (0, 1), -1 none.
 func tick(held: int, pressed: int = -1, fire: bool = false, hotkey: int = -1, potion: int = -1) -> void:
+	sounds.clear()
 	hero.prev_pos = hero.pos
 	for e in enemies:
 		e.prev_pos = e.pos
@@ -491,6 +492,8 @@ func _start_hero_action(pressed: int, skill: int = 0) -> void:
 		hero.dir = hero.facing
 		hero.action = skill
 		hero.frame = 0
+		if skill in [15, 16, 21, 22, 23, 24, 25]:
+			_sound(11)
 
 
 ## Takes the MP of a skill (12..30) at its level; 0 = not enough MP (nothing is taken).
@@ -586,6 +589,14 @@ func _move_hero() -> void:
 				hero.dir = i
 
 
+## The sound effects of this tick (sound numbers 3..16), for the screen to play.
+var sounds: Array[int] = []
+
+
+func _sound(n: int) -> void:
+	sounds.append(n)
+
+
 ## The frames of the hero's action that hit, heal or buff. False: a skill's cinematic
 ## stops the world this tick (arrows and enemies wait).
 func _hero_action_hits() -> bool:
@@ -596,22 +607,37 @@ func _hero_action_hits() -> bool:
 		if frame == HIT_FRAME[action]:
 			if action <= 8:
 				_turn_to_nearest()
+			if action in [3, 4, 6, 7]:
+				_sound(15)
+			elif action in [5, 8, 21, 22]:
+				_sound(16)
+			else:
+				_sound(9)
 			_hero_attack(0)
 			_hero_hits_breakables()
+	elif action == 2:
+		if frame == 1:
+			_sound(7)
 	elif action == 12:
 		if frame > 2 and frame < 6:
+			if frame == 3:
+				_sound(7)
 			_hero_attack(0)
 			_hero_hits_breakables()
 	elif action == 13:
 		if frame > 4 and frame < 8:
+			if frame == 5:
+				_sound(7)
 			_hero_attack(0)
 			_hero_hits_breakables()
 	elif action == 14:
 		if frame in [2, 4, 6, 8]:
+			_sound(15)
 			_hero_attack(0)
 			_hero_hits_breakables()
 	elif action == 15 or action == 16:
 		if frame == 11:  # heals
+			_sound(8)
 			if action == 15:
 				hero.hp += hero.max_hp * (4 + skill_levels[3]) / 25
 			else:
@@ -627,35 +653,51 @@ func _hero_action_hits() -> bool:
 			if action != 17:
 				hero.defense_buff = maxi(hero.defense * lv / int(BUFF_DIV[action - 17]), 1)
 				hero.defense_buff_ticks = ticks
+		elif frame == 4:
+			_sound(12)
 	elif action == 20:
 		if (frame & 1) != 0:
+			_sound(15)
 			hero.combo = 0 if frame in [1, 5, 9] else 2
 			_hero_attack(0)
 			_hero_hits_breakables()
 	elif action == 25:
 		if (frame & 1) != 0:
+			_sound(9)
 			_hero_attack(0)
 			_hero_hits_breakables()
 	elif action == 26 or action == 27:
 		if frame == 8:
+			if action == 27:
+				_sound(9)
 			_hero_attack(0)
 			_hero_hits_breakables()
 		if frame > 1 and frame < 9:
+			if frame == 2:
+				_sound(13)
 			world_runs = false
 	elif action == 28:
 		if frame == 22:
 			_hero_attack(0)
 			_hero_hits_breakables()
 		elif frame > 3:
+			if frame == 6:
+				_sound(13)
 			world_runs = false
 	elif action == 29:
 		if frame == 22:
 			_hero_attack(0)
 			_hero_hits_breakables()
 		elif frame > 6:
+			if frame == 7:
+				_sound(14)
 			world_runs = false
 	elif action == 30:
 		if frame > 3:
+			if frame == 4:
+				_sound(11)
+			elif frame == 13:
+				_sound(9)
 			if frame < 15:
 				world_runs = false
 			elif frame == 15:
@@ -684,6 +726,8 @@ func _use_quick_slot(key: int) -> void:
 		if hero.action > 1:
 			return
 		hero.action = 11
+	else:
+		_sound(8)
 	effect_item = item
 	effect_slot = sel
 	effect_step = 0
@@ -704,6 +748,7 @@ func _tick_effect() -> void:
 		_hero_attack(-2)
 	effect_step += 1
 	if effect_item > 9 and effect_step > 4:
+		_sound(9)
 		effect_pos = _front_of(effect_pos, effect_dir << 1)
 		effect_item -= 12
 		effect_step = 0
@@ -779,6 +824,7 @@ func _end_tick() -> void:
 				room_phase = 0
 			3:
 				_show_banner(BANNER_STAGE_CLEAR)
+				_sound(5)
 				room_phase = 0
 			4:
 				# the mission's general is defeated
@@ -1333,6 +1379,7 @@ func hero_is_hit(e: Actor, a: Arrow = null) -> void:
 	_spark_at(hero)
 	hero.frame = 0
 	hero.action = 9
+	_sound(4 if hero.hurt_ticks != 0 else 16)
 	if hero.hp < 1:
 		hero.hp = 0
 		hero.action = 10
@@ -1386,6 +1433,7 @@ func _hero_attack(kind: int) -> void:
 							int(table("hit_box_w")[side]), int(table("hit_box_h")[side]),
 							e.pos.x - 8, e.pos.y - 8, 17, 17):
 						_hero_hits_enemy(e, hero.action)
+						_sound(3)
 				22:
 					if _is_in_front(hero.pos, e.pos, hero.dir):
 						_hero_strike_if_near(e, reach)
@@ -1404,6 +1452,7 @@ func _hero_attack(kind: int) -> void:
 				_hero_strike_if_near(e, reach)
 		elif distance(effect_pos, e.pos) <= 35:
 			_hero_hits_enemy(e, effect_item)
+			_sound(4)
 
 
 func _hero_strike_if_near(e: Actor, reach: int) -> void:
@@ -1438,6 +1487,9 @@ func _strike_enemy(e: Actor) -> void:
 		var f := _front_of(hero.pos, hero.dir)
 		e.dir = dir8(e.pos, f)
 		e.facing = e.dir
+	if hero.action == 29:
+		_sound(13)  # it sets the enemy on fire
+	_sound(16)
 
 
 ## The damage of a hit: a strike (3..8), a skill (its level adds attack), or a scroll.
@@ -1459,8 +1511,10 @@ func _hero_hits_enemy(e: Actor, action: int) -> void:
 	elif action == -2:
 		e.ai_mode = 2
 		e.hp -= mini(hero.level << 1, 50)
+		_sound(4)
 	elif action == -1:
 		e.hp -= mini(hero.level, 30)
+		_sound(3)
 	if e.hp < 1:
 		e.hp = 0
 		e.frame = 3
@@ -1684,6 +1738,7 @@ func _hero_hits_breakables() -> void:
 func hit_breakable(b: Breakable) -> void:
 	b.hp = b.hp - hero.attack + hero.attack_buff
 	b.break_frame = 2
+	_sound(3)
 	if b.hp < 1:
 		b.break_ticks = 12
 		objects[b.tile.y * w + b.tile.x] = 0  # the cell is free from now on

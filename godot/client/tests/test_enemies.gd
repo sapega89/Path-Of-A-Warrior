@@ -144,6 +144,22 @@ func test_weapon_trail_of_a_swing() -> void:
 		sim.tick(-1, -1)
 	check(seen, "a sword strike leaves a trail")
 
+
+func test_strikes_and_hits_have_their_sounds() -> void:
+	var d := _duel()
+	var sim: RefCounted = d[0]
+	var heard: Array[int] = []
+	sim.tick(-1, -1, true)
+	heard.append_array(sim.sounds)
+	for i in 3:
+		sim.tick(-1, -1)
+		heard.append_array(sim.sounds)
+	check(15 in heard, "the swing: %s" % [heard])
+	check(16 in heard, "the strike lands: %s" % [heard])
+	sim.hero.hurt_ticks = 0
+	sim.hero_is_hit(d[1])
+	eq(sim.sounds.back(), 16, "the hero is hit")
+
 func test_last_enemy_clears_the_room() -> void:
 	var d := _duel()
 	var sim: RefCounted = d[0]
