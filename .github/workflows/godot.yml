@@ -1,0 +1,35 @@
+name: godot
+
+on:
+  push:
+    branches: [main, dev]
+    paths: ["godot/**", ".github/workflows/godot.yml"]
+  pull_request:
+    paths: ["godot/**", ".github/workflows/godot.yml"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: "4.5.1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Godot
+        run: |
+          curl -sSL -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot"
+
+      - name: Converted data is up to date
+        run: |
+          pip install pillow
+          python godot/tools/import_original.py
+          git diff --exit-code -- godot/client/data godot/client/assets/original/hero.json
+
+      - name: Import
+        run: timeout 300 "$RUNNER_TEMP/godot" --headless --path godot/client --import
+
+      - name: Tests
+        run: timeout 300 "$RUNNER_TEMP/godot" --headless --path godot/client res://tests/runner.tscn

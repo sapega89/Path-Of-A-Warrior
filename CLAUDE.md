@@ -20,7 +20,10 @@ The earlier Godot port and the J2ME emulator files were removed; the Godot audit
 
 ## Rules
 
-- New code goes into `pyport/` (Python)
+- New code goes into `pyport/` (Python), or into `godot/` for the Godot version
+  (`godot/README.md`, `docs/GODOT_PLAN.md`): step 1 there is to move the game over as it is,
+  3D world with the original 2D sprites; `python godot/tools/import_original.py` makes its data.
+  Godot tests: `godot --headless --path godot/client res://tests/runner.tscn` (also in CI)
 - Before implementing anything — analyze the original Java source first (branch `java-reference`)
 - Keep the Java behaviour; the Java classes may be split into modules/mixins by
   responsibility (keep the `# file.java:FROM-TO` comments). Mark deliberate changes (`PORT-EXTRA`,
