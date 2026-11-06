@@ -12,10 +12,10 @@ godot/
   client/                 проєкт Godot 4.5 (GDScript)
     project.godot
     scenes/main.tscn      корінь: тема + роутер екранів
-    scripts/core/         автозавантаження: I18n, Settings, InputSetup, Router
+    scripts/core/         автозавантаження: I18n, Settings, InputSetup, Router, Audio
     scripts/screens/      екрани: title, main_menu, settings, map_viewer, campaign, mission,
                           management, attributes, skills, gear, inventory,
-                          assign_items, story (герой у user://hero.json)
+                          assign_items, story, blacksmith, shop (герой у user://hero.json)
     scripts/world/        3D-світ: map_builder (карта з оригінальних шарів), hero, follow_camera
     scripts/ui/           тема, сенсорні кнопки
     i18n/strings.json     тексти українською й англійською

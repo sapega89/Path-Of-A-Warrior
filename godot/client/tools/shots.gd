@@ -69,6 +69,22 @@ func _ready() -> void:
 	Router.current.press_slot(2)
 	Router.current.slots[2].grab_focus()
 	await _shot(out, "10_assign_items")
+	# The Blacksmith: buying from the shop, and enchanting the sword in hand.
+	Router.go("main_menu")
+	Router.push("blacksmith", {"profile_path": "user://shot_hero.json"})
+	await _shot(out, "14_blacksmith")
+	Router.current.open_page("buy")
+	await _frames(2)
+	Router.current.cells[9].grab_focus()
+	await _shot(out, "15_shop_buy")
+	Router.back()
+	Router.current.open_page("enchant")
+	await _frames(2)
+	Router.current.cells[25].grab_focus()
+	Router.current.press_cell(25)
+	await _frames(2)
+	await _shot(out, "16_enchant_ask")
+	Router.current.ask.hide()
 	# A story: ending 2's first talk, its first picture and its numbers with the reward.
 	Router.go("main_menu")
 	Router.push("story", {"story": 2, "reward_item": 502, "opened_lord": 8,

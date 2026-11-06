@@ -190,5 +190,69 @@
   "campaign.lords": {
     "en": "Lords",
     "uk": "Володарі"
+  },
+  "menu.blacksmith": {
+    "en": "Blacksmith",
+    "uk": "Коваль"
+  },
+  "blacksmith.title": {
+    "en": "Blacksmith",
+    "uk": "Коваль"
+  },
+  "blacksmith.buy": {
+    "en": "Buy",
+    "uk": "Купити"
+  },
+  "blacksmith.sell": {
+    "en": "Sell",
+    "uk": "Продати"
+  },
+  "blacksmith.enchant": {
+    "en": "Enchant",
+    "uk": "Зачарувати"
+  },
+  "blacksmith.combine": {
+    "en": "Combine",
+    "uk": "Поєднати"
+  },
+  "shop.bought": {
+    "en": "You bought %s.",
+    "uk": "Ви купили %s."
+  },
+  "shop.sold": {
+    "en": "You sold %s.",
+    "uk": "Ви продали %s."
+  },
+  "shop.no_gold": {
+    "en": "Not enough Gold",
+    "uk": "Не вистачає золота"
+  },
+  "shop.no_more": {
+    "en": "You cannot buy anymore.",
+    "uk": "Більше купити не можна."
+  },
+  "shop.full": {
+    "en": "Your backpack is full. Please empty some items and try again.",
+    "uk": "Торба повна. Звільніть місце й спробуйте ще."
+  },
+  "enchant.not_possible": {
+    "en": "Not possible to enchant.",
+    "uk": "Це не зачарувати."
+  },
+  "enchant.full": {
+    "en": "Fully enchanted. Not possible to enchant.",
+    "uk": "Зачаровано до краю. Більше не можна."
+  },
+  "enchant.ask": {
+    "en": "Price is %d. If enchanting fails, items can be lost. Continue?",
+    "uk": "Ціна %d. Якщо не вийде, річ можна втратити. Продовжити?"
+  },
+  "enchant.success": {
+    "en": "Enchant Success",
+    "uk": "Зачарування вдалося"
+  },
+  "enchant.fail": {
+    "en": "Enchant Fail",
+    "uk": "Зачарування не вдалося"
   }
 }
