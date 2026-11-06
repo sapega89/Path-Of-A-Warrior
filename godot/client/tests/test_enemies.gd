@@ -159,3 +159,73 @@ func test_gold_is_picked_up() -> void:
 	sim.tick(-1, -1)
 	eq(sim.gold, 20, "20 gold")
 	check(sim.drops.is_empty(), "nothing left on the floor")
+
+
+## A general met in an open room, with the hero next to him.
+func _general_duel() -> Array:
+	var d := _duel()
+	var sim: RefCounted = d[0]
+	sim.enemies.clear()
+	sim.enemies_alive = 0
+	sim.boss_type = 1
+	sim.waves[0] = 1
+	sim.waves[1] = 1
+	var g = sim.create_enemy(1, 4, 7, 0)
+	g.pos = sim.hero.pos + Vector2i(0, 30)
+	g.alerted = 1
+	g.think_ticks = 100
+	return [sim, g]
+
+
+func test_general_comes_with_his_talk() -> void:
+	var d := _general_duel()
+	var sim: RefCounted = d[0]
+	var g = d[1]
+	eq(sim.general.get("name", ""), "Wallace", "general 1")
+	check(sim.boss_fight, "the mission's own general")
+	eq(g.level, 2, "the hero's level and the list's count")
+	eq(g.hp, 23, "20 HP and 3 a level")
+	eq(sim.talk.size(), 3, "three lines")
+	eq(sim.talk[0], "[Wallace] Wallace is here!!!", "his name for &")
+	sim.tick(-1, -1)
+	eq(sim.talk_text(), "[", "typed a letter a tick")
+	var x: int = sim.hero.pos.x
+	for t in 10:
+		sim.tick(-1, -1, true)
+		if sim.talk.is_empty():
+			break
+	check(sim.talk.is_empty(), "the key goes through the talk")
+	eq(sim.hero.pos.x, x, "the world waited")
+
+
+func test_mission_won_when_his_general_falls() -> void:
+	var d := _general_duel()
+	var sim: RefCounted = d[0]
+	var g = d[1]
+	sim.talk.clear()
+	sim.room_phase = 0
+	sim.waves[0] = 0
+	sim.waves[1] = 0
+	g.hp = 1
+	sim.tick(-1, -1, true)
+	sim.tick(-1, -1)
+	eq(g.hp, 0, "struck down")
+	for t in 80:
+		sim.tick(-1, -1)
+		if sim.banner == MapSim.BANNER_SUCCESS:
+			break
+	eq(sim.banner, MapSim.BANNER_SUCCESS, "Mission Success!")
+	check(sim.won, "won")
+	sim.tick(-1, -1, true)
+	check(sim.finished, "a key ends the mission")
+
+
+func test_general_skills_are_actions() -> void:
+	var d := _general_duel()
+	var sim: RefCounted = d[0]
+	var g = d[1]
+	sim.set_general(4)  # Kirkland: skills 2, 3, 4, 6 (a heal only when hurt: else a strike)
+	for t in 20:
+		sim.general_pick_skill(g, false)
+		check(g.action == 1 or (g.action >= 5 and g.action <= 21), "a skill action: %d" % g.action)
+		check(sim.enemy_anim(g, g.action).size() > 1, "with frames")

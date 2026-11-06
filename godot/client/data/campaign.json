@@ -2020,5 +2020,2263 @@
 "name": "Lord Leonard",
 "portrait": 32
 }
-]
+],
+"generals": {
+"1": {
+"name": "Wallace",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 0,
+"hp": 20
+},
+"2": {
+"name": "Philip",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 0,
+"hp": 20
+},
+"3": {
+"name": "Langley",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 0,
+"hp": 20
+},
+"4": {
+"name": "Kirkland",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+3,
+4,
+6
+],
+"portrait": 3,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"5": {
+"name": "Reeve",
+"look": 2,
+"side": 0,
+"skills": [
+1,
+2,
+3,
+6
+],
+"portrait": 2,
+"gift_table": 0,
+"attack": 10,
+"defense": 3,
+"hp": 50
+},
+"6": {
+"name": "Augustine",
+"look": 1,
+"side": 0,
+"skills": [
+2,
+5,
+7,
+9
+],
+"portrait": 1,
+"gift_table": 0,
+"attack": 10,
+"defense": 4,
+"hp": 50
+},
+"7": {
+"name": "Drake",
+"look": 5,
+"side": 1,
+"skills": [
+4,
+6,
+7,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"8": {
+"name": "Dunstan",
+"look": 6,
+"side": 1,
+"skills": [
+4,
+6,
+7,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 2,
+"hp": 20
+},
+"9": {
+"name": "Lord Brenda",
+"look": 1,
+"side": 1,
+"skills": [
+4,
+8,
+14,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 2,
+"hp": 20
+},
+"10": {
+"name": "Catherine",
+"look": 4,
+"side": 0,
+"skills": [
+2,
+3,
+9,
+10
+],
+"portrait": 37,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"11": {
+"name": "Charlton",
+"look": 6,
+"side": 0,
+"skills": [
+2,
+3,
+5,
+7
+],
+"portrait": 6,
+"gift_table": 0,
+"attack": 9,
+"defense": 4,
+"hp": 45
+},
+"12": {
+"name": "Lord Wesley",
+"look": 5,
+"side": 1,
+"skills": [
+3,
+5,
+8,
+14
+],
+"portrait": 25,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"13": {
+"name": "Lord Aldred",
+"look": 4,
+"side": 0,
+"skills": [
+3,
+8,
+11,
+17
+],
+"portrait": 4,
+"gift_table": 0,
+"attack": 12,
+"defense": 5,
+"hp": 60
+},
+"14": {
+"name": "Beresford",
+"look": 2,
+"side": 0,
+"skills": [
+2,
+3,
+6,
+9
+],
+"portrait": 18,
+"gift_table": 0,
+"attack": 9,
+"defense": 2,
+"hp": 45
+},
+"15": {
+"name": "Kendrick",
+"look": 6,
+"side": 0,
+"skills": [
+3,
+4,
+8,
+14
+],
+"portrait": 5,
+"gift_table": 0,
+"attack": 10,
+"defense": 5,
+"hp": 50
+},
+"16": {
+"name": "Winfield",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+5,
+6,
+0
+],
+"portrait": 6,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"17": {
+"name": "Colden",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+4,
+9,
+0
+],
+"portrait": 24,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"18": {
+"name": "Barclay",
+"look": 1,
+"side": 0,
+"skills": [
+2,
+7,
+10,
+12
+],
+"portrait": 9,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"19": {
+"name": "Luke",
+"look": 6,
+"side": 1,
+"skills": [
+5,
+8,
+16,
+18
+],
+"portrait": 11,
+"gift_table": 0,
+"attack": 7,
+"defense": 4,
+"hp": 35
+},
+"20": {
+"name": "Blanford",
+"look": 2,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 2,
+"hp": 35
+},
+"21": {
+"name": "Devlin",
+"look": 2,
+"side": 0,
+"skills": [
+3,
+11,
+14,
+16
+],
+"portrait": 12,
+"gift_table": 0,
+"attack": 10,
+"defense": 2,
+"hp": 50
+},
+"22": {
+"name": "Nickleby",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"23": {
+"name": "Coleridge",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"24": {
+"name": "Modred",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"25": {
+"name": "Tristan",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+5,
+8,
+11
+],
+"portrait": 13,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"26": {
+"name": "Clarissa",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+4,
+6,
+7
+],
+"portrait": 21,
+"gift_table": 0,
+"attack": 9,
+"defense": 2,
+"hp": 45
+},
+"27": {
+"name": "Cromwell",
+"look": 5,
+"side": 0,
+"skills": [
+3,
+9,
+12,
+15
+],
+"portrait": 16,
+"gift_table": 0,
+"attack": 9,
+"defense": 2,
+"hp": 45
+},
+"28": {
+"name": "Claxton",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"29": {
+"name": "Houghton",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+5,
+11,
+13
+],
+"portrait": 19,
+"gift_table": 0,
+"attack": 9,
+"defense": 2,
+"hp": 45
+},
+"30": {
+"name": "Sheldon",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"31": {
+"name": "Ingram",
+"look": 2,
+"side": 1,
+"skills": [
+2,
+3,
+10,
+12
+],
+"portrait": 8,
+"gift_table": 0,
+"attack": 9,
+"defense": 2,
+"hp": 45
+},
+"32": {
+"name": "Aldous",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 0,
+"hp": 25
+},
+"33": {
+"name": "Bryce",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 0,
+"hp": 25
+},
+"34": {
+"name": "Cranley",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 0,
+"hp": 25
+},
+"35": {
+"name": "Huxley",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 0,
+"hp": 25
+},
+"36": {
+"name": "Edbert",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 0,
+"hp": 25
+},
+"37": {
+"name": "Alton",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"38": {
+"name": "Richard",
+"look": 2,
+"side": 0,
+"skills": [
+2,
+4,
+8,
+0
+],
+"portrait": 13,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"39": {
+"name": "Jay",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+4,
+9,
+0
+],
+"portrait": 21,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"40": {
+"name": "Bellamy",
+"look": 6,
+"side": 0,
+"skills": [
+2,
+4,
+7,
+0
+],
+"portrait": 22,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"41": {
+"name": "Allen",
+"look": 2,
+"side": 0,
+"skills": [
+2,
+6,
+9,
+0
+],
+"portrait": 18,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"42": {
+"name": "Norwell",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"43": {
+"name": "Berthold",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"44": {
+"name": "Jameson",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"45": {
+"name": "Edmar",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"46": {
+"name": "Faramond",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"47": {
+"name": "Athelstan",
+"look": 2,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"48": {
+"name": "Luke",
+"look": 6,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 1,
+"hp": 20
+},
+"49": {
+"name": "Berwyn",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"50": {
+"name": "Blackwell",
+"look": 6,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"51": {
+"name": "Sanbury",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"52": {
+"name": "Creighton",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"53": {
+"name": "Ethelred",
+"look": 2,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"54": {
+"name": "Escott",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+4,
+15,
+0
+],
+"portrait": 24,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"55": {
+"name": "Jonathan",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+5,
+8,
+18
+],
+"portrait": 23,
+"gift_table": 0,
+"attack": 8,
+"defense": 3,
+"hp": 40
+},
+"56": {
+"name": "Blake",
+"look": 5,
+"side": 0,
+"skills": [
+3,
+6,
+11,
+16
+],
+"portrait": 15,
+"gift_table": 0,
+"attack": 9,
+"defense": 2,
+"hp": 45
+},
+"57": {
+"name": "Cresswell",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+5,
+8,
+0
+],
+"portrait": 19,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"58": {
+"name": "Sefton",
+"look": 5,
+"side": 1,
+"skills": [
+3,
+4,
+7,
+0
+],
+"portrait": 22,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"59": {
+"name": "Denley",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"60": {
+"name": "Lawford",
+"look": 2,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"61": {
+"name": "Derland",
+"look": 2,
+"side": 0,
+"skills": [
+3,
+4,
+12,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"62": {
+"name": "Orrick",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 1,
+"hp": 20
+},
+"63": {
+"name": "Elbridge",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"64": {
+"name": "Bligh",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"65": {
+"name": "Elden",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"66": {
+"name": "Katelyn",
+"look": 6,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"67": {
+"name": "Boden",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"68": {
+"name": "Meldrick",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"69": {
+"name": "Dryden",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+5,
+7,
+0
+],
+"portrait": 12,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"70": {
+"name": "Mark",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+6,
+7,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 1,
+"hp": 40
+},
+"71": {
+"name": "Osric",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 2,
+"hp": 35
+},
+"72": {
+"name": "Lord Bartho",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 3,
+"hp": 35
+},
+"73": {
+"name": "Ellington",
+"look": 2,
+"side": 0,
+"skills": [
+2,
+6,
+12,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"74": {
+"name": "Melbourne",
+"look": 3,
+"side": 1,
+"skills": [
+2,
+7,
+13,
+0
+],
+"portrait": 17,
+"gift_table": 0,
+"attack": 8,
+"defense": 3,
+"hp": 40
+},
+"75": {
+"name": "Gerard",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"76": {
+"name": "Lowman",
+"look": 6,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 1,
+"hp": 20
+},
+"77": {
+"name": "Millard",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+8,
+11,
+16
+],
+"portrait": 26,
+"gift_table": 0,
+"attack": 8,
+"defense": 3,
+"hp": 40
+},
+"78": {
+"name": "Lord Bryce",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 2,
+"hp": 35
+},
+"79": {
+"name": "Ludlow",
+"look": 1,
+"side": 1,
+"skills": [
+12,
+13,
+0,
+0
+],
+"portrait": 27,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"80": {
+"name": "Arthur",
+"look": 1,
+"side": 1,
+"skills": [
+13,
+14,
+0,
+0
+],
+"portrait": 28,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"81": {
+"name": "Guildford",
+"look": 1,
+"side": 1,
+"skills": [
+14,
+15,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"82": {
+"name": "Adrien",
+"look": 1,
+"side": 1,
+"skills": [
+15,
+16,
+0,
+0
+],
+"portrait": 27,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"83": {
+"name": "Braddock",
+"look": 1,
+"side": 1,
+"skills": [
+14,
+16,
+0,
+0
+],
+"portrait": 28,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"84": {
+"name": "Evans",
+"look": 1,
+"side": 1,
+"skills": [
+11,
+12,
+0,
+0
+],
+"portrait": 27,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"85": {
+"name": "Christopher",
+"look": 1,
+"side": 1,
+"skills": [
+10,
+11,
+0,
+0
+],
+"portrait": 28,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"86": {
+"name": "Lester",
+"look": 1,
+"side": 1,
+"skills": [
+9,
+10,
+17,
+0
+],
+"portrait": 28,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"87": {
+"name": "Gregory",
+"look": 1,
+"side": 1,
+"skills": [
+11,
+16,
+0,
+0
+],
+"portrait": 28,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"88": {
+"name": "Maxwell",
+"look": 1,
+"side": 1,
+"skills": [
+11,
+14,
+16,
+19
+],
+"portrait": 29,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"89": {
+"name": "Gilman",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"90": {
+"name": "Stepney",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"91": {
+"name": "Patterson",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"92": {
+"name": "Sutcliff",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"93": {
+"name": "Bramwell",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"94": {
+"name": "Rowley",
+"look": 2,
+"side": 1,
+"skills": [
+2,
+6,
+10,
+0
+],
+"portrait": 24,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"95": {
+"name": "Waltham",
+"look": 3,
+"side": 1,
+"skills": [
+2,
+8,
+10,
+0
+],
+"portrait": 14,
+"gift_table": 0,
+"attack": 8,
+"defense": 3,
+"hp": 40
+},
+"96": {
+"name": "Marlon",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"97": {
+"name": "Rutherford",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 2,
+"hp": 35
+},
+"98": {
+"name": "Hadden",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"99": {
+"name": "Graham",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+9,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"100": {
+"name": "Stratford",
+"look": 6,
+"side": 1,
+"skills": [
+2,
+10,
+0,
+0
+],
+"portrait": 21,
+"gift_table": 0,
+"attack": 8,
+"defense": 3,
+"hp": 40
+},
+"101": {
+"name": "Braxton",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+3,
+5,
+8
+],
+"portrait": 20,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"102": {
+"name": "Lord Drake",
+"look": 6,
+"side": 1,
+"skills": [
+3,
+8,
+11,
+14
+],
+"portrait": 7,
+"gift_table": 0,
+"attack": 10,
+"defense": 3,
+"hp": 50
+},
+"103": {
+"name": "Stuart",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"104": {
+"name": "Prescott",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"105": {
+"name": "Jocelyn",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"106": {
+"name": "Preston",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 2,
+"hp": 35
+},
+"107": {
+"name": "Warren",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"108": {
+"name": "Glenavon",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"109": {
+"name": "Lord Halber",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"110": {
+"name": "Lord Thatch",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 0,
+"hp": 20
+},
+"111": {
+"name": "Quinton",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"112": {
+"name": "Kenneth",
+"look": 5,
+"side": 1,
+"skills": [
+3,
+6,
+11,
+14
+],
+"portrait": 18,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"113": {
+"name": "William",
+"look": 3,
+"side": 1,
+"skills": [
+2,
+7,
+8,
+15
+],
+"portrait": 10,
+"gift_table": 0,
+"attack": 9,
+"defense": 4,
+"hp": 45
+},
+"114": {
+"name": "Walcott",
+"look": 2,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 0,
+"hp": 25
+},
+"115": {
+"name": "Chauncey",
+"look": 2,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"116": {
+"name": "Bromwell",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"117": {
+"name": "Chapman",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"118": {
+"name": "Ramsay",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+7,
+0,
+0
+],
+"portrait": 9,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"119": {
+"name": "Tilden",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+10,
+0,
+0
+],
+"portrait": 13,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"120": {
+"name": "Ransford",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 2,
+"hp": 35
+},
+"121": {
+"name": "Wakefield",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+8,
+0,
+0
+],
+"portrait": 23,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"122": {
+"name": "Risley",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 0,
+"hp": 20
+},
+"123": {
+"name": "Broughton",
+"look": 3,
+"side": 1,
+"skills": [
+3,
+5,
+8,
+0
+],
+"portrait": 10,
+"gift_table": 0,
+"attack": 8,
+"defense": 3,
+"hp": 40
+},
+"124": {
+"name": "Harden",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"125": {
+"name": "Vance",
+"look": 3,
+"side": 1,
+"skills": [
+2,
+4,
+10,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"126": {
+"name": "Ransley",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"127": {
+"name": "Hallward",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"128": {
+"name": "Burchard",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 2,
+"hp": 35
+},
+"129": {
+"name": "Walford",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+11,
+12,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 3,
+"hp": 40
+},
+"130": {
+"name": "Rowell",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"131": {
+"name": "Remington",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+2,
+7,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"132": {
+"name": "Harlow",
+"look": 6,
+"side": 1,
+"skills": [
+3,
+11,
+14,
+16
+],
+"portrait": 11,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"133": {
+"name": "Truesdale",
+"look": 6,
+"side": 1,
+"skills": [
+5,
+8,
+14,
+16
+],
+"portrait": 15,
+"gift_table": 0,
+"attack": 8,
+"defense": 4,
+"hp": 40
+},
+"134": {
+"name": "Hanford",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"135": {
+"name": "Hawthorne",
+"look": 2,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 2,
+"hp": 35
+},
+"136": {
+"name": "Riley",
+"look": 2,
+"side": 1,
+"skills": [
+2,
+4,
+12,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"137": {
+"name": "Byram",
+"look": 6,
+"side": 1,
+"skills": [
+2,
+6,
+13,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"138": {
+"name": "Ulric",
+"look": 6,
+"side": 1,
+"skills": [
+3,
+5,
+8,
+15
+],
+"portrait": 21,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"139": {
+"name": "Hayden",
+"look": 2,
+"side": 1,
+"skills": [
+3,
+11,
+14,
+15
+],
+"portrait": 23,
+"gift_table": 0,
+"attack": 9,
+"defense": 2,
+"hp": 45
+},
+"140": {
+"name": "Caldwell",
+"look": 6,
+"side": 1,
+"skills": [
+11,
+14,
+16,
+19
+],
+"portrait": 30,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"141": {
+"name": "Geoffrey",
+"look": 1,
+"side": 0,
+"skills": [
+1,
+2,
+6,
+10
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 3,
+"hp": 40
+}
+}
 }

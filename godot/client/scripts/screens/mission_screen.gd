@@ -79,6 +79,7 @@ func _ready() -> void:
 	if p.has("seed"):
 		sim.rng = JavaRandom.new(int(p.seed))
 	tint = int(mission_info.get("tint", 0))
+	sim.boss_type = int(mission_info.get("boss_type", 0))
 
 	var arrow_mat := StandardMaterial3D.new()
 	arrow_mat.albedo_color = Color8(240, 142, 53)
@@ -205,10 +206,10 @@ func _place_soldiers(t: float) -> void:
 			node = Soldier.new()
 			node.name = "Soldier"
 			world.add_child(node)
-			node.setup(e.type, tint, MapSim.table("squad_offsets"))
+			node.setup(e.type, tint, MapSim.table("squad_offsets"), sim.general)
 			soldiers[e] = node
 		node.global_position = Hero.px_to_world(smooth(e.prev_pos, e.pos, t))
-		node.set_frame(sim.enemy_sprite_frame(e), int(map4[e.dir]))
+		node.set_frame(sim.enemy_sprite_frame(e), int(map4[e.dir]), e.action >= 6)
 
 
 ## Breakable objects: they blink while breaking and are gone once broken.
@@ -258,19 +259,30 @@ func _place_shots() -> void:
 
 
 func _show_banner() -> void:
-	banner.visible = sim.banner != 0
+	var talk: String = sim.talk_text()
+	banner.visible = sim.banner != 0 or not sim.talk.is_empty()
 	if not banner.visible:
+		return
+	if sim.banner == 0:
+		banner_text.text = talk
+		_place_banner(0.72)  # the talk box sits low, over the map
 		return
 	var stage := tr("mission.stage") + " " + str(sim.rooms_visited)
 	if sim.banner == MapSim.BANNER_STAGE_CLEAR:
 		stage += " " + tr("mission.complete")
 	elif sim.banner == MapSim.BANNER_FAILED:
 		stage = tr("mission.failed")
+	elif sim.banner == MapSim.BANNER_SUCCESS:
+		stage = tr("mission.success")
 	banner_text.text = "%s\n%s\n%s" % [lord_name, mission_info.get("name", ""), stage]
+	_place_banner(0.3)
+
+
+func _place_banner(y: float) -> void:
 	var view := get_viewport_rect().size
 	banner.size = Vector2(520, 0)
 	banner.reset_size()
-	banner.position = Vector2((view.x - banner.size.x) / 2.0, view.y * 0.3)
+	banner.position = Vector2((view.x - banner.size.x) / 2.0, view.y * y)
 
 
 func _place_arrows() -> void:
