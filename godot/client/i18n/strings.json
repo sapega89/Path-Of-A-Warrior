@@ -75,6 +75,10 @@
     "en": "Skip",
     "uk": "Пропустити"
   },
+  "mission.acquired": {
+    "en": "Acquired!!",
+    "uk": "Отримано!!"
+  },
   "mission.stage": {
     "en": "Stage",
     "uk": "Етап"

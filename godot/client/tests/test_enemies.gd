@@ -256,6 +256,40 @@ func test_gold_is_picked_up() -> void:
 	check(sim.drops.is_empty(), "nothing left on the floor")
 
 
+## As pyport's popup 13: a gear picked up shows "<its name> Acquired!!" for 20 ticks while the
+## map waits (a key: 2); with no place left in the Inventory it stays on the floor.
+func test_a_gear_picked_up_is_acquired() -> void:
+	var sim := _sim(false)
+	for t in 60:
+		if sim.banner == 0 and sim.room_phase == 0:
+			break
+		sim.tick(-1, -1)
+	sim.free_places = 1
+	for k in 2:
+		var d = MapSim.Drop.new()
+		d.item = 131 + k
+		d.pos = sim.hero.pos
+		sim.drops.append(d)
+	sim.tick(-1, -1)
+	eq([sim.items.size(), sim.banner, sim.acquired], [1, MapSim.BANNER_ACQUIRED, 131], "Acquired!!")
+	eq(sim.free_places, 0, "the last place taken")
+	eq(sim.drops.size(), 1, "the other stays on the floor")
+	var ticks: int = sim.play_ticks
+	for t in 19:
+		sim.tick(-1, -1)
+	eq([sim.banner, sim.play_ticks], [MapSim.BANNER_ACQUIRED, ticks], "the map waits")
+	sim.tick(-1, -1)
+	eq(sim.banner, 0, "gone after 20 ticks")
+	sim.tick(-1, -1)
+	eq(sim.items.size(), 1, "still no place")
+	sim.free_places = 1
+	sim.tick(-1, -1)
+	eq([sim.items.size(), sim.acquired], [2, 132], "a place: picked up")
+	sim.tick(-1, -1, true)
+	sim.tick(-1, -1)
+	eq(sim.banner, 0, "a key closes it sooner")
+
+
 ## A general met in an open room, with the hero next to him.
 func _general_duel() -> Array:
 	var d := _duel()

@@ -26,6 +26,7 @@ const BANNER_STAGE := 8
 const BANNER_STAGE_CLEAR := 9
 const BANNER_SUCCESS := 10  # "Mission Success!": waits for a key, then the mission ends
 const BANNER_FAILED := 22  # "Mission fail!": waits for a key, then the mission ends
+const BANNER_ACQUIRED := 13  # a gear picked up: "<its name> Acquired!!"
 const BANNER_TICKS := 20
 
 const KIND_SWORDS := 201
@@ -149,6 +150,9 @@ var rooms_visited := 1
 var waves: Array = []  # the current room's enemy list, flat: kind, count, kind, count, ...
 var banner := 0
 var banner_timer := 0
+var acquired := 0  # the gear of the BANNER_ACQUIRED banner
+## Places left in the hero's Inventory: a gear with no place stays on the floor.
+var free_places := 45
 var hero := Actor.new()
 var dir_history: Array[int] = [-1, -1, -1, -1, -1]
 var hold_to_move := true  # the port's option (the player asked for it): walk while held
@@ -376,7 +380,7 @@ func tick(held: int, pressed: int = -1, fire: bool = false, hotkey: int = -1, po
 	if belt >= 0 and belt < quick_slots.size():
 		potion = 10 + belt
 	_tick_scene(held, pressed, skill, potion)
-	if banner == 0:
+	if banner == 0 or banner == BANNER_ACQUIRED:
 		_end_tick()
 
 
@@ -1847,7 +1851,13 @@ func _pick_up_drops() -> void:
 					d.ticks -= 1
 					continue  # no room: it stays on the floor
 			else:
+				if free_places < 1:
+					d.ticks -= 1
+					continue  # no place in the Inventory: it stays on the floor
 				items.append(d.item)
+				free_places -= 1
+				acquired = d.item
+				_show_banner(BANNER_ACQUIRED)
 			d.item = 0
 		d.ticks -= 1
 		if d.ticks < 1 or d.item == 0:
