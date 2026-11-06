@@ -44,6 +44,8 @@ jobs:
             "$RUNNER_TEMP/godot" --path godot/client --rendering-driver opengl3 --resolution 1280x720 \
             res://tools/shots.tscn -- "$RUNNER_TEMP/shots"
           ls "$RUNNER_TEMP/shots"
+          # Also into the log (base64, one line each), for reviewers who cannot download artifacts.
+          for f in "$RUNNER_TEMP"/shots/*.png; do echo "SHOT $(basename "$f") $(base64 -w0 "$f")"; done
 
       - name: Upload screenshots
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
