@@ -119,3 +119,43 @@ func test_hero_falls() -> void:
 	check(not sim.finished, "waits for a key")
 	sim.tick(-1, -1, true)
 	check(sim.finished, "a key ends the mission")
+
+
+func test_barrel_breaks() -> void:
+	var sim := _sim(false)
+	for t in 200:
+		if sim.exits_open():
+			break
+		sim.tick(-1, -1, sim.banner != 0)
+	var barrel = null
+	for b in sim.breakables:
+		if b.tile == Vector2i(4, 6):
+			barrel = b
+	check(barrel != null, "the barrel at (4, 6) is in the room")
+	if barrel == null:
+		return
+	eq(barrel.hp, 41, "a barrel takes 41")
+	sim.hero.pos = Vector2i(120, 150)
+	sim.hero.facing = 0
+	sim.hero.dir = 0
+	for t in 120:
+		sim.tick(-1, -1, t % 4 == 0)
+		if barrel.hp < 1:
+			break
+	check(barrel.hp < 1, "broken by the sword: %d" % barrel.hp)
+	eq(int(sim.objects[6 * sim.w + 4]), 0, "the cell is free")
+	for t in 13:
+		sim.tick(-1, -1)
+	check(not barrel.active, "gone after blinking")
+
+
+func test_gold_is_picked_up() -> void:
+	var sim := _sim(false)
+	var d = MapSim.Drop.new()
+	d.item = 10020
+	d.pos = sim.hero.pos
+	sim.drops.append(d)
+	sim.tick(-1, -1)
+	sim.tick(-1, -1)
+	eq(sim.gold, 20, "20 gold")
+	check(sim.drops.is_empty(), "nothing left on the floor")

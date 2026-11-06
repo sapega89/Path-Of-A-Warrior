@@ -252,7 +252,8 @@ def export_campaign(out):
     return len(chapters), len(missions)
 
 
-UI_IMAGES = ["arrow0", "arrow1", "arrow2", "arrow3"]  # exit arrows: down, left, up, right
+UI_IMAGES = ["arrow0", "arrow1", "arrow2", "arrow3",  # exit arrows: down, left, up, right
+             "tool", "gold"]  # things on the floor: potions and gear (28 px frames), gold
 
 
 def export_ui(out):
