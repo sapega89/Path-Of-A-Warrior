@@ -19,7 +19,7 @@ func _duel() -> Array:
 	for t in 200:
 		if sim.exits_open():
 			break
-		sim.tick(-1, -1, true)
+		sim.tick(-1, -1, sim.banner != 0)  # the key closes a banner (in the room it strikes)
 	var e = sim.create_enemy(MapSim.KIND_SWORDS, 4, 7, 0)
 	e.type = MapSim.KIND_SWORDS
 	e.pos = sim.hero.pos + Vector2i(0, 30)

@@ -16,7 +16,7 @@ func _open(sim: RefCounted) -> int:
 	for t in 200:
 		if sim.exits_open():
 			return t
-		sim.tick(-1, -1, true)
+		sim.tick(-1, -1, sim.banner != 0)  # the key closes a banner (in the room it strikes)
 	return -1
 
 
@@ -59,7 +59,7 @@ func test_walk_down_into_the_next_room() -> void:
 	sim.no_enemies = true
 	_open(sim)
 	for t in 200:
-		sim.tick(0, -1, true)
+		sim.tick(0, -1, sim.banner != 0)
 		if sim.rooms_visited == 2:
 			break
 	if sim.cell != 1:
