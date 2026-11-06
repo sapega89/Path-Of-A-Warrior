@@ -12,7 +12,8 @@ extends RefCounted
 ## the sword; soldiers and objects drop gold and items that the hero picks up. Generals come
 ## with their talk, fight with their skills, and the mission's own general ends the mission
 ## ("Mission Success!"). The hero's skills (on their keys, for MP) and his potions and
-## scrolls work, and effects() tells which pictures of their effects show. Not yet: the
+## scrolls work, and effects() tells which pictures of their effects (and of the generals'
+## skills) show. Not yet: the
 ## talk after a cleared room and the mission's rewards.
 
 const Rooms := preload("res://scripts/world/rooms.gd")
@@ -44,6 +45,9 @@ const HIT_FRAME := [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 ## MP of skill 12..30 at level 1, and per level above.
 ## The three flames of a fire scroll around its point.
 const FIRE_SHIFT := [Vector2i(3, -6), Vector2i(-10, 0), Vector2i(10, 5)]
+## A general's Fire Tornado shows its first picture with the sheet's other part: the burst
+## sheet's picture 0 drawn this much aside lands where that part puts it.
+const BURST_FIRST_SHIFT := Vector2i(16, 5)
 const SKILL_BASE_COST := [5, 6, 7, 10, 15, 7, 10, 10, 8, 9, 10, 5, 6, 7, 9, 12, 20, 20, 20]
 const SKILL_COST_PER_LEVEL := [3, 4, 5, 3, 4, 3, 3, 5, 3, 4, 5, 3, 4, 5, 5, 6, 5, 5, 5]
 ## Potions 1..9 restore HP (1), MP (2) or both (3) by 30 / 60 / 100 %.
@@ -2086,7 +2090,7 @@ func slide_corner(pos: Vector2i, direction: int, actor: Actor) -> int:
 
 ## The effects to draw now: [sheet, frame, point in map pixels] (sheets fx_<name>.png). The
 ## hero's skill shows its effect on him (the big skills 28-30 over the middle of the room),
-## a potion or scroll shows where it is in use.
+## a potion or scroll shows where it is in use, a general's skill on the general.
 func effects() -> Array:
 	var out: Array = []
 	var a := hero.action
@@ -2157,7 +2161,51 @@ func effects() -> Array:
 				out.append(["scroll", effect_step - 1 + (effect_dir << 2), effect_pos])
 		_:
 			out.append(["buff", effect_step + 4, effect_pos])
+	for e in enemies:
+		if e.type < 200:
+			_general_effects(e, out)
 	return out
+
+
+## The pictures of a general's skill (his actions 6..21), as the hero's: the same sheets.
+func _general_effects(e: Actor, out: Array) -> void:
+	var f := e.frame
+	var p := e.pos
+	match e.action:
+		6:
+			if f > 2 and f < 6:
+				out.append(["slash", e.dir + (f & 1), p])
+		7:
+			if f > 4 and f < 8:
+				out.append(["slash", e.dir + (f & 1), p])
+		8:
+			if f > 0 and f < 9:
+				out.append(["slash", e.dir + (f & 1), p])
+		9, 10:
+			if f > 3:
+				out.append(["heal", f - 4, p])
+		11, 12, 13:
+			if f > 3 and f < 10:
+				out.append(["buff", f - 4, p])
+		15:
+			if f == 5 or f == 6:
+				out.append(["whirl", f - 5, p])
+		16:
+			if f > 1 and f < 6:
+				out.append(["slash", f & 1, p])
+		17:
+			if f == 5 or f == 6:
+				out.append(["slash", f - 5, p])
+		18:
+			if f == 5:
+				out.append(["burst", 0, p + BURST_FIRST_SHIFT])
+			elif f == 6:
+				out.append(["burst", 1, p])
+		20, 21:
+			if e.action == 21 and f == 9:
+				out.append(["blast", 1, _front_of(p, e.dir)])
+			elif f > 1 and f < 9:
+				out.append(["wave", f - 2 + (e.dir >> 1) * 7, p])
 
 
 ## The weapon trails to draw: ["trail", picture, position]. The picture is the direction

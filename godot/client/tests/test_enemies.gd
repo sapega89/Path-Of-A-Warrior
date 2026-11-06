@@ -473,6 +473,33 @@ func test_effects_of_skills_and_potions() -> void:
 	node.free()
 
 
+func test_effects_of_a_generals_skills() -> void:
+	var d := _general_duel()
+	var sim: RefCounted = d[0]
+	var g = d[1]
+	g.dir = 2
+	# action, frame -> the picture shown on him (or in front of him, the blast)
+	var cases := [
+		[6, 3, ["slash", 3, g.pos]], [8, 2, ["slash", 2, g.pos]], [10, 5, ["heal", 1, g.pos]],
+		[12, 4, ["buff", 0, g.pos]], [15, 6, ["whirl", 1, g.pos]], [16, 3, ["slash", 1, g.pos]],
+		[17, 5, ["slash", 0, g.pos]], [18, 6, ["burst", 1, g.pos]],
+		[18, 5, ["burst", 0, g.pos + MapSim.BURST_FIRST_SHIFT]],
+		[20, 3, ["wave", 8, g.pos]], [21, 9, ["blast", 1, sim._front_of(g.pos, 2)]]]
+	for c in cases:
+		g.action = c[0]
+		g.frame = c[1]
+		eq(sim.effects(), [c[2]], "general action %d frame %d" % [c[0], c[1]])
+	for c in [[6, 2], [7, 8], [14, 3], [19, 3], [1, 0]]:
+		g.action = c[0]
+		g.frame = c[1]
+		eq(sim.effects().size(), 0, "nothing at action %d frame %d" % [c[0], c[1]])
+	var e = sim.create_enemy(MapSim.KIND_SWORDS, 4, 7, 0)
+	e.action = 6
+	e.frame = 3
+	g.action = 0
+	eq(sim.effects().size(), 0, "a soldier's actions are not skills")
+
+
 func test_skip_ends_a_talk_and_what_follows_comes() -> void:
 	var d := _general_duel()
 	var sim: RefCounted = d[0]
