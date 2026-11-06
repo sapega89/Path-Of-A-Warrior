@@ -20,6 +20,7 @@ const SCREENS := {
 	"story": "res://scripts/screens/story_screen.gd",
 	"blacksmith": "res://scripts/screens/blacksmith_screen.gd",
 	"shop": "res://scripts/screens/shop_screen.gd",
+	"visiting": "res://scripts/screens/visiting_screen.gd",
 }
 
 var current: Control
