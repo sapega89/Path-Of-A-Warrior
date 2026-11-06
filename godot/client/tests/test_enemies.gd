@@ -31,6 +31,24 @@ func _duel() -> Array:
 	return [sim, e]
 
 
+func test_archers_stand_on_their_cells() -> void:
+	# Map 1 puts an archer on cell (3, 1) of its first room in its fourth mission.
+	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 3, Vector2i(4, 2))
+	var archers: Array = sim.enemies.filter(func(e): return e.type == MapSim.KIND_ARCHERS)
+	eq(archers.size(), 1, "the archer of the room's script")
+	if archers.size() == 1:
+		eq(archers[0].pos, Vector2i(3 * 27 + 12, 1 * 27 + 20), "on his cell")
+		eq(archers[0].alerted, 1, "on guard at once")
+	eq(sim.enemies_alive, 0, "archers do not count for clearing the room")
+	sim = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	eq(sim.enemies.size(), 0, "another mission: nobody there")
+	sim = MapSim.new(MapBuilder.load_map(1), 3, Vector2i(4, 2))
+	sim.no_enemies = true
+	sim.enemies.clear()
+	sim.enter_room()
+	eq(sim.enemies.size(), 0, "the map without enemies: no archers either")
+
+
 func test_random_numbers() -> void:
 	var r := JavaRandom.new(42)
 	eq(r.next_int(), -1170105035, "first number of seed 42")
