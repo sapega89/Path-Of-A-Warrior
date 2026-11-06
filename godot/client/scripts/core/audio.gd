@@ -13,7 +13,7 @@ const SCREEN_MUSIC := {
 	"live": -1, "live_warehouse": -1, "live_safe": -1, "live_trade": -1, "live_buy": -1,  # Live is quiet
 	"live_sell": -1, "live_cancel": -1, "online": -1, "online_character": -1, "online_skills": -1,
 	"online_text": -1, "online_ranking": -1, "online_order": -1, "online_chat": -1, "online_options": -1,
-	"online_battle": -1,
+	"online_battle": -1, "online_battles": -1,
 }
 const OVERLAPPING := [3, 4, 15, 16]
 const MIN_GAP_MS := {9: 500}

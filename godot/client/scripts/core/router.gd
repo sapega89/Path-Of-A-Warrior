@@ -42,6 +42,7 @@ const SCREENS := {
 	"online_chat": "res://scripts/screens/online_chat_screen.gd",
 	"online_options": "res://scripts/screens/online_options_screen.gd",
 	"online_battle": "res://scripts/screens/online_battle_screen.gd",
+	"online_battles": "res://scripts/screens/online_battles_screen.gd",
 }
 
 var current: Control

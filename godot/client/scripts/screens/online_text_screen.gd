@@ -4,12 +4,16 @@ extends Control
 ##   quote         Change Quote: the battle's first words and the victory quote (1-20 characters)
 ##   order_create  Create Order / order_join  Join Order: 4-12 letters A-Z
 ##   peer          Chat > New Message: the UserID of the player (4-12 letters A-Z)
+##   challenge1    Duel > Challenge 1:1 / challenge2 Challenge 2:2 / ally Mission > Invite An
+##                 Ally: the UserID of the player taken into the battle
 ## OK sends it; the server's "not acceptable" or "name exists" are shown under it. Done, the
-## screen goes back (peer: on to the conversation).
+## screen goes back (peer: on to the conversation; a battle opens its screen by itself).
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const OnlineClient := preload("res://scripts/net/online_client.gd")
 const Protocol := preload("res://scripts/net/protocol.gd")
+const INVITES := {"challenge1": OnlineClient.CHALLENGE_1, "challenge2": OnlineClient.CHALLENGE_2,
+	"ally": OnlineClient.ALLY}
 
 var online: RefCounted
 var kind := "name"
@@ -128,6 +132,11 @@ func send() -> void:
 			online.order_create(t, OnlineClient.later(self, &"done"))
 		"order_join":
 			online.order_join(t, OnlineClient.later(self, &"done"))
+		"challenge1", "challenge2", "ally":
+			if t == str(online.me.get("id", "")):
+				info.text = tr("online.err_self_invite")
+				return
+			online.invite(int(INVITES[kind]), t, OnlineClient.later(self, &"done"))
 		"peer":
 			if t == str(online.me.get("id", "")):
 				info.text = tr("online.err_self")

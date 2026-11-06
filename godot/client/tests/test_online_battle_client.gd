@@ -168,7 +168,7 @@ func test_the_battle_screen_shows_a_duel() -> void:
 	c.enter(func(_e): pass)
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
-	Router.params = {"online": c}
+	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
 	var screen: Control = BattleScreen.new()
 	root.add_child(screen)
 	var b: RefCounted = c.battle
@@ -221,7 +221,7 @@ func test_the_battle_screen_leaves_when_kicked() -> void:
 	c.enter(func(_e): pass)
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
-	Router.params = {"online": c}
+	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
 	var screen: Control = BattleScreen.new()
 	root.add_child(screen)
 	c.on_push({"t": "kicked"})
