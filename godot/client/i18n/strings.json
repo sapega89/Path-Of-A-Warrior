@@ -75,6 +75,14 @@
     "en": "Skip",
     "uk": "Пропустити"
   },
+  "story.prologue": {
+    "en": "Prologue",
+    "uk": "Пролог"
+  },
+  "story.epilogue": {
+    "en": "Epilogue",
+    "uk": "Епілог"
+  },
   "mission.stage": {
     "en": "Stage",
     "uk": "Етап"
