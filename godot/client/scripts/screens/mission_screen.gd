@@ -2,7 +2,8 @@ extends Control
 ## A mission of the original campaign on its map. The game itself runs in MapSim
 ## (original pixels and ticks); this screen reads the input, ticks the simulation every
 ## 120 ms and draws its state in 3D: the hero sprite, the camera on the current room,
-## the exit arrows and the "Stage" banners, the soldiers and their arrows, and the HUD.
+## the exit arrows and the "Stage" banners, the soldiers and their arrows, the effects of
+## skills, potions and scrolls, and the HUD.
 ## Params: {lord, mission, seed (optional: the same enemies every run)}.
 
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
@@ -15,6 +16,7 @@ const JavaRandom := preload("res://scripts/sim/java_random.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const MapHud := preload("res://scripts/ui/map_hud.gd")
+const Effects := preload("res://scripts/world/effects.gd")
 
 const TICK := MapSim.TICK_MS / 1000.0
 const ARROW_SCALE := 3.0
@@ -31,6 +33,7 @@ var builder: Node3D
 var hero: CharacterBody3D
 var camera: Camera3D
 var hud: MapHud
+var effects: Effects
 var banner: PanelContainer
 var banner_text: Label
 var arrows: Array[TextureRect] = []
@@ -45,6 +48,7 @@ var _pressed := -1
 var _fire := false
 var _hotkey := -1  # a skill key pressed since the last tick
 var _potion := -1  # a potion key pressed since the last tick
+var _keys_down := {}  # skill and potion keys held at the last frame
 var _last_held := -1
 var _blink := 0
 
@@ -100,6 +104,9 @@ func _ready() -> void:
 	hero.name = "Hero"
 	hero.external = true
 	world.add_child(hero)
+	effects = Effects.new()
+	effects.name = "Effects"
+	world.add_child(effects)
 	hero.global_position = Hero.px_to_world(Vector2(sim.hero.pos))
 
 	camera = FollowCamera.new()
@@ -158,10 +165,10 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("attack"):
 		_fire = true
 	for i in 4:
-		if Input.is_action_just_pressed("skill_%d" % (i + 1)):
+		if _pressed_now("skill_%d" % (i + 1)):
 			_hotkey = i
 	for i in 2:
-		if Input.is_action_just_pressed("potion_%d" % (i + 1)):
+		if _pressed_now("potion_%d" % (i + 1)):
 			_potion = i
 	_acc += delta
 	while _acc >= TICK:
@@ -180,6 +187,14 @@ func _process(delta: float) -> void:
 	_update_view(_acc / TICK)
 
 
+## The key went down since the last frame (a press seen once, whenever the frame runs).
+func _pressed_now(action: String) -> bool:
+	var down := Input.is_action_pressed(action)
+	var was: bool = _keys_down.get(action, false)
+	_keys_down[action] = down
+	return down and not was
+
+
 ## The position between the last two ticks (a jump, such as a new room, is not smoothed).
 static func smooth(prev: Vector2i, now: Vector2i, t: float) -> Vector2:
 	if (now - prev).length() > 40:
@@ -194,6 +209,7 @@ func _update_view(t: float) -> void:
 	hud.queue_redraw()
 	_place_soldiers(t)
 	_place_shots()
+	effects.show_effects(sim.effects())
 	_place_objects()
 	_place_loot()
 	_place_arrows()

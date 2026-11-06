@@ -3,6 +3,7 @@ extends "res://tests/test_case.gd"
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
 const MapSim := preload("res://scripts/sim/map_sim.gd")
 const JavaRandom := preload("res://scripts/sim/java_random.gd")
+const Effects := preload("res://scripts/world/effects.gd")
 
 
 ## Mission 1 of lord 1 on map 1, the same random numbers every run.
@@ -290,3 +291,26 @@ func test_scroll_blast_hits() -> void:
 		sim.tick(-1, -1)
 	check(e.hp < hp, "the blast took HP: %d -> %d" % [hp, e.hp])
 	eq(sim.effect_item, 0, "the scroll is used up")
+
+
+func test_effects_of_skills_and_potions() -> void:
+	var d := _duel()
+	var sim: RefCounted = d[0]
+	eq(sim.effects().size(), 0, "nothing while standing")
+	sim.tick(-1, -1, false, 0)  # skill 12: the dash
+	for t in 3:
+		sim.tick(-1, -1)
+	var fx: Array = sim.effects()
+	eq(fx.size(), 1, "the dash shows its effect")
+	eq(fx[0][0], "slash", "from the slash sheet")
+	var sim2: RefCounted = _duel()[0]
+	sim2.add_quick_item(4)
+	sim2.tick(-1, -1, false, -1, 0)
+	fx = sim2.effects()
+	eq(fx.size(), 1, "a potion in use shows")
+	eq(fx[0][1], 4, "its first frame")
+	var node := Effects.new()
+	node._ready()
+	node.show_effects(fx + [["storm", 99, Vector2i.ZERO], ["nothing", 0, Vector2i.ZERO]])
+	eq(node.shown(), 1, "only frames the sheets have are drawn")
+	node.free()

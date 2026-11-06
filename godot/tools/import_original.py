@@ -428,6 +428,65 @@ def export_tables(out):
     (out / "tables.json").write_text(json.dumps(tables, separators=(",", ":")))
 
 
+# The effects of the hero's skills, potions and scrolls: (sheet, frames file of mdat, table
+# of pictures in consts or None, the [part, picture] pairs if not part i with picture i).
+# A frame shows its picture (imgeff entry picture - 27) with its part's offset; the slash
+# frames (sheet "slash") are regions of the picture effect1 instead.
+EFFECTS = [
+    ("slash", 56, None, None),
+    ("heal", 57, "fx_anim_15_16", None),
+    ("buff", 58, "fx_anim_17_19", None),
+    ("whirl", 59, "fx_anim_21", None),
+    ("fire", 60, "fx_fire", None),
+    ("burst", 61, "fx_anim_24", [[1, 0], [1, 1]]),
+    ("wave", 62, "fx_anim_26_27", None),
+    ("blast", 63, "fx_anim_27_end", None),
+    ("storm", 64, "fx_anim_28", None),
+    ("quake", 65, "fx_anim_29", None),
+    ("rain", 66, "fx_anim_30", None),
+    ("scroll", 67, "fx_item_10_11", None),
+]
+EFFECT_COLUMNS = 8
+
+
+def export_effects(out):
+    from pow.game import consts
+    mdat = scr.load(ROOT / "mdat_QVGA.scr")
+    eff = scr.load(ROOT / "imgeff.scr")
+    info = {}
+    for name, frames_file, table, pairs in EFFECTS:
+        parts = read_frames(ROOT / mdat[frames_file])
+        pics = getattr(consts, table) if table else None
+        if pairs is None:
+            n = len(pics) if pics else len(parts)
+            pairs = [[i, i] for i in range(min(n, len(parts)))]
+        cells = []  # (image or None, x, y) with the point of the effect at 0, 0
+        for part, pic in pairs:
+            sx, sy, w, h, ox, oy = parts[part]
+            if pics is None:
+                src = Image.open(ROOT / (eff[1] + ".png")).convert("RGBA")
+                cells.append((src.crop((sx, sy, sx + w, sy + h)), -ox, -oy))
+            elif pics[pic] != 0:
+                cells.append((Image.open(ROOT / (eff[pics[pic] - 27] + ".png")).convert("RGBA"), -ox, -oy))
+            else:
+                cells.append((None, 0, 0))
+        drawn = [c for c in cells if c[0] is not None]
+        x0 = min(c[1] for c in drawn)
+        y0 = min(c[2] for c in drawn)
+        x1 = max(c[1] + c[0].width for c in drawn)
+        y1 = max(c[2] + c[0].height for c in drawn)
+        cw, ch = x1 - x0, y1 - y0
+        cols = min(EFFECT_COLUMNS, len(cells))
+        rows = (len(cells) + cols - 1) // cols
+        sheet = Image.new("RGBA", (cw * cols, ch * rows), (0, 0, 0, 0))
+        for i, (img, x, y) in enumerate(cells):
+            if img is not None:
+                sheet.alpha_composite(img, ((i % cols) * cw + x - x0, (i // cols) * ch + y - y0))
+        sheet.save(out / ("fx_%s.png" % name))
+        info[name] = {"cell": [cw, ch], "origin": [-x0, -y0], "frames": len(cells), "columns": cols}
+    (out / "effects.json").write_text(json.dumps(info, separators=(",", ":")))
+
+
 def main():
     tile_names = scr.load(ROOT / "imgtile.scr")
     map_files = [n for n in scr.load(ROOT / "mdat_QVGA.scr") if n.endswith(".MAP")]
@@ -450,6 +509,7 @@ def main():
     export_enemies(out_tiles)
     export_generals(out_tiles)
     export_ui(out_tiles / "ui")
+    export_effects(out_tiles)
     print("maps: %d, tiles: %d, chapters: %d, missions: %d" % (len(map_files), found, chapters, missions))
 
 
