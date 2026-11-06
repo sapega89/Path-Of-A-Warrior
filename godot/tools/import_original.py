@@ -357,6 +357,28 @@ def export_talk(out):
     (out / "talk.json").write_text(json.dumps(talk, ensure_ascii=False, indent=0))
 
 
+def read_table(path):
+    """A text table: u16 count, count + 1 u16 offsets, UTF-8 strings."""
+    d = path.read_bytes()
+    n = d[0] | d[1] << 8
+    off = [d[2 + i * 2] | d[3 + i * 2] << 8 for i in range(n + 1)]
+    return [d[off[i]:off[i + 1]].decode("utf-8", "replace") for i in range(n)]
+
+
+# The Skills page: the 19 skills (12..30) with what each does, the seven groups it shows
+# one row each, and the row's three places (0: an empty place).
+SKILL_ROWS = [[12, 13, 14], [15, 16, 0], [17, 18, 19], [20, 21, 22], [23, 24, 25], [26, 27, 0],
+              [28, 29, 30]]
+
+
+def export_skills(out):
+    edat = scr.load(ROOT / "edat.scr")
+    text = read_table(ROOT / edat[54])
+    menu = read_table(ROOT / edat[69])
+    skills = {"names": text[0:19], "effects": text[19:38], "groups": menu[48:55], "rows": SKILL_ROWS}
+    (out / "skills.json").write_text(json.dumps(skills, ensure_ascii=False, indent=0))
+
+
 def cstr(b):
     return bytes(b).split(b"\0")[0].decode("utf-8", "replace")
 
@@ -405,7 +427,9 @@ UI_IMAGES = ["arrow0", "arrow1", "arrow2", "arrow3",  # exit arrows: down, left,
              "tool", "gold",  # things on the floor: potions and gear (28 px frames), gold
              # the map's HUD: top bars, bottom panel with the HP / MP balls, the cover
              # that empties a ball, digits (0-9 , + :) and small digits (0-9 / x)
-             "box_01", "box_01_R", "box_02", "box_02R", "ball_black", "number1", "number2"]
+             "box_01", "box_01_R", "box_02", "box_02R", "ball_black", "number1", "number2",
+             # the skills' icons (28 px, skill 12 first), learned and not yet learned
+             "skill", "skillgray"]
 
 
 def export_ui(out):
@@ -508,6 +532,7 @@ def main():
     chapters, missions = export_campaign(CLIENT / "data")
     export_tables(CLIENT / "data")
     export_talk(CLIENT / "data")
+    export_skills(CLIENT / "data")
     atlas, found = build_atlas(tile_names)
     out_tiles = CLIENT / "assets" / "original"
     out_tiles.mkdir(parents=True, exist_ok=True)

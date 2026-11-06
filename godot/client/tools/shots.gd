@@ -28,6 +28,18 @@ func _ready() -> void:
 	hero.save("user://shot_hero.json")
 	Router.push("attributes", Router.params)
 	await _shot(out, "06_attributes")
+	# Skills: four learned skills, Storm Slasher on the third key, the cursor on the third key.
+	Router.back()
+	for i in [1, 5, 8]:
+		hero.skill_levels[i] = 1
+	hero.hotkeys = [12, 17, 13, 0, 0]
+	hero.save("user://shot_hero.json")
+	Router.push("skills", Router.params)
+	await _frames(2)
+	Router.current.slot = 2
+	Router.current.refresh()
+	Router.current.skills[20].grab_focus()
+	await _shot(out, "07_skills")
 	Router.go("map_viewer")
 	var viewer: Node = Router.current
 	for n in MAPS:

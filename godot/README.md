@@ -14,7 +14,7 @@ godot/
     scenes/main.tscn      корінь: тема + роутер екранів
     scripts/core/         автозавантаження: I18n, Settings, InputSetup, Router
     scripts/screens/      екрани: title, main_menu, settings, map_viewer, campaign, mission,
-                          management, attributes (герой у user://hero.json)
+                          management, attributes, skills (герой у user://hero.json)
     scripts/world/        3D-світ: map_builder (карта з оригінальних шарів), hero, follow_camera
     scripts/ui/           тема, сенсорні кнопки
     i18n/strings.json     тексти українською й англійською
@@ -53,7 +53,7 @@ godot --headless --path godot/client res://tests/runner.tscn  # тести
 |---|---|---|
 | рух | WASD / стрілки | лівий стік / хрестовина |
 | атака | J / пробіл | A |
-| скіли 1–4 | 1–4 / U I O P | X, Y, LB, RB |
+| скіли 1–5 | 1–4, 7 / U I O P Y | X, Y, LB, RB, Back |
 | зілля 1–2 | 5 6 / K L | натиск лівого і правого стіків |
 | пауза / назад | Esc | Start |
 

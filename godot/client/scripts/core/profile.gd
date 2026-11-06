@@ -121,6 +121,20 @@ func spend_point(stat: int) -> bool:
 	return true
 
 
+## The level of skill 12..30, 0 when not learned.
+func skill_level(skill: int) -> int:
+	var i := skill - 12
+	return int(skill_levels[i]) if i >= 0 and i < skill_levels.size() else 0
+
+
+## Puts a learned skill on a skill key (slot 0..4). False when the skill is not learned.
+func assign_hotkey(slot: int, skill: int) -> bool:
+	if slot < 0 or slot >= hotkeys.size() or skill_level(skill) == 0:
+		return false
+	hotkeys[slot] = skill
+	return true
+
+
 ## The hero of a mission starts with this hero's numbers, full HP and MP.
 func apply_to(sim: RefCounted) -> void:
 	var h = sim.hero

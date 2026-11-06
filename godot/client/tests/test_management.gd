@@ -2,6 +2,7 @@ extends "res://tests/test_case.gd"
 
 const Profile := preload("res://scripts/core/profile.gd")
 const Attributes := preload("res://scripts/screens/attributes_screen.gd")
+const Skills := preload("res://scripts/screens/skills_screen.gd")
 const TEST_PATH := "user://test_attributes.json"
 
 
@@ -43,6 +44,43 @@ func test_attributes_screen() -> void:
 	var saved: RefCounted = Profile.load_or_new(TEST_PATH)
 	eq(saved.max_hp(), 45, "saved")
 	eq(saved.stat_points, 0, "the points saved")
+	screen.free()
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
+
+
+func test_skills_data() -> void:
+	var d: Dictionary = Skills.load_data()
+	eq(d["names"].size(), 19, "19 skills")
+	eq(d["names"][0], "Wind Slasher", "the first skill")
+	eq(d["effects"][0], "Dash & Slash", "what it does")
+	eq(d["groups"].size(), 7, "seven groups")
+	eq(d["groups"][0], "MOVE", "the first group")
+	eq(d["rows"].size(), 7, "a row a group")
+
+
+func test_skills_screen() -> void:
+	var p := Profile.new()
+	p.save(TEST_PATH)
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": TEST_PATH}
+	var screen: Control = Skills.new()
+	root.add_child(screen)
+	eq(screen.keys.size(), 5, "five skill keys")
+	eq(screen.describe(12), "Wind Slasher / Lv1 Dash & Slash", "a learned skill")
+	check(screen.describe(13).ends_with("/ (Not Available)"), "a skill not learned: %s" % screen.describe(13))
+	screen.press_key(2)
+	eq(screen.slot, 2, "the third key is set")
+	check(not screen.press_skill(13), "a skill not learned stays off the keys")
+	check(screen.press_skill(17), "a learned one goes on")
+	eq(int(screen.profile.hotkeys[2]), 17, "on the third key")
+	screen.press_key(0)
+	eq(int(screen.profile.hotkeys[0]), 0, "picking a key that holds a skill takes it off")
+	var saved: RefCounted = Profile.load_or_new(TEST_PATH)
+	var saved_keys: Array = []
+	for k in saved.hotkeys:
+		saved_keys.append(int(k))
+	eq(saved_keys, [0, 17, 17, 0, 0], "saved")
 	screen.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))

@@ -171,7 +171,7 @@ func _process(delta: float) -> void:
 	_last_held = held
 	if _pressed_now("attack"):
 		_fire = true
-	for i in 4:
+	for i in 5:
 		if _pressed_now("skill_%d" % (i + 1)):
 			_hotkey = i
 	for i in 2:

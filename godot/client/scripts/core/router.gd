@@ -13,6 +13,7 @@ const SCREENS := {
 	"mission": "res://scripts/screens/mission_screen.gd",
 	"management": "res://scripts/screens/management_screen.gd",
 	"attributes": "res://scripts/screens/attributes_screen.gd",
+	"skills": "res://scripts/screens/skills_screen.gd",
 }
 
 var current: Control
