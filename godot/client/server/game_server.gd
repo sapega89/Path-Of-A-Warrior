@@ -18,6 +18,9 @@ var guard := Guard.new()
 var running := false
 ## ENetPacketPeer -> Session.
 var sessions := {}
+## [peer, message] pushed by the online game (chat, battles), sent after the answer of the
+## request that made them.
+var _outbox: Array = []
 ## Lines of the log go here (main.gd prints them).
 var log_line: Callable = func(_s: String) -> void: pass
 
@@ -56,7 +59,8 @@ func stop() -> void:
 		p.peer_disconnect_now()
 	sessions.clear()
 	if online != null:
-		online.online.clear()
+		online.shutdown()
+	_outbox.clear()
 	host.destroy()
 	running = false
 
@@ -68,9 +72,24 @@ func poll(wait_ms := 0) -> void:
 	var ev: Array = host.service(wait_ms)
 	while ev[0] != ENetConnection.EVENT_NONE:
 		_event(ev)
+		_flush()
 		if ev[0] == ENetConnection.EVENT_ERROR:
 			return
 		ev = host.service(0)
+	if online != null:
+		online.tick()  # a duel that waited long enough gets the CPU
+		_flush()
+
+
+## Sends the pushes: the chat on channel 1, the rest (battles) on channel 0 in order with the
+## answers.
+func _flush() -> void:
+	var out := _outbox.duplicate()
+	_outbox.clear()
+	for x in out:
+		var peer: ENetPacketPeer = x[0]
+		var m: Dictionary = x[1]
+		peer.send(1 if m.get("t") == "chat_push" else 0, Protocol.encode(m), ENetPacketPeer.FLAG_RELIABLE)
 
 
 func _event(ev: Array) -> void:
@@ -85,8 +104,9 @@ func _event(ev: Array) -> void:
 				peer.peer_disconnect_now()
 				return
 			s.meter = guard.meter()
+			var outbox := _outbox
 			s.online.send = func(m: Dictionary) -> void:  # a push, no request waits for it
-				peer.send(1, Protocol.encode(m), ENetPacketPeer.FLAG_RELIABLE)
+				outbox.append([peer, m])
 			sessions[peer] = s
 		ENetConnection.EVENT_DISCONNECT:
 			var s: Session = sessions.get(peer)

@@ -35,9 +35,27 @@ extends RefCounted
 ##                                       "too fast"; every online reader gets
 ##                                       {t: "chat_push", channel, peer, id, name, text}
 ##   chat_peers                       -> rows: [{id, name, unread, online}]
+##
+## Battles (server/room.gd, server/battle.gd); the battle itself comes as pushes (room.gd):
+##   mp_match {mode: 0 Duel 1-on-1, 1 Duel 2-on-2, 2 Solo Mission} -> waiting: a duel waits up
+##                                       to MATCH_WAIT s for a player near my level, then gets
+##                                       the CPU; a mission starts at once with a CPU ally
+##   mp_cancel                        -> no more waiting (err "none")
+##   mp_invite {mode: 0 Challenge 1:1, 1 Challenge 2:2, 2 Invite An Ally, 3 with an order member
+##             against two CPU fighters, id} -> err "busy", "self", "no player", "not member",
+##                                       "not online", "playing", "denied"; no question to the
+##                                       other player: his Options > Invitation decides; a bot
+##                                       always accepts and fights as a CPU fighter of my level
+##   mp_ready / mp_turn {target, action, hit} / mp_stage_next / mp_intro_done / mp_exit
+##                                    -> err "no battle"; mp_exit leaves (a duel left is lost)
+##   battle_end carries the rewards (also added to the character's purse here) and the loot,
+##   which the client gives the hero.
 
 const Accounts := preload("res://server/accounts.gd")
 const Rules := preload("res://server/rules.gd")
+const Battle := preload("res://server/battle.gd")
+const Room := preload("res://server/room.gd")
+const Loot := preload("res://server/loot.gd")
 
 const EMPTY_SKILL := 99
 const SKILL_IDS := [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
@@ -62,6 +80,9 @@ const HISTORY := 30
 const MAX_PEERS := 20
 const RATE := [[1.5, 1], [20.0, 6]]  # at most 1 message in 1.5 s and 6 in 20 s
 const MAX_MEMBERS := 30
+const MATCH_WAIT := 60.0  # seconds a Duel waits for a live opponent, then a CPU
+const MATCH_LEVELS := [10, 20]  # level reach at first / after half the wait
+const INVITE_TEAM := 3
 ## starred whole or inside words, any case
 const RUDE := "fuck|shit|bitch|cunt|dick|asshole|bastard|whore|slut|nigg|fagg|blya|blia|suka|pizd|khuy|xuy|huy|hui|ebat|yeba|mudak|pidor|pidar|gandon"
 
@@ -71,6 +92,9 @@ var rng := RandomNumberGenerator.new()
 var clock: Callable = func() -> float: return Time.get_ticks_msec() / 1000.0
 ## UserID -> Session of the players online
 var online := {}
+var queue: Array = []  # sessions waiting for a Duel, oldest first
+var rooms: Array = []  # the battles going on
+var match_wait := MATCH_WAIT
 var _chars := {}  # UserID -> the online part of the character
 var _docs := {}  # file name -> a document (orders, chat)
 var _rude := RegEx.create_from_string("(?i)" + RUDE)
@@ -85,6 +109,10 @@ class Session:
 	var user := ""
 	var send: Callable = func(_m: Dictionary) -> void: pass
 	var chat_times: Array = []
+	var room: RefCounted = null  # server/room.gd while in a battle
+	var slot := 0  # my slot in it
+	var queued_mode := -1  # mp_match mode while waiting for an opponent
+	var queued_at := 0.0
 
 
 func _init(data_dir: String, account_store: Accounts) -> void:
@@ -282,7 +310,7 @@ func enter(s: Session, uid: String) -> Dictionary:
 	var old: Session = online.get(uid)
 	if old != null and old != s:
 		old.send.call({"t": "kicked"})
-		old.user = ""
+		leave(old)
 	leave(s)
 	s.user = uid
 	online[uid] = s
@@ -293,10 +321,29 @@ func enter(s: Session, uid: String) -> Dictionary:
 	return _ok("mp_enter", p)
 
 
+## Out of the online game: not waiting any more, out of a battle (a duel left is lost).
 func leave(s: Session) -> void:
+	queue.erase(s)
+	if s.room != null:
+		var r: Room = s.room
+		s.room = null
+		r.leave(s)
+		if r.players.is_empty():
+			rooms.erase(r)
 	if not s.user.is_empty() and online.get(s.user) == s:
 		online.erase(s.user)
 	s.user = ""
+
+
+## The server stops: every battle and wait ends without rewards.
+func shutdown() -> void:
+	for r in rooms:
+		for s in r.players.values():
+			s.room = null
+		r.players.clear()
+	rooms.clear()
+	queue.clear()
+	online.clear()
 
 
 func _fail(t: String, err: String) -> Dictionary:
@@ -406,6 +453,17 @@ func answer(s: Session, t: String, msg: Dictionary) -> Dictionary:
 			return _chat_read(uid, msg)
 		"chat_send":
 			return _chat_send(s, msg)
+		"mp_match":
+			return _match(s, msg)
+		"mp_cancel":
+			if not queue.has(s):
+				return _fail(t, "none")
+			queue.erase(s)
+			return _ok(t)
+		"mp_invite":
+			return _invite(s, msg)
+		"mp_ready", "mp_turn", "mp_stage_next", "mp_intro_done", "mp_exit":
+			return _in_battle(s, t, msg)
 		"chat_peers":
 			var rows: Array = []
 			for p in _me(uid).peers:
@@ -673,3 +731,214 @@ func _append(file: String, uid: String, name: String, text: String) -> Dictionar
 	doc.rows = rows.slice(-HISTORY)
 	_put_doc(file, doc)
 	return doc
+
+
+# --- battles ---------------------------------------------------------------------------------
+static func _int(v: Variant, default: int) -> int:
+	return v if v is int else default
+
+
+func _open_room(mode: int, fighters: Array, players: Dictionary, progress: int, via: String) -> void:
+	var r := Room.new(self, mode, fighters, players, progress, via)
+	rooms.append(r)
+	r.start()
+
+
+func _fighter(uid: String, slot: int) -> Battle.Fighter:
+	return Battle.from_character(character(uid), slot)
+
+
+func _match(s: Session, msg: Dictionary) -> Dictionary:
+	var t := "mp_match"
+	var mode := _int(msg.get("mode"), -1)
+	if mode < 0 or mode > 2:
+		return _fail(t, "bad message")
+	if s.room != null or queue.has(s):
+		return _fail(t, "busy")
+	if mode == 2 or match_wait <= 0:
+		start_vs_cpu(s, mode)
+		return _ok(t, {"waiting": false})
+	var other := find_opponent(s, mode)
+	if other == null:
+		s.queued_mode = mode
+		s.queued_at = clock.call()
+		queue.append(s)
+		return _ok(t, {"waiting": true})
+	queue.erase(other)
+	var first := _fighter(other.user, 0)  # the one who waited takes the left side
+	var second := _fighter(s.user, 1)
+	var fighters: Array = [first, second]
+	if mode == 1:
+		fighters += [Battle.cpu_fighter(rng, first, 2, true), Battle.cpu_fighter(rng, second, 3, true)]
+	_open_room(mode, fighters, {0: other, 1: s}, 0, "match")
+	return _ok(t, {"waiting": false})
+
+
+## A player waiting for the same kind of duel near my level: within MATCH_LEVELS, the reach
+## opening once they have waited half the time.
+func find_opponent(s: Session, mode: int) -> Session:
+	var now: float = clock.call()
+	var level := int(character(s.user).level)
+	for other: Session in queue:
+		if other == s or other.queued_mode != mode:
+			continue
+		var reach: int = MATCH_LEVELS[1] if now - other.queued_at >= match_wait / 2 else MATCH_LEVELS[0]
+		if absi(int(character(other.user).level) - level) <= reach:
+			return other
+	return null
+
+
+## Called often (server/game_server.gd poll): a duel that waited match_wait gets the CPU.
+func tick() -> void:
+	if queue.is_empty():
+		return
+	var now: float = clock.call()
+	for s: Session in queue.duplicate():
+		if now - s.queued_at >= match_wait:
+			queue.erase(s)
+			start_vs_cpu(s, s.queued_mode)
+
+
+## A battle against the CPU: 1v1 at slots 0 / 1; 2v2 adds an ally at 2 and a foe at 3; a
+## mission an ally at 2 (the foes come with the stages).
+func start_vs_cpu(s: Session, mode: int) -> void:
+	var me := _fighter(s.user, 0)
+	var others: Array = []
+	if mode == 2:
+		others = [Battle.cpu_fighter(rng, me, 2, true)]
+	else:
+		others = [Battle.cpu_fighter(rng, me, 1)]
+		if mode == 1:
+			others += [Battle.cpu_fighter(rng, me, 2, true), Battle.cpu_fighter(rng, me, 3)]
+	_open_room(mode, [me] + others, {0: s}, int(character(s.user).progress), "match")
+
+
+func _invite(s: Session, msg: Dictionary) -> Dictionary:
+	var t := "mp_invite"
+	var mode := _int(msg.get("mode"), -1)
+	var uid := str(msg.get("id", "")).to_upper()
+	if mode < 0 or mode > INVITE_TEAM:
+		return _fail(t, "bad message")
+	if s.room != null or queue.has(s):
+		return _fail(t, "busy")
+	if uid == s.user:
+		return _fail(t, "self")
+	if _id_re.search(uid) == null or not accounts.has_account(uid):
+		return _fail(t, "no player")
+	if mode == INVITE_TEAM and not same_order(s.user, uid):
+		return _fail(t, "not member")
+	if is_bot(uid) and not online.has(uid):
+		_invite_bot(s, mode, uid)
+		return _ok(t)
+	var other: Session = online.get(uid)
+	if other == null:
+		return _fail(t, "not online")
+	if other.room != null or queue.has(other):
+		return _fail(t, "playing")
+	if int(online_part(uid).invitation) == 0:
+		return _fail(t, "denied")
+	var me := _fighter(s.user, 0)
+	if mode == INVITE_TEAM:  # side by side against two CPU fighters, a 2-on-2 duel
+		var mate := _fighter(uid, 2)
+		_open_room(1, [me, mate, Battle.cpu_fighter(rng, me, 1), Battle.cpu_fighter(rng, mate, 3)],
+			{0: s, 2: other}, 0, "")
+		return _ok(t)
+	var them := _fighter(uid, 2 if mode == 2 else 1)
+	var fighters: Array = [me, them]
+	if mode == 1:  # each player gets a CPU ally
+		fighters += [Battle.cpu_fighter(rng, me, 2, true), Battle.cpu_fighter(rng, them, 3, true)]
+	var progress := maxi(int(character(s.user).progress), int(character(uid).progress))
+	_open_room(mode, fighters, {0: s, them.slot: other}, progress, "")
+	return _ok(t)
+
+
+## A bot challenged or invited: the room as against the CPU, the bot in the invited player's
+## place.
+func _invite_bot(s: Session, mode: int, uid: String) -> void:
+	var me := _fighter(s.user, 0)
+	var fighters: Array = [me, bot_fighter(uid, me, 2 if mode == 2 else 1, mode == 2)]
+	if mode == 1:
+		fighters += [Battle.cpu_fighter(rng, me, 2, true), Battle.cpu_fighter(rng, me, 3)]
+	_open_room(mode, fighters, {0: s}, int(character(s.user).progress), "invite")
+
+
+## A bot in a battle: a CPU fighter of about my level, with the bot's name and record.
+func bot_fighter(uid: String, me: Battle.Fighter, slot: int, ally: bool) -> Battle.Fighter:
+	var c := character(uid)
+	var f := Battle.cpu_fighter(rng, me, slot, ally)
+	f.name = display_name(c)
+	f.keep_name = true
+	f.wins = int(c.wins)
+	f.losses = int(c.losses)
+	f.quote_start = str(c.quote_start)
+	f.quote_win = str(c.quote_win)
+	return f
+
+
+func _in_battle(s: Session, t: String, msg: Dictionary) -> Dictionary:
+	var r: Room = s.room
+	if r == null:
+		return _fail(t, "no battle")
+	match t:
+		"mp_ready":
+			r.round_ready(s)
+		"mp_turn":
+			r.turn(s, [_int(msg.get("target"), 1), _int(msg.get("action"), Battle.DEFEND),
+				_int(msg.get("hit"), 20)])
+		"mp_stage_next":
+			r.stage_next(s)
+		"mp_intro_done":
+			r.intro_done(s)
+		"mp_exit":  # "Exit Battle"
+			s.room = null
+			r.leave(s)
+			if r.players.is_empty():
+				rooms.erase(r)
+	return _ok(t)
+
+
+## The end of the battle for a player: the rewards (a mission's for the stages cleared), one
+## drop roll per foe beaten (mission monsters are soldiers, the last stage's fighter a boss,
+## a duel's fighters generals), his rank, and out of the room.
+func battle_end(s: Session, r: Room) -> void:
+	var b: Battle = r.battle
+	var m: Dictionary = r.mission
+	var c := online_part(s.user)
+	var res: Dictionary
+	var cat := 2
+	var kills: Array = []
+	if not m.is_empty():
+		var stood: bool = r.human_slots.any(func(k): return b.fighters[k].alive())
+		var cleared: int = int(m.stage) - (0 if stood and not b.team_alive(1) else 1)
+		res = b.mission_rewards(c, s.slot, cleared, int(m.stages))
+		cat = 3
+		for i in mini(cleared, int(m.stages) - 1):
+			kills.append_array([0, 0])
+		if cleared == int(m.stages):
+			kills.append_array([2, 0])
+	else:
+		res = b.duel_rewards(c, s.slot)
+		if res.win:
+			for f in b.fighters.values():
+				if f.team() != s.slot % 2:
+					kills.append(1)
+	res.loot = Loot.roll(rng, int(character(s.user).level), kills)
+	r.players.erase(s.slot)
+	s.room = null
+	if r.players.is_empty():
+		rooms.erase(r)
+	save_char(s.user)
+	res.rank = 0
+	for row in table(cat):
+		if row.id == s.user:
+			res.rank = row.rank
+	res.t = "battle_end"
+	s.send.call(res)
+
+
+## A player left a duel (it counts, a loss when not won); no battle_end for him.
+func duel_left(s: Session, r: Room) -> void:
+	if s.user.is_empty():
+		return
+	r.battle.duel_rewards(online_part(s.user), s.slot)
+	save_char(s.user)

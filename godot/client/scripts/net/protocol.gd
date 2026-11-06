@@ -14,8 +14,9 @@ extends RefCounted
 ##   mp_*, order_*, chat_*      -> the online game: the character, Ranking, orders, chat
 ##                                 (server/online.gd); mp_enter first
 ##
-## The server also sends messages nobody asked for, without "q", on channel 1 (pushes):
-## {t: "chat_push", ...} a chat message, {t: "kicked"} the same UserID went online elsewhere.
+## The server also sends messages nobody asked for, without "q" (pushes), after the answer of
+## the request that made them: {t: "chat_push", ...} a chat message (channel 1); {t: "kicked"}
+## the same UserID went online elsewhere; the battles' messages (server/room.gd).
 ##
 ## Any request before a login answers err "login first"; a wrong one "bad message", an unknown
 ## type "unknown", a packet over MAX_PACKET "too big". `base` is the revision of the hero the
