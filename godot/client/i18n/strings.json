@@ -183,9 +183,9 @@
     "en": "Assign Items",
     "uk": "Швидкі предмети"
   },
-  "assign.key": {
-    "en": "Key %s",
-    "uk": "Клавіша %s"
+  "assign.keys": {
+    "en": "Keys Z X C V B",
+    "uk": "Клавіші Z X C V B"
   },
   "campaign.lords": {
     "en": "Lords",
