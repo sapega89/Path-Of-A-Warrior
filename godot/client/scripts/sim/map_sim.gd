@@ -158,6 +158,7 @@ var difficulty := 1  # 0 hard (gold and exp x2), 1 normal
 var auto_aim_hard := true  # the port's option: the hero turns to the nearest enemy on hard too
 var general_side := 0  # the side (weapon) of the last general met: 0 long, 1 short sword
 var general := {}  # the last general met (campaign.json generals)
+var hero_name := HERO_NAME  # how the hero is called in the talks (the hero's own name)
 var boss_type := 0  # the mission's own general: defeating him wins the mission
 var boss_fight := false
 var boss_spawned := false
@@ -1594,12 +1595,17 @@ func _start_map_talk() -> void:
 	talk.clear()
 	var name := str(general.get("name", ""))
 	for k in TALK_STEPS:
-		var speaker := name if (k & 1) == 0 else HERO_NAME
+		var speaker := name if (k & 1) == 0 else hero_name
 		var text := str(lines[21 + k]) if 21 + k < lines.size() else ""
 		talk.append("[%s] %s" % [speaker, text.replace("&", speaker)])
 	talk_line = 0
 	talk_chars = 0
 	talk_wait = 0
+
+
+## Who says the line shown now: true for the hero (the odd lines), false for the general.
+func hero_talks() -> bool:
+	return (talk_line & 1) == 1
 
 
 ## The line shown now, as far as it is typed.
@@ -1699,7 +1705,7 @@ func _start_general_talk(id: int, after: int) -> void:
 	var name := str(general.get("name", ""))
 	talk.clear()
 	for k in VICTORY_TALK_STEPS:
-		var speaker := name if (k & 1) == 0 else HERO_NAME
+		var speaker := name if (k & 1) == 0 else hero_name
 		var text := str(lines[first + k]) if first + k < lines.size() else ""
 		talk.append("[%s] %s" % [speaker, text.replace("&", speaker)])
 	talk_line = 0
