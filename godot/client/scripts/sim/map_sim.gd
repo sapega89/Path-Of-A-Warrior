@@ -154,7 +154,8 @@ var dir_history: Array[int] = [-1, -1, -1, -1, -1]
 var hold_to_move := true  # the port's option (the player asked for it): walk while held
 ## The map without enemies (pyport's POW_NO_ENEMIES): a room's list counts as defeated.
 var no_enemies := false
-var difficulty := 1  # 0 hard, 1 normal (turns the hero to the nearest enemy when he strikes)
+var difficulty := 1  # 0 hard (gold and exp x2), 1 normal
+var auto_aim_hard := true  # the port's option: the hero turns to the nearest enemy on hard too
 var general_side := 0  # the side (weapon) of the last general met: 0 long, 1 short sword
 var general := {}  # the last general met (campaign.json generals)
 var boss_type := 0  # the mission's own general: defeating him wins the mission
@@ -1527,9 +1528,10 @@ func _hero_hits_enemy(e: Actor, action: int) -> void:
 		general_pick_skill(e, true)
 
 
-## Normal difficulty: the hero turns to the nearest enemy (closer than 50 px) as he strikes.
+## The hero turns to the nearest enemy (closer than 50 px) as he strikes: on normal, and on
+## hard too with auto_aim_hard (the original aimed by hand on hard).
 func _turn_to_nearest() -> void:
-	if difficulty == 0:
+	if difficulty == 0 and not auto_aim_hard:
 		return
 	var best := 50
 	var found: Actor = null

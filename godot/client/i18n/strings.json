@@ -392,8 +392,8 @@
     "uk": "Нормально"
   },
   "newgame.mode_0": {
-    "en": "Manual Targetting\nGold/Exp x2",
-    "uk": "Ручне прицілювання\nЗолото й досвід x2"
+    "en": "Auto Targetting\nGold/Exp x2",
+    "uk": "Автоприцілювання\nЗолото й досвід x2"
   },
   "newgame.mode_1": {
     "en": "Auto Targetting\nGold/Exp x1",

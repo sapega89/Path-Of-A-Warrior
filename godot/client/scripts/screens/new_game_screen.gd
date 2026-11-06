@@ -1,6 +1,6 @@
 extends Control
-## A new game, step by step as in the original: the difficulty (Hard: manual aim, gold and
-## exp x2; Normal: the hero turns to the nearest enemy, x1; it cannot change later), the hero's
+## A new game, step by step as in the original: the difficulty (Hard: gold and exp x2; Normal:
+## x1; on both the hero turns to the nearest enemy as he strikes; it cannot change later), the hero's
 ## face, his name (up to 8 letters), and his 5 first stat points. Then the hero is saved over
 ## any old one and the opening story starts, then the campaign.
 ## Params: profile_path (optional), then (the screen after the opening, default campaign).
