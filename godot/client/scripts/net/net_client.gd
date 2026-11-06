@@ -3,7 +3,8 @@ extends RefCounted
 ## server's certificate checked against the one the game was given. poll() every frame;
 ## request() sends a dictionary and calls `done` with the answer (requests made while still
 ## connecting go out once connected). When the connection fails or drops, every waiting
-## request gets {"ok": false, "err": "offline"}.
+## request gets {"ok": false, "err": "offline"}. A message from the server that answers no
+## request (a push: chat, kicked) goes to on_push.
 
 const Protocol := preload("res://scripts/net/protocol.gd")
 
@@ -18,6 +19,7 @@ var _next_q := 1
 var _waiting := {}  # q -> [request, done]
 var _queued: Array[int] = []  # q of requests not sent yet
 var _started := 0
+var on_push: Callable = func(_m: Dictionary) -> void: pass
 
 
 ## Starts connecting; OK, or the error of the DTLS setup.
@@ -104,6 +106,8 @@ func poll(wait_ms := 0) -> void:
 					var done: Callable = _waiting[q][1]
 					_waiting.erase(q)
 					done.call(reply)
+				elif q == null and not reply.is_empty():
+					on_push.call(reply)
 		if host == null:
 			return  # an answer closed the connection
 		ev = host.service(0)

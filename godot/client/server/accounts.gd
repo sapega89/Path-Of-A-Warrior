@@ -52,12 +52,13 @@ func has_account(uid: String) -> bool:
 	return not _account(uid).is_empty()
 
 
+## A new account; with no password (pwd ""), one nobody can log in to (the server's bots).
 func create_account(uid: String, pwd: String) -> bool:
 	if has_account(uid):
 		return false
 	var salt := _crypto.generate_random_bytes(16)
 	var acc := {"id": uid, "salt": salt.hex_encode(), "rounds": rounds,
-		"hash": pbkdf2(pwd.to_ascii_buffer(), salt, rounds).hex_encode(),
+		"hash": pbkdf2(pwd.to_ascii_buffer(), salt, rounds).hex_encode() if not pwd.is_empty() else "",
 		"created": Time.get_unix_time_from_system(), "hero": {"rev": 0, "at": 0, "data": null}}
 	if not _write(acc):
 		return false
@@ -67,7 +68,7 @@ func create_account(uid: String, pwd: String) -> bool:
 
 func check_password(uid: String, pwd: String) -> bool:
 	var acc := _account(uid)
-	if acc.is_empty():
+	if acc.is_empty() or str(acc.get("hash", "")).is_empty():
 		return false
 	var h := pbkdf2(pwd.to_ascii_buffer(), str(acc.salt).hex_decode(), int(acc.rounds))
 	return same_bytes(h, str(acc.hash).hex_decode())
