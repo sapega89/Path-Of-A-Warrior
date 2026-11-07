@@ -346,7 +346,7 @@ def read_generals():
     while 23 * (g - 1) + 14 + 23 <= len(d):
         o = 23 * (g - 1) + 14
         b = d[o + 11:o + 23]
-        out[g] = {"name": cstr(d[o:o + 11]), "look": b[0], "side": (b[2] + 1) & 1,
+        out[g] = {"name": OWN_NAMES["generals"].get(str(g), [cstr(d[o:o + 11])])[0], "look": b[0], "side": (b[2] + 1) & 1,
                   "skills": list(b[3:7]), "portrait": b[7], "gift_table": b[8],
                   "attack": b[9], "defense": b[10], "hp": b[11]}
         g += 1
@@ -366,7 +366,7 @@ def export_talk(out):
         n = d[0] | d[1] << 8
         off = [d[2 + i * 2] | d[3 + i * 2] << 8 for i in range(n + 1)]
         talk[name] = [d[off[i]:off[i + 1]].decode("utf-8", "replace") for i in range(n)]
-    (out / "talk.json").write_text(json.dumps(talk, ensure_ascii=False, indent=0))
+    (out / "talk.json").write_text(json.dumps(own_texts(talk), ensure_ascii=False, indent=0))
 
 
 # Visiting a general (edat 62 visit.scr, 52 visitgen.arr): the greetings, ten points of
@@ -380,7 +380,7 @@ def export_visit(out):
     width = d[1]
     generals = [int.from_bytes(d[1 + n + width * i:1 + n + width * (i + 1)], "little")
                 for i in range((len(d) - 1 - n) // width)]
-    visit = {"lines": read_table(ROOT / edat[62]), "generals": generals}
+    visit = {"lines": own_texts(read_table(ROOT / edat[62])), "generals": generals}
     (out / "visit.json").write_text(json.dumps(visit, ensure_ascii=False, indent=0))
 
 
@@ -421,12 +421,57 @@ def own_name(section, name):
     return OWN_NAMES.get(section, {}).get(name, [name])[0]
 
 
+TITLES = ("Lord", "Lady", "General", "Emperor", "Empress")
+
+
+def own_title(name):
+    """"Lord Gabriel" -> our person with his rank ("Colonel Bairak"); else the name as it is."""
+    title, _, base = name.partition(" ")
+    person = OWN_NAMES["people"].get(base)
+    return person[2] if title in TITLES and person else name
+
+
+def _own_text_rules():
+    rules = [(re.compile(re.escape(a)), b) for a, b in OWN_NAMES["phrases"].items()]
+    for a in sorted(OWN_NAMES["places"], key=len, reverse=True):
+        rules.append((re.compile(r"\b%s\b" % re.escape(a)), OWN_NAMES["places"][a][0]))
+    names = "|".join(sorted(map(re.escape, OWN_NAMES["people"]), key=len, reverse=True))
+    people = OWN_NAMES["people"]
+    rules.append((re.compile(r"\b(?:%s) (%s)\b" % ("|".join(TITLES), names)), lambda m: people[m.group(1)][2]))
+    rules.append((re.compile(r"\b(%s)\b" % names), lambda m: people[m.group(1)][4]))
+    return rules
+
+
+OWN_TEXT_RULES = _own_text_rules()
+
+
+def own_text(text):
+    """The text with our names of people and places (own_names.json people, places, phrases)."""
+    for pattern, new in OWN_TEXT_RULES:
+        text = pattern.sub(new, text)
+    return text
+
+
+def own_texts(data):
+    """own_text on every string in a JSON value."""
+    if isinstance(data, str):
+        return own_text(data)
+    if isinstance(data, list):
+        return [own_texts(x) for x in data]
+    if isinstance(data, dict):
+        return {k: own_texts(v) for k, v in data.items()}
+    return data
+
+
 def export_names(out):
-    """i18n/names.json: every English name of own_names.json -> its text in each language."""
+    """i18n/names.json: every English name of own_names.json -> its text in each language
+    (a person also with his rank)."""
     names = {}
     for section, table in OWN_NAMES.items():
-        if isinstance(table, dict):
-            for en, uk in table.values():
+        if not isinstance(table, dict) or section == "phrases":
+            continue
+        for value in table.values():
+            for en, uk in zip(value[0:4:2], value[1:4:2]):
                 names[en] = {"en": en, "uk": uk}
     (out / "names.json").write_text(json.dumps(names, ensure_ascii=False, indent=0, sort_keys=True),
                                     encoding="utf-8")
@@ -509,7 +554,7 @@ def export_stories(out, assets):
     stories = {"opening": read_table(ROOT / edat[63]), "endings": endings,
                "gamestr": read_table(ROOT / "gamestr.scr")[:2],
                "titles": read_table(ROOT / edat[54])[38:62]}  # the Endings menu
-    (out / "stories.json").write_text(json.dumps(stories, ensure_ascii=False, indent=0))
+    (out / "stories.json").write_text(json.dumps(own_texts(stories), ensure_ascii=False, indent=0))
     (assets / "story").mkdir(parents=True, exist_ok=True)
     for name in STORY_PICTURES:
         Image.open(ROOT / (name + ".png")).convert("RGBA").save(assets / "story" / (name + ".png"))
@@ -551,7 +596,8 @@ def export_campaign(out):
         o = 38 * r + 10
         chapters.append([b for b in rows[o + 30:o + 36] if b > 0])  # chapter r
         if r > 0:
-            lords[r] = {"name": cstr(rows[o:o + 30]), "first_mission": rows[o + 36], "missions": rows[o + 37]}
+            name = own_name("chapters", str(r)) if str(r) in OWN_NAMES["chapters"] else cstr(rows[o:o + 30])
+            lords[r] = {"name": name, "first_mission": rows[o + 36], "missions": rows[o + 37]}
         r += 1
     while chapters and not chapters[-1]:
         chapters.pop()
@@ -566,9 +612,9 @@ def export_campaign(out):
         missions.append({
             "id": mid, "start": [m[1], m[2]], "tint": m[3], "boss_type": m[4], "general": m[5],
             "reward": m[6], "gold": m[7], "time_limit": m[8] | m[9] << 8, "level_bonus": m[10],
-            "name": cstr(names[n:n + 14]) if mid > 0 else "",
+            "name": own_title(cstr(names[n:n + 14])) if mid > 0 else "",
             "portrait": int.from_bytes(names[n + 14:n + 15], "little", signed=True) if mid > 0 else 0,
-            "description": expand_text(descriptions, len(missions)) if len(missions) < len(descriptions) else "",
+            "description": own_text(expand_text(descriptions, len(missions))) if len(missions) < len(descriptions) else "",
         })
         i += 11
     (out / "campaign.json").write_text(json.dumps(

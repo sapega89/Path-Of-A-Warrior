@@ -259,7 +259,7 @@ func _clock(secs: int, at: Vector2, k: float) -> void:
 func _target(t: Dictionary, view: Vector2, k: float) -> void:
 	var font := get_theme_default_font()
 	var font_size := int(12 * k)
-	var label := str(t.get("name", ""))
+	var label := tr(str(t.get("name", "")))
 	var w := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
 	var top := TOP_Y * k
 	draw_string_outline(font, Vector2(view.x - 8 * k - w, top + 11 * k), label,

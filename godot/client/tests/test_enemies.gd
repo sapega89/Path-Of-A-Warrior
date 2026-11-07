@@ -373,12 +373,12 @@ func test_general_comes_with_his_talk() -> void:
 	var d := _general_duel()
 	var sim: RefCounted = d[0]
 	var g = d[1]
-	eq(sim.general.get("name", ""), "Wallace", "general 1")
+	eq(sim.general.get("name", ""), "Waclaw Krzeminski", "general 1")
 	check(sim.boss_fight, "the mission's own general")
 	eq(g.level, 2, "the hero's level and the list's count")
 	eq(g.hp, 23, "20 HP and 3 a level")
 	eq(sim.talk.size(), 3, "three lines")
-	eq(sim.talk[0], "[Wallace] Wallace is here!!!", "his name for &")
+	eq(sim.talk[0], "[Waclaw Krzeminski] Waclaw Krzeminski is here!!!", "his name for &")
 	sim.tick(-1, -1)
 	eq(sim.talk_text(), "[", "typed a letter a tick")
 	var x: int = sim.hero.pos.x
@@ -438,7 +438,7 @@ func test_rewards_and_the_talk_after_the_mission() -> void:
 	_next_page(sim)
 	eq(sim.banner, 0, "the pages are over")
 	eq(sim.talk.size(), 5, "the general talks")
-	check(sim.talk[0].begins_with("[Reeve] Not bad, warrior."), "his first words: %s" % sim.talk[0])
+	check(sim.talk[0].begins_with("[Andrii Nedolia] Not bad, warrior."), "his first words: %s" % sim.talk[0])
 	check(sim.talk[1].begins_with("[Hero]"), "then the hero")
 	eq(sim.friendship.get(5, 0), 5, "friendship grows")
 	for t in 400:
@@ -473,7 +473,7 @@ func test_general_skills_are_actions() -> void:
 	var d := _general_duel()
 	var sim: RefCounted = d[0]
 	var g = d[1]
-	sim.set_general(4)  # Kirkland: skills 2, 3, 4, 6 (a heal only when hurt: else a strike)
+	sim.set_general(4)  # Jan Gorski: skills 2, 3, 4, 6 (a heal only when hurt: else a strike)
 	for t in 20:
 		sim.general_pick_skill(g, false)
 		check(g.action == 1 or (g.action >= 5 and g.action <= 21), "a skill action: %d" % g.action)

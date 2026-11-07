@@ -43,10 +43,10 @@ func test_campaign_tables() -> void:
 	var c: RefCounted = Campaign.new()
 	eq(c.chapters.size(), 45, "chapters")
 	eq(c.chapter_lords(0), [1.0], "chapter 1: lord 1")
-	eq(c.lord_name(1), "The Rise", "lord 1")
+	eq(c.lord_name(1), "Uprising", "lord 1")
 	var ms: Array = c.lord_missions(1)
 	eq(ms.size(), 4, "lord 1 has 4 missions")
-	eq(ms[0].name, "Lord Gabriel", "first mission")
+	eq(ms[0].name, "Colonel Bairak", "first mission")
 	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(int(ms[0].start[0]), int(ms[0].start[1])))
 	eq(sim.hero.pos, Vector2i(4 * 27 + 12, 2 * 27 + 20), "start position in pixels")
 	# Every lord's map exists and its missions have room data.

@@ -84,7 +84,7 @@ func show_level() -> void:
 			heading.text = campaign.lord_name(lord_id)
 			var ms := campaign.lord_missions(lord_id)
 			for i in ms.size():
-				var text: String = tr("campaign.mission") % [i + 1, ms[i].get("name", "")]
+				var text: String = tr("campaign.mission") % [i + 1, tr(str(ms[i].get("name", "")))]
 				if profile.is_done(lord_id, i):
 					text += DONE_MARK
 				_item(text, _open_mission.bind(i))
@@ -150,7 +150,7 @@ func accept_text() -> String:
 	var general := MapSim.general_data(int(m.get("boss_type", 0)))
 	var lv := int(profile.level) + int(m.get("level_bonus", 0))
 	var gold := int(m.get("gold", 0)) * 150 * (1 + (int(profile.difficulty) ^ 1))
-	return "%s\n%s\n\n%s" % [str(general.get("name", "")), tr("campaign.level_gold") % [lv, gold],
+	return "%s\n%s\n\n%s" % [tr(str(general.get("name", ""))), tr("campaign.level_gold") % [lv, gold],
 		tr("campaign.accept")]
 
 

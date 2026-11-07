@@ -162,17 +162,17 @@
 ],
 "lords": {
 "1": {
-"name": "The Rise",
+"name": "Uprising",
 "first_mission": 0,
 "missions": 4
 },
 "2": {
-"name": "The Yellow",
+"name": "Yellow Waters",
 "first_mission": 4,
 "missions": 4
 },
 "3": {
-"name": "Hellgate",
+"name": "Chortomlyk",
 "first_mission": 8,
 "missions": 5
 },
@@ -187,17 +187,17 @@
 "missions": 2
 },
 "6": {
-"name": "Brown Soil",
+"name": "Black Earth",
 "first_mission": 20,
 "missions": 2
 },
 "7": {
-"name": "The End",
+"name": "End of Glory",
 "first_mission": 22,
 "missions": 2
 },
 "8": {
-"name": "Assassin",
+"name": "The Assassin",
 "first_mission": 24,
 "missions": 2
 },
@@ -207,17 +207,17 @@
 "missions": 2
 },
 "10": {
-"name": "Honor",
+"name": "Honour",
 "first_mission": 28,
 "missions": 2
 },
 "11": {
-"name": "Strongest Man",
+"name": "The Strongman",
 "first_mission": 30,
 "missions": 3
 },
 "12": {
-"name": "Maniac",
+"name": "The Madman",
 "first_mission": 33,
 "missions": 5
 },
@@ -232,37 +232,37 @@
 "missions": 2
 },
 "15": {
-"name": "The Power",
+"name": "The Mace",
 "first_mission": 42,
 "missions": 2
 },
 "16": {
-"name": "Lionheart",
+"name": "Lion's Heart",
 "first_mission": 44,
 "missions": 1
 },
 "17": {
-"name": "South Castle",
+"name": "Kodak",
 "first_mission": 45,
 "missions": 2
 },
 "18": {
-"name": "Fall of Honor",
+"name": "Treason",
 "first_mission": 47,
 "missions": 2
 },
 "19": {
-"name": "Hunt Down",
+"name": "The Hunt",
 "first_mission": 49,
 "missions": 2
 },
 "20": {
-"name": "New Chance",
+"name": "New Hope",
 "first_mission": 51,
 "missions": 2
 },
 "21": {
-"name": "Crash",
+"name": "Rout",
 "first_mission": 53,
 "missions": 2
 },
@@ -272,57 +272,57 @@
 "missions": 2
 },
 "23": {
-"name": "Out-numbered",
+"name": "One Against a Horde",
 "first_mission": 57,
 "missions": 2
 },
 "24": {
-"name": "Exodus",
+"name": "To the Sich",
 "first_mission": 59,
 "missions": 2
 },
 "25": {
-"name": "Chaos",
+"name": "Troubles",
 "first_mission": 61,
 "missions": 1
 },
 "26": {
-"name": "A Wish",
+"name": "The Testament",
 "first_mission": 62,
 "missions": 2
 },
 "27": {
-"name": "Showdown",
+"name": "The Last Battle",
 "first_mission": 64,
 "missions": 2
 },
 "28": {
-"name": "Sebastian",
+"name": "Stanislaw",
 "first_mission": 66,
 "missions": 2
 },
 "29": {
-"name": "Chasing",
+"name": "The Chase",
 "first_mission": 68,
 "missions": 2
 },
 "30": {
-"name": "Soul Valley",
+"name": "Valley of Souls",
 "first_mission": 70,
 "missions": 2
 },
 "31": {
-"name": "Golden Aaron",
+"name": "Golden Arsen",
 "first_mission": 72,
 "missions": 2
 },
 "32": {
-"name": "Stand-Alone",
+"name": "Alone",
 "first_mission": 74,
 "missions": 2
 },
 "33": {
-"name": "Black Plain I",
+"name": "Black Road I",
 "first_mission": 76,
 "missions": 2
 },
@@ -332,52 +332,52 @@
 "missions": 2
 },
 "35": {
-"name": "Green Swamp",
+"name": "Berestechko Marshes",
 "first_mission": 80,
 "missions": 2
 },
 "36": {
-"name": "Brown Peak",
+"name": "Bura Mohyla",
 "first_mission": 82,
 "missions": 2
 },
 "37": {
-"name": "Blue Port",
+"name": "Ochakiv",
 "first_mission": 84,
 "missions": 2
 },
 "38": {
-"name": "Stargate",
+"name": "Golden Gate",
 "first_mission": 86,
 "missions": 2
 },
 "39": {
-"name": "Mainland",
+"name": "The Great Land",
 "first_mission": 88,
 "missions": 2
 },
 "40": {
-"name": "Left Sword",
+"name": "Left Bank",
 "first_mission": 90,
 "missions": 2
 },
 "41": {
-"name": "The Bone Plain",
+"name": "Wild Field",
 "first_mission": 92,
 "missions": 2
 },
 "42": {
-"name": "Black Plain II",
+"name": "Black Road II",
 "first_mission": 94,
 "missions": 2
 },
 "43": {
-"name": "Wearisome War",
+"name": "The Ruin",
 "first_mission": 96,
 "missions": 2
 },
 "44": {
-"name": "Lionheart",
+"name": "Lion's Heart II",
 "first_mission": 98,
 "missions": 2
 },
@@ -401,9 +401,9 @@
 "gold": 3,
 "time_limit": 192,
 "level_bonus": 1,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "\"The Rise of Darkness\" has roused many nameless heroes, still loyal to the true Emperor Duncan, to stand united against the forces of chaos. Lord Gabriel is one of them. He is from Beryl Mountain and is related to the holy emperor's family. We've been watching him carefully, and think he is destined for greatness. You are to help him rout General Wallace, one of the Dark Forces' top leaders. You will participate in a pincer movement. Lord Gabriel will attack from behind and you will attack from the front. The mission objective is to eliminate General Wallace. Do you accept this mission?"
+"description": "\"The Rise of Darkness\" has roused many nameless heroes, still loyal to the true Hetman Verbenko, to stand united against the forces of chaos. Colonel Bairak is one of them. He is from Green Mountain and is related to the holy emperor's family. We've been watching him carefully, and think he is destined for greatness. You are to help him rout Rotmistr Krzeminski, one of the Crown Army's top leaders. You will participate in a pincer movement. Colonel Bairak will attack from behind and you will attack from the front. The mission objective is to eliminate Rotmistr Krzeminski. Do you accept this mission?"
 },
 {
 "id": 2,
@@ -418,9 +418,9 @@
 "gold": 3,
 "time_limit": 192,
 "level_bonus": 2,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "\"The Rise of Darkness\" has roused many nameless heroes, still loyal to the true Emperor Duncan, to stand united against the forces of chaos. Lord Frederick is one of them. He is from Cerise Plains and is currently just an apprentice knight.. We've been watching him carefully, and think he is destined for greatness. You are to help him rout General Philip, one of the Dark Forces' top leaders. You will participate in a pincer movement. Lord Frederick will attack from behind and you will attack from the front. The mission objective is to eliminate General Philip. Do you accept this mission?"
+"description": "\"The Rise of Darkness\" has roused many nameless heroes, still loyal to the true Hetman Verbenko, to stand united against the forces of chaos. Colonel Chornohuz is one of them. He is from Red Steppe and is currently just an apprentice knight.. We've been watching him carefully, and think he is destined for greatness. You are to help him rout Rotmistr Zaleski, one of the Crown Army's top leaders. You will participate in a pincer movement. Colonel Chornohuz will attack from behind and you will attack from the front. The mission objective is to eliminate Rotmistr Zaleski. Do you accept this mission?"
 },
 {
 "id": 3,
@@ -435,9 +435,9 @@
 "gold": 3,
 "time_limit": 192,
 "level_bonus": 3,
-"name": "Lord Vincent",
+"name": "Colonel Syvous",
 "portrait": 25,
-"description": "\"The Rise of Darkness\" has roused many nameless heroes, still loyal to the true Emperor Duncan, to stand united against the forces of chaos. Lord Wesley is one of them. He is the lord of Auric River and known as a fierce warrior.. We've been watching him carefully, and think he is destined for greatness. You are to help him rout General Langley, one of the Dark Forces' top leaders. You will participate in a pincer movement. Lord Wesley will attack from behind and you will attack from the front. The mission objective is to eliminate General Langley. Do you accept this mission?"
+"description": "\"The Rise of Darkness\" has roused many nameless heroes, still loyal to the true Hetman Verbenko, to stand united against the forces of chaos. Colonel Tykhyi is one of them. He is the lord of Zolota Lypa and known as a fierce warrior.. We've been watching him carefully, and think he is destined for greatness. You are to help him rout Rotmistr Wolski, one of the Crown Army's top leaders. You will participate in a pincer movement. Colonel Tykhyi will attack from behind and you will attack from the front. The mission objective is to eliminate Rotmistr Wolski. Do you accept this mission?"
 },
 {
 "id": 4,
@@ -452,9 +452,9 @@
 "gold": 6,
 "time_limit": 252,
 "level_bonus": 15,
-"name": "Lord Edison",
+"name": "Colonel Vovkodav",
 "portrait": 0,
-"description": "The Dark Forces have dispatched their armies all over the continent. General Augustine, one of the three heads of the Dark Forces and the younger brother of Lord Brendan, has entered the area and is vulnerable to attack. You will need to launch a full frontal assault on General Augustine. This is a tough mission, but if you are successful you will be richly rewarded. Do you accept this mission?"
+"description": "The Crown Army have dispatched their armies all over the continent. Rotmistr Augustyn, one of the three heads of the Crown Army and the younger brother of Kniaz Bronislaw, has entered the area and is vulnerable to attack. You will need to launch a full frontal assault on Rotmistr Augustyn. This is a tough mission, but if you are successful you will be richly rewarded. Do you accept this mission?"
 },
 {
 "id": 1,
@@ -469,9 +469,9 @@
 "gold": 3,
 "time_limit": 192,
 "level_bonus": 1,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Thanks in part to your brilliant assault, General Wallace's brigade is now in tatters. Lord Gabriel has shifted his attention to engaging General Drake's army. The mission objective is to eliminate General Drake. What say you?"
+"description": "Thanks in part to your brilliant assault, Rotmistr Krzeminski's brigade is now in tatters. Colonel Bairak has shifted his attention to engaging Kara-murza's army. The mission objective is to eliminate Kara-murza. What say you?"
 },
 {
 "id": 2,
@@ -486,9 +486,9 @@
 "gold": 3,
 "time_limit": 192,
 "level_bonus": 2,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Thanks in part to your brilliant assault, General Philip's brigade is now in tatters. Lord Frederick has shifted his attention to engaging General Dunstan's army. The mission objective is to eliminate General Dunstan. What say you?"
+"description": "Thanks in part to your brilliant assault, Rotmistr Zaleski's brigade is now in tatters. Colonel Chornohuz has shifted his attention to engaging Dzhanbek-bey's army. The mission objective is to eliminate Dzhanbek-bey. What say you?"
 },
 {
 "id": 3,
@@ -503,9 +503,9 @@
 "gold": 3,
 "time_limit": 192,
 "level_bonus": 3,
-"name": "Lord Vincent",
+"name": "Colonel Syvous",
 "portrait": 25,
-"description": "Thanks in part to your brilliant assault, General Peter's brigade is now in tatters. Lord Wesley has shifted his attention to engaging General Lord Brendan's army. The mission objective is to eliminate General Lord Brendan. What say you?"
+"description": "Thanks in part to your brilliant assault, Rotmistr Rudzki's brigade is now in tatters. Colonel Tykhyi has shifted his attention to engaging Kniaz Bronislaw's army. The mission objective is to eliminate Kniaz Bronislaw. What say you?"
 },
 {
 "id": 5,
@@ -520,9 +520,9 @@
 "gold": 9,
 "time_limit": 252,
 "level_bonus": 30,
-"name": "Lord Edgar",
+"name": "Colonel Dovhan",
 "portrait": 0,
-"description": "We are on the verge of a breakthrough! That evil dog, Lord Brendan, is in danger. His situation on the battlefield is desperate, and he has sent an urgent request for reinforcements. Your task is to engage Lord Brendan and vanquish the ferocious warriors that serve him before help arrives. Do you accept this critical mission?"
+"description": "We are on the verge of a breakthrough! That evil dog, Kniaz Bronislaw, is in danger. His situation on the battlefield is desperate, and he has sent an urgent request for reinforcements. Your task is to engage Kniaz Bronislaw and vanquish the ferocious warriors that serve him before help arrives. Do you accept this critical mission?"
 },
 {
 "id": 6,
@@ -537,9 +537,9 @@
 "gold": 3,
 "time_limit": 192,
 "level_bonus": 2,
-"name": "Lord Herbert",
+"name": "Colonel Shabliuk",
 "portrait": 0,
-"description": "You've done well! Lord Brendan's armies have been annihilated, leading to a brief respite from this unending violence. However, the problem runs deeper than we thought: this time it is Lord Geoffrey, Liege of Amethyst Desert, who is behind the chaos. After Lord Brendan went down in defeat, Lord Geoffrey's stature within Empyrean Castle grew, along with his armies and ambition.Lord Geoffrey recently dethroned Emperor Duncan the Grey, replacing him with his younger sister, the newly crowned Empress Beatrice. Needless to say, Lord Geoffrey is now the real power behind the throne. Heroes from around the kingdom have united to declare Lord Geoffrey's actions unlawful and unsanctioned. Allied forces are marching to Empyrean Castle as we speak! Lord Gabriel has set out with Lord Bartholomew to support the Allies. Your job is to engage Lord Geoffrey's new vassal, General Catherine, the first female general in the Empire's long history. Can you do it?"
+"description": "You've done well! Kniaz Bronislaw's armies have been annihilated, leading to a brief respite from this unending violence. However, the problem runs deeper than we thought: this time it is Colonel Kozub, Liege of Oleshky Sands, who is behind the chaos. After Kniaz Bronislaw went down in defeat, Colonel Kozub's stature within Chyhyryn grew, along with his armies and ambition.Colonel Kozub recently dethroned Hetman Verbenko the Grey, replacing him with his younger sister, the newly crowned Hetmanka Bohuslava. Needless to say, Colonel Kozub is now the real power behind the throne. Heroes from around the kingdom have united to declare Colonel Kozub's actions unlawful and unsanctioned. Allied forces are marching to Chyhyryn as we speak! Colonel Bairak has set out with Colonel Varfolomii to support the Allies. Your job is to engage Colonel Kozub's new vassal, Katria, the first female general in the Hetmanate's long history. Can you do it?"
 },
 {
 "id": 7,
@@ -554,9 +554,9 @@
 "gold": 3,
 "time_limit": 192,
 "level_bonus": 2,
-"name": "Lord Eugene",
+"name": "Colonel Tuman",
 "portrait": 0,
-"description": "You've done well! Lord Brendan's armies have been annihilated, leading to a brief respite from this unending violence. However, the problem runs deeper than we thought: this time it is Lord Geoffrey, Liege of Amethyst Desert, who is behind the chaos. After Lord Brendan went down in defeat, Lord Geoffrey's stature within Empyrean Castle grew, along with his armies and ambition.Lord Geoffrey recently dethroned Emperor Duncan the Grey, replacing him with his younger sister, the newly crowned Empress Beatrice. Needless to say, Lord Geoffrey is now the real power behind the throne. Heroes from around the kingdom have united to declare Lord Geoffrey's actions unlawful and unsanctioned. Allied forces are marching to Empyrean Castle as we speak! Lord Eugene of Crimson Ocean is moving to support the Allies. Your job is to engage Lord Geoffrey's new vassal, General Catherine, the first female general in the Empire's long history. Can you do it?"
+"description": "You've done well! Kniaz Bronislaw's armies have been annihilated, leading to a brief respite from this unending violence. However, the problem runs deeper than we thought: this time it is Colonel Kozub, Liege of Oleshky Sands, who is behind the chaos. After Kniaz Bronislaw went down in defeat, Colonel Kozub's stature within Chyhyryn grew, along with his armies and ambition.Colonel Kozub recently dethroned Hetman Verbenko the Grey, replacing him with his younger sister, the newly crowned Hetmanka Bohuslava. Needless to say, Colonel Kozub is now the real power behind the throne. Heroes from around the kingdom have united to declare Colonel Kozub's actions unlawful and unsanctioned. Allied forces are marching to Chyhyryn as we speak! Colonel Tuman of Black Sea is moving to support the Allies. Your job is to engage Colonel Kozub's new vassal, Katria, the first female general in the Hetmanate's long history. Can you do it?"
 },
 {
 "id": 2,
@@ -571,9 +571,9 @@
 "gold": 3,
 "time_limit": 246,
 "level_bonus": 2,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "You've done well! Lord Brendan's armies have been annihilated, leading to a brief respite from this unending violence. However, the problem runs deeper than we thought: this time it is Lord Geoffrey, Liege of Amethyst Desert, who is behind the chaos. After Lord Brendan went down in defeat, Lord Geoffrey's stature within Empyrean Castle grew, along with his armies and ambition.Lord Geoffrey recently dethroned Emperor Duncan the Grey, replacing him with his younger sister, the newly crowned Empress Beatrice. Needless to say, Lord Geoffrey is now the real power behind the throne. Heroes from around the kingdom have united to declare Lord Geoffrey's actions unlawful and unsanctioned. Allied forces are marching to Empyrean Castle as we speak! Lord Frederick has organized a band of heroes and is heading to support the Allies. Your job is to engage Lord Geoffrey's new vassal, General Catherine, the first female general in the Empire's long history. Can you do it?"
+"description": "You've done well! Kniaz Bronislaw's armies have been annihilated, leading to a brief respite from this unending violence. However, the problem runs deeper than we thought: this time it is Colonel Kozub, Liege of Oleshky Sands, who is behind the chaos. After Kniaz Bronislaw went down in defeat, Colonel Kozub's stature within Chyhyryn grew, along with his armies and ambition.Colonel Kozub recently dethroned Hetman Verbenko the Grey, replacing him with his younger sister, the newly crowned Hetmanka Bohuslava. Needless to say, Colonel Kozub is now the real power behind the throne. Heroes from around the kingdom have united to declare Colonel Kozub's actions unlawful and unsanctioned. Allied forces are marching to Chyhyryn as we speak! Colonel Chornohuz has organized a band of heroes and is heading to support the Allies. Your job is to engage Colonel Kozub's new vassal, Katria, the first female general in the Hetmanate's long history. Can you do it?"
 },
 {
 "id": 3,
@@ -588,9 +588,9 @@
 "gold": 3,
 "time_limit": 192,
 "level_bonus": 2,
-"name": "Lord Vincent",
+"name": "Colonel Syvous",
 "portrait": 25,
-"description": "You've done well! Lord Brendan's armies have been annihilated, leading to a brief respite from this unending violence. However, the problem runs deeper than we thought: this time it is Lord Geoffrey, Liege of Amethyst Desert, who is behind the chaos. After Lord Brendan went down in defeat, Lord Geoffrey's stature within Empyrean Castle grew, along with his armies and ambition.Lord Geoffrey recently dethroned Emperor Duncan the Grey, replacing him with his younger sister, the newly crowned Empress Beatrice. Needless to say, Lord Geoffrey is now the real power behind the throne. Heroes from around the kingdom have united to declare Lord Geoffrey's actions unlawful and unsanctioned. Allied forces are marching to Empyrean Castle as we speak! Lord Wesley of Auric River is moving to support the Allies. Your job is to engage Lord Geoffrey's new vassal, General Catherine, the first female general in the Empire's long history. Can you do it?"
+"description": "You've done well! Kniaz Bronislaw's armies have been annihilated, leading to a brief respite from this unending violence. However, the problem runs deeper than we thought: this time it is Colonel Kozub, Liege of Oleshky Sands, who is behind the chaos. After Kniaz Bronislaw went down in defeat, Colonel Kozub's stature within Chyhyryn grew, along with his armies and ambition.Colonel Kozub recently dethroned Hetman Verbenko the Grey, replacing him with his younger sister, the newly crowned Hetmanka Bohuslava. Needless to say, Colonel Kozub is now the real power behind the throne. Heroes from around the kingdom have united to declare Colonel Kozub's actions unlawful and unsanctioned. Allied forces are marching to Chyhyryn as we speak! Colonel Tykhyi of Zolota Lypa is moving to support the Allies. Your job is to engage Colonel Kozub's new vassal, Katria, the first female general in the Hetmanate's long history. Can you do it?"
 },
 {
 "id": 8,
@@ -605,9 +605,9 @@
 "gold": 5,
 "time_limit": 312,
 "level_bonus": 7,
-"name": "Lord Benjamin",
+"name": "Colonel Yavir",
 "portrait": 0,
-"description": "After Lord Brendan's Dark forces were annihilated, Lord Geoffrey's stature as a leader in Empyrean Castle grew. Lord Geoffrey may be dimwitted and greedy, but he also is an excellent judge of character. He is accompanied by General Conrad--known to his enemies as the Butcher--and is generally regarded as the strongest man in the Empire.Lord Geoffrey has dethroned Duncan the Grey and declared Duncan's younger sister, Beatrice, the new Empress. These actions have turned the people's sentiment against Lord Geoffrey, and rebels from around the kingdom have banned together and declared Lord Geoffrey's actions unlawful and unsanctioned. These rebels have organized their forces against Lord Geoffrey and marched to Empyrean Castle. Lord Wesley is leading this rabble. They are now gathered in front of Fort Hell Gate to unleash their attack. General Catherine, the first female general in the Empire's illustrious history, has taken up the sword against the rebels and is requesting reinforcements from us. Your mission objective is to engage Lord Wesley and quell the rebel attack. Will you fight him?"
+"description": "After Kniaz Bronislaw's Crown army were annihilated, Colonel Kozub's stature as a leader in Chyhyryn grew. Colonel Kozub may be dimwitted and greedy, but he also is an excellent judge of character. He is accompanied by Colonel Zaderykhvist--known to his enemies as the Butcher--and is generally regarded as the strongest man in the Hetmanate.Colonel Kozub has dethroned Verbenko the Grey and declared Verbenko's younger sister, Bohuslava, the new Empress. These actions have turned the people's sentiment against Colonel Kozub, and rebels from around the kingdom have banned together and declared Colonel Kozub's actions unlawful and unsanctioned. These rebels have organized their forces against Colonel Kozub and marched to Chyhyryn. Colonel Tykhyi is leading this rabble. They are now gathered in front of Chortomlyk Fort Gate to unleash their attack. Katria, the first female general in the Hetmanate's illustrious history, has taken up the sword against the rebels and is requesting reinforcements from us. Your mission objective is to engage Colonel Tykhyi and quell the rebel attack. Will you fight him?"
 },
 {
 "id": 6,
@@ -622,9 +622,9 @@
 "gold": 3,
 "time_limit": 300,
 "level_bonus": 2,
-"name": "Lord Herbert",
+"name": "Colonel Shabliuk",
 "portrait": 0,
-"description": "General Catherine's forces have been vanquished, and we offer you our thanks for your prominent role in the battle. It is a shame that such a talented general as Catherine is now a footnote in the Empire's history, simply because she served the wrong lord. However, you now have a bigger obstacle ahead of you: the infamous General Conrad, known as the Butcher. Are you brave enough to challenge him?"
+"description": "Katria's forces have been vanquished, and we offer you our thanks for your prominent role in the battle. It is a shame that such a talented general as Katria is now a footnote in the Hetmanate's history, simply because she served the wrong lord. However, you now have a bigger obstacle ahead of you: the infamous Colonel Zaderykhvist, known as the Butcher. Are you brave enough to challenge him?"
 },
 {
 "id": 7,
@@ -639,7 +639,7 @@
 "gold": 3,
 "time_limit": 300,
 "level_bonus": 2,
-"name": "Lord Eugene",
+"name": "Colonel Tuman",
 "portrait": 0,
 "description": "13"
 },
@@ -656,7 +656,7 @@
 "gold": 3,
 "time_limit": 300,
 "level_bonus": 2,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
 "description": "13"
 },
@@ -673,7 +673,7 @@
 "gold": 3,
 "time_limit": 300,
 "level_bonus": 2,
-"name": "Lord Vincent",
+"name": "Colonel Syvous",
 "portrait": 25,
 "description": "13"
 },
@@ -690,9 +690,9 @@
 "gold": 5,
 "time_limit": 366,
 "level_bonus": 7,
-"name": "Lord Benjamin",
+"name": "Colonel Yavir",
 "portrait": 0,
-"description": "Bad news: the rebel forces who retreated in cowardice have returned! Your valiant effort was for naught. General Conrad is now on the move to take his revenge against the rebels and has requested your support. Your mission objective is to eliminate Lord Wesley. Do you accept this mission?"
+"description": "Bad news: the rebel forces who retreated in cowardice have returned! Your valiant effort was for naught. Colonel Zaderykhvist is now on the move to take his revenge against the rebels and has requested your support. Your mission objective is to eliminate Colonel Tykhyi. Do you accept this mission?"
 },
 {
 "id": 3,
@@ -707,9 +707,9 @@
 "gold": 3,
 "time_limit": 354,
 "level_bonus": 2,
-"name": "Lord Vincent",
+"name": "Colonel Syvous",
 "portrait": 25,
-"description": "The allies have defeated Lord Geoffrey's army, but Lord Geoffrey somehow escaped. In the process, he has taken Empress Beatrice hostage. Empyrean Castle has been ransacked and the place now stands deserted. Out of respect for the safety of Empress Beatrice, the allied forces have decided not to chase Lord Geoffrey's forces and have instead dispersed into smaller groups. In another turn of events, Lord Wesley discovered the sought after Royal Seal, and on his way home was promptly attacked by Lord Caden of Regal Canyon. Lord Wesley was fortunate enough to escape with his life, and is now leading a punitive mission back to Regal Canyon to settle the score. Your mission objective is to support Lord Wesley in his counter-attack. Yes or no?"
+"description": "The allies have defeated Colonel Kozub's army, but Colonel Kozub somehow escaped. In the process, he has taken Hetmanka Bohuslava hostage. Chyhyryn has been ransacked and the place now stands deserted. Out of respect for the safety of Hetmanka Bohuslava, the allied forces have decided not to chase Colonel Kozub's forces and have instead dispersed into smaller groups. In another turn of events, Colonel Tykhyi discovered the sought after Royal Seal, and on his way home was promptly attacked by Colonel Kalyna of King's Ravine. Colonel Tykhyi was fortunate enough to escape with his life, and is now leading a punitive mission back to King's Ravine to settle the score. Your mission objective is to support Colonel Tykhyi in his counter-attack. Yes or no?"
 },
 {
 "id": 9,
@@ -724,9 +724,9 @@
 "gold": 5,
 "time_limit": 354,
 "level_bonus": 4,
-"name": "Lord Anthony",
+"name": "Colonel Kremin",
 "portrait": 0,
-"description": "Lord Wesley has discovered the coveted Royal Seal. Lord Caden of Regal Canyon ambushed Lord Wesley in hopes of recovering the Royal Seal himself, but good fortune shone upon Lord Wesley and he escaped. Now, Lord Wesley is heading back to Regal Canyon for a counter-attack and Lord Caden is in distress. Lord Caden knows he cannot face an enraged Lord Wesley by himself and has pleaded for support. Your mission objective is to intercept Lord Wesley and stop him. Do you accept this mission?"
+"description": "Colonel Tykhyi has discovered the coveted Royal Seal. Colonel Kalyna of King's Ravine ambushed Colonel Tykhyi in hopes of recovering the Royal Seal himself, but good fortune shone upon Colonel Tykhyi and he escaped. Now, Colonel Tykhyi is heading back to King's Ravine for a counter-attack and Colonel Kalyna is in distress. Colonel Kalyna knows he cannot face an enraged Colonel Tykhyi by himself and has pleaded for support. Your mission objective is to intercept Colonel Tykhyi and stop him. Do you accept this mission?"
 },
 {
 "id": 6,
@@ -741,9 +741,9 @@
 "gold": 3,
 "time_limit": 246,
 "level_bonus": 3,
-"name": "Lord Herbert",
+"name": "Colonel Shabliuk",
 "portrait": 0,
-"description": "Lord Bartholomew is foolish indeed! It is a good thing Lord Gabriel disassociated with Lord Bartholomew prior to the upcoming battle. Here is the story: Lord Bartholomew returned to his land, White Highland, dissatisfied with his holdings, even though he had made off with a modest amount of gold stolen from Empyrean Castle. He decided to expand his land by annexing Ecru Terra, a plot of land adjacent to his property.The clever Lord Eugene became aware of Lord Bartholomew's intentions and cooked up a plan to swindle him. Lord Eugene contacted Lord Bartholomew and suggested they jointly attack Ecru Terra and split the land. After Lord Bartholomew agreed, Lord Eugene dispatched a messenger to Lord Berenger of Ecru Terra to warn him of Lord Bartholomew's impending attack on his land. Out of fear, Lord Berenger asked Lord Eugene for help, which allowed Lord Eugene to move into Ecru Terra and bloodlessly conquer the land himself. Lord Bartholomew soon learned he had been cheated, and sent his younger brother, General Sonton, to deliver a message to Lord Eugene, demanding his share of the Ecru Terra. In response, Lord Eugene has executed General Sonton, and now an enraged Lord Bartholomew is charging towards Lord Eugene's army, vowing to unleash carnage. Lord Bartholomew has requested your support. Will you help him revenge himself upon Lord Eugene?"
+"description": "Colonel Varfolomii is foolish indeed! It is a good thing Colonel Bairak disassociated with Colonel Varfolomii prior to the upcoming battle. Here is the story: Colonel Varfolomii returned to his land, Volhynia, dissatisfied with his holdings, even though he had made off with a modest amount of gold stolen from Chyhyryn. He decided to expand his land by annexing Siveria, a plot of land adjacent to his property.The clever Colonel Tuman became aware of Colonel Varfolomii's intentions and cooked up a plan to swindle him. Colonel Tuman contacted Colonel Varfolomii and suggested they jointly attack Siveria and split the land. After Colonel Varfolomii agreed, Colonel Tuman dispatched a messenger to Colonel Bereza of Siveria to warn him of Colonel Varfolomii's impending attack on his land. Out of fear, Colonel Bereza asked Colonel Tuman for help, which allowed Colonel Tuman to move into Siveria and bloodlessly conquer the land himself. Colonel Varfolomii soon learned he had been cheated, and sent his younger brother, Osaul Sava, to deliver a message to Colonel Tuman, demanding his share of the Siveria. In response, Colonel Tuman has executed Osaul Sava, and now an enraged Colonel Varfolomii is charging towards Colonel Tuman's army, vowing to unleash carnage. Colonel Varfolomii has requested your support. Will you help him revenge himself upon Colonel Tuman?"
 },
 {
 "id": 7,
@@ -758,9 +758,9 @@
 "gold": 5,
 "time_limit": 246,
 "level_bonus": 5,
-"name": "Lord Eugene",
+"name": "Colonel Tuman",
 "portrait": 0,
-"description": "Lord Eugene sent Lord Bartholomew a letter, suggesting they attack Ecru Terra and split the land evenly. Once Lord Bartholomew agreed to the plan, Lord Eugene dispatched a messenger to Lord Berenger of Ecru Terra warning him of Lord Bartholomew's preparation to seize his land. Fearing for his safety, Lord Berenger asked Lord Eugene for help. Lord Eugene agreed and promptly moved into Ecru Terra, conquering it as he went.Lord Bartholomew realized that he had been swindled and sent General Sonton, his younger brother, to demand his share of Ecru Terra. Instead, Lord Eugene cold-bloodedly executed General Sonton. An enraged Lord Bartholomew is now charging towards Lord Eugene's forces to avenge his brother's death. Lord Eugene is requesting your support. Your mission objective is to quell Lord Bartholomew's assault. Do you accept this mission?"
+"description": "Colonel Tuman sent Colonel Varfolomii a letter, suggesting they attack Siveria and split the land evenly. Once Colonel Varfolomii agreed to the plan, Colonel Tuman dispatched a messenger to Colonel Bereza of Siveria warning him of Colonel Varfolomii's preparation to seize his land. Fearing for his safety, Colonel Bereza asked Colonel Tuman for help. Colonel Tuman agreed and promptly moved into Siveria, conquering it as he went.Colonel Varfolomii realized that he had been swindled and sent Osaul Sava, his younger brother, to demand his share of Siveria. Instead, Colonel Tuman cold-bloodedly executed Osaul Sava. An enraged Colonel Varfolomii is now charging towards Colonel Tuman's forces to avenge his brother's death. Colonel Tuman is requesting your support. Your mission objective is to quell Colonel Varfolomii's assault. Do you accept this mission?"
 },
 {
 "id": 6,
@@ -775,9 +775,9 @@
 "gold": 3,
 "time_limit": 300,
 "level_bonus": 5,
-"name": "Lord Herbert",
+"name": "Colonel Shabliuk",
 "portrait": 0,
-"description": "We are reaching the turning point of this battle. Lord Bartholomew and Lord Eugene are now both battling for their very lives: no quarter will be asked, and none given. Lord Bartholomew is requesting your support. Your mission objective is to turn the tide of the battle and lead Lord Bartholomew to victory. Will you do it?"
+"description": "We are reaching the turning point of this battle. Colonel Varfolomii and Colonel Tuman are now both battling for their very lives: no quarter will be asked, and none given. Colonel Varfolomii is requesting your support. Your mission objective is to turn the tide of the battle and lead Colonel Varfolomii to victory. Will you do it?"
 },
 {
 "id": 7,
@@ -792,9 +792,9 @@
 "gold": 3,
 "time_limit": 300,
 "level_bonus": 3,
-"name": "Lord Eugene",
+"name": "Colonel Tuman",
 "portrait": 0,
-"description": "We are reaching the turning point of this battle. Lord Bartholomew and Lord Eugene are now both battling for their very lives: no quarter will be asked, and none given. Lord Eugene is requesting your support. Your mission objective is to turn the tide of the battle and lead  to victory. Will you do it?"
+"description": "We are reaching the turning point of this battle. Colonel Varfolomii and Colonel Tuman are now both battling for their very lives: no quarter will be asked, and none given. Colonel Tuman is requesting your support. Your mission objective is to turn the tide of the battle and lead  to victory. Will you do it?"
 },
 {
 "id": 2,
@@ -809,9 +809,9 @@
 "gold": 3,
 "time_limit": 630,
 "level_bonus": 5,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "After Lord Caleb fled from Lord Frederick, Lord Frederick took to harassing Lord Caleb's sister-in-law. We have just caught wind of rumors that Lord Caleb is planning to assassinate Lord Frederick to protect his family's honor. Lord Frederick is requesting your support. Your mission objective is to protect Lord Frederick from Lord Caleb��s assault. Do you accept this mission?"
+"description": "After Colonel Dzhura fled from Colonel Chornohuz, Colonel Chornohuz took to harassing Colonel Dzhura's sister-in-law. We have just caught wind of rumors that Colonel Dzhura is planning to assassinate Colonel Chornohuz to protect his family's honor. Colonel Chornohuz is requesting your support. Your mission objective is to protect Colonel Chornohuz from Colonel Dzhura��s assault. Do you accept this mission?"
 },
 {
 "id": 10,
@@ -826,9 +826,9 @@
 "gold": 3,
 "time_limit": 300,
 "level_bonus": 4,
-"name": "Lord Charles",
+"name": "Colonel Teren",
 "portrait": 0,
-"description": "After Lord Caleb fled from Lord Frederick, Lord Frederick took to harassing Lord Caleb's sister-in-law. We have just caught wind of rumors that Lord Caleb is planning to assassinate Lord Frederick to protect his family's honor. Lord Caleb has appealed to us for help. Your mission objective is to protect Lord Frederick from Lord Caleb��s assault. Do you accept this mission?"
+"description": "After Colonel Dzhura fled from Colonel Chornohuz, Colonel Chornohuz took to harassing Colonel Dzhura's sister-in-law. We have just caught wind of rumors that Colonel Dzhura is planning to assassinate Colonel Chornohuz to protect his family's honor. Colonel Dzhura has appealed to us for help. Your mission objective is to protect Colonel Chornohuz from Colonel Dzhura��s assault. Do you accept this mission?"
 },
 {
 "id": 11,
@@ -843,9 +843,9 @@
 "gold": 3,
 "time_limit": 408,
 "level_bonus": 4,
-"name": "Lord Jacob",
+"name": "Colonel Derkach",
 "portrait": 31,
-"description": "After Lord Wesley's heroic death in battle, Lord Jaron made his way to Lord Barclay to ask for help. Lord Wesley's older supporters are now banding together along with fresh troops to press the assault. Lord Jaron will be defending his uncle against Lord Wesley's supporters in battle and has requested support. Your mission objective is to intercept Lord Wesley's supporters. Do you accept this mission?"
+"description": "After Colonel Tykhyi's heroic death in battle, Colonel Kosach made his way to Colonel Shulha to ask for help. Colonel Tykhyi's older supporters are now banding together along with fresh troops to press the assault. Colonel Kosach will be defending his uncle against Colonel Tykhyi's supporters in battle and has requested support. Your mission objective is to intercept Colonel Tykhyi's supporters. Do you accept this mission?"
 },
 {
 "id": 12,
@@ -860,9 +860,9 @@
 "gold": 3,
 "time_limit": 408,
 "level_bonus": 4,
-"name": "Lord Donald",
+"name": "Colonel Lysytsia",
 "portrait": 0,
-"description": "After Lord Wesley's heroic death in battle, Lord Jaron made his way to Lord Barclay to ask for help. Lord Wesley's older supporters are now banding together along with fresh troops to press the assault. Lord Jaron will be defending his uncle against Lord Wesley's supporters in battle and has requested support. Your mission objective is to intercept Lord Wesley's supporters. Do you accept this mission?"
+"description": "After Colonel Tykhyi's heroic death in battle, Colonel Kosach made his way to Colonel Shulha to ask for help. Colonel Tykhyi's older supporters are now banding together along with fresh troops to press the assault. Colonel Kosach will be defending his uncle against Colonel Tykhyi's supporters in battle and has requested support. Your mission objective is to intercept Colonel Tykhyi's supporters. Do you accept this mission?"
 },
 {
 "id": 1,
@@ -877,9 +877,9 @@
 "gold": 3,
 "time_limit": 192,
 "level_bonus": 4,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Lord Geoffrey has been assassinated by Lord Conrad, and now Lord Frederick is guarding Empress Beatrice. In light of this new development, Lord Gabriel and Lord Conrad have joined forces. Lord Frederick is wary of their alliance and has thus put in motion a plan to entrap them both. Lord Barclay is now charging toward Lord Gabriel. Your mission objective is to rendezvous with Lord Barclay and assault Lord Gabriel. Can you help?"
+"description": "Colonel Kozub has been assassinated by Colonel Zaderykhvist, and now Colonel Chornohuz is guarding Hetmanka Bohuslava. In light of this new development, Colonel Bairak and Colonel Zaderykhvist have joined forces. Colonel Chornohuz is wary of their alliance and has thus put in motion a plan to entrap them both. Colonel Shulha is now charging toward Colonel Bairak. Your mission objective is to rendezvous with Colonel Shulha and assault Colonel Bairak. Can you help?"
 },
 {
 "id": 13,
@@ -894,9 +894,9 @@
 "gold": 6,
 "time_limit": 252,
 "level_bonus": 10,
-"name": "Lord Ferdinand",
+"name": "Colonel Dubovyk",
 "portrait": 0,
-"description": "Lord Geoffrey has been assassinated by Lord Conrad, and now Lord Frederick is guarding Empress Beatrice. In light of this new development, Lord Gabriel and Lord Conrad have joined forces. Lord Frederick is wary of their alliance and has thus put in motion a plan to entrap them both. He has bribed Lord Barclay to attack Lord Gabriel. Your mission objective is to rendezvous with  and assault . Can you help?"
+"description": "Colonel Kozub has been assassinated by Colonel Zaderykhvist, and now Colonel Chornohuz is guarding Hetmanka Bohuslava. In light of this new development, Colonel Bairak and Colonel Zaderykhvist have joined forces. Colonel Chornohuz is wary of their alliance and has thus put in motion a plan to entrap them both. He has bribed Colonel Shulha to attack Colonel Bairak. Your mission objective is to rendezvous with  and assault . Can you help?"
 },
 {
 "id": 14,
@@ -911,9 +911,9 @@
 "gold": 6,
 "time_limit": 174,
 "level_bonus": 5,
-"name": "Lord Conrad",
+"name": "Colonel Zaderykhvist",
 "portrait": 4,
-"description": "Lord Frederick is preparing to capture Lord Conrad. Lord Conrad has heard about these developments and has appealed for your support. The Empire's strongest man almost always refuses aid, but he needs assistance now. Will you fight for him?"
+"description": "Colonel Chornohuz is preparing to capture Colonel Zaderykhvist. Colonel Zaderykhvist has heard about these developments and has appealed for your support. The Hetmanate's strongest man almost always refuses aid, but he needs assistance now. Will you fight for him?"
 },
 {
 "id": 1,
@@ -928,9 +928,9 @@
 "gold": 3,
 "time_limit": 276,
 "level_bonus": 5,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Lord Frederick is preparing to capture Lord Conrad. Lord Gabriel has requested your support during the operation. Will you fight for him?"
+"description": "Colonel Chornohuz is preparing to capture Colonel Zaderykhvist. Colonel Bairak has requested your support during the operation. Will you fight for him?"
 },
 {
 "id": 2,
@@ -945,9 +945,9 @@
 "gold": 3,
 "time_limit": 276,
 "level_bonus": 5,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Lord Frederick is preparing to capture Lord Conrad. Knowing that he is in for a fight, Lord Frederick is requesting additional support. Will you fight for him?"
+"description": "Colonel Chornohuz is preparing to capture Colonel Zaderykhvist. Knowing that he is in for a fight, Colonel Chornohuz is requesting additional support. Will you fight for him?"
 },
 {
 "id": 14,
@@ -962,9 +962,9 @@
 "gold": 6,
 "time_limit": 312,
 "level_bonus": 3,
-"name": "Lord Conrad",
+"name": "Colonel Zaderykhvist",
 "portrait": 4,
-"description": "Lord Barclay has invoked the power of the Royal Seal that he seized from Lord Jaron, and has declared himself the new Emperor. Those unwilling to bend the knee to Lord Barclay are forming up all across the kingdom are marching an army to Lord Barclay's land. Lord Conrad is planning to meet up with them and has requested your support. Your mission is to join the assault on the would-be Emperor. Do you accept this mission?"
+"description": "Colonel Shulha has invoked the power of the Royal Seal that he seized from Colonel Kosach, and has declared himself the new Emperor. Those unwilling to bend the knee to Colonel Shulha are forming up all across the kingdom are marching an army to Colonel Shulha's land. Colonel Zaderykhvist is planning to meet up with them and has requested your support. Your mission is to join the assault on the would-be Emperor. Do you accept this mission?"
 },
 {
 "id": 1,
@@ -979,9 +979,9 @@
 "gold": 3,
 "time_limit": 312,
 "level_bonus": 3,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Lord Barclay has invoked the power of the Royal Seal that he seized from Lord Jaron, and has declared himself the new Emperor. Those unwilling to bend the knee to Lord Barclay are forming up all across the kingdom are marching an army to Lord Barclay's land.  Lord Gabriel is also on the way and has requested your support. Your mission is to join the assault on the would-be Emperor. Do you accept this mission?"
+"description": "Colonel Shulha has invoked the power of the Royal Seal that he seized from Colonel Kosach, and has declared himself the new Emperor. Those unwilling to bend the knee to Colonel Shulha are forming up all across the kingdom are marching an army to Colonel Shulha's land.  Colonel Bairak is also on the way and has requested your support. Your mission is to join the assault on the would-be Emperor. Do you accept this mission?"
 },
 {
 "id": 2,
@@ -996,9 +996,9 @@
 "gold": 3,
 "time_limit": 366,
 "level_bonus": 3,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Lord Barclay has invoked the power of the Royal Seal that he seized from Lord Jaron, and has declared himself the new Emperor. Those unwilling to bend the knee to Lord Barclay are forming up all across the kingdom are marching an army to Lord Barclay's land.  Lord Frederick is also on the way and has requested your support. Your mission is to join the assault on the would-be Emperor. Do you accept this mission?"
+"description": "Colonel Shulha has invoked the power of the Royal Seal that he seized from Colonel Kosach, and has declared himself the new Emperor. Those unwilling to bend the knee to Colonel Shulha are forming up all across the kingdom are marching an army to Colonel Shulha's land.  Colonel Chornohuz is also on the way and has requested your support. Your mission is to join the assault on the would-be Emperor. Do you accept this mission?"
 },
 {
 "id": 11,
@@ -1013,9 +1013,9 @@
 "gold": 3,
 "time_limit": 366,
 "level_bonus": 3,
-"name": "Lord Jacob",
+"name": "Colonel Derkach",
 "portrait": 31,
-"description": "Lord Barclay has invoked the power of the Royal Seal that he seized from Lord Jaron, and has declared himself the new Emperor. Those unwilling to bend the knee to Lord Barclay are forming up all across the kingdom are marching an army to Lord Barclay's land.  Lord Jaron is also on the way and has requested your support. Your mission is to join the assault on the would-be Emperor. Do you accept this mission?"
+"description": "Colonel Shulha has invoked the power of the Royal Seal that he seized from Colonel Kosach, and has declared himself the new Emperor. Those unwilling to bend the knee to Colonel Shulha are forming up all across the kingdom are marching an army to Colonel Shulha's land.  Colonel Kosach is also on the way and has requested your support. Your mission is to join the assault on the would-be Emperor. Do you accept this mission?"
 },
 {
 "id": 13,
@@ -1030,9 +1030,9 @@
 "gold": 10,
 "time_limit": 720,
 "level_bonus": 5,
-"name": "Lord Ferdinand",
+"name": "Colonel Dubovyk",
 "portrait": 0,
-"description": "Lord Barclay has invoked the power of the Royal Seal that he seized from Lord Jaron, and has declared himself the new Emperor. Those unwilling to bend the knee to Lord Barclay are forming up all across the kingdom are marching an army to Lord Barclay's land.  Lord Barclay is in trouble and is desperately pleading for help. Your mission is to join the assault on the would-be Emperor. Do you accept this mission?"
+"description": "Colonel Shulha has invoked the power of the Royal Seal that he seized from Colonel Kosach, and has declared himself the new Emperor. Those unwilling to bend the knee to Colonel Shulha are forming up all across the kingdom are marching an army to Colonel Shulha's land.  Colonel Shulha is in trouble and is desperately pleading for help. Your mission is to join the assault on the would-be Emperor. Do you accept this mission?"
 },
 {
 "id": 2,
@@ -1047,9 +1047,9 @@
 "gold": 3,
 "time_limit": 246,
 "level_bonus": 5,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Lord Frederick's tactician put into action a plan to assassinate Lord Gabriel covertly. General Augustine was able to foil the assassination attempt, and killed Lord Frederick's murderous underling in response. A furious Lord Frederick launched an all-out campaign to capture or kill Lord Gabriel and General Callahan, but they've somehow managed to escape the onslaught. Now General Augustine has been left trying to defend Cerise Castle all by himself. Your objective is to capture General Augustine. Will you go to Cerise Castle?"
+"description": "Colonel Chornohuz's tactician put into action a plan to assassinate Colonel Bairak covertly. Rotmistr Augustyn was able to foil the assassination attempt, and killed Colonel Chornohuz's murderous underling in response. A furious Colonel Chornohuz launched an all-out campaign to capture or kill Colonel Bairak and Osaul Kalnyk, but they've somehow managed to escape the onslaught. Now Rotmistr Augustyn has been left trying to defend Chervonohrad all by himself. Your objective is to capture Rotmistr Augustyn. Will you go to Chervonohrad?"
 },
 {
 "id": 1,
@@ -1064,9 +1064,9 @@
 "gold": 6,
 "time_limit": 720,
 "level_bonus": 5,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Lord Frederick's tactician put into action a plan to assassinate Lord Gabriel covertly. General Augustine was able to foil the assassination attempt, and killed Lord Frederick's murderous underling in response. A furious Lord Frederick launched an all-out campaign to capture or kill Lord Gabriel and General Callahan, but they've somehow managed to escape the onslaught. Now General Augustine has been left trying to defend Cerise Castle all by himself. Your objective is to Help General Augustine defend Cerise Castle. Will you go to Cerise Castle?"
+"description": "Colonel Chornohuz's tactician put into action a plan to assassinate Colonel Bairak covertly. Rotmistr Augustyn was able to foil the assassination attempt, and killed Colonel Chornohuz's murderous underling in response. A furious Colonel Chornohuz launched an all-out campaign to capture or kill Colonel Bairak and Osaul Kalnyk, but they've somehow managed to escape the onslaught. Now Rotmistr Augustyn has been left trying to defend Chervonohrad all by himself. Your objective is to Help Rotmistr Augustyn defend Chervonohrad. Will you go to Chervonohrad?"
 },
 {
 "id": 7,
@@ -1081,9 +1081,9 @@
 "gold": 3,
 "time_limit": 384,
 "level_bonus": 5,
-"name": "Lord Eugene",
+"name": "Colonel Tuman",
 "portrait": 0,
-"description": "We are finally reaching the end of this saga. Lord Eugene and Lord Frederick continue to battle with every ounce of strength they still possess. Lord Eugene is marching onward toward White Horse Field, but Lord Frederick has been stopped cold by Lord Eugene's two veteran Generals, Cromwell and Beresford. Your mission objective is to help Lord Eugene vanquish Lord Frederick's forces. Will you perform this duty?"
+"description": "We are finally reaching the end of this saga. Colonel Tuman and Colonel Chornohuz continue to battle with every ounce of strength they still possess. Colonel Tuman is marching onward toward White Horse Field, but Colonel Chornohuz has been stopped cold by Colonel Tuman's two veteran Generals, Pereima and Brzeski. Your mission objective is to help Colonel Tuman vanquish Colonel Chornohuz's forces. Will you perform this duty?"
 },
 {
 "id": 2,
@@ -1098,9 +1098,9 @@
 "gold": 6,
 "time_limit": 384,
 "level_bonus": 7,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "We are finally reaching the end of this saga. Lord Eugene and Lord Frederick continue to battle with every ounce of strength they still possess. Lord Eugene is marching onward toward White Horse Field, but Lord Frederick has been stopped cold by Lord Eugene's two veteran Generals, Cromwell and Beresford. Your mission objective is to help Lord Frederick vanquish Lord Eugene's forces. Will you perform this duty?"
+"description": "We are finally reaching the end of this saga. Colonel Tuman and Colonel Chornohuz continue to battle with every ounce of strength they still possess. Colonel Tuman is marching onward toward White Horse Field, but Colonel Chornohuz has been stopped cold by Colonel Tuman's two veteran Generals, Pereima and Brzeski. Your mission objective is to help Colonel Chornohuz vanquish Colonel Tuman's forces. Will you perform this duty?"
 },
 {
 "id": 7,
@@ -1115,9 +1115,9 @@
 "gold": 6,
 "time_limit": 390,
 "level_bonus": 6,
-"name": "Lord Eugene",
+"name": "Colonel Tuman",
 "portrait": 0,
-"description": "Lord Eugene launched a pre-emptive attack on Lord Frederick, hoping to catch him off guard. 700,000 soldiers loyal to Lord Eugene have gathered and are heading towards Lord Frederick's manor. It seems clear that the victor of this battle will win control of the entire continent. Lord Eugene is requesting your support. Your mission objective is to aid in Lord Eugene's assault on Lord Frederick. Do you accept this mission?"
+"description": "Colonel Tuman launched a pre-emptive attack on Colonel Chornohuz, hoping to catch him off guard. 700,000 soldiers loyal to Colonel Tuman have gathered and are heading towards Colonel Chornohuz's manor. It seems clear that the victor of this battle will win control of the entire continent. Colonel Tuman is requesting your support. Your mission objective is to aid in Colonel Tuman's assault on Colonel Chornohuz. Do you accept this mission?"
 },
 {
 "id": 2,
@@ -1132,9 +1132,9 @@
 "gold": 3,
 "time_limit": 360,
 "level_bonus": 5,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Lord Eugene launched a pre-emptive attack on Lord Frederick, hoping to catch him off guard. 700,000 soldiers loyal to Lord Eugene have gathered and are heading towards Lord Frederick's manor. It seems clear that the victor of this battle will win control of the entire continent. Lord Frederick is requesting your support. Your mission objective is to aid in Lord Eugene's assault on Lord Frederick. Do you accept this mission?"
+"description": "Colonel Tuman launched a pre-emptive attack on Colonel Chornohuz, hoping to catch him off guard. 700,000 soldiers loyal to Colonel Tuman have gathered and are heading towards Colonel Chornohuz's manor. It seems clear that the victor of this battle will win control of the entire continent. Colonel Chornohuz is requesting your support. Your mission objective is to aid in Colonel Tuman's assault on Colonel Chornohuz. Do you accept this mission?"
 },
 {
 "id": 1,
@@ -1149,9 +1149,9 @@
 "gold": 3,
 "time_limit": 720,
 "level_bonus": 8,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "While languishing in Lord Frederick's captivity, General Augustine secretly received a letter from Lord Gabriel indicating his position. General Augustine offered to switch sides and pledge allegiance to Lord Frederick, but Lord Frederick sneeringly refused to release him.To escape Lord Frederick's land, General Augustine needs a permit that allows him to pass through the five gates separating him from freedom. There's no time for that, however, as Lord Gabriel is pleading for immediate support. Your mission objective is to fight your way through these five gates to penetrate Lord Frederick's forces and meet up with Lord Gabriel. Do you accept this mission?"
+"description": "While languishing in Colonel Chornohuz's captivity, Rotmistr Augustyn secretly received a letter from Colonel Bairak indicating his position. Rotmistr Augustyn offered to switch sides and pledge allegiance to Colonel Chornohuz, but Colonel Chornohuz sneeringly refused to release him.To escape Colonel Chornohuz's land, Rotmistr Augustyn needs a permit that allows him to pass through the five gates separating him from freedom. There's no time for that, however, as Colonel Bairak is pleading for immediate support. Your mission objective is to fight your way through these five gates to penetrate Colonel Chornohuz's forces and meet up with Colonel Bairak. Do you accept this mission?"
 },
 {
 "id": 1,
@@ -1166,9 +1166,9 @@
 "gold": 3,
 "time_limit": 444,
 "level_bonus": 8,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "After losing the battle at Beryl Fields, Lord Gabriel left Lord Eugene's land and settled in Bequest Castle. However, Lord Frederick's hatred burns as brightly as ever, and he is dispatching all his troops to run him down. Lord Gabriel is asking you to rescue him. What will you do?"
+"description": "After losing the battle at Green Fields, Colonel Bairak left Colonel Tuman's land and settled in Bar Castle. However, Colonel Chornohuz's hatred burns as brightly as ever, and he is dispatching all his troops to run him down. Colonel Bairak is asking you to rescue him. What will you do?"
 },
 {
 "id": 2,
@@ -1183,9 +1183,9 @@
 "gold": 3,
 "time_limit": 444,
 "level_bonus": 8,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "After losing the battle at Beryl Fields, Lord Gabriel left Lord Eugene's land and settled in Bequest Castle. However, Lord Frederick's hatred burns as brightly as ever, and he is dispatching all his troops to run him down. Lord Frederick needs your assistance to capture Lord Gabriel. What will you do?"
+"description": "After losing the battle at Green Fields, Colonel Bairak left Colonel Tuman's land and settled in Bar Castle. However, Colonel Chornohuz's hatred burns as brightly as ever, and he is dispatching all his troops to run him down. Colonel Chornohuz needs your assistance to capture Colonel Bairak. What will you do?"
 },
 {
 "id": 7,
@@ -1200,9 +1200,9 @@
 "gold": 6,
 "time_limit": 366,
 "level_bonus": 10,
-"name": "Lord Eugene",
+"name": "Colonel Tuman",
 "portrait": 0,
-"description": "Lord Eugene has died from an infected wound. Before he passed, he anointed his youngest son, Edmar, as his successor, over the objections of his two elder sons, Faramond and Luke. Lord Frederick senses an opportunity to strike: he wishes to completely destroy Lord Eugene's lineage. Lord Edmar needs your help if he is to stay alive. Will you participate?"
+"description": "Colonel Tuman has died from an infected wound. Before he passed, he anointed his youngest son, Omelko, as his successor, over the objections of his two elder sons, Khoma and Luka. Colonel Chornohuz senses an opportunity to strike: he wishes to completely destroy Colonel Tuman's lineage. Colonel Omelko needs your help if he is to stay alive. Will you participate?"
 },
 {
 "id": 2,
@@ -1217,9 +1217,9 @@
 "gold": 3,
 "time_limit": 366,
 "level_bonus": 10,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Lord Eugene has died from an infected wound. Before he passed, he anointed his youngest son, Edmar, as his successor, over the objections of his two elder sons, Faramond and Luke. Lord Frederick senses an opportunity to strike: he wishes to completely destroy Lord Eugene's lineage. Lord Frederick would like you to help him eliminate the young Lord Edmar. Will you participate?"
+"description": "Colonel Tuman has died from an infected wound. Before he passed, he anointed his youngest son, Omelko, as his successor, over the objections of his two elder sons, Khoma and Luka. Colonel Chornohuz senses an opportunity to strike: he wishes to completely destroy Colonel Tuman's lineage. Colonel Chornohuz would like you to help him eliminate the young Colonel Omelko. Will you participate?"
 },
 {
 "id": 7,
@@ -1234,9 +1234,9 @@
 "gold": 6,
 "time_limit": 390,
 "level_bonus": 15,
-"name": "Lord Eugene",
+"name": "Colonel Tuman",
 "portrait": 0,
-"description": "Faramond was killed in the assault, but the target of the operation, Lord Edmar, managed a daring escape. He has taken up refuge with his remaining brother, Luke. Lord Frederick wants to finish Lord Eugene's sons off once and for all. Lord Edmar is making his last stand, and he won't live long without your help. Do you accept this mission?"
+"description": "Khoma was killed in the assault, but the target of the operation, Colonel Omelko, managed a daring escape. He has taken up refuge with his remaining brother, Luka. Colonel Chornohuz wants to finish Colonel Tuman's sons off once and for all. Colonel Omelko is making his last stand, and he won't live long without your help. Do you accept this mission?"
 },
 {
 "id": 2,
@@ -1251,9 +1251,9 @@
 "gold": 3,
 "time_limit": 360,
 "level_bonus": 8,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Faramond was killed in the assault, but the target of the operation, Lord Edmar, managed a daring escape. He has taken up refuge with his remaining brother, Luke. Lord Frederick wants to finish Lord Eugene's sons off once and for all.  He wishes to retain your services for this strike. Do you accept this mission?"
+"description": "Khoma was killed in the assault, but the target of the operation, Colonel Omelko, managed a daring escape. He has taken up refuge with his remaining brother, Luka. Colonel Chornohuz wants to finish Colonel Tuman's sons off once and for all.  He wishes to retain your services for this strike. Do you accept this mission?"
 },
 {
 "id": 1,
@@ -1268,9 +1268,9 @@
 "gold": 3,
 "time_limit": 384,
 "level_bonus": 10,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Lord Gabriel is now under Lord Caden's protection. He has hired a talented young commander and is pulling his troops together. Lord Frederick wants them both dead before their forces grow too powerful. Lord Gabriel knows that Lord Frederick's army is on its way, and has requested that you intercept Lord Frederick. Do you want to get involved?"
+"description": "Colonel Bairak is now under Colonel Kalyna's protection. He has hired a talented young commander and is pulling his troops together. Colonel Chornohuz wants them both dead before their forces grow too powerful. Colonel Bairak knows that Colonel Chornohuz's army is on its way, and has requested that you intercept Colonel Chornohuz. Do you want to get involved?"
 },
 {
 "id": 2,
@@ -1285,9 +1285,9 @@
 "gold": 6,
 "time_limit": 414,
 "level_bonus": 10,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Lord Gabriel is now under Lord Caden's protection. He has hired a talented young commander and is pulling his troops together. Lord Frederick wants them both dead before their forces grow too powerful. Lord Frederick will need your help to lay Lord Gabriel low. Do you want to get involved?"
+"description": "Colonel Bairak is now under Colonel Kalyna's protection. He has hired a talented young commander and is pulling his troops together. Colonel Chornohuz wants them both dead before their forces grow too powerful. Colonel Chornohuz will need your help to lay Colonel Bairak low. Do you want to get involved?"
 },
 {
 "id": 1,
@@ -1302,9 +1302,9 @@
 "gold": 3,
 "time_limit": 498,
 "level_bonus": 10,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Lord Frederick has put his bitter rival Lord Gabriel in grave peril, but Lord Gabriel will never surrender, as long as blood courses through his veins. Lord Gabriel seeks your sword for the coming battle. Do you agree to fight?"
+"description": "Colonel Chornohuz has put his bitter rival Colonel Bairak in grave peril, but Colonel Bairak will never surrender, as long as blood courses through his veins. Colonel Bairak seeks your sword for the coming battle. Do you agree to fight?"
 },
 {
 "id": 2,
@@ -1319,9 +1319,9 @@
 "gold": 3,
 "time_limit": 468,
 "level_bonus": 15,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Lord Frederick has put his bitter rival Lord Gabriel in grave peril, but Lord Gabriel will never surrender, as long as blood courses through his veins. Lord Frederick needs you to hunt down Lord Gabriel and finish him. Do you agree to fight?"
+"description": "Colonel Chornohuz has put his bitter rival Colonel Bairak in grave peril, but Colonel Bairak will never surrender, as long as blood courses through his veins. Colonel Chornohuz needs you to hunt down Colonel Bairak and finish him. Do you agree to fight?"
 },
 {
 "id": 15,
@@ -1336,9 +1336,9 @@
 "gold": 3,
 "time_limit": 444,
 "level_bonus": 8,
-"name": "Lord Leonard",
+"name": "Colonel Voron",
 "portrait": 32,
-"description": "Lord Marquise, Lord Jaron's successor, has not been idle. He has recruited many wise and experienced generals to help him take vengeance on Lord Caden, on behalf of his father. Lord Marquise wishes you to join his army for this battle. Do you accept this mission?"
+"description": "Colonel Sych, Colonel Kosach's successor, has not been idle. He has recruited many wise and experienced generals to help him take vengeance on Colonel Kalyna, on behalf of his father. Colonel Sych wishes you to join his army for this battle. Do you accept this mission?"
 },
 {
 "id": 9,
@@ -1353,9 +1353,9 @@
 "gold": 6,
 "time_limit": 720,
 "level_bonus": 11,
-"name": "Lord Anthony",
+"name": "Colonel Kremin",
 "portrait": 0,
-"description": "Lord Marquise, Lord Jaron's successor, has not been idle. He has recruited many wise and experienced generals to help him take vengeance on Lord Caden, on behalf of his father. Lord Caden is requesting your help to protect his land. Do you accept this mission?"
+"description": "Colonel Sych, Colonel Kosach's successor, has not been idle. He has recruited many wise and experienced generals to help him take vengeance on Colonel Kalyna, on behalf of his father. Colonel Kalyna is requesting your help to protect his land. Do you accept this mission?"
 },
 {
 "id": 1,
@@ -1370,9 +1370,9 @@
 "gold": 5,
 "time_limit": 474,
 "level_bonus": 10,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Lord Frederick has lost his last two battles against Lord Gabriel, but these stinging defeats have only caused him to redouble his efforts against his sworn enemy. Lord Frederick's forces are strong, but Lord Gabriel has just discovered a brilliant young commander, General Maxwell, who is poised to turn the tables on Lord Frederick. Lord Gabriel wishes you to join General Maxwell in the field. Will you take on this challenge?"
+"description": "Colonel Chornohuz has lost his last two battles against Colonel Bairak, but these stinging defeats have only caused him to redouble his efforts against his sworn enemy. Colonel Chornohuz's forces are strong, but Colonel Bairak has just discovered a brilliant young commander, Osaul Ternovyi, who is poised to turn the tables on Colonel Chornohuz. Colonel Bairak wishes you to join Osaul Ternovyi in the field. Will you take on this challenge?"
 },
 {
 "id": 2,
@@ -1387,9 +1387,9 @@
 "gold": 6,
 "time_limit": 414,
 "level_bonus": 15,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Lord Frederick has lost his last two battles against Lord Gabriel, but these stinging defeats have only caused him to redouble his efforts against his sworn enemy. Lord Frederick's forces are strong, but Lord Gabriel has just discovered a brilliant young commander, General Maxwell, who is poised to turn the tables on Lord Frederick. Accordingly, Lord Frederick is looking for his own secret weapon: you.. Will you take on this challenge?"
+"description": "Colonel Chornohuz has lost his last two battles against Colonel Bairak, but these stinging defeats have only caused him to redouble his efforts against his sworn enemy. Colonel Chornohuz's forces are strong, but Colonel Bairak has just discovered a brilliant young commander, Osaul Ternovyi, who is poised to turn the tables on Colonel Chornohuz. Accordingly, Colonel Chornohuz is looking for his own secret weapon: you.. Will you take on this challenge?"
 },
 {
 "id": 1,
@@ -1404,9 +1404,9 @@
 "gold": 3,
 "time_limit": 1020,
 "level_bonus": 10,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Lord Frederick is hot in pursuit of Lord Gabriel, who is being slowed by the sheer number of troops he is leading. Lord Gabriel's ally, General Callahan, is doing his best to fend off Lord Frederick's forces, but it looks as though his flanks will soon collapse. Lord Gabriel needs you to halt Lord Frederick's advance. Do you accept this mission?"
+"description": "Colonel Chornohuz is hot in pursuit of Colonel Bairak, who is being slowed by the sheer number of troops he is leading. Colonel Bairak's ally, Osaul Kalnyk, is doing his best to fend off Colonel Chornohuz's forces, but it looks as though his flanks will soon collapse. Colonel Bairak needs you to halt Colonel Chornohuz's advance. Do you accept this mission?"
 },
 {
 "id": 2,
@@ -1421,9 +1421,9 @@
 "gold": 8,
 "time_limit": 522,
 "level_bonus": 30,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Lord Frederick is hot in pursuit of Lord Gabriel, who is being slowed by the sheer number of troops he is leading. Lord Gabriel's ally, General Callahan, is doing his best to fend off Lord Frederick's forces, but it looks as though his flanks will soon collapse. Lord Frederick is looking to you to defeat General Callahan and apprehend Lord Gabriel. Do you accept this mission?"
+"description": "Colonel Chornohuz is hot in pursuit of Colonel Bairak, who is being slowed by the sheer number of troops he is leading. Colonel Bairak's ally, Osaul Kalnyk, is doing his best to fend off Colonel Chornohuz's forces, but it looks as though his flanks will soon collapse. Colonel Chornohuz is looking to you to defeat Osaul Kalnyk and apprehend Colonel Bairak. Do you accept this mission?"
 },
 {
 "id": 1,
@@ -1438,9 +1438,9 @@
 "gold": 10,
 "time_limit": 840,
 "level_bonus": 10,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Lord Gabriel is still on the run from Lord Frederick, who has shown no signs of giving up his single-minded pursuit. Following General Maxwell's advice, Lord Gabriel has evacuated a hundred thousand of his subjects from his land, and led them in search of a safer haven.Compounding his worries, Lord Gabriel's family has somehow separated from the crowd of refugees. They are believed to be hiding from Lord Frederick's forces somewhere nearby. Lord Gabriel desperately wants his family back! You will have to leave the relative safety of Lord Gabriel's troops to find his missing family. Are you willing to accept the risk?"
+"description": "Colonel Bairak is still on the run from Colonel Chornohuz, who has shown no signs of giving up his single-minded pursuit. Following Osaul Ternovyi's advice, Colonel Bairak has evacuated a hundred thousand of his subjects from his land, and led them in search of a safer haven.Compounding his worries, Colonel Bairak's family has somehow separated from the crowd of refugees. They are believed to be hiding from Colonel Chornohuz's forces somewhere nearby. Colonel Bairak desperately wants his family back! You will have to leave the relative safety of Colonel Bairak's troops to find his missing family. Are you willing to accept the risk?"
 },
 {
 "id": 1,
@@ -1455,9 +1455,9 @@
 "gold": 3,
 "time_limit": 1320,
 "level_bonus": 10,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "The joined forces of Lords Gabriel and Marquise are preparing to face off against Lord Frederick's army once more. Lord Frederick's failure to run Lord Gabriel to ground in the previous battle was a personal embarrassment, and he is determined not to fail again. General Maxwell's sage counsel has served Lord Gabriel in good stead, and he is currently cooking up something new for the next fight. I am not sure what General Maxwell is working on, but it seems to be vital to his plans for the upcoming battle. General Maxwell must be protected while he prepares his secret weapon! Lord Gabriel has requested your support. Do you accept this mission?"
+"description": "The joined forces of Colonels Bairak and Sych are preparing to face off against Colonel Chornohuz's army once more. Colonel Chornohuz's failure to run Colonel Bairak to ground in the previous battle was a personal embarrassment, and he is determined not to fail again. Osaul Ternovyi's sage counsel has served Colonel Bairak in good stead, and he is currently cooking up something new for the next fight. I am not sure what Osaul Ternovyi is working on, but it seems to be vital to his plans for the upcoming battle. Osaul Ternovyi must be protected while he prepares his secret weapon! Colonel Bairak has requested your support. Do you accept this mission?"
 },
 {
 "id": 2,
@@ -1472,9 +1472,9 @@
 "gold": 3,
 "time_limit": 1170,
 "level_bonus": 30,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "The joined forces of Lords Gabriel and Marquise are preparing to face off against Lord Frederick's army once more. Lord Frederick's failure to run Lord Gabriel to ground in the previous battle was a personal embarrassment, and he is determined not to fail again. General Maxwell's sage counsel has served Lord Gabriel in good stead, and he is currently cooking up something new for the next fight. I am not sure what General Maxwell is working on, but it seems to be vital to his plans for the upcoming battle. General Maxwell must be defeated before he completes his preparations! Lord Frederick has requested your support. Do you accept this mission?"
+"description": "The joined forces of Colonels Bairak and Sych are preparing to face off against Colonel Chornohuz's army once more. Colonel Chornohuz's failure to run Colonel Bairak to ground in the previous battle was a personal embarrassment, and he is determined not to fail again. Osaul Ternovyi's sage counsel has served Colonel Bairak in good stead, and he is currently cooking up something new for the next fight. I am not sure what Osaul Ternovyi is working on, but it seems to be vital to his plans for the upcoming battle. Osaul Ternovyi must be defeated before he completes his preparations! Colonel Chornohuz has requested your support. Do you accept this mission?"
 },
 {
 "id": 15,
@@ -1489,9 +1489,9 @@
 "gold": 3,
 "time_limit": 1512,
 "level_bonus": 10,
-"name": "Lord Leonard",
+"name": "Colonel Voron",
 "portrait": 32,
-"description": "Lord Marquise and Lord Frederick are facing each other on the battlefield. The importance of this fight to the outcome of the war cannot be understated; songs will be sung of the victor for generations.. Privy to the choices of fate as we are, we know who must be the victor. Lord Marquise has requested your support to defeat Lord Frederick. Do you accept this mission?"
+"description": "Colonel Sych and Colonel Chornohuz are facing each other on the battlefield. The importance of this fight to the outcome of the war cannot be understated; songs will be sung of the victor for generations.. Privy to the choices of fate as we are, we know who must be the victor. Colonel Sych has requested your support to defeat Colonel Chornohuz. Do you accept this mission?"
 },
 {
 "id": 2,
@@ -1506,9 +1506,9 @@
 "gold": 8,
 "time_limit": 2280,
 "level_bonus": 60,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Lord Marquise and Lord Frederick are facing each other on the battlefield. The importance of this fight to the outcome of the war cannot be understated; songs will be sung of the victor for generations.. Privy to the choices of fate as we are, we know who must be the victor.  Lord Frederick has requested your support to defeat Lord Marquise Do you accept this mission?"
+"description": "Colonel Sych and Colonel Chornohuz are facing each other on the battlefield. The importance of this fight to the outcome of the war cannot be understated; songs will be sung of the victor for generations.. Privy to the choices of fate as we are, we know who must be the victor.  Colonel Chornohuz has requested your support to defeat Colonel Sych Do you accept this mission?"
 },
 {
 "id": 15,
@@ -1523,9 +1523,9 @@
 "gold": 10,
 "time_limit": 1140,
 "level_bonus": 50,
-"name": "Lord Leonard",
+"name": "Colonel Voron",
 "portrait": 32,
-"description": "\"He changed the direction of a storm and used it to attack the enemy with fire?! General Maxwell must be a wizard!\" Like everyone else, Lord Marquise is now afraid of General Maxwell's wondrous abilities?even though these same talents once helped to save his own life. Lord Marquise wants to ensure General Maxwell's miracles are not eventually turned against him. Your mission objective is to capture General Maxwell, who is making his way back to Lord Gabriel's front line. What is your choice?"
+"description": "\"He changed the direction of a storm and used it to attack the enemy with fire?! Osaul Ternovyi must be a wizard!\" Like everyone else, Colonel Sych is now afraid of Osaul Ternovyi's wondrous abilities?even though these same talents once helped to save his own life. Colonel Sych wants to ensure Osaul Ternovyi's miracles are not eventually turned against him. Your mission objective is to capture Osaul Ternovyi, who is making his way back to Colonel Bairak's front line. What is your choice?"
 },
 {
 "id": 1,
@@ -1540,9 +1540,9 @@
 "gold": 3,
 "time_limit": 1230,
 "level_bonus": 10,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "\"He changed the direction of a storm and used it to attack the enemy with fire?! General Maxwell must be a wizard!\" Like everyone else, Lord Marquise is now afraid of General Maxwell's wondrous abilities?even though these same talents once helped to save his own life. Lord Marquise wants to ensure General Maxwell's miracles are not eventually turned against him. Your mission objective is to guard General Maxwell and ensure his safe passage to Lord Gabriel's front line. What is your choice?"
+"description": "\"He changed the direction of a storm and used it to attack the enemy with fire?! Osaul Ternovyi must be a wizard!\" Like everyone else, Colonel Sych is now afraid of Osaul Ternovyi's wondrous abilities?even though these same talents once helped to save his own life. Colonel Sych wants to ensure Osaul Ternovyi's miracles are not eventually turned against him. Your mission objective is to guard Osaul Ternovyi and ensure his safe passage to Colonel Bairak's front line. What is your choice?"
 },
 {
 "id": 1,
@@ -1557,9 +1557,9 @@
 "gold": 3,
 "time_limit": 540,
 "level_bonus": 11,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Lord Frederick's armies have finally failed, and the defeated noble is retreating from the battlefield in disgrace. Lord Gabriel wants to prevent Lord Frederick from escaping, and requires your assistance. Do you accept this mission?"
+"description": "Colonel Chornohuz's armies have finally failed, and the defeated noble is retreating from the battlefield in disgrace. Colonel Bairak wants to prevent Colonel Chornohuz from escaping, and requires your assistance. Do you accept this mission?"
 },
 {
 "id": 2,
@@ -1574,9 +1574,9 @@
 "gold": 8,
 "time_limit": 990,
 "level_bonus": 30,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Lord Frederick's armies have finally failed, and the defeated noble is retreating from the battlefield in disgrace. Lord Frederick will need your assistance to make good his escape. Do you accept this mission?"
+"description": "Colonel Chornohuz's armies have finally failed, and the defeated noble is retreating from the battlefield in disgrace. Colonel Chornohuz will need your assistance to make good his escape. Do you accept this mission?"
 },
 {
 "id": 15,
@@ -1591,9 +1591,9 @@
 "gold": 3,
 "time_limit": 840,
 "level_bonus": 11,
-"name": "Lord Leonard",
+"name": "Colonel Voron",
 "portrait": 32,
-"description": "Even though Lord Frederick met a shameful defeat and retreated, Lord Marquise chose to press his advantage all the way to the borders of Lord Frederick's manor. Of course, the fiery Lord Frederick has vowed never to capitulate or retreat! Even though he had the upper hand, Lord Marquise was nearly captured by Lord Frederick, who surely would have put him to death. Now, a chastened Lord Marquise is using a decoy to lure Lord Frederick to Soul Valley. Lord Marquise has requested your support. Do you accept this mission?"
+"description": "Even though Colonel Chornohuz met a shameful defeat and retreated, Colonel Sych chose to press his advantage all the way to the borders of Colonel Chornohuz's manor. Of course, the fiery Colonel Chornohuz has vowed never to capitulate or retreat! Even though he had the upper hand, Colonel Sych was nearly captured by Colonel Chornohuz, who surely would have put him to death. Now, a chastened Colonel Sych is using a decoy to lure Colonel Chornohuz to Valley of Souls. Colonel Sych has requested your support. Do you accept this mission?"
 },
 {
 "id": 2,
@@ -1608,9 +1608,9 @@
 "gold": 8,
 "time_limit": 1560,
 "level_bonus": 50,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Even though Lord Frederick met a shameful defeat and retreated, Lord Marquise chose to press his advantage all the way to the borders of Lord Frederick's manor. Of course, the fiery Lord Frederick has vowed never to capitulate or retreat! Even though he had the upper hand, Lord Marquise was nearly captured by Lord Frederick, who surely would have put him to death. Now, a chastened Lord Marquise is using a decoy to lure Lord Frederick to Soul Valley. Lord Frederick has requested your support. Do you accept this mission?"
+"description": "Even though Colonel Chornohuz met a shameful defeat and retreated, Colonel Sych chose to press his advantage all the way to the borders of Colonel Chornohuz's manor. Of course, the fiery Colonel Chornohuz has vowed never to capitulate or retreat! Even though he had the upper hand, Colonel Sych was nearly captured by Colonel Chornohuz, who surely would have put him to death. Now, a chastened Colonel Sych is using a decoy to lure Colonel Chornohuz to Valley of Souls. Colonel Chornohuz has requested your support. Do you accept this mission?"
 },
 {
 "id": 16,
@@ -1625,9 +1625,9 @@
 "gold": 3,
 "time_limit": 600,
 "level_bonus": 15,
-"name": "Lord Aaron",
+"name": "Colonel Holota",
 "portrait": 7,
-"description": "Lord Drake, who lost his father at the hands of Lord Frederick, is seeking revenge. Lord Drake is known throughout the realm as Golden Drake because of his courage and valor, and he has allied himself with Lord Jay in an effort to destroy the reeling Lord Frederick. Now, the military genius General Maxwell has lured Lord Frederick into a battle at Sterling Mountain. Lord Drake has requested your support. Will you help him?"
+"description": "Colonel Zolotar, who lost his father at the hands of Colonel Chornohuz, is seeking revenge. Colonel Zolotar is known throughout the realm as Dorosh the Golden because of his courage and valor, and he has allied himself with Colonel Kulish in an effort to destroy the reeling Colonel Chornohuz. Now, the military genius Osaul Ternovyi has lured Colonel Chornohuz into a battle at Silver Mountain. Colonel Zolotar has requested your support. Will you help him?"
 },
 {
 "id": 2,
@@ -1642,9 +1642,9 @@
 "gold": 6,
 "time_limit": 630,
 "level_bonus": 30,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Lord Drake, who lost his father at the hands of Lord Frederick, is seeking revenge. Lord Drake is known throughout the realm as Golden Drake because of his courage and valor, and he has allied himself with Lord Jay in an effort to destroy the reeling Lord Frederick. Now, the military genius General Maxwell has lured Lord Frederick into a battle at Sterling Mountain. Lord Frederick has requested your support. Will you help him?"
+"description": "Colonel Zolotar, who lost his father at the hands of Colonel Chornohuz, is seeking revenge. Colonel Zolotar is known throughout the realm as Dorosh the Golden because of his courage and valor, and he has allied himself with Colonel Kulish in an effort to destroy the reeling Colonel Chornohuz. Now, the military genius Osaul Ternovyi has lured Colonel Chornohuz into a battle at Silver Mountain. Colonel Chornohuz has requested your support. Will you help him?"
 },
 {
 "id": 16,
@@ -1659,9 +1659,9 @@
 "gold": 3,
 "time_limit": 648,
 "level_bonus": 12,
-"name": "Lord Aaron",
+"name": "Colonel Holota",
 "portrait": 7,
-"description": "Lord Drake is blessed with many personal strengths, but prudence is not one of them. Lord Frederick managed to trick Golden Drake into a quarrel with Lord Jay by planting an incriminating document in Lord Jay's camp. In the ensuing confrontation, Lord Drake wounded Lord Jay, who quit the alliance. Now, Lord Drake is standing alone against Lord Frederick's frenzied charge. He is in desperate need of a hero to take his side. Will you join him?"
+"description": "Colonel Zolotar is blessed with many personal strengths, but prudence is not one of them. Colonel Chornohuz managed to trick Dorosh the Golden into a quarrel with Colonel Kulish by planting an incriminating document in Colonel Kulish's camp. In the ensuing confrontation, Colonel Zolotar wounded Colonel Kulish, who quit the alliance. Now, Colonel Zolotar is standing alone against Colonel Chornohuz's frenzied charge. He is in desperate need of a hero to take his side. Will you join him?"
 },
 {
 "id": 2,
@@ -1676,9 +1676,9 @@
 "gold": 3,
 "time_limit": 378,
 "level_bonus": 30,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Lord Frederick killed Lord Drake's father, and now Golden Drake is seeking revenge. He has employed the military genius General Maxwell to lure Lord Frederick into a battle at Sterling Mountain. Lord Frederick, suspecting a trap, has requested your support. Will you help him?"
+"description": "Colonel Chornohuz killed Colonel Zolotar's father, and now Dorosh the Golden is seeking revenge. He has employed the military genius Osaul Ternovyi to lure Colonel Chornohuz into a battle at Silver Mountain. Colonel Chornohuz, suspecting a trap, has requested your support. Will you help him?"
 },
 {
 "id": 17,
@@ -1693,9 +1693,9 @@
 "gold": 8,
 "time_limit": 1200,
 "level_bonus": 40,
-"name": "Lord Agnes",
+"name": "Lady Buriak",
 "portrait": 36,
-"description": "Lord Frederick, wishing to cement his dynasty, has forced Lady Celeste, a first cousin to Empress Beatrice who owns many titled lands of her own, to marry his son. To further punish Lord Gabriel and Lord Marquise, Lord Frederick is attacking Lord Blackwell of Sable Plains, and plans establish his headquarters on Lord Blackwell's manor. Lord Blackwell has requested your support. Do you accept this mission?"
+"description": "Colonel Chornohuz, wishing to cement his dynasty, has forced Lady Nebesna, a first cousin to Hetmanka Bohuslava who owns many titled lands of her own, to marry his son. To further punish Colonel Bairak and Colonel Sych, Colonel Chornohuz is attacking Colonel Chornovus of Black Steppe, and plans establish his headquarters on Colonel Chornovus's manor. Colonel Chornovus has requested your support. Do you accept this mission?"
 },
 {
 "id": 2,
@@ -1710,9 +1710,9 @@
 "gold": 3,
 "time_limit": 570,
 "level_bonus": 12,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Lord Frederick, wishing to cement his dynasty, has forced Lady Celeste, a first cousin to Empress Beatrice who owns many titled lands of her own, to marry his son. To further punish Lord Gabriel and Lord Marquise, Lord Frederick is attacking Lord Blackwell of Sable Plains, and plans establish his headquarters on Lord Blackwell's manor. Lord Frederick has requested your support. Do you accept this mission?"
+"description": "Colonel Chornohuz, wishing to cement his dynasty, has forced Lady Nebesna, a first cousin to Hetmanka Bohuslava who owns many titled lands of her own, to marry his son. To further punish Colonel Bairak and Colonel Sych, Colonel Chornohuz is attacking Colonel Chornovus of Black Steppe, and plans establish his headquarters on Colonel Chornovus's manor. Colonel Chornohuz has requested your support. Do you accept this mission?"
 },
 {
 "id": 1,
@@ -1727,9 +1727,9 @@
 "gold": 3,
 "time_limit": 1080,
 "level_bonus": 10,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Lord Gabriel is pushing his forces forward in an effort to take over Highland. Ivory Lake, Lord Langdon's domain, is his first target. Lord Gabriel needs your aid. What say you?"
+"description": "Colonel Bairak is pushing his forces forward in an effort to take over Podillia. White Lake, Colonel Lan's domain, is his first target. Colonel Bairak needs your aid. What say you?"
 },
 {
 "id": 18,
@@ -1744,9 +1744,9 @@
 "gold": 6,
 "time_limit": 900,
 "level_bonus": 40,
-"name": "Lord Leslie",
+"name": "Colonel Sokyra",
 "portrait": 0,
-"description": "Lord Gabriel is pushing his forces forward in an effort to take over Highland. Ivory Lake, Lord Langdon's domain, is his first target. Lord Langdon needs your aid. What say you?"
+"description": "Colonel Bairak is pushing his forces forward in an effort to take over Podillia. White Lake, Colonel Lan's domain, is his first target. Colonel Lan needs your aid. What say you?"
 },
 {
 "id": 1,
@@ -1761,9 +1761,9 @@
 "gold": 3,
 "time_limit": 690,
 "level_bonus": 15,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Lord Gabriel has ordered General Kendrick to attack Beryl Marsh. It should be an easy victory, but one never knows. Lord Gabriel has requested your support. Do you accept this mission?"
+"description": "Colonel Bairak has ordered Osaul Kotsiuba to attack Berestechko Marshes. It should be an easy victory, but one never knows. Colonel Bairak has requested your support. Do you accept this mission?"
 },
 {
 "id": 19,
@@ -1778,9 +1778,9 @@
 "gold": 6,
 "time_limit": 630,
 "level_bonus": 40,
-"name": "Lord Theodore",
+"name": "Colonel Korzhyk",
 "portrait": 0,
-"description": "Lord Gabriel has ordered General Kendrick to attack Beryl Marsh. Lord Percival, a true coward, is terrified of losing the fight. Lord Gabriel has requested your support. Do you accept this mission?"
+"description": "Colonel Bairak has ordered Osaul Kotsiuba to attack Berestechko Marshes. Colonel Zaiats, a true coward, is terrified of losing the fight. Colonel Bairak has requested your support. Do you accept this mission?"
 },
 {
 "id": 1,
@@ -1795,9 +1795,9 @@
 "gold": 3,
 "time_limit": 390,
 "level_bonus": 10,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "General Callahan is leading his troops to Sienna Peak. Lord Gabriel has requested that you join him to attack Lord Hayden's encampment on Sienna Peak. Do you accept this mission?"
+"description": "Osaul Kalnyk is leading his troops to Bura Mohyla. Colonel Bairak has requested that you join him to attack Colonel Holub's encampment on Bura Mohyla. Do you accept this mission?"
 },
 {
 "id": 20,
@@ -1812,9 +1812,9 @@
 "gold": 6,
 "time_limit": 390,
 "level_bonus": 40,
-"name": "Lord Oswald",
+"name": "Colonel Siroshapka",
 "portrait": 0,
-"description": "General Callahan is leading his troops to Sienna Peak. Lord Hayden has requested that you join him to defend against General Callahan's assault on Sienna Peak. Do you accept this mission?"
+"description": "Osaul Kalnyk is leading his troops to Bura Mohyla. Colonel Holub has requested that you join him to defend against Osaul Kalnyk's assault on Bura Mohyla. Do you accept this mission?"
 },
 {
 "id": 1,
@@ -1829,9 +1829,9 @@
 "gold": 5,
 "time_limit": 930,
 "level_bonus": 15,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Cerulean Port, a vital strategic chokepoint, is under the protection of a pair of legendary warriors, William and Kenneth. Therefore, winning control of the port will not be a simple task. Your mission objective is to help Lord Gabriel and conquer Cerulean Port. Will you take this mission?"
+"description": "Ochakiv, a vital strategic chokepoint, is under the protection of a pair of legendary warriors, Vakula and Nazar. Therefore, winning control of the port will not be a simple task. Your mission objective is to help Colonel Bairak and conquer Ochakiv. Will you take this mission?"
 },
 {
 "id": 21,
@@ -1846,9 +1846,9 @@
 "gold": 6,
 "time_limit": 870,
 "level_bonus": 50,
-"name": "Lord Martin",
+"name": "Colonel Huska",
 "portrait": 0,
-"description": "Cerulean Port, a vital strategic chokepoint, is under the protection of a pair of legendary warriors, William and Kenneth. Even so, defending the port from Lord Gabriel's armies will not be an easy task. Your mission objective is to help Lord Kestrel and defend Cerulean Port. Will you take this mission?"
+"description": "Ochakiv, a vital strategic chokepoint, is under the protection of a pair of legendary warriors, Vakula and Nazar. Even so, defending the port from Colonel Bairak's armies will not be an easy task. Your mission objective is to help Colonel Boryvitr and defend Ochakiv. Will you take this mission?"
 },
 {
 "id": 1,
@@ -1863,9 +1863,9 @@
 "gold": 4,
 "time_limit": 630,
 "level_bonus": 20,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Lord Gabriel's armies are a sword pointed at the very heart of Highland. Our intelligence has become aware of a plan to assassinate Lord Gabriel at Seraph Gate, the first gate to Highland's interior. Lord Gabriel wishes to take no chances, and is requesting your protection. Do you accept this mission?"
+"description": "Colonel Bairak's armies are a sword pointed at the very heart of Podillia. Our intelligence has become aware of a plan to assassinate Colonel Bairak at Golden Gate, the first gate to Podillia's interior. Colonel Bairak wishes to take no chances, and is requesting your protection. Do you accept this mission?"
 },
 {
 "id": 22,
@@ -1880,9 +1880,9 @@
 "gold": 8,
 "time_limit": 1350,
 "level_bonus": 30,
-"name": "Lord Daniel",
+"name": "Colonel Pidhornyi",
 "portrait": 35,
-"description": "Lord Gabriel's armies are a sword pointed at the very heart of Highland. Our intelligence has become aware of a plan to assassinate Lord Gabriel at Seraph Gate, the first gate to Highland's interior. Lord Clarence, who controls Highland, wants you to help kill Lord Gabriel. Do you accept this mission?"
+"description": "Colonel Bairak's armies are a sword pointed at the very heart of Podillia. Our intelligence has become aware of a plan to assassinate Colonel Bairak at Golden Gate, the first gate to Podillia's interior. Colonel Bilous, who controls Podillia, wants you to help kill Colonel Bairak. Do you accept this mission?"
 },
 {
 "id": 1,
@@ -1897,9 +1897,9 @@
 "gold": 5,
 "time_limit": 780,
 "level_bonus": 11,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Lord Clarence has decided to defend the Highland mainland to the last man. However, Lord Gabriel has lost the commander of his main force, General Caldwell, in the last battle. Lord Gabriel has requested your help in rallying his men. Do you accept this mission?"
+"description": "Colonel Bilous has decided to defend the Podillia mainland to the last man. However, Colonel Bairak has lost the commander of his main force, Osaul Tulub, in the last battle. Colonel Bairak has requested your help in rallying his men. Do you accept this mission?"
 },
 {
 "id": 22,
@@ -1914,9 +1914,9 @@
 "gold": 10,
 "time_limit": 870,
 "level_bonus": 40,
-"name": "Lord Daniel",
+"name": "Colonel Pidhornyi",
 "portrait": 35,
-"description": "Lord Clarence has decided to defend the Highland mainland to the last man. However, Lord Gabriel has lost the commander of his main force, General Caldwell, in the last battle. Lord Clarence has requested your help in rallying his men. Do you accept this mission?"
+"description": "Colonel Bilous has decided to defend the Podillia mainland to the last man. However, Colonel Bairak has lost the commander of his main force, Osaul Tulub, in the last battle. Colonel Bilous has requested your help in rallying his men. Do you accept this mission?"
 },
 {
 "id": 1,
@@ -1931,9 +1931,9 @@
 "gold": 5,
 "time_limit": 1530,
 "level_bonus": 15,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Lord Gabriel's forces are advancing towards both of Lord Clarence's flanks simultaneously. If these two bastions fall, the the soft underbelly of Highland will be exposed to Lord Gabriel's armies. Lord Gabriel needs your help to assault these two vital locations. Do you accept the challenge?"
+"description": "Colonel Bairak's forces are advancing towards both of Colonel Bilous's flanks simultaneously. If these two bastions fall, the the soft underbelly of Podillia will be exposed to Colonel Bairak's armies. Colonel Bairak needs your help to assault these two vital locations. Do you accept the challenge?"
 },
 {
 "id": 22,
@@ -1948,9 +1948,9 @@
 "gold": 10,
 "time_limit": 2250,
 "level_bonus": 40,
-"name": "Lord Daniel",
+"name": "Colonel Pidhornyi",
 "portrait": 35,
-"description": "Lord Gabriel's forces are advancing towards both of Lord Clarence's flanks simultaneously. If these two bastions fall, the the soft underbelly of Highland will be exposed to Lord Gabriel's armies. Lord Clarence needs your help to defend these two vital locations. Do you accept the challenge?"
+"description": "Colonel Bairak's forces are advancing towards both of Colonel Bilous's flanks simultaneously. If these two bastions fall, the the soft underbelly of Podillia will be exposed to Colonel Bairak's armies. Colonel Bilous needs your help to defend these two vital locations. Do you accept the challenge?"
 },
 {
 "id": 1,
@@ -1965,9 +1965,9 @@
 "gold": 6,
 "time_limit": 990,
 "level_bonus": 15,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "Lord Clarence has requested backup from Lord Blackwell, who has in turn sent in Lord Drake for reinforcements. Lord Caleb, one of Lord Gabriel's vassals, has countered this maneuver by ordering General Maxwell to support him, and now the two forces are assembling for battle at Bale Plains. Lord Gabriel is looking to you to defeat Lord Drake's forces. Do you accept this mission?"
+"description": "Colonel Bilous has requested backup from Colonel Chornovus, who has in turn sent in Colonel Zolotar for reinforcements. Colonel Dzhura, one of Colonel Bairak's vassals, has countered this maneuver by ordering Osaul Ternovyi to support him, and now the two forces are assembling for battle at Wild Field. Colonel Bairak is looking to you to defeat Colonel Zolotar's forces. Do you accept this mission?"
 },
 {
 "id": 16,
@@ -1982,9 +1982,9 @@
 "gold": 12,
 "time_limit": 1590,
 "level_bonus": 40,
-"name": "Lord Aaron",
+"name": "Colonel Holota",
 "portrait": 7,
-"description": "Lord Clarence has requested backup from Lord Blackwell, who has in turn sent in Lord Drake for reinforcements. Lord Caleb, one of Lord Gabriel's vassals, has countered this maneuver by ordering General Maxwell to support him, and now the two forces are assembling for battle at Bale Plains. Lord Drake  is looking to you to defeat Lord Gabriel's forces. Do you accept this mission?"
+"description": "Colonel Bilous has requested backup from Colonel Chornovus, who has in turn sent in Colonel Zolotar for reinforcements. Colonel Dzhura, one of Colonel Bairak's vassals, has countered this maneuver by ordering Osaul Ternovyi to support him, and now the two forces are assembling for battle at Wild Field. Colonel Zolotar  is looking to you to defeat Colonel Bairak's forces. Do you accept this mission?"
 },
 {
 "id": 1,
@@ -1999,9 +1999,9 @@
 "gold": 6,
 "time_limit": 3660,
 "level_bonus": 12,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "The victorious Lord Gabriel, now liege lord of Highland, plans to build on his great triumph by moving into the middle of the Empire. Lord Frederick, Lord Gabriel's old nemesis, is laying in wait for him. Lord Gabriel has requested your support to defeat Lord Frederick's forces. Do you accept this mission?"
+"description": "The victorious Colonel Bairak, now liege lord of Podillia, plans to build on his great triumph by moving into the middle of the Hetmanate. Colonel Chornohuz, Colonel Bairak's old nemesis, is laying in wait for him. Colonel Bairak has requested your support to defeat Colonel Chornohuz's forces. Do you accept this mission?"
 },
 {
 "id": 2,
@@ -2016,9 +2016,9 @@
 "gold": 12,
 "time_limit": 2430,
 "level_bonus": 60,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "The victorious Lord Gabriel, now liege lord of Highland, plans to build on his great triumph by moving into the middle of the Empire. Lord Frederick, Lord Gabriel's old nemesis, is laying in wait for him. Lord Frederick  has requested your support to defeat Lord Gabriel's forces. Do you accept this mission?"
+"description": "The victorious Colonel Bairak, now liege lord of Podillia, plans to build on his great triumph by moving into the middle of the Hetmanate. Colonel Chornohuz, Colonel Bairak's old nemesis, is laying in wait for him. Colonel Chornohuz  has requested your support to defeat Colonel Bairak's forces. Do you accept this mission?"
 },
 {
 "id": 15,
@@ -2033,9 +2033,9 @@
 "gold": 12,
 "time_limit": 1830,
 "level_bonus": 16,
-"name": "Lord Leonard",
+"name": "Colonel Voron",
 "portrait": 32,
-"description": "Lord Frederick's and Lord Marquise's armies have been skirmishing for the past month at Halcyon River, but neither has gained an advantage. It is time to settle this once and for all. Lord Marquise is about to launch another assault on Lord Frederick, and has requested your support. What say you?"
+"description": "Colonel Chornohuz's and Colonel Sych's armies have been skirmishing for the past month at Tiasmyn, but neither has gained an advantage. It is time to settle this once and for all. Colonel Sych is about to launch another assault on Colonel Chornohuz, and has requested your support. What say you?"
 },
 {
 "id": 2,
@@ -2050,9 +2050,9 @@
 "gold": 12,
 "time_limit": 1830,
 "level_bonus": 16,
-"name": "Lord Frederick",
+"name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Lord Frederick's and Lord Marquise's armies have been skirmishing for the past month at Halcyon River, but neither has gained an advantage. It is time to settle this once and for all. Lord Frederick is about to launch another assault on Lord Marquise, and has requested your support. What say you?"
+"description": "Colonel Chornohuz's and Colonel Sych's armies have been skirmishing for the past month at Tiasmyn, but neither has gained an advantage. It is time to settle this once and for all. Colonel Chornohuz is about to launch another assault on Colonel Sych, and has requested your support. What say you?"
 },
 {
 "id": 1,
@@ -2067,9 +2067,9 @@
 "gold": 15,
 "time_limit": 1506,
 "level_bonus": 60,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "General Augustine is surrounded by Lord Marquise's forces, and will soon taste defeat. Lord Gabriel needs you to break through Lord Marquise's lines and rescue him. Do you accept this mission?"
+"description": "Rotmistr Augustyn is surrounded by Colonel Sych's forces, and will soon taste defeat. Colonel Bairak needs you to break through Colonel Sych's lines and rescue him. Do you accept this mission?"
 },
 {
 "id": 15,
@@ -2084,9 +2084,9 @@
 "gold": 10,
 "time_limit": 990,
 "level_bonus": 15,
-"name": "Lord Leonard",
+"name": "Colonel Voron",
 "portrait": 32,
-"description": "General Augustine is surrounded by Lord Marquise's forces, and will soon taste defeat. Lord Marquise, knowing that General Augustine will not give up easily, is in need of some mercenary assistance. Do you accept this mission?"
+"description": "Rotmistr Augustyn is surrounded by Colonel Sych's forces, and will soon taste defeat. Colonel Sych, knowing that Rotmistr Augustyn will not give up easily, is in need of some mercenary assistance. Do you accept this mission?"
 },
 {
 "id": 1,
@@ -2101,9 +2101,9 @@
 "gold": 15,
 "time_limit": 1140,
 "level_bonus": 50,
-"name": "Lord Gabriel",
+"name": "Colonel Bairak",
 "portrait": 33,
-"description": "General Augustin has been killed. Lord Gabriel was distraught over his death, and unleashed his wrath against Lord Marquise's position. Lord Gabriel had some success on the battlefield at first, but now his forces are in a precarious position. Your mission objective is to save Lord Gabriel. Do you accept this mission?"
+"description": "Rotmistr Augustyn has been killed. Colonel Bairak was distraught over his death, and unleashed his wrath against Colonel Sych's position. Colonel Bairak had some success on the battlefield at first, but now his forces are in a precarious position. Your mission objective is to save Colonel Bairak. Do you accept this mission?"
 },
 {
 "id": 15,
@@ -2118,14 +2118,14 @@
 "gold": 10,
 "time_limit": 750,
 "level_bonus": 13,
-"name": "Lord Leonard",
+"name": "Colonel Voron",
 "portrait": 32,
-"description": "General Augustin has been killed. Lord Gabriel was distraught over his death, and unleashed his wrath against Lord Marquise's position. Lord Gabriel had some success on the battlefield at first, but now his forces are in a precarious position. Your mission objective is to eliminate Lord Gabriel. Do you accept this mission?"
+"description": "Rotmistr Augustyn has been killed. Colonel Bairak was distraught over his death, and unleashed his wrath against Colonel Sych's position. Colonel Bairak had some success on the battlefield at first, but now his forces are in a precarious position. Your mission objective is to eliminate Colonel Bairak. Do you accept this mission?"
 }
 ],
 "generals": {
 "1": {
-"name": "Wallace",
+"name": "Waclaw Krzeminski",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2141,7 +2141,7 @@
 "hp": 20
 },
 "2": {
-"name": "Philip",
+"name": "Piotr Zaleski",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2157,7 +2157,7 @@
 "hp": 20
 },
 "3": {
-"name": "Langley",
+"name": "Jan Wolski",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2173,7 +2173,7 @@
 "hp": 20
 },
 "4": {
-"name": "Kirkland",
+"name": "Jan Gorski",
 "look": 5,
 "side": 0,
 "skills": [
@@ -2189,7 +2189,7 @@
 "hp": 45
 },
 "5": {
-"name": "Reeve",
+"name": "Andrii Nedolia",
 "look": 2,
 "side": 0,
 "skills": [
@@ -2205,7 +2205,7 @@
 "hp": 50
 },
 "6": {
-"name": "Augustine",
+"name": "Augustyn Ostrzycki",
 "look": 1,
 "side": 0,
 "skills": [
@@ -2221,7 +2221,7 @@
 "hp": 50
 },
 "7": {
-"name": "Drake",
+"name": "Kara-murza",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2237,7 +2237,7 @@
 "hp": 25
 },
 "8": {
-"name": "Dunstan",
+"name": "Dzhanbek-bey",
 "look": 6,
 "side": 1,
 "skills": [
@@ -2253,7 +2253,7 @@
 "hp": 20
 },
 "9": {
-"name": "Lord Brenda",
+"name": "Bronislaw Ostrzycki",
 "look": 1,
 "side": 1,
 "skills": [
@@ -2269,7 +2269,7 @@
 "hp": 20
 },
 "10": {
-"name": "Catherine",
+"name": "Katria Shabelna",
 "look": 4,
 "side": 0,
 "skills": [
@@ -2285,7 +2285,7 @@
 "hp": 45
 },
 "11": {
-"name": "Charlton",
+"name": "Jerzy Zaremba",
 "look": 6,
 "side": 0,
 "skills": [
@@ -2301,7 +2301,7 @@
 "hp": 45
 },
 "12": {
-"name": "Lord Wesley",
+"name": "Vasyl Tykhyi",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2317,7 +2317,7 @@
 "hp": 45
 },
 "13": {
-"name": "Lord Aldred",
+"name": "Mykola Kryvoshyia",
 "look": 4,
 "side": 0,
 "skills": [
@@ -2333,7 +2333,7 @@
 "hp": 60
 },
 "14": {
-"name": "Beresford",
+"name": "Stanislaw Brzeski",
 "look": 2,
 "side": 0,
 "skills": [
@@ -2349,7 +2349,7 @@
 "hp": 45
 },
 "15": {
-"name": "Kendrick",
+"name": "Kyrylo Kotsiuba",
 "look": 6,
 "side": 0,
 "skills": [
@@ -2365,7 +2365,7 @@
 "hp": 50
 },
 "16": {
-"name": "Winfield",
+"name": "Stanislaw Ostrowski",
 "look": 5,
 "side": 0,
 "skills": [
@@ -2381,7 +2381,7 @@
 "hp": 40
 },
 "17": {
-"name": "Colden",
+"name": "Petro Vyrvykhvist",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2397,7 +2397,7 @@
 "hp": 40
 },
 "18": {
-"name": "Barclay",
+"name": "Borys Shulha",
 "look": 1,
 "side": 0,
 "skills": [
@@ -2413,7 +2413,7 @@
 "hp": 45
 },
 "19": {
-"name": "Luke",
+"name": "Luka Hrim",
 "look": 6,
 "side": 1,
 "skills": [
@@ -2429,7 +2429,7 @@
 "hp": 35
 },
 "20": {
-"name": "Blanford",
+"name": "Pavlo Bezvukhyi",
 "look": 2,
 "side": 1,
 "skills": [
@@ -2445,7 +2445,7 @@
 "hp": 35
 },
 "21": {
-"name": "Devlin",
+"name": "Kara-murza",
 "look": 2,
 "side": 0,
 "skills": [
@@ -2461,7 +2461,7 @@
 "hp": 50
 },
 "22": {
-"name": "Nickleby",
+"name": "Jerzy Rudnicki",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2477,7 +2477,7 @@
 "hp": 30
 },
 "23": {
-"name": "Coleridge",
+"name": "Nazarko Netudykhata",
 "look": 6,
 "side": 1,
 "skills": [
@@ -2493,7 +2493,7 @@
 "hp": 30
 },
 "24": {
-"name": "Modred",
+"name": "Ahmat-bey",
 "look": 5,
 "side": 0,
 "skills": [
@@ -2509,7 +2509,7 @@
 "hp": 35
 },
 "25": {
-"name": "Tristan",
+"name": "Taras Sokil",
 "look": 5,
 "side": 0,
 "skills": [
@@ -2525,7 +2525,7 @@
 "hp": 45
 },
 "26": {
-"name": "Clarissa",
+"name": "Opanas Zahorui",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2541,7 +2541,7 @@
 "hp": 45
 },
 "27": {
-"name": "Cromwell",
+"name": "Stepan Pereima",
 "look": 5,
 "side": 0,
 "skills": [
@@ -2557,7 +2557,7 @@
 "hp": 45
 },
 "28": {
-"name": "Claxton",
+"name": "Andrzej Sokolowski",
 "look": 5,
 "side": 0,
 "skills": [
@@ -2573,7 +2573,7 @@
 "hp": 35
 },
 "29": {
-"name": "Houghton",
+"name": "Savka Malyi",
 "look": 5,
 "side": 0,
 "skills": [
@@ -2589,7 +2589,7 @@
 "hp": 45
 },
 "30": {
-"name": "Sheldon",
+"name": "Selim-murza",
 "look": 5,
 "side": 0,
 "skills": [
@@ -2605,7 +2605,7 @@
 "hp": 35
 },
 "31": {
-"name": "Ingram",
+"name": "Kazimierz Grabowski",
 "look": 2,
 "side": 1,
 "skills": [
@@ -2621,7 +2621,7 @@
 "hp": 45
 },
 "32": {
-"name": "Aldous",
+"name": "Tymofii Dzvin",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2637,7 +2637,7 @@
 "hp": 25
 },
 "33": {
-"name": "Bryce",
+"name": "Mehmed-aga",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2653,7 +2653,7 @@
 "hp": 25
 },
 "34": {
-"name": "Cranley",
+"name": "Marcin Jasinski",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2669,7 +2669,7 @@
 "hp": 25
 },
 "35": {
-"name": "Huxley",
+"name": "Orest Barvinok",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2685,7 +2685,7 @@
 "hp": 25
 },
 "36": {
-"name": "Edbert",
+"name": "Yurko Shram",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2701,7 +2701,7 @@
 "hp": 25
 },
 "37": {
-"name": "Alton",
+"name": "Mikolaj Kowalewski",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2717,7 +2717,7 @@
 "hp": 30
 },
 "38": {
-"name": "Richard",
+"name": "Zakhar Riabokin",
 "look": 2,
 "side": 0,
 "skills": [
@@ -2733,7 +2733,7 @@
 "hp": 40
 },
 "39": {
-"name": "Jay",
+"name": "Yosyp Kulish",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2749,7 +2749,7 @@
 "hp": 40
 },
 "40": {
-"name": "Bellamy",
+"name": "Tomasz Tarnawski",
 "look": 6,
 "side": 0,
 "skills": [
@@ -2765,7 +2765,7 @@
 "hp": 40
 },
 "41": {
-"name": "Allen",
+"name": "Hryts Lytvyn",
 "look": 2,
 "side": 0,
 "skills": [
@@ -2781,7 +2781,7 @@
 "hp": 40
 },
 "42": {
-"name": "Norwell",
+"name": "Kaplan-murza",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2797,7 +2797,7 @@
 "hp": 35
 },
 "43": {
-"name": "Berthold",
+"name": "Zbigniew Debicki",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2813,7 +2813,7 @@
 "hp": 30
 },
 "44": {
-"name": "Jameson",
+"name": "Matvii Skoryk",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2829,7 +2829,7 @@
 "hp": 30
 },
 "45": {
-"name": "Edmar",
+"name": "Omelko Hrim",
 "look": 6,
 "side": 1,
 "skills": [
@@ -2845,7 +2845,7 @@
 "hp": 25
 },
 "46": {
-"name": "Faramond",
+"name": "Khoma Hrim",
 "look": 6,
 "side": 1,
 "skills": [
@@ -2861,7 +2861,7 @@
 "hp": 25
 },
 "47": {
-"name": "Athelstan",
+"name": "Ilko Ohir",
 "look": 2,
 "side": 0,
 "skills": [
@@ -2877,7 +2877,7 @@
 "hp": 30
 },
 "48": {
-"name": "Luke",
+"name": "Luka Hrim",
 "look": 6,
 "side": 0,
 "skills": [
@@ -2893,7 +2893,7 @@
 "hp": 20
 },
 "49": {
-"name": "Berwyn",
+"name": "Wojciech Mierzwa",
 "look": 5,
 "side": 0,
 "skills": [
@@ -2909,7 +2909,7 @@
 "hp": 25
 },
 "50": {
-"name": "Blackwell",
+"name": "Pylyp Chornovus",
 "look": 6,
 "side": 0,
 "skills": [
@@ -2925,7 +2925,7 @@
 "hp": 25
 },
 "51": {
-"name": "Sanbury",
+"name": "Ali-bey",
 "look": 5,
 "side": 0,
 "skills": [
@@ -2941,7 +2941,7 @@
 "hp": 30
 },
 "52": {
-"name": "Creighton",
+"name": "Jakub Ciechanowski",
 "look": 5,
 "side": 0,
 "skills": [
@@ -2957,7 +2957,7 @@
 "hp": 30
 },
 "53": {
-"name": "Ethelred",
+"name": "Fesko Krucha",
 "look": 2,
 "side": 0,
 "skills": [
@@ -2973,7 +2973,7 @@
 "hp": 30
 },
 "54": {
-"name": "Escott",
+"name": "Temir-murza",
 "look": 5,
 "side": 0,
 "skills": [
@@ -2989,7 +2989,7 @@
 "hp": 40
 },
 "55": {
-"name": "Jonathan",
+"name": "Krzysztof Bielski",
 "look": 5,
 "side": 0,
 "skills": [
@@ -3005,7 +3005,7 @@
 "hp": 40
 },
 "56": {
-"name": "Blake",
+"name": "Mykyta Chupryna",
 "look": 5,
 "side": 0,
 "skills": [
@@ -3021,7 +3021,7 @@
 "hp": 45
 },
 "57": {
-"name": "Cresswell",
+"name": "Sefer-aga",
 "look": 5,
 "side": 0,
 "skills": [
@@ -3037,7 +3037,7 @@
 "hp": 40
 },
 "58": {
-"name": "Sefton",
+"name": "Boguslaw Szydlowski",
 "look": 5,
 "side": 1,
 "skills": [
@@ -3053,7 +3053,7 @@
 "hp": 40
 },
 "59": {
-"name": "Denley",
+"name": "Ivas Tyrsa",
 "look": 5,
 "side": 1,
 "skills": [
@@ -3069,7 +3069,7 @@
 "hp": 30
 },
 "60": {
-"name": "Lawford",
+"name": "Urak-bey",
 "look": 2,
 "side": 1,
 "skills": [
@@ -3085,7 +3085,7 @@
 "hp": 35
 },
 "61": {
-"name": "Derland",
+"name": "Mateusz Zielinski",
 "look": 2,
 "side": 0,
 "skills": [
@@ -3101,7 +3101,7 @@
 "hp": 40
 },
 "62": {
-"name": "Orrick",
+"name": "Roman Polyn",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3117,7 +3117,7 @@
 "hp": 20
 },
 "63": {
-"name": "Elbridge",
+"name": "Bahadyr-murza",
 "look": 5,
 "side": 1,
 "skills": [
@@ -3133,7 +3133,7 @@
 "hp": 25
 },
 "64": {
-"name": "Bligh",
+"name": "Feliks Przybylski",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3149,7 +3149,7 @@
 "hp": 25
 },
 "65": {
-"name": "Elden",
+"name": "Sydir Chumak",
 "look": 5,
 "side": 0,
 "skills": [
@@ -3165,7 +3165,7 @@
 "hp": 30
 },
 "66": {
-"name": "Katelyn",
+"name": "Islam-murza",
 "look": 6,
 "side": 0,
 "skills": [
@@ -3181,7 +3181,7 @@
 "hp": 30
 },
 "67": {
-"name": "Boden",
+"name": "Henryk Wrona",
 "look": 5,
 "side": 0,
 "skills": [
@@ -3197,7 +3197,7 @@
 "hp": 30
 },
 "68": {
-"name": "Meldrick",
+"name": "Panas Zhuk",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3213,7 +3213,7 @@
 "hp": 35
 },
 "69": {
-"name": "Dryden",
+"name": "Saadet-bey",
 "look": 5,
 "side": 1,
 "skills": [
@@ -3229,7 +3229,7 @@
 "hp": 40
 },
 "70": {
-"name": "Mark",
+"name": "Ludwik Kozlowski",
 "look": 5,
 "side": 0,
 "skills": [
@@ -3245,7 +3245,7 @@
 "hp": 40
 },
 "71": {
-"name": "Osric",
+"name": "Marko Kosyi",
 "look": 5,
 "side": 0,
 "skills": [
@@ -3261,7 +3261,7 @@
 "hp": 35
 },
 "72": {
-"name": "Lord Bartho",
+"name": "Varfolomii Lykhach",
 "look": 5,
 "side": 0,
 "skills": [
@@ -3277,7 +3277,7 @@
 "hp": 35
 },
 "73": {
-"name": "Ellington",
+"name": "Tadeusz Maliszewski",
 "look": 2,
 "side": 0,
 "skills": [
@@ -3293,7 +3293,7 @@
 "hp": 40
 },
 "74": {
-"name": "Melbourne",
+"name": "Lavrin Sukhovii",
 "look": 3,
 "side": 1,
 "skills": [
@@ -3309,7 +3309,7 @@
 "hp": 40
 },
 "75": {
-"name": "Gerard",
+"name": "Mansur-murza",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3325,7 +3325,7 @@
 "hp": 25
 },
 "76": {
-"name": "Lowman",
+"name": "Witold Borowski",
 "look": 6,
 "side": 0,
 "skills": [
@@ -3341,7 +3341,7 @@
 "hp": 20
 },
 "77": {
-"name": "Millard",
+"name": "Yatsko Vitrohon",
 "look": 5,
 "side": 0,
 "skills": [
@@ -3357,7 +3357,7 @@
 "hp": 40
 },
 "78": {
-"name": "Lord Bryce",
+"name": "Mehmed-aga",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3373,7 +3373,7 @@
 "hp": 35
 },
 "79": {
-"name": "Ludlow",
+"name": "Zygmunt Chmielewski",
 "look": 1,
 "side": 1,
 "skills": [
@@ -3389,7 +3389,7 @@
 "hp": 0
 },
 "80": {
-"name": "Arthur",
+"name": "Danylo Kulyk",
 "look": 1,
 "side": 1,
 "skills": [
@@ -3405,7 +3405,7 @@
 "hp": 0
 },
 "81": {
-"name": "Guildford",
+"name": "Choban-aga",
 "look": 1,
 "side": 1,
 "skills": [
@@ -3421,7 +3421,7 @@
 "hp": 0
 },
 "82": {
-"name": "Adrien",
+"name": "Adam Laski",
 "look": 1,
 "side": 1,
 "skills": [
@@ -3437,7 +3437,7 @@
 "hp": 0
 },
 "83": {
-"name": "Braddock",
+"name": "Matvii Bilokin",
 "look": 1,
 "side": 1,
 "skills": [
@@ -3453,7 +3453,7 @@
 "hp": 0
 },
 "84": {
-"name": "Evans",
+"name": "Aslan-murza",
 "look": 1,
 "side": 1,
 "skills": [
@@ -3469,7 +3469,7 @@
 "hp": 0
 },
 "85": {
-"name": "Christopher",
+"name": "Maciej Dobrzanski",
 "look": 1,
 "side": 1,
 "skills": [
@@ -3485,7 +3485,7 @@
 "hp": 0
 },
 "86": {
-"name": "Lester",
+"name": "Stepan Horobets",
 "look": 1,
 "side": 1,
 "skills": [
@@ -3501,7 +3501,7 @@
 "hp": 0
 },
 "87": {
-"name": "Gregory",
+"name": "Karach-bey",
 "look": 1,
 "side": 1,
 "skills": [
@@ -3517,7 +3517,7 @@
 "hp": 0
 },
 "88": {
-"name": "Maxwell",
+"name": "Maksym Ternovyi",
 "look": 1,
 "side": 1,
 "skills": [
@@ -3533,7 +3533,7 @@
 "hp": 0
 },
 "89": {
-"name": "Gilman",
+"name": "Yurii Shpak",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3549,7 +3549,7 @@
 "hp": 25
 },
 "90": {
-"name": "Stepney",
+"name": "Tokhtar-aga",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3565,7 +3565,7 @@
 "hp": 25
 },
 "91": {
-"name": "Patterson",
+"name": "Pawel Rybinski",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3581,7 +3581,7 @@
 "hp": 30
 },
 "92": {
-"name": "Sutcliff",
+"name": "Ostap Koval",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3597,7 +3597,7 @@
 "hp": 35
 },
 "93": {
-"name": "Bramwell",
+"name": "Edige-murza",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3613,7 +3613,7 @@
 "hp": 35
 },
 "94": {
-"name": "Rowley",
+"name": "Piotr Wasowicz",
 "look": 2,
 "side": 1,
 "skills": [
@@ -3629,7 +3629,7 @@
 "hp": 40
 },
 "95": {
-"name": "Waltham",
+"name": "Kuzma Kozhumiaka",
 "look": 3,
 "side": 1,
 "skills": [
@@ -3645,7 +3645,7 @@
 "hp": 40
 },
 "96": {
-"name": "Marlon",
+"name": "Arslan-bey",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3661,7 +3661,7 @@
 "hp": 30
 },
 "97": {
-"name": "Rutherford",
+"name": "Lukasz Jablonski",
 "look": 5,
 "side": 1,
 "skills": [
@@ -3677,7 +3677,7 @@
 "hp": 35
 },
 "98": {
-"name": "Hadden",
+"name": "Tykhon Hnyda",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3693,7 +3693,7 @@
 "hp": 35
 },
 "99": {
-"name": "Graham",
+"name": "Yashlav-murza",
 "look": 5,
 "side": 1,
 "skills": [
@@ -3709,7 +3709,7 @@
 "hp": 40
 },
 "100": {
-"name": "Stratford",
+"name": "Bartosz Kurowski",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3725,7 +3725,7 @@
 "hp": 40
 },
 "101": {
-"name": "Braxton",
+"name": "Maksym Ruban",
 "look": 5,
 "side": 1,
 "skills": [
@@ -3741,7 +3741,7 @@
 "hp": 45
 },
 "102": {
-"name": "Lord Drake",
+"name": "Dorosh Zolotar",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3757,7 +3757,7 @@
 "hp": 50
 },
 "103": {
-"name": "Stuart",
+"name": "Kacper Stawski",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3773,7 +3773,7 @@
 "hp": 35
 },
 "104": {
-"name": "Prescott",
+"name": "Prokop Pyrih",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3789,7 +3789,7 @@
 "hp": 35
 },
 "105": {
-"name": "Jocelyn",
+"name": "Kemal-bey",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3805,7 +3805,7 @@
 "hp": 30
 },
 "106": {
-"name": "Preston",
+"name": "Szymon Turski",
 "look": 5,
 "side": 1,
 "skills": [
@@ -3821,7 +3821,7 @@
 "hp": 35
 },
 "107": {
-"name": "Warren",
+"name": "Ivan Chornobai",
 "look": 5,
 "side": 1,
 "skills": [
@@ -3837,7 +3837,7 @@
 "hp": 35
 },
 "108": {
-"name": "Glenavon",
+"name": "Murat-murza",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3853,7 +3853,7 @@
 "hp": 30
 },
 "109": {
-"name": "Lord Halber",
+"name": "Vasyl Kalach",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3869,7 +3869,7 @@
 "hp": 25
 },
 "110": {
-"name": "Lord Thatch",
+"name": "Hryhorii Bulava",
 "look": 5,
 "side": 1,
 "skills": [
@@ -3885,7 +3885,7 @@
 "hp": 20
 },
 "111": {
-"name": "Quinton",
+"name": "Osman-aga",
 "look": 5,
 "side": 1,
 "skills": [
@@ -3901,7 +3901,7 @@
 "hp": 30
 },
 "112": {
-"name": "Kenneth",
+"name": "Nazar Dovbysh",
 "look": 5,
 "side": 1,
 "skills": [
@@ -3917,7 +3917,7 @@
 "hp": 45
 },
 "113": {
-"name": "William",
+"name": "Vakula Dovbysh",
 "look": 3,
 "side": 1,
 "skills": [
@@ -3933,7 +3933,7 @@
 "hp": 45
 },
 "114": {
-"name": "Walcott",
+"name": "Timur-bey",
 "look": 2,
 "side": 1,
 "skills": [
@@ -3949,7 +3949,7 @@
 "hp": 25
 },
 "115": {
-"name": "Chauncey",
+"name": "Franciszek Wolanski",
 "look": 2,
 "side": 1,
 "skills": [
@@ -3965,7 +3965,7 @@
 "hp": 30
 },
 "116": {
-"name": "Bromwell",
+"name": "Ihnat Sahaidak",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3981,7 +3981,7 @@
 "hp": 25
 },
 "117": {
-"name": "Chapman",
+"name": "Ilyas-murza",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3997,7 +3997,7 @@
 "hp": 35
 },
 "118": {
-"name": "Ramsay",
+"name": "Ignacy Bystrzycki",
 "look": 5,
 "side": 1,
 "skills": [
@@ -4013,7 +4013,7 @@
 "hp": 40
 },
 "119": {
-"name": "Tilden",
+"name": "Fedko Tryzub",
 "look": 5,
 "side": 1,
 "skills": [
@@ -4029,7 +4029,7 @@
 "hp": 40
 },
 "120": {
-"name": "Ransford",
+"name": "Kasym-bey",
 "look": 6,
 "side": 1,
 "skills": [
@@ -4045,7 +4045,7 @@
 "hp": 35
 },
 "121": {
-"name": "Wakefield",
+"name": "Michal Zawadzki",
 "look": 5,
 "side": 1,
 "skills": [
@@ -4061,7 +4061,7 @@
 "hp": 40
 },
 "122": {
-"name": "Risley",
+"name": "Yakym Holovach",
 "look": 6,
 "side": 1,
 "skills": [
@@ -4077,7 +4077,7 @@
 "hp": 20
 },
 "123": {
-"name": "Broughton",
+"name": "Daulet-murza",
 "look": 3,
 "side": 1,
 "skills": [
@@ -4093,7 +4093,7 @@
 "hp": 40
 },
 "124": {
-"name": "Harden",
+"name": "Roch Orlik",
 "look": 5,
 "side": 1,
 "skills": [
@@ -4109,7 +4109,7 @@
 "hp": 30
 },
 "125": {
-"name": "Vance",
+"name": "Oleksa Dudka",
 "look": 3,
 "side": 1,
 "skills": [
@@ -4125,7 +4125,7 @@
 "hp": 40
 },
 "126": {
-"name": "Ransley",
+"name": "Kurt-aga",
 "look": 6,
 "side": 1,
 "skills": [
@@ -4141,7 +4141,7 @@
 "hp": 30
 },
 "127": {
-"name": "Hallward",
+"name": "Hieronim Czarnecki",
 "look": 6,
 "side": 1,
 "skills": [
@@ -4157,7 +4157,7 @@
 "hp": 25
 },
 "128": {
-"name": "Burchard",
+"name": "Semen Borsuk",
 "look": 5,
 "side": 1,
 "skills": [
@@ -4173,7 +4173,7 @@
 "hp": 35
 },
 "129": {
-"name": "Walford",
+"name": "Beibars-murza",
 "look": 5,
 "side": 1,
 "skills": [
@@ -4189,7 +4189,7 @@
 "hp": 40
 },
 "130": {
-"name": "Rowell",
+"name": "Wladyslaw Glowacki",
 "look": 6,
 "side": 1,
 "skills": [
@@ -4205,7 +4205,7 @@
 "hp": 25
 },
 "131": {
-"name": "Remington",
+"name": "Lesko Lelyk",
 "look": 5,
 "side": 1,
 "skills": [
@@ -4221,7 +4221,7 @@
 "hp": 40
 },
 "132": {
-"name": "Harlow",
+"name": "Sultan-bey",
 "look": 6,
 "side": 1,
 "skills": [
@@ -4237,7 +4237,7 @@
 "hp": 45
 },
 "133": {
-"name": "Truesdale",
+"name": "Leszek Lipski",
 "look": 6,
 "side": 1,
 "skills": [
@@ -4253,7 +4253,7 @@
 "hp": 40
 },
 "134": {
-"name": "Hanford",
+"name": "Mykhailo Ternyk",
 "look": 6,
 "side": 1,
 "skills": [
@@ -4269,7 +4269,7 @@
 "hp": 30
 },
 "135": {
-"name": "Hawthorne",
+"name": "Abdul-aga",
 "look": 2,
 "side": 1,
 "skills": [
@@ -4285,7 +4285,7 @@
 "hp": 35
 },
 "136": {
-"name": "Riley",
+"name": "Dobieslaw Mazur",
 "look": 2,
 "side": 1,
 "skills": [
@@ -4301,7 +4301,7 @@
 "hp": 40
 },
 "137": {
-"name": "Byram",
+"name": "Taras Vovchok",
 "look": 6,
 "side": 1,
 "skills": [
@@ -4317,7 +4317,7 @@
 "hp": 40
 },
 "138": {
-"name": "Ulric",
+"name": "Mamai-murza",
 "look": 6,
 "side": 1,
 "skills": [
@@ -4333,7 +4333,7 @@
 "hp": 45
 },
 "139": {
-"name": "Hayden",
+"name": "Hordii Holub",
 "look": 2,
 "side": 1,
 "skills": [
@@ -4349,7 +4349,7 @@
 "hp": 45
 },
 "140": {
-"name": "Caldwell",
+"name": "Opanas Tulub",
 "look": 6,
 "side": 1,
 "skills": [
@@ -4365,7 +4365,7 @@
 "hp": 0
 },
 "141": {
-"name": "Geoffrey",
+"name": "Herasym Kozub",
 "look": 1,
 "side": 0,
 "skills": [

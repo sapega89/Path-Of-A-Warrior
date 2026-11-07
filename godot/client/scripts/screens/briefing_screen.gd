@@ -42,7 +42,7 @@ func _ready() -> void:
 	var profile: RefCounted = Profile.load_or_new(str(p.get("profile_path", Profile.PATH)))
 	var ms := Campaign.new().lord_missions(lord_id)
 	var m: Dictionary = ms[mission] if mission >= 0 and mission < ms.size() else {}
-	lines = talk(int(p.get("line", 0)), str(m.get("name", "")), profile.hero_name)
+	lines = talk(int(p.get("line", 0)), tr(str(m.get("name", ""))), profile.hero_name)
 
 	var col := UiTheme.menu_column(self, 760)
 	col.add_theme_constant_override("separation", 12)

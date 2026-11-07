@@ -17,7 +17,7 @@ func test_the_hero_speaks_by_his_name() -> void:
 	eq(sim.hero_name, "Ann", "the hero's name")
 	sim.set_general(1)
 	sim._start_map_talk()
-	check(sim.talk[0].begins_with("[Wallace]"), "the general first")
+	check(sim.talk[0].begins_with("[Waclaw Krzeminski]"), "the general first")
 	check(not sim.hero_talks(), "he talks")
 	eq(sim.talk[1], "[Ann] ...", "then the hero, by his name")
 	sim.talk_line = 1

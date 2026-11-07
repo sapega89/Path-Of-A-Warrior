@@ -1,8 +1,8 @@
 {
 "opening": [
-"In the annals of man, peace and strife are like the labors of the field: we must sow one to reap the other. Indeed, the Holy dynasty nursed the tranquil lands of the Empire for five centuries, before Emperor Tristan the Holy's passing finally raised the bloody harvest moon. Duncan the White, a good man in his own right, put on Tristan's crown, but he could not fill the legend's throne. The Empire's nobles, sensing Duncan's weakness, scoffed at their new liege lord and set about expanding their influence, leaving their Emperor to his wine cup and dancing girls. Duncan's common subjects blamed him for his inability to rule and deplored his wanton habits; while the horrified populace watched, the once virtuous Duncan the White decayed into the besotted Duncan the Grey. Sensing that Duncan's failing rule would spell disaster for the Empire, a powerful noble, Lord Brendan of Dark Forest, took up a new battle cry: \"Empyrean is dying and Darkness is rising!\" He rallied an army to his flag and marched on Empyrean Castle, the Empire's capital, gathering followers from all corners of the Empire on his way. The Empire entered the last phase of its existence, which historians later referred to as \"The Rise of Darkness.\"",
-"Naturally, Lord Brendan's rivals were not content to sit idle while his rebel army stormed Empyrean's walls. They quickly raised their own forces to protect their interests, and the last vestiges of Duncan's authority vanished. Before long, lords from all of the Empire's provinces had marched their armies to Empyrean Castle, questing after the Imperial seat. The squabbling nobles clashed ferociously, producing legions of casualties and heroes in equal measure. A chaotic new age had been born, and many, many anonymous warriors walked a path paved with iron...",
-"Welcome to Crimson Temple.",
+"In the annals of man, peace and strife are like the labors of the field: we must sow one to reap the other. Indeed, the Holy dynasty nursed the tranquil lands of the Hetmanate for five centuries, before Hetman Sokil the Holy's passing finally raised the bloody harvest moon. Verbenko the White, a good man in his own right, put on Sokil's crown, but he could not fill the legend's throne. The Hetmanate's nobles, sensing Verbenko's weakness, scoffed at their new liege lord and set about expanding their influence, leaving their Emperor to his wine cup and dancing girls. Verbenko's common subjects blamed him for his inability to rule and deplored his wanton habits; while the horrified populace watched, the once virtuous Verbenko the White decayed into the besotted Verbenko the Grey. Sensing that Verbenko's failing rule would spell disaster for the Hetmanate, a powerful noble, Kniaz Bronislaw of Black Forest, took up a new battle cry: \"Chyhyryn is dying and Darkness is rising!\" He rallied an army to his flag and marched on Chyhyryn, the Hetmanate's capital, gathering followers from all corners of the Hetmanate on his way. The Hetmanate entered the last phase of its existence, which historians later referred to as \"The Rise of Darkness.\"",
+"Naturally, Kniaz Bronislaw's rivals were not content to sit idle while his rebel army stormed Chyhyryn's walls. They quickly raised their own forces to protect their interests, and the last vestiges of Verbenko's authority vanished. Before long, lords from all of the Hetmanate's provinces had marched their armies to Chyhyryn, questing after the Hetman's seat. The squabbling nobles clashed ferociously, producing legions of casualties and heroes in equal measure. A chaotic new age had been born, and many, many anonymous warriors walked a path paved with iron...",
+"Welcome to Red Monastery.",
 "...",
 "I do not need to know why your path has led you here, adventurer. If you are ever to return, however, you must abide by our only rule: victory at any cost.",
 "...",
@@ -17,7 +17,7 @@
 "endings": [
 {
 "talk": [
-"0|[Messenger] Sir, we know well that this new era of peace could never have been born without your efforts on the battlefield. Out of gratitude, we hereby offer you a commission in the Imperial army. Will you accept it?",
+"0|[Messenger] Sir, we know well that this new era of peace could never have been born without your efforts on the battlefield. Out of gratitude, we hereby offer you a commission in the Hetman's army. Will you accept it?",
 "Nay. I was born with a sword in my hand, and these bloody fields where I was raised. I could never accept while away my days behind a castle's walls... not when there are more fights to win..",
 "0",
 "I am honored by this privilege, and I will do my best to live up to it.",
@@ -25,85 +25,85 @@
 ],
 "pictures": [
 "1",
-"2|Alas, fate will never let me rest in peace. None of the Three Kingdoms' lords truly care for their subjects? they lust after power, not peace. The Kingdoms' people cry out for help! There have been too many tragedies because of this endless war. I have much to atone for...",
-"3|Eighty-two years after the Rise of Darkness, Lord Ademar, son of a former commander under Lord Frederick, legitimately succeeded Emperor Everard, son of the former Empress Beatrice. Emperor Ademar, adjust and powerful ruler, managed to unite the entire continent politically once again. The newly peaceful realm was known as the Empire of Asiria from that point on.",
-"4|I resigned from the royal court and returned to Crimson Temple. I have long dreamt of a new age of heroes. I must seek my dream!"
+"2|Alas, fate will never let me rest in peace. None of the Three Nations' lords truly care for their subjects? they lust after power, not peace. The Kingdoms' people cry out for help! There have been too many tragedies because of this endless war. I have much to atone for...",
+"3|Eighty-two years after the Rise of Darkness, Hetman Zhuravel, son of a former commander under Colonel Chornohuz, legitimately succeeded Hetman Tryhub, son of the former Hetmanka Bohuslava. Hetman Zhuravel, adjust and powerful ruler, managed to unite the entire continent politically once again. The newly peaceful realm was known as the Grand Duchy of Ruthenia from that point on.",
+"4|I resigned from the royal court and returned to Red Monastery. I have long dreamt of a new age of heroes. I must seek my dream!"
 ]
 },
 {
 "talk": [
-"0|[Lord Brendan] How dare you, cur! You have no idea what the future holds for this land and its people!",
-"33|[Lord Gabriel] It is not over yet!",
-"0|[Lord Brendan] What the?!",
-"34|[Lord Frederick] Here I am, fool!",
-"0|[Lord Brendan] No? no...!",
-"24|[Lord Wesley] Away with you!",
-"0|[Lord Brendan] Ah... Pull back, pull back!",
+"0|[Kniaz Bronislaw] How dare you, cur! You have no idea what the future holds for this land and its people!",
+"33|[Colonel Bairak] It is not over yet!",
+"0|[Kniaz Bronislaw] What the?!",
+"34|[Colonel Chornohuz] Here I am, fool!",
+"0|[Kniaz Bronislaw] No? no...!",
+"24|[Colonel Tykhyi] Away with you!",
+"0|[Kniaz Bronislaw] Ah... Pull back, pull back!",
 "...?!",
-"2|[Callahan] Take this!",
+"2|[Kalnyk] Take this!",
 "ARRR!",
-"1|[General Augustine] May your death come quickly.",
+"1|[Rotmistr Augustyn] May your death come quickly.",
 "I cannot believe this..."
 ],
 "pictures": [
-"5|Lord Brendan's death led to the downfall of the Dark Forces, but the ensuing riot by former Dark Forces members and waves of refugees destabilized the entire realm. Thus was a new era in the Empire's history founded by the death of an anonymous warrior."
+"5|Kniaz Bronislaw's death led to the downfall of the Crown Army, but the ensuing riot by former Crown Army members and waves of refugees destabilized the entire realm. Thus was a new era in the Hetmanate's history founded by the death of an anonymous warrior."
 ]
 },
 {
 "talk": [
-"37|[Catherine] It's cold... so cold. I'm... slipping... away...",
-"1|[General Augustine] You disappointed me.",
-"37|[Catherine] ...",
-"0|[Soldier] General Catherine has been killed!",
+"37|[Katria] It's cold... so cold. I'm... slipping... away...",
+"1|[Rotmistr Augustyn] You disappointed me.",
+"37|[Katria] ...",
+"0|[Soldier] Katria has been killed!",
 "0|[Soldier] Run! Run!",
 "What a shame..!",
-"37|[Catherine] Please take this to General Conrad ....",
+"37|[Katria] Please take this to Colonel Zaderykhvist ....",
 "What is this?",
-"37|[Catherine] Please....",
+"37|[Katria] Please....",
 "As you wish...",
-"3|[Rosenberg] Stop right there!",
-"37|[Catherine] Go now!",
-"6|[Charlton] Die!",
+"3|[Rozenberg] Stop right there!",
+"37|[Katria] Go now!",
+"6|[Zaremba] Die!",
 "I will be back!"
 ],
 "pictures": [
-"6| Lord Geoffrey's forces decided to cede control of Hell Gate and pull back. I was told to meet General Conrad with the item General Catherine gave me, but my grievous injury prevented me from doing so. Perhaps it was for the best, since I had heard that General Conrad was lost sometime after the battle at Hell Gate."
+"6| Colonel Kozub's forces decided to cede control of Chortomlyk and pull back. I was told to meet Colonel Zaderykhvist with the item Katria gave me, but my grievous injury prevented me from doing so. Perhaps it was for the best, since I had heard that Colonel Zaderykhvist was lost sometime after the battle at Chortomlyk."
 ]
 },
 {
 "talk": [
-"37|[Christine] I have arrived!",
+"37|[Khrystia] I have arrived!",
 "Who are you?",
-"37|[Christine] I am Christine.",
+"37|[Khrystia] I am Khrystia.",
 "Yes? And?",
-"37|[Christine] I am General Catherine's younger sister.",
+"37|[Khrystia] I am Katria's younger sister.",
 "...",
-"37|[Christine] That scarf! How can it be... you possess what is mine!",
+"37|[Khrystia] That scarf! How can it be... you possess what is mine!",
 "?!?",
-"37|[Christine] My sister always told me the one who held that scarf would be betrothed to me.",
+"37|[Khrystia] My sister always told me the one who held that scarf would be betrothed to me.",
 "No... impossible.",
-"37|[Christine] Please take me with you.",
+"37|[Khrystia] Please take me with you.",
 "Nay, I cannot. I am only a sword for hire.",
-"37|[Christine] I do not care. Catherine gave you the scarf, so you are worthy to be a hero!",
+"37|[Khrystia] I do not care. Katria gave you the scarf, so you are worthy to be a hero!",
 "It's strange... this is madness, but there is something about you that makes me want to believe in what you say. Very well, let us leave this place.",
-"37|[Christine] Yes..."
+"37|[Khrystia] Yes..."
 ],
 "pictures": [
-"7|It was the biggest decision of my life, but I finally decided to take Christine with me and marry her. I promised her that I would retire from Crimson Temple and become a simple farmer. On the way back from Crimson Temple, I felt true peace for the first time. I was imagining myself being with her and protecting her for the rest of my life, and the thought brought me unbounded joy."
+"7|It was the biggest decision of my life, but I finally decided to take Khrystia with me and marry her. I promised her that I would retire from Red Monastery and become a simple farmer. On the way back from Red Monastery, I felt true peace for the first time. I was imagining myself being with her and protecting her for the rest of my life, and the thought brought me unbounded joy."
 ]
 },
 {
 "talk": [
 "I have to return soon!",
-"0|[Lord Caden] Thief! How dare you steal the Royal Seal from this sacred place!",
+"0|[Colonel Kalyna] Thief! How dare you steal the Royal Seal from this sacred place!",
 "Eh? What are you talking about?",
-"0|[Lord Caden] You must take me for a fool! Kill him!",
+"0|[Colonel Kalyna] You must take me for a fool! Kill him!",
 "A poisoned arrow?!",
-"0|[Lord Caden] Face the Reaper, you greedy thug! Aha! This must be the Royal Seal!",
+"0|[Colonel Kalyna] Face the Reaper, you greedy thug! Aha! This must be the Royal Seal!",
 "Oh, but I do not fall so easily... your hands are stained with the blood of innocents!",
-"0|[Lord Caden] How... could you? You were poisoned! NO!",
+"0|[Colonel Kalyna] How... could you? You were poisoned! NO!",
 "My life may be forfeit, but you will share the same fate!",
-"0|[Lord Caden] ARRR!",
+"0|[Colonel Kalyna] ARRR!",
 "My shame is unbearable"
 ],
 "pictures": [
@@ -112,7 +112,7 @@
 },
 {
 "talk": [
-"34|[Lord Frederick] How strange that this small oversight ultimately proved to be... my downfall.",
+"34|[Colonel Chornohuz] How strange that this small oversight ultimately proved to be... my downfall.",
 "May your soul find rest in eternity."
 ],
 "pictures": [
@@ -122,345 +122,345 @@
 },
 {
 "talk": [
-"4|[Lord Conrad] Fool, you cannot hope to stand on the same ground as me! Don't you know who I am?! I am the most feared man on the whole continent! I am LORD CONRAD!",
+"4|[Colonel Zaderykhvist] Fool, you cannot hope to stand on the same ground as me! Don't you know who I am?! I am the most feared man on the whole continent! I am LORD CONRAD!",
 "...",
-"4|[Lord Conrad] Odd... you stand your ground. Well, credit where credit is due: I must say, your work has been very impressive!",
+"4|[Colonel Zaderykhvist] Odd... you stand your ground. Well, credit where credit is due: I must say, your work has been very impressive!",
 "Thank you.",
-"4|[Lord Conrad] Why not come and work for me?",
+"4|[Colonel Zaderykhvist] Why not come and work for me?",
 "I am sorry, but I cannot accept.",
-"4|[Lord Conrad] Ah! I thought you might refuse. What a waste of talent...",
+"4|[Colonel Zaderykhvist] Ah! I thought you might refuse. What a waste of talent...",
 "... !?",
-"4|[Lord Conrad] Indeed. I must kill you before you betray me to my enemies.",
+"4|[Colonel Zaderykhvist] Indeed. I must kill you before you betray me to my enemies.",
 "What the...!!",
-"4|[Lord Conrad] Die well, mercenary!",
+"4|[Colonel Zaderykhvist] Die well, mercenary!",
 "Never!",
-"4|[Lord Conrad] ARRR!",
+"4|[Colonel Zaderykhvist] ARRR!",
 "Now you understand: even a butcher like you is made of the same meat you so enjoy chopping up!",
-"4|[Lord Conrad] ... Ugh... im... impossible! How?!",
+"4|[Colonel Zaderykhvist] ... Ugh... im... impossible! How?!",
 "Rest in peace for eternity."
 ],
 "pictures": [
-"8|Lord Conrad's death released his soldiers from the mortal terror he had held them under. His army disbanded and left his body for the ravens.",
+"8|Colonel Zaderykhvist's death released his soldiers from the mortal terror he had held them under. His army disbanded and left his body for the ravens.",
 "10|His life ended by my sword, a good deed and a fitting end, I think. I shall celebrate the cleansing of this murderer with a fine glass of wine!"
 ]
 },
 {
 "talk": [
-"0|[Lord Bartholomew] Finally! The northeastern region of the continent is in my grasp!",
+"0|[Colonel Varfolomii] Finally! The northeastern region of the continent is in my grasp!",
 "Well done, my lord.",
-"0|[Lord Bartholomew] I am deeply thankful for the immeasurable help you have given me.",
+"0|[Colonel Varfolomii] I am deeply thankful for the immeasurable help you have given me.",
 "You do me too much honor.",
-"0|[Lord Bartholomew]I shall reward you handsomely.",
+"0|[Colonel Varfolomii]I shall reward you handsomely.",
 "Thank you, sir.",
-"0|[Lord Bartholomew] Haha...! Finally I, Lord Bartholomew, have wings to fly!",
-"33|[Lord Gabriel] ..."
+"0|[Colonel Varfolomii] Haha...! Finally I, Colonel Varfolomii, have wings to fly!",
+"33|[Colonel Bairak] ..."
 ],
 "pictures": [
-"1| Lord Bartholomew became a force to be reckoned by eliminating Lord Eugene's forces. Gossip over his meteoric rise to power spread throughout the Empire.",
+"1| Colonel Varfolomii became a force to be reckoned by eliminating Colonel Tuman's forces. Gossip over his meteoric rise to power spread throughout the Hetmanate.",
 "11|However, his men were never truly satisfied with his leadership. He lacked the force of command to face down his top commanders, and as a result, many talented men deserted him.",
-"8|Eventually, his once-powerful army was routed by Lord Frederick's forces, and he lost all of his holdings. Lord Bartholomew was devastated! Ultimately, he was not wise enough to be satisfied with the riches fate had granted him."
+"8|Eventually, his once-powerful army was routed by Colonel Chornohuz's forces, and he lost all of his holdings. Colonel Varfolomii was devastated! Ultimately, he was not wise enough to be satisfied with the riches fate had granted him."
 ]
 },
 {
 "talk": [
-"31|[Lord Jaron] I am a failure! I cannot take revenge for my father's defeat.",
+"31|[Colonel Kosach] I am a failure! I cannot take revenge for my father's defeat.",
 "...",
-"11|[Luke] What should I do?!",
-"31|[Lord Jaron] Luke... You must keep your promise",
-"11|[Luke] ???",
-"31|[Lord Jaron] Did you not promise to serve whomever defeats me?",
-"11|[Luke] Are you talking about him?",
-"31|[Lord Jaron] Who else would I be speaking of?",
-"11|[Luke] You are right. Very well. I shall accept him as my lord.",
+"11|[Luka] What should I do?!",
+"31|[Colonel Kosach] Luka... You must keep your promise",
+"11|[Luka] ???",
+"31|[Colonel Kosach] Did you not promise to serve whomever defeats me?",
+"11|[Luka] Are you talking about him?",
+"31|[Colonel Kosach] Who else would I be speaking of?",
+"11|[Luka] You are right. Very well. I shall accept him as my lord.",
 "No! I am lord to nobody!",
-"31|[Lord Jaron] Please accept him. He will be an enormous help to you.",
+"31|[Colonel Kosach] Please accept him. He will be an enormous help to you.",
 "...",
-"11|[Luke] Please, sir!"
+"11|[Luka] Please, sir!"
 ],
 "pictures": [
-"12| Luke convinced me to become Lord Jaron's successor. Although I am but a simple warrior, I am now on the cusp of a completely new life."
+"12| Luka convinced me to become Colonel Kosach's successor. Although I am but a simple warrior, I am now on the cusp of a completely new life."
 ]
 },
 {
 "talk": [
-"0|[Lord Barclay] How dare they challenge me! I cannot thank you enough... you saved me!",
+"0|[Colonel Shulha] How dare they challenge me! I cannot thank you enough... you saved me!",
 "I will be back.",
-"0|[Lord Barclay] Wait. You should come work for me.",
+"0|[Colonel Shulha] Wait. You should come work for me.",
 "...",
-"0|[Lord Barclay] I can pay you much better than what you currently earn as a mercenary. Think about it.",
+"0|[Colonel Shulha] I can pay you much better than what you currently earn as a mercenary. Think about it.",
 "Thank you, but I am better off alone... for now.",
-"0|[Lord Barclay] Ah, that is a pity.",
+"0|[Colonel Shulha] Ah, that is a pity.",
 "Take care.",
-"0|[Lord Barclay] Come and see me if you ever change your mind.",
+"0|[Colonel Shulha] Come and see me if you ever change your mind.",
 "..."
 ],
 "pictures": [
-"4|Lord Barclay's offer was tempting, but I wanted to follow the path of my destiny. I felt he was not the one I was looking for, and I was right.",
-"8| Lord Barclay, who had barely managed to escape the battlefield after his forces were routed, eventually walked the path of ruin. He died alone, impoverished, and unloved.",
+"4|Colonel Shulha's offer was tempting, but I wanted to follow the path of my destiny. I felt he was not the one I was looking for, and I was right.",
+"8| Colonel Shulha, who had barely managed to escape the battlefield after his forces were routed, eventually walked the path of ruin. He died alone, impoverished, and unloved.",
 "6|Where is the lord I am destined to serve?"
 ]
 },
 {
 "talk": [
 "I am sorry for my failure.",
-"1|[General Augustine] Ha... It is not your fault.",
+"1|[Rotmistr Augustyn] Ha... It is not your fault.",
 "Gah! If only I were stronger!",
-"1|[General Augustine] Perhaps it is the will of fate...",
+"1|[Rotmistr Augustyn] Perhaps it is the will of fate...",
 "What are you going to do?",
-"1|[General Augustine] I must embark on a journey. I must find the man I am destined to serve.",
+"1|[Rotmistr Augustyn] I must embark on a journey. I must find the man I am destined to serve.",
 "Then...?",
-"1|[General Augustine] I will keep searching until I find him...",
+"1|[Rotmistr Augustyn] I will keep searching until I find him...",
 "...",
-"1|[General Augustine] Thank you for your help... .",
+"1|[Rotmistr Augustyn] Thank you for your help... .",
 "...",
-"1|[General Augustine] I will see you soon..."
+"1|[Rotmistr Augustyn] I will see you soon..."
 ],
 "pictures": [
-"13|General Augustine managed to escape from Lord Frederick's forces, and vanished from the Empire. I am envious of Lord Gabriel. Very few men could have earned absolute loyalty from such an honorable, upright person."
+"13|Rotmistr Augustyn managed to escape from Colonel Chornohuz's forces, and vanished from the Hetmanate. I am envious of Colonel Bairak. Very few men could have earned absolute loyalty from such an honorable, upright person."
 ]
 },
 {
 "talk": [
-"0|[Lord Eugene] Haha! Now I am lord of the entire continent!",
+"0|[Colonel Tuman] Haha! Now I am lord of the entire continent!",
 "...",
-"0|[Lord Eugene] Lord Frederick! You may have avoided my wrath this time, but I will not rest until I find you! DO YOU HEAR ME?!",
+"0|[Colonel Tuman] Colonel Chornohuz! You may have avoided my wrath this time, but I will not rest until I find you! DO YOU HEAR ME?!",
 "...",
-"0|[Lord Eugene] You, my friend, were incredibly helpful in this battle.",
+"0|[Colonel Tuman] You, my friend, were incredibly helpful in this battle.",
 "...",
-"0|[Lord Eugene] My, my... your eyes are fearsome... like those of a wolf!",
+"0|[Colonel Tuman] My, my... your eyes are fearsome... like those of a wolf!",
 "...",
-"0|[Lord Eugene] Come and serve me! You will not regret it.",
+"0|[Colonel Tuman] Come and serve me! You will not regret it.",
 "..."
 ],
 "pictures": [
-"3|Atfer the battle, Lord Eugene became the Empire's preeminent military power, and briefly held Empyrean Castle with his armies.",
-"8|However, Lord Frederick was far from finished. He recruited a powerful new army, obtained the latest military technology, and trounced Lord Eugene. Lord Eugene had to flee Empyrean Castle in women's clothing to survive. He managed to return to his homeland, but his dignity was not intact. He had been humiliated in front of the entire Empire.",
+"3|Atfer the battle, Colonel Tuman became the Hetmanate's preeminent military power, and briefly held Chyhyryn with his armies.",
+"8|However, Colonel Chornohuz was far from finished. He recruited a powerful new army, obtained the latest military technology, and trounced Colonel Tuman. Colonel Tuman had to flee Chyhyryn in women's clothing to survive. He managed to return to his homeland, but his dignity was not intact. He had been humiliated in front of the entire Hetmanate.",
 "14|The incident filled his heart with hatred, and he died a lonely, bitter old man. As is always the case, the will of fate triumphed over man's plans and hopes."
 ]
 },
 {
 "talk": [
-"34|[Lord Frederick] Curses! We missed Lord Gabriel!",
+"34|[Colonel Chornohuz] Curses! We missed Colonel Bairak!",
 "I am deeply sorry about this.",
-"34|[Lord Frederick] No, you did nothing wrong.",
+"34|[Colonel Chornohuz] No, you did nothing wrong.",
 "...",
-"34|[Lord Frederick] Ach, I've let him escape... now what...",
+"34|[Colonel Chornohuz] Ach, I've let him escape... now what...",
 "...",
-"34|[Lord Frederick] Lord Gabriel! Where have you gone?",
+"34|[Colonel Chornohuz] Colonel Bairak! Where have you gone?",
 "I must leave you now...",
-"34|[Lord Frederick] Thank you for all of your assistance.",
+"34|[Colonel Chornohuz] Thank you for all of your assistance.",
 "...",
-"34|[Lord Frederick] It must be you, Lord Gabriel! You are my only true rival! There is no one else!"
+"34|[Colonel Chornohuz] It must be you, Colonel Bairak! You are my only true rival! There is no one else!"
 ],
 "pictures": [
-"12|Lord Fredrick was a charismatic, talented leader, but he could turn into a viper when provoked. For this reason, many distrusted him and fled his authority en masse. Nevertheless, Lord Frederick crowned himself Emperor after the long war, and he was soon the mightiest ruler the land had ever seen. Alas, disease accomplished what Lord Gabriel and all of his allies could not: he sickened on a battlefield and died before he was able to extend his reign over the whole of the continent. Twenty-two years after Emperor Frederick's untimely demise..."
+"12|Colonel Chornohuz was a charismatic, talented leader, but he could turn into a viper when provoked. For this reason, many distrusted him and fled his authority en masse. Nevertheless, Colonel Chornohuz crowned himself Emperor after the long war, and he was soon the mightiest ruler the land had ever seen. Alas, disease accomplished what Colonel Bairak and all of his allies could not: he sickened on a battlefield and died before he was able to extend his reign over the whole of the continent. Twenty-two years after Colonel Chornohuz's untimely demise..."
 ]
 },
 {
 "talk": [
-"0|[Edmar] Your abilities are truly impressive!",
+"0|[Omelko] Your abilities are truly impressive!",
 "...",
-"0|[Edmar] Will you remain here and serve me?",
+"0|[Omelko] Will you remain here and serve me?",
 "...",
-"0|[Jameson] Answer my lord's request, peasant!",
+"0|[Skoryk] Answer my lord's request, peasant!",
 "A warrior adheres only to his personal code. I am a mercenary. I will not serve you.",
-"0|[Jameson] You are nothing but a dastardly thug!",
+"0|[Skoryk] You are nothing but a dastardly thug!",
 "Do not draw your weapon against me. I warn you.",
-"0|[Jameson] Defend yourself, honorless dog!",
+"0|[Skoryk] Defend yourself, honorless dog!",
 "...!!!",
-"0|[Jameson] ARRR!",
-"0|[Edmar] Get him! Kill him!",
+"0|[Skoryk] ARRR!",
+"0|[Omelko] Get him! Kill him!",
 "Fools.",
-"0|[Edmar] ARRR!"
+"0|[Omelko] ARRR!"
 ],
 "pictures": [
-"15| I fought for Lord Eugene's successor, but he did not last long. I hoped that he passed painlessly, to be reborn during a more peaceful time."
+"15| I fought for Colonel Tuman's successor, but he did not last long. I hoped that he passed painlessly, to be reborn during a more peaceful time."
 ]
 },
 {
 "talk": [
-"0|[Faramond] We will be able to hold on...",
+"0|[Khoma] We will be able to hold on...",
 "...",
-"0|[Edmar] This is our chance for revenge! Our father's blood is calling!",
-"0|[Faramond] No. Father's dead, and nothing we do here will bring him back! We don't have to fight.",
-"0|[Edmar] What? Will you not take revenge in the name of our father?",
-"0|[Faramond] An act of vengeance will only spur another vengeful act. Surely you know this to be true, brother.",
-"0|[Edmar] I cannot believe this. My own brother, a coward!",
-"0|[Faramond] I am no coward...",
-"0|[Edmar] If you betray our father, you betray me! Seize him!",
-"0|[Faramond] No! Do not do this! Please!",
-"0|[Edmar] My brother Faramond is dead to me. Who is this traitor?",
+"0|[Omelko] This is our chance for revenge! Our father's blood is calling!",
+"0|[Khoma] No. Father's dead, and nothing we do here will bring him back! We don't have to fight.",
+"0|[Omelko] What? Will you not take revenge in the name of our father?",
+"0|[Khoma] An act of vengeance will only spur another vengeful act. Surely you know this to be true, brother.",
+"0|[Omelko] I cannot believe this. My own brother, a coward!",
+"0|[Khoma] I am no coward...",
+"0|[Omelko] If you betray our father, you betray me! Seize him!",
+"0|[Khoma] No! Do not do this! Please!",
+"0|[Omelko] My brother Khoma is dead to me. Who is this traitor?",
 "..."
 ],
 "pictures": [
-"8| Lord Eugene's sons were not as noble as their father, who had died as honorably as a warrior could have.",
-"15|While Faramond and Edmar quarreled, Lord Frederick's forces regrouped. Lord Frederick eventually captured the two brothers and executed them. So much for brotherly love!"
+"8| Colonel Tuman's sons were not as noble as their father, who had died as honorably as a warrior could have.",
+"15|While Khoma and Omelko quarreled, Colonel Chornohuz's forces regrouped. Colonel Chornohuz eventually captured the two brothers and executed them. So much for brotherly love!"
 ]
 },
 {
 "talk": [
-"33|[Lord Gabriel] Ah, I am trapped! Very well... I am ready to die.",
-"34|[Lord Frederick] Finally! I finally have you!!",
+"33|[Colonel Bairak] Ah, I am trapped! Very well... I am ready to die.",
+"34|[Colonel Chornohuz] Finally! I finally have you!!",
 "...!!",
-"34|[Lord Frederick] Know this, Lord Gabriel: I do not wish to kill the only man whose talents match mine. Why not serve under me and help me to unite the continent under a single government? Together we would be unstoppable!",
-"33|[Lord Gabriel] Don't you see, Lord Frederick? All of this is a waste of time! We will only kill more innocents.",
-"34|[Lord Frederick] So, you are weaker than I am after all. It is truly a great shame that you have chosen death.",
+"34|[Colonel Chornohuz] Know this, Colonel Bairak: I do not wish to kill the only man whose talents match mine. Why not serve under me and help me to unite the continent under a single government? Together we would be unstoppable!",
+"33|[Colonel Bairak] Don't you see, Colonel Chornohuz? All of this is a waste of time! We will only kill more innocents.",
+"34|[Colonel Chornohuz] So, you are weaker than I am after all. It is truly a great shame that you have chosen death.",
 "...",
-"34|[Lord Frederick] Behead him and give him a hero's funeral!",
-"33|[Lord Gabriel] Why?! Why was I born a noble, only to die at the hands of a monster?! You have no honor, and you are no true lord, Frederick!",
+"34|[Colonel Chornohuz] Behead him and give him a hero's funeral!",
+"33|[Colonel Bairak] Why?! Why was I born a noble, only to die at the hands of a monster?! You have no honor, and you are no true lord, Chornohuz!",
 "..."
 ],
 "pictures": [
-"5|And, just like that, one of the Empire's greatest heroes met his death. Lord Gabriel, a member of the Imperial family and the only noble who fought to defend Emperor Duncan's legacy, disappeared into the annals of history.",
-"12|His loyal servants, Generals Callahan and Augustine, shared their lord's fate soon afterward.",
-"4|Every spring, those who remember Lord Gabriel and his faithful commanders fondly pick the cherry blossoms off of their graves, even hundreds of years later. It is said that the flowers' sweet scent can instill loyalty and honor in even the most hardened mercenary."
+"5|And, just like that, one of the Hetmanate's greatest heroes met his death. Colonel Bairak, a member of the Hetman's family and the only noble who fought to defend Hetman Verbenko's legacy, disappeared into the annals of history.",
+"12|His loyal servants, commanders Kalnyk and Augustyn, shared their lord's fate soon afterward.",
+"4|Every spring, those who remember Colonel Bairak and his faithful commanders fondly pick the cherry blossoms off of their graves, even hundreds of years later. It is said that the flowers' sweet scent can instill loyalty and honor in even the most hardened mercenary."
 ]
 },
 {
 "talk": [
-"34|[Lord Frederick] Curses...",
+"34|[Colonel Chornohuz] Curses...",
 "Your greed betrayed you...",
-"34|[Lord Frederick] How dare you speak to me like that?!",
+"34|[Colonel Chornohuz] How dare you speak to me like that?!",
 "...",
-"34|[Lord Frederick] I may die here, but my successors will avenge me! My name will live on!",
-"1|[General Augustine] Release him...",
+"34|[Colonel Chornohuz] I may die here, but my successors will avenge me! My name will live on!",
+"1|[Rotmistr Augustyn] Release him...",
 "...!!!",
-"1|[General Augustine] It wounds me deeply, but I owe a great debt to him. If I spare his life, I will be finished with him once and for all, and my conscience will be spared.",
+"1|[Rotmistr Augustyn] It wounds me deeply, but I owe a great debt to him. If I spare his life, I will be finished with him once and for all, and my conscience will be spared.",
 "Are you saying you will break the warrior's code?",
-"1|[General Augustine] The warrior's code is worthless if one's spirit is burdened. I must follow my own code as well.",
+"1|[Rotmistr Augustyn] The warrior's code is worthless if one's spirit is burdened. I must follow my own code as well.",
 "... Go.",
-"34|[Lord Frederick] Ha! Thank you, General Augustine! You may consider your debt paid in full!",
-"1|[General Augustine] Go now, before I change my mind. Get out of my sight!"
+"34|[Colonel Chornohuz] Ha! Thank you, Rotmistr Augustyn! You may consider your debt paid in full!",
+"1|[Rotmistr Augustyn] Go now, before I change my mind. Get out of my sight!"
 ],
 "pictures": [
-"8|General Augustine's personal code of ethics was admirable, but it allowed one of the greatest murderers in history avoid his fate. It is not wise to displease the fates, and General Augustine eventually met a horrible end on the battlefield.",
-"14|If Lord Frederick was to die in this battle, history would forever afterward be affected. The future is in fate's hands alone."
+"8|Rotmistr Augustyn's personal code of ethics was admirable, but it allowed one of the greatest murderers in history avoid his fate. It is not wise to displease the fates, and Rotmistr Augustyn eventually met a horrible end on the battlefield.",
+"14|If Colonel Chornohuz was to die in this battle, history would forever afterward be affected. The future is in fate's hands alone."
 ]
 },
 {
 "talk": [
-"0|[Lord Caden] You criminal scum!",
-"0|[Blake] I shall return soon!",
-"0|[Lord Caden] I will kill you with my bare hands if you ever return!",
-"0|[Blake] When I come back, you had better be prepared to die!",
-"0|[Lord Caden] Haha... you are welcome to try, commoner!",
+"0|[Colonel Kalyna] You criminal scum!",
+"0|[Chupryna] I shall return soon!",
+"0|[Colonel Kalyna] I will kill you with my bare hands if you ever return!",
+"0|[Chupryna] When I come back, you had better be prepared to die!",
+"0|[Colonel Kalyna] Haha... you are welcome to try, commoner!",
 "I will take my leave now...",
-"0|[Lord Caden] My deepest thanks. Your brilliant work on the battlefield saved us.",
+"0|[Colonel Kalyna] My deepest thanks. Your brilliant work on the battlefield saved us.",
 "...",
-"0|[Lord Caden] Haha! Look at those cowards run away!"
+"0|[Colonel Kalyna] Haha! Look at those cowards run away!"
 ],
 "pictures": [
-"13|Lord Caden proved to be a decent ruler, but his legacy was not fated to endure. After his death, his will, which would have granted his lands to Lord Gabriel, was ignored. Lord Caden's family squabbled over his assets, and this resulted in the entire estate falling into the hands of Lord Marquise.",
-"15|Lord Marquise wished to avoid any challenges to his ownership of the Caden lands, so he ruthlessly had the entire Caden family assassinated. They were consigned to their place in history in the blink of an eye. It is a shame that Lord Caden's belief in honorable conduct was not shared by his offspring, who instead chose the path of greed and ruin."
+"13|Colonel Kalyna proved to be a decent ruler, but his legacy was not fated to endure. After his death, his will, which would have granted his lands to Colonel Bairak, was ignored. Colonel Kalyna's family squabbled over his assets, and this resulted in the entire estate falling into the hands of Colonel Sych.",
+"15|Colonel Sych wished to avoid any challenges to his ownership of the Kalyna lands, so he ruthlessly had the entire Kalyna family assassinated. They were consigned to their place in history in the blink of an eye. It is a shame that Colonel Kalyna's belief in honorable conduct was not shared by his offspring, who instead chose the path of greed and ruin."
 ]
 },
 {
 "talk": [
-"33|[Lord Gabriel] Curses! I see now that I have underestimated them.",
+"33|[Colonel Bairak] Curses! I see now that I have underestimated them.",
 "...",
-"33|[Lord Gabriel] I will return soon...",
+"33|[Colonel Bairak] I will return soon...",
 "...",
-"1|[General Augustine] Until then you will live in our hearts!",
-"2|[Callahan] Hurry back, my lord...",
+"1|[Rotmistr Augustyn] Until then you will live in our hearts!",
+"2|[Kalnyk] Hurry back, my lord...",
 "...",
-"33|[Lord Gabriel] We must go..."
+"33|[Colonel Bairak] We must go..."
 ],
 "pictures": [
-"3|On General Maxwell's advice, Lord Gabriel rushed his forces into the Highland area. Lord Gabriel battled bravely, and Highland eventually fell to his assault. He quick consolidated his control over Highland and added the realm to his already expansive holdings.",
-"1|General Maxwell, Lord Gabriel's tactician, was deemed \"the Magnificent\" for devising the brilliant strategy that won the battle for Highland.",
-"9|The old adage must be correct: \"Strength is given to the fool who will not capitulate.\" What if Lord Gabriel had given up and retreated from Highland instead of fighting? The Empire's destiny surely would have veered towards the abyss!"
+"3|On Osaul Ternovyi's advice, Colonel Bairak rushed his forces into the Podillia area. Colonel Bairak battled bravely, and Podillia eventually fell to his assault. He quick consolidated his control over Podillia and added the realm to his already expansive holdings.",
+"1|Osaul Ternovyi, Colonel Bairak's tactician, was deemed \"the Magnificent\" for devising the brilliant strategy that won the battle for Podillia.",
+"9|The old adage must be correct: \"Strength is given to the fool who will not capitulate.\" What if Colonel Bairak had given up and retreated from Podillia instead of fighting? The Hetmanate's destiny surely would have veered towards the abyss!"
 ]
 },
 {
 "talk": [
-"10|[Edbert] Ha! Where are you off to, young man?",
-"1|[General Augustine] This is just the beginning! I shall return.",
-"18|[Kenneth]General Augustine! Come back! We are not finished fighting!",
-"1|[General Augustine] I will be back soon!",
-"18|[Kenneth] ...!",
-"10|[Edbert] Hurry back!",
+"10|[Shram] Ha! Where are you off to, young man?",
+"1|[Rotmistr Augustyn] This is just the beginning! I shall return.",
+"18|[Nazar]Rotmistr Augustyn! Come back! We are not finished fighting!",
+"1|[Rotmistr Augustyn] I will be back soon!",
+"18|[Nazar] ...!",
+"10|[Shram] Hurry back!",
 "...",
-"10|[Edbert] He is truly a great man, isn't he?",
-"18|[Kenneth] Yes. I hope to share some drink with him one day!",
+"10|[Shram] He is truly a great man, isn't he?",
+"18|[Nazar] Yes. I hope to share some drink with him one day!",
 "I must leave now.",
-"10|[Edbert] Very well. Godspeed, warrior."
+"10|[Shram] Very well. Godspeed, warrior."
 ],
 "pictures": [
-"10|Lord Kestrel eventually lost his lands when a cabal in his inner circle betrayed him. This was in spite of his two great commanders' best efforts. When Lord Kestrel's end came, it took him by complete surprise, since he had felt secure with his staff nearby. Clearly, it had always been General Edbert's and General Kenneth's fate to find residence in Lord Gabriel's army.",
-"14|Edbert eventually became one of the Highland's very finest generals. He accomplished many amazing feats, including the utter annihilation of General Charlton's army on the battlefield. Eventually, the other great general, Kenneth, also became one of Highland's vassals. His greatest work was to establish a bridgehead leading from Highland to the Empire's central continent."
+"10|Colonel Boryvitr eventually lost his lands when a cabal in his inner circle betrayed him. This was in spite of his two great commanders' best efforts. When Colonel Boryvitr's end came, it took him by complete surprise, since he had felt secure with his staff nearby. Clearly, it had always been Osaul Shram's and Osaul Nazar's fate to find residence in Colonel Bairak's army.",
+"14|Shram eventually became one of the Podillia's very finest generals. He accomplished many amazing feats, including the utter annihilation of Rotmistr Zaremba's army on the battlefield. Eventually, the other great general, Nazar, also became one of Podillia's vassals. His greatest work was to establish a bridgehead leading from Podillia to the Hetmanate's central continent."
 ]
 },
 {
 "talk": [
-"35|[Lord Clarence] I always thought of you as one of the greatest men of our time...",
-"33|[Lord Gabriel] ...",
-"35|[Lord Clarence] Why did you attack us?",
-"33|[Lord Gabriel] ...",
-"35|[Lord Clarence] Why did you not simply reach out to me? We didn't need to fight.",
-"33|[Lord Gabriel] ...",
-"35|[Lord Clarence] I would have just given it to you...",
-"33|[Lord Gabriel]...! What?!",
-"35|[Lord Clarence] Go...",
-"33|[Lord Gabriel] ...! I do not understand...",
+"35|[Colonel Bilous] I always thought of you as one of the greatest men of our time...",
+"33|[Colonel Bairak] ...",
+"35|[Colonel Bilous] Why did you attack us?",
+"33|[Colonel Bairak] ...",
+"35|[Colonel Bilous] Why did you not simply reach out to me? We didn't need to fight.",
+"33|[Colonel Bairak] ...",
+"35|[Colonel Bilous] I would have just given it to you...",
+"33|[Colonel Bairak]...! What?!",
+"35|[Colonel Bilous] Go...",
+"33|[Colonel Bairak] ...! I do not understand...",
 "..."
 ],
 "pictures": [
-"14|Lord Clarence managed to expand his territory considerably during the war, but Lord Gabriel's arrival put an end to his heavy-handed land seizures.",
-"15| Lord Clarence released Lord Gabriel, who went on to conquer the Highland by following General Maxwell's brilliant tactical advice. But the next time he fought Lord Clarence, General Maxwell's skill was unnecessary, as they had received vital information from within Lord Clarence's ranks. They were able to entrap Lord Clarence's men, and another hero was relegated to the bards' songs."
+"14|Colonel Bilous managed to expand his territory considerably during the war, but Colonel Bairak's arrival put an end to his heavy-handed land seizures.",
+"15| Colonel Bilous released Colonel Bairak, who went on to conquer the Podillia by following Osaul Ternovyi's brilliant tactical advice. But the next time he fought Colonel Bilous, Osaul Ternovyi's skill was unnecessary, as they had received vital information from within Colonel Bilous's ranks. They were able to entrap Colonel Bilous's men, and another hero was relegated to the bards' songs."
 ]
 },
 {
 "talk": [
-"36|[Lord Blackwell] Lord Frederick... your hatred burns in your eyes. I can see it.",
-"34|[Lord Frederick] I will return!",
-"36|[Lord Desmond] I am satisfied with my one little parcel of land. I have no ambition for more.",
-"34|[Lord Frederick] It is nothing personal, but you are an obstacle on my way to glory.",
-"36|[Lord Blackwell] Is that so?",
-"34|[Lord Frederick] Yes, you are standing in my way. I must kill Lord Gabriel. I shall kill him!",
-"36|[Lord Blackwell] I see! Your ambition goes far beyond mere parcels of land...",
-"34|[Lord Frederick] Yes! True men ought to have a burning ambition to be the greatest.",
-"36|[Lord Blackwell] You are neither a true man, nor a great one.",
-"34|[Lord Frederick] You will eat those words upon my return, fool."
+"36|[Colonel Chornovus] Colonel Chornohuz... your hatred burns in your eyes. I can see it.",
+"34|[Colonel Chornohuz] I will return!",
+"36|[Colonel Tur] I am satisfied with my one little parcel of land. I have no ambition for more.",
+"34|[Colonel Chornohuz] It is nothing personal, but you are an obstacle on my way to glory.",
+"36|[Colonel Chornovus] Is that so?",
+"34|[Colonel Chornohuz] Yes, you are standing in my way. I must kill Colonel Bairak. I shall kill him!",
+"36|[Colonel Chornovus] I see! Your ambition goes far beyond mere parcels of land...",
+"34|[Colonel Chornohuz] Yes! True men ought to have a burning ambition to be the greatest.",
+"36|[Colonel Chornovus] You are neither a true man, nor a great one.",
+"34|[Colonel Chornohuz] You will eat those words upon my return, fool."
 ],
 "pictures": [
-"1|Lord Blackwell was an effective ruler with a strong sense of morality. He used religion to help guide his people, and decreed that absolute honesty would be the law of his realm. His estates were not expansive, but they lay in a key area of the Highland and Central regions.",
-"3|Before long, Lord Blackwell succumbed to the pressure of Lord Frederick's unstinting attacks. He was forced to flee his lands with only the clothes on his back, but Lord Frederick regarded Lord Blackwell's convictions favorably. He eventually reversed his decree mandating his death, and decided to let him return to his castle.",
-"6|Lord Blackwell is one of this land's unluckiest men. He could have been a truly great ruler, if only he had lived during less chaotic times!"
+"1|Colonel Chornovus was an effective ruler with a strong sense of morality. He used religion to help guide his people, and decreed that absolute honesty would be the law of his realm. His estates were not expansive, but they lay in a key area of the Podillia and Central regions.",
+"3|Before long, Colonel Chornovus succumbed to the pressure of Colonel Chornohuz's unstinting attacks. He was forced to flee his lands with only the clothes on his back, but Colonel Chornohuz regarded Colonel Chornovus's convictions favorably. He eventually reversed his decree mandating his death, and decided to let him return to his castle.",
+"6|Colonel Chornovus is one of this land's unluckiest men. He could have been a truly great ruler, if only he had lived during less chaotic times!"
 ]
 },
 {
 "talk": [
-"7|[Lord Drake] Your assistance was most appreciated...",
+"7|[Colonel Zolotar] Your assistance was most appreciated...",
 "You are welcome.",
-"7|[Lord Drake] Will you continue to assist me?",
+"7|[Colonel Zolotar] Will you continue to assist me?",
 "Of course. I will be waiting for your request.",
-"7|[Lord Drake] Thank you.",
+"7|[Colonel Zolotar] Thank you.",
 "I will go now...",
-"7|[Lord Drake] Please, take care."
+"7|[Colonel Zolotar] Please, take care."
 ],
 "pictures": [
-"1|General Maxwell felt that Lord Drake was someone who possessed the talents necessary to become Emperor. After winning the battle, Lord Drake rushed into Highland and quickly conquered it. Lord Gabriel and his men, including Generals Maxwell, Augustine, Callahan, Kendrick and Edbert, hurried to meet Lord Drake.",
-"13|Lord Drake's forces were built in the shadow of his father's gruesome fate. He decided to create a better army with Lord Blackwell's help. Alas, only two years after conquering the Highland area, Golden Drake died at the relatively young age of 48.",
-"3|Not even Golden Drake, one of the Empire's greatest warriors, could escape the long shadow of his fate."
+"1|Osaul Ternovyi felt that Colonel Zolotar was someone who possessed the talents necessary to become Emperor. After winning the battle, Colonel Zolotar rushed into Podillia and quickly conquered it. Colonel Bairak and his men, including commanders Ternovyi, Augustyn, Kalnyk, Kotsiuba and Shram, hurried to meet Colonel Zolotar.",
+"13|Colonel Zolotar's forces were built in the shadow of his father's gruesome fate. He decided to create a better army with Colonel Chornovus's help. Alas, only two years after conquering the Podillia area, Dorosh the Golden died at the relatively young age of 48.",
+"3|Not even Dorosh the Golden, one of the Hetmanate's greatest warriors, could escape the long shadow of his fate."
 ]
 },
 {
 "talk": [
-"1|[General Augustine] Thank you for saving me.",
+"1|[Rotmistr Augustyn] Thank you for saving me.",
 "You are welcome.",
-"1|[General Augustine] Fate has spared my life... with your help.",
+"1|[Rotmistr Augustyn] Fate has spared my life... with your help.",
 "You have to get back soon.",
-"1|[General Augustine] Yes. I must return to my lord.",
+"1|[Rotmistr Augustyn] Yes. I must return to my lord.",
 "I must say... your loyalty is inspirational.",
-"1|[General Augustine] I only wish my lord had more warriors like you.",
+"1|[Rotmistr Augustyn] I only wish my lord had more warriors like you.",
 "...",
-"1|[General Augustine] Listen: If you want to live for a long time, and not for a brief moment, like a whirling gale of wind, give up your mercenary lifestyle. Come with me and serve my lord.",
+"1|[Rotmistr Augustyn] Listen: If you want to live for a long time, and not for a brief moment, like a whirling gale of wind, give up your mercenary lifestyle. Come with me and serve my lord.",
 "... Very well. I will.",
-"1|[General Augustine] Excellent. Now I have to get moving!"
+"1|[Rotmistr Augustyn] Excellent. Now I have to get moving!"
 ],
 "pictures": [
-"12|General Augustine who lost his good name after Lord Marquise's attack was not the General Augustine I knew. As a loyal servant of Lord Gabriel, he defeated General Catherine at the Battle of Hell Gate, and also eliminated Cromwell and Beresford, who were considered to be two of the greatest warriors in the Empire. But because he often quarreled with General Maxwell, he was placed on the front lines of the battle with Lord Marquise. There he stood alone, cut off from his own forces. His journey back to Lord Gabriel became a legend in its own right, even though his intrepid spirit dimmed as he aged.",
-"1|General Augustine recommended me as his successor, and I became Highland's chief general. General Augustine also gave me his position of an Empyrean Dragon Knight, and then retired permanently from battle. From that point forward, I was known as \"Battle Dragon\" and I began my new life as a hero."
+"12|Rotmistr Augustyn who lost his good name after Colonel Sych's attack was not the Rotmistr Augustyn I knew. As a loyal servant of Colonel Bairak, he defeated Katria at the Battle of Chortomlyk, and also eliminated Pereima and Brzeski, who were considered to be two of the greatest warriors in the Hetmanate. But because he often quarreled with Osaul Ternovyi, he was placed on the front lines of the battle with Colonel Sych. There he stood alone, cut off from his own forces. His journey back to Colonel Bairak became a legend in its own right, even though his intrepid spirit dimmed as he aged.",
+"1|Rotmistr Augustyn recommended me as his successor, and I became Podillia's chief general. Rotmistr Augustyn also gave me his position of an Knight of the Hetman's Banner, and then retired permanently from battle. From that point forward, I was known as \"Battle Dragon\" and I began my new life as a hero."
 ]
 }
 ],
@@ -475,13 +475,13 @@
 "Love Of Warrior",
 "Unnamed Hero",
 "God's Will",
-"Conrad's Story",
+"Zaderykhvist's Story",
 "Condition Of Hero",
 "New Force",
 "Wondering Warrior",
 "Lionheart",
 "Downfall",
-"Frederick",
+"Chornohuz",
 "Internal Strife",
 "What a shame",
 "Hero's Fall",
@@ -489,9 +489,9 @@
 "Code Of Honor",
 "Never Give Up",
 "Two Generals",
-"Lord Daniel",
-"Agnes' Story",
-"Lord Aaron",
+"Colonel Pidhornyi",
+"Buriak' Story",
+"Colonel Holota",
 "Battle Dragon"
 ]
 }
