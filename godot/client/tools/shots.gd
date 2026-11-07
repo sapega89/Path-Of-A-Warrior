@@ -471,8 +471,8 @@ func _ready() -> void:
 	Router.current.next_line()
 	Router.current.press()
 	await _shot(out, "04d_briefing")
-	# The camps between missions: a stop with a fork (one way closed), a stop with six ways,
-	# the main camp at the start with the town hall and the blacksmith, and the town hall.
+	# The camps between missions: a stop with a way per mission (one place closed), six ways,
+	# the main camp at the start, and the town hall that every camp has.
 	walker.place = 4
 	walker.save("user://shot_walker.json")
 	Router.go("camp", {"profile_path": "user://shot_walker.json"})

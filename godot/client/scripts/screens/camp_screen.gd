@@ -1,13 +1,12 @@
 extends Control
 ## The stop between missions (scripts/world/camp_map.gd): the hero walks about the camp of
 ## his place, and each way on from there is a gap in the pines with a blinking arrow, nothing
-## more: which way is better is learnt by playing. Walking out through a gap tells the story
-## of one of the missions there (pick_mission), then its briefing; the mission comes back
+## more: which way is better is learnt by playing. Each gap is one mission (choices()), so
+## walking out tells its story, then its briefing; the mission comes back
 ## here when it is over (won: the camp of the new place; lost: this one again, to try once
 ## more with the same hero). A closed way is fenced. Every camp has the blacksmith (buy, sell, enchant,
-## combine), the warehouse, and the general who came to visit (one visit after each mission
-## won, scripts/core/visits.gd); a main camp also has the town hall (every colonel and
-## general). The game is saved when the hero comes into a camp. Pause opens the camp menu:
+## combine), the warehouse and the town hall (every colonel and general, and the visits of
+## the generals: one after each mission won, scripts/core/visits.gd). The game is saved when the hero comes into a camp. Pause opens the camp menu:
 ## the game menu, the world map, the main menu.
 ## Router.params: profile_path; first: true starts the first mission at once (a new game).
 
@@ -20,15 +19,13 @@ const MapBuilder := preload("res://scripts/world/map_builder.gd")
 const Hero := preload("res://scripts/world/hero.gd")
 const FollowCamera := preload("res://scripts/world/follow_camera.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
-const Soldier := preload("res://scripts/world/soldier.gd")
-const Visits := preload("res://scripts/core/visits.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
 const TALK_RANGE := 1.4  # tiles
 const ARROW_PATH := "res://assets/original/ui/arrow%d.png"
 ## The arrow picture for a gap on the top, the right and the left side (arrow0..3: down,
 ## left, up, right).
 const ARROW_OF_SIDE := [2, 3, 1]
 const BLINK_TIME := 0.25
+const MAX_WAYS := 6  # gaps in a camp
 const CAMERA_DISTANCE := 19.0  # the whole camp on the screen, the camera does not move
 
 var path: String = Profile.PATH
@@ -60,10 +57,8 @@ func _ready() -> void:
 	profile = Profile.load_or_new(path)
 	place = int(profile.place)
 	world_map = WorldMap.new(campaign)
-	var ways: Array = []
-	for id in world_map.next_places(place):
-		ways.append([id, profile.is_lord_open(id)])
-	camp = CampMap.new(ways, CampMap.is_main(place))
+	rng.seed = hash([place, profile.done.size()])  # the same ways each time back here
+	camp = CampMap.new(choices(), CampMap.is_main(place))
 	_build_world()
 	_build_ui()
 	if profile.on_map.is_empty():
@@ -110,7 +105,7 @@ func _build_world() -> void:
 		var at := MapBuilder.cell_to_world(e.inside)
 		if e.open:
 			var arrow := Sprite3D.new()
-			arrow.name = "Arrow%d" % e.place
+			arrow.name = "Arrow%d_%d" % [e.place, e.mission]
 			arrow.texture = load(ARROW_PATH % ARROW_OF_SIDE[int(e.side)])
 			arrow.pixel_size = 1.0 / 27.0
 			arrow.billboard = BaseMaterial3D.BILLBOARD_ENABLED
@@ -119,28 +114,17 @@ func _build_world() -> void:
 			arrow.position = MapBuilder.cell_to_world(e.gap[1]).lerp(at, 0.5) + Vector3(0, 0.6, 0)
 			world.add_child(arrow)
 			arrows.append(arrow)
-		spots.append({"kind": "way", "place": int(e.place), "open": bool(e.open), "at": at})
+		spots.append({"kind": "way", "place": int(e.place), "mission": int(e.mission), "open": bool(e.open),
+			"at": at})
 	var smith := MapBuilder.cell_to_world(camp.smith_spot())
-	_label3d("Smith", tr("menu.blacksmith"), smith + Vector3(0, 2.0, -1.0), UiTheme.TEXT)
+	_label3d("Smith", tr("menu.blacksmith"), smith + Vector3(0, 1.3, -0.3), UiTheme.TEXT)
 	spots.append({"kind": "smith", "at": smith})
 	var store := MapBuilder.cell_to_world(camp.store_spot())
-	_label3d("Store", tr("live.warehouse"), store + Vector3(0, 2.0, -1.0), UiTheme.TEXT)
+	_label3d("Store", tr("live.warehouse"), store + Vector3(0, 1.3, -0.5), UiTheme.TEXT)
 	spots.append({"kind": "store", "at": store})
-	if Visits.can_visit(profile):
-		var guest := Visits.generals(profile).filter(func(g): return int(g[1]) > 0)
-		var gen: Dictionary = MapSim.general_data(int(guest[0][0])) if not guest.is_empty() else {}
-		var npc := Soldier.new()
-		npc.name = "Guest"
-		npc.setup(1, 0, [], {"look": int(gen.get("look", 1)), "side": 0})
-		npc.set_frame(0, 0)
-		npc.position = MapBuilder.cell_to_world(CampMap.GUEST_AT)
-		world.add_child(npc)
-		_label3d("GuestName", tr("menu.visiting"), npc.position + Vector3(0, 2.6, 0), UiTheme.ACCENT)
-		spots.append({"kind": "guest", "at": npc.position})
-	if camp.main:
-		var door := MapBuilder.cell_to_world(camp.hall_door())
-		_label3d("Hall", tr("camp.hall"), door + Vector3(0, 2.8, -1.0), UiTheme.TEXT)
-		spots.append({"kind": "hall", "at": door})
+	var door := MapBuilder.cell_to_world(camp.hall_door())
+	_label3d("Hall", tr("camp.hall"), door + Vector3(0, 2.8, -1.0), UiTheme.TEXT)
+	spots.append({"kind": "hall", "at": door})
 
 
 func _label3d(node_name: String, text: String, at: Vector3, color: Color) -> void:
@@ -272,8 +256,6 @@ func _hint_text(s: Dictionary) -> String:
 			return InputSetup.hint("camp.enter_smith")
 		"store":
 			return InputSetup.hint("camp.enter_store")
-		"guest":
-			return InputSetup.hint("camp.enter_guest")
 	return InputSetup.hint("camp.hint_walk")
 
 
@@ -282,7 +264,7 @@ func use(s: Dictionary) -> void:
 		"way":
 			if s.open:
 				_leaving = true
-				Router.push("campaign", {"level": 3, "lord": int(s.place), "mission": pick_mission(int(s.place)),
+				Router.push("campaign", {"level": 3, "lord": int(s.place), "mission": int(s.mission),
 					"camp": true, "profile_path": path})
 		"hall":
 			Router.push("town_hall", {"profile_path": path})
@@ -290,18 +272,46 @@ func use(s: Dictionary) -> void:
 			Router.push("blacksmith", {"profile_path": path})
 		"store":
 			Router.push("live_warehouse", {"profile_path": path})
-		"guest":
-			Router.push("visiting", {"profile_path": path})
 
 
-## The mission a way leads to: one of the place's missions not won yet, by chance (any of
-## them when all are won).
-func pick_mission(id: int) -> int:
-	var n: int = campaign.lord_missions(id).size()
-	var left: Array = range(n).filter(func(i): return not profile.is_done(id, i))
-	if left.is_empty():
-		left = range(n)
-	return int(left[rng.randi_range(0, left.size() - 1)]) if not left.is_empty() else 0
+## The ways out of the camp, one gap each: [place, open, mission]. Each mission of an open
+## place on from here (not won yet; all of them when all are won) is a way of its own, so
+## there is a choice even where only one place is next; a closed place is one fenced gap. At
+## most six: every open place keeps one mission, the rest are drawn by chance, and closed
+## places give way first. The order is shuffled, so a gap's side says nothing.
+func choices() -> Array:
+	var per_place: Array = []
+	var closed: Array = []
+	for id in world_map.next_places(place):
+		if not profile.is_lord_open(id):
+			closed.append([id, false, -1])
+			continue
+		var n: int = campaign.lord_missions(id).size()
+		var left: Array = range(n).filter(func(i): return not profile.is_done(id, i))
+		if left.is_empty():
+			left = range(n)
+		_shuffle(left)
+		per_place.append(left.map(func(m): return [id, true, m]))
+	var out: Array = []
+	var rest: Array = []
+	for ms in per_place:
+		out.append(ms[0])
+		rest.append_array(ms.slice(1))
+	_shuffle(rest)
+	while out.size() < MAX_WAYS and not rest.is_empty():
+		out.append(rest.pop_back())
+	while out.size() < MAX_WAYS and not closed.is_empty():
+		out.append(closed.pop_front())
+	_shuffle(out)
+	return out
+
+
+func _shuffle(a: Array) -> void:
+	for i in range(a.size() - 1, 0, -1):
+		var j := rng.randi_range(0, i)
+		var t: Variant = a[i]
+		a[i] = a[j]
+		a[j] = t
 
 
 ## Straight into a mission's briefing (the first mission of a new game).

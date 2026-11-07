@@ -89,10 +89,9 @@ func test_camp_map_has_a_gap_per_way() -> void:
 			eq(int(c.data.flags[e.inside.y * CampMap.W + e.inside.x]) & 1, 0, "its colonel stands on free ground")
 	check(CampMap.is_main(0) and CampMap.is_main(30) and not CampMap.is_main(27), "the main camps")
 	var plain: RefCounted = CampMap.new([[1, true]])
-	for spot in [plain.smith_spot(), plain.store_spot(), CampMap.GUEST_AT]:
-		eq(int(plain.data.flags[spot.y * CampMap.W + spot.x]) & 1, 0, "the blacksmith, the stores and the guest can be reached")
-	var main: RefCounted = CampMap.new([[1, true]], true)
-	eq(int(main.data.flags[main.hall_door().y * CampMap.W + main.hall_door().x]) & 1, 0, "the hall's door is free")
+	for spot in [plain.smith_spot(), plain.store_spot(), plain.hall_door(), plain.start]:
+		eq(int(plain.data.flags[spot.y * CampMap.W + spot.x]) & 1, 0, "the blacksmith, the stores, the hall and the start can be reached")
+	eq(plain.data.upper[0], CampMap.TREE[0][0], "a big tree in the corner")
 
 
 func test_camp_screen_ways_lead_to_the_missions() -> void:
@@ -104,28 +103,38 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 	var camp: Control = CampScreen.new()
 	root.add_child(camp)
 	eq(camp.place, 4, "the camp of the hero's place")
-	eq(camp.spots.map(func(s): return s.kind), ["way", "way", "smith", "store"],
-		"the ways, the blacksmith and the warehouse in every camp; no guest without a won mission")
-	eq(camp.spots.slice(0, 2).map(func(s): return [s.place, s.open]), [[5, false], [6, true]],
-		"Korsun: The Regalia closed, Harvest open")
+	eq(camp.spots.map(func(s): return s.kind), ["way", "way", "way", "smith", "store", "hall"],
+		"a way per mission, then the blacksmith, the warehouse and the town hall in every camp")
+	var ways: Array = camp.spots.filter(func(s): return s.kind == "way")
+	var open: Array = ways.filter(func(s): return s.open)
+	eq(ways.filter(func(s): return not s.open).map(func(s): return s.place), [5], "The Regalia fenced")
+	eq(open.map(func(s): return s.place), [6, 6], "Harvest: a way for each of its missions")
+	eq(open.map(func(s): return s.mission).reduce(func(a, b): return a + b), 1, "missions 0 and 1")
 	check(not camp.camp.main, "Korsun is a stop")
-	var harvest: Dictionary = camp.spots[1]
-	eq(camp.spot_near(harvest.at + Vector3(0.5, 0, 0.5)), harvest, "next to the colonel")
+	var harvest: Dictionary = open[0]
+	eq(camp.spot_near(harvest.at + Vector3(0.5, 0, 0.5)), harvest, "next to the way in")
 	eq(camp.spot_near(Vector3(8.5, 0, 10.5)), {}, "far from everyone")
-	var gap: Vector2i = camp.camp.exits[1].gap[1]
-	eq(camp.exit_crossed(Vector3(gap.x + 0.5, 0, 0.3)), harvest, "out through the gap")
+	var k: int = camp.spots.find(harvest)
+	var e: Dictionary = camp.camp.exits[k]
+	var out := Vector3(e.gap[1].x + 0.5, 0, 0.3)
+	if int(e.side) == 1:
+		out = Vector3(CampMap.W - 0.3, 0, e.gap[1].y + 0.5)
+	elif int(e.side) == 2:
+		out = Vector3(0.3, 0, e.gap[1].y + 0.5)
+	eq(camp.exit_crossed(out), harvest, "out through the gap")
 	eq(camp.exit_crossed(Vector3(8.5, 0, 6.0)), {}, "inside")
-	var smith: Dictionary = camp.spots[2]
+	var smith: Dictionary = camp.spots[3]
 	eq(camp.spot_near(smith.at), smith, "at the blacksmith's fire")
 	check(camp._hint_text(smith).contains(tr("menu.blacksmith")), "says what is there")
 	check(camp.rulers(1).size() == 4, "four colonels give the missions at Uprising")
-	eq(camp.arrows.size(), 1, "an arrow on the open way only")
-	for i in 20:
-		var m: int = camp.pick_mission(6)
-		check(m == 0 or m == 1, "a mission of Harvest")
+	eq(camp.arrows.size(), 2, "an arrow on the open ways only")
 	p.done["6:0"] = true
 	camp.profile = p
-	eq(camp.pick_mission(6), 1, "not one won already")
+	var again: Array = camp.choices().filter(func(w): return w[1])
+	eq(again, [[6, true, 1]], "not one won already")
+	camp.profile.place = 27
+	camp.place = 27
+	check(camp.choices().size() <= CampScreen.MAX_WAYS, "at most six ways")
 	camp.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))

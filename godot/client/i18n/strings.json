@@ -1504,12 +1504,12 @@
     "uk": "Обери шлях: вийди туди, де стрілка   [Start] меню табору"
   },
   "camp.enter_hall": {
-    "en": "[Enter] Town Hall: every colonel and general",
-    "uk": "[Enter] Ратуша: усі полковники й генерали"
+    "en": "[Enter] Town Hall: colonels, generals, visits",
+    "uk": "[Enter] Ратуша: полковники, генерали, візити"
   },
   "camp.enter_hall_pad": {
-    "en": "[A] Town Hall: every colonel and general",
-    "uk": "[A] Ратуша: усі полковники й генерали"
+    "en": "[A] Town Hall: colonels, generals, visits",
+    "uk": "[A] Ратуша: полковники, генерали, візити"
   },
   "camp.enter_smith": {
     "en": "[Enter] Blacksmith: buy, sell, enchant, combine",
@@ -1574,13 +1574,5 @@
   "camp.enter_store_pad": {
     "en": "[A] Warehouse",
     "uk": "[A] Склад"
-  },
-  "camp.enter_guest": {
-    "en": "[Enter] Talk to the general who came",
-    "uk": "[Enter] Поговорити з генералом, що прийшов"
-  },
-  "camp.enter_guest_pad": {
-    "en": "[A] Talk to the general who came",
-    "uk": "[A] Поговорити з генералом, що прийшов"
   }
 }
