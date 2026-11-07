@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Installs the game's server (godot/client/server, ENet over UDP with DTLS) on an Ubuntu VM
+# Installs the game's server (godot/client/server, ENet over UDP with DTLS) on an Ubuntu or
+# Oracle Linux VM
 # (Oracle Cloud Always Free, x86_64 or ARM) as a systemd service that starts with the machine.
 #
 #   curl -fsSL https://raw.githubusercontent.com/sapega89/Path-Of-A-Warrior/dev/godot/deploy/install.sh | sudo bash
@@ -17,11 +18,18 @@ DATA=/var/lib/pow-server
 
 [ "$(id -u)" = 0 ] || { echo "run with sudo"; exit 1; }
 
-apt-get update -qq
-DEBIAN_FRONTEND=noninteractive apt-get install -y -qq git unzip curl ca-certificates \
-    fontconfig iptables-persistent unattended-upgrades > /dev/null
-# security updates of the system install themselves every day
-dpkg-reconfigure -f noninteractive unattended-upgrades
+if command -v apt-get >/dev/null; then          # Ubuntu / Debian
+    apt-get update -qq
+    DEBIAN_FRONTEND=noninteractive apt-get install -y -qq git unzip curl ca-certificates \
+        fontconfig iptables-persistent unattended-upgrades > /dev/null
+    # security updates of the system install themselves every day
+    dpkg-reconfigure -f noninteractive unattended-upgrades
+else                                             # Oracle Linux / RHEL
+    dnf install -y -q git unzip curl ca-certificates fontconfig dnf-automatic > /dev/null
+    sed -i 's/^apply_updates.*/apply_updates = yes/; s/^upgrade_type.*/upgrade_type = security/' \
+        /etc/dnf/automatic.conf
+    systemctl enable -q --now dnf-automatic.timer
+fi
 
 case "$(uname -m)" in
     x86_64) GODOT_ARCH=x86_64 ;;
@@ -53,7 +61,7 @@ chown -R pow:pow "$APP"
 # SSH only with the key (Oracle's images already do this; kept so if the image changes)
 if [ -d /etc/ssh/sshd_config.d ]; then
     printf 'PasswordAuthentication no\nPermitRootLogin no\n' > /etc/ssh/sshd_config.d/90-pow.conf
-    systemctl reload ssh 2>/dev/null || systemctl reload sshd 2>/dev/null || true
+    systemctl reload sshd 2>/dev/null || systemctl reload ssh 2>/dev/null || true
 fi
 # the import cache (.godot/) the server's scenes and scripts load from
 sudo -u pow HOME="$DATA" timeout 600 "$GODOT" --headless --path "$APP/godot/client" --import > /dev/null 2>&1 || true
@@ -93,10 +101,13 @@ systemctl daemon-reload
 systemctl enable -q pow-server
 systemctl restart pow-server
 
-# Oracle's Ubuntu images reject everything but SSH in iptables: let the game's UDP port in.
-if ! iptables -C INPUT -p udp --dport "$PORT" -j ACCEPT 2>/dev/null; then
+# Oracle's images let in only SSH: open the game's UDP port in the machine's own firewall too.
+if command -v firewall-cmd >/dev/null && systemctl is-active -q firewalld; then
+    firewall-cmd -q --permanent --add-port="${PORT}/udp"
+    firewall-cmd -q --reload
+elif ! iptables -C INPUT -p udp --dport "$PORT" -j ACCEPT 2>/dev/null; then
     iptables -I INPUT 1 -p udp --dport "$PORT" -j ACCEPT
-    netfilter-persistent save > /dev/null
+    command -v netfilter-persistent >/dev/null && netfilter-persistent save > /dev/null
 fi
 
 for _ in $(seq 1 30); do [ -f "$DATA/server.crt" ] && break; sleep 1; done
