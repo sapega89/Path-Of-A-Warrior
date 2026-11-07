@@ -56,7 +56,7 @@ static func pages() -> int:
 
 static func title(i: int) -> String:
 	var titles: Array = Stories.data().get("titles", [])
-	return str(titles[i]) if i >= 0 and i < titles.size() else ""
+	return I18n.text(titles[i]) if i >= 0 and i < titles.size() else ""
 
 
 func reached(i: int) -> bool:

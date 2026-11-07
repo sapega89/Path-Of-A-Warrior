@@ -11,7 +11,7 @@ const TEST_PATH := "user://test_visits.json"
 func test_data() -> void:
 	eq(Visits.data().get("lines", []).size(), 76, "76 lines")
 	eq(Visits.data().get("generals", []).size(), 44, "44 generals one can visit")
-	eq(Visits.line(0), "Greetings.", "the first greeting")
+	eq(Visits.line(0), "Good day.", "the first greeting")
 
 
 func test_a_won_mission_allows_a_visit() -> void:
@@ -36,11 +36,11 @@ func test_a_won_mission_allows_a_visit() -> void:
 
 func test_greetings_by_friendship() -> void:
 	var g := Visits.greeting(0, 0, "Hero", "Jan Gorski")
-	eq(g, ["[Hero] Greetings.", "[Jan Gorski] Hello.", "[Hero] Hello... thank you for inviting me."], "the coolest")
+	eq(g, ["[Hero] Good day.", "[Jan Gorski] Good day to you.", "[Hero] Thank you for having me."], "the coolest")
 	eq(Visits.greeting(100, 0, "H", "K")[0], "[H] " + Visits.line(27), "100 points: the warmest")
 	eq(Visits.greeting(15, 1, "H", "K")[0], "[H] " + Visits.line(33), "a general of topic 1")
-	eq(Visits.talk(0, 0, "H", "K"), ["[H] Your swordsmanship is without peer!", "[K] Thanks."], "the sword")
-	eq(Visits.talk(1, 3, "H", "K")[1], "[K] That is exceptionally generous of you.", "people, topic 1")
+	eq(Visits.talk(0, 0, "H", "K"), ["[H] Nobody handles a sabre the way you do!", "[K] Thanks."], "the sword")
+	eq(Visits.talk(1, 3, "H", "K")[1], "[K] That is a generous heart you have.", "people, topic 1")
 
 
 func test_friendship() -> void:

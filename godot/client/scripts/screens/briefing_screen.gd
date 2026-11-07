@@ -83,7 +83,7 @@ static func talk(line: int, speaker: String, hero: String) -> Array:
 	for k in 2:
 		var who := speaker if k == 0 else hero
 		var i := line + k
-		var text := str(all[i]) if i >= 0 and i < all.size() else ""
+		var text := I18n.text(all[i]) if i >= 0 and i < all.size() else ""
 		out.append("[%s] %s" % [who, text.replace("&", who)])
 	return out
 

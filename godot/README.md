@@ -23,7 +23,11 @@ godot/
                           accounts (файл JSON на акаунт), guard (ліміти), live (Live),
                           online (мультиплеєр: персонаж, рейтинг, ордени, чат), rules (числа з SP),
                           battle (бій і бот), room (кімната бою), loot (здобич)
-    i18n/strings.json     тексти українською й англійською
+    i18n/strings.json     тексти інтерфейсу українською й англійською
+    i18n/names.json       наші назви (tools/own_names.json) обома мовами (робить import_original.py)
+    i18n/story.json       наші сюжетні тексти (tools/own_story.json: описи місій, вступ і фінали,
+                          репліки, візити, довідка) обома мовами; англійські йдуть у data/*.json,
+                          гра показує їх мовою гравця через I18n.text
     data/maps/N.json      45 оригінальних карт (робить tools/import_original.py)
     assets/original/      тайли й кадри героя з оригіналу (теж import_original.py)
     assets/original/sound/  звуки snd3..16 як є; три мелодії MIDI, зіграні через
