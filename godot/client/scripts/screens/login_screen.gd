@@ -40,7 +40,7 @@ func _ready() -> void:
 	password = _field(col, "Password", "register.password", 12)
 	password.secret = true
 	password.text_changed.connect(func(t: String) -> void: _keep(password, t, "0", "9", false))
-	user_id.text_submitted.connect(func(_t: String) -> void: password.grab_focus())
+	user_id.text_submitted.connect(func(_t: String) -> void: _type_in(password))
 	password.text_submitted.connect(func(_t: String) -> void: submit())
 	keys = KeyGrid.create(KeyGrid.ACCOUNT, user_id)
 	keys.follow(user_id)
@@ -55,7 +55,7 @@ func _ready() -> void:
 	info.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	info.custom_minimum_size = Vector2(0, 60)
 	col.add_child(info)
-	user_id.grab_focus.call_deferred()
+	_type_in.call_deferred(user_id)
 
 
 func _field(col: VBoxContainer, node_name: String, hint_key: String, max_len: int) -> LineEdit:
@@ -64,6 +64,7 @@ func _field(col: VBoxContainer, node_name: String, hint_key: String, max_len: in
 	e.max_length = max_len
 	e.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	e.placeholder_text = tr(hint_key)
+	e.keep_editing_on_text_submit = true  # after a refused Enter the field still types
 	col.add_child(e)
 	return e
 
@@ -75,6 +76,13 @@ func _button(col: VBoxContainer, node_name: String, text_key: String, on_press: 
 	b.pressed.connect(on_press)
 	col.add_child(b)
 	return b
+
+
+## The field takes the focus and types at once (a field reached with Enter or the d-pad would
+## otherwise wait for one more Enter or a click before it types).
+func _type_in(e: LineEdit) -> void:
+	e.grab_focus()
+	e.edit()
 
 
 ## Only the characters a UserID (A-Z, typed in any case) or a password (0-9) may have.

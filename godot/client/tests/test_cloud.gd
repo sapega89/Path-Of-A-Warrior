@@ -400,3 +400,19 @@ func test_the_login_lasts_only_while_the_game_runs() -> void:
 	cloud.stop()
 	s.stop()
 	ServerTests._rm(d)
+
+
+func test_a_login_after_the_server_answered_gets_its_answer() -> void:
+	var d := _dir()
+	var s := _server(d)
+	s.accounts.create_account("ANDREY", "1234")
+	var a := _sync()
+	check(_run(s, [a], a.online), "the server is there: the menu opens")
+	for i in 50:  # the menu stays open a while before the player logs in
+		s.poll(1)
+		a.step()
+	var got := []
+	a.login("ANDREY", "1234", func(r): got.append(r))
+	check(_run(s, [a], func(): return not got.is_empty() and a.online()), "answered, not Connecting... for ever")
+	eq(got[0].get("ok") if not got.is_empty() else null, true, "logged in")
+	_end(s, [a], d)
