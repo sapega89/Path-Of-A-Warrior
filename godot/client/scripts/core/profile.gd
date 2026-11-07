@@ -15,7 +15,7 @@ const BASE_ATTACK := 5
 const BASE_DEFENSE := 4
 const START_POINTS := 5
 const POINTS_PER_LEVEL := 3
-## The weapon a new hero holds: the Iron Claymore (attack +1).
+## The weapon a new hero holds: the Iron Broadsword (attack +1).
 const START_WEAPON := 116
 const PROGRESS_PER_WIN := 5
 ## The lords a new hero can fight for: bit (id - 1) set.
@@ -34,7 +34,7 @@ const HERO_BASES := [[30, 10, 5, 4], [40, 7, 3, 5], [25, 16, 4, 4], [25, 10, 7, 
 const HERO_CLASSES := ["Cossack", "Serdiuk", "Kharakternyk", "Haidamaka"]
 ## Resetting the attributes costs gold per hero level, or one of these elixirs.
 const RESPEC_GOLD_PER_LEVEL := 100
-const RESPEC_ITEMS := [434, 435, 436, 437]  # Rise Potion, Azure Potion, Falls / Forest Medicine
+const RESPEC_ITEMS := [434, 435, 436, 437]  # St John's Wort Tincture, Cornflower Tincture, Rapids / Forest Remedy
 ## The briefing's advice: 28 pairs of lines (talk.json "briefing"), the first 10 in turn.
 const BRIEFING_PAIRS := 28
 const BRIEFINGS_IN_TURN := 10

@@ -10,7 +10,7 @@ func test_prices() -> void:
 	eq(Items.price({"id": 1}), 60, "a Red Potion (S)")
 	eq(Items.price({"id": 11}), 200, "a Handy Dynamite")
 	var blade := Items.make(101)
-	eq(int(blade.attack), 2, "an Iron Blade: ATK+2")
+	eq(int(blade.attack), 2, "an Iron Sabre: ATK+2")
 	eq(Items.price(blade), 120 + 200, "its price and 100 a point")
 	eq(Items.price(Items.make(501)), 150000, "a rare thing has its own price")
 	eq(Items.enchant_price(blade), 200, "enchanting costs 100 a point")
@@ -76,7 +76,7 @@ func test_enchanting() -> void:
 	eq(int(blade.enchant), 1, "enchanted once")
 	eq(p.gold, 800, "for 200")
 	blade.enchant = 5
-	eq(p.can_enchant(blade), "full", "5 times at most for an Iron Blade")
+	eq(p.can_enchant(blade), "full", "5 times at most for an Iron Sabre")
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 11
 	var lost := false
@@ -132,7 +132,7 @@ func test_shop_screen() -> void:
 
 
 func test_combine() -> void:
-	eq(Items.mixes([186, 101, 156]), [342], "an Iron Blade and two more make a treasure")
+	eq(Items.mixes([186, 101, 156]), [342], "an Iron Sabre and two more make a treasure")
 	eq(Items.mixes([101, 101, 101]), [], "three blades make nothing")
 	var p := Profile.new()
 	for id in [101, 156, 186]:

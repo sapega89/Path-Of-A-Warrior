@@ -37,7 +37,7 @@ func test_npc_stock_has_every_kind_and_the_two_that_never_run_out() -> void:
 	var lots: Array = l.market().lots
 	check(lots.size() > 50, "a full stock (%d lots)" % lots.size())
 	var towel := lots.filter(func(x): return int(x.item.id) == 502)
-	eq(towel.size(), 1, "Silk Towel for sale")
+	eq(towel.size(), 1, "Silk Rushnyk for sale")
 	eq(int(towel[0].price), 3000)
 	check(towel[0].forever, "it never runs out")
 	check(lots.all(func(x): return Live.for_sale(int(x.item.id))), "no elixirs or potions")
@@ -122,7 +122,7 @@ func test_buy_menu_counts_and_pages() -> void:
 	var l := _live(d)
 	var s := _session("ANDREY", 10)
 	var counts: Array = l.answer(s, "live_counts", {"cat": 2, "kind": 1}).counts
-	eq(counts[0], 1, "one Silk Towel (rare kind 1)")
+	eq(counts[0], 1, "one Silk Rushnyk (rare kind 1)")
 	var page := l.answer(s, "live_page", {"cat": 2, "kind": 1, "enchant": 0, "page": 0})
 	eq(int(page.lots[0].item.id), 502)
 	eq(l.answer(s, "live_page", {"cat": 2, "kind": 1, "enchant": 0, "page": 1}).err, "none", "no second page")

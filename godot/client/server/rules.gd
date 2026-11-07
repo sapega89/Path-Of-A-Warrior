@@ -116,7 +116,7 @@ static func mission_end(dy: int, in_time: bool, h: int) -> Array:
 
 
 ## {atk, def, hp} of the best Normal gear of each kind a hero of `level` can buy: what a CPU
-## fighter wears. Below the second tier a new hero's Iron Claymore.
+## fighter wears. Below the second tier a new hero's Iron Broadsword.
 static func shop_kit(level: int) -> Dictionary:
 	if level < TIER_LEVELS[1]:
 		return {"atk": 1, "def": 0, "hp": 0}

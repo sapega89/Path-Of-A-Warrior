@@ -6,7 +6,7 @@ extends RefCounted
 
 const Items := preload("res://scripts/core/items.gd")
 
-const STORY_ONLY := [502]  # Silk Towel: the reward of an ending, never a drop
+const STORY_ONLY := [502]  # Silk Rushnyk: the reward of an ending, never a drop
 ## 0 soldier, 1 general, 2 boss
 const DROP_CHANCE := [5, 10, 20]  # % that something drops
 const EQUIP_CHANCE := [10, 30, 60]  # % of a drop that is gear (else a potion or a bomb, 1..11)

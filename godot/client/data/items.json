@@ -1,7 +1,7 @@
 {
 "gear": {
 "101": {
-"name": "Iron Blade",
+"name": "Iron Sabre",
 "slot": 0,
 "stat": 0,
 "bonus": 2,
@@ -12,7 +12,7 @@
 "level": 1
 },
 "102": {
-"name": "Steel Blade",
+"name": "Damask Sabre",
 "slot": 0,
 "stat": 0,
 "bonus": 5,
@@ -23,7 +23,7 @@
 "level": 10
 },
 "103": {
-"name": "War Blade",
+"name": "War Sabre",
 "slot": 0,
 "stat": 0,
 "bonus": 10,
@@ -34,7 +34,7 @@
 "level": 25
 },
 "104": {
-"name": "Great Blade",
+"name": "Great Sabre",
 "slot": 0,
 "stat": 0,
 "bonus": 16,
@@ -45,7 +45,7 @@
 "level": 45
 },
 "105": {
-"name": "Fleet Blade",
+"name": "Swift Sabre",
 "slot": 0,
 "stat": 0,
 "bonus": 23,
@@ -56,7 +56,7 @@
 "level": 70
 },
 "106": {
-"name": "Spontoon Pike",
+"name": "Rohatyna",
 "slot": 0,
 "stat": 0,
 "bonus": 3,
@@ -78,7 +78,7 @@
 "level": 10
 },
 "108": {
-"name": "Steel Pike",
+"name": "Damask Pike",
 "slot": 0,
 "stat": 0,
 "bonus": 10,
@@ -89,7 +89,7 @@
 "level": 25
 },
 "109": {
-"name": "Thrust Pike",
+"name": "Thrusting Pike",
 "slot": 0,
 "stat": 0,
 "bonus": 15,
@@ -100,7 +100,7 @@
 "level": 45
 },
 "110": {
-"name": "Impaling Pike",
+"name": "Long Pike",
 "slot": 0,
 "stat": 0,
 "bonus": 21,
@@ -111,7 +111,7 @@
 "level": 70
 },
 "111": {
-"name": "Brawn Blade",
+"name": "Heavy Knife",
 "slot": 0,
 "stat": 0,
 "bonus": 1,
@@ -122,7 +122,7 @@
 "level": 1
 },
 "112": {
-"name": "Lead Blade",
+"name": "Kindjal",
 "slot": 0,
 "stat": 0,
 "bonus": 6,
@@ -133,7 +133,7 @@
 "level": 10
 },
 "113": {
-"name": "Fealty Blade",
+"name": "Oath Kindjal",
 "slot": 0,
 "stat": 0,
 "bonus": 12,
@@ -144,7 +144,7 @@
 "level": 25
 },
 "114": {
-"name": "Salvo Blade",
+"name": "Battle Kindjal",
 "slot": 0,
 "stat": 0,
 "bonus": 19,
@@ -155,7 +155,7 @@
 "level": 45
 },
 "115": {
-"name": "A. Blade",
+"name": "Ataman's Kindjal",
 "slot": 0,
 "stat": 0,
 "bonus": 27,
@@ -166,7 +166,7 @@
 "level": 70
 },
 "116": {
-"name": "Iron Claymore",
+"name": "Iron Broadsword",
 "slot": 1,
 "stat": 0,
 "bonus": 1,
@@ -177,7 +177,7 @@
 "level": 1
 },
 "117": {
-"name": "Steel Claymore",
+"name": "Damask Broadsword",
 "slot": 1,
 "stat": 0,
 "bonus": 3,
@@ -188,7 +188,7 @@
 "level": 10
 },
 "118": {
-"name": "War Claymore",
+"name": "War Broadsword",
 "slot": 1,
 "stat": 0,
 "bonus": 6,
@@ -199,7 +199,7 @@
 "level": 25
 },
 "119": {
-"name": "Great Claymore",
+"name": "Great Broadsword",
 "slot": 1,
 "stat": 0,
 "bonus": 10,
@@ -210,7 +210,7 @@
 "level": 45
 },
 "120": {
-"name": "Fleet Claymore",
+"name": "Swift Broadsword",
 "slot": 1,
 "stat": 0,
 "bonus": 15,
@@ -221,7 +221,7 @@
 "level": 70
 },
 "121": {
-"name": "Strong Sword",
+"name": "Strong Konchar",
 "slot": 1,
 "stat": 0,
 "bonus": 2,
@@ -232,7 +232,7 @@
 "level": 1
 },
 "122": {
-"name": "Steel Sword",
+"name": "Damask Konchar",
 "slot": 1,
 "stat": 0,
 "bonus": 4,
@@ -243,7 +243,7 @@
 "level": 10
 },
 "123": {
-"name": "War Sword",
+"name": "War Konchar",
 "slot": 1,
 "stat": 0,
 "bonus": 7,
@@ -254,7 +254,7 @@
 "level": 25
 },
 "124": {
-"name": "Bastard Sword",
+"name": "Hussar Konchar",
 "slot": 1,
 "stat": 0,
 "bonus": 11,
@@ -265,7 +265,7 @@
 "level": 45
 },
 "125": {
-"name": "Great Sword",
+"name": "Great Konchar",
 "slot": 1,
 "stat": 0,
 "bonus": 16,
@@ -276,7 +276,7 @@
 "level": 70
 },
 "126": {
-"name": "Half-Axe",
+"name": "Chekan",
 "slot": 1,
 "stat": 0,
 "bonus": 3,
@@ -287,7 +287,7 @@
 "level": 1
 },
 "127": {
-"name": "Steel Axe",
+"name": "Damask Chekan",
 "slot": 1,
 "stat": 0,
 "bonus": 5,
@@ -298,7 +298,7 @@
 "level": 10
 },
 "128": {
-"name": "Battle Axe",
+"name": "Berdysh",
 "slot": 1,
 "stat": 0,
 "bonus": 8,
@@ -309,7 +309,7 @@
 "level": 25
 },
 "129": {
-"name": "Crusader's Axe",
+"name": "Zaporozhian Berdysh",
 "slot": 1,
 "stat": 0,
 "bonus": 12,
@@ -320,7 +320,7 @@
 "level": 45
 },
 "130": {
-"name": "War Hammer Axe",
+"name": "Kelep",
 "slot": 1,
 "stat": 0,
 "bonus": 17,
@@ -342,7 +342,7 @@
 "level": 1
 },
 "132": {
-"name": "Steel Helmet",
+"name": "Misiurka",
 "slot": 2,
 "stat": 1,
 "bonus": 4,
@@ -353,7 +353,7 @@
 "level": 10
 },
 "133": {
-"name": "Demon Helmet",
+"name": "Devil's Helmet",
 "slot": 2,
 "stat": 1,
 "bonus": 8,
@@ -364,7 +364,7 @@
 "level": 25
 },
 "134": {
-"name": "Sage Helmet",
+"name": "Kharakternyk's Helmet",
 "slot": 2,
 "stat": 1,
 "bonus": 13,
@@ -375,7 +375,7 @@
 "level": 45
 },
 "135": {
-"name": "Great Helmet",
+"name": "Shyshak",
 "slot": 2,
 "stat": 1,
 "bonus": 19,
@@ -386,7 +386,7 @@
 "level": 70
 },
 "136": {
-"name": "Leather Armour",
+"name": "Leather Kaftan",
 "slot": 3,
 "stat": 1,
 "bonus": 3,
@@ -397,7 +397,7 @@
 "level": 1
 },
 "137": {
-"name": "Enforced Armour",
+"name": "Padded Kaftan",
 "slot": 3,
 "stat": 1,
 "bonus": 7,
@@ -408,7 +408,7 @@
 "level": 10
 },
 "138": {
-"name": "Chain Armour",
+"name": "Chain Mail",
 "slot": 3,
 "stat": 1,
 "bonus": 12,
@@ -419,7 +419,7 @@
 "level": 25
 },
 "139": {
-"name": "Fierce Armour",
+"name": "Scale Armour",
 "slot": 3,
 "stat": 1,
 "bonus": 18,
@@ -430,7 +430,7 @@
 "level": 45
 },
 "140": {
-"name": "Demon Armour",
+"name": "Devil's Armour",
 "slot": 3,
 "stat": 1,
 "bonus": 25,
@@ -441,7 +441,7 @@
 "level": 70
 },
 "141": {
-"name": "Lord Armour",
+"name": "Colonel's Armour",
 "slot": 3,
 "stat": 2,
 "bonus": 15,
@@ -452,7 +452,7 @@
 "level": 1
 },
 "142": {
-"name": "Emperor Armour",
+"name": "Hetman's Armour",
 "slot": 3,
 "stat": 2,
 "bonus": 35,
@@ -463,7 +463,7 @@
 "level": 10
 },
 "143": {
-"name": "Sage Armour",
+"name": "Kharakternyk's Armour",
 "slot": 3,
 "stat": 2,
 "bonus": 60,
@@ -474,7 +474,7 @@
 "level": 25
 },
 "144": {
-"name": "Scrybe Armour",
+"name": "Scribe's Zhupan",
 "slot": 3,
 "stat": 2,
 "bonus": 90,
@@ -485,7 +485,7 @@
 "level": 45
 },
 "145": {
-"name": "Vast Armour",
+"name": "Bakhterets",
 "slot": 3,
 "stat": 2,
 "bonus": 125,
@@ -496,7 +496,7 @@
 "level": 70
 },
 "146": {
-"name": "Steel Gauntlets",
+"name": "Damask Gauntlets",
 "slot": 4,
 "stat": 2,
 "bonus": 5,
@@ -507,7 +507,7 @@
 "level": 1
 },
 "147": {
-"name": "Cross Gauntlets",
+"name": "Cross-Marked Gauntlets",
 "slot": 4,
 "stat": 2,
 "bonus": 20,
@@ -518,7 +518,7 @@
 "level": 10
 },
 "148": {
-"name": "Demon Gauntlets",
+"name": "Devil's Gauntlets",
 "slot": 4,
 "stat": 2,
 "bonus": 40,
@@ -529,7 +529,7 @@
 "level": 25
 },
 "149": {
-"name": "Sage Gauntlets",
+"name": "Kharakternyk's Gauntlets",
 "slot": 4,
 "stat": 2,
 "bonus": 65,
@@ -540,7 +540,7 @@
 "level": 45
 },
 "150": {
-"name": "Sky Gauntlets",
+"name": "Heaven's Gauntlets",
 "slot": 4,
 "stat": 2,
 "bonus": 95,
@@ -562,7 +562,7 @@
 "level": 1
 },
 "152": {
-"name": "Steel Boots",
+"name": "Iron-Shod Boots",
 "slot": 5,
 "stat": 2,
 "bonus": 20,
@@ -573,7 +573,7 @@
 "level": 10
 },
 "153": {
-"name": "Fierce Boots",
+"name": "Red Boots",
 "slot": 5,
 "stat": 2,
 "bonus": 40,
@@ -584,7 +584,7 @@
 "level": 25
 },
 "154": {
-"name": "Demon Boots",
+"name": "Devil's Boots",
 "slot": 5,
 "stat": 2,
 "bonus": 65,
@@ -595,7 +595,7 @@
 "level": 45
 },
 "155": {
-"name": "Alpha Boots",
+"name": "Ataman's Boots",
 "slot": 5,
 "stat": 2,
 "bonus": 95,
@@ -617,7 +617,7 @@
 "level": 1
 },
 "157": {
-"name": "Steel Belt",
+"name": "Studded Belt",
 "slot": 6,
 "stat": 2,
 "bonus": 20,
@@ -628,7 +628,7 @@
 "level": 10
 },
 "158": {
-"name": "Fierce Belt",
+"name": "Silk Sash",
 "slot": 6,
 "stat": 2,
 "bonus": 40,
@@ -639,7 +639,7 @@
 "level": 25
 },
 "159": {
-"name": "Sage Belt",
+"name": "Kharakternyk's Belt",
 "slot": 6,
 "stat": 2,
 "bonus": 65,
@@ -650,7 +650,7 @@
 "level": 45
 },
 "160": {
-"name": "Enchanted Belt",
+"name": "Charmed Belt",
 "slot": 6,
 "stat": 2,
 "bonus": 95,
@@ -661,7 +661,7 @@
 "level": 70
 },
 "161": {
-"name": "Hawk Armlet",
+"name": "Hawk Bracer",
 "slot": 7,
 "stat": 1,
 "bonus": 1,
@@ -672,7 +672,7 @@
 "level": 1
 },
 "162": {
-"name": "Mystic Armlet",
+"name": "Magic Bracer",
 "slot": 7,
 "stat": 1,
 "bonus": 2,
@@ -683,7 +683,7 @@
 "level": 10
 },
 "163": {
-"name": "Phoenix Armlet",
+"name": "Firebird Bracer",
 "slot": 7,
 "stat": 1,
 "bonus": 4,
@@ -694,7 +694,7 @@
 "level": 25
 },
 "164": {
-"name": "Tiger Armlet",
+"name": "Wolf Bracer",
 "slot": 7,
 "stat": 1,
 "bonus": 6,
@@ -705,7 +705,7 @@
 "level": 45
 },
 "165": {
-"name": "Demon Armlet",
+"name": "Devil's Bracer",
 "slot": 7,
 "stat": 1,
 "bonus": 8,
@@ -716,7 +716,7 @@
 "level": 70
 },
 "166": {
-"name": "Energy Armlet",
+"name": "Bracer of Strength",
 "slot": 7,
 "stat": 0,
 "bonus": 1,
@@ -727,7 +727,7 @@
 "level": 1
 },
 "167": {
-"name": "Fire Armlet",
+"name": "Fire Bracer",
 "slot": 7,
 "stat": 0,
 "bonus": 4,
@@ -738,7 +738,7 @@
 "level": 10
 },
 "168": {
-"name": "Thunder Armlet",
+"name": "Thunder Bracer",
 "slot": 7,
 "stat": 0,
 "bonus": 8,
@@ -749,7 +749,7 @@
 "level": 25
 },
 "169": {
-"name": "Flame Armlet",
+"name": "Flame Bracer",
 "slot": 7,
 "stat": 0,
 "bonus": 13,
@@ -760,7 +760,7 @@
 "level": 45
 },
 "170": {
-"name": "Light Armlet",
+"name": "Bright Bracer",
 "slot": 7,
 "stat": 0,
 "bonus": 19,
@@ -771,7 +771,7 @@
 "level": 70
 },
 "171": {
-"name": "Lord Armlet",
+"name": "Colonel's Bracer",
 "slot": 7,
 "stat": 2,
 "bonus": 5,
@@ -782,7 +782,7 @@
 "level": 1
 },
 "172": {
-"name": "Emperor Armlet",
+"name": "Hetman's Bracer",
 "slot": 7,
 "stat": 2,
 "bonus": 20,
@@ -793,7 +793,7 @@
 "level": 10
 },
 "173": {
-"name": "Sage Armlet",
+"name": "Kharakternyk's Bracer",
 "slot": 7,
 "stat": 2,
 "bonus": 35,
@@ -804,7 +804,7 @@
 "level": 25
 },
 "174": {
-"name": "Bliss Armlet",
+"name": "Blessed Bracer",
 "slot": 7,
 "stat": 2,
 "bonus": 50,
@@ -815,7 +815,7 @@
 "level": 45
 },
 "175": {
-"name": "Heaven's Armlet",
+"name": "Heaven's Bracer",
 "slot": 7,
 "stat": 2,
 "bonus": 65,
@@ -826,7 +826,7 @@
 "level": 70
 },
 "176": {
-"name": "Zero Armlet",
+"name": "Hollow Bracer",
 "slot": 7,
 "stat": 3,
 "bonus": 3,
@@ -837,7 +837,7 @@
 "level": 1
 },
 "177": {
-"name": "Dead Armlet",
+"name": "Upyr's Bracer",
 "slot": 7,
 "stat": 3,
 "bonus": 10,
@@ -848,7 +848,7 @@
 "level": 10
 },
 "178": {
-"name": "Ancient Armlet",
+"name": "Ancient Bracer",
 "slot": 7,
 "stat": 3,
 "bonus": 20,
@@ -859,7 +859,7 @@
 "level": 25
 },
 "179": {
-"name": "Vision Armlet",
+"name": "Prophetic Bracer",
 "slot": 7,
 "stat": 3,
 "bonus": 33,
@@ -870,7 +870,7 @@
 "level": 45
 },
 "180": {
-"name": "Majestic Armlet",
+"name": "Royal Bracer",
 "slot": 7,
 "stat": 3,
 "bonus": 49,
@@ -881,7 +881,7 @@
 "level": 70
 },
 "181": {
-"name": "Hawk Amulet",
+"name": "Hawk Locket",
 "slot": 8,
 "stat": 1,
 "bonus": 1,
@@ -892,7 +892,7 @@
 "level": 1
 },
 "182": {
-"name": "Mystic Amulet",
+"name": "Magic Locket",
 "slot": 8,
 "stat": 1,
 "bonus": 2,
@@ -903,7 +903,7 @@
 "level": 10
 },
 "183": {
-"name": "Phoenix Amulet",
+"name": "Firebird Locket",
 "slot": 8,
 "stat": 1,
 "bonus": 4,
@@ -914,7 +914,7 @@
 "level": 25
 },
 "184": {
-"name": "Tiger Amulet",
+"name": "Wolf Locket",
 "slot": 8,
 "stat": 1,
 "bonus": 6,
@@ -925,7 +925,7 @@
 "level": 45
 },
 "185": {
-"name": "Demon Amulet",
+"name": "Devil's Locket",
 "slot": 8,
 "stat": 1,
 "bonus": 8,
@@ -936,7 +936,7 @@
 "level": 70
 },
 "186": {
-"name": "Energy Amulet",
+"name": "Locket of Strength",
 "slot": 8,
 "stat": 0,
 "bonus": 2,
@@ -947,7 +947,7 @@
 "level": 1
 },
 "187": {
-"name": "Fire Amulet",
+"name": "Fire Locket",
 "slot": 8,
 "stat": 0,
 "bonus": 5,
@@ -958,7 +958,7 @@
 "level": 10
 },
 "188": {
-"name": "Thunder Amulet",
+"name": "Thunder Locket",
 "slot": 8,
 "stat": 0,
 "bonus": 9,
@@ -969,7 +969,7 @@
 "level": 25
 },
 "189": {
-"name": "Flame Amulet",
+"name": "Flame Locket",
 "slot": 8,
 "stat": 0,
 "bonus": 14,
@@ -980,7 +980,7 @@
 "level": 45
 },
 "190": {
-"name": "Light Amulet",
+"name": "Bright Locket",
 "slot": 8,
 "stat": 0,
 "bonus": 20,
@@ -991,7 +991,7 @@
 "level": 70
 },
 "191": {
-"name": "Lord Amulet",
+"name": "Colonel's Locket",
 "slot": 8,
 "stat": 2,
 "bonus": 10,
@@ -1002,7 +1002,7 @@
 "level": 1
 },
 "192": {
-"name": "Emperor Amulet",
+"name": "Hetman's Locket",
 "slot": 8,
 "stat": 2,
 "bonus": 25,
@@ -1013,7 +1013,7 @@
 "level": 10
 },
 "193": {
-"name": "Sage Amulet",
+"name": "Kharakternyk's Locket",
 "slot": 8,
 "stat": 2,
 "bonus": 45,
@@ -1024,7 +1024,7 @@
 "level": 25
 },
 "194": {
-"name": "Bliss Amulet",
+"name": "Blessed Locket",
 "slot": 8,
 "stat": 2,
 "bonus": 70,
@@ -1035,7 +1035,7 @@
 "level": 45
 },
 "195": {
-"name": "Heaven's Amulet",
+"name": "Heaven's Locket",
 "slot": 8,
 "stat": 2,
 "bonus": 95,
@@ -1046,7 +1046,7 @@
 "level": 70
 },
 "196": {
-"name": "Zero Amulet",
+"name": "Hollow Locket",
 "slot": 8,
 "stat": 3,
 "bonus": 3,
@@ -1057,7 +1057,7 @@
 "level": 1
 },
 "197": {
-"name": "Dead Amulet",
+"name": "Upyr's Locket",
 "slot": 8,
 "stat": 3,
 "bonus": 7,
@@ -1068,7 +1068,7 @@
 "level": 10
 },
 "198": {
-"name": "Ancient Amulet",
+"name": "Ancient Locket",
 "slot": 8,
 "stat": 3,
 "bonus": 14,
@@ -1079,7 +1079,7 @@
 "level": 25
 },
 "199": {
-"name": "Vision Amulet",
+"name": "Prophetic Locket",
 "slot": 8,
 "stat": 3,
 "bonus": 24,
@@ -1090,7 +1090,7 @@
 "level": 45
 },
 "200": {
-"name": "Majestic Amulet",
+"name": "Royal Locket",
 "slot": 8,
 "stat": 3,
 "bonus": 37,
@@ -1103,7 +1103,7 @@
 },
 "treasures": {
 "301": {
-"name": "Steel Spear",
+"name": "Damask Spear",
 "slot": 0,
 "attack": 30,
 "defense": 1,
@@ -1114,7 +1114,7 @@
 "level": 62
 },
 "302": {
-"name": "Impale Pike",
+"name": "Cossack Pike",
 "slot": 0,
 "attack": 35,
 "defense": 1,
@@ -1125,7 +1125,7 @@
 "level": 72
 },
 "303": {
-"name": "Shadow Spear",
+"name": "Night Spear",
 "slot": 0,
 "attack": 32,
 "defense": 2,
@@ -1136,7 +1136,7 @@
 "level": 68
 },
 "304": {
-"name": "Lunar Pike",
+"name": "Moon Pike",
 "slot": 0,
 "attack": 38,
 "defense": 3,
@@ -1147,7 +1147,7 @@
 "level": 82
 },
 "305": {
-"name": "Light Spear",
+"name": "Bright Spear",
 "slot": 0,
 "attack": 32,
 "defense": 2,
@@ -1158,7 +1158,7 @@
 "level": 68
 },
 "306": {
-"name": "Slayer Spear",
+"name": "Victor's Spear",
 "slot": 0,
 "attack": 45,
 "defense": 5,
@@ -1169,7 +1169,7 @@
 "level": 100
 },
 "307": {
-"name": "Upshot Pike",
+"name": "Swift Pike",
 "slot": 0,
 "attack": 28,
 "defense": 3,
@@ -1180,7 +1180,7 @@
 "level": 62
 },
 "308": {
-"name": "Sarissa Spear",
+"name": "Dnipro Spear",
 "slot": 0,
 "attack": 30,
 "defense": 1,
@@ -1191,7 +1191,7 @@
 "level": 62
 },
 "309": {
-"name": "Barchi Spear",
+"name": "Tatar Spear",
 "slot": 0,
 "attack": 30,
 "defense": 0,
@@ -1202,7 +1202,7 @@
 "level": 60
 },
 "310": {
-"name": "Raze Pike",
+"name": "Hussar Lance",
 "slot": 0,
 "attack": 32,
 "defense": 2,
@@ -1213,7 +1213,7 @@
 "level": 68
 },
 "311": {
-"name": "Boar Spear",
+"name": "Hunting Rohatyna",
 "slot": 0,
 "attack": 30,
 "defense": 3,
@@ -1257,7 +1257,7 @@
 "level": 72
 },
 "315": {
-"name": "Arete Pike",
+"name": "Valour Pike",
 "slot": 0,
 "attack": 25,
 "defense": 8,
@@ -1268,7 +1268,7 @@
 "level": 66
 },
 "316": {
-"name": "Godendag Pike",
+"name": "Steppe Pike",
 "slot": 0,
 "attack": 45,
 "defense": 4,
@@ -1290,7 +1290,7 @@
 "level": 74
 },
 "318": {
-"name": "Amethyst Sword",
+"name": "Amethyst Konchar",
 "slot": 1,
 "attack": 24,
 "defense": 3,
@@ -1301,7 +1301,7 @@
 "level": 54
 },
 "319": {
-"name": "Demon Sword",
+"name": "Devil's Konchar",
 "slot": 1,
 "attack": 24,
 "defense": 4,
@@ -1312,7 +1312,7 @@
 "level": 56
 },
 "320": {
-"name": "Myriad Claymore",
+"name": "Captain's Broadsword",
 "slot": 1,
 "attack": 27,
 "defense": 6,
@@ -1323,7 +1323,7 @@
 "level": 66
 },
 "321": {
-"name": "Pyrrhic Sword",
+"name": "Broadsword of Woe",
 "slot": 1,
 "attack": 27,
 "defense": 8,
@@ -1334,7 +1334,7 @@
 "level": 70
 },
 "322": {
-"name": "Command Axe",
+"name": "Pernach",
 "slot": 1,
 "attack": 20,
 "defense": 6,
@@ -1345,7 +1345,7 @@
 "level": 52
 },
 "323": {
-"name": "Savoir Sword",
+"name": "Wise Konchar",
 "slot": 1,
 "attack": 24,
 "defense": 6,
@@ -1356,7 +1356,7 @@
 "level": 60
 },
 "324": {
-"name": "Ballistic Sword",
+"name": "Swift Konchar",
 "slot": 1,
 "attack": 27,
 "defense": 3,
@@ -1367,7 +1367,7 @@
 "level": 60
 },
 "325": {
-"name": "Templar Axe",
+"name": "Cloister Berdysh",
 "slot": 1,
 "attack": 22,
 "defense": 3,
@@ -1378,7 +1378,7 @@
 "level": 50
 },
 "326": {
-"name": "Suffuse Sword",
+"name": "Glowing Konchar",
 "slot": 1,
 "attack": 24,
 "defense": 3,
@@ -1389,7 +1389,7 @@
 "level": 54
 },
 "327": {
-"name": "Lucent Axe",
+"name": "Bright Berdysh",
 "slot": 1,
 "attack": 32,
 "defense": 3,
@@ -1400,7 +1400,7 @@
 "level": 70
 },
 "328": {
-"name": "Vestige Sword",
+"name": "Ancestral Konchar",
 "slot": 1,
 "attack": 27,
 "defense": 6,
@@ -1411,7 +1411,7 @@
 "level": 66
 },
 "329": {
-"name": "Excel Claymore",
+"name": "Fine Broadsword",
 "slot": 1,
 "attack": 27,
 "defense": 9,
@@ -1422,7 +1422,7 @@
 "level": 72
 },
 "330": {
-"name": "Celest Claymore",
+"name": "Starry Broadsword",
 "slot": 1,
 "attack": 30,
 "defense": 6,
@@ -1433,7 +1433,7 @@
 "level": 72
 },
 "331": {
-"name": "Triton Claymore",
+"name": "Sea Broadsword",
 "slot": 1,
 "attack": 32,
 "defense": 6,
@@ -1444,7 +1444,7 @@
 "level": 76
 },
 "332": {
-"name": "Bane Sword",
+"name": "Bane Konchar",
 "slot": 1,
 "attack": 32,
 "defense": 3,
@@ -1455,7 +1455,7 @@
 "level": 70
 },
 "333": {
-"name": "Sear Sword",
+"name": "Scorching Konchar",
 "slot": 1,
 "attack": 30,
 "defense": 3,
@@ -1466,7 +1466,7 @@
 "level": 66
 },
 "334": {
-"name": "Fervor Claymore",
+"name": "Ardent Broadsword",
 "slot": 1,
 "attack": 34,
 "defense": 8,
@@ -1477,7 +1477,7 @@
 "level": 84
 },
 "335": {
-"name": "Saint Claymore",
+"name": "Saint's Broadsword",
 "slot": 1,
 "attack": 37,
 "defense": 3,
@@ -1488,7 +1488,7 @@
 "level": 80
 },
 "336": {
-"name": "Carmine Axe",
+"name": "Crimson Berdysh",
 "slot": 1,
 "attack": 37,
 "defense": 6,
@@ -1499,7 +1499,7 @@
 "level": 86
 },
 "337": {
-"name": "Liege Axe",
+"name": "Royal Berdysh",
 "slot": 1,
 "attack": 27,
 "defense": 3,
@@ -1510,7 +1510,7 @@
 "level": 60
 },
 "338": {
-"name": "Fierce Sword",
+"name": "Fierce Konchar",
 "slot": 1,
 "attack": 32,
 "defense": 3,
@@ -1521,7 +1521,7 @@
 "level": 70
 },
 "339": {
-"name": "Sage Sword",
+"name": "Kharakternyk's Konchar",
 "slot": 1,
 "attack": 34,
 "defense": 8,
@@ -1532,7 +1532,7 @@
 "level": 84
 },
 "340": {
-"name": "Austere Sword",
+"name": "Stern Konchar",
 "slot": 1,
 "attack": 37,
 "defense": 4,
@@ -1543,7 +1543,7 @@
 "level": 82
 },
 "341": {
-"name": "Flatbow",
+"name": "Simple Bow",
 "slot": 9,
 "attack": 15,
 "defense": 0,
@@ -1554,7 +1554,7 @@
 "level": 30
 },
 "342": {
-"name": "Longbow",
+"name": "Long Bow",
 "slot": 9,
 "attack": 12,
 "defense": 0,
@@ -1565,7 +1565,7 @@
 "level": 24
 },
 "343": {
-"name": "Mongol Bow",
+"name": "Tatar Bow",
 "slot": 9,
 "attack": 10,
 "defense": 0,
@@ -1576,7 +1576,7 @@
 "level": 20
 },
 "344": {
-"name": "Perso Bow",
+"name": "Persian Bow",
 "slot": 9,
 "attack": 8,
 "defense": 0,
@@ -1598,7 +1598,7 @@
 "level": 10
 },
 "346": {
-"name": "Hun Bow",
+"name": "Scythian Bow",
 "slot": 9,
 "attack": 3,
 "defense": 0,
@@ -1609,7 +1609,7 @@
 "level": 16
 },
 "347": {
-"name": "Weald Crown",
+"name": "Fur Kuchma",
 "slot": 2,
 "attack": 0,
 "defense": 27,
@@ -1620,7 +1620,7 @@
 "level": 64
 },
 "348": {
-"name": "Venerable Crown",
+"name": "Elder's Kalpak",
 "slot": 2,
 "attack": 0,
 "defense": 30,
@@ -1631,7 +1631,7 @@
 "level": 60
 },
 "349": {
-"name": "Lucent Crown",
+"name": "Bright Kalpak",
 "slot": 2,
 "attack": 0,
 "defense": 33,
@@ -1642,7 +1642,7 @@
 "level": 76
 },
 "350": {
-"name": "Triple Crown",
+"name": "Sable Kalpak",
 "slot": 2,
 "attack": 0,
 "defense": 36,
@@ -1653,7 +1653,7 @@
 "level": 72
 },
 "351": {
-"name": "Mystic Crown",
+"name": "Kharakternyk's Kuchma",
 "slot": 2,
 "attack": 0,
 "defense": 30,
@@ -1686,7 +1686,7 @@
 "level": 130
 },
 "354": {
-"name": "Brute Armour",
+"name": "Heavy Armour",
 "slot": 3,
 "attack": 0,
 "defense": 41,
@@ -1697,7 +1697,7 @@
 "level": 142
 },
 "355": {
-"name": "Bliss Armour",
+"name": "Blessed Armour",
 "slot": 3,
 "attack": 0,
 "defense": 38,
@@ -1708,7 +1708,7 @@
 "level": 134
 },
 "356": {
-"name": "Azul Armour",
+"name": "Azure Armour",
 "slot": 3,
 "attack": 0,
 "defense": 27,
@@ -1719,7 +1719,7 @@
 "level": 74
 },
 "357": {
-"name": "Auric Armour",
+"name": "Golden Armour",
 "slot": 3,
 "attack": 0,
 "defense": 24,
@@ -1730,7 +1730,7 @@
 "level": 74
 },
 "358": {
-"name": "Herald Armour",
+"name": "Herald's Armour",
 "slot": 3,
 "attack": 0,
 "defense": 21,
@@ -1741,7 +1741,7 @@
 "level": 108
 },
 "359": {
-"name": "Omega Boots",
+"name": "Morocco Boots",
 "slot": 5,
 "attack": 0,
 "defense": 0,
@@ -1752,7 +1752,7 @@
 "level": 69
 },
 "360": {
-"name": "Stalwart Boots",
+"name": "Sturdy Boots",
 "slot": 5,
 "attack": 0,
 "defense": 0,
@@ -1763,7 +1763,7 @@
 "level": 78
 },
 "361": {
-"name": "Excel Boots",
+"name": "Fine Boots",
 "slot": 5,
 "attack": 0,
 "defense": 0,
@@ -1774,7 +1774,7 @@
 "level": 87
 },
 "362": {
-"name": "Faith Boots",
+"name": "Pilgrim's Boots",
 "slot": 5,
 "attack": 0,
 "defense": 0,
@@ -1796,7 +1796,7 @@
 "level": 102
 },
 "364": {
-"name": "Vim Boots",
+"name": "Spirited Boots",
 "slot": 5,
 "attack": 0,
 "defense": 0,
@@ -1807,7 +1807,7 @@
 "level": 71
 },
 "365": {
-"name": "Azul Boots",
+"name": "Azure Boots",
 "slot": 5,
 "attack": 0,
 "defense": 0,
@@ -1818,7 +1818,7 @@
 "level": 58
 },
 "366": {
-"name": "Havoc Boots",
+"name": "Raider's Boots",
 "slot": 5,
 "attack": 0,
 "defense": 0,
@@ -1829,7 +1829,7 @@
 "level": 113
 },
 "367": {
-"name": "Lancer Boots",
+"name": "Hussar Boots",
 "slot": 5,
 "attack": 0,
 "defense": 0,
@@ -1840,7 +1840,7 @@
 "level": 84
 },
 "368": {
-"name": "Virtue Boots",
+"name": "Righteous Boots",
 "slot": 5,
 "attack": 0,
 "defense": 0,
@@ -1851,7 +1851,7 @@
 "level": 98
 },
 "369": {
-"name": "Scabre Belt",
+"name": "Rough Belt",
 "slot": 6,
 "attack": 0,
 "defense": 0,
@@ -1862,7 +1862,7 @@
 "level": 60
 },
 "370": {
-"name": "Palisade Belt",
+"name": "Fortress Belt",
 "slot": 6,
 "attack": 0,
 "defense": 0,
@@ -1873,7 +1873,7 @@
 "level": 54
 },
 "371": {
-"name": "Belvedere Belt",
+"name": "Sentry's Belt",
 "slot": 6,
 "attack": 0,
 "defense": 0,
@@ -1884,7 +1884,7 @@
 "level": 58
 },
 "372": {
-"name": "Enchanted Belt",
+"name": "Charmed Belt",
 "slot": 6,
 "attack": 0,
 "defense": 0,
@@ -1895,7 +1895,7 @@
 "level": 80
 },
 "373": {
-"name": "Heartfire Belt",
+"name": "Hearth Belt",
 "slot": 6,
 "attack": 0,
 "defense": 0,
@@ -1928,7 +1928,7 @@
 "level": 60
 },
 "376": {
-"name": "Galvanic Belt",
+"name": "Thunder Belt",
 "slot": 6,
 "attack": 0,
 "defense": 0,
@@ -1939,7 +1939,7 @@
 "level": 70
 },
 "377": {
-"name": "Palomino Rouncy",
+"name": "Golden Pony",
 "slot": 9,
 "attack": 0,
 "defense": 3,
@@ -1950,7 +1950,7 @@
 "level": 16
 },
 "378": {
-"name": "Gray Garron",
+"name": "Grey Bakhmat",
 "slot": 9,
 "attack": 0,
 "defense": 5,
@@ -1961,7 +1961,7 @@
 "level": 30
 },
 "379": {
-"name": "Black Barb",
+"name": "Black Rumak",
 "slot": 9,
 "attack": 0,
 "defense": 4,
@@ -1972,7 +1972,7 @@
 "level": 62
 },
 "380": {
-"name": "Dun Sumpter",
+"name": "Dun Packhorse",
 "slot": 9,
 "attack": 0,
 "defense": 1,
@@ -1983,7 +1983,7 @@
 "level": 16
 },
 "381": {
-"name": "Light Palfrey",
+"name": "Pale Ambler",
 "slot": 9,
 "attack": 0,
 "defense": 2,
@@ -1994,7 +1994,7 @@
 "level": 20
 },
 "382": {
-"name": "Gray Clydesdale",
+"name": "Grey Draught Horse",
 "slot": 9,
 "attack": 0,
 "defense": 6,
@@ -2005,7 +2005,7 @@
 "level": 52
 },
 "383": {
-"name": "Black Garron",
+"name": "Black Bakhmat",
 "slot": 9,
 "attack": 0,
 "defense": 25,
@@ -2016,7 +2016,7 @@
 "level": 70
 },
 "384": {
-"name": "White Barb",
+"name": "White Rumak",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2038,7 +2038,7 @@
 "level": 56
 },
 "386": {
-"name": "Dark Palfrey",
+"name": "Bay Ambler",
 "slot": 9,
 "attack": 0,
 "defense": 8,
@@ -2049,7 +2049,7 @@
 "level": 32
 },
 "387": {
-"name": "Dark Sumpter",
+"name": "Bay Packhorse",
 "slot": 9,
 "attack": 0,
 "defense": 3,
@@ -2060,7 +2060,7 @@
 "level": 60
 },
 "388": {
-"name": "Black Destrier",
+"name": "Black Warhorse",
 "slot": 9,
 "attack": 0,
 "defense": 2,
@@ -2071,7 +2071,7 @@
 "level": 40
 },
 "389": {
-"name": "Black Palfrey",
+"name": "Black Ambler",
 "slot": 9,
 "attack": 0,
 "defense": 10,
@@ -2082,7 +2082,7 @@
 "level": 36
 },
 "390": {
-"name": "Chestnut Rouncy",
+"name": "Chestnut Pony",
 "slot": 9,
 "attack": 0,
 "defense": 9,
@@ -2093,7 +2093,7 @@
 "level": 30
 },
 "391": {
-"name": "Gray Sumpter",
+"name": "Grey Packhorse",
 "slot": 9,
 "attack": 0,
 "defense": 10,
@@ -2104,7 +2104,7 @@
 "level": 32
 },
 "392": {
-"name": "White Garron",
+"name": "White Bakhmat",
 "slot": 9,
 "attack": 0,
 "defense": 11,
@@ -2115,7 +2115,7 @@
 "level": 42
 },
 "393": {
-"name": "Dark Clydesdale",
+"name": "Bay Draught Horse",
 "slot": 9,
 "attack": 0,
 "defense": 12,
@@ -2126,7 +2126,7 @@
 "level": 64
 },
 "394": {
-"name": "Chestnut Garron",
+"name": "Chestnut Bakhmat",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2137,7 +2137,7 @@
 "level": 22
 },
 "395": {
-"name": "Dark Courser",
+"name": "Bay Courser",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2148,7 +2148,7 @@
 "level": 24
 },
 "396": {
-"name": "Light Courser",
+"name": "Pale Courser",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2170,7 +2170,7 @@
 "level": 26
 },
 "398": {
-"name": "Chestnut Barb",
+"name": "Chestnut Rumak",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2181,7 +2181,7 @@
 "level": 28
 },
 "399": {
-"name": "Dark Barb",
+"name": "Bay Rumak",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2192,7 +2192,7 @@
 "level": 30
 },
 "400": {
-"name": "Albino Rouncy",
+"name": "Snow-White Pony",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2203,7 +2203,7 @@
 "level": 44
 },
 "401": {
-"name": "Light Barb",
+"name": "Pale Rumak",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2214,7 +2214,7 @@
 "level": 60
 },
 "402": {
-"name": "White Destrier",
+"name": "White Warhorse",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2225,7 +2225,7 @@
 "level": 32
 },
 "403": {
-"name": "Element Scroll",
+"name": "Charter of Elements",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2236,7 +2236,7 @@
 "level": 56
 },
 "404": {
-"name": "Tactical Scroll",
+"name": "War Manual",
 "slot": 9,
 "attack": 10,
 "defense": 0,
@@ -2247,7 +2247,7 @@
 "level": 20
 },
 "405": {
-"name": "Royalty Scroll",
+"name": "Royal Charter",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2258,7 +2258,7 @@
 "level": 10
 },
 "406": {
-"name": "A-Scroll",
+"name": "First Charter",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2269,7 +2269,7 @@
 "level": 16
 },
 "407": {
-"name": "Turn Scroll",
+"name": "Charter of Change",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2280,7 +2280,7 @@
 "level": 20
 },
 "408": {
-"name": "History Scroll",
+"name": "Chronicle",
 "slot": 9,
 "attack": 0,
 "defense": 5,
@@ -2291,7 +2291,7 @@
 "level": 10
 },
 "409": {
-"name": "Ethics Scroll",
+"name": "Cossack Custom",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2302,7 +2302,7 @@
 "level": 10
 },
 "410": {
-"name": "Fiber Scroll",
+"name": "Charter of Endurance",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2313,7 +2313,7 @@
 "level": 24
 },
 "411": {
-"name": "Far East Scroll",
+"name": "Eastern Scroll",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2324,7 +2324,7 @@
 "level": 30
 },
 "412": {
-"name": "Morality Scroll",
+"name": "Teachings",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2335,7 +2335,7 @@
 "level": 42
 },
 "413": {
-"name": "Feoff Scroll",
+"name": "Land Grant",
 "slot": 9,
 "attack": 0,
 "defense": 10,
@@ -2346,7 +2346,7 @@
 "level": 20
 },
 "414": {
-"name": "Mana Scroll",
+"name": "Magic Scroll",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2368,7 +2368,7 @@
 "level": 30
 },
 "416": {
-"name": "Dutiful Scroll",
+"name": "Charter of Loyalty",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2379,7 +2379,7 @@
 "level": 90
 },
 "417": {
-"name": "Duty Scroll",
+"name": "Universal",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2390,7 +2390,7 @@
 "level": 36
 },
 "418": {
-"name": "Rapture Scroll",
+"name": "Psalter",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2401,7 +2401,7 @@
 "level": 84
 },
 "419": {
-"name": "Sire Scroll",
+"name": "Father's Testament",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2412,7 +2412,7 @@
 "level": 120
 },
 "420": {
-"name": "Signory Scroll",
+"name": "Privilege",
 "slot": 9,
 "attack": 0,
 "defense": 20,
@@ -2423,7 +2423,7 @@
 "level": 40
 },
 "421": {
-"name": "Heart Scroll",
+"name": "Scroll of the Heart",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2434,7 +2434,7 @@
 "level": 40
 },
 "422": {
-"name": "Insight Scroll",
+"name": "Prophetic Scroll",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2456,7 +2456,7 @@
 "level": 60
 },
 "424": {
-"name": "Peace Scroll",
+"name": "Peace Treaty",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2467,7 +2467,7 @@
 "level": 90
 },
 "425": {
-"name": "Soul Scroll",
+"name": "Scroll of the Soul",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2478,7 +2478,7 @@
 "level": 70
 },
 "426": {
-"name": "Sprint Scroll",
+"name": "Courier's Scroll",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2489,7 +2489,7 @@
 "level": 80
 },
 "427": {
-"name": "Ferver Scroll",
+"name": "Scroll of Zeal",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2500,7 +2500,7 @@
 "level": 48
 },
 "428": {
-"name": "Ardor Scroll",
+"name": "Scroll of Ardour",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2511,7 +2511,7 @@
 "level": 30
 },
 "429": {
-"name": "Trial Scroll",
+"name": "Scroll of Trial",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2522,7 +2522,7 @@
 "level": 18
 },
 "430": {
-"name": "Chastity Scroll",
+"name": "Scroll of Purity",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2533,7 +2533,7 @@
 "level": 12
 },
 "431": {
-"name": "Dogma Scroll",
+"name": "Creed",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2544,7 +2544,7 @@
 "level": 10
 },
 "432": {
-"name": "Pith Scroll",
+"name": "Scroll of Essence",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2555,7 +2555,7 @@
 "level": 60
 },
 "433": {
-"name": "Nature Scroll",
+"name": "Herbal",
 "slot": 9,
 "attack": 0,
 "defense": 20,
@@ -2566,7 +2566,7 @@
 "level": 40
 },
 "434": {
-"name": "Rise Potion",
+"name": "St John's Wort Tincture",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2577,7 +2577,7 @@
 "level": 0
 },
 "435": {
-"name": "Azure Potion",
+"name": "Cornflower Tincture",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2588,7 +2588,7 @@
 "level": 0
 },
 "436": {
-"name": "Falls Medicine",
+"name": "Rapids Remedy",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2599,7 +2599,7 @@
 "level": 0
 },
 "437": {
-"name": "Forest Medicine",
+"name": "Forest Remedy",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2612,7 +2612,7 @@
 },
 "rare": {
 "501": {
-"name": "Book of Valor",
+"name": "Cossack Chronicle",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2623,7 +2623,7 @@
 "level": 130
 },
 "502": {
-"name": "Silk Towel",
+"name": "Silk Rushnyk",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2634,7 +2634,7 @@
 "level": 0
 },
 "503": {
-"name": "Heaven's Pike",
+"name": "Heaven's Spear",
 "slot": 0,
 "attack": 135,
 "defense": 36,
@@ -2645,7 +2645,7 @@
 "level": 135
 },
 "504": {
-"name": "Emperor's Seal",
+"name": "Hetman's Seal",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2667,7 +2667,7 @@
 "level": 145
 },
 "506": {
-"name": "Great Stallion",
+"name": "Argamak",
 "slot": 9,
 "attack": 0,
 "defense": 40,
@@ -2689,7 +2689,7 @@
 "level": 99
 },
 "508": {
-"name": "Heaven's Sword",
+"name": "Heaven's Konchar",
 "slot": 0,
 "attack": 128,
 "defense": 25,
@@ -2700,7 +2700,7 @@
 "level": 125
 },
 "509": {
-"name": "Next Claymore",
+"name": "Heir's Broadsword",
 "slot": 1,
 "attack": 90,
 "defense": 30,
@@ -2711,7 +2711,7 @@
 "level": 90
 },
 "510": {
-"name": "Swift Falchion",
+"name": "Swift Yatagan",
 "slot": 0,
 "attack": 125,
 "defense": 5,
@@ -2722,7 +2722,7 @@
 "level": 110
 },
 "511": {
-"name": "Tragedy Blade",
+"name": "Sabre of Sorrow",
 "slot": 0,
 "attack": 130,
 "defense": 5,
@@ -2733,7 +2733,7 @@
 "level": 130
 },
 "512": {
-"name": "Canon Claymore",
+"name": "Sich Broadsword",
 "slot": 1,
 "attack": 93,
 "defense": 33,
@@ -2755,7 +2755,7 @@
 "level": 115
 },
 "514": {
-"name": "Sky Claymore",
+"name": "Cloud Broadsword",
 "slot": 1,
 "attack": 96,
 "defense": 28,
@@ -2766,7 +2766,7 @@
 "level": 95
 },
 "515": {
-"name": "Sky Sword",
+"name": "Cloud Konchar",
 "slot": 9,
 "attack": 55,
 "defense": 0,
@@ -2777,7 +2777,7 @@
 "level": 92
 },
 "516": {
-"name": "Heaven's Sword",
+"name": "Heaven's Konchar",
 "slot": 1,
 "attack": 105,
 "defense": 15,
@@ -2788,7 +2788,7 @@
 "level": 90
 },
 "517": {
-"name": "Heaven's Crown",
+"name": "Heaven's Kuchma",
 "slot": 2,
 "attack": 0,
 "defense": 30,

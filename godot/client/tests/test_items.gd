@@ -8,10 +8,10 @@ const TEST_PATH := "user://test_items.json"
 
 
 func test_item_data() -> void:
-	eq(Items.name_of(116), "Iron Claymore", "the first weapon")
+	eq(Items.name_of(116), "Iron Broadsword", "the first weapon")
 	eq(Items.slot_type(116), 1, "a sword of type 1")
 	eq(Items.place(131), 3, "a helmet's place")
-	eq(Items.describe(Items.make(116)), "Iron Claymore / ATK+1 / Available at Lv1", "as the Gear page says")
+	eq(Items.describe(Items.make(116)), "Iron Broadsword / ATK+1 / Available at Lv1", "as the Gear page says")
 	eq(Items.level_needed(102), 10, "a tier 2 gear")
 	eq(Items.icon(116), ["kibo", 0], "gear icon")
 	eq(Items.icon(503), ["shinki", 2], "rare icon")
@@ -20,7 +20,7 @@ func test_item_data() -> void:
 	rng.seed = 7
 	for i in 20:
 		var a := int(Items.make(141, rng).hp)
-		check(a >= 15 and a <= 30, "a found Lord Armour: HP 15 and up to 15 more, got %d" % a)
+		check(a >= 15 and a <= 30, "a found Colonel's Armour: HP 15 and up to 15 more, got %d" % a)
 
 
 func test_new_hero_gear() -> void:
@@ -33,7 +33,7 @@ func test_new_hero_gear() -> void:
 
 func test_wear_and_take_off() -> void:
 	var p := Profile.new()
-	check(p.add_item(Items.make(126)), "a Half-Axe in the backpack")
+	check(p.add_item(Items.make(126)), "a Chekan in the backpack")
 	check(p.add_item(Items.make(131)), "a helmet")
 	eq(p.use_item(0), "", "the axe is worn")
 	eq(int(p.equipped[0].id), 126, "in hand")
@@ -81,7 +81,7 @@ func test_gear_and_inventory_pages() -> void:
 	eq(gear.places.size(), 9, "nine places")
 	check(gear.places[0].icon != null, "the claymore's icon")
 	check(gear.places[3].icon == null, "no helmet")
-	eq(gear.describe(0), "Iron Claymore / ATK+1 / Available at Lv1", "the weapon")
+	eq(gear.describe(0), "Iron Broadsword / ATK+1 / Available at Lv1", "the weapon")
 	gear.free()
 	var inv: Control = Inventory.new()
 	root.add_child(inv)

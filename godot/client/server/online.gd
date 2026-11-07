@@ -198,7 +198,7 @@ func character(uid: String) -> Dictionary:
 			for k in bonus:
 				bonus[k] += int(it.get(k, 0))
 	if h.is_empty():
-		bonus.attack = 1  # the Iron Claymore of a new hero
+		bonus.attack = 1  # the Iron Broadsword of a new hero
 	c.atk_bonus = bonus.attack
 	c.def_bonus = bonus.defense
 	c.hp_bonus = bonus.hp

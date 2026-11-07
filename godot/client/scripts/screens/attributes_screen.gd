@@ -3,8 +3,8 @@ extends Control
 ## defence, each with a "+" that spends a point on it (HP +5, MP +3, attack +1, defence +1).
 ## Attack and defence show the hero's own part and the gear's part ("4+1").
 ## Every point spent is saved at once. Reset gives the points back: the base stats go back to
-## the hero's face, paid with 100 gold per level or an elixir (Rise / Azure Potion, Falls /
-## Forest Medicine).
+## the hero's face, paid with 100 gold per level or an elixir (St John's Wort / Cornflower Tincture,
+## Rapids / Forest Remedy).
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")

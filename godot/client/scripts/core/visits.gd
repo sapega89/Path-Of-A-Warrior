@@ -4,7 +4,7 @@ extends RefCounted
 ## him, warmer the more friendship there is; the hero picks one of four things to talk about;
 ## the visit adds 5 friendship and, with a chance of the friendship in percent, the general
 ## gives a gift: a skill of his, a stat, fame, a gear or a potion. One visit per mission won.
-## With the Emperor's Seal in the backpack all 44 generals one can visit are on the list.
+## With the Hetman's Seal in the backpack all 44 generals one can visit are on the list.
 
 const PATH := "res://data/visit.json"
 const Items := preload("res://scripts/core/items.gd")
@@ -53,7 +53,7 @@ static func can_visit(profile: RefCounted) -> bool:
 
 
 ## The generals on the list, in the order the hero met them: [[id, friendship], ...].
-## With the Emperor's Seal: all generals one can visit, 0 for those not met.
+## With the Hetman's Seal: all generals one can visit, 0 for those not met.
 static func generals(profile: RefCounted) -> Array:
 	var out: Array = []
 	if profile.has_item(SEAL):

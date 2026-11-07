@@ -93,7 +93,7 @@ func test_single_player_numbers() -> void:
 	eq([Rules.skill_bonus(3, 20, 4), Rules.heal(9, 100, 3), Rules.heal(10, 100, 3)], [4, 28, 60])
 	eq(Rules.soul(13, 30, 20, 5), [6, 4, 100], "Protection of the Virgin Lv5")
 	eq(Rules.mission_end(45, true, 6), [45, 94, 900])
-	eq(Rules.shop_kit(1), {"atk": 1, "def": 0, "hp": 0}, "a new hero's Iron Claymore")
+	eq(Rules.shop_kit(1), {"atk": 1, "def": 0, "hp": 0}, "a new hero's Iron Broadsword")
 	eq(Rules.shop_kit(10), {"atk": 6, "def": 11, "hp": 60})
 	eq(Rules.shop_kit(25), {"atk": 12, "def": 20, "hp": 120})
 	eq(Rules.shop_kit(99), {"atk": 27, "def": 44, "hp": 285})
@@ -290,7 +290,7 @@ func test_loot() -> void:
 	check(got.keys().any(func(id): return id <= 11), "potions and bombs")
 	check(got.keys().any(func(id): return id > 100 and id <= 200), "Normal gear")
 	check(got.keys().any(func(id): return id > 300 and id < 500), "Special things")
-	check(not got.has(502), "never the Silk Towel")
+	check(not got.has(502), "never the Silk Rushnyk")
 	for id in got:
 		var it: Dictionary = got[id]
 		check(not str(it.name).is_empty(), "%d has a name" % id)

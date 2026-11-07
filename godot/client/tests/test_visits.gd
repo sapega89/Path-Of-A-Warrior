@@ -29,7 +29,7 @@ func test_a_won_mission_allows_a_visit() -> void:
 	check(Profile.load_or_new(TEST_PATH).can_visit, "and it is kept")
 	eq(Visits.generals(p), [[4, 10]], "the friend and his points")
 	p.add_item({"id": Visits.SEAL, "attack": 0, "defense": 0, "hp": 0, "mp": 0, "enchant": 0, "extra": 0})
-	eq(Visits.generals(p).size(), 44, "with the Emperor's Seal all of them")
+	eq(Visits.generals(p).size(), 44, "with the Hetman's Seal all of them")
 	eq(Visits.generals(p)[0], [4, 10], "points of a friend")
 	eq(Visits.generals(p)[1], [5, 0], "0 for one not met")
 
