@@ -176,6 +176,7 @@ func _ready() -> void:
 	hud = MapHud.new()
 	hud.name = "Hud"
 	hud.sim = sim
+	hud.auto_allowed = auto_allowed()
 	add_child(hud)
 
 	banner = PanelContainer.new()
@@ -620,11 +621,19 @@ func pointer_dir(at: Vector2) -> int:
 	return 0 if d.y > 0.0 else 4
 
 
-## Auto-hunt on / off (Tab, F, R3 or a click on AUTO).
+## Auto-hunt on / off (Tab, F, R3 or a click on AUTO); only on normal, hard has no AUTO.
 func toggle_auto() -> void:
+	if not auto_allowed():
+		return
 	autopilot.toggle()
 	hud.auto_on = autopilot.on
 	hud.queue_redraw()
+
+
+
+## The auto-hunt is there only on normal: on hard the player fights by hand.
+func auto_allowed() -> bool:
+	return sim != null and sim.difficulty != 0
 
 
 ## A click on the skill bar: a belt slot is used, a skill cast; on the corner AUTO / SKIP. False

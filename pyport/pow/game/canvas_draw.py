@@ -174,12 +174,12 @@ class DrawMixin:
     def draw_auto_badge():
         """(pow/game/autopilot.py): the AUTO button in the bottom-left corner of the map
         (the corner is empty on the map; a click on it, Tab or F toggles): white while the
-        auto-hunt is on, grey while it is off (config.AUTO_BUTTON: only while it is on)."""
+        auto-hunt is on, grey while it is off (config.AUTO_BUTTON: only while it is on); none on Hard."""
         from pow.game.autopilot import Autopilot
         if GameCanvas.state != 3 or GameCanvas.popups.kind != 0:
             return
-        if not (Autopilot.on or config.AUTO_BUTTON):
-            return
+        if not Autopilot.allowed() or not (Autopilot.on or config.AUTO_BUTTON):
+            return                       # no AUTO on Hard
         Gfx.fill_rect(0, GameCanvas.screen_h - 17, 48, 17, 0)
         Gfx.set_font(GameCanvas.font_white if Autopilot.on else GameCanvas.font_gray)
         Gfx.draw_string("AUTO", 24, GameCanvas.screen_h - 17, 1)

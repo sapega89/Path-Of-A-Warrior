@@ -22,14 +22,34 @@ def test_autohunt_scenario(tmp_path, name):
 def test_autohunt_is_off_by_default_and_toggles():
     from pow.game.autopilot import Autopilot
     from pow.game.game_canvas import GameCanvas
-    Autopilot.reset()
-    assert not Autopilot.on and Autopilot.tick() is None and Autopilot.direction is None
-    GameCanvas.key_down(GameCanvas, -100)          # Tab / the AUTO corner
-    assert Autopilot.on
-    Autopilot.player_key()
-    assert Autopilot.manual > 0
-    GameCanvas.key_down(GameCanvas, -100)
-    assert not Autopilot.on
+    was = GameCanvas.difficulty
+    GameCanvas.difficulty = 1                      # Normal
+    try:
+        Autopilot.reset()
+        assert not Autopilot.on and Autopilot.tick() is None and Autopilot.direction is None
+        GameCanvas.key_down(GameCanvas, -100)          # Tab / the AUTO corner
+        assert Autopilot.on
+        Autopilot.player_key()
+        assert Autopilot.manual > 0
+        GameCanvas.key_down(GameCanvas, -100)
+        assert not Autopilot.on
+    finally:
+        GameCanvas.difficulty = was
+
+
+def test_no_autohunt_on_hard():
+    from pow.game.autopilot import Autopilot
+    from pow.game.game_canvas import GameCanvas
+    was = GameCanvas.difficulty
+    GameCanvas.difficulty = 0                      # Hard
+    try:
+        Autopilot.reset()
+        assert not Autopilot.allowed()
+        GameCanvas.key_down(GameCanvas, -100)
+        assert not Autopilot.on, "Tab / F / R3 do nothing on Hard"
+        assert not Autopilot.playing()
+    finally:
+        GameCanvas.difficulty = was
 
 
 def test_auto_keys_tab_f_and_the_right_stick():

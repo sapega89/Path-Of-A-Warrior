@@ -41,6 +41,7 @@ var _skills: Texture2D = preload(UI + "skill.png")
 var _skills_gray: Texture2D = preload(UI + "skillgray.png")
 var show_bar := true
 var auto_on := false
+var auto_allowed := true  # false on hard: no AUTO corner (scripts/screens/mission_screen.gd)
 
 
 func _ready() -> void:
@@ -86,7 +87,7 @@ func _draw() -> void:
 				Vector2(BALL, h) * k), Rect2(0, 0, BALL, h))
 	if talking():
 		_corner(Rect2(Vector2(0, view.y - AUTO_H * k), Vector2(AUTO_W, AUTO_H) * k), "SKIP", Color.WHITE, k)
-	else:
+	elif auto_allowed:
 		_auto(view, k)
 	_pause(view, k)
 	if show_bar:
@@ -152,7 +153,7 @@ func _left_corner_at(p: Vector2) -> bool:
 
 ## Is the point on the AUTO corner (not while someone talks: then it is SKIP)?
 func auto_at(p: Vector2) -> bool:
-	return not talking() and _left_corner_at(p)
+	return auto_allowed and not talking() and _left_corner_at(p)
 
 
 ## Is the point on the SKIP corner of a talk?

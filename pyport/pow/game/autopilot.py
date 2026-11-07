@@ -92,8 +92,16 @@ class Autopilot:
         cls._map = cls._exit_cell = cls._exit = None
         cls._seen = set()
 
+    @staticmethod
+    def allowed():
+        """Only on Normal: on Hard there is no auto-hunt, the player fights by hand."""
+        return GameCanvas.difficulty != 0
+
     @classmethod
     def toggle(cls):
+        if not cls.allowed():
+            cls.on = False
+            return
         cls.on = not cls.on
         cls.direction = None
         GameCanvas.redraw = 1          # the corner badge goes with a full redraw of the map
@@ -106,7 +114,7 @@ class Autopilot:
 
     @staticmethod
     def playing():
-        return (GameCanvas.state == 3 and GameCanvas.map_mode.mode == 0 and GameCanvas.popups.kind == 0
+        return (Autopilot.allowed() and GameCanvas.state == 3 and GameCanvas.map_mode.mode == 0 and GameCanvas.popups.kind == 0
                 and not GameCanvas.paused and GameCanvas.hero is not None
                 and GameCanvas.hero.pos[0] is not None)
 
