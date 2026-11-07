@@ -35,8 +35,8 @@ func test_a_won_mission_allows_a_visit() -> void:
 
 
 func test_greetings_by_friendship() -> void:
-	var g := Visits.greeting(0, 0, "Hero", "Kirkland")
-	eq(g, ["[Hero] Greetings.", "[Kirkland] Hello.", "[Hero] Hello... thank you for inviting me."], "the coolest")
+	var g := Visits.greeting(0, 0, "Hero", "Jan Gorski")
+	eq(g, ["[Hero] Greetings.", "[Jan Gorski] Hello.", "[Hero] Hello... thank you for inviting me."], "the coolest")
 	eq(Visits.greeting(100, 0, "H", "K")[0], "[H] " + Visits.line(27), "100 points: the warmest")
 	eq(Visits.greeting(15, 1, "H", "K")[0], "[H] " + Visits.line(33), "a general of topic 1")
 	eq(Visits.talk(0, 0, "H", "K"), ["[H] Your swordsmanship is without peer!", "[K] Thanks."], "the sword")
@@ -84,7 +84,7 @@ func test_visiting_screen() -> void:
 	Router.params = {"profile_path": TEST_PATH, "seed": 1}
 	var screen: Control = Visiting.new()
 	root.add_child(screen)
-	eq(screen.list.get_child_count(), 3, "the header, Kirkland, Back")
+	eq(screen.list.get_child_count(), 3, "the header, Jan Gorski, Back")
 	screen.open(4)
 	eq(screen.step, Visiting.Step.GREETING, "he greets")
 	eq(screen.hero_says.visible_characters, 0, "typed out")
@@ -104,7 +104,7 @@ func test_visiting_screen() -> void:
 	check(screen.text.text.contains("Tactics"), screen.text.text)
 	screen.press()
 	eq(screen.step, Visiting.Step.VISITED, "the visit's end")
-	check(screen.text.text.begins_with("You visited Kirkland.\nFriendship:100%"), screen.text.text)
+	check(screen.text.text.begins_with("You visited Jan Gorski.\nFriendship:100%"), screen.text.text)
 	var saved: RefCounted = Profile.load_or_new(TEST_PATH)
 	check(not saved.can_visit, "one visit per mission")
 	screen.free()

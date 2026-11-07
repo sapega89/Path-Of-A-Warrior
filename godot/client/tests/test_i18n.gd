@@ -80,3 +80,18 @@ func test_every_item_has_a_name_in_every_language() -> void:
 		for item in part.values():
 			for locale in I18nScript.LOCALES:
 				check(t[locale].get(str(item.name), "") != "", "%s has no %s name" % [item.name, locale])
+
+
+func test_campaign_names_in_every_language() -> void:
+	var t := I18nScript.parse(FileAccess.get_file_as_string(I18nScript.NAMES_PATH))
+	var c: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/campaign.json"))
+	var names: Array = []
+	for part in ["lords", "generals"]:
+		for v in c[part].values():
+			names.append(str(v.name))
+	for m in c.missions:
+		if str(m.name) != "":
+			names.append(str(m.name))
+	for name in names:
+		for locale in I18nScript.LOCALES:
+			check(t[locale].get(name, "") != "", "%s has no %s name" % [name, locale])

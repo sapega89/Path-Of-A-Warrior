@@ -24,7 +24,7 @@ const LORD_COUNT := 45
 ## Where the hero goes after ending i (0: back to the start, the progress of the rulers lost).
 const NEXT_PLACE := [0, 0, 0, 0, 0, 0, 11, 8, 0, 15, 15, 20, 17, 19, 19, 0, 30, 22, 35, 38, 39, 33, 33, 44]
 const ENDING_BASE := 200
-const SCARF := 502  # Catherine's scarf: the reward of ending 2, needed to see ending 3
+const SCARF := 502  # Katria's scarf: the reward of ending 2, needed to see ending 3
 ## What one stat point adds: HP, MP, attack, defence.
 const POINT_GAINS := [5, 3, 1, 1]
 ## The four heroes (the faces) start with their own HP, MP, attack and defence. Every set is
@@ -384,7 +384,7 @@ func take_from(sim: RefCounted, lord_id: int, mission: int, ruler_id: int,
 ## Where the campaign goes after a mission (info: its campaign.json record). A won mission
 ## takes the hero to the lord's place. A mission whose general is 200 + i (won) or whose
 ## reward is 200 + i (lost) ends the story with ending i: the hero goes to that ending's
-## place, gets the mission's gold anyway when lost, sometimes a gear (Catherine's scarf
+## place, gets the mission's gold anyway when lost, sometimes a gear (Katria's scarf
 ## after ending 2), and one more lord opens. Returns the ending reached, or -1.
 func advance(sim: RefCounted, lord_id: int, info: Dictionary, rng: RandomNumberGenerator = null) -> int:
 	if rng == null:

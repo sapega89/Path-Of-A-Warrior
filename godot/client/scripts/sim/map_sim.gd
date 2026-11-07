@@ -1541,7 +1541,7 @@ func sparks() -> Array:
 
 func _show_target_info(e: Actor) -> void:
 	var names := table("troop_names")
-	var name := str(general.get("name", "")) if e.type < 200 else \
+	var name := String(TranslationServer.translate(str(general.get("name", "")))) if e.type < 200 else \
 		(str(names[e.type - 201]) if e.type - 201 < names.size() else "")
 	target_info = {"name": name,
 		"level": e.level, "hp_bar": e.hp * 60 / maxi(e.max_hp, 1), "ticks": 10}
@@ -1729,7 +1729,7 @@ func arrows_wait() -> bool:
 func _start_map_talk() -> void:
 	var lines := talk_lines("map")
 	talk.clear()
-	var name := str(general.get("name", ""))
+	var name := String(TranslationServer.translate(str(general.get("name", ""))))
 	for k in TALK_STEPS:
 		var speaker := name if (k & 1) == 0 else hero_name
 		var text := str(lines[21 + k]) if 21 + k < lines.size() else ""
@@ -1858,7 +1858,7 @@ func _start_general_talk(id: int, after: int) -> void:
 	friendship[id] = points
 	var first := mini(points, 95) / 10 * VICTORY_TALK_STEPS
 	var lines := talk_lines("general")
-	var name := str(general.get("name", ""))
+	var name := String(TranslationServer.translate(str(general.get("name", ""))))
 	talk.clear()
 	for k in VICTORY_TALK_STEPS:
 		var speaker := name if (k & 1) == 0 else hero_name

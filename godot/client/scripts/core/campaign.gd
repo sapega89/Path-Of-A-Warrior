@@ -26,7 +26,7 @@ func lord(id: int) -> Dictionary:
 
 
 func lord_name(id: int) -> String:
-	return str(lord(id).get("name", "?"))
+	return String(TranslationServer.translate(str(lord(id).get("name", "?"))))
 
 
 ## Lord ids of a chapter (0-based).

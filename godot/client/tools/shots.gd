@@ -372,7 +372,7 @@ func _ready() -> void:
 	Router.current.press_cell(2)
 	Router.current.cells[2].grab_focus()
 	await _shot(out, "17_combine")
-	# Visiting: three friends after a won mission; Kirkland's greeting, the topics, the gift.
+	# Visiting: three friends after a won mission; Jan Gorski's greeting, the topics, the gift.
 	hero = load("res://scripts/core/profile.gd").load_or_new("user://shot_hero.json")
 	hero.friendship = {"4": 100, "13": 35, "29": 5}
 	hero.can_visit = true

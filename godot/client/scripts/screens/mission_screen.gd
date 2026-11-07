@@ -409,7 +409,7 @@ func _show_banner() -> void:
 				clock(sim.time_limit), tr("mission.time_taken"), clock(sim.play_seconds())]
 		if sim.exp_bars.level_up_ticks > 0:
 			stage += "\n" + tr("mission.level_up") % sim.exp_bars.level
-	banner_text.text = "%s\n%s\n%s" % [lord_name, mission_info.get("name", ""), stage]
+	banner_text.text = "%s\n%s\n%s" % [lord_name, tr(str(mission_info.get("name", ""))), stage]
 	_place_banner(0.3)
 
 

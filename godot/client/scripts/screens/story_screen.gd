@@ -208,14 +208,14 @@ func next_page() -> bool:
 	return true
 
 
-## What the ending gave, as pyport's popup: "Catherine's scarf / received!", then "Hidden
+## What the ending gave, as pyport's popup: "Katria's scarf / received!", then "Hidden
 ## Mission!" and the lord opened.
 func reward_lines() -> Array:
 	var p: Dictionary = Router.params
 	var out: Array = []
 	var item := int(p.get("reward_item", 0))
 	if item != 0:
-		out.append_array([Items.name_of(item) if item != Profile.SCARF else "Catherine's scarf", "received!"])
+		out.append_array([Items.name_of(item) if item != Profile.SCARF else "Katria's scarf", "received!"])
 	var lord := int(p.get("opened_lord", 0))
 	if lord != 0:
 		if not out.is_empty():

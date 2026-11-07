@@ -127,7 +127,7 @@ func show_list() -> void:
 		head.disabled = true
 		head.focus_mode = Control.FOCUS_NONE
 		for g in Visits.generals(profile):
-			var b := _row(str(MapSim.general_data(int(g[0])).get("name", "?")), str(g[1]))
+			var b := _row(tr(str(MapSim.general_data(int(g[0])).get("name", "?"))), str(g[1]))
 			b.pressed.connect(open.bind(int(g[0])))
 	var back := Button.new()
 	back.name = "Back"
@@ -207,7 +207,7 @@ func open(id: int) -> void:
 
 
 func _name() -> String:
-	return str(general.get("name", "?"))
+	return tr(str(general.get("name", "?")))
 
 
 ## Types lines[line_at] into the box of who says it (the hero says the even lines); the
@@ -274,7 +274,7 @@ func press() -> void:
 			Router.back()
 
 
-## "You visited Kirkland. Friendship increased by 5." and the gift, if any.
+## "You visited Jan Gorski. Friendship increased by 5." and the gift, if any.
 func visited_text() -> String:
 	var out: Array = [tr("visit.visited") % _name()]
 	out.append(tr("visit.full") if bool(gift.get("full", false)) else tr("visit.more"))
