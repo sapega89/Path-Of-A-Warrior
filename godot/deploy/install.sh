@@ -19,7 +19,9 @@ DATA=/var/lib/pow-server
 
 apt-get update -qq
 DEBIAN_FRONTEND=noninteractive apt-get install -y -qq git unzip curl ca-certificates \
-    fontconfig iptables-persistent > /dev/null
+    fontconfig iptables-persistent unattended-upgrades > /dev/null
+# security updates of the system install themselves every day
+dpkg-reconfigure -f noninteractive unattended-upgrades
 
 case "$(uname -m)" in
     x86_64) GODOT_ARCH=x86_64 ;;
@@ -39,6 +41,7 @@ fi
 id pow >/dev/null 2>&1 || useradd --system --home "$DATA" --shell /usr/sbin/nologin pow
 mkdir -p "$DATA"
 chown pow:pow "$DATA"
+chmod 700 "$DATA"          # the accounts and the server's private key: only the server reads them
 
 if [ -d "$APP/.git" ]; then
     git -C "$APP" fetch -q --depth 1 origin "$BRANCH"
@@ -47,6 +50,11 @@ else
     git clone -q --depth 1 --branch "$BRANCH" "$REPO" "$APP"
 fi
 chown -R pow:pow "$APP"
+# SSH only with the key (Oracle's images already do this; kept so if the image changes)
+if [ -d /etc/ssh/sshd_config.d ]; then
+    printf 'PasswordAuthentication no\nPermitRootLogin no\n' > /etc/ssh/sshd_config.d/90-pow.conf
+    systemctl reload ssh 2>/dev/null || systemctl reload sshd 2>/dev/null || true
+fi
 # the import cache (.godot/) the server's scenes and scripts load from
 sudo -u pow HOME="$DATA" timeout 600 "$GODOT" --headless --path "$APP/godot/client" --import > /dev/null 2>&1 || true
 
@@ -62,6 +70,21 @@ Environment=HOME=${DATA}
 ExecStart=${GODOT} --headless --path ${APP}/godot/client res://server/main.tscn -- --port ${PORT} --data ${DATA}
 Restart=always
 RestartSec=3
+# the server can write only its data folder and cannot gain rights
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=${DATA} ${APP}/godot/client/.godot
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+CapabilityBoundingSet=
+MemoryMax=1G
 
 [Install]
 WantedBy=multi-user.target
