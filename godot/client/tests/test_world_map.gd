@@ -141,3 +141,26 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 	camp.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))
+
+
+func test_a_room_shows_only_itself_and_the_next() -> void:
+	var map: Dictionary = MapBuilder.load_map(6)
+	var rooms: RefCounted = Rooms.new(map, 0)
+	var next: Array = rooms.next_rooms(0)
+	check(not next.is_empty(), "the first room leads on")
+	var cells: Dictionary = rooms.view_cells(0)
+	check(cells.has(Vector2i(4, 4)), "its own tiles")
+	var p: Vector2i = rooms.room_xy(next[0])
+	check(cells.has(Vector2i(7 * p.x + 4, 7 * p.y + 4)), "the next room's tiles")
+	for r in rooms.count():
+		if r != 0 and not r in next:
+			var q: Vector2i = rooms.room_xy(r)
+			check(not cells.has(Vector2i(7 * q.x + 4, 7 * q.y + 4)), "not room %d" % r)
+	var b: Node3D = MapBuilder.new()
+	root.add_child(b)
+	b.build(map)
+	b.show_only(cells)
+	for r in rooms.count():
+		var q: Vector2i = rooms.room_xy(r)
+		eq(b.is_shown(7 * q.x + 4, 7 * q.y + 4), r == 0 or r in next, "room %d drawn only if current or next" % r)
+	b.free()

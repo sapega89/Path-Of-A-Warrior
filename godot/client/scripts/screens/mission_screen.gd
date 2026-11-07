@@ -310,6 +310,8 @@ func _update_view(t: float) -> void:
 		if _last_cell >= 0 and fade != null:
 			fade.color.a = 1.0
 		_last_cell = sim.cell
+		# Only this room and the next ones it leads to; the rest is the ground around the map.
+		builder.show_only(sim.rooms.view_cells(sim.cell))
 	if fade != null and fade.color.a > 0.0:
 		fade.color.a = maxf(fade.color.a - get_process_delta_time() / FADE_TIME, 0.0)
 	hero.global_position = Hero.px_to_world(smooth(sim.hero.prev_pos, sim.hero.pos, t))
@@ -354,7 +356,7 @@ func _place_objects() -> void:
 	for b in sim.breakables:
 		var node := builder.get_node_or_null("Object_%d_%d" % [b.tile.x, b.tile.y]) as Node3D
 		if node != null:
-			node.visible = sim.breakable_shown(b)
+			node.visible = sim.breakable_shown(b) and builder.is_shown(b.tile.x, b.tile.y)
 
 
 ## Gold and items on the floor.
