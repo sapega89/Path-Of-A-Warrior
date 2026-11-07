@@ -6,7 +6,7 @@ extends RefCounted
 const Profile := preload("res://scripts/core/profile.gd")
 const Items := preload("res://scripts/core/items.gd")
 
-## [HP, MP, ATK, DEF] of each face (0 Warrior, 1 Guardian, 2 Mystic, 3 Berserker).
+## [HP, MP, ATK, DEF] of each face (0 Cossack, 1 Serdiuk, 2 Kharakternyk, 3 Haidamaka).
 const HERO_BASES: Array = Profile.HERO_BASES
 ## a new hero has 5 free points, +3 a level; a point gives HP +5 / MP +3 / ATK +1 / DEF +1
 const POINTS_START := 5
@@ -74,7 +74,7 @@ static func skill_mp(skill: int, level: int) -> int:
 
 
 ## The cost on the 0..100 MP gauge: the share of the hero's MP the skill takes in the single
-## player (Wind Slasher Lv1 = 5 MP of a new hero's 10 -> 50); above the hero's MP, a full gauge.
+## player (Whirlwind Sabre Lv1 = 5 MP of a new hero's 10 -> 50); above the hero's MP, a full gauge.
 static func skill_cost(skill: int, level: int, max_mp: int) -> int:
 	var mp := skill_mp(skill, level)
 	var per := maxi(1, max_mp)
@@ -87,7 +87,7 @@ static func skill_bonus(skill: int, atk: int, level: int) -> int:
 	return atk * level / au if au > 0 else 0
 
 
-## HP of Medium Heal (maxHP * (4 + lvl) / 25) and Maximum Heal (maxHP * (9 + lvl) / 20).
+## HP of Healing Herbs (maxHP * (4 + lvl) / 25) and Living Water (maxHP * (9 + lvl) / 20).
 static func heal(skill: int, max_hp: int, level: int) -> int:
 	return max_hp * (4 + level) / 25 if skill == 9 else max_hp * (9 + level) / 20
 

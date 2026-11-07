@@ -1,6 +1,8 @@
 extends "res://tests/test_case.gd"
 
 const I18nScript := preload("res://scripts/core/i18n.gd")
+const Profile := preload("res://scripts/core/profile.gd")
+const OnlineClient := preload("res://scripts/net/online_client.gd")
 
 
 func _table() -> Dictionary:
@@ -54,3 +56,18 @@ static func _scripts(dir: String) -> Array[String]:
 	for d in DirAccess.get_directories_at(dir):
 		out.append_array(_scripts(dir + "/" + d))
 	return out
+
+
+func test_names_have_every_language() -> void:
+	var t := I18nScript.parse(FileAccess.get_file_as_string(I18nScript.NAMES_PATH))
+	for name in Profile.HERO_CLASSES + OnlineClient.SKILL_NAMES:
+		for locale in I18nScript.LOCALES:
+			check(t[locale].get(name, "") != "", "%s has no %s name" % [name, locale])
+
+
+func test_a_name_in_the_players_language() -> void:
+	var before := TranslationServer.get_locale()
+	TranslationServer.set_locale("uk")
+	eq(String(TranslationServer.translate("Cossack")), "Козак", "a hero class")
+	eq(OnlineClient.skill_name(3), "Шабля-вихор", "an online skill")
+	TranslationServer.set_locale(before)

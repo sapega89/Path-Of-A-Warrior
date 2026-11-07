@@ -33,6 +33,8 @@ Writes
   godot/client/data/help.json            the Help topics and their pages (export_help)
   godot/client/data/visit.json           visiting a general: the greetings and talks, and
                                          the 44 generals one can visit (export_visit)
+  godot/client/i18n/names.json           our names (own_names.json) in both languages, English
+                                         name -> {"en", "uk"}, for the game to translate them
   godot/client/data/campaign.json        chapters, lords (one map each) and missions, as the
                                          campaign screens read them (load_chapter_lords,
                                          load_lord_missions):
@@ -410,11 +412,31 @@ SKILL_ROWS = [[12, 13, 14], [15, 16, 0], [17, 18, 19], [20, 21, 22], [23, 24, 25
               [28, 29, 30]]
 
 
+# Our names for the game's things (own_names.json): section -> imported name -> [en, uk].
+OWN_NAMES = json.loads((pathlib.Path(__file__).with_name("own_names.json")).read_text(encoding="utf-8"))
+
+
+def own_name(section, name):
+    """Our English name for an imported one (the name itself when the table has none)."""
+    return OWN_NAMES.get(section, {}).get(name, [name])[0]
+
+
+def export_names(out):
+    """i18n/names.json: every English name of own_names.json -> its text in each language."""
+    names = {}
+    for section, table in OWN_NAMES.items():
+        if isinstance(table, dict):
+            for en, uk in table.values():
+                names[en] = {"en": en, "uk": uk}
+    (out / "names.json").write_text(json.dumps(names, ensure_ascii=False, indent=0, sort_keys=True),
+                                    encoding="utf-8")
+
+
 def export_skills(out):
     edat = scr.load(ROOT / "edat.scr")
     text = read_table(ROOT / edat[54])
     menu = read_table(ROOT / edat[69])
-    skills = {"names": text[0:19], "effects": text[19:38], "groups": menu[48:55], "rows": SKILL_ROWS}
+    skills = {"names": [own_name("skills", n) for n in text[0:19]], "effects": text[19:38], "groups": menu[48:55], "rows": SKILL_ROWS}
     (out / "skills.json").write_text(json.dumps(skills, ensure_ascii=False, indent=0))
 
 
@@ -931,6 +953,7 @@ def main():
     export_talk(CLIENT / "data")
     export_visit(CLIENT / "data")
     export_help(CLIENT / "data")
+    export_names(CLIENT / "i18n")
     export_skills(CLIENT / "data")
     export_items(CLIENT / "data")
     export_mixing(CLIENT / "data")

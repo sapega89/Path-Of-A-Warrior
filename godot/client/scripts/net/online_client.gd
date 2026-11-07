@@ -29,9 +29,9 @@ const TOGETHER := 3
 const SKILL_IDS := [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 const EMPTY_SKILL := 99
 const GRADES := ["D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"]
-const SKILL_NAMES := ["Wind Slasher", "Storm Slasher", "Thunder Slasher", "Tide Crasher",
-	"Wave Crasher", "Tidal Wave", "Medium Heal", "Maximum Heal", "Devil Soul", "Guardian Soul",
-	"Arch Angel Soul"]
+const SKILL_NAMES := ["Whirlwind Sabre", "Storm Sabre", "Thunder Sabre", "Dnipro Wave",
+	"Rapids", "Flood", "Healing Herbs", "Living Water", "Fury", "Charm",
+	"Protection of the Virgin"]
 const SKILL_INFO := ["Series of 3 Atk", "Ignore opponent Def.", "Ignore opponent Evd.",
 	"Series of 6 Atk", "Opponent Atk Decrease", "Atk 2 enemies at the same time", "Heal HP",
 	"Heal HP and MP Increase", "Atk Increase for 3 turns", "Def Increase for 3 turns",
@@ -97,7 +97,7 @@ static func key(channel: int, peer := "") -> String:
 
 static func skill_name(id: int) -> String:
 	var i := SKILL_IDS.find(id)
-	return SKILL_NAMES[i] if i >= 0 else ""
+	return String(TranslationServer.translate(SKILL_NAMES[i])) if i >= 0 else ""
 
 
 static func grade(v: int) -> String:

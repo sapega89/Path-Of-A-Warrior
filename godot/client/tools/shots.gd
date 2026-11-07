@@ -68,7 +68,7 @@ func _ready() -> void:
 	Router.current.finish_reset(false)
 	await _shot(out, "06b_attributes_reset_done")
 	Router.current.note.hide()
-	# Skills: four learned skills, Storm Slasher on the third key, the cursor on the third key.
+	# Skills: four learned skills, Storm Sabre on the third key, the cursor on the third key.
 	Router.back()
 	for i in [1, 5, 8]:
 		hero.skill_levels[i] = 1

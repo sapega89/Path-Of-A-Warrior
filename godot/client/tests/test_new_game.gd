@@ -47,7 +47,7 @@ func test_new_game_steps() -> void:
 	eq(saved.hero_name, "Ivan", "the name")
 	eq(saved.head, 3, "the face")
 	eq(saved.difficulty, 0, "hard")
-	eq(saved.base_attack, 7 + 5, "the points, over the Berserker's attack")
-	eq(saved.base_hp, 25, "the Berserker's HP")
+	eq(saved.base_attack, 7 + 5, "the points, over the Haidamaka's attack")
+	eq(saved.base_hp, 25, "the Haidamaka's HP")
 	screen.free()
 	Router.params = old

@@ -78,7 +78,7 @@ static func lines(skill: int, level: int, names: Array, about: Array, attack: in
 	var i := skill - 12
 	if i < 0 or i >= names.size():
 		return [["Empty slot", false], ["OK: put a skill here", false]]
-	var out: Array = [[str(names[i]) + ("  Lv%d" % level if level > 0 else ""), true]]
+	var out: Array = [[String(TranslationServer.translate(str(names[i]))) + ("  Lv%d" % level if level > 0 else ""), true]]
 	if i < about.size():
 		out.append([str(about[i]), false])
 	var fx := func(lv: int) -> String:

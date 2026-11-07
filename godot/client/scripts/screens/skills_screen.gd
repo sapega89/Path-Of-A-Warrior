@@ -152,7 +152,7 @@ func refresh() -> void:
 		skills[skill].icon = _icon(skill, profile.skill_level(skill) > 0)
 
 
-## "Wind Slasher / Lv1 Dash & Slash", or "... / (Not Available)" for a skill not learned.
+## "Whirlwind Sabre / Lv1 Dash & Slash", or "... / (Not Available)" for a skill not learned.
 func describe(skill: int) -> String:
 	var i := skill - 12
 	var names: Array = data.get("names", [])
@@ -161,8 +161,8 @@ func describe(skill: int) -> String:
 		return ""
 	var level: int = profile.skill_level(skill)
 	if level == 0:
-		return "%s / %s" % [names[i], tr("skills.not_available")]
-	return "%s / Lv%d %s" % [names[i], level, effects[i] if i < effects.size() else ""]
+		return "%s / %s" % [tr(names[i]), tr("skills.not_available")]
+	return "%s / Lv%d %s" % [tr(names[i]), level, effects[i] if i < effects.size() else ""]
 
 
 ## The card's lines of a skill ([text, heading?]).

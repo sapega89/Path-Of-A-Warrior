@@ -91,7 +91,7 @@ func test_single_player_numbers() -> void:
 	eq(Rules.hero_stats(12, {"atk": 4, "def": 4, "hp": 5, "mp": 7}, 2), {"hp": 70, "mp": 61, "atk": 11, "def": 11})
 	eq(Rules.soldier_stats(2, 7), {"atk": 15, "def": 6, "hp": 28}, "a squad of level 7")
 	eq([Rules.skill_bonus(3, 20, 4), Rules.heal(9, 100, 3), Rules.heal(10, 100, 3)], [4, 28, 60])
-	eq(Rules.soul(13, 30, 20, 5), [6, 4, 100], "Arch angel Soul Lv5")
+	eq(Rules.soul(13, 30, 20, 5), [6, 4, 100], "Protection of the Virgin Lv5")
 	eq(Rules.mission_end(45, true, 6), [45, 94, 900])
 	eq(Rules.shop_kit(1), {"atk": 1, "def": 0, "hp": 0}, "a new hero's Iron Claymore")
 	eq(Rules.shop_kit(10), {"atk": 6, "def": 11, "hp": 60})
@@ -105,7 +105,7 @@ func test_strikes_and_stances() -> void:
 	eq([Battle.strike_damage(f, t, Battle.ATTACK, 100), Battle.strike_damage(f, t, Battle.ATTACK, 60),
 		Battle.strike_damage(f, t, Battle.ATTACK, 10)], [45, 30, 15], "the bar decides 3, 2 or 1 hits")
 	eq(Battle.strike_damage(f, t, Battle.ATTACK, 100, true), 18, "Defend takes 40 %")
-	eq(Battle.strike_damage(f, t, Battle.WIND), 48, "Wind Slasher: 3 hits of ATK - DEF + ATK / 20")
+	eq(Battle.strike_damage(f, t, Battle.WIND), 48, "Whirlwind Sabre: 3 hits of ATK - DEF + ATK / 20")
 	eq(Battle.strike_damage(_fighter(1, 0), _fighter(0, 50), Battle.ATTACK, 0), 1, "at least 1")
 	t.slot = 1
 	var b := Battle.new(RandomNumberGenerator.new(), [f, t])
@@ -119,7 +119,7 @@ func test_strikes_and_stances() -> void:
 	f.mp = 100
 	r = b.resolve({0: [1, Battle.WIND, 100], 1: [0, Battle.ATTACK, 100]})
 	eq(r.records[0].actor, 0, "more MP acts first")
-	eq(r.records[0].actor_mp, 50, "Wind Slasher costs 50 of a 10-MP hero's gauge")
+	eq(r.records[0].actor_mp, 50, "Whirlwind Sabre costs 50 of a 10-MP hero's gauge")
 	r = b.resolve({0: [1, Battle.STORM, 100]})
 	eq(r.actions[0], Battle.ATTACK, "Storm is not learned: an Attack")
 	eq(r.records.filter(func(x): return x.actor == 0)[0].action, Battle.ATTACK)

@@ -5,8 +5,12 @@ extends Node
 ##   {"menu.play": {"en": "Play", "uk": "Грати"}, ...}
 ## Controls translate their text automatically, code uses tr("menu.play").
 ## JSON (not CSV) so that tests and headless runs need no import step.
+## res://i18n/names.json (made by godot/tools/import_original.py) has the same shape: the
+## English names of heroes, skills and things -> their text per locale, so tr(name) shows a
+## name in the player's language.
 
 const STRINGS_PATH := "res://i18n/strings.json"
+const NAMES_PATH := "res://i18n/names.json"
 const LOCALES: Array[String] = ["en", "uk"]
 const FALLBACK := "en"
 
@@ -14,7 +18,7 @@ var _loaded: Array[Translation] = []
 
 
 func _ready() -> void:
-	load_strings(STRINGS_PATH)
+	load_files([STRINGS_PATH, NAMES_PATH])
 
 
 ## Parses the strings file. Returns {locale: {key: text}}, or {} on bad input.
@@ -35,16 +39,23 @@ static func parse(text: String) -> Dictionary:
 	return out
 
 
-## Loads the file and registers one Translation per locale. Returns the number of keys.
-func load_strings(path: String) -> int:
+## Loads the files into one Translation per locale (replacing the ones loaded before).
+## Returns the number of keys.
+func load_files(paths: Array) -> int:
 	for t in _loaded:
 		TranslationServer.remove_translation(t)
 	_loaded.clear()
-	var file := FileAccess.open(path, FileAccess.READ)
-	if file == null:
-		push_error("i18n: cannot open %s" % path)
-		return 0
-	var table := parse(file.get_as_text())
+	var table := {}
+	for locale in LOCALES:
+		table[locale] = {}
+	for path in paths:
+		var file := FileAccess.open(path, FileAccess.READ)
+		if file == null:
+			push_error("i18n: cannot open %s" % path)
+			continue
+		var part := parse(file.get_as_text())
+		for locale in part:
+			table[locale].merge(part[locale], true)
 	var keys := 0
 	for locale in table:
 		var t := Translation.new()

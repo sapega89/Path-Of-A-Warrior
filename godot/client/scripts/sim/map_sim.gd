@@ -50,7 +50,7 @@ const HIT_FRAME := [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 ## MP of skill 12..30 at level 1, and per level above.
 ## The three flames of a fire scroll around its point.
 const FIRE_SHIFT := [Vector2i(3, -6), Vector2i(-10, 0), Vector2i(10, 5)]
-## A general's Fire Tornado shows its first picture with the sheet's other part: the burst
+## A general's Fire Whirl shows its first picture with the sheet's other part: the burst
 ## sheet's picture 0 drawn this much aside lands where that part puts it.
 const BURST_FIRST_SHIFT := Vector2i(16, 5)
 const SKILL_BASE_COST := [5, 6, 7, 10, 15, 7, 10, 10, 8, 9, 10, 5, 6, 7, 9, 12, 20, 20, 20]
@@ -1625,7 +1625,7 @@ func _strike_enemy(e: Actor) -> void:
 	_sound(16)
 
 
-## A fire skill hits him (Flame Twister, Fire Tornado, Dragon Breath; a general's fire
+## A fire skill hits him (Ring of Fire, Fire Whirl, Serpent's Breath; a general's fire
 ## skills on the hero): the fire burns on him from this tick's picture on.
 func _set_on_fire(a: Actor) -> void:
 	a.on_fire = true

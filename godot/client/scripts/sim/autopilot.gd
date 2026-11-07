@@ -4,7 +4,7 @@ extends RefCounted
 ## and press one key (attack, a skill key, a belt slot), so the game's rules stay the same:
 ##   - potions: an HP potion below 30 % HP when no heal skill can be cast, an MP potion when the
 ##     MP is too low for any skill while enemies are around;
-##   - heal (Medium / Maximum Heal) below 40 % HP; the MP of a heal is kept for it otherwise;
+##   - heal (Medium / Living Water) below 40 % HP; the MP of a heal is kept for it otherwise;
 ##   - a soul when no aura is up and the fight is big (3+ enemies, or a general);
 ##   - whole-room skills on 3+ enemies, the near ones on 2+ within 45 px;
 ##   - a ranged skill when the target stands about 60 px ahead, out of the sword's reach;
@@ -222,7 +222,7 @@ func _key_of(sim: RefCounted) -> Dictionary:
 	return out
 
 
-## Medium Heal below 40 % HP, Maximum Heal first below 25 %. A skill key or -1.
+## Healing Herbs below 40 % HP, Living Water first below 25 %. A skill key or -1.
 func _heal(sim: RefCounted) -> int:
 	var h = sim.hero
 	var pct: int = h.hp * 100 / maxi(1, h.max_hp)

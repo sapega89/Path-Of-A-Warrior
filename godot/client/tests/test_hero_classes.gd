@@ -12,16 +12,16 @@ func test_the_faces_are_worth_the_same() -> void:
 	for face in 4:
 		var b: Array = Profile.hero_base(face)
 		worth.append(b[0] / 5.0 + b[1] / 3.0 + b[2] + b[3])
-	eq(Profile.hero_base(0), [30, 10, 5, 4], "the Warrior keeps the old numbers")
+	eq(Profile.hero_base(0), [30, 10, 5, 4], "the Cossack keeps the old numbers")
 	for face in 4:
 		check(absf(worth[face] - worth[0]) < 0.01, "face %d is worth as many points" % face)
-	eq(Profile.stats_line(1), "HP40 MP7 ATK3 DEF5", "the Guardian")
+	eq(Profile.stats_line(1), "HP40 MP7 ATK3 DEF5", "the Serdiuk")
 
 
 func test_a_new_hero_takes_his_face() -> void:
 	var p := Profile.new()
 	p.set_head(2)
-	eq([p.base_hp, p.base_mp, p.base_attack, p.base_defense], [25, 16, 4, 4], "the Mystic")
+	eq([p.base_hp, p.base_mp, p.base_attack, p.base_defense], [25, 16, 4, 4], "the Kharakternyk")
 	eq(p.spent_points(), 0, "nothing spent")
 	p.spend_point(Profile.Stat.MP)
 	p.spend_point(Profile.Stat.ATTACK)
@@ -41,7 +41,7 @@ func test_reset_with_gold() -> void:
 	eq(p.respec(false), "", "reset")
 	eq(p.gold, 50, "paid")
 	eq(p.stat_points, 5, "the points are free again")
-	eq(p.base_hp, 25, "the Berserker's HP")
+	eq(p.base_hp, 25, "the Haidamaka's HP")
 	eq(p.respec(false), "nothing", "nothing more to reset")
 
 
@@ -57,7 +57,7 @@ func test_reset_with_an_elixir() -> void:
 
 
 func test_old_save_gets_its_points() -> void:
-	# a Guardian saved when every face had 30/10/5/4 and 5 points on HP
+	# a Serdiuk saved when every face had 30/10/5/4 and 5 points on HP
 	var p := Profile.new()
 	p.head = 1
 	p.base_hp = 55

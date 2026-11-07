@@ -11,7 +11,7 @@ const NetClient := preload("res://scripts/net/net_client.gd")
 const Protocol := preload("res://scripts/net/protocol.gd")
 const ServerTests := preload("res://tests/test_server.gd")
 
-## A level-12 Mystic with a short blade, three skills and all three on his keys.
+## A level-12 Kharakternyk with a short blade, three skills and all three on his keys.
 const HERO := {"level": 12, "head": 2, "base": [60, 31, 9, 8],
 	"equipped": [{"id": 105, "attack": 6, "defense": 0, "hp": 0, "mp": 0, "enchant": 0},
 		{"id": 201, "attack": 0, "defense": 3, "hp": 5, "mp": 2, "enchant": 0}],
@@ -56,12 +56,12 @@ func _player(o: Online, uid: String, pushes: Array = []) -> Online.Session:
 
 
 func test_skill_costs_follow_the_single_player_mp() -> void:
-	eq(Rules.skill_cost(3, 1, 10), 50, "Wind Slasher Lv1: 5 MP of a new hero's 10")
-	eq(Rules.skill_mp(11, 3), 13, "Devil Soul Lv3")
+	eq(Rules.skill_cost(3, 1, 10), 50, "Whirlwind Sabre Lv1: 5 MP of a new hero's 10")
+	eq(Rules.skill_mp(11, 3), 13, "Fury Lv3")
 	eq(Rules.skill_cost(11, 3, 33), 40, "13 of 33, rounded up")
 	eq(Rules.skill_cost(10, 9, 5), 100, "more than the hero has: a full gauge")
 	eq(Rules.skill_cost(3, 1, 0), 100)
-	eq(Rules.HERO_BASES[1], [40, 7, 3, 5], "[HP, MP, ATK, DEF] of the Guardian")
+	eq(Rules.HERO_BASES[1], [40, 7, 3, 5], "[HP, MP, ATK, DEF] of the Serdiuk")
 
 
 func test_character_comes_from_the_hero_on_the_server() -> void:
@@ -71,8 +71,8 @@ func test_character_comes_from_the_hero_on_the_server() -> void:
 	a.create_account("ANDREY", "1234")
 	var p: Dictionary = o.enter(_session([]), "ANDREY")
 	eq([p.level, p.face, p.hp, p.weapon, p.slots], [1, 0, 40, 0, [3, 11, 99, 99]],
-		"no hero yet: a new Warrior with 5 points and the Iron Claymore")
-	eq(p.skill_cost[0], 50, "Wind Slasher of 10 MP")
+		"no hero yet: a new Cossack with 5 points and the Iron Claymore")
+	eq(p.skill_cost[0], 50, "Whirlwind Sabre of 10 MP")
 	eq(p.unread, [0, 0])
 	var c := o.character("ANDREY")
 	eq([c.atk, c.atk_bonus, c.def, c.mp, c.skills], [7, 1, 5, 10, {3: 1, 11: 1}])
