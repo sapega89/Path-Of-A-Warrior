@@ -907,10 +907,6 @@
     "en": "%d Level up",
     "uk": "Нових рівнів: %d"
   },
-  "online.title": {
-    "en": "MULTIPLAYER",
-    "uk": "МУЛЬТИПЛЕЄР"
-  },
   "online.who": {
     "en": "%s  Lv%d  Wins %d / Losses %d",
     "uk": "%s  Рівень %d  Перемог %d / Поразок %d"
@@ -922,10 +918,6 @@
   "online.duel": {
     "en": "Duel",
     "uk": "Дуель"
-  },
-  "online.mission": {
-    "en": "Mission",
-    "uk": "Місія"
   },
   "online.character": {
     "en": "Character",
@@ -946,10 +938,6 @@
   "online.options": {
     "en": "Options",
     "uk": "Налаштування"
-  },
-  "online.help": {
-    "en": "Help",
-    "uk": "Довідка"
   },
   "online.records": {
     "en": "Records",
