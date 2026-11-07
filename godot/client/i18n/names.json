@@ -3,21 +3,17 @@
 "en": "Abdul-aga",
 "uk": "Абдул-ага"
 },
-"Adam Laski": {
-"en": "Adam Laski",
-"uk": "Адам Ласький"
-},
 "Ahmat-bey": {
 "en": "Ahmat-bey",
 "uk": "Ахмат-бей"
 },
+"Albrecht Wilczek": {
+"en": "Albrecht Wilczek",
+"uk": "Альбрехт Вільчек"
+},
 "Ali-bey": {
 "en": "Ali-bey",
 "uk": "Алі-бей"
-},
-"Alone": {
-"en": "Alone",
-"uk": "Сам-один"
 },
 "Amethyst Konchar": {
 "en": "Amethyst Konchar",
@@ -43,10 +39,6 @@
 "en": "Andrzej Sokolowski",
 "uk": "Анджей Соколовський"
 },
-"Antin Kremin": {
-"en": "Antin Kremin",
-"uk": "Антін Кремінь"
-},
 "Ardent Belt": {
 "en": "Ardent Belt",
 "uk": "Палкий пояс"
@@ -58,14 +50,6 @@
 "Argamak": {
 "en": "Argamak",
 "uk": "Аргамак"
-},
-"Arkhyp Zhuravel": {
-"en": "Arkhyp Zhuravel",
-"uk": "Архип Журавель"
-},
-"Arsen Holota": {
-"en": "Arsen Holota",
-"uk": "Арсен Голота"
 },
 "Arslan-bey": {
 "en": "Arslan-bey",
@@ -83,13 +67,13 @@
 "en": "Ataman's Kindjal",
 "uk": "Отаманський кинджал"
 },
-"Augustyn Ostrzycki": {
-"en": "Augustyn Ostrzycki",
-"uk": "Августин Острицький"
-},
 "Autumn Scroll": {
 "en": "Autumn Scroll",
 "uk": "Осінній сувій"
+},
+"Avram Hulak": {
+"en": "Avram Hulak",
+"uk": "Аврам Гуляк"
 },
 "Azure Armour": {
 "en": "Azure Armour",
@@ -111,6 +95,10 @@
 "en": "Bane Konchar",
 "uk": "Згубний кончар"
 },
+"Bar": {
+"en": "Bar",
+"uk": "Бар"
+},
 "Bar Castle": {
 "en": "Bar Castle",
 "uk": "Барський замок"
@@ -118,6 +106,10 @@
 "Bartosz Kurowski": {
 "en": "Bartosz Kurowski",
 "uk": "Бартош Куровський"
+},
+"Batih": {
+"en": "Batih",
+"uk": "Батіг"
 },
 "Battle Kindjal": {
 "en": "Battle Kindjal",
@@ -155,6 +147,14 @@
 "en": "Berestechko Marshes",
 "uk": "Берестецькі болота"
 },
+"Beyond the Border": {
+"en": "Beyond the Border",
+"uk": "За кордоном"
+},
+"Bila Tserkva": {
+"en": "Bila Tserkva",
+"uk": "Біла Церква"
+},
 "Black Ambler": {
 "en": "Black Ambler",
 "uk": "Вороний іноходець"
@@ -167,22 +167,6 @@
 "en": "Black Courser",
 "uk": "Вороний скакун"
 },
-"Black Earth": {
-"en": "Black Earth",
-"uk": "Чорнозем"
-},
-"Black Forest": {
-"en": "Black Forest",
-"uk": "Чорний ліс"
-},
-"Black Road I": {
-"en": "Black Road I",
-"uk": "Чорний шлях I"
-},
-"Black Road II": {
-"en": "Black Road II",
-"uk": "Чорний шлях II"
-},
 "Black Rumak": {
 "en": "Black Rumak",
 "uk": "Вороний румак"
@@ -190,10 +174,6 @@
 "Black Sea": {
 "en": "Black Sea",
 "uk": "Чорне море"
-},
-"Black Steppe": {
-"en": "Black Steppe",
-"uk": "Чорний степ"
 },
 "Black Warhorse": {
 "en": "Black Warhorse",
@@ -211,29 +191,9 @@
 "en": "Blessed Locket",
 "uk": "Благословенна ладанка"
 },
-"Blue Mountain": {
-"en": "Blue Mountain",
-"uk": "Синя гора"
-},
 "Boguslaw Szydlowski": {
 "en": "Boguslaw Szydlowski",
 "uk": "Богуслав Шидловський"
-},
-"Bohdan Yavir": {
-"en": "Bohdan Yavir",
-"uk": "Богдан Явір"
-},
-"Bohush Bereza": {
-"en": "Bohush Bereza",
-"uk": "Богуш Береза"
-},
-"Bohuslava": {
-"en": "Bohuslava",
-"uk": "Богуслава"
-},
-"Borys Shulha": {
-"en": "Borys Shulha",
-"uk": "Борис Шульга"
 },
 "Bracer of Strength": {
 "en": "Bracer of Strength",
@@ -262,14 +222,6 @@
 "Broadsword of Woe": {
 "en": "Broadsword of Woe",
 "uk": "Палаш журби"
-},
-"Bronislaw Ostrzycki": {
-"en": "Bronislaw Ostrzycki",
-"uk": "Броніслав Острицький"
-},
-"Brotherhood": {
-"en": "Brotherhood",
-"uk": "Побратимство"
 },
 "Bura Mohyla": {
 "en": "Bura Mohyla",
@@ -311,9 +263,9 @@
 "en": "Chekan",
 "uk": "Чекан"
 },
-"Chervonohrad": {
-"en": "Chervonohrad",
-"uk": "Червоногород"
+"Chernecha Hora": {
+"en": "Chernecha Hora",
+"uk": "Чернеча гора"
 },
 "Chestnut Bakhmat": {
 "en": "Chestnut Bakhmat",
@@ -363,17 +315,13 @@
 "en": "Colonel Bairak",
 "uk": "полковник Байрак"
 },
-"Colonel Bereza": {
-"en": "Colonel Bereza",
-"uk": "полковник Береза"
+"Colonel Bars": {
+"en": "Colonel Bars",
+"uk": "полковник Барс"
 },
 "Colonel Bilous": {
 "en": "Colonel Bilous",
 "uk": "полковник Білоус"
-},
-"Colonel Boryvitr": {
-"en": "Colonel Boryvitr",
-"uk": "полковник Боривітер"
 },
 "Colonel Bulava": {
 "en": "Colonel Bulava",
@@ -382,10 +330,6 @@
 "Colonel Chornohuz": {
 "en": "Colonel Chornohuz",
 "uk": "полковник Чорногуз"
-},
-"Colonel Chornovus": {
-"en": "Colonel Chornovus",
-"uk": "полковник Чорновус"
 },
 "Colonel Derkach": {
 "en": "Colonel Derkach",
@@ -407,9 +351,9 @@
 "en": "Colonel Holota",
 "uk": "полковник Голота"
 },
-"Colonel Holub": {
-"en": "Colonel Holub",
-"uk": "полковник Голуб"
+"Colonel Hulak": {
+"en": "Colonel Hulak",
+"uk": "полковник Гуляк"
 },
 "Colonel Huska": {
 "en": "Colonel Huska",
@@ -419,9 +363,9 @@
 "en": "Colonel Kalach",
 "uk": "полковник Калач"
 },
-"Colonel Kalyna": {
-"en": "Colonel Kalyna",
-"uk": "полковник Калина"
+"Colonel Kharko": {
+"en": "Colonel Kharko",
+"uk": "полковник Харко"
 },
 "Colonel Khoma": {
 "en": "Colonel Khoma",
@@ -451,13 +395,9 @@
 "en": "Colonel Kulish",
 "uk": "полковник Куліш"
 },
-"Colonel Lan": {
-"en": "Colonel Lan",
-"uk": "полковник Лан"
-},
-"Colonel Luka": {
-"en": "Colonel Luka",
-"uk": "полковник Лука"
+"Colonel Kurylo": {
+"en": "Colonel Kurylo",
+"uk": "полковник Курило"
 },
 "Colonel Lysytsia": {
 "en": "Colonel Lysytsia",
@@ -470,6 +410,14 @@
 "Colonel Pidhornyi": {
 "en": "Colonel Pidhornyi",
 "uk": "полковник Підгорний"
+},
+"Colonel Ptakha": {
+"en": "Colonel Ptakha",
+"uk": "полковник Птаха"
+},
+"Colonel Rudyi": {
+"en": "Colonel Rudyi",
+"uk": "полковник Рудий"
 },
 "Colonel Shabliuk": {
 "en": "Colonel Shabliuk",
@@ -499,6 +447,10 @@
 "en": "Colonel Teren",
 "uk": "полковник Терен"
 },
+"Colonel Topolia": {
+"en": "Colonel Topolia",
+"uk": "полковник Тополя"
+},
 "Colonel Tuman": {
 "en": "Colonel Tuman",
 "uk": "полковник Туман"
@@ -511,9 +463,9 @@
 "en": "Colonel Tykhyi",
 "uk": "полковник Тихий"
 },
-"Colonel Varfolomii": {
-"en": "Colonel Varfolomii",
-"uk": "полковник Варфоломій"
+"Colonel Tymish": {
+"en": "Colonel Tymish",
+"uk": "полковник Тиміш"
 },
 "Colonel Voron": {
 "en": "Colonel Voron",
@@ -522,6 +474,10 @@
 "Colonel Vovkodav": {
 "en": "Colonel Vovkodav",
 "uk": "полковник Вовкодав"
+},
+"Colonel Yasen": {
+"en": "Colonel Yasen",
+"uk": "полковник Ясень"
 },
 "Colonel Yavir": {
 "en": "Colonel Yavir",
@@ -534,10 +490,6 @@
 "Colonel Zaiats": {
 "en": "Colonel Zaiats",
 "uk": "полковник Заєць"
-},
-"Colonel Zolotar": {
-"en": "Colonel Zolotar",
-"uk": "полковник Золотар"
 },
 "Colonel's Armour": {
 "en": "Colonel's Armour",
@@ -623,13 +575,13 @@
 "en": "Damask Spear",
 "uk": "Булатний спис"
 },
+"Danko Dzhura": {
+"en": "Danko Dzhura",
+"uk": "Данько Джура"
+},
 "Danylo Kulyk": {
 "en": "Danylo Kulyk",
 "uk": "Данило Кулик"
-},
-"Danylo Verbenko": {
-"en": "Danylo Verbenko",
-"uk": "Данило Вербенко"
 },
 "Daulet-murza": {
 "en": "Daulet-murza",
@@ -639,13 +591,9 @@
 "en": "Dawn Pike",
 "uk": "Світанкова піка"
 },
-"Demian Tur": {
-"en": "Demian Tur",
-"uk": "Дем'ян Тур"
-},
-"Demko Lysytsia": {
-"en": "Demko Lysytsia",
-"uk": "Демко Лисиця"
+"Dawn over the Dnipro": {
+"en": "Dawn over the Dnipro",
+"uk": "Світанок над Дніпром"
 },
 "Devil's Armour": {
 "en": "Devil's Armour",
@@ -675,10 +623,6 @@
 "en": "Devil's Locket",
 "uk": "Чортова ладанка"
 },
-"Dmytro Pidhornyi": {
-"en": "Dmytro Pidhornyi",
-"uk": "Дмитро Підгорний"
-},
 "Dnipro Spear": {
 "en": "Dnipro Spear",
 "uk": "Дніпровий спис"
@@ -691,9 +635,13 @@
 "en": "Dobieslaw Mazur",
 "uk": "Добеслав Мазур"
 },
-"Dorosh Zolotar": {
-"en": "Dorosh Zolotar",
-"uk": "Дорош Золотар"
+"Dominik Ostrzycki": {
+"en": "Dominik Ostrzycki",
+"uk": "Домінік Острицький"
+},
+"Down the Dnipro": {
+"en": "Down the Dnipro",
+"uk": "Униз Дніпром"
 },
 "Dun Packhorse": {
 "en": "Dun Packhorse",
@@ -715,25 +663,29 @@
 "en": "Elder's Kalpak",
 "uk": "Старшинський ковпак"
 },
-"End of Glory": {
-"en": "End of Glory",
-"uk": "Кінець слави"
+"Fadei Kulish": {
+"en": "Fadei Kulish",
+"uk": "Фадей Куліш"
 },
-"End of a Hero": {
-"en": "End of a Hero",
-"uk": "Кінець героя"
+"Falcon's Flight": {
+"en": "Falcon's Flight",
+"uk": "Соколиний літ"
+},
+"Falcon's Flight II": {
+"en": "Falcon's Flight II",
+"uk": "Соколиний літ II"
 },
 "Father's Testament": {
 "en": "Father's Testament",
 "uk": "Батьківський заповіт"
 },
-"Fedir Chornohuz": {
-"en": "Fedir Chornohuz",
-"uk": "Федір Чорногуз"
-},
 "Fedko Tryzub": {
 "en": "Fedko Tryzub",
 "uk": "Федько Тризуб"
+},
+"Fedot Zaderykhvist": {
+"en": "Fedot Zaderykhvist",
+"uk": "Федот Задерихвіст"
 },
 "Feliks Przybylski": {
 "en": "Feliks Przybylski",
@@ -811,10 +763,6 @@
 "en": "Fury",
 "uk": "Лють"
 },
-"Fylon Dubovyk": {
-"en": "Fylon Dubovyk",
-"uk": "Филон Дубовик"
-},
 "Glowing Konchar": {
 "en": "Glowing Konchar",
 "uk": "Сяйливий кончар"
@@ -822,14 +770,6 @@
 "Golden Armour": {
 "en": "Golden Armour",
 "uk": "Золотий панцир"
-},
-"Golden Arsen": {
-"en": "Golden Arsen",
-"uk": "Золотий Арсен"
-},
-"Golden Gate": {
-"en": "Golden Gate",
-"uk": "Золоті ворота"
 },
 "Golden Pony": {
 "en": "Golden Pony",
@@ -851,14 +791,6 @@
 "en": "Great Sabre",
 "uk": "Велика шабля"
 },
-"Green Fields": {
-"en": "Green Fields",
-"uk": "Зелені поля"
-},
-"Green Mountain": {
-"en": "Green Mountain",
-"uk": "Зелена гора"
-},
 "Grey Bakhmat": {
 "en": "Grey Bakhmat",
 "uk": "Сивий бахмат"
@@ -879,9 +811,9 @@
 "en": "Hanna Buriak",
 "uk": "Ганна Буряк"
 },
-"Havrylo Bairak": {
-"en": "Havrylo Bairak",
-"uk": "Гаврило Байрак"
+"Harvest": {
+"en": "Harvest",
+"uk": "Жнива"
 },
 "Hawk Bracer": {
 "en": "Hawk Bracer",
@@ -951,10 +883,6 @@
 "en": "Heir's Broadsword",
 "uk": "Палаш нащадка"
 },
-"Henryk Rozenberg": {
-"en": "Henryk Rozenberg",
-"uk": "Генрик Розенберг"
-},
 "Henryk Wrona": {
 "en": "Henryk Wrona",
 "uk": "Генрик Врона"
@@ -962,10 +890,6 @@
 "Herald's Armour": {
 "en": "Herald's Armour",
 "uk": "Панцир гінця"
-},
-"Herasym Kozub": {
-"en": "Herasym Kozub",
-"uk": "Герасим Козуб"
 },
 "Herbal": {
 "en": "Herbal",
@@ -1011,13 +935,17 @@
 "en": "Hetmanate",
 "uk": "Гетьманщина"
 },
-"Hetmanka Bohuslava": {
-"en": "Hetmanka Bohuslava",
-"uk": "гетьманша Богуслава"
+"Hetmanka Olena": {
+"en": "Hetmanka Olena",
+"uk": "гетьманша Олена"
 },
 "Hieronim Czarnecki": {
 "en": "Hieronim Czarnecki",
 "uk": "Ієронім Чарнецький"
+},
+"Hlib Kurylo": {
+"en": "Hlib Kurylo",
+"uk": "Гліб Курило"
 },
 "Hnat Shabliuk": {
 "en": "Hnat Shabliuk",
@@ -1034,14 +962,6 @@
 "Holy Pike": {
 "en": "Holy Pike",
 "uk": "Свята піка"
-},
-"Honour": {
-"en": "Honour",
-"uk": "Честь"
-},
-"Hordii Holub": {
-"en": "Hordii Holub",
-"uk": "Гордій Голуб"
 },
 "Hryhorii Bulava": {
 "en": "Hryhorii Bulava",
@@ -1079,6 +999,14 @@
 "en": "Ihnat Sahaidak",
 "uk": "Ігнат Сагайдак"
 },
+"Ihor Syvous": {
+"en": "Ihor Syvous",
+"uk": "Ігор Сивоус"
+},
+"Ilarion Ptakha": {
+"en": "Ilarion Ptakha",
+"uk": "Іларіон Птаха"
+},
 "Ilko Ohir": {
 "en": "Ilko Ohir",
 "uk": "Ілько Огір"
@@ -1086,6 +1014,10 @@
 "Ilyas-murza": {
 "en": "Ilyas-murza",
 "uk": "Ільяс-мурза"
+},
+"Inhul Steppe": {
+"en": "Inhul Steppe",
+"uk": "Інгульський степ"
 },
 "Iron Broadsword": {
 "en": "Iron Broadsword",
@@ -1123,6 +1055,10 @@
 "en": "Ivas Tyrsa",
 "uk": "Івась Тирса"
 },
+"Jacek Rudzki": {
+"en": "Jacek Rudzki",
+"uk": "Яцек Рудзький"
+},
 "Jakub Ciechanowski": {
 "en": "Jakub Ciechanowski",
 "uk": "Якуб Цєхановський"
@@ -1147,9 +1083,13 @@
 "en": "Kacper Stawski",
 "uk": "Каспер Ставський"
 },
-"Kalenyk Dzhura": {
-"en": "Kalenyk Dzhura",
-"uk": "Каленик Джура"
+"Kalistrat Korzhyk": {
+"en": "Kalistrat Korzhyk",
+"uk": "Калістрат Коржик"
+},
+"Kamianets": {
+"en": "Kamianets",
+"uk": "Кам'янець"
 },
 "Kaplan-murza": {
 "en": "Kaplan-murza",
@@ -1166,14 +1106,6 @@
 "Kasym-bey": {
 "en": "Kasym-bey",
 "uk": "Касим-бей"
-},
-"Katria": {
-"en": "Katria",
-"uk": "Катря"
-},
-"Katria Shabelna": {
-"en": "Katria Shabelna",
-"uk": "Катря Шабельна"
 },
 "Kazimierz Grabowski": {
 "en": "Kazimierz Grabowski",
@@ -1223,37 +1155,29 @@
 "en": "Kharakternyk's Locket",
 "uk": "Характерницька ладанка"
 },
+"Khariton Mlynchuk": {
+"en": "Khariton Mlynchuk",
+"uk": "Харитон Млинчук"
+},
+"Kharko Lykhach": {
+"en": "Kharko Lykhach",
+"uk": "Харко Лихач"
+},
 "Khoma Hrim": {
 "en": "Khoma Hrim",
 "uk": "Хома Грім"
-},
-"Khrystia": {
-"en": "Khrystia",
-"uk": "Христя"
-},
-"Khrystia Shabelna": {
-"en": "Khrystia Shabelna",
-"uk": "Христя Шабельна"
 },
 "Kindjal": {
 "en": "Kindjal",
 "uk": "Кинджал"
 },
-"Kindrat Boryvitr": {
-"en": "Kindrat Boryvitr",
-"uk": "Кіндрат Боривітер"
+"Klym Holota": {
+"en": "Klym Holota",
+"uk": "Клим Голота"
 },
-"King's Ravine": {
-"en": "King's Ravine",
-"uk": "Королівський яр"
-},
-"Klym Bilous": {
-"en": "Klym Bilous",
-"uk": "Клим Білоус"
-},
-"Kniaz Bronislaw": {
-"en": "Kniaz Bronislaw",
-"uk": "князь Броніслав"
+"Kniaz Dominik": {
+"en": "Kniaz Dominik",
+"uk": "князь Домінік"
 },
 "Knight of the Hetman's Banner": {
 "en": "Knight of the Hetman's Banner",
@@ -1263,17 +1187,29 @@
 "en": "Kodak",
 "uk": "Кодак"
 },
-"Kornii Zaderykhvist": {
-"en": "Kornii Zaderykhvist",
-"uk": "Корній Задерихвіст"
+"Kodyma Fields": {
+"en": "Kodyma Fields",
+"uk": "Кодимські поля"
 },
-"Kost Kalyna": {
-"en": "Kost Kalyna",
-"uk": "Кость Калина"
+"Korsun": {
+"en": "Korsun",
+"uk": "Корсунь"
+},
+"Kruta Balka": {
+"en": "Kruta Balka",
+"uk": "Крута балка"
 },
 "Krzysztof Bielski": {
 "en": "Krzysztof Bielski",
 "uk": "Кшиштоф Бєльський"
+},
+"Kuchman Road I": {
+"en": "Kuchman Road I",
+"uk": "Кучманський шлях I"
+},
+"Kuchman Road II": {
+"en": "Kuchman Road II",
+"uk": "Кучманський шлях II"
 },
 "Kurt-aga": {
 "en": "Kurt-aga",
@@ -1283,10 +1219,6 @@
 "en": "Kuzma Kozhumiaka",
 "uk": "Кузьма Кожум'яка"
 },
-"Kyrylo Kotsiuba": {
-"en": "Kyrylo Kotsiuba",
-"uk": "Кирило Коцюба"
-},
 "Kyrylo Teren": {
 "en": "Kyrylo Teren",
 "uk": "Кирило Терен"
@@ -1295,9 +1227,9 @@
 "en": "Lady Buriak",
 "uk": "пані Буряк"
 },
-"Lady Nebesna": {
-"en": "Lady Nebesna",
-"uk": "пані Небесна"
+"Lady Kvitka": {
+"en": "Lady Kvitka",
+"uk": "пані Квітка"
 },
 "Land Grant": {
 "en": "Land Grant",
@@ -1306,6 +1238,10 @@
 "Lavrin Sukhovii": {
 "en": "Lavrin Sukhovii",
 "uk": "Лаврін Суховій"
+},
+"Lazar Topolia": {
+"en": "Lazar Topolia",
+"uk": "Лазар Тополя"
 },
 "Leather Belt": {
 "en": "Leather Belt",
@@ -1323,14 +1259,6 @@
 "en": "Leather Kaftan",
 "uk": "Шкіряний каптан"
 },
-"Left Bank": {
-"en": "Left Bank",
-"uk": "Лівобережжя"
-},
-"Leontii Lan": {
-"en": "Leontii Lan",
-"uk": "Леонтій Лан"
-},
 "Lesko Lelyk": {
 "en": "Lesko Lelyk",
 "uk": "Лесько Лелик"
@@ -1339,21 +1267,9 @@
 "en": "Leszek Lipski",
 "uk": "Лешек Ліпський"
 },
-"Levko Voron": {
-"en": "Levko Voron",
-"uk": "Левко Ворон"
-},
 "Lightning": {
 "en": "Lightning",
 "uk": "Блискавка"
-},
-"Lion's Heart": {
-"en": "Lion's Heart",
-"uk": "Леве серце"
-},
-"Lion's Heart II": {
-"en": "Lion's Heart II",
-"uk": "Леве серце II"
 },
 "Living Water": {
 "en": "Living Water",
@@ -1375,17 +1291,9 @@
 "en": "Ludwik Kozlowski",
 "uk": "Людвік Козловський"
 },
-"Luka Hrim": {
-"en": "Luka Hrim",
-"uk": "Лука Грім"
-},
 "Lukasz Jablonski": {
 "en": "Lukasz Jablonski",
 "uk": "Лукаш Яблонський"
-},
-"Lukian Sokyra": {
-"en": "Lukian Sokyra",
-"uk": "Лук'ян Сокира"
 },
 "Maciej Dobrzanski": {
 "en": "Maciej Dobrzanski",
@@ -1403,13 +1311,13 @@
 "en": "Magic Scroll",
 "uk": "Чарівний сувій"
 },
+"Makar Yasen": {
+"en": "Makar Yasen",
+"uk": "Макар Ясень"
+},
 "Maksym Ruban": {
 "en": "Maksym Ruban",
 "uk": "Максим Рубан"
-},
-"Maksym Ternovyi": {
-"en": "Maksym Ternovyi",
-"uk": "Максим Терновий"
 },
 "Mamai-murza": {
 "en": "Mamai-murza",
@@ -1423,21 +1331,29 @@
 "en": "Marcin Jasinski",
 "uk": "Марцін Ясінський"
 },
-"Markiian Sych": {
-"en": "Markiian Sych",
-"uk": "Маркіян Сич"
+"Marian Zaleski": {
+"en": "Marian Zaleski",
+"uk": "Маріан Залеський"
 },
 "Marko Kosyi": {
 "en": "Marko Kosyi",
 "uk": "Марко Косий"
 },
-"Martyn Huska": {
-"en": "Martyn Huska",
-"uk": "Мартин Гуска"
+"Marusia": {
+"en": "Marusia",
+"uk": "Маруся"
+},
+"Marusia Shabelna": {
+"en": "Marusia Shabelna",
+"uk": "Маруся Шабельна"
 },
 "Mateusz Zielinski": {
 "en": "Mateusz Zielinski",
 "uk": "Матеуш Зелінський"
+},
+"Matiash Tuman": {
+"en": "Matiash Tuman",
+"uk": "Матіяш Туман"
 },
 "Matvii Bilokin": {
 "en": "Matvii Bilokin",
@@ -1446,6 +1362,10 @@
 "Matvii Skoryk": {
 "en": "Matvii Skoryk",
 "uk": "Матвій Скорик"
+},
+"Mefodii Lysytsia": {
+"en": "Mefodii Lysytsia",
+"uk": "Мефодій Лисиця"
 },
 "Mehmed-aga": {
 "en": "Mehmed-aga",
@@ -1471,6 +1391,10 @@
 "en": "Morocco Boots",
 "uk": "Сап'янові чоботи"
 },
+"Motronyn Monastery": {
+"en": "Motronyn Monastery",
+"uk": "Мотронинський монастир"
+},
 "Murat-murza": {
 "en": "Murat-murza",
 "uk": "Мурат-мурза"
@@ -1487,6 +1411,18 @@
 "en": "Mykyta Chupryna",
 "uk": "Микита Чуприна"
 },
+"Myrhorod": {
+"en": "Myrhorod",
+"uk": "Миргород"
+},
+"Myron Tykhyi": {
+"en": "Myron Tykhyi",
+"uk": "Мирон Тихий"
+},
+"Naum Zaiats": {
+"en": "Naum Zaiats",
+"uk": "Наум Заєць"
+},
 "Nazar Dovbysh": {
 "en": "Nazar Dovbysh",
 "uk": "Назар Довбиш"
@@ -1495,13 +1431,17 @@
 "en": "Nazarko Netudykhata",
 "uk": "Назарко Нетудихата"
 },
-"New Hope": {
-"en": "New Hope",
-"uk": "Нова надія"
+"Nestor Zalizo": {
+"en": "Nestor Zalizo",
+"uk": "Нестор Залізо"
 },
 "Night Spear": {
 "en": "Night Spear",
 "uk": "Нічний спис"
+},
+"Nykyfor Sych": {
+"en": "Nykyfor Sych",
+"uk": "Никифор Сич"
 },
 "Oath Kindjal": {
 "en": "Oath Kindjal",
@@ -1511,13 +1451,33 @@
 "en": "Ochakiv",
 "uk": "Очаків"
 },
-"Okhrim Siroshapka": {
-"en": "Okhrim Siroshapka",
-"uk": "Охрім Сірошапка"
+"Odarka Kvitka": {
+"en": "Odarka Kvitka",
+"uk": "Одарка Квітка"
+},
+"Oksana": {
+"en": "Oksana",
+"uk": "Оксана"
+},
+"Oksana Shabelna": {
+"en": "Oksana Shabelna",
+"uk": "Оксана Шабельна"
 },
 "Oleksa Dudka": {
 "en": "Oleksa Dudka",
 "uk": "Олекса Дудка"
+},
+"Oleksandr Verbenko": {
+"en": "Oleksandr Verbenko",
+"uk": "Олександр Вербенко"
+},
+"Oleksii Derkach": {
+"en": "Oleksii Derkach",
+"uk": "Олексій Деркач"
+},
+"Olena": {
+"en": "Olena",
+"uk": "Олена"
 },
 "Oleshky Sands": {
 "en": "Oleshky Sands",
@@ -1527,9 +1487,9 @@
 "en": "Omelko Hrim",
 "uk": "Омелько Грім"
 },
-"One Against a Horde": {
-"en": "One Against a Horde",
-"uk": "Один проти тьми"
+"Onysko Bilyk": {
+"en": "Onysko Bilyk",
+"uk": "Онисько Білик"
 },
 "Opanas Tulub": {
 "en": "Opanas Tulub",
@@ -1543,17 +1503,17 @@
 "en": "Orest Barvinok",
 "uk": "Орест Барвінок"
 },
+"Osaul Bilyk": {
+"en": "Osaul Bilyk",
+"uk": "осавул Білик"
+},
 "Osaul Chupryna": {
 "en": "Osaul Chupryna",
 "uk": "осавул Чуприна"
 },
-"Osaul Kalnyk": {
-"en": "Osaul Kalnyk",
-"uk": "осавул Кальник"
-},
-"Osaul Kotsiuba": {
-"en": "Osaul Kotsiuba",
-"uk": "осавул Коцюба"
+"Osaul Hrebinka": {
+"en": "Osaul Hrebinka",
+"uk": "осавул Гребінка"
 },
 "Osaul Nazar": {
 "en": "Osaul Nazar",
@@ -1587,6 +1547,10 @@
 "en": "Osaul Vakula",
 "uk": "осавул Вакула"
 },
+"Osaul Zalizo": {
+"en": "Osaul Zalizo",
+"uk": "осавул Залізо"
+},
 "Osman-aga": {
 "en": "Osman-aga",
 "uk": "Осман-ага"
@@ -1598,6 +1562,10 @@
 "Ostap Vovkodav": {
 "en": "Ostap Vovkodav",
 "uk": "Остап Вовкодав"
+},
+"Ovsii Yavir": {
+"en": "Ovsii Yavir",
+"uk": "Овсій Явір"
 },
 "Padded Kaftan": {
 "en": "Padded Kaftan",
@@ -1619,13 +1587,17 @@
 "en": "Panas Zhuk",
 "uk": "Панас Жук"
 },
+"Panko Voron": {
+"en": "Panko Voron",
+"uk": "Панько Ворон"
+},
+"Pankrat Siroshapka": {
+"en": "Pankrat Siroshapka",
+"uk": "Панкрат Сірошапка"
+},
 "Pavlo Bezvukhyi": {
 "en": "Pavlo Bezvukhyi",
 "uk": "Павло Безвухий"
-},
-"Pawel Rudzki": {
-"en": "Pawel Rudzki",
-"uk": "Павел Рудзький"
 },
 "Pawel Rybinski": {
 "en": "Pawel Rybinski",
@@ -1634,6 +1606,10 @@
 "Peace Treaty": {
 "en": "Peace Treaty",
 "uk": "Мирний договір"
+},
+"Pereiaslav": {
+"en": "Pereiaslav",
+"uk": "Переяслав"
 },
 "Pernach": {
 "en": "Pernach",
@@ -1667,29 +1643,25 @@
 "en": "Piotr Wasowicz",
 "uk": "Пйотр Вонсович"
 },
-"Piotr Zaleski": {
-"en": "Piotr Zaleski",
-"uk": "Пйотр Залеський"
-},
 "Plate Armour": {
 "en": "Plate Armour",
 "uk": "Пластинчастий панцир"
+},
+"Platon Chornohuz": {
+"en": "Platon Chornohuz",
+"uk": "Платон Чорногуз"
 },
 "Podillia": {
 "en": "Podillia",
 "uk": "Поділля"
 },
+"Poltava": {
+"en": "Poltava",
+"uk": "Полтава"
+},
 "Privilege": {
 "en": "Privilege",
 "uk": "Привілей"
-},
-"Prokip Zaiats": {
-"en": "Prokip Zaiats",
-"uk": "Прокіп Заєць"
-},
-"Prokop Pyrih": {
-"en": "Prokop Pyrih",
-"uk": "Прокоп Пиріг"
 },
 "Prophetic Bracer": {
 "en": "Prophetic Bracer",
@@ -1711,9 +1683,13 @@
 "en": "Psalter",
 "uk": "Псалтир"
 },
-"Pylyp Chornovus": {
-"en": "Pylyp Chornovus",
-"uk": "Пилип Чорновус"
+"Pylyp Rudyi": {
+"en": "Pylyp Rudyi",
+"uk": "Пилип Рудий"
+},
+"Rafal Laski": {
+"en": "Rafal Laski",
+"uk": "Рафал Ласький"
 },
 "Raider's Boots": {
 "en": "Raider's Boots",
@@ -1735,18 +1711,6 @@
 "en": "Red Boots",
 "uk": "Червоні чоботи"
 },
-"Red Castle": {
-"en": "Red Castle",
-"uk": "Червоний замок"
-},
-"Red Monastery": {
-"en": "Red Monastery",
-"uk": "Червоний монастир"
-},
-"Red Steppe": {
-"en": "Red Steppe",
-"uk": "Червоний степ"
-},
 "Righteous Boots": {
 "en": "Righteous Boots",
 "uk": "Праведні чоботи"
@@ -1759,6 +1723,10 @@
 "en": "Roch Orlik",
 "uk": "Рох Орлік"
 },
+"Rodion Tur": {
+"en": "Rodion Tur",
+"uk": "Родіон Тур"
+},
 "Rohatyna": {
 "en": "Rohatyna",
 "uk": "Рогатина"
@@ -1766,10 +1734,6 @@
 "Roman Polyn": {
 "en": "Roman Polyn",
 "uk": "Роман Полин"
-},
-"Rotmistr Augustyn": {
-"en": "Rotmistr Augustyn",
-"uk": "ротмістр Августин"
 },
 "Rotmistr Bielski": {
 "en": "Rotmistr Bielski",
@@ -1875,10 +1839,6 @@
 "en": "Rotmistr Przybylski",
 "uk": "ротмістр Пшибильський"
 },
-"Rotmistr Rozenberg": {
-"en": "Rotmistr Rozenberg",
-"uk": "ротмістр Розенберг"
-},
 "Rotmistr Rudnicki": {
 "en": "Rotmistr Rudnicki",
 "uk": "ротмістр Рудницький"
@@ -1915,6 +1875,10 @@
 "en": "Rotmistr Wasowicz",
 "uk": "ротмістр Вонсович"
 },
+"Rotmistr Wilczek": {
+"en": "Rotmistr Wilczek",
+"uk": "ротмістр Вільчек"
+},
 "Rotmistr Wolanski": {
 "en": "Rotmistr Wolanski",
 "uk": "ротмістр Воланський"
@@ -1947,10 +1911,6 @@
 "en": "Rough Belt",
 "uk": "Грубий пояс"
 },
-"Rout": {
-"en": "Rout",
-"uk": "Розгром"
-},
 "Royal Berdysh": {
 "en": "Royal Berdysh",
 "uk": "Королівський бердиш"
@@ -1967,10 +1927,6 @@
 "en": "Royal Locket",
 "uk": "Королівська ладанка"
 },
-"Royal Seal": {
-"en": "Royal Seal",
-"uk": "Королівська печатка"
-},
 "Saadet-bey": {
 "en": "Saadet-bey",
 "uk": "Саадет-бей"
@@ -1986,6 +1942,14 @@
 "Saint's Broadsword": {
 "en": "Saint's Broadsword",
 "uk": "Святий палаш"
+},
+"Samiilo Shulha": {
+"en": "Samiilo Shulha",
+"uk": "Самійло Шульга"
+},
+"Sandomierz": {
+"en": "Sandomierz",
+"uk": "Сандомир"
 },
 "Sava Lykhach": {
 "en": "Sava Lykhach",
@@ -2055,9 +2019,9 @@
 "en": "Semen Borsuk",
 "uk": "Семен Борсук"
 },
-"Semen Kalnyk": {
-"en": "Semen Kalnyk",
-"uk": "Семен Кальник"
+"Semen Hrebinka": {
+"en": "Semen Hrebinka",
+"uk": "Семен Гребінка"
 },
 "Sentry's Belt": {
 "en": "Sentry's Belt",
@@ -2070,6 +2034,10 @@
 "Serpent's Breath": {
 "en": "Serpent's Breath",
 "uk": "Подих Змія"
+},
+"Severyn Sokil": {
+"en": "Severyn Sokil",
+"uk": "Северин Сокіл"
 },
 "Shyshak": {
 "en": "Shyshak",
@@ -2087,13 +2055,13 @@
 "en": "Silk Sash",
 "uk": "Шовковий пояс"
 },
-"Silver Mountain": {
-"en": "Silver Mountain",
-"uk": "Срібна гора"
-},
 "Simple Bow": {
 "en": "Simple Bow",
 "uk": "Простий лук"
+},
+"Single Combat": {
+"en": "Single Combat",
+"uk": "Герць"
 },
 "Siveria": {
 "en": "Siveria",
@@ -2102,10 +2070,6 @@
 "Snow-White Pony": {
 "en": "Snow-White Pony",
 "uk": "Сніжний коник"
-},
-"Solomiia Nebesna": {
-"en": "Solomiia Nebesna",
-"uk": "Соломія Небесна"
 },
 "Sotnyk Barvinok": {
 "en": "Sotnyk Barvinok",
@@ -2183,6 +2147,10 @@
 "en": "Sotnyk Malyi",
 "uk": "сотник Малий"
 },
+"Sotnyk Mlynchuk": {
+"en": "Sotnyk Mlynchuk",
+"uk": "сотник Млинчук"
+},
 "Sotnyk Nedolia": {
 "en": "Sotnyk Nedolia",
 "uk": "сотник Недоля"
@@ -2198,10 +2166,6 @@
 "Sotnyk Polyn": {
 "en": "Sotnyk Polyn",
 "uk": "сотник Полин"
-},
-"Sotnyk Pyrih": {
-"en": "Sotnyk Pyrih",
-"uk": "сотник Пиріг"
 },
 "Sotnyk Riabokin": {
 "en": "Sotnyk Riabokin",
@@ -2259,6 +2223,10 @@
 "en": "Spirited Boots",
 "uk": "Завзяті чоботи"
 },
+"Spyrydon Bars": {
+"en": "Spyrydon Bars",
+"uk": "Спиридон Барс"
+},
 "St John's Wort Tincture": {
 "en": "St John's Wort Tincture",
 "uk": "Настоянка звіробою"
@@ -2287,6 +2255,10 @@
 "en": "Stepan Pereima",
 "uk": "Степан Перейма"
 },
+"Steppe": {
+"en": "Steppe",
+"uk": "Степу"
+},
 "Steppe Blaze": {
 "en": "Steppe Blaze",
 "uk": "Степова пожежа"
@@ -2294,6 +2266,10 @@
 "Steppe Pike": {
 "en": "Steppe Pike",
 "uk": "Степова піка"
+},
+"Steppe Wind": {
+"en": "Steppe Wind",
+"uk": "Степовий вітер"
 },
 "Stern Konchar": {
 "en": "Stern Konchar",
@@ -2318,6 +2294,10 @@
 "Sultan-bey": {
 "en": "Sultan-bey",
 "uk": "Султан-бей"
+},
+"Svitiaz": {
+"en": "Svitiaz",
+"uk": "Світязь"
 },
 "Swift Broadsword": {
 "en": "Swift Broadsword",
@@ -2351,10 +2331,6 @@
 "en": "Tadeusz Maliszewski",
 "uk": "Тадеуш Малішевський"
 },
-"Taras Sokil": {
-"en": "Taras Sokil",
-"uk": "Тарас Сокіл"
-},
 "Taras Vovchok": {
 "en": "Taras Vovchok",
 "uk": "Тарас Вовчок"
@@ -2375,49 +2351,73 @@
 "en": "Temir-murza",
 "uk": "Темір-мурза"
 },
-"The Assassin": {
-"en": "The Assassin",
-"uk": "Підісланий"
+"The Ambush": {
+"en": "The Ambush",
+"uk": "Засідка"
 },
-"The Chase": {
-"en": "The Chase",
-"uk": "Погоня"
+"The Black Council": {
+"en": "The Black Council",
+"uk": "Чорна рада"
 },
-"The Great Land": {
-"en": "The Great Land",
-"uk": "Велика земля"
+"The Burnt Camp": {
+"en": "The Burnt Camp",
+"uk": "Спалений табір"
 },
-"The Hunt": {
-"en": "The Hunt",
-"uk": "Облава"
+"The Duma": {
+"en": "The Duma",
+"uk": "Дума"
 },
-"The Last Battle": {
-"en": "The Last Battle",
-"uk": "Остання січа"
+"The Ford": {
+"en": "The Ford",
+"uk": "Брід"
+},
+"The Hetman's Letter": {
+"en": "The Hetman's Letter",
+"uk": "Гетьманський лист"
+},
+"The Hetman's Twilight": {
+"en": "The Hetman's Twilight",
+"uk": "Гетьманські сутінки"
+},
+"The Kurin": {
+"en": "The Kurin",
+"uk": "Курінь"
+},
+"The Last Redoubt": {
+"en": "The Last Redoubt",
+"uk": "Останній шанець"
 },
 "The Mace": {
 "en": "The Mace",
 "uk": "Булава"
 },
-"The Madman": {
-"en": "The Madman",
-"uk": "Навіжений"
+"The Oath": {
+"en": "The Oath",
+"uk": "Присяга"
+},
+"The Poisoned Cup": {
+"en": "The Poisoned Cup",
+"uk": "Отруєна чаша"
+},
+"The Raid": {
+"en": "The Raid",
+"uk": "Набіг"
+},
+"The Regalia": {
+"en": "The Regalia",
+"uk": "Клейноди"
 },
 "The Ruin": {
 "en": "The Ruin",
 "uk": "Руїна"
 },
-"The Strongman": {
-"en": "The Strongman",
-"uk": "Силач"
+"The Thaw": {
+"en": "The Thaw",
+"uk": "Відлига"
 },
-"The Testament": {
-"en": "The Testament",
-"uk": "Заповіт"
-},
-"Three Nations": {
-"en": "Three Nations",
-"uk": "Трьох народів"
+"The Turncoat": {
+"en": "The Turncoat",
+"uk": "Перевертень"
 },
 "Thrusting Pike": {
 "en": "Thrusting Pike",
@@ -2451,10 +2451,6 @@
 "en": "Timur-bey",
 "uk": "Тимур-бей"
 },
-"To the Sich": {
-"en": "To the Sich",
-"uk": "На Січ"
-},
 "Tokhtar-aga": {
 "en": "Tokhtar-aga",
 "uk": "Тохтар-ага"
@@ -2463,25 +2459,29 @@
 "en": "Tomasz Tarnawski",
 "uk": "Томаш Тарнавський"
 },
-"Treason": {
-"en": "Treason",
-"uk": "Зрада"
-},
-"Trokhym Korzhyk": {
-"en": "Trokhym Korzhyk",
-"uk": "Трохим Коржик"
-},
-"Troubles": {
-"en": "Troubles",
-"uk": "Смута"
+"Trokhym Kozub": {
+"en": "Trokhym Kozub",
+"uk": "Трохим Козуб"
 },
 "Tykhon Hnyda": {
 "en": "Tykhon Hnyda",
 "uk": "Тихон Гнида"
 },
+"Tymish Hrim": {
+"en": "Tymish Hrim",
+"uk": "Тиміш Грім"
+},
+"Tymko Bilous": {
+"en": "Tymko Bilous",
+"uk": "Тимко Білоус"
+},
 "Tymofii Dzvin": {
 "en": "Tymofii Dzvin",
 "uk": "Тимофій Дзвін"
+},
+"Uman": {
+"en": "Uman",
+"uk": "Умань"
 },
 "Universal": {
 "en": "Universal",
@@ -2503,49 +2503,37 @@
 "en": "Urak-bey",
 "uk": "Урак-бей"
 },
+"Ustym Kremin": {
+"en": "Ustym Kremin",
+"uk": "Устим Кремінь"
+},
 "Vakula Dovbysh": {
 "en": "Vakula Dovbysh",
 "uk": "Вакула Довбиш"
 },
-"Valley of Souls": {
-"en": "Valley of Souls",
-"uk": "Долина душ"
+"Valentyn Pidhornyi": {
+"en": "Valentyn Pidhornyi",
+"uk": "Валентин Підгорний"
 },
 "Valour Pike": {
 "en": "Valour Pike",
 "uk": "Піка звитяги"
 },
-"Varfolomii Lykhach": {
-"en": "Varfolomii Lykhach",
-"uk": "Варфоломій Лихач"
-},
 "Vasyl Kalach": {
 "en": "Vasyl Kalach",
 "uk": "Василь Калач"
-},
-"Vasyl Tykhyi": {
-"en": "Vasyl Tykhyi",
-"uk": "Василь Тихий"
-},
-"Vengeance": {
-"en": "Vengeance",
-"uk": "Помста"
 },
 "Victor's Spear": {
 "en": "Victor's Spear",
 "uk": "Спис звитяжця"
 },
-"Viktor Syvous": {
-"en": "Viktor Syvous",
-"uk": "Віктор Сивоус"
+"Vlas Kosach": {
+"en": "Vlas Kosach",
+"uk": "Влас Косач"
 },
 "Volhynia": {
 "en": "Volhynia",
 "uk": "Волинь"
-},
-"Waclaw Krzeminski": {
-"en": "Waclaw Krzeminski",
-"uk": "Вацлав Кшемінський"
 },
 "War Boots": {
 "en": "War Boots",
@@ -2583,14 +2571,6 @@
 "en": "White Courser",
 "uk": "Білий скакун"
 },
-"White Horse": {
-"en": "White Horse",
-"uk": "Білий кінь"
-},
-"White Lake": {
-"en": "White Lake",
-"uk": "Біле озеро"
-},
 "White Rumak": {
 "en": "White Rumak",
 "uk": "Білий румак"
@@ -2598,6 +2578,10 @@
 "White Warhorse": {
 "en": "White Warhorse",
 "uk": "Білий бойовий кінь"
+},
+"Wild Blood": {
+"en": "Wild Blood",
+"uk": "Дика кров"
 },
 "Wild Field": {
 "en": "Wild Field",
@@ -2627,10 +2611,6 @@
 "en": "Wolf Locket",
 "uk": "Вовча ладанка"
 },
-"Yakiv Derkach": {
-"en": "Yakiv Derkach",
-"uk": "Яків Деркач"
-},
 "Yakym Dovhan": {
 "en": "Yakym Dovhan",
 "uk": "Яким Довгань"
@@ -2639,9 +2619,9 @@
 "en": "Yakym Holovach",
 "uk": "Яким Головач"
 },
-"Yaroslav Kosach": {
-"en": "Yaroslav Kosach",
-"uk": "Ярослав Косач"
+"Yarema Bairak": {
+"en": "Yarema Bairak",
+"uk": "Ярема Байрак"
 },
 "Yashlav-murza": {
 "en": "Yashlav-murza",
@@ -2651,17 +2631,21 @@
 "en": "Yatsko Vitrohon",
 "uk": "Яцко Вітрогон"
 },
+"Yavtukh Dubovyk": {
+"en": "Yavtukh Dubovyk",
+"uk": "Явтух Дубовик"
+},
 "Yellow Waters": {
 "en": "Yellow Waters",
 "uk": "Жовті Води"
 },
-"Yevhen Tuman": {
-"en": "Yevhen Tuman",
-"uk": "Євген Туман"
+"Yosyp Huska": {
+"en": "Yosyp Huska",
+"uk": "Йосип Гуска"
 },
-"Yosyp Kulish": {
-"en": "Yosyp Kulish",
-"uk": "Йосип Куліш"
+"Yukhym Ternovyi": {
+"en": "Yukhym Ternovyi",
+"uk": "Юхим Терновий"
 },
 "Yurii Shpak": {
 "en": "Yurii Shpak",
@@ -2679,13 +2663,25 @@
 "en": "Zaporozhian Berdysh",
 "uk": "Запорозький бердиш"
 },
+"Zbarazh": {
+"en": "Zbarazh",
+"uk": "Збараж"
+},
 "Zbigniew Debicki": {
 "en": "Zbigniew Debicki",
 "uk": "Збіґнєв Дембіцький"
 },
-"Zolota Lypa": {
-"en": "Zolota Lypa",
-"uk": "Золота Липа"
+"Zdzislaw Krzeminski": {
+"en": "Zdzislaw Krzeminski",
+"uk": "Здзіслав Кшемінський"
+},
+"Zenon Sokyra": {
+"en": "Zenon Sokyra",
+"uk": "Зенон Сокира"
+},
+"Zinovii Zhuravel": {
+"en": "Zinovii Zhuravel",
+"uk": "Зіновій Журавель"
 },
 "Zygmunt Chmielewski": {
 "en": "Zygmunt Chmielewski",

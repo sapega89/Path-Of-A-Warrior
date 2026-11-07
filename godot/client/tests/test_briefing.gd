@@ -88,7 +88,7 @@ func test_description_accept_briefing_mission() -> void:
 	check(c.ok.visible, "OK under it")
 	(c.ok as Button).pressed.emit()
 	check(c.ask.visible, "OK asks")
-	eq(c.ask.dialog_text, "Waclaw Krzeminski\n%s\n\n%s" % [tr("campaign.level_gold") % [4, 900], tr("campaign.accept")],
+	eq(c.ask.dialog_text, "Zdzislaw Krzeminski\n%s\n\n%s" % [tr("campaign.level_gold") % [4, 900], tr("campaign.accept")],
 		"the general, Lv hero + 1 and the gold, twice on hard")
 	p.difficulty = 1
 	p.save_keeping_map(PATH)
