@@ -707,14 +707,6 @@
     "en": "Missions",
     "uk": "Місії"
   },
-  "menu.campaign": {
-    "en": "Campaign",
-    "uk": "Кампанія"
-  },
-  "menu.live": {
-    "en": "Live",
-    "uk": "Live"
-  },
   "menu.online_missions": {
     "en": "Online Missions",
     "uk": "Онлайн-місії"
@@ -722,10 +714,6 @@
   "menu.invitations": {
     "en": "Invitations",
     "uk": "Запрошення"
-  },
-  "menu.multiplayer": {
-    "en": "Multiplayer",
-    "uk": "Мультиплеєр"
   },
   "live.backpack": {
     "en": "Backpack",

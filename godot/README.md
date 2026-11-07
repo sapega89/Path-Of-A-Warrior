@@ -149,10 +149,10 @@ godot --path godot/client                                      # 2) гра
 - **Головне меню** (`scripts/screens/main_menu.gd`): Play / Continue, New Game, Endings,
   Settings, Quit (на телефоні й у браузері без Quit).
 - **Ігрове меню** (`scripts/screens/game_menu.gd`; Continue, а після прологу нової гри — саме),
-  три колонки: **Campaign** — Missions, Management, Blacksmith, Visiting, Help; **Live** — Trade,
-  Warehouse, Safe; **Multiplayer** — Duel, Online Missions, Character, Ranking, Order, Chat,
-  Invitations (`scripts/ui/online_section.gd`). Гра завжди онлайн, тому окремих меню Live і
-  Multiplayer немає. Назад — у головне.
+  одна колонка, що прокручується за фокусом, групи через проміжок: Missions, Management,
+  Blacksmith, Visiting; Trade, Warehouse, Safe; рядок персонажа й Duel, Online Missions,
+  Character, Ranking, Order, Chat, Invitations (`scripts/ui/online_section.gd`); Help. Гра завжди
+  онлайн, тому окремих меню Live і Multiplayer немає. Назад — у головне.
 - **Help** одна на всю гру: теми кампанії, далі Duel і Online Missions мультиплеєра; Control —
   клавіші на карті й в онлайн-бою.
 
@@ -183,7 +183,7 @@ Trade, Warehouse і Safe з ігрового меню (`scripts/screens/live_*.g
 
 ## Мультиплеєр у клієнті
 
-Колонка **Multiplayer** ігрового меню (`scripts/ui/online_section.gd`, `scripts/screens/online_*.gd`,
+Пункти мультиплеєра в ігровому меню (`scripts/ui/online_section.gd`, `scripts/screens/online_*.gd`,
 `scripts/net/online_client.gd`), по тому самому з'єднанню. Ігрове меню ставить гравця онлайн
 (`mp_enter`); вихід у головне меню чи на сторінку одиночної гри (Missions, Trade, ...) — знімає,
 щоб ніхто не викликав героя посеред місії. Поки нема відповіді — «Connecting...», без сервера —

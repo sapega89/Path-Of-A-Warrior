@@ -269,6 +269,9 @@ func _ready() -> void:
 	Router.push("game_menu", live_params.merged(mp_params))
 	await _frames(2)
 	await _shot(out, "11a_game_menu")
+	Router.current.buttons[-1].grab_focus()  # Help, at the end: the list scrolls down
+	await _frames(3)
+	await _shot(out, "11a_game_menu_end")
 	Router.push("online_character", mp_params)
 	await _frames(2)
 	Router.current.open("records")

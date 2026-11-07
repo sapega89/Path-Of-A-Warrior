@@ -1,5 +1,5 @@
 extends VBoxContainer
-## The multiplayer part of the game menu: Duel, Online Missions, Character, Ranking, Order,
+## The multiplayer part of the game menu, under the line of the character: Duel, Online Missions, Character, Ranking, Order,
 ## Chat and Invitations, open once the player is online. Showing it puts the player online
 ## (scripts/net/online_client.gd enter); until the server answers it says "Connecting...",
 ## without an answer "Network connection has failed".
@@ -32,7 +32,6 @@ func _init(params: Dictionary) -> void:
 	name = "Multiplayer"
 	online = OnlineClient.of(params)
 	add_theme_constant_override("separation", 6)
-	add_child(UiTheme.heading("menu.multiplayer", 32))
 	who = UiTheme.note("Who")
 	who.add_theme_font_size_override("font_size", 22)
 	add_child(who)

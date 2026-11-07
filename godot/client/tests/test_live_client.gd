@@ -192,7 +192,7 @@ func test_game_menu_has_the_game_and_the_main_menu_the_rest() -> void:
 	var screen: Control = GameMenu.new()
 	root.add_child(screen)
 	eq(screen.buttons.map(func(b): return str(b.name)), ["Missions", "Management", "Blacksmith",
-		"Visiting", "Help", "Trade", "Warehouse", "Safe"])
+		"Visiting", "Trade", "Warehouse", "Safe", "Help"])
 	eq(screen.online.buttons.map(func(b): return str(b.name)), ["Duel", "OnlineMissions", "Character",
 		"Ranking", "Order", "Chat", "Invitations"], "the multiplayer pages in the same menu")
 	check(t[0].synced and screen.news.done, "Live synced, nothing new")
