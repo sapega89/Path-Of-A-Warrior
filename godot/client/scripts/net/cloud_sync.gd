@@ -150,7 +150,8 @@ func step() -> void:
 			if state != "probe":
 				state = "probe"
 				client.request({"t": "hello"}, _probe_answer)
-			client.poll()
+		if client.state != NetClient.State.CLOSED:
+			client.poll()  # the probe, or a login or registration on its way
 		return
 	if state == "off":
 		return
@@ -193,13 +194,23 @@ func _logged_in() -> void:
 
 
 ## Registers a new account on the server; done(answer) once it is known. On "ok" the account is
-## this device's and its session is logged in.
+## this session's and it is logged in.
 func register(id: String, pwd: String, done: Callable) -> void:
+	_sign_in("register", id, pwd, done)
+
+
+## Logs in to an account made before; done(answer) once it is known (err "no account",
+## "password", "update", "bad id", "offline"). On "ok" the account is this session's.
+func login(id: String, pwd: String, done: Callable) -> void:
+	_sign_in("login", id, pwd, done)
+
+
+func _sign_in(t: String, id: String, pwd: String, done: Callable) -> void:
 	if client.state == NetClient.State.CLOSED and _connect() != OK:
-		done.call({"t": "register", "ok": false, "err": "offline"})
+		done.call({"t": t, "ok": false, "err": "offline"})
 		return
 	state = "connecting"
-	client.request({"t": "register", "id": id, "pwd": pwd, "v": Protocol.VERSION},
+	client.request({"t": t, "id": id, "pwd": pwd, "v": Protocol.VERSION},
 		func(r: Dictionary) -> void:
 			if r.get("ok", false):
 				account = [id, pwd]

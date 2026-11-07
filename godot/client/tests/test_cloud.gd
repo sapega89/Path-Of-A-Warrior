@@ -198,9 +198,10 @@ func test_profile_lives_on_the_server_when_online() -> void:
 	cloud.register("ANDREY", "1234", func(r): got.append(r))
 	check(_run(s, [cloud.sync], func(): return cloud.online() and cloud.sync.idle()), "registered, sent")
 	eq(str(s.accounts.hero_get("ANDREY").hero.name), "Andrey", "on the server")
-	eq(cloud.load_account(), ["ANDREY", "1234"], "the account stays on this device")
+	eq(cloud.sync.account, ["ANDREY", "1234"], "the account kept while the game runs")
+	check(not FileAccess.file_exists(cloud.account_path), "and not on the device")
 	cloud.forget_account()
-	eq(cloud.load_account(), [], "forgotten")
+	check(not cloud.has_account(), "forgotten")
 	cloud.stop()
 	check(not cloud.enabled(), "off again: the hero file as before")
 	s.stop()
@@ -213,10 +214,10 @@ func test_live_goes_over_the_same_connection() -> void:
 	var s := _server(d)
 	s.accounts.create_account("ANDREY", "1234")
 	cloud.account_path = d.path_join("account.cfg")
-	cloud.save_account("ANDREY", "1234")
 	cloud.start("127.0.0.1", PORT, ServerTests.pair(0)[1])
 	cloud.sync.legacy = null
 	cloud.sync.options_store = null  # this device's own Options stay out of the tests
+	cloud.login("ANDREY", "1234", func(_r: Dictionary) -> void: pass)
 	var got := []
 	cloud.request({"t": "live_status"}, func(r): got.append(r))
 	eq(got[0].err if not got.is_empty() else "", "offline", "not before the login")
@@ -245,10 +246,10 @@ func test_the_online_game_goes_over_the_same_connection() -> void:
 	s.accounts.create_account("ANDREY", "1234")
 	s.accounts.create_account("MARIA", "1234")
 	cloud.account_path = d.path_join("account.cfg")
-	cloud.save_account("ANDREY", "1234")
 	cloud.start("127.0.0.1", PORT, ServerTests.pair(0)[1])
 	cloud.sync.legacy = null
 	cloud.sync.options_store = null  # this device's own Options stay out of the tests
+	cloud.login("ANDREY", "1234", func(_r: Dictionary) -> void: pass)
 	check(_run(s, [cloud.sync], cloud.online), "logged in")
 	var mp: RefCounted = cloud.mp
 	var err := []
@@ -330,10 +331,10 @@ func test_quitting_lets_the_last_save_reach_the_server() -> void:
 	var s := _server(d)
 	s.accounts.create_account("ANDREY", "1234")
 	cloud.account_path = d.path_join("account.cfg")
-	cloud.save_account("ANDREY", "1234")
 	cloud.start("127.0.0.1", PORT, ServerTests.pair(0)[1])
 	cloud.sync.legacy = null
 	cloud.sync.options_store = null  # this device's own Options stay out of the tests
+	cloud.login("ANDREY", "1234", func(_r: Dictionary) -> void: pass)
 	var quits := []
 	cloud.quit_now = func() -> void: quits.append(true)
 	check(_run(s, [cloud.sync], cloud.online), "logged in")
@@ -367,3 +368,51 @@ func test_quitting_lets_the_last_save_reach_the_server() -> void:
 	cloud.quit_now = Callable()
 	s.stop()
 	ServerTests._rm(d)
+
+
+func test_the_login_lasts_only_while_the_game_runs() -> void:
+	var cloud: Node = root.get_node("/root/Cloud")
+	var d := _dir()
+	var s := _server(d)
+	s.accounts.create_account("ANDREY", "1234")
+	cloud.account_path = d.path_join("account.cfg")
+	var old := ConfigFile.new()  # an older version kept the account here
+	old.set_value("account", "id", "ANDREY")
+	old.set_value("account", "pwd", "1234")
+	old.save(cloud.account_path)
+	cloud.start("127.0.0.1", PORT, ServerTests.pair(0)[1])
+	cloud.sync.legacy = null
+	cloud.sync.options_store = null  # this device's own Options stay out of the tests
+	check(not cloud.has_account(), "a new start asks for the account")
+	check(not FileAccess.file_exists(cloud.account_path), "the old file is gone")
+	check(_run(s, [cloud.sync], cloud.online), "the server is there")
+	var got := []
+	cloud.login("ANDREY", "9999", func(r): got.append(r))
+	check(_run(s, [cloud.sync], func(): return not got.is_empty()), "answered")
+	eq([got[0].get("err"), cloud.has_account()], ["password", false], "a wrong password")
+	cloud.login("MARIA", "1234", func(r): got.append(r))
+	check(_run(s, [cloud.sync], func(): return got.size() > 1), "answered")
+	eq(got[1].get("err"), "no account", "nobody by that UserID")
+	cloud.login("ANDREY", "1234", func(r): got.append(r))
+	check(_run(s, [cloud.sync], func(): return got.size() > 2 and cloud.online()), "logged in")
+	eq([got[2].get("ok"), cloud.has_account(), cloud.hero()], [true, true, null], "no hero there yet")
+	check(not FileAccess.file_exists(cloud.account_path), "nothing kept on the device")
+	cloud.stop()
+	s.stop()
+	ServerTests._rm(d)
+
+
+func test_a_login_after_the_server_answered_gets_its_answer() -> void:
+	var d := _dir()
+	var s := _server(d)
+	s.accounts.create_account("ANDREY", "1234")
+	var a := _sync()
+	check(_run(s, [a], a.online), "the server is there: the menu opens")
+	for i in 50:  # the menu stays open a while before the player logs in
+		s.poll(1)
+		a.step()
+	var got := []
+	a.login("ANDREY", "1234", func(r): got.append(r))
+	check(_run(s, [a], func(): return not got.is_empty() and a.online()), "answered, not Connecting... for ever")
+	eq(got[0].get("ok") if not got.is_empty() else null, true, "logged in")
+	_end(s, [a], d)

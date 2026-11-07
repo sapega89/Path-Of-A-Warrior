@@ -197,3 +197,32 @@ func test_phone_back_button() -> void:
 	help.free()
 	Router.params = old
 
+
+
+func test_the_pad_works_the_menus() -> void:
+	InputSetupScript.register()
+	var a := _pad_press(JOY_BUTTON_A)
+	a.device = 1  # not only the first pad
+	check(a.is_action("ui_accept") and a.is_action("attack"), "A: OK in the menus, attack on the map")
+	var b := _pad_press(JOY_BUTTON_B)
+	b.device = 3
+	check(b.is_action("ui_cancel"), "B: BACK")
+	var up := _pad_press(JOY_BUTTON_DPAD_UP)
+	up.device = 2
+	check(up.is_action("ui_up") and up.is_action("move_up"), "the d-pad moves in the menus and on the map")
+	var stick := InputEventJoypadMotion.new()
+	stick.device = 2
+	stick.axis = JOY_AXIS_LEFT_X
+	stick.axis_value = 1.0
+	check(stick.is_action("ui_right"), "so does the left stick")
+	var screen := Button.new()
+	root.add_child(screen)
+	var pressed := []
+	screen.pressed.connect(func() -> void: pressed.append(true))
+	screen.grab_focus()
+	var release := _pad_press(JOY_BUTTON_A)
+	release.pressed = false
+	root.get_viewport().push_input(_pad_press(JOY_BUTTON_A))
+	root.get_viewport().push_input(release)
+	eq(pressed.size(), 1, "A pressed the focused button")
+	screen.free()

@@ -4,7 +4,7 @@ extends "res://tests/test_case.gd"
 
 const KeyGrid := preload("res://scripts/ui/key_grid.gd")
 const NewGame := preload("res://scripts/screens/new_game_screen.gd")
-const Register := preload("res://scripts/screens/register_screen.gd")
+const Login := preload("res://scripts/screens/login_screen.gd")
 
 
 func _type(keys: VBoxContainer, labels: Array) -> void:
@@ -30,8 +30,8 @@ func test_the_heros_name_on_the_keys() -> void:
 	Router.params = old
 
 
-func test_the_registration_on_the_keys() -> void:
-	var screen: Control = Register.new()
+func test_the_login_on_the_keys() -> void:
+	var screen: Control = Login.new()
 	root.add_child(screen)
 	var keys: VBoxContainer = screen.keys
 	_type(keys, ["A", "N", "7", "D", "Y"])
@@ -43,3 +43,24 @@ func test_the_registration_on_the_keys() -> void:
 	keys.key(KeyGrid.OK).pressed.emit()
 	eq(screen.info.text, tr("register.bad_password"), "OK: as Enter, the account is checked")
 	screen.free()
+
+
+func test_the_keys_show_only_for_the_gamepad() -> void:
+	var was: String = InputSetup.device
+	InputSetup.device = "keys"
+	var screen: Control = Login.new()
+	root.add_child(screen)
+	check(not screen.keys.visible, "a keyboard: no keys on the screen")
+	var pad := InputEventJoypadButton.new()
+	pad.button_index = JOY_BUTTON_DPAD_DOWN
+	pad.pressed = true
+	InputSetup._input(pad)
+	check(screen.keys.visible, "the gamepad: the keys")
+	screen.keys.key("A").grab_focus()
+	var touch := InputEventScreenTouch.new()
+	touch.pressed = true
+	InputSetup._input(touch)
+	check(not screen.keys.visible, "a touch: the phone's own keyboard")
+	check(screen.user_id.has_focus(), "the field has the focus back")
+	screen.free()
+	InputSetup.device = was

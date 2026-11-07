@@ -112,14 +112,14 @@ func _ready() -> void:
 	Router.current.press_slot(2)
 	Router.current.slots[2].grab_focus()
 	await _shot(out, "10_assign_items")
-	# Always online: no server there, then the registration (scripts/net/cloud.gd).
+	# Always online: no server there, then the login (scripts/net/cloud.gd).
 	var cloud: Node = get_node("/root/Cloud")
 	cloud.account_path = "user://shot_account.cfg"
 	cloud.start("127.0.0.1", 28397, X509Certificate.new())
 	Router.go("main_menu")
 	await _frames(3)
 	await _shot(out, "10b_no_connection")
-	Router.go("register")
+	Router.go("login")
 	await _frames(2)
 	Router.current.user_id.text = "ANDREY"
 	Router.current.password.text = "12"

@@ -635,9 +635,17 @@
     "en": "Connecting...",
     "uk": "З'єднання..."
   },
-  "register.title": {
-    "en": "Registration",
-    "uk": "Реєстрація"
+  "login.title": {
+    "en": "Log in",
+    "uk": "Вхід"
+  },
+  "login.ok": {
+    "en": "Log in",
+    "uk": "Увійти"
+  },
+  "login.new": {
+    "en": "New account",
+    "uk": "Новий акаунт"
   },
   "register.hint": {
     "en": "Your hero is kept on the server under this account (also for Live and multiplayer).",
@@ -651,10 +659,6 @@
     "en": "Password (4-12 numbers)",
     "uk": "Пароль (4-12 цифр)"
   },
-  "register.ok": {
-    "en": "OK",
-    "uk": "OK"
-  },
   "register.bad_id": {
     "en": "The UserID is 4-12 letters A-Z.",
     "uk": "UserID: 4-12 літер A-Z."
@@ -663,13 +667,17 @@
     "en": "The password is 4-12 numbers.",
     "uk": "Пароль: 4-12 цифр."
   },
-  "register.must": {
-    "en": "The hero is kept on the server: register first.",
-    "uk": "Герой зберігається на сервері: спершу реєстрація."
-  },
   "register.err_taken": {
     "en": "This UserID is taken.",
     "uk": "Цей UserID уже зайнятий."
+  },
+  "register.err_no_account": {
+    "en": "There is no such account. Press New account to make it.",
+    "uk": "Такого акаунта немає. Натисніть «Новий акаунт», щоб створити."
+  },
+  "register.err_password": {
+    "en": "Wrong password.",
+    "uk": "Невірний пароль."
   },
   "register.err_limit": {
     "en": "Too many new accounts from here. Try later.",

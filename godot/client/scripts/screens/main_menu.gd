@@ -1,7 +1,9 @@
 extends Control
 ## Main menu: continue (or play), new game, endings, settings, quit (no quit button on phones
 ## and the web). Continue opens the game menu (scripts/screens/game_menu.gd), where
-## the hero's game is.
+## the hero's game is. While the game is always online and this run has no account yet, Play
+## and New game open the login (scripts/screens/login_screen.gd) first; it comes back here and
+## goes on with play() or new_game() once the hero (or none) has come from the server.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
@@ -27,12 +29,21 @@ func _ready() -> void:
 	ask.dialog_text = tr("newgame.ask_delete")
 	ask.confirmed.connect(func(): Router.push("new_game", {}))
 	add_child(ask)
-	buttons[0].grab_focus.call_deferred()
+	_focus_first.call_deferred()
+
+
+## The first button takes the focus, unless the login sent this menu on at once.
+func _focus_first() -> void:
+	if is_inside_tree():
+		buttons[0].grab_focus()
 
 
 ## The saved hero goes on in the game menu (back into the mission saved on its map, if any);
 ## without one a new game starts.
 func play() -> void:
+	if needs_login():
+		Router.push("login", {"next": "play"})
+		return
 	if not Profile.exists():
 		Router.push("new_game", {})
 		return
@@ -46,10 +57,18 @@ func play() -> void:
 
 ## A new hero (difficulty, face, name, points); over a saved one only when that is confirmed.
 func new_game() -> void:
+	if needs_login():
+		Router.push("login", {"next": "new_game"})
+		return
 	if Profile.exists():
 		ask.popup_centered()
 		return
 	Router.push("new_game", {})
+
+
+## The hero is on the server and nobody has logged in since the game started.
+static func needs_login() -> bool:
+	return Cloud.enabled() and not Cloud.has_account()
 
 
 static func show_quit() -> bool:

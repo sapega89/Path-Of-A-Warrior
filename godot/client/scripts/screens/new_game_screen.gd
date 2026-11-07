@@ -108,6 +108,7 @@ func show_step(s: int) -> void:
 			name_edit.max_length = NAME_MAX
 			name_edit.alignment = HORIZONTAL_ALIGNMENT_CENTER
 			name_edit.placeholder_text = tr("newgame.name_hint")
+			name_edit.keep_editing_on_text_submit = true  # an empty name refused: it still types
 			name_edit.text_submitted.connect(func(_t): submit_name())
 			name_edit.text_changed.connect(_name_changed)
 			body.add_child(name_edit)

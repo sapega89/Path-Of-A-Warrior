@@ -6,7 +6,8 @@ extends Control
 ## the main menu.
 ##
 ## The game is always online: here it starts (Cloud.game_started), and without an account the
-## registration opens once, since the hero lives on the server. What Live kept for the player
+## login opens (the main menu asks for it before, so only when the account was dropped), since
+## the hero lives on the server. What Live kept for the player
 ## while away (notices, sales, gifts, Exp and Fame) is shown over the menu when it opens
 ## (scripts/ui/live_news.gd). The hero is in the online game (others can challenge him) only
 ## while this menu or a multiplayer page is open. Router.params: profile_path, live and online
@@ -71,7 +72,7 @@ func _ready() -> void:
 	if Cloud.enabled():
 		Cloud.game_started()
 		if not Cloud.has_account():
-			Router.push.call_deferred("register")
+			Router.push.call_deferred("login", {"must": true})
 			return
 	_show_news()
 
