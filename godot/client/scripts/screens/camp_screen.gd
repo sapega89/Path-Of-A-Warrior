@@ -107,7 +107,8 @@ func _build_world() -> void:
 			npc.set_frame(0, 0)
 			npc.position = at
 			world.add_child(npc)
-		_label3d("Way%d" % e.place, "%s\n%s" % [campaign.lord_name(e.place), colonel if e.open else tr("world.closed")],
+		var below: String = "%s\n%s" % [colonel, way_reward(e.place)] if e.open else tr("world.closed")
+		_label3d("Way%d" % e.place, "%s\n%s" % [campaign.lord_name(e.place), below],
 			at + Vector3(0, 2.6, 0), UiTheme.ACCENT if e.open else UiTheme.TEXT_DIM)
 		spots.append({"kind": "way", "place": int(e.place), "open": bool(e.open), "at": at})
 	if camp.main:
@@ -179,6 +180,25 @@ func rulers(id: int) -> Array:
 		if not r in out:
 			out.append(r)
 	return out
+
+
+## What the missions of a place give, as a door shows it: the gold (twice on hard) and the
+## level of the general to beat, from the least to the most.
+func way_reward(id: int) -> String:
+	var gold := []
+	var lv := []
+	for m in campaign.lord_missions(id):
+		gold.append(int(m.get("gold", 0)) * 150 * (1 + (int(profile.difficulty) ^ 1)))
+		lv.append(int(profile.level) + int(m.get("level_bonus", 0)))
+	if gold.is_empty():
+		return ""
+	return tr("camp.reward") % [_span(gold), _span(lv)]
+
+
+static func _span(values: Array) -> String:
+	var lo: int = values.min()
+	var hi: int = values.max()
+	return str(lo) if lo == hi else "%d–%d" % [lo, hi]
 
 
 func _first_ruler(id: int) -> int:

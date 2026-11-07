@@ -1582,5 +1582,25 @@
   "hall.visits": {
     "en": "Visiting",
     "uk": "Візити"
+  },
+  "door.general": {
+    "en": "General!",
+    "uk": "Генерал!"
+  },
+  "door.enemies": {
+    "en": "%d enemies",
+    "uk": "Ворогів: %d"
+  },
+  "door.empty": {
+    "en": "Nobody",
+    "uk": "Порожньо"
+  },
+  "door.been": {
+    "en": "(been there)",
+    "uk": "(уже були)"
+  },
+  "camp.reward": {
+    "en": "Gold %s · Lv %s",
+    "uk": "Золото %s · рів. %s"
   }
 }

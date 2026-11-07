@@ -64,6 +64,12 @@ var talk_portrait: TextureRect
 var talk_panel: PanelContainer
 var talk_text: Label
 var arrows: Array[TextureRect] = []
+## Next to each exit's arrow: what waits in the room behind it (Door hints below).
+var door_hints: Array[Label] = []
+var visited := {}  # rooms the hero has been in during this mission
+var fade: ColorRect  # the short dark between two rooms
+var _last_cell := -1
+const FADE_TIME := 0.35
 var soldiers := {}  # sim actor -> Soldier node
 var shots: Array[MeshInstance3D] = []  # the archers' arrows
 var tint := 0
@@ -172,12 +178,29 @@ func _ready() -> void:
 		a.visible = false
 		add_child(a)
 		arrows.append(a)
+		var h := Label.new()
+		h.name = "DoorHint%d" % i
+		h.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+		h.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		h.add_theme_font_size_override("font_size", 22)
+		h.add_theme_constant_override("outline_size", 8)
+		h.add_theme_color_override("font_outline_color", Color.BLACK)
+		h.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		h.visible = false
+		add_child(h)
+		door_hints.append(h)
 
 	hud = MapHud.new()
 	hud.name = "Hud"
 	hud.sim = sim
 	hud.auto_allowed = auto_allowed()
 	add_child(hud)
+	fade = ColorRect.new()
+	fade.name = "Fade"
+	fade.color = Color(0, 0, 0, 0)
+	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(fade)
 
 	banner = PanelContainer.new()
 	banner.name = "Banner"
@@ -297,6 +320,13 @@ static func smooth(prev: Vector2i, now: Vector2i, t: float) -> Vector2:
 
 
 func _update_view(t: float) -> void:
+	if sim.cell != _last_cell:
+		if _last_cell >= 0 and fade != null:
+			fade.color.a = 1.0
+		_last_cell = sim.cell
+		visited[sim.cell] = true
+	if fade != null and fade.color.a > 0.0:
+		fade.color.a = maxf(fade.color.a - get_process_delta_time() / FADE_TIME, 0.0)
 	hero.global_position = Hero.px_to_world(smooth(sim.hero.prev_pos, sim.hero.pos, t))
 	hero.set_frame(sim.hero_sprite_frame(), sim.hero.action >= 12)
 	camera.focus = sim.rooms.center(sim.cell)
@@ -491,10 +521,12 @@ func _place_banner(y: float) -> void:
 
 func _place_arrows() -> void:
 	var view := get_viewport_rect().size
-	var lit: bool = sim.exits_open() and (_blink & 2) != 0
+	var open: bool = sim.exits_open()
+	var lit: bool = open and (_blink & 2) != 0
 	for i in 4:
 		var a := arrows[i]
-		a.visible = lit and sim.rooms.has_exit(sim.cell, i + 1)
+		var has: bool = sim.rooms.has_exit(sim.cell, i + 1)
+		a.visible = lit and has
 		var s := a.texture.get_size() * ARROW_SCALE
 		a.size = s
 		match i:
@@ -502,6 +534,44 @@ func _place_arrows() -> void:
 			1: a.position = Vector2(16, (view.y - s.y) / 2.0)
 			2: a.position = Vector2((view.x - s.x) / 2.0, 16)
 			3: a.position = Vector2(view.x - s.x - 16, (view.y - s.y) / 2.0)
+		var h := door_hints[i]
+		h.visible = open and has
+		if not h.visible:
+			continue
+		var next: int = sim.rooms.neighbour(sim.cell, i + 1)
+		var hint := door_hint(sim.rooms, next, visited.has(next))
+		h.text = hint.text
+		h.add_theme_color_override("font_color", hint.color)
+		h.reset_size()
+		var hs := h.size
+		match i:
+			0: h.position = Vector2((view.x - hs.x) / 2.0, a.position.y - hs.y - 4)
+			1: h.position = Vector2(a.position.x + s.x + 8, (view.y - hs.y) / 2.0)
+			2: h.position = Vector2((view.x - hs.x) / 2.0, a.position.y + s.y + 4)
+			3: h.position = Vector2(a.position.x - hs.x - 8, (view.y - hs.y) / 2.0)
+
+
+## What waits behind a door, as the doors of a cleared chamber show it: the room's general
+## (red), how many soldiers, or that the hero was there already. {text, color}
+static func door_hint(rooms: RefCounted, room: int, been: bool) -> Dictionary:
+	var soldiers := 0
+	var general := false
+	for w in rooms.waves(room):
+		if int(w[0]) >= 200:
+			soldiers += int(w[1])
+		else:
+			general = true
+	var parts: Array = []
+	if general:
+		parts.append(TranslationServer.translate("door.general"))
+	if soldiers > 0:
+		parts.append(TranslationServer.translate("door.enemies") % soldiers)
+	if parts.is_empty():
+		parts.append(TranslationServer.translate("door.empty"))
+	if been:
+		parts.append(TranslationServer.translate("door.been"))
+	var color := Color("e06b5f") if general else Color("e8e2d4")
+	return {"text": "\n".join(parts), "color": color}
 
 
 ## Stops the mission and shows the pause menu (Resume, Options, Exit to Menu, Exit Game).

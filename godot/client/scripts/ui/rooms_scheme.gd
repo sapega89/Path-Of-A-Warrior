@@ -33,7 +33,7 @@ func reached() -> int:
 func generals() -> Array:
 	var out: Array = []
 	for r in reach:
-		if rooms.has_general(r) or int(rooms.cells[r].get("general", 0)) != 0:
+		if rooms.has_general(r):
 			out.append(r)
 	out.sort()
 	return out

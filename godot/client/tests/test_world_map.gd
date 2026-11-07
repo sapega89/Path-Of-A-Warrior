@@ -10,6 +10,7 @@ const MapBuilder := preload("res://scripts/world/map_builder.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const RouterScript := preload("res://scripts/core/router.gd")
 const CampMap := preload("res://scripts/world/camp_map.gd")
+const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
 const CampScreen := preload("res://scripts/screens/camp_screen.gd")
 const CAMP_PATH := "user://test_camp.json"
 
@@ -128,6 +129,16 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 	eq(camp.exit_crossed(Vector3(gap.x + 0.5, 0, 0.3)), harvest, "out through the gap")
 	eq(camp.exit_crossed(Vector3(8.5, 0, 6.0)), {}, "inside")
 	check(camp.rulers(1).size() == 4, "four colonels give the missions at Uprising")
+	eq(camp.way_reward(6), tr("camp.reward") % ["450–750", "4–6"], "Harvest: its gold and the generals' levels")
 	camp.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))
+
+
+func test_door_hint_tells_what_is_behind() -> void:
+	var r: RefCounted = Rooms.new(MapBuilder.load_map(3), 0)
+	var h: Dictionary = MissionScreen.door_hint(r, 7, false)
+	check(h.text.contains(tr("door.general")), "room 7 of Chortomlyk has the general: %s" % h.text)
+	var r1: RefCounted = Rooms.new(MapBuilder.load_map(1), 0)
+	eq(MissionScreen.door_hint(r1, 1, false).text, tr("door.enemies") % 8, "map 1's second room: 8 soldiers")
+	check(MissionScreen.door_hint(r1, 1, true).text.ends_with(tr("door.been")), "and the rooms already seen")
