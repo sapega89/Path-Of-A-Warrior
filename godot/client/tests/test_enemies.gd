@@ -373,12 +373,12 @@ func test_general_comes_with_his_talk() -> void:
 	var d := _general_duel()
 	var sim: RefCounted = d[0]
 	var g = d[1]
-	eq(sim.general.get("name", ""), "Waclaw Krzeminski", "general 1")
+	eq(sim.general.get("name", ""), "Zdzislaw Krzeminski", "general 1")
 	check(sim.boss_fight, "the mission's own general")
 	eq(g.level, 2, "the hero's level and the list's count")
 	eq(g.hp, 23, "20 HP and 3 a level")
 	eq(sim.talk.size(), 3, "three lines")
-	eq(sim.talk[0], "[Waclaw Krzeminski] Waclaw Krzeminski is here!!!", "his name for &")
+	eq(sim.talk[0], "[Zdzislaw Krzeminski] Zdzislaw Krzeminski is here!!!", "his name for &")
 	sim.tick(-1, -1)
 	eq(sim.talk_text(), "[", "typed a letter a tick")
 	var x: int = sim.hero.pos.x
