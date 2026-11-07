@@ -9,6 +9,8 @@ const DISTANCE := 13.0  # about one 7x7 room fills the screen, as in the origina
 const FOLLOW_SPEED := 6.0
 
 var target: Node3D
+## How far back the camera is: DISTANCE, farther where more than a room should show (a camp).
+var distance := DISTANCE
 ## The point to look at when there is no target.
 var focus := Vector3.ZERO
 
@@ -19,9 +21,9 @@ func _ready() -> void:
 	snap()
 
 
-static func offset() -> Vector3:
+func offset() -> Vector3:
 	var pitch := deg_to_rad(PITCH_DEG)
-	return Vector3(0.0, sin(pitch), cos(pitch)) * DISTANCE
+	return Vector3(0.0, sin(pitch), cos(pitch)) * distance
 
 
 func goal() -> Vector3:

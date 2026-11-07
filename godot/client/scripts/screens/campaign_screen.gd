@@ -1,14 +1,21 @@
 extends Control
-## The campaign: the lords the hero can fight for from where he is (the campaign chapter of
-## his place), then the missions of a lord. A lord who is not open yet is greyed; a mission
-## won has a mark. Winning takes the hero to that lord's place, so the list changes.
-## A mission shows its description first; OK asks whether to accept it (the general to beat,
-## the level and the gold), and Yes counts the briefing and opens it, then the map.
+## The campaign: the world map (scripts/ui/world_map_view.gd) with the hero's place and the
+## places he can go to from there, then the missions of a place (a lord: one map). A place
+## that is not open yet is dark; a mission won has a mark. Winning takes the hero to that
+## place, so the map changes. A mission shows the rooms it walks on the place's map and its
+## description first; OK asks whether to accept it (the general to beat, the level and the
+## gold), and Yes counts the briefing and opens it, then the map. Opened from a camp
+## (Router.params camp: true) it shows one place's missions, and the briefing takes its place,
+## so the mission ends back in the camp.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Campaign := preload("res://scripts/core/campaign.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const MapSim := preload("res://scripts/sim/map_sim.gd")
+const MapBuilder := preload("res://scripts/world/map_builder.gd")
+const WorldMap := preload("res://scripts/core/world_map.gd")
+const WorldMapView := preload("res://scripts/ui/world_map_view.gd")
+const RoomsScheme := preload("res://scripts/ui/rooms_scheme.gd")
 const DONE_MARK := "  ✓"
 
 var campaign := Campaign.new()
@@ -18,12 +25,15 @@ var heading: Label
 var scroll: ScrollContainer
 var ok: Button  # under the description: accept the mission?
 var ask: ConfirmationDialog
-## 1 lords of the hero's place, 2 missions of a lord, 3 the description of a mission
+var column: Control  # the list, the missions and the description
+var world_view: Control  # the world map (level 1)
+## 1 the world map at the hero's place, 2 missions of a lord, 3 the description of a mission
 var level := 1
 var chapter := 0
 var lord_id := 0
 var mission := 0
 var path: String = Profile.PATH
+var from_camp := false
 var rng := RandomNumberGenerator.new()
 
 
@@ -34,6 +44,8 @@ func _ready() -> void:
 	if p.has("seed"):
 		rng.seed = int(p.seed)
 	var col := UiTheme.menu_column(self, 640)
+	column = col.get_parent()
+	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	heading = UiTheme.heading("campaign.lords", 40)
 	col.add_child(heading)
 	scroll = ScrollContainer.new()
@@ -61,6 +73,15 @@ func _ready() -> void:
 	chapter = int(p.get("chapter", profile.place))
 	lord_id = int(p.get("lord", 0))
 	mission = int(p.get("mission", 0))
+	from_camp = bool(p.get("camp", false))
+	world_view = WorldMapView.new(WorldMap.new(campaign), profile, chapter)
+	world_view.set_anchors_preset(Control.PRESET_FULL_RECT)
+	world_view.offset_left = 30
+	world_view.offset_right = -30
+	world_view.offset_top = 90
+	world_view.offset_bottom = -20
+	world_view.place_chosen.connect(_open_lord)
+	add_child(world_view)
 	show_level()
 
 
@@ -70,12 +91,13 @@ func show_level() -> void:
 		c.queue_free()
 	ok.visible = level == 3
 	scroll.scroll_vertical = 0
+	world_view.visible = level == 1
+	scroll.visible = level != 1
+	column.set_anchors_and_offsets_preset(
+		Control.PRESET_TOP_WIDE if level == 1 else Control.PRESET_FULL_RECT)
 	match level:
 		1:
-			heading.text = "campaign.lords"
-			for id in campaign.chapter_lords(chapter):
-				var b := _item(campaign.lord_name(id), _open_lord.bind(int(id)))
-				b.disabled = not profile.is_lord_open(int(id))
+			heading.text = "campaign.world"
 		2:
 			heading.text = campaign.lord_name(lord_id)
 			var ms := campaign.lord_missions(lord_id)
@@ -93,6 +115,15 @@ func show_level() -> void:
 			title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			title.text = str(m.get("name", ""))
 			list.add_child(title)
+			var st: Array = m.get("start", [4, 4])
+			var scheme := RoomsScheme.new(MapBuilder.load_map(Campaign.lord_map(lord_id)), mission,
+				Vector2i(int(st[0]), int(st[1])))
+			list.add_child(scheme)
+			var legend := UiTheme.note("Legend")
+			legend.add_theme_font_size_override("font_size", 20)
+			legend.add_theme_color_override("font_color", UiTheme.TEXT_DIM)
+			legend.text = tr("world.rooms") % [scheme.reached(), scheme.rooms.count()]
+			list.add_child(legend)
 			var text := Label.new()
 			text.name = "Description"
 			text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
@@ -106,6 +137,9 @@ func show_level() -> void:
 		open.push_front(list.get_child(mission))
 	if level == 3:
 		open = [ok]
+	if level == 1:
+		world_view.focus_first.call_deferred()
+		return
 	if not open.is_empty():
 		(open[0] as Button).grab_focus.call_deferred()
 
@@ -159,7 +193,8 @@ func ask_accept() -> void:
 func accept() -> void:
 	var line: int = profile.next_briefing(rng)
 	profile.save_keeping_map(path)
-	Router.push("briefing", {"lord": lord_id, "mission": mission, "line": line, "profile_path": path})
+	var go := Router.replace if from_camp else Router.push
+	go.call("briefing", {"lord": lord_id, "mission": mission, "line": line, "profile_path": path})
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -170,7 +205,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		scroll.scroll_vertical += page if event.is_action_pressed("ui_down") else -page
 	elif event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
-		if level > 1:
+		if level > 1 and not (from_camp and level == 2):
 			level -= 1
 			show_level()
 		else:

@@ -11,6 +11,8 @@ const SCREENS := {
 	"settings": "res://scripts/screens/settings_screen.gd",
 	"map_viewer": "res://scripts/screens/map_viewer.gd",
 	"campaign": "res://scripts/screens/campaign_screen.gd",
+	"camp": "res://scripts/screens/camp_screen.gd",
+	"town_hall": "res://scripts/screens/town_hall_screen.gd",
 	"mission": "res://scripts/screens/mission_screen.gd",
 	"briefing": "res://scripts/screens/briefing_screen.gd",
 	"management": "res://scripts/screens/management_screen.gd",

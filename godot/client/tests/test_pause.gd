@@ -15,7 +15,7 @@ func test_pause_menu() -> void:
 	check(not screen.is_processing(), "paused: the game stops")
 	check(screen.pause_menu != null, "the pause menu shows")
 	var names: Array = screen.pause_menu.buttons.map(func(b): return str(b.name))
-	eq(names.slice(0, 6), ["Resume", "Items", "Save", "Options", "Help", "Exit"], "its rows, as in pyport")
+	eq(names.slice(0, 5), ["Resume", "Items", "Options", "Help", "Exit"], "its rows: no Save, the camps keep the game")
 	screen.sim.quick_slots[2] = [4, 1]
 	screen.pause_menu.open_items()
 	var items: Control = screen.pause_menu.settings
@@ -25,7 +25,7 @@ func test_pause_menu() -> void:
 	eq(int(screen.sim.quick_keys[0]), 2, "the mission's key changed at once")
 	items.go_back()
 	check(screen.pause_menu.settings == null, "back to the pause menu")
-	screen.pause_menu.buttons[5].pressed.emit()
+	screen.pause_menu.buttons[4].pressed.emit()
 	check(screen.pause_menu.ask.visible, "exit is asked first")
 	screen.pause_menu.ask.hide()
 	screen.pause_menu.open_options()

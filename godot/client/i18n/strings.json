@@ -1470,5 +1470,117 @@
   "online.battle_bag_full": {
     "en": "No room for the loot!",
     "uk": "Немає місця для здобичі!"
+  },
+  "campaign.world": {
+    "en": "World Map",
+    "uk": "Карта світу"
+  },
+  "world.here": {
+    "en": "you are here",
+    "uk": "ви тут"
+  },
+  "world.next": {
+    "en": "you can go here",
+    "uk": "можна йти"
+  },
+  "world.closed": {
+    "en": "closed for now",
+    "uk": "поки закрито"
+  },
+  "world.away": {
+    "en": "further on",
+    "uk": "далі"
+  },
+  "world.won": {
+    "en": "won %d / %d",
+    "uk": "виграно %d / %d"
+  },
+  "world.rooms": {
+    "en": "Rooms on the way: %d of %d   ■ start   ● general",
+    "uk": "Кімнат на шляху: %d із %d   ■ старт   ● генерал"
+  },
+  "camp.hint_walk": {
+    "en": "Walk to a colonel at a way on   [Esc] camp menu",
+    "uk": "Підійди до полковника біля шляху   [Esc] меню табору"
+  },
+  "camp.hint_walk_pad": {
+    "en": "Walk to a colonel at a way on   [Start] camp menu",
+    "uk": "Підійди до полковника біля шляху   [Start] меню табору"
+  },
+  "camp.talk": {
+    "en": "[Enter] talk: the missions at %s",
+    "uk": "[Enter] говорити: місії в «%s»"
+  },
+  "camp.talk_pad": {
+    "en": "[A] talk: the missions at %s",
+    "uk": "[A] говорити: місії в «%s»"
+  },
+  "camp.way_closed": {
+    "en": "The way to %s is closed for now",
+    "uk": "Шлях до «%s» поки закритий"
+  },
+  "camp.enter_hall": {
+    "en": "[Enter] Town Hall: every colonel and general",
+    "uk": "[Enter] Ратуша: усі полковники й генерали"
+  },
+  "camp.enter_hall_pad": {
+    "en": "[A] Town Hall: every colonel and general",
+    "uk": "[A] Ратуша: усі полковники й генерали"
+  },
+  "camp.enter_smith": {
+    "en": "[Enter] Blacksmith",
+    "uk": "[Enter] Коваль"
+  },
+  "camp.enter_smith_pad": {
+    "en": "[A] Blacksmith",
+    "uk": "[A] Коваль"
+  },
+  "camp.hall": {
+    "en": "Town Hall",
+    "uk": "Ратуша"
+  },
+  "camp.main": {
+    "en": "Main camp",
+    "uk": "Головний табір"
+  },
+  "camp.stop": {
+    "en": "Stop",
+    "uk": "Стоянка"
+  },
+  "camp.start": {
+    "en": "the start",
+    "uk": "початок"
+  },
+  "camp.main_menu": {
+    "en": "Main menu",
+    "uk": "Головне меню"
+  },
+  "camp.back": {
+    "en": "Back to the camp",
+    "uk": "Назад до табору"
+  },
+  "hall.colonels": {
+    "en": "Colonels",
+    "uk": "Полковники"
+  },
+  "hall.generals": {
+    "en": "Generals you know",
+    "uk": "Знайомі генерали"
+  },
+  "hall.progress": {
+    "en": "%s: %d%%",
+    "uk": "%s: %d%%"
+  },
+  "hall.friend": {
+    "en": "%s: friendship %d",
+    "uk": "%s: дружба %d"
+  },
+  "hall.nobody": {
+    "en": "Nobody yet: win missions beside the generals",
+    "uk": "Поки нікого: вигравай місії разом із генералами"
+  },
+  "hall.visits": {
+    "en": "Visiting",
+    "uk": "Візити"
   }
 }

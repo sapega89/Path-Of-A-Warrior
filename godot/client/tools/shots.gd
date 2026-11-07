@@ -471,6 +471,22 @@ func _ready() -> void:
 	Router.current.next_line()
 	Router.current.press()
 	await _shot(out, "04d_briefing")
+	# The camps between missions: a stop with a fork (one way closed), a stop with six ways,
+	# the main camp at the start with the town hall and the blacksmith, and the town hall.
+	walker.place = 4
+	walker.save("user://shot_walker.json")
+	Router.go("camp", {"profile_path": "user://shot_walker.json"})
+	await _shot(out, "04e_camp_fork")
+	walker.place = 27
+	walker.save("user://shot_walker.json")
+	Router.go("camp", {"profile_path": "user://shot_walker.json"})
+	await _shot(out, "04f_camp_six_ways")
+	walker.place = 0
+	walker.save("user://shot_walker.json")
+	Router.go("camp", {"profile_path": "user://shot_walker.json"})
+	await _shot(out, "04g_camp_main")
+	Router.go("town_hall", {"profile_path": "user://shot_walker.json"})
+	await _shot(out, "04h_town_hall")
 	Router.go("mission", {"lord": 1, "mission": 0, "seed": 1})
 	var mission: Node = Router.current
 	await _frames(20)
@@ -489,7 +505,7 @@ func _ready() -> void:
 	Router.current.pause_menu.open_items()
 	await _shot(out, "mission_1_pause_items")
 	Router.current.pause_menu.close_options()
-	Router.current.pause_menu.buttons[5].pressed.emit()
+	Router.current.pause_menu.buttons[4].pressed.emit()
 	await _shot(out, "mission_1_pause_exit_ask")
 	Router.current.pause_menu.ask.hide()
 	Router.current.resume()
