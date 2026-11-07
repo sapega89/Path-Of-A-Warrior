@@ -45,7 +45,7 @@ func test_points_have_done_reset_back() -> void:
 	InputSetup.device = "keys"
 	check(screen.controls_hint().contains("+1"), "the line says a press adds a point")
 	InputSetup.device = was
-	check(screen.stat_buttons[0].text.contains("+5"), "the HP button says what a point adds")
+	eq(screen.stat_buttons[0].text, "+", "a \"+\" beside each stat")
 	check(screen.done_button.disabled, "Done waits for every point")
 	check(screen.reset_button.disabled, "nothing to reset yet")
 	var hp: int = screen.profile.base_hp

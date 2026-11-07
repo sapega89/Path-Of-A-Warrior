@@ -3,7 +3,7 @@ extends Control
 ## x1; on both the hero turns to the nearest enemy as he strikes; it cannot change later), the
 ## hero's face (each face a hero with his own base stats), his name (up to 8 letters, typed or
 ## on the keys under the field, scripts/ui/key_grid.gd), and his
-## 5 first stat points (each stat button says what a point adds; Reset gives them back, Done
+## 5 first stat points ("+" beside a stat puts a point in it; Reset gives them back, Done
 ## asks to go on once all are spent). Every step has Back. Then the hero is saved over
 ## any old one and the opening story starts, then the game menu.
 ## Params: profile_path (optional), then (the screen after the opening, default game_menu).
@@ -27,7 +27,8 @@ var body: VBoxContainer
 var info: Label
 var ask: ConfirmationDialog
 var name_edit: LineEdit
-var stat_buttons: Array[Button] = []
+var stat_buttons: Array[Button] = []  # the "+" of each stat
+var stat_values: Array[Label] = []
 var points_label: Label
 var points_hint: Label
 var reset_button: Button
@@ -61,6 +62,7 @@ func _clear() -> void:
 		body.remove_child(c)
 		c.queue_free()
 	stat_buttons.clear()
+	stat_values.clear()
 	info.text = ""
 	points_hint = null
 	reset_button = null
@@ -156,12 +158,23 @@ func show_step(s: int) -> void:
 			points_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 			body.add_child(points_label)
 			for i in 4:
-				# one button a stat, its value and what a point adds in it ("HP: 40   +5")
+				# as on the Attributes screen: the stat, its value and "+" that puts a point in it
 				var row := HBoxContainer.new()
+				var l := Label.new()
+				l.text = "attributes." + STAT_KEYS[i]
+				l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+				row.add_child(l)
+				var v := Label.new()
+				v.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+				v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+				v.custom_minimum_size = Vector2(120, 0)
+				row.add_child(v)
+				stat_values.append(v)
 				var b := Button.new()
 				b.name = "Stat%d" % i
+				b.text = "+"
 				b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-				b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+				b.custom_minimum_size = Vector2(56, 0)
 				b.pressed.connect(spend.bind(i))
 				row.add_child(b)
 				stat_buttons.append(b)
@@ -180,7 +193,7 @@ func show_step(s: int) -> void:
 			for b in actions.get_children():
 				b.custom_minimum_size = Vector2(180, 0)
 			_refresh_points()
-			(body.get_child(1).get_child(0) as Button).grab_focus.call_deferred()
+			stat_buttons[0].grab_focus.call_deferred()
 
 
 func choose_difficulty(d: int) -> void:
@@ -238,7 +251,7 @@ func reset_points() -> void:
 	profile = fresh
 	if step == Step.POINTS:
 		_refresh_points()
-		(body.get_child(1).get_child(0) as Button).grab_focus()
+		stat_buttons[0].grab_focus()
 
 
 ## Done: asks to go on with the hero (only once every point is spent).
@@ -251,7 +264,7 @@ func _refresh_points() -> void:
 	points_label.text = tr("newgame.points_left") % profile.stat_points
 	var values := [profile.base_hp, profile.base_mp, profile.base_attack, profile.base_defense]
 	for i in stat_buttons.size():
-		stat_buttons[i].text = "%s %d   +%d" % [tr("attributes.%s" % STAT_KEYS[i]), values[i], Profile.POINT_GAINS[i]]
+		stat_values[i].text = str(values[i])
 		stat_buttons[i].disabled = profile.stat_points == 0
 	var left: int = profile.stat_points
 	points_hint.text = tr("newgame.points_spent") if left == 0 else tr("newgame.points_hint")
