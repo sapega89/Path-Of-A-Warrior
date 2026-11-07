@@ -139,8 +139,8 @@ func test_sword_hits() -> void:
 
 
 
-## The hero turns to the enemy beside him as he strikes, on hard too (as in pyport).
-func test_auto_aim_on_both_difficulties() -> void:
+## The hero turns to the enemy beside him as he strikes on normal; on hard he aims by hand.
+func test_auto_aim_only_on_normal() -> void:
 	for hard in [false, true]:
 		var d := _duel()
 		var sim: RefCounted = d[0]
@@ -149,15 +149,7 @@ func test_auto_aim_on_both_difficulties() -> void:
 		e.pos = sim.hero.pos + Vector2i(30, 0)
 		sim.tick(-1, -1, true)
 		sim.tick(-1, -1)
-		eq(sim.hero.facing, 6, "turned right to the enemy (hard: %s)" % hard)
-	var d := _duel()
-	var sim: RefCounted = d[0]
-	d[1].pos = sim.hero.pos + Vector2i(30, 0)
-	sim.difficulty = 0
-	sim.auto_aim_hard = false
-	sim.tick(-1, -1, true)
-	sim.tick(-1, -1)
-	eq(sim.hero.facing, 0, "the original's hard: no turn")
+		eq(sim.hero.facing, 0 if hard else 6, "turned to the enemy only on normal (hard: %s)" % hard)
 
 
 func test_hit_spark_shows_two_ticks() -> void:

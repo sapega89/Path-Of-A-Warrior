@@ -23,6 +23,29 @@ func _skip_key() -> InputEventAction:
 	return ev
 
 
+## Hard has no auto-hunt: no AUTO corner, and Tab / F / R3 do nothing.
+func test_no_auto_on_hard() -> void:
+	var old: Dictionary = Router.params
+	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	var screen: Control = MissionScreen.new()
+	root.add_child(screen)
+	var view: Vector2 = screen.hud.get_viewport_rect().size
+	var corner := Vector2(4, view.y - 4)
+	screen.sim.difficulty = 1
+	check(screen.auto_allowed(), "normal: AUTO")
+	screen.toggle_auto()
+	check(screen.autopilot.on, "normal: it turns on")
+	screen.toggle_auto()
+	screen.sim.difficulty = 0
+	screen.hud.auto_allowed = screen.auto_allowed()
+	check(not screen.auto_allowed(), "hard: no AUTO")
+	check(not screen.hud.auto_at(corner), "hard: no AUTO corner")
+	screen.toggle_auto()
+	check(not screen.autopilot.on, "hard: it stays off")
+	screen.queue_free()
+	Router.params = old
+
+
 func test_skip_corner_on_the_map() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}

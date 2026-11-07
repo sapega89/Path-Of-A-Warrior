@@ -73,10 +73,10 @@ NO_COMBAT = os.environ.get("POW_NO_COMBAT", "0") == "1"
 # POW_HOLD_TO_MOVE=0 = the phone way. tools/shot.py uses 0 (scenarios press keys like a phone).
 HOLD_TO_MOVE = os.environ.get("POW_HOLD_TO_MOVE", "1") == "1"
 
-# (temporary, asked by the player): the Normal-difficulty auto-aim (ar.f: before a hit
-# the hero turns to the nearest enemy) also on Hard. Gold and EXP of Hard stay as they are.
-# POW_AUTO_AIM_HARD=0 = the original (no auto-aim on Hard). tools/shot.py uses 0.
-AUTO_AIM_HARD = os.environ.get("POW_AUTO_AIM_HARD", "1") == "1"
+# the Normal-difficulty auto-aim (ar.f: before a hit the hero turns to the nearest enemy) also
+# on Hard. Off (the player asked for Hard without it again): on Hard the player aims by hand.
+# POW_AUTO_AIM_HARD=1 = auto-aim on Hard too.
+AUTO_AIM_HARD = os.environ.get("POW_AUTO_AIM_HARD", "0") == "1"
 
 # (like Dragon Nest): a strip above the HUD frame with the 5 belt slots (keys Z X C V B
 # or a click) and the 5 skill slots (keys 1-5 or a click; grey without the MP), see
@@ -114,7 +114,7 @@ DROPS_AFTER_69 = True
 # : auto-hunt on the mission map (pow/game/autopilot.py). The hero
 # walks to the nearest enemy, attacks, casts the skills on keys 1-5 and drinks the potions on * / #.
 # Tab, F or a click on the AUTO button (bottom-left corner of the map) turns it on and off; POW_AUTO_HUNT=1 = on
-# from the start. Any key of the player pauses it for a moment.
+# from the start. Only on Normal: Hard has no auto-hunt and no AUTO button. Any key of the player pauses it for a moment.
 AUTO_HUNT = os.environ.get("POW_AUTO_HUNT", "0") == "1"
 # The AUTO button is always drawn (grey = off) on the map and in Multiplayer battles, so the
 # mode can be found; F and the right stick of a gamepad toggle it too. POW_AUTO_BUTTON=0 = only
