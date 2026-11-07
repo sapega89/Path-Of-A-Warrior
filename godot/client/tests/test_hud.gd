@@ -50,5 +50,9 @@ func test_skill_bar_slots() -> void:
 	eq(hud.slot_at(Vector2(left + (MapHud.slot_x(true, 2) + 5) * k, y)), ["skill", 2], "the third skill")
 	eq(hud.slot_at(Vector2(view.x / 2.0, y)), [], "the gap between")
 	eq(hud.slot_at(Vector2(left + 5 * k, y - 40 * k)), [], "above the bar")
+	var bottom := view.y - 10 * k
+	check(hud.panel_at(Vector2(left + 10 * k, bottom)), "the HP ball's frame")
+	check(hud.panel_at(Vector2(left + 230 * k, bottom)), "the MP ball's frame")
+	check(not hud.panel_at(Vector2(view.x / 2.0, bottom)), "no middle: the map shows there")
 	hud.sim = null
 	hud.free()

@@ -6,7 +6,8 @@ extends Control
 ## Above the panel the skill bar (as in pyport): the five belt slots (keys Z X C V B) on the
 ## left with their counts, the five skills (keys 1-5) on the right, grey when not learned
 ## or without the MP; the slot in use is framed white. A click on a slot uses it. With the
-## bar the panel does not show the two potions (the belt shows all five). In the bottom-left
+## bar only the two balls of the panel are drawn, in their frames at its corners: the middle
+## with the two potions is not needed (the belt shows all five) and the map shows through. In the bottom-left
 ## corner AUTO: white while the auto-hunt is on, grey while off; a click toggles it. While
 ## someone talks on the map that corner is SKIP (pyport's left soft key): a click skips the
 ## talk. In the bottom-right corner PAUSE (pyport's soft key): a click pauses the game.
@@ -15,6 +16,7 @@ const UI := "res://assets/original/ui/"
 const BALL := 35  # the balls' size
 const BALL_X := [4, 201]  # in the 240 px wide panel
 const PANEL_H := 61
+const BALL_FRAME_W := 44  # the frame of a ball at each end of the 240 px panel
 const TOP_Y := 16  # the clock and the kills, below the top bars
 const ITEM := 28  # a frame of tool.png
 const CELL := 23  # a slot of the bar: 1 px shared border and a 22 px icon
@@ -77,8 +79,14 @@ func _draw() -> void:
 		_number(kills_shown, Vector2(view.x - 12 * k, (TOP_Y + 5) * k), k)
 	# the panel at the bottom: two halves around the middle
 	var origin := Vector2(view.x / 2.0 - 120.0 * k, view.y - PANEL_H * k)
-	_put(_panel, origin, k)
-	_put(_panel_r, origin + Vector2(120 * k, 0), k)
+	if show_bar:
+		draw_texture_rect_region(_panel, Rect2(origin, Vector2(BALL_FRAME_W, PANEL_H) * k),
+			Rect2(0, 0, BALL_FRAME_W, PANEL_H))
+		draw_texture_rect_region(_panel_r, Rect2(origin + Vector2(240 - BALL_FRAME_W, 0) * k,
+			Vector2(BALL_FRAME_W, PANEL_H) * k), Rect2(120 - BALL_FRAME_W, 0, BALL_FRAME_W, PANEL_H))
+	else:
+		_put(_panel, origin, k)
+		_put(_panel_r, origin + Vector2(120 * k, 0), k)
 	var fill := [_fill(sim.hero.hp, sim.hero.max_hp), _fill(sim.hero.mp, sim.hero.max_mp)]
 	for b in 2:
 		var h: int = BALL - int(fill[b])
@@ -137,7 +145,13 @@ func pause_at(p: Vector2) -> bool:
 ## Is the point on the rows of the panel at the bottom?
 func panel_at(p: Vector2) -> bool:
 	var view := get_viewport_rect().size
-	return p.y >= view.y - PANEL_H * scale_of(view)
+	var k := scale_of(view)
+	if p.y < view.y - PANEL_H * k:
+		return false
+	if not show_bar:
+		return true
+	var x := (p.x - (view.x / 2.0 - 120.0 * k)) / k  # with the bar only the balls' frames
+	return x < BALL_FRAME_W or x >= 240 - BALL_FRAME_W
 
 
 ## Someone talks on the map (the general who comes, his words after the fight).
