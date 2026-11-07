@@ -1495,10 +1495,6 @@
     "en": "won %d / %d",
     "uk": "виграно %d / %d"
   },
-  "world.rooms": {
-    "en": "Rooms on the way: %d of %d   ■ start   ● general",
-    "uk": "Кімнат на шляху: %d із %d   ■ старт   ● генерал"
-  },
   "camp.hint_walk": {
     "en": "Choose a way: walk out by an arrow   [Esc] camp menu",
     "uk": "Обери шлях: вийди туди, де стрілка   [Esc] меню табору"

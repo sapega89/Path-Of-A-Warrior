@@ -4,7 +4,6 @@ extends "res://tests/test_case.gd"
 
 const WorldMap := preload("res://scripts/core/world_map.gd")
 const WorldMapView := preload("res://scripts/ui/world_map_view.gd")
-const RoomsScheme := preload("res://scripts/ui/rooms_scheme.gd")
 const Rooms := preload("res://scripts/world/rooms.gd")
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
 const Profile := preload("res://scripts/core/profile.gd")
@@ -53,22 +52,6 @@ func test_state_follows_the_hero() -> void:
 	eq(w.won(1, p), Vector2i(2, 4), "two of Uprising's four missions won")
 
 
-func test_rooms_a_mission_walks() -> void:
-	var r: RefCounted = Rooms.new(MapBuilder.load_map(1), 0)
-	eq(r.start_room(Vector2i(4, 2)), 0, "the first mission starts in the top room")
-	eq(r.reachable_from(0), [0, 1, 2], "and walks down all three")
-	var r3: RefCounted = Rooms.new(MapBuilder.load_map(3), 0)
-	eq(r3.start_room(Vector2i(20, 12)), 5, "Chortomlyk's first mission starts on the right")
-	eq(r3.reachable_from(5).size(), 7, "and walks 7 of its 9 rooms")
-	eq(r3.reachable_from(0), [0, 3, 4, 7], "from the top left it would walk other ones")
-	var s: Control = RoomsScheme.new(MapBuilder.load_map(3), 0, Vector2i(20, 12))
-	eq(s.reached(), 7, "the scheme counts them")
-	check(not s.generals().is_empty(), "and marks the general's rooms")
-	for g in s.generals():
-		check(s.reach.has(g), "on the way")
-	s.free()
-
-
 func test_campaign_screen_opens_a_place_from_the_map() -> void:
 	var host := Control.new()
 	host.size = Vector2(1280, 720)
@@ -87,7 +70,7 @@ func test_campaign_screen_opens_a_place_from_the_map() -> void:
 	eq([screen.level, screen.lord_id], [2, 1], "Uprising opens its missions")
 	check(not view.visible, "the map hides")
 	screen._open_mission(0)
-	check(screen.list.get_node_or_null("Rooms") != null, "the description shows the mission's rooms")
+	check(screen.list.get_node_or_null("Description") != null, "a mission shows its story")
 	r.free()
 	host.free()
 	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://test_world_map.json"))

@@ -2,8 +2,7 @@ extends Control
 ## The campaign: the world map (scripts/ui/world_map_view.gd) with the hero's place and the
 ## places he can go to from there, then the missions of a place (a lord: one map). A place
 ## that is not open yet is dark; a mission won has a mark. Winning takes the hero to that
-## place, so the map changes. A mission shows the rooms it walks on the place's map and its
-## description first; OK asks whether to accept it (the general to beat, the level and the
+## place, so the map changes. A mission shows its description first; OK asks whether to accept it (the general to beat, the level and the
 ## gold), and Yes counts the briefing and opens it, then the map. Opened from a camp
 ## (Router.params camp: true) it shows the story of the mission the way led to, OK goes
 ## straight to its briefing (in its place, so the mission ends back in the camp) and Back
@@ -13,10 +12,8 @@ const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Campaign := preload("res://scripts/core/campaign.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const MapSim := preload("res://scripts/sim/map_sim.gd")
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
 const WorldMap := preload("res://scripts/core/world_map.gd")
 const WorldMapView := preload("res://scripts/ui/world_map_view.gd")
-const RoomsScheme := preload("res://scripts/ui/rooms_scheme.gd")
 const DONE_MARK := "  ✓"
 
 var campaign := Campaign.new()
@@ -116,15 +113,6 @@ func show_level() -> void:
 			title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			title.text = str(m.get("name", ""))
 			list.add_child(title)
-			var st: Array = m.get("start", [4, 4])
-			var scheme := RoomsScheme.new(MapBuilder.load_map(Campaign.lord_map(lord_id)), mission,
-				Vector2i(int(st[0]), int(st[1])))
-			list.add_child(scheme)
-			var legend := UiTheme.note("Legend")
-			legend.add_theme_font_size_override("font_size", 20)
-			legend.add_theme_color_override("font_color", UiTheme.TEXT_DIM)
-			legend.text = tr("world.rooms") % [scheme.reached(), scheme.rooms.count()]
-			list.add_child(legend)
 			var text := Label.new()
 			text.name = "Description"
 			text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED

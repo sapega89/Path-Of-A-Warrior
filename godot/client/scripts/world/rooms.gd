@@ -131,23 +131,3 @@ func keep_inside(room: int, pos: Vector3) -> Dictionary:
 		edge = EXIT_DOWN
 	return {"pos": p, "edge": edge}
 
-
-## The room of a start tile (a mission's "start" in campaign.json).
-func start_room(tile: Vector2i) -> int:
-	return room_at(Vector3(tile.x + 0.5, 0.0, tile.y + 0.75))
-
-
-## The rooms the hero can walk to from `room` through the exits, `room` first.
-func reachable_from(room: int) -> Array:
-	var seen := {room: true}
-	var out: Array = [room]
-	var i := 0
-	while i < out.size():
-		var r: int = out[i]
-		i += 1
-		for exit_no in range(EXIT_DOWN, EXIT_RIGHT + 1):
-			var n := neighbour(r, exit_no)
-			if has_exit(r, exit_no) and n >= 0 and n < count() and not seen.has(n):
-				seen[n] = true
-				out.append(n)
-	return out
