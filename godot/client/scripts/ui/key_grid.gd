@@ -4,6 +4,8 @@ extends VBoxContainer
 ## a click) types one; BACK deletes the last character, OK does what Enter does in the field.
 ## Typing goes through the field's text_changed, so the screen's own filter still holds.
 ## With several fields the keys type into the one that had the focus last (follow()).
+## The keys show only while the gamepad is in use (InputSetup.device "pad"): a PC has its
+## keyboard and a phone its own on-screen one when the field is tapped.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const BACK := "⌫"
@@ -17,6 +19,27 @@ const LETTERS := ["ABCDEFGHIJKLM", "NOPQRSTUVWXYZ", "abcdefghijklm", "nopqrstuvw
 
 var target: LineEdit
 var keys: Array[Button] = []
+
+
+func _ready() -> void:
+	var setup := get_node_or_null("/root/InputSetup")
+	if setup == null:
+		return
+	shown_for(setup.device)
+	setup.device_changed.connect(shown_for)
+
+
+## Shown for the gamepad only; a key that had the focus gives it back to the field.
+func shown_for(device: String) -> void:
+	var on := device == "pad"
+	if visible == on:
+		return
+	var had_focus := false
+	for b in keys:
+		had_focus = had_focus or b.has_focus()
+	visible = on
+	if had_focus and target != null and target.is_inside_tree():
+		target.grab_focus()
 
 
 ## A keyboard of these rows (each a string of keys) and a last row of BACK and OK, typing

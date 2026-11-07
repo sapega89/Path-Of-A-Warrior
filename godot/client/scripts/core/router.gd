@@ -27,7 +27,7 @@ const SCREENS := {
 	"endings": "res://scripts/screens/endings_screen.gd",
 	"help": "res://scripts/screens/help_screen.gd",
 	"offline": "res://scripts/screens/offline_screen.gd",
-	"register": "res://scripts/screens/register_screen.gd",
+	"login": "res://scripts/screens/login_screen.gd",
 	"live_warehouse": "res://scripts/screens/live_warehouse_screen.gd",
 	"live_safe": "res://scripts/screens/live_safe_screen.gd",
 	"live_trade": "res://scripts/screens/live_trade_screen.gd",

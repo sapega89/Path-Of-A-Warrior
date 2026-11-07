@@ -3,7 +3,7 @@ extends Node
 ##
 ## Game code reads only actions ("attack", "skill_1"), never keys, so the
 ## same code works with a keyboard, a gamepad and the touch buttons.
-## Menus use Godot's built-in ui_* actions, which already cover all three (with MENU_KEYS added).
+## Menus use Godot's built-in ui_* actions, with MENU_KEYS and MENU_PAD (A: OK, B: BACK) added.
 ## As in pyport: 1-5 (or U I O P K) the five skills, Z X C V B the five belt slots, * and #
 ## (the numeric keypad, RT and L3 of a pad) the two potion keys; the pad's right stick
 ## up / right / down / left uses the belt slots Z X C V. Tab, F or R3: auto-hunt on / off.
@@ -51,6 +51,25 @@ const MENU_KEYS := {
 	"ui_right": [KEY_D, KEY_KP_6],
 	"ui_accept": [KEY_J, KEY_KP_5],
 }
+## The pad in the menus: Godot's own ui_accept and ui_cancel have no pad button (A pressed no
+## button, B went nowhere), and its d-pad and stick are only for the first pad (device 0).
+const MENU_PAD := {
+	"ui_accept": JOY_BUTTON_A,
+	"ui_cancel": JOY_BUTTON_B,
+	"ui_up": JOY_BUTTON_DPAD_UP,
+	"ui_down": JOY_BUTTON_DPAD_DOWN,
+	"ui_left": JOY_BUTTON_DPAD_LEFT,
+	"ui_right": JOY_BUTTON_DPAD_RIGHT,
+}
+const MENU_AXES := {
+	"ui_up": [JOY_AXIS_LEFT_Y, -1.0],
+	"ui_down": [JOY_AXIS_LEFT_Y, 1.0],
+	"ui_left": [JOY_AXIS_LEFT_X, -1.0],
+	"ui_right": [JOY_AXIS_LEFT_X, 1.0],
+}
+## Pad bindings match every pad, not only the first one Windows or Android numbered 0 (a
+## second pad, or one that came back with another number, did nothing).
+const ALL_PADS := -1
 const PAD_BUTTONS := {
 	"move_left": JOY_BUTTON_DPAD_LEFT,
 	"move_right": JOY_BUTTON_DPAD_RIGHT,
@@ -177,6 +196,15 @@ static func register() -> void:
 			var mk := InputEventKey.new()
 			mk.physical_keycode = key
 			_add(action, mk)
+	for action in MENU_PAD:
+		var mb := InputEventJoypadButton.new()
+		mb.button_index = MENU_PAD[action]
+		_add(action, mb)
+	for action in MENU_AXES:
+		var ma := InputEventJoypadMotion.new()
+		ma.axis = MENU_AXES[action][0]
+		ma.axis_value = MENU_AXES[action][1]
+		_add(action, ma)
 	for action in KEYS:
 		if not InputMap.has_action(action):
 			InputMap.add_action(action, DEADZONE)
@@ -196,5 +224,7 @@ static func register() -> void:
 
 
 static func _add(action: String, ev: InputEvent) -> void:
+	if ev is InputEventJoypadButton or ev is InputEventJoypadMotion:
+		ev.device = ALL_PADS
 	if not InputMap.action_has_event(action, ev):
 		InputMap.action_add_event(action, ev)

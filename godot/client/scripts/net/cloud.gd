@@ -9,7 +9,8 @@ extends Node
 ## pow/net/cert. Only the game's own scene turns it on: the tests, the screenshots, the server
 ## and the tools run without it (the hero in user://hero.json), and so does `-- --offline`
 ## (for working on the game without a server).
-## The account (UserID + password) stays on this device in user://account.cfg.
+## The account (UserID + password) is asked for on the login screen and kept only while the game
+## runs: a restart asks again. The file an older version kept it in (user://account.cfg) goes.
 ## Live (scripts/net/live_client.gd) and the online game (scripts/net/online_client.gd) go
 ## over the same logged-in connection (request()); the server's pushes go to the online game.
 ## Quit (or the window closed) waits up to FLUSH_MS for the last save to reach the server.
@@ -18,7 +19,7 @@ const CloudSync := preload("res://scripts/net/cloud_sync.gd")
 const LiveClient := preload("res://scripts/net/live_client.gd")
 const OnlineClient := preload("res://scripts/net/online_client.gd")
 const Protocol := preload("res://scripts/net/protocol.gd")
-const ACCOUNT_PATH := "user://account.cfg"
+const ACCOUNT_PATH := "user://account.cfg"  # an older version's, removed at the start
 const LEGACY_PATH := "user://hero.json"
 const FLUSH_MS := 3000
 const DEFAULT_SERVER := "127.0.0.1"
@@ -90,9 +91,8 @@ func start(address: String, port: int, cert: X509Certificate, cert_path := "") -
 	mp.on_battle = func() -> void: Router.push("online_battle")
 	sync.client.on_push = _push
 	sync.options_store = Settings
-	var acc := load_account()
-	if not acc.is_empty():
-		sync.account = acc
+	if FileAccess.file_exists(account_path):
+		DirAccess.remove_absolute(account_path)
 	if FileAccess.file_exists(LEGACY_PATH):
 		var v: Variant = JSON.parse_string(FileAccess.get_file_as_string(LEGACY_PATH))
 		if v is Dictionary:
@@ -162,35 +162,21 @@ func register(id: String, pwd: String, done: Callable) -> void:
 	if sync == null:
 		done.call({"ok": false, "err": "offline"})
 		return
-	sync.register(id, pwd, func(r: Dictionary) -> void:
-		if r.get("ok", false):
-			save_account(id, pwd)
-		done.call(r))
+	sync.register(id, pwd, done)
 
 
-## "Login refused" > BACK: the stored account goes; the game asks for one again.
+## done(answer): ok, or err "no account", "password", "bad id", "update", "offline".
+func login(id: String, pwd: String, done: Callable) -> void:
+	if sync == null:
+		done.call({"ok": false, "err": "offline"})
+		return
+	sync.login(id, pwd, done)
+
+
+## "Login refused" > BACK, or logged out: the game asks for an account again.
 func forget_account() -> void:
-	DirAccess.remove_absolute(account_path)
 	if sync != null:
 		sync.forget_account()
-
-
-func load_account() -> Array:
-	var cf := ConfigFile.new()
-	if cf.load(account_path) != OK:
-		return []
-	var id: Variant = cf.get_value("account", "id", "")
-	var pwd: Variant = cf.get_value("account", "pwd", "")
-	if Protocol.valid_id(id) and Protocol.valid_password(pwd):
-		return [id, pwd]
-	return []
-
-
-func save_account(id: String, pwd: String) -> void:
-	var cf := ConfigFile.new()
-	cf.set_value("account", "id", id)
-	cf.set_value("account", "pwd", pwd)
-	cf.save(account_path)
 
 
 ## Quit Game, or the window closed: the game ends once the last save has reached the server,
