@@ -51,10 +51,6 @@
     "en": "Map %d / %d   [LB] [RB] change map   [B] back",
     "uk": "Карта %d / %d   [LB] [RB] інша карта   [B] назад"
   },
-  "menu.maps": {
-    "en": "Maps",
-    "uk": "Карти"
-  },
   "campaign.mission": {
     "en": "Mission %d: %s",
     "uk": "Місія %d: %s"

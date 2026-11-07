@@ -204,7 +204,7 @@ func test_game_menu_has_the_game_and_the_main_menu_the_rest() -> void:
 	screen = MainMenu.new()
 	root.add_child(screen)
 	var names: Array = screen.buttons.map(func(b): return str(b.name))
-	eq(names.slice(0, 6), ["Play", "NewGame", "Endings", "Maps", "Settings", "Help"])
+	eq(names.slice(0, 5), ["Play", "NewGame", "Endings", "Settings", "Help"])
 	screen.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))

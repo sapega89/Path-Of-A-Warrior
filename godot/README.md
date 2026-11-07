@@ -146,7 +146,7 @@ godot --path godot/client                                      # 2) гра
 
 ## Меню
 
-- **Головне меню** (`scripts/screens/main_menu.gd`): Play / Continue, New Game, Endings, Maps,
+- **Головне меню** (`scripts/screens/main_menu.gd`): Play / Continue, New Game, Endings,
   Settings, Help, Quit (на телефоні й у браузері без Quit).
 - **Ігрове меню** (`scripts/screens/game_menu.gd`; Continue, а після прологу нової гри — саме):
   Missions (кампанія), Management, Blacksmith, сторінки Live — **Trade**, **Warehouse**, **Safe**,
