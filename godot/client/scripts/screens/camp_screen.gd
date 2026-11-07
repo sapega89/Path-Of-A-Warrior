@@ -58,7 +58,7 @@ func _ready() -> void:
 	place = int(profile.place)
 	world_map = WorldMap.new(campaign)
 	rng.seed = hash([place, profile.done.size()])  # the same ways each time back here
-	camp = CampMap.new(choices(), CampMap.is_main(place))
+	camp = CampMap.new(choices(), CampMap.is_main(place), place)
 	_build_world()
 	_build_ui()
 	if profile.on_map.is_empty():

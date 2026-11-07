@@ -82,6 +82,9 @@ func test_camp_map_has_a_gap_per_way() -> void:
 			ways.append([i + 1, i != 1])
 		var c: RefCounted = CampMap.new(ways)
 		eq(c.exits.size(), n, "%d ways, %d gaps" % [n, n])
+		for place in 46:
+			check(CampMap.new(ways, false, place).all_reachable(),
+				"%d ways at place %d: the things about the camp leave every way and spot free" % [n, place])
 		for e in c.exits:
 			for p in e.gap:
 				var f: int = c.data.flags[p.y * CampMap.W + p.x]
