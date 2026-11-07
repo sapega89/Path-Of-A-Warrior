@@ -30,7 +30,8 @@ static func data() -> Dictionary:
 	return _data
 
 
-## The pages of a story, in order. The hero's lines carry his name.
+## The pages of a story, in order, in the player's language (I18n.text). The hero's lines
+## carry his name, the master's the name of his office (strings.json story.master).
 static func pages(story: int, hero_name: String) -> Array:
 	var out: Array = []
 	var d := data()
@@ -38,11 +39,12 @@ static func pages(story: int, hero_name: String) -> Array:
 		var lines: Array = d.get("opening", [])
 		for i in lines.size():
 			if i < 2:
-				out.append({"kind": "picture", "picture": 1 if i == 0 else 10, "text": str(lines[i])})
+				out.append({"kind": "picture", "picture": 1 if i == 0 else 10, "text": I18n.text(lines[i])})
 			elif i % 2 == 0:
-				out.append({"kind": "talk", "speaker": NOFACE, "text": "[Master] " + str(lines[i])})
+				out.append({"kind": "talk", "speaker": NOFACE,
+					"text": "[%s] %s" % [TranslationServer.translate("story.master"), I18n.text(lines[i])]})
 			else:
-				out.append({"kind": "talk", "speaker": HERO, "text": "[%s] %s" % [hero_name, lines[i]]})
+				out.append({"kind": "talk", "speaker": HERO, "text": "[%s] %s" % [hero_name, I18n.text(lines[i])]})
 		return out
 	var endings: Array = d.get("endings", [])
 	if story < 0 or story >= endings.size():
@@ -52,19 +54,19 @@ static func pages(story: int, hero_name: String) -> Array:
 	for i in talk.size():
 		var line := str(talk[i])
 		if story == 0 and i == 2:
-			out.append({"kind": "talk", "speaker": NOFACE, "text": str(gamestr[1])})
+			out.append({"kind": "talk", "speaker": NOFACE, "text": I18n.text(gamestr[1])})
 		elif _numbered(line):
 			var parts := _split(line)
-			out.append({"kind": "talk", "speaker": parts[0], "text": parts[1]})
+			out.append({"kind": "talk", "speaker": parts[0], "text": I18n.text(parts[1])})
 		else:
-			out.append({"kind": "talk", "speaker": HERO, "text": "[%s] %s" % [hero_name, line]})
+			out.append({"kind": "talk", "speaker": HERO, "text": "[%s] %s" % [hero_name, I18n.text(line)]})
 	var pictures: Array = endings[story].get("pictures", [])
 	for i in pictures.size():
 		if story == 0 and i == 0:
-			out.append({"kind": "picture", "picture": 0, "text": str(gamestr[0])})
+			out.append({"kind": "picture", "picture": 0, "text": I18n.text(gamestr[0])})
 		else:
 			var parts := _split(str(pictures[i]))
-			out.append({"kind": "picture", "picture": int(parts[0]) - 1, "text": parts[1]})
+			out.append({"kind": "picture", "picture": int(parts[0]) - 1, "text": I18n.text(parts[1])})
 	out.append({"kind": "stats"})
 	return out
 

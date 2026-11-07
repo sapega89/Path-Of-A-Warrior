@@ -58,7 +58,7 @@ func test_briefing_lines_in_turn_then_random() -> void:
 
 func test_briefing_talk() -> void:
 	var lines := Briefing.talk(0, "Colonel Bairak", "Ann")
-	eq(lines[0], "[Colonel Bairak] You look like you're new here. If you have not visited the Blacksmith already, you ought to.", "the advice")
+	eq(lines[0], "[Colonel Bairak] A new face. Before you ride anywhere, go and see the smith. A bare sabre wins no wars.", "the advice")
 	eq(lines[1], "[Ann] I hear you.", "the answer")
 
 
@@ -79,7 +79,7 @@ func test_description_accept_briefing_mission() -> void:
 	eq(c.level, 3, "a mission: its description first")
 	eq(c.heading.text, "Uprising", "the lord")
 	eq((c.list.get_node("Mission") as Label).text, "Colonel Bairak", "the mission")
-	check((c.list.get_node("Description") as Label).text.begins_with("\"The Rise of Darkness\" has roused"),
+	check((c.list.get_node("Description") as Label).text.begins_with("Listen, mercenary. Chyhyryn may be burning"),
 		"its text")
 	c._unhandled_input(_cancel())
 	eq(c.level, 2, "back: the missions")
@@ -102,7 +102,7 @@ func test_description_accept_briefing_mission() -> void:
 	eq(int(saved.on_map.get("lord", 0)), 2, "the mission saved on its map stays")
 
 	var b: Control = Router.current
-	eq(b.lord_says.text, "[Colonel Bairak] You look like you're new here. If you have not visited the Blacksmith already, you ought to.",
+	eq(b.lord_says.text, "[Colonel Bairak] A new face. Before you ride anywhere, go and see the smith. A bare sabre wins no wars.",
 		"the advice of the mission's lord")
 	eq(b.lord_says.visible_characters, 0, "typed out")
 	b._process(0.1)

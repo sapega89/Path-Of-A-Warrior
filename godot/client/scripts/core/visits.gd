@@ -42,9 +42,10 @@ static func data() -> Dictionary:
 	return _data
 
 
+## Line i of the visit talks, in the player's language.
 static func line(i: int) -> String:
 	var lines: Array = data().get("lines", [])
-	return str(lines[i]) if i >= 0 and i < lines.size() else ""
+	return I18n.text(lines[i]) if i >= 0 and i < lines.size() else ""
 
 
 ## Can the hero invite someone now: a mission won since the last visit, and a friend.

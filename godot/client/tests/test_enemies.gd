@@ -370,7 +370,7 @@ func test_general_comes_with_his_talk() -> void:
 	eq(g.level, 2, "the hero's level and the list's count")
 	eq(g.hp, 23, "20 HP and 3 a level")
 	eq(sim.talk.size(), 3, "three lines")
-	eq(sim.talk[0], "[Zdzislaw Krzeminski] Zdzislaw Krzeminski is here!!!", "his name for &")
+	eq(sim.talk[0], "[Zdzislaw Krzeminski] Zdzislaw Krzeminski is here!", "his name for &")
 	sim.tick(-1, -1)
 	eq(sim.talk_text(), "[", "typed a letter a tick")
 	var x: int = sim.hero.pos.x
@@ -430,7 +430,7 @@ func test_rewards_and_the_talk_after_the_mission() -> void:
 	_next_page(sim)
 	eq(sim.banner, 0, "the pages are over")
 	eq(sim.talk.size(), 5, "the general talks")
-	check(sim.talk[0].begins_with("[Andrii Nedolia] Not bad, warrior."), "his first words: %s" % sim.talk[0])
+	check(sim.talk[0].begins_with("[Andrii Nedolia] You handle yourself well, warrior."), "his first words: %s" % sim.talk[0])
 	check(sim.talk[1].begins_with("[Hero]"), "then the hero")
 	eq(sim.friendship.get(5, 0), 5, "friendship grows")
 	for t in 400:

@@ -87,6 +87,10 @@
     "en": "Epilogue",
     "uk": "Епілог"
   },
+  "story.master": {
+    "en": "Prior",
+    "uk": "Настоятель"
+  },
   "mission.stage": {
     "en": "Stage",
     "uk": "Етап"

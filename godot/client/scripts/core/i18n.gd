@@ -7,10 +7,13 @@ extends Node
 ## JSON (not CSV) so that tests and headless runs need no import step.
 ## res://i18n/names.json (made by godot/tools/import_original.py) has the same shape: the
 ## English names of heroes, skills and things -> their text per locale, so tr(name) shows a
-## name in the player's language.
+## name in the player's language. res://i18n/story.json (made by the same tool from
+## godot/tools/own_story.json) likewise: the English story texts of data (mission briefings,
+## the opening and the endings, the talks, the visits, the help) -> their text per locale.
 
 const STRINGS_PATH := "res://i18n/strings.json"
 const NAMES_PATH := "res://i18n/names.json"
+const STORY_PATH := "res://i18n/story.json"
 const LOCALES: Array[String] = ["en", "uk"]
 const FALLBACK := "en"
 
@@ -18,7 +21,7 @@ var _loaded: Array[Translation] = []
 
 
 func _ready() -> void:
-	load_files([STRINGS_PATH, NAMES_PATH])
+	load_files([STRINGS_PATH, NAMES_PATH, STORY_PATH])
 
 
 ## Parses the strings file. Returns {locale: {key: text}}, or {} on bad input.
@@ -66,6 +69,12 @@ func load_files(paths: Array) -> int:
 		_loaded.append(t)
 		keys = maxi(keys, table[locale].size())
 	return keys
+
+
+## A text of the data files (data/*.json) in the player's language: its translation of
+## i18n/story.json, or the text itself.
+static func text(v: Variant) -> String:
+	return String(TranslationServer.translate(str(v)))
 
 
 ## Which locale to use: the saved choice, else the system language, else English.

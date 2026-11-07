@@ -35,6 +35,11 @@ Writes
                                          the 44 generals one can visit (export_visit)
   godot/client/i18n/names.json           our names (own_names.json) in both languages, English
                                          name -> {"en", "uk"}, for the game to translate them
+  godot/client/i18n/story.json           our story texts (own_story.json: the mission briefings,
+                                         the opening and endings, the talks, the visits, the help)
+                                         in both languages, English text -> {"en", "uk"}; the
+                                         English goes into the data files in place of the
+                                         imported texts (export_story_i18n)
   godot/client/data/campaign.json        chapters, lords (one map each) and missions, as the
                                          campaign screens read them (load_chapter_lords,
                                          load_lord_missions):
@@ -366,7 +371,8 @@ def export_talk(out):
         n = d[0] | d[1] << 8
         off = [d[2 + i * 2] | d[3 + i * 2] << 8 for i in range(n + 1)]
         talk[name] = [d[off[i]:off[i + 1]].decode("utf-8", "replace") for i in range(n)]
-    (out / "talk.json").write_text(json.dumps(own_texts(talk), ensure_ascii=False, indent=0))
+        talk[name] = own_story_lines(OWN_STORY["talk"][name], own_texts(talk[name]))
+    (out / "talk.json").write_text(json.dumps(talk, ensure_ascii=False, indent=0))
 
 
 # Visiting a general (edat 62 visit.scr, 52 visitgen.arr): the greetings, ten points of
@@ -380,7 +386,8 @@ def export_visit(out):
     width = d[1]
     generals = [int.from_bytes(d[1 + n + width * i:1 + n + width * (i + 1)], "little")
                 for i in range((len(d) - 1 - n) // width)]
-    visit = {"lines": own_texts(read_table(ROOT / edat[62])), "generals": generals}
+    lines = own_story_lines(OWN_STORY["visit"], own_texts(read_table(ROOT / edat[62])))
+    visit = {"lines": lines, "generals": generals}
     (out / "visit.json").write_text(json.dumps(visit, ensure_ascii=False, indent=0))
 
 
@@ -395,6 +402,9 @@ def export_help(out):
     names = read_table(ROOT / "uimenu.scr")[38].split("|")
     topics = [{"name": names[i], "pages": pages[HELP_TOPIC_START[i]:HELP_TOPIC_START[i + 1]]}
               for i in range(len(HELP_TOPIC_START) - 1)]
+    for topic, own in zip(topics, OWN_STORY["help"]):
+        topic["name"] = own_story_text(own["name"], topic["name"])
+        topic["pages"] = own_story_lines(own["pages"], topic["pages"])
     (out / "help.json").write_text(json.dumps({"topics": topics}, ensure_ascii=False, indent=0))
 
 
@@ -461,6 +471,36 @@ def own_texts(data):
     if isinstance(data, dict):
         return {k: own_texts(v) for k, v in data.items()}
     return data
+
+
+OWN_STORY = json.loads((pathlib.Path(__file__).with_name("own_story.json")).read_text(encoding="utf-8"))
+STORY_I18N = {}
+
+
+def own_story_text(own, imported=""):
+    """Our English text for an imported one ({"en", "uk"} of own_story.json), noting both languages
+    for i18n/story.json; the imported text itself when ours is None (a line the game fills in)."""
+    if own is None:
+        return imported
+    en, uk = own["en"], own["uk"]
+    # a line of an ending: "<number>|text"; the game translates the text after the bar
+    head = re.match(r"\d+\|", en)
+    key = en[head.end():] if head else en
+    STORY_I18N[key] = {"en": key, "uk": uk[head.end():] if head and re.match(r"\d+\|", uk) else uk}
+    return en
+
+
+def own_story_lines(own, imported):
+    """Our texts in place of a table of imported ones; they must be as many."""
+    if len(own) != len(imported):
+        raise ValueError("own_story.json: %d texts for %d imported" % (len(own), len(imported)))
+    return [own_story_text(a, b) for a, b in zip(own, imported)]
+
+
+def export_story_i18n(out):
+    """i18n/story.json: every English text of own_story.json -> its text in each language."""
+    (out / "story.json").write_text(json.dumps(STORY_I18N, ensure_ascii=False, indent=0, sort_keys=True),
+                                    encoding="utf-8")
 
 
 def export_names(out):
@@ -540,6 +580,23 @@ def export_items(out):
 STORY_PICTURES = ["e%d" % i for i in range(1, 16)]
 
 
+def zip_same(own, imported):
+    if len(own) != len(imported):
+        raise ValueError("own_story.json: %d texts for %d imported" % (len(own), len(imported)))
+    return zip(own, imported)
+
+
+def _story_line(own, key):
+    """A talk line of an ending ("<portrait>|text", the hero's without a portrait) or a picture
+    ("<picture>|text") of own_story.json as the data has it; None stays None."""
+    if own is None:
+        return None
+    number = int(own[key])
+    if key == "who" and number < 0:
+        return own
+    return {"en": "%d|%s" % (number, own["en"]), "uk": "%d|%s" % (number, own["uk"])}
+
+
 def export_stories(out, assets):
     sys.path.insert(0, str(ROOT / "pyport"))
     from pow.game import consts
@@ -550,11 +607,18 @@ def export_stories(out, assets):
         lines = read_table(ROOT / edat[64 + s // 6])
         base = offsets[s // 6 * 12]
         p0, p1, p2 = (offsets[2 * s + i] - base for i in range(3))
-        endings.append({"talk": lines[p0:p1], "pictures": lines[p1:p2]})
-    stories = {"opening": read_table(ROOT / edat[63]), "endings": endings,
-               "gamestr": read_table(ROOT / "gamestr.scr")[:2],
-               "titles": read_table(ROOT / edat[54])[38:62]}  # the Endings menu
-    (out / "stories.json").write_text(json.dumps(own_texts(stories), ensure_ascii=False, indent=0))
+        own = OWN_STORY["stories"]["endings"][s]
+        talk = [own_story_text(_story_line(t, "who"), line)
+                for t, line in zip_same(own["talk"], own_texts(lines[p0:p1]))]
+        pictures = [own_story_text(_story_line(t, "pic"), line)
+                    for t, line in zip_same(own["pictures"], own_texts(lines[p1:p2]))]
+        endings.append({"talk": talk, "pictures": pictures})
+    own = OWN_STORY["stories"]
+    stories = {"opening": own_story_lines(own["opening"], own_texts(read_table(ROOT / edat[63]))),
+               "endings": endings,
+               "gamestr": own_story_lines(own["gamestr"], own_texts(read_table(ROOT / "gamestr.scr")[:2])),
+               "titles": own_story_lines(own["titles"], own_texts(read_table(ROOT / edat[54])[38:62]))}
+    (out / "stories.json").write_text(json.dumps(stories, ensure_ascii=False, indent=0))
     (assets / "story").mkdir(parents=True, exist_ok=True)
     for name in STORY_PICTURES:
         Image.open(ROOT / (name + ".png")).convert("RGBA").save(assets / "story" / (name + ".png"))
@@ -614,7 +678,8 @@ def export_campaign(out):
             "reward": m[6], "gold": m[7], "time_limit": m[8] | m[9] << 8, "level_bonus": m[10],
             "name": own_title(cstr(names[n:n + 14])) if mid > 0 else "",
             "portrait": int.from_bytes(names[n + 14:n + 15], "little", signed=True) if mid > 0 else 0,
-            "description": own_text(expand_text(descriptions, len(missions))) if len(missions) < len(descriptions) else "",
+            "description": own_story_text(OWN_STORY["missions"][len(missions)],
+                                          own_text(expand_text(descriptions, len(missions))) if len(missions) < len(descriptions) else ""),
         })
         i += 11
     (out / "campaign.json").write_text(json.dumps(
@@ -1004,6 +1069,7 @@ def main():
     export_items(CLIENT / "data")
     export_mixing(CLIENT / "data")
     export_stories(CLIENT / "data", CLIENT / "assets" / "original")
+    export_story_i18n(CLIENT / "i18n")
     atlas, found = build_atlas(tile_names)
     out_tiles = CLIENT / "assets" / "original"
     out_tiles.mkdir(parents=True, exist_ok=True)

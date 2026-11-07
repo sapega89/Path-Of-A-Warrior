@@ -50,7 +50,7 @@ func _ready() -> void:
 		var b := Button.new()
 		b.name = "Topic%d" % i
 		b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-		b.text = str(topics[i].get("name", ""))
+		b.text = I18n.text(topics[i].get("name", ""))
 		b.pressed.connect(open.bind(i))
 		list.add_child(b)
 	col.add_child(list)
@@ -107,13 +107,13 @@ func show_topics() -> void:
 func pages_of(i: int) -> Array:
 	if i == control_topic:
 		return control_pages.map(func(k): return tr(k))
-	return topics[i].get("pages", []) if i >= 0 and i < topics.size() else []
+	return topics[i].get("pages", []).map(I18n.text) if i >= 0 and i < topics.size() else []
 
 
 func open(i: int) -> void:
 	topic = i
 	page = 0
-	heading.text = str(topics[i].get("name", ""))
+	heading.text = I18n.text(topics[i].get("name", ""))
 	heading.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	list.visible = false
 	page_box.visible = true
