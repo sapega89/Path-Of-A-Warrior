@@ -1,5 +1,5 @@
 extends Control
-## Live > Trade > Buy Item, step by step: the category (Normal, Special, Rare Items), the kind
+## Game menu > Trade > Buy Item, step by step: the category (Normal, Special, Rare Items), the kind
 ## (a grid of the things), the enchant level with the number of lots at each (Rare things have
 ## none), then the lots, 20 a page, cheapest first. Picking a lot asks "Buy for N Gold?"; with a
 ## full backpack it asks whether to put the thing in the Warehouse instead. The hero is saved

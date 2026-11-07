@@ -126,7 +126,7 @@ func _ready() -> void:
 	Router.current.submit()
 	await _shot(out, "10c_register")
 	cloud.stop()
-	# Live: the menu, the Warehouse (two things moved there), the Safe; the server's Live runs
+	# The Live pages: the Warehouse (two things moved there), the Safe; the server's Live runs
 	# in this process (server/live.gd), the hero is a copy.
 	_rm_dir("user://shot_live")
 	var market: RefCounted = LiveServer.new("user://shot_live")
@@ -140,9 +140,7 @@ func _ready() -> void:
 	hero.gold = 1250
 	var live_params := {"profile_path": "user://shot_live_hero.json", "live": client}
 	Router.go("main_menu")
-	Router.push("live", live_params)
-	await _frames(2)
-	await _shot(out, "10d_live")
+	Router.push("game_menu", live_params)
 	Router.push("live_warehouse", live_params)
 	await _frames(2)
 	Router.current.cells[2].grab_focus()
@@ -196,7 +194,7 @@ func _ready() -> void:
 	Router.push("live_cancel", live_params)
 	await _frames(2)
 	await _shot(out, "10o_live_cancel")
-	# Opening Live with something new on the server: a notice, the Sale List, the Gift List,
+	# Opening the game menu with something new on Live: a notice, the Sale List, the Gift List,
 	# the Exp and Fame kept there.
 	market.notices = [["Welcome to Live!", "Sell what you", "do not need."]]
 	var on_server: Dictionary = market.user("ANDREY")
@@ -207,20 +205,21 @@ func _ready() -> void:
 	on_server.exp = 300
 	client.notices_seen = false
 	Router.go("main_menu")
-	Router.push("live", live_params)
+	Router.push("game_menu", live_params)
 	await _frames(2)
+	var news: Control = Router.current.news
 	await _shot(out, "10p_live_notice")
-	Router.current.note.hide()
-	Router.current.note.confirmed.emit()
+	news.note.hide()
+	news.note.confirmed.emit()
 	await _frames(2)
 	await _shot(out, "10q_live_sale_list")
-	Router.current.list_done()
+	news.list_done()
 	await _frames(2)
 	await _shot(out, "10r_live_gift_list")
-	Router.current.list_done()
+	news.list_done()
 	await _frames(2)
 	await _shot(out, "10s_live_fame")
-	Router.current.note.hide()
+	news.note.hide()
 	# Multiplayer: the menu, the Character pages, Skills, Ranking, the Order, the Chat and the
 	# Options. The server's online game runs in this process (server/online.gd) with its bots;
 	# Maria is in my order and wrote while I was away.
@@ -267,9 +266,12 @@ func _ready() -> void:
 	holder.append(mp)
 	var mp_params := {"online": mp}
 	Router.go("main_menu")
-	Router.push("online", mp_params)
+	Router.push("game_menu", live_params.merged(mp_params))
 	await _frames(2)
-	await _shot(out, "11a_online")
+	await _shot(out, "11a_game_menu")
+	Router.current.buttons[-1].grab_focus()  # Help, at the end: the list scrolls down
+	await _frames(3)
+	await _shot(out, "11a_game_menu_end")
 	Router.push("online_character", mp_params)
 	await _frames(2)
 	Router.current.open("records")
@@ -337,9 +339,9 @@ func _ready() -> void:
 	await _shot(out, "11o_online_order_pick")
 	Router.back()
 	Router.back()
-	Router.push("help", {"online": mp, "kind": "mp"})  # Multiplayer > Help, the Duel topic
+	Router.push("help")  # the Duel topic of the one help
 	await _frames(2)
-	Router.current.open(2)
+	Router.current.open(Router.current.topics.size() - 2)
 	await _shot(out, "11p_online_help")
 	Router.back()
 	await _battle_shots(out, game, mp)
@@ -408,7 +410,7 @@ func _ready() -> void:
 	Router.current.open(2)
 	Router.current.turn_page(1)
 	await _shot(out, "24_help_page")
-	Router.current.open(Router.current.control_topic)  # Control: this version's keys
+	Router.current.open(Router.current.CONTROL_TOPIC)  # Control: this version's keys
 	await _shot(out, "24b_help_control")
 	# A story: ending 2's talk, its first picture with its text floating up, its numbers and the
 	# reward.

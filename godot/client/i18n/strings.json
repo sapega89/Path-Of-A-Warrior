@@ -51,10 +51,6 @@
     "en": "Map %d / %d   [LB] [RB] change map   [B] back",
     "uk": "Карта %d / %d   [LB] [RB] інша карта   [B] назад"
   },
-  "menu.maps": {
-    "en": "Maps",
-    "uk": "Карти"
-  },
   "campaign.mission": {
     "en": "Mission %d: %s",
     "uk": "Місія %d: %s"
@@ -504,8 +500,8 @@
     "uk": "Пауза: Esc або Backspace (Start). Автополювання: Tab або F (R3). Пропустити розмову, брифінг чи сюжет: Q або F1 (Back). Меню: стрілки, WASD або Num 8 2 4 6 — вибір, Enter, пробіл, J або Num 5 — OK, Esc або Backspace — назад. На телефоні: стік зліва, кнопки справа, пауза вгорі. Меню працюють і з мишею та дотиком."
   },
   "help.mp_control_1": {
-    "en": "In battle: Right attacks, Left defends, Up evades, Down opens the special skills (the arrows, the d-pad or the left stick). Enter or Space (A) stops the timing bar near its mark and picks the target.",
-    "uk": "У бою: вправо — атака, вліво — захист, вгору — ухилення, вниз — особливі вміння (стрілки, хрестовина або лівий стік). Enter чи пробіл (A) зупиняє смугу біля позначки й вибирає ціль."
+    "en": "In an online battle: Right attacks, Left defends, Up evades, Down opens the special skills (the arrows, the d-pad or the left stick). Enter or Space (A) stops the timing bar near its mark and picks the target.",
+    "uk": "В онлайн-бою: вправо — атака, вліво — захист, вгору — ухилення, вниз — особливі вміння (стрілки, хрестовина або лівий стік). Enter чи пробіл (A) зупиняє смугу біля позначки й вибирає ціль."
   },
   "help.mp_control_2": {
     "en": "Esc (B) goes back or asks to leave the battle; Tab or F (R3) turns auto-battle on. The buttons under the fighters work with the mouse and touch, as do the menus.",
@@ -691,10 +687,6 @@
     "en": "Network connection has failed.",
     "uk": "Немає зв'язку з сервером."
   },
-  "menu.live": {
-    "en": "Live",
-    "uk": "Live"
-  },
   "live.title": {
     "en": "LIVE",
     "uk": "LIVE"
@@ -711,9 +703,21 @@
     "en": "Safe",
     "uk": "Сейф"
   },
-  "live.multiplayer": {
-    "en": "Multiplayer",
-    "uk": "Мультиплеєр"
+  "menu.game": {
+    "en": "Game Menu",
+    "uk": "Ігрове меню"
+  },
+  "menu.missions": {
+    "en": "Missions",
+    "uk": "Місії"
+  },
+  "menu.online_missions": {
+    "en": "Online Missions",
+    "uk": "Онлайн-місії"
+  },
+  "menu.invitations": {
+    "en": "Invitations",
+    "uk": "Запрошення"
   },
   "live.backpack": {
     "en": "Backpack",
@@ -895,10 +899,6 @@
     "en": "%d Level up",
     "uk": "Нових рівнів: %d"
   },
-  "online.title": {
-    "en": "MULTIPLAYER",
-    "uk": "МУЛЬТИПЛЕЄР"
-  },
   "online.who": {
     "en": "%s  Lv%d  Wins %d / Losses %d",
     "uk": "%s  Рівень %d  Перемог %d / Поразок %d"
@@ -910,10 +910,6 @@
   "online.duel": {
     "en": "Duel",
     "uk": "Дуель"
-  },
-  "online.mission": {
-    "en": "Mission",
-    "uk": "Місія"
   },
   "online.character": {
     "en": "Character",
@@ -934,10 +930,6 @@
   "online.options": {
     "en": "Options",
     "uk": "Налаштування"
-  },
-  "online.help": {
-    "en": "Help",
-    "uk": "Довідка"
   },
   "online.records": {
     "en": "Records",

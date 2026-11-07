@@ -62,10 +62,6 @@ func _ready() -> void:
 	lord_id = int(p.get("lord", 0))
 	mission = int(p.get("mission", 0))
 	show_level()
-	if Cloud.enabled():
-		Cloud.game_started()
-		if not Cloud.has_account():  # no hero without an account: it lives on the server
-			Router.push.call_deferred("register")
 
 
 func show_level() -> void:

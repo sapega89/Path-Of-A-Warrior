@@ -13,7 +13,7 @@ godot/
     project.godot
     scenes/main.tscn      корінь: тема + роутер екранів
     scripts/core/         автозавантаження: I18n, Settings, InputSetup, Router, Audio
-    scripts/screens/      екрани: title, main_menu, settings, map_viewer, campaign, briefing, mission,
+    scripts/screens/      екрани: title, main_menu, game_menu, settings, map_viewer, campaign, briefing, mission,
                           management, attributes, skills, gear, inventory,
                           assign_items, story, blacksmith, shop, visiting, endings, help, new_game (герой у user://hero.json)
     scripts/world/        3D-світ: map_builder (карта з оригінальних шарів), hero, follow_camera
@@ -134,7 +134,7 @@ godot --path godot/client                                      # 2) гра
 - Гра запускається тільки онлайн: поки сервера немає, замість меню — «No connection to the
   server» (OK — ще раз, сама пробує кожні 10 с). Якщо сервер не прийняв збережений пароль —
   «Login refused»: OK — ще раз, Назад — забути акаунт.
-- Без акаунта кампанія відкриває реєстрацію (UserID 4–12 літер A–Z, пароль 4–12 цифр); її не
+- Без акаунта ігрове меню відкриває реєстрацію (UserID 4–12 літер A–Z, пароль 4–12 цифр); її не
   пропустити, бо героя без акаунта не зберегти. Акаунт лишається на пристрої (`user://account.cfg`),
   той самий буде для Live і мультиплеєра.
 - Пропав зв'язок посеред гри — сейви чекають у пам'яті й ідуть після відновлення (повтор через
@@ -148,16 +148,28 @@ godot --path godot/client                                      # 2) гра
   виграє новіша копія, а на пристрої, де акаунт новий, — серверна. Мова й повний екран лишаються
   свої на кожному пристрої.
 
+## Меню
+
+- **Головне меню** (`scripts/screens/main_menu.gd`): Play / Continue, New Game, Endings,
+  Settings, Quit (на телефоні й у браузері без Quit).
+- **Ігрове меню** (`scripts/screens/game_menu.gd`; Continue, а після прологу нової гри — саме),
+  одна колонка, що прокручується за фокусом, групи через проміжок: Missions, Management,
+  Blacksmith, Visiting; Trade, Warehouse, Safe; рядок персонажа й Duel, Online Missions,
+  Character, Ranking, Order, Chat, Invitations (`scripts/ui/online_section.gd`); Help. Гра завжди
+  онлайн, тому окремих меню Live і Multiplayer немає. Назад — у головне.
+- **Help** одна на всю гру: теми кампанії, далі Duel і Online Missions мультиплеєра; Control —
+  клавіші на карті й в онлайн-бою.
+
 ## Live у клієнті
 
-Головне меню → **Live** (`scripts/screens/live_screen.gd`, `scripts/net/live_client.gd`), по тому
-самому з'єднанню, що й сейви. Відкриття шле серверу золото й рюкзак героя (`live_sync`), поки
-нема відповіді — «Connecting...», без сервера — «Network connection has failed» і лише Назад.
+Trade, Warehouse і Safe з ігрового меню (`scripts/screens/live_*.gd`,
+`scripts/net/live_client.gd`), по тому самому з'єднанню, що й сейви. Кожна сторінка шле серверу
+золото й рюкзак героя (`live_sync`); без сервера — «Network connection has failed».
 Музика в Live мовчить, як у pyport.
-Потім, як у pyport, перед меню йде те, що сервер тримав для гравця: оголошення (раз за гру,
-сторінками), **Sale List** (що купили інші гравці; гроші вже в сейфі), **Gift List** (по п'ять;
-подарунки вже на складі) і **Exp / Fame** із сервера — герой отримує їх зараз (з новими рівнями)
-і зберігається.
+Коли відкривається ігрове меню, поверх нього йде те, що Live тримав для гравця
+(`scripts/ui/live_news.gd`): оголошення (раз за гру, сторінками), **Sale List** (що купили інші
+гравці; гроші вже в сейфі), **Gift List** (по п'ять; подарунки вже на складі) і **Exp / Fame** із
+сервера — герой отримує їх зараз (з новими рівнями) і зберігається.
 - **Warehouse**: дві кнопки над сіткою перемикають рюкзак (45) і склад на сервері (200); вибрана
   річ переходить на інший бік (у рюкзаку — в перше вільне місце). Після кожного переносу герой
   зберігається.
@@ -172,22 +184,21 @@ godot --path godot/client                                      # 2) гра
   на гравця, еліксири (434–437) не продаються.
 - **Trade → Cancel Sale**: мої лоти (до 5); вибраний знімається з продажу в рюкзак, а коли той
   повний — на склад.
-- **Multiplayer** — меню мультиплеєра (нижче).
-- Головне меню тепер має 11 кнопок, тому вони нижчі (щоб влізли в 720 px).
 
 ## Мультиплеєр у клієнті
 
-Live → **Multiplayer** (`scripts/screens/online_*.gd`, `scripts/net/online_client.gd`), по тому
-самому з'єднанню. Відкриття ставить гравця онлайн (`mp_enter`), Назад — знімає; поки нема
-відповіді — «Connecting...», без сервера — «Network connection has failed». Під назвою — ім'я,
-рівень, перемоги й поразки; на кнопці Chat — скільки повідомлень чекає (Order і приватні).
-Зайшов той самий UserID з іншого пристрою — тут «Another player has connected using your
-UserID.», меню гасне. Якщо сервер забув гравця (зв'язок відновився), клієнт сам заходить знову й повторює
+Пункти мультиплеєра в ігровому меню (`scripts/ui/online_section.gd`, `scripts/screens/online_*.gd`,
+`scripts/net/online_client.gd`), по тому самому з'єднанню. Ігрове меню ставить гравця онлайн
+(`mp_enter`); вихід у головне меню чи на сторінку одиночної гри (Missions, Trade, ...) — знімає,
+щоб ніхто не викликав героя посеред місії. Поки нема відповіді — «Connecting...», без сервера —
+«Network connection has failed». Під назвою — ім'я, рівень, перемоги й поразки; на кнопці Chat —
+скільки повідомлень чекає (Order і приватні). Зайшов той самий UserID з іншого пристрою — тут
+«Another player has connected using your UserID.», кнопки гаснуть. Якщо сервер забув гравця (зв'язок відновився), клієнт сам заходить знову й повторює
 запит. Музика мовчить, як у Live.
 - **Duel**: 1-on-1 Duel і 2-on-2 Duel (суперник близького рівня, поки шукає — «Searching for
   opponent...» з Cancel; за хвилину без нікого — CPU), Challenge 1:1 і Challenge 2:2 (гравець за
   UserID; у 2:2 кожному CPU-союзник), 2-on-2 Order (учасник мого ордену поруч зі мною проти двох
-  CPU). **Mission**: Solo Mission (з CPU-союзником), Invite An Ally (за UserID), Order Ally
+  CPU). **Online Missions**: Solo Mission (з CPU-союзником), Invite An Ally (за UserID), Order Ally
   (учасник ордену). Помилки — як на сервері: «The user is not online.», «Your invitation is
   denied.» (у нього Invitation: Deny), гравець у бою, не з ордену.
 - **Character**: Records (рівень, Fame, оцінка Duel, перемоги / поразки, оцінка Mission, орден),
@@ -205,10 +216,10 @@ UserID.», меню гасне. Якщо сервер забув гравця (�
   зверху, з числом непрочитаних, і New Message (UserID). Розмова — останні 30 повідомлень і рядок до
   40 символів (лише латиниця й ASCII, як на сервері); нові повідомлення приходять самі
   (`chat_push`), відкрита розмова вважається прочитаною.
-- **Options**: Invitation — Accept або Deny (чи бере мене чужий Challenge / Invite An Ally в бій).
-- **Help** (є й без сервера): теми мультиплеєра Controls, Menu, Duel, Missions, About, Network
-  (тексти оригіналу з pyport, `import_original.py` кладе їх у `data/mp.json`); Controls — клавіші
-  бою цієї версії (стрілки, Enter / пробіл, Esc, Tab / F / R3, кнопки й дотик).
+- **Invitations**: Accept або Deny (чи бере мене чужий Challenge / Invite An Ally в бій).
+- Довідка мультиплеєра — теми Duel і Online Missions у спільній Help (тексти з `data/mp.json`,
+  куди їх кладе `import_original.py`); її Control закінчується клавішами онлайн-бою (стрілки,
+  Enter / пробіл, Esc, Tab / F / R3, кнопки й дотик).
 
 ### Бій мультиплеєра
 
@@ -346,7 +357,8 @@ Backspace — BACK, як Esc, крім поля для тексту, де він
 реєстрації): під полем — клавіші (`scripts/ui/key_grid.gd`; для імені літери обох регістрів, для
 реєстрації A–Z і 0–9), хрестовина ходить по них, A набирає, ⌫ стирає, OK — як Enter у полі.
 У переглядачі карт 3 / 4 (LB / RB) — попередня / наступна карта.
-Help → Control називає саме ці клавіші (`help.control_1`, `help.control_2`).
+Help → Control називає саме ці клавіші (`help.control_1`, `help.control_2`, а для онлайн-бою
+`help.mp_control_1`, `help.mp_control_2`).
 
 Підказки клавіш, як у pyport: гра пам'ятає пристрій останнього натиску (`InputSetup.device`:
 клавіатура, геймпад або дотик на телефоні; миша нічого не змінює) і `InputSetup.hint(key)` бере

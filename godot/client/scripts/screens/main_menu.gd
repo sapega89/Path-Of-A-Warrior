@@ -1,9 +1,10 @@
 extends Control
-## Main menu: continue (or play), new game, blacksmith, management, Live, visiting, endings, maps, settings, help, quit (no quit button on phones and the web).
+## Main menu: continue (or play), new game, endings, settings, quit (no quit button on phones
+## and the web). Continue opens the game menu (scripts/screens/game_menu.gd), where
+## the hero's game is.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
-const Visits := preload("res://scripts/core/visits.gd")
 
 var buttons: Array[Button] = []
 var ask: ConfirmationDialog  # "Starting a new game will cause your saved game to be deleted."
@@ -13,22 +14,12 @@ func _ready() -> void:
 	if Cloud.enabled() and not Cloud.online():
 		Router.go.call_deferred("offline")  # the game starts only online
 	var col := UiTheme.menu_column(self)
-	col.theme = compact_theme()  # eleven buttons in a 720 px high screen
-	col.add_theme_constant_override("separation", 4)
 	col.add_child(UiTheme.heading("game.title", 44))
 	var saved := Profile.exists()
 	_add(col, "Play", "menu.continue" if saved else "menu.play", play)
 	_add(col, "NewGame", "menu.new_game", new_game)
-	_add(col, "Blacksmith", "menu.blacksmith", func(): Router.push("blacksmith"))
-	_add(col, "Management", "menu.management", func(): Router.push("management"))
-	_add(col, "Live", "menu.live", func(): Router.push("live"))
-	_add(col, "Visiting", "menu.visiting", func(): Router.push("visiting"))
-	if not Visits.can_visit(Profile.load_or_new()):
-		buttons[-1].modulate = Color(1, 1, 1, 0.5)  # greyed: it only says when one can visit
 	_add(col, "Endings", "menu.endings", func(): Router.push("endings", {}))
-	_add(col, "Maps", "menu.maps", func(): Router.push("map_viewer"))
 	_add(col, "Settings", "menu.settings", func(): Router.push("settings"))
-	_add(col, "Help", "menu.help", func(): Router.push("help"))
 	if show_quit():
 		_add(col, "Quit", "menu.quit", func(): Cloud.quit_game())
 	ask = ConfirmationDialog.new()
@@ -39,17 +30,18 @@ func _ready() -> void:
 	buttons[0].grab_focus.call_deferred()
 
 
-## The saved hero goes on with the campaign (back into the mission saved on its map, if
-## any); without one a new game starts.
+## The saved hero goes on in the game menu (back into the mission saved on its map, if any);
+## without one a new game starts.
 func play() -> void:
-	if Profile.exists():
-		Router.push("campaign")
-		var on_map: Dictionary = Profile.load_or_new().on_map
-		if not on_map.is_empty():
-			Router.push("mission", {"lord": int(on_map.get("lord", 1)),
-				"mission": int(on_map.get("mission", 0)), "resume": true})
+	if not Profile.exists():
+		Router.push("new_game", {})
 		return
-	Router.push("new_game", {})
+	Router.push("game_menu")
+	var on_map: Dictionary = Profile.load_or_new().on_map
+	if not on_map.is_empty():
+		Router.push("campaign")
+		Router.push("mission", {"lord": int(on_map.get("lord", 1)),
+			"mission": int(on_map.get("mission", 0)), "resume": true})
 
 
 ## A new hero (difficulty, face, name, points); over a saved one only when that is confirmed.
@@ -58,17 +50,6 @@ func new_game() -> void:
 		ask.popup_centered()
 		return
 	Router.push("new_game", {})
-
-
-## The game's theme with lower buttons.
-static func compact_theme() -> Theme:
-	var t := UiTheme.build()
-	for style in ["normal", "hover", "pressed", "disabled", "focus"]:
-		var sb := t.get_stylebox(style, "Button").duplicate() as StyleBoxFlat
-		sb.content_margin_top = 4
-		sb.content_margin_bottom = 4
-		t.set_stylebox(style, "Button", sb)
-	return t
 
 
 static func show_quit() -> bool:

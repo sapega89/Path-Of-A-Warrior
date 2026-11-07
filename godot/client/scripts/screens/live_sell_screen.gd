@@ -1,5 +1,5 @@
 extends Control
-## Live > Trade > Sell Item: a thing of the backpack or of the Warehouse (the two buttons above
+## Game menu > Trade > Sell Item: a thing of the backpack or of the Warehouse (the two buttons above
 ## the grid), then its price, typed in; a share of it (the tax) goes to the server when it sells.
 ## Price Info shows the cheapest lots of the same kind. OK puts the thing on sale (five at most);
 ## the money comes into the Safe when another player buys it. Elixirs cannot be sold.

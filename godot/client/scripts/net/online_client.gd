@@ -2,7 +2,7 @@ extends RefCounted
 ## The online game on this device, the client of server/online.gd: what the Multiplayer
 ## screens know of the player's online character, the Ranking, the order and the chat.
 ##
-## enter() puts the player online (the Multiplayer menu opens), leave() takes him off. A
+## enter() puts the player online (the game menu opens), leave() takes him off. A
 ## request the server answers "enter first" (the connection came back, the server forgot him)
 ## enters again and is sent once more. Messages the server sends on its own (a chat message,
 ## "kicked", the battles) come in on_push(); the screens that listen() get them too.

@@ -9,7 +9,7 @@ func test_help_screen() -> void:
 	Router.params = {}
 	var screen: Control = Help.new()
 	root.add_child(screen)
-	eq(screen.topics.size(), 8, "eight topics")
+	eq(screen.topics.size(), 10, "eight of the campaign, two of the multiplayer")
 	eq(str(screen.list.get_child(0).text), "Missions", "the first")
 	screen.open(2)
 	eq(screen.heading.text, "Blacksmith", "a topic")
@@ -18,7 +18,7 @@ func test_help_screen() -> void:
 	screen.turn_page(-1)
 	eq(screen.page, 5, "back from the first page to the last")
 	screen.open(Help.CONTROL_TOPIC)
-	eq(screen.pages_of(Help.CONTROL_TOPIC).size(), 2, "Control: this version's keys")
+	eq(screen.pages_of(Help.CONTROL_TOPIC).size(), 4, "Control: this version's keys, on the map and online")
 	check(not screen.text.text.contains("keypad"), "not the phone's keypad")
 	screen.go_back()
 	eq(screen.topic, -1, "back: the topics again")
@@ -30,19 +30,16 @@ func test_help_screen() -> void:
 	Router.params = old
 
 
-func test_multiplayer_help() -> void:
+func test_multiplayer_topics_in_the_same_help() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"kind": "mp"}
+	Router.params = {}
 	var screen: Control = Help.new()
 	root.add_child(screen)
-	eq(screen.topics.map(func(t): return t.name), ["Controls", "Menu", "Duel", "Missions", "About", "Network"])
-	screen.open(1)
-	eq(screen.page_label.text, "1 / 8", "Menu: its pages")
-	eq(screen.text.text, "Duel\n\nDuel mode allows you to battle against enemies in a '1-on-1' or '2-on-2' battle.")
-	screen.open(2)
-	eq(screen.pages_of(2).size(), 18, "Duel")
-	screen.open(0)
-	eq(screen.pages_of(0), [tr("help.mp_control_1"), tr("help.mp_control_2")], "Controls: this version's battle keys")
+	eq(screen.topics.slice(8).map(func(t): return t.name), [tr("online.duel"), tr("menu.online_missions")])
+	eq(screen.pages_of(8).size(), 18, "Duel")
+	eq(screen.pages_of(9).size(), 8, "Online Missions")
+	eq(screen.pages_of(Help.CONTROL_TOPIC).slice(2), [tr("help.mp_control_1"), tr("help.mp_control_2")],
+		"Control: then the online battle's keys")
 	screen.free()
 	Router.params = old
 
