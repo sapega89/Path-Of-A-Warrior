@@ -564,8 +564,8 @@
     "uk": "Бракує золота."
   },
   "attributes.reset_item": {
-    "en": "You have no elixir.\nRise Potion, Azure Potion, Falls or Forest Medicine.",
-    "uk": "У рюкзаку немає еліксиру.\nRise Potion, Azure Potion, Falls або Forest Medicine."
+    "en": "You have no elixir.\nSt John's Wort or Cornflower Tincture, Rapids or Forest Remedy.",
+    "uk": "У рюкзаку немає еліксиру.\nНастоянка звіробою чи волошкова, порогове чи лісове зілля."
   },
   "attributes.reset_done": {
     "en": "Attributes reset.\n%d points are free.",

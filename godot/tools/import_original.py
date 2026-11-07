@@ -459,7 +459,7 @@ def export_items(out):
     k = 0
     while 9 + 23 * (k + 1) <= len(d):
         i = 9 + 23 * k
-        gear[101 + k] = {"name": cstr(d[i:i + 15]), "slot": s8(d[i + 15]), "stat": s8(d[i + 16]),
+        gear[101 + k] = {"name": own_name("items", cstr(d[i:i + 15])), "slot": s8(d[i + 15]), "stat": s8(d[i + 16]),
                          "bonus": s8(d[i + 17]), "range": s8(d[i + 18]), "enchant_max": d[i + 19],
                          "price": d[i + 20] | d[i + 21] << 8, "icon": s8(d[i + 22]),
                          "level": GEAR_LEVELS[(101 + k) % 5]}
@@ -468,7 +468,7 @@ def export_items(out):
     k = 0
     while 10 + 24 * (k + 1) <= len(d):
         i = 10 + 24 * k
-        treasures[301 + k] = {"name": cstr(d[i:i + 15]), "slot": s8(d[i + 15]),
+        treasures[301 + k] = {"name": own_name("items", cstr(d[i:i + 15])), "slot": s8(d[i + 15]),
                               "attack": d[i + 16] | d[i + 17] << 8, "defense": s8(d[i + 18]),
                               "hp": d[i + 19], "mp": s8(d[i + 20]), "enchant_max": d[i + 21],
                               "icon": s8(d[i + 22]), "level": d[i + 23]}
@@ -477,7 +477,7 @@ def export_items(out):
     k = 0
     while 9 + 27 * (k + 1) <= len(d):
         i = 9 + 27 * k
-        rare[501 + k] = {"name": cstr(d[i:i + 15]), "slot": s8(d[i + 15]),
+        rare[501 + k] = {"name": own_name("items", cstr(d[i:i + 15])), "slot": s8(d[i + 15]),
                          "attack": d[i + 16] | d[i + 17] << 8, "defense": s8(d[i + 18]),
                          "hp": d[i + 19] | d[i + 20] << 8, "mp": s8(d[i + 21]),
                          "price": int.from_bytes(d[i + 22:i + 26], "little"), "icon": k,

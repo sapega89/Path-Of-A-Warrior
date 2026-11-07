@@ -6,7 +6,7 @@ extends RefCounted
 ##
 ## The NPC stock is made up as in pyport: a few Normal / Special things of every kind at enchant
 ## 0..4 and two random Rare ones, renewed every NPC_REFRESH seconds, priced at the shop's price
-## times 1.0..2.0; 502 Silk Towel and 504 Emperor's Seal are always for sale (LIVE_PRICE). A
+## times 1.0..2.0; 502 Silk Rushnyk and 504 Hetman's Seal are always for sale (LIVE_PRICE). A
 ## sale pays the seller the price less TAX_PERCENT, into the Safe.
 ##
 ## Requests (scripts/net/protocol.gd), each answered {t, ok, err?}:

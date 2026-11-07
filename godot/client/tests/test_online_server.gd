@@ -71,7 +71,7 @@ func test_character_comes_from_the_hero_on_the_server() -> void:
 	a.create_account("ANDREY", "1234")
 	var p: Dictionary = o.enter(_session([]), "ANDREY")
 	eq([p.level, p.face, p.hp, p.weapon, p.slots], [1, 0, 40, 0, [3, 11, 99, 99]],
-		"no hero yet: a new Cossack with 5 points and the Iron Claymore")
+		"no hero yet: a new Cossack with 5 points and the Iron Broadsword")
 	eq(p.skill_cost[0], 50, "Whirlwind Sabre of 10 MP")
 	eq(p.unread, [0, 0])
 	var c := o.character("ANDREY")

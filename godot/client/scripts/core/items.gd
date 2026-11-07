@@ -82,10 +82,10 @@ static func level_needed(id: int) -> int:
 
 
 static func name_of(id: int) -> String:
-	return str(info(id).get("name", ""))
+	return String(TranslationServer.translate(str(info(id).get("name", ""))))
 
 
-## "Iron Claymore / ATK+1 / Available at Lv1", the line under the Gear and Inventory pages.
+## "Iron Broadsword / ATK+1 / Available at Lv1", the line under the Gear and Inventory pages.
 static func describe(item: Dictionary) -> String:
 	var id := int(item.get("id", 0))
 	if id == 0:
@@ -216,7 +216,7 @@ static func enchant(item: Dictionary, rng: RandomNumberGenerator) -> void:
 	item.enchant = int(item.enchant) + 1
 
 
-## "Iron Blade / Price: 120 / ATK+2 ...", the line under the shop: the name, the price
+## "Iron Sabre / Price: 120 / ATK+2 ...", the line under the shop: the name, the price
 ## (half of it when selling) and what the thing gives.
 static func describe_for_sale(item: Dictionary, selling: bool) -> String:
 	var id := int(item.get("id", 0))

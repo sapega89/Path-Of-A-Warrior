@@ -71,3 +71,12 @@ func test_a_name_in_the_players_language() -> void:
 	eq(String(TranslationServer.translate("Cossack")), "Козак", "a hero class")
 	eq(OnlineClient.skill_name(3), "Шабля-вихор", "an online skill")
 	TranslationServer.set_locale(before)
+
+
+func test_every_item_has_a_name_in_every_language() -> void:
+	var t := I18nScript.parse(FileAccess.get_file_as_string(I18nScript.NAMES_PATH))
+	var items: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/items.json"))
+	for part in items.values():
+		for item in part.values():
+			for locale in I18nScript.LOCALES:
+				check(t[locale].get(str(item.name), "") != "", "%s has no %s name" % [item.name, locale])

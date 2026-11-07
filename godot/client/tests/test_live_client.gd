@@ -275,7 +275,7 @@ func test_buy_screen() -> void:
 	screen.choose_category(2)
 	eq(screen.step, BuyScreen.Step.KIND)
 	eq(screen.cells.size(), 18, "the Rare kinds")
-	screen.choose_kind(1)  # 502 Silk Towel: always for sale
+	screen.choose_kind(1)  # 502 Silk Rushnyk: always for sale
 	eq(screen.step, BuyScreen.Step.LOTS, "Rare: straight to the lots")
 	eq(int(screen.live.lots[0].item.id), 502)
 	check(screen.press_lot(0).contains("3000"), "asks: %s" % screen.ask.dialog_text)

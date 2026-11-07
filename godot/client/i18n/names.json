@@ -1,39 +1,655 @@
 {
+"Amethyst Konchar": {
+"en": "Amethyst Konchar",
+"uk": "Аметистовий кончар"
+},
+"Ancestral Konchar": {
+"en": "Ancestral Konchar",
+"uk": "Прадідівський кончар"
+},
+"Ancient Bracer": {
+"en": "Ancient Bracer",
+"uk": "Прадавній наруч"
+},
+"Ancient Locket": {
+"en": "Ancient Locket",
+"uk": "Прадавня ладанка"
+},
+"Ardent Belt": {
+"en": "Ardent Belt",
+"uk": "Палкий пояс"
+},
+"Ardent Broadsword": {
+"en": "Ardent Broadsword",
+"uk": "Палкий палаш"
+},
+"Argamak": {
+"en": "Argamak",
+"uk": "Аргамак"
+},
+"Ataman's Boots": {
+"en": "Ataman's Boots",
+"uk": "Отаманські чоботи"
+},
+"Ataman's Kindjal": {
+"en": "Ataman's Kindjal",
+"uk": "Отаманський кинджал"
+},
+"Autumn Scroll": {
+"en": "Autumn Scroll",
+"uk": "Осінній сувій"
+},
+"Azure Armour": {
+"en": "Azure Armour",
+"uk": "Блакитний панцир"
+},
+"Azure Boots": {
+"en": "Azure Boots",
+"uk": "Блакитні чоботи"
+},
+"Bakhterets": {
+"en": "Bakhterets",
+"uk": "Бехтерець"
+},
+"Bane Konchar": {
+"en": "Bane Konchar",
+"uk": "Згубний кончар"
+},
+"Battle Kindjal": {
+"en": "Battle Kindjal",
+"uk": "Бойовий кинджал"
+},
+"Bay Ambler": {
+"en": "Bay Ambler",
+"uk": "Гнідий іноходець"
+},
+"Bay Courser": {
+"en": "Bay Courser",
+"uk": "Гнідий скакун"
+},
+"Bay Draught Horse": {
+"en": "Bay Draught Horse",
+"uk": "Гнідий ваговоз"
+},
+"Bay Packhorse": {
+"en": "Bay Packhorse",
+"uk": "Гнідий в'ючак"
+},
+"Bay Rumak": {
+"en": "Bay Rumak",
+"uk": "Гнідий румак"
+},
+"Berdysh": {
+"en": "Berdysh",
+"uk": "Бердиш"
+},
+"Black Ambler": {
+"en": "Black Ambler",
+"uk": "Вороний іноходець"
+},
+"Black Bakhmat": {
+"en": "Black Bakhmat",
+"uk": "Вороний бахмат"
+},
+"Black Courser": {
+"en": "Black Courser",
+"uk": "Вороний скакун"
+},
+"Black Rumak": {
+"en": "Black Rumak",
+"uk": "Вороний румак"
+},
+"Black Warhorse": {
+"en": "Black Warhorse",
+"uk": "Вороний бойовий кінь"
+},
+"Blessed Armour": {
+"en": "Blessed Armour",
+"uk": "Благословенний панцир"
+},
+"Blessed Bracer": {
+"en": "Blessed Bracer",
+"uk": "Благословенний наруч"
+},
+"Blessed Locket": {
+"en": "Blessed Locket",
+"uk": "Благословенна ладанка"
+},
+"Bracer of Strength": {
+"en": "Bracer of Strength",
+"uk": "Наруч сили"
+},
+"Bright Berdysh": {
+"en": "Bright Berdysh",
+"uk": "Світлий бердиш"
+},
+"Bright Bracer": {
+"en": "Bright Bracer",
+"uk": "Світлий наруч"
+},
+"Bright Kalpak": {
+"en": "Bright Kalpak",
+"uk": "Світлий ковпак"
+},
+"Bright Locket": {
+"en": "Bright Locket",
+"uk": "Світла ладанка"
+},
+"Bright Spear": {
+"en": "Bright Spear",
+"uk": "Світлий спис"
+},
+"Broadsword of Woe": {
+"en": "Broadsword of Woe",
+"uk": "Палаш журби"
+},
+"Captain's Broadsword": {
+"en": "Captain's Broadsword",
+"uk": "Палаш тисячника"
+},
+"Chain Mail": {
+"en": "Chain Mail",
+"uk": "Кольчуга"
+},
 "Charm": {
 "en": "Charm",
 "uk": "Оберіг"
+},
+"Charmed Belt": {
+"en": "Charmed Belt",
+"uk": "Зачарований пояс"
+},
+"Charter of Change": {
+"en": "Charter of Change",
+"uk": "Грамота переміни"
+},
+"Charter of Elements": {
+"en": "Charter of Elements",
+"uk": "Грамота стихій"
+},
+"Charter of Endurance": {
+"en": "Charter of Endurance",
+"uk": "Грамота витривалості"
+},
+"Charter of Loyalty": {
+"en": "Charter of Loyalty",
+"uk": "Грамота вірності"
+},
+"Chekan": {
+"en": "Chekan",
+"uk": "Чекан"
+},
+"Chestnut Bakhmat": {
+"en": "Chestnut Bakhmat",
+"uk": "Рудий бахмат"
+},
+"Chestnut Pony": {
+"en": "Chestnut Pony",
+"uk": "Рудий коник"
+},
+"Chestnut Rumak": {
+"en": "Chestnut Rumak",
+"uk": "Рудий румак"
+},
+"Chronicle": {
+"en": "Chronicle",
+"uk": "Літопис"
+},
+"Cloister Berdysh": {
+"en": "Cloister Berdysh",
+"uk": "Монастирський бердиш"
+},
+"Cloud Broadsword": {
+"en": "Cloud Broadsword",
+"uk": "Хмарний палаш"
+},
+"Cloud Konchar": {
+"en": "Cloud Konchar",
+"uk": "Хмарний кончар"
+},
+"Colonel's Armour": {
+"en": "Colonel's Armour",
+"uk": "Полковницький панцир"
+},
+"Colonel's Bracer": {
+"en": "Colonel's Bracer",
+"uk": "Полковницький наруч"
+},
+"Colonel's Locket": {
+"en": "Colonel's Locket",
+"uk": "Полковницька ладанка"
+},
+"Cornflower Tincture": {
+"en": "Cornflower Tincture",
+"uk": "Волошкова настоянка"
 },
 "Cossack": {
 "en": "Cossack",
 "uk": "Козак"
 },
+"Cossack Chronicle": {
+"en": "Cossack Chronicle",
+"uk": "Козацький літопис"
+},
+"Cossack Custom": {
+"en": "Cossack Custom",
+"uk": "Козацький звичай"
+},
+"Cossack Pike": {
+"en": "Cossack Pike",
+"uk": "Козацька піка"
+},
+"Courier's Scroll": {
+"en": "Courier's Scroll",
+"uk": "Сувій гінця"
+},
+"Creed": {
+"en": "Creed",
+"uk": "Символ віри"
+},
+"Crimson Berdysh": {
+"en": "Crimson Berdysh",
+"uk": "Багряний бердиш"
+},
+"Cross-Marked Gauntlets": {
+"en": "Cross-Marked Gauntlets",
+"uk": "Хрещаті рукавиці"
+},
+"Damask Broadsword": {
+"en": "Damask Broadsword",
+"uk": "Булатний палаш"
+},
+"Damask Chekan": {
+"en": "Damask Chekan",
+"uk": "Булатний чекан"
+},
+"Damask Gauntlets": {
+"en": "Damask Gauntlets",
+"uk": "Булатні рукавиці"
+},
+"Damask Konchar": {
+"en": "Damask Konchar",
+"uk": "Булатний кончар"
+},
+"Damask Pike": {
+"en": "Damask Pike",
+"uk": "Булатна піка"
+},
+"Damask Sabre": {
+"en": "Damask Sabre",
+"uk": "Булатна шабля"
+},
+"Damask Spear": {
+"en": "Damask Spear",
+"uk": "Булатний спис"
+},
+"Dawn Pike": {
+"en": "Dawn Pike",
+"uk": "Світанкова піка"
+},
+"Devil's Armour": {
+"en": "Devil's Armour",
+"uk": "Чортів панцир"
+},
+"Devil's Boots": {
+"en": "Devil's Boots",
+"uk": "Чортові чоботи"
+},
+"Devil's Bracer": {
+"en": "Devil's Bracer",
+"uk": "Чортів наруч"
+},
+"Devil's Gauntlets": {
+"en": "Devil's Gauntlets",
+"uk": "Чортові рукавиці"
+},
+"Devil's Helmet": {
+"en": "Devil's Helmet",
+"uk": "Чортів шолом"
+},
+"Devil's Konchar": {
+"en": "Devil's Konchar",
+"uk": "Чортів кончар"
+},
+"Devil's Locket": {
+"en": "Devil's Locket",
+"uk": "Чортова ладанка"
+},
+"Dnipro Spear": {
+"en": "Dnipro Spear",
+"uk": "Дніпровий спис"
+},
 "Dnipro Wave": {
 "en": "Dnipro Wave",
 "uk": "Хвиля Дніпра"
+},
+"Dun Packhorse": {
+"en": "Dun Packhorse",
+"uk": "Буланий в'ючак"
+},
+"Eastern Scroll": {
+"en": "Eastern Scroll",
+"uk": "Східний сувій"
+},
+"Elder's Kalpak": {
+"en": "Elder's Kalpak",
+"uk": "Старшинський ковпак"
+},
+"Father's Testament": {
+"en": "Father's Testament",
+"uk": "Батьківський заповіт"
+},
+"Fierce Konchar": {
+"en": "Fierce Konchar",
+"uk": "Лютий кончар"
+},
+"Fine Boots": {
+"en": "Fine Boots",
+"uk": "Добірні чоботи"
+},
+"Fine Broadsword": {
+"en": "Fine Broadsword",
+"uk": "Добірний палаш"
+},
+"Fire Bracer": {
+"en": "Fire Bracer",
+"uk": "Вогняний наруч"
+},
+"Fire Locket": {
+"en": "Fire Locket",
+"uk": "Вогняна ладанка"
 },
 "Fire Whirl": {
 "en": "Fire Whirl",
 "uk": "Вогняний вихор"
 },
+"Firebird Bracer": {
+"en": "Firebird Bracer",
+"uk": "Наруч Жар-птиці"
+},
+"Firebird Locket": {
+"en": "Firebird Locket",
+"uk": "Ладанка Жар-птиці"
+},
+"First Charter": {
+"en": "First Charter",
+"uk": "Перша грамота"
+},
+"Flame Bracer": {
+"en": "Flame Bracer",
+"uk": "Полум'яний наруч"
+},
+"Flame Locket": {
+"en": "Flame Locket",
+"uk": "Полум'яна ладанка"
+},
 "Flood": {
 "en": "Flood",
 "uk": "Повінь"
+},
+"Forest Remedy": {
+"en": "Forest Remedy",
+"uk": "Лісове зілля"
+},
+"Fortress Belt": {
+"en": "Fortress Belt",
+"uk": "Фортечний пояс"
+},
+"Fur Kuchma": {
+"en": "Fur Kuchma",
+"uk": "Хутряна кучма"
 },
 "Fury": {
 "en": "Fury",
 "uk": "Лють"
 },
+"Glowing Konchar": {
+"en": "Glowing Konchar",
+"uk": "Сяйливий кончар"
+},
+"Golden Armour": {
+"en": "Golden Armour",
+"uk": "Золотий панцир"
+},
+"Golden Pony": {
+"en": "Golden Pony",
+"uk": "Золотистий коник"
+},
+"Great Broadsword": {
+"en": "Great Broadsword",
+"uk": "Великий палаш"
+},
+"Great Konchar": {
+"en": "Great Konchar",
+"uk": "Великий кончар"
+},
+"Great Sabre": {
+"en": "Great Sabre",
+"uk": "Велика шабля"
+},
+"Grey Bakhmat": {
+"en": "Grey Bakhmat",
+"uk": "Сивий бахмат"
+},
+"Grey Draught Horse": {
+"en": "Grey Draught Horse",
+"uk": "Сивий ваговоз"
+},
+"Grey Packhorse": {
+"en": "Grey Packhorse",
+"uk": "Сивий в'ючак"
+},
 "Haidamaka": {
 "en": "Haidamaka",
 "uk": "Гайдамака"
+},
+"Hawk Bracer": {
+"en": "Hawk Bracer",
+"uk": "Яструбиний наруч"
+},
+"Hawk Locket": {
+"en": "Hawk Locket",
+"uk": "Яструбина ладанка"
 },
 "Healing Herbs": {
 "en": "Healing Herbs",
 "uk": "Цілюще зілля"
 },
+"Hearth Belt": {
+"en": "Hearth Belt",
+"uk": "Пояс вогнища"
+},
+"Heaven's Armour": {
+"en": "Heaven's Armour",
+"uk": "Небесний панцир"
+},
+"Heaven's Belt": {
+"en": "Heaven's Belt",
+"uk": "Небесний пояс"
+},
+"Heaven's Boots": {
+"en": "Heaven's Boots",
+"uk": "Небесні чоботи"
+},
+"Heaven's Bracer": {
+"en": "Heaven's Bracer",
+"uk": "Небесний наруч"
+},
+"Heaven's Gauntlets": {
+"en": "Heaven's Gauntlets",
+"uk": "Небесні рукавиці"
+},
+"Heaven's Konchar": {
+"en": "Heaven's Konchar",
+"uk": "Небесний кончар"
+},
+"Heaven's Kuchma": {
+"en": "Heaven's Kuchma",
+"uk": "Небесна кучма"
+},
+"Heaven's Locket": {
+"en": "Heaven's Locket",
+"uk": "Небесна ладанка"
+},
+"Heaven's Sabre": {
+"en": "Heaven's Sabre",
+"uk": "Небесна шабля"
+},
+"Heaven's Spear": {
+"en": "Heaven's Spear",
+"uk": "Небесний спис"
+},
+"Heavy Armour": {
+"en": "Heavy Armour",
+"uk": "Важкий панцир"
+},
+"Heavy Knife": {
+"en": "Heavy Knife",
+"uk": "Важкий ніж"
+},
+"Heir's Broadsword": {
+"en": "Heir's Broadsword",
+"uk": "Палаш нащадка"
+},
+"Herald's Armour": {
+"en": "Herald's Armour",
+"uk": "Панцир гінця"
+},
+"Herbal": {
+"en": "Herbal",
+"uk": "Травник"
+},
+"Hetman's Armour": {
+"en": "Hetman's Armour",
+"uk": "Гетьманський панцир"
+},
+"Hetman's Bracer": {
+"en": "Hetman's Bracer",
+"uk": "Гетьманський наруч"
+},
+"Hetman's Locket": {
+"en": "Hetman's Locket",
+"uk": "Гетьманська ладанка"
+},
+"Hetman's Seal": {
+"en": "Hetman's Seal",
+"uk": "Гетьманська печатка"
+},
+"Hollow Bracer": {
+"en": "Hollow Bracer",
+"uk": "Порожній наруч"
+},
+"Hollow Locket": {
+"en": "Hollow Locket",
+"uk": "Порожня ладанка"
+},
+"Holy Pike": {
+"en": "Holy Pike",
+"uk": "Свята піка"
+},
+"Hungarian Bow": {
+"en": "Hungarian Bow",
+"uk": "Угорський лук"
+},
+"Hunting Rohatyna": {
+"en": "Hunting Rohatyna",
+"uk": "Мисливська рогатина"
+},
+"Hussar Boots": {
+"en": "Hussar Boots",
+"uk": "Гусарські чоботи"
+},
+"Hussar Konchar": {
+"en": "Hussar Konchar",
+"uk": "Гусарський кончар"
+},
+"Hussar Lance": {
+"en": "Hussar Lance",
+"uk": "Гусарський спис"
+},
+"Iron Broadsword": {
+"en": "Iron Broadsword",
+"uk": "Залізний палаш"
+},
+"Iron Pike": {
+"en": "Iron Pike",
+"uk": "Залізна піка"
+},
+"Iron Sabre": {
+"en": "Iron Sabre",
+"uk": "Залізна шабля"
+},
+"Iron Will Belt": {
+"en": "Iron Will Belt",
+"uk": "Пояс залізної волі"
+},
+"Iron-Shod Boots": {
+"en": "Iron-Shod Boots",
+"uk": "Підковані чоботи"
+},
+"Kelep": {
+"en": "Kelep",
+"uk": "Келеп"
+},
 "Kharakternyk": {
 "en": "Kharakternyk",
 "uk": "Характерник"
+},
+"Kharakternyk's Armour": {
+"en": "Kharakternyk's Armour",
+"uk": "Характерницький панцир"
+},
+"Kharakternyk's Belt": {
+"en": "Kharakternyk's Belt",
+"uk": "Характерницький пояс"
+},
+"Kharakternyk's Bracer": {
+"en": "Kharakternyk's Bracer",
+"uk": "Характерницький наруч"
+},
+"Kharakternyk's Gauntlets": {
+"en": "Kharakternyk's Gauntlets",
+"uk": "Характерницькі рукавиці"
+},
+"Kharakternyk's Helmet": {
+"en": "Kharakternyk's Helmet",
+"uk": "Характерницький шолом"
+},
+"Kharakternyk's Konchar": {
+"en": "Kharakternyk's Konchar",
+"uk": "Характерницький кончар"
+},
+"Kharakternyk's Kuchma": {
+"en": "Kharakternyk's Kuchma",
+"uk": "Характерницька кучма"
+},
+"Kharakternyk's Locket": {
+"en": "Kharakternyk's Locket",
+"uk": "Характерницька ладанка"
+},
+"Kindjal": {
+"en": "Kindjal",
+"uk": "Кинджал"
+},
+"Land Grant": {
+"en": "Land Grant",
+"uk": "Грамота на землю"
+},
+"Leather Belt": {
+"en": "Leather Belt",
+"uk": "Шкіряний пояс"
+},
+"Leather Boots": {
+"en": "Leather Boots",
+"uk": "Шкіряні чоботи"
+},
+"Leather Helmet": {
+"en": "Leather Helmet",
+"uk": "Шкіряний шолом"
+},
+"Leather Kaftan": {
+"en": "Leather Kaftan",
+"uk": "Шкіряний каптан"
 },
 "Lightning": {
 "en": "Lightning",
@@ -43,13 +659,125 @@
 "en": "Living Water",
 "uk": "Жива вода"
 },
+"Locket of Strength": {
+"en": "Locket of Strength",
+"uk": "Ладанка сили"
+},
+"Long Bow": {
+"en": "Long Bow",
+"uk": "Довгий лук"
+},
+"Long Pike": {
+"en": "Long Pike",
+"uk": "Довга піка"
+},
+"Magic Bracer": {
+"en": "Magic Bracer",
+"uk": "Чарівний наруч"
+},
+"Magic Locket": {
+"en": "Magic Locket",
+"uk": "Чарівна ладанка"
+},
+"Magic Scroll": {
+"en": "Magic Scroll",
+"uk": "Чарівний сувій"
+},
+"Misiurka": {
+"en": "Misiurka",
+"uk": "Місюрка"
+},
+"Moon Pike": {
+"en": "Moon Pike",
+"uk": "Місячна піка"
+},
+"Morocco Boots": {
+"en": "Morocco Boots",
+"uk": "Сап'янові чоботи"
+},
+"Night Spear": {
+"en": "Night Spear",
+"uk": "Нічний спис"
+},
+"Oath Kindjal": {
+"en": "Oath Kindjal",
+"uk": "Присяжний кинджал"
+},
+"Padded Kaftan": {
+"en": "Padded Kaftan",
+"uk": "Підбитий каптан"
+},
+"Pale Ambler": {
+"en": "Pale Ambler",
+"uk": "Солов'ий іноходець"
+},
+"Pale Courser": {
+"en": "Pale Courser",
+"uk": "Солов'ий скакун"
+},
+"Pale Rumak": {
+"en": "Pale Rumak",
+"uk": "Солов'ий румак"
+},
+"Peace Treaty": {
+"en": "Peace Treaty",
+"uk": "Мирний договір"
+},
+"Pernach": {
+"en": "Pernach",
+"uk": "Пернач"
+},
+"Persian Bow": {
+"en": "Persian Bow",
+"uk": "Перський лук"
+},
 "Perun's Arrow": {
 "en": "Perun's Arrow",
 "uk": "Перунова стріла"
 },
+"Piercing Pike": {
+"en": "Piercing Pike",
+"uk": "Пробивна піка"
+},
+"Piercing Spear": {
+"en": "Piercing Spear",
+"uk": "Пробивний спис"
+},
+"Pilgrim's Boots": {
+"en": "Pilgrim's Boots",
+"uk": "Прочанські чоботи"
+},
+"Plate Armour": {
+"en": "Plate Armour",
+"uk": "Пластинчастий панцир"
+},
+"Privilege": {
+"en": "Privilege",
+"uk": "Привілей"
+},
+"Prophetic Bracer": {
+"en": "Prophetic Bracer",
+"uk": "Віщий наруч"
+},
+"Prophetic Locket": {
+"en": "Prophetic Locket",
+"uk": "Віща ладанка"
+},
+"Prophetic Scroll": {
+"en": "Prophetic Scroll",
+"uk": "Віщий сувій"
+},
 "Protection of the Virgin": {
 "en": "Protection of the Virgin",
 "uk": "Покрова"
+},
+"Psalter": {
+"en": "Psalter",
+"uk": "Псалтир"
+},
+"Raider's Boots": {
+"en": "Raider's Boots",
+"uk": "Чоботи наїзника"
 },
 "Rain of Fire": {
 "en": "Rain of Fire",
@@ -59,9 +787,109 @@
 "en": "Rapids",
 "uk": "Пороги"
 },
+"Rapids Remedy": {
+"en": "Rapids Remedy",
+"uk": "Порогове зілля"
+},
+"Red Boots": {
+"en": "Red Boots",
+"uk": "Червоні чоботи"
+},
+"Righteous Boots": {
+"en": "Righteous Boots",
+"uk": "Праведні чоботи"
+},
 "Ring of Fire": {
 "en": "Ring of Fire",
 "uk": "Вогняне коло"
+},
+"Rohatyna": {
+"en": "Rohatyna",
+"uk": "Рогатина"
+},
+"Rough Belt": {
+"en": "Rough Belt",
+"uk": "Грубий пояс"
+},
+"Royal Berdysh": {
+"en": "Royal Berdysh",
+"uk": "Королівський бердиш"
+},
+"Royal Bracer": {
+"en": "Royal Bracer",
+"uk": "Королівський наруч"
+},
+"Royal Charter": {
+"en": "Royal Charter",
+"uk": "Королівська грамота"
+},
+"Royal Locket": {
+"en": "Royal Locket",
+"uk": "Королівська ладанка"
+},
+"Sable Kalpak": {
+"en": "Sable Kalpak",
+"uk": "Соболевий ковпак"
+},
+"Sabre of Sorrow": {
+"en": "Sabre of Sorrow",
+"uk": "Шабля скорботи"
+},
+"Saint's Broadsword": {
+"en": "Saint's Broadsword",
+"uk": "Святий палаш"
+},
+"Scale Armour": {
+"en": "Scale Armour",
+"uk": "Лускатий панцир"
+},
+"Scorching Konchar": {
+"en": "Scorching Konchar",
+"uk": "Пекучий кончар"
+},
+"Scribe's Zhupan": {
+"en": "Scribe's Zhupan",
+"uk": "Писарський жупан"
+},
+"Scroll of Ardour": {
+"en": "Scroll of Ardour",
+"uk": "Сувій палкості"
+},
+"Scroll of Essence": {
+"en": "Scroll of Essence",
+"uk": "Сувій суті"
+},
+"Scroll of Purity": {
+"en": "Scroll of Purity",
+"uk": "Сувій чистоти"
+},
+"Scroll of Trial": {
+"en": "Scroll of Trial",
+"uk": "Сувій випробування"
+},
+"Scroll of Zeal": {
+"en": "Scroll of Zeal",
+"uk": "Сувій завзяття"
+},
+"Scroll of the Heart": {
+"en": "Scroll of the Heart",
+"uk": "Сувій серця"
+},
+"Scroll of the Soul": {
+"en": "Scroll of the Soul",
+"uk": "Сувій душі"
+},
+"Scythian Bow": {
+"en": "Scythian Bow",
+"uk": "Скіфський лук"
+},
+"Sea Broadsword": {
+"en": "Sea Broadsword",
+"uk": "Морський палаш"
+},
+"Sentry's Belt": {
+"en": "Sentry's Belt",
+"uk": "Пояс вартового"
 },
 "Serdiuk": {
 "en": "Serdiuk",
@@ -71,13 +899,117 @@
 "en": "Serpent's Breath",
 "uk": "Подих Змія"
 },
+"Shyshak": {
+"en": "Shyshak",
+"uk": "Шишак"
+},
+"Sich Broadsword": {
+"en": "Sich Broadsword",
+"uk": "Палаш Січі"
+},
+"Silk Rushnyk": {
+"en": "Silk Rushnyk",
+"uk": "Шовковий рушник"
+},
+"Silk Sash": {
+"en": "Silk Sash",
+"uk": "Шовковий пояс"
+},
+"Simple Bow": {
+"en": "Simple Bow",
+"uk": "Простий лук"
+},
+"Snow-White Pony": {
+"en": "Snow-White Pony",
+"uk": "Сніжний коник"
+},
+"Spirited Boots": {
+"en": "Spirited Boots",
+"uk": "Завзяті чоботи"
+},
+"St John's Wort Tincture": {
+"en": "St John's Wort Tincture",
+"uk": "Настоянка звіробою"
+},
+"Starry Broadsword": {
+"en": "Starry Broadsword",
+"uk": "Зоряний палаш"
+},
 "Steppe Blaze": {
 "en": "Steppe Blaze",
 "uk": "Степова пожежа"
 },
+"Steppe Pike": {
+"en": "Steppe Pike",
+"uk": "Степова піка"
+},
+"Stern Konchar": {
+"en": "Stern Konchar",
+"uk": "Суворий кончар"
+},
 "Storm Sabre": {
 "en": "Storm Sabre",
 "uk": "Шабля-буря"
+},
+"Strong Konchar": {
+"en": "Strong Konchar",
+"uk": "Міцний кончар"
+},
+"Studded Belt": {
+"en": "Studded Belt",
+"uk": "Кований пояс"
+},
+"Sturdy Boots": {
+"en": "Sturdy Boots",
+"uk": "Міцні чоботи"
+},
+"Swift Broadsword": {
+"en": "Swift Broadsword",
+"uk": "Легкий палаш"
+},
+"Swift Konchar": {
+"en": "Swift Konchar",
+"uk": "Стрімкий кончар"
+},
+"Swift Pike": {
+"en": "Swift Pike",
+"uk": "Бистра піка"
+},
+"Swift Sabre": {
+"en": "Swift Sabre",
+"uk": "Легка шабля"
+},
+"Swift Yatagan": {
+"en": "Swift Yatagan",
+"uk": "Бистрий ятаган"
+},
+"Tatar Bow": {
+"en": "Tatar Bow",
+"uk": "Татарський лук"
+},
+"Tatar Spear": {
+"en": "Tatar Spear",
+"uk": "Татарський спис"
+},
+"Teachings": {
+"en": "Teachings",
+"uk": "Повчання"
+},
+"Thrusting Pike": {
+"en": "Thrusting Pike",
+"uk": "Колюча піка"
+},
+"Thunder Belt": {
+"en": "Thunder Belt",
+"uk": "Громовий пояс"
+},
+"Thunder Bracer": {
+"en": "Thunder Bracer",
+"uk": "Громовий наруч"
+},
+"Thunder Locket": {
+"en": "Thunder Locket",
+"uk": "Громова ладанка"
 },
 "Thunder Sabre": {
 "en": "Thunder Sabre",
@@ -87,8 +1019,84 @@
 "en": "Thunderstorm",
 "uk": "Громовиця"
 },
+"Universal": {
+"en": "Universal",
+"uk": "Універсал"
+},
+"Upyr's Bracer": {
+"en": "Upyr's Bracer",
+"uk": "Наруч упиря"
+},
+"Upyr's Locket": {
+"en": "Upyr's Locket",
+"uk": "Ладанка упиря"
+},
+"Valour Pike": {
+"en": "Valour Pike",
+"uk": "Піка звитяги"
+},
+"Victor's Spear": {
+"en": "Victor's Spear",
+"uk": "Спис звитяжця"
+},
+"War Boots": {
+"en": "War Boots",
+"uk": "Бойові чоботи"
+},
+"War Broadsword": {
+"en": "War Broadsword",
+"uk": "Бойовий палаш"
+},
+"War Konchar": {
+"en": "War Konchar",
+"uk": "Бойовий кончар"
+},
+"War Manual": {
+"en": "War Manual",
+"uk": "Військовий устав"
+},
+"War Sabre": {
+"en": "War Sabre",
+"uk": "Бойова шабля"
+},
+"Western Scroll": {
+"en": "Western Scroll",
+"uk": "Західний сувій"
+},
 "Whirlwind Sabre": {
 "en": "Whirlwind Sabre",
 "uk": "Шабля-вихор"
+},
+"White Bakhmat": {
+"en": "White Bakhmat",
+"uk": "Білий бахмат"
+},
+"White Courser": {
+"en": "White Courser",
+"uk": "Білий скакун"
+},
+"White Rumak": {
+"en": "White Rumak",
+"uk": "Білий румак"
+},
+"White Warhorse": {
+"en": "White Warhorse",
+"uk": "Білий бойовий кінь"
+},
+"Wise Konchar": {
+"en": "Wise Konchar",
+"uk": "Мудрий кончар"
+},
+"Wolf Bracer": {
+"en": "Wolf Bracer",
+"uk": "Вовчий наруч"
+},
+"Wolf Locket": {
+"en": "Wolf Locket",
+"uk": "Вовча ладанка"
+},
+"Zaporozhian Berdysh": {
+"en": "Zaporozhian Berdysh",
+"uk": "Запорозький бердиш"
 }
 }

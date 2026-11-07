@@ -685,7 +685,7 @@ func result_text() -> String:
 		lines.append(tr("online.battle_fame") % int(r.get("fame", 0)))
 	var loot: Variant = r.get("loot", {})
 	if loot is Dictionary and not (loot as Dictionary).is_empty():
-		lines.append(tr("online.battle_loot") % str(loot.get("name", "")))
+		lines.append(tr("online.battle_loot") % tr(str(loot.get("name", ""))))
 		if loot_lost:
 			lines.append(tr("online.battle_bag_full"))
 	lines.append(tr("online.battle_rank") % int(r.get("rank", 0)))
