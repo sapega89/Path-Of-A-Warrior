@@ -14,7 +14,7 @@ func test_help_screen() -> void:
 	screen.open(2)
 	eq(screen.heading.text, "Blacksmith", "a topic")
 	eq(screen.page_label.text, "1 / 6", "its pages")
-	eq(screen.text.text, "You can sell and buy items at the Blacksmith.", "its first page")
+	eq(screen.text.text, "The smith buys and sells things.", "its first page")
 	screen.turn_page(-1)
 	eq(screen.page, 5, "back from the first page to the last")
 	screen.open(Help.CONTROL_TOPIC)

@@ -98,7 +98,7 @@ func show_level() -> void:
 			text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 			text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			text.text = str(m.get("description", ""))
+			text.text = I18n.text(m.get("description", ""))
 			list.add_child(text)
 	# The focus: the first one open; back from a description, that mission; OK on one.
 	var open := list.get_children().filter(func(c): return c is Button and not c.disabled)

@@ -6,8 +6,8 @@ const TEST_PATH := "user://test_endings.json"
 
 
 func test_titles() -> void:
-	eq(Endings.title(0), "Main Ending", "the first")
-	eq(Endings.title(23), "Battle Dragon", "the last")
+	eq(Endings.title(0), "The Long Road", "the first")
+	eq(Endings.title(23), "Banner Knight", "the last")
 	eq(Endings.pages(), 5, "five pages of five")
 
 

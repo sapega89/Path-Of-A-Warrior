@@ -1,497 +1,497 @@
 {
 "opening": [
-"In the annals of man, peace and strife are like the labors of the field: we must sow one to reap the other. Indeed, the Holy dynasty nursed the tranquil lands of the Hetmanate for five centuries, before Hetman Sokil the Holy's passing finally raised the bloody harvest moon. Verbenko the White, a good man in his own right, put on Sokil's crown, but he could not fill the legend's throne. The Hetmanate's nobles, sensing Verbenko's weakness, scoffed at their new liege lord and set about expanding their influence, leaving their Emperor to his wine cup and dancing girls. Verbenko's common subjects blamed him for his inability to rule and deplored his wanton habits; while the horrified populace watched, the once virtuous Verbenko the White decayed into the besotted Verbenko the Grey. Sensing that Verbenko's failing rule would spell disaster for the Hetmanate, a powerful noble, Kniaz Bronislaw of Black Forest, took up a new battle cry: \"Chyhyryn is dying and Darkness is rising!\" He rallied an army to his flag and marched on Chyhyryn, the Hetmanate's capital, gathering followers from all corners of the Hetmanate on his way. The Hetmanate entered the last phase of its existence, which historians later referred to as \"The Rise of Darkness.\"",
-"Naturally, Kniaz Bronislaw's rivals were not content to sit idle while his rebel army stormed Chyhyryn's walls. They quickly raised their own forces to protect their interests, and the last vestiges of Verbenko's authority vanished. Before long, lords from all of the Hetmanate's provinces had marched their armies to Chyhyryn, questing after the Hetman's seat. The squabbling nobles clashed ferociously, producing legions of casualties and heroes in equal measure. A chaotic new age had been born, and many, many anonymous warriors walked a path paved with iron...",
-"Welcome to Red Monastery.",
+"Old men in these parts say that peace and war are two oxen in one yoke: whichever you drive, the other walks beside it. For five hundred years the house of Sokil held the Hetman's mace, and the land between the Dnipro and the Buh knew a quiet it had never known before. The quiet ended on the day they buried Hetman Sokil the Holy. The mace passed to Oleksandr Verbenko, a decent man who had never wanted to rule. The colonels saw at once that he could not hold them, and each began to carve out a piece of the country for himself while the Hetman drowned his helplessness in wine. The people, who at first had loved him, began to call him Verbenko the Grey. And then, from the west, from the castles of Sandomierz, came Kniaz Dominik Ostrzycki with a cry that the kobzars still sing: \"Chyhyryn is dying, and Darkness is rising!\" He called it a crusade for order. The Crown gave him banners of hussars, the Khan sent him horsemen, and every landless sabre on the road fell in behind him. So began the years the chronicles call the Dark Years.",
+"The colonels who had been quietly robbing the Hetman were not about to let a Polish kniaz rob him first. Each gathered his regiment, called it the defence of the mace, and marched on Chyhyryn. Within a year every road to the capital was full of armies, and nobody could say any longer who was fighting for whom. What was left of the Hetman's authority blew away like chaff. In that storm, between the great names, walked thousands of men nobody wrote down: hired sabres who sold a day of their life for a handful of silver. This is the story of one of them.",
+"So you have found your way to the Motronyn Monastery.",
 "...",
-"I do not need to know why your path has led you here, adventurer. If you are ever to return, however, you must abide by our only rule: victory at any cost.",
+"I will not ask what brought you here, and you will not tell me. The brotherhood keeps one rule, and whoever wants to walk out of these gates alive keeps it too: you win. Nothing else is asked of you.",
 "...",
-"If you fail in a mission, you will spill your life's blood on the battlefield-- but it is our order as a whole which will suffer the greatest fate. Know also that if you are wounded while engaged in combat, you must stay strong: you may be quickly cured. You will not even be aware that you have been marred.",
+"Lose a fight, and you will be left on the field for the crows, but it is the brotherhood that pays the greater price for your failure. If you are cut in battle, hold on. Our brothers know how to close a wound before you have time to notice it.",
 "...",
-"Choose your missions wisely. The means you employ are irrelevant, so long as the result is victory. Remember, a victorious mission is yours alone, but your failure is a defeat for all of us.",
+"Pick your work with your head, not your heart. How you win is your own business, so long as you win. A victory is yours alone. A defeat belongs to all of us.",
 "...",
-"The Rise of Darkness has cast the entire land into chaos. Although we do not know what the future holds, we do know that your choices will lead inexorably to that future. Do not take them lightly.",
+"The Dark Years have turned the whole country upside down. No one knows how it will end, but every sabre you take tilts the scales a little. Do not take them lightly.",
 "...",
-"We will meet again. Remember the golden rule: victory. You must somehow survive the end of this sad era to help forge the promise of the next! Godspeed, brave warrior."
+"We will speak again. Remember the one rule. Live through this miserable age, and perhaps you will help build the next one. God keep you, warrior."
 ],
 "endings": [
 {
 "talk": [
-"0|[Messenger] Sir, we know well that this new era of peace could never have been born without your efforts on the battlefield. Out of gratitude, we hereby offer you a commission in the Hetman's army. Will you accept it?",
-"Nay. I was born with a sword in my hand, and these bloody fields where I was raised. I could never accept while away my days behind a castle's walls... not when there are more fights to win..",
+"0|[Messenger] Sir, everyone knows that this peace was bought with your sabre as much as anyone's. The Hetman wishes to thank you. He offers you a sotnia in his own army and a house in Chyhyryn. Will you take it?",
+"No. I was born with a sabre in my fist, and the steppe raised me. I would rot behind city walls... and there are fights still waiting for me.",
 "0",
-"I am honored by this privilege, and I will do my best to live up to it.",
-"0|[Messenger] You have made a wise decision. My Lord will be flattered!"
+"It is a great honour. I will try to be worthy of it.",
+"0|[Messenger] A wise choice. The Hetman will be glad to hear it."
 ],
 "pictures": [
 "1",
-"2|Alas, fate will never let me rest in peace. None of the Three Nations' lords truly care for their subjects? they lust after power, not peace. The Kingdoms' people cry out for help! There have been too many tragedies because of this endless war. I have much to atone for...",
-"3|Eighty-two years after the Rise of Darkness, Hetman Zhuravel, son of a former commander under Colonel Chornohuz, legitimately succeeded Hetman Tryhub, son of the former Hetmanka Bohuslava. Hetman Zhuravel, adjust and powerful ruler, managed to unite the entire continent politically once again. The newly peaceful realm was known as the Grand Duchy of Ruthenia from that point on.",
-"4|I resigned from the royal court and returned to Red Monastery. I have long dreamt of a new age of heroes. I must seek my dream!"
+"2|But fate does not let a man like me sit by the stove. Not one of the colonels of the Steppe cares about the people who feed them. They want the mace, not peace. Villages burn, and the dead do not ask who was right. I have too much on my conscience to rest now.",
+"3|Eighty-two years after the start of the Dark Years, Hetman Zinovii Zhuravel, whose father had once ridden under Colonel Chornohuz, took the mace in a lawful election from Hetman Tryhub, the son of Hetmanka Olena. He was a just man and a hard one, and he gathered the whole country under one banner for the first time since Sokil the Holy. From that day the land was known as the Grand Duchy of Ruthenia.",
+"4|I gave the sotnia back to the Hetman and returned to the Motronyn Monastery. All my life I had dreamed of a time when heroes would be needed again. The dream was not done with me yet."
 ]
 },
 {
 "talk": [
-"0|[Kniaz Bronislaw] How dare you, cur! You have no idea what the future holds for this land and its people!",
-"33|[Colonel Bairak] It is not over yet!",
-"0|[Kniaz Bronislaw] What the?!",
-"34|[Colonel Chornohuz] Here I am, fool!",
-"0|[Kniaz Bronislaw] No? no...!",
-"24|[Colonel Tykhyi] Away with you!",
-"0|[Kniaz Bronislaw] Ah... Pull back, pull back!",
+"0|[Kniaz Dominik] Cur! Do you even understand what you have torn down today?",
+"33|[Colonel Bairak] It is not finished, kniaz!",
+"0|[Kniaz Dominik] What? Where did you...",
+"34|[Colonel Chornohuz] Over here, kniaz! Did you forget me?",
+"0|[Kniaz Dominik] No... this cannot be...",
+"24|[Colonel Tykhyi] Get out of our land!",
+"0|[Kniaz Dominik] Back! Everyone back to the wagons!",
+"Where do you think you are going?",
+"2|[Hrebinka] Here is something to remember us by!",
+"Finish him!",
+"1|[Osaul Zalizo] Die quickly, kniaz. It is more than you gave others.",
+"So that is how it ends..."
+],
+"pictures": [
+"5|With the kniaz dead the Crown Army fell apart, but the men it had brought did not go home. Bands of hussars without pay and whole villages of refugees drifted across the land, and the country shook for years. A nameless sabre had opened a new page in the chronicle of the Hetmanate."
+]
+},
+{
+"talk": [
+"37|[Oksana] It is cold... so cold. I cannot feel my hands...",
+"1|[Osaul Zalizo] I expected more of you, girl.",
+"37|[Oksana] ...",
+"0|[Cossack] The otaman is down! Oksana is down!",
+"0|[Cossack] Run for it! Run!",
+"A pity. She fought well.",
+"37|[Oksana] Take this... to Colonel Zaderykhvist... please...",
+"A scarf? What is this?",
+"37|[Oksana] Promise me...",
+"I promise.",
+"3|[Wilczek] Stand where you are!",
+"37|[Oksana] Go... now...",
+"6|[Zaremba] You will not leave here alive!",
+"We will see about that!"
+],
+"pictures": [
+"6|Colonel Kozub gave up Chortomlyk and drew his men back. I meant to carry the scarf to Colonel Zaderykhvist as I had promised, but my wounds kept me in bed for a month. Perhaps that was for the best. They say the Butcher vanished soon after the fight at Chortomlyk, and nobody has seen him since."
+]
+},
+{
+"talk": [
+"37|[Marusia] There you are. I have been looking for you.",
+"Looking for me? Who are you?",
+"37|[Marusia] Marusia. Marusia Shabelna.",
+"Shabelna?",
+"37|[Marusia] Oksana was my sister.",
+"...",
+"37|[Marusia] That scarf on your belt. She gave it to you, did she not?",
+"She did. What of it?",
+"37|[Marusia] She always said that the man she gave that scarf to would be the one to take me from our house.",
+"That is a child's tale.",
+"37|[Marusia] Then let it be a tale. I am still coming with you.",
+"I cannot. I am a hired sabre. I have no house and no tomorrow.",
+"37|[Marusia] Oksana trusted you with the last thing she had. That is enough for me.",
+"This is madness... and yet I believe you. Very well. Come. We are leaving this place.",
+"37|[Marusia] Yes..."
+],
+"pictures": [
+"7|It was the hardest choice of my life, and I made it: I took Marusia with me and we were married before the first snow. I swore to her that I was done with the monastery and the brotherhood, and that I would plough a field like other men. On the road home I felt something I had never felt before. It took me a long time to understand that it was peace."
+]
+},
+{
+"talk": [
+"I need to be back before dark.",
+"0|[Colonel Topolia] Thief! You dare carry the Hetman's Seal out of this holy place?",
+"The Seal? I have no idea what you mean.",
+"0|[Colonel Topolia] Do not play the fool with me. Shoot him!",
+"A poisoned arrow...!",
+"0|[Colonel Topolia] Go and meet your Maker, you greedy cur. Now then... yes! Here it is, the Seal!",
+"I do not die that easily... And whose hands are bloodier, colonel, mine or yours?",
+"0|[Colonel Topolia] Impossible... the poison should have... no!",
+"My life is forfeit. So is yours.",
+"0|[Colonel Topolia] ARRR!",
+"What a shameful way to die..."
+],
+"pictures": [
+"8|So ends a hired sabre who served no one, loved no one and died in a ditch chasing a nobleman's gold. There is no name on his cross."
+]
+},
+{
+"talk": [
+"34|[Colonel Chornohuz] Strange... one small thing overlooked, and it cost me everything.",
+"May God give your soul rest."
+],
+"pictures": [
+"9|He had despised his enemy, and for that a hero lay dead on the field.",
+"8|It does not matter how strong a man is or how many sabres ride behind him. No one outruns his fate. Every old soldier knows that fate is the one enemy that has never lost a battle."
+]
+},
+{
+"talk": [
+"4|[Colonel Zaderykhvist] You? Standing in front of me? Do you know who I am, boy? There is not a man between the Dnipro and the Vistula who does not fear my name. I am ZADERYKHVIST!",
+"...",
+"4|[Colonel Zaderykhvist] Still on your feet. Well, well. I will say it plainly: you have done fine work out there.",
+"My thanks.",
+"4|[Colonel Zaderykhvist] Why not ride under my banner?",
+"I am sorry. I cannot.",
+"4|[Colonel Zaderykhvist] I thought you would say that. Such a waste...",
 "...?!",
-"2|[Kalnyk] Take this!",
-"ARRR!",
-"1|[Rotmistr Augustyn] May your death come quickly.",
-"I cannot believe this..."
-],
-"pictures": [
-"5|Kniaz Bronislaw's death led to the downfall of the Crown Army, but the ensuing riot by former Crown Army members and waves of refugees destabilized the entire realm. Thus was a new era in the Hetmanate's history founded by the death of an anonymous warrior."
-]
-},
-{
-"talk": [
-"37|[Katria] It's cold... so cold. I'm... slipping... away...",
-"1|[Rotmistr Augustyn] You disappointed me.",
-"37|[Katria] ...",
-"0|[Soldier] Katria has been killed!",
-"0|[Soldier] Run! Run!",
-"What a shame..!",
-"37|[Katria] Please take this to Colonel Zaderykhvist ....",
-"What is this?",
-"37|[Katria] Please....",
-"As you wish...",
-"3|[Rozenberg] Stop right there!",
-"37|[Katria] Go now!",
-"6|[Zaremba] Die!",
-"I will be back!"
-],
-"pictures": [
-"6| Colonel Kozub's forces decided to cede control of Chortomlyk and pull back. I was told to meet Colonel Zaderykhvist with the item Katria gave me, but my grievous injury prevented me from doing so. Perhaps it was for the best, since I had heard that Colonel Zaderykhvist was lost sometime after the battle at Chortomlyk."
-]
-},
-{
-"talk": [
-"37|[Khrystia] I have arrived!",
-"Who are you?",
-"37|[Khrystia] I am Khrystia.",
-"Yes? And?",
-"37|[Khrystia] I am Katria's younger sister.",
-"...",
-"37|[Khrystia] That scarf! How can it be... you possess what is mine!",
-"?!?",
-"37|[Khrystia] My sister always told me the one who held that scarf would be betrothed to me.",
-"No... impossible.",
-"37|[Khrystia] Please take me with you.",
-"Nay, I cannot. I am only a sword for hire.",
-"37|[Khrystia] I do not care. Katria gave you the scarf, so you are worthy to be a hero!",
-"It's strange... this is madness, but there is something about you that makes me want to believe in what you say. Very well, let us leave this place.",
-"37|[Khrystia] Yes..."
-],
-"pictures": [
-"7|It was the biggest decision of my life, but I finally decided to take Khrystia with me and marry her. I promised her that I would retire from Red Monastery and become a simple farmer. On the way back from Red Monastery, I felt true peace for the first time. I was imagining myself being with her and protecting her for the rest of my life, and the thought brought me unbounded joy."
-]
-},
-{
-"talk": [
-"I have to return soon!",
-"0|[Colonel Kalyna] Thief! How dare you steal the Royal Seal from this sacred place!",
-"Eh? What are you talking about?",
-"0|[Colonel Kalyna] You must take me for a fool! Kill him!",
-"A poisoned arrow?!",
-"0|[Colonel Kalyna] Face the Reaper, you greedy thug! Aha! This must be the Royal Seal!",
-"Oh, but I do not fall so easily... your hands are stained with the blood of innocents!",
-"0|[Colonel Kalyna] How... could you? You were poisoned! NO!",
-"My life may be forfeit, but you will share the same fate!",
-"0|[Colonel Kalyna] ARRR!",
-"My shame is unbearable"
-],
-"pictures": [
-"8| Behold, the worthless death of a mercenary, who lived as an honorless, lone wolf and died in pursuit of greedy nobles' gold."
-]
-},
-{
-"talk": [
-"34|[Colonel Chornohuz] How strange that this small oversight ultimately proved to be... my downfall.",
-"May your soul find rest in eternity."
-],
-"pictures": [
-"9|The grave mistake of underestimating the enemy led to a hero's death on the battlefield.",
-"8|No matter how strong a warrior may be, and no matter how many men he may have under his banner, he can never escape his destiny. As every true soldier knows, fate is the only truly invincible force on the battlefield."
-]
-},
-{
-"talk": [
-"4|[Colonel Zaderykhvist] Fool, you cannot hope to stand on the same ground as me! Don't you know who I am?! I am the most feared man on the whole continent! I am LORD CONRAD!",
-"...",
-"4|[Colonel Zaderykhvist] Odd... you stand your ground. Well, credit where credit is due: I must say, your work has been very impressive!",
-"Thank you.",
-"4|[Colonel Zaderykhvist] Why not come and work for me?",
-"I am sorry, but I cannot accept.",
-"4|[Colonel Zaderykhvist] Ah! I thought you might refuse. What a waste of talent...",
-"... !?",
-"4|[Colonel Zaderykhvist] Indeed. I must kill you before you betray me to my enemies.",
-"What the...!!",
+"4|[Colonel Zaderykhvist] A man like you cannot be left alive to sell himself to my enemies tomorrow.",
+"You would...!",
 "4|[Colonel Zaderykhvist] Die well, mercenary!",
-"Never!",
+"Not today!",
 "4|[Colonel Zaderykhvist] ARRR!",
-"Now you understand: even a butcher like you is made of the same meat you so enjoy chopping up!",
-"4|[Colonel Zaderykhvist] ... Ugh... im... impossible! How?!",
-"Rest in peace for eternity."
+"Now you know, Butcher. You bleed like the rest of the meat you chopped.",
+"4|[Colonel Zaderykhvist] ...Ugh... impossible... how...?!",
+"Sleep. For good."
 ],
 "pictures": [
-"8|Colonel Zaderykhvist's death released his soldiers from the mortal terror he had held them under. His army disbanded and left his body for the ravens.",
-"10|His life ended by my sword, a good deed and a fitting end, I think. I shall celebrate the cleansing of this murderer with a fine glass of wine!"
+"8|When the Butcher fell, the terror that had held his regiment together fell with him. His men scattered in a single night and left his body to the ravens.",
+"10|He died on my sabre, and I have never once regretted it. That evening I drank a cup of good wine to a land with one murderer fewer in it."
 ]
 },
 {
 "talk": [
-"0|[Colonel Varfolomii] Finally! The northeastern region of the continent is in my grasp!",
-"Well done, my lord.",
-"0|[Colonel Varfolomii] I am deeply thankful for the immeasurable help you have given me.",
-"You do me too much honor.",
-"0|[Colonel Varfolomii]I shall reward you handsomely.",
-"Thank you, sir.",
-"0|[Colonel Varfolomii] Haha...! Finally I, Colonel Varfolomii, have wings to fly!",
+"0|[Colonel Kharko] At last! The whole north-east is mine!",
+"Well fought, colonel.",
+"0|[Colonel Kharko] I owe you more than I can say.",
+"You flatter me.",
+"0|[Colonel Kharko] I will pay you as a colonel pays, not as a merchant does.",
+"I am obliged.",
+"0|[Colonel Kharko] Ha! Now Kharko has wings, and the whole Hetmanate will see him fly!",
 "33|[Colonel Bairak] ..."
 ],
 "pictures": [
-"1| Colonel Varfolomii became a force to be reckoned by eliminating Colonel Tuman's forces. Gossip over his meteoric rise to power spread throughout the Hetmanate.",
-"11|However, his men were never truly satisfied with his leadership. He lacked the force of command to face down his top commanders, and as a result, many talented men deserted him.",
-"8|Eventually, his once-powerful army was routed by Colonel Chornohuz's forces, and he lost all of his holdings. Colonel Varfolomii was devastated! Ultimately, he was not wise enough to be satisfied with the riches fate had granted him."
+"1|By breaking Colonel Tuman, Kharko became a man to be reckoned with overnight, and every tavern in the Hetmanate talked of his rise.",
+"11|But his men never truly believed in him. He lacked the iron to stand up to his own osauls, and the best of them left him one by one.",
+"8|In the end Chornohuz's regiment broke what was left of Kharko's army, and he lost every acre he had won. Kharko had wanted to fly, and he had not had the wisdom to be content with walking."
 ]
 },
 {
 "talk": [
-"31|[Colonel Kosach] I am a failure! I cannot take revenge for my father's defeat.",
+"31|[Colonel Kosach] I have failed. I could not avenge my uncle.",
 "...",
-"11|[Luka] What should I do?!",
-"31|[Colonel Kosach] Luka... You must keep your promise",
-"11|[Luka] ???",
-"31|[Colonel Kosach] Did you not promise to serve whomever defeats me?",
-"11|[Luka] Are you talking about him?",
-"31|[Colonel Kosach] Who else would I be speaking of?",
-"11|[Luka] You are right. Very well. I shall accept him as my lord.",
-"No! I am lord to nobody!",
-"31|[Colonel Kosach] Please accept him. He will be an enormous help to you.",
+"11|[Tymish] And what am I to do now?!",
+"31|[Colonel Kosach] Tymish... you gave your word.",
+"11|[Tymish] My word?",
+"31|[Colonel Kosach] You swore to serve whoever beat me.",
+"11|[Tymish] You mean... him?",
+"31|[Colonel Kosach] Who else?",
+"11|[Tymish] So be it. I will take him as my colonel.",
+"No! I am nobody's colonel!",
+"31|[Colonel Kosach] Take him. You will not find a better sabre at your side.",
 "...",
-"11|[Luka] Please, sir!"
+"11|[Tymish] I am asking you, sir."
 ],
 "pictures": [
-"12| Luka convinced me to become Colonel Kosach's successor. Although I am but a simple warrior, I am now on the cusp of a completely new life."
+"12|Tymish talked me into it, and I took up what Kosach had left behind. I was a plain soldier, and now a regiment looked to me for orders. A whole new life was beginning, whether I wanted it or not."
 ]
 },
 {
 "talk": [
-"0|[Colonel Shulha] How dare they challenge me! I cannot thank you enough... you saved me!",
-"I will be back.",
-"0|[Colonel Shulha] Wait. You should come work for me.",
+"0|[Colonel Shulha] They thought they could take me! I owe you my life, and I do not forget such debts.",
+"I must be going.",
+"0|[Colonel Shulha] Wait. Stay. Serve me.",
 "...",
-"0|[Colonel Shulha] I can pay you much better than what you currently earn as a mercenary. Think about it.",
-"Thank you, but I am better off alone... for now.",
-"0|[Colonel Shulha] Ah, that is a pity.",
-"Take care.",
-"0|[Colonel Shulha] Come and see me if you ever change your mind.",
+"0|[Colonel Shulha] I will pay you twice what the brotherhood pays. Think it over.",
+"My thanks, colonel, but I ride alone. At least for now.",
+"0|[Colonel Shulha] A pity.",
+"Farewell, colonel.",
+"0|[Colonel Shulha] Should you think better of it, you know where to find me.",
 "..."
 ],
 "pictures": [
-"4|Colonel Shulha's offer was tempting, but I wanted to follow the path of my destiny. I felt he was not the one I was looking for, and I was right.",
-"8| Colonel Shulha, who had barely managed to escape the battlefield after his forces were routed, eventually walked the path of ruin. He died alone, impoverished, and unloved.",
-"6|Where is the lord I am destined to serve?"
+"4|Shulha's silver was tempting, but I had a road of my own to walk. Something told me he was not the man I was looking for, and that something was right.",
+"8|Colonel Shulha, who had barely crawled off the field when his regiment broke, slid downhill from that day on. He died alone, poor and unmourned.",
+"6|Where is the colonel I was born to serve?"
 ]
 },
 {
 "talk": [
-"I am sorry for my failure.",
-"1|[Rotmistr Augustyn] Ha... It is not your fault.",
-"Gah! If only I were stronger!",
-"1|[Rotmistr Augustyn] Perhaps it is the will of fate...",
-"What are you going to do?",
-"1|[Rotmistr Augustyn] I must embark on a journey. I must find the man I am destined to serve.",
-"Then...?",
-"1|[Rotmistr Augustyn] I will keep searching until I find him...",
+"Forgive me. I let you down.",
+"1|[Osaul Zalizo] Ha... No. The fault is not yours.",
+"If only I had been stronger!",
+"1|[Osaul Zalizo] Perhaps it was simply meant to be.",
+"What will you do now?",
+"1|[Osaul Zalizo] Ride. My colonel is out there somewhere, and I must find him.",
+"And if you cannot?",
+"1|[Osaul Zalizo] Then I will keep looking until I can.",
 "...",
-"1|[Rotmistr Augustyn] Thank you for your help... .",
+"1|[Osaul Zalizo] Thank you for everything.",
 "...",
-"1|[Rotmistr Augustyn] I will see you soon..."
+"1|[Osaul Zalizo] Until we meet again."
 ],
 "pictures": [
-"13|Rotmistr Augustyn managed to escape from Colonel Chornohuz's forces, and vanished from the Hetmanate. I am envious of Colonel Bairak. Very few men could have earned absolute loyalty from such an honorable, upright person."
+"13|Zalizo slipped through Chornohuz's lines and was gone from the Hetmanate. I envied Colonel Bairak that day. Few men ever earn such loyalty from a man so honest and so hard."
 ]
 },
 {
 "talk": [
-"0|[Colonel Tuman] Haha! Now I am lord of the entire continent!",
+"0|[Colonel Tuman] Ha-ha! The whole land is mine now!",
 "...",
-"0|[Colonel Tuman] Colonel Chornohuz! You may have avoided my wrath this time, but I will not rest until I find you! DO YOU HEAR ME?!",
+"0|[Colonel Tuman] Chornohuz! You slipped away this time, but I will dig you out of whatever hole you are hiding in! Do you hear me?!",
 "...",
-"0|[Colonel Tuman] You, my friend, were incredibly helpful in this battle.",
+"0|[Colonel Tuman] And you, friend. You did more than any three of my osauls today.",
 "...",
-"0|[Colonel Tuman] My, my... your eyes are fearsome... like those of a wolf!",
+"0|[Colonel Tuman] Those eyes of yours... a wolf's eyes. I like that.",
 "...",
-"0|[Colonel Tuman] Come and serve me! You will not regret it.",
+"0|[Colonel Tuman] Serve me, and you will never regret it.",
 "..."
 ],
 "pictures": [
-"3|Atfer the battle, Colonel Tuman became the Hetmanate's preeminent military power, and briefly held Chyhyryn with his armies.",
-"8|However, Colonel Chornohuz was far from finished. He recruited a powerful new army, obtained the latest military technology, and trounced Colonel Tuman. Colonel Tuman had to flee Chyhyryn in women's clothing to survive. He managed to return to his homeland, but his dignity was not intact. He had been humiliated in front of the entire Hetmanate.",
-"14|The incident filled his heart with hatred, and he died a lonely, bitter old man. As is always the case, the will of fate triumphed over man's plans and hopes."
+"3|After that battle Tuman was the strongest man in the Hetmanate, and for a short while his regiments held Chyhyryn itself.",
+"8|But Chornohuz was not done. He raised a new army, bought the newest guns money could find, and crushed Tuman so completely that the colonel had to flee Chyhyryn in a woman's dress. He reached his home alive, but the whole Hetmanate had seen him run, and he never lived it down.",
+"14|The shame curdled into hatred, and he died a bitter, lonely old man. Fate, as always, had the last word over the plans of men."
 ]
 },
 {
 "talk": [
-"34|[Colonel Chornohuz] Curses! We missed Colonel Bairak!",
-"I am deeply sorry about this.",
-"34|[Colonel Chornohuz] No, you did nothing wrong.",
+"34|[Colonel Chornohuz] Damn it all! Bairak got away!",
+"I am sorry, colonel.",
+"34|[Colonel Chornohuz] No. The fault was not yours.",
 "...",
-"34|[Colonel Chornohuz] Ach, I've let him escape... now what...",
+"34|[Colonel Chornohuz] I let him slip through my fingers... what now...",
 "...",
-"34|[Colonel Chornohuz] Colonel Bairak! Where have you gone?",
-"I must leave you now...",
-"34|[Colonel Chornohuz] Thank you for all of your assistance.",
+"34|[Colonel Chornohuz] Bairak! Where are you hiding?",
+"I must leave you now.",
+"34|[Colonel Chornohuz] Thank you for everything you did.",
 "...",
-"34|[Colonel Chornohuz] It must be you, Colonel Bairak! You are my only true rival! There is no one else!"
+"34|[Colonel Chornohuz] It has to be you, Bairak. You are the only one worth fighting. There is no one else!"
 ],
 "pictures": [
-"12|Colonel Chornohuz was a charismatic, talented leader, but he could turn into a viper when provoked. For this reason, many distrusted him and fled his authority en masse. Nevertheless, Colonel Chornohuz crowned himself Emperor after the long war, and he was soon the mightiest ruler the land had ever seen. Alas, disease accomplished what Colonel Bairak and all of his allies could not: he sickened on a battlefield and died before he was able to extend his reign over the whole of the continent. Twenty-two years after Colonel Chornohuz's untimely demise..."
+"12|Chornohuz could charm a regiment and lead it anywhere, but when crossed he turned into a viper, and many who had followed him fled from him for that reason. After the long war he had himself proclaimed Hetman all the same, and no ruler before him had held so much. What Bairak and all his allies could not do, a fever did: he sickened in camp and died before his rule reached the far edges of the land. Twenty-two years after Chornohuz's death..."
 ]
 },
 {
 "talk": [
-"0|[Omelko] Your abilities are truly impressive!",
+"0|[Omelko] I have never seen anyone fight like that!",
 "...",
-"0|[Omelko] Will you remain here and serve me?",
+"0|[Omelko] Stay with me. Serve me.",
 "...",
-"0|[Skoryk] Answer my lord's request, peasant!",
-"A warrior adheres only to his personal code. I am a mercenary. I will not serve you.",
-"0|[Skoryk] You are nothing but a dastardly thug!",
-"Do not draw your weapon against me. I warn you.",
-"0|[Skoryk] Defend yourself, honorless dog!",
+"0|[Skoryk] My colonel asked you a question, churl! Answer him!",
+"I keep my own law and nobody else's. My sabre is for hire, not my knee. Find yourself another man.",
+"0|[Skoryk] A cut-throat, that is all you are!",
+"Keep your hand off that sabre. I will not warn you twice.",
+"0|[Skoryk] Defend yourself, dog!",
 "...!!!",
 "0|[Skoryk] ARRR!",
-"0|[Omelko] Get him! Kill him!",
+"0|[Omelko] Take him! Kill him!",
 "Fools.",
 "0|[Omelko] ARRR!"
 ],
 "pictures": [
-"15| I fought for Colonel Tuman's successor, but he did not last long. I hoped that he passed painlessly, to be reborn during a more peaceful time."
+"15|I had fought for Tuman's heir, and he did not outlive his father by much. I hoped his death was quick, and that he would be born again in a kinder age."
 ]
 },
 {
 "talk": [
-"0|[Khoma] We will be able to hold on...",
+"0|[Khoma] We can still hold them...",
 "...",
-"0|[Omelko] This is our chance for revenge! Our father's blood is calling!",
-"0|[Khoma] No. Father's dead, and nothing we do here will bring him back! We don't have to fight.",
-"0|[Omelko] What? Will you not take revenge in the name of our father?",
-"0|[Khoma] An act of vengeance will only spur another vengeful act. Surely you know this to be true, brother.",
-"0|[Omelko] I cannot believe this. My own brother, a coward!",
+"0|[Omelko] Now is the hour! Father's blood will not go unpaid!",
+"0|[Khoma] No. Father is dead, and no fight here will bring him back. We do not have to do this.",
+"0|[Omelko] What? You will not avenge our own father?",
+"0|[Khoma] Blood for blood only brings more blood. You know that as well as I do, brother.",
+"0|[Omelko] So that is what you are. A coward, and my own blood!",
 "0|[Khoma] I am no coward...",
-"0|[Omelko] If you betray our father, you betray me! Seize him!",
-"0|[Khoma] No! Do not do this! Please!",
-"0|[Omelko] My brother Khoma is dead to me. Who is this traitor?",
+"0|[Omelko] Turn your back on Father and you turn it on me! Take him!",
+"0|[Khoma] Omelko, no! Think what you are doing!",
+"0|[Omelko] My brother Khoma is dead. I do not know this traitor.",
 "..."
 ],
 "pictures": [
-"8| Colonel Tuman's sons were not as noble as their father, who had died as honorably as a warrior could have.",
-"15|While Khoma and Omelko quarreled, Colonel Chornohuz's forces regrouped. Colonel Chornohuz eventually captured the two brothers and executed them. So much for brotherly love!"
+"8|Tuman's sons were not the men their father had been. He had died as a soldier should; they could not even stand together at his grave.",
+"15|While Khoma and Omelko tore at each other, Chornohuz gathered his regiment again. He took both brothers and had them beheaded on the same block. So much for brotherly love."
 ]
 },
 {
 "talk": [
-"33|[Colonel Bairak] Ah, I am trapped! Very well... I am ready to die.",
-"34|[Colonel Chornohuz] Finally! I finally have you!!",
+"33|[Colonel Bairak] Cornered, then. So be it. I am not afraid.",
+"34|[Colonel Chornohuz] At last! At last I have you!",
 "...!!",
-"34|[Colonel Chornohuz] Know this, Colonel Bairak: I do not wish to kill the only man whose talents match mine. Why not serve under me and help me to unite the continent under a single government? Together we would be unstoppable!",
-"33|[Colonel Bairak] Don't you see, Colonel Chornohuz? All of this is a waste of time! We will only kill more innocents.",
-"34|[Colonel Chornohuz] So, you are weaker than I am after all. It is truly a great shame that you have chosen death.",
+"34|[Colonel Chornohuz] Hear me, Bairak. I do not want to kill the one man who is my equal. Ride under my banner and help me bring the whole land under one mace. Nobody could stand against the two of us!",
+"33|[Colonel Bairak] Do you not see it, Chornohuz? All of this is for nothing. We will only bury more of the innocent.",
+"34|[Colonel Chornohuz] Then you are the weaker of us after all. A great pity that you chose to die.",
 "...",
-"34|[Colonel Chornohuz] Behead him and give him a hero's funeral!",
-"33|[Colonel Bairak] Why?! Why was I born a noble, only to die at the hands of a monster?! You have no honor, and you are no true lord, Chornohuz!",
+"34|[Colonel Chornohuz] Take his head, and bury him with the honours of a hero!",
+"33|[Colonel Bairak] Why was I born of the Hetman's blood, only to die by the hand of a beast? You have no honour, Chornohuz, and you will never be anyone's rightful colonel!",
 "..."
 ],
 "pictures": [
-"5|And, just like that, one of the Hetmanate's greatest heroes met his death. Colonel Bairak, a member of the Hetman's family and the only noble who fought to defend Hetman Verbenko's legacy, disappeared into the annals of history.",
-"12|His loyal servants, commanders Kalnyk and Augustyn, shared their lord's fate soon afterward.",
-"4|Every spring, those who remember Colonel Bairak and his faithful commanders fondly pick the cherry blossoms off of their graves, even hundreds of years later. It is said that the flowers' sweet scent can instill loyalty and honor in even the most hardened mercenary."
+"5|And so, in a single morning, one of the finest men of the Hetmanate was gone. Colonel Bairak, kin to the Hetman and the only colonel who had fought for Verbenko's house to the end, passed into the chronicles.",
+"12|His osauls Hrebinka and Zalizo followed him into the grave before the year was out.",
+"4|Every spring, even now, people who remember Bairak and his two osauls bring cherry blossom to their graves. They say the scent of it can teach loyalty even to a hired sabre."
 ]
 },
 {
 "talk": [
-"34|[Colonel Chornohuz] Curses...",
-"Your greed betrayed you...",
-"34|[Colonel Chornohuz] How dare you speak to me like that?!",
+"34|[Colonel Chornohuz] Damn you...",
+"Your greed did this, not I.",
+"34|[Colonel Chornohuz] You dare speak to me so?!",
 "...",
-"34|[Colonel Chornohuz] I may die here, but my successors will avenge me! My name will live on!",
-"1|[Rotmistr Augustyn] Release him...",
+"34|[Colonel Chornohuz] Kill me, and my heirs will hunt you down. My name will not die with me!",
+"1|[Osaul Zalizo] Let him go.",
 "...!!!",
-"1|[Rotmistr Augustyn] It wounds me deeply, but I owe a great debt to him. If I spare his life, I will be finished with him once and for all, and my conscience will be spared.",
-"Are you saying you will break the warrior's code?",
-"1|[Rotmistr Augustyn] The warrior's code is worthless if one's spirit is burdened. I must follow my own code as well.",
-"... Go.",
-"34|[Colonel Chornohuz] Ha! Thank you, Rotmistr Augustyn! You may consider your debt paid in full!",
-"1|[Rotmistr Augustyn] Go now, before I change my mind. Get out of my sight!"
+"1|[Osaul Zalizo] It cuts me to say it, but I owe this man my life. If I give him his, we are quits, and my conscience is clean.",
+"You would break the law of the sabre?",
+"1|[Osaul Zalizo] The law of the sabre is worth nothing to a man with a stone on his soul. I keep my own law too.",
+"...Go, then.",
+"34|[Colonel Chornohuz] Ha! My thanks, Zalizo! Consider the debt paid in full!",
+"1|[Osaul Zalizo] Ride, while I still let you. And do not cross my path again!"
 ],
 "pictures": [
-"8|Rotmistr Augustyn's personal code of ethics was admirable, but it allowed one of the greatest murderers in history avoid his fate. It is not wise to displease the fates, and Rotmistr Augustyn eventually met a horrible end on the battlefield.",
-"14|If Colonel Chornohuz was to die in this battle, history would forever afterward be affected. The future is in fate's hands alone."
+"8|Zalizo's sense of honour did him credit, and it let one of the worst murderers of the age walk away. The fates do not like to be cheated. Zalizo himself died badly on a battlefield not many years later.",
+"14|Had Chornohuz died in that fight, the whole history of the land would have run another way. But the future belongs to fate alone."
 ]
 },
 {
 "talk": [
-"0|[Colonel Kalyna] You criminal scum!",
-"0|[Chupryna] I shall return soon!",
-"0|[Colonel Kalyna] I will kill you with my bare hands if you ever return!",
-"0|[Chupryna] When I come back, you had better be prepared to die!",
-"0|[Colonel Kalyna] Haha... you are welcome to try, commoner!",
-"I will take my leave now...",
-"0|[Colonel Kalyna] My deepest thanks. Your brilliant work on the battlefield saved us.",
+"0|[Colonel Topolia] Bandit! Scum!",
+"0|[Chupryna] I will be back, colonel!",
+"0|[Colonel Topolia] Come back and I will strangle you with my own hands!",
+"0|[Chupryna] Then have your coffin ready when I do!",
+"0|[Colonel Topolia] Ha-ha! Try it, peasant!",
+"I will take my leave.",
+"0|[Colonel Topolia] My deepest thanks. Without you we would all be hanging from the gate by now.",
 "...",
-"0|[Colonel Kalyna] Haha! Look at those cowards run away!"
+"0|[Colonel Topolia] Ha! See how the rabble scatters!"
 ],
 "pictures": [
-"13|Colonel Kalyna proved to be a decent ruler, but his legacy was not fated to endure. After his death, his will, which would have granted his lands to Colonel Bairak, was ignored. Colonel Kalyna's family squabbled over his assets, and this resulted in the entire estate falling into the hands of Colonel Sych.",
-"15|Colonel Sych wished to avoid any challenges to his ownership of the Kalyna lands, so he ruthlessly had the entire Kalyna family assassinated. They were consigned to their place in history in the blink of an eye. It is a shame that Colonel Kalyna's belief in honorable conduct was not shared by his offspring, who instead chose the path of greed and ruin."
+"13|Topolia turned out to be a fair master, but what he built did not outlive him. His will left his lands to Colonel Bairak, and nobody honoured it. His family fought over the estate until the whole of it fell into the hands of Colonel Sych.",
+"15|Sych wanted no one left to challenge his claim, so he had every last Topolia murdered. A whole house wiped out between one harvest and the next. The colonel had believed in honour. His children had believed in gold, and it buried them."
 ]
 },
 {
 "talk": [
-"33|[Colonel Bairak] Curses! I see now that I have underestimated them.",
+"33|[Colonel Bairak] Damn it! I took them too lightly.",
 "...",
-"33|[Colonel Bairak] I will return soon...",
+"33|[Colonel Bairak] This is not the last they have seen of me...",
 "...",
-"1|[Rotmistr Augustyn] Until then you will live in our hearts!",
-"2|[Kalnyk] Hurry back, my lord...",
+"1|[Osaul Zalizo] We will keep your place warm, colonel!",
+"2|[Hrebinka] Come back soon, my lord...",
 "...",
-"33|[Colonel Bairak] We must go..."
+"33|[Colonel Bairak] Ride. We have no time."
 ],
 "pictures": [
-"3|On Osaul Ternovyi's advice, Colonel Bairak rushed his forces into the Podillia area. Colonel Bairak battled bravely, and Podillia eventually fell to his assault. He quick consolidated his control over Podillia and added the realm to his already expansive holdings.",
-"1|Osaul Ternovyi, Colonel Bairak's tactician, was deemed \"the Magnificent\" for devising the brilliant strategy that won the battle for Podillia.",
-"9|The old adage must be correct: \"Strength is given to the fool who will not capitulate.\" What if Colonel Bairak had given up and retreated from Podillia instead of fighting? The Hetmanate's destiny surely would have veered towards the abyss!"
+"3|On Osaul Ternovyi's advice, Bairak threw his whole regiment into Podillia. He fought like a man with nothing left to lose, and Podillia fell to him. He held it fast and added it to lands that were already wide.",
+"1|Ternovyi, who had drawn up the plan for Podillia, was called the Magnificent from that campaign on.",
+"9|The old saying is true: strength is given to the stubborn man who will not yield. Had Bairak given up Podillia and ridden home, the Hetmanate would surely have slid into the abyss."
 ]
 },
 {
 "talk": [
-"10|[Shram] Ha! Where are you off to, young man?",
-"1|[Rotmistr Augustyn] This is just the beginning! I shall return.",
-"18|[Nazar]Rotmistr Augustyn! Come back! We are not finished fighting!",
-"1|[Rotmistr Augustyn] I will be back soon!",
+"10|[Shram] Ho there! Leaving us already, youngster?",
+"1|[Osaul Zalizo] This is only the beginning! I will be back.",
+"18|[Nazar] Zalizo! Come back here! We are not finished!",
+"1|[Osaul Zalizo] Soon!",
 "18|[Nazar] ...!",
-"10|[Shram] Hurry back!",
+"10|[Shram] Hurry back, then!",
 "...",
-"10|[Shram] He is truly a great man, isn't he?",
-"18|[Nazar] Yes. I hope to share some drink with him one day!",
-"I must leave now.",
-"10|[Shram] Very well. Godspeed, warrior."
+"10|[Shram] A rare man, that one. Eh?",
+"18|[Nazar] Aye. I would gladly share a jug with him some day.",
+"I must go.",
+"10|[Shram] Go, then. God speed you, warrior."
 ],
 "pictures": [
-"10|Colonel Boryvitr eventually lost his lands when a cabal in his inner circle betrayed him. This was in spite of his two great commanders' best efforts. When Colonel Boryvitr's end came, it took him by complete surprise, since he had felt secure with his staff nearby. Clearly, it had always been Osaul Shram's and Osaul Nazar's fate to find residence in Colonel Bairak's army.",
-"14|Shram eventually became one of the Podillia's very finest generals. He accomplished many amazing feats, including the utter annihilation of Rotmistr Zaremba's army on the battlefield. Eventually, the other great general, Nazar, also became one of Podillia's vassals. His greatest work was to establish a bridgehead leading from Podillia to the Hetmanate's central continent."
+"10|Colonel Hulak lost his lands in the end, not to an enemy but to a plot hatched in his own house, and his two best osauls could do nothing to stop it. The blow caught him with his guard down: he had felt safe with his own men around him. Plainly it had always been written that Shram and Nazar would end up riding for Bairak.",
+"14|Shram became one of the finest commanders Podillia ever had. Among his deeds was the destruction of Rotmistr Zaremba's banner to the last man. Nazar, too, became Podillia's man in time; his great work was the bridgehead that joined Podillia to the heart of the Hetmanate."
 ]
 },
 {
 "talk": [
-"35|[Colonel Bilous] I always thought of you as one of the greatest men of our time...",
+"35|[Colonel Bilous] I always took you for one of the great men of our age...",
 "33|[Colonel Bairak] ...",
-"35|[Colonel Bilous] Why did you attack us?",
+"35|[Colonel Bilous] Why did you come at me with a sabre?",
 "33|[Colonel Bairak] ...",
-"35|[Colonel Bilous] Why did you not simply reach out to me? We didn't need to fight.",
+"35|[Colonel Bilous] One letter. One letter would have done it. We did not have to fight.",
 "33|[Colonel Bairak] ...",
-"35|[Colonel Bilous] I would have just given it to you...",
-"33|[Colonel Bairak]...! What?!",
-"35|[Colonel Bilous] Go...",
-"33|[Colonel Bairak] ...! I do not understand...",
+"35|[Colonel Bilous] It was yours for the asking...",
+"33|[Colonel Bairak] ...! What?!",
+"35|[Colonel Bilous] Go.",
+"33|[Colonel Bairak] ...! What kind of man are you...",
 "..."
 ],
 "pictures": [
-"14|Colonel Bilous managed to expand his territory considerably during the war, but Colonel Bairak's arrival put an end to his heavy-handed land seizures.",
-"15| Colonel Bilous released Colonel Bairak, who went on to conquer the Podillia by following Osaul Ternovyi's brilliant tactical advice. But the next time he fought Colonel Bilous, Osaul Ternovyi's skill was unnecessary, as they had received vital information from within Colonel Bilous's ranks. They were able to entrap Colonel Bilous's men, and another hero was relegated to the bards' songs."
+"14|Bilous had grown fat on other men's land during the war, and it was Bairak's coming that put an end to his grabbing.",
+"15|Bilous let Bairak go, and Bairak went on to take Podillia by Ternovyi's plan. When he met Bilous again, he needed no plan at all: someone inside Bilous's own camp had sold him out. They caught his men in a trap, and one more hero passed into the songs of the kobzars."
 ]
 },
 {
 "talk": [
-"36|[Colonel Chornovus] Colonel Chornohuz... your hatred burns in your eyes. I can see it.",
-"34|[Colonel Chornohuz] I will return!",
-"36|[Colonel Tur] I am satisfied with my one little parcel of land. I have no ambition for more.",
-"34|[Colonel Chornohuz] It is nothing personal, but you are an obstacle on my way to glory.",
-"36|[Colonel Chornovus] Is that so?",
-"34|[Colonel Chornohuz] Yes, you are standing in my way. I must kill Colonel Bairak. I shall kill him!",
-"36|[Colonel Chornovus] I see! Your ambition goes far beyond mere parcels of land...",
-"34|[Colonel Chornohuz] Yes! True men ought to have a burning ambition to be the greatest.",
-"36|[Colonel Chornovus] You are neither a true man, nor a great one.",
-"34|[Colonel Chornohuz] You will eat those words upon my return, fool."
+"36|[Colonel Rudyi] Your eyes give you away, Chornohuz. There is hate in them.",
+"34|[Colonel Chornohuz] I will be back!",
+"36|[Colonel Rudyi] My little parcel of land is enough for me. I want no more than that.",
+"34|[Colonel Chornohuz] Nothing against you personally. You are simply standing in my road.",
+"36|[Colonel Rudyi] Is that so?",
+"34|[Colonel Chornohuz] Yes. In my road to Bairak. I will have his head, and I will have it!",
+"36|[Colonel Rudyi] I see. So this is about more than a few acres...",
+"34|[Colonel Chornohuz] A real man burns to be the greatest. Anything less is not worth living for.",
+"36|[Colonel Rudyi] There is nothing real in you, and nothing great.",
+"34|[Colonel Chornohuz] You will swallow those words when I return, fool."
 ],
 "pictures": [
-"1|Colonel Chornovus was an effective ruler with a strong sense of morality. He used religion to help guide his people, and decreed that absolute honesty would be the law of his realm. His estates were not expansive, but they lay in a key area of the Podillia and Central regions.",
-"3|Before long, Colonel Chornovus succumbed to the pressure of Colonel Chornohuz's unstinting attacks. He was forced to flee his lands with only the clothes on his back, but Colonel Chornohuz regarded Colonel Chornovus's convictions favorably. He eventually reversed his decree mandating his death, and decided to let him return to his castle.",
-"6|Colonel Chornovus is one of this land's unluckiest men. He could have been a truly great ruler, if only he had lived during less chaotic times!"
+"1|Rudyi ruled well and ruled honestly. He let the church guide his people and made plain dealing the law of his estate. His land was small, but it lay where the roads from Podillia into the heart of the country met.",
+"3|Before long Chornohuz's attacks wore him down, and he fled his land with the shirt on his back and nothing more. Yet Chornohuz respected the man's convictions. He revoked the death sentence he had passed and let Rudyi return to his own house.",
+"6|Rudyi was one of the unluckiest men in the land. In a quieter age he would have been a truly great master."
 ]
 },
 {
 "talk": [
-"7|[Colonel Zolotar] Your assistance was most appreciated...",
-"You are welcome.",
-"7|[Colonel Zolotar] Will you continue to assist me?",
-"Of course. I will be waiting for your request.",
-"7|[Colonel Zolotar] Thank you.",
-"I will go now...",
-"7|[Colonel Zolotar] Please, take care."
+"7|[Colonel Kurylo] I am in your debt...",
+"You owe me nothing.",
+"7|[Colonel Kurylo] Will you ride with me again?",
+"Of course. Send for me when you need me.",
+"7|[Colonel Kurylo] Thank you.",
+"I will be on my way.",
+"7|[Colonel Kurylo] Keep safe."
 ],
 "pictures": [
-"1|Osaul Ternovyi felt that Colonel Zolotar was someone who possessed the talents necessary to become Emperor. After winning the battle, Colonel Zolotar rushed into Podillia and quickly conquered it. Colonel Bairak and his men, including commanders Ternovyi, Augustyn, Kalnyk, Kotsiuba and Shram, hurried to meet Colonel Zolotar.",
-"13|Colonel Zolotar's forces were built in the shadow of his father's gruesome fate. He decided to create a better army with Colonel Chornovus's help. Alas, only two years after conquering the Podillia area, Dorosh the Golden died at the relatively young age of 48.",
-"3|Not even Dorosh the Golden, one of the Hetmanate's greatest warriors, could escape the long shadow of his fate."
+"1|Osaul Ternovyi believed that Kurylo had in him the makings of a Hetman. After the battle Kurylo drove into Podillia and took it in a single campaign. Bairak and his osauls, Ternovyi, Zalizo, Hrebinka, Bilyk and Shram, rode hard to join him.",
+"13|Kurylo had built his regiment in the shadow of his father's terrible death, and with Rudyi's help he meant to build a better army than any before. He never had the time. Two years after taking Podillia, Hlib Kurylo died, only forty-eight years old.",
+"3|Even Kurylo, one of the greatest soldiers the Hetmanate ever raised, could not step out of the long shadow of his fate."
 ]
 },
 {
 "talk": [
-"1|[Rotmistr Augustyn] Thank you for saving me.",
-"You are welcome.",
-"1|[Rotmistr Augustyn] Fate has spared my life... with your help.",
-"You have to get back soon.",
-"1|[Rotmistr Augustyn] Yes. I must return to my lord.",
-"I must say... your loyalty is inspirational.",
-"1|[Rotmistr Augustyn] I only wish my lord had more warriors like you.",
+"1|[Osaul Zalizo] You pulled me out of there. I will not forget it.",
+"Think nothing of it.",
+"1|[Osaul Zalizo] Fate let me live... with a little help from you.",
+"You should get back soon.",
+"1|[Osaul Zalizo] Yes. My colonel is waiting for me.",
+"I have to say it: I have never seen loyalty like yours.",
+"1|[Osaul Zalizo] I only wish my colonel had more sabres like yours.",
 "...",
-"1|[Rotmistr Augustyn] Listen: If you want to live for a long time, and not for a brief moment, like a whirling gale of wind, give up your mercenary lifestyle. Come with me and serve my lord.",
-"... Very well. I will.",
-"1|[Rotmistr Augustyn] Excellent. Now I have to get moving!"
+"1|[Osaul Zalizo] Listen to me. If you want a long life and not a short blaze like a gust of wind, leave the hired trade behind. Come with me and serve my colonel.",
+"...Very well. I will.",
+"1|[Osaul Zalizo] Good. Then let us ride!"
 ],
 "pictures": [
-"12|Rotmistr Augustyn who lost his good name after Colonel Sych's attack was not the Rotmistr Augustyn I knew. As a loyal servant of Colonel Bairak, he defeated Katria at the Battle of Chortomlyk, and also eliminated Pereima and Brzeski, who were considered to be two of the greatest warriors in the Hetmanate. But because he often quarreled with Osaul Ternovyi, he was placed on the front lines of the battle with Colonel Sych. There he stood alone, cut off from his own forces. His journey back to Colonel Bairak became a legend in its own right, even though his intrepid spirit dimmed as he aged.",
-"1|Rotmistr Augustyn recommended me as his successor, and I became Podillia's chief general. Rotmistr Augustyn also gave me his position of an Knight of the Hetman's Banner, and then retired permanently from battle. From that point forward, I was known as \"Battle Dragon\" and I began my new life as a hero."
+"12|The Zalizo whose name was dragged through the mud after Sych's attack was not the Zalizo I knew. As Bairak's loyal osaul he had beaten Oksana at Chortomlyk and cut down Pereima and Brzeski, two of the best sabres in the Hetmanate. But he quarrelled too often with Ternovyi, and so he was sent to the front line against Sych, where he was left alone, cut off from his own people. His journey back to Bairak became a legend of its own, though the fire in him had burned low by the time he grew old.",
+"1|Zalizo named me his successor, and I became the first commander of Podillia. He also handed me his title of Knight of the Hetman's Banner, and then he left the wars for good. From that day they called me the Banner Knight, and my life as a hero began."
 ]
 }
 ],
 "gamestr": [
-"I could get out of bloody battle field like that. I was appointed as a officer.I didn't have to wonder around the battle fields anymore.",
-"[Messenger] The country will need you.."
+"That was how I walked away from the fields of slaughter. They gave me a sotnia and a roof, and I no longer had to roam from one battle to the next.",
+"[Messenger] The country still needs men like you."
 ],
 "titles": [
-"Main Ending",
-"Fall Of The Yellow",
-"Bloody Scarp",
-"Love Of Warrior",
-"Unnamed Hero",
-"God's Will",
-"Zaderykhvist's Story",
-"Condition Of Hero",
-"New Force",
-"Wondering Warrior",
-"Lionheart",
-"Downfall",
+"The Long Road",
+"The Kniaz Falls",
+"The Blood-Stained Scarf",
+"A Cossack's Love",
+"No Name on the Cross",
+"God's Judgement",
+"The Butcher",
+"Wings of Wax",
+"The Heir",
+"The Road Goes On",
+"A Faithful Heart",
+"In Women's Dress",
 "Chornohuz",
-"Internal Strife",
-"What a shame",
-"Hero's Fall",
-"Nine Lives",
-"Code Of Honor",
-"Never Give Up",
-"Two Generals",
-"Colonel Pidhornyi",
-"Buriak' Story",
-"Colonel Holota",
-"Battle Dragon"
+"A Sabre for Hire",
+"Brothers' Blood",
+"The Noble's Head",
+"The Debt Repaid",
+"The Lost Will",
+"Hold the Line",
+"Two Osauls",
+"The Gift of Bilous",
+"A Small Parcel of Land",
+"Kurylo",
+"Banner Knight"
 ]
 }

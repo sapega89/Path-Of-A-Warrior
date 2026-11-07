@@ -139,8 +139,8 @@ func test_sword_hits() -> void:
 
 
 
-## The hero turns to the enemy beside him as he strikes, on hard too (as in pyport).
-func test_auto_aim_on_both_difficulties() -> void:
+## The hero turns to the enemy beside him as he strikes on normal; on hard he aims by hand.
+func test_auto_aim_only_on_normal() -> void:
 	for hard in [false, true]:
 		var d := _duel()
 		var sim: RefCounted = d[0]
@@ -149,15 +149,7 @@ func test_auto_aim_on_both_difficulties() -> void:
 		e.pos = sim.hero.pos + Vector2i(30, 0)
 		sim.tick(-1, -1, true)
 		sim.tick(-1, -1)
-		eq(sim.hero.facing, 6, "turned right to the enemy (hard: %s)" % hard)
-	var d := _duel()
-	var sim: RefCounted = d[0]
-	d[1].pos = sim.hero.pos + Vector2i(30, 0)
-	sim.difficulty = 0
-	sim.auto_aim_hard = false
-	sim.tick(-1, -1, true)
-	sim.tick(-1, -1)
-	eq(sim.hero.facing, 0, "the original's hard: no turn")
+		eq(sim.hero.facing, 0 if hard else 6, "turned to the enemy only on normal (hard: %s)" % hard)
 
 
 func test_hit_spark_shows_two_ticks() -> void:
@@ -373,12 +365,12 @@ func test_general_comes_with_his_talk() -> void:
 	var d := _general_duel()
 	var sim: RefCounted = d[0]
 	var g = d[1]
-	eq(sim.general.get("name", ""), "Waclaw Krzeminski", "general 1")
+	eq(sim.general.get("name", ""), "Zdzislaw Krzeminski", "general 1")
 	check(sim.boss_fight, "the mission's own general")
 	eq(g.level, 2, "the hero's level and the list's count")
 	eq(g.hp, 23, "20 HP and 3 a level")
 	eq(sim.talk.size(), 3, "three lines")
-	eq(sim.talk[0], "[Waclaw Krzeminski] Waclaw Krzeminski is here!!!", "his name for &")
+	eq(sim.talk[0], "[Zdzislaw Krzeminski] Zdzislaw Krzeminski is here!", "his name for &")
 	sim.tick(-1, -1)
 	eq(sim.talk_text(), "[", "typed a letter a tick")
 	var x: int = sim.hero.pos.x
@@ -438,7 +430,7 @@ func test_rewards_and_the_talk_after_the_mission() -> void:
 	_next_page(sim)
 	eq(sim.banner, 0, "the pages are over")
 	eq(sim.talk.size(), 5, "the general talks")
-	check(sim.talk[0].begins_with("[Andrii Nedolia] Not bad, warrior."), "his first words: %s" % sim.talk[0])
+	check(sim.talk[0].begins_with("[Andrii Nedolia] You handle yourself well, warrior."), "his first words: %s" % sim.talk[0])
 	check(sim.talk[1].begins_with("[Hero]"), "then the hero")
 	eq(sim.friendship.get(5, 0), 5, "friendship grows")
 	for t in 400:

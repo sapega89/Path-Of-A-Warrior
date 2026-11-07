@@ -18,7 +18,7 @@ const STAT_ITEMS := {
 ## Things that can be carried but not worn.
 const NOT_WORN := [502, 504]
 const SUFFIX := {434: " / Hp 5 Increased", 435: " / MP 3 Increased", 436: " / DEF 1 Increased",
-	437: " / ATK 1 Increased", 502: " / Katria's scarf", 504: " / all General Visiting"}
+	437: " / ATK 1 Increased", 502: " / Oksana's scarf", 504: " / all General Visiting"}
 const GEAR_STATS := ["attack", "defense", "hp", "mp"]
 ## Icon sheets: potions, gear, treasures, rare things (28 px icons in a row).
 const SHEETS := ["tool", "kibo", "sungbo", "shinki"]

@@ -3,6 +3,10 @@ extends "res://tests/test_case.gd"
 const I18nScript := preload("res://scripts/core/i18n.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const OnlineClient := preload("res://scripts/net/online_client.gd")
+const Visits := preload("res://scripts/core/visits.gd")
+const Stories := preload("res://scripts/core/stories.gd")
+const Endings := preload("res://scripts/screens/endings_screen.gd")
+const MapSim := preload("res://scripts/sim/map_sim.gd")
 
 
 func _table() -> Dictionary:
@@ -95,3 +99,19 @@ func test_campaign_names_in_every_language() -> void:
 	for name in names:
 		for locale in I18nScript.LOCALES:
 			check(t[locale].get(name, "") != "", "%s has no %s name" % [name, locale])
+
+
+func test_story_texts_in_the_players_language() -> void:
+	var t := I18nScript.parse(FileAccess.get_file_as_string(I18nScript.STORY_PATH))
+	check(t["en"].size() > 500, "the story texts are there: %d" % t["en"].size())
+	for key in t["en"]:
+		check(t["uk"].get(key, "") != "", "%s has no uk text" % key)
+	var before := TranslationServer.get_locale()
+	TranslationServer.set_locale("uk")
+	eq(Visits.line(0), "Добридень.", "a visit greeting")
+	eq(Stories.pages(Stories.OPENING, "Лесь")[2].text,
+		"[Настоятель] Отже, ти знайшов дорогу до Мотронинського монастиря.", "the prior's first line")
+	eq(Endings.title(0), "Довга дорога", "an ending's title")
+	eq(MapSim.talk_lines("map")[21], "& is here!", "the data stays English")
+	eq(I18n.text(MapSim.talk_lines("map")[21]), "& тут!", "and I18n.text gives the player's language")
+	TranslationServer.set_locale(before)

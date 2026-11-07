@@ -105,7 +105,7 @@ func test_endings() -> void:
 	eq(p.advance(_sim_won(true), 5, {"general": 202, "reward": 0}, rng), 2, "ending 2")
 	check(p.endings & (1 << 2) != 0, "seen")
 	eq(p.place, 0, "back to the start")
-	check(p.has_item(Profile.SCARF), "Katria's scarf")
+	check(p.has_item(Profile.SCARF), "Oksana's scarf")
 	check(p.lords_open != open_before, "one more lord open")
 	eq(p.advance(_sim_won(true), 9, {"general": 206, "reward": 0}, rng), 6, "ending 6")
 	eq(p.place, 11, "its place")

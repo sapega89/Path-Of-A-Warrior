@@ -172,7 +172,6 @@ var hold_to_move := true  # the port's option (the player asked for it): walk wh
 ## The map without enemies (pyport's POW_NO_ENEMIES): a room's list counts as defeated.
 var no_enemies := false
 var difficulty := 1  # 0 hard (gold and exp x2), 1 normal
-var auto_aim_hard := true  # the port's option: the hero turns to the nearest enemy on hard too
 var general_side := 0  # the side (weapon) of the last general met: 0 long, 1 short sword
 var general := {}  # the last general met (campaign.json generals)
 var hero_name := HERO_NAME  # how the hero is called in the talks (the hero's own name)
@@ -260,6 +259,7 @@ static func general_data(id: int) -> Dictionary:
 	return _generals.get(str(id), {})
 
 
+## The lines of data/talk.json `kind` (in English; I18n.text gives the player's language).
 static func talk_lines(kind: String) -> Array:
 	if _talk.is_empty():
 		_talk = _load_json(TALK_PATH)
@@ -1668,10 +1668,10 @@ func _hero_hits_enemy(e: Actor, action: int) -> void:
 		general_pick_skill(e, true)
 
 
-## The hero turns to the nearest enemy (closer than 50 px) as he strikes: on normal, and on
-## hard too with auto_aim_hard (the original aimed by hand on hard).
+## The hero turns to the nearest enemy (closer than 50 px) as he strikes: only on normal (on
+## hard the player aims by hand).
 func _turn_to_nearest() -> void:
-	if difficulty == 0 and not auto_aim_hard:
+	if difficulty == 0:
 		return
 	var best := 50
 	var found: Actor = null
@@ -1732,7 +1732,7 @@ func _start_map_talk() -> void:
 	var name := String(TranslationServer.translate(str(general.get("name", ""))))
 	for k in TALK_STEPS:
 		var speaker := name if (k & 1) == 0 else hero_name
-		var text := str(lines[21 + k]) if 21 + k < lines.size() else ""
+		var text := I18n.text(lines[21 + k]) if 21 + k < lines.size() else ""
 		talk.append("[%s] %s" % [speaker, text.replace("&", speaker)])
 	talk_line = 0
 	talk_chars = 0
@@ -1862,7 +1862,7 @@ func _start_general_talk(id: int, after: int) -> void:
 	talk.clear()
 	for k in VICTORY_TALK_STEPS:
 		var speaker := name if (k & 1) == 0 else hero_name
-		var text := str(lines[first + k]) if first + k < lines.size() else ""
+		var text := I18n.text(lines[first + k]) if first + k < lines.size() else ""
 		talk.append("[%s] %s" % [speaker, text.replace("&", speaker)])
 	talk_line = 0
 	talk_chars = 0

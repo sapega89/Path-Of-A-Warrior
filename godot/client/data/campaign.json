@@ -177,57 +177,57 @@
 "missions": 5
 },
 "4": {
-"name": "Blue Mountain",
+"name": "Korsun",
 "first_mission": 13,
 "missions": 5
 },
 "5": {
-"name": "Royal Seal",
+"name": "The Regalia",
 "first_mission": 18,
 "missions": 2
 },
 "6": {
-"name": "Black Earth",
+"name": "Harvest",
 "first_mission": 20,
 "missions": 2
 },
 "7": {
-"name": "End of Glory",
+"name": "The Hetman's Twilight",
 "first_mission": 22,
 "missions": 2
 },
 "8": {
-"name": "The Assassin",
+"name": "The Poisoned Cup",
 "first_mission": 24,
 "missions": 2
 },
 "9": {
-"name": "Brotherhood",
+"name": "The Kurin",
 "first_mission": 26,
 "missions": 2
 },
 "10": {
-"name": "Honour",
+"name": "The Oath",
 "first_mission": 28,
 "missions": 2
 },
 "11": {
-"name": "The Strongman",
+"name": "Single Combat",
 "first_mission": 30,
 "missions": 3
 },
 "12": {
-"name": "The Madman",
+"name": "Wild Blood",
 "first_mission": 33,
 "missions": 5
 },
 "13": {
-"name": "Red Castle",
+"name": "Zbarazh",
 "first_mission": 38,
 "missions": 2
 },
 "14": {
-"name": "White Horse",
+"name": "The Ford",
 "first_mission": 40,
 "missions": 2
 },
@@ -237,7 +237,7 @@
 "missions": 2
 },
 "16": {
-"name": "Lion's Heart",
+"name": "Falcon's Flight",
 "first_mission": 44,
 "missions": 1
 },
@@ -247,52 +247,52 @@
 "missions": 2
 },
 "18": {
-"name": "Treason",
+"name": "The Turncoat",
 "first_mission": 47,
 "missions": 2
 },
 "19": {
-"name": "The Hunt",
+"name": "The Ambush",
 "first_mission": 49,
 "missions": 2
 },
 "20": {
-"name": "New Hope",
+"name": "The Thaw",
 "first_mission": 51,
 "missions": 2
 },
 "21": {
-"name": "Rout",
+"name": "The Burnt Camp",
 "first_mission": 53,
 "missions": 2
 },
 "22": {
-"name": "Vengeance",
+"name": "The Raid",
 "first_mission": 55,
 "missions": 2
 },
 "23": {
-"name": "One Against a Horde",
+"name": "The Last Redoubt",
 "first_mission": 57,
 "missions": 2
 },
 "24": {
-"name": "To the Sich",
+"name": "Down the Dnipro",
 "first_mission": 59,
 "missions": 2
 },
 "25": {
-"name": "Troubles",
+"name": "The Black Council",
 "first_mission": 61,
 "missions": 1
 },
 "26": {
-"name": "The Testament",
+"name": "The Hetman's Letter",
 "first_mission": 62,
 "missions": 2
 },
 "27": {
-"name": "The Last Battle",
+"name": "Dawn over the Dnipro",
 "first_mission": 64,
 "missions": 2
 },
@@ -302,32 +302,32 @@
 "missions": 2
 },
 "29": {
-"name": "The Chase",
+"name": "Steppe Wind",
 "first_mission": 68,
 "missions": 2
 },
 "30": {
-"name": "Valley of Souls",
+"name": "Kruta Balka",
 "first_mission": 70,
 "missions": 2
 },
 "31": {
-"name": "Golden Arsen",
+"name": "Klym Holota",
 "first_mission": 72,
 "missions": 2
 },
 "32": {
-"name": "Alone",
+"name": "Bar",
 "first_mission": 74,
 "missions": 2
 },
 "33": {
-"name": "Black Road I",
+"name": "Kuchman Road I",
 "first_mission": 76,
 "missions": 2
 },
 "34": {
-"name": "White Lake",
+"name": "Svitiaz",
 "first_mission": 78,
 "missions": 2
 },
@@ -347,17 +347,17 @@
 "missions": 2
 },
 "38": {
-"name": "Golden Gate",
+"name": "Kamianets",
 "first_mission": 86,
 "missions": 2
 },
 "39": {
-"name": "The Great Land",
+"name": "Beyond the Border",
 "first_mission": 88,
 "missions": 2
 },
 "40": {
-"name": "Left Bank",
+"name": "Poltava",
 "first_mission": 90,
 "missions": 2
 },
@@ -367,7 +367,7 @@
 "missions": 2
 },
 "42": {
-"name": "Black Road II",
+"name": "Kuchman Road II",
 "first_mission": 94,
 "missions": 2
 },
@@ -377,12 +377,12 @@
 "missions": 2
 },
 "44": {
-"name": "Lion's Heart II",
+"name": "Falcon's Flight II",
 "first_mission": 98,
 "missions": 2
 },
 "45": {
-"name": "End of a Hero",
+"name": "The Duma",
 "first_mission": 100,
 "missions": 2
 }
@@ -403,7 +403,7 @@
 "level_bonus": 1,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "\"The Rise of Darkness\" has roused many nameless heroes, still loyal to the true Hetman Verbenko, to stand united against the forces of chaos. Colonel Bairak is one of them. He is from Green Mountain and is related to the holy emperor's family. We've been watching him carefully, and think he is destined for greatness. You are to help him rout Rotmistr Krzeminski, one of the Crown Army's top leaders. You will participate in a pincer movement. Colonel Bairak will attack from behind and you will attack from the front. The mission objective is to eliminate Rotmistr Krzeminski. Do you accept this mission?"
+"description": "Listen, mercenary. Chyhyryn may be burning, but not every colonel has sold himself to the Crown. A few still hold to their oath to Hetman Verbenko. Colonel Bairak of Pereiaslav is one of them, and the Hetman's own blood runs in him. The brotherhood has had its eye on this man for years: something great will come of him. Our first job with him is simple and bloody. The banner of Rotmistr Krzeminski, one of the pillars of the Crown Army, has made camp in a gully. Bairak will circle through the woods and hit them from behind, while you cross the open field straight at the tents. It does not matter which of you reaches the rotmistr first, only that one of you does. Are you in?"
 },
 {
 "id": 2,
@@ -420,7 +420,7 @@
 "level_bonus": 2,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "\"The Rise of Darkness\" has roused many nameless heroes, still loyal to the true Hetman Verbenko, to stand united against the forces of chaos. Colonel Chornohuz is one of them. He is from Red Steppe and is currently just an apprentice knight.. We've been watching him carefully, and think he is destined for greatness. You are to help him rout Rotmistr Zaleski, one of the Crown Army's top leaders. You will participate in a pincer movement. Colonel Chornohuz will attack from behind and you will attack from the front. The mission objective is to eliminate Rotmistr Zaleski. Do you accept this mission?"
+"description": "There is another man the brotherhood keeps watch on: Platon Chornohuz of Myrhorod. For now he is only a squire under someone else's banner, and the senior officers do not notice him at table. Their mistake. He has a wolf's nose and a quick hand. Right now he means to bloody Rotmistr Zaleski, whose Crown banner is grazing its horses above the river. The plan is the same one Bairak used: Chornohuz creeps in from the reeds at the back, you come in from the front, and Zaleski finds himself between two blades. The rotmistr must fall. Will you ride?"
 },
 {
 "id": 3,
@@ -437,7 +437,7 @@
 "level_bonus": 3,
 "name": "Colonel Syvous",
 "portrait": 25,
-"description": "\"The Rise of Darkness\" has roused many nameless heroes, still loyal to the true Hetman Verbenko, to stand united against the forces of chaos. Colonel Tykhyi is one of them. He is the lord of Zolota Lypa and known as a fierce warrior.. We've been watching him carefully, and think he is destined for greatness. You are to help him rout Rotmistr Wolski, one of the Crown Army's top leaders. You will participate in a pincer movement. Colonel Tykhyi will attack from behind and you will attack from the front. The mission objective is to eliminate Rotmistr Wolski. Do you accept this mission?"
+"description": "Colonel Syvous of Uman is a man of few words, but his regiment speaks loudly. When a Crown proclamation reached him, he hanged the courier on the gate. Now Rotmistr Wolski is leading a banner against Uman to teach him a lesson. Syvous has no intention of sitting behind a palisade. His field commander, Myron Tykhyi, will take the horse out by night and get round behind Wolski, and at dawn you will strike the front. The pincer closes on the rotmistr. Your answer?"
 },
 {
 "id": 4,
@@ -454,7 +454,7 @@
 "level_bonus": 15,
 "name": "Colonel Vovkodav",
 "portrait": 0,
-"description": "The Crown Army have dispatched their armies all over the continent. Rotmistr Augustyn, one of the three heads of the Crown Army and the younger brother of Kniaz Bronislaw, has entered the area and is vulnerable to attack. You will need to launch a full frontal assault on Rotmistr Augustyn. This is a tough mission, but if you are successful you will be richly rewarded. Do you accept this mission?"
+"description": "No pincer this time, and no colonels at your back. The Crown Army has three heads, and one of them is in our parts right now: Osaul Zalizo, a Cossack who sold his sabre to Kniaz Dominik and leads his fiercest banner. He has broken away from the main host and is camped in the open steppe, certain that no one will dare. Someone must dare. You go at him alone, head-on, through his guards. The work is hard, and the pay is not like the pay for the others. What do you say?"
 },
 {
 "id": 1,
@@ -471,7 +471,7 @@
 "level_bonus": 1,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Thanks in part to your brilliant assault, Rotmistr Krzeminski's brigade is now in tatters. Colonel Bairak has shifted his attention to engaging Kara-murza's army. The mission objective is to eliminate Kara-murza. What say you?"
+"description": "Krzeminski is gone: after your blow nothing is left of his banner but wagons and dust. But the Crown has brought the Horde with it. Kara-murza and his riders are already burning farmsteads along the Yellow Waters, and Bairak has turned on him. Steppe men do not stand in ranks; they swoop in and vanish, so this needs stubbornness more than strength. Find the murza and see to it that his horse goes back to the camp without a rider. Will you ride?"
 },
 {
 "id": 2,
@@ -488,7 +488,7 @@
 "level_bonus": 2,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Thanks in part to your brilliant assault, Rotmistr Zaleski's brigade is now in tatters. Colonel Chornohuz has shifted his attention to engaging Dzhanbek-bey's army. The mission objective is to eliminate Dzhanbek-bey. What say you?"
+"description": "Zaleski is broken and his men have scattered into the forests. But in place of the banner came the warband of Dzhanbek-bey: the Horde has taken the Crown's money and is now earning it on the Yellow Waters. Chornohuz says he will not have Tatar campfires on his steppe, and that is something. Help him: the bey must fall, or his riders will never leave. Your word?"
 },
 {
 "id": 3,
@@ -505,7 +505,7 @@
 "level_bonus": 3,
 "name": "Colonel Syvous",
 "portrait": 25,
-"description": "Thanks in part to your brilliant assault, Rotmistr Rudzki's brigade is now in tatters. Colonel Tykhyi has shifted his attention to engaging Kniaz Bronislaw's army. The mission objective is to eliminate Kniaz Bronislaw. What say you?"
+"description": "Wolski is no longer among the living, and Rudzki's banner, which was marching to his relief, fell apart the moment it saw Tykhyi's horse. Now Syvous is aiming higher: at Kniaz Dominik himself. The kniaz is camped above the Yellow Waters with what is left of the Crown Army, and if he goes down, this whole march on Chyhyryn ends of its own accord. Syvous sends Tykhyi forward and asks for you at his side. You must get to the kniaz. Will you take it?"
 },
 {
 "id": 5,
@@ -522,7 +522,7 @@
 "level_bonus": 30,
 "name": "Colonel Dovhan",
 "portrait": 0,
-"description": "We are on the verge of a breakthrough! That evil dog, Kniaz Bronislaw, is in danger. His situation on the battlefield is desperate, and he has sent an urgent request for reinforcements. Your task is to engage Kniaz Bronislaw and vanquish the ferocious warriors that serve him before help arrives. Do you accept this critical mission?"
+"description": "The turning point is close. Kniaz Dominik is cornered above the Yellow Waters, his banners beaten one by one, and he has sent riders in every direction begging for relief. The relief is coming, and that is our problem: the moment it arrives, the kniaz crawls out of the trap. So there is no time. You go into the kniaz's camp ahead of everyone, cut through whoever still stands by him, and finish the business. This is the mission that changes the fate of the land. Will you take it?"
 },
 {
 "id": 6,
@@ -539,7 +539,7 @@
 "level_bonus": 2,
 "name": "Colonel Shabliuk",
 "portrait": 0,
-"description": "You've done well! Kniaz Bronislaw's armies have been annihilated, leading to a brief respite from this unending violence. However, the problem runs deeper than we thought: this time it is Colonel Kozub, Liege of Oleshky Sands, who is behind the chaos. After Kniaz Bronislaw went down in defeat, Colonel Kozub's stature within Chyhyryn grew, along with his armies and ambition.Colonel Kozub recently dethroned Hetman Verbenko the Grey, replacing him with his younger sister, the newly crowned Hetmanka Bohuslava. Needless to say, Colonel Kozub is now the real power behind the throne. Heroes from around the kingdom have united to declare Colonel Kozub's actions unlawful and unsanctioned. Allied forces are marching to Chyhyryn as we speak! Colonel Bairak has set out with Colonel Varfolomii to support the Allies. Your job is to engage Colonel Kozub's new vassal, Katria, the first female general in the Hetmanate's long history. Can you do it?"
+"description": "You did good work: Kniaz Dominik's Crown Army lies dead in the steppe, and for the first time in a long while people sleep soundly. The quiet is short. Out of Oleshky Sands came Colonel Kozub, and he has raised his head higher than anyone expected. While the others were fighting the Crown, he walked into Chyhyryn, drove old Verbenko the Grey from the mace and put the Hetman's younger sister Olena in his place, a girl who does whatever Kozub tells her. Colonels from across the land have called it lawlessness and are marching on Chyhyryn. Bairak has set out together with Kharko. In their road stands Oksana, a young otaman, the first woman Kozub ever gave a regiment to. You must face her. Can you manage it?"
 },
 {
 "id": 7,
@@ -556,7 +556,7 @@
 "level_bonus": 2,
 "name": "Colonel Tuman",
 "portrait": 0,
-"description": "You've done well! Kniaz Bronislaw's armies have been annihilated, leading to a brief respite from this unending violence. However, the problem runs deeper than we thought: this time it is Colonel Kozub, Liege of Oleshky Sands, who is behind the chaos. After Kniaz Bronislaw went down in defeat, Colonel Kozub's stature within Chyhyryn grew, along with his armies and ambition.Colonel Kozub recently dethroned Hetman Verbenko the Grey, replacing him with his younger sister, the newly crowned Hetmanka Bohuslava. Needless to say, Colonel Kozub is now the real power behind the throne. Heroes from around the kingdom have united to declare Colonel Kozub's actions unlawful and unsanctioned. Allied forces are marching to Chyhyryn as we speak! Colonel Tuman of Black Sea is moving to support the Allies. Your job is to engage Colonel Kozub's new vassal, Katria, the first female general in the Hetmanate's long history. Can you do it?"
+"description": "You did good work: Kniaz Dominik's Crown Army lies dead in the steppe, and for the first time in a long while people sleep soundly. The quiet is short. Out of Oleshky Sands came Colonel Kozub, and he has raised his head higher than anyone expected. While the others were fighting the Crown, he walked into Chyhyryn, drove old Verbenko the Grey from the mace and put the Hetman's younger sister Olena in his place, a girl who does whatever Kozub tells her. Colonels from across the land have called it lawlessness and are marching on Chyhyryn. Among them is Colonel Tuman of the Black Sea, bringing his boats and his horse north. In his road stands Oksana, a young otaman, the first woman Kozub ever gave a regiment to. You must face her. Can you manage it?"
 },
 {
 "id": 2,
@@ -573,7 +573,7 @@
 "level_bonus": 2,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "You've done well! Kniaz Bronislaw's armies have been annihilated, leading to a brief respite from this unending violence. However, the problem runs deeper than we thought: this time it is Colonel Kozub, Liege of Oleshky Sands, who is behind the chaos. After Kniaz Bronislaw went down in defeat, Colonel Kozub's stature within Chyhyryn grew, along with his armies and ambition.Colonel Kozub recently dethroned Hetman Verbenko the Grey, replacing him with his younger sister, the newly crowned Hetmanka Bohuslava. Needless to say, Colonel Kozub is now the real power behind the throne. Heroes from around the kingdom have united to declare Colonel Kozub's actions unlawful and unsanctioned. Allied forces are marching to Chyhyryn as we speak! Colonel Chornohuz has organized a band of heroes and is heading to support the Allies. Your job is to engage Colonel Kozub's new vassal, Katria, the first female general in the Hetmanate's long history. Can you do it?"
+"description": "You did good work: Kniaz Dominik's Crown Army lies dead in the steppe, and for the first time in a long while people sleep soundly. The quiet is short. Out of Oleshky Sands came Colonel Kozub, and he has raised his head higher than anyone expected. While the others were fighting the Crown, he walked into Chyhyryn, drove old Verbenko the Grey from the mace and put the Hetman's younger sister Olena in his place, a girl who does whatever Kozub tells her. Colonels from across the land have called it lawlessness and are marching on Chyhyryn. Chornohuz has gathered a band of daredevils, men like you, and set out too. In his road stands Oksana, a young otaman, the first woman Kozub ever gave a regiment to. You must face her. Can you manage it?"
 },
 {
 "id": 3,
@@ -590,7 +590,7 @@
 "level_bonus": 2,
 "name": "Colonel Syvous",
 "portrait": 25,
-"description": "You've done well! Kniaz Bronislaw's armies have been annihilated, leading to a brief respite from this unending violence. However, the problem runs deeper than we thought: this time it is Colonel Kozub, Liege of Oleshky Sands, who is behind the chaos. After Kniaz Bronislaw went down in defeat, Colonel Kozub's stature within Chyhyryn grew, along with his armies and ambition.Colonel Kozub recently dethroned Hetman Verbenko the Grey, replacing him with his younger sister, the newly crowned Hetmanka Bohuslava. Needless to say, Colonel Kozub is now the real power behind the throne. Heroes from around the kingdom have united to declare Colonel Kozub's actions unlawful and unsanctioned. Allied forces are marching to Chyhyryn as we speak! Colonel Tykhyi of Zolota Lypa is moving to support the Allies. Your job is to engage Colonel Kozub's new vassal, Katria, the first female general in the Hetmanate's long history. Can you do it?"
+"description": "You did good work: Kniaz Dominik's Crown Army lies dead in the steppe, and for the first time in a long while people sleep soundly. The quiet is short. Out of Oleshky Sands came Colonel Kozub, and he has raised his head higher than anyone expected. While the others were fighting the Crown, he walked into Chyhyryn, drove old Verbenko the Grey from the mace and put the Hetman's younger sister Olena in his place, a girl who does whatever Kozub tells her. Colonels from across the land have called it lawlessness and are marching on Chyhyryn. Syvous of Uman is already in the saddle, with Tykhyi riding at the head of his column. In their road stands Oksana, a young otaman, the first woman Kozub ever gave a regiment to. You must face her. Can you manage it?"
 },
 {
 "id": 8,
@@ -607,7 +607,7 @@
 "level_bonus": 7,
 "name": "Colonel Yavir",
 "portrait": 0,
-"description": "After Kniaz Bronislaw's Crown army were annihilated, Colonel Kozub's stature as a leader in Chyhyryn grew. Colonel Kozub may be dimwitted and greedy, but he also is an excellent judge of character. He is accompanied by Colonel Zaderykhvist--known to his enemies as the Butcher--and is generally regarded as the strongest man in the Hetmanate.Colonel Kozub has dethroned Verbenko the Grey and declared Verbenko's younger sister, Bohuslava, the new Empress. These actions have turned the people's sentiment against Colonel Kozub, and rebels from around the kingdom have banned together and declared Colonel Kozub's actions unlawful and unsanctioned. These rebels have organized their forces against Colonel Kozub and marched to Chyhyryn. Colonel Tykhyi is leading this rabble. They are now gathered in front of Chortomlyk Fort Gate to unleash their attack. Katria, the first female general in the Hetmanate's illustrious history, has taken up the sword against the rebels and is requesting reinforcements from us. Your mission objective is to engage Colonel Tykhyi and quell the rebel attack. Will you fight him?"
+"description": "Look at it from the other side for once. Kozub is greedy and rough, but he knows how to pick men. At his side is Colonel Zaderykhvist, whom his enemies call the Butcher and his friends call nothing at all, because they are afraid. And there is Oksana, who holds her regiment tighter than many a moustached veteran. Against them comes a revolt: colonels who will not accept the new Hetmanka have gathered below Chyhyryn and stand before the gate of Chortomlyk Fort. Tykhyi of Uman leads them. Oksana has ridden out to meet them and asks the brotherhood for help. The pay is Kozub's, but the gold is real. Your job: meet Tykhyi at the gate and break the assault. Will you stand against him?"
 },
 {
 "id": 6,
@@ -624,7 +624,7 @@
 "level_bonus": 2,
 "name": "Colonel Shabliuk",
 "portrait": 0,
-"description": "Katria's forces have been vanquished, and we offer you our thanks for your prominent role in the battle. It is a shame that such a talented general as Katria is now a footnote in the Hetmanate's history, simply because she served the wrong lord. However, you now have a bigger obstacle ahead of you: the infamous Colonel Zaderykhvist, known as the Butcher. Are you brave enough to challenge him?"
+"description": "Oksana's regiment has fallen apart, and your hand was in it, for which the brotherhood is grateful. A pity about the girl: such talent, and she will go into the chronicles as a single line, because she served the wrong man. But this is no time for pity. Further down the road stands one whom even wolves give a wide berth: Colonel Zaderykhvist, the Butcher. They say he has never lost a duel and never left alive anyone who challenged him. Have you the heart for it?"
 },
 {
 "id": 7,
@@ -641,7 +641,7 @@
 "level_bonus": 2,
 "name": "Colonel Tuman",
 "portrait": 0,
-"description": "13"
+"description": "Oksana's regiment has fallen apart, and your hand was in it, for which the brotherhood is grateful. A pity about the girl: such talent, and she will go into the chronicles as a single line, because she served the wrong man. But this is no time for pity. Further down the road stands one whom even wolves give a wide berth: Colonel Zaderykhvist, the Butcher. They say he has never lost a duel and never left alive anyone who challenged him. Have you the heart for it?"
 },
 {
 "id": 2,
@@ -658,7 +658,7 @@
 "level_bonus": 2,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "13"
+"description": "Oksana's regiment has fallen apart, and your hand was in it, for which the brotherhood is grateful. A pity about the girl: such talent, and she will go into the chronicles as a single line, because she served the wrong man. But this is no time for pity. Further down the road stands one whom even wolves give a wide berth: Colonel Zaderykhvist, the Butcher. They say he has never lost a duel and never left alive anyone who challenged him. Have you the heart for it?"
 },
 {
 "id": 3,
@@ -675,7 +675,7 @@
 "level_bonus": 2,
 "name": "Colonel Syvous",
 "portrait": 25,
-"description": "13"
+"description": "Oksana's regiment has fallen apart, and your hand was in it, for which the brotherhood is grateful. A pity about the girl: such talent, and she will go into the chronicles as a single line, because she served the wrong man. But this is no time for pity. Further down the road stands one whom even wolves give a wide berth: Colonel Zaderykhvist, the Butcher. They say he has never lost a duel and never left alive anyone who challenged him. Have you the heart for it?"
 },
 {
 "id": 8,
@@ -692,7 +692,7 @@
 "level_bonus": 7,
 "name": "Colonel Yavir",
 "portrait": 0,
-"description": "Bad news: the rebel forces who retreated in cowardice have returned! Your valiant effort was for naught. Colonel Zaderykhvist is now on the move to take his revenge against the rebels and has requested your support. Your mission objective is to eliminate Colonel Tykhyi. Do you accept this mission?"
+"description": "Bad news. The rebels who fled from Chortomlyk have caught their breath and come back, so all your work at the gate has gone with the wind. Zaderykhvist is in a rage and already saddling up to pay them back. He wants one more sabre, and he remembered you. One target: Tykhyi. Will you go?"
 },
 {
 "id": 3,
@@ -709,7 +709,7 @@
 "level_bonus": 2,
 "name": "Colonel Syvous",
 "portrait": 25,
-"description": "The allies have defeated Colonel Kozub's army, but Colonel Kozub somehow escaped. In the process, he has taken Hetmanka Bohuslava hostage. Chyhyryn has been ransacked and the place now stands deserted. Out of respect for the safety of Hetmanka Bohuslava, the allied forces have decided not to chase Colonel Kozub's forces and have instead dispersed into smaller groups. In another turn of events, Colonel Tykhyi discovered the sought after Royal Seal, and on his way home was promptly attacked by Colonel Kalyna of King's Ravine. Colonel Tykhyi was fortunate enough to escape with his life, and is now leading a punitive mission back to King's Ravine to settle the score. Your mission objective is to support Colonel Tykhyi in his counter-attack. Yes or no?"
+"description": "Kozub's host is beaten, but Kozub himself got away and took Hetmanka Olena with him as a hostage. Chyhyryn is sacked and empty. For the girl's sake the colonels did not dare give chase and went home in small companies. And now the interesting part. Tykhyi, rummaging through the ashes of the Hetman's court, found the thing everyone is hunting: the Hetman's Seal. On the road home Colonel Topolia of Batih fell on him to take it. Tykhyi fought his way out, barely alive, and Syvous is now gathering men to pay Topolia a visit with his answer. Will you ride with them?"
 },
 {
 "id": 9,
@@ -726,7 +726,7 @@
 "level_bonus": 4,
 "name": "Colonel Kremin",
 "portrait": 0,
-"description": "Colonel Tykhyi has discovered the coveted Royal Seal. Colonel Kalyna of King's Ravine ambushed Colonel Tykhyi in hopes of recovering the Royal Seal himself, but good fortune shone upon Colonel Tykhyi and he escaped. Now, Colonel Tykhyi is heading back to King's Ravine for a counter-attack and Colonel Kalyna is in distress. Colonel Kalyna knows he cannot face an enraged Colonel Tykhyi by himself and has pleaded for support. Your mission objective is to intercept Colonel Tykhyi and stop him. Do you accept this mission?"
+"description": "There is one thing that changes everything: the Hetman's Seal. Tykhyi found it in the ruins of Chyhyryn, and Topolia of Batih tried to take it by force, falling on him from ambush. It did not work: Tykhyi escaped and is now coming back to the ravine with every man he has. Topolia knows full well he cannot stand alone against an enraged Tykhyi, and he is paying the brotherhood to have him intercepted on the road. That job is yours. Will you take it?"
 },
 {
 "id": 6,
@@ -743,7 +743,7 @@
 "level_bonus": 3,
 "name": "Colonel Shabliuk",
 "portrait": 0,
-"description": "Colonel Varfolomii is foolish indeed! It is a good thing Colonel Bairak disassociated with Colonel Varfolomii prior to the upcoming battle. Here is the story: Colonel Varfolomii returned to his land, Volhynia, dissatisfied with his holdings, even though he had made off with a modest amount of gold stolen from Chyhyryn. He decided to expand his land by annexing Siveria, a plot of land adjacent to his property.The clever Colonel Tuman became aware of Colonel Varfolomii's intentions and cooked up a plan to swindle him. Colonel Tuman contacted Colonel Varfolomii and suggested they jointly attack Siveria and split the land. After Colonel Varfolomii agreed, Colonel Tuman dispatched a messenger to Colonel Bereza of Siveria to warn him of Colonel Varfolomii's impending attack on his land. Out of fear, Colonel Bereza asked Colonel Tuman for help, which allowed Colonel Tuman to move into Siveria and bloodlessly conquer the land himself. Colonel Varfolomii soon learned he had been cheated, and sent his younger brother, Osaul Sava, to deliver a message to Colonel Tuman, demanding his share of the Siveria. In response, Colonel Tuman has executed Osaul Sava, and now an enraged Colonel Varfolomii is charging towards Colonel Tuman's army, vowing to unleash carnage. Colonel Varfolomii has requested your support. Will you help him revenge himself upon Colonel Tuman?"
+"description": "Hear how two colonels failed to share land that belonged to neither. Kharko went home to Volhynia with Chyhyryn gold, but it was not enough, and he set his eye on neighbouring Siveria. Tuman, a cunning man, got wind of it and proposed marching on Siveria together and splitting it in half. Kharko agreed. Then Tuman quietly sent a rider to Colonel Yasen, master of Siveria, to warn him Kharko was coming. The frightened Yasen asked Tuman for protection, and Tuman entered Siveria as its protector, without a shot fired, and stayed as its master. Kharko, realising he had been played, sent his brother Osaul Sava to Tuman to demand the promised half. Tuman took Sava's head. Now Kharko is marching on Tuman with everything he has and is paying us for your sabre. A good thing Bairak broke with him before this squabble. Will you help Kharko get his revenge?"
 },
 {
 "id": 7,
@@ -760,7 +760,7 @@
 "level_bonus": 5,
 "name": "Colonel Tuman",
 "portrait": 0,
-"description": "Colonel Tuman sent Colonel Varfolomii a letter, suggesting they attack Siveria and split the land evenly. Once Colonel Varfolomii agreed to the plan, Colonel Tuman dispatched a messenger to Colonel Bereza of Siveria warning him of Colonel Varfolomii's preparation to seize his land. Fearing for his safety, Colonel Bereza asked Colonel Tuman for help. Colonel Tuman agreed and promptly moved into Siveria, conquering it as he went.Colonel Varfolomii realized that he had been swindled and sent Osaul Sava, his younger brother, to demand his share of Siveria. Instead, Colonel Tuman cold-bloodedly executed Osaul Sava. An enraged Colonel Varfolomii is now charging towards Colonel Tuman's forces to avenge his brother's death. Colonel Tuman is requesting your support. Your mission objective is to quell Colonel Varfolomii's assault. Do you accept this mission?"
+"description": "Tuman tells it this way: he proposed to Kharko that they take Siveria together and split it evenly, Kharko agreed, and then Tuman changed his mind and took it all himself by warning Colonel Yasen and walking in as his protector. Kharko sent his brother Osaul Sava for his half, and Tuman executed the messenger. Now Kharko is coming for revenge, and Tuman, who I can tell you is not a timid man, wants you in his ranks. The task: break Kharko's attack. Will you ride?"
 },
 {
 "id": 6,
@@ -777,7 +777,7 @@
 "level_bonus": 5,
 "name": "Colonel Shabliuk",
 "portrait": 0,
-"description": "We are reaching the turning point of this battle. Colonel Varfolomii and Colonel Tuman are now both battling for their very lives: no quarter will be asked, and none given. Colonel Varfolomii is requesting your support. Your mission objective is to turn the tide of the battle and lead Colonel Varfolomii to victory. Will you do it?"
+"description": "Kharko and Tuman have met to the death. No one will beg quarter and no one will give it; whoever loses today is no longer a colonel, and perhaps no longer alive. Kharko asks for you at his side. You must turn the fight and drag him to victory. Will you do it?"
 },
 {
 "id": 7,
@@ -794,7 +794,7 @@
 "level_bonus": 3,
 "name": "Colonel Tuman",
 "portrait": 0,
-"description": "We are reaching the turning point of this battle. Colonel Varfolomii and Colonel Tuman are now both battling for their very lives: no quarter will be asked, and none given. Colonel Tuman is requesting your support. Your mission objective is to turn the tide of the battle and lead  to victory. Will you do it?"
+"description": "Kharko and Tuman have met to the death. No one will beg quarter and no one will give it; whoever loses today is no longer a colonel, and perhaps no longer alive. Tuman asks for you at his side. You must turn the fight and drag him to victory. Will you do it?"
 },
 {
 "id": 2,
@@ -811,7 +811,7 @@
 "level_bonus": 5,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "After Colonel Dzhura fled from Colonel Chornohuz, Colonel Chornohuz took to harassing Colonel Dzhura's sister-in-law. We have just caught wind of rumors that Colonel Dzhura is planning to assassinate Colonel Chornohuz to protect his family's honor. Colonel Chornohuz is requesting your support. Your mission objective is to protect Colonel Chornohuz from Colonel Dzhura��s assault. Do you accept this mission?"
+"description": "A dirty story. When Colonel Dzhura fled from Chornohuz, Chornohuz started pestering Dzhura's brother's wife. Dzhura does not forgive such things: we are told he has hired men to cut Chornohuz's throat by night and wash the shame off his house. Chornohuz knows it and asks the brotherhood to stand by his tent. Your job: see that Dzhura's men never reach him. Will you take it?"
 },
 {
 "id": 10,
@@ -828,7 +828,7 @@
 "level_bonus": 4,
 "name": "Colonel Teren",
 "portrait": 0,
-"description": "After Colonel Dzhura fled from Colonel Chornohuz, Colonel Chornohuz took to harassing Colonel Dzhura's sister-in-law. We have just caught wind of rumors that Colonel Dzhura is planning to assassinate Colonel Chornohuz to protect his family's honor. Colonel Dzhura has appealed to us for help. Your mission objective is to protect Colonel Chornohuz from Colonel Dzhura��s assault. Do you accept this mission?"
+"description": "A dirty story. When Colonel Dzhura fled from Chornohuz, Chornohuz started pestering Dzhura's brother's wife. Dzhura does not forgive such things and has hired men to cut Chornohuz's throat by night and wash the shame off his house. Now he has come to us as well: the guard around Chornohuz is strong, and his men need someone to clear a path for them. Your job: see that Chornohuz does not live through that night. Will you take it?"
 },
 {
 "id": 11,
@@ -845,7 +845,7 @@
 "level_bonus": 4,
 "name": "Colonel Derkach",
 "portrait": 31,
-"description": "After Colonel Tykhyi's heroic death in battle, Colonel Kosach made his way to Colonel Shulha to ask for help. Colonel Tykhyi's older supporters are now banding together along with fresh troops to press the assault. Colonel Kosach will be defending his uncle against Colonel Tykhyi's supporters in battle and has requested support. Your mission objective is to intercept Colonel Tykhyi's supporters. Do you accept this mission?"
+"description": "Tykhyi died the way he lived, with a sabre in his hand. His nephew, Colonel Kosach, has gone to Colonel Shulha to ask for shelter and men. But Tykhyi's old companions have not scattered: they have raised fresh troops and are marching to finish what their otaman began. Kosach must defend his uncle from them, and he needs hands. Intercept Tykhyi's men before they arrive. Will you ride?"
 },
 {
 "id": 12,
@@ -862,7 +862,7 @@
 "level_bonus": 4,
 "name": "Colonel Lysytsia",
 "portrait": 0,
-"description": "After Colonel Tykhyi's heroic death in battle, Colonel Kosach made his way to Colonel Shulha to ask for help. Colonel Tykhyi's older supporters are now banding together along with fresh troops to press the assault. Colonel Kosach will be defending his uncle against Colonel Tykhyi's supporters in battle and has requested support. Your mission objective is to intercept Colonel Tykhyi's supporters. Do you accept this mission?"
+"description": "Tykhyi died the way he lived, with a sabre in his hand. His nephew, Colonel Kosach, has gone to Colonel Shulha to ask for shelter and men. But Tykhyi's old companions have not scattered: they have raised fresh troops and are marching to finish what their otaman began. Kosach must defend his uncle from them, and he needs hands. Intercept Tykhyi's men before they arrive. Will you ride?"
 },
 {
 "id": 1,
@@ -879,7 +879,7 @@
 "level_bonus": 4,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Colonel Kozub has been assassinated by Colonel Zaderykhvist, and now Colonel Chornohuz is guarding Hetmanka Bohuslava. In light of this new development, Colonel Bairak and Colonel Zaderykhvist have joined forces. Colonel Chornohuz is wary of their alliance and has thus put in motion a plan to entrap them both. Colonel Shulha is now charging toward Colonel Bairak. Your mission objective is to rendezvous with Colonel Shulha and assault Colonel Bairak. Can you help?"
+"description": "News from Chyhyryn: Kozub is dead, and his killer was none other than Zaderykhvist. Hetmanka Olena is now in Chornohuz's keeping. Bairak and Zaderykhvist have come together since and made an alliance, and to Chornohuz that alliance is a knife in the side. He has laid a trap for both, and the first part of it is Shulha, who is already riding at Bairak. Shulha wants you to meet him on the road and go at Bairak together. Will you help?"
 },
 {
 "id": 13,
@@ -896,7 +896,7 @@
 "level_bonus": 10,
 "name": "Colonel Dubovyk",
 "portrait": 0,
-"description": "Colonel Kozub has been assassinated by Colonel Zaderykhvist, and now Colonel Chornohuz is guarding Hetmanka Bohuslava. In light of this new development, Colonel Bairak and Colonel Zaderykhvist have joined forces. Colonel Chornohuz is wary of their alliance and has thus put in motion a plan to entrap them both. He has bribed Colonel Shulha to attack Colonel Bairak. Your mission objective is to rendezvous with  and assault . Can you help?"
+"description": "News from Chyhyryn: Kozub is dead, and his killer was none other than Zaderykhvist. Hetmanka Olena is now in Chornohuz's keeping. Bairak and Zaderykhvist have come together since and made an alliance, and to Chornohuz that alliance is a knife in the side. He has laid a trap for both and bought Shulha to strike at Bairak. The money is Chornohuz's, the hand is yours: join Shulha and go at Bairak. Will you help?"
 },
 {
 "id": 14,
@@ -913,7 +913,7 @@
 "level_bonus": 5,
 "name": "Colonel Zaderykhvist",
 "portrait": 4,
-"description": "Colonel Chornohuz is preparing to capture Colonel Zaderykhvist. Colonel Zaderykhvist has heard about these developments and has appealed for your support. The Hetmanate's strongest man almost always refuses aid, but he needs assistance now. Will you fight for him?"
+"description": "Chornohuz has decided to take Zaderykhvist alive. The Butcher found out, and something unheard of happened: the strongest man in the Hetmanate, who never asked anyone for anything, sent a rider to the brotherhood. He needs help and he is ready to pay. Will you stand for him?"
 },
 {
 "id": 1,
@@ -930,7 +930,7 @@
 "level_bonus": 5,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Colonel Chornohuz is preparing to capture Colonel Zaderykhvist. Colonel Bairak has requested your support during the operation. Will you fight for him?"
+"description": "Chornohuz has decided to take Zaderykhvist alive, and Bairak is with him in the hunt. Bairak asks for you in his company: you do not take the Butcher bare-handed, this needs the best. Will you stand for him?"
 },
 {
 "id": 2,
@@ -947,7 +947,7 @@
 "level_bonus": 5,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Colonel Chornohuz is preparing to capture Colonel Zaderykhvist. Knowing that he is in for a fight, Colonel Chornohuz is requesting additional support. Will you fight for him?"
+"description": "Chornohuz has decided to take Zaderykhvist alive. He is no fool and knows he is going up against the deadliest swordsman in the land, so he is hiring every sabre he can find. Yours is wanted too. Will you stand for him?"
 },
 {
 "id": 14,
@@ -964,7 +964,7 @@
 "level_bonus": 3,
 "name": "Colonel Zaderykhvist",
 "portrait": 4,
-"description": "Colonel Shulha has invoked the power of the Royal Seal that he seized from Colonel Kosach, and has declared himself the new Emperor. Those unwilling to bend the knee to Colonel Shulha are forming up all across the kingdom are marching an army to Colonel Shulha's land. Colonel Zaderykhvist is planning to meet up with them and has requested your support. Your mission is to join the assault on the would-be Emperor. Do you accept this mission?"
+"description": "Shulha took the Hetman's Seal from Kosach, pressed it onto a proclamation and named himself Hetman. Half the land laughed, the other half reached for its weapons: pretenders are not loved here. The regiments that will not bend the knee are gathering and marching on Shulha's domain. Zaderykhvist is going with them and calls for you. You must join the march on the pretender. Will you ride?"
 },
 {
 "id": 1,
@@ -981,7 +981,7 @@
 "level_bonus": 3,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Colonel Shulha has invoked the power of the Royal Seal that he seized from Colonel Kosach, and has declared himself the new Emperor. Those unwilling to bend the knee to Colonel Shulha are forming up all across the kingdom are marching an army to Colonel Shulha's land.  Colonel Bairak is also on the way and has requested your support. Your mission is to join the assault on the would-be Emperor. Do you accept this mission?"
+"description": "Shulha took the Hetman's Seal from Kosach, pressed it onto a proclamation and named himself Hetman. Half the land laughed, the other half reached for its weapons: pretenders are not loved here. The regiments that will not bend the knee are gathering and marching on Shulha's domain. Bairak is already on the road and wants you beside him. You must join the march on the pretender. Will you ride?"
 },
 {
 "id": 2,
@@ -998,7 +998,7 @@
 "level_bonus": 3,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Colonel Shulha has invoked the power of the Royal Seal that he seized from Colonel Kosach, and has declared himself the new Emperor. Those unwilling to bend the knee to Colonel Shulha are forming up all across the kingdom are marching an army to Colonel Shulha's land.  Colonel Chornohuz is also on the way and has requested your support. Your mission is to join the assault on the would-be Emperor. Do you accept this mission?"
+"description": "Shulha took the Hetman's Seal from Kosach, pressed it onto a proclamation and named himself Hetman. Half the land laughed, the other half reached for its weapons: pretenders are not loved here. The regiments that will not bend the knee are gathering and marching on Shulha's domain. Chornohuz is in the saddle too and calls for you. You must join the march on the pretender. Will you ride?"
 },
 {
 "id": 11,
@@ -1015,7 +1015,7 @@
 "level_bonus": 3,
 "name": "Colonel Derkach",
 "portrait": 31,
-"description": "Colonel Shulha has invoked the power of the Royal Seal that he seized from Colonel Kosach, and has declared himself the new Emperor. Those unwilling to bend the knee to Colonel Shulha are forming up all across the kingdom are marching an army to Colonel Shulha's land.  Colonel Kosach is also on the way and has requested your support. Your mission is to join the assault on the would-be Emperor. Do you accept this mission?"
+"description": "Shulha took the Hetman's Seal from Kosach, pressed it onto a proclamation and named himself Hetman. Half the land laughed, the other half reached for its weapons: pretenders are not loved here. The regiments that will not bend the knee are gathering and marching on Shulha's domain. Kosach, the man the Seal was taken from, rides at the head and asks for you with him. You must join the march on the pretender. Will you ride?"
 },
 {
 "id": 13,
@@ -1032,7 +1032,7 @@
 "level_bonus": 5,
 "name": "Colonel Dubovyk",
 "portrait": 0,
-"description": "Colonel Shulha has invoked the power of the Royal Seal that he seized from Colonel Kosach, and has declared himself the new Emperor. Those unwilling to bend the knee to Colonel Shulha are forming up all across the kingdom are marching an army to Colonel Shulha's land.  Colonel Shulha is in trouble and is desperately pleading for help. Your mission is to join the assault on the would-be Emperor. Do you accept this mission?"
+"description": "Shulha took the Hetman's Seal from Kosach, pressed it onto a proclamation and named himself Hetman. Half the land laughed, the other half reached for its weapons, and now regiments are marching on Shulha's domain from every side. The pretender is in trouble and begs the brotherhood for help, promising gold, of which they say he still has plenty. You must take his side and throw back the assault. Will you ride?"
 },
 {
 "id": 2,
@@ -1049,7 +1049,7 @@
 "level_bonus": 5,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Colonel Chornohuz's tactician put into action a plan to assassinate Colonel Bairak covertly. Rotmistr Augustyn was able to foil the assassination attempt, and killed Colonel Chornohuz's murderous underling in response. A furious Colonel Chornohuz launched an all-out campaign to capture or kill Colonel Bairak and Osaul Kalnyk, but they've somehow managed to escape the onslaught. Now Rotmistr Augustyn has been left trying to defend Chervonohrad all by himself. Your objective is to capture Rotmistr Augustyn. Will you go to Chervonohrad?"
+"description": "Chornohuz has an adviser who does not care for honest fighting. He sent a killer after Bairak. Bairak is alive only because Osaul Zalizo was beside him: he caught the knife and put the killer down on the spot. Chornohuz, furious that the scheme failed, threw his whole host into hunting Bairak and Osaul Hrebinka, but the two of them vanished into the steppe. Zalizo did not vanish: he has shut himself up in Bila Tserkva and holds the town alone with a handful of men. Chornohuz wants him alive and is paying for it. Will you ride to take Bila Tserkva?"
 },
 {
 "id": 1,
@@ -1066,7 +1066,7 @@
 "level_bonus": 5,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Colonel Chornohuz's tactician put into action a plan to assassinate Colonel Bairak covertly. Rotmistr Augustyn was able to foil the assassination attempt, and killed Colonel Chornohuz's murderous underling in response. A furious Colonel Chornohuz launched an all-out campaign to capture or kill Colonel Bairak and Osaul Kalnyk, but they've somehow managed to escape the onslaught. Now Rotmistr Augustyn has been left trying to defend Chervonohrad all by himself. Your objective is to Help Rotmistr Augustyn defend Chervonohrad. Will you go to Chervonohrad?"
+"description": "Chornohuz has an adviser who does not care for honest fighting. He sent a killer after Bairak. Bairak is alive only because Osaul Zalizo was beside him: he caught the knife and put the killer down on the spot. Chornohuz, furious that the scheme failed, threw his whole host into hunting Bairak and Osaul Hrebinka, but the two of them vanished into the steppe. Zalizo stayed behind: he has shut himself up in Bila Tserkva and holds the town alone with a handful of men, and he will not hold it long. Will you ride to Bila Tserkva and help him keep the walls?"
 },
 {
 "id": 7,
@@ -1083,7 +1083,7 @@
 "level_bonus": 5,
 "name": "Colonel Tuman",
 "portrait": 0,
-"description": "We are finally reaching the end of this saga. Colonel Tuman and Colonel Chornohuz continue to battle with every ounce of strength they still possess. Colonel Tuman is marching onward toward White Horse Field, but Colonel Chornohuz has been stopped cold by Colonel Tuman's two veteran Generals, Pereima and Brzeski. Your mission objective is to help Colonel Tuman vanquish Colonel Chornohuz's forces. Will you perform this duty?"
+"description": "This war between Tuman and Chornohuz has dragged on so long that both are fighting on their last strength. Tuman is leading his host to White Horse Field. Chornohuz meant to cut him off, but ran into two of Tuman's old wolves, Pereima and Brzeski, and got stuck. Tuman asks you to reinforce him: together you will crush Chornohuz's host while it stands still. Will you take it?"
 },
 {
 "id": 2,
@@ -1100,7 +1100,7 @@
 "level_bonus": 7,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "We are finally reaching the end of this saga. Colonel Tuman and Colonel Chornohuz continue to battle with every ounce of strength they still possess. Colonel Tuman is marching onward toward White Horse Field, but Colonel Chornohuz has been stopped cold by Colonel Tuman's two veteran Generals, Pereima and Brzeski. Your mission objective is to help Colonel Chornohuz vanquish Colonel Tuman's forces. Will you perform this duty?"
+"description": "This war between Tuman and Chornohuz has dragged on so long that both are fighting on their last strength. Tuman is leading his host to White Horse Field. Chornohuz meant to cut him off, but ran into two of Tuman's old wolves, Pereima and Brzeski, and got stuck. Chornohuz asks you to reinforce him: cut him a path through those two, and he will crush Tuman's host. Will you take it?"
 },
 {
 "id": 7,
@@ -1117,7 +1117,7 @@
 "level_bonus": 6,
 "name": "Colonel Tuman",
 "portrait": 0,
-"description": "Colonel Tuman launched a pre-emptive attack on Colonel Chornohuz, hoping to catch him off guard. 700,000 soldiers loyal to Colonel Tuman have gathered and are heading towards Colonel Chornohuz's manor. It seems clear that the victor of this battle will win control of the entire continent. Colonel Tuman is requesting your support. Your mission objective is to aid in Colonel Tuman's assault on Colonel Chornohuz. Do you accept this mission?"
+"description": "Tuman did not wait; he struck first. Seventy thousand sabres have gathered under his banners, and the whole avalanche is rolling toward Chornohuz's manor. Everyone in the land understands: whoever wins this battle will hold the mace. Tuman calls for you. You must help his assault. Will you take it?"
 },
 {
 "id": 2,
@@ -1134,7 +1134,7 @@
 "level_bonus": 5,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Colonel Tuman launched a pre-emptive attack on Colonel Chornohuz, hoping to catch him off guard. 700,000 soldiers loyal to Colonel Tuman have gathered and are heading towards Colonel Chornohuz's manor. It seems clear that the victor of this battle will win control of the entire continent. Colonel Chornohuz is requesting your support. Your mission objective is to aid in Colonel Tuman's assault on Colonel Chornohuz. Do you accept this mission?"
+"description": "Tuman did not wait; he struck first. Seventy thousand sabres have gathered under his banners, and the whole avalanche is rolling toward Chornohuz's manor. Everyone in the land understands: whoever wins this battle will hold the mace. Chornohuz meets the avalanche with what he has and calls for you. You must help him stand. Will you take it?"
 },
 {
 "id": 1,
@@ -1151,7 +1151,7 @@
 "level_bonus": 8,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "While languishing in Colonel Chornohuz's captivity, Rotmistr Augustyn secretly received a letter from Colonel Bairak indicating his position. Rotmistr Augustyn offered to switch sides and pledge allegiance to Colonel Chornohuz, but Colonel Chornohuz sneeringly refused to release him.To escape Colonel Chornohuz's land, Rotmistr Augustyn needs a permit that allows him to pass through the five gates separating him from freedom. There's no time for that, however, as Colonel Bairak is pleading for immediate support. Your mission objective is to fight your way through these five gates to penetrate Colonel Chornohuz's forces and meet up with Colonel Bairak. Do you accept this mission?"
+"description": "Osaul Zalizo is Chornohuz's prisoner. Someone smuggled him a letter from Bairak, and now he knows where his master is. Zalizo even pretended he would swear to Chornohuz just to get out, but Chornohuz only laughed and kept him under guard. To leave Chornohuz's land you must pass five posts, and no one will issue a pass. Bairak, meanwhile, is begging for help this very moment. So you will be the pass: cut through all five posts, bring Zalizo through Chornohuz's lines and deliver him to Bairak. Will you take it?"
 },
 {
 "id": 1,
@@ -1168,7 +1168,7 @@
 "level_bonus": 8,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "After losing the battle at Green Fields, Colonel Bairak left Colonel Tuman's land and settled in Bar Castle. However, Colonel Chornohuz's hatred burns as brightly as ever, and he is dispatching all his troops to run him down. Colonel Bairak is asking you to rescue him. What will you do?"
+"description": "After the defeat at Kodyma Fields, Bairak left Tuman's land and shut himself in Bar Castle. That is not enough for Chornohuz: his hatred of Bairak has not burned out, and he is sending regiment after regiment against Bar to dig him out like a fox from its den. Bairak asks to be saved. What will you do?"
 },
 {
 "id": 2,
@@ -1185,7 +1185,7 @@
 "level_bonus": 8,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "After losing the battle at Green Fields, Colonel Bairak left Colonel Tuman's land and settled in Bar Castle. However, Colonel Chornohuz's hatred burns as brightly as ever, and he is dispatching all his troops to run him down. Colonel Chornohuz needs your assistance to capture Colonel Bairak. What will you do?"
+"description": "After the defeat at Kodyma Fields, Bairak left Tuman's land and shut himself in Bar Castle. That is not enough for Chornohuz: his hatred of Bairak has not burned out, and he is sending regiment after regiment against Bar to dig him out like a fox from its den. Chornohuz is paying to have Bairak taken. What will you do?"
 },
 {
 "id": 7,
@@ -1202,7 +1202,7 @@
 "level_bonus": 10,
 "name": "Colonel Tuman",
 "portrait": 0,
-"description": "Colonel Tuman has died from an infected wound. Before he passed, he anointed his youngest son, Omelko, as his successor, over the objections of his two elder sons, Khoma and Luka. Colonel Chornohuz senses an opportunity to strike: he wishes to completely destroy Colonel Tuman's lineage. Colonel Omelko needs your help if he is to stay alive. Will you participate?"
+"description": "Tuman is dead. Not in battle, but of a wound that festered. Dying, he handed the regiment to his youngest son Omelko, and the two elder sons, Khoma and Tymish, forgave neither father nor brother for it. Chornohuz was waiting for exactly this: while the brothers quarrel, he is marching to wipe out Tuman's line to the last man. Young Omelko will not see winter without you. Will you take it?"
 },
 {
 "id": 2,
@@ -1219,7 +1219,7 @@
 "level_bonus": 10,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Colonel Tuman has died from an infected wound. Before he passed, he anointed his youngest son, Omelko, as his successor, over the objections of his two elder sons, Khoma and Luka. Colonel Chornohuz senses an opportunity to strike: he wishes to completely destroy Colonel Tuman's lineage. Colonel Chornohuz would like you to help him eliminate the young Colonel Omelko. Will you participate?"
+"description": "Tuman is dead. Not in battle, but of a wound that festered. Dying, he handed the regiment to his youngest son Omelko, and the two elder sons, Khoma and Tymish, forgave neither father nor brother for it. Chornohuz was waiting for exactly this: while the brothers quarrel, he is marching to wipe out Tuman's line to the last man. He wants you to help him get to young Omelko. Will you take it?"
 },
 {
 "id": 7,
@@ -1236,7 +1236,7 @@
 "level_bonus": 15,
 "name": "Colonel Tuman",
 "portrait": 0,
-"description": "Khoma was killed in the assault, but the target of the operation, Colonel Omelko, managed a daring escape. He has taken up refuge with his remaining brother, Luka. Colonel Chornohuz wants to finish Colonel Tuman's sons off once and for all. Colonel Omelko is making his last stand, and he won't live long without your help. Do you accept this mission?"
+"description": "Khoma died in Chornohuz's assault. Omelko, the one they were hunting, broke out and hid with the last brother, Tymish. Chornohuz is not a man to leave a job half done: he wants none of Tuman's sons left. Omelko has taken his last stand and will not last a day without you. Will you take it?"
 },
 {
 "id": 2,
@@ -1253,7 +1253,7 @@
 "level_bonus": 8,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Khoma was killed in the assault, but the target of the operation, Colonel Omelko, managed a daring escape. He has taken up refuge with his remaining brother, Luka. Colonel Chornohuz wants to finish Colonel Tuman's sons off once and for all.  He wishes to retain your services for this strike. Do you accept this mission?"
+"description": "Khoma died in Chornohuz's assault. Omelko, the one they were hunting, broke out and hid with the last brother, Tymish. Chornohuz is not a man to leave a job half done: he wants none of Tuman's sons left, and he is hiring your sabre for the final blow. Will you take it?"
 },
 {
 "id": 1,
@@ -1270,7 +1270,7 @@
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Colonel Bairak is now under Colonel Kalyna's protection. He has hired a talented young commander and is pulling his troops together. Colonel Chornohuz wants them both dead before their forces grow too powerful. Colonel Bairak knows that Colonel Chornohuz's army is on its way, and has requested that you intercept Colonel Chornohuz. Do you want to get involved?"
+"description": "Bairak has found shelter with Colonel Topolia and is slowly getting back on his feet: gathering his scattered men, and he has taken into his service some young osaul about whom rumours are already spreading. Chornohuz wants to strangle all this in the cradle and has already sent out a host. Bairak knows it is on the road and asks you to intercept it before it arrives. Will you get involved?"
 },
 {
 "id": 2,
@@ -1287,7 +1287,7 @@
 "level_bonus": 10,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Colonel Bairak is now under Colonel Kalyna's protection. He has hired a talented young commander and is pulling his troops together. Colonel Chornohuz wants them both dead before their forces grow too powerful. Colonel Chornohuz will need your help to lay Colonel Bairak low. Do you want to get involved?"
+"description": "Bairak has found shelter with Colonel Topolia and is slowly getting back on his feet: gathering his scattered men, and he has taken into his service some young osaul about whom rumours are already spreading. Chornohuz wants to strangle all this in the cradle and has sent out a host. He needs your sabre to bring Bairak down while he is weak. Will you get involved?"
 },
 {
 "id": 1,
@@ -1304,7 +1304,7 @@
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Colonel Chornohuz has put his bitter rival Colonel Bairak in grave peril, but Colonel Bairak will never surrender, as long as blood courses through his veins. Colonel Bairak seeks your sword for the coming battle. Do you agree to fight?"
+"description": "Chornohuz has pressed Bairak against the wall. Anyone else would already be asking for terms, but Bairak would rather lie down dead than bow his head to Chornohuz. He wants your sabre beside his in the coming fight. Will you fight?"
 },
 {
 "id": 2,
@@ -1321,7 +1321,7 @@
 "level_bonus": 15,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Colonel Chornohuz has put his bitter rival Colonel Bairak in grave peril, but Colonel Bairak will never surrender, as long as blood courses through his veins. Colonel Chornohuz needs you to hunt down Colonel Bairak and finish him. Do you agree to fight?"
+"description": "Chornohuz has pressed Bairak against the wall. Anyone else would already be asking for terms, but Bairak would rather lie down dead than bow his head to Chornohuz. Chornohuz is tired of the chase: he wants you to run Bairak down and finish the matter. Will you fight?"
 },
 {
 "id": 15,
@@ -1338,7 +1338,7 @@
 "level_bonus": 8,
 "name": "Colonel Voron",
 "portrait": 32,
-"description": "Colonel Sych, Colonel Kosach's successor, has not been idle. He has recruited many wise and experienced generals to help him take vengeance on Colonel Kalyna, on behalf of his father. Colonel Sych wishes you to join his army for this battle. Do you accept this mission?"
+"description": "Kosach is gone, and his place has been taken by his son, Colonel Sych. Young, but not green: he has gathered seasoned commanders around him and is marching on Topolia to pay him back for his father. Sych wants you in his ranks. Will you take it?"
 },
 {
 "id": 9,
@@ -1355,7 +1355,7 @@
 "level_bonus": 11,
 "name": "Colonel Kremin",
 "portrait": 0,
-"description": "Colonel Sych, Colonel Kosach's successor, has not been idle. He has recruited many wise and experienced generals to help him take vengeance on Colonel Kalyna, on behalf of his father. Colonel Kalyna is requesting your help to protect his land. Do you accept this mission?"
+"description": "Kosach is gone, and his place has been taken by his son, Colonel Sych. Young, but not green: he has gathered seasoned commanders around him and is marching on Topolia to pay him back for his father. Topolia asks the brotherhood to help him hold his land. Will you take it?"
 },
 {
 "id": 1,
@@ -1372,7 +1372,7 @@
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Colonel Chornohuz has lost his last two battles against Colonel Bairak, but these stinging defeats have only caused him to redouble his efforts against his sworn enemy. Colonel Chornohuz's forces are strong, but Colonel Bairak has just discovered a brilliant young commander, Osaul Ternovyi, who is poised to turn the tables on Colonel Chornohuz. Colonel Bairak wishes you to join Osaul Ternovyi in the field. Will you take on this challenge?"
+"description": "Two defeats in a row at Bairak's hands have not cooled Chornohuz, only inflamed him. He is marching on him again, and he has men enough. But Bairak now has Osaul Ternovyi, that same young osaul, and they say his head is worth a whole regiment. Ternovyi is preparing a surprise for Chornohuz, and Bairak wants you in the field beside him. Will you take the challenge?"
 },
 {
 "id": 2,
@@ -1389,7 +1389,7 @@
 "level_bonus": 15,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Colonel Chornohuz has lost his last two battles against Colonel Bairak, but these stinging defeats have only caused him to redouble his efforts against his sworn enemy. Colonel Chornohuz's forces are strong, but Colonel Bairak has just discovered a brilliant young commander, Osaul Ternovyi, who is poised to turn the tables on Colonel Chornohuz. Accordingly, Colonel Chornohuz is looking for his own secret weapon: you.. Will you take on this challenge?"
+"description": "Two defeats in a row at Bairak's hands have not cooled Chornohuz, only inflamed him. He is marching on him again, and he has men enough. But Bairak now has Osaul Ternovyi, a young osaul of whom they say his head is worth a whole regiment. Chornohuz knows it and is looking for something to answer with. He has decided the answer is you. Will you take the challenge?"
 },
 {
 "id": 1,
@@ -1406,7 +1406,7 @@
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Colonel Chornohuz is hot in pursuit of Colonel Bairak, who is being slowed by the sheer number of troops he is leading. Colonel Bairak's ally, Osaul Kalnyk, is doing his best to fend off Colonel Chornohuz's forces, but it looks as though his flanks will soon collapse. Colonel Bairak needs you to halt Colonel Chornohuz's advance. Do you accept this mission?"
+"description": "Bairak is fleeing to the Sich, and Chornohuz is treading on his heels. Bairak moves slowly, because what he leads is not an army but people: whole villages with carts and children. Osaul Hrebinka covers the retreat and holds as long as he can, but his flanks are already bending. Bairak asks you to stop Chornohuz's pursuit for even a day. Will you take it?"
 },
 {
 "id": 2,
@@ -1423,7 +1423,7 @@
 "level_bonus": 30,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Colonel Chornohuz is hot in pursuit of Colonel Bairak, who is being slowed by the sheer number of troops he is leading. Colonel Bairak's ally, Osaul Kalnyk, is doing his best to fend off Colonel Chornohuz's forces, but it looks as though his flanks will soon collapse. Colonel Chornohuz is looking to you to defeat Osaul Kalnyk and apprehend Colonel Bairak. Do you accept this mission?"
+"description": "Bairak is fleeing to the Sich, and Chornohuz is treading on his heels. Bairak moves slowly, because what he leads is not an army but people: whole villages with carts and children. Osaul Hrebinka covers the retreat and holds as long as he can, but his flanks are already bending. Chornohuz wants you to break Hrebinka and take Bairak before he reaches the Sich. Will you take it?"
 },
 {
 "id": 1,
@@ -1440,7 +1440,7 @@
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Colonel Bairak is still on the run from Colonel Chornohuz, who has shown no signs of giving up his single-minded pursuit. Following Osaul Ternovyi's advice, Colonel Bairak has evacuated a hundred thousand of his subjects from his land, and led them in search of a safer haven.Compounding his worries, Colonel Bairak's family has somehow separated from the crowd of refugees. They are believed to be hiding from Colonel Chornohuz's forces somewhere nearby. Colonel Bairak desperately wants his family back! You will have to leave the relative safety of Colonel Bairak's troops to find his missing family. Are you willing to accept the risk?"
+"description": "Chornohuz will not let go, and Bairak, taking Ternovyi's advice, has led a hundred thousand of his people out of their homeland to look for somewhere to live. The column stretches for a day's march. And somewhere in that column Bairak's family got lost: cut off from their own and hiding from Chornohuz's patrols somewhere in the steppe. Bairak would give everything to find them, but he cannot leave his people himself. So you will go: without an army, alone, into steppe where the enemy prowls. Will you take that risk?"
 },
 {
 "id": 1,
@@ -1457,7 +1457,7 @@
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "The joined forces of Colonels Bairak and Sych are preparing to face off against Colonel Chornohuz's army once more. Colonel Chornohuz's failure to run Colonel Bairak to ground in the previous battle was a personal embarrassment, and he is determined not to fail again. Osaul Ternovyi's sage counsel has served Colonel Bairak in good stead, and he is currently cooking up something new for the next fight. I am not sure what Osaul Ternovyi is working on, but it seems to be vital to his plans for the upcoming battle. Osaul Ternovyi must be protected while he prepares his secret weapon! Colonel Bairak has requested your support. Do you accept this mission?"
+"description": "Bairak and Sych have joined forces and stand against Chornohuz once more. Chornohuz has not forgiven himself for letting Bairak slip last time, and this time he will not miss. Meanwhile, in Bairak's camp, Ternovyi is building something he will not speak of even to me. Whatever it is, the battle hangs on it. Your job: guard Ternovyi while he prepares his surprise. Will you take it?"
 },
 {
 "id": 2,
@@ -1474,7 +1474,7 @@
 "level_bonus": 30,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "The joined forces of Colonels Bairak and Sych are preparing to face off against Colonel Chornohuz's army once more. Colonel Chornohuz's failure to run Colonel Bairak to ground in the previous battle was a personal embarrassment, and he is determined not to fail again. Osaul Ternovyi's sage counsel has served Colonel Bairak in good stead, and he is currently cooking up something new for the next fight. I am not sure what Osaul Ternovyi is working on, but it seems to be vital to his plans for the upcoming battle. Osaul Ternovyi must be defeated before he completes his preparations! Colonel Chornohuz has requested your support. Do you accept this mission?"
+"description": "Bairak and Sych have joined forces and stand against Chornohuz once more. Chornohuz has not forgiven himself for letting Bairak slip last time, and this time he will not miss. Meanwhile, in Bairak's camp, Ternovyi is building something he will not speak of even to me. Whatever it is, the battle hangs on it. Chornohuz wants you to reach Ternovyi before he finishes. Will you take it?"
 },
 {
 "id": 15,
@@ -1491,7 +1491,7 @@
 "level_bonus": 10,
 "name": "Colonel Voron",
 "portrait": 32,
-"description": "Colonel Sych and Colonel Chornohuz are facing each other on the battlefield. The importance of this fight to the outcome of the war cannot be understated; songs will be sung of the victor for generations.. Privy to the choices of fate as we are, we know who must be the victor. Colonel Sych has requested your support to defeat Colonel Chornohuz. Do you accept this mission?"
+"description": "Sych and Chornohuz have drawn up facing each other. Kobzars will sing of this fight for a hundred years whoever wins it, and it will decide whose the Hetmanate will be. The brotherhood sees further than others, and we know who is meant to come out the victor. Sych calls for you to break Chornohuz. Will you take it?"
 },
 {
 "id": 2,
@@ -1508,7 +1508,7 @@
 "level_bonus": 60,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Colonel Sych and Colonel Chornohuz are facing each other on the battlefield. The importance of this fight to the outcome of the war cannot be understated; songs will be sung of the victor for generations.. Privy to the choices of fate as we are, we know who must be the victor.  Colonel Chornohuz has requested your support to defeat Colonel Sych Do you accept this mission?"
+"description": "Sych and Chornohuz have drawn up facing each other. Kobzars will sing of this fight for a hundred years whoever wins it, and it will decide whose the Hetmanate will be. The brotherhood sees further than others, and we know who is meant to come out the victor. Chornohuz calls for you to break Sych. Will you take it?"
 },
 {
 "id": 15,
@@ -1525,7 +1525,7 @@
 "level_bonus": 50,
 "name": "Colonel Voron",
 "portrait": 32,
-"description": "\"He changed the direction of a storm and used it to attack the enemy with fire?! Osaul Ternovyi must be a wizard!\" Like everyone else, Colonel Sych is now afraid of Osaul Ternovyi's wondrous abilities?even though these same talents once helped to save his own life. Colonel Sych wants to ensure Osaul Ternovyi's miracles are not eventually turned against him. Your mission objective is to capture Osaul Ternovyi, who is making his way back to Colonel Bairak's front line. What is your choice?"
+"description": "After the battle the camps are whispering: Ternovyi turned the wind and sent fire onto Chornohuz's boats, and what man can do that? So he must be a sorcerer. Sych is frightened too, though that very sorcery saved his life. He wants Ternovyi serving no one else, least of all against him. Ternovyi is now returning to Bairak across the steppe with a small escort. Sych pays to have him intercepted and taken alive. Your choice?"
 },
 {
 "id": 1,
@@ -1542,7 +1542,7 @@
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "\"He changed the direction of a storm and used it to attack the enemy with fire?! Osaul Ternovyi must be a wizard!\" Like everyone else, Colonel Sych is now afraid of Osaul Ternovyi's wondrous abilities?even though these same talents once helped to save his own life. Colonel Sych wants to ensure Osaul Ternovyi's miracles are not eventually turned against him. Your mission objective is to guard Osaul Ternovyi and ensure his safe passage to Colonel Bairak's front line. What is your choice?"
+"description": "After the battle the camps are whispering: Ternovyi turned the wind and sent fire onto Chornohuz's boats, and what man can do that? So he must be a sorcerer. Sych is frightened too, though that very sorcery saved his life. He wants Ternovyi serving no one else, least of all against him. Ternovyi is now returning to Bairak across the steppe with a small escort, and Sych's men are already in the saddle. You must bring Ternovyi to Bairak's lines alive. Your choice?"
 },
 {
 "id": 1,
@@ -1559,7 +1559,7 @@
 "level_bonus": 11,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Colonel Chornohuz's armies have finally failed, and the defeated noble is retreating from the battlefield in disgrace. Colonel Bairak wants to prevent Colonel Chornohuz from escaping, and requires your assistance. Do you accept this mission?"
+"description": "Chornohuz's host has broken at last, and he himself, beaten, is leaving the field with what remains of his men. Bairak does not want him to walk away from this alive and raise regiments again, so he asks you to cut off the escape. Will you take it?"
 },
 {
 "id": 2,
@@ -1576,7 +1576,7 @@
 "level_bonus": 30,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Colonel Chornohuz's armies have finally failed, and the defeated noble is retreating from the battlefield in disgrace. Colonel Chornohuz will need your assistance to make good his escape. Do you accept this mission?"
+"description": "Chornohuz's host has broken at last, and he himself, beaten, is leaving the field with what remains of his men. They are after him, and without someone's sabre he will never reach his own lines. Chornohuz is paying for you to bring him through the pursuit. Will you take it?"
 },
 {
 "id": 15,
@@ -1593,7 +1593,7 @@
 "level_bonus": 11,
 "name": "Colonel Voron",
 "portrait": 32,
-"description": "Even though Colonel Chornohuz met a shameful defeat and retreated, Colonel Sych chose to press his advantage all the way to the borders of Colonel Chornohuz's manor. Of course, the fiery Colonel Chornohuz has vowed never to capitulate or retreat! Even though he had the upper hand, Colonel Sych was nearly captured by Colonel Chornohuz, who surely would have put him to death. Now, a chastened Colonel Sych is using a decoy to lure Colonel Chornohuz to Valley of Souls. Colonel Sych has requested your support. Do you accept this mission?"
+"description": "Chornohuz was beaten and withdrew, but Sych did not stop there and chased him right up to the borders of Chornohuz's estates. There his zeal cost him: Chornohuz, who had sworn never to retreat, dragged Sych from the saddle, and only a miracle stopped him taking Sych's head. Sych has come to his senses and is now playing it smarter: he is sending out a decoy to lure Chornohuz into the Kruta Balka, where a welcome will be waiting. Sych calls for you. Will you take it?"
 },
 {
 "id": 2,
@@ -1610,7 +1610,7 @@
 "level_bonus": 50,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Even though Colonel Chornohuz met a shameful defeat and retreated, Colonel Sych chose to press his advantage all the way to the borders of Colonel Chornohuz's manor. Of course, the fiery Colonel Chornohuz has vowed never to capitulate or retreat! Even though he had the upper hand, Colonel Sych was nearly captured by Colonel Chornohuz, who surely would have put him to death. Now, a chastened Colonel Sych is using a decoy to lure Colonel Chornohuz to Valley of Souls. Colonel Chornohuz has requested your support. Do you accept this mission?"
+"description": "Chornohuz was beaten and withdrew, but Sych did not stop there and chased him right up to the borders of Chornohuz's estates. There his zeal cost him: Chornohuz, who had sworn never to retreat, dragged Sych from the saddle, and only a miracle stopped him taking Sych's head. Sych has come to his senses and is now playing it smarter: he is sending out a decoy to lure Chornohuz into the Kruta Balka. Chornohuz suspects something is off and calls for you. Will you take it?"
 },
 {
 "id": 16,
@@ -1627,7 +1627,7 @@
 "level_bonus": 15,
 "name": "Colonel Holota",
 "portrait": 7,
-"description": "Colonel Zolotar, who lost his father at the hands of Colonel Chornohuz, is seeking revenge. Colonel Zolotar is known throughout the realm as Dorosh the Golden because of his courage and valor, and he has allied himself with Colonel Kulish in an effort to destroy the reeling Colonel Chornohuz. Now, the military genius Osaul Ternovyi has lured Colonel Chornohuz into a battle at Silver Mountain. Colonel Zolotar has requested your support. Will you help him?"
+"description": "Colonel Kurylo, whom the whole land calls Hlib Kurylo, has an old score with Chornohuz: the man killed his father. Now Kurylo has made common cause with Colonel Kulish to finish the shaken Chornohuz, and Ternovyi, who sees a battlefield the way others see a chessboard, has lured Chornohuz to Chernecha Hora. Kurylo asks for you in this fight. Will you help?"
 },
 {
 "id": 2,
@@ -1644,7 +1644,7 @@
 "level_bonus": 30,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Colonel Zolotar, who lost his father at the hands of Colonel Chornohuz, is seeking revenge. Colonel Zolotar is known throughout the realm as Dorosh the Golden because of his courage and valor, and he has allied himself with Colonel Kulish in an effort to destroy the reeling Colonel Chornohuz. Now, the military genius Osaul Ternovyi has lured Colonel Chornohuz into a battle at Silver Mountain. Colonel Chornohuz has requested your support. Will you help him?"
+"description": "Colonel Kurylo, whom the whole land calls Hlib Kurylo, has an old score with Chornohuz: the man killed his father. Now Kurylo has made common cause with Colonel Kulish to finish the shaken Chornohuz, and Ternovyi, who sees a battlefield the way others see a chessboard, has lured Chornohuz to Chernecha Hora. Chornohuz asks for you at his side. Will you help?"
 },
 {
 "id": 16,
@@ -1661,7 +1661,7 @@
 "level_bonus": 12,
 "name": "Colonel Holota",
 "portrait": 7,
-"description": "Colonel Zolotar is blessed with many personal strengths, but prudence is not one of them. Colonel Chornohuz managed to trick Dorosh the Golden into a quarrel with Colonel Kulish by planting an incriminating document in Colonel Kulish's camp. In the ensuing confrontation, Colonel Zolotar wounded Colonel Kulish, who quit the alliance. Now, Colonel Zolotar is standing alone against Colonel Chornohuz's frenzied charge. He is in desperate need of a hero to take his side. Will you join him?"
+"description": "Hlib Kurylo has courage enough for three men, and prudence enough for half of one. Chornohuz planted a forged letter in Kulish's camp, and Kurylo believed Kulish was selling him out. It came to sabres: Kurylo wounded Kulish, and Kulish took his men home. Now Kurylo stands alone against Chornohuz's onslaught, and he badly needs at least one reliable blade beside him. Will you stand with him?"
 },
 {
 "id": 2,
@@ -1678,7 +1678,7 @@
 "level_bonus": 30,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Colonel Chornohuz killed Colonel Zolotar's father, and now Dorosh the Golden is seeking revenge. He has employed the military genius Osaul Ternovyi to lure Colonel Chornohuz into a battle at Silver Mountain. Colonel Chornohuz, suspecting a trap, has requested your support. Will you help him?"
+"description": "Hlib Kurylo wants Chornohuz's head for his father's. He has hired Ternovyi, who is luring Chornohuz to Chernecha Hora. Chornohuz smells a trap and will not walk into it without reliable men. He calls for you. Will you help?"
 },
 {
 "id": 17,
@@ -1695,7 +1695,7 @@
 "level_bonus": 40,
 "name": "Lady Buriak",
 "portrait": 36,
-"description": "Colonel Chornohuz, wishing to cement his dynasty, has forced Lady Nebesna, a first cousin to Hetmanka Bohuslava who owns many titled lands of her own, to marry his son. To further punish Colonel Bairak and Colonel Sych, Colonel Chornohuz is attacking Colonel Chornovus of Black Steppe, and plans establish his headquarters on Colonel Chornovus's manor. Colonel Chornovus has requested your support. Do you accept this mission?"
+"description": "Chornohuz is strengthening his house: he has married his son by force to Lady Kvitka, cousin of Hetmanka Olena, who has lands and men of her own. And to needle Bairak and Sych further, he has marched on Rudyi, master of Inhul Steppe, and means to make Rudyi's manor his headquarters. Rudyi asks the brotherhood for help. Will you take it?"
 },
 {
 "id": 2,
@@ -1712,7 +1712,7 @@
 "level_bonus": 12,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Colonel Chornohuz, wishing to cement his dynasty, has forced Lady Nebesna, a first cousin to Hetmanka Bohuslava who owns many titled lands of her own, to marry his son. To further punish Colonel Bairak and Colonel Sych, Colonel Chornohuz is attacking Colonel Chornovus of Black Steppe, and plans establish his headquarters on Colonel Chornovus's manor. Colonel Chornohuz has requested your support. Do you accept this mission?"
+"description": "Chornohuz is strengthening his house: he has married his son by force to Lady Kvitka, cousin of Hetmanka Olena, who has lands and men of her own. And to needle Bairak and Sych further, he has marched on Rudyi, master of Inhul Steppe, and means to make Rudyi's manor his headquarters. Chornohuz calls for you to ride with him. Will you take it?"
 },
 {
 "id": 1,
@@ -1729,7 +1729,7 @@
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Colonel Bairak is pushing his forces forward in an effort to take over Podillia. White Lake, Colonel Lan's domain, is his first target. Colonel Bairak needs your aid. What say you?"
+"description": "Bairak is marching on Podillia. The first thing in his road is Colonel Bars's stronghold on Svitiaz. Bairak asks for your help. What do you say?"
 },
 {
 "id": 18,
@@ -1746,7 +1746,7 @@
 "level_bonus": 40,
 "name": "Colonel Sokyra",
 "portrait": 0,
-"description": "Colonel Bairak is pushing his forces forward in an effort to take over Podillia. White Lake, Colonel Lan's domain, is his first target. Colonel Lan needs your aid. What say you?"
+"description": "Bairak is marching on Podillia. The first thing in his road is Colonel Bars's stronghold on Svitiaz, and Bars has no intention of giving it up without a fight. He asks for your help. What do you say?"
 },
 {
 "id": 1,
@@ -1763,7 +1763,7 @@
 "level_bonus": 15,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Colonel Bairak has ordered Osaul Kotsiuba to attack Berestechko Marshes. It should be an easy victory, but one never knows. Colonel Bairak has requested your support. Do you accept this mission?"
+"description": "Bairak has sent Osaul Bilyk against Berestechko Marshes. The job looks easy, but nothing on a marsh is ever easy. Bairak asks you to go with Bilyk. Will you take it?"
 },
 {
 "id": 19,
@@ -1780,7 +1780,7 @@
 "level_bonus": 40,
 "name": "Colonel Korzhyk",
 "portrait": 0,
-"description": "Colonel Bairak has ordered Osaul Kotsiuba to attack Berestechko Marshes. Colonel Zaiats, a true coward, is terrified of losing the fight. Colonel Bairak has requested your support. Do you accept this mission?"
+"description": "Bairak has sent Osaul Bilyk against Berestechko Marshes. The marshes are held by Colonel Zaiats, and he carries his name for a reason: he is already shaking and paying the brotherhood for someone to fight in his place. Will you take it?"
 },
 {
 "id": 1,
@@ -1797,7 +1797,7 @@
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Osaul Kalnyk is leading his troops to Bura Mohyla. Colonel Bairak has requested that you join him to attack Colonel Holub's encampment on Bura Mohyla. Do you accept this mission?"
+"description": "Osaul Hrebinka is leading his men to Bura Mohyla, where Colonel Ptakha has dug in. Bairak wants you to go with Hrebinka and help take Ptakha's camp. Will you take it?"
 },
 {
 "id": 20,
@@ -1814,7 +1814,7 @@
 "level_bonus": 40,
 "name": "Colonel Siroshapka",
 "portrait": 0,
-"description": "Osaul Kalnyk is leading his troops to Bura Mohyla. Colonel Holub has requested that you join him to defend against Osaul Kalnyk's assault on Bura Mohyla. Do you accept this mission?"
+"description": "Osaul Hrebinka is leading his men to Bura Mohyla, where Colonel Ptakha has dug in. Ptakha asks you to stand with him on the hill and throw back Hrebinka's assault. Will you take it?"
 },
 {
 "id": 1,
@@ -1831,7 +1831,7 @@
 "level_bonus": 15,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Ochakiv, a vital strategic chokepoint, is under the protection of a pair of legendary warriors, Vakula and Nazar. Therefore, winning control of the port will not be a simple task. Your mission objective is to help Colonel Bairak and conquer Ochakiv. Will you take this mission?"
+"description": "Ochakiv locks the road to the sea, and whoever holds it holds all the trade. It is held by two brothers, Vakula and Nazar, about whom songs are sung, so the port will not be taken easily. Bairak asks you to help him win Ochakiv. Will you take it?"
 },
 {
 "id": 21,
@@ -1848,7 +1848,7 @@
 "level_bonus": 50,
 "name": "Colonel Huska",
 "portrait": 0,
-"description": "Ochakiv, a vital strategic chokepoint, is under the protection of a pair of legendary warriors, Vakula and Nazar. Even so, defending the port from Colonel Bairak's armies will not be an easy task. Your mission objective is to help Colonel Boryvitr and defend Ochakiv. Will you take this mission?"
+"description": "Ochakiv locks the road to the sea, and whoever holds it holds all the trade. It is held by two brothers, Vakula and Nazar, about whom songs are sung, but against Bairak's host even they need help. Colonel Hulak, master of Ochakiv, asks you to help him keep the port. Will you take it?"
 },
 {
 "id": 1,
@@ -1865,7 +1865,7 @@
 "level_bonus": 20,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Colonel Bairak's armies are a sword pointed at the very heart of Podillia. Our intelligence has become aware of a plan to assassinate Colonel Bairak at Golden Gate, the first gate to Podillia's interior. Colonel Bairak wishes to take no chances, and is requesting your protection. Do you accept this mission?"
+"description": "Bairak's host is already aimed at the heart of Podillia. Our scouts have learned that at Kamianets, the first gate into the interior, an attempt on Bairak's life is being prepared. Bairak will not take chances and asks you to be at his side. Will you take it?"
 },
 {
 "id": 22,
@@ -1882,7 +1882,7 @@
 "level_bonus": 30,
 "name": "Colonel Pidhornyi",
 "portrait": 35,
-"description": "Colonel Bairak's armies are a sword pointed at the very heart of Podillia. Our intelligence has become aware of a plan to assassinate Colonel Bairak at Golden Gate, the first gate to Podillia's interior. Colonel Bilous, who controls Podillia, wants you to help kill Colonel Bairak. Do you accept this mission?"
+"description": "Bairak's host is already aimed at the heart of Podillia. At Kamianets, the first gate into the interior, an attempt on Bairak's life is being prepared, and the man preparing it is Colonel Bilous, master of Podillia. Bilous is paying for your part in it. Will you take it?"
 },
 {
 "id": 1,
@@ -1899,7 +1899,7 @@
 "level_bonus": 11,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Colonel Bilous has decided to defend the Podillia mainland to the last man. However, Colonel Bairak has lost the commander of his main force, Osaul Tulub, in the last battle. Colonel Bairak has requested your help in rallying his men. Do you accept this mission?"
+"description": "Bilous has resolved to stand for Podillia to the last. And Bairak lost Osaul Tulub, who led his main force, in the last battle, and without him the men are adrift. Bairak asks you to help pull them together and lead them on. Will you take it?"
 },
 {
 "id": 22,
@@ -1916,7 +1916,7 @@
 "level_bonus": 40,
 "name": "Colonel Pidhornyi",
 "portrait": 35,
-"description": "Colonel Bilous has decided to defend the Podillia mainland to the last man. However, Colonel Bairak has lost the commander of his main force, Osaul Tulub, in the last battle. Colonel Bilous has requested your help in rallying his men. Do you accept this mission?"
+"description": "Bilous has resolved to stand for Podillia to the last. Bairak lost Osaul Tulub, who led his main force, in the last battle, and this is the chance to strike while Bairak's men are adrift. Bilous asks you to rally his regiments and lead them. Will you take it?"
 },
 {
 "id": 1,
@@ -1933,7 +1933,7 @@
 "level_bonus": 15,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Colonel Bairak's forces are advancing towards both of Colonel Bilous's flanks simultaneously. If these two bastions fall, the the soft underbelly of Podillia will be exposed to Colonel Bairak's armies. Colonel Bairak needs your help to assault these two vital locations. Do you accept the challenge?"
+"description": "Bairak is advancing on both of Bilous's flanks at once. If those two strongholds fall, Podillia lies open before him like a yard without a gate. Bairak asks for your help in the storm. Will you take the challenge?"
 },
 {
 "id": 22,
@@ -1950,7 +1950,7 @@
 "level_bonus": 40,
 "name": "Colonel Pidhornyi",
 "portrait": 35,
-"description": "Colonel Bairak's forces are advancing towards both of Colonel Bilous's flanks simultaneously. If these two bastions fall, the the soft underbelly of Podillia will be exposed to Colonel Bairak's armies. Colonel Bilous needs your help to defend these two vital locations. Do you accept the challenge?"
+"description": "Bairak is advancing on both of Bilous's flanks at once. If those two strongholds fall, Podillia lies open before him like a yard without a gate. Bilous asks for your help to hold them. Will you take the challenge?"
 },
 {
 "id": 1,
@@ -1967,7 +1967,7 @@
 "level_bonus": 15,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Colonel Bilous has requested backup from Colonel Chornovus, who has in turn sent in Colonel Zolotar for reinforcements. Colonel Dzhura, one of Colonel Bairak's vassals, has countered this maneuver by ordering Osaul Ternovyi to support him, and now the two forces are assembling for battle at Wild Field. Colonel Bairak is looking to you to defeat Colonel Zolotar's forces. Do you accept this mission?"
+"description": "Bilous asked Rudyi for help, and Rudyi sent Kurylo. Dzhura, who serves Bairak, answered by calling in Ternovyi. The two hosts are converging on the Wild Field. Bairak wants you to beat Kurylo. Will you take it?"
 },
 {
 "id": 16,
@@ -1984,7 +1984,7 @@
 "level_bonus": 40,
 "name": "Colonel Holota",
 "portrait": 7,
-"description": "Colonel Bilous has requested backup from Colonel Chornovus, who has in turn sent in Colonel Zolotar for reinforcements. Colonel Dzhura, one of Colonel Bairak's vassals, has countered this maneuver by ordering Osaul Ternovyi to support him, and now the two forces are assembling for battle at Wild Field. Colonel Zolotar  is looking to you to defeat Colonel Bairak's forces. Do you accept this mission?"
+"description": "Bilous asked Rudyi for help, and Rudyi sent Kurylo. Dzhura, who serves Bairak, answered by calling in Ternovyi. The two hosts are converging on the Wild Field. Kurylo wants you to beat Bairak's host. Will you take it?"
 },
 {
 "id": 1,
@@ -2001,7 +2001,7 @@
 "level_bonus": 12,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "The victorious Colonel Bairak, now liege lord of Podillia, plans to build on his great triumph by moving into the middle of the Hetmanate. Colonel Chornohuz, Colonel Bairak's old nemesis, is laying in wait for him. Colonel Bairak has requested your support to defeat Colonel Chornohuz's forces. Do you accept this mission?"
+"description": "Bairak has won Podillia and now looks toward the heart of the Hetmanate. But on the Kuchman Road an old enemy waits for him: Chornohuz has gathered his regiments and placed himself across the way. Bairak asks for your sabre to get through. Will you take it?"
 },
 {
 "id": 2,
@@ -2018,7 +2018,7 @@
 "level_bonus": 60,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "The victorious Colonel Bairak, now liege lord of Podillia, plans to build on his great triumph by moving into the middle of the Hetmanate. Colonel Chornohuz, Colonel Bairak's old nemesis, is laying in wait for him. Colonel Chornohuz  has requested your support to defeat Colonel Bairak's forces. Do you accept this mission?"
+"description": "Bairak has won Podillia and now looks toward the heart of the Hetmanate. But on the Kuchman Road an old enemy waits for him: Chornohuz has gathered his regiments and placed himself across the way. Chornohuz asks for your sabre to hold it. Will you take it?"
 },
 {
 "id": 15,
@@ -2035,7 +2035,7 @@
 "level_bonus": 16,
 "name": "Colonel Voron",
 "portrait": 32,
-"description": "Colonel Chornohuz's and Colonel Sych's armies have been skirmishing for the past month at Tiasmyn, but neither has gained an advantage. It is time to settle this once and for all. Colonel Sych is about to launch another assault on Colonel Chornohuz, and has requested your support. What say you?"
+"description": "Chornohuz and Sych have been skirmishing on the Tiasmyn for a month, and neither has gained the upper hand. Both are sick of it. Sych is preparing a new assault meant to settle everything, and calls for you. What do you say?"
 },
 {
 "id": 2,
@@ -2052,7 +2052,7 @@
 "level_bonus": 16,
 "name": "Colonel Chornohuz",
 "portrait": 34,
-"description": "Colonel Chornohuz's and Colonel Sych's armies have been skirmishing for the past month at Tiasmyn, but neither has gained an advantage. It is time to settle this once and for all. Colonel Chornohuz is about to launch another assault on Colonel Sych, and has requested your support. What say you?"
+"description": "Chornohuz and Sych have been skirmishing on the Tiasmyn for a month, and neither has gained the upper hand. Both are sick of it. Chornohuz is preparing a new assault meant to settle everything, and calls for you. What do you say?"
 },
 {
 "id": 1,
@@ -2069,7 +2069,7 @@
 "level_bonus": 60,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Rotmistr Augustyn is surrounded by Colonel Sych's forces, and will soon taste defeat. Colonel Bairak needs you to break through Colonel Sych's lines and rescue him. Do you accept this mission?"
+"description": "Sych has surrounded Osaul Zalizo, and the ring is tightening. Bairak will not abandon his osaul: he asks you to punch through Sych's lines and pull Zalizo out of the pocket. Will you take it?"
 },
 {
 "id": 15,
@@ -2086,7 +2086,7 @@
 "level_bonus": 15,
 "name": "Colonel Voron",
 "portrait": 32,
-"description": "Rotmistr Augustyn is surrounded by Colonel Sych's forces, and will soon taste defeat. Colonel Sych, knowing that Rotmistr Augustyn will not give up easily, is in need of some mercenary assistance. Do you accept this mission?"
+"description": "Sych has surrounded Osaul Zalizo, and the ring is tightening. But Sych knows very well that Zalizo will not be taken alive and that his men will sell themselves dearly. He needs a hired sabre to finish the matter. Will you take it?"
 },
 {
 "id": 1,
@@ -2103,7 +2103,7 @@
 "level_bonus": 50,
 "name": "Colonel Bairak",
 "portrait": 33,
-"description": "Rotmistr Augustyn has been killed. Colonel Bairak was distraught over his death, and unleashed his wrath against Colonel Sych's position. Colonel Bairak had some success on the battlefield at first, but now his forces are in a precarious position. Your mission objective is to save Colonel Bairak. Do you accept this mission?"
+"description": "Zalizo is dead. When Bairak heard it, he threw his whole host at Sych's positions the way a man throws himself into a brawl, not a battle. At first Sych gave ground, but now Bairak has gone in too far and is about to be cut off. You must get Bairak out before it is too late. Will you take it?"
 },
 {
 "id": 15,
@@ -2120,12 +2120,12 @@
 "level_bonus": 13,
 "name": "Colonel Voron",
 "portrait": 32,
-"description": "Rotmistr Augustyn has been killed. Colonel Bairak was distraught over his death, and unleashed his wrath against Colonel Sych's position. Colonel Bairak had some success on the battlefield at first, but now his forces are in a precarious position. Your mission objective is to eliminate Colonel Bairak. Do you accept this mission?"
+"description": "Zalizo is dead. When Bairak heard it, he threw his whole host at Sych's positions the way a man throws himself into a brawl, not a battle. At first Sych gave ground, but now Bairak has gone in too far and can be cut off. Sych wants you to end this war with one blow: Bairak must fall. Will you take it?"
 }
 ],
 "generals": {
 "1": {
-"name": "Waclaw Krzeminski",
+"name": "Zdzislaw Krzeminski",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2141,7 +2141,7 @@
 "hp": 20
 },
 "2": {
-"name": "Piotr Zaleski",
+"name": "Marian Zaleski",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2205,7 +2205,7 @@
 "hp": 50
 },
 "6": {
-"name": "Augustyn Ostrzycki",
+"name": "Nestor Zalizo",
 "look": 1,
 "side": 0,
 "skills": [
@@ -2253,7 +2253,7 @@
 "hp": 20
 },
 "9": {
-"name": "Bronislaw Ostrzycki",
+"name": "Dominik Ostrzycki",
 "look": 1,
 "side": 1,
 "skills": [
@@ -2269,7 +2269,7 @@
 "hp": 20
 },
 "10": {
-"name": "Katria Shabelna",
+"name": "Oksana Shabelna",
 "look": 4,
 "side": 0,
 "skills": [
@@ -2301,7 +2301,7 @@
 "hp": 45
 },
 "12": {
-"name": "Vasyl Tykhyi",
+"name": "Myron Tykhyi",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2349,7 +2349,7 @@
 "hp": 45
 },
 "15": {
-"name": "Kyrylo Kotsiuba",
+"name": "Onysko Bilyk",
 "look": 6,
 "side": 0,
 "skills": [
@@ -2397,7 +2397,7 @@
 "hp": 40
 },
 "18": {
-"name": "Borys Shulha",
+"name": "Samiilo Shulha",
 "look": 1,
 "side": 0,
 "skills": [
@@ -2413,7 +2413,7 @@
 "hp": 45
 },
 "19": {
-"name": "Luka Hrim",
+"name": "Tymish Hrim",
 "look": 6,
 "side": 1,
 "skills": [
@@ -2509,7 +2509,7 @@
 "hp": 35
 },
 "25": {
-"name": "Taras Sokil",
+"name": "Severyn Sokil",
 "look": 5,
 "side": 0,
 "skills": [
@@ -2733,7 +2733,7 @@
 "hp": 40
 },
 "39": {
-"name": "Yosyp Kulish",
+"name": "Fadei Kulish",
 "look": 5,
 "side": 1,
 "skills": [
@@ -2877,7 +2877,7 @@
 "hp": 30
 },
 "48": {
-"name": "Luka Hrim",
+"name": "Tymish Hrim",
 "look": 6,
 "side": 0,
 "skills": [
@@ -2909,7 +2909,7 @@
 "hp": 25
 },
 "50": {
-"name": "Pylyp Chornovus",
+"name": "Pylyp Rudyi",
 "look": 6,
 "side": 0,
 "skills": [
@@ -3261,7 +3261,7 @@
 "hp": 35
 },
 "72": {
-"name": "Varfolomii Lykhach",
+"name": "Kharko Lykhach",
 "look": 5,
 "side": 0,
 "skills": [
@@ -3421,7 +3421,7 @@
 "hp": 0
 },
 "82": {
-"name": "Adam Laski",
+"name": "Rafal Laski",
 "look": 1,
 "side": 1,
 "skills": [
@@ -3517,7 +3517,7 @@
 "hp": 0
 },
 "88": {
-"name": "Maksym Ternovyi",
+"name": "Yukhym Ternovyi",
 "look": 1,
 "side": 1,
 "skills": [
@@ -3741,7 +3741,7 @@
 "hp": 45
 },
 "102": {
-"name": "Dorosh Zolotar",
+"name": "Hlib Kurylo",
 "look": 6,
 "side": 1,
 "skills": [
@@ -3773,7 +3773,7 @@
 "hp": 35
 },
 "104": {
-"name": "Prokop Pyrih",
+"name": "Khariton Mlynchuk",
 "look": 6,
 "side": 1,
 "skills": [
@@ -4333,7 +4333,7 @@
 "hp": 45
 },
 "139": {
-"name": "Hordii Holub",
+"name": "Ilarion Ptakha",
 "look": 2,
 "side": 1,
 "skills": [
@@ -4365,7 +4365,7 @@
 "hp": 0
 },
 "141": {
-"name": "Herasym Kozub",
+"name": "Trokhym Kozub",
 "look": 1,
 "side": 0,
 "skills": [

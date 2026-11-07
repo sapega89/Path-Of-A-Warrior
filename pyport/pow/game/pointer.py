@@ -260,7 +260,7 @@ def _map_keys(x, y, kind):
     if x >= GameCanvas.screen_w - 60 and y >= GameCanvas.screen_h - 20:            # soft key PAUSE / BACK (bottom right)
         return [BACK]
     if (kind == "click" and GameCanvas.state == 3 and GameCanvas.map_mode.mode == 0 and x < 48
-            and y >= GameCanvas.screen_h - 17):          # the AUTO corner = auto-hunt
+            and y >= GameCanvas.screen_h - 17 and GameCanvas.difficulty != 0):  # the AUTO corner (not on Hard)
         return [AUTO]
     if GameCanvas.state == 5:                                     # talk on the map: only SKIP (-6) works
         if kind == "click" and x < 60 and y >= GameCanvas.screen_h - 20:
