@@ -69,7 +69,7 @@ func _ready() -> void:
 	place = int(profile.place)
 	world_map = WorldMap.new(campaign)
 	rng.seed = hash([place, profile.done.size()])  # the same ways each time back here
-	camp = CampMap.new(choices(), CampMap.is_main(place), place)
+	camp = CampMap.new(choices(), CampMap.is_main(camp_place()), camp_place())
 	_build_world()
 	_build_ui()
 	if profile.on_map.is_empty():
@@ -160,7 +160,7 @@ func _build_ui() -> void:
 	title.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	title.offset_top = 12
 	var kind := tr("camp.main") if camp.main else tr("camp.stop")
-	title.text = "%s · %s" % [kind, campaign.lord_name(place) if place > 0 else tr("camp.start")]
+	title.text = "%s · %s" % [kind, campaign.lord_name(camp_place()) if camp_place() > 0 else tr("camp.start")]
 	add_child(title)
 	hint = UiTheme.note("Hint")
 	hint.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
@@ -286,11 +286,23 @@ func use(s: Dictionary) -> void:
 			Router.push("live_warehouse", {"profile_path": path})
 
 
-## The ways out of the camp, one gap each: [place, open, mission], one per place on from here
-## (one, two, sometimes three), in a shuffled order so a gap's side says nothing. The mission
-## is the first of that place not won yet (the first when all are won).
+## The ways out of the camp, one gap each: [place, open, mission], in a shuffled order so a
+## gap's side says nothing. When the hero chose the way on at the end of his last mission
+## (profile.heading), the camp is that place's: a way per mission of it not won yet (each its
+## general to beat; all of them when all are won). Otherwise (the start, after an ending) a way
+## per place on from here, to the first mission of it not won yet; a closed place is fenced.
 func choices() -> Array:
 	var out: Array = []
+	var to: int = int(profile.heading)
+	if to > 0 and to in world_map.next_places(place) and profile.is_lord_open(to):
+		var n: int = campaign.lord_missions(to).size()
+		var left: Array = range(n).filter(func(i): return not profile.is_done(to, i))
+		if left.is_empty():
+			left = range(n)
+		for m in left.slice(0, MAX_WAYS):
+			out.append([to, true, m])
+		_shuffle(out)
+		return out
 	for id in world_map.next_places(place):
 		if out.size() >= MAX_WAYS:
 			break
@@ -304,6 +316,12 @@ func choices() -> Array:
 		out.append([id, open, m if open else -1])
 	_shuffle(out)
 	return out
+
+
+## The place whose camp this is: the one the hero is heading for, else his own.
+func camp_place() -> int:
+	var to: int = int(profile.heading)
+	return to if to > 0 and to in world_map.next_places(place) else place
 
 
 ## The land of a place, from its map: "lake", "mountains", "forest", "town" or "steppe".

@@ -31,10 +31,13 @@ const Items := preload("res://scripts/core/items.gd")
 const MissionPause := preload("res://scripts/ui/mission_pause.gd")
 const ExpBar := preload("res://scripts/ui/exp_bar.gd")
 const Stories := preload("res://scripts/core/stories.gd")
+const WorldMap := preload("res://scripts/core/world_map.gd")
+const Rooms := preload("res://scripts/world/rooms.gd")
 
 ## One tick of the game, by the game speed of the settings (MapSim.TICK_MS at Med).
 var tick := MapSim.TICK_MS / 1000.0
 const ARROW_SCALE := 3.0
+const BOTTOM_ARROW_LIFT := 180.0  # the down arrow stands above the belt and the balls
 const ARROW_PATH := "res://assets/original/ui/arrow%d.png"
 const PORTRAITS := "res://assets/original/portraits/%d.png"
 
@@ -63,7 +66,10 @@ var talk_face: PanelContainer
 var talk_portrait: TextureRect
 var talk_panel: PanelContainer
 var talk_text: Label
-var arrows: Array[TextureRect] = []
+var arrows: Array[TextureRect] = []  # 0..3 the room's exits (down, left, up, right); 4..7 a second way on a side
+## After a mission won: the ways on, one per open place the campaign goes to next:
+## [{exit: Rooms.EXIT_*, half: -1 the whole side | 0 its first half | 1 its second, place}]
+var ways_out: Array = []
 var fade: ColorRect  # the short dark between two rooms
 var _last_cell := -1
 const FADE_TIME := 0.35
@@ -165,10 +171,10 @@ func _ready() -> void:
 	camera.make_current()
 	camera.snap()
 
-	for i in 4:
+	for i in 8:
 		var a := TextureRect.new()
 		a.name = "Arrow%d" % i
-		a.texture = load(ARROW_PATH % i)
+		a.texture = load(ARROW_PATH % (i % 4))
 		a.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		a.stretch_mode = TextureRect.STRETCH_SCALE
 		a.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -277,11 +283,27 @@ func _process(delta: float) -> void:
 	if sim.failed and not _fail_seen:
 		_fail_seen = true
 		lost_gear = profile.lose_gear(sim.rng)
+	if sim.choosing and sim.way_out != 0:
+		var to := way_for(sim.way_out, Hero.px_to_world(Vector2(sim.hero.pos)))
+		if to > 0:
+			set_process(false)
+			profile.heading = to
+			profile.save()
+			Router.back()
+			return
+		sim.way_out = 0
 	if sim.finished:
-		set_process(false)
 		profile.take_from(sim, lord_id, mission, int(mission_info.get("id", 0)))
 		var ending: int = profile.advance(sim, lord_id, mission_info)
 		profile.save()
+		if ending < 0 and sim.won:
+			ways_out = ways_on(lord_id)
+			if not ways_out.is_empty():
+				# The way on is chosen here, in the last room: an arrow per place on.
+				sim.start_choosing()
+				_update_view(_acc / tick)
+				return
+		set_process(false)
 		Router.back()
 		if ending >= 0:
 			Router.push("story", {"story": ending, "reward_item": profile.reward_item,
@@ -508,17 +530,71 @@ func _place_banner(y: float) -> void:
 
 func _place_arrows() -> void:
 	var view := get_viewport_rect().size
-	var lit: bool = sim.exits_open() and (_blink & 2) != 0
-	for i in 4:
+	var blink := (_blink & 2) != 0
+	var lit: bool = sim.exits_open() and blink
+	for i in 8:
 		var a := arrows[i]
-		a.visible = lit and sim.rooms.has_exit(sim.cell, i + 1)
+		var along := 0.5  # where on its side: the middle, or a half's middle
+		if sim.choosing:
+			a.visible = false
+			for w in ways_out:
+				if int(w.exit) - 1 == i % 4 and (int(w.half) == -1 and i < 4 or int(w.half) == i / 4):
+					a.visible = blink
+					along = 0.5 if int(w.half) == -1 else 0.25 + 0.5 * int(w.half)
+		else:
+			a.visible = i < 4 and lit and sim.rooms.has_exit(sim.cell, i + 1)
 		var s := a.texture.get_size() * ARROW_SCALE
 		a.size = s
-		match i:
-			0: a.position = Vector2((view.x - s.x) / 2.0, view.y - s.y - 16)
-			1: a.position = Vector2(16, (view.y - s.y) / 2.0)
-			2: a.position = Vector2((view.x - s.x) / 2.0, 16)
-			3: a.position = Vector2(view.x - s.x - 16, (view.y - s.y) / 2.0)
+		match i % 4:
+			0: a.position = Vector2(view.x * along - s.x / 2.0, view.y - s.y - BOTTOM_ARROW_LIFT)
+			1: a.position = Vector2(16, view.y * along - s.y / 2.0)
+			2: a.position = Vector2(view.x * along - s.x / 2.0, 16)
+			3: a.position = Vector2(view.x - s.x - 16, view.y * along - s.y / 2.0)
+
+
+## The ways on from a place won: one per open place the campaign goes to next, each on a side
+## of the room in a shuffled order (a side says nothing); with more than four places, some
+## sides carry two, one on each half.
+func ways_on(won_place: int) -> Array:
+	var places: Array = WorldMap.new(Campaign.new()).next_places(won_place).filter(
+		func(id): return profile.is_lord_open(id))
+	var sides: Array = [Rooms.EXIT_UP, Rooms.EXIT_RIGHT, Rooms.EXIT_LEFT, Rooms.EXIT_DOWN]
+	var pick := RandomNumberGenerator.new()
+	pick.seed = hash([won_place, profile.done.size()])
+	for i in range(sides.size() - 1, 0, -1):
+		var j := pick.randi_range(0, i)
+		var t: int = sides[i]
+		sides[i] = sides[j]
+		sides[j] = t
+	var slots: Array = []
+	var split := maxi(places.size() - sides.size(), 0)  # sides that carry two
+	for k in mini(sides.size(), places.size()):
+		if k < split:
+			slots.append({"exit": sides[k], "half": 0})
+			slots.append({"exit": sides[k], "half": 1})
+		else:
+			slots.append({"exit": sides[k], "half": -1})
+	var out: Array = []
+	for k in mini(slots.size(), places.size()):
+		var w: Dictionary = slots[k]
+		w["place"] = places[k]
+		out.append(w)
+	return out
+
+
+## The place of the way on the hero walked into (a side, and on a side with two, the half
+## he stands in), or 0.
+func way_for(exit_no: int, at: Vector3) -> int:
+	var mid: Vector3 = sim.rooms.center(sim.cell)
+	for w in ways_out:
+		if int(w.exit) != exit_no:
+			continue
+		if int(w.half) == -1:
+			return int(w.place)
+		var along: float = at.x - mid.x if exit_no == Rooms.EXIT_UP or exit_no == Rooms.EXIT_DOWN else at.z - mid.z
+		if (along < 0.0) == (int(w.half) == 0):
+			return int(w.place)
+	return 0
 
 
 ## Stops the mission and shows the pause menu (Resume, Options, Exit to Menu, Exit Game).

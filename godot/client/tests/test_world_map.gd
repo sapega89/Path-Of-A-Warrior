@@ -169,3 +169,59 @@ func test_a_room_shows_only_itself_and_the_next() -> void:
 		var q: Vector2i = rooms.room_xy(r)
 		eq(b.is_shown(7 * q.x + 4, 7 * q.y + 4), r == 0 or r in next, "room %d drawn only if current or next" % r)
 	b.free()
+
+
+func test_after_a_mission_won_the_way_on_is_chosen_in_the_room() -> void:
+	var old: Dictionary = Router.params
+	Router.params = {"lord": 4, "mission": 0, "seed": 2}
+	var screen: Control = load("res://scripts/screens/mission_screen.gd").new()
+	root.add_child(screen)
+	var p: RefCounted = Profile.new()
+	screen.profile = p
+	eq(screen.ways_on(4).map(func(w): return w.place), [6], "Korsun: Harvest only, The Regalia is closed")
+	p.lords_open = -1
+	var two: Array = screen.ways_on(4)
+	eq(two.map(func(w): return w.place), [5, 6], "both open: a way each")
+	check(two[0].exit != two[1].exit and two.all(func(w): return w.half == -1), "each on a side of its own")
+	var six: Array = screen.ways_on(27)
+	eq(six.size(), 6, "six places on from Dawn over the Dnipro")
+	eq(six.filter(func(w): return w.half != -1).size(), 4, "two sides carry two ways")
+	screen.ways_out = six
+	var mid: Vector3 = screen.sim.rooms.center(screen.sim.cell)
+	var seen := {}
+	for w in six:
+		var off := -1.0 if int(w.half) == 0 else 1.0
+		if int(w.half) == -1:
+			off = 0.0
+		var at := mid + (Vector3(off, 0, 0) if int(w.exit) in [Rooms.EXIT_UP, Rooms.EXIT_DOWN] else Vector3(0, 0, off))
+		eq(screen.way_for(int(w.exit), at), int(w.place), "the way to %d" % w.place)
+		seen[w.place] = true
+	eq(seen.size(), 6, "every place has its way")
+	var sim: RefCounted = screen.sim
+	sim.start_choosing()
+	check(sim.choosing and not sim.finished and sim.enemies.is_empty(), "the room is quiet")
+	sim.keep_in_room(sim.hero.pos, 0, -2000)
+	eq(sim.way_out, Rooms.EXIT_UP, "walked into the top side")
+	screen.free()
+	Router.params = old
+
+
+func test_the_camp_of_the_way_chosen_offers_its_generals() -> void:
+	var p: RefCounted = Profile.new()
+	p.place = 1
+	p.heading = 2
+	p.save(CAMP_PATH)
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": CAMP_PATH}
+	var camp: Control = CampScreen.new()
+	root.add_child(camp)
+	var ways: Array = camp.spots.filter(func(s): return s.kind == "way")
+	var n: int = camp.campaign.lord_missions(2).size()
+	eq(ways.size(), n, "a way per mission of the place chosen")
+	check(ways.all(func(s): return s.place == 2 and s.open), "all of it, all open")
+	eq(camp.camp_place(), 2, "the camp is that place's")
+	camp.free()
+	Router.params = old
+	var back: RefCounted = Profile.load_or_new(CAMP_PATH)
+	eq(back.heading, 2, "the way chosen is kept")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))

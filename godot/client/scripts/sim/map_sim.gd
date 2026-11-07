@@ -210,6 +210,10 @@ var friendship := {}
 var talk_after := 0
 var failed := false
 var finished := false  # the mission is over: the screen leaves
+## The mission is won and its pages shown: the hero walks the last room to a side of it, the
+## way on to the next place (the screen puts the arrows); way_out is the side walked into.
+var choosing := false
+var way_out := 0
 ## The hero's skill levels (skills 12..30), the skills on his keys, his quick slots
 ## ([item, count], potions and scrolls) and which slots the two potion keys use.
 var skill_levels: Array[int] = []
@@ -410,6 +414,9 @@ func tick(held: int, pressed: int = -1, fire: bool = false, hotkey: int = -1, po
 	hero.prev_pos = hero.pos
 	for e in enemies:
 		e.prev_pos = e.pos
+	if choosing:
+		_tick_scene(held, pressed, 3 if fire else 0, potion)
+		return
 	if banner != 0:
 		_tick_banner(fire)
 		return
@@ -923,6 +930,20 @@ func can_save() -> bool:
 		if e.hp > 0:
 			return false
 	return not boss_fight and (waves.is_empty() or int(waves[0]) == 0)
+
+
+## After the mission's pages: the room empty and quiet, the hero free to walk to a side.
+func start_choosing() -> void:
+	choosing = true
+	finished = false
+	way_out = 0
+	banner = 0
+	talk.clear()
+	enemies.clear()
+	enemies_alive = 0
+	for i in waves.size():
+		waves[i] = 0
+	room_phase = 0
 
 
 ## The exits are open and their arrows shown.
@@ -2034,22 +2055,26 @@ static func edge(k: int) -> int:
 func keep_in_room(pos: Vector2i, dx: int, dy: int) -> Vector2i:
 	var o := room_origin()
 	var dest := pos + Vector2i(dx, dy)
+	var touched := 0
 	if dest.x < edge(o.x) + 12:
 		dx = edge(o.x) + 12 - pos.x
-		if room_phase == 1:
-			leave_room(Rooms.EXIT_LEFT)
+		touched = Rooms.EXIT_LEFT
 	elif dest.x > edge(o.x + 1) - 12:
 		dx = edge(o.x + 1) - 12 - pos.x
-		if room_phase == 1:
-			leave_room(Rooms.EXIT_RIGHT)
+		touched = Rooms.EXIT_RIGHT
+	if touched != 0 and room_phase == 1:
+		leave_room(touched)
+	var touched_y := 0
 	if dest.y < edge(o.y) + 10:
 		dy = edge(o.y) + 10 - pos.y
-		if room_phase == 1:
-			leave_room(Rooms.EXIT_UP)
+		touched_y = Rooms.EXIT_UP
 	elif dest.y > edge(o.y + 1) + 10:
 		dy = edge(o.y + 1) + 10 - pos.y
-		if room_phase == 1:
-			leave_room(Rooms.EXIT_DOWN)
+		touched_y = Rooms.EXIT_DOWN
+	if touched_y != 0 and room_phase == 1:
+		leave_room(touched_y)
+	if choosing and (touched != 0 or touched_y != 0):
+		way_out = touched_y if touched_y != 0 else touched
 	return Vector2i(dx, dy)
 
 

@@ -63,6 +63,9 @@ var can_visit := false  # a mission was won since the last visit of a general (V
 var progress := {}  # ruler id (as text) -> 0..100, 5 a won mission
 var done := {}  # "lord:mission" of the missions won
 var place := 0  # where the hero is: the lords of campaign chapter `place` can be fought for
+## The place on from `place` the hero chose at the end of his last mission won (0: none yet):
+## its camp offers that place's missions.
+var heading := 0
 var lords_open := START_LORDS_OPEN  # bit (id - 1) set: that lord can be fought for
 var endings := 0  # bit i set: ending i was reached
 var briefings := 0  # missions accepted (1..11): which advice the briefing gives
@@ -394,10 +397,12 @@ func advance(sim: RefCounted, lord_id: int, info: Dictionary, rng: RandomNumberG
 	var ending := -1
 	if sim.won:
 		place = lord_id
+		heading = 0
 		if general >= ENDING_BASE:
 			ending = general - ENDING_BASE
 	elif reward > ENDING_BASE:
 		place = lord_id
+		heading = 0
 		ending = reward - ENDING_BASE
 		gold += int(sim.gold_reward())
 	reward_item = 0
@@ -654,7 +659,7 @@ func to_dict() -> Dictionary:
 		"backpack": backpack,
 		"skill_levels": skill_levels, "hotkeys": hotkeys, "quick_slots": quick_slots,
 		"quick_keys": quick_keys, "friendship": friendship, "can_visit": can_visit,
-		"progress": progress, "done": done, "place": place, "lords_open": lords_open,
+		"progress": progress, "done": done, "place": place, "heading": heading, "lords_open": lords_open,
 		"endings": endings, "briefings": briefings, "shop": shop, "on_map": on_map}
 
 
@@ -684,6 +689,7 @@ func from_dict(d: Dictionary) -> void:
 	progress = d.get("progress", progress)
 	done = d.get("done", done)
 	place = int(d.get("place", place))
+	heading = int(d.get("heading", 0))
 	lords_open = int(d.get("lords_open", lords_open))
 	endings = int(d.get("endings", endings))
 	briefings = clampi(int(d.get("briefings", briefings)), 0, BRIEFINGS_IN_TURN + 1)
