@@ -1,10 +1,10 @@
 extends Control
 ## The stop between missions (scripts/world/camp_map.gd): the hero walks about the camp of
-## his place, and each way on from there is a gap in the pines with a colonel inside it.
-## Talking to the colonel (attack / OK next to him) or walking out through the gap opens the
-## missions of that place; a mission accepted from here comes back here when it is over (won:
-## the camp of the new place; lost: this one again, to try once more with the same hero). A
-## closed way is fenced. A main camp also has the town hall (every colonel and general) and the
+## his place, and each way on from there is a gap in the pines with a blinking arrow, nothing
+## more: which way is better is learnt by playing. Walking out through a gap tells the story
+## of one of the missions there (pick_mission), then its briefing; the mission comes back
+## here when it is over (won: the camp of the new place; lost: this one again, to try once
+## more with the same hero). A closed way is fenced. A main camp also has the town hall (every colonel and general) and the
 ## blacksmith. The game is saved when the hero comes into a camp. Pause opens the camp menu:
 ## the game menu, the world map, the main menu.
 ## Router.params: profile_path; first: true starts the first mission at once (a new game).
@@ -16,11 +16,14 @@ const WorldMap := preload("res://scripts/core/world_map.gd")
 const CampMap := preload("res://scripts/world/camp_map.gd")
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
 const Hero := preload("res://scripts/world/hero.gd")
-const Soldier := preload("res://scripts/world/soldier.gd")
 const FollowCamera := preload("res://scripts/world/follow_camera.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 const TALK_RANGE := 1.4  # tiles
-const COLONEL_LOOKS := 6
+const ARROW_PATH := "res://assets/original/ui/arrow%d.png"
+## The arrow picture for a gap on the top, the right and the left side (arrow0..3: down,
+## left, up, right).
+const ARROW_OF_SIDE := [2, 3, 1]
+const BLINK_TIME := 0.25
 const CAMERA_DISTANCE := 19.0  # the whole camp on the screen, the camera does not move
 
 var path: String = Profile.PATH
@@ -41,6 +44,9 @@ var menu_buttons: Array[Button] = []
 ## What the hero can use where he stands: {kind: "way"|"hall"|"smith", place, at: Vector3}
 var spots: Array = []
 var near := {}  # the spot in reach, or empty
+var arrows: Array[Sprite3D] = []
+var rng := RandomNumberGenerator.new()
+var _blink := 0.0
 var _leaving := false
 
 
@@ -93,23 +99,21 @@ func _build_world() -> void:
 	world.add_child(camera)
 	camera.make_current()
 	camera.snap()
+	# Each open way: only the blinking arrow of the original rooms in its gap; nothing says
+	# where it leads (that is learnt by playing).
 	for e in camp.exits:
 		var at := MapBuilder.cell_to_world(e.inside)
-		var names: Array = rulers(e.place).map(func(id): return tr(ruler_name(id)))
-		var colonel: String = names[0] if not names.is_empty() else ""
-		if names.size() > 1:
-			colonel += " +%d" % (names.size() - 1)
 		if e.open:
-			var npc := Soldier.new()
-			npc.name = "Colonel%d" % e.place
-			var look := 1 + (_first_ruler(e.place) % COLONEL_LOOKS)
-			npc.setup(1, 0, [], {"look": look, "side": 0})
-			npc.set_frame(0, 0)
-			npc.position = at
-			world.add_child(npc)
-		var below: String = "%s\n%s" % [colonel, way_reward(e.place)] if e.open else tr("world.closed")
-		_label3d("Way%d" % e.place, "%s\n%s" % [campaign.lord_name(e.place), below],
-			at + Vector3(0, 2.6, 0), UiTheme.ACCENT if e.open else UiTheme.TEXT_DIM)
+			var arrow := Sprite3D.new()
+			arrow.name = "Arrow%d" % e.place
+			arrow.texture = load(ARROW_PATH % ARROW_OF_SIDE[int(e.side)])
+			arrow.pixel_size = 1.0 / 27.0
+			arrow.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+			arrow.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+			arrow.no_depth_test = true
+			arrow.position = MapBuilder.cell_to_world(e.gap[1]).lerp(at, 0.5) + Vector3(0, 0.6, 0)
+			world.add_child(arrow)
+			arrows.append(arrow)
 		spots.append({"kind": "way", "place": int(e.place), "open": bool(e.open), "at": at})
 	if camp.main:
 		var door := MapBuilder.cell_to_world(camp.hall_door())
@@ -182,35 +186,17 @@ func rulers(id: int) -> Array:
 	return out
 
 
-## What the missions of a place give, as a door shows it: the gold (twice on hard) and the
-## level of the general to beat, from the least to the most.
-func way_reward(id: int) -> String:
-	var gold := []
-	var lv := []
-	for m in campaign.lord_missions(id):
-		gold.append(int(m.get("gold", 0)) * 150 * (1 + (int(profile.difficulty) ^ 1)))
-		lv.append(int(profile.level) + int(m.get("level_bonus", 0)))
-	if gold.is_empty():
-		return ""
-	return tr("camp.reward") % [_span(gold), _span(lv)]
-
-
-static func _span(values: Array) -> String:
-	var lo: int = values.min()
-	var hi: int = values.max()
-	return str(lo) if lo == hi else "%d–%d" % [lo, hi]
-
-
-func _first_ruler(id: int) -> int:
-	var r := rulers(id)
-	return int(r[0]) if not r.is_empty() else 0
-
-
 func ruler_name(ruler: int) -> String:
 	for m in campaign.missions:
 		if int(m.get("id", 0)) == ruler:
 			return str(m.get("name", ""))
 	return ""
+
+
+func _process(delta: float) -> void:
+	_blink += delta
+	for a in arrows:
+		a.visible = int(_blink / BLINK_TIME) % 2 == 0
 
 
 func _physics_process(_delta: float) -> void:
@@ -224,7 +210,7 @@ func _physics_process(_delta: float) -> void:
 	if not e.is_empty():
 		use(e)
 		return
-	if not near.is_empty() and (Input.is_action_just_pressed("attack") or Input.is_action_just_pressed("ui_accept")):
+	if not near.is_empty() and near.kind != "way" and (Input.is_action_just_pressed("attack") or Input.is_action_just_pressed("ui_accept")):
 		use(near)
 
 
@@ -260,18 +246,12 @@ func exit_crossed(pos: Vector3) -> Dictionary:
 
 
 func _hint_text(s: Dictionary) -> String:
-	if s.is_empty():
-		return InputSetup.hint("camp.hint_walk")
-	match str(s.kind):
-		"way":
-			if not s.open:
-				return tr("camp.way_closed") % campaign.lord_name(s.place)
-			return InputSetup.hint("camp.talk") % campaign.lord_name(s.place)
+	match str(s.get("kind", "")):
 		"hall":
 			return InputSetup.hint("camp.enter_hall")
 		"smith":
 			return InputSetup.hint("camp.enter_smith")
-	return ""
+	return InputSetup.hint("camp.hint_walk")
 
 
 func use(s: Dictionary) -> void:
@@ -279,11 +259,22 @@ func use(s: Dictionary) -> void:
 		"way":
 			if s.open:
 				_leaving = true
-				Router.push("campaign", {"level": 2, "lord": int(s.place), "camp": true, "profile_path": path})
+				Router.push("campaign", {"level": 3, "lord": int(s.place), "mission": pick_mission(int(s.place)),
+					"camp": true, "profile_path": path})
 		"hall":
 			Router.push("town_hall", {"profile_path": path})
 		"smith":
 			Router.push("blacksmith", {"profile_path": path})
+
+
+## The mission a way leads to: one of the place's missions not won yet, by chance (any of
+## them when all are won).
+func pick_mission(id: int) -> int:
+	var n: int = campaign.lord_missions(id).size()
+	var left: Array = range(n).filter(func(i): return not profile.is_done(id, i))
+	if left.is_empty():
+		left = range(n)
+	return int(left[rng.randi_range(0, left.size() - 1)]) if not left.is_empty() else 0
 
 
 ## Straight into a mission's briefing (the first mission of a new game).

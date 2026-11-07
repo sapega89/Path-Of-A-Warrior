@@ -1,8 +1,8 @@
 extends RefCounted
 ## The stop between missions: a small map in the format of data/maps/N.json (so MapBuilder
 ## builds it), made in code from the original tiles. Pines close it in; each way on from the
-## hero's place (WorldMap.next_places) is a gap in the pines, with a colonel who gives the
-## missions there standing inside it, and a fence across it while that place is closed. The
+## hero's place (WorldMap.next_places) is a gap in the pines (`inside` is the cell just within
+## it), with a fence across it while that place is closed. The
 ## hero comes in at the bottom. A main camp (the start and the places the endings lead to)
 ## also has the town hall, where every colonel and general is, and the blacksmith.
 

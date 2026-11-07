@@ -129,7 +129,13 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 	eq(camp.exit_crossed(Vector3(gap.x + 0.5, 0, 0.3)), harvest, "out through the gap")
 	eq(camp.exit_crossed(Vector3(8.5, 0, 6.0)), {}, "inside")
 	check(camp.rulers(1).size() == 4, "four colonels give the missions at Uprising")
-	eq(camp.way_reward(6), tr("camp.reward") % ["450–750", "4–6"], "Harvest: its gold and the generals' levels")
+	eq(camp.arrows.size(), 1, "an arrow on the open way only")
+	for i in 20:
+		var m: int = camp.pick_mission(6)
+		check(m == 0 or m == 1, "a mission of Harvest")
+	p.done["6:0"] = true
+	camp.profile = p
+	eq(camp.pick_mission(6), 1, "not one won already")
 	camp.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))

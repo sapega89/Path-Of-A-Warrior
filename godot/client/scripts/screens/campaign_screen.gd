@@ -5,8 +5,9 @@ extends Control
 ## place, so the map changes. A mission shows the rooms it walks on the place's map and its
 ## description first; OK asks whether to accept it (the general to beat, the level and the
 ## gold), and Yes counts the briefing and opens it, then the map. Opened from a camp
-## (Router.params camp: true) it shows one place's missions, and the briefing takes its place,
-## so the mission ends back in the camp.
+## (Router.params camp: true) it shows the story of the mission the way led to, OK goes
+## straight to its briefing (in its place, so the mission ends back in the camp) and Back
+## returns to the camp.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Campaign := preload("res://scripts/core/campaign.gd")
@@ -61,7 +62,7 @@ func _ready() -> void:
 	ok = Button.new()
 	ok.name = "Ok"
 	ok.text = "campaign.ok"
-	ok.pressed.connect(ask_accept)
+	ok.pressed.connect(_on_ok)
 	col.add_child(ok)
 	ask = ConfirmationDialog.new()
 	ask.name = "Ask"
@@ -184,6 +185,14 @@ func accept_text() -> String:
 		tr("campaign.accept")]
 
 
+## OK under the description: from a camp the story goes straight on to the briefing.
+func _on_ok() -> void:
+	if from_camp:
+		accept()
+	else:
+		ask_accept()
+
+
 func ask_accept() -> void:
 	ask.dialog_text = accept_text()
 	ask.popup_centered()
@@ -205,7 +214,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		scroll.scroll_vertical += page if event.is_action_pressed("ui_down") else -page
 	elif event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
-		if level > 1 and not (from_camp and level == 2):
+		if level > 1 and not from_camp:
 			level -= 1
 			show_level()
 		else:

@@ -1500,24 +1500,12 @@
     "uk": "Кімнат на шляху: %d із %d   ■ старт   ● генерал"
   },
   "camp.hint_walk": {
-    "en": "Walk to a colonel at a way on   [Esc] camp menu",
-    "uk": "Підійди до полковника біля шляху   [Esc] меню табору"
+    "en": "Choose a way: walk out by an arrow   [Esc] camp menu",
+    "uk": "Обери шлях: вийди туди, де стрілка   [Esc] меню табору"
   },
   "camp.hint_walk_pad": {
-    "en": "Walk to a colonel at a way on   [Start] camp menu",
-    "uk": "Підійди до полковника біля шляху   [Start] меню табору"
-  },
-  "camp.talk": {
-    "en": "[Enter] talk: the missions at %s",
-    "uk": "[Enter] говорити: місії в «%s»"
-  },
-  "camp.talk_pad": {
-    "en": "[A] talk: the missions at %s",
-    "uk": "[A] говорити: місії в «%s»"
-  },
-  "camp.way_closed": {
-    "en": "The way to %s is closed for now",
-    "uk": "Шлях до «%s» поки закритий"
+    "en": "Choose a way: walk out by an arrow   [Start] camp menu",
+    "uk": "Обери шлях: вийди туди, де стрілка   [Start] меню табору"
   },
   "camp.enter_hall": {
     "en": "[Enter] Town Hall: every colonel and general",
@@ -1598,9 +1586,5 @@
   "door.been": {
     "en": "(been there)",
     "uk": "(уже були)"
-  },
-  "camp.reward": {
-    "en": "Gold %s · Lv %s",
-    "uk": "Золото %s · рів. %s"
   }
 }
