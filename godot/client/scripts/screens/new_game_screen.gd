@@ -148,7 +148,7 @@ func choose_difficulty(d: int) -> void:
 ## Under the faces: the hint, and the hero of face h with his base stats.
 func show_class(h: int) -> void:
 	info.text = "%s\n%s\n\n%s\n%s" % [tr("newgame.select_1"), tr("newgame.select_2"),
-		Profile.HERO_CLASSES[h], Profile.stats_line(h)]
+		tr(Profile.HERO_CLASSES[h]), Profile.stats_line(h)]
 
 
 func choose_head(h: int) -> void:

@@ -31,7 +31,7 @@ const POINT_GAINS := [5, 3, 1, 1]
 ## worth the same stat points (POINT_GAINS), so no hero is stronger, only different. Face 0
 ## has the numbers every hero had in the original.
 const HERO_BASES := [[30, 10, 5, 4], [40, 7, 3, 5], [25, 16, 4, 4], [25, 10, 7, 3]]
-const HERO_CLASSES := ["Warrior", "Guardian", "Mystic", "Berserker"]
+const HERO_CLASSES := ["Cossack", "Serdiuk", "Kharakternyk", "Haidamaka"]
 ## Resetting the attributes costs gold per hero level, or one of these elixirs.
 const RESPEC_GOLD_PER_LEVEL := 100
 const RESPEC_ITEMS := [434, 435, 436, 437]  # Rise Potion, Azure Potion, Falls / Forest Medicine

@@ -211,7 +211,7 @@ func character(uid: String) -> Dictionary:
 		if int(levels[i]) > 0 and SKILL_IDS.has(SKILL_CODES[i]):
 			skills[SKILL_CODES[i]] = int(levels[i])
 	if h.is_empty():
-		skills = {3: 1, 11: 1}  # Wind Slasher, Devil Soul
+		skills = {3: 1, 11: 1}  # Whirlwind Sabre, Fury
 	c.skills = skills
 	var chosen: Array = c.slots
 	if chosen.is_empty():  # none chosen online: the skills on the hero's keys

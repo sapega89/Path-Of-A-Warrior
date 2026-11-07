@@ -59,7 +59,7 @@ func test_heal_skill_first() -> void:
 	sim.hero.hp = 5
 	var a := Autopilot.new()
 	a.toggle()
-	eq(int(a.decide(sim).hotkey), 1, "Medium Heal on its key, not the potion")
+	eq(int(a.decide(sim).hotkey), 1, "Healing Herbs on its key, not the potion")
 
 
 func test_a_key_of_the_player_hands_off() -> void:

@@ -1,0 +1,32 @@
+{
+"about": "Our names for the game's things: section -> imported name -> [English, Ukrainian]. import_original.py puts the English name into godot/client/data and writes godot/client/i18n/names.json (English name -> both languages) for the game to show the player's language.",
+"classes": {
+"Warrior": ["Cossack", "Козак"],
+"Guardian": ["Serdiuk", "Сердюк"],
+"Mystic": ["Kharakternyk", "Характерник"],
+"Berserker": ["Haidamaka", "Гайдамака"]
+},
+"skills": {
+"Wind Slasher": ["Whirlwind Sabre", "Шабля-вихор"],
+"Storm Slasher": ["Storm Sabre", "Шабля-буря"],
+"Thunder Slasher": ["Thunder Sabre", "Шабля-грім"],
+"Medium Heal": ["Healing Herbs", "Цілюще зілля"],
+"Maximum Heal": ["Living Water", "Жива вода"],
+"Devil Soul": ["Fury", "Лють"],
+"Guardian Soul": ["Charm", "Оберіг"],
+"Arch angel Soul": ["Protection of the Virgin", "Покрова"],
+"Arch Angel Soul": ["Protection of the Virgin", "Покрова"],
+"Tide Crasher": ["Dnipro Wave", "Хвиля Дніпра"],
+"Wave Crasher": ["Rapids", "Пороги"],
+"Tidal wave Crasher": ["Flood", "Повінь"],
+"Tidal Wave": ["Flood", "Повінь"],
+"Flame Twister": ["Ring of Fire", "Вогняне коло"],
+"Fire Tornado": ["Fire Whirl", "Вогняний вихор"],
+"Tornado Blaze": ["Steppe Blaze", "Степова пожежа"],
+"Lightning": ["Lightning", "Блискавка"],
+"Chain Lightning": ["Perun's Arrow", "Перунова стріла"],
+"Thunder Storm": ["Thunderstorm", "Громовиця"],
+"Dragon Breath": ["Serpent's Breath", "Подих Змія"],
+"Meteor Strike": ["Rain of Fire", "Вогняний дощ"]
+}
+}

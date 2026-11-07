@@ -181,7 +181,7 @@ static func skill_name(i: int) -> String:
 		return ""
 	var d: Variant = JSON.parse_string(f.get_as_text())
 	var names: Array = d.get("names", []) if typeof(d) == TYPE_DICTIONARY else []
-	return str(names[i]) if i >= 0 and i < names.size() else ""
+	return String(TranslationServer.translate(str(names[i]))) if i >= 0 and i < names.size() else ""
 
 
 ## Ends a visit: no more until the next mission won, the gift, 5 more friendship.
