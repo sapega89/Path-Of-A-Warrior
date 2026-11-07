@@ -51,3 +51,31 @@ func test_new_game_steps() -> void:
 	eq(saved.base_hp, 25, "the Haidamaka's HP")
 	screen.free()
 	Router.params = old
+
+
+func test_the_server_says_whether_the_name_is_free() -> void:
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": TEST_PATH}
+	var screen: Control = NewGame.new()
+	root.add_child(screen)
+	screen.choose_head(1)
+	var asked: Array = []
+	screen.ask_name = func(n: String, done: Callable) -> void: asked.append([n, done])
+	screen.name_edit.text = "Blade"
+	check(not screen.submit_name(), "waits for the server")
+	eq(screen.info.text, tr("newgame.name_checking"))
+	check(not screen.submit_name(), "asked once")
+	eq(asked.size(), 1)
+	eq(asked[0][0], "Blade")
+	asked[0][1].call({"ok": false, "err": "name exists"})
+	eq(screen.step, NewGame.Step.NAME, "still the name")
+	eq(screen.info.text, tr("newgame.name_taken"))
+	screen.name_edit.text = "Ivan"
+	screen.submit_name()
+	asked[1][1].call({"ok": false, "err": "offline"})
+	eq(screen.info.text, tr("register.err_offline"))
+	screen.submit_name()
+	asked[2][1].call({"ok": true})
+	eq([screen.step, screen.profile.hero_name], [NewGame.Step.POINTS, "Ivan"], "free: on to the points")
+	screen.free()
+	Router.params = old

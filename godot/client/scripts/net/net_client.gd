@@ -46,7 +46,8 @@ func open(address: String, port: int, cert: X509Certificate, common_name := "loc
 func close() -> void:
 	if host != null:
 		if peer != null and state == State.CONNECTED:
-			peer.peer_disconnect_now()
+			peer.peer_disconnect_now()  # the server is told now, not when it times the peer out
+			host.flush()
 		host.destroy()
 	host = null
 	peer = null

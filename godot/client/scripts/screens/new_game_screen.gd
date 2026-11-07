@@ -2,7 +2,8 @@ extends Control
 ## A new game, step by step as in the original: the difficulty (Hard: gold and exp x2; Normal:
 ## x1; on both the hero turns to the nearest enemy as he strikes; it cannot change later), the
 ## hero's face (each face a hero with his own base stats), his name (up to 8 letters, typed or
-## on the keys under the field, scripts/ui/key_grid.gd), and his
+## on the keys under the field, scripts/ui/key_grid.gd; the server says whether another player's
+## hero has it already, since it is the hero's name online too), and his
 ## 5 first stat points. Then the hero is saved over
 ## any old one and the opening story starts, then the game menu.
 ## Params: profile_path (optional), then (the screen after the opening, default game_menu).
@@ -27,6 +28,14 @@ var ask: ConfirmationDialog
 var name_edit: LineEdit
 var stat_labels: Array[Label] = []
 var points_label: Label
+var checking := ""  # the name the server is asked about, "" when none
+## Asks whether the hero may have this name: done(answer {ok, err}). Online the server's
+## name_check; without the server (tests, --offline) every name may be used.
+var ask_name: Callable = func(n: String, done: Callable) -> void:
+	if Cloud.enabled():
+		Cloud.request({"t": "name_check", "name": n}, done)
+	else:
+		done.call({"ok": true})
 
 
 func _ready() -> void:
@@ -72,6 +81,7 @@ func _button(node_name: String, text: String, on_press: Callable, translate := t
 
 func show_step(s: int) -> void:
 	step = s
+	checking = ""
 	_clear()
 	match step:
 		Step.DIFFICULTY:
@@ -169,14 +179,40 @@ func _name_changed(t: String) -> void:
 		name_edit.caret_column = mini(at, clean.length())
 
 
+## The typed name goes to the server; once it says nobody else's hero has it, on to the
+## points. True when that happened at once (no server to ask).
 func submit_name() -> bool:
 	var n := name_edit.text.strip_edges()
 	if n.is_empty():
 		info.text = tr("newgame.name_empty")
 		return false
-	profile.hero_name = n
-	show_step(Step.POINTS)
-	return true
+	if not checking.is_empty():
+		return false
+	checking = n
+	info.text = tr("newgame.name_checking")
+	var ref: WeakRef = weakref(self)
+	ask_name.call(n, func(r: Dictionary) -> void:
+		var me: Object = ref.get_ref()
+		if me != null and not me.is_queued_for_deletion():
+			me.name_answered(n, r))
+	return step == Step.POINTS
+
+
+func name_answered(n: String, r: Dictionary) -> void:
+	if checking != n or step != Step.NAME:
+		return
+	checking = ""
+	if r.get("ok", false):
+		profile.hero_name = n
+		show_step(Step.POINTS)
+		return
+	match str(r.get("err", "")):
+		"name exists":
+			info.text = tr("newgame.name_taken")
+		"not acceptable":
+			info.text = tr("newgame.name_hint")
+		_:
+			info.text = tr("register.err_offline")
 
 
 func spend(stat: int) -> void:

@@ -6,11 +6,13 @@ extends RefCounted
 ## The character is the account's hero (the single-player save the server keeps,
 ## server/accounts.gd: level, HP / MP / ATK / DEF and the gear's bonuses, the face and the
 ## weapon, the skills and the keys they are on, the missions won) plus what only the online
-## game has: the display name, the two quotes, wins and losses, the Exp / Fame / Gold earned
+## game has: the two quotes, wins and losses, the Exp / Fame / Gold earned
 ## online, the Duel and Mission grades, Invitation, the skill slots chosen online and the order.
 ## That part is kept in <data>/online/char_<ID>.json; orders in order_<NAME>.json; the chat in
 ## chat_*.json (the last HISTORY messages of each conversation) and me_<ID>.json (what a player
 ## has read).
+## The display name is the hero's name from the new game when that name is the account's
+## (Accounts.name_owner(): no two heroes share one); a bot has its own; else the UserID.
 ##
 ## The Multiplayer menu of a client sends mp_enter first (the player is online from then on,
 ## until mp_leave or the connection closes); every other request needs it. Each is answered
@@ -18,7 +20,6 @@ extends RefCounted
 ##   mp_enter / mp_profile            -> the character (id, name, face, level, wins, losses, hp,
 ##                                       weapon, slots, quotes, skill_cost), unread: [order, private]
 ##   mp_options / mp_options_set {invitation: 0 Deny, 1 Accept}
-##   mp_name {name}                   -> err "not acceptable", "name exists"
 ##   mp_quote {which: "start" | "win", quote}
 ##   mp_attributes                    -> hp, hp_bonus, mp, mp_bonus, atk, atk_bonus, def, def_bonus
 ##   mp_skills                        -> skills: [{id, level}]
@@ -98,7 +99,7 @@ var match_wait := MATCH_WAIT
 var _chars := {}  # UserID -> the online part of the character
 var _docs := {}  # file name -> a document (orders, chat)
 var _rude := RegEx.create_from_string("(?i)" + RUDE)
-var _name_re := RegEx.create_from_string("^[A-Za-z0-9]{1,8}$")
+var _name_re := RegEx.create_from_string("^[A-Za-z]{1,8}$")  # a hero's name, as the new game types it
 var _quote_re := RegEx.create_from_string("^[ -~]{1,20}$")
 var _id_re := RegEx.create_from_string("^[A-Z]{4,12}$")
 var _text_re := RegEx.create_from_string("^[ -\\[\\]-~]+$")
@@ -182,6 +183,9 @@ func character(uid: String) -> Dictionary:
 	c.id = uid
 	var hero: Variant = accounts.hero_get(uid).get("hero") if accounts.has_account(uid) else null
 	var h: Dictionary = hero if hero is Dictionary else {}
+	var hero_name := Accounts.hero_name(h)
+	if not hero_name.is_empty() and accounts.name_owner(hero_name) == uid:
+		c.name = hero_name
 	c.level = clampi(int(h.get("level", 1)), 1, 255)
 	var base: Array = h.get("base", [])
 	var face := int(h.get("head", 0)) & 3
@@ -379,15 +383,6 @@ func answer(s: Session, t: String, msg: Dictionary) -> Dictionary:
 			c.invitation = v
 			save_char(uid)
 			return _ok(t)
-		"mp_name":
-			var name := str(msg.get("name", ""))
-			if _name_re.search(name) == null:
-				return _fail(t, "not acceptable")
-			if name_taken(name, uid):
-				return _fail(t, "name exists")
-			c.name = name
-			save_char(uid)
-			return _ok(t)
 		"mp_quote":
 			var q := str(msg.get("quote", ""))
 			var which := str(msg.get("which", ""))
@@ -473,7 +468,19 @@ func answer(s: Session, t: String, msg: Dictionary) -> Dictionary:
 	return _fail(t, "unknown")
 
 
+## Whether a new hero may be called `name`: "" when it may, else "not acceptable" (1-8
+## letters) or "name exists".
+func check_name(name: String, uid: String) -> String:
+	if _name_re.search(name) == null:
+		return "not acceptable"
+	return "name exists" if name_taken(name, uid) else ""
+
+
+## Another player's hero, or a bot, already has this name (any case).
 func name_taken(name: String, uid: String) -> bool:
+	var owner := accounts.name_owner(name)
+	if not owner.is_empty() and owner != uid:
+		return true
 	for other in _chars:
 		if other != uid and str(_chars[other].get("name", "")).to_upper() == name.to_upper():
 			return true

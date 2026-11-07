@@ -157,18 +157,9 @@ func test_menu_and_character_pages() -> void:
 	eq(page.info.text.split("\n")[2], "ATK 9 + 6")
 	page.open("purse")
 	eq(page.info.text.split("\n")[2], tr("online.mp_gold") % 0)
+	check(page.find_child("Name", true, false) == null, "no Display Name: the hero's name is used")
 	page.free()
-	var text := _screen(TextScreen, {"online": c, "kind": "name"})
-	text.fields[0].text = "Andrey"
-	text.send()
-	eq([str(c.me.name), str(net.o.online_part("ANDREY").name)], ["Andrey", "Andrey"], "the display name")
-	text.free()
-	text = _screen(TextScreen, {"online": c, "kind": "name"})
-	text.fields[0].text = "Blade"
-	text.send()
-	eq(text.info.text, tr("online.err_name_exists"), "a bot has it")
-	text.free()
-	text = _screen(TextScreen, {"online": c, "kind": "quote"})
+	var text := _screen(TextScreen, {"online": c, "kind": "quote"})
 	text.fields[0].text = "Come on!"
 	text.fields[1].text = "Next!"
 	text.send()

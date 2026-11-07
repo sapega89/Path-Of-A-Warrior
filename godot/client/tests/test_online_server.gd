@@ -127,14 +127,14 @@ func test_options_name_quotes_and_slots() -> void:
 	var a := _accounts(d)
 	var o := _online(d, a)
 	var s := _player(o, "ANDREY")
-	a.hero_put("ANDREY", 0, 1, HERO)
+	var named := HERO.duplicate(true)
+	named.name = "Andrey"
+	a.hero_put("ANDREY", 0, 1, named)
 	eq(o.answer(s, "mp_options", {}).invitation, 1, "Accept")
 	check(o.answer(s, "mp_options_set", {"invitation": 0}).ok)
 	eq(o.answer(s, "mp_options_set", {"invitation": 2}).err, "bad message")
-	eq(o.answer(s, "mp_name", {"name": "An drey"}).err, "not acceptable")
-	eq(o.answer(s, "mp_name", {"name": "Andrey123"}).err, "not acceptable", "8 characters at most")
-	eq(o.answer(s, "mp_name", {"name": "bLaDe"}).err, "name exists", "a bot's name, any case")
-	check(o.answer(s, "mp_name", {"name": "Andrey"}).ok)
+	eq(o.answer(s, "mp_name", {"name": "Andrey"}).err, "unknown", "the display name is the hero's")
+	eq(o.profile("ANDREY").name, "Andrey", "the name from the new game")
 	check(o.answer(s, "mp_quote", {"which": "win", "quote": "Next!"}).ok)
 	eq(o.answer(s, "mp_quote", {"which": "start", "quote": "x".repeat(21)}).err, "not acceptable")
 	eq(o.answer(s, "mp_slots", {"slots": [9, 4, 99, 99]}).err, "bad message", "Storm is not learned")
@@ -206,7 +206,7 @@ func test_lobby_order_and_private_chat() -> void:
 	var got_b: Array = []
 	var a := _player(o, "ANDREY", got_a)
 	var b := _player(o, "MARIA", got_b)
-	o.answer(b, "mp_name", {"name": "Maria"})
+	o.online_part("MARIA").name = "Maria"  # as a name kept from an older version
 	eq(o.answer(a, "chat_send", {"channel": 0, "text": "  "}).err, "not acceptable")
 	eq(o.answer(a, "chat_send", {"channel": 0, "text": "back\\slash"}).err, "not acceptable")
 	check(o.answer(a, "chat_send", {"channel": 0, "text": "Hi, SHITty day"}).ok)
@@ -304,4 +304,29 @@ func test_chat_pushes_over_enet() -> void:
 	check(not srv.online.is_online("MARIA"), "offline when the connection closes")
 	clients[0].close()
 	srv.stop()
+	ServerTests._rm(d)
+
+
+func test_a_hero_name_belongs_to_one_player() -> void:
+	var d := _dir()
+	var a := _accounts(d)
+	var o := _online(d, a)
+	a.create_account("ANDREY", "1234")
+	a.create_account("MARIA", "1234")
+	eq(o.check_name("Ivan", "MARIA"), "", "nobody has it")
+	eq(o.check_name("Iv an", "MARIA"), "not acceptable")
+	eq(o.check_name("Ivanovych", "MARIA"), "not acceptable", "8 letters at most")
+	eq(o.check_name("Ivan7", "MARIA"), "not acceptable", "only letters")
+	eq(o.check_name("bLaDe", "MARIA"), "name exists", "a bot's name, any case")
+	a.hero_put("ANDREY", 0, 1, {"name": "Ivan"})
+	eq(a.name_owner("IVAN"), "ANDREY")
+	eq(o.check_name("iVaN", "MARIA"), "name exists", "another player's hero, any case")
+	eq(o.check_name("Ivan", "ANDREY"), "", "my own hero's")
+	a.hero_put("MARIA", 0, 2, {"name": "Ivan"})  # saved anyway (an older game)
+	eq([o.profile("ANDREY").name, o.profile("MARIA").name], ["Ivan", "MARIA"],
+		"the second one is shown by the UserID")
+	var again := Accounts.new(d.path_join("accounts"))  # as after a restart
+	eq(again.name_owner("Ivan"), "ANDREY", "the older account keeps it")
+	a.hero_put("ANDREY", 1, 3, {"name": "Petro"})
+	eq([a.name_owner("Ivan"), a.name_owner("Petro")], ["", "ANDREY"], "a new game frees the old name")
 	ServerTests._rm(d)

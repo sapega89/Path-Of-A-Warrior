@@ -1,6 +1,6 @@
 extends Control
 ## Multiplayer > Character (pyport's Character menu): Records, Attributes, Skills,
-## Exp/Fame/Gold, Change Quote, Display Name. Records, Attributes and Exp/Fame/Gold are read
+## Exp/Fame/Gold, Change Quote (the display name is the hero's own, from the new game). Records, Attributes and Exp/Fame/Gold are read
 ## from the server and shown beside the menu; the others open their page.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
@@ -12,7 +12,6 @@ const ITEMS := [
 	["Skills", "online.skills", "online_skills"],
 	["Purse", "online.purse", "purse"],
 	["Quote", "online.quote", "online_text:quote"],
-	["Name", "online.name", "online_text:name"],
 ]
 
 var online: RefCounted

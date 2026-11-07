@@ -111,6 +111,7 @@ func _event(ev: Array) -> void:
 		ENetConnection.EVENT_DISCONNECT:
 			var s: Session = sessions.get(peer)
 			if s != null:
+				log_line.call("%s left (%s)" % [s.user if not s.user.is_empty() else "a guest", s.address])
 				guard.close_connection(s.address)
 				_leave_online(s)
 				sessions.erase(peer)
@@ -161,6 +162,7 @@ func answer(s: Session, msg: Dictionary) -> Dictionary:
 			"hero_put": reply = _hero_put(s, msg)
 			"options_get": reply = _options_get(s)
 			"options_put": reply = _options_put(s, msg)
+			"name_check": reply = _name_check(s, msg)
 			_:
 				if t.begins_with("live_") and live != null:
 					reply = live.answer(s.live, t, msg)
@@ -214,7 +216,17 @@ func _login(s: Session, msg: Dictionary) -> Dictionary:
 	_leave_online(s)
 	s.user = uid
 	s.live.user = uid
+	log_line.call("%s logged in from %s" % [uid, s.address])
 	return {"t": "login", "ok": true}
+
+
+## Whether the new game may call the hero so: no other player's hero (nor a bot) has the name.
+func _name_check(s: Session, msg: Dictionary) -> Dictionary:
+	var name: Variant = msg.get("name")
+	if not name is String or online == null:
+		return _fail("name_check", "bad message")
+	var err := online.check_name(name, s.user)
+	return {"t": "name_check", "ok": true} if err.is_empty() else _fail("name_check", err)
 
 
 func _hero_get(s: Session) -> Dictionary:

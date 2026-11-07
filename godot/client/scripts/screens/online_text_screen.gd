@@ -1,6 +1,5 @@
 extends Control
 ## A line to type for the online game (Router.params.kind):
-##   name          Display Name: 1-8 letters and digits ("Are you sure?" first)
 ##   quote         Change Quote: the battle's first words and the victory quote (1-20 characters)
 ##   order_create  Create Order / order_join  Join Order: 4-12 letters A-Z
 ##   peer          Chat > New Message: the UserID of the player (4-12 letters A-Z)
@@ -16,15 +15,14 @@ const INVITES := {"challenge1": OnlineClient.CHALLENGE_1, "challenge2": OnlineCl
 	"ally": OnlineClient.ALLY}
 
 var online: RefCounted
-var kind := "name"
+var kind := "quote"
 var fields: Array[LineEdit] = []
 var info: Label
-var ask: ConfirmationDialog
 
 
 func _ready() -> void:
 	online = OnlineClient.of(Router.params)
-	kind = str(Router.params.get("kind", "name"))
+	kind = str(Router.params.get("kind", "quote"))
 	var col := UiTheme.menu_column(self, 560)
 	col.add_child(UiTheme.heading("online.title_" + kind, 40))
 	var hint := UiTheme.note("Hint")
@@ -32,8 +30,6 @@ func _ready() -> void:
 	col.add_child(hint)
 	var me: Dictionary = online.me if online != null else {}
 	match kind:
-		"name":
-			_field(col, "Name", 8, str(me.get("name", "")))
 		"quote":
 			_field(col, "Start", 20, str(me.get("quote_start", "")))
 			_field(col, "Win", 20, str(me.get("quote_win", "")))
@@ -51,11 +47,6 @@ func _ready() -> void:
 	back.text = "common.back"
 	back.pressed.connect(func(): Router.back())
 	col.add_child(back)
-	ask = ConfirmationDialog.new()
-	ask.name = "Ask"
-	ask.dialog_text = tr("online.name_sure")
-	ask.confirmed.connect(send)
-	add_child(ask)
 	fields[0].grab_focus.call_deferred()
 
 
@@ -71,15 +62,12 @@ func _field(col: VBoxContainer, node_name: String, max_len: int, text: String) -
 	fields.append(e)
 
 
-## Only what the kind allows: A-Z (typed in any case) for a UserID or an order, letters and
-## digits for a name, printable ASCII for a quote.
+## Only what the kind allows: A-Z (typed in any case) for a UserID or an order,
+## printable ASCII for a quote.
 func _keep(e: LineEdit, t: String) -> void:
 	var clean := ""
 	for c in t:
 		match kind:
-			"name":
-				if (c >= "A" and c <= "Z") or (c >= "a" and c <= "z") or (c >= "0" and c <= "9"):
-					clean += c
 			"quote":
 				if c >= " " and c <= "~":
 					clean += c
@@ -97,8 +85,6 @@ func _keep(e: LineEdit, t: String) -> void:
 func problem() -> String:
 	var t := fields[0].text
 	match kind:
-		"name":
-			return "" if not t.is_empty() else tr("online.err_not_acceptable")
 		"quote":
 			return "" if not t.strip_edges().is_empty() and not fields[1].text.strip_edges().is_empty() \
 				else tr("online.err_not_acceptable")
@@ -112,9 +98,6 @@ func submit() -> void:
 	if not p.is_empty():
 		info.text = p
 		return
-	if kind == "name":
-		ask.popup_centered()  # "Are you sure you want to use this display name?"
-		return
 	send()
 
 
@@ -124,8 +107,6 @@ func send() -> void:
 	info.text = tr("live.connecting")
 	var t := fields[0].text
 	match kind:
-		"name":
-			online.set_name(t, OnlineClient.later(self, &"done"))
 		"quote":
 			online.set_quote("start", t.strip_edges(), OnlineClient.later(self, &"quoted"))
 		"order_create":

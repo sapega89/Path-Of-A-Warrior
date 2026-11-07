@@ -6,6 +6,7 @@ const NetClient := preload("res://scripts/net/net_client.gd")
 const GameServer := preload("res://server/game_server.gd")
 const Accounts := preload("res://server/accounts.gd")
 const Guard := preload("res://server/guard.gd")
+const Online := preload("res://server/online.gd")
 const ServerMain := preload("res://server/main.gd")
 const PORT := 28399
 
@@ -138,6 +139,29 @@ func test_accounts_keep_the_hero_on_disk() -> void:
 	var text := FileAccess.get_file_as_string(d.path_join("ANDREY.json"))
 	# as a JSON string: the hex of the salt and the hash may hold the digits 1234 by chance
 	check(not text.contains("\"1234\""), "the password is not in the file")
+	_rm(d)
+
+
+func test_the_new_game_asks_whether_a_hero_name_is_free() -> void:
+	var d := _dir("names")
+	var s := GameServer.new()
+	s.accounts = Accounts.new(d.path_join("accounts"))
+	s.accounts.rounds = 20
+	s.online = Online.new(d, s.accounts)
+	s.online.add_bots()
+	var a := GameServer.Session.new()
+	var b := GameServer.Session.new()
+	eq(s.answer(a, {"t": "name_check", "name": "Ivan"}).err, "login first")
+	check(s.answer(a, {"t": "register", "id": "ANDREY", "pwd": "1234", "v": Protocol.VERSION}).ok)
+	check(s.answer(b, {"t": "register", "id": "MARIA", "pwd": "1234", "v": Protocol.VERSION}).ok)
+	eq(s.answer(b, {"t": "register", "id": "ANDREY", "pwd": "5555", "v": Protocol.VERSION}).err, "taken",
+		"one UserID, one account")
+	eq(s.answer(a, {"t": "name_check", "name": "Ivan", "q": 3}), {"t": "name_check", "ok": true, "q": 3})
+	check(s.answer(a, {"t": "hero_put", "base": 0, "at": 1, "hero": {"name": "Ivan"}}).ok)
+	eq(s.answer(b, {"t": "name_check", "name": "IVAN"}).err, "name exists", "ANDREY's hero has it")
+	eq(s.answer(b, {"t": "name_check", "name": "Raven"}).err, "name exists", "a bot has it")
+	check(s.answer(a, {"t": "name_check", "name": "Ivan"}).ok, "my own hero's name")
+	eq(s.answer(b, {"t": "name_check", "name": 5}).err, "bad message")
 	_rm(d)
 
 

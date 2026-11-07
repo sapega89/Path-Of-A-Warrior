@@ -11,6 +11,8 @@ extends RefCounted
 ##   hero_put {base, at, hero}   -> {ok, rev} / err "conflict" with the server's {rev, at, hero}
 ##   options_get {}              -> {ok, rev, at, options}       (the Options, kept like the hero)
 ##   options_put {base, at, options} -> {ok, rev} / err "conflict" with {rev, at, options}
+##   name_check {name}           -> {ok} / err "not acceptable" (1-8 letters) "name exists": the
+##                                  new game's hero name is free (no other player's hero has it)
 ##
 ##   live_*                     -> Live: Warehouse, Safe, Trade (server/live.gd)
 ##   mp_*, order_*, chat_*      -> the online game: the character, Ranking, orders, chat
