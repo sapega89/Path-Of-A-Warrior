@@ -25,6 +25,9 @@ const RETRY_MAX_MS := 300000
 var address := "127.0.0.1"
 var port := Protocol.PORT
 var cert: X509Certificate
+## Read into `cert` on the next try while `cert` is null (the local server makes it on its first
+## start, maybe after the game).
+var cert_path := ""
 var clock: Callable = func() -> int: return Time.get_ticks_msec()
 
 ## [UserID, password], or [] without an account.
@@ -124,10 +127,21 @@ func _open() -> bool:
 		return true
 	if int(clock.call()) < retry_at:
 		return false
-	if client.open(address, port, cert) != OK:
+	if _connect() != OK:
 		_lost()
 		return false
 	return true
+
+
+## Opens the connection; an error while the server's certificate cannot be read yet.
+func _connect() -> int:
+	if cert == null and not cert_path.is_empty() and FileAccess.file_exists(cert_path):
+		var c := X509Certificate.new()
+		if c.load(cert_path) == OK:
+			cert = c
+	if cert == null:
+		return ERR_FILE_NOT_FOUND
+	return client.open(address, port, cert)
 
 
 func step() -> void:
@@ -181,7 +195,7 @@ func _logged_in() -> void:
 ## Registers a new account on the server; done(answer) once it is known. On "ok" the account is
 ## this device's and its session is logged in.
 func register(id: String, pwd: String, done: Callable) -> void:
-	if client.state == NetClient.State.CLOSED and client.open(address, port, cert) != OK:
+	if client.state == NetClient.State.CLOSED and _connect() != OK:
 		done.call({"t": "register", "ok": false, "err": "offline"})
 		return
 	state = "connecting"

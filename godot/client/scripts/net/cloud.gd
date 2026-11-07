@@ -1,9 +1,14 @@
 extends Node
 ## Autoload "Cloud": always online, the hero only on the server (scripts/net/cloud_sync.gd).
 ##
-## On when the game knows its server: command line `-- --server HOST:PORT --cert FILE.crt`,
-## or the project settings pow/net/server and pow/net/cert. Off (no server given, as in the
-## tests and the screenshots) the hero stays in user://hero.json as before.
+## The game always plays online, as pyport does: it starts only once the server is there (the
+## "No connection" screen until then) and the hero lives on the server. The server is the local
+## one by default (127.0.0.1:28310 and the certificate it makes on its first start,
+## user://server/server.crt, since the server is the same project); another one with
+## `-- --server HOST:PORT --cert FILE.crt` or the project settings pow/net/server and
+## pow/net/cert. Only the game's own scene turns it on: the tests, the screenshots, the server
+## and the tools run without it (the hero in user://hero.json), and so does `-- --offline`
+## (for working on the game without a server).
 ## The account (UserID + password) stays on this device in user://account.cfg.
 ## Live (scripts/net/live_client.gd) and the online game (scripts/net/online_client.gd) go
 ## over the same logged-in connection (request()); the server's pushes go to the online game.
@@ -16,6 +21,8 @@ const Protocol := preload("res://scripts/net/protocol.gd")
 const ACCOUNT_PATH := "user://account.cfg"
 const LEGACY_PATH := "user://hero.json"
 const FLUSH_MS := 3000
+const DEFAULT_SERVER := "127.0.0.1"
+const DEFAULT_CERT := "user://server/server.crt"  # server/main.gd's default data folder
 
 var sync: CloudSync = null
 var live: LiveClient = null
@@ -27,14 +34,33 @@ var quit_now := Callable()  # what quitting does; empty: the game ends
 
 func _ready() -> void:
 	get_tree().auto_accept_quit = false  # the window's close goes through quit_game()
+	if not runs_the_game(OS.get_cmdline_args()):
+		return
 	var cfg := server_config(OS.get_cmdline_user_args())
 	if cfg.is_empty():
 		return
-	start(cfg.address, cfg.port, cfg.cert)
+	start(cfg.address, cfg.port, null, cfg.cert_path)
 
 
-## {address, port, cert} of the server, or {} when the game has none.
+## The game itself (its main scene) runs, not a scene or script named on the command line (the
+## tests, the screenshots, the server, the tools).
+static func runs_the_game(args: PackedStringArray) -> bool:
+	var main := str(ProjectSettings.get_setting("application/run/main_scene", ""))
+	for a in args:
+		if a == "--":
+			break
+		if a in ["-s", "--script"]:
+			return false
+		if (a.ends_with(".tscn") or a.ends_with(".scn")) and a != main:
+			return false
+	return true
+
+
+## {address, port, cert_path} of the server: the local one unless told otherwise; {} with
+## --offline.
 static func server_config(argv: PackedStringArray) -> Dictionary:
+	if argv.has("--offline"):
+		return {}
 	var server := str(ProjectSettings.get_setting("pow/net/server", ""))
 	var cert_path := str(ProjectSettings.get_setting("pow/net/cert", ""))
 	for i in argv.size() - 1:
@@ -42,23 +68,23 @@ static func server_config(argv: PackedStringArray) -> Dictionary:
 			server = argv[i + 1]
 		elif argv[i] == "--cert":
 			cert_path = argv[i + 1]
-	if server.is_empty() or cert_path.is_empty():
-		return {}
-	var cert := X509Certificate.new()
-	if cert.load(cert_path) != OK:
-		push_error("cloud: cannot read the server's certificate %s" % cert_path)
-		return {}
+	if server.is_empty():
+		server = DEFAULT_SERVER
+	if cert_path.is_empty():
+		cert_path = DEFAULT_CERT
 	var port := Protocol.PORT
 	var address := server
 	if server.contains(":"):
 		address = server.get_slice(":", 0)
 		port = int(server.get_slice(":", 1))
-	return {"address": address, "port": port, "cert": cert}
+	return {"address": address, "port": port, "cert_path": cert_path}
 
 
-func start(address: String, port: int, cert: X509Certificate) -> void:
+## cert: the server's certificate, or null to read it from cert_path when connecting.
+func start(address: String, port: int, cert: X509Certificate, cert_path := "") -> void:
 	sync = CloudSync.new()
 	sync.setup(address, port, cert)
+	sync.cert_path = cert_path
 	live = LiveClient.new(request)
 	mp = OnlineClient.new(request)
 	mp.on_battle = func() -> void: Router.push("online_battle")
