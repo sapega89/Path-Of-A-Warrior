@@ -687,10 +687,6 @@
     "en": "Network connection has failed.",
     "uk": "Немає зв'язку з сервером."
   },
-  "menu.live": {
-    "en": "Live",
-    "uk": "Live"
-  },
   "live.title": {
     "en": "LIVE",
     "uk": "LIVE"
@@ -707,7 +703,15 @@
     "en": "Safe",
     "uk": "Сейф"
   },
-  "live.multiplayer": {
+  "menu.game": {
+    "en": "Game Menu",
+    "uk": "Ігрове меню"
+  },
+  "menu.missions": {
+    "en": "Missions",
+    "uk": "Місії"
+  },
+  "menu.multiplayer": {
     "en": "Multiplayer",
     "uk": "Мультиплеєр"
   },

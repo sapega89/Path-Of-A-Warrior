@@ -1,6 +1,6 @@
 extends Control
 ## Registration: the account the hero is kept under on the server (UserID 4-12 letters A-Z,
-## password 4-12 digits), the same account for Live and multiplayer. Opened by the campaign
+## password 4-12 digits), the same account for Live and multiplayer. Opened by the game menu
 ## when the game is always online and this device has no account yet; it cannot be skipped
 ## (no hero without an account), so Back does nothing. OK registers on the server, then the
 ## game goes on. The keys under the fields (scripts/ui/key_grid.gd) type with a gamepad too.

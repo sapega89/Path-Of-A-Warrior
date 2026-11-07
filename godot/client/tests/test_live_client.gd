@@ -9,7 +9,8 @@ const Items := preload("res://scripts/core/items.gd")
 const ServerTests := preload("res://tests/test_server.gd")
 const WarehouseScreen := preload("res://scripts/screens/live_warehouse_screen.gd")
 const SafeScreen := preload("res://scripts/screens/live_safe_screen.gd")
-const LiveScreen := preload("res://scripts/screens/live_screen.gd")
+const MainMenu := preload("res://scripts/screens/main_menu.gd")
+const GameMenu := preload("res://scripts/screens/game_menu.gd")
 const BuyScreen := preload("res://scripts/screens/live_buy_screen.gd")
 const SellScreen := preload("res://scripts/screens/live_sell_screen.gd")
 const CancelScreen := preload("res://scripts/screens/live_cancel_screen.gd")
@@ -182,24 +183,31 @@ func test_safe_screen() -> void:
 	ServerTests._rm(d)
 
 
-func test_live_menu_opens_its_pages_once_synced() -> void:
+func test_game_menu_has_the_game_and_the_main_menu_the_rest() -> void:
 	var d := _dir()
 	var t := _client(d)
+	_hero().save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "live": t[0]}
-	var screen: Control = LiveScreen.new()
+	var screen: Control = GameMenu.new()
 	root.add_child(screen)
-	eq(screen.status.text, "", "connected")
-	eq(screen.buttons.map(func(b): return b.disabled), [false, false, false, false],
-		"Trade, Warehouse, Safe and Multiplayer")
+	eq(screen.buttons.map(func(b): return str(b.name)), ["Missions", "Management", "Blacksmith",
+		"Trade", "Warehouse", "Safe", "Multiplayer", "Visiting"])
+	check(t[0].synced and screen.news.done, "Live synced, nothing new")
+	check(screen.menu.visible)
 	screen.free()
 	Router.params = {"profile_path": TEST_PATH}
-	screen = LiveScreen.new()
+	screen = GameMenu.new()
 	root.add_child(screen)
-	eq(screen.status.text, tr("live.failed"), "offline: no Live")
-	check(screen.buttons.all(func(b): return b.disabled))
+	check(screen.news == null, "offline: nothing asked")
+	screen.free()
+	screen = MainMenu.new()
+	root.add_child(screen)
+	var names: Array = screen.buttons.map(func(b): return str(b.name))
+	eq(names.slice(0, 6), ["Play", "NewGame", "Endings", "Maps", "Settings", "Help"])
 	screen.free()
 	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
 	ServerTests._rm(d)
 
 
@@ -336,7 +344,7 @@ func test_sell_and_cancel_screens() -> void:
 	ServerTests._rm(d)
 
 
-func test_live_opens_with_notices_sale_list_gifts_and_fame() -> void:
+func test_game_menu_shows_notices_sale_list_gifts_and_fame() -> void:
 	var d := _dir()
 	var t := _client(d)
 	var l: Live = t[1]
@@ -349,33 +357,33 @@ func test_live_opens_with_notices_sale_list_gifts_and_fame() -> void:
 	_hero(0).save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "live": t[0]}
-	var screen: Control = LiveScreen.new()
+	var screen: Control = GameMenu.new()
 	root.add_child(screen)
-	check(screen.note.visible, "a page of notices")
-	check(screen.note.dialog_text.begins_with("Welcome\nto Live"), screen.note.dialog_text)
-	check(screen.buttons.all(func(b): return b.disabled), "no menu yet")
-	screen.note.confirmed.emit()
-	check(screen.note.dialog_text.begins_with("Second"), "the next page")
-	screen.note.confirmed.emit()
-	check(screen.list.visible, "then the Sale List")
-	eq(screen.list_kind, "sold")
-	check(screen.list_info.text.contains("700"), screen.list_info.text)
-	screen.list_done()
-	eq(screen.list_kind, "gifts", "then the Gift List")
-	check(screen.list_info.text.begins_with("FRIEND"), screen.list_info.text)
+	var news: Control = screen.news
+	check(news.note.visible, "a page of notices")
+	check(news.note.dialog_text.begins_with("Welcome\nto Live"), news.note.dialog_text)
+	news.note.confirmed.emit()
+	check(news.note.dialog_text.begins_with("Second"), "the next page")
+	news.note.confirmed.emit()
+	check(news.list.visible and not screen.menu.visible, "then the Sale List, in place of the menu")
+	eq(news.list_kind, "sold")
+	check(news.list_info.text.contains("700"), news.list_info.text)
+	news.list_done()
+	eq(news.list_kind, "gifts", "then the Gift List")
+	check(news.list_info.text.begins_with("FRIEND"), news.list_info.text)
 	eq(t[0].warehouse.size(), 1, "the gift is in the Warehouse")
-	screen.list_done()
-	eq(screen.note.dialog_text, tr("live.fame_applied") % [5, 7], "then the Exp and Fame")
-	screen.note.confirmed.emit()
-	eq(screen.stage, "", "done")
-	check(not screen.buttons[0].disabled, "the menu")
+	news.list_done()
+	eq(news.note.dialog_text, tr("live.fame_applied") % [5, 7], "then the Exp and Fame")
+	news.note.confirmed.emit()
+	check(news.done and screen.menu.visible, "done, the menu again")
 	var hero: RefCounted = Profile.load_or_new(TEST_PATH)
 	eq([int(hero.fame), int(hero.experience)], [7, 5], "the hero got them, saved")
 	screen.free()
-	screen = LiveScreen.new()
+	screen = GameMenu.new()
 	root.add_child(screen)
-	check(not screen.note.visible and not screen.list.visible, "nothing new the second time")
-	check(not screen.buttons[0].disabled, "the menu at once")
+	news = screen.news
+	check(not news.note.visible and not news.list.visible, "nothing new the second time")
+	check(news.done and screen.menu.visible, "the menu at once")
 	screen.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))

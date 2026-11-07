@@ -1,5 +1,5 @@
 extends Control
-## Live > Multiplayer: the online game's main menu (pyport pow/game/online: Duel, Mission,
+## Game menu > Multiplayer: the online game's menu (pyport pow/game/online: Duel, Mission,
 ## Character, Options, Help, Ranking, and the Order and Chat windows). Help is open even
 ## without the server; the rest once the player is online. Opening it puts the player
 ## online (scripts/net/online_client.gd enter); until the server answers it says
@@ -9,7 +9,6 @@ extends Control
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const OnlineClient := preload("res://scripts/net/online_client.gd")
-const MainMenu := preload("res://scripts/screens/main_menu.gd")
 ## Page button name, text key, screen (empty: not open yet), and its kind for the screen.
 const PAGES := [
 	["Duel", "online.duel", "online_battles", "duel"],
@@ -32,7 +31,7 @@ var chat: Button
 func _ready() -> void:
 	online = OnlineClient.of(Router.params)
 	var col := UiTheme.menu_column(self, 560)
-	col.theme = MainMenu.compact_theme()  # nine buttons in a 720 px high screen
+	col.theme = UiTheme.compact()  # nine buttons in a 720 px high screen
 	col.add_theme_constant_override("separation", 4)
 	col.add_child(UiTheme.heading("online.title", 44))
 	who = UiTheme.note("Who")

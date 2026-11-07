@@ -59,6 +59,17 @@ static func build() -> Theme:
 	return t
 
 
+## The game's theme with lower buttons, for a menu of many.
+static func compact() -> Theme:
+	var t := build()
+	for style in ["normal", "hover", "pressed", "disabled", "focus"]:
+		var sb := t.get_stylebox(style, "Button").duplicate() as StyleBoxFlat
+		sb.content_margin_top = 4
+		sb.content_margin_bottom = 4
+		t.set_stylebox(style, "Button", sb)
+	return t
+
+
 ## A centred column for menu screens.
 static func menu_column(parent: Control, width: int = 460) -> VBoxContainer:
 	var center := CenterContainer.new()

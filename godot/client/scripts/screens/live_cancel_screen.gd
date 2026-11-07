@@ -1,5 +1,5 @@
 extends Control
-## Live > Trade > Cancel Sale: this player's lots on sale (five at most). Picking one asks
+## Game menu > Trade > Cancel Sale: this player's lots on sale (five at most). Picking one asks
 ## "Do you want to cancel sales of ...?"; Yes takes it off the market into the backpack, or into
 ## the Warehouse when the backpack is full. The hero is saved then.
 

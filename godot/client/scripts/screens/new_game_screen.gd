@@ -4,8 +4,8 @@ extends Control
 ## hero's face (each face a hero with his own base stats), his name (up to 8 letters, typed or
 ## on the keys under the field, scripts/ui/key_grid.gd), and his
 ## 5 first stat points. Then the hero is saved over
-## any old one and the opening story starts, then the campaign.
-## Params: profile_path (optional), then (the screen after the opening, default campaign).
+## any old one and the opening story starts, then the game menu.
+## Params: profile_path (optional), then (the screen after the opening, default game_menu).
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
@@ -208,7 +208,7 @@ func _confirmed() -> void:
 ## Saves the new hero over the old one and starts the opening story.
 func finish() -> void:
 	profile.save(path)
-	var then := str(Router.params.get("then", "campaign"))
+	var then := str(Router.params.get("then", "game_menu"))
 	Router.back()
 	Router.push("story", {"story": Stories.OPENING, "then": then, "profile_path": path})
 

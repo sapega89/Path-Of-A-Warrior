@@ -7,6 +7,7 @@ signal screen_changed(screen_name: String)
 const SCREENS := {
 	"title": "res://scripts/screens/title_screen.gd",
 	"main_menu": "res://scripts/screens/main_menu.gd",
+	"game_menu": "res://scripts/screens/game_menu.gd",
 	"settings": "res://scripts/screens/settings_screen.gd",
 	"map_viewer": "res://scripts/screens/map_viewer.gd",
 	"campaign": "res://scripts/screens/campaign_screen.gd",
@@ -27,7 +28,6 @@ const SCREENS := {
 	"help": "res://scripts/screens/help_screen.gd",
 	"offline": "res://scripts/screens/offline_screen.gd",
 	"register": "res://scripts/screens/register_screen.gd",
-	"live": "res://scripts/screens/live_screen.gd",
 	"live_warehouse": "res://scripts/screens/live_warehouse_screen.gd",
 	"live_safe": "res://scripts/screens/live_safe_screen.gd",
 	"live_trade": "res://scripts/screens/live_trade_screen.gd",

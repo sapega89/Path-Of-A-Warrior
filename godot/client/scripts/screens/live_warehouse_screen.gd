@@ -1,5 +1,5 @@
 extends Control
-## Live > Warehouse: the hero's backpack or the Warehouse on the server (200 places), switched
+## Game menu > Warehouse: the hero's backpack or the Warehouse on the server (200 places), switched
 ## by the two buttons above the grid. Picking a thing moves it to the other one (into the
 ## first free place of the backpack); the hero is saved after every move.
 

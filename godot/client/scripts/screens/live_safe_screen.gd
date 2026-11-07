@@ -1,5 +1,5 @@
 extends Control
-## Live > Safe: gold between the hero (Local) and the Safe on the server. The arrow between
+## Game menu > Safe: gold between the hero (Local) and the Safe on the server. The arrow between
 ## the two says which way it goes, out of the Safe at first; it turns when pressed. The amount
 ## is typed in (no more than there is on that side) and OK moves it; the hero is saved then.
 
