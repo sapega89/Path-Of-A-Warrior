@@ -1470,5 +1470,173 @@
   "online.battle_bag_full": {
     "en": "No room for the loot!",
     "uk": "Немає місця для здобичі!"
+  },
+  "hint.menu": {
+    "en": "Arrows / WASD: choose · Enter: OK · Esc / right click: back",
+    "uk": "Стрілки / WASD: вибір · Enter: OK · Esc / права кнопка миші: назад"
+  },
+  "hint.menu_pad": {
+    "en": "D-pad / stick: choose · A: OK · B: back",
+    "uk": "Хрестовина / стік: вибір · A: OK · B: назад"
+  },
+  "hint.menu_touch": {
+    "en": "Tap to choose · Back: the phone's Back button",
+    "uk": "Торкніться, щоб вибрати · Назад: кнопка «Назад» телефона"
+  },
+  "hint.new_points": {
+    "en": "Up / Down: choose a stat · Enter or click: +1 point · Esc: back to the name",
+    "uk": "Вгору / вниз: вибір характеристики · Enter або клік: +1 очко · Esc: назад до імені"
+  },
+  "hint.new_points_pad": {
+    "en": "D-pad: choose a stat · A: +1 point · B: back to the name",
+    "uk": "Хрестовина: вибір характеристики · A: +1 очко · B: назад до імені"
+  },
+  "hint.new_points_touch": {
+    "en": "Tap a stat to add a point",
+    "uk": "Торкніться характеристики, щоб додати очко"
+  },
+  "hint.new_name": {
+    "en": "Type the name or pick letters below · Enter: OK · Esc: back",
+    "uk": "Введіть ім'я або виберіть літери нижче · Enter: OK · Esc: назад"
+  },
+  "hint.new_name_pad": {
+    "en": "D-pad: choose a letter · A: type it · B: back",
+    "uk": "Хрестовина: вибір літери · A: ввести · B: назад"
+  },
+  "hint.new_name_touch": {
+    "en": "Tap the letters, then OK",
+    "uk": "Торкайтеся літер, потім OK"
+  },
+  "hint.skip": {
+    "en": "Enter / click: next · Q / Esc: skip",
+    "uk": "Enter / клік: далі · Q / Esc: пропустити"
+  },
+  "hint.skip_pad": {
+    "en": "A: next · Back / B: skip",
+    "uk": "A: далі · Back / B: пропустити"
+  },
+  "hint.skip_touch": {
+    "en": "Tap: next · Skip: skip",
+    "uk": "Дотик: далі · Skip: пропустити"
+  },
+  "hint.grid_inventory": {
+    "en": "Arrows: choose a thing · Enter / click: wear / use · Esc: back",
+    "uk": "Стрілки: вибір речі · Enter / клік: вдягти / використати · Esc: назад"
+  },
+  "hint.grid_inventory_pad": {
+    "en": "D-pad: choose a thing · A: wear / use · B: back",
+    "uk": "Хрестовина: вибір речі · A: вдягти / використати · B: назад"
+  },
+  "hint.grid_inventory_touch": {
+    "en": "Tap a thing: wear / use",
+    "uk": "Торкніться речі: вдягти / використати"
+  },
+  "hint.grid_buy": {
+    "en": "Arrows: choose a thing · Enter / click: buy · Esc: back",
+    "uk": "Стрілки: вибір речі · Enter / клік: купити · Esc: назад"
+  },
+  "hint.grid_buy_pad": {
+    "en": "D-pad: choose a thing · A: buy · B: back",
+    "uk": "Хрестовина: вибір речі · A: купити · B: назад"
+  },
+  "hint.grid_buy_touch": {
+    "en": "Tap a thing: buy",
+    "uk": "Торкніться речі: купити"
+  },
+  "hint.grid_sell": {
+    "en": "Arrows: choose a thing · Enter / click: sell · Esc: back",
+    "uk": "Стрілки: вибір речі · Enter / клік: продати · Esc: назад"
+  },
+  "hint.grid_sell_pad": {
+    "en": "D-pad: choose a thing · A: sell · B: back",
+    "uk": "Хрестовина: вибір речі · A: продати · B: назад"
+  },
+  "hint.grid_sell_touch": {
+    "en": "Tap a thing: sell",
+    "uk": "Торкніться речі: продати"
+  },
+  "hint.grid_enchant": {
+    "en": "Arrows: choose a thing · Enter / click: enchant · Esc: back",
+    "uk": "Стрілки: вибір речі · Enter / клік: зачарувати · Esc: назад"
+  },
+  "hint.grid_enchant_pad": {
+    "en": "D-pad: choose a thing · A: enchant · B: back",
+    "uk": "Хрестовина: вибір речі · A: зачарувати · B: назад"
+  },
+  "hint.grid_enchant_touch": {
+    "en": "Tap a thing: enchant",
+    "uk": "Торкніться речі: зачарувати"
+  },
+  "hint.grid_combine": {
+    "en": "Arrows: choose a thing · Enter / click: choose 3 things to combine · Esc: back",
+    "uk": "Стрілки: вибір речі · Enter / клік: вибрати 3 речі для поєднання · Esc: назад"
+  },
+  "hint.grid_combine_pad": {
+    "en": "D-pad: choose a thing · A: choose 3 things to combine · B: back",
+    "uk": "Хрестовина: вибір речі · A: вибрати 3 речі для поєднання · B: назад"
+  },
+  "hint.grid_combine_touch": {
+    "en": "Tap a thing: choose 3 things to combine",
+    "uk": "Торкніться речі: вибрати 3 речі для поєднання"
+  },
+  "hint.grid_gear": {
+    "en": "Arrows: choose a thing · Enter / click: take off and choose another · Esc: back",
+    "uk": "Стрілки: вибір речі · Enter / клік: зняти й вибрати іншу · Esc: назад"
+  },
+  "hint.grid_gear_pad": {
+    "en": "D-pad: choose a thing · A: take off and choose another · B: back",
+    "uk": "Хрестовина: вибір речі · A: зняти й вибрати іншу · B: назад"
+  },
+  "hint.grid_gear_touch": {
+    "en": "Tap a thing: take off and choose another",
+    "uk": "Торкніться речі: зняти й вибрати іншу"
+  },
+  "hint.grid_assign": {
+    "en": "Arrows: choose a thing · Enter / click: choose a slot, then a potion · Esc: back",
+    "uk": "Стрілки: вибір речі · Enter / клік: вибрати слот, потім зілля · Esc: назад"
+  },
+  "hint.grid_assign_pad": {
+    "en": "D-pad: choose a thing · A: choose a slot, then a potion · B: back",
+    "uk": "Хрестовина: вибір речі · A: вибрати слот, потім зілля · B: назад"
+  },
+  "hint.grid_assign_touch": {
+    "en": "Tap a thing: choose a slot, then a potion",
+    "uk": "Торкніться речі: вибрати слот, потім зілля"
+  },
+  "hint.grid_warehouse": {
+    "en": "Arrows: choose a thing · Enter / click: move to the other side · Esc: back",
+    "uk": "Стрілки: вибір речі · Enter / клік: перекласти на інший бік · Esc: назад"
+  },
+  "hint.grid_warehouse_pad": {
+    "en": "D-pad: choose a thing · A: move to the other side · B: back",
+    "uk": "Хрестовина: вибір речі · A: перекласти на інший бік · B: назад"
+  },
+  "hint.grid_warehouse_touch": {
+    "en": "Tap a thing: move to the other side",
+    "uk": "Торкніться речі: перекласти на інший бік"
+  },
+  "newgame.points_hint": {
+    "en": "When all points are spent, press Done.",
+    "uk": "Коли розподілите всі очки, натисніть «Готово»."
+  },
+  "newgame.reset": {
+    "en": "Reset",
+    "uk": "Скинути"
+  },
+  "newgame.done": {
+    "en": "Done",
+    "uk": "Готово"
+  },
+  "newgame.points_spent": {
+    "en": "All points are spent. Press Done to continue.",
+    "uk": "Усі очки розподілено. Натисніть «Готово», щоб продовжити."
+  },
+  "offline.try_again_button": {
+    "en": "Try again",
+    "uk": "Спробувати ще"
+  },
+  "offline.other_account_button": {
+    "en": "Another account",
+    "uk": "Інший акаунт"
   }
 }

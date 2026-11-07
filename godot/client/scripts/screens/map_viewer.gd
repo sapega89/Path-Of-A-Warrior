@@ -89,3 +89,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		show_map(wrapi(map_number - 1, 1, map_total + 1))
 	elif event.is_action_pressed("skill_4"):
 		show_map(wrapi(map_number + 1, 1, map_total + 1))
+
+
+## No line of control hints under this screen: it shows its own (scripts/ui/hint_bar.gd).
+func controls_hint() -> String:
+	return ""

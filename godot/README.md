@@ -17,7 +17,7 @@ godot/
                           management, attributes, skills, gear, inventory,
                           assign_items, story, blacksmith, shop, visiting, endings, help, new_game (герой у user://hero.json)
     scripts/world/        3D-світ: map_builder (карта з оригінальних шарів), hero, follow_camera
-    scripts/ui/           тема, сенсорні кнопки
+    scripts/ui/           тема, сенсорні кнопки, рядок підказок керування внизу (hint_bar)
     scripts/net/          зв'язок із сервером: protocol (повідомлення), net_client (ENet + DTLS)
     server/               сервер гри (той самий проєкт, без графіки): main.tscn, game_server,
                           accounts (файл JSON на акаунт), guard (ліміти), live (Live),

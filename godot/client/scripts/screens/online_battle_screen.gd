@@ -781,3 +781,8 @@ func leave() -> void:
 		online.battle_over()
 	battle = null
 	Router.back()
+
+
+## No line of control hints under this screen: it shows its own (scripts/ui/hint_bar.gd).
+func controls_hint() -> String:
+	return ""

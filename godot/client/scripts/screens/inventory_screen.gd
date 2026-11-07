@@ -112,3 +112,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
 		Router.back()
+
+
+## The line of control hints under the screen (scripts/ui/hint_bar.gd): what picking a thing does.
+func controls_hint() -> String:
+	return InputSetup.hint("hint.grid_inventory")

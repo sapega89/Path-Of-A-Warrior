@@ -3,7 +3,8 @@ extends Control
 ## x1; on both the hero turns to the nearest enemy as he strikes; it cannot change later), the
 ## hero's face (each face a hero with his own base stats), his name (up to 8 letters, typed or
 ## on the keys under the field, scripts/ui/key_grid.gd), and his
-## 5 first stat points. Then the hero is saved over
+## 5 first stat points (each stat button says what a point adds; Reset gives them back, Done
+## asks to go on once all are spent). Every step has Back. Then the hero is saved over
 ## any old one and the opening story starts, then the game menu.
 ## Params: profile_path (optional), then (the screen after the opening, default game_menu).
 
@@ -15,6 +16,7 @@ const PORTRAITS := "res://assets/original/portraits/%d.png"
 const HEADS := 4
 const NAME_MAX := 8
 const SCALE := 3
+const STAT_KEYS := ["hp", "mp", "attack", "defense"]
 enum Step { DIFFICULTY, HERO, NAME, POINTS }
 
 var path: String = Profile.PATH
@@ -25,8 +27,11 @@ var body: VBoxContainer
 var info: Label
 var ask: ConfirmationDialog
 var name_edit: LineEdit
-var stat_labels: Array[Label] = []
+var stat_buttons: Array[Button] = []
 var points_label: Label
+var points_hint: Label
+var reset_button: Button
+var done_button: Button
 
 
 func _ready() -> void:
@@ -55,19 +60,44 @@ func _clear() -> void:
 	for c in body.get_children():
 		body.remove_child(c)
 		c.queue_free()
-	stat_labels.clear()
+	stat_buttons.clear()
 	info.text = ""
+	points_hint = null
+	reset_button = null
+	done_button = null
 
 
-func _button(node_name: String, text: String, on_press: Callable, translate := true) -> Button:
+func _button(node_name: String, text: String, on_press: Callable, translate := true, parent: Node = null) -> Button:
 	var b := Button.new()
 	b.name = node_name
 	b.text = text
 	if not translate:
 		b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	b.pressed.connect(on_press)
-	body.add_child(b)
+	(body if parent == null else parent).add_child(b)
 	return b
+
+
+## The line of control hints under the screen (scripts/ui/hint_bar.gd), for this step.
+func controls_hint() -> String:
+	match step:
+		Step.NAME:
+			return InputSetup.hint("hint.new_name")
+		Step.POINTS:
+			return InputSetup.hint("hint.new_points")
+	return InputSetup.hint("hint.menu")
+
+
+## Back, as BACK (Esc, B, the right button): the step before, or out of a new game.
+func go_back() -> void:
+	match step:
+		Step.DIFFICULTY:
+			Router.back()
+		Step.POINTS:  # the points back, then the name again
+			reset_points()
+			show_step(Step.NAME)
+		_:
+			show_step(step - 1)
 
 
 func show_step(s: int) -> void:
@@ -80,6 +110,7 @@ func show_step(s: int) -> void:
 				var b := _button("Difficulty%d" % d, "newgame.difficulty_%d" % d, choose_difficulty.bind(d))
 				b.focus_entered.connect(func(): info.text = tr("newgame.mode_%d" % d))
 				b.mouse_entered.connect(func(): info.text = tr("newgame.mode_%d" % d))
+			_button("Back", "common.back", go_back)
 			(body.get_child(1) as Button).grab_focus.call_deferred()
 			info.text = tr("newgame.mode_1")
 		Step.HERO:
@@ -99,6 +130,7 @@ func show_step(s: int) -> void:
 				b.mouse_entered.connect(show_class.bind(h))
 				row.add_child(b)
 			body.add_child(row)
+			_button("Back", "common.back", go_back)
 			show_class(profile.head)
 			(row.get_child(profile.head) as Button).grab_focus.call_deferred()
 		Step.NAME:
@@ -114,6 +146,7 @@ func show_step(s: int) -> void:
 			body.add_child(name_edit)
 			body.add_child(KeyGrid.create(KeyGrid.LETTERS, name_edit))
 			_button("Ok", "newgame.ok", submit_name)
+			_button("Back", "common.back", go_back)
 			name_edit.grab_focus.call_deferred()
 		Step.POINTS:
 			heading.text = "newgame.points"
@@ -123,20 +156,29 @@ func show_step(s: int) -> void:
 			points_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 			body.add_child(points_label)
 			for i in 4:
+				# one button a stat, its value and what a point adds in it ("HP: 40   +5")
 				var row := HBoxContainer.new()
 				var b := Button.new()
 				b.name = "Stat%d" % i
-				b.text = "attributes.%s" % ["hp", "mp", "attack", "defense"][i]
+				b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 				b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 				b.pressed.connect(spend.bind(i))
 				row.add_child(b)
-				var v := Label.new()
-				v.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-				v.custom_minimum_size = Vector2(120, 0)
-				v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-				row.add_child(v)
-				stat_labels.append(v)
+				stat_buttons.append(b)
 				body.add_child(row)
+			points_hint = UiTheme.note("PointsHint")
+			points_hint.add_theme_color_override("font_color", UiTheme.TEXT_DIM)
+			body.add_child(points_hint)
+			var actions := HBoxContainer.new()
+			actions.name = "Actions"
+			actions.alignment = BoxContainer.ALIGNMENT_CENTER
+			actions.add_theme_constant_override("separation", 12)
+			body.add_child(actions)
+			reset_button = _button("Reset", "newgame.reset", reset_points, true, actions)
+			done_button = _button("Done", "newgame.done", ask_done, true, actions)
+			_button("Back", "common.back", go_back, true, actions)
+			for b in actions.get_children():
+				b.custom_minimum_size = Vector2(180, 0)
 			_refresh_points()
 			(body.get_child(1).get_child(0) as Button).grab_focus.call_deferred()
 
@@ -183,14 +225,38 @@ func spend(stat: int) -> void:
 	if profile.spend_point(stat):
 		_refresh_points()
 		if profile.stat_points == 0:
-			_ask("newgame.ask_done")
+			done_button.grab_focus()
+			ask_done()
+
+
+## Gives the points back: the hero of the chosen face again, with his name.
+func reset_points() -> void:
+	var fresh: RefCounted = Profile.new()
+	fresh.difficulty = profile.difficulty
+	fresh.set_head(profile.head)
+	fresh.hero_name = profile.hero_name
+	profile = fresh
+	if step == Step.POINTS:
+		_refresh_points()
+		(body.get_child(1).get_child(0) as Button).grab_focus()
+
+
+## Done: asks to go on with the hero (only once every point is spent).
+func ask_done() -> void:
+	if profile.stat_points == 0:
+		_ask("newgame.ask_done")
 
 
 func _refresh_points() -> void:
 	points_label.text = tr("newgame.points_left") % profile.stat_points
 	var values := [profile.base_hp, profile.base_mp, profile.base_attack, profile.base_defense]
-	for i in stat_labels.size():
-		stat_labels[i].text = str(values[i])
+	for i in stat_buttons.size():
+		stat_buttons[i].text = "%s %d   +%d" % [tr("attributes.%s" % STAT_KEYS[i]), values[i], Profile.POINT_GAINS[i]]
+		stat_buttons[i].disabled = profile.stat_points == 0
+	var left: int = profile.stat_points
+	points_hint.text = tr("newgame.points_spent") if left == 0 else tr("newgame.points_hint")
+	done_button.disabled = left > 0
+	reset_button.disabled = left == Profile.START_POINTS
 
 
 func _ask(key: String) -> void:
@@ -217,14 +283,4 @@ func finish() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
-		match step:
-			Step.DIFFICULTY:
-				Router.back()
-			Step.POINTS:  # the points back, then the name again
-				var fresh: RefCounted = Profile.new()
-				fresh.difficulty = profile.difficulty
-				fresh.set_head(profile.head)
-				profile = fresh
-				show_step(Step.NAME)
-			_:
-				show_step(step - 1)
+		go_back()

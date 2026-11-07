@@ -405,3 +405,8 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		accept_event()
 		press()
+
+
+## The line of control hints under the screen (scripts/ui/hint_bar.gd).
+func controls_hint() -> String:
+	return InputSetup.hint("hint.skip")
