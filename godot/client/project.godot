@@ -36,6 +36,11 @@ pointing/emulate_touch_from_mouse=false
 
 locale/fallback="en"
 
+[pow]
+
+net/server="140.238.73.129:28310"
+net/cert="res://net/server.crt"
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"

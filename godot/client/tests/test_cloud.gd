@@ -132,12 +132,16 @@ func test_the_old_save_file_goes_to_the_server_once() -> void:
 	_end(s, [b, a], d)
 
 
-func test_the_game_is_always_online_with_the_local_server_by_default() -> void:
+func test_the_game_is_always_online_with_the_internet_server_by_default() -> void:
 	var Cloud := preload("res://scripts/net/cloud.gd")
 	var cfg: Dictionary = Cloud.server_config(PackedStringArray())
-	eq(cfg.address, "127.0.0.1", "the local server")
+	eq(cfg.address, "140.238.73.129", "the game's server (project setting pow/net/server)")
 	eq(cfg.port, 28310)
-	eq(cfg.cert_path, "user://server/server.crt", "the certificate the local server makes")
+	eq(cfg.cert_path, "res://net/server.crt", "its certificate, shipped with the game")
+	check(FileAccess.file_exists(cfg.cert_path), "the certificate is in the project")
+	cfg = Cloud.server_config(PackedStringArray(["--server", "127.0.0.1", "--cert", "user://server/server.crt"]))
+	eq([cfg.address, cfg.port, cfg.cert_path], ["127.0.0.1", 28310, "user://server/server.crt"],
+		"the local server")
 	cfg = Cloud.server_config(PackedStringArray(["--server", "pow.example:28311", "--cert", "/x/s.crt"]))
 	eq([cfg.address, cfg.port, cfg.cert_path], ["pow.example", 28311, "/x/s.crt"], "another server")
 	eq(Cloud.server_config(PackedStringArray(["--offline"])), {}, "--offline: without a server")
