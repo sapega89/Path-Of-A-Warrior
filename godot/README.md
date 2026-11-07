@@ -13,7 +13,7 @@ godot/
     project.godot
     scenes/main.tscn      корінь: тема + роутер екранів
     scripts/core/         автозавантаження: I18n, Settings, InputSetup, Router, Audio
-    scripts/screens/      екрани: title, main_menu, settings, map_viewer, campaign, briefing, mission,
+    scripts/screens/      екрани: title, main_menu, game_menu, settings, map_viewer, campaign, briefing, mission,
                           management, attributes, skills, gear, inventory,
                           assign_items, story, blacksmith, shop, visiting, endings, help, new_game (герой у user://hero.json)
     scripts/world/        3D-світ: map_builder (карта з оригінальних шарів), hero, follow_camera
@@ -147,10 +147,14 @@ godot --path godot/client                                      # 2) гра
 ## Меню
 
 - **Головне меню** (`scripts/screens/main_menu.gd`): Play / Continue, New Game, Endings,
-  Settings, Help, Quit (на телефоні й у браузері без Quit).
-- **Ігрове меню** (`scripts/screens/game_menu.gd`; Continue, а після прологу нової гри — саме):
-  Missions (кампанія), Management, Blacksmith, сторінки Live — **Trade**, **Warehouse**, **Safe**,
-  **Multiplayer** і Visiting. Гра завжди онлайн, тому окремого меню Live немає. Назад — у головне.
+  Settings, Quit (на телефоні й у браузері без Quit).
+- **Ігрове меню** (`scripts/screens/game_menu.gd`; Continue, а після прологу нової гри — саме),
+  три колонки: **Campaign** — Missions, Management, Blacksmith, Visiting, Help; **Live** — Trade,
+  Warehouse, Safe; **Multiplayer** — Duel, Online Missions, Character, Ranking, Order, Chat,
+  Invitations (`scripts/ui/online_section.gd`). Гра завжди онлайн, тому окремих меню Live і
+  Multiplayer немає. Назад — у головне.
+- **Help** одна на всю гру: теми кампанії, далі Duel і Online Missions мультиплеєра; Control —
+  клавіші на карті й в онлайн-бою.
 
 ## Live у клієнті
 
@@ -179,17 +183,18 @@ Trade, Warehouse і Safe з ігрового меню (`scripts/screens/live_*.g
 
 ## Мультиплеєр у клієнті
 
-Ігрове меню → **Multiplayer** (`scripts/screens/online_*.gd`, `scripts/net/online_client.gd`), по тому
-самому з'єднанню. Відкриття ставить гравця онлайн (`mp_enter`), Назад — знімає; поки нема
-відповіді — «Connecting...», без сервера — «Network connection has failed». Під назвою — ім'я,
-рівень, перемоги й поразки; на кнопці Chat — скільки повідомлень чекає (Order і приватні).
-Зайшов той самий UserID з іншого пристрою — тут «Another player has connected using your
-UserID.», меню гасне. Якщо сервер забув гравця (зв'язок відновився), клієнт сам заходить знову й повторює
+Колонка **Multiplayer** ігрового меню (`scripts/ui/online_section.gd`, `scripts/screens/online_*.gd`,
+`scripts/net/online_client.gd`), по тому самому з'єднанню. Ігрове меню ставить гравця онлайн
+(`mp_enter`); вихід у головне меню чи на сторінку одиночної гри (Missions, Trade, ...) — знімає,
+щоб ніхто не викликав героя посеред місії. Поки нема відповіді — «Connecting...», без сервера —
+«Network connection has failed». Під назвою — ім'я, рівень, перемоги й поразки; на кнопці Chat —
+скільки повідомлень чекає (Order і приватні). Зайшов той самий UserID з іншого пристрою — тут
+«Another player has connected using your UserID.», кнопки гаснуть. Якщо сервер забув гравця (зв'язок відновився), клієнт сам заходить знову й повторює
 запит. Музика мовчить, як у Live.
 - **Duel**: 1-on-1 Duel і 2-on-2 Duel (суперник близького рівня, поки шукає — «Searching for
   opponent...» з Cancel; за хвилину без нікого — CPU), Challenge 1:1 і Challenge 2:2 (гравець за
   UserID; у 2:2 кожному CPU-союзник), 2-on-2 Order (учасник мого ордену поруч зі мною проти двох
-  CPU). **Mission**: Solo Mission (з CPU-союзником), Invite An Ally (за UserID), Order Ally
+  CPU). **Online Missions**: Solo Mission (з CPU-союзником), Invite An Ally (за UserID), Order Ally
   (учасник ордену). Помилки — як на сервері: «The user is not online.», «Your invitation is
   denied.» (у нього Invitation: Deny), гравець у бою, не з ордену.
 - **Character**: Records (рівень, Fame, оцінка Duel, перемоги / поразки, оцінка Mission, орден),
@@ -207,10 +212,10 @@ UserID.», меню гасне. Якщо сервер забув гравця (�
   зверху, з числом непрочитаних, і New Message (UserID). Розмова — останні 30 повідомлень і рядок до
   40 символів (лише латиниця й ASCII, як на сервері); нові повідомлення приходять самі
   (`chat_push`), відкрита розмова вважається прочитаною.
-- **Options**: Invitation — Accept або Deny (чи бере мене чужий Challenge / Invite An Ally в бій).
-- **Help** (є й без сервера): теми мультиплеєра Controls, Menu, Duel, Missions, About, Network
-  (тексти оригіналу з pyport, `import_original.py` кладе їх у `data/mp.json`); Controls — клавіші
-  бою цієї версії (стрілки, Enter / пробіл, Esc, Tab / F / R3, кнопки й дотик).
+- **Invitations**: Accept або Deny (чи бере мене чужий Challenge / Invite An Ally в бій).
+- Довідка мультиплеєра — теми Duel і Online Missions у спільній Help (тексти з `data/mp.json`,
+  куди їх кладе `import_original.py`); її Control закінчується клавішами онлайн-бою (стрілки,
+  Enter / пробіл, Esc, Tab / F / R3, кнопки й дотик).
 
 ### Бій мультиплеєра
 
@@ -348,7 +353,8 @@ Backspace — BACK, як Esc, крім поля для тексту, де він
 реєстрації): під полем — клавіші (`scripts/ui/key_grid.gd`; для імені літери обох регістрів, для
 реєстрації A–Z і 0–9), хрестовина ходить по них, A набирає, ⌫ стирає, OK — як Enter у полі.
 У переглядачі карт 3 / 4 (LB / RB) — попередня / наступна карта.
-Help → Control називає саме ці клавіші (`help.control_1`, `help.control_2`).
+Help → Control називає саме ці клавіші (`help.control_1`, `help.control_2`, а для онлайн-бою
+`help.mp_control_1`, `help.mp_control_2`).
 
 Підказки клавіш, як у pyport: гра пам'ятає пристрій останнього натиску (`InputSetup.device`:
 клавіатура, геймпад або дотик на телефоні; миша нічого не змінює) і `InputSetup.hint(key)` бере

@@ -34,7 +34,6 @@ const SCREENS := {
 	"live_buy": "res://scripts/screens/live_buy_screen.gd",
 	"live_sell": "res://scripts/screens/live_sell_screen.gd",
 	"live_cancel": "res://scripts/screens/live_cancel_screen.gd",
-	"online": "res://scripts/screens/online_screen.gd",
 	"online_character": "res://scripts/screens/online_character_screen.gd",
 	"online_skills": "res://scripts/screens/online_skills_screen.gd",
 	"online_text": "res://scripts/screens/online_text_screen.gd",

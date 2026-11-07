@@ -128,7 +128,7 @@ func stopped(_err: String) -> void:
 	buttons[0].grab_focus.call_deferred()
 
 
-## Back: no more waiting, then the Multiplayer menu.
+## Back: no more waiting, then the game menu.
 func close() -> void:
 	if online != null and online.waiting:
 		online.cancel_battle(func(_e: String) -> void: pass)

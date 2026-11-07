@@ -192,7 +192,9 @@ func test_game_menu_has_the_game_and_the_main_menu_the_rest() -> void:
 	var screen: Control = GameMenu.new()
 	root.add_child(screen)
 	eq(screen.buttons.map(func(b): return str(b.name)), ["Missions", "Management", "Blacksmith",
-		"Trade", "Warehouse", "Safe", "Multiplayer", "Visiting"])
+		"Visiting", "Help", "Trade", "Warehouse", "Safe"])
+	eq(screen.online.buttons.map(func(b): return str(b.name)), ["Duel", "OnlineMissions", "Character",
+		"Ranking", "Order", "Chat", "Invitations"], "the multiplayer pages in the same menu")
 	check(t[0].synced and screen.news.done, "Live synced, nothing new")
 	check(screen.menu.visible)
 	screen.free()
@@ -204,7 +206,7 @@ func test_game_menu_has_the_game_and_the_main_menu_the_rest() -> void:
 	screen = MainMenu.new()
 	root.add_child(screen)
 	var names: Array = screen.buttons.map(func(b): return str(b.name))
-	eq(names.slice(0, 5), ["Play", "NewGame", "Endings", "Settings", "Help"])
+	eq(names.slice(0, 4), ["Play", "NewGame", "Endings", "Settings"])
 	screen.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))

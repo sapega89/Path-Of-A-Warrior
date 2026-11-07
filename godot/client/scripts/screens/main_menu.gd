@@ -1,6 +1,6 @@
 extends Control
-## Main menu: continue (or play), new game, endings, settings, help, quit (no quit button
-## on phones and the web). Continue opens the game menu (scripts/screens/game_menu.gd), where
+## Main menu: continue (or play), new game, endings, settings, quit (no quit button on phones
+## and the web). Continue opens the game menu (scripts/screens/game_menu.gd), where
 ## the hero's game is.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
@@ -20,7 +20,6 @@ func _ready() -> void:
 	_add(col, "NewGame", "menu.new_game", new_game)
 	_add(col, "Endings", "menu.endings", func(): Router.push("endings", {}))
 	_add(col, "Settings", "menu.settings", func(): Router.push("settings"))
-	_add(col, "Help", "menu.help", func(): Router.push("help"))
 	if show_quit():
 		_add(col, "Quit", "menu.quit", func(): Cloud.quit_game())
 	ask = ConfirmationDialog.new()

@@ -1,10 +1,9 @@
 extends Control
-## Help: the original's topics (Missions, Visiting, Blacksmith, Skills, Gear, Experience,
-## Saving, Control), each a few pages, ◄ n / m ►. The Control pages tell this version's
-## keys, buttons and touch controls (the original's were the phone keypad).
+## Help, one for the whole game: the campaign's topics (Missions, Visiting, Blacksmith, Skills,
+## Gear, Experience, Saving, Control; data/help.json), then the multiplayer's Duel and Online
+## Missions (data/mp.json), each a few pages, ◄ n / m ►. The Control pages tell this version's
+## keys, buttons and touch controls, on the map and in an online battle.
 ## Up / down pick a topic, left / right turn the page, back returns to the topics, then leaves.
-## Multiplayer > Help (Router.params.kind "mp"): the online game's topics (Controls, Menu, Duel,
-## Missions, About, Network; data/mp.json), its Controls pages this version's battle keys.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const PATH := "res://data/help.json"
@@ -12,10 +11,10 @@ const CONTROL_TOPIC := 7
 const CONTROL_PAGES := ["help.control_1", "help.control_2"]
 const MP_PATH := "res://data/mp.json"
 const MP_CONTROL_PAGES := ["help.mp_control_1", "help.mp_control_2"]
+## The multiplayer topics shown, by their name in data/mp.json, and the name they get here.
+const MP_TOPICS := {"Duel": "online.duel", "Missions": "menu.online_missions"}
 
 var topics: Array = []
-var control_topic := CONTROL_TOPIC
-var control_pages: Array = CONTROL_PAGES
 var topic := -1  # -1: the list of topics
 var page := 0
 var list: VBoxContainer
@@ -28,19 +27,12 @@ var close := Callable()
 
 
 func _ready() -> void:
-	var path := PATH
-	var key := "topics"
-	if str(Router.params.get("kind", "")) == "mp":
-		path = MP_PATH
-		key = "help"
-		control_topic = 0
-		control_pages = MP_CONTROL_PAGES
-	var f := FileAccess.open(path, FileAccess.READ)
-	if f != null:
-		var d: Variant = JSON.parse_string(f.get_as_text())
-		if typeof(d) == TYPE_DICTIONARY:
-			topics = d.get(key, [])
+	topics = _read(PATH, "topics")
+	for t in _read(MP_PATH, "help"):
+		if MP_TOPICS.has(t.get("name")):
+			topics.append({"name": tr(MP_TOPICS[t.name]), "pages": t.get("pages", [])})
 	var col := UiTheme.menu_column(self, 640)
+	col.theme = UiTheme.compact()  # ten topics and Back in a 720 px high screen
 	heading = UiTheme.heading("help.title", 40)
 	col.add_child(heading)
 	list = VBoxContainer.new()
@@ -85,6 +77,14 @@ func _ready() -> void:
 	show_topics()
 
 
+static func _read(path: String, key: String) -> Array:
+	var f := FileAccess.open(path, FileAccess.READ)
+	if f == null:
+		return []
+	var d: Variant = JSON.parse_string(f.get_as_text())
+	return d.get(key, []) if typeof(d) == TYPE_DICTIONARY else []
+
+
 func _arrow(node_name: String, label: String, step: int) -> Button:
 	var b := Button.new()
 	b.name = node_name
@@ -105,8 +105,8 @@ func show_topics() -> void:
 
 
 func pages_of(i: int) -> Array:
-	if i == control_topic:
-		return control_pages.map(func(k): return tr(k))
+	if i == CONTROL_TOPIC:
+		return (CONTROL_PAGES + MP_CONTROL_PAGES).map(func(k): return tr(k))
 	return topics[i].get("pages", []) if i >= 0 and i < topics.size() else []
 
 
