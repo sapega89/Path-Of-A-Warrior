@@ -3,8 +3,10 @@ extends RefCounted
 ## builds it), made in code from the original tiles. Pines close it in; each way on from the
 ## hero's place (WorldMap.next_places) is a gap in the pines (`inside` is the cell just within
 ## it), with a fence across it while that place is closed. The
-## hero comes in at the bottom. A main camp (the start and the places the endings lead to)
-## also has the town hall, where every colonel and general is, and the blacksmith.
+## hero comes in at the bottom. Every camp has the blacksmith's fire (buy, sell, enchant,
+## combine), the stores (the warehouse) and a place where a visiting general stands; a main
+## camp (the start and the places the endings lead to) also has the town hall, where every
+## colonel and general is.
 
 const W := 17
 const H := 13
@@ -19,6 +21,9 @@ const FENCE := [85, 86]
 const HALL := [[193, 194, 195, 196], [197, 198, 199, 200]]
 const HALL_AT := Vector2i(2, 7)  # its top-left cell
 const SMITH_AT := Vector2i(13, 8)
+const STORE_AT := Vector2i(11, 4)  # barrels and a crate, left to right
+const STORE := [97, 97, 105]
+const GUEST_AT := Vector2i(6, 4)  # where a visiting general stands
 const BLOCKED := 1
 const OVER := 2
 ## Where the gaps go for 1..6 ways: [side, centre]; side 0 top, 1 right, 2 left.
@@ -99,12 +104,13 @@ func _init(ways: Array = [], main_camp: bool = false) -> void:
 		exits.append({"place": ways[i][0], "open": open, "gap": cells, "inside": inside, "side": side})
 	_put(8, 6, CAMPFIRE, BLOCKED)
 	_put(6, 8, STONES, 0)
-	_put(11, 4, BUSH, BLOCKED)
+	_put(SMITH_AT.x, SMITH_AT.y, BRAZIER, BLOCKED)
+	for i in STORE.size():
+		_put(STORE_AT.x + i, STORE_AT.y, STORE[i], BLOCKED)
 	if main:
 		for row in HALL.size():
 			for col in HALL[row].size():
 				_put(HALL_AT.x + col, HALL_AT.y + row, HALL[row][col], BLOCKED | OVER)
-		_put(SMITH_AT.x, SMITH_AT.y, BRAZIER, BLOCKED)
 
 
 ## Where one stands to use the town hall's door and the blacksmith's fire.
@@ -114,6 +120,10 @@ func hall_door() -> Vector2i:
 
 func smith_spot() -> Vector2i:
 	return SMITH_AT + Vector2i(0, 1)
+
+
+func store_spot() -> Vector2i:
+	return STORE_AT + Vector2i(1, 1)
 
 
 func _put(x: int, y: int, tile: int, flag: int) -> void:

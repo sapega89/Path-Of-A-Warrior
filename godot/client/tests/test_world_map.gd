@@ -89,6 +89,9 @@ func test_camp_map_has_a_gap_per_way() -> void:
 				eq(f & 1 == 0, bool(e.open), "an open way is free, a closed one fenced")
 			eq(int(c.data.flags[e.inside.y * CampMap.W + e.inside.x]) & 1, 0, "its colonel stands on free ground")
 	check(CampMap.is_main(0) and CampMap.is_main(30) and not CampMap.is_main(27), "the main camps")
+	var plain: RefCounted = CampMap.new([[1, true]])
+	for spot in [plain.smith_spot(), plain.store_spot(), CampMap.GUEST_AT]:
+		eq(int(plain.data.flags[spot.y * CampMap.W + spot.x]) & 1, 0, "the blacksmith, the stores and the guest can be reached")
 	var main: RefCounted = CampMap.new([[1, true]], true)
 	eq(int(main.data.flags[main.hall_door().y * CampMap.W + main.hall_door().x]) & 1, 0, "the hall's door is free")
 
@@ -102,7 +105,9 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 	var camp: Control = CampScreen.new()
 	root.add_child(camp)
 	eq(camp.place, 4, "the camp of the hero's place")
-	eq(camp.spots.map(func(s): return [s.place, s.open]), [[5, false], [6, true]],
+	eq(camp.spots.map(func(s): return s.kind), ["way", "way", "smith", "store"],
+		"the ways, the blacksmith and the warehouse in every camp; no guest without a won mission")
+	eq(camp.spots.slice(0, 2).map(func(s): return [s.place, s.open]), [[5, false], [6, true]],
 		"Korsun: The Regalia closed, Harvest open")
 	check(not camp.camp.main, "Korsun is a stop")
 	var harvest: Dictionary = camp.spots[1]
@@ -111,6 +116,9 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 	var gap: Vector2i = camp.camp.exits[1].gap[1]
 	eq(camp.exit_crossed(Vector3(gap.x + 0.5, 0, 0.3)), harvest, "out through the gap")
 	eq(camp.exit_crossed(Vector3(8.5, 0, 6.0)), {}, "inside")
+	var smith: Dictionary = camp.spots[2]
+	eq(camp.spot_near(smith.at), smith, "at the blacksmith's fire")
+	check(camp._hint_text(smith).contains(tr("menu.blacksmith")), "says what is there")
 	check(camp.rulers(1).size() == 4, "four colonels give the missions at Uprising")
 	eq(camp.arrows.size(), 1, "an arrow on the open way only")
 	for i in 20:

@@ -1512,12 +1512,12 @@
     "uk": "[A] Ратуша: усі полковники й генерали"
   },
   "camp.enter_smith": {
-    "en": "[Enter] Blacksmith",
-    "uk": "[Enter] Коваль"
+    "en": "[Enter] Blacksmith: buy, sell, enchant, combine",
+    "uk": "[Enter] Коваль: купити, продати, заточити, скласти"
   },
   "camp.enter_smith_pad": {
-    "en": "[A] Blacksmith",
-    "uk": "[A] Коваль"
+    "en": "[A] Blacksmith: buy, sell, enchant, combine",
+    "uk": "[A] Коваль: купити, продати, заточити, скласти"
   },
   "camp.hall": {
     "en": "Town Hall",
@@ -1582,5 +1582,21 @@
   "door.been": {
     "en": "(been there)",
     "uk": "(уже були)"
+  },
+  "camp.enter_store": {
+    "en": "[Enter] Warehouse",
+    "uk": "[Enter] Склад"
+  },
+  "camp.enter_store_pad": {
+    "en": "[A] Warehouse",
+    "uk": "[A] Склад"
+  },
+  "camp.enter_guest": {
+    "en": "[Enter] Talk to the general who came",
+    "uk": "[Enter] Поговорити з генералом, що прийшов"
+  },
+  "camp.enter_guest_pad": {
+    "en": "[A] Talk to the general who came",
+    "uk": "[A] Поговорити з генералом, що прийшов"
   }
 }

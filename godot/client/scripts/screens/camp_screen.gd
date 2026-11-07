@@ -4,8 +4,10 @@ extends Control
 ## more: which way is better is learnt by playing. Walking out through a gap tells the story
 ## of one of the missions there (pick_mission), then its briefing; the mission comes back
 ## here when it is over (won: the camp of the new place; lost: this one again, to try once
-## more with the same hero). A closed way is fenced. A main camp also has the town hall (every colonel and general) and the
-## blacksmith. The game is saved when the hero comes into a camp. Pause opens the camp menu:
+## more with the same hero). A closed way is fenced. Every camp has the blacksmith (buy, sell, enchant,
+## combine), the warehouse, and the general who came to visit (one visit after each mission
+## won, scripts/core/visits.gd); a main camp also has the town hall (every colonel and
+## general). The game is saved when the hero comes into a camp. Pause opens the camp menu:
 ## the game menu, the world map, the main menu.
 ## Router.params: profile_path; first: true starts the first mission at once (a new game).
 
@@ -18,6 +20,9 @@ const MapBuilder := preload("res://scripts/world/map_builder.gd")
 const Hero := preload("res://scripts/world/hero.gd")
 const FollowCamera := preload("res://scripts/world/follow_camera.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
+const Soldier := preload("res://scripts/world/soldier.gd")
+const Visits := preload("res://scripts/core/visits.gd")
+const MapSim := preload("res://scripts/sim/map_sim.gd")
 const TALK_RANGE := 1.4  # tiles
 const ARROW_PATH := "res://assets/original/ui/arrow%d.png"
 ## The arrow picture for a gap on the top, the right and the left side (arrow0..3: down,
@@ -115,13 +120,27 @@ func _build_world() -> void:
 			world.add_child(arrow)
 			arrows.append(arrow)
 		spots.append({"kind": "way", "place": int(e.place), "open": bool(e.open), "at": at})
+	var smith := MapBuilder.cell_to_world(camp.smith_spot())
+	_label3d("Smith", tr("menu.blacksmith"), smith + Vector3(0, 2.0, -1.0), UiTheme.TEXT)
+	spots.append({"kind": "smith", "at": smith})
+	var store := MapBuilder.cell_to_world(camp.store_spot())
+	_label3d("Store", tr("live.warehouse"), store + Vector3(0, 2.0, -1.0), UiTheme.TEXT)
+	spots.append({"kind": "store", "at": store})
+	if Visits.can_visit(profile):
+		var guest := Visits.generals(profile).filter(func(g): return int(g[1]) > 0)
+		var gen: Dictionary = MapSim.general_data(int(guest[0][0])) if not guest.is_empty() else {}
+		var npc := Soldier.new()
+		npc.name = "Guest"
+		npc.setup(1, 0, [], {"look": int(gen.get("look", 1)), "side": 0})
+		npc.set_frame(0, 0)
+		npc.position = MapBuilder.cell_to_world(CampMap.GUEST_AT)
+		world.add_child(npc)
+		_label3d("GuestName", tr("menu.visiting"), npc.position + Vector3(0, 2.6, 0), UiTheme.ACCENT)
+		spots.append({"kind": "guest", "at": npc.position})
 	if camp.main:
 		var door := MapBuilder.cell_to_world(camp.hall_door())
 		_label3d("Hall", tr("camp.hall"), door + Vector3(0, 2.8, -1.0), UiTheme.TEXT)
 		spots.append({"kind": "hall", "at": door})
-		var smith := MapBuilder.cell_to_world(camp.smith_spot())
-		_label3d("Smith", tr("menu.blacksmith"), smith + Vector3(0, 2.0, -1.0), UiTheme.TEXT)
-		spots.append({"kind": "smith", "at": smith})
 
 
 func _label3d(node_name: String, text: String, at: Vector3, color: Color) -> void:
@@ -251,6 +270,10 @@ func _hint_text(s: Dictionary) -> String:
 			return InputSetup.hint("camp.enter_hall")
 		"smith":
 			return InputSetup.hint("camp.enter_smith")
+		"store":
+			return InputSetup.hint("camp.enter_store")
+		"guest":
+			return InputSetup.hint("camp.enter_guest")
 	return InputSetup.hint("camp.hint_walk")
 
 
@@ -265,6 +288,10 @@ func use(s: Dictionary) -> void:
 			Router.push("town_hall", {"profile_path": path})
 		"smith":
 			Router.push("blacksmith", {"profile_path": path})
+		"store":
+			Router.push("live_warehouse", {"profile_path": path})
+		"guest":
+			Router.push("visiting", {"profile_path": path})
 
 
 ## The mission a way leads to: one of the place's missions not won yet, by chance (any of
