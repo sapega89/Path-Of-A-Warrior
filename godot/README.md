@@ -118,6 +118,32 @@ UDP, зашифрований DTLS; кожен пакет — словник God
 тож тека `user://` у них спільна). Інший сервер: `godot --path godot/client -- --server HOST:28310
 --cert server.crt` або налаштування проєкту `pow/net/server` і `pow/net/cert`.
 
+### Збірка для друзів (Windows і Linux)
+
+Пресети експорту — `client/export_presets.cfg` (Windows `.exe` і Linux `.x86_64`, ресурси всередині
+файлу). Збирає `.github/workflows/godot-build.yml`: вкладка Actions → **godot-build** → **Run
+workflow** (поле `server` — адреса `HOST:PORT`), або тег `v*` (`git tag v0.1 && git push origin
+v0.1`) — тоді ще й GitHub Release з `MercenarysPath-windows.zip` і `MercenarysPath-linux.tar.gz`.
+Адресу й сертифікат для архівів можна задати раз і назавжди: Settings → Secrets and variables →
+Actions → Variables, `POW_SERVER` (`HOST:PORT`) і `POW_SERVER_CERT` (увесь текст `server.crt`
+сервера, від `-----BEGIN` до `-----END`). Локально:
+`godot --headless --path godot/client --export-release Linux ../build/linux/MercenarysPath.x86_64`
+(потрібні export templates тієї ж версії Godot).
+
+Зібрана гра бере сервер із `server.txt` (`HOST` або `HOST:PORT`) і `server.crt` поруч зі своїм
+файлом (`Cloud.exe_dir()`); командний рядок `-- --server ... --cert ...` важить більше. Що
+робити друзям — [`FRIENDS.md`](FRIENDS.md) (він же `ІНСТРУКЦІЯ.txt` в архіві).
+
+Сервер для друзів (наприклад, Oracle Cloud Free Tier, Ubuntu) — той самий Linux-файл гри:
+```
+./MercenarysPath.x86_64 --headless res://server/main.tscn -- --port 28310 --data ./server-data
+```
+Відкрити UDP 28310: у хмарі (Oracle: VCN → Security List → Ingress, UDP, 0.0.0.0/0, порт 28310)
+і на самій машині (`sudo iptables -I INPUT -p udp --dport 28310 -j ACCEPT`). Сертифікат сервер
+робить сам на першому старті — `./server-data/server.crt`; саме його дати друзям (або в
+`POW_SERVER_CERT`). Тека `server-data` — це всі акаунти: її бекапити й не стирати, інакше новий
+сертифікат і порожній сервер.
+
 Без сервера працюють лише тести, скріншоти, сам сервер і `tools/` (вони запускають свою сцену чи
 скрипт), а також `-- --offline` для роботи над грою без сервера: там герой, як і раніше, у
 `user://hero.json`.
