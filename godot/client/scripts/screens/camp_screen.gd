@@ -1,8 +1,10 @@
 extends Control
 ## The stop between missions (scripts/world/camp_map.gd): the hero walks about the camp of
-## his place, and each way on from there is a gap in the pines with a blinking arrow, nothing
-## more: which way is better is learnt by playing. Each gap is one mission (choices()), so
-## walking out tells its story, then its briefing; the mission comes back
+## his place, and each way on from there (one, two or three places, as the campaign goes) is a
+## gap in the trees with a blinking arrow; past the gap lies the land of that place (a lake,
+## mountains, a forest, a town or the steppe, from its map: terrain()), nothing more, so which
+## way is better is learnt by playing. Walking out tells the story of the next mission of that
+## place not won yet (choices()), then its briefing; the mission comes back
 ## here when it is over (won: the camp of the new place; lost: this one again, to try once
 ## more with the same hero). A closed way is fenced. Every camp has the blacksmith (buy, sell, enchant,
 ## combine), the warehouse and the town hall (every colonel and general, and the visits of
@@ -26,6 +28,15 @@ const ARROW_PATH := "res://assets/original/ui/arrow%d.png"
 const ARROW_OF_SIDE := [2, 3, 1]
 const BLINK_TIME := 0.25
 const MAX_WAYS := 6  # gaps in a camp
+## What lies past a gap, by the land of its place: pictures of the original tiles.
+const LAKE := [[73, 74, 75], [76, 77, 78], [79, 80, 81]]
+const ROCKS := [[69, 70]]
+const RUBBLE := [[71, 72]]
+const TREE := [[63, 64], [65, 66], [67, 68]]
+const TENT := [[217, 218, 219], [220, 221, 222]]
+const PALISADE := [[119, 120, 121]]
+const STAKES := [[122, 123, 124]]
+const SHADE := Color(0.8, 0.8, 0.8)  # the land past the trees, a little darker
 const CAMERA_DISTANCE := 19.0  # the whole camp on the screen, the camera does not move
 
 var path: String = Profile.PATH
@@ -94,7 +105,7 @@ func _build_world() -> void:
 	hero.dir8 = 4  # facing up, into the camp
 	camera = FollowCamera.new()
 	camera.name = "Camera"
-	camera.focus = Vector3(CampMap.W / 2.0, 0.0, CampMap.H / 2.0 + 0.5)
+	camera.focus = Vector3(CampMap.W / 2.0, 0.0, CampMap.H / 2.0 - 0.3)  # a little of the land past the top
 	camera.distance = CAMERA_DISTANCE
 	world.add_child(camera)
 	camera.make_current()
@@ -114,6 +125,7 @@ func _build_world() -> void:
 			arrow.position = MapBuilder.cell_to_world(e.gap[1]).lerp(at, 0.5) + Vector3(0, 0.6, 0)
 			world.add_child(arrow)
 			arrows.append(arrow)
+		_scenery(e, terrain(int(e.place)))
 		spots.append({"kind": "way", "place": int(e.place), "mission": int(e.mission), "open": bool(e.open),
 			"at": at})
 	var smith := MapBuilder.cell_to_world(camp.smith_spot())
@@ -274,36 +286,146 @@ func use(s: Dictionary) -> void:
 			Router.push("live_warehouse", {"profile_path": path})
 
 
-## The ways out of the camp, one gap each: [place, open, mission]. Each mission of an open
-## place on from here (not won yet; all of them when all are won) is a way of its own, so
-## there is a choice even where only one place is next; a closed place is one fenced gap. At
-## most six: every open place keeps one mission, the rest are drawn by chance, and closed
-## places give way first. The order is shuffled, so a gap's side says nothing.
+## The ways out of the camp, one gap each: [place, open, mission], one per place on from here
+## (one, two, sometimes three), in a shuffled order so a gap's side says nothing. The mission
+## is the first of that place not won yet (the first when all are won).
 func choices() -> Array:
-	var per_place: Array = []
-	var closed: Array = []
-	for id in world_map.next_places(place):
-		if not profile.is_lord_open(id):
-			closed.append([id, false, -1])
-			continue
-		var n: int = campaign.lord_missions(id).size()
-		var left: Array = range(n).filter(func(i): return not profile.is_done(id, i))
-		if left.is_empty():
-			left = range(n)
-		_shuffle(left)
-		per_place.append(left.map(func(m): return [id, true, m]))
 	var out: Array = []
-	var rest: Array = []
-	for ms in per_place:
-		out.append(ms[0])
-		rest.append_array(ms.slice(1))
-	_shuffle(rest)
-	while out.size() < MAX_WAYS and not rest.is_empty():
-		out.append(rest.pop_back())
-	while out.size() < MAX_WAYS and not closed.is_empty():
-		out.append(closed.pop_front())
+	for id in world_map.next_places(place):
+		if out.size() >= MAX_WAYS:
+			break
+		var open: bool = profile.is_lord_open(id)
+		var n: int = campaign.lord_missions(id).size()
+		var m := 0
+		for i in n:
+			if not profile.is_done(id, i):
+				m = i
+				break
+		out.append([id, open, m if open else -1])
 	_shuffle(out)
 	return out
+
+
+## The land of a place, from its map: "lake", "mountains", "forest", "town" or "steppe".
+static func terrain(id: int) -> String:
+	return terrain_of(MapBuilder.load_map(id))
+
+
+static func terrain_of(map: Dictionary) -> String:
+	var n := maxi(int(map.get("w", 0)) * int(map.get("h", 0)), 1)
+	var count := {"lake": 0, "mountains": 0, "forest": 0, "town": 0}
+	for layer in ["ground", "upper"]:
+		for t in map.get(layer, []):
+			var k := int(t)
+			if (k >= 73 and k <= 81) or k == 145 or k == 149:
+				count.lake += 1
+			elif (k >= 69 and k <= 72) or k == 101 or k == 102 or (k >= 36 and k <= 48):
+				count.mountains += 1
+			elif k >= 63 and k <= 68:
+				count.forest += 1
+			elif (k >= 146 and k <= 188) or (k >= 193 and k <= 236):
+				count.town += 1
+	if count.lake >= 0.08 * n:
+		return "lake"
+	if count.mountains >= 0.1 * n:
+		return "mountains"
+	if count.forest >= 0.1 * n:
+		return "forest"
+	if count.town >= 0.2 * n:
+		return "town"
+	return "steppe"
+
+
+## The land past an open or closed gap: a few pictures beside the road on, outside the camp.
+func _scenery(e: Dictionary, land: String) -> void:
+	var out := Vector2.ZERO  # the way out of the gap
+	var across := Vector2.ZERO  # along the edge
+	match int(e.side):
+		0:
+			out = Vector2(0, -1)
+			across = Vector2(1, 0)
+		1:
+			out = Vector2(1, 0)
+			across = Vector2(0, 1)
+		2:
+			out = Vector2(-1, 0)
+			across = Vector2(0, 1)
+	# The middle of the gap's outer edge (its road is the two cells from the gap's centre on).
+	var c: Vector2i = e.gap[1]
+	var mid := Vector2(c.x + 0.5, c.y + 0.5)
+	if int(e.side) == 0:
+		mid = Vector2(c.x + 1.0, 0.0)
+	elif int(e.side) == 1:
+		mid = Vector2(CampMap.W, c.y + 1.0)
+	else:
+		mid = Vector2(0.0, c.y + 1.0)
+	var at := func(ahead: float, side: float) -> Vector3:
+		var p: Vector2 = mid + out * ahead + across * side
+		return Vector3(p.x, 0.0, p.y)
+	match land:
+		"lake":
+			_flat(LAKE, at.call(2.5, -3.2))
+			_flat(LAKE, at.call(3.5, 3.0))
+		"mountains":
+			_stand(ROCKS, at.call(1.8, -2.6))
+			_stand(RUBBLE, at.call(2.8, 2.6))
+			_stand(ROCKS, at.call(4.0, -1.6), 1.6)
+			_stand(ROCKS, at.call(4.5, 2.2), 1.6)
+		"forest":
+			_stand(TREE, at.call(1.8, -2.4))
+			_stand(TREE, at.call(2.2, 2.4))
+			_stand(TREE, at.call(3.8, -3.6))
+			_stand(TREE, at.call(4.2, 3.4))
+		"town":
+			_stand(PALISADE, at.call(1.4, -2.4))
+			_stand(STAKES, at.call(1.4, 2.4))
+			_stand(TENT, at.call(3.6, -2.8))
+		_:
+			_stand([[111]], at.call(1.6, -2.0))
+			_stand([[136]], at.call(2.4, 2.2))
+			_flat([[137]], at.call(3.0, -1.4))
+			_stand([[112]], at.call(3.6, 2.8))
+
+
+## A picture of tiles (rows of tile ids) cut from the atlas.
+func _picture(tiles: Array) -> ImageTexture:
+	var atlas: Image = (load(MapBuilder.ATLAS_PATH) as Texture2D).get_image()
+	var px := MapBuilder.TILE_PX
+	var img := Image.create(tiles[0].size() * px, tiles.size() * px, false, atlas.get_format())
+	for row in tiles.size():
+		for col in tiles[row].size():
+			var i: int = int(tiles[row][col]) - 1
+			var src := Rect2i((i % MapBuilder.ATLAS_COLS) * px, (i / MapBuilder.ATLAS_COLS) * px, px, px)
+			img.blit_rect(atlas, src, Vector2i(col * px, row * px))
+	return ImageTexture.create_from_image(img)
+
+
+func _sprite(tiles: Array, scale_by: float) -> Sprite3D:
+	var s := Sprite3D.new()
+	s.texture = _picture(tiles)
+	s.pixel_size = scale_by / MapBuilder.TILE_PX
+	s.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	s.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+	s.modulate = SHADE
+	return s
+
+
+## Standing up, its foot on the ground at `foot` (the middle of its bottom edge).
+func _stand(tiles: Array, foot: Vector3, scale_by: float = 1.0) -> void:
+	var s := _sprite(tiles, scale_by)
+	s.name = "Land%d" % world.get_child_count()
+	s.centered = true
+	s.position = foot + Vector3(0, tiles.size() * scale_by / 2.0, 0)
+	world.add_child(s)
+
+
+## Lying flat on the ground, centred on `centre`.
+func _flat(tiles: Array, centre: Vector3) -> void:
+	var s := _sprite(tiles, 1.0)
+	s.name = "Land%d" % world.get_child_count()
+	s.axis = Vector3.Axis.AXIS_Y
+	s.position = centre + Vector3(0, 0.01, 0)
+	world.add_child(s)
 
 
 func _shuffle(a: Array) -> void:

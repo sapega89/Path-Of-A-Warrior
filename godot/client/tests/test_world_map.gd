@@ -106,13 +106,12 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 	var camp: Control = CampScreen.new()
 	root.add_child(camp)
 	eq(camp.place, 4, "the camp of the hero's place")
-	eq(camp.spots.map(func(s): return s.kind), ["way", "way", "way", "smith", "store", "hall"],
-		"a way per mission, then the blacksmith, the warehouse and the town hall in every camp")
+	eq(camp.spots.map(func(s): return s.kind), ["way", "way", "smith", "store", "hall"],
+		"a way per place on, then the blacksmith, the warehouse and the town hall in every camp")
 	var ways: Array = camp.spots.filter(func(s): return s.kind == "way")
 	var open: Array = ways.filter(func(s): return s.open)
 	eq(ways.filter(func(s): return not s.open).map(func(s): return s.place), [5], "The Regalia fenced")
-	eq(open.map(func(s): return s.place), [6, 6], "Harvest: a way for each of its missions")
-	eq(open.map(func(s): return s.mission).reduce(func(a, b): return a + b), 1, "missions 0 and 1")
+	eq(open.map(func(s): return [s.place, s.mission]), [[6, 0]], "Harvest, its first mission")
 	check(not camp.camp.main, "Korsun is a stop")
 	var harvest: Dictionary = open[0]
 	eq(camp.spot_near(harvest.at + Vector3(0.5, 0, 0.5)), harvest, "next to the way in")
@@ -126,18 +125,24 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 		out = Vector3(0.3, 0, e.gap[1].y + 0.5)
 	eq(camp.exit_crossed(out), harvest, "out through the gap")
 	eq(camp.exit_crossed(Vector3(8.5, 0, 6.0)), {}, "inside")
-	var smith: Dictionary = camp.spots[3]
+	var smith: Dictionary = camp.spots[2]
 	eq(camp.spot_near(smith.at), smith, "at the blacksmith's fire")
 	check(camp._hint_text(smith).contains(tr("menu.blacksmith")), "says what is there")
 	check(camp.rulers(1).size() == 4, "four colonels give the missions at Uprising")
-	eq(camp.arrows.size(), 2, "an arrow on the open ways only")
+	eq(camp.arrows.size(), 1, "an arrow on the open way only")
+	check(camp.world.get_children().any(func(n): return str(n.name).begins_with("Land")),
+		"the land of the places past the gaps")
 	p.done["6:0"] = true
 	camp.profile = p
 	var again: Array = camp.choices().filter(func(w): return w[1])
-	eq(again, [[6, true, 1]], "not one won already")
-	camp.profile.place = 27
+	eq(again, [[6, true, 1]], "the next mission not won yet")
 	camp.place = 27
-	check(camp.choices().size() <= CampScreen.MAX_WAYS, "at most six ways")
+	eq(camp.choices().map(func(w): return w[0]).size(), camp.world_map.next_places(27).size(),
+		"one way per place on")
+	eq(CampScreen.terrain(33), "mountains", "Chyhyryn's hills")
+	eq(CampScreen.terrain(19), "forest", "a forest")
+	eq(CampScreen.terrain(24), "lake", "down the Dnipro")
+	eq(CampScreen.terrain(2), "steppe", "the steppe")
 	camp.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))
