@@ -132,6 +132,37 @@ func test_the_old_save_file_goes_to_the_server_once() -> void:
 	_end(s, [b, a], d)
 
 
+func test_the_game_is_always_online_with_the_local_server_by_default() -> void:
+	var Cloud := preload("res://scripts/net/cloud.gd")
+	var cfg: Dictionary = Cloud.server_config(PackedStringArray())
+	eq(cfg.address, "127.0.0.1", "the local server")
+	eq(cfg.port, 28310)
+	eq(cfg.cert_path, "user://server/server.crt", "the certificate the local server makes")
+	cfg = Cloud.server_config(PackedStringArray(["--server", "pow.example:28311", "--cert", "/x/s.crt"]))
+	eq([cfg.address, cfg.port, cfg.cert_path], ["pow.example", 28311, "/x/s.crt"], "another server")
+	eq(Cloud.server_config(PackedStringArray(["--offline"])), {}, "--offline: without a server")
+	check(Cloud.runs_the_game(PackedStringArray(["--path", "godot/client"])), "the game")
+	check(Cloud.runs_the_game(PackedStringArray(["res://scenes/main.tscn"])), "its main scene")
+	check(not Cloud.runs_the_game(PackedStringArray(["--headless", "res://tests/runner.tscn"])), "not the tests")
+	check(not Cloud.runs_the_game(PackedStringArray(["res://server/main.tscn"])), "not the server")
+	check(not Cloud.runs_the_game(PackedStringArray(["-s", "res://tools/net_check.gd"])), "not a tool")
+
+
+func test_the_certificate_is_read_once_the_local_server_made_it() -> void:
+	var d := _dir()
+	var a := CloudSync.new()
+	a.setup("127.0.0.1", PORT, null)
+	a.cert_path = d.path_join("server.crt")
+	a.step()
+	check(not a.online(), "no certificate yet: no connection")
+	check(a.retry_at > 0, "tries again later")
+	var s := _server(d)
+	ServerTests.pair(0)[1].save(a.cert_path)
+	a.retry_now()
+	check(_run(s, [a], a.online), "online once the certificate is there")
+	_end(s, [a], d)
+
+
 func test_no_server_waits_longer_each_time() -> void:
 	var a := _sync(["ANDREY", "1234"])
 	var now := [0]
