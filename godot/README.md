@@ -21,7 +21,7 @@ godot/
                           місії в новому арті), motion (дія → кліп), map_effects (ефекти й
                           стріли кодом), battle_arena і battle_motion (поле й бійці бою
                           мультиплеєра), hero, follow_camera
-    scripts/ui/           тема, сенсорні кнопки
+    scripts/ui/           тема, сенсорні кнопки, рядок підказок керування внизу (hint_bar)
     scripts/art/          новий арт, поки вітрина: табір і бій (scenes/art_slice.tscn)
     scripts/net/          зв'язок із сервером: protocol (повідомлення), net_client (ENet + DTLS)
     server/               сервер гри (той самий проєкт, без графіки): main.tscn, game_server,

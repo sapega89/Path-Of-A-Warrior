@@ -4,6 +4,7 @@ extends Control
 ## won has a mark. Winning takes the hero to that lord's place, so the list changes.
 ## A mission shows its description first; OK asks whether to accept it (the general to beat,
 ## the level and the gold), and Yes counts the briefing and opens it, then the map.
+## Back under the list goes a level up, as BACK does.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Campaign := preload("res://scripts/core/campaign.gd")
@@ -51,6 +52,11 @@ func _ready() -> void:
 	ok.text = "campaign.ok"
 	ok.pressed.connect(ask_accept)
 	col.add_child(ok)
+	var back := Button.new()
+	back.name = "Back"
+	back.text = "common.back"
+	back.pressed.connect(go_back)
+	col.add_child(back)
 	ask = ConfirmationDialog.new()
 	ask.name = "Ask"
 	ask.ok_button_text = "online.yes"
@@ -170,8 +176,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		scroll.scroll_vertical += page if event.is_action_pressed("ui_down") else -page
 	elif event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
-		if level > 1:
-			level -= 1
-			show_level()
-		else:
-			Router.back()
+		go_back()
+
+
+## Back (the button or BACK): the list before, or out of the campaign.
+func go_back() -> void:
+	if level > 1:
+		level -= 1
+		show_level()
+	else:
+		Router.back()

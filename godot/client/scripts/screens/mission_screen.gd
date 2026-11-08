@@ -659,3 +659,8 @@ func click_bar(at: Vector2) -> bool:
 	elif hit[0] == "skill":
 		_hotkey = hit[1]
 	return true
+
+
+## No line of control hints under this screen: it shows its own (scripts/ui/hint_bar.gd).
+func controls_hint() -> String:
+	return ""
