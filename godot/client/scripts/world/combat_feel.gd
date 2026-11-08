@@ -312,6 +312,14 @@ func knock_t(t: float) -> float:
 ## The flash of one hit on a sprite: drawn for that moment with a material that adds the colour
 ## as light, so it shows nearly white (on the hero red) even unlit, keeping the sprite's own
 ## picture, billboard and alpha edge. `mats` keeps a material per sprite.
+## The hit flash on a piece of the new art: its painted material, f as flash_of() gives it.
+static func flash_material(m: Material, f: Array) -> void:
+	if m is ShaderMaterial:
+		var c: Color = f[1]
+		(m as ShaderMaterial).set_shader_parameter("flash", float(f[0]))
+		(m as ShaderMaterial).set_shader_parameter("flash_color", Vector3(c.r, c.g, c.b))
+
+
 static func flash_sprite(s: Sprite3D, f: Array, mats: Dictionary) -> void:
 	var k: float = f[0]
 	if k <= 0.0:

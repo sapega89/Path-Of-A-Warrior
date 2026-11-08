@@ -383,6 +383,54 @@ def penok(k, rng):
     k.box((0.02, 0.02, 0.52), (0.22, 0.03, 0.14), "steel", rot=Matrix.Rotation(-0.6, 4, "Z"))
 
 
+# -- the maps of the campaign: firs, a woodpile, a weapon rack, crags on the cliffs --------
+def yalyna(k, rng):
+    """Fir: a straight trunk and four tiers of dark needles."""
+    h = rng.uniform(3.8, 4.4)
+    k.tube((0, 0, 0), (0, 0, h * 0.3), 0.16, 0.12, "wood_dark", segs=7)
+    tiers = 4
+    for i in range(tiers):
+        z0 = h * (0.16 + 0.19 * i)
+        r = 1.1 * (1.0 - i / (tiers + 0.8))
+        k.lathe((0, 0, z0), [(0.0, r * 0.35), (0.02, r, "hard"), (0.14, r * 0.9, "hard"), (h * 0.36, 0.0)],
+                "oak_dark", segs=9, shade=jitter(rng, 0.85, 1.05))
+
+
+def drova(k, rng):
+    """Woodpile: split logs stacked between two stakes."""
+    for row in range(3):
+        n = 4 - row
+        for i in range(n):
+            x = (i - (n - 1) / 2) * 0.24
+            z = 0.11 + row * 0.2
+            k.tube((x, -0.45, z), (x + rng.uniform(-0.02, 0.02), 0.45, z), 0.1, 0.1,
+                   "wood" if (i + row) % 2 else "wood_light", segs=6, shade=jitter(rng))
+    for x in (-0.55, 0.55):
+        k.tube((x, 0, 0), (x, 0, 0.8), 0.04, 0.035, "wood_dark", segs=5)
+
+
+def stoiak(k, rng):
+    """Weapon rack: two posts, a bar, spears leaning on it."""
+    for x in (-0.6, 0.6):
+        k.tube((x, 0, 0), (x, 0, 1.2), 0.05, 0.045, "wood_dark", segs=6)
+    k.beam((-0.65, 0, 1.05), (0.65, 0, 1.05), 0.06, 0.06, "wood")
+    for i in range(4):
+        x = -0.45 + i * 0.3
+        k.tube((x, 0.25, 0), (x + 0.02, -0.03, 1.6), 0.02, 0.02, "wood_light", segs=4)
+        k.lathe((x + 0.02, -0.03, 1.6), [(0.0, 0.035), (0.18, 0.0)], "steel", segs=4)
+
+
+def skelia(k, rng):
+    """Crags on the face of a cliff: angular rocks heaped up to two metres."""
+    for i in range(5):
+        r = rng.uniform(0.42, 0.62)
+        x, y = rng.uniform(-0.28, 0.28), rng.uniform(-0.28, 0.28)
+        hgt = rng.uniform(1.1, 2.0) if i < 3 else rng.uniform(0.5, 0.9)
+        rot = Matrix.Rotation(rng.uniform(0, TAU), 4, "Z") @ Matrix.Rotation(rng.uniform(-0.15, 0.15), 4, "X")
+        k.ball((x, y, hgt * 0.5), (r, r * 0.9, hgt * 0.6), "stone" if i % 2 else "stone_dark", segs=6, rings=4,
+               rot=rot, smooth=False, shade=jitter(rng, 0.85, 1.1))
+
+
 PROPS = {
     "khata": khata,
     "tyn": tyn,
@@ -405,6 +453,10 @@ PROPS = {
     "kamin": kamin,
     "trava": trava,
     "penok": penok,
+    "yalyna": yalyna,
+    "drova": drova,
+    "stoiak": stoiak,
+    "skelia": skelia,
 }
 
 
