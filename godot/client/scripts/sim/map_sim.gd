@@ -64,6 +64,8 @@ const EFFECT_STEPS := [2, 10, 100, 2, 2, 2, 2, 2, 2, 2, 2, 2, 100, 100]
 const SQUAD_SHIFT := {3: Vector2i(-20, 0), 1: Vector2i(-20, 20), 2: Vector2i(-20, 0),
 	0: Vector2i(0, 20), 5: Vector2i(20, 0), 7: Vector2i(20, 20), 6: Vector2i(20, 0)}
 const GENERAL_REACH := [60, 50]
+## How far to the side of the line he faces the hero's sword still hits (one cell).
+const STRIKE_BAND := 27
 const CAMPAIGN_PATH := "res://data/campaign.json"
 const TALK_PATH := "res://data/talk.json"
 const BUFF_DIV := [20, 20, 25]
@@ -1598,12 +1600,33 @@ func _hero_attack(kind: int) -> void:
 						_strike_enemy(e)
 				28, 29, 30:
 					_strike_enemy(e)
-			# (every action also strikes what is straight in front, as the original does)
-			if hero.dir == dir4(hero.pos, e.pos):
-				_hero_strike_if_near(e, reach)
+			# every action also strikes what is in front, within the strike band
+			if in_strike_reach(hero.pos, e.pos, hero.dir, reach):
+				_strike_enemy(e)
 		elif distance(effect_pos, e.pos) <= 35:
 			_hero_hits_enemy(e, effect_item)
 			_sound(4)
+
+
+## What the hero's sword reaches: within reach, and either in the quarter he faces or ahead of
+## him and no farther than STRIKE_BAND to the side, so an enemy a little above or below (or
+## beside, when he faces up or down) is hit too, also close up where the quarter is narrow.
+static func in_strike_reach(a: Vector2i, b: Vector2i, d8: int, reach: int) -> bool:
+	if distance(a, b) > reach:
+		return false
+	if d8 == dir4(a, b):
+		return true
+	var d := b - a
+	match d8:
+		0:
+			return d.y >= 0 and absi(d.x) <= STRIKE_BAND
+		4:
+			return d.y <= 0 and absi(d.x) <= STRIKE_BAND
+		6:
+			return d.x >= 0 and absi(d.y) <= STRIKE_BAND
+		2:
+			return d.x <= 0 and absi(d.y) <= STRIKE_BAND
+	return false
 
 
 func _hero_strike_if_near(e: Actor, reach: int) -> void:
@@ -1950,7 +1973,7 @@ func _hero_hits_breakables() -> void:
 			28, 29, 30:
 				hit_breakable(b)
 			_:
-				if hero.dir == dir4(hero.pos, b.pos) and distance(hero.pos, b.pos) <= reach:
+				if in_strike_reach(hero.pos, b.pos, hero.dir, reach):
 					hit_breakable(b)
 
 
