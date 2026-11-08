@@ -9,14 +9,14 @@ const OUTLINE := preload("res://assets/art/shaders/outline.gdshader")
 ## The ten colours of the style guide.
 const PALETTE := {
 	"chernozem": Color("2B211C"),
-	"ochre": Color("C9A15B"),
-	"grass": Color("9E9A5C"),
-	"oak": Color("4E6B3A"),
-	"whitewash": Color("EDE6D6"),
-	"cinnabar": Color("A8322D"),
-	"blue": Color("2F4E7A"),
-	"gold": Color("D4A645"),
-	"steel": Color("6E7780"),
+	"ochre": Color("A88A57"),
+	"grass": Color("85814F"),
+	"oak": Color("435A33"),
+	"whitewash": Color("CFC5B0"),
+	"cinnabar": Color("8A2B25"),
+	"blue": Color("2D3F57"),
+	"gold": Color("AE8C48"),
+	"steel": Color("6A7178"),
 	"dusk": Color("1C2230"),
 }
 
@@ -31,6 +31,8 @@ const SUN_ENERGY := 0.7
 const AMBIENT := Color("68708a")
 const AMBIENT_ENERGY := 0.34
 const AIR := Color("9b978b")
+## The grade of the finished picture: brightness, contrast, saturation (muted, harder).
+const GRADE := Vector3(0.96, 1.12, 0.8)
 
 static var _scenes := {}
 static var _clips: AnimationLibrary
@@ -83,9 +85,9 @@ static func light(sun: DirectionalLight3D, env: Environment) -> void:
 
 static func grade(env: Environment) -> void:
 	env.adjustment_enabled = true
-	env.adjustment_saturation = 0.8
-	env.adjustment_contrast = 1.12
-	env.adjustment_brightness = 0.96
+	env.adjustment_saturation = GRADE.z
+	env.adjustment_contrast = GRADE.y
+	env.adjustment_brightness = GRADE.x
 
 
 static func dress(node: Node, material: Material) -> void:

@@ -165,7 +165,7 @@ func _hero_view(mid: Vector2) -> TextureRect:
 	return r
 
 
-## The round stage under the hero: a dark ellipse with a gold rim and rhombi around it.
+## The round stage under the hero: a dark ellipse with an iron rim and rivets around it.
 class Stage extends Control:
 	func _ready() -> void:
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -179,15 +179,14 @@ class Stage extends Control:
 			var t := TAU * i / 48.0
 			rim.append(c + Vector2(cos(t) * rx, sin(t) * ry))
 		draw_colored_polygon(rim, Color(UiTheme.SLOT, 0.85))
-		draw_polyline(rim, UiTheme.ACCENT_DARK, 2.0, true)
+		draw_polyline(rim, UiTheme.IRON, 2.0, true)
 		var inner := PackedVector2Array()
 		for p in rim:
 			inner.append(c + (p - c) * 0.8)
-		draw_polyline(inner, Color(UiTheme.ACCENT, 0.3), 1.0, true)
+		draw_polyline(inner, Color(UiTheme.IRON_LIGHT, 0.25), 1.0, true)
 		for i in 8:
 			var t := TAU * (i + 0.5) / 8.0
-			UiTheme.rhombus(get_canvas_item(), c + Vector2(cos(t) * rx * 0.9, sin(t) * ry * 0.9), 3.0,
-				UiTheme.ACCENT if i % 2 == 0 else UiTheme.RED)
+			UiTheme.rivet(get_canvas_item(), c + Vector2(cos(t) * rx * 0.9, sin(t) * ry * 0.9), 2.8)
 
 
 func _unhandled_input(event: InputEvent) -> void:

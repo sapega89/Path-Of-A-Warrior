@@ -14,7 +14,7 @@ extends Control
 ## skills and the bar take the mouse too. The hint at the bottom names the keys of the device
 ## just used (InputSetup.hint: the keyboard's or the pad's).
 ## The HUD: each fighter's plate at the top (my team at the left, the other at the right, one
-## row under the other) with his portrait in a gold frame looking at the other side, his name,
+## row under the other) with his portrait in an iron frame looking at the other side, his name,
 ## level on a cinnabar badge, HP and MP bars; the card of his action beside it; the changes of
 ## HP over the fighters; the quotes in parchment bubbles; the pad of the actions (sabre, shield,
 ## wind, a skill) with the seconds left; the skills with their icons; the timing bar (the
@@ -68,12 +68,12 @@ const BOX_H := 80.0
 const FACE := 68.0  # the portrait on the plate
 const CARD_W := 230.0
 const AUTO_ON := UiTheme.ACCENT  # AUTO while auto-battle is on
-const PLATE := Color(0.075, 0.09, 0.13, 0.9)
-const PAPER := Color("ede6d6")
-const HP_FILL := [Color("e0574a"), Color("8a2420")]
-const MP_FILL := [Color("6f9fe0"), Color("24427a")]
-const DAMAGE := Color("ff6f5a")
-const HEAL := Color("9be27f")
+const PLATE := Color(0.07, 0.066, 0.062, 0.92)
+const PAPER := Color("c9bb9b")  # old parchment
+const HP_FILL := [Color("c23a2f"), Color("5e1510")]
+const MP_FILL := [Color("5a83bd"), Color("1a2e55")]
+const DAMAGE := Color("e8553f")
+const HEAL := Color("8fc873")
 ## The pad: key, icon (assets/art/ui), caption, place in buttons.
 const PAD := [["up", "wind", "online.battle_evade", Vector2(1, 0)],
 	["left", "shield", "online.battle_defend", Vector2(0, 1)],
@@ -82,8 +82,8 @@ const PAD := [["up", "wind", "online.battle_evade", Vector2(1, 0)],
 ## The icons of the battle's skills (3..13): their places on the sheet of the skills (the
 ## same skills of the map, 12..22).
 const SKILL_ICONS := {3: 0, 4: 1, 5: 2, 6: 8, 7: 9, 8: 10, 9: 3, 10: 4, 11: 5, 12: 6, 13: 7}
-## The chevron over the target: gold over cinnabar, inked.
-const MARKER_SVG := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 72"><path d="M8 6 L32 26 L56 6 L56 20 L32 40 L8 20 Z" fill="#d4a645" stroke="#2b211c" stroke-width="3.5" stroke-linejoin="round"/><path d="M14 34 L32 49 L50 34 L50 45 L32 62 L14 45 Z" fill="#a8322d" stroke="#2b211c" stroke-width="3.5" stroke-linejoin="round"/></svg>'
+## The chevron over the target: brass over blood-red, inked.
+const MARKER_SVG := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 72"><path d="M8 6 L32 26 L56 6 L56 20 L32 40 L8 20 Z" fill="#b89550" stroke="#0f0d0c" stroke-width="3.5" stroke-linejoin="round"/><path d="M14 34 L32 49 L50 34 L50 45 L32 62 L14 45 Z" fill="#8a2b25" stroke="#0f0d0c" stroke-width="3.5" stroke-linejoin="round"/></svg>'
 
 var online: RefCounted
 var battle: RefCounted
@@ -429,7 +429,7 @@ func _build_hud() -> void:
 		portraits.append(face)
 	center = PanelContainer.new()
 	center.name = "Center"
-	var box := UiTheme.box(Color(0.075, 0.09, 0.13, 0.92), UiTheme.ACCENT, 2)
+	var box := UiTheme.box(PLATE, UiTheme.IRON, 2)
 	box.set_content_margin_all(20)
 	box.content_margin_left = 34
 	box.content_margin_right = 34
@@ -524,8 +524,7 @@ func _build_hud() -> void:
 	auto_button.add_theme_font_override("font", UiTheme.font("bold"))
 	auto_button.add_theme_font_size_override("font_size", 20)
 	for style in ["normal", "hover", "pressed", "focus"]:
-		var sb := UiTheme.box(PLATE if style != "hover" else Color(0.12, 0.14, 0.2, 0.92), UiTheme.ACCENT_DARK, 2)
-		sb.set_corner_radius_all(8)
+		var sb := UiTheme.box(PLATE if style != "hover" else Color(UiTheme.BUTTON_HOVER, 0.92), UiTheme.IRON, 2)
 		sb.content_margin_left = 14
 		sb.content_margin_right = 14
 		sb.content_margin_top = 4
@@ -574,7 +573,7 @@ func draw_hud(layer: Control) -> void:
 		var right: bool = f.mirrored()
 		var r := plate_rect(i, layer.size)
 		var aimed: bool = battle.state == OnlineBattle.TARGET and i == battle.target_cursor
-		_plaque(layer, r, UiTheme.HIGHLIGHT if aimed else UiTheme.ACCENT_DARK, 3 if aimed else 2)
+		_plaque(layer, r, UiTheme.HIGHLIGHT if aimed else UiTheme.IRON, 3 if aimed else 2)
 		var inner := Rect2(r.position + Vector2(0 if right else FACE + 16.0, 0), Vector2(r.size.x - FACE - 26.0, r.size.y))
 		var name: String = f.name if f.alt_name.is_empty() or battle.round_no % 2 == 0 else f.alt_name
 		var badge := Vector2(inner.position.x + 22.0 if right else inner.end.x - 12.0, r.position.y + 22.0)
@@ -608,12 +607,11 @@ func _screen_point(sx: float, y: float, up_px: float) -> Vector2:
 	return camera.unproject_position(world_at(sx, y, up_px))
 
 
-## A plaque: a dark plate with round corners and a gold rim.
+## A plaque: a dark plate with hard corners and a rim.
 static func _plaque(layer: Control, r: Rect2, rim: Color, width: int) -> void:
 	var sb := UiTheme.box(PLATE, rim, width)
-	sb.set_corner_radius_all(10)
-	sb.shadow_color = Color(0, 0, 0, 0.35)
-	sb.shadow_size = 4
+	sb.shadow_color = Color(0, 0, 0, 0.5)
+	sb.shadow_size = 5
 	layer.draw_style_box(sb, r)
 
 
@@ -629,11 +627,10 @@ static func _text(layer: Control, text: String, at: Vector2, px: int, color: Col
 	layer.draw_string(font, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, px, color)
 
 
-## A bar in a dark hollow with a gold rim, filled from its outer end (a right plate's from the
+## A bar in a dark hollow with an iron rim, filled from its outer end (a right plate's from the
 ## right), a light line along the top of the fill.
 static func _bar(layer: Control, r: Rect2, part: float, fill: Array, right: bool) -> void:
-	var back := UiTheme.box(Color("0b0e15"), UiTheme.ACCENT_DARK, 1)
-	back.set_corner_radius_all(int(r.size.y / 2.0))
+	var back := UiTheme.box(UiTheme.SLOT, UiTheme.IRON, 1)
 	layer.draw_style_box(back, r)
 	part = clampf(part, 0.0, 1.0)
 	if part <= 0.0:
@@ -642,10 +639,8 @@ static func _bar(layer: Control, r: Rect2, part: float, fill: Array, right: bool
 	var w := maxf(inner.size.y, inner.size.x * part)
 	var at := Vector2(inner.end.x - w if right else inner.position.x, inner.position.y)
 	var sb := UiTheme.box(fill[1])
-	sb.set_corner_radius_all(int(inner.size.y / 2.0))
 	layer.draw_style_box(sb, Rect2(at, Vector2(w, inner.size.y)))
 	var top := UiTheme.box(fill[0])
-	top.set_corner_radius_all(int(inner.size.y / 2.0))
 	layer.draw_style_box(top, Rect2(at, Vector2(w, inner.size.y * 0.62)))
 	if w > inner.size.y:
 		var shine := inner.size.y * 0.5
@@ -657,8 +652,7 @@ static func _bar(layer: Control, r: Rect2, part: float, fill: Array, right: bool
 func _card(layer: Control, f: RefCounted, a: int, at: Vector2) -> void:
 	var r := Rect2(at, Vector2(CARD_W, 46))
 	var sb := UiTheme.box(PAPER, UiTheme.INK, 2)
-	sb.set_corner_radius_all(8)
-	sb.shadow_color = Color(0, 0, 0, 0.3)
+	sb.shadow_color = Color(0, 0, 0, 0.45)
 	sb.shadow_size = 3
 	layer.draw_style_box(sb, r)
 	var as_target: bool = battle.state == OnlineBattle.TURN and battle.fighters.find(f) != battle.attacker
@@ -710,8 +704,8 @@ func _quote(layer: Control, q: String, tip: Vector2) -> void:
 	var tail := PackedVector2Array([Vector2(tip.x - 10.0, r.end.y - 2.0), Vector2(tip.x + 10.0, r.end.y - 2.0),
 		Vector2(tip.x, tip.y)])
 	var sb := UiTheme.box(PAPER, UiTheme.INK, 2)
-	sb.set_corner_radius_all(14)
-	sb.shadow_color = Color(0, 0, 0, 0.3)
+	sb.set_corner_radius_all(4)
+	sb.shadow_color = Color(0, 0, 0, 0.45)
 	sb.shadow_size = 3
 	layer.draw_style_box(sb, r)
 	layer.draw_colored_polygon(tail, PAPER)
@@ -726,13 +720,12 @@ func draw_bar(layer: Control) -> void:
 	if battle == null:
 		return
 	var s := BAR_SCALE
-	_plaque(layer, Rect2(Vector2.ZERO, layer.size), UiTheme.ACCENT, 2)
+	_plaque(layer, Rect2(Vector2.ZERO, layer.size), UiTheme.IRON, 2)
 	var left := 11.0 * s  # BAR_LEFT inside the plate (it is 110 px wide around CX)
 	var mark := left + float(OnlineBattle.MARK - OnlineBattle.BAR_LEFT) * s
 	var mid := layer.size.y * 0.52
 	var track := Rect2(left - 10.0, mid - 11.0, mark - left + 10.0 * s + 20.0, 22.0)
-	var hollow := UiTheme.box(Color("0b0e15"), UiTheme.ACCENT_DARK, 2)
-	hollow.set_corner_radius_all(11)
+	var hollow := UiTheme.box(UiTheme.SLOT, UiTheme.IRON, 2)
 	layer.draw_style_box(hollow, track)
 	var x := left + float(battle.bar_x - OnlineBattle.BAR_LEFT) * s
 	var to := clampf(x, left, track.end.x - 4.0)
@@ -755,7 +748,7 @@ func draw_bar(layer: Control) -> void:
 	elif stopped:
 		_burst(layer, Vector2(to, mid), 26.0, Color(1, 1, 1, 0.9))
 	layer.draw_line(Vector2(to, mid - 22.0), Vector2(to, mid + 22.0), UiTheme.INK, 7.0, true)
-	layer.draw_line(Vector2(to, mid - 20.0), Vector2(to, mid + 20.0), Color("fff4d6"), 3.0, true)
+	layer.draw_line(Vector2(to, mid - 20.0), Vector2(to, mid + 20.0), Color("efe4c8"), 3.0, true)
 
 
 ## A star of light: eight rays.

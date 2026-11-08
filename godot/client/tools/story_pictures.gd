@@ -3,7 +3,8 @@ extends Node
 ##   godot --path godot/client --resolution 1040x800 res://tools/story_pictures.tscn [-- 2 5 ...]
 ## Each of the 15 pictures is a small scene of the maps' people and things (the painted shader
 ## with the ink outline) under a painted sky (assets/art/shaders/story_sky.gdshader), with rain,
-## dark corners and grain over it (story_overlay.gdshader), saved as assets/art/story/e<n>.png.
+## dark corners and grain over it (story_overlay.gdshader), graded as the game (ArtKit.GRADE:
+## muted and harder), saved as assets/art/story/e<n>.png.
 ## The numbers after -- paint only those pictures.
 
 const ArtKit := preload("res://scripts/art/art_kit.gd")
@@ -47,6 +48,7 @@ func _ready() -> void:
 		await _frames(8)
 		await RenderingServer.frame_post_draw
 		var img := canvas.get_texture().get_image()
+		img.adjust_bcs(ArtKit.GRADE.x, ArtKit.GRADE.y, ArtKit.GRADE.z)  # the game's grade, sky and all
 		img.resize(OUT.x, OUT.y, Image.INTERPOLATE_LANCZOS)
 		img.save_png(ProjectSettings.globalize_path(DIR + "e%d.png" % n))
 		print("picture ", n)

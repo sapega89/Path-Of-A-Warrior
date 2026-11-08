@@ -56,8 +56,8 @@ static func frame(aspect: float) -> ShaderMaterial:
 		m.shader = FRAME
 		m.set_shader_parameter("aspect", key)
 		if key > 1.0:
-			# a wide picture: a thinner rim and rounder corners for its size
-			m.set_shader_parameter("radius", 0.05)
+			# a wide picture: a thinner rim and smaller corners for its size
+			m.set_shader_parameter("radius", 0.012)
 			m.set_shader_parameter("width", 0.02)
 		_frames[key] = m
 	return _frames[key]

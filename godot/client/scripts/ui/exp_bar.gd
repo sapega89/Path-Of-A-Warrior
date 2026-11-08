@@ -1,19 +1,19 @@
 extends Control
 ## Draws the exp bar of the pages after a won mission (MapSim.exp_bars, scripts/sim/exp_bars.gd)
-## in the new art: a dark hollow of 102 x 7 grid pixels with a gold rim and round ends, what the
-## hero had cinnabar, what the mission gave blue, what the time gave gold; each part in three
+## in the new art: a dark hollow of 102 x 7 grid pixels with an iron rim and hard ends, what the
+## hero had blood-red, what the mission gave blue, what the time gave brass; each part in three
 ## lines of colour, lighter to the middle, and a shine along its top.
 
 const W := 100
 const H := 7
 ## Each part's three colours, from the edge to the middle line.
 const COLORS := [
-	[Color("161c29"), Color("1d2536"), Color("232c40")],
-	[Color("6e1a16"), Color("a8322d"), Color("e0574a")],
-	[Color("16284d"), Color("2f4e7a"), Color("5b8fd6")],
-	[Color("9c7a30"), Color("d4a645"), Color("f2d58a")],
+	[Color("0f0f10"), Color("161514"), Color("1d1b19")],
+	[Color("4a0f0c"), Color("7e241f"), Color("bf3a2e")],
+	[Color("101d36"), Color("2d3f57"), Color("4f78b0")],
+	[Color("6f5a33"), Color("b08d4a"), Color("dcc48e")],
 ]
-const RIM := Color("9c7a30")
+const RIM := Color("4e4a45")
 
 var px := 3.0  # screen pixels to an original pixel
 var bars: RefCounted  # the sim's exp bar
@@ -26,8 +26,8 @@ func _ready() -> void:
 
 func _draw() -> void:
 	var hollow := StyleBoxFlat.new()
-	hollow.bg_color = Color("0b0e15")
-	hollow.set_corner_radius_all(int(H * px / 2.0))
+	hollow.bg_color = Color("0b0b0c")
+	hollow.set_corner_radius_all(int(px / 2.0))
 	hollow.anti_aliasing = true
 	draw_style_box(hollow, Rect2(Vector2.ZERO, Vector2(W + 2, H) * px))
 	if bars != null:
@@ -36,7 +36,7 @@ func _draw() -> void:
 	rim.draw_center = false
 	rim.border_color = RIM
 	rim.set_border_width_all(maxi(1, int(px / 2.0)))
-	rim.set_corner_radius_all(int(H * px / 2.0))
+	rim.set_corner_radius_all(int(px / 2.0))
 	rim.anti_aliasing = true
 	draw_style_box(rim, Rect2(Vector2.ZERO, Vector2(W + 2, H) * px))
 

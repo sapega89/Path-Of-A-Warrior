@@ -8,13 +8,13 @@ const UI := "res://assets/art/ui/%s.svg"
 const SKILLS := ["sabre", "shield", "fire", "wind", "potion"]
 const PLACE_NAMES := {"camp": "Корсунь", "battle": "Крута балка"}
 
-const INK := Color("2B211C")
-const GOLD := Color("D4A645")
-const GOLD_DARK := Color("9C7A30")
-const PAPER := Color("EDE6D6")
-const DUSK := Color("1C2230")
-const RED := Color("A8322D")
-const BLUE := Color("2F4E7A")
+const INK := Color("0F0D0C")
+const GOLD := Color("B08D4A")  # tarnished brass
+const GOLD_DARK := Color("4E4A45")  # iron
+const PAPER := Color("DCD3C2")
+const DUSK := Color("1D1B1A")
+const RED := Color("7E241F")
+const BLUE := Color("2D3F57")
 
 const PORTRAIT_MASK := """
 shader_type canvas_item;
@@ -101,7 +101,7 @@ func _portrait() -> void:
 	var ring := Panel.new()
 	ring.position = Vector2(18, 14)
 	ring.size = Vector2(132, 132)
-	ring.add_theme_stylebox_override("panel", _box(DUSK, GOLD, 5, 66))
+	ring.add_theme_stylebox_override("panel", _box(DUSK, GOLD_DARK, 5, 66))
 	add_child(ring)
 	portrait_view = SubViewport.new()
 	portrait_view.size = Vector2i(256, 256)
@@ -166,8 +166,8 @@ func _bar(at: Vector2, width: float, fill: Color, value: float, text: String) ->
 	bar.show_percentage = false
 	bar.max_value = 1.0
 	bar.value = value
-	bar.add_theme_stylebox_override("background", _box(DUSK.lerp(INK, 0.3), GOLD, 3, 8))
-	var f := _box(fill, Color(0, 0, 0, 0), 0, 6)
+	bar.add_theme_stylebox_override("background", _box(DUSK.lerp(INK, 0.3), GOLD_DARK, 3, 2))
+	var f := _box(fill, Color(0, 0, 0, 0), 0, 1)
 	f.set_expand_margin_all(-3)
 	bar.add_theme_stylebox_override("fill", f)
 	add_child(bar)
@@ -193,7 +193,7 @@ func _skills(place: String) -> void:
 	var plate := Panel.new()
 	plate.position = start - Vector2(14, 14)
 	plate.size = Vector2(count * slot + (count - 1) * gap + 28, slot + 28)
-	plate.add_theme_stylebox_override("panel", _box(Color(DUSK, 0.72), GOLD_DARK, 2, 16))
+	plate.add_theme_stylebox_override("panel", _box(Color(DUSK, 0.8), GOLD_DARK, 2, 3))
 	add_child(plate)
 	for i in count:
 		var at := start + Vector2(i * (slot + gap), 0)
@@ -201,7 +201,7 @@ func _skills(place: String) -> void:
 		p.position = at
 		p.size = Vector2(slot, slot)
 		var active := i == 0 and place == "battle"
-		p.add_theme_stylebox_override("panel", _box(Color("2a2f3f"), PAPER if active else GOLD, 4 if active else 3, 12))
+		p.add_theme_stylebox_override("panel", _box(Color("2a2623"), GOLD if active else GOLD_DARK, 4 if active else 3, 2))
 		add_child(p)
 		var t := TextureRect.new()
 		t.texture = icon(SKILLS[i], 128)
