@@ -139,6 +139,31 @@ func test_sword_hits() -> void:
 
 
 
+## The sword hits ahead within a band one cell wide to each side, not only in the quarter faced.
+func test_strike_band() -> void:
+	var o := Vector2i(100, 100)
+	check(MapSim.in_strike_reach(o, o + Vector2i(15, -20), 6, 63), "right: a little above, close up")
+	check(MapSim.in_strike_reach(o, o + Vector2i(15, 25), 6, 63), "right: a little below")
+	check(MapSim.in_strike_reach(o, o + Vector2i(-25, -10), 4, 63), "up: a little to the left")
+	check(MapSim.in_strike_reach(o, o + Vector2i(45, 35), 6, 63), "right: the quarter as before")
+	check(not MapSim.in_strike_reach(o, o + Vector2i(10, -30), 6, 63), "right: more than a cell above")
+	check(not MapSim.in_strike_reach(o, o + Vector2i(-10, 5), 6, 63), "right: behind him")
+	check(not MapSim.in_strike_reach(o, o + Vector2i(60, 25), 6, 63), "right: out of reach")
+	# on hard (no turning to the enemy) a soldier a little above, in front of him, is hit
+	var d := _duel()
+	var sim: RefCounted = d[0]
+	var e = d[1]
+	sim.difficulty = 0
+	e.pos = sim.hero.pos + Vector2i(15, -20)  # in the quarter above him
+	sim.hero.facing = 6
+	sim.hero.dir = 6
+	var hp: int = e.hp
+	sim.tick(-1, -1, true)
+	sim.tick(-1, -1)
+	eq(sim.hero.facing, 6, "he did not turn")
+	check(e.hp < hp, "the strike took HP: %d -> %d" % [hp, e.hp])
+
+
 ## The hero turns to the enemy beside him as he strikes on normal; on hard he aims by hand.
 func test_auto_aim_only_on_normal() -> void:
 	for hard in [false, true]:
