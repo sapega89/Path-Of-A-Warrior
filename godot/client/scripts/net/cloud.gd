@@ -5,8 +5,9 @@ extends Node
 ## "No connection" screen until then) and the hero lives on the server. The server is the local
 ## one by default (127.0.0.1:28310 and the certificate it makes on its first start,
 ## user://server/server.crt, since the server is the same project); another one with
-## `-- --server HOST:PORT --cert FILE.crt` or the project settings pow/net/server and
-## pow/net/cert. Only the game's own scene turns it on: the tests, the screenshots, the server
+## `-- --server HOST:PORT --cert FILE.crt`, the files server.txt and server.crt next to an exported
+## game's executable (what friends get, see godot/FRIENDS.md), or the project settings
+## pow/net/server and pow/net/cert. Only the game's own scene turns it on: the tests, the screenshots, the server
 ## and the tools run without it (the hero in user://hero.json), and so does `-- --offline`
 ## (for working on the game without a server).
 ## The account (UserID + password) is asked for on the login screen and kept only while the game
@@ -24,6 +25,8 @@ const LEGACY_PATH := "user://hero.json"
 const FLUSH_MS := 3000
 const DEFAULT_SERVER := "127.0.0.1"
 const DEFAULT_CERT := "user://server/server.crt"  # server/main.gd's default data folder
+const SERVER_FILE := "server.txt"  # next to the executable: HOST or HOST:PORT
+const CERT_FILE := "server.crt"  # next to the executable: the server's certificate
 
 var sync: CloudSync = null
 var live: LiveClient = null
@@ -37,7 +40,7 @@ func _ready() -> void:
 	get_tree().auto_accept_quit = false  # the window's close goes through quit_game()
 	if not runs_the_game(OS.get_cmdline_args()):
 		return
-	var cfg := server_config(OS.get_cmdline_user_args())
+	var cfg := server_config(OS.get_cmdline_user_args(), exe_dir())
 	if cfg.is_empty():
 		return
 	start(cfg.address, cfg.port, null, cfg.cert_path)
@@ -57,13 +60,28 @@ static func runs_the_game(args: PackedStringArray) -> bool:
 	return true
 
 
-## {address, port, cert_path} of the server: the local one unless told otherwise; {} with
+## The folder of an exported game's executable, where server.txt and server.crt may lie; "" when
+## the game runs from the editor or `godot --path`.
+static func exe_dir() -> String:
+	if not OS.has_feature("template"):
+		return ""
+	return OS.get_executable_path().get_base_dir()
+
+
+## {address, port, cert_path} of the server: the command line first, then server.txt and
+## server.crt in dir (exe_dir()), then the project settings, else the local one; {} with
 ## --offline.
-static func server_config(argv: PackedStringArray) -> Dictionary:
+static func server_config(argv: PackedStringArray, dir := "") -> Dictionary:
 	if argv.has("--offline"):
 		return {}
 	var server := str(ProjectSettings.get_setting("pow/net/server", ""))
 	var cert_path := str(ProjectSettings.get_setting("pow/net/cert", ""))
+	if not dir.is_empty():
+		var from_file := read_server_file(dir.path_join(SERVER_FILE))
+		if not from_file.is_empty():
+			server = from_file
+		if FileAccess.file_exists(dir.path_join(CERT_FILE)):
+			cert_path = dir.path_join(CERT_FILE)
 	for i in argv.size() - 1:
 		if argv[i] == "--server":
 			server = argv[i + 1]
@@ -79,6 +97,18 @@ static func server_config(argv: PackedStringArray) -> Dictionary:
 		address = server.get_slice(":", 0)
 		port = int(server.get_slice(":", 1))
 	return {"address": address, "port": port, "cert_path": cert_path}
+
+
+## HOST or HOST:PORT from the first line of path that is not empty and not a # comment; "" when
+## there is no such file or line.
+static func read_server_file(path: String) -> String:
+	if not FileAccess.file_exists(path):
+		return ""
+	for line in FileAccess.get_file_as_string(path).split("\n"):
+		var t := line.strip_edges()
+		if not t.is_empty() and not t.begins_with("#"):
+			return t
+	return ""
 
 
 ## cert: the server's certificate, or null to read it from cert_path when connecting.

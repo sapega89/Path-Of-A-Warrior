@@ -1,0 +1,100 @@
+name: godot-build
+
+# Builds the game for Windows and Linux (godot/client/export_presets.cfg) so friends can play it.
+# Run it by hand from the Actions tab (Run workflow) or push a tag v* to also make a GitHub
+# release with both archives. The server's address and certificate go into each archive as
+# server.txt and server.crt (see godot/FRIENDS.md): the "server" input, or the repository
+# variables POW_SERVER (HOST:PORT) and POW_SERVER_CERT (the text of the server's server.crt).
+
+on:
+  workflow_dispatch:
+    inputs:
+      server:
+        description: "Server address HOST:PORT for server.txt (empty: the POW_SERVER variable)"
+        required: false
+        default: ""
+  push:
+    tags: ["v*"]
+  pull_request:  # a change to the build itself is built once, to see that it still works
+    paths: [".github/workflows/godot-build.yml", "godot/client/export_presets.cfg"]
+
+permissions:
+  contents: write  # the release on a tag
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: "4.5.1"
+      SERVER: ${{ inputs.server || vars.POW_SERVER }}
+      SERVER_CERT: ${{ vars.POW_SERVER_CERT }}
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1, the repo allows only pinned actions
+
+      - name: Install Godot and its export templates
+        run: |
+          base="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable"
+          curl -sSL -o godot.zip "$base/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot"
+          curl -sSL -o templates.tpz "$base/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          dir="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$dir"
+          unzip -q -j templates.tpz templates/version.txt templates/linux_release.x86_64 \
+            templates/windows_release_x86_64.exe templates/windows_release_x86_64_console.exe -d "$dir"
+          rm godot.zip templates.tpz
+
+      - name: Import
+        run: timeout 300 "$RUNNER_TEMP/godot" --headless --path godot/client --import
+
+      - name: Export
+        run: |
+          mkdir -p godot/build/windows godot/build/linux
+          timeout 600 "$RUNNER_TEMP/godot" --headless --path godot/client --export-release Windows ../build/windows/MercenarysPath.exe
+          timeout 600 "$RUNNER_TEMP/godot" --headless --path godot/client --export-release Linux ../build/linux/MercenarysPath.x86_64
+          test -s godot/build/windows/MercenarysPath.exe
+          test -s godot/build/linux/MercenarysPath.x86_64
+
+      - name: Server address, certificate and instructions
+        run: |
+          for d in godot/build/windows godot/build/linux; do
+            {
+              echo "# Адреса сервера гри: HOST або HOST:PORT (типовий порт 28310)."
+              echo "# Рядки з # — коментарі. Деталі: ІНСТРУКЦІЯ.txt"
+              if [ -n "$SERVER" ]; then echo "$SERVER"; else echo "127.0.0.1:28310"; fi
+            } > "$d/server.txt"
+            if [ -n "$SERVER_CERT" ]; then printf '%s\n' "$SERVER_CERT" > "$d/server.crt"; fi
+            cp godot/FRIENDS.md "$d/ІНСТРУКЦІЯ.txt"
+          done
+          sed -i 's/$/\r/' godot/build/windows/server.txt godot/build/windows/ІНСТРУКЦІЯ.txt  # Notepad
+          chmod +x godot/build/linux/MercenarysPath.x86_64
+          echo "server: ${SERVER:-127.0.0.1:28310 (not set)}, certificate: $([ -n "$SERVER_CERT" ] && echo yes || echo no)"
+
+      - name: Pack
+        run: |
+          mkdir -p dist
+          (cd godot/build/windows && zip -q -r "$GITHUB_WORKSPACE/dist/MercenarysPath-windows.zip" .)
+          tar -C godot/build/linux -czf dist/MercenarysPath-linux.tar.gz .
+          ls -la dist
+
+      - name: Upload Windows
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: MercenarysPath-windows
+          path: dist/MercenarysPath-windows.zip
+
+      - name: Upload Linux
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: MercenarysPath-linux
+          path: dist/MercenarysPath-linux.tar.gz
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/MercenarysPath-windows.zip dist/MercenarysPath-linux.tar.gz \
+            --title "Mercenary's Path $GITHUB_REF_NAME" \
+            --notes "Windows: MercenarysPath-windows.zip, Linux: MercenarysPath-linux.tar.gz. Як запустити — ІНСТРУКЦІЯ.txt в архіві (godot/FRIENDS.md)."
