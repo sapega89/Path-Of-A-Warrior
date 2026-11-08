@@ -13,6 +13,7 @@ extends Control
 ## F4 a general, F6 god mode, Esc quit.
 
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
+const MapArt := preload("res://scripts/world/map_art.gd")
 const MapSim := preload("res://scripts/sim/map_sim.gd")
 const Campaign := preload("res://scripts/core/campaign.gd")
 const Hero := preload("res://scripts/world/hero.gd")
@@ -94,9 +95,9 @@ func _ready() -> void:
 	world = Node3D.new()
 	world.name = "WorldRoot"
 	viewport.add_child(world)
-	MapBuilder.add_environment(world)
+	MapArt.add_environment(world)
 	map = MapBuilder.load_map(Campaign.lord_map(LORD))
-	builder = MapBuilder.new()
+	builder = MapArt.new()
 	builder.name = "Map"
 	world.add_child(builder)
 	builder.build(map)
@@ -317,6 +318,8 @@ func _update_view(t: float) -> void:
 			node.visible = sim.breakable_shown(b)
 			if node is Sprite3D:
 				CombatFeel.flash_sprite(node as Sprite3D, feel.flash_of(b), _flash_mats)
+			elif node.has_meta("material"):
+				CombatFeel.flash_material(node.get_meta("material"), feel.flash_of(b))
 	_place_loot()
 
 
