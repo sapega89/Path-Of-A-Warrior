@@ -96,8 +96,13 @@ var _flash_mats := {}  # Sprite3D -> its flash material
 var _anim_dt := 0.0  # seconds the figures' clips move on this frame (0 while a hit holds)
 
 
+## The mission to play: Router.params (the training gives its own).
+func mission_params() -> Dictionary:
+	return Router.params
+
+
 func _ready() -> void:
-	var p: Dictionary = Router.params
+	var p: Dictionary = mission_params()
 	tick = Settings.tick_seconds()
 	lord_id = int(p.get("lord", 1))
 	mission = int(p.get("mission", 0))
@@ -125,7 +130,7 @@ func _ready() -> void:
 	builder.name = "Map"
 	world.add_child(builder)
 	builder.build(map)
-	profile = Profile.load_or_new()
+	profile = Profile.load_or_new(str(p.get("profile_path", Profile.PATH)))
 	var s: Array = mission_info.get("start", [4, 4])
 	var resume := bool(p.get("resume", false)) and not profile.on_map.is_empty()
 	if resume:
@@ -486,6 +491,8 @@ static func exit_arrow(i: int) -> Texture2D:
 	return ImageTexture.create_from_image(img)
 
 
+## The exit arrows at the screen's edges, blinking while the exits are open; the one down sits
+## above the HUD (at the very bottom the HUD hid it).
 func _place_arrows() -> void:
 	var view := get_viewport_rect().size
 	var lit: bool = sim.exits_open() and (_blink & 2) != 0
@@ -495,7 +502,7 @@ func _place_arrows() -> void:
 		var s := a.texture.get_size()
 		a.size = s
 		match i:
-			0: a.position = Vector2((view.x - s.x) / 2.0, view.y - s.y - 16)
+			0: a.position = Vector2((view.x - s.x) / 2.0, hud.top_of(view) - s.y - 8)  # above the HUD
 			1: a.position = Vector2(16, (view.y - s.y) / 2.0)
 			2: a.position = Vector2((view.x - s.x) / 2.0, 16)
 			3: a.position = Vector2(view.x - s.x - 16, (view.y - s.y) / 2.0)
@@ -512,7 +519,13 @@ func pause() -> void:
 	pause_menu.sim = sim
 	pause_menu.save_game = save_on_map
 	pause_menu.resumed.connect(resume)
+	_pause_menu_ready(pause_menu)
 	add_child(pause_menu)
+
+
+## The pause menu before it is shown (the training makes its Exit skip the training).
+func _pause_menu_ready(_menu: MissionPause) -> void:
+	pass
 
 
 func resume() -> void:

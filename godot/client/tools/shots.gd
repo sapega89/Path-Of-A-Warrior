@@ -480,6 +480,7 @@ func _ready() -> void:
 	Router.current.next_line()
 	Router.current.press()
 	await _shot(out, "04d_briefing")
+	await _training_shots(out)
 	Router.go("mission", {"lord": 1, "mission": 0, "seed": 1})
 	var mission: Node = Router.current
 	await _frames(20)
@@ -738,6 +739,42 @@ func _battle_shots(out: String, game: RefCounted, mp: RefCounted) -> void:
 
 
 ## A blow's change of HP shown over a fighter.
+## The training before the first mission (training_screen.gd): its steps' hints, a pad's too,
+## the cleared room's arrow, Skip Training on the pause menu and the end.
+func _training_shots(out: String) -> void:
+	var trainee: RefCounted = load("res://scripts/core/profile.gd").new()
+	trainee.save("user://shot_training.json")
+	Router.go("training", {"profile_path": "user://shot_training.json"})
+	var training: Node = Router.current
+	var tut: Node = training.tutorial
+	await _seconds(3.0)  # the Stage banner
+	await _shot(out, "05a_training_move")
+	tut.begin(tut.Step.ATTACK)
+	await _seconds(3.0)  # the soldier comes in
+	await _shot(out, "05b_training_attack")
+	InputSetup.device = "pad"
+	InputSetup.pad_brand = "xbox"
+	InputSetup.device_changed.emit("pad")
+	await _shot(out, "05c_training_attack_pad")
+	InputSetup.device = "keys"
+	InputSetup.pad_brand = "generic"
+	InputSetup.device_changed.emit("keys")
+	tut.begin(tut.Step.POTION)
+	await _shot(out, "05d_training_potion")
+	training.sim.enemies.clear()
+	training.sim.enemies_alive = 0
+	tut.begin(tut.Step.EXIT)
+	var t0 := Time.get_ticks_msec()  # Stage Clear, then the exits blink
+	while Time.get_ticks_msec() - t0 < 8000 and not training.arrows.any(func(a): return a.visible):
+		await _frames(1)
+	await _shot(out, "05e_training_exit")
+	training.pause()
+	await _shot(out, "05f_training_pause")
+	training.resume()
+	tut.begin(tut.Step.DONE)
+	await _shot(out, "05g_training_done")
+
+
 func _blow_shown(b: RefCounted) -> bool:
 	return b.state == OnlineBattle.TURN and b.damage_shown.size() > 0 and b.damage_tick == 2
 

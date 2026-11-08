@@ -289,12 +289,14 @@ func _confirmed() -> void:
 			finish()
 
 
-## Saves the new hero over the old one and starts the opening story.
+## Saves the new hero over the old one and starts the opening story, then the training
+## (training_screen.gd), then `then` (the game menu).
 func finish() -> void:
 	profile.save(path)
 	var then := str(Router.params.get("then", "game_menu"))
 	Router.back()
-	Router.push("story", {"story": Stories.OPENING, "then": then, "profile_path": path})
+	Router.push("story", {"story": Stories.OPENING, "then": "training",
+		"then_params": {"then": then, "profile_path": path}, "profile_path": path})
 
 
 func _unhandled_input(event: InputEvent) -> void:

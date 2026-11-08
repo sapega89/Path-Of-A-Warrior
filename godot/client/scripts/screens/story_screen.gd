@@ -372,9 +372,10 @@ func _end() -> void:
 	_over = true
 	set_process(false)
 	var then := str(Router.params.get("then", ""))
+	var then_params: Dictionary = Router.params.get("then_params", {})
 	Router.back()
 	if not then.is_empty():
-		Router.push(then)
+		Router.push(then, then_params)
 
 
 ## SKIP: from a talk of the opening to the end, from a talk of an ending to its pictures; on a
