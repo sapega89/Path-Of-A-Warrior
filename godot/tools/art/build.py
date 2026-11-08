@@ -9,6 +9,8 @@ Outputs (glTF binary, Y up):
     characters/humanoid_clips.glb   skeleton with every clip (one library for all people)
     characters/weapons.glb  every weapon on its hand bone
     props/<name>.glb        environment pieces (see props.py)
+    portraits/busts.glb     with --portraits: the busts of the portraits (see portraits.py)
+    characters/divchyna.glb with --story: the people only the story pictures have (portraits.py)
 --preview FILE renders a line-up of everyone with Cycles for a quick look.
 """
 
@@ -24,6 +26,7 @@ from mathutils import Vector  # noqa: E402
 
 import characters  # noqa: E402
 import mesh_kit  # noqa: E402
+import portraits  # noqa: E402
 import props  # noqa: E402
 import rig  # noqa: E402
 import weapons  # noqa: E402
@@ -165,10 +168,18 @@ def main():
     ap.add_argument("--pose", default="idle")
     ap.add_argument("--frame", type=int, default=8)
     ap.add_argument("--skip-export", action="store_true")
+    ap.add_argument("--portraits", action="store_true")
+    ap.add_argument("--story", action="store_true")
     args = ap.parse_args(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:])
     arm = rig.load(args.kaykit)
     bones = rig.bones(arm)
     painted_material()
+    if args.story:
+        for name, faces in portraits.build_story_people(arm, bones, rig.DEFORM, args.out, export):
+            print(f"{name:16s} {faces:6d} faces")
+    if args.portraits:
+        for name, faces in portraits.build_busts(arm, bones, rig.DEFORM, args.out, export):
+            print(f"{name:16s} {faces:6d} faces")
     if not args.skip_export:
         for name, tris in build_people(arm, bones, args.out):
             print(f"{name:16s} {tris:6d} tris")

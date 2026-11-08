@@ -4,7 +4,8 @@
 й ряд усіх людей у єдиному стилі. У місіях гра вже бере з неї людей: героя за класом і зброєю,
 ворогів за стороною генерала місії (`scripts/world/map_people.gd`), ефекти, намальовані
 кодом (`scripts/world/map_effects.gd`), карти (`scripts/world/map_art.gd`) та іконки речей і
-вмінь (`assets/art/icons`). Рамки інтерфейсу місій і меню ще старі.
+вмінь (`assets/art/icons`), меню й HUD (`scripts/ui/ui_theme.gd`, `scripts/ui/map_hud.gd`),
+портрети й ілюстрації сюжету (`scripts/ui/pictures.gd`).
 
 ```
 godot --path godot/client res://scenes/art_slice.tscn              # табір
@@ -38,6 +39,7 @@ C9A15B, трава 9E9A5C, дуб 4E6B3A, побілка EDE6D6, кіновар 
 | Іконки всіх речей і вмінь (80) | Кодом у SVG (`icons.py`) | наш код |
 | Шрифти Kurale (заголовки), PT Sans (текст) | `@fontsource`, латиниця й кирилиця | OFL 1.1, тексти поруч зі шрифтами |
 | Тема меню, HUD місії, тло, стрілки виходів, значки прапорця й повзунка | Кодом (`ui_theme.gd`, `map_hud.gd`, `ui_backdrop.gdshader`) | наш код |
+| 42 портрети й 15 ілюстрацій сюжету | Погруддя й сцени з людей і речей нового арту (`portraits.py`, `tools/portraits.tscn`, `tools/story_pictures.tscn`), небо й рамка — шейдери | наш код |
 
 Жодної картинки з оригінальної гри; тест `test_art_slice.gd` перевіряє, що скрипти й шейдери
 нового арту не посилаються на `assets/original`.
@@ -54,6 +56,20 @@ godot --headless --path godot/client --import
 `--preview FILE` малює всіх у ряд (Cycles) для швидкого погляду; `--skip-export` — лише
 прев'ю. Зріз зібрано з KayKit на коміті `672074b`.
 
+Портрети й ілюстрації сюжету (Godot малює їх з вікном, не `--headless`):
+
+```
+python godot/tools/art/build.py --kaykit kaykit --out godot/client/assets/art --portraits --story --skip-export
+godot --headless --path godot/client --import
+godot --path godot/client --resolution 640x640 res://tools/portraits.tscn [-- 33 37]
+godot --path godot/client --resolution 1040x800 res://tools/story_pictures.tscn [-- 2 5]
+```
+
+`--portraits` будує погруддя (`portraits/busts.glb` і `busts.json`), `--story` — людей, які є
+лише в ілюстраціях (дівчина, `characters/divchyna.glb`). `portraits.tscn` малює кожне погруддя
+в `portraits/<номер>.png` (256×256), `story_pictures.tscn` — кожну сцену в `story/e<n>.png`
+(520×400); числа після `--` — лише ці.
+
 - `rig.py` — скелет: які кістки лишаються, нові довжини й положення, які кліпи беремо і як
   вони звуться в грі (`idle`, `walk`, `attack_slash`, `block_hit`, `aim_bow`, `sit`...).
 - `mesh_kit.py` — примітиви (точене тіло, трубка, куля, брус, вигнута стрічка, клинок); кожен
@@ -68,6 +84,11 @@ godot --headless --path godot/client --import
 - `props.py` — хата, тин, частокіл, кузня, шатро, намет, корогви, вогнище, віз, бочка,
   скриня, гармата, стіг, журавель, тополя, дуб, кущ, камінь, трава, пеньок; для карт — ялина,
   дрова, стояк зі списами, брили на схилі урвища.
+- `portraits.py` — 42 портрети: рецепт кожного словами `characters.py` (здебільшого варіант
+  людини з карт: інша шапка, волосся, вуса, шрам, сережка, хутряний комір), сторона для кольору
+  тла й поворот голови; погруддя в позі `idle` без ніг, запечене в статичні меші. Дівчина
+  (Оксана, Маруся) — вінок, коса, намисто, червоний кептар, довга сорочка, червоні чобітки; вона ж
+  — ціла фігура для ілюстрацій.
 - `icons.py` — `assets/art/icons/<аркуш>.svg` (без Blender: `python godot/tools/art/icons.py`):
   аркуші tool, kibo, sungbo, shinki, skill і skillgray — смуги іконок 128×128 у порядку
   оригінальних аркушів (номер іконки той самий). Невеликий набір у самому скрипті (клинок, держак,
@@ -124,6 +145,15 @@ godot --headless --path godot/client --import
 - `scripts/ui/map_hud.gd` — HUD місії на сітці 240×320 оригіналу (ціле число разів), але
   векторами: плашки, скляні кулі з рідиною-полігоном, ромби, текст PT Sans Bold з контуром;
   іконки — на своєму шарі з міпмапами, числа й клавіші — над ними.
+- `scripts/ui/pictures.gd` — портрети й ілюстрації сюжету в екранах: текстура з міпмапами (стає
+  на місце імпортованої за тим самим шляхом) і `TextureRect` у золотій рамці
+  (`portrait_frame.gdshader`: округлі кути, обідок, лінія тушшю, затінок до краю).
+- `tools/portraits.gd` — погруддя тим самим шейдером із контуром, сонце й повітря карт; 3D малюється
+  на прозорому й лягає на тло сторони (`portrait_backdrop.gdshader`) у другому, плоскому вікні.
+- `tools/story_pictures.gd` — 15 сцен ілюстрацій: земля `ArtGround`, речі, люди в кліпах на
+  потрібній миті (`pose`), хрести й могили з простих форм, шабля в землі, чарка в руці; небо
+  `story_sky.gdshader` (градієнт мазками, сонце чи місяць, хмари, освітлені з боку сонця,
+  зорі, блискавка), над усім `story_overlay.gdshader` (дощ, темні кути, зерно паперу).
 - `scripts/art/art_slice.gd` — збирає табір, бій, ряд людей (`people`) чи ефекти (`effects`,
   `effects_room`), світло й камеру.
 

@@ -45,7 +45,7 @@ var tick := MapSim.TICK_MS / 1000.0
 const GOLD_ICON := 12  # the heap of gold in the tool icons
 ## The exit arrow of the new art, pointing down: two gold chevrons in ink, the near one fainter.
 const EXIT_ARROW := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 40"><g fill="#d4a645" stroke="#2b211c" stroke-width="2.5" stroke-linejoin="round"><path d="M4 3 L24 17 L44 3 L44 11 L24 25 L4 11 Z" fill-opacity="0.55"/><path d="M4 15 L24 29 L44 15 L44 23 L24 37 L4 23 Z"/></g><path d="M24 30.5 l3 2.5 l-3 2.5 l-3 -2.5 z" fill="#a8322d"/></svg>'
-const PORTRAITS := "res://assets/original/portraits/%d.png"
+const Pictures := preload("res://scripts/ui/pictures.gd")
 
 var lord_id := 1
 var mission := 0
@@ -419,14 +419,8 @@ func _make_talk_box() -> void:
 	talk_face = PanelContainer.new()
 	talk_face.name = "Face"
 	talk_face.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var face_style := style.duplicate()
-	face_style.set_content_margin_all(2)
-	talk_face.add_theme_stylebox_override("panel", face_style)
-	talk_portrait = TextureRect.new()
-	talk_portrait.name = "Portrait"
-	talk_portrait.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	talk_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	talk_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	talk_face.add_theme_stylebox_override("panel", StyleBoxEmpty.new())  # the portrait has its frame
+	talk_portrait = Pictures.framed("Portrait", Vector2(46, 46))
 	talk_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	talk_face.add_child(talk_portrait)
 	talk_box.add_child(talk_face)
@@ -460,7 +454,7 @@ func _place_talk() -> void:
 	var k := hud.scale_of(view)
 	var top := view.y - (MapHud.PANEL_H + (MapHud.BAR_H if hud.show_bar else 0)) * k
 	var left := view.x / 2.0 - 120.0 * k
-	talk_portrait.texture = load(PORTRAITS % talk_portrait_id())
+	talk_portrait.texture = Pictures.portrait(talk_portrait_id())
 	talk_portrait.custom_minimum_size = Vector2(46, 46) * k
 	talk_face.position = Vector2(left + 2 * k, top - 50 * k)
 	talk_face.size = Vector2(48, 48) * k
