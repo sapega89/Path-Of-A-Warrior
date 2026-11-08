@@ -189,11 +189,15 @@ class MeshKit:
         self.deform = self.bm.verts.layers.deform.verify() if self.bones else None
         # colour names drawn as other ones (a figure with skin of another colour)
         self.remap = {}
+        # a transform put over everything added while it is set (a smaller head, a broader chest)
+        self.pre = None
 
     # -- low level -------------------------------------------------------------
     def add(self, geom, color, bone=None, matrix=None, smooth=True, shade=1.0):
         verts, faces = geom
         m = matrix if matrix is not None else Matrix.Identity(4)
+        if self.pre is not None:
+            m = self.pre @ m
         bv = [self.bm.verts.new(m @ Vector(v)) for v in verts]
         if bone is not None:
             gi = self.index[bone]

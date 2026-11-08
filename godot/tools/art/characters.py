@@ -105,11 +105,16 @@ RECIPES = {
     # fur vest, horns, glowing eyes, a club
     "upyr": {
         "hat": "horns", "hair": "fur", "hair_cap": True, "face": "none", "beard": True, "nose": 1.35,
-        "skin": "skin_upyr", "eyes": "ember",
+        "skin": "skin_upyr", "eyes": "ember", "eye_size": 1.8,
         "coat": "skin_upyr", "coat_trim": "skin_upyr_dark", "coat_len": "shirt", "vest": "fur",
         "sash": "cinnabar_dark", "trousers": "fur", "boots": "skin_upyr_dark", "belly": 1.14,
     },
 }
+
+
+# A grown man's build: the head smaller, the chest broader (around the spine).
+HEAD_SCALE = 0.92
+CHEST_SCALE = 1.07
 
 
 class Figure:
@@ -128,17 +133,35 @@ class Figure:
         k = self.k
         c = self.h("head") + Vector((0, 0, 0.125))
         self.head_center = c
-        k.ball(c, (0.108, 0.112, 0.128), "skin", "head", segs=14, rings=8)
-        k.tube(self.h("head") + Vector((0, 0.01, -0.07)), c, 0.052, 0.05, "skin_dark", "head", segs=8)
+        # the skull, and under it a heavy jaw narrowing to a square chin (carved: flat faces)
+        k.ball(c + Vector((0, 0.008, 0.014)), (0.102, 0.11, 0.116), "skin", "head", segs=12, rings=7)
+        jaw = [(-0.135, 0.0, "hard"), (-0.134, 0.042), (-0.11, 0.068), (-0.07, 0.088), (-0.03, 0.094), (0.0, 0.09)]
+        k.lathe(c + Vector((0, -0.016, 0)), jaw, "skin", "head", segs=8, sx=1.0, sy=0.98, smooth=False)
+        if r.get("face", "mustache") != "none" and not r.get("beard"):
+            # the shadow of a shaven jaw that is never quite shaven
+            k.lathe(c + Vector((0, -0.017, 0)), [(-0.137, 0.0, "hard"), (-0.136, 0.044), (-0.11, 0.071),
+                                                 (-0.075, 0.09), (-0.068, 0.0)],
+                    "stubble", "head", segs=8, sx=1.0, sy=0.98, smooth=False)
+        k.tube(self.h("head") + Vector((0, 0.01, -0.07)), c + Vector((0, 0.01, -0.02)), 0.064, 0.058, "skin_dark",
+               "head", segs=8)
+        # a heavy brow over deep-set eyes, a long nose
+        k.box(c + Vector((0, -0.094, 0.042)), (0.165, 0.042, 0.032), "skin", "head", taper=0.9)
         nose = r.get("nose", 1.0)
-        k.ball(c + Vector((0, -0.112, -0.012)), (0.022 * nose, 0.03 * nose, 0.032 * nose), "skin_dark", "head",
-               segs=8, rings=5)
+        k.box(c + Vector((0, -0.112, -0.008)), (0.024 * nose, 0.026 * nose, 0.064 * nose), "skin_dark", "head",
+              taper=0.55, rot=Matrix.Rotation(0.18, 4, "X"))
+        k.ball(c + Vector((0, -0.124, -0.036)), (0.017 * nose, 0.018 * nose, 0.015 * nose), "skin_dark", "head",
+               segs=7, rings=4)
         for sx in (1, -1):
-            k.ball(c + Vector((0.042 * sx, -0.098, 0.022)), (0.016, 0.01, 0.016), r.get("eyes", "chernozem"), "head",
-                   segs=6, rings=4)
-            k.box(c + Vector((0.045 * sx, -0.1, 0.048)), (0.04, 0.012, 0.012), r["hair"], "head",
-                  rot=Matrix.Rotation(-0.12 * sx, 4, "Y"))
-            k.ball(c + Vector((0.108 * sx, 0.0, -0.005)), (0.018, 0.028, 0.034), "skin_dark", "head", segs=6, rings=4)
+            # narrow, hard eyes in the shadow of the brow, and brows drawn down into a frown
+            e = r.get("eye_size", 1.0)
+            k.ball(c + Vector((0.04 * sx, -0.097, 0.016)), (0.017 * e, 0.006 * e, 0.007 * e), r.get("eyes", "chernozem"),
+                   "head", segs=6, rings=4)
+            k.box(c + Vector((0.043 * sx, -0.113, 0.05)), (0.052, 0.014, 0.014), r["hair"], "head",
+                  rot=Matrix.Rotation(-0.32 * sx, 4, "Y"))
+            k.ball(c + Vector((0.1 * sx, 0.004, -0.008)), (0.014, 0.026, 0.032), "skin_dark", "head", segs=6, rings=4)
+        if r.get("face", "mustache") != "none":
+            # a hard line of a mouth under the mustache
+            k.box(c + Vector((0, -0.106, -0.082)), (0.042, 0.01, 0.007), "chernozem", "head")
         face = r.get("face", "mustache")
         if face in ("mustache", "long_mustache", "short_mustache"):
             droop = {"mustache": 0.11, "long_mustache": 0.17, "short_mustache": 0.04}[face]
@@ -405,8 +428,8 @@ class Figure:
         ua, la, hd = "upperarm." + side, "lowerarm." + side, "hand." + side
         sh, el, wr = self.h(ua), self.h(la), self.h("wrist." + side)
         if not r.get("armour"):
-            k.ball(sh + Vector((0.01 * s, 0, 0)), (0.085, 0.08, 0.08), coat, ua, segs=10, rings=6)
-        k.along(sh, el, [(-0.05, 0.06), (0.0, 0.075), (0.5, 0.07), (1.0, 0.06), (1.06, 0.056)], coat, ua, segs=10)
+            k.ball(sh + Vector((0.01 * s, 0, 0)), (0.095, 0.088, 0.088), coat, ua, segs=10, rings=6)
+        k.along(sh, el, [(-0.05, 0.066), (0.0, 0.083), (0.5, 0.077), (1.0, 0.063), (1.06, 0.058)], coat, ua, segs=10)
         k.ball(el, 0.058, coat, la, segs=8, rings=5)
         k.along(el, wr, [(0.0, 0.058), (0.72, 0.05)], coat, la, segs=10)
         k.along(el, wr, [(0.7, 0.056, "hard"), (0.75, 0.064), (1.0, 0.066), (1.02, 0.0)], trim, la, segs=10)
@@ -416,8 +439,8 @@ class Figure:
         k.along(self.h("wrist." + side) - Vector((0.02 * s, 0, 0)), self.h(hd) + Vector((0.02 * s, 0, 0)),
                 [(0.0, 0.04), (1.0, 0.042)], "skin", "wrist." + side, segs=8)
         hc = self.h(hd) + Vector((0.03 * s, -0.005, -0.012))
-        k.ball(hc, (0.062, 0.046, 0.056), "skin", hd, segs=10, rings=6)
-        k.ball(hc + Vector((-0.02 * s, -0.04, 0.008)), (0.022, 0.02, 0.018), "skin", hd, segs=6, rings=4)
+        k.ball(hc, (0.053, 0.042, 0.05), "skin", hd, segs=8, rings=5, smooth=False)
+        k.ball(hc + Vector((-0.018 * s, -0.036, 0.008)), (0.019, 0.017, 0.016), "skin", hd, segs=6, rings=4)
 
     def leg(self, r, side):
         k = self.k
@@ -438,9 +461,14 @@ class Figure:
     def build(self, r, legs=True):
         if r.get("skin"):
             self.k.remap = {"skin": r["skin"], "skin_dark": r["skin"] + "_dark"}
+        # the head a little smaller (with its hat) and the chest broader than a doll's
+        neck = self.h("head")
+        self.k.pre = Matrix.Translation(neck) @ Matrix.Scale(HEAD_SCALE, 4) @ Matrix.Translation(-neck)
         self.head(r)
         self.hat(r)
+        self.k.pre = Matrix.Scale(CHEST_SCALE, 4, Vector((1, 0, 0)))
         self.torso(r)
+        self.k.pre = None
         for side in ("l", "r"):
             self.arm(r, side)
             if legs:

@@ -12,12 +12,12 @@ const SIZE := 512  # painted at, then made smaller
 const OUT := 256
 ## The backdrop of each side: [light behind the head, dark at the corners].
 const SIDES := {
-	"cossack": [Color("d9b26a"), Color("6a4b28")],
-	"crown": [Color("9fb4cf"), Color("23324c")],
-	"horde": [Color("c0645a"), Color("4a1a24")],
-	"hero": [Color("ecc96c"), Color("7a5420")],
-	"plain": [Color("b3a68f"), Color("4a4238")],
-	"upyr": [Color("a3b08a"), Color("262f22")],
+	"cossack": [Color("9a7f52"), Color("2e2216")],
+	"crown": [Color("6e7f95"), Color("161e2c")],
+	"horde": [Color("8a4a42"), Color("2a1014")],
+	"hero": [Color("a8884e"), Color("3a2810")],
+	"plain": [Color("827868"), Color("26221c")],
+	"upyr": [Color("6f7a60"), Color("161c12")],
 }
 
 var view: SubViewport  # the bust, on a clear background
@@ -74,17 +74,16 @@ func _stage() -> void:
 	add_child(view)
 	var env := Environment.new()
 	env.background_mode = Environment.BG_CLEAR_COLOR
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color("9aa2c0")
-	env.ambient_light_energy = 0.45
 	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	var we := WorldEnvironment.new()
 	we.environment = env
 	view.add_child(we)
 	var sun := DirectionalLight3D.new()
-	sun.light_color = Color("ffe6c0")
-	sun.light_energy = 1.0
-	sun.transform = Transform3D(Basis.looking_at(Vector3(0.55, -0.45, -0.7).normalized(), Vector3.UP), Vector3.ZERO)
+	ArtKit.light(sun, env)
+	# a hard light from the side: half of the face in the shade
+	sun.light_energy = 1.05
+	env.ambient_light_energy = 0.3
+	sun.transform = Transform3D(Basis.looking_at(Vector3(0.8, -0.4, -0.45).normalized(), Vector3.UP), Vector3.ZERO)
 	view.add_child(sun)
 	stand = Node3D.new()
 	view.add_child(stand)
