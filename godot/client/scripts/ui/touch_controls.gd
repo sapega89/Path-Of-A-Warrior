@@ -31,7 +31,7 @@ var _button_fingers := {}  # finger index -> action
 
 
 func _ready() -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	visible = force_visible or DisplayServer.is_touchscreen_available()
 
@@ -111,13 +111,35 @@ func _exit_tree() -> void:
 	_button_fingers.clear()
 
 
+## In the new art: discs of dusk glass with a whitewash rim (gold while held), the stick's
+## knob ringed in gold; a sabre on the attack button, the skill's number on the others, two bars
+## on PAUSE.
 func _draw() -> void:
-	var dim := Color(UiTheme.TEXT, 0.25)
-	var lit := Color(UiTheme.ACCENT, 0.6)
+	var glass := Color(UiTheme.BG, 0.35)
+	var rim := Color(UiTheme.TEXT, 0.45)
 	if _stick_finger >= 0:
-		draw_circle(_stick_origin, STICK_RADIUS, dim)
-		draw_circle(_stick_origin + stick_vector * STICK_RADIUS, 36.0, lit)
+		draw_circle(_stick_origin, STICK_RADIUS, glass, true, -1.0, true)
+		draw_arc(_stick_origin, STICK_RADIUS, 0.0, TAU, 64, rim, 3.0, true)
+		var knob := _stick_origin + stick_vector * STICK_RADIUS
+		draw_circle(knob, 36.0, Color(UiTheme.TEXT, 0.3), true, -1.0, true)
+		draw_arc(knob, 36.0, 0.0, TAU, 48, Color(UiTheme.ACCENT, 0.85), 3.0, true)
 	var held := _button_fingers.values()
+	var font := UiTheme.font("bold")
 	for action in BUTTONS:
 		var r := BUTTON_RADIUS * (0.6 if action == "pause" else 1.0)
-		draw_circle(button_center(action), r, lit if action in held else dim)
+		var c := button_center(action)
+		var on: bool = action in held
+		draw_circle(c, r, Color(UiTheme.ACCENT, 0.4) if on else glass, true, -1.0, true)
+		draw_arc(c, r, 0.0, TAU, 48, Color(UiTheme.ACCENT, 0.9) if on else rim, 3.0, true)
+		var ink := Color(UiTheme.TEXT, 0.8)
+		match action:
+			"attack":
+				draw_line(c + Vector2(-16, 16), c + Vector2(18, -18), ink, 5.0, true)
+				draw_line(c + Vector2(-20, 6), c + Vector2(-6, 20), Color(UiTheme.ACCENT, 0.85), 4.0, true)
+			"pause":
+				for dx in [-6.0, 6.0]:
+					draw_line(c + Vector2(dx, -10), c + Vector2(dx, 10), ink, 5.0, true)
+			_:
+				var n: String = String(action).trim_prefix("skill_")
+				var w := font.get_string_size(n, HORIZONTAL_ALIGNMENT_LEFT, -1, 40).x
+				draw_string(font, c + Vector2(-w / 2.0, 14), n, HORIZONTAL_ALIGNMENT_LEFT, -1, 40, ink)

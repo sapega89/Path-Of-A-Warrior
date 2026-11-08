@@ -1,24 +1,27 @@
 extends Control
-## The HUD of a mission's map, drawn from the original 240x320 pictures at a whole-number
-## scale: the bars at the top with the mission clock (left) and the kills or the last enemy
-## hit (right), and the panel at the bottom with the HP ball (left), the MP ball (right) and
-## the two potions on the potion keys. A ball empties from the top as HP or MP goes.
-## Above the panel the skill bar (as in pyport): the five belt slots (keys Z X C V B) on the
-## left with their counts, the five skills (keys 1-5) on the right, grey when not learned
-## or without the MP; the slot in use is framed white. A click on a slot uses it. With the
-## bar the panel does not show the two potions (the belt shows all five). In the bottom-left
-## corner AUTO: white while the auto-hunt is on, grey while off; a click toggles it. While
-## someone talks on the map that corner is SKIP (pyport's left soft key): a click skips the
-## talk. In the bottom-right corner PAUSE (pyport's soft key): a click pauses the game.
+## The HUD of a mission's map in the new art, laid out on the original 240x320 grid at a
+## whole-number scale (so the places to click stay where they were) and drawn smooth: the
+## mission clock on a plaque at the top left, the kills (or the last enemy hit: his name, level
+## and HP) at the top right, and the panel at the bottom: a dusk plate with a gold rim and a
+## band of folk rhombi, the HP orb (left, cinnabar) and the MP orb (right, blue) that empty from
+## the top as HP or MP goes, with the value in the middle, and the two potions on the potion
+## keys. Above the panel the skill bar (as in pyport): the five belt slots (keys Z X C V B) on
+## the left with their counts, the five skills (keys 1-5) on the right, grey when not learned
+## or without the MP; the slot in use has a light rim. A click on a slot uses it. With the bar
+## the panel does not show the two potions (the belt shows all five). In the bottom-left corner
+## AUTO: gold while the auto-hunt is on, grey while off; a click toggles it. While someone talks
+## on the map that corner is SKIP (pyport's left soft key): a click skips the talk. In the
+## bottom-right corner PAUSE (pyport's soft key): a click pauses the game.
 ## The icons of the potions and the skills are the new art's (ItemSlot.icon), drawn smooth on
-## a layer of their own over the pixels, the counts and the keys on a layer over them.
+## a layer of their own over the plates, the counts and the keys on a layer over them.
 
 const ItemSlot := preload("res://scripts/ui/item_slot.gd")
-const UI := "res://assets/original/ui/"
-const BALL := 35  # the balls' size
-const BALL_X := [4, 201]  # in the 240 px wide panel
+const UiTheme := preload("res://scripts/ui/ui_theme.gd")
+const BALL := 35  # how full an orb is: 0..BALL
+const ORB_X := [26, 214]  # the orbs' middles in the 240 px wide panel
+const ORB_Y := 33
+const ORB_R := 22
 const PANEL_H := 61
-const TOP_Y := 16  # the clock and the kills, below the top bars
 const ITEM := 28  # a potion on the panel
 const CELL := 23  # a slot of the bar: 1 px shared border and a 22 px icon
 const ICON := 22  # an icon in a slot of the bar
@@ -32,13 +35,11 @@ const SKILL_KEYS := "12345"
 var sim: RefCounted
 var kills_shown := 0  # counts up to the kills one a tick
 
-var _box_top: Texture2D = preload(UI + "box_01.png")
-var _box_top_r: Texture2D = preload(UI + "box_01_R.png")
-var _panel: Texture2D = preload(UI + "box_02.png")
-var _panel_r: Texture2D = preload(UI + "box_02R.png")
-var _cover: Texture2D = preload(UI + "ball_black.png")
-var _digits: Texture2D = preload(UI + "number1.png")
-var _small: Texture2D = preload(UI + "number2.png")
+## The colours of the orbs: [top of the liquid, its bottom].
+const HP_LIQUID := [Color("e0574a"), Color("6e1a16")]
+const MP_LIQUID := [Color("5b8fd6"), Color("16284d")]
+const PLATE := Color(0.075, 0.09, 0.13, 0.9)
+
 var _icons: Control  # the icons, drawn smooth
 var _labels: Control  # the counts and the keys over them
 var show_bar := true
@@ -48,10 +49,9 @@ var auto_allowed := true  # false on hard: no AUTO corner (scripts/screens/missi
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	_icons = _layer("Icons", CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS, _draw_icons)
-	_labels = _layer("Labels", CanvasItem.TEXTURE_FILTER_NEAREST, _draw_labels)
+	_labels = _layer("Labels", CanvasItem.TEXTURE_FILTER_LINEAR, _draw_labels)
 
 
 func _layer(layer_name: String, filter: int, drawn: Callable) -> Control:
@@ -65,7 +65,7 @@ func _layer(layer_name: String, filter: int, drawn: Callable) -> Control:
 	return c
 
 
-## The scale of the original pixels: as many whole times as 320 rows fit the screen.
+## The scale of the HUD's grid: as many whole times as 320 rows fit the screen.
 func scale_of(view: Vector2) -> float:
 	return maxf(1.0, floorf(view.y / 320.0))
 
@@ -84,27 +84,24 @@ func _draw() -> void:
 		return
 	var view := get_viewport_rect().size
 	var k := scale_of(view)
-	# the top bars at the corners
-	_put(_box_top, Vector2(0, 2 * k), k)
-	_put(_box_top_r, Vector2(view.x - _box_top_r.get_width() * k, 2 * k), k)
+	# the clock at the top left, the kills or the last enemy hit at the top right
 	var seconds: int = sim.play_seconds()
-	_clock(seconds, Vector2(11 * k, (TOP_Y + 5) * k), k)
+	_plaque(Rect2(Vector2(4, 4) * k, Vector2(58, 20) * k), k)
+	_text("%02d:%02d" % [(seconds / 60) % 100, seconds % 60], Vector2(33, 19) * k, 13 * k, UiTheme.TEXT, k, 0)
 	if not sim.target_info.is_empty():
 		_target(sim.target_info, view, k)
 	else:
-		_number(kills_shown, Vector2(view.x - 12 * k, (TOP_Y + 5) * k), k)
-	# the panel at the bottom: two halves around the middle
+		_kills(kills_shown, view, k)
+	# the panel at the bottom with the orbs
 	var origin := Vector2(view.x / 2.0 - 120.0 * k, view.y - PANEL_H * k)
-	_put(_panel, origin, k)
-	_put(_panel_r, origin + Vector2(120 * k, 0), k)
-	var fill := [_fill(sim.hero.hp, sim.hero.max_hp), _fill(sim.hero.mp, sim.hero.max_mp)]
-	for b in 2:
-		var h: int = BALL - int(fill[b])
-		if h > 0:
-			draw_texture_rect_region(_cover, Rect2(origin + Vector2(BALL_X[b], 0) * k,
-				Vector2(BALL, h) * k), Rect2(0, 0, BALL, h))
+	_panel(origin, k)
+	_orb(origin + Vector2(ORB_X[0], ORB_Y) * k, ORB_R * k, _fill(sim.hero.hp, sim.hero.max_hp), HP_LIQUID, sim.hero.hp, k)
+	_orb(origin + Vector2(ORB_X[1], ORB_Y) * k, ORB_R * k, _fill(sim.hero.mp, sim.hero.max_mp), MP_LIQUID, sim.hero.mp, k)
+	if not show_bar:
+		for b in 2:
+			_socket(_potion_rect(origin, b, k), k, false)
 	if talking():
-		_corner(Rect2(Vector2(0, view.y - AUTO_H * k), Vector2(AUTO_W, AUTO_H) * k), "SKIP", Color.WHITE, k)
+		_corner(Rect2(Vector2(0, view.y - AUTO_H * k), Vector2(AUTO_W, AUTO_H) * k), "SKIP", UiTheme.TEXT, k)
 	elif auto_allowed:
 		_auto(view, k)
 	_pause(view, k)
@@ -130,9 +127,7 @@ func _draw_icons() -> void:
 		for b in 2:
 			var item := int(sim.quick_slots[sim.quick_keys[b]][0])
 			if item != 0:
-				var side := 2 * b - 1
-				_icon("tool", item - 1, Rect2(origin + Vector2(120 + side * (44 + 28 * (1 - b)), PANEL_H - 50) * k,
-					Vector2(ITEM, ITEM) * k))
+				_icon("tool", item - 1, _potion_rect(origin, b, k).grow(-2 * k))
 		return
 	var top := origin + Vector2(0, -BAR_H) * k
 	for b in 5:
@@ -164,40 +159,33 @@ func _draw_labels() -> void:
 			var slot: Array = sim.quick_slots[sim.quick_keys[b]]
 			if int(slot[0]) == 0:
 				continue
-			var side := 2 * b - 1
-			var p := origin + Vector2(120 + side * (38 + 11 * (1 - b)), PANEL_H - 33) * k
-			_labels.draw_texture_rect_region(_small, Rect2(p, Vector2(11, 12) * k), Rect2(98, 0, 11, 12))
-			_number(int(slot[1]), origin + Vector2(120 + side * (28 + 10 * b), PANEL_H - 35) * k, k, _labels)
+			var r := _potion_rect(origin, b, k)
+			_text("x%d" % int(slot[1]), r.end - Vector2(2, 3) * k, 10 * k, UiTheme.TEXT, k, 1, _labels)
 		return
 	var top := origin + Vector2(0, -BAR_H) * k
 	for b in 5:
 		var at := top + Vector2(slot_x(false, b), 0) * k
 		var slot: Array = sim.quick_slots[b]
 		if int(slot[0]) != 0 and int(slot[1]) > 1:
-			_labels.draw_texture_rect_region(_small, Rect2(at + Vector2(CELL - 9, BAR_H - 13) * k,
-				Vector2(9, 12) * k), Rect2(int(slot[1]) * 9, 0, 9, 12))
+			_text(str(int(slot[1])), at + Vector2(CELL - 1, BAR_H - 3) * k, 10 * k, UiTheme.TEXT, k, 1, _labels)
 		_key_label(BELT_KEYS[b], at, k)
 		_key_label(SKILL_KEYS[b], top + Vector2(slot_x(true, b), 0) * k, k)
 
 
 func _auto(view: Vector2, k: float) -> void:
 	_corner(Rect2(Vector2(0, view.y - AUTO_H * k), Vector2(AUTO_W, AUTO_H) * k), "AUTO",
-		Color.WHITE if auto_on else Color8(120, 120, 120), k)
+		UiTheme.HIGHLIGHT if auto_on else UiTheme.TEXT_DIM, k)
 
 
 func _pause(view: Vector2, k: float) -> void:
 	_corner(Rect2(Vector2(view.x - PAUSE_W * k, view.y - AUTO_H * k), Vector2(PAUSE_W, AUTO_H) * k),
-		"PAUSE", Color.WHITE, k)
+		"PAUSE", UiTheme.TEXT, k)
 
 
-## A black corner with its word in the middle.
+## A plaque in a bottom corner with its word in the middle.
 func _corner(r: Rect2, text: String, color: Color, k: float) -> void:
-	draw_rect(r, Color.BLACK)
-	var font := get_theme_default_font()
-	var size := int(12 * k)
-	var w := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x
-	draw_string(font, Vector2(r.position.x + (r.size.x - w) / 2.0, r.end.y - 4 * k), text,
-		HORIZONTAL_ALIGNMENT_LEFT, -1, size, color)
+	_plaque(Rect2(r.position + Vector2(1, 1) * k, r.size - Vector2(2, 1) * k), k)
+	_text(text, Vector2(r.get_center().x, r.end.y - 5 * k), 10 * k, color, k, 0)
 
 
 ## Is the point on the PAUSE corner?
@@ -239,24 +227,18 @@ static func slot_x(skill: bool, i: int) -> int:
 	return (240 - CELL * 5 - 1 if skill else 0) + i * CELL
 
 
-## The bar's black strip and the frames of its slots (the icons and the keys: their layers).
+## The bar's slots: a dark hollow each (the icons and the keys: their layers).
 func _bar(top: Vector2, k: float) -> void:
-	draw_rect(Rect2(top, Vector2(240, BAR_H) * k), Color.BLACK)
 	for b in 5:
-		_slot_box(top + Vector2(slot_x(false, b), 0) * k, k, sim.effect_item != 0 and sim.effect_slot == b)
+		_socket(Rect2(top + Vector2(slot_x(false, b), 0) * k, Vector2(CELL + 1, BAR_H) * k).grow(-0.5 * k), k,
+			sim.effect_item != 0 and sim.effect_slot == b)
 		var s := int(sim.hotkeys[b])
-		_slot_box(top + Vector2(slot_x(true, b), 0) * k, k, s != 0 and sim.hero.action == s)
-
-
-func _slot_box(at: Vector2, k: float, hot: bool) -> void:
-	draw_rect(Rect2(at, Vector2(CELL + 1, BAR_H) * k), Color.WHITE if hot else Color8(90, 90, 90), false, k)
+		_socket(Rect2(top + Vector2(slot_x(true, b), 0) * k, Vector2(CELL + 1, BAR_H) * k).grow(-0.5 * k), k,
+			s != 0 and sim.hero.action == s)
 
 
 func _key_label(text: String, at: Vector2, k: float) -> void:
-	var font := get_theme_default_font()
-	var p := at + Vector2(2, 9) * k
-	_labels.draw_string_outline(font, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, int(9 * k), int(k), Color.BLACK)
-	_labels.draw_string(font, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, int(9 * k), Color.WHITE)
+	_text(text, at + Vector2(2.5, 8.5) * k, 8 * k, UiTheme.ACCENT, k, -1, _labels)
 
 
 ## The bar's slot under a point of the screen: ["belt", 0..4], ["skill", 0..4], or [].
@@ -282,67 +264,136 @@ static func _fill(v: int, most: int) -> int:
 	return maxi(f, 3) if f != 0 else 0
 
 
-func _put(tex: Texture2D, at: Vector2, k: float) -> void:
-	draw_texture_rect(tex, Rect2(at, tex.get_size() * k), false)
+## A plaque: a dark plate with round corners and a thin gold rim.
+func _plaque(r: Rect2, k: float) -> void:
+	var sb := UiTheme.box(PLATE, UiTheme.ACCENT_DARK, maxi(1, int(k)))
+	sb.set_corner_radius_all(int(5 * k))
+	draw_style_box(sb, r)
 
 
-## A number, its last digit ending at `right`, a comma before every third digit.
-func _number(value: int, right: Vector2, k: float, on: CanvasItem = self) -> void:
-	var x := right.x
-	var n := 0
-	while true:
-		if n != 0 and n % 3 == 0:
-			x -= 4 * k
-			on.draw_texture_rect_region(_digits, Rect2(Vector2(x, right.y), Vector2(5, 14) * k), Rect2(100, 0, 5, 14))
-		x -= 10 * k
-		on.draw_texture_rect_region(_digits, Rect2(Vector2(x, right.y), Vector2(10, 14) * k),
-			Rect2((value % 10) * 10, 0, 10, 14))
-		n += 1
-		value /= 10
-		if value <= 0:
-			break
+## A dark hollow for an icon; the one in use has a light rim.
+func _socket(r: Rect2, k: float, hot: bool) -> void:
+	var sb := UiTheme.box(Color(UiTheme.SLOT, 0.88), UiTheme.HIGHLIGHT if hot else UiTheme.SLOT_RIM,
+		int(2 * k) if hot else maxi(1, int(k / 2)))
+	sb.set_corner_radius_all(int(3 * k))
+	draw_style_box(sb, r)
 
 
-## The mission clock mm:ss.
-func _clock(secs: int, at: Vector2, k: float) -> void:
-	var xs := [0, 9, 25, 34]
-	var ds := [(secs / 600) % 10, (secs / 60) % 10, (secs % 60) / 10, secs % 10]
-	for i in 4:
-		draw_texture_rect_region(_digits, Rect2(at + Vector2(xs[i], 0) * k, Vector2(10, 14) * k),
-			Rect2(int(ds[i]) * 10, 0, 10, 14))
-	draw_texture_rect_region(_digits, Rect2(at + Vector2(20, 0) * k, Vector2(4, 14) * k), Rect2(115, 0, 4, 14))
+## Where potion b (0 left, 1 right) sits on the panel when there is no bar.
+static func _potion_rect(origin: Vector2, b: int, k: float) -> Rect2:
+	return Rect2(origin + Vector2(64 if b == 0 else 148, 15) * k, Vector2(ITEM, ITEM) * k)
 
 
-## The last enemy hit: his name, level and HP bar in place of the kills.
+## The panel: a dusk plate with a gold rim along its top and a band of rhombi between the orbs.
+func _panel(origin: Vector2, k: float) -> void:
+	var plate := UiTheme.box(PLATE, UiTheme.ACCENT_DARK, int(1.5 * k))
+	plate.corner_radius_top_left = int(14 * k)
+	plate.corner_radius_top_right = int(14 * k)
+	plate.corner_radius_bottom_left = 0
+	plate.corner_radius_bottom_right = 0
+	plate.border_width_bottom = 0
+	draw_style_box(plate, Rect2(origin + Vector2(0, 3) * k, Vector2(240, PANEL_H - 3) * k))
+	var line := Color(UiTheme.ACCENT, 0.45)
+	for y in [12.0, 54.0]:
+		draw_line(origin + Vector2(52, y) * k, origin + Vector2(188, y) * k, line, k, true)
+	var to := get_canvas_item()
+	var reach := 4 if show_bar else 1  # without the bar the potions sit on the band
+	for i in range(-reach, reach + 1):
+		var c := origin + Vector2(120 + i * 15, 33) * k
+		var big := i == 0
+		UiTheme.rhombus(to, c, (6.5 if big else 4.5) * k, UiTheme.ACCENT)
+		UiTheme.rhombus(to, c, (3.5 if big else 2.2) * k, UiTheme.RED)
+		if i < reach:
+			draw_circle(c + Vector2(7.5, 0) * k, 0.9 * k, line, true, -1.0, true)
+	for side in [-1, 1]:
+		UiTheme.rhombus(to, origin + Vector2(120 + side * 66, 12) * k, 2 * k, UiTheme.ACCENT)
+		UiTheme.rhombus(to, origin + Vector2(120 + side * 66, 54) * k, 2 * k, UiTheme.ACCENT)
+
+
+## An orb of glass: the liquid up to fill (0..BALL) with a light surface, the value in the
+## middle, a shine on the glass and a gold rim.
+func _orb(c: Vector2, r: float, fill: int, liquid: Array, value: int, k: float) -> void:
+	draw_circle(c, r + 2.5 * k, UiTheme.INK, true, -1.0, true)
+	draw_circle(c, r, Color("0b0e15"), true, -1.0, true)
+	var f := float(fill) / float(BALL)
+	if f > 0.0:
+		var s := clampf(1.0 - 2.0 * f, -1.0, 1.0)
+		var a0 := asin(s)
+		var points := PackedVector2Array()
+		var colors := PackedColorArray()
+		var n := 32
+		for i in n + 1:
+			var t := lerpf(a0, PI - a0, float(i) / float(n))
+			var p := c + Vector2(cos(t), sin(t)) * (r - 0.5 * k)
+			points.append(p)
+			colors.append((liquid[0] as Color).lerp(liquid[1], clampf((p.y - (c.y - r)) / (2.0 * r), 0.0, 1.0)))
+		draw_polygon(points, colors)
+		if f < 0.98:
+			var half := sqrt(maxf(0.0, 1.0 - s * s)) * (r - 0.5 * k)
+			var y := c.y + s * r
+			draw_line(Vector2(c.x - half, y), Vector2(c.x + half, y), (liquid[0] as Color).lightened(0.35), 1.2 * k, true)
+	# the glass: a dark ring inside the rim, a shine at the upper left
+	draw_arc(c, r - 1.5 * k, 0.0, TAU, 48, Color(0, 0, 0, 0.35), 3.0 * k, true)
+	var shine := PackedVector2Array()
+	for i in 13:
+		var t := lerpf(PI * 1.02, PI * 1.5, i / 12.0)
+		shine.append(c + Vector2(cos(t), sin(t)) * r * 0.84)
+	for i in 13:
+		var t := lerpf(PI * 1.5, PI * 1.02, i / 12.0)
+		shine.append(c + Vector2(0.1, 0.12) * r + Vector2(cos(t), sin(t)) * r * 0.76)
+	draw_colored_polygon(shine, Color(1, 1, 1, 0.2))
+	draw_circle(c + Vector2(-0.38, -0.52) * r, r * 0.07, Color(1, 1, 1, 0.45), true, -1.0, true)
+	draw_arc(c, r + 0.8 * k, 0.0, TAU, 64, UiTheme.ACCENT, 2.2 * k, true)
+	_text(str(value), c + Vector2(0, 4.5 * k), 12 * k, UiTheme.TEXT, k, 0)
+
+
+## A line of text in PT Sans Bold with a dark outline: align -1 from the point, 0 centred on
+## it, 1 ending at it (the point is on the baseline).
+func _text(text: String, at: Vector2, size: float, color: Color, k: float, align: int, on: CanvasItem = self) -> void:
+	var font := UiTheme.font("bold")
+	var px := int(size)
+	var w := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
+	var p := at - Vector2(w * (align + 1) / 2.0, 0)
+	on.draw_string_outline(font, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, px, maxi(2, int(2 * k)), UiTheme.INK)
+	on.draw_string(font, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, px, color)
+
+
+## The kills on a plaque at the top right, after two crossed sabres.
+func _kills(value: int, view: Vector2, k: float) -> void:
+	var r := Rect2(Vector2(view.x - 62 * k, 4 * k), Vector2(58, 20) * k)
+	_plaque(r, k)
+	var c := r.position + Vector2(11, 10) * k
+	for side in [-1.0, 1.0]:
+		var tip := c + Vector2(side * 6, -6) * k
+		var hilt := c + Vector2(-side * 5, 5) * k
+		draw_line(hilt, tip, UiTheme.TEXT, 1.6 * k, true)
+		draw_line(hilt + Vector2(side * 2.2, 0.6) * k, hilt + Vector2(side * 0.2, -2.6) * k, UiTheme.ACCENT, 1.4 * k, true)
+	_text(str(value), Vector2(r.end.x - 6 * k, r.position.y + 15 * k), 13 * k, UiTheme.TEXT, k, 1)
+
+
+## The last enemy hit: his name, his level on a cinnabar badge and his HP bar, in place of the kills.
 func _target(t: Dictionary, view: Vector2, k: float) -> void:
-	var font := get_theme_default_font()
-	var font_size := int(12 * k)
+	var font := UiTheme.font("bold")
 	var label := tr(str(t.get("name", "")))
-	var w := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
-	var top := TOP_Y * k
-	draw_string_outline(font, Vector2(view.x - 8 * k - w, top + 11 * k), label,
-		HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, int(k), Color.BLACK)
-	draw_string(font, Vector2(view.x - 8 * k - w, top + 11 * k), label,
-		HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color.WHITE)
-	_small_number(int(t.get("level", 1)), Vector2(view.x - 6 * k, top + 15 * k), k)
-	var bar := int(t.get("hp_bar", 0))
+	var w := font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, int(11 * k)).x / k
+	var width := maxf(86.0, w + 30.0)
+	var r := Rect2(Vector2(view.x - (width + 4) * k, 4 * k), Vector2(width, 30) * k)
+	_plaque(r, k)
+	_text(label, r.position + Vector2(6, 13) * k, 11 * k, UiTheme.TEXT, k, -1)
+	var badge := Vector2(r.end.x - 11 * k, r.position.y + 10 * k)
+	draw_circle(badge, 7.5 * k, UiTheme.RED, true, -1.0, true)
+	draw_arc(badge, 7.5 * k, 0.0, TAU, 32, UiTheme.ACCENT, 1.4 * k, true)
+	_text(str(int(t.get("level", 1))), badge + Vector2(0, 3.5 * k), 9 * k, UiTheme.TEXT, k, 0)
+	var track := Rect2(r.position + Vector2(6, 20) * k, Vector2(width - 12, 6) * k)
+	var back := UiTheme.box(Color("0b0e15"), UiTheme.ACCENT_DARK, maxi(1, int(k / 2)))
+	back.set_corner_radius_all(int(3 * k))
+	draw_style_box(back, track)
+	var bar := clampi(int(t.get("hp_bar", 0)), 0, 62)
 	if bar > 0:
-		var r := Rect2(Vector2(view.x - 82 * k, top + 17 * k), Vector2(mini(bar, 62), 7) * k)
-		draw_rect(r, Color8(0, 0, 0))
-		r = Rect2(r.position + Vector2(1, 1) * k, r.size - Vector2(2, 2) * k)
-		draw_rect(r, Color8(107, 0, 0))
-		r = Rect2(r.position + Vector2(0, 1) * k, Vector2(r.size.x, 3 * k))
-		draw_rect(r, Color8(181, 0, 0))
-		r = Rect2(r.position + Vector2(0, 1) * k, Vector2(r.size.x, k))
-		draw_rect(r, Color8(255, 73, 0))
-
-
-func _small_number(value: int, right: Vector2, k: float) -> void:
-	var x := right.x
-	while true:
-		x -= 9 * k
-		draw_texture_rect_region(_small, Rect2(Vector2(x, right.y), Vector2(9, 12) * k),
-			Rect2((value % 10) * 9, 0, 9, 12))
-		value /= 10
-		if value <= 0:
-			break
+		var fill := UiTheme.box(Color("c0392b"))
+		fill.set_corner_radius_all(int(2 * k))
+		fill.border_blend = false
+		var inner := track.grow(-1 * k)
+		draw_style_box(fill, Rect2(inner.position, Vector2(inner.size.x * bar / 62.0, inner.size.y)))
+		draw_rect(Rect2(inner.position + Vector2(1, 0.6) * k, Vector2(inner.size.x * bar / 62.0 - 2 * k, 1.2 * k)),
+			Color(1, 0.6, 0.5, 0.45))

@@ -1,7 +1,7 @@
 extends RefCounted
 ## Icon buttons of the Gear, Inventory and Skills pages: an icon of the new art
-## (assets/art/icons, made by godot/tools/art/icons.py) on a dark place, a gold border on the
-## chosen one. The same icons serve the shops, the HUD and the things on the ground.
+## (assets/art/icons, made by godot/tools/art/icons.py) in a dark hollow with a thin rim, a gold
+## border on the chosen one. The same icons serve the shops, the HUD and the things on the ground.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Items := preload("res://scripts/core/items.gd")
@@ -22,12 +22,21 @@ static func button(node_name: String) -> Button:
 	b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	b.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	b.add_theme_stylebox_override("normal", box(false))
+	b.add_theme_stylebox_override("hover", _place(UiTheme.SLOT.lightened(0.08), UiTheme.ACCENT_DARK, 2))
+	b.add_theme_stylebox_override("pressed", _place(UiTheme.SLOT, UiTheme.ACCENT, 2))
+	b.add_theme_stylebox_override("hover_pressed", _place(UiTheme.SLOT, UiTheme.ACCENT, 2))
+	b.add_theme_stylebox_override("disabled", _place(Color(UiTheme.SLOT, 0.6), UiTheme.SLOT_RIM, 1))
 	return b
 
 
-## The look of a place; the chosen one has a gold border.
+## The look of a place: a dark hollow with a thin rim; the chosen one has a gold border.
 static func box(selected: bool) -> StyleBoxFlat:
-	var sb := UiTheme.box(UiTheme.BUTTON, UiTheme.ACCENT if selected else Color.TRANSPARENT, 3 if selected else 0)
+	return _place(UiTheme.SLOT, UiTheme.ACCENT if selected else UiTheme.SLOT_RIM, 3 if selected else 1)
+
+
+static func _place(fill: Color, rim: Color, width: int) -> StyleBoxFlat:
+	var sb := UiTheme.box(fill, rim, width)
+	sb.set_corner_radius_all(6)
 	sb.set_content_margin_all(4)
 	return sb
 

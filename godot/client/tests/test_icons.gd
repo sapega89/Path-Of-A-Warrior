@@ -68,7 +68,7 @@ func test_the_hud_draws_them_smooth() -> void:
 	root.add_child(hud)
 	var icons: Control = hud.get_node("Icons")
 	eq(icons.texture_filter, CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS, "the icons smooth")
-	eq(hud.texture_filter, CanvasItem.TEXTURE_FILTER_NEAREST, "the HUD's pixels sharp")
+	eq(hud.get_node("Labels").texture_filter, CanvasItem.TEXTURE_FILTER_LINEAR, "the counts and keys smooth")
 	check(hud.get_node("Labels").get_index() > icons.get_index(), "the counts and keys over the icons")
 	hud.free()
 
