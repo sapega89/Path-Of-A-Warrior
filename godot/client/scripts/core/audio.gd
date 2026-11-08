@@ -58,8 +58,9 @@ func play_music(tune: int) -> void:
 		_music_player.play()
 
 
-## Plays effect n (3..16). False when it is held back by the one before.
-func play_sound(n: int) -> bool:
+## Plays effect n (3..16), at a pitch and a volume (dB) of its own (the hits on the map vary
+## them a little: scripts/world/combat_feel.gd). False when it is held back by the one before.
+func play_sound(n: int, pitch: float = 1.0, volume_db: float = 0.0) -> bool:
 	var now := Time.get_ticks_msec()
 	if _last != -1 and MIN_GAP_MS.has(_last) and now - _last_time < int(MIN_GAP_MS[_last]):
 		return false
@@ -77,6 +78,8 @@ func play_sound(n: int) -> bool:
 			free = p
 			break
 	free.stream = _stream(SFX_PATH % n)
+	free.pitch_scale = pitch
+	free.volume_db = volume_db
 	if free.stream != null:
 		free.play()
 	return true

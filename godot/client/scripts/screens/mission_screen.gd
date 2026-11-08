@@ -8,6 +8,9 @@ extends Control
 ## buffs, and the HUD. A talk on the map shows the portrait of who speaks beside the line, just
 ## above the HUD, as pyport's.
 ## Params: {lord, mission, seed (optional: the same enemies every run)}.
+## A hit on the map is felt (scripts/world/combat_feel.gd, the options Hit effects, Screen shake,
+## Vibration): the picture stands still a moment, the camera shakes, the one hit flashes white and
+## recoils, the one killed flies off, the hit sound varies a little and the pad rumbles.
 ## The mouse, as pyport's: the left button beside the hero walks that way while it is held
 ## (dragging turns him, two quick clicks run), a click on the hero or the right button attacks,
 ## a click on the skill bar uses the slot, on AUTO toggles the auto-hunt, on PAUSE pauses.
@@ -31,6 +34,7 @@ const Items := preload("res://scripts/core/items.gd")
 const MissionPause := preload("res://scripts/ui/mission_pause.gd")
 const ExpBar := preload("res://scripts/ui/exp_bar.gd")
 const Stories := preload("res://scripts/core/stories.gd")
+const CombatFeel := preload("res://scripts/world/combat_feel.gd")
 
 ## One tick of the game, by the game speed of the settings (MapSim.TICK_MS at Med).
 var tick := MapSim.TICK_MS / 1000.0
@@ -85,6 +89,8 @@ var _last_held := -1
 var _mouse_dir := -1  # the direction the left mouse button holds, -1: none
 var _blink := 0
 var pause_menu: MissionPause  # shown while the game is paused
+var feel := CombatFeel.new()  # how a hit feels: the hitstop, shake, flash, flight, sound, rumble
+var _flash_mats := {}  # Sprite3D -> its flash material
 
 
 func _ready() -> void:
@@ -203,7 +209,13 @@ func _ready() -> void:
 	touch.name = "Touch"
 	add_child(touch)
 	add_to_group(InputSetup.RIGHT_BUTTON)  # the right button attacks, not BACK
+	feel.use_settings(Settings)
+	Settings.changed.connect(_on_setting_changed)
 	_update_view(0.0)
+
+
+func _on_setting_changed(_key: String) -> void:
+	feel.use_settings(Settings)
 
 
 ## The 4-direction of a stick or keys (the original hero walks in 4 directions), or -1.
@@ -239,8 +251,10 @@ func _process(delta: float) -> void:
 			_belt = i
 	if held != -1 or _fire or _hotkey != -1 or _potion != -1 or _belt != -1:
 		autopilot.player_key()
-	_acc += delta
-	while _acc >= tick:
+	feel.advance(delta)
+	if feel.freeze <= 0.0:
+		_acc += delta  # while a hit holds the picture, no tick goes by
+	while _acc >= tick and feel.freeze <= 0.0:
 		_acc -= tick
 		var auto: Dictionary = autopilot.decide(sim)
 		if int(auto.held) != -1 and held == -1:
@@ -254,9 +268,13 @@ func _process(delta: float) -> void:
 		if _skip:
 			sim.skip_talk()
 			_skip = false
+		var before := CombatFeel.snapshot(sim)
 		sim.tick(held, _pressed, _fire, _hotkey, _potion, _belt)
-		for n in sim.sounds:
-			Audio.play_sound(n)
+		var hits := CombatFeel.hits(sim, before)
+		feel.react(hits)
+		feel.play_sounds(sim.sounds, hits)
+		feel.rumble(InputSetup.device)
+		_forget_feel()
 		_pressed = -1
 		_fire = false
 		_hotkey = -1
@@ -296,10 +314,22 @@ static func smooth(prev: Vector2i, now: Vector2i, t: float) -> Vector2:
 	return Vector2(prev).lerp(Vector2(now), clampf(t, 0.0, 1.0))
 
 
+## The hit effects of those gone from the map are dropped.
+func _forget_feel() -> void:
+	var alive := {sim.hero: true}
+	for e in sim.enemies:
+		alive[e] = true
+	for b in sim.breakables:
+		alive[b] = true
+	feel.forget_except(alive)
+
+
 func _update_view(t: float) -> void:
 	hero.global_position = Hero.px_to_world(smooth(sim.hero.prev_pos, sim.hero.pos, t))
 	hero.set_frame(sim.hero_sprite_frame(), sim.hero.action >= 12)
+	CombatFeel.flash_sprite(hero.sprite, feel.flash_of(sim.hero), _flash_mats)
 	camera.focus = sim.rooms.center(sim.cell)
+	feel.shake_camera(camera, Hero.PIXEL_SIZE)
 	hud.queue_redraw()
 	_place_soldiers(t)
 	_place_shots()
@@ -330,8 +360,15 @@ func _place_soldiers(t: float) -> void:
 			world.add_child(node)
 			node.setup(e.type, tint, MapSim.table("squad_offsets"), sim.general)
 			soldiers[e] = node
-		node.global_position = Hero.px_to_world(smooth(e.prev_pos, e.pos, t))
+		# a knock-back (a long step while hit) goes out fast and slows down; the one hit
+		# recoils, the one killed flies off (in map pixels; z: up)
+		var knocked: bool = e.action == 2 and (e.pos - e.prev_pos).length() > 8
+		var o := feel.offset_of(e)
+		node.global_position = Hero.px_to_world(smooth(e.prev_pos, e.pos, feel.knock_t(t) if knocked else t)
+			+ Vector2(o.x, o.y)) + Vector3(0.0, o.z * Hero.PIXEL_SIZE, 0.0)
 		node.set_frame(sim.enemy_sprite_frame(e), int(map4[e.dir]), e.action >= 6)
+		for sprite in node.sprites:
+			CombatFeel.flash_sprite(sprite, feel.flash_of(e), _flash_mats)
 
 
 ## Breakable objects: they blink while breaking and are gone once broken.
@@ -340,6 +377,8 @@ func _place_objects() -> void:
 		var node := builder.get_node_or_null("Object_%d_%d" % [b.tile.x, b.tile.y]) as Node3D
 		if node != null:
 			node.visible = sim.breakable_shown(b)
+			if node is Sprite3D:
+				CombatFeel.flash_sprite(node as Sprite3D, feel.flash_of(b), _flash_mats)
 
 
 ## Gold and items on the floor.
@@ -609,10 +648,18 @@ func uses_right_button() -> bool:
 ## his position, as pyport's pointer.
 func pointer_dir(at: Vector2) -> int:
 	var middle := hero.global_position + Vector3(0, (20 + Hero.FOOT_PX) * Hero.PIXEL_SIZE, 0)
+	# measured on the still camera: the shake of a hit does not turn the hero
+	var shaken := [camera.h_offset, camera.v_offset, camera.rotation.z]
+	camera.h_offset = 0.0
+	camera.v_offset = 0.0
+	camera.rotation.z = 0.0
 	var c := camera.unproject_position(middle)
 	var box := Vector2(
 		absf(camera.unproject_position(middle + Vector3(14 * Hero.PIXEL_SIZE, 0, 0)).x - c.x),
 		absf(camera.unproject_position(middle + Vector3(0, 20 * Hero.PIXEL_SIZE, 0)).y - c.y))
+	camera.h_offset = shaken[0]
+	camera.v_offset = shaken[1]
+	camera.rotation.z = shaken[2]
 	var d := at - c
 	if absf(d.x) < box.x and absf(d.y) < box.y:
 		return -1
