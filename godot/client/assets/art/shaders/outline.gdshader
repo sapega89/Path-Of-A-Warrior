@@ -4,7 +4,7 @@ shader_type spatial;
 render_mode unshaded, cull_front, shadows_disabled;
 
 uniform vec4 ink : source_color = vec4(0.169, 0.129, 0.11, 1.0);
-uniform float width_px = 2.2;
+uniform float width_px = 1.6;
 
 void vertex() {
 	vec4 clip = PROJECTION_MATRIX * (MODELVIEW_MATRIX * vec4(VERTEX, 1.0));

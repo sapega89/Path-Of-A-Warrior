@@ -6,7 +6,7 @@ extends Control
 ## pages Total Exp and Time Exp, the level gone up on it), the soldiers (the people as 3D
 ## figures playing the clips of their actions, scripts/world/map_people.gd), the effects made
 ## in code (scripts/world/map_effects.gd: skills, potions and scrolls, the fire on whoever a
-## fire skill hits, the auras of buffs, hit sparks, weapon trails, the archers' arrows), and
+## fire skill hits, the auras of buffs, the blood of hits, weapon trails, the archers' arrows), and
 ## the HUD. A talk on the map shows the portrait of who speaks beside the line, just
 ## above the HUD, as pyport's.
 ## Params: {lord, mission, seed (optional: the same enemies every run)}.
@@ -43,8 +43,8 @@ const ItemSlot := preload("res://scripts/ui/item_slot.gd")
 ## One tick of the game, by the game speed of the settings (MapSim.TICK_MS at Med).
 var tick := MapSim.TICK_MS / 1000.0
 const GOLD_ICON := 12  # the heap of gold in the tool icons
-## The exit arrow of the new art, pointing down: two gold chevrons in ink, the near one fainter.
-const EXIT_ARROW := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 40"><g fill="#d4a645" stroke="#2b211c" stroke-width="2.5" stroke-linejoin="round"><path d="M4 3 L24 17 L44 3 L44 11 L24 25 L4 11 Z" fill-opacity="0.55"/><path d="M4 15 L24 29 L44 15 L44 23 L24 37 L4 23 Z"/></g><path d="M24 30.5 l3 2.5 l-3 2.5 l-3 -2.5 z" fill="#a8322d"/></svg>'
+## The exit arrow of the new art, pointing down: two brass chevrons in ink, the near one fainter.
+const EXIT_ARROW := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 40"><g fill="#b89550" stroke="#0f0d0c" stroke-width="2.5" stroke-linejoin="round"><path d="M4 3 L24 17 L44 3 L44 11 L24 25 L4 11 Z" fill-opacity="0.55"/><path d="M4 15 L24 29 L44 15 L44 23 L24 37 L4 23 Z"/></g><path d="M24 30.5 l3 2.5 l-3 2.5 l-3 -2.5 z" fill="#7e241f"/></svg>'
 const Pictures := preload("res://scripts/ui/pictures.gd")
 
 var lord_id := 1
@@ -327,7 +327,7 @@ func _update_view(t: float) -> void:
 	shown.append_array(sim.effects())
 	shown.append_array(sim.fires())
 	for sp in sim.sparks():
-		shown.append(["spark", sp[0], sp[1]])
+		shown.append(["blood", sp[0], sp[1]])  # the hits of MapSim land on people
 	shown.append_array(trails)
 	effects.show_effects(shown, t)
 	_place_objects()

@@ -10,8 +10,8 @@ extends Node3D
 ##     winding away;
 ##   3 a forest edge: rows of firs and oaks, bushes and stumps.
 ## The ground is a green meadow, lush dark grass, dry steppe or red trodden earth. The light
-## is the maps' (a warm sun with soft shadows, a cool shade) or a cold moon, and far away the
-## land fades into the colour of the sky's horizon. The sky itself is painted behind the 3D
+## is the maps' (ArtKit.light: a dull sun through the clouds, a deep cool shade) or a cold
+## moon, and far away the land fades into the colour of the sky's horizon. The sky itself is painted behind the 3D
 ## view (sky_settings(): assets/art/shaders/story_sky.gdshader).
 
 const ArtKit := preload("res://scripts/art/art_kit.gd")
@@ -19,20 +19,20 @@ const ArtGround := preload("res://scripts/art/art_ground.gd")
 
 ## The flat part of the ground: the fighters, the scenery and the camera's view of it.
 const PLAY := Rect2(-18, -9, 36, 21)
-const DAY := {"top": Color("4a6896"), "horizon": Color("e3d2aa"), "horizon_y": 0.34,
-	"glow": Color("f6e4b4"), "glow_size": 0.5, "sun": Vector2(0.18, 0.06), "sun_size": 0.0,
-	"sun_colour": Color("fff0c8"), "clouds": 0.42, "cloud_dark": Color("8f97ab"),
-	"cloud_lit": Color("fbf1dc"), "stars": 0.0, "bolt": -1.0, "seed": 3.0}
+const DAY := {"top": Color("565d6b"), "horizon": Color("a8a395"), "horizon_y": 0.34,
+	"glow": Color("cfc4a8"), "glow_size": 0.3, "sun": Vector2(0.18, 0.06), "sun_size": 0.0,
+	"sun_colour": Color("efe2c4"), "clouds": 0.55, "cloud_dark": Color("646a76"),
+	"cloud_lit": Color("b4afa2"), "stars": 0.0, "bolt": -1.0, "seed": 3.0}
 const NIGHT := {"top": Color("0c1222"), "horizon": Color("2c3854"), "horizon_y": 0.34,
 	"glow": Color("5a6a90"), "glow_size": 0.3, "sun": Vector2(0.78, 0.1), "sun_size": 0.035,
 	"sun_colour": Color("ece6cf"), "clouds": 0.25, "cloud_dark": Color("1a2238"),
 	"cloud_lit": Color("6a7898"), "stars": 1.0, "bolt": -1.0, "seed": 7.0}
 ## The ground's colours by its kind: [soil, dry grass, green grass], and how green it is.
 const GROUNDS := [
-	[Color("c9a15b"), Color("9e9a5c"), Color("6f8a4a"), 1.0],  # a green meadow
-	[Color("8f7448"), Color("6f7a48"), Color("4d6a36"), 1.4],  # lush dark grass
-	[Color("c9a15b"), Color("aaa067"), Color("8a8a4e"), 0.0],  # dry steppe
-	[Color("a0704a"), Color("8f7d50"), Color("6f7a44"), 0.4],  # red trodden earth
+	[Color("8f7a56"), Color("7c7a52"), Color("566a3e"), 1.0],  # a green meadow
+	[Color("6c5a3e"), Color("5c6440"), Color("3f5530"), 1.4],  # lush dark grass
+	[Color("8f7a56"), Color("878058"), Color("6e6e46"), 0.0],  # dry steppe
+	[Color("7a5a40"), Color("706448"), Color("596242"), 0.4],  # red trodden earth
 ]
 
 var scenery := -1
@@ -106,13 +106,11 @@ func _light() -> void:
 	if night:
 		sun.light_color = Color("aab8e0")
 		sun.light_energy = 0.32
-		env.ambient_light_color = Color("44507a")
-		env.ambient_light_energy = 0.55
+		env.ambient_light_color = Color("3c4666")
+		env.ambient_light_energy = 0.5
+		ArtKit.grade(env)
 	else:
-		sun.light_color = Color("ffe6c0")
-		sun.light_energy = 0.62
-		env.ambient_light_color = Color("9aa2c0")
-		env.ambient_light_energy = 0.42
+		ArtKit.light(sun, env)
 	sun.transform = Transform3D(Basis.looking_at(Vector3(0.5, -0.7, -0.5).normalized(), Vector3.UP), Vector3.ZERO)
 	env.fog_light_color = sky.horizon
 

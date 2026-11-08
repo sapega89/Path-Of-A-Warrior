@@ -9,14 +9,14 @@ const OUTLINE := preload("res://assets/art/shaders/outline.gdshader")
 ## The ten colours of the style guide.
 const PALETTE := {
 	"chernozem": Color("2B211C"),
-	"ochre": Color("C9A15B"),
-	"grass": Color("9E9A5C"),
-	"oak": Color("4E6B3A"),
-	"whitewash": Color("EDE6D6"),
-	"cinnabar": Color("A8322D"),
-	"blue": Color("2F4E7A"),
-	"gold": Color("D4A645"),
-	"steel": Color("6E7780"),
+	"ochre": Color("A88A57"),
+	"grass": Color("85814F"),
+	"oak": Color("435A33"),
+	"whitewash": Color("CFC5B0"),
+	"cinnabar": Color("8A2B25"),
+	"blue": Color("2D3F57"),
+	"gold": Color("AE8C48"),
+	"steel": Color("6A7178"),
 	"dusk": Color("1C2230"),
 }
 
@@ -24,9 +24,20 @@ const PALETTE := {
 const LOOPING := ["idle", "idle_unarmed", "idle_2h", "walk", "walk_relaxed", "walk_back", "run",
 	"run_relaxed", "blocking", "sit", "aim_bow"]
 
+## The light and air of the world: a dull sun through an overcast sky, a deep cool shade,
+## the land fading far away into grey dust; the colours held down and the contrast up.
+const SUN_COLOR := Color("f0dcbc")
+const SUN_ENERGY := 0.7
+const AMBIENT := Color("68708a")
+const AMBIENT_ENERGY := 0.34
+const AIR := Color("9b978b")
+## The grade of the finished picture: brightness, contrast, saturation (muted, harder).
+const GRADE := Vector3(0.96, 1.12, 0.8)
+
 static var _scenes := {}
 static var _clips: AnimationLibrary
 static var _props_material: ShaderMaterial
+static var _tufts_material: ShaderMaterial
 
 
 static func scene(path: String) -> PackedScene:
@@ -51,6 +62,32 @@ static func props_material() -> ShaderMaterial:
 	if _props_material == null:
 		_props_material = painted(false)
 	return _props_material
+
+
+## The grass tufts: painted, without the mud that rises over the feet of things.
+static func tufts_material() -> ShaderMaterial:
+	if _tufts_material == null:
+		_tufts_material = painted(false)
+		_tufts_material.set_shader_parameter("dirt_height", 0.0)
+	return _tufts_material
+
+
+## The world's sun, shade and air (SUN_COLOR, AMBIENT, AIR) and its grading: the colours
+## held down, the contrast up.
+static func light(sun: DirectionalLight3D, env: Environment) -> void:
+	sun.light_color = SUN_COLOR
+	sun.light_energy = SUN_ENERGY
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = AMBIENT
+	env.ambient_light_energy = AMBIENT_ENERGY
+	grade(env)
+
+
+static func grade(env: Environment) -> void:
+	env.adjustment_enabled = true
+	env.adjustment_saturation = GRADE.z
+	env.adjustment_contrast = GRADE.y
+	env.adjustment_brightness = GRADE.x
 
 
 static func dress(node: Node, material: Material) -> void:

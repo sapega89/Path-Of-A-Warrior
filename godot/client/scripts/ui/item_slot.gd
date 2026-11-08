@@ -29,14 +29,14 @@ static func button(node_name: String) -> Button:
 	return b
 
 
-## The look of a place: a dark hollow with a thin rim; the chosen one has a gold border.
+## The look of a place: a dark hollow with a thin rim; the chosen one has a brass border.
 static func box(selected: bool) -> StyleBoxFlat:
 	return _place(UiTheme.SLOT, UiTheme.ACCENT if selected else UiTheme.SLOT_RIM, 3 if selected else 1)
 
 
 static func _place(fill: Color, rim: Color, width: int) -> StyleBoxFlat:
 	var sb := UiTheme.box(fill, rim, width)
-	sb.set_corner_radius_all(6)
+	sb.set_corner_radius_all(UiTheme.RADIUS)
 	sb.set_content_margin_all(4)
 	return sb
 

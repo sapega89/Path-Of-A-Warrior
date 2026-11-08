@@ -17,7 +17,7 @@ const MapEffects := preload("res://scripts/world/map_effects.gd")
 ## [kind, frame, the kozak's clip, where he faces].
 const EFFECT_GRID := [
 	["slash", 6, "run", Vector3.RIGHT], ["trail", 0, "attack_slash", Vector3.BACK],
-	["spark", 2, "hit", Vector3.BACK], ["heal", 4, "cast_raise", Vector3.BACK],
+	["blood", 2, "hit", Vector3.BACK], ["heal", 4, "cast_raise", Vector3.BACK],
 	["buff", 2, "cast_raise", Vector3.BACK], ["aura", 4, "idle", Vector3.BACK],
 	["whirl", 0, "attack_2h_slash", Vector3.BACK], ["fire", 4, "hit", Vector3.BACK],
 	["burst", 1, "attack_spin", Vector3.BACK], ["blast", 0, "", Vector3.ZERO],
@@ -76,27 +76,20 @@ func build(where: String, pitch_deg: float) -> void:
 func _world() -> void:
 	var env := Environment.new()
 	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color("c9b48a")
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color("9aa2c0")
-	env.ambient_light_energy = 0.35
+	env.background_color = ArtKit.AIR
 	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	env.fog_enabled = true
 	env.fog_mode = Environment.FOG_MODE_DEPTH
-	env.fog_light_color = Color("d9c7a0")
+	env.fog_light_color = ArtKit.AIR
 	env.fog_density = 1.0
 	env.fog_depth_begin = distance + 8.0
 	env.fog_depth_end = distance + 40.0
 	env.fog_sky_affect = 0.0
-	env.adjustment_enabled = false
-	env.adjustment_saturation = 1.0
-	env.adjustment_contrast = 1.0
 	var we := WorldEnvironment.new()
 	we.environment = env
 	add_child(we)
 	var sun := DirectionalLight3D.new()
-	sun.light_color = Color("ffe6c0")
-	sun.light_energy = 0.5
+	ArtKit.light(sun, env)
 	sun.shadow_enabled = true
 	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
 	sun.directional_shadow_max_distance = 40.0

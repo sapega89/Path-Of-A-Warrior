@@ -341,14 +341,19 @@ def dub(k, rng):
 
 
 def kushch(k, rng):
+    """A ragged bush: rough clumps of leaves, dark inside, a few bare twigs sticking out."""
+    for i in range(6):
+        a = TAU * i / 6 + rng.uniform(0, 0.8)
+        d = rng.uniform(0.2, 0.42)
+        r = rng.uniform(0.32, 0.5)
+        rot = Matrix.Rotation(rng.uniform(0, TAU), 4, "Z") @ Matrix.Rotation(rng.uniform(-0.4, 0.4), 4, "X")
+        k.ball((math.sin(a) * d, -math.cos(a) * d, r * 0.75 + rng.uniform(0, 0.2)), (r, r * 0.9, r * 0.75),
+               "oak" if i % 2 else "oak_dark", segs=7, rings=4, rot=rot, smooth=False, shade=jitter(rng, 0.75, 1.05))
     for i in range(3):
-        a = TAU * i / 3 + rng.uniform(0, 1)
-        r = rng.uniform(0.45, 0.65)
-        k.ball((math.sin(a) * 0.35, -math.cos(a) * 0.35, r * 0.7), (r, r, r * 0.8), "oak_light", segs=8, rings=5,
-               shade=jitter(rng, 0.8, 1.05))
-    for i in range(4):
         a = rng.uniform(0, TAU)
-        k.ball((math.sin(a) * 0.5, -math.cos(a) * 0.5, rng.uniform(0.6, 1.0)), 0.05, "cinnabar", segs=5, rings=3)
+        base = Vector((math.sin(a) * 0.25, -math.cos(a) * 0.25, 0.5))
+        tip = base + Vector((math.sin(a) * 0.45, -math.cos(a) * 0.45, rng.uniform(0.35, 0.6)))
+        k.tube(base, tip, 0.02, 0.006, "wood_dark", segs=4)
 
 
 def kamin(k, rng):
@@ -361,7 +366,7 @@ def kamin(k, rng):
 
 
 def trava(k, rng):
-    """Tuft of dry grass with a few poppies."""
+    """Tuft of dry grass, now and then a dry seed head."""
     for i in range(9):
         a = rng.uniform(0, TAU)
         d = rng.uniform(0.0, 0.18)
@@ -371,8 +376,8 @@ def trava(k, rng):
                 rot=Vector((0, 0, 1)).rotation_difference(tip - base).to_matrix().to_4x4(), shade=jitter(rng, 0.85, 1.15))
     for i in range(1 if rng.random() < 0.35 else 0):
         p = Vector((rng.uniform(-0.2, 0.2), rng.uniform(-0.2, 0.2), rng.uniform(0.4, 0.55)))
-        k.tube((p.x, p.y, 0), p, 0.008, 0.008, "oak", segs=3)
-        k.ball(p, (0.05, 0.05, 0.03), "cinnabar", segs=6, rings=3)
+        k.tube((p.x, p.y, 0), p, 0.008, 0.008, "grass_dark", segs=3)
+        k.ball(p, (0.025, 0.025, 0.05), "straw", segs=5, rings=3)
 
 
 def penok(k, rng):

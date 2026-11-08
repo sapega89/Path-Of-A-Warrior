@@ -3,8 +3,9 @@ extends Control
 ## and things under a painted sky (scripts/world/battle_arena.gd, after the battle's
 ## background), the fighters as the maps' people (scripts/world/battle_motion.gd: who is who,
 ## which clip shows each animation of the battle) and the effects of the missions on them
-## (scripts/world/map_effects.gd: blade trails, sparks where a blow lands, dust of a dodge, the
-## healing spiral, the light of a soul and the ring of its aura), and the HUD over it. What
+## (scripts/world/map_effects.gd: blade trails, blood where a blow lands and under the fallen,
+## sparks on a guard, dust of a dodge, the healing spiral, the light of a soul and the ring of
+## its aura), and the HUD over it. A blow that lands shakes the view. What
 ## happens is scripts/net/online_battle.gd, one step every TICK_MS; the figures move and turn
 ## smoothly between the steps. This screen shows it and passes the keys: arrows choose (Right
 ## Attack, Left Defend, Up Evade, Down a skill), Enter / Space confirms and stops the timing bar,
@@ -13,7 +14,7 @@ extends Control
 ## skills and the bar take the mouse too. The hint at the bottom names the keys of the device
 ## just used (InputSetup.hint: the keyboard's or the pad's).
 ## The HUD: each fighter's plate at the top (my team at the left, the other at the right, one
-## row under the other) with his portrait in a gold frame looking at the other side, his name,
+## row under the other) with his portrait in an iron frame looking at the other side, his name,
 ## level on a cinnabar badge, HP and MP bars; the card of his action beside it; the changes of
 ## HP over the fighters; the quotes in parchment bubbles; the pad of the actions (sabre, shield,
 ## wind, a skill) with the seconds left; the skills with their icons; the timing bar (the
@@ -55,6 +56,8 @@ const BAR_SCALE := 4.0
 const DAMAGE_UP := 22.0
 const QUOTE_UP := 66.0  # the quote's tail over the feet
 const MARKER_UP := 2.6  # the target's chevron over the feet (world units)
+const SHAKE := 0.07  # how far a blow that lands shakes the view (world units)
+const HIT_FLASH := Color(0.8, 0.16, 0.12)  # the flash of one who is hit: blood-red
 ## The rows of a 2-on-2 stand apart in depth; seen from the camera the back one would hide
 ## behind the front one, so the farther a fighter stands the farther out from the middle it
 ## is drawn (by this part of its distance from the middle per pixel of depth).
@@ -65,12 +68,12 @@ const BOX_H := 80.0
 const FACE := 68.0  # the portrait on the plate
 const CARD_W := 230.0
 const AUTO_ON := UiTheme.ACCENT  # AUTO while auto-battle is on
-const PLATE := Color(0.075, 0.09, 0.13, 0.9)
-const PAPER := Color("ede6d6")
-const HP_FILL := [Color("e0574a"), Color("8a2420")]
-const MP_FILL := [Color("6f9fe0"), Color("24427a")]
-const DAMAGE := Color("ff6f5a")
-const HEAL := Color("9be27f")
+const PLATE := Color(0.07, 0.066, 0.062, 0.92)
+const PAPER := Color("c9bb9b")  # old parchment
+const HP_FILL := [Color("c23a2f"), Color("5e1510")]
+const MP_FILL := [Color("5a83bd"), Color("1a2e55")]
+const DAMAGE := Color("e8553f")
+const HEAL := Color("8fc873")
 ## The pad: key, icon (assets/art/ui), caption, place in buttons.
 const PAD := [["up", "wind", "online.battle_evade", Vector2(1, 0)],
 	["left", "shield", "online.battle_defend", Vector2(0, 1)],
@@ -79,8 +82,8 @@ const PAD := [["up", "wind", "online.battle_evade", Vector2(1, 0)],
 ## The icons of the battle's skills (3..13): their places on the sheet of the skills (the
 ## same skills of the map, 12..22).
 const SKILL_ICONS := {3: 0, 4: 1, 5: 2, 6: 8, 7: 9, 8: 10, 9: 3, 10: 4, 11: 5, 12: 6, 13: 7}
-## The chevron over the target: gold over cinnabar, inked.
-const MARKER_SVG := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 72"><path d="M8 6 L32 26 L56 6 L56 20 L32 40 L8 20 Z" fill="#d4a645" stroke="#2b211c" stroke-width="3.5" stroke-linejoin="round"/><path d="M14 34 L32 49 L50 34 L50 45 L32 62 L14 45 Z" fill="#a8322d" stroke="#2b211c" stroke-width="3.5" stroke-linejoin="round"/></svg>'
+## The chevron over the target: brass over blood-red, inked.
+const MARKER_SVG := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 72"><path d="M8 6 L32 26 L56 6 L56 20 L32 40 L8 20 Z" fill="#b89550" stroke="#0f0d0c" stroke-width="3.5" stroke-linejoin="round"/><path d="M14 34 L32 49 L50 34 L50 45 L32 62 L14 45 Z" fill="#8a2b25" stroke="#0f0d0c" stroke-width="3.5" stroke-linejoin="round"/></svg>'
 
 var online: RefCounted
 var battle: RefCounted
@@ -119,6 +122,8 @@ var _from: Array[Vector3] = []  # where each stood at the step before and stands
 var _to: Array[Vector3] = []
 var _yaw: Array[float] = []
 var _fx: Array = []  # the effects of this step (MapEffects.show_effects)
+var _fallen_at: Array[float] = [-1.0, -1.0, -1.0, -1.0]  # when each was first seen lying (_clock)
+var _shake := 0.0  # how hard the view shakes from a blow (world units), dying away
 var _icons := {}
 var _no_skill: Texture2D
 
@@ -295,6 +300,8 @@ func _show_fighters() -> void:
 		var motion: Array = BattleMotion.motion(battle, i)
 		var p := BattleMotion.progress(battle, i)
 		var restart := anim != _last[i].x or p.x < _last[i].y
+		if restart and anim == 1 and not still:
+			_shake = maxf(_shake, SHAKE)  # a blow that lands shakes the view
 		_last[i] = Vector2i(anim, p.x)
 		var part := float(p.x) / float(p.y)
 		if BattleMotion.fallen(battle, i):
@@ -305,7 +312,7 @@ func _show_fighters() -> void:
 			if f.hp > 0 and fig.shown_clip == "death":
 				fig.shown_clip = ""  # up again: a new stage
 			fig.act(motion, p.y * TICK, restart, part, 0.0 if still else ArtFigure.BLEND)
-		fig.flash(0.45 * (1.0 - clampf(part, 0.0, 1.0)) if anim == 1 else 0.0)
+		fig.flash(0.4 * (1.0 - clampf(part, 0.0, 1.0)) if anim == 1 else 0.0, HIT_FLASH)
 		if still or fresh:
 			bodies[i].position = to
 			bodies[i].rotation.y = _yaw[i]
@@ -366,11 +373,22 @@ func _effects_of(i: int, f: RefCounted, anim: int, at: Vector3, p: Vector2i) -> 
 				_fx.append(["buff", mini(p.x * 6 / p.y, 5), px])
 	match anim:
 		1:
-			_fx.append(["spark", 2 + mini(p.x, 1), px])
+			# blood: the drops fly away from the blow, to his own side
+			_fx.append(["blood", (4 if f.team() == 1 else 8) + 2 + mini(p.x, 1), px])
 		4:
-			_fx.append(["spark", mini(p.x, 1), px])
+			_fx.append(["spark", mini(p.x, 1), px])  # steel on the guard
 		5:
 			_fx.append(["slash", ((ahead + 4) % 8) | mini(p.x, 1), px])
+	if BattleMotion.fallen(battle, i):
+		# blood spreads under the fallen (he lies on his back, his chest behind his feet) and stays;
+		# a still screen shows it spread
+		if _fallen_at[i] < 0.0:
+			_fallen_at[i] = _clock
+		var spread := 7 if not is_processing() else clampi(int((_clock - _fallen_at[i]) / 0.25), 0, 7)
+		var chest := px - Vector2(1.0 if f.team() == 0 else -1.0, 0.0) * 0.8 / PX
+		_fx.append(["pool", spread, chest, true])
+	else:
+		_fallen_at[i] = -1.0
 	if f.status in [11, 12, 13] and battle.state != OnlineBattle.RESULT:
 		_fx.append(["aura", battle.state_ticks % 3, px, true])
 
@@ -388,6 +406,9 @@ func _move_fighters(delta: float) -> void:
 	effects.show_effects(_fx, t)
 	if marker.visible:
 		marker.position.y = MARKER_UP + 0.08 * sin(_clock * 6.0)
+	camera.h_offset = _shake * sin(_clock * 71.0)
+	camera.v_offset = _shake * 0.6 * sin(_clock * 53.0 + 1.3)
+	_shake = move_toward(_shake, 0.0, delta * SHAKE * 4.0)
 
 
 # --- the HUD --------------------------------------------------------------------------------
@@ -408,7 +429,7 @@ func _build_hud() -> void:
 		portraits.append(face)
 	center = PanelContainer.new()
 	center.name = "Center"
-	var box := UiTheme.box(Color(0.075, 0.09, 0.13, 0.92), UiTheme.ACCENT, 2)
+	var box := UiTheme.box(PLATE, UiTheme.IRON, 2)
 	box.set_content_margin_all(20)
 	box.content_margin_left = 34
 	box.content_margin_right = 34
@@ -503,8 +524,7 @@ func _build_hud() -> void:
 	auto_button.add_theme_font_override("font", UiTheme.font("bold"))
 	auto_button.add_theme_font_size_override("font_size", 20)
 	for style in ["normal", "hover", "pressed", "focus"]:
-		var sb := UiTheme.box(PLATE if style != "hover" else Color(0.12, 0.14, 0.2, 0.92), UiTheme.ACCENT_DARK, 2)
-		sb.set_corner_radius_all(8)
+		var sb := UiTheme.box(PLATE if style != "hover" else Color(UiTheme.BUTTON_HOVER, 0.92), UiTheme.IRON, 2)
 		sb.content_margin_left = 14
 		sb.content_margin_right = 14
 		sb.content_margin_top = 4
@@ -553,7 +573,7 @@ func draw_hud(layer: Control) -> void:
 		var right: bool = f.mirrored()
 		var r := plate_rect(i, layer.size)
 		var aimed: bool = battle.state == OnlineBattle.TARGET and i == battle.target_cursor
-		_plaque(layer, r, UiTheme.HIGHLIGHT if aimed else UiTheme.ACCENT_DARK, 3 if aimed else 2)
+		_plaque(layer, r, UiTheme.HIGHLIGHT if aimed else UiTheme.IRON, 3 if aimed else 2)
 		var inner := Rect2(r.position + Vector2(0 if right else FACE + 16.0, 0), Vector2(r.size.x - FACE - 26.0, r.size.y))
 		var name: String = f.name if f.alt_name.is_empty() or battle.round_no % 2 == 0 else f.alt_name
 		var badge := Vector2(inner.position.x + 22.0 if right else inner.end.x - 12.0, r.position.y + 22.0)
@@ -587,12 +607,11 @@ func _screen_point(sx: float, y: float, up_px: float) -> Vector2:
 	return camera.unproject_position(world_at(sx, y, up_px))
 
 
-## A plaque: a dark plate with round corners and a gold rim.
+## A plaque: a dark plate with hard corners and a rim.
 static func _plaque(layer: Control, r: Rect2, rim: Color, width: int) -> void:
 	var sb := UiTheme.box(PLATE, rim, width)
-	sb.set_corner_radius_all(10)
-	sb.shadow_color = Color(0, 0, 0, 0.35)
-	sb.shadow_size = 4
+	sb.shadow_color = Color(0, 0, 0, 0.5)
+	sb.shadow_size = 5
 	layer.draw_style_box(sb, r)
 
 
@@ -608,11 +627,10 @@ static func _text(layer: Control, text: String, at: Vector2, px: int, color: Col
 	layer.draw_string(font, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, px, color)
 
 
-## A bar in a dark hollow with a gold rim, filled from its outer end (a right plate's from the
+## A bar in a dark hollow with an iron rim, filled from its outer end (a right plate's from the
 ## right), a light line along the top of the fill.
 static func _bar(layer: Control, r: Rect2, part: float, fill: Array, right: bool) -> void:
-	var back := UiTheme.box(Color("0b0e15"), UiTheme.ACCENT_DARK, 1)
-	back.set_corner_radius_all(int(r.size.y / 2.0))
+	var back := UiTheme.box(UiTheme.SLOT, UiTheme.IRON, 1)
 	layer.draw_style_box(back, r)
 	part = clampf(part, 0.0, 1.0)
 	if part <= 0.0:
@@ -621,10 +639,8 @@ static func _bar(layer: Control, r: Rect2, part: float, fill: Array, right: bool
 	var w := maxf(inner.size.y, inner.size.x * part)
 	var at := Vector2(inner.end.x - w if right else inner.position.x, inner.position.y)
 	var sb := UiTheme.box(fill[1])
-	sb.set_corner_radius_all(int(inner.size.y / 2.0))
 	layer.draw_style_box(sb, Rect2(at, Vector2(w, inner.size.y)))
 	var top := UiTheme.box(fill[0])
-	top.set_corner_radius_all(int(inner.size.y / 2.0))
 	layer.draw_style_box(top, Rect2(at, Vector2(w, inner.size.y * 0.62)))
 	if w > inner.size.y:
 		var shine := inner.size.y * 0.5
@@ -636,8 +652,7 @@ static func _bar(layer: Control, r: Rect2, part: float, fill: Array, right: bool
 func _card(layer: Control, f: RefCounted, a: int, at: Vector2) -> void:
 	var r := Rect2(at, Vector2(CARD_W, 46))
 	var sb := UiTheme.box(PAPER, UiTheme.INK, 2)
-	sb.set_corner_radius_all(8)
-	sb.shadow_color = Color(0, 0, 0, 0.3)
+	sb.shadow_color = Color(0, 0, 0, 0.45)
 	sb.shadow_size = 3
 	layer.draw_style_box(sb, r)
 	var as_target: bool = battle.state == OnlineBattle.TURN and battle.fighters.find(f) != battle.attacker
@@ -689,8 +704,8 @@ func _quote(layer: Control, q: String, tip: Vector2) -> void:
 	var tail := PackedVector2Array([Vector2(tip.x - 10.0, r.end.y - 2.0), Vector2(tip.x + 10.0, r.end.y - 2.0),
 		Vector2(tip.x, tip.y)])
 	var sb := UiTheme.box(PAPER, UiTheme.INK, 2)
-	sb.set_corner_radius_all(14)
-	sb.shadow_color = Color(0, 0, 0, 0.3)
+	sb.set_corner_radius_all(4)
+	sb.shadow_color = Color(0, 0, 0, 0.45)
 	sb.shadow_size = 3
 	layer.draw_style_box(sb, r)
 	layer.draw_colored_polygon(tail, PAPER)
@@ -705,13 +720,12 @@ func draw_bar(layer: Control) -> void:
 	if battle == null:
 		return
 	var s := BAR_SCALE
-	_plaque(layer, Rect2(Vector2.ZERO, layer.size), UiTheme.ACCENT, 2)
+	_plaque(layer, Rect2(Vector2.ZERO, layer.size), UiTheme.IRON, 2)
 	var left := 11.0 * s  # BAR_LEFT inside the plate (it is 110 px wide around CX)
 	var mark := left + float(OnlineBattle.MARK - OnlineBattle.BAR_LEFT) * s
 	var mid := layer.size.y * 0.52
 	var track := Rect2(left - 10.0, mid - 11.0, mark - left + 10.0 * s + 20.0, 22.0)
-	var hollow := UiTheme.box(Color("0b0e15"), UiTheme.ACCENT_DARK, 2)
-	hollow.set_corner_radius_all(11)
+	var hollow := UiTheme.box(UiTheme.SLOT, UiTheme.IRON, 2)
 	layer.draw_style_box(hollow, track)
 	var x := left + float(battle.bar_x - OnlineBattle.BAR_LEFT) * s
 	var to := clampf(x, left, track.end.x - 4.0)
@@ -734,7 +748,7 @@ func draw_bar(layer: Control) -> void:
 	elif stopped:
 		_burst(layer, Vector2(to, mid), 26.0, Color(1, 1, 1, 0.9))
 	layer.draw_line(Vector2(to, mid - 22.0), Vector2(to, mid + 22.0), UiTheme.INK, 7.0, true)
-	layer.draw_line(Vector2(to, mid - 20.0), Vector2(to, mid + 20.0), Color("fff4d6"), 3.0, true)
+	layer.draw_line(Vector2(to, mid - 20.0), Vector2(to, mid + 20.0), Color("efe4c8"), 3.0, true)
 
 
 ## A star of light: eight rays.

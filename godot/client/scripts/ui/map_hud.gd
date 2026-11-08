@@ -2,14 +2,14 @@ extends Control
 ## The HUD of a mission's map in the new art, laid out on the original 240x320 grid at a
 ## whole-number scale (so the places to click stay where they were) and drawn smooth: the
 ## mission clock on a plaque at the top left, the kills (or the last enemy hit: his name, level
-## and HP) at the top right, and the panel at the bottom: a dusk plate with a gold rim and a
-## band of folk rhombi, the HP orb (left, cinnabar) and the MP orb (right, blue) that empty from
+## and HP) at the top right, and the panel at the bottom: a dark plate with an iron rim and a
+## riveted iron bar, the HP orb (left, blood-red) and the MP orb (right, blue) that empty from
 ## the top as HP or MP goes, with the value in the middle, and the two potions on the potion
 ## keys. Above the panel the skill bar (as in pyport): the five belt slots (keys Z X C V B) on
 ## the left with their counts, the five skills (keys 1-5) on the right, grey when not learned
 ## or without the MP; the slot in use has a light rim. A click on a slot uses it. With the bar
 ## the panel does not show the two potions (the belt shows all five). In the bottom-left corner
-## AUTO: gold while the auto-hunt is on, grey while off; a click toggles it. While someone talks
+## AUTO: brass while the auto-hunt is on, grey while off; a click toggles it. While someone talks
 ## on the map that corner is SKIP (pyport's left soft key): a click skips the talk. In the
 ## bottom-right corner PAUSE (pyport's soft key): a click pauses the game.
 ## The icons of the potions and the skills are the new art's (ItemSlot.icon), drawn smooth on
@@ -36,9 +36,9 @@ var sim: RefCounted
 var kills_shown := 0  # counts up to the kills one a tick
 
 ## The colours of the orbs: [top of the liquid, its bottom].
-const HP_LIQUID := [Color("e0574a"), Color("6e1a16")]
-const MP_LIQUID := [Color("5b8fd6"), Color("16284d")]
-const PLATE := Color(0.075, 0.09, 0.13, 0.9)
+const HP_LIQUID := [Color("bf3a2e"), Color("4a0f0c")]
+const MP_LIQUID := [Color("4f78b0"), Color("101d36")]
+const PLATE := Color(0.07, 0.066, 0.062, 0.92)
 
 var _icons: Control  # the icons, drawn smooth
 var _labels: Control  # the counts and the keys over them
@@ -264,10 +264,10 @@ static func _fill(v: int, most: int) -> int:
 	return maxi(f, 3) if f != 0 else 0
 
 
-## A plaque: a dark plate with round corners and a thin gold rim.
+## A plaque: a dark plate with hard corners and a thin iron rim.
 func _plaque(r: Rect2, k: float) -> void:
-	var sb := UiTheme.box(PLATE, UiTheme.ACCENT_DARK, maxi(1, int(k)))
-	sb.set_corner_radius_all(int(5 * k))
+	var sb := UiTheme.box(PLATE, UiTheme.IRON, maxi(1, int(k)))
+	sb.set_corner_radius_all(int(k))
 	draw_style_box(sb, r)
 
 
@@ -275,7 +275,7 @@ func _plaque(r: Rect2, k: float) -> void:
 func _socket(r: Rect2, k: float, hot: bool) -> void:
 	var sb := UiTheme.box(Color(UiTheme.SLOT, 0.88), UiTheme.HIGHLIGHT if hot else UiTheme.SLOT_RIM,
 		int(2 * k) if hot else maxi(1, int(k / 2)))
-	sb.set_corner_radius_all(int(3 * k))
+	sb.set_corner_radius_all(int(k))
 	draw_style_box(sb, r)
 
 
@@ -284,37 +284,43 @@ static func _potion_rect(origin: Vector2, b: int, k: float) -> Rect2:
 	return Rect2(origin + Vector2(64 if b == 0 else 148, 15) * k, Vector2(ITEM, ITEM) * k)
 
 
-## The panel: a dusk plate with a gold rim along its top and a band of rhombi between the orbs.
+## The panel: a dark plate with an iron rim along its top and a riveted iron bar between the orbs.
 func _panel(origin: Vector2, k: float) -> void:
-	var plate := UiTheme.box(PLATE, UiTheme.ACCENT_DARK, int(1.5 * k))
-	plate.corner_radius_top_left = int(14 * k)
-	plate.corner_radius_top_right = int(14 * k)
+	var plate := UiTheme.box(PLATE, UiTheme.IRON, int(1.5 * k))
+	plate.corner_radius_top_left = int(3 * k)
+	plate.corner_radius_top_right = int(3 * k)
 	plate.corner_radius_bottom_left = 0
 	plate.corner_radius_bottom_right = 0
 	plate.border_width_bottom = 0
 	draw_style_box(plate, Rect2(origin + Vector2(0, 3) * k, Vector2(240, PANEL_H - 3) * k))
-	var line := Color(UiTheme.ACCENT, 0.45)
+	var line := Color(UiTheme.IRON_LIGHT, 0.4)
 	for y in [12.0, 54.0]:
 		draw_line(origin + Vector2(52, y) * k, origin + Vector2(188, y) * k, line, k, true)
 	var to := get_canvas_item()
-	var reach := 4 if show_bar else 1  # without the bar the potions sit on the band
+	var reach := 4 if show_bar else 1  # without the bar the potions sit on it
+	var bar := Rect2(origin + Vector2(120 - reach * 15 - 6, 29) * k, Vector2(reach * 30 + 12, 8) * k)
+	var iron := UiTheme.box(UiTheme.IRON.darkened(0.45), UiTheme.INK, maxi(1, int(k / 2)))
+	iron.set_corner_radius_all(int(k))
+	draw_style_box(iron, bar)
+	draw_line(bar.position + Vector2(k, k), Vector2(bar.end.x - k, bar.position.y + k), Color(UiTheme.IRON_LIGHT, 0.5), k, true)
 	for i in range(-reach, reach + 1):
 		var c := origin + Vector2(120 + i * 15, 33) * k
-		var big := i == 0
-		UiTheme.rhombus(to, c, (6.5 if big else 4.5) * k, UiTheme.ACCENT)
-		UiTheme.rhombus(to, c, (3.5 if big else 2.2) * k, UiTheme.RED)
-		if i < reach:
-			draw_circle(c + Vector2(7.5, 0) * k, 0.9 * k, line, true, -1.0, true)
+		if i == 0:
+			UiTheme.rhombus(to, c, 6.5 * k, UiTheme.INK)
+			UiTheme.rhombus(to, c, 5.5 * k, UiTheme.ACCENT_DARK)
+			UiTheme.rhombus(to, c, 2.5 * k, UiTheme.RED)
+		else:
+			UiTheme.rivet(to, c, 2.6 * k)
 	for side in [-1, 1]:
-		UiTheme.rhombus(to, origin + Vector2(120 + side * 66, 12) * k, 2 * k, UiTheme.ACCENT)
-		UiTheme.rhombus(to, origin + Vector2(120 + side * 66, 54) * k, 2 * k, UiTheme.ACCENT)
+		UiTheme.rivet(to, origin + Vector2(120 + side * 66, 12) * k, 1.8 * k)
+		UiTheme.rivet(to, origin + Vector2(120 + side * 66, 54) * k, 1.8 * k)
 
 
 ## An orb of glass: the liquid up to fill (0..BALL) with a light surface, the value in the
-## middle, a shine on the glass and a gold rim.
+## middle, a shine on the glass and an iron rim.
 func _orb(c: Vector2, r: float, fill: int, liquid: Array, value: int, k: float) -> void:
 	draw_circle(c, r + 2.5 * k, UiTheme.INK, true, -1.0, true)
-	draw_circle(c, r, Color("0b0e15"), true, -1.0, true)
+	draw_circle(c, r, UiTheme.SLOT, true, -1.0, true)
 	var f := float(fill) / float(BALL)
 	if f > 0.0:
 		var s := clampf(1.0 - 2.0 * f, -1.0, 1.0)
@@ -343,7 +349,7 @@ func _orb(c: Vector2, r: float, fill: int, liquid: Array, value: int, k: float) 
 		shine.append(c + Vector2(0.1, 0.12) * r + Vector2(cos(t), sin(t)) * r * 0.76)
 	draw_colored_polygon(shine, Color(1, 1, 1, 0.2))
 	draw_circle(c + Vector2(-0.38, -0.52) * r, r * 0.07, Color(1, 1, 1, 0.45), true, -1.0, true)
-	draw_arc(c, r + 0.8 * k, 0.0, TAU, 64, UiTheme.ACCENT, 2.2 * k, true)
+	draw_arc(c, r + 0.8 * k, 0.0, TAU, 64, UiTheme.IRON_LIGHT, 2.2 * k, true)
 	_text(str(value), c + Vector2(0, 4.5 * k), 12 * k, UiTheme.TEXT, k, 0)
 
 
@@ -385,13 +391,13 @@ func _target(t: Dictionary, view: Vector2, k: float) -> void:
 	draw_arc(badge, 7.5 * k, 0.0, TAU, 32, UiTheme.ACCENT, 1.4 * k, true)
 	_text(str(int(t.get("level", 1))), badge + Vector2(0, 3.5 * k), 9 * k, UiTheme.TEXT, k, 0)
 	var track := Rect2(r.position + Vector2(6, 20) * k, Vector2(width - 12, 6) * k)
-	var back := UiTheme.box(Color("0b0e15"), UiTheme.ACCENT_DARK, maxi(1, int(k / 2)))
-	back.set_corner_radius_all(int(3 * k))
+	var back := UiTheme.box(UiTheme.SLOT, UiTheme.IRON, maxi(1, int(k / 2)))
+	back.set_corner_radius_all(int(k))
 	draw_style_box(back, track)
 	var bar := clampi(int(t.get("hp_bar", 0)), 0, 62)
 	if bar > 0:
-		var fill := UiTheme.box(Color("c0392b"))
-		fill.set_corner_radius_all(int(2 * k))
+		var fill := UiTheme.box(HP_LIQUID[0])
+		fill.set_corner_radius_all(int(k))
 		fill.border_blend = false
 		var inner := track.grow(-1 * k)
 		draw_style_box(fill, Rect2(inner.position, Vector2(inner.size.x * bar / 62.0, inner.size.y)))

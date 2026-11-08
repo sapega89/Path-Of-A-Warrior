@@ -1,7 +1,7 @@
 extends Node3D
 ## The effects of a mission in the new art, made in code: the blows, skills, potions and
-## scrolls MapSim shows, the fire on whoever burns, the auras of buffs, the sparks of hits,
-## the weapon trails and the archers' arrows. show_effects() takes what MapSim gives each
+## scrolls MapSim shows, the fire on whoever burns, the auras of buffs, the blood of hits (and
+## the blots it leaves on the ground for a while), the weapon trails and the archers' arrows. show_effects() takes what MapSim gives each
 ## tick: [kind, frame, point in map pixels], with an optional true for the ring of an aura (on
 ## the ground behind the one who glows). The frame says how far the effect has gone (and for
 ## some, which way it goes); t, 0..1 of the way to the next tick, carries it on smoothly.
@@ -15,19 +15,24 @@ const ArtKit := preload("res://scripts/art/art_kit.gd")
 const ArtEffects := preload("res://scripts/art/art_effects.gd")
 const LIGHT := preload("res://assets/art/shaders/fx_light.gdshader")
 const PUFF := preload("res://assets/art/shaders/fx_puff.gdshader")
+const BLOOD := preload("res://assets/art/shaders/fx_blood.gdshader")
 const PX := 1.0 / 27.0
 
 ## The kinds of effects and how many frames each has.
 ##   slash:  dust kicked up by a dash (frame: direction << 1 | step)
 ##   trail:  the trail of a blade (direction * 3 + which blow)
-##   spark:  where a hit lands (two steps; 0-1 a light hit, 2-3 a hard one)
+##   spark:  where a blow lands on steel (two steps; 0-1 a light hit, 2-3 a hard one)
+##   blood:  where a blow lands on a man: drops thrown out and the blood they leave on the
+##           ground (two steps; 0-1 a light hit, 2-3 a hard one; +4 they fly to the right,
+##           +8 to the left)
+##   pool:   blood spreading under one who lies fallen (it stays at the last frame)
 ##   heal, buff, aura: herbs and water healing, a buff or a potion, the glow of a buff
 ##   whirl:  the crown of water that knocks back
 ##   fire, burst, blast: fire on someone, a fire burst, an explosion
 ##   wave:   lightning running ahead (direction * 7 + step)
 ##   storm, rain, quake: Thunderstorm, Rain of Fire, Serpent's Breath over the room
 ##   scroll: the orb of a scroll flying ahead (direction * 4 + step)
-const FRAMES := {"slash": 8, "trail": 12, "spark": 4, "heal": 9, "buff": 6, "aura": 6,
+const FRAMES := {"slash": 8, "trail": 12, "spark": 4, "blood": 12, "pool": 8, "heal": 9, "buff": 6, "aura": 6,
 	"whirl": 2, "fire": 10, "burst": 2, "blast": 10, "wave": 28, "storm": 42, "rain": 25,
 	"quake": 15, "scroll": 16}
 
@@ -58,12 +63,21 @@ var _arrow_mesh: ArrayMesh
 static var _tube_mesh: ArrayMesh
 ## What the last show_effects() drew: [kind, frame, rig].
 var drawn: Array = []
+## The blood hits leave on the ground: [blot, when it was left (ms)]; the oldest goes first.
+const STAINS := 24
+const STAIN_MS := 9000.0
+var _stains: Array = []
+var _stain_holder: Node3D
+## The hits that bled last time and this time (by place and blow), so that each leaves one stain.
+var _bled := {}
+var _bleeding := {}
 
 
 ## Draws the effects of the tick; t: 0..1 of the way to the next tick.
 func show_effects(list: Array, t := 0.0) -> void:
 	_used.clear()
 	drawn.clear()
+	_bleeding = {}
 	for e in list:
 		var kind := str(e[0])
 		var frame := int(e[1])
@@ -79,6 +93,8 @@ func show_effects(list: Array, t := 0.0) -> void:
 		var pool: Array = _pools[kind]
 		for i in range(int(_used.get(kind, 0)), pool.size()):
 			pool[i].visible = false
+	_bled = _bleeding
+	_age_stains()
 
 
 ## How many effects the last call drew.
@@ -350,6 +366,88 @@ func _draw_spark(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 		"toward": 0.8})
 	_quad(glow, at, size * lerpf(1.0, 0.5, ph))
 	_tune(glow, {"strength": 0.9 * (1.0 - ph), "toward": 0.75})
+
+
+# ---- blood -------------------------------------------------------------------------------
+
+## A part of blood: a quad with fx_blood in a shape (0 the spray, 1 a blot on the ground).
+func _blood_part(rig: Node3D, part: String, shape: int, turn: Turn) -> MeshInstance3D:
+	var mi := MeshInstance3D.new()
+	mi.name = part
+	var q := QuadMesh.new()
+	q.size = Vector2.ONE
+	mi.mesh = q
+	var m := ShaderMaterial.new()
+	m.shader = BLOOD
+	m.set_shader_parameter("shape", shape)
+	m.set_shader_parameter("billboard", turn)
+	mi.material_override = m
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.extra_cull_margin = 4.0
+	if rig != null:
+		rig.add_child(mi)
+	return mi
+
+
+func _build_blood(rig: Node3D) -> void:
+	_blood_part(rig, "Spray", 0, Turn.FACING)
+	_light(rig, "Glint", Shape.GLOW, Turn.FACING, STEEL)
+
+
+func _draw_blood(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
+	var hard := (frame & 3) >= 2
+	var side: float = [0.0, 1.0, -1.0][clampi(frame >> 2, 0, 2)]
+	var ph := _run(frame & 1, t, 2)
+	var at := _at(p) + Vector3(0.0, 1.0, 0.0)
+	var size := 2.0 if hard else 1.45
+	var spray := rig.get_node("Spray") as MeshInstance3D
+	_quad(spray, at, size)
+	_tune(spray, {"progress": ph, "count": 18.0 if hard else 11.0, "seed": _seed(p, frame & 3), "side": side,
+		"strength": 1.0 - smoothstep(0.8, 1.0, ph), "toward": 0.8})
+	var glint := rig.get_node("Glint") as MeshInstance3D
+	_quad(glint, at, size * 0.6 * (1.0 - ph))
+	_tune(glint, {"strength": 0.5 * (1.0 - ph) * (1.0 - ph), "toward": 0.85})
+	# one blot on the ground for each blow, a little to the side the drops fly
+	var key := "%d,%d,%d" % [int(p.x), int(p.y), frame >> 1]
+	_bleeding[key] = true
+	if not _bled.has(key):
+		_stain(_at(p) + Vector3(side * 0.35, 0.0, 0.0), size * 0.8, _seed(p, frame))
+
+
+## Leaves a blot of blood on the ground, the oldest going when there are too many.
+func _stain(at: Vector3, size: float, seed_value: float) -> void:
+	if _stain_holder == null:
+		_stain_holder = Node3D.new()
+		_stain_holder.name = "Stains"
+		add_child(_stain_holder)
+	var blot: MeshInstance3D
+	if _stains.size() >= STAINS:
+		blot = _stains.pop_front()[0]
+	else:
+		blot = _blood_part(_stain_holder, "Stain%d" % _stains.size(), 1, Turn.PLACED)
+	_flat(blot, at, size)
+	_tune(blot, {"seed": seed_value, "progress": 0.0, "strength": 0.85})
+	_stains.append([blot, Time.get_ticks_msec()])
+
+
+## The blots spread for a moment, lie, and fade away.
+func _age_stains() -> void:
+	var now := Time.get_ticks_msec()
+	for s in _stains:
+		var age := float(now - int(s[1]))
+		_tune(s[0], {"progress": clampf(age / 400.0, 0.0, 1.0),
+			"strength": 0.85 * (1.0 - smoothstep(STAIN_MS * 0.6, STAIN_MS, age))})
+
+
+func _build_pool(rig: Node3D) -> void:
+	_blood_part(rig, "Pool", 1, Turn.PLACED)
+
+
+func _draw_pool(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
+	var ph := _run(frame, t, 8)
+	var pool := rig.get_node("Pool") as MeshInstance3D
+	_flat(pool, _at(p), lerpf(0.9, 2.0, ph))
+	_tune(pool, {"progress": 0.3 + 0.7 * ph, "seed": _seed(p), "strength": 0.9})
 
 
 # ---- healing, buffs, auras ---------------------------------------------------------------

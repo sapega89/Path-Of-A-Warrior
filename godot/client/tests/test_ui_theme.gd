@@ -29,17 +29,17 @@ func test_the_fonts_of_the_new_art() -> void:
 	var h := UiTheme.heading("gear.title", 44)
 	check(h is Label, "a heading is a label")
 	eq(h.get_theme_font("font"), UiTheme.font("title"), "in Kurale")
-	eq(h.get_theme_color("font_color"), UiTheme.ACCENT, "gold")
+	eq(h.get_theme_color("font_color"), UiTheme.ACCENT, "brass")
 	h.free()
 
 
 func test_plaques_and_panels() -> void:
 	var t := UiTheme.build()
 	var normal := t.get_stylebox("normal", "Button") as StyleBoxFlat
-	check(normal.corner_radius_top_left > 0 and normal.anti_aliasing, "round, smooth corners")
-	eq(normal.border_color, UiTheme.ACCENT_DARK, "a gold rim")
-	eq((t.get_stylebox("pressed", "Button") as StyleBoxFlat).bg_color, UiTheme.BUTTON_PRESSED, "cinnabar when pressed")
-	check(t.get_stylebox("panel", "PanelContainer") is UiTheme.PanelBox, "panels with their rhombi")
+	check(normal.corner_radius_top_left <= 3 and normal.anti_aliasing, "hard corners, smooth edges")
+	eq(normal.border_color, UiTheme.IRON, "an iron rim")
+	eq((t.get_stylebox("pressed", "Button") as StyleBoxFlat).bg_color, UiTheme.BUTTON_PRESSED, "blood-red when pressed")
+	check(t.get_stylebox("panel", "PanelContainer") is UiTheme.PanelBox, "panels of leather with their rivets")
 	check(t.get_stylebox("embedded_border", "Window") is UiTheme.PanelBox, "and the dialogs")
 	var on := t.get_icon("checked", "CheckBox")
 	var off := t.get_icon("unchecked", "CheckBox")
