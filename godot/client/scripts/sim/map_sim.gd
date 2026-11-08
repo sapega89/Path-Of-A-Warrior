@@ -173,6 +173,10 @@ var dir_history: Array[int] = [-1, -1, -1, -1, -1]
 var hold_to_move := true  # the port's option (the player asked for it): walk while held
 ## The map without enemies (pyport's POW_NO_ENEMIES): a room's list counts as defeated.
 var no_enemies := false
+## The training (training_screen.gd) keeps the room until it says: the last soldier's death
+## does not clear it, and its soldiers come by send_soldiers() (max_override at a time).
+var hold_room := false
+var max_override := -1
 var difficulty := 1  # 0 hard (gold and exp x2), 1 normal
 var general_side := 0  # the side (weapon) of the last general met: 0 long, 1 short sword
 var general := {}  # the last general met (campaign.json generals)
@@ -309,6 +313,7 @@ func enter_room() -> void:
 	enemies.clear()
 	enemies_alive = 0
 	waves.clear()
+	max_override = -1
 	var list: Array = rooms.cells[cell].get("waves", []) if cell < rooms.cells.size() else []
 	for v in list:
 		waves.append(int(v))
@@ -343,7 +348,25 @@ func _run_cell_scripts() -> void:
 
 
 func max_enemies() -> int:
+	if max_override >= 0:
+		return max_override
 	return int(rooms.cells[cell].get("max_enemies", 0)) if cell < rooms.cells.size() else 0
+
+
+## The training's soldiers: n swordsmen (one or a squad each, as a room's list sends them) come
+## in through the exits, all of them at once if they can.
+func send_soldiers(n: int) -> void:
+	waves[0] = KIND_SWORDS
+	waves[1] = n
+	max_override = n
+
+
+## The room counts as cleared now, as when its last soldier falls: "Stage Clear", then the exits.
+func clear_room() -> void:
+	for k in 14:
+		waves[k] = 0
+	room_phase = 3
+	room_phase_timer = 5
 
 
 ## The cells of the room the hero can reach (flood fill from his cell over unblocked cells):
@@ -1225,7 +1248,7 @@ func _tick_enemies() -> void:
 			if anim_frame > END:
 				_enemy_dies(e)
 				# (the next enemy waits a tick, as in the original's loop)
-				if enemies_alive < 1 and waves[0] == 0 and e.type != KIND_ARCHERS:
+				if enemies_alive < 1 and waves[0] == 0 and e.type != KIND_ARCHERS and not hold_room:
 					if boss_fight:
 						room_phase = 4
 						room_phase_timer = 22
