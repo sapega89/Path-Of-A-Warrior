@@ -207,10 +207,6 @@ func set_invitation(v: int, done: Callable) -> void:
 	_send({"t": "mp_options_set", "invitation": v}, done, func(_r: Dictionary) -> void: invitation = v)
 
 
-func set_name(name: String, done: Callable) -> void:
-	_send({"t": "mp_name", "name": name}, done, func(_r: Dictionary) -> void: me.name = name)
-
-
 ## which: "start" (the battle's first words) or "win" (the victory quote).
 func set_quote(which: String, quote: String, done: Callable) -> void:
 	_send({"t": "mp_quote", "which": which, "quote": quote}, done, func(_r: Dictionary) -> void:

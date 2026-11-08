@@ -467,6 +467,14 @@
     "en": "Enter a name.",
     "uk": "Введіть ім'я."
   },
+  "newgame.name_taken": {
+    "en": "Another player's hero already has this name. Choose another one.",
+    "uk": "Таке ім'я вже має герой іншого гравця. Виберіть інше."
+  },
+  "newgame.name_checking": {
+    "en": "Checking the name...",
+    "uk": "Перевіряю ім'я..."
+  },
   "newgame.ok": {
     "en": "OK",
     "uk": "OK"
@@ -971,10 +979,6 @@
     "en": "Change Quote",
     "uk": "Змінити фрази"
   },
-  "online.name": {
-    "en": "Display Name",
-    "uk": "Ім'я в грі"
-  },
   "online.level": {
     "en": "Level %d",
     "uk": "Рівень %d"
@@ -1010,18 +1014,6 @@
   "online.mp_gold": {
     "en": "Gold In Server %d",
     "uk": "Золото на сервері %d"
-  },
-  "online.title_name": {
-    "en": "Display Name",
-    "uk": "Ім'я в грі"
-  },
-  "online.hint_name": {
-    "en": "Enter your display name. (8 characters max)",
-    "uk": "Введіть ім'я, яке бачитимуть інші. (до 8 літер і цифр)"
-  },
-  "online.name_sure": {
-    "en": "Are you sure you want to use this display name?",
-    "uk": "Точно взяти це ім'я?"
   },
   "online.title_quote": {
     "en": "Change Quote",

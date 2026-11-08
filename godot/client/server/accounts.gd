@@ -6,6 +6,8 @@ extends RefCounted
 ## The hero and the Options (STORES) each keep a revision: a write based on an older one is
 ## refused, so a device that missed another device's save learns of it.
 ## The password is kept only as PBKDF2-HMAC-SHA256 of a random salt.
+## The hero's name (hero.data.name) belongs to one account, in any case: the first account
+## saved with it keeps it (name_owner()); the new game asks the server whether it is free.
 
 const ROUNDS := 10000
 const STORES := ["hero", "options"]
@@ -14,6 +16,8 @@ var dir: String
 ## PBKDF2 rounds of new accounts (tests use fewer).
 var rounds := ROUNDS
 var _cache := {}  # UserID -> its dictionary
+var _names := {}  # the hero's name in upper case -> the UserID it belongs to
+var _names_read := false  # _names was made from the files
 var _crypto := Crypto.new()
 
 
@@ -102,6 +106,47 @@ func store_put(uid: String, store: String, base: int, at: int, data: Dictionary)
 	return [true, store_get(uid, store)]
 
 
+## The UserID whose hero has this name (any case), "" when nobody's has it.
+func name_owner(name: String) -> String:
+	_read_names()
+	return str(_names.get(name.to_upper(), ""))
+
+
+## The hero's name of an account's hero dictionary, "" without one.
+static func hero_name(hero: Variant) -> String:
+	return str(hero.get("name", "")).strip_edges() if hero is Dictionary else ""
+
+
+## Who has which name, from every account's file: of two heroes with one name, the older
+## account has it.
+func _read_names() -> void:
+	if _names_read:
+		return
+	_names_read = true
+	var accs: Array = []
+	for f in DirAccess.get_files_at(dir):
+		if f.ends_with(".json"):
+			var acc := _account(f.trim_suffix(".json"))
+			if not acc.is_empty():
+				accs.append(acc)
+	accs.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		var ca := float(a.get("created", 0))
+		var cb := float(b.get("created", 0))
+		return ca < cb or (ca == cb and str(a.id) < str(b.id)))
+	for acc: Dictionary in accs:
+		_claim_name(str(acc.id), hero_name((acc.get("hero", {}) as Dictionary).get("data")))
+
+
+## The account's hero is called `name` now: its old name is free again, the new one is its
+## own unless another account has it.
+func _claim_name(uid: String, name: String) -> void:
+	for k in _names.keys():
+		if _names[k] == uid and k != name.to_upper():
+			_names.erase(k)
+	if not name.is_empty() and not _names.has(name.to_upper()):
+		_names[name.to_upper()] = uid
+
+
 ## {"rev", "at", "hero"} of the account (rev 0, hero null: none yet).
 func hero_get(uid: String) -> Dictionary:
 	var e := store_get(uid, "hero")
@@ -111,6 +156,9 @@ func hero_get(uid: String) -> Dictionary:
 ## store_put() of the hero, the entries as hero_get() gives them.
 func hero_put(uid: String, base: int, at: int, hero: Dictionary) -> Array:
 	var r := store_put(uid, "hero", base, at, hero)
+	if r[0]:
+		_read_names()
+		_claim_name(uid, hero_name(hero))
 	return [r[0], hero_get(uid)]
 
 

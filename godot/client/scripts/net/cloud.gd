@@ -13,7 +13,8 @@ extends Node
 ## runs: a restart asks again. The file an older version kept it in (user://account.cfg) goes.
 ## Live (scripts/net/live_client.gd) and the online game (scripts/net/online_client.gd) go
 ## over the same logged-in connection (request()); the server's pushes go to the online game.
-## Quit (or the window closed) waits up to FLUSH_MS for the last save to reach the server.
+## Quit (or the window closed) waits up to FLUSH_MS for the last save to reach the server,
+## then closes the connection (the server sees the player leave at once) and ends the game.
 
 const CloudSync := preload("res://scripts/net/cloud_sync.gd")
 const LiveClient := preload("res://scripts/net/live_client.gd")
@@ -192,8 +193,9 @@ func _quit() -> void:
 	quit_at = -1
 	if quit_now.is_valid():
 		quit_now.call()
-	else:
-		get_tree().quit()
+		return
+	stop()  # the connection closes before the game does, not when the engine tears it down
+	get_tree().quit()
 
 
 func _notification(what: int) -> void:

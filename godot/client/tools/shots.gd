@@ -247,7 +247,7 @@ func _ready() -> void:
 	game.answer(mine, "order_create", {"name": "WOLVES"})
 	game.leave(mine)
 	game.enter(maria, "MARIA")
-	game.answer(maria, "mp_name", {"name": "Maria"})
+	game.online_part("MARIA").name = "Maria"
 	game.answer(maria, "order_join", {"name": "WOLVES"})
 	for m in [[OnlineServer.LOBBY, "", "Anyone up for a duel?"],
 			[OnlineServer.ORDER, "", "Wolves, meet at the arena!"],
