@@ -13,6 +13,8 @@ const SHOTS := [
 	["art_battle_50", "battle", 50.0, 13.0],
 	["art_lineup", "lineup", 0.0, 13.0],
 	["art_people", "people", 0.0, 13.0],
+	["art_effects", "effects", 35.0, 13.0],
+	["art_effects_room", "effects_room", 35.0, 15.0],
 ]
 
 

@@ -4,12 +4,25 @@ extends Node3D
 ## the game's maps and battles still use their own scenes.
 ##   godot --path godot/client res://scenes/art_slice.tscn            (the camp)
 ##   godot --path godot/client res://scenes/art_slice.tscn -- battle 50
+##   godot --path godot/client res://scenes/art_slice.tscn -- effects 35       (or effects_room)
 
 const ArtKit := preload("res://scripts/art/art_kit.gd")
 const ArtFigure := preload("res://scripts/art/art_figure.gd")
 const ArtEffects := preload("res://scripts/art/art_effects.gd")
 const ArtGround := preload("res://scripts/art/art_ground.gd")
 const ArtHud := preload("res://scripts/art/art_hud.gd")
+const MapEffects := preload("res://scripts/world/map_effects.gd")
+
+## The effects of the map (scripts/world/map_effects.gd) in a grid, each on a kozak:
+## [kind, frame, the kozak's clip, where he faces].
+const EFFECT_GRID := [
+	["slash", 6, "run", Vector3.RIGHT], ["trail", 0, "attack_slash", Vector3.BACK],
+	["spark", 2, "hit", Vector3.BACK], ["heal", 4, "cast_raise", Vector3.BACK],
+	["buff", 2, "cast_raise", Vector3.BACK], ["aura", 4, "idle", Vector3.BACK],
+	["whirl", 0, "attack_2h_slash", Vector3.BACK], ["fire", 4, "hit", Vector3.BACK],
+	["burst", 1, "attack_spin", Vector3.BACK], ["blast", 0, "", Vector3.ZERO],
+	["wave", 24, "cast", Vector3.RIGHT], ["scroll", 14, "use_item", Vector3.RIGHT],
+]
 
 const FOV := 35.0
 const DISTANCE := 13.0
@@ -45,10 +58,14 @@ func build(where: String, pitch_deg: float) -> void:
 		_lineup()
 	elif place == "people":
 		_people()
+	elif place == "effects":
+		_effects()
+	elif place == "effects_room":
+		_effects_room()
 	else:
 		_camp()
 	_camera()
-	if place != "lineup" and place != "people":
+	if not place in ["lineup", "people", "effects", "effects_room"]:
 		hud = ArtHud.new()
 		var layer := CanvasLayer.new()
 		add_child(layer)
@@ -263,3 +280,45 @@ func _people() -> void:
 		var x := (i - (enemies.size() - 1) / 2.0) * 1.45
 		_figure(enemies[i], Vector3(x, 0, -0.6), "idle", Vector3(x - 0.2, 0, 4.0), 0.2 + i * 0.11)
 	hero = null
+
+
+# -- the effects of the map: one of each on a kozak, then the skills over a room ----------
+func _effects() -> void:
+	_ground([], [Vector3(0, -3, 6)], Rect2(-12, -8, 24, 16))
+	var fx: Node3D = MapEffects.new()
+	add_child(fx)
+	var shown: Array = []
+	for i in EFFECT_GRID.size():
+		var e: Array = EFFECT_GRID[i]
+		var at := Vector3((i % 4 - 1.5) * 3.3, 0.0, (i / 4 - 1.0) * 3.0)
+		var p := _px(at)
+		if e[2] != "":
+			_figure("kozak", at, e[2], at + e[3], 0.35)
+		shown.append([e[0], e[1], p])
+		if e[0] == "aura":
+			shown.append(["aura", 1, p + Vector2i(0, 3), true])
+	fx.show_effects(shown, 0.5)
+	hero = null
+
+
+func _effects_room() -> void:
+	_ground([], [Vector3(0, -3, 6)], Rect2(-12, -8, 24, 16))
+	_figure("kozak", Vector3.ZERO, "cast_raise", Vector3(0, 0, 3), 0.5)
+	for i in 6:
+		var a := i * TAU / 6.0 + 0.4
+		var at := Vector3(cos(a) * 3.2, 0.0, sin(a) * 2.4)
+		_figure("tatar" if i % 2 == 0 else "tatar_luk", at, "hit", Vector3.ZERO, 0.2 + 0.1 * i)
+	var fx: Node3D = MapEffects.new()
+	add_child(fx)
+	var p := _px(Vector3.ZERO)
+	var shown: Array = [["storm", 3, p], ["storm", 6, p], ["storm", 7, p], ["storm", 8, p],
+		["quake", 6, p]]
+	for k in 5:
+		shown.append(["rain", 5 + k, p])
+	fx.show_effects(shown, 0.55)
+	hero = null
+
+
+## A place on the ground in the map's pixels (MapPeople.to_world turned back).
+static func _px(at: Vector3) -> Vector2i:
+	return Vector2i(roundi(at.x * 27.0), roundi(at.z * 27.0) - MapEffects.MapPeople.FOOT_PX)
