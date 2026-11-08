@@ -37,6 +37,7 @@ const MapPeople := preload("res://scripts/world/map_people.gd")
 const Pictures := preload("res://scripts/ui/pictures.gd")
 const ItemSlot := preload("res://scripts/ui/item_slot.gd")
 const SKY_SHADER := preload("res://assets/art/shaders/story_sky.gdshader")
+const WorldView := preload("res://scripts/world/world_view.gd")
 const MP := "res://assets/original/mp/"  # the battle's sounds
 ## World units per pixel of the battle (online_battle.gd's 240×320 field): one 27 px map tile
 ## is one unit, as on the map.
@@ -176,17 +177,13 @@ func _build_world() -> void:
 	sky.shader = SKY_SHADER
 	back.material = sky
 	add_child(back)
-	var container := SubViewportContainer.new()
+	var container := WorldView.new()
 	container.name = "World"
-	container.stretch = true
-	container.set_anchors_preset(Control.PRESET_FULL_RECT)
 	container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(container)
-	viewport = SubViewport.new()
+	viewport = container.viewport
 	viewport.own_world_3d = true
 	viewport.transparent_bg = true
-	viewport.msaa_3d = Viewport.MSAA_2X
-	container.add_child(viewport)
 	stage = Node3D.new()
 	stage.name = "Stage"
 	viewport.add_child(stage)

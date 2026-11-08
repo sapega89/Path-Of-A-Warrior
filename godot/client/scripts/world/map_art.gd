@@ -523,7 +523,7 @@ static func add_environment(parent: Node3D) -> void:
 	sun.name = "Sun"
 	sun.shadow_enabled = true
 	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
-	sun.directional_shadow_max_distance = 40.0
+	sun.directional_shadow_max_distance = 26.0
 	sun.shadow_blur = 1.5
 	sun.transform = Transform3D(Basis.looking_at(Vector3(0.5, -0.74, -0.45).normalized(), Vector3.UP), Vector3.ZERO)
 	parent.add_child(sun)

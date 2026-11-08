@@ -46,6 +46,7 @@ const GOLD_ICON := 12  # the heap of gold in the tool icons
 ## The exit arrow of the new art, pointing down: two brass chevrons in ink, the near one fainter.
 const EXIT_ARROW := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 40"><g fill="#b89550" stroke="#0f0d0c" stroke-width="2.5" stroke-linejoin="round"><path d="M4 3 L24 17 L44 3 L44 11 L24 25 L4 11 Z" fill-opacity="0.55"/><path d="M4 15 L24 29 L44 15 L44 23 L24 37 L4 23 Z"/></g><path d="M24 30.5 l3 2.5 l-3 2.5 l-3 -2.5 z" fill="#7e241f"/></svg>'
 const Pictures := preload("res://scripts/ui/pictures.gd")
+const WorldView := preload("res://scripts/world/world_view.gd")
 
 var lord_id := 1
 var mission := 0
@@ -111,15 +112,11 @@ func _ready() -> void:
 	mission_info = ms[mission] if mission < ms.size() else {}
 	lord_name = campaign.lord_name(lord_id)
 
-	var container := SubViewportContainer.new()
+	var container := WorldView.new()
 	container.name = "World"
-	container.stretch = true
-	container.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(container)
-	viewport = SubViewport.new()
+	viewport = container.viewport
 	viewport.own_world_3d = true
-	viewport.msaa_3d = Viewport.MSAA_2X
-	container.add_child(viewport)
 	world = Node3D.new()
 	world.name = "WorldRoot"
 	viewport.add_child(world)
