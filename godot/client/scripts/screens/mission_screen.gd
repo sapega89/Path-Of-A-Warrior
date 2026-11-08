@@ -3,10 +3,11 @@ extends Control
 ## (original pixels and ticks); this screen reads the input, ticks the simulation every
 ## 120 ms and draws its state in 3D: the hero, the camera on the current room,
 ## the exit arrows and the "Stage" banners (after a won mission the exp bar of pyport on the
-## pages Total Exp and Time Exp, the level gone up on it), the soldiers and their arrows (the
-## people as 3D figures playing the clips of their actions, scripts/world/map_people.gd), the
-## effects of skills, potions and scrolls, the fire on whoever a fire skill hits, the auras of
-## buffs, and the HUD. A talk on the map shows the portrait of who speaks beside the line, just
+## pages Total Exp and Time Exp, the level gone up on it), the soldiers (the people as 3D
+## figures playing the clips of their actions, scripts/world/map_people.gd), the effects made
+## in code (scripts/world/map_effects.gd: skills, potions and scrolls, the fire on whoever a
+## fire skill hits, the auras of buffs, hit sparks, weapon trails, the archers' arrows), and
+## the HUD. A talk on the map shows the portrait of who speaks beside the line, just
 ## above the HUD, as pyport's.
 ## Params: {lord, mission, seed (optional: the same enemies every run)}.
 ## A hit on the map is felt (scripts/world/combat_feel.gd, the options Hit effects, Screen shake,
@@ -29,7 +30,7 @@ const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const MapHud := preload("res://scripts/ui/map_hud.gd")
 const Autopilot := preload("res://scripts/sim/autopilot.gd")
-const Effects := preload("res://scripts/world/effects.gd")
+const MapEffects := preload("res://scripts/world/map_effects.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const Items := preload("res://scripts/core/items.gd")
 const MissionPause := preload("res://scripts/ui/mission_pause.gd")
@@ -58,7 +59,7 @@ var hero: Node3D  # the hero's figure (people.hero)
 var camera: Camera3D
 var hud: MapHud
 var profile: Profile
-var effects: Effects
+var effects: MapEffects  # the effects, arrows in flight among them
 var banner: PanelContainer
 var banner_text: Label
 var exp_bar: ExpBar  # under the text of the pages Total Exp and Time Exp
@@ -70,7 +71,6 @@ var talk_portrait: TextureRect
 var talk_panel: PanelContainer
 var talk_text: Label
 var arrows: Array[TextureRect] = []
-var shots: Array[MeshInstance3D] = []  # the archers' arrows
 var tint := 0
 var loot := {}  # sim drop -> Sprite3D
 var trails: Array = []  # the weapon trails of this tick
@@ -141,24 +141,13 @@ func _ready() -> void:
 	if resume:
 		profile.resume_on_map(sim)
 
-	var arrow_mat := StandardMaterial3D.new()
-	arrow_mat.albedo_color = Color8(240, 142, 53)
-	arrow_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	for i in sim.arrows.size():
-		var m := MeshInstance3D.new()
-		m.name = "Shot%d" % i
-		m.mesh = BoxMesh.new()
-		m.material_override = arrow_mat
-		m.visible = false
-		world.add_child(m)
-		shots.append(m)
 
 	people = MapPeople.new()
 	people.name = "People"
 	world.add_child(people)
 	people.setup(sim, profile.head)
 	hero = people.hero
-	effects = Effects.new()
+	effects = MapEffects.new()
 	effects.name = "Effects"
 	world.add_child(effects)
 
@@ -333,14 +322,14 @@ func _update_view(t: float) -> void:
 	camera.focus = sim.rooms.center(sim.cell)
 	feel.shake_camera(camera, Hero.PIXEL_SIZE)
 	hud.queue_redraw()
-	_place_shots()
+	effects.show_shots(sim.arrows, t, not sim.arrows_wait())
 	var shown: Array = sim.auras()
 	shown.append_array(sim.effects())
 	shown.append_array(sim.fires())
 	for sp in sim.sparks():
 		shown.append(["spark", sp[0], sp[1]])
 	shown.append_array(trails)
-	effects.show_effects(shown)
+	effects.show_effects(shown, t)
 	_place_objects()
 	_place_loot()
 	_place_arrows()
@@ -383,16 +372,6 @@ func _place_loot() -> void:
 		world.add_child(s)
 		s.global_position = Hero.px_to_world(Vector2(d.pos)) + Vector3(0.0, s.region_rect.size.y / 54.0, 0.0)
 		loot[d] = s
-
-
-func _place_shots() -> void:
-	for i in shots.size():
-		var a = sim.arrows[i]
-		shots[i].visible = a.active
-		if a.active:
-			(shots[i].mesh as BoxMesh).size = Vector3(a.w / 27.0, 0.07, a.h / 27.0)
-			shots[i].global_position = Vector3((a.pos.x + a.w / 2.0) / 27.0, 0.6,
-				(a.pos.y + 8 + a.h / 2.0 + Hero.FOOT_PX) / 27.0)
 
 
 func _show_banner() -> void:

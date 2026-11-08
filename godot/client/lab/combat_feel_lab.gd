@@ -22,7 +22,7 @@ const JavaRandom := preload("res://scripts/sim/java_random.gd")
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const MapHud := preload("res://scripts/ui/map_hud.gd")
 const Autopilot := preload("res://scripts/sim/autopilot.gd")
-const Effects := preload("res://scripts/world/effects.gd")
+const MapEffects := preload("res://scripts/world/map_effects.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const CombatFeel := preload("res://scripts/world/combat_feel.gd")
 const FeelPanel := preload("res://lab/feel_panel.gd")
@@ -45,12 +45,11 @@ var hero: Node3D  # the hero's figure (people.hero)
 var people: MapPeople  # the hero and the soldiers as figures
 var _anim_dt := 0.0  # seconds the figures' clips move on this frame (0 while a hit holds)
 var camera: Camera3D
-var effects: Effects
+var effects: MapEffects  # the effects, arrows in flight among them
 var hud: MapHud
 var panel: FeelPanel
 var help: Label
 var status: Label  # whether the effects are on, at the top in the middle
-var shots: Array[MeshInstance3D] = []
 var loot := {}
 var trails: Array = []
 var god := true
@@ -102,17 +101,7 @@ func _ready() -> void:
 	world.add_child(builder)
 	builder.build(map)
 
-	var arrow_mat := StandardMaterial3D.new()
-	arrow_mat.albedo_color = Color8(240, 142, 53)
-	arrow_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	for i in 3:
-		var m := MeshInstance3D.new()
-		m.mesh = BoxMesh.new()
-		m.material_override = arrow_mat
-		m.visible = false
-		world.add_child(m)
-		shots.append(m)
-	effects = Effects.new()
+	effects = MapEffects.new()
 	world.add_child(effects)
 	camera = FollowCamera.new()
 	world.add_child(camera)
@@ -314,14 +303,14 @@ func _update_view(t: float) -> void:
 	camera.focus = sim.rooms.center(sim.cell)
 	feel.shake_camera(camera, PX)
 	hud.queue_redraw()
-	_place_shots()
+	effects.show_shots(sim.arrows, t, not sim.arrows_wait())
 	var shown: Array = sim.auras()
 	shown.append_array(sim.effects())
 	shown.append_array(sim.fires())
 	for sp in sim.sparks():
 		shown.append(["spark", sp[0], sp[1]])
 	shown.append_array(trails)
-	effects.show_effects(shown)
+	effects.show_effects(shown, t)
 	for b in sim.breakables:
 		var node := builder.get_node_or_null("Object_%d_%d" % [b.tile.x, b.tile.y]) as Node3D
 		if node != null:
@@ -329,16 +318,6 @@ func _update_view(t: float) -> void:
 			if node is Sprite3D:
 				CombatFeel.flash_sprite(node as Sprite3D, feel.flash_of(b), _flash_mats)
 	_place_loot()
-
-
-func _place_shots() -> void:
-	for i in shots.size():
-		var a = sim.arrows[i]
-		shots[i].visible = a.active
-		if a.active:
-			(shots[i].mesh as BoxMesh).size = Vector3(a.w / 27.0, 0.07, a.h / 27.0)
-			shots[i].global_position = Vector3((a.pos.x + a.w / 2.0) / 27.0, 0.6,
-				(a.pos.y + 8 + a.h / 2.0 + Hero.FOOT_PX) / 27.0)
 
 
 func _place_loot() -> void:

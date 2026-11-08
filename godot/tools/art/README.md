@@ -2,13 +2,15 @@
 
 Нова графіка гри (крок 2 у `docs/GODOT_PLAN.md`). Вітрина — табір Корсунь, одна кімната бою
 й ряд усіх людей у єдиному стилі. У місіях гра вже бере з неї людей: героя за класом і зброєю,
-ворогів за стороною генерала місії (`scripts/world/map_people.gd`). Карти, ефекти, предмети,
-інтерфейс місій і меню ще старі.
+ворогів за стороною генерала місії (`scripts/world/map_people.gd`), і ефекти, намальовані
+кодом (`scripts/world/map_effects.gd`). Карти, предмети, інтерфейс місій і меню ще старі.
 
 ```
 godot --path godot/client res://scenes/art_slice.tscn              # табір
 godot --path godot/client res://scenes/art_slice.tscn -- battle 50 # бій, камера 50°
 godot --path godot/client res://scenes/art_slice.tscn -- people    # усі люди в ряд
+godot --path godot/client res://scenes/art_slice.tscn -- effects   # кожен ефект місії
+godot --path godot/client res://scenes/art_slice.tscn -- effects_room  # гроза, дощ, змій
 godot --path godot/client --resolution 1280x720 res://tools/art_shots.tscn -- OUT_DIR
                                                                    # знімки зрізу (є в CI)
 ```
@@ -28,7 +30,7 @@ C9A15B, трава 9E9A5C, дуб 4E6B3A, побілка EDE6D6, кіновар 
 |---|---|---|
 | Скелет і 34 кліпи (ходьба, удари, блок, лук, сидіння...) | KayKit Character Pack: Adventurers 1.0, скелет Knight; кістки перенесено на дорослі пропорції (~1,8 м), руки опущено на 22° | CC0 |
 | П'ятнадцять людей, вісім видів зброї, 21 річ табору | Кодом у Blender (`characters.py`, `weapons.py`, `props.py`) | наш код |
-| Шейдери: фарба, контур, земля, слід шаблі | `godot/client/assets/art/shaders/*.gdshader` | наш код |
+| Шейдери: фарба, контур, земля, слід шаблі, світло й дим ефектів | `godot/client/assets/art/shaders/*.gdshader` | наш код |
 | Іскри, пил, вогнище | `CPUParticles3D` у `scripts/art/art_effects.gd` | наш код |
 | Іконки, монета, орнамент-петриківка | SVG вручну (`assets/art/ui/*.svg`) | наш код |
 | Шрифти Kurale (заголовки), PT Sans (текст) | `@fontsource`, латиниця й кирилиця | OFL 1.1, тексти поруч зі шрифтами |
@@ -83,7 +85,14 @@ godot --headless --path godot/client --import
 - `scripts/art/art_effects.gd` — слід шаблі, іскри, пил, вогнище з теплим світлом.
 - `scripts/art/art_hud.gd` — круглий портрет героя (живий, з камери), смуги здоров'я й духу,
   уміння з іконками, гаманець, назва місця, сенсорний стік.
-- `scripts/art/art_slice.gd` — збирає табір, бій або ряд людей (`people`), світло й камеру.
+- `scripts/world/map_effects.gd` — ефекти місії кодом: на кожен вид ефекту, який показує
+  `MapSim`, — свій набір частин (квадрати й відкриті циліндри з `fx_light.gdshader`, дим і пил з
+  `fx_puff.gdshader`), які повертаються до камери й ведуться кадром симуляції; стріли лучників.
+  `fx_light` малює форму (сяйво, кільце, зірку, язик полум'я, блискавку, хвіст, спіраль, стовп,
+  іскри, водяну стіну, слід клинка); `body` робить найяскравішу частину непрозорою, решта
+  світиться поверх.
+- `scripts/art/art_slice.gd` — збирає табір, бій, ряд людей (`people`) чи ефекти (`effects`,
+  `effects_room`), світло й камеру.
 
 Рендер — GL Compatibility. У ньому `ALBEDO` шейдера вважається sRGB, тому `painted.gdshader`
 переводить лінійні кольори вершин назад у sRGB (`OUTPUT_IS_SRGB`), а точкові світла (вогнище) не
