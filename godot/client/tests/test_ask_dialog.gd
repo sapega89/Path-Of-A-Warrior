@@ -43,6 +43,13 @@ func test_question() -> void:
 	ask.safe_default = true
 	ask.popup_centered()
 	check(ask.cancel.has_focus(), "safe: the focus on No")
+	before.grab_focus()  # the screen's own deferred focus, in the same frame
+	ask._focus_first()  # the dialog's deferred call after it
+	check(ask.cancel.has_focus(), "the focus taken back to No")
+	ask.ok.grab_focus()
+	ask._focus_first()
+	check(ask.ok.has_focus(), "a button of its own keeps the focus")
+	ask.cancel.grab_focus()
 	ask.ok.pressed.emit()
 	eq(answers, ["no", "yes"], "Yes answers Yes")
 	check(not ask.visible, "and closes it")

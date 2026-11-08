@@ -115,8 +115,17 @@ func popup_centered(_size := Vector2i.ZERO) -> void:
 		_focus_before = get_viewport().gui_get_focus_owner()
 		move_to_front()
 	show()
+	_focus_first()
+	_focus_first.call_deferred()  # again, over a focus the screen asked for later in this frame
+
+
+## The focus on its first button, unless it is on one of its buttons already or it is hidden.
+func _focus_first() -> void:
 	var first := cancel if safe_default and not notice else ok
-	if first.is_inside_tree():
+	if not visible or not first.is_inside_tree():
+		return
+	var f := get_viewport().gui_get_focus_owner()
+	if f != ok and f != cancel:
 		first.grab_focus()
 
 
