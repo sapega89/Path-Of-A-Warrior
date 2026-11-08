@@ -11,8 +11,11 @@ the original one. Its choices:
   - Lightning when the target stands about 60 px ahead, out of reach of the sword;
   - a strike skill (Wind Slasher, Tide Crasher ...) on a general, on 2+ enemies in reach or with
     the MP nearly full, else the attack combo;
-  - it walks to the nearest living enemy, and around a wall when it stops moving;
-  - a cleared room: out through an open exit, to a room it has not seen yet when it can.
+  - it walks to the nearest living enemy, and around a wall when it stops moving or comes no
+    closer (each way around longer than the one before, to the other side); an enemy that four
+    ways around bring no closer (an archer up on a wall) it leaves alone in this room;
+  - a cleared room (or one where only such enemies are left): out through an open exit, to a
+    room it has not seen yet when it can.
 Talks on the map, popups and the pause menu stay the player's.
 """
 import config
@@ -39,7 +42,10 @@ HP_POTIONS = (1, 2, 3, 7, 8, 9)        # draw_potion_effect: 1-3 HP, 4-6 MP, 7-9
 MP_POTIONS = (4, 5, 6, 7, 8, 9)
 MANUAL_PAUSE = 12                      # ticks the autopilot waits after a key of the player
 STUCK_TICKS = 4                        # ticks without moving -> go around
-DETOUR_TICKS = 8
+NO_CLOSER_TICKS = 16                   # ticks without coming closer to the target -> go around
+DETOUR_TICKS = 8                       # the first way around; the n-th is n times as long
+GIVE_UP_TRIES = 4                      # ways around that bring it no closer: out of reach
+CLOSER = 27                            # px closer than where the ways around began: they worked
 
 
 def distance(a, b):
@@ -60,6 +66,13 @@ class Autopilot:
     _still = 0
     _detour = None
     _detour_ticks = 0
+    _target = None                     # the enemy it walks to
+    _closest = 0                       # its nearest distance to the target so far
+    _no_closer = 0                     # ticks since it last came closer
+    _tries = 0                         # ways around the target in a row
+    _try_from = 0                      # the nearest distance when they began
+    _out_of_reach = []                 # the enemies of this room it leaves alone
+    _hunt_room = None                  # (map, cell) of _out_of_reach
     _map = None                        # the map whose rooms _seen holds
     _seen = set()
     _exit_cell = None
@@ -73,11 +86,22 @@ class Autopilot:
         cls._last = None
         cls._still = cls._detour_ticks = 0
         cls._detour = None
+        cls._target = cls._hunt_room = None
+        cls._closest = cls._no_closer = cls._tries = cls._try_from = 0
+        cls._out_of_reach = []
         cls._map = cls._exit_cell = cls._exit = None
         cls._seen = set()
 
+    @staticmethod
+    def allowed():
+        """Only on Normal: on Hard there is no auto-hunt, the player fights by hand."""
+        return GameCanvas.difficulty != 0
+
     @classmethod
     def toggle(cls):
+        if not cls.allowed():
+            cls.on = False
+            return
         cls.on = not cls.on
         cls.direction = None
         GameCanvas.redraw = 1          # the corner badge goes with a full redraw of the map
@@ -90,7 +114,7 @@ class Autopilot:
 
     @staticmethod
     def playing():
-        return (GameCanvas.state == 3 and GameCanvas.map_mode.mode == 0 and GameCanvas.popups.kind == 0
+        return (Autopilot.allowed() and GameCanvas.state == 3 and GameCanvas.map_mode.mode == 0 and GameCanvas.popups.kind == 0
                 and not GameCanvas.paused and GameCanvas.hero is not None
                 and GameCanvas.hero.pos[0] is not None)
 
@@ -128,10 +152,13 @@ class Autopilot:
         if key is not None:
             cls.direction = None
             return key
-        if not foes:
+        hunt = cls._hunted(foes)
+        if not hunt:
+            if GameCanvas.room_phase != 1 or GameCanvas.room_phase_timer >= 0:
+                cls._out_of_reach = []         # no way out yet: it tries them again
             cls.direction = cls._to_exit(cz)
             return None
-        target = min(foes, key=lambda ex: distance(cz.pos[0], ex.pos[0]))
+        target = min(hunt, key=lambda ex: distance(cz.pos[0], ex.pos[0]))
         dist = distance(cz.pos[0], target.pos[0])
         reach = consts.weapon_reach[cz.weapon_kind] - 6
         key = cls._skill(cz, foes, target, dist, reach)
@@ -143,24 +170,59 @@ class Autopilot:
         return None
 
     @classmethod
+    def _hunted(cls, foes):
+        """The enemies it goes for: the living ones, but those it left alone in this room."""
+        room = (GameCanvas.map, GameCanvas.cell)
+        if cls._hunt_room is None or cls._hunt_room[0] is not room[0] or cls._hunt_room[1] != room[1]:
+            cls._hunt_room = room
+            cls._out_of_reach = []
+            cls._target = None
+        cls._out_of_reach = [ex for ex in cls._out_of_reach if ex in foes]
+        return [ex for ex in foes if ex not in cls._out_of_reach]
+
+    @classmethod
     def _walk(cls, cz, target):
         pos = (cz.pos[0].x, cz.pos[0].y)
         cls._still = cls._still + 1 if pos == cls._last and cz.action[0] == 1 else 0
         cls._last = pos
-        want = dir4(cz.pos[0], target.pos[0])
+        dist = distance(cz.pos[0], target.pos[0])
+        if target is not cls._target:
+            cls._target = target
+            cls._closest = dist
+            cls._no_closer = cls._tries = 0
+        elif dist < cls._closest:
+            cls._closest = dist
+            cls._no_closer = 0
+            if cls._tries > 0 and dist <= cls._try_from - CLOSER:
+                cls._tries = 0
+        else:
+            cls._no_closer += 1
         if cls._detour_ticks > 0:
             cls._detour_ticks -= 1
+            cls._no_closer = 0
             return DIR_KEY[cls._detour]
-        if cls._still >= STUCK_TICKS:          # a wall: go along it, toward the target's other axis
-            cls._still = 0
-            dx, dy = target.pos[0].x - cz.pos[0].x, target.pos[0].y - cz.pos[0].y
-            if want in (0, 4):
-                cls._detour = 6 if dx > 0 else 2
-            else:
-                cls._detour = 0 if dy > 0 else 4
-            cls._detour_ticks = DETOUR_TICKS
-            return DIR_KEY[cls._detour]
-        return DIR_KEY[want]
+        want = dir4(cz.pos[0], target.pos[0])
+        if cls._still < STUCK_TICKS and cls._no_closer < NO_CLOSER_TICKS:
+            return DIR_KEY[want]
+        # a wall, or a corner it goes to and fro at: along it, toward the target's other axis
+        # first, then to the other side
+        cls._still = cls._no_closer = 0
+        cls._tries += 1
+        if cls._tries == 1:
+            cls._try_from = cls._closest
+        if cls._tries > GIVE_UP_TRIES:
+            cls._out_of_reach.append(target)
+            cls._target = None
+            return None
+        dx, dy = target.pos[0].x - cz.pos[0].x, target.pos[0].y - cz.pos[0].y
+        if want in (0, 4):
+            cls._detour = 6 if dx > 0 else 2
+        else:
+            cls._detour = 0 if dy > 0 else 4
+        if cls._tries % 2 == 0:
+            cls._detour = (cls._detour + 4) & 7
+        cls._detour_ticks = DETOUR_TICKS * cls._tries
+        return DIR_KEY[cls._detour]
 
     # --- potions --------------------------------------------------------------------------------------
     @classmethod

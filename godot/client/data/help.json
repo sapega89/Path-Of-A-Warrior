@@ -1,0 +1,81 @@
+{
+"topics": [
+{
+"name": "Missions",
+"pages": [
+"A mission won brings gold, fame, experience and things found on the field.",
+"After a mission you can pay a visit to a general you have spoken with.",
+"If your warrior's health falls to nothing during a mission, the mission is lost.",
+"Experience and things picked up in a lost mission are gone with it.",
+"A lost mission can also cost you one of the things you are wearing."
+]
+},
+{
+"name": "Visiting",
+"pages": [
+"Generals you finish a mission with, or meet on the field, can be visited once the mission is over.",
+"You will find Visiting in the main menu, but only once a mission has been won.",
+"A visit can bring you a skill, a thing, gold, fame, or even a point to your stats!"
+]
+},
+{
+"name": "Blacksmith",
+"pages": [
+"The smith buys and sells things.",
+"He can also charm a thing by combining it with certain others.",
+"Try putting different things together at the smith's to discover new ones.",
+"Online you can buy, sell or give things to other players, and keep your gold on the server.",
+"Remember that a tax is taken on every thing sold or given to another player.",
+"Changed your mind about a sale? Live > Trade > Cancel Sale takes the thing back."
+]
+},
+{
+"name": "Skills",
+"pages": [
+"The only way to learn a skill, or improve one, is a visit to a warrior or general.",
+"Open Management > Skill in the game menu before a mission to swap the skills you carry.",
+"A skill's level rises only through a visit to a general."
+]
+},
+{
+"name": "Gear",
+"pages": [
+"Everything you can wear, weapons and armour alike, is called gear.",
+"Before a mission starts you can put on your gear under Management > Gear in the game menu.",
+"A piece of gear is plain, special or rare. Some pieces are very hard to come by.",
+"Every piece of gear wears out after so much use.",
+"Only the smith can charm a piece of gear."
+]
+},
+{
+"name": "Experience",
+"pages": [
+"Finishing a mission brings gold, fame, experience and things.",
+"Gather enough experience from missions and your level goes up.",
+"Your warrior rises a level each time his experience reaches the next mark.",
+"Every new level gives you three points to spend as you see fit.",
+"The points go into attack, defence, health or spirit.",
+"Choose with care: a point once spent cannot be taken back."
+]
+},
+{
+"name": "Saving",
+"pages": [
+"Every step you take is saved on its own.",
+"A mission can be saved after a stage is cleared, but if the mission is lost, that save is lost too.",
+"The Live entry of the game menu puts your warrior on the server and fetches him back.",
+"Try your warrior in online missions. He is ranked against other players without you lifting a finger.",
+"Your standing is shown in the multiplayer game.",
+"Use Load User Data to load a warrior saved on this device.",
+"Connecting to Live adds your saved experience and fame on its own."
+]
+},
+{
+"name": "Control",
+"pages": [
+"Attack: 5 or OK. Move: 2, 4, 6, 8 or the arrows. Skills: 1, 3, 7, 9, 0. Things: * and #.",
+"Only the 0 key can hold the Aerial Attack skill."
+]
+}
+]
+}

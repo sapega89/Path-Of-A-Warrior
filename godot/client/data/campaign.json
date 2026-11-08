@@ -1,0 +1,4585 @@
+{
+"chapters": [
+[
+1
+],
+[
+2
+],
+[
+3
+],
+[
+4
+],
+[
+5,
+6
+],
+[
+8,
+9,
+10
+],
+[
+7
+],
+[
+10
+],
+[
+11,
+12
+],
+[
+12
+],
+[
+11,
+12
+],
+[
+13
+],
+[
+11,
+13
+],
+[
+14
+],
+[
+15,
+16
+],
+[
+17
+],
+[
+15
+],
+[
+18,
+20
+],
+[
+19
+],
+[
+20
+],
+[
+21,
+22
+],
+[
+22,
+23
+],
+[
+24
+],
+[
+24,
+25
+],
+[
+27
+],
+[
+26,
+24
+],
+[
+28,
+24
+],
+[
+30,
+34,
+35,
+36,
+37,
+29
+],
+[
+27
+],
+[
+35
+],
+[
+31,
+43
+],
+[
+32,
+33
+],
+[
+33,
+41,
+43
+],
+[
+43
+],
+[
+38
+],
+[
+39
+],
+[
+40
+],
+[
+41
+],
+[
+39,
+42
+],
+[
+41
+],
+[
+41
+],
+[
+43
+],
+[
+44,
+45
+],
+[
+45
+],
+[
+45
+]
+],
+"lords": {
+"1": {
+"name": "Uprising",
+"first_mission": 0,
+"missions": 4
+},
+"2": {
+"name": "Yellow Waters",
+"first_mission": 4,
+"missions": 4
+},
+"3": {
+"name": "Chortomlyk",
+"first_mission": 8,
+"missions": 5
+},
+"4": {
+"name": "Korsun",
+"first_mission": 13,
+"missions": 5
+},
+"5": {
+"name": "The Regalia",
+"first_mission": 18,
+"missions": 2
+},
+"6": {
+"name": "Harvest",
+"first_mission": 20,
+"missions": 2
+},
+"7": {
+"name": "The Hetman's Twilight",
+"first_mission": 22,
+"missions": 2
+},
+"8": {
+"name": "The Poisoned Cup",
+"first_mission": 24,
+"missions": 2
+},
+"9": {
+"name": "The Kurin",
+"first_mission": 26,
+"missions": 2
+},
+"10": {
+"name": "The Oath",
+"first_mission": 28,
+"missions": 2
+},
+"11": {
+"name": "Single Combat",
+"first_mission": 30,
+"missions": 3
+},
+"12": {
+"name": "Wild Blood",
+"first_mission": 33,
+"missions": 5
+},
+"13": {
+"name": "Zbarazh",
+"first_mission": 38,
+"missions": 2
+},
+"14": {
+"name": "The Ford",
+"first_mission": 40,
+"missions": 2
+},
+"15": {
+"name": "The Mace",
+"first_mission": 42,
+"missions": 2
+},
+"16": {
+"name": "Falcon's Flight",
+"first_mission": 44,
+"missions": 1
+},
+"17": {
+"name": "Kodak",
+"first_mission": 45,
+"missions": 2
+},
+"18": {
+"name": "The Turncoat",
+"first_mission": 47,
+"missions": 2
+},
+"19": {
+"name": "The Ambush",
+"first_mission": 49,
+"missions": 2
+},
+"20": {
+"name": "The Thaw",
+"first_mission": 51,
+"missions": 2
+},
+"21": {
+"name": "The Burnt Camp",
+"first_mission": 53,
+"missions": 2
+},
+"22": {
+"name": "The Raid",
+"first_mission": 55,
+"missions": 2
+},
+"23": {
+"name": "The Last Redoubt",
+"first_mission": 57,
+"missions": 2
+},
+"24": {
+"name": "Down the Dnipro",
+"first_mission": 59,
+"missions": 2
+},
+"25": {
+"name": "The Black Council",
+"first_mission": 61,
+"missions": 1
+},
+"26": {
+"name": "The Hetman's Letter",
+"first_mission": 62,
+"missions": 2
+},
+"27": {
+"name": "Dawn over the Dnipro",
+"first_mission": 64,
+"missions": 2
+},
+"28": {
+"name": "Stanislaw",
+"first_mission": 66,
+"missions": 2
+},
+"29": {
+"name": "Steppe Wind",
+"first_mission": 68,
+"missions": 2
+},
+"30": {
+"name": "Kruta Balka",
+"first_mission": 70,
+"missions": 2
+},
+"31": {
+"name": "Klym Holota",
+"first_mission": 72,
+"missions": 2
+},
+"32": {
+"name": "Bar",
+"first_mission": 74,
+"missions": 2
+},
+"33": {
+"name": "Kuchman Road I",
+"first_mission": 76,
+"missions": 2
+},
+"34": {
+"name": "Svitiaz",
+"first_mission": 78,
+"missions": 2
+},
+"35": {
+"name": "Berestechko Marshes",
+"first_mission": 80,
+"missions": 2
+},
+"36": {
+"name": "Bura Mohyla",
+"first_mission": 82,
+"missions": 2
+},
+"37": {
+"name": "Ochakiv",
+"first_mission": 84,
+"missions": 2
+},
+"38": {
+"name": "Kamianets",
+"first_mission": 86,
+"missions": 2
+},
+"39": {
+"name": "Beyond the Border",
+"first_mission": 88,
+"missions": 2
+},
+"40": {
+"name": "Poltava",
+"first_mission": 90,
+"missions": 2
+},
+"41": {
+"name": "Wild Field",
+"first_mission": 92,
+"missions": 2
+},
+"42": {
+"name": "Kuchman Road II",
+"first_mission": 94,
+"missions": 2
+},
+"43": {
+"name": "The Ruin",
+"first_mission": 96,
+"missions": 2
+},
+"44": {
+"name": "Falcon's Flight II",
+"first_mission": 98,
+"missions": 2
+},
+"45": {
+"name": "The Duma",
+"first_mission": 100,
+"missions": 2
+}
+},
+"missions": [
+{
+"id": 1,
+"start": [
+4,
+2
+],
+"tint": 1,
+"boss_type": 1,
+"general": 5,
+"reward": 0,
+"gold": 3,
+"time_limit": 192,
+"level_bonus": 1,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Listen, mercenary. Chyhyryn may be burning, but not every colonel has sold himself to the Crown. A few still hold to their oath to Hetman Verbenko. Colonel Bairak of Pereiaslav is one of them, and the Hetman's own blood runs in him. The brotherhood has had its eye on this man for years: something great will come of him. Our first job with him is simple and bloody. The banner of Rotmistr Krzeminski, one of the pillars of the Crown Army, has made camp in a gully. Bairak will circle through the woods and hit them from behind, while you cross the open field straight at the tents. It does not matter which of you reaches the rotmistr first, only that one of you does. Are you in?"
+},
+{
+"id": 2,
+"start": [
+4,
+2
+],
+"tint": 1,
+"boss_type": 2,
+"general": 4,
+"reward": 0,
+"gold": 3,
+"time_limit": 192,
+"level_bonus": 2,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "There is another man the brotherhood keeps watch on: Platon Chornohuz of Myrhorod. For now he is only a squire under someone else's banner, and the senior officers do not notice him at table. Their mistake. He has a wolf's nose and a quick hand. Right now he means to bloody Rotmistr Zaleski, whose Crown banner is grazing its horses above the river. The plan is the same one Bairak used: Chornohuz creeps in from the reeds at the back, you come in from the front, and Zaleski finds himself between two blades. The rotmistr must fall. Will you ride?"
+},
+{
+"id": 3,
+"start": [
+4,
+2
+],
+"tint": 1,
+"boss_type": 3,
+"general": 18,
+"reward": 0,
+"gold": 3,
+"time_limit": 192,
+"level_bonus": 3,
+"name": "Colonel Syvous",
+"portrait": 25,
+"description": "Colonel Syvous of Uman is a man of few words, but his regiment speaks loudly. When a Crown proclamation reached him, he hanged the courier on the gate. Now Rotmistr Wolski is leading a banner against Uman to teach him a lesson. Syvous has no intention of sitting behind a palisade. His field commander, Myron Tykhyi, will take the horse out by night and get round behind Wolski, and at dawn you will strike the front. The pincer closes on the rotmistr. Your answer?"
+},
+{
+"id": 4,
+"start": [
+4,
+20
+],
+"tint": 3,
+"boss_type": 6,
+"general": 0,
+"reward": 0,
+"gold": 6,
+"time_limit": 252,
+"level_bonus": 15,
+"name": "Colonel Vovkodav",
+"portrait": 0,
+"description": "No pincer this time, and no colonels at your back. The Crown Army has three heads, and one of them is in our parts right now: Osaul Zalizo, a Cossack who sold his sabre to Kniaz Dominik and leads his fiercest banner. He has broken away from the main host and is camped in the open steppe, certain that no one will dare. Someone must dare. You go at him alone, head-on, through his guards. The work is hard, and the pay is not like the pay for the others. What do you say?"
+},
+{
+"id": 1,
+"start": [
+4,
+2
+],
+"tint": 1,
+"boss_type": 7,
+"general": 6,
+"reward": 0,
+"gold": 3,
+"time_limit": 192,
+"level_bonus": 1,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Krzeminski is gone: after your blow nothing is left of his banner but wagons and dust. But the Crown has brought the Horde with it. Kara-murza and his riders are already burning farmsteads along the Yellow Waters, and Bairak has turned on him. Steppe men do not stand in ranks; they swoop in and vanish, so this needs stubbornness more than strength. Find the murza and see to it that his horse goes back to the camp without a rider. Will you ride?"
+},
+{
+"id": 2,
+"start": [
+4,
+2
+],
+"tint": 1,
+"boss_type": 8,
+"general": 11,
+"reward": 0,
+"gold": 3,
+"time_limit": 192,
+"level_bonus": 2,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Zaleski is broken and his men have scattered into the forests. But in place of the banner came the warband of Dzhanbek-bey: the Horde has taken the Crown's money and is now earning it on the Yellow Waters. Chornohuz says he will not have Tatar campfires on his steppe, and that is something. Help him: the bey must fall, or his riders will never leave. Your word?"
+},
+{
+"id": 3,
+"start": [
+4,
+2
+],
+"tint": 1,
+"boss_type": 9,
+"general": 74,
+"reward": 0,
+"gold": 3,
+"time_limit": 192,
+"level_bonus": 3,
+"name": "Colonel Syvous",
+"portrait": 25,
+"description": "Wolski is no longer among the living, and Rudzki's banner, which was marching to his relief, fell apart the moment it saw Tykhyi's horse. Now Syvous is aiming higher: at Kniaz Dominik himself. The kniaz is camped above the Yellow Waters with what is left of the Crown Army, and if he goes down, this whole march on Chyhyryn ends of its own accord. Syvous sends Tykhyi forward and asks for you at his side. You must get to the kniaz. Will you take it?"
+},
+{
+"id": 5,
+"start": [
+4,
+20
+],
+"tint": 3,
+"boss_type": 6,
+"general": 201,
+"reward": 0,
+"gold": 9,
+"time_limit": 252,
+"level_bonus": 30,
+"name": "Colonel Dovhan",
+"portrait": 0,
+"description": "The turning point is close. Kniaz Dominik is cornered above the Yellow Waters, his banners beaten one by one, and he has sent riders in every direction begging for relief. The relief is coming, and that is our problem: the moment it arrives, the kniaz crawls out of the trap. So there is no time. You go into the kniaz's camp ahead of everyone, cut through whoever still stands by him, and finish the business. This is the mission that changes the fate of the land. Will you take it?"
+},
+{
+"id": 6,
+"start": [
+20,
+12
+],
+"tint": 3,
+"boss_type": 10,
+"general": 6,
+"reward": 0,
+"gold": 3,
+"time_limit": 192,
+"level_bonus": 2,
+"name": "Colonel Shabliuk",
+"portrait": 0,
+"description": "You did good work: Kniaz Dominik's Crown Army lies dead in the steppe, and for the first time in a long while people sleep soundly. The quiet is short. Out of Oleshky Sands came Colonel Kozub, and he has raised his head higher than anyone expected. While the others were fighting the Crown, he walked into Chyhyryn, drove old Verbenko the Grey from the mace and put the Hetman's younger sister Olena in his place, a girl who does whatever Kozub tells her. Colonels from across the land have called it lawlessness and are marching on Chyhyryn. Bairak has set out together with Kharko. In their road stands Oksana, a young otaman, the first woman Kozub ever gave a regiment to. You must face her. Can you manage it?"
+},
+{
+"id": 7,
+"start": [
+11,
+2
+],
+"tint": 3,
+"boss_type": 10,
+"general": 27,
+"reward": 0,
+"gold": 3,
+"time_limit": 192,
+"level_bonus": 2,
+"name": "Colonel Tuman",
+"portrait": 0,
+"description": "You did good work: Kniaz Dominik's Crown Army lies dead in the steppe, and for the first time in a long while people sleep soundly. The quiet is short. Out of Oleshky Sands came Colonel Kozub, and he has raised his head higher than anyone expected. While the others were fighting the Crown, he walked into Chyhyryn, drove old Verbenko the Grey from the mace and put the Hetman's younger sister Olena in his place, a girl who does whatever Kozub tells her. Colonels from across the land have called it lawlessness and are marching on Chyhyryn. Among them is Colonel Tuman of the Black Sea, bringing his boats and his horse north. In his road stands Oksana, a young otaman, the first woman Kozub ever gave a regiment to. You must face her. Can you manage it?"
+},
+{
+"id": 2,
+"start": [
+3,
+2
+],
+"tint": 3,
+"boss_type": 10,
+"general": 11,
+"reward": 0,
+"gold": 3,
+"time_limit": 246,
+"level_bonus": 2,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "You did good work: Kniaz Dominik's Crown Army lies dead in the steppe, and for the first time in a long while people sleep soundly. The quiet is short. Out of Oleshky Sands came Colonel Kozub, and he has raised his head higher than anyone expected. While the others were fighting the Crown, he walked into Chyhyryn, drove old Verbenko the Grey from the mace and put the Hetman's younger sister Olena in his place, a girl who does whatever Kozub tells her. Colonels from across the land have called it lawlessness and are marching on Chyhyryn. Chornohuz has gathered a band of daredevils, men like you, and set out too. In his road stands Oksana, a young otaman, the first woman Kozub ever gave a regiment to. You must face her. Can you manage it?"
+},
+{
+"id": 3,
+"start": [
+1,
+9
+],
+"tint": 3,
+"boss_type": 10,
+"general": 18,
+"reward": 0,
+"gold": 3,
+"time_limit": 192,
+"level_bonus": 2,
+"name": "Colonel Syvous",
+"portrait": 25,
+"description": "You did good work: Kniaz Dominik's Crown Army lies dead in the steppe, and for the first time in a long while people sleep soundly. The quiet is short. Out of Oleshky Sands came Colonel Kozub, and he has raised his head higher than anyone expected. While the others were fighting the Crown, he walked into Chyhyryn, drove old Verbenko the Grey from the mace and put the Hetman's younger sister Olena in his place, a girl who does whatever Kozub tells her. Colonels from across the land have called it lawlessness and are marching on Chyhyryn. Syvous of Uman is already in the saddle, with Tykhyi riding at the head of his column. In their road stands Oksana, a young otaman, the first woman Kozub ever gave a regiment to. You must face her. Can you manage it?"
+},
+{
+"id": 8,
+"start": [
+11,
+20
+],
+"tint": 2,
+"boss_type": 12,
+"general": 202,
+"reward": 0,
+"gold": 5,
+"time_limit": 312,
+"level_bonus": 7,
+"name": "Colonel Yavir",
+"portrait": 0,
+"description": "Look at it from the other side for once. Kozub is greedy and rough, but he knows how to pick men. At his side is Colonel Zaderykhvist, whom his enemies call the Butcher and his friends call nothing at all, because they are afraid. And there is Oksana, who holds her regiment tighter than many a moustached veteran. Against them comes a revolt: colonels who will not accept the new Hetmanka have gathered below Chyhyryn and stand before the gate of Chortomlyk Fort. Tykhyi of Uman leads them. Oksana has ridden out to meet them and asks the brotherhood for help. The pay is Kozub's, but the gold is real. Your job: meet Tykhyi at the gate and break the assault. Will you stand against him?"
+},
+{
+"id": 6,
+"start": [
+18,
+2
+],
+"tint": 3,
+"boss_type": 141,
+"general": 5,
+"reward": 0,
+"gold": 3,
+"time_limit": 300,
+"level_bonus": 2,
+"name": "Colonel Shabliuk",
+"portrait": 0,
+"description": "Oksana's regiment has fallen apart, and your hand was in it, for which the brotherhood is grateful. A pity about the girl: such talent, and she will go into the chronicles as a single line, because she served the wrong man. But this is no time for pity. Further down the road stands one whom even wolves give a wide berth: Colonel Zaderykhvist, the Butcher. They say he has never lost a duel and never left alive anyone who challenged him. Have you the heart for it?"
+},
+{
+"id": 7,
+"start": [
+11,
+2
+],
+"tint": 3,
+"boss_type": 141,
+"general": 27,
+"reward": 0,
+"gold": 3,
+"time_limit": 300,
+"level_bonus": 2,
+"name": "Colonel Tuman",
+"portrait": 0,
+"description": "Oksana's regiment has fallen apart, and your hand was in it, for which the brotherhood is grateful. A pity about the girl: such talent, and she will go into the chronicles as a single line, because she served the wrong man. But this is no time for pity. Further down the road stands one whom even wolves give a wide berth: Colonel Zaderykhvist, the Butcher. They say he has never lost a duel and never left alive anyone who challenged him. Have you the heart for it?"
+},
+{
+"id": 2,
+"start": [
+4,
+2
+],
+"tint": 3,
+"boss_type": 141,
+"general": 58,
+"reward": 0,
+"gold": 3,
+"time_limit": 300,
+"level_bonus": 2,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Oksana's regiment has fallen apart, and your hand was in it, for which the brotherhood is grateful. A pity about the girl: such talent, and she will go into the chronicles as a single line, because she served the wrong man. But this is no time for pity. Further down the road stands one whom even wolves give a wide berth: Colonel Zaderykhvist, the Butcher. They say he has never lost a duel and never left alive anyone who challenged him. Have you the heart for it?"
+},
+{
+"id": 3,
+"start": [
+3,
+14
+],
+"tint": 3,
+"boss_type": 141,
+"general": 18,
+"reward": 0,
+"gold": 3,
+"time_limit": 300,
+"level_bonus": 2,
+"name": "Colonel Syvous",
+"portrait": 25,
+"description": "Oksana's regiment has fallen apart, and your hand was in it, for which the brotherhood is grateful. A pity about the girl: such talent, and she will go into the chronicles as a single line, because she served the wrong man. But this is no time for pity. Further down the road stands one whom even wolves give a wide berth: Colonel Zaderykhvist, the Butcher. They say he has never lost a duel and never left alive anyone who challenged him. Have you the heart for it?"
+},
+{
+"id": 8,
+"start": [
+11,
+26
+],
+"tint": 2,
+"boss_type": 12,
+"general": 203,
+"reward": 0,
+"gold": 5,
+"time_limit": 366,
+"level_bonus": 7,
+"name": "Colonel Yavir",
+"portrait": 0,
+"description": "Bad news. The rebels who fled from Chortomlyk have caught their breath and come back, so all your work at the gate has gone with the wind. Zaderykhvist is in a rage and already saddling up to pay them back. He wants one more sabre, and he remembered you. One target: Tykhyi. Will you go?"
+},
+{
+"id": 3,
+"start": [
+4,
+3
+],
+"tint": 1,
+"boss_type": 16,
+"general": 74,
+"reward": 0,
+"gold": 3,
+"time_limit": 354,
+"level_bonus": 2,
+"name": "Colonel Syvous",
+"portrait": 25,
+"description": "Kozub's host is beaten, but Kozub himself got away and took Hetmanka Olena with him as a hostage. Chyhyryn is sacked and empty. For the girl's sake the colonels did not dare give chase and went home in small companies. And now the interesting part. Tykhyi, rummaging through the ashes of the Hetman's court, found the thing everyone is hunting: the Hetman's Seal. On the road home Colonel Topolia of Batih fell on him to take it. Tykhyi fought his way out, barely alive, and Syvous is now gathering men to pay Topolia a visit with his answer. Will you ride with them?"
+},
+{
+"id": 9,
+"start": [
+4,
+27
+],
+"tint": 2,
+"boss_type": 12,
+"general": 204,
+"reward": 0,
+"gold": 5,
+"time_limit": 354,
+"level_bonus": 4,
+"name": "Colonel Kremin",
+"portrait": 0,
+"description": "There is one thing that changes everything: the Hetman's Seal. Tykhyi found it in the ruins of Chyhyryn, and Topolia of Batih tried to take it by force, falling on him from ambush. It did not work: Tykhyi escaped and is now coming back to the ravine with every man he has. Topolia knows full well he cannot stand alone against an enraged Tykhyi, and he is paying the brotherhood to have him intercepted on the road. That job is yours. Will you take it?"
+},
+{
+"id": 6,
+"start": [
+4,
+2
+],
+"tint": 2,
+"boss_type": 14,
+"general": 15,
+"reward": 0,
+"gold": 3,
+"time_limit": 246,
+"level_bonus": 3,
+"name": "Colonel Shabliuk",
+"portrait": 0,
+"description": "Hear how two colonels failed to share land that belonged to neither. Kharko went home to Volhynia with Chyhyryn gold, but it was not enough, and he set his eye on neighbouring Siveria. Tuman, a cunning man, got wind of it and proposed marching on Siveria together and splitting it in half. Kharko agreed. Then Tuman quietly sent a rider to Colonel Yasen, master of Siveria, to warn him Kharko was coming. The frightened Yasen asked Tuman for protection, and Tuman entered Siveria as its protector, without a shot fired, and stayed as its master. Kharko, realising he had been played, sent his brother Osaul Sava to Tuman to demand the promised half. Tuman took Sava's head. Now Kharko is marching on Tuman with everything he has and is paying us for your sabre. A good thing Bairak broke with him before this squabble. Will you help Kharko get his revenge?"
+},
+{
+"id": 7,
+"start": [
+3,
+27
+],
+"tint": 1,
+"boss_type": 15,
+"general": 14,
+"reward": 0,
+"gold": 5,
+"time_limit": 246,
+"level_bonus": 5,
+"name": "Colonel Tuman",
+"portrait": 0,
+"description": "Tuman tells it this way: he proposed to Kharko that they take Siveria together and split it evenly, Kharko agreed, and then Tuman changed his mind and took it all himself by warning Colonel Yasen and walking in as his protector. Kharko sent his brother Osaul Sava for his half, and Tuman executed the messenger. Now Kharko is coming for revenge, and Tuman, who I can tell you is not a timid man, wants you in his ranks. The task: break Kharko's attack. Will you ride?"
+},
+{
+"id": 6,
+"start": [
+4,
+27
+],
+"tint": 2,
+"boss_type": 14,
+"general": 207,
+"reward": 0,
+"gold": 3,
+"time_limit": 300,
+"level_bonus": 5,
+"name": "Colonel Shabliuk",
+"portrait": 0,
+"description": "Kharko and Tuman have met to the death. No one will beg quarter and no one will give it; whoever loses today is no longer a colonel, and perhaps no longer alive. Kharko asks for you at his side. You must turn the fight and drag him to victory. Will you do it?"
+},
+{
+"id": 7,
+"start": [
+11,
+2
+],
+"tint": 1,
+"boss_type": 15,
+"general": 14,
+"reward": 0,
+"gold": 3,
+"time_limit": 300,
+"level_bonus": 3,
+"name": "Colonel Tuman",
+"portrait": 0,
+"description": "Kharko and Tuman have met to the death. No one will beg quarter and no one will give it; whoever loses today is no longer a colonel, and perhaps no longer alive. Tuman asks for you at his side. You must turn the fight and drag him to victory. Will you do it?"
+},
+{
+"id": 2,
+"start": [
+18,
+19
+],
+"tint": 1,
+"boss_type": 20,
+"general": 21,
+"reward": 0,
+"gold": 3,
+"time_limit": 630,
+"level_bonus": 5,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "A dirty story. When Colonel Dzhura fled from Chornohuz, Chornohuz started pestering Dzhura's brother's wife. Dzhura does not forgive such things: we are told he has hired men to cut Chornohuz's throat by night and wash the shame off his house. Chornohuz knows it and asks the brotherhood to stand by his tent. Your job: see that Dzhura's men never reach him. Will you take it?"
+},
+{
+"id": 10,
+"start": [
+4,
+2
+],
+"tint": 0,
+"boss_type": 21,
+"general": 205,
+"reward": 0,
+"gold": 3,
+"time_limit": 300,
+"level_bonus": 4,
+"name": "Colonel Teren",
+"portrait": 0,
+"description": "A dirty story. When Colonel Dzhura fled from Chornohuz, Chornohuz started pestering Dzhura's brother's wife. Dzhura does not forgive such things and has hired men to cut Chornohuz's throat by night and wash the shame off his house. Now he has come to us as well: the guard around Chornohuz is strong, and his men need someone to clear a path for them. Your job: see that Chornohuz does not live through that night. Will you take it?"
+},
+{
+"id": 11,
+"start": [
+11,
+27
+],
+"tint": 1,
+"boss_type": 18,
+"general": 19,
+"reward": 0,
+"gold": 3,
+"time_limit": 408,
+"level_bonus": 4,
+"name": "Colonel Derkach",
+"portrait": 31,
+"description": "Tykhyi died the way he lived, with a sabre in his hand. His nephew, Colonel Kosach, has gone to Colonel Shulha to ask for shelter and men. But Tykhyi's old companions have not scattered: they have raised fresh troops and are marching to finish what their otaman began. Kosach must defend his uncle from them, and he needs hands. Intercept Tykhyi's men before they arrive. Will you ride?"
+},
+{
+"id": 12,
+"start": [
+11,
+11
+],
+"tint": 2,
+"boss_type": 19,
+"general": 208,
+"reward": 0,
+"gold": 3,
+"time_limit": 408,
+"level_bonus": 4,
+"name": "Colonel Lysytsia",
+"portrait": 0,
+"description": "Tykhyi died the way he lived, with a sabre in his hand. His nephew, Colonel Kosach, has gone to Colonel Shulha to ask for shelter and men. But Tykhyi's old companions have not scattered: they have raised fresh troops and are marching to finish what their otaman began. Kosach must defend his uncle from them, and he needs hands. Intercept Tykhyi's men before they arrive. Will you ride?"
+},
+{
+"id": 1,
+"start": [
+11,
+3
+],
+"tint": 2,
+"boss_type": 17,
+"general": 15,
+"reward": 0,
+"gold": 3,
+"time_limit": 192,
+"level_bonus": 4,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "News from Chyhyryn: Kozub is dead, and his killer was none other than Zaderykhvist. Hetmanka Olena is now in Chornohuz's keeping. Bairak and Zaderykhvist have come together since and made an alliance, and to Chornohuz that alliance is a knife in the side. He has laid a trap for both, and the first part of it is Shulha, who is already riding at Bairak. Shulha wants you to meet him on the road and go at Bairak together. Will you help?"
+},
+{
+"id": 13,
+"start": [
+11,
+19
+],
+"tint": 3,
+"boss_type": 15,
+"general": 0,
+"reward": 0,
+"gold": 6,
+"time_limit": 252,
+"level_bonus": 10,
+"name": "Colonel Dubovyk",
+"portrait": 0,
+"description": "News from Chyhyryn: Kozub is dead, and his killer was none other than Zaderykhvist. Hetmanka Olena is now in Chornohuz's keeping. Bairak and Zaderykhvist have come together since and made an alliance, and to Chornohuz that alliance is a knife in the side. He has laid a trap for both and bought Shulha to strike at Bairak. The money is Chornohuz's, the hand is yours: join Shulha and go at Bairak. Will you help?"
+},
+{
+"id": 14,
+"start": [
+4,
+25
+],
+"tint": 0,
+"boss_type": 11,
+"general": 206,
+"reward": 0,
+"gold": 6,
+"time_limit": 174,
+"level_bonus": 5,
+"name": "Colonel Zaderykhvist",
+"portrait": 4,
+"description": "Chornohuz has decided to take Zaderykhvist alive. The Butcher found out, and something unheard of happened: the strongest man in the Hetmanate, who never asked anyone for anything, sent a rider to the brotherhood. He needs help and he is ready to pay. Will you stand for him?"
+},
+{
+"id": 1,
+"start": [
+4,
+2
+],
+"tint": 1,
+"boss_type": 13,
+"general": 6,
+"reward": 0,
+"gold": 3,
+"time_limit": 276,
+"level_bonus": 5,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Chornohuz has decided to take Zaderykhvist alive, and Bairak is with him in the hunt. Bairak asks for you in his company: you do not take the Butcher bare-handed, this needs the best. Will you stand for him?"
+},
+{
+"id": 2,
+"start": [
+4,
+47
+],
+"tint": 1,
+"boss_type": 13,
+"general": 4,
+"reward": 0,
+"gold": 3,
+"time_limit": 276,
+"level_bonus": 5,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Chornohuz has decided to take Zaderykhvist alive. He is no fool and knows he is going up against the deadliest swordsman in the land, so he is hiring every sabre he can find. Yours is wanted too. Will you stand for him?"
+},
+{
+"id": 14,
+"start": [
+25,
+3
+],
+"tint": 2,
+"boss_type": 73,
+"general": 13,
+"reward": 0,
+"gold": 6,
+"time_limit": 312,
+"level_bonus": 3,
+"name": "Colonel Zaderykhvist",
+"portrait": 4,
+"description": "Shulha took the Hetman's Seal from Kosach, pressed it onto a proclamation and named himself Hetman. Half the land laughed, the other half reached for its weapons: pretenders are not loved here. The regiments that will not bend the knee are gathering and marching on Shulha's domain. Zaderykhvist is going with them and calls for you. You must join the march on the pretender. Will you ride?"
+},
+{
+"id": 1,
+"start": [
+25,
+18
+],
+"tint": 2,
+"boss_type": 73,
+"general": 5,
+"reward": 0,
+"gold": 3,
+"time_limit": 312,
+"level_bonus": 3,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Shulha took the Hetman's Seal from Kosach, pressed it onto a proclamation and named himself Hetman. Half the land laughed, the other half reached for its weapons: pretenders are not loved here. The regiments that will not bend the knee are gathering and marching on Shulha's domain. Bairak is already on the road and wants you beside him. You must join the march on the pretender. Will you ride?"
+},
+{
+"id": 2,
+"start": [
+4,
+3
+],
+"tint": 2,
+"boss_type": 73,
+"general": 4,
+"reward": 0,
+"gold": 3,
+"time_limit": 366,
+"level_bonus": 3,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Shulha took the Hetman's Seal from Kosach, pressed it onto a proclamation and named himself Hetman. Half the land laughed, the other half reached for its weapons: pretenders are not loved here. The regiments that will not bend the knee are gathering and marching on Shulha's domain. Chornohuz is in the saddle too and calls for you. You must join the march on the pretender. Will you ride?"
+},
+{
+"id": 11,
+"start": [
+4,
+20
+],
+"tint": 2,
+"boss_type": 73,
+"general": 18,
+"reward": 0,
+"gold": 3,
+"time_limit": 366,
+"level_bonus": 3,
+"name": "Colonel Derkach",
+"portrait": 31,
+"description": "Shulha took the Hetman's Seal from Kosach, pressed it onto a proclamation and named himself Hetman. Half the land laughed, the other half reached for its weapons: pretenders are not loved here. The regiments that will not bend the knee are gathering and marching on Shulha's domain. Kosach, the man the Seal was taken from, rides at the head and asks for you with him. You must join the march on the pretender. Will you ride?"
+},
+{
+"id": 13,
+"start": [
+18,
+11
+],
+"tint": 0,
+"boss_type": 4,
+"general": 209,
+"reward": 0,
+"gold": 10,
+"time_limit": 720,
+"level_bonus": 5,
+"name": "Colonel Dubovyk",
+"portrait": 0,
+"description": "Shulha took the Hetman's Seal from Kosach, pressed it onto a proclamation and named himself Hetman. Half the land laughed, the other half reached for its weapons, and now regiments are marching on Shulha's domain from every side. The pretender is in trouble and begs the brotherhood for help, promising gold, of which they say he still has plenty. You must take his side and throw back the assault. Will you ride?"
+},
+{
+"id": 2,
+"start": [
+4,
+3
+],
+"tint": 3,
+"boss_type": 6,
+"general": 26,
+"reward": 0,
+"gold": 3,
+"time_limit": 246,
+"level_bonus": 5,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Chornohuz has an adviser who does not care for honest fighting. He sent a killer after Bairak. Bairak is alive only because Osaul Zalizo was beside him: he caught the knife and put the killer down on the spot. Chornohuz, furious that the scheme failed, threw his whole host into hunting Bairak and Osaul Hrebinka, but the two of them vanished into the steppe. Zalizo did not vanish: he has shut himself up in Bila Tserkva and holds the town alone with a handful of men. Chornohuz wants him alive and is paying for it. Will you ride to take Bila Tserkva?"
+},
+{
+"id": 1,
+"start": [
+18,
+19
+],
+"tint": 0,
+"boss_type": 11,
+"general": 6,
+"reward": 0,
+"gold": 6,
+"time_limit": 720,
+"level_bonus": 5,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Chornohuz has an adviser who does not care for honest fighting. He sent a killer after Bairak. Bairak is alive only because Osaul Zalizo was beside him: he caught the knife and put the killer down on the spot. Chornohuz, furious that the scheme failed, threw his whole host into hunting Bairak and Osaul Hrebinka, but the two of them vanished into the steppe. Zalizo stayed behind: he has shut himself up in Bila Tserkva and holds the town alone with a handful of men, and he will not hold it long. Will you ride to Bila Tserkva and help him keep the walls?"
+},
+{
+"id": 7,
+"start": [
+4,
+40
+],
+"tint": 0,
+"boss_type": 6,
+"general": 27,
+"reward": 0,
+"gold": 3,
+"time_limit": 384,
+"level_bonus": 5,
+"name": "Colonel Tuman",
+"portrait": 0,
+"description": "This war between Tuman and Chornohuz has dragged on so long that both are fighting on their last strength. Tuman is leading his host to White Horse Field. Chornohuz meant to cut him off, but ran into two of Tuman's old wolves, Pereima and Brzeski, and got stuck. Tuman asks you to reinforce him: together you will crush Chornohuz's host while it stands still. Will you take it?"
+},
+{
+"id": 2,
+"start": [
+4,
+3
+],
+"tint": 2,
+"boss_type": 14,
+"general": 26,
+"reward": 0,
+"gold": 6,
+"time_limit": 384,
+"level_bonus": 7,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "This war between Tuman and Chornohuz has dragged on so long that both are fighting on their last strength. Tuman is leading his host to White Horse Field. Chornohuz meant to cut him off, but ran into two of Tuman's old wolves, Pereima and Brzeski, and got stuck. Chornohuz asks you to reinforce him: cut him a path through those two, and he will crush Tuman's host. Will you take it?"
+},
+{
+"id": 7,
+"start": [
+26,
+11
+],
+"tint": 0,
+"boss_type": 31,
+"general": 211,
+"reward": 0,
+"gold": 6,
+"time_limit": 390,
+"level_bonus": 6,
+"name": "Colonel Tuman",
+"portrait": 0,
+"description": "Tuman did not wait; he struck first. Seventy thousand sabres have gathered under his banners, and the whole avalanche is rolling toward Chornohuz's manor. Everyone in the land understands: whoever wins this battle will hold the mace. Tuman calls for you. You must help his assault. Will you take it?"
+},
+{
+"id": 2,
+"start": [
+4,
+3
+],
+"tint": 2,
+"boss_type": 29,
+"general": 6,
+"reward": 0,
+"gold": 3,
+"time_limit": 360,
+"level_bonus": 5,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Tuman did not wait; he struck first. Seventy thousand sabres have gathered under his banners, and the whole avalanche is rolling toward Chornohuz's manor. Everyone in the land understands: whoever wins this battle will hold the mace. Chornohuz meets the avalanche with what he has and calls for you. You must help him stand. Will you take it?"
+},
+{
+"id": 1,
+"start": [
+4,
+2
+],
+"tint": 0,
+"boss_type": 4,
+"general": 6,
+"reward": 210,
+"gold": 3,
+"time_limit": 720,
+"level_bonus": 8,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Osaul Zalizo is Chornohuz's prisoner. Someone smuggled him a letter from Bairak, and now he knows where his master is. Zalizo even pretended he would swear to Chornohuz just to get out, but Chornohuz only laughed and kept him under guard. To leave Chornohuz's land you must pass five posts, and no one will issue a pass. Bairak, meanwhile, is begging for help this very moment. So you will be the pass: cut through all five posts, bring Zalizo through Chornohuz's lines and deliver him to Bairak. Will you take it?"
+},
+{
+"id": 1,
+"start": [
+4,
+41
+],
+"tint": 0,
+"boss_type": 31,
+"general": 5,
+"reward": 0,
+"gold": 3,
+"time_limit": 444,
+"level_bonus": 8,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "After the defeat at Kodyma Fields, Bairak left Tuman's land and shut himself in Bar Castle. That is not enough for Chornohuz: his hatred of Bairak has not burned out, and he is sending regiment after regiment against Bar to dig him out like a fox from its den. Bairak asks to be saved. What will you do?"
+},
+{
+"id": 2,
+"start": [
+4,
+2
+],
+"tint": 3,
+"boss_type": 6,
+"general": 212,
+"reward": 0,
+"gold": 3,
+"time_limit": 444,
+"level_bonus": 8,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "After the defeat at Kodyma Fields, Bairak left Tuman's land and shut himself in Bar Castle. That is not enough for Chornohuz: his hatred of Bairak has not burned out, and he is sending regiment after regiment against Bar to dig him out like a fox from its den. Chornohuz is paying to have Bairak taken. What will you do?"
+},
+{
+"id": 7,
+"start": [
+4,
+3
+],
+"tint": 0,
+"boss_type": 4,
+"general": 213,
+"reward": 0,
+"gold": 6,
+"time_limit": 366,
+"level_bonus": 10,
+"name": "Colonel Tuman",
+"portrait": 0,
+"description": "Tuman is dead. Not in battle, but of a wound that festered. Dying, he handed the regiment to his youngest son Omelko, and the two elder sons, Khoma and Tymish, forgave neither father nor brother for it. Chornohuz was waiting for exactly this: while the brothers quarrel, he is marching to wipe out Tuman's line to the last man. Young Omelko will not see winter without you. Will you take it?"
+},
+{
+"id": 2,
+"start": [
+17,
+13
+],
+"tint": 2,
+"boss_type": 45,
+"general": 29,
+"reward": 0,
+"gold": 3,
+"time_limit": 366,
+"level_bonus": 10,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Tuman is dead. Not in battle, but of a wound that festered. Dying, he handed the regiment to his youngest son Omelko, and the two elder sons, Khoma and Tymish, forgave neither father nor brother for it. Chornohuz was waiting for exactly this: while the brothers quarrel, he is marching to wipe out Tuman's line to the last man. He wants you to help him get to young Omelko. Will you take it?"
+},
+{
+"id": 7,
+"start": [
+11,
+4
+],
+"tint": 0,
+"boss_type": 25,
+"general": 214,
+"reward": 0,
+"gold": 6,
+"time_limit": 390,
+"level_bonus": 15,
+"name": "Colonel Tuman",
+"portrait": 0,
+"description": "Khoma died in Chornohuz's assault. Omelko, the one they were hunting, broke out and hid with the last brother, Tymish. Chornohuz is not a man to leave a job half done: he wants none of Tuman's sons left. Omelko has taken his last stand and will not last a day without you. Will you take it?"
+},
+{
+"id": 2,
+"start": [
+11,
+33
+],
+"tint": 2,
+"boss_type": 48,
+"general": 31,
+"reward": 0,
+"gold": 3,
+"time_limit": 360,
+"level_bonus": 8,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Khoma died in Chornohuz's assault. Omelko, the one they were hunting, broke out and hid with the last brother, Tymish. Chornohuz is not a man to leave a job half done: he wants none of Tuman's sons left, and he is hiring your sabre for the final blow. Will you take it?"
+},
+{
+"id": 1,
+"start": [
+11,
+3
+],
+"tint": 0,
+"boss_type": 50,
+"general": 15,
+"reward": 0,
+"gold": 3,
+"time_limit": 384,
+"level_bonus": 10,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Bairak has found shelter with Colonel Topolia and is slowly getting back on his feet: gathering his scattered men, and he has taken into his service some young osaul about whom rumours are already spreading. Chornohuz wants to strangle all this in the cradle and has already sent out a host. Bairak knows it is on the road and asks you to intercept it before it arrives. Will you get involved?"
+},
+{
+"id": 2,
+"start": [
+11,
+26
+],
+"tint": 3,
+"boss_type": 15,
+"general": 58,
+"reward": 0,
+"gold": 6,
+"time_limit": 414,
+"level_bonus": 10,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Bairak has found shelter with Colonel Topolia and is slowly getting back on his feet: gathering his scattered men, and he has taken into his service some young osaul about whom rumours are already spreading. Chornohuz wants to strangle all this in the cradle and has sent out a host. He needs your sabre to bring Bairak down while he is weak. Will you get involved?"
+},
+{
+"id": 1,
+"start": [
+11,
+34
+],
+"tint": 0,
+"boss_type": 58,
+"general": 5,
+"reward": 0,
+"gold": 3,
+"time_limit": 498,
+"level_bonus": 10,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Chornohuz has pressed Bairak against the wall. Anyone else would already be asking for terms, but Bairak would rather lie down dead than bow his head to Chornohuz. He wants your sabre beside his in the coming fight. Will you fight?"
+},
+{
+"id": 2,
+"start": [
+11,
+3
+],
+"tint": 3,
+"boss_type": 6,
+"general": 58,
+"reward": 0,
+"gold": 3,
+"time_limit": 468,
+"level_bonus": 15,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Chornohuz has pressed Bairak against the wall. Anyone else would already be asking for terms, but Bairak would rather lie down dead than bow his head to Chornohuz. Chornohuz is tired of the chase: he wants you to run Bairak down and finish the matter. Will you fight?"
+},
+{
+"id": 15,
+"start": [
+25,
+13
+],
+"tint": 1,
+"boss_type": 54,
+"general": 56,
+"reward": 0,
+"gold": 3,
+"time_limit": 444,
+"level_bonus": 8,
+"name": "Colonel Voron",
+"portrait": 32,
+"description": "Kosach is gone, and his place has been taken by his son, Colonel Sych. Young, but not green: he has gathered seasoned commanders around him and is marching on Topolia to pay him back for his father. Sych wants you in his ranks. Will you take it?"
+},
+{
+"id": 9,
+"start": [
+4,
+3
+],
+"tint": 2,
+"boss_type": 74,
+"general": 217,
+"reward": 0,
+"gold": 6,
+"time_limit": 720,
+"level_bonus": 11,
+"name": "Colonel Kremin",
+"portrait": 0,
+"description": "Kosach is gone, and his place has been taken by his son, Colonel Sych. Young, but not green: he has gathered seasoned commanders around him and is marching on Topolia to pay him back for his father. Topolia asks the brotherhood to help him hold his land. Will you take it?"
+},
+{
+"id": 1,
+"start": [
+4,
+41
+],
+"tint": 0,
+"boss_type": 4,
+"general": 6,
+"reward": 0,
+"gold": 5,
+"time_limit": 474,
+"level_bonus": 10,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Two defeats in a row at Bairak's hands have not cooled Chornohuz, only inflamed him. He is marching on him again, and he has men enough. But Bairak now has Osaul Ternovyi, that same young osaul, and they say his head is worth a whole regiment. Ternovyi is preparing a surprise for Chornohuz, and Bairak wants you in the field beside him. Will you take the challenge?"
+},
+{
+"id": 2,
+"start": [
+4,
+2
+],
+"tint": 3,
+"boss_type": 6,
+"general": 215,
+"reward": 0,
+"gold": 6,
+"time_limit": 414,
+"level_bonus": 15,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Two defeats in a row at Bairak's hands have not cooled Chornohuz, only inflamed him. He is marching on him again, and he has men enough. But Bairak now has Osaul Ternovyi, a young osaul of whom they say his head is worth a whole regiment. Chornohuz knows it and is looking for something to answer with. He has decided the answer is you. Will you take the challenge?"
+},
+{
+"id": 1,
+"start": [
+4,
+41
+],
+"tint": 0,
+"boss_type": 11,
+"general": 5,
+"reward": 0,
+"gold": 3,
+"time_limit": 1020,
+"level_bonus": 10,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Bairak is fleeing to the Sich, and Chornohuz is treading on his heels. Bairak moves slowly, because what he leads is not an army but people: whole villages with carts and children. Osaul Hrebinka covers the retreat and holds as long as he can, but his flanks are already bending. Bairak asks you to stop Chornohuz's pursuit for even a day. Will you take it?"
+},
+{
+"id": 2,
+"start": [
+4,
+3
+],
+"tint": 3,
+"boss_type": 6,
+"general": 11,
+"reward": 0,
+"gold": 8,
+"time_limit": 522,
+"level_bonus": 30,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Bairak is fleeing to the Sich, and Chornohuz is treading on his heels. Bairak moves slowly, because what he leads is not an army but people: whole villages with carts and children. Osaul Hrebinka covers the retreat and holds as long as he can, but his flanks are already bending. Chornohuz wants you to break Hrebinka and take Bairak before he reaches the Sich. Will you take it?"
+},
+{
+"id": 1,
+"start": [
+11,
+2
+],
+"tint": 0,
+"boss_type": 4,
+"general": 15,
+"reward": 0,
+"gold": 10,
+"time_limit": 840,
+"level_bonus": 10,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Chornohuz will not let go, and Bairak, taking Ternovyi's advice, has led a hundred thousand of his people out of their homeland to look for somewhere to live. The column stretches for a day's march. And somewhere in that column Bairak's family got lost: cut off from their own and hiding from Chornohuz's patrols somewhere in the steppe. Bairak would give everything to find them, but he cannot leave his people himself. So you will go: without an army, alone, into steppe where the enemy prowls. Will you take that risk?"
+},
+{
+"id": 1,
+"start": [
+11,
+10
+],
+"tint": 0,
+"boss_type": 11,
+"general": 15,
+"reward": 0,
+"gold": 3,
+"time_limit": 1320,
+"level_bonus": 10,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Bairak and Sych have joined forces and stand against Chornohuz once more. Chornohuz has not forgiven himself for letting Bairak slip last time, and this time he will not miss. Meanwhile, in Bairak's camp, Ternovyi is building something he will not speak of even to me. Whatever it is, the battle hangs on it. Your job: guard Ternovyi while he prepares his surprise. Will you take it?"
+},
+{
+"id": 2,
+"start": [
+19,
+4
+],
+"tint": 3,
+"boss_type": 6,
+"general": 4,
+"reward": 0,
+"gold": 3,
+"time_limit": 1170,
+"level_bonus": 30,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Bairak and Sych have joined forces and stand against Chornohuz once more. Chornohuz has not forgiven himself for letting Bairak slip last time, and this time he will not miss. Meanwhile, in Bairak's camp, Ternovyi is building something he will not speak of even to me. Whatever it is, the battle hangs on it. Chornohuz wants you to reach Ternovyi before he finishes. Will you take it?"
+},
+{
+"id": 15,
+"start": [
+25,
+12
+],
+"tint": 0,
+"boss_type": 31,
+"general": 19,
+"reward": 0,
+"gold": 3,
+"time_limit": 1512,
+"level_bonus": 10,
+"name": "Colonel Voron",
+"portrait": 32,
+"description": "Sych and Chornohuz have drawn up facing each other. Kobzars will sing of this fight for a hundred years whoever wins it, and it will decide whose the Hetmanate will be. The brotherhood sees further than others, and we know who is meant to come out the victor. Sych calls for you to break Chornohuz. Will you take it?"
+},
+{
+"id": 2,
+"start": [
+25,
+17
+],
+"tint": 2,
+"boss_type": 19,
+"general": 87,
+"reward": 0,
+"gold": 8,
+"time_limit": 2280,
+"level_bonus": 60,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Sych and Chornohuz have drawn up facing each other. Kobzars will sing of this fight for a hundred years whoever wins it, and it will decide whose the Hetmanate will be. The brotherhood sees further than others, and we know who is meant to come out the victor. Chornohuz calls for you to break Sych. Will you take it?"
+},
+{
+"id": 15,
+"start": [
+19,
+4
+],
+"tint": 3,
+"boss_type": 15,
+"general": 55,
+"reward": 0,
+"gold": 10,
+"time_limit": 1140,
+"level_bonus": 50,
+"name": "Colonel Voron",
+"portrait": 32,
+"description": "After the battle the camps are whispering: Ternovyi turned the wind and sent fire onto Chornohuz's boats, and what man can do that? So he must be a sorcerer. Sych is frightened too, though that very sorcery saved his life. He wants Ternovyi serving no one else, least of all against him. Ternovyi is now returning to Bairak across the steppe with a small escort. Sych pays to have him intercepted and taken alive. Your choice?"
+},
+{
+"id": 1,
+"start": [
+11,
+10
+],
+"tint": 2,
+"boss_type": 71,
+"general": 40,
+"reward": 0,
+"gold": 3,
+"time_limit": 1230,
+"level_bonus": 10,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "After the battle the camps are whispering: Ternovyi turned the wind and sent fire onto Chornohuz's boats, and what man can do that? So he must be a sorcerer. Sych is frightened too, though that very sorcery saved his life. He wants Ternovyi serving no one else, least of all against him. Ternovyi is now returning to Bairak across the steppe with a small escort, and Sych's men are already in the saddle. You must bring Ternovyi to Bairak's lines alive. Your choice?"
+},
+{
+"id": 1,
+"start": [
+4,
+34
+],
+"tint": 0,
+"boss_type": 11,
+"general": 88,
+"reward": 0,
+"gold": 3,
+"time_limit": 540,
+"level_bonus": 11,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Chornohuz's host has broken at last, and he himself, beaten, is leaving the field with what remains of his men. Bairak does not want him to walk away from this alive and raise regiments again, so he asks you to cut off the escape. Will you take it?"
+},
+{
+"id": 2,
+"start": [
+4,
+2
+],
+"tint": 3,
+"boss_type": 6,
+"general": 25,
+"reward": 216,
+"gold": 8,
+"time_limit": 990,
+"level_bonus": 30,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Chornohuz's host has broken at last, and he himself, beaten, is leaving the field with what remains of his men. They are after him, and without someone's sabre he will never reach his own lines. Chornohuz is paying for you to bring him through the pursuit. Will you take it?"
+},
+{
+"id": 15,
+"start": [
+4,
+2
+],
+"tint": 0,
+"boss_type": 58,
+"general": 74,
+"reward": 0,
+"gold": 3,
+"time_limit": 840,
+"level_bonus": 11,
+"name": "Colonel Voron",
+"portrait": 32,
+"description": "Chornohuz was beaten and withdrew, but Sych did not stop there and chased him right up to the borders of Chornohuz's estates. There his zeal cost him: Chornohuz, who had sworn never to retreat, dragged Sych from the saddle, and only a miracle stopped him taking Sych's head. Sych has come to his senses and is now playing it smarter: he is sending out a decoy to lure Chornohuz into the Kruta Balka, where a welcome will be waiting. Sych calls for you. Will you take it?"
+},
+{
+"id": 2,
+"start": [
+4,
+39
+],
+"tint": 2,
+"boss_type": 57,
+"general": 58,
+"reward": 0,
+"gold": 8,
+"time_limit": 1560,
+"level_bonus": 50,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Chornohuz was beaten and withdrew, but Sych did not stop there and chased him right up to the borders of Chornohuz's estates. There his zeal cost him: Chornohuz, who had sworn never to retreat, dragged Sych from the saddle, and only a miracle stopped him taking Sych's head. Sych has come to his senses and is now playing it smarter: he is sending out a decoy to lure Chornohuz into the Kruta Balka. Chornohuz suspects something is off and calls for you. Will you take it?"
+},
+{
+"id": 16,
+"start": [
+18,
+27
+],
+"tint": 0,
+"boss_type": 26,
+"general": 101,
+"reward": 0,
+"gold": 3,
+"time_limit": 600,
+"level_bonus": 15,
+"name": "Colonel Holota",
+"portrait": 7,
+"description": "Colonel Kurylo, whom the whole land calls Hlib Kurylo, has an old score with Chornohuz: the man killed his father. Now Kurylo has made common cause with Colonel Kulish to finish the shaken Chornohuz, and Ternovyi, who sees a battlefield the way others see a chessboard, has lured Chornohuz to Chernecha Hora. Kurylo asks for you in this fight. Will you help?"
+},
+{
+"id": 2,
+"start": [
+18,
+2
+],
+"tint": 1,
+"boss_type": 102,
+"general": 26,
+"reward": 0,
+"gold": 6,
+"time_limit": 630,
+"level_bonus": 30,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Colonel Kurylo, whom the whole land calls Hlib Kurylo, has an old score with Chornohuz: the man killed his father. Now Kurylo has made common cause with Colonel Kulish to finish the shaken Chornohuz, and Ternovyi, who sees a battlefield the way others see a chessboard, has lured Chornohuz to Chernecha Hora. Chornohuz asks for you at his side. Will you help?"
+},
+{
+"id": 16,
+"start": [
+3,
+11
+],
+"tint": 0,
+"boss_type": 31,
+"general": 102,
+"reward": 0,
+"gold": 3,
+"time_limit": 648,
+"level_bonus": 12,
+"name": "Colonel Holota",
+"portrait": 7,
+"description": "Hlib Kurylo has courage enough for three men, and prudence enough for half of one. Chornohuz planted a forged letter in Kulish's camp, and Kurylo believed Kulish was selling him out. It came to sabres: Kurylo wounded Kulish, and Kulish took his men home. Now Kurylo stands alone against Chornohuz's onslaught, and he badly needs at least one reliable blade beside him. Will you stand with him?"
+},
+{
+"id": 2,
+"start": [
+26,
+11
+],
+"tint": 1,
+"boss_type": 102,
+"general": 31,
+"reward": 0,
+"gold": 3,
+"time_limit": 378,
+"level_bonus": 30,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Hlib Kurylo wants Chornohuz's head for his father's. He has hired Ternovyi, who is luring Chornohuz to Chernecha Hora. Chornohuz smells a trap and will not walk into it without reliable men. He calls for you. Will you help?"
+},
+{
+"id": 17,
+"start": [
+11,
+34
+],
+"tint": 0,
+"boss_type": 31,
+"general": 221,
+"reward": 0,
+"gold": 8,
+"time_limit": 1200,
+"level_bonus": 40,
+"name": "Lady Buriak",
+"portrait": 36,
+"description": "Chornohuz is strengthening his house: he has married his son by force to Lady Kvitka, cousin of Hetmanka Olena, who has lands and men of her own. And to needle Bairak and Sych further, he has marched on Rudyi, master of Inhul Steppe, and means to make Rudyi's manor his headquarters. Rudyi asks the brotherhood for help. Will you take it?"
+},
+{
+"id": 2,
+"start": [
+11,
+2
+],
+"tint": 1,
+"boss_type": 101,
+"general": 26,
+"reward": 0,
+"gold": 3,
+"time_limit": 570,
+"level_bonus": 12,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Chornohuz is strengthening his house: he has married his son by force to Lady Kvitka, cousin of Hetmanka Olena, who has lands and men of her own. And to needle Bairak and Sych further, he has marched on Rudyi, master of Inhul Steppe, and means to make Rudyi's manor his headquarters. Chornohuz calls for you to ride with him. Will you take it?"
+},
+{
+"id": 1,
+"start": [
+3,
+4
+],
+"tint": 1,
+"boss_type": 106,
+"general": 15,
+"reward": 0,
+"gold": 3,
+"time_limit": 1080,
+"level_bonus": 10,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Bairak is marching on Podillia. The first thing in his road is Colonel Bars's stronghold on Svitiaz. Bairak asks for your help. What do you say?"
+},
+{
+"id": 18,
+"start": [
+19,
+18
+],
+"tint": 3,
+"boss_type": 15,
+"general": 218,
+"reward": 0,
+"gold": 6,
+"time_limit": 900,
+"level_bonus": 40,
+"name": "Colonel Sokyra",
+"portrait": 0,
+"description": "Bairak is marching on Podillia. The first thing in his road is Colonel Bars's stronghold on Svitiaz, and Bars has no intention of giving it up without a fight. He asks for your help. What do you say?"
+},
+{
+"id": 1,
+"start": [
+3,
+27
+],
+"tint": 1,
+"boss_type": 109,
+"general": 15,
+"reward": 0,
+"gold": 3,
+"time_limit": 690,
+"level_bonus": 15,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Bairak has sent Osaul Bilyk against Berestechko Marshes. The job looks easy, but nothing on a marsh is ever easy. Bairak asks you to go with Bilyk. Will you take it?"
+},
+{
+"id": 19,
+"start": [
+11,
+2
+],
+"tint": 3,
+"boss_type": 15,
+"general": 218,
+"reward": 0,
+"gold": 6,
+"time_limit": 630,
+"level_bonus": 40,
+"name": "Colonel Korzhyk",
+"portrait": 0,
+"description": "Bairak has sent Osaul Bilyk against Berestechko Marshes. The marshes are held by Colonel Zaiats, and he carries his name for a reason: he is already shaking and paying the brotherhood for someone to fight in his place. Will you take it?"
+},
+{
+"id": 1,
+"start": [
+11,
+18
+],
+"tint": 1,
+"boss_type": 110,
+"general": 5,
+"reward": 0,
+"gold": 3,
+"time_limit": 390,
+"level_bonus": 10,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Osaul Hrebinka is leading his men to Bura Mohyla, where Colonel Ptakha has dug in. Bairak wants you to go with Hrebinka and help take Ptakha's camp. Will you take it?"
+},
+{
+"id": 20,
+"start": [
+11,
+4
+],
+"tint": 3,
+"boss_type": 5,
+"general": 218,
+"reward": 0,
+"gold": 6,
+"time_limit": 390,
+"level_bonus": 40,
+"name": "Colonel Siroshapka",
+"portrait": 0,
+"description": "Osaul Hrebinka is leading his men to Bura Mohyla, where Colonel Ptakha has dug in. Ptakha asks you to stand with him on the hill and throw back Hrebinka's assault. Will you take it?"
+},
+{
+"id": 1,
+"start": [
+4,
+3
+],
+"tint": 1,
+"boss_type": 113,
+"general": 113,
+"reward": 0,
+"gold": 5,
+"time_limit": 930,
+"level_bonus": 15,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Ochakiv locks the road to the sea, and whoever holds it holds all the trade. It is held by two brothers, Vakula and Nazar, about whom songs are sung, so the port will not be taken easily. Bairak asks you to help him win Ochakiv. Will you take it?"
+},
+{
+"id": 21,
+"start": [
+4,
+41
+],
+"tint": 3,
+"boss_type": 6,
+"general": 219,
+"reward": 0,
+"gold": 6,
+"time_limit": 870,
+"level_bonus": 50,
+"name": "Colonel Huska",
+"portrait": 0,
+"description": "Ochakiv locks the road to the sea, and whoever holds it holds all the trade. It is held by two brothers, Vakula and Nazar, about whom songs are sung, but against Bairak's host even they need help. Colonel Hulak, master of Ochakiv, asks you to help him keep the port. Will you take it?"
+},
+{
+"id": 1,
+"start": [
+4,
+4
+],
+"tint": 1,
+"boss_type": 115,
+"general": 112,
+"reward": 0,
+"gold": 4,
+"time_limit": 630,
+"level_bonus": 20,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Bairak's host is already aimed at the heart of Podillia. Our scouts have learned that at Kamianets, the first gate into the interior, an attempt on Bairak's life is being prepared. Bairak will not take chances and asks you to be at his side. Will you take it?"
+},
+{
+"id": 22,
+"start": [
+4,
+4
+],
+"tint": 3,
+"boss_type": 113,
+"general": 220,
+"reward": 0,
+"gold": 8,
+"time_limit": 1350,
+"level_bonus": 30,
+"name": "Colonel Pidhornyi",
+"portrait": 35,
+"description": "Bairak's host is already aimed at the heart of Podillia. At Kamianets, the first gate into the interior, an attempt on Bairak's life is being prepared, and the man preparing it is Colonel Bilous, master of Podillia. Bilous is paying for your part in it. Will you take it?"
+},
+{
+"id": 1,
+"start": [
+11,
+20
+],
+"tint": 1,
+"boss_type": 121,
+"general": 113,
+"reward": 0,
+"gold": 5,
+"time_limit": 780,
+"level_bonus": 11,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Bilous has resolved to stand for Podillia to the last. And Bairak lost Osaul Tulub, who led his main force, in the last battle, and without him the men are adrift. Bairak asks you to help pull them together and lead them on. Will you take it?"
+},
+{
+"id": 22,
+"start": [
+18,
+3
+],
+"tint": 3,
+"boss_type": 5,
+"general": 220,
+"reward": 0,
+"gold": 10,
+"time_limit": 870,
+"level_bonus": 40,
+"name": "Colonel Pidhornyi",
+"portrait": 35,
+"description": "Bilous has resolved to stand for Podillia to the last. Bairak lost Osaul Tulub, who led his main force, in the last battle, and this is the chance to strike while Bairak's men are adrift. Bilous asks you to rally his regiments and lead them. Will you take it?"
+},
+{
+"id": 1,
+"start": [
+25,
+20
+],
+"tint": 1,
+"boss_type": 125,
+"general": 112,
+"reward": 0,
+"gold": 5,
+"time_limit": 1530,
+"level_bonus": 15,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Bairak is advancing on both of Bilous's flanks at once. If those two strongholds fall, Podillia lies open before him like a yard without a gate. Bairak asks for your help in the storm. Will you take the challenge?"
+},
+{
+"id": 22,
+"start": [
+2,
+4
+],
+"tint": 3,
+"boss_type": 5,
+"general": 220,
+"reward": 0,
+"gold": 10,
+"time_limit": 2250,
+"level_bonus": 40,
+"name": "Colonel Pidhornyi",
+"portrait": 35,
+"description": "Bairak is advancing on both of Bilous's flanks at once. If those two strongholds fall, Podillia lies open before him like a yard without a gate. Bilous asks for your help to hold them. Will you take the challenge?"
+},
+{
+"id": 1,
+"start": [
+4,
+4
+],
+"tint": 1,
+"boss_type": 102,
+"general": 102,
+"reward": 0,
+"gold": 6,
+"time_limit": 990,
+"level_bonus": 15,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Bilous asked Rudyi for help, and Rudyi sent Kurylo. Dzhura, who serves Bairak, answered by calling in Ternovyi. The two hosts are converging on the Wild Field. Bairak wants you to beat Kurylo. Will you take it?"
+},
+{
+"id": 16,
+"start": [
+19,
+4
+],
+"tint": 3,
+"boss_type": 5,
+"general": 222,
+"reward": 0,
+"gold": 12,
+"time_limit": 1590,
+"level_bonus": 40,
+"name": "Colonel Holota",
+"portrait": 7,
+"description": "Bilous asked Rudyi for help, and Rudyi sent Kurylo. Dzhura, who serves Bairak, answered by calling in Ternovyi. The two hosts are converging on the Wild Field. Kurylo wants you to beat Bairak's host. Will you take it?"
+},
+{
+"id": 1,
+"start": [
+5,
+27
+],
+"tint": 0,
+"boss_type": 132,
+"general": 102,
+"reward": 0,
+"gold": 6,
+"time_limit": 3660,
+"level_bonus": 12,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Bairak has won Podillia and now looks toward the heart of the Hetmanate. But on the Kuchman Road an old enemy waits for him: Chornohuz has gathered his regiments and placed himself across the way. Bairak asks for your sabre to get through. Will you take it?"
+},
+{
+"id": 2,
+"start": [
+25,
+17
+],
+"tint": 3,
+"boss_type": 102,
+"general": 26,
+"reward": 0,
+"gold": 12,
+"time_limit": 2430,
+"level_bonus": 60,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Bairak has won Podillia and now looks toward the heart of the Hetmanate. But on the Kuchman Road an old enemy waits for him: Chornohuz has gathered his regiments and placed himself across the way. Chornohuz asks for your sabre to hold it. Will you take it?"
+},
+{
+"id": 15,
+"start": [
+11,
+27
+],
+"tint": 0,
+"boss_type": 25,
+"general": 133,
+"reward": 0,
+"gold": 12,
+"time_limit": 1830,
+"level_bonus": 16,
+"name": "Colonel Voron",
+"portrait": 32,
+"description": "Chornohuz and Sych have been skirmishing on the Tiasmyn for a month, and neither has gained the upper hand. Both are sick of it. Sych is preparing a new assault meant to settle everything, and calls for you. What do you say?"
+},
+{
+"id": 2,
+"start": [
+4,
+27
+],
+"tint": 2,
+"boss_type": 133,
+"general": 101,
+"reward": 0,
+"gold": 12,
+"time_limit": 1830,
+"level_bonus": 16,
+"name": "Colonel Chornohuz",
+"portrait": 34,
+"description": "Chornohuz and Sych have been skirmishing on the Tiasmyn for a month, and neither has gained the upper hand. Both are sick of it. Chornohuz is preparing a new assault meant to settle everything, and calls for you. What do you say?"
+},
+{
+"id": 1,
+"start": [
+4,
+2
+],
+"tint": 2,
+"boss_type": 133,
+"general": 223,
+"reward": 0,
+"gold": 15,
+"time_limit": 1506,
+"level_bonus": 60,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Sych has surrounded Osaul Zalizo, and the ring is tightening. Bairak will not abandon his osaul: he asks you to punch through Sych's lines and pull Zalizo out of the pocket. Will you take it?"
+},
+{
+"id": 15,
+"start": [
+4,
+48
+],
+"tint": 3,
+"boss_type": 6,
+"general": 133,
+"reward": 0,
+"gold": 10,
+"time_limit": 990,
+"level_bonus": 15,
+"name": "Colonel Voron",
+"portrait": 32,
+"description": "Sych has surrounded Osaul Zalizo, and the ring is tightening. But Sych knows very well that Zalizo will not be taken alive and that his men will sell themselves dearly. He needs a hired sabre to finish the matter. Will you take it?"
+},
+{
+"id": 1,
+"start": [
+3,
+12
+],
+"tint": 2,
+"boss_type": 133,
+"general": 200,
+"reward": 0,
+"gold": 15,
+"time_limit": 1140,
+"level_bonus": 50,
+"name": "Colonel Bairak",
+"portrait": 33,
+"description": "Zalizo is dead. When Bairak heard it, he threw his whole host at Sych's positions the way a man throws himself into a brawl, not a battle. At first Sych gave ground, but now Bairak has gone in too far and is about to be cut off. You must get Bairak out before it is too late. Will you take it?"
+},
+{
+"id": 15,
+"start": [
+33,
+12
+],
+"tint": 3,
+"boss_type": 15,
+"general": 200,
+"reward": 0,
+"gold": 10,
+"time_limit": 750,
+"level_bonus": 13,
+"name": "Colonel Voron",
+"portrait": 32,
+"description": "Zalizo is dead. When Bairak heard it, he threw his whole host at Sych's positions the way a man throws himself into a brawl, not a battle. At first Sych gave ground, but now Bairak has gone in too far and can be cut off. Sych wants you to end this war with one blow: Bairak must fall. Will you take it?"
+}
+],
+"generals": {
+"1": {
+"name": "Zdzislaw Krzeminski",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 0,
+"hp": 20
+},
+"2": {
+"name": "Marian Zaleski",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 0,
+"hp": 20
+},
+"3": {
+"name": "Jan Wolski",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 0,
+"hp": 20
+},
+"4": {
+"name": "Jan Gorski",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+3,
+4,
+6
+],
+"portrait": 3,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"5": {
+"name": "Andrii Nedolia",
+"look": 2,
+"side": 0,
+"skills": [
+1,
+2,
+3,
+6
+],
+"portrait": 2,
+"gift_table": 0,
+"attack": 10,
+"defense": 3,
+"hp": 50
+},
+"6": {
+"name": "Nestor Zalizo",
+"look": 1,
+"side": 0,
+"skills": [
+2,
+5,
+7,
+9
+],
+"portrait": 1,
+"gift_table": 0,
+"attack": 10,
+"defense": 4,
+"hp": 50
+},
+"7": {
+"name": "Kara-murza",
+"look": 5,
+"side": 1,
+"skills": [
+4,
+6,
+7,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"8": {
+"name": "Dzhanbek-bey",
+"look": 6,
+"side": 1,
+"skills": [
+4,
+6,
+7,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 2,
+"hp": 20
+},
+"9": {
+"name": "Dominik Ostrzycki",
+"look": 1,
+"side": 1,
+"skills": [
+4,
+8,
+14,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 2,
+"hp": 20
+},
+"10": {
+"name": "Oksana Shabelna",
+"look": 4,
+"side": 0,
+"skills": [
+2,
+3,
+9,
+10
+],
+"portrait": 37,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"11": {
+"name": "Jerzy Zaremba",
+"look": 6,
+"side": 0,
+"skills": [
+2,
+3,
+5,
+7
+],
+"portrait": 6,
+"gift_table": 0,
+"attack": 9,
+"defense": 4,
+"hp": 45
+},
+"12": {
+"name": "Myron Tykhyi",
+"look": 5,
+"side": 1,
+"skills": [
+3,
+5,
+8,
+14
+],
+"portrait": 25,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"13": {
+"name": "Mykola Kryvoshyia",
+"look": 4,
+"side": 0,
+"skills": [
+3,
+8,
+11,
+17
+],
+"portrait": 4,
+"gift_table": 0,
+"attack": 12,
+"defense": 5,
+"hp": 60
+},
+"14": {
+"name": "Stanislaw Brzeski",
+"look": 2,
+"side": 0,
+"skills": [
+2,
+3,
+6,
+9
+],
+"portrait": 18,
+"gift_table": 0,
+"attack": 9,
+"defense": 2,
+"hp": 45
+},
+"15": {
+"name": "Onysko Bilyk",
+"look": 6,
+"side": 0,
+"skills": [
+3,
+4,
+8,
+14
+],
+"portrait": 5,
+"gift_table": 0,
+"attack": 10,
+"defense": 5,
+"hp": 50
+},
+"16": {
+"name": "Stanislaw Ostrowski",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+5,
+6,
+0
+],
+"portrait": 6,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"17": {
+"name": "Petro Vyrvykhvist",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+4,
+9,
+0
+],
+"portrait": 24,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"18": {
+"name": "Samiilo Shulha",
+"look": 1,
+"side": 0,
+"skills": [
+2,
+7,
+10,
+12
+],
+"portrait": 9,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"19": {
+"name": "Tymish Hrim",
+"look": 6,
+"side": 1,
+"skills": [
+5,
+8,
+16,
+18
+],
+"portrait": 11,
+"gift_table": 0,
+"attack": 7,
+"defense": 4,
+"hp": 35
+},
+"20": {
+"name": "Pavlo Bezvukhyi",
+"look": 2,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 2,
+"hp": 35
+},
+"21": {
+"name": "Kara-murza",
+"look": 2,
+"side": 0,
+"skills": [
+3,
+11,
+14,
+16
+],
+"portrait": 12,
+"gift_table": 0,
+"attack": 10,
+"defense": 2,
+"hp": 50
+},
+"22": {
+"name": "Jerzy Rudnicki",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"23": {
+"name": "Nazarko Netudykhata",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"24": {
+"name": "Ahmat-bey",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"25": {
+"name": "Severyn Sokil",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+5,
+8,
+11
+],
+"portrait": 13,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"26": {
+"name": "Opanas Zahorui",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+4,
+6,
+7
+],
+"portrait": 21,
+"gift_table": 0,
+"attack": 9,
+"defense": 2,
+"hp": 45
+},
+"27": {
+"name": "Stepan Pereima",
+"look": 5,
+"side": 0,
+"skills": [
+3,
+9,
+12,
+15
+],
+"portrait": 16,
+"gift_table": 0,
+"attack": 9,
+"defense": 2,
+"hp": 45
+},
+"28": {
+"name": "Andrzej Sokolowski",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"29": {
+"name": "Savka Malyi",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+5,
+11,
+13
+],
+"portrait": 19,
+"gift_table": 0,
+"attack": 9,
+"defense": 2,
+"hp": 45
+},
+"30": {
+"name": "Selim-murza",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"31": {
+"name": "Kazimierz Grabowski",
+"look": 2,
+"side": 1,
+"skills": [
+2,
+3,
+10,
+12
+],
+"portrait": 8,
+"gift_table": 0,
+"attack": 9,
+"defense": 2,
+"hp": 45
+},
+"32": {
+"name": "Tymofii Dzvin",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 0,
+"hp": 25
+},
+"33": {
+"name": "Mehmed-aga",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 0,
+"hp": 25
+},
+"34": {
+"name": "Marcin Jasinski",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 0,
+"hp": 25
+},
+"35": {
+"name": "Orest Barvinok",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 0,
+"hp": 25
+},
+"36": {
+"name": "Yurko Shram",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 0,
+"hp": 25
+},
+"37": {
+"name": "Mikolaj Kowalewski",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"38": {
+"name": "Zakhar Riabokin",
+"look": 2,
+"side": 0,
+"skills": [
+2,
+4,
+8,
+0
+],
+"portrait": 13,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"39": {
+"name": "Fadei Kulish",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+4,
+9,
+0
+],
+"portrait": 21,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"40": {
+"name": "Tomasz Tarnawski",
+"look": 6,
+"side": 0,
+"skills": [
+2,
+4,
+7,
+0
+],
+"portrait": 22,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"41": {
+"name": "Hryts Lytvyn",
+"look": 2,
+"side": 0,
+"skills": [
+2,
+6,
+9,
+0
+],
+"portrait": 18,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"42": {
+"name": "Kaplan-murza",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"43": {
+"name": "Zbigniew Debicki",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"44": {
+"name": "Matvii Skoryk",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"45": {
+"name": "Omelko Hrim",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"46": {
+"name": "Khoma Hrim",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"47": {
+"name": "Ilko Ohir",
+"look": 2,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"48": {
+"name": "Tymish Hrim",
+"look": 6,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 1,
+"hp": 20
+},
+"49": {
+"name": "Wojciech Mierzwa",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"50": {
+"name": "Pylyp Rudyi",
+"look": 6,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"51": {
+"name": "Ali-bey",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"52": {
+"name": "Jakub Ciechanowski",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"53": {
+"name": "Fesko Krucha",
+"look": 2,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"54": {
+"name": "Temir-murza",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+4,
+15,
+0
+],
+"portrait": 24,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"55": {
+"name": "Krzysztof Bielski",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+5,
+8,
+18
+],
+"portrait": 23,
+"gift_table": 0,
+"attack": 8,
+"defense": 3,
+"hp": 40
+},
+"56": {
+"name": "Mykyta Chupryna",
+"look": 5,
+"side": 0,
+"skills": [
+3,
+6,
+11,
+16
+],
+"portrait": 15,
+"gift_table": 0,
+"attack": 9,
+"defense": 2,
+"hp": 45
+},
+"57": {
+"name": "Sefer-aga",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+5,
+8,
+0
+],
+"portrait": 19,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"58": {
+"name": "Boguslaw Szydlowski",
+"look": 5,
+"side": 1,
+"skills": [
+3,
+4,
+7,
+0
+],
+"portrait": 22,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"59": {
+"name": "Ivas Tyrsa",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"60": {
+"name": "Urak-bey",
+"look": 2,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"61": {
+"name": "Mateusz Zielinski",
+"look": 2,
+"side": 0,
+"skills": [
+3,
+4,
+12,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"62": {
+"name": "Roman Polyn",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 1,
+"hp": 20
+},
+"63": {
+"name": "Bahadyr-murza",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"64": {
+"name": "Feliks Przybylski",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"65": {
+"name": "Sydir Chumak",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"66": {
+"name": "Islam-murza",
+"look": 6,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"67": {
+"name": "Henryk Wrona",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"68": {
+"name": "Panas Zhuk",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"69": {
+"name": "Saadet-bey",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+5,
+7,
+0
+],
+"portrait": 12,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"70": {
+"name": "Ludwik Kozlowski",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+6,
+7,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 1,
+"hp": 40
+},
+"71": {
+"name": "Marko Kosyi",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 2,
+"hp": 35
+},
+"72": {
+"name": "Kharko Lykhach",
+"look": 5,
+"side": 0,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 3,
+"hp": 35
+},
+"73": {
+"name": "Tadeusz Maliszewski",
+"look": 2,
+"side": 0,
+"skills": [
+2,
+6,
+12,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"74": {
+"name": "Lavrin Sukhovii",
+"look": 3,
+"side": 1,
+"skills": [
+2,
+7,
+13,
+0
+],
+"portrait": 17,
+"gift_table": 0,
+"attack": 8,
+"defense": 3,
+"hp": 40
+},
+"75": {
+"name": "Mansur-murza",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"76": {
+"name": "Witold Borowski",
+"look": 6,
+"side": 0,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 1,
+"hp": 20
+},
+"77": {
+"name": "Yatsko Vitrohon",
+"look": 5,
+"side": 0,
+"skills": [
+2,
+8,
+11,
+16
+],
+"portrait": 26,
+"gift_table": 0,
+"attack": 8,
+"defense": 3,
+"hp": 40
+},
+"78": {
+"name": "Mehmed-aga",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 2,
+"hp": 35
+},
+"79": {
+"name": "Zygmunt Chmielewski",
+"look": 1,
+"side": 1,
+"skills": [
+12,
+13,
+0,
+0
+],
+"portrait": 27,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"80": {
+"name": "Danylo Kulyk",
+"look": 1,
+"side": 1,
+"skills": [
+13,
+14,
+0,
+0
+],
+"portrait": 28,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"81": {
+"name": "Choban-aga",
+"look": 1,
+"side": 1,
+"skills": [
+14,
+15,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"82": {
+"name": "Rafal Laski",
+"look": 1,
+"side": 1,
+"skills": [
+15,
+16,
+0,
+0
+],
+"portrait": 27,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"83": {
+"name": "Matvii Bilokin",
+"look": 1,
+"side": 1,
+"skills": [
+14,
+16,
+0,
+0
+],
+"portrait": 28,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"84": {
+"name": "Aslan-murza",
+"look": 1,
+"side": 1,
+"skills": [
+11,
+12,
+0,
+0
+],
+"portrait": 27,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"85": {
+"name": "Maciej Dobrzanski",
+"look": 1,
+"side": 1,
+"skills": [
+10,
+11,
+0,
+0
+],
+"portrait": 28,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"86": {
+"name": "Stepan Horobets",
+"look": 1,
+"side": 1,
+"skills": [
+9,
+10,
+17,
+0
+],
+"portrait": 28,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"87": {
+"name": "Karach-bey",
+"look": 1,
+"side": 1,
+"skills": [
+11,
+16,
+0,
+0
+],
+"portrait": 28,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"88": {
+"name": "Yukhym Ternovyi",
+"look": 1,
+"side": 1,
+"skills": [
+11,
+14,
+16,
+19
+],
+"portrait": 29,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"89": {
+"name": "Yurii Shpak",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"90": {
+"name": "Tokhtar-aga",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"91": {
+"name": "Pawel Rybinski",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"92": {
+"name": "Ostap Koval",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"93": {
+"name": "Edige-murza",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"94": {
+"name": "Piotr Wasowicz",
+"look": 2,
+"side": 1,
+"skills": [
+2,
+6,
+10,
+0
+],
+"portrait": 24,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"95": {
+"name": "Kuzma Kozhumiaka",
+"look": 3,
+"side": 1,
+"skills": [
+2,
+8,
+10,
+0
+],
+"portrait": 14,
+"gift_table": 0,
+"attack": 8,
+"defense": 3,
+"hp": 40
+},
+"96": {
+"name": "Arslan-bey",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"97": {
+"name": "Lukasz Jablonski",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 2,
+"hp": 35
+},
+"98": {
+"name": "Tykhon Hnyda",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"99": {
+"name": "Yashlav-murza",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+9,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"100": {
+"name": "Bartosz Kurowski",
+"look": 6,
+"side": 1,
+"skills": [
+2,
+10,
+0,
+0
+],
+"portrait": 21,
+"gift_table": 0,
+"attack": 8,
+"defense": 3,
+"hp": 40
+},
+"101": {
+"name": "Maksym Ruban",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+3,
+5,
+8
+],
+"portrait": 20,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"102": {
+"name": "Hlib Kurylo",
+"look": 6,
+"side": 1,
+"skills": [
+3,
+8,
+11,
+14
+],
+"portrait": 7,
+"gift_table": 0,
+"attack": 10,
+"defense": 3,
+"hp": 50
+},
+"103": {
+"name": "Kacper Stawski",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"104": {
+"name": "Khariton Mlynchuk",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"105": {
+"name": "Kemal-bey",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"106": {
+"name": "Szymon Turski",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 2,
+"hp": 35
+},
+"107": {
+"name": "Ivan Chornobai",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"108": {
+"name": "Murat-murza",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"109": {
+"name": "Vasyl Kalach",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"110": {
+"name": "Hryhorii Bulava",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 0,
+"hp": 20
+},
+"111": {
+"name": "Osman-aga",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"112": {
+"name": "Nazar Dovbysh",
+"look": 5,
+"side": 1,
+"skills": [
+3,
+6,
+11,
+14
+],
+"portrait": 18,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"113": {
+"name": "Vakula Dovbysh",
+"look": 3,
+"side": 1,
+"skills": [
+2,
+7,
+8,
+15
+],
+"portrait": 10,
+"gift_table": 0,
+"attack": 9,
+"defense": 4,
+"hp": 45
+},
+"114": {
+"name": "Timur-bey",
+"look": 2,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 0,
+"hp": 25
+},
+"115": {
+"name": "Franciszek Wolanski",
+"look": 2,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"116": {
+"name": "Ihnat Sahaidak",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"117": {
+"name": "Ilyas-murza",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 1,
+"hp": 35
+},
+"118": {
+"name": "Ignacy Bystrzycki",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+7,
+0,
+0
+],
+"portrait": 9,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"119": {
+"name": "Fedko Tryzub",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+10,
+0,
+0
+],
+"portrait": 13,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"120": {
+"name": "Kasym-bey",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 2,
+"hp": 35
+},
+"121": {
+"name": "Michal Zawadzki",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+8,
+0,
+0
+],
+"portrait": 23,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"122": {
+"name": "Yakym Holovach",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 4,
+"defense": 0,
+"hp": 20
+},
+"123": {
+"name": "Daulet-murza",
+"look": 3,
+"side": 1,
+"skills": [
+3,
+5,
+8,
+0
+],
+"portrait": 10,
+"gift_table": 0,
+"attack": 8,
+"defense": 3,
+"hp": 40
+},
+"124": {
+"name": "Roch Orlik",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"125": {
+"name": "Oleksa Dudka",
+"look": 3,
+"side": 1,
+"skills": [
+2,
+4,
+10,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"126": {
+"name": "Kurt-aga",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"127": {
+"name": "Hieronim Czarnecki",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"128": {
+"name": "Semen Borsuk",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 2,
+"hp": 35
+},
+"129": {
+"name": "Beibars-murza",
+"look": 5,
+"side": 1,
+"skills": [
+2,
+11,
+12,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 3,
+"hp": 40
+},
+"130": {
+"name": "Wladyslaw Glowacki",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 5,
+"defense": 1,
+"hp": 25
+},
+"131": {
+"name": "Lesko Lelyk",
+"look": 5,
+"side": 1,
+"skills": [
+1,
+2,
+7,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"132": {
+"name": "Sultan-bey",
+"look": 6,
+"side": 1,
+"skills": [
+3,
+11,
+14,
+16
+],
+"portrait": 11,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"133": {
+"name": "Leszek Lipski",
+"look": 6,
+"side": 1,
+"skills": [
+5,
+8,
+14,
+16
+],
+"portrait": 15,
+"gift_table": 0,
+"attack": 8,
+"defense": 4,
+"hp": 40
+},
+"134": {
+"name": "Mykhailo Ternyk",
+"look": 6,
+"side": 1,
+"skills": [
+1,
+0,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 6,
+"defense": 1,
+"hp": 30
+},
+"135": {
+"name": "Abdul-aga",
+"look": 2,
+"side": 1,
+"skills": [
+1,
+2,
+0,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 7,
+"defense": 2,
+"hp": 35
+},
+"136": {
+"name": "Dobieslaw Mazur",
+"look": 2,
+"side": 1,
+"skills": [
+2,
+4,
+12,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"137": {
+"name": "Taras Vovchok",
+"look": 6,
+"side": 1,
+"skills": [
+2,
+6,
+13,
+0
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 2,
+"hp": 40
+},
+"138": {
+"name": "Mamai-murza",
+"look": 6,
+"side": 1,
+"skills": [
+3,
+5,
+8,
+15
+],
+"portrait": 21,
+"gift_table": 0,
+"attack": 9,
+"defense": 3,
+"hp": 45
+},
+"139": {
+"name": "Ilarion Ptakha",
+"look": 2,
+"side": 1,
+"skills": [
+3,
+11,
+14,
+15
+],
+"portrait": 23,
+"gift_table": 0,
+"attack": 9,
+"defense": 2,
+"hp": 45
+},
+"140": {
+"name": "Opanas Tulub",
+"look": 6,
+"side": 1,
+"skills": [
+11,
+14,
+16,
+19
+],
+"portrait": 30,
+"gift_table": 1,
+"attack": 0,
+"defense": 0,
+"hp": 0
+},
+"141": {
+"name": "Trokhym Kozub",
+"look": 1,
+"side": 0,
+"skills": [
+1,
+2,
+6,
+10
+],
+"portrait": 0,
+"gift_table": 0,
+"attack": 8,
+"defense": 3,
+"hp": 40
+}
+},
+"exp_table": [
+50,
+104,
+165,
+236,
+320,
+420,
+539,
+680,
+846,
+1040,
+1254,
+1488,
+1742,
+2016,
+2310,
+2624,
+2958,
+3312,
+3686,
+4080,
+4494,
+4928,
+5382,
+5856,
+6350,
+6864,
+7398,
+7952,
+8526,
+9120,
+9734,
+10368,
+11022,
+11696,
+12390,
+13104,
+13838,
+14592,
+15366,
+16160,
+18245,
+20454,
+22790,
+25256,
+27855,
+30590,
+33464,
+36480,
+39641,
+42950,
+46410,
+50024,
+53795,
+57726,
+61820,
+66080,
+70509,
+75110,
+79886,
+84840,
+89975,
+95294,
+100800,
+106496,
+112385,
+118470,
+124754,
+131240,
+137931,
+144830,
+151940,
+159264,
+166805,
+174566,
+182550,
+190760,
+199199,
+207870,
+216776,
+225920,
+235305,
+244934,
+254810,
+264936,
+275315,
+285950,
+296844,
+308000,
+319421,
+331110,
+343070,
+355304,
+367815,
+380606,
+393680,
+407040,
+420689,
+434630,
+448866,
+463400,
+478235,
+493374,
+508820,
+524576,
+540645,
+557030,
+573734,
+590760,
+608111,
+625790,
+643800,
+662144,
+680825,
+699846,
+719210,
+738920,
+758979,
+779390,
+800156,
+821280,
+842765,
+864614,
+886830,
+909416,
+932375,
+955710,
+979424,
+1003520,
+1028001,
+1052870,
+1078130,
+1103784,
+1129835,
+1156286,
+1183140,
+1210400,
+1238069,
+1266150,
+1294646,
+1323560,
+1352895,
+1382654,
+1412840,
+1443456,
+1474505,
+1505990,
+1537914,
+1570280,
+1603091,
+1636350,
+1670060,
+1704224,
+1738845,
+1773926,
+1809470,
+1845480,
+1881959,
+1918910,
+1956336,
+1994240,
+2032625,
+2071494,
+2110850,
+2150696,
+2191035,
+2231870,
+2273204,
+2315040,
+2357381,
+2400230,
+2443590,
+2487464,
+2531855,
+2576766,
+2622200,
+2668160,
+2714649,
+2761670,
+2809226,
+2889720,
+2971296,
+3286483,
+3634995,
+4020344,
+4446413,
+4917493,
+5438324,
+6014146,
+6650750,
+7354533,
+9611214,
+14492301,
+26222007,
+52715745,
+158962428,
+479332860,
+1445335308,
+1445335308,
+1445335308
+]
+}

@@ -1,0 +1,73 @@
+extends "res://tests/test_case.gd"
+
+const SettingsScript := preload("res://scripts/core/settings.gd")
+const PATH := "user://test_settings.cfg"
+
+
+func _fresh() -> Node:
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))
+	var s: Node = SettingsScript.new()
+	s.path = PATH
+	s.load_from_disk()
+	return s
+
+
+func test_defaults() -> void:
+	var s := _fresh()
+	for key in SettingsScript.DEFAULTS:
+		eq(s.get_value(key), SettingsScript.DEFAULTS[key], key)
+	s.free()
+
+
+func test_save_and_load() -> void:
+	var s := _fresh()
+	check(s.set_value("music_volume", 0.25), "set music")
+	check(s.set_value("locale", "uk"), "set locale")
+	var s2: Node = SettingsScript.new()
+	s2.path = PATH
+	s2.load_from_disk()
+	eq(s2.get_value("music_volume"), 0.25, "music saved")
+	eq(s2.get_value("locale"), "uk", "locale saved")
+	s.set_value("locale", "")
+	s.free()
+	s2.free()
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))
+
+
+func test_bad_values() -> void:
+	var s := _fresh()
+	check(not s.set_value("nope", 1), "unknown key")
+	check(not s.set_value("fullscreen", "yes"), "wrong type")
+	s.set_value("sfx_volume", 5)
+	eq(s.get_value("sfx_volume"), 1.0, "clamped, int accepted")
+	s.free()
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))
+
+
+func test_game_speed() -> void:
+	var s := _fresh()
+	eq(s.tick_seconds(), 0.12, "Med: the simulation's own 120 ms")
+	check(s.set_value("game_speed", 4), "Fast")
+	eq(s.tick_seconds(), 0.05, "50 ms a tick")
+	s.set_value("game_speed", 9)
+	eq(s.get_value("game_speed"), 4, "clamped")
+	s.set_value("game_speed", 0)
+	eq(s.tick_seconds(), 0.25, "Slow: 250 ms")
+	var s2: Node = SettingsScript.new()
+	s2.path = PATH
+	s2.load_from_disk()
+	eq(s2.get_value("game_speed"), 0, "saved")
+	s.free()
+	s2.free()
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))
+
+
+func test_volume_by_ear() -> void:
+	eq([0.25, 0.5, 0.75, 1.0].map(func(v): return roundi(SettingsScript.volume_db(v))), [-24, -12, -5, 0],
+		"the amplitude is the volume squared, as in pyport")
+	var s := _fresh()
+	s.set_value("music_volume", 0.5)
+	eq(roundi(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Music"))), -12, "on the Music bus")
+	s.free()
+	root.get_node("/root/Settings").apply_all()  # the game's own volumes again
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))

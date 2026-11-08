@@ -1,0 +1,90 @@
+{
+"names": [
+"Whirlwind Sabre",
+"Storm Sabre",
+"Thunder Sabre",
+"Healing Herbs",
+"Living Water",
+"Fury",
+"Charm",
+"Protection of the Virgin",
+"Dnipro Wave",
+"Rapids",
+"Flood",
+"Ring of Fire",
+"Fire Whirl",
+"Steppe Blaze",
+"Lightning",
+"Perun's Arrow",
+"Thunderstorm",
+"Serpent's Breath",
+"Rain of Fire"
+],
+"effects": [
+"Dash & Slash",
+"Dash & Smash through",
+"Series of thrust attacks",
+"Heal HP",
+"Heal HP",
+"ATK Up",
+"Defend Up",
+"ATK and Defend Up",
+"Series of melee attacks",
+"Knocks back enemy",
+"Straight Angle ATK",
+"Fire ATK 360 degrees",
+"Fire ATK 360 degrees & Knocks back",
+"Battering ATK for 360 degrees",
+"Ranged ATK",
+"Ranged ATK & Knocks back",
+"Lightning Aerial ATK",
+"Fire Aerial ATK",
+"Meteor Aerial ATK"
+],
+"groups": [
+"MOVE",
+"HEAL",
+"PASV",
+"FWD",
+"NEAR",
+"RANGE",
+"WHOLE"
+],
+"rows": [
+[
+12,
+13,
+14
+],
+[
+15,
+16,
+0
+],
+[
+17,
+18,
+19
+],
+[
+20,
+21,
+22
+],
+[
+23,
+24,
+25
+],
+[
+26,
+27,
+0
+],
+[
+28,
+29,
+30
+]
+]
+}
