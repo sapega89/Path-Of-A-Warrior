@@ -1,6 +1,7 @@
 extends Control
-## Settings: language, music and sound volume, the game speed, fullscreen (desktop only), and
-## Training (training_screen.gd) to take the training again (not over the mission's pause).
+## Settings: language, music and sound volume, the game speed, the hit effects on the map (all
+## of them, the screen shake, the vibration), fullscreen (desktop only), and Training
+## (training_screen.gd) to take the training again (not over the mission's pause).
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const I18nScript := preload("res://scripts/core/i18n.gd")
@@ -12,6 +13,9 @@ var music: HSlider
 var sfx: HSlider
 var fullscreen: CheckBox
 var speed: OptionButton  # the game speed of the missions
+var hit_feel: CheckBox
+var screen_shake: CheckBox
+var rumble: CheckBox
 ## Shown over another screen (the mission's pause menu): what Back does instead of going back.
 var close := Callable()
 
@@ -44,6 +48,13 @@ func _ready() -> void:
 	speed.item_selected.connect(func(i: int): Settings.set_value("game_speed", i))
 	_row(col, "settings.speed", speed)
 
+	hit_feel = _check("HitFeel", "hit_feel")
+	_row(col, "settings.hit_feel", hit_feel)
+	screen_shake = _check("ScreenShake", "screen_shake")
+	_row(col, "settings.screen_shake", screen_shake)
+	rumble = _check("Rumble", "rumble")
+	_row(col, "settings.rumble", rumble)
+
 	if Settings.can_fullscreen():
 		fullscreen = CheckBox.new()
 		fullscreen.name = "Fullscreen"
@@ -71,6 +82,14 @@ func _back() -> void:
 		close.call()
 	else:
 		Router.back()
+
+
+func _check(node_name: String, key: String) -> CheckBox:
+	var b := CheckBox.new()
+	b.name = node_name
+	b.button_pressed = Settings.get_value(key)
+	b.toggled.connect(func(on: bool): Settings.set_value(key, on))
+	return b
 
 
 func _slider(node_name: String, key: String) -> HSlider:

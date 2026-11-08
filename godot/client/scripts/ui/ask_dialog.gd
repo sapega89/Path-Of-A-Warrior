@@ -57,7 +57,7 @@ func _init(is_notice := false) -> void:
 	add_child(center)
 	panel = PanelContainer.new()
 	panel.name = "Panel"
-	var sb := UiTheme.box(UiTheme.PANEL, UiTheme.ACCENT, 2)
+	var sb := UiTheme.PanelBox.new()  # the dialogs' leather with its seam and rivets
 	sb.set_content_margin_all(28)
 	panel.add_theme_stylebox_override("panel", sb)
 	panel.custom_minimum_size = Vector2(WIDTH, 0)

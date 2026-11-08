@@ -1,13 +1,18 @@
 extends Control
 ## A mission of the original campaign on its map. The game itself runs in MapSim
 ## (original pixels and ticks); this screen reads the input, ticks the simulation every
-## 120 ms and draws its state in 3D: the hero sprite, the camera on the current room,
+## 120 ms and draws its state in 3D: the hero, the camera on the current room,
 ## the exit arrows and the "Stage" banners (after a won mission the exp bar of pyport on the
-## pages Total Exp and Time Exp, the level gone up on it), the soldiers and their arrows, the
-## effects of skills, potions and scrolls, the fire on whoever a fire skill hits, the auras of
-## buffs, and the HUD. A talk on the map shows the portrait of who speaks beside the line, just
+## pages Total Exp and Time Exp, the level gone up on it), the soldiers (the people as 3D
+## figures playing the clips of their actions, scripts/world/map_people.gd), the effects made
+## in code (scripts/world/map_effects.gd: skills, potions and scrolls, the fire on whoever a
+## fire skill hits, the auras of buffs, the blood of hits, weapon trails, the archers' arrows), and
+## the HUD. A talk on the map shows the portrait of who speaks beside the line, just
 ## above the HUD, as pyport's.
 ## Params: {lord, mission, seed (optional: the same enemies every run)}.
+## A hit on the map is felt (scripts/world/combat_feel.gd, the options Hit effects, Screen shake,
+## Vibration): the picture stands still a moment, the camera shakes, the one hit flashes white and
+## recoils, the one killed flies off, the hit sound varies a little and the pad rumbles.
 ## The mouse, as pyport's: the left button beside the hero walks that way while it is held
 ## (dragging turns him, two quick clicks run), a click on the hero or the right button attacks,
 ## a click on the skill bar uses the slot, on AUTO toggles the auto-hunt, on PAUSE pauses.
@@ -15,28 +20,32 @@ extends Control
 ## corner) skips the talk.
 
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
+const MapArt := preload("res://scripts/world/map_art.gd")
 const MapSim := preload("res://scripts/sim/map_sim.gd")
 const Campaign := preload("res://scripts/core/campaign.gd")
 const Hero := preload("res://scripts/world/hero.gd")
 const FollowCamera := preload("res://scripts/world/follow_camera.gd")
-const Soldier := preload("res://scripts/world/soldier.gd")
+const MapPeople := preload("res://scripts/world/map_people.gd")
 const JavaRandom := preload("res://scripts/sim/java_random.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const MapHud := preload("res://scripts/ui/map_hud.gd")
 const Autopilot := preload("res://scripts/sim/autopilot.gd")
-const Effects := preload("res://scripts/world/effects.gd")
+const MapEffects := preload("res://scripts/world/map_effects.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const Items := preload("res://scripts/core/items.gd")
 const MissionPause := preload("res://scripts/ui/mission_pause.gd")
 const ExpBar := preload("res://scripts/ui/exp_bar.gd")
 const Stories := preload("res://scripts/core/stories.gd")
+const CombatFeel := preload("res://scripts/world/combat_feel.gd")
+const ItemSlot := preload("res://scripts/ui/item_slot.gd")
 
 ## One tick of the game, by the game speed of the settings (MapSim.TICK_MS at Med).
 var tick := MapSim.TICK_MS / 1000.0
-const ARROW_SCALE := 3.0
-const ARROW_PATH := "res://assets/original/ui/arrow%d.png"
-const PORTRAITS := "res://assets/original/portraits/%d.png"
+const GOLD_ICON := 12  # the heap of gold in the tool icons
+## The exit arrow of the new art, pointing down: two brass chevrons in ink, the near one fainter.
+const EXIT_ARROW := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 40"><g fill="#b89550" stroke="#0f0d0c" stroke-width="2.5" stroke-linejoin="round"><path d="M4 3 L24 17 L44 3 L44 11 L24 25 L4 11 Z" fill-opacity="0.55"/><path d="M4 15 L24 29 L44 15 L44 23 L24 37 L4 23 Z"/></g><path d="M24 30.5 l3 2.5 l-3 2.5 l-3 -2.5 z" fill="#7e241f"/></svg>'
+const Pictures := preload("res://scripts/ui/pictures.gd")
 
 var lord_id := 1
 var mission := 0
@@ -48,11 +57,12 @@ var sim: RefCounted
 var viewport: SubViewport
 var world: Node3D
 var builder: Node3D
-var hero: CharacterBody3D
+var people: MapPeople  # the hero and the enemies as figures
+var hero: Node3D  # the hero's figure (people.hero)
 var camera: Camera3D
 var hud: MapHud
 var profile: Profile
-var effects: Effects
+var effects: MapEffects  # the effects, arrows in flight among them
 var banner: PanelContainer
 var banner_text: Label
 var exp_bar: ExpBar  # under the text of the pages Total Exp and Time Exp
@@ -64,14 +74,10 @@ var talk_portrait: TextureRect
 var talk_panel: PanelContainer
 var talk_text: Label
 var arrows: Array[TextureRect] = []
-var soldiers := {}  # sim actor -> Soldier node
-var shots: Array[MeshInstance3D] = []  # the archers' arrows
 var tint := 0
 var loot := {}  # sim drop -> Sprite3D
 var trails: Array = []  # the weapon trails of this tick
 var _trail_pick := RandomNumberGenerator.new()
-var _tool_tex: Texture2D = preload("res://assets/original/ui/tool.png")
-var _gold_tex: Texture2D = preload("res://assets/original/ui/gold.png")
 var _acc := 0.0
 var _pressed := -1
 var _fire := false
@@ -85,6 +91,9 @@ var _last_held := -1
 var _mouse_dir := -1  # the direction the left mouse button holds, -1: none
 var _blink := 0
 var pause_menu: MissionPause  # shown while the game is paused
+var feel := CombatFeel.new()  # how a hit feels: the hitstop, shake, flash, flight, sound, rumble
+var _flash_mats := {}  # Sprite3D -> its flash material
+var _anim_dt := 0.0  # seconds the figures' clips move on this frame (0 while a hit holds)
 
 
 ## The mission to play: Router.params (the training gives its own).
@@ -114,10 +123,10 @@ func _ready() -> void:
 	world = Node3D.new()
 	world.name = "WorldRoot"
 	viewport.add_child(world)
-	MapBuilder.add_environment(world)
+	MapArt.add_environment(world)
 
 	var map := MapBuilder.load_map(Campaign.lord_map(lord_id))
-	builder = MapBuilder.new()
+	builder = MapArt.new()
 	builder.name = "Map"
 	world.add_child(builder)
 	builder.build(map)
@@ -138,27 +147,15 @@ func _ready() -> void:
 	if resume:
 		profile.resume_on_map(sim)
 
-	var arrow_mat := StandardMaterial3D.new()
-	arrow_mat.albedo_color = Color8(240, 142, 53)
-	arrow_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	for i in sim.arrows.size():
-		var m := MeshInstance3D.new()
-		m.name = "Shot%d" % i
-		m.mesh = BoxMesh.new()
-		m.material_override = arrow_mat
-		m.visible = false
-		world.add_child(m)
-		shots.append(m)
 
-	hero = Hero.new()
-	hero.name = "Hero"
-	hero.external = true
-	world.add_child(hero)
-	hero.set_look(profile.head, sim.hero.weapon_kind)
-	effects = Effects.new()
+	people = MapPeople.new()
+	people.name = "People"
+	world.add_child(people)
+	people.setup(sim, profile.head)
+	hero = people.hero
+	effects = MapEffects.new()
 	effects.name = "Effects"
 	world.add_child(effects)
-	hero.global_position = Hero.px_to_world(Vector2(sim.hero.pos))
 
 	camera = FollowCamera.new()
 	camera.name = "Camera"
@@ -170,8 +167,7 @@ func _ready() -> void:
 	for i in 4:
 		var a := TextureRect.new()
 		a.name = "Arrow%d" % i
-		a.texture = load(ARROW_PATH % i)
-		a.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		a.texture = exit_arrow(i)
 		a.stretch_mode = TextureRect.STRETCH_SCALE
 		a.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		a.visible = false
@@ -208,7 +204,13 @@ func _ready() -> void:
 	touch.name = "Touch"
 	add_child(touch)
 	add_to_group(InputSetup.RIGHT_BUTTON)  # the right button attacks, not BACK
+	feel.use_settings(Settings)
+	Settings.changed.connect(_on_setting_changed)
 	_update_view(0.0)
+
+
+func _on_setting_changed(_key: String) -> void:
+	feel.use_settings(Settings)
 
 
 ## The 4-direction of a stick or keys (the original hero walks in 4 directions), or -1.
@@ -246,8 +248,11 @@ func _process(delta: float) -> void:
 			_belt = i
 	if held != -1 or _fire or _hotkey != -1 or _potion != -1 or _belt != -1:
 		autopilot.player_key()
-	_acc += delta
-	while _acc >= tick:
+	feel.advance(delta)
+	_anim_dt = delta if feel.freeze <= 0.0 else 0.0
+	if feel.freeze <= 0.0:
+		_acc += delta  # while a hit holds the picture, no tick goes by
+	while _acc >= tick and feel.freeze <= 0.0:
 		_acc -= tick
 		var auto: Dictionary = autopilot.decide(sim)
 		if int(auto.held) != -1 and held == -1:
@@ -261,9 +266,13 @@ func _process(delta: float) -> void:
 		if _skip:
 			sim.skip_talk()
 			_skip = false
+		var before := CombatFeel.snapshot(sim)
 		sim.tick(held, _pressed, _fire, _hotkey, _potion, _belt)
-		for n in sim.sounds:
-			Audio.play_sound(n)
+		var hits := CombatFeel.hits(sim, before)
+		feel.react(hits)
+		feel.play_sounds(sim.sounds, hits)
+		feel.rumble(InputSetup.device)
+		_forget_feel()
 		_pressed = -1
 		_fire = false
 		_hotkey = -1
@@ -303,42 +312,35 @@ static func smooth(prev: Vector2i, now: Vector2i, t: float) -> Vector2:
 	return Vector2(prev).lerp(Vector2(now), clampf(t, 0.0, 1.0))
 
 
+## The hit effects of those gone from the map are dropped.
+func _forget_feel() -> void:
+	var alive := {sim.hero: true}
+	for e in sim.enemies:
+		alive[e] = true
+	for b in sim.breakables:
+		alive[b] = true
+	feel.forget_except(alive)
+
+
 func _update_view(t: float) -> void:
-	hero.global_position = Hero.px_to_world(smooth(sim.hero.prev_pos, sim.hero.pos, t))
-	hero.set_frame(sim.hero_sprite_frame(), sim.hero.action >= 12)
+	people.update(t, _anim_dt, tick, feel)
+	_anim_dt = 0.0
+	hero = people.hero
 	camera.focus = sim.rooms.center(sim.cell)
+	feel.shake_camera(camera, Hero.PIXEL_SIZE)
 	hud.queue_redraw()
-	_place_soldiers(t)
-	_place_shots()
+	effects.show_shots(sim.arrows, t, not sim.arrows_wait())
 	var shown: Array = sim.auras()
 	shown.append_array(sim.effects())
 	shown.append_array(sim.fires())
 	for sp in sim.sparks():
-		shown.append(["spark", sp[0], sp[1]])
+		shown.append(["blood", sp[0], sp[1]])  # the hits of MapSim land on people
 	shown.append_array(trails)
-	effects.show_effects(shown)
+	effects.show_effects(shown, t)
 	_place_objects()
 	_place_loot()
 	_place_arrows()
 	_show_banner()
-
-
-func _place_soldiers(t: float) -> void:
-	for e in soldiers.keys():
-		if not sim.enemies.has(e):
-			soldiers[e].queue_free()
-			soldiers.erase(e)
-	var map4 := MapSim.table("dir8_to_dir4")
-	for e in sim.enemies:
-		var node = soldiers.get(e)
-		if node == null:
-			node = Soldier.new()
-			node.name = "Soldier"
-			world.add_child(node)
-			node.setup(e.type, tint, MapSim.table("squad_offsets"), sim.general)
-			soldiers[e] = node
-		node.global_position = Hero.px_to_world(smooth(e.prev_pos, e.pos, t))
-		node.set_frame(sim.enemy_sprite_frame(e), int(map4[e.dir]), e.action >= 6)
 
 
 ## Breakable objects: they blink while breaking and are gone once broken.
@@ -347,6 +349,10 @@ func _place_objects() -> void:
 		var node := builder.get_node_or_null("Object_%d_%d" % [b.tile.x, b.tile.y]) as Node3D
 		if node != null:
 			node.visible = sim.breakable_shown(b)
+			if node is Sprite3D:
+				CombatFeel.flash_sprite(node as Sprite3D, feel.flash_of(b), _flash_mats)
+			elif node.has_meta("material"):
+				CombatFeel.flash_material(node.get_meta("material"), feel.flash_of(b))
 
 
 ## Gold and items on the floor.
@@ -360,31 +366,15 @@ func _place_loot() -> void:
 			continue
 		var s := Sprite3D.new()
 		s.name = "Loot"
-		s.region_enabled = true
-		if d.item > 10000:
-			s.texture = _gold_tex
-			s.region_rect = Rect2(Vector2.ZERO, _gold_tex.get_size())
-		else:
-			s.texture = _tool_tex
-			var f: int = 11 if d.item > 100 else d.item - 1
-			s.region_rect = Rect2(f * 28, 0, 28, 28)
-		s.pixel_size = 1.0 / 27.0
+		# an icon of the new art, as big as the original's 28 px (gold: 24 px)
+		var px := 24.0 if d.item > 10000 else 28.0
+		s.texture = ItemSlot.icon("tool", GOLD_ICON if d.item > 10000 else (11 if d.item > 100 else d.item - 1))
+		s.pixel_size = px / 27.0 / ItemSlot.ART
 		s.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
-		s.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-		s.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+		s.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 		world.add_child(s)
-		s.global_position = Hero.px_to_world(Vector2(d.pos)) + Vector3(0.0, s.region_rect.size.y / 54.0, 0.0)
+		s.global_position = Hero.px_to_world(Vector2(d.pos)) + Vector3(0.0, px / 54.0, 0.0)
 		loot[d] = s
-
-
-func _place_shots() -> void:
-	for i in shots.size():
-		var a = sim.arrows[i]
-		shots[i].visible = a.active
-		if a.active:
-			(shots[i].mesh as BoxMesh).size = Vector3(a.w / 27.0, 0.07, a.h / 27.0)
-			shots[i].global_position = Vector3((a.pos.x + a.w / 2.0) / 27.0, 0.6,
-				(a.pos.y + 8 + a.h / 2.0 + Hero.FOOT_PX) / 27.0)
 
 
 func _show_banner() -> void:
@@ -432,18 +422,12 @@ func _make_talk_box() -> void:
 	talk_box.visible = false
 	talk_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	talk_box.set_anchors_preset(Control.PRESET_FULL_RECT)
-	var style := UiTheme.box(Color(0, 0, 0, 0.85), UiTheme.TEXT_DIM, 2)
+	var style := UiTheme.box(Color(UiTheme.PANEL, 0.92), UiTheme.ACCENT_DARK, 2)
 	talk_face = PanelContainer.new()
 	talk_face.name = "Face"
 	talk_face.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var face_style := style.duplicate()
-	face_style.set_content_margin_all(2)
-	talk_face.add_theme_stylebox_override("panel", face_style)
-	talk_portrait = TextureRect.new()
-	talk_portrait.name = "Portrait"
-	talk_portrait.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	talk_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	talk_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	talk_face.add_theme_stylebox_override("panel", StyleBoxEmpty.new())  # the portrait has its frame
+	talk_portrait = Pictures.framed("Portrait", Vector2(46, 46))
 	talk_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	talk_face.add_child(talk_portrait)
 	talk_box.add_child(talk_face)
@@ -477,7 +461,7 @@ func _place_talk() -> void:
 	var k := hud.scale_of(view)
 	var top := view.y - (MapHud.PANEL_H + (MapHud.BAR_H if hud.show_bar else 0)) * k
 	var left := view.x / 2.0 - 120.0 * k
-	talk_portrait.texture = load(PORTRAITS % talk_portrait_id())
+	talk_portrait.texture = Pictures.portrait(talk_portrait_id())
 	talk_portrait.custom_minimum_size = Vector2(46, 46) * k
 	talk_face.position = Vector2(left + 2 * k, top - 50 * k)
 	talk_face.size = Vector2(48, 48) * k
@@ -496,6 +480,17 @@ func _place_banner(y: float) -> void:
 	banner.position = Vector2((view.x - banner.size.x) / 2.0, view.y * y)
 
 
+## The exit arrow to side i (0 down, 1 left, 2 up, 3 right), 72 px across.
+static func exit_arrow(i: int) -> Texture2D:
+	var img := Image.new()
+	img.load_svg_from_string(EXIT_ARROW, 1.5)
+	match i:
+		1: img.rotate_90(CLOCKWISE)
+		2: img.rotate_180()
+		3: img.rotate_90(COUNTERCLOCKWISE)
+	return ImageTexture.create_from_image(img)
+
+
 ## The exit arrows at the screen's edges, blinking while the exits are open; the one down sits
 ## above the HUD (at the very bottom the HUD hid it).
 func _place_arrows() -> void:
@@ -504,7 +499,7 @@ func _place_arrows() -> void:
 	for i in 4:
 		var a := arrows[i]
 		a.visible = lit and sim.rooms.has_exit(sim.cell, i + 1)
-		var s := a.texture.get_size() * ARROW_SCALE
+		var s := a.texture.get_size()
 		a.size = s
 		match i:
 			0: a.position = Vector2((view.x - s.x) / 2.0, hud.top_of(view) - s.y - 8)  # above the HUD
@@ -624,10 +619,18 @@ func uses_right_button() -> bool:
 ## his position, as pyport's pointer.
 func pointer_dir(at: Vector2) -> int:
 	var middle := hero.global_position + Vector3(0, (20 + Hero.FOOT_PX) * Hero.PIXEL_SIZE, 0)
+	# measured on the still camera: the shake of a hit does not turn the hero
+	var shaken := [camera.h_offset, camera.v_offset, camera.rotation.z]
+	camera.h_offset = 0.0
+	camera.v_offset = 0.0
+	camera.rotation.z = 0.0
 	var c := camera.unproject_position(middle)
 	var box := Vector2(
 		absf(camera.unproject_position(middle + Vector3(14 * Hero.PIXEL_SIZE, 0, 0)).x - c.x),
 		absf(camera.unproject_position(middle + Vector3(0, 20 * Hero.PIXEL_SIZE, 0)).y - c.y))
+	camera.h_offset = shaken[0]
+	camera.v_offset = shaken[1]
+	camera.rotation.z = shaken[2]
 	var d := at - c
 	if absf(d.x) < box.x and absf(d.y) < box.y:
 		return -1

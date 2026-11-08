@@ -14,7 +14,7 @@ const Profile := preload("res://scripts/core/profile.gd")
 const Stories := preload("res://scripts/core/stories.gd")
 const KeyGrid := preload("res://scripts/ui/key_grid.gd")
 const AskDialog := preload("res://scripts/ui/ask_dialog.gd")
-const PORTRAITS := "res://assets/original/portraits/%d.png"
+const Pictures := preload("res://scripts/ui/pictures.gd")
 const HEADS := 4
 const NAME_MAX := 8
 const SCALE := 3
@@ -125,9 +125,12 @@ func show_step(s: int) -> void:
 			for h in HEADS:
 				var b := Button.new()
 				b.name = "Head%d" % h
-				b.icon = load(PORTRAITS % (Stories.HERO_PORTRAIT + h))
-				b.expand_icon = true
 				b.custom_minimum_size = Vector2(46, 46) * SCALE + Vector2(12, 12)
+				var face := Pictures.framed("Portrait", Vector2(46, 46) * SCALE)
+				face.texture = Pictures.portrait(Stories.HERO_PORTRAIT + h)
+				face.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				face.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 6)
+				b.add_child(face)
 				b.pressed.connect(choose_head.bind(h))
 				b.focus_entered.connect(show_class.bind(h))
 				b.mouse_entered.connect(show_class.bind(h))
