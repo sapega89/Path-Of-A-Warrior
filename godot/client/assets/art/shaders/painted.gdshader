@@ -1,17 +1,24 @@
 shader_type spatial;
-// Painted wood: flat vertex colours from the palette, two-step light (warm sun, cool
-// shade), a faint brush grain and a darker foot where things touch the ground.
+// Worn painted figures: flat vertex colours from the palette, two-step light (a dull sun,
+// deep cool shade, a thin rim of light on the edges turned from the camera), the grain and
+// the worn patches of cloth and wood, and dust and mud rising from where a thing stands.
 
 uniform vec3 shade_tint : source_color = vec3(0.56, 0.6, 0.78);
-uniform float band_softness = 0.08;
-uniform float grain = 0.06;
+uniform float band_softness = 0.05;
+uniform float shade_depth = 0.34;  // how much of the sun the shade keeps
+uniform float grain = 0.1;
+uniform float wear = 0.16;  // worn, darker patches
 uniform float ground_shade = 0.12;
+uniform vec3 dirt : source_color = vec3(0.4, 0.33, 0.25);  // dust and mud over the feet
+uniform float dirt_height = 0.55;  // how high it rises (metres over the thing's origin); 0: none
+uniform float rim = 0.18;
 uniform vec3 tint : source_color = vec3(1.0);
 uniform float flash = 0.0;
 // the colour of a hit flash (white; the hero hit flashes red), in sRGB like the palette
 uniform vec3 flash_color = vec3(1.0, 0.95, 0.85);
 
 varying vec3 world_pos;
+varying float local_y;
 
 float hash(vec3 p) {
 	p = fract(p * 0.3183099 + 0.1);
@@ -29,6 +36,7 @@ float noise(vec3 x) {
 
 void vertex() {
 	world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+	local_y = world_pos.y - NODE_POSITION_WORLD.y;
 }
 
 vec3 to_srgb(vec3 c) {
@@ -40,7 +48,12 @@ void fragment() {
 	vec3 c = (OUTPUT_IS_SRGB ? to_srgb(COLOR.rgb) : COLOR.rgb) * tint;
 	float g = noise(world_pos * vec3(9.0, 2.5, 9.0)) * 0.6 + noise(world_pos * 31.0) * 0.4;
 	c *= 1.0 - grain + grain * 2.0 * g;
+	float w = smoothstep(0.35, 0.75, noise(world_pos * 3.1 + 7.0));
+	c *= 1.0 - wear * w;
 	c *= mix(1.0 - ground_shade, 1.0, smoothstep(0.0, 0.45, world_pos.y));
+	vec3 mud = OUTPUT_IS_SRGB ? dirt : pow(dirt, vec3(2.2));
+	float d = dirt_height > 0.0 ? 1.0 - smoothstep(0.0, dirt_height, local_y + (noise(world_pos * 6.0) - 0.5) * 0.18) : 0.0;
+	c = mix(c, c * 0.45 + mud * 0.4, d * 0.75);
 	vec3 fc = OUTPUT_IS_SRGB ? flash_color : pow(flash_color, vec3(2.2));
 	ALBEDO = mix(c, fc, flash * 0.65);
 	EMISSION = fc * flash * 0.45;
@@ -54,7 +67,10 @@ void light() {
 		// the sun: two flat steps, and its cool tint in the shade
 		float lit = smoothstep(0.0, band_softness, ndl) * 0.8 + smoothstep(0.45, 0.45 + band_softness, ndl) * 0.2;
 		lit *= smoothstep(0.2, 0.6, ATTENUATION);
-		DIFFUSE_LIGHT += mix(shade_tint * 0.5, vec3(1.0), lit) * LIGHT_COLOR / PI;
+		DIFFUSE_LIGHT += mix(shade_tint * shade_depth, vec3(1.0), lit) * LIGHT_COLOR / PI;
+		// a thin rim where the surface turns away from the camera on the sun's side
+		float edge = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), 4.0);
+		DIFFUSE_LIGHT += edge * rim * smoothstep(-0.2, 0.3, ndl) * LIGHT_COLOR;
 	} else {
 		// fires and lamps: plain light that fades with distance
 		DIFFUSE_LIGHT += clamp(ndl, 0.0, 1.0) * ATTENUATION * LIGHT_COLOR / PI;

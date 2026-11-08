@@ -9,6 +9,7 @@ var body: Node3D
 var skeleton: Skeleton3D
 var player: AnimationPlayer
 var material: ShaderMaterial
+var blades: ShaderMaterial  # the weapons: no mud on them
 ## The clip and play mode shown now (act()).
 var shown_clip := ""
 var shown_mode := ""
@@ -25,7 +26,11 @@ func setup(figure_kind: String) -> Node3D:
 	add_child(body)
 	skeleton = body.find_child("Skeleton3D", true, false) as Skeleton3D
 	material = ArtKit.painted(true)
+	blades = ArtKit.painted(true)
+	blades.set_shader_parameter("dirt_height", 0.0)
 	ArtKit.dress(body, material)
+	for attach in body.find_children("*", "BoneAttachment3D", true, false):
+		ArtKit.dress(attach, blades)
 	player = AnimationPlayer.new()
 	player.name = "Clips"
 	body.add_child(player)
@@ -57,8 +62,9 @@ func look_at_point(point: Vector3) -> void:
 
 ## Hit flash: 1 is the flash colour (white unless given), 0 is the normal colour.
 func flash(amount: float, color := Color(1.0, 0.95, 0.85)) -> void:
-	material.set_shader_parameter("flash", amount)
-	material.set_shader_parameter("flash_color", Vector3(color.r, color.g, color.b))
+	for m in [material, blades]:
+		m.set_shader_parameter("flash", amount)
+		m.set_shader_parameter("flash_color", Vector3(color.r, color.g, color.b))
 
 
 ## The clips move only when advance() is called (the map: a hit holds the picture, the
@@ -119,7 +125,7 @@ func equip(weapon: String) -> void:
 		copy.name = weapon
 		copy.mesh = mesh.mesh
 		copy.transform = mesh.transform
-		copy.material_override = material
+		copy.material_override = blades
 		attach.add_child(copy)
 	source.free()
 

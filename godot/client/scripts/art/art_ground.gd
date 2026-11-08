@@ -109,7 +109,7 @@ func _scatter_tufts() -> void:
 	var mmi := MultiMeshInstance3D.new()
 	mmi.name = "Tufts"
 	mmi.multimesh = mm
-	mmi.material_override = ArtKit.props_material()
+	mmi.material_override = ArtKit.tufts_material()
 	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(mmi)
 	source.free()

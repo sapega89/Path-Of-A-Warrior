@@ -11,6 +11,7 @@ const Items := preload("res://scripts/core/items.gd")
 const ItemSlot := preload("res://scripts/ui/item_slot.gd")
 const ArtFigure := preload("res://scripts/art/art_figure.gd")
 const MapPeople := preload("res://scripts/world/map_people.gd")
+const ArtKit := preload("res://scripts/art/art_kit.gd")
 const SCALE := 2
 const BOARD := Vector2(158, 162)  # the panel, in grid pixels
 const FIGURE := Vector2i(200, 220)  # the picture of the hero, in screen pixels
@@ -130,15 +131,13 @@ func _hero_view(mid: Vector2) -> TextureRect:
 	view.msaa_3d = Viewport.MSAA_4X
 	add_child(view)
 	var sun := DirectionalLight3D.new()
-	sun.light_color = Color("ffe6c0")
-	sun.light_energy = 0.9
 	sun.transform = Transform3D(Basis.looking_at(Vector3(-0.4, -0.6, -0.7).normalized(), Vector3.UP), Vector3.ZERO)
 	view.add_child(sun)
 	var env := Environment.new()
+	ArtKit.light(sun, env)
+	sun.light_energy = 1.0  # a figure on a stand, not a field: more light on it
+	env.ambient_light_energy = 0.45
 	env.background_mode = Environment.BG_CLEAR_COLOR
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color("9aa2c0")
-	env.ambient_light_energy = 0.5
 	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	var we := WorldEnvironment.new()
 	we.environment = env

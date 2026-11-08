@@ -27,12 +27,12 @@ const TILES_PATH := "res://assets/art/tiles.json"
 const PARTS := 3  # parts to a tile, each way
 const MARGIN := 10  # tiles of land around the map
 
-## The colour of each kind of ground (sRGB, near the palette).
+## The colour of each kind of ground (sRGB, near the palette): worn, dusty, held down.
 const KIND_COLOUR := {
-	"meadow": Color("8c8a55"), "grass": Color("6f8a4a"), "dirt": Color("a37b4a"),
-	"sand": Color("c4a262"), "gravel": Color("8a7565"), "stone": Color("7f8892"),
-	"rock": Color("6a666c"), "water": Color("3c536c"), "wood": Color("8a5a36"),
-	"cobble": Color("9a9286"),
+	"meadow": Color("74714a"), "grass": Color("5a6a3e"), "dirt": Color("7f6546"),
+	"sand": Color("9c8964"), "gravel": Color("716659"), "stone": Color("6c7177"),
+	"rock": Color("58565b"), "water": Color("34475a"), "wood": Color("6e4c33"),
+	"cobble": Color("7c766c"),
 }
 ## How high a blocked cell of each kind rises (none: it does not). Low enough that a wall
 ## hides little of the cells behind it from the game's camera.
@@ -510,19 +510,17 @@ func _build_tufts() -> void:
 	var mmi := MultiMeshInstance3D.new()
 	mmi.name = "Tufts"
 	mmi.multimesh = mm
-	mmi.material_override = ArtKit.props_material()
+	mmi.material_override = ArtKit.tufts_material()
 	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(mmi)
 	source.free()
 
 
-## Light and air for a map in the new art: a warm sun from the upper left with soft shadows,
-## a cool ambient, and the land fading into a dusty sky far away.
+## Light and air for a map in the new art (ArtKit.light): a dull sun from the upper left with
+## soft shadows, a deep cool shade, and the land fading into grey dust far away.
 static func add_environment(parent: Node3D) -> void:
 	var sun := DirectionalLight3D.new()
 	sun.name = "Sun"
-	sun.light_color = Color("ffe6c0")
-	sun.light_energy = 0.55
 	sun.shadow_enabled = true
 	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
 	sun.directional_shadow_max_distance = 40.0
@@ -530,15 +528,13 @@ static func add_environment(parent: Node3D) -> void:
 	sun.transform = Transform3D(Basis.looking_at(Vector3(0.5, -0.74, -0.45).normalized(), Vector3.UP), Vector3.ZERO)
 	parent.add_child(sun)
 	var env := Environment.new()
+	ArtKit.light(sun, env)
 	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color("c9b48a")
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color("9aa2c0")
-	env.ambient_light_energy = 0.4
+	env.background_color = ArtKit.AIR
 	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
 	env.fog_enabled = true
 	env.fog_mode = Environment.FOG_MODE_DEPTH
-	env.fog_light_color = Color("d9c7a0")
+	env.fog_light_color = ArtKit.AIR
 	env.fog_density = 1.0
 	env.fog_depth_begin = 20.0
 	env.fog_depth_end = 52.0

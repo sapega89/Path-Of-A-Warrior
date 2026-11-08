@@ -1,4 +1,5 @@
-"""Palette of the "steppe folk print" art style.
+"""Palette of the art style: worn, dusty colours of a hard steppe life (dull cloth, tarnished
+brass, dark blood-red, weathered skin).
 
 The ten base colours come from the style guide. Working colours are mixed from them
 for things the base set does not cover (skin, wood, straw, canvas, leather).
@@ -8,52 +9,52 @@ in linear space.
 
 BASE = {
     "chernozem": "2B211C",  # outlines, deep shadows, dark leather
-    "ochre": "C9A15B",      # steppe soil, dry wood, parchment
-    "grass": "9E9A5C",      # dry grass, fields
-    "oak": "4E6B3A",        # forest, bushes, green cloth
-    "whitewash": "EDE6D6",  # hut walls, shirts, UI text
-    "cinnabar": "A8322D",   # coats, banners, health
-    "blue": "2F4E7A",       # trousers, water, mana
-    "gold": "D4A645",       # rare items, trims, rewards
-    "steel": "6E7780",      # armour and weapons
+    "ochre": "A88A57",      # steppe soil, dry wood, parchment
+    "grass": "85814F",      # dry grass, fields
+    "oak": "435A33",        # forest, bushes, green cloth
+    "whitewash": "CFC5B0",  # hut walls, shirts, UI text
+    "cinnabar": "8A2B25",   # coats, banners, health
+    "blue": "2D3F57",       # trousers, water, mana
+    "gold": "AE8C48",       # rare items, trims, rewards
+    "steel": "6A7178",      # armour and weapons
     "dusk": "1C2230",       # night, fog, menu background
 }
 
 WORK = {
-    "skin": "D29B74",
-    "skin_dark": "B47A55",
+    "skin": "BE896A",
+    "skin_dark": "9C6A4E",
     "hair": "2B211C",
     "hair_grey": "B9B2A6",
     "hair_brown": "4A3020",
     "hair_red": "8E3B1F",
-    "hair_blond": "D2B06A",
+    "hair_blond": "B0955E",
     "hair_white": "E6E0D4",
     "fur": "3A2E28",
     "fur_grey": "6F655C",
     "leather": "5A3A26",
-    "leather_light": "8A5A36",
+    "leather_light": "765034",
     "wood": "8A5A36",
     "wood_dark": "5C3B26",
-    "wood_light": "B48A5A",
-    "thatch": "A98D5A",
-    "straw": "D1B26A",
-    "canvas": "D8CBB0",
-    "canvas_dark": "A99C82",
-    "clay": "B5764E",
+    "wood_light": "9A7650",
+    "thatch": "8E7A52",
+    "straw": "B09A62",
+    "canvas": "BEB298",
+    "canvas_dark": "948770",
+    "clay": "9A6646",
     "stone": "8C8577",
     "stone_dark": "5F5A52",
     "iron": "4B5157",
-    "steel_light": "A7AEB4",
-    "cinnabar_dark": "7A2420",
-    "blue_dark": "22385A",
-    "blue_light": "4D6E9C",
+    "steel_light": "9DA3A8",
+    "cinnabar_dark": "64221E",
+    "blue_dark": "222F42",
+    "blue_light": "4A5F7A",
     "oak_dark": "34492A",
-    "oak_light": "6F8A4A",
+    "oak_light": "5E7442",
     "grass_dark": "77754A",
-    "gold_dark": "9C7A30",
+    "gold_dark": "7E6430",
     "ember": "E8742A",
     "fire": "F2B33D",
-    "crimson": "8C1F3A",
+    "crimson": "74202F",
     "skin_upyr": "8F9B7C",  # the grey-green skin of the forest upyr (the battles' monsters)
     "skin_upyr_dark": "6B7759",
     "bone": "DCCFB4",

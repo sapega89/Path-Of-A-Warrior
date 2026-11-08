@@ -24,9 +24,18 @@ const PALETTE := {
 const LOOPING := ["idle", "idle_unarmed", "idle_2h", "walk", "walk_relaxed", "walk_back", "run",
 	"run_relaxed", "blocking", "sit", "aim_bow"]
 
+## The light and air of the world: a dull sun through an overcast sky, a deep cool shade,
+## the land fading far away into grey dust; the colours held down and the contrast up.
+const SUN_COLOR := Color("f0dcbc")
+const SUN_ENERGY := 0.7
+const AMBIENT := Color("68708a")
+const AMBIENT_ENERGY := 0.34
+const AIR := Color("9b978b")
+
 static var _scenes := {}
 static var _clips: AnimationLibrary
 static var _props_material: ShaderMaterial
+static var _tufts_material: ShaderMaterial
 
 
 static func scene(path: String) -> PackedScene:
@@ -51,6 +60,32 @@ static func props_material() -> ShaderMaterial:
 	if _props_material == null:
 		_props_material = painted(false)
 	return _props_material
+
+
+## The grass tufts: painted, without the mud that rises over the feet of things.
+static func tufts_material() -> ShaderMaterial:
+	if _tufts_material == null:
+		_tufts_material = painted(false)
+		_tufts_material.set_shader_parameter("dirt_height", 0.0)
+	return _tufts_material
+
+
+## The world's sun, shade and air (SUN_COLOR, AMBIENT, AIR) and its grading: the colours
+## held down, the contrast up.
+static func light(sun: DirectionalLight3D, env: Environment) -> void:
+	sun.light_color = SUN_COLOR
+	sun.light_energy = SUN_ENERGY
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = AMBIENT
+	env.ambient_light_energy = AMBIENT_ENERGY
+	grade(env)
+
+
+static func grade(env: Environment) -> void:
+	env.adjustment_enabled = true
+	env.adjustment_saturation = 0.8
+	env.adjustment_contrast = 1.12
+	env.adjustment_brightness = 0.96
 
 
 static func dress(node: Node, material: Material) -> void:

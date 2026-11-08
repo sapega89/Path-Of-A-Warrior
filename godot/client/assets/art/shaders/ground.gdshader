@@ -2,11 +2,11 @@ shader_type spatial;
 // Steppe ground painted in the palette: soil, dry grass and green patches mixed by
 // world-space noise, trodden paths from the vertex colour (r = path, g = green).
 
-uniform vec3 soil : source_color = vec3(0.788, 0.631, 0.357);
-uniform vec3 grass_dry : source_color = vec3(0.62, 0.604, 0.361);
-uniform vec3 grass_green : source_color = vec3(0.435, 0.541, 0.29);
-uniform vec3 path : source_color = vec3(0.72, 0.56, 0.33);
-uniform vec3 path_dark : source_color = vec3(0.55, 0.41, 0.24);
+uniform vec3 soil : source_color = vec3(0.56, 0.48, 0.34);
+uniform vec3 grass_dry : source_color = vec3(0.49, 0.48, 0.32);
+uniform vec3 grass_green : source_color = vec3(0.34, 0.41, 0.24);
+uniform vec3 path : source_color = vec3(0.5, 0.41, 0.29);
+uniform vec3 path_dark : source_color = vec3(0.36, 0.29, 0.2);
 uniform vec3 shade_tint : source_color = vec3(0.56, 0.6, 0.78);
 
 varying vec3 world_pos;
