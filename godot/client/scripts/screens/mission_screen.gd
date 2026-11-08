@@ -43,8 +43,8 @@ const ItemSlot := preload("res://scripts/ui/item_slot.gd")
 ## One tick of the game, by the game speed of the settings (MapSim.TICK_MS at Med).
 var tick := MapSim.TICK_MS / 1000.0
 const GOLD_ICON := 12  # the heap of gold in the tool icons
-const ARROW_SCALE := 3.0
-const ARROW_PATH := "res://assets/original/ui/arrow%d.png"
+## The exit arrow of the new art, pointing down: two gold chevrons in ink, the near one fainter.
+const EXIT_ARROW := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 40"><g fill="#d4a645" stroke="#2b211c" stroke-width="2.5" stroke-linejoin="round"><path d="M4 3 L24 17 L44 3 L44 11 L24 25 L4 11 Z" fill-opacity="0.55"/><path d="M4 15 L24 29 L44 15 L44 23 L24 37 L4 23 Z"/></g><path d="M24 30.5 l3 2.5 l-3 2.5 l-3 -2.5 z" fill="#a8322d"/></svg>'
 const PORTRAITS := "res://assets/original/portraits/%d.png"
 
 var lord_id := 1
@@ -162,8 +162,7 @@ func _ready() -> void:
 	for i in 4:
 		var a := TextureRect.new()
 		a.name = "Arrow%d" % i
-		a.texture = load(ARROW_PATH % i)
-		a.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		a.texture = exit_arrow(i)
 		a.stretch_mode = TextureRect.STRETCH_SCALE
 		a.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		a.visible = false
@@ -416,7 +415,7 @@ func _make_talk_box() -> void:
 	talk_box.visible = false
 	talk_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	talk_box.set_anchors_preset(Control.PRESET_FULL_RECT)
-	var style := UiTheme.box(Color(0, 0, 0, 0.85), UiTheme.TEXT_DIM, 2)
+	var style := UiTheme.box(Color(UiTheme.PANEL, 0.92), UiTheme.ACCENT_DARK, 2)
 	talk_face = PanelContainer.new()
 	talk_face.name = "Face"
 	talk_face.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -480,13 +479,24 @@ func _place_banner(y: float) -> void:
 	banner.position = Vector2((view.x - banner.size.x) / 2.0, view.y * y)
 
 
+## The exit arrow to side i (0 down, 1 left, 2 up, 3 right), 72 px across.
+static func exit_arrow(i: int) -> Texture2D:
+	var img := Image.new()
+	img.load_svg_from_string(EXIT_ARROW, 1.5)
+	match i:
+		1: img.rotate_90(CLOCKWISE)
+		2: img.rotate_180()
+		3: img.rotate_90(COUNTERCLOCKWISE)
+	return ImageTexture.create_from_image(img)
+
+
 func _place_arrows() -> void:
 	var view := get_viewport_rect().size
 	var lit: bool = sim.exits_open() and (_blink & 2) != 0
 	for i in 4:
 		var a := arrows[i]
 		a.visible = lit and sim.rooms.has_exit(sim.cell, i + 1)
-		var s := a.texture.get_size() * ARROW_SCALE
+		var s := a.texture.get_size()
 		a.size = s
 		match i:
 			0: a.position = Vector2((view.x - s.x) / 2.0, view.y - s.y - 16)
