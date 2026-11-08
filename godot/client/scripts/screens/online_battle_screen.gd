@@ -9,8 +9,8 @@ extends Control
 ## happens is scripts/net/online_battle.gd, one step every TICK_MS; the figures move and turn
 ## smoothly between the steps. This screen shows it and passes the keys: arrows choose (Right
 ## Attack, Left Defend, Up Evade, Down a skill), Enter / Space confirms and stops the timing bar,
-## Esc asks to leave the battle, Tab, F, R3 (the "auto" action, as auto-hunt on the map) or a
-## click on AUTO in the bottom-left corner turn auto-battle on and off. The pad's buttons, the
+## Esc asks to leave the battle, Tab, F, the pad's Back (the "auto" action, as auto-hunt on the
+## map) or a click on AUTO in the bottom-left corner turn auto-battle on and off. The pad's buttons, the
 ## skills and the bar take the mouse too. The hint at the bottom names the keys of the device
 ## just used (InputSetup.hint: the keyboard's or the pad's).
 ## The HUD: each fighter's plate at the top (my team at the left, the other at the right, one
@@ -910,7 +910,7 @@ func result_text() -> String:
 
 ## AUTO in the bottom-left corner while the actions are chosen: gold AUTO while
 ## auto-battle is on, white with its keys while it is off (named for the device in use). A click
-## or a tap turns it over, as Tab, F or R3.
+## or a tap turns it over, as Tab, F or the pad's Back.
 func _show_auto() -> void:
 	auto_button.visible = battle.state >= OnlineBattle.CHOOSE and battle.state <= OnlineBattle.SENT
 	auto_button.text = "AUTO" if battle.auto_battle else InputSetup.hint("online.battle_auto_key")

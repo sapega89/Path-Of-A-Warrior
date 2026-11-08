@@ -27,6 +27,9 @@ func _ready() -> void:
 	await _shot(out, "01_title")
 	Router.go("main_menu")
 	await _shot(out, "02_main_menu")
+	Router.current.ask.popup_centered()  # a new game over a saved one: the game's question, No first
+	await _shot(out, "02_main_menu_delete_ask")
+	Router.current.ask.hide()
 	# A new game: the difficulty, the face, the name, the points.
 	Router.push("new_game", {"profile_path": "user://shot_new.json"})
 	var ng: Node = Router.current
@@ -49,6 +52,10 @@ func _ready() -> void:
 	for i in 3:
 		ng.spend(0)
 	await _shot(out, "02d_new_points")
+	for i in 2:  # the last points: the question to go on
+		ng.spend(0)
+	await _shot(out, "02e_new_ask")
+	ng.ask.hide()
 	Router.push("settings")
 	await _shot(out, "03_settings")
 	# Management and Attributes, with a hero who has put three points into HP.
@@ -121,6 +128,8 @@ func _ready() -> void:
 	await _shot(out, "10b_no_connection")
 	Router.go("login")
 	await _frames(2)
+	Router.current.user_id.grab_focus()  # the line of hints says what the field takes
+	await _shot(out, "10c_login_typing")
 	Router.current.user_id.text = "ANDREY"
 	Router.current.password.text = "12"
 	Router.current.submit()
@@ -477,6 +486,14 @@ func _ready() -> void:
 	await _shot(out, "mission_1_start")
 	await _seconds(3.0)  # the banner, then the first soldiers come in through the exit
 	await _shot(out, "mission_1_enemies")
+	# The slots' labels name the device in use: an Xbox pad, then a PlayStation one.
+	InputSetup.device = "pad"
+	InputSetup.pad_brand = "xbox"
+	await _shot(out, "mission_1_hud_xbox")
+	InputSetup.pad_brand = "ps"
+	await _shot(out, "mission_1_hud_ps")
+	InputSetup.device = "keys"
+	InputSetup.pad_brand = "generic"
 	# The pause menu over the mission, then its Options.
 	Router.current.pause()
 	await _shot(out, "mission_1_pause")

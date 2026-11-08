@@ -20,8 +20,7 @@ func test_actions_have_keys_and_pad() -> void:
 			elif ev is InputEventJoypadButton or ev is InputEventJoypadMotion:
 				pad += 1
 		eq(keys, InputSetupScript.KEYS[action].size(), "%s keys" % action)
-		if action != "belt_5":  # the fifth belt slot only by key (or put on * / #)
-			check(pad >= 1, "%s has no gamepad binding" % action)
+		check(pad >= 1, "%s has no gamepad binding" % action)
 
 
 func _key_press(code: Key) -> InputEventKey:
@@ -209,7 +208,8 @@ func test_the_pad_works_the_menus() -> void:
 	check(b.is_action("ui_cancel"), "B: BACK")
 	var up := _pad_press(JOY_BUTTON_DPAD_UP)
 	up.device = 2
-	check(up.is_action("ui_up") and up.is_action("move_up"), "the d-pad moves in the menus and on the map")
+	check(up.is_action("ui_up"), "the d-pad moves in the menus")
+	check(up.is_action("belt_1") and not up.is_action("move_up"), "on the map it is the belt, not a step")
 	var stick := InputEventJoypadMotion.new()
 	stick.device = 2
 	stick.axis = JOY_AXIS_LEFT_X

@@ -12,14 +12,15 @@ const MainMenu := preload("res://scripts/screens/main_menu.gd")
 const SettingsScreen := preload("res://scripts/screens/settings_screen.gd")
 const HelpScreen := preload("res://scripts/screens/help_screen.gd")
 const AssignItems := preload("res://scripts/screens/assign_items_screen.gd")
+const AskDialog := preload("res://scripts/ui/ask_dialog.gd")
 
 var buttons: Array[Button] = []
 var menu: Control
 var settings: Control  # the items, the settings or the help shown over the menu
 var sim: RefCounted  # the mission's (its potion keys)
 var save_game := Callable()  # the mission's save on its map: true when saved
-var note: AcceptDialog
-var ask: ConfirmationDialog
+var note: AskDialog  # a notice: OK alone
+var ask: AskDialog
 var asked := ""  # "exit" or "quit"
 
 
@@ -43,11 +44,11 @@ func _ready() -> void:
 	_add(col, "Exit", "pause.exit", func(): _ask("exit"))
 	if MainMenu.show_quit():
 		_add(col, "Quit", "pause.quit", func(): _ask("quit"))
-	note = AcceptDialog.new()
+	note = AskDialog.new(true)
 	note.name = "Note"
 	add_child(note)
-	ask = ConfirmationDialog.new()
-	ask.name = "Ask"
+	ask = AskDialog.new()
+	ask.safe_default = true
 	ask.confirmed.connect(confirmed)
 	add_child(ask)
 	buttons[0].grab_focus.call_deferred()
@@ -58,7 +59,6 @@ func _ask(what: String) -> void:
 	asked = what
 	ask.dialog_text = tr("pause.ask_" + what)
 	ask.popup_centered()
-	ask.get_cancel_button().grab_focus.call_deferred()
 
 
 func confirmed() -> void:

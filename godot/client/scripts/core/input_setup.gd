@@ -5,20 +5,28 @@ extends Node
 ## same code works with a keyboard, a gamepad and the touch buttons.
 ## Menus use Godot's built-in ui_* actions, with MENU_KEYS and MENU_PAD (A: OK, B: BACK) added.
 ## As in pyport: 1-5 (or U I O P K) the five skills, Z X C V B the five belt slots, * and #
-## (the numeric keypad, RT and L3 of a pad) the two potion keys; the pad's right stick
-## up / right / down / left uses the belt slots Z X C V. Tab, F or R3: auto-hunt on / off.
-## Q, F1 or the pad's Back / Select: SKIP (pyport's left soft key), the talk on the map, the
-## briefing and the story skipped. The numeric keypad is the phone's, as in pyport: 8 2 4 6 move,
-## 5 attacks (Enter too), 1 3 7 9 0 are the five skills.
+## (the numeric keypad, RT and L3 of a pad) the two potion keys. On a pad the hero moves with
+## the left stick, and the d-pad up / right / down / left uses the belt slots Z X C V, a press
+## of the right stick (R3) the fifth, B (Andrey's choice: the belt on the d-pad, as the HUD shows
+## it; in the menus the d-pad still moves the cursor).
+## Tab or F: auto-hunt on / off. Q or F1: SKIP (pyport's left soft key), the talk on the map,
+## the briefing and the story skipped. On a pad both are Back (View, Select), as the HUD's
+## bottom-left corner, which is AUTO and, while someone talks, SKIP (the mission screen tells
+## the two apart). The numeric keypad is the phone's, as in pyport: 8 2 4 6 move, 5 attacks
+## (Enter too), 1 3 7 9 0 are the five skills.
 ##
 ## Key hints, as pyport's: `device` is what the last key came from ("keys", "pad"; "touch" on a
-## phone or after a touch; the mouse changes nothing), and hint(key) is the text `key` + "_" +
-## device when the strings have one (Enter / Esc after the keyboard, A / B after the pad).
+## phone or after a touch; the mouse changes nothing), and `pad_brand` which maker's pad it was
+## (scripts/ui/glyphs.gd). hint(key) is the text `key` + "_" + device when the strings have one,
+## `key` otherwise, with every {action} in it named for the device: "{ui_accept}: OK" is
+## "Enter: OK" after the keyboard and "A: OK" after an Xbox pad.
 ##
 ## The right mouse button is BACK (ui_cancel), as pyport's, on every screen and over any control,
 ## except where a node of the group RIGHT_BUTTON uses it itself (the mission's map attacks with
 ## it while the hero plays). The phone's own Back button is BACK too (the game does not quit on
 ## it: application/config/quit_on_go_back is off).
+
+const Glyphs := preload("res://scripts/ui/glyphs.gd")
 
 const KEYS := {
 	"move_left": [KEY_A, KEY_LEFT, KEY_KP_4],
@@ -71,18 +79,19 @@ const MENU_AXES := {
 ## second pad, or one that came back with another number, did nothing).
 const ALL_PADS := -1
 const PAD_BUTTONS := {
-	"move_left": JOY_BUTTON_DPAD_LEFT,
-	"move_right": JOY_BUTTON_DPAD_RIGHT,
-	"move_up": JOY_BUTTON_DPAD_UP,
-	"move_down": JOY_BUTTON_DPAD_DOWN,
 	"attack": JOY_BUTTON_A,
 	"skill_1": JOY_BUTTON_X,
 	"skill_2": JOY_BUTTON_Y,
 	"skill_3": JOY_BUTTON_LEFT_SHOULDER,
 	"skill_4": JOY_BUTTON_RIGHT_SHOULDER,
 	"potion_2": JOY_BUTTON_LEFT_STICK,
+	"belt_1": JOY_BUTTON_DPAD_UP,
+	"belt_2": JOY_BUTTON_DPAD_RIGHT,
+	"belt_3": JOY_BUTTON_DPAD_DOWN,
+	"belt_4": JOY_BUTTON_DPAD_LEFT,
+	"belt_5": JOY_BUTTON_RIGHT_STICK,
 	"pause": JOY_BUTTON_START,
-	"auto": JOY_BUTTON_RIGHT_STICK,
+	"auto": JOY_BUTTON_BACK,
 	"skip": JOY_BUTTON_BACK,
 }
 ## action: [axis, direction]
@@ -93,10 +102,6 @@ const PAD_AXES := {
 	"move_down": [JOY_AXIS_LEFT_Y, 1.0],
 	"skill_5": [JOY_AXIS_TRIGGER_LEFT, 1.0],
 	"potion_1": [JOY_AXIS_TRIGGER_RIGHT, 1.0],
-	"belt_1": [JOY_AXIS_RIGHT_Y, -1.0],
-	"belt_2": [JOY_AXIS_RIGHT_X, 1.0],
-	"belt_3": [JOY_AXIS_RIGHT_Y, 1.0],
-	"belt_4": [JOY_AXIS_RIGHT_X, -1.0],
 }
 const DEADZONE := 0.3
 ## A stick or trigger moved this far counts as the pad being used.
@@ -107,6 +112,7 @@ const RIGHT_BUTTON := "right_button"
 signal device_changed(device: String)
 
 var device := "touch" if OS.has_feature("mobile") else "keys"
+var pad_brand := "generic"
 
 
 func _ready() -> void:
@@ -115,8 +121,12 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
 	var from := device_of(event)
-	if not from.is_empty() and from != device:
+	var brand := pad_brand
+	if from == "pad":
+		brand = Glyphs.brand_of(Input.get_joy_name(event.device))
+	if not from.is_empty() and (from != device or brand != pad_brand):
 		device = from
+		pad_brand = brand
 		device_changed.emit(device)
 	if (is_back_click(event) and not right_button_taken()) or (is_back_key(event) and not typing()):
 		get_viewport().set_input_as_handled()
@@ -178,11 +188,18 @@ static func device_of(event: InputEvent) -> String:
 
 
 ## The text of `key` for the device in use: `key`_pad, `key`_keys or `key`_touch when the
-## strings have it, `key` itself otherwise.
+## strings have it, `key` itself otherwise; its {action}s named for the device.
 func hint(key: String) -> String:
 	var own := key + "_" + device
 	var text := tr(own)
-	return tr(key) if text == own else text
+	if text == own:
+		text = tr(key)
+	return Glyphs.fill(text, device, pad_brand)
+
+
+## The name of the action's key or button on the device in use ("Enter", "A", "RB").
+func key_name(action: String) -> String:
+	return Glyphs.name_of(action, device, pad_brand)
 
 
 static func actions() -> Array:
