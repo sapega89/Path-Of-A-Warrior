@@ -147,6 +147,22 @@
   "look": -24,
   "side": "hero"
  },
+ "42": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "43": {
+  "look": 24,
+  "side": "crown"
+ },
+ "44": {
+  "look": 24,
+  "side": "horde"
+ },
+ "45": {
+  "look": 24,
+  "side": "upyr"
+ },
  "5": {
   "look": 24,
   "side": "cossack"

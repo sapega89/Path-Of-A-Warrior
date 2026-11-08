@@ -101,6 +101,14 @@ RECIPES = {
         "undercoat": "ochre", "sash": FACTIONS["horde"], "trousers": "cinnabar_dark", "boots": "gold_dark",
         "belly": 1.1,
     },
+    # the monsters of the multiplayer battles: a forest upyr, bare grey-green skin under a
+    # fur vest, horns, glowing eyes, a club
+    "upyr": {
+        "hat": "horns", "hair": "fur", "hair_cap": True, "face": "none", "beard": True, "nose": 1.35,
+        "skin": "skin_upyr", "eyes": "ember",
+        "coat": "skin_upyr", "coat_trim": "skin_upyr_dark", "coat_len": "shirt", "vest": "fur",
+        "sash": "cinnabar_dark", "trousers": "fur", "boots": "skin_upyr_dark", "belly": 1.14,
+    },
 }
 
 
@@ -126,7 +134,8 @@ class Figure:
         k.ball(c + Vector((0, -0.112, -0.012)), (0.022 * nose, 0.03 * nose, 0.032 * nose), "skin_dark", "head",
                segs=8, rings=5)
         for sx in (1, -1):
-            k.ball(c + Vector((0.042 * sx, -0.098, 0.022)), (0.016, 0.01, 0.016), "chernozem", "head", segs=6, rings=4)
+            k.ball(c + Vector((0.042 * sx, -0.098, 0.022)), (0.016, 0.01, 0.016), r.get("eyes", "chernozem"), "head",
+                   segs=6, rings=4)
             k.box(c + Vector((0.045 * sx, -0.1, 0.048)), (0.04, 0.012, 0.012), r["hair"], "head",
                   rot=Matrix.Rotation(-0.12 * sx, 4, "Y"))
             k.ball(c + Vector((0.108 * sx, 0.0, -0.005)), (0.018, 0.028, 0.034), "skin_dark", "head", segs=6, rings=4)
@@ -188,6 +197,12 @@ class Figure:
                 pts = [front + Vector((0, 0.0, 0.02)), front + Vector((0.0, 0.02, 0.16)),
                        front + Vector((0.0, 0.08, 0.28)), front + Vector((0.0, 0.17, 0.33))]
                 k.sweep(pts, [0.02, 0.035, 0.03, 0.006], "whitewash", "head", segs=6, flat=0.45)
+        elif kind == "horns":
+            # two curved horns from the temples, outwards and up
+            for sx in (1, -1):
+                pts = [c + Vector((0.07 * sx, -0.01, 0.07)), c + Vector((0.13 * sx, -0.0, 0.12)),
+                       c + Vector((0.18 * sx, -0.02, 0.2)), c + Vector((0.165 * sx, -0.06, 0.29))]
+                k.sweep(pts, [0.036, 0.03, 0.019, 0.004], "bone", "head", segs=8)
         elif kind == "oseledets":
             k.ball(c + Vector((0, 0.005, 0.01)), (0.111, 0.116, 0.126), "skin", "head", segs=14, rings=8)
             pts = [c + Vector((0.0, -0.03, 0.128)), c + Vector((0.04, -0.01, 0.135)),
@@ -421,6 +436,8 @@ class Figure:
         k.ball(Vector((x, ball.y - 0.1, 0.045)), (0.022, 0.03, 0.02), boots, to, segs=6, rings=4)
 
     def build(self, r, legs=True):
+        if r.get("skin"):
+            self.k.remap = {"skin": r["skin"], "skin_dark": r["skin"] + "_dark"}
         self.head(r)
         self.hat(r)
         self.torso(r)

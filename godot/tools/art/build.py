@@ -11,6 +11,7 @@ Outputs (glTF binary, Y up):
     props/<name>.glb        environment pieces (see props.py)
     portraits/busts.glb     with --portraits: the busts of the portraits (see portraits.py)
     characters/divchyna.glb with --story: the people only the story pictures have (portraits.py)
+--only NAMES builds just those people (characters/<name>.glb), e.g. --only upyr.
 --preview FILE renders a line-up of everyone with Cycles for a quick look.
 """
 
@@ -48,6 +49,7 @@ LOADOUT = {
     "tatar_luk": ["bow"],
     "rotmistr": ["sabre_gold"],
     "murza": ["sabre_gold"],
+    "upyr": ["bulava"],
 }
 
 
@@ -83,9 +85,9 @@ def painted_material():
     return mat
 
 
-def build_people(arm, bones, out):
+def build_people(arm, bones, out, names=None):
     report = []
-    for name in characters.RECIPES:
+    for name in names or characters.RECIPES:
         body = characters.build(name, bones, rig.DEFORM, arm)
         held = [weapons.build(w, bones, arm) for w in LOADOUT[name]]
         export(f"{out}/characters/{name}.glb", [arm, body] + held)
@@ -93,6 +95,8 @@ def build_people(arm, bones, out):
         report.append((name, tris))
         for o in [body] + held:
             bpy.data.objects.remove(o, do_unlink=True)
+    if names:
+        return report
     held = [weapons.build(w, bones, arm) for w in weapons.SLOTS]
     export(f"{out}/characters/weapons.glb", [arm] + held)
     for o in held:
@@ -170,6 +174,7 @@ def main():
     ap.add_argument("--skip-export", action="store_true")
     ap.add_argument("--portraits", action="store_true")
     ap.add_argument("--story", action="store_true")
+    ap.add_argument("--only", help="build only these people (comma-separated), nothing else")
     args = ap.parse_args(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:])
     arm = rig.load(args.kaykit)
     bones = rig.bones(arm)
@@ -180,7 +185,10 @@ def main():
     if args.portraits:
         for name, faces in portraits.build_busts(arm, bones, rig.DEFORM, args.out, export):
             print(f"{name:16s} {faces:6d} faces")
-    if not args.skip_export:
+    if args.only:
+        for name, tris in build_people(arm, bones, args.out, args.only.split(",")):
+            print(f"{name:16s} {tris:6d} tris")
+    elif not args.skip_export:
         for name, tris in build_people(arm, bones, args.out):
             print(f"{name:16s} {tris:6d} tris")
         for name, tris in props.build_all(args.out, export):

@@ -75,8 +75,9 @@ func advance(delta: float) -> void:
 ## Shows a motion [clip, mode, speed] (scripts/world/motion.gd). duration: the action's length
 ## in seconds (mode "fit"); restart: the action began (again) now; progress: how far into it
 ## (0..1) it already is. Walking or standing does not cut off most of a blow, and the fallen
-## stay down.
-func act(motion: Array, duration := 0.0, restart := false, progress := 0.0) -> void:
+## stay down. blend: seconds the change of clip blends over (0 for a still picture, whose clips
+## do not move on).
+func act(motion: Array, duration := 0.0, restart := false, progress := 0.0, blend := BLEND) -> void:
 	var c: String = motion[0]
 	var m: String = motion[1]
 	var speed: float = motion[2]
@@ -89,7 +90,7 @@ func act(motion: Array, duration := 0.0, restart := false, progress := 0.0) -> v
 		if c == shown_clip and shown_mode == "loop":
 			if absf(speed - _speed) > 0.05:
 				_speed = speed
-				player.play(c, BLEND, speed)
+				player.play(c, blend, speed)
 			return
 		if shown_mode != "loop" and player.is_playing() and player.current_animation_position < _hold_until:
 			return
@@ -97,7 +98,7 @@ func act(motion: Array, duration := 0.0, restart := false, progress := 0.0) -> v
 			return
 	elif not restart and c == shown_clip:
 		return
-	player.play(c, BLEND, speed)
+	player.play(c, blend, speed)
 	player.seek(clampf(progress, 0.0, 1.0) * length if m != "loop" else 0.0, true)
 	shown_clip = c
 	shown_mode = m

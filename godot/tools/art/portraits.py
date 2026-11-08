@@ -1,7 +1,7 @@
 """The portraits of the game: busts of the people as wooden figures of the new art.
 
-Each of the 42 portraits (the numbers the game's data use: generals, colonels, the master's
-people, the hero's four classes) gets its own recipe in the words of characters.py (a hat,
+Each of the 46 portraits (the numbers the game's data use: generals, colonels, the master's
+people, the hero's four classes; and 42-45 the fighters of the multiplayer battles) gets its own recipe in the words of characters.py (a hat,
 hair, a face, a coat), most of them a variation of a figure that fights on the maps, so a
 colonel looks on his portrait as he looks in the mission. `side` picks the colour of the
 portrait's backdrop; `look` turns the head (degrees, + to the viewer's right).
@@ -101,6 +101,12 @@ PORTRAITS = {
     39: (dict(R["serdiuk"]), "hero"),
     40: (dict(R["kharakternyk"]), "hero"),
     41: (dict(R["haidamaka"]), "hero"),
+    # the multiplayer battles: the server's fighters (a rival Cossack, a Crown soldier, a
+    # Tatar) and the monster of its missions, the forest upyr
+    42: (dict(R["kozak_rival"]), "cossack"),
+    43: (dict(R["zholner"]), "crown"),
+    44: (dict(R["tatar"]), "horde"),
+    45: (dict(R["upyr"]), "upyr"),
 }
 
 ## How far each bust turns from the viewer (degrees, + to the viewer's right, towards the hero

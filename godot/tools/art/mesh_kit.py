@@ -187,6 +187,8 @@ class MeshKit:
         self.bones = list(bones or [])
         self.index = {n: i for i, n in enumerate(self.bones)}
         self.deform = self.bm.verts.layers.deform.verify() if self.bones else None
+        # colour names drawn as other ones (a figure with skin of another colour)
+        self.remap = {}
 
     # -- low level -------------------------------------------------------------
     def add(self, geom, color, bone=None, matrix=None, smooth=True, shade=1.0):
@@ -197,7 +199,7 @@ class MeshKit:
             gi = self.index[bone]
             for v in bv:
                 v[self.deform][gi] = 1.0
-        c = linear(color, shade)
+        c = linear(self.remap.get(color, color), shade)
         made = []
         for f in faces:
             try:

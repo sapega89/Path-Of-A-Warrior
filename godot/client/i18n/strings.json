@@ -1367,6 +1367,18 @@
     "en": "Auto",
     "uk": "Авто"
   },
+  "online.battle_skill": {
+    "en": "Skill",
+    "uk": "Уміння"
+  },
+  "online.battle_perfect": {
+    "en": "Perfect!",
+    "uk": "Точно!"
+  },
+  "online.battle_miss": {
+    "en": "Miss!",
+    "uk": "Мимо!"
+  },
   "online.duel_1on1": {
     "en": "1-on-1 Duel",
     "uk": "Дуель 1 на 1"
