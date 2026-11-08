@@ -212,6 +212,8 @@ class MeshKit:
 
     def solidify(self, faces, thickness, color, bone=None, shade=1.0):
         """Give an open surface a thickness (inner side faces inwards)."""
+        # the offset follows the normals, so they must be up to date first
+        self.bm.normal_update()
         res = bmesh.ops.solidify(self.bm, geom=faces, thickness=thickness)
         c = linear(color, shade)
         gi = self.index[bone] if bone is not None else None

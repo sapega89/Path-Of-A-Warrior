@@ -1,7 +1,7 @@
 extends RefCounted
 ## The stories of data/stories.json as pages: the opening of a new game (OPENING) and the 24
 ## endings. A page is {kind: "talk", speaker, text} (speaker: a portrait, HERO for the hero),
-## {kind: "picture", picture, text} (a picture of assets/original/story) or {kind: "stats"},
+## {kind: "picture", picture, text} (a picture of assets/art/story, from 0) or {kind: "stats"},
 ## the last page of an ending: how much of the game is done.
 
 const PATH := "res://data/stories.json"

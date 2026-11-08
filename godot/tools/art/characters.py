@@ -122,7 +122,9 @@ class Figure:
         self.head_center = c
         k.ball(c, (0.108, 0.112, 0.128), "skin", "head", segs=14, rings=8)
         k.tube(self.h("head") + Vector((0, 0.01, -0.07)), c, 0.052, 0.05, "skin_dark", "head", segs=8)
-        k.ball(c + Vector((0, -0.112, -0.012)), (0.022, 0.03, 0.032), "skin_dark", "head", segs=8, rings=5)
+        nose = r.get("nose", 1.0)
+        k.ball(c + Vector((0, -0.112, -0.012)), (0.022 * nose, 0.03 * nose, 0.032 * nose), "skin_dark", "head",
+               segs=8, rings=5)
         for sx in (1, -1):
             k.ball(c + Vector((0.042 * sx, -0.098, 0.022)), (0.016, 0.01, 0.016), "chernozem", "head", segs=6, rings=4)
             k.box(c + Vector((0.045 * sx, -0.1, 0.048)), (0.04, 0.012, 0.012), r["hair"], "head",
@@ -140,6 +142,26 @@ class Figure:
                 k.sweep(pts, [0.017, 0.02, 0.013, 0.005], r["hair"], "head", segs=6, flat=0.7)
         if r.get("beard"):
             k.ball(c + Vector((0, -0.088, -0.118)), (0.05, 0.045, 0.06), r["hair"], "head", segs=8, rings=5)
+        if r.get("beard") == "long":
+            k.ball(c + Vector((0, -0.075, -0.17)), (0.045, 0.04, 0.07), r["hair"], "head", segs=8, rings=5)
+        if r.get("hair_cap"):
+            # hair over the crown and the back of the head, the hairline over the brow
+            k.ball(c + Vector((0, 0.018, 0.02)), (0.114, 0.118, 0.124), r["hair"], "head", segs=14, rings=8)
+        if r.get("braid"):
+            # one long braid down the back, a red ribbon at its end
+            pts = [c + Vector((0, 0.1, -0.02)), c + Vector((0, 0.135, -0.12)),
+                   c + Vector((0.01, 0.15, -0.26)), c + Vector((0.0, 0.16, -0.42))]
+            k.sweep(pts, [0.04, 0.034, 0.03, 0.024], r["hair"], "chest", segs=8)
+            k.box(pts[-1] + Vector((0, 0, -0.03)), (0.05, 0.012, 0.06), "cinnabar", "chest")
+        if r.get("scar"):
+            # an old sabre cut across the left brow and cheek
+            pts = [c + Vector((0.07, -0.088, 0.075)), c + Vector((0.058, -0.104, 0.02)),
+                   c + Vector((0.044, -0.11, -0.03))]
+            k.sweep(pts, [0.006, 0.007, 0.005], "cinnabar_dark", "head", segs=5, flat=0.6)
+        if r.get("earring"):
+            k.ball(c + Vector((-0.112, 0.004, -0.06)), 0.016, "gold", "head", segs=8, rings=5)
+        if r.get("lips"):
+            k.ball(c + Vector((0, -0.112, -0.055)), (0.022, 0.01, 0.008), "cinnabar", "head", segs=8, rings=4)
 
     def hat(self, r):
         k, c = self.k, self.head_center
@@ -237,6 +259,20 @@ class Figure:
             pts = [front + Vector((0, 0.0, 0.02)), front + Vector((0.0, 0.03, 0.18)),
                    front + Vector((0.0, 0.08, 0.3)), front + Vector((0.0, 0.15, 0.36))]
             k.sweep(pts, [0.012, 0.03, 0.025, 0.004], "whitewash", "head", segs=6, flat=0.45)
+        elif kind == "vinok":
+            # a girl's wreath: flowers round the crown of the head, ribbons down the back
+            flowers = ["cinnabar", "gold", "whitewash", "cinnabar", "blue", "gold", "cinnabar", "whitewash"]
+            ring = c + Vector((0, 0.01, 0.085))
+            for i in range(14):
+                a = math.radians(-90 + i * 360 / 14)
+                at = ring + Vector((math.cos(a) * 0.112, math.sin(a) * 0.118, 0.012 * math.sin(a)))
+                big = 0.032 if i % 2 == 0 else 0.022
+                k.ball(at, big, flowers[i % len(flowers)], "head", segs=8, rings=5)
+                if i % 2 == 1:
+                    k.ball(at + Vector((0, 0, -0.018)), (0.024, 0.024, 0.01), "oak", "head", segs=6, rings=3)
+            for j, col in enumerate(("cinnabar", "blue", "gold")):
+                x = (j - 1) * 0.035
+                k.box(c + Vector((x, 0.14, -0.12)), (0.026, 0.008, 0.26), col, "chest", taper=0.8)
         elif kind == "kolpak_tall":
             # the haidamaka's tall cloth cap, its top falling back
             cloth = r.get("hat_cloth", "cinnabar")
@@ -293,6 +329,22 @@ class Figure:
             k.beam(Vector((-0.06, -0.1, 1.5)), Vector((0.0, -0.135, 1.36)), 0.008, 0.006, "leather", "chest")
             k.ball(Vector((0.0, -0.14, 1.34)), (0.036, 0.012, 0.036), "gold", "chest", segs=10, rings=5)
             k.ball(Vector((0.0, -0.152, 1.34)), 0.012, "cinnabar", "chest", segs=6, rings=4)
+        if r.get("collar"):
+            # a fur collar over the shoulders
+            k.lathe((0, 0, 0), [(chest_top - 0.06, 0.13), (chest_top - 0.01, 0.12), (chest_top + 0.03, 0.085)],
+                    r["collar"], "chest", segs=14, sx=1.15, sy=0.92)
+        if r.get("namysto"):
+            # strings of coral beads round the neck, lying on the chest
+            body = [(1.39, 0.158), (1.46, 0.152), (1.51, 0.118), (chest_top + 0.005, 0.07)]
+            for row in range(3):
+                z = chest_top - 0.03 - 0.03 * row
+                rad = next(r0 + (r1 - r0) * (z - z0) / (z1 - z0)
+                           for (z0, r0), (z1, r1) in zip(body, body[1:]) if z0 <= z <= z1) + 0.012
+                n = 9 + row * 2
+                for i in range(n):
+                    a = math.radians(-62 + i * 124 / (n - 1))
+                    k.ball(Vector((math.sin(a) * rad * 1.18, -math.cos(a) * rad * 0.82, z)), 0.013,
+                           "cinnabar" if (i + row) % 4 else "gold", "chest", segs=6, rings=4)
         # sash
         sash = r["sash"]
         k.lathe((0, 0, 0), [(1.02, 0.142 * belly, "hard"), (1.045, 0.152 * belly), (1.105, 0.152 * belly), (1.13, 0.142 * belly, "hard")],
@@ -368,13 +420,14 @@ class Figure:
         k.ball(Vector((x, ball.y - 0.04, 0.034)), (0.05, 0.075, 0.034), boots, to, segs=10, rings=5)
         k.ball(Vector((x, ball.y - 0.1, 0.045)), (0.022, 0.03, 0.02), boots, to, segs=6, rings=4)
 
-    def build(self, r):
+    def build(self, r, legs=True):
         self.head(r)
         self.hat(r)
         self.torso(r)
         for side in ("l", "r"):
             self.arm(r, side)
-            self.leg(r, side)
+            if legs:
+                self.leg(r, side)
         return self.k
 
 
