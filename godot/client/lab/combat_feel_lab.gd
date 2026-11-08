@@ -1,8 +1,9 @@
 extends Control
 ## The combat feel lab: the first room of mission 1 with soldiers coming in wave after wave, to
-## try how a hit feels (lab/combat_feel.gd: hitstop, camera shake, flash, recoil, the flight of
-## the one killed, the hit sound) before any of it goes into the game. The game's own map, hero,
-## soldiers, effects and HUD are used as they are; nothing of the game is changed.
+## try and tune how a hit feels (scripts/world/combat_feel.gd, as the missions use it: hitstop,
+## camera shake, flash, recoil, the flight of the one killed, the hit sound, the pad's rumble)
+## with every effect and number at hand. The game's own map, hero, soldiers, effects and HUD
+## are used as they are.
 ## Nothing is saved: the hero is a new one (Profile.new(), never written), he does not die
 ## (god mode), the room never ends.
 ##
@@ -23,16 +24,13 @@ const MapHud := preload("res://scripts/ui/map_hud.gd")
 const Autopilot := preload("res://scripts/sim/autopilot.gd")
 const Effects := preload("res://scripts/world/effects.gd")
 const Profile := preload("res://scripts/core/profile.gd")
-const CombatFeel := preload("res://lab/combat_feel.gd")
+const CombatFeel := preload("res://scripts/world/combat_feel.gd")
 const FeelPanel := preload("res://lab/feel_panel.gd")
 
 const LORD := 1
 const MISSION := 0
 const WAVE := 3  # swordsmen in a wave
 const GENERAL := 5  # the general who comes on F4 (mission 1's)
-const SFX_PATH := "res://assets/original/sound/sfx_%d.wav"
-const HIT_SOUNDS := [3, 4, 15, 16]
-const SOUND_PLAYERS := 6
 const PX := 1.0 / 27.0
 
 var tick := MapSim.TICK_MS / 1000.0
@@ -70,9 +68,6 @@ var _belt := -1
 var _keys_down := {}
 var _last_held := -1
 var _trail_pick := RandomNumberGenerator.new()
-var _sound_pick := RandomNumberGenerator.new()
-var _players: Array[AudioStreamPlayer] = []
-var _streams := {}
 var _flash_mats := {}  # Sprite3D -> StandardMaterial3D
 var _tool_tex: Texture2D = preload("res://assets/original/ui/tool.png")
 var _gold_tex: Texture2D = preload("res://assets/original/ui/gold.png")
@@ -129,11 +124,6 @@ func _ready() -> void:
 	hud = MapHud.new()
 	hud.auto_allowed = true
 	add_child(hud)
-	for i in SOUND_PLAYERS:
-		var pl := AudioStreamPlayer.new()
-		pl.bus = &"SFX"
-		add_child(pl)
-		_players.append(pl)
 	panel = FeelPanel.new()
 	panel.name = "Panel"
 	panel.feel = feel
@@ -265,7 +255,8 @@ func _tick(held: int) -> void:
 	_belt = -1
 	var list := CombatFeel.hits(sim, before)
 	feel.react(list)
-	_play_sounds(list)
+	feel.play_sounds(sim.sounds, list)
+	feel.rumble(InputSetup.device)
 	if not sim.talk.is_empty():
 		sim.skip_talk()
 	if god:
@@ -287,43 +278,6 @@ func _tick(held: int) -> void:
 	feel.forget_except(alive)
 
 
-## The sounds of the tick: the hits with their pitch a little off each time (and a lower second
-## layer on a kill) while the sound effect is on, everything else as the game plays it.
-func _play_sounds(list: Array) -> void:
-	var kill := false
-	var heavy := false
-	for h in list:
-		kill = kill or (h.killed and h.who == "enemy")
-		heavy = heavy or h.heavy
-	for n in sim.sounds:
-		if not (feel.on.sound and n in HIT_SOUNDS):
-			Audio.play_sound(n)
-			continue
-		var db := float(feel.p.heavy_db) if heavy or kill else 0.0
-		_play(n, feel.pitch(_sound_pick), db)
-		if kill:
-			get_tree().create_timer(float(feel.p.kill_delay)).timeout.connect(
-				_play.bind(n, float(feel.p.kill_pitch), db))
-			kill = false
-
-
-func _play(n: int, pitch: float, db: float) -> void:
-	var path := SFX_PATH % n
-	if not _streams.has(path):
-		_streams[path] = load(path) if ResourceLoader.exists(path) else null
-	if _streams[path] == null:
-		return
-	var free: AudioStreamPlayer = _players[0]
-	for pl in _players:
-		if not pl.playing:
-			free = pl
-			break
-	free.stream = _streams[path]
-	free.pitch_scale = pitch
-	free.volume_db = db
-	free.play()
-
-
 static func dir4_of(v: Vector2) -> int:
 	if v.length() < 0.3:
 		return -1
@@ -339,15 +293,11 @@ func _pressed_now(action: String) -> bool:
 	return down and not was
 
 
-## The position between the last two ticks; a knock-back (a long step) goes out fast and slows
-## down when its effect is on, instead of at an even speed.
-func _smooth(prev: Vector2i, now: Vector2i, t: float, knocked: bool = false) -> Vector2:
+## The position between the last two ticks (a jump, such as a new room, is not smoothed).
+func _smooth(prev: Vector2i, now: Vector2i, t: float) -> Vector2:
 	if (now - prev).length() > 40:
 		return Vector2(now)
-	t = clampf(t, 0.0, 1.0)
-	if knocked and feel.on.knock_ease:
-		t = 1.0 - pow(1.0 - t, 3.0)
-	return Vector2(prev).lerp(Vector2(now), t)
+	return Vector2(prev).lerp(Vector2(now), clampf(t, 0.0, 1.0))
 
 
 func _update_view(t: float) -> void:
@@ -358,12 +308,9 @@ func _update_view(t: float) -> void:
 	status.modulate = Color(0.6, 1.0, 0.6) if n > 0 else Color(1.0, 0.6, 0.6)
 	hero.global_position = Hero.px_to_world(_smooth(sim.hero.prev_pos, sim.hero.pos, t))
 	hero.set_frame(sim.hero_sprite_frame(), sim.hero.action >= 12)
-	_flash(hero.sprite, sim.hero)
+	CombatFeel.flash_sprite(hero.sprite, feel.flash_of(sim.hero), _flash_mats)
 	camera.focus = sim.rooms.center(sim.cell)
-	var shake := feel.camera_shake()
-	camera.h_offset = shake.x * PX
-	camera.v_offset = -shake.y * PX
-	camera.rotation.z = deg_to_rad(shake.z)
+	feel.shake_camera(camera, PX)
 	hud.queue_redraw()
 	_place_soldiers(t)
 	_place_shots()
@@ -379,7 +326,7 @@ func _update_view(t: float) -> void:
 		if node != null:
 			node.visible = sim.breakable_shown(b)
 			if node is Sprite3D:
-				_flash(node as Sprite3D, b)
+				CombatFeel.flash_sprite(node as Sprite3D, feel.flash_of(b), _flash_mats)
 	_place_loot()
 
 
@@ -398,41 +345,12 @@ func _place_soldiers(t: float) -> void:
 			node.setup(e.type, tint, MapSim.table("squad_offsets"), sim.general)
 			soldiers[e] = node
 		var knocked: bool = e.action == 2 and (e.pos - e.prev_pos).length() > 8
-		var at := _smooth(e.prev_pos, e.pos, t, knocked)
+		var at := _smooth(e.prev_pos, e.pos, feel.knock_t(t) if knocked else t)
 		var o := feel.offset_of(e)
 		node.global_position = Hero.px_to_world(at + Vector2(o.x, o.y)) + Vector3(0.0, o.z * PX, 0.0)
 		node.set_frame(sim.enemy_sprite_frame(e), int(map4[e.dir]), e.action >= 6)
 		for s in node.sprites:
-			_flash(s, e)
-
-
-## The white (or, on the hero, red) flash of one hit: the sprite is drawn for that moment with
-## a material that adds the colour as light, so it shows nearly white even unlit, with the
-## sprite's own picture, billboard and alpha edge kept.
-func _flash(s: Sprite3D, actor) -> void:
-	var f: Array = feel.flash_of(actor)
-	var k: float = f[0]
-	if k <= 0.0:
-		if s.material_override != null:
-			s.material_override = null
-		return
-	var m: StandardMaterial3D = _flash_mats.get(s)
-	if m == null:
-		m = StandardMaterial3D.new()
-		m.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
-		m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
-		m.alpha_scissor_threshold = 0.5
-		m.cull_mode = BaseMaterial3D.CULL_DISABLED
-		m.vertex_color_use_as_albedo = true
-		m.emission_enabled = true
-		_flash_mats[s] = m
-	m.albedo_texture = s.texture
-	m.emission = f[1]
-	m.emission_energy_multiplier = 1.2 * k
-	m.no_depth_test = s.no_depth_test
-	m.render_priority = s.render_priority
-	s.material_override = m
+			CombatFeel.flash_sprite(s, feel.flash_of(e), _flash_mats)
 
 
 func _place_shots() -> void:

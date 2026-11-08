@@ -1,11 +1,14 @@
 extends "res://tests/test_case.gd"
-## The combat feel lab (lab/combat_feel.gd, lab/combat_feel_lab.gd): the hits it sees, the
-## hitstop and its limit, the shake and the flash fading, and the arena running by itself.
+## How a hit feels (scripts/world/combat_feel.gd): the hits it sees, the hitstop and its limit,
+## the shake and the flash fading, the rumble, the options; on the map (the mission screen) and
+## in the arena of the lab (lab/combat_feel_lab.gd), which also runs by itself.
 
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
 const MapSim := preload("res://scripts/sim/map_sim.gd")
 const JavaRandom := preload("res://scripts/sim/java_random.gd")
-const CombatFeel := preload("res://lab/combat_feel.gd")
+const CombatFeel := preload("res://scripts/world/combat_feel.gd")
+const SettingsScript := preload("res://scripts/core/settings.gd")
+const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
 
 
 ## An empty, open room with one swordsman standing below the hero, looking at him.
@@ -131,6 +134,74 @@ func test_switched_off_does_nothing() -> void:
 	eq(f.freeze, 0.0, "no stop")
 	eq(f.trauma, 0.0, "no shake")
 	check(f.flashes.is_empty() and f.launches.is_empty() and f.recoils.is_empty(), "no flash, no flight")
+
+
+func test_the_strongest_hit_sets_the_rumble_once() -> void:
+	var f := CombatFeel.new()
+	var hit := _kill_on(RefCounted.new())
+	hit.killed = false
+	f.react([hit, _kill_on(RefCounted.new())])
+	eq(f.rumble_wanted, f.p.rumble_kill, "the kill's rumble")
+	f.rumble("keys")
+	check(f.rumble_wanted.is_empty(), "asked once, nothing on the keyboard")
+	f.react([])
+	check(f.rumble_wanted.is_empty(), "no hit, no rumble")
+	f.on.rumble = false
+	f.react([_kill_on(RefCounted.new())])
+	check(f.rumble_wanted.is_empty(), "switched off")
+
+
+## The options: Hit effects switches all of them, Screen shake and Vibration only their own.
+func test_the_options_switch_the_effects() -> void:
+	var s: Node = SettingsScript.new()
+	s.path = "user://test_feel_settings.cfg"
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(s.path))
+	s.load_from_disk()
+	var f := CombatFeel.new()
+	f.use_settings(s)
+	for k in f.on:
+		check(f.on[k], "on at first: %s" % k)
+	s.set_value("screen_shake", false)
+	s.set_value("rumble", false)
+	f.use_settings(s)
+	check(not f.on.shake and not f.on.rumble, "no shake, no rumble")
+	check(f.on.hitstop and f.on.flash and f.on.launch and f.on.sound, "the rest stays")
+	s.set_value("screen_shake", true)
+	s.set_value("hit_feel", false)
+	f.use_settings(s)
+	for k in f.on:
+		check(not f.on[k], "all off: %s" % k)
+	s.free()
+	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://test_feel_settings.cfg"))
+
+
+## On the map a hit holds the picture: no tick goes by while it stands, then the game goes on.
+## The hero flashes and the camera shakes, and both settle.
+func test_the_mission_feels_a_hit() -> void:
+	var old: Dictionary = Router.params
+	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	var screen: Control = MissionScreen.new()
+	root.add_child(screen)
+	screen.set_process(false)
+	for k in screen.feel.on:
+		screen.feel.on[k] = true
+	screen._process(screen.tick)
+	var ticks: int = screen.sim.ticks
+	var hurt := {"who": "hero", "actor": screen.sim.hero, "pos": screen.sim.hero.pos,
+		"dir": Vector2.DOWN, "killed": false, "heavy": true, "boss": false}
+	screen.feel.react([hurt])
+	check(screen.feel.freeze > 0.0, "a stop")
+	screen._process(0.02)
+	eq(screen.sim.ticks, ticks, "no tick while the picture stands")
+	check(screen.hero.sprite.material_override != null, "the hero flashes")
+	check(absf(screen.camera.h_offset) + absf(screen.camera.v_offset) > 0.0, "the camera shakes")
+	for i in 30:
+		screen._process(1.0 / 30.0)
+	check(screen.sim.ticks > ticks, "then the game goes on")
+	check(screen.hero.sprite.material_override == null, "the flash is over")
+	eq(screen.camera.h_offset, 0.0, "the shake is over")
+	screen.queue_free()
+	Router.params = old
 
 
 ## The arena fights by itself (auto-hunt) for a minute of ticks: the hero stays in its room,

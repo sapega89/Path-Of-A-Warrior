@@ -1,15 +1,16 @@
 extends RefCounted
-## How a hit feels, for the combat feel lab (lab/combat_feel_lab.gd): the hitstop, the camera
-## shake, the white flash, the recoil of the one hit, the flight of the one killed and the hit
-## sound's pitch. It only watches the map simulation: hits() compares the HP before and after a
-## tick, react() turns this tick's hits into what the screen shows, advance() lets it fade.
-## The simulation, its positions and its ticks are never changed. Every effect can be switched
-## off (`on`) and every number tuned (`p`), both from the lab's panel.
+## How a hit feels on the map (the mission screen, and the lab lab/combat_feel_lab.gd): the
+## hitstop, the camera shake, the white flash, the recoil of the one hit, the flight of the one
+## killed, the hit sound's pitch and the rumble of the pad (or the phone). It only watches the
+## map simulation: hits() compares the HP before and after a tick, react() turns this tick's
+## hits into what the screen shows, advance() lets it fade. The simulation, its positions and
+## its ticks are never changed. Every effect can be switched off (`on`, use_settings()) and
+## every number tuned (`p`, the lab's panel).
 
 ## The effects, each on or off.
 var on := {
 	"hitstop": true, "shake": true, "flash": true, "recoil": true, "knock_ease": true,
-	"launch": true, "sound": true,
+	"launch": true, "sound": true, "rumble": true,
 }
 ## The numbers: times in seconds, distances in the original's pixels (27 to a tile).
 var p := {
@@ -31,8 +32,14 @@ var p := {
 	"launch_px": 24.0, "launch_boss_px": 32.0, "launch_hop_px": 8.0, "launch_time": 0.25,
 	# sound
 	"pitch_spread": 0.07, "kill_pitch": 0.8, "kill_delay": 0.03, "heavy_db": 2.0,
+	# rumble: [weak motor, strong motor, seconds]
+	"rumble_hit": [0.25, 0.0, 0.06], "rumble_heavy": [0.4, 0.25, 0.1],
+	"rumble_kill": [0.45, 0.5, 0.12], "rumble_boss": [0.7, 1.0, 0.35],
+	"rumble_hurt": [0.5, 0.6, 0.15], "rumble_object": [0.2, 0.0, 0.05],
+	"rumble_scale": 1.0,
 }
 
+const HIT_SOUNDS := [3, 4, 15, 16]
 const WHITE := Color(1.0, 1.0, 1.0)
 const HURT := Color(1.0, 0.35, 0.3)  # the hero's flash when he is hit
 
@@ -46,8 +53,12 @@ var recoils := {}
 ## actor -> {t, total, dir: Vector2, px, hop}
 var launches := {}
 
+## The rumble this tick's strongest hit asks for, [weak, strong, seconds] (empty: none);
+## rumble() plays it.
+var rumble_wanted: Array = []
 var _budget := 0.2
 var _time := 0.0
+var _sound_pick := RandomNumberGenerator.new()
 var _kick := Vector2.ZERO  # the first jolt of a strong hit, along the blow
 var _noise := FastNoiseLite.new()
 
@@ -124,8 +135,12 @@ func react(list: Array) -> void:
 	var shake := 0.0
 	var kick := Vector2.ZERO
 	var seen := {}
+	rumble_wanted = []
 	for h in list:
 		var g := grade(h)
+		var r: Array = p["rumble_" + g]
+		if on.rumble and (rumble_wanted.is_empty() or float(r[1]) + float(r[0]) > float(rumble_wanted[1]) + float(rumble_wanted[0])):
+			rumble_wanted = r
 		if float(p["stop_" + g]) > stop:
 			stop = float(p["stop_" + g])
 		if float(p["trauma_" + g]) > shake:
@@ -224,6 +239,102 @@ func camera_shake() -> Vector3:
 func pitch(rng: RandomNumberGenerator) -> float:
 	var s := float(p.pitch_spread)
 	return 1.0 + rng.randf_range(-s, s)
+
+
+## The effects as the player set them (Settings): all of them with "hit_feel", the shake also
+## with "screen_shake", the rumble also with "rumble".
+func use_settings(settings: Node) -> void:
+	var all := bool(settings.get_value("hit_feel"))
+	for k in on:
+		on[k] = all
+	on.shake = all and bool(settings.get_value("screen_shake"))
+	on.rumble = all and bool(settings.get_value("rumble"))
+
+
+## The sounds of a tick (MapSim.sounds) through Audio: while the sound effect is on, the hits
+## (3, 4, 15, 16) with their pitch a little off each time, louder on a strong hit, and on a kill
+## a lower second layer just after; everything else as the game always plays it.
+func play_sounds(sounds: Array, list: Array) -> void:
+	var kill := false
+	var heavy := false
+	for h in list:
+		kill = kill or (h.killed and h.who == "enemy")
+		heavy = heavy or h.heavy
+	for n in sounds:
+		if not (on.sound and n in HIT_SOUNDS):
+			Audio.play_sound(n)
+			continue
+		var db := float(p.heavy_db) if heavy or kill else 0.0
+		Audio.play_sound(n, pitch(_sound_pick), db)
+		if kill:
+			kill = false
+			var tree := Engine.get_main_loop() as SceneTree
+			if tree != null:
+				tree.create_timer(float(p.kill_delay)).timeout.connect(
+					Audio.play_sound.bind(n, float(p.kill_pitch), db))
+
+
+## Plays the rumble react() asked for: on the pad's motors when a pad is what the player uses,
+## a short buzz of the phone when it is the touch screen.
+func rumble(device: String) -> void:
+	if rumble_wanted.is_empty():
+		return
+	var k := float(p.rumble_scale)
+	var weak := clampf(float(rumble_wanted[0]) * k, 0.0, 1.0)
+	var strong := clampf(float(rumble_wanted[1]) * k, 0.0, 1.0)
+	var secs := float(rumble_wanted[2])
+	rumble_wanted = []
+	if weak <= 0.0 and strong <= 0.0:
+		return
+	if device == "pad":
+		for j in Input.get_connected_joypads():
+			Input.start_joy_vibration(j, weak, strong, secs)
+	elif device == "touch" and OS.has_feature("mobile"):
+		Input.vibrate_handheld(int(secs * 1000.0), maxf(weak, strong))
+
+
+## The camera's shake now, put on its offsets (they move the picture without moving the camera,
+## so its following the room is not disturbed). PX: world units per map pixel.
+func shake_camera(camera: Camera3D, px: float) -> void:
+	var s := camera_shake()
+	camera.h_offset = s.x * px
+	camera.v_offset = -s.y * px
+	camera.rotation.z = deg_to_rad(s.z)
+
+
+## Where between two ticks a knocked-back actor is drawn: out fast, slowing down (while that
+## effect is on), instead of at an even speed.
+func knock_t(t: float) -> float:
+	t = clampf(t, 0.0, 1.0)
+	return 1.0 - pow(1.0 - t, 3.0) if on.knock_ease else t
+
+
+## The flash of one hit on a sprite: drawn for that moment with a material that adds the colour
+## as light, so it shows nearly white (on the hero red) even unlit, keeping the sprite's own
+## picture, billboard and alpha edge. `mats` keeps a material per sprite.
+static func flash_sprite(s: Sprite3D, f: Array, mats: Dictionary) -> void:
+	var k: float = f[0]
+	if k <= 0.0:
+		if s.material_override != null:
+			s.material_override = null
+		return
+	var m: StandardMaterial3D = mats.get(s)
+	if m == null:
+		m = StandardMaterial3D.new()
+		m.billboard_mode = BaseMaterial3D.BILLBOARD_FIXED_Y
+		m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+		m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
+		m.alpha_scissor_threshold = 0.5
+		m.cull_mode = BaseMaterial3D.CULL_DISABLED
+		m.vertex_color_use_as_albedo = true
+		m.emission_enabled = true
+		mats[s] = m
+	m.albedo_texture = s.texture
+	m.emission = f[1]
+	m.emission_energy_multiplier = 1.2 * k
+	m.no_depth_test = s.no_depth_test
+	m.render_priority = s.render_priority
+	s.material_override = m
 
 
 ## Forgets the effects of actors gone from the map (no longer in `alive`).

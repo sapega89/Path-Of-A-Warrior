@@ -1,12 +1,12 @@
 extends PanelContainer
 ## The lab's panel (lab/combat_feel_lab.gd), on the right: a switch for each effect of
-## lab/combat_feel.gd, sliders for its main numbers, and the arena's own switches (waves, god
+## scripts/world/combat_feel.gd, sliders for its main numbers, and the arena's own switches (waves, god
 ## mode) and buttons (a wave, archers, a general). H hides it.
 
 const EFFECTS := [
 	["hitstop", "Хитстоп"], ["shake", "Тряска камеры"], ["flash", "Вспышка"],
 	["recoil", "Отдача при ударе"], ["knock_ease", "Резкий отброс"],
-	["launch", "Отлёт убитого"], ["sound", "Звук с разбросом"],
+	["launch", "Отлёт убитого"], ["sound", "Звук с разбросом"], ["rumble", "Вибрация геймпада"],
 ]
 ## [key of CombatFeel.p, label, min, max, step]
 const SLIDERS := [
@@ -21,6 +21,7 @@ const SLIDERS := [
 	["launch_px", "Отлёт, px", 0.0, 60.0, 1.0],
 	["launch_hop_px", "Подскок, px", 0.0, 20.0, 1.0],
 	["pitch_spread", "Разброс высоты звука", 0.0, 0.3, 0.01],
+	["rumble_scale", "Вибрация ×", 0.0, 2.0, 0.1],
 ]
 
 var feel: RefCounted
