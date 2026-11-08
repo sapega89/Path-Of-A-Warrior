@@ -140,10 +140,11 @@ UDP, зашифрований DTLS; кожен пакет — словник God
 ## Завжди онлайн
 
 Як у pyport («Завжди онлайн» і «Сейв тільки на сервері»): гра (і кампанія, і Live, і
-мультиплеєр) працює лише із сервером. Типово це локальний сервер — `127.0.0.1:28310` і сертифікат,
-який він сам робить на першому старті (`user://server/server.crt`; клієнт і сервер — один проєкт,
-тож тека `user://` у них спільна). Інший сервер: `godot --path godot/client -- --server HOST:28310
---cert server.crt` або налаштування проєкту `pow/net/server` і `pow/net/cert`.
+мультиплеєр) працює лише із сервером. Типово це сервер гри в Oracle Cloud — `140.238.73.129:28310`
+і його сертифікат `net/server.crt` (налаштування проєкту `pow/net/server` і `pow/net/cert`; як його
+поставити чи оновити — розділ «Сервер в інтернеті» нижче). Локальний сервер: `godot --path
+godot/client -- --server 127.0.0.1:28310 --cert user://server/server.crt` (сертифікат, який він сам
+робить на першому старті; клієнт і сервер — один проєкт, тож тека `user://` у них спільна).
 
 ### Збірка для друзів (Windows і Linux)
 
@@ -178,8 +179,22 @@ Actions → Variables, `POW_SERVER` (`HOST:PORT`) і `POW_SERVER_CERT` (увес
 Грати локально:
 ```
 godot --headless --path godot/client res://server/main.tscn    # 1) сервер (лишити відкритим)
-godot --path godot/client                                      # 2) гра
+godot --path godot/client -- --server 127.0.0.1:28310 --cert user://server/server.crt   # 2) гра
 ```
+
+### Сервер в інтернеті
+
+`deploy/install.sh` ставить сервер на віртуальну машину з Ubuntu або Oracle Linux (x86_64 чи ARM):
+Godot, проєкт із гілки `dev`, службу systemd `pow-server` (UDP 28310, дані в
+`/var/lib/pow-server`), відкриває порт у файрволі машини.
+```
+ssh -i KEY ubuntu@HOST "curl -fsSL https://raw.githubusercontent.com/sapega89/Path-Of-A-Warrior/dev/godot/deploy/install.sh | sudo bash"
+```
+Той самий рядок оновлює сервер до свіжого `dev`. У хмарі ще треба відкрити UDP 28310 (в Oracle —
+Ingress Rule у Security List підмережі). Скрипт наприкінці друкує сертифікат сервера: він іде в
+`client/net/server.crt` (публічна частина; ключ лишається на машині). Безпека машини: сервер від
+окремого користувача в пісочниці systemd, SSH лише за ключем, щоденні оновлення безпеки.
+Експорт гри має включати `*.crt` (Export → Resources → Filters to export non-resource files).
 
 - Герой живе в пам'яті й на сервері (`scripts/net/cloud.gd`, `cloud_sync.gd`); кожен сейв іде на
   сервер. На старті завжди виграє серверна копія; якщо під час гри інший пристрій теж зберіг,
