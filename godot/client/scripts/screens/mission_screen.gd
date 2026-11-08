@@ -38,9 +38,11 @@ const MissionPause := preload("res://scripts/ui/mission_pause.gd")
 const ExpBar := preload("res://scripts/ui/exp_bar.gd")
 const Stories := preload("res://scripts/core/stories.gd")
 const CombatFeel := preload("res://scripts/world/combat_feel.gd")
+const ItemSlot := preload("res://scripts/ui/item_slot.gd")
 
 ## One tick of the game, by the game speed of the settings (MapSim.TICK_MS at Med).
 var tick := MapSim.TICK_MS / 1000.0
+const GOLD_ICON := 12  # the heap of gold in the tool icons
 const ARROW_SCALE := 3.0
 const ARROW_PATH := "res://assets/original/ui/arrow%d.png"
 const PORTRAITS := "res://assets/original/portraits/%d.png"
@@ -76,8 +78,6 @@ var tint := 0
 var loot := {}  # sim drop -> Sprite3D
 var trails: Array = []  # the weapon trails of this tick
 var _trail_pick := RandomNumberGenerator.new()
-var _tool_tex: Texture2D = preload("res://assets/original/ui/tool.png")
-var _gold_tex: Texture2D = preload("res://assets/original/ui/gold.png")
 var _acc := 0.0
 var _pressed := -1
 var _fire := false
@@ -360,20 +360,14 @@ func _place_loot() -> void:
 			continue
 		var s := Sprite3D.new()
 		s.name = "Loot"
-		s.region_enabled = true
-		if d.item > 10000:
-			s.texture = _gold_tex
-			s.region_rect = Rect2(Vector2.ZERO, _gold_tex.get_size())
-		else:
-			s.texture = _tool_tex
-			var f: int = 11 if d.item > 100 else d.item - 1
-			s.region_rect = Rect2(f * 28, 0, 28, 28)
-		s.pixel_size = 1.0 / 27.0
+		# an icon of the new art, as big as the original's 28 px (gold: 24 px)
+		var px := 24.0 if d.item > 10000 else 28.0
+		s.texture = ItemSlot.icon("tool", GOLD_ICON if d.item > 10000 else (11 if d.item > 100 else d.item - 1))
+		s.pixel_size = px / 27.0 / ItemSlot.ART
 		s.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
-		s.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-		s.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+		s.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 		world.add_child(s)
-		s.global_position = Hero.px_to_world(Vector2(d.pos)) + Vector3(0.0, s.region_rect.size.y / 54.0, 0.0)
+		s.global_position = Hero.px_to_world(Vector2(d.pos)) + Vector3(0.0, px / 54.0, 0.0)
 		loot[d] = s
 
 

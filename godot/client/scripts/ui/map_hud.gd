@@ -10,15 +10,18 @@ extends Control
 ## corner AUTO: white while the auto-hunt is on, grey while off; a click toggles it. While
 ## someone talks on the map that corner is SKIP (pyport's left soft key): a click skips the
 ## talk. In the bottom-right corner PAUSE (pyport's soft key): a click pauses the game.
+## The icons of the potions and the skills are the new art's (ItemSlot.icon), drawn smooth on
+## a layer of their own over the pixels, the counts and the keys on a layer over them.
 
+const ItemSlot := preload("res://scripts/ui/item_slot.gd")
 const UI := "res://assets/original/ui/"
 const BALL := 35  # the balls' size
 const BALL_X := [4, 201]  # in the 240 px wide panel
 const PANEL_H := 61
 const TOP_Y := 16  # the clock and the kills, below the top bars
-const ITEM := 28  # a frame of tool.png
+const ITEM := 28  # a potion on the panel
 const CELL := 23  # a slot of the bar: 1 px shared border and a 22 px icon
-const ICON := 22  # the middle of a 28 px icon
+const ICON := 22  # an icon in a slot of the bar
 const BAR_H := 24
 const BELT_KEYS := "ZXCVB"
 const AUTO_W := 48  # the AUTO corner
@@ -36,9 +39,8 @@ var _panel_r: Texture2D = preload(UI + "box_02R.png")
 var _cover: Texture2D = preload(UI + "ball_black.png")
 var _digits: Texture2D = preload(UI + "number1.png")
 var _small: Texture2D = preload(UI + "number2.png")
-var _items: Texture2D = preload(UI + "tool.png")
-var _skills: Texture2D = preload(UI + "skill.png")
-var _skills_gray: Texture2D = preload(UI + "skillgray.png")
+var _icons: Control  # the icons, drawn smooth
+var _labels: Control  # the counts and the keys over them
 var show_bar := true
 var auto_on := false
 var auto_allowed := true  # false on hard: no AUTO corner (scripts/screens/mission_screen.gd)
@@ -48,6 +50,19 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	set_anchors_preset(Control.PRESET_FULL_RECT)
+	_icons = _layer("Icons", CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS, _draw_icons)
+	_labels = _layer("Labels", CanvasItem.TEXTURE_FILTER_NEAREST, _draw_labels)
+
+
+func _layer(layer_name: String, filter: int, drawn: Callable) -> Control:
+	var c := Control.new()
+	c.name = layer_name
+	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	c.texture_filter = filter
+	c.set_anchors_preset(Control.PRESET_FULL_RECT)
+	c.draw.connect(drawn)
+	add_child(c)
+	return c
 
 
 ## The scale of the original pixels: as many whole times as 320 rows fit the screen.
@@ -62,6 +77,9 @@ func tick() -> void:
 
 
 func _draw() -> void:
+	if _icons != null:
+		_icons.queue_redraw()
+		_labels.queue_redraw()
 	if sim == null:
 		return
 	var view := get_viewport_rect().size
@@ -92,19 +110,74 @@ func _draw() -> void:
 	_pause(view, k)
 	if show_bar:
 		_bar(origin + Vector2(0, -BAR_H) * k, k)
+
+
+## Where the HUD's panel starts and its scale: [origin, k].
+func _frame() -> Array:
+	var view := get_viewport_rect().size
+	var k := scale_of(view)
+	return [Vector2(view.x / 2.0 - 120.0 * k, view.y - PANEL_H * k), k]
+
+
+## The icons: the potions on the panel or the belt and the skills of the bar.
+func _draw_icons() -> void:
+	if sim == null:
 		return
-	for b in 2:
-		var slot: Array = sim.quick_slots[sim.quick_keys[b]]
-		var item := int(slot[0])
-		if item == 0:
-			continue
-		var side := 2 * b - 1
-		var p := origin + Vector2(120 + side * (44 + 28 * (1 - b)), PANEL_H - 50) * k
-		draw_texture_rect_region(_items, Rect2(p, Vector2(ITEM, ITEM) * k),
-			Rect2((item - 1) * ITEM, 0, ITEM, ITEM))
-		p = origin + Vector2(120 + side * (38 + 11 * (1 - b)), PANEL_H - 33) * k
-		draw_texture_rect_region(_small, Rect2(p, Vector2(11, 12) * k), Rect2(98, 0, 11, 12))
-		_number(int(slot[1]), origin + Vector2(120 + side * (28 + 10 * b), PANEL_H - 35) * k, k)
+	var f := _frame()
+	var origin: Vector2 = f[0]
+	var k: float = f[1]
+	if not show_bar:
+		for b in 2:
+			var item := int(sim.quick_slots[sim.quick_keys[b]][0])
+			if item != 0:
+				var side := 2 * b - 1
+				_icon("tool", item - 1, Rect2(origin + Vector2(120 + side * (44 + 28 * (1 - b)), PANEL_H - 50) * k,
+					Vector2(ITEM, ITEM) * k))
+		return
+	var top := origin + Vector2(0, -BAR_H) * k
+	for b in 5:
+		var item := int(sim.quick_slots[b][0])
+		if item != 0:
+			_icon("tool", item - 1, Rect2(top + Vector2(slot_x(false, b) + 1, 1) * k, Vector2(ICON, ICON) * k))
+		var s := int(sim.hotkeys[b])
+		if s >= 12 and s <= 30:
+			var ready: bool = sim.skill_levels[s - 12] > 0 and sim.skill_mp_need(s) <= sim.hero.mp
+			_icon("skill" if ready else "skillgray", s - 12,
+				Rect2(top + Vector2(slot_x(true, b) + 1, 1) * k, Vector2(ICON, ICON) * k))
+
+
+func _icon(sheet: String, i: int, r: Rect2) -> void:
+	var t := ItemSlot.icon(sheet, i)
+	if t != null:
+		_icons.draw_texture_rect(t, r, false)
+
+
+## Over the icons: how many of each potion, the keys of the slots.
+func _draw_labels() -> void:
+	if sim == null:
+		return
+	var f := _frame()
+	var origin: Vector2 = f[0]
+	var k: float = f[1]
+	if not show_bar:
+		for b in 2:
+			var slot: Array = sim.quick_slots[sim.quick_keys[b]]
+			if int(slot[0]) == 0:
+				continue
+			var side := 2 * b - 1
+			var p := origin + Vector2(120 + side * (38 + 11 * (1 - b)), PANEL_H - 33) * k
+			_labels.draw_texture_rect_region(_small, Rect2(p, Vector2(11, 12) * k), Rect2(98, 0, 11, 12))
+			_number(int(slot[1]), origin + Vector2(120 + side * (28 + 10 * b), PANEL_H - 35) * k, k, _labels)
+		return
+	var top := origin + Vector2(0, -BAR_H) * k
+	for b in 5:
+		var at := top + Vector2(slot_x(false, b), 0) * k
+		var slot: Array = sim.quick_slots[b]
+		if int(slot[0]) != 0 and int(slot[1]) > 1:
+			_labels.draw_texture_rect_region(_small, Rect2(at + Vector2(CELL - 9, BAR_H - 13) * k,
+				Vector2(9, 12) * k), Rect2(int(slot[1]) * 9, 0, 9, 12))
+		_key_label(BELT_KEYS[b], at, k)
+		_key_label(SKILL_KEYS[b], top + Vector2(slot_x(true, b), 0) * k, k)
 
 
 func _auto(view: Vector2, k: float) -> void:
@@ -166,29 +239,13 @@ static func slot_x(skill: bool, i: int) -> int:
 	return (240 - CELL * 5 - 1 if skill else 0) + i * CELL
 
 
+## The bar's black strip and the frames of its slots (the icons and the keys: their layers).
 func _bar(top: Vector2, k: float) -> void:
 	draw_rect(Rect2(top, Vector2(240, BAR_H) * k), Color.BLACK)
 	for b in 5:
-		var at := top + Vector2(slot_x(false, b), 0) * k
-		var slot: Array = sim.quick_slots[b]
-		_slot_box(at, k, sim.effect_item != 0 and sim.effect_slot == b)
-		var item := int(slot[0])
-		if item != 0:
-			draw_texture_rect_region(_items, Rect2(at + Vector2(1, 1) * k, Vector2(ICON, ICON) * k),
-				Rect2((item - 1) * ITEM + 3, 3, ICON, ICON))
-			if int(slot[1]) > 1:
-				draw_texture_rect_region(_small, Rect2(at + Vector2(CELL - 9, BAR_H - 13) * k,
-					Vector2(9, 12) * k), Rect2(int(slot[1]) * 9, 0, 9, 12))
-		_key_label(BELT_KEYS[b], at, k)
-	for b in 5:
-		var at := top + Vector2(slot_x(true, b), 0) * k
+		_slot_box(top + Vector2(slot_x(false, b), 0) * k, k, sim.effect_item != 0 and sim.effect_slot == b)
 		var s := int(sim.hotkeys[b])
-		_slot_box(at, k, s != 0 and sim.hero.action == s)
-		if s >= 12 and s <= 30:
-			var ready: bool = sim.skill_levels[s - 12] > 0 and sim.skill_mp_need(s) <= sim.hero.mp
-			draw_texture_rect_region(_skills if ready else _skills_gray,
-				Rect2(at + Vector2(1, 1) * k, Vector2(ICON, ICON) * k), Rect2((s - 12) * ITEM + 3, 3, ICON, ICON))
-		_key_label(SKILL_KEYS[b], at, k)
+		_slot_box(top + Vector2(slot_x(true, b), 0) * k, k, s != 0 and sim.hero.action == s)
 
 
 func _slot_box(at: Vector2, k: float, hot: bool) -> void:
@@ -198,8 +255,8 @@ func _slot_box(at: Vector2, k: float, hot: bool) -> void:
 func _key_label(text: String, at: Vector2, k: float) -> void:
 	var font := get_theme_default_font()
 	var p := at + Vector2(2, 9) * k
-	draw_string_outline(font, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, int(9 * k), int(k), Color.BLACK)
-	draw_string(font, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, int(9 * k), Color.WHITE)
+	_labels.draw_string_outline(font, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, int(9 * k), int(k), Color.BLACK)
+	_labels.draw_string(font, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, int(9 * k), Color.WHITE)
 
 
 ## The bar's slot under a point of the screen: ["belt", 0..4], ["skill", 0..4], or [].
@@ -230,15 +287,15 @@ func _put(tex: Texture2D, at: Vector2, k: float) -> void:
 
 
 ## A number, its last digit ending at `right`, a comma before every third digit.
-func _number(value: int, right: Vector2, k: float) -> void:
+func _number(value: int, right: Vector2, k: float, on: CanvasItem = self) -> void:
 	var x := right.x
 	var n := 0
 	while true:
 		if n != 0 and n % 3 == 0:
 			x -= 4 * k
-			draw_texture_rect_region(_digits, Rect2(Vector2(x, right.y), Vector2(5, 14) * k), Rect2(100, 0, 5, 14))
+			on.draw_texture_rect_region(_digits, Rect2(Vector2(x, right.y), Vector2(5, 14) * k), Rect2(100, 0, 5, 14))
 		x -= 10 * k
-		draw_texture_rect_region(_digits, Rect2(Vector2(x, right.y), Vector2(10, 14) * k),
+		on.draw_texture_rect_region(_digits, Rect2(Vector2(x, right.y), Vector2(10, 14) * k),
 			Rect2((value % 10) * 10, 0, 10, 14))
 		n += 1
 		value /= 10

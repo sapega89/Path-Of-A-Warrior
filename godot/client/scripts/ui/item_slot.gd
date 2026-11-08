@@ -1,14 +1,17 @@
 extends RefCounted
-## Icon buttons of the Gear, Inventory and Skills pages: a 28 px original icon drawn twice
-## as big on a dark place, a gold border on the chosen one.
+## Icon buttons of the Gear, Inventory and Skills pages: an icon of the new art
+## (assets/art/icons, made by godot/tools/art/icons.py) on a dark place, a gold border on the
+## chosen one. The same icons serve the shops, the HUD and the things on the ground.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Items := preload("res://scripts/core/items.gd")
-const UI := "res://assets/original/ui/%s.png"
-const ICON := 28
+const SHEET := "res://assets/art/icons/%s.svg"
+const ICON := 28  # the size of an icon place, in the original pixels
 const SCALE := 2
+const ART := 128  # the size of an icon in its sheet
 
 static var _sheets := {}
+static var _icons := {}
 
 
 static func button(node_name: String) -> Button:
@@ -17,7 +20,7 @@ static func button(node_name: String) -> Button:
 	b.custom_minimum_size = Vector2(ICON * SCALE + 8, ICON * SCALE + 8)
 	b.expand_icon = true
 	b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	b.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	b.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	b.add_theme_stylebox_override("normal", box(false))
 	return b
 
@@ -29,16 +32,30 @@ static func box(selected: bool) -> StyleBoxFlat:
 	return sb
 
 
-## Icon i of a sheet of 28 px icons (tool, kibo, sungbo, shinki, skill, skillgray).
+## Icon i of a sheet (tool, kibo, sungbo, shinki, skill, skillgray), in the order of the
+## original sheets; its own texture with mipmaps, so it stays smooth at any size.
 static func icon(sheet: String, i: int) -> Texture2D:
 	if sheet.is_empty() or i < 0:
 		return null
-	if not _sheets.has(sheet):
-		_sheets[sheet] = load(UI % sheet)
-	var t := AtlasTexture.new()
-	t.atlas = _sheets[sheet]
-	t.region = Rect2(i * ICON, 0, ICON, ICON)
-	return t
+	var key := "%s %d" % [sheet, i]
+	if not _icons.has(key):
+		if not _sheets.has(sheet):
+			_sheets[sheet] = (load(SHEET % sheet) as Texture2D).get_image()
+		var all: Image = _sheets[sheet]
+		if (i + 1) * ART > all.get_width():
+			return null
+		_icons[key] = smooth(all.get_region(Rect2i(i * ART, 0, ART, ART)))
+	return _icons[key]
+
+
+## A texture with mipmaps of a picture of the new art (smooth when drawn small).
+static func smooth(image: Image) -> ImageTexture:
+	var img := image.duplicate() as Image
+	if img.is_compressed():
+		img.decompress()
+	img.convert(Image.FORMAT_RGBA8)
+	img.generate_mipmaps()
+	return ImageTexture.create_from_image(img)
 
 
 ## The icon of a carried thing, null for an empty place.
