@@ -3,7 +3,7 @@ extends "res://tests/test_case.gd"
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
 const MapSim := preload("res://scripts/sim/map_sim.gd")
 const JavaRandom := preload("res://scripts/sim/java_random.gd")
-const Effects := preload("res://scripts/world/effects.gd")
+const MapEffects := preload("res://scripts/world/map_effects.gd")
 
 
 ## Mission 1 of lord 1 on map 1, the same random numbers every run.
@@ -562,12 +562,15 @@ func test_a_buff_shows_its_aura() -> void:
 	g.defense_buff_ticks = 5
 	eq(sim2.auras().size(), 2, "a general's buff too")
 	eq(sim2.auras()[0][2], g.pos + Vector2i(0, 3), "on him")
-	var node := Effects.new()
-	node._ready()
+	var node := MapEffects.new()
 	node.show_effects(sim2.auras())
-	eq(node.shown(), 2, "both pictures are drawn")
-	check(not node.get_child(0).no_depth_test and node.get_child(1).no_depth_test,
-		"the ring stands behind him, the light over him")
+	eq(node.shown(), 2, "both are drawn")
+	var ring: Node3D = node.drawn[0][2]
+	var light: Node3D = node.drawn[1][2]
+	check(ring.get_node("Ring").visible and not ring.get_node("Light").visible,
+		"the ring on the ground behind him")
+	check(light.get_node("Light").visible and not light.get_node("Ring").visible,
+		"the light rising around him")
 	node.free()
 
 
@@ -628,10 +631,9 @@ func test_effects_of_skills_and_potions() -> void:
 	fx = sim2.effects()
 	eq(fx.size(), 1, "a potion in use shows")
 	eq(fx[0][1], 4, "its first frame")
-	var node := Effects.new()
-	node._ready()
+	var node := MapEffects.new()
 	node.show_effects(fx + [["storm", 99, Vector2i.ZERO], ["nothing", 0, Vector2i.ZERO]])
-	eq(node.shown(), 1, "only frames the sheets have are drawn")
+	eq(node.shown(), 1, "only the frames each kind has are drawn")
 	node.free()
 
 

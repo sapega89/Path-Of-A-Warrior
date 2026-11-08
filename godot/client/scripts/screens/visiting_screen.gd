@@ -12,7 +12,7 @@ const Profile := preload("res://scripts/core/profile.gd")
 const Visits := preload("res://scripts/core/visits.gd")
 const Stories := preload("res://scripts/core/stories.gd")
 const MapSim := preload("res://scripts/sim/map_sim.gd")
-const PORTRAITS := "res://assets/original/portraits/%d.png"
+const Pictures := preload("res://scripts/ui/pictures.gd")
 const SCALE := 3
 const CHARS_PER_SECOND := 40.0
 ## Ticks a line shown whole stays before the talk goes on by itself.
@@ -81,7 +81,7 @@ func _ready() -> void:
 	general_says = top.get_child(1)
 	hero_portrait = bottom.get_child(1)
 	hero_says = bottom.get_child(0)
-	hero_portrait.texture = load(PORTRAITS % (Stories.HERO_PORTRAIT + int(profile.head)))
+	hero_portrait.texture = Pictures.portrait(Stories.HERO_PORTRAIT + int(profile.head))
 	text = Label.new()
 	text.name = "Text"
 	text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
@@ -141,13 +141,7 @@ func show_list() -> void:
 
 
 func _portrait(node_name: String) -> TextureRect:
-	var t := TextureRect.new()
-	t.name = node_name
-	t.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	t.custom_minimum_size = Vector2(46, 46) * SCALE
-	return t
+	return Pictures.framed(node_name, Vector2(46, 46) * SCALE)
 
 
 func _speech(node_name: String) -> Label:
@@ -200,7 +194,7 @@ func open(id: int) -> void:
 	talk_box.visible = true
 	heading.text = _name()
 	heading.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	general_portrait.texture = load(PORTRAITS % int(general.get("portrait", 0)))
+	general_portrait.texture = Pictures.portrait(int(general.get("portrait", 0)))
 	general_says.text = ""
 	hero_says.text = ""
 	_show_line()

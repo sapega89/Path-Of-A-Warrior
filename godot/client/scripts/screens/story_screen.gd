@@ -19,8 +19,7 @@ const Profile := preload("res://scripts/core/profile.gd")
 const Stories := preload("res://scripts/core/stories.gd")
 const Items := preload("res://scripts/core/items.gd")
 const Campaign := preload("res://scripts/core/campaign.gd")
-const PORTRAITS := "res://assets/original/portraits/%d.png"
-const PICTURES := "res://assets/original/story/e%d.png"
+const Pictures := preload("res://scripts/ui/pictures.gd")
 const SCALE := 3
 const CHARS_PER_SECOND := 40.0
 ## Ticks a typed line stays before the story goes on by itself.
@@ -105,17 +104,13 @@ func _ready() -> void:
 	bottom.add_child(hero_says)
 	bottom.add_child(hero_portrait)
 	col.add_child(bottom)
-	hero_portrait.texture = load(PORTRAITS % (Stories.HERO_PORTRAIT + int(profile.head)))
+	hero_portrait.texture = Pictures.portrait(Stories.HERO_PORTRAIT + int(profile.head))
 
 	var center := CenterContainer.new()
 	center.set_anchors_preset(Control.PRESET_FULL_RECT)
 	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(center)
-	picture = TextureRect.new()
-	picture.name = "Picture"
-	picture.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	picture.custom_minimum_size = Vector2(117, 90) * SCALE
+	picture = Pictures.framed("Picture", Vector2(117, 90) * SCALE)
 	center.add_child(picture)
 	float_box = Control.new()
 	float_box.name = "Lines"
@@ -140,13 +135,7 @@ func _ready() -> void:
 
 
 func _portrait(node_name: String) -> TextureRect:
-	var t := TextureRect.new()
-	t.name = node_name
-	t.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	t.custom_minimum_size = Vector2(46, 46) * SCALE
-	return t
+	return Pictures.framed(node_name, Vector2(46, 46) * SCALE)
 
 
 func _speech(node_name: String) -> Label:
@@ -185,13 +174,13 @@ func next_page() -> bool:
 				typing = hero_says
 			else:
 				typing = speaker_says
-				speaker_portrait.texture = load(PORTRAITS % who)
+				speaker_portrait.texture = Pictures.portrait(who)
 			typing.text = str(pg.text)
 			typing.visible_characters = 0
 			_typed = 0.0
 		"picture":
 			Audio.play_music(2)
-			picture.texture = load(PICTURES % (int(pg.picture) + 1))
+			picture.texture = Pictures.story(int(pg.picture) + 1)
 			_set_lines(wrap_lines(str(pg.text), _line_font(), LINE_FONT, WRAP * SCALE))
 			phase = 0
 			_fade = 0

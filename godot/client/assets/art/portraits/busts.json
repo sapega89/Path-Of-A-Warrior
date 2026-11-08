@@ -1,0 +1,186 @@
+{
+ "0": {
+  "look": 24,
+  "side": "plain"
+ },
+ "1": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "10": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "11": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "12": {
+  "look": 24,
+  "side": "horde"
+ },
+ "13": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "14": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "15": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "16": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "17": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "18": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "19": {
+  "look": 24,
+  "side": "horde"
+ },
+ "2": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "20": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "21": {
+  "look": 24,
+  "side": "crown"
+ },
+ "22": {
+  "look": 24,
+  "side": "crown"
+ },
+ "23": {
+  "look": 24,
+  "side": "crown"
+ },
+ "24": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "25": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "26": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "27": {
+  "look": 24,
+  "side": "horde"
+ },
+ "28": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "29": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "3": {
+  "look": 24,
+  "side": "crown"
+ },
+ "30": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "31": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "32": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "33": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "34": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "35": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "36": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "37": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "38": {
+  "look": -24,
+  "side": "hero"
+ },
+ "39": {
+  "look": -24,
+  "side": "hero"
+ },
+ "4": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "40": {
+  "look": -24,
+  "side": "hero"
+ },
+ "41": {
+  "look": -24,
+  "side": "hero"
+ },
+ "42": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "43": {
+  "look": 24,
+  "side": "crown"
+ },
+ "44": {
+  "look": 24,
+  "side": "horde"
+ },
+ "45": {
+  "look": 24,
+  "side": "upyr"
+ },
+ "5": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "6": {
+  "look": 24,
+  "side": "crown"
+ },
+ "7": {
+  "look": 24,
+  "side": "cossack"
+ },
+ "8": {
+  "look": 24,
+  "side": "crown"
+ },
+ "9": {
+  "look": 24,
+  "side": "cossack"
+ }
+}

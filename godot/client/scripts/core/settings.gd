@@ -15,6 +15,9 @@ const DEFAULTS := {
 	"sfx_volume": 0.8,
 	"fullscreen": false,
 	"game_speed": 2,  # the missions' speed: 0 Slow .. 4 Fast (SPEED_MS)
+	"hit_feel": true,  # the hitstop, shake, flash, flight and sound of a hit on the map
+	"screen_shake": true,  # of those, the camera shake
+	"rumble": true,  # of those, the pad's (or the phone's) rumble
 }
 ## One tick of a mission at each game speed, in ms (2, Med, is the simulation's own tick).
 const SPEED_MS := [250, 180, 120, 90, 50]
