@@ -1,18 +1,20 @@
 extends "res://tests/test_case.gd"
-## The pictures of the new art in the screens (scripts/ui/pictures.gd): the 42 portraits, the 15
-## story pictures, both with mipmaps and in a gold frame, and the screens that show them.
+## The pictures of the new art in the screens (scripts/ui/pictures.gd): the 46 portraits (42-45
+## the fighters of the multiplayer battles), the 15 story pictures, both with mipmaps and in a
+## gold frame, and the screens that show them.
 
 const Pictures := preload("res://scripts/ui/pictures.gd")
 const Stories := preload("res://scripts/core/stories.gd")
 const ArtKit := preload("res://scripts/art/art_kit.gd")
-const SIDES := ["plain", "cossack", "crown", "horde", "hero"]
-const SCREENS := ["story_screen", "briefing_screen", "visiting_screen", "new_game_screen", "mission_screen"]
+const SIDES := ["plain", "cossack", "crown", "horde", "hero", "upyr"]
+const SCREENS := ["story_screen", "briefing_screen", "visiting_screen", "new_game_screen", "mission_screen",
+	"online_battle_screen"]
 
 
 func test_every_portrait_painted() -> void:
 	var info: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://assets/art/portraits/busts.json"))
-	eq(info.size(), 42, "a bust for every portrait")
-	for id in 42:
+	eq(info.size(), 46, "a bust for every portrait")
+	for id in 46:
 		var t := Pictures.portrait(id)
 		check(t != null and t.get_size() == Vector2(256, 256), "portrait %d" % id)
 		check(t.resource_path == Pictures.PORTRAIT % id, "portrait %d of the new art" % id)
@@ -20,6 +22,7 @@ func test_every_portrait_painted() -> void:
 	for head in 4:
 		eq(info[str(Stories.HERO_PORTRAIT + head)].side, "hero", "the hero's portraits: their own colour")
 	check(int(info["38"].look) < 0 and int(info["1"].look) > 0, "the hero looks at the one he talks to")
+	eq([info["43"].side, info["44"].side, info["45"].side], ["crown", "horde", "upyr"], "the battles' fighters")
 
 
 func test_mipmaps_made_once() -> void:

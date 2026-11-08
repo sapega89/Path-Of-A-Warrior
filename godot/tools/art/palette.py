@@ -54,6 +54,9 @@ WORK = {
     "ember": "E8742A",
     "fire": "F2B33D",
     "crimson": "8C1F3A",
+    "skin_upyr": "8F9B7C",  # the grey-green skin of the forest upyr (the battles' monsters)
+    "skin_upyr_dark": "6B7759",
+    "bone": "DCCFB4",
 }
 
 COLORS = {**BASE, **WORK}
