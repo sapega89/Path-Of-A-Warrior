@@ -4,12 +4,15 @@ extends Control
 ## again, and so does the screen itself every AUTO_RETRY_MS; on a refused login BACK forgets
 ## the stored account (the game asks for one again). Once online, the main menu comes back.
 ## OK and BACK are named for the device just used, as pyport's: Enter / Esc, A / B, or OK / Back
-## on a phone.
+## on a phone, in the line of hints under the screen. The buttons under the text do the same: Try again, and Another account on a
+## refused login.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const AUTO_RETRY_MS := 10000
 
 var text: Label
+var retry: Button
+var other: Button  # on a refused login: forget it and log in with another account
 var shown_at := 0
 
 
@@ -21,6 +24,17 @@ func _ready() -> void:
 	text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	col.add_child(text)
+	retry = Button.new()
+	retry.name = "Retry"
+	retry.text = "offline.try_again_button"
+	retry.pressed.connect(try_again)
+	col.add_child(retry)
+	other = Button.new()
+	other.name = "Other"
+	other.text = "offline.other_account_button"
+	other.pressed.connect(other_account)
+	col.add_child(other)
+	retry.grab_focus.call_deferred()
 	shown_at = Time.get_ticks_msec()
 	refresh()
 	InputSetup.device_changed.connect(_on_device)
@@ -28,12 +42,19 @@ func _ready() -> void:
 
 func lines() -> String:
 	if Cloud.refused():
-		return "%s\n\n%s\n%s" % [tr("offline.refused"), InputSetup.hint("offline.try_again"), InputSetup.hint("offline.other_account")]
-	return "%s\n\n%s\n\n%s" % [tr("offline.no_connection"), tr("offline.only_online"), InputSetup.hint("offline.try_again")]
+		return tr("offline.refused")
+	return "%s\n\n%s" % [tr("offline.no_connection"), tr("offline.only_online")]
 
 
 func refresh() -> void:
 	text.text = lines()
+	other.visible = Cloud.refused()
+
+
+## Forgets the stored login (the game asks for one again) and tries again.
+func other_account() -> void:
+	Cloud.forget_account()
+	try_again()
 
 
 ## The keys are named for the device just used (Enter / Esc or A / B).
@@ -61,9 +82,8 @@ func _process(_delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel") and Cloud.refused():
 		get_viewport().set_input_as_handled()
-		Cloud.forget_account()
-		try_again()
-	elif event.is_action_pressed("ui_accept"):
+		other_account()
+	elif event.is_action_pressed("ui_accept") and get_viewport().gui_get_focus_owner() == null:
 		get_viewport().set_input_as_handled()
 		try_again()
 
@@ -73,3 +93,10 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		accept_event()
 		try_again()
+
+
+## The keys of the buttons, in the line of control hints under the screen (scripts/ui/hint_bar.gd).
+func controls_hint() -> String:
+	if Cloud.refused():
+		return "%s · %s" % [InputSetup.hint("offline.try_again"), InputSetup.hint("offline.other_account")]
+	return InputSetup.hint("offline.try_again")

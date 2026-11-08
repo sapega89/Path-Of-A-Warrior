@@ -94,12 +94,12 @@ func test_offline_screen_and_map_viewer_follow_the_device() -> void:
 	InputSetup.device = "keys"
 	var offline: Control = Offline.new()
 	root.add_child(offline)
-	check(offline.text.text.ends_with("Enter: try again"), "the keyboard's OK")
+	check(offline.controls_hint().ends_with("Enter: try again"), "the keyboard's OK, in the line of hints")
 	var viewer: Control = MapViewer.new()
 	root.add_child(viewer)
 	eq(viewer.info.text, "Map 1 / %d   [3] [4] change map   [Esc] back" % viewer.map_total, "keys")
 	InputSetup._input(_pad_press(JOY_BUTTON_B))
-	check(offline.text.text.ends_with("A: try again"), "the pad's OK")
+	check(offline.controls_hint().ends_with("A: try again"), "the pad's OK")
 	eq(viewer.info.text, "Map 1 / %d   [LB] [RB] change map   [B] back" % viewer.map_total, "pad")
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
