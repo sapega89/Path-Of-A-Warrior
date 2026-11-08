@@ -535,6 +535,18 @@
     "en": "Fast",
     "uk": "Швидко"
   },
+  "settings.hit_feel": {
+    "en": "Hit effects",
+    "uk": "Ефекти удару"
+  },
+  "settings.screen_shake": {
+    "en": "Screen shake",
+    "uk": "Трясіння екрана"
+  },
+  "settings.rumble": {
+    "en": "Vibration",
+    "uk": "Вібрація"
+  },
   "attributes.reset": {
     "en": "Reset",
     "uk": "Скинути"
