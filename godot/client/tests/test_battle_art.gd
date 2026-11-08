@@ -3,7 +3,7 @@ extends "res://tests/test_case.gd"
 ## the clips of the battle's animations, the field of each background
 ## (scripts/world/battle_arena.gd), and the screen of a Solo Mission played step by step: the
 ## upyr, the portraits on the plates, the chevron over the target, the blade's trail and the
-## sparks of a hit.
+## blood of a hit.
 
 const OnlineBattle := preload("res://scripts/net/online_battle.gd")
 const ClientTests := preload("res://tests/test_online_client.gd")
@@ -170,7 +170,7 @@ func test_a_mission_on_the_screen() -> void:
 					b.key("fire")
 		for e in screen.effects.drawn:
 			seen[e[0]] = true
-	for what in ["people", "target", "trail", "spark"]:
+	for what in ["people", "target", "trail", "blood"]:
 		check(seen.has(what), "seen: " + what)
 	screen.free()
 	Router.params = old

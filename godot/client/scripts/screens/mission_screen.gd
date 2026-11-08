@@ -6,7 +6,7 @@ extends Control
 ## pages Total Exp and Time Exp, the level gone up on it), the soldiers (the people as 3D
 ## figures playing the clips of their actions, scripts/world/map_people.gd), the effects made
 ## in code (scripts/world/map_effects.gd: skills, potions and scrolls, the fire on whoever a
-## fire skill hits, the auras of buffs, hit sparks, weapon trails, the archers' arrows), and
+## fire skill hits, the auras of buffs, the blood of hits, weapon trails, the archers' arrows), and
 ## the HUD. A talk on the map shows the portrait of who speaks beside the line, just
 ## above the HUD, as pyport's.
 ## Params: {lord, mission, seed (optional: the same enemies every run)}.
@@ -327,7 +327,7 @@ func _update_view(t: float) -> void:
 	shown.append_array(sim.effects())
 	shown.append_array(sim.fires())
 	for sp in sim.sparks():
-		shown.append(["spark", sp[0], sp[1]])
+		shown.append(["blood", sp[0], sp[1]])  # the hits of MapSim land on people
 	shown.append_array(trails)
 	effects.show_effects(shown, t)
 	_place_objects()

@@ -17,7 +17,7 @@ const MapEffects := preload("res://scripts/world/map_effects.gd")
 ## [kind, frame, the kozak's clip, where he faces].
 const EFFECT_GRID := [
 	["slash", 6, "run", Vector3.RIGHT], ["trail", 0, "attack_slash", Vector3.BACK],
-	["spark", 2, "hit", Vector3.BACK], ["heal", 4, "cast_raise", Vector3.BACK],
+	["blood", 2, "hit", Vector3.BACK], ["heal", 4, "cast_raise", Vector3.BACK],
 	["buff", 2, "cast_raise", Vector3.BACK], ["aura", 4, "idle", Vector3.BACK],
 	["whirl", 0, "attack_2h_slash", Vector3.BACK], ["fire", 4, "hit", Vector3.BACK],
 	["burst", 1, "attack_spin", Vector3.BACK], ["blast", 0, "", Vector3.ZERO],

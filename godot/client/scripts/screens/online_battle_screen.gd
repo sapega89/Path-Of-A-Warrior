@@ -3,8 +3,9 @@ extends Control
 ## and things under a painted sky (scripts/world/battle_arena.gd, after the battle's
 ## background), the fighters as the maps' people (scripts/world/battle_motion.gd: who is who,
 ## which clip shows each animation of the battle) and the effects of the missions on them
-## (scripts/world/map_effects.gd: blade trails, sparks where a blow lands, dust of a dodge, the
-## healing spiral, the light of a soul and the ring of its aura), and the HUD over it. What
+## (scripts/world/map_effects.gd: blade trails, blood where a blow lands and under the fallen,
+## sparks on a guard, dust of a dodge, the healing spiral, the light of a soul and the ring of
+## its aura), and the HUD over it. A blow that lands shakes the view. What
 ## happens is scripts/net/online_battle.gd, one step every TICK_MS; the figures move and turn
 ## smoothly between the steps. This screen shows it and passes the keys: arrows choose (Right
 ## Attack, Left Defend, Up Evade, Down a skill), Enter / Space confirms and stops the timing bar,
@@ -55,6 +56,8 @@ const BAR_SCALE := 4.0
 const DAMAGE_UP := 22.0
 const QUOTE_UP := 66.0  # the quote's tail over the feet
 const MARKER_UP := 2.6  # the target's chevron over the feet (world units)
+const SHAKE := 0.07  # how far a blow that lands shakes the view (world units)
+const HIT_FLASH := Color(0.8, 0.16, 0.12)  # the flash of one who is hit: blood-red
 ## The rows of a 2-on-2 stand apart in depth; seen from the camera the back one would hide
 ## behind the front one, so the farther a fighter stands the farther out from the middle it
 ## is drawn (by this part of its distance from the middle per pixel of depth).
@@ -119,6 +122,8 @@ var _from: Array[Vector3] = []  # where each stood at the step before and stands
 var _to: Array[Vector3] = []
 var _yaw: Array[float] = []
 var _fx: Array = []  # the effects of this step (MapEffects.show_effects)
+var _fallen_at: Array[float] = [-1.0, -1.0, -1.0, -1.0]  # when each was first seen lying (_clock)
+var _shake := 0.0  # how hard the view shakes from a blow (world units), dying away
 var _icons := {}
 var _no_skill: Texture2D
 
@@ -295,6 +300,8 @@ func _show_fighters() -> void:
 		var motion: Array = BattleMotion.motion(battle, i)
 		var p := BattleMotion.progress(battle, i)
 		var restart := anim != _last[i].x or p.x < _last[i].y
+		if restart and anim == 1 and not still:
+			_shake = maxf(_shake, SHAKE)  # a blow that lands shakes the view
 		_last[i] = Vector2i(anim, p.x)
 		var part := float(p.x) / float(p.y)
 		if BattleMotion.fallen(battle, i):
@@ -305,7 +312,7 @@ func _show_fighters() -> void:
 			if f.hp > 0 and fig.shown_clip == "death":
 				fig.shown_clip = ""  # up again: a new stage
 			fig.act(motion, p.y * TICK, restart, part, 0.0 if still else ArtFigure.BLEND)
-		fig.flash(0.45 * (1.0 - clampf(part, 0.0, 1.0)) if anim == 1 else 0.0)
+		fig.flash(0.4 * (1.0 - clampf(part, 0.0, 1.0)) if anim == 1 else 0.0, HIT_FLASH)
 		if still or fresh:
 			bodies[i].position = to
 			bodies[i].rotation.y = _yaw[i]
@@ -366,11 +373,22 @@ func _effects_of(i: int, f: RefCounted, anim: int, at: Vector3, p: Vector2i) -> 
 				_fx.append(["buff", mini(p.x * 6 / p.y, 5), px])
 	match anim:
 		1:
-			_fx.append(["spark", 2 + mini(p.x, 1), px])
+			# blood: the drops fly away from the blow, to his own side
+			_fx.append(["blood", (4 if f.team() == 1 else 8) + 2 + mini(p.x, 1), px])
 		4:
-			_fx.append(["spark", mini(p.x, 1), px])
+			_fx.append(["spark", mini(p.x, 1), px])  # steel on the guard
 		5:
 			_fx.append(["slash", ((ahead + 4) % 8) | mini(p.x, 1), px])
+	if BattleMotion.fallen(battle, i):
+		# blood spreads under the fallen (he lies on his back, his chest behind his feet) and stays;
+		# a still screen shows it spread
+		if _fallen_at[i] < 0.0:
+			_fallen_at[i] = _clock
+		var spread := 7 if not is_processing() else clampi(int((_clock - _fallen_at[i]) / 0.25), 0, 7)
+		var chest := px - Vector2(1.0 if f.team() == 0 else -1.0, 0.0) * 0.8 / PX
+		_fx.append(["pool", spread, chest, true])
+	else:
+		_fallen_at[i] = -1.0
 	if f.status in [11, 12, 13] and battle.state != OnlineBattle.RESULT:
 		_fx.append(["aura", battle.state_ticks % 3, px, true])
 
@@ -388,6 +406,9 @@ func _move_fighters(delta: float) -> void:
 	effects.show_effects(_fx, t)
 	if marker.visible:
 		marker.position.y = MARKER_UP + 0.08 * sin(_clock * 6.0)
+	camera.h_offset = _shake * sin(_clock * 71.0)
+	camera.v_offset = _shake * 0.6 * sin(_clock * 53.0 + 1.3)
+	_shake = move_toward(_shake, 0.0, delta * SHAKE * 4.0)
 
 
 # --- the HUD --------------------------------------------------------------------------------
