@@ -8,6 +8,7 @@ const ClientTests := preload("res://tests/test_online_client.gd")
 const OnlineTests := preload("res://tests/test_online_server.gd")
 const ServerTests := preload("res://tests/test_server.gd")
 const BattleScreen := preload("res://scripts/screens/online_battle_screen.gd")
+const BattleMotion := preload("res://scripts/world/battle_motion.gd")
 
 
 func _dir() -> String:
@@ -173,11 +174,12 @@ func test_the_battle_screen_shows_a_duel() -> void:
 	root.add_child(screen)
 	var b: RefCounted = c.battle
 	eq(screen.battle, b, "the client's battle")
-	check(screen.backdrop.mesh != null and screen.ground.mesh != null, "the stage built")
+	check(screen.arena.ground != null and screen.arena.scenery == b.bg & 3, "the field built")
 	check(screen.bodies[0].position.x < 0 and screen.bodies[1].position.x > 0, "mine on the left")
 	eq([screen.bodies[2].visible, screen.bodies[3].visible], [false, false], "a duel: two fighters")
-	var sheet: String = screen.sprites[1].texture.resource_path.get_file()
-	check(sheet.begins_with("fighter_0_") and sheet.ends_with("_r.png"), "the CPU, facing left: " + sheet)
+	eq(screen.figures[0].kind, BattleMotion.kind_of(b.fighters[0]), "me: the model of my class")
+	check(screen.figures[1].kind in BattleMotion.RIVALS, "the CPU: a rival " + screen.figures[1].kind)
+	check(is_equal_approx(screen.bodies[1].rotation.y, -PI / 2.0), "facing left")
 	var seen := {}
 	for i in 30000:
 		if screen.battle == null:
@@ -323,7 +325,7 @@ func test_auto_corner() -> void:
 	screen.auto_button.pressed.emit()
 	check(c.battle.auto_battle, "a click turns it on")
 	eq(screen.auto_button.text, "AUTO", "on")
-	eq(screen.auto_button.get_theme_color("font_color"), BattleScreen.ORANGE, "orange")
+	eq(screen.auto_button.get_theme_color("font_color"), BattleScreen.AUTO_ON, "gold")
 	InputSetup.device = was
 	screen.free()
 	Router.params = old
