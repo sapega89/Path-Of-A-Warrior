@@ -87,8 +87,13 @@ var _blink := 0
 var pause_menu: MissionPause  # shown while the game is paused
 
 
+## The mission to play: Router.params (the training gives its own).
+func mission_params() -> Dictionary:
+	return Router.params
+
+
 func _ready() -> void:
-	var p: Dictionary = Router.params
+	var p: Dictionary = mission_params()
 	tick = Settings.tick_seconds()
 	lord_id = int(p.get("lord", 1))
 	mission = int(p.get("mission", 0))
@@ -116,7 +121,7 @@ func _ready() -> void:
 	builder.name = "Map"
 	world.add_child(builder)
 	builder.build(map)
-	profile = Profile.load_or_new()
+	profile = Profile.load_or_new(str(p.get("profile_path", Profile.PATH)))
 	var s: Array = mission_info.get("start", [4, 4])
 	var resume := bool(p.get("resume", false)) and not profile.on_map.is_empty()
 	if resume:
@@ -517,7 +522,13 @@ func pause() -> void:
 	pause_menu.sim = sim
 	pause_menu.save_game = save_on_map
 	pause_menu.resumed.connect(resume)
+	_pause_menu_ready(pause_menu)
 	add_child(pause_menu)
+
+
+## The pause menu before it is shown (the training makes its Exit skip the training).
+func _pause_menu_ready(_menu: MissionPause) -> void:
+	pass
 
 
 func resume() -> void:

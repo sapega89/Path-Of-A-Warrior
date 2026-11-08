@@ -4,6 +4,8 @@ extends Control
 ## to it), Options (the settings), Help, Exit to Menu (asked
 ## first: the mission is lost, back to the campaign) and Exit Game (asked first; not on phones
 ## and the web). Items, Options and Help show over the menu. Back resumes.
+## In the training (training_screen.gd, `leave` set) there is no Save, and Exit is Skip
+## Training (asked first, No first): `leave` goes on as after the training.
 
 signal resumed
 
@@ -19,9 +21,10 @@ var menu: Control
 var settings: Control  # the items, the settings or the help shown over the menu
 var sim: RefCounted  # the mission's (its potion keys)
 var save_game := Callable()  # the mission's save on its map: true when saved
+var leave := Callable()  # the training's way out: Exit skips it instead of losing a mission
 var note: AskDialog  # a notice: OK alone
 var ask: AskDialog
-var asked := ""  # "exit" or "quit"
+var asked := ""  # "exit", "skip_training" or "quit"
 
 
 func _ready() -> void:
@@ -38,10 +41,14 @@ func _ready() -> void:
 	col.add_child(UiTheme.heading("pause.title", 44))
 	_add(col, "Resume", "pause.resume", func(): resumed.emit())
 	_add(col, "Items", "pause.items", open_items)
-	_add(col, "Save", "pause.save", save)
+	if not leave.is_valid():
+		_add(col, "Save", "pause.save", save)
 	_add(col, "Options", "pause.options", open_options)
 	_add(col, "Help", "pause.help", open_help)
-	_add(col, "Exit", "pause.exit", func(): _ask("exit"))
+	if leave.is_valid():
+		_add(col, "Exit", "pause.skip_training", func(): _ask("skip_training"))
+	else:
+		_add(col, "Exit", "pause.exit", func(): _ask("exit"))
 	if MainMenu.show_quit():
 		_add(col, "Quit", "pause.quit", func(): _ask("quit"))
 	note = AskDialog.new(true)
@@ -54,7 +61,7 @@ func _ready() -> void:
 	buttons[0].grab_focus.call_deferred()
 
 
-## "Exit Game and go to main menu?" / "Exit Game?", No first.
+## "Exit Game and go to main menu?" / "Skip the training?" / "Exit Game?", No first.
 func _ask(what: String) -> void:
 	asked = what
 	ask.dialog_text = tr("pause.ask_" + what)
@@ -64,6 +71,8 @@ func _ask(what: String) -> void:
 func confirmed() -> void:
 	if asked == "exit":
 		Router.back()
+	elif asked == "skip_training":
+		leave.call()
 	elif asked == "quit":
 		Cloud.quit_game()
 
