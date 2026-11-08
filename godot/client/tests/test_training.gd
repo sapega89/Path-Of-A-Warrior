@@ -147,6 +147,20 @@ func test_the_room_waits_for_the_training() -> void:
 	Router.params = old
 
 
+## The training says "walk out by the blinking arrow": the arrow down is above the HUD, not
+## under it.
+func test_the_arrow_down_shows_above_the_hud() -> void:
+	var old: Dictionary = Router.params
+	var screen := _training()
+	screen._place_arrows()
+	var view: Vector2 = screen.get_viewport_rect().size
+	var a: TextureRect = screen.arrows[0]
+	check(a.position.y + a.size.y <= screen.hud.top_of(view), "above the HUD: %s + %s <= %s" % [
+		a.position.y, a.size.y, screen.hud.top_of(view)])
+	screen.free()
+	Router.params = old
+
+
 func test_skip_training_on_the_pause_menu() -> void:
 	var old: Dictionary = Router.params
 	var screen := _training()

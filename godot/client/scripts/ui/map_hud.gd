@@ -56,6 +56,11 @@ func scale_of(view: Vector2) -> float:
 	return maxf(1.0, floorf(view.y / 320.0))
 
 
+## The top of the HUD (its skill bar, or the panel without it) on a screen of this size.
+func top_of(view: Vector2) -> float:
+	return view.y - (PANEL_H + (BAR_H if show_bar else 0)) * scale_of(view)
+
+
 func tick() -> void:
 	if sim != null and sim.kills > kills_shown:
 		kills_shown += 1

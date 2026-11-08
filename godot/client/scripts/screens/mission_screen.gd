@@ -496,6 +496,8 @@ func _place_banner(y: float) -> void:
 	banner.position = Vector2((view.x - banner.size.x) / 2.0, view.y * y)
 
 
+## The exit arrows at the screen's edges, blinking while the exits are open; the one down sits
+## above the HUD (at the very bottom the HUD hid it).
 func _place_arrows() -> void:
 	var view := get_viewport_rect().size
 	var lit: bool = sim.exits_open() and (_blink & 2) != 0
@@ -505,7 +507,7 @@ func _place_arrows() -> void:
 		var s := a.texture.get_size() * ARROW_SCALE
 		a.size = s
 		match i:
-			0: a.position = Vector2((view.x - s.x) / 2.0, view.y - s.y - 16)
+			0: a.position = Vector2((view.x - s.x) / 2.0, hud.top_of(view) - s.y - 8)  # above the HUD
 			1: a.position = Vector2(16, (view.y - s.y) / 2.0)
 			2: a.position = Vector2((view.x - s.x) / 2.0, 16)
 			3: a.position = Vector2(view.x - s.x - 16, (view.y - s.y) / 2.0)
