@@ -55,6 +55,10 @@ jobs:
           timeout 300 xvfb-run -a -s "-screen 0 1280x720x24" \
             "$RUNNER_TEMP/godot" --path godot/client --rendering-driver opengl3 --resolution 1280x720 \
             res://tools/shots.tscn -- "$RUNNER_TEMP/shots"
+          # The art slice in the new style (scripts/art): the camp, the battle room, the people.
+          timeout 300 xvfb-run -a -s "-screen 0 1280x720x24" \
+            "$RUNNER_TEMP/godot" --path godot/client --rendering-driver opengl3 --resolution 1280x720 \
+            res://tools/art_shots.tscn -- "$RUNNER_TEMP/shots"
           ls "$RUNNER_TEMP/shots"
           # Also into the log (base64, one line each), for reviewers who cannot download artifacts.
           for f in "$RUNNER_TEMP"/shots/*.png; do echo "SHOT $(basename "$f") $(base64 -w0 "$f")"; done

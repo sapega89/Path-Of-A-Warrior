@@ -18,6 +18,7 @@ godot/
                           assign_items, story, blacksmith, shop, visiting, endings, help, new_game (герой у user://hero.json)
     scripts/world/        3D-світ: map_builder (карта з оригінальних шарів), hero, follow_camera
     scripts/ui/           тема, сенсорні кнопки
+    scripts/art/          новий арт, поки вітрина: табір і бій (scenes/art_slice.tscn)
     scripts/net/          зв'язок із сервером: protocol (повідомлення), net_client (ENet + DTLS)
     server/               сервер гри (той самий проєкт, без графіки): main.tscn, game_server,
                           accounts (файл JSON на акаунт), guard (ліміти), live (Live),
@@ -34,8 +35,10 @@ godot/
                           fluidsynth і General MIDI sound font у .ogg (scripts/core/audio.gd)
     assets/original/mp/   бій мультиплеєра: листи кадрів бійців і монстра, аури, фон, інтерфейс,
                           звуки; числа й таблиці — data/mp.json
+    assets/art/           новий арт: люди, зброя, реквізит (.glb), шейдери, іконки SVG, шрифти
     tests/                тести: test_*.gd, запуск runner.tscn
   tools/import_original.py  конвертер оригінальних ресурсів з кореня репо
+  tools/art/              моделі нового арту кодом у Blender (tools/art/README.md)
 ```
 
 ## Запуск
@@ -425,3 +428,11 @@ Skip унизу ліворуч.
 Як у pyport: після «Так» на Enchant чи Combine на речі (на кожній з трьох у Combine) п'ять кадрів
 по 120 мс грає іскра (`itemReinforce.png` оригіналу, `shop_screen.gd`), і лише тоді видно, чи вдалося;
 поки вона грає, клітинки не натискаються.
+
+## Новий арт (зріз)
+
+Єдиний стиль у нормальній роздільності замість спрайтів 27×27: «степовий лубок», розписні
+дерев'яні фігурки з контуром тушшю. Поки це вітрина, гра її не використовує:
+`godot --path godot/client res://scenes/art_slice.tscn` (табір Корсунь) або `-- battle 50`
+(бій). Як зроблено, ліцензії й перебудова моделей — у [`tools/art/README.md`](tools/art/README.md).
+CI знімає зріз разом з іншими скріншотами (`tools/art_shots.tscn`).

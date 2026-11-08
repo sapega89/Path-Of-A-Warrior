@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 128">
+  <!-- petrykivka-style branch: a stem, "seed" strokes and a flower in the middle -->
+  <path d="M8 96 C 120 40, 200 120, 256 70 C 312 120, 392 40, 504 96" fill="none" stroke="#4E6B3A" stroke-width="6" stroke-linecap="round"/>
+  <g fill="#4E6B3A">
+    <path d="M70 70 c 10 -28, 40 -36, 46 -30 c -8 4, -28 18, -46 30 z"/>
+    <path d="M150 84 c 6 -26, 34 -40, 42 -36 c -8 6, -26 20, -42 36 z"/>
+    <path d="M442 70 c -10 -28, -40 -36, -46 -30 c 8 4, 28 18, 46 30 z"/>
+    <path d="M362 84 c -6 -26, -34 -40, -42 -36 c 8 6, 26 20, 42 36 z"/>
+  </g>
+  <g fill="#A8322D">
+    <circle cx="40" cy="78" r="9"/><circle cx="472" cy="78" r="9"/>
+    <path d="M110 92 c 14 -6, 26 2, 28 14 c -12 2, -24 -2, -28 -14 z"/>
+    <path d="M402 92 c -14 -6, -26 2, -28 14 c 12 2, 24 -2, 28 -14 z"/>
+  </g>
+  <g fill="#D4A645">
+    <circle cx="96" cy="60" r="5"/><circle cx="182" cy="66" r="5"/><circle cx="330" cy="66" r="5"/><circle cx="416" cy="60" r="5"/>
+  </g>
+  <g transform="translate(256 62)">
+    <path d="M0 0 C -36 -10, -44 -46, -20 -56 C -12 -36, -4 -24, 0 0 Z" fill="#A8322D"/>
+    <path d="M0 0 C 36 -10, 44 -46, 20 -56 C 12 -36, 4 -24, 0 0 Z" fill="#A8322D"/>
+    <path d="M0 0 C -12 -26, -10 -52, 0 -62 C 10 -52, 12 -26, 0 0 Z" fill="#D4A645"/>
+    <circle cx="0" cy="4" r="10" fill="#2F4E7A"/>
+    <circle cx="0" cy="4" r="4" fill="#EDE6D6"/>
+  </g>
+</svg>
