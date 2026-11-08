@@ -222,9 +222,11 @@ func _process(delta: float) -> void:
 	if held != -1 and held != _last_held:
 		_pressed = held  # a new direction this tick: the original's key press
 	_last_held = held
-	if _pressed_now("auto"):
+	# the pad's Back is both, as the HUD's corner: SKIP while someone talks, AUTO otherwise
+	var skip_now := _pressed_now("skip")
+	if _pressed_now("auto") and not (skip_now and hud.talking()):
 		toggle_auto()
-	if _pressed_now("skip"):
+	if skip_now:
 		_skip = true
 	if _pressed_now("attack"):
 		_fire = true
@@ -621,7 +623,7 @@ func pointer_dir(at: Vector2) -> int:
 	return 0 if d.y > 0.0 else 4
 
 
-## Auto-hunt on / off (Tab, F, R3 or a click on AUTO); only on normal, hard has no AUTO.
+## Auto-hunt on / off (Tab, F, the pad's Back or a click on AUTO); only on normal, hard has no AUTO.
 func toggle_auto() -> void:
 	if not auto_allowed():
 		return

@@ -4,8 +4,8 @@ extends Control
 ## godot/tools/import_original.py export_mp), and the HUD drawn over it. What happens is scripts/net/online_battle.gd, one step every TICK_MS; this screen
 ## shows it and passes the keys: arrows choose (Right Attack, Left Defend, Up Evade, Down a
 ## skill), Enter / Space confirms and stops the timing bar, Esc asks to leave the battle, Tab,
-## F, R3 (the "auto" action, as auto-hunt on the map) or a click on AUTO in the bottom-left
-## corner turn auto-battle on and off. The pad's
+## F, the pad's Back (the "auto" action, as auto-hunt on the map) or a click on AUTO in the
+## bottom-left corner turn auto-battle on and off. The pad's
 ## buttons, the skills and the bar take the mouse too. The hint at the bottom names the keys of
 ## the device just used (InputSetup.hint: the keyboard's or the pad's).
 ## What the battle earned goes to the hero as soon as the result comes: gold, fame, exp (a
@@ -698,7 +698,7 @@ func result_text() -> String:
 
 ## pyport's AUTO in the bottom-left corner while the actions are chosen: orange AUTO while
 ## auto-battle is on, white with its keys while it is off (named for the device in use). A click
-## or a tap turns it over, as Tab, F or R3.
+## or a tap turns it over, as Tab, F or the pad's Back.
 func _show_auto() -> void:
 	auto_button.visible = battle.state >= OnlineBattle.CHOOSE and battle.state <= OnlineBattle.SENT
 	auto_button.text = "AUTO" if battle.auto_battle else InputSetup.hint("online.battle_auto_key")

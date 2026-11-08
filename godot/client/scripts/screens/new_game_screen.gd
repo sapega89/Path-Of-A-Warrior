@@ -1,6 +1,7 @@
 extends Control
-## A new game, step by step as in the original: the difficulty (Hard: gold and exp x2; Normal:
-## x1; on both the hero turns to the nearest enemy as he strikes; it cannot change later), the
+## A new game, step by step as in the original: the difficulty (Normal first: x1 gold and exp,
+## the hero turns to the nearest enemy as he strikes and AUTO hunts; Hard: x2, neither; it
+## cannot change later), the
 ## hero's face (each face a hero with his own base stats), his name (up to 8 letters, typed or
 ## on the keys under the field, scripts/ui/key_grid.gd), and his
 ## 5 first stat points ("+" beside a stat puts a point in it; Reset gives them back, Done
@@ -12,6 +13,7 @@ const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const Stories := preload("res://scripts/core/stories.gd")
 const KeyGrid := preload("res://scripts/ui/key_grid.gd")
+const AskDialog := preload("res://scripts/ui/ask_dialog.gd")
 const PORTRAITS := "res://assets/original/portraits/%d.png"
 const HEADS := 4
 const NAME_MAX := 8
@@ -25,7 +27,7 @@ var step := Step.DIFFICULTY
 var heading: Label
 var body: VBoxContainer
 var info: Label
-var ask: ConfirmationDialog
+var ask: AskDialog
 var name_edit: LineEdit
 var stat_buttons: Array[Button] = []  # the "+" of each stat
 var stat_values: Array[Label] = []
@@ -50,8 +52,7 @@ func _ready() -> void:
 	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	info.custom_minimum_size = Vector2(0, 80)
 	col.add_child(info)
-	ask = ConfirmationDialog.new()
-	ask.name = "Ask"
+	ask = AskDialog.new()
 	ask.confirmed.connect(_confirmed)
 	add_child(ask)
 	show_step(Step.DIFFICULTY)
@@ -108,12 +109,12 @@ func show_step(s: int) -> void:
 	match step:
 		Step.DIFFICULTY:
 			heading.text = "newgame.difficulty"
-			for d in [0, 1]:
+			for d in [1, 0]:  # Normal first, as most will play it
 				var b := _button("Difficulty%d" % d, "newgame.difficulty_%d" % d, choose_difficulty.bind(d))
 				b.focus_entered.connect(func(): info.text = tr("newgame.mode_%d" % d))
 				b.mouse_entered.connect(func(): info.text = tr("newgame.mode_%d" % d))
 			_button("Back", "common.back", go_back)
-			(body.get_child(1) as Button).grab_focus.call_deferred()
+			(body.get_child(0) as Button).grab_focus.call_deferred()
 			info.text = tr("newgame.mode_1")
 		Step.HERO:
 			heading.text = "newgame.hero"

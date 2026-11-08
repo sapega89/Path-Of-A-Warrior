@@ -78,6 +78,17 @@ func _button(col: VBoxContainer, node_name: String, text_key: String, on_press: 
 	return b
 
 
+## The line of control hints: while a field types on the keyboard, what it takes and what Enter
+## does there (the menus' line, with its arrows, would say nothing of typing).
+func controls_hint() -> String:
+	var f := get_viewport().gui_get_focus_owner() if is_inside_tree() else null
+	if InputSetup.device == "keys" and f == user_id:
+		return InputSetup.hint("hint.login_user")
+	if InputSetup.device == "keys" and f == password:
+		return InputSetup.hint("hint.login_password")
+	return InputSetup.hint("hint.menu")
+
+
 ## The field takes the focus and types at once (a field reached with Enter or the d-pad would
 ## otherwise wait for one more Enter or a click before it types).
 func _type_in(e: LineEdit) -> void:

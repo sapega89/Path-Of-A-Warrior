@@ -240,7 +240,7 @@ func _key(code: Key) -> InputEventKey:
 	return ev
 
 
-func test_auto_battle_by_tab_f_or_r3() -> void:
+func test_auto_battle_by_tab_f_or_back() -> void:
 	var d := _dir()
 	var net = ClientTests.Net.new(d)
 	net.o.match_wait = 0
@@ -251,14 +251,14 @@ func test_auto_battle_by_tab_f_or_r3() -> void:
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
 	var screen: Control = BattleScreen.new()
 	root.add_child(screen)
-	var r3 := InputEventJoypadButton.new()
-	r3.button_index = JOY_BUTTON_RIGHT_STICK
-	r3.pressed = true
+	var back := InputEventJoypadButton.new()
+	back.button_index = JOY_BUTTON_BACK
+	back.pressed = true
 	var seen := []
-	for ev in [_key(KEY_TAB), _key(KEY_F), r3]:
+	for ev in [_key(KEY_TAB), _key(KEY_F), back]:
 		screen._unhandled_input(ev)
 		seen.append(c.battle.auto_battle)
-	eq(seen, [true, false, true], "Tab, F and R3 each turn it over, as auto-hunt on the map")
+	eq(seen, [true, false, true], "Tab, F and the pad's Back each turn it over, as auto-hunt on the map")
 	screen.free()
 	Router.params = old
 	ServerTests._rm(d)
@@ -285,10 +285,16 @@ func test_battle_hints_name_the_pad_after_the_pad() -> void:
 		for st in states:
 			c.battle.state = st
 			var key: String = "online.battle_hint_" + states[st]
-			eq(screen.hint_text(), tr(key + ("_pad" if device == "pad" else "")), "%s: %s" % [device, key])
+			eq(screen.hint_text(), InputSetup.hint(key), "%s: %s" % [device, key])
+	InputSetup.device = "keys"
+	eq(InputSetup.hint("online.battle_hint_choose"), "Arrows: choose the action   Esc: exit the battle   Tab / F: auto-battle",
+		"the keyboard's line")
 	c.battle.state = OnlineBattle.BAR
 	InputSetup.device = "pad"
 	eq(screen.hint_text(), "A: stop the bar at the mark", "the pad's A")
+	c.battle.state = OnlineBattle.CHOOSE
+	eq(screen.hint_text(), "D-pad: choose the action   B: exit the battle   Back: auto-battle",
+		"the pad's B and Back")
 	InputSetup.device = was
 	screen.free()
 	Router.params = old
@@ -319,7 +325,7 @@ func test_auto_corner() -> void:
 	eq(screen.auto_button.get_theme_color("font_color"), Color.WHITE, "white")
 	InputSetup.device = "pad"
 	screen._refresh()
-	eq(screen.auto_button.text, "AUTO: R3", "the pad's key after the pad")
+	eq(screen.auto_button.text, "AUTO: Back", "the pad's key after the pad")
 	screen.auto_button.pressed.emit()
 	check(c.battle.auto_battle, "a click turns it on")
 	eq(screen.auto_button.text, "AUTO", "on")

@@ -48,8 +48,8 @@
     "uk": "Карта %d / %d   [3] [4] інша карта   [Esc] назад"
   },
   "viewer.info_pad": {
-    "en": "Map %d / %d   [LB] [RB] change map   [B] back",
-    "uk": "Карта %d / %d   [LB] [RB] інша карта   [B] назад"
+    "en": "Map %d / %d   [{skill_3}] [{skill_4}] change map   [{ui_cancel}] back",
+    "uk": "Карта %d / %d   [{skill_3}] [{skill_4}] інша карта   [{ui_cancel}] назад"
   },
   "campaign.mission": {
     "en": "Mission %d: %s",
@@ -432,8 +432,8 @@
     "uk": "Нормально"
   },
   "newgame.mode_0": {
-    "en": "Auto Targetting\nGold/Exp x2",
-    "uk": "Автоприцілювання\nЗолото й досвід x2"
+    "en": "No auto-targeting, no AUTO\nGold/Exp x2",
+    "uk": "Без автоприцілювання й без AUTO\nЗолото й досвід x2"
   },
   "newgame.mode_1": {
     "en": "Auto Targetting\nGold/Exp x1",
@@ -492,20 +492,20 @@
     "uk": "Довідка"
   },
   "help.control_1": {
-    "en": "Move: WASD, the arrows or Num 8 2 4 6 (left stick, d-pad). Attack: J, Space, Enter or Num 5 (A). Skills 1-5: 1-5, or U I O P K, or Num 1 3 7 9 0 (X, Y, LB, RB, LT). Belt: Z X C V B (the right stick up, right, down, left). Potions * and #: Num * and Num / (RT, L3).",
-    "uk": "Рух: WASD, стрілки або Num 8 2 4 6 (лівий стік, хрестовина). Атака: J, пробіл, Enter або Num 5 (A). Скіли 1–5: 1–5, U I O P K або Num 1 3 7 9 0 (X, Y, LB, RB, LT). Пояс: Z X C V B (правий стік вгору, вправо, вниз, вліво). Зілля * і #: Num * і Num / (RT, L3)."
+    "en": "Move: WASD, the arrows or Num 8 2 4 6 (the left stick). Attack: J, Space, Enter or Num 5 (A). Skills 1-5: 1-5, or U I O P K, or Num 1 3 7 9 0 (X, Y, LB, RB, LT). Belt: Z X C V B (the d-pad up, right, down, left; a press of the right stick, R3, for B). Potions * and #: Num * and Num / (RT, L3).",
+    "uk": "Рух: WASD, стрілки або Num 8 2 4 6 (лівий стік). Атака: J, пробіл, Enter або Num 5 (A). Скіли 1–5: 1–5, U I O P K або Num 1 3 7 9 0 (X, Y, LB, RB, LT). Пояс: Z X C V B (хрестовина вгору, вправо, вниз, вліво; натиск правого стіка, R3, — B). Зілля * і #: Num * і Num / (RT, L3)."
   },
   "help.control_2": {
-    "en": "Pause: Esc or Backspace (Start). Auto-hunt: Tab or F (R3). Skip a talk, the briefing or the story: Q or F1 (Back). Menus: the arrows, WASD or Num 8 2 4 6 to choose, Enter, Space, J or Num 5 for OK, Esc or Backspace to go back. On a phone: the stick on the left, the buttons on the right, pause at the top. The menus also work with the mouse and touch.",
-    "uk": "Пауза: Esc або Backspace (Start). Автополювання: Tab або F (R3). Пропустити розмову, брифінг чи сюжет: Q або F1 (Back). Меню: стрілки, WASD або Num 8 2 4 6 — вибір, Enter, пробіл, J або Num 5 — OK, Esc або Backspace — назад. На телефоні: стік зліва, кнопки справа, пауза вгорі. Меню працюють і з мишею та дотиком."
+    "en": "Pause: Esc or Backspace (Start). Auto-hunt: Tab or F (Back). Skip a talk, the briefing or the story: Q or F1 (Back). Menus: the arrows, WASD or Num 8 2 4 6 to choose, Enter, Space, J or Num 5 for OK, Esc or Backspace to go back. On a phone: the stick on the left, the buttons on the right, pause at the top. The menus also work with the mouse and touch.",
+    "uk": "Пауза: Esc або Backspace (Start). Автополювання: Tab або F (Back). Пропустити розмову, брифінг чи сюжет: Q або F1 (Back). Меню: стрілки, WASD або Num 8 2 4 6 — вибір, Enter, пробіл, J або Num 5 — OK, Esc або Backspace — назад. На телефоні: стік зліва, кнопки справа, пауза вгорі. Меню працюють і з мишею та дотиком."
   },
   "help.mp_control_1": {
     "en": "In an online battle: Right attacks, Left defends, Up evades, Down opens the special skills (the arrows, the d-pad or the left stick). Enter or Space (A) stops the timing bar near its mark and picks the target.",
     "uk": "В онлайн-бою: вправо — атака, вліво — захист, вгору — ухилення, вниз — особливі вміння (стрілки, хрестовина або лівий стік). Enter чи пробіл (A) зупиняє смугу біля позначки й вибирає ціль."
   },
   "help.mp_control_2": {
-    "en": "Esc (B) goes back or asks to leave the battle; Tab or F (R3) turns auto-battle on. The buttons under the fighters work with the mouse and touch, as do the menus.",
-    "uk": "Esc (B) — назад або вийти з бою; Tab або F (R3) вмикає автобій. Кнопки під бійцями, як і меню, працюють із мишею та дотиком."
+    "en": "Esc (B) goes back or asks to leave the battle; Tab or F (Back) turns auto-battle on. The buttons under the fighters work with the mouse and touch, as do the menus.",
+    "uk": "Esc (B) — назад або вийти з бою; Tab або F (Back) вмикає автобій. Кнопки під бійцями, як і меню, працюють із мишею та дотиком."
   },
   "pause.help": {
     "en": "Help",
@@ -608,12 +608,12 @@
     "uk": "OK: ще раз"
   },
   "offline.try_again_keys": {
-    "en": "Enter: try again",
-    "uk": "Enter: ще раз"
+    "en": "{ui_accept}: try again",
+    "uk": "{ui_accept}: ще раз"
   },
   "offline.try_again_pad": {
-    "en": "A: try again",
-    "uk": "A: ще раз"
+    "en": "{ui_accept}: try again",
+    "uk": "{ui_accept}: ще раз"
   },
   "offline.refused": {
     "en": "Login refused",
@@ -624,12 +624,12 @@
     "uk": "Назад: інший акаунт"
   },
   "offline.other_account_keys": {
-    "en": "Esc: other account",
-    "uk": "Esc: інший акаунт"
+    "en": "{ui_cancel}: other account",
+    "uk": "{ui_cancel}: інший акаунт"
   },
   "offline.other_account_pad": {
-    "en": "B: other account",
-    "uk": "B: інший акаунт"
+    "en": "{ui_cancel}: other account",
+    "uk": "{ui_cancel}: інший акаунт"
   },
   "offline.connecting": {
     "en": "Connecting...",
@@ -1292,8 +1292,8 @@
     "uk": "AUTO: Tab/F"
   },
   "online.battle_auto_key_pad": {
-    "en": "AUTO: R3",
-    "uk": "AUTO: R3"
+    "en": "AUTO: {auto}",
+    "uk": "AUTO: {auto}"
   },
   "online.battle_auto_key_touch": {
     "en": "AUTO",
@@ -1304,32 +1304,32 @@
     "uk": "Стрілки: дія   Esc: вийти з бою   Tab / F: автобій"
   },
   "online.battle_hint_choose_pad": {
-    "en": "D-pad: choose the action   B: exit the battle   R3: auto-battle",
-    "uk": "Хрестовина: дія   B: вийти з бою   R3: автобій"
+    "en": "D-pad: choose the action   {ui_cancel}: exit the battle   {auto}: auto-battle",
+    "uk": "Хрестовина: дія   {ui_cancel}: вийти з бою   {auto}: автобій"
   },
   "online.battle_hint_skills": {
     "en": "Up / Down: a skill   Enter: use it   Esc: back",
     "uk": "Вгору / вниз: вміння   Enter: застосувати   Esc: назад"
   },
   "online.battle_hint_skills_pad": {
-    "en": "Up / Down: a skill   A: use it   B: back",
-    "uk": "Вгору / вниз: вміння   A: застосувати   B: назад"
+    "en": "Up / Down: a skill   {ui_accept}: use it   {ui_cancel}: back",
+    "uk": "Вгору / вниз: вміння   {ui_accept}: застосувати   {ui_cancel}: назад"
   },
   "online.battle_hint_target": {
     "en": "Arrows: the target   Enter: strike   Esc: back",
     "uk": "Стрілки: ціль   Enter: удар   Esc: назад"
   },
   "online.battle_hint_target_pad": {
-    "en": "D-pad: the target   A: strike   B: back",
-    "uk": "Хрестовина: ціль   A: удар   B: назад"
+    "en": "D-pad: the target   {ui_accept}: strike   {ui_cancel}: back",
+    "uk": "Хрестовина: ціль   {ui_accept}: удар   {ui_cancel}: назад"
   },
   "online.battle_hint_bar": {
     "en": "Enter / Space: stop the bar at the mark",
     "uk": "Enter / пробіл: зупини смугу на позначці"
   },
   "online.battle_hint_bar_pad": {
-    "en": "A: stop the bar at the mark",
-    "uk": "A: зупини смугу на позначці"
+    "en": "{ui_accept}: stop the bar at the mark",
+    "uk": "{ui_accept}: зупини смугу на позначці"
   },
   "online.battle_hit": {
     "en": "Hit",
@@ -1472,144 +1472,100 @@
     "uk": "Немає місця для здобичі!"
   },
   "hint.menu": {
-    "en": "Arrows / WASD: choose · Enter: OK · Esc / right click: back",
-    "uk": "Стрілки / WASD: вибір · Enter: OK · Esc / права кнопка миші: назад"
-  },
-  "hint.menu_pad": {
-    "en": "D-pad / stick: choose · A: OK · B: back",
-    "uk": "Хрестовина / стік: вибір · A: OK · B: назад"
+    "en": "{ui_move}: choose · {ui_accept}: OK · {ui_back_click}: back",
+    "uk": "{ui_move}: вибір · {ui_accept}: OK · {ui_back_click}: назад"
   },
   "hint.menu_touch": {
     "en": "Tap to choose · Back: the phone's Back button",
     "uk": "Торкніться, щоб вибрати · Назад: кнопка «Назад» телефона"
   },
   "hint.new_points": {
-    "en": "Up / Down: choose a stat · Enter or click: +1 point · Esc: back to the name",
-    "uk": "Вгору / вниз: вибір характеристики · Enter або клік: +1 очко · Esc: назад до імені"
-  },
-  "hint.new_points_pad": {
-    "en": "D-pad: choose a stat · A: +1 point · B: back to the name",
-    "uk": "Хрестовина: вибір характеристики · A: +1 очко · B: назад до імені"
+    "en": "{ui_move}: choose a stat · {ui_click}: +1 point · {ui_cancel}: back to the name",
+    "uk": "{ui_move}: вибір характеристики · {ui_click}: +1 очко · {ui_cancel}: назад до імені"
   },
   "hint.new_points_touch": {
     "en": "Tap a stat to add a point",
     "uk": "Торкніться характеристики, щоб додати очко"
   },
   "hint.new_name": {
-    "en": "Type the name or pick letters below · Enter: OK · Esc: back",
-    "uk": "Введіть ім'я або виберіть літери нижче · Enter: OK · Esc: назад"
+    "en": "Type the name or pick letters below · {ui_accept}: OK · {ui_cancel}: back",
+    "uk": "Введіть ім'я або виберіть літери нижче · {ui_accept}: OK · {ui_cancel}: назад"
   },
   "hint.new_name_pad": {
-    "en": "D-pad: choose a letter · A: type it · B: back",
-    "uk": "Хрестовина: вибір літери · A: ввести · B: назад"
+    "en": "{ui_move}: choose a letter · {ui_accept}: type it · {ui_cancel}: back",
+    "uk": "{ui_move}: вибір літери · {ui_accept}: ввести · {ui_cancel}: назад"
   },
   "hint.new_name_touch": {
     "en": "Tap the letters, then OK",
     "uk": "Торкайтеся літер, потім OK"
   },
   "hint.skip": {
-    "en": "Enter / click: next · Q / Esc: skip",
-    "uk": "Enter / клік: далі · Q / Esc: пропустити"
-  },
-  "hint.skip_pad": {
-    "en": "A: next · Back / B: skip",
-    "uk": "A: далі · Back / B: пропустити"
+    "en": "{ui_click}: next · {skip} / {ui_cancel}: skip",
+    "uk": "{ui_click}: далі · {skip} / {ui_cancel}: пропустити"
   },
   "hint.skip_touch": {
     "en": "Tap: next · Skip: skip",
     "uk": "Дотик: далі · Skip: пропустити"
   },
   "hint.grid_inventory": {
-    "en": "Arrows: choose a thing · Enter / click: wear / use · Esc: back",
-    "uk": "Стрілки: вибір речі · Enter / клік: вдягти / використати · Esc: назад"
-  },
-  "hint.grid_inventory_pad": {
-    "en": "D-pad: choose a thing · A: wear / use · B: back",
-    "uk": "Хрестовина: вибір речі · A: вдягти / використати · B: назад"
+    "en": "{ui_move}: choose a thing · {ui_click}: wear / use · {ui_cancel}: back",
+    "uk": "{ui_move}: вибір речі · {ui_click}: вдягти / використати · {ui_cancel}: назад"
   },
   "hint.grid_inventory_touch": {
     "en": "Tap a thing: wear / use",
     "uk": "Торкніться речі: вдягти / використати"
   },
   "hint.grid_buy": {
-    "en": "Arrows: choose a thing · Enter / click: buy · Esc: back",
-    "uk": "Стрілки: вибір речі · Enter / клік: купити · Esc: назад"
-  },
-  "hint.grid_buy_pad": {
-    "en": "D-pad: choose a thing · A: buy · B: back",
-    "uk": "Хрестовина: вибір речі · A: купити · B: назад"
+    "en": "{ui_move}: choose a thing · {ui_click}: buy · {ui_cancel}: back",
+    "uk": "{ui_move}: вибір речі · {ui_click}: купити · {ui_cancel}: назад"
   },
   "hint.grid_buy_touch": {
     "en": "Tap a thing: buy",
     "uk": "Торкніться речі: купити"
   },
   "hint.grid_sell": {
-    "en": "Arrows: choose a thing · Enter / click: sell · Esc: back",
-    "uk": "Стрілки: вибір речі · Enter / клік: продати · Esc: назад"
-  },
-  "hint.grid_sell_pad": {
-    "en": "D-pad: choose a thing · A: sell · B: back",
-    "uk": "Хрестовина: вибір речі · A: продати · B: назад"
+    "en": "{ui_move}: choose a thing · {ui_click}: sell · {ui_cancel}: back",
+    "uk": "{ui_move}: вибір речі · {ui_click}: продати · {ui_cancel}: назад"
   },
   "hint.grid_sell_touch": {
     "en": "Tap a thing: sell",
     "uk": "Торкніться речі: продати"
   },
   "hint.grid_enchant": {
-    "en": "Arrows: choose a thing · Enter / click: enchant · Esc: back",
-    "uk": "Стрілки: вибір речі · Enter / клік: зачарувати · Esc: назад"
-  },
-  "hint.grid_enchant_pad": {
-    "en": "D-pad: choose a thing · A: enchant · B: back",
-    "uk": "Хрестовина: вибір речі · A: зачарувати · B: назад"
+    "en": "{ui_move}: choose a thing · {ui_click}: enchant · {ui_cancel}: back",
+    "uk": "{ui_move}: вибір речі · {ui_click}: зачарувати · {ui_cancel}: назад"
   },
   "hint.grid_enchant_touch": {
     "en": "Tap a thing: enchant",
     "uk": "Торкніться речі: зачарувати"
   },
   "hint.grid_combine": {
-    "en": "Arrows: choose a thing · Enter / click: choose 3 things to combine · Esc: back",
-    "uk": "Стрілки: вибір речі · Enter / клік: вибрати 3 речі для поєднання · Esc: назад"
-  },
-  "hint.grid_combine_pad": {
-    "en": "D-pad: choose a thing · A: choose 3 things to combine · B: back",
-    "uk": "Хрестовина: вибір речі · A: вибрати 3 речі для поєднання · B: назад"
+    "en": "{ui_move}: choose a thing · {ui_click}: choose 3 things to combine · {ui_cancel}: back",
+    "uk": "{ui_move}: вибір речі · {ui_click}: вибрати 3 речі для поєднання · {ui_cancel}: назад"
   },
   "hint.grid_combine_touch": {
     "en": "Tap a thing: choose 3 things to combine",
     "uk": "Торкніться речі: вибрати 3 речі для поєднання"
   },
   "hint.grid_gear": {
-    "en": "Arrows: choose a thing · Enter / click: take off and choose another · Esc: back",
-    "uk": "Стрілки: вибір речі · Enter / клік: зняти й вибрати іншу · Esc: назад"
-  },
-  "hint.grid_gear_pad": {
-    "en": "D-pad: choose a thing · A: take off and choose another · B: back",
-    "uk": "Хрестовина: вибір речі · A: зняти й вибрати іншу · B: назад"
+    "en": "{ui_move}: choose a thing · {ui_click}: take off and choose another · {ui_cancel}: back",
+    "uk": "{ui_move}: вибір речі · {ui_click}: зняти й вибрати іншу · {ui_cancel}: назад"
   },
   "hint.grid_gear_touch": {
     "en": "Tap a thing: take off and choose another",
     "uk": "Торкніться речі: зняти й вибрати іншу"
   },
   "hint.grid_assign": {
-    "en": "Arrows: choose a thing · Enter / click: choose a slot, then a potion · Esc: back",
-    "uk": "Стрілки: вибір речі · Enter / клік: вибрати слот, потім зілля · Esc: назад"
-  },
-  "hint.grid_assign_pad": {
-    "en": "D-pad: choose a thing · A: choose a slot, then a potion · B: back",
-    "uk": "Хрестовина: вибір речі · A: вибрати слот, потім зілля · B: назад"
+    "en": "{ui_move}: choose a thing · {ui_click}: choose a slot, then a potion · {ui_cancel}: back",
+    "uk": "{ui_move}: вибір речі · {ui_click}: вибрати слот, потім зілля · {ui_cancel}: назад"
   },
   "hint.grid_assign_touch": {
     "en": "Tap a thing: choose a slot, then a potion",
     "uk": "Торкніться речі: вибрати слот, потім зілля"
   },
   "hint.grid_warehouse": {
-    "en": "Arrows: choose a thing · Enter / click: move to the other side · Esc: back",
-    "uk": "Стрілки: вибір речі · Enter / клік: перекласти на інший бік · Esc: назад"
-  },
-  "hint.grid_warehouse_pad": {
-    "en": "D-pad: choose a thing · A: move to the other side · B: back",
-    "uk": "Хрестовина: вибір речі · A: перекласти на інший бік · B: назад"
+    "en": "{ui_move}: choose a thing · {ui_click}: move to the other side · {ui_cancel}: back",
+    "uk": "{ui_move}: вибір речі · {ui_click}: перекласти на інший бік · {ui_cancel}: назад"
   },
   "hint.grid_warehouse_touch": {
     "en": "Tap a thing: move to the other side",
@@ -1638,5 +1594,101 @@
   "offline.other_account_button": {
     "en": "Another account",
     "uk": "Інший акаунт"
+  },
+  "glyph.arrows_wasd": {
+    "en": "Arrows / WASD",
+    "uk": "Стрілки / WASD"
+  },
+  "glyph.dpad_stick": {
+    "en": "D-pad / stick",
+    "uk": "Хрестовина / стік"
+  },
+  "glyph.wasd_arrows": {
+    "en": "WASD / arrows",
+    "uk": "WASD / стрілки"
+  },
+  "glyph.click": {
+    "en": "click",
+    "uk": "клік"
+  },
+  "glyph.right_click": {
+    "en": "right click",
+    "uk": "права кнопка миші"
+  },
+  "glyph.space": {
+    "en": "Space",
+    "uk": "Пробіл"
+  },
+  "glyph.up": {
+    "en": "Up",
+    "uk": "Вгору"
+  },
+  "glyph.down": {
+    "en": "Down",
+    "uk": "Вниз"
+  },
+  "glyph.left": {
+    "en": "Left",
+    "uk": "Вліво"
+  },
+  "glyph.right": {
+    "en": "Right",
+    "uk": "Вправо"
+  },
+  "glyph.dpad_up": {
+    "en": "D-pad up",
+    "uk": "Хрестовина вгору"
+  },
+  "glyph.dpad_down": {
+    "en": "D-pad down",
+    "uk": "Хрестовина вниз"
+  },
+  "glyph.dpad_left": {
+    "en": "D-pad left",
+    "uk": "Хрестовина вліво"
+  },
+  "glyph.dpad_right": {
+    "en": "D-pad right",
+    "uk": "Хрестовина вправо"
+  },
+  "glyph.left_stick": {
+    "en": "Left stick",
+    "uk": "Лівий стік"
+  },
+  "glyph.ps_cross": {
+    "en": "Cross",
+    "uk": "Хрестик"
+  },
+  "glyph.ps_circle": {
+    "en": "Circle",
+    "uk": "Коло"
+  },
+  "glyph.ps_square": {
+    "en": "Square",
+    "uk": "Квадрат"
+  },
+  "glyph.ps_triangle": {
+    "en": "Triangle",
+    "uk": "Трикутник"
+  },
+  "ask.yes": {
+    "en": "Yes",
+    "uk": "Так"
+  },
+  "ask.no": {
+    "en": "No",
+    "uk": "Ні"
+  },
+  "ask.ok": {
+    "en": "OK",
+    "uk": "OK"
+  },
+  "hint.login_user": {
+    "en": "UserID: letters A–Z · {ui_accept}: to the password",
+    "uk": "UserID: літери A–Z · {ui_accept}: до пароля"
+  },
+  "hint.login_password": {
+    "en": "Password: digits 0–9 · {ui_accept}: log in",
+    "uk": "Пароль: цифри 0–9 · {ui_accept}: увійти"
   }
 }
