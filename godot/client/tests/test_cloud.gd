@@ -146,7 +146,7 @@ func test_the_game_is_always_online_with_the_internet_server_by_default() -> voi
 	eq([cfg.address, cfg.port, cfg.cert_path], ["pow.example", 28311, "/x/s.crt"], "another server")
 	eq(Cloud.server_config(PackedStringArray(["--offline"])), {}, "--offline: without a server")
 	var d := _dir()
-	eq(Cloud.server_config(PackedStringArray(), d).cert_path, "user://server/server.crt", "no files next to the game")
+	eq(Cloud.server_config(PackedStringArray(), d).cert_path, "res://net/server.crt", "no files next to the game: the project's server")
 	var f := FileAccess.open(d.path_join("server.txt"), FileAccess.WRITE)
 	f.store_string("# the server of our group\n\n  friends.example:28312  \n")
 	f.close()
