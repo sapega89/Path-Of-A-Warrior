@@ -8,6 +8,8 @@ uniform float grain = 0.06;
 uniform float ground_shade = 0.12;
 uniform vec3 tint : source_color = vec3(1.0);
 uniform float flash = 0.0;
+// the colour of a hit flash (white; the hero hit flashes red), in sRGB like the palette
+uniform vec3 flash_color = vec3(1.0, 0.95, 0.85);
 
 varying vec3 world_pos;
 
@@ -39,7 +41,9 @@ void fragment() {
 	float g = noise(world_pos * vec3(9.0, 2.5, 9.0)) * 0.6 + noise(world_pos * 31.0) * 0.4;
 	c *= 1.0 - grain + grain * 2.0 * g;
 	c *= mix(1.0 - ground_shade, 1.0, smoothstep(0.0, 0.45, world_pos.y));
-	ALBEDO = mix(c, vec3(1.0, 0.95, 0.85), flash);
+	vec3 fc = OUTPUT_IS_SRGB ? flash_color : pow(flash_color, vec3(2.2));
+	ALBEDO = mix(c, fc, flash * 0.65);
+	EMISSION = fc * flash * 0.45;
 	ROUGHNESS = 1.0;
 	SPECULAR = 0.0;
 }

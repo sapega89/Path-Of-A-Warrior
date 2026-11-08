@@ -35,6 +35,16 @@ LOADOUT = {
     "zholner": ["sabre", "shield"],
     "luchnyk": ["bow"],
     "polkovnyk": ["bulava"],
+    # the hero's classes take their blade in the game (sabre or palash)
+    "serdiuk": [],
+    "kharakternyk": [],
+    "haidamaka": [],
+    "kozak_rival": ["sabre"],
+    "kozak_rival_luk": ["bow"],
+    "tatar": ["sabre", "kalkan"],
+    "tatar_luk": ["bow"],
+    "rotmistr": ["sabre_gold"],
+    "murza": ["sabre_gold"],
 }
 
 

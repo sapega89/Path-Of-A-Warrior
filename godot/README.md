@@ -16,7 +16,8 @@ godot/
     scripts/screens/      екрани: title, main_menu, game_menu, settings, map_viewer, campaign, briefing, mission,
                           management, attributes, skills, gear, inventory,
                           assign_items, story, blacksmith, shop, visiting, endings, help, new_game (герой у user://hero.json)
-    scripts/world/        3D-світ: map_builder (карта з оригінальних шарів), hero, follow_camera
+    scripts/world/        3D-світ: map_builder (карта з оригінальних шарів), map_people (люди
+                          місії в новому арті), motion (дія → кліп), hero, follow_camera
     scripts/ui/           тема, сенсорні кнопки
     scripts/art/          новий арт, поки вітрина: табір і бій (scenes/art_slice.tscn)
     scripts/net/          зв'язок із сервером: protocol (повідомлення), net_client (ENet + DTLS)
@@ -455,10 +456,25 @@ F6, або `godot --path godot/client res://lab/combat_feel_lab.tscn`. Це пе
 вимк / увімк (порівняти той самий бій), F2 хвиля мечників, F3 лучники, F4 генерал, F6 безсмертя,
 Esc вихід.
 
-## Новий арт (зріз)
+## Новий арт
 
 Єдиний стиль у нормальній роздільності замість спрайтів 27×27: «степовий лубок», розписні
-дерев'яні фігурки з контуром тушшю. Поки це вітрина, гра її не використовує:
-`godot --path godot/client res://scenes/art_slice.tscn` (табір Корсунь) або `-- battle 50`
-(бій). Як зроблено, ліцензії й перебудова моделей — у [`tools/art/README.md`](tools/art/README.md).
-CI знімає зріз разом з іншими скріншотами (`tools/art_shots.tscn`).
+дерев'яні фігурки з контуром тушшю. Як зроблено, ліцензії й перебудова моделей — у
+[`tools/art/README.md`](tools/art/README.md). Гра переходить на нього частинами (просив Andrey):
+
+- **Люди в місіях** (`scripts/world/map_people.gd`): герой, солдати, лучники, загони й генерали —
+  3D-фігури замість спрайтів. Герой — модель свого класу (Cossack — козак, Serdiuk — сердюк у
+  кольчузі й місюрці, Kharakternyk — характерник у темній свиті, Haidamaka — гайдамака у
+  високому ковпаку) зі шаблею або палашем (тип зброї). Вороги — сторони генерала місії
+  (`assets/art/people.json`, робить `python godot/tools/art/people.py` за іменами генералів):
+  Корона (жовніри зі щитом, лучники, ротмістр), орда (татари з калканом, лучники, мурза) або
+  козаки суперника (козаки, лучники, полковник). Кожна дія симуляції грає свій кліп
+  (`scripts/world/motion.gd`): стоїть, іде й біжить у такт кроку, три удари комбо, скіли,
+  поранення, відкидання, падіння; удар займає тики своєї дії, але не коротше 0,42 с, і крок не
+  обриває його. Фігура повертається плавно за 8 напрямками, спалахує від удару (`flash`), а
+  стоп-кадр удару зупиняє й кліпи. Сама гра (`MapSim`) не змінилась.
+- Ще старі: карти, ефекти скілів, здобич, HUD і меню, портрети.
+
+Вітрина стилю: `godot --path godot/client res://scenes/art_slice.tscn` (табір Корсунь),
+`-- battle 50` (бій) або `-- people` (усі люди гри). CI знімає її разом з іншими скріншотами
+(`tools/art_shots.tscn`).
