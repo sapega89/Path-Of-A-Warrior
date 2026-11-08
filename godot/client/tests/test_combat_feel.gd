@@ -193,12 +193,12 @@ func test_the_mission_feels_a_hit() -> void:
 	check(screen.feel.freeze > 0.0, "a stop")
 	screen._process(0.02)
 	eq(screen.sim.ticks, ticks, "no tick while the picture stands")
-	check(screen.hero.sprite.material_override != null, "the hero flashes")
+	check(float(screen.hero.material.get_shader_parameter("flash")) > 0.0, "the hero flashes")
 	check(absf(screen.camera.h_offset) + absf(screen.camera.v_offset) > 0.0, "the camera shakes")
 	for i in 30:
 		screen._process(1.0 / 30.0)
 	check(screen.sim.ticks > ticks, "then the game goes on")
-	check(screen.hero.sprite.material_override == null, "the flash is over")
+	eq(float(screen.hero.material.get_shader_parameter("flash")), 0.0, "the flash is over")
 	eq(screen.camera.h_offset, 0.0, "the shake is over")
 	screen.queue_free()
 	Router.params = old

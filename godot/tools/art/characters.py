@@ -15,6 +15,7 @@ FACTIONS = {
     "hetman": "gold",       # the hero's regiment
     "crown": "whitewash",   # Crown army
     "rival": "oak",         # Cossacks of a rival colonel
+    "horde": "crimson",     # the Crimean horde
 }
 
 RECIPES = {
@@ -48,6 +49,57 @@ RECIPES = {
         "coat": "blue", "coat_trim": "gold", "coat_len": "long", "buttons": "gold",
         "undercoat": "cinnabar", "sash": "gold", "trousers": "cinnabar_dark", "boots": "gold_dark",
         "belly": 1.12, "hanging_sleeves": True,
+    },
+    # the hero's four classes (Profile.HERO_CLASSES): Cossack is "kozak" above
+    "serdiuk": {
+        "hat": "misiurka", "hair": "hair", "face": "mustache",
+        "coat": "blue", "coat_trim": "blue_dark", "coat_len": "knee", "armour": "mail",
+        "sash": FACTIONS["hetman"], "trousers": "cinnabar_dark", "boots": "chernozem",
+    },
+    "kharakternyk": {
+        "hat": "kuchma", "hat_fur": "fur", "hair": "hair_grey", "face": "long_mustache",
+        "coat": "dusk", "coat_trim": "oak_dark", "coat_len": "long", "amulet": True,
+        "sash": FACTIONS["hetman"], "trousers": "blue_dark", "boots": "leather",
+    },
+    "haidamaka": {
+        "hat": "kolpak_tall", "hat_cloth": "cinnabar", "hair": "hair", "face": "mustache",
+        "coat": "whitewash", "coat_trim": "canvas_dark", "coat_len": "shirt", "vest": "fur_grey",
+        "sash": FACTIONS["hetman"], "trousers": "blue", "boots": "leather",
+    },
+    # Cossacks of a rival colonel
+    "kozak_rival": {
+        "hat": "kuchma", "hair": "hair", "face": "mustache",
+        "coat": "stone", "coat_trim": "fur", "coat_len": "knee",
+        "sash": FACTIONS["rival"], "trousers": "oak_dark", "boots": "leather",
+    },
+    "kozak_rival_luk": {
+        "hat": "kolpak", "hat_cloth": "oak_dark", "hair": "hair", "face": "mustache",
+        "coat": "grass_dark", "coat_trim": "wood_dark", "coat_len": "thigh",
+        "sash": FACTIONS["rival"], "trousers": "stone_dark", "boots": "leather", "quiver": True,
+    },
+    # the horde
+    "tatar": {
+        "hat": "tatar", "hat_cloth": "cinnabar_dark", "hair": "hair", "face": "short_mustache", "beard": True,
+        "coat": "blue_light", "coat_trim": "fur", "coat_len": "knee",
+        "sash": FACTIONS["horde"], "trousers": "cinnabar_dark", "boots": "leather_light",
+    },
+    "tatar_luk": {
+        "hat": "tatar", "hat_cloth": "oak_dark", "hair": "hair", "face": "short_mustache", "beard": True,
+        "coat": "canvas", "coat_trim": "fur", "coat_len": "thigh",
+        "sash": FACTIONS["horde"], "trousers": "cinnabar_dark", "boots": "leather_light", "quiver": True,
+    },
+    # generals of the Crown and of the horde (the Cossack one is "polkovnyk")
+    "rotmistr": {
+        "hat": "kolpak_noble", "hat_cloth": "crimson", "hair": "hair", "face": "long_mustache",
+        "coat": "crimson", "coat_trim": "gold", "coat_len": "long", "buttons": "gold",
+        "undercoat": "gold", "sash": FACTIONS["crown"], "trousers": "blue_dark", "boots": "gold_dark",
+        "belly": 1.08, "hanging_sleeves": True,
+    },
+    "murza": {
+        "hat": "murza", "hair": "hair", "face": "long_mustache", "beard": True,
+        "coat": "blue_dark", "coat_trim": "gold", "coat_len": "long", "buttons": "gold",
+        "undercoat": "ochre", "sash": FACTIONS["horde"], "trousers": "cinnabar_dark", "boots": "gold_dark",
+        "belly": 1.1,
     },
 }
 
@@ -86,6 +138,8 @@ class Figure:
                        c + Vector((reach * sx, -0.095, -0.05 - droop * 0.5)),
                        c + Vector((reach * 1.05 * sx, -0.075, -0.05 - droop))]
                 k.sweep(pts, [0.017, 0.02, 0.013, 0.005], r["hair"], "head", segs=6, flat=0.7)
+        if r.get("beard"):
+            k.ball(c + Vector((0, -0.088, -0.118)), (0.05, 0.045, 0.06), r["hair"], "head", segs=8, rings=5)
 
     def hat(self, r):
         k, c = self.k, self.head_center
@@ -93,7 +147,7 @@ class Figure:
         if kind == "kuchma":
             k.lathe(c + Vector((0, 0, 0.03)),
                     [(0.0, 0.118, "hard"), (0.04, 0.138), (0.12, 0.136), (0.18, 0.1), (0.205, 0.0)],
-                    "fur_grey", "head", segs=14, sx=1.0, sy=1.04)
+                    r.get("hat_fur", "fur_grey"), "head", segs=14, sx=1.0, sy=1.04)
         if kind in ("shlyk", "plume"):
             k.lathe(c + Vector((0, 0, 0.035)),
                     [(0.0, 0.118, "hard"), (0.03, 0.128), (0.12, 0.132), (0.155, 0.12, "hard"), (0.16, 0.0)],
@@ -143,6 +197,57 @@ class Figure:
             k.ball(c + Vector((0.0, -0.02, 0.125)), (0.012, 0.03, 0.08), "whitewash", "head",
                    rot=Matrix.Rotation(-0.2, 4, "X"), segs=6, rings=4)
 
+        elif kind == "misiurka":
+            # a low steel cap with a spike and a mail curtain over the neck
+            k.lathe(c + Vector((0, 0, 0.02)),
+                    [(0.0, 0.126, "hard"), (0.05, 0.126), (0.1, 0.102), (0.14, 0.05), (0.155, 0.0)],
+                    "steel", "head", segs=14)
+            k.tube(c + Vector((0, 0, 0.16)), c + Vector((0, 0, 0.24)), 0.012, 0.003, "steel_light", "head", segs=6)
+            k.lathe(c + Vector((0, 0, 0.0)), [(-0.2, 0.175, "hard"), (-0.1, 0.152), (0.025, 0.128)], "iron", "head",
+                    segs=14, a0=math.radians(65), a1=math.radians(295), thickness=0.012)
+        elif kind == "tatar":
+            # a cloth cone on a rolled fur brim
+            cloth = r.get("hat_cloth", "cinnabar_dark")
+            k.lathe(c + Vector((0, 0, 0.03)),
+                    [(0.0, 0.124, "hard"), (0.02, 0.142), (0.06, 0.144), (0.08, 0.12, "hard"), (0.081, 0.0)],
+                    "fur", "head", segs=14)
+            k.lathe(c + Vector((0, 0, 0.1)), [(0.0, 0.118, "hard"), (0.07, 0.1), (0.15, 0.06), (0.22, 0.0)],
+                    cloth, "head", segs=12)
+            k.ball(c + Vector((0, 0, 0.32)), 0.02, "gold", "head", segs=6, rings=4)
+        elif kind == "murza":
+            # a tall grey fur cap with a gold top and a jewel
+            k.lathe(c + Vector((0, 0, 0.03)),
+                    [(0.0, 0.126, "hard"), (0.05, 0.145), (0.16, 0.14), (0.21, 0.1), (0.235, 0.0)],
+                    "fur_grey", "head", segs=14)
+            k.ball(c + Vector((0, 0, 0.27)), 0.032, "gold", "head", segs=8, rings=5)
+            front = c + Vector((0, -0.142, 0.1))
+            k.ball(front, (0.03, 0.014, 0.034), "gold", "head", segs=8, rings=5)
+            k.ball(front + Vector((0, -0.01, 0)), 0.014, "blue", "head", segs=6, rings=4)
+        elif kind == "kolpak_noble":
+            # a nobleman's cap: a fur band, a cloth crown, a jewel and a heron feather
+            cloth = r.get("hat_cloth", "crimson")
+            k.lathe(c + Vector((0, 0, 0.035)),
+                    [(0.0, 0.124, "hard"), (0.03, 0.136), (0.09, 0.136), (0.1, 0.1, "hard"), (0.101, 0.0)],
+                    "fur_grey", "head", segs=14)
+            k.lathe(c + Vector((0, 0, 0.11)), [(0.0, 0.112, "hard"), (0.05, 0.106), (0.09, 0.06), (0.11, 0.0)],
+                    cloth, "head", segs=12)
+            front = c + Vector((0, -0.138, 0.09))
+            k.ball(front, (0.03, 0.014, 0.034), "gold", "head", segs=8, rings=5)
+            k.ball(front + Vector((0, -0.012, 0)), 0.012, "cinnabar", "head", segs=6, rings=4)
+            pts = [front + Vector((0, 0.0, 0.02)), front + Vector((0.0, 0.03, 0.18)),
+                   front + Vector((0.0, 0.08, 0.3)), front + Vector((0.0, 0.15, 0.36))]
+            k.sweep(pts, [0.012, 0.03, 0.025, 0.004], "whitewash", "head", segs=6, flat=0.45)
+        elif kind == "kolpak_tall":
+            # the haidamaka's tall cloth cap, its top falling back
+            cloth = r.get("hat_cloth", "cinnabar")
+            k.lathe(c + Vector((0, 0, 0.035)),
+                    [(0.0, 0.124, "hard"), (0.04, 0.138), (0.1, 0.136), (0.11, 0.1, "hard"), (0.111, 0.0)],
+                    "fur", "head", segs=14)
+            pts = [c + Vector((0, 0, 0.12)), c + Vector((0, 0.02, 0.24)), c + Vector((0, 0.06, 0.33)),
+                   c + Vector((0, 0.13, 0.37)), c + Vector((0, 0.19, 0.31))]
+            k.sweep(pts, [0.112, 0.1, 0.08, 0.05, 0.028], cloth, "head", segs=10)
+            k.ball(pts[-1] + Vector((0, 0.01, -0.03)), 0.026, "gold", "head", segs=8, rings=5)
+
     # -- body -----------------------------------------------------------------
     def torso(self, r):
         k = self.k
@@ -167,6 +272,27 @@ class Figure:
             for sx in (1, -1):
                 k.ball(self.h("upperarm.l" if sx > 0 else "upperarm.r") + Vector((0.01 * sx, 0, 0.02)),
                        (0.095, 0.09, 0.07), "steel", "upperarm.l" if sx > 0 else "upperarm.r", segs=10, rings=5)
+        if r.get("armour") == "mail":
+            # mail from the shoulders to the sash
+            k.lathe((0, 0, 0), [(1.29, 0.164 * belly), (1.39, 0.17), (1.46, 0.164), (1.52, 0.124, "hard")],
+                    "iron", "chest", segs=14, sx=1.18, sy=0.84)
+            k.lathe((0, 0, 0), [(1.13, 0.156 * belly, "hard"), (1.2, 0.158 * belly), (1.31, 0.164 * belly)],
+                    "iron", "spine", segs=14, sx=1.16, sy=0.85)
+            for sx in (1, -1):
+                k.ball(self.h("upperarm.l" if sx > 0 else "upperarm.r") + Vector((0.01 * sx, 0, 0.0)),
+                       (0.095, 0.09, 0.08), "iron", "upperarm.l" if sx > 0 else "upperarm.r", segs=10, rings=5)
+        if r.get("vest"):
+            # a sheepskin vest, open in front
+            a0, a1 = math.radians(30), math.radians(330)
+            k.lathe((0, 0, 0), [(1.29, 0.162 * belly), (1.39, 0.17), (1.46, 0.164), (1.52, 0.124, "hard")],
+                    r["vest"], "chest", segs=14, sx=1.18, sy=0.84, a0=a0, a1=a1, thickness=0.02)
+            k.lathe((0, 0, 0), [(0.96, 0.17 * belly, "hard"), (1.17, 0.158 * belly), (1.31, 0.162 * belly)],
+                    r["vest"], "spine", segs=14, sx=1.16, sy=0.85, a0=a0, a1=a1, thickness=0.02)
+        if r.get("amulet"):
+            k.beam(Vector((0.06, -0.1, 1.5)), Vector((0.0, -0.135, 1.36)), 0.008, 0.006, "leather", "chest")
+            k.beam(Vector((-0.06, -0.1, 1.5)), Vector((0.0, -0.135, 1.36)), 0.008, 0.006, "leather", "chest")
+            k.ball(Vector((0.0, -0.14, 1.34)), (0.036, 0.012, 0.036), "gold", "chest", segs=10, rings=5)
+            k.ball(Vector((0.0, -0.152, 1.34)), 0.012, "cinnabar", "chest", segs=6, rings=4)
         # sash
         sash = r["sash"]
         k.lathe((0, 0, 0), [(1.02, 0.142 * belly, "hard"), (1.045, 0.152 * belly), (1.105, 0.152 * belly), (1.13, 0.142 * belly, "hard")],
@@ -211,7 +337,7 @@ class Figure:
         coat, trim = r["coat"], r.get("coat_trim", r["coat"])
         ua, la, hd = "upperarm." + side, "lowerarm." + side, "hand." + side
         sh, el, wr = self.h(ua), self.h(la), self.h("wrist." + side)
-        if r.get("armour") != "cuirass":
+        if not r.get("armour"):
             k.ball(sh + Vector((0.01 * s, 0, 0)), (0.085, 0.08, 0.08), coat, ua, segs=10, rings=6)
         k.along(sh, el, [(-0.05, 0.06), (0.0, 0.075), (0.5, 0.07), (1.0, 0.06), (1.06, 0.056)], coat, ua, segs=10)
         k.ball(el, 0.058, coat, la, segs=8, rings=5)

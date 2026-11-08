@@ -2,8 +2,8 @@ extends Control
 ## The combat feel lab: the first room of mission 1 with soldiers coming in wave after wave, to
 ## try and tune how a hit feels (scripts/world/combat_feel.gd, as the missions use it: hitstop,
 ## camera shake, flash, recoil, the flight of the one killed, the hit sound, the pad's rumble)
-## with every effect and number at hand. The game's own map, hero, soldiers, effects and HUD
-## are used as they are.
+## with every effect and number at hand. The game's own map, people (scripts/world/map_people.gd),
+## effects and HUD are used as they are.
 ## Nothing is saved: the hero is a new one (Profile.new(), never written), he does not die
 ## (god mode), the room never ends.
 ##
@@ -17,7 +17,7 @@ const MapSim := preload("res://scripts/sim/map_sim.gd")
 const Campaign := preload("res://scripts/core/campaign.gd")
 const Hero := preload("res://scripts/world/hero.gd")
 const FollowCamera := preload("res://scripts/world/follow_camera.gd")
-const Soldier := preload("res://scripts/world/soldier.gd")
+const MapPeople := preload("res://scripts/world/map_people.gd")
 const JavaRandom := preload("res://scripts/sim/java_random.gd")
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const MapHud := preload("res://scripts/ui/map_hud.gd")
@@ -41,14 +41,15 @@ var map: Dictionary
 var tint := 0
 var world: Node3D
 var builder: Node3D
-var hero: Node3D
+var hero: Node3D  # the hero's figure (people.hero)
+var people: MapPeople  # the hero and the soldiers as figures
+var _anim_dt := 0.0  # seconds the figures' clips move on this frame (0 while a hit holds)
 var camera: Camera3D
 var effects: Effects
 var hud: MapHud
 var panel: FeelPanel
 var help: Label
 var status: Label  # whether the effects are on, at the top in the middle
-var soldiers := {}  # sim actor -> Soldier node
 var shots: Array[MeshInstance3D] = []
 var loot := {}
 var trails: Array = []
@@ -111,10 +112,6 @@ func _ready() -> void:
 		m.visible = false
 		world.add_child(m)
 		shots.append(m)
-	hero = Hero.new()
-	hero.name = "Hero"
-	hero.external = true
-	world.add_child(hero)
 	effects = Effects.new()
 	world.add_child(effects)
 	camera = FollowCamera.new()
@@ -149,9 +146,6 @@ func _ready() -> void:
 
 ## A new arena: the hero (new, level 1) in the first room, the room cleared, the first wave.
 func start() -> void:
-	for n in soldiers.values():
-		n.queue_free()
-	soldiers.clear()
 	for n in loot.values():
 		n.queue_free()
 	loot.clear()
@@ -173,7 +167,14 @@ func start() -> void:
 	sim.no_enemies = false
 	_fill_waves()
 	sim.room_phase = 0
-	hero.set_look(profile.head, sim.hero.weapon_kind)
+	if people != null:
+		people.free()
+	people = MapPeople.new()
+	people.name = "People"
+	world.add_child(people)
+	people.setup(sim, profile.head)
+	people.side = MapPeople.side_of(GENERAL)  # mission 1's soldiers
+	hero = people.hero
 	hud.sim = sim
 	camera.focus = sim.rooms.center(sim.cell)
 	camera.snap()
@@ -230,6 +231,7 @@ func _process(delta: float) -> void:
 	if held != -1 or _fire or _hotkey != -1:
 		autopilot.player_key()
 	feel.advance(delta)
+	_anim_dt = delta if feel.freeze <= 0.0 else 0.0
 	if feel.freeze <= 0.0:
 		_acc += delta
 	while _acc >= tick and feel.freeze <= 0.0:
@@ -306,13 +308,12 @@ func _update_view(t: float) -> void:
 		n += 1 if feel.on[k] else 0
 	status.text = "Эффекты: ВКЛ" if n == feel.on.size() else ("Эффекты: ВЫКЛ" if n == 0 else "Эффекты: часть")
 	status.modulate = Color(0.6, 1.0, 0.6) if n > 0 else Color(1.0, 0.6, 0.6)
-	hero.global_position = Hero.px_to_world(_smooth(sim.hero.prev_pos, sim.hero.pos, t))
-	hero.set_frame(sim.hero_sprite_frame(), sim.hero.action >= 12)
-	CombatFeel.flash_sprite(hero.sprite, feel.flash_of(sim.hero), _flash_mats)
+	people.update(t, _anim_dt, tick, feel)
+	_anim_dt = 0.0
+	hero = people.hero
 	camera.focus = sim.rooms.center(sim.cell)
 	feel.shake_camera(camera, PX)
 	hud.queue_redraw()
-	_place_soldiers(t)
 	_place_shots()
 	var shown: Array = sim.auras()
 	shown.append_array(sim.effects())
@@ -328,29 +329,6 @@ func _update_view(t: float) -> void:
 			if node is Sprite3D:
 				CombatFeel.flash_sprite(node as Sprite3D, feel.flash_of(b), _flash_mats)
 	_place_loot()
-
-
-func _place_soldiers(t: float) -> void:
-	for e in soldiers.keys():
-		if not sim.enemies.has(e):
-			soldiers[e].queue_free()
-			soldiers.erase(e)
-	var map4 := MapSim.table("dir8_to_dir4")
-	for e in sim.enemies:
-		var node = soldiers.get(e)
-		if node == null:
-			node = Soldier.new()
-			node.name = "Soldier"
-			world.add_child(node)
-			node.setup(e.type, tint, MapSim.table("squad_offsets"), sim.general)
-			soldiers[e] = node
-		var knocked: bool = e.action == 2 and (e.pos - e.prev_pos).length() > 8
-		var at := _smooth(e.prev_pos, e.pos, feel.knock_t(t) if knocked else t)
-		var o := feel.offset_of(e)
-		node.global_position = Hero.px_to_world(at + Vector2(o.x, o.y)) + Vector3(0.0, o.z * PX, 0.0)
-		node.set_frame(sim.enemy_sprite_frame(e), int(map4[e.dir]), e.action >= 6)
-		for s in node.sprites:
-			CombatFeel.flash_sprite(s, feel.flash_of(e), _flash_mats)
 
 
 func _place_shots() -> void:

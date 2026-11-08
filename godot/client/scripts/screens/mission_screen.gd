@@ -1,9 +1,10 @@
 extends Control
 ## A mission of the original campaign on its map. The game itself runs in MapSim
 ## (original pixels and ticks); this screen reads the input, ticks the simulation every
-## 120 ms and draws its state in 3D: the hero sprite, the camera on the current room,
+## 120 ms and draws its state in 3D: the hero, the camera on the current room,
 ## the exit arrows and the "Stage" banners (after a won mission the exp bar of pyport on the
-## pages Total Exp and Time Exp, the level gone up on it), the soldiers and their arrows, the
+## pages Total Exp and Time Exp, the level gone up on it), the soldiers and their arrows (the
+## people as 3D figures playing the clips of their actions, scripts/world/map_people.gd), the
 ## effects of skills, potions and scrolls, the fire on whoever a fire skill hits, the auras of
 ## buffs, and the HUD. A talk on the map shows the portrait of who speaks beside the line, just
 ## above the HUD, as pyport's.
@@ -22,7 +23,7 @@ const MapSim := preload("res://scripts/sim/map_sim.gd")
 const Campaign := preload("res://scripts/core/campaign.gd")
 const Hero := preload("res://scripts/world/hero.gd")
 const FollowCamera := preload("res://scripts/world/follow_camera.gd")
-const Soldier := preload("res://scripts/world/soldier.gd")
+const MapPeople := preload("res://scripts/world/map_people.gd")
 const JavaRandom := preload("res://scripts/sim/java_random.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
@@ -52,7 +53,8 @@ var sim: RefCounted
 var viewport: SubViewport
 var world: Node3D
 var builder: Node3D
-var hero: CharacterBody3D
+var people: MapPeople  # the hero and the enemies as figures
+var hero: Node3D  # the hero's figure (people.hero)
 var camera: Camera3D
 var hud: MapHud
 var profile: Profile
@@ -68,7 +70,6 @@ var talk_portrait: TextureRect
 var talk_panel: PanelContainer
 var talk_text: Label
 var arrows: Array[TextureRect] = []
-var soldiers := {}  # sim actor -> Soldier node
 var shots: Array[MeshInstance3D] = []  # the archers' arrows
 var tint := 0
 var loot := {}  # sim drop -> Sprite3D
@@ -91,6 +92,7 @@ var _blink := 0
 var pause_menu: MissionPause  # shown while the game is paused
 var feel := CombatFeel.new()  # how a hit feels: the hitstop, shake, flash, flight, sound, rumble
 var _flash_mats := {}  # Sprite3D -> its flash material
+var _anim_dt := 0.0  # seconds the figures' clips move on this frame (0 while a hit holds)
 
 
 func _ready() -> void:
@@ -151,15 +153,14 @@ func _ready() -> void:
 		world.add_child(m)
 		shots.append(m)
 
-	hero = Hero.new()
-	hero.name = "Hero"
-	hero.external = true
-	world.add_child(hero)
-	hero.set_look(profile.head, sim.hero.weapon_kind)
+	people = MapPeople.new()
+	people.name = "People"
+	world.add_child(people)
+	people.setup(sim, profile.head)
+	hero = people.hero
 	effects = Effects.new()
 	effects.name = "Effects"
 	world.add_child(effects)
-	hero.global_position = Hero.px_to_world(Vector2(sim.hero.pos))
 
 	camera = FollowCamera.new()
 	camera.name = "Camera"
@@ -252,6 +253,7 @@ func _process(delta: float) -> void:
 	if held != -1 or _fire or _hotkey != -1 or _potion != -1 or _belt != -1:
 		autopilot.player_key()
 	feel.advance(delta)
+	_anim_dt = delta if feel.freeze <= 0.0 else 0.0
 	if feel.freeze <= 0.0:
 		_acc += delta  # while a hit holds the picture, no tick goes by
 	while _acc >= tick and feel.freeze <= 0.0:
@@ -325,13 +327,12 @@ func _forget_feel() -> void:
 
 
 func _update_view(t: float) -> void:
-	hero.global_position = Hero.px_to_world(smooth(sim.hero.prev_pos, sim.hero.pos, t))
-	hero.set_frame(sim.hero_sprite_frame(), sim.hero.action >= 12)
-	CombatFeel.flash_sprite(hero.sprite, feel.flash_of(sim.hero), _flash_mats)
+	people.update(t, _anim_dt, tick, feel)
+	_anim_dt = 0.0
+	hero = people.hero
 	camera.focus = sim.rooms.center(sim.cell)
 	feel.shake_camera(camera, Hero.PIXEL_SIZE)
 	hud.queue_redraw()
-	_place_soldiers(t)
 	_place_shots()
 	var shown: Array = sim.auras()
 	shown.append_array(sim.effects())
@@ -344,31 +345,6 @@ func _update_view(t: float) -> void:
 	_place_loot()
 	_place_arrows()
 	_show_banner()
-
-
-func _place_soldiers(t: float) -> void:
-	for e in soldiers.keys():
-		if not sim.enemies.has(e):
-			soldiers[e].queue_free()
-			soldiers.erase(e)
-	var map4 := MapSim.table("dir8_to_dir4")
-	for e in sim.enemies:
-		var node = soldiers.get(e)
-		if node == null:
-			node = Soldier.new()
-			node.name = "Soldier"
-			world.add_child(node)
-			node.setup(e.type, tint, MapSim.table("squad_offsets"), sim.general)
-			soldiers[e] = node
-		# a knock-back (a long step while hit) goes out fast and slows down; the one hit
-		# recoils, the one killed flies off (in map pixels; z: up)
-		var knocked: bool = e.action == 2 and (e.pos - e.prev_pos).length() > 8
-		var o := feel.offset_of(e)
-		node.global_position = Hero.px_to_world(smooth(e.prev_pos, e.pos, feel.knock_t(t) if knocked else t)
-			+ Vector2(o.x, o.y)) + Vector3(0.0, o.z * Hero.PIXEL_SIZE, 0.0)
-		node.set_frame(sim.enemy_sprite_frame(e), int(map4[e.dir]), e.action >= 6)
-		for sprite in node.sprites:
-			CombatFeel.flash_sprite(sprite, feel.flash_of(e), _flash_mats)
 
 
 ## Breakable objects: they blink while breaking and are gone once broken.

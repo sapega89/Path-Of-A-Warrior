@@ -43,10 +43,12 @@ func build(where: String, pitch_deg: float) -> void:
 		_battle()
 	elif place == "lineup":
 		_lineup()
+	elif place == "people":
+		_people()
 	else:
 		_camp()
 	_camera()
-	if place != "lineup":
+	if place != "lineup" and place != "people":
 		hud = ArtHud.new()
 		var layer := CanvasLayer.new()
 		add_child(layer)
@@ -97,6 +99,11 @@ func _camera() -> void:
 		camera.fov = 30.0
 		camera.position = Vector3(0, 2.6, 11.5)
 		camera.rotation_degrees = Vector3(-9.0, 0, 0)
+		return
+	if place == "people":
+		camera.fov = 30.0
+		camera.position = Vector3(0, 4.2, 15.5)
+		camera.rotation_degrees = Vector3(-13.0, 0, 0)
 		return
 	var p := deg_to_rad(pitch)
 	camera.position = target + Vector3(0.0, sin(p), cos(p)) * distance
@@ -238,4 +245,21 @@ func _lineup() -> void:
 	_prop("topolia", Vector3(-6.5, 0, -5.0))
 	_prop("shatro", Vector3(4.5, 0, -7.0), -20.0)
 	_prop("khata", Vector3(-3.0, 0, -9.0), 10.0)
+	hero = null
+
+
+# -- the people of the map: the hero's four classes in front, the enemies behind --------
+func _people() -> void:
+	_ground([], [Vector3(0, -3, 6)], Rect2(-12, -8, 24, 16))
+	var heroes := [["kozak", ""], ["serdiuk", "palash"], ["kharakternyk", "sabre"], ["haidamaka", "sabre"]]
+	for i in heroes.size():
+		var x := (i - (heroes.size() - 1) / 2.0) * 1.7
+		var f := _figure(heroes[i][0], Vector3(x, 0, 2.2), "idle", Vector3(x + 0.3, 0, 6.0), 0.3 + i * 0.13)
+		if heroes[i][1] != "":
+			f.equip(heroes[i][1])
+	var enemies := ["zholner", "luchnyk", "rotmistr", "kozak_rival", "kozak_rival_luk", "polkovnyk",
+		"tatar", "tatar_luk", "murza"]
+	for i in enemies.size():
+		var x := (i - (enemies.size() - 1) / 2.0) * 1.45
+		_figure(enemies[i], Vector3(x, 0, -0.6), "idle", Vector3(x - 0.2, 0, 4.0), 0.2 + i * 0.11)
 	hero = null
