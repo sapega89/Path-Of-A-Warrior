@@ -1,0 +1,24 @@
+shader_type spatial;
+// Ink outline around living figures: the back faces are pushed out along the normal
+// by a fixed number of pixels and drawn in one dark colour.
+render_mode unshaded, cull_front, shadows_disabled;
+
+uniform vec4 ink : source_color = vec4(0.169, 0.129, 0.11, 1.0);
+uniform float width_px = 2.2;
+
+void vertex() {
+	vec4 clip = PROJECTION_MATRIX * (MODELVIEW_MATRIX * vec4(VERTEX, 1.0));
+	vec3 n = mat3(MODELVIEW_MATRIX) * NORMAL;
+	vec2 dir = (PROJECTION_MATRIX * vec4(n, 0.0)).xy;
+	float len = length(dir);
+	if (len > 0.0001) {
+		dir /= len;
+	}
+	float scale = VIEWPORT_SIZE.y / 720.0;
+	clip.xy += dir * width_px * scale * 2.0 / VIEWPORT_SIZE * clip.w;
+	POSITION = clip;
+}
+
+void fragment() {
+	ALBEDO = ink.rgb;
+}
