@@ -10,6 +10,7 @@ const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Campaign := preload("res://scripts/core/campaign.gd")
 const Profile := preload("res://scripts/core/profile.gd")
 const MapSim := preload("res://scripts/sim/map_sim.gd")
+const AskDialog := preload("res://scripts/ui/ask_dialog.gd")
 const DONE_MARK := "  ✓"
 
 var campaign := Campaign.new()
@@ -18,7 +19,7 @@ var list: VBoxContainer
 var heading: Label
 var scroll: ScrollContainer
 var ok: Button  # under the description: accept the mission?
-var ask: ConfirmationDialog
+var ask: AskDialog
 ## 1 lords of the hero's place, 2 missions of a lord, 3 the description of a mission
 var level := 1
 var chapter := 0
@@ -57,10 +58,7 @@ func _ready() -> void:
 	back.text = "common.back"
 	back.pressed.connect(go_back)
 	col.add_child(back)
-	ask = ConfirmationDialog.new()
-	ask.name = "Ask"
-	ask.ok_button_text = "online.yes"
-	ask.cancel_button_text = "online.no"
+	ask = AskDialog.new()
 	ask.confirmed.connect(accept)
 	add_child(ask)
 	level = clampi(int(p.get("level", 1)), 1, 3)

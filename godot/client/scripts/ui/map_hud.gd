@@ -7,14 +7,17 @@ extends Control
 ## the top as HP or MP goes, with the value in the middle, and the two potions on the potion
 ## keys. Above the panel the skill bar (as in pyport): the five belt slots (keys Z X C V B) on
 ## the left with their counts, the five skills (keys 1-5) on the right, grey when not learned
-## or without the MP; the slot in use has a light rim. A click on a slot uses it. With the bar
-## the panel does not show the two potions (the belt shows all five). In the bottom-left corner
+## or without the MP; the slot in use has a light rim. A click on a slot uses it. Each slot is
+## labelled with its key or button for the device just used (scripts/ui/glyphs.gd: Z or the
+## d-pad up, 1 or X, a PlayStation shape), and not on touch, where the slots are tapped. With the
+## bar the panel does not show the two potions (the belt shows all five). In the bottom-left corner
 ## AUTO: brass while the auto-hunt is on, grey while off; a click toggles it. While someone talks
 ## on the map that corner is SKIP (pyport's left soft key): a click skips the talk. In the
 ## bottom-right corner PAUSE (pyport's soft key): a click pauses the game.
 ## The icons of the potions and the skills are the new art's (ItemSlot.icon), drawn smooth on
 ## a layer of their own over the plates, the counts and the keys on a layer over them.
 
+const Glyphs := preload("res://scripts/ui/glyphs.gd")
 const ItemSlot := preload("res://scripts/ui/item_slot.gd")
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const BALL := 35  # how full an orb is: 0..BALL
@@ -26,11 +29,9 @@ const ITEM := 28  # a potion on the panel
 const CELL := 23  # a slot of the bar: 1 px shared border and a 22 px icon
 const ICON := 22  # an icon in a slot of the bar
 const BAR_H := 24
-const BELT_KEYS := "ZXCVB"
 const AUTO_W := 48  # the AUTO corner
 const AUTO_H := 17
 const PAUSE_W := 48  # the PAUSE corner
-const SKILL_KEYS := "12345"
 
 var sim: RefCounted
 var kills_shown := 0  # counts up to the kills one a tick
@@ -168,8 +169,8 @@ func _draw_labels() -> void:
 		var slot: Array = sim.quick_slots[b]
 		if int(slot[0]) != 0 and int(slot[1]) > 1:
 			_text(str(int(slot[1])), at + Vector2(CELL - 1, BAR_H - 3) * k, 10 * k, UiTheme.TEXT, k, 1, _labels)
-		_key_label(BELT_KEYS[b], at, k)
-		_key_label(SKILL_KEYS[b], top + Vector2(slot_x(true, b), 0) * k, k)
+		_key_label(_label_of("belt_%d" % (b + 1)), at, k)
+		_key_label(_label_of("skill_%d" % (b + 1)), top + Vector2(slot_x(true, b), 0) * k, k)
 
 
 func _auto(view: Vector2, k: float) -> void:
@@ -237,8 +238,51 @@ func _bar(top: Vector2, k: float) -> void:
 			s != 0 and sim.hero.action == s)
 
 
-func _key_label(text: String, at: Vector2, k: float) -> void:
-	_text(text, at + Vector2(2.5, 8.5) * k, 8 * k, UiTheme.ACCENT, k, -1, _labels)
+## The label of an action's slot for the device just used.
+static func _label_of(action: String) -> Dictionary:
+	return Glyphs.short_of(action, InputSetup.device, InputSetup.pad_brand)
+
+
+## A slot's key in its top-left corner (Glyphs.short_of), in brass outlined in ink: a word, a
+## small d-pad with the arm to press lit, or a PlayStation button's shape; nothing for {}.
+func _key_label(label: Dictionary, at: Vector2, k: float) -> void:
+	if label.has("shape"):
+		_shape(str(label.shape), at + Vector2(5.5, 5.5) * k, 3.0 * k)
+	elif label.has("dpad"):
+		_dpad(label.dpad, at + Vector2(6.5, 6.5) * k, 5.0 * k)
+	elif label.has("text"):
+		_text(str(label.text), at + Vector2(2.5, 8.5) * k, 8 * k, UiTheme.ACCENT, k, -1, _labels)
+
+
+## A small d-pad of half-width r around c, outlined in ink: dark iron, the arm towards `dir` brass.
+func _dpad(dir: Vector2, c: Vector2, r: float) -> void:
+	var a := maxf(1.0, r * 0.36)  # half an arm's width
+	var bars := [Rect2(c - Vector2(r, a), Vector2(r, a) * 2), Rect2(c - Vector2(a, r), Vector2(a, r) * 2)]
+	for b: Rect2 in bars:
+		_labels.draw_rect(b.grow(maxf(1.0, r / 6.0)), UiTheme.INK)
+	for b: Rect2 in bars:
+		_labels.draw_rect(b, UiTheme.IRON)
+	var side := Vector2(-dir.y, dir.x)
+	_labels.draw_rect(Rect2(c + side * a + dir * a, Vector2.ZERO).expand(c - side * a + dir * r), UiTheme.ACCENT)
+
+
+## A PlayStation face button's sign of radius r around c, in brass outlined in ink.
+func _shape(shape: String, c: Vector2, r: float) -> void:
+	var w := maxf(1.5, r / 2.5)
+	for stroke in [[UiTheme.INK, w + 2.0], [UiTheme.ACCENT, w]]:
+		var color: Color = stroke[0]
+		var width: float = stroke[1]
+		match shape:
+			"cross":
+				for d in [Vector2(1, 1), Vector2(1, -1)]:
+					_labels.draw_line(c - d * r, c + d * r, color, width, true)
+			"circle":
+				_labels.draw_arc(c, r, 0, TAU, 16, color, width, true)
+			"square":
+				_labels.draw_rect(Rect2(c - Vector2(r, r), Vector2(r, r) * 2), color, false, width)
+			"triangle":
+				_labels.draw_polyline(PackedVector2Array([c + Vector2(0, -r), c + Vector2(r, r * 0.8),
+					c + Vector2(-r, r * 0.8), c + Vector2(0, -r)]), color, width, true)
 
 
 ## The bar's slot under a point of the screen: ["belt", 0..4], ["skill", 0..4], or [].

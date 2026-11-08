@@ -5,7 +5,8 @@ extends Control
 ## the hero at the bottom beside his; each box keeps its last line. A line typed out goes on
 ## by itself after 15 ticks; attack / accept / a click shows the whole line, or goes on at once.
 ## A picture page shows the story picture, then its text floats up over it a line at a time
-## (white in the middle of the screen, grey above and below it) and the picture goes; an
+## (white in the middle of the screen, grey above and below it, each on a dark backing so it
+## reads over the picture) and the picture goes; an
 ## ending played after its mission ends with the numbers of the game done floating up, and
 ## what the ending gave in a popup. These pages go on by themselves; a press does nothing there.
 ## SKIP (Q, F1, the pad's Back, the Skip button, back): on a talk of the opening, the end; on a
@@ -247,9 +248,21 @@ func _set_lines(new_lines: PackedStringArray) -> void:
 		label.add_theme_font_size_override("font_size", LINE_FONT)
 		label.add_theme_color_override("font_outline_color", Color.BLACK)
 		label.add_theme_constant_override("outline_size", 6)
-		label.set_anchors_preset(Control.PRESET_TOP_WIDE)
+		label.add_theme_stylebox_override("normal", line_backing())
+		label.set_anchors_preset(Control.PRESET_CENTER_TOP)  # as wide as its words
+		label.grow_horizontal = Control.GROW_DIRECTION_BOTH
 		label.visible = false
 		float_box.add_child(label)
+
+
+## The dark, half-clear box under a floating line.
+static func line_backing() -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0, 0, 0, 0.55)
+	sb.content_margin_left = 16
+	sb.content_margin_right = 16
+	sb.set_corner_radius_all(6)
+	return sb
 
 
 ## The y of floating line `i` on the original screen, or -1000 while it is not drawn (not up to
