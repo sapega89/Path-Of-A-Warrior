@@ -24,12 +24,13 @@ below, also when the code around it is still in the old style.
   length is known at run time (an inventory grid, a ranking), and then instances a small `.tscn`
   for one row or cell
 - When a screen is changed for more than a small fix, move it to a scene in the same PR
-- Screens extend the shared base screen (`BaseScreen`: back key, focus, title, hint line). Do not
-  write another `_unhandled_input` with `ui_cancel` → `Router.back()`; if the base does not exist
-  yet, create it first in its own PR
-- The hero's state is read and changed through one shared `GameState` autoload, which alone
-  saves it. Do not call `Profile.load_or_new` / `save` from screens (move an old screen over when
-  touching it)
+- Every screen extends `BaseScreen` (`scripts/screens/base_screen.gd`): it takes the back key.
+  A screen overrides `go_back()` when its back does more, `handles_back()` when the key is not
+  back, and `_screen_input()` for its other keys; it never writes its own `_unhandled_input`
+  with `ui_cancel`
+- The hero is read with `Profile.load_or_new(path)` and saved with `save(path)`, where `path`
+  is `BaseScreen.profile_path()` (the server's copy through `Cloud` when online, a test's file
+  otherwise); do not read `Router.params.profile_path` or write `user://` files by hand
 - Styles come from `theme.tres` and theme type variations, not from `add_theme_*_override` in code
 - Shared classes have a `class_name`; do not add `const X := preload("res://...gd")` for them
 - Calls go down, signals go up: a child node never reaches its parent or siblings by path;
@@ -46,7 +47,8 @@ below, also when the code around it is still in the old style.
   - a long `match` / `if` chain over message or action types becomes a table of handlers
   - the same code in a third place becomes a shared function, scene or base class
   - no code "for later": no unused options, parameters, layers or abstractions
-- Follow the official GDScript style guide; type every variable, parameter and return value
+- Follow the official GDScript style guide; type every variable, parameter and return value.
+  `gdformat` and `gdlint` (gdtoolkit 4.5.0, config `godot/client/gdlintrc`) run in CI
 - Names are ours and say what the thing does; comments explain what the code does now, not where
   it came from (no references to the original game's code or to `pyport`, no port markers)
 - Magic numbers become named constants or data in `data/*.json`
@@ -57,7 +59,9 @@ below, also when the code around it is still in the old style.
 
 - Every behaviour change or new screen comes with a test in `godot/client/tests/test_*.gd`
 - Before pushing: `godot --headless --path godot/client res://tests/runner.tscn` passes, and the
-  run adds no new `ERROR` lines to the log
+  run adds no new `ERROR` lines to the log; in `godot/client`:
+  `gdformat --check scripts server tests tools lab` and `gdlint scripts server tests tools lab`
+- `.uid` files are not committed
 - CI screenshots (`tools/shots.tscn`) must not change unless the change is meant to change them
 - Small PRs: one screen group or one module at a time; do not mix a refactor with a new feature
 - Behaviour changes the player asked for are documented in `godot/README.md`
