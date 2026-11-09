@@ -1,9 +1,9 @@
+class_name SettingsScreen
 extends Control
 ## Settings: language, music and sound volume, the game speed, the hit effects on the map (all
 ## of them, the screen shake, the vibration), fullscreen (desktop only), and Training
 ## (training_screen.gd) to take the training again (not over the mission's pause).
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const I18nScript := preload("res://scripts/core/i18n.gd")
 ## Language names are shown in their own language, not translated.
 const LANGUAGE_NAMES := {"en": "English", "uk": "Українська"}

@@ -3,12 +3,7 @@ extends "res://tests/test_case.gd"
 ## the shake and the flash fading, the rumble, the options; on the map (the mission screen) and
 ## in the arena of the lab (lab/combat_feel_lab.gd), which also runs by itself.
 
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const JavaRandom := preload("res://scripts/sim/java_random.gd")
-const CombatFeel := preload("res://scripts/world/combat_feel.gd")
 const SettingsScript := preload("res://scripts/core/settings.gd")
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
 
 
 ## An empty, open room with one swordsman standing below the hero, looking at him.

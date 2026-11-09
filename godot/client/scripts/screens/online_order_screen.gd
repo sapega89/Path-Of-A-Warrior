@@ -1,3 +1,4 @@
+class_name OnlineOrderScreen
 extends Control
 ## Multiplayer > Order (pyport's Order window): my order's name and its members (the leader
 ## first, then me, who is online, the others), with Leave Order ("Leave the order?"). Without
@@ -6,9 +7,6 @@ extends Control
 ## or 2-on-2 Together (side by side against two CPU fighters); Duel > 2-on-2 Order and Mission
 ## > Order Ally open the list for one of them (Router.params.pick, the OnlineClient invite
 ## mode). The battle opens its screen by itself and comes back here.
-
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const OnlineClient := preload("res://scripts/net/online_client.gd")
 
 var online: RefCounted
 var title: Label

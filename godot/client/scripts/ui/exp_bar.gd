@@ -1,3 +1,4 @@
+class_name ExpBar
 extends Control
 ## Draws the exp bar of the pages after a won mission (MapSim.exp_bars, scripts/sim/exp_bars.gd)
 ## in the new art: a dark hollow of 102 x 7 grid pixels with an iron rim and hard ends, what the

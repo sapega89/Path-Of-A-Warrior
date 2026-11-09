@@ -1,3 +1,4 @@
+class_name LoginScreen
 extends Control
 ## Login: the account the hero is kept under on the server (UserID 4-12 letters A-Z, password
 ## 4-12 digits), the same account for Live and multiplayer. The main menu opens it on Play,
@@ -8,10 +9,6 @@ extends Control
 ## (the main menu's play or new_game). Back returns there without logging in (to the main menu
 ## when params.must: the game menu opened it, which needs an account). The keys under the
 ## fields (scripts/ui/key_grid.gd) type with a gamepad; they show only while it is in use.
-
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Protocol := preload("res://scripts/net/protocol.gd")
-const KeyGrid := preload("res://scripts/ui/key_grid.gd")
 
 var user_id: LineEdit
 var password: LineEdit

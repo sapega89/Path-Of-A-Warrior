@@ -1,3 +1,4 @@
+class_name LiveBuyScreen
 extends Control
 ## Game menu > Trade > Buy Item, step by step: the category (Normal, Special, Rare Items), the kind
 ## (a grid of the things), the enchant level with the number of lots at each (Rare things have
@@ -5,12 +6,6 @@ extends Control
 ## full backpack it asks whether to put the thing in the Warehouse instead. The hero is saved
 ## after a buy. Back goes one step up.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
-const ItemSlot := preload("res://scripts/ui/item_slot.gd")
-const ItemGrid := preload("res://scripts/ui/item_grid.gd")
-const LiveClient := preload("res://scripts/net/live_client.gd")
 const CATEGORIES := ["live.normal", "live.special", "live.rare"]
 const LEVELS := 10
 

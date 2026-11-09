@@ -1,10 +1,9 @@
+class_name OnlineCharacterScreen
 extends Control
 ## Multiplayer > Character (pyport's Character menu): Records, Attributes, Skills,
 ## Exp/Fame/Gold, Change Quote, Display Name. Records, Attributes and Exp/Fame/Gold are read
 ## from the server and shown beside the menu; the others open their page.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const OnlineClient := preload("res://scripts/net/online_client.gd")
 ## Button name, text key, what it does: a page shown here or a screen and its params.
 const ITEMS := [
 	["Records", "online.records", "records"],

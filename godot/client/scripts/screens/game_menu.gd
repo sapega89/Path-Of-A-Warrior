@@ -1,3 +1,4 @@
+class_name GameMenu
 extends Control
 ## Game menu, the hero's game (Main menu > Continue, and after the opening of a new game), one
 ## column: the campaign (missions, management, blacksmith, visiting), the Live pages on the
@@ -13,12 +14,6 @@ extends Control
 ## while this menu or a multiplayer page is open. Router.params: profile_path, live and online
 ## (tests and screenshots) go on to the pages.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Visits := preload("res://scripts/core/visits.gd")
-const LiveClient := preload("res://scripts/net/live_client.gd")
-const LiveNews := preload("res://scripts/ui/live_news.gd")
-const OnlineSection := preload("res://scripts/ui/online_section.gd")
 const WIDTH := 460
 const LIST_HEIGHT := 600
 const GAP := 14

@@ -1,9 +1,5 @@
 extends "res://tests/test_case.gd"
 
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
-const HelpScreen := preload("res://scripts/screens/help_screen.gd")
-const AssignItems := preload("res://scripts/screens/assign_items_screen.gd")
-
 
 func test_pause_menu() -> void:
 	var old: Dictionary = Router.params
@@ -23,7 +19,7 @@ func test_pause_menu() -> void:
 	screen.sim.quick_slots[2] = [4, 1]
 	screen.pause_menu.open_items()
 	var items: Control = screen.pause_menu.settings
-	check(items is AssignItems, "Assign Items over it")
+	check(items is AssignItemsScreen, "Assign Items over it")
 	items.press_slot(2)
 	check(items.press_key(0), "slot 3 on the * key")
 	eq(int(screen.sim.quick_keys[0]), 2, "the mission's key changed at once")

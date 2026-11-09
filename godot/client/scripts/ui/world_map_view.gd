@@ -1,3 +1,4 @@
+class_name WorldMapView
 extends Control
 ## The world map of the campaign (scripts/core/world_map.gd): a button for each place, the
 ## ways between them, the hero's place lit and the places he can go to now marked. A place
@@ -6,8 +7,6 @@ extends Control
 
 signal place_chosen(id: int)
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const WorldMap := preload("res://scripts/core/world_map.gd")
 const NODE := 38.0  # a place's button, px
 const WON := Color("7fb069")
 const WAY := Color(0.6, 0.57, 0.65, 0.35)

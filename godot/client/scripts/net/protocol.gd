@@ -1,3 +1,4 @@
+class_name Protocol
 extends RefCounted
 ## What the game and its server say to each other: ENet over UDP, encrypted with DTLS, one
 ## Godot Dictionary per packet (var_to_bytes, never objects), on channel 0, reliable and in order.

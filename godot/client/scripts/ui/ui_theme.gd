@@ -1,3 +1,4 @@
+class_name UiTheme
 extends RefCounted
 ## The game's UI theme in the new art, built in code so it is easy to read and change.
 ## A grim look of dark iron and worn leather: soot-black plates, tarnished brass, the dried red

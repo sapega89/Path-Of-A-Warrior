@@ -1,14 +1,8 @@
+class_name MapViewer
 extends Control
 ## Walks the hero around the maps of the campaign in 3D, in the new art (MapArt). skill_3 /
 ## skill_4 (keys 3 / 4, gamepad LB / RB) switch to the previous / next map; the line at the top
 ## names the keys of the device in use.
-
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const MapArt := preload("res://scripts/world/map_art.gd")
-const Hero := preload("res://scripts/world/hero.gd")
-const FollowCamera := preload("res://scripts/world/follow_camera.gd")
-const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 
 var viewport: SubViewport
 var world: Node3D

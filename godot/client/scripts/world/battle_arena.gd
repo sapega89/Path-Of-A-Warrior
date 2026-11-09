@@ -1,3 +1,4 @@
+class_name BattleArena
 extends Node3D
 ## The field of a multiplayer battle in the new art: the steppe ground of the maps with a
 ## trodden strip where the fighters stand, and behind it one of four sceneries made of the
@@ -14,9 +15,6 @@ extends Node3D
 ## moon, and far away the land fades into the colour of the sky's horizon. The sky itself is painted
 ## behind the 3D
 ## view (sky_settings(): assets/art/shaders/story_sky.gdshader).
-
-const ArtKit := preload("res://scripts/art/art_kit.gd")
-const ArtGround := preload("res://scripts/art/art_ground.gd")
 
 ## The flat part of the ground: the fighters, the scenery and the camera's view of it.
 const PLAY := Rect2(-18, -9, 36, 21)

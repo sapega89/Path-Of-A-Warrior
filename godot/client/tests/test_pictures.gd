@@ -3,9 +3,6 @@ extends "res://tests/test_case.gd"
 ## the fighters of the multiplayer battles), the 15 story pictures, both with mipmaps and in a
 ## gold frame, and the screens that show them.
 
-const Pictures := preload("res://scripts/ui/pictures.gd")
-const Stories := preload("res://scripts/core/stories.gd")
-const ArtKit := preload("res://scripts/art/art_kit.gd")
 const SIDES := ["plain", "cossack", "crown", "horde", "hero", "upyr"]
 const SCREENS := [
 	"story_screen",

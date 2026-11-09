@@ -1,3 +1,4 @@
+class_name VisitingScreen
 extends Control
 ## Visiting: the generals the hero is friends with and their friendship points; one of them
 ## comes to visit. He greets the hero (portraits and the lines typed out), the hero picks a
@@ -7,12 +8,6 @@ extends Control
 ## A line typed out goes on by itself after 15 ticks, as pyport's; attack / accept shows the
 ## whole line, or goes on at once; back leaves the list.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Visits := preload("res://scripts/core/visits.gd")
-const Stories := preload("res://scripts/core/stories.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const Pictures := preload("res://scripts/ui/pictures.gd")
 const SCALE := 3
 const CHARS_PER_SECOND := 40.0
 ## Ticks a line shown whole stays before the talk goes on by itself.

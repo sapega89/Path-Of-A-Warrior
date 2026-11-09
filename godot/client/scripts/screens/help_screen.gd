@@ -1,3 +1,4 @@
+class_name HelpScreen
 extends Control
 ## Help, one for the whole game: the campaign's topics (Missions, Visiting, Blacksmith, Skills,
 ## Gear, Experience, Saving, Control; data/help.json), then the multiplayer's Duel and Online
@@ -5,7 +6,6 @@ extends Control
 ## keys, buttons and touch controls, on the map and in an online battle.
 ## Up / down pick a topic, left / right turn the page, back returns to the topics, then leaves.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const PATH := "res://data/help.json"
 const CONTROL_TOPIC := 7
 const CONTROL_PAGES := ["help.control_1", "help.control_2"]

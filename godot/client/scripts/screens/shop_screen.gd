@@ -1,3 +1,4 @@
+class_name ShopScreen
 extends Control
 ## A page of the Blacksmith (Router.params "mode"): the hero's gold over a grid of things.
 ## Buy: the shop's potions, scrolls and gears. Sell: the quick slots' potions, then the
@@ -7,10 +8,6 @@ extends Control
 ## one of them. Every change is saved at once. After Yes to Enchant or Combine a sparkle plays
 ## on the thing (on each of the three) for five frames of 120 ms, then comes the outcome.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
-const ItemSlot := preload("res://scripts/ui/item_slot.gd")
 const COLUMNS := 5
 const QUICK := 5
 ## The sparkle's frames in itemReinforce.png: x, y and the side of the square.

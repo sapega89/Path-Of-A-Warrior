@@ -1,3 +1,4 @@
+class_name CampScreen
 extends Control
 ## The stop between missions (scripts/world/camp_map.gd): the hero walks about the camp of
 ## his place, and each way on from there (one, two or three places, as the campaign goes) is a
@@ -14,21 +15,7 @@ extends Control
 ## the game menu, the world map, the main menu.
 ## Router.params: profile_path; first: true starts the first mission at once (a new game).
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Campaign := preload("res://scripts/core/campaign.gd")
-const WorldMap := preload("res://scripts/core/world_map.gd")
-const CampMap := preload("res://scripts/world/camp_map.gd")
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const MapArt := preload("res://scripts/world/map_art.gd")
-const Hero := preload("res://scripts/world/hero.gd")
-const MapPeople := preload("res://scripts/world/map_people.gd")
-const ArtFigure := preload("res://scripts/art/art_figure.gd")
-const Motion := preload("res://scripts/world/motion.gd")
-const FollowCamera := preload("res://scripts/world/follow_camera.gd")
-const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 const TALK_RANGE := 1.4  # tiles
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
 ## The arrow picture for a gap on the top, the right and the left side (arrow0..3: down,
 ## left, up, right).
 const ARROW_OF_SIDE := [2, 3, 1]
@@ -469,12 +456,12 @@ func _scenery(e: Dictionary, land: String) -> void:
 func _land_piece(what: String, at: Vector3, scale_by: float) -> void:
 	var node: Node3D
 	if what == "hut":
-		node = MapArt.ArtKit.prop(MapArt.CLUSTERS["hut"])
+		node = ArtKit.prop(MapArt.CLUSTERS["hut"])
 	else:
 		var spec: Array = MapArt.PROP.get(what, [])
 		if spec.is_empty():
 			return
-		node = MapArt.ArtKit.prop(spec[0], false)
+		node = ArtKit.prop(spec[0], false)
 		scale_by *= float(spec[1].x)
 	node.name = "Land%d" % world.get_child_count()
 	node.scale = Vector3.ONE * scale_by

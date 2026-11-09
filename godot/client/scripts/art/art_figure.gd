@@ -1,8 +1,7 @@
+class_name ArtFigure
 extends Node3D
 ## A person in the new art: the body from characters/<kind>.glb with its weapons, the
 ## shared clips, the painted material and the ink outline. The model faces +Z.
-
-const ArtKit := preload("res://scripts/art/art_kit.gd")
 
 var kind := ""
 var body: Node3D

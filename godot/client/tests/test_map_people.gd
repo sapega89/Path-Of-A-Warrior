@@ -2,13 +2,6 @@ extends "res://tests/test_case.gd"
 ## The people of a mission in the new art (scripts/world/map_people.gd, motion.gd): every action
 ## has a clip, the figures follow the simulation, the sides come from the generals.
 
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const MapPeople := preload("res://scripts/world/map_people.gd")
-const Motion := preload("res://scripts/world/motion.gd")
-const ArtKit := preload("res://scripts/art/art_kit.gd")
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
-
 
 func _sim() -> RefCounted:
 	return MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))

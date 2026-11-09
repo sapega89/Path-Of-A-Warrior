@@ -3,12 +3,6 @@ extends Control
 ## come with him (Profile.progress, 5 per mission won), and the generals the hero knows, with
 ## their friendship (Visits.generals). Visiting opens the visits from here.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Campaign := preload("res://scripts/core/campaign.gd")
-const Visits := preload("res://scripts/core/visits.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-
 var path: String = Profile.PATH
 var profile: RefCounted
 var campaign := Campaign.new()

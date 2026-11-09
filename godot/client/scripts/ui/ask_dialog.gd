@@ -1,3 +1,4 @@
+class_name AskDialog
 extends Control
 ## The game's own question (Yes / No) and notice (OK), in place of Godot's ConfirmationDialog and
 ## AcceptDialog, which have an English title bar ("Please Confirm..."), a close cross and the
@@ -13,7 +14,6 @@ extends Control
 signal confirmed
 signal canceled
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const WIDTH := 620
 const BUTTON_WIDTH := 200
 

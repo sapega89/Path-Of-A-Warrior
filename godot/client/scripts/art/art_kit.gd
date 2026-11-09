@@ -1,3 +1,4 @@
+class_name ArtKit
 extends RefCounted
 ## The new art: palette, materials and loaders for the models that
 ## godot/tools/art/build.py makes (people, weapons, shared clips, environment pieces).

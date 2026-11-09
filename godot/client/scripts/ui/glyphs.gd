@@ -1,3 +1,4 @@
+class_name Glyphs
 extends RefCounted
 ## The names of an action's keys and buttons, for the hints and the HUD, read from InputMap (so
 ## a key bound later is named as it is bound).

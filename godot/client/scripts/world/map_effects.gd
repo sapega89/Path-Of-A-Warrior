@@ -1,3 +1,4 @@
+class_name MapEffects
 extends Node3D
 ## The effects of a mission in the new art, made in code: the blows, skills, potions and
 ## scrolls MapSim shows, the fire on whoever burns, the auras of buffs, the blood of hits (and
@@ -9,11 +10,6 @@ extends Node3D
 ## Room-wide skills (Thunderstorm, Rain of Fire) strike at places that follow from the frame,
 ## the same each time.
 
-const MapPeople := preload("res://scripts/world/map_people.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const Motion := preload("res://scripts/world/motion.gd")
-const ArtKit := preload("res://scripts/art/art_kit.gd")
-const ArtEffects := preload("res://scripts/art/art_effects.gd")
 const LIGHT := preload("res://assets/art/shaders/fx_light.gdshader")
 const PUFF := preload("res://assets/art/shaders/fx_puff.gdshader")
 const BLOOD := preload("res://assets/art/shaders/fx_blood.gdshader")

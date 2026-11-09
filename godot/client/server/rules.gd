@@ -1,10 +1,8 @@
+class_name Rules
 extends RefCounted
 ## The numbers of the single-player game that the online game plays with (pyport
 ## pow_server/sp_rules.py): the heroes' stats, the soldiers, what a skill costs on the online
 ## game's 0..100 MP gauge and what it does, the rewards, and the shop's gear of a level.
-
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
 
 ## [HP, MP, ATK, DEF] of each face (0 Cossack, 1 Serdiuk, 2 Kharakternyk, 3 Haidamaka).
 const HERO_BASES: Array = Profile.HERO_BASES

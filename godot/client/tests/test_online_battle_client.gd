@@ -2,13 +2,9 @@ extends "res://tests/test_case.gd"
 ## A battle on this device (scripts/net/online_battle.gd) played to its end against the
 ## server's online game (server/online.gd) in this process.
 
-const OnlineBattle := preload("res://scripts/net/online_battle.gd")
-const OnlineClient := preload("res://scripts/net/online_client.gd")
 const ClientTests := preload("res://tests/test_online_client.gd")
 const OnlineTests := preload("res://tests/test_online_server.gd")
 const ServerTests := preload("res://tests/test_server.gd")
-const BattleScreen := preload("res://scripts/screens/online_battle_screen.gd")
-const BattleMotion := preload("res://scripts/world/battle_motion.gd")
 
 
 func _dir() -> String:
@@ -200,7 +196,7 @@ func test_the_battle_screen_shows_a_duel() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = BattleScreen.new()
+	var screen: Control = OnlineBattleScreen.new()
 	root.add_child(screen)
 	var b: RefCounted = c.battle
 	eq(screen.battle, b, "the client's battle")
@@ -272,7 +268,7 @@ func test_the_battle_screen_leaves_when_kicked() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = BattleScreen.new()
+	var screen: Control = OnlineBattleScreen.new()
 	root.add_child(screen)
 	c.on_push({"t": "kicked"})
 	screen._process(0.2)
@@ -299,7 +295,7 @@ func test_auto_battle_by_tab_f_or_back() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = BattleScreen.new()
+	var screen: Control = OnlineBattleScreen.new()
 	root.add_child(screen)
 	var back := InputEventJoypadButton.new()
 	back.button_index = JOY_BUTTON_BACK
@@ -327,7 +323,7 @@ func test_battle_hints_name_the_pad_after_the_pad() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = BattleScreen.new()
+	var screen: Control = OnlineBattleScreen.new()
 	root.add_child(screen)
 	var was: String = InputSetup.device
 	var states := {
@@ -374,7 +370,7 @@ func test_auto_corner() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = BattleScreen.new()
+	var screen: Control = OnlineBattleScreen.new()
 	root.add_child(screen)
 	var was: String = InputSetup.device
 	InputSetup.device = "keys"
@@ -393,7 +389,7 @@ func test_auto_corner() -> void:
 	screen.auto_button.pressed.emit()
 	check(c.battle.auto_battle, "a click turns it on")
 	eq(screen.auto_button.text, "AUTO", "on")
-	eq(screen.auto_button.get_theme_color("font_color"), BattleScreen.AUTO_ON, "gold")
+	eq(screen.auto_button.get_theme_color("font_color"), OnlineBattleScreen.AUTO_ON, "gold")
 	InputSetup.device = was
 	screen.free()
 	Router.params = old

@@ -1,11 +1,9 @@
+class_name LiveSafeScreen
 extends Control
 ## Game menu > Safe: gold between the hero (Local) and the Safe on the server. The arrow between
 ## the two says which way it goes, out of the Safe at first; it turns when pressed. The amount
 ## is typed in (no more than there is on that side) and OK moves it; the hero is saved then.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const LiveClient := preload("res://scripts/net/live_client.gd")
 const ARROWS := ["res://assets/original/ui/arrow1.png", "res://assets/original/ui/arrow3.png"]
 
 var live: RefCounted

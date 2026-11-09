@@ -3,9 +3,6 @@ extends SceneTree
 ## it back. Exit code 0 when it all worked.
 ##   godot --headless --path godot/client -s res://tools/net_check.gd -- HOST PORT CERT.crt
 
-const Protocol := preload("res://scripts/net/protocol.gd")
-const NetClient := preload("res://scripts/net/net_client.gd")
-
 
 func _init() -> void:
 	var a := OS.get_cmdline_user_args()

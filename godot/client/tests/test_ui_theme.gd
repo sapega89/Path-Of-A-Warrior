@@ -3,14 +3,6 @@ extends "res://tests/test_case.gd"
 ## fonts of the new art with their Cyrillic, plaques and panels, the backdrop, the coin, the
 ## HUD's orbs and plates, the exit arrows, the hero on the Gear page as a 3D figure.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const MapHud := preload("res://scripts/ui/map_hud.gd")
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
-const Gear := preload("res://scripts/screens/gear_screen.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
-const MapPeople := preload("res://scripts/world/map_people.gd")
-const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 const TEST_PATH := "user://test_ui_theme.json"
 
 
@@ -110,7 +102,7 @@ func test_the_hero_on_the_gear_page() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var gear: Control = Gear.new()
+	var gear: Control = GearScreen.new()
 	root.add_child(gear)
 	check(gear.figure != null, "a figure")
 	eq(gear.figure.kind, MapPeople.HEROES[2], "of his class")

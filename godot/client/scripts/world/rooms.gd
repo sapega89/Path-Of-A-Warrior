@@ -1,3 +1,4 @@
+class_name Rooms
 extends RefCounted
 ## The rooms of a map, as in the original: the map is a grid of 7x7-tile rooms
 ## shifted by one tile (room (rx, ry) covers tiles 1 + 7 rx .. 7 + 7 rx across and

@@ -7,10 +7,6 @@ extends Node
 ## muted and harder), saved as assets/art/story/e<n>.png.
 ## The numbers after -- paint only those pictures.
 
-const ArtKit := preload("res://scripts/art/art_kit.gd")
-const ArtFigure := preload("res://scripts/art/art_figure.gd")
-const ArtGround := preload("res://scripts/art/art_ground.gd")
-const ArtEffects := preload("res://scripts/art/art_effects.gd")
 const DIR := "res://assets/art/story/"
 const SIZE := Vector2i(1040, 800)  # painted at, then made smaller
 const OUT := Vector2i(520, 400)

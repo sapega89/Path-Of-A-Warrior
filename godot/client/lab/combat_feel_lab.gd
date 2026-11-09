@@ -12,22 +12,6 @@ extends Control
 ## and: H the panel, E all effects off / on (to compare), F2 a wave of swordsmen, F3 archers,
 ## F4 a general, F6 god mode, Esc quit.
 
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const MapArt := preload("res://scripts/world/map_art.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const Campaign := preload("res://scripts/core/campaign.gd")
-const Hero := preload("res://scripts/world/hero.gd")
-const FollowCamera := preload("res://scripts/world/follow_camera.gd")
-const MapPeople := preload("res://scripts/world/map_people.gd")
-const JavaRandom := preload("res://scripts/sim/java_random.gd")
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const MapHud := preload("res://scripts/ui/map_hud.gd")
-const Autopilot := preload("res://scripts/sim/autopilot.gd")
-const MapEffects := preload("res://scripts/world/map_effects.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const CombatFeel := preload("res://scripts/world/combat_feel.gd")
-const FeelPanel := preload("res://lab/feel_panel.gd")
-
 const LORD := 1
 const MISSION := 0
 const WAVE := 3  # swordsmen in a wave

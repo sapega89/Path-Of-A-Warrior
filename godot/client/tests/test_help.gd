@@ -1,13 +1,12 @@
 extends "res://tests/test_case.gd"
 
-const Help := preload("res://scripts/screens/help_screen.gd")
 const Keys := preload("res://scripts/core/input_setup.gd")
 
 
 func test_help_screen() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {}
-	var screen: Control = Help.new()
+	var screen: Control = HelpScreen.new()
 	root.add_child(screen)
 	eq(screen.topics.size(), 10, "eight of the campaign, two of the multiplayer")
 	eq(str(screen.list.get_child(0).text), "Missions", "the first")
@@ -17,9 +16,9 @@ func test_help_screen() -> void:
 	eq(screen.text.text, "The smith buys and sells things.", "its first page")
 	screen.turn_page(-1)
 	eq(screen.page, 5, "back from the first page to the last")
-	screen.open(Help.CONTROL_TOPIC)
+	screen.open(HelpScreen.CONTROL_TOPIC)
 	eq(
-		screen.pages_of(Help.CONTROL_TOPIC).size(),
+		screen.pages_of(HelpScreen.CONTROL_TOPIC).size(),
 		4,
 		"Control: this version's keys, on the map and online"
 	)
@@ -37,7 +36,7 @@ func test_help_screen() -> void:
 func test_multiplayer_topics_in_the_same_help() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {}
-	var screen: Control = Help.new()
+	var screen: Control = HelpScreen.new()
 	root.add_child(screen)
 	eq(
 		screen.topics.slice(8).map(func(t): return t.name),
@@ -46,7 +45,7 @@ func test_multiplayer_topics_in_the_same_help() -> void:
 	eq(screen.pages_of(8).size(), 18, "Duel")
 	eq(screen.pages_of(9).size(), 8, "Online Missions")
 	eq(
-		screen.pages_of(Help.CONTROL_TOPIC).slice(2),
+		screen.pages_of(HelpScreen.CONTROL_TOPIC).slice(2),
 		[tr("help.mp_control_1"), tr("help.mp_control_2")],
 		"Control: then the online battle's keys"
 	)

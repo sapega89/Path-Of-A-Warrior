@@ -4,11 +4,6 @@ extends "res://tests/test_case.gd"
 ## out, no losing, the hints for the device in use, Skip Training on the pause menu, and the way
 ## from New Game's opening story through the training to the game menu.
 
-const Training := preload("res://scripts/screens/training_screen.gd")
-const Tutorial := preload("res://scripts/ui/tutorial.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const NewGame := preload("res://scripts/screens/new_game_screen.gd")
 const PATH := "user://test_training.json"
 
 
@@ -17,7 +12,7 @@ func _training(difficulty := 1) -> Control:
 	p.difficulty = difficulty
 	p.save(PATH)
 	Router.params = {"profile_path": PATH}
-	var screen: Control = Training.new()
+	var screen: Control = TrainingScreen.new()
 	root.add_child(screen)
 	return screen
 

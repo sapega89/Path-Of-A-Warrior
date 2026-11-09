@@ -1,9 +1,8 @@
+class_name OnlineRankingScreen
 extends Control
 ## Multiplayer > Ranking (pyport's Ranking menu): Fame, Duel or Mission, the Top Rankers or the
 ## Ranks Near Me, three rows each, and my own rank under them. Duel and Mission rank by grade.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const OnlineClient := preload("res://scripts/net/online_client.gd")
 const CATEGORIES := [
 	["Fame", "online.rank_fame"], ["Duel", "online.rank_duel"], ["Mission", "online.rank_mission"]
 ]

@@ -1,3 +1,4 @@
+class_name CombatFeel
 extends RefCounted
 ## How a hit feels on the map (the mission screen, and the lab lab/combat_feel_lab.gd): the
 ## hitstop, the camera shake, the white flash, the recoil of the one hit, the flight of the one

@@ -3,12 +3,6 @@ extends "res://tests/test_case.gd"
 ## made from the hero, Options, the Character pages, the Ranking, the orders, the chat and the
 ## bots.
 
-const Online := preload("res://server/online.gd")
-const Rules := preload("res://server/rules.gd")
-const Accounts := preload("res://server/accounts.gd")
-const GameServer := preload("res://server/game_server.gd")
-const NetClient := preload("res://scripts/net/net_client.gd")
-const Protocol := preload("res://scripts/net/protocol.gd")
 const ServerTests := preload("res://tests/test_server.gd")
 
 ## A level-12 Kharakternyk with a short blade, three skills and all three on his keys.
@@ -39,8 +33,8 @@ func _accounts(d: String) -> Accounts:
 	return a
 
 
-func _online(d: String, a: Accounts) -> Online:
-	var o := Online.new(d, a)
+func _online(d: String, a: Accounts) -> OnlineServer:
+	var o := OnlineServer.new(d, a)
 	o.rng.seed = 3
 	o.clock = func() -> float: return 100.0
 	o.add_bots()
@@ -48,14 +42,14 @@ func _online(d: String, a: Accounts) -> Online:
 
 
 ## A session that keeps what is pushed to it.
-func _session(pushes: Array) -> Online.Session:
-	var s := Online.Session.new()
+func _session(pushes: Array) -> OnlineServer.Session:
+	var s := OnlineServer.Session.new()
 	s.send = func(m: Dictionary) -> void: pushes.append(m)
 	return s
 
 
 ## A player with an account, online.
-func _player(o: Online, uid: String, pushes: Array = []) -> Online.Session:
+func _player(o: OnlineServer, uid: String, pushes: Array = []) -> OnlineServer.Session:
 	if not o.accounts.has_account(uid):
 		o.accounts.create_account(uid, "1234")
 	var s := _session(pushes)
@@ -89,7 +83,7 @@ func test_character_comes_from_the_hero_on_the_server() -> void:
 	eq([c.atk, c.atk_bonus, c.def, c.mp, c.skills], [7, 1, 5, 10, {3: 1, 11: 1}])
 	a.hero_put("ANDREY", 0, 1, HERO)
 	for acc in [a, _accounts(d)]:  # in memory, then read back from the file
-		var o2 := Online.new(d, acc)
+		var o2 := OnlineServer.new(d, acc)
 		c = o2.character("ANDREY")
 		eq(
 			[
@@ -185,7 +179,7 @@ func test_options_name_quotes_and_slots() -> void:
 	)
 	var at := o.answer(s, "mp_attributes", {})
 	eq([at.hp, at.hp_bonus, at.atk, at.atk_bonus], [60, 5, 9, 6])
-	var again := Online.new(d, a)  # as after a restart
+	var again := OnlineServer.new(d, a)  # as after a restart
 	var p := again.profile("ANDREY")
 	eq(
 		[p.name, p.quote_win, p.quote_start, p.slots],
@@ -244,7 +238,7 @@ func test_orders() -> void:
 	check(o.same_order("ANDREY", "MARIA"))
 	check(o.answer(a, "order_leave", {}).ok)
 	eq(o.answer(a, "order_info", {}).name, "", "out of it")
-	eq(Online.new(d, o.accounts).order("WOLVES").members, ["MARIA"], "the next member leads")
+	eq(OnlineServer.new(d, o.accounts).order("WOLVES").members, ["MARIA"], "the next member leads")
 	b = _player(o, "MARIA")
 	o.answer(b, "order_leave", {})
 	check(o.order("WOLVES").is_empty(), "the last one out: the order is gone")
@@ -324,7 +318,7 @@ func test_a_bot_answers_a_private_message() -> void:
 	var a := _player(o, "ANDREY", got)
 	check(o.answer(a, "chat_send", {"channel": 2, "peer": "BLADE", "text": "hello"}).ok)
 	eq(got.size(), 2, "my message and the answer")
-	eq([got[1].id, got[1].name, Online.BOT_LINES.has(got[1].text)], ["BLADE", "Blade", true])
+	eq([got[1].id, got[1].name, OnlineServer.BOT_LINES.has(got[1].text)], ["BLADE", "Blade", true])
 	eq(o.unread("ANDREY"), [0, 1], "the answer waits in Blade's conversation")
 	eq(o.accounts.check_password("BLADE", ""), false, "nobody logs in as a bot")
 	ServerTests._rm(d)

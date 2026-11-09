@@ -1,3 +1,4 @@
+class_name JavaRandom
 extends RefCounted
 ## The game's random numbers: a 48-bit linear congruential generator (the same numbers as
 ## pyport/pow/midp/jrandom.py), so a fixed seed gives the same enemies and hits everywhere.

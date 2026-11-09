@@ -1,3 +1,4 @@
+class_name Visits
 extends RefCounted
 ## Visiting the generals: after a won mission the hero may invite one of the generals he is
 ## friends with (data/visit.json, made by godot/tools/import_original.py). The general greets
@@ -7,7 +8,6 @@ extends RefCounted
 ## With the Hetman's Seal in the backpack all 44 generals one can visit are on the list.
 
 const PATH := "res://data/visit.json"
-const Items := preload("res://scripts/core/items.gd")
 const SEAL := 504
 const FRIENDSHIP_PER_VISIT := 5
 const MAX_FRIENDSHIP := 100

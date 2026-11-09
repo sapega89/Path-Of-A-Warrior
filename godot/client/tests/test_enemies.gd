@@ -1,11 +1,6 @@
 # gdlint: disable=max-public-methods
 extends "res://tests/test_case.gd"
 
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const JavaRandom := preload("res://scripts/sim/java_random.gd")
-const MapEffects := preload("res://scripts/world/map_effects.gd")
-
 
 ## Mission 1 of lord 1 on map 1, the same random numbers every run.
 func _sim(enemies: bool = true) -> RefCounted:

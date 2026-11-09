@@ -1,3 +1,4 @@
+class_name GearScreen
 extends Control
 ## Gear: the hero as a 3D figure of the new art (his class, his blade) standing on a round
 ## stage in the middle of a panel, and the nine places around him (weapon, head, body, ...),
@@ -5,13 +6,6 @@ extends Control
 ## Picking a place takes off what is worn there into the backpack and opens the Inventory to
 ## choose what to wear instead. The line at the bottom says what the thing under the cursor is.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
-const ItemSlot := preload("res://scripts/ui/item_slot.gd")
-const ArtFigure := preload("res://scripts/art/art_figure.gd")
-const MapPeople := preload("res://scripts/world/map_people.gd")
-const ArtKit := preload("res://scripts/art/art_kit.gd")
 const SCALE := 2
 const BOARD := Vector2(158, 162)  # the panel, in grid pixels
 const FIGURE := Vector2i(200, 220)  # the picture of the hero, in screen pixels

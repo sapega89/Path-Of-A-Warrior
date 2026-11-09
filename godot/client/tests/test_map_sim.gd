@@ -1,8 +1,5 @@
 extends "res://tests/test_case.gd"
 
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-
 
 ## The map without enemies (the rooms open at once), for the walking tests.
 func _sim() -> RefCounted:

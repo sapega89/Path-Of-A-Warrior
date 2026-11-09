@@ -2,11 +2,6 @@ extends "res://tests/test_case.gd"
 ## Battles of the online game on the server (server/battle.gd, room.gd, loot.gd and the
 ## battle requests of online.gd), as pyport's pow_server/battle.py, loot.py and Room.
 
-const Online := preload("res://server/online.gd")
-const Battle := preload("res://server/battle.gd")
-const Rules := preload("res://server/rules.gd")
-const Loot := preload("res://server/loot.gd")
-const Accounts := preload("res://server/accounts.gd")
 const ServerTests := preload("res://tests/test_server.gd")
 const OnlineTests := preload("res://tests/test_online_server.gd")
 
@@ -17,10 +12,10 @@ func _dir() -> String:
 	return d
 
 
-func _online(d: String) -> Online:
+func _online(d: String) -> OnlineServer:
 	var a := Accounts.new(d.path_join("accounts"))
 	a.rounds = 20
-	var o := Online.new(d, a)
+	var o := OnlineServer.new(d, a)
 	o.rng.seed = 11
 	o.add_bots()
 	return o
@@ -28,18 +23,18 @@ func _online(d: String) -> Online:
 
 ## A player online, with what the server pushed to him in .inbox.
 class Player:
-	var s: Online.Session
+	var s: OnlineServer.Session
 	var inbox: Array = []
 	var seen: Array = []  # every push, in order
 
 
-func _player(o: Online, uid: String, hero := {}) -> Player:
+func _player(o: OnlineServer, uid: String, hero := {}) -> Player:
 	var p := Player.new()
 	if not o.accounts.has_account(uid):
 		o.accounts.create_account(uid, "1234")
 	if not hero.is_empty():
 		o.accounts.hero_put(uid, int(o.accounts.hero_get(uid).rev), 1, hero)
-	p.s = Online.Session.new()
+	p.s = OnlineServer.Session.new()
 	var inbox := p.inbox
 	p.s.send = func(m: Dictionary) -> void: inbox.append(m)
 	check(o.enter(p.s, uid).ok, "%s online" % uid)
@@ -48,7 +43,7 @@ func _player(o: Online, uid: String, hero := {}) -> Player:
 
 ## Plays the pushes as a client that never waits: ready after every result, the bot chooses
 ## its moves (action AUTO). Stops when nothing is left to answer.
-func _play(o: Online, players: Array, limit := 5000) -> void:
+func _play(o: OnlineServer, players: Array, limit := 5000) -> void:
 	var busy := true
 	while busy and limit > 0:
 		busy = false
@@ -321,7 +316,7 @@ func test_leaving_a_duel_loses_it() -> void:
 	eq(o.rooms.size(), 0)
 	o.match_wait = 0
 	o.answer(a.s, "mp_match", {"mode": 0})
-	var again := Online.Session.new()  # the same UserID from another device
+	var again := OnlineServer.Session.new()  # the same UserID from another device
 	o.enter(again, "ANDREY")
 	eq(int(o.online_part("ANDREY").losses), 2, "kicked out of a duel: lost")
 	eq(o.rooms.size(), 0)
@@ -345,8 +340,8 @@ func test_loot() -> void:
 		var it: Dictionary = got[id]
 		check(not str(it.name).is_empty(), "%d has a name" % id)
 		if id > 100 and id <= 200:
-			var rec := Loot.Items.info(id)
-			var v: int = it[Loot.Items.GEAR_STATS[int(rec.stat)]]
+			var rec := Items.info(id)
+			var v: int = it[Items.GEAR_STATS[int(rec.stat)]]
 			check(
 				v >= int(rec.bonus) and v <= int(rec.bonus) + int(rec.range),
 				"%d: base + 0..range" % id

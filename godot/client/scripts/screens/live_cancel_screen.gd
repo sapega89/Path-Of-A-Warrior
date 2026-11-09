@@ -1,14 +1,8 @@
+class_name LiveCancelScreen
 extends Control
 ## Game menu > Trade > Cancel Sale: this player's lots on sale (five at most). Picking one asks
 ## "Do you want to cancel sales of ...?"; Yes takes it off the market into the backpack, or into
 ## the Warehouse when the backpack is full. The hero is saved then.
-
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
-const ItemSlot := preload("res://scripts/ui/item_slot.gd")
-const ItemGrid := preload("res://scripts/ui/item_grid.gd")
-const LiveClient := preload("res://scripts/net/live_client.gd")
 
 var live: RefCounted
 var profile: RefCounted

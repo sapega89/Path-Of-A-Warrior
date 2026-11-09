@@ -1,4 +1,5 @@
 # gdlint: disable=max-public-methods
+class_name OnlineServer
 extends RefCounted
 # gdlint: disable=max-file-lines
 ## The online game on the server (pyport/pow_server/server.py, model.py, chat.py, orders.py):
@@ -54,12 +55,6 @@ extends RefCounted
 ##                                    -> err "no battle"; mp_exit leaves (a duel left is lost)
 ##   battle_end carries the rewards (also added to the character's purse here) and the loot,
 ##   which the client gives the hero.
-
-const Accounts := preload("res://server/accounts.gd")
-const Rules := preload("res://server/rules.gd")
-const Battle := preload("res://server/battle.gd")
-const Room := preload("res://server/room.gd")
-const Loot := preload("res://server/loot.gd")
 
 const EMPTY_SKILL := 99
 const SKILL_IDS := [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]

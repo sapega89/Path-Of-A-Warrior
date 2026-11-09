@@ -2,7 +2,6 @@ extends Control
 ## Management: the hero's pages between missions: Attributes, Skills, Gear, Inventory and
 ## Assign Items.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 ## Page button name, text key, screen (empty: not open yet).
 const PAGES := [
 	["Attributes", "management.attributes", "attributes"],

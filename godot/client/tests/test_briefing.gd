@@ -2,9 +2,7 @@ extends "res://tests/test_case.gd"
 ## Before a mission, as pyport: its description, "Do you want to accept this mission?", the
 ## briefing (the advice and the hero's answer), then the map.
 
-const Profile := preload("res://scripts/core/profile.gd")
 const RouterScript := preload("res://scripts/core/router.gd")
-const Briefing := preload("res://scripts/screens/briefing_screen.gd")
 const PATH := "user://test_briefing.json"
 
 
@@ -67,7 +65,7 @@ func test_briefing_lines_in_turn_then_random() -> void:
 
 
 func test_briefing_talk() -> void:
-	var lines := Briefing.talk(0, "Colonel Bairak", "Ann")
+	var lines := BriefingScreen.talk(0, "Colonel Bairak", "Ann")
 	eq(
 		lines[0],
 		# gdlint:ignore = max-line-length

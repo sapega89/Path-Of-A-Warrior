@@ -1,3 +1,4 @@
+class_name OnlineBattleScreen
 extends Control
 # gdlint: disable=max-file-lines
 ## The multiplayer battle in the new art, as the rest of the game: a field of the maps' ground
@@ -26,18 +27,6 @@ extends Control
 ## Router.params: online (the client, tests), profile_path (tests); the battle is the
 ## client's `battle`.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const OnlineClient := preload("res://scripts/net/online_client.gd")
-const OnlineBattle := preload("res://scripts/net/online_battle.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const ArtFigure := preload("res://scripts/art/art_figure.gd")
-const ArtHud := preload("res://scripts/art/art_hud.gd")
-const BattleArena := preload("res://scripts/world/battle_arena.gd")
-const BattleMotion := preload("res://scripts/world/battle_motion.gd")
-const MapEffects := preload("res://scripts/world/map_effects.gd")
-const MapPeople := preload("res://scripts/world/map_people.gd")
-const Pictures := preload("res://scripts/ui/pictures.gd")
-const ItemSlot := preload("res://scripts/ui/item_slot.gd")
 const SKY_SHADER := preload("res://assets/art/shaders/story_sky.gdshader")
 const MP := "res://assets/original/mp/"  # the battle's sounds
 ## World units per pixel of the battle (online_battle.gd's 240×320 field): one 27 px map tile

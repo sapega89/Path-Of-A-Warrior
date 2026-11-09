@@ -1,10 +1,5 @@
 extends "res://tests/test_case.gd"
 
-const Profile := preload("res://scripts/core/profile.gd")
-const Attributes := preload("res://scripts/screens/attributes_screen.gd")
-const Skills := preload("res://scripts/screens/skills_screen.gd")
-const Items := preload("res://scripts/core/items.gd")
-const AssignItems := preload("res://scripts/screens/assign_items_screen.gd")
 const TEST_PATH := "user://test_attributes.json"
 
 
@@ -29,7 +24,7 @@ func test_attributes_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = Attributes.new()
+	var screen: Control = AttributesScreen.new()
 	root.add_child(screen)
 	eq(screen.values["Points"].text, "5", "five points")
 	eq(screen.values["ATK"].text, "5+1", "own attack and the claymore's")
@@ -52,7 +47,7 @@ func test_attributes_screen() -> void:
 
 
 func test_skills_data() -> void:
-	var d: Dictionary = Skills.load_data()
+	var d: Dictionary = SkillsScreen.load_data()
 	eq(d["names"].size(), 19, "19 skills")
 	eq(d["names"][0], "Whirlwind Sabre", "the first skill")
 	eq(d["effects"][0], "Dash & Slash", "what it does")
@@ -66,7 +61,7 @@ func test_skills_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = Skills.new()
+	var screen: Control = SkillsScreen.new()
 	root.add_child(screen)
 	eq(screen.keys.size(), 5, "five skill keys")
 	eq(screen.describe(12), "Whirlwind Sabre / Lv1 Dash & Slash", "a learned skill")
@@ -119,7 +114,7 @@ func test_assign_items_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = AssignItems.new()
+	var screen: Control = AssignItemsScreen.new()
 	root.add_child(screen)
 	eq(
 		screen.marks.map(func(m): return m.text),

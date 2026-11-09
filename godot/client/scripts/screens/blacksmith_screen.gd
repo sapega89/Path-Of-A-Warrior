@@ -2,8 +2,6 @@ extends Control
 ## Blacksmith: Buy, Sell, Enchant and Combine, each a page of things (the shop screen).
 ## Combine with fewer than 3 things in the Inventory only says so, as pyport's popup 39.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
 ## Things the Inventory needs for Combine to open.
 const COMBINE_AT_LEAST := 3
 ## Page button name, text key, shop mode (empty: not open yet).

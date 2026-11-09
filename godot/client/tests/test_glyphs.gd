@@ -2,10 +2,7 @@ extends "res://tests/test_case.gd"
 ## The names of keys and buttons in the hints and the HUD (scripts/ui/glyphs.gd): read from the
 ## bindings, for the device just used and the maker of the pad.
 
-const Glyphs := preload("res://scripts/ui/glyphs.gd")
 const InputSetupScript := preload("res://scripts/core/input_setup.gd")
-const LoginScreen := preload("res://scripts/screens/login_screen.gd")
-const NewGame := preload("res://scripts/screens/new_game_screen.gd")
 
 
 func test_the_pad_maker_from_its_name() -> void:
@@ -159,7 +156,7 @@ func test_login_hint_while_typing() -> void:
 func test_normal_comes_first() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": "user://test_glyphs.json"}
-	var screen: Control = NewGame.new()
+	var screen: Control = NewGameScreen.new()
 	root.add_child(screen)
 	eq(str(screen.body.get_child(0).name), "Difficulty1", "Normal first")
 	eq(str(screen.body.get_child(1).name), "Difficulty0", "then Hard")

@@ -1,10 +1,5 @@
 extends "res://tests/test_case.gd"
 
-const Profile := preload("res://scripts/core/profile.gd")
-const Visits := preload("res://scripts/core/visits.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const Visiting := preload("res://scripts/screens/visiting_screen.gd")
 const TEST_PATH := "user://test_visits.json"
 
 
@@ -98,11 +93,11 @@ func test_visiting_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "seed": 1}
-	var screen: Control = Visiting.new()
+	var screen: Control = VisitingScreen.new()
 	root.add_child(screen)
 	eq(screen.list.get_child_count(), 3, "the header, Jan Gorski, Back")
 	screen.open(4)
-	eq(screen.step, Visiting.Step.GREETING, "he greets")
+	eq(screen.step, VisitingScreen.Step.GREETING, "he greets")
 	eq(screen.hero_says.visible_characters, 0, "typed out")
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
@@ -110,16 +105,16 @@ func test_visiting_screen() -> void:
 	screen._gui_input(click)  # a click beside the buttons, as OK
 	for i in 5:
 		screen.press()
-	eq(screen.step, Visiting.Step.TOPIC, "then the question")
+	eq(screen.step, VisitingScreen.Step.TOPIC, "then the question")
 	check(screen.topics.visible, "with four topics")
 	screen.choose(2)
-	eq(screen.step, Visiting.Step.TALK, "they talk")
+	eq(screen.step, VisitingScreen.Step.TALK, "they talk")
 	for i in 4:
 		screen.press()
-	eq(screen.step, Visiting.Step.DISCUSSED, "what was discussed")
+	eq(screen.step, VisitingScreen.Step.DISCUSSED, "what was discussed")
 	check(screen.text.text.contains("Tactics"), screen.text.text)
 	screen.press()
-	eq(screen.step, Visiting.Step.VISITED, "the visit's end")
+	eq(screen.step, VisitingScreen.Step.VISITED, "the visit's end")
 	check(
 		screen.text.text.begins_with("You visited Jan Gorski.\nFriendship:100%"), screen.text.text
 	)
@@ -128,7 +123,7 @@ func test_visiting_screen() -> void:
 	screen.free()
 	Router.params = old
 	Router.params = {"profile_path": TEST_PATH}
-	screen = Visiting.new()
+	screen = VisitingScreen.new()
 	root.add_child(screen)
 	eq(str(screen.list.get_child(0).name), "Notice", "not now")
 	screen.free()
@@ -144,9 +139,9 @@ func test_visiting_talk_goes_on_by_itself() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "seed": 1}
-	var screen: Control = Visiting.new()
+	var screen: Control = VisitingScreen.new()
 	root.add_child(screen)
-	var wait: float = Visiting.WAIT_TICKS * Settings.tick_seconds()
+	var wait: float = VisitingScreen.WAIT_TICKS * Settings.tick_seconds()
 	screen.open(4)
 	screen._process(100.0)
 	eq(screen.hero_says.visible_characters, -1, "the line typed out")
@@ -156,9 +151,9 @@ func test_visiting_talk_goes_on_by_itself() -> void:
 	eq([screen.line_at, screen.typing], [1, screen.general_says], "then the general's line")
 	for i in 10:
 		screen._process(100.0)
-	eq(screen.step, Visiting.Step.TOPIC, "the greeting over: the question")
+	eq(screen.step, VisitingScreen.Step.TOPIC, "the greeting over: the question")
 	screen._process(100.0)
-	eq(screen.step, Visiting.Step.TOPIC, "which waits for a topic")
+	eq(screen.step, VisitingScreen.Step.TOPIC, "which waits for a topic")
 	screen.choose(2)
 	screen.press()
 	eq(screen.typing.visible_characters, -1, "a press: the whole line")
@@ -166,9 +161,9 @@ func test_visiting_talk_goes_on_by_itself() -> void:
 	eq(screen.line_at, 1, "another: the next one at once")
 	for i in 10:
 		screen._process(100.0)
-	eq(screen.step, Visiting.Step.DISCUSSED, "the talk over: what was discussed")
+	eq(screen.step, VisitingScreen.Step.DISCUSSED, "the talk over: what was discussed")
 	screen._process(100.0)
-	eq(screen.step, Visiting.Step.DISCUSSED, "which waits for OK")
+	eq(screen.step, VisitingScreen.Step.DISCUSSED, "which waits for OK")
 	screen.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))

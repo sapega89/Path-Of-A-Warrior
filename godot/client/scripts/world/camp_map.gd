@@ -1,3 +1,4 @@
+class_name CampMap
 extends RefCounted
 ## The stop between missions: a small map in the format of data/maps/N.json (so MapBuilder
 ## builds it), made in code from the original tiles. Big trees close it in (three tiles deep

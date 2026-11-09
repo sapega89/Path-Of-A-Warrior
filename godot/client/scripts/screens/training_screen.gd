@@ -1,3 +1,4 @@
+class_name TrainingScreen
 extends "res://scripts/screens/mission_screen.gd"
 ## The training before the first mission (Andrey's choice: a training of its own, not hints in
 ## the mission): on the first mission's map a new hero walks, strikes, picks up loot, uses a
@@ -9,7 +10,6 @@ extends "res://scripts/screens/mission_screen.gd"
 ## from the Settings back to them.
 ## Params: {then (optional), then_params (optional, for `then`), profile_path (optional)}.
 
-const Tutorial := preload("res://scripts/ui/tutorial.gd")
 const LORD := 1
 const SEED := 7  # the same soldiers every time
 

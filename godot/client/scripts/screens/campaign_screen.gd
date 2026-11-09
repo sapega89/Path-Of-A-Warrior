@@ -1,3 +1,4 @@
+class_name CampaignScreen
 extends Control
 ## The campaign: the world map (scripts/ui/world_map_view.gd) with the hero's place and the
 ## places he can go to from there, then the missions of a place (a lord: one map). A place
@@ -10,13 +11,6 @@ extends Control
 ## returns to the camp.
 ## Back under the list goes a level up, as BACK does.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Campaign := preload("res://scripts/core/campaign.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const WorldMap := preload("res://scripts/core/world_map.gd")
-const WorldMapView := preload("res://scripts/ui/world_map_view.gd")
-const AskDialog := preload("res://scripts/ui/ask_dialog.gd")
 const DONE_MARK := "  ✓"
 
 var campaign := Campaign.new()

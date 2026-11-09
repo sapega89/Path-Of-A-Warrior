@@ -1,3 +1,4 @@
+class_name StoryScreen
 extends Control
 ## The story player, as pyport's: the opening of a new game and the endings.
 ## A talk page types its line into one of two boxes under "Prologue" / "Epilogue", as the
@@ -15,12 +16,6 @@ extends Control
 ## from Endings: no numbers, no popup), then (a screen to open when the story is over, instead
 ## of going back).
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Stories := preload("res://scripts/core/stories.gd")
-const Items := preload("res://scripts/core/items.gd")
-const Campaign := preload("res://scripts/core/campaign.gd")
-const Pictures := preload("res://scripts/ui/pictures.gd")
 const SCALE := 3
 const CHARS_PER_SECOND := 40.0
 ## Ticks a typed line stays before the story goes on by itself.

@@ -1,3 +1,4 @@
+class_name OnlineBattle
 extends RefCounted
 # gdlint: disable=max-file-lines
 ## One online battle on this device: what the server's pushes say (server/room.gd), played

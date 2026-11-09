@@ -1,19 +1,14 @@
+class_name GameServer
 extends RefCounted
 ## The game's server: accounts and the hero kept on the server (scripts/net/protocol.gd), Live
 ## (server/live.gd) and the online game (server/online.gd).
 ## start() binds the UDP port with DTLS, then poll() is called every frame (server/main.gd)
 ## or in a loop (tests).
 
-const Protocol := preload("res://scripts/net/protocol.gd")
-const Accounts := preload("res://server/accounts.gd")
-const Guard := preload("res://server/guard.gd")
-const Live := preload("res://server/live.gd")
-const Online := preload("res://server/online.gd")
-
 var host := ENetConnection.new()
 var accounts: Accounts
-var live: Live
-var online: Online
+var live: LiveServer
+var online: OnlineServer
 var guard := Guard.new()
 var running := false
 ## ENetPacketPeer -> Session.
@@ -30,8 +25,8 @@ class Session:
 	var address := ""
 	var user := ""
 	var meter: RefCounted
-	var live := Live.Session.new()
-	var online := Online.Session.new()
+	var live := LiveServer.Session.new()
+	var online := OnlineServer.Session.new()
 
 
 ## Error code of the bind / DTLS setup, OK when the server is listening.
@@ -44,8 +39,8 @@ func start(
 	max_peers := 256
 ) -> int:
 	accounts = Accounts.new(data_dir.path_join("accounts"))
-	live = Live.new(data_dir)
-	online = Online.new(data_dir, accounts)
+	live = LiveServer.new(data_dir)
+	online = OnlineServer.new(data_dir, accounts)
 	online.add_bots()
 	var err := host.create_host_bound(bind_address, port, max_peers, Protocol.CHANNELS)
 	if err != OK:

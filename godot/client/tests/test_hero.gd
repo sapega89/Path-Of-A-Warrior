@@ -1,8 +1,5 @@
 extends "res://tests/test_case.gd"
 
-const Hero := preload("res://scripts/world/hero.gd")
-const TouchControls := preload("res://scripts/ui/touch_controls.gd")
-
 
 func test_directions() -> void:
 	eq(Hero.dir8_of(Vector2.DOWN), 0, "down")

@@ -1,9 +1,9 @@
+class_name ItemGrid
 extends RefCounted
 ## A grid of item places (ItemSlot buttons), five a row, centred in a box that scrolls when it is
 ## higher than `height`; and the two buttons that switch Live's grids between the backpack and
 ## the Warehouse.
 
-const ItemSlot := preload("res://scripts/ui/item_slot.gd")
 const COLUMNS := 5
 
 

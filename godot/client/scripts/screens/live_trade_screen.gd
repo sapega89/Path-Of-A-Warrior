@@ -2,7 +2,6 @@ extends Control
 ## Game menu > Trade: Buy Item, Sell Item and Cancel Sale (the Live client in Router.params goes on
 ## to each page).
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 ## Page button name, text key, screen.
 const PAGES := [
 	["Buy", "live.buy", "live_buy"],

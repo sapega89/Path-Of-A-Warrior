@@ -1,8 +1,8 @@
+class_name ArtEffects
 extends RefCounted
 ## Effects in the new art, made in code: the sabre trail, sparks where steel meets steel,
 ## dust under feet, the campfire.
 
-const ArtKit := preload("res://scripts/art/art_kit.gd")
 const SLASH := preload("res://assets/art/shaders/slash.gdshader")
 
 

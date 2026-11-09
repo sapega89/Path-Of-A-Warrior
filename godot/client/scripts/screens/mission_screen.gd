@@ -1,3 +1,4 @@
+class_name MissionScreen
 extends Control
 ## A mission of the original campaign on its map. The game itself runs in MapSim
 ## (original pixels and ticks); this screen reads the input, ticks the simulation every
@@ -19,36 +20,12 @@ extends Control
 ## While someone talks on the map, SKIP (Q, F1, the pad's Back, a click on SKIP in AUTO's
 ## corner) skips the talk.
 
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const MapArt := preload("res://scripts/world/map_art.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const Campaign := preload("res://scripts/core/campaign.gd")
-const Hero := preload("res://scripts/world/hero.gd")
-const FollowCamera := preload("res://scripts/world/follow_camera.gd")
-const MapPeople := preload("res://scripts/world/map_people.gd")
-const JavaRandom := preload("res://scripts/sim/java_random.gd")
-const TouchControls := preload("res://scripts/ui/touch_controls.gd")
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const MapHud := preload("res://scripts/ui/map_hud.gd")
-const Autopilot := preload("res://scripts/sim/autopilot.gd")
-const MapEffects := preload("res://scripts/world/map_effects.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
-const MissionPause := preload("res://scripts/ui/mission_pause.gd")
-const ExpBar := preload("res://scripts/ui/exp_bar.gd")
-const Stories := preload("res://scripts/core/stories.gd")
-const WorldMap := preload("res://scripts/core/world_map.gd")
-const Rooms := preload("res://scripts/world/rooms.gd")
-const CombatFeel := preload("res://scripts/world/combat_feel.gd")
-const ItemSlot := preload("res://scripts/ui/item_slot.gd")
-
 ## One tick of the game, by the game speed of the settings (MapSim.TICK_MS at Med).
 var tick := MapSim.TICK_MS / 1000.0
 const GOLD_ICON := 12  # the heap of gold in the tool icons
 ## The exit arrow of the new art, pointing down: two brass chevrons in ink, the near one fainter.
 # gdlint:ignore = max-line-length
 const EXIT_ARROW := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 40"><g fill="#b89550" stroke="#0f0d0c" stroke-width="2.5" stroke-linejoin="round"><path d="M4 3 L24 17 L44 3 L44 11 L24 25 L4 11 Z" fill-opacity="0.55"/><path d="M4 15 L24 29 L44 15 L44 23 L24 37 L4 23 Z"/></g><path d="M24 30.5 l3 2.5 l-3 2.5 l-3 -2.5 z" fill="#7e241f"/></svg>'
-const Pictures := preload("res://scripts/ui/pictures.gd")
 
 var lord_id := 1
 var mission := 0

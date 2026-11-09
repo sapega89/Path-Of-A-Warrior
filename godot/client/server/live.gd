@@ -1,3 +1,4 @@
+class_name LiveServer
 extends RefCounted
 ## Live on the server (pyport/pow_server/live.py): a market where players sell things to each
 ## other (Trade), a Warehouse of WAREHOUSE places, a Safe for gold, the Sale List (what others
@@ -27,8 +28,6 @@ extends RefCounted
 ##   live_cancel {lot, to_warehouse}   -> serial
 ## Errors as in pyport: "gold" (not enough), "full", "gone" (sold meanwhile), "limit" (5 lots),
 ## "price", "not for sale", "own" (your own lot), "none" (empty list), "bad message".
-
-const Items := preload("res://scripts/core/items.gd")
 
 const TAX_PERCENT := 10
 const WAREHOUSE := 200

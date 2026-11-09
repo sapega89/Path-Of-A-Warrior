@@ -1,8 +1,6 @@
 extends Control
 ## Title: the game name and "press any key"; any key, button or tap opens the main menu.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-
 var _prompt: Label
 
 

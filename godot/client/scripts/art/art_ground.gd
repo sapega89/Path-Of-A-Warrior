@@ -1,9 +1,9 @@
+class_name ArtGround
 extends Node3D
 ## Ground for a scene in the new art: a grid painted by ground.gdshader. Vertex colours
 ## mark trodden paths (r) and green grass (g); outside the play area the land rises
 ## into low hills so the edge of the world is never seen. Grass tufts are one MultiMesh.
 
-const ArtKit := preload("res://scripts/art/art_kit.gd")
 const GROUND := preload("res://assets/art/shaders/ground.gdshader")
 
 var size := 64.0

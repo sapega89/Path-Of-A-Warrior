@@ -1,8 +1,6 @@
 extends "res://tests/test_case.gd"
 ## The mouse on a mission's map, as pyport's pointer: beside the hero walks, on him attacks.
 
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
-
 
 func _click(at: Vector2, button := MOUSE_BUTTON_LEFT, pressed := true) -> InputEventMouseButton:
 	var ev := InputEventMouseButton.new()

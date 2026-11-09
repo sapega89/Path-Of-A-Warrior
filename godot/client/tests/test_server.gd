@@ -1,12 +1,6 @@
 extends "res://tests/test_case.gd"
 ## The game's server: protocol checks, accounts, limits, and a real ENet + DTLS connection.
 
-const Protocol := preload("res://scripts/net/protocol.gd")
-const NetClient := preload("res://scripts/net/net_client.gd")
-const GameServer := preload("res://server/game_server.gd")
-const Accounts := preload("res://server/accounts.gd")
-const Guard := preload("res://server/guard.gd")
-const ServerMain := preload("res://server/main.gd")
 const PORT := 28399
 
 static var _pairs: Array = []  # [key, cert] made once for all the tests

@@ -1,3 +1,4 @@
+class_name FollowCamera
 extends Camera3D
 ## The 2.5D camera: fixed angle from above and behind. It follows a target node, or,
 ## when there is none, looks at a fixed point (the middle of the current room, as the

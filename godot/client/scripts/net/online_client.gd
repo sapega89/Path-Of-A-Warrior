@@ -1,4 +1,5 @@
 # gdlint: disable=max-public-methods
+class_name OnlineClient
 extends RefCounted
 ## The online game on this device, the client of server/online.gd: what the Multiplayer
 ## screens know of the player's online character, the Ranking, the order and the chat.
@@ -16,7 +17,6 @@ extends RefCounted
 ## until the screen is done with it, and the battle's messages go to it. on_battle() is
 ## called when one starts, to show it (the Cloud pushes the battle screen).
 
-const OnlineBattle := preload("res://scripts/net/online_battle.gd")
 const BATTLE_PUSHES := [
 	"room",
 	"stage_info",

@@ -1,11 +1,9 @@
+class_name EndingsScreen
 extends Control
 ## Endings: the 24 endings of the story, five to a page. One the hero has reached plays again
 ## (the story player, without its reward); one not reached yet is greyed and only says so.
 ## Up / down pick, left / right turn the page, back leaves.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Stories := preload("res://scripts/core/stories.gd")
 const PER_PAGE := 5
 
 var profile: RefCounted

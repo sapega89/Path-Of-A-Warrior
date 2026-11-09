@@ -1,3 +1,4 @@
+class_name Pictures
 extends RefCounted
 ## The pictures of the new art in the screens: the portraits (busts of the game's people painted
 ## in the shader of the maps, assets/art/portraits/<number>.png, made by tools/portraits.tscn)

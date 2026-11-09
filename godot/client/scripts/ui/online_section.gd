@@ -1,3 +1,4 @@
+class_name OnlineSection
 extends VBoxContainer
 ## The multiplayer part of the game menu, under the line of the character: Duel, Online Missions,
 ## Character, Ranking, Order,
@@ -8,8 +9,6 @@ extends VBoxContainer
 ## shows the messages waiting (order and private). Another device taking the player online
 ## ("kicked") closes them. leave() takes the player off the online game.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const OnlineClient := preload("res://scripts/net/online_client.gd")
 ## Button name, text key, screen and the kind for that screen.
 const PAGES := [
 	["Duel", "online.duel", "online_battles", "duel"],

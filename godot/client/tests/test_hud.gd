@@ -1,9 +1,5 @@
 extends "res://tests/test_case.gd"
 
-const MapHud := preload("res://scripts/ui/map_hud.gd")
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-
 
 func test_ball_fill() -> void:
 	eq(MapHud._fill(30, 30), 35, "full")

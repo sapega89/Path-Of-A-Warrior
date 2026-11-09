@@ -5,16 +5,9 @@ extends "res://tests/test_case.gd"
 ## upyr, the portraits on the plates, the chevron over the target, the blade's trail and the
 ## blood of a hit.
 
-const OnlineBattle := preload("res://scripts/net/online_battle.gd")
 const ClientTests := preload("res://tests/test_online_client.gd")
 const OnlineTests := preload("res://tests/test_online_server.gd")
 const ServerTests := preload("res://tests/test_server.gd")
-const BattleScreen := preload("res://scripts/screens/online_battle_screen.gd")
-const BattleMotion := preload("res://scripts/world/battle_motion.gd")
-const BattleArena := preload("res://scripts/world/battle_arena.gd")
-const MapPeople := preload("res://scripts/world/map_people.gd")
-const Pictures := preload("res://scripts/ui/pictures.gd")
-const ArtKit := preload("res://scripts/art/art_kit.gd")
 
 
 func _dir() -> String:
@@ -137,7 +130,7 @@ func test_a_mission_on_the_screen() -> void:
 	var c: RefCounted = got[0]
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": String(got[1]).path_join("hero.json")}
-	var screen: Control = BattleScreen.new()
+	var screen: Control = OnlineBattleScreen.new()
 	root.add_child(screen)
 	screen.size = Vector2(1280, 720)
 	screen.set_process(false)
@@ -190,7 +183,7 @@ func test_a_mission_on_the_screen() -> void:
 								screen.marker.position.distance_to(
 									(
 										screen.bodies[t].position
-										+ Vector3(0, BattleScreen.MARKER_UP, 0)
+										+ Vector3(0, OnlineBattleScreen.MARKER_UP, 0)
 									)
 								)
 								< 0.01

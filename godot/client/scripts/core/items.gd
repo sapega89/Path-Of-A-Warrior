@@ -1,3 +1,4 @@
+class_name Items
 extends RefCounted
 ## The things the hero carries: gear (ids 101..300), treasures (301..500) and rare things
 ## (501..), read from data/items.json. A carried thing is a Dictionary {id, attack, defense,

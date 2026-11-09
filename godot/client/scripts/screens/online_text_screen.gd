@@ -1,3 +1,4 @@
+class_name OnlineTextScreen
 extends Control
 ## A line to type for the online game (Router.params.kind):
 ##   name          Display Name: 1-8 letters and digits ("Are you sure?" first)
@@ -9,9 +10,6 @@ extends Control
 ## OK sends it; the server's "not acceptable" or "name exists" are shown under it. Done, the
 ## screen goes back (peer: on to the conversation; a battle opens its screen by itself).
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const OnlineClient := preload("res://scripts/net/online_client.gd")
-const Protocol := preload("res://scripts/net/protocol.gd")
 const INVITES := {
 	"challenge1": OnlineClient.CHALLENGE_1,
 	"challenge2": OnlineClient.CHALLENGE_2,

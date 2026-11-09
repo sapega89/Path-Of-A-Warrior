@@ -3,16 +3,9 @@ extends "res://tests/test_case.gd"
 ## Invite An Ally lines, the Order's members, invitations, and the rewards of a battle going to
 ## the hero, against the server's online game (server/online.gd) in this process.
 
-const OnlineBattle := preload("res://scripts/net/online_battle.gd")
-const OnlineClient := preload("res://scripts/net/online_client.gd")
-const Profile := preload("res://scripts/core/profile.gd")
 const ClientTests := preload("res://tests/test_online_client.gd")
 const OnlineTests := preload("res://tests/test_online_server.gd")
 const ServerTests := preload("res://tests/test_server.gd")
-const BattlesScreen := preload("res://scripts/screens/online_battles_screen.gd")
-const TextScreen := preload("res://scripts/screens/online_text_screen.gd")
-const OrderScreen := preload("res://scripts/screens/online_order_screen.gd")
-const BattleScreen := preload("res://scripts/screens/online_battle_screen.gd")
 
 
 func _dir() -> String:
@@ -43,7 +36,7 @@ func test_duel_waits_for_an_opponent() -> void:
 	var a: RefCounted = _player(net, "ANDREY", started)
 	var m: RefCounted = _player(net, "MARIA", started)
 	var old: Dictionary = Router.params
-	var menu := _screen(BattlesScreen, {"online": a, "kind": "duel"})
+	var menu := _screen(OnlineBattlesScreen, {"online": a, "kind": "duel"})
 	eq(
 		menu.buttons.map(func(b): return b.text),
 		[
@@ -70,7 +63,7 @@ func test_duel_waits_for_an_opponent() -> void:
 		[0, "MARIA", "ANDREY", false]
 	)
 	menu.free()
-	menu = _screen(BattlesScreen, {"online": a, "kind": "mission"})
+	menu = _screen(OnlineBattlesScreen, {"online": a, "kind": "mission"})
 	eq(menu.buttons.map(func(b): return str(b.name)), ["Solo", "Ally", "Order"])
 	Router.params = old
 	menu.free()
@@ -102,7 +95,7 @@ func test_challenges_and_invitations() -> void:
 	var a: RefCounted = _player(net, "ANDREY", started)
 	var m: RefCounted = _player(net, "MARIA", started)
 	var old: Dictionary = Router.params
-	var text := _screen(TextScreen, {"online": a, "kind": "challenge1"})
+	var text := _screen(OnlineTextScreen, {"online": a, "kind": "challenge1"})
 	text.fields[0].text = "andrey"
 	text._keep(text.fields[0], text.fields[0].text)
 	text.submit()
@@ -121,7 +114,7 @@ func test_challenges_and_invitations() -> void:
 	a.battle_request({"t": "mp_exit"})  # Exit Battle
 	a.battle_over()
 	net.o.online_part("MARIA").invitation = 0
-	text = _screen(TextScreen, {"online": a, "kind": "ally"})
+	text = _screen(OnlineTextScreen, {"online": a, "kind": "ally"})
 	text.fields[0].text = "MARIA"
 	text.submit()
 	eq(text.info.text, tr("online.err_denied"), "Maria denies invitations")
@@ -147,7 +140,7 @@ func test_order_members_into_a_battle() -> void:
 	a.order_create("WOLVES", func(_e): pass)
 	m.order_join("WOLVES", func(_e): pass)
 	var old: Dictionary = Router.params
-	var order := _screen(OrderScreen, {"online": a, "pick": OnlineClient.TOGETHER})
+	var order := _screen(OnlineOrderScreen, {"online": a, "pick": OnlineClient.TOGETHER})
 	eq(order.info.text, tr("online.pick_together"))
 	var buttons: Array = order.list.get_children()
 	eq(buttons.map(func(b): return b.disabled), [true, false], "not me")
@@ -174,7 +167,7 @@ func test_the_rewards_go_to_the_hero() -> void:
 	p.gold = 100
 	p.save(hero)
 	var old: Dictionary = Router.params
-	var screen := _screen(BattleScreen, {"online": a, "profile_path": hero})
+	var screen := _screen(OnlineBattleScreen, {"online": a, "profile_path": hero})
 	var b: RefCounted = a.battle
 	b.on_push(
 		{
@@ -213,7 +206,7 @@ func test_the_rewards_go_to_the_hero() -> void:
 	for i in p.backpack.size():
 		p.backpack[i] = {"id": 105, "attack": 0, "defense": 0, "hp": 0, "mp": 0, "enchant": 0}
 	p.save(hero)
-	screen = _screen(BattleScreen, {"online": a, "profile_path": hero})
+	screen = _screen(OnlineBattleScreen, {"online": a, "profile_path": hero})
 	a.battle.on_push(
 		{
 			"t": "battle_end",

@@ -17,10 +17,6 @@ extends Node
 ## over the same logged-in connection (request()); the server's pushes go to the online game.
 ## Quit (or the window closed) waits up to FLUSH_MS for the last save to reach the server.
 
-const CloudSync := preload("res://scripts/net/cloud_sync.gd")
-const LiveClient := preload("res://scripts/net/live_client.gd")
-const OnlineClient := preload("res://scripts/net/online_client.gd")
-const Protocol := preload("res://scripts/net/protocol.gd")
 const ACCOUNT_PATH := "user://account.cfg"  # an older version's, removed at the start
 const LEGACY_PATH := "user://hero.json"
 const FLUSH_MS := 3000

@@ -1,10 +1,5 @@
 extends "res://tests/test_case.gd"
 
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const Rooms := preload("res://scripts/world/rooms.gd")
-const Campaign := preload("res://scripts/core/campaign.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-
 
 func test_map_1_rooms() -> void:
 	var r: RefCounted = Rooms.new(MapBuilder.load_map(1), 0)

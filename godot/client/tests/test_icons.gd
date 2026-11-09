@@ -3,12 +3,6 @@ extends "res://tests/test_case.gd"
 ## scripts/ui/item_slot.gd): every thing and every skill has one, drawn, smooth when small;
 ## the HUD and the things on the ground show them too.
 
-const ItemSlot := preload("res://scripts/ui/item_slot.gd")
-const Items := preload("res://scripts/core/items.gd")
-const MapHud := preload("res://scripts/ui/map_hud.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
-
 
 ## How much of an icon is painted (0..1).
 func _painted(t: Texture2D) -> float:

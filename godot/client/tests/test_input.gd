@@ -1,10 +1,6 @@
 extends "res://tests/test_case.gd"
 
 const InputSetupScript := preload("res://scripts/core/input_setup.gd")
-const Offline := preload("res://scripts/screens/offline_screen.gd")
-const MapViewer := preload("res://scripts/screens/map_viewer.gd")
-const Help := preload("res://scripts/screens/help_screen.gd")
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
 
 
 func test_actions_have_keys_and_pad() -> void:
@@ -91,7 +87,7 @@ func test_hints_name_the_device_last_used() -> void:
 func test_offline_screen_and_map_viewer_follow_the_device() -> void:
 	var was: String = InputSetup.device
 	InputSetup.device = "keys"
-	var offline: Control = Offline.new()
+	var offline: Control = OfflineScreen.new()
 	root.add_child(offline)
 	check(
 		offline.controls_hint().ends_with("Enter: try again"),
@@ -131,7 +127,7 @@ func test_right_click_is_back() -> void:
 	check(not InputSetupScript.is_back_click(left), "not the left button")
 	var old: Dictionary = Router.params
 	Router.params = {}
-	var help: Control = Help.new()
+	var help: Control = HelpScreen.new()
 	root.add_child(help)
 	help.open(2)
 	help.get_viewport().push_input(_right_click())
@@ -183,7 +179,7 @@ func test_keyboard_as_pyport() -> void:
 	check(not InputSetupScript.is_back_key(_key_press(KEY_ESCAPE)), "(Esc is ui_cancel itself)")
 	var old: Dictionary = Router.params
 	Router.params = {}
-	var help: Control = Help.new()
+	var help: Control = HelpScreen.new()
 	root.add_child(help)
 	help.open(2)
 	help.get_viewport().push_input(_key_press(KEY_BACKSPACE))
@@ -210,7 +206,7 @@ func test_phone_back_button() -> void:
 	)
 	var old: Dictionary = Router.params
 	Router.params = {}
-	var help: Control = Help.new()
+	var help: Control = HelpScreen.new()
 	root.add_child(help)
 	help.open(2)
 	InputSetup._notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)

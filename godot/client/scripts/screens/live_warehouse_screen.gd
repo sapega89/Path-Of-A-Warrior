@@ -1,14 +1,8 @@
+class_name LiveWarehouseScreen
 extends Control
 ## Game menu > Warehouse: the hero's backpack or the Warehouse on the server (200 places), switched
 ## by the two buttons above the grid. Picking a thing moves it to the other one (into the
 ## first free place of the backpack); the hero is saved after every move.
-
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
-const ItemSlot := preload("res://scripts/ui/item_slot.gd")
-const ItemGrid := preload("res://scripts/ui/item_grid.gd")
-const LiveClient := preload("res://scripts/net/live_client.gd")
 
 var live: RefCounted
 var profile: RefCounted

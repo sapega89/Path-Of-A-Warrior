@@ -1,3 +1,4 @@
+class_name OnlineBattlesScreen
 extends Control
 ## Multiplayer > Duel or Mission (Router.params.kind "duel" / "mission"): the ways into a
 ## battle. Duel: 1-on-1 Duel and 2-on-2 Duel (an opponent of about my level, else the CPU),
@@ -7,8 +8,6 @@ extends Control
 ## for opponent..." with Cancel. The battle screen opens by itself when the battle starts
 ## (OnlineClient.on_battle) and comes back here after it.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const OnlineClient := preload("res://scripts/net/online_client.gd")
 ## Button name, text key, what it does: ["find", mode] / ["type", text screen kind] /
 ## ["order", invite mode].
 const CHOICES := {

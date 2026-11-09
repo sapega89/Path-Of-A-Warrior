@@ -1,3 +1,4 @@
+class_name BriefingScreen
 extends Control
 ## The briefing of an accepted mission: the one who gives it (the mission's portrait, at the
 ## top) advises the hero and the hero (at the bottom) answers. Each line is typed out into its
@@ -8,12 +9,6 @@ extends Control
 ## Params: lord, mission, line (the advice's line of talk.json "briefing", the hero answers
 ## with the next one), profile_path.
 
-const Profile := preload("res://scripts/core/profile.gd")
-const Campaign := preload("res://scripts/core/campaign.gd")
-const Stories := preload("res://scripts/core/stories.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Pictures := preload("res://scripts/ui/pictures.gd")
 const SCALE := 3
 const CHARS_PER_SECOND := 40.0
 ## Ticks a typed line stays before the next one, and after a press that showed it whole.

@@ -1,3 +1,4 @@
+class_name MapHud
 extends Control
 ## The HUD of a mission's map in the new art, laid out on the original 240x320 grid at a
 ## whole-number scale (so the places to click stay where they were) and drawn smooth: the
@@ -17,9 +18,6 @@ extends Control
 ## The icons of the potions and the skills are the new art's (ItemSlot.icon), drawn smooth on
 ## a layer of their own over the plates, the counts and the keys on a layer over them.
 
-const Glyphs := preload("res://scripts/ui/glyphs.gd")
-const ItemSlot := preload("res://scripts/ui/item_slot.gd")
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const BALL := 35  # how full an orb is: 0..BALL
 const ORB_X := [26, 214]  # the orbs' middles in the 240 px wide panel
 const ORB_Y := 33

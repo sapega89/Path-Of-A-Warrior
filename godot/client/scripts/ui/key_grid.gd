@@ -1,3 +1,4 @@
+class_name KeyGrid
 extends VBoxContainer
 ## An on-screen keyboard, so that a gamepad (or touch, or the mouse) can type too: rows of keys
 ## that type into a text field. The keys are buttons, so the d-pad moves between them and A (or
@@ -7,7 +8,6 @@ extends VBoxContainer
 ## The keys show only while the gamepad is in use (InputSetup.device "pad"): a PC has its
 ## keyboard and a phone its own on-screen one when the field is tapped.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const BACK := "⌫"
 const OK := "OK"
 const KEY_SIZE := Vector2(48, 44)

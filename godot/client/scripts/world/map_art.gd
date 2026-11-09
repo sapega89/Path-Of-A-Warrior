@@ -1,3 +1,4 @@
+class_name MapArt
 extends "res://scripts/world/map_builder.gd"
 ## A map of the campaign in the new art, from the same data as MapBuilder (data/maps/N.json),
 ## with the same cells, collision and breakable objects:
@@ -19,8 +20,6 @@ extends "res://scripts/world/map_builder.gd"
 ##   around       the land goes on past the edges and rises into low hills, with grass tufts.
 ## The simulation does not see any of this: it keeps the original cells.
 
-const ArtKit := preload("res://scripts/art/art_kit.gd")
-const ArtEffects := preload("res://scripts/art/art_effects.gd")
 const GROUND_SHADER := preload("res://assets/art/shaders/map_ground.gdshader")
 const WATER_SHADER := preload("res://assets/art/shaders/water.gdshader")
 const TILES_PATH := "res://assets/art/tiles.json"

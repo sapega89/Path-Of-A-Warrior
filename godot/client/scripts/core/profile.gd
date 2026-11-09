@@ -1,4 +1,5 @@
 # gdlint: disable=max-public-methods
+class_name Profile
 extends RefCounted
 ## The hero between missions: level, exp, gold, stats, skills, gear and backpack, quick slots,
 ## the friendship of the generals and the missions done. Kept in user://hero.json. A mission
@@ -8,7 +9,6 @@ extends RefCounted
 
 const PATH := "user://hero.json"
 const CAMPAIGN_PATH := "res://data/campaign.json"
-const Items := preload("res://scripts/core/items.gd")
 ## A new hero: HP, MP, attack, defence, and the free stat points.
 const BASE_HP := 30
 const BASE_MP := 10

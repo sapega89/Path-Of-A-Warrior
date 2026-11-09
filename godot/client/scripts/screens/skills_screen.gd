@@ -1,3 +1,4 @@
+class_name SkillsScreen
 extends Control
 ## Skills: the five skill keys and the skills by group (MOVE, HEAL, PASV, FWD, NEAR, RANGE,
 ## WHOLE). A learned skill has its coloured icon, one not yet learned its grey icon.
@@ -6,10 +7,6 @@ extends Control
 ## pyport): name and level, what it is, MP and what it does now and at the next level.
 ## Every change is saved at once.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const ItemSlot := preload("res://scripts/ui/item_slot.gd")
-const SkillCard := preload("res://scripts/core/skill_card.gd")
 const SKILLS_PATH := "res://data/skills.json"
 const KEY_COUNT := 5
 

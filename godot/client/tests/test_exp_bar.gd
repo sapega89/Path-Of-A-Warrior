@@ -2,11 +2,6 @@ extends "res://tests/test_case.gd"
 ## The exp bar of the pages after a won mission (pyport's draw_exp_bar): what the hero had,
 ## what the mission gives growing 4 px a tick, a level up at the end of the bar.
 
-const Profile := preload("res://scripts/core/profile.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const ExpBars := preload("res://scripts/sim/exp_bars.gd")
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
-
 
 func test_the_bar_grows_and_goes_up_a_level() -> void:
 	var bar: RefCounted = ExpBars.new()

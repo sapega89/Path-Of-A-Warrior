@@ -1,3 +1,4 @@
+class_name Tutorial
 extends Control
 ## The training's steps (scripts/screens/training_screen.gd), one hint at a time at the top of
 ## the map, under the clock. A step waits for what it asks, then the next one starts by itself:
@@ -15,8 +16,6 @@ extends Control
 ## The hero cannot lose here: below a quarter of his HP he is healed to half.
 
 signal finished
-
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 
 enum Step { MOVE, ATTACK, LOOT, SKILL, POTION, AUTO, EXIT, PAUSE, DONE }
 const KEYS := [

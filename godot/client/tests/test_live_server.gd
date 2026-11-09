@@ -1,11 +1,6 @@
 extends "res://tests/test_case.gd"
 ## Live on the server (server/live.gd): Safe, Warehouse, Trade, as pyport's pow_server/live.py.
 
-const Live := preload("res://server/live.gd")
-const GameServer := preload("res://server/game_server.gd")
-const Accounts := preload("res://server/accounts.gd")
-const Items := preload("res://scripts/core/items.gd")
-const Protocol := preload("res://scripts/net/protocol.gd")
 const ServerTests := preload("res://tests/test_server.gd")
 
 
@@ -15,15 +10,15 @@ func _dir() -> String:
 	return d
 
 
-func _live(d: String) -> Live:
-	var l := Live.new(d)
+func _live(d: String) -> LiveServer:
+	var l := LiveServer.new(d)
 	l.rng.seed = 7
 	l.clock = func() -> float: return 1000.0
 	return l
 
 
-func _session(uid: String, gold := 0, backpack: Array = []) -> Live.Session:
-	var s := Live.Session.new()
+func _session(uid: String, gold := 0, backpack: Array = []) -> LiveServer.Session:
+	var s := LiveServer.Session.new()
 	s.user = uid
 	s.gold = gold
 	for i in backpack.size():
@@ -40,7 +35,7 @@ func test_npc_stock_has_every_kind_and_the_two_that_never_run_out() -> void:
 	eq(towel.size(), 1, "Silk Rushnyk for sale")
 	eq(int(towel[0].price), 3000)
 	check(towel[0].forever, "it never runs out")
-	check(lots.all(func(x): return Live.for_sale(int(x.item.id))), "no elixirs or potions")
+	check(lots.all(func(x): return LiveServer.for_sale(int(x.item.id))), "no elixirs or potions")
 	check(lots.all(func(x): return str(x.seller).is_empty()), "all NPC lots")
 	ServerTests._rm(d)
 

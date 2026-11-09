@@ -1,12 +1,10 @@
+class_name ServerMain
 extends Node
 ## The server's entry, run without graphics:
 ##   godot --headless --path godot/client res://server/main.tscn -- [--port 28310]
 ##       [--bind *] [--data user://server] [--key server.key --cert server.crt]
 ## Without --key / --cert it makes a self-signed pair in the data folder on the first start
 ## (server.key, server.crt); the game trusts the certificate it is given (pow/net/cert).
-
-const Protocol := preload("res://scripts/net/protocol.gd")
-const GameServer := preload("res://server/game_server.gd")
 
 var server := GameServer.new()
 

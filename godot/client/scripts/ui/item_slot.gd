@@ -1,10 +1,9 @@
+class_name ItemSlot
 extends RefCounted
 ## Icon buttons of the Gear, Inventory and Skills pages: an icon of the new art
 ## (assets/art/icons, made by godot/tools/art/icons.py) in a dark hollow with a thin rim, a gold
 ## border on the chosen one. The same icons serve the shops, the HUD and the things on the ground.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Items := preload("res://scripts/core/items.gd")
 const SHEET := "res://assets/art/icons/%s.svg"
 const ICON := 28  # the size of an icon place, in the original pixels
 const SCALE := 2

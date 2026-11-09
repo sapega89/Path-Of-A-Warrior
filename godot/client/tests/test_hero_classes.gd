@@ -1,9 +1,6 @@
 extends "res://tests/test_case.gd"
 ## The four heroes' base stats and the reset of the attributes.
 
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
-const Attributes := preload("res://scripts/screens/attributes_screen.gd")
 const TEST_PATH := "user://test_hero_classes.json"
 
 
@@ -75,7 +72,7 @@ func test_reset_on_the_attributes_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = Attributes.new()
+	var screen: Control = AttributesScreen.new()
 	root.add_child(screen)
 	screen.open_reset()
 	check(screen.ask.visible, "asked how to pay")

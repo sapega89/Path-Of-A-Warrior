@@ -2,11 +2,6 @@ extends "res://tests/test_case.gd"
 ## The art slice (scripts/art, assets/art): the models load, the people share one clip
 ## library, and the camp and the battle room build with everything in place.
 
-const ArtKit := preload("res://scripts/art/art_kit.gd")
-const ArtFigure := preload("res://scripts/art/art_figure.gd")
-const ArtSlice := preload("res://scripts/art/art_slice.gd")
-const ArtHud := preload("res://scripts/art/art_hud.gd")
-
 const PEOPLE := ["kozak", "kozak_camp", "kozak_svyta", "zholner", "luchnyk", "polkovnyk"]
 const WEAPONS := ["sabre", "sabre_gold", "bulava", "spear", "shield", "bow"]
 const CLIPS := [

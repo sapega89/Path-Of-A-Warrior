@@ -6,7 +6,6 @@ extends Node
 ## busts.json says, before a backdrop in the colour of its side
 ## (assets/art/shaders/portrait_backdrop.gdshader), into assets/art/portraits/<number>.png.
 
-const ArtKit := preload("res://scripts/art/art_kit.gd")
 const DIR := "res://assets/art/portraits/"
 const SIZE := 512  # painted at, then made smaller
 const OUT := 256

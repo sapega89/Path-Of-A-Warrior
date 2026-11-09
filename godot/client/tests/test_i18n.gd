@@ -1,12 +1,6 @@
 extends "res://tests/test_case.gd"
 
 const I18nScript := preload("res://scripts/core/i18n.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const OnlineClient := preload("res://scripts/net/online_client.gd")
-const Visits := preload("res://scripts/core/visits.gd")
-const Stories := preload("res://scripts/core/stories.gd")
-const Endings := preload("res://scripts/screens/endings_screen.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
 
 
 func _table() -> Dictionary:
@@ -119,7 +113,7 @@ func test_story_texts_in_the_players_language() -> void:
 		"[Настоятель] Отже, ти знайшов дорогу до Мотронинського монастиря.",
 		"the prior's first line"
 	)
-	eq(Endings.title(0), "Довга дорога", "an ending's title")
+	eq(EndingsScreen.title(0), "Довга дорога", "an ending's title")
 	eq(MapSim.talk_lines("map")[21], "& is here!", "the data stays English")
 	eq(
 		I18n.text(MapSim.talk_lines("map")[21]),

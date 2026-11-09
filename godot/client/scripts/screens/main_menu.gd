@@ -1,3 +1,4 @@
+class_name MainMenu
 extends Control
 ## Main menu: continue (or play), new game, endings, settings, quit (no quit button on phones
 ## and the web). Continue opens the hero's camp (scripts/screens/camp_screen.gd), where his
@@ -5,10 +6,6 @@ extends Control
 ## always online and this run has no account yet, Play
 ## and New game open the login (scripts/screens/login_screen.gd) first; it comes back here and
 ## goes on with play() or new_game() once the hero (or none) has come from the server.
-
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const AskDialog := preload("res://scripts/ui/ask_dialog.gd")
 
 var buttons: Array[Button] = []
 var ask: AskDialog  # "Starting a new game will cause your saved game to be deleted.", No first

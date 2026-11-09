@@ -1,8 +1,6 @@
 extends "res://tests/test_case.gd"
 ## The numbers of the skill card, from the formulas of the fight.
 
-const SkillCard := preload("res://scripts/core/skill_card.gd")
-
 
 func test_mp_and_strikes() -> void:
 	eq(SkillCard.mp_need(12, 1), 5, "Whirlwind Sabre Lv1")

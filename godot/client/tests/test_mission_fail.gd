@@ -1,12 +1,6 @@
 extends "res://tests/test_case.gd"
 ## A mission lost, as the original: from level 10 on the hero may lose a thing he wears.
 
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
-const JavaRandom := preload("res://scripts/sim/java_random.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
-
 
 ## Gives the numbers it is told, as rng.below would.
 class Rolls:

@@ -1,3 +1,4 @@
+class_name AttributesScreen
 extends Control
 ## Attributes: the hero's name, level, fame and free stat points, and HP, MP, attack and
 ## defence, each with a "+" that spends a point on it (HP +5, MP +3, attack +1, defence +1).
@@ -6,9 +7,6 @@ extends Control
 ## the hero's face, paid with 100 gold per level or an elixir (St John's Wort / Cornflower Tincture,
 ## Rapids / Forest Remedy).
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
 ## Stat row name, text key, Profile.Stat.
 const STATS := [
 	["HP", "attributes.hp", Profile.Stat.HP],

@@ -1,10 +1,5 @@
 extends "res://tests/test_case.gd"
 
-const Stories := preload("res://scripts/core/stories.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Story := preload("res://scripts/screens/story_screen.gd")
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Campaign := preload("res://scripts/core/campaign.gd")
 const ENDING_2 := {
 	"story": 2, "reward_item": 502, "opened_lord": 8, "profile_path": "user://no_such_hero.json"
 }
@@ -60,7 +55,7 @@ func test_stats() -> void:
 
 func _story(params: Dictionary) -> Control:
 	Router.params = params
-	var screen: Control = Story.new()
+	var screen: Control = StoryScreen.new()
 	root.add_child(screen)
 	return screen
 
@@ -235,7 +230,7 @@ func test_story_screen_click() -> void:
 func test_story_goes_on_by_itself() -> void:
 	var old: Dictionary = Router.params
 	var screen := _story(ENDING_2)
-	var wait: float = Story.WAIT_TICKS * Settings.tick_seconds()
+	var wait: float = StoryScreen.WAIT_TICKS * Settings.tick_seconds()
 	screen._process(100.0)
 	eq(screen.typing.visible_characters, -1, "the line typed out")
 	screen._process(wait * 0.5)

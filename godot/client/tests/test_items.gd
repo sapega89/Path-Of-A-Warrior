@@ -1,9 +1,5 @@
 extends "res://tests/test_case.gd"
 
-const Items := preload("res://scripts/core/items.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Gear := preload("res://scripts/screens/gear_screen.gd")
-const Inventory := preload("res://scripts/screens/inventory_screen.gd")
 const TEST_PATH := "user://test_items.json"
 
 
@@ -80,14 +76,14 @@ func test_gear_and_inventory_pages() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var gear: Control = Gear.new()
+	var gear: Control = GearScreen.new()
 	root.add_child(gear)
 	eq(gear.places.size(), 9, "nine places")
 	check(gear.places[0].icon != null, "the claymore's icon")
 	check(gear.places[3].icon == null, "no helmet")
 	eq(gear.describe(0), "Iron Broadsword / ATK+1 / Available at Lv1", "the weapon")
 	gear.free()
-	var inv: Control = Inventory.new()
+	var inv: Control = InventoryScreen.new()
 	root.add_child(inv)
 	eq(inv.gold.text, "0", "gold")
 	eq(inv.press_cell(1), "cannot", "too high a level")

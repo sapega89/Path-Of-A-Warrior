@@ -1,3 +1,4 @@
+class_name MissionPause
 extends Control
 ## The pause menu of a mission, over the stopped game: Resume, Items (Assign Items for this
 ## mission's potion keys), Options (the settings), Help, Exit to Menu (asked first: the
@@ -9,13 +10,6 @@ extends Control
 ## first): `leave` goes on as after the training.
 
 signal resumed
-
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const MainMenu := preload("res://scripts/screens/main_menu.gd")
-const SettingsScreen := preload("res://scripts/screens/settings_screen.gd")
-const HelpScreen := preload("res://scripts/screens/help_screen.gd")
-const AssignItems := preload("res://scripts/screens/assign_items_screen.gd")
-const AskDialog := preload("res://scripts/ui/ask_dialog.gd")
 
 var buttons: Array[Button] = []
 var menu: Control
@@ -86,7 +80,7 @@ func save() -> bool:
 
 ## Assign Items over the pause menu, for this mission's potion keys.
 func open_items() -> void:
-	var screen: Control = AssignItems.new()
+	var screen: Control = AssignItemsScreen.new()
 	screen.sim = sim
 	_open_over(screen, "Items")
 

@@ -1,3 +1,4 @@
+class_name Accounts
 extends RefCounted
 ## The server's accounts, one JSON file each (<dir>/<UserID>.json), written whole to a .tmp
 ## file first and then renamed over the old one, so a crash never leaves half a file.

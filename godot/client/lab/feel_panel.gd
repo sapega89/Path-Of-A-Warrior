@@ -1,3 +1,4 @@
+class_name FeelPanel
 extends PanelContainer
 ## The lab's panel (lab/combat_feel_lab.gd), on the right: a switch for each effect of
 ## scripts/world/combat_feel.gd, sliders for its main numbers, and the arena's own switches (waves,

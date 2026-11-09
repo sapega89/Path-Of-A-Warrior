@@ -1,3 +1,4 @@
+class_name CloudSync
 extends RefCounted
 ## The hero kept on the server, as in pyport's "save only on the server": the hero lives in
 ## memory, every save goes to the server, and the game starts only online.
@@ -15,9 +16,6 @@ extends RefCounted
 ## as pyport keeps them: after each login the newer copy wins (the server's on a device the
 ## account is new to), and every change goes to the server; a conflict while playing is won
 ## by this device.
-
-const NetClient := preload("res://scripts/net/net_client.gd")
-const Protocol := preload("res://scripts/net/protocol.gd")
 
 const RETRY_MS := 30000
 const RETRY_MAX_MS := 300000

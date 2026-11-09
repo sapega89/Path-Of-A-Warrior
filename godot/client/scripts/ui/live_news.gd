@@ -1,3 +1,4 @@
+class_name LiveNews
 extends Control
 ## What Live kept for the player while away, shown over the main menu: the notices (once a
 ## game, page by page), the Sale List (what other players bought from him; the money is in the
@@ -12,12 +13,6 @@ extends Control
 signal showing_list(on: bool)
 signal finished
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
-const ItemSlot := preload("res://scripts/ui/item_slot.gd")
-const ItemGrid := preload("res://scripts/ui/item_grid.gd")
-const LiveClient := preload("res://scripts/net/live_client.gd")
 const LIST_PLACES := 20
 
 var live: RefCounted

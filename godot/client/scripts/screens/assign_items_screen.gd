@@ -1,13 +1,10 @@
+class_name AssignItemsScreen
 extends Control
 ## Assign Items: the hero's gold and the five potion slots of the belt, each with its key above
 ## it (Z X C V B, used in a mission) and "Keys Z X C V B" under them, as in pyport with the skill
 ## bar. The keypad's * and / still put the chosen slot on the old potion keys (no buttons or
 ## marks for them). Saved at once. Opened from a mission's pause menu (sim set) it changes that
 ## mission's slots and saves nothing; close goes back there.
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
-const ItemSlot := preload("res://scripts/ui/item_slot.gd")
 const SLOTS := 5
 
 var profile: RefCounted

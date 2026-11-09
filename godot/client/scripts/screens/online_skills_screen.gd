@@ -1,11 +1,9 @@
+class_name OnlineSkillsScreen
 extends Control
 ## Multiplayer > Character > Skills: the skills the hero has learned (from the single player),
 ## each with its level and its cost on the battle's MP gauge, and the four skill slots of the
 ## battles. Pick a skill, then a slot to put it there (from another slot it moves); a slot
 ## picked with no skill in hand is emptied. Every change is saved on the server.
-
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const OnlineClient := preload("res://scripts/net/online_client.gd")
 
 var online: RefCounted
 var list: VBoxContainer

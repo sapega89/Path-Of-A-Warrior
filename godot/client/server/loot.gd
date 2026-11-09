@@ -1,10 +1,9 @@
+class_name Loot
 extends RefCounted
 ## Loot of the online battles (pyport pow_server/loot.py): items of the single-player tables
 ## (data/items.json). One drop roll per foe beaten, the best item kept; equipment can come out
 ## Special (301..) or Rare (501..), which the single player does not drop. The client puts the
 ## item into the hero's backpack.
-
-const Items := preload("res://scripts/core/items.gd")
 
 const STORY_ONLY := [502]  # Silk Rushnyk: the reward of an ending, never a drop
 ## 0 soldier, 1 general, 2 boss

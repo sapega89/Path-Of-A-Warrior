@@ -2,14 +2,7 @@ extends "res://tests/test_case.gd"
 ## The world map of the campaign: 45 places joined by the ways of campaign.json, and the
 ## rooms a mission walks on its place's map.
 
-const WorldMap := preload("res://scripts/core/world_map.gd")
-const WorldMapView := preload("res://scripts/ui/world_map_view.gd")
-const Rooms := preload("res://scripts/world/rooms.gd")
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const Profile := preload("res://scripts/core/profile.gd")
 const RouterScript := preload("res://scripts/core/router.gd")
-const CampMap := preload("res://scripts/world/camp_map.gd")
-const CampScreen := preload("res://scripts/screens/camp_screen.gd")
 const CAMP_PATH := "user://test_camp.json"
 
 

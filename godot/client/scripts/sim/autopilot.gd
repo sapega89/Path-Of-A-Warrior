@@ -1,3 +1,4 @@
+class_name Autopilot
 extends RefCounted
 ## Auto-hunt on a mission's map (as pyport's autopilot.py; Tab, F or a pad's Back, or a click on
 ## AUTO in the bottom-left corner). It plays like a player: every tick it may hold a direction
@@ -18,7 +19,6 @@ extends RefCounted
 ## Talks, banners and the pause menu stay the player's; any key of the player hands off for a
 ## moment.
 
-const MapSim := preload("res://scripts/sim/map_sim.gd")
 const HEALS := [15, 16]
 const WHOLE := [28, 29, 30]
 const NEAR := [23, 24, 25]

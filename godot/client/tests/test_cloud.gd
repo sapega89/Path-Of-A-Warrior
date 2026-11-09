@@ -2,10 +2,6 @@ extends "res://tests/test_case.gd"
 ## Always online: the hero kept on the server (scripts/net/cloud_sync.gd, cloud.gd) against a
 ## real server in this process.
 
-const CloudSync := preload("res://scripts/net/cloud_sync.gd")
-const GameServer := preload("res://server/game_server.gd")
-const Online := preload("res://server/online.gd")
-const Profile := preload("res://scripts/core/profile.gd")
 const ServerTests := preload("res://tests/test_server.gd")
 const SettingsScript := preload("res://scripts/core/settings.gd")
 const PORT := 28398
@@ -302,7 +298,7 @@ func test_the_online_game_goes_over_the_same_connection() -> void:
 	mp.enter(func(e): err.append(e))
 	check(_run(s, [cloud.sync], func(): return not err.is_empty()), "answered")
 	eq([err, mp.entered, s.online.is_online("ANDREY")], [[""], true, true], "online")
-	var maria := Online.Session.new()  # another player, on the server
+	var maria := OnlineServer.Session.new()  # another player, on the server
 	maria.send = func(_m: Dictionary) -> void: pass
 	s.online.enter(maria, "MARIA")
 	eq(
@@ -310,7 +306,9 @@ func test_the_online_game_goes_over_the_same_connection() -> void:
 			s
 			. online
 			. answer(
-				maria, "chat_send", {"channel": Online.PRIVATE, "peer": "ANDREY", "text": "hi"}
+				maria,
+				"chat_send",
+				{"channel": OnlineServer.PRIVATE, "peer": "ANDREY", "text": "hi"}
 			)
 			. ok
 		),

@@ -2,10 +2,6 @@ extends "res://tests/test_case.gd"
 ## SKIP, as pyport's left soft key: Q, F1 or the pad's Back, or a click on SKIP. It skips the
 ## talk on the map, the briefing and the story.
 
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
-const Story := preload("res://scripts/screens/story_screen.gd")
-const Briefing := preload("res://scripts/screens/briefing_screen.gd")
-
 
 func _click(at: Vector2, device := 0) -> InputEventMouseButton:
 	var ev := InputEventMouseButton.new()
@@ -118,7 +114,7 @@ func test_skip_the_story() -> void:
 	Router.params = {
 		"story": 2, "reward_item": 502, "opened_lord": 8, "profile_path": "user://no_such_hero.json"
 	}
-	var screen: Control = Story.new()
+	var screen: Control = StoryScreen.new()
 	root.add_child(screen)
 	screen._unhandled_input(_skip_key())
 	eq(

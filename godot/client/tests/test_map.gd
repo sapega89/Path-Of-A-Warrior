@@ -1,7 +1,5 @@
 extends "res://tests/test_case.gd"
 
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-
 
 func test_all_maps_load() -> void:
 	eq(MapBuilder.map_count(), 45, "map count")

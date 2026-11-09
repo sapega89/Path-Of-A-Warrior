@@ -2,10 +2,6 @@ extends "res://tests/test_case.gd"
 ## The on-screen keys (scripts/ui/key_grid.gd): the hero's name and the registration typed
 ## without a keyboard.
 
-const KeyGrid := preload("res://scripts/ui/key_grid.gd")
-const NewGame := preload("res://scripts/screens/new_game_screen.gd")
-const Login := preload("res://scripts/screens/login_screen.gd")
-
 
 func _type(keys: VBoxContainer, labels: Array) -> void:
 	for k in labels:
@@ -15,7 +11,7 @@ func _type(keys: VBoxContainer, labels: Array) -> void:
 func test_the_heros_name_on_the_keys() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": "user://test_key_grid.json"}
-	var screen: Control = NewGame.new()
+	var screen: Control = NewGameScreen.new()
 	root.add_child(screen)
 	screen.choose_head(1)
 	var keys: VBoxContainer = screen.body.get_node("Keys")
@@ -27,7 +23,7 @@ func test_the_heros_name_on_the_keys() -> void:
 	keys.key(KeyGrid.OK).pressed.emit()
 	eq(
 		[screen.step, screen.profile.hero_name],
-		[NewGame.Step.POINTS, "Ivanovic"],
+		[NewGameScreen.Step.POINTS, "Ivanovic"],
 		"OK: as Enter in the field"
 	)
 	screen.free()
@@ -35,7 +31,7 @@ func test_the_heros_name_on_the_keys() -> void:
 
 
 func test_the_login_on_the_keys() -> void:
-	var screen: Control = Login.new()
+	var screen: Control = LoginScreen.new()
 	root.add_child(screen)
 	var keys: VBoxContainer = screen.keys
 	_type(keys, ["A", "N", "7", "D", "Y"])
@@ -52,7 +48,7 @@ func test_the_login_on_the_keys() -> void:
 func test_the_keys_show_only_for_the_gamepad() -> void:
 	var was: String = InputSetup.device
 	InputSetup.device = "keys"
-	var screen: Control = Login.new()
+	var screen: Control = LoginScreen.new()
 	root.add_child(screen)
 	check(not screen.keys.visible, "a keyboard: no keys on the screen")
 	var pad := InputEventJoypadButton.new()

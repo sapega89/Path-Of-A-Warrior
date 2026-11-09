@@ -3,11 +3,6 @@ extends "res://tests/test_case.gd"
 ## the ground rises where it is blocked and stays flat where people walk, the faces of cliffs
 ## climb, bridges and decks hold, what stands on a cell is a 3D piece, the breakable ones flash.
 
-const MapArt := preload("res://scripts/world/map_art.gd")
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const CombatFeel := preload("res://scripts/world/combat_feel.gd")
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
-
 
 func _map(n: int) -> Node3D:
 	var b: Node3D = MapArt.new()

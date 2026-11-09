@@ -1,3 +1,4 @@
+class_name Room
 extends RefCounted
 ## One battle of the online game and the players in it (pyport pow_server/server.py, Room):
 ## one player against the CPU, or two for a Challenge, Invite An Ally or a duel found by the
@@ -15,8 +16,6 @@ extends RefCounted
 ##   {t: "stage_end", bg}                     (a stage cleared; mp_stage_next for the next)
 ##   {t: "room_join", fighter}                (a foe of the next stage)
 ##   {t: "battle_end", win, gold, grade, fame, exp, loot, rank}
-
-const Battle := preload("res://server/battle.gd")
 
 var online: RefCounted  # server/online.gd: rewards, loot, the Ranking
 var rng: RandomNumberGenerator

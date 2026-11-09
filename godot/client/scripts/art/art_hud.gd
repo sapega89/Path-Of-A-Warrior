@@ -1,9 +1,9 @@
+class_name ArtHud
 extends Control
 ## HUD in the new art: a round portrait drawn live from the hero's model, health and
 ## spirit bars, the skill keys with folk-print icons, the purse and the place name.
 ## Shapes and colours come from the palette; icons are SVG (assets/art/ui).
 
-const ArtKit := preload("res://scripts/art/art_kit.gd")
 const UI := "res://assets/art/ui/%s.svg"
 const SKILLS := ["sabre", "shield", "fire", "wind", "potion"]
 const PLACE_NAMES := {"camp": "Корсунь", "battle": "Крута балка"}

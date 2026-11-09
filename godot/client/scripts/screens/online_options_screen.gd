@@ -1,10 +1,8 @@
+class_name OnlineOptionsScreen
 extends Control
 ## Multiplayer > Options: Invitation, Accept or Deny (pyport's Options > Invitation): whether
 ## another player's Challenge or Invite An Ally takes me into the battle. It is kept on the
 ## server.
-
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const OnlineClient := preload("res://scripts/net/online_client.gd")
 
 var online: RefCounted
 var accept: Button

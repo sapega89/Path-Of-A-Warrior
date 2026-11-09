@@ -1,3 +1,4 @@
+class_name NewGameScreen
 extends Control
 ## A new game, step by step as in the original: the difficulty (Normal first: x1 gold and exp,
 ## the hero turns to the nearest enemy as he strikes and AUTO hunts; Hard: x2, neither; it
@@ -9,12 +10,6 @@ extends Control
 ## any old one and the opening story starts, then the game menu.
 ## Params: profile_path (optional), then (the screen after the opening, default game_menu).
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Stories := preload("res://scripts/core/stories.gd")
-const KeyGrid := preload("res://scripts/ui/key_grid.gd")
-const AskDialog := preload("res://scripts/ui/ask_dialog.gd")
-const Pictures := preload("res://scripts/ui/pictures.gd")
 const HEADS := 4
 const NAME_MAX := 8
 const SCALE := 3

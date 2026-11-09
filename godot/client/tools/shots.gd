@@ -4,13 +4,6 @@ extends Node
 ## Opens the main scene, walks through the screens and some maps, saves PNGs to OUT_DIR.
 
 const MAPS: Array[int] = [1, 5, 10, 20, 30, 40]
-const LiveServer := preload("res://server/live.gd")
-const LiveClient := preload("res://scripts/net/live_client.gd")
-const OnlineServer := preload("res://server/online.gd")
-const OnlineAccounts := preload("res://server/accounts.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const OnlineClient := preload("res://scripts/net/online_client.gd")
-const OnlineBattle := preload("res://scripts/net/online_battle.gd")
 ## The multiplayer shots' hero, as the server keeps it (Profile.to_dict()).
 const ONLINE_HERO := {
 	"level": 12,
@@ -244,7 +237,7 @@ func _ready() -> void:
 	# Options. The server's online game runs in this process (server/online.gd) with its bots;
 	# Maria is in my order and wrote while I was away.
 	_rm_dir("user://shot_online")
-	var accounts: RefCounted = OnlineAccounts.new("user://shot_online/accounts")
+	var accounts: RefCounted = Accounts.new("user://shot_online/accounts")
 	accounts.rounds = 20
 	var game: RefCounted = OnlineServer.new("user://shot_online", accounts)
 	game.rng.seed = 7

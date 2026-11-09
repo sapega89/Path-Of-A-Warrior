@@ -1,3 +1,4 @@
+class_name TouchControls
 extends Control
 ## On-screen controls for phones: a floating stick on the left half and action
 ## buttons on the right. They press the same actions as keys and gamepads, so
@@ -5,7 +6,6 @@ extends Control
 ## A button sends its action as an input event (press_action), as a key does: the screens that
 ## wait for the event (PAUSE) get it, and the action is held for the ones that poll it.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const STICK_RADIUS := 90.0
 const BUTTON_RADIUS := 52.0
 ## action -> centre, measured from the bottom-right corner

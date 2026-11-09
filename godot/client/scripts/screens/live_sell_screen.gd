@@ -1,15 +1,9 @@
+class_name LiveSellScreen
 extends Control
 ## Game menu > Trade > Sell Item: a thing of the backpack or of the Warehouse (the two buttons above
 ## the grid), then its price, typed in; a share of it (the tax) goes to the server when it sells.
 ## Price Info shows the cheapest lots of the same kind. OK puts the thing on sale (five at most);
 ## the money comes into the Safe when another player buys it. Elixirs cannot be sold.
-
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
-const ItemSlot := preload("res://scripts/ui/item_slot.gd")
-const ItemGrid := preload("res://scripts/ui/item_grid.gd")
-const LiveClient := preload("res://scripts/net/live_client.gd")
 
 enum Step { PICK, PRICE, PRICES }
 

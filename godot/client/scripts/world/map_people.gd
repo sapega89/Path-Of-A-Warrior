@@ -1,3 +1,4 @@
+class_name MapPeople
 extends Node3D
 ## The people of a mission in the new art: the hero and the enemies of MapSim as 3D figures
 ## (scripts/art/art_figure.gd) on their places, turned their way and playing the clip of
@@ -7,9 +8,6 @@ extends Node3D
 ## of the mission's general (assets/art/people.json): the Crown, the horde or Cossacks of a
 ## rival colonel, swordsmen, archers and squads of three.
 
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const Motion := preload("res://scripts/world/motion.gd")
-const ArtFigure := preload("res://scripts/art/art_figure.gd")
 const PEOPLE_PATH := "res://assets/art/people.json"
 const PX := 1.0 / 27.0  # world units per map pixel (a tile is 27 px)
 const FOOT_PX := 6  # the original's body box reaches this far below the position

@@ -1,3 +1,4 @@
+class_name LiveClient
 extends RefCounted
 ## Live on this device, the client of server/live.gd: what the Live screens know of the
 ## server's side (the Safe, the Warehouse) and the serials the server knows the backpack's
@@ -11,7 +12,6 @@ extends RefCounted
 ## "full", "gone", ...) or "offline" when there was no answer. While a request is on its way
 ## busy is true and the screens take no presses.
 
-const Items := preload("res://scripts/core/items.gd")
 const WAREHOUSE := 200
 const MAX_SALES := 5
 const TAX_PERCENT := 10

@@ -26,8 +26,6 @@ extends Node
 ## it while the hero plays). The phone's own Back button is BACK too (the game does not quit on
 ## it: application/config/quit_on_go_back is off).
 
-const Glyphs := preload("res://scripts/ui/glyphs.gd")
-
 const KEYS := {
 	"move_left": [KEY_A, KEY_LEFT, KEY_KP_4],
 	"move_right": [KEY_D, KEY_RIGHT, KEY_KP_6],

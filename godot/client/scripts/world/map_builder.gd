@@ -1,3 +1,4 @@
+class_name MapBuilder
 extends Node3D
 ## Builds a 3D map from an original map (data/maps/<n>.json, made by
 ## godot/tools/import_original.py) with the original tiles.

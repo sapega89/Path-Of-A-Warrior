@@ -1,4 +1,5 @@
 # gdlint: disable=max-public-methods
+class_name MapSim
 extends RefCounted
 # gdlint: disable=max-file-lines
 ## The map part of the game, tick by tick, as the original runs it (pyport/pow/game
@@ -19,9 +20,6 @@ extends RefCounted
 ## skills) show. Not yet: the
 ## talk after a cleared room and the mission's rewards.
 
-const Rooms := preload("res://scripts/world/rooms.gd")
-const JavaRandom := preload("res://scripts/sim/java_random.gd")
-const ExpBars := preload("res://scripts/sim/exp_bars.gd")
 const TABLES_PATH := "res://data/tables.json"
 const TICK_MS := 120  # speed 2 of the original (speed_frame_ms)
 const END := 200  # animation frame numbers above this end the animation (222 = loop end)

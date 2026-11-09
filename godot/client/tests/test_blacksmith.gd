@@ -1,8 +1,5 @@
 extends "res://tests/test_case.gd"
 
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
-const Shop := preload("res://scripts/screens/shop_screen.gd")
 const TEST_PATH := "user://test_blacksmith.json"
 
 
@@ -99,7 +96,7 @@ func test_shop_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "mode": "buy"}
-	var screen: Control = Shop.new()
+	var screen: Control = ShopScreen.new()
 	root.add_child(screen)
 	eq(screen.cells.size(), 25, "the shop's 25 things")
 	check(screen.cells[0].icon != null, "a potion's icon")
@@ -108,7 +105,7 @@ func test_shop_screen() -> void:
 	eq(int(screen.profile.gold), 940, "bought for 60")
 	screen.free()
 	Router.params = {"profile_path": TEST_PATH, "mode": "enchant"}
-	screen = Shop.new()
+	screen = ShopScreen.new()
 	root.add_child(screen)
 	eq(screen.cells.size(), Items.BACKPACK + Items.EQUIPPED, "the backpack and the Gear page")
 	screen.press_cell(0)
@@ -168,7 +165,7 @@ func test_combine_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "mode": "combine"}
-	var screen: Control = Shop.new()
+	var screen: Control = ShopScreen.new()
 	root.add_child(screen)
 	eq(screen.info.text, screen.tr("combine.select"), "choose three")
 	screen.press_cell(0)

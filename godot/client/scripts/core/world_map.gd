@@ -1,3 +1,4 @@
+class_name WorldMap
 extends RefCounted
 ## The campaign's world: 45 places, each one map with its missions, and the ways between them.
 ## A place is what campaign.json calls a lord: place N is map N, its missions are
@@ -6,8 +7,6 @@ extends RefCounted
 ## The ways never lead back, so the places are laid out in columns: a place's column is the
 ## longest way to it from the start, and in a column the places sit near the places they
 ## come from.
-
-const Campaign := preload("res://scripts/core/campaign.gd")
 
 enum State { HERE, NEXT, CLOSED, AWAY }
 

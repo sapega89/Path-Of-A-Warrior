@@ -3,13 +3,6 @@ extends "res://tests/test_case.gd"
 ## every kind is drawn in code, the rigs are reused, room-wide strikes keep their places, the
 ## arrows fly their way.
 
-const MapEffects := preload("res://scripts/world/map_effects.gd")
-const MapPeople := preload("res://scripts/world/map_people.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const Motion := preload("res://scripts/world/motion.gd")
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
-
 
 func _shown_parts(rig: Node3D) -> int:
 	var n := 0

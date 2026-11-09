@@ -1,3 +1,4 @@
+class_name OfflineScreen
 extends Control
 ## "No connection": the game starts only online (scripts/net/cloud.gd). Shown by the main
 ## menu while the server is not there, or refused the stored login. OK (or a click) tries
@@ -8,7 +9,6 @@ extends Control
 ## again, and Another account on a
 ## refused login.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const AUTO_RETRY_MS := 10000
 
 var text: Label

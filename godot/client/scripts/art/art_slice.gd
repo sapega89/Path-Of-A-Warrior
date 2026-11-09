@@ -1,3 +1,4 @@
+class_name ArtSlice
 extends Node3D
 ## Vertical slice of the new art: the Korsun camp and one battle room, with the people,
 ## the environment kit, the effects and the HUD in the new style. It is a showcase only:
@@ -5,13 +6,6 @@ extends Node3D
 ##   godot --path godot/client res://scenes/art_slice.tscn            (the camp)
 ##   godot --path godot/client res://scenes/art_slice.tscn -- battle 50
 ##   godot --path godot/client res://scenes/art_slice.tscn -- effects 35       (or effects_room)
-
-const ArtKit := preload("res://scripts/art/art_kit.gd")
-const ArtFigure := preload("res://scripts/art/art_figure.gd")
-const ArtEffects := preload("res://scripts/art/art_effects.gd")
-const ArtGround := preload("res://scripts/art/art_ground.gd")
-const ArtHud := preload("res://scripts/art/art_hud.gd")
-const MapEffects := preload("res://scripts/world/map_effects.gd")
 
 ## The effects of the map (scripts/world/map_effects.gd) in a grid, each on a kozak:
 ## [kind, frame, the kozak's clip, where he faces].
@@ -351,4 +345,4 @@ func _effects_room() -> void:
 
 ## A place on the ground in the map's pixels (MapPeople.to_world turned back).
 static func _px(at: Vector3) -> Vector2i:
-	return Vector2i(roundi(at.x * 27.0), roundi(at.z * 27.0) - MapEffects.MapPeople.FOOT_PX)
+	return Vector2i(roundi(at.x * 27.0), roundi(at.z * 27.0) - MapPeople.FOOT_PX)

@@ -1,3 +1,4 @@
+class_name Battle
 extends RefCounted
 ## A battle of the online game on the server (pyport pow_server/battle.py): Duel 1-on-1 and
 ## 2-on-2, Solo Mission. The client only shows what the server decides: it sends one choice a
@@ -9,8 +10,6 @@ extends RefCounted
 ## Slots: slot % 2 is the team (0 left, 1 right), slot / 2 the row; 1-on-1 uses 0 and 1.
 ## Actions: 0 Attack, 1 Defend, 2 Evade, 3..13 skills. Defend and Evade are stances: they never
 ## make a record of their own.
-
-const Rules := preload("res://server/rules.gd")
 
 const ATTACK := 0
 const DEFEND := 1

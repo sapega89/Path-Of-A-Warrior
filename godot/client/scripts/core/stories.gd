@@ -1,3 +1,4 @@
+class_name Stories
 extends RefCounted
 ## The stories of data/stories.json as pages: the opening of a new game (OPENING) and the 24
 ## endings. A page is {kind: "talk", speaker, text} (speaker: a portrait, HERO for the hero),

@@ -1,3 +1,4 @@
+class_name OnlineChatScreen
 extends Control
 ## Multiplayer > Chat (pyport's Chat window): three tabs, Lobby (everyone online), Order (my
 ## order) and Private (my conversations, the newest first, with the messages waiting in each;
@@ -6,8 +7,6 @@ extends Control
 ## the page grows as they come; the tabs count what waits in the others.
 ## Router.params: channel (0 Lobby, 1 Order, 2 Private) and peer (a private conversation).
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const OnlineClient := preload("res://scripts/net/online_client.gd")
 const TABS := [
 	["Lobby", "online.lobby"], ["OrderTab", "online.order"], ["Private", "online.private"]
 ]
