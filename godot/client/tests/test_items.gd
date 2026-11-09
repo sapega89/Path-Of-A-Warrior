@@ -76,7 +76,7 @@ func test_gear_and_inventory_pages() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var gear: Control = GearScreen.new()
+	var gear: Control = Router.make(Router.SCREENS["gear"])
 	root.add_child(gear)
 	eq(gear.places.size(), 9, "nine places")
 	check(gear.places[0].icon != null, "the claymore's icon")

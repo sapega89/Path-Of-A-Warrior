@@ -80,7 +80,7 @@ func save() -> bool:
 
 ## Assign Items over the pause menu, for this mission's potion keys.
 func open_items() -> void:
-	var screen: Control = AssignItemsScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["assign_items"])
 	screen.sim = sim
 	_open_over(screen, "Items")
 

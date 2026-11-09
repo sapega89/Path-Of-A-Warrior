@@ -17,20 +17,14 @@ var slot := 0  # the skill key being set
 var keys: Array[Button] = []
 var skills := {}  # skill id -> its Button
 var info: Label  # the card's heading line (name and level)
-var card: VBoxContainer
+@onready var card: VBoxContainer = %Lines
 
 
 func _ready() -> void:
 	path = profile_path()
 	profile = Profile.load_or_new(path)
 	data = load_data()
-	var col := UiTheme.menu_column(self, 900)
-	col.add_child(UiTheme.heading("skills.title", 44))
-
-	var key_row := HBoxContainer.new()
-	key_row.name = "Keys"
-	key_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	key_row.add_theme_constant_override("separation", 16)
+	var key_row: HBoxContainer = %Keys
 	for i in KEY_COUNT:
 		var box := VBoxContainer.new()
 		var l := Label.new()
@@ -46,13 +40,7 @@ func _ready() -> void:
 		box.add_child(b)
 		key_row.add_child(box)
 		keys.append(b)
-	col.add_child(key_row)
-
-	var grid := GridContainer.new()
-	grid.name = "Groups"
-	grid.columns = 2
-	grid.add_theme_constant_override("h_separation", 40)
-	grid.add_theme_constant_override("v_separation", 6)
+	var grid: GridContainer = %Groups
 	var groups: Array = data.get("groups", [])
 	var rows: Array = data.get("rows", [])
 	for r in rows.size():
@@ -77,25 +65,6 @@ func _ready() -> void:
 				skills[skill] = b
 			row.add_child(b)
 		grid.add_child(row)
-	var middle := HBoxContainer.new()
-	middle.add_theme_constant_override("separation", 24)
-	middle.add_child(grid)
-	var panel := PanelContainer.new()
-	panel.name = "Card"
-	panel.custom_minimum_size = Vector2(330, 0)
-	panel.add_theme_stylebox_override("panel", UiTheme.box(UiTheme.PANEL, UiTheme.ACCENT, 2))
-	card = VBoxContainer.new()
-	panel.add_child(card)
-	middle.add_child(panel)
-	var center := CenterContainer.new()
-	center.add_child(middle)
-	col.add_child(center)
-
-	var back := Button.new()
-	back.name = "Back"
-	back.text = "common.back"
-	back.pressed.connect(func(): Router.back())
-	col.add_child(back)
 	refresh()
 	_show_info(int(profile.hotkeys[0]))
 	keys[0].grab_focus.call_deferred()

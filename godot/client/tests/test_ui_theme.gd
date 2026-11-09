@@ -103,7 +103,7 @@ func test_the_hero_on_the_gear_page() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var gear: Control = GearScreen.new()
+	var gear: Control = Router.make(Router.SCREENS["gear"])
 	root.add_child(gear)
 	check(gear.figure != null, "a figure")
 	eq(gear.figure.kind, MapPeople.HEROES[2], "of his class")

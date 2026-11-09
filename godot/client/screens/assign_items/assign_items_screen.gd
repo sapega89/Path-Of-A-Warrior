@@ -12,8 +12,8 @@ var path: String = Profile.PATH
 var slot := 0
 var slots: Array[Button] = []
 var marks: Array[Label] = []
-var gold: Label
-var info: Label
+@onready var gold: Label = %Gold.get_node("Value")
+@onready var info: Label = %Info
 var sim: RefCounted = null  # a mission's: its slots and keys are the ones changed
 var close := Callable()  # set by the pause menu: what Back does instead of Router.back()
 
@@ -25,23 +25,8 @@ func _ready() -> void:
 		profile.quick_slots = sim.quick_slots
 		profile.quick_keys = sim.quick_keys
 		profile.gold += int(sim.gold)
-	var col := UiTheme.menu_column(self, 640)
-	col.add_child(UiTheme.heading("assign.title", 44))
-
-	var gold_row := HBoxContainer.new()
-	gold_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	gold_row.add_child(UiTheme.coin_rect())
-	gold = Label.new()
-	gold.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	gold.custom_minimum_size = Vector2(160, 0)
-	gold.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	gold_row.add_child(gold)
-	col.add_child(gold_row)
-
-	var row := HBoxContainer.new()
-	row.name = "Slots"
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_theme_constant_override("separation", 8)
+	%Keys.text = tr("assign.keys")
+	var row: HBoxContainer = %Slots
 	for i in SLOTS:
 		var box := VBoxContainer.new()
 		var mark := Label.new()
@@ -63,27 +48,6 @@ func _ready() -> void:
 		box.add_child(count)
 		row.add_child(box)
 		slots.append(b)
-	col.add_child(row)
-
-	var keys := Label.new()
-	keys.name = "Keys"
-	keys.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	keys.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	keys.text = tr("assign.keys")
-	col.add_child(keys)
-
-	info = Label.new()
-	info.name = "Info"
-	info.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	info.custom_minimum_size = Vector2(0, 72)
-	col.add_child(info)
-	var back := Button.new()
-	back.name = "Back"
-	back.text = "common.back"
-	back.pressed.connect(go_back)
-	col.add_child(back)
 	refresh()
 	_show_info(0)
 	slots[0].grab_focus.call_deferred()

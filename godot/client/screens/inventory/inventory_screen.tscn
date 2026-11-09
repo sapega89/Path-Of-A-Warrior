@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://screens/inventory/inventory_screen.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/ui/heading.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/gold_row.tscn" id="9"]
 
 [node name="InventoryScreen" type="Control"]
 layout_mode = 3
@@ -35,17 +36,9 @@ theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 44
 script = ExtResource("2")
 
-[node name="Gold" type="HBoxContainer" parent="Center/Column"]
+[node name="Gold" parent="Center/Column" instance=ExtResource("9")]
 unique_name_in_owner = true
 layout_mode = 2
-alignment = 1
-
-[node name="Value" type="Label" parent="Center/Column/Gold"]
-unique_name_in_owner = true
-layout_mode = 2
-custom_minimum_size = Vector2(160, 0)
-auto_translate_mode = 2
-horizontal_alignment = 2
 
 [node name="Scroll" type="ScrollContainer" parent="Center/Column"]
 layout_mode = 2

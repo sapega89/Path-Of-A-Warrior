@@ -61,7 +61,7 @@ func test_skills_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = SkillsScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["skills"])
 	root.add_child(screen)
 	eq(screen.keys.size(), 5, "five skill keys")
 	eq(screen.describe(12), "Whirlwind Sabre / Lv1 Dash & Slash", "a learned skill")
@@ -114,7 +114,7 @@ func test_assign_items_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = AssignItemsScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["assign_items"])
 	root.add_child(screen)
 	eq(
 		screen.marks.map(func(m): return m.text),

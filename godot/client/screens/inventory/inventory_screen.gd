@@ -8,7 +8,7 @@ extends BaseScreen
 var profile: RefCounted
 var path: String = Profile.PATH
 var cells: Array[Button] = []
-@onready var gold: Label = %Value
+@onready var gold: Label = %Gold.get_node("Value")
 @onready var info: Label = %Info
 
 
@@ -16,8 +16,6 @@ func _ready() -> void:
 	path = profile_path()
 	profile = Profile.load_or_new(path)
 	profile.compact_backpack()
-	%Gold.add_child(UiTheme.coin_rect())
-	%Gold.move_child(%Gold.get_node("Coin"), 0)
 	var grid: GridContainer = %Backpack
 	for i in Items.BACKPACK:
 		var b := ItemSlot.button("Cell%d" % i)
