@@ -116,15 +116,12 @@ static func menu_column(parent: Control, width: int = 460) -> VBoxContainer:
 ## A heading in Kurale, tarnished brass with a dark outline, between two iron rules.
 static func heading(text_key: String, size: int = TITLE_SIZE) -> Label:
 	var l := Heading.new()
+	l.theme_type_variation = &"Heading"
 	l.text = text_key
 	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	l.add_theme_font_override("font", font("title"))
-	l.add_theme_font_size_override("font_size", size)
-	l.add_theme_color_override("font_color", ACCENT)
-	l.add_theme_color_override("font_outline_color", INK)
-	l.add_theme_constant_override("outline_size", maxi(4, size / 9))
-	l.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.45))
-	l.add_theme_constant_override("shadow_offset_y", 3)
+	if size != TITLE_SIZE:
+		l.add_theme_font_size_override("font_size", size)
+		l.add_theme_constant_override("outline_size", maxi(4, size / 9))
 	return l
 
 

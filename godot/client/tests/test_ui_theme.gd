@@ -20,8 +20,10 @@ func test_the_fonts_of_the_new_art() -> void:
 	eq(t.get_font("font", "Button"), UiTheme.font("bold"), "the buttons bold")
 	var h := UiTheme.heading("gear.title", 44)
 	check(h is Label, "a heading is a label")
-	eq(h.get_theme_font("font"), UiTheme.font("title"), "in Kurale")
-	eq(h.get_theme_color("font_color"), UiTheme.ACCENT, "brass")
+	eq(h.theme_type_variation, &"Heading", "of the theme's headings")
+	eq(t.get_font("font", "Heading"), UiTheme.font("title"), "in Kurale")
+	eq(t.get_color("font_color", "Heading"), UiTheme.ACCENT, "brass")
+	eq(h.get_theme_font_size("font_size"), 44, "its own size")
 	h.free()
 
 
