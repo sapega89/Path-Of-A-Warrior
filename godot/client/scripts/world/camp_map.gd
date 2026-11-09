@@ -20,7 +20,7 @@ const SIDE := 2  # columns of trees on each side
 const BUSH := 136
 const STONES := 137
 const CAMPFIRE := 140
-const BRAZIER := 141
+const BRAZIER := 140  # the blacksmith's fire
 const FENCE := [85, 86]
 ## The town hall: the big tent of the original maps, four tiles across and two down.
 const HALL := [[193, 194, 195, 196], [197, 198, 199, 200]]
@@ -39,14 +39,14 @@ const TENT := [[217, 218, 219], [220, 221, 222]]
 const TENT_AT := [Vector2i(2, 4), Vector2i(11, 4), Vector2i(4, 4), Vector2i(10, 4)]
 ## Things that stand at their place in every camp where they fit: [tile, cell].
 const PROPS := [
-	[125, Vector2i(14, 7)], [129, Vector2i(12, 7)],  # weapon racks by the blacksmith's fire
+	[125, Vector2i(14, 7)], [126, Vector2i(12, 7)],  # weapon racks by the blacksmith's fire
 	[106, Vector2i(14, 10)], [111, Vector2i(10, 11)],  # a crate and hay by the stores
-	[143, Vector2i(7, 7)], [143, Vector2i(9, 5)],  # stumps to sit on by the fire
+	[115, Vector2i(7, 7)], [116, Vector2i(9, 5)],  # stumps to sit on by the fire
 	[113, Vector2i(11, 4)], [113, Vector2i(5, 4)],  # the well (the first place that fits)
 ]
-## Scattered about: bushes and stumps stand and block; stones and mushrooms lie flat.
-const SCATTER_UP := [136, 136, 117, 118, 115, 116, 143]
-const SCATTER_FLAT := [137, 142, 137]
+## Scattered about: bushes, stumps and hay stand and block; stones lie flat.
+const SCATTER_UP := [136, 136, 117, 118, 115, 116, 111]
+const SCATTER_FLAT := [137, 137, 137]
 ## Where the gaps go for 1..6 ways: [side, centre]; side 0 top, 1 right, 2 left.
 const GAPS := [
 	[],
@@ -317,7 +317,7 @@ func _decorate(dirt: Dictionary, gaps: Dictionary, rng: RandomNumberGenerator) -
 		var c: Vector2i = p[1]
 		if p[0] == 113 and well:
 			continue
-		if _room_for(c, dirt, gaps) or (p[0] == 143 and dirt.has(c)):
+		if _room_for(c, dirt, gaps) or (p[0] in [115, 116] and dirt.has(c)):
 			if _stands_alone(c) and _try([c], [p[0]]):
 				well = well or p[0] == 113
 	var free: Array = []

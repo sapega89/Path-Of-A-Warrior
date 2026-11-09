@@ -18,25 +18,33 @@ const Campaign := preload("res://scripts/core/campaign.gd")
 const WorldMap := preload("res://scripts/core/world_map.gd")
 const CampMap := preload("res://scripts/world/camp_map.gd")
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
+const MapArt := preload("res://scripts/world/map_art.gd")
 const Hero := preload("res://scripts/world/hero.gd")
+const MapPeople := preload("res://scripts/world/map_people.gd")
+const ArtFigure := preload("res://scripts/art/art_figure.gd")
+const Motion := preload("res://scripts/world/motion.gd")
 const FollowCamera := preload("res://scripts/world/follow_camera.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 const TALK_RANGE := 1.4  # tiles
-const ARROW_PATH := "res://assets/original/ui/arrow%d.png"
+const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
 ## The arrow picture for a gap on the top, the right and the left side (arrow0..3: down,
 ## left, up, right).
 const ARROW_OF_SIDE := [2, 3, 1]
 const BLINK_TIME := 0.25
 const MAX_WAYS := 6  # gaps in a camp
-## What lies past a gap, by the land of its place: pictures of the original tiles.
-const LAKE := [[73, 74, 75], [76, 77, 78], [79, 80, 81]]
-const ROCKS := [[69, 70]]
-const RUBBLE := [[71, 72]]
-const TREE := [[63, 64], [65, 66], [67, 68]]
-const TENT := [[217, 218, 219], [220, 221, 222]]
-const PALISADE := [[119, 120, 121]]
-const STAKES := [[122, 123, 124]]
-const SHADE := Color(0.8, 0.8, 0.8)  # the land past the trees, a little darker
+## What lies past a gap, by the land of its place: pieces of the new art (MapArt.PROP) and,
+## for a lake, its water.
+const LAND := {
+	"mountains": [["boulder", 1.8, -2.6, 1.6], ["crag", 2.8, 2.4, 2.4], ["boulder", 4.0, -1.4, 2.4],
+		["crag", 4.4, 2.2, 3.4], ["rock", 2.0, 1.4, 1.0]],
+	"forest": [["fir", 1.8, -2.4, 1.0], ["fir", 2.2, 2.4, 1.1], ["fir", 3.8, -3.4, 1.2],
+		["fir", 4.2, 3.2, 1.2], ["bush", 1.4, -1.4, 1.0]],
+	"town": [["palisade", 1.4, -2.0, 1.0], ["palisade", 1.4, -2.8, 1.0], ["palisade", 1.4, 2.0, 1.0],
+		["palisade", 1.4, 2.8, 1.0], ["hut", 3.6, -2.8, 0.6]],
+	"steppe": [["hay", 1.6, -2.0, 0.6], ["bush", 2.4, 2.2, 1.0], ["pebbles", 3.0, -1.4, 1.0],
+		["hay", 3.6, 2.8, 0.7]],
+	"lake": [["bush", 1.4, -1.8, 0.9], ["rock", 1.6, 2.0, 1.0]],
+}
 const CAMERA_DISTANCE := 19.0  # the whole camp on the screen, the camera does not move
 
 var path: String = Profile.PATH
@@ -49,6 +57,7 @@ var viewport: SubViewport
 var world: Node3D
 var builder: Node3D
 var hero: CharacterBody3D
+var figure: Node3D  # the hero's figure in the new art, on the body that walks
 var camera: Camera3D
 var title: Label
 var hint: Label
@@ -92,8 +101,8 @@ func _build_world() -> void:
 	world = Node3D.new()
 	world.name = "WorldRoot"
 	viewport.add_child(world)
-	MapBuilder.add_environment(world)
-	builder = MapBuilder.new()
+	MapArt.add_environment(world)
+	builder = MapArt.new()
 	builder.name = "Map"
 	world.add_child(builder)
 	builder.build(camp.data)
@@ -103,6 +112,18 @@ func _build_world() -> void:
 	hero.set_look(int(profile.head), profile.weapon_kind())
 	hero.global_position = MapBuilder.cell_to_world(camp.start) + Vector3(0, 0.05, 0)
 	hero.dir8 = 4  # facing up, into the camp
+	# The hero as the missions show him: the figure of his class with his blade (the body
+	# walks, the figure plays idle or walk and turns the way he goes).
+	figure = ArtFigure.new()
+	figure.name = "Figure"
+	hero.add_child(figure)
+	figure.setup(MapPeople.HEROES[clampi(int(profile.head), 0, 3)])
+	figure.unequip_all()
+	figure.equip(MapPeople.BLADES[clampi(profile.weapon_kind(), 0, 1)])
+	figure.rotation.y = Motion.yaw_of(hero.dir8)
+	figure.play("idle", 0.0)
+	if hero.sprite != null:
+		hero.sprite.visible = false
 	camera = FollowCamera.new()
 	camera.name = "Camera"
 	camera.focus = Vector3(CampMap.W / 2.0, 0.0, CampMap.H / 2.0 - 0.3)  # a little of the land past the top
@@ -117,10 +138,9 @@ func _build_world() -> void:
 		if e.open:
 			var arrow := Sprite3D.new()
 			arrow.name = "Arrow%d_%d" % [e.place, e.mission]
-			arrow.texture = load(ARROW_PATH % ARROW_OF_SIDE[int(e.side)])
-			arrow.pixel_size = 1.0 / 27.0
+			arrow.texture = MissionScreen.exit_arrow(ARROW_OF_SIDE[int(e.side)])
+			arrow.pixel_size = 1.0 / 72.0
 			arrow.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-			arrow.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 			arrow.no_depth_test = true
 			arrow.position = MapBuilder.cell_to_world(e.gap[1]).lerp(at, 0.5) + Vector3(0, 0.6, 0)
 			world.add_child(arrow)
@@ -129,7 +149,7 @@ func _build_world() -> void:
 		spots.append({"kind": "way", "place": int(e.place), "mission": int(e.mission), "open": bool(e.open),
 			"at": at})
 	var smith := MapBuilder.cell_to_world(camp.smith_spot())
-	_label3d("Smith", tr("menu.blacksmith"), smith + Vector3(0, 1.3, -0.3), UiTheme.TEXT)
+	_label3d("Smith", tr("menu.blacksmith"), smith + Vector3(0, 2.1, -0.6), UiTheme.TEXT)
 	spots.append({"kind": "smith", "at": smith})
 	var store := MapBuilder.cell_to_world(camp.store_spot())
 	_label3d("Store", tr("live.warehouse"), store + Vector3(0, 1.3, -0.5), UiTheme.TEXT)
@@ -210,6 +230,11 @@ func ruler_name(ruler: int) -> String:
 
 func _process(delta: float) -> void:
 	_blink += delta
+	if figure != null:
+		if hero.sprite != null:
+			hero.sprite.visible = false
+		figure.play("walk" if hero.walking else "idle")
+		figure.rotation.y = lerp_angle(figure.rotation.y, Motion.yaw_of(hero.dir8), 1.0 - exp(-16.0 * delta))
 	for a in arrows:
 		a.visible = int(_blink / BLINK_TIME) % 2 == 0
 
@@ -380,70 +405,46 @@ func _scenery(e: Dictionary, land: String) -> void:
 	var at := func(ahead: float, side: float) -> Vector3:
 		var p: Vector2 = mid + out * ahead + across * side
 		return Vector3(p.x, 0.0, p.y)
-	match land:
-		"lake":
-			_flat(LAKE, at.call(2.5, -3.2))
-			_flat(LAKE, at.call(3.5, 3.0))
-		"mountains":
-			_stand(ROCKS, at.call(1.8, -2.6))
-			_stand(RUBBLE, at.call(2.8, 2.6))
-			_stand(ROCKS, at.call(4.0, -1.6), 1.6)
-			_stand(ROCKS, at.call(4.5, 2.2), 1.6)
-		"forest":
-			_stand(TREE, at.call(1.8, -2.4))
-			_stand(TREE, at.call(2.2, 2.4))
-			_stand(TREE, at.call(3.8, -3.6))
-			_stand(TREE, at.call(4.2, 3.4))
-		"town":
-			_stand(PALISADE, at.call(1.4, -2.4))
-			_stand(STAKES, at.call(1.4, 2.4))
-			_stand(TENT, at.call(3.6, -2.8))
-		_:
-			_stand([[111]], at.call(1.6, -2.0))
-			_stand([[136]], at.call(2.4, 2.2))
-			_flat([[137]], at.call(3.0, -1.4))
-			_stand([[112]], at.call(3.6, 2.8))
+	for piece in LAND.get(land, LAND["steppe"]):
+		_land_piece(str(piece[0]), at.call(float(piece[1]), float(piece[2])), float(piece[3]))
+	if land == "lake":
+		_lake(at.call(3.2, 0.0) + Vector3(across.x, 0, across.y) * -2.6)
+		_lake(at.call(4.2, 0.0) + Vector3(across.x, 0, across.y) * 3.0)
 
 
-## A picture of tiles (rows of tile ids) cut from the atlas.
-func _picture(tiles: Array) -> ImageTexture:
-	var atlas: Image = (load(MapBuilder.ATLAS_PATH) as Texture2D).get_image()
-	var px := MapBuilder.TILE_PX
-	var img := Image.create(tiles[0].size() * px, tiles.size() * px, false, atlas.get_format())
-	for row in tiles.size():
-		for col in tiles[row].size():
-			var i: int = int(tiles[row][col]) - 1
-			var src := Rect2i((i % MapBuilder.ATLAS_COLS) * px, (i / MapBuilder.ATLAS_COLS) * px, px, px)
-			img.blit_rect(atlas, src, Vector2i(col * px, row * px))
-	return ImageTexture.create_from_image(img)
+## A piece of the new art standing on the land past the trees (on its hills).
+func _land_piece(what: String, at: Vector3, scale_by: float) -> void:
+	var node: Node3D
+	if what == "hut":
+		node = MapArt.ArtKit.prop(MapArt.CLUSTERS["hut"])
+	else:
+		var spec: Array = MapArt.PROP.get(what, [])
+		if spec.is_empty():
+			return
+		node = MapArt.ArtKit.prop(spec[0], false)
+		scale_by *= float(spec[1].x)
+	node.name = "Land%d" % world.get_child_count()
+	node.scale = Vector3.ONE * scale_by
+	node.rotation.y = float(hash(Vector2(at.x, at.z)) % 628) / 100.0
+	node.position = Vector3(at.x, builder.hills(at.x, at.z), at.z)
+	world.add_child(node)
 
 
-func _sprite(tiles: Array, scale_by: float) -> Sprite3D:
-	var s := Sprite3D.new()
-	s.texture = _picture(tiles)
-	s.pixel_size = scale_by / MapBuilder.TILE_PX
-	s.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	s.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
-	s.modulate = SHADE
-	return s
-
-
-## Standing up, its foot on the ground at `foot` (the middle of its bottom edge).
-func _stand(tiles: Array, foot: Vector3, scale_by: float = 1.0) -> void:
-	var s := _sprite(tiles, scale_by)
-	s.name = "Land%d" % world.get_child_count()
-	s.centered = true
-	s.position = foot + Vector3(0, tiles.size() * scale_by / 2.0, 0)
-	world.add_child(s)
-
-
-## Lying flat on the ground, centred on `centre`.
-func _flat(tiles: Array, centre: Vector3) -> void:
-	var s := _sprite(tiles, 1.0)
-	s.name = "Land%d" % world.get_child_count()
-	s.axis = Vector3.Axis.AXIS_Y
-	s.position = centre + Vector3(0, 0.01, 0)
-	world.add_child(s)
+## A pond past the trees: a disc of the maps' water on the land.
+func _lake(centre: Vector3) -> void:
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = 1.6
+	mesh.bottom_radius = 1.6
+	mesh.height = 0.02
+	var mi := MeshInstance3D.new()
+	mi.name = "Land%d" % world.get_child_count()
+	mi.mesh = mesh
+	var m := ShaderMaterial.new()
+	m.shader = MapArt.WATER_SHADER
+	mi.material_override = m
+	mi.scale = Vector3(1.4, 1.0, 1.0)
+	mi.position = Vector3(centre.x, builder.hills(centre.x, centre.z) + 0.03, centre.z)
+	world.add_child(mi)
 
 
 func _shuffle(a: Array) -> void:
