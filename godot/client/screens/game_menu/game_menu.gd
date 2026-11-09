@@ -14,25 +14,9 @@ extends BaseScreen
 ## while this menu or a multiplayer page is open. Router.params: profile_path, live and online
 ## (tests and screenshots) go on to the pages.
 
-const WIDTH := 460
-const LIST_HEIGHT := 600
-const GAP := 14
-## The pages of each single-player group: button name, text key, screen.
-const CAMPAIGN := [
-	["Missions", "menu.missions", "campaign"],
-	["Management", "menu.management", "management"],
-	["Blacksmith", "menu.blacksmith", "blacksmith"],
-	["Visiting", "menu.visiting", "visiting"],
-]
-const LIVE := [
-	["Trade", "live.trade", "live_trade"],
-	["Warehouse", "live.warehouse", "live_warehouse"],
-	["Safe", "live.safe", "live_safe"],
-]
-
 var path: String = Profile.PATH
-var menu: VBoxContainer
-var list: VBoxContainer
+@onready var menu: VBoxContainer = %Column
+@onready var list: VBoxContainer = %List
 var buttons: Array[Button] = []  # the single-player pages and Help
 var online: VBoxContainer  # the multiplayer pages
 var news: Control  # what Live kept for the player; null when the game is not online
@@ -40,27 +24,11 @@ var news: Control  # what Live kept for the player; null when the game is not on
 
 func _ready() -> void:
 	path = profile_path()
-	menu = UiTheme.menu_column(self, WIDTH)
-	menu.theme = UiTheme.theme(UiTheme.COMPACT_THEME)
-	menu.add_child(UiTheme.heading("menu.game", 44))
-	var scroll := ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(WIDTH, LIST_HEIGHT)
-	scroll.follow_focus = true
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	menu.add_child(scroll)
-	list = VBoxContainer.new()
-	list.name = "List"
-	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	list.add_theme_constant_override("separation", 6)
-	scroll.add_child(list)
-	for group in [CAMPAIGN, LIVE]:
-		for page in group:
-			_add(page[0], page[1], page[2])
-		_gap()
+	for b in list.get_children():
+		if b is Button:
+			buttons.append(b)
 	online = OnlineSection.new(Router.params)
-	list.add_child(online)
-	_gap()
-	_add("Help", "menu.help", "help")  # of the whole game
+	list.get_node("Gap2").add_sibling(online)  # the multiplayer pages, between the groups
 	if not Visits.can_visit(Profile.load_or_new(path)):
 		list.get_node("Visiting").modulate = Color(1, 1, 1, 0.5)  # only says when one can visit
 	buttons[0].grab_focus.call_deferred()
@@ -70,21 +38,6 @@ func _ready() -> void:
 			Router.push.call_deferred("login", {"must": true})
 			return
 	_show_news()
-
-
-func _add(node_name: String, text_key: String, screen: String) -> void:
-	var b := Button.new()
-	b.name = node_name
-	b.text = text_key
-	b.pressed.connect(_open.bind(screen))
-	list.add_child(b)
-	buttons.append(b)
-
-
-func _gap() -> void:
-	var gap := Control.new()
-	gap.custom_minimum_size = Vector2(0, GAP)
-	list.add_child(gap)
 
 
 ## A page of the hero's own game: off the online game first.

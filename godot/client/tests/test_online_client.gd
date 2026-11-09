@@ -63,9 +63,9 @@ func _dir() -> String:
 	return d
 
 
-func _screen(script: GDScript, params: Dictionary) -> Control:
+func _screen(screen_name: String, params: Dictionary) -> Control:
 	Router.params = params
-	var screen: Control = script.new()
+	var screen: Control = Router.make(Router.SCREENS[screen_name])
 	root.add_child(screen)
 	return screen
 
@@ -147,7 +147,7 @@ func test_menu_and_character_pages() -> void:
 	root.add_child(menu)
 	check(menu.buttons.all(func(b): return b.disabled), "no server: all closed")
 	menu.free()
-	var page := _screen(OnlineCharacterScreen, {"online": c})
+	var page := _screen("online_character", {"online": c})
 	page.open("records")
 	check(page.info.text.contains(tr("online.duel_grade") % "D+"), "Records: " + page.info.text)
 	page.open("attributes")
@@ -155,7 +155,7 @@ func test_menu_and_character_pages() -> void:
 	page.open("purse")
 	eq(page.info.text.split("\n")[2], tr("online.mp_gold") % 0)
 	page.free()
-	var text := _screen(OnlineTextScreen, {"online": c, "kind": "name"})
+	var text := _screen("online_text", {"online": c, "kind": "name"})
 	text.fields[0].text = "Andrey"
 	text.send()
 	eq(
@@ -164,12 +164,12 @@ func test_menu_and_character_pages() -> void:
 		"the display name"
 	)
 	text.free()
-	text = _screen(OnlineTextScreen, {"online": c, "kind": "name"})
+	text = _screen("online_text", {"online": c, "kind": "name"})
 	text.fields[0].text = "Blade"
 	text.send()
 	eq(text.info.text, tr("online.err_name_exists"), "a bot has it")
 	text.free()
-	text = _screen(OnlineTextScreen, {"online": c, "kind": "quote"})
+	text = _screen("online_text", {"online": c, "kind": "quote"})
 	text.fields[0].text = "Come on!"
 	text.fields[1].text = "Next!"
 	text.send()
@@ -178,7 +178,7 @@ func test_menu_and_character_pages() -> void:
 		["Come on!", "Next!"]
 	)
 	text.free()
-	var skills := _screen(OnlineSkillsScreen, {"online": c})
+	var skills := _screen("online_skills", {"online": c})
 	eq(skills.skill_buttons.size(), 3, "Whirlwind Sabre, Healing Herbs, Fury")
 	eq(
 		skills.slot_buttons.map(func(b): return b.text),
@@ -200,7 +200,7 @@ func test_ranking_order_options() -> void:
 	var c := net.client("ANDREY")
 	c.enter(func(_e): pass)
 	var old: Dictionary = Router.params
-	var rank := _screen(OnlineRankingScreen, {"online": c})
+	var rank := _screen("online_ranking", {"online": c})
 	eq(
 		rank.rows.map(func(l): return l.text),
 		["1.  BLADE  900", "2.  RAVEN  600", "3.  TIGER  400"]
@@ -213,26 +213,26 @@ func test_ranking_order_options() -> void:
 		"my Duel grade, near me"
 	)
 	rank.free()
-	var order := _screen(OnlineOrderScreen, {"online": c})
+	var order := _screen("online_order", {"online": c})
 	eq(
 		[order.info.text, order.create.visible, order.leave.visible],
 		[tr("online.no_order"), true, false]
 	)
 	order.free()
-	var text := _screen(OnlineTextScreen, {"online": c, "kind": "order_create"})
+	var text := _screen("online_text", {"online": c, "kind": "order_create"})
 	text.fields[0].text = "WO"
 	text.submit()
 	eq(text.info.text, tr("online.err_not_acceptable"), "4 to 12 letters")
 	text.fields[0].text = "WOLVES"
 	text.submit()
 	text.free()
-	order = _screen(OnlineOrderScreen, {"online": c})
+	order = _screen("online_order", {"online": c})
 	eq([order.title.text, order.list.get_child_count(), order.leave.visible], ["WOLVES", 1, true])
 	eq(order.list.get_child(0).text, "* ANDREY  Lv1  " + tr("online.online"))
 	order.online.order_leave(order.shown)
 	eq(net.o.order("WOLVES"), {}, "left: the order is gone")
 	order.free()
-	var opts := _screen(OnlineOptionsScreen, {"online": c})
+	var opts := _screen("online_options", {"online": c})
 	eq(opts.info.text, tr("online.invitation_accept"))
 	opts.choose(0)
 	eq(
@@ -252,7 +252,7 @@ func test_chat_screen() -> void:
 	a.enter(func(_e): pass)
 	b.enter(func(_e): pass)
 	var old: Dictionary = Router.params
-	var chat := _screen(OnlineChatScreen, {"online": a})
+	var chat := _screen("online_chat", {"online": a})
 	eq([chat.info.text, chat.write.visible], [tr("online.no_messages"), true], "the Lobby")
 	chat.line.text = "Hi there"
 	chat.submit()
@@ -268,9 +268,7 @@ func test_chat_screen() -> void:
 		"a conversation with a message waiting"
 	)
 	chat.free()
-	chat = _screen(
-		OnlineChatScreen, {"online": a, "channel": OnlineClient.PRIVATE, "peer": "MARIA"}
-	)
+	chat = _screen("online_chat", {"online": a, "channel": OnlineClient.PRIVATE, "peer": "MARIA"})
 	eq(
 		[chat.title.text, chat.lines.get_child(0).text],
 		[tr("online.with") % "MARIA", "MARIA: hello you"]

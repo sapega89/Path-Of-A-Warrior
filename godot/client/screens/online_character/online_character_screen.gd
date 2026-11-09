@@ -4,51 +4,14 @@ extends BaseScreen
 ## Exp/Fame/Gold, Change Quote, Display Name. Records, Attributes and Exp/Fame/Gold are read
 ## from the server and shown beside the menu; the others open their page.
 
-## Button name, text key, what it does: a page shown here or a screen and its params.
-const ITEMS := [
-	["Records", "online.records", "records"],
-	["Attributes", "online.attributes", "attributes"],
-	["Skills", "online.skills", "online_skills"],
-	["Purse", "online.purse", "purse"],
-	["Quote", "online.quote", "online_text:quote"],
-	["Name", "online.name", "online_text:name"],
-]
-
 var online: RefCounted
-var info: Label
+@onready var info: Label = %Info
 var buttons: Array[Button] = []
 
 
 func _ready() -> void:
 	online = OnlineClient.of(Router.params)
-	var col := UiTheme.menu_column(self, 900)
-	col.add_child(UiTheme.heading("online.character", 44))
-	var row := HBoxContainer.new()  # the menu, and what it shows beside it
-	row.name = "Row"
-	row.add_theme_constant_override("separation", 24)
-	col.add_child(row)
-	var menu := VBoxContainer.new()
-	menu.name = "Menu"
-	menu.custom_minimum_size = Vector2(440, 0)
-	menu.add_theme_constant_override("separation", 8)
-	row.add_child(menu)
-	for item in ITEMS:
-		var b := Button.new()
-		b.name = item[0]
-		b.text = item[1]
-		var what: String = item[2]
-		b.pressed.connect(func(): open(what))
-		menu.add_child(b)
-		buttons.append(b)
-	info = UiTheme.note("Info")
-	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	info.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	row.add_child(info)
-	var back := Button.new()
-	back.name = "Back"
-	back.text = "common.back"
-	back.pressed.connect(func(): Router.back())
-	col.add_child(back)
+	buttons.assign(%Menu.get_children())
 	buttons[0].grab_focus.call_deferred()
 
 

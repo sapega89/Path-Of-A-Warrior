@@ -5,42 +5,13 @@ extends BaseScreen
 ## server.
 
 var online: RefCounted
-var accept: Button
-var deny: Button
-var info: Label
+@onready var accept: Button = %Accept
+@onready var deny: Button = %Deny
+@onready var info: Label = %Info
 
 
 func _ready() -> void:
 	online = OnlineClient.of(Router.params)
-	var col := UiTheme.menu_column(self, 560)
-	col.add_child(UiTheme.heading("online.options", 44))
-	var label := Label.new()
-	label.text = "online.invitation"
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	col.add_child(label)
-	var row := HBoxContainer.new()
-	row.name = "Invitation"
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	accept = Button.new()
-	accept.name = "Accept"
-	accept.text = "online.accept"
-	accept.custom_minimum_size = Vector2(200, 0)
-	accept.pressed.connect(choose.bind(1))
-	row.add_child(accept)
-	deny = Button.new()
-	deny.name = "Deny"
-	deny.text = "online.deny"
-	deny.custom_minimum_size = Vector2(200, 0)
-	deny.pressed.connect(choose.bind(0))
-	row.add_child(deny)
-	col.add_child(row)
-	info = UiTheme.note("Info", 80)
-	col.add_child(info)
-	var back := Button.new()
-	back.name = "Back"
-	back.text = "common.back"
-	back.pressed.connect(func(): Router.back())
-	col.add_child(back)
 	accept.grab_focus.call_deferred()
 	if online == null:
 		info.text = tr("live.failed")

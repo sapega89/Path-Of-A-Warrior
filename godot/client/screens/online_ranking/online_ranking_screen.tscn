@@ -1,0 +1,119 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://screens/online_ranking/online_ranking_screen.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/ui/heading.gd" id="2"]
+
+[node name="OnlineRankingScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 1
+grow_vertical = 1
+
+[node name="Column" type="VBoxContainer" parent="Center"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(640, 0)
+theme_override_constants/separation = 8
+
+[node name="Heading" type="Label" parent="Center/Column"]
+layout_mode = 2
+theme_type_variation = &"Heading"
+text = "online.ranking"
+horizontal_alignment = 1
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 44
+script = ExtResource("2")
+
+[node name="Categories" type="HBoxContainer" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 1
+
+[node name="Fame" type="Button" parent="Center/Column/Categories"]
+layout_mode = 2
+custom_minimum_size = Vector2(190, 0)
+text = "online.rank_fame"
+
+[node name="Duel" type="Button" parent="Center/Column/Categories"]
+layout_mode = 2
+custom_minimum_size = Vector2(190, 0)
+text = "online.rank_duel"
+
+[node name="Mission" type="Button" parent="Center/Column/Categories"]
+layout_mode = 2
+custom_minimum_size = Vector2(190, 0)
+text = "online.rank_mission"
+
+[node name="Views" type="HBoxContainer" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 1
+
+[node name="Top" type="Button" parent="Center/Column/Views"]
+layout_mode = 2
+custom_minimum_size = Vector2(190, 0)
+text = "online.rank_top"
+
+[node name="Near" type="Button" parent="Center/Column/Views"]
+layout_mode = 2
+custom_minimum_size = Vector2(190, 0)
+text = "online.rank_near"
+
+[node name="Row1" type="Label" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+auto_translate_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Row2" type="Label" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+auto_translate_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Row3" type="Label" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+auto_translate_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Mine" type="Label" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+auto_translate_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 3
+custom_minimum_size = Vector2(0, 40)
+
+[node name="Back" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "common.back"
+
+[connection signal="pressed" from="Center/Column/Categories/Fame" to="." method="_on_category" binds= [0]]
+
+[connection signal="pressed" from="Center/Column/Categories/Duel" to="." method="_on_category" binds= [1]]
+
+[connection signal="pressed" from="Center/Column/Categories/Mission" to="." method="_on_category" binds= [2]]
+
+[connection signal="pressed" from="Center/Column/Views/Top" to="." method="_on_view" binds= [0]]
+
+[connection signal="pressed" from="Center/Column/Views/Near" to="." method="_on_view" binds= [1]]
+
+[connection signal="pressed" from="Center/Column/Back" to="." method="go_back"]

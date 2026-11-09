@@ -1,0 +1,110 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://screens/game_menu/game_menu.gd" id="1"]
+[ext_resource type="Theme" path="res://assets/art/ui/compact_theme.tres" id="2"]
+[ext_resource type="Script" path="res://scripts/ui/heading.gd" id="3"]
+
+[node name="GameMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 1
+grow_vertical = 1
+
+[node name="Column" type="VBoxContainer" parent="Center"]
+unique_name_in_owner = true
+theme = ExtResource("2")
+layout_mode = 2
+custom_minimum_size = Vector2(460, 0)
+theme_override_constants/separation = 8
+
+[node name="Heading" type="Label" parent="Center/Column"]
+layout_mode = 2
+theme_type_variation = &"Heading"
+text = "menu.game"
+horizontal_alignment = 1
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 44
+script = ExtResource("3")
+
+[node name="Scroll" type="ScrollContainer" parent="Center/Column"]
+layout_mode = 2
+custom_minimum_size = Vector2(460, 600)
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="List" type="VBoxContainer" parent="Center/Column/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="Missions" type="Button" parent="Center/Column/Scroll/List"]
+layout_mode = 2
+text = "menu.missions"
+
+[node name="Management" type="Button" parent="Center/Column/Scroll/List"]
+layout_mode = 2
+text = "menu.management"
+
+[node name="Blacksmith" type="Button" parent="Center/Column/Scroll/List"]
+layout_mode = 2
+text = "menu.blacksmith"
+
+[node name="Visiting" type="Button" parent="Center/Column/Scroll/List"]
+layout_mode = 2
+text = "menu.visiting"
+
+[node name="Gap1" type="Control" parent="Center/Column/Scroll/List"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 14)
+
+[node name="Trade" type="Button" parent="Center/Column/Scroll/List"]
+layout_mode = 2
+text = "live.trade"
+
+[node name="Warehouse" type="Button" parent="Center/Column/Scroll/List"]
+layout_mode = 2
+text = "live.warehouse"
+
+[node name="Safe" type="Button" parent="Center/Column/Scroll/List"]
+layout_mode = 2
+text = "live.safe"
+
+[node name="Gap2" type="Control" parent="Center/Column/Scroll/List"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 14)
+
+[node name="Gap3" type="Control" parent="Center/Column/Scroll/List"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 14)
+
+[node name="Help" type="Button" parent="Center/Column/Scroll/List"]
+layout_mode = 2
+text = "menu.help"
+
+[connection signal="pressed" from="Center/Column/Scroll/List/Missions" to="." method="_open" binds= ["campaign"]]
+
+[connection signal="pressed" from="Center/Column/Scroll/List/Management" to="." method="_open" binds= ["management"]]
+
+[connection signal="pressed" from="Center/Column/Scroll/List/Blacksmith" to="." method="_open" binds= ["blacksmith"]]
+
+[connection signal="pressed" from="Center/Column/Scroll/List/Visiting" to="." method="_open" binds= ["visiting"]]
+
+[connection signal="pressed" from="Center/Column/Scroll/List/Trade" to="." method="_open" binds= ["live_trade"]]
+
+[connection signal="pressed" from="Center/Column/Scroll/List/Warehouse" to="." method="_open" binds= ["live_warehouse"]]
+
+[connection signal="pressed" from="Center/Column/Scroll/List/Safe" to="." method="_open" binds= ["live_safe"]]
+
+[connection signal="pressed" from="Center/Column/Scroll/List/Help" to="." method="_open" binds= ["help"]]

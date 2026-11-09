@@ -30,8 +30,8 @@ const CHOICES := {
 var online: RefCounted
 var kind := "duel"
 var buttons: Array[Button] = []
-var status: Label
-var cancel: Button
+@onready var status: Label = %Status
+@onready var cancel: Button = %Cancel
 var _ticks := 0.0
 
 
@@ -40,34 +40,20 @@ func _ready() -> void:
 	kind = str(Router.params.get("kind", "duel"))
 	if not CHOICES.has(kind):
 		kind = "duel"
-	var col := UiTheme.menu_column(self, 560)
-	col.add_child(UiTheme.heading("online." + kind, 44))
-	status = UiTheme.note("Status", 44)
-	col.add_child(status)
+	%Heading.text = "online." + kind
 	for c in CHOICES[kind]:
 		var b := Button.new()
 		b.name = c[0]
 		b.text = c[1]
 		var what: Array = c[2]
 		b.pressed.connect(func(): choose(what))
-		col.add_child(b)
+		%Choices.add_child(b)
 		buttons.append(b)
-	cancel = Button.new()
-	cancel.name = "Cancel"
-	cancel.text = "online.cancel_search"
-	cancel.pressed.connect(stop_waiting)
-	cancel.visible = false
-	col.add_child(cancel)
-	var back := Button.new()
-	back.name = "Back"
-	back.text = "common.back"
-	back.pressed.connect(close)
-	col.add_child(back)
 	if online == null:
 		status.text = tr("live.failed")
 		for b in buttons:
 			b.disabled = true
-		back.grab_focus.call_deferred()
+		%Back.grab_focus.call_deferred()
 		return
 	buttons[0].grab_focus.call_deferred()
 	_show_waiting()

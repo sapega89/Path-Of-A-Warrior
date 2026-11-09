@@ -19,18 +19,16 @@ const INVITES := {
 var online: RefCounted
 var kind := "name"
 var fields: Array[LineEdit] = []
-var info: Label
-var ask: ConfirmationDialog
+@onready var info: Label = %Info
+@onready var ask: ConfirmationDialog = %Ask
 
 
 func _ready() -> void:
 	online = OnlineClient.of(Router.params)
 	kind = str(Router.params.get("kind", "name"))
-	var col := UiTheme.menu_column(self, 560)
-	col.add_child(UiTheme.heading("online.title_" + kind, 40))
-	var hint := UiTheme.note("Hint")
-	hint.text = tr("online.hint_" + kind)
-	col.add_child(hint)
+	%Heading.text = "online.title_" + kind
+	%Hint.text = tr("online.hint_" + kind)
+	var col: VBoxContainer = %Fields
 	var me: Dictionary = online.me if online != null else {}
 	match kind:
 		"name":
@@ -40,23 +38,7 @@ func _ready() -> void:
 			_field(col, "Win", 20, str(me.get("quote_win", "")))
 		_:
 			_field(col, "Text", 12, "")
-	var ok := Button.new()
-	ok.name = "Ok"
-	ok.text = "live.ok"
-	ok.pressed.connect(submit)
-	col.add_child(ok)
-	info = UiTheme.note("Info", 60)
-	col.add_child(info)
-	var back := Button.new()
-	back.name = "Back"
-	back.text = "common.back"
-	back.pressed.connect(func(): Router.back())
-	col.add_child(back)
-	ask = ConfirmationDialog.new()
-	ask.name = "Ask"
 	ask.dialog_text = tr("online.name_sure")
-	ask.confirmed.connect(send)
-	add_child(ask)
 	fields[0].grab_focus.call_deferred()
 
 

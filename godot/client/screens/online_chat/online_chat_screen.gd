@@ -7,87 +7,29 @@ extends BaseScreen
 ## the page grows as they come; the tabs count what waits in the others.
 ## Router.params: channel (0 Lobby, 1 Order, 2 Private) and peer (a private conversation).
 
-const TABS := [
-	["Lobby", "online.lobby"], ["OrderTab", "online.order"], ["Private", "online.private"]
-]
+## The tabs' text keys, in the order of the channels.
+const TABS := ["online.lobby", "online.order", "online.private"]
 
 var online: RefCounted
 var channel := 0
 var peer := ""
-var title: Label
+@onready var title: Label = %Title
 var tabs: Array[Button] = []
-var scroll: ScrollContainer
-var lines: VBoxContainer
-var write: HBoxContainer
-var line: LineEdit
-var new_message: Button
-var info: Label
+@onready var scroll: ScrollContainer = %Scroll
+@onready var lines: VBoxContainer = %Lines
+@onready var write: HBoxContainer = %Write
+@onready var line: LineEdit = %Line
+@onready var new_message: Button = %NewMessage
+@onready var info: Label = %Info
 
 
 func _ready() -> void:
 	online = OnlineClient.of(Router.params)
 	channel = clampi(int(Router.params.get("channel", 0)), 0, 2)
 	peer = str(Router.params.get("peer", ""))
-	var col := UiTheme.menu_column(self, 760)
-	title = UiTheme.heading("online.chat", 40)
-	title.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	col.add_child(title)
-	var row := HBoxContainer.new()
-	row.name = "Tabs"
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	for i in TABS.size():
-		var b := Button.new()
-		b.name = TABS[i][0]
-		b.custom_minimum_size = Vector2(220, 0)
-		b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-		b.pressed.connect(func(): open(i, ""))
-		row.add_child(b)
-		tabs.append(b)
-	col.add_child(row)
-	row.visible = peer.is_empty()
-	scroll = ScrollContainer.new()
-	scroll.name = "Scroll"
-	scroll.custom_minimum_size = Vector2(0, 330)
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	lines = VBoxContainer.new()
-	lines.name = "Lines"
-	lines.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	lines.add_theme_constant_override("separation", 2)
-	scroll.add_child(lines)
-	col.add_child(scroll)
-	new_message = Button.new()
-	new_message.name = "NewMessage"
-	new_message.text = "online.new_message"
-	new_message.pressed.connect(
-		func():
-			var p := Router.params.duplicate()
-			p.kind = "peer"
-			Router.push("online_text", p)
-	)
-	col.add_child(new_message)
-	write = HBoxContainer.new()
-	write.name = "Write"
-	line = LineEdit.new()
-	line.name = "Line"
+	tabs.assign(%Tabs.get_children())
+	%Tabs.visible = peer.is_empty()
 	line.max_length = OnlineClient.MAX_TEXT
-	line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	line.placeholder_text = tr("online.write_hint")
-	line.text_changed.connect(_keep)
-	line.text_submitted.connect(func(_t: String) -> void: submit())
-	write.add_child(line)
-	var send := Button.new()
-	send.name = "Send"
-	send.text = "online.send"
-	send.pressed.connect(submit)
-	write.add_child(send)
-	col.add_child(write)
-	info = UiTheme.note("Info", 36)
-	col.add_child(info)
-	var back := Button.new()
-	back.name = "Back"
-	back.text = "common.back"
-	back.pressed.connect(func(): Router.back())
-	col.add_child(back)
 	if online == null:
 		info.text = tr("live.failed")
 		write.visible = false
@@ -95,6 +37,16 @@ func _ready() -> void:
 		return
 	online.listen(self, &"pushed")
 	open(channel, peer)
+
+
+func _new_message() -> void:
+	var p := Router.params.duplicate()
+	p.kind = "peer"
+	Router.push("online_text", p)
+
+
+func _on_line_submitted(_t: String) -> void:
+	submit()
 
 
 func _exit_tree() -> void:
@@ -140,7 +92,7 @@ func _tab_texts() -> void:
 	var counts := [0, int(online.unread[0]), int(online.unread[1])]
 	for i in tabs.size():
 		tabs[i].text = (
-			tr(TABS[i][1]) + (" (%d)" % counts[i] if counts[i] > 0 and i != channel else "")
+			tr(TABS[i]) + (" (%d)" % counts[i] if counts[i] > 0 and i != channel else "")
 		)
 		tabs[i].modulate = Color(1, 0.85, 0.4) if i == channel else Color.WHITE
 

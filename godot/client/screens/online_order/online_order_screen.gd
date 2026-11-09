@@ -2,21 +2,22 @@ class_name OnlineOrderScreen
 extends BaseScreen
 ## Multiplayer > Order (pyport's Order window): my order's name and its members (the leader
 ## first, then me, who is online, the others), with Leave Order ("Leave the order?"). Without
-## an order: Create Order and Join Order, a name of 4-12 letters (scripts/screens/
-## online_text_screen.gd). A member online takes me into a battle with him: Mission Together
-## or 2-on-2 Together (side by side against two CPU fighters); Duel > 2-on-2 Order and Mission
-## > Order Ally open the list for one of them (Router.params.pick, the OnlineClient invite
-## mode). The battle opens its screen by itself and comes back here.
+## an order: Create Order and Join Order, a name of 4-12 letters
+## (screens/online_text/online_text_screen.gd). A member online takes me into a battle with
+## him: Mission Together or 2-on-2 Together (side by side against two CPU fighters); Duel >
+## 2-on-2 Order and Mission > Order Ally open the list for one of them (Router.params.pick,
+## the OnlineClient invite mode). The battle opens its screen by itself and comes back here.
 
 var online: RefCounted
-var title: Label
-var info: Label
-var list: VBoxContainer
-var create: Button
-var join: Button
-var leave: Button
-var ask: ConfirmationDialog
-var together: ConfirmationDialog  # a member chosen: 2-on-2 Together (OK) or Mission Together
+@onready var title: Label = %Name
+@onready var info: Label = %Info
+@onready var list: VBoxContainer = %Members
+@onready var create: Button = %Create
+@onready var join: Button = %Join
+@onready var leave: Button = %Leave
+@onready var ask: ConfirmationDialog = %Ask
+## A member chosen: 2-on-2 Together (OK) or Mission Together.
+@onready var together: ConfirmationDialog = %Together
 var pick := -1  # the invite mode a member is chosen for, -1 either
 var chosen := ""  # the member's UserID
 
@@ -24,41 +25,10 @@ var chosen := ""  # the member's UserID
 func _ready() -> void:
 	online = OnlineClient.of(Router.params)
 	pick = int(Router.params.get("pick", -1))
-	var col := UiTheme.menu_column(self, 640)
-	col.add_child(UiTheme.heading("online.order", 44))
-	title = UiTheme.note("Name")
-	title.add_theme_font_size_override("font_size", 32)
-	title.add_theme_color_override("font_color", UiTheme.ACCENT)
-	col.add_child(title)
-	list = VBoxContainer.new()
-	list.name = "Members"
-	list.add_theme_constant_override("separation", 2)
-	col.add_child(list)
-	info = UiTheme.note("Info", 40)
-	col.add_child(info)
-	create = _button(col, "Create", "online.order_create", func(): _type("order_create"))
-	join = _button(col, "Join", "online.order_join", func(): _type("order_join"))
-	leave = _button(col, "Leave", "online.order_leave", func(): ask.popup_centered())
-	var back := _button(col, "Back", "common.back", func(): Router.back())
-	for b in [create, join, leave]:
-		b.visible = false
-	ask = ConfirmationDialog.new()
-	ask.name = "Ask"
 	ask.dialog_text = tr("online.order_leave_ask")
-	ask.confirmed.connect(func(): online.order_leave(OnlineClient.later(self, &"shown")))
-	add_child(ask)
-	together = ConfirmationDialog.new()
-	together.name = "Together"
 	together.ok_button_text = tr("online.together_2on2")
 	together.add_button(tr("online.together_mission"), false, "mission")
-	together.confirmed.connect(func(): invite(OnlineClient.TOGETHER))
-	together.custom_action.connect(
-		func(_a: StringName):
-			together.hide()
-			invite(OnlineClient.ALLY)
-	)
-	add_child(together)
-	back.grab_focus.call_deferred()
+	%Back.grab_focus.call_deferred()
 	if online == null:
 		info.text = tr("live.failed")
 		return
@@ -66,13 +36,21 @@ func _ready() -> void:
 	online.ask_order(OnlineClient.later(self, &"shown"))
 
 
-func _button(col: VBoxContainer, node_name: String, key: String, press: Callable) -> Button:
-	var b := Button.new()
-	b.name = node_name
-	b.text = key
-	b.pressed.connect(press)
-	col.add_child(b)
-	return b
+func _ask_leave() -> void:
+	ask.popup_centered()
+
+
+func _leave_order() -> void:
+	online.order_leave(OnlineClient.later(self, &"shown"))
+
+
+func _together_2on2() -> void:
+	invite(OnlineClient.TOGETHER)
+
+
+func _together_mission(_a: StringName) -> void:
+	together.hide()
+	invite(OnlineClient.ALLY)
 
 
 func _type(kind: String) -> void:

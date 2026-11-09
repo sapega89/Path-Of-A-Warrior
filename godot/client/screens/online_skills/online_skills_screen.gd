@@ -6,42 +6,18 @@ extends BaseScreen
 ## picked with no skill in hand is emptied. Every change is saved on the server.
 
 var online: RefCounted
-var list: VBoxContainer
+@onready var list: VBoxContainer = %List
 var skill_buttons: Array[Button] = []
 var slot_buttons: Array[Button] = []
-var info: Label
+@onready var info: Label = %Info
 var held := -1  # the skill picked, waiting for a slot
 var slots: Array = []
 
 
 func _ready() -> void:
 	online = OnlineClient.of(Router.params)
-	var col := UiTheme.menu_column(self, 640)
-	col.add_child(UiTheme.heading("online.skills", 44))
-	list = VBoxContainer.new()
-	list.name = "List"
-	list.add_theme_constant_override("separation", 4)
-	col.add_child(list)
-	var row := GridContainer.new()  # the four slots, two by two
-	row.name = "Slots"
-	row.columns = 2
-	for i in 4:
-		var b := Button.new()
-		b.name = "Slot%d" % (i + 1)
-		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-		b.pressed.connect(press_slot.bind(i))
-		row.add_child(b)
-		slot_buttons.append(b)
-	col.add_child(row)
-	info = UiTheme.note("Info", 60)
-	col.add_child(info)
-	var back := Button.new()
-	back.name = "Back"
-	back.text = "common.back"
-	back.pressed.connect(func(): Router.back())
-	col.add_child(back)
-	back.grab_focus.call_deferred()
+	slot_buttons.assign(%Slots.get_children())
+	%Back.grab_focus.call_deferred()
 	if online == null:
 		info.text = tr("live.failed")
 		return
@@ -128,6 +104,11 @@ func saved(err: String) -> void:
 
 
 ## Back lets go of a skill being moved first.
+## The Back button: out of the page, a skill in hand or not.
+func leave() -> void:
+	Router.back()
+
+
 func go_back() -> void:
 	if held >= 0:
 		held = -1

@@ -8,7 +8,7 @@ signal screen_changed(screen_name: String)
 const SCREENS := {
 	"title": "res://screens/title/title_screen.tscn",
 	"main_menu": "res://screens/main_menu/main_menu.tscn",
-	"game_menu": "res://scripts/screens/game_menu.gd",
+	"game_menu": "res://screens/game_menu/game_menu.tscn",
 	"settings": "res://screens/settings/settings_screen.tscn",
 	"map_viewer": "res://scripts/screens/map_viewer.gd",
 	"campaign": "res://screens/campaign/campaign_screen.tscn",
@@ -38,15 +38,15 @@ const SCREENS := {
 	"live_buy": "res://screens/live_buy/live_buy_screen.tscn",
 	"live_sell": "res://screens/live_sell/live_sell_screen.tscn",
 	"live_cancel": "res://screens/live_cancel/live_cancel_screen.tscn",
-	"online_character": "res://scripts/screens/online_character_screen.gd",
-	"online_skills": "res://scripts/screens/online_skills_screen.gd",
-	"online_text": "res://scripts/screens/online_text_screen.gd",
-	"online_ranking": "res://scripts/screens/online_ranking_screen.gd",
-	"online_order": "res://scripts/screens/online_order_screen.gd",
-	"online_chat": "res://scripts/screens/online_chat_screen.gd",
-	"online_options": "res://scripts/screens/online_options_screen.gd",
+	"online_character": "res://screens/online_character/online_character_screen.tscn",
+	"online_skills": "res://screens/online_skills/online_skills_screen.tscn",
+	"online_text": "res://screens/online_text/online_text_screen.tscn",
+	"online_ranking": "res://screens/online_ranking/online_ranking_screen.tscn",
+	"online_order": "res://screens/online_order/online_order_screen.tscn",
+	"online_chat": "res://screens/online_chat/online_chat_screen.tscn",
+	"online_options": "res://screens/online_options/online_options_screen.tscn",
 	"online_battle": "res://scripts/screens/online_battle_screen.gd",
-	"online_battles": "res://scripts/screens/online_battles_screen.gd",
+	"online_battles": "res://screens/online_battles/online_battles_screen.tscn",
 }
 
 var current: Control

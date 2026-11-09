@@ -13,11 +13,13 @@ godot/
     project.godot
     scenes/main.tscn      корінь: тема + роутер екранів
     scripts/core/         автозавантаження: I18n, Settings, InputSetup, Router, Audio
-    scripts/screens/      екрани: title, main_menu, game_menu, settings, map_viewer, campaign, briefing, mission,
-                          management, attributes, skills, gear, inventory,
-                          assign_items, story, blacksmith, shop, visiting, endings, help, new_game (герой у user://hero.json)
-                          camp (стоянка між місіями: шляхи далі зі стрілками, коваль, склад
-                          і ратуша), town_hall (ратуша: усі полковники й генерали)
+    screens/<назва>/      екрани-сцени: <назва>_screen.tscn і скрипт поруч (меню, налаштування,
+                          довідка, кінцівки, вхід, ігрове меню, керування героєм, нова гра,
+                          брифінг, кампанія, візити, крамниця, історія, ратуша, Live, Online)
+    scenes/ui/            спільні шматки екранів: рядок золота, діалог двох, сітка речей,
+                          кнопки Рюкзак / Склад
+    scripts/screens/      BaseScreen і екрани, ще не перенесені на сцени: map_viewer, mission,
+                          camp (стоянка між місіями), training, online_battle
     scripts/world/        3D-світ: map_builder (карта з оригінальних шарів), hero, follow_camera
     scripts/ui/           тема, сенсорні кнопки
     scripts/world/        3D-світ: map_builder (карта з оригінальних шарів: дані, клітинки,
@@ -232,7 +234,7 @@ Ingress Rule у Security List підмережі). Скрипт наприкін
 
 - **Головне меню** (`screens/main_menu/main_menu.tscn`): Play / Continue, New Game, Endings,
   Settings, Quit (на телефоні й у браузері без Quit).
-- **Ігрове меню** (`scripts/screens/game_menu.gd`; Continue, а після прологу й тренування нової
+- **Ігрове меню** (`screens/game_menu/game_menu.tscn`; Continue, а після прологу й тренування нової
   гри — саме),
   одна колонка, що прокручується за фокусом, групи через проміжок: Missions, Management,
   Blacksmith, Visiting; Trade, Warehouse, Safe; рядок персонажа й Duel, Online Missions,
@@ -243,7 +245,7 @@ Ingress Rule у Security List підмережі). Скрипт наприкін
 
 ## Live у клієнті
 
-Trade, Warehouse і Safe з ігрового меню (`scripts/screens/live_*.gd`,
+Trade, Warehouse і Safe з ігрового меню (`screens/live_*/`,
 `scripts/net/live_client.gd`), по тому самому з'єднанню, що й сейви. Кожна сторінка шле серверу
 золото й рюкзак героя (`live_sync`); без сервера — «Network connection has failed».
 Музика в Live мовчить, як у pyport.
@@ -268,7 +270,7 @@ Trade, Warehouse і Safe з ігрового меню (`scripts/screens/live_*.g
 
 ## Мультиплеєр у клієнті
 
-Пункти мультиплеєра в ігровому меню (`scripts/ui/online_section.gd`, `scripts/screens/online_*.gd`,
+Пункти мультиплеєра в ігровому меню (`scripts/ui/online_section.gd`, `screens/online_*/`,
 `scripts/net/online_client.gd`), по тому самому з'єднанню. Ігрове меню ставить гравця онлайн
 (`mp_enter`); вихід у головне меню чи на сторінку одиночної гри (Missions, Trade, ...) — знімає,
 щоб ніхто не викликав героя посеред місії. Поки нема відповіді — «Connecting...», без сервера —

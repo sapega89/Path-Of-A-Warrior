@@ -182,7 +182,7 @@ func test_game_menu_has_the_game_and_the_main_menu_the_rest() -> void:
 	_hero().save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "live": t[0]}
-	var screen: Control = GameMenu.new()
+	var screen: Control = Router.make(Router.SCREENS["game_menu"])
 	root.add_child(screen)
 	eq(
 		screen.buttons.map(func(b): return str(b.name)),
@@ -197,7 +197,7 @@ func test_game_menu_has_the_game_and_the_main_menu_the_rest() -> void:
 	check(screen.menu.visible)
 	screen.free()
 	Router.params = {"profile_path": TEST_PATH}
-	screen = GameMenu.new()
+	screen = Router.make(Router.SCREENS["game_menu"])
 	root.add_child(screen)
 	check(screen.news == null, "offline: nothing asked")
 	screen.free()
@@ -360,7 +360,7 @@ func test_game_menu_shows_notices_sale_list_gifts_and_fame() -> void:
 	_hero(0).save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "live": t[0]}
-	var screen: Control = GameMenu.new()
+	var screen: Control = Router.make(Router.SCREENS["game_menu"])
 	root.add_child(screen)
 	var news: Control = screen.news
 	check(news.note.visible, "a page of notices")
@@ -382,7 +382,7 @@ func test_game_menu_shows_notices_sale_list_gifts_and_fame() -> void:
 	var hero: RefCounted = Profile.load_or_new(TEST_PATH)
 	eq([int(hero.fame), int(hero.experience)], [7, 5], "the hero got them, saved")
 	screen.free()
-	screen = GameMenu.new()
+	screen = Router.make(Router.SCREENS["game_menu"])
 	root.add_child(screen)
 	news = screen.news
 	check(not news.note.visible and not news.list.visible, "nothing new the second time")
