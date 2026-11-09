@@ -1,7 +1,9 @@
 extends Node3D
 ## Ground for a scene in the new art: a grid painted by ground.gdshader. Vertex colours
-## mark trodden paths (r) and green grass (g); outside the play area the land rises
-## into low hills so the edge of the world is never seen. Grass tufts are one MultiMesh.
+## mark trodden paths (r), green grass (g) and wet mud (b); outside the play area the land rises
+## into low hills so the edge of the world is never seen. Hollows sink the ground into
+## channels for water (a marsh round a camp), with wet mud along their banks. Grass tufts
+## are one MultiMesh.
 
 const ArtKit := preload("res://scripts/art/art_kit.gd")
 const GROUND := preload("res://assets/art/shaders/ground.gdshader")
@@ -15,6 +17,11 @@ var paths: Array = []
 var path_width := 0.8
 ## Green patches: Vector3(x, z, radius).
 var greens: Array = []
+## Hollows: polylines on the XZ plane (Array of PackedVector2Array) where the ground sinks
+## `hollow_depth` metres, `hollow_width` to each side; the water is the scene's own plane.
+var hollows: Array = []
+var hollow_width := 1.8
+var hollow_depth := 0.7
 var tufts := 140
 var seed_value := 3
 
@@ -31,7 +38,7 @@ func build() -> void:
 		for j in n + 1:
 			var x := -half + i * step
 			var z := -half + j * step
-			st.set_color(Color(_path_amount(x, z), _green_amount(x, z), 0.0))
+			st.set_color(Color(_path_amount(x, z), _green_amount(x, z), _wet_amount(x, z)))
 			st.add_vertex(Vector3(x, height(x, z), z))
 	for i in n:
 		for j in n:
@@ -59,22 +66,39 @@ func height(x: float, z: float) -> float:
 	var dx := maxf(play.position.x - x, x - play.end.x)
 	var dz := maxf(play.position.y - z, z - play.end.y)
 	var out := maxf(maxf(dx, dz), 0.0)
+	var sink := hollow_amount(x, z) * hollow_depth
 	if out <= 0.0:
-		return 0.0
+		return -sink
 	var rise := smoothstep(0.0, 9.0, out) * 3.2
 	var wave := 0.6 + 0.4 * sin(x * 0.31 + cos(z * 0.23) * 2.0) * cos(z * 0.27 - x * 0.11)
-	return rise * wave
+	return rise * wave - sink
+
+
+## How deep in a hollow (x, z) is: 1 on its line, 0 past its banks.
+func hollow_amount(x: float, z: float) -> float:
+	if hollows.is_empty():
+		return 0.0
+	return 1.0 - smoothstep(hollow_width * 0.3, hollow_width, _distance_to(hollows, x, z))
+
+
+func _wet_amount(x: float, z: float) -> float:
+	if hollows.is_empty():
+		return 0.0
+	return 1.0 - smoothstep(hollow_width * 0.8, hollow_width * 2.4, _distance_to(hollows, x, z))
+
+
+static func _distance_to(lines: Array, x: float, z: float) -> float:
+	var p := Vector2(x, z)
+	var best := 99.0
+	for line in lines:
+		var pl: PackedVector2Array = line
+		for k in pl.size() - 1:
+			best = minf(best, p.distance_to(Geometry2D.get_closest_point_to_segment(p, pl[k], pl[k + 1])))
+	return best
 
 
 func _path_amount(x: float, z: float) -> float:
-	var p := Vector2(x, z)
-	var best := 99.0
-	for line in paths:
-		var pl: PackedVector2Array = line
-		for k in pl.size() - 1:
-			var q := Geometry2D.get_closest_point_to_segment(p, pl[k], pl[k + 1])
-			best = minf(best, p.distance_to(q))
-	return 1.0 - smoothstep(path_width * 0.5, path_width * 1.3, best)
+	return 1.0 - smoothstep(path_width * 0.5, path_width * 1.3, _distance_to(paths, x, z))
 
 
 func _green_amount(x: float, z: float) -> float:
@@ -98,7 +122,7 @@ func _scatter_tufts() -> void:
 		tries += 1
 		var x := _rng.randf_range(play.position.x - 6.0, play.end.x + 6.0)
 		var z := _rng.randf_range(play.position.y - 6.0, play.end.y + 6.0)
-		if _path_amount(x, z) > 0.2:
+		if _path_amount(x, z) > 0.2 or hollow_amount(x, z) > 0.2:
 			continue
 		var t := Transform3D(Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3.ONE * _rng.randf_range(0.45, 0.8)),
 			Vector3(x, height(x, z), z))

@@ -1,8 +1,9 @@
 extends Node3D
-## Vertical slice of the new art: the Korsun camp and one battle room, with the people,
-## the environment kit, the effects and the HUD in the new style. It is a showcase only:
-## the game's maps and battles still use their own scenes.
+## Vertical slice of the new art: the Korsun camp, the camp on the marsh at dusk and one
+## battle room, with the people, the environment kit, the effects and the HUD in the new style.
+## It is a showcase only: the game's maps and battles still use their own scenes.
 ##   godot --path godot/client res://scenes/art_slice.tscn            (the camp)
+##   godot --path godot/client res://scenes/art_slice.tscn -- fort 32  (the camp on the marsh)
 ##   godot --path godot/client res://scenes/art_slice.tscn -- battle 50
 ##   godot --path godot/client res://scenes/art_slice.tscn -- effects 35       (or effects_room)
 
@@ -12,6 +13,8 @@ const ArtEffects := preload("res://scripts/art/art_effects.gd")
 const ArtGround := preload("res://scripts/art/art_ground.gd")
 const ArtHud := preload("res://scripts/art/art_hud.gd")
 const MapEffects := preload("res://scripts/world/map_effects.gd")
+const DUSK_SKY := preload("res://assets/art/shaders/dusk_sky.gdshader")
+const WATER := preload("res://assets/art/shaders/water.gdshader")
 
 ## The effects of the map (scripts/world/map_effects.gd) in a grid, each on a kozak:
 ## [kind, frame, the kozak's clip, where he faces].
@@ -27,15 +30,42 @@ const EFFECT_GRID := [
 const FOV := 35.0
 const DISTANCE := 13.0
 
+## The camp on the marsh: the radius of its palisade ring, and its ways out: name ->
+## [angle round the ring in degrees (0 = the front, +Z; growing towards +X), the gate, how many
+## pieces of palisade it takes]. A1 is the main gate at the front, B2 and C3 the side gates
+## at the back.
+const FORT_RADIUS := 10.0
+const FORT_EXITS := {"A1": [0.0, "brama", 2], "B2": [218.0, "vorota", 1], "C3": [142.0, "vorota", 1]}
+## The water channels round the ring: how far out they run, and the dry causeway left on
+## each side of a way out (degrees).
+const FORT_MOAT := 13.6
+const FORT_CAUSEWAY := 16.0
+## Dusk over the marsh: a low violet-grey sky under heavy cloud (dusk_sky.gdshader), a cold
+## moon behind it, a deep blue shade, mist.
+const DUSK := {"top": Color("12151d"), "horizon": Color("4a4759"), "glow": Color("6c5670"),
+	"glow_size": 0.32, "glow_dir": Vector3(0.55, 0.1, -0.8), "clouds": 0.62, "cloud_dark": Color("1b1e28"),
+	"cloud_lit": Color("5d6178"), "seed": 11.0}
+const MOON_COLOR := Color("bcc0cf")
+const MOON_ENERGY := 0.62
+const DUSK_AMBIENT := Color("3e4354")
+const DUSK_AMBIENT_ENERGY := 0.55
+## The grade at dusk: brightness, contrast, saturation.
+const DUSK_GRADE := Vector3(0.98, 1.12, 0.8)
+
 var place := "camp"
 var pitch := 50.0
 ## Camera distance; the game's own camera keeps 13 m, a larger value shows the whole place.
 var distance := DISTANCE
+## The camera's field of view; a wider one over the whole place shows the sky above it.
+var fov := FOV
 var camera: Camera3D
 var hero: Node3D
 var hud: Control
 var figures: Array[Node3D] = []
 var effects: Array[Node] = []
+## The ways out of the camp on the marsh: name -> the middle of its gate on the ground.
+var exits := {}
+var ground: Node3D  # the ArtGround of the place
 
 
 func _ready() -> void:
@@ -62,6 +92,8 @@ func build(where: String, pitch_deg: float) -> void:
 		_effects()
 	elif place == "effects_room":
 		_effects_room()
+	elif place == "fort":
+		_fort()
 	else:
 		_camp()
 	_camera()
@@ -98,11 +130,40 @@ func _world() -> void:
 	var dir := Vector3(0.5, -0.74, -0.45).normalized()
 	sun.transform = Transform3D(Basis.looking_at(dir, Vector3.UP), Vector3.ZERO)
 	add_child(sun)
+	if place == "fort":
+		_dusk(env, sun)
+
+
+## Dusk instead of the day: the painted sky, the moon from behind the viewer, the deep shade,
+## mist the colour of the horizon.
+func _dusk(env: Environment, moon: DirectionalLight3D) -> void:
+	var sm := ShaderMaterial.new()
+	sm.shader = DUSK_SKY
+	for key in DUSK:
+		sm.set_shader_parameter(key, DUSK[key])
+	var sky := Sky.new()
+	sky.sky_material = sm
+	env.background_mode = Environment.BG_SKY
+	env.sky = sky
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = DUSK_AMBIENT
+	env.ambient_light_energy = DUSK_AMBIENT_ENERGY
+	env.fog_light_color = DUSK.horizon
+	env.fog_depth_begin = distance + 4.0
+	env.fog_depth_end = distance + 40.0
+	env.fog_depth_curve = 0.7
+	env.adjustment_brightness = DUSK_GRADE.x
+	env.adjustment_contrast = DUSK_GRADE.y
+	env.adjustment_saturation = DUSK_GRADE.z
+	moon.light_color = MOON_COLOR
+	moon.light_energy = MOON_ENERGY
+	moon.directional_shadow_max_distance = 60.0
+	moon.transform = Transform3D(Basis.looking_at(Vector3(0.45, -0.55, -0.7).normalized(), Vector3.UP), Vector3.ZERO)
 
 
 func _camera() -> void:
 	camera = Camera3D.new()
-	camera.fov = FOV
+	camera.fov = fov
 	add_child(camera)
 	var target := hero.global_position if hero != null else Vector3.ZERO
 	if place == "lineup":
@@ -158,6 +219,7 @@ func _ground(paths: Array, greens: Array, play: Rect2) -> void:
 	g.play = play
 	add_child(g)
 	g.build()
+	ground = g
 
 
 # -- Korsun camp ----------------------------------------------------------------------
@@ -208,6 +270,167 @@ func _camp() -> void:
 	_figure("kozak_svyta", Vector3(6.3, 0, -0.4), "attack_chop", Vector3(7.4, 0, -0.4), 0.55)
 	_figure("luchnyk", Vector3(-3.6, 0, -3.1), "walk", Vector3(-4.4, 0, -4.4), 0.3)
 	hero = _figure("kozak", Vector3(0.4, 0, 0.6), "idle", Vector3(1.4, 0, -1.6), 0.2)
+
+
+# -- the camp on the marsh ------------------------------------------------------------
+## A camp after Andrey's sketch: a ring of palisade on dry ground among water channels and
+## reeds, with three ways out (FORT_EXITS: the main gate A1 at the front, the side gates B2 and
+## C3 at the back, a road from each to the middle); the town hall's big tent in the middle,
+## smoke-dark tents, two fires, torches, an anvil with the stores; at dusk (_dusk()).
+func _fort() -> void:
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 41
+	# roads from the ways out to the yard before the big tent, and round the yard
+	var roads: Array = []
+	for way in FORT_EXITS:
+		var o := _on_ring(FORT_EXITS[way][0], FORT_RADIUS + 9.0)
+		roads.append(PackedVector2Array([Vector2(o.x, o.z), Vector2(o.x * 0.45, o.z * 0.45), Vector2(0.0, 1.0)]))
+	var yard := PackedVector2Array()
+	for i in 13:
+		var a := TAU * i / 12.0
+		yard.append(Vector2(sin(a) * 4.4, -2.0 + cos(a) * 4.0))
+	roads.append(yard)
+	# the water channels: round the ring with a causeway at each way out, and two creeks away
+	var channels: Array = []
+	var bare := []
+	for way in FORT_EXITS:
+		bare.append(float(FORT_EXITS[way][0]))
+	bare.sort()
+	for i in bare.size():
+		var from: float = bare[i] + FORT_CAUSEWAY
+		var to: float = (bare[(i + 1) % bare.size()] + (360.0 if i == bare.size() - 1 else 0.0)) - FORT_CAUSEWAY
+		var arc := PackedVector2Array()
+		var steps := int(ceil((to - from) / 8.0))
+		for k in steps + 1:
+			var p := _on_ring(lerpf(from, to, float(k) / steps), FORT_MOAT)
+			arc.append(Vector2(p.x, p.z))
+		channels.append(arc)
+	channels.append(PackedVector2Array([Vector2(FORT_MOAT, 0.0), Vector2(18.0, 2.5), Vector2(22.0, 1.0), Vector2(27.0, 4.0)]))
+	channels.append(PackedVector2Array([Vector2(-FORT_MOAT, 0.0), Vector2(-17.5, -3.0), Vector2(-22.0, -2.0),
+		Vector2(-27.0, -5.0)]))
+	var g: Node3D = ArtGround.new()
+	g.paths = roads
+	g.path_width = 1.1
+	g.hollows = channels
+	g.greens = [Vector3(-16, -8, 6), Vector3(16, -9, 6), Vector3(-17, 9, 6), Vector3(17, 10, 6), Vector3(0, -19, 7),
+		Vector3(-7, -2, 3), Vector3(7, 4, 3)]
+	g.play = Rect2(-26, -26, 52, 44)
+	g.size = 100.0
+	g.tufts = 600
+	g.seed_value = 41
+	add_child(g)
+	g.build()
+	ground = g
+	var m := (g.get_node("Ground") as MeshInstance3D).material_override as ShaderMaterial
+	m.set_shader_parameter("soil", Color("6c5a3e"))
+	m.set_shader_parameter("grass_dry", Color("5c6440"))
+	m.set_shader_parameter("grass_green", Color("3f5530"))
+	_water(Vector2(80.0, 80.0), -0.32)
+	# the palisade ring in two-metre pieces, a gate in each way out
+	var step := rad_to_deg(2.0 * asin(1.0 / FORT_RADIUS))
+	var pieces := int(floor(360.0 / step))
+	step = 360.0 / pieces
+	for i in pieces:
+		var a := (i + 0.5) * step
+		var gap := false
+		for way in FORT_EXITS:
+			var off := absf(fposmod(a - float(FORT_EXITS[way][0]) + 180.0, 360.0) - 180.0)
+			gap = gap or off < step * float(FORT_EXITS[way][2]) / 2.0 + 0.1
+		if not gap:
+			_prop("palisade", _on_ring(a, FORT_RADIUS * cos(deg_to_rad(step / 2.0))), a)
+	for way in FORT_EXITS:
+		var at := _on_ring(FORT_EXITS[way][0], FORT_RADIUS * cos(deg_to_rad(step / 2.0)))
+		_prop(FORT_EXITS[way][1], at, FORT_EXITS[way][0])
+		exits[way] = at
+	# the town hall's big tent in the middle, tents round it
+	_prop("shatro", Vector3(0.0, 0, -3.2), 0.0, 1.35)
+	_prop("namet_dark", Vector3(-6.3, 0, -1.4), 75.0, 1.5)
+	_prop("namet_dark", Vector3(-5.6, 0, 3.0), 105.0, 1.4)
+	_prop("namet_dark", Vector3(6.4, 0, 2.4), -70.0, 1.5)
+	_prop("namet_dark", Vector3(6.0, 0, -3.8), -110.0, 1.35)
+	_prop("namet_dark", Vector3(0.4, 0, -8.0), 5.0, 1.35)
+	_prop("banner", Vector3(-3.0, 0, -1.2), 15.0)
+	# two fires with men round them
+	var fires := [Vector3(-3.4, 0, 1.2), Vector3(4.0, 0, -0.9)]
+	for f in fires:
+		_prop("vohnyshche", f)
+		effects.append(ArtEffects.campfire(self, f))
+	_figure("kozak_svyta", fires[0] + Vector3(0.1, 0, -1.25), "sit", fires[0] + Vector3(0.6, 0, 2.0), 1.0)
+	_figure("kozak_camp", fires[0] + Vector3(-1.2, 0, 0.2), "interact", fires[0], 0.45)
+	_figure("kozak_camp", fires[1] + Vector3(-0.9, 0, 0.9), "cheer", fires[1], 0.55)
+	_figure("kozak_svyta", fires[1] + Vector3(1.1, 0, -0.5), "sit", fires[1], 1.0)
+	# the anvil and the stores, before the big tent
+	_prop("kovadlo", Vector3(1.9, 0, 3.4), 20.0, 1.0, true)
+	_prop("skrynia", Vector3(3.3, 0, 3.9), -12.0, 1.0, true)
+	_prop("bochka", Vector3(4.3, 0, 3.1))
+	_prop("bochka", Vector3(4.7, 0, 3.8), 30.0, 0.85)
+	_prop("drova", Vector3(-1.6, 0, 4.6), 70.0)
+	_prop("stoiak", Vector3(-2.2, 0, -6.6), 30.0)
+	_prop("harmata", Vector3(-6.0, 0, -5.9), 210.0)
+	# torches: by the main gate outside, inside the side gates, at the big tent's door
+	var torches := [_on_ring(-14.0, FORT_RADIUS + 0.9), _on_ring(14.0, FORT_RADIUS + 0.9),
+		_on_ring(FORT_EXITS.B2[0] + 9.0, FORT_RADIUS - 1.0), _on_ring(FORT_EXITS.C3[0] - 9.0, FORT_RADIUS - 1.0),
+		Vector3(-1.5, 0, 0.2), Vector3(1.5, 0, 0.2)]
+	for t in torches:
+		_prop("smoloskyp", t, rng.randf() * 360.0)
+		effects.append(ArtEffects.torch(self, t))
+	# guards: two outside the main gate, one inside each side gate
+	for a in [-9.0, 9.0]:
+		var at := _on_ring(a, FORT_RADIUS + 1.7)
+		_figure("kozak_svyta", at, "idle", at * 2.0, 0.2 + absf(a) * 0.02).equip("spear")
+	for way in ["B2", "C3"]:
+		var a: float = FORT_EXITS[way][0] + (6.0 if way == "B2" else -6.0)
+		var at := _on_ring(a, FORT_RADIUS - 1.5)
+		_figure("kozak_svyta", at, "idle", at * 2.0, 0.4).equip("spear")
+	_figure("polkovnyk", Vector3(0.9, 0, 0.9), "idle", Vector3(0.6, 0, 4.0), 0.4)
+	hero = _figure("kozak", Vector3(0.1, 0, 2.6), "idle", Vector3(-0.3, 0, 6.0), 0.2)
+	# reeds on both banks of the water, bushes and trees beyond
+	for line in channels:
+		var pl: PackedVector2Array = line
+		for k in pl.size() - 1:
+			var a2 := pl[k]
+			var b2 := pl[k + 1]
+			var across := (b2 - a2).normalized().orthogonal()
+			var n := int(ceil(a2.distance_to(b2) / 1.1))
+			for j in n:
+				for side in [-1.0, 1.0]:
+					if rng.randf() < 0.4:
+						continue
+					var p: Vector2 = a2.lerp(b2, (j + rng.randf()) / n) + across * side * rng.randf_range(1.2, 2.1)
+					var at := Vector3(p.x, g.height(p.x, p.y) - 0.05, p.y)
+					_prop("ochert", at, rng.randf() * 360.0, rng.randf_range(0.75, 1.25))
+	for p in [Vector3(-18, 0, -8), Vector3(18.5, 0, -7), Vector3(-17, 0, 7), Vector3(18, 0, 9), Vector3(-7, 0, -18),
+			Vector3(8, 0, -18.5), Vector3(-10, 0, 16), Vector3(11, 0, 16.5)]:
+		_prop("kushch", Vector3(p.x, g.height(p.x, p.z), p.z), p.x * 17.0, rng.randf_range(1.0, 1.4))
+	for t in [["topolia", -21.0, -17.0, 1.1], ["topolia", -16.0, -22.0, 1.2], ["dub", 22.0, -15.0, 1.15],
+			["topolia", 19.0, -22.0, 1.15], ["yalyna", -25.0, -6.0, 1.3], ["yalyna", 26.0, -3.0, 1.25],
+			["dub", -4.0, -25.0, 1.2], ["topolia", 6.0, -26.0, 1.1]]:
+		_prop(t[0], Vector3(t[1], g.height(t[1], t[2]), t[2]), rng.randf() * 360.0, t[3])
+
+
+## The still water of a marsh, a plane at `level` over the hollows of the ground: dark, with
+## slow lighter ripples (water.gdshader).
+func _water(size: Vector2, level: float) -> void:
+	var plane := PlaneMesh.new()
+	plane.size = size
+	var mi := MeshInstance3D.new()
+	mi.name = "Water"
+	mi.mesh = plane
+	mi.position.y = level
+	var m := ShaderMaterial.new()
+	m.shader = WATER
+	m.set_shader_parameter("deep", Vector3(0.1, 0.12, 0.13))
+	m.set_shader_parameter("shallow", Vector3(0.19, 0.22, 0.24))
+	m.set_shader_parameter("glint", Vector3(0.55, 0.58, 0.64))
+	mi.material_override = m
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mi)
+
+
+## A point round the middle of the camp: `deg` degrees from the front (+Z) towards +X.
+static func _on_ring(deg: float, radius: float) -> Vector3:
+	var a := deg_to_rad(deg)
+	return Vector3(sin(a) * radius, 0.0, cos(a) * radius)
 
 
 # -- battle room ----------------------------------------------------------------------

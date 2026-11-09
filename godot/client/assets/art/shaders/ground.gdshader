@@ -1,6 +1,7 @@
 shader_type spatial;
 // Steppe ground painted in the palette: soil, dry grass and green patches mixed by
-// world-space noise, trodden paths from the vertex colour (r = path, g = green).
+// world-space noise, trodden paths and wet mud from the vertex colour (r = path, g = green,
+// b = wet: the dark mud on the banks of the water in a marsh).
 
 uniform vec3 soil : source_color = vec3(0.56, 0.48, 0.34);
 uniform vec3 grass_dry : source_color = vec3(0.49, 0.48, 0.32);
@@ -8,6 +9,7 @@ uniform vec3 grass_green : source_color = vec3(0.34, 0.41, 0.24);
 uniform vec3 path : source_color = vec3(0.5, 0.41, 0.29);
 uniform vec3 path_dark : source_color = vec3(0.36, 0.29, 0.2);
 uniform vec3 shade_tint : source_color = vec3(0.56, 0.6, 0.78);
+uniform vec3 wet : source_color = vec3(0.2, 0.18, 0.14);
 
 varying vec3 world_pos;
 
@@ -36,6 +38,7 @@ void fragment() {
 	float strokes = noise(vec2(p.x * 2.4 + p.y * 0.9, p.y * 4.5));
 	vec3 c = mix(soil, grass_dry, smoothstep(0.35, 0.65, n));
 	c = mix(c, grass_green, clamp(COLOR.g * smoothstep(0.3, 0.7, fbm(p * 0.6 + 11.0)) * 1.3, 0.0, 1.0));
+	c = mix(c, wet * (0.85 + 0.3 * fbm(p * 2.0)), smoothstep(0.1, 0.8, COLOR.b * (0.8 + n * 0.4)));
 	vec3 pc = mix(path, path_dark, smoothstep(0.4, 0.8, fbm(p * 1.5)) * 0.6);
 	c = mix(c, pc, smoothstep(0.25, 0.6, COLOR.r + (n - 0.5) * 0.3));
 	c *= 0.95 + 0.08 * strokes;

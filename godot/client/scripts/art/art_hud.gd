@@ -6,7 +6,7 @@ extends Control
 const ArtKit := preload("res://scripts/art/art_kit.gd")
 const UI := "res://assets/art/ui/%s.svg"
 const SKILLS := ["sabre", "shield", "fire", "wind", "potion"]
-const PLACE_NAMES := {"camp": "Корсунь", "battle": "Крута балка"}
+const PLACE_NAMES := {"camp": "Корсунь", "fort": "Плавні", "battle": "Крута балка"}
 
 const INK := Color("0F0D0C")
 const GOLD := Color("B08D4A")  # tarnished brass

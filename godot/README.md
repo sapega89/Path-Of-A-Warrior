@@ -22,7 +22,7 @@ godot/
                           стріли кодом), battle_arena і battle_motion (поле й бійці бою
                           мультиплеєра), hero, follow_camera
     scripts/ui/           тема, сенсорні кнопки, рядок підказок керування внизу (hint_bar)
-    scripts/art/          новий арт, поки вітрина: табір і бій (scenes/art_slice.tscn)
+    scripts/art/          новий арт, поки вітрина: два табори й бій (scenes/art_slice.tscn)
     scripts/net/          зв'язок із сервером: protocol (повідомлення), net_client (ENet + DTLS)
     server/               сервер гри (той самий проєкт, без графіки): main.tscn, game_server,
                           accounts (файл JSON на акаунт), guard (ліміти), live (Live),
@@ -629,6 +629,6 @@ Esc вихід.
   «Мимо!»; цитати — на старому пергаменті.
 
 Вітрина стилю: `godot --path godot/client res://scenes/art_slice.tscn` (табір Корсунь),
-`-- battle 50` (бій), `-- people` (усі люди гри), `-- effects` (кожен ефект на козакові) або
+`-- fort 21` (табір у плавнях у сутінках, з виходами A1, B2, C3), `-- battle 50` (бій), `-- people` (усі люди гри), `-- effects` (кожен ефект на козакові) або
 `-- effects_room` (гроза, вогняний дощ і змій над кімнатою). CI знімає її разом з іншими
 скріншотами (`tools/art_shots.tscn`).

@@ -1,6 +1,6 @@
 extends RefCounted
 ## Effects in the new art, made in code: the sabre trail, sparks where steel meets steel,
-## dust under feet, the campfire.
+## dust under feet, the campfire, a torch.
 
 const ArtKit := preload("res://scripts/art/art_kit.gd")
 const SLASH := preload("res://assets/art/shaders/slash.gdshader")
@@ -181,5 +181,63 @@ static func campfire(parent: Node3D, at: Vector3) -> Node3D:
 	light.light_energy = 0.9
 	light.omni_range = 4.5
 	light.position = Vector3(0, 0.8, 0)
+	root.add_child(light)
+	return root
+
+
+## The flame of a torch on a pole (props/smoloskyp.glb): a small tongue of fire, a thread of
+## smoke and a warm light that reaches a few metres; `at` is the foot of the pole.
+static func torch(parent: Node3D, at: Vector3, height := 2.12) -> Node3D:
+	var root := Node3D.new()
+	root.position = at + Vector3(0.02, height, 0.0)
+	parent.add_child(root)
+	var flame := CPUParticles3D.new()
+	flame.amount = 10
+	flame.lifetime = 0.45
+	var q := QuadMesh.new()
+	q.size = Vector2(0.14, 0.22)
+	q.material = _unshaded(Color.WHITE, true)
+	flame.mesh = q
+	flame.emission_shape = CPUParticles3D.EMISSION_SHAPE_SPHERE
+	flame.emission_sphere_radius = 0.06
+	flame.direction = Vector3.UP
+	flame.spread = 10.0
+	flame.gravity = Vector3(0, 1.0, 0)
+	flame.initial_velocity_min = 0.35
+	flame.initial_velocity_max = 0.7
+	var shrink := Curve.new()
+	shrink.add_point(Vector2(0, 1.0))
+	shrink.add_point(Vector2(1, 0.1))
+	flame.scale_amount_curve = shrink
+	flame.color_ramp = _ramp([Color(0.95, 0.62, 0.2, 0.8), Color(0.91, 0.42, 0.14, 0.7), Color(0.66, 0.2, 0.18, 0.0)])
+	root.add_child(flame)
+	var smoke := CPUParticles3D.new()
+	smoke.amount = 6
+	smoke.lifetime = 1.8
+	var s := SphereMesh.new()
+	s.radius = 0.1
+	s.height = 0.16
+	s.radial_segments = 6
+	s.rings = 3
+	s.material = _unshaded(Color.WHITE)
+	(s.material as StandardMaterial3D).billboard_mode = BaseMaterial3D.BILLBOARD_DISABLED
+	smoke.mesh = s
+	smoke.direction = Vector3.UP
+	smoke.spread = 8.0
+	smoke.initial_velocity_min = 0.4
+	smoke.initial_velocity_max = 0.6
+	smoke.gravity = Vector3(0.2, 0.1, 0)
+	var grow := Curve.new()
+	grow.add_point(Vector2(0, 0.5))
+	grow.add_point(Vector2(1, 2.0))
+	smoke.scale_amount_curve = grow
+	smoke.color_ramp = _ramp([Color(0.3, 0.29, 0.3, 0.0), Color(0.36, 0.35, 0.36, 0.4), Color(0.45, 0.44, 0.45, 0.0)])
+	smoke.position = Vector3(0, 0.45, 0)
+	root.add_child(smoke)
+	var light := OmniLight3D.new()
+	light.light_color = Color("F2A23D")
+	light.light_energy = 0.85
+	light.omni_range = 4.2
+	light.position = Vector3(0, 0.1, 0)
 	root.add_child(light)
 	return root

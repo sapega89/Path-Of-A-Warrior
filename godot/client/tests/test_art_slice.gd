@@ -1,6 +1,6 @@
 extends "res://tests/test_case.gd"
 ## The art slice (scripts/art, assets/art): the models load, the people share one clip
-## library, and the camp and the battle room build with everything in place.
+## library, and the camps and the battle room build with everything in place.
 
 const ArtKit := preload("res://scripts/art/art_kit.gd")
 const ArtFigure := preload("res://scripts/art/art_figure.gd")
@@ -74,7 +74,7 @@ func test_icons_and_fonts() -> void:
 
 
 func test_camp_and_battle_build() -> void:
-	for place in ["camp", "battle"]:
+	for place in ["camp", "fort", "battle"]:
 		var slice: Node3D = ArtSlice.new()
 		root.add_child(slice)
 		slice.build(place, 50.0)
@@ -84,6 +84,35 @@ func test_camp_and_battle_build() -> void:
 		check(slice.hud != null, "%s: the HUD" % place)
 		check(slice.find_child("Ground", true, false) != null, "%s: the ground" % place)
 		slice.free()
+
+
+func test_fort_ways_out_and_marsh() -> void:
+	var slice: Node3D = ArtSlice.new()
+	root.add_child(slice)
+	slice.build("fort", 50.0)
+	eq(slice.exits.keys(), ["A1", "B2", "C3"], "three ways out")
+	for way in slice.exits:
+		var at: Vector3 = slice.exits[way]
+		var gate := ""
+		var blocked := false
+		for child in slice.get_children():
+			if child is Node3D and (child as Node3D).position.distance_to(at) < 0.9:
+				var file := child.scene_file_path.get_file()
+				if file in ["brama.glb", "vorota.glb"]:
+					gate = file
+				blocked = blocked or file == "palisade.glb"
+		eq(gate, "brama.glb" if way == "A1" else "vorota.glb", "%s: its gate" % way)
+		check(not blocked, "%s: no palisade across it" % way)
+		# a dry causeway leads out, the water lies on both sides of it
+		var out := at * (ArtSlice.FORT_MOAT / at.length())
+		check(slice.ground.height(out.x, out.z) > -0.05, "%s: dry ground on the way out" % way)
+		for turn in [-40.0, 40.0]:
+			var aside := out.rotated(Vector3.UP, deg_to_rad(turn))
+			check(slice.ground.height(aside.x, aside.z) < -0.5, "%s: water beside it" % way)
+	check(slice.find_child("Water", false, false) != null, "the water")
+	var env := (slice.find_children("*", "WorldEnvironment", false, false)[0] as WorldEnvironment).environment
+	eq(env.background_mode, Environment.BG_SKY, "the painted sky")
+	slice.free()
 
 
 func test_no_original_pictures() -> void:

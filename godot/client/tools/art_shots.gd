@@ -4,12 +4,14 @@ extends Node
 ## CI runs it after tools/shots.gd into the same folder (.github/workflows/godot.yml).
 
 const ArtSlice := preload("res://scripts/art/art_slice.gd")
-## name, place, camera pitch, camera distance
+## name, place, camera pitch, camera distance[, field of view]
 const SHOTS := [
 	["art_camp_overview", "camp", 50.0, 24.0],
 	["art_camp_45", "camp", 45.0, 13.0],
 	["art_camp_50", "camp", 50.0, 13.0],
 	["art_camp_55", "camp", 55.0, 13.0],
+	["art_fort_overview", "fort", 21.0, 21.0, 55.0],
+	["art_fort_50", "fort", 50.0, 13.0],
 	["art_battle_50", "battle", 50.0, 13.0],
 	["art_lineup", "lineup", 0.0, 13.0],
 	["art_people", "people", 0.0, 13.0],
@@ -28,6 +30,8 @@ func _ready() -> void:
 			continue
 		var slice: Node3D = ArtSlice.new()
 		slice.distance = s[3]
+		if s.size() > 4:
+			slice.fov = s[4]
 		add_child(slice)
 		slice.build(s[1], s[2])
 		await _frames(4)
