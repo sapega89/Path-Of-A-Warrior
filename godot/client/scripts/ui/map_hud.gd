@@ -43,7 +43,7 @@ var _icons: Control  # the icons, drawn smooth
 var _labels: Control  # the counts and the keys over them
 var show_bar := true
 var auto_on := false
-var auto_allowed := true  # false on hard: no AUTO corner (scripts/screens/mission_screen.gd)
+var auto_allowed := true  # false on hard: no AUTO corner (screens/mission/mission_screen.gd)
 
 
 func _ready() -> void:

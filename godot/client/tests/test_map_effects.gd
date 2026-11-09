@@ -148,7 +148,7 @@ func test_arrows_fly_their_way() -> void:
 func test_the_mission_draws_effects_in_code() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var screen: Control = MissionScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	screen.set_process(false)
 	check(screen.effects is MapEffects, "the effects are the new ones")

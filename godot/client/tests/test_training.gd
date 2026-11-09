@@ -12,7 +12,7 @@ func _training(difficulty := 1) -> Control:
 	p.difficulty = difficulty
 	p.save(PATH)
 	Router.params = {"profile_path": PATH}
-	var screen: Control = TrainingScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["training"])
 	root.add_child(screen)
 	return screen
 

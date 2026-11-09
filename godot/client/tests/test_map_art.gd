@@ -168,7 +168,7 @@ func test_breakables_flash() -> void:
 func test_the_mission_stands_on_the_new_maps() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 5, "mission": 0, "seed": 2}
-	var screen: Control = MissionScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	screen.set_process(false)
 	check(screen.builder is MapArt, "the map in the new art")

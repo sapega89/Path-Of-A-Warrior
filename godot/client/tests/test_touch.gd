@@ -5,7 +5,7 @@ extends "res://tests/test_case.gd"
 func test_touch_buttons_press_their_actions() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var screen: Control = MissionScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	var touch: Control = screen.get_node("Touch")
 	touch._touch(0, touch.button_center("attack"), true)

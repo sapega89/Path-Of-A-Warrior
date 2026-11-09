@@ -21,7 +21,7 @@ func test_the_hero_speaks_by_his_name() -> void:
 func test_the_talk_shows_who_speaks() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var screen: Control = MissionScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	screen._show_banner()
 	check(not screen.talk_box.visible, "nobody talks")

@@ -39,7 +39,7 @@ func test_lose_gear_chance_and_place() -> void:
 func test_lost_gear_on_the_fail_banner() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var screen: Control = MissionScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	screen.profile.level = 40
 	# a seed whose rolls lose the weapon: below 10 of 100, then place 0

@@ -49,7 +49,7 @@ func test_the_bar_grows_and_goes_up_a_level() -> void:
 func test_the_exp_pages_show_the_bar() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var screen: Control = MissionScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	var sim: RefCounted = screen.sim
 	eq(sim.hero_exp, screen.profile.experience, "the sim knows the hero's exp")

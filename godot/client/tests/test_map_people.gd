@@ -109,7 +109,7 @@ func test_a_squad_is_three() -> void:
 func test_the_mission_draws_figures() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var screen: Control = MissionScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	screen.set_process(false)
 	eq(screen.hero.kind, "kozak", "the hero as a figure")

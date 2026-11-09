@@ -135,7 +135,7 @@ func test_right_click_is_back() -> void:
 	eq(help.topic, -1, "Help: back from a topic to the topics, as Esc")
 	help.free()
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var mission: Control = MissionScreen.new()
+	var mission: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(mission)
 	mission.get_viewport().push_input(_right_click())
 	Input.flush_buffered_events()

@@ -196,7 +196,7 @@ func test_a_room_shows_only_itself_and_the_next() -> void:
 func test_after_a_mission_won_the_way_on_is_chosen_in_the_room() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 4, "mission": 0, "seed": 2}
-	var screen: Control = load("res://scripts/screens/mission_screen.gd").new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	var p: RefCounted = Profile.new()
 	screen.profile = p

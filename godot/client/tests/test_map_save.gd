@@ -10,7 +10,7 @@ func test_save_on_the_map_and_continue() -> void:
 	p.save()
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var screen: Control = MissionScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	var sim: RefCounted = screen.sim
 	sim.waves = [201, 2]
@@ -33,7 +33,7 @@ func test_save_on_the_map_and_continue() -> void:
 	screen.free()
 
 	Router.params = {"lord": 1, "mission": 0, "seed": 2, "resume": true}
-	var again: Control = MissionScreen.new()
+	var again: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(again)
 	eq(again.sim.hero.hp, 10, "Continue: the HP of the save")
 	eq(again.sim.kills, 7, "and its kills")

@@ -23,7 +23,7 @@ func _skip_key() -> InputEventAction:
 func test_no_auto_on_hard() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var screen: Control = MissionScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	var view: Vector2 = screen.hud.get_viewport_rect().size
 	var corner := Vector2(4, view.y - 4)
@@ -45,7 +45,7 @@ func test_no_auto_on_hard() -> void:
 func test_skip_corner_on_the_map() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var screen: Control = MissionScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	var view: Vector2 = screen.hud.get_viewport_rect().size
 	var corner := Vector2(4, view.y - 4)
@@ -86,7 +86,7 @@ func test_pad_back_skips_or_toggles_auto() -> void:
 	var old: Dictionary = Router.params
 	var was: String = InputSetup.device
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var screen: Control = MissionScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	screen.sim.difficulty = 1
 	var auto_was: bool = screen.autopilot.on

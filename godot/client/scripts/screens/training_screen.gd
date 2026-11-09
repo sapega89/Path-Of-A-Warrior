@@ -1,5 +1,5 @@
 class_name TrainingScreen
-extends "res://scripts/screens/mission_screen.gd"
+extends MissionScreen
 ## The training before the first mission (Andrey's choice: a training of its own, not hints in
 ## the mission): on the first mission's map a new hero walks, strikes, picks up loot, uses a
 ## skill, drinks a potion, turns on the auto-hunt, leaves a cleared room and pauses, one step at

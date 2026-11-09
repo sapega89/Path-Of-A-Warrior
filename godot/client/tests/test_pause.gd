@@ -4,7 +4,7 @@ extends "res://tests/test_case.gd"
 func test_pause_menu() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var screen: Control = MissionScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	check(screen.is_processing(), "the mission runs")
 	screen.pause()

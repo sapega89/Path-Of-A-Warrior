@@ -194,7 +194,7 @@ func test_the_options_switch_the_effects() -> void:
 func test_the_mission_feels_a_hit() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var screen: Control = MissionScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	screen.set_process(false)
 	for k in screen.feel.on:

@@ -34,31 +34,13 @@ var lost_gear := {}  # what the hero lost with the mission (Profile.lose_gear), 
 var _fail_seen := false
 var lord_name := ""
 var sim: RefCounted
-var viewport: SubViewport
-var world: Node3D
-var builder: Node3D
-var people: MapPeople  # the hero and the enemies as figures
 var hero: Node3D  # the hero's figure (people.hero)
-var camera: Camera3D
-var hud: MapHud
 var profile: Profile
-var effects: MapEffects  # the effects, arrows in flight among them
-var banner: PanelContainer
-var banner_text: Label
-var exp_bar: ExpBar  # under the text of the pages Total Exp and Time Exp
-## A talk over the map, as pyport's: the portrait of who speaks and the line beside it, just
-## above the HUD.
-var talk_box: Control
-var talk_face: PanelContainer
-var talk_portrait: TextureRect
-var talk_panel: PanelContainer
-var talk_text: Label
 ## 0..3 the room's exits (down, left, up, right); 4..7 a second way on a side
 var arrows: Array[TextureRect] = []
 ## After a mission won: the ways on, one per open place the campaign goes to next:
 ## [{exit: Rooms.EXIT_*, half: -1 the whole side | 0 its first half | 1 its second, place}]
 var ways_out: Array = []
-var fade: ColorRect  # the short dark between two rooms
 var _last_cell := -1
 const FADE_TIME := 0.35
 var tint := 0
@@ -82,6 +64,23 @@ var feel := CombatFeel.new()  # how a hit feels: the hitstop, shake, flash, flig
 var _flash_mats := {}  # Sprite3D -> its flash material
 var _anim_dt := 0.0  # seconds the figures' clips move on this frame (0 while a hit holds)
 
+@onready var world: Node3D = $World/Viewport/WorldRoot
+@onready var builder: MapArt = $World/Viewport/WorldRoot/Map
+@onready var camera: FollowCamera = $World/Viewport/WorldRoot/Camera
+@onready var people: MapPeople = $World/Viewport/WorldRoot/People  # the hero and enemies
+@onready var effects: MapEffects = $World/Viewport/WorldRoot/Effects  # arrows in flight too
+@onready var hud: MapHud = %Hud
+@onready var fade: ColorRect = %Fade  # the short dark between two rooms
+@onready var banner: PanelContainer = %Banner
+@onready var banner_text: Label = %BannerText
+@onready var exp_bar: ExpBar = %ExpBar  # under the text of the pages Total Exp and Time Exp
+## A talk over the map: the portrait of who speaks and the line beside it, just above the HUD.
+@onready var talk_box: Control = %Talk
+@onready var talk_face: PanelContainer = %Face
+@onready var talk_portrait: TextureRect = %Portrait
+@onready var talk_panel: PanelContainer = %Box
+@onready var talk_text: Label = %Line
+
 
 ## The mission to play: Router.params (the training gives its own).
 func mission_params() -> Dictionary:
@@ -98,24 +97,7 @@ func _ready() -> void:
 	mission_info = ms[mission] if mission < ms.size() else {}
 	lord_name = campaign.lord_name(lord_id)
 
-	var container := SubViewportContainer.new()
-	container.name = "World"
-	container.stretch = true
-	container.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(container)
-	viewport = SubViewport.new()
-	viewport.own_world_3d = true
-	viewport.msaa_3d = Viewport.MSAA_2X
-	container.add_child(viewport)
-	world = Node3D.new()
-	world.name = "WorldRoot"
-	viewport.add_child(world)
-	MapArt.add_environment(world)
-
 	var map := MapBuilder.load_map(Campaign.lord_map(lord_id))
-	builder = MapArt.new()
-	builder.name = "Map"
-	world.add_child(builder)
 	builder.build(map)
 	profile = Profile.load_or_new(str(p.get("profile_path", Profile.PATH)))
 	var s: Array = mission_info.get("start", [4, 4])
@@ -134,67 +116,19 @@ func _ready() -> void:
 	if resume:
 		profile.resume_on_map(sim)
 
-	people = MapPeople.new()
-	people.name = "People"
-	world.add_child(people)
 	people.setup(sim, profile.head)
 	hero = people.hero
-	effects = MapEffects.new()
-	effects.name = "Effects"
-	world.add_child(effects)
-
-	camera = FollowCamera.new()
-	camera.name = "Camera"
-	world.add_child(camera)
 	camera.focus = sim.rooms.center(sim.cell)
-	camera.make_current()
 	camera.snap()
 
 	for i in 8:
-		var a := TextureRect.new()
-		a.name = "Arrow%d" % i
+		var a: TextureRect = get_node("Arrow%d" % i)
 		a.texture = exit_arrow(i % 4)
-		a.stretch_mode = TextureRect.STRETCH_SCALE
-		a.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		a.visible = false
-		add_child(a)
 		arrows.append(a)
 
-	hud = MapHud.new()
-	hud.name = "Hud"
 	hud.sim = sim
 	hud.auto_allowed = auto_allowed()
-	add_child(hud)
-	fade = ColorRect.new()
-	fade.name = "Fade"
-	fade.color = Color(0, 0, 0, 0)
-	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(fade)
-
-	banner = PanelContainer.new()
-	banner.name = "Banner"
-	banner.visible = false
-	banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	banner_text = Label.new()
-	banner_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	banner_text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	var lines := VBoxContainer.new()
-	lines.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	lines.add_child(banner_text)
-	exp_bar = ExpBar.new()
-	exp_bar.name = "ExpBar"
-	exp_bar.visible = false
 	exp_bar.bars = sim.exp_bars
-	exp_bar.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	lines.add_child(exp_bar)
-	banner.add_child(lines)
-	add_child(banner)
-	_make_talk_box()
-
-	var touch := TouchControls.new()
-	touch.name = "Touch"
-	add_child(touch)
 	add_to_group(InputSetup.RIGHT_BUTTON)  # the right button attacks, not BACK
 	feel.use_settings(Settings)
 	Settings.changed.connect(_on_setting_changed)
@@ -446,37 +380,6 @@ func _show_banner() -> void:
 ## mm:ss
 static func clock(secs: int) -> String:
 	return "%02d:%02d" % [secs / 60, secs % 60]
-
-
-func _make_talk_box() -> void:
-	talk_box = Control.new()
-	talk_box.name = "Talk"
-	talk_box.visible = false
-	talk_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	talk_box.set_anchors_preset(Control.PRESET_FULL_RECT)
-	var style := UiTheme.box(Color(UiTheme.PANEL, 0.92), UiTheme.ACCENT_DARK, 2)
-	talk_face = PanelContainer.new()
-	talk_face.name = "Face"
-	talk_face.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	talk_face.add_theme_stylebox_override("panel", StyleBoxEmpty.new())  # the portrait has its frame
-	talk_portrait = Pictures.framed("Portrait", Vector2(46, 46))
-	talk_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	talk_face.add_child(talk_portrait)
-	talk_box.add_child(talk_face)
-	talk_panel = PanelContainer.new()
-	talk_panel.name = "Box"
-	talk_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var box_style := style.duplicate()
-	box_style.set_content_margin_all(8)
-	talk_panel.add_theme_stylebox_override("panel", box_style)
-	talk_text = Label.new()
-	talk_text.name = "Line"
-	talk_text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	talk_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	talk_text.vertical_alignment = VERTICAL_ALIGNMENT_TOP
-	talk_panel.add_child(talk_text)
-	talk_box.add_child(talk_panel)
-	add_child(talk_box)
 
 
 ## The portrait of who speaks the line shown now: the general's, or the hero's for his own lines.

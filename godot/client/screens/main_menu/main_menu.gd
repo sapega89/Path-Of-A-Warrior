@@ -1,7 +1,7 @@
 class_name MainMenu
 extends BaseScreen
 ## Main menu: continue (or play), new game, endings, settings, quit (no quit button on phones
-## and the web). Continue opens the hero's camp (scripts/screens/camp_screen.gd), where his
+## and the web). Continue opens the hero's camp (screens/camp/camp_screen.gd), where his
 ## game goes on; a new game starts its first mission at once after the opening. While the game is
 ## always online and this run has no account yet, Play
 ## and New game open the login (screens/login/login_screen.gd) first; it comes back here and
