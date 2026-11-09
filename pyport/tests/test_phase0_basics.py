@@ -4,7 +4,7 @@ import zlib
 import pygame
 from conftest import ROOT
 
-RES = ROOT.parent
+RES = ROOT.parent / "original"
 
 
 def test_scr_counts():  # task 0.5 / PHASE_1 §6

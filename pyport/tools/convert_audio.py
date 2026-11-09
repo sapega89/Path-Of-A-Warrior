@@ -13,6 +13,7 @@ import sys
 import tempfile
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
+ORIGINAL = ROOT / "original"
 OUT = ROOT / "pyport" / "assets" / "audio"
 SF2 = pathlib.Path("/usr/share/sounds/sf2/FluidR3_GM.sf2")
 
@@ -28,11 +29,11 @@ def main():
     with tempfile.TemporaryDirectory() as tmp:
         for n in range(3):
             wav = pathlib.Path(tmp) / ("snd%d.wav" % n)
-            run(["fluidsynth", "-ni", "-g", "0.8", "-r", "22050", "-F", str(wav), str(SF2), str(ROOT / ("snd%d.mid" % n))])
+            run(["fluidsynth", "-ni", "-g", "0.8", "-r", "22050", "-F", str(wav), str(SF2), str(ORIGINAL / ("snd%d.mid" % n))])
             run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(wav), "-ac", "1", "-c:a", "libvorbis", "-q:a", "2",
                  str(OUT / ("snd%d.ogg" % n))])
     for n in range(3, 17):
-        run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(ROOT / ("snd%d.wav" % n)), "-c:a", "libvorbis", "-q:a", "3",
+        run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(ORIGINAL / ("snd%d.wav" % n)), "-c:a", "libvorbis", "-q:a", "3",
              str(OUT / ("snd%d.ogg" % n))])
     mp = ROOT / "pyport" / "assets_mp"
     for wav in sorted(mp.glob("snd*.wav")):

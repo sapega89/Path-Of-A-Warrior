@@ -55,7 +55,7 @@ godot/
                           показуються); числа й таблиці — data/mp.json
     assets/art/           новий арт: люди, зброя, реквізит (.glb), шейдери, іконки SVG, шрифти
     tests/                тести: test_*.gd, запуск runner.tscn
-  tools/import_original.py  конвертер оригінальних ресурсів з кореня репо
+  tools/import_original.py  конвертер оригінальних ресурсів з `original/`
   tools/art/              моделі нового арту кодом у Blender (tools/art/README.md)
 ```
 

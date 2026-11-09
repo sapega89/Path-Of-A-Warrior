@@ -5,9 +5,9 @@ import pathlib
 HERE = pathlib.Path(__file__).resolve().parent
 
 # Where the original resources (PNG, .scr, .arr, ...) are read from.
-# Desktop: the repository root (pyport/..). Browser build: assets are copied next to main.py.
+# Desktop: original/ in the repository. Browser build: assets are copied next to main.py.
 RES_ROOT = os.environ.get("POW_RES_ROOT") or (
-    str(HERE.parent) if (HERE.parent / "0_font.png").exists() else str(HERE / "res")
+    str(HERE.parent / "original") if (HERE.parent / "original" / "0_font.png").exists() else str(HERE / "res")
 )
 
 # Multiplayer (PHASE_9): resources of the multiplayer, and where its server is.

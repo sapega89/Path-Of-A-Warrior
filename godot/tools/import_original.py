@@ -72,6 +72,7 @@ import sys
 from PIL import Image
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
+ORIGINAL = ROOT / "original"  # the original game's files
 sys.path.insert(0, str(ROOT / "pyport"))
 from pow.data import scr  # noqa: E402
 
@@ -124,7 +125,7 @@ def build_atlas(tile_names):
     atlas = Image.new("RGBA", (16 * TILE, 15 * TILE), (0, 0, 0, 0))
     found = 0
     for t in range(1, 241):
-        path = ROOT / (tile_name(tile_names, t) + ".png")
+        path = ORIGINAL / (tile_name(tile_names, t) + ".png")
         if not path.exists():
             continue
         img = Image.open(path).convert("RGBA")
@@ -153,12 +154,12 @@ WEAPONS = 2  # 0 long sword, 1 short sword
 
 
 def build_hero(mdat, chars, head, weapon):
-    body_img = Image.open(ROOT / (chars[44] + ".png")).convert("RGBA")
-    head_img = Image.open(ROOT / (chars[46 + head] + ".png")).convert("RGBA")
-    wep_img = Image.open(ROOT / (chars[42 + weapon] + ".png")).convert("RGBA")
-    body = read_frames(ROOT / mdat[45])
-    heads = read_frames(ROOT / mdat[47 + head])
-    weps = read_frames(ROOT / mdat[87 + (weapon << 2)])
+    body_img = Image.open(ORIGINAL / (chars[44] + ".png")).convert("RGBA")
+    head_img = Image.open(ORIGINAL / (chars[46 + head] + ".png")).convert("RGBA")
+    wep_img = Image.open(ORIGINAL / (chars[42 + weapon] + ".png")).convert("RGBA")
+    body = read_frames(ORIGINAL / mdat[45])
+    heads = read_frames(ORIGINAL / mdat[47 + head])
+    weps = read_frames(ORIGINAL / mdat[87 + (weapon << 2)])
     count = len(body)
     cw, ch = HERO_CELL
     sheet = Image.new("RGBA", (cw * 16, ch * ((count + 15) // 16)), (0, 0, 0, 0))
@@ -190,12 +191,12 @@ HERO_SKILL_ORIGIN = (64, 88)  # the skill swings reach 55 px aside and 76 px up
 
 def build_hero_skills(mdat, chars, head, weapon, flags):
     """The hero's skill frames (actions 12 and up), as draw_hero puts them together."""
-    body_img = Image.open(ROOT / (chars[44] + ".png")).convert("RGBA")
-    head_img = Image.open(ROOT / (chars[46 + head] + ".png")).convert("RGBA")
-    wep_img = Image.open(ROOT / (chars[42 + weapon] + ".png")).convert("RGBA")
-    body = read_frames(ROOT / mdat[46])
-    heads = read_frames(ROOT / mdat[51 + head])
-    weps = read_frames(ROOT / mdat[89 + (weapon << 2)])
+    body_img = Image.open(ORIGINAL / (chars[44] + ".png")).convert("RGBA")
+    head_img = Image.open(ORIGINAL / (chars[46 + head] + ".png")).convert("RGBA")
+    wep_img = Image.open(ORIGINAL / (chars[42 + weapon] + ".png")).convert("RGBA")
+    body = read_frames(ORIGINAL / mdat[46])
+    heads = read_frames(ORIGINAL / mdat[51 + head])
+    weps = read_frames(ORIGINAL / mdat[89 + (weapon << 2)])
     cw, ch = HERO_SKILL_CELL
     ox0, oy0 = HERO_SKILL_ORIGIN
     sheet = Image.new("RGBA", (cw * 16, ch * ((len(body) + 15) // 16)), (0, 0, 0, 0))
@@ -219,8 +220,8 @@ def build_hero_skills(mdat, chars, head, weapon, flags):
 
 
 def export_hero(out):
-    mdat = scr.load(ROOT / "mdat_QVGA.scr")
-    chars = scr.load(ROOT / "imgchar.scr")
+    mdat = scr.load(ORIGINAL / "mdat_QVGA.scr")
+    chars = scr.load(ORIGINAL / "imgchar.scr")
     count = 0
     for head in range(HEADS):
         for weapon in range(WEAPONS):
@@ -266,13 +267,13 @@ def recolour(img, tint):
 
 
 def export_enemies(out):
-    mdat = scr.load(ROOT / "mdat_QVGA.scr")
-    chars = scr.load(ROOT / "imgchar.scr")
+    mdat = scr.load(ORIGINAL / "mdat_QVGA.scr")
+    chars = scr.load(ORIGINAL / "imgchar.scr")
     cw, ch = HERO_CELL
     for n, (image, table) in enumerate(ENEMY_SPRITES):
-        frames = read_frames(ROOT / mdat[table])
+        frames = read_frames(ORIGINAL / mdat[table])
         for tint in range(len(ENEMY_PALETTES)):
-            img = recolour(Image.open(ROOT / (chars[image] + ".png")).convert("RGBA"), tint)
+            img = recolour(Image.open(ORIGINAL / (chars[image] + ".png")).convert("RGBA"), tint)
             sheet = Image.new("RGBA", (cw * 16, ch * ((len(frames) + 15) // 16)), (0, 0, 0, 0))
             for i, (sx, sy, w, h, ox, oy) in enumerate(frames):
                 if w and h:
@@ -291,13 +292,13 @@ GENERAL_WEAPON_BEHIND = {1: 1310732, 0: 1053711}
 
 
 def build_general(mdat, chars, look, side, skill, flags):
-    body_img = Image.open(ROOT / (chars[44] + ".png")).convert("RGBA")
-    head_img = Image.open(ROOT / (chars[50 + look - 1] + ".png")).convert("RGBA")
-    wep_img = Image.open(ROOT / (chars[42 + side] + ".png")).convert("RGBA")
-    mark = Image.open(ROOT / (chars[45] + ".png")).convert("RGBA")
-    body = read_frames(ROOT / mdat[69 if skill else 68])
-    heads = read_frames(ROOT / mdat[(76 if skill else 70) + look - 1])
-    weps = read_frames(ROOT / mdat[(90 if skill else 88) + (side << 2)])
+    body_img = Image.open(ORIGINAL / (chars[44] + ".png")).convert("RGBA")
+    head_img = Image.open(ORIGINAL / (chars[50 + look - 1] + ".png")).convert("RGBA")
+    wep_img = Image.open(ORIGINAL / (chars[42 + side] + ".png")).convert("RGBA")
+    mark = Image.open(ORIGINAL / (chars[45] + ".png")).convert("RGBA")
+    body = read_frames(ORIGINAL / mdat[69 if skill else 68])
+    heads = read_frames(ORIGINAL / mdat[(76 if skill else 70) + look - 1])
+    weps = read_frames(ORIGINAL / mdat[(90 if skill else 88) + (side << 2)])
     cw, ch = GENERAL_CELL
     ox0, oy0 = GENERAL_ORIGIN
     sheet = Image.new("RGBA", (cw * 16, ch * ((len(body) + 15) // 16)), (0, 0, 0, 0))
@@ -333,8 +334,8 @@ def build_general(mdat, chars, look, side, skill, flags):
 
 def export_generals(out):
     from pow.game import consts
-    mdat = scr.load(ROOT / "mdat_QVGA.scr")
-    chars = scr.load(ROOT / "imgchar.scr")
+    mdat = scr.load(ORIGINAL / "mdat_QVGA.scr")
+    chars = scr.load(ORIGINAL / "imgchar.scr")
     for look in range(1, GENERAL_LOOKS + 1):
         for side in range(2):
             for skill in range(2):
@@ -345,7 +346,7 @@ def export_generals(out):
 # general.arr: 23 bytes per general from 14: 11-byte name, look, -, side (0 = short sword
 # as stored, the game flips it), 4 skills, portrait, gift table, attack, defence, HP
 def read_generals():
-    d = (ROOT / "general.arr").read_bytes()
+    d = (ORIGINAL / "general.arr").read_bytes()
     out = {}
     g = 1
     while 23 * (g - 1) + 14 + 23 <= len(d):
@@ -364,10 +365,10 @@ TALK_FILES = {"briefing": 57, "map": 58, "general": 59}
 
 
 def export_talk(out):
-    edat = scr.load(ROOT / "edat.scr")
+    edat = scr.load(ORIGINAL / "edat.scr")
     talk = {}
     for name, index in TALK_FILES.items():
-        d = (ROOT / edat[index]).read_bytes()
+        d = (ORIGINAL / edat[index]).read_bytes()
         n = d[0] | d[1] << 8
         off = [d[2 + i * 2] | d[3 + i * 2] << 8 for i in range(n + 1)]
         talk[name] = [d[off[i]:off[i + 1]].decode("utf-8", "replace") for i in range(n)]
@@ -380,13 +381,13 @@ def export_talk(out):
 # the four things to talk about, two lines each (60.. topic 0, 68.. topic 1); and the 44
 # generals one can visit (the Emperor's Seal lists them all).
 def export_visit(out):
-    edat = scr.load(ROOT / "edat.scr")
-    d = (ROOT / edat[52]).read_bytes()
+    edat = scr.load(ORIGINAL / "edat.scr")
+    d = (ORIGINAL / edat[52]).read_bytes()
     n = d[0]
     width = d[1]
     generals = [int.from_bytes(d[1 + n + width * i:1 + n + width * (i + 1)], "little")
                 for i in range((len(d) - 1 - n) // width)]
-    lines = own_story_lines(OWN_STORY["visit"], own_texts(read_table(ROOT / edat[62])))
+    lines = own_story_lines(OWN_STORY["visit"], own_texts(read_table(ORIGINAL / edat[62])))
     visit = {"lines": lines, "generals": generals}
     (out / "visit.json").write_text(json.dumps(visit, ensure_ascii=False, indent=0))
 
@@ -397,9 +398,9 @@ HELP_TOPIC_START = [0, 5, 8, 14, 17, 22, 28, 35, 37]
 
 
 def export_help(out):
-    edat = scr.load(ROOT / "edat.scr")
-    pages = read_table(ROOT / edat[61])
-    names = read_table(ROOT / "uimenu.scr")[38].split("|")
+    edat = scr.load(ORIGINAL / "edat.scr")
+    pages = read_table(ORIGINAL / edat[61])
+    names = read_table(ORIGINAL / "uimenu.scr")[38].split("|")
     topics = [{"name": names[i], "pages": pages[HELP_TOPIC_START[i]:HELP_TOPIC_START[i + 1]]}
               for i in range(len(HELP_TOPIC_START) - 1)]
     for topic, own in zip(topics, OWN_STORY["help"]):
@@ -518,9 +519,9 @@ def export_names(out):
 
 
 def export_skills(out):
-    edat = scr.load(ROOT / "edat.scr")
-    text = read_table(ROOT / edat[54])
-    menu = read_table(ROOT / edat[69])
+    edat = scr.load(ORIGINAL / "edat.scr")
+    text = read_table(ORIGINAL / edat[54])
+    menu = read_table(ORIGINAL / edat[69])
     skills = {"names": [own_name("skills", n) for n in text[0:19]], "effects": text[19:38], "groups": menu[48:55], "rows": SKILL_ROWS}
     (out / "skills.json").write_text(json.dumps(skills, ensure_ascii=False, indent=0))
 
@@ -538,9 +539,9 @@ def s8(v):
 
 
 def export_items(out):
-    edat = scr.load(ROOT / "edat.scr")
+    edat = scr.load(ORIGINAL / "edat.scr")
     gear, treasures, rare = {}, {}, {}
-    d = (ROOT / edat[47]).read_bytes()
+    d = (ORIGINAL / edat[47]).read_bytes()
     k = 0
     while 9 + 23 * (k + 1) <= len(d):
         i = 9 + 23 * k
@@ -549,7 +550,7 @@ def export_items(out):
                          "price": d[i + 20] | d[i + 21] << 8, "icon": s8(d[i + 22]),
                          "level": GEAR_LEVELS[(101 + k) % 5]}
         k += 1
-    d = (ROOT / edat[51]).read_bytes()
+    d = (ORIGINAL / edat[51]).read_bytes()
     k = 0
     while 10 + 24 * (k + 1) <= len(d):
         i = 10 + 24 * k
@@ -558,7 +559,7 @@ def export_items(out):
                               "hp": d[i + 19], "mp": s8(d[i + 20]), "enchant_max": d[i + 21],
                               "icon": s8(d[i + 22]), "level": d[i + 23]}
         k += 1
-    d = (ROOT / edat[49]).read_bytes()
+    d = (ORIGINAL / edat[49]).read_bytes()
     k = 0
     while 9 + 27 * (k + 1) <= len(d):
         i = 9 + 27 * k
@@ -600,11 +601,11 @@ def _story_line(own, key):
 def export_stories(out, assets):
     sys.path.insert(0, str(ROOT / "pyport"))
     from pow.game import consts
-    edat = scr.load(ROOT / "edat.scr")
+    edat = scr.load(ORIGINAL / "edat.scr")
     offsets = consts.story_offsets
     endings = []
     for s in range(24):
-        lines = read_table(ROOT / edat[64 + s // 6])
+        lines = read_table(ORIGINAL / edat[64 + s // 6])
         base = offsets[s // 6 * 12]
         p0, p1, p2 = (offsets[2 * s + i] - base for i in range(3))
         own = OWN_STORY["stories"]["endings"][s]
@@ -614,18 +615,18 @@ def export_stories(out, assets):
                     for t, line in zip_same(own["pictures"], own_texts(lines[p1:p2]))]
         endings.append({"talk": talk, "pictures": pictures})
     own = OWN_STORY["stories"]
-    stories = {"opening": own_story_lines(own["opening"], own_texts(read_table(ROOT / edat[63]))),
+    stories = {"opening": own_story_lines(own["opening"], own_texts(read_table(ORIGINAL / edat[63]))),
                "endings": endings,
-               "gamestr": own_story_lines(own["gamestr"], own_texts(read_table(ROOT / "gamestr.scr")[:2])),
-               "titles": own_story_lines(own["titles"], own_texts(read_table(ROOT / edat[54])[38:62]))}
+               "gamestr": own_story_lines(own["gamestr"], own_texts(read_table(ORIGINAL / "gamestr.scr")[:2])),
+               "titles": own_story_lines(own["titles"], own_texts(read_table(ORIGINAL / edat[54])[38:62]))}
     (out / "stories.json").write_text(json.dumps(stories, ensure_ascii=False, indent=0))
     (assets / "story").mkdir(parents=True, exist_ok=True)
     for name in STORY_PICTURES:
-        Image.open(ROOT / (name + ".png")).convert("RGBA").save(assets / "story" / (name + ".png"))
-    chars = scr.load(ROOT / "imgchar.scr")
+        Image.open(ORIGINAL / (name + ".png")).convert("RGBA").save(assets / "story" / (name + ".png"))
+    chars = scr.load(ORIGINAL / "imgchar.scr")
     (assets / "portraits").mkdir(parents=True, exist_ok=True)
     for i in range(42):
-        Image.open(ROOT / (chars[i] + ".png")).convert("RGBA").save(assets / "portraits" / ("%d.png" % i))
+        Image.open(ORIGINAL / (chars[i] + ".png")).convert("RGBA").save(assets / "portraits" / ("%d.png" % i))
 
 
 def cstr(b):
@@ -634,7 +635,7 @@ def cstr(b):
 
 def read_exp_table():
     """The exp the hero needs to go from level n + 1 to n + 2 (exp.arr: u16 count, s32 each)."""
-    d = (ROOT / "exp.arr").read_bytes()
+    d = (ORIGINAL / "exp.arr").read_bytes()
     return [int.from_bytes(d[2 + 4 * k:6 + 4 * k], "little", signed=True) for k in range((len(d) - 2) // 4)]
 
 
@@ -651,9 +652,9 @@ def expand_text(table, i):
 
 
 def export_campaign(out):
-    rows = (ROOT / "mission.arr").read_bytes()
-    side = (ROOT / "sideinfo.arr").read_bytes()
-    names = (ROOT / "ruler.arr").read_bytes()
+    rows = (ORIGINAL / "mission.arr").read_bytes()
+    side = (ORIGINAL / "sideinfo.arr").read_bytes()
+    names = (ORIGINAL / "ruler.arr").read_bytes()
     chapters, lords = [], {}
     r = 0
     while 38 * r + 10 + 38 <= len(rows):
@@ -665,8 +666,8 @@ def export_campaign(out):
         r += 1
     while chapters and not chapters[-1]:
         chapters.pop()
-    edat = scr.load(ROOT / "edat.scr")
-    descriptions = read_table(ROOT / edat[56])
+    edat = scr.load(ORIGINAL / "edat.scr")
+    descriptions = read_table(ORIGINAL / edat[56])
     missions = []
     i = 11
     while i + 11 <= len(side):
@@ -705,7 +706,7 @@ UI_IMAGES = ["arrow0", "arrow1", "arrow2", "arrow3",  # exit arrows: down, left,
 def export_ui(out):
     out.mkdir(parents=True, exist_ok=True)
     for name in UI_IMAGES:
-        Image.open(ROOT / (name + ".png")).convert("RGBA").save(out / (name + ".png"))
+        Image.open(ORIGINAL / (name + ".png")).convert("RGBA").save(out / (name + ".png"))
 
 
 TABLES = [
@@ -773,11 +774,11 @@ def _merge_cells(parts):
 
 def export_effects(out):
     from pow.game import consts
-    mdat = scr.load(ROOT / "mdat_QVGA.scr")
-    eff = scr.load(ROOT / "imgeff.scr")
+    mdat = scr.load(ORIGINAL / "mdat_QVGA.scr")
+    eff = scr.load(ORIGINAL / "imgeff.scr")
     info = {}
     for name, frames_file, table, pairs in EFFECTS:
-        parts = read_frames(ROOT / mdat[frames_file])
+        parts = read_frames(ORIGINAL / mdat[frames_file])
         pics = getattr(consts, table) if table else None
         if pairs is None:
             n = len(pics) if pics else len(parts)
@@ -786,10 +787,10 @@ def export_effects(out):
         for part, pic in pairs:
             sx, sy, w, h, ox, oy = parts[part]
             if pics is None:
-                src = Image.open(ROOT / (eff[EFFECT_IMAGE.get(name, 1)] + ".png")).convert("RGBA")
+                src = Image.open(ORIGINAL / (eff[EFFECT_IMAGE.get(name, 1)] + ".png")).convert("RGBA")
                 cells.append((src.crop((sx, sy, sx + w, sy + h)), -ox, -oy))
             elif pics[pic] != 0:
-                cells.append((Image.open(ROOT / (eff[pics[pic] - 27] + ".png")).convert("RGBA"), -ox, -oy))
+                cells.append((Image.open(ORIGINAL / (eff[pics[pic] - 27] + ".png")).convert("RGBA"), -ox, -oy))
             else:
                 cells.append((None, 0, 0))
         group = EFFECT_GROUP.get(name, 1)
@@ -1014,7 +1015,7 @@ def export_mixing(out):
     """The Blacksmith's Combine: item-mixing-table.bin is four columns of 149 numbers (16 bit):
     three things (their ids, smallest first) and what they make. Rows for the same three are
     next to each other; one of them is chosen at random."""
-    d = (ROOT / "item-mixing-table.bin").read_bytes()
+    d = (ORIGINAL / "item-mixing-table.bin").read_bytes()
     e = [d[i] | d[i + 1] << 8 for i in range(0, len(d), 2)]
     rows = [[e[i], e[MIX_ROWS + i], e[2 * MIX_ROWS + i], e[3 * MIX_ROWS + i]] for i in range(MIX_ROWS)]
     (out / "mixing.json").write_text(json.dumps(rows, separators=(",", ":")))
@@ -1032,7 +1033,7 @@ def export_sounds(out):
     import tempfile
     out.mkdir(parents=True, exist_ok=True)
     for n in range(3, 17):
-        shutil.copyfile(ROOT / ("snd%d.wav" % n), out / ("sfx_%d.wav" % n))
+        shutil.copyfile(ORIGINAL / ("snd%d.wav" % n), out / ("sfx_%d.wav" % n))
     font = next((f for f in SOUND_FONTS if pathlib.Path(f).exists()), None)
     if font is None or not shutil.which("fluidsynth") or not shutil.which("ffmpeg"):
         print("music: fluidsynth, ffmpeg or a sound font missing, the tunes are kept")
@@ -1043,21 +1044,21 @@ def export_sounds(out):
                 continue
             wav = pathlib.Path(tmp) / ("music_%d.wav" % n)
             subprocess.run(["fluidsynth", "-ni", "-F", str(wav), "-r", "44100", font,
-                            str(ROOT / ("snd%d.mid" % n))], check=True, capture_output=True)
+                            str(ORIGINAL / ("snd%d.mid" % n))], check=True, capture_output=True)
             subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(wav), "-c:a", "libvorbis",
                             "-q:a", "3", str(out / ("music_%d.ogg" % n))], check=True)
 
 
 def main():
-    tile_names = scr.load(ROOT / "imgtile.scr")
-    map_files = [n for n in scr.load(ROOT / "mdat_QVGA.scr") if n.endswith(".MAP")]
-    room_files = scr.load(ROOT / "edat.scr")
+    tile_names = scr.load(ORIGINAL / "imgtile.scr")
+    map_files = [n for n in scr.load(ORIGINAL / "mdat_QVGA.scr") if n.endswith(".MAP")]
+    room_files = scr.load(ORIGINAL / "edat.scr")
     out_maps = CLIENT / "data" / "maps"
     out_maps.mkdir(parents=True, exist_ok=True)
     for index, name in enumerate(map_files):
-        m = parse_map((ROOT / name).read_bytes())
+        m = parse_map((ORIGINAL / name).read_bytes())
         m["number"] = index + 1
-        m["rooms"] = parse_rooms((ROOT / room_files[index]).read_bytes(), m["w"], m["h"])
+        m["rooms"] = parse_rooms((ORIGINAL / room_files[index]).read_bytes(), m["w"], m["h"])
         (out_maps / ("%d.json" % (index + 1))).write_text(json.dumps(m, separators=(",", ":")))
     chapters, missions = export_campaign(CLIENT / "data")
     export_tables(CLIENT / "data")

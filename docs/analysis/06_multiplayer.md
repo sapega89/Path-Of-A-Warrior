@@ -1,7 +1,7 @@
 # 06 — Path of a Warrior Multiplayer (онлайн-клієнт)
 
 > **Примітка (30.10.2026).** Розбір окремого клієнта «Path of a Warrior Multiplayer» (`s40.kiev.ua_5426_path_of_a_warrior_multiplayer_nokia_240x.jar` у корені проєкту), декомпільованого CFR 0.152.
-> - План, що з цього випливає, — `docs/plans/PHASE_9_ARENA.md`. Таблиці годин у §6 тут — первинна оцінка агента; актуальні — в плані етапу 9.
+> - План, що з цього випливає, — `docs/history/plans/PHASE_9_ARENA.md`. Таблиці годин у §6 тут — первинна оцінка агента; актуальні — в плані етапу 9.
 > - Шляхи `/home/claude/mp/...` — робоча копія в хмарі. Ресурси мультиплеєра в проєкті лежать лише всередині jar (розпакування — таск 9.1).
 
 Джерела: `/home/claude/mp/src/*.java` (CFR 0.152), ресурси `/home/claude/mp/jar/`, а для порівняння SP-аналіз `03_items_economy.md` §5 і SP-код `/home/claude/pow/as.java`, `u.java`.
