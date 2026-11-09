@@ -1,5 +1,5 @@
 class_name OnlineBattleScreen
-extends Control
+extends BaseScreen
 # gdlint: disable=max-file-lines
 ## The multiplayer battle in the new art, as the rest of the game: a field of the maps' ground
 ## and things under a painted sky (scripts/world/battle_arena.gd, after the battle's
@@ -81,7 +81,7 @@ const MARKER_SVG := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 72"
 
 var online: RefCounted
 var battle: RefCounted
-var profile_path: String = Profile.PATH
+var hero_path: String = Profile.PATH
 var rewarded := false  # the result's rewards went to the hero
 var levels_gained := 0
 var loot_lost := false  # no room for it
@@ -135,7 +135,7 @@ class Layer:
 func _ready() -> void:
 	online = OnlineClient.of(Router.params)
 	battle = null if online == null else online.battle
-	profile_path = str(Router.params.get("profile_path", Profile.PATH))
+	hero_path = profile_path()
 	_build_world()
 	_build_hud()
 	_sound_player = AudioStreamPlayer.new()
@@ -987,7 +987,7 @@ func center_message() -> String:
 func take_rewards() -> void:
 	rewarded = true
 	var r: Dictionary = battle.result
-	var p: RefCounted = Profile.load_or_new(profile_path)
+	var p: RefCounted = Profile.load_or_new(hero_path)
 	p.gold = clampi(int(p.gold) + int(r.get("gold", 0)), 0, 0x7FFFFFFF)
 	p.fame = clampi(int(p.fame) + int(r.get("fame", 0)), 0, 0x7FFFFFFF)
 	levels_gained = p.gain_exp(int(r.get("exp", 0))) if int(r.get("exp", 0)) > 0 else 0
@@ -997,7 +997,7 @@ func take_rewards() -> void:
 		item.erase("name")
 		var id := int(item.id)
 		loot_lost = not (p.add_potion(id) if id <= 11 else p.add_item(item))
-	p.save(profile_path)
+	p.save(hero_path)
 
 
 func result_text() -> String:
@@ -1131,7 +1131,12 @@ func press(k: String) -> void:
 		leave()
 
 
-func _unhandled_input(event: InputEvent) -> void:
+## The battle reads the back key itself (below), so the base does not take it.
+func handles_back() -> bool:
+	return false
+
+
+func _screen_input(event: InputEvent) -> void:
 	if battle == null:
 		if event.is_action_pressed("ui_cancel"):
 			Router.back()

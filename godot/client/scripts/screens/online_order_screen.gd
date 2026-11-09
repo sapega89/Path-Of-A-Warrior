@@ -1,5 +1,5 @@
 class_name OnlineOrderScreen
-extends Control
+extends BaseScreen
 ## Multiplayer > Order (pyport's Order window): my order's name and its members (the leader
 ## first, then me, who is online, the others), with Leave Order ("Leave the order?"). Without
 ## an order: Create Order and Join Order, a name of 4-12 letters (scripts/screens/
@@ -149,9 +149,3 @@ func invited(err: String) -> void:
 		return
 	var k := "online.err_" + err.replace(" ", "_")
 	info.text = tr(k) if tr(k) != k else tr("live.failed")
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()

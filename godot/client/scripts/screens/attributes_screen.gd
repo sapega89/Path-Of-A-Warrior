@@ -1,5 +1,5 @@
 class_name AttributesScreen
-extends Control
+extends BaseScreen
 ## Attributes: the hero's name, level, fame and free stat points, and HP, MP, attack and
 ## defence, each with a "+" that spends a point on it (HP +5, MP +3, attack +1, defence +1).
 ## Attack and defence show the hero's own part and the gear's part ("4+1").
@@ -26,7 +26,7 @@ var note: AcceptDialog
 
 
 func _ready() -> void:
-	path = str(Router.params.get("profile_path", Profile.PATH))
+	path = profile_path()
 	profile = Profile.load_or_new(path)
 	var col := UiTheme.menu_column(self, 520)
 	col.add_child(UiTheme.heading("attributes.title", 44))
@@ -154,9 +154,3 @@ func _row(col: VBoxContainer, row_name: String, label_key: String, button: Butto
 		button.custom_minimum_size = Vector2(56, 0)
 		row.add_child(button)
 	col.add_child(row)
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()

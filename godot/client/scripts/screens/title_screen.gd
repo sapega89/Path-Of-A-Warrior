@@ -1,4 +1,4 @@
-extends Control
+extends BaseScreen
 ## Title: the game name and "press any key"; any key, button or tap opens the main menu.
 
 var _prompt: Label
@@ -22,7 +22,12 @@ func _ready() -> void:
 	tw.tween_property(_prompt, "modulate:a", 1.0, 0.8)
 
 
-func _unhandled_input(event: InputEvent) -> void:
+## Any key (back too) starts: it goes to the main menu.
+func handles_back() -> bool:
+	return false
+
+
+func _screen_input(event: InputEvent) -> void:
 	if is_start_event(event):
 		get_viewport().set_input_as_handled()
 		Router.go("main_menu")

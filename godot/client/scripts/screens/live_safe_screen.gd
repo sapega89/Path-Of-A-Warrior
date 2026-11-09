@@ -1,5 +1,5 @@
 class_name LiveSafeScreen
-extends Control
+extends BaseScreen
 ## Game menu > Safe: gold between the hero (Local) and the Safe on the server. The arrow between
 ## the two says which way it goes, out of the Safe at first; it turns when pressed. The amount
 ## is typed in (no more than there is on that side) and OK moves it; the hero is saved then.
@@ -19,7 +19,7 @@ var info: Label
 
 
 func _ready() -> void:
-	path = str(Router.params.get("profile_path", Profile.PATH))
+	path = profile_path()
 	profile = Profile.load_or_new(path)
 	live = LiveClient.of(Router.params)
 	var col := UiTheme.menu_column(self, 640)
@@ -144,9 +144,3 @@ func refresh() -> void:
 	local.text = str(profile.gold)
 	server.text = "-" if live == null or not live.synced else str(live.safe)
 	arrow.icon = load(ARROWS[1 if to_safe else 0])
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()

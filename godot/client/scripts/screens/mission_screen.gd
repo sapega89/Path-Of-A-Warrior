@@ -1,5 +1,5 @@
 class_name MissionScreen
-extends Control
+extends BaseScreen
 ## A mission of the original campaign on its map. The game itself runs in MapSim
 ## (original pixels and ticks); this screen reads the input, ticks the simulation every
 ## 120 ms and draws its state in 3D: the hero, the camera on the current room,
@@ -657,7 +657,12 @@ func _release_keys() -> void:
 	_keys_down.clear()
 
 
-func _unhandled_input(event: InputEvent) -> void:
+## Back pauses the mission (below), so the base does not take it.
+func handles_back() -> bool:
+	return false
+
+
+func _screen_input(event: InputEvent) -> void:
 	if pause_menu != null:
 		return
 	if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):

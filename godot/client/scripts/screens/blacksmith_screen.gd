@@ -1,4 +1,4 @@
-extends Control
+extends BaseScreen
 ## Blacksmith: Buy, Sell, Enchant and Combine, each a page of things (the shop screen).
 ## Combine with fewer than 3 things in the Inventory only says so, as pyport's popup 39.
 
@@ -56,13 +56,5 @@ func open_page(mode: String) -> bool:
 
 ## The things in the hero's Inventory.
 func things() -> int:
-	var profile: RefCounted = Profile.load_or_new(
-		str(Router.params.get("profile_path", Profile.PATH))
-	)
+	var profile: RefCounted = Profile.load_or_new(profile_path())
 	return profile.backpack.filter(func(it): return int(it.get("id", 0)) > 0).size()
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()

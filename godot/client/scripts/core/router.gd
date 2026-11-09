@@ -1,6 +1,7 @@
 extends Node
 ## Screen router: shows one screen at a time inside a host Control and keeps
-## a back stack. Screens are Control scripts listed in SCREENS.
+## a back stack. Screens are listed in SCREENS: a scene (.tscn) whose root is a BaseScreen,
+## or, for a screen not moved to a scene yet, its script (.gd).
 
 signal screen_changed(screen_name: String)
 
@@ -115,8 +116,7 @@ func _show(screen_name: String, screen_params: Dictionary = {}) -> bool:
 		push_error("router: cannot show %s" % screen_name)
 		return false
 	params = screen_params
-	var script: Script = load(SCREENS[screen_name])
-	var screen: Control = script.new()
+	var screen := make(SCREENS[screen_name])
 	screen.name = screen_name
 	screen.set_anchors_preset(Control.PRESET_FULL_RECT)
 	if current != null:
@@ -126,3 +126,10 @@ func _show(screen_name: String, screen_params: Dictionary = {}) -> bool:
 	_host.add_child(screen)
 	screen_changed.emit(screen_name)
 	return true
+
+
+## A new screen from its scene or, for one not moved to a scene yet, its script.
+static func make(path: String) -> Control:
+	if path.ends_with(".tscn"):
+		return (load(path) as PackedScene).instantiate()
+	return (load(path) as Script).new()

@@ -1,5 +1,5 @@
 class_name LiveBuyScreen
-extends Control
+extends BaseScreen
 ## Game menu > Trade > Buy Item, step by step: the category (Normal, Special, Rare Items), the kind
 ## (a grid of the things), the enchant level with the number of lots at each (Rare things have
 ## none), then the lots, 20 a page, cheapest first. Picking a lot asks "Buy for N Gold?"; with a
@@ -32,7 +32,7 @@ var note := ""  # the line the next step shows (what happened before it)
 
 
 func _ready() -> void:
-	path = str(Router.params.get("profile_path", Profile.PATH))
+	path = profile_path()
 	profile = Profile.load_or_new(path)
 	live = LiveClient.of(Router.params)
 	var col := UiTheme.menu_column(self, 640)
@@ -308,9 +308,3 @@ func go_back() -> void:
 			show_step(Step.CATEGORY)
 		_:
 			Router.back()
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		go_back()

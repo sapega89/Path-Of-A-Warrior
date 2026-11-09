@@ -1,5 +1,5 @@
 class_name MapViewer
-extends Control
+extends BaseScreen
 ## Walks the hero around the maps of the campaign in 3D, in the new art (MapArt). skill_3 /
 ## skill_4 (keys 3 / 4, gamepad LB / RB) switch to the previous / next map; the line at the top
 ## names the keys of the device in use.
@@ -75,8 +75,8 @@ func show_info(_device := "") -> void:
 	info.text = InputSetup.hint("viewer.info") % [map_number, map_total]
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):
+func _screen_input(event: InputEvent) -> void:
+	if event.is_action_pressed("pause"):
 		get_viewport().set_input_as_handled()
 		Router.back()
 	elif event.is_action_pressed("skill_3"):

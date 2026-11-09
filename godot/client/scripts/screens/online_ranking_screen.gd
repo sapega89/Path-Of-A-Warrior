@@ -1,5 +1,5 @@
 class_name OnlineRankingScreen
-extends Control
+extends BaseScreen
 ## Multiplayer > Ranking (pyport's Ranking menu): Fame, Duel or Mission, the Top Rankers or the
 ## Ranks Near Me, three rows each, and my own rank under them. Duel and Mission rank by grade.
 
@@ -93,9 +93,3 @@ func ranked(err: String) -> void:
 		if not online.rank.is_empty()
 		else tr("online.no_rank")
 	)
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()

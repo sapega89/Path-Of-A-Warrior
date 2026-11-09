@@ -1,5 +1,5 @@
 class_name AssignItemsScreen
-extends Control
+extends BaseScreen
 ## Assign Items: the hero's gold and the five potion slots of the belt, each with its key above
 ## it (Z X C V B, used in a mission) and "Keys Z X C V B" under them, as in pyport with the skill
 ## bar. The keypad's * and / still put the chosen slot on the old potion keys (no buttons or
@@ -19,7 +19,7 @@ var close := Callable()  # set by the pause menu: what Back does instead of Rout
 
 
 func _ready() -> void:
-	path = str(Router.params.get("profile_path", Profile.PATH))
+	path = profile_path()
 	profile = Profile.load_or_new(path)
 	if sim != null:
 		profile.quick_slots = sim.quick_slots
@@ -136,11 +136,7 @@ func _show_info(i: int) -> void:
 	info.text = describe(i)
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		go_back()
-		return
+func _screen_input(event: InputEvent) -> void:
 	for k in 2:
 		if event.is_action_pressed("potion_%d" % (k + 1)):
 			get_viewport().set_input_as_handled()

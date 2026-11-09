@@ -1,5 +1,5 @@
 class_name OfflineScreen
-extends Control
+extends BaseScreen
 ## "No connection": the game starts only online (scripts/net/cloud.gd). Shown by the main
 ## menu while the server is not there, or refused the stored login. OK (or a click) tries
 ## again, and so does the screen itself every AUTO_RETRY_MS; on a refused login BACK forgets
@@ -80,11 +80,17 @@ func _process(_delta: float) -> void:
 		refresh()
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel") and Cloud.refused():
-		get_viewport().set_input_as_handled()
-		other_account()
-	elif event.is_action_pressed("ui_accept") and get_viewport().gui_get_focus_owner() == null:
+## Back is another account, and only once the server refused this one.
+func handles_back() -> bool:
+	return Cloud.refused()
+
+
+func go_back() -> void:
+	other_account()
+
+
+func _screen_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_accept") and get_viewport().gui_get_focus_owner() == null:
 		get_viewport().set_input_as_handled()
 		try_again()
 

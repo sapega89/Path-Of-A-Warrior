@@ -1,4 +1,4 @@
-extends Control
+extends BaseScreen
 ## Management: the hero's pages between missions: Attributes, Skills, Gear, Inventory and
 ## Assign Items.
 
@@ -33,9 +33,3 @@ func _ready() -> void:
 	back.pressed.connect(func(): Router.back())
 	col.add_child(back)
 	buttons[0].grab_focus.call_deferred()
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()

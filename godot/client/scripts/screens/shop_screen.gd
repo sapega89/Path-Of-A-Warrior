@@ -1,5 +1,5 @@
 class_name ShopScreen
-extends Control
+extends BaseScreen
 ## A page of the Blacksmith (Router.params "mode"): the hero's gold over a grid of things.
 ## Buy: the shop's potions, scrolls and gears. Sell: the quick slots' potions, then the
 ## backpack, for half the price. Enchant: the backpack, then what the hero wears; enchanting
@@ -33,7 +33,7 @@ var _sparkle_sheet: Texture2D = preload("res://assets/original/ui/itemReinforce.
 
 
 func _ready() -> void:
-	path = str(Router.params.get("profile_path", Profile.PATH))
+	path = profile_path()
 	mode = str(Router.params.get("mode", "buy"))
 	profile = Profile.load_or_new(path)
 	profile.compact_backpack()
@@ -315,12 +315,6 @@ func _name(id: int) -> String:
 
 func _show_info(i: int) -> void:
 	info.text = describe(i)
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()
 
 
 ## The line of control hints under the screen (scripts/ui/hint_bar.gd): what picking a thing does.

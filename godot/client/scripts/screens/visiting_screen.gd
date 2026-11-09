@@ -1,5 +1,5 @@
 class_name VisitingScreen
-extends Control
+extends BaseScreen
 ## Visiting: the generals the hero is friends with and their friendship points; one of them
 ## comes to visit. He greets the hero (portraits and the lines typed out), the hero picks a
 ## thing to talk about, they talk, and the visit ends with the friendship gained and the
@@ -40,7 +40,7 @@ var _wait := -1.0  # seconds before the talk goes on by itself, -1: it waits for
 
 
 func _ready() -> void:
-	path = str(Router.params.get("profile_path", Profile.PATH))
+	path = profile_path()
 	profile = Profile.load_or_new(path)
 	if Router.params.has("seed"):
 		rng.seed = int(Router.params.seed)
@@ -290,12 +290,14 @@ func _process(delta: float) -> void:
 		_wait = WAIT_TICKS * Settings.tick_seconds()
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		if step == Step.LIST:
-			Router.back()
-	elif (
+## Back leaves the visits from the list of friends; in a talk it does nothing.
+func go_back() -> void:
+	if step == Step.LIST:
+		Router.back()
+
+
+func _screen_input(event: InputEvent) -> void:
+	if (
 		step in [Step.GREETING, Step.TALK]
 		and (event.is_action_pressed("attack") or event.is_action_pressed("ui_accept"))
 	):

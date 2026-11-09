@@ -1,4 +1,4 @@
-extends Control
+extends BaseScreen
 ## Game menu > Trade: Buy Item, Sell Item and Cancel Sale (the Live client in Router.params goes on
 ## to each page).
 
@@ -29,9 +29,3 @@ func _ready() -> void:
 	back.pressed.connect(func(): Router.back())
 	col.add_child(back)
 	buttons[0].grab_focus.call_deferred()
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()

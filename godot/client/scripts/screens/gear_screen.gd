@@ -1,5 +1,5 @@
 class_name GearScreen
-extends Control
+extends BaseScreen
 ## Gear: the hero as a 3D figure of the new art (his class, his blade) standing on a round
 ## stage in the middle of a panel, and the nine places around him (weapon, head, body, ...),
 ## each with what is worn there; an empty place shows a faint picture of what goes there.
@@ -22,7 +22,7 @@ var info: Label
 
 
 func _ready() -> void:
-	path = str(Router.params.get("profile_path", Profile.PATH))
+	path = profile_path()
 	profile = Profile.load_or_new(path)
 	var col := UiTheme.menu_column(self, 640)
 	col.add_child(UiTheme.heading("gear.title", 44))
@@ -185,12 +185,6 @@ class Stage:
 		for i in 8:
 			var t := TAU * (i + 0.5) / 8.0
 			UiTheme.rivet(get_canvas_item(), c + Vector2(cos(t) * rx * 0.9, sin(t) * ry * 0.9), 2.8)
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()
 
 
 ## The line of control hints under the screen (scripts/ui/hint_bar.gd): what picking a thing does.

@@ -1,5 +1,5 @@
 class_name SettingsScreen
-extends Control
+extends BaseScreen
 ## Settings: language, music and sound volume, the game speed, the hit effects on the map (all
 ## of them, the screen shake, the vibration), fullscreen (desktop only), and Training
 ## (training_screen.gd) to take the training again (not over the mission's pause).
@@ -124,7 +124,5 @@ func _row(col: VBoxContainer, label_key: String, control: Control) -> void:
 	col.add_child(row)
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		_back()
+func go_back() -> void:
+	_back()

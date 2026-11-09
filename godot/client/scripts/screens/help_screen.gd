@@ -1,5 +1,5 @@
 class_name HelpScreen
-extends Control
+extends BaseScreen
 ## Help, one for the whole game: the campaign's topics (Missions, Visiting, Blacksmith, Skills,
 ## Gear, Experience, Saving, Control; data/help.json), then the multiplayer's Duel and Online
 ## Missions (data/mp.json), each a few pages, ◄ n / m ►. The Control pages tell this version's
@@ -145,11 +145,8 @@ func go_back() -> void:
 		Router.back()
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		go_back()
-	elif topic >= 0 and (event.is_action_pressed("ui_left") or event.is_action_pressed("ui_right")):
+func _screen_input(event: InputEvent) -> void:
+	if topic >= 0 and (event.is_action_pressed("ui_left") or event.is_action_pressed("ui_right")):
 		get_viewport().set_input_as_handled()
 		turn_page(-1 if event.is_action_pressed("ui_left") else 1)
 	elif topic >= 0 and (event.is_action_pressed("ui_accept") or event.is_action_pressed("attack")):

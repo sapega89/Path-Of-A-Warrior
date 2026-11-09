@@ -1,5 +1,5 @@
 class_name LiveWarehouseScreen
-extends Control
+extends BaseScreen
 ## Game menu > Warehouse: the hero's backpack or the Warehouse on the server (200 places), switched
 ## by the two buttons above the grid. Picking a thing moves it to the other one (into the
 ## first free place of the backpack); the hero is saved after every move.
@@ -15,7 +15,7 @@ var info: Label
 
 
 func _ready() -> void:
-	path = str(Router.params.get("profile_path", Profile.PATH))
+	path = profile_path()
 	profile = Profile.load_or_new(path)
 	live = LiveClient.of(Router.params)
 	var col := UiTheme.menu_column(self, 640)
@@ -108,12 +108,6 @@ func describe(i: int) -> String:
 
 func _show_info(i: int) -> void:
 	info.text = describe(i)
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()
 
 
 ## The line of control hints under the screen (scripts/ui/hint_bar.gd): what picking a thing does.

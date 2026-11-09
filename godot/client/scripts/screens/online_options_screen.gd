@@ -1,5 +1,5 @@
 class_name OnlineOptionsScreen
-extends Control
+extends BaseScreen
 ## Multiplayer > Options: Invitation, Accept or Deny (pyport's Options > Invitation): whether
 ## another player's Challenge or Invite An Ally takes me into the battle. It is kept on the
 ## server.
@@ -63,9 +63,3 @@ func choose(v: int) -> void:
 		return
 	info.text = tr("live.connecting")
 	online.set_invitation(v, OnlineClient.later(self, &"shown"))
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()

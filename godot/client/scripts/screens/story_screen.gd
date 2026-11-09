@@ -1,5 +1,5 @@
 class_name StoryScreen
-extends Control
+extends BaseScreen
 ## The story player, as pyport's: the opening of a new game and the endings.
 ## A talk page types its line into one of two boxes under "Prologue" / "Epilogue", as the
 ## briefing does: the one who speaks (the master, a general) at the top beside his portrait,
@@ -394,8 +394,12 @@ func skip() -> void:
 	next_page()
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("skip"):
+func go_back() -> void:
+	skip()
+
+
+func _screen_input(event: InputEvent) -> void:
+	if event.is_action_pressed("skip"):
 		get_viewport().set_input_as_handled()
 		skip()
 	elif event.is_action_pressed("attack") or event.is_action_pressed("ui_accept"):

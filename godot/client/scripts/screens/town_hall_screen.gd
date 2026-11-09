@@ -1,4 +1,4 @@
-extends Control
+extends BaseScreen
 ## The town hall of a main camp: every colonel who gives missions, with how far the hero has
 ## come with him (Profile.progress, 5 per mission won), and the generals the hero knows, with
 ## their friendship (Visits.generals). Visiting opens the visits from here.
@@ -11,7 +11,7 @@ var visit: Button
 
 
 func _ready() -> void:
-	path = str(Router.params.get("profile_path", Profile.PATH))
+	path = profile_path()
 	profile = Profile.load_or_new(path)
 	var col := UiTheme.menu_column(self, 760)
 	col.add_child(UiTheme.heading("camp.hall", 40))
@@ -92,9 +92,3 @@ func _cell(grid: GridContainer, text: String) -> void:
 	l.add_theme_font_size_override("font_size", 22)
 	l.clip_text = true
 	grid.add_child(l)
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()

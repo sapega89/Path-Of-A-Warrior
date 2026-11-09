@@ -1,5 +1,5 @@
 class_name OnlineTextScreen
-extends Control
+extends BaseScreen
 ## A line to type for the online game (Router.params.kind):
 ##   name          Display Name: 1-8 letters and digits ("Are you sure?" first)
 ##   quote         Change Quote: the battle's first words and the victory quote (1-20 characters)
@@ -166,9 +166,3 @@ func done(err: String) -> void:
 		return
 	var k := "online.err_" + err.replace(" ", "_")
 	info.text = tr(k) if tr(k) != k else tr("live.failed")
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()

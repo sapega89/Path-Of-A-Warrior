@@ -1,5 +1,5 @@
 class_name LiveCancelScreen
-extends Control
+extends BaseScreen
 ## Game menu > Trade > Cancel Sale: this player's lots on sale (five at most). Picking one asks
 ## "Do you want to cancel sales of ...?"; Yes takes it off the market into the backpack, or into
 ## the Warehouse when the backpack is full. The hero is saved then.
@@ -15,7 +15,7 @@ var asked: Dictionary = {}  # the lot waiting for Yes
 
 
 func _ready() -> void:
-	path = str(Router.params.get("profile_path", Profile.PATH))
+	path = profile_path()
 	profile = Profile.load_or_new(path)
 	live = LiveClient.of(Router.params)
 	var col := UiTheme.menu_column(self, 640)
@@ -125,9 +125,3 @@ func relisted(err: String) -> void:
 	if err == "none":
 		live.lots = []
 	refresh()
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()

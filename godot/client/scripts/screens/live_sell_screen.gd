@@ -1,5 +1,5 @@
 class_name LiveSellScreen
-extends Control
+extends BaseScreen
 ## Game menu > Trade > Sell Item: a thing of the backpack or of the Warehouse (the two buttons above
 ## the grid), then its price, typed in; a share of it (the tax) goes to the server when it sells.
 ## Price Info shows the cheapest lots of the same kind. OK puts the thing on sale (five at most);
@@ -22,7 +22,7 @@ var info: Label
 
 
 func _ready() -> void:
-	path = str(Router.params.get("profile_path", Profile.PATH))
+	path = profile_path()
 	profile = Profile.load_or_new(path)
 	live = LiveClient.of(Router.params)
 	var col := UiTheme.menu_column(self, 640)
@@ -234,9 +234,3 @@ func go_back() -> void:
 			info.text = describe(chosen)
 		_:
 			Router.back()
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		go_back()

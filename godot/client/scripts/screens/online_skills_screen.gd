@@ -1,5 +1,5 @@
 class_name OnlineSkillsScreen
-extends Control
+extends BaseScreen
 ## Multiplayer > Character > Skills: the skills the hero has learned (from the single player),
 ## each with its level and its cost on the battle's MP gauge, and the four skill slots of the
 ## battles. Pick a skill, then a slot to put it there (from another slot it moves); a slot
@@ -127,12 +127,11 @@ func saved(err: String) -> void:
 	refresh()
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		if held >= 0:
-			held = -1
-			info.text = ""
-			refresh()
-			return
-		Router.back()
+## Back lets go of a skill being moved first.
+func go_back() -> void:
+	if held >= 0:
+		held = -1
+		info.text = ""
+		refresh()
+		return
+	Router.back()

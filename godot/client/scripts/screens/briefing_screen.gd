@@ -1,5 +1,5 @@
 class_name BriefingScreen
-extends Control
+extends BaseScreen
 ## The briefing of an accepted mission: the one who gives it (the mission's portrait, at the
 ## top) advises the hero and the hero (at the bottom) answers. Each line is typed out into its
 ## box and stays there; a line typed out goes on by itself after a moment. Attack / accept or a
@@ -150,8 +150,12 @@ func _process(delta: float) -> void:
 		_wait = WAIT_TICKS * Settings.tick_seconds()
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel") or event.is_action_pressed("skip"):
+func go_back() -> void:
+	finish()
+
+
+func _screen_input(event: InputEvent) -> void:
+	if event.is_action_pressed("skip"):
 		get_viewport().set_input_as_handled()
 		finish()
 	elif event.is_action_pressed("attack") or event.is_action_pressed("ui_accept"):

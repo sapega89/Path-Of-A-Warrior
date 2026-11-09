@@ -1,5 +1,5 @@
 class_name OnlineChatScreen
-extends Control
+extends BaseScreen
 ## Multiplayer > Chat (pyport's Chat window): three tabs, Lobby (everyone online), Order (my
 ## order) and Private (my conversations, the newest first, with the messages waiting in each;
 ## New Message asks for a UserID). A conversation shows its last 30 messages and a line to
@@ -250,9 +250,3 @@ func pushed(m: Dictionary) -> void:
 	elif list_open() and int(m.channel) == OnlineClient.PRIVATE and not online.busy:
 		online.ask_peers(OnlineClient.later(self, &"peers_shown"))
 	_tab_texts()
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()

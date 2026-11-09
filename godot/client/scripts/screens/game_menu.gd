@@ -1,5 +1,5 @@
 class_name GameMenu
-extends Control
+extends BaseScreen
 ## Game menu, the hero's game (Main menu > Continue, and after the opening of a new game), one
 ## column: the campaign (missions, management, blacksmith, visiting), the Live pages on the
 ## server (trade, warehouse, safe), multiplayer (scripts/ui/online_section.gd) and the help of
@@ -39,7 +39,7 @@ var news: Control  # what Live kept for the player; null when the game is not on
 
 
 func _ready() -> void:
-	path = str(Router.params.get("profile_path", Profile.PATH))
+	path = profile_path()
 	menu = UiTheme.menu_column(self, WIDTH)
 	menu.theme = UiTheme.compact()
 	menu.add_child(UiTheme.heading("menu.game", 44))
@@ -107,9 +107,8 @@ func _show_news() -> void:
 	add_child(news)
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		online.leave()
-		if not Router.back():
-			Router.go("main_menu")
+## Back leaves the multiplayer pages and goes where the menu was opened from.
+func go_back() -> void:
+	online.leave()
+	if not Router.back():
+		Router.go("main_menu")

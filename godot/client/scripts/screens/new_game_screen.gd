@@ -1,5 +1,5 @@
 class_name NewGameScreen
-extends Control
+extends BaseScreen
 ## A new game, step by step as in the original: the difficulty (Normal first: x1 gold and exp,
 ## the hero turns to the nearest enemy as he strikes and AUTO hunts; Hard: x2, neither; it
 ## cannot change later), the
@@ -33,7 +33,7 @@ var done_button: Button
 
 
 func _ready() -> void:
-	path = str(Router.params.get("profile_path", Profile.PATH))
+	path = profile_path()
 	var col := UiTheme.menu_column(self, 640)
 	heading = UiTheme.heading("newgame.difficulty", 40)
 	col.add_child(heading)
@@ -317,9 +317,3 @@ func finish() -> void:
 			"profile_path": path
 		}
 	)
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		go_back()

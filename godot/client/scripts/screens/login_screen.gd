@@ -1,5 +1,5 @@
 class_name LoginScreen
-extends Control
+extends BaseScreen
 ## Login: the account the hero is kept under on the server (UserID 4-12 letters A-Z, password
 ## 4-12 digits), the same account for Live and multiplayer. The main menu opens it on Play,
 ## Continue and New game while this run of the game has no account yet: Log in takes an account
@@ -159,12 +159,11 @@ func done() -> void:
 		Router.current.call(then)
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		if busy or waiting:
-			return
-		if must or Router.depth() < 2:
-			Router.go("main_menu")
-		else:
-			Router.back()
+## Back, unless a request is on its way: the main menu when the login must come first.
+func go_back() -> void:
+	if busy or waiting:
+		return
+	if must or Router.depth() < 2:
+		Router.go("main_menu")
+	else:
+		Router.back()

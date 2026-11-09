@@ -1,5 +1,5 @@
 class_name OnlineCharacterScreen
-extends Control
+extends BaseScreen
 ## Multiplayer > Character (pyport's Character menu): Records, Attributes, Skills,
 ## Exp/Fame/Gold, Change Quote, Display Name. Records, Attributes and Exp/Fame/Gold are read
 ## from the server and shown beside the menu; the others open their page.
@@ -117,9 +117,3 @@ func show_purse(err: String) -> void:
 			tr("online.mp_gold") % int(p.get("gold", 0))
 		]
 	)
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()

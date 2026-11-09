@@ -1,5 +1,5 @@
 class_name SkillsScreen
-extends Control
+extends BaseScreen
 ## Skills: the five skill keys and the skills by group (MOVE, HEAL, PASV, FWD, NEAR, RANGE,
 ## WHOLE). A learned skill has its coloured icon, one not yet learned its grey icon.
 ## Pick a key, then a learned skill to put it on that key; picking a key that holds a skill
@@ -21,7 +21,7 @@ var card: VBoxContainer
 
 
 func _ready() -> void:
-	path = str(Router.params.get("profile_path", Profile.PATH))
+	path = profile_path()
 	profile = Profile.load_or_new(path)
 	data = load_data()
 	var col := UiTheme.menu_column(self, 900)
@@ -200,9 +200,3 @@ func _icon(skill: int, learned: bool) -> Texture2D:
 
 func _icon_button(node_name: String) -> Button:
 	return ItemSlot.button(node_name)
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()

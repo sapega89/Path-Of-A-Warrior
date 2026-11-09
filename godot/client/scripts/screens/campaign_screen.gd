@@ -1,5 +1,5 @@
 class_name CampaignScreen
-extends Control
+extends BaseScreen
 ## The campaign: the world map (scripts/ui/world_map_view.gd) with the hero's place and the
 ## places he can go to from there, then the missions of a place (a lord: one map). A place
 ## that is not open yet is dark; a mission won has a mark. Winning takes the hero to that
@@ -200,15 +200,12 @@ func accept() -> void:
 	go.call("briefing", {"lord": lord_id, "mission": mission, "line": line, "profile_path": path})
 
 
-func _unhandled_input(event: InputEvent) -> void:
+func _screen_input(event: InputEvent) -> void:
 	if level == 3 and (event.is_action_pressed("ui_up") or event.is_action_pressed("ui_down")):
 		# up / down: the description a page back or on (the focus stays on OK)
 		get_viewport().set_input_as_handled()
 		var page := int(scroll.size.y) - 40
 		scroll.scroll_vertical += page if event.is_action_pressed("ui_down") else -page
-	elif event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		go_back()
 
 
 ## Back (the button or BACK): the list before, or out of the campaign.

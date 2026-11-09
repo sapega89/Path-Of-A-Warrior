@@ -1,5 +1,5 @@
 class_name EndingsScreen
-extends Control
+extends BaseScreen
 ## Endings: the 24 endings of the story, five to a page. One the hero has reached plays again
 ## (the story player, without its reward); one not reached yet is greyed and only says so.
 ## Up / down pick, left / right turn the page, back leaves.
@@ -15,7 +15,7 @@ var info: Label
 
 
 func _ready() -> void:
-	path = str(Router.params.get("profile_path", Profile.PATH))
+	path = profile_path()
 	profile = Profile.load_or_new(path)
 	page = clampi(int(Router.params.get("page", 0)), 0, pages() - 1)
 	var col := UiTheme.menu_column(self, 560)
@@ -108,11 +108,8 @@ func open(i: int) -> bool:
 	return true
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()
-	elif event.is_action_pressed("ui_left"):
+func _screen_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_left"):
 		get_viewport().set_input_as_handled()
 		turn_page(-1)
 	elif event.is_action_pressed("ui_right"):

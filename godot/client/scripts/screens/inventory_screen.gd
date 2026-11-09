@@ -1,5 +1,5 @@
 class_name InventoryScreen
-extends Control
+extends BaseScreen
 ## Inventory: the hero's gold and the 45 places of the backpack (it scrolls).
 ## Picking gear wears it (what was worn in its place comes into the backpack instead); a stat
 ## item (HP, MP, ATK, DEF up) is used up. Gear above the hero's level cannot be taken. Every change
@@ -15,7 +15,7 @@ var info: Label
 
 
 func _ready() -> void:
-	path = str(Router.params.get("profile_path", Profile.PATH))
+	path = profile_path()
 	profile = Profile.load_or_new(path)
 	profile.compact_backpack()
 	var col := UiTheme.menu_column(self, 640)
@@ -98,12 +98,6 @@ func describe(i: int) -> String:
 
 func _show_info(i: int) -> void:
 	info.text = describe(i)
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.back()
 
 
 ## The line of control hints under the screen (scripts/ui/hint_bar.gd): what picking a thing does.

@@ -1,5 +1,5 @@
 class_name MainMenu
-extends Control
+extends BaseScreen
 ## Main menu: continue (or play), new game, endings, settings, quit (no quit button on phones
 ## and the web). Continue opens the hero's camp (scripts/screens/camp_screen.gd), where his
 ## game goes on; a new game starts its first mission at once after the opening. While the game is
@@ -88,7 +88,5 @@ func _add(col: VBoxContainer, node_name: String, text_key: String, on_press: Cal
 	buttons.append(b)
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		Router.go("title")
+func go_back() -> void:
+	Router.go("title")

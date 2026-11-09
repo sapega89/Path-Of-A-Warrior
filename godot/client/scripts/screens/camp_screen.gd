@@ -1,5 +1,5 @@
 class_name CampScreen
-extends Control
+extends BaseScreen
 ## The stop between missions (scripts/world/camp_map.gd): the hero walks about the camp of
 ## his place, and each way on from there (one, two or three places, as the campaign goes) is a
 ## gap in the trees with a blinking arrow; past the gap lies the land of that place (a lake,
@@ -85,7 +85,7 @@ var _leaving := false
 
 
 func _ready() -> void:
-	path = str(Router.params.get("profile_path", Profile.PATH))
+	path = profile_path()
 	profile = Profile.load_or_new(path)
 	place = int(profile.place)
 	world_map = WorldMap.new(campaign)
@@ -521,7 +521,11 @@ func open_world_map() -> void:
 	Router.push("campaign", {"level": 1, "profile_path": path})
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):
+func go_back() -> void:
+	toggle_menu()
+
+
+func _screen_input(event: InputEvent) -> void:
+	if event.is_action_pressed("pause"):
 		get_viewport().set_input_as_handled()
 		toggle_menu()

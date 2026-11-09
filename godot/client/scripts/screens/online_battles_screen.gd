@@ -1,5 +1,5 @@
 class_name OnlineBattlesScreen
-extends Control
+extends BaseScreen
 ## Multiplayer > Duel or Mission (Router.params.kind "duel" / "mission"): the ways into a
 ## battle. Duel: 1-on-1 Duel and 2-on-2 Duel (an opponent of about my level, else the CPU),
 ## Challenge 1:1 and Challenge 2:2 (a player by UserID), 2-on-2 Order (side by side with a
@@ -141,7 +141,5 @@ func error_text(err: String) -> String:
 	return tr(k) if tr(k) != k else tr("live.failed")
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		close()
+func go_back() -> void:
+	close()
