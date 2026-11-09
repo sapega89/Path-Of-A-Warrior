@@ -84,7 +84,7 @@ func test_framed() -> void:
 
 func test_screens_show_the_new_pictures() -> void:
 	for name in SCREENS:
-		var text := FileAccess.get_file_as_string("res://scripts/screens/%s.gd" % name)
+		var text := FileAccess.get_file_as_string(_script_of(name))
 		check(
 			not text.contains("original/portraits") and not text.contains("original/story"),
 			"%s shows the new portraits and pictures" % name
@@ -101,3 +101,9 @@ func test_the_girl_of_the_story() -> void:
 		body.find_children("*", "MeshInstance3D", true, false).size() == 1, "her body, no weapons"
 	)
 	body.free()
+
+
+## A screen's script: by its scene in screens/<name>/, or still in scripts/screens.
+static func _script_of(screen: String) -> String:
+	var moved := "res://screens/%s/%s.gd" % [screen.trim_suffix("_screen"), screen]
+	return moved if FileAccess.file_exists(moved) else "res://scripts/screens/%s.gd" % screen

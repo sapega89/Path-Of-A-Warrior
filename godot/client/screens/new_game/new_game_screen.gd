@@ -19,62 +19,53 @@ enum Step { DIFFICULTY, HERO, NAME, POINTS }
 var path: String = Profile.PATH
 var profile: RefCounted = Profile.new()
 var step := Step.DIFFICULTY
-var heading: Label
-var body: VBoxContainer
-var info: Label
+@onready var heading: Label = %Heading
+@onready var body: VBoxContainer = %DifficultyPage  # the page of this step
+@onready var info: Label = %Info
 var ask: AskDialog
-var name_edit: LineEdit
+@onready var name_edit: LineEdit = %Name
 var stat_buttons: Array[Button] = []  # the "+" of each stat
 var stat_values: Array[Label] = []
-var points_label: Label
-var points_hint: Label
-var reset_button: Button
-var done_button: Button
+@onready var points_label: Label = %Points
+@onready var points_hint: Label = %PointsHint
+@onready var reset_button: Button = %Reset
+@onready var done_button: Button = %Done
+## Each step's page and heading.
+@onready var pages := {
+	Step.DIFFICULTY: [%DifficultyPage, "newgame.difficulty"],
+	Step.HERO: [%HeroPage, "newgame.hero"],
+	Step.NAME: [%NamePage, "newgame.name"],
+	Step.POINTS: [%PointsPage, "newgame.points"],
+}
 
 
 func _ready() -> void:
 	path = profile_path()
-	var col := UiTheme.menu_column(self, 640)
-	heading = UiTheme.heading("newgame.difficulty", 40)
-	col.add_child(heading)
-	body = VBoxContainer.new()
-	body.name = "Body"
-	body.add_theme_constant_override("separation", 10)
-	col.add_child(body)
-	info = Label.new()
-	info.name = "Info"
-	info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	info.custom_minimum_size = Vector2(0, 80)
-	col.add_child(info)
+	for h in HEADS:
+		%Heads.add_child(_head_button(h))
+	name_edit.add_sibling(KeyGrid.create(KeyGrid.LETTERS, name_edit))
+	for i in STAT_KEYS.size():
+		stat_buttons.append(%PointsPage.get_node("Row%d/Stat%d" % [i, i]))
+		stat_values.append(%PointsPage.get_node("Row%d/Value" % i))
 	ask = AskDialog.new()
 	ask.confirmed.connect(_confirmed)
 	add_child(ask)
 	show_step(Step.DIFFICULTY)
 
 
-func _clear() -> void:
-	for c in body.get_children():
-		body.remove_child(c)
-		c.queue_free()
-	stat_buttons.clear()
-	stat_values.clear()
-	info.text = ""
-	points_hint = null
-	reset_button = null
-	done_button = null
-
-
-func _button(
-	node_name: String, text: String, on_press: Callable, translate := true, parent: Node = null
-) -> Button:
+## The button of face h: the hero's portrait in its frame.
+func _head_button(h: int) -> Button:
 	var b := Button.new()
-	b.name = node_name
-	b.text = text
-	if not translate:
-		b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	b.pressed.connect(on_press)
-	(body if parent == null else parent).add_child(b)
+	b.name = "Head%d" % h
+	b.custom_minimum_size = Vector2(46, 46) * SCALE + Vector2(12, 12)
+	var face := Pictures.framed("Portrait", Vector2(46, 46) * SCALE)
+	face.texture = Pictures.portrait(Stories.HERO_PORTRAIT + h)
+	face.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	face.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 6)
+	b.add_child(face)
+	b.pressed.connect(choose_head.bind(h))
+	b.focus_entered.connect(show_class.bind(h))
+	b.mouse_entered.connect(show_class.bind(h))
 	return b
 
 
@@ -100,105 +91,33 @@ func go_back() -> void:
 			show_step(step - 1)
 
 
+## Shows the page of step s, as it is at its start.
 func show_step(s: int) -> void:
 	step = s
-	_clear()
+	for p in pages.values():
+		p[0].visible = false
+	body = pages[step][0]
+	body.visible = true
+	heading.text = pages[step][1]
+	info.text = ""
 	match step:
 		Step.DIFFICULTY:
-			heading.text = "newgame.difficulty"
-			for d in [1, 0]:  # Normal first, as most will play it
-				var b := _button(
-					"Difficulty%d" % d, "newgame.difficulty_%d" % d, choose_difficulty.bind(d)
-				)
-				b.focus_entered.connect(func(): info.text = tr("newgame.mode_%d" % d))
-				b.mouse_entered.connect(func(): info.text = tr("newgame.mode_%d" % d))
-			_button("Back", "common.back", go_back)
 			(body.get_child(0) as Button).grab_focus.call_deferred()
 			info.text = tr("newgame.mode_1")
 		Step.HERO:
-			heading.text = "newgame.hero"
-			var row := HBoxContainer.new()
-			row.name = "Heads"
-			row.alignment = BoxContainer.ALIGNMENT_CENTER
-			row.add_theme_constant_override("separation", 24)
-			for h in HEADS:
-				var b := Button.new()
-				b.name = "Head%d" % h
-				b.custom_minimum_size = Vector2(46, 46) * SCALE + Vector2(12, 12)
-				var face := Pictures.framed("Portrait", Vector2(46, 46) * SCALE)
-				face.texture = Pictures.portrait(Stories.HERO_PORTRAIT + h)
-				face.mouse_filter = Control.MOUSE_FILTER_IGNORE
-				face.set_anchors_and_offsets_preset(
-					Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 6
-				)
-				b.add_child(face)
-				b.pressed.connect(choose_head.bind(h))
-				b.focus_entered.connect(show_class.bind(h))
-				b.mouse_entered.connect(show_class.bind(h))
-				row.add_child(b)
-			body.add_child(row)
-			_button("Back", "common.back", go_back)
 			show_class(profile.head)
-			(row.get_child(profile.head) as Button).grab_focus.call_deferred()
+			(%Heads.get_child(profile.head) as Button).grab_focus.call_deferred()
 		Step.NAME:
-			heading.text = "newgame.name"
-			name_edit = LineEdit.new()
-			name_edit.name = "Name"
-			name_edit.max_length = NAME_MAX
-			name_edit.alignment = HORIZONTAL_ALIGNMENT_CENTER
-			name_edit.placeholder_text = tr("newgame.name_hint")
-			name_edit.keep_editing_on_text_submit = true  # an empty name refused: it still types
-			name_edit.text_submitted.connect(func(_t): submit_name())
-			name_edit.text_changed.connect(_name_changed)
-			body.add_child(name_edit)
-			body.add_child(KeyGrid.create(KeyGrid.LETTERS, name_edit))
-			_button("Ok", "newgame.ok", submit_name)
-			_button("Back", "common.back", go_back)
+			name_edit.text = ""
 			name_edit.grab_focus.call_deferred()
 		Step.POINTS:
-			heading.text = "newgame.points"
-			points_label = Label.new()
-			points_label.name = "Points"
-			points_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			points_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-			body.add_child(points_label)
-			for i in 4:
-				# as on the Attributes screen: the stat, its value and "+" that puts a point in it
-				var row := HBoxContainer.new()
-				var l := Label.new()
-				l.text = "attributes." + STAT_KEYS[i]
-				l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-				row.add_child(l)
-				var v := Label.new()
-				v.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-				v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-				v.custom_minimum_size = Vector2(120, 0)
-				row.add_child(v)
-				stat_values.append(v)
-				var b := Button.new()
-				b.name = "Stat%d" % i
-				b.text = "+"
-				b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-				b.custom_minimum_size = Vector2(56, 0)
-				b.pressed.connect(spend.bind(i))
-				row.add_child(b)
-				stat_buttons.append(b)
-				body.add_child(row)
-			points_hint = UiTheme.note("PointsHint")
-			points_hint.add_theme_color_override("font_color", UiTheme.TEXT_DIM)
-			body.add_child(points_hint)
-			var actions := HBoxContainer.new()
-			actions.name = "Actions"
-			actions.alignment = BoxContainer.ALIGNMENT_CENTER
-			actions.add_theme_constant_override("separation", 12)
-			body.add_child(actions)
-			reset_button = _button("Reset", "newgame.reset", reset_points, true, actions)
-			done_button = _button("Done", "newgame.done", ask_done, true, actions)
-			_button("Back", "common.back", go_back, true, actions)
-			for b in actions.get_children():
-				b.custom_minimum_size = Vector2(180, 0)
 			_refresh_points()
 			stat_buttons[0].grab_focus.call_deferred()
+
+
+## Under a difficulty: what it means.
+func _show_mode(d: int) -> void:
+	info.text = tr("newgame.mode_%d" % d)
 
 
 func choose_difficulty(d: int) -> void:
@@ -234,6 +153,10 @@ func _name_changed(t: String) -> void:
 		var at := name_edit.caret_column
 		name_edit.text = clean
 		name_edit.caret_column = mini(at, clean.length())
+
+
+func _name_submitted(_t: String) -> void:
+	submit_name()
 
 
 func submit_name() -> bool:

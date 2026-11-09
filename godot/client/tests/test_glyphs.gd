@@ -156,7 +156,7 @@ func test_login_hint_while_typing() -> void:
 func test_normal_comes_first() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": "user://test_glyphs.json"}
-	var screen: Control = NewGameScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["new_game"])
 	root.add_child(screen)
 	eq(str(screen.body.get_child(0).name), "Difficulty1", "Normal first")
 	eq(str(screen.body.get_child(1).name), "Difficulty0", "then Hard")

@@ -11,7 +11,7 @@ func _type(keys: VBoxContainer, labels: Array) -> void:
 func test_the_heros_name_on_the_keys() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": "user://test_key_grid.json"}
-	var screen: Control = NewGameScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["new_game"])
 	root.add_child(screen)
 	screen.choose_head(1)
 	var keys: VBoxContainer = screen.body.get_node("Keys")

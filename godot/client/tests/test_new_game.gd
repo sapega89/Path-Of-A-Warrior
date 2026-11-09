@@ -20,7 +20,7 @@ func test_head_and_difficulty_are_kept() -> void:
 func test_new_game_steps() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = NewGameScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["new_game"])
 	root.add_child(screen)
 	eq(screen.step, NewGameScreen.Step.DIFFICULTY, "the difficulty first")
 	screen.choose_difficulty(0)

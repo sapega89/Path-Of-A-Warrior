@@ -66,7 +66,7 @@ func test_notice() -> void:
 func test_back_stays_with_the_question() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": "user://test_ask.json"}
-	var screen: Control = NewGameScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["new_game"])
 	root.add_child(screen)
 	check(screen.ask is AskDialog, "the game's own question")
 	screen.choose_head(0)

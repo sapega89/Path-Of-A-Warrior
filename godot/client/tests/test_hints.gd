@@ -26,7 +26,7 @@ func test_screens_with_own_line() -> void:
 
 func _new_game_at_points() -> Control:
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = NewGameScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["new_game"])
 	root.add_child(screen)
 	screen.choose_head(1)
 	screen.name_edit.text = "Ivan"
