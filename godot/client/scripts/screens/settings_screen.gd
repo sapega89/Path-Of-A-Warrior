@@ -1,6 +1,7 @@
 extends Control
 ## Settings: language, music and sound volume, the game speed, the hit effects on the map (all
-## of them, the screen shake, the vibration), fullscreen (desktop only), and Training
+## of them, the screen shake, the vibration), the world as pixel art or smooth, fullscreen
+## (desktop only), and Training
 ## (training_screen.gd) to take the training again (not over the mission's pause).
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
@@ -16,6 +17,7 @@ var speed: OptionButton  # the game speed of the missions
 var hit_feel: CheckBox
 var screen_shake: CheckBox
 var rumble: CheckBox
+var pixel_art: CheckBox
 ## Shown over another screen (the mission's pause menu): what Back does instead of going back.
 var close := Callable()
 
@@ -54,6 +56,8 @@ func _ready() -> void:
 	_row(col, "settings.screen_shake", screen_shake)
 	rumble = _check("Rumble", "rumble")
 	_row(col, "settings.rumble", rumble)
+	pixel_art = _check("PixelArt", "pixel_art")
+	_row(col, "settings.pixel_art", pixel_art)
 
 	if Settings.can_fullscreen():
 		fullscreen = CheckBox.new()

@@ -27,6 +27,7 @@ const FollowCamera := preload("res://scripts/world/follow_camera.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 const TALK_RANGE := 1.4  # tiles
 const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
+const PixelView := preload("res://scripts/world/pixel_view.gd")
 ## The arrow picture for a gap on the top, the right and the left side (arrow0..3: down,
 ## left, up, right).
 const ARROW_OF_SIDE := [2, 3, 1]
@@ -89,15 +90,9 @@ func _ready() -> void:
 
 
 func _build_world() -> void:
-	var container := SubViewportContainer.new()
-	container.name = "World"
-	container.stretch = true
-	container.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(container)
-	viewport = SubViewport.new()
-	viewport.own_world_3d = true
-	viewport.msaa_3d = Viewport.MSAA_2X
-	container.add_child(viewport)
+	var view := PixelView.new()
+	add_child(view)
+	viewport = view.viewport
 	world = Node3D.new()
 	world.name = "WorldRoot"
 	viewport.add_child(world)

@@ -9,6 +9,7 @@ const MapArt := preload("res://scripts/world/map_art.gd")
 const Hero := preload("res://scripts/world/hero.gd")
 const FollowCamera := preload("res://scripts/world/follow_camera.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
+const PixelView := preload("res://scripts/world/pixel_view.gd")
 
 var viewport: SubViewport
 var world: Node3D
@@ -22,15 +23,9 @@ var map_total := 0
 
 
 func _ready() -> void:
-	var container := SubViewportContainer.new()
-	container.name = "World"
-	container.stretch = true
-	container.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(container)
-	viewport = SubViewport.new()
-	viewport.own_world_3d = true
-	viewport.msaa_3d = Viewport.MSAA_2X
-	container.add_child(viewport)
+	var view := PixelView.new()
+	add_child(view)
+	viewport = view.viewport
 
 	world = Node3D.new()
 	world.name = "WorldRoot"

@@ -41,6 +41,13 @@ locale/fallback="en"
 net/server="140.238.73.129:28310"
 net/cert="res://net/server.crt"
 
+[shader_globals]
+
+pixel_art={
+"type": "float",
+"value": 1.0
+}
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
