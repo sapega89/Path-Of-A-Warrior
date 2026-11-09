@@ -14,7 +14,6 @@ const SCREENS := {
 	"camp": "res://scripts/screens/camp_screen.gd",
 	"town_hall": "res://scripts/screens/town_hall_screen.gd",
 	"mission": "res://scripts/screens/mission_screen.gd",
-	"training": "res://scripts/screens/training_screen.gd",
 	"briefing": "res://scripts/screens/briefing_screen.gd",
 	"management": "res://scripts/screens/management_screen.gd",
 	"attributes": "res://scripts/screens/attributes_screen.gd",

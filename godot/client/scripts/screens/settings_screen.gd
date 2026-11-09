@@ -1,7 +1,6 @@
 extends Control
 ## Settings: language, music and sound volume, the game speed, the hit effects on the map (all
-## of them, the screen shake, the vibration), fullscreen (desktop only), and Training
-## (training_screen.gd) to take the training again (not over the mission's pause).
+## of them, the screen shake, the vibration), fullscreen (desktop only).
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const I18nScript := preload("res://scripts/core/i18n.gd")
@@ -61,13 +60,6 @@ func _ready() -> void:
 		fullscreen.button_pressed = Settings.get_value("fullscreen")
 		fullscreen.toggled.connect(func(on: bool): Settings.set_value("fullscreen", on))
 		_row(col, "settings.fullscreen", fullscreen)
-
-	if not close.is_valid():
-		var training := Button.new()
-		training.name = "Training"
-		training.text = "settings.training"
-		training.pressed.connect(func(): Router.push("training", {}))
-		col.add_child(training)
 
 	var back := Button.new()
 	back.name = "Back"
