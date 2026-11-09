@@ -1,7 +1,7 @@
 extends "res://tests/test_case.gd"
-## Multiplayer > Duel and Mission (screens/online_battles/online_battles_screen.gd), the Challenge and
-## Invite An Ally lines, the Order's members, invitations, and the rewards of a battle going to
-## the hero, against the server's online game (server/online.gd) in this process.
+## Multiplayer > Duel and Mission (screens/online_battles/online_battles_screen.gd), the
+## Challenge and Invite An Ally lines, the Order's members, invitations, and the rewards of a
+## battle going to the hero, against the server's online game (server/online.gd) in this process.
 
 const ClientTests := preload("res://tests/test_online_client.gd")
 const OnlineTests := preload("res://tests/test_online_server.gd")
