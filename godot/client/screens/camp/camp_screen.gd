@@ -65,16 +65,6 @@ var campaign := Campaign.new()
 var world_map: RefCounted
 var camp: RefCounted
 var place := 0
-var viewport: SubViewport
-var world: Node3D
-var builder: Node3D
-var hero: CharacterBody3D
-var figure: Node3D  # the hero's figure in the new art, on the body that walks
-var camera: Camera3D
-var title: Label
-var hint: Label
-var menu: PanelContainer
-var menu_buttons: Array[Button] = []
 ## What the hero can use where he stands: {kind: "way"|"hall"|"smith", place, at: Vector3}
 var spots: Array = []
 var near := {}  # the spot in reach, or empty
@@ -82,6 +72,15 @@ var arrows: Array[Sprite3D] = []
 var rng := RandomNumberGenerator.new()
 var _blink := 0.0
 var _leaving := false
+
+@onready var world: Node3D = $World/Viewport/WorldRoot
+@onready var builder: MapArt = $World/Viewport/WorldRoot/Map
+@onready var hero: Hero = $World/Viewport/WorldRoot/Hero
+@onready var figure: ArtFigure = $World/Viewport/WorldRoot/Hero/Figure
+@onready var camera: FollowCamera = $World/Viewport/WorldRoot/Camera
+@onready var title: Label = %Place
+@onready var hint: Label = %Hint
+@onready var menu: PanelContainer = %Menu
 
 
 func _ready() -> void:
@@ -92,7 +91,7 @@ func _ready() -> void:
 	rng.seed = hash([place, profile.done.size()])  # the same ways each time back here
 	camp = CampMap.new(choices(), CampMap.is_main(camp_place()), camp_place())
 	_build_world()
-	_build_ui()
+	_show_place()
 	if profile.on_map.is_empty():
 		profile.save(path)  # the game is kept between missions, here
 	if bool(Router.params.get("first", false)) and profile.done.is_empty():
@@ -101,34 +100,12 @@ func _ready() -> void:
 
 
 func _build_world() -> void:
-	var container := SubViewportContainer.new()
-	container.name = "World"
-	container.stretch = true
-	container.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(container)
-	viewport = SubViewport.new()
-	viewport.own_world_3d = true
-	viewport.msaa_3d = Viewport.MSAA_2X
-	container.add_child(viewport)
-	world = Node3D.new()
-	world.name = "WorldRoot"
-	viewport.add_child(world)
-	MapArt.add_environment(world)
-	builder = MapArt.new()
-	builder.name = "Map"
-	world.add_child(builder)
 	builder.build(camp.data)
-	hero = Hero.new()
-	hero.name = "Hero"
-	world.add_child(hero)
 	hero.set_look(int(profile.head), profile.weapon_kind())
 	hero.global_position = MapBuilder.cell_to_world(camp.start) + Vector3(0, 0.05, 0)
 	hero.dir8 = 4  # facing up, into the camp
 	# The hero as the missions show him: the figure of his class with his blade (the body
 	# walks, the figure plays idle or walk and turns the way he goes).
-	figure = ArtFigure.new()
-	figure.name = "Figure"
-	hero.add_child(figure)
 	figure.setup(MapPeople.HEROES[clampi(int(profile.head), 0, 3)])
 	figure.unequip_all()
 	figure.equip(MapPeople.BLADES[clampi(profile.weapon_kind(), 0, 1)])
@@ -136,13 +113,9 @@ func _build_world() -> void:
 	figure.play("idle", 0.0)
 	if hero.sprite != null:
 		hero.sprite.visible = false
-	camera = FollowCamera.new()
-	camera.name = "Camera"
 	# a little of the land past the top
 	camera.focus = Vector3(CampMap.W / 2.0, 0.0, CampMap.H / 2.0 - 0.3)
 	camera.distance = CAMERA_DISTANCE
-	world.add_child(camera)
-	camera.make_current()
 	camera.snap()
 	# Each open way: only the blinking arrow of the original rooms in its gap; nothing says
 	# where it leads (that is learnt by playing).
@@ -169,72 +142,22 @@ func _build_world() -> void:
 			}
 		)
 	var smith := MapBuilder.cell_to_world(camp.smith_spot())
-	_label3d("Smith", tr("menu.blacksmith"), smith + Vector3(0, 2.1, -0.6), UiTheme.TEXT)
+	%Smith.position = smith + Vector3(0, 2.1, -0.6)
 	spots.append({"kind": "smith", "at": smith})
 	var store := MapBuilder.cell_to_world(camp.store_spot())
-	_label3d("Store", tr("live.warehouse"), store + Vector3(0, 1.3, -0.5), UiTheme.TEXT)
+	%Store.position = store + Vector3(0, 1.3, -0.5)
 	spots.append({"kind": "store", "at": store})
 	var door := MapBuilder.cell_to_world(camp.hall_door())
-	_label3d("Hall", tr("camp.hall"), door + Vector3(0, 2.8, -1.0), UiTheme.TEXT)
+	%Hall.position = door + Vector3(0, 2.8, -1.0)
 	spots.append({"kind": "hall", "at": door})
 
 
-func _label3d(node_name: String, text: String, at: Vector3, color: Color) -> void:
-	var l := Label3D.new()
-	l.name = node_name
-	l.text = text
-	l.font_size = 44
-	l.outline_size = 12
-	l.pixel_size = 0.009
-	l.modulate = color
-	l.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	l.no_depth_test = true
-	l.position = at
-	world.add_child(l)
-
-
-func _build_ui() -> void:
-	title = UiTheme.heading("", 32)
-	title.name = "Place"
-	title.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	title.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	title.offset_top = 12
+func _show_place() -> void:
 	var kind := tr("camp.main") if camp.main else tr("camp.stop")
 	title.text = (
 		"%s · %s"
 		% [kind, campaign.lord_name(camp_place()) if camp_place() > 0 else tr("camp.start")]
 	)
-	add_child(title)
-	hint = UiTheme.note("Hint")
-	hint.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	hint.offset_top = -64
-	hint.offset_bottom = -24
-	add_child(hint)
-	add_child(TouchControls.new())
-	menu = PanelContainer.new()
-	menu.name = "Menu"
-	menu.visible = false
-	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(center)
-	center.add_child(menu)
-	var col := VBoxContainer.new()
-	col.custom_minimum_size = Vector2(420, 0)
-	col.add_theme_constant_override("separation", 8)
-	menu.add_child(col)
-	for item in [
-		["GameMenu", "menu.game", open_game_menu],
-		["WorldMap", "campaign.world", open_world_map],
-		["MainMenu", "camp.main_menu", func(): Router.go("main_menu")],
-		["Back", "camp.back", toggle_menu]
-	]:
-		var b := Button.new()
-		b.name = item[0]
-		b.text = item[1]
-		b.pressed.connect(item[2])
-		col.add_child(b)
-		menu_buttons.append(b)
 
 
 ## The colonels (ruler ids) who give missions at a place, in mission order.
@@ -510,7 +433,7 @@ func start_mission(lord_id: int, mission: int) -> void:
 func toggle_menu() -> void:
 	menu.visible = not menu.visible
 	if menu.visible:
-		menu_buttons[0].grab_focus()
+		%GameMenu.grab_focus()
 
 
 func open_game_menu() -> void:
@@ -519,6 +442,10 @@ func open_game_menu() -> void:
 
 func open_world_map() -> void:
 	Router.push("campaign", {"level": 1, "profile_path": path})
+
+
+func open_main_menu() -> void:
+	Router.go("main_menu")
 
 
 func go_back() -> void:

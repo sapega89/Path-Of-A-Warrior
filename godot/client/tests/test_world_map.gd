@@ -109,7 +109,7 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 	p.save(CAMP_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": CAMP_PATH}
-	var camp: Control = CampScreen.new()
+	var camp: Control = Router.make(Router.SCREENS["camp"])
 	root.add_child(camp)
 	eq(camp.place, 4, "the camp of the hero's place")
 	eq(
@@ -249,7 +249,7 @@ func test_the_camp_of_the_way_chosen_offers_its_generals() -> void:
 	p.save(CAMP_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": CAMP_PATH}
-	var camp: Control = CampScreen.new()
+	var camp: Control = Router.make(Router.SCREENS["camp"])
 	root.add_child(camp)
 	var ways: Array = camp.spots.filter(func(s): return s.kind == "way")
 	var n: int = camp.campaign.lord_missions(2).size()

@@ -93,7 +93,7 @@ func test_offline_screen_and_map_viewer_follow_the_device() -> void:
 		offline.controls_hint().ends_with("Enter: try again"),
 		"the keyboard's OK, in the line of hints"
 	)
-	var viewer: Control = MapViewer.new()
+	var viewer: Control = Router.make(Router.SCREENS["map_viewer"])
 	root.add_child(viewer)
 	eq(viewer.info.text, "Map 1 / %d   [3] [4] change map   [Esc] back" % viewer.map_total, "keys")
 	InputSetup._input(_pad_press(JOY_BUTTON_B))
