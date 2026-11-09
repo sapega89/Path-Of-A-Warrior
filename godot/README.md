@@ -28,6 +28,12 @@ godot/
                           стріли кодом), battle_arena і battle_motion (поле й бійці бою
                           мультиплеєра), hero, follow_camera
     scripts/ui/           тема, сенсорні кнопки, рядок підказок керування внизу (hint_bar)
+    scripts/sim/          логіка місії без вузлів: MapSim (стан і тік) і його модулі —
+                          room_play (кімнати), map_walls (рух і стіни), hero_play (герой),
+                          enemy_play (вороги), map_talks (розмови й нагороди), map_loot
+                          (предмети й лут), map_anims, map_pictures (що малює екран),
+                          map_geometry; дані map_actor, map_arrow, map_breakable, map_drop;
+                          autopilot (автополювання)
     scripts/art/          новий арт, поки вітрина: табір і бій (scenes/art_slice.tscn)
     scripts/net/          зв'язок із сервером: protocol (повідомлення), net_client (ENet + DTLS)
     server/               сервер гри (той самий проєкт, без графіки): main.tscn, game_server,
@@ -541,7 +547,7 @@ Skip унизу ліворуч.
 
 Удар мечем (і те, що кожен скіл б'є перед собою) влучає ширше, ніж у pyport (просив Andrey): не
 лише в чверть, куди герой дивиться, а й у смугу попереду завширшки в комірку (27 пікселів) у
-кожен бік (`MapSim.in_strike_reach`, `STRIKE_BAND`). Тож ворог трохи вище чи нижче (або трохи
+кожен бік (`MapGeometry.in_strike_reach`, `STRIKE_BAND`). Тож ворог трохи вище чи нижче (або трохи
 збоку, коли герой б'є вгору чи вниз) теж дістає, зокрема впритул, де чверть вузька. Дальність
 (63 / 53) не змінилася; позаду себе герой не б'є. Так само з бочками й ящиками.
 

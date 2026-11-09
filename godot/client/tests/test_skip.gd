@@ -51,7 +51,7 @@ func test_skip_corner_on_the_map() -> void:
 	var corner := Vector2(4, view.y - 4)
 	check(not screen.hud.talking(), "nobody talks")
 	check(screen.hud.auto_at(corner) and not screen.hud.skip_at(corner), "the corner is AUTO")
-	screen.sim._start_general_talk(5, 0)
+	MapTalks.start_general_talk(screen.sim, 5, 0)
 	check(screen.hud.talking(), "a general talks")
 	check(screen.hud.skip_at(corner) and not screen.hud.auto_at(corner), "the corner is SKIP")
 	var auto_was: bool = screen.autopilot.on
@@ -62,7 +62,7 @@ func test_skip_corner_on_the_map() -> void:
 	check(screen.sim.talk.is_empty(), "on the next tick the talk is over")
 	check(not screen._skip, "once")
 
-	screen.sim._start_general_talk(5, 0)
+	MapTalks.start_general_talk(screen.sim, 5, 0)
 	Input.action_press("skip")
 	screen._process(screen.tick)
 	Input.action_release("skip")
@@ -90,7 +90,7 @@ func test_pad_back_skips_or_toggles_auto() -> void:
 	root.add_child(screen)
 	screen.sim.difficulty = 1
 	var auto_was: bool = screen.autopilot.on
-	screen.sim._start_general_talk(5, 0)
+	MapTalks.start_general_talk(screen.sim, 5, 0)
 	_pad_back(true)
 	screen._process(screen.tick)
 	_pad_back(false)

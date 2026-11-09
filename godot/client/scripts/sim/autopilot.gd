@@ -94,16 +94,16 @@ func decide(sim: RefCounted) -> Dictionary:
 		out.held = _to_exit(sim)
 		return out
 	var target = hunt[0]
-	var dist := MapSim.distance(h.pos, target.pos)
+	var dist := MapGeometry.distance(h.pos, target.pos)
 	for e in hunt:
-		var d := MapSim.distance(h.pos, e.pos)
+		var d := MapGeometry.distance(h.pos, e.pos)
 		if d < dist:
 			dist = d
 			target = e
 	var reach := int(MapSim.table("weapon_reach")[h.weapon_kind]) - 6
 	key = _skill(sim, foes, target, dist, reach)
 	if key >= 0 or dist <= reach:
-		h.dir = MapSim.dir4(h.pos, target.pos)  # turns the hero
+		h.dir = MapGeometry.dir4(h.pos, target.pos)  # turns the hero
 		h.facing = h.dir
 		if key >= 0:
 			out.hotkey = key
@@ -128,7 +128,7 @@ func _walk(sim: RefCounted, target) -> int:
 	var h = sim.hero
 	_still = _still + 1 if h.pos == _last and h.action == 1 else 0
 	_last = h.pos
-	var dist := MapSim.distance(h.pos, target.pos)
+	var dist := MapGeometry.distance(h.pos, target.pos)
 	if target != _target:
 		_target = target
 		_closest = dist
@@ -145,7 +145,7 @@ func _walk(sim: RefCounted, target) -> int:
 		_detour_ticks -= 1
 		_no_closer = 0
 		return _detour
-	var want := MapSim.dir4(h.pos, target.pos)
+	var want := MapGeometry.dir4(h.pos, target.pos)
 	if _still < STUCK_TICKS and _no_closer < NO_CLOSER_TICKS:
 		return want
 	# a wall, or a corner it goes to and fro at: along it, toward the target's other axis first,
@@ -298,7 +298,7 @@ func _skill(sim: RefCounted, foes: Array, target, dist: int, reach: int) -> int:
 	var near := 0
 	var general := false
 	for e in foes:
-		if MapSim.distance(h.pos, e.pos) <= 45:
+		if MapGeometry.distance(h.pos, e.pos) <= 45:
 			near += 1
 		if e.type < 200:
 			general = true
@@ -315,7 +315,7 @@ func _skill(sim: RefCounted, foes: Array, target, dist: int, reach: int) -> int:
 		if not u.is_empty():
 			return key_of[u[0]]
 	if dist > reach:
-		var d := MapSim.dir4(h.pos, target.pos)
+		var d := MapGeometry.dir4(h.pos, target.pos)
 		var ax: int = h.pos.x + int(MapSim.table("front_dx")[d >> 1])
 		var ay: int = h.pos.y + int(MapSim.table("front_dy")[d >> 1])
 		if (
@@ -328,7 +328,7 @@ func _skill(sim: RefCounted, foes: Array, target, dist: int, reach: int) -> int:
 		return -1
 	var crowd := 0
 	for e in foes:
-		if MapSim.distance(h.pos, e.pos) <= reach:
+		if MapGeometry.distance(h.pos, e.pos) <= reach:
 			crowd += 1
 	if (general and target.type < 200) or crowd >= 2 or h.mp * 100 >= h.max_mp * 80:
 		var u: Array = usable.call(STRIKES)

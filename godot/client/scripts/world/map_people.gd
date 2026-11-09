@@ -107,7 +107,13 @@ func update(t: float, dt: float, tick: float, feel: RefCounted) -> void:
 	hero.position = to_world(_smooth(h.prev_pos, h.pos, t))
 	var speed := _ground_speed(h, tick)
 	_drive(
-		hero, h, Motion.hero(h.action, speed), MapSim.hero_anim(h.action, h.shown_dir), t, dt, tick
+		hero,
+		h,
+		Motion.hero(h.action, speed),
+		MapAnims.hero_anim(h.action, h.shown_dir),
+		t,
+		dt,
+		tick
 	)
 	_turn(hero, Motion.yaw_of(h.shown_dir), dt)
 	_flash(hero, h, feel)

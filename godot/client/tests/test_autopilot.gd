@@ -73,7 +73,7 @@ func test_leaves_an_archer_it_cannot_reach() -> void:
 	var sim: RefCounted = MapSim.new(MapBuilder.load_map(Campaign.lord_map(6)), 0, Vector2i(11, 4))
 	sim.rng = JavaRandom.new(60)
 	sim.continue_in_clear_room()
-	sim._run_cell_scripts()
+	MapRoomPlay.run_cell_scripts(sim)
 	eq(
 		sim.enemies.map(func(e): return [e.type, e.pos / 27]),
 		[[MapSim.KIND_ARCHERS, Vector2i(13, 2)], [MapSim.KIND_ARCHERS, Vector2i(14, 5)]],

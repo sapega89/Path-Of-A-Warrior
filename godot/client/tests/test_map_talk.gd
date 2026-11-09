@@ -10,7 +10,7 @@ func test_the_hero_speaks_by_his_name() -> void:
 	p.apply_to(sim)
 	eq(sim.hero_name, "Ann", "the hero's name")
 	sim.set_general(1)
-	sim._start_map_talk()
+	MapTalks.start_map_talk(sim)
 	check(sim.talk[0].begins_with("[Zdzislaw Krzeminski]"), "the general first")
 	check(not sim.hero_talks(), "he talks")
 	eq(sim.talk[1], "[Ann] ...", "then the hero, by his name")
@@ -25,7 +25,7 @@ func test_the_talk_shows_who_speaks() -> void:
 	root.add_child(screen)
 	screen._show_banner()
 	check(not screen.talk_box.visible, "nobody talks")
-	screen.sim._start_general_talk(5, 0)
+	MapTalks.start_general_talk(screen.sim, 5, 0)
 	for t in 3:
 		screen.sim.tick(-1, -1)
 	screen._show_banner()

@@ -23,7 +23,7 @@ static func mp_need(skill: int, level: int) -> int:
 
 ## The frames of the hero's action `skill`.
 static func frames(skill: int) -> int:
-	var seq: Array = MapSim.hero_anim(skill, 0)
+	var seq: Array = MapAnims.hero_anim(skill, 0)
 	var n := 0
 	while n < seq.size() and int(seq[n]) <= 200:
 		n += 1

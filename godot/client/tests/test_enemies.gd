@@ -83,7 +83,7 @@ func test_arrows_wait_while_a_big_skill_holds_the_room() -> void:
 		a.ticks = 0
 		sim.hero.last_action = c[0]
 		sim.hero.last_frame = c[1]
-		sim._tick_arrows()
+		MapEnemyPlay.tick_arrows(sim)
 		eq(a.pos.y, sim.hero.pos.y + (108 if c[2] else 120), "skill %d, frame %d" % [c[0], c[1]])
 		eq(a.ticks, 1 if c[2] else 0, "its time goes on only while it flies")
 	sim.hero.action = 28
@@ -104,11 +104,11 @@ func test_random_numbers() -> void:
 
 
 func test_directions_and_distance() -> void:
-	eq(MapSim.distance(Vector2i(0, 0), Vector2i(30, 40)), 50, "3-4-5")
-	eq(MapSim.dir4(Vector2i(0, 0), Vector2i(0, 30)), 0, "down")
-	eq(MapSim.dir4(Vector2i(0, 0), Vector2i(-30, 5)), 2, "left")
-	eq(MapSim.dir8(Vector2i(0, 0), Vector2i(10, 30)), 0, "almost down")
-	eq(MapSim.dir8(Vector2i(0, 0), Vector2i(30, 30)), 7, "down right")
+	eq(MapGeometry.distance(Vector2i(0, 0), Vector2i(30, 40)), 50, "3-4-5")
+	eq(MapGeometry.dir4(Vector2i(0, 0), Vector2i(0, 30)), 0, "down")
+	eq(MapGeometry.dir4(Vector2i(0, 0), Vector2i(-30, 5)), 2, "left")
+	eq(MapGeometry.dir8(Vector2i(0, 0), Vector2i(10, 30)), 0, "almost down")
+	eq(MapGeometry.dir8(Vector2i(0, 0), Vector2i(30, 30)), 7, "down right")
 
 
 func test_spawn_spots_on_the_open_exit() -> void:
@@ -128,7 +128,9 @@ func test_soldiers_come_in() -> void:
 		if first_y == -1 and sim.enemies.size() > 0:
 			first_y = sim.enemies[0].pos.y
 		most = maxi(most, sim.enemies.size())
-	check(first_y > MapSim.edge(1), "the first one starts outside, below the room: %d" % first_y)
+	check(
+		first_y > MapGeometry.edge(1), "the first one starts outside, below the room: %d" % first_y
+	)
 	check(most > 0 and most <= sim.max_enemies(), "at most the room's maximum at once: %d" % most)
 	for e in sim.enemies:
 		check(e.type == MapSim.KIND_SWORDS or e.type == MapSim.KIND_SQUAD, "room 1 sends swords")
@@ -152,16 +154,20 @@ func test_sword_hits() -> void:
 func test_strike_band() -> void:
 	var o := Vector2i(100, 100)
 	check(
-		MapSim.in_strike_reach(o, o + Vector2i(15, -20), 6, 63), "right: a little above, close up"
+		MapGeometry.in_strike_reach(o, o + Vector2i(15, -20), 6, 63),
+		"right: a little above, close up"
 	)
-	check(MapSim.in_strike_reach(o, o + Vector2i(15, 25), 6, 63), "right: a little below")
-	check(MapSim.in_strike_reach(o, o + Vector2i(-25, -10), 4, 63), "up: a little to the left")
-	check(MapSim.in_strike_reach(o, o + Vector2i(45, 35), 6, 63), "right: the quarter as before")
+	check(MapGeometry.in_strike_reach(o, o + Vector2i(15, 25), 6, 63), "right: a little below")
+	check(MapGeometry.in_strike_reach(o, o + Vector2i(-25, -10), 4, 63), "up: a little to the left")
 	check(
-		not MapSim.in_strike_reach(o, o + Vector2i(10, -30), 6, 63), "right: more than a cell above"
+		MapGeometry.in_strike_reach(o, o + Vector2i(45, 35), 6, 63), "right: the quarter as before"
 	)
-	check(not MapSim.in_strike_reach(o, o + Vector2i(-10, 5), 6, 63), "right: behind him")
-	check(not MapSim.in_strike_reach(o, o + Vector2i(60, 25), 6, 63), "right: out of reach")
+	check(
+		not MapGeometry.in_strike_reach(o, o + Vector2i(10, -30), 6, 63),
+		"right: more than a cell above"
+	)
+	check(not MapGeometry.in_strike_reach(o, o + Vector2i(-10, 5), 6, 63), "right: behind him")
+	check(not MapGeometry.in_strike_reach(o, o + Vector2i(60, 25), 6, 63), "right: out of reach")
 	# on hard (no turning to the enemy) a soldier a little above, in front of him, is hit
 	var d := _duel()
 	var sim: RefCounted = d[0]
@@ -207,7 +213,9 @@ func test_hit_spark_shows_two_ticks() -> void:
 	if sp.size() == 1:
 		eq(int(sp[0][0]), 0, "its first picture")
 		at = sp[0][1]
-		check(MapSim.distance(at, e.pos) <= 8, "where the soldier was hit: %s, %s" % [at, e.pos])
+		check(
+			MapGeometry.distance(at, e.pos) <= 8, "where the soldier was hit: %s, %s" % [at, e.pos]
+		)
 	sim.tick(-1, -1)
 	sp = sim.sparks()
 	if sp.size() == 1:
@@ -310,7 +318,7 @@ func test_hero_falls() -> void:
 	sim = _duel()[0]
 	sim.hero.hp = 0
 	sim.failed = true
-	sim._show_banner(MapSim.BANNER_FAILED)
+	sim.show_banner(MapSim.BANNER_FAILED)
 	sim.tick(-1, -1, true)
 	check(not sim.finished, "a key: two more ticks")
 	sim.tick(-1, -1)
@@ -347,7 +355,7 @@ func test_barrel_breaks() -> void:
 
 func test_gold_is_picked_up() -> void:
 	var sim := _sim(false)
-	var d = MapSim.Drop.new()
+	var d = MapDrop.new()
 	d.item = 10020
 	d.pos = sim.hero.pos
 	sim.drops.append(d)
@@ -367,7 +375,7 @@ func test_a_gear_picked_up_is_acquired() -> void:
 		sim.tick(-1, -1)
 	sim.free_places = 1
 	for k in 2:
-		var d = MapSim.Drop.new()
+		var d = MapDrop.new()
 		d.item = 131 + k
 		d.pos = sim.hero.pos
 		sim.drops.append(d)
@@ -462,7 +470,7 @@ func test_rewards_and_the_talk_after_the_mission() -> void:
 	sim.mission_exp = 40
 	sim.time_limit = 192
 	sim.mission_general = 5
-	sim._show_banner(MapSim.BANNER_SUCCESS)
+	sim.show_banner(MapSim.BANNER_SUCCESS)
 	eq(sim.gold_reward(), 450, "gold: 3 x 150 on normal")
 	_next_page(sim)
 	eq(sim.banner, MapSim.BANNER_TOTAL_EXP, "the exp")
@@ -576,7 +584,7 @@ func test_a_buff_shows_its_aura() -> void:
 			eq(int(a[1][1]), int(a[0][1]) + 3, "the same step of both")
 		seen.append(a.size())
 	eq(seen, [2, 2, 0], "while it lasts, and the tick it ends")
-	var d = MapSim.Drop.new()
+	var d = MapDrop.new()
 	d.item = 10020
 	d.pos = sim.hero.pos
 	sim.drops.append(d)
@@ -685,7 +693,7 @@ func test_effects_of_a_generals_skills() -> void:
 		[18, 6, ["burst", 1, g.pos]],
 		[18, 5, ["burst", 0, g.pos + MapSim.BURST_FIRST_SHIFT]],
 		[20, 3, ["wave", 8, g.pos]],
-		[21, 9, ["blast", 1, sim._front_of(g.pos, 2)]]
+		[21, 9, ["blast", 1, MapEnemyPlay.front_of(g.pos, 2)]]
 	]
 	for c in cases:
 		g.action = c[0]
@@ -708,7 +716,7 @@ func test_fire_skills_set_on_fire() -> void:
 		var sim: RefCounted = d[0]
 		var e = d[1]
 		sim.hero.action = skill
-		sim._strike_enemy(e)
+		MapHeroPlay.strike_enemy(sim, e)
 		check(sim.sounds.has(13), "%d: the fire's sound" % skill)
 		eq(sim.fires().size(), 0, "%d: it shows from the end of the tick" % skill)
 		sim.hero.action = 0
@@ -723,7 +731,7 @@ func test_fire_skills_set_on_fire() -> void:
 	var d := _duel()
 	var sim: RefCounted = d[0]
 	sim.hero.action = 22
-	sim._strike_enemy(d[1])
+	MapHeroPlay.strike_enemy(sim, d[1])
 	sim.tick(-1, -1)
 	eq(sim.fires().size(), 0, "other skills do not burn")
 
@@ -734,7 +742,7 @@ func test_a_general_sets_the_hero_on_fire() -> void:
 		var sim: RefCounted = d[0]
 		var g = d[1]
 		g.action = skill
-		sim._general_skill_hits_hero(g)
+		MapEnemyPlay.general_skill_hits_hero(sim, g)
 		check(sim.sounds.has(13), "%d: the fire's sound" % skill)
 		sim._end_tick()
 		var f: Array = sim.fires()
@@ -749,7 +757,7 @@ func test_a_general_sets_the_hero_on_fire() -> void:
 	var d := _general_duel()
 	var sim: RefCounted = d[0]
 	d[1].action = 16
-	sim._general_skill_hits_hero(d[1])
+	MapEnemyPlay.general_skill_hits_hero(sim, d[1])
 	sim._end_tick()
 	eq(sim.fires().size(), 0, "other skills do not burn")
 

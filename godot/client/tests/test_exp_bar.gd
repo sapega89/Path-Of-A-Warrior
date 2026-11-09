@@ -58,7 +58,7 @@ func test_the_exp_pages_show_the_bar() -> void:
 	sim.mission_exp = 10
 	sim.difficulty = 1
 	sim.time_limit = 0
-	sim._show_banner(MapSim.BANNER_SUCCESS)
+	sim.show_banner(MapSim.BANNER_SUCCESS)
 	for t in MapSim.BANNER_TICKS:
 		sim.tick(-1)
 	eq(sim.banner, MapSim.BANNER_TOTAL_EXP, "Total Exp")

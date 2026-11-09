@@ -83,7 +83,7 @@ func test_things_on_the_ground() -> void:
 	root.add_child(screen)
 	screen.set_process(false)
 	for item in [1, 120, 20000]:
-		var d := MapSim.Drop.new()
+		var d := MapDrop.new()
 		d.item = item
 		d.pos = Vector2i(120, 100)
 		screen.sim.drops.append(d)

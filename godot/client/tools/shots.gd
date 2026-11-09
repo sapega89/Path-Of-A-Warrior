@@ -905,7 +905,7 @@ func _fight_step(sim: RefCounted) -> void:
 	var best: Variant = null
 	var best_d := 1 << 30
 	for e in sim.enemies:
-		var d: int = sim.distance(e.pos, sim.hero.pos)
+		var d: int = MapGeometry.distance(e.pos, sim.hero.pos)
 		if e.alerted != 0 and e.hp > 0 and d < best_d:
 			best = e
 			best_d = d
@@ -914,7 +914,7 @@ func _fight_step(sim: RefCounted) -> void:
 		if best_d <= 40:
 			Input.action_press("attack")
 		else:
-			Input.action_press(DIR_ACTIONS[sim.dir4(sim.hero.pos, best.pos)])
+			Input.action_press(DIR_ACTIONS[MapGeometry.dir4(sim.hero.pos, best.pos)])
 	await _frames(4)
 	Input.action_release("attack")
 	await _frames(4)
