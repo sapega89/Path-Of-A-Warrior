@@ -83,7 +83,7 @@ func test_gear_and_inventory_pages() -> void:
 	check(gear.places[3].icon == null, "no helmet")
 	eq(gear.describe(0), "Iron Broadsword / ATK+1 / Available at Lv1", "the weapon")
 	gear.free()
-	var inv: Control = InventoryScreen.new()
+	var inv: Control = Router.make(Router.SCREENS["inventory"])
 	root.add_child(inv)
 	eq(inv.gold.text, "0", "gold")
 	eq(inv.press_cell(1), "cannot", "too high a level")

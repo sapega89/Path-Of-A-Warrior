@@ -72,7 +72,7 @@ func test_reset_on_the_attributes_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = AttributesScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["attributes"])
 	root.add_child(screen)
 	screen.open_reset()
 	check(screen.ask.visible, "asked how to pay")

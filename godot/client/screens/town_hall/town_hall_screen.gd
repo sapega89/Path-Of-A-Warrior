@@ -6,23 +6,13 @@ extends BaseScreen
 var path: String = Profile.PATH
 var profile: RefCounted
 var campaign := Campaign.new()
-var list: VBoxContainer
-var visit: Button
+@onready var list: VBoxContainer = %List
+@onready var visit: Button = %Visit
 
 
 func _ready() -> void:
 	path = profile_path()
 	profile = Profile.load_or_new(path)
-	var col := UiTheme.menu_column(self, 760)
-	col.add_child(UiTheme.heading("camp.hall", 40))
-	var scroll := ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(760, 500)
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	col.add_child(scroll)
-	list = VBoxContainer.new()
-	list.name = "List"
-	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(list)
 	_section("hall.colonels")
 	var grid := _grid("Colonels")
 	for r in colonels():
@@ -38,22 +28,12 @@ func _ready() -> void:
 		for g in gens:
 			var name_key := str(MapSim.general_data(int(g[0])).get("name", "?"))
 			_cell(grid, tr("hall.friend") % [tr(name_key), int(g[1])])
-	var row := HBoxContainer.new()
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_theme_constant_override("separation", 12)
-	col.add_child(row)
-	visit = Button.new()
-	visit.name = "Visit"
-	visit.text = "hall.visits"
 	visit.disabled = not Visits.can_visit(profile)
-	visit.pressed.connect(func(): Router.push("visiting", {"profile_path": path}))
-	row.add_child(visit)
-	var back := Button.new()
-	back.name = "Back"
-	back.text = "common.back"
-	back.pressed.connect(func(): Router.back())
-	row.add_child(back)
-	(back if visit.disabled else visit).grab_focus.call_deferred()
+	(%Back if visit.disabled else visit).grab_focus.call_deferred()
+
+
+func open_visits() -> void:
+	Router.push("visiting", {"profile_path": path})
 
 
 ## Every colonel who gives missions: [[ruler id, name], ...] by id.

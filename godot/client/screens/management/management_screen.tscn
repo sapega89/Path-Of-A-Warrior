@@ -1,0 +1,72 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://screens/management/management_screen.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/ui/heading.gd" id="2"]
+
+[node name="ManagementScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Column" type="VBoxContainer" parent="Center"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(460, 0)
+theme_override_constants/separation = 8
+
+[node name="Heading" type="Label" parent="Center/Column"]
+layout_mode = 2
+theme_type_variation = &"Heading"
+text = "management.title"
+horizontal_alignment = 1
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 44
+script = ExtResource("2")
+
+[node name="Attributes" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "management.attributes"
+
+[node name="Skills" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "management.skills"
+
+[node name="Gear" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "management.gear"
+
+[node name="Inventory" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "management.inventory"
+
+[node name="AssignItems" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "management.assign_items"
+
+[node name="Back" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "common.back"
+
+[connection signal="pressed" from="Center/Column/Attributes" to="." method="open_page" binds= ["attributes"]]
+
+[connection signal="pressed" from="Center/Column/Skills" to="." method="open_page" binds= ["skills"]]
+
+[connection signal="pressed" from="Center/Column/Gear" to="." method="open_page" binds= ["gear"]]
+
+[connection signal="pressed" from="Center/Column/Inventory" to="." method="open_page" binds= ["inventory"]]
+
+[connection signal="pressed" from="Center/Column/AssignItems" to="." method="open_page" binds= ["assign_items"]]
+
+[connection signal="pressed" from="Center/Column/Back" to="." method="go_back"]

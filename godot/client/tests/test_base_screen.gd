@@ -95,3 +95,35 @@ func test_a_screen_from_a_scene() -> void:
 	check(screen.get_node_or_null("Line") is Label, "with its nodes")
 	screen.free()
 	DirAccess.remove_absolute(path)
+
+
+## A screen that is a scene is made from its scene (Router.make), never with its script's new(),
+## which would give the script without the scene's nodes.
+func test_scene_screens_are_not_made_with_new() -> void:
+	var classes: Array[String] = []
+	for path: String in Router.SCREENS.values():
+		if path.ends_with(".tscn"):
+			check(
+				FileAccess.file_exists(path.get_basename() + ".gd"), "%s: its script by it" % path
+			)
+			var cls := (load(path.get_basename() + ".gd") as GDScript).get_global_name()
+			if not cls.is_empty():
+				classes.append(cls)
+	var found: Array[String] = []
+	for dir in ["res://scripts", "res://screens", "res://tests", "res://tools", "res://lab"]:
+		for path in _sources(dir):
+			var src := FileAccess.get_file_as_string(path)
+			for cls in classes:
+				if src.contains(cls + ".new("):
+					found.append("%s: %s.new()" % [path, cls])
+	eq(found, [] as Array[String], "made with Router.make")
+
+
+func _sources(dir: String) -> Array[String]:
+	var out: Array[String] = []
+	for f in DirAccess.get_files_at(dir):
+		if f.ends_with(".gd"):
+			out.append(dir.path_join(f))
+	for sub in DirAccess.get_directories_at(dir):
+		out.append_array(_sources(dir.path_join(sub)))
+	return out

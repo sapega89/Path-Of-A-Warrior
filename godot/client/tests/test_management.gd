@@ -24,7 +24,7 @@ func test_attributes_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = AttributesScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["attributes"])
 	root.add_child(screen)
 	eq(screen.values["Points"].text, "5", "five points")
 	eq(screen.values["ATK"].text, "5+1", "own attack and the claymore's")

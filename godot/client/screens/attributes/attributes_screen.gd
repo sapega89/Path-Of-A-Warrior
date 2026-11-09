@@ -19,54 +19,22 @@ var profile: RefCounted
 var path: String = Profile.PATH
 var values := {}  # row name -> its value Label
 var plus := {}  # stat row name -> its "+" Button
-var reset: Button
-var ask: ConfirmationDialog  # pay with gold (OK), an elixir ("item") or cancel
+@onready var reset: Button = %Reset
+@onready var ask: ConfirmationDialog = %Ask  # pay with gold (OK), an elixir ("item") or cancel
 var pay_item: Button
-var note: AcceptDialog
+@onready var note: AcceptDialog = %Note
 
 
 func _ready() -> void:
 	path = profile_path()
 	profile = Profile.load_or_new(path)
-	var col := UiTheme.menu_column(self, 520)
-	col.add_child(UiTheme.heading("attributes.title", 44))
-	_row(col, "Name", "attributes.name")
-	_row(col, "Level", "attributes.level")
-	_row(col, "Fame", "attributes.fame")
-	_row(col, "Points", "attributes.points")
+	for row in ["Name", "Level", "Fame", "Points"] + STATS.map(func(s): return s[0]):
+		values[row] = %Column.get_node(row + "/Value")
 	for s in STATS:
-		var b := Button.new()
-		b.name = "Plus" + s[0]
-		b.text = "+"
-		var stat: int = s[2]
-		b.pressed.connect(func(): spend(stat))
-		_row(col, s[0], s[1], b)
-		plus[s[0]] = b
-	reset = Button.new()
-	reset.name = "Reset"
-	reset.text = "attributes.reset"
-	reset.pressed.connect(open_reset)
-	col.add_child(reset)
-	ask = ConfirmationDialog.new()
-	ask.name = "Ask"
-	ask.confirmed.connect(func(): finish_reset(false))
-	ask.custom_action.connect(
-		func(_a):
-			ask.hide()
-			finish_reset(true)
-	)
+		plus[s[0]] = %Column.get_node("%s/Plus%s" % [s[0], s[0]])
 	pay_item = ask.add_button("", false, "item")
-	add_child(ask)
-	note = AcceptDialog.new()
-	note.name = "Note"
-	add_child(note)
-	var back := Button.new()
-	back.name = "Back"
-	back.text = "common.back"
-	back.pressed.connect(func(): Router.back())
-	col.add_child(back)
 	refresh()
-	back.grab_focus.call_deferred()
+	%Back.grab_focus.call_deferred()
 	for s in STATS:
 		if not plus[s[0]].disabled:
 			plus[s[0]].grab_focus.call_deferred()
@@ -93,6 +61,15 @@ func refresh() -> void:
 	values["DEF"].text = _with_gear(profile.base_defense, profile.defense())
 	for b in plus.values():
 		b.disabled = profile.stat_points <= 0
+
+
+func _on_pay_gold() -> void:
+	finish_reset(false)
+
+
+func _on_pay_item(_action: StringName) -> void:
+	ask.hide()
+	finish_reset(true)
 
 
 ## Asks how to pay for the reset; says so when there is nothing to reset.
@@ -134,23 +111,3 @@ func _note(text: String) -> void:
 ## "4+1" when the gear adds to the hero's own number, else just the number.
 static func _with_gear(own: int, total: int) -> String:
 	return str(own) if total == own else "%d+%d" % [own, total - own]
-
-
-func _row(col: VBoxContainer, row_name: String, label_key: String, button: Button = null) -> void:
-	var row := HBoxContainer.new()
-	row.name = row_name
-	var l := Label.new()
-	l.text = label_key
-	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(l)
-	var v := Label.new()
-	v.name = "Value"
-	v.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	v.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	v.custom_minimum_size = Vector2(120, 0)
-	row.add_child(v)
-	values[row_name] = v
-	if button != null:
-		button.custom_minimum_size = Vector2(56, 0)
-		row.add_child(button)
-	col.add_child(row)
