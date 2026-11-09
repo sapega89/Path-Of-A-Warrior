@@ -42,12 +42,16 @@ class Net:
 		var box: Array = []
 		s.send = func(m: Dictionary) -> void: box.append(bytes_to_var(var_to_bytes(m)))
 		var entry: Array = [s, null, box]
-		var c := OnlineClient.new(func(msg: Dictionary, done: Callable) -> void:
-			var m: Dictionary = bytes_to_var(var_to_bytes(msg))
-			now += 2.0
-			var r: Dictionary = o.enter(s, uid) if m.t == "mp_enter" else o.answer(s, str(m.t), m)
-			done.call(bytes_to_var(var_to_bytes(r)))
-			flush())
+		var c := OnlineClient.new(
+			func(msg: Dictionary, done: Callable) -> void:
+				var m: Dictionary = bytes_to_var(var_to_bytes(msg))
+				now += 2.0
+				var r: Dictionary = (
+					o.enter(s, uid) if m.t == "mp_enter" else o.answer(s, str(m.t), m)
+				)
+				done.call(bytes_to_var(var_to_bytes(r)))
+				flush()
+		)
 		entry[1] = c
 		players.append(entry)
 		return c
@@ -108,7 +112,11 @@ func test_pushed_chat_counts_as_waiting() -> void:
 	var got := []
 	a.send_chat(OnlineClient.LOBBY, "", "Hello all", func(e): got.append(e))
 	eq(got, [""])
-	eq(b.chat.get("lobby", []).map(func(r): return r.text), ["Hello all"], "pushed to the lobby's readers")
+	eq(
+		b.chat.get("lobby", []).map(func(r): return r.text),
+		["Hello all"],
+		"pushed to the lobby's readers"
+	)
 	eq(a.chat.get("lobby", []).size(), 1, "and back to me")
 	a.send_chat(OnlineClient.PRIVATE, "MARIA", "psst", func(e): got.append(e))
 	eq(got[-1], "")
@@ -161,7 +169,11 @@ func test_menu_and_character_pages() -> void:
 	var text := _screen(TextScreen, {"online": c, "kind": "name"})
 	text.fields[0].text = "Andrey"
 	text.send()
-	eq([str(c.me.name), str(net.o.online_part("ANDREY").name)], ["Andrey", "Andrey"], "the display name")
+	eq(
+		[str(c.me.name), str(net.o.online_part("ANDREY").name)],
+		["Andrey", "Andrey"],
+		"the display name"
+	)
 	text.free()
 	text = _screen(TextScreen, {"online": c, "kind": "name"})
 	text.fields[0].text = "Blade"
@@ -172,11 +184,17 @@ func test_menu_and_character_pages() -> void:
 	text.fields[0].text = "Come on!"
 	text.fields[1].text = "Next!"
 	text.send()
-	eq([str(net.o.online_part("ANDREY").quote_start), str(net.o.online_part("ANDREY").quote_win)], ["Come on!", "Next!"])
+	eq(
+		[str(net.o.online_part("ANDREY").quote_start), str(net.o.online_part("ANDREY").quote_win)],
+		["Come on!", "Next!"]
+	)
 	text.free()
 	var skills := _screen(SkillsScreen, {"online": c})
 	eq(skills.skill_buttons.size(), 3, "Whirlwind Sabre, Healing Herbs, Fury")
-	eq(skills.slot_buttons.map(func(b): return b.text), ["1: Fury", "2: Healing Herbs", "3: Whirlwind Sabre", "4: -"])
+	eq(
+		skills.slot_buttons.map(func(b): return b.text),
+		["1: Fury", "2: Healing Herbs", "3: Whirlwind Sabre", "4: -"]
+	)
 	skills.press_skill(9)
 	skills.press_slot(3)
 	eq(c.me.slots, [11, 3, 9, 99], "moved from slot 2 to 4: learned ones first")
@@ -194,13 +212,23 @@ func test_ranking_order_options() -> void:
 	c.enter(func(_e): pass)
 	var old: Dictionary = Router.params
 	var rank := _screen(RankingScreen, {"online": c})
-	eq(rank.rows.map(func(l): return l.text), ["1.  BLADE  900", "2.  RAVEN  600", "3.  TIGER  400"])
+	eq(
+		rank.rows.map(func(l): return l.text),
+		["1.  BLADE  900", "2.  RAVEN  600", "3.  TIGER  400"]
+	)
 	eq(rank.mine.text, tr("online.my_rank") % [6, "0"])
 	rank.choose(2, true)
-	eq(rank.rows.map(func(l): return l.text), ["4.  SHADOW  C", "5.  IRONFIST  C-", "6.  ANDREY  D+"], "my Duel grade, near me")
+	eq(
+		rank.rows.map(func(l): return l.text),
+		["4.  SHADOW  C", "5.  IRONFIST  C-", "6.  ANDREY  D+"],
+		"my Duel grade, near me"
+	)
 	rank.free()
 	var order := _screen(OrderScreen, {"online": c})
-	eq([order.info.text, order.create.visible, order.leave.visible], [tr("online.no_order"), true, false])
+	eq(
+		[order.info.text, order.create.visible, order.leave.visible],
+		[tr("online.no_order"), true, false]
+	)
 	order.free()
 	var text := _screen(TextScreen, {"online": c, "kind": "order_create"})
 	text.fields[0].text = "WO"
@@ -218,7 +246,10 @@ func test_ranking_order_options() -> void:
 	var opts := _screen(OptionsScreen, {"online": c})
 	eq(opts.info.text, tr("online.invitation_accept"))
 	opts.choose(0)
-	eq([opts.info.text, int(net.o.online_part("ANDREY").invitation)], [tr("online.invitation_deny"), 0])
+	eq(
+		[opts.info.text, int(net.o.online_part("ANDREY").invitation)],
+		[tr("online.invitation_deny"), 0]
+	)
 	opts.free()
 	Router.params = old
 	ServerTests._rm(d)
@@ -242,10 +273,17 @@ func test_chat_screen() -> void:
 	chat.open(OnlineClient.ORDER, "")
 	eq([chat.info.text, chat.write.visible], [tr("online.no_order"), false])
 	chat.open(OnlineClient.PRIVATE, "")
-	eq(chat.lines.get_child(0).text, "MARIA (1)  " + tr("online.online"), "a conversation with a message waiting")
+	eq(
+		chat.lines.get_child(0).text,
+		"MARIA (1)  " + tr("online.online"),
+		"a conversation with a message waiting"
+	)
 	chat.free()
 	chat = _screen(ChatScreen, {"online": a, "channel": OnlineClient.PRIVATE, "peer": "MARIA"})
-	eq([chat.title.text, chat.lines.get_child(0).text], [tr("online.with") % "MARIA", "MARIA: hello you"])
+	eq(
+		[chat.title.text, chat.lines.get_child(0).text],
+		[tr("online.with") % "MARIA", "MARIA: hello you"]
+	)
 	eq(a.unread, [0, 0], "read")
 	b.send_chat(OnlineClient.PRIVATE, "ANDREY", "and again", func(_e): pass)
 	eq([chat.lines.get_child_count(), a.unread], [2, [0, 0]], "shown at once: not waiting")

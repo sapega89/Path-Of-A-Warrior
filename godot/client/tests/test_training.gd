@@ -38,7 +38,11 @@ func test_the_steps() -> void:
 	sim.hero.pos += Vector2i(Tutorial.WALK_PX, 0)
 	t.check()
 	eq(t.step, Tutorial.Step.ATTACK, "walked: a soldier")
-	eq([int(sim.waves[0]), int(sim.waves[1]), sim.max_enemies()], [MapSim.KIND_SWORDS, 1, 1], "one comes in")
+	eq(
+		[int(sim.waves[0]), int(sim.waves[1]), sim.max_enemies()],
+		[MapSim.KIND_SWORDS, 1, 1],
+		"one comes in"
+	)
 	eq(t.label.text, "A soldier! Walk up to him and strike: J", "strike")
 	sim.waves[0] = 0  # he came in and fell
 	t.check()
@@ -60,7 +64,11 @@ func test_the_steps() -> void:
 	sim.quick_slots[0] = [0, 0]
 	t.check()
 	eq(t.step, Tutorial.Step.AUTO, "drunk: the auto-hunt")
-	eq(t.label.text, "Three more. Auto-hunt: Tab. The hero fights by himself; any key takes over", "AUTO")
+	eq(
+		t.label.text,
+		"Three more. Auto-hunt: Tab. The hero fights by himself; any key takes over",
+		"AUTO"
+	)
 	screen.toggle_auto()
 	t.check()
 	sim.waves[0] = 0
@@ -155,8 +163,10 @@ func test_the_arrow_down_shows_above_the_hud() -> void:
 	screen._place_arrows()
 	var view: Vector2 = screen.get_viewport_rect().size
 	var a: TextureRect = screen.arrows[0]
-	check(a.position.y + a.size.y <= screen.hud.top_of(view), "above the HUD: %s + %s <= %s" % [
-		a.position.y, a.size.y, screen.hud.top_of(view)])
+	check(
+		a.position.y + a.size.y <= screen.hud.top_of(view),
+		"above the HUD: %s + %s <= %s" % [a.position.y, a.size.y, screen.hud.top_of(view)]
+	)
 	screen.free()
 	Router.params = old
 
@@ -192,16 +202,36 @@ func test_the_way_through_the_training() -> void:
 	var ng: Control = Router.current
 	ng.finish()
 	eq(Router.current_name(), "story", "the opening story")
-	eq([Router.params.get("then"), Router.params.get("then_params")],
-		["training", {"then": "camp", "then_params": {"first": true, "profile_path": PATH},
-			"profile_path": PATH}], "then the training, then the camp")
+	eq(
+		[Router.params.get("then"), Router.params.get("then_params")],
+		[
+			"training",
+			{
+				"then": "camp",
+				"then_params": {"first": true, "profile_path": PATH},
+				"profile_path": PATH
+			}
+		],
+		"then the training, then the camp"
+	)
 	Router.current._end()
 	eq(Router.current_name(), "training", "the training")
-	eq(Router.params, {"then": "camp", "then_params": {"first": true, "profile_path": PATH},
-		"profile_path": PATH}, "with where to go after it")
+	eq(
+		Router.params,
+		{
+			"then": "camp",
+			"then_params": {"first": true, "profile_path": PATH},
+			"profile_path": PATH
+		},
+		"with where to go after it"
+	)
 	Router.current.tutorial.finish()
 	eq(Router.current_name(), "camp", "after it: the camp, which starts the first mission")
-	eq(Router.params.get("profile_path"), PATH, "the camp of the new hero (it took `first`: the first mission at once)")
+	eq(
+		Router.params.get("profile_path"),
+		PATH,
+		"the camp of the new hero (it took `first`: the first mission at once)"
+	)
 	Router.go("settings")
 	var training: Button = Router.current.find_child("Training", true, false)
 	check(training != null, "Settings: Training")

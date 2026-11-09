@@ -117,6 +117,7 @@ func _ready() -> void:
 	panel.lab = self
 	add_child(panel)
 	help = Label.new()
+	# gdlint:ignore = max-line-length
 	help.text = "H панель · E эффекты вкл/выкл · F2 мечники · F3 лучники · F4 генерал · F6 бессмертие · Tab автоохота · Esc выход"
 	help.add_theme_font_size_override("font_size", 13)
 	help.position = Vector2(12, 78)
@@ -296,7 +297,9 @@ func _update_view(t: float) -> void:
 	var n := 0
 	for k in feel.on:
 		n += 1 if feel.on[k] else 0
-	status.text = "Эффекты: ВКЛ" if n == feel.on.size() else ("Эффекты: ВЫКЛ" if n == 0 else "Эффекты: часть")
+	status.text = (
+		"Эффекты: ВКЛ" if n == feel.on.size() else ("Эффекты: ВЫКЛ" if n == 0 else "Эффекты: часть")
+	)
 	status.modulate = Color(0.6, 1.0, 0.6) if n > 0 else Color(1.0, 0.6, 0.6)
 	people.update(t, _anim_dt, tick, feel)
 	_anim_dt = 0.0
@@ -345,7 +348,9 @@ func _place_loot() -> void:
 		s.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 		s.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
 		world.add_child(s)
-		s.global_position = Hero.px_to_world(Vector2(d.pos)) + Vector3(0.0, s.region_rect.size.y / 54.0, 0.0)
+		s.global_position = (
+			Hero.px_to_world(Vector2(d.pos)) + Vector3(0.0, s.region_rect.size.y / 54.0, 0.0)
+		)
 		loot[d] = s
 
 

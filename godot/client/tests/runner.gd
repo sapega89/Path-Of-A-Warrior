@@ -8,12 +8,21 @@ const TEST_DIR := "res://tests/"
 
 
 ## Counts the script errors and their first lines.
-class ScriptErrors extends Logger:
+class ScriptErrors:
+	extends Logger
 	var count := 0
 	var first := ""
 
-	func _log_error(_function: String, file: String, line: int, code: String, rationale: String,
-			_editor_notify: bool, error_type: int, _backtraces: Array[ScriptBacktrace]) -> void:
+	func _log_error(
+		_function: String,
+		file: String,
+		line: int,
+		code: String,
+		rationale: String,
+		_editor_notify: bool,
+		error_type: int,
+		_backtraces: Array[ScriptBacktrace]
+	) -> void:
 		if error_type != ERROR_TYPE_SCRIPT:
 			return
 		count += 1
@@ -46,7 +55,9 @@ func _ready() -> void:
 			errors.first = ""
 			test.call(method)
 			if errors.count > 0:
-				test.failures.append("%s: %d script error(s), first: %s" % [test.current, errors.count, errors.first])
+				test.failures.append(
+					"%s: %d script error(s), first: %s" % [test.current, errors.count, errors.first]
+				)
 			if test.failures.is_empty():
 				passed += 1
 				print("ok   %s" % test.current)

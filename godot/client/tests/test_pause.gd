@@ -15,7 +15,11 @@ func test_pause_menu() -> void:
 	check(not screen.is_processing(), "paused: the game stops")
 	check(screen.pause_menu != null, "the pause menu shows")
 	var names: Array = screen.pause_menu.buttons.map(func(b): return str(b.name))
-	eq(names.slice(0, 5), ["Resume", "Items", "Options", "Help", "Exit"], "its rows: no Save, the camps keep the game")
+	eq(
+		names.slice(0, 5),
+		["Resume", "Items", "Options", "Help", "Exit"],
+		"its rows: no Save, the camps keep the game"
+	)
 	screen.sim.quick_slots[2] = [4, 1]
 	screen.pause_menu.open_items()
 	var items: Control = screen.pause_menu.settings

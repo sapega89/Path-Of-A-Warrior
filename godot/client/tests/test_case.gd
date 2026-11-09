@@ -14,4 +14,9 @@ func check(condition: bool, message: String = "") -> void:
 
 func eq(actual: Variant, expected: Variant, message: String = "") -> void:
 	if typeof(actual) != typeof(expected) or actual != expected:
-		failures.append("%s: %s expected %s, got %s" % [current, message, var_to_str(expected), var_to_str(actual)])
+		failures.append(
+			(
+				"%s: %s expected %s, got %s"
+				% [current, message, var_to_str(expected), var_to_str(actual)]
+			)
+		)

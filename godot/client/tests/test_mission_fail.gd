@@ -9,7 +9,8 @@ const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
 
 
 ## Gives the numbers it is told, as rng.below would.
-class Rolls extends RefCounted:
+class Rolls:
+	extends RefCounted
 	var values: Array = []
 	var asked: Array = []
 
@@ -61,8 +62,15 @@ func test_lost_gear_on_the_fail_banner() -> void:
 	eq(int(screen.lost_gear.get("id", 0)), Profile.START_WEAPON, "the weapon is lost")
 	eq(int(screen.profile.equipped[0].id), 0, "taken from the hero")
 	var text: String = screen.banner_text.text
-	check(text.ends_with("%s\n%s\n%s" % [tr("mission.failed"), tr("mission.lost"), Items.name_of(Profile.START_WEAPON)]),
-		"the banner names it: %s" % text)
+	check(
+		text.ends_with(
+			(
+				"%s\n%s\n%s"
+				% [tr("mission.failed"), tr("mission.lost"), Items.name_of(Profile.START_WEAPON)]
+			)
+		),
+		"the banner names it: %s" % text
+	)
 	screen._process(0.0)
 	eq(int(screen.profile.equipped[0].id), 0, "once")
 	screen.free()

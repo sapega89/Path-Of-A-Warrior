@@ -61,9 +61,15 @@ func create_account(uid: String, pwd: String) -> bool:
 	if has_account(uid):
 		return false
 	var salt := _crypto.generate_random_bytes(16)
-	var acc := {"id": uid, "salt": salt.hex_encode(), "rounds": rounds,
-		"hash": pbkdf2(pwd.to_ascii_buffer(), salt, rounds).hex_encode() if not pwd.is_empty() else "",
-		"created": Time.get_unix_time_from_system(), "hero": {"rev": 0, "at": 0, "data": null}}
+	var acc := {
+		"id": uid,
+		"salt": salt.hex_encode(),
+		"rounds": rounds,
+		"hash":
+		pbkdf2(pwd.to_ascii_buffer(), salt, rounds).hex_encode() if not pwd.is_empty() else "",
+		"created": Time.get_unix_time_from_system(),
+		"hero": {"rev": 0, "at": 0, "data": null}
+	}
 	if not _write(acc):
 		return false
 	_cache[uid] = acc

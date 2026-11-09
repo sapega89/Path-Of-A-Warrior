@@ -59,8 +59,10 @@ func _pump(s: GameServer, c: NetClient, done: Callable) -> bool:
 func test_pbkdf2_matches_rfc_vector() -> void:
 	var a := Accounts.new(_dir("kdf"))
 	# RFC 7914 section 11: PBKDF2-HMAC-SHA256 ("passwd", "salt", 1), first 32 bytes
-	eq(a.pbkdf2("passwd".to_ascii_buffer(), "salt".to_ascii_buffer(), 1).hex_encode(),
-		"55ac046e56e3089fec1691c22544b605f94185216dde0465e68b9d57c20dacbc")
+	eq(
+		a.pbkdf2("passwd".to_ascii_buffer(), "salt".to_ascii_buffer(), 1).hex_encode(),
+		"55ac046e56e3089fec1691c22544b605f94185216dde0465e68b9d57c20dacbc"
+	)
 	check(Accounts.same_bytes(PackedByteArray([1, 2]), PackedByteArray([1, 2])))
 	check(not Accounts.same_bytes(PackedByteArray([1, 2]), PackedByteArray([1, 3])))
 	_rm(a.dir)
@@ -137,7 +139,7 @@ func test_accounts_keep_the_hero_on_disk() -> void:
 	check(not FileAccess.file_exists(d.path_join("ANDREY.json.tmp")), "no temporary file left")
 	var text := FileAccess.get_file_as_string(d.path_join("ANDREY.json"))
 	# as a JSON string: the hex of the salt and the hash may hold the digits 1234 by chance
-	check(not text.contains("\"1234\""), "the password is not in the file")
+	check(not text.contains('"1234"'), "the password is not in the file")
 	_rm(d)
 
 
@@ -148,19 +150,46 @@ func test_requests_and_their_answers() -> void:
 	s.accounts.rounds = 20
 	var a := GameServer.Session.new()
 	eq(s.answer(a, {}).err, "bad message")
-	eq(s.answer(a, {"t": "hero_get", "q": 7}), {"t": "hero_get", "ok": false, "err": "login first", "q": 7})
+	eq(
+		s.answer(a, {"t": "hero_get", "q": 7}),
+		{"t": "hero_get", "ok": false, "err": "login first", "q": 7}
+	)
 	eq(s.answer(a, {"t": "login", "id": "ANDREY", "pwd": "1234", "v": 0}).err, "update")
-	eq(s.answer(a, {"t": "login", "id": "ANDREY", "pwd": "1234", "v": Protocol.VERSION}).err, "no account")
-	eq(s.answer(a, {"t": "register", "id": "AN", "pwd": "1234", "v": Protocol.VERSION}).err, "bad id")
+	eq(
+		s.answer(a, {"t": "login", "id": "ANDREY", "pwd": "1234", "v": Protocol.VERSION}).err,
+		"no account"
+	)
+	eq(
+		s.answer(a, {"t": "register", "id": "AN", "pwd": "1234", "v": Protocol.VERSION}).err,
+		"bad id"
+	)
 	check(s.answer(a, {"t": "register", "id": "ANDREY", "pwd": "1234", "v": Protocol.VERSION}).ok)
 	eq(s.answer(a, {"t": "nope"}).err, "unknown")
 	eq(s.answer(a, {"t": "hero_put", "base": "0", "at": 1, "hero": {}}).err, "bad message")
-	eq(s.answer(a, {"t": "hero_put", "base": 0, "at": 1, "hero": {"x": "a".repeat(Protocol.MAX_HERO)}}).err,
-		"too big")
-	eq(s.answer(a, {"t": "hero_put", "base": 0, "at": 1, "hero": {"level": 2}}), {"t": "hero_put", "ok": true, "rev": 1})
+	eq(
+		(
+			s
+			. answer(
+				a,
+				{"t": "hero_put", "base": 0, "at": 1, "hero": {"x": "a".repeat(Protocol.MAX_HERO)}}
+			)
+			. err
+		),
+		"too big"
+	)
+	eq(
+		s.answer(a, {"t": "hero_put", "base": 0, "at": 1, "hero": {"level": 2}}),
+		{"t": "hero_put", "ok": true, "rev": 1}
+	)
 	var b := GameServer.Session.new()
-	eq(s.answer(b, {"t": "register", "id": "ANDREY", "pwd": "5555", "v": Protocol.VERSION}).err, "taken")
-	eq(s.answer(b, {"t": "login", "id": "ANDREY", "pwd": "5555", "v": Protocol.VERSION}).err, "password")
+	eq(
+		s.answer(b, {"t": "register", "id": "ANDREY", "pwd": "5555", "v": Protocol.VERSION}).err,
+		"taken"
+	)
+	eq(
+		s.answer(b, {"t": "login", "id": "ANDREY", "pwd": "5555", "v": Protocol.VERSION}).err,
+		"password"
+	)
 	check(s.answer(b, {"t": "login", "id": "ANDREY", "pwd": "1234", "v": Protocol.VERSION}).ok)
 	var c := s.answer(b, {"t": "hero_put", "base": 0, "at": 2, "hero": {"level": 9}})
 	eq([c.err, c.rev, int(c.hero.level)], ["conflict", 1, 2], "the other device saved first")
@@ -177,18 +206,47 @@ func test_the_options_are_kept_like_the_hero() -> void:
 	var a := GameServer.Session.new()
 	eq(s.answer(a, {"t": "options_get"}).err, "login first")
 	check(s.answer(a, {"t": "register", "id": "ANDREY", "pwd": "1234", "v": Protocol.VERSION}).ok)
-	eq(s.answer(a, {"t": "options_get"}), {"t": "options_get", "ok": true, "rev": 0, "at": 0, "options": null},
-		"none yet")
+	eq(
+		s.answer(a, {"t": "options_get"}),
+		{"t": "options_get", "ok": true, "rev": 0, "at": 0, "options": null},
+		"none yet"
+	)
 	eq(s.answer(a, {"t": "options_put", "base": 0, "at": 1, "options": []}).err, "bad message")
-	eq(s.answer(a, {"t": "options_put", "base": 0, "at": 1, "options": {"x": "a".repeat(Protocol.MAX_OPTIONS)}}).err,
-		"too big")
-	eq(s.answer(a, {"t": "options_put", "base": 0, "at": 5, "options": {"game_speed": 4}}),
-		{"t": "options_put", "ok": true, "rev": 1})
+	eq(
+		(
+			s
+			. answer(
+				a,
+				{
+					"t": "options_put",
+					"base": 0,
+					"at": 1,
+					"options": {"x": "a".repeat(Protocol.MAX_OPTIONS)}
+				}
+			)
+			. err
+		),
+		"too big"
+	)
+	eq(
+		s.answer(a, {"t": "options_put", "base": 0, "at": 5, "options": {"game_speed": 4}}),
+		{"t": "options_put", "ok": true, "rev": 1}
+	)
 	var c := s.answer(a, {"t": "options_put", "base": 0, "at": 6, "options": {"game_speed": 0}})
-	eq([c.err, c.rev, c.at, int(c.options.game_speed)], ["conflict", 1, 5, 4], "another device changed them first")
+	eq(
+		[c.err, c.rev, c.at, int(c.options.game_speed)],
+		["conflict", 1, 5, 4],
+		"another device changed them first"
+	)
 	eq(s.answer(a, {"t": "hero_get"}).rev, 0, "the hero is apart")
 	var again := Accounts.new(d)  # as after a restart
-	eq([again.store_get("ANDREY", "options").rev, int(again.store_get("ANDREY", "options").data.game_speed)], [1, 4])
+	eq(
+		[
+			again.store_get("ANDREY", "options").rev,
+			int(again.store_get("ANDREY", "options").data.game_speed)
+		],
+		[1, 4]
+	)
 	check(not again.store_put("ANDREY", "chat", 0, 1, {})[0], "only the hero and the options")
 	_rm(d)
 
@@ -199,8 +257,14 @@ func test_register_and_save_over_enet_dtls() -> void:
 	var c := NetClient.new()
 	eq(c.open("127.0.0.1", PORT, pair(0)[1]), OK, "client set up")
 	var got := []
-	c.request({"t": "register", "id": "ANDREY", "pwd": "1234", "v": Protocol.VERSION}, func(r): got.append(r))
-	c.request({"t": "hero_put", "base": 0, "at": 5, "hero": {"hero_name": "Andrey"}}, func(r): got.append(r))
+	c.request(
+		{"t": "register", "id": "ANDREY", "pwd": "1234", "v": Protocol.VERSION},
+		func(r): got.append(r)
+	)
+	c.request(
+		{"t": "hero_put", "base": 0, "at": 5, "hero": {"hero_name": "Andrey"}},
+		func(r): got.append(r)
+	)
 	c.request({"t": "hero_get"}, func(r): got.append(r))
 	check(_pump(s, c, func(): return got.size() == 3), "three answers")
 	if got.size() == 3:
@@ -222,7 +286,9 @@ func test_a_server_with_another_certificate_is_refused() -> void:
 	var c := NetClient.new()
 	eq(c.open("127.0.0.1", PORT, pair(1)[1]), OK)
 	var got := []
-	c.request({"t": "login", "id": "ANDREY", "pwd": "1234", "v": Protocol.VERSION}, func(r): got.append(r))
+	c.request(
+		{"t": "login", "id": "ANDREY", "pwd": "1234", "v": Protocol.VERSION}, func(r): got.append(r)
+	)
 	_pump(s, c, func(): return not got.is_empty() or c.state == NetClient.State.CLOSED)
 	check(c.state != NetClient.State.CONNECTED, "not connected to an unknown server")
 	if not got.is_empty():
@@ -240,8 +306,10 @@ func test_requests_when_offline() -> void:
 
 
 func test_server_args_and_certificate_files() -> void:
-	eq(ServerMain.parse_args(PackedStringArray(["--port", "1234", "--data", "x", "loose"])),
-		{"port": "1234", "data": "x"})
+	eq(
+		ServerMain.parse_args(PackedStringArray(["--port", "1234", "--data", "x", "loose"])),
+		{"port": "1234", "data": "x"}
+	)
 	var d := _dir("main")
 	var first := ServerMain.load_or_make_cert(d, "", "")
 	eq(first.size(), 2, "made a pair")

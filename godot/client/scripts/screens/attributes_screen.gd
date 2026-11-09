@@ -52,7 +52,11 @@ func _ready() -> void:
 	ask = ConfirmationDialog.new()
 	ask.name = "Ask"
 	ask.confirmed.connect(func(): finish_reset(false))
-	ask.custom_action.connect(func(_a): ask.hide(); finish_reset(true))
+	ask.custom_action.connect(
+		func(_a):
+			ask.hide()
+			finish_reset(true)
+	)
 	pay_item = ask.add_button("", false, "item")
 	add_child(ask)
 	note = AcceptDialog.new()
@@ -102,7 +106,11 @@ func open_reset() -> void:
 	ask.ok_button_text = tr("attributes.pay_gold") % profile.respec_gold()
 	var slot: int = profile.respec_item_slot()
 	pay_item.disabled = slot < 0
-	pay_item.text = tr("attributes.no_elixir") if slot < 0 else tr("attributes.use_item") % Items.name_of(int(profile.backpack[slot].id))
+	pay_item.text = (
+		tr("attributes.no_elixir")
+		if slot < 0
+		else tr("attributes.use_item") % Items.name_of(int(profile.backpack[slot].id))
+	)
 	ask.popup_centered()
 
 
@@ -110,7 +118,9 @@ func open_reset() -> void:
 func finish_reset(by_item: bool) -> String:
 	var free: int = profile.spent_points()
 	var why: String = profile.respec(by_item)
-	var said := tr("attributes.reset_done") % free if why.is_empty() else tr("attributes.reset_" + why)
+	var said := (
+		tr("attributes.reset_done") % free if why.is_empty() else tr("attributes.reset_" + why)
+	)
 	if why.is_empty():
 		profile.save(path)
 		refresh()

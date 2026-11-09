@@ -115,11 +115,17 @@ func test_pad_back_skips_or_toggles_auto() -> void:
 ## page; on a talk of the opening it ends the story.
 func test_skip_the_story() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"story": 2, "reward_item": 502, "opened_lord": 8, "profile_path": "user://no_such_hero.json"}
+	Router.params = {
+		"story": 2, "reward_item": 502, "opened_lord": 8, "profile_path": "user://no_such_hero.json"
+	}
 	var screen: Control = Story.new()
 	root.add_child(screen)
 	screen._unhandled_input(_skip_key())
-	eq([screen.page, screen.pages[screen.page].kind], [14, "picture"], "an ending: on to its pictures")
+	eq(
+		[screen.page, screen.pages[screen.page].kind],
+		[14, "picture"],
+		"an ending: on to its pictures"
+	)
 	screen.skip_button.pressed.emit()
 	eq(screen.pages[screen.page].kind, "stats", "on a picture: the next page (the Skip button too)")
 	screen.free()
@@ -145,9 +151,15 @@ func test_skip_the_briefing() -> void:
 	var host := Control.new()
 	root.add_child(host)
 	Router.attach(host)
-	Router.go("briefing", {"lord": 1, "mission": 1, "line": 2, "profile_path": "user://no_such_hero.json"})
+	Router.go(
+		"briefing", {"lord": 1, "mission": 1, "line": 2, "profile_path": "user://no_such_hero.json"}
+	)
 	Router.current._unhandled_input(_skip_key())
-	eq([Router.current_name(), Router.params], ["mission", {"lord": 1, "mission": 1}], "the skip key: the map")
+	eq(
+		[Router.current_name(), Router.params],
+		["mission", {"lord": 1, "mission": 1}],
+		"the skip key: the map"
+	)
 	Router.attach(null)
 	host.free()
 	Router.params = old

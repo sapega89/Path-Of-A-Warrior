@@ -11,8 +11,13 @@ const STORY_ONLY := [502]  # Silk Rushnyk: the reward of an ending, never a drop
 const DROP_CHANCE := [5, 10, 20]  # % that something drops
 const EQUIP_CHANCE := [10, 30, 60]  # % of a drop that is gear (else a potion or a bomb, 1..11)
 const TIER_LEVELS := [69, 44, 24, 9, 0]  # hero level above -> the row of TIER_ODDS
-const TIER_ODDS := [[0, 0, 33, 77, 100], [5, 30, 55, 80, 100], [30, 60, 90, 100, 100],
-	[40, 80, 100, 100, 100], [80, 100, 100, 100, 100]]
+const TIER_ODDS := [
+	[0, 0, 33, 77, 100],
+	[5, 30, 55, 80, 100],
+	[30, 60, 90, 100, 100],
+	[40, 80, 100, 100, 100],
+	[80, 100, 100, 100, 100]
+]
 ## the share of the gear drops that is Special / Rare instead of Normal
 const SPECIAL_SHARE := 20
 const RARE_SHARE := 2

@@ -20,7 +20,11 @@ func test_the_bar_grows_and_goes_up_a_level() -> void:
 	eq(bar.grown(), [50, 1], "the bar is full")
 	eq(bar.level, 1, "the level up comes on the next tick")
 	bar.tick()
-	eq([bar.level, bar.level_up_ticks], [2, ExpBars.LEVEL_UP_TICKS], "Level Up : Lv 2, for 20 ticks")
+	eq(
+		[bar.level, bar.level_up_ticks],
+		[2, ExpBars.LEVEL_UP_TICKS],
+		"Level Up : Lv 2, for 20 ticks"
+	)
 	eq(bar.bars, [0, 24, 24], "the bar starts again with the rest")
 	for t in ExpBars.LEVEL_UP_TICKS:
 		bar.tick()
@@ -32,8 +36,11 @@ func test_the_bar_grows_and_goes_up_a_level() -> void:
 	var p: RefCounted = Profile.new()
 	p.experience = 25
 	p.gain_exp(50)
-	eq([p.level, p.experience * 100 / Profile.exp_needed(p.level)], [bar.level, 24],
-		"the bar ends where the hero is after the mission")
+	eq(
+		[p.level, p.experience * 100 / Profile.exp_needed(p.level)],
+		[bar.level, 24],
+		"the bar ends where the hero is after the mission"
+	)
 	bar.begin_time(60)
 	eq(bar.bars, [0, 24, 33], "Time Exp: 10 more, from the end of the mission's part")
 	eq(bar.part, 1, "the time's part grows")
@@ -71,7 +78,10 @@ func test_the_exp_pages_show_the_bar() -> void:
 	sim.tick(-1, -1, true)
 	eq(sim.exp_bars.level_up_ticks, 1, "a key cuts it short")
 	screen._show_banner()
-	check(screen.banner_text.text.ends_with(screen.tr("mission.level_up") % 2), screen.banner_text.text)
+	check(
+		screen.banner_text.text.ends_with(screen.tr("mission.level_up") % 2),
+		screen.banner_text.text
+	)
 	sim.banner = MapSim.BANNER_STAGE_CLEAR
 	screen._show_banner()
 	check(not screen.exp_bar.visible, "no bar on other banners")

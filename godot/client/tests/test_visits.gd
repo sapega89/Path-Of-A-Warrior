@@ -28,7 +28,9 @@ func test_a_won_mission_allows_a_visit() -> void:
 	check(p.save(TEST_PATH), "saved")
 	check(Profile.load_or_new(TEST_PATH).can_visit, "and it is kept")
 	eq(Visits.generals(p), [[4, 10]], "the friend and his points")
-	p.add_item({"id": Visits.SEAL, "attack": 0, "defense": 0, "hp": 0, "mp": 0, "enchant": 0, "extra": 0})
+	p.add_item(
+		{"id": Visits.SEAL, "attack": 0, "defense": 0, "hp": 0, "mp": 0, "enchant": 0, "extra": 0}
+	)
 	eq(Visits.generals(p).size(), 44, "with the Hetman's Seal all of them")
 	eq(Visits.generals(p)[0], [4, 10], "points of a friend")
 	eq(Visits.generals(p)[1], [5, 0], "0 for one not met")
@@ -36,10 +38,18 @@ func test_a_won_mission_allows_a_visit() -> void:
 
 func test_greetings_by_friendship() -> void:
 	var g := Visits.greeting(0, 0, "Hero", "Jan Gorski")
-	eq(g, ["[Hero] Good day.", "[Jan Gorski] Good day to you.", "[Hero] Thank you for having me."], "the coolest")
+	eq(
+		g,
+		["[Hero] Good day.", "[Jan Gorski] Good day to you.", "[Hero] Thank you for having me."],
+		"the coolest"
+	)
 	eq(Visits.greeting(100, 0, "H", "K")[0], "[H] " + Visits.line(27), "100 points: the warmest")
 	eq(Visits.greeting(15, 1, "H", "K")[0], "[H] " + Visits.line(33), "a general of topic 1")
-	eq(Visits.talk(0, 0, "H", "K"), ["[H] Nobody handles a sabre the way you do!", "[K] Thanks."], "the sword")
+	eq(
+		Visits.talk(0, 0, "H", "K"),
+		["[H] Nobody handles a sabre the way you do!", "[K] Thanks."],
+		"the sword"
+	)
 	eq(Visits.talk(1, 3, "H", "K")[1], "[K] That is a generous heart you have.", "people, topic 1")
 
 
@@ -68,8 +78,14 @@ func test_gifts() -> void:
 		rng.seed = i
 		var gift := Visits.give_gift(p, 4, g, 2, rng)
 		kinds[int(gift.kind)] = true
-		check(int(gift.kind) == Visits.Gift.NONE or not str(gift.text).is_empty(), "a gift has a name: %s" % gift)
-	check(kinds.has(Visits.Gift.SKILL) and kinds.has(Visits.Gift.ATTACK), "skills and attack about tactics")
+		check(
+			int(gift.kind) == Visits.Gift.NONE or not str(gift.text).is_empty(),
+			"a gift has a name: %s" % gift
+		)
+	check(
+		kinds.has(Visits.Gift.SKILL) and kinds.has(Visits.Gift.ATTACK),
+		"skills and attack about tactics"
+	)
 	check(p.base_attack > Profile.BASE_ATTACK, "attack given")
 	check(p.base_hp >= hp, "HP not lost")
 	eq((Visits.gift_gear(1, rng) - 101) % 5 <= 1, true, "a new hero gets low tiers")
@@ -104,7 +120,9 @@ func test_visiting_screen() -> void:
 	check(screen.text.text.contains("Tactics"), screen.text.text)
 	screen.press()
 	eq(screen.step, Visiting.Step.VISITED, "the visit's end")
-	check(screen.text.text.begins_with("You visited Jan Gorski.\nFriendship:100%"), screen.text.text)
+	check(
+		screen.text.text.begins_with("You visited Jan Gorski.\nFriendship:100%"), screen.text.text
+	)
 	var saved: RefCounted = Profile.load_or_new(TEST_PATH)
 	check(not saved.can_visit, "one visit per mission")
 	screen.free()

@@ -11,7 +11,8 @@ extends Node3D
 ##   3 a forest edge: rows of firs and oaks, bushes and stumps.
 ## The ground is a green meadow, lush dark grass, dry steppe or red trodden earth. The light
 ## is the maps' (ArtKit.light: a dull sun through the clouds, a deep cool shade) or a cold
-## moon, and far away the land fades into the colour of the sky's horizon. The sky itself is painted behind the 3D
+## moon, and far away the land fades into the colour of the sky's horizon. The sky itself is painted
+## behind the 3D
 ## view (sky_settings(): assets/art/shaders/story_sky.gdshader).
 
 const ArtKit := preload("res://scripts/art/art_kit.gd")
@@ -19,14 +20,38 @@ const ArtGround := preload("res://scripts/art/art_ground.gd")
 
 ## The flat part of the ground: the fighters, the scenery and the camera's view of it.
 const PLAY := Rect2(-18, -9, 36, 21)
-const DAY := {"top": Color("565d6b"), "horizon": Color("a8a395"), "horizon_y": 0.34,
-	"glow": Color("cfc4a8"), "glow_size": 0.3, "sun": Vector2(0.18, 0.06), "sun_size": 0.0,
-	"sun_colour": Color("efe2c4"), "clouds": 0.55, "cloud_dark": Color("646a76"),
-	"cloud_lit": Color("b4afa2"), "stars": 0.0, "bolt": -1.0, "seed": 3.0}
-const NIGHT := {"top": Color("0c1222"), "horizon": Color("2c3854"), "horizon_y": 0.34,
-	"glow": Color("5a6a90"), "glow_size": 0.3, "sun": Vector2(0.78, 0.1), "sun_size": 0.035,
-	"sun_colour": Color("ece6cf"), "clouds": 0.25, "cloud_dark": Color("1a2238"),
-	"cloud_lit": Color("6a7898"), "stars": 1.0, "bolt": -1.0, "seed": 7.0}
+const DAY := {
+	"top": Color("565d6b"),
+	"horizon": Color("a8a395"),
+	"horizon_y": 0.34,
+	"glow": Color("cfc4a8"),
+	"glow_size": 0.3,
+	"sun": Vector2(0.18, 0.06),
+	"sun_size": 0.0,
+	"sun_colour": Color("efe2c4"),
+	"clouds": 0.55,
+	"cloud_dark": Color("646a76"),
+	"cloud_lit": Color("b4afa2"),
+	"stars": 0.0,
+	"bolt": -1.0,
+	"seed": 3.0
+}
+const NIGHT := {
+	"top": Color("0c1222"),
+	"horizon": Color("2c3854"),
+	"horizon_y": 0.34,
+	"glow": Color("5a6a90"),
+	"glow_size": 0.3,
+	"sun": Vector2(0.78, 0.1),
+	"sun_size": 0.035,
+	"sun_colour": Color("ece6cf"),
+	"clouds": 0.25,
+	"cloud_dark": Color("1a2238"),
+	"cloud_lit": Color("6a7898"),
+	"stars": 1.0,
+	"bolt": -1.0,
+	"seed": 7.0
+}
 ## The ground's colours by its kind: [soil, dry grass, green grass], and how green it is.
 const GROUNDS := [
 	[Color("8f7a56"), Color("7c7a52"), Color("566a3e"), 1.0],  # a green meadow
@@ -111,7 +136,9 @@ func _light() -> void:
 		ArtKit.grade(env)
 	else:
 		ArtKit.light(sun, env)
-	sun.transform = Transform3D(Basis.looking_at(Vector3(0.5, -0.7, -0.5).normalized(), Vector3.UP), Vector3.ZERO)
+	sun.transform = Transform3D(
+		Basis.looking_at(Vector3(0.5, -0.7, -0.5).normalized(), Vector3.UP), Vector3.ZERO
+	)
 	env.fog_light_color = sky.horizon
 
 
@@ -123,14 +150,28 @@ func _ground() -> void:
 	var colours: Array = GROUNDS[ground_kind]
 	var green: float = colours[3]
 	if green > 0.0:
-		ground.greens = [Vector3(-9, -4, 6.0 * green), Vector3(8, -5, 7.0 * green), Vector3(-2, 6, 5.0 * green),
-			Vector3(12, 4, 6.0 * green), Vector3(-14, 3, 5.0 * green)]
+		ground.greens = [
+			Vector3(-9, -4, 6.0 * green),
+			Vector3(8, -5, 7.0 * green),
+			Vector3(-2, 6, 5.0 * green),
+			Vector3(12, 4, 6.0 * green),
+			Vector3(-14, 3, 5.0 * green)
+		]
 	# the strip trodden by the fighters; the road of scenery 2 winds away from it
 	ground.paths = [PackedVector2Array([Vector2(-9.5, 0.1), Vector2(9.5, -0.1)])]
 	ground.path_width = 2.6 if ground_kind == 3 else 1.8
 	if scenery == 2:
-		ground.paths.append(PackedVector2Array([Vector2(0.4, 0.0), Vector2(1.6, -5.0), Vector2(0.2, -10.0),
-			Vector2(2.5, -16.0), Vector2(1.0, -24.0)]))
+		ground.paths.append(
+			PackedVector2Array(
+				[
+					Vector2(0.4, 0.0),
+					Vector2(1.6, -5.0),
+					Vector2(0.2, -10.0),
+					Vector2(2.5, -16.0),
+					Vector2(1.0, -24.0)
+				]
+			)
+		)
 	_things.add_child(ground)
 	ground.build()
 	var m := (ground.get_node("Ground") as MeshInstance3D).material_override as ShaderMaterial
@@ -212,11 +253,22 @@ func _forest() -> void:
 		var x := -20.0 + row * 1.3
 		while x < 20.0:
 			var tree := "dub" if rng.randf() < 0.2 else "yalyna"
-			_put(tree, x + rng.randf_range(-0.6, 0.6), z + rng.randf_range(-0.8, 0.8), rng.randf() * 360.0,
-				rng.randf_range(0.85, 1.2) if tree == "yalyna" else rng.randf_range(0.7, 0.9))
+			_put(
+				tree,
+				x + rng.randf_range(-0.6, 0.6),
+				z + rng.randf_range(-0.8, 0.8),
+				rng.randf() * 360.0,
+				rng.randf_range(0.85, 1.2) if tree == "yalyna" else rng.randf_range(0.7, 0.9)
+			)
 			x += rng.randf_range(2.6, 3.6)
 	for x in [-11.0, -6.2, 5.4, 10.6]:
-		_put("kushch", x, -8.0 + rng.randf_range(-0.6, 0.6), rng.randf() * 360.0, rng.randf_range(0.9, 1.3))
+		_put(
+			"kushch",
+			x,
+			-8.0 + rng.randf_range(-0.6, 0.6),
+			rng.randf() * 360.0,
+			rng.randf_range(0.9, 1.3)
+		)
 	_put("yalyna", -9.0, -9.5, 20.0, 0.75)
 	_put("yalyna", 8.2, -10.0, 70.0, 0.7)
 	_put("penok", -8.6, -5.2)

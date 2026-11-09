@@ -12,14 +12,16 @@ const OnlineClient := preload("res://scripts/net/online_client.gd")
 ## Button name, text key, what it does: ["find", mode] / ["type", text screen kind] /
 ## ["order", invite mode].
 const CHOICES := {
-	"duel": [
+	"duel":
+	[
 		["Duel1", "online.duel_1on1", ["find", 0]],
 		["Duel2", "online.duel_2on2", ["find", 1]],
 		["Challenge1", "online.challenge_1", ["type", "challenge1"]],
 		["Challenge2", "online.challenge_2", ["type", "challenge2"]],
 		["Order", "online.duel_order", ["order", OnlineClient.TOGETHER]],
 	],
-	"mission": [
+	"mission":
+	[
 		["Solo", "online.mission_solo", ["find", 2]],
 		["Ally", "online.mission_ally", ["type", "ally"]],
 		["Order", "online.mission_order", ["order", OnlineClient.ALLY]],

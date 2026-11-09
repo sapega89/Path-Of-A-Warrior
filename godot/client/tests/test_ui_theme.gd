@@ -38,14 +38,25 @@ func test_plaques_and_panels() -> void:
 	var normal := t.get_stylebox("normal", "Button") as StyleBoxFlat
 	check(normal.corner_radius_top_left <= 3 and normal.anti_aliasing, "hard corners, smooth edges")
 	eq(normal.border_color, UiTheme.IRON, "an iron rim")
-	eq((t.get_stylebox("pressed", "Button") as StyleBoxFlat).bg_color, UiTheme.BUTTON_PRESSED, "blood-red when pressed")
-	check(t.get_stylebox("panel", "PanelContainer") is UiTheme.PanelBox, "panels of leather with their rivets")
+	eq(
+		(t.get_stylebox("pressed", "Button") as StyleBoxFlat).bg_color,
+		UiTheme.BUTTON_PRESSED,
+		"blood-red when pressed"
+	)
+	check(
+		t.get_stylebox("panel", "PanelContainer") is UiTheme.PanelBox,
+		"panels of leather with their rivets"
+	)
 	check(t.get_stylebox("embedded_border", "Window") is UiTheme.PanelBox, "and the dialogs")
 	var on := t.get_icon("checked", "CheckBox")
 	var off := t.get_icon("unchecked", "CheckBox")
 	check(on != null and off != null and on != off, "the check boxes drawn")
 	var compact := UiTheme.compact()
-	eq((compact.get_stylebox("normal", "Button") as StyleBoxFlat).content_margin_top, 4.0, "lower buttons")
+	eq(
+		(compact.get_stylebox("normal", "Button") as StyleBoxFlat).content_margin_top,
+		4.0,
+		"lower buttons"
+	)
 
 
 func test_the_backdrop_and_the_coin() -> void:
@@ -65,11 +76,17 @@ func test_the_backdrop_and_the_coin() -> void:
 func test_the_hud_panel() -> void:
 	for x in MapHud.ORB_X:
 		check(x - MapHud.ORB_R >= 0 and x + MapHud.ORB_R <= 240, "an orb in the panel: %d" % x)
-	check(MapHud.ORB_Y - MapHud.ORB_R > 3 and MapHud.ORB_Y + MapHud.ORB_R < MapHud.PANEL_H, "and under its rim")
+	check(
+		MapHud.ORB_Y - MapHud.ORB_R > 3 and MapHud.ORB_Y + MapHud.ORB_R < MapHud.PANEL_H,
+		"and under its rim"
+	)
 	for b in 2:
 		var r := MapHud._potion_rect(Vector2.ZERO, b, 1.0)
 		for x in MapHud.ORB_X:
-			check(absf(r.get_center().x - x) > MapHud.ORB_R + MapHud.ITEM / 2.0, "potion %d beside the orbs" % b)
+			check(
+				absf(r.get_center().x - x) > MapHud.ORB_R + MapHud.ITEM / 2.0,
+				"potion %d beside the orbs" % b
+			)
 	var src := FileAccess.get_file_as_string("res://scripts/ui/map_hud.gd")
 	check(not src.contains("assets/original"), "no old pictures")
 
@@ -80,7 +97,10 @@ func test_exit_arrows() -> void:
 	eq(MissionScreen.exit_arrow(2).get_size(), Vector2(72, 60), "up")
 	var down := MissionScreen.exit_arrow(0).get_image()
 	var up := MissionScreen.exit_arrow(2).get_image()
-	check(down.get_pixel(36, 8).a < down.get_pixel(36, 52).a, "down: the point at the bottom is the strong one")
+	check(
+		down.get_pixel(36, 8).a < down.get_pixel(36, 52).a,
+		"down: the point at the bottom is the strong one"
+	)
 	check(up.get_pixel(36, 8).a > up.get_pixel(36, 52).a, "up: at the top")
 
 

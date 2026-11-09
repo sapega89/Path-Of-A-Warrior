@@ -32,7 +32,9 @@ func _ready() -> void:
 		language.set_item_metadata(i, code)
 	language.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	language.select(I18nScript.LOCALES.find(Settings.current_locale()))
-	language.item_selected.connect(func(i: int): Settings.set_value("locale", language.get_item_metadata(i)))
+	language.item_selected.connect(
+		func(i: int): Settings.set_value("locale", language.get_item_metadata(i))
+	)
 	_row(col, "settings.language", language)
 
 	music = _slider("Music", "music_volume")

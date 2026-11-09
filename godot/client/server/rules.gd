@@ -48,7 +48,11 @@ static func hero_stats(level: int, build: Dictionary, face := 0) -> Dictionary:
 	var given := 0
 	var keys := build.keys()
 	for i in keys.size():
-		var n: int = points - given if i == keys.size() - 1 else points * int(build[keys[i]]) / maxi(1, total)
+		var n: int = (
+			points - given
+			if i == keys.size() - 1
+			else points * int(build[keys[i]]) / maxi(1, total)
+		)
 		out[keys[i]] += n * int(POINT_GAIN[keys[i]])
 		given += n
 	return out
@@ -63,8 +67,11 @@ static func soldier_level(rng: RandomNumberGenerator, lp: int) -> int:
 
 
 static func soldier_stats(t: int, level: int) -> Dictionary:
-	return {"atk": (SOLDIER_BASE[t] + level) * SOLDIER_MULT[t] / 100, "def": level - 1,
-		"hp": SOLDIER_HP[t] + 3 * level}
+	return {
+		"atk": (SOLDIER_BASE[t] + level) * SOLDIER_MULT[t] / 100,
+		"def": level - 1,
+		"hp": SOLDIER_HP[t] + 3 * level
+	}
 
 
 ## MP of an online skill (3..13) at `level` in the single player.

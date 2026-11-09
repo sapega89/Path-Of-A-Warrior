@@ -100,8 +100,10 @@ func _scatter_tufts() -> void:
 		var z := _rng.randf_range(play.position.y - 6.0, play.end.y + 6.0)
 		if _path_amount(x, z) > 0.2:
 			continue
-		var t := Transform3D(Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3.ONE * _rng.randf_range(0.45, 0.8)),
-			Vector3(x, height(x, z), z))
+		var t := Transform3D(
+			Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3.ONE * _rng.randf_range(0.45, 0.8)),
+			Vector3(x, height(x, z), z)
+		)
 		placed.append(t)
 	mm.instance_count = placed.size()
 	for i in placed.size():

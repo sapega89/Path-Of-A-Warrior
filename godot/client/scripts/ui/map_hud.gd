@@ -93,7 +93,14 @@ func _draw() -> void:
 	# the clock at the top left, the kills or the last enemy hit at the top right
 	var seconds: int = sim.play_seconds()
 	_plaque(Rect2(Vector2(4, 4) * k, Vector2(58, 20) * k), k)
-	_text("%02d:%02d" % [(seconds / 60) % 100, seconds % 60], Vector2(33, 19) * k, 13 * k, UiTheme.TEXT, k, 0)
+	_text(
+		"%02d:%02d" % [(seconds / 60) % 100, seconds % 60],
+		Vector2(33, 19) * k,
+		13 * k,
+		UiTheme.TEXT,
+		k,
+		0
+	)
 	if not sim.target_info.is_empty():
 		_target(sim.target_info, view, k)
 	else:
@@ -101,13 +108,32 @@ func _draw() -> void:
 	# the panel at the bottom with the orbs
 	var origin := Vector2(view.x / 2.0 - 120.0 * k, view.y - PANEL_H * k)
 	_panel(origin, k)
-	_orb(origin + Vector2(ORB_X[0], ORB_Y) * k, ORB_R * k, _fill(sim.hero.hp, sim.hero.max_hp), HP_LIQUID, sim.hero.hp, k)
-	_orb(origin + Vector2(ORB_X[1], ORB_Y) * k, ORB_R * k, _fill(sim.hero.mp, sim.hero.max_mp), MP_LIQUID, sim.hero.mp, k)
+	_orb(
+		origin + Vector2(ORB_X[0], ORB_Y) * k,
+		ORB_R * k,
+		_fill(sim.hero.hp, sim.hero.max_hp),
+		HP_LIQUID,
+		sim.hero.hp,
+		k
+	)
+	_orb(
+		origin + Vector2(ORB_X[1], ORB_Y) * k,
+		ORB_R * k,
+		_fill(sim.hero.mp, sim.hero.max_mp),
+		MP_LIQUID,
+		sim.hero.mp,
+		k
+	)
 	if not show_bar:
 		for b in 2:
 			_socket(_potion_rect(origin, b, k), k, false)
 	if talking():
-		_corner(Rect2(Vector2(0, view.y - AUTO_H * k), Vector2(AUTO_W, AUTO_H) * k), "SKIP", UiTheme.TEXT, k)
+		_corner(
+			Rect2(Vector2(0, view.y - AUTO_H * k), Vector2(AUTO_W, AUTO_H) * k),
+			"SKIP",
+			UiTheme.TEXT,
+			k
+		)
 	elif auto_allowed:
 		_auto(view, k)
 	_pause(view, k)
@@ -139,12 +165,19 @@ func _draw_icons() -> void:
 	for b in 5:
 		var item := int(sim.quick_slots[b][0])
 		if item != 0:
-			_icon("tool", item - 1, Rect2(top + Vector2(slot_x(false, b) + 1, 1) * k, Vector2(ICON, ICON) * k))
+			_icon(
+				"tool",
+				item - 1,
+				Rect2(top + Vector2(slot_x(false, b) + 1, 1) * k, Vector2(ICON, ICON) * k)
+			)
 		var s := int(sim.hotkeys[b])
 		if s >= 12 and s <= 30:
 			var ready: bool = sim.skill_levels[s - 12] > 0 and sim.skill_mp_need(s) <= sim.hero.mp
-			_icon("skill" if ready else "skillgray", s - 12,
-				Rect2(top + Vector2(slot_x(true, b) + 1, 1) * k, Vector2(ICON, ICON) * k))
+			_icon(
+				"skill" if ready else "skillgray",
+				s - 12,
+				Rect2(top + Vector2(slot_x(true, b) + 1, 1) * k, Vector2(ICON, ICON) * k)
+			)
 
 
 func _icon(sheet: String, i: int, r: Rect2) -> void:
@@ -166,26 +199,44 @@ func _draw_labels() -> void:
 			if int(slot[0]) == 0:
 				continue
 			var r := _potion_rect(origin, b, k)
-			_text("x%d" % int(slot[1]), r.end - Vector2(2, 3) * k, 10 * k, UiTheme.TEXT, k, 1, _labels)
+			_text(
+				"x%d" % int(slot[1]), r.end - Vector2(2, 3) * k, 10 * k, UiTheme.TEXT, k, 1, _labels
+			)
 		return
 	var top := origin + Vector2(0, -BAR_H) * k
 	for b in 5:
 		var at := top + Vector2(slot_x(false, b), 0) * k
 		var slot: Array = sim.quick_slots[b]
 		if int(slot[0]) != 0 and int(slot[1]) > 1:
-			_text(str(int(slot[1])), at + Vector2(CELL - 1, BAR_H - 3) * k, 10 * k, UiTheme.TEXT, k, 1, _labels)
+			_text(
+				str(int(slot[1])),
+				at + Vector2(CELL - 1, BAR_H - 3) * k,
+				10 * k,
+				UiTheme.TEXT,
+				k,
+				1,
+				_labels
+			)
 		_key_label(_label_of("belt_%d" % (b + 1)), at, k)
 		_key_label(_label_of("skill_%d" % (b + 1)), top + Vector2(slot_x(true, b), 0) * k, k)
 
 
 func _auto(view: Vector2, k: float) -> void:
-	_corner(Rect2(Vector2(0, view.y - AUTO_H * k), Vector2(AUTO_W, AUTO_H) * k), "AUTO",
-		UiTheme.HIGHLIGHT if auto_on else UiTheme.TEXT_DIM, k)
+	_corner(
+		Rect2(Vector2(0, view.y - AUTO_H * k), Vector2(AUTO_W, AUTO_H) * k),
+		"AUTO",
+		UiTheme.HIGHLIGHT if auto_on else UiTheme.TEXT_DIM,
+		k
+	)
 
 
 func _pause(view: Vector2, k: float) -> void:
-	_corner(Rect2(Vector2(view.x - PAUSE_W * k, view.y - AUTO_H * k), Vector2(PAUSE_W, AUTO_H) * k),
-		"PAUSE", UiTheme.TEXT, k)
+	_corner(
+		Rect2(Vector2(view.x - PAUSE_W * k, view.y - AUTO_H * k), Vector2(PAUSE_W, AUTO_H) * k),
+		"PAUSE",
+		UiTheme.TEXT,
+		k
+	)
 
 
 ## A plaque in a bottom corner with its word in the middle.
@@ -236,11 +287,21 @@ static func slot_x(skill: bool, i: int) -> int:
 ## The bar's slots: a dark hollow each (the icons and the keys: their layers).
 func _bar(top: Vector2, k: float) -> void:
 	for b in 5:
-		_socket(Rect2(top + Vector2(slot_x(false, b), 0) * k, Vector2(CELL + 1, BAR_H) * k).grow(-0.5 * k), k,
-			sim.effect_item != 0 and sim.effect_slot == b)
+		_socket(
+			Rect2(top + Vector2(slot_x(false, b), 0) * k, Vector2(CELL + 1, BAR_H) * k).grow(
+				-0.5 * k
+			),
+			k,
+			sim.effect_item != 0 and sim.effect_slot == b
+		)
 		var s := int(sim.hotkeys[b])
-		_socket(Rect2(top + Vector2(slot_x(true, b), 0) * k, Vector2(CELL + 1, BAR_H) * k).grow(-0.5 * k), k,
-			s != 0 and sim.hero.action == s)
+		_socket(
+			Rect2(top + Vector2(slot_x(true, b), 0) * k, Vector2(CELL + 1, BAR_H) * k).grow(
+				-0.5 * k
+			),
+			k,
+			s != 0 and sim.hero.action == s
+		)
 
 
 ## The label of an action's slot for the device just used.
@@ -262,13 +323,17 @@ func _key_label(label: Dictionary, at: Vector2, k: float) -> void:
 ## A small d-pad of half-width r around c, outlined in ink: dark iron, the arm towards `dir` brass.
 func _dpad(dir: Vector2, c: Vector2, r: float) -> void:
 	var a := maxf(1.0, r * 0.36)  # half an arm's width
-	var bars := [Rect2(c - Vector2(r, a), Vector2(r, a) * 2), Rect2(c - Vector2(a, r), Vector2(a, r) * 2)]
+	var bars := [
+		Rect2(c - Vector2(r, a), Vector2(r, a) * 2), Rect2(c - Vector2(a, r), Vector2(a, r) * 2)
+	]
 	for b: Rect2 in bars:
 		_labels.draw_rect(b.grow(maxf(1.0, r / 6.0)), UiTheme.INK)
 	for b: Rect2 in bars:
 		_labels.draw_rect(b, UiTheme.IRON)
 	var side := Vector2(-dir.y, dir.x)
-	_labels.draw_rect(Rect2(c + side * a + dir * a, Vector2.ZERO).expand(c - side * a + dir * r), UiTheme.ACCENT)
+	_labels.draw_rect(
+		Rect2(c + side * a + dir * a, Vector2.ZERO).expand(c - side * a + dir * r), UiTheme.ACCENT
+	)
 
 
 ## A PlayStation face button's sign of radius r around c, in brass outlined in ink.
@@ -286,8 +351,19 @@ func _shape(shape: String, c: Vector2, r: float) -> void:
 			"square":
 				_labels.draw_rect(Rect2(c - Vector2(r, r), Vector2(r, r) * 2), color, false, width)
 			"triangle":
-				_labels.draw_polyline(PackedVector2Array([c + Vector2(0, -r), c + Vector2(r, r * 0.8),
-					c + Vector2(-r, r * 0.8), c + Vector2(0, -r)]), color, width, true)
+				_labels.draw_polyline(
+					PackedVector2Array(
+						[
+							c + Vector2(0, -r),
+							c + Vector2(r, r * 0.8),
+							c + Vector2(-r, r * 0.8),
+							c + Vector2(0, -r)
+						]
+					),
+					color,
+					width,
+					true
+				)
 
 
 ## The bar's slot under a point of the screen: ["belt", 0..4], ["skill", 0..4], or [].
@@ -322,8 +398,11 @@ func _plaque(r: Rect2, k: float) -> void:
 
 ## A dark hollow for an icon; the one in use has a light rim.
 func _socket(r: Rect2, k: float, hot: bool) -> void:
-	var sb := UiTheme.box(Color(UiTheme.SLOT, 0.88), UiTheme.HIGHLIGHT if hot else UiTheme.SLOT_RIM,
-		int(2 * k) if hot else maxi(1, int(k / 2)))
+	var sb := UiTheme.box(
+		Color(UiTheme.SLOT, 0.88),
+		UiTheme.HIGHLIGHT if hot else UiTheme.SLOT_RIM,
+		int(2 * k) if hot else maxi(1, int(k / 2))
+	)
 	sb.set_corner_radius_all(int(k))
 	draw_style_box(sb, r)
 
@@ -347,11 +426,19 @@ func _panel(origin: Vector2, k: float) -> void:
 		draw_line(origin + Vector2(52, y) * k, origin + Vector2(188, y) * k, line, k, true)
 	var to := get_canvas_item()
 	var reach := 4 if show_bar else 1  # without the bar the potions sit on it
-	var bar := Rect2(origin + Vector2(120 - reach * 15 - 6, 29) * k, Vector2(reach * 30 + 12, 8) * k)
+	var bar := Rect2(
+		origin + Vector2(120 - reach * 15 - 6, 29) * k, Vector2(reach * 30 + 12, 8) * k
+	)
 	var iron := UiTheme.box(UiTheme.IRON.darkened(0.45), UiTheme.INK, maxi(1, int(k / 2)))
 	iron.set_corner_radius_all(int(k))
 	draw_style_box(iron, bar)
-	draw_line(bar.position + Vector2(k, k), Vector2(bar.end.x - k, bar.position.y + k), Color(UiTheme.IRON_LIGHT, 0.5), k, true)
+	draw_line(
+		bar.position + Vector2(k, k),
+		Vector2(bar.end.x - k, bar.position.y + k),
+		Color(UiTheme.IRON_LIGHT, 0.5),
+		k,
+		true
+	)
 	for i in range(-reach, reach + 1):
 		var c := origin + Vector2(120 + i * 15, 33) * k
 		if i == 0:
@@ -381,12 +468,22 @@ func _orb(c: Vector2, r: float, fill: int, liquid: Array, value: int, k: float) 
 			var t := lerpf(a0, PI - a0, float(i) / float(n))
 			var p := c + Vector2(cos(t), sin(t)) * (r - 0.5 * k)
 			points.append(p)
-			colors.append((liquid[0] as Color).lerp(liquid[1], clampf((p.y - (c.y - r)) / (2.0 * r), 0.0, 1.0)))
+			colors.append(
+				(liquid[0] as Color).lerp(
+					liquid[1], clampf((p.y - (c.y - r)) / (2.0 * r), 0.0, 1.0)
+				)
+			)
 		draw_polygon(points, colors)
 		if f < 0.98:
 			var half := sqrt(maxf(0.0, 1.0 - s * s)) * (r - 0.5 * k)
 			var y := c.y + s * r
-			draw_line(Vector2(c.x - half, y), Vector2(c.x + half, y), (liquid[0] as Color).lightened(0.35), 1.2 * k, true)
+			draw_line(
+				Vector2(c.x - half, y),
+				Vector2(c.x + half, y),
+				(liquid[0] as Color).lightened(0.35),
+				1.2 * k,
+				true
+			)
 	# the glass: a dark ring inside the rim, a shine at the upper left
 	draw_arc(c, r - 1.5 * k, 0.0, TAU, 48, Color(0, 0, 0, 0.35), 3.0 * k, true)
 	var shine := PackedVector2Array()
@@ -404,12 +501,22 @@ func _orb(c: Vector2, r: float, fill: int, liquid: Array, value: int, k: float) 
 
 ## A line of text in PT Sans Bold with a dark outline: align -1 from the point, 0 centred on
 ## it, 1 ending at it (the point is on the baseline).
-func _text(text: String, at: Vector2, size: float, color: Color, k: float, align: int, on: CanvasItem = self) -> void:
+func _text(
+	text: String,
+	at: Vector2,
+	size: float,
+	color: Color,
+	k: float,
+	align: int,
+	on: CanvasItem = self
+) -> void:
 	var font := UiTheme.font("bold")
 	var px := int(size)
 	var w := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
 	var p := at - Vector2(w * (align + 1) / 2.0, 0)
-	on.draw_string_outline(font, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, px, maxi(2, int(2 * k)), UiTheme.INK)
+	on.draw_string_outline(
+		font, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, px, maxi(2, int(2 * k)), UiTheme.INK
+	)
 	on.draw_string(font, p, text, HORIZONTAL_ALIGNMENT_LEFT, -1, px, color)
 
 
@@ -422,11 +529,18 @@ func _kills(value: int, view: Vector2, k: float) -> void:
 		var tip := c + Vector2(side * 6, -6) * k
 		var hilt := c + Vector2(-side * 5, 5) * k
 		draw_line(hilt, tip, UiTheme.TEXT, 1.6 * k, true)
-		draw_line(hilt + Vector2(side * 2.2, 0.6) * k, hilt + Vector2(side * 0.2, -2.6) * k, UiTheme.ACCENT, 1.4 * k, true)
+		draw_line(
+			hilt + Vector2(side * 2.2, 0.6) * k,
+			hilt + Vector2(side * 0.2, -2.6) * k,
+			UiTheme.ACCENT,
+			1.4 * k,
+			true
+		)
 	_text(str(value), Vector2(r.end.x - 6 * k, r.position.y + 15 * k), 13 * k, UiTheme.TEXT, k, 1)
 
 
-## The last enemy hit: his name, his level on a cinnabar badge and his HP bar, in place of the kills.
+## The last enemy hit: his name, his level on a cinnabar badge and his HP bar, in place of the
+## kills.
 func _target(t: Dictionary, view: Vector2, k: float) -> void:
 	var font := UiTheme.font("bold")
 	var label := tr(str(t.get("name", "")))
@@ -449,6 +563,13 @@ func _target(t: Dictionary, view: Vector2, k: float) -> void:
 		fill.set_corner_radius_all(int(k))
 		fill.border_blend = false
 		var inner := track.grow(-1 * k)
-		draw_style_box(fill, Rect2(inner.position, Vector2(inner.size.x * bar / 62.0, inner.size.y)))
-		draw_rect(Rect2(inner.position + Vector2(1, 0.6) * k, Vector2(inner.size.x * bar / 62.0 - 2 * k, 1.2 * k)),
-			Color(1, 0.6, 0.5, 0.45))
+		draw_style_box(
+			fill, Rect2(inner.position, Vector2(inner.size.x * bar / 62.0, inner.size.y))
+		)
+		draw_rect(
+			Rect2(
+				inner.position + Vector2(1, 0.6) * k,
+				Vector2(inner.size.x * bar / 62.0 - 2 * k, 1.2 * k)
+			),
+			Color(1, 0.6, 0.5, 0.45)
+		)

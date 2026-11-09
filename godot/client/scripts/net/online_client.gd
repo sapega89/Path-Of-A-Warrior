@@ -1,3 +1,4 @@
+# gdlint: disable=max-public-methods
 extends RefCounted
 ## The online game on this device, the client of server/online.gd: what the Multiplayer
 ## screens know of the player's online character, the Ranking, the order and the chat.
@@ -16,8 +17,16 @@ extends RefCounted
 ## called when one starts, to show it (the Cloud pushes the battle screen).
 
 const OnlineBattle := preload("res://scripts/net/online_battle.gd")
-const BATTLE_PUSHES := ["room", "stage_info", "all_ready", "round_start", "turn_result",
-	"stage_end", "room_join", "battle_end"]
+const BATTLE_PUSHES := [
+	"room",
+	"stage_info",
+	"all_ready",
+	"round_start",
+	"turn_result",
+	"stage_end",
+	"room_join",
+	"battle_end"
+]
 
 ## invite() modes: Challenge 1:1, Challenge 2:2, Invite An Ally (a mission), 2-on-2 side by
 ## side with a member of my order against two CPU fighters.
@@ -29,13 +38,32 @@ const TOGETHER := 3
 const SKILL_IDS := [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 const EMPTY_SKILL := 99
 const GRADES := ["D+", "C-", "C", "C+", "B-", "B", "B+", "A-", "A", "A+"]
-const SKILL_NAMES := ["Whirlwind Sabre", "Storm Sabre", "Thunder Sabre", "Dnipro Wave",
-	"Rapids", "Flood", "Healing Herbs", "Living Water", "Fury", "Charm",
-	"Protection of the Virgin"]
-const SKILL_INFO := ["Series of 3 Atk", "Ignore opponent Def.", "Ignore opponent Evd.",
-	"Series of 6 Atk", "Opponent Atk Decrease", "Atk 2 enemies at the same time", "Heal HP",
-	"Heal HP and MP Increase", "Atk Increase for 3 turns", "Def Increase for 3 turns",
-	"Atk/Def Increase for 3 turns"]
+const SKILL_NAMES := [
+	"Whirlwind Sabre",
+	"Storm Sabre",
+	"Thunder Sabre",
+	"Dnipro Wave",
+	"Rapids",
+	"Flood",
+	"Healing Herbs",
+	"Living Water",
+	"Fury",
+	"Charm",
+	"Protection of the Virgin"
+]
+const SKILL_INFO := [
+	"Series of 3 Atk",
+	"Ignore opponent Def.",
+	"Ignore opponent Evd.",
+	"Series of 6 Atk",
+	"Opponent Atk Decrease",
+	"Atk 2 enemies at the same time",
+	"Heal HP",
+	"Heal HP and MP Increase",
+	"Atk Increase for 3 turns",
+	"Def Increase for 3 turns",
+	"Atk/Def Increase for 3 turns"
+]
 const LOBBY := 0
 const ORDER := 1
 const PRIVATE := 2
@@ -47,7 +75,8 @@ var request: Callable
 var busy := false
 var entered := false
 var kicked := false  # the same UserID went online on another device
-var me := {}  # the character: name, face, level, wins, losses, hp, weapon, slots, quotes, skill_cost
+## the character: name, face, level, wins, losses, hp, weapon, slots, quotes, skill_cost
+var me := {}
 var unread := [0, 0]  # chat messages waiting: [order, private]
 var invitation := 1  # Options > Invitation: 0 Deny, 1 Accept
 var attributes := {}  # hp, hp_bonus, mp, mp_bonus, atk, atk_bonus, def, def_bonus
@@ -123,7 +152,13 @@ func on_push(m: Dictionary) -> void:
 		"chat_push":
 			var k := key(int(m.get("channel", 0)), str(m.get("peer", "")))
 			var rows: Array = chat.get(k, [])
-			rows.append({"id": str(m.get("id", "")), "name": str(m.get("name", "")), "text": str(m.get("text", ""))})
+			rows.append(
+				{
+					"id": str(m.get("id", "")),
+					"name": str(m.get("name", "")),
+					"text": str(m.get("text", ""))
+				}
+			)
 			chat[k] = rows.slice(-HISTORY)
 			var channel := int(m.get("channel", 0))
 			if k != reading and str(m.get("id", "")) != str(me.get("id", "")) and channel != LOBBY:
@@ -155,7 +190,9 @@ func _send(msg: Dictionary, done: Callable, on_ok: Callable, again := true) -> v
 	request.call(msg, _answered.bind(msg, done, on_ok, again))
 
 
-func _answered(r: Dictionary, msg: Dictionary, done: Callable, on_ok: Callable, again: bool) -> void:
+func _answered(
+	r: Dictionary, msg: Dictionary, done: Callable, on_ok: Callable, again: bool
+) -> void:
 	busy = false
 	if r.get("ok", false):
 		on_ok.call(r)
@@ -183,10 +220,14 @@ func _take_me(r: Dictionary) -> void:
 
 ## Online from now on; the answer is the character.
 func enter(done: Callable) -> void:
-	_send({"t": "mp_enter"}, done, func(r: Dictionary) -> void:
-		_take_me(r)
-		entered = true
-		kicked = false)
+	_send(
+		{"t": "mp_enter"},
+		done,
+		func(r: Dictionary) -> void:
+			_take_me(r)
+			entered = true
+			kicked = false
+	)
 
 
 func leave() -> void:
@@ -200,11 +241,17 @@ func ask_profile(done: Callable) -> void:
 
 
 func ask_options(done: Callable) -> void:
-	_send({"t": "mp_options"}, done, func(r: Dictionary) -> void: invitation = int(r.get("invitation", 1)))
+	_send(
+		{"t": "mp_options"},
+		done,
+		func(r: Dictionary) -> void: invitation = int(r.get("invitation", 1))
+	)
 
 
 func set_invitation(v: int, done: Callable) -> void:
-	_send({"t": "mp_options_set", "invitation": v}, done, func(_r: Dictionary) -> void: invitation = v)
+	_send(
+		{"t": "mp_options_set", "invitation": v}, done, func(_r: Dictionary) -> void: invitation = v
+	)
 
 
 func set_name(name: String, done: Callable) -> void:
@@ -213,49 +260,75 @@ func set_name(name: String, done: Callable) -> void:
 
 ## which: "start" (the battle's first words) or "win" (the victory quote).
 func set_quote(which: String, quote: String, done: Callable) -> void:
-	_send({"t": "mp_quote", "which": which, "quote": quote}, done, func(_r: Dictionary) -> void:
-		me["quote_" + which] = quote)
+	_send(
+		{"t": "mp_quote", "which": which, "quote": quote},
+		done,
+		func(_r: Dictionary) -> void: me["quote_" + which] = quote
+	)
 
 
 func ask_attributes(done: Callable) -> void:
-	_send({"t": "mp_attributes"}, done, func(r: Dictionary) -> void:
-		attributes = r.duplicate()
-		attributes.erase("q"))
+	_send(
+		{"t": "mp_attributes"},
+		done,
+		func(r: Dictionary) -> void:
+			attributes = r.duplicate()
+			attributes.erase("q")
+	)
 
 
 func ask_skills(done: Callable) -> void:
-	_send({"t": "mp_skills"}, done, func(r: Dictionary) -> void:
-		skills = []
-		for s in r.get("skills", []):
-			skills.append({"id": int(s.id), "level": int(s.level)}))
+	_send(
+		{"t": "mp_skills"},
+		done,
+		func(r: Dictionary) -> void:
+			skills = []
+			for s in r.get("skills", []):
+				skills.append({"id": int(s.id), "level": int(s.level)})
+	)
 
 
 ## The four skill slots (EMPTY_SKILL for none), learned skills only.
 func set_slots(slots: Array, done: Callable) -> void:
-	_send({"t": "mp_slots", "slots": slots}, done, func(_r: Dictionary) -> void:
-		var kept: Array = slots.filter(func(s): return s != EMPTY_SKILL)
-		while kept.size() < 4:
-			kept.append(EMPTY_SKILL)
-		me.slots = kept)
+	_send(
+		{"t": "mp_slots", "slots": slots},
+		done,
+		func(_r: Dictionary) -> void:
+			var kept: Array = slots.filter(func(s): return s != EMPTY_SKILL)
+			while kept.size() < 4:
+				kept.append(EMPTY_SKILL)
+			me.slots = kept
+	)
 
 
 func ask_records(done: Callable) -> void:
-	_send({"t": "mp_records"}, done, func(r: Dictionary) -> void:
-		records = r.duplicate()
-		records.erase("q"))
+	_send(
+		{"t": "mp_records"},
+		done,
+		func(r: Dictionary) -> void:
+			records = r.duplicate()
+			records.erase("q")
+	)
 
 
 func ask_purse(done: Callable) -> void:
-	_send({"t": "mp_purse"}, done, func(r: Dictionary) -> void:
-		purse = r.duplicate()
-		purse.erase("q"))
+	_send(
+		{"t": "mp_purse"},
+		done,
+		func(r: Dictionary) -> void:
+			purse = r.duplicate()
+			purse.erase("q")
+	)
 
 
 ## The Ranking of a category (1 Fame, 2 Duel, 3 Mission): my rank, then three rows (the top
 ## three, or around me when near).
 func ask_rank(cat: int, near: bool, done: Callable) -> void:
-	_send({"t": "mp_rank_mine", "cat": cat}, _ranked.bind(cat, near, done), func(r: Dictionary) -> void:
-		rank = {"rank": int(r.rank), "value": int(r.value)})
+	_send(
+		{"t": "mp_rank_mine", "cat": cat},
+		_ranked.bind(cat, near, done),
+		func(r: Dictionary) -> void: rank = {"rank": int(r.rank), "value": int(r.value)}
+	)
 
 
 func _ranked(err: String, cat: int, near: bool, done: Callable) -> void:
@@ -264,41 +337,66 @@ func _ranked(err: String, cat: int, near: bool, done: Callable) -> void:
 		return
 	if err == "none":
 		rank = {}
-	_send({"t": "mp_rank_list", "cat": cat, "near": near}, done, func(r: Dictionary) -> void:
-		rank_rows = r.get("rows", []))
+	_send(
+		{"t": "mp_rank_list", "cat": cat, "near": near},
+		done,
+		func(r: Dictionary) -> void: rank_rows = r.get("rows", [])
+	)
 
 
 func ask_order(done: Callable) -> void:
-	_send({"t": "order_info"}, done, func(r: Dictionary) -> void:
-		order_name = str(r.get("name", ""))
-		members = r.get("rows", []))
+	_send(
+		{"t": "order_info"},
+		done,
+		func(r: Dictionary) -> void:
+			order_name = str(r.get("name", ""))
+			members = r.get("rows", [])
+	)
 
 
 func order_create(name: String, done: Callable) -> void:
-	_send({"t": "order_create", "name": name}, done, func(_r: Dictionary) -> void: order_name = name.to_upper())
+	_send(
+		{"t": "order_create", "name": name},
+		done,
+		func(_r: Dictionary) -> void: order_name = name.to_upper()
+	)
 
 
 func order_join(name: String, done: Callable) -> void:
-	_send({"t": "order_join", "name": name}, done, func(_r: Dictionary) -> void: order_name = name.to_upper())
+	_send(
+		{"t": "order_join", "name": name},
+		done,
+		func(_r: Dictionary) -> void: order_name = name.to_upper()
+	)
 
 
 func order_leave(done: Callable) -> void:
-	_send({"t": "order_leave"}, done, func(_r: Dictionary) -> void:
-		order_name = ""
-		members = [])
+	_send(
+		{"t": "order_leave"},
+		done,
+		func(_r: Dictionary) -> void:
+			order_name = ""
+			members = []
+	)
 
 
 ## Reads a conversation (and the server counts it read).
 func read_chat(channel: int, peer: String, done: Callable) -> void:
-	_send({"t": "chat_read", "channel": channel, "peer": peer}, done, func(r: Dictionary) -> void:
-		var rows: Array = []
-		for x in r.get("rows", []):
-			rows.append({"id": str(x.id), "name": str(x.name), "text": str(x.text)})
-		chat[key(channel, str(r.get("peer", peer)))] = rows
-		if channel == PRIVATE:
-			peer_name = str(r.get("peer_name", peer))
-		if channel != LOBBY:
-			unread[channel - 1] = 0 if channel == ORDER else maxi(0, int(unread[1]) - _peer_unread(peer)))
+	_send(
+		{"t": "chat_read", "channel": channel, "peer": peer},
+		done,
+		func(r: Dictionary) -> void:
+			var rows: Array = []
+			for x in r.get("rows", []):
+				rows.append({"id": str(x.id), "name": str(x.name), "text": str(x.text)})
+			chat[key(channel, str(r.get("peer", peer)))] = rows
+			if channel == PRIVATE:
+				peer_name = str(r.get("peer_name", peer))
+			if channel != LOBBY:
+				unread[channel - 1] = (
+					0 if channel == ORDER else maxi(0, int(unread[1]) - _peer_unread(peer))
+				)
+	)
 
 
 func _peer_unread(peer: String) -> int:
@@ -312,22 +410,40 @@ func _peer_unread(peer: String) -> int:
 
 ## Writes to a conversation; the server pushes the message back to every reader, me too.
 func send_chat(channel: int, peer: String, text: String, done: Callable) -> void:
-	_send({"t": "chat_send", "channel": channel, "peer": peer, "text": text}, done, func(_r: Dictionary) -> void: pass)
+	_send(
+		{"t": "chat_send", "channel": channel, "peer": peer, "text": text},
+		done,
+		func(_r: Dictionary) -> void: pass
+	)
 
 
 func ask_peers(done: Callable) -> void:
-	_send({"t": "chat_peers"}, done, func(r: Dictionary) -> void:
-		peers = []
-		for p in r.get("rows", []):
-			peers.append({"id": str(p.id), "name": str(p.name), "unread": int(p.unread), "online": int(p.online)}))
+	_send(
+		{"t": "chat_peers"},
+		done,
+		func(r: Dictionary) -> void:
+			peers = []
+			for p in r.get("rows", []):
+				peers.append(
+					{
+						"id": str(p.id),
+						"name": str(p.name),
+						"unread": int(p.unread),
+						"online": int(p.online)
+					}
+				)
+	)
 
 
 # --- battles --------------------------------------------------------------------------------
 ## Duel 1-on-1 (mode 0), 2-on-2 (1) or a Solo Mission (2): the battle comes as a push, now or
 ## when an opponent is found (waiting).
 func find_battle(mode: int, done: Callable) -> void:
-	_send({"t": "mp_match", "mode": mode}, done, func(r: Dictionary) -> void:
-		waiting = bool(r.get("waiting", false)))
+	_send(
+		{"t": "mp_match", "mode": mode},
+		done,
+		func(r: Dictionary) -> void: waiting = bool(r.get("waiting", false))
+	)
 
 
 ## No more waiting for an opponent.

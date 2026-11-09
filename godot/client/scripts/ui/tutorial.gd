@@ -19,8 +19,17 @@ signal finished
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 
 enum Step { MOVE, ATTACK, LOOT, SKILL, POTION, AUTO, EXIT, PAUSE, DONE }
-const KEYS := ["training.move", "training.attack", "training.loot", "training.skill",
-	"training.potion", "training.auto", "training.exit", "training.pause", "training.done"]
+const KEYS := [
+	"training.move",
+	"training.attack",
+	"training.loot",
+	"training.skill",
+	"training.potion",
+	"training.auto",
+	"training.exit",
+	"training.pause",
+	"training.done"
+]
 const WALK_PX := 54  # two cells
 const LOOT_WAIT := 8.0
 const PAUSE_WAIT := 8.0
@@ -198,8 +207,12 @@ func finish() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if step == Step.DONE and not _over and screen.pause_menu == null \
-			and (event.is_action_pressed("ui_accept") or event.is_action_pressed("attack")):
+	if (
+		step == Step.DONE
+		and not _over
+		and screen.pause_menu == null
+		and (event.is_action_pressed("ui_accept") or event.is_action_pressed("attack"))
+	):
 		get_viewport().set_input_as_handled()
 		finish()
 

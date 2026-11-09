@@ -3,7 +3,8 @@ extends RefCounted
 ## builds it), made in code from the original tiles. Big trees close it in (three tiles deep
 ## at the top, two wide on the sides); each way on (a mission, see camp_screen.gd) is a gap in
 ## the trees (`inside` is the cell just within it), with a fence across it while its place is
-## closed. The hero comes in at the bottom. Every camp has the blacksmith's fire (buy, sell, enchant,
+## closed. The hero comes in at the bottom. Every camp has the blacksmith's fire (buy, sell,
+## enchant,
 ## combine), the stores (the warehouse) and the town hall (every colonel and general, and
 ## the visits of the generals). Dirt roads run from the campfire to each way and down to where
 ## the hero comes in; the smithy and the stores have their racks, crates and hay, and bushes,
@@ -39,10 +40,14 @@ const TENT := [[217, 218, 219], [220, 221, 222]]
 const TENT_AT := [Vector2i(2, 4), Vector2i(11, 4), Vector2i(4, 4), Vector2i(10, 4)]
 ## Things that stand at their place in every camp where they fit: [tile, cell].
 const PROPS := [
-	[125, Vector2i(14, 7)], [126, Vector2i(12, 7)],  # weapon racks by the blacksmith's fire
-	[106, Vector2i(14, 10)], [111, Vector2i(10, 11)],  # a crate and hay by the stores
-	[115, Vector2i(7, 7)], [116, Vector2i(9, 5)],  # stumps to sit on by the fire
-	[113, Vector2i(11, 4)], [113, Vector2i(5, 4)],  # the well (the first place that fits)
+	[125, Vector2i(14, 7)],
+	[126, Vector2i(12, 7)],  # weapon racks by the blacksmith's fire
+	[106, Vector2i(14, 10)],
+	[111, Vector2i(10, 11)],  # a crate and hay by the stores
+	[115, Vector2i(7, 7)],
+	[116, Vector2i(9, 5)],  # stumps to sit on by the fire
+	[113, Vector2i(11, 4)],
+	[113, Vector2i(5, 4)],  # the well (the first place that fits)
 ]
 ## Scattered about: bushes, stumps and hay stand and block; stones lie flat.
 const SCATTER_UP := [136, 136, 117, 118, 115, 116, 111]
@@ -88,8 +93,17 @@ func _init(ways: Array = [], main_camp: bool = false, seed: int = 0) -> void:
 	flags.fill(0)
 	objects.resize(W * H)
 	objects.fill(0)
-	data = {"w": W, "h": H, "ground": ground, "upper": upper, "objects": objects, "flags": flags,
-		"scripts": [], "number": 0, "rooms": {"rooms_x": 1, "rooms_y": 1, "missions": []}}
+	data = {
+		"w": W,
+		"h": H,
+		"ground": ground,
+		"upper": upper,
+		"objects": objects,
+		"flags": flags,
+		"scripts": [],
+		"number": 0,
+		"rooms": {"rooms_x": 1, "rooms_y": 1, "missions": []}
+	}
 	# The border is blocked all round; the bottom without a picture, so nothing stands between
 	# the camera and the hero. The trees go on after the gaps are known.
 	for x in W:
@@ -128,14 +142,25 @@ func _init(ways: Array = [], main_camp: bool = false, seed: int = 0) -> void:
 			_put(p.x, p.y, 0, 0 if open else BLOCKED)
 		if not open:  # a fence across the inner end of a closed gap
 			for p in cells:
-				var inner: bool = (side == 0 and p.y == TOP - 1) or (side == 1 and p.x == W - 2) \
+				var inner: bool = (
+					(side == 0 and p.y == TOP - 1)
+					or (side == 1 and p.x == W - 2)
 					or (side == 2 and p.x == 1)
+				)
 				if inner:
 					_put(p.x, p.y, FENCE[(p.x + p.y) % 2] if side == 0 else BUSH, BLOCKED)
 		var mission: int = int(ways[i][2]) if ways[i].size() > 2 else -1
 		# gap[1] is the middle of the gap's outer edge, where the hero walks out
-		exits.append({"place": ways[i][0], "mission": mission, "open": open, "gap": cells,
-			"inside": inside, "side": side})
+		exits.append(
+			{
+				"place": ways[i][0],
+				"mission": mission,
+				"open": open,
+				"gap": cells,
+				"inside": inside,
+				"side": side
+			}
+		)
 	_plant(gap_cells)
 	_put(8, 6, CAMPFIRE, BLOCKED)
 	_put(6, 8, STONES, 0)
@@ -175,7 +200,13 @@ func must_reach() -> Array:
 
 
 func is_free(c: Vector2i) -> bool:
-	return c.x >= 0 and c.y >= 0 and c.x < W and c.y < H and (int(data.flags[c.y * W + c.x]) & BLOCKED) == 0
+	return (
+		c.x >= 0
+		and c.y >= 0
+		and c.x < W
+		and c.y < H
+		and (int(data.flags[c.y * W + c.x]) & BLOCKED) == 0
+	)
 
 
 ## Whether every cell of must_reach() can be walked to from the start.

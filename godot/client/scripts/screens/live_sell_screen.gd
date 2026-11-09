@@ -72,7 +72,9 @@ func show_step(s: Step) -> void:
 		Step.PICK:
 			tabs = ItemGrid.sides(body, show_side)
 			tabs[1 if in_warehouse else 0].button_pressed = true
-			cells = ItemGrid.add(body, LiveClient.WAREHOUSE, 290, pick, func(i): info.text = describe(i))
+			cells = ItemGrid.add(
+				body, LiveClient.WAREHOUSE, 290, pick, func(i): info.text = describe(i)
+			)
 			refresh()
 			cells[maxi(chosen, 0)].grab_focus.call_deferred()
 		Step.PRICE:
@@ -89,7 +91,9 @@ func show_step(s: Step) -> void:
 			var name_line := Label.new()
 			name_line.name = "Name"
 			name_line.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-			name_line.text = "%s\n%s" % [Items.name_of(int(it.id)), tr("live.enchant_lv") % int(it.enchant)]
+			name_line.text = (
+				"%s\n%s" % [Items.name_of(int(it.id)), tr("live.enchant_lv") % int(it.enchant)]
+			)
 			row.add_child(name_line)
 			body.add_child(row)
 			var hint := UiTheme.note("Hint")

@@ -32,8 +32,14 @@ var ready: Array = []  # players past a stage's end or its intro
 var stage_bg := -1
 
 
-func _init(server: RefCounted, battle_mode: int, fighters: Array, room_players: Dictionary,
-		progress := 0, opening := "") -> void:
+func _init(
+	server: RefCounted,
+	battle_mode: int,
+	fighters: Array,
+	room_players: Dictionary,
+	progress := 0,
+	opening := ""
+) -> void:
 	online = server
 	rng = server.rng
 	via = opening
@@ -86,8 +92,16 @@ func start() -> void:
 		var opening := via
 		if opening.is_empty():
 			opening = "match" if players.size() == 1 else ("invite" if slot == 0 else "invited")
-		s.send.call({"t": "room", "via": opening, "bg": battle.bg, "slot": slot, "mode": mode,
-			"fighters": wires})
+		s.send.call(
+			{
+				"t": "room",
+				"via": opening,
+				"bg": battle.bg,
+				"slot": slot,
+				"mode": mode,
+				"fighters": wires
+			}
+		)
 		if not mission.is_empty():
 			_stage_info(s)
 		else:
@@ -105,14 +119,24 @@ static func _covers(have: Array, want: Array) -> bool:
 
 
 func _stage_info(s: RefCounted) -> void:
-	s.send.call({"t": "stage_info", "title": str(mission.title), "stages": mission.stages,
-		"stage": mission.stage})
+	s.send.call(
+		{
+			"t": "stage_info",
+			"title": str(mission.title),
+			"stages": mission.stages,
+			"stage": mission.stage
+		}
+	)
 
 
 ## Another stage follows the cleared one.
 func _mission_left() -> bool:
-	return not mission.is_empty() and battle.team_alive(0) and not battle.team_alive(1) \
+	return (
+		not mission.is_empty()
+		and battle.team_alive(0)
+		and not battle.team_alive(1)
 		and int(mission.stage) < int(mission.stages)
+	)
 
 
 # --- the players' messages ----------------------------------------------------------------

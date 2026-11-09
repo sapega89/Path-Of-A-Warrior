@@ -54,9 +54,11 @@ func _ready() -> void:
 	together.ok_button_text = tr("online.together_2on2")
 	together.add_button(tr("online.together_mission"), false, "mission")
 	together.confirmed.connect(func(): invite(OnlineClient.TOGETHER))
-	together.custom_action.connect(func(_a: StringName):
-		together.hide()
-		invite(OnlineClient.ALLY))
+	together.custom_action.connect(
+		func(_a: StringName):
+			together.hide()
+			invite(OnlineClient.ALLY)
+	)
 	add_child(together)
 	back.grab_focus.call_deferred()
 	if online == null:
@@ -91,13 +93,22 @@ func shown(err: String) -> void:
 	title.text = online.order_name
 	info.text = "" if inside else tr("online.no_order")
 	if inside and pick >= 0:
-		info.text = tr("online.pick_together" if pick == OnlineClient.TOGETHER else "online.pick_ally")
+		info.text = tr(
+			"online.pick_together" if pick == OnlineClient.TOGETHER else "online.pick_ally"
+		)
 	var me_id := str(online.me.get("id", ""))
 	for m in online.members:
 		var l := Button.new()
 		l.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-		l.text = "%s%s  Lv%d%s" % ["* " if int(m.leader) else "", str(m.name), int(m.level),
-			"  " + tr("online.online") if int(m.online) else ""]
+		l.text = (
+			"%s%s  Lv%d%s"
+			% [
+				"* " if int(m.leader) else "",
+				str(m.name),
+				int(m.level),
+				"  " + tr("online.online") if int(m.online) else ""
+			]
+		)
 		var color := Color(0.5, 1, 0.5) if int(m.online) else Color(0.7, 0.7, 0.7)
 		for state in ["font_color", "font_disabled_color", "font_hover_color", "font_focus_color"]:
 			l.add_theme_color_override(state, color)

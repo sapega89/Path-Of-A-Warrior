@@ -27,8 +27,10 @@ func test_every_tile_is_known() -> void:
 		check(MapArt.KIND_COLOUR.has(k), "a colour for %s" % k)
 	for tile in t.props:
 		var what: String = t.props[tile]
-		check(MapArt.PROP.has(what) or MapArt.CLUSTERS.has(what) or what in MapArt.AS_GROUND,
-			"tile %s: %s is drawn" % [tile, what])
+		check(
+			MapArt.PROP.has(what) or MapArt.CLUSTERS.has(what) or what in MapArt.AS_GROUND,
+			"tile %s: %s is drawn" % [tile, what]
+		)
 	var used := {}
 	for n in range(1, MapBuilder.map_count() + 1):
 		var m := MapBuilder.load_map(n)
@@ -37,7 +39,10 @@ func test_every_tile_is_known() -> void:
 				used[int(tile)] = n
 	for tile in used:
 		if tile != 0:
-			check(t.ground.has(str(tile)) or t.props.has(str(tile)), "tile %d (map %d)" % [tile, used[tile]])
+			check(
+				t.ground.has(str(tile)) or t.props.has(str(tile)),
+				"tile %d (map %d)" % [tile, used[tile]]
+			)
 
 
 func test_people_walk_on_flat_ground() -> void:
@@ -59,14 +64,24 @@ func test_the_ground_and_around() -> void:
 	var ground: MeshInstance3D = b.get_node("Ground")
 	var verts: PackedVector3Array = ground.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
 	var m := MapArt.MARGIN
-	eq(verts.size(), ((b.w + 2 * m) * MapArt.PARTS + 1) * ((b.h + 2 * m) * MapArt.PARTS + 1), "a grid of parts")
+	eq(
+		verts.size(),
+		((b.w + 2 * m) * MapArt.PARTS + 1) * ((b.h + 2 * m) * MapArt.PARTS + 1),
+		"a grid of parts"
+	)
 	var lo := Vector3(INF, INF, INF)
 	var hi := -lo
 	for v in verts:
 		lo = lo.min(v)
 		hi = hi.max(v)
-	eq([lo.x, lo.z, hi.x, hi.z], [-float(m), -float(m), float(b.w + m), float(b.h + m)], "the land goes on past the edges")
-	check(b.hills(-m, -m) > 0.5 and b.hills(b.w / 2.0, b.h / 2.0) == 0.0, "hills around, flat inside")
+	eq(
+		[lo.x, lo.z, hi.x, hi.z],
+		[-float(m), -float(m), float(b.w + m), float(b.h + m)],
+		"the land goes on past the edges"
+	)
+	check(
+		b.hills(-m, -m) > 0.5 and b.hills(b.w / 2.0, b.h / 2.0) == 0.0, "hills around, flat inside"
+	)
 	check(ground.material_override is ShaderMaterial, "painted by its shader")
 	var blocked := 0
 	for y in b.h:
@@ -88,7 +103,10 @@ func test_a_cliff_climbs_to_its_top() -> void:
 			faces += 1
 			var here: float = b.part_raise[py * pw + 9 * MapArt.PARTS]
 			var above: float = b.part_raise[(py - 1) * pw + 9 * MapArt.PARTS]
-			check(here > 0.0 and here < above, "the face climbs north: %.2f under %.2f" % [here, above])
+			check(
+				here > 0.0 and here < above,
+				"the face climbs north: %.2f under %.2f" % [here, above]
+			)
 	check(faces >= 9, "the face of the cliff: %d parts" % faces)
 	b.free()
 
@@ -138,8 +156,11 @@ func test_breakables_flash() -> void:
 		var at: PackedStringArray = String(o.name).split("_")
 		eq(at[0], "Object", "named as before")
 		var piece: Node3D = o.get_child(0)
-		eq(Vector2(piece.position.x, piece.position.z), Vector2(int(at[1]) + 0.5, int(at[2]) + 0.5),
-			"%s stands on its cell" % o.name)
+		eq(
+			Vector2(piece.position.x, piece.position.z),
+			Vector2(int(at[1]) + 0.5, int(at[2]) + 0.5),
+			"%s stands on its cell" % o.name
+		)
 		check(o.get_meta("material") is ShaderMaterial, "%s has a material" % o.name)
 		materials[o.get_meta("material")] = true
 	eq(materials.size(), b.breakables.size(), "each its own")

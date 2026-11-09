@@ -33,6 +33,8 @@ func _init() -> void:
 		c.poll(10)
 	c.close()
 	print(got)
-	var ok: bool = got.size() == 3 and got[0].ok and got[1].ok and got[2].get("hero") == {"hero_name": "Check"}
+	var ok: bool = (
+		got.size() == 3 and got[0].ok and got[1].ok and got[2].get("hero") == {"hero_name": "Check"}
+	)
 	print("net check: ", "ok" if ok else "FAILED")
 	quit(0 if ok else 1)

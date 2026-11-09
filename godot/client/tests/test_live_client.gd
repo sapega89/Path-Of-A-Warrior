@@ -35,9 +35,11 @@ func _client(d: String) -> Array:
 func _player(l: Live, uid: String) -> Array:
 	var s := Live.Session.new()
 	s.user = uid
-	var c := LiveClient.new(func(msg: Dictionary, done: Callable) -> void:
-		var r := l.answer(s, str(msg.t), bytes_to_var(var_to_bytes(msg)))  # as over the wire
-		done.call(bytes_to_var(var_to_bytes(r))))
+	var c := LiveClient.new(
+		func(msg: Dictionary, done: Callable) -> void:
+			var r := l.answer(s, str(msg.t), bytes_to_var(var_to_bytes(msg)))  # as over the wire
+			done.call(bytes_to_var(var_to_bytes(r)))
+	)
 	return [c, l, s]
 
 
@@ -124,8 +126,10 @@ func test_gold_into_the_safe_and_out() -> void:
 
 
 func test_offline_every_call_says_so() -> void:
-	var c := LiveClient.new(func(msg: Dictionary, done: Callable) -> void:
-		done.call({"t": msg.t, "ok": false, "err": "offline"}))
+	var c := LiveClient.new(
+		func(msg: Dictionary, done: Callable) -> void:
+			done.call({"t": msg.t, "ok": false, "err": "offline"})
+	)
 	var got := []
 	c.sync(_hero(), func(err): got.append(err))
 	eq(got, ["offline"])
@@ -191,10 +195,15 @@ func test_game_menu_has_the_game_and_the_main_menu_the_rest() -> void:
 	Router.params = {"profile_path": TEST_PATH, "live": t[0]}
 	var screen: Control = GameMenu.new()
 	root.add_child(screen)
-	eq(screen.buttons.map(func(b): return str(b.name)), ["Missions", "Management", "Blacksmith",
-		"Visiting", "Trade", "Warehouse", "Safe", "Help"])
-	eq(screen.online.buttons.map(func(b): return str(b.name)), ["Duel", "OnlineMissions", "Character",
-		"Ranking", "Order", "Chat", "Invitations"], "the multiplayer pages in the same menu")
+	eq(
+		screen.buttons.map(func(b): return str(b.name)),
+		["Missions", "Management", "Blacksmith", "Visiting", "Trade", "Warehouse", "Safe", "Help"]
+	)
+	eq(
+		screen.online.buttons.map(func(b): return str(b.name)),
+		["Duel", "OnlineMissions", "Character", "Ranking", "Order", "Chat", "Invitations"],
+		"the multiplayer pages in the same menu"
+	)
 	check(t[0].synced and screen.news.done, "Live synced, nothing new")
 	check(screen.menu.visible)
 	screen.free()
@@ -268,7 +277,10 @@ func test_elixirs_and_the_warehouse_on_sale() -> void:
 	c.ask_prices(0, LiveClient.kind(101), func(e): got.append(e))
 	eq(got[-1], "", "price info")
 	check(c.lots.size() > 0)
-	check(c.lots.all(func(x): return LiveClient.kind(int(x.item.id)) == LiveClient.kind(101)), "of that kind")
+	check(
+		c.lots.all(func(x): return LiveClient.kind(int(x.item.id)) == LiveClient.kind(101)),
+		"of that kind"
+	)
 	ServerTests._rm(d)
 
 

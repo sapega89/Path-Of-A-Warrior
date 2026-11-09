@@ -47,7 +47,11 @@ func test_skill_bar_slots() -> void:
 	var y := view.y - (MapHud.PANEL_H + MapHud.BAR_H / 2) * k
 	var left := view.x / 2.0 - 120.0 * k
 	eq(hud.slot_at(Vector2(left + 5 * k, y)), ["belt", 0], "Z")
-	eq(hud.slot_at(Vector2(left + (MapHud.slot_x(true, 2) + 5) * k, y)), ["skill", 2], "the third skill")
+	eq(
+		hud.slot_at(Vector2(left + (MapHud.slot_x(true, 2) + 5) * k, y)),
+		["skill", 2],
+		"the third skill"
+	)
 	eq(hud.slot_at(Vector2(view.x / 2.0, y)), [], "the gap between")
 	eq(hud.slot_at(Vector2(left + 5 * k, y - 40 * k)), [], "above the bar")
 	hud.sim = null

@@ -107,12 +107,16 @@ func show_step(s: Step) -> void:
 		Step.KIND:
 			caption.text = tr(CATEGORIES[cat])
 			var ids: Array = LiveClient.KINDS[cat]
-			cells = ItemGrid.add(body, ids.size(), 300, choose_kind, func(i): info.text = Items.name_of(ids[i]))
+			cells = ItemGrid.add(
+				body, ids.size(), 300, choose_kind, func(i): info.text = Items.name_of(ids[i])
+			)
 			for i in ids.size():
 				cells[i].icon = ItemSlot.item_icon(ids[i])
 			cells[mini(kind, cells.size() - 1)].grab_focus.call_deferred()
 		Step.ENCHANT:
-			caption.text = "%s / %s" % [tr(CATEGORIES[cat]), Items.name_of(LiveClient.KINDS[cat][kind])]
+			caption.text = (
+				"%s / %s" % [tr(CATEGORIES[cat]), Items.name_of(LiveClient.KINDS[cat][kind])]
+			)
 			var grid := GridContainer.new()
 			grid.name = "Levels"
 			grid.columns = 5
@@ -132,7 +136,9 @@ func show_step(s: Step) -> void:
 			body.add_child(center)
 			cells[enchant].grab_focus.call_deferred()
 		Step.LOTS:
-			var line := "%s / %s" % [tr(CATEGORIES[cat]), Items.name_of(LiveClient.KINDS[cat][kind])]
+			var line := (
+				"%s / %s" % [tr(CATEGORIES[cat]), Items.name_of(LiveClient.KINDS[cat][kind])]
+			)
 			caption.text = line if cat == 2 else "%s +%d" % [line, enchant]
 			cells = ItemGrid.add(body, live.lots.size(), 220, press_lot, show_lot)
 			for i in live.lots.size():

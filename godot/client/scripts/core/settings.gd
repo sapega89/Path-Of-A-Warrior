@@ -133,8 +133,10 @@ func tick_seconds() -> float:
 
 
 static func can_fullscreen() -> bool:
-	return not (OS.has_feature("mobile") or OS.has_feature("web")) \
+	return (
+		not (OS.has_feature("mobile") or OS.has_feature("web"))
 		and DisplayServer.get_name() != "headless"
+	)
 
 
 func _coerce(key: String, value: Variant) -> Variant:
@@ -167,8 +169,12 @@ func _apply(key: String) -> void:
 		"fullscreen":
 			if can_fullscreen():
 				DisplayServer.window_set_mode(
-					DisplayServer.WINDOW_MODE_FULLSCREEN if get_value(key)
-					else DisplayServer.WINDOW_MODE_WINDOWED)
+					(
+						DisplayServer.WINDOW_MODE_FULLSCREEN
+						if get_value(key)
+						else DisplayServer.WINDOW_MODE_WINDOWED
+					)
+				)
 
 
 ## A volume (0..1) as its bus's dB, by ear as in pyport: the amplitude is the volume squared,

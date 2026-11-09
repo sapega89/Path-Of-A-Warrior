@@ -7,7 +7,8 @@ extends Node
 ## user://server/server.crt, since the server is the same project); another one with
 ## `-- --server HOST:PORT --cert FILE.crt`, the files server.txt and server.crt next to an exported
 ## game's executable (what friends get, see godot/FRIENDS.md), or the project settings
-## pow/net/server and pow/net/cert. Only the game's own scene turns it on: the tests, the screenshots, the server
+## pow/net/server and pow/net/cert. Only the game's own scene turns it on: the tests, the
+## screenshots, the server
 ## and the tools run without it (the hero in user://hero.json), and so does `-- --offline`
 ## (for working on the game without a server).
 ## The account (UserID + password) is asked for on the login screen and kept only while the game

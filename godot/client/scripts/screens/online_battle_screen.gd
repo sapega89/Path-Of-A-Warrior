@@ -1,4 +1,5 @@
 extends Control
+# gdlint: disable=max-file-lines
 ## The multiplayer battle in the new art, as the rest of the game: a field of the maps' ground
 ## and things under a painted sky (scripts/world/battle_arena.gd, after the battle's
 ## background), the fighters as the maps' people (scripts/world/battle_motion.gd: who is who,
@@ -10,7 +11,8 @@ extends Control
 ## smoothly between the steps. This screen shows it and passes the keys: arrows choose (Right
 ## Attack, Left Defend, Up Evade, Down a skill), Enter / Space confirms and stops the timing bar,
 ## Esc asks to leave the battle, Tab, F, the pad's Back (the "auto" action, as auto-hunt on the
-## map) or a click on AUTO in the bottom-left corner turn auto-battle on and off. The pad's buttons, the
+## map) or a click on AUTO in the bottom-left corner turn auto-battle on and off. The pad's buttons,
+## the
 ## skills and the bar take the mouse too. The hint at the bottom names the keys of the device
 ## just used (InputSetup.hint: the keyboard's or the pad's).
 ## The HUD: each fighter's plate at the top (my team at the left, the other at the right, one
@@ -75,14 +77,17 @@ const MP_FILL := [Color("5a83bd"), Color("1a2e55")]
 const DAMAGE := Color("e8553f")
 const HEAL := Color("8fc873")
 ## The pad: key, icon (assets/art/ui), caption, place in buttons.
-const PAD := [["up", "wind", "online.battle_evade", Vector2(1, 0)],
+const PAD := [
+	["up", "wind", "online.battle_evade", Vector2(1, 0)],
 	["left", "shield", "online.battle_defend", Vector2(0, 1)],
 	["right", "sabre", "online.battle_attack", Vector2(2, 1)],
-	["down", "fire", "online.battle_skill", Vector2(1, 2)]]
+	["down", "fire", "online.battle_skill", Vector2(1, 2)]
+]
 ## The icons of the battle's skills (3..13): their places on the sheet of the skills (the
 ## same skills of the map, 12..22).
 const SKILL_ICONS := {3: 0, 4: 1, 5: 2, 6: 8, 7: 9, 8: 10, 9: 3, 10: 4, 11: 5, 12: 6, 13: 7}
 ## The chevron over the target: brass over blood-red, inked.
+# gdlint:ignore = max-line-length
 const MARKER_SVG := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 72"><path d="M8 6 L32 26 L56 6 L56 20 L32 40 L8 20 Z" fill="#b89550" stroke="#0f0d0c" stroke-width="3.5" stroke-linejoin="round"/><path d="M14 34 L32 49 L50 34 L50 45 L32 62 L14 45 Z" fill="#8a2b25" stroke="#0f0d0c" stroke-width="3.5" stroke-linejoin="round"/></svg>'
 
 var online: RefCounted
@@ -128,7 +133,8 @@ var _icons := {}
 var _no_skill: Texture2D
 
 
-class Layer extends Control:
+class Layer:
+	extends Control
 	## Draws with the screen's draw_<what>(layer).
 	var screen: Object
 	var what := ""
@@ -239,7 +245,11 @@ func show_background(bg: int) -> void:
 func _fit_sky() -> void:
 	var view := size if size.x > 0.0 and size.y > 0.0 else Vector2(1280, 720)
 	sky.set_shader_parameter("aspect", view.x / view.y)
-	var far := camera.unproject_position(Vector3(0, 1.6, -40)) if camera.is_inside_tree() else Vector2(0, view.y * 0.3)
+	var far := (
+		camera.unproject_position(Vector3(0, 1.6, -40))
+		if camera.is_inside_tree()
+		else Vector2(0, view.y * 0.3)
+	)
 	sky.set_shader_parameter("horizon_y", clampf(far.y / view.y + 0.03, 0.1, 0.9))
 
 
@@ -336,7 +346,9 @@ func _heading(i: int, f: RefCounted, anim: int, places: Array[Vector3]) -> float
 			if t >= 0 and t != i:
 				way = places[t] - places[i]
 		28:
-			var row_y: int = OnlineBattle.CY + 65 + (0 if battle.mode == 0 else (-23 if f.row() == 0 else 23))
+			var row_y: int = (
+				OnlineBattle.CY + 65 + (0 if battle.mode == 0 else (-23 if f.row() == 0 else 23))
+			)
 			way = world_at(42.0 if f.team() == 0 else OnlineBattle.W - 42.0, row_y, 0.0) - places[i]
 		17, 18, 19:
 			if (places[i] - _from[i]).length() > 0.01:
@@ -384,7 +396,9 @@ func _effects_of(i: int, f: RefCounted, anim: int, at: Vector3, p: Vector2i) -> 
 		# a still screen shows it spread
 		if _fallen_at[i] < 0.0:
 			_fallen_at[i] = _clock
-		var spread := 7 if not is_processing() else clampi(int((_clock - _fallen_at[i]) / 0.25), 0, 7)
+		var spread := (
+			7 if not is_processing() else clampi(int((_clock - _fallen_at[i]) / 0.25), 0, 7)
+		)
 		var chest := px - Vector2(1.0 if f.team() == 0 else -1.0, 0.0) * 0.8 / PX
 		_fx.append(["pool", spread, chest, true])
 	else:
@@ -500,9 +514,11 @@ func _build_hud() -> void:
 	bar.position = Vector2(-55 * BAR_SCALE, -70 - 30 * BAR_SCALE)
 	bar.size = Vector2(110 * BAR_SCALE, 30 * BAR_SCALE)
 	bar.visible = false
-	bar.gui_input.connect(func(e: InputEvent) -> void:
-		if e is InputEventMouseButton and e.pressed:
-			press("fire"))
+	bar.gui_input.connect(
+		func(e: InputEvent) -> void:
+			if e is InputEventMouseButton and e.pressed:
+				press("fire")
+	)
 	add_child(bar)
 	hint = Label.new()
 	hint.name = "Hint"
@@ -524,7 +540,9 @@ func _build_hud() -> void:
 	auto_button.add_theme_font_override("font", UiTheme.font("bold"))
 	auto_button.add_theme_font_size_override("font_size", 20)
 	for style in ["normal", "hover", "pressed", "focus"]:
-		var sb := UiTheme.box(PLATE if style != "hover" else Color(UiTheme.BUTTON_HOVER, 0.92), UiTheme.IRON, 2)
+		var sb := UiTheme.box(
+			PLATE if style != "hover" else Color(UiTheme.BUTTON_HOVER, 0.92), UiTheme.IRON, 2
+		)
 		sb.content_margin_left = 14
 		sb.content_margin_right = 14
 		sb.content_margin_top = 4
@@ -557,7 +575,9 @@ func _show_portraits() -> void:
 		var looks_left := id >= BattleMotion.HERO_PORTRAIT and id < BattleMotion.HERO_PORTRAIT + 4
 		face.flip_h = looks_left != f.mirrored()
 		var r := plate_rect(i, hud.size)
-		face.position = Vector2(r.end.x - 7.0 - FACE if f.mirrored() else r.position.x + 7.0, r.position.y + 6.0)
+		face.position = Vector2(
+			r.end.x - 7.0 - FACE if f.mirrored() else r.position.x + 7.0, r.position.y + 6.0
+		)
 		face.modulate = Color(0.55, 0.55, 0.6) if f.hp <= 0 else Color.WHITE
 
 
@@ -574,20 +594,54 @@ func draw_hud(layer: Control) -> void:
 		var r := plate_rect(i, layer.size)
 		var aimed: bool = battle.state == OnlineBattle.TARGET and i == battle.target_cursor
 		_plaque(layer, r, UiTheme.HIGHLIGHT if aimed else UiTheme.IRON, 3 if aimed else 2)
-		var inner := Rect2(r.position + Vector2(0 if right else FACE + 16.0, 0), Vector2(r.size.x - FACE - 26.0, r.size.y))
-		var name: String = f.name if f.alt_name.is_empty() or battle.round_no % 2 == 0 else f.alt_name
-		var badge := Vector2(inner.position.x + 22.0 if right else inner.end.x - 12.0, r.position.y + 22.0)
+		var inner := Rect2(
+			r.position + Vector2(0 if right else FACE + 16.0, 0),
+			Vector2(r.size.x - FACE - 26.0, r.size.y)
+		)
+		var name: String = (
+			f.name if f.alt_name.is_empty() or battle.round_no % 2 == 0 else f.alt_name
+		)
+		var badge := Vector2(
+			inner.position.x + 22.0 if right else inner.end.x - 12.0, r.position.y + 22.0
+		)
 		var name_at := Vector2(inner.end.x if right else inner.position.x, r.position.y + 30.0)
-		_text(layer, name, name_at, 22, UiTheme.HIGHLIGHT if aimed else UiTheme.TEXT, 1 if right else -1)
+		_text(
+			layer,
+			name,
+			name_at,
+			22,
+			UiTheme.HIGHLIGHT if aimed else UiTheme.TEXT,
+			1 if right else -1
+		)
 		layer.draw_circle(badge, 14.0, UiTheme.RED, true, -1.0, true)
 		layer.draw_arc(badge, 14.0, 0.0, TAU, 32, UiTheme.ACCENT, 2.0, true)
 		_text(layer, str(f.level), badge + Vector2(0, 6), 16, UiTheme.TEXT, 0)
 		var bars := Rect2(inner.position.x + (10.0 if right else 0.0), 0, inner.size.x - 10.0, 0)
-		_bar(layer, Rect2(bars.position.x, r.position.y + 42, bars.size.x, 15), float(f.hp) / maxf(1.0, f.max_hp), HP_FILL, right)
-		_bar(layer, Rect2(bars.position.x, r.position.y + 62, bars.size.x, 9), float(f.mp) / 100.0, MP_FILL, right)
+		_bar(
+			layer,
+			Rect2(bars.position.x, r.position.y + 42, bars.size.x, 15),
+			float(f.hp) / maxf(1.0, f.max_hp),
+			HP_FILL,
+			right
+		)
+		_bar(
+			layer,
+			Rect2(bars.position.x, r.position.y + 62, bars.size.x, 9),
+			float(f.mp) / 100.0,
+			MP_FILL,
+			right
+		)
 		var a: int = battle.card_action(i)
 		if a >= 0:
-			_card(layer, f, a, Vector2(r.end.x + 10.0 if not right else r.position.x - 10.0 - CARD_W, r.position.y + 17.0))
+			_card(
+				layer,
+				f,
+				a,
+				Vector2(
+					r.end.x + 10.0 if not right else r.position.x - 10.0 - CARD_W,
+					r.position.y + 17.0
+				)
+			)
 	for d in battle.damage_shown:
 		var p := _screen_point(float(d[0]), float(d[1]), DAMAGE_UP + float(d[2]))
 		var text := ("+%d" if int(d[3]) > 0 else "%d") % int(d[3])
@@ -617,8 +671,16 @@ static func _plaque(layer: Control, r: Rect2, rim: Color, width: int) -> void:
 
 ## A line of text in PT Sans Bold with a dark outline: align -1 from the point, 0 centred on
 ## it, 1 ending at it (the point is on the baseline).
-static func _text(layer: Control, text: String, at: Vector2, px: int, color: Color, align: int, outline := 4,
-		ink := UiTheme.INK) -> void:
+static func _text(
+	layer: Control,
+	text: String,
+	at: Vector2,
+	px: int,
+	color: Color,
+	align: int,
+	outline := 4,
+	ink := UiTheme.INK
+) -> void:
 	var font := UiTheme.font("bold")
 	var w := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, px).x
 	var p := at - Vector2(w * (align + 1) / 2.0, 0)
@@ -644,7 +706,9 @@ static func _bar(layer: Control, r: Rect2, part: float, fill: Array, right: bool
 	layer.draw_style_box(top, Rect2(at, Vector2(w, inner.size.y * 0.62)))
 	if w > inner.size.y:
 		var shine := inner.size.y * 0.5
-		layer.draw_line(at + Vector2(shine, 2.0), at + Vector2(w - shine, 2.0), Color(1, 1, 1, 0.35), 1.5, true)
+		layer.draw_line(
+			at + Vector2(shine, 2.0), at + Vector2(w - shine, 2.0), Color(1, 1, 1, 0.35), 1.5, true
+		)
 
 
 ## A card of the action shown: a parchment plaque with the action's sign and its name; a
@@ -655,14 +719,24 @@ func _card(layer: Control, f: RefCounted, a: int, at: Vector2) -> void:
 	sb.shadow_color = Color(0, 0, 0, 0.45)
 	sb.shadow_size = 3
 	layer.draw_style_box(sb, r)
-	var as_target: bool = battle.state == OnlineBattle.TURN and battle.fighters.find(f) != battle.attacker
+	var as_target: bool = (
+		battle.state == OnlineBattle.TURN and battle.fighters.find(f) != battle.attacker
+	)
 	var sign := action_icon(a) if not (as_target and a == OnlineBattle.RES_HIT) else null
 	if sign != null:
 		layer.draw_texture_rect(sign, Rect2(at + Vector2(8, 6), Vector2(34, 34)), false)
 	elif as_target:
 		_burst(layer, at + Vector2(25, 23), 18.0, UiTheme.RED)  # the blow got through
 	var text := action_name(a, as_target)
-	layer.draw_string(UiTheme.font("bold"), at + Vector2(52, 30), text, HORIZONTAL_ALIGNMENT_LEFT, CARD_W - 60, 20, UiTheme.INK)
+	layer.draw_string(
+		UiTheme.font("bold"),
+		at + Vector2(52, 30),
+		text,
+		HORIZONTAL_ALIGNMENT_LEFT,
+		CARD_W - 60,
+		20,
+		UiTheme.INK
+	)
 
 
 ## The sign of an action: the sabre, the shield, the wind, a skill's medallion, the mace of
@@ -701,8 +775,13 @@ func _quote(layer: Control, q: String, tip: Vector2) -> void:
 	var sz := font.get_string_size(q, HORIZONTAL_ALIGNMENT_LEFT, -1, 24)
 	var r := Rect2(tip.x - sz.x / 2.0 - 16.0, tip.y - 58.0, sz.x + 32.0, 44.0)
 	r.position.x = clampf(r.position.x, 8.0, layer.size.x - 8.0 - r.size.x)
-	var tail := PackedVector2Array([Vector2(tip.x - 10.0, r.end.y - 2.0), Vector2(tip.x + 10.0, r.end.y - 2.0),
-		Vector2(tip.x, tip.y)])
+	var tail := PackedVector2Array(
+		[
+			Vector2(tip.x - 10.0, r.end.y - 2.0),
+			Vector2(tip.x + 10.0, r.end.y - 2.0),
+			Vector2(tip.x, tip.y)
+		]
+	)
 	var sb := UiTheme.box(PAPER, UiTheme.INK, 2)
 	sb.set_corner_radius_all(4)
 	sb.shadow_color = Color(0, 0, 0, 0.45)
@@ -710,7 +789,15 @@ func _quote(layer: Control, q: String, tip: Vector2) -> void:
 	layer.draw_style_box(sb, r)
 	layer.draw_colored_polygon(tail, PAPER)
 	layer.draw_polyline(PackedVector2Array([tail[0], tail[2], tail[1]]), UiTheme.INK, 2.0, true)
-	layer.draw_string(font, Vector2(r.position.x + 16.0, r.position.y + 30.0), q, HORIZONTAL_ALIGNMENT_LEFT, -1, 24, UiTheme.INK)
+	layer.draw_string(
+		font,
+		Vector2(r.position.x + 16.0, r.position.y + 30.0),
+		q,
+		HORIZONTAL_ALIGNMENT_LEFT,
+		-1,
+		24,
+		UiTheme.INK
+	)
 
 
 ## The timing bar: a dark plate, the track from where the cursor starts past the gold mark,
@@ -732,8 +819,17 @@ func draw_bar(layer: Control) -> void:
 	if to > left:
 		var k := clampf((to - left) / (mark - left), 0.0, 1.0)
 		var tip := MP_FILL[0].lerp(UiTheme.ACCENT, k)
-		layer.draw_polygon(PackedVector2Array([Vector2(left, mid - 6), Vector2(to, mid - 6), Vector2(to, mid + 6),
-			Vector2(left, mid + 6)]), PackedColorArray([MP_FILL[1], tip, tip.darkened(0.25), MP_FILL[1].darkened(0.3)]))
+		layer.draw_polygon(
+			PackedVector2Array(
+				[
+					Vector2(left, mid - 6),
+					Vector2(to, mid - 6),
+					Vector2(to, mid + 6),
+					Vector2(left, mid + 6)
+				]
+			),
+			PackedColorArray([MP_FILL[1], tip, tip.darkened(0.25), MP_FILL[1].darkened(0.3)])
+		)
 	var to_item := layer.get_canvas_item()
 	var pulse := 1.15 if battle.state_ticks % 2 == 0 else 1.0
 	UiTheme.rhombus(to_item, Vector2(mark, mid), 19.0 * pulse, UiTheme.INK)
@@ -742,7 +838,14 @@ func draw_bar(layer: Control) -> void:
 	var stopped: bool = battle.state == OnlineBattle.SENT and battle.bar_shown
 	if stopped and battle.hit_score == 100:
 		_burst(layer, Vector2(mark, mid), 44.0, UiTheme.HIGHLIGHT)
-		_text(layer, tr("online.battle_perfect"), Vector2(layer.size.x / 2.0, 30.0), 24, UiTheme.HIGHLIGHT, 0)
+		_text(
+			layer,
+			tr("online.battle_perfect"),
+			Vector2(layer.size.x / 2.0, 30.0),
+			24,
+			UiTheme.HIGHLIGHT,
+			0
+		)
 	elif stopped and battle.hit_score == 20:
 		_text(layer, tr("online.battle_miss"), Vector2(layer.size.x / 2.0, 30.0), 24, DAMAGE, 0)
 	elif stopped:
@@ -808,11 +911,15 @@ func _refresh() -> void:
 	if choosing:
 		for k in pad_buttons:
 			var b: Button = pad_buttons[k]
-			var mine: bool = {"right": 0, "left": 1, "up": 2}.get(k, -1) == battle.chosen_action \
+			var mine: bool = (
+				{"right": 0, "left": 1, "up": 2}.get(k, -1) == battle.chosen_action
 				or (k == "down" and battle.chosen_action >= 3 and battle.chosen_action <= 13)
+			)
 			b.modulate = Color(1, 0.9, 0.5) if mine else Color.WHITE
 			b.disabled = st != OnlineBattle.CHOOSE
-		pad_buttons["down"].icon = icon("fire", 52) if battle.any_skill_ready() else _no_skill_icon()
+		pad_buttons["down"].icon = (
+			icon("fire", 52) if battle.any_skill_ready() else _no_skill_icon()
+		)
 		countdown.text = str(battle.choose_secs) if st == OnlineBattle.CHOOSE else ""
 	_show_skills()
 	bar.visible = battle.bar_shown and st in [OnlineBattle.BAR, OnlineBattle.SENT]
@@ -840,13 +947,31 @@ func center_message() -> String:
 					lines.append("%s  Lv%d" % [f.name, f.level])
 			return "\n".join(lines)
 		OnlineBattle.ROUND:
-			if b.round_no > 0 and b.allies_alive > 0 and b.enemies_alive > 0 and b.fighters[0].hp > 0:
-				return tr("online.battle_round") % b.round_no + "\n" + tr("online.battle_waiting") + dots
+			if (
+				b.round_no > 0
+				and b.allies_alive > 0
+				and b.enemies_alive > 0
+				and b.fighters[0].hp > 0
+			):
+				return (
+					tr("online.battle_round") % b.round_no
+					+ "\n"
+					+ tr("online.battle_waiting")
+					+ dots
+				)
 		OnlineBattle.CHOOSE:
 			if b.exit_prompt:
 				var secs: int = 15 - b.exit_ticks * OnlineBattle.TIME_MS / 1000
-				return tr("online.battle_exit_ask") + "\n" + ("[%s]   %s" if b.exit_cursor == 0 else "%s   [%s]") \
-					% [tr("online.yes"), tr("online.no")] + "\n" + tr("online.battle_remain") % secs
+				return (
+					tr("online.battle_exit_ask")
+					+ "\n"
+					+ (
+						("[%s]   %s" if b.exit_cursor == 0 else "%s   [%s]")
+						% [tr("online.yes"), tr("online.no")]
+					)
+					+ "\n"
+					+ tr("online.battle_remain") % secs
+				)
 		OnlineBattle.SENT:
 			if b.state_ticks >= 4:
 				return tr("online.battle_waiting") + dots
@@ -855,7 +980,14 @@ func center_message() -> String:
 		OnlineBattle.OVER:
 			return tr("online.battle_waiting") + dots
 		OnlineBattle.STAGE_END:
-			return "%s\n%s\n%s" % [b.stage_title, tr("online.battle_stage_n") % b.stage, tr("online.battle_complete")]
+			return (
+				"%s\n%s\n%s"
+				% [
+					b.stage_title,
+					tr("online.battle_stage_n") % b.stage,
+					tr("online.battle_complete")
+				]
+			)
 		OnlineBattle.RESULT:
 			if b.result_shown():
 				return result_text()
@@ -890,8 +1022,13 @@ func result_text() -> String:
 		lines.append(tr("online.battle_gold") % int(r.get("gold", 0)))
 		lines.append(tr("online.battle_fame") % int(r.get("fame", 0)))
 	else:
-		lines.append(tr("online.mission_grade") % OnlineClient.grade(int(r.get("grade", 0))) if b.battle_won == 1
-			else tr("online.battle_failed"))
+		lines.append(
+			(
+				tr("online.mission_grade") % OnlineClient.grade(int(r.get("grade", 0)))
+				if b.battle_won == 1
+				else tr("online.battle_failed")
+			)
+		)
 		lines.append(tr("online.battle_gold") % int(r.get("gold", 0)))
 		lines.append(tr("online.battle_exp") % int(r.get("exp", 0)))
 		lines.append(tr("online.battle_fame") % int(r.get("fame", 0)))
@@ -915,8 +1052,13 @@ func _show_auto() -> void:
 	auto_button.visible = battle.state >= OnlineBattle.CHOOSE and battle.state <= OnlineBattle.SENT
 	auto_button.text = "AUTO" if battle.auto_battle else InputSetup.hint("online.battle_auto_key")
 	var c := AUTO_ON if battle.auto_battle else Color.WHITE
-	for k in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color",
-			"font_hover_pressed_color"]:
+	for k in [
+		"font_color",
+		"font_hover_color",
+		"font_pressed_color",
+		"font_focus_color",
+		"font_hover_pressed_color"
+	]:
 		auto_button.add_theme_color_override(k, c)
 
 
@@ -924,7 +1066,9 @@ func hint_text() -> String:
 	var auto := "   " + tr("online.battle_auto_on") if battle.auto_battle else ""
 	match battle.state:
 		OnlineBattle.CHOOSE:
-			return ("" if battle.exit_prompt else InputSetup.hint("online.battle_hint_choose")) + auto
+			return (
+				("" if battle.exit_prompt else InputSetup.hint("online.battle_hint_choose")) + auto
+			)
 		OnlineBattle.SKILLS:
 			return InputSetup.hint("online.battle_hint_skills") + auto
 		OnlineBattle.TARGET:
@@ -964,17 +1108,27 @@ func _show_skills() -> void:
 			b.expand_icon = false
 			b.add_theme_constant_override("icon_max_width", 40)
 			b.custom_minimum_size = Vector2(0, 54)
-			b.pressed.connect(func() -> void:
-				battle.skill_cursor = k
-				press("fire"))
+			b.pressed.connect(
+				func() -> void:
+					battle.skill_cursor = k
+					press("fire")
+			)
 			skill_list.add_child(b)
 			skill_buttons.append(b)
 	for k in skill_buttons.size():
 		var s := int(battle.skill_slots[k])
 		var b := skill_buttons[k]
-		b.text = "%s  MP %d" % [OnlineClient.skill_name(s), int(battle.skill_costs[s - 3]) if s - 3 < battle.skill_costs.size() else 0]
+		b.text = (
+			"%s  MP %d"
+			% [
+				OnlineClient.skill_name(s),
+				int(battle.skill_costs[s - 3]) if s - 3 < battle.skill_costs.size() else 0
+			]
+		)
 		b.disabled = not battle.skill_ready(s)
-		b.icon = ItemSlot.icon("skill" if not b.disabled else "skillgray", int(SKILL_ICONS.get(s, -1)))
+		b.icon = ItemSlot.icon(
+			"skill" if not b.disabled else "skillgray", int(SKILL_ICONS.get(s, -1))
+		)
 		b.modulate = Color(1, 0.9, 0.5) if k == battle.skill_cursor else Color.WHITE
 
 
@@ -993,8 +1147,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.is_action_pressed("ui_cancel"):
 			Router.back()
 		return
-	var keys := {"ui_up": "up", "ui_down": "down", "ui_left": "left", "ui_right": "right",
-		"ui_accept": "fire", "ui_cancel": "back"}
+	var keys := {
+		"ui_up": "up",
+		"ui_down": "down",
+		"ui_left": "left",
+		"ui_right": "right",
+		"ui_accept": "fire",
+		"ui_cancel": "back"
+	}
 	for action in keys:
 		if event.is_action_pressed(action):
 			get_viewport().set_input_as_handled()

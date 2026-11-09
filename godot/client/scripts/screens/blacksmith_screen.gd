@@ -58,7 +58,9 @@ func open_page(mode: String) -> bool:
 
 ## The things in the hero's Inventory.
 func things() -> int:
-	var profile: RefCounted = Profile.load_or_new(str(Router.params.get("profile_path", Profile.PATH)))
+	var profile: RefCounted = Profile.load_or_new(
+		str(Router.params.get("profile_path", Profile.PATH))
+	)
 	return profile.backpack.filter(func(it): return int(it.get("id", 0)) > 0).size()
 
 

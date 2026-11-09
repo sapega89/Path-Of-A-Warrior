@@ -1,4 +1,5 @@
 extends RefCounted
+# gdlint: disable=max-file-lines
 ## One online battle on this device: what the server's pushes say (server/room.gd), played
 ## back step by step as the game's battle screen does it in pyport (pow/game/online), one step
 ## every TICK_MS. The screen (scripts/screens/online_battle_screen.gd) draws what is here and
@@ -263,7 +264,9 @@ func _join(w: Dictionary) -> void:
 	f.max_hp = maxi(1, f.hp)
 	f.weapon = clampi(int(w.get("weapon", 0)), 0, 1)
 	f.face = clampi(int(w.get("face", 0)), 0, 3)
-	f.kind = MONSTER if bool(w.get("monster", false)) else (CPU if bool(w.get("cpu", false)) else PLAYER)
+	f.kind = (
+		MONSTER if bool(w.get("monster", false)) else (CPU if bool(w.get("cpu", false)) else PLAYER)
+	)
 	f.quote_start = str(w.get("quote_start", ""))
 	f.quote_win = str(w.get("quote_win", ""))
 	f.mp = 0
@@ -353,8 +356,14 @@ func tick() -> void:
 				if chosen_action <= 2 and bar_shown and hit_score != 20:
 					sounds.append(0)  # a hit on the bar
 			elif state_ticks == 4:
-				send.call({"t": "mp_turn", "target": fighters[target_cursor].slot,
-					"action": chosen_action, "hit": hit_score})
+				send.call(
+					{
+						"t": "mp_turn",
+						"target": fighters[target_cursor].slot,
+						"action": chosen_action,
+						"hit": hit_score
+					}
+				)
 		REVEAL:
 			state_ticks = maxi(state_ticks, 2)
 			_idle_all()
@@ -589,7 +598,9 @@ func _key_skills(k: String) -> void:
 func _key_target(k: String) -> void:
 	if k == "up" or k == "down":
 		var cur := fighters[target_cursor]
-		var from := 0 if chosen_action in [9, 10] else (1 if chosen_action in [0, 3, 4, 5, 6, 7] else 4)
+		var from := (
+			0 if chosen_action in [9, 10] else (1 if chosen_action in [0, 3, 4, 5, 6, 7] else 4)
+		)
 		for i in range(from, 4):
 			var f := fighters[i]
 			if f.present and f.team() == cur.team() and f.slot != cur.slot:

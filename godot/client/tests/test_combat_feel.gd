@@ -75,8 +75,15 @@ func test_the_hero_hit_is_seen() -> void:
 
 
 func _kill_on(actor) -> Dictionary:
-	return {"who": "enemy", "actor": actor, "pos": Vector2i.ZERO, "dir": Vector2.DOWN,
-		"killed": true, "heavy": false, "boss": false}
+	return {
+		"who": "enemy",
+		"actor": actor,
+		"pos": Vector2i.ZERO,
+		"dir": Vector2.DOWN,
+		"killed": true,
+		"heavy": false,
+		"boss": false
+	}
 
 
 func test_the_strongest_hit_of_a_tick_sets_the_stop() -> void:
@@ -86,8 +93,14 @@ func test_the_strongest_hit_of_a_tick_sets_the_stop() -> void:
 	var hit := _kill_on(a)
 	hit.killed = false
 	f.react([hit, _kill_on(b)])
-	check(is_equal_approx(f.freeze, float(f.p.stop_kill)), "the kill's stop, not the sum: %f" % f.freeze)
-	check(is_equal_approx(f.trauma, float(f.p.trauma_kill)), "the kill's shake, not the sum: %f" % f.trauma)
+	check(
+		is_equal_approx(f.freeze, float(f.p.stop_kill)),
+		"the kill's stop, not the sum: %f" % f.freeze
+	)
+	check(
+		is_equal_approx(f.trauma, float(f.p.trauma_kill)),
+		"the kill's shake, not the sum: %f" % f.trauma
+	)
 	eq(f.flashes.size(), 2, "both flash")
 	check(f.launches.has(b) and f.recoils.has(a), "the killed flies, the hit recoils")
 
@@ -99,7 +112,10 @@ func test_the_stop_has_a_limit() -> void:
 		f.freeze = 0.0
 		f.react([_kill_on(RefCounted.new())])
 		total += f.freeze
-	check(total <= float(f.p.stop_budget) + 0.0001, "ten kills at once stop at most %f s: %f" % [f.p.stop_budget, total])
+	check(
+		total <= float(f.p.stop_budget) + 0.0001,
+		"ten kills at once stop at most %f s: %f" % [f.p.stop_budget, total]
+	)
 
 
 func test_shake_and_flash_fade() -> void:
@@ -133,7 +149,10 @@ func test_switched_off_does_nothing() -> void:
 	f.react([_kill_on(a)])
 	eq(f.freeze, 0.0, "no stop")
 	eq(f.trauma, 0.0, "no shake")
-	check(f.flashes.is_empty() and f.launches.is_empty() and f.recoils.is_empty(), "no flash, no flight")
+	check(
+		f.flashes.is_empty() and f.launches.is_empty() and f.recoils.is_empty(),
+		"no flash, no flight"
+	)
 
 
 func test_the_strongest_hit_sets_the_rumble_once() -> void:
@@ -187,8 +206,15 @@ func test_the_mission_feels_a_hit() -> void:
 		screen.feel.on[k] = true
 	screen._process(screen.tick)
 	var ticks: int = screen.sim.ticks
-	var hurt := {"who": "hero", "actor": screen.sim.hero, "pos": screen.sim.hero.pos,
-		"dir": Vector2.DOWN, "killed": false, "heavy": true, "boss": false}
+	var hurt := {
+		"who": "hero",
+		"actor": screen.sim.hero,
+		"pos": screen.sim.hero.pos,
+		"dir": Vector2.DOWN,
+		"killed": false,
+		"heavy": true,
+		"boss": false
+	}
 	screen.feel.react([hurt])
 	check(screen.feel.freeze > 0.0, "a stop")
 	screen._process(0.02)

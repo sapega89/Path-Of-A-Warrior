@@ -46,6 +46,7 @@ const ItemSlot := preload("res://scripts/ui/item_slot.gd")
 var tick := MapSim.TICK_MS / 1000.0
 const GOLD_ICON := 12  # the heap of gold in the tool icons
 ## The exit arrow of the new art, pointing down: two brass chevrons in ink, the near one fainter.
+# gdlint:ignore = max-line-length
 const EXIT_ARROW := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 40"><g fill="#b89550" stroke="#0f0d0c" stroke-width="2.5" stroke-linejoin="round"><path d="M4 3 L24 17 L44 3 L44 11 L24 25 L4 11 Z" fill-opacity="0.55"/><path d="M4 15 L24 29 L44 15 L44 23 L24 37 L4 23 Z"/></g><path d="M24 30.5 l3 2.5 l-3 2.5 l-3 -2.5 z" fill="#7e241f"/></svg>'
 const Pictures := preload("res://scripts/ui/pictures.gd")
 
@@ -75,7 +76,8 @@ var talk_face: PanelContainer
 var talk_portrait: TextureRect
 var talk_panel: PanelContainer
 var talk_text: Label
-var arrows: Array[TextureRect] = []  # 0..3 the room's exits (down, left, up, right); 4..7 a second way on a side
+## 0..3 the room's exits (down, left, up, right); 4..7 a second way on a side
+var arrows: Array[TextureRect] = []
 ## After a mission won: the ways on, one per open place the campaign goes to next:
 ## [{exit: Rooms.EXIT_*, half: -1 the whole side | 0 its first half | 1 its second, place}]
 var ways_out: Array = []
@@ -154,7 +156,6 @@ func _ready() -> void:
 	profile.apply_to(sim)
 	if resume:
 		profile.resume_on_map(sim)
-
 
 	people = MapPeople.new()
 	people.name = "People"
@@ -321,8 +322,14 @@ func _process(delta: float) -> void:
 		set_process(false)
 		Router.back()
 		if ending >= 0:
-			Router.push("story", {"story": ending, "reward_item": profile.reward_item,
-				"opened_lord": profile.opened_lord})
+			Router.push(
+				"story",
+				{
+					"story": ending,
+					"reward_item": profile.reward_item,
+					"opened_lord": profile.opened_lord
+				}
+			)
 		return
 	_update_view(_acc / tick)
 
@@ -406,7 +413,9 @@ func _place_loot() -> void:
 		s.name = "Loot"
 		# an icon of the new art, as big as the original's 28 px (gold: 24 px)
 		var px := 24.0 if d.item > 10000 else 28.0
-		s.texture = ItemSlot.icon("tool", GOLD_ICON if d.item > 10000 else (11 if d.item > 100 else d.item - 1))
+		s.texture = ItemSlot.icon(
+			"tool", GOLD_ICON if d.item > 10000 else (11 if d.item > 100 else d.item - 1)
+		)
 		s.pixel_size = px / 27.0 / ItemSlot.ART
 		s.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
 		s.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
@@ -441,8 +450,16 @@ func _show_banner() -> void:
 		if sim.banner == MapSim.BANNER_TOTAL_EXP:
 			stage = "%s\n%d" % [tr("mission.total_exp"), sim.exp_reward()]
 		else:
-			stage = "%s\n%s %s\n%s %s" % [tr("mission.time_exp"), tr("mission.time_limit"),
-				clock(sim.time_limit), tr("mission.time_taken"), clock(sim.play_seconds())]
+			stage = (
+				"%s\n%s %s\n%s %s"
+				% [
+					tr("mission.time_exp"),
+					tr("mission.time_limit"),
+					clock(sim.time_limit),
+					tr("mission.time_taken"),
+					clock(sim.play_seconds())
+				]
+			)
 		if sim.exp_bars.level_up_ticks > 0:
 			stage += "\n" + tr("mission.level_up") % sim.exp_bars.level
 	banner_text.text = "%s\n%s\n%s" % [lord_name, tr(str(mission_info.get("name", ""))), stage]
@@ -523,9 +540,12 @@ static func exit_arrow(i: int) -> Texture2D:
 	var img := Image.new()
 	img.load_svg_from_string(EXIT_ARROW, 1.5)
 	match i:
-		1: img.rotate_90(CLOCKWISE)
-		2: img.rotate_180()
-		3: img.rotate_90(COUNTERCLOCKWISE)
+		1:
+			img.rotate_90(CLOCKWISE)
+		2:
+			img.rotate_180()
+		3:
+			img.rotate_90(COUNTERCLOCKWISE)
 	return ImageTexture.create_from_image(img)
 
 
@@ -541,7 +561,10 @@ func _place_arrows() -> void:
 		if sim.choosing:
 			a.visible = false
 			for w in ways_out:
-				if int(w.exit) - 1 == i % 4 and (int(w.half) == -1 and i < 4 or int(w.half) == i / 4):
+				if (
+					int(w.exit) - 1 == i % 4
+					and (int(w.half) == -1 and i < 4 or int(w.half) == i / 4)
+				):
 					a.visible = blink
 					along = 0.5 if int(w.half) == -1 else 0.25 + 0.5 * int(w.half)
 		else:
@@ -549,10 +572,14 @@ func _place_arrows() -> void:
 		var s := a.texture.get_size()
 		a.size = s
 		match i % 4:
-			0: a.position = Vector2(view.x * along - s.x / 2.0, hud.top_of(view) - s.y - 8)  # above the HUD
-			1: a.position = Vector2(16, view.y * along - s.y / 2.0)
-			2: a.position = Vector2(view.x * along - s.x / 2.0, 16)
-			3: a.position = Vector2(view.x - s.x - 16, view.y * along - s.y / 2.0)
+			0:
+				a.position = Vector2(view.x * along - s.x / 2.0, hud.top_of(view) - s.y - 8)  # above the HUD
+			1:
+				a.position = Vector2(16, view.y * along - s.y / 2.0)
+			2:
+				a.position = Vector2(view.x * along - s.x / 2.0, 16)
+			3:
+				a.position = Vector2(view.x - s.x - 16, view.y * along - s.y / 2.0)
 
 
 ## The ways on from a place won: one per open place the campaign goes to next, each on a side
@@ -560,7 +587,8 @@ func _place_arrows() -> void:
 ## sides carry two, one on each half.
 func ways_on(won_place: int) -> Array:
 	var places: Array = WorldMap.new(Campaign.new()).next_places(won_place).filter(
-		func(id): return profile.is_lord_open(id))
+		func(id): return profile.is_lord_open(id)
+	)
 	var sides: Array = [Rooms.EXIT_UP, Rooms.EXIT_RIGHT, Rooms.EXIT_LEFT, Rooms.EXIT_DOWN]
 	var pick := RandomNumberGenerator.new()
 	pick.seed = hash([won_place, profile.done.size()])
@@ -594,7 +622,9 @@ func way_for(exit_no: int, at: Vector3) -> int:
 			continue
 		if int(w.half) == -1:
 			return int(w.place)
-		var along: float = at.x - mid.x if exit_no == Rooms.EXIT_UP or exit_no == Rooms.EXIT_DOWN else at.z - mid.z
+		var along: float = (
+			at.x - mid.x if exit_no == Rooms.EXIT_UP or exit_no == Rooms.EXIT_DOWN else at.z - mid.z
+		)
 		if (along < 0.0) == (int(w.half) == 0):
 			return int(w.place)
 	return 0
@@ -719,7 +749,8 @@ func pointer_dir(at: Vector2) -> int:
 	var c := camera.unproject_position(middle)
 	var box := Vector2(
 		absf(camera.unproject_position(middle + Vector3(14 * Hero.PIXEL_SIZE, 0, 0)).x - c.x),
-		absf(camera.unproject_position(middle + Vector3(0, 20 * Hero.PIXEL_SIZE, 0)).y - c.y))
+		absf(camera.unproject_position(middle + Vector3(0, 20 * Hero.PIXEL_SIZE, 0)).y - c.y)
+	)
 	camera.h_offset = shaken[0]
 	camera.v_offset = shaken[1]
 	camera.rotation.z = shaken[2]
@@ -738,7 +769,6 @@ func toggle_auto() -> void:
 	autopilot.toggle()
 	hud.auto_on = autopilot.on
 	hud.queue_redraw()
-
 
 
 ## The auto-hunt is there only on normal: on hard the player fights by hand.

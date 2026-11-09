@@ -4,7 +4,9 @@ extends Control
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const OnlineClient := preload("res://scripts/net/online_client.gd")
-const CATEGORIES := [["Fame", "online.rank_fame"], ["Duel", "online.rank_duel"], ["Mission", "online.rank_mission"]]
+const CATEGORIES := [
+	["Fame", "online.rank_fame"], ["Duel", "online.rank_duel"], ["Mission", "online.rank_mission"]
+]
 const VIEWS := [["Top", "online.rank_top"], ["Near", "online.rank_near"]]
 
 var online: RefCounted
@@ -83,10 +85,15 @@ func ranked(err: String) -> void:
 		var r: Dictionary = online.rank_rows[i] if i < online.rank_rows.size() else {}
 		var at := int(r.get("rank", 0))
 		rows[i].text = "%d.  %s  %s" % [at, str(r.id), value_text(int(r.value))] if at > 0 else "-"
-		rows[i].add_theme_color_override("font_color",
-			UiTheme.ACCENT if at > 0 and str(r.id) == str(online.me.get("id", "")) else Color.WHITE)
-	mine.text = tr("online.my_rank") % [int(online.rank.rank), value_text(int(online.rank.value))] \
-		if not online.rank.is_empty() else tr("online.no_rank")
+		rows[i].add_theme_color_override(
+			"font_color",
+			UiTheme.ACCENT if at > 0 and str(r.id) == str(online.me.get("id", "")) else Color.WHITE
+		)
+	mine.text = (
+		tr("online.my_rank") % [int(online.rank.rank), value_text(int(online.rank.value))]
+		if not online.rank.is_empty()
+		else tr("online.no_rank")
+	)
 
 
 func _unhandled_input(event: InputEvent) -> void:

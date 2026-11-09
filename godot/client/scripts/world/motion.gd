@@ -105,4 +105,6 @@ static func _pace(ground_speed: float, nominal: float) -> float:
 ## The original 8-direction (0 down, 2 left, 4 up, 6 right) as a turn about Y: the figure
 ## faces +Z at 0.
 static func yaw_of(dir8: int) -> float:
-	return [0.0, -PI / 4.0, -PI / 2.0, -3.0 * PI / 4.0, PI, 3.0 * PI / 4.0, PI / 2.0, PI / 4.0][posmod(dir8, 8)]
+	return [0.0, -PI / 4.0, -PI / 2.0, -3.0 * PI / 4.0, PI, 3.0 * PI / 4.0, PI / 2.0, PI / 4.0][posmod(
+		dir8, 8
+	)]

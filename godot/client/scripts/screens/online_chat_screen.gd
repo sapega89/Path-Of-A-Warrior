@@ -8,7 +8,9 @@ extends Control
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const OnlineClient := preload("res://scripts/net/online_client.gd")
-const TABS := [["Lobby", "online.lobby"], ["OrderTab", "online.order"], ["Private", "online.private"]]
+const TABS := [
+	["Lobby", "online.lobby"], ["OrderTab", "online.order"], ["Private", "online.private"]
+]
 
 var online: RefCounted
 var channel := 0
@@ -57,10 +59,12 @@ func _ready() -> void:
 	new_message = Button.new()
 	new_message.name = "NewMessage"
 	new_message.text = "online.new_message"
-	new_message.pressed.connect(func():
-		var p := Router.params.duplicate()
-		p.kind = "peer"
-		Router.push("online_text", p))
+	new_message.pressed.connect(
+		func():
+			var p := Router.params.duplicate()
+			p.kind = "peer"
+			Router.push("online_text", p)
+	)
 	col.add_child(new_message)
 	write = HBoxContainer.new()
 	write.name = "Write"
@@ -136,7 +140,9 @@ func open(ch: int, with: String) -> void:
 func _tab_texts() -> void:
 	var counts := [0, int(online.unread[0]), int(online.unread[1])]
 	for i in tabs.size():
-		tabs[i].text = tr(TABS[i][1]) + (" (%d)" % counts[i] if counts[i] > 0 and i != channel else "")
+		tabs[i].text = (
+			tr(TABS[i][1]) + (" (%d)" % counts[i] if counts[i] > 0 and i != channel else "")
+		)
 		tabs[i].modulate = Color(1, 0.85, 0.4) if i == channel else Color.WHITE
 
 
@@ -194,14 +200,22 @@ func peers_shown(err: String) -> void:
 		var b := Button.new()
 		b.name = "Peer" + str(p.id)
 		b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-		b.text = "%s%s%s" % [p.name, " (%d)" % int(p.unread) if int(p.unread) > 0 else "",
-			"  " + tr("online.online") if int(p.online) else ""]
+		b.text = (
+			"%s%s%s"
+			% [
+				p.name,
+				" (%d)" % int(p.unread) if int(p.unread) > 0 else "",
+				"  " + tr("online.online") if int(p.online) else ""
+			]
+		)
 		var id := str(p.id)
-		b.pressed.connect(func():
-			var params := Router.params.duplicate()
-			params.channel = OnlineClient.PRIVATE
-			params.peer = id
-			Router.push("online_chat", params))
+		b.pressed.connect(
+			func():
+				var params := Router.params.duplicate()
+				params.channel = OnlineClient.PRIVATE
+				params.peer = id
+				Router.push("online_chat", params)
+		)
 		lines.add_child(b)
 	(lines.get_child(0) if lines.get_child_count() > 0 else new_message).grab_focus.call_deferred()
 

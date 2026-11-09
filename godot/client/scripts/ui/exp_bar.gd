@@ -56,6 +56,8 @@ func _draw_parts() -> void:
 		if x1 <= x0:
 			continue
 		for line in 3:
-			draw_rect(Rect2(Vector2(1 + x0, 1 + line) * px, Vector2(x1 - x0, H - 2 - 2 * line) * px),
-				COLORS[p][line])
+			draw_rect(
+				Rect2(Vector2(1 + x0, 1 + line) * px, Vector2(x1 - x0, H - 2 - 2 * line) * px),
+				COLORS[p][line]
+			)
 	draw_rect(Rect2(Vector2(2, 1.4) * px, Vector2(W - 2, 0.6) * px), Color(1, 1, 1, 0.18))

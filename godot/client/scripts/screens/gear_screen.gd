@@ -131,7 +131,9 @@ func _hero_view(mid: Vector2) -> TextureRect:
 	view.msaa_3d = Viewport.MSAA_4X
 	add_child(view)
 	var sun := DirectionalLight3D.new()
-	sun.transform = Transform3D(Basis.looking_at(Vector3(-0.4, -0.6, -0.7).normalized(), Vector3.UP), Vector3.ZERO)
+	sun.transform = Transform3D(
+		Basis.looking_at(Vector3(-0.4, -0.6, -0.7).normalized(), Vector3.UP), Vector3.ZERO
+	)
 	view.add_child(sun)
 	var env := Environment.new()
 	ArtKit.light(sun, env)
@@ -166,7 +168,9 @@ func _hero_view(mid: Vector2) -> TextureRect:
 
 
 ## The round stage under the hero: a dark ellipse with an iron rim and rivets around it.
-class Stage extends Control:
+class Stage:
+	extends Control
+
 	func _ready() -> void:
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
 

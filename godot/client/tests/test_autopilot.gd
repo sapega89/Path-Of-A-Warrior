@@ -80,8 +80,11 @@ func test_leaves_an_archer_it_cannot_reach() -> void:
 	sim.rng = JavaRandom.new(60)
 	sim.continue_in_clear_room()
 	sim._run_cell_scripts()
-	eq(sim.enemies.map(func(e): return [e.type, e.pos / 27]),
-		[[MapSim.KIND_ARCHERS, Vector2i(13, 2)], [MapSim.KIND_ARCHERS, Vector2i(14, 5)]], "the archers")
+	eq(
+		sim.enemies.map(func(e): return [e.type, e.pos / 27]),
+		[[MapSim.KIND_ARCHERS, Vector2i(13, 2)], [MapSim.KIND_ARCHERS, Vector2i(14, 5)]],
+		"the archers"
+	)
 	var room: int = sim.cell
 	var a := Autopilot.new()
 	a.toggle()

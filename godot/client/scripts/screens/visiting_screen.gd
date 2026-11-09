@@ -300,8 +300,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		if step == Step.LIST:
 			Router.back()
-	elif step in [Step.GREETING, Step.TALK] and (event.is_action_pressed("attack")
-			or event.is_action_pressed("ui_accept")):
+	elif (
+		step in [Step.GREETING, Step.TALK]
+		and (event.is_action_pressed("attack") or event.is_action_pressed("ui_accept"))
+	):
 		get_viewport().set_input_as_handled()
 		press()
 

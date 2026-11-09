@@ -75,14 +75,22 @@ func listed(err: String) -> void:
 func refresh() -> void:
 	gold.text = str(profile.gold)
 	for i in cells.size():
-		cells[i].icon = ItemSlot.item_icon(int(live.lots[i].item.id)) if i < live.lots.size() else null
+		cells[i].icon = (
+			ItemSlot.item_icon(int(live.lots[i].item.id)) if i < live.lots.size() else null
+		)
 
 
 func show_lot(i: int) -> void:
 	if live != null and i < live.lots.size():
 		var lot: Dictionary = live.lots[i]
-		info.text = "%s\n%s\n%s" % [Items.name_of(int(lot.item.id)), tr("live.price") % int(lot.price),
-			Items.describe(lot.item)]
+		info.text = (
+			"%s\n%s\n%s"
+			% [
+				Items.name_of(int(lot.item.id)),
+				tr("live.price") % int(lot.price),
+				Items.describe(lot.item)
+			]
+		)
 
 
 ## Asks before taking the lot of a place off the market. Returns the question.

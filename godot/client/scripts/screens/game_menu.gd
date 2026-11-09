@@ -103,10 +103,12 @@ func _show_news() -> void:
 	if live == null:
 		return
 	news = LiveNews.new(live, path)
-	news.showing_list.connect(func(on: bool) -> void:
-		menu.visible = not on
-		if not on:
-			buttons[0].grab_focus.call_deferred())
+	news.showing_list.connect(
+		func(on: bool) -> void:
+			menu.visible = not on
+			if not on:
+				buttons[0].grab_focus.call_deferred()
+	)
 	add_child(news)
 
 

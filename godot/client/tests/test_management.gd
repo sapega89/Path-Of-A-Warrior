@@ -70,7 +70,10 @@ func test_skills_screen() -> void:
 	root.add_child(screen)
 	eq(screen.keys.size(), 5, "five skill keys")
 	eq(screen.describe(12), "Whirlwind Sabre / Lv1 Dash & Slash", "a learned skill")
-	check(screen.describe(13).ends_with("/ (Not Available)"), "a skill not learned: %s" % screen.describe(13))
+	check(
+		screen.describe(13).ends_with("/ (Not Available)"),
+		"a skill not learned: %s" % screen.describe(13)
+	)
 	var lines: Array = screen.card_lines(12)
 	eq(lines[0], ["Whirlwind Sabre  Lv1", true], "the card's heading")
 	eq(lines[1][0], "Dash & Slash", "what it is")
@@ -118,7 +121,11 @@ func test_assign_items_screen() -> void:
 	Router.params = {"profile_path": TEST_PATH}
 	var screen: Control = AssignItems.new()
 	root.add_child(screen)
-	eq(screen.marks.map(func(m): return m.text), ["Z", "X", "C", "V", "B"], "belt keys only, no * or #")
+	eq(
+		screen.marks.map(func(m): return m.text),
+		["Z", "X", "C", "V", "B"],
+		"belt keys only, no * or #"
+	)
 	eq(screen.find_child("Keys", true, false).text, "Keys Z X C V B", "the line under the slots")
 	check(screen.find_child("Key1", true, false) == null, "no * / # buttons")
 	check(screen.slots[3].icon != null, "the blue potion's icon")

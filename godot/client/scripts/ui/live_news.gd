@@ -99,11 +99,14 @@ func _noticed(err: String) -> void:
 	if not err.is_empty():
 		_read_sold()
 		return
-	_show_note("\n".join(live.notice), func() -> void:
-		if live.more_notices:
-			live.ask_notices(LiveClient.later(self, &"_noticed"))
-		else:
-			_read_sold())
+	_show_note(
+		"\n".join(live.notice),
+		func() -> void:
+			if live.more_notices:
+				live.ask_notices(LiveClient.later(self, &"_noticed"))
+			else:
+				_read_sold()
+	)
 
 
 func _read_sold() -> void:
@@ -140,7 +143,9 @@ func _listed(err: String) -> void:
 	list_text.text = tr("live.sold_lines" if list_kind == "sold" else "live.gift_lines")
 	for i in list_cells.size():
 		list_cells[i].visible = i < maxi(entries.size(), 5)
-		list_cells[i].icon = ItemSlot.item_icon(int(entries[i].item.id)) if i < entries.size() else null
+		list_cells[i].icon = (
+			ItemSlot.item_icon(int(entries[i].item.id)) if i < entries.size() else null
+		)
 	_set_list_shown(true)
 	show_entry(0)
 	list_ok.grab_focus.call_deferred()
@@ -158,8 +163,14 @@ func show_entry(i: int) -> void:
 	var e: Dictionary = entries[i]
 	var it: Dictionary = e.item
 	if list_kind == "sold":
-		list_info.text = "%s\n%s\n%s" % [Items.name_of(int(it.id)), tr("live.price") % int(e.price),
-			tr("live.enchant_lv") % int(it.enchant)]
+		list_info.text = (
+			"%s\n%s\n%s"
+			% [
+				Items.name_of(int(it.id)),
+				tr("live.price") % int(e.price),
+				tr("live.enchant_lv") % int(it.enchant)
+			]
+		)
 	else:
 		list_info.text = "%s\n%s\n%s" % [str(e.from), Items.name_of(int(it.id)), Items.describe(it)]
 

@@ -9,7 +9,9 @@ const COLUMNS := 5
 
 ## Adds a grid of n places to `col`; pressing place i calls press(i), focusing or pointing at
 ## it calls show(i). Returns the places' buttons.
-static func add(col: Container, n: int, height: int, press: Callable, show: Callable) -> Array[Button]:
+static func add(
+	col: Container, n: int, height: int, press: Callable, show: Callable
+) -> Array[Button]:
 	var grid := GridContainer.new()
 	grid.name = "Things"
 	grid.columns = COLUMNS

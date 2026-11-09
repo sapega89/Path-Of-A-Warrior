@@ -28,13 +28,20 @@ func test_every_frame_of_every_kind_is_drawn() -> void:
 				fx.show_effects([[kind, frame, Vector2i(100, 100)]], t)
 				eq(fx.shown(), 1, "%s %d at %.1f" % [kind, frame, t])
 				var rig: Node3D = fx.drawn[0][2]
-				check(rig.visible and _shown_parts(rig) > 0, "%s %d at %.1f shows something" % [kind, frame, t])
+				check(
+					rig.visible and _shown_parts(rig) > 0,
+					"%s %d at %.1f shows something" % [kind, frame, t]
+				)
 	fx.free()
 
 
 func test_rigs_are_reused() -> void:
 	var fx: Node3D = MapEffects.new()
-	var list := [["spark", 0, Vector2i(10, 10)], ["spark", 2, Vector2i(40, 10)], ["fire", 3, Vector2i(10, 40)]]
+	var list := [
+		["spark", 0, Vector2i(10, 10)],
+		["spark", 2, Vector2i(40, 10)],
+		["fire", 3, Vector2i(10, 40)]
+	]
 	fx.show_effects(list)
 	var children := fx.get_child_count()
 	fx.show_effects(list, 0.5)
@@ -55,18 +62,34 @@ func test_effects_stand_where_the_sim_puts_them() -> void:
 	var p := Vector2i(135, 81)
 	fx.show_effects([["fire", 4, p]])
 	var ground: Node3D = fx.drawn[0][2].get_node("Ground")
-	check(ground.position.distance_to(MapPeople.to_world(Vector2(p))) < 0.05, "the fire burns where he stands")
+	check(
+		ground.position.distance_to(MapPeople.to_world(Vector2(p))) < 0.05,
+		"the fire burns where he stands"
+	)
 	fx.show_effects([["blast", 1, p]])
 	var scorch: Node3D = fx.drawn[0][2].get_node("Scorch")
-	check(Vector2(scorch.position.x, scorch.position.z).distance_to(
-		Vector2(MapPeople.to_world(Vector2(p)).x, MapPeople.to_world(Vector2(p)).z)) < 0.05,
-		"a scroll's blast lands on its point")
+	check(
+		(
+			Vector2(scorch.position.x, scorch.position.z).distance_to(
+				Vector2(MapPeople.to_world(Vector2(p)).x, MapPeople.to_world(Vector2(p)).z)
+			)
+			< 0.05
+		),
+		"a scroll's blast lands on its point"
+	)
 	fx.free()
 
 
 func test_room_wide_strikes_keep_their_places() -> void:
-	eq(MapEffects.scatter("storm", 9, 100.0, 80.0), MapEffects.scatter("storm", 9, 100.0, 80.0), "the same frame, the same place")
-	check(MapEffects.scatter("storm", 9, 100.0, 80.0) != MapEffects.scatter("storm", 10, 100.0, 80.0), "another frame, another place")
+	eq(
+		MapEffects.scatter("storm", 9, 100.0, 80.0),
+		MapEffects.scatter("storm", 9, 100.0, 80.0),
+		"the same frame, the same place"
+	)
+	check(
+		MapEffects.scatter("storm", 9, 100.0, 80.0) != MapEffects.scatter("storm", 10, 100.0, 80.0),
+		"another frame, another place"
+	)
 	for f in 42:
 		var s := MapEffects.scatter("storm", f, 100.0, 80.0)
 		check(absf(s.x) <= 100.0 and absf(s.y) <= 80.0, "within the room: %s" % s)

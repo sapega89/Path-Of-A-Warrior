@@ -4,7 +4,8 @@ extends Control
 ## again, and so does the screen itself every AUTO_RETRY_MS; on a refused login BACK forgets
 ## the stored account (the game asks for one again). Once online, the main menu comes back.
 ## OK and BACK are named for the device just used, as pyport's: Enter / Esc, A / B, or OK / Back
-## on a phone, in the line of hints under the screen. The buttons under the text do the same: Try again, and Another account on a
+## on a phone, in the line of hints under the screen. The buttons under the text do the same: Try
+## again, and Another account on a
 ## refused login.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
@@ -98,5 +99,8 @@ func _gui_input(event: InputEvent) -> void:
 ## The keys of the buttons, in the line of control hints under the screen (scripts/ui/hint_bar.gd).
 func controls_hint() -> String:
 	if Cloud.refused():
-		return "%s · %s" % [InputSetup.hint("offline.try_again"), InputSetup.hint("offline.other_account")]
+		return (
+			"%s · %s"
+			% [InputSetup.hint("offline.try_again"), InputSetup.hint("offline.other_account")]
+		)
 	return InputSetup.hint("offline.try_again")

@@ -81,7 +81,15 @@ func user(uid: String) -> Dictionary:
 	if not _users.has(uid):
 		var u := _read(dir.path_join("user_%s.json" % uid))
 		if u.is_empty():
-			u = {"safe": 0, "warehouse": [], "serial": 0, "sold": [], "gifts": [], "fame": 0, "exp": 0}
+			u = {
+				"safe": 0,
+				"warehouse": [],
+				"serial": 0,
+				"sold": [],
+				"gifts": [],
+				"fame": 0,
+				"exp": 0
+			}
 		_users[uid] = u
 	return _users[uid]
 
@@ -141,20 +149,29 @@ func restock(m: Dictionary) -> void:
 				continue
 			by_kind.get_or_add(Vector2i(category(id), kind(id)), []).append(id)
 	var add := func(it: Dictionary, price: int, forever: bool) -> void:
-		lots.append({"id": int(m.next), "seller": "", "item": it, "price": mini(maxi(price, 1), MAX_GOLD),
-			"forever": forever})
+		lots.append(
+			{
+				"id": int(m.next),
+				"seller": "",
+				"item": it,
+				"price": mini(maxi(price, 1), MAX_GOLD),
+				"forever": forever
+			}
+		)
 		m.next = int(m.next) + 1
 	for cat in [0, 1]:
 		var lo := 1.2 if cat == 0 else 1.0
 		var hi := 2.0 if cat == 0 else 1.6
-		for k in (NORMAL_KINDS if cat == 0 else SPECIAL_KINDS):
+		for k in NORMAL_KINDS if cat == 0 else SPECIAL_KINDS:
 			var ids: Array = by_kind.get(Vector2i(cat, k), [])
-			for i in (4 if cat == 0 else 2):
+			for i in 4 if cat == 0 else 2:
 				if ids.is_empty():
 					break
 				var id: int = ids[rng.randi_range(0, ids.size() - 1)]
 				var it := Items.make(id, rng)
-				var times := mini(Items.enchant_max(id), [0, 0, 0, 1, 1, 2, 3, 4][rng.randi_range(0, 7)])
+				var times := mini(
+					Items.enchant_max(id), [0, 0, 0, 1, 1, 2, 3, 4][rng.randi_range(0, 7)]
+				)
 				for t in times:
 					Items.enchant(it, rng)
 				add.call(it, int(Items.price(it) * rng.randf_range(lo, hi)), false)
@@ -194,10 +211,16 @@ static func _new_bp_serial(s: Session) -> int:
 
 
 func _lots(s: Session, cat: int, k: int, ench := -1) -> Array:
-	return market().lots.filter(func(x):
-		var id := int(x.item.id)
-		return category(id) == cat and kind(id) == k and str(x.seller) != s.user \
-			and (ench < 0 or cat == 2 or int(x.item.enchant) == ench))
+	return market().lots.filter(
+		func(x):
+			var id := int(x.item.id)
+			return (
+				category(id) == cat
+				and kind(id) == k
+				and str(x.seller) != s.user
+				and (ench < 0 or cat == 2 or int(x.item.enchant) == ench)
+			)
+	)
 
 
 static func _lot_out(x: Dictionary) -> Dictionary:
@@ -216,8 +239,14 @@ func answer(s: Session, t: String, msg: Dictionary) -> Dictionary:
 	var u := user(s.user)
 	match t:
 		"live_status":
-			return {"t": t, "ok": true, "notice": not notices.is_empty(), "sold": not u.sold.is_empty(),
-				"gifts": not u.gifts.is_empty(), "tax": TAX_PERCENT}
+			return {
+				"t": t,
+				"ok": true,
+				"notice": not notices.is_empty(),
+				"sold": not u.sold.is_empty(),
+				"gifts": not u.gifts.is_empty(),
+				"tax": TAX_PERCENT
+			}
 		"live_notices":
 			if notices.is_empty():
 				return _fail(t, "none")
@@ -257,13 +286,21 @@ func answer(s: Session, t: String, msg: Dictionary) -> Dictionary:
 				counts[mini(9, int(x.item.enchant))] += 1
 			return {"t": t, "ok": true, "counts": counts}
 		"live_page":
-			var lots := _lots(s, int(msg.get("cat", -1)), int(msg.get("kind", -1)), int(msg.get("enchant", 0)))
-			lots.sort_custom(func(a, b): return [int(a.price), int(a.id)] < [int(b.price), int(b.id)])
+			var lots := _lots(
+				s, int(msg.get("cat", -1)), int(msg.get("kind", -1)), int(msg.get("enchant", 0))
+			)
+			lots.sort_custom(
+				func(a, b): return [int(a.price), int(a.id)] < [int(b.price), int(b.id)]
+			)
 			var page := int(msg.get("page", 0))
 			if page < 0 or page * PAGE >= lots.size():
 				return _fail(t, "none")
-			return {"t": t, "ok": true, "lots": lots.slice(page * PAGE, page * PAGE + PAGE).map(_lot_out),
-				"pages": ceili(lots.size() / float(PAGE))}
+			return {
+				"t": t,
+				"ok": true,
+				"lots": lots.slice(page * PAGE, page * PAGE + PAGE).map(_lot_out),
+				"pages": ceili(lots.size() / float(PAGE))
+			}
 		"live_buy":
 			return _buy(s, u, msg)
 		"live_sell":
@@ -302,7 +339,10 @@ func _safe(s: Session, u: Dictionary, msg: Dictionary) -> Dictionary:
 	var to_safe := bool(msg.get("to_safe", true))
 	if amount <= 0 or (to_safe and amount > s.gold) or (not to_safe and amount > int(u.safe)):
 		return _fail("live_safe", "gold")
-	if (to_safe and int(u.safe) + amount > MAX_GOLD) or (not to_safe and s.gold + amount > MAX_GOLD):
+	if (
+		(to_safe and int(u.safe) + amount > MAX_GOLD)
+		or (not to_safe and s.gold + amount > MAX_GOLD)
+	):
 		return _fail("live_safe", "gold")
 	var sign := 1 if to_safe else -1
 	s.gold -= amount * sign
@@ -394,7 +434,9 @@ func _sell(s: Session, u: Dictionary, msg: Dictionary) -> Dictionary:
 		save_user(s.user)
 	else:
 		s.backpack.erase(serial)
-	m.lots.append({"id": int(m.next), "seller": s.user, "item": it, "price": price, "forever": false})
+	m.lots.append(
+		{"id": int(m.next), "seller": s.user, "item": it, "price": price, "forever": false}
+	)
 	m.next = int(m.next) + 1
 	save_market()
 	return {"t": "live_sell", "ok": true}

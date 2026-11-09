@@ -181,8 +181,12 @@ func _potion(sim: RefCounted, foes: Array) -> int:
 	for s in sim.hotkeys:
 		if int(s) >= 12 and int(s) <= 30:
 			skills.append(int(s))
-	var mp_low: bool = not foes.is_empty() and h.max_mp > 0 and not skills.is_empty() \
+	var mp_low: bool = (
+		not foes.is_empty()
+		and h.max_mp > 0
+		and not skills.is_empty()
 		and _castable(sim, skills).is_empty()
+	)
 	for i in 5:
 		var slot: Array = sim.quick_slots[i]
 		if int(slot[1]) < 1:
@@ -229,7 +233,7 @@ func _heal(sim: RefCounted) -> int:
 	if pct >= 40:
 		return -1
 	var key_of := _key_of(sim)
-	for s in ([16, 15] if pct < 25 else [15, 16]):
+	for s in [16, 15] if pct < 25 else [15, 16]:
 		if key_of.has(s) and sim.skill_mp_need(s) <= h.mp:
 			return key_of[s]
 	return -1
@@ -283,7 +287,11 @@ func _skill(sim: RefCounted, foes: Array, target, dist: int, reach: int) -> int:
 	var usable := func(group: Array) -> Array:
 		var out: Array = []
 		for s in group:
-			if key_of.has(s) and sim.skill_mp_need(s) <= h.mp and h.mp - sim.skill_mp_need(s) >= heal_mp:
+			if (
+				key_of.has(s)
+				and sim.skill_mp_need(s) <= h.mp
+				and h.mp - sim.skill_mp_need(s) >= heal_mp
+			):
 				out.append(s)
 		out.sort_custom(func(a, b): return sim.skill_mp_need(a) > sim.skill_mp_need(b))
 		return out
@@ -310,7 +318,10 @@ func _skill(sim: RefCounted, foes: Array, target, dist: int, reach: int) -> int:
 		var d := MapSim.dir4(h.pos, target.pos)
 		var ax: int = h.pos.x + int(MapSim.table("front_dx")[d >> 1])
 		var ay: int = h.pos.y + int(MapSim.table("front_dy")[d >> 1])
-		if (ax - target.pos.x) * (ax - target.pos.x) + (ay - target.pos.y) * (ay - target.pos.y) <= 35 * 35:
+		if (
+			(ax - target.pos.x) * (ax - target.pos.x) + (ay - target.pos.y) * (ay - target.pos.y)
+			<= 35 * 35
+		):
 			var u: Array = usable.call(RANGED)
 			if not u.is_empty():
 				return key_of[u[0]]

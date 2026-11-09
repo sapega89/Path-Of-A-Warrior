@@ -1,7 +1,8 @@
 extends Control
 ## Inventory: the hero's gold and the 45 places of the backpack (it scrolls).
 ## Picking gear wears it (what was worn in its place comes into the backpack instead); a stat
-## item (HP, MP, ATK, DEF up) is used up. Gear above the hero's level cannot be taken. Every change is saved at once.
+## item (HP, MP, ATK, DEF up) is used up. Gear above the hero's level cannot be taken. Every change
+## is saved at once.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")

@@ -83,7 +83,9 @@ func _stage() -> void:
 	# a hard light from the side: half of the face in the shade
 	sun.light_energy = 1.05
 	env.ambient_light_energy = 0.3
-	sun.transform = Transform3D(Basis.looking_at(Vector3(0.8, -0.4, -0.45).normalized(), Vector3.UP), Vector3.ZERO)
+	sun.transform = Transform3D(
+		Basis.looking_at(Vector3(0.8, -0.4, -0.45).normalized(), Vector3.UP), Vector3.ZERO
+	)
 	view.add_child(sun)
 	stand = Node3D.new()
 	view.add_child(stand)

@@ -99,7 +99,7 @@ func _type_in(e: LineEdit) -> void:
 ## Only the characters a UserID (A-Z, typed in any case) or a password (0-9) may have.
 func _keep(e: LineEdit, t: String, first: String, last: String, upper: bool) -> void:
 	var clean := ""
-	for c in (t.to_upper() if upper else t):
+	for c in t.to_upper() if upper else t:
 		if c >= first and c <= last:
 			clean += c
 	if clean != t:

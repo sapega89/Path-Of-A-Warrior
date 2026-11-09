@@ -64,7 +64,9 @@ func listed(err: String) -> void:
 		b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 		b.text = "%s  Lv%d  MP %d" % [OnlineClient.skill_name(id), int(s.level), cost(id)]
 		b.pressed.connect(press_skill.bind(id))
-		b.focus_entered.connect(func(): info.text = OnlineClient.SKILL_INFO[OnlineClient.SKILL_IDS.find(id)])
+		b.focus_entered.connect(
+			func(): info.text = OnlineClient.SKILL_INFO[OnlineClient.SKILL_IDS.find(id)]
+		)
 		list.add_child(b)
 		skill_buttons.append(b)
 	refresh()
@@ -82,7 +84,10 @@ func cost(id: int) -> int:
 func refresh() -> void:
 	for i in 4:
 		var id := int(slots[i]) if i < slots.size() else OnlineClient.EMPTY_SKILL
-		slot_buttons[i].text = "%d: %s" % [i + 1, OnlineClient.skill_name(id) if id != OnlineClient.EMPTY_SKILL else "-"]
+		slot_buttons[i].text = (
+			"%d: %s"
+			% [i + 1, OnlineClient.skill_name(id) if id != OnlineClient.EMPTY_SKILL else "-"]
+		)
 	for b in skill_buttons:
 		var id := int(b.name.trim_prefix("Skill"))
 		b.modulate = Color(1, 0.85, 0.4) if id == held else Color.WHITE

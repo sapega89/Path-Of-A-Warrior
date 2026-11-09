@@ -80,13 +80,16 @@ func show_records(err: String) -> void:
 	var m: Dictionary = online.me
 	var r: Dictionary = online.records
 	var order := str(r.get("order", ""))
-	info.text = "\n".join([
-		tr("online.level") % int(m.get("level", 1)),
-		tr("online.fame") % int(r.get("fame", 0)),
-		tr("online.duel_grade") % OnlineClient.grade(int(r.get("duel_grade", 0))),
-		tr("online.wins") % [int(m.get("wins", 0)), int(m.get("losses", 0))],
-		tr("online.mission_grade") % OnlineClient.grade(int(r.get("mission_grade", 0))),
-		tr("online.order_line") % (order if not order.is_empty() else "-")])
+	info.text = "\n".join(
+		[
+			tr("online.level") % int(m.get("level", 1)),
+			tr("online.fame") % int(r.get("fame", 0)),
+			tr("online.duel_grade") % OnlineClient.grade(int(r.get("duel_grade", 0))),
+			tr("online.wins") % [int(m.get("wins", 0)), int(m.get("losses", 0))],
+			tr("online.mission_grade") % OnlineClient.grade(int(r.get("mission_grade", 0))),
+			tr("online.order_line") % (order if not order.is_empty() else "-")
+		]
+	)
 
 
 func show_attributes(err: String) -> void:
@@ -97,7 +100,9 @@ func show_attributes(err: String) -> void:
 	var lines: Array = []
 	for k in [["hp", "HP"], ["mp", "MP"], ["atk", "ATK"], ["def", "DEF"]]:
 		var bonus := int(a.get(k[0] + "_bonus", 0))
-		lines.append("%s %d%s" % [k[1], int(a.get(k[0], 0)), (" + %d" % bonus) if bonus != 0 else ""])
+		lines.append(
+			"%s %d%s" % [k[1], int(a.get(k[0], 0)), (" + %d" % bonus) if bonus != 0 else ""]
+		)
 	info.text = "\n".join(lines)
 
 
@@ -106,8 +111,13 @@ func show_purse(err: String) -> void:
 		info.text = tr("live.failed")
 		return
 	var p: Dictionary = online.purse
-	info.text = "\n".join([tr("online.mp_exp") % int(p.get("exp", 0)), tr("online.mp_fame") % int(p.get("fame", 0)),
-		tr("online.mp_gold") % int(p.get("gold", 0))])
+	info.text = "\n".join(
+		[
+			tr("online.mp_exp") % int(p.get("exp", 0)),
+			tr("online.mp_fame") % int(p.get("fame", 0)),
+			tr("online.mp_gold") % int(p.get("gold", 0))
+		]
+	)
 
 
 func _unhandled_input(event: InputEvent) -> void:

@@ -167,9 +167,16 @@ func describe(skill: int) -> String:
 
 ## The card's lines of a skill ([text, heading?]).
 func card_lines(skill: int) -> Array:
-	return SkillCard.lines(skill, profile.skill_level(skill), data.get("names", []),
-		data.get("effects", []), profile.attack(), profile.defense(), profile.max_hp(),
-		Settings.tick_seconds())
+	return SkillCard.lines(
+		skill,
+		profile.skill_level(skill),
+		data.get("names", []),
+		data.get("effects", []),
+		profile.attack(),
+		profile.defense(),
+		profile.max_hp(),
+		Settings.tick_seconds()
+	)
 
 
 func _show_info(skill: int) -> void:

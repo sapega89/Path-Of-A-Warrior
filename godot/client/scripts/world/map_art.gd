@@ -29,18 +29,35 @@ const MARGIN := 10  # tiles of land around the map
 
 ## The colour of each kind of ground (sRGB, near the palette): worn, dusty, held down.
 const KIND_COLOUR := {
-	"meadow": Color("74714a"), "grass": Color("5a6a3e"), "dirt": Color("7f6546"),
-	"sand": Color("9c8964"), "gravel": Color("716659"), "stone": Color("6c7177"),
-	"rock": Color("58565b"), "water": Color("34475a"), "wood": Color("6e4c33"),
+	"meadow": Color("74714a"),
+	"grass": Color("5a6a3e"),
+	"dirt": Color("7f6546"),
+	"sand": Color("9c8964"),
+	"gravel": Color("716659"),
+	"stone": Color("6c7177"),
+	"rock": Color("58565b"),
+	"water": Color("34475a"),
+	"wood": Color("6e4c33"),
 	"cobble": Color("7c766c"),
 }
 ## How high a blocked cell of each kind rises (none: it does not). Low enough that a wall
 ## hides little of the cells behind it from the game's camera.
-const RAISE := {"gravel": 1.0, "stone": 1.0, "rock": 1.0, "cobble": 0.9, "wood": 0.9,
-	"meadow": 0.45, "grass": 0.45, "dirt": 0.45, "sand": 0.45}
+const RAISE := {
+	"gravel": 1.0,
+	"stone": 1.0,
+	"rock": 1.0,
+	"cobble": 0.9,
+	"wood": 0.9,
+	"meadow": 0.45,
+	"grass": 0.45,
+	"dirt": 0.45,
+	"sand": 0.45
+}
 ## How the face of a raised kind looks (map_ground.gdshader): 0 rock in strata, 0.25 an earth
 ## bank, 0.5 stone in courses, 1 logs.
-const FACE := {"meadow": 0.25, "grass": 0.25, "dirt": 0.25, "sand": 0.25, "cobble": 0.5, "wood": 1.0}
+const FACE := {
+	"meadow": 0.25, "grass": 0.25, "dirt": 0.25, "sand": 0.25, "cobble": 0.5, "wood": 1.0
+}
 ## The detail painted on a kind (map_ground.gdshader): pebbles and cracks, planks, paving.
 const DETAIL := {"gravel": 0, "stone": 0, "rock": 0, "wood": 1, "cobble": 2}
 const WATER_DEPTH := 0.45
@@ -124,6 +141,7 @@ func build(data: Dictionary) -> void:
 
 # ---- what each part of the map is ----------------------------------------------------------
 
+
 func _layout() -> void:
 	var pw := w * PARTS
 	part_kind.resize(pw * h * PARTS)
@@ -164,7 +182,9 @@ func _layout() -> void:
 	for y in h:
 		for x in w:
 			for i in PARTS * PARTS:
-				part_raise[(y * PARTS + i / PARTS) * pw + x * PARTS + i % PARTS] = cell_raise[y * w + x]
+				part_raise[(y * PARTS + i / PARTS) * pw + x * PARTS + i % PARTS] = cell_raise[
+					y * w + x
+				]
 	_slope_cliffs()
 
 
@@ -175,13 +195,23 @@ func _fill_pits() -> void:
 	for y in h:
 		for x in w:
 			var what := prop_of(cell("upper", x, y))
-			if cell_raise[y * w + x] > 0.0 or (cell("flags", x, y) & FLAG_BLOCKED) == 0 \
-					or cell("objects", x, y) != 0 or not what in NATURAL:
+			if (
+				cell_raise[y * w + x] > 0.0
+				or (cell("flags", x, y) & FLAG_BLOCKED) == 0
+				or cell("objects", x, y) != 0
+				or not what in NATURAL
+			):
 				continue
 			var around: Array[float] = []
 			for d in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
 				var n: Vector2i = Vector2i(x, y) + d
-				if n.x >= 0 and n.y >= 0 and n.x < w and n.y < h and cell_raise[n.y * w + n.x] > 0.0:
+				if (
+					n.x >= 0
+					and n.y >= 0
+					and n.x < w
+					and n.y < h
+					and cell_raise[n.y * w + n.x] > 0.0
+				):
 					around.append(cell_raise[n.y * w + n.x])
 			if around.size() >= 3:
 				lifted[y * w + x] = around.min()
@@ -272,6 +302,7 @@ func hills(x: float, z: float) -> float:
 
 
 # ---- the ground ----------------------------------------------------------------------------
+
 
 func _build_ground() -> void:
 	var st := SurfaceTool.new()
@@ -365,6 +396,7 @@ func _build_water() -> void:
 
 # ---- what stands on the map ----------------------------------------------------------------
 
+
 func _build_props() -> void:
 	var holder := Node3D.new()
 	holder.name = "Props"
@@ -390,7 +422,10 @@ func _build_props() -> void:
 	# crags here and there on the faces of the cliffs
 	for y in h:
 		for x in w:
-			if int(_part(x * PARTS + 1, y * PARTS + 1)[2]) == 1 and hash(Vector2i(x, y) * 31) % 100 < 30:
+			if (
+				int(_part(x * PARTS + 1, y * PARTS + 1)[2]) == 1
+				and hash(Vector2i(x, y) * 31) % 100 < 30
+			):
 				_stand(holder, "crag", x, y, false).position.y -= 0.1
 
 
@@ -423,7 +458,9 @@ func _along_x(x: int, y: int) -> bool:
 	var fences := ["fence", "palisade"]
 	if prop_of(cell("upper", x - 1, y)) in fences or prop_of(cell("upper", x + 1, y)) in fences:
 		return true
-	return not (prop_of(cell("upper", x, y - 1)) in fences or prop_of(cell("upper", x, y + 1)) in fences)
+	return not (
+		prop_of(cell("upper", x, y - 1)) in fences or prop_of(cell("upper", x, y + 1)) in fences
+	)
 
 
 ## Each group of touching blocked cells of a tent (or a hut) is one tent over its middle.
@@ -470,9 +507,15 @@ func show_only(cells: Dictionary) -> void:
 		if mi != null and mi.material_override is ShaderMaterial:
 			var m := mi.material_override as ShaderMaterial
 			m.set_shader_parameter("view_mask", tex)
-			m.set_shader_parameter("view_rect", Vector4(0, 0, w, h) if not cells.is_empty() else Vector4.ZERO)
+			m.set_shader_parameter(
+				"view_rect", Vector4(0, 0, w, h) if not cells.is_empty() else Vector4.ZERO
+			)
 	for node in props:
-		if is_instance_valid(node) and node.get_parent() != null and node.get_parent().name == "Props":
+		if (
+			is_instance_valid(node)
+			and node.get_parent() != null
+			and node.get_parent().name == "Props"
+		):
 			node.visible = is_shown(floori(node.position.x), floori(node.position.z))
 
 
@@ -486,7 +529,9 @@ func _build_objects() -> void:
 			var node := Node3D.new()
 			node.name = "Object_%d_%d" % [x, y]
 			add_child(node)
-			var piece := _stand(node, prop_of(kind) if PROP.has(prop_of(kind)) else "barrel", x, y, true)
+			var piece := _stand(
+				node, prop_of(kind) if PROP.has(prop_of(kind)) else "barrel", x, y, true
+			)
 			node.set_meta("kind", kind)
 			node.set_meta("hp", 41 if kind in [101, 113] else 21)
 			node.set_meta("material", _material_of(piece))
@@ -523,8 +568,14 @@ func _build_tufts() -> void:
 				continue
 			var x := (px + rng.randf()) / PARTS
 			var z := (py + rng.randf()) / PARTS
-			placed.append(Transform3D(Basis(Vector3.UP, rng.randf() * TAU).scaled(Vector3.ONE * rng.randf_range(0.4, 0.75)),
-				Vector3(x, hills(x, z), z)))
+			placed.append(
+				Transform3D(
+					Basis(Vector3.UP, rng.randf() * TAU).scaled(
+						Vector3.ONE * rng.randf_range(0.4, 0.75)
+					),
+					Vector3(x, hills(x, z), z)
+				)
+			)
 	mm.instance_count = placed.size()
 	for i in placed.size():
 		mm.set_instance_transform(i, placed[i])
@@ -546,7 +597,9 @@ static func add_environment(parent: Node3D) -> void:
 	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
 	sun.directional_shadow_max_distance = 40.0
 	sun.shadow_blur = 1.5
-	sun.transform = Transform3D(Basis.looking_at(Vector3(0.5, -0.74, -0.45).normalized(), Vector3.UP), Vector3.ZERO)
+	sun.transform = Transform3D(
+		Basis.looking_at(Vector3(0.5, -0.74, -0.45).normalized(), Vector3.UP), Vector3.ZERO
+	)
 	parent.add_child(sun)
 	var env := Environment.new()
 	ArtKit.light(sun, env)

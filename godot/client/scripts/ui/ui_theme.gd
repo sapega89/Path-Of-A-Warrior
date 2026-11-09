@@ -40,10 +40,15 @@ const BACKDROP := preload("res://assets/art/shaders/ui_backdrop.gdshader")
 const COIN := "res://assets/art/ui/coin.svg"
 
 ## Small pictures of the controls (SVG, drawn at their size).
+# gdlint:ignore = max-line-length
 const CHECK_OFF := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect x="3" y="3" width="26" height="26" rx="1.5" fill="#0f0f10" stroke="#4e4a45" stroke-width="2.5"/></svg>'
+# gdlint:ignore = max-line-length
 const CHECK_ON := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect x="3" y="3" width="26" height="26" rx="1.5" fill="#0f0f10" stroke="#b08d4a" stroke-width="2.5"/><path d="M8 16.5 L13.5 22 L24 9.5" fill="none" stroke="#b08d4a" stroke-width="4" stroke-linecap="square"/></svg>'
+# gdlint:ignore = max-line-length
 const ARROW_DOWN := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 8 L12 17 L20 8" fill="none" stroke="#b08d4a" stroke-width="3.5" stroke-linecap="square" stroke-linejoin="miter"/></svg>'
+# gdlint:ignore = max-line-length
 const KNOB := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12.5" fill="#4e4a45" stroke="#0f0d0c" stroke-width="2.5"/><circle cx="14" cy="13.5" r="7" fill="#8a847b"/><circle cx="16" cy="16" r="4" fill="#b08d4a"/></svg>'
+# gdlint:ignore = max-line-length
 const CROSS := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#b08d4a" stroke-width="3.5" stroke-linecap="square"/></svg>'
 
 static var _fonts := {}
@@ -321,7 +326,9 @@ class Ornament:
 	static var _leather: Texture2D
 
 	static func rhombus(to: RID, c: Vector2, r: float, color: Color) -> void:
-		var points := PackedVector2Array([c + Vector2(0, -r), c + Vector2(r, 0), c + Vector2(0, r), c + Vector2(-r, 0)])
+		var points := PackedVector2Array(
+			[c + Vector2(0, -r), c + Vector2(r, 0), c + Vector2(0, r), c + Vector2(-r, 0)]
+		)
 		RenderingServer.canvas_item_add_polygon(to, points, PackedColorArray([color]))
 		points.append(points[0])
 		RenderingServer.canvas_item_add_polyline(to, points, PackedColorArray([color]), 1.0, true)
@@ -355,8 +362,12 @@ class Ornament:
 	## A seam of stitches along the rect's edge.
 	static func seam(to: RID, rect: Rect2, color: Color) -> void:
 		var stitches := PackedVector2Array()
-		var edges := [[rect.position, Vector2(rect.end.x, rect.position.y)], [Vector2(rect.end.x, rect.position.y), rect.end],
-			[rect.end, Vector2(rect.position.x, rect.end.y)], [Vector2(rect.position.x, rect.end.y), rect.position]]
+		var edges := [
+			[rect.position, Vector2(rect.end.x, rect.position.y)],
+			[Vector2(rect.end.x, rect.position.y), rect.end],
+			[rect.end, Vector2(rect.position.x, rect.end.y)],
+			[Vector2(rect.position.x, rect.end.y), rect.position]
+		]
 		for e in edges:
 			var a: Vector2 = e[0]
 			var b: Vector2 = e[1]
@@ -378,8 +389,9 @@ class Ornament:
 			var h := minf(tile.y, rect.end.y - y)
 			while x < rect.end.x:
 				var w := minf(tile.x, rect.end.x - x)
-				RenderingServer.canvas_item_add_texture_rect_region(to, Rect2(x, y, w, h), _leather.get_rid(),
-					Rect2(0, 0, w, h))
+				RenderingServer.canvas_item_add_texture_rect_region(
+					to, Rect2(x, y, w, h), _leather.get_rid(), Rect2(0, 0, w, h)
+				)
 				x += tile.x
 			y += tile.y
 
@@ -407,7 +419,8 @@ class Ornament:
 
 ## The plate of a panel or a window: dark leather in an iron rim, a stitched seam inside it and
 ## an iron rivet in each corner.
-class PanelBox extends StyleBox:
+class PanelBox:
+	extends StyleBox
 	var plate: StyleBoxFlat
 	## How far it reaches out of its rect: left, top, right, bottom (a window's frame and title).
 	var outset := [0.0, 0.0, 0.0, 0.0]
@@ -431,14 +444,21 @@ class PanelBox extends StyleBox:
 			return
 		Ornament.grain(to, rect.grow(-3))
 		Ornament.seam(to, rect.grow(-8), THREAD)
-		for corner in [rect.position, Vector2(rect.end.x, rect.position.y), rect.end, Vector2(rect.position.x, rect.end.y)]:
+		for corner in [
+			rect.position,
+			Vector2(rect.end.x, rect.position.y),
+			rect.end,
+			Vector2(rect.position.x, rect.end.y)
+		]:
 			var c: Vector2 = corner + (rect.get_center() - corner).sign() * 8.0
 			Ornament.rivet(to, c, 4.5)
 
 
 ## A heading: its text with an iron rule on each side, a rhombus of brass near the words and a
 ## rivet at the far end.
-class Heading extends Label:
+class Heading:
+	extends Label
+
 	func _draw() -> void:
 		var f := get_theme_font("font")
 		var font_size := get_theme_font_size("font_size")
@@ -453,7 +473,13 @@ class Heading extends Label:
 		for side in [-1.0, 1.0]:
 			var near := Vector2(size.x / 2.0 + side * (w / 2.0 + 12.0 + r), y)
 			var far := near + Vector2(side * reach, 0)
-			draw_line(near + Vector2(side * r * 1.6, 1.5), far + Vector2(0, 1.5), Color(0, 0, 0, 0.5), 3.0, true)
+			draw_line(
+				near + Vector2(side * r * 1.6, 1.5),
+				far + Vector2(0, 1.5),
+				Color(0, 0, 0, 0.5),
+				3.0,
+				true
+			)
 			draw_line(near + Vector2(side * r * 1.6, 0), far, Color(IRON_LIGHT, 0.8), 2.0, true)
 			Ornament.rhombus(to, near, r, ACCENT_DARK)
 			Ornament.rhombus(to, near, r * 0.45, INK)

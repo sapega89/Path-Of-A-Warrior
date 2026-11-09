@@ -49,9 +49,15 @@ func test_safe_and_warehouse() -> void:
 	var d := _dir()
 	var l := _live(d)
 	var s := _session("ANDREY", 500, [Items.make(101)])
-	var r := l.answer(s, "live_sync", {"gold": 500, "backpack": [{"serial": 1, "item": Items.make(101)}]})
+	var r := l.answer(
+		s, "live_sync", {"gold": 500, "backpack": [{"serial": 1, "item": Items.make(101)}]}
+	)
 	eq([r.ok, r.safe, r.warehouse], [true, 0, []])
-	eq(l.answer(s, "live_safe", {"to_safe": true, "amount": 600}).err, "gold", "more than the hero has")
+	eq(
+		l.answer(s, "live_safe", {"to_safe": true, "amount": 600}).err,
+		"gold",
+		"more than the hero has"
+	)
 	r = l.answer(s, "live_safe", {"to_safe": true, "amount": 200})
 	eq([r.gold, r.safe], [300, 200], "into the Safe")
 	r = l.answer(s, "live_store", {"to_warehouse": true, "serial": 1})
@@ -125,7 +131,11 @@ func test_buy_menu_counts_and_pages() -> void:
 	eq(counts[0], 1, "one Silk Rushnyk (rare kind 1)")
 	var page := l.answer(s, "live_page", {"cat": 2, "kind": 1, "enchant": 0, "page": 0})
 	eq(int(page.lots[0].item.id), 502)
-	eq(l.answer(s, "live_page", {"cat": 2, "kind": 1, "enchant": 0, "page": 1}).err, "none", "no second page")
+	eq(
+		l.answer(s, "live_page", {"cat": 2, "kind": 1, "enchant": 0, "page": 1}).err,
+		"none",
+		"no second page"
+	)
 	check(l.answer(s, "live_prices", {"cat": 0, "kind": 0}).ok, "price info")
 	ServerTests._rm(d)
 

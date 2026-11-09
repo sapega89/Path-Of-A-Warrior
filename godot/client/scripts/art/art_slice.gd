@@ -16,12 +16,18 @@ const MapEffects := preload("res://scripts/world/map_effects.gd")
 ## The effects of the map (scripts/world/map_effects.gd) in a grid, each on a kozak:
 ## [kind, frame, the kozak's clip, where he faces].
 const EFFECT_GRID := [
-	["slash", 6, "run", Vector3.RIGHT], ["trail", 0, "attack_slash", Vector3.BACK],
-	["blood", 2, "hit", Vector3.BACK], ["heal", 4, "cast_raise", Vector3.BACK],
-	["buff", 2, "cast_raise", Vector3.BACK], ["aura", 4, "idle", Vector3.BACK],
-	["whirl", 0, "attack_2h_slash", Vector3.BACK], ["fire", 4, "hit", Vector3.BACK],
-	["burst", 1, "attack_spin", Vector3.BACK], ["blast", 0, "", Vector3.ZERO],
-	["wave", 24, "cast", Vector3.RIGHT], ["scroll", 14, "use_item", Vector3.RIGHT],
+	["slash", 6, "run", Vector3.RIGHT],
+	["trail", 0, "attack_slash", Vector3.BACK],
+	["blood", 2, "hit", Vector3.BACK],
+	["heal", 4, "cast_raise", Vector3.BACK],
+	["buff", 2, "cast_raise", Vector3.BACK],
+	["aura", 4, "idle", Vector3.BACK],
+	["whirl", 0, "attack_2h_slash", Vector3.BACK],
+	["fire", 4, "hit", Vector3.BACK],
+	["burst", 1, "attack_spin", Vector3.BACK],
+	["blast", 0, "", Vector3.ZERO],
+	["wave", 24, "cast", Vector3.RIGHT],
+	["scroll", 14, "use_item", Vector3.RIGHT],
 ]
 
 const FOV := 35.0
@@ -127,7 +133,9 @@ func burst() -> void:
 			(e as CPUParticles3D).restart()
 
 
-func _prop(prop_name: String, at: Vector3, yaw_deg := 0.0, scale_by := 1.0, outline := false) -> Node3D:
+func _prop(
+	prop_name: String, at: Vector3, yaw_deg := 0.0, scale_by := 1.0, outline := false
+) -> Node3D:
 	var node := ArtKit.prop(prop_name, outline)
 	node.position = at
 	node.rotation_degrees.y = yaw_deg
@@ -163,11 +171,23 @@ func _ground(paths: Array, greens: Array, play: Rect2) -> void:
 # -- Korsun camp ----------------------------------------------------------------------
 func _camp() -> void:
 	var centre := Vector2(0.0, -0.4)
-	_ground([
-		PackedVector2Array([Vector2(-4.2, -4.4), Vector2(-2.0, -2.6), centre, Vector2(2.2, -1.6), Vector2(4.0, -3.6)]),
-		PackedVector2Array([centre, Vector2(1.0, 2.0), Vector2(3.6, 2.6), Vector2(5.2, 1.0)]),
-		PackedVector2Array([centre, Vector2(-3.5, 1.6), Vector2(-9.0, 3.0)]),
-	], [Vector3(-8, -8, 4), Vector3(8, -7, 4), Vector3(-8, 5, 3), Vector3(6, 6, 4)], Rect2(-12, -11, 24, 20))
+	_ground(
+		[
+			PackedVector2Array(
+				[
+					Vector2(-4.2, -4.4),
+					Vector2(-2.0, -2.6),
+					centre,
+					Vector2(2.2, -1.6),
+					Vector2(4.0, -3.6)
+				]
+			),
+			PackedVector2Array([centre, Vector2(1.0, 2.0), Vector2(3.6, 2.6), Vector2(5.2, 1.0)]),
+			PackedVector2Array([centre, Vector2(-3.5, 1.6), Vector2(-9.0, 3.0)]),
+		],
+		[Vector3(-8, -8, 4), Vector3(8, -7, 4), Vector3(-8, 5, 3), Vector3(6, 6, 4)],
+		Rect2(-12, -11, 24, 20)
+	)
 	# hut, fence and poplars at the back left
 	_prop("khata", Vector3(-5.0, 0, -6.2), 8.0)
 	_prop("tyn", Vector3(-7.2, 0, -3.5))
@@ -212,8 +232,11 @@ func _camp() -> void:
 
 # -- battle room ----------------------------------------------------------------------
 func _battle() -> void:
-	_ground([PackedVector2Array([Vector2(-1.0, 6.0), Vector2(0.0, 1.0), Vector2(0.4, -1.5)])],
-		[Vector3(-5, 4, 3), Vector3(5, -5, 3), Vector3(5.5, 4.5, 3)], Rect2(-8, -8, 16, 16))
+	_ground(
+		[PackedVector2Array([Vector2(-1.0, 6.0), Vector2(0.0, 1.0), Vector2(0.4, -1.5)])],
+		[Vector3(-5, 4, 3), Vector3(5, -5, 3), Vector3(5.5, 4.5, 3)],
+		Rect2(-8, -8, 16, 16)
+	)
 	for i in 4:
 		_prop("palisade", Vector3(-3.0 + i * 2.0, 0, -4.4), 0.0)
 	for i in 3:
@@ -261,14 +284,27 @@ func _lineup() -> void:
 # -- the people of the map: the hero's four classes in front, the enemies behind --------
 func _people() -> void:
 	_ground([], [Vector3(0, -3, 6)], Rect2(-12, -8, 24, 16))
-	var heroes := [["kozak", ""], ["serdiuk", "palash"], ["kharakternyk", "sabre"], ["haidamaka", "sabre"]]
+	var heroes := [
+		["kozak", ""], ["serdiuk", "palash"], ["kharakternyk", "sabre"], ["haidamaka", "sabre"]
+	]
 	for i in heroes.size():
 		var x := (i - (heroes.size() - 1) / 2.0) * 1.7
-		var f := _figure(heroes[i][0], Vector3(x, 0, 2.2), "idle", Vector3(x + 0.3, 0, 6.0), 0.3 + i * 0.13)
+		var f := _figure(
+			heroes[i][0], Vector3(x, 0, 2.2), "idle", Vector3(x + 0.3, 0, 6.0), 0.3 + i * 0.13
+		)
 		if heroes[i][1] != "":
 			f.equip(heroes[i][1])
-	var enemies := ["zholner", "luchnyk", "rotmistr", "kozak_rival", "kozak_rival_luk", "polkovnyk",
-		"tatar", "tatar_luk", "murza"]
+	var enemies := [
+		"zholner",
+		"luchnyk",
+		"rotmistr",
+		"kozak_rival",
+		"kozak_rival_luk",
+		"polkovnyk",
+		"tatar",
+		"tatar_luk",
+		"murza"
+	]
 	for i in enemies.size():
 		var x := (i - (enemies.size() - 1) / 2.0) * 1.45
 		_figure(enemies[i], Vector3(x, 0, -0.6), "idle", Vector3(x - 0.2, 0, 4.0), 0.2 + i * 0.11)
@@ -304,8 +340,9 @@ func _effects_room() -> void:
 	var fx: Node3D = MapEffects.new()
 	add_child(fx)
 	var p := _px(Vector3.ZERO)
-	var shown: Array = [["storm", 3, p], ["storm", 6, p], ["storm", 7, p], ["storm", 8, p],
-		["quake", 6, p]]
+	var shown: Array = [
+		["storm", 3, p], ["storm", 6, p], ["storm", 7, p], ["storm", 8, p], ["quake", 6, p]
+	]
 	for k in 5:
 		shown.append(["rain", 5 + k, p])
 	fx.show_effects(shown, 0.55)

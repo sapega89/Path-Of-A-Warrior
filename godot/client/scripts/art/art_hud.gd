@@ -61,12 +61,24 @@ func setup(hero_node: Node3D, place: String) -> void:
 	screen = get_viewport_rect().size
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	title_font = font(["res://assets/art/fonts/kurale-latin-400-normal.woff2",
-		"res://assets/art/fonts/kurale-cyrillic-400-normal.woff2"])
-	text_font = font(["res://assets/art/fonts/pt-sans-latin-400-normal.woff2",
-		"res://assets/art/fonts/pt-sans-cyrillic-400-normal.woff2"])
-	bold_font = font(["res://assets/art/fonts/pt-sans-latin-700-normal.woff2",
-		"res://assets/art/fonts/pt-sans-cyrillic-700-normal.woff2"])
+	title_font = font(
+		[
+			"res://assets/art/fonts/kurale-latin-400-normal.woff2",
+			"res://assets/art/fonts/kurale-cyrillic-400-normal.woff2"
+		]
+	)
+	text_font = font(
+		[
+			"res://assets/art/fonts/pt-sans-latin-400-normal.woff2",
+			"res://assets/art/fonts/pt-sans-cyrillic-400-normal.woff2"
+		]
+	)
+	bold_font = font(
+		[
+			"res://assets/art/fonts/pt-sans-latin-700-normal.woff2",
+			"res://assets/art/fonts/pt-sans-cyrillic-700-normal.woff2"
+		]
+	)
 	_portrait()
 	_bars()
 	_skills(place)
@@ -146,7 +158,9 @@ func _process(_delta: float) -> void:
 		return
 	var forward := Vector3(sin(hero.rotation.y), 0.0, cos(hero.rotation.y))
 	var head := hero.global_position + Vector3(0, 1.66, 0)
-	portrait_camera.global_position = head + forward * 1.25 + Vector3(0.25, 0.12, 0).rotated(Vector3.UP, hero.rotation.y)
+	portrait_camera.global_position = (
+		head + forward * 1.25 + Vector3(0.25, 0.12, 0).rotated(Vector3.UP, hero.rotation.y)
+	)
 	portrait_camera.look_at(head + Vector3(0, 0.02, 0), Vector3.UP)
 
 
@@ -201,7 +215,9 @@ func _skills(place: String) -> void:
 		p.position = at
 		p.size = Vector2(slot, slot)
 		var active := i == 0 and place == "battle"
-		p.add_theme_stylebox_override("panel", _box(Color("2a2623"), GOLD if active else GOLD_DARK, 4 if active else 3, 2))
+		p.add_theme_stylebox_override(
+			"panel", _box(Color("2a2623"), GOLD if active else GOLD_DARK, 4 if active else 3, 2)
+		)
 		add_child(p)
 		var t := TextureRect.new()
 		t.texture = icon(SKILLS[i], 128)

@@ -8,13 +8,22 @@ const LiveServer := preload("res://server/live.gd")
 const LiveClient := preload("res://scripts/net/live_client.gd")
 const OnlineServer := preload("res://server/online.gd")
 const OnlineAccounts := preload("res://server/accounts.gd")
+const Profile := preload("res://scripts/core/profile.gd")
 const OnlineClient := preload("res://scripts/net/online_client.gd")
 const OnlineBattle := preload("res://scripts/net/online_battle.gd")
 ## The multiplayer shots' hero, as the server keeps it (Profile.to_dict()).
-const ONLINE_HERO := {"level": 12, "head": 2, "base": [60, 31, 9, 8],
-	"equipped": [{"id": 105, "attack": 6, "defense": 0, "hp": 0, "mp": 0, "enchant": 0},
-		{"id": 201, "attack": 0, "defense": 3, "hp": 5, "mp": 2, "enchant": 0}],
-	"skill_levels": [2, 0, 0, 1, 0, 3], "hotkeys": [17, 15, 12, 0, 0]}
+const ONLINE_HERO := {
+	"level": 12,
+	"head": 2,
+	"base": [60, 31, 9, 8],
+	"equipped":
+	[
+		{"id": 105, "attack": 6, "defense": 0, "hp": 0, "mp": 0, "enchant": 0},
+		{"id": 201, "attack": 0, "defense": 3, "hp": 5, "mp": 2, "enchant": 0}
+	],
+	"skill_levels": [2, 0, 0, 1, 0, 3],
+	"hotkeys": [17, 15, 12, 0, 0]
+}
 
 
 func _ready() -> void:
@@ -62,7 +71,7 @@ func _ready() -> void:
 	Router.go("main_menu")
 	Router.push("management", {"profile_path": "user://shot_hero.json"})
 	await _shot(out, "05_management")
-	var hero: RefCounted = load("res://scripts/core/profile.gd").new()
+	var hero: RefCounted = Profile.new()
 	for i in 3:
 		hero.spend_point(0)
 	hero.gold = 300
@@ -142,8 +151,10 @@ func _ready() -> void:
 	market.rng.seed = 7
 	var session: RefCounted = LiveServer.Session.new()
 	session.user = "ANDREY"
-	var client: RefCounted = LiveClient.new(func(msg: Dictionary, done: Callable) -> void:
-		done.call(bytes_to_var(var_to_bytes(market.answer(session, str(msg.t), msg)))))
+	var client: RefCounted = LiveClient.new(
+		func(msg: Dictionary, done: Callable) -> void:
+			done.call(bytes_to_var(var_to_bytes(market.answer(session, str(msg.t), msg))))
+	)
 	hero.gold = 5000
 	hero.save("user://shot_live_hero.json")
 	hero.gold = 1250
@@ -244,8 +255,19 @@ func _ready() -> void:
 	accounts.hero_put("ANDREY", 0, 1, ONLINE_HERO)
 	accounts.create_account("MARIA", "1234")
 	var me_part: Dictionary = game.online_part("ANDREY")
-	me_part.merge({"name": "Andrey", "wins": 7, "losses": 3, "mp_fame": 320, "duel_grade": 5,
-		"mission_grade": 3, "gold": 1800, "mp_exp": 950}, true)
+	me_part.merge(
+		{
+			"name": "Andrey",
+			"wins": 7,
+			"losses": 3,
+			"mp_fame": 320,
+			"duel_grade": 5,
+			"mission_grade": 3,
+			"gold": 1800,
+			"mp_exp": 950
+		},
+		true
+	)
 	game.save_char("ANDREY")
 	var mine: RefCounted = OnlineServer.Session.new()
 	var pushes: Array = []
@@ -258,20 +280,27 @@ func _ready() -> void:
 	game.enter(maria, "MARIA")
 	game.answer(maria, "mp_name", {"name": "Maria"})
 	game.answer(maria, "order_join", {"name": "WOLVES"})
-	for m in [[OnlineServer.LOBBY, "", "Anyone up for a duel?"],
-			[OnlineServer.ORDER, "", "Wolves, meet at the arena!"],
-			[OnlineServer.PRIVATE, "ANDREY", "Want to do a mission together?"]]:
+	for m in [
+		[OnlineServer.LOBBY, "", "Anyone up for a duel?"],
+		[OnlineServer.ORDER, "", "Wolves, meet at the arena!"],
+		[OnlineServer.PRIVATE, "ANDREY", "Want to do a mission together?"]
+	]:
 		now[0] += 2.0
 		game.answer(maria, "chat_send", {"channel": m[0], "peer": m[1], "text": m[2]})
 	pushes.clear()
 	var holder: Array = []  # the client, for its own request's pushes
-	var mp: RefCounted = OnlineClient.new(func(msg: Dictionary, done: Callable) -> void:
-		now[0] += 2.0
-		var r: Dictionary = game.enter(mine, "ANDREY") if msg.t == "mp_enter" \
-			else game.answer(mine, str(msg.t), bytes_to_var(var_to_bytes(msg)))
-		done.call(bytes_to_var(var_to_bytes(r)))
-		while not pushes.is_empty():
-			holder[0].on_push(pushes.pop_front()))
+	var mp: RefCounted = OnlineClient.new(
+		func(msg: Dictionary, done: Callable) -> void:
+			now[0] += 2.0
+			var r: Dictionary = (
+				game.enter(mine, "ANDREY")
+				if msg.t == "mp_enter"
+				else game.answer(mine, str(msg.t), bytes_to_var(var_to_bytes(msg)))
+			)
+			done.call(bytes_to_var(var_to_bytes(r)))
+			while not pushes.is_empty():
+				holder[0].on_push(pushes.pop_front())
+	)
 	holder.append(mp)
 	var mp_params := {"online": mp}
 	Router.go("main_menu")
@@ -384,7 +413,7 @@ func _ready() -> void:
 	Router.current.cells[2].grab_focus()
 	await _shot(out, "17_combine")
 	# Visiting: three friends after a won mission; Jan Gorski's greeting, the topics, the gift.
-	hero = load("res://scripts/core/profile.gd").load_or_new("user://shot_hero.json")
+	hero = Profile.load_or_new("user://shot_hero.json")
 	hero.friendship = {"4": 100, "13": 35, "29": 5}
 	hero.can_visit = true
 	hero.save("user://shot_hero.json")
@@ -424,8 +453,10 @@ func _ready() -> void:
 	# A story: ending 2's talk, its first picture with its text floating up, its numbers and the
 	# reward.
 	Router.go("main_menu")
-	Router.push("story", {"story": 2, "reward_item": 502, "opened_lord": 8,
-		"profile_path": "user://shot_hero.json"})
+	Router.push(
+		"story",
+		{"story": 2, "reward_item": 502, "opened_lord": 8, "profile_path": "user://shot_hero.json"}
+	)
 	await _frames(2)
 	var story: Node = Router.current
 	for i in 5:
@@ -460,7 +491,7 @@ func _ready() -> void:
 	InputSetup.device = "keys"
 	# The campaign: the mission list and the first mission, walking down into the next room.
 	# The lords to fight for from chapter 5: Assassin and Brotherhood are not open yet.
-	var walker: RefCounted = load("res://scripts/core/profile.gd").new()
+	var walker: RefCounted = Profile.new()
 	walker.place = 5
 	walker.done["1:0"] = true
 	walker.save("user://shot_walker.json")
@@ -469,12 +500,16 @@ func _ready() -> void:
 	Router.go("campaign", {"level": 2, "lord": 1, "profile_path": "user://shot_walker.json"})
 	await _shot(out, "04_missions")
 	# A mission's description, the question whether to accept it, the briefing typed out.
-	Router.go("campaign", {"level": 3, "lord": 1, "mission": 0, "profile_path": "user://shot_walker.json"})
+	Router.go(
+		"campaign", {"level": 3, "lord": 1, "mission": 0, "profile_path": "user://shot_walker.json"}
+	)
 	await _shot(out, "04b_mission_description")
 	Router.current.ask_accept()
 	await _shot(out, "04c_mission_accept")
 	Router.current.ask.hide()
-	Router.go("briefing", {"lord": 1, "mission": 0, "line": 0, "profile_path": "user://shot_walker.json"})
+	Router.go(
+		"briefing", {"lord": 1, "mission": 0, "line": 0, "profile_path": "user://shot_walker.json"}
+	)
 	Router.current.set_process(false)
 	Router.current.press()
 	Router.current.next_line()
@@ -530,14 +565,28 @@ func _ready() -> void:
 	# Fight: walk to the nearest soldier and strike, until the room is cleared.
 	var shot_fight := false
 	var t0 := Time.get_ticks_msec()
-	while Time.get_ticks_msec() - t0 < 60000 and not mission.sim.exits_open() and not mission.sim.failed:
+	while (
+		Time.get_ticks_msec() - t0 < 60000
+		and not mission.sim.exits_open()
+		and not mission.sim.failed
+	):
 		await _fight_step(mission.sim)
 		if not shot_fight and Time.get_ticks_msec() - t0 > 5000:
 			shot_fight = true
 			await _shot(out, "mission_1_fight")
 	_release_all()
-	print("fight: kills ", mission.sim.kills, " hp ", mission.sim.hero.hp, " open ", mission.sim.exits_open(),
-		" failed ", mission.sim.failed, " s ", (Time.get_ticks_msec() - t0) / 1000)
+	print(
+		"fight: kills ",
+		mission.sim.kills,
+		" hp ",
+		mission.sim.hero.hp,
+		" open ",
+		mission.sim.exits_open(),
+		" failed ",
+		mission.sim.failed,
+		" s ",
+		(Time.get_ticks_msec() - t0) / 1000
+	)
 	await _shot(out, "mission_1_cleared")
 	Router.current.toggle_auto()  # the AUTO corner lit (switched off again at once)
 	await _shot(out, "mission_1_auto_on")
@@ -688,7 +737,9 @@ func _ready() -> void:
 	await _shot(out, "mission_1_general_end")
 	# The pages after the mission go on by themselves: the exp, the exp for time, then the
 	# general's talk.
-	for page in [[11, "mission_1_total_exp"], [12, "mission_1_time_exp"], [0, "mission_1_victory_talk"]]:
+	for page in [
+		[11, "mission_1_total_exp"], [12, "mission_1_time_exp"], [0, "mission_1_victory_talk"]
+	]:
 		while sim.banner != page[0] and not sim.finished:
 			await _frames(1)
 		await _seconds(1.0)
@@ -710,11 +761,20 @@ func _battle_shots(out: String, game: RefCounted, mp: RefCounted) -> void:
 	Router.current.buttons[0].pressed.emit()  # 1-on-1 Duel
 	var screen: Node = Router.current
 	screen.set_process(false)
-	await _battle_until(screen, func(b: RefCounted) -> bool: return b.state == OnlineBattle.QUOTES and b.state_ticks >= 8)
+	await _battle_until(
+		screen,
+		func(b: RefCounted) -> bool: return b.state == OnlineBattle.QUOTES and b.state_ticks >= 8
+	)
 	await _shot(out, "12a_battle_quotes")
-	await _battle_until(screen, func(b: RefCounted) -> bool: return b.state == OnlineBattle.CHOOSE and b.state_ticks == 3)
+	await _battle_until(
+		screen,
+		func(b: RefCounted) -> bool: return b.state == OnlineBattle.CHOOSE and b.state_ticks == 3
+	)
 	await _shot(out, "12b_battle_choose")
-	await _battle_until(screen, func(b: RefCounted) -> bool: return b.state == OnlineBattle.BAR and b.state_ticks == 5)
+	await _battle_until(
+		screen,
+		func(b: RefCounted) -> bool: return b.state == OnlineBattle.BAR and b.state_ticks == 5
+	)
 	await _shot(out, "12c_battle_bar")
 	await _battle_until(screen, _blow_shown)
 	await _shot(out, "12d_battle_blow")
@@ -724,12 +784,18 @@ func _battle_shots(out: String, game: RefCounted, mp: RefCounted) -> void:
 	Router.current.buttons[1].pressed.emit()  # 2-on-2 Duel
 	screen = Router.current
 	screen.set_process(false)
-	await _battle_until(screen, func(b: RefCounted) -> bool: return b.state == OnlineBattle.CHOOSE and b.state_ticks == 3)
+	await _battle_until(
+		screen,
+		func(b: RefCounted) -> bool: return b.state == OnlineBattle.CHOOSE and b.state_ticks == 3
+	)
 	screen.press("back")
 	await _shot(out, "12f_battle_exit")
 	screen.press("fire")  # No
-	await _battle_until(screen, func(b: RefCounted) -> bool:
-		return b.state == OnlineBattle.TARGET and b.state_ticks >= 4 and b.state_ticks % 2 == 0)
+	await _battle_until(
+		screen,
+		func(b: RefCounted) -> bool:
+			return b.state == OnlineBattle.TARGET and b.state_ticks >= 4 and b.state_ticks % 2 == 0
+	)
 	screen.press("down")
 	await _shot(out, "12g_battle_2v2_target")
 	InputSetup.device = "pad"  # the hint names the pad's buttons after a pad button
@@ -745,7 +811,11 @@ func _battle_shots(out: String, game: RefCounted, mp: RefCounted) -> void:
 	Router.current.buttons[0].pressed.emit()  # Solo Mission
 	screen = Router.current
 	screen.set_process(false)
-	await _battle_until(screen, func(b: RefCounted) -> bool: return b.state == OnlineBattle.STAGE_INTRO and b.state_ticks >= 4)
+	await _battle_until(
+		screen,
+		func(b: RefCounted) -> bool:
+			return b.state == OnlineBattle.STAGE_INTRO and b.state_ticks >= 4
+	)
 	await _shot(out, "12i_mission_stage")
 	await _battle_until(screen, _blow_shown)
 	await _shot(out, "12j_mission_blow")
@@ -758,7 +828,7 @@ func _battle_shots(out: String, game: RefCounted, mp: RefCounted) -> void:
 ## The training before the first mission (training_screen.gd): its steps' hints, a pad's too,
 ## the cleared room's arrow, Skip Training on the pause menu and the end.
 func _training_shots(out: String) -> void:
-	var trainee: RefCounted = load("res://scripts/core/profile.gd").new()
+	var trainee: RefCounted = Profile.new()
 	trainee.save("user://shot_training.json")
 	Router.go("training", {"profile_path": "user://shot_training.json"})
 	var training: Node = Router.current
@@ -819,8 +889,11 @@ func _battle_until(screen: Node, done: Callable, limit := 5000) -> void:
 
 ## Out of the battle: OK on the result, or Exit Battle when it goes on.
 func _battle_leave(screen: Node) -> void:
-	await _battle_until(screen, func(b: RefCounted) -> bool:
-		return b.state == OnlineBattle.CHOOSE and b.state_ticks == 3 and not b.exit_asked)
+	await _battle_until(
+		screen,
+		func(b: RefCounted) -> bool:
+			return b.state == OnlineBattle.CHOOSE and b.state_ticks == 3 and not b.exit_asked
+	)
 	if screen.battle.state == OnlineBattle.CHOOSE:
 		screen.press("back")
 		screen.press("left")

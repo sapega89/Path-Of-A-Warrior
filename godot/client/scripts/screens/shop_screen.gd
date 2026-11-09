@@ -263,7 +263,11 @@ func finish() -> String:
 	asked = -1
 	if r != "no_gold":
 		profile.save(path)
-	var said := tr("shop.no_gold") if r == "no_gold" else tr("enchant.success" if r == "success" else "enchant.fail")
+	var said := (
+		tr("shop.no_gold")
+		if r == "no_gold"
+		else tr("enchant.success" if r == "success" else "enchant.fail")
+	)
 	refresh()
 	info.text = said
 	return said
@@ -278,8 +282,11 @@ func _draw_sparkle() -> void:
 	for i in sparkle_cells:
 		var mid := cells[i].get_global_rect().get_center()
 		var half := side * ItemSlot.SCALE / 2.0
-		_sparkle_view.draw_texture_rect_region(_sparkle_sheet,
-			Rect2(mid - Vector2(half, half), Vector2(half, half) * 2.0), Rect2(f[0], f[1], side, side))
+		_sparkle_view.draw_texture_rect_region(
+			_sparkle_sheet,
+			Rect2(mid - Vector2(half, half), Vector2(half, half) * 2.0),
+			Rect2(f[0], f[1], side, side)
+		)
 
 
 func refresh() -> void:
@@ -303,7 +310,9 @@ func describe(i: int) -> String:
 
 func _name(id: int) -> String:
 	if id < 100:
-		return str(Items.POTION_NAMES[id - 1]).strip_edges() if id <= Items.POTION_NAMES.size() else ""
+		return (
+			str(Items.POTION_NAMES[id - 1]).strip_edges() if id <= Items.POTION_NAMES.size() else ""
+		)
 	return Items.name_of(id)
 
 

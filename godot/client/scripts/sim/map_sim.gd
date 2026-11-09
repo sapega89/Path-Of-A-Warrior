@@ -1,4 +1,6 @@
+# gdlint: disable=max-public-methods
 extends RefCounted
+# gdlint: disable=max-file-lines
 ## The map part of the game, tick by tick, as the original runs it (pyport/pow/game
 ## map_engine.py and map_scene.py are the reference). Everything is in original pixels
 ## (a tile is 27 px) and whole numbers; one tick is 120 ms. The 3D screen only draws
@@ -61,8 +63,15 @@ const RESTORE_PCT := [30, 60, 100, 30, 60, 100, 30, 60, 100]
 ## How many ticks an effect lasts, by effect item + 2 (-2, -1 scrolls in flight, 1..9 potions).
 const EFFECT_STEPS := [2, 10, 100, 2, 2, 2, 2, 2, 2, 2, 2, 2, 100, 100]
 ## A squad moves as if it stood this far aside (the side its men stand on), by direction.
-const SQUAD_SHIFT := {3: Vector2i(-20, 0), 1: Vector2i(-20, 20), 2: Vector2i(-20, 0),
-	0: Vector2i(0, 20), 5: Vector2i(20, 0), 7: Vector2i(20, 20), 6: Vector2i(20, 0)}
+const SQUAD_SHIFT := {
+	3: Vector2i(-20, 0),
+	1: Vector2i(-20, 20),
+	2: Vector2i(-20, 0),
+	0: Vector2i(0, 20),
+	5: Vector2i(20, 0),
+	7: Vector2i(20, 20),
+	6: Vector2i(20, 0)
+}
 const GENERAL_REACH := [60, 50]
 ## How far to the side of the line he faces the hero's sword still hits (one cell).
 const STRIKE_BAND := 27
@@ -276,7 +285,9 @@ static func talk_lines(kind: String) -> Array:
 	return _talk.get(kind, [])
 
 
-func _init(map_data: Dictionary = {}, mission_no: int = 0, start_tile: Vector2i = Vector2i(4, 4)) -> void:
+func _init(
+	map_data: Dictionary = {}, mission_no: int = 0, start_tile: Vector2i = Vector2i(4, 4)
+) -> void:
 	if map_data.is_empty():
 		return
 	map = map_data
@@ -427,13 +438,20 @@ func _find_spawn_spots() -> void:
 
 # ---- one tick ----------------------------------------------------------------------------
 
+
 ## One tick. held: the 8-direction of the held direction key (0, 2, 4, 6) or -1.
 ## pressed: a direction key pressed this tick (-1 none), for the original's tap-to-walk.
 ## fire: the attack key was pressed (it also closes a banner). hotkey: a skill key (0..4)
 ## pressed, -1 none; potion: a potion key (0, 1), -1 none; belt: a belt slot (0..4) used by
 ## its own key (the skill bar's Z X C V B), -1 none.
-func tick(held: int, pressed: int = -1, fire: bool = false, hotkey: int = -1, potion: int = -1,
-		belt: int = -1) -> void:
+func tick(
+	held: int,
+	pressed: int = -1,
+	fire: bool = false,
+	hotkey: int = -1,
+	potion: int = -1,
+	belt: int = -1
+) -> void:
 	sounds.clear()
 	ticks += 1
 	hero.prev_pos = hero.pos
@@ -814,6 +832,7 @@ func _clamp_hero() -> void:
 
 # ---- potions and scrolls -------------------------------------------------------------------
 
+
 ## The item of a quick slot (0..4) goes into use, by a potion key or the slot's belt key (a
 ## scroll only while standing or walking: the hero holds it up first).
 func _use_slot(sel: int) -> void:
@@ -978,6 +997,7 @@ func exits_open() -> bool:
 
 # ---- enemies: waves, AI, hits -------------------------------------------------------------
 
+
 ## The next enemy of the room's list comes in while fewer than the room's maximum are alive.
 func _spawn_next_enemy() -> void:
 	if no_enemies:
@@ -1075,19 +1095,32 @@ func enemy_anim(e: Actor, action: int) -> Array:
 		var prefix := "body_anim_" if e.type == KIND_ARCHERS else "head_anim_"
 		return table(prefix + str(clampi(action, 0, 3)))[dir4]
 	match clampi(action, 0, 21):
-		0: return table("head_anim_0")[dir4]
-		1, 4, 5: return table("weapon_anim_1")[dir4]
-		2: return table("weapon_anim_2")[dir4]
-		3: return table("weapon_anim_3")
-		6: return table("hero_anim_12")[dir4]
-		7: return table("hero_anim_13")[dir4]
-		8: return table("hero_anim_14")[dir4]
-		9, 10, 11, 12, 13: return table("hero_anim_15_19")
-		14: return table("hero_anim_20")[dir4]
-		15: return table("hero_anim_21")[dir4]
-		16: return table("hero_anim_22")[dir4]
-		17, 18: return table("hero_anim_23_24")
-		19: return table("hero_anim_25")[dir4]
+		0:
+			return table("head_anim_0")[dir4]
+		1, 4, 5:
+			return table("weapon_anim_1")[dir4]
+		2:
+			return table("weapon_anim_2")[dir4]
+		3:
+			return table("weapon_anim_3")
+		6:
+			return table("hero_anim_12")[dir4]
+		7:
+			return table("hero_anim_13")[dir4]
+		8:
+			return table("hero_anim_14")[dir4]
+		9, 10, 11, 12, 13:
+			return table("hero_anim_15_19")
+		14:
+			return table("hero_anim_20")[dir4]
+		15:
+			return table("hero_anim_21")[dir4]
+		16:
+			return table("hero_anim_22")[dir4]
+		17, 18:
+			return table("hero_anim_23_24")
+		19:
+			return table("hero_anim_25")[dir4]
 	return table("hero_anim_26_27")[dir4]
 
 
@@ -1153,7 +1186,9 @@ func dir_to_hero(p: Vector2i) -> int:
 
 
 ## The two boxes overlap (the game's own test, kept as it is).
-static func boxes_touch(x1: int, y1: int, w1: int, h1: int, x2: int, y2: int, w2: int, h2: int) -> bool:
+static func boxes_touch(
+	x1: int, y1: int, w1: int, h1: int, x2: int, y2: int, w2: int, h2: int
+) -> bool:
 	var dx := x1 + w1 / 2 - x2 + w2 / 2
 	var dy := y1 + h1 / 2 - y2 + h2 / 2
 	return absi(dx) < (w1 + w2) / 2 and absi(dy) < (h1 + h2) / 2
@@ -1197,7 +1232,12 @@ func choose_enemy_action(e: Actor) -> void:
 	elif roll < 150:
 		general_pick_skill(e, false)
 	elif roll < 350:
-		if i <= 60 and (hero.action != 9 or hero.frame >= 6) and hero.action != 10 and hero.action < 12:
+		if (
+			i <= 60
+			and (hero.action != 9 or hero.frame >= 6)
+			and hero.action != 10
+			and hero.action < 12
+		):
 			e.action = 1
 			e.dir = dir4(e.pos, hero.pos)
 			e.facing = e.dir
@@ -1410,9 +1450,16 @@ func _enemy_strikes_hero(e: Actor) -> void:
 		match action:
 			7:
 				var side := e.dir >> 1
-				if boxes_touch(e.pos.x + int(table("hit_box_x")[side]), e.pos.y + int(table("hit_box_y")[side]),
-						int(table("hit_box_w")[side]), int(table("hit_box_h")[side]),
-						hero.pos.x - 8, hero.pos.y - 8, 17, 17):
+				if boxes_touch(
+					e.pos.x + int(table("hit_box_x")[side]),
+					e.pos.y + int(table("hit_box_y")[side]),
+					int(table("hit_box_w")[side]),
+					int(table("hit_box_h")[side]),
+					hero.pos.x - 8,
+					hero.pos.y - 8,
+					17,
+					17
+				):
 					hero_is_hit(e)
 				return
 			16:
@@ -1447,10 +1494,14 @@ func _front_of(p: Vector2i, d8: int) -> Vector2i:
 
 static func _is_in_front(a: Vector2i, b: Vector2i, d8: int) -> bool:
 	match d8:
-		2: return a.x > b.x
-		6: return a.x < b.x
-		0: return a.y < b.y
-		4: return a.y > b.y
+		2:
+			return a.x > b.x
+		6:
+			return a.x < b.x
+		0:
+			return a.y < b.y
+		4:
+			return a.y > b.y
 	return false
 
 
@@ -1563,8 +1614,11 @@ func auras() -> Array:
 	var out: Array = []
 	var who: Array = [hero] if hero_glows else []
 	for e in enemies:
-		if e.type < 200 and (e.attack_buff_ticks > 0 or e.defense_buff_ticks > 0) \
-				and enemy_sprite_frame(e) < 180:
+		if (
+			e.type < 200
+			and (e.attack_buff_ticks > 0 or e.defense_buff_ticks > 0)
+			and enemy_sprite_frame(e) < 180
+		):
 			who.append(e)
 	for a in who:
 		var at: Vector2i = a.pos + Vector2i(0, 3)
@@ -1587,10 +1641,14 @@ func sparks() -> Array:
 
 func _show_target_info(e: Actor) -> void:
 	var names := table("troop_names")
-	var name := String(TranslationServer.translate(str(general.get("name", "")))) if e.type < 200 else \
-		(str(names[e.type - 201]) if e.type - 201 < names.size() else "")
-	target_info = {"name": name,
-		"level": e.level, "hp_bar": e.hp * 60 / maxi(e.max_hp, 1), "ticks": 10}
+	var name := (
+		String(TranslationServer.translate(str(general.get("name", ""))))
+		if e.type < 200
+		else (str(names[e.type - 201]) if e.type - 201 < names.size() else "")
+	)
+	target_info = {
+		"name": name, "level": e.level, "hp_bar": e.hp * 60 / maxi(e.max_hp, 1), "ticks": 10
+	}
 
 
 ## The hero's attack (kind 0, by his action) or a scroll's blast (-1, -2) against the enemies.
@@ -1603,9 +1661,16 @@ func _hero_attack(kind: int) -> void:
 			match hero.action:
 				13:
 					var side := hero.dir >> 1
-					if boxes_touch(hero.pos.x + int(table("hit_box_x")[side]), hero.pos.y + int(table("hit_box_y")[side]),
-							int(table("hit_box_w")[side]), int(table("hit_box_h")[side]),
-							e.pos.x - 8, e.pos.y - 8, 17, 17):
+					if boxes_touch(
+						hero.pos.x + int(table("hit_box_x")[side]),
+						hero.pos.y + int(table("hit_box_y")[side]),
+						int(table("hit_box_w")[side]),
+						int(table("hit_box_h")[side]),
+						e.pos.x - 8,
+						e.pos.y - 8,
+						17,
+						17
+					):
 						_hero_hits_enemy(e, hero.action)
 						_sound(3)
 				22:
@@ -1713,8 +1778,13 @@ func _hero_hits_enemy(e: Actor, action: int) -> void:
 		e.hp -= maxi(dmg, 1)
 	elif action in [12, 13, 14] or (action >= 20 and action <= 30):
 		var k := action - 12
-		var dmg := hero.attack + hero.attack_buff + hero.attack * skill_levels[k] / int(table("skill_attack_div")[k]) \
-			- e.defense - e.defense_buff
+		var dmg := (
+			hero.attack
+			+ hero.attack_buff
+			+ hero.attack * skill_levels[k] / int(table("skill_attack_div")[k])
+			- e.defense
+			- e.defense_buff
+		)
 		e.hp -= maxi(dmg, 1)
 	elif action == -2:
 		e.ai_mode = 2
@@ -1757,8 +1827,10 @@ func _tick_arrows() -> void:
 	for a in arrows:
 		if not a.active:
 			continue
-		if boxes_touch(a.pos.x, a.pos.y + 8, a.w, a.h, hero.pos.x - 12, hero.pos.y - 20, 17, 18) \
-				and hero.action < 12:
+		if (
+			boxes_touch(a.pos.x, a.pos.y + 8, a.w, a.h, hero.pos.x - 12, hero.pos.y - 20, 17, 18)
+			and hero.action < 12
+		):
 			a.active = false
 			hero_is_hit(null, a)
 			continue
@@ -1769,10 +1841,14 @@ func _tick_arrows() -> void:
 			a.active = false
 			continue
 		match a.dir:
-			0: a.pos.y += 12
-			1: a.pos.x -= 12
-			2: a.pos.y -= 12
-			3: a.pos.x += 12
+			0:
+				a.pos.y += 12
+			1:
+				a.pos.x -= 12
+			2:
+				a.pos.y -= 12
+			3:
+				a.pos.x += 12
 
 
 ## The arrows stand still while a big skill of the hero holds the room, as in pyport
@@ -1791,6 +1867,7 @@ func arrows_wait() -> bool:
 
 
 # ---- talks over the map ------------------------------------------------------------------
+
 
 ## A general met on the map: "<name> is here!!!", the hero's "...", his "Come on!".
 func _start_map_talk() -> void:
@@ -1856,6 +1933,7 @@ func _tick_talk(fire: bool) -> void:
 
 
 # ---- after a room or the mission: the general's talk, the rewards ------------------------
+
 
 ## The general of the room (0 none), who talks once it is cleared.
 func room_general() -> int:
@@ -1949,6 +2027,7 @@ func _talk_done() -> void:
 
 # ---- breakable objects and drops ----------------------------------------------------------
 
+
 ## The objects of the room's 9x9-tile view.
 func _find_breakables() -> void:
 	breakables.clear()
@@ -1974,9 +2053,16 @@ func _hero_hits_breakables() -> void:
 		match hero.action:
 			13:
 				var side := hero.dir >> 1
-				if boxes_touch(hero.pos.x + int(table("hit_box_x")[side]), hero.pos.y + int(table("hit_box_y")[side]),
-						int(table("hit_box_w")[side]), int(table("hit_box_h")[side]),
-						b.pos.x - 8, b.pos.y - 8, 18, 18):
+				if boxes_touch(
+					hero.pos.x + int(table("hit_box_x")[side]),
+					hero.pos.y + int(table("hit_box_y")[side]),
+					int(table("hit_box_w")[side]),
+					int(table("hit_box_h")[side]),
+					b.pos.x - 8,
+					b.pos.y - 8,
+					18,
+					18
+				):
 					hit_breakable(b)
 			22:
 				if _is_in_front(hero.pos, b.pos, hero.dir) and distance(hero.pos, b.pos) <= reach:
@@ -1985,8 +2071,10 @@ func _hero_hits_breakables() -> void:
 				if distance(hero.pos, b.pos) <= 45:
 					hit_breakable(b)
 			25:
-				if ((hero.dir + (hero.frame >> 1 << 1)) & 7) == dir4(hero.pos, b.pos) \
-						and distance(hero.pos, b.pos) <= reach:
+				if (
+					((hero.dir + (hero.frame >> 1 << 1)) & 7) == dir4(hero.pos, b.pos)
+					and distance(hero.pos, b.pos) <= reach
+				):
 					hit_breakable(b)
 			26, 27:
 				if distance(_front_of(hero.pos, hero.dir), b.pos) <= 35:
@@ -2048,8 +2136,13 @@ func random_drop(kind: int) -> int:
 	const DROP_ODDS := [5, 10, 20, 5, 100]
 	const POTION_ODDS := [10, 30, 60, 1, 100]
 	const TIER_MIN_LEVEL := [69, 44, 24, 9, 0]
-	const TIER_ODDS := [[0, 0, 33, 77, 100], [5, 30, 55, 80, 100], [30, 60, 90, 100, 100],
-		[40, 80, 100, 100, 100], [80, 100, 100, 100, 100]]
+	const TIER_ODDS := [
+		[0, 0, 33, 77, 100],
+		[5, 30, 55, 80, 100],
+		[30, 60, 90, 100, 100],
+		[40, 80, 100, 100, 100],
+		[80, 100, 100, 100, 100]
+	]
 	if rng.below(100) < DROP_ODDS[kind]:
 		var i := rng.below(100)
 		if i < POTION_ODDS[kind]:
@@ -2091,6 +2184,7 @@ func _pick_up_drops() -> void:
 
 
 # ---- rooms and walls (map_engine) ------------------------------------------------------------
+
 
 ## Room edges in pixels: 27 + 189 k, as the original's table (x 3 / 2).
 static func edge(k: int) -> int:
@@ -2187,8 +2281,10 @@ func step_until_free(pos: Vector2i, step: int, direction: int) -> int:
 
 
 static func straighten_step(delta: int, row: int) -> int:
-	const STEPS := [[0, 1, 1, 2, 3, 4, 4, 5, 6, 7, 7, 8, 8, 9, 10, 10, 11],
-		[0, 2, 3, 4, 6, 7, 8, 9, 11, 13, 14, 16, 17, 18, 20, 21, 23]]
+	const STEPS := [
+		[0, 1, 1, 2, 3, 4, 4, 5, 6, 7, 7, 8, 8, 9, 10, 10, 11],
+		[0, 2, 3, 4, 6, 7, 8, 9, 11, 13, 14, 16, 17, 18, 20, 21, 23]
+	]
 	if delta < 0:
 		return -int(STEPS[row][mini(16, -delta)])
 	return int(STEPS[row][mini(16, delta)])
@@ -2324,6 +2420,7 @@ func slide_corner(pos: Vector2i, direction: int, actor: Actor) -> int:
 
 # ---- the pictures of the effects ---------------------------------------------------------
 
+
 ## The effects to draw now: [sheet, frame, point in map pixels] (sheets fx_<name>.png). The
 ## hero's skill shows its effect on him (the big skills 28-30 over the middle of the room),
 ## a potion or scroll shows where it is in use, a general's skill on the general.
@@ -2451,7 +2548,9 @@ func trails(pick: RandomNumberGenerator) -> Array:
 	var out: Array = []
 	var step := hero_trail_step(pick)
 	if step > -1:
-		out.append(["trail", _trail_picture(hero.dir, hero.action == 25, hero.frame, step), hero.pos])
+		out.append(
+			["trail", _trail_picture(hero.dir, hero.action == 25, hero.frame, step), hero.pos]
+		)
 	for e in enemies:
 		if e.type >= 200:
 			continue
@@ -2542,18 +2641,45 @@ func _room_middle() -> Vector2i:
 
 # ---- the hero's animation tables ---------------------------------------------------------------
 
+
 ## The hero's frame list for an action and 8-direction (as the original builds hero.anims).
 static func hero_anim(action: int, dir8: int) -> Array:
 	var dir4: int = int(table("dir8_to_dir4")[dir8])
-	var names := {0: "hero_anim_0", 1: "hero_anim_1", 2: "hero_anim_2", 9: "hero_anim_9",
-		3: "hero_anim_3", 4: "hero_anim_4", 5: "hero_anim_5", 6: "hero_anim_6", 7: "hero_anim_7",
-		8: "hero_anim_8", 11: "hero_anim_11", 12: "hero_anim_12", 13: "hero_anim_13",
-		14: "hero_anim_14", 20: "hero_anim_20", 21: "hero_anim_21", 22: "hero_anim_22",
-		25: "hero_anim_25", 26: "hero_anim_26_27", 27: "hero_anim_26_27"}
-	var flat := {10: "hero_anim_10", 15: "hero_anim_15_19", 16: "hero_anim_15_19",
-		17: "hero_anim_15_19", 18: "hero_anim_15_19", 19: "hero_anim_15_19",
-		23: "hero_anim_23_24", 24: "hero_anim_23_24", 28: "hero_anim_28", 29: "hero_anim_29",
-		30: "hero_anim_30"}
+	var names := {
+		0: "hero_anim_0",
+		1: "hero_anim_1",
+		2: "hero_anim_2",
+		9: "hero_anim_9",
+		3: "hero_anim_3",
+		4: "hero_anim_4",
+		5: "hero_anim_5",
+		6: "hero_anim_6",
+		7: "hero_anim_7",
+		8: "hero_anim_8",
+		11: "hero_anim_11",
+		12: "hero_anim_12",
+		13: "hero_anim_13",
+		14: "hero_anim_14",
+		20: "hero_anim_20",
+		21: "hero_anim_21",
+		22: "hero_anim_22",
+		25: "hero_anim_25",
+		26: "hero_anim_26_27",
+		27: "hero_anim_26_27"
+	}
+	var flat := {
+		10: "hero_anim_10",
+		15: "hero_anim_15_19",
+		16: "hero_anim_15_19",
+		17: "hero_anim_15_19",
+		18: "hero_anim_15_19",
+		19: "hero_anim_15_19",
+		23: "hero_anim_23_24",
+		24: "hero_anim_23_24",
+		28: "hero_anim_28",
+		29: "hero_anim_29",
+		30: "hero_anim_30"
+	}
 	if names.has(action):
 		return table(names[action])[dir4]
 	if flat.has(action):

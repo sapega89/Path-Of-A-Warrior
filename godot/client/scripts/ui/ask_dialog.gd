@@ -131,8 +131,11 @@ func _focus_first() -> void:
 
 func _answer(yes: bool) -> void:
 	hide()
-	if is_instance_valid(_focus_before) and _focus_before.is_inside_tree() \
-			and _focus_before.is_visible_in_tree():
+	if (
+		is_instance_valid(_focus_before)
+		and _focus_before.is_inside_tree()
+		and _focus_before.is_visible_in_tree()
+	):
 		_focus_before.grab_focus()
 	_focus_before = null
 	if yes:
@@ -150,6 +153,13 @@ func _input(event: InputEvent) -> void:
 
 ## The keys and buttons its own buttons did not take go nowhere else while it shows.
 func _unhandled_input(event: InputEvent) -> void:
-	if visible and (event is InputEventKey or event is InputEventJoypadButton \
-			or event is InputEventJoypadMotion or event is InputEventAction):
+	if (
+		visible
+		and (
+			event is InputEventKey
+			or event is InputEventJoypadButton
+			or event is InputEventJoypadMotion
+			or event is InputEventAction
+		)
+	):
 		get_viewport().set_input_as_handled()

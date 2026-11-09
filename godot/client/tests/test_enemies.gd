@@ -1,3 +1,4 @@
+# gdlint: disable=max-public-methods
 extends "res://tests/test_case.gd"
 
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
@@ -64,9 +65,23 @@ func test_arrows_wait_while_a_big_skill_holds_the_room() -> void:
 	var sim := _sim(false)
 	var a = sim.arrows[0]
 	# [the hero's action and frame of the last tick, the arrow flies on]
-	for c in [[0, 0, true], [12, 5, true], [26, 1, true], [26, 2, false], [27, 8, false],
-			[26, 9, true], [28, 3, true], [28, 4, false], [28, 30, false], [29, 6, true],
-			[29, 7, false], [30, 3, true], [30, 4, false], [30, 14, false], [30, 15, true]]:
+	for c in [
+		[0, 0, true],
+		[12, 5, true],
+		[26, 1, true],
+		[26, 2, false],
+		[27, 8, false],
+		[26, 9, true],
+		[28, 3, true],
+		[28, 4, false],
+		[28, 30, false],
+		[29, 6, true],
+		[29, 7, false],
+		[30, 3, true],
+		[30, 4, false],
+		[30, 14, false],
+		[30, 15, true]
+	]:
 		a.active = true
 		a.pos = sim.hero.pos + Vector2i(0, 120)
 		a.dir = 2  # up, toward the hero
@@ -138,15 +153,18 @@ func test_sword_hits() -> void:
 	eq(sim.target_info.get("name", ""), "Swords", "the target's name is shown")
 
 
-
 ## The sword hits ahead within a band one cell wide to each side, not only in the quarter faced.
 func test_strike_band() -> void:
 	var o := Vector2i(100, 100)
-	check(MapSim.in_strike_reach(o, o + Vector2i(15, -20), 6, 63), "right: a little above, close up")
+	check(
+		MapSim.in_strike_reach(o, o + Vector2i(15, -20), 6, 63), "right: a little above, close up"
+	)
 	check(MapSim.in_strike_reach(o, o + Vector2i(15, 25), 6, 63), "right: a little below")
 	check(MapSim.in_strike_reach(o, o + Vector2i(-25, -10), 4, 63), "up: a little to the left")
 	check(MapSim.in_strike_reach(o, o + Vector2i(45, 35), 6, 63), "right: the quarter as before")
-	check(not MapSim.in_strike_reach(o, o + Vector2i(10, -30), 6, 63), "right: more than a cell above")
+	check(
+		not MapSim.in_strike_reach(o, o + Vector2i(10, -30), 6, 63), "right: more than a cell above"
+	)
 	check(not MapSim.in_strike_reach(o, o + Vector2i(-10, 5), 6, 63), "right: behind him")
 	check(not MapSim.in_strike_reach(o, o + Vector2i(60, 25), 6, 63), "right: out of reach")
 	# on hard (no turning to the enemy) a soldier a little above, in front of him, is hit
@@ -174,7 +192,11 @@ func test_auto_aim_only_on_normal() -> void:
 		e.pos = sim.hero.pos + Vector2i(30, 0)
 		sim.tick(-1, -1, true)
 		sim.tick(-1, -1)
-		eq(sim.hero.facing, 0 if hard else 6, "turned to the enemy only on normal (hard: %s)" % hard)
+		eq(
+			sim.hero.facing,
+			0 if hard else 6,
+			"turned to the enemy only on normal (hard: %s)" % hard
+		)
 
 
 func test_hit_spark_shows_two_ticks() -> void:
@@ -200,7 +222,10 @@ func test_hit_spark_shows_two_ticks() -> void:
 		check(false, "the spark shows a second tick: %d" % sp.size())
 	sim.tick(-1, -1)
 	sim.tick(-1, -1)
-	check(sim.sparks().filter(func(x): return x[1] == e.pos and int(x[0]) < 2).size() <= 1, "the spark ends")
+	check(
+		sim.sparks().filter(func(x): return x[1] == e.pos and int(x[0]) < 2).size() <= 1,
+		"the spark ends"
+	)
 
 
 func test_weapon_trail_of_a_swing() -> void:
@@ -248,6 +273,7 @@ func test_strikes_and_hits_have_their_sounds() -> void:
 	sim.hero.hurt_ticks = 0
 	sim.hero_is_hit(d[1])
 	eq(sim.sounds.back(), 16, "the hero is hit")
+
 
 func test_last_enemy_clears_the_room() -> void:
 	var d := _duel()
@@ -455,7 +481,10 @@ func test_rewards_and_the_talk_after_the_mission() -> void:
 	_next_page(sim)
 	eq(sim.banner, 0, "the pages are over")
 	eq(sim.talk.size(), 5, "the general talks")
-	check(sim.talk[0].begins_with("[Andrii Nedolia] You handle yourself well, warrior."), "his first words: %s" % sim.talk[0])
+	check(
+		sim.talk[0].begins_with("[Andrii Nedolia] You handle yourself well, warrior."),
+		"his first words: %s" % sim.talk[0]
+	)
 	check(sim.talk[1].begins_with("[Hero]"), "then the hero")
 	eq(sim.friendship.get(5, 0), 5, "friendship grows")
 	for t in 400:
@@ -544,8 +573,11 @@ func test_a_buff_shows_its_aura() -> void:
 		sim.tick(-1, -1)
 		var a: Array = sim.auras()
 		if a.size() == 2:
-			eq([a[0][0], a[0][2], a[0][3], a[1][2]], ["aura", sim.hero.pos + Vector2i(0, 3), true,
-				sim.hero.pos + Vector2i(0, 3)], "a ring behind him and the light in front, at his feet")
+			eq(
+				[a[0][0], a[0][2], a[0][3], a[1][2]],
+				["aura", sim.hero.pos + Vector2i(0, 3), true, sim.hero.pos + Vector2i(0, 3)],
+				"a ring behind him and the light in front, at his feet"
+			)
 			eq(int(a[1][1]), int(a[0][1]) + 3, "the same step of both")
 		seen.append(a.size())
 	eq(seen, [2, 2, 0], "while it lasts, and the tick it ends")
@@ -567,10 +599,14 @@ func test_a_buff_shows_its_aura() -> void:
 	eq(node.shown(), 2, "both are drawn")
 	var ring: Node3D = node.drawn[0][2]
 	var light: Node3D = node.drawn[1][2]
-	check(ring.get_node("Ring").visible and not ring.get_node("Light").visible,
-		"the ring on the ground behind him")
-	check(light.get_node("Light").visible and not light.get_node("Ring").visible,
-		"the light rising around him")
+	check(
+		ring.get_node("Ring").visible and not ring.get_node("Light").visible,
+		"the ring on the ground behind him"
+	)
+	check(
+		light.get_node("Light").visible and not light.get_node("Ring").visible,
+		"the light rising around him"
+	)
 	node.free()
 
 
@@ -644,11 +680,18 @@ func test_effects_of_a_generals_skills() -> void:
 	g.dir = 2
 	# action, frame -> the picture shown on him (or in front of him, the blast)
 	var cases := [
-		[6, 3, ["slash", 3, g.pos]], [8, 2, ["slash", 2, g.pos]], [10, 5, ["heal", 1, g.pos]],
-		[12, 4, ["buff", 0, g.pos]], [15, 6, ["whirl", 1, g.pos]], [16, 3, ["slash", 1, g.pos]],
-		[17, 5, ["slash", 0, g.pos]], [18, 6, ["burst", 1, g.pos]],
+		[6, 3, ["slash", 3, g.pos]],
+		[8, 2, ["slash", 2, g.pos]],
+		[10, 5, ["heal", 1, g.pos]],
+		[12, 4, ["buff", 0, g.pos]],
+		[15, 6, ["whirl", 1, g.pos]],
+		[16, 3, ["slash", 1, g.pos]],
+		[17, 5, ["slash", 0, g.pos]],
+		[18, 6, ["burst", 1, g.pos]],
 		[18, 5, ["burst", 0, g.pos + MapSim.BURST_FIRST_SHIFT]],
-		[20, 3, ["wave", 8, g.pos]], [21, 9, ["blast", 1, sim._front_of(g.pos, 2)]]]
+		[20, 3, ["wave", 8, g.pos]],
+		[21, 9, ["blast", 1, sim._front_of(g.pos, 2)]]
+	]
 	for c in cases:
 		g.action = c[0]
 		g.frame = c[1]
@@ -703,7 +746,11 @@ func test_a_general_sets_the_hero_on_fire() -> void:
 		eq(f.size(), 1, "%d: the hero burns" % skill)
 		if f.size() == 1:
 			eq([f[0][1], f[0][2]], [0, sim.hero.pos], "its first picture on him")
-		eq(sim.hero.hurt_ticks, 2 if skill == 19 else (5 if skill == 18 else 0), "%d: he reels" % skill)
+		eq(
+			sim.hero.hurt_ticks,
+			2 if skill == 19 else (5 if skill == 18 else 0),
+			"%d: he reels" % skill
+		)
 	var d := _general_duel()
 	var sim: RefCounted = d[0]
 	d[1].action = 16

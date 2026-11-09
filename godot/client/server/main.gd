@@ -64,8 +64,9 @@ static func load_or_make_cert(data: String, key_path: String, cert_path: String)
 		if not FileAccess.file_exists(key_path):
 			var crypto := Crypto.new()
 			key = crypto.generate_rsa(2048)
-			cert = crypto.generate_self_signed_certificate(key, "CN=localhost,O=Path of a Warrior,C=UA",
-				"20250101000000", "20450101000000")
+			cert = crypto.generate_self_signed_certificate(
+				key, "CN=localhost,O=Path of a Warrior,C=UA", "20250101000000", "20450101000000"
+			)
 			key.save(key_path)
 			cert.save(cert_path)
 			print("made a self-signed certificate: %s" % ProjectSettings.globalize_path(cert_path))

@@ -70,7 +70,9 @@ func _clear() -> void:
 	done_button = null
 
 
-func _button(node_name: String, text: String, on_press: Callable, translate := true, parent: Node = null) -> Button:
+func _button(
+	node_name: String, text: String, on_press: Callable, translate := true, parent: Node = null
+) -> Button:
 	var b := Button.new()
 	b.name = node_name
 	b.text = text
@@ -110,7 +112,9 @@ func show_step(s: int) -> void:
 		Step.DIFFICULTY:
 			heading.text = "newgame.difficulty"
 			for d in [1, 0]:  # Normal first, as most will play it
-				var b := _button("Difficulty%d" % d, "newgame.difficulty_%d" % d, choose_difficulty.bind(d))
+				var b := _button(
+					"Difficulty%d" % d, "newgame.difficulty_%d" % d, choose_difficulty.bind(d)
+				)
 				b.focus_entered.connect(func(): info.text = tr("newgame.mode_%d" % d))
 				b.mouse_entered.connect(func(): info.text = tr("newgame.mode_%d" % d))
 			_button("Back", "common.back", go_back)
@@ -129,7 +133,9 @@ func show_step(s: int) -> void:
 				var face := Pictures.framed("Portrait", Vector2(46, 46) * SCALE)
 				face.texture = Pictures.portrait(Stories.HERO_PORTRAIT + h)
 				face.mouse_filter = Control.MOUSE_FILTER_IGNORE
-				face.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 6)
+				face.set_anchors_and_offsets_preset(
+					Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 6
+				)
 				b.add_child(face)
 				b.pressed.connect(choose_head.bind(h))
 				b.focus_entered.connect(show_class.bind(h))
@@ -207,8 +213,15 @@ func choose_difficulty(d: int) -> void:
 
 ## Under the faces: the hint, and the hero of face h with his base stats.
 func show_class(h: int) -> void:
-	info.text = "%s\n%s\n\n%s\n%s" % [tr("newgame.select_1"), tr("newgame.select_2"),
-		tr(Profile.HERO_CLASSES[h]), Profile.stats_line(h)]
+	info.text = (
+		"%s\n%s\n\n%s\n%s"
+		% [
+			tr("newgame.select_1"),
+			tr("newgame.select_2"),
+			tr(Profile.HERO_CLASSES[h]),
+			Profile.stats_line(h)
+		]
+	)
 
 
 func choose_head(h: int) -> void:
@@ -295,9 +308,20 @@ func finish() -> void:
 	profile.save(path)
 	var then := str(Router.params.get("then", "camp"))
 	Router.back()
-	Router.push("story", {"story": Stories.OPENING, "then": "training",
-		"then_params": {"then": then, "then_params": {"first": true, "profile_path": path},
-			"profile_path": path}, "profile_path": path})
+	Router.push(
+		"story",
+		{
+			"story": Stories.OPENING,
+			"then": "training",
+			"then_params":
+			{
+				"then": then,
+				"then_params": {"first": true, "profile_path": path},
+				"profile_path": path
+			},
+			"profile_path": path
+		}
+	)
 
 
 func _unhandled_input(event: InputEvent) -> void:

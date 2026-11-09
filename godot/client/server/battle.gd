@@ -43,13 +43,33 @@ const SKILL_HIT := 70  # skills skip the timing bar
 ## Attack is the single player's 3-hit combo; where the timing bar stops decides how many land
 const COMBO_HITS := [[88, 3], [52, 2], [0, 1]]
 
-const CPU_NAMES := ["Garrick", "Selene", "Borin", "Kaida", "Ulric", "Mirena", "Dorn", "Ysolde",
-	"Thane", "Rowan", "Brakka", "Liora"]
-const CPU_QUOTES := [["En garde!", "Too slow."], ["Face me!", "As expected."],
-	["Show me your blade", "Train harder."], ["Here I come!", "Victory is mine!"]]
+const CPU_NAMES := [
+	"Garrick",
+	"Selene",
+	"Borin",
+	"Kaida",
+	"Ulric",
+	"Mirena",
+	"Dorn",
+	"Ysolde",
+	"Thane",
+	"Rowan",
+	"Brakka",
+	"Liora"
+]
+const CPU_QUOTES := [
+	["En garde!", "Too slow."],
+	["Face me!", "As expected."],
+	["Show me your blade", "Train harder."],
+	["Here I come!", "Victory is mine!"]
+]
 ## where a CPU fighter's points go when the hero it copies has none
-const BUILDS := [{"atk": 2, "def": 1, "hp": 2}, {"atk": 3, "def": 1, "hp": 1},
-	{"atk": 1, "def": 2, "hp": 2}, {"atk": 2, "def": 2, "hp": 1}]
+const BUILDS := [
+	{"atk": 2, "def": 1, "hp": 2},
+	{"atk": 3, "def": 1, "hp": 1},
+	{"atk": 1, "def": 2, "hp": 2},
+	{"atk": 2, "def": 2, "hp": 1}
+]
 
 ## the bot: where it stops the timing bar, heals a battle at most, heals when HP lasts this many
 ## rounds or less
@@ -58,8 +78,16 @@ const HEAL_LIMIT := 3
 const HEAL_ROUNDS := 2
 
 const GRADE_TOP := 9  # D+ .. A+
-const MISSION_TITLES := ["Dark Forest", "Old Ruins", "Bandit Pass", "Cursed Swamp", "Iron Keep",
-	"Bone Valley", "Frozen Gate", "Lost Temple"]
+const MISSION_TITLES := [
+	"Dark Forest",
+	"Old Ruins",
+	"Bandit Pass",
+	"Cursed Swamp",
+	"Iron Keep",
+	"Bone Valley",
+	"Frozen Gate",
+	"Lost Temple"
+]
 const MONSTER_NAMES := ["Goblin", "Ghoul", "Orc", "Troll", "Imp", "Wraith", "Ogre", "Lizard"]
 const SOLDIER_KINDS := [0, 0, 1, 2]  # swordsmen more often than archers and squads
 
@@ -112,9 +140,20 @@ class Fighter:
 
 	## What the clients are told of a fighter.
 	func wire() -> Dictionary:
-		return {"slot": slot, "name": name.left(8), "level": level, "wins": wins, "losses": losses,
-			"hp": max_hp, "weapon": weapon, "face": face, "cpu": cpu, "monster": monster,
-			"quote_start": quote_start, "quote_win": quote_win}
+		return {
+			"slot": slot,
+			"name": name.left(8),
+			"level": level,
+			"wins": wins,
+			"losses": losses,
+			"hp": max_hp,
+			"weapon": weapon,
+			"face": face,
+			"cpu": cpu,
+			"monster": monster,
+			"quote_start": quote_start,
+			"quote_win": quote_win
+		}
 
 
 # --- helpers --------------------------------------------------------------------------------
@@ -164,7 +203,9 @@ static func from_character(c: Dictionary, slot: int) -> Fighter:
 	f.atk = int(c.atk) + int(c.atk_bonus)
 	f.def = int(c.def) + int(c.def_bonus)
 	f.skills = (c.skills as Dictionary).duplicate()
-	f.slots = (c.slots as Array).filter(func(s): return f.skills.has(int(s))).map(func(s): return int(s))
+	f.slots = (
+		(c.slots as Array).filter(func(s): return f.skills.has(int(s))).map(func(s): return int(s))
+	)
 	f.face = int(c.face)
 	f.weapon = int(c.weapon)
 	f.wins = int(c.wins)
@@ -180,20 +221,29 @@ static func from_character(c: Dictionary, slot: int) -> Fighter:
 ## The stat points of a hero: its base stats over a new hero's of its face, per point gain.
 static func hero_build(c: Dictionary) -> Dictionary:
 	var b := Rules.hero_base(int(c.face))
-	return {"atk": maxi(0, int(c.atk) - int(b.atk)), "def": maxi(0, int(c.def) - int(b.def)),
+	return {
+		"atk": maxi(0, int(c.atk) - int(b.atk)),
+		"def": maxi(0, int(c.def) - int(b.def)),
 		"hp": maxi(0, (int(c.hp) - int(b.hp)) / int(Rules.POINT_GAIN.hp)),
-		"mp": maxi(0, (int(c.mp) - int(b.mp)) / int(Rules.POINT_GAIN.mp))}
+		"mp": maxi(0, (int(c.mp) - int(b.mp)) / int(Rules.POINT_GAIN.mp))
+	}
 
 
 ## A CPU fighter: a single-player hero of about my level, its points spent like mine, my
 ## skills, in the shop's gear of its level.
-static func cpu_fighter(rng: RandomNumberGenerator, me: Fighter, slot: int, ally := false) -> Fighter:
+static func cpu_fighter(
+	rng: RandomNumberGenerator, me: Fighter, slot: int, ally := false
+) -> Fighter:
 	var f := Fighter.new()
 	f.slot = slot
 	f.level = maxi(1, me.level + rng.randi_range(-2, 1) - (1 if ally else 0))
 	# the points go about where mine went: with damage ATK - DEF (at least 1) a random build can
 	# out-DEF the other side's ATK and the duel never ends
-	var build: Dictionary = me.build.duplicate() if _sum(me.build.values()) > 0 else (_pick(rng, BUILDS) as Dictionary).duplicate()
+	var build: Dictionary = (
+		me.build.duplicate()
+		if _sum(me.build.values()) > 0
+		else (_pick(rng, BUILDS) as Dictionary).duplicate()
+	)
 	var stat: String = _pick(rng, ["atk", "def", "hp"])
 	build[stat] = int(build.get(stat, 0)) + maxi(1, _sum(build.values()) / 10)
 	f.skills = me.skills.duplicate() if not me.skills.is_empty() else {WIND: 1, SOUL_DEVIL: 1}
@@ -266,8 +316,11 @@ static func battle_background(rng: RandomNumberGenerator) -> int:
 # Defend or Evade when the hits coming are lethal, heal when HP is below them, else the action
 # with the most damage, a skill only when it beats Attack by enough for its MP.
 
+
 ## The damage `action` of f would do to t (no Evade roll).
-static func strike_damage(f: Fighter, t: Fighter, action: int, hit := 100, defended := false) -> int:
+static func strike_damage(
+	f: Fighter, t: Fighter, action: int, hit := 100, defended := false
+) -> int:
 	var one := f.atk + f.bonus("atk") - t.def - t.bonus("def")
 	var hits := 1
 	if action == ATTACK:
@@ -327,8 +380,11 @@ static func _heal_choice(me: Fighter, allies: Array, incoming: Dictionary) -> Ar
 		for s in heals:
 			gain[s] = Rules.heal(s, t.max_hp, int(me.skills.get(s, 1)))
 		var enough: Array = heals.filter(func(s): return t.hp + int(gain[s]) > coming)
-		var heal: int = _min_by(enough, func(s): return me.cost(s)) if not enough.is_empty() \
+		var heal: int = (
+			_min_by(enough, func(s): return me.cost(s))
+			if not enough.is_empty()
 			else _max_by(heals, func(s): return gain[s])
+		)
 		return [t.slot, heal, 0]
 	return []
 
@@ -350,7 +406,9 @@ static func _winning_race(me: Fighter, foes: Array, opts: Array) -> bool:
 
 
 ## [target slot, action, hit %] for a CPU fighter or a player on auto-battle.
-static func cpu_choice(rng: RandomNumberGenerator, me: Fighter, all_foes: Array, allies: Array = []) -> Array:
+static func cpu_choice(
+	rng: RandomNumberGenerator, me: Fighter, all_foes: Array, allies: Array = []
+) -> Array:
 	var foes: Array = all_foes.filter(func(g): return g.alive())
 	if foes.is_empty():
 		return [me.slot, DEFEND, 0]
@@ -361,8 +419,10 @@ static func cpu_choice(rng: RandomNumberGenerator, me: Fighter, all_foes: Array,
 			incoming[a.slot] = _sum(foes.map(func(g): return threat(g, a)))
 	var lethal: bool = me.hp <= int(incoming[me.slot])
 	# do I act before every foe (higher MP first, a tie is a coin flip)
-	var first: bool = foes.all(func(g): return _acts_before(me, g)) or (
-		not foes.any(func(g): return _acts_before(g, me)) and rng.randf() < 0.5)
+	var first: bool = (
+		foes.all(func(g): return _acts_before(me, g))
+		or (not foes.any(func(g): return _acts_before(g, me)) and rng.randf() < 0.5)
+	)
 	var opts := attack_options(me, hit)
 
 	# 1. finish a foe off with the cheapest action that kills (the most dangerous foe first);
@@ -380,8 +440,11 @@ static func cpu_choice(rng: RandomNumberGenerator, me: Fighter, all_foes: Array,
 	# 2. heal when HP is below the damage of the next rounds; against a lethal round it helps
 	#    only if I act first
 	var heal := _heal_choice(me, allies, incoming)
-	if not heal.is_empty() and (first or not lethal or heal[0] != me.slot) \
-			and not _winning_race(me, foes, opts):
+	if (
+		not heal.is_empty()
+		and (first or not lethal or heal[0] != me.slot)
+		and not _winning_race(me, foes, opts)
+	):
 		return heal
 
 	# 3. a lethal round: Defend if it saves me, else Evade (45 %; Thunder ignores it). Not twice
@@ -414,24 +477,32 @@ static func cpu_choice(rng: RandomNumberGenerator, me: Fighter, all_foes: Array,
 	# 5. damage on the foe that falls soonest (the most dangerous on a tie). A skill only when it
 	#    beats Attack this round, the one with the most extra damage per MP; with HP getting low
 	#    it leaves the MP of a heal
-	var target: Fighter = _min_by(foes, func(g):
-		var most := 1
-		for o in opts:
-			most = maxi(most, strike_damage(me, g, o[0], o[1]))
-		return [float(g.hp) / most, -threat(g, me)])
+	var target: Fighter = _min_by(
+		foes,
+		func(g):
+			var most := 1
+			for o in opts:
+				most = maxi(most, strike_damage(me, g, o[0], o[1]))
+			return [float(g.hp) / most, -threat(g, me)]
+	)
 	var base := strike_damage(me, target, ATTACK, hit)
 	var others: Array = foes.filter(func(g): return g != target)
 	var reserve := 0
 	if me.hp * 100 < me.max_hp * 60:
-		var costs: Array = HEALS.filter(func(s): return me.slots.has(s) and me.skills.has(s)).map(
-			func(s): return me.cost(s))
+		var costs: Array = (
+			HEALS
+			. filter(func(s): return me.slots.has(s) and me.skills.has(s))
+			. map(func(s): return me.cost(s))
+		)
 		reserve = costs.min() if not costs.is_empty() else 0
 	var extra := func(o: Array) -> int:
 		var dmg := strike_damage(me, target, o[0], o[1])
 		if o[0] == TIDAL and not others.is_empty():  # its second target takes a strike too
 			dmg += strike_damage(me, others[0], o[0], o[1])
 		return dmg - base
-	var better: Array = opts.filter(func(o): return o[0] != ATTACK and extra.call(o) > 0 and me.mp - o[2] >= reserve)
+	var better: Array = opts.filter(
+		func(o): return o[0] != ATTACK and extra.call(o) > 0 and me.mp - o[2] >= reserve
+	)
 	if better.is_empty():
 		return [target.slot, ATTACK, hit]
 	var best: Array = _max_by(better, func(o): return [float(extra.call(o)) / o[2], extra.call(o)])
@@ -447,6 +518,7 @@ var round_no := 0  # rounds played
 var bg := 0
 var beaten: Array = []  # fighters knocked out, in order (rewards)
 
+
 ## Battle.new(rng, fighters, mode): mode 0 Duel 1-on-1, 1 Duel 2-on-2, 2 Solo Mission.
 func _init(random: RandomNumberGenerator, list: Array, battle_mode := 0) -> void:
 	rng = random
@@ -455,14 +527,17 @@ func _init(random: RandomNumberGenerator, list: Array, battle_mode := 0) -> void
 		fighters[f.slot] = f
 	bg = battle_background(rng)
 
+
 func team_alive(team: int) -> bool:
 	for f in fighters.values():
 		if f.alive() and f.team() == team:
 			return true
 	return false
 
+
 func over() -> bool:
 	return not (team_alive(0) and team_alive(1))
+
 
 ## The team still standing, or -1 while both stand or none does.
 func winner() -> int:
@@ -470,11 +545,14 @@ func winner() -> int:
 	var b := team_alive(1)
 	return 0 if a and not b else (1 if b and not a else -1)
 
+
 func foes(f: Fighter) -> Array:
 	return fighters.values().filter(func(g): return g.alive() and g.team() != f.team())
 
+
 func allies(f: Fighter) -> Array:
 	return fighters.values().filter(func(g): return g.alive() and g.team() == f.team())
+
 
 ## Mission: the next stage's foes replace team 1; my team keeps its MP and buffs and gets
 ## back `rest` of its max HP (the living ones).
@@ -490,11 +568,13 @@ func new_wave(new_foes: Array, rest := 0.35) -> void:
 	for f in new_foes:
 		fighters[f.slot] = f
 
+
 ## The CPU fighters play the rest (the players have no one left to choose).
 func finish(max_rounds := 60) -> void:
 	while not over() and max_rounds > 0:
 		resolve({})
 		max_rounds -= 1
+
 
 ## One round. choices: slot -> [target, action, hit %] of the players; the CPU, a fighter on
 ## auto-battle and a choice with action AUTO go to the bot. Returns {actions, records}.
@@ -541,6 +621,7 @@ func resolve(choices: Dictionary) -> Dictionary:
 		f.stance = ATTACK
 	return {"actions": actions, "records": records}
 
+
 func _validate(f: Fighter, choice: Array) -> Array:
 	var target: int = choice[0]
 	var action: int = choice[1]
@@ -550,6 +631,7 @@ func _validate(f: Fighter, choice: Array) -> Array:
 	if action < WIND or action > SOUL_ARCH or not f.can_use(action):
 		return [target, ATTACK, 20]  # not learned, not in a slot or not enough MP
 	return [target, action, SKILL_HIT]
+
 
 func _target(f: Fighter, target: int, action: int) -> Fighter:
 	var t: Fighter = fighters.get(target)
@@ -561,12 +643,19 @@ func _target(f: Fighter, target: int, action: int) -> Fighter:
 		return t
 	return _min_by(foes(f), func(g): return g.hp)
 
+
 func _act(f: Fighter, target: int, action: int, hit: int) -> Dictionary:
 	var t := _target(f, target, action)
 	if t == null:
 		return {}
-	var rec := {"actor": f.slot, "action": action, "target": t.slot, "result": RES_HIT,
-		"has2nd": 0, "flags": 0}
+	var rec := {
+		"actor": f.slot,
+		"action": action,
+		"target": t.slot,
+		"result": RES_HIT,
+		"has2nd": 0,
+		"flags": 0
+	}
 	if action >= WIND:
 		f.mp -= f.cost(action)
 	if action in HEALS:
@@ -600,6 +689,7 @@ func _act(f: Fighter, target: int, action: int, hit: int) -> Dictionary:
 	rec.target_hp = t.hp
 	rec.target_mp = t.mp
 	return rec
+
 
 ## One action's damage, one number for all its hits; returns the result. A hit is
 ## ATK + A - DEF - B, at least 1; a skill adds ATK * lvl / AU to every hit.

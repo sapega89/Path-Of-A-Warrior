@@ -1,12 +1,18 @@
 extends PanelContainer
 ## The lab's panel (lab/combat_feel_lab.gd), on the right: a switch for each effect of
-## scripts/world/combat_feel.gd, sliders for its main numbers, and the arena's own switches (waves, god
+## scripts/world/combat_feel.gd, sliders for its main numbers, and the arena's own switches (waves,
+## god
 ## mode) and buttons (a wave, archers, a general). H hides it.
 
 const EFFECTS := [
-	["hitstop", "Хитстоп"], ["shake", "Тряска камеры"], ["flash", "Вспышка"],
-	["recoil", "Отдача при ударе"], ["knock_ease", "Резкий отброс"],
-	["launch", "Отлёт убитого"], ["sound", "Звук с разбросом"], ["rumble", "Вибрация геймпада"],
+	["hitstop", "Хитстоп"],
+	["shake", "Тряска камеры"],
+	["flash", "Вспышка"],
+	["recoil", "Отдача при ударе"],
+	["knock_ease", "Резкий отброс"],
+	["launch", "Отлёт убитого"],
+	["sound", "Звук с разбросом"],
+	["rumble", "Вибрация геймпада"],
 ]
 ## [key of CombatFeel.p, label, min, max, step]
 const SLIDERS := [
@@ -134,10 +140,11 @@ func _slider(col: VBoxContainer, s: Array) -> void:
 	slider.focus_mode = Control.FOCUS_NONE
 	slider.custom_minimum_size = Vector2(0, 18)
 	col.add_child(slider)
-	var show := func(v: float) -> void:
-		label.text = "%s: %s" % [s[1], str(snappedf(v, s[4]))]
+	var show := func(v: float) -> void: label.text = "%s: %s" % [s[1], str(snappedf(v, s[4]))]
 	show.call(slider.value)
-	slider.value_changed.connect(func(v: float) -> void:
-		feel.p[key] = v
-		show.call(v))
+	slider.value_changed.connect(
+		func(v: float) -> void:
+			feel.p[key] = v
+			show.call(v)
+	)
 	_sliders[key] = slider

@@ -25,7 +25,11 @@ func test_the_heros_name_on_the_keys() -> void:
 	_type(keys, ["o", "v", "i", "c", "h", "e", "s"])
 	eq(screen.name_edit.text, "Ivanovic", "no more than 8")
 	keys.key(KeyGrid.OK).pressed.emit()
-	eq([screen.step, screen.profile.hero_name], [NewGame.Step.POINTS, "Ivanovic"], "OK: as Enter in the field")
+	eq(
+		[screen.step, screen.profile.hero_name],
+		[NewGame.Step.POINTS, "Ivanovic"],
+		"OK: as Enter in the field"
+	)
 	screen.free()
 	Router.params = old
 

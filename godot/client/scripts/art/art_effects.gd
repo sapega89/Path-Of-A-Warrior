@@ -33,8 +33,16 @@ static func _ramp(colors: Array) -> Gradient:
 
 ## A curved ribbon of light that follows the blade: `arc` degrees around the attacker,
 ## from `start` degrees (0 = in front, +Z). `life` 0..1 runs the sweep.
-static func slash(parent: Node3D, center: Vector3, start_deg: float, arc_deg := 150.0, radius := 1.15,
-		height := 1.1, tilt := 0.35, life := 0.5) -> MeshInstance3D:
+static func slash(
+	parent: Node3D,
+	center: Vector3,
+	start_deg: float,
+	arc_deg := 150.0,
+	radius := 1.15,
+	height := 1.1,
+	tilt := 0.35,
+	life := 0.5
+) -> MeshInstance3D:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var steps := 24
@@ -81,7 +89,9 @@ static func sparks(parent: Node3D, at: Vector3, amount := 26) -> CPUParticles3D:
 	p.gravity = Vector3(0, -9.0, 0)
 	p.scale_amount_min = 0.6
 	p.scale_amount_max = 1.2
-	p.color_ramp = _ramp([Color("FFE08A"), ArtKit.color("gold"), Color("E8742A"), Color(0.66, 0.2, 0.18, 0.0)])
+	p.color_ramp = _ramp(
+		[Color("FFE08A"), ArtKit.color("gold"), Color("E8742A"), Color(0.66, 0.2, 0.18, 0.0)]
+	)
 	p.position = at
 	parent.add_child(p)
 	p.emitting = true
@@ -173,7 +183,9 @@ static func campfire(parent: Node3D, at: Vector3) -> Node3D:
 	grow.add_point(Vector2(0, 0.6))
 	grow.add_point(Vector2(1, 2.2))
 	smoke.scale_amount_curve = grow
-	smoke.color_ramp = _ramp([Color(0.42, 0.4, 0.4, 0.0), Color(0.5, 0.48, 0.46, 0.45), Color(0.6, 0.58, 0.56, 0.0)])
+	smoke.color_ramp = _ramp(
+		[Color(0.42, 0.4, 0.4, 0.0), Color(0.5, 0.48, 0.46, 0.45), Color(0.6, 0.58, 0.56, 0.0)]
+	)
 	smoke.position = Vector3(0, 1.6, 0)
 	root.add_child(smoke)
 	var light := OmniLight3D.new()

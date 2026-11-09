@@ -151,4 +151,3 @@ func keep_inside(room: int, pos: Vector3) -> Dictionary:
 		p.z = b.end.y
 		edge = EXIT_DOWN
 	return {"pos": p, "edge": edge}
-

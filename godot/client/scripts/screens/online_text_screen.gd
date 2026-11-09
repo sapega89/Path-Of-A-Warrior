@@ -12,8 +12,11 @@ extends Control
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const OnlineClient := preload("res://scripts/net/online_client.gd")
 const Protocol := preload("res://scripts/net/protocol.gd")
-const INVITES := {"challenge1": OnlineClient.CHALLENGE_1, "challenge2": OnlineClient.CHALLENGE_2,
-	"ally": OnlineClient.ALLY}
+const INVITES := {
+	"challenge1": OnlineClient.CHALLENGE_1,
+	"challenge2": OnlineClient.CHALLENGE_2,
+	"ally": OnlineClient.ALLY
+}
 
 var online: RefCounted
 var kind := "name"
@@ -100,8 +103,11 @@ func problem() -> String:
 		"name":
 			return "" if not t.is_empty() else tr("online.err_not_acceptable")
 		"quote":
-			return "" if not t.strip_edges().is_empty() and not fields[1].text.strip_edges().is_empty() \
+			return (
+				""
+				if not t.strip_edges().is_empty() and not fields[1].text.strip_edges().is_empty()
 				else tr("online.err_not_acceptable")
+			)
 	return "" if Protocol.valid_id(t) else tr("online.err_not_acceptable")
 
 

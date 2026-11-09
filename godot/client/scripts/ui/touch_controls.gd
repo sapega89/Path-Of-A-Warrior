@@ -17,8 +17,10 @@ const BUTTONS := {
 	"pause": Vector2(-70, -650),
 }
 const MOVE_ACTIONS := {
-	"move_left": Vector2.LEFT, "move_right": Vector2.RIGHT,
-	"move_up": Vector2.UP, "move_down": Vector2.DOWN,
+	"move_left": Vector2.LEFT,
+	"move_right": Vector2.RIGHT,
+	"move_up": Vector2.UP,
+	"move_down": Vector2.DOWN,
 }
 
 ## Show even without a touch screen (for tests and screenshots).
@@ -135,11 +137,15 @@ func _draw() -> void:
 		match action:
 			"attack":
 				draw_line(c + Vector2(-16, 16), c + Vector2(18, -18), ink, 5.0, true)
-				draw_line(c + Vector2(-20, 6), c + Vector2(-6, 20), Color(UiTheme.ACCENT, 0.85), 4.0, true)
+				draw_line(
+					c + Vector2(-20, 6), c + Vector2(-6, 20), Color(UiTheme.ACCENT, 0.85), 4.0, true
+				)
 			"pause":
 				for dx in [-6.0, 6.0]:
 					draw_line(c + Vector2(dx, -10), c + Vector2(dx, 10), ink, 5.0, true)
 			_:
 				var n: String = String(action).trim_prefix("skill_")
 				var w := font.get_string_size(n, HORIZONTAL_ALIGNMENT_LEFT, -1, 40).x
-				draw_string(font, c + Vector2(-w / 2.0, 14), n, HORIZONTAL_ALIGNMENT_LEFT, -1, 40, ink)
+				draw_string(
+					font, c + Vector2(-w / 2.0, 14), n, HORIZONTAL_ALIGNMENT_LEFT, -1, 40, ink
+				)

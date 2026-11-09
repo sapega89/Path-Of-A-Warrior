@@ -183,7 +183,11 @@ func test_combine_screen() -> void:
 	screen.confirm()
 	eq(screen.sparkle_cells, [0, 1, 2] as Array[int], "the sparkle on the three")
 	screen._process(0.5)
-	eq([screen.sparkle, int(screen.profile.backpack[2].id)], [4, 186], "its fifth frame, not yet combined")
+	eq(
+		[screen.sparkle, int(screen.profile.backpack[2].id)],
+		[4, 186],
+		"its fifth frame, not yet combined"
+	)
 	screen._process(0.1)
 	eq(screen.sparkle, -1, "after 0.6 s the sparkle is gone")
 	eq(int(screen.profile.backpack[2].id), 342, "combined")
@@ -208,7 +212,7 @@ func test_combine_needs_three_things() -> void:
 	eq(smith.things(), 2, "two things")
 	check(not smith.open_page("combine"), "Combine does not open")
 	check(smith.notice.visible, "it says why")
-	eq(smith.notice.dialog_text, "combine.too_few", "\"at least 3 items\"")
+	eq(smith.notice.dialog_text, "combine.too_few", '"at least 3 items"')
 	eq(Router.current_name(), "blacksmith", "still the Blacksmith")
 	smith.notice.hide()
 	check(smith.open_page("sell"), "the other pages open")

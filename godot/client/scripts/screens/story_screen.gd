@@ -205,7 +205,9 @@ func reward_lines() -> Array:
 	var out: Array = []
 	var item := int(p.get("reward_item", 0))
 	if item != 0:
-		out.append_array([Items.name_of(item) if item != Profile.SCARF else "Oksana's scarf", "received!"])
+		out.append_array(
+			[Items.name_of(item) if item != Profile.SCARF else "Oksana's scarf", "received!"]
+		)
 	var lord := int(p.get("opened_lord", 0))
 	if lord != 0:
 		if not out.is_empty():
@@ -220,7 +222,10 @@ static func wrap_lines(text: String, font: Font, font_size: int, width: float) -
 	var line := ""
 	for word in text.split(" ", false):
 		var longer := word if line.is_empty() else line + " " + word
-		if line.is_empty() or font.get_string_size(longer, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x <= width:
+		if (
+			line.is_empty()
+			or font.get_string_size(longer, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x <= width
+		):
 			line = longer
 		else:
 			out.append(line)

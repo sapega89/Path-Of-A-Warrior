@@ -35,8 +35,14 @@ class Session:
 
 
 ## Error code of the bind / DTLS setup, OK when the server is listening.
-func start(port: int, key: CryptoKey, cert: X509Certificate, data_dir: String,
-		bind_address := "*", max_peers := 256) -> int:
+func start(
+	port: int,
+	key: CryptoKey,
+	cert: X509Certificate,
+	data_dir: String,
+	bind_address := "*",
+	max_peers := 256
+) -> int:
 	accounts = Accounts.new(data_dir.path_join("accounts"))
 	live = Live.new(data_dir)
 	online = Online.new(data_dir, accounts)
@@ -89,7 +95,9 @@ func _flush() -> void:
 	for x in out:
 		var peer: ENetPacketPeer = x[0]
 		var m: Dictionary = x[1]
-		peer.send(1 if m.get("t") == "chat_push" else 0, Protocol.encode(m), ENetPacketPeer.FLAG_RELIABLE)
+		peer.send(
+			1 if m.get("t") == "chat_push" else 0, Protocol.encode(m), ENetPacketPeer.FLAG_RELIABLE
+		)
 
 
 func _event(ev: Array) -> void:
@@ -105,8 +113,8 @@ func _event(ev: Array) -> void:
 				return
 			s.meter = guard.meter()
 			var outbox := _outbox
-			s.online.send = func(m: Dictionary) -> void:  # a push, no request waits for it
-				outbox.append([peer, m])
+			# a push, no request waits for it
+			s.online.send = func(m: Dictionary) -> void: outbox.append([peer, m])
 			sessions[peer] = s
 		ENetConnection.EVENT_DISCONNECT:
 			var s: Session = sessions.get(peer)
@@ -155,19 +163,27 @@ func answer(s: Session, msg: Dictionary) -> Dictionary:
 		reply = _fail(t, "login first")
 	else:
 		match t:
-			"register": reply = _register(s, msg)
-			"login": reply = _login(s, msg)
-			"hero_get": reply = _hero_get(s)
-			"hero_put": reply = _hero_put(s, msg)
-			"options_get": reply = _options_get(s)
-			"options_put": reply = _options_put(s, msg)
+			"register":
+				reply = _register(s, msg)
+			"login":
+				reply = _login(s, msg)
+			"hero_get":
+				reply = _hero_get(s)
+			"hero_put":
+				reply = _hero_put(s, msg)
+			"options_get":
+				reply = _options_get(s)
+			"options_put":
+				reply = _options_put(s, msg)
 			_:
 				if t.begins_with("live_") and live != null:
 					reply = live.answer(s.live, t, msg)
 				elif t == "mp_enter" and online != null:
 					reply = online.enter(s.online, s.user)
-				elif online != null and (t.begins_with("mp_") or t.begins_with("order_")
-						or t.begins_with("chat_")):
+				elif (
+					online != null
+					and (t.begins_with("mp_") or t.begins_with("order_") or t.begins_with("chat_"))
+				):
 					reply = online.answer(s.online, t, msg)
 				else:
 					reply = _fail(t, "unknown")
@@ -234,8 +250,14 @@ func _hero_put(s: Session, msg: Dictionary) -> Dictionary:
 	var entry: Dictionary = r[1]
 	if r[0]:
 		return {"t": "hero_put", "ok": true, "rev": entry.rev}
-	return {"t": "hero_put", "ok": false, "err": "conflict",
-		"rev": entry.rev, "at": entry.at, "hero": entry.hero}
+	return {
+		"t": "hero_put",
+		"ok": false,
+		"err": "conflict",
+		"rev": entry.rev,
+		"at": entry.at,
+		"hero": entry.hero
+	}
 
 
 func _options_get(s: Session) -> Dictionary:
@@ -255,5 +277,11 @@ func _options_put(s: Session, msg: Dictionary) -> Dictionary:
 	var entry: Dictionary = r[1]
 	if r[0]:
 		return {"t": "options_put", "ok": true, "rev": entry.rev}
-	return {"t": "options_put", "ok": false, "err": "conflict",
-		"rev": entry.rev, "at": entry.at, "options": entry.data}
+	return {
+		"t": "options_put",
+		"ok": false,
+		"err": "conflict",
+		"rev": entry.rev,
+		"at": entry.at,
+		"options": entry.data
+	}

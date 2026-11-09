@@ -38,16 +38,25 @@ func test_the_talk_shows_who_speaks() -> void:
 	check(screen.talk_box.visible and not screen.banner.visible, "a talk, not a banner")
 	eq(screen.talk_text.text, screen.sim.talk_text(), "the line as far as it is typed")
 	var general := int(screen.sim.general.get("portrait", -1))
-	check(screen.talk_portrait.texture.resource_path.ends_with("/%d.png" % general), "the general's portrait")
+	check(
+		screen.talk_portrait.texture.resource_path.ends_with("/%d.png" % general),
+		"the general's portrait"
+	)
 	screen.sim.talk_line = 1
 	screen._show_banner()
-	check(screen.talk_portrait.texture.resource_path.ends_with("/%d.png" % (38 + int(screen.profile.head))),
-		"the hero's for his line")
+	check(
+		screen.talk_portrait.texture.resource_path.ends_with(
+			"/%d.png" % (38 + int(screen.profile.head))
+		),
+		"the hero's for his line"
+	)
 	var view: Vector2 = screen.get_viewport_rect().size
 	var k: float = screen.hud.scale_of(view)
 	var hud_top: float = view.y - (MapHud.PANEL_H + MapHud.BAR_H) * k
 	eq(screen.talk_face.position.y + screen.talk_face.size.y, hud_top - 2 * k, "just above the HUD")
-	check(screen.talk_panel.position.x > screen.talk_face.position.x + screen.talk_face.size.x, "the line beside it")
+	check(
+		screen.talk_panel.position.x > screen.talk_face.position.x + screen.talk_face.size.x,
+		"the line beside it"
+	)
 	screen.free()
 	Router.params = old
-

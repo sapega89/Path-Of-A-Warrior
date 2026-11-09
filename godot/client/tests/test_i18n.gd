@@ -79,11 +79,16 @@ func test_a_name_in_the_players_language() -> void:
 
 func test_every_item_has_a_name_in_every_language() -> void:
 	var t := I18nScript.parse(FileAccess.get_file_as_string(I18nScript.NAMES_PATH))
-	var items: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/items.json"))
+	var items: Dictionary = JSON.parse_string(
+		FileAccess.get_file_as_string("res://data/items.json")
+	)
 	for part in items.values():
 		for item in part.values():
 			for locale in I18nScript.LOCALES:
-				check(t[locale].get(str(item.name), "") != "", "%s has no %s name" % [item.name, locale])
+				check(
+					t[locale].get(str(item.name), "") != "",
+					"%s has no %s name" % [item.name, locale]
+				)
 
 
 func test_campaign_names_in_every_language() -> void:
@@ -109,9 +114,16 @@ func test_story_texts_in_the_players_language() -> void:
 	var before := TranslationServer.get_locale()
 	TranslationServer.set_locale("uk")
 	eq(Visits.line(0), "Добридень.", "a visit greeting")
-	eq(Stories.pages(Stories.OPENING, "Лесь")[2].text,
-		"[Настоятель] Отже, ти знайшов дорогу до Мотронинського монастиря.", "the prior's first line")
+	eq(
+		Stories.pages(Stories.OPENING, "Лесь")[2].text,
+		"[Настоятель] Отже, ти знайшов дорогу до Мотронинського монастиря.",
+		"the prior's first line"
+	)
 	eq(Endings.title(0), "Довга дорога", "an ending's title")
 	eq(MapSim.talk_lines("map")[21], "& is here!", "the data stays English")
-	eq(I18n.text(MapSim.talk_lines("map")[21]), "& тут!", "and I18n.text gives the player's language")
+	eq(
+		I18n.text(MapSim.talk_lines("map")[21]),
+		"& тут!",
+		"and I18n.text gives the player's language"
+	)
 	TranslationServer.set_locale(before)

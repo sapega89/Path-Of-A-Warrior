@@ -6,9 +6,11 @@ extends Control
 ## way is better is learnt by playing. Walking out tells the story of the next mission of that
 ## place not won yet (choices()), then its briefing; the mission comes back
 ## here when it is over (won: the camp of the new place; lost: this one again, to try once
-## more with the same hero). A closed way is fenced. Every camp has the blacksmith (buy, sell, enchant,
+## more with the same hero). A closed way is fenced. Every camp has the blacksmith (buy, sell,
+## enchant,
 ## combine), the warehouse and the town hall (every colonel and general, and the visits of
-## the generals: one after each mission won, scripts/core/visits.gd). The game is saved when the hero comes into a camp. Pause opens the camp menu:
+## the generals: one after each mission won, scripts/core/visits.gd). The game is saved when the
+## hero comes into a camp. Pause opens the camp menu:
 ## the game menu, the world map, the main menu.
 ## Router.params: profile_path; first: true starts the first mission at once (a new game).
 
@@ -35,14 +37,37 @@ const MAX_WAYS := 6  # gaps in a camp
 ## What lies past a gap, by the land of its place: pieces of the new art (MapArt.PROP) and,
 ## for a lake, its water.
 const LAND := {
-	"mountains": [["boulder", 1.8, -2.6, 1.6], ["crag", 2.8, 2.4, 2.4], ["boulder", 4.0, -1.4, 2.4],
-		["crag", 4.4, 2.2, 3.4], ["rock", 2.0, 1.4, 1.0]],
-	"forest": [["fir", 1.8, -2.4, 1.0], ["fir", 2.2, 2.4, 1.1], ["fir", 3.8, -3.4, 1.2],
-		["fir", 4.2, 3.2, 1.2], ["bush", 1.4, -1.4, 1.0]],
-	"town": [["palisade", 1.4, -2.0, 1.0], ["palisade", 1.4, -2.8, 1.0], ["palisade", 1.4, 2.0, 1.0],
-		["palisade", 1.4, 2.8, 1.0], ["hut", 3.6, -2.8, 0.6]],
-	"steppe": [["hay", 1.6, -2.0, 0.6], ["bush", 2.4, 2.2, 1.0], ["pebbles", 3.0, -1.4, 1.0],
-		["hay", 3.6, 2.8, 0.7]],
+	"mountains":
+	[
+		["boulder", 1.8, -2.6, 1.6],
+		["crag", 2.8, 2.4, 2.4],
+		["boulder", 4.0, -1.4, 2.4],
+		["crag", 4.4, 2.2, 3.4],
+		["rock", 2.0, 1.4, 1.0]
+	],
+	"forest":
+	[
+		["fir", 1.8, -2.4, 1.0],
+		["fir", 2.2, 2.4, 1.1],
+		["fir", 3.8, -3.4, 1.2],
+		["fir", 4.2, 3.2, 1.2],
+		["bush", 1.4, -1.4, 1.0]
+	],
+	"town":
+	[
+		["palisade", 1.4, -2.0, 1.0],
+		["palisade", 1.4, -2.8, 1.0],
+		["palisade", 1.4, 2.0, 1.0],
+		["palisade", 1.4, 2.8, 1.0],
+		["hut", 3.6, -2.8, 0.6]
+	],
+	"steppe":
+	[
+		["hay", 1.6, -2.0, 0.6],
+		["bush", 2.4, 2.2, 1.0],
+		["pebbles", 3.0, -1.4, 1.0],
+		["hay", 3.6, 2.8, 0.7]
+	],
 	"lake": [["bush", 1.4, -1.8, 0.9], ["rock", 1.6, 2.0, 1.0]],
 }
 const CAMERA_DISTANCE := 19.0  # the whole camp on the screen, the camera does not move
@@ -126,7 +151,8 @@ func _build_world() -> void:
 		hero.sprite.visible = false
 	camera = FollowCamera.new()
 	camera.name = "Camera"
-	camera.focus = Vector3(CampMap.W / 2.0, 0.0, CampMap.H / 2.0 - 0.3)  # a little of the land past the top
+	# a little of the land past the top
+	camera.focus = Vector3(CampMap.W / 2.0, 0.0, CampMap.H / 2.0 - 0.3)
 	camera.distance = CAMERA_DISTANCE
 	world.add_child(camera)
 	camera.make_current()
@@ -146,8 +172,15 @@ func _build_world() -> void:
 			world.add_child(arrow)
 			arrows.append(arrow)
 		_scenery(e, terrain(int(e.place)))
-		spots.append({"kind": "way", "place": int(e.place), "mission": int(e.mission), "open": bool(e.open),
-			"at": at})
+		spots.append(
+			{
+				"kind": "way",
+				"place": int(e.place),
+				"mission": int(e.mission),
+				"open": bool(e.open),
+				"at": at
+			}
+		)
 	var smith := MapBuilder.cell_to_world(camp.smith_spot())
 	_label3d("Smith", tr("menu.blacksmith"), smith + Vector3(0, 2.1, -0.6), UiTheme.TEXT)
 	spots.append({"kind": "smith", "at": smith})
@@ -180,7 +213,10 @@ func _build_ui() -> void:
 	title.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	title.offset_top = 12
 	var kind := tr("camp.main") if camp.main else tr("camp.stop")
-	title.text = "%s · %s" % [kind, campaign.lord_name(camp_place()) if camp_place() > 0 else tr("camp.start")]
+	title.text = (
+		"%s · %s"
+		% [kind, campaign.lord_name(camp_place()) if camp_place() > 0 else tr("camp.start")]
+	)
 	add_child(title)
 	hint = UiTheme.note("Hint")
 	hint.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
@@ -200,9 +236,12 @@ func _build_ui() -> void:
 	col.custom_minimum_size = Vector2(420, 0)
 	col.add_theme_constant_override("separation", 8)
 	menu.add_child(col)
-	for item in [["GameMenu", "menu.game", open_game_menu], ["WorldMap", "campaign.world", open_world_map],
-			["MainMenu", "camp.main_menu", func(): Router.go("main_menu")],
-			["Back", "camp.back", toggle_menu]]:
+	for item in [
+		["GameMenu", "menu.game", open_game_menu],
+		["WorldMap", "campaign.world", open_world_map],
+		["MainMenu", "camp.main_menu", func(): Router.go("main_menu")],
+		["Back", "camp.back", toggle_menu]
+	]:
 		var b := Button.new()
 		b.name = item[0]
 		b.text = item[1]
@@ -234,7 +273,9 @@ func _process(delta: float) -> void:
 		if hero.sprite != null:
 			hero.sprite.visible = false
 		figure.play("walk" if hero.walking else "idle")
-		figure.rotation.y = lerp_angle(figure.rotation.y, Motion.yaw_of(hero.dir8), 1.0 - exp(-16.0 * delta))
+		figure.rotation.y = lerp_angle(
+			figure.rotation.y, Motion.yaw_of(hero.dir8), 1.0 - exp(-16.0 * delta)
+		)
 	for a in arrows:
 		a.visible = int(_blink / BLINK_TIME) % 2 == 0
 
@@ -250,7 +291,11 @@ func _physics_process(_delta: float) -> void:
 	if not e.is_empty():
 		use(e)
 		return
-	if not near.is_empty() and near.kind != "way" and (Input.is_action_just_pressed("attack") or Input.is_action_just_pressed("ui_accept")):
+	if (
+		not near.is_empty()
+		and near.kind != "way"
+		and (Input.is_action_just_pressed("attack") or Input.is_action_just_pressed("ui_accept"))
+	):
 		use(near)
 
 
@@ -301,8 +346,16 @@ func use(s: Dictionary) -> void:
 		"way":
 			if s.open:
 				_leaving = true
-				Router.push("campaign", {"level": 3, "lord": int(s.place), "mission": int(s.mission),
-					"camp": true, "profile_path": path})
+				Router.push(
+					"campaign",
+					{
+						"level": 3,
+						"lord": int(s.place),
+						"mission": int(s.mission),
+						"camp": true,
+						"profile_path": path
+					}
+				)
 		"hall":
 			Router.push("town_hall", {"profile_path": path})
 		"smith":
@@ -462,7 +515,9 @@ func start_mission(lord_id: int, mission: int) -> void:
 	var line: int = profile.next_briefing(RandomNumberGenerator.new())
 	profile.save_keeping_map(path)
 	_leaving = true
-	Router.push("briefing", {"lord": lord_id, "mission": mission, "line": line, "profile_path": path})
+	Router.push(
+		"briefing", {"lord": lord_id, "mission": mission, "line": line, "profile_path": path}
+	)
 
 
 func toggle_menu() -> void:

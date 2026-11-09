@@ -39,8 +39,12 @@ func _gui_input(event: InputEvent) -> void:
 
 
 static func is_start_event(event: InputEvent) -> bool:
-	if event is InputEventKey or event is InputEventJoypadButton \
-			or event is InputEventMouseButton or event is InputEventScreenTouch:
+	if (
+		event is InputEventKey
+		or event is InputEventJoypadButton
+		or event is InputEventMouseButton
+		or event is InputEventScreenTouch
+	):
 		return event.is_pressed() and not event.is_echo()
 	return false
 

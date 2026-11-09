@@ -98,7 +98,11 @@ func act(motion: Array, duration := 0.0, restart := false, progress := 0.0, blen
 				_speed = speed
 				player.play(c, blend, speed)
 			return
-		if shown_mode != "loop" and player.is_playing() and player.current_animation_position < _hold_until:
+		if (
+			shown_mode != "loop"
+			and player.is_playing()
+			and player.current_animation_position < _hold_until
+		):
 			return
 		if shown_clip == "death":
 			return

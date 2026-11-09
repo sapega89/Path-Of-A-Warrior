@@ -44,17 +44,31 @@ func test_duel_waits_for_an_opponent() -> void:
 	var m: RefCounted = _player(net, "MARIA", started)
 	var old: Dictionary = Router.params
 	var menu := _screen(BattlesScreen, {"online": a, "kind": "duel"})
-	eq(menu.buttons.map(func(b): return b.text), ["online.duel_1on1", "online.duel_2on2",
-		"online.challenge_1", "online.challenge_2", "online.duel_order"])
+	eq(
+		menu.buttons.map(func(b): return b.text),
+		[
+			"online.duel_1on1",
+			"online.duel_2on2",
+			"online.challenge_1",
+			"online.challenge_2",
+			"online.duel_order"
+		]
+	)
 	menu.buttons[0].pressed.emit()
 	check(a.waiting and menu.cancel.visible and menu.buttons[1].disabled, "searching")
 	eq(menu.status.text, tr("online.searching"))
 	menu.cancel.pressed.emit()
-	check(not a.waiting and not menu.cancel.visible and not net.o.queue.has(net.session(a)), "cancelled")
+	check(
+		not a.waiting and not menu.cancel.visible and not net.o.queue.has(net.session(a)),
+		"cancelled"
+	)
 	menu.buttons[0].pressed.emit()
 	m.find_battle(0, func(_e): pass)
 	eq(started, ["ANDREY", "MARIA"], "matched: both battles start")
-	eq([a.battle.mode, a.battle.fighters[1].name, m.battle.fighters[1].name, a.waiting], [0, "MARIA", "ANDREY", false])
+	eq(
+		[a.battle.mode, a.battle.fighters[1].name, m.battle.fighters[1].name, a.waiting],
+		[0, "MARIA", "ANDREY", false]
+	)
 	menu.free()
 	menu = _screen(BattlesScreen, {"online": a, "kind": "mission"})
 	eq(menu.buttons.map(func(b): return str(b.name)), ["Solo", "Ally", "Order"])
@@ -73,7 +87,10 @@ func test_a_duel_waited_long_gets_the_cpu() -> void:
 	net.now += net.o.match_wait
 	net.o.tick()
 	net.flush()
-	eq([started, a.battle.mode, a.battle.allies_alive, a.battle.enemies_alive], [["ANDREY"], 1, 2, 2])
+	eq(
+		[started, a.battle.mode, a.battle.allies_alive, a.battle.enemies_alive],
+		[["ANDREY"], 1, 2, 2]
+	)
 	ServerTests._rm(d)
 
 
@@ -95,8 +112,11 @@ func test_challenges_and_invitations() -> void:
 	eq(text.info.text, tr("online.err_no_player"))
 	text.fields[0].text = "BLADE"
 	text.submit()
-	eq([started, a.battle.mode, a.battle.via, a.battle.fighters[1].name], [["ANDREY"], 0, "invite", "Blade"],
-		"a bot takes the challenge")
+	eq(
+		[started, a.battle.mode, a.battle.via, a.battle.fighters[1].name],
+		[["ANDREY"], 0, "invite", "Blade"],
+		"a bot takes the challenge"
+	)
 	text.free()
 	a.battle_request({"t": "mp_exit"})  # Exit Battle
 	a.battle_over()
@@ -108,8 +128,11 @@ func test_challenges_and_invitations() -> void:
 	net.o.online_part("MARIA").invitation = 1
 	text.submit()
 	eq(started, ["ANDREY", "ANDREY", "MARIA"], "Maria is taken into the mission")
-	eq([m.battle.mode, m.battle.my_slot, m.battle.fighters[0].name, a.battle.fighters[1].name],
-		[2, 2, "MARIA", "MARIA"], "her own battle: her place first")
+	eq(
+		[m.battle.mode, m.battle.my_slot, m.battle.fighters[0].name, a.battle.fighters[1].name],
+		[2, 2, "MARIA", "MARIA"],
+		"her own battle: her place first"
+	)
 	text.free()
 	Router.params = old
 	ServerTests._rm(d)
@@ -130,8 +153,11 @@ func test_order_members_into_a_battle() -> void:
 	eq(buttons.map(func(b): return b.disabled), [true, false], "not me")
 	buttons[1].pressed.emit()
 	eq(started, ["ANDREY", "MARIA"], "2-on-2 Together")
-	eq([a.battle.mode, a.battle.fighters[1].slot, m.battle.my_slot, a.battle.allies_alive], [1, 2, 2, 2],
-		"side by side")
+	eq(
+		[a.battle.mode, a.battle.fighters[1].slot, m.battle.my_slot, a.battle.allies_alive],
+		[1, 2, 2, 2],
+		"side by side"
+	)
 	order.free()
 	Router.params = old
 	ServerTests._rm(d)
@@ -150,12 +176,30 @@ func test_the_rewards_go_to_the_hero() -> void:
 	var old: Dictionary = Router.params
 	var screen := _screen(BattleScreen, {"online": a, "profile_path": hero})
 	var b: RefCounted = a.battle
-	b.on_push({"t": "battle_end", "win": 1, "gold": 450, "grade": 5, "fame": 30, "exp": 400, "rank": 2,
-		"loot": {"id": 3, "attack": 0, "defense": 0, "hp": 0, "mp": 0, "enchant": 0, "name": "Potion"}})
+	b.on_push(
+		{
+			"t": "battle_end",
+			"win": 1,
+			"gold": 450,
+			"grade": 5,
+			"fame": 30,
+			"exp": 400,
+			"rank": 2,
+			"loot":
+			{"id": 3, "attack": 0, "defense": 0, "hp": 0, "mp": 0, "enchant": 0, "name": "Potion"}
+		}
+	)
 	screen._process(OnlineBattle.TICK_MS / 1000.0)
 	p = Profile.load_or_new(hero)
-	eq([p.gold, p.fame, p.level > 1, p.quick_slots[0]], [550, 30, true, [3, 1]], "gold, fame, exp, the potion")
-	check(screen.result_text().contains(tr("online.battle_level_up") % screen.levels_gained), screen.result_text())
+	eq(
+		[p.gold, p.fame, p.level > 1, p.quick_slots[0]],
+		[550, 30, true, [3, 1]],
+		"gold, fame, exp, the potion"
+	)
+	check(
+		screen.result_text().contains(tr("online.battle_level_up") % screen.levels_gained),
+		screen.result_text()
+	)
 	screen._process(OnlineBattle.TICK_MS / 1000.0)
 	eq(Profile.load_or_new(hero).gold, 550, "once")
 	screen.free()
@@ -170,10 +214,23 @@ func test_the_rewards_go_to_the_hero() -> void:
 		p.backpack[i] = {"id": 105, "attack": 0, "defense": 0, "hp": 0, "mp": 0, "enchant": 0}
 	p.save(hero)
 	screen = _screen(BattleScreen, {"online": a, "profile_path": hero})
-	a.battle.on_push({"t": "battle_end", "win": 1, "gold": 0, "grade": 0, "fame": 0, "exp": 0, "rank": 1,
-		"loot": {"id": 120, "attack": 9, "defense": 0, "hp": 0, "mp": 0, "enchant": 0, "name": "Blade"}})
+	a.battle.on_push(
+		{
+			"t": "battle_end",
+			"win": 1,
+			"gold": 0,
+			"grade": 0,
+			"fame": 0,
+			"exp": 0,
+			"rank": 1,
+			"loot":
+			{"id": 120, "attack": 9, "defense": 0, "hp": 0, "mp": 0, "enchant": 0, "name": "Blade"}
+		}
+	)
 	screen._process(OnlineBattle.TICK_MS / 1000.0)
-	check(screen.loot_lost and screen.result_text().contains(tr("online.battle_bag_full")), "no room")
+	check(
+		screen.loot_lost and screen.result_text().contains(tr("online.battle_bag_full")), "no room"
+	)
 	screen.free()
 	Router.params = old
 	ServerTests._rm(d)

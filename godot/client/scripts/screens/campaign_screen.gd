@@ -2,7 +2,8 @@ extends Control
 ## The campaign: the world map (scripts/ui/world_map_view.gd) with the hero's place and the
 ## places he can go to from there, then the missions of a place (a lord: one map). A place
 ## that is not open yet is dark; a mission won has a mark. Winning takes the hero to that
-## place, so the map changes. A mission shows its description first; OK asks whether to accept it (the general to beat, the level and the
+## place, so the map changes. A mission shows its description first; OK asks whether to accept it
+## (the general to beat, the level and the
 ## gold), and Yes counts the briefing and opens it, then the map. Opened from a camp
 ## (Router.params camp: true) it shows the story of the mission the way led to, OK goes
 ## straight to its briefing (in its place, so the mission ends back in the camp) and Back
@@ -96,7 +97,8 @@ func show_level() -> void:
 	world_view.visible = level == 1
 	scroll.visible = level != 1
 	column.set_anchors_and_offsets_preset(
-		Control.PRESET_TOP_WIDE if level == 1 else Control.PRESET_FULL_RECT)
+		Control.PRESET_TOP_WIDE if level == 1 else Control.PRESET_FULL_RECT
+	)
 	match level:
 		1:
 			heading.text = "campaign.world"
@@ -173,8 +175,14 @@ func accept_text() -> String:
 	var general := MapSim.general_data(int(m.get("boss_type", 0)))
 	var lv := int(profile.level) + int(m.get("level_bonus", 0))
 	var gold := int(m.get("gold", 0)) * 150 * (1 + (int(profile.difficulty) ^ 1))
-	return "%s\n%s\n\n%s" % [tr(str(general.get("name", ""))), tr("campaign.level_gold") % [lv, gold],
-		tr("campaign.accept")]
+	return (
+		"%s\n%s\n\n%s"
+		% [
+			tr(str(general.get("name", ""))),
+			tr("campaign.level_gold") % [lv, gold],
+			tr("campaign.accept")
+		]
+	)
 
 
 ## OK under the description: from a camp the story goes straight on to the briefing.

@@ -11,7 +11,11 @@ func test_item_data() -> void:
 	eq(Items.name_of(116), "Iron Broadsword", "the first weapon")
 	eq(Items.slot_type(116), 1, "a sword of type 1")
 	eq(Items.place(131), 3, "a helmet's place")
-	eq(Items.describe(Items.make(116)), "Iron Broadsword / ATK+1 / Available at Lv1", "as the Gear page says")
+	eq(
+		Items.describe(Items.make(116)),
+		"Iron Broadsword / ATK+1 / Available at Lv1",
+		"as the Gear page says"
+	)
 	eq(Items.level_needed(102), 10, "a tier 2 gear")
 	eq(Items.icon(116), ["kibo", 0], "gear icon")
 	eq(Items.icon(503), ["shinki", 2], "rare icon")

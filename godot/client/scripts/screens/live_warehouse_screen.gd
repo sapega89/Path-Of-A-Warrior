@@ -61,7 +61,9 @@ func show_side(warehouse: bool) -> void:
 
 func item_at(i: int) -> Dictionary:
 	if in_warehouse:
-		return live.warehouse[i].item if live != null and i < live.warehouse.size() else Items.empty()
+		return (
+			live.warehouse[i].item if live != null and i < live.warehouse.size() else Items.empty()
+		)
 	return profile.backpack[i] if i < profile.backpack.size() else Items.empty()
 
 
