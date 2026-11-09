@@ -38,7 +38,10 @@ void fragment() {
 	float strokes = noise(vec2(p.x * 2.4 + p.y * 0.9, p.y * 4.5));
 	vec3 c = mix(soil, grass_dry, smoothstep(0.35, 0.65, n));
 	c = mix(c, grass_green, clamp(COLOR.g * smoothstep(0.3, 0.7, fbm(p * 0.6 + 11.0)) * 1.3, 0.0, 1.0));
-	c = mix(c, wet * (0.85 + 0.3 * fbm(p * 2.0)), smoothstep(0.1, 0.8, COLOR.b * (0.8 + n * 0.4)));
+	float mud = smoothstep(0.1, 0.8, COLOR.b * (0.8 + n * 0.4));
+	if (mud > 0.0) {  // only the banks of the water pay for the mud's noise
+		c = mix(c, wet * (0.85 + 0.3 * fbm(p * 2.0)), mud);
+	}
 	vec3 pc = mix(path, path_dark, smoothstep(0.4, 0.8, fbm(p * 1.5)) * 0.6);
 	c = mix(c, pc, smoothstep(0.25, 0.6, COLOR.r + (n - 0.5) * 0.3));
 	c *= 0.95 + 0.08 * strokes;

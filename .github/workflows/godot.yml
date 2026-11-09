@@ -52,7 +52,8 @@ jobs:
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgl1 libegl1 mesa-utils > /dev/null
           mkdir -p "$RUNNER_TEMP/shots"
-          timeout 300 xvfb-run -a -s "-screen 0 1280x720x24" \
+          # The game's screens and the first mission: 3 to 5 minutes, by the runner's speed.
+          timeout 600 xvfb-run -a -s "-screen 0 1280x720x24" \
             "$RUNNER_TEMP/godot" --path godot/client --rendering-driver opengl3 --resolution 1280x720 \
             res://tools/shots.tscn -- "$RUNNER_TEMP/shots"
           # The art slice in the new style (scripts/art): the camp, the battle room, the people.
