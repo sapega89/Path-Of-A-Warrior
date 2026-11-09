@@ -95,14 +95,14 @@ jobs:
 
       - name: Export
         run: |
-          mkdir -p godot/client/build
+          mkdir -p godot/build/windows
           timeout 300 "$RUNNER_TEMP/godot" --headless --path godot/client \
-            --export-release "Windows Desktop" build/PathOfAWarrior.exe
-          ls -la godot/client/build
-          test -s godot/client/build/PathOfAWarrior.exe
+            --export-release Windows ../build/windows/MercenarysPath.exe
+          ls -la godot/build/windows
+          test -s godot/build/windows/MercenarysPath.exe
 
       - name: Upload
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
         with:
-          name: PathOfAWarrior-windows
-          path: godot/client/build/PathOfAWarrior.exe
+          name: MercenarysPath-windows
+          path: godot/build/windows/MercenarysPath.exe
