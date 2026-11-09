@@ -39,11 +39,8 @@ static func texture(path: String) -> Texture2D:
 
 ## A framed picture of the given size; set its texture with portrait() or story().
 static func framed(node_name: String, size: Vector2) -> TextureRect:
-	var t := TextureRect.new()
+	var t := FramedPicture.new()
 	t.name = node_name
-	t.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
-	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	t.custom_minimum_size = size
 	t.material = frame(size.x / size.y)
 	return t

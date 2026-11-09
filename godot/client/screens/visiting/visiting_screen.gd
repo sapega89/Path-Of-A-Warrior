@@ -8,7 +8,6 @@ extends BaseScreen
 ## A line typed out goes on by itself after 15 ticks, as pyport's; attack / accept shows the
 ## whole line, or goes on at once; back leaves the list.
 
-const SCALE := 3
 const CHARS_PER_SECOND := 40.0
 ## Ticks a line shown whole stays before the talk goes on by itself.
 const WAIT_TICKS := 15
@@ -17,17 +16,18 @@ enum Step { LIST, GREETING, TOPIC, TALK, DISCUSSED, VISITED, CLOSED }
 var profile: RefCounted
 var path: String = Profile.PATH
 var step := Step.LIST
-var heading: Label
-var list: VBoxContainer
-var talk_box: VBoxContainer
-var general_portrait: TextureRect
-var hero_portrait: TextureRect
-var general_says: Label
-var hero_says: Label
-var text: Label  # a notice in the middle: the question, what was discussed, the visit's end
+@onready var heading: Label = %Heading
+@onready var list: VBoxContainer = %List
+@onready var talk_box: VBoxContainer = %Talk
+@onready var general_portrait: TextureRect = %Dialogue.speaker_portrait
+@onready var hero_portrait: TextureRect = %Dialogue.hero_portrait
+@onready var general_says: Label = %Dialogue.speaker_says
+@onready var hero_says: Label = %Dialogue.hero_says
+## A notice in the middle: the question, what was discussed, the visit's end.
+@onready var text: Label = %Text
 var typing: Label  # the speech being typed
-var topics: VBoxContainer
-var ok: Button
+@onready var topics: VBoxContainer = %Topics
+@onready var ok: Button = %Ok
 var general_id := 0
 var general := {}
 var chosen := 0
@@ -44,61 +44,7 @@ func _ready() -> void:
 	profile = Profile.load_or_new(path)
 	if Router.params.has("seed"):
 		rng.seed = int(Router.params.seed)
-	var col := UiTheme.menu_column(self, 760)
-	heading = UiTheme.heading("visit.title", 40)
-	col.add_child(heading)
-
-	list = VBoxContainer.new()
-	list.name = "List"
-	list.add_theme_constant_override("separation", 6)
-	var scroll := ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(760, 470)
-	scroll.follow_focus = true
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(list)
-	col.add_child(scroll)
-
-	talk_box = VBoxContainer.new()
-	talk_box.name = "Talk"
-	talk_box.add_theme_constant_override("separation", 12)
-	var top := HBoxContainer.new()
-	top.add_theme_constant_override("separation", 16)
-	top.add_child(_portrait("GeneralPortrait"))
-	top.add_child(_speech("GeneralSays"))
-	talk_box.add_child(top)
-	var bottom := HBoxContainer.new()
-	bottom.add_theme_constant_override("separation", 16)
-	bottom.add_child(_speech("HeroSays"))
-	bottom.add_child(_portrait("HeroPortrait"))
-	talk_box.add_child(bottom)
-	general_portrait = top.get_child(0)
-	general_says = top.get_child(1)
-	hero_portrait = bottom.get_child(1)
-	hero_says = bottom.get_child(0)
 	hero_portrait.texture = Pictures.portrait(Stories.HERO_PORTRAIT + int(profile.head))
-	text = Label.new()
-	text.name = "Text"
-	text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	text.custom_minimum_size = Vector2(760, 0)
-	talk_box.add_child(text)
-	topics = VBoxContainer.new()
-	topics.name = "Topics"
-	for i in Visits.TOPICS.size():
-		var b := Button.new()
-		b.name = "Topic%d" % i
-		b.text = "visit.topic_%d" % i
-		b.pressed.connect(choose.bind(i))
-		topics.add_child(b)
-	talk_box.add_child(topics)
-	ok = Button.new()
-	ok.name = "Ok"
-	ok.text = "visit.ok"
-	ok.pressed.connect(press)
-	talk_box.add_child(ok)
-	col.add_child(talk_box)
 	show_list()
 
 
@@ -133,21 +79,6 @@ func show_list() -> void:
 		if c is Button and not (c as Button).disabled:
 			(c as Button).grab_focus.call_deferred()
 			break
-
-
-func _portrait(node_name: String) -> TextureRect:
-	return Pictures.framed(node_name, Vector2(46, 46) * SCALE)
-
-
-func _speech(node_name: String) -> Label:
-	var l := Label.new()
-	l.name = node_name
-	l.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	l.custom_minimum_size = Vector2(0, 46 * SCALE)
-	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	return l
 
 
 ## A row of the list: the name on the left, the points on the right.

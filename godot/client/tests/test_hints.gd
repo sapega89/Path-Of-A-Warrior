@@ -66,7 +66,7 @@ func test_points_have_done_reset_back() -> void:
 func test_campaign_back_button() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = CampaignScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["campaign"])
 	root.add_child(screen)
 	check(screen.find_child("Back", true, false) is Button, "a Back button")
 	screen._open_lord(1)

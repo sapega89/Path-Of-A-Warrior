@@ -1,0 +1,102 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://screens/visiting/visiting_screen.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/ui/heading.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/dialogue.tscn" id="3"]
+
+[node name="VisitingScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 1
+grow_vertical = 1
+
+[node name="Column" type="VBoxContainer" parent="Center"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(760, 0)
+theme_override_constants/separation = 8
+
+[node name="Heading" type="Label" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Heading"
+text = "visit.title"
+horizontal_alignment = 1
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 40
+script = ExtResource("2")
+
+[node name="Scroll" type="ScrollContainer" parent="Center/Column"]
+layout_mode = 2
+custom_minimum_size = Vector2(760, 470)
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="List" type="VBoxContainer" parent="Center/Column/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="Talk" type="VBoxContainer" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Dialogue" parent="Center/Column/Talk" instance=ExtResource("3")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Text" type="Label" parent="Center/Column/Talk"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(760, 0)
+auto_translate_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Topics" type="VBoxContainer" parent="Center/Column/Talk"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Topic0" type="Button" parent="Center/Column/Talk/Topics"]
+layout_mode = 2
+text = "visit.topic_0"
+
+[node name="Topic1" type="Button" parent="Center/Column/Talk/Topics"]
+layout_mode = 2
+text = "visit.topic_1"
+
+[node name="Topic2" type="Button" parent="Center/Column/Talk/Topics"]
+layout_mode = 2
+text = "visit.topic_2"
+
+[node name="Topic3" type="Button" parent="Center/Column/Talk/Topics"]
+layout_mode = 2
+text = "visit.topic_3"
+
+[node name="Ok" type="Button" parent="Center/Column/Talk"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "visit.ok"
+
+[connection signal="pressed" from="Center/Column/Talk/Topics/Topic0" to="." method="choose" binds= [0]]
+
+[connection signal="pressed" from="Center/Column/Talk/Topics/Topic1" to="." method="choose" binds= [1]]
+
+[connection signal="pressed" from="Center/Column/Talk/Topics/Topic2" to="." method="choose" binds= [2]]
+
+[connection signal="pressed" from="Center/Column/Talk/Topics/Topic3" to="." method="choose" binds= [3]]
+
+[connection signal="pressed" from="Center/Column/Talk/Ok" to="." method="press"]

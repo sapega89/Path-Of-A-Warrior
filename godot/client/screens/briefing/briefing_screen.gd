@@ -9,7 +9,6 @@ extends BaseScreen
 ## Params: lord, mission, line (the advice's line of talk.json "briefing", the hero answers
 ## with the next one), profile_path.
 
-const SCALE := 3
 const CHARS_PER_SECOND := 40.0
 ## Ticks a typed line stays before the next one, and after a press that showed it whole.
 const WAIT_TICKS := 15
@@ -19,12 +18,12 @@ var lord_id := 0
 var mission := 0
 var lines: Array = []  # the advice and the hero's answer, "[Speaker] text"
 var line_at := 0
-var lord_portrait: TextureRect
-var hero_portrait: TextureRect
-var lord_says: Label
-var hero_says: Label
+@onready var lord_portrait: TextureRect = %Dialogue.speaker_portrait
+@onready var hero_portrait: TextureRect = %Dialogue.hero_portrait
+@onready var lord_says: Label = %Dialogue.speaker_says
+@onready var hero_says: Label = %Dialogue.hero_says
 var typing: Label  # the box being typed
-var skip: Button
+@onready var skip: Button = %Skip
 var _typed := 0.0
 var _wait := -1.0  # seconds before the next line once this one is shown, -1 while typing
 var _done := false
@@ -39,34 +38,9 @@ func _ready() -> void:
 	var m: Dictionary = ms[mission] if mission >= 0 and mission < ms.size() else {}
 	lines = talk(int(p.get("line", 0)), tr(str(m.get("name", ""))), profile.hero_name)
 
-	var col := UiTheme.menu_column(self, 760)
-	col.add_theme_constant_override("separation", 12)
-	var top := HBoxContainer.new()
-	top.add_theme_constant_override("separation", 16)
-	lord_portrait = _portrait("LordPortrait")
-	lord_says = _speech("LordSays")
-	top.add_child(lord_portrait)
-	top.add_child(lord_says)
-	col.add_child(top)
-	var bottom := HBoxContainer.new()
-	bottom.add_theme_constant_override("separation", 16)
-	hero_says = _speech("HeroSays")
-	hero_portrait = _portrait("HeroPortrait")
-	bottom.add_child(hero_says)
-	bottom.add_child(hero_portrait)
-	col.add_child(bottom)
 	lord_portrait.texture = Pictures.portrait(int(m.get("portrait", 0)))
 	hero_portrait.texture = Pictures.portrait(Stories.HERO_PORTRAIT + int(profile.head))
 
-	skip = Button.new()
-	skip.name = "Skip"
-	skip.text = "common.skip"
-	skip.flat = true
-	skip.focus_mode = Control.FOCUS_NONE
-	skip.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
-	skip.position = Vector2(12, -60)
-	skip.pressed.connect(finish)
-	add_child(skip)
 	_show_line()
 
 
@@ -81,21 +55,6 @@ static func talk(line: int, speaker: String, hero: String) -> Array:
 		var text := I18n.text(all[i]) if i >= 0 and i < all.size() else ""
 		out.append("[%s] %s" % [who, text.replace("&", who)])
 	return out
-
-
-func _portrait(node_name: String) -> TextureRect:
-	return Pictures.framed(node_name, Vector2(46, 46) * SCALE)
-
-
-func _speech(node_name: String) -> Label:
-	var l := Label.new()
-	l.name = node_name
-	l.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	l.custom_minimum_size = Vector2(0, 46 * SCALE)
-	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	return l
 
 
 ## Types lines[line_at] into its box: the advice at the top, the answer at the bottom.

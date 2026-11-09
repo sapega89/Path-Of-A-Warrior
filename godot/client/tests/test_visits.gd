@@ -93,7 +93,7 @@ func test_visiting_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "seed": 1}
-	var screen: Control = VisitingScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["visiting"])
 	root.add_child(screen)
 	eq(screen.list.get_child_count(), 3, "the header, Jan Gorski, Back")
 	screen.open(4)
@@ -123,7 +123,7 @@ func test_visiting_screen() -> void:
 	screen.free()
 	Router.params = old
 	Router.params = {"profile_path": TEST_PATH}
-	screen = VisitingScreen.new()
+	screen = Router.make(Router.SCREENS["visiting"])
 	root.add_child(screen)
 	eq(str(screen.list.get_child(0).name), "Notice", "not now")
 	screen.free()
@@ -139,7 +139,7 @@ func test_visiting_talk_goes_on_by_itself() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "seed": 1}
-	var screen: Control = VisitingScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["visiting"])
 	root.add_child(screen)
 	var wait: float = VisitingScreen.WAIT_TICKS * Settings.tick_seconds()
 	screen.open(4)

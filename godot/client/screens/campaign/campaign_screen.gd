@@ -15,12 +15,12 @@ const DONE_MARK := "  ✓"
 
 var campaign := Campaign.new()
 var profile: RefCounted
-var list: VBoxContainer
-var heading: Label
-var scroll: ScrollContainer
-var ok: Button  # under the description: accept the mission?
+@onready var list: VBoxContainer = %List
+@onready var heading: Label = %Heading
+@onready var scroll: ScrollContainer = %Scroll
+@onready var ok: Button = %Ok  # under the description: accept the mission?
 var ask: AskDialog
-var column: Control  # the list, the missions and the description
+@onready var column: Control = %Center  # the list, the missions and the description
 var world_view: Control  # the world map (level 1)
 ## 1 the world map at the hero's place, 2 missions of a lord, 3 the description of a mission
 var level := 1
@@ -38,31 +38,6 @@ func _ready() -> void:
 	profile = Profile.load_or_new(path)
 	if p.has("seed"):
 		rng.seed = int(p.seed)
-	var col := UiTheme.menu_column(self, 640)
-	column = col.get_parent()
-	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	heading = UiTheme.heading("campaign.lords", 40)
-	col.add_child(heading)
-	scroll = ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(640, 520)
-	scroll.follow_focus = true
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	col.add_child(scroll)
-	list = VBoxContainer.new()
-	list.name = "List"
-	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	list.add_theme_constant_override("separation", 6)
-	scroll.add_child(list)
-	ok = Button.new()
-	ok.name = "Ok"
-	ok.text = "campaign.ok"
-	ok.pressed.connect(_on_ok)
-	col.add_child(ok)
-	var back := Button.new()
-	back.name = "Back"
-	back.text = "common.back"
-	back.pressed.connect(go_back)
-	col.add_child(back)
 	ask = AskDialog.new()
 	ask.confirmed.connect(accept)
 	add_child(ask)
