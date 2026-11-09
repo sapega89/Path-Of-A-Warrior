@@ -68,6 +68,27 @@ func center(room: int) -> Vector3:
 	return Vector3(7 * p.x + 4.5, 0.0, 7 * p.y + 4.5)
 
 
+## The rooms the room's exits lead to (the next ones; none past the last).
+func next_rooms(room: int) -> Array:
+	var out: Array = []
+	for n in range(EXIT_DOWN, EXIT_RIGHT + 1):
+		var r := neighbour(room, n)
+		if has_exit(room, n) and r >= 0 and r < count() and r != room:
+			out.append(r)
+	return out
+
+
+## The tiles a room shows with the ones its exits lead to: each room's 9x9-tile view.
+func view_cells(room: int) -> Dictionary:
+	var cells_shown := {}
+	for r in [room] + next_rooms(room):
+		var p := room_xy(r)
+		for y in 9:
+			for x in 9:
+				cells_shown[Vector2i(7 * p.x + x, 7 * p.y + y)] = true
+	return cells_shown
+
+
 func exits(room: int) -> Array:
 	if room < 0 or room >= cells.size():
 		return [0, 0, 0, 0]
@@ -130,3 +151,4 @@ func keep_inside(room: int, pos: Vector3) -> Dictionary:
 		p.z = b.end.y
 		edge = EXIT_DOWN
 	return {"pos": p, "edge": edge}
+

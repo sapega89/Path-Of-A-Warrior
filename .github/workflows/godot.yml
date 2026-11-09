@@ -52,11 +52,11 @@ jobs:
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq xvfb libgl1 libegl1 mesa-utils > /dev/null
           mkdir -p "$RUNNER_TEMP/shots"
-          timeout 300 xvfb-run -a -s "-screen 0 1280x720x24" \
+          timeout 600 xvfb-run -a -s "-screen 0 1280x720x24" \
             "$RUNNER_TEMP/godot" --path godot/client --rendering-driver opengl3 --resolution 1280x720 \
             res://tools/shots.tscn -- "$RUNNER_TEMP/shots"
           # The art slice in the new style (scripts/art): the camp, the battle room, the people.
-          timeout 300 xvfb-run -a -s "-screen 0 1280x720x24" \
+          timeout 600 xvfb-run -a -s "-screen 0 1280x720x24" \
             "$RUNNER_TEMP/godot" --path godot/client --rendering-driver opengl3 --resolution 1280x720 \
             res://tools/art_shots.tscn -- "$RUNNER_TEMP/shots"
           ls "$RUNNER_TEMP/shots"
@@ -68,3 +68,41 @@ jobs:
         with:
           name: godot-shots
           path: ${{ runner.temp }}/shots
+
+  windows:
+    # the game for Windows (one .exe with the data inside), in the run's artifacts
+    runs-on: ubuntu-latest
+    env:
+      GODOT_VERSION: "4.5.1"
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1, the repo allows only pinned actions
+
+      - name: Install Godot and the Windows export template
+        run: |
+          base="https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable"
+          curl -sSL -o godot.zip "$base/Godot_v${GODOT_VERSION}-stable_linux.x86_64.zip"
+          unzip -q godot.zip
+          mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot"
+          curl -sSL -o templates.tpz "$base/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          dir="$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          mkdir -p "$dir"
+          unzip -q -j templates.tpz "templates/windows_release_x86_64.exe" "templates/version.txt" -d "$dir"
+          rm templates.tpz
+
+      - name: Import
+        run: timeout 300 "$RUNNER_TEMP/godot" --headless --path godot/client --import
+
+      - name: Export
+        run: |
+          mkdir -p godot/build/windows
+          timeout 300 "$RUNNER_TEMP/godot" --headless --path godot/client \
+            --export-release Windows ../build/windows/MercenarysPath.exe
+          ls -la godot/build/windows
+          test -s godot/build/windows/MercenarysPath.exe
+
+      - name: Upload
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: MercenarysPath-windows
+          path: godot/build/windows/MercenarysPath.exe

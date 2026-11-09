@@ -1,11 +1,12 @@
 extends Control
-## The pause menu of a mission, over the stopped game, in pyport's order: Resume, Items (Assign
-## Items for this mission's potion keys), Save (once the room is cleared; Continue comes back
-## to it), Options (the settings), Help, Exit to Menu (asked
-## first: the mission is lost, back to the campaign) and Exit Game (asked first; not on phones
-## and the web). Items, Options and Help show over the menu. Back resumes.
-## In the training (training_screen.gd, `leave` set) there is no Save, and Exit is Skip
-## Training (asked first, No first): `leave` goes on as after the training.
+## The pause menu of a mission, over the stopped game: Resume, Items (Assign Items for this
+## mission's potion keys), Options (the settings), Help, Exit to Menu (asked first: the
+## mission is lost, back to the camp) and Exit Game (asked first; not on phones and the web).
+## The game is saved in the camps between missions, so there is no Save here (save() is kept
+## for a mission saved on its map by an older version). Items, Options and Help show over the
+## menu. Back resumes.
+## In the training (training_screen.gd, `leave` set) Exit is Skip Training (asked first, No
+## first): `leave` goes on as after the training.
 
 signal resumed
 
@@ -41,8 +42,6 @@ func _ready() -> void:
 	col.add_child(UiTheme.heading("pause.title", 44))
 	_add(col, "Resume", "pause.resume", func(): resumed.emit())
 	_add(col, "Items", "pause.items", open_items)
-	if not leave.is_valid():
-		_add(col, "Save", "pause.save", save)
 	_add(col, "Options", "pause.options", open_options)
 	_add(col, "Help", "pause.help", open_help)
 	if leave.is_valid():

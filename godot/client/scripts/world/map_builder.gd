@@ -38,6 +38,9 @@ var floor_mat: StandardMaterial3D
 var stand_mat: StandardMaterial3D
 var breakables: Array[Node3D] = []
 var _standing := {}  # Vector2i -> true, cells drawn standing up
+## The cells drawn (show_only); empty: all. A cell not drawn shows the ground around the map.
+var _shown := {}
+var _background := {}  # Vector2i -> ground tile, for a cell not drawn: that of the nearest drawn one
 
 
 static func map_path(number: int) -> String:
@@ -125,6 +128,39 @@ func build(data: Dictionary) -> void:
 	_build_collision()
 
 
+## Draws only these cells (Vector2i -> true; empty: all of them). Every other cell looks like
+## the ground around the map: the ground of the nearest drawn cell, darker, with nothing on it.
+## Only the pictures change: collision and the breakables' nodes stay (see is_shown).
+func show_only(cells: Dictionary) -> void:
+	_shown = cells
+	_background.clear()
+	var todo: Array = []
+	for c in _shown:
+		_background[c] = cell("ground", c.x, c.y)
+		todo.append(c)
+	var i := 0
+	while i < todo.size():
+		var c: Vector2i = todo[i]
+		i += 1
+		for d in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+			var n: Vector2i = c + d
+			if n.x >= 0 and n.y >= 0 and n.x < w and n.y < h and not _background.has(n):
+				_background[n] = _background[c]
+				todo.append(n)
+	for n in ["Floor", "Outside", "Standing"]:
+		var old := get_node_or_null(n)
+		if old != null:
+			remove_child(old)
+			old.queue_free()
+	_build_floor()
+	_build_outside()
+	_build_standing()
+
+
+func is_shown(x: int, y: int) -> bool:
+	return _shown.is_empty() or _shown.has(Vector2i(x, y))
+
+
 func _material(cutout: bool) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
 	m.albedo_texture = atlas
@@ -141,6 +177,8 @@ func _build_floor() -> void:
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	for y in h:
 		for x in w:
+			if not is_shown(x, y):
+				continue
 			var g := cell("ground", x, y)
 			if g != 0:
 				_flat_quad(st, x, y, 0.0, g)
@@ -150,7 +188,8 @@ func _build_floor() -> void:
 	_add_mesh("Floor", st, stand_mat)  # decals have transparent pixels
 
 
-## The ground around the map: a cell outside shows the ground of the nearest edge cell.
+## The ground around the map: a cell outside shows the ground of the nearest edge cell (and a
+## cell of the map not drawn, that of the nearest drawn cell).
 func _build_outside() -> void:
 	if w < 1 or h < 1:
 		return
@@ -158,9 +197,13 @@ func _build_outside() -> void:
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	for y in range(-OUTSIDE, h + OUTSIDE):
 		for x in range(-OUTSIDE, w + OUTSIDE):
-			if x >= 0 and y >= 0 and x < w and y < h:
+			var inside := x >= 0 and y >= 0 and x < w and y < h
+			if inside and is_shown(x, y):
 				continue
-			var g := cell("ground", clampi(x, 0, w - 1), clampi(y, 0, h - 1))
+			var edge := Vector2i(clampi(x, 0, w - 1), clampi(y, 0, h - 1))
+			var g := cell("ground", edge.x, edge.y)
+			if not is_shown(edge.x, edge.y):
+				g = int(_background.get(edge, g))
 			if g != 0:
 				_flat_quad(st, x, y, 0.0, g)
 	var m := _material(false)
@@ -172,6 +215,8 @@ func _build_standing() -> void:
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	for run in standing_runs():
+		if not is_shown(run.x, run.bottom):
+			continue
 		var front_z := float(run.bottom) + 1.0
 		var level := 0
 		for y in range(run.bottom, run.top - 1, -1):

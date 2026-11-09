@@ -13,6 +13,19 @@ uniform vec3 cliff = vec3(0.42, 0.41, 0.46);
 // the colour earth banks lean to (sRGB)
 uniform vec3 bank = vec3(0.42, 0.31, 0.2);
 
+// The cells drawn (MapArt.show_only): a w x h mask over the map's rect (x, z, w, h); where it is
+// 0 the place is darker, as the land around the map. No rect (w = 0): everything drawn.
+uniform sampler2D view_mask : filter_linear, repeat_disable;
+uniform vec4 view_rect = vec4(0.0);
+uniform float hidden_shade = 0.5;
+
+float shown_at(vec2 p) {
+	if (view_rect.z <= 0.0) {
+		return 1.0;
+	}
+	return texture(view_mask, (p - view_rect.xy) / view_rect.zw).r;
+}
+
 varying vec3 world_pos;
 varying vec3 world_normal;
 varying vec4 detail;
@@ -113,6 +126,7 @@ void fragment() {
 		vec3 facec = style < 0.15 ? rock : (style < 0.4 ? earth : (style < 0.75 ? masonry : logs));
 		c = mix(c, facec, steep);
 	}
+	c *= mix(hidden_shade, 1.0, shown_at(world_pos.xz));
 	ALBEDO = OUTPUT_IS_SRGB ? c : pow(c, vec3(2.2));
 	ROUGHNESS = 1.0;
 	SPECULAR = 0.0;

@@ -7,7 +7,7 @@ extends "res://scripts/screens/mission_screen.gd"
 ## quarter of his HP; his exp, gold and loot stay here). After it, or Skip Training on the pause
 ## menu, the screen goes back and on to `then`: after New Game's opening story the game menu,
 ## from the Settings back to them.
-## Params: {then (optional), profile_path (optional)}.
+## Params: {then (optional), then_params (optional, for `then`), profile_path (optional)}.
 
 const Tutorial := preload("res://scripts/ui/tutorial.gd")
 const LORD := 1
@@ -15,6 +15,7 @@ const SEED := 7  # the same soldiers every time
 
 var tutorial: Tutorial
 var then := ""
+var then_params := {}
 
 
 func mission_params() -> Dictionary:
@@ -26,6 +27,7 @@ func mission_params() -> Dictionary:
 
 func _ready() -> void:
 	then = str(Router.params.get("then", ""))
+	then_params = Router.params.get("then_params", {})
 	super._ready()
 	sim.time_limit = 0
 	sim.hold_room = true
@@ -51,6 +53,7 @@ func leave() -> void:
 	if tutorial != null:
 		tutorial.set_process(false)
 	var next := then
+	var next_params := then_params
 	Router.back()
 	if not next.is_empty():
-		Router.push(next)
+		Router.push(next, next_params)

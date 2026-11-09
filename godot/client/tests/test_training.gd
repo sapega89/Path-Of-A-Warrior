@@ -193,12 +193,15 @@ func test_the_way_through_the_training() -> void:
 	ng.finish()
 	eq(Router.current_name(), "story", "the opening story")
 	eq([Router.params.get("then"), Router.params.get("then_params")],
-		["training", {"then": "game_menu", "profile_path": PATH}], "then the training, then the menu")
+		["training", {"then": "camp", "then_params": {"first": true, "profile_path": PATH},
+			"profile_path": PATH}], "then the training, then the camp")
 	Router.current._end()
 	eq(Router.current_name(), "training", "the training")
-	eq(Router.params, {"then": "game_menu", "profile_path": PATH}, "with where to go after it")
+	eq(Router.params, {"then": "camp", "then_params": {"first": true, "profile_path": PATH},
+		"profile_path": PATH}, "with where to go after it")
 	Router.current.tutorial.finish()
-	eq(Router.current_name(), "game_menu", "after it: the game menu")
+	eq(Router.current_name(), "camp", "after it: the camp, which starts the first mission")
+	eq(Router.params.get("profile_path"), PATH, "the camp of the new hero (it took `first`: the first mission at once)")
 	Router.go("settings")
 	var training: Button = Router.current.find_child("Training", true, false)
 	check(training != null, "Settings: Training")

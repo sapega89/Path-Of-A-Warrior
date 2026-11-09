@@ -1495,6 +1495,110 @@
     "en": "No room for the loot!",
     "uk": "Немає місця для здобичі!"
   },
+  "campaign.world": {
+    "en": "World Map",
+    "uk": "Карта світу"
+  },
+  "world.here": {
+    "en": "you are here",
+    "uk": "ви тут"
+  },
+  "world.next": {
+    "en": "you can go here",
+    "uk": "можна йти"
+  },
+  "world.closed": {
+    "en": "closed for now",
+    "uk": "поки закрито"
+  },
+  "world.away": {
+    "en": "further on",
+    "uk": "далі"
+  },
+  "world.won": {
+    "en": "won %d / %d",
+    "uk": "виграно %d / %d"
+  },
+  "camp.hint_walk": {
+    "en": "Choose a way: walk out by an arrow   [Esc] camp menu",
+    "uk": "Обери шлях: вийди туди, де стрілка   [Esc] меню табору"
+  },
+  "camp.hint_walk_pad": {
+    "en": "Choose a way: walk out by an arrow   [Start] camp menu",
+    "uk": "Обери шлях: вийди туди, де стрілка   [Start] меню табору"
+  },
+  "camp.enter_hall": {
+    "en": "[Enter] Town Hall: colonels, generals, visits",
+    "uk": "[Enter] Ратуша: полковники, генерали, візити"
+  },
+  "camp.enter_hall_pad": {
+    "en": "[A] Town Hall: colonels, generals, visits",
+    "uk": "[A] Ратуша: полковники, генерали, візити"
+  },
+  "camp.enter_smith": {
+    "en": "[Enter] Blacksmith: buy, sell, enchant, combine",
+    "uk": "[Enter] Коваль: купити, продати, заточити, скласти"
+  },
+  "camp.enter_smith_pad": {
+    "en": "[A] Blacksmith: buy, sell, enchant, combine",
+    "uk": "[A] Коваль: купити, продати, заточити, скласти"
+  },
+  "camp.hall": {
+    "en": "Town Hall",
+    "uk": "Ратуша"
+  },
+  "camp.main": {
+    "en": "Main camp",
+    "uk": "Головний табір"
+  },
+  "camp.stop": {
+    "en": "Stop",
+    "uk": "Стоянка"
+  },
+  "camp.start": {
+    "en": "the start",
+    "uk": "початок"
+  },
+  "camp.main_menu": {
+    "en": "Main menu",
+    "uk": "Головне меню"
+  },
+  "camp.back": {
+    "en": "Back to the camp",
+    "uk": "Назад до табору"
+  },
+  "hall.colonels": {
+    "en": "Colonels",
+    "uk": "Полковники"
+  },
+  "hall.generals": {
+    "en": "Generals you know",
+    "uk": "Знайомі генерали"
+  },
+  "hall.progress": {
+    "en": "%s: %d%%",
+    "uk": "%s: %d%%"
+  },
+  "hall.friend": {
+    "en": "%s: friendship %d",
+    "uk": "%s: дружба %d"
+  },
+  "hall.nobody": {
+    "en": "Nobody yet: win missions beside the generals",
+    "uk": "Поки нікого: вигравай місії разом із генералами"
+  },
+  "hall.visits": {
+    "en": "Visiting",
+    "uk": "Візити"
+  },
+  "camp.enter_store": {
+    "en": "[Enter] Warehouse",
+    "uk": "[Enter] Склад"
+  },
+  "camp.enter_store_pad": {
+    "en": "[A] Warehouse",
+    "uk": "[A] Склад"
+  },
   "hint.menu": {
     "en": "{ui_move}: choose · {ui_accept}: OK · {ui_back_click}: back",
     "uk": "{ui_move}: вибір · {ui_accept}: OK · {ui_back_click}: назад"

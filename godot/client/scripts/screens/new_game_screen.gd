@@ -293,10 +293,11 @@ func _confirmed() -> void:
 ## (training_screen.gd), then `then` (the game menu).
 func finish() -> void:
 	profile.save(path)
-	var then := str(Router.params.get("then", "game_menu"))
+	var then := str(Router.params.get("then", "camp"))
 	Router.back()
 	Router.push("story", {"story": Stories.OPENING, "then": "training",
-		"then_params": {"then": then, "profile_path": path}, "profile_path": path})
+		"then_params": {"then": then, "then_params": {"first": true, "profile_path": path},
+			"profile_path": path}, "profile_path": path})
 
 
 func _unhandled_input(event: InputEvent) -> void:

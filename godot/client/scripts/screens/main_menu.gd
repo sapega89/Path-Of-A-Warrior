@@ -1,7 +1,7 @@
 extends Control
 ## Main menu: continue (or play), new game, endings, settings, quit (no quit button on phones
-## and the web). Continue opens the game menu (scripts/screens/game_menu.gd), where
-## the hero's game is. While the game is always online and this run has no account yet, Play
+## and the web). Continue opens the hero's camp (scripts/screens/camp_screen.gd), where his
+## game goes on; a new game starts its first mission at once after the opening. While the game is always online and this run has no account yet, Play
 ## and New game open the login (scripts/screens/login_screen.gd) first; it comes back here and
 ## goes on with play() or new_game() once the hero (or none) has come from the server.
 
@@ -39,7 +39,7 @@ func _focus_first() -> void:
 		buttons[0].grab_focus()
 
 
-## The saved hero goes on in the game menu (back into the mission saved on its map, if any);
+## The saved hero goes on in his camp (back into the mission saved on its map, if any);
 ## without one a new game starts.
 func play() -> void:
 	if needs_login():
@@ -48,10 +48,9 @@ func play() -> void:
 	if not Profile.exists():
 		Router.push("new_game", {})
 		return
-	Router.push("game_menu")
+	Router.push("camp")
 	var on_map: Dictionary = Profile.load_or_new().on_map
 	if not on_map.is_empty():
-		Router.push("campaign")
 		Router.push("mission", {"lord": int(on_map.get("lord", 1)),
 			"mission": int(on_map.get("mission", 0)), "resume": true})
 

@@ -2,6 +2,8 @@
 .godot/
 *.translation
 export_presets.cfg
+!godot/client/export_presets.cfg
+godot/build/
 
 # Godot import cache (optional, uncomment if too large)
 # .godot/imported/

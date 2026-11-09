@@ -455,6 +455,27 @@ func _build_clusters(parent: Node3D, clustered: Dictionary) -> void:
 		props.append(node)
 
 
+## Draws only these cells (as MapBuilder.show_only; empty: all): the ground and the water of
+## the others darker (a mask the shaders read), the props on them hidden. The breakables'
+## nodes stay (the mission screen hides them by is_shown); collision stays.
+func show_only(cells: Dictionary) -> void:
+	_shown = cells
+	var img := Image.create(maxi(w, 1), maxi(h, 1), false, Image.FORMAT_L8)
+	for y in h:
+		for x in w:
+			img.set_pixel(x, y, Color.WHITE if is_shown(x, y) else Color.BLACK)
+	var tex := ImageTexture.create_from_image(img)
+	for n in ["Ground", "Water"]:
+		var mi := get_node_or_null(n) as MeshInstance3D
+		if mi != null and mi.material_override is ShaderMaterial:
+			var m := mi.material_override as ShaderMaterial
+			m.set_shader_parameter("view_mask", tex)
+			m.set_shader_parameter("view_rect", Vector4(0, 0, w, h) if not cells.is_empty() else Vector4.ZERO)
+	for node in props:
+		if is_instance_valid(node) and node.get_parent() != null and node.get_parent().name == "Props":
+			node.visible = is_shown(floori(node.position.x), floori(node.position.z))
+
+
 ## The breakable objects (MapSim.breakables) as props, named Object_x_y like MapBuilder's.
 func _build_objects() -> void:
 	for y in h:
