@@ -1,7 +1,7 @@
 # pyport — Path of a Warrior на Python
 
 «Path of a Warrior» (одиночна кампанія і мультиплеєр) на pygame-ce: одна гра, один рушій.
-Ресурси читаються з кореня репозиторію (`config.RES_ROOT`), Godot-файли не використовуються.
+Ресурси читаються з `original/` (`config.RES_ROOT`), Godot-файли не використовуються.
 
 ## Запуск
 
@@ -125,7 +125,7 @@ Game Menu `txt_b.png` / `txt_m.png` («Live»), тексти мультипле�
 префіксом видавця переїжджають під нові назви при першому читанні (`pow/midp/rms.py`), а на сервері —
 при старті (`pow_server/storage.py`); ключі маніфесту — `POW_SERVER`, `POW_PORT`, `POW_CHEAT`….
 `tests/test_no_publisher.py` стежить, щоб назва не повернулась (крім нотаток про оригінал у `docs/`,
-`vault/`). Еталонні скріншоти знято вже без неї.
+`docs/history/vault/`). Еталонні скріншоти знято вже без неї.
 
 **Повноекранний режим** (`pow/midp/display.py`): F11 або Alt+Enter, або Options → Screen
 (Window / Full; і в меню, і в паузі). Картинка 240×320 збільшується в найбільшу цілу кількість разів, що
@@ -239,7 +239,7 @@ Game Menu → **Management** (Attributes, Skills, Gear, Inventory, Assign Items)
 (Buy, Sell, Enchant, Combine), Main Menu → **Options**, **Help**, **Endings**, **About**,
 **Multiplayer**. В оригіналі YES у Multiplayer закривав гру й відкривав браузер, щоб завантажити
 окрему гру; у порті мультиплеєр — частина цієї гри (просив гравець; `main.py`,
-`docs/plans/one_engine_plan.md`): YES робить Continue і сам відкриває Live → **Multiplayer**
+`docs/history/plans/one_engine_plan.md`): YES робить Continue і сам відкриває Live → **Multiplayer**
 (без сейва нічого не робить). Пункт **Multiplayer** у меню Live (замість Management, якого з
 «завжди онлайн» немає): екрани мультиплеєра стають станом тієї ж канви й того ж циклу
 (`GameCanvas.state` 13, `pow/game/online_session.py`): `GameCanvas.loop` крутить по одному кадру
@@ -259,7 +259,7 @@ outro: BACK у її головному меню повертає в меню Liv
 , а Exit закриває вікно одразу (в оригіналі 3 с картинка outro).
 **Live** (онлайн-магазин) — з нашим сервером, див. нижче.
 
-### Live (етап 7, `docs/plans/PHASE_7_LIVE_OFFLINE.md`)
+### Live (етап 7, `docs/history/plans/PHASE_7_LIVE_OFFLINE.md`)
 
 Game Menu → Live працює як в оригіналі, але сервер — `pow_server/live.py` (той самий
 протокол, що в оригіналі: кадр u16 + опкод, відповідь опкод+1 і статус). Де він:
@@ -429,7 +429,7 @@ Please select» на екрані 6 — як в оригіналі.
 Еталонні скріншоти оригіналу (з емулятора) можна покласти в `pyport/shots_ref/<сценарій>/` з тими самими іменами й
 запустити `tools/compare_ref.py`.
 
-## Мультиплеєр (етап 9, `docs/plans/PHASE_9_ARENA.md`)
+## Мультиплеєр (етап 9, `docs/history/plans/PHASE_9_ARENA.md`)
 
 Колись окрема гра «Path of a Warrior Multiplayer» (Duel 1-на-1 / 2-на-2, Challenge, місії, рейтинги),
 тепер екрани одиночної: Live → Multiplayer (див. «Меню» вище).

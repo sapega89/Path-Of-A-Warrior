@@ -1,7 +1,7 @@
 # План переходу на Godot
 
-> Створено: 05.11.2026. Цей документ замінює `ROADMAP.md` як головний план, коли ми починаємо Godot-версію.
-> `ROADMAP.md` і `docs/plans/PHASE_*.md` лишаються історією Python-порту.
+> Створено: 05.11.2026. Цей документ замінює `docs/history/ROADMAP.md` як головний план, коли ми починаємо Godot-версію.
+> `docs/history/ROADMAP.md` і `docs/history/plans/PHASE_*.md` лишаються історією Python-порту.
 
 ## Зміни 06.11.2026 (рішення Andrey)
 
