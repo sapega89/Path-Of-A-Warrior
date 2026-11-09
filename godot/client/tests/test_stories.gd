@@ -55,7 +55,7 @@ func test_stats() -> void:
 
 func _story(params: Dictionary) -> Control:
 	Router.params = params
-	var screen: Control = StoryScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["story"])
 	root.add_child(screen)
 	return screen
 

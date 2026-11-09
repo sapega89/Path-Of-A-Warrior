@@ -41,19 +41,19 @@ var profile: RefCounted
 var story := Stories.OPENING
 var pages: Array = []
 var page := -1
-var background: ColorRect  # black under the pictures and the numbers
-var talk_box: Control
-var title: Label
-var speaker_portrait: TextureRect
-var hero_portrait: TextureRect
-var speaker_says: Label
-var hero_says: Label
+@onready var background: ColorRect = %Background  # black under the pictures and the numbers
+@onready var talk_box: Control = %Center
+@onready var title: Label = %Title
+@onready var speaker_portrait: TextureRect = %Dialogue.speaker_portrait
+@onready var hero_portrait: TextureRect = %Dialogue.hero_portrait
+@onready var speaker_says: Label = %Dialogue.speaker_says
+@onready var hero_says: Label = %Dialogue.hero_says
 var typing: Label  # the box being typed on a talk page
-var picture: TextureRect
-var float_box: Control  # the floating lines, a Label each
+@onready var picture: TextureRect = %Picture
+@onready var float_box: Control = %Lines  # the floating lines, a Label each
 var lines: PackedStringArray = []  # the floating text of this page
-var reward: AcceptDialog  # what the ending gave
-var skip_button: Button
+@onready var reward: AcceptDialog = %Reward  # what the ending gave
+@onready var skip_button: Button = %Skip
 ## Picture pages: 0 the picture comes, 1 its text floats up, 2 the picture goes.
 var phase := 0
 var first_line := 0  # the first floating line still on the screen
@@ -73,76 +73,10 @@ func _ready() -> void:
 	pages = Stories.pages(story, profile.hero_name)
 	if bool(p.get("replay", false)):
 		pages = pages.filter(func(pg): return str(pg.kind) != "stats")
-	background = ColorRect.new()
-	background.color = Color.BLACK
-	background.set_anchors_preset(Control.PRESET_FULL_RECT)
-	background.mouse_filter = Control.MOUSE_FILTER_IGNORE  # a click goes to the screen
-	add_child(background)
-
-	var col := UiTheme.menu_column(self, 760)
-	col.add_theme_constant_override("separation", 12)
-	talk_box = col.get_parent()
-	talk_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	title = UiTheme.heading("story.prologue" if story == Stories.OPENING else "story.epilogue", 40)
-	title.name = "Title"
-	col.add_child(title)
-	var top := HBoxContainer.new()
-	top.add_theme_constant_override("separation", 16)
-	speaker_portrait = _portrait("SpeakerPortrait")
-	speaker_says = _speech("SpeakerSays")
-	top.add_child(speaker_portrait)
-	top.add_child(speaker_says)
-	col.add_child(top)
-	var bottom := HBoxContainer.new()
-	bottom.add_theme_constant_override("separation", 16)
-	hero_says = _speech("HeroSays")
-	hero_portrait = _portrait("HeroPortrait")
-	bottom.add_child(hero_says)
-	bottom.add_child(hero_portrait)
-	col.add_child(bottom)
+	if story != Stories.OPENING:
+		title.text = "story.epilogue"
 	hero_portrait.texture = Pictures.portrait(Stories.HERO_PORTRAIT + int(profile.head))
-
-	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(center)
-	picture = Pictures.framed("Picture", Vector2(117, 90) * SCALE)
-	center.add_child(picture)
-	float_box = Control.new()
-	float_box.name = "Lines"
-	float_box.set_anchors_preset(Control.PRESET_FULL_RECT)
-	float_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(float_box)
-
-	skip_button = Button.new()
-	skip_button.name = "Skip"
-	skip_button.text = "common.skip"
-	skip_button.flat = true
-	skip_button.focus_mode = Control.FOCUS_NONE
-	skip_button.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
-	skip_button.position = Vector2(12, -60)
-	skip_button.pressed.connect(skip)
-	add_child(skip_button)
-	reward = AcceptDialog.new()
-	reward.name = "Reward"
-	reward.title = ""
-	add_child(reward)
 	next_page()
-
-
-func _portrait(node_name: String) -> TextureRect:
-	return Pictures.framed(node_name, Vector2(46, 46) * SCALE)
-
-
-func _speech(node_name: String) -> Label:
-	var l := Label.new()
-	l.name = node_name
-	l.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	l.custom_minimum_size = Vector2(0, 46 * SCALE)
-	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	return l
 
 
 ## Shows the next page, or ends the story. False when it is over.

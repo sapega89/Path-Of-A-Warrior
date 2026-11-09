@@ -96,7 +96,7 @@ func test_shop_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "mode": "buy"}
-	var screen: Control = ShopScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["shop"])
 	root.add_child(screen)
 	eq(screen.cells.size(), 25, "the shop's 25 things")
 	check(screen.cells[0].icon != null, "a potion's icon")
@@ -105,7 +105,7 @@ func test_shop_screen() -> void:
 	eq(int(screen.profile.gold), 940, "bought for 60")
 	screen.free()
 	Router.params = {"profile_path": TEST_PATH, "mode": "enchant"}
-	screen = ShopScreen.new()
+	screen = Router.make(Router.SCREENS["shop"])
 	root.add_child(screen)
 	eq(screen.cells.size(), Items.BACKPACK + Items.EQUIPPED, "the backpack and the Gear page")
 	screen.press_cell(0)
@@ -165,7 +165,7 @@ func test_combine_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "mode": "combine"}
-	var screen: Control = ShopScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["shop"])
 	root.add_child(screen)
 	eq(screen.info.text, screen.tr("combine.select"), "choose three")
 	screen.press_cell(0)

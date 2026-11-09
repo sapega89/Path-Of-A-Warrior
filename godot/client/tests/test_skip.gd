@@ -114,7 +114,7 @@ func test_skip_the_story() -> void:
 	Router.params = {
 		"story": 2, "reward_item": 502, "opened_lord": 8, "profile_path": "user://no_such_hero.json"
 	}
-	var screen: Control = StoryScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["story"])
 	root.add_child(screen)
 	screen._unhandled_input(_skip_key())
 	eq(
