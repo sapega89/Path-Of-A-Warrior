@@ -110,6 +110,9 @@ func test_fort_ways_out_and_marsh() -> void:
 			var aside := out.rotated(Vector3.UP, deg_to_rad(turn))
 			check(slice.ground.height(aside.x, aside.z) < -0.5, "%s: water beside it" % way)
 	check(slice.find_child("Water", false, false) != null, "the water")
+	check(slice.find_child("Mist", false, false) != null, "the mist over the marsh")
+	# two fires and six torches; the Compatibility renderer lights a mesh (the ground) with 8 at most
+	eq(slice._flames.size(), 8, "the warm lights")
 	var env := (slice.find_children("*", "WorldEnvironment", false, false)[0] as WorldEnvironment).environment
 	eq(env.background_mode, Environment.BG_SKY, "the painted sky")
 	slice.free()

@@ -15,6 +15,7 @@ const ArtHud := preload("res://scripts/art/art_hud.gd")
 const MapEffects := preload("res://scripts/world/map_effects.gd")
 const DUSK_SKY := preload("res://assets/art/shaders/dusk_sky.gdshader")
 const WATER := preload("res://assets/art/shaders/water.gdshader")
+const MIST := preload("res://assets/art/shaders/mist.gdshader")
 
 ## The effects of the map (scripts/world/map_effects.gd) in a grid, each on a kozak:
 ## [kind, frame, the kozak's clip, where he faces].
@@ -40,17 +41,26 @@ const FORT_EXITS := {"A1": [0.0, "brama", 2], "B2": [218.0, "vorota", 1], "C3": 
 ## each side of a way out (degrees).
 const FORT_MOAT := 13.6
 const FORT_CAUSEWAY := 16.0
-## Dusk over the marsh: a low violet-grey sky under heavy cloud (dusk_sky.gdshader), a cold
-## moon behind it, a deep blue shade, mist.
-const DUSK := {"top": Color("12151d"), "horizon": Color("4a4759"), "glow": Color("6c5670"),
-	"glow_size": 0.32, "glow_dir": Vector3(0.55, 0.1, -0.8), "clouds": 0.62, "cloud_dark": Color("1b1e28"),
-	"cloud_lit": Color("5d6178"), "seed": 11.0}
-const MOON_COLOR := Color("bcc0cf")
-const MOON_ENERGY := 0.62
-const DUSK_AMBIENT := Color("3e4354")
+## Dusk over the marsh, grim and dark: a low violet-grey sky under heavy cloud
+## (dusk_sky.gdshader), a weak cold moon behind it, a deep blue-black shade, mist over the
+## water; the fires and torches give the only warm light, and the camp lies in pools of it.
+const DUSK := {"top": Color("0b0d13"), "horizon": Color("36343f"), "glow": Color("55425b"),
+	"glow_size": 0.3, "glow_dir": Vector3(0.55, 0.1, -0.8), "clouds": 0.7, "cloud_dark": Color("13151c"),
+	"cloud_lit": Color("474c60"), "seed": 11.0}
+const MOON_COLOR := Color("a3b0d2")
+const MOON_ENERGY := 0.42
+const DUSK_AMBIENT := Color("282d3c")
 const DUSK_AMBIENT_ENERGY := 0.55
 ## The grade at dusk: brightness, contrast, saturation.
-const DUSK_GRADE := Vector3(0.98, 1.12, 0.8)
+const DUSK_GRADE := Vector3(0.96, 1.18, 0.72)
+## The warm light of a campfire and of a torch at dusk: colour, energy, reach (metres).
+const FIRE_LIGHT := [Color("ff9443"), 2.1, 8.5]
+const TORCH_LIGHT := [Color("ffa24c"), 1.5, 6.0]
+## The mist over the marsh: sheets [height, density], its colour.
+const MIST_SHEETS := [[0.25, 0.5], [0.6, 0.38], [1.0, 0.26], [1.6, 0.14]]
+const MIST_COLOR := Vector3(0.37, 0.39, 0.47)
+## The town hall's tent in the middle, gone grey with smoke and rain (the painted shader's tint).
+const SMOKED := Color(0.62, 0.6, 0.56)
 
 var place := "camp"
 var pitch := 50.0
@@ -66,6 +76,9 @@ var effects: Array[Node] = []
 ## The ways out of the camp on the marsh: name -> the middle of its gate on the ground.
 var exits := {}
 var ground: Node3D  # the ArtGround of the place
+## The flickering lights of the fires and torches: [light, its energy, a phase].
+var _flames: Array = []
+var _time := 0.0
 
 
 func _ready() -> void:
@@ -76,6 +89,16 @@ func _ready() -> void:
 		if args.size() > 1:
 			pitch = float(args[1])
 		build(place, pitch)
+
+
+## The fires and torches flicker.
+func _process(delta: float) -> void:
+	if _flames.is_empty():
+		return
+	_time += delta
+	for f in _flames:
+		var t: float = _time * 9.0 + f[2]
+		(f[0] as OmniLight3D).light_energy = f[1] * (0.86 + 0.08 * sin(t) + 0.06 * sin(t * 2.3 + 1.7))
 
 
 func build(where: String, pitch_deg: float) -> void:
@@ -155,6 +178,15 @@ func _dusk(env: Environment, moon: DirectionalLight3D) -> void:
 	env.adjustment_brightness = DUSK_GRADE.x
 	env.adjustment_contrast = DUSK_GRADE.y
 	env.adjustment_saturation = DUSK_GRADE.z
+	# the flames' brightest light rolls off into warm colour instead of white, and glows
+	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	env.tonemap_exposure = 1.25
+	env.tonemap_white = 3.0
+	env.glow_enabled = true
+	env.glow_intensity = 0.7
+	env.glow_bloom = 0.0
+	env.glow_hdr_threshold = 0.85
+	env.glow_blend_mode = Environment.GLOW_BLEND_MODE_SCREEN
 	moon.light_color = MOON_COLOR
 	moon.light_energy = MOON_ENERGY
 	moon.directional_shadow_max_distance = 60.0
@@ -326,6 +358,8 @@ func _fort() -> void:
 	m.set_shader_parameter("grass_dry", Color("5c6440"))
 	m.set_shader_parameter("grass_green", Color("3f5530"))
 	_water(Vector2(80.0, 80.0), -0.32)
+	for i in MIST_SHEETS.size():
+		_mist(MIST_SHEETS[i][0], MIST_SHEETS[i][1], float(i) * 5.3)
 	# the palisade ring in two-metre pieces, a gate in each way out
 	var step := rad_to_deg(2.0 * asin(1.0 / FORT_RADIUS))
 	var pieces := int(floor(360.0 / step))
@@ -343,7 +377,10 @@ func _fort() -> void:
 		_prop(FORT_EXITS[way][1], at, FORT_EXITS[way][0])
 		exits[way] = at
 	# the town hall's big tent in the middle, tents round it
-	_prop("shatro", Vector3(0.0, 0, -3.2), 0.0, 1.35)
+	var hall := _prop("shatro", Vector3(0.0, 0, -3.2), 0.0, 1.35)
+	var smoked := ArtKit.painted(false)
+	smoked.set_shader_parameter("tint", SMOKED)
+	ArtKit.dress(hall, smoked)
 	_prop("namet_dark", Vector3(-6.3, 0, -1.4), 75.0, 1.5)
 	_prop("namet_dark", Vector3(-5.6, 0, 3.0), 105.0, 1.4)
 	_prop("namet_dark", Vector3(6.4, 0, 2.4), -70.0, 1.5)
@@ -354,7 +391,9 @@ func _fort() -> void:
 	var fires := [Vector3(-3.4, 0, 1.2), Vector3(4.0, 0, -0.9)]
 	for f in fires:
 		_prop("vohnyshche", f)
-		effects.append(ArtEffects.campfire(self, f))
+		var fire_node := ArtEffects.campfire(self, f)
+		effects.append(fire_node)
+		_warm(fire_node, FIRE_LIGHT, true)
 	_figure("kozak_svyta", fires[0] + Vector3(0.1, 0, -1.25), "sit", fires[0] + Vector3(0.6, 0, 2.0), 1.0)
 	_figure("kozak_camp", fires[0] + Vector3(-1.2, 0, 0.2), "interact", fires[0], 0.45)
 	_figure("kozak_camp", fires[1] + Vector3(-0.9, 0, 0.9), "cheer", fires[1], 0.55)
@@ -373,7 +412,9 @@ func _fort() -> void:
 		Vector3(-1.5, 0, 0.2), Vector3(1.5, 0, 0.2)]
 	for t in torches:
 		_prop("smoloskyp", t, rng.randf() * 360.0)
-		effects.append(ArtEffects.torch(self, t))
+		var torch := ArtEffects.torch(self, t)
+		effects.append(torch)
+		_warm(torch, TORCH_LIGHT, false)
 	# guards: two outside the main gate, one inside each side gate
 	for a in [-9.0, 9.0]:
 		var at := _on_ring(a, FORT_RADIUS + 1.7)
@@ -419,9 +460,41 @@ func _water(size: Vector2, level: float) -> void:
 	mi.position.y = level
 	var m := ShaderMaterial.new()
 	m.shader = WATER
-	m.set_shader_parameter("deep", Vector3(0.1, 0.12, 0.13))
-	m.set_shader_parameter("shallow", Vector3(0.19, 0.22, 0.24))
-	m.set_shader_parameter("glint", Vector3(0.55, 0.58, 0.64))
+	m.set_shader_parameter("deep", Vector3(0.045, 0.055, 0.065))
+	m.set_shader_parameter("shallow", Vector3(0.1, 0.115, 0.135))
+	m.set_shader_parameter("glint", Vector3(0.42, 0.45, 0.52))
+	mi.material_override = m
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(mi)
+
+
+## The light of a fire or a torch made warmer and stronger for the dusk (FIRE_LIGHT,
+## TORCH_LIGHT), casting shadows if `shadows`; it flickers (_process()).
+func _warm(flame: Node3D, how: Array, shadows: bool) -> void:
+	for light in flame.find_children("*", "OmniLight3D", false, false):
+		var l := light as OmniLight3D
+		l.light_color = how[0]
+		l.light_energy = how[1]
+		l.omni_range = how[2]
+		l.omni_attenuation = 1.6
+		l.shadow_enabled = shadows
+		_flames.append([l, float(how[1]), randf() * TAU])
+
+
+## A sheet of the mist over the marsh at `height` (mist.gdshader), clear over the camp.
+func _mist(height: float, density: float, seed_value: float) -> void:
+	var plane := PlaneMesh.new()
+	plane.size = Vector2(90.0, 90.0)
+	var mi := MeshInstance3D.new()
+	mi.name = "Mist"
+	mi.mesh = plane
+	mi.position.y = height
+	var m := ShaderMaterial.new()
+	m.shader = MIST
+	m.set_shader_parameter("color", MIST_COLOR)
+	m.set_shader_parameter("density", density)
+	m.set_shader_parameter("clear_radius", FORT_RADIUS + 1.5)
+	m.set_shader_parameter("seed", seed_value)
 	mi.material_override = m
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(mi)
