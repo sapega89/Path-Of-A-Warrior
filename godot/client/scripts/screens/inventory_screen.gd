@@ -26,13 +26,7 @@ func _ready() -> void:
 	var gold_row := HBoxContainer.new()
 	gold_row.name = "Gold"
 	gold_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	var coin := TextureRect.new()
-	coin.texture = load("res://assets/original/ui/gold.png")
-	coin.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	coin.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	coin.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	coin.custom_minimum_size = Vector2(56, 40)
-	gold_row.add_child(coin)
+	gold_row.add_child(UiTheme.coin_rect())
 	gold = Label.new()
 	gold.name = "Value"
 	gold.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
@@ -112,3 +106,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
 		Router.back()
+
+
+## The line of control hints under the screen (scripts/ui/hint_bar.gd): what picking a thing does.
+func controls_hint() -> String:
+	return InputSetup.hint("hint.grid_inventory")

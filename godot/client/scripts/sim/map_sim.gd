@@ -64,6 +64,8 @@ const EFFECT_STEPS := [2, 10, 100, 2, 2, 2, 2, 2, 2, 2, 2, 2, 100, 100]
 const SQUAD_SHIFT := {3: Vector2i(-20, 0), 1: Vector2i(-20, 20), 2: Vector2i(-20, 0),
 	0: Vector2i(0, 20), 5: Vector2i(20, 0), 7: Vector2i(20, 20), 6: Vector2i(20, 0)}
 const GENERAL_REACH := [60, 50]
+## How far to the side of the line he faces the hero's sword still hits (one cell).
+const STRIKE_BAND := 27
 const CAMPAIGN_PATH := "res://data/campaign.json"
 const TALK_PATH := "res://data/talk.json"
 const BUFF_DIV := [20, 20, 25]
@@ -171,6 +173,10 @@ var dir_history: Array[int] = [-1, -1, -1, -1, -1]
 var hold_to_move := true  # the port's option (the player asked for it): walk while held
 ## The map without enemies (pyport's POW_NO_ENEMIES): a room's list counts as defeated.
 var no_enemies := false
+## The training (training_screen.gd) keeps the room until it says: the last soldier's death
+## does not clear it, and its soldiers come by send_soldiers() (max_override at a time).
+var hold_room := false
+var max_override := -1
 var difficulty := 1  # 0 hard (gold and exp x2), 1 normal
 var general_side := 0  # the side (weapon) of the last general met: 0 long, 1 short sword
 var general := {}  # the last general met (campaign.json generals)
@@ -311,6 +317,7 @@ func enter_room() -> void:
 	enemies.clear()
 	enemies_alive = 0
 	waves.clear()
+	max_override = -1
 	var list: Array = rooms.cells[cell].get("waves", []) if cell < rooms.cells.size() else []
 	for v in list:
 		waves.append(int(v))
@@ -345,7 +352,25 @@ func _run_cell_scripts() -> void:
 
 
 func max_enemies() -> int:
+	if max_override >= 0:
+		return max_override
 	return int(rooms.cells[cell].get("max_enemies", 0)) if cell < rooms.cells.size() else 0
+
+
+## The training's soldiers: n swordsmen (one or a squad each, as a room's list sends them) come
+## in through the exits, all of them at once if they can.
+func send_soldiers(n: int) -> void:
+	waves[0] = KIND_SWORDS
+	waves[1] = n
+	max_override = n
+
+
+## The room counts as cleared now, as when its last soldier falls: "Stage Clear", then the exits.
+func clear_room() -> void:
+	for k in 14:
+		waves[k] = 0
+	room_phase = 3
+	room_phase_timer = 5
 
 
 ## The cells of the room the hero can reach (flood fill from his cell over unblocked cells):
@@ -1244,7 +1269,7 @@ func _tick_enemies() -> void:
 			if anim_frame > END:
 				_enemy_dies(e)
 				# (the next enemy waits a tick, as in the original's loop)
-				if enemies_alive < 1 and waves[0] == 0 and e.type != KIND_ARCHERS:
+				if enemies_alive < 1 and waves[0] == 0 and e.type != KIND_ARCHERS and not hold_room:
 					if boss_fight:
 						room_phase = 4
 						room_phase_timer = 22
@@ -1596,12 +1621,33 @@ func _hero_attack(kind: int) -> void:
 						_strike_enemy(e)
 				28, 29, 30:
 					_strike_enemy(e)
-			# (every action also strikes what is straight in front, as the original does)
-			if hero.dir == dir4(hero.pos, e.pos):
-				_hero_strike_if_near(e, reach)
+			# every action also strikes what is in front, within the strike band
+			if in_strike_reach(hero.pos, e.pos, hero.dir, reach):
+				_strike_enemy(e)
 		elif distance(effect_pos, e.pos) <= 35:
 			_hero_hits_enemy(e, effect_item)
 			_sound(4)
+
+
+## What the hero's sword reaches: within reach, and either in the quarter he faces or ahead of
+## him and no farther than STRIKE_BAND to the side, so an enemy a little above or below (or
+## beside, when he faces up or down) is hit too, also close up where the quarter is narrow.
+static func in_strike_reach(a: Vector2i, b: Vector2i, d8: int, reach: int) -> bool:
+	if distance(a, b) > reach:
+		return false
+	if d8 == dir4(a, b):
+		return true
+	var d := b - a
+	match d8:
+		0:
+			return d.y >= 0 and absi(d.x) <= STRIKE_BAND
+		4:
+			return d.y <= 0 and absi(d.x) <= STRIKE_BAND
+		6:
+			return d.x >= 0 and absi(d.y) <= STRIKE_BAND
+		2:
+			return d.x <= 0 and absi(d.y) <= STRIKE_BAND
+	return false
 
 
 func _hero_strike_if_near(e: Actor, reach: int) -> void:
@@ -1948,7 +1994,7 @@ func _hero_hits_breakables() -> void:
 			28, 29, 30:
 				hit_breakable(b)
 			_:
-				if hero.dir == dir4(hero.pos, b.pos) and distance(hero.pos, b.pos) <= reach:
+				if in_strike_reach(hero.pos, b.pos, hero.dir, reach):
 					hit_breakable(b)
 
 

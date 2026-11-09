@@ -5,7 +5,8 @@ extends Control
 ## the hero at the bottom beside his; each box keeps its last line. A line typed out goes on
 ## by itself after 15 ticks; attack / accept / a click shows the whole line, or goes on at once.
 ## A picture page shows the story picture, then its text floats up over it a line at a time
-## (white in the middle of the screen, grey above and below it) and the picture goes; an
+## (white in the middle of the screen, grey above and below it, each on a dark backing so it
+## reads over the picture) and the picture goes; an
 ## ending played after its mission ends with the numbers of the game done floating up, and
 ## what the ending gave in a popup. These pages go on by themselves; a press does nothing there.
 ## SKIP (Q, F1, the pad's Back, the Skip button, back): on a talk of the opening, the end; on a
@@ -19,8 +20,7 @@ const Profile := preload("res://scripts/core/profile.gd")
 const Stories := preload("res://scripts/core/stories.gd")
 const Items := preload("res://scripts/core/items.gd")
 const Campaign := preload("res://scripts/core/campaign.gd")
-const PORTRAITS := "res://assets/original/portraits/%d.png"
-const PICTURES := "res://assets/original/story/e%d.png"
+const Pictures := preload("res://scripts/ui/pictures.gd")
 const SCALE := 3
 const CHARS_PER_SECOND := 40.0
 ## Ticks a typed line stays before the story goes on by itself.
@@ -105,17 +105,13 @@ func _ready() -> void:
 	bottom.add_child(hero_says)
 	bottom.add_child(hero_portrait)
 	col.add_child(bottom)
-	hero_portrait.texture = load(PORTRAITS % (Stories.HERO_PORTRAIT + int(profile.head)))
+	hero_portrait.texture = Pictures.portrait(Stories.HERO_PORTRAIT + int(profile.head))
 
 	var center := CenterContainer.new()
 	center.set_anchors_preset(Control.PRESET_FULL_RECT)
 	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(center)
-	picture = TextureRect.new()
-	picture.name = "Picture"
-	picture.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	picture.custom_minimum_size = Vector2(117, 90) * SCALE
+	picture = Pictures.framed("Picture", Vector2(117, 90) * SCALE)
 	center.add_child(picture)
 	float_box = Control.new()
 	float_box.name = "Lines"
@@ -140,13 +136,7 @@ func _ready() -> void:
 
 
 func _portrait(node_name: String) -> TextureRect:
-	var t := TextureRect.new()
-	t.name = node_name
-	t.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	t.custom_minimum_size = Vector2(46, 46) * SCALE
-	return t
+	return Pictures.framed(node_name, Vector2(46, 46) * SCALE)
 
 
 func _speech(node_name: String) -> Label:
@@ -185,13 +175,13 @@ func next_page() -> bool:
 				typing = hero_says
 			else:
 				typing = speaker_says
-				speaker_portrait.texture = load(PORTRAITS % who)
+				speaker_portrait.texture = Pictures.portrait(who)
 			typing.text = str(pg.text)
 			typing.visible_characters = 0
 			_typed = 0.0
 		"picture":
 			Audio.play_music(2)
-			picture.texture = load(PICTURES % (int(pg.picture) + 1))
+			picture.texture = Pictures.story(int(pg.picture) + 1)
 			_set_lines(wrap_lines(str(pg.text), _line_font(), LINE_FONT, WRAP * SCALE))
 			phase = 0
 			_fade = 0
@@ -258,9 +248,21 @@ func _set_lines(new_lines: PackedStringArray) -> void:
 		label.add_theme_font_size_override("font_size", LINE_FONT)
 		label.add_theme_color_override("font_outline_color", Color.BLACK)
 		label.add_theme_constant_override("outline_size", 6)
-		label.set_anchors_preset(Control.PRESET_TOP_WIDE)
+		label.add_theme_stylebox_override("normal", line_backing())
+		label.set_anchors_preset(Control.PRESET_CENTER_TOP)  # as wide as its words
+		label.grow_horizontal = Control.GROW_DIRECTION_BOTH
 		label.visible = false
 		float_box.add_child(label)
+
+
+## The dark, half-clear box under a floating line.
+static func line_backing() -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0, 0, 0, 0.55)
+	sb.content_margin_left = 16
+	sb.content_margin_right = 16
+	sb.set_corner_radius_all(6)
+	return sb
 
 
 ## The y of floating line `i` on the original screen, or -1000 while it is not drawn (not up to
@@ -406,3 +408,8 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed:
 		accept_event()
 		press()
+
+
+## The line of control hints under the screen (scripts/ui/hint_bar.gd).
+func controls_hint() -> String:
+	return InputSetup.hint("hint.skip")

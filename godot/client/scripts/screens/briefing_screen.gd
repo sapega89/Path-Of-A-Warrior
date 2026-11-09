@@ -13,7 +13,7 @@ const Campaign := preload("res://scripts/core/campaign.gd")
 const Stories := preload("res://scripts/core/stories.gd")
 const MapSim := preload("res://scripts/sim/map_sim.gd")
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const PORTRAITS := "res://assets/original/portraits/%d.png"
+const Pictures := preload("res://scripts/ui/pictures.gd")
 const SCALE := 3
 const CHARS_PER_SECOND := 40.0
 ## Ticks a typed line stays before the next one, and after a press that showed it whole.
@@ -60,8 +60,8 @@ func _ready() -> void:
 	bottom.add_child(hero_says)
 	bottom.add_child(hero_portrait)
 	col.add_child(bottom)
-	lord_portrait.texture = load(PORTRAITS % int(m.get("portrait", 0)))
-	hero_portrait.texture = load(PORTRAITS % (Stories.HERO_PORTRAIT + int(profile.head)))
+	lord_portrait.texture = Pictures.portrait(int(m.get("portrait", 0)))
+	hero_portrait.texture = Pictures.portrait(Stories.HERO_PORTRAIT + int(profile.head))
 
 	skip = Button.new()
 	skip.name = "Skip"
@@ -89,13 +89,7 @@ static func talk(line: int, speaker: String, hero: String) -> Array:
 
 
 func _portrait(node_name: String) -> TextureRect:
-	var t := TextureRect.new()
-	t.name = node_name
-	t.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	t.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	t.custom_minimum_size = Vector2(46, 46) * SCALE
-	return t
+	return Pictures.framed(node_name, Vector2(46, 46) * SCALE)
 
 
 func _speech(node_name: String) -> Label:
@@ -175,3 +169,8 @@ func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		accept_event()
 		press()
+
+
+## The line of control hints under the screen (scripts/ui/hint_bar.gd).
+func controls_hint() -> String:
+	return InputSetup.hint("hint.skip")

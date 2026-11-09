@@ -8,6 +8,7 @@ const ClientTests := preload("res://tests/test_online_client.gd")
 const OnlineTests := preload("res://tests/test_online_server.gd")
 const ServerTests := preload("res://tests/test_server.gd")
 const BattleScreen := preload("res://scripts/screens/online_battle_screen.gd")
+const BattleMotion := preload("res://scripts/world/battle_motion.gd")
 
 
 func _dir() -> String:
@@ -173,11 +174,12 @@ func test_the_battle_screen_shows_a_duel() -> void:
 	root.add_child(screen)
 	var b: RefCounted = c.battle
 	eq(screen.battle, b, "the client's battle")
-	check(screen.backdrop.mesh != null and screen.ground.mesh != null, "the stage built")
+	check(screen.arena.ground != null and screen.arena.scenery == b.bg & 3, "the field built")
 	check(screen.bodies[0].position.x < 0 and screen.bodies[1].position.x > 0, "mine on the left")
 	eq([screen.bodies[2].visible, screen.bodies[3].visible], [false, false], "a duel: two fighters")
-	var sheet: String = screen.sprites[1].texture.resource_path.get_file()
-	check(sheet.begins_with("fighter_0_") and sheet.ends_with("_r.png"), "the CPU, facing left: " + sheet)
+	eq(screen.figures[0].kind, BattleMotion.kind_of(b.fighters[0]), "me: the model of my class")
+	check(screen.figures[1].kind in BattleMotion.RIVALS, "the CPU: a rival " + screen.figures[1].kind)
+	check(is_equal_approx(screen.bodies[1].rotation.y, -PI / 2.0), "facing left")
 	var seen := {}
 	for i in 30000:
 		if screen.battle == null:
@@ -240,7 +242,7 @@ func _key(code: Key) -> InputEventKey:
 	return ev
 
 
-func test_auto_battle_by_tab_f_or_r3() -> void:
+func test_auto_battle_by_tab_f_or_back() -> void:
 	var d := _dir()
 	var net = ClientTests.Net.new(d)
 	net.o.match_wait = 0
@@ -251,14 +253,14 @@ func test_auto_battle_by_tab_f_or_r3() -> void:
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
 	var screen: Control = BattleScreen.new()
 	root.add_child(screen)
-	var r3 := InputEventJoypadButton.new()
-	r3.button_index = JOY_BUTTON_RIGHT_STICK
-	r3.pressed = true
+	var back := InputEventJoypadButton.new()
+	back.button_index = JOY_BUTTON_BACK
+	back.pressed = true
 	var seen := []
-	for ev in [_key(KEY_TAB), _key(KEY_F), r3]:
+	for ev in [_key(KEY_TAB), _key(KEY_F), back]:
 		screen._unhandled_input(ev)
 		seen.append(c.battle.auto_battle)
-	eq(seen, [true, false, true], "Tab, F and R3 each turn it over, as auto-hunt on the map")
+	eq(seen, [true, false, true], "Tab, F and the pad's Back each turn it over, as auto-hunt on the map")
 	screen.free()
 	Router.params = old
 	ServerTests._rm(d)
@@ -285,10 +287,16 @@ func test_battle_hints_name_the_pad_after_the_pad() -> void:
 		for st in states:
 			c.battle.state = st
 			var key: String = "online.battle_hint_" + states[st]
-			eq(screen.hint_text(), tr(key + ("_pad" if device == "pad" else "")), "%s: %s" % [device, key])
+			eq(screen.hint_text(), InputSetup.hint(key), "%s: %s" % [device, key])
+	InputSetup.device = "keys"
+	eq(InputSetup.hint("online.battle_hint_choose"), "Arrows: choose the action   Esc: exit the battle   Tab / F: auto-battle",
+		"the keyboard's line")
 	c.battle.state = OnlineBattle.BAR
 	InputSetup.device = "pad"
 	eq(screen.hint_text(), "A: stop the bar at the mark", "the pad's A")
+	c.battle.state = OnlineBattle.CHOOSE
+	eq(screen.hint_text(), "D-pad: choose the action   B: exit the battle   Back: auto-battle",
+		"the pad's B and Back")
 	InputSetup.device = was
 	screen.free()
 	Router.params = old
@@ -319,11 +327,11 @@ func test_auto_corner() -> void:
 	eq(screen.auto_button.get_theme_color("font_color"), Color.WHITE, "white")
 	InputSetup.device = "pad"
 	screen._refresh()
-	eq(screen.auto_button.text, "AUTO: R3", "the pad's key after the pad")
+	eq(screen.auto_button.text, "AUTO: Back", "the pad's key after the pad")
 	screen.auto_button.pressed.emit()
 	check(c.battle.auto_battle, "a click turns it on")
 	eq(screen.auto_button.text, "AUTO", "on")
-	eq(screen.auto_button.get_theme_color("font_color"), BattleScreen.ORANGE, "orange")
+	eq(screen.auto_button.get_theme_color("font_color"), BattleScreen.AUTO_ON, "gold")
 	InputSetup.device = was
 	screen.free()
 	Router.params = old

@@ -7,9 +7,10 @@ extends Control
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Profile := preload("res://scripts/core/profile.gd")
+const AskDialog := preload("res://scripts/ui/ask_dialog.gd")
 
 var buttons: Array[Button] = []
-var ask: ConfirmationDialog  # "Starting a new game will cause your saved game to be deleted."
+var ask: AskDialog  # "Starting a new game will cause your saved game to be deleted.", No first
 
 
 func _ready() -> void:
@@ -24,8 +25,8 @@ func _ready() -> void:
 	_add(col, "Settings", "menu.settings", func(): Router.push("settings"))
 	if show_quit():
 		_add(col, "Quit", "menu.quit", func(): Cloud.quit_game())
-	ask = ConfirmationDialog.new()
-	ask.name = "Ask"
+	ask = AskDialog.new()
+	ask.safe_default = true
 	ask.dialog_text = tr("newgame.ask_delete")
 	ask.confirmed.connect(func(): Router.push("new_game", {}))
 	add_child(ask)

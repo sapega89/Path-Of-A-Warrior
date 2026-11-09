@@ -20,8 +20,7 @@ func test_actions_have_keys_and_pad() -> void:
 			elif ev is InputEventJoypadButton or ev is InputEventJoypadMotion:
 				pad += 1
 		eq(keys, InputSetupScript.KEYS[action].size(), "%s keys" % action)
-		if action != "belt_5":  # the fifth belt slot only by key (or put on * / #)
-			check(pad >= 1, "%s has no gamepad binding" % action)
+		check(pad >= 1, "%s has no gamepad binding" % action)
 
 
 func _key_press(code: Key) -> InputEventKey:
@@ -94,12 +93,12 @@ func test_offline_screen_and_map_viewer_follow_the_device() -> void:
 	InputSetup.device = "keys"
 	var offline: Control = Offline.new()
 	root.add_child(offline)
-	check(offline.text.text.ends_with("Enter: try again"), "the keyboard's OK")
+	check(offline.controls_hint().ends_with("Enter: try again"), "the keyboard's OK, in the line of hints")
 	var viewer: Control = MapViewer.new()
 	root.add_child(viewer)
 	eq(viewer.info.text, "Map 1 / %d   [3] [4] change map   [Esc] back" % viewer.map_total, "keys")
 	InputSetup._input(_pad_press(JOY_BUTTON_B))
-	check(offline.text.text.ends_with("A: try again"), "the pad's OK")
+	check(offline.controls_hint().ends_with("A: try again"), "the pad's OK")
 	eq(viewer.info.text, "Map 1 / %d   [LB] [RB] change map   [B] back" % viewer.map_total, "pad")
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
@@ -209,7 +208,8 @@ func test_the_pad_works_the_menus() -> void:
 	check(b.is_action("ui_cancel"), "B: BACK")
 	var up := _pad_press(JOY_BUTTON_DPAD_UP)
 	up.device = 2
-	check(up.is_action("ui_up") and up.is_action("move_up"), "the d-pad moves in the menus and on the map")
+	check(up.is_action("ui_up"), "the d-pad moves in the menus")
+	check(up.is_action("belt_1") and not up.is_action("move_up"), "on the map it is the belt, not a step")
 	var stick := InputEventJoypadMotion.new()
 	stick.device = 2
 	stick.axis = JOY_AXIS_LEFT_X

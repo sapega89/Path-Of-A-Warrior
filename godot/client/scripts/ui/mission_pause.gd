@@ -5,6 +5,8 @@ extends Control
 ## The game is saved in the camps between missions, so there is no Save here (save() is kept
 ## for a mission saved on its map by an older version). Items, Options and Help show over the
 ## menu. Back resumes.
+## In the training (training_screen.gd, `leave` set) Exit is Skip Training (asked first, No
+## first): `leave` goes on as after the training.
 
 signal resumed
 
@@ -13,15 +15,17 @@ const MainMenu := preload("res://scripts/screens/main_menu.gd")
 const SettingsScreen := preload("res://scripts/screens/settings_screen.gd")
 const HelpScreen := preload("res://scripts/screens/help_screen.gd")
 const AssignItems := preload("res://scripts/screens/assign_items_screen.gd")
+const AskDialog := preload("res://scripts/ui/ask_dialog.gd")
 
 var buttons: Array[Button] = []
 var menu: Control
 var settings: Control  # the items, the settings or the help shown over the menu
 var sim: RefCounted  # the mission's (its potion keys)
 var save_game := Callable()  # the mission's save on its map: true when saved
-var note: AcceptDialog
-var ask: ConfirmationDialog
-var asked := ""  # "exit" or "quit"
+var leave := Callable()  # the training's way out: Exit skips it instead of losing a mission
+var note: AskDialog  # a notice: OK alone
+var ask: AskDialog
+var asked := ""  # "exit", "skip_training" or "quit"
 
 
 func _ready() -> void:
@@ -40,30 +44,34 @@ func _ready() -> void:
 	_add(col, "Items", "pause.items", open_items)
 	_add(col, "Options", "pause.options", open_options)
 	_add(col, "Help", "pause.help", open_help)
-	_add(col, "Exit", "pause.exit", func(): _ask("exit"))
+	if leave.is_valid():
+		_add(col, "Exit", "pause.skip_training", func(): _ask("skip_training"))
+	else:
+		_add(col, "Exit", "pause.exit", func(): _ask("exit"))
 	if MainMenu.show_quit():
 		_add(col, "Quit", "pause.quit", func(): _ask("quit"))
-	note = AcceptDialog.new()
+	note = AskDialog.new(true)
 	note.name = "Note"
 	add_child(note)
-	ask = ConfirmationDialog.new()
-	ask.name = "Ask"
+	ask = AskDialog.new()
+	ask.safe_default = true
 	ask.confirmed.connect(confirmed)
 	add_child(ask)
 	buttons[0].grab_focus.call_deferred()
 
 
-## "Exit Game and go to main menu?" / "Exit Game?", No first.
+## "Exit Game and go to main menu?" / "Skip the training?" / "Exit Game?", No first.
 func _ask(what: String) -> void:
 	asked = what
 	ask.dialog_text = tr("pause.ask_" + what)
 	ask.popup_centered()
-	ask.get_cancel_button().grab_focus.call_deferred()
 
 
 func confirmed() -> void:
 	if asked == "exit":
 		Router.back()
+	elif asked == "skip_training":
+		leave.call()
 	elif asked == "quit":
 		Cloud.quit_game()
 

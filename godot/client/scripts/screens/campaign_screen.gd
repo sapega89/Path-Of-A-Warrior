@@ -7,6 +7,7 @@ extends Control
 ## (Router.params camp: true) it shows the story of the mission the way led to, OK goes
 ## straight to its briefing (in its place, so the mission ends back in the camp) and Back
 ## returns to the camp.
+## Back under the list goes a level up, as BACK does.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const Campaign := preload("res://scripts/core/campaign.gd")
@@ -14,6 +15,7 @@ const Profile := preload("res://scripts/core/profile.gd")
 const MapSim := preload("res://scripts/sim/map_sim.gd")
 const WorldMap := preload("res://scripts/core/world_map.gd")
 const WorldMapView := preload("res://scripts/ui/world_map_view.gd")
+const AskDialog := preload("res://scripts/ui/ask_dialog.gd")
 const DONE_MARK := "  ✓"
 
 var campaign := Campaign.new()
@@ -22,7 +24,7 @@ var list: VBoxContainer
 var heading: Label
 var scroll: ScrollContainer
 var ok: Button  # under the description: accept the mission?
-var ask: ConfirmationDialog
+var ask: AskDialog
 var column: Control  # the list, the missions and the description
 var world_view: Control  # the world map (level 1)
 ## 1 the world map at the hero's place, 2 missions of a lord, 3 the description of a mission
@@ -61,10 +63,12 @@ func _ready() -> void:
 	ok.text = "campaign.ok"
 	ok.pressed.connect(_on_ok)
 	col.add_child(ok)
-	ask = ConfirmationDialog.new()
-	ask.name = "Ask"
-	ask.ok_button_text = "online.yes"
-	ask.cancel_button_text = "online.no"
+	var back := Button.new()
+	back.name = "Back"
+	back.text = "common.back"
+	back.pressed.connect(go_back)
+	col.add_child(back)
+	ask = AskDialog.new()
 	ask.confirmed.connect(accept)
 	add_child(ask)
 	level = clampi(int(p.get("level", 1)), 1, 3)
@@ -202,8 +206,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		scroll.scroll_vertical += page if event.is_action_pressed("ui_down") else -page
 	elif event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
-		if level > 1 and not from_camp:
-			level -= 1
-			show_level()
-		else:
-			Router.back()
+		go_back()
+
+
+## Back (the button or BACK): the list before, or out of the campaign.
+func go_back() -> void:
+	if level > 1 and not from_camp:
+		level -= 1
+		show_level()
+	else:
+		Router.back()

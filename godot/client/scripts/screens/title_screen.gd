@@ -43,3 +43,8 @@ static func is_start_event(event: InputEvent) -> bool:
 			or event is InputEventMouseButton or event is InputEventScreenTouch:
 		return event.is_pressed() and not event.is_echo()
 	return false
+
+
+## No line of control hints under this screen: it shows its own (scripts/ui/hint_bar.gd).
+func controls_hint() -> String:
+	return ""

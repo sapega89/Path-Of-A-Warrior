@@ -1,11 +1,11 @@
 extends Control
-## Walks the hero around the original maps in 3D. skill_3 / skill_4 (keys 3 / 4,
-## gamepad LB / RB) switch to the previous / next map; the line at the top names the keys of
-## the device in use. Grows into the real map
-## screen when the map logic (rooms, exits, enemies) is ported.
+## Walks the hero around the maps of the campaign in 3D, in the new art (MapArt). skill_3 /
+## skill_4 (keys 3 / 4, gamepad LB / RB) switch to the previous / next map; the line at the top
+## names the keys of the device in use.
 
 const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const MapBuilder := preload("res://scripts/world/map_builder.gd")
+const MapArt := preload("res://scripts/world/map_art.gd")
 const Hero := preload("res://scripts/world/hero.gd")
 const FollowCamera := preload("res://scripts/world/follow_camera.gd")
 const TouchControls := preload("res://scripts/ui/touch_controls.gd")
@@ -35,8 +35,8 @@ func _ready() -> void:
 	world = Node3D.new()
 	world.name = "WorldRoot"
 	viewport.add_child(world)
-	MapBuilder.add_environment(world)
-	builder = MapBuilder.new()
+	MapArt.add_environment(world)
+	builder = MapArt.new()
 	builder.name = "Map"
 	world.add_child(builder)
 	hero = Hero.new()
@@ -89,3 +89,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		show_map(wrapi(map_number - 1, 1, map_total + 1))
 	elif event.is_action_pressed("skill_4"):
 		show_map(wrapi(map_number + 1, 1, map_total + 1))
+
+
+## No line of control hints under this screen: it shows its own (scripts/ui/hint_bar.gd).
+func controls_hint() -> String:
+	return ""

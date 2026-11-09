@@ -23,7 +23,7 @@ func _skip_key() -> InputEventAction:
 	return ev
 
 
-## Hard has no auto-hunt: no AUTO corner, and Tab / F / R3 do nothing.
+## Hard has no auto-hunt: no AUTO corner, and Tab / F / the pad's Back do nothing.
 func test_no_auto_on_hard() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
@@ -73,6 +73,41 @@ func test_skip_corner_on_the_map() -> void:
 	screen._process(0.0)
 	check(screen.sim.talk.is_empty(), "the skip key")
 	screen.free()
+	Router.params = old
+
+
+func _pad_back(pressed: bool) -> void:
+	var ev := InputEventJoypadButton.new()
+	ev.button_index = JOY_BUTTON_BACK
+	ev.pressed = pressed
+	Input.parse_input_event(ev)
+	Input.flush_buffered_events()
+
+
+## The pad's Back is SKIP and AUTO, as the corner: while someone talks it skips and leaves the
+## auto-hunt as it was; when nobody talks it turns the auto-hunt on or off.
+func test_pad_back_skips_or_toggles_auto() -> void:
+	var old: Dictionary = Router.params
+	var was: String = InputSetup.device
+	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	var screen: Control = MissionScreen.new()
+	root.add_child(screen)
+	screen.sim.difficulty = 1
+	var auto_was: bool = screen.autopilot.on
+	screen.sim._start_general_talk(5, 0)
+	_pad_back(true)
+	screen._process(screen.tick)
+	_pad_back(false)
+	screen._process(0.0)
+	check(screen.sim.talk.is_empty(), "a talk: Back skips it")
+	eq(screen.autopilot.on, auto_was, "and the auto-hunt stays as it was")
+	_pad_back(true)
+	screen._process(0.0)
+	_pad_back(false)
+	screen._process(0.0)
+	eq(screen.autopilot.on, not auto_was, "nobody talks: Back turns the auto-hunt on or off")
+	screen.free()
+	InputSetup.device = was
 	Router.params = old
 
 
