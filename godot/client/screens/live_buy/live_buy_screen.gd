@@ -19,13 +19,20 @@ var cat := 0
 var kind := 0
 var enchant := 0
 var page := 0
-var gold: Label
-var caption: Label
-var body: VBoxContainer
+@onready var gold: Label = %Gold.get_node("Value")
+@onready var caption: Label = %Caption
+@onready var body: VBoxContainer = %Body
 var cells: Array[Button] = []  # the places of the step's grid (or its list)
-var page_line: Label
-var info: Label
-var ask: ConfirmationDialog
+@onready var page_line: Label = %Page
+@onready var info: Label = %Info
+@onready var ask: ConfirmationDialog = %Ask
+## Each step's page.
+@onready var pages := {
+	Step.CATEGORY: %CategoryPage,
+	Step.KIND: %KindPage,
+	Step.ENCHANT: %EnchantPage,
+	Step.LOTS: %LotsPage,
+}
 var asked: Dictionary = {}  # the lot waiting for Yes
 var into_warehouse := false  # ... and where it goes
 var note := ""  # the line the next step shows (what happened before it)
@@ -35,32 +42,8 @@ func _ready() -> void:
 	path = profile_path()
 	profile = Profile.load_or_new(path)
 	live = LiveClient.of(Router.params)
-	var col := UiTheme.menu_column(self, 640)
-	col.add_child(UiTheme.heading("live.buy", 44))
-	var gold_row := UiTheme.gold_row("Gold")
-	gold = gold_row.get_node("Value")
-	col.add_child(gold_row)
-	caption = UiTheme.note("Caption")
-	col.add_child(caption)
-	body = VBoxContainer.new()
-	body.name = "Body"
-	body.custom_minimum_size = Vector2(0, 300)
-	body.add_theme_constant_override("separation", 8)
-	col.add_child(body)
-	info = UiTheme.note("Info", 72)
-	col.add_child(info)
-	var back := Button.new()
-	back.name = "Back"
-	back.text = "common.back"
-	back.pressed.connect(go_back)
-	col.add_child(back)
-	ask = ConfirmationDialog.new()
-	ask.name = "Ask"
-	ask.confirmed.connect(confirm)
-	ask.canceled.connect(func(): asked = {})
-	add_child(ask)
 	gold.text = str(profile.gold)
-	back.grab_focus.call_deferred()
+	%Back.grab_focus.call_deferred()
 	if live == null:
 		info.text = tr("live.failed")
 		return
@@ -75,36 +58,29 @@ func synced(err: String) -> void:
 		info.text = tr("live.failed")
 
 
-## Builds the page of a step from what the client has (counts, lots).
+## Shows the page of a step with what the client has (counts, lots).
 func show_step(s: Step) -> void:
 	step = s
-	for c in body.get_children():
-		body.remove_child(c)
-		c.queue_free()
+	for p in pages.values():
+		p.visible = false
+	pages[step].visible = true
 	cells.clear()
-	page_line = null
 	info.text = note
 	note = ""
 	gold.text = str(profile.gold)
 	match step:
 		Step.CATEGORY:
 			caption.text = ""
-			for i in CATEGORIES.size():
-				var b := Button.new()
-				b.name = "Category%d" % i
-				b.text = CATEGORIES[i]
-				b.pressed.connect(choose_category.bind(i))
-				body.add_child(b)
-				cells.append(b)
+			cells.assign(%CategoryPage.get_children())
 			if cat < cells.size():
 				cells[cat].grab_focus.call_deferred()
 			return
 		Step.KIND:
 			caption.text = tr(CATEGORIES[cat])
 			var ids: Array = LiveClient.KINDS[cat]
-			cells = ItemGrid.add(
-				body, ids.size(), 300, choose_kind, func(i): info.text = Items.name_of(ids[i])
-			)
+			var kinds: ItemGrid = %KindGrid
+			kinds.clear()
+			cells = kinds.fill(ids.size(), choose_kind, func(i): info.text = Items.name_of(ids[i]))
 			for i in ids.size():
 				cells[i].icon = ItemSlot.item_icon(ids[i])
 			cells[mini(kind, cells.size() - 1)].grab_focus.call_deferred()
@@ -112,58 +88,29 @@ func show_step(s: Step) -> void:
 			caption.text = (
 				"%s / %s" % [tr(CATEGORIES[cat]), Items.name_of(LiveClient.KINDS[cat][kind])]
 			)
-			var grid := GridContainer.new()
-			grid.name = "Levels"
-			grid.columns = 5
-			grid.add_theme_constant_override("h_separation", 6)
-			grid.add_theme_constant_override("v_separation", 6)
+			cells.assign(%Levels.get_children())
 			for e in LEVELS:
-				var b := Button.new()
-				b.name = "Level%d" % e
-				b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-				b.custom_minimum_size = Vector2(110, 90)
-				b.text = "+%d\n%d" % [e, lot_count(e)]
-				b.pressed.connect(choose_enchant.bind(e))
-				grid.add_child(b)
-				cells.append(b)
-			var center := CenterContainer.new()
-			center.add_child(grid)
-			body.add_child(center)
+				cells[e].text = "+%d\n%d" % [e, lot_count(e)]
 			cells[enchant].grab_focus.call_deferred()
 		Step.LOTS:
 			var line := (
 				"%s / %s" % [tr(CATEGORIES[cat]), Items.name_of(LiveClient.KINDS[cat][kind])]
 			)
 			caption.text = line if cat == 2 else "%s +%d" % [line, enchant]
-			cells = ItemGrid.add(body, live.lots.size(), 220, press_lot, show_lot)
+			var lots: ItemGrid = %LotsGrid
+			lots.clear()
+			cells = lots.fill(live.lots.size(), press_lot, show_lot)
 			for i in live.lots.size():
 				cells[i].icon = ItemSlot.item_icon(int(live.lots[i].item.id))
-			var row := HBoxContainer.new()
-			row.name = "Pages"
-			row.alignment = BoxContainer.ALIGNMENT_CENTER
-			row.add_theme_constant_override("separation", 16)
-			var prev := Button.new()
-			prev.name = "Prev"
-			prev.text = "live.prev"
-			prev.pressed.connect(turn_page.bind(-1))
-			row.add_child(prev)
-			page_line = Label.new()
-			page_line.name = "Page"
-			page_line.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-			page_line.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			page_line.custom_minimum_size = Vector2(200, 0)
 			page_line.text = tr("live.page") % [page + 1, maxi(1, live.pages)]
-			row.add_child(page_line)
-			var next := Button.new()
-			next.name = "Next"
-			next.text = "live.next"
-			next.pressed.connect(turn_page.bind(1))
-			row.add_child(next)
-			body.add_child(row)
 			if not cells.is_empty():
 				cells[0].grab_focus.call_deferred()
 				if info.text.is_empty():
 					show_lot(0)
+
+
+func _on_cancel() -> void:
+	asked = {}
 
 
 func lot_count(e: int) -> int:

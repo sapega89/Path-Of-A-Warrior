@@ -280,7 +280,7 @@ func test_buy_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "live": t[0]}
-	var screen: Control = LiveBuyScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["live_buy"])
 	root.add_child(screen)
 	eq(screen.step, LiveBuyScreen.Step.CATEGORY)
 	screen.choose_category(2)
@@ -316,7 +316,7 @@ func test_sell_and_cancel_screens() -> void:
 	_hero().save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "live": t[0]}
-	var screen: Control = LiveSellScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["live_sell"])
 	root.add_child(screen)
 	check(screen.pick(0), "the sword picked")
 	eq(screen.step, LiveSellScreen.Step.PRICE)

@@ -23,6 +23,14 @@ func fill(n: int, press: Callable, show: Callable) -> Array[Button]:
 	return cells
 
 
+## Takes every place away (for fill() again).
+func clear() -> void:
+	var things: GridContainer = $Center/Things
+	for c in things.get_children():
+		things.remove_child(c)
+		c.queue_free()
+
+
 ## Adds a grid of n places, `height` high, to `col` (see fill()). Returns the places' buttons.
 static func add(
 	col: Container, n: int, height: int, press: Callable, show: Callable

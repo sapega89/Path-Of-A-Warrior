@@ -13,33 +13,29 @@ var path: String = Profile.PATH
 var step := Step.PICK
 var in_warehouse := false
 var chosen := -1  # the place (or Warehouse index) of the thing to sell
-var body: VBoxContainer
-var tabs: Array[Button] = []
-var cells: Array[Button] = []
-var price: LineEdit
+@onready var body: VBoxContainer = %Body
+@onready var tabs: Array[Button] = (%Sides as GridSides).tabs()
+var cells: Array[Button] = []  # the places of the page shown
+var pick_cells: Array[Button] = []
+var thing: Button  # on the Price page: the thing to sell
+@onready var price: LineEdit = %Price
 var typed := ""  # the price typed before Price Info
-var info: Label
+@onready var info: Label = %Info
+## Each step's page.
+@onready var pages := {Step.PICK: %PickPage, Step.PRICE: %PricePage, Step.PRICES: %PricesPage}
 
 
 func _ready() -> void:
 	path = profile_path()
 	profile = Profile.load_or_new(path)
 	live = LiveClient.of(Router.params)
-	var col := UiTheme.menu_column(self, 640)
-	col.add_child(UiTheme.heading("live.sell", 44))
-	body = VBoxContainer.new()
-	body.name = "Body"
-	body.custom_minimum_size = Vector2(0, 360)
-	body.add_theme_constant_override("separation", 8)
-	col.add_child(body)
-	info = UiTheme.note("Info", 72)
-	col.add_child(info)
-	var back := Button.new()
-	back.name = "Back"
-	back.text = "common.back"
-	back.pressed.connect(go_back)
-	col.add_child(back)
-	back.grab_focus.call_deferred()
+	pick_cells = (%PickGrid as ItemGrid).fill(LiveClient.WAREHOUSE, pick, _show_pick)
+	thing = ItemSlot.button("Cell")
+	thing.focus_mode = Control.FOCUS_NONE
+	thing.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	%Thing.add_child(thing)
+	%Thing.move_child(thing, 0)
+	%Back.grab_focus.call_deferred()
 	if live == null:
 		info.text = tr("live.failed")
 		return
@@ -55,73 +51,46 @@ func synced(err: String) -> void:
 		info.text = tr("live.failed")
 
 
+## Shows the page of step s, as it is at its start.
 func show_step(s: Step) -> void:
 	step = s
-	for c in body.get_children():
-		body.remove_child(c)
-		c.queue_free()
-	cells.clear()
-	price = null
+	for p in pages.values():
+		p.visible = false
+	pages[step].visible = true
 	match step:
 		Step.PICK:
-			tabs = ItemGrid.sides(body, show_side)
+			cells = pick_cells
 			tabs[1 if in_warehouse else 0].button_pressed = true
-			cells = ItemGrid.add(
-				body, LiveClient.WAREHOUSE, 290, pick, func(i): info.text = describe(i)
-			)
 			refresh()
 			cells[maxi(chosen, 0)].grab_focus.call_deferred()
 		Step.PRICE:
 			var it := item_at(chosen)
-			var row := HBoxContainer.new()
-			row.name = "Thing"
-			row.alignment = BoxContainer.ALIGNMENT_CENTER
-			row.add_theme_constant_override("separation", 16)
-			var cell := ItemSlot.button("Cell")
-			cell.icon = ItemSlot.item_icon(int(it.id))
-			cell.focus_mode = Control.FOCUS_NONE
-			cell.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-			row.add_child(cell)
-			var name_line := Label.new()
-			name_line.name = "Name"
-			name_line.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-			name_line.text = (
+			thing.icon = ItemSlot.item_icon(int(it.id))
+			%Name.text = (
 				"%s\n%s" % [Items.name_of(int(it.id)), tr("live.enchant_lv") % int(it.enchant)]
 			)
-			row.add_child(name_line)
-			body.add_child(row)
-			var hint := UiTheme.note("Hint")
-			hint.text = tr("live.sell_price") % live.tax
-			body.add_child(hint)
-			price = LineEdit.new()
-			price.name = "Price"
-			price.alignment = HORIZONTAL_ALIGNMENT_CENTER
-			price.max_length = 9
-			price.text_changed.connect(_typed)
-			price.text_submitted.connect(func(_t: String) -> void: put_on_sale())
-			body.add_child(price)
-			var ok := Button.new()
-			ok.name = "Ok"
-			ok.text = "live.ok"
-			ok.pressed.connect(put_on_sale)
-			body.add_child(ok)
-			var prices := Button.new()
-			prices.name = "PriceInfo"
-			prices.text = "live.price_info"
-			prices.pressed.connect(price_info)
-			body.add_child(prices)
+			%Hint.text = tr("live.sell_price") % live.tax
+			price.text = ""
 			info.text = Items.describe(it)
 			price.grab_focus.call_deferred()
 		Step.PRICES:
-			var title := UiTheme.note("Caption")
-			title.text = tr("live.price_info")
-			body.add_child(title)
-			cells = ItemGrid.add(body, live.lots.size(), 300, func(_i): pass, show_price)
+			%Caption.text = tr("live.price_info")
+			var prices: ItemGrid = %PricesGrid
+			prices.clear()
+			cells = prices.fill(live.lots.size(), func(_i): pass, show_price)
 			for i in live.lots.size():
 				cells[i].icon = ItemSlot.item_icon(int(live.lots[i].item.id))
 			if not cells.is_empty():
 				cells[0].grab_focus.call_deferred()
 				show_price(0)
+
+
+func _show_pick(i: int) -> void:
+	info.text = describe(i)
+
+
+func _on_price_submitted(_t: String) -> void:
+	put_on_sale()
 
 
 func show_side(warehouse: bool) -> void:
@@ -175,7 +144,7 @@ func _typed(t: String) -> void:
 
 ## OK: the thing goes on sale for the price typed. Returns false when nothing was asked.
 func put_on_sale() -> bool:
-	if live.busy or price == null or int(price.text) <= 0:
+	if live.busy or step != Step.PRICE or int(price.text) <= 0:
 		return false
 	live.sell(profile, in_warehouse, chosen, int(price.text), LiveClient.later(self, &"sold"))
 	return true
