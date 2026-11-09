@@ -31,7 +31,7 @@ func test_the_heros_name_on_the_keys() -> void:
 
 
 func test_the_login_on_the_keys() -> void:
-	var screen: Control = LoginScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["login"])
 	root.add_child(screen)
 	var keys: VBoxContainer = screen.keys
 	_type(keys, ["A", "N", "7", "D", "Y"])
@@ -48,7 +48,7 @@ func test_the_login_on_the_keys() -> void:
 func test_the_keys_show_only_for_the_gamepad() -> void:
 	var was: String = InputSetup.device
 	InputSetup.device = "keys"
-	var screen: Control = LoginScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["login"])
 	root.add_child(screen)
 	check(not screen.keys.visible, "a keyboard: no keys on the screen")
 	var pad := InputEventJoypadButton.new()

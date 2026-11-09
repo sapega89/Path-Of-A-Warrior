@@ -6,7 +6,7 @@ const Keys := preload("res://scripts/core/input_setup.gd")
 func test_help_screen() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {}
-	var screen: Control = HelpScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["help"])
 	root.add_child(screen)
 	eq(screen.topics.size(), 10, "eight of the campaign, two of the multiplayer")
 	eq(str(screen.list.get_child(0).text), "Missions", "the first")
@@ -36,7 +36,7 @@ func test_help_screen() -> void:
 func test_multiplayer_topics_in_the_same_help() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {}
-	var screen: Control = HelpScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["help"])
 	root.add_child(screen)
 	eq(
 		screen.topics.slice(8).map(func(t): return t.name),

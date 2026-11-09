@@ -4,7 +4,7 @@ extends BaseScreen
 ## and the web). Continue opens the hero's camp (scripts/screens/camp_screen.gd), where his
 ## game goes on; a new game starts its first mission at once after the opening. While the game is
 ## always online and this run has no account yet, Play
-## and New game open the login (scripts/screens/login_screen.gd) first; it comes back here and
+## and New game open the login (screens/login/login_screen.gd) first; it comes back here and
 ## goes on with play() or new_game() once the hero (or none) has come from the server.
 
 var buttons: Array[Button] = []
@@ -14,15 +14,14 @@ var ask: AskDialog  # "Starting a new game will cause your saved game to be dele
 func _ready() -> void:
 	if Cloud.enabled() and not Cloud.online():
 		Router.go.call_deferred("offline")  # the game starts only online
-	var col := UiTheme.menu_column(self)
-	col.add_child(UiTheme.heading("game.title", 44))
-	var saved := Profile.exists()
-	_add(col, "Play", "menu.continue" if saved else "menu.play", play)
-	_add(col, "NewGame", "menu.new_game", new_game)
-	_add(col, "Endings", "menu.endings", func(): Router.push("endings", {}))
-	_add(col, "Settings", "menu.settings", func(): Router.push("settings"))
-	if show_quit():
-		_add(col, "Quit", "menu.quit", func(): Cloud.quit_game())
+	var col: VBoxContainer = %Column
+	if Profile.exists():
+		col.get_node("Play").text = "menu.continue"
+	if not show_quit():
+		col.get_node("Quit").free()
+	for b in col.get_children():
+		if b is Button:
+			buttons.append(b)
 	ask = AskDialog.new()
 	ask.safe_default = true
 	ask.dialog_text = tr("newgame.ask_delete")
@@ -59,6 +58,18 @@ func play() -> void:
 		)
 
 
+func open_endings() -> void:
+	Router.push("endings", {})
+
+
+func open_settings() -> void:
+	Router.push("settings")
+
+
+func quit() -> void:
+	Cloud.quit_game()
+
+
 ## A new hero (difficulty, face, name, points); over a saved one only when that is confirmed.
 func new_game() -> void:
 	if needs_login():
@@ -77,15 +88,6 @@ static func needs_login() -> bool:
 
 static func show_quit() -> bool:
 	return not (OS.has_feature("mobile") or OS.has_feature("web"))
-
-
-func _add(col: VBoxContainer, node_name: String, text_key: String, on_press: Callable) -> void:
-	var b := Button.new()
-	b.name = node_name
-	b.text = text_key
-	b.pressed.connect(on_press)
-	col.add_child(b)
-	buttons.append(b)
 
 
 func go_back() -> void:

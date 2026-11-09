@@ -96,12 +96,12 @@ func _add(col: VBoxContainer, node_name: String, text_key: String, on_press: Cal
 
 ## The settings over the pause menu; their Back comes back here.
 func open_options() -> void:
-	_open_over(SettingsScreen.new(), "Settings")
+	_open_over(Router.make(Router.SCREENS["settings"]), "Settings")
 
 
 ## The help over the pause menu; leaving it comes back here.
 func open_help() -> void:
-	_open_over(HelpScreen.new(), "Help")
+	_open_over(Router.make(Router.SCREENS["help"]), "Help")
 
 
 func _open_over(screen: Control, node_name: String) -> void:

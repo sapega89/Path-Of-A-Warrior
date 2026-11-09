@@ -201,7 +201,7 @@ func test_game_menu_has_the_game_and_the_main_menu_the_rest() -> void:
 	root.add_child(screen)
 	check(screen.news == null, "offline: nothing asked")
 	screen.free()
-	screen = MainMenu.new()
+	screen = Router.make(Router.SCREENS["main_menu"])
 	root.add_child(screen)
 	var names: Array = screen.buttons.map(func(b): return str(b.name))
 	eq(names.slice(0, 4), ["Play", "NewGame", "Endings", "Settings"])

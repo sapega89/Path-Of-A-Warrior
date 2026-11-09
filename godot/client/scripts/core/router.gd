@@ -6,10 +6,10 @@ extends Node
 signal screen_changed(screen_name: String)
 
 const SCREENS := {
-	"title": "res://scripts/screens/title_screen.gd",
-	"main_menu": "res://scripts/screens/main_menu.gd",
+	"title": "res://screens/title/title_screen.tscn",
+	"main_menu": "res://screens/main_menu/main_menu.tscn",
 	"game_menu": "res://scripts/screens/game_menu.gd",
-	"settings": "res://scripts/screens/settings_screen.gd",
+	"settings": "res://screens/settings/settings_screen.tscn",
 	"map_viewer": "res://scripts/screens/map_viewer.gd",
 	"campaign": "res://scripts/screens/campaign_screen.gd",
 	"camp": "res://scripts/screens/camp_screen.gd",
@@ -28,10 +28,10 @@ const SCREENS := {
 	"shop": "res://scripts/screens/shop_screen.gd",
 	"visiting": "res://scripts/screens/visiting_screen.gd",
 	"new_game": "res://scripts/screens/new_game_screen.gd",
-	"endings": "res://scripts/screens/endings_screen.gd",
-	"help": "res://scripts/screens/help_screen.gd",
-	"offline": "res://scripts/screens/offline_screen.gd",
-	"login": "res://scripts/screens/login_screen.gd",
+	"endings": "res://screens/endings/endings_screen.tscn",
+	"help": "res://screens/help/help_screen.tscn",
+	"offline": "res://screens/offline/offline_screen.tscn",
+	"login": "res://screens/login/login_screen.tscn",
 	"live_warehouse": "res://scripts/screens/live_warehouse_screen.gd",
 	"live_safe": "res://scripts/screens/live_safe_screen.gd",
 	"live_trade": "res://scripts/screens/live_trade_screen.gd",

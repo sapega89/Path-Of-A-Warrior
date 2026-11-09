@@ -1,7 +1,9 @@
 extends "res://tests/test_case.gd"
 ## Every script of the project compiles, also the tools and the lab that no other test runs.
 
-const DIRS: Array[String] = ["res://scripts", "res://server", "res://tools", "res://lab"]
+const DIRS: Array[String] = [
+	"res://scripts", "res://screens", "res://server", "res://tools", "res://lab"
+]
 
 
 func test_every_script_compiles() -> void:

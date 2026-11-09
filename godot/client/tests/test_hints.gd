@@ -19,7 +19,7 @@ func test_menu_line_by_device() -> void:
 
 
 func test_screens_with_own_line() -> void:
-	var screen: Control = load("res://scripts/screens/title_screen.gd").new()
+	var screen: Control = Router.make(Router.SCREENS["title"])
 	eq(HintBar.text_for(screen), "", "the title has its own line: no bar")
 	screen.free()
 

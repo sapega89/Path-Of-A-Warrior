@@ -10,12 +10,12 @@ extends BaseScreen
 ## when params.must: the game menu opened it, which needs an account). The keys under the
 ## fields (scripts/ui/key_grid.gd) type with a gamepad; they show only while it is in use.
 
-var user_id: LineEdit
-var password: LineEdit
-var info: Label
-var keys: VBoxContainer
-var login_button: Button
-var register_button: Button
+@onready var user_id: LineEdit = %UserId
+@onready var password: LineEdit = %Password
+@onready var info: Label = %Info
+@onready var login_button: Button = %Login
+@onready var register_button: Button = %Register
+var keys: VBoxContainer  # under the fields, made for them (KeyGrid)
 var busy := false
 var waiting := false  # logged in, the hero not here yet
 var next := ""
@@ -25,54 +25,31 @@ var must := false
 func _ready() -> void:
 	next = str(Router.params.get("next", ""))
 	must = bool(Router.params.get("must", false))
-	var col := UiTheme.menu_column(self, 520)
-	col.add_child(UiTheme.heading("login.title", 40))
-	var hint := Label.new()
-	hint.text = "register.hint"
-	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	col.add_child(hint)
-	user_id = _field(col, "UserId", "register.user_id", 12)
-	user_id.text_changed.connect(func(t: String) -> void: _keep(user_id, t, "A", "Z", true))
-	password = _field(col, "Password", "register.password", 12)
-	password.secret = true
-	password.text_changed.connect(func(t: String) -> void: _keep(password, t, "0", "9", false))
-	user_id.text_submitted.connect(func(_t: String) -> void: _type_in(password))
-	password.text_submitted.connect(func(_t: String) -> void: submit())
 	keys = KeyGrid.create(KeyGrid.ACCOUNT, user_id)
 	keys.follow(user_id)
 	keys.follow(password)
-	col.add_child(keys)
-	login_button = _button(col, "Login", "login.ok", submit)
-	register_button = _button(col, "Register", "login.new", submit.bind(true))
-	info = Label.new()
-	info.name = "Info"
-	info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	info.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	info.custom_minimum_size = Vector2(0, 60)
-	col.add_child(info)
+	password.add_sibling(keys)
 	_type_in.call_deferred(user_id)
 
 
-func _field(col: VBoxContainer, node_name: String, hint_key: String, max_len: int) -> LineEdit:
-	var e := LineEdit.new()
-	e.name = node_name
-	e.max_length = max_len
-	e.alignment = HORIZONTAL_ALIGNMENT_CENTER
-	e.placeholder_text = tr(hint_key)
-	e.keep_editing_on_text_submit = true  # after a refused Enter the field still types
-	col.add_child(e)
-	return e
+func _on_user_id_changed(t: String) -> void:
+	_keep(user_id, t, "A", "Z", true)
 
 
-func _button(col: VBoxContainer, node_name: String, text_key: String, on_press: Callable) -> Button:
-	var b := Button.new()
-	b.name = node_name
-	b.text = text_key
-	b.pressed.connect(on_press)
-	col.add_child(b)
-	return b
+func _on_password_changed(t: String) -> void:
+	_keep(password, t, "0", "9", false)
+
+
+func _on_user_id_submitted(_t: String) -> void:
+	_type_in(password)
+
+
+func _on_password_submitted(_t: String) -> void:
+	submit()
+
+
+func register() -> void:
+	submit(true)
 
 
 ## The line of control hints: while a field types on the keyboard, what it takes and what Enter

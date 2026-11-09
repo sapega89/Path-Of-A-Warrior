@@ -87,7 +87,7 @@ func test_hints_name_the_device_last_used() -> void:
 func test_offline_screen_and_map_viewer_follow_the_device() -> void:
 	var was: String = InputSetup.device
 	InputSetup.device = "keys"
-	var offline: Control = OfflineScreen.new()
+	var offline: Control = Router.make(Router.SCREENS["offline"])
 	root.add_child(offline)
 	check(
 		offline.controls_hint().ends_with("Enter: try again"),
@@ -127,7 +127,7 @@ func test_right_click_is_back() -> void:
 	check(not InputSetupScript.is_back_click(left), "not the left button")
 	var old: Dictionary = Router.params
 	Router.params = {}
-	var help: Control = HelpScreen.new()
+	var help: Control = Router.make(Router.SCREENS["help"])
 	root.add_child(help)
 	help.open(2)
 	help.get_viewport().push_input(_right_click())
@@ -179,7 +179,7 @@ func test_keyboard_as_pyport() -> void:
 	check(not InputSetupScript.is_back_key(_key_press(KEY_ESCAPE)), "(Esc is ui_cancel itself)")
 	var old: Dictionary = Router.params
 	Router.params = {}
-	var help: Control = HelpScreen.new()
+	var help: Control = Router.make(Router.SCREENS["help"])
 	root.add_child(help)
 	help.open(2)
 	help.get_viewport().push_input(_key_press(KEY_BACKSPACE))
@@ -206,7 +206,7 @@ func test_phone_back_button() -> void:
 	)
 	var old: Dictionary = Router.params
 	Router.params = {}
-	var help: Control = HelpScreen.new()
+	var help: Control = Router.make(Router.SCREENS["help"])
 	root.add_child(help)
 	help.open(2)
 	InputSetup._notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)

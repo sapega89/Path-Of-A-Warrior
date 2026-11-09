@@ -136,7 +136,7 @@ func test_login_hint_while_typing() -> void:
 	var old: Dictionary = Router.params
 	var was: String = InputSetup.device
 	Router.params = {}
-	var screen: Control = LoginScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["login"])
 	root.add_child(screen)
 	InputSetup.device = "keys"
 	screen.user_id.grab_focus()

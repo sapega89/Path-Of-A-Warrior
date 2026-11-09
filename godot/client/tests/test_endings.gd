@@ -15,7 +15,7 @@ func test_endings_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = EndingsScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["endings"])
 	root.add_child(screen)
 	eq(screen.list.get_child_count(), 5, "five on a page")
 	eq(screen.page_label.text, "1 / 5", "page 1")

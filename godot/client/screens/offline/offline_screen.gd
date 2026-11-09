@@ -11,30 +11,13 @@ extends BaseScreen
 
 const AUTO_RETRY_MS := 10000
 
-var text: Label
-var retry: Button
-var other: Button  # on a refused login: forget it and log in with another account
+@onready var text: Label = %Text
+@onready var retry: Button = %Retry
+@onready var other: Button = %Other  # on a refused login: forget it and log in with another account
 var shown_at := 0
 
 
 func _ready() -> void:
-	var col := UiTheme.menu_column(self, 640)
-	text = Label.new()
-	text.name = "Text"
-	text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	col.add_child(text)
-	retry = Button.new()
-	retry.name = "Retry"
-	retry.text = "offline.try_again_button"
-	retry.pressed.connect(try_again)
-	col.add_child(retry)
-	other = Button.new()
-	other.name = "Other"
-	other.text = "offline.other_account_button"
-	other.pressed.connect(other_account)
-	col.add_child(other)
 	retry.grab_focus.call_deferred()
 	shown_at = Time.get_ticks_msec()
 	refresh()

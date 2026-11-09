@@ -84,7 +84,7 @@ func test_back_stays_with_the_question() -> void:
 
 
 func test_main_menu_asks_with_no_first() -> void:
-	var menu: Control = MainMenu.new()
+	var menu: Control = Router.make(Router.SCREENS["main_menu"])
 	root.add_child(menu)
 	check(menu.ask is AskDialog and menu.ask.safe_default, "deleting the save: No first")
 	menu.free()

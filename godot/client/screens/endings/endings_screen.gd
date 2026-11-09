@@ -9,42 +9,15 @@ const PER_PAGE := 5
 var profile: RefCounted
 var path: String = Profile.PATH
 var page := 0
-var list: VBoxContainer
-var page_label: Label
-var info: Label
+@onready var list: VBoxContainer = %List
+@onready var page_label: Label = %Page
+@onready var info: Label = %Info
 
 
 func _ready() -> void:
 	path = profile_path()
 	profile = Profile.load_or_new(path)
 	page = clampi(int(Router.params.get("page", 0)), 0, pages() - 1)
-	var col := UiTheme.menu_column(self, 560)
-	col.add_child(UiTheme.heading("endings.title", 40))
-	list = VBoxContainer.new()
-	list.name = "List"
-	list.add_theme_constant_override("separation", 8)
-	col.add_child(list)
-	var turn := HBoxContainer.new()
-	turn.alignment = BoxContainer.ALIGNMENT_CENTER
-	turn.add_theme_constant_override("separation", 24)
-	turn.add_child(_arrow("Prev", "◄", -1))
-	page_label = Label.new()
-	page_label.name = "Page"
-	page_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	turn.add_child(page_label)
-	turn.add_child(_arrow("Next", "►", 1))
-	col.add_child(turn)
-	info = Label.new()
-	info.name = "Info"
-	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	info.custom_minimum_size = Vector2(0, 60)
-	col.add_child(info)
-	var back := Button.new()
-	back.name = "Back"
-	back.text = "common.back"
-	back.pressed.connect(func(): Router.back())
-	col.add_child(back)
 	show_page()
 
 
@@ -59,15 +32,6 @@ static func title(i: int) -> String:
 
 func reached(i: int) -> bool:
 	return int(profile.endings) & (1 << i) != 0
-
-
-func _arrow(node_name: String, text: String, step: int) -> Button:
-	var b := Button.new()
-	b.name = node_name
-	b.text = text
-	b.focus_mode = Control.FOCUS_NONE
-	b.pressed.connect(func(): turn_page(step))
-	return b
 
 
 func show_page() -> void:
@@ -90,6 +54,14 @@ func show_page() -> void:
 	page_label.text = "%d / %d" % [page + 1, pages()]
 	info.text = ""
 	(list.get_child(0) as Button).grab_focus.call_deferred()
+
+
+func prev_page() -> void:
+	turn_page(-1)
+
+
+func next_page() -> void:
+	turn_page(1)
 
 
 func turn_page(step: int) -> void:
