@@ -59,7 +59,7 @@ var _gold_tex: Texture2D = preload("res://assets/original/ui/gold.png")
 
 
 func _ready() -> void:
-	theme = UiTheme.build()
+	theme = UiTheme.theme(UiTheme.THEME)
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	tick = Settings.tick_seconds()
 	var bg := ColorRect.new()

@@ -41,7 +41,7 @@ var news: Control  # what Live kept for the player; null when the game is not on
 func _ready() -> void:
 	path = profile_path()
 	menu = UiTheme.menu_column(self, WIDTH)
-	menu.theme = UiTheme.compact()
+	menu.theme = UiTheme.theme(UiTheme.COMPACT_THEME)
 	menu.add_child(UiTheme.heading("menu.game", 44))
 	var scroll := ScrollContainer.new()
 	scroll.custom_minimum_size = Vector2(WIDTH, LIST_HEIGHT)

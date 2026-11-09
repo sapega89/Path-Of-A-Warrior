@@ -15,7 +15,7 @@ func test_the_fonts_of_the_new_art() -> void:
 		check(UiTheme.font(kind) == f, "%s made once" % kind)
 	check(UiTheme.font("title").get_font_name().contains("Kurale"), "headings in Kurale")
 	check(UiTheme.font("text").get_font_name().contains("PT Sans"), "text in PT Sans")
-	var t := UiTheme.build()
+	var t: Theme = UiTheme.theme(UiTheme.THEME)
 	eq(t.default_font, UiTheme.font("text"), "the text")
 	eq(t.get_font("font", "Button"), UiTheme.font("bold"), "the buttons bold")
 	var h := UiTheme.heading("gear.title", 44)
@@ -26,7 +26,7 @@ func test_the_fonts_of_the_new_art() -> void:
 
 
 func test_plaques_and_panels() -> void:
-	var t := UiTheme.build()
+	var t: Theme = UiTheme.theme(UiTheme.THEME)
 	var normal := t.get_stylebox("normal", "Button") as StyleBoxFlat
 	check(normal.corner_radius_top_left <= 3 and normal.anti_aliasing, "hard corners, smooth edges")
 	eq(normal.border_color, UiTheme.IRON, "an iron rim")
@@ -36,14 +36,13 @@ func test_plaques_and_panels() -> void:
 		"blood-red when pressed"
 	)
 	check(
-		t.get_stylebox("panel", "PanelContainer") is UiTheme.PanelBox,
-		"panels of leather with their rivets"
+		t.get_stylebox("panel", "PanelContainer") is PanelBox, "panels of leather with their rivets"
 	)
-	check(t.get_stylebox("embedded_border", "Window") is UiTheme.PanelBox, "and the dialogs")
+	check(t.get_stylebox("embedded_border", "Window") is PanelBox, "and the dialogs")
 	var on := t.get_icon("checked", "CheckBox")
 	var off := t.get_icon("unchecked", "CheckBox")
 	check(on != null and off != null and on != off, "the check boxes drawn")
-	var compact := UiTheme.compact()
+	var compact: Theme = UiTheme.theme(UiTheme.COMPACT_THEME)
 	eq(
 		(compact.get_stylebox("normal", "Button") as StyleBoxFlat).content_margin_top,
 		4.0,
@@ -125,3 +124,14 @@ func test_touch_controls_fill_the_screen() -> void:
 	eq(tc.size, root.get_viewport().get_visible_rect().size, "as big as the screen")
 	check(tc.button_center("attack").x > tc.size.x / 2.0, "the buttons at the right")
 	tc.free()
+
+
+func test_the_theme_files_keep_the_cyrillic_fallbacks() -> void:
+	for path in [UiTheme.THEME, UiTheme.COMPACT_THEME, KeyGrid.KEY_THEME]:
+		var t: Theme = UiTheme.theme(path)
+		check(t != null, "%s loads" % path)
+	var full: Theme = UiTheme.theme(UiTheme.THEME)
+	for item in [["font", "Button"], ["title_font", "Window"]]:
+		var f: Font = full.get_font(item[0], item[1])
+		check(f.fallbacks.size() >= 1, "%s of %s falls back to the Cyrillic file" % item)
+	check(full.default_font.fallbacks.size() >= 1, "and the default font")

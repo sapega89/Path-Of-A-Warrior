@@ -11,6 +11,7 @@ extends VBoxContainer
 const BACK := "⌫"
 const OK := "OK"
 const KEY_SIZE := Vector2(48, 44)
+const KEY_THEME := "res://assets/art/ui/key_theme.tres"
 const FONT_SIZE := 24
 ## The registration's keys: the UserID's letters and the password's digits.
 const ACCOUNT := ["ABCDEFGHIJKLM", "NOPQRSTUVWXYZ", "0123456789"]
@@ -77,17 +78,10 @@ func _key(label: String) -> Button:
 	return b
 
 
-## The game's theme with narrow margins, so that every key is as wide as the others.
+## The buttons of the game's theme with narrow margins, so that every key is as wide as the
+## others (the rest of the theme comes from the screen around the grid).
 static func key_theme() -> Theme:
-	var t := UiTheme.build()
-	for style in ["normal", "hover", "pressed", "disabled", "focus"]:
-		var sb := t.get_stylebox(style, "Button").duplicate() as StyleBox
-		sb.content_margin_left = 2
-		sb.content_margin_right = 2
-		sb.content_margin_top = 2
-		sb.content_margin_bottom = 2
-		t.set_stylebox(style, "Button", sb)
-	return t
+	return UiTheme.theme(KEY_THEME)
 
 
 ## The keys type into `field` once it has had the focus.

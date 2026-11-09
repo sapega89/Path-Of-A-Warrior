@@ -4,7 +4,7 @@ extends Control
 
 
 func _ready() -> void:
-	theme = UiTheme.build()
+	theme = UiTheme.theme(UiTheme.THEME)
 	add_child(UiTheme.backdrop())
 	var host := Control.new()
 	host.name = "Screens"

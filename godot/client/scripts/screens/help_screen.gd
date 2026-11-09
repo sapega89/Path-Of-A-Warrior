@@ -32,7 +32,7 @@ func _ready() -> void:
 		if MP_TOPICS.has(t.get("name")):
 			topics.append({"name": tr(MP_TOPICS[t.name]), "pages": t.get("pages", [])})
 	var col := UiTheme.menu_column(self, 640)
-	col.theme = UiTheme.compact()  # ten topics and Back in a 720 px high screen
+	col.theme = UiTheme.theme(UiTheme.COMPACT_THEME)  # ten topics and Back in a 720 px high screen
 	heading = UiTheme.heading("help.title", 40)
 	col.add_child(heading)
 	list = VBoxContainer.new()
