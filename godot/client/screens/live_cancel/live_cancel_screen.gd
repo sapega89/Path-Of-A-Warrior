@@ -7,10 +7,10 @@ extends BaseScreen
 var live: RefCounted
 var profile: RefCounted
 var path: String = Profile.PATH
-var gold: Label
+@onready var gold: Label = %Gold.get_node("Value")
 var cells: Array[Button] = []
-var info: Label
-var ask: ConfirmationDialog
+@onready var info: Label = %Info
+@onready var ask: ConfirmationDialog = %Ask
 var asked: Dictionary = {}  # the lot waiting for Yes
 
 
@@ -18,31 +18,18 @@ func _ready() -> void:
 	path = profile_path()
 	profile = Profile.load_or_new(path)
 	live = LiveClient.of(Router.params)
-	var col := UiTheme.menu_column(self, 640)
-	col.add_child(UiTheme.heading("live.cancel", 44))
-	var gold_row := UiTheme.gold_row("Gold")
-	gold = gold_row.get_node("Value")
 	gold.text = str(profile.gold)
-	col.add_child(gold_row)
-	cells = ItemGrid.add(col, LiveClient.MAX_SALES, 70, press_lot, show_lot)
-	info = UiTheme.note("Info", 100)
-	col.add_child(info)
-	var back := Button.new()
-	back.name = "Back"
-	back.text = "common.back"
-	back.pressed.connect(func(): Router.back())
-	col.add_child(back)
-	ask = ConfirmationDialog.new()
-	ask.name = "Ask"
-	ask.confirmed.connect(confirm)
-	ask.canceled.connect(func(): asked = {})
-	add_child(ask)
+	cells = (%Grid as ItemGrid).fill(LiveClient.MAX_SALES, press_lot, show_lot)
 	cells[0].grab_focus.call_deferred()
 	if live == null:
 		info.text = tr("live.failed")
 		return
 	info.text = tr("live.connecting")
 	live.sync(profile, LiveClient.later(self, &"synced"))
+
+
+func _on_cancel() -> void:
+	asked = {}
 
 
 func synced(err: String) -> void:

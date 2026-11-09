@@ -10,58 +10,18 @@ var live: RefCounted
 var profile: RefCounted
 var path: String = Profile.PATH
 var to_safe := false  # the arrow points at the Safe (else at the hero)
-var local: Label
-var server: Label
-var arrow: Button
-var amount: LineEdit
-var ok: Button
-var info: Label
+@onready var local: Label = %Local.get_node("Gold/Value")
+@onready var server: Label = %Server.get_node("Gold/Value")
+@onready var arrow: Button = %Arrow
+@onready var amount: LineEdit = %Amount
+@onready var ok: Button = %Ok
+@onready var info: Label = %Info
 
 
 func _ready() -> void:
 	path = profile_path()
 	profile = Profile.load_or_new(path)
 	live = LiveClient.of(Router.params)
-	var col := UiTheme.menu_column(self, 640)
-	col.add_child(UiTheme.heading("live.safe", 44))
-	var row := HBoxContainer.new()
-	row.name = "Sides"
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_theme_constant_override("separation", 24)
-	local = _side(row, "Local", "live.local")
-	arrow = Button.new()
-	arrow.name = "Arrow"
-	arrow.custom_minimum_size = Vector2(96, 64)
-	arrow.expand_icon = true
-	arrow.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	arrow.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	arrow.pressed.connect(turn)
-	row.add_child(arrow)
-	server = _side(row, "Server", "live.server")
-	col.add_child(row)
-	var ask := Label.new()
-	ask.text = "live.how_much"
-	ask.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	col.add_child(ask)
-	amount = LineEdit.new()
-	amount.name = "Amount"
-	amount.alignment = HORIZONTAL_ALIGNMENT_CENTER
-	amount.max_length = 9
-	amount.text_changed.connect(_typed)
-	amount.text_submitted.connect(func(_t: String) -> void: submit())
-	col.add_child(amount)
-	ok = Button.new()
-	ok.name = "Ok"
-	ok.text = "live.ok"
-	ok.pressed.connect(submit)
-	col.add_child(ok)
-	info = UiTheme.note("Info", 60)
-	col.add_child(info)
-	var back := Button.new()
-	back.name = "Back"
-	back.text = "common.back"
-	back.pressed.connect(func(): Router.back())
-	col.add_child(back)
 	refresh()
 	amount.grab_focus.call_deferred()
 	if live == null:
@@ -71,18 +31,8 @@ func _ready() -> void:
 	live.sync(profile, LiveClient.later(self, &"synced"))
 
 
-func _side(row: HBoxContainer, node_name: String, caption_key: String) -> Label:
-	var box := VBoxContainer.new()
-	box.name = node_name
-	box.custom_minimum_size = Vector2(200, 0)
-	var caption := Label.new()
-	caption.text = caption_key
-	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	box.add_child(caption)
-	var gold := UiTheme.gold_row("Gold")
-	box.add_child(gold)
-	row.add_child(box)
-	return gold.get_node("Value")
+func _on_amount_submitted(_t: String) -> void:
+	submit()
 
 
 func synced(err: String) -> void:

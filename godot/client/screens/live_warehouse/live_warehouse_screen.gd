@@ -8,29 +8,17 @@ var live: RefCounted
 var profile: RefCounted
 var path: String = Profile.PATH
 var in_warehouse := false  # the grid shows the Warehouse (else the backpack)
-var tabs: Array[Button] = []
-var count: Label
+@onready var tabs: Array[Button] = (%Sides as GridSides).tabs()
+@onready var count: Label = %Count
 var cells: Array[Button] = []
-var info: Label
+@onready var info: Label = %Info
 
 
 func _ready() -> void:
 	path = profile_path()
 	profile = Profile.load_or_new(path)
 	live = LiveClient.of(Router.params)
-	var col := UiTheme.menu_column(self, 640)
-	col.add_child(UiTheme.heading("live.warehouse", 44))
-	tabs = ItemGrid.sides(col, show_side)
-	count = UiTheme.note("Count")
-	col.add_child(count)
-	cells = ItemGrid.add(col, LiveClient.WAREHOUSE, 290, press_cell, _show_info)
-	info = UiTheme.note("Info", 72)
-	col.add_child(info)
-	var back := Button.new()
-	back.name = "Back"
-	back.text = "common.back"
-	back.pressed.connect(func(): Router.back())
-	col.add_child(back)
+	cells = (%Grid as ItemGrid).fill(LiveClient.WAREHOUSE, press_cell, _show_info)
 	refresh()
 	cells[0].grab_focus.call_deferred()
 	if live == null:

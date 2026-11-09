@@ -132,7 +132,7 @@ func test_warehouse_screen() -> void:
 	_hero().save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "live": t[0]}
-	var screen: Control = LiveWarehouseScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["live_warehouse"])
 	root.add_child(screen)
 	check(screen.cells[0].icon != null, "the backpack first")
 	eq(screen.count.text, "2 / 45")
@@ -157,7 +157,7 @@ func test_safe_screen() -> void:
 	_hero(500).save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "live": t[0]}
-	var screen: Control = LiveSafeScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["live_safe"])
 	root.add_child(screen)
 	eq([screen.local.text, screen.server.text], ["500", "0"])
 	check(not screen.submit(), "nothing in the Safe to take out")
@@ -332,7 +332,7 @@ func test_sell_and_cancel_screens() -> void:
 	eq(screen.info.text, tr("live.on_sale"))
 	eq(int(Profile.load_or_new(TEST_PATH).backpack[0].id), 0, "the hero saved")
 	screen.free()
-	screen = LiveCancelScreen.new()
+	screen = Router.make(Router.SCREENS["live_cancel"])
 	root.add_child(screen)
 	check(screen.cells[0].icon != null, "my lot")
 	check(screen.press_lot(0).contains(Items.name_of(101)), "asks")
