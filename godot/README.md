@@ -88,14 +88,20 @@ godot/
 ```
 python godot/tools/import_original.py                       # після змін у конвертері
                               # (мелодії: потрібні fluidsynth, fluid-soundfont-gm, ffmpeg)
+godot --headless --path godot/client --import               # після клонування і після кожного pull
+                                                            # з новими файлами в assets/
 godot --path godot/client                                   # гра
-godot --headless --path godot/client --import               # один раз після клонування
 godot --headless --path godot/client res://tests/runner.tscn  # тести
 godot --headless --path godot/client res://server/main.tscn -- --port 28310 --data user://server
                                                             # сервер (UDP, ENet + DTLS)
 godot --headless --path godot/client -s res://tools/net_check.gd -- 127.0.0.1 28310 CERT.crt
                                                             # перевірка сервера: вхід, сейв героя
 ```
+
+`godot --path godot/client` сам нічого не імпортує: нові моделі, текстури, іконки й шрифти з
+`assets/` гра бачить лише після `--import` (або після того, як проєкт відкрили в редакторі, він
+імпортує сам). Без цього в місії немає людей, слоти й кутки HUD порожні, а в лозі
+(`user://logs/godot.log`) тисячі `No loader found for resource: res://assets/...`.
 
 ## Сервер
 
