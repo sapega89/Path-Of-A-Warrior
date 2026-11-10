@@ -530,7 +530,8 @@ func _ready() -> void:
 	Router.current.press()
 	await _shot(out, "04d_briefing")
 	# The camps between missions: a stop with a way per mission (one place closed), six ways,
-	# the main camp at the start, and the town hall that every camp has.
+	# the main camp at the start, its auctioneer and all of it from above, and the town hall
+	# that every camp has.
 	walker.place = 4
 	walker.save("user://shot_walker.json")
 	Router.go("camp", {"profile_path": "user://shot_walker.json"})
@@ -543,6 +544,13 @@ func _ready() -> void:
 	walker.save("user://shot_walker.json")
 	Router.go("camp", {"profile_path": "user://shot_walker.json"})
 	await _shot(out, "04g_camp_main")
+	var camp: Node = Router.current  # the hero by the auctioneer's stall, then the whole camp
+	camp.hero.global_position = camp.spot_of("auction").at
+	camp.camera.snap()
+	await _shot(out, "04i_camp_auction")
+	camp.camera.distance = 42.0
+	camp.camera.snap()
+	await _shot(out, "04j_camp_overview")
 	Router.go("town_hall", {"profile_path": "user://shot_walker.json"})
 	await _shot(out, "04h_town_hall")
 	await _training_shots(out)

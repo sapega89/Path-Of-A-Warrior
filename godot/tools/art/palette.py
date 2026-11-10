@@ -40,6 +40,8 @@ WORK = {
     "straw": "B09A62",
     "canvas": "BEB298",
     "canvas_dark": "948770",
+    "canvas_smoke": "5E5A4E",  # tents gone dark with smoke and rain
+    "iron_dark": "33383D",
     "clay": "9A6646",
     "stone": "8C8577",
     "stone_dark": "5F5A52",
