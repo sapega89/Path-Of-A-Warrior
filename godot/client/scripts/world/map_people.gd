@@ -14,7 +14,7 @@ const FOOT_PX := 6  # the original's body box reaches this far below the positio
 
 ## The hero's model by his class (Profile.HERO_CLASSES) and his weapon by its kind
 ## (MapActor.weapon_kind): 0 a long one, a pike; 1 a short one, a broadsword.
-const HEROES := ["kozak", "serdiuk", "kharakternyk", "haidamaka"]
+const HEROES := ["kozak_hero", "serdiuk", "kharakternyk", "haidamaka"]
 const BLADES := ["spear", "palash"]
 ## Swordsmen and archers of each side, and its generals.
 const SOLDIERS := {

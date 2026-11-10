@@ -130,7 +130,7 @@ func test_the_mission_draws_figures() -> void:
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	screen.set_process(false)
-	eq(screen.hero.kind, "kozak", "the hero as a figure")
+	eq(screen.hero.kind, "kozak_hero", "the hero as a figure: the Cossack class")
 	eq(screen.people.side, "cossack", "mission 1: a rival colonel's men")
 	for i in 40:
 		screen._process(screen.tick)

@@ -221,7 +221,7 @@ func _camp() -> void:
 	_figure("polkovnyk", Vector3(2.8, 0, -2.7), "idle", Vector3(0.4, 0, 0.6), 0.4)
 	_figure("kozak_svyta", Vector3(6.3, 0, -0.4), "attack_chop", Vector3(7.4, 0, -0.4), 0.55)
 	_figure("luchnyk", Vector3(-3.6, 0, -3.1), "walk", Vector3(-4.4, 0, -4.4), 0.3)
-	hero = _figure("kozak", Vector3(0.4, 0, 0.6), "idle", Vector3(1.4, 0, -1.6), 0.2)
+	hero = _figure("kozak_hero", Vector3(0.4, 0, 0.6), "idle", Vector3(1.4, 0, -1.6), 0.2)
 
 
 # -- battle room ----------------------------------------------------------------------
@@ -249,7 +249,7 @@ func _battle() -> void:
 	_prop("trava", Vector3(1.6, 0, 2.4))
 	_prop("trava", Vector3(-1.8, 0, 1.8), 50.0)
 	# the fight: the hero cuts at a Crown soldier who takes it on his shield
-	hero = _figure("kozak", Vector3(-0.2, 0, 0.9), "attack_slash", Vector3(0.9, 0, -0.4), 0.42)
+	hero = _figure("kozak_hero", Vector3(-0.2, 0, 0.9), "attack_slash", Vector3(0.9, 0, -0.4), 0.42)
 	var guard := _figure("zholner", Vector3(0.9, 0, -0.45), "block_hit", hero.position, 0.18)
 	_figure("zholner", Vector3(-2.1, 0, -1.4), "attack_chop", hero.position, 0.5)
 	_figure("luchnyk", Vector3(2.4, 0, -2.0), "aim_bow", hero.position, 0.6)
@@ -279,7 +279,7 @@ func _lineup() -> void:
 func _people() -> void:
 	_ground([], [Vector3(0, -3, 6)], Rect2(-12, -8, 24, 16))
 	var heroes := [
-		["kozak", ""], ["serdiuk", "palash"], ["kharakternyk", "sabre"], ["haidamaka", "sabre"]
+		["kozak_hero", ""], ["serdiuk", "palash"], ["kharakternyk", "sabre"], ["haidamaka", "sabre"]
 	]
 	for i in heroes.size():
 		var x := (i - (heroes.size() - 1) / 2.0) * 1.7
