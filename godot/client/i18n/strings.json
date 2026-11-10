@@ -1599,6 +1599,18 @@
     "en": "[A] Warehouse",
     "uk": "[A] Склад"
   },
+  "camp.auction": {
+    "en": "Auctioneer",
+    "uk": "Аукціоніст"
+  },
+  "camp.enter_auction": {
+    "en": "[Enter] Auctioneer: buy, sell, your lots",
+    "uk": "[Enter] Аукціоніст: купити, продати, твої лоти"
+  },
+  "camp.enter_auction_pad": {
+    "en": "[A] Auctioneer: buy, sell, your lots",
+    "uk": "[A] Аукціоніст: купити, продати, твої лоти"
+  },
   "hint.menu": {
     "en": "{ui_move}: choose · {ui_accept}: OK · {ui_back_click}: back",
     "uk": "{ui_move}: вибір · {ui_accept}: OK · {ui_back_click}: назад"

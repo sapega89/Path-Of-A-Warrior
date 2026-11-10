@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://screens/camp/camp_screen.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/world/map_view.tscn" id="2"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/art/art_figure.gd" id="4"]
 [ext_resource type="Script" path="res://scripts/ui/heading.gd" id="5"]
 [ext_resource type="Script" path="res://scripts/ui/touch_controls.gd" id="6"]
+[ext_resource type="PackedScene" path="res://screens/camp/camp_fort.tscn" id="7"]
 
 [node name="CampScreen" type="Control"]
 layout_mode = 3
@@ -18,6 +19,8 @@ script = ExtResource("1")
 
 [node name="World" parent="." instance=ExtResource("2")]
 layout_mode = 1
+
+[node name="Fort" parent="World/Viewport/WorldRoot" instance=ExtResource("7")]
 
 [node name="Hero" type="CharacterBody3D" parent="World/Viewport/WorldRoot"]
 script = ExtResource("3")
@@ -52,6 +55,16 @@ pixel_size = 0.009
 billboard = 1
 no_depth_test = true
 text = "camp.hall"
+font_size = 44
+outline_size = 12
+
+[node name="Auction" type="Label3D" parent="World/Viewport/WorldRoot"]
+unique_name_in_owner = true
+modulate = Color(0.862745, 0.827451, 0.760784, 1)
+pixel_size = 0.009
+billboard = 1
+no_depth_test = true
+text = "camp.auction"
 font_size = 44
 outline_size = 12
 

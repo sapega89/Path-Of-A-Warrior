@@ -12,6 +12,8 @@ Outputs (glTF binary, Y up):
     portraits/busts.glb     with --portraits: the busts of the portraits (see portraits.py)
     characters/divchyna.glb with --story: the people only the story pictures have (portraits.py)
 --only NAMES builds just those people (characters/<name>.glb), e.g. --only upyr.
+--props NAMES builds just those environment pieces (props/<name>.glb), e.g. --props brama,vorota;
+    it needs no --kaykit.
 --preview FILE renders a line-up of everyone with Cycles for a quick look.
 """
 
@@ -166,7 +168,7 @@ def preview(arm, bones, path, pose="idle", frame=8, spacing=1.45):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--kaykit", required=True)
+    ap.add_argument("--kaykit")
     ap.add_argument("--out", default="godot/client/assets/art")
     ap.add_argument("--preview")
     ap.add_argument("--pose", default="idle")
@@ -175,7 +177,18 @@ def main():
     ap.add_argument("--portraits", action="store_true")
     ap.add_argument("--story", action="store_true")
     ap.add_argument("--only", help="build only these people (comma-separated), nothing else")
+    ap.add_argument("--props", help="build only these environment pieces (comma-separated), nothing else")
     args = ap.parse_args(sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else sys.argv[1:])
+    if args.props:
+        painted_material()
+        for name in args.props.split(","):
+            obj = props.build_one(name)
+            export(f"{args.out}/props/{name}.glb", [obj])
+            print(f"{name:16s} {mesh_kit.triangles(obj):6d} tris")
+            bpy.data.objects.remove(obj, do_unlink=True)
+        return
+    if not args.kaykit:
+        ap.error("--kaykit is needed for the people")
     arm = rig.load(args.kaykit)
     bones = rig.bones(arm)
     painted_material()
