@@ -6,6 +6,8 @@ extends RefCounted
 const ROOT := "res://assets/art/"
 const PAINTED := preload("res://assets/art/shaders/painted.gdshader")
 const OUTLINE := preload("res://assets/art/shaders/outline.gdshader")
+const BREAKABLE_OUTLINE := preload("res://assets/art/shaders/breakable_outline.gdshader")
+const BREAKABLE_GLOW := preload("res://assets/art/shaders/breakable_glow.gdshader")
 
 ## The ten colours of the style guide.
 const PALETTE := {
@@ -36,15 +38,15 @@ const LOOPING := [
 	"aim_bow"
 ]
 
-## The light and air of the world: a dull sun through an overcast sky, a deep cool shade,
-## the land fading far away into grey dust; the colours held down and the contrast up.
-const SUN_COLOR := Color("f0dcbc")
-const SUN_ENERGY := 0.7
-const AMBIENT := Color("68708a")
-const AMBIENT_ENERGY := 0.34
-const AIR := Color("9b978b")
-## The grade of the finished picture: brightness, contrast, saturation (muted, harder).
-const GRADE := Vector3(0.96, 1.12, 0.8)
+## The light and air of the world: a warm sun through thin clouds, a cool shade that still
+## shows the colours in it, the land fading far away into grey dust.
+const SUN_COLOR := Color("f5e2c2")
+const SUN_ENERGY := 0.95
+const AMBIENT := Color("6e7a96")
+const AMBIENT_ENERGY := 0.5
+const AIR := Color("a7a393")
+## The grade of the finished picture: brightness, contrast, saturation (a little muted).
+const GRADE := Vector3(1.0, 1.1, 0.88)
 
 static var _scenes := {}
 static var _clips: AnimationLibrary
@@ -113,6 +115,22 @@ static func dress(node: Node, material: Material) -> void:
 static func prop(prop_name: String, outline := false) -> Node3D:
 	var node: Node3D = scene("props/%s.glb" % prop_name).instantiate()
 	dress(node, painted(true) if outline else props_material())
+	return node
+
+
+## A piece one can break (a barrel, a crate, a bush in the way): with its own material (a hit
+## flashes it) and, in place of the ink outline, a brass one with warm edges that slowly glow
+## and dim, so it reads apart from what only stands around.
+static func breakable_prop(prop_name: String) -> Node3D:
+	var node: Node3D = scene("props/%s.glb" % prop_name).instantiate()
+	var m := painted(false)
+	var outline := ShaderMaterial.new()
+	outline.shader = BREAKABLE_OUTLINE
+	var glow := ShaderMaterial.new()
+	glow.shader = BREAKABLE_GLOW
+	outline.next_pass = glow
+	m.next_pass = outline
+	dress(node, m)
 	return node
 
 

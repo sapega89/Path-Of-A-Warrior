@@ -931,10 +931,6 @@
 "en": "In the end Chornohuz's regiment broke what was left of Kharko's army, and he lost every acre he had won. Kharko had wanted to fly, and he had not had the wisdom to be content with walking.",
 "uk": "Урешті Чорногузів полк розбив рештки Харкового війська, і він утратив кожну п'ядь, яку здобув. Харко хотів літати, а мудрості задовольнитися ходою йому не вистачило."
 },
-"In the game menu, Trade buys and sells things with other players, and Safe keeps your gold on the server.": {
-"en": "In the game menu, Trade buys and sells things with other players, and Safe keeps your gold on the server.",
-"uk": "В ігровому меню Торгівля купує й продає речі разом з іншими гравцями, а Сейф тримає твоє золото на сервері."
-},
 "It cannot be! Why would you fight me, &?": {
 "en": "It cannot be! Why would you fight me, &?",
 "uk": "Не може бути! Чому ти хочеш битися зі мною, &?"
@@ -1650,6 +1646,10 @@
 "Topolia turned out to be a fair master, but what he built did not outlive him. His will left his lands to Colonel Bairak, and nobody honoured it. His family fought over the estate until the whole of it fell into the hands of Colonel Sych.": {
 "en": "Topolia turned out to be a fair master, but what he built did not outlive him. His will left his lands to Colonel Bairak, and nobody honoured it. His family fought over the estate until the whole of it fell into the hands of Colonel Sych.",
 "uk": "Тополя виявився справедливим господарем, та те, що він збудував, його не пережило. За заповітом його землі відходили полковникові Байраку, і ніхто того заповіту не виконав. Родина гризлася за маєток, доки весь він не опинився в руках полковника Сича."
+},
+"Trade, in the game menu or at a camp's Auctioneer, buys, sells and gives things to other players; Safe in the game menu keeps your gold on the server.": {
+"en": "Trade, in the game menu or at a camp's Auctioneer, buys, sells and gives things to other players; Safe in the game menu keeps your gold on the server.",
+"uk": "Торгівля в ігровому меню чи в аукціоніста табору купує, продає й дарує речі іншим гравцям; Сейф в ігровому меню тримає твоє золото на сервері."
 },
 "Try putting different things together at the smith's to discover new ones.": {
 "en": "Try putting different things together at the smith's to discover new ones.",

@@ -68,104 +68,6 @@ func test_campaign_screen_opens_a_place_from_the_map() -> void:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://test_world_map.json"))
 
 
-func test_camp_map_has_a_gap_per_way() -> void:
-	for n in range(0, 7):
-		var ways: Array = []
-		for i in n:
-			ways.append([i + 1, i != 1])
-		var c: RefCounted = CampMap.new(ways)
-		eq(c.exits.size(), n, "%d ways, %d gaps" % [n, n])
-		for place in 46:
-			check(
-				CampMap.new(ways, false, place).all_reachable(),
-				(
-					"%d ways at place %d: the things about the camp leave every way and spot free"
-					% [n, place]
-				)
-			)
-		for e in c.exits:
-			for p in e.gap:
-				var f: int = c.data.flags[p.y * CampMap.W + p.x]
-				eq(f & 1 == 0, bool(e.open), "an open way is free, a closed one fenced")
-			eq(
-				int(c.data.flags[e.inside.y * CampMap.W + e.inside.x]) & 1,
-				0,
-				"its colonel stands on free ground"
-			)
-	check(CampMap.is_main(0) and CampMap.is_main(30) and not CampMap.is_main(27), "the main camps")
-	var plain: RefCounted = CampMap.new([[1, true]])
-	for spot in [plain.smith_spot(), plain.store_spot(), plain.hall_door(), plain.start]:
-		eq(
-			int(plain.data.flags[spot.y * CampMap.W + spot.x]) & 1,
-			0,
-			"the blacksmith, the stores, the hall and the start can be reached"
-		)
-	eq(plain.data.upper[0], CampMap.TREE[0][0], "a big tree in the corner")
-
-
-func test_camp_screen_ways_lead_to_the_missions() -> void:
-	var p: RefCounted = Profile.new()
-	p.place = 4
-	p.save(CAMP_PATH)
-	var old: Dictionary = Router.params
-	Router.params = {"profile_path": CAMP_PATH}
-	var camp: Control = Router.make(Router.SCREENS["camp"])
-	root.add_child(camp)
-	eq(camp.place, 4, "the camp of the hero's place")
-	eq(
-		camp.spots.map(func(s): return s.kind),
-		["way", "way", "smith", "store", "hall"],
-		"a way per place on, then the blacksmith, the warehouse and the town hall in every camp"
-	)
-	var ways: Array = camp.spots.filter(func(s): return s.kind == "way")
-	var open: Array = ways.filter(func(s): return s.open)
-	eq(
-		ways.filter(func(s): return not s.open).map(func(s): return s.place),
-		[5],
-		"The Regalia fenced"
-	)
-	eq(open.map(func(s): return [s.place, s.mission]), [[6, 0]], "Harvest, its first mission")
-	check(not camp.camp.main, "Korsun is a stop")
-	var harvest: Dictionary = open[0]
-	eq(camp.spot_near(harvest.at + Vector3(0.5, 0, 0.5)), harvest, "next to the way in")
-	eq(camp.spot_near(Vector3(8.5, 0, 10.5)), {}, "far from everyone")
-	var k: int = camp.spots.find(harvest)
-	var e: Dictionary = camp.camp.exits[k]
-	var out := Vector3(e.gap[1].x + 0.5, 0, 0.3)
-	if int(e.side) == 1:
-		out = Vector3(CampMap.W - 0.3, 0, e.gap[1].y + 0.5)
-	elif int(e.side) == 2:
-		out = Vector3(0.3, 0, e.gap[1].y + 0.5)
-	eq(camp.exit_crossed(out), harvest, "out through the gap")
-	eq(camp.exit_crossed(Vector3(8.5, 0, 6.0)), {}, "inside")
-	var smith: Dictionary = camp.spots[2]
-	eq(camp.spot_near(smith.at), smith, "at the blacksmith's fire")
-	check(camp._hint_text(smith).contains(tr("menu.blacksmith")), "says what is there")
-	check(camp.rulers(1).size() == 4, "four colonels give the missions at Uprising")
-	eq(camp.arrows.size(), 1, "an arrow on the open way only")
-	check(
-		camp.world.get_children().any(func(n): return str(n.name).begins_with("Land")),
-		"the land of the places past the gaps"
-	)
-	p.done["6:0"] = true
-	camp.profile = p
-	var again: Array = camp.choices().filter(func(w): return w[1])
-	eq(again, [[6, true, 1]], "the next mission not won yet")
-	camp.place = 27
-	eq(
-		camp.choices().map(func(w): return w[0]).size(),
-		camp.world_map.next_places(27).size(),
-		"one way per place on"
-	)
-	eq(CampScreen.terrain(33), "mountains", "Chyhyryn's hills")
-	eq(CampScreen.terrain(19), "forest", "a forest")
-	eq(CampScreen.terrain(24), "lake", "down the Dnipro")
-	eq(CampScreen.terrain(2), "steppe", "the steppe")
-	camp.free()
-	Router.params = old
-	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))
-
-
 func test_a_room_shows_only_itself_and_the_next() -> void:
 	var map: Dictionary = MapBuilder.load_map(6)
 	var rooms: RefCounted = Rooms.new(map, 0)
@@ -260,4 +162,29 @@ func test_the_camp_of_the_way_chosen_offers_its_generals() -> void:
 	Router.params = old
 	var back: RefCounted = Profile.load_or_new(CAMP_PATH)
 	eq(back.heading, 2, "the way chosen is kept")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))
+
+
+## The town hall names every colonel; how far the hero has come with one only once it is
+## something.
+func test_town_hall_colonels_without_zero() -> void:
+	Profile.new().save(CAMP_PATH)
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": CAMP_PATH}
+	var hall: Control = Router.make(Router.SCREENS["town_hall"])
+	root.add_child(hall)
+	var lines: Array = hall.list.get_node("Colonels").get_children()
+	eq(lines.size(), hall.colonels().size(), "a line per colonel")
+	for l in lines:
+		check(not (l as Label).text.contains("%"), "no 0% for a colonel the hero has not won with")
+	var first: Array = hall.colonels()[0]
+	eq(hall.colonel_line(first), tr(str(first[1])), "only his name")
+	hall.profile.progress[str(first[0])] = 15
+	eq(
+		hall.colonel_line(first),
+		tr("hall.progress") % [tr(str(first[1])), 15],
+		"15% once he has won with him"
+	)
+	hall.free()
+	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))

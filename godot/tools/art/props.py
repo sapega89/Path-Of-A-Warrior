@@ -187,11 +187,11 @@ def banner(k, rng, color="cinnabar"):
     k.lathe((0, 0, 0), [(0.0, 0.25), (0.12, 0.22), (0.2, 0.0)], "stone", segs=7, smooth=False)
 
 
-def namet(k, rng):
+def namet(k, rng, cloth="canvas"):
     """Small A-frame canvas tent along X."""
     L, W, H = 2.4, 1.9, 1.6
     v = [(-L / 2, -W / 2, 0), (L / 2, -W / 2, 0), (L / 2, W / 2, 0), (-L / 2, W / 2, 0), (-L / 2, 0, H), (L / 2, 0, H)]
-    made = k.add((v, [(0, 1, 5, 4), (2, 3, 4, 5), (1, 2, 5), (3, 0, 4)]), "canvas", None, None, False)
+    made = k.add((v, [(0, 1, 5, 4), (2, 3, 4, 5), (1, 2, 5), (3, 0, 4)]), cloth, None, None, False)
     k.box((-L / 2 - 0.02, -0.0, 0.5), (0.04, 0.6, 1.0), "dusk", taper=0.2)
     for x in (-L / 2 - 0.05, L / 2 + 0.05):
         k.tube((x, 0, 0), (x, 0, H + 0.25), 0.035, 0.03, "wood_dark", segs=5)
@@ -436,6 +436,125 @@ def skelia(k, rng):
                rot=rot, smooth=False, shade=jitter(rng, 0.85, 1.1))
 
 
+# -- the camp on the marsh: gates in the palisade ring, torches, reeds, an anvil ----------
+def _leaf(k, rng, hinge, width, height, swing, planks=5):
+    """A gate leaf of upright planks on two battens with a brace, hung at `hinge` (x, y): it
+    runs along +X from the hinge (along -X for a negative width) and is swung `swing` radians
+    about it (0: shut). The battens are on the inner side (+Y), iron straps on the outer."""
+    hx, hy = hinge
+    turn = Matrix.Rotation(swing, 4, "Z")
+    place = Matrix.Translation((hx, hy, 0)) @ turn
+    w = abs(width)
+    s = 1 if width > 0 else -1
+    pw = w / planks
+    for i in range(planks):
+        h = height + rng.uniform(-0.05, 0.05)
+        k.box(place @ Vector((s * pw * (i + 0.5), 0, 0.1 + h / 2)), (pw - 0.012, 0.07, h), "wood", rot=turn,
+              shade=jitter(rng, 0.82, 1.04))
+        k.lathe(place @ Vector((s * pw * (i + 0.5), 0, 0.1 + h)), [(0.0, pw * 0.5), (0.1, 0.0)], "wood", segs=4,
+                rot=turn @ Matrix.Rotation(math.pi / 4, 4, "Z"), smooth=False, shade=0.9)
+    for z in (0.55, height - 0.35):
+        k.box(place @ Vector((s * w / 2, 0.06, z)), (w - 0.04, 0.05, 0.16), "wood_dark", rot=turn)
+        k.box(place @ Vector((s * w * 0.32, -0.045, z)), (w * 0.62, 0.02, 0.08), "iron", rot=turn)
+    k.beam(place @ Vector((s * (w - 0.15), 0.07, 0.62)), place @ Vector((s * 0.15, 0.07, height - 0.42)), 0.13, 0.05,
+           "wood_dark", roll_hint=turn @ Vector((0, 1, 0)))
+    k.ball(place @ Vector((s * (w - 0.22), -0.07, 1.15)), (0.06, 0.03, 0.06), "iron", segs=6, rings=4)
+
+
+def brama(k, rng):
+    """The main gate of a camp: two heavy posts with props behind, a lintel, an icon in a case
+    under a little gable roof on top of it, two leaves of planks swung open inwards (+Y). The
+    opening is 3.2 m along X; it stands in a palisade ring (palisade)."""
+    half = 1.6
+    for s in (1, -1):
+        x = s * (half + 0.22)
+        k.lathe((x, 0, 0), [(0.0, 0.21), (3.3, 0.19, "hard"), (3.55, 0.0)], "wood_dark", segs=8,
+                shade=jitter(rng, 0.9, 1.05))
+        k.tube((x, 1.0, 0), (x, 0.15, 2.1), 0.08, 0.07, "wood_dark", segs=6)
+    k.beam((-half - 0.6, 0, 3.0), (half + 0.6, 0, 3.0), 0.28, 0.3, "wood_dark")
+    k.beam((-half - 0.25, -0.02, 2.66), (half + 0.25, -0.02, 2.66), 0.16, 0.18, "wood")
+    k.beam((-half, 0, 0.04), (half, 0, 0.04), 0.3, 0.08, "wood_dark")
+    # the icon case on the lintel, under its own little roof
+    k.box((0, 0, 3.47), (0.7, 0.3, 0.64), "wood_dark")
+    k.box((0, -0.16, 3.45), (0.52, 0.04, 0.46), "gold_dark")
+    k.box((0, -0.18, 3.45), (0.4, 0.03, 0.34), "blue_dark")
+    k.box((0, -0.2, 3.49), (0.12, 0.02, 0.2), "gold")
+    for s in (1, -1):
+        v = [(-0.5, 0, 4.1), (0.5, 0, 4.1), (0.5, s * 0.36, 3.78), (-0.5, s * 0.36, 3.78)]
+        made = k.add((v, [(0, 1, 2, 3)] if s > 0 else [(3, 2, 1, 0)]), "wood", None, None, False)
+        k.solidify(made, 0.05, "wood_dark", shade=0.9)
+    k.lathe((0, 0, 4.1), [(0.0, 0.05), (0.12, 0.04), (0.2, 0.0)], "gold_dark", segs=6)
+    k.beam((0, 0, 4.25), (0, 0, 4.6), 0.04, 0.04, "iron_dark")
+    k.beam((-0.12, 0, 4.5), (0.12, 0, 4.5), 0.04, 0.04, "iron_dark")
+    _leaf(k, rng, (-half, 0.06), half, 2.6, 1.2)
+    _leaf(k, rng, (half, 0.06), -half, 2.6, -1.25)
+
+
+def vorota(k, rng):
+    """A side gate of a camp: two posts, a lintel with a rail over it, one leaf swung open
+    inwards (+Y). The opening is 1.5 m along X."""
+    half = 0.75
+    for s in (1, -1):
+        k.lathe((s * (half + 0.14), 0, 0), [(0.0, 0.15), (2.75, 0.13, "hard"), (2.95, 0.0)], "wood_dark", segs=7,
+                shade=jitter(rng, 0.9, 1.05))
+    k.beam((-half - 0.45, 0, 2.58), (half + 0.45, 0, 2.58), 0.2, 0.22, "wood_dark")
+    k.beam((-half - 0.3, 0, 2.86), (half + 0.3, 0, 2.86), 0.12, 0.12, "wood", shade=0.9)
+    for s in (1, -1):
+        k.beam((s * (half - 0.1), 0, 2.58), (s * (half - 0.1), 0, 2.86), 0.08, 0.08, "wood_dark")
+    _leaf(k, rng, (-half, 0.06), 2 * half, 2.2, 1.45, planks=6)
+
+
+def smoloskyp(k, rng):
+    """A torch on a pole: an iron cup of tarred tow at two metres (the flame is an effect),
+    stones heaped round the foot."""
+    k.tube((0, 0, 0), (0.02, 0, 1.95), 0.05, 0.04, "wood_dark", segs=6)
+    k.lathe((0.02, 0, 1.9), [(0.0, 0.04), (0.17, 0.13, "hard"), (0.19, 0.11, "hard"), (0.1, 0.0)], "iron", segs=8,
+            smooth=False)
+    for z in (1.97, 2.04):
+        k.lathe((0.02, 0, z), [(-0.012, 0.115 + (z - 1.97)), (0.012, 0.118 + (z - 1.97))], "iron_dark", segs=8,
+                cap0=False, cap1=False)
+    k.ball((0.02, 0, 2.08), (0.1, 0.1, 0.08), "chernozem", segs=7, rings=4, smooth=False)
+    k.ball((0.02, 0, 2.12), (0.07, 0.07, 0.04), "ember", segs=7, rings=3)
+    for i in range(5):
+        a = TAU * i / 5 + rng.uniform(-0.2, 0.2)
+        k.ball((math.sin(a) * 0.14, -math.cos(a) * 0.14, 0.05), (0.09, 0.08, 0.07), "stone", segs=6, rings=4,
+               rot=Matrix.Rotation(a, 4, "Z"), smooth=False, shade=jitter(rng, 0.8, 1.05))
+
+
+def ochert(k, rng):
+    """A clump of reeds at the water's edge: tall thin blades leaning out, and bulrushes with
+    brown heads on their stalks."""
+    up = Vector((0, 0, 1))
+    for i in range(26):
+        a = rng.uniform(0, TAU)
+        d = rng.uniform(0.0, 0.38)
+        out = Vector((math.sin(a), -math.cos(a), 0))
+        base = out * d
+        tip = base + out * rng.uniform(0.08, 0.4) + Vector((0, 0, rng.uniform(1.0, 1.9)))
+        k.lathe(base, [(0.0, 0.032), ((tip - base).length, 0.0)], rng.choice(["grass_dark", "oak_light", "straw", "grass"]),
+                segs=3, smooth=False, rot=up.rotation_difference(tip - base).to_matrix().to_4x4(),
+                shade=jitter(rng, 0.75, 1.1))
+    for i in range(5):
+        a = rng.uniform(0, TAU)
+        base = Vector((math.sin(a) * 0.2, -math.cos(a) * 0.2, 0))
+        top = base + Vector((rng.uniform(-0.12, 0.12), rng.uniform(-0.12, 0.12), rng.uniform(1.5, 2.1)))
+        k.tube(base, top, 0.012, 0.01, "grass_dark", segs=4)
+        k.ball(top - Vector((0, 0, 0.22)), (0.04, 0.04, 0.13), "leather", segs=6, rings=5, shade=jitter(rng, 0.85, 1.1))
+
+
+def kovadlo(k, rng):
+    """An anvil on a stump, its horn towards +X, and a hammer leaning on the stump."""
+    k.lathe((0, 0, 0), [(0.0, 0.34), (0.1, 0.28), (0.55, 0.27, "hard"), (0.56, 0.0)], "wood", segs=9)
+    k.lathe((0, 0, 0.555), [(0.0, 0.22), (0.006, 0.0)], "wood_light", segs=9)
+    k.box((0, 0, 0.61), (0.36, 0.26, 0.1), "iron", taper=0.8)
+    k.box((0, 0, 0.72), (0.2, 0.15, 0.14), "iron")
+    k.box((-0.03, 0, 0.84), (0.44, 0.2, 0.11), "iron")
+    k.box((-0.03, 0, 0.896), (0.42, 0.18, 0.012), "steel")
+    k.lathe((0.19, 0, 0.845), [(0.0, 0.075), (0.26, 0.0)], "iron", segs=8, rot=Matrix.Rotation(math.pi / 2, 4, "Y"))
+    k.beam((0.3, -0.34, 0.0), (0.16, -0.22, 0.52), 0.035, 0.035, "wood_light")
+    k.box((0.16, -0.22, 0.55), (0.18, 0.07, 0.07), "iron", rot=Matrix.Rotation(-0.7, 4, "Z"))
+
+
 PROPS = {
     "khata": khata,
     "tyn": tyn,
@@ -462,6 +581,12 @@ PROPS = {
     "drova": drova,
     "stoiak": stoiak,
     "skelia": skelia,
+    "brama": brama,
+    "vorota": vorota,
+    "smoloskyp": smoloskyp,
+    "ochert": ochert,
+    "kovadlo": kovadlo,
+    "namet_dark": lambda k, rng: namet(k, rng, "canvas_smoke"),
 }
 
 

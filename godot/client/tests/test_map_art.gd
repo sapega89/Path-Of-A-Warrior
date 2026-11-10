@@ -138,8 +138,36 @@ func test_what_stands_on_the_map() -> void:
 		if p.scene_file_path.ends_with("shatro.glb"):
 			tents += 1
 	check(tents >= 2, "a tent over each group of its cells: %d" % tents)
-	var tufts: MultiMeshInstance3D = b.get_node("Tufts")
-	check(tufts.multimesh.instance_count > 100, "grass")
+	var grass := 0
+	var wheat := 0
+	for mmi in b.get_node("Grass").get_children():
+		var n: int = (mmi as MultiMeshInstance3D).multimesh.instance_count
+		if String(mmi.name).begins_with("wheat"):
+			wheat += n
+		else:
+			grass += n
+	check(grass > 300, "grass: %d" % grass)
+	check(wheat > 100, "fields of wheat around: %d" % wheat)
+	b.free()
+
+
+## Grass and wheat sway (grass.gdshader), are lit as the ground, and only past the map's edge
+## is wheat sown.
+func test_grass_and_wheat() -> void:
+	var b := _map(9)
+	var chunk: MultiMeshInstance3D = b.get_node("Grass").get_child(0)
+	eq(chunk.material_override, Grass.material(), "one material for all the grass")
+	eq(chunk.cast_shadow, GeometryInstance3D.SHADOW_CASTING_SETTING_OFF, "no shadows of its own")
+	check(chunk.multimesh.use_custom_data, "each clump its colour")
+	check(not b.in_field(b.w / 2.0, b.h / 2.0), "no wheat on the map")
+	var sown := 0
+	for x in range(-5, b.w + 5):
+		if b.in_field(x + 0.5, -3.0):
+			sown += 1
+	check(sown > 0 and sown < b.w + 10, "fields along the top, not all of it: %d" % sown)
+	var wheat := Grass.mesh("wheat")
+	var grass := Grass.mesh("grass")
+	check(wheat.get_aabb().size.y > grass.get_aabb().size.y * 1.5, "wheat stands taller")
 	b.free()
 
 
@@ -162,6 +190,29 @@ func test_breakables_flash() -> void:
 	var m: ShaderMaterial = b.breakables[0].get_meta("material")
 	CombatFeel.flash_material(m, [0.7, Color(1, 0.5, 0.25)])
 	eq(m.get_shader_parameter("flash"), 0.7, "a hit flashes it")
+	b.free()
+
+
+## A thing one can break wears a brass outline and warm edges that glow and dim; the other
+## props do not.
+func test_breakables_marked() -> void:
+	var b := _map(1)
+	for o in b.breakables:
+		var m: ShaderMaterial = o.get_meta("material")
+		var outline := m.next_pass as ShaderMaterial
+		check(
+			outline != null and outline.shader == ArtKit.BREAKABLE_OUTLINE,
+			"%s: a brass outline" % o.name
+		)
+		var glow := outline.next_pass as ShaderMaterial if outline != null else null
+		check(glow != null and glow.shader == ArtKit.BREAKABLE_GLOW, "%s: warm edges" % o.name)
+	var others := 0
+	for p in b.props:
+		if p.get_parent() != null and p.get_parent().name == "Props":
+			var m: Material = MapArt._material_of(p)
+			check(m == null or m.next_pass == null, "%s is not" % p.name)
+			others += 1
+	check(others > 0, "props around")
 	b.free()
 
 

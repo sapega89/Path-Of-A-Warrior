@@ -160,9 +160,11 @@ func test_safe_screen() -> void:
 	var screen: Control = Router.make(Router.SCREENS["live_safe"])
 	root.add_child(screen)
 	eq([screen.local.text, screen.server.text], ["500", "0"])
+	eq(screen.arrow.icon, screen._arrows[0], "the arrow points at the hero first")
 	check(not screen.submit(), "nothing in the Safe to take out")
 	eq(screen.info.text, tr("live.no_safe_gold"))
 	screen.turn()
+	eq(screen.arrow.icon, screen._arrows[1], "and at the Safe when turned")
 	screen.amount.text = "9999"
 	screen._typed(screen.amount.text)
 	eq(screen.amount.text, "500", "no more than the hero has")
@@ -176,6 +178,20 @@ func test_safe_screen() -> void:
 	ServerTests._rm(d)
 
 
+func test_safe_arrow_in_the_new_art() -> void:
+	var right := LiveSafeScreen.arrow_icon(true).get_image()
+	var left := LiveSafeScreen.arrow_icon(false).get_image()
+	eq(right.get_width(), LiveSafeScreen.ARROW_PX, "as wide as ARROW_PX")
+	var y := right.get_height() / 2
+	check(right.get_pixel(87, y).a > 0.5 and right.get_pixel(1, y).a < 0.1, "points right")
+	var mirrored := true
+	for x in right.get_width():
+		mirrored = (
+			mirrored and left.get_pixel(x, y) == right.get_pixel(right.get_width() - 1 - x, y)
+		)
+	check(mirrored, "the hero's arrow is the Safe's one turned round")
+
+
 func test_game_menu_has_the_game_and_the_main_menu_the_rest() -> void:
 	var d := _dir()
 	var t := _client(d)
@@ -186,12 +202,13 @@ func test_game_menu_has_the_game_and_the_main_menu_the_rest() -> void:
 	root.add_child(screen)
 	eq(
 		screen.buttons.map(func(b): return str(b.name)),
-		["Missions", "Management", "Blacksmith", "Visiting", "Trade", "Warehouse", "Safe", "Help"]
+		["Management", "Blacksmith", "Visiting", "Trade", "Safe", "Help"],
+		"no Missions (the camp's ways) and no Warehouse (the camp's stores)"
 	)
 	eq(
 		screen.online.buttons.map(func(b): return str(b.name)),
-		["Duel", "OnlineMissions", "Character", "Ranking", "Order", "Chat", "Invitations"],
-		"the multiplayer pages in the same menu"
+		["Character", "Ranking", "Order", "Chat"],
+		"the multiplayer pages in the same menu, without the online battles while they are hidden"
 	)
 	check(t[0].synced and screen.news.done, "Live synced, nothing new")
 	check(screen.menu.visible)
@@ -369,13 +386,12 @@ func test_game_menu_shows_notices_sale_list_gifts_and_fame() -> void:
 	check(news.note.dialog_text.begins_with("Second"), "the next page")
 	news.note.confirmed.emit()
 	check(news.list.visible and not screen.menu.visible, "then the Sale List, in place of the menu")
-	eq(news.list_kind, "sold")
 	check(news.list_info.text.contains("700"), news.list_info.text)
 	news.list_done()
-	eq(news.list_kind, "gifts", "then the Gift List")
-	check(news.list_info.text.begins_with("FRIEND"), news.list_info.text)
+	check(not news.list.visible, "the Sale List read")
+	eq(news.note.dialog_text, tr("live.gifts_waiting"), "then: gifts came (read at the auctioneer)")
 	eq(t[0].warehouse.size(), 1, "the gift is in the Warehouse")
-	news.list_done()
+	news.note.confirmed.emit()
 	eq(news.note.dialog_text, tr("live.fame_applied") % [5, 7], "then the Exp and Fame")
 	news.note.confirmed.emit()
 	check(news.done and screen.menu.visible, "done, the menu again")
@@ -385,8 +401,106 @@ func test_game_menu_shows_notices_sale_list_gifts_and_fame() -> void:
 	screen = Router.make(Router.SCREENS["game_menu"])
 	root.add_child(screen)
 	news = screen.news
+	check(t[0].has_gifts, "the gifts not read yet")
 	check(not news.note.visible and not news.list.visible, "nothing new the second time")
 	check(news.done and screen.menu.visible, "the menu at once")
+	screen.free()
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
+	ServerTests._rm(d)
+
+
+func test_gift_list_at_the_auctioneer() -> void:
+	var d := _dir()
+	var t := _client(d)
+	var l: LiveServer = t[1]
+	for i in 6:
+		l.give_gift("ANDREY", "FRIEND" if i == 0 else "MARIA", Items.make(131))
+	_hero().save(TEST_PATH)
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": TEST_PATH, "live": t[0]}
+	var screen: Control = Router.make(Router.SCREENS["live_trade"])
+	root.add_child(screen)
+	eq(screen.buttons.map(func(b): return str(b.name)), ["Buy", "Sell", "Cancel", "Gifts", "Give"])
+	screen.free()
+	screen = Router.make(Router.SCREENS["live_gifts"])
+	root.add_child(screen)
+	var shown := func(s: Control) -> int:
+		return s.cells.filter(func(c): return c.icon != null).size()
+	eq(screen.text.text, tr("live.gift_lines"))
+	eq(shown.call(screen), 5, "five at a time")
+	check(screen.info.text.begins_with(tr("live.gift_from") % "FRIEND"), screen.info.text)
+	check(screen.info.text.contains(Items.name_of(131)), screen.info.text)
+	check(screen.next.visible, "one more")
+	check(screen.ask_next(), "the next five")
+	eq(shown.call(screen), 1)
+	check(not screen.next.visible, "no more")
+	screen.free()
+	screen = Router.make(Router.SCREENS["live_gifts"])
+	root.add_child(screen)
+	eq(screen.text.text, tr("live.no_gifts"), "each gift is shown once")
+	eq(shown.call(screen), 0)
+	eq(t[0].warehouse.size(), 6, "the gifts stay in the Warehouse")
+	screen.free()
+	Router.params = {"profile_path": TEST_PATH}
+	screen = Router.make(Router.SCREENS["live_gifts"])
+	root.add_child(screen)
+	eq(screen.info.text, tr("live.failed"), "offline")
+	screen.free()
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
+	ServerTests._rm(d)
+
+
+func test_give_a_gift_screen() -> void:
+	var d := _dir()
+	var t := _client(d)
+	var l: LiveServer = t[1]
+	l.accounts = Accounts.new(d.path_join("accounts"))
+	l.accounts.rounds = 20
+	l.accounts.create_account("MARIA", "1234")
+	var hero := _hero()
+	hero.add_item(Items.make(434))
+	hero.save(TEST_PATH)
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": TEST_PATH, "live": t[0]}
+	var screen: Control = Router.make(Router.SCREENS["live_give"])
+	root.add_child(screen)
+	check(screen.things.cells[0].icon != null, "the backpack first")
+	check(not screen.pick(2), "an elixir")
+	eq(screen.info.text, tr("live.not_giftable"))
+	check(screen.pick(0), "the sword picked")
+	eq(screen.step, LiveGiveScreen.Step.WHO)
+	screen.go_back()
+	eq(screen.step, LiveGiveScreen.Step.PICK, "back to the things")
+	screen.pick(0)
+	screen.to.text = "ma ria1"
+	screen._typed(screen.to.text)
+	eq(screen.to.text, "MARIA", "capital letters only")
+	screen.to.text = "MAR"
+	eq(screen.ask_give(), "", "too short for a UserID")
+	eq(screen.info.text, tr("live.bad_user_id"))
+	screen.to.text = "NOBODY"
+	check(screen.ask_give().contains("NOBODY"), "asks")
+	screen.ask.hide()
+	screen.confirm()
+	eq(screen.info.text, tr("live.no_player"))
+	eq(screen.step, LiveGiveScreen.Step.WHO, "still on who")
+	screen.to.text = "MARIA"
+	check(screen.ask_give().contains(Items.name_of(101)), "asks")
+	screen.ask.hide()
+	screen.confirm()
+	eq(screen.info.text, tr("live.given") % [Items.name_of(101), "MARIA"])
+	eq(screen.step, LiveGiveScreen.Step.PICK)
+	check(screen.things.cells[0].icon == null, "gone from the backpack")
+	eq(int(Profile.load_or_new(TEST_PATH).backpack[0].id), 0, "the hero saved")
+	screen.free()
+	var maria: Array = _player(l, "MARIA")
+	Router.params = {"profile_path": TEST_PATH, "live": maria[0]}
+	screen = Router.make(Router.SCREENS["live_gifts"])
+	root.add_child(screen)
+	check(screen.info.text.begins_with(tr("live.gift_from") % "ANDREY"), screen.info.text)
+	eq(maria[0].warehouse.size(), 1, "in her Warehouse")
 	screen.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))

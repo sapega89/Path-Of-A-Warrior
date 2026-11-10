@@ -57,7 +57,6 @@ layout_mode = 2
 [node name="Arrow" type="Button" parent="Center/Column/Sides"]
 unique_name_in_owner = true
 layout_mode = 2
-texture_filter = 1
 custom_minimum_size = Vector2(96, 64)
 icon_alignment = 1
 expand_icon = true

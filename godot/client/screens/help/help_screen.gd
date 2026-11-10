@@ -3,7 +3,8 @@ extends BaseScreen
 ## Help, one for the whole game: the campaign's topics (Missions, Visiting, Blacksmith, Skills,
 ## Gear, Experience, Saving, Control; data/help.json), then the multiplayer's Duel and Online
 ## Missions (data/mp.json), each a few pages, ◄ n / m ►. The Control pages tell this version's
-## keys, buttons and touch controls, on the map and in an online battle.
+## keys, buttons and touch controls, on the map and in an online battle. While the online
+## battles are hidden (OnlineSection.BATTLES), so are their topics and keys.
 ## Up / down pick a topic, left / right turn the page, back returns to the topics, then leaves.
 
 const PATH := "res://data/help.json"
@@ -28,7 +29,7 @@ var close := Callable()
 
 func _ready() -> void:
 	topics = _read(PATH, "topics")
-	for t in _read(MP_PATH, "help"):
+	for t in _read(MP_PATH, "help") if OnlineSection.BATTLES else []:
 		if MP_TOPICS.has(t.get("name")):
 			topics.append({"name": tr(MP_TOPICS[t.name]), "pages": t.get("pages", [])})
 	for i in topics.size():
@@ -61,7 +62,8 @@ func show_topics() -> void:
 
 func pages_of(i: int) -> Array:
 	if i == CONTROL_TOPIC:
-		return (CONTROL_PAGES + MP_CONTROL_PAGES).map(func(k): return tr(k))
+		var keys: Array = CONTROL_PAGES + (MP_CONTROL_PAGES if OnlineSection.BATTLES else [])
+		return keys.map(func(k: String) -> String: return tr(k))
 	return topics[i].get("pages", []).map(I18n.text) if i >= 0 and i < topics.size() else []
 
 

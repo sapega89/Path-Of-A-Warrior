@@ -77,6 +77,11 @@ func test_gifts() -> void:
 			int(gift.kind) == Visits.Gift.NONE or not str(gift.text).is_empty(),
 			"a gift has a name: %s" % gift
 		)
+		for key in [str(gift.text), str(gift.title)]:
+			check(
+				not key.begins_with("visit.") or TranslationServer.translate(key) != key,
+				"%s is said in words" % key
+			)
 	check(
 		kinds.has(Visits.Gift.SKILL) and kinds.has(Visits.Gift.ATTACK),
 		"skills and attack about tactics"
@@ -95,9 +100,18 @@ func test_visiting_screen() -> void:
 	Router.params = {"profile_path": TEST_PATH, "seed": 1}
 	var screen: Control = Router.make(Router.SCREENS["visiting"])
 	root.add_child(screen)
-	eq(screen.list.get_child_count(), 3, "the header, Jan Gorski, Back")
+	eq(screen.friends.get_child_count(), 1, "Jan Gorski on the list")
+	check(screen.header.visible and not screen.notice.visible, "under the header, no notice")
 	screen.open(4)
 	eq(screen.step, VisitingScreen.Step.GREETING, "he greets")
+	check(screen.popup.visible and screen.list.is_visible_in_tree(), "in a popup over the list")
+	eq(
+		screen.column.focus_behavior_recursive,
+		Control.FOCUS_BEHAVIOR_DISABLED,
+		"the list behind it takes no focus"
+	)
+	eq(screen.general_name.text, "Jan Gorski", "his name over the talk")
+	eq(screen.hero_says.horizontal_alignment, HORIZONTAL_ALIGNMENT_RIGHT, "the hero's line by him")
 	eq(screen.hero_says.visible_characters, 0, "typed out")
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
@@ -106,18 +120,24 @@ func test_visiting_screen() -> void:
 	for i in 5:
 		screen.press()
 	eq(screen.step, VisitingScreen.Step.TOPIC, "then the question")
-	check(screen.topics.visible, "with four topics")
+	check(screen.topics.visible and not screen.hero_says.visible, "four topics in his line's place")
 	screen.choose(2)
 	eq(screen.step, VisitingScreen.Step.TALK, "they talk")
+	check(screen.hero_says.visible and not screen.topics.visible, "his line back")
 	for i in 4:
 		screen.press()
 	eq(screen.step, VisitingScreen.Step.DISCUSSED, "what was discussed")
+	check(
+		screen.note.visible and screen.popup.visible and not screen.talk.visible,
+		"in a notice in the talk's place"
+	)
 	check(screen.text.text.contains("Tactics"), screen.text.text)
 	screen.press()
 	eq(screen.step, VisitingScreen.Step.VISITED, "the visit's end")
 	check(
-		screen.text.text.begins_with("You visited Jan Gorski.\nFriendship:100%"), screen.text.text
+		screen.text.text.begins_with("You visited Jan Gorski.\nFriendship: 100%"), screen.text.text
 	)
+	check(not screen.text.text.contains(":1") and not screen.text.text.contains(" :"), "in words")
 	var saved: RefCounted = Profile.load_or_new(TEST_PATH)
 	check(not saved.can_visit, "one visit per mission")
 	screen.free()
@@ -126,6 +146,8 @@ func test_visiting_screen() -> void:
 	screen = Router.make(Router.SCREENS["visiting"])
 	root.add_child(screen)
 	eq(str(screen.list.get_child(0).name), "Notice", "not now")
+	check(screen.notice.visible and not screen.header.visible, "the notice alone")
+	eq(screen.friends.get_child_count(), 0, "and no one to invite")
 	screen.free()
 	Router.params = old
 

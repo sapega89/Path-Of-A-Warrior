@@ -24,7 +24,7 @@ grow_vertical = 1
 unique_name_in_owner = true
 layout_mode = 2
 custom_minimum_size = Vector2(600, 0)
-theme_override_constants/separation = 8
+theme_override_constants/separation = 4
 
 [node name="Heading" type="Label" parent="Center/Column"]
 layout_mode = 2
@@ -133,6 +133,19 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="PixelArtRow" type="HBoxContainer" parent="Center/Column"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Center/Column/PixelArtRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "settings.pixel_art"
+
+[node name="PixelArt" type="CheckBox" parent="Center/Column/PixelArtRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="FullscreenRow" type="HBoxContainer" parent="Center/Column"]
 layout_mode = 2
 
@@ -163,6 +176,8 @@ text = "common.back"
 [connection signal="toggled" from="Center/Column/ScreenShakeRow/ScreenShake" to="." method="_on_screen_shake"]
 
 [connection signal="toggled" from="Center/Column/RumbleRow/Rumble" to="." method="_on_rumble"]
+
+[connection signal="toggled" from="Center/Column/PixelArtRow/PixelArt" to="." method="_on_pixel_art"]
 
 [connection signal="toggled" from="Center/Column/FullscreenRow/Fullscreen" to="." method="_on_fullscreen"]
 

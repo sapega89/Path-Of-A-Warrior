@@ -46,6 +46,7 @@ const FADE_TIME := 0.35
 var tint := 0
 var loot := {}  # sim drop -> Sprite3D
 var trails: Array = []  # the weapon trails of this tick
+var _trails_before: Array = []  # and of the last one, fading
 var _trail_pick := RandomNumberGenerator.new()
 var _acc := 0.0
 var _pressed := -1
@@ -201,6 +202,7 @@ func _process(delta: float) -> void:
 		_belt = -1
 		hud.tick()
 		_blink += 1
+		_trails_before = trails
 		trails = sim.trails(_trail_pick)
 	if sim.failed and not _fail_seen:
 		_fail_seen = true
@@ -284,9 +286,10 @@ func _update_view(t: float) -> void:
 	var shown: Array = sim.auras()
 	shown.append_array(sim.effects())
 	shown.append_array(sim.fires())
-	for sp in sim.sparks():
-		shown.append(["blood", sp[0], sp[1]])  # the hits of MapSim land on people
-	shown.append_array(trails)
+	for sp in sim.sparks():  # the hits of MapSim land on people: a flash and blood
+		shown.append(["spark", sp[0], sp[1]])
+		shown.append(["blood", sp[0], sp[1]])
+	shown.append_array(MapPictures.trails_with_fading(trails, _trails_before))
 	effects.show_effects(shown, t)
 	_place_objects()
 	_place_loot()
