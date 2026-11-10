@@ -7,7 +7,8 @@ extends SubViewportContainer
 ## of pixels high, and blown up without smoothing, so each of its pixels is a crisp square of
 ## `pixel` screen pixels, the same whole number across the screen. Its colours are then held to
 ## a few steps of lightness and colour with an ordered dither between them (pixel_post.gdshader).
-## Off: the world is drawn at the window's own pixels with smoothed edges.
+## Off: the world is drawn at the window's own pixels with smoothed edges (as the graphics
+## quality says: Settings.GRAPHICS msaa), and the lamps' and fires' shadows are as good as it says.
 ## The setting "brightness" lifts or deepens the shade of the world (Settings.world_gamma): in
 ## pixel art before its steps, smooth by the shader world_light.gdshader, which is left off at
 ## the middle brightness, so the colours stay as they are.
@@ -87,7 +88,9 @@ func fit() -> void:
 	scale = Vector2.ONE * (pixel / ratio)
 	size = cells
 	viewport.size_2d_override = Vector2i((cells * pixel / ratio).round())
-	viewport.msaa_3d = Viewport.MSAA_DISABLED if pixel_art else Viewport.MSAA_2X
+	var graphics: Dictionary = Settings.graphics()
+	viewport.msaa_3d = Viewport.MSAA_DISABLED if pixel_art else graphics.msaa
+	viewport.positional_shadow_atlas_size = graphics.lamps
 	material = post if pixel_art else _smooth_material()
 	texture_filter = (
 		CanvasItem.TEXTURE_FILTER_NEAREST if pixel_art else CanvasItem.TEXTURE_FILTER_LINEAR
@@ -107,7 +110,7 @@ func _process(_delta: float) -> void:
 
 
 func _on_setting(key: String) -> void:
-	if key in ["pixel_art", "brightness"]:
+	if key in ["pixel_art", "brightness", "graphics"]:
 		fit()
 
 

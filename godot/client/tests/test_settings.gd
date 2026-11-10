@@ -109,3 +109,46 @@ func test_the_brightness_slider() -> void:
 	screen.free()
 	Settings.path = old_path
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))
+
+
+func test_graphics_and_the_window() -> void:
+	var s := _fresh()
+	eq(s.get_value("graphics"), 1, "Medium by default")
+	eq(SettingsScript.GRAPHICS[1].msaa, Viewport.MSAA_2X, "Medium smooths as the game did")
+	check(
+		0 < SettingsScript.GRAPHICS[0].lamps and SettingsScript.GRAPHICS[0].lamps < 2048,
+		"Low: the lamps' and fires' shadows coarser (never none: the world went white)"
+	)
+	check(SettingsScript.GRAPHICS[2].lamps > SettingsScript.GRAPHICS[1].lamps, "High: finer")
+	check(s.set_value("graphics", 9), "too high")
+	eq(s.graphics(), SettingsScript.GRAPHICS[2], "clamped to High")
+	check(s.set_value("game_speed", 4), "each number has its own range")
+	eq(s.get_value("game_speed"), 4, "Fast is still there")
+	eq(s.get_value("window_size"), 0, "the game's own window by default")
+	s.set_value("window_size", 99)
+	eq(s.get_value("window_size"), SettingsScript.WINDOW_SIZES.size() - 1, "clamped")
+	eq(
+		Array(SettingsScript.window_sizes_within(Vector2i(1920, 1080))),
+		[0, 1, 2],
+		"the sizes that fit the screen"
+	)
+	eq(Array(SettingsScript.window_sizes_within(Vector2i(1024, 600))), [0], "the first always")
+	s.set_value("graphics", 1)
+	s.free()
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))
+
+
+func test_the_graphics_on_the_settings_screen() -> void:
+	var old_path: String = Settings.path
+	Settings.path = PATH
+	var screen: SettingsScreen = Router.make(Router.SCREENS["settings"])
+	root.add_child(screen)
+	eq(screen.graphics.selected, 1, "Medium")
+	screen.graphics.select(0)
+	screen.graphics.item_selected.emit(0)
+	eq(Settings.get_value("graphics"), 0, "Low chosen")
+	check(screen.window_size == null, "no window here (headless), so no window size")
+	Settings.set_value("graphics", 1)
+	screen.free()
+	Settings.path = old_path
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))
