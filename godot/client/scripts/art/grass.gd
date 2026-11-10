@@ -130,10 +130,15 @@ func build(parent: Node3D) -> Node3D:
 			var mm := MultiMesh.new()
 			mm.transform_format = MultiMesh.TRANSFORM_3D
 			mm.use_custom_data = true
+			# White instance colours: the renderer multiplies the vertex colour (how high up a
+			# blade is, the ears) by the instance's, and without them by nothing, so the grass
+			# would neither sway nor show its ears.
+			mm.use_colors = true
 			mm.mesh = mesh(kind)
 			mm.instance_count = list.size()
 			for i in list.size():
 				mm.set_instance_transform(i, list[i][0])
+				mm.set_instance_color(i, Color.WHITE)
 				mm.set_instance_custom_data(i, list[i][1])
 			var mmi := MultiMeshInstance3D.new()
 			mmi.name = "%s_%d_%d" % [kind, key.x, key.y]

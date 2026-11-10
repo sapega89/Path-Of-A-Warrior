@@ -159,6 +159,10 @@ func test_grass_and_wheat() -> void:
 	eq(chunk.material_override, Grass.material(), "one material for all the grass")
 	eq(chunk.cast_shadow, GeometryInstance3D.SHADOW_CASTING_SETTING_OFF, "no shadows of its own")
 	check(chunk.multimesh.use_custom_data, "each clump its colour")
+	# (the renderer multiplies the blades' vertex colour by the instance colour: without one the
+	# grass neither sways nor shows its ears)
+	for c in b.get_node("Grass").get_children():
+		check((c as MultiMeshInstance3D).multimesh.use_colors, "%s: instance colours" % c.name)
 	check(not b.in_field(b.w / 2.0, b.h / 2.0), "no wheat on the map")
 	var sown := 0
 	for x in range(-5, b.w + 5):
