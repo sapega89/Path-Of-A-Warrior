@@ -1915,82 +1915,6 @@
     "en": "Password: digits 0–9 · {ui_accept}: log in",
     "uk": "Пароль: цифри 0–9 · {ui_accept}: увійти"
   },
-  "training.move": {
-    "en": "Walk: {move}",
-    "uk": "Іди: {move}"
-  },
-  "training.move_touch": {
-    "en": "Walk: the stick on the left",
-    "uk": "Іди: стік ліворуч"
-  },
-  "training.attack": {
-    "en": "A soldier! Walk up to him and strike: {attack}",
-    "uk": "Солдат! Підійди й бий: {attack}"
-  },
-  "training.attack_touch": {
-    "en": "A soldier! Walk up to him and strike: the big button on the right",
-    "uk": "Солдат! Підійди й бий: велика кнопка праворуч"
-  },
-  "training.loot": {
-    "en": "He dropped something: walk over it to pick it up",
-    "uk": "Він щось упустив: пройди по ньому, щоб підібрати"
-  },
-  "training.skill": {
-    "en": "Two more! Use a skill: {skill_1}. It costs MP, the blue ball",
-    "uk": "Ще двоє! Уміння: {skill_1}. Воно витрачає MP — синю кулю"
-  },
-  "training.skill_touch": {
-    "en": "Two more! Use a skill: a small button on the right. It costs MP, the blue ball",
-    "uk": "Ще двоє! Уміння: мала кнопка праворуч. Воно витрачає MP — синю кулю"
-  },
-  "training.potion": {
-    "en": "The red ball is your health. Drink a potion from the belt: {belt_1}",
-    "uk": "Червона куля — здоров'я. Випий зілля з поясу: {belt_1}"
-  },
-  "training.potion_touch": {
-    "en": "The red ball is your health. Drink a potion: tap it on the belt below",
-    "uk": "Червона куля — здоров'я. Випий зілля: торкнися його на поясі внизу"
-  },
-  "training.auto": {
-    "en": "Three more. Auto-hunt: {auto}. The hero fights by himself; any key takes over",
-    "uk": "Ще троє. Автополювання: {auto}. Герой б'ється сам; будь-яка клавіша поверне керування"
-  },
-  "training.auto_touch": {
-    "en": "Three more. Auto-hunt: tap AUTO in the bottom-left corner. Any touch takes over",
-    "uk": "Ще троє. Автополювання: торкнися AUTO в лівому нижньому куті. Будь-який дотик поверне керування"
-  },
-  "training.exit": {
-    "en": "Clear! Walk out by the blinking arrow at the edge",
-    "uk": "Чисто! Іди до блимаючої стрілки біля краю"
-  },
-  "training.pause": {
-    "en": "Pause: {pause}. When a room is clear, you can save there",
-    "uk": "Пауза: {pause}. Коли в кімнаті чисто, на паузі можна зберегтися"
-  },
-  "training.pause_touch": {
-    "en": "Pause: the button at the top right. When a room is clear, you can save there",
-    "uk": "Пауза: кнопка вгорі праворуч. Коли в кімнаті чисто, на паузі можна зберегтися"
-  },
-  "training.done": {
-    "en": "Training complete! {ui_accept}: to the game",
-    "uk": "Тренування пройдено! {ui_accept}: до гри"
-  },
-  "training.done_touch": {
-    "en": "Training complete!",
-    "uk": "Тренування пройдено!"
-  },
-  "pause.skip_training": {
-    "en": "Skip Training",
-    "uk": "Пропустити тренування"
-  },
-  "pause.ask_skip_training": {
-    "en": "Skip the training? You can take it later in Settings.",
-    "uk": "Пропустити тренування? Його можна пройти пізніше в налаштуваннях."
-  },
-  "settings.training": {
-    "en": "Training",
-    "uk": "Тренування"
-  },
   "settings.controls": {
     "en": "Controls",
     "uk": "Керування"
@@ -2051,6 +1975,26 @@
     "en": "Attack",
     "uk": "Атака"
   },
+  "controls.skill_1": {
+    "en": "Skill 1",
+    "uk": "Скіл 1"
+  },
+  "controls.skill_2": {
+    "en": "Skill 2",
+    "uk": "Скіл 2"
+  },
+  "controls.skill_3": {
+    "en": "Skill 3",
+    "uk": "Скіл 3"
+  },
+  "controls.skill_4": {
+    "en": "Skill 4",
+    "uk": "Скіл 4"
+  },
+  "controls.skill_5": {
+    "en": "Skill 5",
+    "uk": "Скіл 5"
+  },
   "controls.potion_1": {
     "en": "Potion *",
     "uk": "Зілля *"
@@ -2059,6 +2003,26 @@
     "en": "Potion #",
     "uk": "Зілля #"
   },
+  "controls.belt_1": {
+    "en": "Belt slot 1",
+    "uk": "Пояс, комірка 1"
+  },
+  "controls.belt_2": {
+    "en": "Belt slot 2",
+    "uk": "Пояс, комірка 2"
+  },
+  "controls.belt_3": {
+    "en": "Belt slot 3",
+    "uk": "Пояс, комірка 3"
+  },
+  "controls.belt_4": {
+    "en": "Belt slot 4",
+    "uk": "Пояс, комірка 4"
+  },
+  "controls.belt_5": {
+    "en": "Belt slot 5",
+    "uk": "Пояс, комірка 5"
+  },
   "controls.auto": {
     "en": "Auto-hunt",
     "uk": "Автополювання"
@@ -2066,45 +2030,5 @@
   "controls.skip": {
     "en": "Skip a talk or the story",
     "uk": "Пропустити розмову чи сюжет"
-  },
-  "controls.skill_1": {
-    "en": "Skill 1",
-    "uk": "Скіл 1"
-  },
-  "controls.belt_1": {
-    "en": "Belt slot 1",
-    "uk": "Пояс, комірка 1"
-  },
-  "controls.skill_2": {
-    "en": "Skill 2",
-    "uk": "Скіл 2"
-  },
-  "controls.belt_2": {
-    "en": "Belt slot 2",
-    "uk": "Пояс, комірка 2"
-  },
-  "controls.skill_3": {
-    "en": "Skill 3",
-    "uk": "Скіл 3"
-  },
-  "controls.belt_3": {
-    "en": "Belt slot 3",
-    "uk": "Пояс, комірка 3"
-  },
-  "controls.skill_4": {
-    "en": "Skill 4",
-    "uk": "Скіл 4"
-  },
-  "controls.belt_4": {
-    "en": "Belt slot 4",
-    "uk": "Пояс, комірка 4"
-  },
-  "controls.skill_5": {
-    "en": "Skill 5",
-    "uk": "Скіл 5"
-  },
-  "controls.belt_5": {
-    "en": "Belt slot 5",
-    "uk": "Пояс, комірка 5"
   }
 }

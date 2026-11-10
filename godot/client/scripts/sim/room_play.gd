@@ -18,7 +18,6 @@ static func enter_room(sim: MapSim) -> void:
 	sim.enemies.clear()
 	sim.enemies_alive = 0
 	sim.waves.clear()
-	sim.max_override = -1
 	var list: Array = (
 		sim.rooms.cells[sim.cell].get("waves", []) if sim.cell < sim.rooms.cells.size() else []
 	)
@@ -55,29 +54,11 @@ static func run_cell_scripts(sim: MapSim) -> void:
 
 
 static func max_enemies(sim: MapSim) -> int:
-	if sim.max_override >= 0:
-		return sim.max_override
 	return (
 		int(sim.rooms.cells[sim.cell].get("max_enemies", 0))
 		if sim.cell < sim.rooms.cells.size()
 		else 0
 	)
-
-
-## The training's soldiers: n swordsmen (one or a squad each, as a room's list sends them) come
-## in through the exits, all of them at once if they can.
-static func send_soldiers(sim: MapSim, n: int) -> void:
-	sim.waves[0] = MapSim.KIND_SWORDS
-	sim.waves[1] = n
-	sim.max_override = n
-
-
-## The room counts as cleared now, as when its last soldier falls: "Stage Clear", then the exits.
-static func clear_room(sim: MapSim) -> void:
-	for k in 14:
-		sim.waves[k] = 0
-	sim.room_phase = 3
-	sim.room_phase_timer = 5
 
 
 ## The cells of the room the hero can reach (flood fill from his cell over unblocked cells):
