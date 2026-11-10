@@ -92,7 +92,8 @@ func test_brightness() -> void:
 	)
 	check(s.set_value("brightness", 3.0), "too bright")
 	eq(s.get_value("brightness"), 1.0, "clamped")
-	check(not "brightness" in SettingsScript.CLOUD_KEYS, "the screen's own, not the account's")
+	s.load_from_disk()
+	eq(s.get_value("brightness"), 1.0, "kept on this computer")
 	s.free()
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))
 

@@ -2,8 +2,8 @@
 
 ## Tech Stack
 
-- **Main project:** Godot 4.5, GDScript, in `godot/client` (game, server and tests in one project)
-- **Server (Live, saves):** `godot/client/server`, run headless (ENet + DTLS)
+- **Main project:** Godot 4.5, GDScript, in `godot/client` (game and tests in one project). The
+  game is offline: no server, the hero and the settings are saved on the computer
 - **Data:** `python godot/tools/import_original.py` makes `godot/client/data` and
   `godot/client/assets/original` from the original files
 - **Reference only:** `pyport/` (Python + pygame-ce) describes how the original game behaves. No new
@@ -11,7 +11,7 @@
 
 ## Project Context
 
-`godot/README.md` describes the layout and how to run the game, the server and the tests;
+`godot/README.md` describes the layout and how to run the game and the tests;
 `docs/GODOT_PLAN.md` is the plan of the port. The code is moving to the usual Godot structure step
 by step (the plan: "План переходу Godot-коду на стандарт Godot"). Every change follows the rules
 below, also when the code around it is still in the old style.
@@ -29,8 +29,8 @@ below, also when the code around it is still in the old style.
   back, and `_screen_input()` for its other keys; it never writes its own `_unhandled_input`
   with `ui_cancel`
 - The hero is read with `Profile.load_or_new(path)` and saved with `save(path)`, where `path`
-  is `BaseScreen.profile_path()` (the server's copy through `Cloud` when online, a test's file
-  otherwise); do not read `Router.params.profile_path` or write `user://` files by hand
+  is `BaseScreen.profile_path()` (`Profile.PATH`, user://hero.json, or a test's file); do not
+  read `Router.params.profile_path` or write `user://` files by hand
 - Styles come from `theme.tres` and theme type variations, not from `add_theme_*_override` in code
 - Shared classes have a `class_name`; do not add `const X := preload("res://...gd")` for them
 - Calls go down, signals go up: a child node never reaches its parent or siblings by path;
@@ -60,7 +60,7 @@ below, also when the code around it is still in the old style.
 - Every behaviour change or new screen comes with a test in `godot/client/tests/test_*.gd`
 - Before pushing: `godot --headless --path godot/client res://tests/runner.tscn` passes, and the
   run adds no new `ERROR` lines to the log; in `godot/client`:
-  `gdformat --check scripts server tests tools lab` and `gdlint scripts server tests tools lab`
+  `gdformat --check scripts tests tools lab` and `gdlint scripts tests tools lab`
 - `.uid` files are not committed
 - CI screenshots (`tools/shots.tscn`) must not change unless the change is meant to change them
 - Small PRs: one screen group or one module at a time; do not mix a refactor with a new feature

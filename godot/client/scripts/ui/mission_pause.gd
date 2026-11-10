@@ -59,7 +59,7 @@ func confirmed() -> void:
 	if asked == "exit":
 		Router.back()
 	elif asked == "quit":
-		Cloud.quit_game()
+		get_tree().quit()
 
 
 ## Saves the mission on its map and says how it went ("Saving Success!" or "Can't Save!").

@@ -2,17 +2,10 @@ name: godot-build
 
 # Builds the game for Windows and Linux (godot/client/export_presets.cfg) so friends can play it.
 # Run it by hand from the Actions tab (Run workflow) or push a tag v* to also make a GitHub
-# release with both archives. The server's address and certificate go into each archive as
-# server.txt and server.crt (see godot/FRIENDS.md): the "server" input, or the repository
-# variables POW_SERVER (HOST:PORT) and POW_SERVER_CERT (the text of the server's server.crt).
+# release with both archives. Each archive has the instructions (godot/FRIENDS.md).
 
 on:
   workflow_dispatch:
-    inputs:
-      server:
-        description: "Server address HOST:PORT for server.txt (empty: the POW_SERVER variable)"
-        required: false
-        default: ""
   push:
     tags: ["v*"]
   pull_request:  # a change to the build itself is built once, to see that it still works
@@ -26,8 +19,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GODOT_VERSION: "4.5.1"
-      SERVER: ${{ inputs.server || vars.POW_SERVER }}
-      SERVER_CERT: ${{ vars.POW_SERVER_CERT }}
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5  # v4.3.1, the repo allows only pinned actions
 
@@ -56,20 +47,13 @@ jobs:
           test -s godot/build/windows/MercenarysPath.exe
           test -s godot/build/linux/MercenarysPath.x86_64
 
-      - name: Server address, certificate and instructions
+      - name: Instructions
         run: |
           for d in godot/build/windows godot/build/linux; do
-            {
-              echo "# Адреса сервера гри: HOST або HOST:PORT (типовий порт 28310)."
-              echo "# Рядки з # — коментарі. Деталі: ІНСТРУКЦІЯ.txt"
-              if [ -n "$SERVER" ]; then echo "$SERVER"; else echo "127.0.0.1:28310"; fi
-            } > "$d/server.txt"
-            if [ -n "$SERVER_CERT" ]; then printf '%s\n' "$SERVER_CERT" > "$d/server.crt"; fi
             cp godot/FRIENDS.md "$d/ІНСТРУКЦІЯ.txt"
           done
-          sed -i 's/$/\r/' godot/build/windows/server.txt godot/build/windows/ІНСТРУКЦІЯ.txt  # Notepad
+          sed -i 's/$/\r/' godot/build/windows/ІНСТРУКЦІЯ.txt  # Notepad
           chmod +x godot/build/linux/MercenarysPath.x86_64
-          echo "server: ${SERVER:-127.0.0.1:28310 (not set)}, certificate: $([ -n "$SERVER_CERT" ] && echo yes || echo no)"
 
       - name: Pack
         run: |

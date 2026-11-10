@@ -635,106 +635,6 @@
     "en": "Can't Save!\nIt needs all enemies dead.",
     "uk": "Не можна зберегти!\nСпершу переможіть усіх ворогів."
   },
-  "offline.no_connection": {
-    "en": "No connection to the server",
-    "uk": "Немає зв'язку з сервером"
-  },
-  "offline.only_online": {
-    "en": "The game starts only online",
-    "uk": "Гра запускається лише онлайн"
-  },
-  "offline.try_again": {
-    "en": "OK: try again",
-    "uk": "OK: ще раз"
-  },
-  "offline.try_again_keys": {
-    "en": "{ui_accept}: try again",
-    "uk": "{ui_accept}: ще раз"
-  },
-  "offline.try_again_pad": {
-    "en": "{ui_accept}: try again",
-    "uk": "{ui_accept}: ще раз"
-  },
-  "offline.refused": {
-    "en": "Login refused",
-    "uk": "Сервер не прийняв вхід"
-  },
-  "offline.other_account": {
-    "en": "Back: other account",
-    "uk": "Назад: інший акаунт"
-  },
-  "offline.other_account_keys": {
-    "en": "{ui_cancel}: other account",
-    "uk": "{ui_cancel}: інший акаунт"
-  },
-  "offline.other_account_pad": {
-    "en": "{ui_cancel}: other account",
-    "uk": "{ui_cancel}: інший акаунт"
-  },
-  "offline.connecting": {
-    "en": "Connecting...",
-    "uk": "З'єднання..."
-  },
-  "login.title": {
-    "en": "Log in",
-    "uk": "Вхід"
-  },
-  "login.ok": {
-    "en": "Log in",
-    "uk": "Увійти"
-  },
-  "login.new": {
-    "en": "New account",
-    "uk": "Новий акаунт"
-  },
-  "register.hint": {
-    "en": "Your hero is kept on the server under this account (also for Live and multiplayer).",
-    "uk": "Герой зберігається на сервері під цим акаунтом (він же для Live і мультиплеєра)."
-  },
-  "register.user_id": {
-    "en": "UserID (4-12 letters)",
-    "uk": "UserID (4-12 літер)"
-  },
-  "register.password": {
-    "en": "Password (4-12 numbers)",
-    "uk": "Пароль (4-12 цифр)"
-  },
-  "register.bad_id": {
-    "en": "The UserID is 4-12 letters A-Z.",
-    "uk": "UserID: 4-12 літер A-Z."
-  },
-  "register.bad_password": {
-    "en": "The password is 4-12 numbers.",
-    "uk": "Пароль: 4-12 цифр."
-  },
-  "register.err_taken": {
-    "en": "This UserID is taken.",
-    "uk": "Цей UserID уже зайнятий."
-  },
-  "register.err_no_account": {
-    "en": "There is no such account. Press New account to make it.",
-    "uk": "Такого акаунта немає. Натисніть «Новий акаунт», щоб створити."
-  },
-  "register.err_password": {
-    "en": "Wrong password.",
-    "uk": "Невірний пароль."
-  },
-  "register.err_limit": {
-    "en": "Too many new accounts from here. Try later.",
-    "uk": "Забагато нових акаунтів звідси. Спробуйте пізніше."
-  },
-  "register.err_update": {
-    "en": "Please update the game.",
-    "uk": "Оновіть гру."
-  },
-  "register.err_bad_id": {
-    "en": "The UserID is 4-12 letters A-Z.",
-    "uk": "UserID: 4-12 літер A-Z."
-  },
-  "register.err_offline": {
-    "en": "Network connection has failed.",
-    "uk": "Немає зв'язку з сервером."
-  },
   "menu.game": {
     "en": "Game Menu",
     "uk": "Ігрове меню"
@@ -947,14 +847,6 @@
     "en": "All points are spent. Press Done to continue.",
     "uk": "Усі очки розподілено. Натисніть «Готово», щоб продовжити."
   },
-  "offline.try_again_button": {
-    "en": "Try again",
-    "uk": "Спробувати ще"
-  },
-  "offline.other_account_button": {
-    "en": "Another account",
-    "uk": "Інший акаунт"
-  },
   "glyph.arrows_wasd": {
     "en": "Arrows / WASD",
     "uk": "Стрілки / WASD"
@@ -1042,14 +934,6 @@
   "ask.ok": {
     "en": "OK",
     "uk": "OK"
-  },
-  "hint.login_user": {
-    "en": "UserID: letters A–Z · {ui_accept}: to the password",
-    "uk": "UserID: літери A–Z · {ui_accept}: до пароля"
-  },
-  "hint.login_password": {
-    "en": "Password: digits 0–9 · {ui_accept}: log in",
-    "uk": "Пароль: цифри 0–9 · {ui_accept}: увійти"
   },
   "settings.controls": {
     "en": "Controls",

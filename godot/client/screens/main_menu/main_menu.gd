@@ -2,18 +2,14 @@ class_name MainMenu
 extends BaseScreen
 ## Main menu: continue (or play), new game, endings, settings, quit (no quit button on phones
 ## and the web). Continue opens the hero's camp (screens/camp/camp_screen.gd), where his
-## game goes on; a new game starts its first mission at once after the opening. While the game is
-## always online and this run has no account yet, Play
-## and New game open the login (screens/login/login_screen.gd) first; it comes back here and
-## goes on with play() or new_game() once the hero (or none) has come from the server.
+## game goes on; a new game starts its first mission at once after the opening. The hero is
+## saved on this computer (Profile.PATH).
 
 var buttons: Array[Button] = []
 var ask: AskDialog  # "Starting a new game will cause your saved game to be deleted.", No first
 
 
 func _ready() -> void:
-	if Cloud.enabled() and not Cloud.online():
-		Router.go.call_deferred("offline")  # the game starts only online
 	var col: VBoxContainer = %Column
 	if Profile.exists():
 		col.get_node("Play").text = "menu.continue"
@@ -30,7 +26,7 @@ func _ready() -> void:
 	_focus_first.call_deferred()
 
 
-## The first button takes the focus, unless the login sent this menu on at once.
+## The first button takes the focus once the menu is shown.
 func _focus_first() -> void:
 	if is_inside_tree():
 		buttons[0].grab_focus()
@@ -39,9 +35,6 @@ func _focus_first() -> void:
 ## The saved hero goes on in his camp (back into the mission saved on its map, if any);
 ## without one a new game starts.
 func play() -> void:
-	if needs_login():
-		Router.push("login", {"next": "play"})
-		return
 	if not Profile.exists():
 		Router.push("new_game", {})
 		return
@@ -67,23 +60,15 @@ func open_settings() -> void:
 
 
 func quit() -> void:
-	Cloud.quit_game()
+	get_tree().quit()
 
 
 ## A new hero (difficulty, face, name, points); over a saved one only when that is confirmed.
 func new_game() -> void:
-	if needs_login():
-		Router.push("login", {"next": "new_game"})
-		return
 	if Profile.exists():
 		ask.popup_centered()
 		return
 	Router.push("new_game", {})
-
-
-## The hero is on the server and nobody has logged in since the game started.
-static func needs_login() -> bool:
-	return Cloud.enabled() and not Cloud.has_account()
 
 
 static func show_quit() -> bool:
