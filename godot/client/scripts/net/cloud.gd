@@ -13,8 +13,7 @@ extends Node
 ## (for working on the game without a server).
 ## The account (UserID + password) is asked for on the login screen and kept only while the game
 ## runs: a restart asks again. The file an older version kept it in (user://account.cfg) goes.
-## Live (scripts/net/live_client.gd) and the online game (scripts/net/online_client.gd) go
-## over the same logged-in connection (request()); the server's pushes go to the online game.
+## Live (scripts/net/live_client.gd) goes over the same logged-in connection (request()).
 ## Quit (or the window closed) waits up to FLUSH_MS for the last save to reach the server.
 
 const ACCOUNT_PATH := "user://account.cfg"  # an older version's, removed at the start
@@ -27,7 +26,6 @@ const CERT_FILE := "server.crt"  # next to the executable: the server's certific
 
 var sync: CloudSync = null
 var live: LiveClient = null
-var mp: OnlineClient = null  # the online game, while connected
 var account_path := ACCOUNT_PATH
 var quit_at := -1  # ms by which the game quits while the last save goes, -1: not quitting
 var quit_now := Callable()  # what quitting does; empty: the game ends
@@ -114,9 +112,6 @@ func start(address: String, port: int, cert: X509Certificate, cert_path := "") -
 	sync.setup(address, port, cert)
 	sync.cert_path = cert_path
 	live = LiveClient.new(request)
-	mp = OnlineClient.new(request)
-	mp.on_battle = func() -> void: Router.push("online_battle")
-	sync.client.on_push = _push
 	sync.options_store = Settings
 	if FileAccess.file_exists(account_path):
 		DirAccess.remove_absolute(account_path)
@@ -131,7 +126,6 @@ func stop() -> void:
 		sync.client.close()
 	sync = null
 	live = null
-	mp = null
 
 
 func enabled() -> bool:
@@ -161,11 +155,6 @@ func request(msg: Dictionary, done: Callable) -> void:
 		done.call({"t": msg.get("t", "?"), "ok": false, "err": "offline"})
 		return
 	sync.client.request(msg, done)
-
-
-func _push(m: Dictionary) -> void:
-	if mp != null:
-		mp.on_push(m)
 
 
 func save_hero(d: Dictionary) -> void:

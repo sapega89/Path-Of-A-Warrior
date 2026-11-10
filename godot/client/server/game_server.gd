@@ -1,25 +1,20 @@
 class_name GameServer
 extends RefCounted
-## The game's server: accounts and the hero kept on the server (scripts/net/protocol.gd), Live
-## (server/live.gd) and the online game (server/online.gd).
+## The game's server: accounts and the hero kept on the server (scripts/net/protocol.gd) and Live
+## (server/live.gd).
 ## start() binds the UDP port with DTLS, then poll() is called every frame (server/main.gd)
 ## or in a loop (tests).
 
 var host := ENetConnection.new()
 var accounts: Accounts
 var live: LiveServer
-var online: OnlineServer
 var guard := Guard.new()
 var running := false
 ## ENetPacketPeer -> Session.
 var sessions := {}
-## [peer, message] pushed by the online game (chat, battles), sent after the answer of the
-## request that made them.
-var _outbox: Array = []
 ## Lines of the log go here (main.gd prints them).
 var log_line: Callable = func(_s: String) -> void: pass
-## The handler of each request the server answers itself (answer()); Live and the online
-## game answer theirs.
+## The handler of each request the server answers itself (answer()); Live answers its own.
 var _answers := {
 	"register": _register,
 	"login": _login,
@@ -36,7 +31,6 @@ class Session:
 	var user := ""
 	var meter: RefCounted
 	var live := LiveServer.Session.new()
-	var online := OnlineServer.Session.new()
 
 
 ## Error code of the bind / DTLS setup, OK when the server is listening.
@@ -51,8 +45,6 @@ func start(
 	accounts = Accounts.new(data_dir.path_join("accounts"))
 	live = LiveServer.new(data_dir)
 	live.accounts = accounts
-	online = OnlineServer.new(data_dir, accounts)
-	online.add_bots()
 	var err := host.create_host_bound(bind_address, port, max_peers, Protocol.CHANNELS)
 	if err != OK:
 		return err
@@ -70,9 +62,6 @@ func stop() -> void:
 	for p: ENetPacketPeer in sessions.keys():
 		p.peer_disconnect_now()
 	sessions.clear()
-	if online != null:
-		online.shutdown()
-	_outbox.clear()
 	host.destroy()
 	running = false
 
@@ -84,26 +73,9 @@ func poll(wait_ms := 0) -> void:
 	var ev: Array = host.service(wait_ms)
 	while ev[0] != ENetConnection.EVENT_NONE:
 		_event(ev)
-		_flush()
 		if ev[0] == ENetConnection.EVENT_ERROR:
 			return
 		ev = host.service(0)
-	if online != null:
-		online.tick()  # a duel that waited long enough gets the CPU
-		_flush()
-
-
-## Sends the pushes: the chat on channel 1, the rest (battles) on channel 0 in order with the
-## answers.
-func _flush() -> void:
-	var out := _outbox.duplicate()
-	_outbox.clear()
-	for x in out:
-		var peer: ENetPacketPeer = x[0]
-		var m: Dictionary = x[1]
-		peer.send(
-			1 if m.get("t") == "chat_push" else 0, Protocol.encode(m), ENetPacketPeer.FLAG_RELIABLE
-		)
 
 
 func _event(ev: Array) -> void:
@@ -118,15 +90,11 @@ func _event(ev: Array) -> void:
 				peer.peer_disconnect_now()
 				return
 			s.meter = guard.meter()
-			var outbox := _outbox
-			# a push, no request waits for it
-			s.online.send = func(m: Dictionary) -> void: outbox.append([peer, m])
 			sessions[peer] = s
 		ENetConnection.EVENT_DISCONNECT:
 			var s: Session = sessions.get(peer)
 			if s != null:
 				guard.close_connection(s.address)
-				_leave_online(s)
 				sessions.erase(peer)
 		ENetConnection.EVENT_RECEIVE:
 			var data := peer.get_packet()
@@ -145,14 +113,8 @@ func _event(ev: Array) -> void:
 
 func _drop(s: Session) -> void:
 	guard.close_connection(s.address)
-	_leave_online(s)
 	sessions.erase(s.peer)
 	s.peer.peer_disconnect_later()
-
-
-func _leave_online(s: Session) -> void:
-	if online != null:
-		online.leave(s.online)
 
 
 func _send(s: Session, msg: Dictionary) -> void:
@@ -173,13 +135,6 @@ func answer(s: Session, msg: Dictionary) -> Dictionary:
 			reply = own.call(s, msg)
 		elif t.begins_with("live_") and live != null:
 			reply = live.answer(s.live, t, msg)
-		elif t == "mp_enter" and online != null:
-			reply = online.enter(s.online, s.user)
-		elif (
-			online != null
-			and (t.begins_with("mp_") or t.begins_with("order_") or t.begins_with("chat_"))
-		):
-			reply = online.answer(s.online, t, msg)
 		else:
 			reply = _fail(t, "unknown")
 	if msg.get("q") is int:
@@ -204,7 +159,6 @@ func _register(s: Session, msg: Dictionary) -> Dictionary:
 		return _fail("register", "limit")
 	if not accounts.create_account(uid, pwd):
 		return _fail("register", "taken")
-	_leave_online(s)
 	s.user = uid
 	s.live.user = uid
 	log_line.call("new account %s from %s" % [uid, s.address])
@@ -222,7 +176,6 @@ func _login(s: Session, msg: Dictionary) -> Dictionary:
 		return _fail("login", "no account")
 	if not guard.check_password(uid, s.address, accounts.check_password.bind(uid, pwd)):
 		return _fail("login", "password")
-	_leave_online(s)
 	s.user = uid
 	s.live.user = uid
 	return {"t": "login", "ok": true}

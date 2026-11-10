@@ -1,16 +1,14 @@
 extends "res://tests/test_case.gd"
-## The pictures of the new art in the screens (scripts/ui/pictures.gd): the 46 portraits (42-45
-## the fighters of the multiplayer battles), the 15 story pictures, both with mipmaps and in a
-## gold frame, and the screens that show them.
+## The pictures of the new art in the screens (scripts/ui/pictures.gd): the 42 portraits, the 15
+## story pictures, both with mipmaps and in a gold frame, and the screens that show them.
 
-const SIDES := ["plain", "cossack", "crown", "horde", "hero", "upyr"]
+const SIDES := ["plain", "cossack", "crown", "horde", "hero"]
 const SCREENS := [
 	"story_screen",
 	"briefing_screen",
 	"visiting_screen",
 	"new_game_screen",
 	"mission_screen",
-	"res://scripts/ui/battle_hud.gd"  # the online battle's portraits
 ]
 
 
@@ -18,8 +16,8 @@ func test_every_portrait_painted() -> void:
 	var info: Dictionary = JSON.parse_string(
 		FileAccess.get_file_as_string("res://assets/art/portraits/busts.json")
 	)
-	eq(info.size(), 46, "a bust for every portrait")
-	for id in 46:
+	eq(info.size(), 42, "a bust for every portrait")
+	for id in 42:
 		var t := Pictures.portrait(id)
 		check(t != null and t.get_size() == Vector2(256, 256), "portrait %d" % id)
 		check(t.resource_path == Pictures.PORTRAIT % id, "portrait %d of the new art" % id)
@@ -33,11 +31,6 @@ func test_every_portrait_painted() -> void:
 	check(
 		int(info["38"].look) < 0 and int(info["1"].look) > 0,
 		"the hero looks at the one he talks to"
-	)
-	eq(
-		[info["43"].side, info["44"].side, info["45"].side],
-		["crown", "horde", "upyr"],
-		"the battles' fighters"
 	)
 
 
@@ -103,10 +96,7 @@ func test_the_girl_of_the_story() -> void:
 	body.free()
 
 
-## A screen's script: by its scene in screens/<name>/, or still in scripts/screens (a path: that
-## script).
+## A screen's script: by its scene in screens/<name>/, or still in scripts/screens.
 static func _script_of(screen: String) -> String:
-	if screen.begins_with("res://"):
-		return screen
 	var moved := "res://screens/%s/%s.gd" % [screen.trim_suffix("_screen"), screen]
 	return moved if FileAccess.file_exists(moved) else "res://scripts/screens/%s.gd" % screen

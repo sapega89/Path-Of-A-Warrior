@@ -1,7 +1,7 @@
 class_name LoginScreen
 extends BaseScreen
 ## Login: the account the hero is kept under on the server (UserID 4-12 letters A-Z, password
-## 4-12 digits), the same account for Live and multiplayer. The main menu opens it on Play,
+## 4-12 digits), the same account for Live. The main menu opens it on Play,
 ## Continue and New game while this run of the game has no account yet: Log in takes an account
 ## made before, New account registers this UserID and password. The account is kept only until
 ## the game is closed (scripts/net/cloud.gd). Once logged in and the hero (or none) has come

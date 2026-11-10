@@ -281,50 +281,6 @@ func test_live_goes_over_the_same_connection() -> void:
 	ServerTests._rm(d)
 
 
-func test_the_online_game_goes_over_the_same_connection() -> void:
-	var cloud: Node = root.get_node("/root/Cloud")
-	var d := _dir()
-	var s := _server(d)
-	s.accounts.create_account("ANDREY", "1234")
-	s.accounts.create_account("MARIA", "1234")
-	cloud.account_path = d.path_join("account.cfg")
-	cloud.start("127.0.0.1", PORT, ServerTests.pair(0)[1])
-	cloud.sync.legacy = null
-	cloud.sync.options_store = null  # this device's own Options stay out of the tests
-	cloud.login("ANDREY", "1234", func(_r: Dictionary) -> void: pass)
-	check(_run(s, [cloud.sync], cloud.online), "logged in")
-	var mp: RefCounted = cloud.mp
-	var err := []
-	mp.enter(func(e): err.append(e))
-	check(_run(s, [cloud.sync], func(): return not err.is_empty()), "answered")
-	eq([err, mp.entered, s.online.is_online("ANDREY")], [[""], true, true], "online")
-	var maria := OnlineServer.Session.new()  # another player, on the server
-	maria.send = func(_m: Dictionary) -> void: pass
-	s.online.enter(maria, "MARIA")
-	eq(
-		(
-			s
-			. online
-			. answer(
-				maria,
-				"chat_send",
-				{"channel": OnlineServer.PRIVATE, "peer": "ANDREY", "text": "hi"}
-			)
-			. ok
-		),
-		true
-	)
-	check(
-		_run(s, [cloud.sync], func(): return int(mp.unread[1]) == 1),
-		"her message pushed here, waiting"
-	)
-	eq(mp.chat["pm:MARIA"].map(func(r): return r.text), ["hi"])
-	cloud.stop()
-	check(cloud.mp == null, "no online game without the server")
-	s.stop()
-	ServerTests._rm(d)
-
-
 ## The Options of one device, in their own file.
 func _options(d: String, tag: String) -> Node:
 	var o: Node = SettingsScript.new()

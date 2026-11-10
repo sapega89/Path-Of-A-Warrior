@@ -517,8 +517,7 @@ func _give(s: Session, u: Dictionary, msg: Dictionary) -> Dictionary:
 	return {"t": "live_give", "ok": true}
 
 
-## Puts a thing in a player's Warehouse with a Gift List line (a gift of another player, or
-## multiplayer loot).
+## Puts a thing in a player's Warehouse with a Gift List line (a gift of another player).
 func give_gift(uid: String, sender: String, item: Dictionary) -> bool:
 	var u := user(uid)
 	if u.warehouse.size() >= WAREHOUSE:

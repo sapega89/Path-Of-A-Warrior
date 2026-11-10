@@ -11,7 +11,7 @@ Outputs (glTF binary, Y up):
     props/<name>.glb        environment pieces (see props.py)
     portraits/busts.glb     with --portraits: the busts of the portraits (see portraits.py)
     characters/divchyna.glb with --story: the people only the story pictures have (portraits.py)
---only NAMES builds just those people (characters/<name>.glb), e.g. --only upyr.
+--only NAMES builds just those people (characters/<name>.glb), e.g. --only tatar.
 --props NAMES builds just those environment pieces (props/<name>.glb), e.g. --props brama,vorota;
     it needs no --kaykit.
 --preview FILE renders a line-up of everyone with Cycles for a quick look.
@@ -53,7 +53,6 @@ LOADOUT = {
     "tatar_luk": ["bow"],
     "rotmistr": ["sabre_gold"],
     "murza": ["sabre_gold"],
-    "upyr": ["bulava"],
 }
 
 

@@ -61,11 +61,15 @@ func test_hints_name_the_device_last_used() -> void:
 	var seen := []
 	var on_change := func(d: String) -> void: seen.append(d)
 	InputSetup.device_changed.connect(on_change)
-	eq(InputSetup.hint("online.battle_hint_bar"), "Enter / Space: stop the bar at the mark", "keys")
+	eq(
+		InputSetup.hint("camp.enter_smith"),
+		"[Enter] Blacksmith: buy, sell, enchant, combine",
+		"keys"
+	)
 	eq(InputSetup.hint("offline.try_again"), "Enter: try again", "keys: Enter")
 	InputSetup._input(_pad_press(JOY_BUTTON_A))
 	eq(InputSetup.device, "pad", "a pad button")
-	eq(InputSetup.hint("online.battle_hint_bar"), "A: stop the bar at the mark", "pad")
+	eq(InputSetup.hint("camp.enter_smith"), "[A] Blacksmith: buy, sell, enchant, combine", "pad")
 	eq(InputSetup.hint("offline.other_account"), "B: other account", "pad: B")
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT

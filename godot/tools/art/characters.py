@@ -101,14 +101,6 @@ RECIPES = {
         "undercoat": "ochre", "sash": FACTIONS["horde"], "trousers": "cinnabar_dark", "boots": "gold_dark",
         "belly": 1.1,
     },
-    # the monsters of the multiplayer battles: a forest upyr, bare grey-green skin under a
-    # fur vest, horns, glowing eyes, a club
-    "upyr": {
-        "hat": "horns", "hair": "fur", "hair_cap": True, "face": "none", "beard": True, "nose": 1.35,
-        "skin": "skin_upyr", "eyes": "ember", "eye_size": 1.8,
-        "coat": "skin_upyr", "coat_trim": "skin_upyr_dark", "coat_len": "shirt", "vest": "fur",
-        "sash": "cinnabar_dark", "trousers": "fur", "boots": "skin_upyr_dark", "belly": 1.14,
-    },
 }
 
 
@@ -220,12 +212,6 @@ class Figure:
                 pts = [front + Vector((0, 0.0, 0.02)), front + Vector((0.0, 0.02, 0.16)),
                        front + Vector((0.0, 0.08, 0.28)), front + Vector((0.0, 0.17, 0.33))]
                 k.sweep(pts, [0.02, 0.035, 0.03, 0.006], "whitewash", "head", segs=6, flat=0.45)
-        elif kind == "horns":
-            # two curved horns from the temples, outwards and up
-            for sx in (1, -1):
-                pts = [c + Vector((0.07 * sx, -0.01, 0.07)), c + Vector((0.13 * sx, -0.0, 0.12)),
-                       c + Vector((0.18 * sx, -0.02, 0.2)), c + Vector((0.165 * sx, -0.06, 0.29))]
-                k.sweep(pts, [0.036, 0.03, 0.019, 0.004], "bone", "head", segs=8)
         elif kind == "oseledets":
             k.ball(c + Vector((0, 0.005, 0.01)), (0.111, 0.116, 0.126), "skin", "head", segs=14, rings=8)
             pts = [c + Vector((0.0, -0.03, 0.128)), c + Vector((0.04, -0.01, 0.135)),
