@@ -2,8 +2,8 @@ extends Node
 ## Player settings, kept in user://settings.cfg and applied to the engine.
 ## The volumes and the game speed (CLOUD_KEYS) are kept on the server too, with the account
 ## (scripts/net/cloud_sync.gd): the newer copy wins, and on a device the account is new to,
-## the server's. The language, the full screen, the brightness and the controls belong to the
-## device.
+## the server's. The language, the full screen, the window's size, the brightness, the graphics
+## and the controls belong to the device.
 
 signal changed(key: String)
 
@@ -21,6 +21,8 @@ const DEFAULTS := {
 	"rumble": true,  # of those, the pad's (or the phone's) rumble
 	"pixel_art": true,  # the 3D world drawn as pixel art (pixel_view.gd), or smooth
 	"brightness": 0.5,  # the 3D world's: 0.5 as it is drawn, 0 darker, 1 brighter (world_gamma)
+	"graphics": 1,  # 0 Low, 1 Medium (the engine's own), 2 High (GRAPHICS)
+	"window_size": 0,  # the window when not in full screen (WINDOW_SIZES; desktop only)
 	"controls": {},  # the keys and pad buttons changed by the player (KeyBindings.changes())
 }
 ## One tick of a mission at each game speed, in ms (2, Med, is the simulation's own tick).
@@ -28,6 +30,37 @@ const SPEED_MS := [250, 180, 120, 90, 50]
 const BUSES := {"music_volume": "Music", "sfx_volume": "SFX"}
 const CLOUD_KEYS := ["music_volume", "sfx_volume", "game_speed"]
 const CLOUD_SECTION := "cloud"
+## What each graphics quality (Low, Medium, High) draws: the sun's shadow map (pixels a side) and
+## how soft its edges are, the lamps' and fires' shadow maps in each 3D view (never 0: the
+## compatibility renderer then draws the world white), and in the smooth world how its edges are
+## smoothed (pixel art has none). Medium is the engine's own.
+const GRAPHICS := [
+	{
+		"sun": 2048,
+		"soft": RenderingServer.SHADOW_QUALITY_HARD,
+		"lamps": 1024,
+		"msaa": Viewport.MSAA_DISABLED,
+	},
+	{
+		"sun": 4096,
+		"soft": RenderingServer.SHADOW_QUALITY_SOFT_LOW,
+		"lamps": 2048,
+		"msaa": Viewport.MSAA_2X,
+	},
+	{
+		"sun": 4096,
+		"soft": RenderingServer.SHADOW_QUALITY_SOFT_HIGH,
+		"lamps": 4096,
+		"msaa": Viewport.MSAA_4X,
+	},
+]
+## The window's sizes to choose from (the first is the game's own); those larger than the screen
+## are not offered.
+const WINDOW_SIZES := [
+	Vector2i(1280, 720), Vector2i(1600, 900), Vector2i(1920, 1080), Vector2i(2560, 1440)
+]
+## The choices of each whole-number setting: its value is a place in them.
+const INT_CHOICES := {"game_speed": SPEED_MS, "graphics": GRAPHICS, "window_size": WINDOW_SIZES}
 ## How far the brightness goes: at 0 and 1 the world's gamma is 2 to the power of plus or minus
 ## half of it.
 const GAMMA_RANGE := 1.5
@@ -156,7 +189,7 @@ func _coerce(key: String, value: Variant) -> Variant:
 				return value
 		TYPE_INT:
 			if typeof(value) in [TYPE_FLOAT, TYPE_INT]:
-				return clampi(int(value), 0, SPEED_MS.size() - 1)
+				return clampi(int(value), 0, INT_CHOICES[key].size() - 1)
 		TYPE_STRING:
 			if typeof(value) == TYPE_STRING:
 				return value
@@ -192,6 +225,40 @@ func _apply(key: String) -> void:
 						else DisplayServer.WINDOW_MODE_WINDOWED
 					)
 				)
+				_size_window()
+		"window_size":
+			_size_window()
+		"graphics":
+			var g: Dictionary = graphics()
+			RenderingServer.directional_shadow_atlas_set_size(g.sun, true)
+			RenderingServer.directional_soft_shadow_filter_set_quality(g.soft)
+			RenderingServer.positional_soft_shadow_filter_set_quality(g.soft)
+
+
+## What the chosen graphics quality draws (GRAPHICS).
+func graphics() -> Dictionary:
+	return GRAPHICS[int(get_value("graphics"))]
+
+
+## The window at its chosen size, in the middle of its screen (in full screen nothing changes).
+func _size_window() -> void:
+	if not can_fullscreen() or get_value("fullscreen"):
+		return
+	var size: Vector2i = WINDOW_SIZES[int(get_value("window_size"))]
+	var screen := DisplayServer.window_get_current_screen()
+	var room := DisplayServer.screen_get_usable_rect(screen)
+	DisplayServer.window_set_size(size)
+	DisplayServer.window_set_position(room.position + (room.size - size) / 2)
+
+
+## The window's sizes that fit in `room` (the screen), as indexes of WINDOW_SIZES; the first
+## always.
+static func window_sizes_within(room: Vector2i) -> Array[int]:
+	var fit: Array[int] = [0]
+	for i in range(1, WINDOW_SIZES.size()):
+		if WINDOW_SIZES[i].x <= room.x and WINDOW_SIZES[i].y <= room.y:
+			fit.append(i)
+	return fit
 
 
 ## The gamma the world is shown with (pixel_view.gd) at a brightness (0..1): 1 at the middle,

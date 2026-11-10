@@ -83,6 +83,24 @@ func test_smooth_when_the_setting_is_off() -> void:
 	area.free()
 
 
+func test_the_graphics_quality() -> void:
+	_set_pixel_art(false)
+	var area := _area(Vector2(1280, 720))
+	var view := _view_in(area)
+	eq(view.viewport.msaa_3d, Viewport.MSAA_2X, "Medium: smoothed as the game did")
+	eq(view.viewport.positional_shadow_atlas_size, 2048, "and the lamps' shadows the engine's")
+	_set_setting("graphics", 0)
+	eq(view.viewport.msaa_3d, Viewport.MSAA_DISABLED, "Low: no smoothing")
+	eq(view.viewport.positional_shadow_atlas_size, 1024, "and coarser shadows of lamps")
+	_set_setting("graphics", 2)
+	eq(view.viewport.msaa_3d, Viewport.MSAA_4X, "High: smoother")
+	eq(view.viewport.positional_shadow_atlas_size, 4096, "finer shadows of lamps")
+	_set_pixel_art(true)
+	eq(view.viewport.msaa_3d, Viewport.MSAA_DISABLED, "pixel art: never smoothed")
+	_set_setting("graphics", 1)
+	area.free()
+
+
 func test_the_camera_moves_in_whole_pixels() -> void:
 	var holder := SubViewport.new()
 	holder.size = Vector2i(642, 362)

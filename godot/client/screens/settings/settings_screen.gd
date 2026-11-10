@@ -2,8 +2,9 @@ class_name SettingsScreen
 extends BaseScreen
 ## Settings: language, music and sound volume, the game speed, the hit effects on the map (all
 ## of them, the screen shake, the vibration), the world as pixel art or smooth, its brightness,
-## fullscreen (desktop only), and Controls (controls_screen.gd: the keys and pad buttons, shown
-## over these settings). The options scroll; Controls and Back stay in a row under them.
+## the graphics quality, fullscreen and the window's size (desktop only), and Controls
+## (controls_screen.gd: the keys and pad buttons, shown over these settings). The options
+## scroll; Controls and Back stay in a row under them.
 
 const I18nScript := preload("res://scripts/core/i18n.gd")
 ## Language names are shown in their own language, not translated.
@@ -19,12 +20,15 @@ const LANGUAGE_NAMES := {"en": "English", "uk": "Українська"}
 @onready var rumble: CheckBox = %Rumble
 @onready var pixel_art: CheckBox = %PixelArt
 @onready var brightness: HSlider = %Brightness
+@onready var graphics: OptionButton = %Graphics
+@onready var window_size: OptionButton = %WindowSize  # desktop only (freed elsewhere)
 @onready var column: VBoxContainer = %Column
 ## Shown over another screen (the mission's pause menu): what Back does instead of going back.
 var close := Callable()
 
 
-## The settings as they are now; a row the platform has not (fullscreen) is taken away.
+## The settings as they are now; the rows the platform has not (fullscreen, the window's size)
+## are taken away.
 func _ready() -> void:
 	for i in I18nScript.LOCALES.size():
 		var code: String = I18nScript.LOCALES[i]
@@ -41,12 +45,27 @@ func _ready() -> void:
 	rumble.set_pressed_no_signal(Settings.get_value("rumble"))
 	pixel_art.set_pressed_no_signal(Settings.get_value("pixel_art"))
 	brightness.set_value_no_signal(Settings.get_value("brightness"))
+	for i in Settings.GRAPHICS.size():
+		graphics.add_item(tr("settings.graphics_%d" % i), i)
+	graphics.select(int(Settings.get_value("graphics")))
 	if Settings.can_fullscreen():
 		fullscreen.set_pressed_no_signal(Settings.get_value("fullscreen"))
+		_list_window_sizes()
 	else:
 		fullscreen.get_parent().free()
 		fullscreen = null
+		window_size.get_parent().free()
+		window_size = null
 	language.grab_focus()
+
+
+## The window's sizes that fit the screen; each item's id is its place in Settings.WINDOW_SIZES.
+func _list_window_sizes() -> void:
+	var screen := DisplayServer.window_get_current_screen()
+	for i in Settings.window_sizes_within(DisplayServer.screen_get_usable_rect(screen).size):
+		var s: Vector2i = Settings.WINDOW_SIZES[i]
+		window_size.add_item("%d × %d" % [s.x, s.y], i)
+	window_size.select(window_size.get_item_index(int(Settings.get_value("window_size"))))
 
 
 func _back() -> void:
@@ -94,6 +113,14 @@ func _on_rumble(on: bool) -> void:
 
 func _on_fullscreen(on: bool) -> void:
 	Settings.set_value("fullscreen", on)
+
+
+func _on_graphics(i: int) -> void:
+	Settings.set_value("graphics", i)
+
+
+func _on_window_size(i: int) -> void:
+	Settings.set_value("window_size", window_size.get_item_id(i))
 
 
 ## The Controls over these settings; their Back comes back here.

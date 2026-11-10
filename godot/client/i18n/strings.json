@@ -2034,5 +2034,25 @@
   "settings.brightness": {
     "en": "Brightness",
     "uk": "Яскравість"
+  },
+  "settings.graphics": {
+    "en": "Graphics",
+    "uk": "Графіка"
+  },
+  "settings.graphics_0": {
+    "en": "Low",
+    "uk": "Низька"
+  },
+  "settings.graphics_1": {
+    "en": "Medium",
+    "uk": "Середня"
+  },
+  "settings.graphics_2": {
+    "en": "High",
+    "uk": "Висока"
+  },
+  "settings.window_size": {
+    "en": "Window size",
+    "uk": "Розмір вікна"
   }
 }
