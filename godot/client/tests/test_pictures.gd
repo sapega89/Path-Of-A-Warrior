@@ -10,7 +10,7 @@ const SCREENS := [
 	"visiting_screen",
 	"new_game_screen",
 	"mission_screen",
-	"online_battle_screen"
+	"res://scripts/ui/battle_hud.gd"  # the online battle's portraits
 ]
 
 
@@ -103,7 +103,10 @@ func test_the_girl_of_the_story() -> void:
 	body.free()
 
 
-## A screen's script: by its scene in screens/<name>/, or still in scripts/screens.
+## A screen's script: by its scene in screens/<name>/, or still in scripts/screens (a path: that
+## script).
 static func _script_of(screen: String) -> String:
+	if screen.begins_with("res://"):
+		return screen
 	var moved := "res://screens/%s/%s.gd" % [screen.trim_suffix("_screen"), screen]
 	return moved if FileAccess.file_exists(moved) else "res://scripts/screens/%s.gd" % screen

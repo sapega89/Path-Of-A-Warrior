@@ -200,14 +200,29 @@ func test_the_battle_screen_shows_a_duel() -> void:
 	root.add_child(screen)
 	var b: RefCounted = c.battle
 	eq(screen.battle, b, "the client's battle")
-	check(screen.arena.ground != null and screen.arena.scenery == b.bg & 3, "the field built")
-	check(screen.bodies[0].position.x < 0 and screen.bodies[1].position.x > 0, "mine on the left")
-	eq([screen.bodies[2].visible, screen.bodies[3].visible], [false, false], "a duel: two fighters")
-	eq(screen.figures[0].kind, BattleMotion.kind_of(b.fighters[0]), "me: the model of my class")
 	check(
-		screen.figures[1].kind in BattleMotion.RIVALS, "the CPU: a rival " + screen.figures[1].kind
+		screen.stage.arena.ground != null and screen.stage.arena.scenery == b.bg & 3,
+		"the field built"
 	)
-	check(is_equal_approx(screen.bodies[1].rotation.y, -PI / 2.0), "facing left")
+	check(
+		screen.stage.bodies[0].position.x < 0 and screen.stage.bodies[1].position.x > 0,
+		"mine on the left"
+	)
+	eq(
+		[screen.stage.bodies[2].visible, screen.stage.bodies[3].visible],
+		[false, false],
+		"a duel: two fighters"
+	)
+	eq(
+		screen.stage.figures[0].kind,
+		BattleMotion.kind_of(b.fighters[0]),
+		"me: the model of my class"
+	)
+	check(
+		screen.stage.figures[1].kind in BattleMotion.RIVALS,
+		"the CPU: a rival " + screen.stage.figures[1].kind
+	)
+	check(is_equal_approx(screen.stage.bodies[1].rotation.y, -PI / 2.0), "facing left")
 	var seen := {}
 	for i in 30000:
 		if screen.battle == null:
