@@ -238,6 +238,20 @@ func _ready() -> void:
 	Router.push("live_gifts", live_params)
 	await _frames(2)
 	await _shot(out, "10t_live_gift_list")
+	# Give a Gift: the first thing that can be given, MARIA typed in, then "Give ... to MARIA?".
+	Router.back()
+	Router.push("live_give", live_params)
+	await _frames(2)
+	for i in LiveClient.WAREHOUSE:
+		if Router.current.pick(i):
+			break
+	Router.current.to.text = "MARIA"
+	await _frames(2)
+	await _shot(out, "10u_live_give")
+	Router.current.ask_give()
+	await _frames(2)
+	await _shot(out, "10v_live_give_ask")
+	Router.current.ask.hide()
 	# Multiplayer: the menu, the Character pages, Skills, Ranking, the Order, the Chat and the
 	# Options. The server's online game runs in this process (server/online.gd) with its bots;
 	# Maria is in my order and wrote while I was away.

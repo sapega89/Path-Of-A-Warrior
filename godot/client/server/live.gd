@@ -2,7 +2,8 @@ class_name LiveServer
 extends RefCounted
 ## Live on the server (pyport/pow_server/live.py): a market where players sell things to each
 ## other (Trade), a Warehouse of WAREHOUSE places, a Safe for gold, the Sale List (what others
-## bought from me), the Gift List and Exp / Fame kept on the server. As in pyport the gold and
+## bought from me), gifts from player to player (into the Warehouse, with a line in the Gift
+## List) and Exp / Fame kept on the server. As in pyport the gold and
 ## the backpack are the client's word (live_sync), the rest is the server's.
 ##
 ## The NPC stock is made up as in pyport: a few Normal / Special things of every kind at enchant
@@ -26,8 +27,10 @@ extends RefCounted
 ##   live_prices {cat, kind}           -> lots (cheapest first)
 ##   live_mine                         -> lots (my lots on sale)
 ##   live_cancel {lot, to_warehouse}   -> serial
+##   live_give {to, from_warehouse, serial} (to: another player's UserID)
 ## Errors as in pyport: "gold" (not enough), "full", "gone" (sold meanwhile), "limit" (5 lots),
-## "price", "not for sale", "own" (your own lot), "none" (empty list), "bad message".
+## "price", "not for sale", "own" (your own lot), "none" (empty list), "bad message"; and
+## "nobody" (no player with that UserID), "self" (a gift to yourself).
 
 const TAX_PERCENT := 10
 const WAREHOUSE := 200
@@ -45,6 +48,8 @@ const RARE_KINDS := 18
 ## The handler of each request type (answer()).
 var _answers: Dictionary = {}
 var dir: String
+## The players a gift can go to (GameServer sets it); without it nobody gets a gift.
+var accounts: Accounts
 var notices: Array = []  # pages of up to 4 lines
 var rng := RandomNumberGenerator.new()
 var clock: Callable = func() -> float: return Time.get_unix_time_from_system()
@@ -71,7 +76,8 @@ func _init(data_dir: String) -> void:
 		"live_sell": _sell,
 		"live_prices": _on_live_prices,
 		"live_mine": _on_live_mine,
-		"live_cancel": _cancel
+		"live_cancel": _cancel,
+		"live_give": _give
 	}
 
 
@@ -441,23 +447,12 @@ func _sell(s: Session, u: Dictionary, msg: Dictionary) -> Dictionary:
 		return _fail("live_sell", "price")
 	var serial := int(msg.get("serial", -1))
 	var from_wh := bool(msg.get("from_warehouse", false))
-	var it: Dictionary = {}
-	var i := -1
-	if from_wh:
-		i = u.warehouse.find_custom(func(w): return int(w.serial) == serial)
-		if i >= 0:
-			it = u.warehouse[i].item
-	else:
-		it = s.backpack.get(serial, {})
+	var it := _own_thing(s, u, from_wh, serial)
 	if it.is_empty():
 		return _fail("live_sell", "gone")
 	if not for_sale(int(it.id)):
 		return _fail("live_sell", "not for sale")
-	if from_wh:
-		u.warehouse.remove_at(i)
-		save_user(s.user)
-	else:
-		s.backpack.erase(serial)
+	_take_away(s, u, from_wh, serial)
 	m.lots.append(
 		{"id": int(m.next), "seller": s.user, "item": it, "price": price, "forever": false}
 	)
@@ -486,7 +481,44 @@ func _cancel(s: Session, u: Dictionary, msg: Dictionary) -> Dictionary:
 	return {"t": "live_cancel", "ok": true, "serial": n}
 
 
-## Puts a thing in a player's Warehouse with a Gift List line (e.g. multiplayer loot).
+## A thing of this player's backpack (serial of live_sync) or Warehouse, {} when there is none.
+static func _own_thing(s: Session, u: Dictionary, from_wh: bool, serial: int) -> Dictionary:
+	if not from_wh:
+		return s.backpack.get(serial, {})
+	var i: int = u.warehouse.find_custom(func(w): return int(w.serial) == serial)
+	return u.warehouse[i].item if i >= 0 else {}
+
+
+func _take_away(s: Session, u: Dictionary, from_wh: bool, serial: int) -> void:
+	if from_wh:
+		u.warehouse.remove_at(u.warehouse.find_custom(func(w): return int(w.serial) == serial))
+		save_user(s.user)
+	else:
+		s.backpack.erase(serial)
+
+
+## A thing of the backpack or the Warehouse to another player, into his Warehouse.
+func _give(s: Session, u: Dictionary, msg: Dictionary) -> Dictionary:
+	var to: Variant = msg.get("to")
+	if not Protocol.valid_id(to) or accounts == null or not accounts.has_account(to):
+		return _fail("live_give", "nobody")
+	if to == s.user:
+		return _fail("live_give", "self")
+	var serial := int(msg.get("serial", -1))
+	var from_wh := bool(msg.get("from_warehouse", false))
+	var it := _own_thing(s, u, from_wh, serial)
+	if it.is_empty():
+		return _fail("live_give", "gone")
+	if not for_sale(int(it.id)):
+		return _fail("live_give", "not for sale")
+	if not give_gift(str(to), s.user, it):
+		return _fail("live_give", "full")
+	_take_away(s, u, from_wh, serial)
+	return {"t": "live_give", "ok": true}
+
+
+## Puts a thing in a player's Warehouse with a Gift List line (a gift of another player, or
+## multiplayer loot).
 func give_gift(uid: String, sender: String, item: Dictionary) -> bool:
 	var u := user(uid)
 	if u.warehouse.size() >= WAREHOUSE:

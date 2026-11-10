@@ -50,6 +50,7 @@ func start(
 ) -> int:
 	accounts = Accounts.new(data_dir.path_join("accounts"))
 	live = LiveServer.new(data_dir)
+	live.accounts = accounts
 	online = OnlineServer.new(data_dir, accounts)
 	online.add_bots()
 	var err := host.create_host_bound(bind_address, port, max_peers, Protocol.CHANNELS)

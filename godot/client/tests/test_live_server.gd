@@ -118,6 +118,44 @@ func test_elixirs_cannot_be_sold() -> void:
 	ServerTests._rm(d)
 
 
+func test_a_gift_to_another_player() -> void:
+	var d := _dir()
+	var l := _live(d)
+	l.accounts = Accounts.new(d.path_join("accounts"))
+	l.accounts.rounds = 20
+	for uid in ["ANDREY", "MARIA"]:
+		l.accounts.create_account(uid, "1234")
+	var s := _session("ANDREY", 0, [Items.make(101), Items.make(434), Items.make(131)])
+	l.user("ANDREY").warehouse.append({"serial": 9, "item": Items.make(146)})
+	var give := func(to: Variant, serial: int, from_wh := false) -> Dictionary:
+		return l.answer(s, "live_give", {"to": to, "serial": serial, "from_warehouse": from_wh})
+	eq(give.call("NOBODY", 1).err, "nobody", "no such player")
+	eq(give.call("../MARIA", 1).err, "nobody", "not a UserID")
+	eq(give.call(7, 1).err, "nobody")
+	eq(give.call("ANDREY", 1).err, "self")
+	eq(give.call("MARIA", 2).err, "not for sale", "an elixir")
+	eq(give.call("MARIA", 5).err, "gone")
+	check(give.call("MARIA", 1).ok, "from the backpack")
+	check(not s.backpack.has(1), "gone from the backpack")
+	check(give.call("MARIA", 9, true).ok, "from the Warehouse")
+	eq(l.user("ANDREY").warehouse.size(), 0, "gone from the Warehouse")
+	var maria := l.user("MARIA")
+	eq(maria.warehouse.map(func(w): return int(w.item.id)), [101, 146], "in her Warehouse")
+	eq(
+		maria.gifts.map(func(g): return [g.from, int(g.item.id)]),
+		[["ANDREY", 101], ["ANDREY", 146]]
+	)
+	var her := _session("MARIA")
+	check(l.answer(her, "live_status", {}).gifts, "she sees she has gifts")
+	while maria.warehouse.size() < LiveServer.WAREHOUSE:
+		maria.warehouse.append({"serial": 0, "item": Items.make(101)})
+	eq(give.call("MARIA", 3).err, "full", "her Warehouse is full")
+	check(s.backpack.has(3), "the thing stays")
+	l.accounts = null
+	eq(give.call("MARIA", 3).err, "nobody", "no accounts: nobody to give to")
+	ServerTests._rm(d)
+
+
 func test_buy_menu_counts_and_pages() -> void:
 	var d := _dir()
 	var l := _live(d)

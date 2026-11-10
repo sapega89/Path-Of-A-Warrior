@@ -39,6 +39,7 @@ const SCREENS := {
 	"live_sell": "res://screens/live_sell/live_sell_screen.tscn",
 	"live_cancel": "res://screens/live_cancel/live_cancel_screen.tscn",
 	"live_gifts": "res://screens/live_gifts/live_gifts_screen.tscn",
+	"live_give": "res://screens/live_give/live_give_screen.tscn",
 	"online_character": "res://screens/online_character/online_character_screen.tscn",
 	"online_skills": "res://screens/online_skills/online_skills_screen.tscn",
 	"online_text": "res://screens/online_text/online_text_screen.tscn",
