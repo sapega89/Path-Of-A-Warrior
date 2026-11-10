@@ -196,7 +196,7 @@ func test_the_battle_screen_shows_a_duel() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = OnlineBattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	var b: RefCounted = c.battle
 	eq(screen.battle, b, "the client's battle")
@@ -268,7 +268,7 @@ func test_the_battle_screen_leaves_when_kicked() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = OnlineBattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	c.on_push({"t": "kicked"})
 	screen._process(0.2)
@@ -295,7 +295,7 @@ func test_auto_battle_by_tab_f_or_back() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = OnlineBattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	var back := InputEventJoypadButton.new()
 	back.button_index = JOY_BUTTON_BACK
@@ -323,7 +323,7 @@ func test_battle_hints_name_the_pad_after_the_pad() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = OnlineBattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	var was: String = InputSetup.device
 	var states := {
@@ -370,7 +370,7 @@ func test_auto_corner() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = OnlineBattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	var was: String = InputSetup.device
 	InputSetup.device = "keys"

@@ -3,7 +3,7 @@ extends RefCounted
 # gdlint: disable=max-file-lines
 ## One online battle on this device: what the server's pushes say (server/room.gd), played
 ## back step by step as the game's battle screen does it in pyport (pow/game/online), one step
-## every TICK_MS. The screen (scripts/screens/online_battle_screen.gd) draws what is here and
+## every TICK_MS. The screen (screens/online_battle/online_battle_screen.gd) draws what is here and
 ## passes the keys on.
 ##
 ## Places are on the original's 240 x 320 screen: a fighter of the left team (slot % 2 == 0)

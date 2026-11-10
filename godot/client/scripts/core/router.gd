@@ -45,7 +45,7 @@ const SCREENS := {
 	"online_order": "res://screens/online_order/online_order_screen.tscn",
 	"online_chat": "res://screens/online_chat/online_chat_screen.tscn",
 	"online_options": "res://screens/online_options/online_options_screen.tscn",
-	"online_battle": "res://scripts/screens/online_battle_screen.gd",
+	"online_battle": "res://screens/online_battle/online_battle_screen.tscn",
 	"online_battles": "res://screens/online_battles/online_battles_screen.tscn",
 }
 

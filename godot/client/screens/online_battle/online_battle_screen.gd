@@ -27,7 +27,6 @@ extends BaseScreen
 ## Router.params: online (the client, tests), profile_path (tests); the battle is the
 ## client's `battle`.
 
-const SKY_SHADER := preload("res://assets/art/shaders/story_sky.gdshader")
 const MP := "res://assets/original/mp/"  # the battle's sounds
 ## World units per pixel of the battle (online_battle.gd's 240×320 field): one 27 px map tile
 ## is one unit, as on the map.
@@ -53,7 +52,6 @@ const HIT_FLASH := Color(0.8, 0.16, 0.12)  # the flash of one who is hit: blood-
 ## behind the front one, so the farther a fighter stands the farther out from the middle it
 ## is drawn (by this part of its distance from the middle per pixel of depth).
 const SPREAD := 0.016
-const PAD_BUTTON := 96
 const BOX_W := 360.0  # a fighter's plate at the top; the card of its action beside it
 const BOX_H := 80.0
 const FACE := 68.0  # the portrait on the plate
@@ -65,13 +63,9 @@ const HP_FILL := [Color("c23a2f"), Color("5e1510")]
 const MP_FILL := [Color("5a83bd"), Color("1a2e55")]
 const DAMAGE := Color("e8553f")
 const HEAL := Color("8fc873")
-## The pad: key, icon (assets/art/ui), caption, place in buttons.
-const PAD := [
-	["up", "wind", "online.battle_evade", Vector2(1, 0)],
-	["left", "shield", "online.battle_defend", Vector2(0, 1)],
-	["right", "sabre", "online.battle_attack", Vector2(2, 1)],
-	["down", "fire", "online.battle_skill", Vector2(1, 2)]
-]
+## The pad's buttons (in the scene: Evade up, Defend left, Attack right, a skill down): key and
+## icon (assets/art/ui).
+const PAD := [["up", "wind"], ["left", "shield"], ["right", "sabre"], ["down", "fire"]]
 ## The icons of the battle's skills (3..13): their places on the sheet of the skills (the
 ## same skills of the map, 12..22).
 const SKILL_ICONS := {3: 0, 4: 1, 5: 2, 6: 8, 7: 9, 8: 10, 9: 3, 10: 4, 11: 5, 12: 6, 13: 7}
@@ -85,31 +79,14 @@ var hero_path: String = Profile.PATH
 var rewarded := false  # the result's rewards went to the hero
 var levels_gained := 0
 var loot_lost := false  # no room for it
-var viewport: SubViewport
-var camera: Camera3D
-var stage: Node3D
-var arena: Node3D  # BattleArena
-var sky: ShaderMaterial
-var effects: Node3D  # MapEffects
 var bodies: Array[Node3D] = []  # Fighter0..3: where each fighter stands
 var figures: Array = [null, null, null, null]  # the ArtFigure of each
 var portraits: Array[TextureRect] = []
-var marker: Sprite3D
-var hud: Control
-var pad: Control
 var pad_buttons := {}  # key -> Button
-var skill_list: VBoxContainer
 var skill_buttons: Array[Button] = []
-var countdown: Label
-var hint: Label
-var auto_button: Button  # AUTO in the bottom-left corner
-var center: PanelContainer
-var center_text: Label
-var bar: Control
 var _acc := 0.0
 var _clock := 0.0
 var _bg_shown := -1
-var _sound_player: AudioStreamPlayer
 var _looks := ["", "", "", ""]  # what each figure was made for
 var _last: Array[Vector2i] = []  # [animation, ticks into it] of each fighter drawn last
 var _from: Array[Vector3] = []  # where each stood at the step before and stands now
@@ -121,26 +98,30 @@ var _shake := 0.0  # how hard the view shakes from a blow (world units), dying a
 var _icons := {}
 var _no_skill: Texture2D
 
-
-class Layer:
-	extends Control
-	## Draws with the screen's draw_<what>(layer).
-	var screen: Object
-	var what := ""
-
-	func _draw() -> void:
-		screen.call("draw_" + what, self)
+@onready var sky: ShaderMaterial = $Sky.material
+@onready var stage: Node3D = $World/Viewport/Stage
+@onready var arena: BattleArena = $World/Viewport/Stage/Arena
+@onready var camera: Camera3D = $World/Viewport/Stage/Camera
+@onready var effects: MapEffects = $World/Viewport/Stage/Effects
+@onready var marker: Sprite3D = $World/Viewport/Stage/Target
+@onready var hud: Control = %Hud
+@onready var center: PanelContainer = %Center
+@onready var center_text: Label = %CenterText
+@onready var pad: Control = %Pad
+@onready var countdown: Label = %Countdown
+@onready var skill_list: VBoxContainer = %Skills
+@onready var bar: Control = %Bar
+@onready var hint: Label = %Hint
+@onready var auto_button: Button = %Auto  # AUTO in the bottom-left corner
+@onready var _sound_player: AudioStreamPlayer = $Sound
 
 
 func _ready() -> void:
 	online = OnlineClient.of(Router.params)
 	battle = null if online == null else online.battle
 	hero_path = profile_path()
-	_build_world()
-	_build_hud()
-	_sound_player = AudioStreamPlayer.new()
-	_sound_player.bus = &"SFX"
-	add_child(_sound_player)
+	_setup_world()
+	_setup_hud()
 	if battle == null:
 		center_text.text = tr("live.failed")
 		center.visible = true
@@ -162,62 +143,17 @@ func icon(icon_name: String, px := 64) -> Texture2D:
 
 
 # --- the stage ------------------------------------------------------------------------------
-func _build_world() -> void:
-	var back := ColorRect.new()
-	back.name = "Sky"
-	back.set_anchors_preset(Control.PRESET_FULL_RECT)
-	back.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	sky = ShaderMaterial.new()
-	sky.shader = SKY_SHADER
-	back.material = sky
-	add_child(back)
-	var container := SubViewportContainer.new()
-	container.name = "World"
-	container.stretch = true
-	container.set_anchors_preset(Control.PRESET_FULL_RECT)
-	container.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(container)
-	viewport = SubViewport.new()
-	viewport.own_world_3d = true
-	viewport.transparent_bg = true
-	viewport.msaa_3d = Viewport.MSAA_2X
-	container.add_child(viewport)
-	stage = Node3D.new()
-	stage.name = "Stage"
-	viewport.add_child(stage)
-	arena = BattleArena.new()
-	arena.name = "Arena"
-	stage.add_child(arena)
-	camera = Camera3D.new()
-	camera.name = "Camera"
-	camera.fov = CAMERA_FOV
-	stage.add_child(camera)
+func _setup_world() -> void:
 	camera.look_at_from_position(CAMERA_AT, CAMERA_TO, Vector3.UP)
-	effects = MapEffects.new()
-	effects.name = "Effects"
-	stage.add_child(effects)
 	for i in 4:
-		var body := Node3D.new()
-		body.name = "Fighter%d" % i
-		body.visible = false
-		stage.add_child(body)
-		bodies.append(body)
+		bodies.append(get_node("World/Viewport/Stage/Fighter%d" % i) as Node3D)
 		_last.append(Vector2i(-1, 0))
 		_from.append(Vector3.ZERO)
 		_to.append(Vector3.ZERO)
 		_yaw.append(0.0)
-	marker = Sprite3D.new()
-	marker.name = "Target"
 	var img := Image.new()
 	img.load_svg_from_string(MARKER_SVG, 1.5)
 	marker.texture = ImageTexture.create_from_image(img)
-	marker.pixel_size = 0.0055
-	marker.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	marker.shaded = false
-	marker.no_depth_test = true
-	marker.render_priority = 2
-	marker.visible = false
-	stage.add_child(marker)
 
 
 ## The field of the battle's background byte and its sky.
@@ -415,131 +351,19 @@ func _move_fighters(delta: float) -> void:
 
 
 # --- the HUD --------------------------------------------------------------------------------
-func _build_hud() -> void:
-	hud = Layer.new()
-	hud.name = "Hud"
-	hud.screen = self
-	hud.what = "hud"
-	hud.set_anchors_preset(Control.PRESET_FULL_RECT)
-	hud.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(hud)
+func _setup_hud() -> void:
 	for i in 4:
-		var face := Pictures.framed("Portrait%d" % i, Vector2(FACE, FACE))
-		face.size = Vector2(FACE, FACE)
-		face.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		face.visible = false
-		hud.add_child(face)
-		portraits.append(face)
-	center = PanelContainer.new()
-	center.name = "Center"
-	var box := UiTheme.box(PLATE, UiTheme.IRON, 2)
-	box.set_content_margin_all(20)
-	box.content_margin_left = 34
-	box.content_margin_right = 34
-	center.add_theme_stylebox_override("panel", box)
-	center.set_anchors_preset(Control.PRESET_CENTER)
-	center.visible = false
-	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	center_text = Label.new()
-	center_text.name = "Text"
-	center_text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	center_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	center_text.add_theme_font_size_override("font_size", 30)
-	center.add_child(center_text)
-	add_child(center)
-	pad = Control.new()
-	pad.name = "Pad"
-	pad.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	pad.position = Vector2(-1.5 * PAD_BUTTON, -56 - 3 * PAD_BUTTON)
-	add_child(pad)
-	# Evade up, Defend left, Attack right, a skill down
-	var u := float(PAD_BUTTON)
+		portraits.append(hud.get_node("Portrait%d" % i) as TextureRect)
 	for k in PAD:
-		var b := Button.new()
-		b.name = str(k[0]).capitalize()
-		b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-		b.text = tr(k[2])
+		var b: Button = pad.get_node(str(k[0]).capitalize())
 		b.icon = icon(k[1], 52)
-		b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
-		b.custom_minimum_size = Vector2(u - 6, u - 6)
-		b.size = Vector2(u - 6, u - 6)
-		b.position = k[3] * u + Vector2(3, 3)
-		b.add_theme_font_size_override("font_size", 16)
-		b.add_theme_font_override("font", UiTheme.font("bold"))
-		for style in ["normal", "hover", "pressed", "disabled", "focus"]:
-			var sb: StyleBox = get_theme_stylebox(style, "Button").duplicate()
-			if sb != null:
-				sb.set_content_margin_all(6)
-				sb.content_margin_top = 8
-				b.add_theme_stylebox_override(style, sb)
-		b.focus_mode = Control.FOCUS_NONE
-		b.pressed.connect(press.bind(k[0]))
-		pad.add_child(b)
 		pad_buttons[k[0]] = b
-	countdown = Label.new()
-	countdown.name = "Countdown"
-	countdown.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	countdown.add_theme_font_override("font", UiTheme.font("title"))
-	countdown.add_theme_font_size_override("font_size", 56)
-	countdown.add_theme_color_override("font_color", UiTheme.ACCENT)
-	countdown.add_theme_color_override("font_outline_color", UiTheme.INK)
-	countdown.add_theme_constant_override("outline_size", 10)
-	countdown.position = Vector2(3 * u + 14, u + 6)
-	pad.add_child(countdown)
-	skill_list = VBoxContainer.new()
-	skill_list.name = "Skills"
-	skill_list.set_anchors_preset(Control.PRESET_CENTER)
-	skill_list.position = Vector2(-200, -210)
-	skill_list.custom_minimum_size = Vector2(400, 0)
-	skill_list.add_theme_constant_override("separation", 6)
-	skill_list.visible = false
-	add_child(skill_list)
-	bar = Layer.new()
-	bar.name = "Bar"
-	bar.screen = self
-	bar.what = "bar"
-	bar.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	bar.position = Vector2(-55 * BAR_SCALE, -70 - 30 * BAR_SCALE)
-	bar.size = Vector2(110 * BAR_SCALE, 30 * BAR_SCALE)
-	bar.visible = false
-	bar.gui_input.connect(
-		func(e: InputEvent) -> void:
-			if e is InputEventMouseButton and e.pressed:
-				press("fire")
-	)
-	add_child(bar)
-	hint = Label.new()
-	hint.name = "Hint"
-	hint.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	hint.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	hint.position.y = -44
-	hint.add_theme_font_size_override("font_size", 22)
-	hint.add_theme_color_override("font_color", UiTheme.TEXT)
-	hint.add_theme_color_override("font_outline_color", UiTheme.INK)
-	hint.add_theme_constant_override("outline_size", 6)
-	add_child(hint)
-	auto_button = Button.new()
-	auto_button.name = "Auto"
-	auto_button.focus_mode = Control.FOCUS_NONE
-	auto_button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	auto_button.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
-	auto_button.position = Vector2(12, -62)
-	auto_button.add_theme_font_override("font", UiTheme.font("bold"))
-	auto_button.add_theme_font_size_override("font_size", 20)
-	for style in ["normal", "hover", "pressed", "focus"]:
-		var sb := UiTheme.box(
-			PLATE if style != "hover" else Color(UiTheme.BUTTON_HOVER, 0.92), UiTheme.IRON, 2
-		)
-		sb.content_margin_left = 14
-		sb.content_margin_right = 14
-		sb.content_margin_top = 4
-		sb.content_margin_bottom = 4
-		auto_button.add_theme_stylebox_override(style, sb)
-	auto_button.visible = false
-	auto_button.pressed.connect(press.bind("auto"))
-	add_child(auto_button)
+
+
+## A click on the timing bar stops it, as the confirm key.
+func _on_bar_input(e: InputEvent) -> void:
+	if e is InputEventMouseButton and e.pressed:
+		press("fire")
 
 
 ## Where fighter i's plate is: my team at the top left, the other at the top right, one row

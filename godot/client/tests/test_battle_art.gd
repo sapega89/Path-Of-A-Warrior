@@ -130,14 +130,14 @@ func test_a_mission_on_the_screen() -> void:
 	var c: RefCounted = got[0]
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": String(got[1]).path_join("hero.json")}
-	var screen: Control = OnlineBattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	screen.size = Vector2(1280, 720)
 	screen.set_process(false)
 	var b: RefCounted = c.battle
 	eq(b.mode, 2, "a Solo Mission")
 	check(screen.arena.scenery == b.bg & 3, "the field of its background")
-	var text := FileAccess.get_file_as_string("res://scripts/screens/online_battle_screen.gd")
+	var text := FileAccess.get_file_as_string("res://screens/online_battle/online_battle_screen.gd")
 	for old_art in ["fighter_", "gamebg", '"ui%d"', "act%d", "face%d", "monster_r"]:
 		check(not text.contains(old_art), "no sprite of the old screen: " + old_art)
 	var seen := {}
