@@ -3,8 +3,8 @@ extends BaseScreen
 ## Walks the hero around the maps of the campaign in 3D, in the new art (MapArt). skill_3 /
 ## skill_4 (keys 3 / 4, gamepad LB / RB) switch to the previous / next map; the line at the top
 ## names the keys of the device in use. The hero is shown as the missions show a new one: the
-## Cossack's figure with a sabre (the body under it walks, the figure plays idle or walk and
-## turns the way he goes).
+## figure of the first class (the Cossack) with the first kind of weapon (the body under it
+## walks, the figure plays idle or walk and turns the way he goes).
 
 var map_number := 1
 var map_total := 0

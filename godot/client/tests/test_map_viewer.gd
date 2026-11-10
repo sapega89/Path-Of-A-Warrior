@@ -1,6 +1,6 @@
 extends "res://tests/test_case.gd"
 ## The map viewer (screens/map_viewer): the hero shown as the missions show a new one, the
-## Cossack's 3D figure with a sabre, walking and turning with the body under it.
+## Cossack's 3D figure with the first kind of weapon, walking and turning with the body under it.
 
 
 func test_the_hero_is_the_cossack_figure() -> void:
@@ -8,7 +8,8 @@ func test_the_hero_is_the_cossack_figure() -> void:
 	root.add_child(viewer)
 	eq(viewer.figure.kind, MapPeople.HEROES.front(), "the Cossack's figure")
 	check(
-		viewer.figure.skeleton.find_child(MapPeople.BLADES.front(), true, false) != null, "a sabre"
+		viewer.figure.skeleton.find_child(MapPeople.BLADES.front(), true, false) != null,
+		"his weapon"
 	)
 	check(not viewer.hero.sprite.visible, "not the flat picture")
 	eq(viewer.figure.player.current_animation, "idle", "standing still")
