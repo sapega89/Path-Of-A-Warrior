@@ -2,7 +2,9 @@ extends "res://tests/test_case.gd"
 ## The art slice (scripts/art, assets/art): the models load, the people share one clip
 ## library, and the camp and the battle room build with everything in place.
 
-const PEOPLE := ["kozak", "kozak_camp", "kozak_svyta", "zholner", "luchnyk", "polkovnyk"]
+const PEOPLE := [
+	"kozak", "kozak_hero", "kozak_camp", "kozak_svyta", "zholner", "luchnyk", "polkovnyk"
+]
 const WEAPONS := ["sabre", "sabre_gold", "bulava", "spear", "shield", "bow"]
 const CLIPS := [
 	"idle",

@@ -28,6 +28,7 @@ import bpy  # noqa: E402
 from mathutils import Vector  # noqa: E402
 
 import characters  # noqa: E402
+import hero  # noqa: E402
 import mesh_kit  # noqa: E402
 import portraits  # noqa: E402
 import props  # noqa: E402
@@ -36,6 +37,7 @@ import weapons  # noqa: E402
 
 LOADOUT = {
     "kozak": ["sabre"],
+    "kozak_hero": ["sabre"],
     "kozak_camp": [],
     "kozak_svyta": [],
     "zholner": ["sabre", "shield"],
@@ -53,6 +55,14 @@ LOADOUT = {
     "murza": ["sabre_gold"],
     "upyr": ["bulava"],
 }
+
+
+PEOPLE = list(characters.RECIPES) + list(hero.RECIPES)
+
+
+def build_person(name, bones, arm):
+    """The body of a person: the hero's Cossack from hero.py, everyone else from characters.py."""
+    return (hero if name in hero.RECIPES else characters).build(name, bones, rig.DEFORM, arm)
 
 
 def _select(objs):
@@ -89,8 +99,8 @@ def painted_material():
 
 def build_people(arm, bones, out, names=None):
     report = []
-    for name in names or characters.RECIPES:
-        body = characters.build(name, bones, rig.DEFORM, arm)
+    for name in names or PEOPLE:
+        body = build_person(name, bones, arm)
         held = [weapons.build(w, bones, arm) for w in LOADOUT[name]]
         export(f"{out}/characters/{name}.glb", [arm, body] + held)
         tris = mesh_kit.triangles(body) + sum(mesh_kit.triangles(h) for h in held)
@@ -112,7 +122,7 @@ def build_people(arm, bones, out, names=None):
 def preview(arm, bones, path, pose="idle", frame=8, spacing=1.45):
     painted_material()
     scene = bpy.context.scene
-    names = list(characters.RECIPES)
+    names = PEOPLE
     for i, name in enumerate(names):
         a = arm.copy()
         a.data = arm.data
@@ -123,7 +133,7 @@ def preview(arm, bones, path, pose="idle", frame=8, spacing=1.45):
         a.animation_data.action = act
         if act.slots:
             a.animation_data.action_slot = act.slots[0]
-        body = characters.build(name, bones, rig.DEFORM, a)
+        body = build_person(name, bones, a)
         for w in LOADOUT[name]:
             weapons.build(w, bones, a)
     for p in props.preview_set():
