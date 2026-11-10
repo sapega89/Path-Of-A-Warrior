@@ -6,6 +6,8 @@ extends RefCounted
 const ROOT := "res://assets/art/"
 const PAINTED := preload("res://assets/art/shaders/painted.gdshader")
 const OUTLINE := preload("res://assets/art/shaders/outline.gdshader")
+const BREAKABLE_OUTLINE := preload("res://assets/art/shaders/breakable_outline.gdshader")
+const BREAKABLE_GLOW := preload("res://assets/art/shaders/breakable_glow.gdshader")
 
 ## The ten colours of the style guide.
 const PALETTE := {
@@ -113,6 +115,22 @@ static func dress(node: Node, material: Material) -> void:
 static func prop(prop_name: String, outline := false) -> Node3D:
 	var node: Node3D = scene("props/%s.glb" % prop_name).instantiate()
 	dress(node, painted(true) if outline else props_material())
+	return node
+
+
+## A piece one can break (a barrel, a crate, a bush in the way): with its own material (a hit
+## flashes it) and, in place of the ink outline, a brass one with warm edges that slowly glow
+## and dim, so it reads apart from what only stands around.
+static func breakable_prop(prop_name: String) -> Node3D:
+	var node: Node3D = scene("props/%s.glb" % prop_name).instantiate()
+	var m := painted(false)
+	var outline := ShaderMaterial.new()
+	outline.shader = BREAKABLE_OUTLINE
+	var glow := ShaderMaterial.new()
+	glow.shader = BREAKABLE_GLOW
+	outline.next_pass = glow
+	m.next_pass = outline
+	dress(node, m)
 	return node
 
 

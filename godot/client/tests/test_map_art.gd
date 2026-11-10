@@ -165,6 +165,29 @@ func test_breakables_flash() -> void:
 	b.free()
 
 
+## A thing one can break wears a brass outline and warm edges that glow and dim; the other
+## props do not.
+func test_breakables_marked() -> void:
+	var b := _map(1)
+	for o in b.breakables:
+		var m: ShaderMaterial = o.get_meta("material")
+		var outline := m.next_pass as ShaderMaterial
+		check(
+			outline != null and outline.shader == ArtKit.BREAKABLE_OUTLINE,
+			"%s: a brass outline" % o.name
+		)
+		var glow := outline.next_pass as ShaderMaterial if outline != null else null
+		check(glow != null and glow.shader == ArtKit.BREAKABLE_GLOW, "%s: warm edges" % o.name)
+	var others := 0
+	for p in b.props:
+		if p.get_parent() != null and p.get_parent().name == "Props":
+			var m: Material = MapArt._material_of(p)
+			check(m == null or m.next_pass == null, "%s is not" % p.name)
+			others += 1
+	check(others > 0, "props around")
+	b.free()
+
+
 func test_the_mission_stands_on_the_new_maps() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 5, "mission": 0, "seed": 2}
