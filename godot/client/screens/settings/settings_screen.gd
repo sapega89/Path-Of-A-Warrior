@@ -107,7 +107,6 @@ func _close_controls(controls: ControlsScreen) -> void:
 	(%Controls as Button).grab_focus()
 
 
-
 ## A volume is set, and the sound of the setting plays at it.
 func _volume_changed(v: float, key: String) -> void:
 	Settings.set_value(key, v)
