@@ -196,18 +196,33 @@ func test_the_battle_screen_shows_a_duel() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = OnlineBattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	var b: RefCounted = c.battle
 	eq(screen.battle, b, "the client's battle")
-	check(screen.arena.ground != null and screen.arena.scenery == b.bg & 3, "the field built")
-	check(screen.bodies[0].position.x < 0 and screen.bodies[1].position.x > 0, "mine on the left")
-	eq([screen.bodies[2].visible, screen.bodies[3].visible], [false, false], "a duel: two fighters")
-	eq(screen.figures[0].kind, BattleMotion.kind_of(b.fighters[0]), "me: the model of my class")
 	check(
-		screen.figures[1].kind in BattleMotion.RIVALS, "the CPU: a rival " + screen.figures[1].kind
+		screen.stage.arena.ground != null and screen.stage.arena.scenery == b.bg & 3,
+		"the field built"
 	)
-	check(is_equal_approx(screen.bodies[1].rotation.y, -PI / 2.0), "facing left")
+	check(
+		screen.stage.bodies[0].position.x < 0 and screen.stage.bodies[1].position.x > 0,
+		"mine on the left"
+	)
+	eq(
+		[screen.stage.bodies[2].visible, screen.stage.bodies[3].visible],
+		[false, false],
+		"a duel: two fighters"
+	)
+	eq(
+		screen.stage.figures[0].kind,
+		BattleMotion.kind_of(b.fighters[0]),
+		"me: the model of my class"
+	)
+	check(
+		screen.stage.figures[1].kind in BattleMotion.RIVALS,
+		"the CPU: a rival " + screen.stage.figures[1].kind
+	)
+	check(is_equal_approx(screen.stage.bodies[1].rotation.y, -PI / 2.0), "facing left")
 	var seen := {}
 	for i in 30000:
 		if screen.battle == null:
@@ -268,7 +283,7 @@ func test_the_battle_screen_leaves_when_kicked() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = OnlineBattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	c.on_push({"t": "kicked"})
 	screen._process(0.2)
@@ -295,7 +310,7 @@ func test_auto_battle_by_tab_f_or_back() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = OnlineBattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	var back := InputEventJoypadButton.new()
 	back.button_index = JOY_BUTTON_BACK
@@ -323,7 +338,7 @@ func test_battle_hints_name_the_pad_after_the_pad() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = OnlineBattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	var was: String = InputSetup.device
 	var states := {
@@ -370,7 +385,7 @@ func test_auto_corner() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = OnlineBattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	var was: String = InputSetup.device
 	InputSetup.device = "keys"

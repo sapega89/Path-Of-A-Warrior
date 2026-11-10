@@ -28,7 +28,7 @@ func _battle(mode: int) -> Array:
 
 
 func test_who_is_who() -> void:
-	var f := OnlineBattle.Fighter.new()
+	var f := OnlineFighter.new()
 	f.kind = OnlineBattle.PLAYER
 	for face in 4:
 		f.face = face
@@ -130,14 +130,14 @@ func test_a_mission_on_the_screen() -> void:
 	var c: RefCounted = got[0]
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": String(got[1]).path_join("hero.json")}
-	var screen: Control = OnlineBattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	screen.size = Vector2(1280, 720)
 	screen.set_process(false)
 	var b: RefCounted = c.battle
 	eq(b.mode, 2, "a Solo Mission")
-	check(screen.arena.scenery == b.bg & 3, "the field of its background")
-	var text := FileAccess.get_file_as_string("res://scripts/screens/online_battle_screen.gd")
+	check(screen.stage.arena.scenery == b.bg & 3, "the field of its background")
+	var text := FileAccess.get_file_as_string("res://screens/online_battle/online_battle_screen.gd")
 	for old_art in ["fighter_", "gamebg", '"ui%d"', "act%d", "face%d", "monster_r"]:
 		check(not text.contains(old_art), "no sprite of the old screen: " + old_art)
 	var seen := {}
@@ -151,23 +151,27 @@ func test_a_mission_on_the_screen() -> void:
 			var monsters := 0
 			for k in 4:
 				var f: RefCounted = b.fighters[k]
-				eq(screen.figures[k].kind, BattleMotion.kind_of(f), "fighter %d as who he is" % k)
+				eq(
+					screen.stage.figures[k].kind,
+					BattleMotion.kind_of(f),
+					"fighter %d as who he is" % k
+				)
 				var face := BattleMotion.portrait_of(f)
-				eq(screen.portraits[k].texture, Pictures.portrait(face), "his portrait")
+				eq(screen.hud.portraits[k].texture, Pictures.portrait(face), "his portrait")
 				# the hero's portraits look to the left, the others to the right: each looks across
 				eq(
-					screen.portraits[k].flip_h,
+					screen.hud.portraits[k].flip_h,
 					(face >= 38 and face < 42) != f.mirrored(),
 					"fighter %d looks across" % k
 				)
 				eq(
-					screen.portraits[k].position.x > screen.size.x / 2.0,
+					screen.hud.portraits[k].position.x > screen.size.x / 2.0,
 					f.mirrored(),
 					"fighter %d on his side" % k
 				)
 				if f.kind == OnlineBattle.MONSTER:
 					monsters += 1
-					eq(screen.figures[k].kind, "upyr", "a monster")
+					eq(screen.stage.figures[k].kind, "upyr", "a monster")
 			eq(monsters, 2, "two monsters")
 		match b.state:
 			OnlineBattle.CHOOSE:
@@ -178,12 +182,12 @@ func test_a_mission_on_the_screen() -> void:
 					var t: int = b.target_cursor
 					check(
 						(
-							screen.marker.visible
+							screen.stage.marker.visible
 							and (
-								screen.marker.position.distance_to(
+								screen.stage.marker.position.distance_to(
 									(
-										screen.bodies[t].position
-										+ Vector3(0, OnlineBattleScreen.MARKER_UP, 0)
+										screen.stage.bodies[t].position
+										+ Vector3(0, BattleStage.MARKER_UP, 0)
 									)
 								)
 								< 0.01
@@ -196,7 +200,7 @@ func test_a_mission_on_the_screen() -> void:
 			OnlineBattle.BAR:
 				if b.state_ticks == 6:
 					b.key("fire")
-		for e in screen.effects.drawn:
+		for e in screen.stage.effects.drawn:
 			seen[e[0]] = true
 	for what in ["people", "target", "trail", "blood"]:
 		check(seen.has(what), "seen: " + what)

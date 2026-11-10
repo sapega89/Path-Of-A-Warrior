@@ -18,6 +18,16 @@ var sessions := {}
 var _outbox: Array = []
 ## Lines of the log go here (main.gd prints them).
 var log_line: Callable = func(_s: String) -> void: pass
+## The handler of each request the server answers itself (answer()); Live and the online
+## game answer theirs.
+var _answers := {
+	"register": _register,
+	"login": _login,
+	"hero_get": _hero_get,
+	"hero_put": _hero_put,
+	"options_get": _options_get,
+	"options_put": _options_put,
+}
 
 
 class Session:
@@ -157,31 +167,20 @@ func answer(s: Session, msg: Dictionary) -> Dictionary:
 	elif t != "register" and t != "login" and s.user.is_empty():
 		reply = _fail(t, "login first")
 	else:
-		match t:
-			"register":
-				reply = _register(s, msg)
-			"login":
-				reply = _login(s, msg)
-			"hero_get":
-				reply = _hero_get(s)
-			"hero_put":
-				reply = _hero_put(s, msg)
-			"options_get":
-				reply = _options_get(s)
-			"options_put":
-				reply = _options_put(s, msg)
-			_:
-				if t.begins_with("live_") and live != null:
-					reply = live.answer(s.live, t, msg)
-				elif t == "mp_enter" and online != null:
-					reply = online.enter(s.online, s.user)
-				elif (
-					online != null
-					and (t.begins_with("mp_") or t.begins_with("order_") or t.begins_with("chat_"))
-				):
-					reply = online.answer(s.online, t, msg)
-				else:
-					reply = _fail(t, "unknown")
+		var own: Callable = _answers.get(t, Callable())
+		if own.is_valid():
+			reply = own.call(s, msg)
+		elif t.begins_with("live_") and live != null:
+			reply = live.answer(s.live, t, msg)
+		elif t == "mp_enter" and online != null:
+			reply = online.enter(s.online, s.user)
+		elif (
+			online != null
+			and (t.begins_with("mp_") or t.begins_with("order_") or t.begins_with("chat_"))
+		):
+			reply = online.answer(s.online, t, msg)
+		else:
+			reply = _fail(t, "unknown")
 	if msg.get("q") is int:
 		reply["q"] = msg["q"]
 	return reply
@@ -228,7 +227,7 @@ func _login(s: Session, msg: Dictionary) -> Dictionary:
 	return {"t": "login", "ok": true}
 
 
-func _hero_get(s: Session) -> Dictionary:
+func _hero_get(s: Session, _msg: Dictionary) -> Dictionary:
 	var h := accounts.hero_get(s.user)
 	return {"t": "hero_get", "ok": true, "rev": h.rev, "at": h.at, "hero": h.hero}
 
@@ -255,7 +254,7 @@ func _hero_put(s: Session, msg: Dictionary) -> Dictionary:
 	}
 
 
-func _options_get(s: Session) -> Dictionary:
+func _options_get(s: Session, _msg: Dictionary) -> Dictionary:
 	var e := accounts.store_get(s.user, "options")
 	return {"t": "options_get", "ok": true, "rev": e.rev, "at": e.at, "options": e.data}
 
