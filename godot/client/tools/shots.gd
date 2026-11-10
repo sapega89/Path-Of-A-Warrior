@@ -207,8 +207,8 @@ func _ready() -> void:
 	Router.push("live_cancel", live_params)
 	await _frames(2)
 	await _shot(out, "10o_live_cancel")
-	# Opening the game menu with something new on Live: a notice, the Sale List, the Gift List,
-	# the Exp and Fame kept there.
+	# Opening the game menu with something new on Live: a notice, the Sale List, the note that
+	# gifts came, the Exp and Fame kept there; then the Gift List in Trade.
 	market.notices = [["Welcome to Live!", "Sell what you", "do not need."]]
 	var on_server: Dictionary = market.user("ANDREY")
 	on_server.sold.append({"item": items.make(146), "price": 1800})
@@ -228,11 +228,16 @@ func _ready() -> void:
 	await _shot(out, "10q_live_sale_list")
 	news.list_done()
 	await _frames(2)
-	await _shot(out, "10r_live_gift_list")
-	news.list_done()
+	await _shot(out, "10r_live_gifts_came")
+	news.note.hide()
+	news.note.confirmed.emit()
 	await _frames(2)
 	await _shot(out, "10s_live_fame")
 	news.note.hide()
+	news.note.confirmed.emit()
+	Router.push("live_gifts", live_params)
+	await _frames(2)
+	await _shot(out, "10t_live_gift_list")
 	# Multiplayer: the menu, the Character pages, Skills, Ranking, the Order, the Chat and the
 	# Options. The server's online game runs in this process (server/online.gd) with its bots;
 	# Maria is in my order and wrote while I was away.

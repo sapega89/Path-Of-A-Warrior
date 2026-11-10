@@ -47,6 +47,10 @@ text = "live.sell"
 layout_mode = 2
 text = "live.cancel"
 
+[node name="Gifts" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "live.gift_list"
+
 [node name="Back" type="Button" parent="Center/Column"]
 layout_mode = 2
 text = "common.back"
@@ -56,5 +60,7 @@ text = "common.back"
 [connection signal="pressed" from="Center/Column/Sell" to="." method="open_page" binds= ["live_sell"]]
 
 [connection signal="pressed" from="Center/Column/Cancel" to="." method="open_page" binds= ["live_cancel"]]
+
+[connection signal="pressed" from="Center/Column/Gifts" to="." method="open_page" binds= ["live_gifts"]]
 
 [connection signal="pressed" from="Center/Column/Back" to="." method="go_back"]
