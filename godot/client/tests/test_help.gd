@@ -17,7 +17,7 @@ func test_help_screen() -> void:
 	screen.open(2)
 	eq(screen.heading.text, "Blacksmith", "a topic")
 	eq(screen.page_label.text, "1 / 6", "its pages")
-	eq(screen.text.text, "The smith buys and sells things.", "its first page")
+	eq(screen.text.text, "The smith, in every camp, buys and sells things.", "its first page")
 	screen.turn_page(-1)
 	eq(screen.page, 5, "back from the first page to the last")
 	screen.open(HelpScreen.CONTROL_TOPIC)
@@ -67,6 +67,27 @@ func test_multiplayer_topics_in_the_same_help() -> void:
 		[tr("help.mp_control_1"), tr("help.mp_control_2")],
 		"Control: then the online battle's keys"
 	)
+	screen.free()
+	Router.params = old
+
+
+## Missions starts with how a mission is fought (there is no training before the first one),
+## and no page sends the player to menus the game no longer has.
+func test_missions_tell_how_a_mission_is_fought() -> void:
+	var old: Dictionary = Router.params
+	Router.params = {}
+	var screen: Control = Router.make(Router.SCREENS["help"])
+	root.add_child(screen)
+	var first: Array = screen.pages_of(0).slice(0, 5)
+	for words in ["walk over them", "red ball", "keys 1 to 5", "Auto-hunt (Tab)", "arrow blinks"]:
+		check(first.any(func(p: String) -> bool: return p.contains(words)), "Missions: " + words)
+	for i in screen.topics.size():
+		for p in screen.pages_of(i):
+			for gone in ["Live", "Load User Data", "in the main menu"]:
+				check(
+					not str(p).contains(gone),
+					'%s: no "%s" in %s' % [screen.topics[i].name, gone, p]
+				)
 	screen.free()
 	Router.params = old
 

@@ -1,7 +1,0 @@
-[gd_scene load_steps=3 format=3]
-
-[ext_resource type="PackedScene" path="res://screens/mission/mission_screen.tscn" id="1"]
-[ext_resource type="Script" path="res://scripts/screens/training_screen.gd" id="2"]
-
-[node name="TrainingScreen" instance=ExtResource("1")]
-script = ExtResource("2")

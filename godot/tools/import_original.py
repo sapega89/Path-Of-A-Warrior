@@ -392,8 +392,9 @@ def export_visit(out):
     (out / "visit.json").write_text(json.dumps(visit, ensure_ascii=False, indent=0))
 
 
-# Help (edat 61 help.scr): its pages, the first page of each topic (the last two pages are the
-# About box, not a topic), and the topic names (uimenu.scr 38, "Missions|Visiting|...").
+# Help (edat 61 help.scr): the topic names (uimenu.scr 38, "Missions|Visiting|...") and where
+# each topic's pages start (the last two pages are the About box, not a topic); the pages shown are
+# ours (own_story.json), as many as each topic needs.
 HELP_TOPIC_START = [0, 5, 8, 14, 17, 22, 28, 35, 37]
 
 
@@ -405,7 +406,7 @@ def export_help(out):
               for i in range(len(HELP_TOPIC_START) - 1)]
     for topic, own in zip(topics, OWN_STORY["help"]):
         topic["name"] = own_story_text(own["name"], topic["name"])
-        topic["pages"] = own_story_lines(own["pages"], topic["pages"])
+        topic["pages"] = [own_story_text(page) for page in own["pages"]]  # ours, as many as we wrote
     (out / "help.json").write_text(json.dumps({"topics": topics}, ensure_ascii=False, indent=0))
 
 

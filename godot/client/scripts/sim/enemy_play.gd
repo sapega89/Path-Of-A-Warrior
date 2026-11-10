@@ -240,12 +240,7 @@ static func tick_enemies(sim: MapSim) -> void:
 			if anim_frame > MapSim.END:
 				_enemy_dies(sim, e)
 				# (the next enemy waits a tick, as in the original's loop)
-				if (
-					sim.enemies_alive < 1
-					and sim.waves[0] == 0
-					and e.type != MapSim.KIND_ARCHERS
-					and not sim.hold_room
-				):
+				if sim.enemies_alive < 1 and sim.waves[0] == 0 and e.type != MapSim.KIND_ARCHERS:
 					if sim.boss_fight:
 						sim.room_phase = 4
 						sim.room_phase_timer = 22
