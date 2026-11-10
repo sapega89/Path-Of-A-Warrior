@@ -1,5 +1,7 @@
 extends "res://tests/test_case.gd"
 
+const SETTINGS_PATH := "user://test_pause_settings.cfg"
+
 
 func test_pause_menu() -> void:
 	var old: Dictionary = Router.params
@@ -43,3 +45,31 @@ func test_pause_menu() -> void:
 	check(screen.is_processing(), "and the game runs on")
 	screen.free()
 	Router.params = old
+
+
+func test_game_speed_changed_in_the_pause_applies_at_once() -> void:
+	var old_params: Dictionary = Router.params
+	var old_path: String = Settings.path
+	var old_speed: int = int(Settings.get_value("game_speed"))
+	var old_cloud: Dictionary = Settings.cloud.duplicate()
+	Settings.path = SETTINGS_PATH
+	Settings.set_value("game_speed", 2)
+	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	var screen: Control = Router.make(Router.SCREENS["mission"])
+	root.add_child(screen)
+	eq(screen.tick, Settings.SPEED_MS[2] / 1000.0, "the mission starts at Med")
+	screen.pause()
+	screen.pause_menu.open_options()
+	var options: SettingsScreen = screen.pause_menu.settings
+	options.speed.select(4)
+	options.speed.item_selected.emit(4)
+	eq(screen.tick, Settings.SPEED_MS[4] / 1000.0, "Fast at once, not from the next mission")
+	options._back()
+	screen.pause_menu.resumed.emit()
+	eq(screen.tick, Settings.SPEED_MS[4] / 1000.0, "and on after the pause")
+	screen.free()
+	Settings.set_value("game_speed", old_speed)
+	Settings.cloud = old_cloud
+	Settings.path = old_path
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(SETTINGS_PATH))
+	Router.params = old_params

@@ -136,8 +136,10 @@ func _ready() -> void:
 	_update_view(0.0)
 
 
+## A setting changed over the pause menu: the hit effects and the game speed apply at once.
 func _on_setting_changed(_key: String) -> void:
 	feel.use_settings(Settings)
+	tick = Settings.tick_seconds()
 
 
 ## The 4-direction of a stick or keys (the original hero walks in 4 directions), or -1.
