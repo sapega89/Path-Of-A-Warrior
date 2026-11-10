@@ -2,8 +2,7 @@ class_name SettingsScreen
 extends BaseScreen
 ## Settings: language, music and sound volume, the game speed, the hit effects on the map (all
 ## of them, the screen shake, the vibration), the world as pixel art or smooth, fullscreen
-## (desktop only), and Training
-## (training_screen.gd) to take the training again (not over the mission's pause).
+## (desktop only).
 
 const I18nScript := preload("res://scripts/core/i18n.gd")
 ## Language names are shown in their own language, not translated.
@@ -22,8 +21,7 @@ const LANGUAGE_NAMES := {"en": "English", "uk": "Українська"}
 var close := Callable()
 
 
-## The settings as they are now; the rows a platform has not (fullscreen) or a screen opened
-## over another does not offer (Training) are taken away.
+## The settings as they are now; a row the platform has not (fullscreen) is taken away.
 func _ready() -> void:
 	for i in I18nScript.LOCALES.size():
 		var code: String = I18nScript.LOCALES[i]
@@ -44,8 +42,6 @@ func _ready() -> void:
 	else:
 		fullscreen.get_parent().free()
 		fullscreen = null
-	if close.is_valid():
-		%Training.free()
 	language.grab_focus()
 
 
@@ -90,10 +86,6 @@ func _on_rumble(on: bool) -> void:
 
 func _on_fullscreen(on: bool) -> void:
 	Settings.set_value("fullscreen", on)
-
-
-func _on_training() -> void:
-	Router.push("training", {})
 
 
 ## A volume is set, and the sound of the setting plays at it.

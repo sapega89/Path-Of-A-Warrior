@@ -83,13 +83,8 @@ var _anim_dt := 0.0  # seconds the figures' clips move on this frame (0 while a 
 @onready var talk_text: Label = %Line
 
 
-## The mission to play: Router.params (the training gives its own).
-func mission_params() -> Dictionary:
-	return Router.params
-
-
 func _ready() -> void:
-	var p: Dictionary = mission_params()
+	var p: Dictionary = Router.params
 	tick = Settings.tick_seconds()
 	lord_id = int(p.get("lord", 1))
 	mission = int(p.get("mission", 0))
@@ -136,8 +131,10 @@ func _ready() -> void:
 	_update_view(0.0)
 
 
+## A setting changed over the pause menu: the hit effects and the game speed apply at once.
 func _on_setting_changed(_key: String) -> void:
 	feel.use_settings(Settings)
+	tick = Settings.tick_seconds()
 
 
 ## The 4-direction of a stick or keys (the original hero walks in 4 directions), or -1.
@@ -524,13 +521,7 @@ func pause() -> void:
 	pause_menu.sim = sim
 	pause_menu.save_game = save_on_map
 	pause_menu.resumed.connect(resume)
-	_pause_menu_ready(pause_menu)
 	add_child(pause_menu)
-
-
-## The pause menu before it is shown (the training makes its Exit skip the training).
-func _pause_menu_ready(_menu: MissionPause) -> void:
-	pass
 
 
 func resume() -> void:

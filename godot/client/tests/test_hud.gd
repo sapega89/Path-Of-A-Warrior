@@ -52,3 +52,21 @@ func test_skill_bar_slots() -> void:
 	eq(hud.slot_at(Vector2(left + 5 * k, y - 40 * k)), [], "above the bar")
 	hud.sim = null
 	hud.free()
+
+
+## The blinking arrow down to the next room sits above the HUD, not under it.
+func test_the_exit_arrow_down_shows_above_the_hud() -> void:
+	var old: Dictionary = Router.params
+	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	var screen: Control = Router.make(Router.SCREENS["mission"])
+	root.add_child(screen)
+	screen._place_arrows()
+	var view: Vector2 = screen.get_viewport_rect().size
+	var a: TextureRect = screen.arrows[0]
+	var top: float = screen.hud.top_of(view)
+	check(
+		a.position.y + a.size.y <= top,
+		"above the HUD: %s + %s <= %s" % [a.position.y, a.size.y, top]
+	)
+	screen.free()
+	Router.params = old
