@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://screens/map_viewer/map_viewer_screen.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/world/map_view.tscn" id="2"]
 [ext_resource type="Script" path="res://scripts/world/hero.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/ui/touch_controls.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/art/art_figure.gd" id="5"]
 
 [node name="MapViewerScreen" type="Control"]
 layout_mode = 3
@@ -19,6 +20,9 @@ layout_mode = 1
 
 [node name="Hero" type="CharacterBody3D" parent="World/Viewport/WorldRoot"]
 script = ExtResource("3")
+
+[node name="Figure" type="Node3D" parent="World/Viewport/WorldRoot/Hero"]
+script = ExtResource("5")
 
 [node name="Info" type="Label" parent="."]
 unique_name_in_owner = true
