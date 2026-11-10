@@ -190,8 +190,9 @@ func _act(
 	fig: Node3D, a: RefCounted, motion: Array, anim: Array, t: float, tick: float, restart: bool
 ) -> void:
 	var n := Motion.ticks(anim)
-	var progress := clampf((float(a.frame) + t) / float(n), 0.0, 1.0) if restart else 0.0
-	fig.act(motion, n * tick, restart, progress)
+	var x := clampf((float(a.frame) + t) / float(n), 0.0, 1.0)
+	fig.act(motion, n * tick, restart, x if restart else 0.0)
+	fig.carry(Motion.body_pose(motion, x))
 
 
 ## The action began (again) since the last tick drawn.

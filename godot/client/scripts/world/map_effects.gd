@@ -1,5 +1,5 @@
 class_name MapEffects
-extends FxRigs
+extends SkillEffects
 ## The effects of a mission in the new art, made in code: the blows, skills, potions and
 ## scrolls MapSim shows, the fire on whoever burns, the auras of buffs, the blood of hits (and
 ## the blots it leaves on the ground for a while), the weapon trails and the archers' arrows.
@@ -12,7 +12,7 @@ extends FxRigs
 
 const BLOOD := preload("res://assets/art/shaders/fx_blood.gdshader")
 
-## The kinds of effects and how many frames each has.
+## The kinds of effects and how many frames each has (the skills' own: SKILL_FRAMES).
 ##   slash:  dust kicked up by a dash (frame: direction << 1 | step)
 ##   trail:  the trail of a blade (direction * 3 + which blow)
 ##   spark:  where a blow lands on steel (two steps; 0-1 a light hit, 2-3 a hard one)
@@ -73,7 +73,7 @@ func show_effects(list: Array, t := 0.0) -> void:
 	for e in list:
 		var kind := str(e[0])
 		var frame := int(e[1])
-		if not FRAMES.has(kind) or frame < 0 or frame >= int(FRAMES[kind]):
+		if frame < 0 or frame >= int(FRAMES.get(kind, SKILL_FRAMES.get(kind, 0))):
 			continue
 		var rig := _rig(kind)
 		rig.visible = true
