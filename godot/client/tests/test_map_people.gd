@@ -25,7 +25,16 @@ func test_what_the_actions_look_like() -> void:
 	eq(Motion.hero(2, 7.0)[0], "run", "running")
 	eq(Motion.hero(3)[0], "attack_slash", "the first blow of the combo")
 	eq(Motion.hero(4)[0], "attack_sweep", "the second")
-	eq(Motion.hero(8)[0], "attack_chop", "the third, with the other blade")
+	eq(Motion.hero(5)[0], "attack_chop", "the third")
+	eq(
+		[Motion.hero(6)[0], Motion.hero(7)[0], Motion.hero(8)[0]],
+		["attack_stab", "attack_2h_slash", "attack_2h_stab"],
+		"a long weapon's blows: a thrust, a cut with both hands, a sweeping thrust"
+	)
+	for long_blow in Motion.LONG_COMBO:
+		check(not long_blow in Motion.COMBO, "%s: not a short weapon's blow" % long_blow)
+	eq(Motion.hero(0, 0.0, 1)[0], "idle", "standing with a short weapon")
+	eq(Motion.hero(0, 0.0, 0)[0], "idle_2h", "and with a long one ready in both hands")
 	eq(Motion.hero(9)[1], "once", "a hit plays once")
 	eq(Motion.hero(10)[0], "death", "the fall")
 	eq(Motion.enemy(MapSim.KIND_ARCHERS, 1)[0], "shoot_bow", "an archer shoots")
@@ -57,11 +66,16 @@ func test_the_hero_by_class_and_blade() -> void:
 	root.add_child(people)
 	people.setup(sim, 2)
 	eq(people.hero.kind, "kharakternyk", "the third class")
-	check(people.hero.skeleton.find_child("sabre", true, false) != null, "a sabre")
+	var pike := people.hero.skeleton.find_child("spear", true, false) as MeshInstance3D
+	check(pike != null, "a long weapon: a pike")
+	var pike_length := pike.mesh.get_aabb().get_longest_axis_size() if pike != null else 0.0
 	people.set_hero_look(1, 1)
 	eq(people.hero.kind, "serdiuk", "another class")
-	check(people.hero.skeleton.find_child("palash", true, false) != null, "the broadsword")
-	check(people.hero.skeleton.find_child("sabre", true, false) == null, "and no sabre")
+	var sword := people.hero.skeleton.find_child("palash", true, false) as MeshInstance3D
+	check(sword != null, "a short one: the broadsword")
+	check(people.hero.skeleton.find_child("spear", true, false) == null, "and no pike")
+	var sword_length := sword.mesh.get_aabb().get_longest_axis_size() if sword != null else 0.0
+	check(pike_length > sword_length * 1.8, "the long one twice as long: %.2f" % pike_length)
 	people.free()
 
 
@@ -88,6 +102,10 @@ func test_figures_follow_the_simulation() -> void:
 	people.hero.advance(1.0)
 	people.update(0.6, 0.05, 0.12, null)
 	eq(people.hero.shown_clip, "walk", "then he walks")
+	sim.hero.action = 0
+	sim.hero.weapon_kind = Motion.LONG_WEAPON
+	people.update(0.6, 0.05, 0.12, null)
+	eq(people.hero.shown_clip, "idle_2h", "and stands with his pike ready")
 	sim.enemies.erase(e)
 	people.update(1.0, 0.0, 0.12, null)
 	check(not people.enemies.has(e), "the one gone is taken away")

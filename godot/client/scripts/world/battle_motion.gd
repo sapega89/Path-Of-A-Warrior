@@ -52,10 +52,12 @@ static func kind_of(f: RefCounted) -> String:
 	return RIVALS[_rival(f)]
 
 
-## The weapons a player carries (his blade); the others keep the model's own.
+## The weapons a player carries (his blade); the others keep the model's own. The battles'
+## weapon is 1 for the ids 101..115, the long weapons (MapActor.weapon_kind 0), so it shows
+## the same as in a mission.
 static func weapons_of(f: RefCounted) -> Array:
 	if int(f.kind) == OnlineBattle.PLAYER:
-		return [MapPeople.BLADES[clampi(int(f.weapon), 0, 1)]]
+		return [MapPeople.BLADES[1 - clampi(int(f.weapon), 0, 1)]]
 	return []
 
 
