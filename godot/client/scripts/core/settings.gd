@@ -2,7 +2,8 @@ extends Node
 ## Player settings, kept in user://settings.cfg and applied to the engine.
 ## The volumes and the game speed (CLOUD_KEYS) are kept on the server too, with the account
 ## (scripts/net/cloud_sync.gd): the newer copy wins, and on a device the account is new to,
-## the server's. The language, the full screen and the controls belong to the device.
+## the server's. The language, the full screen, the brightness and the controls belong to the
+## device.
 
 signal changed(key: String)
 
@@ -19,6 +20,7 @@ const DEFAULTS := {
 	"screen_shake": true,  # of those, the camera shake
 	"rumble": true,  # of those, the pad's (or the phone's) rumble
 	"pixel_art": true,  # the 3D world drawn as pixel art (pixel_view.gd), or smooth
+	"brightness": 0.5,  # the 3D world's: 0.5 as it is drawn, 0 darker, 1 brighter (world_gamma)
 	"controls": {},  # the keys and pad buttons changed by the player (KeyBindings.changes())
 }
 ## One tick of a mission at each game speed, in ms (2, Med, is the simulation's own tick).
@@ -26,6 +28,9 @@ const SPEED_MS := [250, 180, 120, 90, 50]
 const BUSES := {"music_volume": "Music", "sfx_volume": "SFX"}
 const CLOUD_KEYS := ["music_volume", "sfx_volume", "game_speed"]
 const CLOUD_SECTION := "cloud"
+## How far the brightness goes: at 0 and 1 the world's gamma is 2 to the power of plus or minus
+## half of it.
+const GAMMA_RANGE := 1.5
 
 var path := DEFAULT_PATH
 var _values := {}
@@ -176,6 +181,8 @@ func _apply(key: String) -> void:
 			RenderingServer.global_shader_parameter_set(
 				&"pixel_art", 1.0 if get_value(key) else 0.0
 			)
+		"brightness":
+			RenderingServer.global_shader_parameter_set(&"world_gamma", world_gamma(get_value(key)))
 		"fullscreen":
 			if can_fullscreen():
 				DisplayServer.window_set_mode(
@@ -185,6 +192,12 @@ func _apply(key: String) -> void:
 						else DisplayServer.WINDOW_MODE_WINDOWED
 					)
 				)
+
+
+## The gamma the world is shown with (pixel_view.gd) at a brightness (0..1): 1 at the middle,
+## below 1 (the shade lifted) above it, over 1 (the shade deeper) under it.
+static func world_gamma(brightness: float) -> float:
+	return pow(2.0, (0.5 - brightness) * GAMMA_RANGE)
 
 
 ## A volume (0..1) as its bus's dB, by ear as in pyport: the amplitude is the volume squared,

@@ -15,9 +15,13 @@ func _area(size: Vector2) -> Control:
 
 
 func _set_pixel_art(on: bool) -> void:
+	_set_setting("pixel_art", on)
+
+
+func _set_setting(key: String, value: Variant) -> void:
 	var old_path: String = Settings.path
 	Settings.path = TEST_PATH
-	Settings.set_value("pixel_art", on)
+	Settings.set_value(key, value)
 	Settings.path = old_path
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
 
@@ -66,9 +70,16 @@ func test_smooth_when_the_setting_is_off() -> void:
 	check(view.material == null, "the colours as they are")
 	check(view.viewport.msaa_3d != Viewport.MSAA_DISABLED, "smoothed edges")
 	eq(view.viewport.size_2d_override, Vector2i(1280, 720), "positions in layout units")
+	_set_setting("brightness", 0.8)
+	eq(view.material, view.light, "brighter: the smooth world through world_light")
+	_set_setting("brightness", 0.5)
+	check(view.material == null, "the middle again: as it is")
 	# and back on while it is shown
 	_set_pixel_art(true)
 	check(view.material != null and view.margin == PixelView.MARGIN, "pixel art again")
+	_set_setting("brightness", 0.2)
+	eq(view.material, view.post, "pixel art takes the brightness in its own shader")
+	_set_setting("brightness", 0.5)
 	area.free()
 
 

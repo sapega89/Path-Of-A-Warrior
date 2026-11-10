@@ -47,6 +47,10 @@ pixel_art={
 "type": "float",
 "value": 1.0
 }
+world_gamma={
+"type": "float",
+"value": 1.0
+}
 
 [rendering]
 

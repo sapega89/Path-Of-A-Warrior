@@ -2030,5 +2030,9 @@
   "controls.skip": {
     "en": "Skip a talk or the story",
     "uk": "Пропустити розмову чи сюжет"
+  },
+  "settings.brightness": {
+    "en": "Brightness",
+    "uk": "Яскравість"
   }
 }

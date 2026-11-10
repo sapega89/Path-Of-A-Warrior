@@ -157,6 +157,22 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="BrightnessRow" type="HBoxContainer" parent="Center/Column/Scroll/Rows"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Center/Column/Scroll/Rows/BrightnessRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "settings.brightness"
+
+[node name="Brightness" type="HSlider" parent="Center/Column/Scroll/Rows/BrightnessRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+custom_minimum_size = Vector2(260, 28)
+max_value = 1.0
+step = 0.05
+
 [node name="FullscreenRow" type="HBoxContainer" parent="Center/Column/Scroll/Rows"]
 layout_mode = 2
 
@@ -200,6 +216,8 @@ text = "common.back"
 [connection signal="toggled" from="Center/Column/Scroll/Rows/RumbleRow/Rumble" to="." method="_on_rumble"]
 
 [connection signal="toggled" from="Center/Column/Scroll/Rows/PixelArtRow/PixelArt" to="." method="_on_pixel_art"]
+
+[connection signal="value_changed" from="Center/Column/Scroll/Rows/BrightnessRow/Brightness" to="." method="_on_brightness"]
 
 [connection signal="toggled" from="Center/Column/Scroll/Rows/FullscreenRow/Fullscreen" to="." method="_on_fullscreen"]
 
