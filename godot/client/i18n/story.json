@@ -91,10 +91,6 @@
 "en": "A mercy that your sabre is with us and not against us!",
 "uk": "Щастя, що твоя шабля з нами, а не проти нас!"
 },
-"A mission can be saved after a stage is cleared, but if the mission is lost, that save is lost too.": {
-"en": "A mission can be saved after a stage is cleared, but if the mission is lost, that save is lost too.",
-"uk": "Місію можна зберегти після пройденого етапу, та якщо місію програно, це збереження теж пропадає."
-},
 "A mission won brings gold, fame, experience and things found on the field.": {
 "en": "A mission won brings gold, fame, experience and things found on the field.",
 "uk": "Виграна місія приносить золото, славу, досвід і речі, знайдені в полі."
@@ -199,6 +195,10 @@
 "en": "Attack: 5 or OK. Move: 2, 4, 6, 8 or the arrows. Skills: 1, 3, 7, 9, 0. Things: * and #.",
 "uk": "Атака: 5 або OK. Рух: 2, 4, 6, 8 або стрілки. Вміння: 1, 3, 7, 9, 0. Речі: * і #."
 },
+"Auto-hunt (Tab) lets your warrior fight by himself; move or strike and you have him back. There is no auto-hunt on Hard.": {
+"en": "Auto-hunt (Tab) lets your warrior fight by himself; move or strike and you have him back. There is no auto-hunt on Hard.",
+"uk": "Автополювання (Tab) — твій вояк б'ється сам; рушиш чи вдариш — і він знову твій. На складності «Важко» автополювання немає."
+},
 "Bad news. The rebels who fled from Chortomlyk have caught their breath and come back, so all your work at the gate has gone with the wind. Zaderykhvist is in a rage and already saddling up to pay them back. He wants one more sabre, and he remembered you. One target: Tykhyi. Will you go?": {
 "en": "Bad news. The rebels who fled from Chortomlyk have caught their breath and come back, so all your work at the gate has gone with the wind. Zaderykhvist is in a rage and already saddling up to pay them back. He wants one more sabre, and he remembered you. One target: Tykhyi. Will you go?",
 "uk": "Погана вість. Бунтарі, що втекли з-під Чортомлика, відсапались і повернулися, тож уся твоя робота під брамою пішла за вітром. Задерихвіст лютує і вже сідлає коня, щоб відплатити їм. Йому потрібна ще одна шабля, і він згадав про тебе. Ціль одна: Тихий. Підеш?"
@@ -271,9 +271,13 @@
 "en": "Banner Knight",
 "uk": "Лицар корогви"
 },
-"Before a mission starts you can put on your gear under Management > Gear in the game menu.": {
-"en": "Before a mission starts you can put on your gear under Management > Gear in the game menu.",
-"uk": "Перед початком місії спорядження можна одягнути в ігровому меню: Управління > Спорядження."
+"Before a mission you put on your gear under Management > Gear in the game menu.": {
+"en": "Before a mission you put on your gear under Management > Gear in the game menu.",
+"uk": "Перед місією спорядження одягають в ігровому меню: Керування > Спорядження."
+},
+"Before a mission, Management > Skills in the game menu swaps the skills you carry.": {
+"en": "Before a mission, Management > Skills in the game menu swaps the skills you carry.",
+"uk": "Перед місією в ігровому меню, Керування > Уміння, можна поміняти вміння, які береш із собою."
 },
 "Before long Chornohuz's attacks wore him down, and he fled his land with the shirt on his back and nothing more. Yet Chornohuz respected the man's convictions. He revoked the death sentence he had passed and let Rudyi return to his own house.": {
 "en": "Before long Chornohuz's attacks wore him down, and he fled his land with the shirt on his back and nothing more. Yet Chornohuz respected the man's convictions. He revoked the death sentence he had passed and let Rudyi return to his own house.",
@@ -339,9 +343,9 @@
 "en": "Call on as many generals as you can. They say a guest brings luck into the house, and takes some away with him.",
 "uk": "Навідуй якомога більше генералів. Кажуть, гість приносить у дім удачу і трохи забирає з собою."
 },
-"Changed your mind about a sale? Live > Trade > Cancel Sale takes the thing back.": {
-"en": "Changed your mind about a sale? Live > Trade > Cancel Sale takes the thing back.",
-"uk": "Передумав продавати? Мережа > Обмін > Скасувати продаж поверне річ."
+"Changed your mind about a sale? Trade > Cancel Sale takes the thing back.": {
+"en": "Changed your mind about a sale? Trade > Cancel Sale takes the thing back.",
+"uk": "Передумав продавати? Торгівля > Зняти з продажу поверне річ."
 },
 "Choose with care: a point once spent cannot be taken back.": {
 "en": "Choose with care: a point once spent cannot be taken back.",
@@ -471,10 +475,6 @@
 "en": "Come over for a jug and we will talk.",
 "uk": "Заходь на глечик, і ми поговоримо."
 },
-"Connecting to Live adds your saved experience and fame on its own.": {
-"en": "Connecting to Live adds your saved experience and fame on its own.",
-"uk": "Підключення до мережі саме додає збережені досвід і славу."
-},
 "Control": {
 "en": "Control",
 "uk": "Керування"
@@ -526,10 +526,6 @@
 "Every spring, even now, people who remember Bairak and his two osauls bring cherry blossom to their graves. They say the scent of it can teach loyalty even to a hired sabre.": {
 "en": "Every spring, even now, people who remember Bairak and his two osauls bring cherry blossom to their graves. They say the scent of it can teach loyalty even to a hired sabre.",
 "uk": "Щовесни, навіть тепер, люди, які пам'ятають Байрака і двох його осавулів, приносять на їхні могили вишневий цвіт. Кажуть, його запах може навчити вірності навіть найману шаблю."
-},
-"Every step you take is saved on its own.": {
-"en": "Every step you take is saved on its own.",
-"uk": "Кожен твій крок зберігається сам собою."
 },
 "Everything you can wear, weapons and armour alike, is called gear.": {
 "en": "Everything you can wear, weapons and armour alike, is called gear.",
@@ -927,6 +923,10 @@
 "en": "In Women's Dress",
 "uk": "У жіночій сукні"
 },
+"In a mission you fight your way from room to room. Walk up to an enemy and strike; gold and things that fall are yours once you walk over them.": {
+"en": "In a mission you fight your way from room to room. Walk up to an enemy and strike; gold and things that fall are yours once you walk over them.",
+"uk": "У місії ти пробиваєшся з кімнати в кімнату. Підійди до ворога й бий; золото й речі, що впали, стануть твоїми, щойно пройдеш по них."
+},
 "In the end Chornohuz's regiment broke what was left of Kharko's army, and he lost every acre he had won. Kharko had wanted to fly, and he had not had the wisdom to be content with walking.": {
 "en": "In the end Chornohuz's regiment broke what was left of Kharko's army, and he lost every acre he had won. Kharko had wanted to fly, and he had not had the wisdom to be content with walking.",
 "uk": "Урешті Чорногузів полк розбив рештки Харкового війська, і він утратив кожну п'ядь, яку здобув. Харко хотів літати, а мудрості задовольнитися ходою йому не вистачило."
@@ -1187,10 +1187,6 @@
 "en": "One visit, one mission. You cannot knock on two doors after a single fight.",
 "uk": "Один візит на одну місію. Після одного бою у двоє дверей не постукаєш."
 },
-"Online you can buy, sell or give things to other players, and keep your gold on the server.": {
-"en": "Online you can buy, sell or give things to other players, and keep your gold on the server.",
-"uk": "У мережі можна купувати, продавати або дарувати речі іншим гравцям і тримати золото на сервері."
-},
 "Online you can trade what you carry with other players.": {
 "en": "Online you can trade what you carry with other players.",
 "uk": "У мережі можна мінятися тим, що носиш, з іншими гравцями."
@@ -1206,10 +1202,6 @@
 "Only the smith can charm a piece of gear.": {
 "en": "Only the smith can charm a piece of gear.",
 "uk": "Зачарувати спорядження може лише коваль."
-},
-"Open Management > Skill in the game menu before a mission to swap the skills you carry.": {
-"en": "Open Management > Skill in the game menu before a mission to swap the skills you carry.",
-"uk": "Відкрий Управління > Вміння в ігровому меню перед місією, щоб поміняти вміння, які береш із собою."
 },
 "Osaul Hrebinka is leading his men to Bura Mohyla, where Colonel Ptakha has dug in. Bairak wants you to go with Hrebinka and help take Ptakha's camp. Will you take it?": {
 "en": "Osaul Hrebinka is leading his men to Bura Mohyla, where Colonel Ptakha has dug in. Bairak wants you to go with Hrebinka and help take Ptakha's camp. Will you take it?",
@@ -1479,10 +1471,6 @@
 "en": "The Kniaz Falls",
 "uk": "Князь падає"
 },
-"The Live entry of the game menu puts your warrior on the server and fetches him back.": {
-"en": "The Live entry of the game menu puts your warrior on the server and fetches him back.",
-"uk": "Пункт Мережа в ігровому меню кладе твого вояка на сервер і забирає назад."
-},
 "The Long Road": {
 "en": "The Long Road",
 "uk": "Довга дорога"
@@ -1511,6 +1499,10 @@
 "en": "The colonels who had been quietly robbing the Hetman were not about to let a Polish kniaz rob him first. Each gathered his regiment, called it the defence of the mace, and marched on Chyhyryn. Within a year every road to the capital was full of armies, and nobody could say any longer who was fighting for whom. What was left of the Hetman's authority blew away like chaff. In that storm, between the great names, walked thousands of men nobody wrote down: hired sabres who sold a day of their life for a handful of silver. This is the story of one of them.",
 "uk": "Полковники, які потихеньку обкрадали гетьмана, не збиралися віддавати цю справу польському князеві. Кожен зібрав свій полк, назвав це обороною булави і рушив на Чигирин. За рік усі дороги до столиці були повні війська, і ніхто вже не міг сказати, хто за кого б'ється. Те, що лишалося від гетьманської влади, розвіялося, як полова. У цій бурі, поміж великих імен, ходили тисячі людей, яких ніхто не записав: наймані шаблі, що продавали день свого життя за жменю срібла. Це історія одного з них."
 },
+"The game is saved each time your warrior comes into a camp.": {
+"en": "The game is saved each time your warrior comes into a camp.",
+"uk": "Гра зберігається щоразу, коли твій вояк приходить до табору."
+},
 "The honour is all mine.": {
 "en": "The honour is all mine.",
 "uk": "Це честь для мене."
@@ -1531,6 +1523,10 @@
 "en": "The points go into attack, defence, health or spirit.",
 "uk": "Очки йдуть в атаку, захист, здоров'я або дух."
 },
+"The red ball at the bottom of the screen is your health, the blue one your spirit. Skills cost spirit; potions bring health and spirit back.": {
+"en": "The red ball at the bottom of the screen is your health, the blue one your spirit. Skills cost spirit; potions bring health and spirit back.",
+"uk": "Червона куля внизу екрана — твоє здоров'я, синя — дух. Уміння витрачають дух; зілля повертає здоров'я й дух."
+},
 "The road you take across the field decides whom you meet on it.": {
 "en": "The road you take across the field decides whom you meet on it.",
 "uk": "Дорога, якою ти йдеш полем, вирішує, кого ти на ній зустрінеш."
@@ -1547,10 +1543,6 @@
 "en": "The silent sort, I see. Think on my invitation. Farewell for now.",
 "uk": "Мовчазний, бачу. Подумай про моє запрошення. Поки що прощавай."
 },
-"The smith buys and sells things.": {
-"en": "The smith buys and sells things.",
-"uk": "Коваль купує й продає речі."
-},
 "The smith can forge a charm into your gear, but the fire is fickle. If the work fails, the piece is gone.": {
 "en": "The smith can forge a charm into your gear, but the fire is fickle. If the work fails, the piece is gone.",
 "uk": "Коваль може вкувати в твою річ оберіг, та вогонь примхливий. Якщо робота не вдасться, річ пропаде."
@@ -1558,6 +1550,10 @@
 "The smith lays out different wares before every mission.": {
 "en": "The smith lays out different wares before every mission.",
 "uk": "Коваль перед кожною місією викладає інший крам."
+},
+"The smith, in every camp, buys and sells things.": {
+"en": "The smith, in every camp, buys and sells things.",
+"uk": "Коваль, що є в кожному таборі, купує й продає речі."
 },
 "The turning point is close. Kniaz Dominik is cornered above the Yellow Waters, his banners beaten one by one, and he has sent riders in every direction begging for relief. The relief is coming, and that is our problem: the moment it arrives, the kniaz crawls out of the trap. So there is no time. You go into the kniaz's camp ahead of everyone, cut through whoever still stands by him, and finish the business. This is the mission that changes the fate of the land. Will you take it?": {
 "en": "The turning point is close. Kniaz Dominik is cornered above the Yellow Waters, his banners beaten one by one, and he has sent riders in every direction begging for relief. The relief is coming, and that is our problem: the moment it arrives, the kniaz crawls out of the trap. So there is no time. You go into the kniaz's camp ahead of everyone, cut through whoever still stands by him, and finish the business. This is the mission that changes the fate of the land. Will you take it?",
@@ -1594,6 +1590,10 @@
 "There is another man the brotherhood keeps watch on: Platon Chornohuz of Myrhorod. For now he is only a squire under someone else's banner, and the senior officers do not notice him at table. Their mistake. He has a wolf's nose and a quick hand. Right now he means to bloody Rotmistr Zaleski, whose Crown banner is grazing its horses above the river. The plan is the same one Bairak used: Chornohuz creeps in from the reeds at the back, you come in from the front, and Zaleski finds himself between two blades. The rotmistr must fall. Will you ride?": {
 "en": "There is another man the brotherhood keeps watch on: Platon Chornohuz of Myrhorod. For now he is only a squire under someone else's banner, and the senior officers do not notice him at table. Their mistake. He has a wolf's nose and a quick hand. Right now he means to bloody Rotmistr Zaleski, whose Crown banner is grazing its horses above the river. The plan is the same one Bairak used: Chornohuz creeps in from the reeds at the back, you come in from the front, and Zaleski finds himself between two blades. The rotmistr must fall. Will you ride?",
 "uk": "Є ще один, за ким братство приглядає: Платон Чорногуз із Миргорода. Поки що він тільки джура при чужій корогві, і старшина за столом його не помічає. Дарма. Нюх у нього вовчий, а рука швидка. Нині він зібрався дошкулити ротмістрові Залеському, чия коронна хоругва пасе коней над річкою. Задум той самий, що й у Байрака: Чорногуз підкрадеться з очеретів ззаду, ти вийдеш із чола, і Залеський опиниться між двома клинками. Ротмістр має лягти. Їдеш?"
+},
+"There is no saving in the middle of a mission: a lost mission takes you back to the camp you set out from, to try it again.": {
+"en": "There is no saving in the middle of a mission: a lost mission takes you back to the camp you set out from, to try it again.",
+"uk": "Посеред місії зберегтися не можна: програна місія повертає до табору, з якого ти вирушив, і її можна пройти знову."
 },
 "There is one thing that changes everything: the Hetman's Seal. Tykhyi found it in the ruins of Chyhyryn, and Topolia of Batih tried to take it by force, falling on him from ambush. It did not work: Tykhyi escaped and is now coming back to the ravine with every man he has. Topolia knows full well he cannot stand alone against an enraged Tykhyi, and he is paying the brotherhood to have him intercepted on the road. That job is yours. Will you take it?": {
 "en": "There is one thing that changes everything: the Hetman's Seal. Tykhyi found it in the ruins of Chyhyryn, and Topolia of Batih tried to take it by force, falling on him from ambush. It did not work: Tykhyi escaped and is now coming back to the ravine with every man he has. Topolia knows full well he cannot stand alone against an enraged Tykhyi, and he is paying the brotherhood to have him intercepted on the road. That job is yours. Will you take it?",
@@ -1647,13 +1647,13 @@
 "en": "Topolia turned out to be a fair master, but what he built did not outlive him. His will left his lands to Colonel Bairak, and nobody honoured it. His family fought over the estate until the whole of it fell into the hands of Colonel Sych.",
 "uk": "Тополя виявився справедливим господарем, та те, що він збудував, його не пережило. За заповітом його землі відходили полковникові Байраку, і ніхто того заповіту не виконав. Родина гризлася за маєток, доки весь він не опинився в руках полковника Сича."
 },
+"Trade, in the game menu or at a camp's Auctioneer, buys, sells and gives things to other players; Safe in the game menu keeps your gold on the server.": {
+"en": "Trade, in the game menu or at a camp's Auctioneer, buys, sells and gives things to other players; Safe in the game menu keeps your gold on the server.",
+"uk": "Торгівля в ігровому меню чи в аукціоніста табору купує, продає й дарує речі іншим гравцям; Сейф в ігровому меню тримає твоє золото на сервері."
+},
 "Try putting different things together at the smith's to discover new ones.": {
 "en": "Try putting different things together at the smith's to discover new ones.",
 "uk": "Спробуй складати різні речі в коваля, щоб відкрити нові."
-},
-"Try your warrior in online missions. He is ranked against other players without you lifting a finger.": {
-"en": "Try your warrior in online missions. He is ranked against other players without you lifting a finger.",
-"uk": "Спробуй свого вояка в мережевих місіях. Його місце серед інших гравців визначається саме собою."
 },
 "Tuman did not wait; he struck first. Seventy thousand sabres have gathered under his banners, and the whole avalanche is rolling toward Chornohuz's manor. Everyone in the land understands: whoever wins this battle will hold the mace. Chornohuz meets the avalanche with what he has and calls for you. You must help him stand. Will you take it?": {
 "en": "Tuman did not wait; he struck first. Seventy thousand sabres have gathered under his banners, and the whole avalanche is rolling toward Chornohuz's manor. Everyone in the land understands: whoever wins this battle will hold the mace. Chornohuz meets the avalanche with what he has and calls for you. You must help him stand. Will you take it?",
@@ -1707,10 +1707,6 @@
 "en": "Until next time, warrior!",
 "uk": "До наступного разу, вояче!"
 },
-"Use Load User Data to load a warrior saved on this device.": {
-"en": "Use Load User Data to load a warrior saved on this device.",
-"uk": "Щоб завантажити вояка, збереженого на цьому пристрої, вибери Завантажити дані."
-},
 "Visiting": {
 "en": "Visiting",
 "uk": "Відвідини"
@@ -1747,6 +1743,10 @@
 "en": "What a shameful way to die...",
 "uk": "Яка ганебна смерть..."
 },
+"What happened while you were away (sales, gifts, experience and fame) is shown when the game menu opens.": {
+"en": "What happened while you were away (sales, gifts, experience and fame) is shown when the game menu opens.",
+"uk": "Що сталося, поки тебе не було (продажі, подарунки, досвід і слава), показується, коли відкриваєш ігрове меню."
+},
 "What is a sabre for?": {
 "en": "What is a sabre for?",
 "uk": "Для чого шабля?"
@@ -1754,6 +1754,10 @@
 "What will you do now?": {
 "en": "What will you do now?",
 "uk": "Що ти тепер робитимеш?"
+},
+"When a room is cleared, its ways out open: walk out where the arrow blinks at the edge of the screen.": {
+"en": "When a room is cleared, its ways out open: walk out where the arrow blinks at the edge of the screen.",
+"uk": "Коли кімнату очищено, виходи з неї відкриваються: вийди туди, де на краю екрана блимає стрілка."
 },
 "When the Butcher fell, the terror that had held his regiment together fell with him. His men scattered in a single night and left his body to the ravens.": {
 "en": "When the Butcher fell, the terror that had held his regiment together fell with him. His men scattered in a single night and left his body to the ravens.",
@@ -1859,9 +1863,9 @@
 "en": "You should get back soon.",
 "uk": "Тобі треба швидше вертатися."
 },
-"You will find Visiting in the main menu, but only once a mission has been won.": {
-"en": "You will find Visiting in the main menu, but only once a mission has been won.",
-"uk": "Відвідини ти знайдеш у головному меню, та лише коли місію виграно."
+"You will find Visiting in the game menu and in the Town Hall of a camp, once a mission has been won.": {
+"en": "You will find Visiting in the game menu and in the Town Hall of a camp, once a mission has been won.",
+"uk": "Візити ти знайдеш в ігровому меню й у ратуші табору, та лише коли місію виграно."
 },
 "You would break the law of the sabre?": {
 "en": "You would break the law of the sabre?",
@@ -1887,9 +1891,13 @@
 "en": "Your name!",
 "uk": "Твоє ім'я!"
 },
-"Your standing is shown in the multiplayer game.": {
-"en": "Your standing is shown in the multiplayer game.",
-"uk": "Твоє місце показано в грі для кількох гравців."
+"Your skills are on the keys 1 to 5; Management > Skills in the game menu chooses which. Potions and scrolls you pick up go onto the belt and are used with Z, X, C, V and B. A gamepad's buttons are under Control.": {
+"en": "Your skills are on the keys 1 to 5; Management > Skills in the game menu chooses which. Potions and scrolls you pick up go onto the belt and are used with Z, X, C, V and B. A gamepad's buttons are under Control.",
+"uk": "Твої вміння — на клавішах 1–5; які саме, вибираєш в ігровому меню: Керування > Уміння. Підібране зілля й сувої лягають на пояс і вживаються клавішами Z, X, C, V і B. Кнопки геймпада — у темі «Керування»."
+},
+"Your warrior is kept on the server, so the game needs a connection; log in to your account to play him on any device.": {
+"en": "Your warrior is kept on the server, so the game needs a connection; log in to your account to play him on any device.",
+"uk": "Твій вояк зберігається на сервері, тому грі потрібне з'єднання; увійди у свій обліковий запис — і грай ним на будь-якому пристрої."
 },
 "Your warrior rises a level each time his experience reaches the next mark.": {
 "en": "Your warrior rises a level each time his experience reaches the next mark.",

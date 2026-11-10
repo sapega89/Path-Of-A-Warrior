@@ -66,10 +66,6 @@ var dir_history: Array[int] = [-1, -1, -1, -1, -1]
 var hold_to_move := true  # the player's option: walk while the key is held
 ## The map without enemies (a test option): a room's list counts as defeated.
 var no_enemies := false
-## The training (training_screen.gd) keeps the room until it says: the last soldier's death
-## does not clear it, and its soldiers come by send_soldiers() (max_override at a time).
-var hold_room := false
-var max_override := -1
 var difficulty := 1  # 0 hard (gold and exp x2), 1 normal
 var general_side := 0  # the side (weapon) of the last general met: 0 long, 1 short sword
 var general := {}  # the last general met (campaign.json generals)
@@ -439,16 +435,6 @@ func enter_room() -> void:
 ## See MapRoomPlay.max_enemies().
 func max_enemies() -> int:
 	return MapRoomPlay.max_enemies(self)
-
-
-## See MapRoomPlay.send_soldiers().
-func send_soldiers(n: int) -> void:
-	MapRoomPlay.send_soldiers(self, n)
-
-
-## See MapRoomPlay.clear_room().
-func clear_room() -> void:
-	MapRoomPlay.clear_room(self)
 
 
 ## See MapHeroPlay.skill_mp_need().
