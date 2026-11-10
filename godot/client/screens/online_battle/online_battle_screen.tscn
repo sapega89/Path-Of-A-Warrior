@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://screens/online_battle/online_battle_screen.gd" id="1"]
 [ext_resource type="Shader" path="res://assets/art/shaders/story_sky.gdshader" id="2"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" path="res://scripts/world/battle_stage.gd" id="7"]
 [ext_resource type="Script" path="res://scripts/ui/timing_bar.gd" id="8"]
 [ext_resource type="Script" path="res://scripts/ui/framed_picture.gd" id="6"]
+[ext_resource type="Script" path="res://scripts/world/pixel_view.gd" id="9"]
 
 [sub_resource type="ShaderMaterial" id="SkyMaterial"]
 resource_local_to_scene = true
@@ -31,12 +32,9 @@ anchor_bottom = 1.0
 mouse_filter = 2
 
 [node name="World" type="SubViewportContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
 mouse_filter = 2
 stretch = true
+script = ExtResource("9")
 
 [node name="Viewport" type="SubViewport" parent="World"]
 own_world_3d = true

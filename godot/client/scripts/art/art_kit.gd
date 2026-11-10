@@ -36,15 +36,15 @@ const LOOPING := [
 	"aim_bow"
 ]
 
-## The light and air of the world: a dull sun through an overcast sky, a deep cool shade,
-## the land fading far away into grey dust; the colours held down and the contrast up.
-const SUN_COLOR := Color("f0dcbc")
-const SUN_ENERGY := 0.7
-const AMBIENT := Color("68708a")
-const AMBIENT_ENERGY := 0.34
-const AIR := Color("9b978b")
-## The grade of the finished picture: brightness, contrast, saturation (muted, harder).
-const GRADE := Vector3(0.96, 1.12, 0.8)
+## The light and air of the world: a warm sun through thin clouds, a cool shade that still
+## shows the colours in it, the land fading far away into grey dust.
+const SUN_COLOR := Color("f5e2c2")
+const SUN_ENERGY := 0.95
+const AMBIENT := Color("6e7a96")
+const AMBIENT_ENERGY := 0.5
+const AIR := Color("a7a393")
+## The grade of the finished picture: brightness, contrast, saturation (a little muted).
+const GRADE := Vector3(1.0, 1.1, 0.88)
 
 static var _scenes := {}
 static var _clips: AnimationLibrary
