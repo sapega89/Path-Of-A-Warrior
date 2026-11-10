@@ -14,7 +14,10 @@ const MAX_FRIENDSHIP := 100
 ## Above this a general leaves the list (as when it falls to 0).
 const LEAVES_ABOVE := 200
 const TOPICS := ["Sword", "Books", "Tactics", "People"]
-const STAT_TEXTS := ["Atk Up : 1", "Def Up : 1", "HP Up : 5", "MP Up : 3", "Fame Up : 10"]
+## What a stat gift says (translation keys), for attack, defence, HP, MP and fame.
+const STAT_TEXTS := [
+	"visit.gift_attack", "visit.gift_defense", "visit.gift_hp", "visit.gift_mp", "visit.gift_fame"
+]
 ## Per gift table (a general's gift_table) and topic: a roll of 0..999 below the n-th number
 ## gives gift n: 0 a skill, 1 attack, 2 defence, 3 HP, 4 MP, 5 fame, 6 a gear, 7 a potion.
 const GIFT_ODDS := [
@@ -120,7 +123,8 @@ static func add_friendship(profile: RefCounted, id: int, amount: int) -> bool:
 
 ## The gift after a talk about `chosen` with general `general` (campaign.json generals):
 ## with a chance of his friendship in percent, a roll picks the kind. Gives it to the hero.
-## Returns {kind: Gift, text, title}; kind NONE when there is none (or no room for it).
+## Returns {kind: Gift, text, title} (text and title translation keys or names); kind NONE when
+## there is none (or no room for it).
 static func give_gift(
 	profile: RefCounted,
 	general_id: int,
@@ -157,7 +161,9 @@ static func give_gift(
 			):
 				return none
 			profile.skill_levels[i] = int(profile.skill_levels[i]) + 1
-			var title := "Skill :" if int(profile.skill_levels[i]) == 1 else "Skill up :"
+			var title := (
+				"visit.gift_skill" if int(profile.skill_levels[i]) == 1 else "visit.gift_skill_up"
+			)
 			return {"kind": kind, "text": skill_name(i), "title": title}
 		Gift.ATTACK:
 			if profile.base_attack >= 10000:
@@ -181,7 +187,7 @@ static func give_gift(
 			var id := gift_gear(int(profile.level), rng)
 			if not profile.add_item(Items.make(id, rng)):
 				return none
-			return {"kind": kind, "text": Items.name_of(id), "title": "Item Acquired!"}
+			return {"kind": kind, "text": Items.name_of(id), "title": "visit.gift_item"}
 		_:
 			var potion := rng.randi_range(1, 11)
 			if not profile.add_potion(potion):
@@ -189,7 +195,7 @@ static func give_gift(
 			return {
 				"kind": Gift.POTION,
 				"text": str(Items.POTION_NAMES[potion - 1]).strip_edges(),
-				"title": "Item Acquired!"
+				"title": "visit.gift_item"
 			}
 	return {"kind": kind, "text": STAT_TEXTS[kind - 1], "title": ""}
 
