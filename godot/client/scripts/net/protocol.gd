@@ -14,17 +14,11 @@ extends RefCounted
 ##   options_put {base, at, options} -> {ok, rev} / err "conflict" with {rev, at, options}
 ##
 ##   live_*                     -> Live: Warehouse, Safe, Trade (server/live.gd)
-##   mp_*, order_*, chat_*      -> the online game: the character, Ranking, orders, chat
-##                                 (server/online.gd); mp_enter first
-##
-## The server also sends messages nobody asked for, without "q" (pushes), after the answer of
-## the request that made them: {t: "chat_push", ...} a chat message (channel 1); {t: "kicked"}
-## the same UserID went online elsewhere; the battles' messages (server/room.gd).
 ##
 ## Any request before a login answers err "login first"; a wrong one "bad message", an unknown
 ## type "unknown", a packet over MAX_PACKET "too big". `base` is the revision of the hero the
 ## client last saw: a device that missed another device's save gets "conflict".
-## UserID: 4 to 12 letters A-Z; password: 4 to 12 digits (the accounts of Live and multiplayer).
+## UserID: 4 to 12 letters A-Z; password: 4 to 12 digits (the accounts of Live).
 
 const VERSION := 1
 const PORT := 28310

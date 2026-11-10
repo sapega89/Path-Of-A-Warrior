@@ -205,11 +205,6 @@ func test_game_menu_has_the_game_and_the_main_menu_the_rest() -> void:
 		["Management", "Blacksmith", "Visiting", "Trade", "Safe", "Help"],
 		"no Missions (the camp's ways) and no Warehouse (the camp's stores)"
 	)
-	eq(
-		screen.online.buttons.map(func(b): return str(b.name)),
-		["Character", "Ranking", "Order", "Chat"],
-		"the multiplayer pages in the same menu, without the online battles while they are hidden"
-	)
 	check(t[0].synced and screen.news.done, "Live synced, nothing new")
 	check(screen.menu.visible)
 	screen.free()

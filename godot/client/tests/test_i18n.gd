@@ -58,7 +58,10 @@ static func _scripts(dir: String) -> Array[String]:
 
 func test_names_have_every_language() -> void:
 	var t := I18nScript.parse(FileAccess.get_file_as_string(I18nScript.NAMES_PATH))
-	for name in Profile.HERO_CLASSES + OnlineClient.SKILL_NAMES:
+	var skills: Dictionary = JSON.parse_string(
+		FileAccess.get_file_as_string("res://data/skills.json")
+	)
+	for name in Profile.HERO_CLASSES + skills.names:
 		for locale in I18nScript.LOCALES:
 			check(t[locale].get(name, "") != "", "%s has no %s name" % [name, locale])
 
@@ -67,7 +70,7 @@ func test_a_name_in_the_players_language() -> void:
 	var before := TranslationServer.get_locale()
 	TranslationServer.set_locale("uk")
 	eq(String(TranslationServer.translate("Cossack")), "Козак", "a hero class")
-	eq(OnlineClient.skill_name(3), "Шабля-вихор", "an online skill")
+	eq(String(TranslationServer.translate("Whirlwind Sabre")), "Шабля-вихор", "a skill")
 	TranslationServer.set_locale(before)
 
 

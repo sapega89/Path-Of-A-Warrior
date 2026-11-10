@@ -16,7 +16,6 @@ const SIDES := {
 	"horde": [Color("8a4a42"), Color("2a1014")],
 	"hero": [Color("a8884e"), Color("3a2810")],
 	"plain": [Color("827868"), Color("26221c")],
-	"upyr": [Color("6f7a60"), Color("161c12")],
 }
 
 var view: SubViewport  # the bust, on a clear background

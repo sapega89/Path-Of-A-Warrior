@@ -40,15 +40,6 @@ const SCREENS := {
 	"live_cancel": "res://screens/live_cancel/live_cancel_screen.tscn",
 	"live_gifts": "res://screens/live_gifts/live_gifts_screen.tscn",
 	"live_give": "res://screens/live_give/live_give_screen.tscn",
-	"online_character": "res://screens/online_character/online_character_screen.tscn",
-	"online_skills": "res://screens/online_skills/online_skills_screen.tscn",
-	"online_text": "res://screens/online_text/online_text_screen.tscn",
-	"online_ranking": "res://screens/online_ranking/online_ranking_screen.tscn",
-	"online_order": "res://screens/online_order/online_order_screen.tscn",
-	"online_chat": "res://screens/online_chat/online_chat_screen.tscn",
-	"online_options": "res://screens/online_options/online_options_screen.tscn",
-	"online_battle": "res://screens/online_battle/online_battle_screen.tscn",
-	"online_battles": "res://screens/online_battles/online_battles_screen.tscn",
 }
 
 var current: Control

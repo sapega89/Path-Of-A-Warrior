@@ -1,7 +1,7 @@
 class_name PixelView
 extends SubViewportContainer
-## A 3D world on the screen (a map's MapView, the online battle's stage), drawn by its child
-## Viewport. It places and sizes itself over its parent (no anchors), stretching its viewport.
+## A 3D world on the screen (a map's MapView), drawn by its child Viewport. It places and sizes
+## itself over its parent (no anchors), stretching its viewport.
 ##
 ## Pixel art (the setting "pixel_art", on by default): the world is drawn small, about ROWS rows
 ## of pixels high, and blown up without smoothing, so each of its pixels is a crisp square of

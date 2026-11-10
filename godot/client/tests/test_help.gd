@@ -8,11 +8,7 @@ func test_help_screen() -> void:
 	Router.params = {}
 	var screen: Control = Router.make(Router.SCREENS["help"])
 	root.add_child(screen)
-	eq(
-		screen.topics.size(),
-		10 if OnlineSection.BATTLES else 8,
-		"eight of the campaign, two of the multiplayer while its battles are shown"
-	)
+	eq(screen.topics.size(), 8, "eight topics")
 	eq(str(screen.list.get_child(0).text), "Missions", "the first")
 	screen.open(2)
 	eq(screen.heading.text, "Blacksmith", "a topic")
@@ -22,9 +18,9 @@ func test_help_screen() -> void:
 	eq(screen.page, 5, "back from the first page to the last")
 	screen.open(HelpScreen.CONTROL_TOPIC)
 	eq(
-		screen.pages_of(HelpScreen.CONTROL_TOPIC).size(),
-		4 if OnlineSection.BATTLES else 2,
-		"Control: this version's keys, on the map (and online while the battles are shown)"
+		screen.pages_of(HelpScreen.CONTROL_TOPIC),
+		[tr("help.control_1"), tr("help.control_2")],
+		"Control: this version's keys on the map"
 	)
 	check(not screen.text.text.contains("keypad"), "not the phone's keypad")
 	screen.go_back()
@@ -33,40 +29,6 @@ func test_help_screen() -> void:
 	screen.close = func(): closed[0] = true
 	screen.go_back()
 	check(closed[0], "and then out")
-	screen.free()
-	Router.params = old
-
-
-func test_multiplayer_topics_in_the_same_help() -> void:
-	var old: Dictionary = Router.params
-	Router.params = {}
-	var screen: Control = Router.make(Router.SCREENS["help"])
-	root.add_child(screen)
-	if not OnlineSection.BATTLES:
-		eq(
-			screen.topics.slice(8),
-			[],
-			"no Duel or Online Missions while the online battles are hidden"
-		)
-		eq(
-			screen.pages_of(HelpScreen.CONTROL_TOPIC),
-			[tr("help.control_1"), tr("help.control_2")],
-			"Control: only the map's keys"
-		)
-		screen.free()
-		Router.params = old
-		return
-	eq(
-		screen.topics.slice(8).map(func(t): return t.name),
-		[tr("online.duel"), tr("menu.online_missions")]
-	)
-	eq(screen.pages_of(8).size(), 18, "Duel")
-	eq(screen.pages_of(9).size(), 8, "Online Missions")
-	eq(
-		screen.pages_of(HelpScreen.CONTROL_TOPIC).slice(2),
-		[tr("help.mp_control_1"), tr("help.mp_control_2")],
-		"Control: then the online battle's keys"
-	)
 	screen.free()
 	Router.params = old
 

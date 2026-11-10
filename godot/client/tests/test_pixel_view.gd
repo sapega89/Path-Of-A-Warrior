@@ -131,14 +131,3 @@ func test_the_mission_draws_its_world_as_pixel_art() -> void:
 	check(view.material != null, "its colours held to steps")
 	screen.free()
 	Router.params = old
-
-
-func test_the_online_battle_draws_its_world_as_pixel_art() -> void:
-	_set_pixel_art(true)
-	var screen: Control = Router.make(Router.SCREENS["online_battle"])
-	root.add_child(screen)
-	var view := screen.get_node("World") as PixelView
-	check(view != null, "the world is a pixel view")
-	check(view.viewport.transparent_bg, "the sky behind it shows through")
-	check(view.material != null, "its colours held to steps")
-	screen.free()

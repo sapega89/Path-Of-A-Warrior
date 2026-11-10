@@ -77,10 +77,6 @@ text = "live.safe"
 layout_mode = 2
 custom_minimum_size = Vector2(0, 14)
 
-[node name="Gap3" type="Control" parent="Center/Column/Scroll/List"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 14)
-
 [node name="Help" type="Button" parent="Center/Column/Scroll/List"]
 layout_mode = 2
 text = "menu.help"

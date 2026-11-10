@@ -3,7 +3,7 @@
 ## Tech Stack
 
 - **Main project:** Godot 4.5, GDScript, in `godot/client` (game, server and tests in one project)
-- **Server (Live, multiplayer, saves):** `godot/client/server`, run headless (ENet + DTLS)
+- **Server (Live, saves):** `godot/client/server`, run headless (ENet + DTLS)
 - **Data:** `python godot/tools/import_original.py` makes `godot/client/data` and
   `godot/client/assets/original` from the original files
 - **Reference only:** `pyport/` (Python + pygame-ce) describes how the original game behaves. No new
