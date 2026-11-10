@@ -159,5 +159,40 @@ func test_the_mission_draws_effects_in_code() -> void:
 	for d in screen.effects.drawn:
 		kinds.append(d[0])
 	check("fire" in kinds, "the hero burns: %s" % [kinds])
+	screen.sim.hero.on_fire = false
+	screen.sim.hero.hit_fx_kind = 1
+	screen.sim.hero.hit_fx_frame = 0
+	screen.sim.hero.hit_fx_pos = screen.sim.hero.pos
+	screen._update_view(0.5)
+	kinds = []
+	for d in screen.effects.drawn:
+		kinds.append(d[0])
+	check("spark" in kinds and "blood" in kinds, "a hit: a flash and blood: %s" % [kinds])
 	screen.queue_free()
 	Router.params = old
+
+
+## A blow's trail stays a moment: the tick after its swing it fades, whole, then it is gone; a
+## swing over two ticks fades in its second.
+func test_a_trail_fades_after_its_swing() -> void:
+	var swing := ["trail", 4, Vector2i(50, 50)]
+	var faded := ["trail", 4, Vector2i(50, 50), true]
+	eq(MapPictures.trails_with_fading([swing], []), [swing], "the swing")
+	eq(MapPictures.trails_with_fading([], [swing]), [faded], "then it fades")
+	eq(MapPictures.trails_with_fading([], []), [], "then it is gone")
+	eq(MapPictures.trails_with_fading([swing], [swing]), [faded], "not swung twice")
+	var next := ["trail", 5, Vector2i(50, 50)]
+	eq(
+		MapPictures.trails_with_fading([next], [swing]),
+		[next, faded],
+		"the next blow, the last fading"
+	)
+	var fx: Node3D = MapEffects.new()
+	fx.show_effects([swing], 0.5)
+	var blow := fx.drawn[0][2].get_node("Blow1") as MeshInstance3D
+	var m := blow.material_override as ShaderMaterial
+	eq(m.get_shader_parameter("strength"), 1.0, "a swing at its full light")
+	fx.show_effects([faded], 0.5)
+	check(is_equal_approx(m.get_shader_parameter("strength"), 0.5), "a fading one dims")
+	eq(m.get_shader_parameter("progress"), 0.8, "shown whole")
+	fx.free()

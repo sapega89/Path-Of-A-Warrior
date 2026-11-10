@@ -3,10 +3,10 @@ extends Node3D
 ## The effects of a mission in the new art, made in code: the blows, skills, potions and
 ## scrolls MapSim shows, the fire on whoever burns, the auras of buffs, the blood of hits (and
 ## the blots it leaves on the ground for a while), the weapon trails and the archers' arrows.
-## show_effects() takes what MapSim gives each
-## tick: [kind, frame, point in map pixels], with an optional true for the ring of an aura (on
-## the ground behind the one who glows). The frame says how far the effect has gone (and for
-## some, which way it goes); t, 0..1 of the way to the next tick, carries it on smoothly.
+## show_effects() takes what MapSim gives each tick: [kind, frame, point in map pixels], with an
+## optional true for the ring of an aura (on the ground behind the one who glows) or for a trail
+## whose swing is done (it fades). The frame says how far the effect has gone (and for some,
+## which way it goes); t, 0..1 of the way to the next tick, carries it on smoothly.
 ## Room-wide skills (Thunderstorm, Rain of Fire) strike at places that follow from the frame,
 ## the same each time.
 
@@ -380,7 +380,7 @@ func _build_trail(rig: Node3D) -> void:
 		(rig.get_node("Blow%d" % i) as MeshInstance3D).material_override = m
 
 
-func _draw_trail(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
+func _draw_trail(rig: Node3D, frame: int, p: Vector2, t: float, fading: bool) -> void:
 	var blow := frame % 3
 	rig.position = _at(p)
 	rig.rotation = Vector3(0.0, Motion.yaw_of((frame / 3) << 1), 0.0)
@@ -388,7 +388,8 @@ func _draw_trail(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 		var r := rig.get_node("Blow%d" % i) as MeshInstance3D
 		r.visible = i == blow
 		if r.visible:
-			_tune(r, {"progress": 0.25 + 0.7 * t})
+			var swing := {"progress": 0.25 + 0.7 * t, "strength": 1.0}
+			_tune(r, {"progress": 0.8, "strength": 1.0 - t} if fading else swing)
 
 
 # ---- a hit -------------------------------------------------------------------------------
