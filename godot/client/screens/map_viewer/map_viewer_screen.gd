@@ -3,8 +3,11 @@ extends BaseScreen
 ## Walks the hero around the maps of the campaign in 3D, in the new art (MapArt). skill_3 /
 ## skill_4 (keys 3 / 4, gamepad LB / RB) switch to the previous / next map; the line at the top
 ## names the keys of the device in use. The hero is shown as the missions show a new one: the
-## figure of the first class (the Cossack) with the first kind of weapon (the body under it
-## walks, the figure plays idle or walk and turns the way he goes).
+## figure of the first class (the Cossack) with the first kind of weapon, a long one held ready
+## in both hands (the body under it walks, the figure stands or walks and turns the way he goes).
+
+## The hero's kind of weapon (MapPeople.BLADES): the first one.
+const WEAPON_KIND := 0
 
 var map_number := 1
 var map_total := 0
@@ -19,8 +22,8 @@ func _ready() -> void:
 	view.camera.target = hero
 	figure.setup(MapPeople.HEROES.front())
 	figure.unequip_all()
-	figure.equip(MapPeople.BLADES.front())
-	figure.play("idle", 0.0)
+	figure.equip(MapPeople.BLADES[WEAPON_KIND])
+	figure.play(Motion.idle(WEAPON_KIND), 0.0)
 	hero.sprite.visible = false
 	InputSetup.device_changed.connect(show_info)
 	map_total = MapBuilder.map_count()
@@ -42,7 +45,7 @@ func show_map(number: int) -> bool:
 
 
 func _process(delta: float) -> void:
-	figure.play("walk" if hero.walking else "idle")
+	figure.play("walk" if hero.walking else Motion.idle(WEAPON_KIND))
 	figure.rotation.y = lerp_angle(
 		figure.rotation.y, Motion.yaw_of(hero.dir8), 1.0 - exp(-MapPeople.TURN * delta)
 	)

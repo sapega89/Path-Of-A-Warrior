@@ -12,11 +12,15 @@ func test_the_hero_is_the_cossack_figure() -> void:
 		"his weapon"
 	)
 	check(not viewer.hero.sprite.visible, "not the flat picture")
-	eq(viewer.figure.player.current_animation, "idle", "standing still")
+	eq(viewer.figure.player.current_animation, "idle_2h", "standing, the spear ready in both hands")
 	for i in 10:
 		viewer.hero.step(Vector2.RIGHT, 1.0 / 60.0)
 	viewer._process(1.0)
 	eq(viewer.figure.player.current_animation, "walk", "walking")
+	for i in 30:
+		viewer.hero.step(Vector2.ZERO, 1.0 / 60.0)
+	viewer._process(1.0)
+	eq(viewer.figure.player.current_animation, "idle_2h", "and stopped again")
 	check(
 		is_equal_approx(viewer.figure.rotation.y, Motion.yaw_of(viewer.hero.dir8)),
 		"turned the way he goes"

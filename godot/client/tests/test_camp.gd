@@ -165,3 +165,28 @@ func test_the_camp_menu_opens_the_settings() -> void:
 	host.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))
+
+
+## The hero stands in the camp as in the missions: a long weapon (a spear) held ready in both
+## hands, a short one (a broadsword) as before.
+func test_the_hero_stands_as_his_weapon_has_him() -> void:
+	var old: Dictionary = Router.params
+	for case in [[105, "spear", "idle_2h"], [Profile.START_WEAPON, "palash", "idle"]]:
+		var p := Profile.new()
+		p.equipped[0] = Items.make(case[0])
+		p.save(CAMP_PATH)
+		Router.params = {"profile_path": CAMP_PATH}
+		var camp: CampScreen = Router.make(Router.SCREENS["camp"])
+		root.add_child(camp)
+		check(camp.figure.skeleton.find_child(case[1], true, false) != null, "the %s" % case[1])
+		eq(camp.figure.player.current_animation, case[2], "standing with the %s" % case[1])
+		for i in 10:
+			camp.hero.step(Vector2.UP, 1.0 / 60.0)
+		camp._process(1.0 / 60.0)
+		eq(camp.figure.player.current_animation, "walk", "walking with the %s" % case[1])
+		camp.hero.step(Vector2.ZERO, 1.0 / 60.0)
+		camp._process(1.0 / 60.0)
+		eq(camp.figure.player.current_animation, case[2], "and standing again")
+		camp.free()
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))
