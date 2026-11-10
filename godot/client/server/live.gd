@@ -42,6 +42,8 @@ const NORMAL_KINDS := 13
 const SPECIAL_KINDS := 13
 const RARE_KINDS := 18
 
+## The handler of each request type (answer()).
+var _answers: Dictionary = {}
 var dir: String
 var notices: Array = []  # pages of up to 4 lines
 var rng := RandomNumberGenerator.new()
@@ -54,6 +56,23 @@ var _market := {}
 func _init(data_dir: String) -> void:
 	dir = data_dir.path_join("live")
 	DirAccess.make_dir_recursive_absolute(dir)
+	_answers = {
+		"live_status": _on_live_status,
+		"live_notices": _on_live_notices,
+		"live_sold": _on_live_sold,
+		"live_gifts": _on_live_gifts,
+		"live_fame": _on_live_fame,
+		"live_sync": _sync,
+		"live_safe": _safe,
+		"live_store": _store,
+		"live_counts": _on_live_counts,
+		"live_page": _on_live_page,
+		"live_buy": _buy,
+		"live_sell": _sell,
+		"live_prices": _on_live_prices,
+		"live_mine": _on_live_mine,
+		"live_cancel": _cancel
+	}
 
 
 # --- what the server keeps --------------------------------------------------------------
@@ -236,88 +255,94 @@ func _find_lot(id: int) -> Dictionary:
 ## The answer to one Live request of a logged-in session.
 func answer(s: Session, t: String, msg: Dictionary) -> Dictionary:
 	var u := user(s.user)
-	match t:
-		"live_status":
-			return {
-				"t": t,
-				"ok": true,
-				"notice": not notices.is_empty(),
-				"sold": not u.sold.is_empty(),
-				"gifts": not u.gifts.is_empty(),
-				"tax": TAX_PERCENT
-			}
-		"live_notices":
-			if notices.is_empty():
-				return _fail(t, "none")
-			var page: Array = notices[s.notice_page % notices.size()]
-			s.notice_page += 1
-			var more := s.notice_page < notices.size()
-			if not more:
-				s.notice_page = 0
-			return {"t": t, "ok": true, "lines": page.slice(0, 4), "more": more}
-		"live_sold":
-			var sold: Array = u.sold.slice(0, PAGE)
-			u.sold = u.sold.slice(PAGE)
-			save_user(s.user)
-			return {"t": t, "ok": true, "sold": sold}
-		"live_gifts":
-			var gifts: Array = u.gifts.slice(0, 5)
-			u.gifts = u.gifts.slice(5)
-			save_user(s.user)
-			return {"t": t, "ok": true, "gifts": gifts, "more": not u.gifts.is_empty()}
-		"live_fame":
-			var r := {"t": t, "ok": true, "fame": int(u.fame), "exp": int(u.exp)}
-			u.fame = 0
-			u.exp = 0
-			save_user(s.user)
-			return r
-		"live_sync":
-			return _sync(s, u, msg)
-		"live_safe":
-			return _safe(s, u, msg)
-		"live_store":
-			return _store(s, u, msg)
-		"live_counts":
-			var counts: Array = []
-			counts.resize(10)
-			counts.fill(0)
-			for x in _lots(s, int(msg.get("cat", -1)), int(msg.get("kind", -1))):
-				counts[mini(9, int(x.item.enchant))] += 1
-			return {"t": t, "ok": true, "counts": counts}
-		"live_page":
-			var lots := _lots(
-				s, int(msg.get("cat", -1)), int(msg.get("kind", -1)), int(msg.get("enchant", 0))
-			)
-			lots.sort_custom(
-				func(a, b): return [int(a.price), int(a.id)] < [int(b.price), int(b.id)]
-			)
-			var page := int(msg.get("page", 0))
-			if page < 0 or page * PAGE >= lots.size():
-				return _fail(t, "none")
-			return {
-				"t": t,
-				"ok": true,
-				"lots": lots.slice(page * PAGE, page * PAGE + PAGE).map(_lot_out),
-				"pages": ceili(lots.size() / float(PAGE))
-			}
-		"live_buy":
-			return _buy(s, u, msg)
-		"live_sell":
-			return _sell(s, u, msg)
-		"live_prices":
-			var lots := _lots(s, int(msg.get("cat", -1)), int(msg.get("kind", -1)))
-			if lots.is_empty():
-				return _fail(t, "none")
-			lots.sort_custom(func(a, b): return int(a.price) < int(b.price))
-			return {"t": t, "ok": true, "lots": lots.slice(0, PAGE).map(_lot_out)}
-		"live_mine":
-			var mine: Array = market().lots.filter(func(x): return str(x.seller) == s.user)
-			if mine.is_empty():
-				return _fail(t, "none")
-			return {"t": t, "ok": true, "lots": mine.slice(0, PAGE).map(_lot_out)}
-		"live_cancel":
-			return _cancel(s, u, msg)
-	return _fail(t, "unknown")
+	var handler: Callable = _answers.get(t, Callable())
+	if not handler.is_valid():
+		return _fail(t, "unknown")
+	return handler.call(s, u, msg)
+
+
+func _on_live_status(_s: Session, u: Dictionary, _msg: Dictionary) -> Dictionary:
+	return {
+		"t": "live_status",
+		"ok": true,
+		"notice": not notices.is_empty(),
+		"sold": not u.sold.is_empty(),
+		"gifts": not u.gifts.is_empty(),
+		"tax": TAX_PERCENT
+	}
+
+
+func _on_live_notices(s: Session, _u: Dictionary, _msg: Dictionary) -> Dictionary:
+	if notices.is_empty():
+		return _fail("live_notices", "none")
+	var page: Array = notices[s.notice_page % notices.size()]
+	s.notice_page += 1
+	var more := s.notice_page < notices.size()
+	if not more:
+		s.notice_page = 0
+	return {"t": "live_notices", "ok": true, "lines": page.slice(0, 4), "more": more}
+
+
+func _on_live_sold(s: Session, u: Dictionary, _msg: Dictionary) -> Dictionary:
+	var sold: Array = u.sold.slice(0, PAGE)
+	u.sold = u.sold.slice(PAGE)
+	save_user(s.user)
+	return {"t": "live_sold", "ok": true, "sold": sold}
+
+
+func _on_live_gifts(s: Session, u: Dictionary, _msg: Dictionary) -> Dictionary:
+	var gifts: Array = u.gifts.slice(0, 5)
+	u.gifts = u.gifts.slice(5)
+	save_user(s.user)
+	return {"t": "live_gifts", "ok": true, "gifts": gifts, "more": not u.gifts.is_empty()}
+
+
+func _on_live_fame(s: Session, u: Dictionary, _msg: Dictionary) -> Dictionary:
+	var r := {"t": "live_fame", "ok": true, "fame": int(u.fame), "exp": int(u.exp)}
+	u.fame = 0
+	u.exp = 0
+	save_user(s.user)
+	return r
+
+
+func _on_live_counts(s: Session, _u: Dictionary, msg: Dictionary) -> Dictionary:
+	var counts: Array = []
+	counts.resize(10)
+	counts.fill(0)
+	for x in _lots(s, int(msg.get("cat", -1)), int(msg.get("kind", -1))):
+		counts[mini(9, int(x.item.enchant))] += 1
+	return {"t": "live_counts", "ok": true, "counts": counts}
+
+
+func _on_live_page(s: Session, _u: Dictionary, msg: Dictionary) -> Dictionary:
+	var lots := _lots(
+		s, int(msg.get("cat", -1)), int(msg.get("kind", -1)), int(msg.get("enchant", 0))
+	)
+	lots.sort_custom(func(a, b): return [int(a.price), int(a.id)] < [int(b.price), int(b.id)])
+	var page := int(msg.get("page", 0))
+	if page < 0 or page * PAGE >= lots.size():
+		return _fail("live_page", "none")
+	return {
+		"t": "live_page",
+		"ok": true,
+		"lots": lots.slice(page * PAGE, page * PAGE + PAGE).map(_lot_out),
+		"pages": ceili(lots.size() / float(PAGE))
+	}
+
+
+func _on_live_prices(s: Session, _u: Dictionary, msg: Dictionary) -> Dictionary:
+	var lots := _lots(s, int(msg.get("cat", -1)), int(msg.get("kind", -1)))
+	if lots.is_empty():
+		return _fail("live_prices", "none")
+	lots.sort_custom(func(a, b): return int(a.price) < int(b.price))
+	return {"t": "live_prices", "ok": true, "lots": lots.slice(0, PAGE).map(_lot_out)}
+
+
+func _on_live_mine(s: Session, _u: Dictionary, _msg: Dictionary) -> Dictionary:
+	var mine: Array = market().lots.filter(func(x): return str(x.seller) == s.user)
+	if mine.is_empty():
+		return _fail("live_mine", "none")
+	return {"t": "live_mine", "ok": true, "lots": mine.slice(0, PAGE).map(_lot_out)}
 
 
 func _sync(s: Session, u: Dictionary, msg: Dictionary) -> Dictionary:
