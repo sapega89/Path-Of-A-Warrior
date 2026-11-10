@@ -18,6 +18,11 @@ uniform vec3 bank = vec3(0.42, 0.31, 0.2);
 uniform sampler2D view_mask : filter_linear, repeat_disable;
 uniform vec4 view_rect = vec4(0.0);
 uniform float hidden_shade = 0.5;
+// how much of the sun the shade keeps
+uniform float shade_depth = 0.6;
+// 1 when the world is drawn as pixel art (Settings "pixel_art"): the light and the shadows in
+// hard steps, and the finest detail (small pebbles) left out, as it would only flicker
+global uniform float pixel_art;
 
 float shown_at(vec2 p) {
 	if (view_rect.z <= 0.0) {
@@ -74,9 +79,13 @@ void fragment() {
 	float strokes = noise(vec2(p.x * 2.4 + p.y * 0.9, p.y * 4.5));
 	vec3 c = base * (0.86 + 0.24 * n) * (0.94 + 0.1 * strokes);
 	float top = step(0.3, world_pos.y) * smoothstep(0.8, 0.9, world_normal.y) * (1.0 - detail.w);
+	// pixel art: metres of ground in one pixel; detail smaller than a few pixels (far away, or
+	// seen at a slant) fades to its average, so it does not break into noise
+	float per_pixel = max(length(dFdx(p)), length(dFdy(p))) * pixel_art;
 	// stony ground: pebbles light and dark; on the top of a cliff, a few cracks
 	if (detail.x > 0.01) {
-		float stones = pebbles(p * 7.0) * 0.18 + pebbles(p * 13.0 + 5.0) * 0.1;
+		float stones = pebbles(p * 7.0) * 0.18 + pebbles(p * 13.0 + 5.0) * 0.1 * (1.0 - pixel_art);
+		stones *= 1.0 - smoothstep(0.25, 0.45, per_pixel * 7.0);
 		float cracks = crack(p * 1.3 + 11.0) * smoothstep(0.55, 0.75, noise(p * 0.6 + 3.0));
 		float rough = (1.0 + stones) * (1.0 - cracks * 0.3 * top);
 		c *= mix(1.0, rough, detail.x);
@@ -91,6 +100,7 @@ void fragment() {
 		float grain = 0.9 + 0.1 * noise(vec2(fract(u) * 9.0 + row * 13.0, p.y * 1.3));
 		float tone = 0.86 + 0.22 * hash(vec2(row, floor(v)));
 		vec3 boards = base * tone * grain * mix(0.5, 1.0, seam * joint);
+		boards = mix(boards, base * 0.9, smoothstep(0.2, 0.35, per_pixel * 3.0));
 		c = mix(c, boards, detail.y);
 	}
 	// paving: cobbles in staggered rows, dark joints
@@ -103,6 +113,7 @@ void fragment() {
 		float tone = 0.82 + 0.3 * hash(floor(q));
 		float dome = 0.94 + 0.12 * smoothstep(0.08, 0.4, edge);
 		vec3 paving = base * mix(0.5, tone * dome, stone);
+		paving = mix(paving, base * 0.88, smoothstep(0.2, 0.35, per_pixel * 3.8));
 		c = mix(c, paving, detail.z);
 	}
 	float steep = max(1.0 - smoothstep(0.45, 0.8, world_normal.y), detail.w);
@@ -135,8 +146,12 @@ void fragment() {
 void light() {
 	float ndl = dot(NORMAL, LIGHT);
 	if (LIGHT_IS_DIRECTIONAL) {
-		float lit = smoothstep(0.2, 0.6, ATTENUATION) * clamp(ndl * 2.0, 0.0, 1.0);
-		DIFFUSE_LIGHT += mix(shade_tint * 0.5, vec3(1.0), lit) * LIGHT_COLOR / PI;
+		float slope = clamp(ndl * 2.0, 0.0, 1.0);
+		float shadow = smoothstep(0.2, 0.6, ATTENUATION);
+		// pixel art: three steps of light on the slopes, the shadow's edge hard
+		slope = mix(slope, floor(slope * 3.0 + 0.5) / 3.0, pixel_art);
+		shadow = mix(shadow, step(0.5, ATTENUATION), pixel_art);
+		DIFFUSE_LIGHT += mix(shade_tint * shade_depth, vec3(1.0), slope * shadow) * LIGHT_COLOR / PI;
 	} else {
 		DIFFUSE_LIGHT += clamp(ndl, 0.0, 1.0) * ATTENUATION * LIGHT_COLOR / PI;
 	}

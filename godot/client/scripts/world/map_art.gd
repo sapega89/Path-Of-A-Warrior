@@ -17,7 +17,8 @@ extends "res://scripts/world/map_builder.gd"
 ##                a haystack, a well, a campfire...) is a 3D piece of the new art; a tent or a
 ##                hut drawn over several cells is one tent or hut over their middle;
 ##   objects      the breakable ones too: a hit flashes each, a glowing brass outline marks it;
-##   around       the land goes on past the edges and rises into low hills, with grass tufts.
+##   around       the land goes on past the edges and rises into low hills, with fields of
+##                wheat; grass on the meadows in and around the map; both sway in the wind.
 ## The simulation does not see any of this: it keeps the original cells.
 
 const GROUND_SHADER := preload("res://assets/art/shaders/map_ground.gdshader")
@@ -134,7 +135,7 @@ func build(data: Dictionary) -> void:
 	_build_water()
 	_build_props()
 	_build_objects()
-	_build_tufts()
+	_build_grass()
 	_build_collision()
 
 
@@ -547,44 +548,42 @@ static func _material_of(node: Node) -> Material:
 	return null
 
 
-## Tufts of grass on the meadows, in and around the map (one MultiMesh).
-func _build_tufts() -> void:
-	var source: Node = ArtKit.scene("props/trava.glb").instantiate()
-	var mesh_node: MeshInstance3D = source.find_children("*", "MeshInstance3D", true, false)[0]
-	var mm := MultiMesh.new()
-	mm.transform_format = MultiMesh.TRANSFORM_3D
-	mm.mesh = mesh_node.mesh
+## Grass on the meadows, in and around the map, and fields of wheat on the land around it,
+## swaying in the wind (Grass). Grass grows thick on lush grass, thinner on a meadow, in the
+## colour of its ground leaning to green; a field is a block of land past the edge (FIELD).
+func _build_grass() -> void:
+	var grass := Grass.new()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = w * 7919 + h
-	var grassy := [kinds.find("meadow"), kinds.find("grass")]
-	var placed: Array[Transform3D] = []
+	var meadow := kinds.find("meadow")
+	var lush := kinds.find("grass")
 	for py in range(-MARGIN * PARTS / 2, (h + MARGIN / 2) * PARTS):
 		for px in range(-MARGIN * PARTS / 2, (w + MARGIN / 2) * PARTS):
-			if rng.randf() > 0.22:
-				continue
 			var p: Array = _part(px, py)
-			if not int(p[0]) in grassy or float(p[1]) > 0.0:
+			var kind := int(p[0])
+			if not kind in [meadow, lush] or float(p[1]) > 0.0:
 				continue
 			var x := (px + rng.randf()) / PARTS
 			var z := (py + rng.randf()) / PARTS
-			placed.append(
-				Transform3D(
-					Basis(Vector3.UP, rng.randf() * TAU).scaled(
-						Vector3.ONE * rng.randf_range(0.4, 0.75)
-					),
-					Vector3(x, hills(x, z), z)
-				)
-			)
-	mm.instance_count = placed.size()
-	for i in placed.size():
-		mm.set_instance_transform(i, placed[i])
-	var mmi := MultiMeshInstance3D.new()
-	mmi.name = "Tufts"
-	mmi.multimesh = mm
-	mmi.material_override = ArtKit.tufts_material()
-	mmi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	add_child(mmi)
-	source.free()
+			if in_field(x, z):
+				if rng.randf() < Grass.WHEAT_DENSITY:
+					grass.add("wheat", Vector3(x, hills(x, z), z), Grass.WHEAT, rng)
+				continue
+			var ground := "grass" if kind == lush else "meadow"
+			if rng.randf() > float(Grass.DENSITY[ground]):
+				continue
+			var colour: Color = KIND_COLOUR[ground].lerp(Grass.GREEN, Grass.GREENER)
+			grass.add("grass", Vector3(x, hills(x, z), z), colour, rng)
+	grass.build(self)
+
+
+## Whether (x, z) is in a field of wheat: blocks of Grass.FIELD metres on the land past the map's
+## edge, about half of them sown.
+func in_field(x: float, z: float) -> bool:
+	if x > -1.0 and x < w + 1.0 and z > -1.0 and z < h + 1.0:
+		return false
+	var block := Vector2i(floori(x / Grass.FIELD.x), floori(z / Grass.FIELD.y))
+	return (hash([block, w, h]) & 0xff) < Grass.SOWN
 
 
 ## Light and air for a map in the new art (ArtKit.light): a dull sun from the upper left with
