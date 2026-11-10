@@ -124,6 +124,10 @@ text = "menu.game"
 layout_mode = 2
 text = "campaign.world"
 
+[node name="Settings" type="Button" parent="Center/Menu/Column"]
+layout_mode = 2
+text = "menu.settings"
+
 [node name="MainMenu" type="Button" parent="Center/Menu/Column"]
 layout_mode = 2
 text = "camp.main_menu"
@@ -135,6 +139,8 @@ text = "camp.back"
 [connection signal="pressed" from="Center/Menu/Column/GameMenu" to="." method="open_game_menu"]
 
 [connection signal="pressed" from="Center/Menu/Column/WorldMap" to="." method="open_world_map"]
+
+[connection signal="pressed" from="Center/Menu/Column/Settings" to="." method="open_settings"]
 
 [connection signal="pressed" from="Center/Menu/Column/MainMenu" to="." method="open_main_menu"]
 

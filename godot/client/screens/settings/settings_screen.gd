@@ -56,7 +56,7 @@ func _ready() -> void:
 		fullscreen = null
 		window_size.get_parent().free()
 		window_size = null
-	language.grab_focus.call_deferred()
+	language.grab_focus()
 
 
 ## The window's sizes that fit the screen; each item's id is its place in Settings.WINDOW_SIZES.
