@@ -10,6 +10,7 @@ const SCREENS := {
 	"main_menu": "res://screens/main_menu/main_menu.tscn",
 	"game_menu": "res://screens/game_menu/game_menu.tscn",
 	"settings": "res://screens/settings/settings_screen.tscn",
+	"controls": "res://screens/controls/controls_screen.tscn",
 	"map_viewer": "res://screens/map_viewer/map_viewer_screen.tscn",
 	"campaign": "res://screens/campaign/campaign_screen.tscn",
 	"camp": "res://screens/camp/camp_screen.tscn",

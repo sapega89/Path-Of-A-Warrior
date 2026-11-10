@@ -25,6 +25,10 @@ extends Node
 ## except where a node of the group RIGHT_BUTTON uses it itself (the mission's map attacks with
 ## it while the hero plays). The phone's own Back button is BACK too (the game does not quit on
 ## it: application/config/quit_on_go_back is off).
+##
+## The player can change the game actions' keys and pad buttons (Settings -> Controls,
+## key_bindings.gd); what they changed is kept in Settings "controls" and bound here at the start
+## and on each change.
 
 const KEYS := {
 	"move_left": [KEY_A, KEY_LEFT, KEY_KP_4],
@@ -115,6 +119,13 @@ var pad_brand := "generic"
 
 func _ready() -> void:
 	register()
+	bind(saved_bindings())
+	Settings.changed.connect(_on_setting_changed)
+
+
+func _on_setting_changed(key: String) -> void:
+	if key == "controls":
+		bind(saved_bindings())
 
 
 func _input(event: InputEvent) -> void:
@@ -228,22 +239,42 @@ static func register() -> void:
 		ma.axis = MENU_AXES[action][0]
 		ma.axis_value = MENU_AXES[action][1]
 		_add(action, ma)
+	bind(default_bindings())
+
+
+## The game actions' keys and pad inputs as `b` has them; the left stick still walks.
+static func bind(b: KeyBindings) -> void:
 	for action in KEYS:
 		if not InputMap.has_action(action):
 			InputMap.add_action(action, DEADZONE)
-		for key in KEYS[action]:
+		InputMap.action_erase_events(action)
+		for key in b.keys[action]:
 			var ev := InputEventKey.new()
 			ev.physical_keycode = key
 			_add(action, ev)
-		if PAD_BUTTONS.has(action):
-			var jb := InputEventJoypadButton.new()
-			jb.button_index = PAD_BUTTONS[action]
-			_add(action, jb)
-		if PAD_AXES.has(action):
+		if b.pads.has(action):
+			_add(action, KeyBindings.pad_event(b.pads[action]))
+		if PAD_AXES.has(action) and not PAD_AXES[action][0] in KeyBindings.TRIGGERS:
 			var jm := InputEventJoypadMotion.new()
 			jm.axis = PAD_AXES[action][0]
 			jm.axis_value = PAD_AXES[action][1]
 			_add(action, jm)
+
+
+## The keys and pad inputs the game comes with (the triggers among PAD_AXES are pad inputs).
+static func default_bindings() -> KeyBindings:
+	var pads := PAD_BUTTONS.duplicate()
+	for action in PAD_AXES:
+		if PAD_AXES[action][0] in KeyBindings.TRIGGERS:
+			pads[action] = KeyBindings.trigger(PAD_AXES[action][0])
+	return KeyBindings.new(KEYS, pads)
+
+
+## The defaults with what the player changed (Settings "controls").
+static func saved_bindings() -> KeyBindings:
+	var b := default_bindings()
+	b.take(Settings.get_value("controls"))
+	return b
 
 
 static func _add(action: String, ev: InputEvent) -> void:

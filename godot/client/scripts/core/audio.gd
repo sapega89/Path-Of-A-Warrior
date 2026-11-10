@@ -14,6 +14,7 @@ const SCREEN_MUSIC := {
 	"mission": 1,
 	"campaign": 2,
 	"settings": 2,
+	"controls": 2,
 	"management": 2,
 	"attributes": 2,
 	"skills": 2,

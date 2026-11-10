@@ -2,7 +2,7 @@ extends Node
 ## Player settings, kept in user://settings.cfg and applied to the engine.
 ## The volumes and the game speed (CLOUD_KEYS) are kept on the server too, with the account
 ## (scripts/net/cloud_sync.gd): the newer copy wins, and on a device the account is new to,
-## the server's. The language and the full screen belong to the device.
+## the server's. The language, the full screen and the controls belong to the device.
 
 signal changed(key: String)
 
@@ -19,6 +19,7 @@ const DEFAULTS := {
 	"screen_shake": true,  # of those, the camera shake
 	"rumble": true,  # of those, the pad's (or the phone's) rumble
 	"pixel_art": true,  # the 3D world drawn as pixel art (pixel_view.gd), or smooth
+	"controls": {},  # the keys and pad buttons changed by the player (KeyBindings.changes())
 }
 ## One tick of a mission at each game speed, in ms (2, Med, is the simulation's own tick).
 const SPEED_MS := [250, 180, 120, 90, 50]
@@ -153,6 +154,9 @@ func _coerce(key: String, value: Variant) -> Variant:
 				return clampi(int(value), 0, SPEED_MS.size() - 1)
 		TYPE_STRING:
 			if typeof(value) == TYPE_STRING:
+				return value
+		TYPE_DICTIONARY:
+			if typeof(value) == TYPE_DICTIONARY:
 				return value
 	return null
 

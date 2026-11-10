@@ -2,7 +2,8 @@ class_name SettingsScreen
 extends BaseScreen
 ## Settings: language, music and sound volume, the game speed, the hit effects on the map (all
 ## of them, the screen shake, the vibration), the world as pixel art or smooth, fullscreen
-## (desktop only).
+## (desktop only), and Controls (controls_screen.gd: the keys and pad buttons, shown over these
+## settings). The options scroll; Controls and Back stay in a row under them.
 
 const I18nScript := preload("res://scripts/core/i18n.gd")
 ## Language names are shown in their own language, not translated.
@@ -17,6 +18,7 @@ const LANGUAGE_NAMES := {"en": "English", "uk": "Українська"}
 @onready var screen_shake: CheckBox = %ScreenShake
 @onready var rumble: CheckBox = %Rumble
 @onready var pixel_art: CheckBox = %PixelArt
+@onready var column: VBoxContainer = %Column
 ## Shown over another screen (the mission's pause menu): what Back does instead of going back.
 var close := Callable()
 
@@ -86,6 +88,23 @@ func _on_rumble(on: bool) -> void:
 
 func _on_fullscreen(on: bool) -> void:
 	Settings.set_value("fullscreen", on)
+
+
+## The Controls over these settings; their Back comes back here.
+func open_controls() -> ControlsScreen:
+	var controls: ControlsScreen = Router.make(Router.SCREENS["controls"])
+	controls.name = "Controls"
+	controls.set_anchors_preset(Control.PRESET_FULL_RECT)
+	controls.close = _close_controls.bind(controls)
+	column.visible = false
+	add_child(controls)
+	return controls
+
+
+func _close_controls(controls: ControlsScreen) -> void:
+	controls.queue_free()
+	column.visible = true
+	(%Controls as Button).grab_focus()
 
 
 ## A volume is set, and the sound of the setting plays at it.
