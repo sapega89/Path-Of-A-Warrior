@@ -421,7 +421,7 @@ func test_gift_list_at_the_auctioneer() -> void:
 	Router.params = {"profile_path": TEST_PATH, "live": t[0]}
 	var screen: Control = Router.make(Router.SCREENS["live_trade"])
 	root.add_child(screen)
-	eq(screen.buttons.map(func(b): return str(b.name)), ["Buy", "Sell", "Cancel", "Gifts"])
+	eq(screen.buttons.map(func(b): return str(b.name)), ["Buy", "Sell", "Cancel", "Gifts", "Give"])
 	screen.free()
 	screen = Router.make(Router.SCREENS["live_gifts"])
 	root.add_child(screen)
@@ -446,6 +446,61 @@ func test_gift_list_at_the_auctioneer() -> void:
 	screen = Router.make(Router.SCREENS["live_gifts"])
 	root.add_child(screen)
 	eq(screen.info.text, tr("live.failed"), "offline")
+	screen.free()
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
+	ServerTests._rm(d)
+
+
+func test_give_a_gift_screen() -> void:
+	var d := _dir()
+	var t := _client(d)
+	var l: LiveServer = t[1]
+	l.accounts = Accounts.new(d.path_join("accounts"))
+	l.accounts.rounds = 20
+	l.accounts.create_account("MARIA", "1234")
+	var hero := _hero()
+	hero.add_item(Items.make(434))
+	hero.save(TEST_PATH)
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": TEST_PATH, "live": t[0]}
+	var screen: Control = Router.make(Router.SCREENS["live_give"])
+	root.add_child(screen)
+	check(screen.things.cells[0].icon != null, "the backpack first")
+	check(not screen.pick(2), "an elixir")
+	eq(screen.info.text, tr("live.not_giftable"))
+	check(screen.pick(0), "the sword picked")
+	eq(screen.step, LiveGiveScreen.Step.WHO)
+	screen.go_back()
+	eq(screen.step, LiveGiveScreen.Step.PICK, "back to the things")
+	screen.pick(0)
+	screen.to.text = "ma ria1"
+	screen._typed(screen.to.text)
+	eq(screen.to.text, "MARIA", "capital letters only")
+	screen.to.text = "MAR"
+	eq(screen.ask_give(), "", "too short for a UserID")
+	eq(screen.info.text, tr("live.bad_user_id"))
+	screen.to.text = "NOBODY"
+	check(screen.ask_give().contains("NOBODY"), "asks")
+	screen.ask.hide()
+	screen.confirm()
+	eq(screen.info.text, tr("live.no_player"))
+	eq(screen.step, LiveGiveScreen.Step.WHO, "still on who")
+	screen.to.text = "MARIA"
+	check(screen.ask_give().contains(Items.name_of(101)), "asks")
+	screen.ask.hide()
+	screen.confirm()
+	eq(screen.info.text, tr("live.given") % [Items.name_of(101), "MARIA"])
+	eq(screen.step, LiveGiveScreen.Step.PICK)
+	check(screen.things.cells[0].icon == null, "gone from the backpack")
+	eq(int(Profile.load_or_new(TEST_PATH).backpack[0].id), 0, "the hero saved")
+	screen.free()
+	var maria: Array = _player(l, "MARIA")
+	Router.params = {"profile_path": TEST_PATH, "live": maria[0]}
+	screen = Router.make(Router.SCREENS["live_gifts"])
+	root.add_child(screen)
+	check(screen.info.text.begins_with(tr("live.gift_from") % "ANDREY"), screen.info.text)
+	eq(maria[0].warehouse.size(), 1, "in her Warehouse")
 	screen.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))

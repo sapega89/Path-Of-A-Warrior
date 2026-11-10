@@ -951,6 +951,42 @@
     "en": "From %s",
     "uk": "Від: %s"
   },
+  "live.give": {
+    "en": "Give a Gift",
+    "uk": "Подарувати"
+  },
+  "live.give_to": {
+    "en": "Who is it for? Type the player's UserID.",
+    "uk": "Кому? Введіть UserID гравця."
+  },
+  "live.give_ask": {
+    "en": "Give %s to %s?",
+    "uk": "Подарувати %s гравцеві %s?"
+  },
+  "live.given": {
+    "en": "%s has been sent to %s.",
+    "uk": "%s надіслано гравцеві %s."
+  },
+  "live.bad_user_id": {
+    "en": "A UserID is 4 to 12 letters.",
+    "uk": "UserID — це від 4 до 12 латинських літер."
+  },
+  "live.no_player": {
+    "en": "There is no player with that UserID.",
+    "uk": "Гравця з таким UserID немає."
+  },
+  "live.gift_self": {
+    "en": "You cannot give a gift to yourself.",
+    "uk": "Собі подарунок не надішлеш."
+  },
+  "live.their_warehouse_full": {
+    "en": "That player's Warehouse is full.",
+    "uk": "Склад цього гравця повний."
+  },
+  "live.not_giftable": {
+    "en": "This cannot be given.",
+    "uk": "Це не можна подарувати."
+  },
   "live.gifts_waiting": {
     "en": "Other players sent you gifts. They are in the Warehouse;\nsee who sent what at the auctioneer (Trade > Gift List).",
     "uk": "Інші гравці надіслали вам подарунки. Вони вже на складі,\nа хто що надіслав, покаже аукціоніст (Торгівля > Подарунки)."
