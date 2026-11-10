@@ -60,6 +60,8 @@ func _ready() -> void:
 	ng.ask.hide()
 	Router.push("settings")
 	await _shot(out, "03_settings")
+	Router.current.open_controls()
+	await _shot(out, "03b_controls")
 	# Management and Attributes, with a hero who has put three points into HP.
 	Router.go("main_menu")
 	Router.push("management", {"profile_path": "user://shot_hero.json"})

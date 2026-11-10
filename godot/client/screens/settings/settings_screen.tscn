@@ -35,29 +35,40 @@ theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 44
 script = ExtResource("2")
 
-[node name="LanguageRow" type="HBoxContainer" parent="Center/Column"]
+[node name="Scroll" type="ScrollContainer" parent="Center/Column"]
+custom_minimum_size = Vector2(600, 500)
+layout_mode = 2
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="Rows" type="VBoxContainer" parent="Center/Column/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="LanguageRow" type="HBoxContainer" parent="Center/Column/Scroll/Rows"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Center/Column/LanguageRow"]
+[node name="Label" type="Label" parent="Center/Column/Scroll/Rows/LanguageRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "settings.language"
 
-[node name="Language" type="OptionButton" parent="Center/Column/LanguageRow"]
+[node name="Language" type="OptionButton" parent="Center/Column/Scroll/Rows/LanguageRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 auto_translate_mode = 2
 
-[node name="MusicRow" type="HBoxContainer" parent="Center/Column"]
+[node name="MusicRow" type="HBoxContainer" parent="Center/Column/Scroll/Rows"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Center/Column/MusicRow"]
+[node name="Label" type="Label" parent="Center/Column/Scroll/Rows/MusicRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "settings.music"
 
-[node name="Music" type="HSlider" parent="Center/Column/MusicRow"]
+[node name="Music" type="HSlider" parent="Center/Column/Scroll/Rows/MusicRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -65,15 +76,15 @@ custom_minimum_size = Vector2(260, 28)
 max_value = 1.0
 step = 0.05
 
-[node name="SfxRow" type="HBoxContainer" parent="Center/Column"]
+[node name="SfxRow" type="HBoxContainer" parent="Center/Column/Scroll/Rows"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Center/Column/SfxRow"]
+[node name="Label" type="Label" parent="Center/Column/Scroll/Rows/SfxRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "settings.sfx"
 
-[node name="Sfx" type="HSlider" parent="Center/Column/SfxRow"]
+[node name="Sfx" type="HSlider" parent="Center/Column/Scroll/Rows/SfxRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -81,111 +92,125 @@ custom_minimum_size = Vector2(260, 28)
 max_value = 1.0
 step = 0.05
 
-[node name="SpeedRow" type="HBoxContainer" parent="Center/Column"]
+[node name="SpeedRow" type="HBoxContainer" parent="Center/Column/Scroll/Rows"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Center/Column/SpeedRow"]
+[node name="Label" type="Label" parent="Center/Column/Scroll/Rows/SpeedRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "settings.speed"
 
-[node name="Speed" type="OptionButton" parent="Center/Column/SpeedRow"]
+[node name="Speed" type="OptionButton" parent="Center/Column/Scroll/Rows/SpeedRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HitFeelRow" type="HBoxContainer" parent="Center/Column"]
+[node name="HitFeelRow" type="HBoxContainer" parent="Center/Column/Scroll/Rows"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Center/Column/HitFeelRow"]
+[node name="Label" type="Label" parent="Center/Column/Scroll/Rows/HitFeelRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "settings.hit_feel"
 
-[node name="HitFeel" type="CheckBox" parent="Center/Column/HitFeelRow"]
+[node name="HitFeel" type="CheckBox" parent="Center/Column/Scroll/Rows/HitFeelRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ScreenShakeRow" type="HBoxContainer" parent="Center/Column"]
+[node name="ScreenShakeRow" type="HBoxContainer" parent="Center/Column/Scroll/Rows"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Center/Column/ScreenShakeRow"]
+[node name="Label" type="Label" parent="Center/Column/Scroll/Rows/ScreenShakeRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "settings.screen_shake"
 
-[node name="ScreenShake" type="CheckBox" parent="Center/Column/ScreenShakeRow"]
+[node name="ScreenShake" type="CheckBox" parent="Center/Column/Scroll/Rows/ScreenShakeRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="RumbleRow" type="HBoxContainer" parent="Center/Column"]
+[node name="RumbleRow" type="HBoxContainer" parent="Center/Column/Scroll/Rows"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Center/Column/RumbleRow"]
+[node name="Label" type="Label" parent="Center/Column/Scroll/Rows/RumbleRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "settings.rumble"
 
-[node name="Rumble" type="CheckBox" parent="Center/Column/RumbleRow"]
+[node name="Rumble" type="CheckBox" parent="Center/Column/Scroll/Rows/RumbleRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PixelArtRow" type="HBoxContainer" parent="Center/Column"]
+[node name="PixelArtRow" type="HBoxContainer" parent="Center/Column/Scroll/Rows"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Center/Column/PixelArtRow"]
+[node name="Label" type="Label" parent="Center/Column/Scroll/Rows/PixelArtRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "settings.pixel_art"
 
-[node name="PixelArt" type="CheckBox" parent="Center/Column/PixelArtRow"]
+[node name="PixelArt" type="CheckBox" parent="Center/Column/Scroll/Rows/PixelArtRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="FullscreenRow" type="HBoxContainer" parent="Center/Column"]
+[node name="FullscreenRow" type="HBoxContainer" parent="Center/Column/Scroll/Rows"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Center/Column/FullscreenRow"]
+[node name="Label" type="Label" parent="Center/Column/Scroll/Rows/FullscreenRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "settings.fullscreen"
 
-[node name="Fullscreen" type="CheckBox" parent="Center/Column/FullscreenRow"]
+[node name="Fullscreen" type="CheckBox" parent="Center/Column/Scroll/Rows/FullscreenRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Training" type="Button" parent="Center/Column"]
+[node name="Buttons" type="HBoxContainer" parent="Center/Column"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Controls" type="Button" parent="Center/Column/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
+text = "settings.controls"
+
+[node name="Training" type="Button" parent="Center/Column/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 text = "settings.training"
 
-[node name="Back" type="Button" parent="Center/Column"]
+[node name="Back" type="Button" parent="Center/Column/Buttons"]
 layout_mode = 2
+size_flags_horizontal = 3
 text = "common.back"
 
-[connection signal="item_selected" from="Center/Column/LanguageRow/Language" to="." method="_on_language"]
+[connection signal="item_selected" from="Center/Column/Scroll/Rows/LanguageRow/Language" to="." method="_on_language"]
 
-[connection signal="value_changed" from="Center/Column/MusicRow/Music" to="." method="_on_music"]
+[connection signal="value_changed" from="Center/Column/Scroll/Rows/MusicRow/Music" to="." method="_on_music"]
 
-[connection signal="value_changed" from="Center/Column/SfxRow/Sfx" to="." method="_on_sfx"]
+[connection signal="value_changed" from="Center/Column/Scroll/Rows/SfxRow/Sfx" to="." method="_on_sfx"]
 
-[connection signal="item_selected" from="Center/Column/SpeedRow/Speed" to="." method="_on_speed"]
+[connection signal="item_selected" from="Center/Column/Scroll/Rows/SpeedRow/Speed" to="." method="_on_speed"]
 
-[connection signal="toggled" from="Center/Column/HitFeelRow/HitFeel" to="." method="_on_hit_feel"]
+[connection signal="toggled" from="Center/Column/Scroll/Rows/HitFeelRow/HitFeel" to="." method="_on_hit_feel"]
 
-[connection signal="toggled" from="Center/Column/ScreenShakeRow/ScreenShake" to="." method="_on_screen_shake"]
+[connection signal="toggled" from="Center/Column/Scroll/Rows/ScreenShakeRow/ScreenShake" to="." method="_on_screen_shake"]
 
-[connection signal="toggled" from="Center/Column/RumbleRow/Rumble" to="." method="_on_rumble"]
+[connection signal="toggled" from="Center/Column/Scroll/Rows/RumbleRow/Rumble" to="." method="_on_rumble"]
 
-[connection signal="toggled" from="Center/Column/PixelArtRow/PixelArt" to="." method="_on_pixel_art"]
+[connection signal="toggled" from="Center/Column/Scroll/Rows/PixelArtRow/PixelArt" to="." method="_on_pixel_art"]
 
-[connection signal="toggled" from="Center/Column/FullscreenRow/Fullscreen" to="." method="_on_fullscreen"]
+[connection signal="toggled" from="Center/Column/Scroll/Rows/FullscreenRow/Fullscreen" to="." method="_on_fullscreen"]
 
-[connection signal="pressed" from="Center/Column/Training" to="." method="_on_training"]
+[connection signal="pressed" from="Center/Column/Buttons/Controls" to="." method="open_controls"]
 
-[connection signal="pressed" from="Center/Column/Back" to="." method="_back"]
+[connection signal="pressed" from="Center/Column/Buttons/Training" to="." method="_on_training"]
+
+[connection signal="pressed" from="Center/Column/Buttons/Back" to="." method="_back"]
