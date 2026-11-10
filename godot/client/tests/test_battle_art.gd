@@ -28,7 +28,7 @@ func _battle(mode: int) -> Array:
 
 
 func test_who_is_who() -> void:
-	var f := OnlineBattle.Fighter.new()
+	var f := OnlineFighter.new()
 	f.kind = OnlineBattle.PLAYER
 	for face in 4:
 		f.face = face
