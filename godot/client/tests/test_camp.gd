@@ -139,3 +139,29 @@ func test_the_arrow_points_the_way_out() -> void:
 	eq(CampScreen.arrow_side(Vector3(1, 0, 0)), CampScreen.ARROW_RIGHT, "east: right")
 	eq(CampScreen.arrow_side(Vector3(-1, 0, 0)), CampScreen.ARROW_LEFT, "west: left")
 	eq(CampScreen.arrow_side(Vector3(0, 0, 1)), CampScreen.ARROW_DOWN, "south: down")
+
+
+func test_the_camp_menu_opens_the_settings() -> void:
+	Profile.new().save(CAMP_PATH)
+	var old: Dictionary = Router.params
+	var host := Control.new()
+	root.add_child(host)
+	Router.attach(host)
+	Router.go("camp", {"profile_path": CAMP_PATH})
+	var camp: CampScreen = Router.current
+	camp.toggle_menu()
+	var column: Node = camp.menu.get_node("Column")
+	eq(
+		column.get_children().map(func(b): return str(b.name)),
+		["GameMenu", "WorldMap", "Settings", "MainMenu", "Back"],
+		"the camp menu has the settings"
+	)
+	(column.get_node("Settings") as Button).pressed.emit()
+	eq(Router.current_name(), "settings", "the settings, without going by the main menu")
+	(Router.current as SettingsScreen)._back()
+	eq(Router.current_name(), "camp", "their Back: the camp again")
+	eq(Router.params.get("profile_path"), CAMP_PATH, "with the same hero")
+	Router.attach(null)
+	host.free()
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))

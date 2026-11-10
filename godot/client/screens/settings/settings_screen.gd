@@ -46,7 +46,7 @@ func _ready() -> void:
 		fullscreen = null
 	if close.is_valid():
 		%Training.free()
-	language.grab_focus.call_deferred()
+	language.grab_focus()
 
 
 func _back() -> void:
