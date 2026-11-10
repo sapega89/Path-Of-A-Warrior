@@ -26,8 +26,9 @@ godot/
     scripts/world/        3D-світ: map_builder (карта з оригінальних шарів: дані, клітинки,
                           зіткнення), map_art (та сама карта в новому арті), map_people (люди
                           місії в новому арті), motion (дія → кліп), map_effects (ефекти й
-                          стріли кодом), battle_arena і battle_motion (поле й бійці бою
-                          мультиплеєра), hero, follow_camera
+                          стріли кодом) і fx_rigs (частини, з яких ефекти складено),
+                          battle_arena і battle_motion (поле й бійці бою мультиплеєра), hero,
+                          follow_camera
     scripts/ui/           тема, сенсорні кнопки, рядок підказок керування внизу (hint_bar)
     scripts/sim/          логіка місії без вузлів: MapSim (стан і тік) і його модулі —
                           room_play (кімнати), map_walls (рух і стіни), hero_play (герой),
