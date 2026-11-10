@@ -12,10 +12,10 @@ func test_help_screen() -> void:
 	eq(str(screen.list.get_child(0).text), "Missions", "the first")
 	screen.open(2)
 	eq(screen.heading.text, "Blacksmith", "a topic")
-	eq(screen.page_label.text, "1 / 6", "its pages")
+	eq(screen.page_label.text, "1 / 3", "its pages")
 	eq(screen.text.text, "The smith, in every camp, buys and sells things.", "its first page")
 	screen.turn_page(-1)
-	eq(screen.page, 5, "back from the first page to the last")
+	eq(screen.page, 2, "back from the first page to the last")
 	screen.open(HelpScreen.CONTROL_TOPIC)
 	eq(
 		screen.pages_of(HelpScreen.CONTROL_TOPIC),
@@ -45,7 +45,7 @@ func test_missions_tell_how_a_mission_is_fought() -> void:
 		check(first.any(func(p: String) -> bool: return p.contains(words)), "Missions: " + words)
 	for i in screen.topics.size():
 		for p in screen.pages_of(i):
-			for gone in ["Live", "Load User Data", "in the main menu"]:
+			for gone in ["Live", "Trade", "Safe", "Load User Data", "in the main menu"]:
 				check(
 					not str(p).contains(gone),
 					'%s: no "%s" in %s' % [screen.topics[i].name, gone, p]

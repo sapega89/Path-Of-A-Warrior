@@ -9,8 +9,7 @@ extends BaseScreen
 ## out tells the story of the next mission of that place not won yet (choices()), then its
 ## briefing; the mission comes back here when it is over (won: the camp of the new place; lost:
 ## this one again, to try once more with the same hero). A closed way's gate is barred. Every
-## camp has the blacksmith (buy, sell, enchant, combine), the stores (the warehouse), the
-## auctioneer (trade: buy, sell, the hero's own lots) and the town hall (every colonel and
+## camp has the blacksmith (buy, sell, enchant, combine) and the town hall (every colonel and
 ## general, and the visits of the generals: one after each mission won,
 ## scripts/core/visits.gd), which the hero enters from a few steps off its door. The game is
 ## saved when the hero comes into a camp. Pause opens the camp menu: the game menu, the world
@@ -23,9 +22,7 @@ const CAMERA_DISTANCE := 15.0  # it follows the hero, a good part of the camp in
 ## The name over each thing to use: its spot's kind and where it hangs from the spot.
 const LABELS := {
 	"Smith": ["smith", Vector3(0.0, 2.4, -1.6)],
-	"Store": ["store", Vector3(0.0, 2.0, -1.6)],
 	"Hall": ["hall", Vector3(0.0, 3.2, -1.2)],
-	"Auction": ["auction", Vector3(0.0, 2.7, -2.1)],
 }
 ## The blinking arrow in an open gate: how high, how big.
 const ARROW_HEIGHT := 0.6
@@ -43,7 +40,7 @@ var world_map: RefCounted
 var plan: CampPlan
 var place := 0
 ## What the hero can use where he stands (CampPlan.spots()): the ways first, in the order of
-## plan.exits, then the smithy, the stores, the town hall and the auctioneer.
+## plan.exits, then the smithy and the town hall.
 var spots: Array[Dictionary] = []
 var near := {}  # the spot in reach, or empty
 var arrows: Array[Sprite3D] = []
@@ -97,7 +94,7 @@ func _build_world() -> void:
 		(get_node("%" + label_name) as Node3D).position = spot.at + LABELS[label_name][1]
 
 
-## The spot of a kind ("smith", "store", "hall", "auction"; the first way for "way").
+## The spot of a kind ("smith", "hall"; the first way for "way").
 func spot_of(kind: String) -> Dictionary:
 	for s in spots:
 		if s.kind == kind:
@@ -218,10 +215,6 @@ func _hint_text(s: Dictionary) -> String:
 			return InputSetup.hint("camp.enter_hall")
 		"smith":
 			return InputSetup.hint("camp.enter_smith")
-		"store":
-			return InputSetup.hint("camp.enter_store")
-		"auction":
-			return InputSetup.hint("camp.enter_auction")
 	return InputSetup.hint("camp.hint_walk")
 
 
@@ -244,10 +237,6 @@ func use(s: Dictionary) -> void:
 			Router.push("town_hall", {"profile_path": path})
 		"smith":
 			Router.push("blacksmith", {"profile_path": path})
-		"store":
-			Router.push("live_warehouse", {"profile_path": path})
-		"auction":
-			Router.push("live_trade", {"profile_path": path})
 
 
 ## The ways out of the camp, one gate each: [place, open, mission], in a shuffled order so a

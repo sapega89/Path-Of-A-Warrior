@@ -32,14 +32,6 @@ const SCREENS := {
 	"help": "res://screens/help/help_screen.tscn",
 	"offline": "res://screens/offline/offline_screen.tscn",
 	"login": "res://screens/login/login_screen.tscn",
-	"live_warehouse": "res://screens/live_warehouse/live_warehouse_screen.tscn",
-	"live_safe": "res://screens/live_safe/live_safe_screen.tscn",
-	"live_trade": "res://screens/live_trade/live_trade_screen.tscn",
-	"live_buy": "res://screens/live_buy/live_buy_screen.tscn",
-	"live_sell": "res://screens/live_sell/live_sell_screen.tscn",
-	"live_cancel": "res://screens/live_cancel/live_cancel_screen.tscn",
-	"live_gifts": "res://screens/live_gifts/live_gifts_screen.tscn",
-	"live_give": "res://screens/live_give/live_give_screen.tscn",
 }
 
 var current: Control

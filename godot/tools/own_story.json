@@ -2299,12 +2299,12 @@ null,
 "uk": "Тоді краще добре вибрати, чиї це двері."
 },
 {
-"en": "To take your hero into the online battles, he must be kept on the server first.",
-"uk": "Щоб узяти героя в мережеві битви, його спершу треба зберегти на сервері."
+"en": "Your pack holds forty-five things. Sell what you do not need to the smith before it fills up.",
+"uk": "У твоїй торбі сорок п'ять місць. Продавай ковалеві те, що не потрібне, поки вона не заповнилася."
 },
 {
-"en": "Makes sense. I would like to cross sabres with other players some day.",
-"uk": "Зрозуміло. Я б хотів колись схрестити шаблі з іншими гравцями."
+"en": "Then no good find will be left lying in the field.",
+"uk": "Тоді жодна добра знахідка не лишиться лежати в полі."
 },
 {
 "en": "That is all you need for now. Come back later and I will tell you more.",
@@ -2363,36 +2363,36 @@ null,
 "uk": "Отже, дещо можна знайти лише посеред місії."
 },
 {
-"en": "Keep your fame and experience on the server and you will grow the stronger for it.",
-"uk": "Тримай славу й досвід на сервері, і від цього станеш сильнішим."
+"en": "Watch the red ball and the blue one: your health and your spirit. Drink before it is too late.",
+"uk": "Стеж за червоною й синьою кулями: це твоє здоров'я і твій дух. Пий зілля, поки не пізно."
 },
 {
-"en": "So the server is where my strength is kept. Noted.",
-"uk": "Отже, моя сила зберігається на сервері. Затямив."
+"en": "I will keep a potion close at hand.",
+"uk": "Триматиму зілля напоготові."
 },
 {
-"en": "Online you can trade what you carry with other players.",
-"uk": "У мережі можна мінятися тим, що носиш, з іншими гравцями."
+"en": "Put your potions on the belt before you set out. In the thick of a fight there is no time to dig through your pack.",
+"uk": "Почепи зілля на пояс, перш ніж вирушати. У розпалі бою ніколи ритися в торбі."
 },
 {
-"en": "A good trade is worth more than a good fight.",
-"uk": "Добрий обмін вартий більше за добрий бій."
+"en": "Then my belt will never be empty.",
+"uk": "Тоді мій пояс ніколи не буде порожнім."
 },
 {
-"en": "Taking missions online will teach you to stand against strong enemies.",
-"uk": "Місії в мережі навчать тебе стояти проти сильних ворогів."
+"en": "On Normal, auto-hunt will fight for you. Take the sabre back yourself when things get hot.",
+"uk": "На звичайній складності автополювання битиметься за тебе. Коли стане гаряче, бери шаблю сам."
 },
 {
-"en": "So playing online will make me stronger.",
-"uk": "Отже, гра в мережі зробить мене сильнішим."
+"en": "So I can rest my arm and still keep watch.",
+"uk": "Отже, можна дати руці перепочити й не втрачати пильності."
 },
 {
-"en": "Rare things turn up in online missions that you will see nowhere else.",
-"uk": "У мережевих місіях трапляються рідкісні речі, яких більше ніде не побачиш."
+"en": "The points you put into your stats can be taken back, but it will cost you gold or a tincture.",
+"uk": "Очки, вкладені в показники, можна повернути, але це коштуватиме золота або настоянки."
 },
 {
-"en": "And my fame and gold will grow along with them.",
-"uk": "І моя слава й золото ростимуть разом із ними."
+"en": "Then I will spend them wisely the first time.",
+"uk": "Тоді витрачу їх розважливо з першого разу."
 },
 {
 "en": "Call on as many generals as you can. They say a guest brings luck into the house, and takes some away with him.",
@@ -2427,12 +2427,12 @@ null,
 "uk": "А розчищене поле ще й дає додатковий досвід."
 },
 {
-"en": "Online, the strongbox and the warehouse let you move your things to the server.",
-"uk": "У мережі скриня й склад дають змогу перенести твої речі на сервер."
+"en": "Every camp has a town hall. Look in on the colonels there: they keep count of what you have done for them.",
+"uk": "У кожному таборі є ратуша. Зазирни до полковників: вони пам'ятають, що ти для них зробив."
 },
 {
-"en": "A hundred things can be kept there, as I understand it.",
-"uk": "Сотню речей там можна тримати, як я розумію."
+"en": "Then I will see how far I have come with each of them.",
+"uk": "Тоді побачу, як далеко я зайшов із кожним із них."
 },
 {
 "en": "The road you take will lead you to your fate. Choose it with your eyes open!",
@@ -2443,12 +2443,12 @@ null,
 "uk": "Доля любить сміливих!"
 },
 {
-"en": "Before you remove or update the game, save your hero and move your gold and things to the server.",
-"uk": "Перш ніж видаляти чи оновлювати гру, збережи героя й перенеси золото та речі на сервер."
+"en": "Your hero is saved each time he comes into a camp.",
+"uk": "Твій герой зберігається щоразу, коли приходить до табору."
 },
 {
-"en": "That way I can update without losing what I have earned.",
-"uk": "Так я зможу оновитися, не втративши того, що заробив."
+"en": "Then a lost mission will not cost me my whole road.",
+"uk": "Тоді програна місія не коштуватиме мені всієї дороги."
 },
 {
 "en": "If the fighting feels slow to you, change the speed in the settings.",
@@ -3236,18 +3236,6 @@ null,
 {
 "en": "Try putting different things together at the smith's to discover new ones.",
 "uk": "Спробуй складати різні речі в коваля, щоб відкрити нові."
-},
-{
-"en": "Trade, in the game menu or at a camp's Auctioneer, buys, sells and gives things to other players; Safe in the game menu keeps your gold on the server.",
-"uk": "Торгівля в ігровому меню чи в аукціоніста табору купує, продає й дарує речі іншим гравцям; Сейф в ігровому меню тримає твоє золото на сервері."
-},
-{
-"en": "Remember that a tax is taken on every thing sold or given to another player.",
-"uk": "Пам'ятай, що з кожної речі, проданої чи подарованої іншому гравцеві, береться податок."
-},
-{
-"en": "Changed your mind about a sale? Trade > Cancel Sale takes the thing back.",
-"uk": "Передумав продавати? Торгівля > Зняти з продажу поверне річ."
 }
 ]
 },
@@ -3348,10 +3336,6 @@ null,
 {
 "en": "Your warrior is kept on the server, so the game needs a connection; log in to your account to play him on any device.",
 "uk": "Твій вояк зберігається на сервері, тому грі потрібне з'єднання; увійди у свій обліковий запис — і грай ним на будь-якому пристрої."
-},
-{
-"en": "What happened while you were away (sales, gifts, experience and fame) is shown when the game menu opens.",
-"uk": "Що сталося, поки тебе не було (продажі, подарунки, досвід і слава), показується, коли відкриваєш ігрове меню."
 }
 ]
 },

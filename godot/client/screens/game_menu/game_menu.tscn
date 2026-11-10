@@ -65,18 +65,6 @@ text = "menu.visiting"
 layout_mode = 2
 custom_minimum_size = Vector2(0, 14)
 
-[node name="Trade" type="Button" parent="Center/Column/Scroll/List"]
-layout_mode = 2
-text = "live.trade"
-
-[node name="Safe" type="Button" parent="Center/Column/Scroll/List"]
-layout_mode = 2
-text = "live.safe"
-
-[node name="Gap2" type="Control" parent="Center/Column/Scroll/List"]
-layout_mode = 2
-custom_minimum_size = Vector2(0, 14)
-
 [node name="Help" type="Button" parent="Center/Column/Scroll/List"]
 layout_mode = 2
 text = "menu.help"
@@ -86,9 +74,5 @@ text = "menu.help"
 [connection signal="pressed" from="Center/Column/Scroll/List/Blacksmith" to="." method="_open" binds= ["blacksmith"]]
 
 [connection signal="pressed" from="Center/Column/Scroll/List/Visiting" to="." method="_open" binds= ["visiting"]]
-
-[connection signal="pressed" from="Center/Column/Scroll/List/Trade" to="." method="_open" binds= ["live_trade"]]
-
-[connection signal="pressed" from="Center/Column/Scroll/List/Safe" to="." method="_open" binds= ["live_safe"]]
 
 [connection signal="pressed" from="Center/Column/Scroll/List/Help" to="." method="_open" binds= ["help"]]

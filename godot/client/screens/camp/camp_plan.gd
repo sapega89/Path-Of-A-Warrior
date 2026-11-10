@@ -4,11 +4,11 @@ extends RefCounted
 ## ring of palisade RADIUS metres round with a gate for each way on (a mission, see
 ## camp_screen.gd) on a side of the world (GATES: north, east, west, south, then north-east and
 ## north-west), the yard with its fires in the middle, the town hall north-west of it (off the
-## north road, so it never hides the hero there), round them the smithy, the stores and the
-## auctioneer. A closed way's gate is barred. What stands in the camp is added as a round
+## north road, so it never hides the hero there), east of the yard the smithy. A closed way's
+## gate is barred. What stands in the camp is added as a round
 ## (add_solid), so blocked() and reachable() know the ground without physics. The spots are
 ## where the hero uses something (SPOTS): a way's road inside its gate, the town hall's door
-## (from farther off than the rest), the smithy, the stores, the auctioneer.
+## (from farther off than the smithy's), the smithy.
 ## Coordinates: metres on the XZ plane, the middle of the ring at (0, 0); +Z is south (towards
 ## the camera), +X east.
 
@@ -45,16 +45,12 @@ const HALL_AT := Vector3(-4.5, 0.0, -7.0)  # off the north road, so it hides not
 const YARD := Vector3(0.0, 0.0, 1.0)  # the middle of the trodden yard before the hall
 const FIRES := [Vector3(-3.6, 0.0, 2.2), Vector3(3.8, 0.0, 0.4)]
 const SMITH_AT := Vector3(9.0, 0.0, 2.6)  # the anvil
-const STORE_AT := Vector3(6.6, 0.0, 9.2)  # the middle of the barrels and chests
-const AUCTION_AT := Vector3(-7.4, 0.0, 8.0)  # the auctioneer, behind his stall
 const START := Vector3(0.0, 0.0, 5.2)
 ## Where the hero stands to use each, and how near he must come (metres): the town hall's
 ## door from farther off, so he need not walk right up to it.
 const SPOTS := {
 	"hall": [HALL_AT + Vector3(0.0, 0.0, 3.9), 3.0],
 	"smith": [SMITH_AT + Vector3(-0.2, 0.0, 1.6), 2.0],
-	"store": [STORE_AT + Vector3(0.0, 0.0, 1.6), 2.0],
-	"auction": [AUCTION_AT + Vector3(0.0, 0.0, 2.1), 2.0],
 }
 const WAY_RANGE := 2.0
 const BODY := 0.3  # the hero's radius
@@ -184,8 +180,7 @@ static func cell_of(p: Vector3) -> Vector2i:
 
 
 ## Where the hero uses things: a way's road inside its gate (with its place, mission and
-## whether it is open), then the smithy, the stores, the town hall and the auctioneer; each
-## {kind, at, range}.
+## whether it is open), then the smithy and the town hall; each {kind, at, range}.
 func spots() -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	for e in exits:
@@ -202,7 +197,7 @@ func spots() -> Array[Dictionary]:
 				}
 			)
 		)
-	for kind in ["smith", "store", "hall", "auction"]:
+	for kind in ["smith", "hall"]:
 		out.append({"kind": kind, "at": SPOTS[kind][0], "range": SPOTS[kind][1]})
 	return out
 

@@ -51,8 +51,8 @@ func test_the_town_hall_from_farther_off() -> void:
 	var spots := plan.spots()
 	eq(
 		spots.map(func(s: Dictionary) -> String: return s.kind),
-		["way", "smith", "store", "hall", "auction"],
-		"a way per gate, then the smithy, the stores, the town hall and the auctioneer"
+		["way", "smith", "hall"],
+		"a way per gate, then the smithy and the town hall"
 	)
 	var door: Vector3 = CampPlan.SPOTS["hall"][0]
 	var smith: Vector3 = CampPlan.SPOTS["smith"][0]
@@ -72,7 +72,6 @@ func test_the_fort_leaves_every_way_and_spot_free() -> void:
 		for s in plan.spots():
 			if s.kind != "way" or s.open:
 				check(seen.has(CampPlan.cell_of(s.at)), "%d ways: %s can be reached" % [n, s.kind])
-		check(fort.auctioneer != null and fort.auctioneer.name == "Auctioneer", "the auctioneer")
 		check(fort.find_child("Land*", false, false) != null, "the land past the gates")
 		check(fort.body.get_child_count() > plan.solids.size(), "the palisade stands")
 		var lights := fort.find_children("*", "OmniLight3D", true, false)
@@ -91,8 +90,8 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 	eq(camp.place, 4, "the camp of the hero's place")
 	eq(
 		camp.spots.map(func(s): return s.kind),
-		["way", "way", "smith", "store", "hall", "auction"],
-		"a way per place on, then the blacksmith, the warehouse, the town hall, the auctioneer"
+		["way", "way", "smith", "hall"],
+		"a way per place on, then the blacksmith and the town hall"
 	)
 	var ways: Array = camp.spots.filter(func(s): return s.kind == "way")
 	var open: Array = ways.filter(func(s): return s.open)
@@ -105,9 +104,9 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 	var out: Vector3 = e.out * (CampPlan.RADIUS + CampPlan.OUT + 0.5)
 	eq(camp.exit_crossed(out), harvest, "out through the gate")
 	eq(camp.exit_crossed(CampPlan.START), {}, "inside")
-	var auction: Dictionary = camp.spots[5]
-	eq(camp.spot_near(auction.at), auction, "at the auctioneer's stall")
-	check(camp._hint_text(auction).contains(tr("camp.auction")), "says who is there")
+	var smith: Dictionary = camp.spot_of("smith")
+	eq(camp.spot_near(smith.at), smith, "at the anvil")
+	check(camp._hint_text(smith).contains(tr("menu.blacksmith")), "says what is there")
 	check(camp.rulers(1).size() == 4, "four colonels give the missions at Uprising")
 	eq(camp.arrows.size(), 1, "an arrow on the open way only")
 	eq(camp.camera.target, camp.hero, "the camera follows the hero")

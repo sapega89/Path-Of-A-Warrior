@@ -5,9 +5,8 @@ extends Node3D
 ## the ring (the main gate with its icon in the south, side gates elsewhere) with a road to the
 ## yard and a dry causeway across the water; past it lies the land of that place (LAND). A
 ## closed way's gate is barred. In the middle the yard with two fires, the town hall's big
-## tent, gone grey with smoke, north-west of it; round them the smithy (an anvil by its forge), the
-## stores (barrels and chests), the auctioneer behind his stall of chests, smoke-dark tents,
-## torches, guards inside the gates. Reeds, bushes and trees round the marsh are placed by the
+## tent, gone grey with smoke, north-west of it; round them the smithy (an anvil by its forge),
+## smoke-dark tents, torches, guards inside the gates. Reeds, bushes and trees round the marsh are placed by the
 ## camp's own seed, so each place looks its own and the same each time.
 ## The water and the mist are the scene's (camp_fort.tscn); dusk() turns the world's light
 ## into the dusk. What stands is a round in the plan (CampPlan.add_solid) and a cylinder in
@@ -121,7 +120,6 @@ const TREE_COUNT := 10
 var plan: CampPlan
 var ground: ArtGround
 var figures: Array[ArtFigure] = []
-var auctioneer: ArtFigure
 var hall: Node3D
 var body: StaticBody3D
 ## The flickering lights of the fires and torches: [light, its energy, a phase].
@@ -144,8 +142,6 @@ func build(camp_plan: CampPlan, lands: Array, seed_value: int) -> void:
 	_palisade()
 	_hall_and_yard()
 	_smithy()
-	_stores()
-	_auction()
 	_tents()
 	_torches()
 	_guards()
@@ -218,10 +214,9 @@ func _roads() -> Array:
 		var a := TAU * i / 16.0
 		ring.append(Vector2(yard.x + sin(a) * YARD_SIZE.x, yard.z + cos(a) * YARD_SIZE.y))
 	roads.append(ring)
-	for kind in ["smith", "store", "auction"]:
-		var p: Vector3 = CampPlan.SPOTS[kind][0]
-		var toward := yard + (p - yard).normalized() * YARD_SIZE.x
-		roads.append(PackedVector2Array([Vector2(toward.x, toward.z), Vector2(p.x, p.z)]))
+	var smith: Vector3 = CampPlan.SPOTS.smith[0]  # a path from the yard to the smithy
+	var toward := yard + (smith - yard).normalized() * YARD_SIZE.x
+	roads.append(PackedVector2Array([Vector2(toward.x, toward.z), Vector2(smith.x, smith.z)]))
 	return roads
 
 
@@ -320,27 +315,6 @@ func _smithy() -> void:
 	_solid(_prop("stoiak", at + Vector3(-1.4, 0.0, -0.9), 30.0), 0.8)
 	_solid(_prop("skrynia", at + Vector3(1.5, 0.0, 0.6), -12.0, 1.0, true), 0.9)
 	_figure("kozak_camp", at + Vector3(0.9, 0.0, -0.5), "attack_chop", at, 0.55)
-
-
-## The stores: barrels, chests, firewood.
-func _stores() -> void:
-	var at := CampPlan.STORE_AT
-	_solid(_prop("bochka", at + Vector3(-1.2, 0.0, -0.2)), 0.9)
-	_solid(_prop("bochka", at + Vector3(-0.6, 0.0, -0.9), 30.0, 0.85), 0.9)
-	_solid(_prop("skrynia", at + Vector3(0.3, 0.0, -0.1), 8.0, 1.0, true), 0.9)
-	_solid(_prop("skrynia", at + Vector3(1.3, 0.0, -0.6), -20.0, 0.9, true), 0.9)
-	_solid(_prop("drova", at + Vector3(2.4, 0.0, 0.0), 70.0), 0.8)
-
-
-## The auctioneer behind his stall of chests, a barrel and his banner.
-func _auction() -> void:
-	var at := CampPlan.AUCTION_AT
-	_solid(_prop("skrynia", at + Vector3(-0.7, 0.0, 0.8), 0.0, 1.0, true), 0.9)
-	_solid(_prop("skrynia", at + Vector3(0.7, 0.0, 0.8), 0.0, 1.0, true), 0.9)
-	_solid(_prop("bochka", at + Vector3(-1.8, 0.0, 0.3), 0.0, 0.8), 0.9)
-	_solid(_prop("banner", at + Vector3(1.7, 0.0, -0.4), -15.0), 0.6)
-	auctioneer = _figure("kozak_svyta", at, "idle", at + Vector3(0.0, 0.0, 4.0))
-	auctioneer.name = "Auctioneer"
 
 
 ## Smoke-dark tents round the yard, a cannon, a rack and firewood about.
