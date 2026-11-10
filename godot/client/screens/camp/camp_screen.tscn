@@ -38,16 +38,6 @@ text = "menu.blacksmith"
 font_size = 44
 outline_size = 12
 
-[node name="Store" type="Label3D" parent="World/Viewport/WorldRoot"]
-unique_name_in_owner = true
-modulate = Color(0.862745, 0.827451, 0.760784, 1)
-pixel_size = 0.009
-billboard = 1
-no_depth_test = true
-text = "live.warehouse"
-font_size = 44
-outline_size = 12
-
 [node name="Hall" type="Label3D" parent="World/Viewport/WorldRoot"]
 unique_name_in_owner = true
 modulate = Color(0.862745, 0.827451, 0.760784, 1)
@@ -55,16 +45,6 @@ pixel_size = 0.009
 billboard = 1
 no_depth_test = true
 text = "camp.hall"
-font_size = 44
-outline_size = 12
-
-[node name="Auction" type="Label3D" parent="World/Viewport/WorldRoot"]
-unique_name_in_owner = true
-modulate = Color(0.862745, 0.827451, 0.760784, 1)
-pixel_size = 0.009
-billboard = 1
-no_depth_test = true
-text = "camp.auction"
 font_size = 44
 outline_size = 12
 

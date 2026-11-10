@@ -23,14 +23,6 @@ const SCREEN_MUSIC := {
 	"gear": 2,
 	"inventory": 2,
 	"assign_items": 2,
-	"live_warehouse": -1,
-	"live_safe": -1,
-	"live_trade": -1,
-	"live_buy": -1,  # Live is quiet
-	"live_sell": -1,
-	"live_cancel": -1,
-	"live_gifts": -1,
-	"live_give": -1,
 }
 const OVERLAPPING := [3, 4, 15, 16]
 const MIN_GAP_MS := {9: 500}

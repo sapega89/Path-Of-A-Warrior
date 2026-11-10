@@ -13,7 +13,6 @@ extends Node
 ## (for working on the game without a server).
 ## The account (UserID + password) is asked for on the login screen and kept only while the game
 ## runs: a restart asks again. The file an older version kept it in (user://account.cfg) goes.
-## Live (scripts/net/live_client.gd) goes over the same logged-in connection (request()).
 ## Quit (or the window closed) waits up to FLUSH_MS for the last save to reach the server.
 
 const ACCOUNT_PATH := "user://account.cfg"  # an older version's, removed at the start
@@ -25,7 +24,6 @@ const SERVER_FILE := "server.txt"  # next to the executable: HOST or HOST:PORT
 const CERT_FILE := "server.crt"  # next to the executable: the server's certificate
 
 var sync: CloudSync = null
-var live: LiveClient = null
 var account_path := ACCOUNT_PATH
 var quit_at := -1  # ms by which the game quits while the last save goes, -1: not quitting
 var quit_now := Callable()  # what quitting does; empty: the game ends
@@ -111,7 +109,6 @@ func start(address: String, port: int, cert: X509Certificate, cert_path := "") -
 	sync = CloudSync.new()
 	sync.setup(address, port, cert)
 	sync.cert_path = cert_path
-	live = LiveClient.new(request)
 	sync.options_store = Settings
 	if FileAccess.file_exists(account_path):
 		DirAccess.remove_absolute(account_path)
@@ -125,7 +122,6 @@ func stop() -> void:
 	if sync != null:
 		sync.client.close()
 	sync = null
-	live = null
 
 
 func enabled() -> bool:
@@ -147,14 +143,6 @@ func has_account() -> bool:
 ## The hero's dictionary from the server (or saved since), null when there is none.
 func hero() -> Variant:
 	return null if sync == null else sync.hero
-
-
-## One request over the logged-in connection, done(answer); offline: {ok: false, err: "offline"}.
-func request(msg: Dictionary, done: Callable) -> void:
-	if not online():
-		done.call({"t": msg.get("t", "?"), "ok": false, "err": "offline"})
-		return
-	sync.client.request(msg, done)
 
 
 func save_hero(d: Dictionary) -> void:

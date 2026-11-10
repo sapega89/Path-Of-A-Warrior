@@ -75,14 +75,6 @@
 "en": "A good question. I am glad you asked it.",
 "uk": "Добре питання. Радий, що ти його поставив."
 },
-"A good trade is worth more than a good fight.": {
-"en": "A good trade is worth more than a good fight.",
-"uk": "Добрий обмін вартий більше за добрий бій."
-},
-"A hundred things can be kept there, as I understand it.": {
-"en": "A hundred things can be kept there, as I understand it.",
-"uk": "Сотню речей там можна тримати, як я розумію."
-},
 "A lost mission can also cost you one of the things you are wearing.": {
 "en": "A lost mission can also cost you one of the things you are wearing.",
 "uk": "Програна місія може коштувати тобі й однієї з речей, які ти носиш."
@@ -166,10 +158,6 @@
 "And if you cannot?": {
 "en": "And if you cannot?",
 "uk": "А якщо не знайдеш?"
-},
-"And my fame and gold will grow along with them.": {
-"en": "And my fame and gold will grow along with them.",
-"uk": "І моя слава й золото ростимуть разом із ними."
 },
 "And so, in a single morning, one of the finest men of the Hetmanate was gone. Colonel Bairak, kin to the Hetman and the only colonel who had fought for Verbenko's house to the end, passed into the chronicles.": {
 "en": "And so, in a single morning, one of the finest men of the Hetmanate was gone. Colonel Bairak, kin to the Hetman and the only colonel who had fought for Verbenko's house to the end, passed into the chronicles.",
@@ -283,10 +271,6 @@
 "en": "Before long Chornohuz's attacks wore him down, and he fled his land with the shirt on his back and nothing more. Yet Chornohuz respected the man's convictions. He revoked the death sentence he had passed and let Rudyi return to his own house.",
 "uk": "Незабаром Чорногузові наскоки виснажили його, і він утік зі своєї землі в самій сорочці й без нічого більше. Проте Чорногуз поважав переконання цього чоловіка. Він скасував вирок смерті, який був виніс, і дозволив Рудому повернутися до власного дому."
 },
-"Before you remove or update the game, save your hero and move your gold and things to the server.": {
-"en": "Before you remove or update the game, save your hero and move your gold and things to the server.",
-"uk": "Перш ніж видаляти чи оновлювати гру, збережи героя й перенеси золото та речі на сервер."
-},
 "Bilous asked Rudyi for help, and Rudyi sent Kurylo. Dzhura, who serves Bairak, answered by calling in Ternovyi. The two hosts are converging on the Wild Field. Bairak wants you to beat Kurylo. Will you take it?": {
 "en": "Bilous asked Rudyi for help, and Rudyi sent Kurylo. Dzhura, who serves Bairak, answered by calling in Ternovyi. The two hosts are converging on the Wild Field. Bairak wants you to beat Kurylo. Will you take it?",
 "uk": "Білоус попросив підмоги в Рудого, і той прислав Курила. Джура, що служить Байракові, відповів тим, що покликав Тернового. Обидва війська сходяться на Дикому Полі. Байрак хоче, щоб ти розбив Курила. Берешся?"
@@ -342,10 +326,6 @@
 "Call on as many generals as you can. They say a guest brings luck into the house, and takes some away with him.": {
 "en": "Call on as many generals as you can. They say a guest brings luck into the house, and takes some away with him.",
 "uk": "Навідуй якомога більше генералів. Кажуть, гість приносить у дім удачу і трохи забирає з собою."
-},
-"Changed your mind about a sale? Trade > Cancel Sale takes the thing back.": {
-"en": "Changed your mind about a sale? Trade > Cancel Sale takes the thing back.",
-"uk": "Передумав продавати? Торгівля > Зняти з продажу поверне річ."
 },
 "Choose with care: a point once spent cannot be taken back.": {
 "en": "Choose with care: a point once spent cannot be taken back.",
@@ -514,6 +494,10 @@
 "Even Kurylo, one of the greatest soldiers the Hetmanate ever raised, could not step out of the long shadow of his fate.": {
 "en": "Even Kurylo, one of the greatest soldiers the Hetmanate ever raised, could not step out of the long shadow of his fate.",
 "uk": "Навіть Курило, один із найбільших вояків, яких виростила Гетьманщина, не зміг вийти з довгої тіні своєї долі."
+},
+"Every camp has a town hall. Look in on the colonels there: they keep count of what you have done for them.": {
+"en": "Every camp has a town hall. Look in on the colonels there: they keep count of what you have done for them.",
+"uk": "У кожному таборі є ратуша. Зазирни до полковників: вони пам'ятають, що ти для них зробив."
 },
 "Every new level gives you three points to spend as you see fit.": {
 "en": "Every new level gives you three points to spend as you see fit.",
@@ -883,6 +867,10 @@
 "en": "I will be waiting.",
 "uk": "Чекатиму."
 },
+"I will keep a potion close at hand.": {
+"en": "I will keep a potion close at hand.",
+"uk": "Триматиму зілля напоготові."
+},
 "I will not ask what brought you here, and you will not tell me. The brotherhood keeps one rule, and whoever wants to walk out of these gates alive keeps it too: you win. Nothing else is asked of you.": {
 "en": "I will not ask what brought you here, and you will not tell me. The brotherhood keeps one rule, and whoever wants to walk out of these gates alive keeps it too: you win. Nothing else is asked of you.",
 "uk": "Я не питатиму, що привело тебе сюди, а ти не розказуватимеш. Братство тримається одного правила, і хто хоче вийти з цих воріт живим, тримається його теж: ти перемагаєш. Більше від тебе нічого не вимагають."
@@ -955,10 +943,6 @@
 "en": "It would honour me to drink with you.",
 "uk": "Для мене честь випити з тобою."
 },
-"Keep your fame and experience on the server and you will grow the stronger for it.": {
-"en": "Keep your fame and experience on the server and you will grow the stronger for it.",
-"uk": "Тримай славу й досвід на сервері, і від цього станеш сильнішим."
-},
 "Keep your hand off that sabre. I will not warn you twice.": {
 "en": "Keep your hand off that sabre. I will not warn you twice.",
 "uk": "Не хапайся за шаблю. Двічі не попереджатиму."
@@ -1030,10 +1014,6 @@
 "Lose a fight, and you will be left on the field for the crows, but it is the brotherhood that pays the greater price for your failure. If you are cut in battle, hold on. Our brothers know how to close a wound before you have time to notice it.": {
 "en": "Lose a fight, and you will be left on the field for the crows, but it is the brotherhood that pays the greater price for your failure. If you are cut in battle, hold on. Our brothers know how to close a wound before you have time to notice it.",
 "uk": "Програєш бій — залишишся в полі на поживу воронам, та за твою поразку найбільше заплатить братство. Якщо тебе посічуть у бою, тримайся. Наші брати вміють затягнути рану швидше, ніж ти її помітиш."
-},
-"Makes sense. I would like to cross sabres with other players some day.": {
-"en": "Makes sense. I would like to cross sabres with other players some day.",
-"uk": "Зрозуміло. Я б хотів колись схрестити шаблі з іншими гравцями."
 },
 "Many thanks. I owe you one.": {
 "en": "Many thanks. I owe you one.",
@@ -1175,6 +1155,10 @@
 "en": "Old men in these parts say that peace and war are two oxen in one yoke: whichever you drive, the other walks beside it. For five hundred years the house of Sokil held the Hetman's mace, and the land between the Dnipro and the Buh knew a quiet it had never known before. The quiet ended on the day they buried Hetman Sokil the Holy. The mace passed to Oleksandr Verbenko, a decent man who had never wanted to rule. The colonels saw at once that he could not hold them, and each began to carve out a piece of the country for himself while the Hetman drowned his helplessness in wine. The people, who at first had loved him, began to call him Verbenko the Grey. And then, from the west, from the castles of Sandomierz, came Kniaz Dominik Ostrzycki with a cry that the kobzars still sing: \"Chyhyryn is dying, and Darkness is rising!\" He called it a crusade for order. The Crown gave him banners of hussars, the Khan sent him horsemen, and every landless sabre on the road fell in behind him. So began the years the chronicles call the Dark Years.",
 "uk": "Старі люди в наших краях кажуть, що мир і війна — це два воли в одному ярмі: якого не поганяй, другий іде поруч. П'ятсот років рід Сокола тримав гетьманську булаву, і земля між Дніпром і Бугом знала такий спокій, якого не знала ніколи. Спокій скінчився того дня, коли поховали гетьмана Сокола Святого. Булава перейшла до Олександра Вербенка, порядного чоловіка, який ніколи не хотів правити. Полковники одразу побачили, що він їх не втримає, і кожен заходився кроїти собі шмат країни, поки гетьман топив свою безпорадність у вині. Народ, що спершу любив його, став звати його Вербенком Сивим. А тоді із заходу, із сандомирських замків, прийшов князь Домінік Острицький із кличем, який кобзарі співають і досі: «Чигирин умирає, і Темрява встає!» Він назвав це походом за лад. Корона дала йому гусарські хоругви, хан прислав вершників, і кожна безземельна шабля на шляху пристала до нього. Так почалися роки, які літописи звуть Лихоліттям."
 },
+"On Normal, auto-hunt will fight for you. Take the sabre back yourself when things get hot.": {
+"en": "On Normal, auto-hunt will fight for you. Take the sabre back yourself when things get hot.",
+"uk": "На звичайній складності автополювання битиметься за тебе. Коли стане гаряче, бери шаблю сам."
+},
 "On Osaul Ternovyi's advice, Bairak threw his whole regiment into Podillia. He fought like a man with nothing left to lose, and Podillia fell to him. He held it fast and added it to lands that were already wide.": {
 "en": "On Osaul Ternovyi's advice, Bairak threw his whole regiment into Podillia. He fought like a man with nothing left to lose, and Podillia fell to him. He held it fast and added it to lands that were already wide.",
 "uk": "За порадою осавула Тернового Байрак кинув увесь полк на Поділля. Він бився, як чоловік, якому нема чого втрачати, і Поділля впало перед ним. Він міцно тримав його і додав до земель, які й без того були широкі."
@@ -1186,14 +1170,6 @@
 "One visit, one mission. You cannot knock on two doors after a single fight.": {
 "en": "One visit, one mission. You cannot knock on two doors after a single fight.",
 "uk": "Один візит на одну місію. Після одного бою у двоє дверей не постукаєш."
-},
-"Online you can trade what you carry with other players.": {
-"en": "Online you can trade what you carry with other players.",
-"uk": "У мережі можна мінятися тим, що носиш, з іншими гравцями."
-},
-"Online, the strongbox and the warehouse let you move your things to the server.": {
-"en": "Online, the strongbox and the warehouse let you move your things to the server.",
-"uk": "У мережі скриня й склад дають змогу перенести твої речі на сервер."
 },
 "Only the 0 key can hold the Aerial Attack skill.": {
 "en": "Only the 0 key can hold the Aerial Attack skill.",
@@ -1231,21 +1207,17 @@
 "en": "Pick your work with your head, not your heart. How you win is your own business, so long as you win. A victory is yours alone. A defeat belongs to all of us.",
 "uk": "Вибирай роботу головою, а не серцем. Як ти переможеш, то твоя справа, аби переміг. Перемога буде тільки твоя. Поразка буде на всіх нас."
 },
+"Put your potions on the belt before you set out. In the thick of a fight there is no time to dig through your pack.": {
+"en": "Put your potions on the belt before you set out. In the thick of a fight there is no time to dig through your pack.",
+"uk": "Почепи зілля на пояс, перш ніж вирушати. У розпалі бою ніколи ритися в торбі."
+},
 "RAHHH!": {
 "en": "RAHHH!",
 "uk": "А-а-а!"
 },
-"Rare things turn up in online missions that you will see nowhere else.": {
-"en": "Rare things turn up in online missions that you will see nowhere else.",
-"uk": "У мережевих місіях трапляються рідкісні речі, яких більше ніде не побачиш."
-},
 "Ready yourself for the fight!": {
 "en": "Ready yourself for the fight!",
 "uk": "Готуйся до бою!"
-},
-"Remember that a tax is taken on every thing sold or given to another player.": {
-"en": "Remember that a tax is taken on every thing sold or given to another player.",
-"uk": "Пам'ятай, що з кожної речі, проданої чи подарованої іншому гравцеві, береться податок."
 },
 "Rudyi ruled well and ruled honestly. He let the church guide his people and made plain dealing the law of his estate. His land was small, but it lay where the roads from Podillia into the heart of the country met.": {
 "en": "Rudyi ruled well and ruled honestly. He let the church guide his people and made plain dealing the law of his estate. His land was small, but it lay where the roads from Podillia into the heart of the country met.",
@@ -1307,6 +1279,10 @@
 "en": "Sleep. For good.",
 "uk": "Спи. Назавжди."
 },
+"So I can rest my arm and still keep watch.": {
+"en": "So I can rest my arm and still keep watch.",
+"uk": "Отже, можна дати руці перепочити й не втрачати пильності."
+},
 "So I should think twice about what I put in his fire.": {
 "en": "So I should think twice about what I put in his fire.",
 "uk": "Отже, двічі подумаю, що класти йому у вогонь."
@@ -1319,10 +1295,6 @@
 "en": "So ends a hired sabre who served no one, loved no one and died in a ditch chasing a nobleman's gold. There is no name on his cross.",
 "uk": "Так кінчає наймана шабля, яка нікому не служила, нікого не любила й померла в канаві, ганяючись за панським золотом. На її хресті нема імені."
 },
-"So playing online will make me stronger.": {
-"en": "So playing online will make me stronger.",
-"uk": "Отже, гра в мережі зробить мене сильнішим."
-},
 "So some things can only be found in the middle of a mission.": {
 "en": "So some things can only be found in the middle of a mission.",
 "uk": "Отже, дещо можна знайти лише посеред місії."
@@ -1330,10 +1302,6 @@
 "So that is how it ends...": {
 "en": "So that is how it ends...",
 "uk": "Ось так це й кінчається..."
-},
-"So the server is where my strength is kept. Noted.": {
-"en": "So the server is where my strength is kept. Noted.",
-"uk": "Отже, моя сила зберігається на сервері. Затямив."
 },
 "So with a little cunning I can keep clear of those I am not yet ready for.": {
 "en": "So with a little cunning I can keep clear of those I am not yet ready for.",
@@ -1366,10 +1334,6 @@
 "Sych wanted no one left to challenge his claim, so he had every last Topolia murdered. A whole house wiped out between one harvest and the next. The colonel had believed in honour. His children had believed in gold, and it buried them.": {
 "en": "Sych wanted no one left to challenge his claim, so he had every last Topolia murdered. A whole house wiped out between one harvest and the next. The colonel had believed in honour. His children had believed in gold, and it buried them.",
 "uk": "Сич не хотів, щоб хтось лишився оскаржувати його право, тож звелів вирізати всіх Тополь до одного. Цілий рід зник між одними жнивами й наступними. Полковник вірив у честь. Його діти вірили в золото, і воно їх поховало."
-},
-"Taking missions online will teach you to stand against strong enemies.": {
-"en": "Taking missions online will teach you to stand against strong enemies.",
-"uk": "Місії в мережі навчать тебе стояти проти сильних ворогів."
 },
 "Tap the direction twice and your legs will carry you twice as fast.": {
 "en": "Tap the direction twice and your legs will carry you twice as fast.",
@@ -1438,10 +1402,6 @@
 "That was how I walked away from the fields of slaughter. They gave me a sotnia and a roof, and I no longer had to roam from one battle to the next.": {
 "en": "That was how I walked away from the fields of slaughter. They gave me a sotnia and a roof, and I no longer had to roam from one battle to the next.",
 "uk": "Отак я пішов із полів різанини. Мені дали сотню і дах над головою, і я більше не мусив блукати від однієї битви до другої."
-},
-"That way I can update without losing what I have earned.": {
-"en": "That way I can update without losing what I have earned.",
-"uk": "Так я зможу оновитися, не втративши того, що заробив."
 },
 "The Blood-Stained Scarf": {
 "en": "The Blood-Stained Scarf",
@@ -1523,6 +1483,10 @@
 "en": "The points go into attack, defence, health or spirit.",
 "uk": "Очки йдуть в атаку, захист, здоров'я або дух."
 },
+"The points you put into your stats can be taken back, but it will cost you gold or a tincture.": {
+"en": "The points you put into your stats can be taken back, but it will cost you gold or a tincture.",
+"uk": "Очки, вкладені в показники, можна повернути, але це коштуватиме золота або настоянки."
+},
 "The red ball at the bottom of the screen is your health, the blue one your spirit. Skills cost spirit; potions bring health and spirit back.": {
 "en": "The red ball at the bottom of the screen is your health, the blue one your spirit. Skills cost spirit; potions bring health and spirit back.",
 "uk": "Червона куля внизу екрана — твоє здоров'я, синя — дух. Уміння витрачають дух; зілля повертає здоров'я й дух."
@@ -1587,6 +1551,26 @@
 "en": "Then I will look in on him after every mission, so I miss nothing.",
 "uk": "Тоді заглядатиму до нього після кожної місії, щоб нічого не проґавити."
 },
+"Then I will see how far I have come with each of them.": {
+"en": "Then I will see how far I have come with each of them.",
+"uk": "Тоді побачу, як далеко я зайшов із кожним із них."
+},
+"Then I will spend them wisely the first time.": {
+"en": "Then I will spend them wisely the first time.",
+"uk": "Тоді витрачу їх розважливо з першого разу."
+},
+"Then a lost mission will not cost me my whole road.": {
+"en": "Then a lost mission will not cost me my whole road.",
+"uk": "Тоді програна місія не коштуватиме мені всієї дороги."
+},
+"Then my belt will never be empty.": {
+"en": "Then my belt will never be empty.",
+"uk": "Тоді мій пояс ніколи не буде порожнім."
+},
+"Then no good find will be left lying in the field.": {
+"en": "Then no good find will be left lying in the field.",
+"uk": "Тоді жодна добра знахідка не лишиться лежати в полі."
+},
 "There is another man the brotherhood keeps watch on: Platon Chornohuz of Myrhorod. For now he is only a squire under someone else's banner, and the senior officers do not notice him at table. Their mistake. He has a wolf's nose and a quick hand. Right now he means to bloody Rotmistr Zaleski, whose Crown banner is grazing its horses above the river. The plan is the same one Bairak used: Chornohuz creeps in from the reeds at the back, you come in from the front, and Zaleski finds himself between two blades. The rotmistr must fall. Will you ride?": {
 "en": "There is another man the brotherhood keeps watch on: Platon Chornohuz of Myrhorod. For now he is only a squire under someone else's banner, and the senior officers do not notice him at table. Their mistake. He has a wolf's nose and a quick hand. Right now he means to bloody Rotmistr Zaleski, whose Crown banner is grazing its horses above the river. The plan is the same one Bairak used: Chornohuz creeps in from the reeds at the back, you come in from the front, and Zaleski finds himself between two blades. The rotmistr must fall. Will you ride?",
 "uk": "Є ще один, за ким братство приглядає: Платон Чорногуз із Миргорода. Поки що він тільки джура при чужій корогві, і старшина за столом його не помічає. Дарма. Нюх у нього вовчий, а рука швидка. Нині він зібрався дошкулити ротмістрові Залеському, чия коронна хоругва пасе коней над річкою. Задум той самий, що й у Байрака: Чорногуз підкрадеться з очеретів ззаду, ти вийдеш із чола, і Залеський опиниться між двома клинками. Ротмістр має лягти. Їдеш?"
@@ -1635,10 +1619,6 @@
 "en": "To raise a hand against each other brings only grief. Why has God sent me such a trial, &...",
 "uk": "Підняти руку одне на одного — це лише горе. За що Бог послав мені таке випробування, &..."
 },
-"To take your hero into the online battles, he must be kept on the server first.": {
-"en": "To take your hero into the online battles, he must be kept on the server first.",
-"uk": "Щоб узяти героя в мережеві битви, його спершу треба зберегти на сервері."
-},
 "To that I will drink!": {
 "en": "To that I will drink!",
 "uk": "За це я вип'ю!"
@@ -1646,10 +1626,6 @@
 "Topolia turned out to be a fair master, but what he built did not outlive him. His will left his lands to Colonel Bairak, and nobody honoured it. His family fought over the estate until the whole of it fell into the hands of Colonel Sych.": {
 "en": "Topolia turned out to be a fair master, but what he built did not outlive him. His will left his lands to Colonel Bairak, and nobody honoured it. His family fought over the estate until the whole of it fell into the hands of Colonel Sych.",
 "uk": "Тополя виявився справедливим господарем, та те, що він збудував, його не пережило. За заповітом його землі відходили полковникові Байраку, і ніхто того заповіту не виконав. Родина гризлася за маєток, доки весь він не опинився в руках полковника Сича."
-},
-"Trade, in the game menu or at a camp's Auctioneer, buys, sells and gives things to other players; Safe in the game menu keeps your gold on the server.": {
-"en": "Trade, in the game menu or at a camp's Auctioneer, buys, sells and gives things to other players; Safe in the game menu keeps your gold on the server.",
-"uk": "Торгівля в ігровому меню чи в аукціоніста табору купує, продає й дарує речі іншим гравцям; Сейф в ігровому меню тримає твоє золото на сервері."
 },
 "Try putting different things together at the smith's to discover new ones.": {
 "en": "Try putting different things together at the smith's to discover new ones.",
@@ -1711,6 +1687,10 @@
 "en": "Visiting",
 "uk": "Відвідини"
 },
+"Watch the red ball and the blue one: your health and your spirit. Drink before it is too late.": {
+"en": "Watch the red ball and the blue one: your health and your spirit. Drink before it is too late.",
+"uk": "Стеж за червоною й синьою кулями: це твоє здоров'я і твій дух. Пий зілля, поки не пізно."
+},
 "We will see about that!": {
 "en": "We will see about that!",
 "uk": "Це ми ще побачимо!"
@@ -1742,10 +1722,6 @@
 "What a shameful way to die...": {
 "en": "What a shameful way to die...",
 "uk": "Яка ганебна смерть..."
-},
-"What happened while you were away (sales, gifts, experience and fame) is shown when the game menu opens.": {
-"en": "What happened while you were away (sales, gifts, experience and fame) is shown when the game menu opens.",
-"uk": "Що сталося, поки тебе не було (продажі, подарунки, досвід і слава), показується, коли відкриваєш ігрове меню."
 },
 "What is a sabre for?": {
 "en": "What is a sabre for?",
@@ -1887,9 +1863,17 @@
 "en": "Your greed did this, not I.",
 "uk": "Це зробила твоя жадоба, не я."
 },
+"Your hero is saved each time he comes into a camp.": {
+"en": "Your hero is saved each time he comes into a camp.",
+"uk": "Твій герой зберігається щоразу, коли приходить до табору."
+},
 "Your name!": {
 "en": "Your name!",
 "uk": "Твоє ім'я!"
+},
+"Your pack holds forty-five things. Sell what you do not need to the smith before it fills up.": {
+"en": "Your pack holds forty-five things. Sell what you do not need to the smith before it fills up.",
+"uk": "У твоїй торбі сорок п'ять місць. Продавай ковалеві те, що не потрібне, поки вона не заповнилася."
 },
 "Your skills are on the keys 1 to 5; Management > Skills in the game menu chooses which. Potions and scrolls you pick up go onto the belt and are used with Z, X, C, V and B. A gamepad's buttons are under Control.": {
 "en": "Your skills are on the keys 1 to 5; Management > Skills in the game menu chooses which. Potions and scrolls you pick up go onto the belt and are used with Z, X, C, V and B. A gamepad's buttons are under Control.",

@@ -13,12 +13,10 @@ extends RefCounted
 ##   options_get {}              -> {ok, rev, at, options}       (the Options, kept like the hero)
 ##   options_put {base, at, options} -> {ok, rev} / err "conflict" with {rev, at, options}
 ##
-##   live_*                     -> Live: Warehouse, Safe, Trade (server/live.gd)
-##
 ## Any request before a login answers err "login first"; a wrong one "bad message", an unknown
 ## type "unknown", a packet over MAX_PACKET "too big". `base` is the revision of the hero the
 ## client last saw: a device that missed another device's save gets "conflict".
-## UserID: 4 to 12 letters A-Z; password: 4 to 12 digits (the accounts of Live).
+## UserID: 4 to 12 letters A-Z; password: 4 to 12 digits.
 
 const VERSION := 1
 const PORT := 28310

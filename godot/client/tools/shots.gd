@@ -126,124 +126,9 @@ func _ready() -> void:
 	Router.current.submit()
 	await _shot(out, "10c_register")
 	cloud.stop()
-	# The Live pages: the Warehouse (two things moved there), the Safe; the server's Live runs
-	# in this process (server/live.gd), the hero is a copy.
-	_rm_dir("user://shot_live")
-	var market: RefCounted = LiveServer.new("user://shot_live")
-	market.rng.seed = 7
-	var session: RefCounted = LiveServer.Session.new()
-	session.user = "ANDREY"
-	var client: RefCounted = LiveClient.new(
-		func(msg: Dictionary, done: Callable) -> void:
-			done.call(bytes_to_var(var_to_bytes(market.answer(session, str(msg.t), msg))))
-	)
-	hero.gold = 5000
-	hero.save("user://shot_live_hero.json")
-	hero.gold = 1250
-	var live_params := {"profile_path": "user://shot_live_hero.json", "live": client}
-	Router.go("main_menu")
-	Router.push("game_menu", live_params)
-	Router.push("live_warehouse", live_params)
-	await _frames(2)
-	Router.current.cells[2].grab_focus()
-	await _shot(out, "10e_live_backpack")
-	Router.current.press_cell(0)
-	Router.current.press_cell(1)
-	Router.current.show_side(true)
-	await _frames(2)
-	Router.current.cells[1].grab_focus()
-	await _shot(out, "10f_live_warehouse")
-	Router.back()
-	Router.push("live_safe", live_params)
-	await _frames(2)
-	Router.current.turn()
-	Router.current.amount.text = "500"
-	Router.current.submit()
-	Router.current.amount.text = "250"
-	await _shot(out, "10g_live_safe")
-	# Trade: Buy (kinds of Normal Items, the enchant levels, a page of lots, "Buy for?"), Sell
-	# (the price, Price Info), Cancel Sale with the lot just put on sale.
-	Router.back()
-	Router.push("live_trade", live_params)
-	await _shot(out, "10h_live_trade")
-	Router.push("live_buy", live_params)
-	await _frames(2)
-	Router.current.choose_category(0)
-	await _frames(2)
-	Router.current.cells[2].grab_focus()
-	await _shot(out, "10i_live_buy_kinds")
-	Router.current.choose_kind(2)
-	await _shot(out, "10j_live_buy_enchant")
-	Router.current.choose_enchant(0)
-	await _frames(2)
-	Router.current.cells[1].grab_focus()
-	await _shot(out, "10k_live_buy_lots")
-	Router.current.press_lot(1)
-	await _shot(out, "10l_live_buy_ask")
-	Router.current.ask.hide()
-	Router.back()
-	Router.push("live_sell", live_params)
-	await _frames(2)
-	Router.current.pick(2)  # the first two things are in the Warehouse now
-	Router.current.price.text = "1500"
-	await _shot(out, "10m_live_sell_price")
-	Router.current.price_info()
-	await _frames(2)
-	await _shot(out, "10n_live_price_info")
-	Router.current.go_back()
-	Router.current.put_on_sale()
-	Router.back()
-	Router.push("live_cancel", live_params)
-	await _frames(2)
-	await _shot(out, "10o_live_cancel")
-	# Opening the game menu with something new on Live: a notice, the Sale List, the note that
-	# gifts came, the Exp and Fame kept there; then the Gift List in Trade.
-	market.notices = [["Welcome to Live!", "Sell what you", "do not need."]]
-	var on_server: Dictionary = market.user("ANDREY")
-	on_server.sold.append({"item": items.make(146), "price": 1800})
-	on_server.sold.append({"item": items.make(161), "price": 950})
-	market.give_gift("ANDREY", "MARIA", items.make(503))
-	on_server.fame = 12
-	on_server.exp = 300
-	client.notices_seen = false
-	Router.go("main_menu")
-	Router.push("game_menu", live_params)
-	await _frames(2)
-	var news: Control = Router.current.news
-	await _shot(out, "10p_live_notice")
-	news.note.hide()
-	news.note.confirmed.emit()
-	await _frames(2)
-	await _shot(out, "10q_live_sale_list")
-	news.list_done()
-	await _frames(2)
-	await _shot(out, "10r_live_gifts_came")
-	news.note.hide()
-	news.note.confirmed.emit()
-	await _frames(2)
-	await _shot(out, "10s_live_fame")
-	news.note.hide()
-	news.note.confirmed.emit()
-	Router.push("live_gifts", live_params)
-	await _frames(2)
-	await _shot(out, "10t_live_gift_list")
-	# Give a Gift: the first thing that can be given, MARIA typed in, then "Give ... to MARIA?".
-	Router.back()
-	Router.push("live_give", live_params)
-	await _frames(2)
-	for i in LiveClient.WAREHOUSE:
-		if Router.current.pick(i):
-			break
-	Router.current.to.text = "MARIA"
-	await _frames(2)
-	await _shot(out, "10u_live_give")
-	Router.current.ask_give()
-	await _frames(2)
-	await _shot(out, "10v_live_give_ask")
-	Router.current.ask.hide()
 	# The game menu, and its end: the list scrolls down to Help.
 	Router.go("main_menu")
-	Router.push("game_menu", live_params)
+	Router.push("game_menu", {"profile_path": "user://shot_hero.json"})
 	await _frames(2)
 	await _shot(out, "11a_game_menu")
 	Router.current.buttons[-1].grab_focus()  # Help, at the end: the list scrolls down
@@ -382,8 +267,8 @@ func _ready() -> void:
 	Router.current.press()
 	await _shot(out, "04d_briefing")
 	# The camps between missions: a stop with a way per mission (one place closed) and its
-	# pause menu, six ways, the main camp at the start, its auctioneer and all of it from above,
-	# and the town hall that every camp has.
+	# pause menu, six ways, the main camp at the start, its smithy and all of it from above, and
+	# the town hall that every camp has.
 	walker.place = 4
 	walker.save("user://shot_walker.json")
 	Router.go("camp", {"profile_path": "user://shot_walker.json"})
@@ -398,10 +283,10 @@ func _ready() -> void:
 	walker.save("user://shot_walker.json")
 	Router.go("camp", {"profile_path": "user://shot_walker.json"})
 	await _shot(out, "04g_camp_main")
-	var camp: Node = Router.current  # the hero by the auctioneer's stall, then the whole camp
-	camp.hero.global_position = camp.spot_of("auction").at
+	var camp: Node = Router.current  # the hero by the anvil, then the whole camp
+	camp.hero.global_position = camp.spot_of("smith").at
 	camp.camera.snap()
-	await _shot(out, "04i_camp_auction")
+	await _shot(out, "04i_camp_smith")
 	camp.camera.distance = 42.0
 	camp.camera.snap()
 	await _shot(out, "04j_camp_overview")
@@ -649,16 +534,6 @@ func _fight_step(sim: RefCounted) -> void:
 	await _frames(4)
 	Input.action_release("attack")
 	await _frames(4)
-
-
-## Empties a folder of the shots' own data and the folders in it (only user://shot_*).
-func _rm_dir(d: String) -> void:
-	if not d.begins_with("user://shot_") or not DirAccess.dir_exists_absolute(d):
-		return
-	for sub in DirAccess.get_directories_at(d):
-		_rm_dir(d.path_join(sub))
-	for f in DirAccess.get_files_at(d):
-		DirAccess.remove_absolute(d.path_join(f))
 
 
 func _seconds(t: float) -> void:

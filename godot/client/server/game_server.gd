@@ -1,20 +1,18 @@
 class_name GameServer
 extends RefCounted
-## The game's server: accounts and the hero kept on the server (scripts/net/protocol.gd) and Live
-## (server/live.gd).
+## The game's server: accounts and the hero kept on the server (scripts/net/protocol.gd).
 ## start() binds the UDP port with DTLS, then poll() is called every frame (server/main.gd)
 ## or in a loop (tests).
 
 var host := ENetConnection.new()
 var accounts: Accounts
-var live: LiveServer
 var guard := Guard.new()
 var running := false
 ## ENetPacketPeer -> Session.
 var sessions := {}
 ## Lines of the log go here (main.gd prints them).
 var log_line: Callable = func(_s: String) -> void: pass
-## The handler of each request the server answers itself (answer()); Live answers its own.
+## The handler of each request the server answers (answer()).
 var _answers := {
 	"register": _register,
 	"login": _login,
@@ -30,7 +28,6 @@ class Session:
 	var address := ""
 	var user := ""
 	var meter: RefCounted
-	var live := LiveServer.Session.new()
 
 
 ## Error code of the bind / DTLS setup, OK when the server is listening.
@@ -43,8 +40,6 @@ func start(
 	max_peers := 256
 ) -> int:
 	accounts = Accounts.new(data_dir.path_join("accounts"))
-	live = LiveServer.new(data_dir)
-	live.accounts = accounts
 	var err := host.create_host_bound(bind_address, port, max_peers, Protocol.CHANNELS)
 	if err != OK:
 		return err
@@ -133,8 +128,6 @@ func answer(s: Session, msg: Dictionary) -> Dictionary:
 		var own: Callable = _answers.get(t, Callable())
 		if own.is_valid():
 			reply = own.call(s, msg)
-		elif t.begins_with("live_") and live != null:
-			reply = live.answer(s.live, t, msg)
 		else:
 			reply = _fail(t, "unknown")
 	if msg.get("q") is int:
@@ -160,7 +153,6 @@ func _register(s: Session, msg: Dictionary) -> Dictionary:
 	if not accounts.create_account(uid, pwd):
 		return _fail("register", "taken")
 	s.user = uid
-	s.live.user = uid
 	log_line.call("new account %s from %s" % [uid, s.address])
 	return {"t": "register", "ok": true}
 
@@ -177,7 +169,6 @@ func _login(s: Session, msg: Dictionary) -> Dictionary:
 	if not guard.check_password(uid, s.address, accounts.check_password.bind(uid, pwd)):
 		return _fail("login", "password")
 	s.user = uid
-	s.live.user = uid
 	return {"t": "login", "ok": true}
 
 
