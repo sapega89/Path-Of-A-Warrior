@@ -35,17 +35,23 @@ const SKILLS := {
 	29: ["cast_raise", "fit", 1.0],  # Serpent's Breath
 	30: ["cast_raise", "fit", 1.0],  # Rain of Fire
 }
-## The three blows of the sword combo (actions 3..5, and 6..8 with the other blade).
+## The three blows of the combo with a short weapon (actions 3..5): quick cuts.
 const COMBO := ["attack_slash", "attack_sweep", "attack_chop"]
+## And with a long one (actions 6..8, slower): a thrust, a cut from above with both hands, a
+## sweeping thrust.
+const LONG_COMBO := ["attack_stab", "attack_2h_slash", "attack_2h_stab"]
+## MapActor.weapon_kind of a long weapon (its reach 63 px, the short one's 53).
+const LONG_WEAPON := 0
 ## A general's actions 6..21 are the hero's skills.
 const GENERAL_SKILL := [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]
 
 
-## The hero's clip for his action; ground_speed: m/s he moves now.
-static func hero(action: int, ground_speed: float = 0.0) -> Array:
+## The hero's clip for his action; ground_speed: m/s he moves now, weapon_kind: his
+## MapActor.weapon_kind (a long weapon he holds ready in both hands).
+static func hero(action: int, ground_speed: float = 0.0, weapon_kind := 1) -> Array:
 	match action:
 		0:
-			return ["idle", "loop", 1.0]
+			return [idle(weapon_kind), "loop", 1.0]
 		1:
 			return ["walk", "loop", _pace(ground_speed, WALK_SPEED)]
 		2:
@@ -56,9 +62,16 @@ static func hero(action: int, ground_speed: float = 0.0) -> Array:
 			return ["death", "once", 0.8]
 		11:
 			return ["use_item", "fit", 1.0]
-	if action >= 3 and action <= 8:
-		return [COMBO[(action - 3) % 3], "fit", 1.0]
+	if action >= 3 and action <= 5:
+		return [COMBO[action - 3], "fit", 1.0]
+	if action >= 6 and action <= 8:
+		return [LONG_COMBO[action - 6], "fit", 1.0]
 	return SKILLS.get(action, ["idle", "loop", 1.0])
+
+
+## How one stands with a weapon of this kind: a long one ready in both hands.
+static func idle(weapon_kind: int) -> String:
+	return "idle_2h" if weapon_kind == LONG_WEAPON else "idle"
 
 
 ## A soldier's (201 swords, 202 archers, 203 a squad) or a general's (type < 200) clip.

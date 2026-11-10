@@ -12,9 +12,10 @@ const PEOPLE_PATH := "res://assets/art/people.json"
 const PX := 1.0 / 27.0  # world units per map pixel (a tile is 27 px)
 const FOOT_PX := 6  # the original's body box reaches this far below the position
 
-## The hero's model by his class (Profile.HERO_CLASSES) and his blade by its kind.
+## The hero's model by his class (Profile.HERO_CLASSES) and his weapon by its kind
+## (MapActor.weapon_kind): 0 a long one, a pike; 1 a short one, a broadsword.
 const HEROES := ["kozak", "serdiuk", "kharakternyk", "haidamaka"]
-const BLADES := ["sabre", "palash"]
+const BLADES := ["spear", "palash"]
 ## Swordsmen and archers of each side, and its generals.
 const SOLDIERS := {
 	"crown": ["zholner", "luchnyk"],
@@ -69,7 +70,7 @@ func setup(map_sim: RefCounted, hero_class: int) -> void:
 	set_hero_look(hero_class, int(sim.hero.weapon_kind))
 
 
-## The hero's class (0..3) and blade kind (0 sabre, 1 palash).
+## The hero's class (0..3) and weapon kind (0 long: a pike, 1 short: a broadsword).
 func set_hero_look(hero_class: int, weapon_kind: int) -> void:
 	var look := Vector2i(clampi(hero_class, 0, 3), clampi(weapon_kind, 0, 1))
 	if look == _hero_look:
@@ -109,7 +110,7 @@ func update(t: float, dt: float, tick: float, feel: RefCounted) -> void:
 	_drive(
 		hero,
 		h,
-		Motion.hero(h.action, speed),
+		Motion.hero(h.action, speed, int(h.weapon_kind)),
 		MapAnims.hero_anim(h.action, h.shown_dir),
 		t,
 		dt,
