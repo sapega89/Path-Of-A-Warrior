@@ -368,8 +368,40 @@
     "uk": "Дружба зросла на 5."
   },
   "visit.full": {
-    "en": "Friendship:100%",
+    "en": "Friendship: 100%",
     "uk": "Дружба: 100%"
+  },
+  "visit.gift_attack": {
+    "en": "Attack +1",
+    "uk": "Атака +1"
+  },
+  "visit.gift_defense": {
+    "en": "Defence +1",
+    "uk": "Захист +1"
+  },
+  "visit.gift_hp": {
+    "en": "HP +5",
+    "uk": "HP +5"
+  },
+  "visit.gift_mp": {
+    "en": "MP +3",
+    "uk": "MP +3"
+  },
+  "visit.gift_fame": {
+    "en": "Fame +10",
+    "uk": "Слава +10"
+  },
+  "visit.gift_skill": {
+    "en": "A new skill:",
+    "uk": "Нове вміння:"
+  },
+  "visit.gift_skill_up": {
+    "en": "Skill up:",
+    "uk": "Вміння зросло:"
+  },
+  "visit.gift_item": {
+    "en": "Item acquired!",
+    "uk": "Отримано річ!"
   },
   "visit.ok": {
     "en": "OK",
