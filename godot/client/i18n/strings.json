@@ -943,6 +943,18 @@
     "en": "Listed Items has been received.",
     "uk": "Ці речі вам подарували (вони на складі)."
   },
+  "live.no_gifts": {
+    "en": "No new gifts.",
+    "uk": "Нових подарунків немає."
+  },
+  "live.gift_from": {
+    "en": "From %s",
+    "uk": "Від: %s"
+  },
+  "live.gifts_waiting": {
+    "en": "Other players sent you gifts. They are in the Warehouse;\nsee who sent what at the auctioneer (Trade > Gift List).",
+    "uk": "Інші гравці надіслали вам подарунки. Вони вже на складі,\nа хто що надіслав, покаже аукціоніст (Торгівля > Подарунки)."
+  },
   "live.fame_applied": {
     "en": "Saved Exp (%d) and Fame (%d) in Server has been applied.",
     "uk": "Досвід (%d) і славу (%d), збережені на сервері, отримано."

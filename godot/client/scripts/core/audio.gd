@@ -28,6 +28,7 @@ const SCREEN_MUSIC := {
 	"live_buy": -1,  # Live is quiet
 	"live_sell": -1,
 	"live_cancel": -1,
+	"live_gifts": -1,
 	"online_character": -1,
 	"online_skills": -1,
 	"online_text": -1,

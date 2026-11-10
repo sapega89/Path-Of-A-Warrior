@@ -1,9 +1,12 @@
 extends BaseScreen
-## Game menu > Trade: Buy Item, Sell Item and Cancel Sale (the Live client in Router.params goes on
-## to each page).
+## Trade (in the game menu, and at the auctioneer in the camp): Buy Item, Sell Item, Cancel Sale
+## and the Gift List (the Live client in Router.params goes on to each page).
 
 @onready var buttons: Array[Button] = [
-	%Column.get_node("Buy"), %Column.get_node("Sell"), %Column.get_node("Cancel")
+	%Column.get_node("Buy"),
+	%Column.get_node("Sell"),
+	%Column.get_node("Cancel"),
+	%Column.get_node("Gifts")
 ]
 
 

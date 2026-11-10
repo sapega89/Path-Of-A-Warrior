@@ -39,6 +39,7 @@ var has_notice := false
 var has_sold := false
 var has_gifts := false
 var notices_seen := false  # the notices are shown once a game
+var gifts_told := false  # the game menu says once a game that gifts came
 var notice: Array = []  # the lines of a page of notices
 var more_notices := false
 var sold: Array = []  # Sale List: [{item, price}] (what others bought from me)
