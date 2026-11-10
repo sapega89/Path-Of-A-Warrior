@@ -1,11 +1,8 @@
 extends "res://tests/test_case.gd"
 
-const Stories := preload("res://scripts/core/stories.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Story := preload("res://scripts/screens/story_screen.gd")
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const Campaign := preload("res://scripts/core/campaign.gd")
-const ENDING_2 := {"story": 2, "reward_item": 502, "opened_lord": 8, "profile_path": "user://no_such_hero.json"}
+const ENDING_2 := {
+	"story": 2, "reward_item": 502, "opened_lord": 8, "profile_path": "user://no_such_hero.json"
+}
 
 
 func test_opening_pages() -> void:
@@ -14,7 +11,11 @@ func test_opening_pages() -> void:
 	eq(pages[0].kind, "picture", "a picture first")
 	eq(int(pages[0].picture), 1, "the second story picture")
 	eq(int(pages[1].picture), 10, "then the eleventh")
-	eq(pages[2].text, "[Prior] So you have found your way to the Motronyn Monastery.", "the prior talks")
+	eq(
+		pages[2].text,
+		"[Prior] So you have found your way to the Motronyn Monastery.",
+		"the prior talks"
+	)
 	eq(int(pages[2].speaker), Stories.NOFACE, "no face")
 	eq(pages[3].text, "[Leo] ...", "the hero answers")
 	eq(int(pages[3].speaker), Stories.HERO, "the hero")
@@ -26,7 +27,11 @@ func test_ending_pages() -> void:
 	eq(int(pages[0].speaker), 0, "the messenger")
 	check(str(pages[0].text).begins_with("[Messenger] Sir,"), "his line")
 	check(str(pages[1].text).begins_with("[Leo] No."), "the hero's line")
-	eq(pages[2].text, "[Messenger] The country still needs men like you.", "the line of the game's strings")
+	eq(
+		pages[2].text,
+		"[Messenger] The country still needs men like you.",
+		"the line of the game's strings"
+	)
 	eq(int(pages[5].picture), 0, "the first picture")
 	check(str(pages[5].text).begins_with("That was how I walked away"), "its text")
 	eq(int(pages[6].picture), 1, "picture 2 (e2)")
@@ -50,10 +55,9 @@ func test_stats() -> void:
 
 func _story(params: Dictionary) -> Control:
 	Router.params = params
-	var screen: Control = Story.new()
+	var screen: Control = Router.make(Router.SCREENS["story"])
 	root.add_child(screen)
 	return screen
-
 
 
 ## A talk, as pyport's: two boxes under "Epilogue", the one who speaks at the top, the hero at
@@ -62,22 +66,37 @@ func test_story_talk() -> void:
 	var old: Dictionary = Router.params
 	var screen := _story(ENDING_2)
 	eq(screen.title.text, "story.epilogue", "an ending: the epilogue")
-	check(screen.talk_box.visible and not screen.background.visible, "the talk on the menu's background")
+	check(
+		screen.talk_box.visible and not screen.background.visible,
+		"the talk on the menu's background"
+	)
 	eq(screen.typing, screen.speaker_says, "Oksana speaks at the top")
-	eq(screen.speaker_says.text, "[Oksana] It is cold... so cold. I cannot feel my hands...", "her line")
+	eq(
+		screen.speaker_says.text,
+		"[Oksana] It is cold... so cold. I cannot feel my hands...",
+		"her line"
+	)
 	check(screen.speaker_portrait.texture.resource_path.ends_with("/37.png"), "beside her portrait")
-	check(screen.hero_portrait.texture.resource_path.ends_with("/38.png"), "the hero's at the bottom")
+	check(
+		screen.hero_portrait.texture.resource_path.ends_with("/38.png"), "the hero's at the bottom"
+	)
 	eq(screen.typing.visible_characters, 0, "typed out")
 	screen.press()
 	eq(screen.typing.visible_characters, -1, "a press: the whole line")
 	screen.press()
 	eq(screen.page, 1, "another: the next page")
-	check(screen.speaker_portrait.texture.resource_path.ends_with("/1.png"), "General Augustine's portrait")
+	check(
+		screen.speaker_portrait.texture.resource_path.ends_with("/1.png"),
+		"General Augustine's portrait"
+	)
 	for i in 4:
 		screen.next_page()
 	eq([screen.page, screen.typing], [5, screen.hero_says], "the hero answers at the bottom")
-	eq([screen.speaker_says.text, screen.speaker_says.visible_characters], ["[Cossack] Run for it! Run!", -1],
-		"the top box keeps its last line")
+	eq(
+		[screen.speaker_says.text, screen.speaker_says.visible_characters],
+		["[Cossack] Run for it! Run!", -1],
+		"the top box keeps its last line"
+	)
 	screen.free()
 	screen = _story({"profile_path": "user://no_such_hero.json"})
 	eq(screen.title.text, "story.prologue", "the opening: the prologue")
@@ -102,7 +121,11 @@ func test_story_picture_floats() -> void:
 	eq(screen.line_y(0), -1000, "the text not yet")
 	for i in 3:
 		screen.tick()
-	eq([screen.phase, screen.line_y(0), screen.line_y(1)], [1, 230, -1000], "the first line at 230, the next below")
+	eq(
+		[screen.phase, screen.line_y(0), screen.line_y(1)],
+		[1, 230, -1000],
+		"the first line at 230, the next below"
+	)
 	eq(screen.line_color(230), Color(UiTheme.TEXT), "white in the middle")
 	screen.tick()
 	eq(screen.line_y(0), 228, "up 2 a tick")
@@ -116,7 +139,11 @@ func test_story_picture_floats() -> void:
 	while screen.phase == 1 and guard < 2000:
 		screen.tick()
 		guard += 1
-	eq([screen.phase, screen.line_y(screen.lines.size() - 1)], [2, -1000], "all gone up: the picture goes")
+	eq(
+		[screen.phase, screen.line_y(screen.lines.size() - 1)],
+		[2, -1000],
+		"all gone up: the picture goes"
+	)
 	for i in 7:
 		screen.tick()
 	eq(screen.page, 15, "then the next page")
@@ -138,14 +165,22 @@ func test_story_numbers_and_reward() -> void:
 	screen.next_page()
 	eq(screen.pages[screen.page].kind, "stats", "the numbers")
 	check(not screen.picture.visible, "no picture")
-	eq(Array(screen.lines.slice(0, 3)), ["Mission", "Accomplished", "0 %"], "a line each, as pyport's")
+	eq(
+		Array(screen.lines.slice(0, 3)),
+		["Mission", "Accomplished", "0 %"],
+		"a line each, as pyport's"
+	)
 	eq(screen.lines.size(), 12, "missions, hidden missions, endings, generals, the total")
 	eq(screen.line_y(0), -1000, "below the screen")
 	for i in 45:
 		screen.tick()
 	eq(screen.line_y(0), 230, "then up")
 	check(screen.reward.visible, "the reward popup")
-	eq(screen.reward.dialog_text, "Oksana's scarf\nreceived!\n\nHidden Mission!\n%s" % Campaign.new().lord_name(8), "what the ending gave")
+	eq(
+		screen.reward.dialog_text,
+		"Oksana's scarf\nreceived!\n\nHidden Mission!\n%s" % Campaign.new().lord_name(8),
+		"what the ending gave"
+	)
 	screen.skip()
 	eq(Router.current, screen, "the story waits for the popup")
 	screen.reward.hide()
@@ -171,7 +206,11 @@ func test_story_replay() -> void:
 func test_story_screen_click() -> void:
 	var old: Dictionary = Router.params
 	var screen := _story(ENDING_2)
-	eq(screen.get_child(0).mouse_filter, Control.MOUSE_FILTER_IGNORE, "the black background lets clicks through")
+	eq(
+		screen.get_child(0).mouse_filter,
+		Control.MOUSE_FILTER_IGNORE,
+		"the black background lets clicks through"
+	)
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
 	click.pressed = true
@@ -191,7 +230,7 @@ func test_story_screen_click() -> void:
 func test_story_goes_on_by_itself() -> void:
 	var old: Dictionary = Router.params
 	var screen := _story(ENDING_2)
-	var wait: float = Story.WAIT_TICKS * Settings.tick_seconds()
+	var wait: float = StoryScreen.WAIT_TICKS * Settings.tick_seconds()
 	screen._process(100.0)
 	eq(screen.typing.visible_characters, -1, "the line typed out")
 	screen._process(wait * 0.5)

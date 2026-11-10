@@ -7,10 +7,6 @@ extends Node
 ## muted and harder), saved as assets/art/story/e<n>.png.
 ## The numbers after -- paint only those pictures.
 
-const ArtKit := preload("res://scripts/art/art_kit.gd")
-const ArtFigure := preload("res://scripts/art/art_figure.gd")
-const ArtGround := preload("res://scripts/art/art_ground.gd")
-const ArtEffects := preload("res://scripts/art/art_effects.gd")
 const DIR := "res://assets/art/story/"
 const SIZE := Vector2i(1040, 800)  # painted at, then made smaller
 const OUT := Vector2i(520, 400)
@@ -19,10 +15,22 @@ const EARTH := Color("7a5a3a")
 const GRASS := Color("5f6a3c")
 const WOOD := Color("4a3324")
 ## The sky's settings before a picture changes them.
-const SKY := {"top": Color("33405f"), "horizon": Color("d9b98a"), "horizon_y": 0.6,
-	"glow": Color("f2cc8a"), "glow_size": 0.35, "sun": Vector2(0.7, 0.5), "sun_size": 0.0,
-	"sun_colour": Color("ffe6a0"), "clouds": 0.4, "cloud_dark": Color("4a4a60"),
-	"cloud_lit": Color("f0d8b0"), "stars": 0.0, "bolt": -1.0, "seed": 0.0}
+const SKY := {
+	"top": Color("33405f"),
+	"horizon": Color("d9b98a"),
+	"horizon_y": 0.6,
+	"glow": Color("f2cc8a"),
+	"glow_size": 0.35,
+	"sun": Vector2(0.7, 0.5),
+	"sun_size": 0.0,
+	"sun_colour": Color("ffe6a0"),
+	"clouds": 0.4,
+	"cloud_dark": Color("4a4a60"),
+	"cloud_lit": Color("f0d8b0"),
+	"stars": 0.0,
+	"bolt": -1.0,
+	"seed": 0.0
+}
 
 var view: SubViewport  # the scene, on a clear background
 var canvas: SubViewport  # the sky, the scene and what lies over it
@@ -156,7 +164,9 @@ func _ground(play: Rect2, greens: Array = [], paths: Array = [], colours: Dictio
 		m.set_shader_parameter(key, colours[key])
 
 
-func _prop(prop_name: String, at: Vector3, yaw := 0.0, tilt := Vector3.ZERO, scale_by := 1.0) -> Node3D:
+func _prop(
+	prop_name: String, at: Vector3, yaw := 0.0, tilt := Vector3.ZERO, scale_by := 1.0
+) -> Node3D:
 	var node := ArtKit.prop(prop_name, true)
 	node.position = at
 	node.rotation_degrees = Vector3(tilt.x, yaw, tilt.z)
@@ -178,7 +188,9 @@ func _person(kind: String, at: Vector3, face_to: Vector3, clip := "idle", part :
 
 
 ## A plain shape in one colour, with the ink outline.
-func _shape(mesh: PrimitiveMesh, at: Vector3, colour: Color, rot := Vector3.ZERO, scale_by := Vector3.ONE) -> MeshInstance3D:
+func _shape(
+	mesh: PrimitiveMesh, at: Vector3, colour: Color, rot := Vector3.ZERO, scale_by := Vector3.ONE
+) -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
 	mi.mesh = mesh
 	var m := ArtKit.painted(true)
@@ -228,7 +240,11 @@ func _stuck(weapon: String, at: Vector3, lean := 10.0, yaw := 0.0) -> void:
 	mi.material_override = ArtKit.painted(true)
 	# the blade lies along the mesh's Z, its point at the far end: Z to down, the point in the ground
 	var tip := Vector3(box.get_center().x, box.get_center().y, box.end.z - 0.18)
-	var turn := Basis(Vector3.UP, deg_to_rad(yaw)) * Basis(Vector3.BACK, deg_to_rad(lean)) * Basis(Vector3.RIGHT, PI / 2.0)
+	var turn := (
+		Basis(Vector3.UP, deg_to_rad(yaw))
+		* Basis(Vector3.BACK, deg_to_rad(lean))
+		* Basis(Vector3.RIGHT, PI / 2.0)
+	)
 	mi.transform = Transform3D(turn, at) * Transform3D(Basis(), -tip)
 	world.add_child(mi)
 	source.free()
@@ -257,7 +273,9 @@ func _fire(at: Vector3) -> void:
 		particles.preprocess = 3.0
 		if particles.mesh is QuadMesh:
 			particles.amount = 12
-			((particles.mesh as QuadMesh).material as StandardMaterial3D).albedo_color = Color(0.62, 0.5, 0.42)
+			((particles.mesh as QuadMesh).material as StandardMaterial3D).albedo_color = Color(
+				0.62, 0.5, 0.42
+			)
 
 
 func _frames(n: int) -> void:
@@ -267,14 +285,29 @@ func _frames(n: int) -> void:
 
 # -- the pictures -------------------------------------------------------------------------
 
+
 ## 1. Peace: a village in the gold of the afternoon, Cossacks at home.
 func _e1() -> void:
-	_sky({"top": Color("5f86b4"), "horizon": Color("f0d8a0"), "glow": Color("f8d890"), "glow_size": 0.45,
-		"sun": Vector2(0.88, 0.32), "clouds": 0.35, "cloud_dark": Color("b4a28c"), "cloud_lit": Color("fff2d6"), "seed": 1.0})
+	_sky(
+		{
+			"top": Color("5f86b4"),
+			"horizon": Color("f0d8a0"),
+			"glow": Color("f8d890"),
+			"glow_size": 0.45,
+			"sun": Vector2(0.88, 0.32),
+			"clouds": 0.35,
+			"cloud_dark": Color("b4a28c"),
+			"cloud_lit": Color("fff2d6"),
+			"seed": 1.0
+		}
+	)
 	_light(Vector3(-0.55, -0.55, -0.6), Color("ffe2b0"), 1.05, Color("9aa6c8"), 0.45)
 	_fog(Color("e8d2a2"), 16.0, 48.0)
-	_ground(Rect2(-16, -18, 32, 30), [Vector3(-4, -2, 4.0), Vector3(5, -7, 5.0), Vector3(-7, -12, 5.0)],
-		[PackedVector2Array([Vector2(0.5, 8), Vector2(0.2, 0), Vector2(-1.5, -6)])])
+	_ground(
+		Rect2(-16, -18, 32, 30),
+		[Vector3(-4, -2, 4.0), Vector3(5, -7, 5.0), Vector3(-7, -12, 5.0)],
+		[PackedVector2Array([Vector2(0.5, 8), Vector2(0.2, 0), Vector2(-1.5, -6)])]
+	)
 	_prop("khata", Vector3(-4.2, 0, -7.0), 18.0)
 	_prop("zhuravel", Vector3(4.2, 0, -5.5), -30.0)
 	_prop("tyn", Vector3(-1.4, 0, -3.6), 8.0)
@@ -294,15 +327,31 @@ func _e1() -> void:
 
 ## 2. The storm: three men on the road under lightning and rain.
 func _e2() -> void:
-	_sky({"top": Color("1c1830"), "horizon": Color("6e5482"), "glow": Color("9c88cc"), "glow_size": 0.3,
-		"sun": Vector2(0.3, 0.25), "clouds": 0.78, "cloud_dark": Color("27223c"), "cloud_lit": Color("8e80b6"),
-		"bolt": 0.27, "seed": 4.0, "horizon_y": 0.66})
+	_sky(
+		{
+			"top": Color("1c1830"),
+			"horizon": Color("6e5482"),
+			"glow": Color("9c88cc"),
+			"glow_size": 0.3,
+			"sun": Vector2(0.3, 0.25),
+			"clouds": 0.78,
+			"cloud_dark": Color("27223c"),
+			"cloud_lit": Color("8e80b6"),
+			"bolt": 0.27,
+			"seed": 4.0,
+			"horizon_y": 0.66
+		}
+	)
 	_light(Vector3(0.35, -0.55, -0.75), Color("bcb2e6"), 0.75, Color("625c8c"), 0.5)
 	_fog(Color("4c3e66"), 8.0, 36.0)
 	overlay.set_shader_parameter("rain", 1.0)
 	overlay.set_shader_parameter("vignette", 0.65)
-	_ground(Rect2(-14, -24, 28, 32), [], [PackedVector2Array([Vector2(0, 8), Vector2(0.6, -6), Vector2(-1, -20)])],
-		{"soil": Color("8a7a66"), "grass_dry": Color("6c6a58")})
+	_ground(
+		Rect2(-14, -24, 28, 32),
+		[],
+		[PackedVector2Array([Vector2(0, 8), Vector2(0.6, -6), Vector2(-1, -20)])],
+		{"soil": Color("8a7a66"), "grass_dry": Color("6c6a58")}
+	)
 	_prop("yalyna", Vector3(-5.5, 0, -7.0))
 	_prop("yalyna", Vector3(5.0, 0, -11.0), 30.0)
 	_prop("kamin", Vector3(3.2, 0, -2.0), 60.0)
@@ -314,20 +363,36 @@ func _e2() -> void:
 
 ## 3. The regiment: a colonel on a rise before his army, the sun behind them.
 func _e3() -> void:
-	_sky({"top": Color("394866"), "horizon": Color("eab274"), "glow": Color("f6c67a"), "glow_size": 0.5,
-		"sun": Vector2(0.52, 0.52), "sun_size": 0.0, "clouds": 0.55, "cloud_dark": Color("4a4660"),
-		"cloud_lit": Color("f8c890"), "seed": 7.0, "horizon_y": 0.64})
+	_sky(
+		{
+			"top": Color("394866"),
+			"horizon": Color("eab274"),
+			"glow": Color("f6c67a"),
+			"glow_size": 0.5,
+			"sun": Vector2(0.52, 0.52),
+			"sun_size": 0.0,
+			"clouds": 0.55,
+			"cloud_dark": Color("4a4660"),
+			"cloud_lit": Color("f8c890"),
+			"seed": 7.0,
+			"horizon_y": 0.64
+		}
+	)
 	_light(Vector3(0.15, -0.45, 0.88), Color("ffd8a0"), 1.0, Color("8a8cac"), 0.55)
 	_fog(Color("d8a878"), 10.0, 40.0)
 	_ground(Rect2(-18, -24, 36, 30), [Vector3(-3, -6, 6.0), Vector3(6, -10, 6.0)])
 	_person("polkovnyk", Vector3(0, 0, 1.1), Vector3(0.6, 0, 6), "cheer", 0.42)
-	var kinds := ["serdiuk", "kozak", "kozak_camp", "zholner", "kozak_rival", "luchnyk", "kozak_svyta"]
+	var kinds := [
+		"serdiuk", "kozak", "kozak_camp", "zholner", "kozak_rival", "luchnyk", "kozak_svyta"
+	]
 	var i := 0
 	for row in 4:
 		for col in 8:
 			var x := -6.3 + col * 1.8 + (row % 2) * 0.9 + randf_range(-0.2, 0.2)
 			var z := -2.6 - row * 1.7
-			_person(kinds[i % kinds.size()], Vector3(x, 0, z), Vector3(x * 0.6, 0, 8), "idle", randf())
+			_person(
+				kinds[i % kinds.size()], Vector3(x, 0, z), Vector3(x * 0.6, 0, 8), "idle", randf()
+			)
 			i += 1
 	_prop("banner", Vector3(-3.4, 0, -4.4), 20.0)
 	_prop("banner", Vector3(2.9, 0, -5.4), -10.0)
@@ -337,14 +402,38 @@ func _e3() -> void:
 
 ## 4. A road of his own: a lone Cossack walking away into the mist.
 func _e4() -> void:
-	_sky({"top": Color("8790a6"), "horizon": Color("dcd6c8"), "glow": Color("fff6e0"), "glow_size": 0.55,
-		"sun": Vector2(0.56, 0.42), "clouds": 0.3, "cloud_dark": Color("a7a8b4"), "cloud_lit": Color("f2eee4"),
-		"seed": 11.0, "horizon_y": 0.56})
+	_sky(
+		{
+			"top": Color("8790a6"),
+			"horizon": Color("dcd6c8"),
+			"glow": Color("fff6e0"),
+			"glow_size": 0.55,
+			"sun": Vector2(0.56, 0.42),
+			"clouds": 0.3,
+			"cloud_dark": Color("a7a8b4"),
+			"cloud_lit": Color("f2eee4"),
+			"seed": 11.0,
+			"horizon_y": 0.56
+		}
+	)
 	_light(Vector3(0.25, -0.6, -0.75), Color("f4ecdc"), 0.7, Color("b0b4c4"), 0.6)
 	_fog(Color("d4d0c4"), 3.0, 24.0)
 	overlay.set_shader_parameter("vignette", 0.35)
-	_ground(Rect2(-14, -30, 28, 36), [Vector3(-4, -6, 4.0), Vector3(4, -12, 5.0)],
-		[PackedVector2Array([Vector2(0, 8), Vector2(0.4, 0), Vector2(1.6, -8), Vector2(-1.5, -18), Vector2(0, -28)])])
+	_ground(
+		Rect2(-14, -30, 28, 36),
+		[Vector3(-4, -6, 4.0), Vector3(4, -12, 5.0)],
+		[
+			PackedVector2Array(
+				[
+					Vector2(0, 8),
+					Vector2(0.4, 0),
+					Vector2(1.6, -8),
+					Vector2(-1.5, -18),
+					Vector2(0, -28)
+				]
+			)
+		]
+	)
 	_prop("yalyna", Vector3(-4.8, 0, -5.5))
 	_prop("yalyna", Vector3(-6.5, 0, -9.0), 40.0, Vector3.ZERO, 1.2)
 	_prop("yalyna", Vector3(4.6, 0, -9.5), 20.0, Vector3.ZERO, 1.1)
@@ -358,12 +447,30 @@ func _e4() -> void:
 
 ## 5. The grave of a fine man: a cross, a sabre in the ground, the sun going down.
 func _e5() -> void:
-	_sky({"top": Color("3a2236"), "horizon": Color("f08a3a"), "glow": Color("ff9a40"), "glow_size": 0.5,
-		"sun": Vector2(0.3, 0.5), "sun_size": 0.07, "sun_colour": Color("ffd46a"), "clouds": 0.45,
-		"cloud_dark": Color("4a2530"), "cloud_lit": Color("ff9c56"), "seed": 13.0, "horizon_y": 0.62})
+	_sky(
+		{
+			"top": Color("3a2236"),
+			"horizon": Color("f08a3a"),
+			"glow": Color("ff9a40"),
+			"glow_size": 0.5,
+			"sun": Vector2(0.3, 0.5),
+			"sun_size": 0.07,
+			"sun_colour": Color("ffd46a"),
+			"clouds": 0.45,
+			"cloud_dark": Color("4a2530"),
+			"cloud_lit": Color("ff9c56"),
+			"seed": 13.0,
+			"horizon_y": 0.62
+		}
+	)
 	_light(Vector3(0.4, -0.3, 0.86), Color("ffb070"), 1.1, Color("6c4260"), 0.55)
 	_fog(Color("e07a42"), 12.0, 40.0)
-	_ground(Rect2(-14, -22, 28, 28), [Vector3(-3, -4, 4.0)], [], {"soil": Color("a87a52"), "grass_dry": Color("8a7048")})
+	_ground(
+		Rect2(-14, -22, 28, 28),
+		[Vector3(-3, -4, 4.0)],
+		[],
+		{"soil": Color("a87a52"), "grass_dry": Color("8a7048")}
+	)
 	_mound(Vector3(0.1, -0.2, -1.3), 1.4, 0.55, EARTH)
 	_cross(Vector3(0.35, 0.25, -1.9), -5.0, 15.0, 1.6)
 	_stuck("sabre", Vector3(0.95, 0.05, -0.55), -12.0, 20.0)
@@ -375,12 +482,27 @@ func _e5() -> void:
 
 ## 6. Alone at sundown: where is the colonel I was born to serve?
 func _e6() -> void:
-	_sky({"top": Color("2b2440"), "horizon": Color("ea6c4a"), "glow": Color("ec744c"), "glow_size": 0.45,
-		"sun": Vector2(0.24, 0.6), "sun_size": 0.05, "sun_colour": Color("ffb878"), "clouds": 0.5,
-		"cloud_dark": Color("3a2a44"), "cloud_lit": Color("f28c64"), "seed": 17.0, "horizon_y": 0.66})
+	_sky(
+		{
+			"top": Color("2b2440"),
+			"horizon": Color("ea6c4a"),
+			"glow": Color("ec744c"),
+			"glow_size": 0.45,
+			"sun": Vector2(0.24, 0.6),
+			"sun_size": 0.05,
+			"sun_colour": Color("ffb878"),
+			"clouds": 0.5,
+			"cloud_dark": Color("3a2a44"),
+			"cloud_lit": Color("f28c64"),
+			"seed": 17.0,
+			"horizon_y": 0.66
+		}
+	)
 	_light(Vector3(0.62, -0.25, 0.75), Color("ffa070"), 1.0, Color("5c4262"), 0.5)
 	_fog(Color("d26c52"), 12.0, 44.0)
-	_ground(Rect2(-14, -22, 28, 28), [], [], {"soil": Color("9a6e50"), "grass_dry": Color("7c6448")})
+	_ground(
+		Rect2(-14, -22, 28, 28), [], [], {"soil": Color("9a6e50"), "grass_dry": Color("7c6448")}
+	)
 	_person("kharakternyk", Vector3(0.8, 0, -1.0), Vector3(-4, 0, -6), "idle", 0.5)
 	_prop("penok", Vector3(-1.6, 0, 0.6))
 	_look(Vector3(-0.6, 0.45, 5.0), Vector3(0.5, 1.6, -1.0), 36.0)
@@ -388,9 +510,20 @@ func _e6() -> void:
 
 ## 7. Marusia: the hero and the girl by her house in the evening.
 func _e7() -> void:
-	_sky({"top": Color("34406a"), "horizon": Color("f2ba7a"), "glow": Color("ffcc8c"), "glow_size": 0.4,
-		"sun": Vector2(0.12, 0.52), "clouds": 0.3, "cloud_dark": Color("6a5a78"), "cloud_lit": Color("ffd2a2"),
-		"stars": 0.15, "seed": 19.0})
+	_sky(
+		{
+			"top": Color("34406a"),
+			"horizon": Color("f2ba7a"),
+			"glow": Color("ffcc8c"),
+			"glow_size": 0.4,
+			"sun": Vector2(0.12, 0.52),
+			"clouds": 0.3,
+			"cloud_dark": Color("6a5a78"),
+			"cloud_lit": Color("ffd2a2"),
+			"stars": 0.15,
+			"seed": 19.0
+		}
+	)
 	_light(Vector3(0.75, -0.35, -0.55), Color("ffc890"), 1.0, Color("7c84ac"), 0.45)
 	_fog(Color("e2ae7c"), 12.0, 42.0)
 	_ground(Rect2(-14, -20, 28, 28), [Vector3(-3, -3, 4.0), Vector3(4, -2, 3.0)])
@@ -407,13 +540,26 @@ func _e7() -> void:
 
 ## 8. After the battle: a fallen banner, a gun on its side, the dead and the ravens' sky.
 func _e8() -> void:
-	_sky({"top": Color("28283a"), "horizon": Color("b27250"), "glow": Color("c48462"), "glow_size": 0.4,
-		"sun": Vector2(0.62, 0.6), "clouds": 0.66, "cloud_dark": Color("2c2834"), "cloud_lit": Color("b48c72"),
-		"seed": 23.0, "horizon_y": 0.62})
+	_sky(
+		{
+			"top": Color("28283a"),
+			"horizon": Color("b27250"),
+			"glow": Color("c48462"),
+			"glow_size": 0.4,
+			"sun": Vector2(0.62, 0.6),
+			"clouds": 0.66,
+			"cloud_dark": Color("2c2834"),
+			"cloud_lit": Color("b48c72"),
+			"seed": 23.0,
+			"horizon_y": 0.62
+		}
+	)
 	_light(Vector3(-0.4, -0.45, 0.8), Color("e8b08a"), 0.85, Color("6a6478"), 0.5)
 	_fog(Color("8c6a5e"), 8.0, 38.0)
 	overlay.set_shader_parameter("vignette", 0.6)
-	_ground(Rect2(-14, -22, 28, 28), [], [], {"soil": Color("8e7056"), "grass_dry": Color("6e6450")})
+	_ground(
+		Rect2(-14, -22, 28, 28), [], [], {"soil": Color("8e7056"), "grass_dry": Color("6e6450")}
+	)
 	_prop("banner", Vector3(0.8, 0, -2.6), -30.0, Vector3(0, 0, 24.0))
 	_prop("harmata", Vector3(-2.8, 0, -3.6), 70.0, Vector3(0, 0, 12.0))
 	_prop("viz", Vector3(4.0, 0, -6.5), 30.0, Vector3(0, 0, 70.0))
@@ -426,9 +572,19 @@ func _e8() -> void:
 
 ## 9. A hero lies dead: his friend kneels by him.
 func _e9() -> void:
-	_sky({"top": Color("5a6070"), "horizon": Color("bcb6aa"), "glow": Color("dcd4c4"), "glow_size": 0.45,
-		"sun": Vector2(0.45, 0.38), "clouds": 0.62, "cloud_dark": Color("666a78"), "cloud_lit": Color("dcd8cc"),
-		"seed": 29.0})
+	_sky(
+		{
+			"top": Color("5a6070"),
+			"horizon": Color("bcb6aa"),
+			"glow": Color("dcd4c4"),
+			"glow_size": 0.45,
+			"sun": Vector2(0.45, 0.38),
+			"clouds": 0.62,
+			"cloud_dark": Color("666a78"),
+			"cloud_lit": Color("dcd8cc"),
+			"seed": 29.0
+		}
+	)
 	_light(Vector3(0.45, -0.65, -0.6), Color("eae4d8"), 0.8, Color("9098aa"), 0.55)
 	_fog(Color("aaa69c"), 8.0, 36.0)
 	_ground(Rect2(-14, -22, 28, 28), [Vector3(1, -2, 3.0)])
@@ -443,9 +599,22 @@ func _e9() -> void:
 
 ## 10. A cup of wine by the fire at night, a murderer fewer in the land.
 func _e10() -> void:
-	_sky({"top": Color("0b0f1e"), "horizon": Color("2c2c4a"), "glow": Color("48507a"), "glow_size": 0.2,
-		"sun": Vector2(0.8, 0.18), "sun_size": 0.03, "sun_colour": Color("f2ecd2"), "clouds": 0.25,
-		"cloud_dark": Color("141a2c"), "cloud_lit": Color("3c4462"), "stars": 1.0, "seed": 31.0})
+	_sky(
+		{
+			"top": Color("0b0f1e"),
+			"horizon": Color("2c2c4a"),
+			"glow": Color("48507a"),
+			"glow_size": 0.2,
+			"sun": Vector2(0.8, 0.18),
+			"sun_size": 0.03,
+			"sun_colour": Color("f2ecd2"),
+			"clouds": 0.25,
+			"cloud_dark": Color("141a2c"),
+			"cloud_lit": Color("3c4462"),
+			"stars": 1.0,
+			"seed": 31.0
+		}
+	)
 	_light(Vector3(-0.5, -0.6, -0.6), Color("8a9ad2"), 0.35, Color("2a3050"), 0.5)
 	_fog(Color("1c2032"), 8.0, 32.0)
 	overlay.set_shader_parameter("vignette", 0.6)
@@ -465,12 +634,26 @@ func _e10() -> void:
 
 ## 11. His men never believed in him: the colonel alone, his osauls walking away.
 func _e11() -> void:
-	_sky({"top": Color("2a3050"), "horizon": Color("ca9272"), "glow": Color("e8a272"), "glow_size": 0.4,
-		"sun": Vector2(0.62, 0.55), "clouds": 0.45, "cloud_dark": Color("3c3a54"), "cloud_lit": Color("eaa880"),
-		"seed": 37.0})
+	_sky(
+		{
+			"top": Color("2a3050"),
+			"horizon": Color("ca9272"),
+			"glow": Color("e8a272"),
+			"glow_size": 0.4,
+			"sun": Vector2(0.62, 0.55),
+			"clouds": 0.45,
+			"cloud_dark": Color("3c3a54"),
+			"cloud_lit": Color("eaa880"),
+			"seed": 37.0
+		}
+	)
 	_light(Vector3(-0.3, -0.4, -0.85), Color("ffc89a"), 0.95, Color("6e7090"), 0.5)
 	_fog(Color("b88a70"), 10.0, 40.0)
-	_ground(Rect2(-14, -24, 28, 30), [], [PackedVector2Array([Vector2(-1, 6), Vector2(1, -4), Vector2(4, -16)])])
+	_ground(
+		Rect2(-14, -24, 28, 30),
+		[],
+		[PackedVector2Array([Vector2(-1, 6), Vector2(1, -4), Vector2(4, -16)])]
+	)
 	_prop("shatro", Vector3(-4.2, 0, -3.6), 20.0)
 	_prop("banner", Vector3(-2.0, 0, -0.8), 10.0)
 	_person("polkovnyk", Vector3(-1.2, 0, 1.3), Vector3(0.5, 0, 6), "idle", 0.6)
@@ -482,13 +665,27 @@ func _e11() -> void:
 
 ## 12. A regiment on the march over green fields under big clouds.
 func _e12() -> void:
-	_sky({"top": Color("4a78b0"), "horizon": Color("dce2e2"), "glow": Color("fff8e2"), "glow_size": 0.4,
-		"sun": Vector2(0.18, 0.28), "clouds": 0.5, "cloud_dark": Color("8a98b2"), "cloud_lit": Color("ffffff"),
-		"seed": 41.0, "horizon_y": 0.56})
+	_sky(
+		{
+			"top": Color("4a78b0"),
+			"horizon": Color("dce2e2"),
+			"glow": Color("fff8e2"),
+			"glow_size": 0.4,
+			"sun": Vector2(0.18, 0.28),
+			"clouds": 0.5,
+			"cloud_dark": Color("8a98b2"),
+			"cloud_lit": Color("ffffff"),
+			"seed": 41.0,
+			"horizon_y": 0.56
+		}
+	)
 	_light(Vector3(0.6, -0.6, -0.5), Color("fff0d8"), 1.05, Color("a0aac4"), 0.45)
 	_fog(Color("ccd6d8"), 16.0, 52.0)
-	_ground(Rect2(-18, -24, 36, 32), [Vector3(-6, -4, 7.0), Vector3(4, -8, 8.0), Vector3(8, 2, 5.0), Vector3(-2, 3, 5.0)],
-		[PackedVector2Array([Vector2(-14, 4), Vector2(-2, 0), Vector2(14, -6)])])
+	_ground(
+		Rect2(-18, -24, 36, 32),
+		[Vector3(-6, -4, 7.0), Vector3(4, -8, 8.0), Vector3(8, 2, 5.0), Vector3(-2, 3, 5.0)],
+		[PackedVector2Array([Vector2(-14, 4), Vector2(-2, 0), Vector2(14, -6)])]
+	)
 	var kinds := ["kozak", "serdiuk", "kozak_camp", "luchnyk", "kozak_rival", "zholner"]
 	var dir := Vector3(1, 0, -0.42).normalized()
 	var side := Vector3(0.42, 0, 1).normalized()
@@ -496,7 +693,9 @@ func _e12() -> void:
 	for rank in 5:
 		for file in 3:
 			var at := Vector3(-6.0, 0, 2.6) + dir * (rank * 2.0) + side * (file - 1) * 1.25
-			_person(kinds[i % kinds.size()], at, at + dir, "walk", fmod(rank * 0.37 + file * 0.21, 1.0))
+			_person(
+				kinds[i % kinds.size()], at, at + dir, "walk", fmod(rank * 0.37 + file * 0.21, 1.0)
+			)
 			i += 1
 	_prop("banner", Vector3(-5.5, 0, 2.4) + dir * 7.0 - side * 1.6, 0.0)
 	_prop("topolia", Vector3(-8.0, 0, -12.0))
@@ -507,14 +706,28 @@ func _e12() -> void:
 
 ## 13. Through the enemy's lines in the storm: an armoured man, sabre raised.
 func _e13() -> void:
-	_sky({"top": Color("12161e"), "horizon": Color("4c5464"), "glow": Color("8494b4"), "glow_size": 0.3,
-		"sun": Vector2(0.72, 0.3), "clouds": 0.82, "cloud_dark": Color("1c222e"), "cloud_lit": Color("7a849a"),
-		"bolt": 0.74, "seed": 43.0, "horizon_y": 0.7})
+	_sky(
+		{
+			"top": Color("12161e"),
+			"horizon": Color("4c5464"),
+			"glow": Color("8494b4"),
+			"glow_size": 0.3,
+			"sun": Vector2(0.72, 0.3),
+			"clouds": 0.82,
+			"cloud_dark": Color("1c222e"),
+			"cloud_lit": Color("7a849a"),
+			"bolt": 0.74,
+			"seed": 43.0,
+			"horizon_y": 0.7
+		}
+	)
 	_light(Vector3(-0.5, -0.45, 0.75), Color("c8d0e8"), 1.0, Color("4a5062"), 0.55)
 	_fog(Color("3c4250"), 8.0, 32.0)
 	overlay.set_shader_parameter("rain", 1.0)
 	overlay.set_shader_parameter("vignette", 0.6)
-	_ground(Rect2(-14, -22, 28, 28), [], [], {"soil": Color("6e665c"), "grass_dry": Color("5c5c50")})
+	_ground(
+		Rect2(-14, -22, 28, 28), [], [], {"soil": Color("6e665c"), "grass_dry": Color("5c5c50")}
+	)
 	_person("rotmistr", Vector3(0, 0, 0), Vector3(-2, 0, 3), "attack_slash", 0.32)
 	_person("zholner", Vector3(-2.6, 0, -3.6), Vector3(1, 0, 2), "blocking", 0.3)
 	_person("zholner", Vector3(2.8, 0, -4.4), Vector3(-1, 0, 2), "idle", 0.6)
@@ -523,9 +736,20 @@ func _e13() -> void:
 
 ## 14. A bitter old man alone by his house at dusk.
 func _e14() -> void:
-	_sky({"top": Color("383a58"), "horizon": Color("da9a72"), "glow": Color("e2a272"), "glow_size": 0.35,
-		"sun": Vector2(0.78, 0.6), "clouds": 0.4, "cloud_dark": Color("44405a"), "cloud_lit": Color("e6a684"),
-		"stars": 0.15, "seed": 47.0})
+	_sky(
+		{
+			"top": Color("383a58"),
+			"horizon": Color("da9a72"),
+			"glow": Color("e2a272"),
+			"glow_size": 0.35,
+			"sun": Vector2(0.78, 0.6),
+			"clouds": 0.4,
+			"cloud_dark": Color("44405a"),
+			"cloud_lit": Color("e6a684"),
+			"stars": 0.15,
+			"seed": 47.0
+		}
+	)
 	_light(Vector3(-0.6, -0.35, -0.7), Color("ffbe8e"), 0.85, Color("6a6a88"), 0.5)
 	_fog(Color("b8907a"), 12.0, 40.0)
 	_ground(Rect2(-14, -22, 28, 28), [Vector3(3, -3, 3.0)])
@@ -540,13 +764,28 @@ func _e14() -> void:
 
 ## 15. Graves on a hill under a red sky: a whole house wiped out.
 func _e15() -> void:
-	_sky({"top": Color("1a0e18"), "horizon": Color("c4322a"), "glow": Color("d84a32"), "glow_size": 0.55,
-		"sun": Vector2(0.46, 0.62), "sun_size": 0.09, "sun_colour": Color("f28a44"), "clouds": 0.5,
-		"cloud_dark": Color("2a1018"), "cloud_lit": Color("e25e3c"), "seed": 53.0, "horizon_y": 0.66})
+	_sky(
+		{
+			"top": Color("1a0e18"),
+			"horizon": Color("c4322a"),
+			"glow": Color("d84a32"),
+			"glow_size": 0.55,
+			"sun": Vector2(0.46, 0.62),
+			"sun_size": 0.09,
+			"sun_colour": Color("f28a44"),
+			"clouds": 0.5,
+			"cloud_dark": Color("2a1018"),
+			"cloud_lit": Color("e25e3c"),
+			"seed": 53.0,
+			"horizon_y": 0.66
+		}
+	)
 	_light(Vector3(0.05, -0.2, 0.98), Color("ff7a50"), 0.9, Color("3c1c2a"), 0.6)
 	_fog(Color("8c2a26"), 10.0, 40.0)
 	overlay.set_shader_parameter("vignette", 0.7)
-	_ground(Rect2(-14, -22, 28, 28), [], [], {"soil": Color("5a3a30"), "grass_dry": Color("4a3a30")})
+	_ground(
+		Rect2(-14, -22, 28, 28), [], [], {"soil": Color("5a3a30"), "grass_dry": Color("4a3a30")}
+	)
 	_mound(Vector3(0, -2.6, -5.0), 7.0, 3.1, GRASS)
 	_cross(Vector3(-2.4, 0.15, -4.4), 6.0, 10.0, 1.5)
 	_cross(Vector3(-0.8, 0.45, -4.8), -4.0, -15.0, 1.7)

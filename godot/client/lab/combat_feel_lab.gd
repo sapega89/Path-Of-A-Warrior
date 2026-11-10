@@ -12,22 +12,6 @@ extends Control
 ## and: H the panel, E all effects off / on (to compare), F2 a wave of swordsmen, F3 archers,
 ## F4 a general, F6 god mode, Esc quit.
 
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const MapArt := preload("res://scripts/world/map_art.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const Campaign := preload("res://scripts/core/campaign.gd")
-const Hero := preload("res://scripts/world/hero.gd")
-const FollowCamera := preload("res://scripts/world/follow_camera.gd")
-const MapPeople := preload("res://scripts/world/map_people.gd")
-const JavaRandom := preload("res://scripts/sim/java_random.gd")
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const MapHud := preload("res://scripts/ui/map_hud.gd")
-const Autopilot := preload("res://scripts/sim/autopilot.gd")
-const MapEffects := preload("res://scripts/world/map_effects.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const CombatFeel := preload("res://scripts/world/combat_feel.gd")
-const FeelPanel := preload("res://lab/feel_panel.gd")
-
 const LORD := 1
 const MISSION := 0
 const WAVE := 3  # swordsmen in a wave
@@ -75,7 +59,7 @@ var _gold_tex: Texture2D = preload("res://assets/original/ui/gold.png")
 
 
 func _ready() -> void:
-	theme = UiTheme.build()
+	theme = UiTheme.theme(UiTheme.THEME)
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	tick = Settings.tick_seconds()
 	var bg := ColorRect.new()
@@ -117,6 +101,7 @@ func _ready() -> void:
 	panel.lab = self
 	add_child(panel)
 	help = Label.new()
+	# gdlint:ignore = max-line-length
 	help.text = "H панель · E эффекты вкл/выкл · F2 мечники · F3 лучники · F4 генерал · F6 бессмертие · Tab автоохота · Esc выход"
 	help.add_theme_font_size_override("font_size", 13)
 	help.position = Vector2(12, 78)
@@ -296,7 +281,9 @@ func _update_view(t: float) -> void:
 	var n := 0
 	for k in feel.on:
 		n += 1 if feel.on[k] else 0
-	status.text = "Эффекты: ВКЛ" if n == feel.on.size() else ("Эффекты: ВЫКЛ" if n == 0 else "Эффекты: часть")
+	status.text = (
+		"Эффекты: ВКЛ" if n == feel.on.size() else ("Эффекты: ВЫКЛ" if n == 0 else "Эффекты: часть")
+	)
 	status.modulate = Color(0.6, 1.0, 0.6) if n > 0 else Color(1.0, 0.6, 0.6)
 	people.update(t, _anim_dt, tick, feel)
 	_anim_dt = 0.0
@@ -345,7 +332,9 @@ func _place_loot() -> void:
 		s.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 		s.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
 		world.add_child(s)
-		s.global_position = Hero.px_to_world(Vector2(d.pos)) + Vector3(0.0, s.region_rect.size.y / 54.0, 0.0)
+		s.global_position = (
+			Hero.px_to_world(Vector2(d.pos)) + Vector3(0.0, s.region_rect.size.y / 54.0, 0.0)
+		)
 		loot[d] = s
 
 

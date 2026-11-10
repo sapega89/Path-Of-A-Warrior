@@ -1,9 +1,5 @@
 extends "res://tests/test_case.gd"
 
-const Profile := preload("res://scripts/core/profile.gd")
-const NewGame := preload("res://scripts/screens/new_game_screen.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
 const TEST_PATH := "user://test_new_game.json"
 
 
@@ -24,21 +20,21 @@ func test_head_and_difficulty_are_kept() -> void:
 func test_new_game_steps() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = NewGame.new()
+	var screen: Control = Router.make(Router.SCREENS["new_game"])
 	root.add_child(screen)
-	eq(screen.step, NewGame.Step.DIFFICULTY, "the difficulty first")
+	eq(screen.step, NewGameScreen.Step.DIFFICULTY, "the difficulty first")
 	screen.choose_difficulty(0)
 	screen._confirmed()
-	eq(screen.step, NewGame.Step.HERO, "then the face")
+	eq(screen.step, NewGameScreen.Step.HERO, "then the face")
 	screen.choose_head(3)
-	eq(screen.step, NewGame.Step.NAME, "then the name")
+	eq(screen.step, NewGameScreen.Step.NAME, "then the name")
 	screen.name_edit.text = ""
 	check(not screen.submit_name(), "a name is needed")
 	screen.name_edit.text = "Ivan7!"
 	screen._name_changed(screen.name_edit.text)
 	eq(screen.name_edit.text, "Ivan", "only letters")
 	check(screen.submit_name(), "taken")
-	eq(screen.step, NewGame.Step.POINTS, "then the points")
+	eq(screen.step, NewGameScreen.Step.POINTS, "then the points")
 	for i in 5:
 		screen.spend(Profile.Stat.ATTACK)
 	eq(screen.profile.stat_points, 0, "all five spent")

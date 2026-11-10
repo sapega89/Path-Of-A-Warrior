@@ -1,7 +1,8 @@
+class_name OnlineBattle
 extends RefCounted
 ## One online battle on this device: what the server's pushes say (server/room.gd), played
 ## back step by step as the game's battle screen does it in pyport (pow/game/online), one step
-## every TICK_MS. The screen (scripts/screens/online_battle_screen.gd) draws what is here and
+## every TICK_MS. The screen (screens/online_battle/online_battle_screen.gd) draws what is here and
 ## passes the keys on.
 ##
 ## Places are on the original's 240 x 320 screen: a fighter of the left team (slot % 2 == 0)
@@ -11,8 +12,9 @@ extends RefCounted
 ## The steps: ROOM (the fighters come), STAGE_INTRO (a mission's stage, then mp_intro_done),
 ## QUOTES, then each round ROUND (mp_ready) -> CHOOSE (10 s: Left Defend, Right Attack, Up
 ## Evade, Down a skill) -> SKILLS -> TARGET -> BAR (the timing bar) -> SENT (mp_turn) ->
-## REVEAL (everyone's card) -> TURN (each record played back) -> ROUND ... -> OVER (mp_ready)
-## -> STAGE_END (mp_stage_next) or RESULT.
+## REVEAL (everyone's card) -> TURN (each record played back: scripts/net/battle_playback.gd)
+## -> ROUND ... -> OVER (mp_ready) -> STAGE_END (mp_stage_next) or RESULT. The fighters are
+## OnlineFighter (scripts/net/online_fighter.gd).
 
 const W := 240
 const H := 320
@@ -58,53 +60,6 @@ const REACT_HIT := 1
 const REACT_DEFENDED := 4
 const REACT_EVADE := 5
 
-
-class Fighter:
-	var present := false
-	var slot := 0
-	var name := ""
-	var alt_name := ""
-	var level := 1
-	var wins := 0
-	var losses := 0
-	var hp := 0
-	var max_hp := 1
-	var mp := 0
-	var weapon := 0
-	var face := 0
-	var kind := PLAYER
-	var quote_start := ""
-	var quote_win := ""
-	var x := 0
-	var y := 0
-	var frame := 0
-	var anim := 0
-	var anim_tick := 0
-	var anim_len := 0
-	var hp_target := 0
-	var mp_target := 0
-	var hp_step := 0
-	var mp_step := 0
-	var hp_delta := 0
-	var blink := 0
-	var status := 99  # 11..13: a soul's aura (its action), 99 none
-	var status_ticks := 0
-	## How high over the ground the fighter is now, in pixels: the part of an animation's
-	## up-and-down that is a leap, not a step along the ground (the 2.5D screen shows it as
-	## height; y stays as on the original screen).
-	var lift := 0
-	var leap_from := 0
-
-	func team() -> int:
-		return slot % 2
-
-	func row() -> int:
-		return slot / 2
-
-	func mirrored() -> bool:
-		return slot % 2 != 0
-
-
 ## send(msg): a request of the battle to the server (mp_ready, mp_turn, ...), no answer needed.
 var send: Callable
 var rng := RandomNumberGenerator.new()
@@ -121,7 +76,7 @@ var via := ""
 var bg := 0
 var mode := 0  # 0 1-on-1, 1 2-on-2, 2 Solo Mission
 var my_slot := 0
-var fighters: Array[Fighter] = []
+var fighters: Array[OnlineFighter] = []
 var allies_alive := 0
 var enemies_alive := 0
 var round_no := 0
@@ -178,7 +133,7 @@ func _init(request: Callable, me: Dictionary = {}) -> void:
 	anim_lengths = tables.get("anim_length", [])
 	steps = tables.get("anim_steps", [])
 	for i in 4:
-		fighters.append(Fighter.new())
+		fighters.append(OnlineFighter.new())
 	wins = int(me.get("wins", 0))
 	losses = int(me.get("losses", 0))
 	for s in me.get("slots", []):
@@ -252,7 +207,7 @@ func _join(w: Dictionary) -> void:
 		i += 1
 	if i >= 4:
 		return
-	var f := Fighter.new()
+	var f := OnlineFighter.new()
 	f.present = true
 	f.slot = int(w.get("slot", 0))
 	f.name = str(w.get("name", ""))
@@ -263,7 +218,9 @@ func _join(w: Dictionary) -> void:
 	f.max_hp = maxi(1, f.hp)
 	f.weapon = clampi(int(w.get("weapon", 0)), 0, 1)
 	f.face = clampi(int(w.get("face", 0)), 0, 3)
-	f.kind = MONSTER if bool(w.get("monster", false)) else (CPU if bool(w.get("cpu", false)) else PLAYER)
+	f.kind = (
+		MONSTER if bool(w.get("monster", false)) else (CPU if bool(w.get("cpu", false)) else PLAYER)
+	)
 	f.quote_start = str(w.get("quote_start", ""))
 	f.quote_win = str(w.get("quote_win", ""))
 	f.mp = 0
@@ -276,7 +233,7 @@ func _join(w: Dictionary) -> void:
 		enemies_alive += 1
 
 
-func place(f: Fighter) -> void:
+func place(f: OnlineFighter) -> void:
 	f.x = 42
 	f.y = CY + 65
 	if mode != 0:
@@ -305,14 +262,14 @@ func tick() -> void:
 	match state:
 		ROOM:
 			state_ticks = maxi(state_ticks, 2)
-			_idle_all()
+			BattlePlayback.idle_all(self)
 		STAGE_INTRO:
-			_idle_all()
+			BattlePlayback.idle_all(self)
 			if state_ticks == 1500 / TIME_MS:
 				send.call({"t": "mp_intro_done"})
 		QUOTES:
 			state_ticks = maxi(state_ticks, 2)
-			_idle_all()
+			BattlePlayback.idle_all(self)
 			if state_ticks == 2500 / TIME_MS:
 				round_no = 0
 				set_state(ROUND)
@@ -327,19 +284,19 @@ func tick() -> void:
 				if exit_ticks >= 15000 / TIME_MS:
 					exit_prompt = false
 			else:
-				_idle_all()
+				BattlePlayback.idle_all(self)
 		SKILLS:
 			if state_ticks < 2:
 				state_ticks = 2
 				skill_cursor = 0
-			_idle_all()
+			BattlePlayback.idle_all(self)
 		TARGET:
 			if state_ticks < 2:
 				state_ticks = 2
 				_first_target()
-			_idle_all()
+			BattlePlayback.idle_all(self)
 		BAR:
-			_idle_all()
+			BattlePlayback.idle_all(self)
 			if state_ticks < 2:
 				state_ticks = 2
 				if chosen_action > 2:
@@ -347,37 +304,43 @@ func tick() -> void:
 				else:
 					_start_bar()
 		SENT:
-			_idle_all()
+			BattlePlayback.idle_all(self)
 			if state_ticks < 2:
 				state_ticks = 2
 				if chosen_action <= 2 and bar_shown and hit_score != 20:
 					sounds.append(0)  # a hit on the bar
 			elif state_ticks == 4:
-				send.call({"t": "mp_turn", "target": fighters[target_cursor].slot,
-					"action": chosen_action, "hit": hit_score})
+				send.call(
+					{
+						"t": "mp_turn",
+						"target": fighters[target_cursor].slot,
+						"action": chosen_action,
+						"hit": hit_score
+					}
+				)
 		REVEAL:
 			state_ticks = maxi(state_ticks, 2)
-			_idle_all()
+			BattlePlayback.idle_all(self)
 			if state_ticks >= 4:
 				turn_rec = 0
-				_next_record()
+				BattlePlayback.next_record(self)
 		NO_BATTLE:
-			_idle_all()
+			BattlePlayback.idle_all(self)
 			if state_ticks < 2:
 				state_ticks = 2
 			elif state_ticks == 1000 / TIME_MS:
 				set_state(ROUND)
 		TURN_START:
-			_idle_all()
-			_reset_turn()
+			BattlePlayback.idle_all(self)
+			BattlePlayback.reset_turn(self)
 			set_state(TURN)
 		TURN:
-			_turn_fighters()
-			_damage()
+			BattlePlayback.turn_fighters(self)
+			BattlePlayback.damage(self)
 			anim_frame += 1
-			_step_turn()
+			BattlePlayback.step_turn(self)
 		OVER:
-			_idle_all()
+			BattlePlayback.idle_all(self)
 			if state_ticks < 2:
 				state_ticks = 2
 				send.call({"t": "mp_ready"})
@@ -387,7 +350,7 @@ func tick() -> void:
 			if state_ticks < 5:
 				state_ticks = 5
 				sounds.append(5 if battle_won == 1 else 4)
-			_idle_all()
+			BattlePlayback.idle_all(self)
 	if prev_state == state and state_ticks < 25000:
 		state_ticks += 1
 
@@ -424,7 +387,7 @@ func _round() -> void:
 		_tick_statuses()
 	elif state_ticks == 1000 / TIME_MS:
 		send.call({"t": "mp_ready"})
-	_idle_all()
+	BattlePlayback.idle_all(self)
 
 
 func _tick_statuses() -> void:
@@ -438,7 +401,7 @@ func _tick_statuses() -> void:
 func _stage_end() -> void:
 	if state_ticks < 2:
 		state_ticks = 2
-	_idle_all()
+	BattlePlayback.idle_all(self)
 	if state_ticks == 1000 / TIME_MS:
 		for i in range(1, 4):
 			var f := fighters[i]
@@ -589,7 +552,9 @@ func _key_skills(k: String) -> void:
 func _key_target(k: String) -> void:
 	if k == "up" or k == "down":
 		var cur := fighters[target_cursor]
-		var from := 0 if chosen_action in [9, 10] else (1 if chosen_action in [0, 3, 4, 5, 6, 7] else 4)
+		var from := (
+			0 if chosen_action in [9, 10] else (1 if chosen_action in [0, 3, 4, 5, 6, 7] else 4)
+		)
 		for i in range(from, 4):
 			var f := fighters[i]
 			if f.present and f.team() == cur.team() and f.slot != cur.slot:
@@ -605,389 +570,6 @@ func _key_target(k: String) -> void:
 			set_state(CHOOSE)
 
 
-# --- playing a round back -------------------------------------------------------------------
-func _next_record() -> void:
-	if records.is_empty():
-		set_state(NO_BATTLE)
-	elif turn_rec < records.size():
-		set_state(TURN_START)
-	else:
-		set_state(ROUND)
-
-
-func _r(field: String) -> int:
-	return int(rec.get(field, 0))
-
-
-func _update_bars(f: Fighter) -> void:
-	f.hp_delta = f.hp_target - f.hp
-	f.hp_step = f.hp_delta / 5
-	if f.hp_step == 0:
-		f.hp_step = signi(f.hp_target - f.hp)
-	f.mp_step = (f.mp_target - f.mp) / 5
-	if f.mp_step == 0:
-		f.mp_step = signi(f.mp_target - f.mp)
-
-
-func _reset_turn() -> void:
-	rec = records[turn_rec]
-	anim_frame = 0
-	target2 = -1
-	damage_tick = -1
-	for i in 4:
-		var f := fighters[i]
-		if not f.present:
-			continue
-		f.anim = 0
-		f.anim_tick = 0
-		f.anim_len = 0
-		f.hp_delta = 0
-		if f.slot == _r("actor"):
-			attacker = i
-			f.hp_target = _r("actor_hp")
-			f.mp_target = _r("actor_mp")
-			_update_bars(f)
-		if f.slot == _r("target"):
-			target = i
-			f.hp_target = _r("target_hp")
-			f.mp_target = _r("target_mp")
-			_update_bars(f)
-			if _r("result") == RES_HIT:
-				target_reaction = REACT_DEFENDED if turn_actions[i] == 1 else REACT_HIT
-			elif _r("result") == RES_EVADED:
-				target_reaction = REACT_EVADE
-		if _r("has2nd") > 0 and f.slot == _r("target2"):
-			target2 = i
-			f.hp_target = _r("target2_hp")
-			f.mp_target = _r("target2_mp")
-			_update_bars(f)
-			if _r("result2") == RES_HIT:
-				target2_reaction = REACT_DEFENDED if turn_actions[i] == 1 else REACT_HIT
-			elif _r("result2") == RES_EVADED:
-				target2_reaction = REACT_EVADE
-	var a := fighters[attacker]
-	var action := _r("action")
-	if action in [3, 4, 5, 6, 7, 8]:
-		a.anim = 8  # the ready pose
-	elif action in [2, 9, 10]:
-		a.anim = 12  # a heal
-	elif action in [11, 12, 13]:
-		a.anim = 13  # a soul
-	elif action == 0:
-		a.anim = 2  # the run to the target
-		_run_to_target(a)
-	anim_length = int(anim_lengths[a.anim])
-
-
-func _run_to_target(a: Fighter) -> void:
-	run_dx = (W - 67 - 42) / int(anim_lengths[a.anim])
-	run_dy = 0
-	if mode != 0 and a.row() != _r("target") / 2:
-		run_dy = (46 if a.row() == 0 else -46) / int(anim_lengths[a.anim])
-
-
-## The fighters during a record: the others first, then the one acting.
-func _turn_fighters() -> void:
-	for i in 4:
-		var f := fighters[i]
-		if not f.present or i == attacker:
-			continue
-		match f.anim:
-			0:
-				_idle(i)
-			1, 4:
-				var id := f.anim + (21 if f.kind == MONSTER else 0)
-				f.frame = int(first_frame[id])
-				f.x -= 2
-			5:
-				f.frame = int(first_frame[26 if f.kind == MONSTER else 5])
-				if f.anim_tick == 0:
-					f.x -= 6
-					sounds.append(3)
-				elif f.anim_tick == 1:
-					f.x -= 2
-			6:
-				_dying(f)
-			_:
-				_anim(f)
-	var a := fighters[attacker]
-	if a.anim == 2 or a.anim == 28:
-		a.frame = int(first_frame[23 if a.kind == MONSTER else 2])
-		a.x += run_dx
-		a.y += run_dy
-	elif a.anim == 6:
-		_dying(a)
-	else:
-		_anim(a)
-
-
-func _dying(f: Fighter) -> void:
-	f.frame = int(first_frame[27 if f.kind == MONSTER else 6]) + anim_frame
-
-
-func _anim(f: Fighter) -> void:
-	var id := f.anim
-	if f.kind == MONSTER and id == 3:
-		id = 24
-	var at := anim_frame
-	if id == 12 and at >= 4:
-		at = 4
-	f.frame = int(first_frame[id]) + at
-	if id < steps.size():
-		var st: Array = steps[id]
-		if at == 0:
-			f.leap_from = f.y
-		if 3 * at + 2 < st.size():
-			f.x += _signed(int(st[3 * at + 1]))
-			f.y += _signed(int(st[3 * at + 2]))
-		# the ground under the fighter moves evenly from where the animation began to where
-		# it ends; the rest of the way up and down is height
-		var n := st.size() / 3
-		var total := 0
-		for k in n:
-			total += _signed(int(st[3 * k + 2]))
-		if n > 0:
-			f.lift = f.leap_from + total * mini(at + 1, n) / n - f.y
-
-
-static func _signed(v: int) -> int:
-	return -(v & 0x7F) if v & 0x80 else v & 0x7F
-
-
-## The pose of a fighter standing (blinking), or lying when fallen.
-func _idle(i: int) -> void:
-	var f := fighters[i]
-	if f.hp > 0:
-		if state_ticks % 4 == f.blink:
-			f.frame = (state_ticks / 4) % 2
-		if f.frame != 0 and f.frame != 1:
-			f.frame = 0
-	else:
-		f.frame = int(first_frame[6]) + 1
-
-
-func _idle_all() -> void:
-	for i in 4:
-		if fighters[i].present:
-			_idle(i)
-
-
-## The HP and MP of those in the record move to what the record says, the
-## change shown over them.
-func _damage() -> void:
-	if damage_tick < 0:
-		return
-	for i in _involved():
-		var f := fighters[i]
-		if f.hp != f.hp_target:
-			f.hp = maxi(0, f.hp + f.hp_step)
-		if f.mp != f.mp_target:
-			f.mp = maxi(0, f.mp + f.mp_step)
-		if f.hp_delta != 0:
-			var sx := (W - f.x) if f.mirrored() else f.x
-			damage_shown.append([sx, f.y, 40 + 2 * damage_tick, f.hp_delta])
-	for i in _involved():
-		if fighters[i].hp == 0:
-			fighters[i].hp = 1  # still standing until the record's end
-	damage_tick += 1
-
-
-## The fighters in the record played back: the one acting and its targets, each once.
-func _involved() -> Array:
-	var out: Array = []
-	for i in [attacker, target, target2]:
-		if i >= 0 and fighters[i].present and not out.has(i):
-			out.append(i)
-	return out
-
-
-func _step_turn() -> void:
-	if damage_tick >= 5:
-		damage_tick = -1
-		for i in _involved():
-			fighters[i].hp = fighters[i].hp_target
-			fighters[i].mp = fighters[i].mp_target
-	var a := fighters[attacker]
-	if anim_frame >= anim_length:
-		anim_frame = 0
-		match a.anim:
-			2, 17, 18, 19:
-				_after_run_in()
-			8:
-				_after_ready()
-			20:
-				if _r("action") == 8:
-					fighters[attacker].anim = 16
-			3, 9, 10, 11, 14, 15, 16:
-				_after_strike()
-			12, 13, 28:
-				_after_run_back()
-			6:
-				turn_rec += 1
-				_next_record()
-		if state != TURN:
-			return
-		anim_length = int(anim_lengths[fighters[attacker].anim])
-	if fighters[attacker].anim != 6:
-		_reactions()
-
-
-func _after_run_in() -> void:
-	var a := fighters[attacker]
-	a.x = W - 67
-	a.y = CY + 65
-	if mode != 0:
-		a.y += (-1 if _r("target") / 2 == 0 else 1) * 23
-	match _r("action"):
-		3:
-			a.anim = 9
-		4:
-			a.anim = 10
-		5:
-			a.anim = 11
-		6:
-			a.anim = 14
-		7:
-			a.anim = 15
-		0:
-			a.anim = 3
-
-
-func _after_ready() -> void:
-	var a := fighters[attacker]
-	var action := _r("action")
-	if action in [3, 4, 5]:
-		a.anim = 2
-		_run_to_target(a)
-	elif action in [6, 7]:
-		if mode == 0 or _r("target") / 2 == _r("actor") / 2:
-			a.anim = 17
-		elif _r("target") / 2 == 1:
-			a.anim = 18
-		else:
-			a.anim = 19
-	elif action == 8:
-		a.anim = 20
-
-
-func _after_strike() -> void:
-	if _r("flags") == 3 and fighters[attacker].slot == _r("actor"):  # the target strikes back
-		var t := attacker
-		attacker = target
-		target = t
-		fighters[attacker].anim = 3
-		target_reaction = REACT_HIT
-		return
-	damage_tick = 0
-	if _r("flags") == 3:
-		var t := attacker
-		attacker = target
-		target = t
-		fighters[target].anim = 0
-		place(fighters[target])
-	var a := fighters[attacker]
-	a.anim = 28  # the run back
-	var length := int(anim_lengths[28])
-	run_dx = (42 - a.x) / length
-	run_dy = 0
-	if mode != 0 and a.row() != _r("target") / 2:
-		run_dy = (-46 if a.row() == 0 else 46) / length
-
-
-func _after_run_back() -> void:
-	var a := fighters[attacker]
-	place(a)
-	var fallen := -1
-	for i in 4:
-		var f := fighters[i]
-		if not f.present:
-			continue
-		if a.anim == 13 and f.team() == a.team():  # the soul's aura on the team
-			f.status = _r("action")
-			f.status_ticks = 3
-		if f.hp == 0 and f.hp_delta != 0:
-			fallen = i
-			f.anim = 6
-			if f.team() == fighters[0].team():
-				allies_alive -= 1
-			else:
-				enemies_alive -= 1
-	if fallen > 0:
-		if a.anim != 6:
-			a.anim = 0
-		attacker = fallen
-		return
-	turn_rec += 1
-	_next_record()
-
-
-## When the target flinches, dodges or falls back, and the sounds.
-func _reactions() -> void:
-	var a := fighters[attacker]
-	if a.anim != 12 and a.anim != 13 and _r("flags") != 3:
-		for i in [target, target2]:
-			if i >= 0 and fighters[i].anim != 0:
-				var f := fighters[i]
-				f.anim_tick += 1
-				if f.anim_tick >= f.anim_len:
-					f.anim = 0
-					place(f)
-	match a.anim:
-		3, 9, 10, 11, 14:
-			if target_reaction in [REACT_HIT, REACT_DEFENDED]:
-				if a.anim == 11 and anim_frame == 17:
-					_start_reaction()
-					fighters[target].anim_len = 3
-					return
-				if anim_frame % 2 != 1 or (a.anim == 11 and anim_frame > 10):
-					return
-				_start_reaction()
-				fighters[target].anim_len = 2
-			elif target_reaction == REACT_EVADE:
-				if _r("flags") == 3:
-					if anim_frame != 0:
-						return
-					var t := fighters[target]
-					t.anim = 5
-					t.anim_tick = 0
-					t.anim_len = anim_length
-				else:
-					if anim_frame % 2 != 1:
-						return
-					_start_reaction()
-					fighters[target].anim_len = 2
-		15:
-			if target_reaction in [REACT_HIT, REACT_DEFENDED] and anim_frame == 2:
-				_start_reaction()
-				fighters[target].anim_len = 4
-		16:
-			if target_reaction in [REACT_HIT, REACT_DEFENDED] and anim_frame == 8:
-				_start_reaction()
-				fighters[target].anim_len = 3
-				if target2 != -1:
-					var t2 := fighters[target2]
-					t2.anim = target2_reaction
-					t2.anim_tick = 0
-					t2.anim_len = 3
-		12:
-			if anim_frame == 4:
-				damage_tick = 0
-				sounds.append(6)
-		13:
-			if (anim_frame == 4 and _r("action") == 13) or anim_frame == 7:
-				sounds.append(5)
-			elif anim_frame == 5:
-				damage_tick = 0
-
-
-func _start_reaction() -> void:
-	var t := fighters[target]
-	t.anim = target_reaction
-	t.anim_tick = 0
-	var a := fighters[attacker]
-	sounds.append(2 if a.anim == 16 or a.anim == 15 else 0)
-
-
 # --- what the screen shows ------------------------------------------------------------------
 ## The card of fighter i this step: the action it shows, or -1.
 func card_action(i: int) -> int:
@@ -999,11 +581,11 @@ func card_action(i: int) -> int:
 	if state != TURN:
 		return -1
 	if i == attacker:
-		return _r("action")
+		return BattlePlayback.field(self, "action")
 	if i == target:
-		return _r("result")
+		return BattlePlayback.field(self, "result")
 	if i == target2:
-		return _r("result2")
+		return BattlePlayback.field(self, "result2")
 	return -1
 
 

@@ -567,7 +567,7 @@ tests/           headless-ранер (на основі flow_test.gd) — зап
 
 **TD-14 (P3) — Синхронізувати документацію та мову UI.** ~2 год
 - **Мета:** документи відповідають коду, рядки UI — англійські з оригіналу.
-- **Файли:** `docs/DESIGN.md`, `docs/TECHNICAL.md`, `vault/01`, `vault/05`, `GODOT_README.md`, рядки RU/UK у `*.gd`.
+- **Файли:** `docs/DESIGN.md`, `docs/TECHNICAL.md`, `docs/history/vault/01`, `docs/history/vault/05`, `GODOT_README.md`, рядки RU/UK у `*.gd`.
 - **Готово, коли:** усі рядки таблиці §6 закриті; у `scripts/` немає кириличних UI-рядків (лише коментарі).
 
 **Разом:** близько 70 год. Мінімум перед геймплеєм (TD-1…TD-5, TD-7) — близько 33 год.

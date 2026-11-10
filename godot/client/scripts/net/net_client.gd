@@ -1,3 +1,4 @@
+class_name NetClient
 extends RefCounted
 ## One connection to the game's server (scripts/net/protocol.gd): ENet with DTLS, the
 ## server's certificate checked against the one the game was given. poll() every frame;
@@ -5,8 +6,6 @@ extends RefCounted
 ## connecting go out once connected). When the connection fails or drops, every waiting
 ## request gets {"ok": false, "err": "offline"}. A message from the server that answers no
 ## request (a push: chat, kicked) goes to on_push.
-
-const Protocol := preload("res://scripts/net/protocol.gd")
 
 enum State { CLOSED, CONNECTING, CONNECTED }
 

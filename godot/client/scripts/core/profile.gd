@@ -1,3 +1,5 @@
+# gdlint: disable=max-public-methods
+class_name Profile
 extends RefCounted
 ## The hero between missions: level, exp, gold, stats, skills, gear and backpack, quick slots,
 ## the friendship of the generals and the missions done. Kept in user://hero.json. A mission
@@ -7,7 +9,6 @@ extends RefCounted
 
 const PATH := "user://hero.json"
 const CAMPAIGN_PATH := "res://data/campaign.json"
-const Items := preload("res://scripts/core/items.gd")
 ## A new hero: HP, MP, attack, defence, and the free stat points.
 const BASE_HP := 30
 const BASE_MP := 10
@@ -22,7 +23,9 @@ const PROGRESS_PER_WIN := 5
 const START_LORDS_OPEN := 35113052110447
 const LORD_COUNT := 45
 ## Where the hero goes after ending i (0: back to the start, the progress of the rulers lost).
-const NEXT_PLACE := [0, 0, 0, 0, 0, 0, 11, 8, 0, 15, 15, 20, 17, 19, 19, 0, 30, 22, 35, 38, 39, 33, 33, 44]
+const NEXT_PLACE := [
+	0, 0, 0, 0, 0, 0, 11, 8, 0, 15, 15, 20, 17, 19, 19, 0, 30, 22, 35, 38, 39, 33, 33, 44
+]
 const ENDING_BASE := 200
 const SCARF := 502  # Katria's scarf: the reward of ending 2, needed to see ending 3
 ## What one stat point adds: HP, MP, attack, defence.
@@ -34,7 +37,8 @@ const HERO_BASES := [[30, 10, 5, 4], [40, 7, 3, 5], [25, 16, 4, 4], [25, 10, 7, 
 const HERO_CLASSES := ["Cossack", "Serdiuk", "Kharakternyk", "Haidamaka"]
 ## Resetting the attributes costs gold per hero level, or one of these elixirs.
 const RESPEC_GOLD_PER_LEVEL := 100
-const RESPEC_ITEMS := [434, 435, 436, 437]  # St John's Wort Tincture, Cornflower Tincture, Rapids / Forest Remedy
+## St John's Wort Tincture, Cornflower Tincture, Rapids / Forest Remedy
+const RESPEC_ITEMS := [434, 435, 436, 437]
 ## The briefing's advice: 28 pairs of lines (talk.json "briefing"), the first 10 in turn.
 const BRIEFING_PAIRS := 28
 const BRIEFINGS_IN_TURN := 10
@@ -206,10 +210,14 @@ func use_item(i: int) -> String:
 	if Items.STAT_ITEMS.has(id):
 		var s: Dictionary = Items.STAT_ITEMS[id]
 		match str(s.stat):
-			"hp": base_hp += int(s.add)
-			"mp": base_mp += int(s.add)
-			"defense": base_defense += int(s.add)
-			"attack": base_attack += int(s.add)
+			"hp":
+				base_hp += int(s.add)
+			"mp":
+				base_mp += int(s.add)
+			"defense":
+				base_defense += int(s.add)
+			"attack":
+				base_attack += int(s.add)
 		backpack[i] = Items.empty()
 		return str(s.text)
 	var place := Items.place(id)
@@ -360,8 +368,9 @@ func apply_to(sim: RefCounted) -> void:
 ## rng; what does not fit in the backpack is lost), used potions, friendship; if won, the
 ## mission's gold and exp, its progress and its place among the missions done.
 ## Returns the levels gained.
-func take_from(sim: RefCounted, lord_id: int, mission: int, ruler_id: int,
-		rng: RandomNumberGenerator = null) -> int:
+func take_from(
+	sim: RefCounted, lord_id: int, mission: int, ruler_id: int, rng: RandomNumberGenerator = null
+) -> int:
 	gold += int(sim.gold)
 	if rng == null:
 		rng = RandomNumberGenerator.new()
@@ -389,7 +398,9 @@ func take_from(sim: RefCounted, lord_id: int, mission: int, ruler_id: int,
 ## reward is 200 + i (lost) ends the story with ending i: the hero goes to that ending's
 ## place, gets the mission's gold anyway when lost, sometimes a gear (Katria's scarf
 ## after ending 2), and one more lord opens. Returns the ending reached, or -1.
-func advance(sim: RefCounted, lord_id: int, info: Dictionary, rng: RandomNumberGenerator = null) -> int:
+func advance(
+	sim: RefCounted, lord_id: int, info: Dictionary, rng: RandomNumberGenerator = null
+) -> int:
 	if rng == null:
 		rng = RandomNumberGenerator.new()
 	var general := int(info.get("general", 0))
@@ -435,6 +446,7 @@ func advance(sim: RefCounted, lord_id: int, info: Dictionary, rng: RandomNumberG
 
 
 # ---- the Blacksmith ------------------------------------------------------------------------
+
 
 ## New things in the shop (after a mission won): its potions and scrolls, and 17 gears of the
 ## tiers the hero's level finds, the cheapest first.
@@ -654,13 +666,34 @@ func is_done(lord_id: int, mission: int) -> bool:
 
 
 func to_dict() -> Dictionary:
-	return {"name": hero_name, "head": head, "difficulty": difficulty, "level": level, "exp": experience, "fame": fame, "gold": gold, "stat_points": stat_points,
-		"base": [base_hp, base_mp, base_attack, base_defense], "equipped": equipped,
+	return {
+		"name": hero_name,
+		"head": head,
+		"difficulty": difficulty,
+		"level": level,
+		"exp": experience,
+		"fame": fame,
+		"gold": gold,
+		"stat_points": stat_points,
+		"base": [base_hp, base_mp, base_attack, base_defense],
+		"equipped": equipped,
 		"backpack": backpack,
-		"skill_levels": skill_levels, "hotkeys": hotkeys, "quick_slots": quick_slots,
-		"quick_keys": quick_keys, "friendship": friendship, "can_visit": can_visit,
-		"progress": progress, "done": done, "place": place, "heading": heading, "lords_open": lords_open,
-		"endings": endings, "briefings": briefings, "shop": shop, "on_map": on_map}
+		"skill_levels": skill_levels,
+		"hotkeys": hotkeys,
+		"quick_slots": quick_slots,
+		"quick_keys": quick_keys,
+		"friendship": friendship,
+		"can_visit": can_visit,
+		"progress": progress,
+		"done": done,
+		"place": place,
+		"heading": heading,
+		"lords_open": lords_open,
+		"endings": endings,
+		"briefings": briefings,
+		"shop": shop,
+		"on_map": on_map
+	}
 
 
 func from_dict(d: Dictionary) -> void:
@@ -713,16 +746,25 @@ func save_keeping_map(path: String = PATH) -> bool:
 ## Saves a mission on its map (its room cleared): what was picked up so far goes to the hero
 ## (and is taken from the mission, so its end does not give it twice) and the place in it is
 ## kept for Continue.
-func save_on_map(sim: RefCounted, lord_id: int, mission: int, ruler_id: int,
-		path: String = PATH) -> bool:
+func save_on_map(
+	sim: RefCounted, lord_id: int, mission: int, ruler_id: int, path: String = PATH
+) -> bool:
 	take_from(sim, lord_id, mission, ruler_id)
 	sim.gold = 0
 	sim.items.clear()
 	var at: Vector2i = sim.hero.pos
-	on_map = {"lord": lord_id, "mission": mission,
-		"x": at.x / 27 / 7 * 7 + 4, "y": at.y / 27 / 7 * 7 + 4,
-		"hp": int(sim.hero.hp), "mp": int(sim.hero.mp), "rooms": int(sim.rooms_visited),
-		"exp": int(sim.mission_exp), "kills": int(sim.kills), "ticks": int(sim.play_ticks)}
+	on_map = {
+		"lord": lord_id,
+		"mission": mission,
+		"x": at.x / 27 / 7 * 7 + 4,
+		"y": at.y / 27 / 7 * 7 + 4,
+		"hp": int(sim.hero.hp),
+		"mp": int(sim.hero.mp),
+		"rooms": int(sim.rooms_visited),
+		"exp": int(sim.mission_exp),
+		"kills": int(sim.kills),
+		"ticks": int(sim.play_ticks)
+	}
 	return _write(path)
 
 

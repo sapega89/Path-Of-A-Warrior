@@ -2,10 +2,6 @@ extends "res://tests/test_case.gd"
 ## Save on the map (pause menu): once the room is cleared, the mission is saved with what was
 ## picked up, and Continue comes back to that room.
 
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
-const MainMenu := preload("res://scripts/screens/main_menu.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-
 
 func test_save_on_the_map_and_continue() -> void:
 	var kept := FileAccess.get_file_as_string(Profile.PATH)  # the hero of this machine, put back after
@@ -14,7 +10,7 @@ func test_save_on_the_map_and_continue() -> void:
 	p.save()
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var screen: Control = MissionScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	var sim: RefCounted = screen.sim
 	sim.waves = [201, 2]
@@ -37,7 +33,7 @@ func test_save_on_the_map_and_continue() -> void:
 	screen.free()
 
 	Router.params = {"lord": 1, "mission": 0, "seed": 2, "resume": true}
-	var again: Control = MissionScreen.new()
+	var again: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(again)
 	eq(again.sim.hero.hp, 10, "Continue: the HP of the save")
 	eq(again.sim.kills, 7, "and its kills")

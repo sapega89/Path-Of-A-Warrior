@@ -1,3 +1,4 @@
+class_name Glyphs
 extends RefCounted
 ## The names of an action's keys and buttons, for the hints and the HUD, read from InputMap (so
 ## a key bound later is named as it is bound).
@@ -12,7 +13,8 @@ extends RefCounted
 ## fill(text) puts the name of every {action} into a text: "{ui_accept}: OK · {ui_cancel}: back"
 ## is "Enter: OK · Esc: back" after the keyboard and "A: OK · B: back" after an Xbox pad. Two
 ## words stand for a group of keys: {ui_move} (the menus' arrows and WASD, or the d-pad and the
-## stick) and {move} (the hero's: WASD and the arrows, or the left stick). On touch the keyboard's names are used (a text for touch says
+## stick) and {move} (the hero's: WASD and the arrows, or the left stick). On touch the keyboard's
+## names are used (a text for touch says
 ## its own words: the _touch strings). {ui_click} and {ui_back_click} are OK and BACK, with
 ## "/ click" and "/ right click" after them on the keyboard.
 ##
@@ -31,49 +33,97 @@ const CLICKS := {
 const BRANDS := ["xbox", "ps", "nintendo", "generic"]
 ## Each brand's names: the buttons by JOY_BUTTON_*, then "lt" / "rt" for the triggers.
 const NAMES := {
-	"xbox": {
-		JOY_BUTTON_A: "A", JOY_BUTTON_B: "B", JOY_BUTTON_X: "X", JOY_BUTTON_Y: "Y",
-		JOY_BUTTON_LEFT_SHOULDER: "LB", JOY_BUTTON_RIGHT_SHOULDER: "RB",
-		JOY_BUTTON_LEFT_STICK: "LS", JOY_BUTTON_RIGHT_STICK: "RS",
-		JOY_BUTTON_BACK: "View", JOY_BUTTON_START: "Menu", "lt": "LT", "rt": "RT",
+	"xbox":
+	{
+		JOY_BUTTON_A: "A",
+		JOY_BUTTON_B: "B",
+		JOY_BUTTON_X: "X",
+		JOY_BUTTON_Y: "Y",
+		JOY_BUTTON_LEFT_SHOULDER: "LB",
+		JOY_BUTTON_RIGHT_SHOULDER: "RB",
+		JOY_BUTTON_LEFT_STICK: "LS",
+		JOY_BUTTON_RIGHT_STICK: "RS",
+		JOY_BUTTON_BACK: "View",
+		JOY_BUTTON_START: "Menu",
+		"lt": "LT",
+		"rt": "RT",
 	},
-	"ps": {
-		JOY_BUTTON_A: "glyph.ps_cross", JOY_BUTTON_B: "glyph.ps_circle",
-		JOY_BUTTON_X: "glyph.ps_square", JOY_BUTTON_Y: "glyph.ps_triangle",
-		JOY_BUTTON_LEFT_SHOULDER: "L1", JOY_BUTTON_RIGHT_SHOULDER: "R1",
-		JOY_BUTTON_LEFT_STICK: "L3", JOY_BUTTON_RIGHT_STICK: "R3",
-		JOY_BUTTON_BACK: "Share", JOY_BUTTON_START: "Options", "lt": "L2", "rt": "R2",
+	"ps":
+	{
+		JOY_BUTTON_A: "glyph.ps_cross",
+		JOY_BUTTON_B: "glyph.ps_circle",
+		JOY_BUTTON_X: "glyph.ps_square",
+		JOY_BUTTON_Y: "glyph.ps_triangle",
+		JOY_BUTTON_LEFT_SHOULDER: "L1",
+		JOY_BUTTON_RIGHT_SHOULDER: "R1",
+		JOY_BUTTON_LEFT_STICK: "L3",
+		JOY_BUTTON_RIGHT_STICK: "R3",
+		JOY_BUTTON_BACK: "Share",
+		JOY_BUTTON_START: "Options",
+		"lt": "L2",
+		"rt": "R2",
 	},
-	"nintendo": {
-		JOY_BUTTON_A: "B", JOY_BUTTON_B: "A", JOY_BUTTON_X: "Y", JOY_BUTTON_Y: "X",
-		JOY_BUTTON_LEFT_SHOULDER: "L", JOY_BUTTON_RIGHT_SHOULDER: "R",
-		JOY_BUTTON_LEFT_STICK: "LS", JOY_BUTTON_RIGHT_STICK: "RS",
-		JOY_BUTTON_BACK: "-", JOY_BUTTON_START: "+", "lt": "ZL", "rt": "ZR",
+	"nintendo":
+	{
+		JOY_BUTTON_A: "B",
+		JOY_BUTTON_B: "A",
+		JOY_BUTTON_X: "Y",
+		JOY_BUTTON_Y: "X",
+		JOY_BUTTON_LEFT_SHOULDER: "L",
+		JOY_BUTTON_RIGHT_SHOULDER: "R",
+		JOY_BUTTON_LEFT_STICK: "LS",
+		JOY_BUTTON_RIGHT_STICK: "RS",
+		JOY_BUTTON_BACK: "-",
+		JOY_BUTTON_START: "+",
+		"lt": "ZL",
+		"rt": "ZR",
 	},
-	"generic": {
-		JOY_BUTTON_A: "A", JOY_BUTTON_B: "B", JOY_BUTTON_X: "X", JOY_BUTTON_Y: "Y",
-		JOY_BUTTON_LEFT_SHOULDER: "LB", JOY_BUTTON_RIGHT_SHOULDER: "RB",
-		JOY_BUTTON_LEFT_STICK: "L3", JOY_BUTTON_RIGHT_STICK: "R3",
-		JOY_BUTTON_BACK: "Back", JOY_BUTTON_START: "Start", "lt": "LT", "rt": "RT",
+	"generic":
+	{
+		JOY_BUTTON_A: "A",
+		JOY_BUTTON_B: "B",
+		JOY_BUTTON_X: "X",
+		JOY_BUTTON_Y: "Y",
+		JOY_BUTTON_LEFT_SHOULDER: "LB",
+		JOY_BUTTON_RIGHT_SHOULDER: "RB",
+		JOY_BUTTON_LEFT_STICK: "L3",
+		JOY_BUTTON_RIGHT_STICK: "R3",
+		JOY_BUTTON_BACK: "Back",
+		JOY_BUTTON_START: "Start",
+		"lt": "LT",
+		"rt": "RT",
 	},
 }
 ## The shapes of PlayStation's face buttons, drawn on the HUD.
 const PS_SHAPES := {
-	JOY_BUTTON_A: "cross", JOY_BUTTON_B: "circle", JOY_BUTTON_X: "square", JOY_BUTTON_Y: "triangle",
+	JOY_BUTTON_A: "cross",
+	JOY_BUTTON_B: "circle",
+	JOY_BUTTON_X: "square",
+	JOY_BUTTON_Y: "triangle",
 }
 const DPAD := {
-	JOY_BUTTON_DPAD_UP: "glyph.dpad_up", JOY_BUTTON_DPAD_DOWN: "glyph.dpad_down",
-	JOY_BUTTON_DPAD_LEFT: "glyph.dpad_left", JOY_BUTTON_DPAD_RIGHT: "glyph.dpad_right",
+	JOY_BUTTON_DPAD_UP: "glyph.dpad_up",
+	JOY_BUTTON_DPAD_DOWN: "glyph.dpad_down",
+	JOY_BUTTON_DPAD_LEFT: "glyph.dpad_left",
+	JOY_BUTTON_DPAD_RIGHT: "glyph.dpad_right",
 }
 const DPAD_DIRS := {
-	JOY_BUTTON_DPAD_UP: Vector2.UP, JOY_BUTTON_DPAD_DOWN: Vector2.DOWN,
-	JOY_BUTTON_DPAD_LEFT: Vector2.LEFT, JOY_BUTTON_DPAD_RIGHT: Vector2.RIGHT,
+	JOY_BUTTON_DPAD_UP: Vector2.UP,
+	JOY_BUTTON_DPAD_DOWN: Vector2.DOWN,
+	JOY_BUTTON_DPAD_LEFT: Vector2.LEFT,
+	JOY_BUTTON_DPAD_RIGHT: Vector2.RIGHT,
 }
 ## Keys with a shorter or a translated name than OS.get_keycode_string() gives.
 const KEY_NAMES := {
-	KEY_ESCAPE: "Esc", KEY_SPACE: "glyph.space", KEY_KP_ENTER: "Enter",
-	KEY_UP: "glyph.up", KEY_DOWN: "glyph.down", KEY_LEFT: "glyph.left", KEY_RIGHT: "glyph.right",
-	KEY_KP_MULTIPLY: "Num *", KEY_KP_DIVIDE: "Num /",
+	KEY_ESCAPE: "Esc",
+	KEY_SPACE: "glyph.space",
+	KEY_KP_ENTER: "Enter",
+	KEY_UP: "glyph.up",
+	KEY_DOWN: "glyph.down",
+	KEY_LEFT: "glyph.left",
+	KEY_RIGHT: "glyph.right",
+	KEY_KP_MULTIPLY: "Num *",
+	KEY_KP_DIVIDE: "Num /",
 }
 const TOKEN := "\\{([a-z0-9_]+)\\}"
 

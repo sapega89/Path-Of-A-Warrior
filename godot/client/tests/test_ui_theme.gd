@@ -3,14 +3,6 @@ extends "res://tests/test_case.gd"
 ## fonts of the new art with their Cyrillic, plaques and panels, the backdrop, the coin, the
 ## HUD's orbs and plates, the exit arrows, the hero on the Gear page as a 3D figure.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const MapHud := preload("res://scripts/ui/map_hud.gd")
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
-const Gear := preload("res://scripts/screens/gear_screen.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
-const MapPeople := preload("res://scripts/world/map_people.gd")
-const TouchControls := preload("res://scripts/ui/touch_controls.gd")
 const TEST_PATH := "user://test_ui_theme.json"
 
 
@@ -23,29 +15,41 @@ func test_the_fonts_of_the_new_art() -> void:
 		check(UiTheme.font(kind) == f, "%s made once" % kind)
 	check(UiTheme.font("title").get_font_name().contains("Kurale"), "headings in Kurale")
 	check(UiTheme.font("text").get_font_name().contains("PT Sans"), "text in PT Sans")
-	var t := UiTheme.build()
+	var t: Theme = UiTheme.theme(UiTheme.THEME)
 	eq(t.default_font, UiTheme.font("text"), "the text")
 	eq(t.get_font("font", "Button"), UiTheme.font("bold"), "the buttons bold")
 	var h := UiTheme.heading("gear.title", 44)
 	check(h is Label, "a heading is a label")
-	eq(h.get_theme_font("font"), UiTheme.font("title"), "in Kurale")
-	eq(h.get_theme_color("font_color"), UiTheme.ACCENT, "brass")
+	eq(h.theme_type_variation, &"Heading", "of the theme's headings")
+	eq(t.get_font("font", "Heading"), UiTheme.font("title"), "in Kurale")
+	eq(t.get_color("font_color", "Heading"), UiTheme.ACCENT, "brass")
+	eq(h.get_theme_font_size("font_size"), 44, "its own size")
 	h.free()
 
 
 func test_plaques_and_panels() -> void:
-	var t := UiTheme.build()
+	var t: Theme = UiTheme.theme(UiTheme.THEME)
 	var normal := t.get_stylebox("normal", "Button") as StyleBoxFlat
 	check(normal.corner_radius_top_left <= 3 and normal.anti_aliasing, "hard corners, smooth edges")
 	eq(normal.border_color, UiTheme.IRON, "an iron rim")
-	eq((t.get_stylebox("pressed", "Button") as StyleBoxFlat).bg_color, UiTheme.BUTTON_PRESSED, "blood-red when pressed")
-	check(t.get_stylebox("panel", "PanelContainer") is UiTheme.PanelBox, "panels of leather with their rivets")
-	check(t.get_stylebox("embedded_border", "Window") is UiTheme.PanelBox, "and the dialogs")
+	eq(
+		(t.get_stylebox("pressed", "Button") as StyleBoxFlat).bg_color,
+		UiTheme.BUTTON_PRESSED,
+		"blood-red when pressed"
+	)
+	check(
+		t.get_stylebox("panel", "PanelContainer") is PanelBox, "panels of leather with their rivets"
+	)
+	check(t.get_stylebox("embedded_border", "Window") is PanelBox, "and the dialogs")
 	var on := t.get_icon("checked", "CheckBox")
 	var off := t.get_icon("unchecked", "CheckBox")
 	check(on != null and off != null and on != off, "the check boxes drawn")
-	var compact := UiTheme.compact()
-	eq((compact.get_stylebox("normal", "Button") as StyleBoxFlat).content_margin_top, 4.0, "lower buttons")
+	var compact: Theme = UiTheme.theme(UiTheme.COMPACT_THEME)
+	eq(
+		(compact.get_stylebox("normal", "Button") as StyleBoxFlat).content_margin_top,
+		4.0,
+		"lower buttons"
+	)
 
 
 func test_the_backdrop_and_the_coin() -> void:
@@ -65,11 +69,17 @@ func test_the_backdrop_and_the_coin() -> void:
 func test_the_hud_panel() -> void:
 	for x in MapHud.ORB_X:
 		check(x - MapHud.ORB_R >= 0 and x + MapHud.ORB_R <= 240, "an orb in the panel: %d" % x)
-	check(MapHud.ORB_Y - MapHud.ORB_R > 3 and MapHud.ORB_Y + MapHud.ORB_R < MapHud.PANEL_H, "and under its rim")
+	check(
+		MapHud.ORB_Y - MapHud.ORB_R > 3 and MapHud.ORB_Y + MapHud.ORB_R < MapHud.PANEL_H,
+		"and under its rim"
+	)
 	for b in 2:
 		var r := MapHud._potion_rect(Vector2.ZERO, b, 1.0)
 		for x in MapHud.ORB_X:
-			check(absf(r.get_center().x - x) > MapHud.ORB_R + MapHud.ITEM / 2.0, "potion %d beside the orbs" % b)
+			check(
+				absf(r.get_center().x - x) > MapHud.ORB_R + MapHud.ITEM / 2.0,
+				"potion %d beside the orbs" % b
+			)
 	var src := FileAccess.get_file_as_string("res://scripts/ui/map_hud.gd")
 	check(not src.contains("assets/original"), "no old pictures")
 
@@ -80,7 +90,10 @@ func test_exit_arrows() -> void:
 	eq(MissionScreen.exit_arrow(2).get_size(), Vector2(72, 60), "up")
 	var down := MissionScreen.exit_arrow(0).get_image()
 	var up := MissionScreen.exit_arrow(2).get_image()
-	check(down.get_pixel(36, 8).a < down.get_pixel(36, 52).a, "down: the point at the bottom is the strong one")
+	check(
+		down.get_pixel(36, 8).a < down.get_pixel(36, 52).a,
+		"down: the point at the bottom is the strong one"
+	)
 	check(up.get_pixel(36, 8).a > up.get_pixel(36, 52).a, "up: at the top")
 
 
@@ -90,7 +103,7 @@ func test_the_hero_on_the_gear_page() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var gear: Control = Gear.new()
+	var gear: Control = Router.make(Router.SCREENS["gear"])
 	root.add_child(gear)
 	check(gear.figure != null, "a figure")
 	eq(gear.figure.kind, MapPeople.HEROES[2], "of his class")
@@ -113,3 +126,14 @@ func test_touch_controls_fill_the_screen() -> void:
 	eq(tc.size, root.get_viewport().get_visible_rect().size, "as big as the screen")
 	check(tc.button_center("attack").x > tc.size.x / 2.0, "the buttons at the right")
 	tc.free()
+
+
+func test_the_theme_files_keep_the_cyrillic_fallbacks() -> void:
+	for path in [UiTheme.THEME, UiTheme.COMPACT_THEME, KeyGrid.KEY_THEME]:
+		var t: Theme = UiTheme.theme(path)
+		check(t != null, "%s loads" % path)
+	var full: Theme = UiTheme.theme(UiTheme.THEME)
+	for item in [["font", "Button"], ["title_font", "Window"]]:
+		var f: Font = full.get_font(item[0], item[1])
+		check(f.fallbacks.size() >= 1, "%s of %s falls back to the Cyrillic file" % item)
+	check(full.default_font.fallbacks.size() >= 1, "and the default font")

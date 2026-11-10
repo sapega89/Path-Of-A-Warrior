@@ -1,8 +1,5 @@
 extends "res://tests/test_case.gd"
 
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-
 
 ## The map without enemies (the rooms open at once), for the walking tests.
 func _sim() -> RefCounted:
@@ -63,8 +60,20 @@ func test_walk_down_into_the_next_room() -> void:
 		if sim.rooms_visited == 2:
 			break
 	if sim.cell != 1:
-		print("walk down: pos ", sim.hero.pos, " action ", sim.hero.action, " phase ", sim.room_phase,
-			" timer ", sim.room_phase_timer, " banner ", sim.banner, " scrolling ", sim.scrolling)
+		print(
+			"walk down: pos ",
+			sim.hero.pos,
+			" action ",
+			sim.hero.action,
+			" phase ",
+			sim.room_phase,
+			" timer ",
+			sim.room_phase_timer,
+			" banner ",
+			sim.banner,
+			" scrolling ",
+			sim.scrolling
+		)
 	eq(sim.cell, 1, "in room 2")
 	eq(sim.rooms_visited, 2, "second stage")
 	var b: Rect2 = sim.rooms.bounds(1)

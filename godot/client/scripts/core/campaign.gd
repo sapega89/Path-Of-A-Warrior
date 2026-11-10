@@ -1,3 +1,4 @@
+class_name Campaign
 extends RefCounted
 ## The original campaign tables (data/campaign.json, made by godot/tools/import_original.py):
 ## chapters list the lords you can fight for, each lord has one map and a run of missions.

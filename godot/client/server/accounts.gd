@@ -1,3 +1,4 @@
+class_name Accounts
 extends RefCounted
 ## The server's accounts, one JSON file each (<dir>/<UserID>.json), written whole to a .tmp
 ## file first and then renamed over the old one, so a crash never leaves half a file.
@@ -61,9 +62,15 @@ func create_account(uid: String, pwd: String) -> bool:
 	if has_account(uid):
 		return false
 	var salt := _crypto.generate_random_bytes(16)
-	var acc := {"id": uid, "salt": salt.hex_encode(), "rounds": rounds,
-		"hash": pbkdf2(pwd.to_ascii_buffer(), salt, rounds).hex_encode() if not pwd.is_empty() else "",
-		"created": Time.get_unix_time_from_system(), "hero": {"rev": 0, "at": 0, "data": null}}
+	var acc := {
+		"id": uid,
+		"salt": salt.hex_encode(),
+		"rounds": rounds,
+		"hash":
+		pbkdf2(pwd.to_ascii_buffer(), salt, rounds).hex_encode() if not pwd.is_empty() else "",
+		"created": Time.get_unix_time_from_system(),
+		"hero": {"rev": 0, "at": 0, "data": null}
+	}
 	if not _write(acc):
 		return false
 	_cache[uid] = acc

@@ -1,3 +1,4 @@
+class_name BattleMotion
 extends RefCounted
 ## Who a fighter of the multiplayer battle is in the new art, and which clip of the shared
 ## library he plays for each animation of scripts/net/online_battle.gd: [clip, mode, speed]
@@ -5,9 +6,6 @@ extends RefCounted
 ## A player is the model of his class (the hero's four) with his blade; the server's fighters
 ## are a rival Cossack, a Crown soldier or a Tatar (the same one for the same name), each with
 ## his own weapons; the monsters of Solo Mission are the forest upyr with a club.
-
-const OnlineBattle := preload("res://scripts/net/online_battle.gd")
-const MapPeople := preload("res://scripts/world/map_people.gd")
 
 const RIVALS := ["kozak_rival", "zholner", "tatar"]
 const MONSTER := "upyr"

@@ -1,0 +1,67 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://screens/assign_items/assign_items_screen.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/ui/heading.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/gold_row.tscn" id="3"]
+
+[node name="AssignItemsScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 1
+grow_vertical = 1
+
+[node name="Column" type="VBoxContainer" parent="Center"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(640, 0)
+theme_override_constants/separation = 8
+
+[node name="Heading" type="Label" parent="Center/Column"]
+layout_mode = 2
+theme_type_variation = &"Heading"
+text = "assign.title"
+horizontal_alignment = 1
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 44
+script = ExtResource("2")
+
+[node name="Gold" parent="Center/Column" instance=ExtResource("3")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Slots" type="HBoxContainer" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="Keys" type="Label" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+auto_translate_mode = 2
+horizontal_alignment = 1
+
+[node name="Info" type="Label" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 72)
+auto_translate_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Back" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "common.back"
+
+[connection signal="pressed" from="Center/Column/Back" to="." method="go_back"]

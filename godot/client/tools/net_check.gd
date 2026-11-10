@@ -3,9 +3,6 @@ extends SceneTree
 ## it back. Exit code 0 when it all worked.
 ##   godot --headless --path godot/client -s res://tools/net_check.gd -- HOST PORT CERT.crt
 
-const Protocol := preload("res://scripts/net/protocol.gd")
-const NetClient := preload("res://scripts/net/net_client.gd")
-
 
 func _init() -> void:
 	var a := OS.get_cmdline_user_args()
@@ -33,6 +30,8 @@ func _init() -> void:
 		c.poll(10)
 	c.close()
 	print(got)
-	var ok: bool = got.size() == 3 and got[0].ok and got[1].ok and got[2].get("hero") == {"hero_name": "Check"}
+	var ok: bool = (
+		got.size() == 3 and got[0].ok and got[1].ok and got[2].get("hero") == {"hero_name": "Check"}
+	)
 	print("net check: ", "ok" if ok else "FAILED")
 	quit(0 if ok else 1)

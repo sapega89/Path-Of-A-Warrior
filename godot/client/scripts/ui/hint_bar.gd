@@ -1,3 +1,4 @@
+class_name HintBar
 extends PanelContainer
 ## The line of control hints at the bottom of every screen: which keys choose, confirm and go
 ## back, named for the device just used (InputSetup.hint: the keyboard's, the pad's or touch).
@@ -5,7 +6,6 @@ extends PanelContainer
 ## bar, e.g. on the map, where the HUD shows the keys); without it the menus' line is shown.
 ## The bar takes HEIGHT px off the bottom of the screen area while it shows.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const HEIGHT := 40
 const FONT_SIZE := 20
 const MENU_HINT := "hint.menu"

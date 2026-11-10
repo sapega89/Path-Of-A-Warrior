@@ -1,0 +1,117 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://screens/online_chat/online_chat_screen.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/ui/heading.gd" id="2"]
+
+[node name="OnlineChatScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 1
+grow_vertical = 1
+
+[node name="Column" type="VBoxContainer" parent="Center"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(760, 0)
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"Heading"
+text = "online.chat"
+auto_translate_mode = 2
+horizontal_alignment = 1
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 40
+script = ExtResource("2")
+
+[node name="Tabs" type="HBoxContainer" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 1
+
+[node name="Lobby" type="Button" parent="Center/Column/Tabs"]
+layout_mode = 2
+custom_minimum_size = Vector2(220, 0)
+auto_translate_mode = 2
+
+[node name="OrderTab" type="Button" parent="Center/Column/Tabs"]
+layout_mode = 2
+custom_minimum_size = Vector2(220, 0)
+auto_translate_mode = 2
+
+[node name="Private" type="Button" parent="Center/Column/Tabs"]
+layout_mode = 2
+custom_minimum_size = Vector2(220, 0)
+auto_translate_mode = 2
+
+[node name="Scroll" type="ScrollContainer" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(0, 330)
+horizontal_scroll_mode = 0
+
+[node name="Lines" type="VBoxContainer" parent="Center/Column/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="NewMessage" type="Button" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "online.new_message"
+
+[node name="Write" type="HBoxContainer" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Line" type="LineEdit" parent="Center/Column/Write"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "online.write_hint"
+
+[node name="Send" type="Button" parent="Center/Column/Write"]
+layout_mode = 2
+text = "online.send"
+
+[node name="Info" type="Label" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+auto_translate_mode = 2
+horizontal_alignment = 1
+autowrap_mode = 3
+custom_minimum_size = Vector2(0, 36)
+
+[node name="Back" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "common.back"
+
+[connection signal="pressed" from="Center/Column/Tabs/Lobby" to="." method="open" binds= [0, ""]]
+
+[connection signal="pressed" from="Center/Column/Tabs/OrderTab" to="." method="open" binds= [1, ""]]
+
+[connection signal="pressed" from="Center/Column/Tabs/Private" to="." method="open" binds= [2, ""]]
+
+[connection signal="pressed" from="Center/Column/NewMessage" to="." method="_new_message"]
+
+[connection signal="text_changed" from="Center/Column/Write/Line" to="." method="_keep"]
+
+[connection signal="text_submitted" from="Center/Column/Write/Line" to="." method="_on_line_submitted"]
+
+[connection signal="pressed" from="Center/Column/Write/Send" to="." method="submit"]
+
+[connection signal="pressed" from="Center/Column/Back" to="." method="go_back"]

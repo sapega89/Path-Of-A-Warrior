@@ -1,14 +1,12 @@
 extends "res://tests/test_case.gd"
 
-const Profile := preload("res://scripts/core/profile.gd")
-const Endings := preload("res://scripts/screens/endings_screen.gd")
 const TEST_PATH := "user://test_endings.json"
 
 
 func test_titles() -> void:
-	eq(Endings.title(0), "The Long Road", "the first")
-	eq(Endings.title(23), "Banner Knight", "the last")
-	eq(Endings.pages(), 5, "five pages of five")
+	eq(EndingsScreen.title(0), "The Long Road", "the first")
+	eq(EndingsScreen.title(23), "Banner Knight", "the last")
+	eq(EndingsScreen.pages(), 5, "five pages of five")
 
 
 func test_endings_screen() -> void:
@@ -17,7 +15,7 @@ func test_endings_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = Endings.new()
+	var screen: Control = Router.make(Router.SCREENS["endings"])
 	root.add_child(screen)
 	eq(screen.list.get_child_count(), 5, "five on a page")
 	eq(screen.page_label.text, "1 / 5", "page 1")

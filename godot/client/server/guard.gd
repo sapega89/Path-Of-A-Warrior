@@ -1,3 +1,4 @@
+class_name Guard
 extends RefCounted
 ## The server's limits against guessing and flooding:
 ## - LOGIN_FAILS wrong passwords for one UserID, or from one address, within LOGIN_WINDOW

@@ -1,3 +1,4 @@
+class_name Visits
 extends RefCounted
 ## Visiting the generals: after a won mission the hero may invite one of the generals he is
 ## friends with (data/visit.json, made by godot/tools/import_original.py). The general greets
@@ -7,7 +8,6 @@ extends RefCounted
 ## With the Hetman's Seal in the backpack all 44 generals one can visit are on the list.
 
 const PATH := "res://data/visit.json"
-const Items := preload("res://scripts/core/items.gd")
 const SEAL := 504
 const FRIENDSHIP_PER_VISIT := 5
 const MAX_FRIENDSHIP := 100
@@ -18,15 +18,29 @@ const STAT_TEXTS := ["Atk Up : 1", "Def Up : 1", "HP Up : 5", "MP Up : 3", "Fame
 ## Per gift table (a general's gift_table) and topic: a roll of 0..999 below the n-th number
 ## gives gift n: 0 a skill, 1 attack, 2 defence, 3 HP, 4 MP, 5 fame, 6 a gear, 7 a potion.
 const GIFT_ODDS := [
-	[[500, 800, 900, 960, 990, 995, 998], [60, 61, 91, 92, 392, 892, 992],
-		[100, 600, 900, 930, 990, 995, 996], [1, 2, 5, 305, 310, 410, 910]],
-	[[1, 101, 106, 606, 609, 610, 910], [30, 31, 91, 92, 592, 892, 992],
-		[300, 360, 860, 960, 961, 991, 996], [1, 2, 5, 10, 40, 100, 200]]]
+	[
+		[500, 800, 900, 960, 990, 995, 998],
+		[60, 61, 91, 92, 392, 892, 992],
+		[100, 600, 900, 930, 990, 995, 996],
+		[1, 2, 5, 305, 310, 410, 910]
+	],
+	[
+		[1, 101, 106, 606, 609, 610, 910],
+		[30, 31, 91, 92, 592, 892, 992],
+		[300, 360, 860, 960, 961, 991, 996],
+		[1, 2, 5, 10, 40, 100, 200]
+	]
+]
 enum Gift { SKILL, ATTACK, DEFENSE, HP, MP, FAME, GEAR, POTION, NONE }
 ## The gear a gift is: the hero's level picks the odds of its tier.
 const TIER_MIN_LEVEL := [69, 44, 24, 9, 0]
-const TIER_ODDS := [[0, 0, 33, 77, 100], [5, 30, 55, 80, 100], [30, 60, 90, 100, 100],
-	[40, 80, 100, 100, 100], [80, 100, 100, 100, 100]]
+const TIER_ODDS := [
+	[0, 0, 33, 77, 100],
+	[5, 30, 55, 80, 100],
+	[30, 60, 90, 100, 100],
+	[40, 80, 100, 100, 100],
+	[80, 100, 100, 100, 100]
+]
 const MAX_SKILL_LEVEL := 10
 
 static var _data: Dictionary = {}
@@ -107,13 +121,20 @@ static func add_friendship(profile: RefCounted, id: int, amount: int) -> bool:
 ## The gift after a talk about `chosen` with general `general` (campaign.json generals):
 ## with a chance of his friendship in percent, a roll picks the kind. Gives it to the hero.
 ## Returns {kind: Gift, text, title}; kind NONE when there is none (or no room for it).
-static func give_gift(profile: RefCounted, general_id: int, general: Dictionary, chosen: int,
-		rng: RandomNumberGenerator) -> Dictionary:
+static func give_gift(
+	profile: RefCounted,
+	general_id: int,
+	general: Dictionary,
+	chosen: int,
+	rng: RandomNumberGenerator
+) -> Dictionary:
 	var none := {"kind": Gift.NONE, "text": "", "title": ""}
 	var points := int(profile.friendship.get(str(general_id), 0))
 	if rng.randi_range(0, 99) >= points:
 		return none
-	var table: Array = GIFT_ODDS[clampi(int(general.get("gift_table", 0)), 0, 1)][clampi(chosen, 0, 3)]
+	var table: Array = GIFT_ODDS[clampi(int(general.get("gift_table", 0)), 0, 1)][clampi(
+		chosen, 0, 3
+	)]
 	var roll := rng.randi_range(0, 999)
 	var kind := 0
 	while kind < 7 and roll >= int(table[kind]):
@@ -129,7 +150,11 @@ static func give_gift(profile: RefCounted, general_id: int, general: Dictionary,
 				return none
 			var skill: int = skills[rng.randi_range(0, skills.size() - 1)]
 			var i := skill - 1
-			if i < 0 or i >= profile.skill_levels.size() or int(profile.skill_levels[i]) >= MAX_SKILL_LEVEL:
+			if (
+				i < 0
+				or i >= profile.skill_levels.size()
+				or int(profile.skill_levels[i]) >= MAX_SKILL_LEVEL
+			):
 				return none
 			profile.skill_levels[i] = int(profile.skill_levels[i]) + 1
 			var title := "Skill :" if int(profile.skill_levels[i]) == 1 else "Skill up :"
@@ -161,7 +186,11 @@ static func give_gift(profile: RefCounted, general_id: int, general: Dictionary,
 			var potion := rng.randi_range(1, 11)
 			if not profile.add_potion(potion):
 				return none
-			return {"kind": Gift.POTION, "text": str(Items.POTION_NAMES[potion - 1]).strip_edges(), "title": "Item Acquired!"}
+			return {
+				"kind": Gift.POTION,
+				"text": str(Items.POTION_NAMES[potion - 1]).strip_edges(),
+				"title": "Item Acquired!"
+			}
 	return {"kind": kind, "text": STAT_TEXTS[kind - 1], "title": ""}
 
 
@@ -187,8 +216,13 @@ static func skill_name(i: int) -> String:
 
 ## Ends a visit: no more until the next mission won, the gift, 5 more friendship.
 ## Returns the gift (give_gift) and "full": whether the friendship reached 100.
-static func finish(profile: RefCounted, general_id: int, general: Dictionary, chosen: int,
-		rng: RandomNumberGenerator) -> Dictionary:
+static func finish(
+	profile: RefCounted,
+	general_id: int,
+	general: Dictionary,
+	chosen: int,
+	rng: RandomNumberGenerator
+) -> Dictionary:
 	profile.can_visit = false
 	var gift := give_gift(profile, general_id, general, chosen, rng)
 	gift["full"] = add_friendship(profile, general_id, FRIENDSHIP_PER_VISIT)

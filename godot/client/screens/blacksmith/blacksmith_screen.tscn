@@ -1,0 +1,72 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://screens/blacksmith/blacksmith_screen.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/ui/heading.gd" id="2"]
+
+[node name="BlacksmithScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 1
+grow_vertical = 1
+
+[node name="Column" type="VBoxContainer" parent="Center"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(460, 0)
+theme_override_constants/separation = 8
+
+[node name="Heading" type="Label" parent="Center/Column"]
+layout_mode = 2
+theme_type_variation = &"Heading"
+text = "blacksmith.title"
+horizontal_alignment = 1
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 44
+script = ExtResource("2")
+
+[node name="Buy" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "blacksmith.buy"
+
+[node name="Sell" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "blacksmith.sell"
+
+[node name="Enchant" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "blacksmith.enchant"
+
+[node name="Combine" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "blacksmith.combine"
+
+[node name="Back" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "common.back"
+
+[node name="Notice" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = ""
+dialog_text = "combine.too_few"
+
+[connection signal="pressed" from="Center/Column/Buy" to="." method="open_page" binds= ["buy"]]
+
+[connection signal="pressed" from="Center/Column/Sell" to="." method="open_page" binds= ["sell"]]
+
+[connection signal="pressed" from="Center/Column/Enchant" to="." method="open_page" binds= ["enchant"]]
+
+[connection signal="pressed" from="Center/Column/Combine" to="." method="open_page" binds= ["combine"]]
+
+[connection signal="pressed" from="Center/Column/Back" to="." method="go_back"]
+

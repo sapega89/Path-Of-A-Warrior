@@ -1,8 +1,6 @@
 extends "res://tests/test_case.gd"
 ## The mouse on a mission's map, as pyport's pointer: beside the hero walks, on him attacks.
 
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
-
 
 func _click(at: Vector2, button := MOUSE_BUTTON_LEFT, pressed := true) -> InputEventMouseButton:
 	var ev := InputEventMouseButton.new()
@@ -19,7 +17,7 @@ func _hero_middle(screen: Control) -> Vector2:
 
 func _screen() -> Control:
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var screen: Control = MissionScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	return screen
 

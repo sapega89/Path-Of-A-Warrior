@@ -1,3 +1,4 @@
+class_name KeyGrid
 extends VBoxContainer
 ## An on-screen keyboard, so that a gamepad (or touch, or the mouse) can type too: rows of keys
 ## that type into a text field. The keys are buttons, so the d-pad moves between them and A (or
@@ -7,10 +8,10 @@ extends VBoxContainer
 ## The keys show only while the gamepad is in use (InputSetup.device "pad"): a PC has its
 ## keyboard and a phone its own on-screen one when the field is tapped.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const BACK := "⌫"
 const OK := "OK"
 const KEY_SIZE := Vector2(48, 44)
+const KEY_THEME := "res://assets/art/ui/key_theme.tres"
 const FONT_SIZE := 24
 ## The registration's keys: the UserID's letters and the password's digits.
 const ACCOUNT := ["ABCDEFGHIJKLM", "NOPQRSTUVWXYZ", "0123456789"]
@@ -77,17 +78,10 @@ func _key(label: String) -> Button:
 	return b
 
 
-## The game's theme with narrow margins, so that every key is as wide as the others.
+## The buttons of the game's theme with narrow margins, so that every key is as wide as the
+## others (the rest of the theme comes from the screen around the grid).
 static func key_theme() -> Theme:
-	var t := UiTheme.build()
-	for style in ["normal", "hover", "pressed", "disabled", "focus"]:
-		var sb := t.get_stylebox(style, "Button").duplicate() as StyleBox
-		sb.content_margin_left = 2
-		sb.content_margin_right = 2
-		sb.content_margin_top = 2
-		sb.content_margin_bottom = 2
-		t.set_stylebox(style, "Button", sb)
-	return t
+	return UiTheme.theme(KEY_THEME)
 
 
 ## The keys type into `field` once it has had the focus.

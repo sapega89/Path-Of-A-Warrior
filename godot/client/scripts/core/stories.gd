@@ -1,3 +1,4 @@
+class_name Stories
 extends RefCounted
 ## The stories of data/stories.json as pages: the opening of a new game (OPENING) and the 24
 ## endings. A page is {kind: "talk", speaker, text} (speaker: a portrait, HERO for the hero),
@@ -39,12 +40,29 @@ static func pages(story: int, hero_name: String) -> Array:
 		var lines: Array = d.get("opening", [])
 		for i in lines.size():
 			if i < 2:
-				out.append({"kind": "picture", "picture": 1 if i == 0 else 10, "text": I18n.text(lines[i])})
+				out.append(
+					{"kind": "picture", "picture": 1 if i == 0 else 10, "text": I18n.text(lines[i])}
+				)
 			elif i % 2 == 0:
-				out.append({"kind": "talk", "speaker": NOFACE,
-					"text": "[%s] %s" % [TranslationServer.translate("story.master"), I18n.text(lines[i])]})
+				out.append(
+					{
+						"kind": "talk",
+						"speaker": NOFACE,
+						"text":
+						(
+							"[%s] %s"
+							% [TranslationServer.translate("story.master"), I18n.text(lines[i])]
+						)
+					}
+				)
 			else:
-				out.append({"kind": "talk", "speaker": HERO, "text": "[%s] %s" % [hero_name, I18n.text(lines[i])]})
+				out.append(
+					{
+						"kind": "talk",
+						"speaker": HERO,
+						"text": "[%s] %s" % [hero_name, I18n.text(lines[i])]
+					}
+				)
 		return out
 	var endings: Array = d.get("endings", [])
 	if story < 0 or story >= endings.size():
@@ -59,14 +77,18 @@ static func pages(story: int, hero_name: String) -> Array:
 			var parts := _split(line)
 			out.append({"kind": "talk", "speaker": parts[0], "text": I18n.text(parts[1])})
 		else:
-			out.append({"kind": "talk", "speaker": HERO, "text": "[%s] %s" % [hero_name, I18n.text(line)]})
+			out.append(
+				{"kind": "talk", "speaker": HERO, "text": "[%s] %s" % [hero_name, I18n.text(line)]}
+			)
 	var pictures: Array = endings[story].get("pictures", [])
 	for i in pictures.size():
 		if story == 0 and i == 0:
 			out.append({"kind": "picture", "picture": 0, "text": I18n.text(gamestr[0])})
 		else:
 			var parts := _split(str(pictures[i]))
-			out.append({"kind": "picture", "picture": int(parts[0]) - 1, "text": I18n.text(parts[1])})
+			out.append(
+				{"kind": "picture", "picture": int(parts[0]) - 1, "text": I18n.text(parts[1])}
+			)
 	out.append({"kind": "stats"})
 	return out
 
@@ -89,9 +111,20 @@ static func stats_lines(profile: RefCounted) -> Array:
 	var h := hidden * 100 / HIDDEN_MISSIONS
 	var e := endings * 100 / ENDINGS
 	var g: int = profile.friendship.size() * 100 / GENERALS
-	return ["Mission", "Accomplished", "%d %%" % m, "Hidden Mission", "Accomplished", "%d %%" % h,
-		"Ending Collected", "%d %%" % e, "Warrior Collected", "%d %%" % g,
-		"Total Accomplished", "%d %%" % ((m + h + e + g) >> 2)]
+	return [
+		"Mission",
+		"Accomplished",
+		"%d %%" % m,
+		"Hidden Mission",
+		"Accomplished",
+		"%d %%" % h,
+		"Ending Collected",
+		"%d %%" % e,
+		"Warrior Collected",
+		"%d %%" % g,
+		"Total Accomplished",
+		"%d %%" % ((m + h + e + g) >> 2)
+	]
 
 
 static func _numbered(line: String) -> bool:

@@ -1,3 +1,4 @@
+class_name Items
 extends RefCounted
 ## The things the hero carries: gear (ids 101..300), treasures (301..500) and rare things
 ## (501..), read from data/items.json. A carried thing is a Dictionary {id, attack, defense,
@@ -17,8 +18,14 @@ const STAT_ITEMS := {
 }
 ## Things that can be carried but not worn.
 const NOT_WORN := [502, 504]
-const SUFFIX := {434: " / Hp 5 Increased", 435: " / MP 3 Increased", 436: " / DEF 1 Increased",
-	437: " / ATK 1 Increased", 502: " / Oksana's scarf", 504: " / all General Visiting"}
+const SUFFIX := {
+	434: " / Hp 5 Increased",
+	435: " / MP 3 Increased",
+	436: " / DEF 1 Increased",
+	437: " / ATK 1 Increased",
+	502: " / Oksana's scarf",
+	504: " / all General Visiting"
+}
 const GEAR_STATS := ["attack", "defense", "hp", "mp"]
 ## Icon sheets: potions, gear, treasures, rare things (28 px icons in a row).
 const SHEETS := ["tool", "kibo", "sungbo", "shinki"]
@@ -104,9 +111,19 @@ static func describe(item: Dictionary) -> String:
 	return text
 
 
-const POTION_NAMES := ["Red Potion (S)", "Red Potion (M)", "Red Potion (L)", "Blue Potion(S)",
-	"Blue Potion(M)", "Blue Potion(L)", "H.M.Potion(S)", "H.M.Potion(M)", "H.M.Potion(M)",
-	" Powerful Bomb", "Handy Dynamite"]
+const POTION_NAMES := [
+	"Red Potion (S)",
+	"Red Potion (M)",
+	"Red Potion (L)",
+	"Blue Potion(S)",
+	"Blue Potion(M)",
+	"Blue Potion(L)",
+	"H.M.Potion(S)",
+	"H.M.Potion(M)",
+	"H.M.Potion(M)",
+	" Powerful Bomb",
+	"Handy Dynamite"
+]
 const POTION_KINDS := ["HP", "MP", "HP&MP"]
 const POTION_PERCENTS := [30, 60, 100]
 ## What the bomb and the dynamite do (the texts of skills 26 and 27; potions recover a share).
@@ -119,7 +136,10 @@ static func describe_potion(potion: int) -> String:
 	if i < 0 or i >= POTION_NAMES.size():
 		return ""
 	if i < 9:
-		return "%s / Recover %d%% of total %s" % [POTION_NAMES[i], POTION_PERCENTS[i % 3], POTION_KINDS[i / 3]]
+		return (
+			"%s / Recover %d%% of total %s"
+			% [POTION_NAMES[i], POTION_PERCENTS[i % 3], POTION_KINDS[i / 3]]
+		)
 	return "%s / %s" % [POTION_NAMES[i], SCROLL_TEXTS[i - 9]]
 
 
@@ -195,7 +215,12 @@ static func enchant_max(id: int) -> int:
 
 ## The price of enchanting a thing once more.
 static func enchant_price(item: Dictionary) -> int:
-	return int(item.attack) * 100 + int(item.defense) * 100 + int(item.hp) * 100 / 5 + int(item.mp) * 100 / 3
+	return (
+		int(item.attack) * 100
+		+ int(item.defense) * 100
+		+ int(item.hp) * 100 / 5
+		+ int(item.mp) * 100 / 3
+	)
 
 
 ## Enchants a thing: each of its stats above 0 grows by a share of a tenth of it (at least 1).

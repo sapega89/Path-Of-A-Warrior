@@ -3,11 +3,6 @@ extends "res://tests/test_case.gd"
 ## on Yes or (when Yes loses something) on No, Back answers No, and the keys do not reach the
 ## screen under it.
 
-const AskDialog := preload("res://scripts/ui/ask_dialog.gd")
-const NewGame := preload("res://scripts/screens/new_game_screen.gd")
-const MainMenu := preload("res://scripts/screens/main_menu.gd")
-const Profile := preload("res://scripts/core/profile.gd")
-
 
 func _cancel() -> InputEventAction:
 	var ev := InputEventAction.new()
@@ -71,7 +66,7 @@ func test_notice() -> void:
 func test_back_stays_with_the_question() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": "user://test_ask.json"}
-	var screen: Control = NewGame.new()
+	var screen: Control = Router.make(Router.SCREENS["new_game"])
 	root.add_child(screen)
 	check(screen.ask is AskDialog, "the game's own question")
 	screen.choose_head(0)
@@ -82,14 +77,14 @@ func test_back_stays_with_the_question() -> void:
 	check(screen.ask.visible, "asked to go on")
 	screen.get_viewport().push_input(_cancel())
 	check(not screen.ask.visible, "Back: the question goes")
-	eq(screen.step, NewGame.Step.POINTS, "the points stay")
+	eq(screen.step, NewGameScreen.Step.POINTS, "the points stay")
 	check(screen.done_button.has_focus(), "the focus on Done again")
 	screen.free()
 	Router.params = old
 
 
 func test_main_menu_asks_with_no_first() -> void:
-	var menu: Control = MainMenu.new()
+	var menu: Control = Router.make(Router.SCREENS["main_menu"])
 	root.add_child(menu)
 	check(menu.ask is AskDialog and menu.ask.safe_default, "deleting the save: No first")
 	menu.free()

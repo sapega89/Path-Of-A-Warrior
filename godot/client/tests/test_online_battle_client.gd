@@ -2,13 +2,9 @@ extends "res://tests/test_case.gd"
 ## A battle on this device (scripts/net/online_battle.gd) played to its end against the
 ## server's online game (server/online.gd) in this process.
 
-const OnlineBattle := preload("res://scripts/net/online_battle.gd")
-const OnlineClient := preload("res://scripts/net/online_client.gd")
 const ClientTests := preload("res://tests/test_online_client.gd")
 const OnlineTests := preload("res://tests/test_online_server.gd")
 const ServerTests := preload("res://tests/test_server.gd")
-const BattleScreen := preload("res://scripts/screens/online_battle_screen.gd")
-const BattleMotion := preload("res://scripts/world/battle_motion.gd")
 
 
 func _dir() -> String:
@@ -59,13 +55,24 @@ func test_a_duel_played_to_the_result() -> void:
 	check(c.battle != null, "the room message made the battle")
 	var b: RefCounted = c.battle
 	var room: RefCounted = net.session(c).room
-	eq([b.mode, b.my_slot, b.fighters[0].name, b.fighters[0].slot, b.fighters[1].slot],
-		[0, 0, "ANDREY", 0, 1], "mine first")
+	eq(
+		[b.mode, b.my_slot, b.fighters[0].name, b.fighters[0].slot, b.fighters[1].slot],
+		[0, 0, "ANDREY", 0, 1],
+		"mine first"
+	)
 	eq([b.allies_alive, b.enemies_alive, b.fighters[0].x, b.fighters[0].y], [1, 1, 42, 225])
 	eq(b.state, OnlineBattle.QUOTES, "all ready: the quotes")
 	var seen := _play(c)
-	for s in [OnlineBattle.ROUND, OnlineBattle.CHOOSE, OnlineBattle.BAR, OnlineBattle.SENT,
-			OnlineBattle.REVEAL, OnlineBattle.TURN, OnlineBattle.OVER, OnlineBattle.RESULT]:
+	for s in [
+		OnlineBattle.ROUND,
+		OnlineBattle.CHOOSE,
+		OnlineBattle.BAR,
+		OnlineBattle.SENT,
+		OnlineBattle.REVEAL,
+		OnlineBattle.TURN,
+		OnlineBattle.OVER,
+		OnlineBattle.RESULT
+	]:
 		check(seen.has(s), "went through %d: %s" % [s, seen])
 	eq(b.state, OnlineBattle.RESULT)
 	check(b.left, "OK on the result")
@@ -100,8 +107,11 @@ func test_a_two_on_two_targets_and_a_mission_stage() -> void:
 	c.battle_over()
 	c.find_battle(2, func(_e): pass)
 	b = c.battle
-	eq([b.mode, b.state, b.stage, b.stage_count >= 2], [2, OnlineBattle.STAGE_INTRO, 1, true],
-		"a mission: its first stage")
+	eq(
+		[b.mode, b.state, b.stage, b.stage_count >= 2],
+		[2, OnlineBattle.STAGE_INTRO, 1, true],
+		"a mission: its first stage"
+	)
 	room = net.session(c).room
 	room.battle.fighters[1].hp = 1  # the stage's foes fall at the first blow
 	if room.battle.fighters.has(3):
@@ -113,12 +123,28 @@ func test_a_two_on_two_targets_and_a_mission_stage() -> void:
 
 
 func test_choosing_skills_targets_and_the_time_out() -> void:
-	var b := OnlineBattle.new(func(_m): pass, {"slots": [11, 99, 3, 99], "skill_cost": [25, 30, 35, 40, 45, 50, 31, 40, 40, 45, 50]})
+	var b := OnlineBattle.new(
+		func(_m): pass,
+		{"slots": [11, 99, 3, 99], "skill_cost": [25, 30, 35, 40, 45, 50, 31, 40, 40, 45, 50]}
+	)
 	var sent: Array = []
 	b.send = func(m): sent.append(m)
-	b.on_push({"t": "room", "via": "match", "bg": 0, "slot": 0, "mode": 1, "fighters": [
-		{"slot": 1, "name": "A", "hp": 50}, {"slot": 0, "name": "ME", "hp": 60},
-		{"slot": 2, "name": "B", "hp": 40, "cpu": true}, {"slot": 3, "name": "C", "hp": 45, "cpu": true}]})
+	b.on_push(
+		{
+			"t": "room",
+			"via": "match",
+			"bg": 0,
+			"slot": 0,
+			"mode": 1,
+			"fighters":
+			[
+				{"slot": 1, "name": "A", "hp": 50},
+				{"slot": 0, "name": "ME", "hp": 60},
+				{"slot": 2, "name": "B", "hp": 40, "cpu": true},
+				{"slot": 3, "name": "C", "hp": 45, "cpu": true}
+			]
+		}
+	)
 	eq([b.fighters[0].name, b.fighters[1].name, b.allies_alive, b.enemies_alive], ["ME", "A", 2, 2])
 	b.on_push({"t": "round_start", "bar_speed": 0})
 	eq(b.skill_slots, [11, 3])
@@ -170,16 +196,33 @@ func test_the_battle_screen_shows_a_duel() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = BattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	var b: RefCounted = c.battle
 	eq(screen.battle, b, "the client's battle")
-	check(screen.arena.ground != null and screen.arena.scenery == b.bg & 3, "the field built")
-	check(screen.bodies[0].position.x < 0 and screen.bodies[1].position.x > 0, "mine on the left")
-	eq([screen.bodies[2].visible, screen.bodies[3].visible], [false, false], "a duel: two fighters")
-	eq(screen.figures[0].kind, BattleMotion.kind_of(b.fighters[0]), "me: the model of my class")
-	check(screen.figures[1].kind in BattleMotion.RIVALS, "the CPU: a rival " + screen.figures[1].kind)
-	check(is_equal_approx(screen.bodies[1].rotation.y, -PI / 2.0), "facing left")
+	check(
+		screen.stage.arena.ground != null and screen.stage.arena.scenery == b.bg & 3,
+		"the field built"
+	)
+	check(
+		screen.stage.bodies[0].position.x < 0 and screen.stage.bodies[1].position.x > 0,
+		"mine on the left"
+	)
+	eq(
+		[screen.stage.bodies[2].visible, screen.stage.bodies[3].visible],
+		[false, false],
+		"a duel: two fighters"
+	)
+	eq(
+		screen.stage.figures[0].kind,
+		BattleMotion.kind_of(b.fighters[0]),
+		"me: the model of my class"
+	)
+	check(
+		screen.stage.figures[1].kind in BattleMotion.RIVALS,
+		"the CPU: a rival " + screen.stage.figures[1].kind
+	)
+	check(is_equal_approx(screen.stage.bodies[1].rotation.y, -PI / 2.0), "facing left")
 	var seen := {}
 	for i in 30000:
 		if screen.battle == null:
@@ -188,7 +231,11 @@ func test_the_battle_screen_shows_a_duel() -> void:
 		if screen.battle == null:
 			break
 		var st: int = b.state
-		var now := [screen.pad.visible, screen.bar.visible, screen.center_text.text if screen.center.visible else ""]
+		var now := [
+			screen.pad.visible,
+			screen.bar.visible,
+			screen.center_text.text if screen.center.visible else ""
+		]
 		if not seen.has(st):
 			seen[st] = now
 		seen[st] = [seen[st][0] or now[0], seen[st][1] or now[1], seen[st][2]]
@@ -203,12 +250,24 @@ func test_the_battle_screen_shows_a_duel() -> void:
 					screen.press("fire")
 			OnlineBattle.RESULT:
 				if b.result_shown():
-					check(screen.center_text.text.contains(tr("online.battle_win") if b.battle_won == 1
-						else tr("online.battle_lose")), "the result: " + screen.center_text.text)
+					check(
+						screen.center_text.text.contains(
+							(
+								tr("online.battle_win")
+								if b.battle_won == 1
+								else tr("online.battle_lose")
+							)
+						),
+						"the result: " + screen.center_text.text
+					)
 					screen.press("fire")
 	eq(seen.get(OnlineBattle.CHOOSE, [])[0], true, "the pad to choose")
 	eq(seen.get(OnlineBattle.BAR, [])[1], true, "the timing bar")
-	eq(seen.get(OnlineBattle.QUOTES, [false, false, "?"]), [false, false, ""], "the quotes over the fighters")
+	eq(
+		seen.get(OnlineBattle.QUOTES, [false, false, "?"]),
+		[false, false, ""],
+		"the quotes over the fighters"
+	)
 	check(screen.battle == null and c.battle == null, "OK: the battle is over")
 	screen.free()
 	Router.params = old
@@ -224,7 +283,7 @@ func test_the_battle_screen_leaves_when_kicked() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = BattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	c.on_push({"t": "kicked"})
 	screen._process(0.2)
@@ -251,7 +310,7 @@ func test_auto_battle_by_tab_f_or_back() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = BattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	var back := InputEventJoypadButton.new()
 	back.button_index = JOY_BUTTON_BACK
@@ -260,7 +319,11 @@ func test_auto_battle_by_tab_f_or_back() -> void:
 	for ev in [_key(KEY_TAB), _key(KEY_F), back]:
 		screen._unhandled_input(ev)
 		seen.append(c.battle.auto_battle)
-	eq(seen, [true, false, true], "Tab, F and the pad's Back each turn it over, as auto-hunt on the map")
+	eq(
+		seen,
+		[true, false, true],
+		"Tab, F and the pad's Back each turn it over, as auto-hunt on the map"
+	)
 	screen.free()
 	Router.params = old
 	ServerTests._rm(d)
@@ -275,11 +338,15 @@ func test_battle_hints_name_the_pad_after_the_pad() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = BattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	var was: String = InputSetup.device
-	var states := {OnlineBattle.CHOOSE: "choose", OnlineBattle.SKILLS: "skills",
-		OnlineBattle.TARGET: "target", OnlineBattle.BAR: "bar"}
+	var states := {
+		OnlineBattle.CHOOSE: "choose",
+		OnlineBattle.SKILLS: "skills",
+		OnlineBattle.TARGET: "target",
+		OnlineBattle.BAR: "bar"
+	}
 	c.battle.auto_battle = false
 	c.battle.exit_prompt = false
 	for device in ["keys", "pad"]:
@@ -289,14 +356,20 @@ func test_battle_hints_name_the_pad_after_the_pad() -> void:
 			var key: String = "online.battle_hint_" + states[st]
 			eq(screen.hint_text(), InputSetup.hint(key), "%s: %s" % [device, key])
 	InputSetup.device = "keys"
-	eq(InputSetup.hint("online.battle_hint_choose"), "Arrows: choose the action   Esc: exit the battle   Tab / F: auto-battle",
-		"the keyboard's line")
+	eq(
+		InputSetup.hint("online.battle_hint_choose"),
+		"Arrows: choose the action   Esc: exit the battle   Tab / F: auto-battle",
+		"the keyboard's line"
+	)
 	c.battle.state = OnlineBattle.BAR
 	InputSetup.device = "pad"
 	eq(screen.hint_text(), "A: stop the bar at the mark", "the pad's A")
 	c.battle.state = OnlineBattle.CHOOSE
-	eq(screen.hint_text(), "D-pad: choose the action   B: exit the battle   Back: auto-battle",
-		"the pad's B and Back")
+	eq(
+		screen.hint_text(),
+		"D-pad: choose the action   B: exit the battle   Back: auto-battle",
+		"the pad's B and Back"
+	)
 	InputSetup.device = was
 	screen.free()
 	Router.params = old
@@ -312,7 +385,7 @@ func test_auto_corner() -> void:
 	c.find_battle(0, func(_e): pass)
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": d.path_join("hero.json")}
-	var screen: Control = BattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	var was: String = InputSetup.device
 	InputSetup.device = "keys"
@@ -331,7 +404,7 @@ func test_auto_corner() -> void:
 	screen.auto_button.pressed.emit()
 	check(c.battle.auto_battle, "a click turns it on")
 	eq(screen.auto_button.text, "AUTO", "on")
-	eq(screen.auto_button.get_theme_color("font_color"), BattleScreen.AUTO_ON, "gold")
+	eq(screen.auto_button.get_theme_color("font_color"), OnlineBattleScreen.AUTO_ON, "gold")
 	InputSetup.device = was
 	screen.free()
 	Router.params = old

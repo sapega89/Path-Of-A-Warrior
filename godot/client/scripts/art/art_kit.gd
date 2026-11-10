@@ -1,3 +1,4 @@
+class_name ArtKit
 extends RefCounted
 ## The new art: palette, materials and loaders for the models that
 ## godot/tools/art/build.py makes (people, weapons, shared clips, environment pieces).
@@ -21,8 +22,19 @@ const PALETTE := {
 }
 
 ## Clips that repeat.
-const LOOPING := ["idle", "idle_unarmed", "idle_2h", "walk", "walk_relaxed", "walk_back", "run",
-	"run_relaxed", "blocking", "sit", "aim_bow"]
+const LOOPING := [
+	"idle",
+	"idle_unarmed",
+	"idle_2h",
+	"walk",
+	"walk_relaxed",
+	"walk_back",
+	"run",
+	"run_relaxed",
+	"blocking",
+	"sit",
+	"aim_bow"
+]
 
 ## The light and air of the world: a dull sun through an overcast sky, a deep cool shade,
 ## the land fading far away into grey dust; the colours held down and the contrast up.

@@ -1,26 +1,30 @@
-# Godot MIDI Player for Godot Engine 4.x
+# Path of a Warrior
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E44AWTA)
+Гра на Godot 4.5 (GDScript): кампанія з 45 місцями, бої на 3D-картах, мультиплеєр і Live через
+власний сервер. Клієнт, сервер і тести — один проєкт Godot у `godot/client`.
 
-Software MIDI player library for Godot Engine 4.2 later
+## Швидкий старт
 
-## for Godot Engine 3
+Потрібні Godot 4.5.1 і Python 3 з Pillow (для конвертера даних).
 
-[see this repository](https://bitbucket.org/arlez80/godot-midi-player)
+```
+godot --headless --path godot/client --import                 # один раз після клонування
+godot --path godot/client                                     # гра (локальний сервер запускається сам)
+godot --headless --path godot/client res://tests/runner.tscn  # тести
+```
 
-## Demo
+Докладніше про запуск, сервер і будову проєкту — у [`godot/README.md`](godot/README.md),
+як працювати з кодом і робити PR — у [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
-* [download](https://bitbucket.org/arlez80/godot-midi-player-g4/downloads/demo.zip)
-	* This demo can get MIDIInput events. You can play using MIDI keyboards!
-* BGM "failyland_gm.mid" from [IvyMaze]( http://ivymaze.sakura.ne.jp/ )
-* Youtube: [Demo #1](https://www.youtube.com/watch?v=SdrU4uRepVs)
-* Youtube: [Demo #2](https://www.youtube.com/watch?v=nn21P3eI4hs)
-* Youtube: [Demo #3](https://www.youtube.com/watch?v=dAYfFH-Fq2o)
+## Що де лежить
 
-## License
-
-MIT License
-
-## Author
-
-* @arlez80 あるる / きのもと 結衣 ( Yui Kinomoto )
+| Шлях | Що там |
+| --- | --- |
+| `godot/client` | Проєкт Godot: гра, сервер (`server/`), тести (`tests/`), дані (`data/`) |
+| `godot/tools/import_original.py` | Конвертер: робить `godot/client/data` і `assets/original` з `original/` |
+| `original/` | Файли оригінальної гри (графіка, карти, тексти, звуки); тільки для конвертера |
+| `pyport/` | Python-версія: довідка про те, як поводиться оригінал. Нових фіч там немає |
+| `docs/GODOT_PLAN.md` | План Godot-версії |
+| `docs/analysis/` | Розбір оригінальної гри |
+| `docs/history/` | Старі плани й документи (Python-порт, перша спроба на Godot); не актуальні |
+| `CLAUDE.md` | Правила для Claude і людей: структура Godot, якість коду, тести |

@@ -1,3 +1,4 @@
+class_name LiveServer
 extends RefCounted
 ## Live on the server (pyport/pow_server/live.py): a market where players sell things to each
 ## other (Trade), a Warehouse of WAREHOUSE places, a Safe for gold, the Sale List (what others
@@ -28,8 +29,6 @@ extends RefCounted
 ## Errors as in pyport: "gold" (not enough), "full", "gone" (sold meanwhile), "limit" (5 lots),
 ## "price", "not for sale", "own" (your own lot), "none" (empty list), "bad message".
 
-const Items := preload("res://scripts/core/items.gd")
-
 const TAX_PERCENT := 10
 const WAREHOUSE := 200
 const BACKPACK := 45
@@ -43,6 +42,8 @@ const NORMAL_KINDS := 13
 const SPECIAL_KINDS := 13
 const RARE_KINDS := 18
 
+## The handler of each request type (answer()).
+var _answers: Dictionary = {}
 var dir: String
 var notices: Array = []  # pages of up to 4 lines
 var rng := RandomNumberGenerator.new()
@@ -55,6 +56,23 @@ var _market := {}
 func _init(data_dir: String) -> void:
 	dir = data_dir.path_join("live")
 	DirAccess.make_dir_recursive_absolute(dir)
+	_answers = {
+		"live_status": _on_live_status,
+		"live_notices": _on_live_notices,
+		"live_sold": _on_live_sold,
+		"live_gifts": _on_live_gifts,
+		"live_fame": _on_live_fame,
+		"live_sync": _sync,
+		"live_safe": _safe,
+		"live_store": _store,
+		"live_counts": _on_live_counts,
+		"live_page": _on_live_page,
+		"live_buy": _buy,
+		"live_sell": _sell,
+		"live_prices": _on_live_prices,
+		"live_mine": _on_live_mine,
+		"live_cancel": _cancel
+	}
 
 
 # --- what the server keeps --------------------------------------------------------------
@@ -81,7 +99,15 @@ func user(uid: String) -> Dictionary:
 	if not _users.has(uid):
 		var u := _read(dir.path_join("user_%s.json" % uid))
 		if u.is_empty():
-			u = {"safe": 0, "warehouse": [], "serial": 0, "sold": [], "gifts": [], "fame": 0, "exp": 0}
+			u = {
+				"safe": 0,
+				"warehouse": [],
+				"serial": 0,
+				"sold": [],
+				"gifts": [],
+				"fame": 0,
+				"exp": 0
+			}
 		_users[uid] = u
 	return _users[uid]
 
@@ -141,20 +167,29 @@ func restock(m: Dictionary) -> void:
 				continue
 			by_kind.get_or_add(Vector2i(category(id), kind(id)), []).append(id)
 	var add := func(it: Dictionary, price: int, forever: bool) -> void:
-		lots.append({"id": int(m.next), "seller": "", "item": it, "price": mini(maxi(price, 1), MAX_GOLD),
-			"forever": forever})
+		lots.append(
+			{
+				"id": int(m.next),
+				"seller": "",
+				"item": it,
+				"price": mini(maxi(price, 1), MAX_GOLD),
+				"forever": forever
+			}
+		)
 		m.next = int(m.next) + 1
 	for cat in [0, 1]:
 		var lo := 1.2 if cat == 0 else 1.0
 		var hi := 2.0 if cat == 0 else 1.6
-		for k in (NORMAL_KINDS if cat == 0 else SPECIAL_KINDS):
+		for k in NORMAL_KINDS if cat == 0 else SPECIAL_KINDS:
 			var ids: Array = by_kind.get(Vector2i(cat, k), [])
-			for i in (4 if cat == 0 else 2):
+			for i in 4 if cat == 0 else 2:
 				if ids.is_empty():
 					break
 				var id: int = ids[rng.randi_range(0, ids.size() - 1)]
 				var it := Items.make(id, rng)
-				var times := mini(Items.enchant_max(id), [0, 0, 0, 1, 1, 2, 3, 4][rng.randi_range(0, 7)])
+				var times := mini(
+					Items.enchant_max(id), [0, 0, 0, 1, 1, 2, 3, 4][rng.randi_range(0, 7)]
+				)
 				for t in times:
 					Items.enchant(it, rng)
 				add.call(it, int(Items.price(it) * rng.randf_range(lo, hi)), false)
@@ -194,10 +229,16 @@ static func _new_bp_serial(s: Session) -> int:
 
 
 func _lots(s: Session, cat: int, k: int, ench := -1) -> Array:
-	return market().lots.filter(func(x):
-		var id := int(x.item.id)
-		return category(id) == cat and kind(id) == k and str(x.seller) != s.user \
-			and (ench < 0 or cat == 2 or int(x.item.enchant) == ench))
+	return market().lots.filter(
+		func(x):
+			var id := int(x.item.id)
+			return (
+				category(id) == cat
+				and kind(id) == k
+				and str(x.seller) != s.user
+				and (ench < 0 or cat == 2 or int(x.item.enchant) == ench)
+			)
+	)
 
 
 static func _lot_out(x: Dictionary) -> Dictionary:
@@ -214,74 +255,94 @@ func _find_lot(id: int) -> Dictionary:
 ## The answer to one Live request of a logged-in session.
 func answer(s: Session, t: String, msg: Dictionary) -> Dictionary:
 	var u := user(s.user)
-	match t:
-		"live_status":
-			return {"t": t, "ok": true, "notice": not notices.is_empty(), "sold": not u.sold.is_empty(),
-				"gifts": not u.gifts.is_empty(), "tax": TAX_PERCENT}
-		"live_notices":
-			if notices.is_empty():
-				return _fail(t, "none")
-			var page: Array = notices[s.notice_page % notices.size()]
-			s.notice_page += 1
-			var more := s.notice_page < notices.size()
-			if not more:
-				s.notice_page = 0
-			return {"t": t, "ok": true, "lines": page.slice(0, 4), "more": more}
-		"live_sold":
-			var sold: Array = u.sold.slice(0, PAGE)
-			u.sold = u.sold.slice(PAGE)
-			save_user(s.user)
-			return {"t": t, "ok": true, "sold": sold}
-		"live_gifts":
-			var gifts: Array = u.gifts.slice(0, 5)
-			u.gifts = u.gifts.slice(5)
-			save_user(s.user)
-			return {"t": t, "ok": true, "gifts": gifts, "more": not u.gifts.is_empty()}
-		"live_fame":
-			var r := {"t": t, "ok": true, "fame": int(u.fame), "exp": int(u.exp)}
-			u.fame = 0
-			u.exp = 0
-			save_user(s.user)
-			return r
-		"live_sync":
-			return _sync(s, u, msg)
-		"live_safe":
-			return _safe(s, u, msg)
-		"live_store":
-			return _store(s, u, msg)
-		"live_counts":
-			var counts: Array = []
-			counts.resize(10)
-			counts.fill(0)
-			for x in _lots(s, int(msg.get("cat", -1)), int(msg.get("kind", -1))):
-				counts[mini(9, int(x.item.enchant))] += 1
-			return {"t": t, "ok": true, "counts": counts}
-		"live_page":
-			var lots := _lots(s, int(msg.get("cat", -1)), int(msg.get("kind", -1)), int(msg.get("enchant", 0)))
-			lots.sort_custom(func(a, b): return [int(a.price), int(a.id)] < [int(b.price), int(b.id)])
-			var page := int(msg.get("page", 0))
-			if page < 0 or page * PAGE >= lots.size():
-				return _fail(t, "none")
-			return {"t": t, "ok": true, "lots": lots.slice(page * PAGE, page * PAGE + PAGE).map(_lot_out),
-				"pages": ceili(lots.size() / float(PAGE))}
-		"live_buy":
-			return _buy(s, u, msg)
-		"live_sell":
-			return _sell(s, u, msg)
-		"live_prices":
-			var lots := _lots(s, int(msg.get("cat", -1)), int(msg.get("kind", -1)))
-			if lots.is_empty():
-				return _fail(t, "none")
-			lots.sort_custom(func(a, b): return int(a.price) < int(b.price))
-			return {"t": t, "ok": true, "lots": lots.slice(0, PAGE).map(_lot_out)}
-		"live_mine":
-			var mine: Array = market().lots.filter(func(x): return str(x.seller) == s.user)
-			if mine.is_empty():
-				return _fail(t, "none")
-			return {"t": t, "ok": true, "lots": mine.slice(0, PAGE).map(_lot_out)}
-		"live_cancel":
-			return _cancel(s, u, msg)
-	return _fail(t, "unknown")
+	var handler: Callable = _answers.get(t, Callable())
+	if not handler.is_valid():
+		return _fail(t, "unknown")
+	return handler.call(s, u, msg)
+
+
+func _on_live_status(_s: Session, u: Dictionary, _msg: Dictionary) -> Dictionary:
+	return {
+		"t": "live_status",
+		"ok": true,
+		"notice": not notices.is_empty(),
+		"sold": not u.sold.is_empty(),
+		"gifts": not u.gifts.is_empty(),
+		"tax": TAX_PERCENT
+	}
+
+
+func _on_live_notices(s: Session, _u: Dictionary, _msg: Dictionary) -> Dictionary:
+	if notices.is_empty():
+		return _fail("live_notices", "none")
+	var page: Array = notices[s.notice_page % notices.size()]
+	s.notice_page += 1
+	var more := s.notice_page < notices.size()
+	if not more:
+		s.notice_page = 0
+	return {"t": "live_notices", "ok": true, "lines": page.slice(0, 4), "more": more}
+
+
+func _on_live_sold(s: Session, u: Dictionary, _msg: Dictionary) -> Dictionary:
+	var sold: Array = u.sold.slice(0, PAGE)
+	u.sold = u.sold.slice(PAGE)
+	save_user(s.user)
+	return {"t": "live_sold", "ok": true, "sold": sold}
+
+
+func _on_live_gifts(s: Session, u: Dictionary, _msg: Dictionary) -> Dictionary:
+	var gifts: Array = u.gifts.slice(0, 5)
+	u.gifts = u.gifts.slice(5)
+	save_user(s.user)
+	return {"t": "live_gifts", "ok": true, "gifts": gifts, "more": not u.gifts.is_empty()}
+
+
+func _on_live_fame(s: Session, u: Dictionary, _msg: Dictionary) -> Dictionary:
+	var r := {"t": "live_fame", "ok": true, "fame": int(u.fame), "exp": int(u.exp)}
+	u.fame = 0
+	u.exp = 0
+	save_user(s.user)
+	return r
+
+
+func _on_live_counts(s: Session, _u: Dictionary, msg: Dictionary) -> Dictionary:
+	var counts: Array = []
+	counts.resize(10)
+	counts.fill(0)
+	for x in _lots(s, int(msg.get("cat", -1)), int(msg.get("kind", -1))):
+		counts[mini(9, int(x.item.enchant))] += 1
+	return {"t": "live_counts", "ok": true, "counts": counts}
+
+
+func _on_live_page(s: Session, _u: Dictionary, msg: Dictionary) -> Dictionary:
+	var lots := _lots(
+		s, int(msg.get("cat", -1)), int(msg.get("kind", -1)), int(msg.get("enchant", 0))
+	)
+	lots.sort_custom(func(a, b): return [int(a.price), int(a.id)] < [int(b.price), int(b.id)])
+	var page := int(msg.get("page", 0))
+	if page < 0 or page * PAGE >= lots.size():
+		return _fail("live_page", "none")
+	return {
+		"t": "live_page",
+		"ok": true,
+		"lots": lots.slice(page * PAGE, page * PAGE + PAGE).map(_lot_out),
+		"pages": ceili(lots.size() / float(PAGE))
+	}
+
+
+func _on_live_prices(s: Session, _u: Dictionary, msg: Dictionary) -> Dictionary:
+	var lots := _lots(s, int(msg.get("cat", -1)), int(msg.get("kind", -1)))
+	if lots.is_empty():
+		return _fail("live_prices", "none")
+	lots.sort_custom(func(a, b): return int(a.price) < int(b.price))
+	return {"t": "live_prices", "ok": true, "lots": lots.slice(0, PAGE).map(_lot_out)}
+
+
+func _on_live_mine(s: Session, _u: Dictionary, _msg: Dictionary) -> Dictionary:
+	var mine: Array = market().lots.filter(func(x): return str(x.seller) == s.user)
+	if mine.is_empty():
+		return _fail("live_mine", "none")
+	return {"t": "live_mine", "ok": true, "lots": mine.slice(0, PAGE).map(_lot_out)}
 
 
 func _sync(s: Session, u: Dictionary, msg: Dictionary) -> Dictionary:
@@ -302,7 +363,10 @@ func _safe(s: Session, u: Dictionary, msg: Dictionary) -> Dictionary:
 	var to_safe := bool(msg.get("to_safe", true))
 	if amount <= 0 or (to_safe and amount > s.gold) or (not to_safe and amount > int(u.safe)):
 		return _fail("live_safe", "gold")
-	if (to_safe and int(u.safe) + amount > MAX_GOLD) or (not to_safe and s.gold + amount > MAX_GOLD):
+	if (
+		(to_safe and int(u.safe) + amount > MAX_GOLD)
+		or (not to_safe and s.gold + amount > MAX_GOLD)
+	):
 		return _fail("live_safe", "gold")
 	var sign := 1 if to_safe else -1
 	s.gold -= amount * sign
@@ -394,7 +458,9 @@ func _sell(s: Session, u: Dictionary, msg: Dictionary) -> Dictionary:
 		save_user(s.user)
 	else:
 		s.backpack.erase(serial)
-	m.lots.append({"id": int(m.next), "seller": s.user, "item": it, "price": price, "forever": false})
+	m.lots.append(
+		{"id": int(m.next), "seller": s.user, "item": it, "price": price, "forever": false}
+	)
 	m.next = int(m.next) + 1
 	save_market()
 	return {"t": "live_sell", "ok": true}

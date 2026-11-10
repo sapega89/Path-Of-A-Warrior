@@ -1,8 +1,5 @@
 extends "res://tests/test_case.gd"
 
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
-const Shop := preload("res://scripts/screens/shop_screen.gd")
 const TEST_PATH := "user://test_blacksmith.json"
 
 
@@ -99,7 +96,7 @@ func test_shop_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "mode": "buy"}
-	var screen: Control = Shop.new()
+	var screen: Control = Router.make(Router.SCREENS["shop"])
 	root.add_child(screen)
 	eq(screen.cells.size(), 25, "the shop's 25 things")
 	check(screen.cells[0].icon != null, "a potion's icon")
@@ -108,7 +105,7 @@ func test_shop_screen() -> void:
 	eq(int(screen.profile.gold), 940, "bought for 60")
 	screen.free()
 	Router.params = {"profile_path": TEST_PATH, "mode": "enchant"}
-	screen = Shop.new()
+	screen = Router.make(Router.SCREENS["shop"])
 	root.add_child(screen)
 	eq(screen.cells.size(), Items.BACKPACK + Items.EQUIPPED, "the backpack and the Gear page")
 	screen.press_cell(0)
@@ -168,7 +165,7 @@ func test_combine_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH, "mode": "combine"}
-	var screen: Control = Shop.new()
+	var screen: Control = Router.make(Router.SCREENS["shop"])
 	root.add_child(screen)
 	eq(screen.info.text, screen.tr("combine.select"), "choose three")
 	screen.press_cell(0)
@@ -183,7 +180,11 @@ func test_combine_screen() -> void:
 	screen.confirm()
 	eq(screen.sparkle_cells, [0, 1, 2] as Array[int], "the sparkle on the three")
 	screen._process(0.5)
-	eq([screen.sparkle, int(screen.profile.backpack[2].id)], [4, 186], "its fifth frame, not yet combined")
+	eq(
+		[screen.sparkle, int(screen.profile.backpack[2].id)],
+		[4, 186],
+		"its fifth frame, not yet combined"
+	)
 	screen._process(0.1)
 	eq(screen.sparkle, -1, "after 0.6 s the sparkle is gone")
 	eq(int(screen.profile.backpack[2].id), 342, "combined")
@@ -208,7 +209,7 @@ func test_combine_needs_three_things() -> void:
 	eq(smith.things(), 2, "two things")
 	check(not smith.open_page("combine"), "Combine does not open")
 	check(smith.notice.visible, "it says why")
-	eq(smith.notice.dialog_text, "combine.too_few", "\"at least 3 items\"")
+	eq(smith.notice.dialog_text, "combine.too_few", '"at least 3 items"')
 	eq(Router.current_name(), "blacksmith", "still the Blacksmith")
 	smith.notice.hide()
 	check(smith.open_page("sell"), "the other pages open")

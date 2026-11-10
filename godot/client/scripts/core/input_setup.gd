@@ -26,8 +26,6 @@ extends Node
 ## it while the hero plays). The phone's own Back button is BACK too (the game does not quit on
 ## it: application/config/quit_on_go_back is off).
 
-const Glyphs := preload("res://scripts/ui/glyphs.gd")
-
 const KEYS := {
 	"move_left": [KEY_A, KEY_LEFT, KEY_KP_4],
 	"move_right": [KEY_D, KEY_RIGHT, KEY_KP_6],
@@ -148,8 +146,12 @@ func right_button_taken() -> bool:
 
 ## Backspace pressed: BACK, as pyport's (Esc is BACK through ui_cancel itself).
 static func is_back_key(event: InputEvent) -> bool:
-	return event is InputEventKey and event.pressed and not event.echo \
+	return (
+		event is InputEventKey
+		and event.pressed
+		and not event.echo
 		and event.physical_keycode == KEY_BACKSPACE
+	)
 
 
 ## A text field has the focus: Backspace deletes there.
@@ -160,8 +162,12 @@ func typing() -> bool:
 
 ## A press of the right mouse button (not a touch).
 static func is_back_click(event: InputEvent) -> bool:
-	return event is InputEventMouseButton and event.pressed \
-		and event.button_index == MOUSE_BUTTON_RIGHT and event.device != InputEvent.DEVICE_ID_EMULATION
+	return (
+		event is InputEventMouseButton
+		and event.pressed
+		and event.button_index == MOUSE_BUTTON_RIGHT
+		and event.device != InputEvent.DEVICE_ID_EMULATION
+	)
 
 
 ## BACK: ui_cancel pressed and let go, as from Esc.

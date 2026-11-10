@@ -1,8 +1,7 @@
+class_name ArtFigure
 extends Node3D
 ## A person in the new art: the body from characters/<kind>.glb with its weapons, the
 ## shared clips, the painted material and the ink outline. The model faces +Z.
-
-const ArtKit := preload("res://scripts/art/art_kit.gd")
 
 var kind := ""
 var body: Node3D
@@ -98,7 +97,11 @@ func act(motion: Array, duration := 0.0, restart := false, progress := 0.0, blen
 				_speed = speed
 				player.play(c, blend, speed)
 			return
-		if shown_mode != "loop" and player.is_playing() and player.current_animation_position < _hold_until:
+		if (
+			shown_mode != "loop"
+			and player.is_playing()
+			and player.current_animation_position < _hold_until
+		):
 			return
 		if shown_clip == "death":
 			return

@@ -5,16 +5,9 @@ extends "res://tests/test_case.gd"
 ## upyr, the portraits on the plates, the chevron over the target, the blade's trail and the
 ## blood of a hit.
 
-const OnlineBattle := preload("res://scripts/net/online_battle.gd")
 const ClientTests := preload("res://tests/test_online_client.gd")
 const OnlineTests := preload("res://tests/test_online_server.gd")
 const ServerTests := preload("res://tests/test_server.gd")
-const BattleScreen := preload("res://scripts/screens/online_battle_screen.gd")
-const BattleMotion := preload("res://scripts/world/battle_motion.gd")
-const BattleArena := preload("res://scripts/world/battle_arena.gd")
-const MapPeople := preload("res://scripts/world/map_people.gd")
-const Pictures := preload("res://scripts/ui/pictures.gd")
-const ArtKit := preload("res://scripts/art/art_kit.gd")
 
 
 func _dir() -> String:
@@ -35,7 +28,7 @@ func _battle(mode: int) -> Array:
 
 
 func test_who_is_who() -> void:
-	var f := OnlineBattle.Fighter.new()
+	var f := OnlineFighter.new()
 	f.kind = OnlineBattle.PLAYER
 	for face in 4:
 		f.face = face
@@ -50,7 +43,11 @@ func test_who_is_who() -> void:
 		var kind := BattleMotion.kind_of(f)
 		check(kind in BattleMotion.RIVALS, "%s: a rival" % name)
 		eq(BattleMotion.kind_of(f), kind, "the same one for the same name")
-		eq(BattleMotion.portrait_of(f), BattleMotion.RIVAL_PORTRAITS[BattleMotion.RIVALS.find(kind)], "his portrait")
+		eq(
+			BattleMotion.portrait_of(f),
+			BattleMotion.RIVAL_PORTRAITS[BattleMotion.RIVALS.find(kind)],
+			"his portrait"
+		)
 		kinds[kind] = true
 	eq(kinds.size(), 3, "all three rivals among them")
 	eq(BattleMotion.weapons_of(f), [], "the server's fighters keep their own weapons")
@@ -65,7 +62,10 @@ func test_who_is_who() -> void:
 func test_every_animation_has_its_clip() -> void:
 	var clips := ArtKit.clips()
 	for anim in BattleMotion.ANIMS:
-		check(clips.has_animation(BattleMotion.ANIMS[anim][0]), "animation %d: %s" % [anim, BattleMotion.ANIMS[anim]])
+		check(
+			clips.has_animation(BattleMotion.ANIMS[anim][0]),
+			"animation %d: %s" % [anim, BattleMotion.ANIMS[anim]]
+		)
 	var got: Array = _battle(0)
 	var b: RefCounted = got[0].battle
 	var f: RefCounted = b.fighters[1]
@@ -76,7 +76,11 @@ func test_every_animation_has_its_clip() -> void:
 	f.kind = OnlineBattle.MONSTER
 	eq(BattleMotion.motion(b, 1)[0], "attack_chop", "the club comes down")
 	b.state = OnlineBattle.CHOOSE
-	eq([BattleMotion.anim_of(b, 1), BattleMotion.motion(b, 1)[0]], [0, "idle"], "between the rounds: standing")
+	eq(
+		[BattleMotion.anim_of(b, 1), BattleMotion.motion(b, 1)[0]],
+		[0, "idle"],
+		"between the rounds: standing"
+	)
 	f.hp = 0
 	check(BattleMotion.fallen(b, 1), "fallen")
 	eq(BattleMotion.motion(b, 1), BattleMotion.ANIMS[6], "lies as at the end of a fall")
@@ -106,8 +110,11 @@ func test_the_fields() -> void:
 		check(things.size() >= 12, "scenery %d: %d things" % [scenery, things.size()])
 		seen[str(things)] = true
 		var ground := a.ground.get_node("Ground") as MeshInstance3D
-		eq((ground.material_override as ShaderMaterial).get_shader_parameter("grass_green"),
-			BattleArena.GROUNDS[2][2], "dry steppe")
+		eq(
+			(ground.material_override as ShaderMaterial).get_shader_parameter("grass_green"),
+			BattleArena.GROUNDS[2][2],
+			"dry steppe"
+		)
 		eq(a.sky_settings(), BattleArena.DAY, "by day")
 		var old: Node = a.get_node("Field")
 		a.build((2 << 4) | scenery)
@@ -123,15 +130,15 @@ func test_a_mission_on_the_screen() -> void:
 	var c: RefCounted = got[0]
 	var old: Dictionary = Router.params
 	Router.params = {"online": c, "profile_path": String(got[1]).path_join("hero.json")}
-	var screen: Control = BattleScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["online_battle"])
 	root.add_child(screen)
 	screen.size = Vector2(1280, 720)
 	screen.set_process(false)
 	var b: RefCounted = c.battle
 	eq(b.mode, 2, "a Solo Mission")
-	check(screen.arena.scenery == b.bg & 3, "the field of its background")
-	var text := FileAccess.get_file_as_string("res://scripts/screens/online_battle_screen.gd")
-	for old_art in ["fighter_", "gamebg", "\"ui%d\"", "act%d", "face%d", "monster_r"]:
+	check(screen.stage.arena.scenery == b.bg & 3, "the field of its background")
+	var text := FileAccess.get_file_as_string("res://screens/online_battle/online_battle_screen.gd")
+	for old_art in ["fighter_", "gamebg", '"ui%d"', "act%d", "face%d", "monster_r"]:
 		check(not text.contains(old_art), "no sprite of the old screen: " + old_art)
 	var seen := {}
 	for i in 6000:
@@ -144,15 +151,27 @@ func test_a_mission_on_the_screen() -> void:
 			var monsters := 0
 			for k in 4:
 				var f: RefCounted = b.fighters[k]
-				eq(screen.figures[k].kind, BattleMotion.kind_of(f), "fighter %d as who he is" % k)
+				eq(
+					screen.stage.figures[k].kind,
+					BattleMotion.kind_of(f),
+					"fighter %d as who he is" % k
+				)
 				var face := BattleMotion.portrait_of(f)
-				eq(screen.portraits[k].texture, Pictures.portrait(face), "his portrait")
+				eq(screen.hud.portraits[k].texture, Pictures.portrait(face), "his portrait")
 				# the hero's portraits look to the left, the others to the right: each looks across
-				eq(screen.portraits[k].flip_h, (face >= 38 and face < 42) != f.mirrored(), "fighter %d looks across" % k)
-				eq(screen.portraits[k].position.x > screen.size.x / 2.0, f.mirrored(), "fighter %d on his side" % k)
+				eq(
+					screen.hud.portraits[k].flip_h,
+					(face >= 38 and face < 42) != f.mirrored(),
+					"fighter %d looks across" % k
+				)
+				eq(
+					screen.hud.portraits[k].position.x > screen.size.x / 2.0,
+					f.mirrored(),
+					"fighter %d on his side" % k
+				)
 				if f.kind == OnlineBattle.MONSTER:
 					monsters += 1
-					eq(screen.figures[k].kind, "upyr", "a monster")
+					eq(screen.stage.figures[k].kind, "upyr", "a monster")
 			eq(monsters, 2, "two monsters")
 		match b.state:
 			OnlineBattle.CHOOSE:
@@ -161,14 +180,27 @@ func test_a_mission_on_the_screen() -> void:
 			OnlineBattle.TARGET:
 				if b.state_ticks >= 3:
 					var t: int = b.target_cursor
-					check(screen.marker.visible and screen.marker.position.distance_to(screen.bodies[t].position + Vector3(0, BattleScreen.MARKER_UP, 0)) < 0.01,
-						"the chevron over the target")
+					check(
+						(
+							screen.stage.marker.visible
+							and (
+								screen.stage.marker.position.distance_to(
+									(
+										screen.stage.bodies[t].position
+										+ Vector3(0, BattleStage.MARKER_UP, 0)
+									)
+								)
+								< 0.01
+							)
+						),
+						"the chevron over the target"
+					)
 					seen["target"] = true
 					b.key("fire")
 			OnlineBattle.BAR:
 				if b.state_ticks == 6:
 					b.key("fire")
-		for e in screen.effects.drawn:
+		for e in screen.stage.effects.drawn:
 			seen[e[0]] = true
 	for what in ["people", "target", "trail", "blood"]:
 		check(seen.has(what), "seen: " + what)

@@ -23,6 +23,14 @@ jobs:
           mv "Godot_v${GODOT_VERSION}-stable_linux.x86_64" "$RUNNER_TEMP/godot"
           chmod +x "$RUNNER_TEMP/godot"
 
+      - name: Style (gdformat, gdlint)
+        working-directory: godot/client
+        run: |
+          python3 -m venv "$RUNNER_TEMP/lint"
+          "$RUNNER_TEMP/lint/bin/pip" install -q "gdtoolkit==4.5.0"
+          "$RUNNER_TEMP/lint/bin/gdformat" --check scripts server tests tools lab
+          "$RUNNER_TEMP/lint/bin/gdlint" scripts server tests tools lab
+
       - name: Converted data is up to date
         run: |
           python3 -m venv "$RUNNER_TEMP/venv"

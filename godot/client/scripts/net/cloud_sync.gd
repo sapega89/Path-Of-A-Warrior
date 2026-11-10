@@ -1,3 +1,4 @@
+class_name CloudSync
 extends RefCounted
 ## The hero kept on the server, as in pyport's "save only on the server": the hero lives in
 ## memory, every save goes to the server, and the game starts only online.
@@ -15,9 +16,6 @@ extends RefCounted
 ## as pyport keeps them: after each login the newer copy wins (the server's on a device the
 ## account is new to), and every change goes to the server; a conflict while playing is won
 ## by this device.
-
-const NetClient := preload("res://scripts/net/net_client.gd")
-const Protocol := preload("res://scripts/net/protocol.gd")
 
 const RETRY_MS := 30000
 const RETRY_MAX_MS := 300000
@@ -159,8 +157,10 @@ func step() -> void:
 		if not _open():
 			return
 		state = "connecting"
-		client.request({"t": "login", "id": account[0], "pwd": account[1], "v": Protocol.VERSION},
-			_login_answer)
+		client.request(
+			{"t": "login", "id": account[0], "pwd": account[1], "v": Protocol.VERSION},
+			_login_answer
+		)
 	client.poll()
 	if state == "ready":
 		_push()
@@ -210,7 +210,8 @@ func _sign_in(t: String, id: String, pwd: String, done: Callable) -> void:
 		done.call({"t": t, "ok": false, "err": "offline"})
 		return
 	state = "connecting"
-	client.request({"t": t, "id": id, "pwd": pwd, "v": Protocol.VERSION},
+	client.request(
+		{"t": t, "id": id, "pwd": pwd, "v": Protocol.VERSION},
 		func(r: Dictionary) -> void:
 			if r.get("ok", false):
 				account = [id, pwd]
@@ -220,7 +221,8 @@ func _sign_in(t: String, id: String, pwd: String, done: Callable) -> void:
 				_lost()
 			else:
 				state = "idle" if account.is_empty() else state
-			done.call(r))
+			done.call(r)
+	)
 
 
 func _get_answer(r: Dictionary) -> void:
@@ -282,8 +284,11 @@ func _put_answer(r: Dictionary) -> void:
 
 ## Nothing waits to be sent.
 func idle() -> bool:
-	return not dirty and in_flight < 0 and (options_store == null
-		or not options_store.cloud.dirty and options_in_flight < 0)
+	return (
+		not dirty
+		and in_flight < 0
+		and (options_store == null or not options_store.cloud.dirty and options_in_flight < 0)
+	)
 
 
 func _options_get_answer(r: Dictionary) -> void:
@@ -298,8 +303,10 @@ func _options_get_answer(r: Dictionary) -> void:
 	if not theirs is Dictionary:
 		m.rev = 0
 		m.dirty = true  # nothing on the server yet: ours go
-	elif str(m.user) != str(account[0]) or (s_rev > int(m.rev)
-			and not (m.dirty and int(m.at) > s_at)):
+	elif (
+		str(m.user) != str(account[0])
+		or (s_rev > int(m.rev) and not (m.dirty and int(m.at) > s_at))
+	):
 		options_store.take_cloud(theirs)
 		m.rev = s_rev
 		m.at = s_at
@@ -319,8 +326,15 @@ func _push_options() -> void:
 	if not m.dirty:
 		return
 	options_in_flight = int(m.at)
-	client.request({"t": "options_put", "base": int(m.rev), "at": int(m.at),
-		"options": options_store.cloud_values()}, _options_put_answer)
+	client.request(
+		{
+			"t": "options_put",
+			"base": int(m.rev),
+			"at": int(m.at),
+			"options": options_store.cloud_values()
+		},
+		_options_put_answer
+	)
 
 
 func _options_put_answer(r: Dictionary) -> void:
@@ -345,5 +359,9 @@ func _options_put_answer(r: Dictionary) -> void:
 ## A save still has to reach the server and the connection is up or coming up: worth
 ## waiting for when the game quits.
 func flushing() -> bool:
-	return not account.is_empty() and state != "off" and client.state != NetClient.State.CLOSED \
+	return (
+		not account.is_empty()
+		and state != "off"
+		and client.state != NetClient.State.CLOSED
 		and not idle()
+	)

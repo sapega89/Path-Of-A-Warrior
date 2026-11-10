@@ -1,9 +1,9 @@
+class_name ArtGround
 extends Node3D
 ## Ground for a scene in the new art: a grid painted by ground.gdshader. Vertex colours
 ## mark trodden paths (r) and green grass (g); outside the play area the land rises
 ## into low hills so the edge of the world is never seen. Grass tufts are one MultiMesh.
 
-const ArtKit := preload("res://scripts/art/art_kit.gd")
 const GROUND := preload("res://assets/art/shaders/ground.gdshader")
 
 var size := 64.0
@@ -100,8 +100,10 @@ func _scatter_tufts() -> void:
 		var z := _rng.randf_range(play.position.y - 6.0, play.end.y + 6.0)
 		if _path_amount(x, z) > 0.2:
 			continue
-		var t := Transform3D(Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3.ONE * _rng.randf_range(0.45, 0.8)),
-			Vector3(x, height(x, z), z))
+		var t := Transform3D(
+			Basis(Vector3.UP, _rng.randf() * TAU).scaled(Vector3.ONE * _rng.randf_range(0.45, 0.8)),
+			Vector3(x, height(x, z), z)
+		)
 		placed.append(t)
 	mm.instance_count = placed.size()
 	for i in placed.size():

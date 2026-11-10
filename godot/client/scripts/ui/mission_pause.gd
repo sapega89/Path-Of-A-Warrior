@@ -1,3 +1,4 @@
+class_name MissionPause
 extends Control
 ## The pause menu of a mission, over the stopped game: Resume, Items (Assign Items for this
 ## mission's potion keys), Options (the settings), Help, Exit to Menu (asked first: the
@@ -9,13 +10,6 @@ extends Control
 ## first): `leave` goes on as after the training.
 
 signal resumed
-
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const MainMenu := preload("res://scripts/screens/main_menu.gd")
-const SettingsScreen := preload("res://scripts/screens/settings_screen.gd")
-const HelpScreen := preload("res://scripts/screens/help_screen.gd")
-const AssignItems := preload("res://scripts/screens/assign_items_screen.gd")
-const AskDialog := preload("res://scripts/ui/ask_dialog.gd")
 
 var buttons: Array[Button] = []
 var menu: Control
@@ -86,7 +80,7 @@ func save() -> bool:
 
 ## Assign Items over the pause menu, for this mission's potion keys.
 func open_items() -> void:
-	var screen: Control = AssignItems.new()
+	var screen: Control = Router.make(Router.SCREENS["assign_items"])
 	screen.sim = sim
 	_open_over(screen, "Items")
 
@@ -102,12 +96,12 @@ func _add(col: VBoxContainer, node_name: String, text_key: String, on_press: Cal
 
 ## The settings over the pause menu; their Back comes back here.
 func open_options() -> void:
-	_open_over(SettingsScreen.new(), "Settings")
+	_open_over(Router.make(Router.SCREENS["settings"]), "Settings")
 
 
 ## The help over the pause menu; leaving it comes back here.
 func open_help() -> void:
-	_open_over(HelpScreen.new(), "Help")
+	_open_over(Router.make(Router.SCREENS["help"]), "Help")
 
 
 func _open_over(screen: Control, node_name: String) -> void:
@@ -131,6 +125,9 @@ func close_options() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if settings == null and (event.is_action_pressed("ui_cancel") or event.is_action_pressed("pause")):
+	if (
+		settings == null
+		and (event.is_action_pressed("ui_cancel") or event.is_action_pressed("pause"))
+	):
 		get_viewport().set_input_as_handled()
 		resumed.emit()

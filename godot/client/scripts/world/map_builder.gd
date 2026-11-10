@@ -1,3 +1,4 @@
+class_name MapBuilder
 extends Node3D
 ## Builds a 3D map from an original map (data/maps/<n>.json, made by
 ## godot/tools/import_original.py) with the original tiles.
@@ -10,7 +11,8 @@ extends Node3D
 ##                        (drawn over the actors) is a front view of a wall, tree or house
 ##                        in the original art, so it is raised as a vertical picture at the
 ##                        front (largest y) cell of the run, stacking upward. Only runs of up to
-##                        MAX_STAND_RUN cells (houses, tents, trees, walls); longer blocked areas are
+##                        MAX_STAND_RUN cells (houses, tents, trees, walls); longer blocked areas
+##                        are
 ##                        cliffs, water or forest drawn from above and stay flat
 ##   objects layer     -> breakable things as sprites facing the camera
 ##   around the map    -> the ground goes on OUTSIDE cells past each edge, each cell with the
@@ -40,7 +42,8 @@ var breakables: Array[Node3D] = []
 var _standing := {}  # Vector2i -> true, cells drawn standing up
 ## The cells drawn (show_only); empty: all. A cell not drawn shows the ground around the map.
 var _shown := {}
-var _background := {}  # Vector2i -> ground tile, for a cell not drawn: that of the nearest drawn one
+## Vector2i -> ground tile, for a cell not drawn: that of the nearest drawn one
+var _background := {}
 
 
 static func map_path(number: int) -> String:
@@ -236,7 +239,9 @@ func _build_objects() -> void:
 			s.texture = atlas
 			s.region_enabled = true
 			var i := kind - 1
-			s.region_rect = Rect2((i % ATLAS_COLS) * TILE_PX, (i / ATLAS_COLS) * TILE_PX, TILE_PX, TILE_PX)
+			s.region_rect = Rect2(
+				(i % ATLAS_COLS) * TILE_PX, (i / ATLAS_COLS) * TILE_PX, TILE_PX, TILE_PX
+			)
 			s.pixel_size = 1.0 / TILE_PX
 			s.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
 			s.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
@@ -298,7 +303,9 @@ func _wall_quad(st: SurfaceTool, x: int, z: float, level: int, t: int) -> void:
 
 
 ## a b / d c, a = top-left of the picture.
-func _quad(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, d: Vector3, uv: Rect2, normal: Vector3) -> void:
+func _quad(
+	st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, d: Vector3, uv: Rect2, normal: Vector3
+) -> void:
 	var ua := uv.position
 	var ub := Vector2(uv.end.x, uv.position.y)
 	var uc := uv.end

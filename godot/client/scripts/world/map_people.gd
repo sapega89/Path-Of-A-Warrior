@@ -1,3 +1,4 @@
+class_name MapPeople
 extends Node3D
 ## The people of a mission in the new art: the hero and the enemies of MapSim as 3D figures
 ## (scripts/art/art_figure.gd) on their places, turned their way and playing the clip of
@@ -7,9 +8,6 @@ extends Node3D
 ## of the mission's general (assets/art/people.json): the Crown, the horde or Cossacks of a
 ## rival colonel, swordsmen, archers and squads of three.
 
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const Motion := preload("res://scripts/world/motion.gd")
-const ArtFigure := preload("res://scripts/art/art_figure.gd")
 const PEOPLE_PATH := "res://assets/art/people.json"
 const PX := 1.0 / 27.0  # world units per map pixel (a tile is 27 px)
 const FOOT_PX := 6  # the original's body box reaches this far below the position
@@ -108,7 +106,15 @@ func update(t: float, dt: float, tick: float, feel: RefCounted) -> void:
 	var h: RefCounted = sim.hero
 	hero.position = to_world(_smooth(h.prev_pos, h.pos, t))
 	var speed := _ground_speed(h, tick)
-	_drive(hero, h, Motion.hero(h.action, speed), MapSim.hero_anim(h.action, h.shown_dir), t, dt, tick)
+	_drive(
+		hero,
+		h,
+		Motion.hero(h.action, speed),
+		MapAnims.hero_anim(h.action, h.shown_dir),
+		t,
+		dt,
+		tick
+	)
 	_turn(hero, Motion.yaw_of(h.shown_dir), dt)
 	_flash(hero, h, feel)
 	_place_enemies(t, dt, tick, feel)
@@ -130,7 +136,10 @@ func _place_enemies(t: float, dt: float, tick: float, feel: RefCounted) -> void:
 		var knocked: bool = e.action == 2 and (e.pos - e.prev_pos).length() > 8
 		var o: Vector3 = feel.offset_of(e) if feel != null else Vector3.ZERO
 		var k: float = feel.knock_t(t) if knocked and feel != null else t
-		node.position = to_world(_smooth(e.prev_pos, e.pos, k) + Vector2(o.x, o.y)) + Vector3(0.0, o.z * PX, 0.0)
+		node.position = (
+			to_world(_smooth(e.prev_pos, e.pos, k) + Vector2(o.x, o.y))
+			+ Vector3(0.0, o.z * PX, 0.0)
+		)
 		var frame: int = sim.enemy_sprite_frame(e)
 		node.visible = frame < (180 if e.type < 200 else 100)
 		var motion := Motion.enemy(e.type, e.action, _ground_speed(e, tick), knocked)
@@ -160,7 +169,7 @@ func _enemy_node(e: RefCounted) -> Node3D:
 		kind = GENERALS[side_of_general(sim.general)]
 	else:
 		kind = SOLDIERS[side][1 if e.type == MapSim.KIND_ARCHERS else 0]
-	for i in (3 if e.type == MapSim.KIND_SQUAD else 1):
+	for i in 3 if e.type == MapSim.KIND_SQUAD else 1:
 		var f: Node3D = ArtFigure.new()
 		node.add_child(f)
 		f.setup(kind)
@@ -169,13 +178,17 @@ func _enemy_node(e: RefCounted) -> Node3D:
 	return node
 
 
-func _drive(fig: Node3D, a: RefCounted, motion: Array, anim: Array, t: float, dt: float, tick: float) -> void:
+func _drive(
+	fig: Node3D, a: RefCounted, motion: Array, anim: Array, t: float, dt: float, tick: float
+) -> void:
 	_act(fig, a, motion, anim, t, tick, _restarted(a))
 	_state[a] = [a.action, a.frame]
 	fig.advance(dt)
 
 
-func _act(fig: Node3D, a: RefCounted, motion: Array, anim: Array, t: float, tick: float, restart: bool) -> void:
+func _act(
+	fig: Node3D, a: RefCounted, motion: Array, anim: Array, t: float, tick: float, restart: bool
+) -> void:
 	var n := Motion.ticks(anim)
 	var progress := clampf((float(a.frame) + t) / float(n), 0.0, 1.0) if restart else 0.0
 	fig.act(motion, n * tick, restart, progress)

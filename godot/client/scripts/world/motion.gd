@@ -1,3 +1,4 @@
+class_name Motion
 extends RefCounted
 ## Which clip of the shared library (assets/art/characters/humanoid_clips.glb) a person on the
 ## map plays for the action MapSim gives him, and how: [clip, mode, speed].
@@ -5,8 +6,6 @@ extends RefCounted
 ##   "fit":  plays once over the action's ticks (but not quicker than MIN_FIT seconds),
 ##   "once": plays once at `speed` and keeps its last pose (a hit, a fall).
 ## The simulation stays in charge: the clip only shows what the action does.
-
-const MapSim := preload("res://scripts/sim/map_sim.gd")
 
 ## A strike shorter than this is stretched to it, so the swing reads.
 const MIN_FIT := 0.42
@@ -105,4 +104,6 @@ static func _pace(ground_speed: float, nominal: float) -> float:
 ## The original 8-direction (0 down, 2 left, 4 up, 6 right) as a turn about Y: the figure
 ## faces +Z at 0.
 static func yaw_of(dir8: int) -> float:
-	return [0.0, -PI / 4.0, -PI / 2.0, -3.0 * PI / 4.0, PI, 3.0 * PI / 4.0, PI / 2.0, PI / 4.0][posmod(dir8, 8)]
+	return [0.0, -PI / 4.0, -PI / 2.0, -3.0 * PI / 4.0, PI, 3.0 * PI / 4.0, PI / 2.0, PI / 4.0][posmod(
+		dir8, 8
+	)]

@@ -1,15 +1,10 @@
 extends "res://tests/test_case.gd"
 ## A mission lost, as the original: from level 10 on the hero may lose a thing he wears.
 
-const Profile := preload("res://scripts/core/profile.gd")
-const Items := preload("res://scripts/core/items.gd")
-const JavaRandom := preload("res://scripts/sim/java_random.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
-
 
 ## Gives the numbers it is told, as rng.below would.
-class Rolls extends RefCounted:
+class Rolls:
+	extends RefCounted
 	var values: Array = []
 	var asked: Array = []
 
@@ -44,7 +39,7 @@ func test_lose_gear_chance_and_place() -> void:
 func test_lost_gear_on_the_fail_banner() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var screen: Control = MissionScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	screen.profile.level = 40
 	# a seed whose rolls lose the weapon: below 10 of 100, then place 0
@@ -61,8 +56,15 @@ func test_lost_gear_on_the_fail_banner() -> void:
 	eq(int(screen.lost_gear.get("id", 0)), Profile.START_WEAPON, "the weapon is lost")
 	eq(int(screen.profile.equipped[0].id), 0, "taken from the hero")
 	var text: String = screen.banner_text.text
-	check(text.ends_with("%s\n%s\n%s" % [tr("mission.failed"), tr("mission.lost"), Items.name_of(Profile.START_WEAPON)]),
-		"the banner names it: %s" % text)
+	check(
+		text.ends_with(
+			(
+				"%s\n%s\n%s"
+				% [tr("mission.failed"), tr("mission.lost"), Items.name_of(Profile.START_WEAPON)]
+			)
+		),
+		"the banner names it: %s" % text
+	)
 	screen._process(0.0)
 	eq(int(screen.profile.equipped[0].id), 0, "once")
 	screen.free()

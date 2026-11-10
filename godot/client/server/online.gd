@@ -1,4 +1,7 @@
+# gdlint: disable=max-public-methods
+class_name OnlineServer
 extends RefCounted
+# gdlint: disable=max-file-lines
 ## The online game on the server (pyport/pow_server/server.py, model.py, chat.py, orders.py):
 ## each account's online character, Options, the Character pages, the Ranking, the orders and
 ## the chat; and the server's bots, accounts nobody logs in to that are always online.
@@ -16,7 +19,8 @@ extends RefCounted
 ## until mp_leave or the connection closes); every other request needs it. Each is answered
 ## {t, ok, err?}:
 ##   mp_enter / mp_profile            -> the character (id, name, face, level, wins, losses, hp,
-##                                       weapon, slots, quotes, skill_cost), unread: [order, private]
+##                                       weapon, slots, quotes, skill_cost), unread: [order,
+##                                       private]
 ##   mp_options / mp_options_set {invitation: 0 Deny, 1 Accept}
 ##   mp_name {name}                   -> err "not acceptable", "name exists"
 ##   mp_quote {which: "start" | "win", quote}
@@ -29,7 +33,8 @@ extends RefCounted
 ##   mp_rank_list {cat, near}         -> rows: 3 x {rank, id, value} (the top three, or around me)
 ##   order_info                       -> name, rows: [{id, name, level, online, leader}]
 ##   order_create {name} / order_join {name} / order_leave
-##                                    -> err "not acceptable", "name exists", "none", "full", "in order"
+##                                    -> err "not acceptable", "name exists", "none", "full", "in
+##                                    order"
 ##   chat_read {channel: 0 lobby, 1 order, 2 private, peer} -> peer_name, rows: [{id, name, text}]
 ##   chat_send {channel, peer, text}  -> err "no order", "no player", "self", "not acceptable",
 ##                                       "too fast"; every online reader gets
@@ -51,26 +56,44 @@ extends RefCounted
 ##   battle_end carries the rewards (also added to the character's purse here) and the loot,
 ##   which the client gives the hero.
 
-const Accounts := preload("res://server/accounts.gd")
-const Rules := preload("res://server/rules.gd")
-const Battle := preload("res://server/battle.gd")
-const Room := preload("res://server/room.gd")
-const Loot := preload("res://server/loot.gd")
-
 const EMPTY_SKILL := 99
 const SKILL_IDS := [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 ## single-player skill index -> its code; the online game knows the codes 3..13
 const SKILL_CODES := [3, 4, 5, 9, 10, 11, 12, 13, 6, 7, 8, 14, 15, 16, 17, 18, 19, 20, 21]
 ## what only the online game has, with the values of a new character
-const ONLINE_FIELDS := {"name": "", "wins": 0, "losses": 0, "quote_start": "Prepare yourself!",
-	"quote_win": "Too easy.", "mp_exp": 0, "mp_fame": 0, "gold": 0, "duel_grade": 0,
-	"mission_grade": 0, "invitation": 1, "slots": [], "order": "", "bot": false}
+const ONLINE_FIELDS := {
+	"name": "",
+	"wins": 0,
+	"losses": 0,
+	"quote_start": "Prepare yourself!",
+	"quote_win": "Too easy.",
+	"mp_exp": 0,
+	"mp_fame": 0,
+	"gold": 0,
+	"duel_grade": 0,
+	"mission_grade": 0,
+	"invitation": 1,
+	"slots": [],
+	"order": "",
+	"bot": false
+}
 ## the server's bots: UserID, display name, Fame
-const BOTS := [["BLADE", "Blade", 900], ["RAVEN", "Raven", 600], ["TIGER", "Tiger", 400],
-	["SHADOW", "Shadow", 250], ["IRONFIST", "Ironfist", 100]]
-const BOT_LINES := ["Ha! Fight me first.", "Not now, I am sharpening my sword.",
-	"Challenge me and we will talk.", "Good luck out there!", "See you in the arena.",
-	"Who sent you?", "I only speak with my blade."]
+const BOTS := [
+	["BLADE", "Blade", 900],
+	["RAVEN", "Raven", 600],
+	["TIGER", "Tiger", 400],
+	["SHADOW", "Shadow", 250],
+	["IRONFIST", "Ironfist", 100]
+]
+const BOT_LINES := [
+	"Ha! Fight me first.",
+	"Not now, I am sharpening my sword.",
+	"Challenge me and we will talk.",
+	"Good luck out there!",
+	"See you in the arena.",
+	"Who sent you?",
+	"I only speak with my blade."
+]
 
 const LOBBY := 0
 const ORDER := 1
@@ -84,8 +107,11 @@ const MATCH_WAIT := 60.0  # seconds a Duel waits for a live opponent, then a CPU
 const MATCH_LEVELS := [10, 20]  # level reach at first / after half the wait
 const INVITE_TEAM := 3
 ## starred whole or inside words, any case
+# gdlint:ignore = max-line-length
 const RUDE := "fuck|shit|bitch|cunt|dick|asshole|bastard|whore|slut|nigg|fagg|blya|blia|suka|pizd|khuy|xuy|huy|hui|ebat|yeba|mudak|pidor|pidar|gandon"
 
+## The handler of each request type (answer()).
+var _answers: Dictionary = {}
 var dir: String
 var accounts: Accounts
 var rng := RandomNumberGenerator.new()
@@ -123,6 +149,35 @@ func _init(data_dir: String, account_store: Accounts) -> void:
 		if f.begins_with("char_") and f.ends_with(".json"):
 			var uid := f.trim_prefix("char_").trim_suffix(".json")
 			_chars[uid] = _read(dir.path_join(f))
+	_answers = {
+		"mp_profile": _on_mp_profile,
+		"mp_options": _on_mp_options,
+		"mp_options_set": _on_mp_options_set,
+		"mp_name": _on_mp_name,
+		"mp_quote": _on_mp_quote,
+		"mp_attributes": _on_mp_attributes,
+		"mp_skills": _on_mp_skills,
+		"mp_slots": _on_mp_slots,
+		"mp_records": _on_mp_records,
+		"mp_purse": _on_mp_purse,
+		"mp_rank_mine": _on_mp_rank_mine,
+		"mp_rank_list": _on_mp_rank_list,
+		"order_info": _on_order_info,
+		"order_create": _on_order_create,
+		"order_join": _on_order_create,
+		"order_leave": _on_order_leave,
+		"chat_read": _on_chat_read,
+		"chat_send": _chat_send,
+		"mp_match": _match,
+		"mp_cancel": _on_mp_cancel,
+		"mp_invite": _invite,
+		"mp_ready": _in_battle,
+		"mp_turn": _in_battle,
+		"mp_stage_next": _in_battle,
+		"mp_intro_done": _in_battle,
+		"mp_exit": _in_battle,
+		"chat_peers": _on_chat_peers
+	}
 
 
 # --- what the server keeps ----------------------------------------------------------------
@@ -264,9 +319,20 @@ func profile(uid: String) -> Dictionary:
 	var costs: Array = []
 	for id in SKILL_IDS:
 		costs.append(Rules.skill_cost(id, int(c.skills.get(id, 1)), max_mp(c)))
-	return {"id": uid, "name": display_name(c), "face": c.face, "level": c.level, "wins": int(c.wins),
-		"losses": int(c.losses), "hp": max_hp(c), "weapon": c.weapon, "slots": c.slots,
-		"quote_start": c.quote_start, "quote_win": c.quote_win, "skill_cost": costs}
+	return {
+		"id": uid,
+		"name": display_name(c),
+		"face": c.face,
+		"level": c.level,
+		"wins": int(c.wins),
+		"losses": int(c.losses),
+		"hp": max_hp(c),
+		"weapon": c.weapon,
+		"slots": c.slots,
+		"quote_start": c.quote_start,
+		"quote_win": c.quote_win,
+		"skill_cost": costs
+	}
 
 
 # --- the server's bots ----------------------------------------------------------------------
@@ -364,113 +430,193 @@ func answer(s: Session, t: String, msg: Dictionary) -> Dictionary:
 		return _ok(t)
 	if uid.is_empty():
 		return _fail(t, "enter first")
+	online_part(uid)  # the player's part of the game is made on his first request
+	var handler: Callable = _answers.get(t, Callable())
+	if not handler.is_valid():
+		return _fail(t, "unknown")
+	return handler.call(s, t, msg)
+
+
+func _on_mp_profile(s: Session, t: String, _msg: Dictionary) -> Dictionary:
+	var uid := s.user
+	var p := profile(uid)
+	p.unread = unread(uid)
+	return _ok(t, p)
+
+
+func _on_mp_options(s: Session, t: String, _msg: Dictionary) -> Dictionary:
+	var uid := s.user
 	var c := online_part(uid)
-	match t:
-		"mp_profile":
-			var p := profile(uid)
-			p.unread = unread(uid)
-			return _ok(t, p)
-		"mp_options":
-			return _ok(t, {"invitation": int(c.invitation)})
-		"mp_options_set":
-			var v: Variant = msg.get("invitation")
-			if not (v is int and (v == 0 or v == 1)):
-				return _fail(t, "bad message")
-			c.invitation = v
-			save_char(uid)
-			return _ok(t)
-		"mp_name":
-			var name := str(msg.get("name", ""))
-			if _name_re.search(name) == null:
-				return _fail(t, "not acceptable")
-			if name_taken(name, uid):
-				return _fail(t, "name exists")
-			c.name = name
-			save_char(uid)
-			return _ok(t)
-		"mp_quote":
-			var q := str(msg.get("quote", ""))
-			var which := str(msg.get("which", ""))
-			if _quote_re.search(q) == null or not which in ["start", "win"]:
-				return _fail(t, "not acceptable")
-			c["quote_" + which] = q
-			save_char(uid)
-			return _ok(t)
-		"mp_attributes":
-			var ch := character(uid)
-			return _ok(t, {"hp": ch.hp, "hp_bonus": ch.hp_bonus, "mp": ch.mp, "mp_bonus": ch.mp_bonus,
-				"atk": ch.atk, "atk_bonus": ch.atk_bonus, "def": ch.def, "def_bonus": ch.def_bonus})
-		"mp_skills":
-			var ch := character(uid)
-			var rows: Array = []
-			for id in SKILL_IDS:
-				if ch.skills.has(id):
-					rows.append({"id": id, "level": ch.skills[id]})
-			return _ok(t, {"skills": rows})
-		"mp_slots":
-			var slots: Variant = msg.get("slots")
-			var ok: Array = _valid_slots(character(uid).skills, slots) if slots is Array and slots.size() == 4 else []
-			if ok.is_empty():
-				return _fail(t, "bad message")
-			c.slots = ok
-			save_char(uid)
-			return _ok(t)
-		"mp_records":
-			var doc := my_order(uid)
-			return _ok(t, {"fame": int(c.mp_fame), "duel_grade": int(c.duel_grade),
-				"mission_grade": int(c.mission_grade), "order": str(doc.get("name", ""))})
-		"mp_purse":
-			return _ok(t, {"exp": int(c.mp_exp), "fame": int(c.mp_fame), "gold": int(c.gold)})
-		"mp_rank_mine":
-			var cat := int(msg.get("cat", 0))
-			if cat < 1 or cat > 3:
-				return _fail(t, "bad message")
-			for r in table(cat):
-				if r.id == uid:
-					return _ok(t, {"rank": r.rank, "value": r.value})
-			return _fail(t, "none")
-		"mp_rank_list":
-			var cat := int(msg.get("cat", 0))
-			if cat < 1 or cat > 3:
-				return _fail(t, "bad message")
-			var rows := table(cat)
-			var start := 0
-			if bool(msg.get("near", false)):  # me in the middle when possible
-				var me := rows.find_custom(func(r): return r.id == uid)
-				start = maxi(0, mini(me - 1, rows.size() - 3))
-			rows = rows.slice(start, start + 3)
-			while rows.size() < 3:
-				rows.append({"rank": 0, "id": "", "value": 0})
-			return _ok(t, {"rows": rows})
-		"order_info":
-			return _order_info(uid)
-		"order_create", "order_join":
-			return _order_enter(t, uid, str(msg.get("name", "")).to_upper())
-		"order_leave":
-			_order_leave(uid)
-			return _ok(t)
-		"chat_read":
-			return _chat_read(uid, msg)
-		"chat_send":
-			return _chat_send(s, msg)
-		"mp_match":
-			return _match(s, msg)
-		"mp_cancel":
-			if not queue.has(s):
-				return _fail(t, "none")
-			queue.erase(s)
-			return _ok(t)
-		"mp_invite":
-			return _invite(s, msg)
-		"mp_ready", "mp_turn", "mp_stage_next", "mp_intro_done", "mp_exit":
-			return _in_battle(s, t, msg)
-		"chat_peers":
-			var rows: Array = []
-			for p in _me(uid).peers:
-				rows.append({"id": p[0], "name": display_name(character(p[0])), "unread": int(p[1]),
-					"online": int(is_online(p[0]))})
-			return _ok(t, {"rows": rows})
-	return _fail(t, "unknown")
+	return _ok(t, {"invitation": int(c.invitation)})
+
+
+func _on_mp_options_set(s: Session, t: String, msg: Dictionary) -> Dictionary:
+	var uid := s.user
+	var c := online_part(uid)
+	var v: Variant = msg.get("invitation")
+	if not (v is int and (v == 0 or v == 1)):
+		return _fail(t, "bad message")
+	c.invitation = v
+	save_char(uid)
+	return _ok(t)
+
+
+func _on_mp_name(s: Session, t: String, msg: Dictionary) -> Dictionary:
+	var uid := s.user
+	var c := online_part(uid)
+	var name := str(msg.get("name", ""))
+	if _name_re.search(name) == null:
+		return _fail(t, "not acceptable")
+	if name_taken(name, uid):
+		return _fail(t, "name exists")
+	c.name = name
+	save_char(uid)
+	return _ok(t)
+
+
+func _on_mp_quote(s: Session, t: String, msg: Dictionary) -> Dictionary:
+	var uid := s.user
+	var c := online_part(uid)
+	var q := str(msg.get("quote", ""))
+	var which := str(msg.get("which", ""))
+	if _quote_re.search(q) == null or not which in ["start", "win"]:
+		return _fail(t, "not acceptable")
+	c["quote_" + which] = q
+	save_char(uid)
+	return _ok(t)
+
+
+func _on_mp_attributes(s: Session, t: String, _msg: Dictionary) -> Dictionary:
+	var uid := s.user
+	var ch := character(uid)
+	return _ok(
+		t,
+		{
+			"hp": ch.hp,
+			"hp_bonus": ch.hp_bonus,
+			"mp": ch.mp,
+			"mp_bonus": ch.mp_bonus,
+			"atk": ch.atk,
+			"atk_bonus": ch.atk_bonus,
+			"def": ch.def,
+			"def_bonus": ch.def_bonus
+		}
+	)
+
+
+func _on_mp_skills(s: Session, t: String, _msg: Dictionary) -> Dictionary:
+	var uid := s.user
+	var ch := character(uid)
+	var rows: Array = []
+	for id in SKILL_IDS:
+		if ch.skills.has(id):
+			rows.append({"id": id, "level": ch.skills[id]})
+	return _ok(t, {"skills": rows})
+
+
+func _on_mp_slots(s: Session, t: String, msg: Dictionary) -> Dictionary:
+	var uid := s.user
+	var c := online_part(uid)
+	var slots: Variant = msg.get("slots")
+	var ok: Array = (
+		_valid_slots(character(uid).skills, slots) if slots is Array and slots.size() == 4 else []
+	)
+	if ok.is_empty():
+		return _fail(t, "bad message")
+	c.slots = ok
+	save_char(uid)
+	return _ok(t)
+
+
+func _on_mp_records(s: Session, t: String, _msg: Dictionary) -> Dictionary:
+	var uid := s.user
+	var c := online_part(uid)
+	var doc := my_order(uid)
+	return _ok(
+		t,
+		{
+			"fame": int(c.mp_fame),
+			"duel_grade": int(c.duel_grade),
+			"mission_grade": int(c.mission_grade),
+			"order": str(doc.get("name", ""))
+		}
+	)
+
+
+func _on_mp_purse(s: Session, t: String, _msg: Dictionary) -> Dictionary:
+	var uid := s.user
+	var c := online_part(uid)
+	return _ok(t, {"exp": int(c.mp_exp), "fame": int(c.mp_fame), "gold": int(c.gold)})
+
+
+func _on_mp_rank_mine(s: Session, t: String, msg: Dictionary) -> Dictionary:
+	var uid := s.user
+	var cat := int(msg.get("cat", 0))
+	if cat < 1 or cat > 3:
+		return _fail(t, "bad message")
+	for r in table(cat):
+		if r.id == uid:
+			return _ok(t, {"rank": r.rank, "value": r.value})
+	return _fail(t, "none")
+
+
+func _on_mp_rank_list(s: Session, t: String, msg: Dictionary) -> Dictionary:
+	var uid := s.user
+	var cat := int(msg.get("cat", 0))
+	if cat < 1 or cat > 3:
+		return _fail(t, "bad message")
+	var rows := table(cat)
+	var start := 0
+	if bool(msg.get("near", false)):  # me in the middle when possible
+		var me := rows.find_custom(func(r): return r.id == uid)
+		start = maxi(0, mini(me - 1, rows.size() - 3))
+	rows = rows.slice(start, start + 3)
+	while rows.size() < 3:
+		rows.append({"rank": 0, "id": "", "value": 0})
+	return _ok(t, {"rows": rows})
+
+
+func _on_order_info(s: Session, _t: String, _msg: Dictionary) -> Dictionary:
+	var uid := s.user
+	return _order_info(uid)
+
+
+func _on_order_create(s: Session, t: String, msg: Dictionary) -> Dictionary:
+	var uid := s.user
+	return _order_enter(t, uid, str(msg.get("name", "")).to_upper())
+
+
+func _on_order_leave(s: Session, t: String, _msg: Dictionary) -> Dictionary:
+	var uid := s.user
+	_order_leave(uid)
+	return _ok(t)
+
+
+func _on_chat_read(s: Session, _t: String, msg: Dictionary) -> Dictionary:
+	var uid := s.user
+	return _chat_read(uid, msg)
+
+
+func _on_mp_cancel(s: Session, t: String, _msg: Dictionary) -> Dictionary:
+	if not queue.has(s):
+		return _fail(t, "none")
+	queue.erase(s)
+	return _ok(t)
+
+
+func _on_chat_peers(s: Session, t: String, _msg: Dictionary) -> Dictionary:
+	var uid := s.user
+	var rows: Array = []
+	for p in _me(uid).peers:
+		rows.append(
+			{
+				"id": p[0],
+				"name": display_name(character(p[0])),
+				"unread": int(p[1]),
+				"online": int(is_online(p[0]))
+			}
+		)
+	return _ok(t, {"rows": rows})
 
 
 func name_taken(name: String, uid: String) -> bool:
@@ -484,10 +630,12 @@ func name_taken(name: String, uid: String) -> bool:
 func table(cat: int) -> Array:
 	var key: String = ["", "mp_fame", "duel_grade", "mission_grade"][cat]
 	var ids: Array = _chars.keys()
-	ids.sort_custom(func(a, b):
-		var va := int(_chars[a].get(key, 0))
-		var vb := int(_chars[b].get(key, 0))
-		return va > vb or (va == vb and str(a) < str(b)))
+	ids.sort_custom(
+		func(a, b):
+			var va := int(_chars[a].get(key, 0))
+			var vb := int(_chars[b].get(key, 0))
+			return va > vb or (va == vb and str(a) < str(b))
+	)
 	var out: Array = []
 	for i in ids.size():
 		out.append({"rank": i + 1, "id": ids[i], "value": int(_chars[ids[i]].get(key, 0))})
@@ -526,12 +674,21 @@ func _order_info(uid: String) -> Dictionary:
 	var rows: Array = []
 	for m in d.members:
 		var ch := character(m)
-		rows.append({"id": m, "name": display_name(ch), "level": ch.level,
-			"online": int(online.has(m)), "leader": int(m == d.members[0])})
-	rows.sort_custom(func(a, b):  # the leader, me, who is online, the others
-		var ka := [1 - a.leader, int(a.id != uid), 1 - a.online]
-		var kb := [1 - b.leader, int(b.id != uid), 1 - b.online]
-		return ka < kb)
+		rows.append(
+			{
+				"id": m,
+				"name": display_name(ch),
+				"level": ch.level,
+				"online": int(online.has(m)),
+				"leader": int(m == d.members[0])
+			}
+		)
+	rows.sort_custom(
+		func(a, b):  # the leader, me, who is online, the others
+			var ka := [1 - a.leader, int(a.id != uid), 1 - a.online]
+			var kb := [1 - b.leader, int(b.id != uid), 1 - b.online]
+			return ka < kb
+	)
 	return _ok("order_info", {"name": d.name, "rows": rows.slice(0, MAX_MEMBERS)})
 
 
@@ -594,7 +751,11 @@ func clean(text: Variant) -> String:
 	if s.is_empty() or s.length() > MAX_TEXT or _text_re.search(s) == null:
 		return ""
 	for m in _rude.search_all(s):
-		s = s.substr(0, m.get_start()) + "*".repeat(m.get_end() - m.get_start()) + s.substr(m.get_end())
+		s = (
+			s.substr(0, m.get_start())
+			+ "*".repeat(m.get_end() - m.get_start())
+			+ s.substr(m.get_end())
+		)
 	return s
 
 
@@ -664,8 +825,15 @@ func _chat_read(uid: String, msg: Dictionary) -> Dictionary:
 	var rows: Array = []
 	for r in doc.rows:
 		rows.append({"id": r[0], "name": r[1], "text": r[2]})
-	return _ok("chat_read", {"channel": channel, "peer": peer,
-		"peer_name": display_name(character(peer)) if not peer.is_empty() else "", "rows": rows})
+	return _ok(
+		"chat_read",
+		{
+			"channel": channel,
+			"peer": peer,
+			"peer_name": display_name(character(peer)) if not peer.is_empty() else "",
+			"rows": rows
+		}
+	)
 
 
 ## Whether a player may write one more message now.
@@ -679,7 +847,7 @@ func _rate_ok(s: Session) -> bool:
 	return true
 
 
-func _chat_send(s: Session, msg: Dictionary) -> Dictionary:
+func _chat_send(s: Session, _t: String, msg: Dictionary) -> Dictionary:
 	var uid := s.user
 	var channel := int(msg.get("channel", -1))
 	var peer := str(msg.get("peer", "")).to_upper()
@@ -711,15 +879,31 @@ func _chat_send(s: Session, msg: Dictionary) -> Dictionary:
 	for r in readers:
 		var other: Session = online.get(r[0])
 		if other != null:
-			other.send.call({"t": "chat_push", "channel": channel, "peer": r[1], "id": uid,
-				"name": name, "text": text})
+			other.send.call(
+				{
+					"t": "chat_push",
+					"channel": channel,
+					"peer": r[1],
+					"id": uid,
+					"name": name,
+					"text": text
+				}
+			)
 	if channel == PRIVATE and is_bot(peer):  # a bot answers with one of its lines
 		var line: String = BOT_LINES[rng.randi_range(0, BOT_LINES.size() - 1)]
 		var bot_name := display_name(character(peer))
 		_append(target[0], peer, bot_name, line)
 		_touch_peer(uid, peer, true)
-		s.send.call({"t": "chat_push", "channel": PRIVATE, "peer": peer, "id": peer, "name": bot_name,
-			"text": line})
+		s.send.call(
+			{
+				"t": "chat_push",
+				"channel": PRIVATE,
+				"peer": peer,
+				"id": peer,
+				"name": bot_name,
+				"text": line
+			}
+		)
 	return _ok("chat_send")
 
 
@@ -738,7 +922,9 @@ static func _int(v: Variant, default: int) -> int:
 	return v if v is int else default
 
 
-func _open_room(mode: int, fighters: Array, players: Dictionary, progress: int, via: String) -> void:
+func _open_room(
+	mode: int, fighters: Array, players: Dictionary, progress: int, via: String
+) -> void:
 	var r := Room.new(self, mode, fighters, players, progress, via)
 	rooms.append(r)
 	r.start()
@@ -748,7 +934,7 @@ func _fighter(uid: String, slot: int) -> Battle.Fighter:
 	return Battle.from_character(character(uid), slot)
 
 
-func _match(s: Session, msg: Dictionary) -> Dictionary:
+func _match(s: Session, _t: String, msg: Dictionary) -> Dictionary:
 	var t := "mp_match"
 	var mode := _int(msg.get("mode"), -1)
 	if mode < 0 or mode > 2:
@@ -769,7 +955,9 @@ func _match(s: Session, msg: Dictionary) -> Dictionary:
 	var second := _fighter(s.user, 1)
 	var fighters: Array = [first, second]
 	if mode == 1:
-		fighters += [Battle.cpu_fighter(rng, first, 2, true), Battle.cpu_fighter(rng, second, 3, true)]
+		fighters += [
+			Battle.cpu_fighter(rng, first, 2, true), Battle.cpu_fighter(rng, second, 3, true)
+		]
 	_open_room(mode, fighters, {0: other, 1: s}, 0, "match")
 	return _ok(t, {"waiting": false})
 
@@ -782,7 +970,9 @@ func find_opponent(s: Session, mode: int) -> Session:
 	for other: Session in queue:
 		if other == s or other.queued_mode != mode:
 			continue
-		var reach: int = MATCH_LEVELS[1] if now - other.queued_at >= match_wait / 2 else MATCH_LEVELS[0]
+		var reach: int = (
+			MATCH_LEVELS[1] if now - other.queued_at >= match_wait / 2 else MATCH_LEVELS[0]
+		)
 		if absi(int(character(other.user).level) - level) <= reach:
 			return other
 	return null
@@ -813,7 +1003,7 @@ func start_vs_cpu(s: Session, mode: int) -> void:
 	_open_room(mode, [me] + others, {0: s}, int(character(s.user).progress), "match")
 
 
-func _invite(s: Session, msg: Dictionary) -> Dictionary:
+func _invite(s: Session, _t: String, msg: Dictionary) -> Dictionary:
 	var t := "mp_invite"
 	var mode := _int(msg.get("mode"), -1)
 	var uid := str(msg.get("id", "")).to_upper()
@@ -840,8 +1030,13 @@ func _invite(s: Session, msg: Dictionary) -> Dictionary:
 	var me := _fighter(s.user, 0)
 	if mode == INVITE_TEAM:  # side by side against two CPU fighters, a 2-on-2 duel
 		var mate := _fighter(uid, 2)
-		_open_room(1, [me, mate, Battle.cpu_fighter(rng, me, 1), Battle.cpu_fighter(rng, mate, 3)],
-			{0: s, 2: other}, 0, "")
+		_open_room(
+			1,
+			[me, mate, Battle.cpu_fighter(rng, me, 1), Battle.cpu_fighter(rng, mate, 3)],
+			{0: s, 2: other},
+			0,
+			""
+		)
 		return _ok(t)
 	var them := _fighter(uid, 2 if mode == 2 else 1)
 	var fighters: Array = [me, them]
@@ -883,8 +1078,14 @@ func _in_battle(s: Session, t: String, msg: Dictionary) -> Dictionary:
 		"mp_ready":
 			r.round_ready(s)
 		"mp_turn":
-			r.turn(s, [_int(msg.get("target"), 1), _int(msg.get("action"), Battle.DEFEND),
-				_int(msg.get("hit"), 20)])
+			r.turn(
+				s,
+				[
+					_int(msg.get("target"), 1),
+					_int(msg.get("action"), Battle.DEFEND),
+					_int(msg.get("hit"), 20)
+				]
+			)
 		"mp_stage_next":
 			r.stage_next(s)
 		"mp_intro_done":

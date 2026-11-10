@@ -1,3 +1,4 @@
+class_name Autopilot
 extends RefCounted
 ## Auto-hunt on a mission's map (as pyport's autopilot.py; Tab, F or a pad's Back, or a click on
 ## AUTO in the bottom-left corner). It plays like a player: every tick it may hold a direction
@@ -18,7 +19,6 @@ extends RefCounted
 ## Talks, banners and the pause menu stay the player's; any key of the player hands off for a
 ## moment.
 
-const MapSim := preload("res://scripts/sim/map_sim.gd")
 const HEALS := [15, 16]
 const WHOLE := [28, 29, 30]
 const NEAR := [23, 24, 25]
@@ -94,16 +94,16 @@ func decide(sim: RefCounted) -> Dictionary:
 		out.held = _to_exit(sim)
 		return out
 	var target = hunt[0]
-	var dist := MapSim.distance(h.pos, target.pos)
+	var dist := MapGeometry.distance(h.pos, target.pos)
 	for e in hunt:
-		var d := MapSim.distance(h.pos, e.pos)
+		var d := MapGeometry.distance(h.pos, e.pos)
 		if d < dist:
 			dist = d
 			target = e
 	var reach := int(MapSim.table("weapon_reach")[h.weapon_kind]) - 6
 	key = _skill(sim, foes, target, dist, reach)
 	if key >= 0 or dist <= reach:
-		h.dir = MapSim.dir4(h.pos, target.pos)  # turns the hero
+		h.dir = MapGeometry.dir4(h.pos, target.pos)  # turns the hero
 		h.facing = h.dir
 		if key >= 0:
 			out.hotkey = key
@@ -128,7 +128,7 @@ func _walk(sim: RefCounted, target) -> int:
 	var h = sim.hero
 	_still = _still + 1 if h.pos == _last and h.action == 1 else 0
 	_last = h.pos
-	var dist := MapSim.distance(h.pos, target.pos)
+	var dist := MapGeometry.distance(h.pos, target.pos)
 	if target != _target:
 		_target = target
 		_closest = dist
@@ -145,7 +145,7 @@ func _walk(sim: RefCounted, target) -> int:
 		_detour_ticks -= 1
 		_no_closer = 0
 		return _detour
-	var want := MapSim.dir4(h.pos, target.pos)
+	var want := MapGeometry.dir4(h.pos, target.pos)
 	if _still < STUCK_TICKS and _no_closer < NO_CLOSER_TICKS:
 		return want
 	# a wall, or a corner it goes to and fro at: along it, toward the target's other axis first,
@@ -181,8 +181,12 @@ func _potion(sim: RefCounted, foes: Array) -> int:
 	for s in sim.hotkeys:
 		if int(s) >= 12 and int(s) <= 30:
 			skills.append(int(s))
-	var mp_low: bool = not foes.is_empty() and h.max_mp > 0 and not skills.is_empty() \
+	var mp_low: bool = (
+		not foes.is_empty()
+		and h.max_mp > 0
+		and not skills.is_empty()
 		and _castable(sim, skills).is_empty()
+	)
 	for i in 5:
 		var slot: Array = sim.quick_slots[i]
 		if int(slot[1]) < 1:
@@ -229,7 +233,7 @@ func _heal(sim: RefCounted) -> int:
 	if pct >= 40:
 		return -1
 	var key_of := _key_of(sim)
-	for s in ([16, 15] if pct < 25 else [15, 16]):
+	for s in [16, 15] if pct < 25 else [15, 16]:
 		if key_of.has(s) and sim.skill_mp_need(s) <= h.mp:
 			return key_of[s]
 	return -1
@@ -283,14 +287,18 @@ func _skill(sim: RefCounted, foes: Array, target, dist: int, reach: int) -> int:
 	var usable := func(group: Array) -> Array:
 		var out: Array = []
 		for s in group:
-			if key_of.has(s) and sim.skill_mp_need(s) <= h.mp and h.mp - sim.skill_mp_need(s) >= heal_mp:
+			if (
+				key_of.has(s)
+				and sim.skill_mp_need(s) <= h.mp
+				and h.mp - sim.skill_mp_need(s) >= heal_mp
+			):
 				out.append(s)
 		out.sort_custom(func(a, b): return sim.skill_mp_need(a) > sim.skill_mp_need(b))
 		return out
 	var near := 0
 	var general := false
 	for e in foes:
-		if MapSim.distance(h.pos, e.pos) <= 45:
+		if MapGeometry.distance(h.pos, e.pos) <= 45:
 			near += 1
 		if e.type < 200:
 			general = true
@@ -307,17 +315,20 @@ func _skill(sim: RefCounted, foes: Array, target, dist: int, reach: int) -> int:
 		if not u.is_empty():
 			return key_of[u[0]]
 	if dist > reach:
-		var d := MapSim.dir4(h.pos, target.pos)
+		var d := MapGeometry.dir4(h.pos, target.pos)
 		var ax: int = h.pos.x + int(MapSim.table("front_dx")[d >> 1])
 		var ay: int = h.pos.y + int(MapSim.table("front_dy")[d >> 1])
-		if (ax - target.pos.x) * (ax - target.pos.x) + (ay - target.pos.y) * (ay - target.pos.y) <= 35 * 35:
+		if (
+			(ax - target.pos.x) * (ax - target.pos.x) + (ay - target.pos.y) * (ay - target.pos.y)
+			<= 35 * 35
+		):
 			var u: Array = usable.call(RANGED)
 			if not u.is_empty():
 				return key_of[u[0]]
 		return -1
 	var crowd := 0
 	for e in foes:
-		if MapSim.distance(h.pos, e.pos) <= reach:
+		if MapGeometry.distance(h.pos, e.pos) <= reach:
 			crowd += 1
 	if (general and target.type < 200) or crowd >= 2 or h.mp * 100 >= h.max_mp * 80:
 		var u: Array = usable.call(STRIKES)

@@ -1,10 +1,6 @@
 extends "res://tests/test_case.gd"
 
 const InputSetupScript := preload("res://scripts/core/input_setup.gd")
-const Offline := preload("res://scripts/screens/offline_screen.gd")
-const MapViewer := preload("res://scripts/screens/map_viewer.gd")
-const Help := preload("res://scripts/screens/help_screen.gd")
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
 
 
 func test_actions_have_keys_and_pad() -> void:
@@ -91,10 +87,13 @@ func test_hints_name_the_device_last_used() -> void:
 func test_offline_screen_and_map_viewer_follow_the_device() -> void:
 	var was: String = InputSetup.device
 	InputSetup.device = "keys"
-	var offline: Control = Offline.new()
+	var offline: Control = Router.make(Router.SCREENS["offline"])
 	root.add_child(offline)
-	check(offline.controls_hint().ends_with("Enter: try again"), "the keyboard's OK, in the line of hints")
-	var viewer: Control = MapViewer.new()
+	check(
+		offline.controls_hint().ends_with("Enter: try again"),
+		"the keyboard's OK, in the line of hints"
+	)
+	var viewer: Control = Router.make(Router.SCREENS["map_viewer"])
 	root.add_child(viewer)
 	eq(viewer.info.text, "Map 1 / %d   [3] [4] change map   [Esc] back" % viewer.map_total, "keys")
 	InputSetup._input(_pad_press(JOY_BUTTON_B))
@@ -128,7 +127,7 @@ func test_right_click_is_back() -> void:
 	check(not InputSetupScript.is_back_click(left), "not the left button")
 	var old: Dictionary = Router.params
 	Router.params = {}
-	var help: Control = Help.new()
+	var help: Control = Router.make(Router.SCREENS["help"])
 	root.add_child(help)
 	help.open(2)
 	help.get_viewport().push_input(_right_click())
@@ -136,7 +135,7 @@ func test_right_click_is_back() -> void:
 	eq(help.topic, -1, "Help: back from a topic to the topics, as Esc")
 	help.free()
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var mission: Control = MissionScreen.new()
+	var mission: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(mission)
 	mission.get_viewport().push_input(_right_click())
 	Input.flush_buffered_events()
@@ -155,16 +154,32 @@ func test_right_click_is_back() -> void:
 ## a text field, where it deletes.
 func test_keyboard_as_pyport() -> void:
 	InputSetupScript.register()
-	for pair in [[KEY_W, "ui_up"], [KEY_S, "ui_down"], [KEY_A, "ui_left"], [KEY_D, "ui_right"],
-			[KEY_KP_8, "ui_up"], [KEY_KP_2, "ui_down"], [KEY_KP_4, "ui_left"], [KEY_KP_6, "ui_right"],
-			[KEY_J, "ui_accept"], [KEY_KP_5, "ui_accept"], [KEY_ENTER, "attack"], [KEY_KP_5, "attack"],
-			[KEY_KP_8, "move_up"], [KEY_KP_1, "skill_1"], [KEY_KP_0, "skill_5"]]:
-		check(_key_press(pair[0]).is_action_pressed(pair[1]), "%s: %s" % [OS.get_keycode_string(pair[0]), pair[1]])
+	for pair in [
+		[KEY_W, "ui_up"],
+		[KEY_S, "ui_down"],
+		[KEY_A, "ui_left"],
+		[KEY_D, "ui_right"],
+		[KEY_KP_8, "ui_up"],
+		[KEY_KP_2, "ui_down"],
+		[KEY_KP_4, "ui_left"],
+		[KEY_KP_6, "ui_right"],
+		[KEY_J, "ui_accept"],
+		[KEY_KP_5, "ui_accept"],
+		[KEY_ENTER, "attack"],
+		[KEY_KP_5, "attack"],
+		[KEY_KP_8, "move_up"],
+		[KEY_KP_1, "skill_1"],
+		[KEY_KP_0, "skill_5"]
+	]:
+		check(
+			_key_press(pair[0]).is_action_pressed(pair[1]),
+			"%s: %s" % [OS.get_keycode_string(pair[0]), pair[1]]
+		)
 	check(InputSetupScript.is_back_key(_key_press(KEY_BACKSPACE)), "Backspace")
 	check(not InputSetupScript.is_back_key(_key_press(KEY_ESCAPE)), "(Esc is ui_cancel itself)")
 	var old: Dictionary = Router.params
 	Router.params = {}
-	var help: Control = Help.new()
+	var help: Control = Router.make(Router.SCREENS["help"])
 	root.add_child(help)
 	help.open(2)
 	help.get_viewport().push_input(_key_press(KEY_BACKSPACE))
@@ -184,10 +199,14 @@ func test_keyboard_as_pyport() -> void:
 
 ## The phone's Back button is BACK, and the game does not quit on it.
 func test_phone_back_button() -> void:
-	eq(ProjectSettings.get_setting("application/config/quit_on_go_back"), false, "no quitting on Back")
+	eq(
+		ProjectSettings.get_setting("application/config/quit_on_go_back"),
+		false,
+		"no quitting on Back"
+	)
 	var old: Dictionary = Router.params
 	Router.params = {}
-	var help: Control = Help.new()
+	var help: Control = Router.make(Router.SCREENS["help"])
 	root.add_child(help)
 	help.open(2)
 	InputSetup._notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
@@ -197,19 +216,23 @@ func test_phone_back_button() -> void:
 	Router.params = old
 
 
-
 func test_the_pad_works_the_menus() -> void:
 	InputSetupScript.register()
 	var a := _pad_press(JOY_BUTTON_A)
 	a.device = 1  # not only the first pad
-	check(a.is_action("ui_accept") and a.is_action("attack"), "A: OK in the menus, attack on the map")
+	check(
+		a.is_action("ui_accept") and a.is_action("attack"), "A: OK in the menus, attack on the map"
+	)
 	var b := _pad_press(JOY_BUTTON_B)
 	b.device = 3
 	check(b.is_action("ui_cancel"), "B: BACK")
 	var up := _pad_press(JOY_BUTTON_DPAD_UP)
 	up.device = 2
 	check(up.is_action("ui_up"), "the d-pad moves in the menus")
-	check(up.is_action("belt_1") and not up.is_action("move_up"), "on the map it is the belt, not a step")
+	check(
+		up.is_action("belt_1") and not up.is_action("move_up"),
+		"on the map it is the belt, not a step"
+	)
 	var stick := InputEventJoypadMotion.new()
 	stick.device = 2
 	stick.axis = JOY_AXIS_LEFT_X

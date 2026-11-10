@@ -2,7 +2,7 @@
 
     python pyport/tools/gen_encyclopedia.py          # -> pyport/web/encyclopedia.html
 
-Everything on the page is read from the resource files in the repository root (kibo / sungbo /
+Everything on the page is read from the resource files in original/ (kibo / sungbo /
 shinki / general / mission / sideinfo / ruler / N.arr / *.scr / item-mixing-table.bin and the
 PNG sheets), so after a data change it is enough to run the script again. The few numbers the
 game keeps as constants (consumables, skill MP, the drop table, soldier stats) are taken
@@ -20,6 +20,7 @@ import sys
 from PIL import Image
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
+ORIGINAL = ROOT / "original"
 PY = ROOT / "pyport"
 sys.path.insert(0, str(PY))
 from pow.game import consts as ae  # noqa: E402
@@ -30,7 +31,7 @@ OUT = PY / "web" / "encyclopedia.html"
 # ---- readers -------------------------------------------------------------------------------
 
 def raw(name):
-    return (ROOT / name).read_bytes()
+    return (ORIGINAL / name).read_bytes()
 
 
 def strings(name):
@@ -80,7 +81,7 @@ def _uri(im):
 
 
 def sheet(name):
-    return Image.open(ROOT / name).convert("RGBA")
+    return Image.open(ORIGINAL / name).convert("RGBA")
 
 
 _SHEETS = {}
@@ -127,7 +128,7 @@ PAL = [[(236, 211, 197), (205, 143, 128), (129, 81, 69), (104, 60, 49), (79, 39,
 def soldier(mon, pal, frame=0):
     key = "%s:%d" % (mon, pal)
     if key not in IMG:
-        im = Image.open(ROOT / (mon + ".png"))
+        im = Image.open(ORIGINAL / (mon + ".png"))
         if pal:
             p = im.getpalette()
             for k in range(0, len(p), 3):

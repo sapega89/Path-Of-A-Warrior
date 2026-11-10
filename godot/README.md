@@ -13,11 +13,14 @@ godot/
     project.godot
     scenes/main.tscn      корінь: тема + роутер екранів
     scripts/core/         автозавантаження: I18n, Settings, InputSetup, Router, Audio
-    scripts/screens/      екрани: title, main_menu, game_menu, settings, map_viewer, campaign, briefing, mission,
-                          management, attributes, skills, gear, inventory,
-                          assign_items, story, blacksmith, shop, visiting, endings, help, new_game (герой у user://hero.json)
-                          camp (стоянка між місіями: шляхи далі зі стрілками, коваль, склад
-                          і ратуша), town_hall (ратуша: усі полковники й генерали)
+    screens/<назва>/      екрани-сцени: <назва>_screen.tscn і скрипт поруч (меню, налаштування,
+                          довідка, кінцівки, вхід, ігрове меню, керування героєм, нова гра,
+                          брифінг, кампанія, візити, крамниця, історія, ратуша, Live, Online,
+                          місія, стоянка між місіями, перегляд карт, бій мультиплеєра)
+    scenes/ui/            спільні шматки екранів: рядок золота, діалог двох, сітка речей,
+                          кнопки Рюкзак / Склад
+    scenes/world/         map_view.tscn: 3D-світ карти на екрані (вікно, світло, карта, камера)
+    scripts/screens/      BaseScreen і тренування (сцена-нащадок місії)
     scripts/world/        3D-світ: map_builder (карта з оригінальних шарів), hero, follow_camera
     scripts/ui/           тема, сенсорні кнопки
     scripts/world/        3D-світ: map_builder (карта з оригінальних шарів: дані, клітинки,
@@ -26,6 +29,12 @@ godot/
                           стріли кодом), battle_arena і battle_motion (поле й бійці бою
                           мультиплеєра), hero, follow_camera
     scripts/ui/           тема, сенсорні кнопки, рядок підказок керування внизу (hint_bar)
+    scripts/sim/          логіка місії без вузлів: MapSim (стан і тік) і його модулі —
+                          room_play (кімнати), map_walls (рух і стіни), hero_play (герой),
+                          enemy_play (вороги), map_talks (розмови й нагороди), map_loot
+                          (предмети й лут), map_anims, map_pictures (що малює екран),
+                          map_geometry; дані map_actor, map_arrow, map_breakable, map_drop;
+                          autopilot (автополювання)
     scripts/art/          новий арт, поки вітрина: табір і бій (scenes/art_slice.tscn)
     scripts/net/          зв'язок із сервером: protocol (повідомлення), net_client (ENet + DTLS)
     server/               сервер гри (той самий проєкт, без графіки): main.tscn, game_server,
@@ -45,7 +54,7 @@ godot/
                           показуються); числа й таблиці — data/mp.json
     assets/art/           новий арт: люди, зброя, реквізит (.glb), шейдери, іконки SVG, шрифти
     tests/                тести: test_*.gd, запуск runner.tscn
-  tools/import_original.py  конвертер оригінальних ресурсів з кореня репо
+  tools/import_original.py  конвертер оригінальних ресурсів з `original/`
   tools/art/              моделі нового арту кодом у Blender (tools/art/README.md)
 ```
 
@@ -57,7 +66,7 @@ godot/
 блимають стрілки: по одній на кожне відкрите місце, куди веде кампанія далі (здебільшого одне,
 буває два-три, з місця 27 — шість, тоді на одній стороні дві, по половинах). Сторони
 перемішані, тож стрілка нічого не підказує. Вийшов у сторону — дорогу вибрано
-(`profile.heading`), і герой на **стоянці** того місця (`scripts/screens/camp_screen.gd`, карта
+(`profile.heading`), і герой на **стоянці** того місця (`screens/camp/camp_screen.gd`, карта
 з `scripts/world/camp_map.gd`, обнесена великими деревами): кожна ще не виграна місія цього
 місця (її генерал) — прохід зі стрілкою, а за проходами видно край місця з його карти: озеро,
 гори, ліс, містечко або степ (`CampScreen.terrain`). Вийшов у прохід — сюжет місії, бриф і бій.
@@ -211,7 +220,7 @@ Ingress Rule у Security List підмережі). Скрипт наприкін
 - Гра запускається тільки онлайн: поки сервера немає, замість меню — «No connection to the
   server» (OK — ще раз, сама пробує кожні 10 с). Якщо сервер не прийняв збережений пароль —
   «Login refused»: OK — ще раз, Назад — забути акаунт.
-- Вхід (`scripts/screens/login_screen.gd`): Грати / Продовжити / Нова гра в головному меню
+- Вхід (`screens/login/login_screen.tscn`): Грати / Продовжити / Нова гра в головному меню
   спершу відкривають екран входу — UserID (4–12 літер A–Z) і пароль (4–12 цифр), «Увійти» для
   наявного акаунта або «Новий акаунт» для реєстрації. Коли герой (або його відсутність) прийшов
   із сервера, гра йде далі: є герой — ігрове меню, немає — створення нового. Акаунт тримається
@@ -230,9 +239,9 @@ Ingress Rule у Security List підмережі). Скрипт наприкін
 
 ## Меню
 
-- **Головне меню** (`scripts/screens/main_menu.gd`): Play / Continue, New Game, Endings,
+- **Головне меню** (`screens/main_menu/main_menu.tscn`): Play / Continue, New Game, Endings,
   Settings, Quit (на телефоні й у браузері без Quit).
-- **Ігрове меню** (`scripts/screens/game_menu.gd`; Continue, а після прологу й тренування нової
+- **Ігрове меню** (`screens/game_menu/game_menu.tscn`; Continue, а після прологу й тренування нової
   гри — саме),
   одна колонка, що прокручується за фокусом, групи через проміжок: Missions, Management,
   Blacksmith, Visiting; Trade, Warehouse, Safe; рядок персонажа й Duel, Online Missions,
@@ -243,7 +252,7 @@ Ingress Rule у Security List підмережі). Скрипт наприкін
 
 ## Live у клієнті
 
-Trade, Warehouse і Safe з ігрового меню (`scripts/screens/live_*.gd`,
+Trade, Warehouse і Safe з ігрового меню (`screens/live_*/`,
 `scripts/net/live_client.gd`), по тому самому з'єднанню, що й сейви. Кожна сторінка шле серверу
 золото й рюкзак героя (`live_sync`); без сервера — «Network connection has failed».
 Музика в Live мовчить, як у pyport.
@@ -268,7 +277,7 @@ Trade, Warehouse і Safe з ігрового меню (`scripts/screens/live_*.g
 
 ## Мультиплеєр у клієнті
 
-Пункти мультиплеєра в ігровому меню (`scripts/ui/online_section.gd`, `scripts/screens/online_*.gd`,
+Пункти мультиплеєра в ігровому меню (`scripts/ui/online_section.gd`, `screens/online_*/`,
 `scripts/net/online_client.gd`), по тому самому з'єднанню. Ігрове меню ставить гравця онлайн
 (`mp_enter`); вихід у головне меню чи на сторінку одиночної гри (Missions, Trade, ...) — знімає,
 щоб ніхто не викликав героя посеред місії. Поки нема відповіді — «Connecting...», без сервера —
@@ -306,7 +315,7 @@ Trade, Warehouse і Safe з ігрового меню (`scripts/screens/live_*.g
 
 Бій відкривається сам, щойно почався (`OnlineClient.on_battle`): після пошуку, виклику, а також
 коли мене запросив інший гравець — з будь-якого екрана мультиплеєра; після OK — назад, звідки
-прийшов. Екран бою (`scripts/screens/online_battle_screen.gd`) — у новому арті, як решта гри
+прийшов. Екран бою (`screens/online_battle/online_battle_screen.gd`) — у новому арті, як решта гри
 (див. «Новий арт»): 3D-поле з землею й речами карт під мальованим небом, бійці — 3D-фігури людей
 карт, ефекти — ті самі, що в місіях. Що відбувається в бою — `scripts/net/online_battle.gd`
 (з pyport, крок 110 мс): цитати, раунди, вибір дії, смуга удару, програвання ходу з сервера,
@@ -539,7 +548,7 @@ Skip унизу ліворуч.
 
 Удар мечем (і те, що кожен скіл б'є перед собою) влучає ширше, ніж у pyport (просив Andrey): не
 лише в чверть, куди герой дивиться, а й у смугу попереду завширшки в комірку (27 пікселів) у
-кожен бік (`MapSim.in_strike_reach`, `STRIKE_BAND`). Тож ворог трохи вище чи нижче (або трохи
+кожен бік (`MapGeometry.in_strike_reach`, `STRIKE_BAND`). Тож ворог трохи вище чи нижче (або трохи
 збоку, коли герой б'є вгору чи вниз) теж дістає, зокрема впритул, де чверть вузька. Дальність
 (63 / 53) не змінилася; позаду себе герой не б'є. Так само з бочками й ящиками.
 
@@ -678,7 +687,7 @@ Esc вихід.
   людей і речей карт під мальованим небом: мирне село, троє в грозу, полк перед полковником,
   самотня дорога в тумані, могила з шаблею на заході сонця, вершник у грозу, хрести під
   червоним небом тощо; приглушені, як уся гра (`ArtKit.GRADE`); у рамці, як портрети.
-- **Бій мультиплеєра** (`scripts/screens/online_battle_screen.gd`, поле
+- **Бій мультиплеєра** (`screens/online_battle/online_battle_screen.gd`, поле
   `scripts/world/battle_arena.gd`, хто є хто `scripts/world/battle_motion.gd`): ті самі правила й
   кроки бою, але замість спрайтів і фону — 3D-поле під мальованим небом (`story_sky.gdshader`).
   Фон бою вибирає одну з чотирьох сцен із речей карт: табір Січі (частокіл із брамою між

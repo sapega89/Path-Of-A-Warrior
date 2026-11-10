@@ -1,3 +1,4 @@
+class_name Hero
 extends CharacterBody3D
 ## The hero: the original 2D sprite standing in the 3D world (decisions 06.11:
 ## "3D world, 2D hero", "move the game over as it is first").

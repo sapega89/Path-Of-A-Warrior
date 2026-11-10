@@ -2,10 +2,6 @@ extends "res://tests/test_case.gd"
 ## The line of control hints under the screens, and the buttons that make a screen clear without
 ## knowing its keys: Done / Reset / Back on the new hero's points, Back in the campaign.
 
-const Profile := preload("res://scripts/core/profile.gd")
-const HintBar := preload("res://scripts/ui/hint_bar.gd")
-const NewGame := preload("res://scripts/screens/new_game_screen.gd")
-const Campaign := preload("res://scripts/screens/campaign_screen.gd")
 const TEST_PATH := "user://test_hints.json"
 
 
@@ -23,14 +19,14 @@ func test_menu_line_by_device() -> void:
 
 
 func test_screens_with_own_line() -> void:
-	var screen: Control = load("res://scripts/screens/title_screen.gd").new()
+	var screen: Control = Router.make(Router.SCREENS["title"])
 	eq(HintBar.text_for(screen), "", "the title has its own line: no bar")
 	screen.free()
 
 
 func _new_game_at_points() -> Control:
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = NewGame.new()
+	var screen: Control = Router.make(Router.SCREENS["new_game"])
 	root.add_child(screen)
 	screen.choose_head(1)
 	screen.name_edit.text = "Ivan"
@@ -45,7 +41,7 @@ func test_points_have_done_reset_back() -> void:
 	InputSetup.device = "keys"
 	check(screen.controls_hint().contains("+1"), "the line says a press adds a point")
 	InputSetup.device = was
-	eq(screen.stat_buttons[0].text, "+", "a \"+\" beside each stat")
+	eq(screen.stat_buttons[0].text, "+", 'a "+" beside each stat')
 	check(screen.done_button.disabled, "Done waits for every point")
 	check(screen.reset_button.disabled, "nothing to reset yet")
 	var hp: int = screen.profile.base_hp
@@ -61,7 +57,7 @@ func test_points_have_done_reset_back() -> void:
 	screen.ask.hide()  # the question cancelled: Done is still there to go on
 	check(screen.done_button.visible and not screen.done_button.disabled, "Done stays")
 	screen.go_back()
-	eq(screen.step, NewGame.Step.NAME, "Back: the name again")
+	eq(screen.step, NewGameScreen.Step.NAME, "Back: the name again")
 	check(screen.body.get_node("Back") != null, "Back under the name too")
 	screen.free()
 	Router.params = old
@@ -70,7 +66,7 @@ func test_points_have_done_reset_back() -> void:
 func test_campaign_back_button() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = Campaign.new()
+	var screen: Control = Router.make(Router.SCREENS["campaign"])
 	root.add_child(screen)
 	check(screen.find_child("Back", true, false) is Button, "a Back button")
 	screen._open_lord(1)

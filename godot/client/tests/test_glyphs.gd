@@ -2,10 +2,7 @@ extends "res://tests/test_case.gd"
 ## The names of keys and buttons in the hints and the HUD (scripts/ui/glyphs.gd): read from the
 ## bindings, for the device just used and the maker of the pad.
 
-const Glyphs := preload("res://scripts/ui/glyphs.gd")
 const InputSetupScript := preload("res://scripts/core/input_setup.gd")
-const LoginScreen := preload("res://scripts/screens/login_screen.gd")
-const NewGame := preload("res://scripts/screens/new_game_screen.gd")
 
 
 func test_the_pad_maker_from_its_name() -> void:
@@ -62,14 +59,20 @@ func test_templates() -> void:
 	eq(Glyphs.fill(t, "keys"), "Enter: OK · Esc: back", "the keyboard")
 	eq(Glyphs.fill(t, "pad"), "A: OK · B: back", "a pad")
 	eq(Glyphs.fill(t, "pad", "ps"), "Cross: OK · Circle: back", "a PlayStation pad")
-	eq(Glyphs.fill("{nothing} {ui_accept}", "keys"), "{nothing} Enter", "a word that is no action stays")
+	eq(
+		Glyphs.fill("{nothing} {ui_accept}", "keys"),
+		"{nothing} Enter",
+		"a word that is no action stays"
+	)
 	eq(Glyphs.fill("no braces", "pad"), "no braces", "a plain text")
 
 
 ## Every {word} of the strings is an action or one of the groups, so no hint shows braces.
 func test_every_template_names_an_action() -> void:
 	InputSetupScript.register()
-	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://i18n/strings.json"))
+	var data: Dictionary = JSON.parse_string(
+		FileAccess.get_file_as_string("res://i18n/strings.json")
+	)
 	var token := RegEx.create_from_string(Glyphs.TOKEN)
 	var bad := []
 	for key in data:
@@ -105,13 +108,20 @@ func test_hud_labels() -> void:
 func test_hints_follow_the_pad_maker() -> void:
 	var was: Array = [InputSetup.device, InputSetup.pad_brand]
 	InputSetup.device = "keys"
-	eq(InputSetup.hint("hint.menu"), "Arrows / WASD: choose · Enter: OK · Esc / right click: back",
-		"the keyboard")
+	eq(
+		InputSetup.hint("hint.menu"),
+		"Arrows / WASD: choose · Enter: OK · Esc / right click: back",
+		"the keyboard"
+	)
 	InputSetup.device = "pad"
 	InputSetup.pad_brand = "generic"
 	eq(InputSetup.hint("hint.menu"), "D-pad / stick: choose · A: OK · B: back", "a pad")
 	InputSetup.pad_brand = "ps"
-	eq(InputSetup.hint("hint.menu"), "D-pad / stick: choose · Cross: OK · Circle: back", "PlayStation")
+	eq(
+		InputSetup.hint("hint.menu"),
+		"D-pad / stick: choose · Cross: OK · Circle: back",
+		"PlayStation"
+	)
 	eq(InputSetup.hint("hint.skip"), "Cross: next · Share / Circle: skip", "its Share skips")
 	InputSetup.pad_brand = "nintendo"
 	eq(InputSetup.key_name("ui_accept"), "B", "Nintendo: OK is the bottom button, B")
@@ -126,7 +136,7 @@ func test_login_hint_while_typing() -> void:
 	var old: Dictionary = Router.params
 	var was: String = InputSetup.device
 	Router.params = {}
-	var screen: Control = LoginScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["login"])
 	root.add_child(screen)
 	InputSetup.device = "keys"
 	screen.user_id.grab_focus()
@@ -146,10 +156,12 @@ func test_login_hint_while_typing() -> void:
 func test_normal_comes_first() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": "user://test_glyphs.json"}
-	var screen: Control = NewGame.new()
+	var screen: Control = Router.make(Router.SCREENS["new_game"])
 	root.add_child(screen)
 	eq(str(screen.body.get_child(0).name), "Difficulty1", "Normal first")
 	eq(str(screen.body.get_child(1).name), "Difficulty0", "then Hard")
-	check(tr("newgame.mode_0").contains("AUTO"), "Hard says it has no AUTO: %s" % tr("newgame.mode_0"))
+	check(
+		tr("newgame.mode_0").contains("AUTO"), "Hard says it has no AUTO: %s" % tr("newgame.mode_0")
+	)
 	screen.free()
 	Router.params = old

@@ -1,3 +1,4 @@
+class_name WorldMapView
 extends Control
 ## The world map of the campaign (scripts/core/world_map.gd): a button for each place, the
 ## ways between them, the hero's place lit and the places he can go to now marked. A place
@@ -6,8 +7,6 @@ extends Control
 
 signal place_chosen(id: int)
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const WorldMap := preload("res://scripts/core/world_map.gd")
 const NODE := 38.0  # a place's button, px
 const WON := Color("7fb069")
 const WAY := Color(0.6, 0.57, 0.65, 0.35)
@@ -118,8 +117,10 @@ func _place_buttons() -> void:
 	var half := maxf((world.rows - 1) / 2.0, 1.0)
 	for id in buttons:
 		var c: Vector2 = world.cells.get(id, Vector2.ZERO)
-		var p := Vector2(_area.position.x + _area.size.x * c.x / cols,
-			_area.position.y + _area.size.y * (0.5 + c.y / (2.0 * half)))
+		var p := Vector2(
+			_area.position.x + _area.size.x * c.x / cols,
+			_area.position.y + _area.size.y * (0.5 + c.y / (2.0 * half))
+		)
 		(buttons[id] as Button).position = p - Vector2(NODE, NODE) / 2
 	queue_redraw()
 
@@ -140,16 +141,25 @@ func _draw() -> void:
 			var d := (b - a).normalized()
 			var tip := b - d * (NODE / 2 + 2)
 			var side := d.orthogonal() * 7
-			draw_colored_polygon(PackedVector2Array([tip, tip - d * 12 + side, tip - d * 12 - side]), col)
+			draw_colored_polygon(
+				PackedVector2Array([tip, tip - d * 12 + side, tip - d * 12 - side]), col
+			)
 	if here == 0 and buttons.has(1):  # before the first mission: a way in from the left
 		var b1 := center_of(1)
-		draw_line(b1 - Vector2(NODE * 1.2, 0), b1 - Vector2(NODE / 2 + 2, 0), UiTheme.ACCENT, 3.0, true)
+		draw_line(
+			b1 - Vector2(NODE * 1.2, 0), b1 - Vector2(NODE / 2 + 2, 0), UiTheme.ACCENT, 3.0, true
+		)
 
 
 func _show_info(id: int) -> void:
 	if not buttons.has(id):
 		info.text = ""
 		return
-	var key: String = ["world.here", "world.next", "world.closed", "world.away"][world.state(id, here, profile)]
+	var key: String = ["world.here", "world.next", "world.closed", "world.away"][world.state(
+		id, here, profile
+	)]
 	var w: Vector2i = world.won(id, profile)
-	info.text = "%d. %s — %s · %s" % [id, world.campaign.lord_name(id), tr(key), tr("world.won") % [w.x, w.y]]
+	info.text = (
+		"%d. %s — %s · %s"
+		% [id, world.campaign.lord_name(id), tr(key), tr("world.won") % [w.x, w.y]]
+	)

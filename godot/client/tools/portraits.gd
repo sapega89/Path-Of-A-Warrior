@@ -6,7 +6,6 @@ extends Node
 ## busts.json says, before a backdrop in the colour of its side
 ## (assets/art/shaders/portrait_backdrop.gdshader), into assets/art/portraits/<number>.png.
 
-const ArtKit := preload("res://scripts/art/art_kit.gd")
 const DIR := "res://assets/art/portraits/"
 const SIZE := 512  # painted at, then made smaller
 const OUT := 256
@@ -83,7 +82,9 @@ func _stage() -> void:
 	# a hard light from the side: half of the face in the shade
 	sun.light_energy = 1.05
 	env.ambient_light_energy = 0.3
-	sun.transform = Transform3D(Basis.looking_at(Vector3(0.8, -0.4, -0.45).normalized(), Vector3.UP), Vector3.ZERO)
+	sun.transform = Transform3D(
+		Basis.looking_at(Vector3(0.8, -0.4, -0.45).normalized(), Vector3.UP), Vector3.ZERO
+	)
 	view.add_child(sun)
 	stand = Node3D.new()
 	view.add_child(stand)

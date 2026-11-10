@@ -1,7 +1,5 @@
 extends "res://tests/test_case.gd"
 
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-
 
 func test_all_maps_load() -> void:
 	eq(MapBuilder.map_count(), 45, "map count")
@@ -52,8 +50,16 @@ func test_ground_around_the_map() -> void:
 		hi = hi.max(v)
 	eq([lo, hi], [Vector3(-o, 0, -o), Vector3(b.w + o, 0, b.h + o)], "OUTSIDE cells past each edge")
 	var uv: PackedVector2Array = mi.mesh.surface_get_arrays(0)[Mesh.ARRAY_TEX_UV]
-	eq(uv[0], MapBuilder.tile_uv(b.cell("ground", 0, 0)).position, "the corner: the corner cell's ground")
-	eq(mi.mesh.surface_get_material(0).albedo_color, MapBuilder.OUTSIDE_SHADE, "darker than the map")
+	eq(
+		uv[0],
+		MapBuilder.tile_uv(b.cell("ground", 0, 0)).position,
+		"the corner: the corner cell's ground"
+	)
+	eq(
+		mi.mesh.surface_get_material(0).albedo_color,
+		MapBuilder.OUTSIDE_SHADE,
+		"darker than the map"
+	)
 	b.free()
 
 

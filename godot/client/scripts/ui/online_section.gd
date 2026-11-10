@@ -1,5 +1,7 @@
+class_name OnlineSection
 extends VBoxContainer
-## The multiplayer part of the game menu, under the line of the character: Duel, Online Missions, Character, Ranking, Order,
+## The multiplayer part of the game menu, under the line of the character: Duel, Online Missions,
+## Character, Ranking, Order,
 ## Chat and Invitations, open once the player is online. Showing it puts the player online
 ## (scripts/net/online_client.gd enter); until the server answers it says "Connecting...",
 ## without an answer "Network connection has failed".
@@ -7,8 +9,6 @@ extends VBoxContainer
 ## shows the messages waiting (order and private). Another device taking the player online
 ## ("kicked") closes them. leave() takes the player off the online game.
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
-const OnlineClient := preload("res://scripts/net/online_client.gd")
 ## Button name, text key, screen and the kind for that screen.
 const PAGES := [
 	["Duel", "online.duel", "online_battles", "duel"],
@@ -76,8 +76,15 @@ func entered(err: String) -> void:
 
 func show_me() -> void:
 	var m: Dictionary = online.me
-	who.text = tr("online.who") % [str(m.get("name", "")), int(m.get("level", 1)), int(m.get("wins", 0)),
-		int(m.get("losses", 0))]
+	who.text = (
+		tr("online.who")
+		% [
+			str(m.get("name", "")),
+			int(m.get("level", 1)),
+			int(m.get("wins", 0)),
+			int(m.get("losses", 0))
+		]
+	)
 	var waiting := int(online.unread[0]) + int(online.unread[1])
 	chat.text = tr("online.chat") + (" (%d)" % waiting if waiting > 0 else "")
 

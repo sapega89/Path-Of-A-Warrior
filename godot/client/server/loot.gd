@@ -1,18 +1,22 @@
+class_name Loot
 extends RefCounted
 ## Loot of the online battles (pyport pow_server/loot.py): items of the single-player tables
 ## (data/items.json). One drop roll per foe beaten, the best item kept; equipment can come out
 ## Special (301..) or Rare (501..), which the single player does not drop. The client puts the
 ## item into the hero's backpack.
 
-const Items := preload("res://scripts/core/items.gd")
-
 const STORY_ONLY := [502]  # Silk Rushnyk: the reward of an ending, never a drop
 ## 0 soldier, 1 general, 2 boss
 const DROP_CHANCE := [5, 10, 20]  # % that something drops
 const EQUIP_CHANCE := [10, 30, 60]  # % of a drop that is gear (else a potion or a bomb, 1..11)
 const TIER_LEVELS := [69, 44, 24, 9, 0]  # hero level above -> the row of TIER_ODDS
-const TIER_ODDS := [[0, 0, 33, 77, 100], [5, 30, 55, 80, 100], [30, 60, 90, 100, 100],
-	[40, 80, 100, 100, 100], [80, 100, 100, 100, 100]]
+const TIER_ODDS := [
+	[0, 0, 33, 77, 100],
+	[5, 30, 55, 80, 100],
+	[30, 60, 90, 100, 100],
+	[40, 80, 100, 100, 100],
+	[80, 100, 100, 100, 100]
+]
 ## the share of the gear drops that is Special / Rare instead of Normal
 const SPECIAL_SHARE := 20
 const RARE_SHARE := 2

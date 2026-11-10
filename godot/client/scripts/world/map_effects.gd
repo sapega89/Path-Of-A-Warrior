@@ -1,18 +1,15 @@
+class_name MapEffects
 extends Node3D
 ## The effects of a mission in the new art, made in code: the blows, skills, potions and
 ## scrolls MapSim shows, the fire on whoever burns, the auras of buffs, the blood of hits (and
-## the blots it leaves on the ground for a while), the weapon trails and the archers' arrows. show_effects() takes what MapSim gives each
+## the blots it leaves on the ground for a while), the weapon trails and the archers' arrows.
+## show_effects() takes what MapSim gives each
 ## tick: [kind, frame, point in map pixels], with an optional true for the ring of an aura (on
 ## the ground behind the one who glows). The frame says how far the effect has gone (and for
 ## some, which way it goes); t, 0..1 of the way to the next tick, carries it on smoothly.
 ## Room-wide skills (Thunderstorm, Rain of Fire) strike at places that follow from the frame,
 ## the same each time.
 
-const MapPeople := preload("res://scripts/world/map_people.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const Motion := preload("res://scripts/world/motion.gd")
-const ArtKit := preload("res://scripts/art/art_kit.gd")
-const ArtEffects := preload("res://scripts/art/art_effects.gd")
 const LIGHT := preload("res://assets/art/shaders/fx_light.gdshader")
 const PUFF := preload("res://assets/art/shaders/fx_puff.gdshader")
 const BLOOD := preload("res://assets/art/shaders/fx_blood.gdshader")
@@ -32,9 +29,25 @@ const PX := 1.0 / 27.0
 ##   wave:   lightning running ahead (direction * 7 + step)
 ##   storm, rain, quake: Thunderstorm, Rain of Fire, Serpent's Breath over the room
 ##   scroll: the orb of a scroll flying ahead (direction * 4 + step)
-const FRAMES := {"slash": 8, "trail": 12, "spark": 4, "blood": 12, "pool": 8, "heal": 9, "buff": 6, "aura": 6,
-	"whirl": 2, "fire": 10, "burst": 2, "blast": 10, "wave": 28, "storm": 42, "rain": 25,
-	"quake": 15, "scroll": 16}
+const FRAMES := {
+	"slash": 8,
+	"trail": 12,
+	"spark": 4,
+	"blood": 12,
+	"pool": 8,
+	"heal": 9,
+	"buff": 6,
+	"aura": 6,
+	"whirl": 2,
+	"fire": 10,
+	"burst": 2,
+	"blast": 10,
+	"wave": 28,
+	"storm": 42,
+	"rain": 25,
+	"quake": 15,
+	"scroll": 16
+}
 
 ## The shapes of fx_light.gdshader.
 enum Shape { GLOW, RING, STAR, FLAME, BOLT, STREAK, RIBBON, SPIRAL, COLUMN, MOTES, SPLASH, SWEEP }
@@ -120,8 +133,10 @@ func show_shots(arrows: Array, t := 0.0, moving := true) -> void:
 		if not node.visible:
 			continue
 		var d := int(a.dir)
-		var step := Vector2(int(MapSim.table("front_dx")[d]), int(MapSim.table("front_dy")[d])) \
-			.normalized() * ARROW_STEP
+		var step := (
+			Vector2(int(MapSim.table("front_dx")[d]), int(MapSim.table("front_dy")[d])).normalized()
+			* ARROW_STEP
+		)
 		var p := Vector2(a.pos) + Vector2(a.w, a.h) / 2.0 + Vector2(0.0, 8.0)
 		if moving and int(a.ticks) > 0:
 			p -= step * (1.0 - clampf(t, 0.0, 1.0))
@@ -130,6 +145,7 @@ func show_shots(arrows: Array, t := 0.0, moving := true) -> void:
 
 
 # ---- the rigs ----------------------------------------------------------------------------
+
 
 func _rig(kind: String) -> Node3D:
 	var pool: Array = _pools.get(kind, [])
@@ -147,8 +163,15 @@ func _rig(kind: String) -> Node3D:
 
 
 ## A part of light: a quad (or an open cylinder) with fx_light in a shape.
-func _light(rig: Node3D, part: String, shape: Shape, turn: Turn, colours: Array, body := 0.0,
-		cylinder := false) -> MeshInstance3D:
+func _light(
+	rig: Node3D,
+	part: String,
+	shape: Shape,
+	turn: Turn,
+	colours: Array,
+	body := 0.0,
+	cylinder := false
+) -> MeshInstance3D:
 	var mi := MeshInstance3D.new()
 	mi.name = part
 	if cylinder:
@@ -184,8 +207,14 @@ static func _tube() -> ArrayMesh:
 		var a := Vector3(cos(u0 * TAU), 0.0, sin(u0 * TAU))
 		var b := Vector3(cos(u1 * TAU), 0.0, sin(u1 * TAU))
 		var top := Vector3(0.0, 0.5, 0.0)
-		for v in [[a + top, Vector2(u0, 0.0)], [b + top, Vector2(u1, 0.0)], [b - top, Vector2(u1, 1.0)],
-				[a + top, Vector2(u0, 0.0)], [b - top, Vector2(u1, 1.0)], [a - top, Vector2(u0, 1.0)]]:
+		for v in [
+			[a + top, Vector2(u0, 0.0)],
+			[b + top, Vector2(u1, 0.0)],
+			[b - top, Vector2(u1, 1.0)],
+			[a + top, Vector2(u0, 0.0)],
+			[b - top, Vector2(u1, 1.0)],
+			[a - top, Vector2(u0, 1.0)]
+		]:
 			st.set_uv(v[1])
 			st.add_vertex(v[0])
 	_tube_mesh = st.commit()
@@ -230,8 +259,10 @@ static func _tune(part: MeshInstance3D, values: Dictionary) -> void:
 
 ## A quad lying on the ground, `size` across, at `at`.
 static func _flat(part: Node3D, at: Vector3, size: float) -> void:
-	part.transform = Transform3D(Basis(Vector3.RIGHT, -PI / 2.0) * Basis.from_scale(Vector3(size, size, 1.0)),
-		at + Vector3(0.0, 0.03, 0.0))
+	part.transform = Transform3D(
+		Basis(Vector3.RIGHT, -PI / 2.0) * Basis.from_scale(Vector3(size, size, 1.0)),
+		at + Vector3(0.0, 0.03, 0.0)
+	)
 
 
 ## A quad facing the camera (or upright), w by h, its middle at `at`.
@@ -244,13 +275,17 @@ static func _span(part: Node3D, a: Vector3, b: Vector3, w: float) -> void:
 	var x := b - a
 	if x.length() < 0.001:
 		x = Vector3(0.001, 0.0, 0.0)
-	var y := x.cross(Vector3.FORWARD if absf(x.normalized().y) > 0.9 else Vector3.UP).normalized() * w
+	var y := (
+		x.cross(Vector3.FORWARD if absf(x.normalized().y) > 0.9 else Vector3.UP).normalized() * w
+	)
 	part.transform = Transform3D(Basis(x, y, x.cross(y).normalized()), (a + b) / 2.0)
 
 
 ## An open cylinder standing on `at`, r around and h high.
 static func _pillar(part: Node3D, at: Vector3, r: float, h: float) -> void:
-	part.transform = Transform3D(Basis.from_scale(Vector3(r, h, r)), at + Vector3(0.0, h / 2.0, 0.0))
+	part.transform = Transform3D(
+		Basis.from_scale(Vector3(r, h, r)), at + Vector3(0.0, h / 2.0, 0.0)
+	)
 
 
 static func _at(p: Vector2) -> Vector3:
@@ -289,6 +324,7 @@ static func _swell(x: float, rise := 0.15, fall := 0.25) -> float:
 
 # ---- a dash: dust ------------------------------------------------------------------------
 
+
 func _build_slash(rig: Node3D) -> void:
 	_light(rig, "Ring", Shape.RING, Turn.PLACED, DUST, 0.4)
 	for i in 3:
@@ -307,18 +343,29 @@ func _draw_slash(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 	for i in 3:
 		var puff := rig.get_node("Dust%d" % i) as MeshInstance3D
 		var back := 0.25 + 0.3 * i * (0.6 + ph)
-		_quad(puff, at - ahead * back + side * (i - 1) * 0.28 + Vector3(0.0, 0.3 + 0.12 * i + 0.3 * ph, 0.0),
-			0.7 + 0.55 * ph)
+		_quad(
+			puff,
+			(
+				at
+				- ahead * back
+				+ side * (i - 1) * 0.28
+				+ Vector3(0.0, 0.3 + 0.12 * i + 0.3 * ph, 0.0)
+			),
+			0.7 + 0.55 * ph
+		)
 		_tune(puff, {"strength": 0.9 * (1.0 - ph * ph), "seed": _seed(p, i)})
 
 
 # ---- the trail of a blade ----------------------------------------------------------------
 
+
 func _build_trail(rig: Node3D) -> void:
 	# a sweep to the left, one back to the right, and a chop from above
 	var sweeps := [[-80.0, 160.0, 0.35], [80.0, -160.0, -0.35]]
 	for i in 2:
-		var r := ArtEffects.slash(rig, Vector3.ZERO, sweeps[i][0], sweeps[i][1], 1.05, 0.95, sweeps[i][2])
+		var r := ArtEffects.slash(
+			rig, Vector3.ZERO, sweeps[i][0], sweeps[i][1], 1.05, 0.95, sweeps[i][2]
+		)
 		r.name = "Blow%d" % i
 	var chop := ArtEffects.slash(rig, Vector3.ZERO, 120.0, -170.0, 1.0, 0.0, 0.0)
 	chop.name = "Blow2"
@@ -346,6 +393,7 @@ func _draw_trail(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 
 # ---- a hit -------------------------------------------------------------------------------
 
+
 func _build_spark(rig: Node3D) -> void:
 	_light(rig, "Glow", Shape.GLOW, Turn.FACING, WARM)
 	_light(rig, "Star", Shape.STAR, Turn.FACING, WARM, 0.35)
@@ -362,13 +410,21 @@ func _draw_spark(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 	_colours(glow.material_override, colours)
 	var size := 1.25 if hard else 0.95
 	_quad(star, at, size * lerpf(0.85, 1.35, ph))
-	_tune(star, {"count": 7.0 if hard else 9.0, "seed": _seed(p, frame), "strength": 1.0 - ph * ph,
-		"toward": 0.8})
+	_tune(
+		star,
+		{
+			"count": 7.0 if hard else 9.0,
+			"seed": _seed(p, frame),
+			"strength": 1.0 - ph * ph,
+			"toward": 0.8
+		}
+	)
 	_quad(glow, at, size * lerpf(1.0, 0.5, ph))
 	_tune(glow, {"strength": 0.9 * (1.0 - ph), "toward": 0.75})
 
 
 # ---- blood -------------------------------------------------------------------------------
+
 
 ## A part of blood: a quad with fx_blood in a shape (0 the spray, 1 a blot on the ground).
 func _blood_part(rig: Node3D, part: String, shape: int, turn: Turn) -> MeshInstance3D:
@@ -402,8 +458,17 @@ func _draw_blood(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 	var size := 2.0 if hard else 1.45
 	var spray := rig.get_node("Spray") as MeshInstance3D
 	_quad(spray, at, size)
-	_tune(spray, {"progress": ph, "count": 18.0 if hard else 11.0, "seed": _seed(p, frame & 3), "side": side,
-		"strength": 1.0 - smoothstep(0.8, 1.0, ph), "toward": 0.8})
+	_tune(
+		spray,
+		{
+			"progress": ph,
+			"count": 18.0 if hard else 11.0,
+			"seed": _seed(p, frame & 3),
+			"side": side,
+			"strength": 1.0 - smoothstep(0.8, 1.0, ph),
+			"toward": 0.8
+		}
+	)
 	var glint := rig.get_node("Glint") as MeshInstance3D
 	_quad(glint, at, size * 0.6 * (1.0 - ph))
 	_tune(glint, {"strength": 0.5 * (1.0 - ph) * (1.0 - ph), "toward": 0.85})
@@ -435,8 +500,13 @@ func _age_stains() -> void:
 	var now := Time.get_ticks_msec()
 	for s in _stains:
 		var age := float(now - int(s[1]))
-		_tune(s[0], {"progress": clampf(age / 400.0, 0.0, 1.0),
-			"strength": 0.85 * (1.0 - smoothstep(STAIN_MS * 0.6, STAIN_MS, age))})
+		_tune(
+			s[0],
+			{
+				"progress": clampf(age / 400.0, 0.0, 1.0),
+				"strength": 0.85 * (1.0 - smoothstep(STAIN_MS * 0.6, STAIN_MS, age))
+			}
+		)
 
 
 func _build_pool(rig: Node3D) -> void:
@@ -451,6 +521,7 @@ func _draw_pool(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) ->
 
 
 # ---- healing, buffs, auras ---------------------------------------------------------------
+
 
 func _build_heal(rig: Node3D) -> void:
 	_light(rig, "Spiral", Shape.SPIRAL, Turn.PLACED, HEAL, 0.35, true)
@@ -486,8 +557,15 @@ func _draw_buff(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) ->
 	_tune(rig.get_node("Column"), {"count": 6.0, "seed": _seed(p), "strength": column})
 	var spread := clampf((ph - 0.45) / 0.55, 0.0, 1.0)
 	_flat(rig.get_node("Ring"), at, 1.2 + 1.8 * spread)
-	_tune(rig.get_node("Ring"), {"radius": 0.7, "width": 0.1, "count": 0.0,
-		"strength": (1.0 - spread) if ph > 0.45 else 0.0})
+	_tune(
+		rig.get_node("Ring"),
+		{
+			"radius": 0.7,
+			"width": 0.1,
+			"count": 0.0,
+			"strength": (1.0 - spread) if ph > 0.45 else 0.0
+		}
+	)
 	_flat(rig.get_node("Ground"), at, 1.6)
 	_tune(rig.get_node("Ground"), {"strength": 0.5 * maxf(column, 1.0 - spread)})
 
@@ -503,13 +581,16 @@ func _draw_aura(rig: Node3D, frame: int, p: Vector2, t: float, behind: bool) -> 
 	var ring := behind or frame < 3
 	var pulse := _run(frame % 3, t, 3)
 	_flat(rig.get_node("Ring"), at, 1.35 + 0.12 * sin(pulse * TAU))
-	_tune(rig.get_node("Ring"), {"radius": 0.72, "width": 0.09, "count": 0.0,
-		"strength": 0.6 if ring else 0.0})
+	_tune(
+		rig.get_node("Ring"),
+		{"radius": 0.72, "width": 0.09, "count": 0.0, "strength": 0.6 if ring else 0.0}
+	)
 	_pillar(rig.get_node("Light"), at, 0.5, 2.1)
 	_tune(rig.get_node("Light"), {"count": 7.0, "seed": 1.3, "strength": 0.0 if ring else 1.0})
 
 
 # ---- water, fire, explosions -------------------------------------------------------------
+
 
 func _build_whirl(rig: Node3D) -> void:
 	_light(rig, "Ring", Shape.RING, Turn.PLACED, WATER, 0.5)
@@ -521,8 +602,10 @@ func _draw_whirl(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 	var ph := _run(frame, t, 2)
 	var at := _at(p)
 	_flat(rig.get_node("Ring"), at, 1.6 + 2.8 * ph)
-	_tune(rig.get_node("Ring"), {"radius": 0.7, "width": 0.1, "count": 16.0, "seed": _seed(p),
-		"strength": 1.0 - 0.7 * ph})
+	_tune(
+		rig.get_node("Ring"),
+		{"radius": 0.7, "width": 0.1, "count": 16.0, "seed": _seed(p), "strength": 1.0 - 0.7 * ph}
+	)
 	_pillar(rig.get_node("Wall"), at, 0.7 + 1.3 * ph, 1.0 - 0.45 * ph)
 	_tune(rig.get_node("Wall"), {"count": 22.0, "seed": _seed(p), "strength": 0.9 * (1.0 - ph)})
 	_flat(rig.get_node("Ground"), at, 2.4 + 2.0 * ph)
@@ -559,8 +642,10 @@ func _draw_burst(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 	_quad(rig.get_node("Glow"), at + Vector3(0.0, 0.8, 0.0), 2.2 * (0.6 + 0.6 * ph))
 	_tune(rig.get_node("Glow"), {"strength": 1.0 - ph, "toward": 0.5})
 	_quad(rig.get_node("Star"), at + Vector3(0.0, 0.8, 0.0), 1.5 + 1.8 * ph)
-	_tune(rig.get_node("Star"), {"count": 11.0, "seed": _seed(p), "strength": 1.0 - pow(ph, 1.5),
-		"toward": 0.6})
+	_tune(
+		rig.get_node("Star"),
+		{"count": 11.0, "seed": _seed(p), "strength": 1.0 - pow(ph, 1.5), "toward": 0.6}
+	)
 	_flat(rig.get_node("Ring"), at, 1.2 + 3.2 * ph)
 	_tune(rig.get_node("Ring"), {"radius": 0.75, "width": 0.08, "count": 0.0, "strength": 1.0 - ph})
 
@@ -583,18 +668,27 @@ func _draw_blast(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 	_quad(rig.get_node("Glow"), mid, 2.6 * size * (0.5 + 0.5 * ph))
 	_tune(rig.get_node("Glow"), {"strength": 1.0 - ph, "toward": 0.4})
 	_quad(rig.get_node("Star"), mid, 3.0 * size * (0.4 + 0.6 * ph))
-	_tune(rig.get_node("Star"), {"count": 13.0, "seed": _seed(p, frame), "strength": pow(1.0 - ph, 1.2),
-		"toward": 0.5})
+	_tune(
+		rig.get_node("Star"),
+		{"count": 13.0, "seed": _seed(p, frame), "strength": pow(1.0 - ph, 1.2), "toward": 0.5}
+	)
 	_flat(rig.get_node("Scorch"), at, 2.8 * size * (0.3 + 0.7 * ph))
-	_tune(rig.get_node("Scorch"), {"radius": 0.7, "width": 0.12, "count": 9.0, "seed": _seed(p),
-		"strength": 1.0 - ph})
+	_tune(
+		rig.get_node("Scorch"),
+		{"radius": 0.7, "width": 0.12, "count": 9.0, "seed": _seed(p), "strength": 1.0 - ph}
+	)
 	for i in 2:
 		var smoke := rig.get_node("Smoke%d" % i) as MeshInstance3D
-		_quad(smoke, mid + Vector3((i - 0.5) * 0.5 * size, (0.3 + ph * 1.1) * size, 0.0), 1.3 * size * (0.5 + ph))
+		_quad(
+			smoke,
+			mid + Vector3((i - 0.5) * 0.5 * size, (0.3 + ph * 1.1) * size, 0.0),
+			1.3 * size * (0.5 + ph)
+		)
 		_tune(smoke, {"strength": 0.6 * sin(ph * PI), "seed": _seed(p, i)})
 
 
 # ---- lightning ---------------------------------------------------------------------------
+
 
 func _build_wave(rig: Node3D) -> void:
 	for i in 3:
@@ -638,14 +732,21 @@ func _draw_storm(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 	var s := _seed(p, frame)
 	var lean := Vector3(sin(s) * 0.8, 0.0, cos(s * 1.3) * 0.4)
 	_span(rig.get_node("Bolt"), at, at + Vector3(0.0, 7.5, 0.0) + lean, 0.55 if gathering else 1.0)
-	_tune(rig.get_node("Bolt"), {"seed": s, "strength": (0.55 if gathering else 1.0) * (1.0 - 0.6 * t)})
+	_tune(
+		rig.get_node("Bolt"),
+		{"seed": s, "strength": (0.55 if gathering else 1.0) * (1.0 - 0.6 * t)}
+	)
 	_flat(rig.get_node("Ground"), at, 2.4)
 	_tune(rig.get_node("Ground"), {"strength": 0.9 * (1.0 - t)})
 	_flat(rig.get_node("Ring"), at, 1.0 + 2.2 * t)
-	_tune(rig.get_node("Ring"), {"radius": 0.7, "width": 0.1, "count": 0.0, "strength": 0.8 * (1.0 - t)})
+	_tune(
+		rig.get_node("Ring"),
+		{"radius": 0.7, "width": 0.1, "count": 0.0, "strength": 0.8 * (1.0 - t)}
+	)
 
 
 # ---- fire from above, the fire serpent ---------------------------------------------------
+
 
 func _build_rain(rig: Node3D) -> void:
 	_light(rig, "Tail", Shape.STREAK, Turn.AXIS, HOT, 0.35)
@@ -700,7 +801,14 @@ func _draw_quake(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 	var points: Array[Vector3] = []
 	for i in n:
 		var a := head_a - (1.0 - float(i) / (n - 1)) * 2.8
-		points.append(middle + Vector3(cos(a) * radius, 0.75 + 0.35 * sin(a * 3.0 + ph * 9.0), sin(a) * radius * 0.8))
+		points.append(
+			(
+				middle
+				+ Vector3(
+					cos(a) * radius, 0.75 + 0.35 * sin(a * 3.0 + ph * 9.0), sin(a) * radius * 0.8
+				)
+			)
+		)
 	mesh.surface_begin(Mesh.PRIMITIVE_TRIANGLE_STRIP)
 	for i in n:
 		var along := points[mini(i + 1, n - 1)] - points[maxi(i - 1, 0)]
@@ -721,6 +829,7 @@ func _draw_quake(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 
 # ---- a scroll ----------------------------------------------------------------------------
 
+
 func _build_scroll(rig: Node3D) -> void:
 	_light(rig, "Orb", Shape.GLOW, Turn.FACING, WARM, 0.3)
 	_light(rig, "Star", Shape.STAR, Turn.FACING, WARM, 0.3)
@@ -735,7 +844,10 @@ func _draw_scroll(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) 
 	var front := Vector2(int(MapSim.table("front_dx")[d]), int(MapSim.table("front_dy")[d]))
 	var ground := _at(p + front * s)
 	var at := ground + Vector3(0.0, 1.0 + sin(PI * s) * 1.3, 0.0)
-	var before := _at(p + front * maxf(s - 0.15, 0.0)) + Vector3(0.0, 1.0 + sin(PI * maxf(s - 0.15, 0.0)) * 1.3, 0.0)
+	var before := (
+		_at(p + front * maxf(s - 0.15, 0.0))
+		+ Vector3(0.0, 1.0 + sin(PI * maxf(s - 0.15, 0.0)) * 1.3, 0.0)
+	)
 	_quad(rig.get_node("Orb"), at, 0.9)
 	_tune(rig.get_node("Orb"), {"strength": 1.0})
 	_quad(rig.get_node("Star"), at, 0.8)
@@ -748,17 +860,25 @@ func _draw_scroll(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) 
 
 # ---- an arrow ----------------------------------------------------------------------------
 
+
 ## An arrow along +Z: a shaft of oak, a steel head, white and red fletching.
 func _arrow() -> ArrayMesh:
 	if _arrow_mesh != null:
 		return _arrow_mesh
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	_box(st, Vector3(0.0, 0.0, 0.0), Vector3(0.03, 0.03, 0.72), ArtKit.color("ochre").darkened(0.25))
+	_box(
+		st, Vector3(0.0, 0.0, 0.0), Vector3(0.03, 0.03, 0.72), ArtKit.color("ochre").darkened(0.25)
+	)
 	# the head: a pyramid
 	var steel := ArtKit.color("steel").lightened(0.2)
 	var tip := Vector3(0.0, 0.0, 0.48)
-	var base := [Vector3(-0.045, 0.0, 0.34), Vector3(0.0, 0.045, 0.34), Vector3(0.045, 0.0, 0.34), Vector3(0.0, -0.045, 0.34)]
+	var base := [
+		Vector3(-0.045, 0.0, 0.34),
+		Vector3(0.0, 0.045, 0.34),
+		Vector3(0.045, 0.0, 0.34),
+		Vector3(0.0, -0.045, 0.34)
+	]
 	for i in 4:
 		_tri(st, base[i], base[(i + 1) % 4], tip, steel)
 	# the fletching: two crossed vanes
@@ -782,8 +902,16 @@ static func _tri(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, col: Color
 
 static func _box(st: SurfaceTool, at: Vector3, size: Vector3, col: Color) -> void:
 	var h := size / 2.0
-	var c := [Vector3(-h.x, -h.y, -h.z), Vector3(h.x, -h.y, -h.z), Vector3(h.x, h.y, -h.z), Vector3(-h.x, h.y, -h.z),
-		Vector3(-h.x, -h.y, h.z), Vector3(h.x, -h.y, h.z), Vector3(h.x, h.y, h.z), Vector3(-h.x, h.y, h.z)]
+	var c := [
+		Vector3(-h.x, -h.y, -h.z),
+		Vector3(h.x, -h.y, -h.z),
+		Vector3(h.x, h.y, -h.z),
+		Vector3(-h.x, h.y, -h.z),
+		Vector3(-h.x, -h.y, h.z),
+		Vector3(h.x, -h.y, h.z),
+		Vector3(h.x, h.y, h.z),
+		Vector3(-h.x, h.y, h.z)
+	]
 	for f in [[0, 3, 2, 1], [4, 5, 6, 7], [0, 1, 5, 4], [3, 7, 6, 2], [0, 4, 7, 3], [1, 2, 6, 5]]:
 		_tri(st, at + c[f[0]], at + c[f[1]], at + c[f[2]], col)
 		_tri(st, at + c[f[0]], at + c[f[2]], at + c[f[3]], col)

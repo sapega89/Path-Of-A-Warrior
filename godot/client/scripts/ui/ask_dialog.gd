@@ -1,3 +1,4 @@
+class_name AskDialog
 extends Control
 ## The game's own question (Yes / No) and notice (OK), in place of Godot's ConfirmationDialog and
 ## AcceptDialog, which have an English title bar ("Please Confirm..."), a close cross and the
@@ -13,7 +14,6 @@ extends Control
 signal confirmed
 signal canceled
 
-const UiTheme := preload("res://scripts/ui/ui_theme.gd")
 const WIDTH := 620
 const BUTTON_WIDTH := 200
 
@@ -57,7 +57,7 @@ func _init(is_notice := false) -> void:
 	add_child(center)
 	panel = PanelContainer.new()
 	panel.name = "Panel"
-	var sb := UiTheme.PanelBox.new()  # the dialogs' leather with its seam and rivets
+	var sb := PanelBox.new()  # the dialogs' leather with its seam and rivets
 	sb.set_content_margin_all(28)
 	panel.add_theme_stylebox_override("panel", sb)
 	panel.custom_minimum_size = Vector2(WIDTH, 0)
@@ -131,8 +131,11 @@ func _focus_first() -> void:
 
 func _answer(yes: bool) -> void:
 	hide()
-	if is_instance_valid(_focus_before) and _focus_before.is_inside_tree() \
-			and _focus_before.is_visible_in_tree():
+	if (
+		is_instance_valid(_focus_before)
+		and _focus_before.is_inside_tree()
+		and _focus_before.is_visible_in_tree()
+	):
 		_focus_before.grab_focus()
 	_focus_before = null
 	if yes:
@@ -150,6 +153,13 @@ func _input(event: InputEvent) -> void:
 
 ## The keys and buttons its own buttons did not take go nowhere else while it shows.
 func _unhandled_input(event: InputEvent) -> void:
-	if visible and (event is InputEventKey or event is InputEventJoypadButton \
-			or event is InputEventJoypadMotion or event is InputEventAction):
+	if (
+		visible
+		and (
+			event is InputEventKey
+			or event is InputEventJoypadButton
+			or event is InputEventJoypadMotion
+			or event is InputEventAction
+		)
+	):
 		get_viewport().set_input_as_handled()

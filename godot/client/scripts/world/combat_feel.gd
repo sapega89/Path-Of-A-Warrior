@@ -1,3 +1,4 @@
+class_name CombatFeel
 extends RefCounted
 ## How a hit feels on the map (the mission screen, and the lab lab/combat_feel_lab.gd): the
 ## hitstop, the camera shake, the white flash, the recoil of the one hit, the flight of the one
@@ -9,33 +10,67 @@ extends RefCounted
 
 ## The effects, each on or off.
 var on := {
-	"hitstop": true, "shake": true, "flash": true, "recoil": true, "knock_ease": true,
-	"launch": true, "sound": true, "rumble": true,
+	"hitstop": true,
+	"shake": true,
+	"flash": true,
+	"recoil": true,
+	"knock_ease": true,
+	"launch": true,
+	"sound": true,
+	"rumble": true,
 }
 ## The numbers: times in seconds, distances in the original's pixels (27 to a tile).
 var p := {
 	# hitstop: how long the picture stands still
-	"stop_hit": 0.04, "stop_heavy": 0.07, "stop_kill": 0.09, "stop_boss": 0.16,
-	"stop_hurt": 0.06, "stop_object": 0.03,
-	"stop_budget": 0.2, "stop_window": 0.5,  # at most this much in any such window
+	"stop_hit": 0.04,
+	"stop_heavy": 0.07,
+	"stop_kill": 0.09,
+	"stop_boss": 0.16,
+	"stop_hurt": 0.06,
+	"stop_object": 0.03,
+	"stop_budget": 0.2,
+	"stop_window": 0.5,  # at most this much in any such window
 	"stop_scale": 1.0,
 	# shake: trauma 0..1 added by a hit; the offset is trauma² × shake_px
-	"trauma_hit": 0.25, "trauma_heavy": 0.4, "trauma_kill": 0.5, "trauma_boss": 0.8,
-	"trauma_hurt": 0.45, "trauma_object": 0.2,
-	"shake_px": 10.0, "shake_roll": 0.8, "shake_decay": 2.5, "shake_freq": 25.0,
-	"shake_kick_px": 2.0, "shake_scale": 1.0,
+	"trauma_hit": 0.25,
+	"trauma_heavy": 0.4,
+	"trauma_kill": 0.5,
+	"trauma_boss": 0.8,
+	"trauma_hurt": 0.45,
+	"trauma_object": 0.2,
+	"shake_px": 10.0,
+	"shake_roll": 0.8,
+	"shake_decay": 2.5,
+	"shake_freq": 25.0,
+	"shake_kick_px": 2.0,
+	"shake_scale": 1.0,
 	# flash: how long the one hit shows white
-	"flash_hit": 0.06, "flash_heavy": 0.08, "flash_kill": 0.10, "flash_boss": 0.2,
-	"flash_hurt": 0.12, "flash_object": 0.06,
+	"flash_hit": 0.06,
+	"flash_heavy": 0.08,
+	"flash_kill": 0.10,
+	"flash_boss": 0.2,
+	"flash_hurt": 0.12,
+	"flash_object": 0.06,
 	# recoil of the one hit, and the flight of the one killed
-	"recoil_px": 3.0, "recoil_heavy_px": 6.0, "recoil_time": 0.12,
-	"launch_px": 24.0, "launch_boss_px": 32.0, "launch_hop_px": 8.0, "launch_time": 0.25,
+	"recoil_px": 3.0,
+	"recoil_heavy_px": 6.0,
+	"recoil_time": 0.12,
+	"launch_px": 24.0,
+	"launch_boss_px": 32.0,
+	"launch_hop_px": 8.0,
+	"launch_time": 0.25,
 	# sound
-	"pitch_spread": 0.07, "kill_pitch": 0.8, "kill_delay": 0.03, "heavy_db": 2.0,
+	"pitch_spread": 0.07,
+	"kill_pitch": 0.8,
+	"kill_delay": 0.03,
+	"heavy_db": 2.0,
 	# rumble: [weak motor, strong motor, seconds]
-	"rumble_hit": [0.25, 0.0, 0.06], "rumble_heavy": [0.4, 0.25, 0.1],
-	"rumble_kill": [0.45, 0.5, 0.12], "rumble_boss": [0.7, 1.0, 0.35],
-	"rumble_hurt": [0.5, 0.6, 0.15], "rumble_object": [0.2, 0.0, 0.05],
+	"rumble_hit": [0.25, 0.0, 0.06],
+	"rumble_heavy": [0.4, 0.25, 0.1],
+	"rumble_kill": [0.45, 0.5, 0.12],
+	"rumble_boss": [0.7, 1.0, 0.35],
+	"rumble_hurt": [0.5, 0.6, 0.15],
+	"rumble_object": [0.2, 0.0, 0.05],
 	"rumble_scale": 1.0,
 }
 
@@ -91,16 +126,43 @@ static func hits(sim: RefCounted, before: Dictionary) -> Array:
 	for e in sim.enemies:
 		if not before.has(e) or e.hp >= int(before[e]):
 			continue
-		out.append({"who": "enemy", "actor": e, "pos": e.pos, "dir": _away(hero.pos, e.pos, e.facing),
-			"killed": e.hp <= 0, "heavy": e.ai_mode > 0 or hero.action >= 12, "boss": e.type < 200})
+		out.append(
+			{
+				"who": "enemy",
+				"actor": e,
+				"pos": e.pos,
+				"dir": _away(hero.pos, e.pos, e.facing),
+				"killed": e.hp <= 0,
+				"heavy": e.ai_mode > 0 or hero.action >= 12,
+				"boss": e.type < 200
+			}
+		)
 	if before.has(hero) and hero.hp < int(before[hero]):
 		var back: int = (hero.facing + 4) & 7
-		out.append({"who": "hero", "actor": hero, "pos": hero.pos, "dir": _dir8_vec(back),
-			"killed": hero.hp <= 0, "heavy": hero.hurt_ticks > 0, "boss": false})
+		out.append(
+			{
+				"who": "hero",
+				"actor": hero,
+				"pos": hero.pos,
+				"dir": _dir8_vec(back),
+				"killed": hero.hp <= 0,
+				"heavy": hero.hurt_ticks > 0,
+				"boss": false
+			}
+		)
 	for b in sim.breakables:
 		if before.has(b) and b.hp < int(before[b]):
-			out.append({"who": "object", "actor": b, "pos": b.pos, "dir": _away(hero.pos, b.pos, 0),
-				"killed": b.hp < 1, "heavy": false, "boss": false})
+			out.append(
+				{
+					"who": "object",
+					"actor": b,
+					"pos": b.pos,
+					"dir": _away(hero.pos, b.pos, 0),
+					"killed": b.hp < 1,
+					"heavy": false,
+					"boss": false
+				}
+			)
 	return out
 
 
@@ -139,7 +201,13 @@ func react(list: Array) -> void:
 	for h in list:
 		var g := grade(h)
 		var r: Array = p["rumble_" + g]
-		if on.rumble and (rumble_wanted.is_empty() or float(r[1]) + float(r[0]) > float(rumble_wanted[1]) + float(rumble_wanted[0])):
+		if (
+			on.rumble
+			and (
+				rumble_wanted.is_empty()
+				or float(r[1]) + float(r[0]) > float(rumble_wanted[1]) + float(rumble_wanted[0])
+			)
+		):
 			rumble_wanted = r
 		if float(p["stop_" + g]) > stop:
 			stop = float(p["stop_" + g])
@@ -157,13 +225,22 @@ func react(list: Array) -> void:
 			continue
 		if on.launch and h.killed:
 			var t := float(p.launch_time)
-			launches[a] = {"t": 0.0, "total": t, "dir": h.dir,
-				"px": float(p.launch_boss_px if h.boss else p.launch_px), "hop": float(p.launch_hop_px)}
+			launches[a] = {
+				"t": 0.0,
+				"total": t,
+				"dir": h.dir,
+				"px": float(p.launch_boss_px if h.boss else p.launch_px),
+				"hop": float(p.launch_hop_px)
+			}
 			recoils.erase(a)
 		elif on.recoil:
 			var t := float(p.recoil_time)
-			recoils[a] = {"t": 0.0, "total": t, "dir": h.dir,
-				"px": float(p.recoil_heavy_px if h.heavy else p.recoil_px)}
+			recoils[a] = {
+				"t": 0.0,
+				"total": t,
+				"dir": h.dir,
+				"px": float(p.recoil_heavy_px if h.heavy else p.recoil_px)
+			}
 	if on.hitstop and stop > 0.0:
 		var want := stop * float(p.stop_scale)
 		var got := minf(want, _budget)
@@ -230,7 +307,9 @@ func camera_shake() -> Vector3:
 	var s := trauma * trauma * float(p.shake_scale)
 	var t := _time * float(p.shake_freq)
 	var x := _noise.get_noise_2d(t, 0.0) * float(p.shake_px) * s + _kick.x * float(p.shake_scale)
-	var y := _noise.get_noise_2d(0.0, t + 100.0) * float(p.shake_px) * s + _kick.y * float(p.shake_scale)
+	var y := (
+		_noise.get_noise_2d(0.0, t + 100.0) * float(p.shake_px) * s + _kick.y * float(p.shake_scale)
+	)
 	var roll := _noise.get_noise_2d(t + 200.0, t) * float(p.shake_roll) * s
 	return Vector3(x, y, roll)
 
@@ -271,7 +350,8 @@ func play_sounds(sounds: Array, list: Array) -> void:
 			var tree := Engine.get_main_loop() as SceneTree
 			if tree != null:
 				tree.create_timer(float(p.kill_delay)).timeout.connect(
-					Audio.play_sound.bind(n, float(p.kill_pitch), db))
+					Audio.play_sound.bind(n, float(p.kill_pitch), db)
+				)
 
 
 ## Plays the rumble react() asked for: on the pad's motors when a pad is what the player uses,

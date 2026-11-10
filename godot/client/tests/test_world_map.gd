@@ -2,14 +2,7 @@ extends "res://tests/test_case.gd"
 ## The world map of the campaign: 45 places joined by the ways of campaign.json, and the
 ## rooms a mission walks on its place's map.
 
-const WorldMap := preload("res://scripts/core/world_map.gd")
-const WorldMapView := preload("res://scripts/ui/world_map_view.gd")
-const Rooms := preload("res://scripts/world/rooms.gd")
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const Profile := preload("res://scripts/core/profile.gd")
 const RouterScript := preload("res://scripts/core/router.gd")
-const CampMap := preload("res://scripts/world/camp_map.gd")
-const CampScreen := preload("res://scripts/screens/camp_screen.gd")
 const CAMP_PATH := "user://test_camp.json"
 
 
@@ -83,17 +76,30 @@ func test_camp_map_has_a_gap_per_way() -> void:
 		var c: RefCounted = CampMap.new(ways)
 		eq(c.exits.size(), n, "%d ways, %d gaps" % [n, n])
 		for place in 46:
-			check(CampMap.new(ways, false, place).all_reachable(),
-				"%d ways at place %d: the things about the camp leave every way and spot free" % [n, place])
+			check(
+				CampMap.new(ways, false, place).all_reachable(),
+				(
+					"%d ways at place %d: the things about the camp leave every way and spot free"
+					% [n, place]
+				)
+			)
 		for e in c.exits:
 			for p in e.gap:
 				var f: int = c.data.flags[p.y * CampMap.W + p.x]
 				eq(f & 1 == 0, bool(e.open), "an open way is free, a closed one fenced")
-			eq(int(c.data.flags[e.inside.y * CampMap.W + e.inside.x]) & 1, 0, "its colonel stands on free ground")
+			eq(
+				int(c.data.flags[e.inside.y * CampMap.W + e.inside.x]) & 1,
+				0,
+				"its colonel stands on free ground"
+			)
 	check(CampMap.is_main(0) and CampMap.is_main(30) and not CampMap.is_main(27), "the main camps")
 	var plain: RefCounted = CampMap.new([[1, true]])
 	for spot in [plain.smith_spot(), plain.store_spot(), plain.hall_door(), plain.start]:
-		eq(int(plain.data.flags[spot.y * CampMap.W + spot.x]) & 1, 0, "the blacksmith, the stores, the hall and the start can be reached")
+		eq(
+			int(plain.data.flags[spot.y * CampMap.W + spot.x]) & 1,
+			0,
+			"the blacksmith, the stores, the hall and the start can be reached"
+		)
 	eq(plain.data.upper[0], CampMap.TREE[0][0], "a big tree in the corner")
 
 
@@ -103,14 +109,21 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 	p.save(CAMP_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": CAMP_PATH}
-	var camp: Control = CampScreen.new()
+	var camp: Control = Router.make(Router.SCREENS["camp"])
 	root.add_child(camp)
 	eq(camp.place, 4, "the camp of the hero's place")
-	eq(camp.spots.map(func(s): return s.kind), ["way", "way", "smith", "store", "hall"],
-		"a way per place on, then the blacksmith, the warehouse and the town hall in every camp")
+	eq(
+		camp.spots.map(func(s): return s.kind),
+		["way", "way", "smith", "store", "hall"],
+		"a way per place on, then the blacksmith, the warehouse and the town hall in every camp"
+	)
 	var ways: Array = camp.spots.filter(func(s): return s.kind == "way")
 	var open: Array = ways.filter(func(s): return s.open)
-	eq(ways.filter(func(s): return not s.open).map(func(s): return s.place), [5], "The Regalia fenced")
+	eq(
+		ways.filter(func(s): return not s.open).map(func(s): return s.place),
+		[5],
+		"The Regalia fenced"
+	)
 	eq(open.map(func(s): return [s.place, s.mission]), [[6, 0]], "Harvest, its first mission")
 	check(not camp.camp.main, "Korsun is a stop")
 	var harvest: Dictionary = open[0]
@@ -130,15 +143,20 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 	check(camp._hint_text(smith).contains(tr("menu.blacksmith")), "says what is there")
 	check(camp.rulers(1).size() == 4, "four colonels give the missions at Uprising")
 	eq(camp.arrows.size(), 1, "an arrow on the open way only")
-	check(camp.world.get_children().any(func(n): return str(n.name).begins_with("Land")),
-		"the land of the places past the gaps")
+	check(
+		camp.world.get_children().any(func(n): return str(n.name).begins_with("Land")),
+		"the land of the places past the gaps"
+	)
 	p.done["6:0"] = true
 	camp.profile = p
 	var again: Array = camp.choices().filter(func(w): return w[1])
 	eq(again, [[6, true, 1]], "the next mission not won yet")
 	camp.place = 27
-	eq(camp.choices().map(func(w): return w[0]).size(), camp.world_map.next_places(27).size(),
-		"one way per place on")
+	eq(
+		camp.choices().map(func(w): return w[0]).size(),
+		camp.world_map.next_places(27).size(),
+		"one way per place on"
+	)
 	eq(CampScreen.terrain(33), "mountains", "Chyhyryn's hills")
 	eq(CampScreen.terrain(19), "forest", "a forest")
 	eq(CampScreen.terrain(24), "lake", "down the Dnipro")
@@ -167,22 +185,33 @@ func test_a_room_shows_only_itself_and_the_next() -> void:
 	b.show_only(cells)
 	for r in rooms.count():
 		var q: Vector2i = rooms.room_xy(r)
-		eq(b.is_shown(7 * q.x + 4, 7 * q.y + 4), r == 0 or r in next, "room %d drawn only if current or next" % r)
+		eq(
+			b.is_shown(7 * q.x + 4, 7 * q.y + 4),
+			r == 0 or r in next,
+			"room %d drawn only if current or next" % r
+		)
 	b.free()
 
 
 func test_after_a_mission_won_the_way_on_is_chosen_in_the_room() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 4, "mission": 0, "seed": 2}
-	var screen: Control = load("res://scripts/screens/mission_screen.gd").new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	var p: RefCounted = Profile.new()
 	screen.profile = p
-	eq(screen.ways_on(4).map(func(w): return w.place), [6], "Korsun: Harvest only, The Regalia is closed")
+	eq(
+		screen.ways_on(4).map(func(w): return w.place),
+		[6],
+		"Korsun: Harvest only, The Regalia is closed"
+	)
 	p.lords_open = -1
 	var two: Array = screen.ways_on(4)
 	eq(two.map(func(w): return w.place), [5, 6], "both open: a way each")
-	check(two[0].exit != two[1].exit and two.all(func(w): return w.half == -1), "each on a side of its own")
+	check(
+		two[0].exit != two[1].exit and two.all(func(w): return w.half == -1),
+		"each on a side of its own"
+	)
 	var six: Array = screen.ways_on(27)
 	eq(six.size(), 6, "six places on from Dawn over the Dnipro")
 	eq(six.filter(func(w): return w.half != -1).size(), 4, "two sides carry two ways")
@@ -193,7 +222,14 @@ func test_after_a_mission_won_the_way_on_is_chosen_in_the_room() -> void:
 		var off := -1.0 if int(w.half) == 0 else 1.0
 		if int(w.half) == -1:
 			off = 0.0
-		var at := mid + (Vector3(off, 0, 0) if int(w.exit) in [Rooms.EXIT_UP, Rooms.EXIT_DOWN] else Vector3(0, 0, off))
+		var at := (
+			mid
+			+ (
+				Vector3(off, 0, 0)
+				if int(w.exit) in [Rooms.EXIT_UP, Rooms.EXIT_DOWN]
+				else Vector3(0, 0, off)
+			)
+		)
 		eq(screen.way_for(int(w.exit), at), int(w.place), "the way to %d" % w.place)
 		seen[w.place] = true
 	eq(seen.size(), 6, "every place has its way")
@@ -213,7 +249,7 @@ func test_the_camp_of_the_way_chosen_offers_its_generals() -> void:
 	p.save(CAMP_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": CAMP_PATH}
-	var camp: Control = CampScreen.new()
+	var camp: Control = Router.make(Router.SCREENS["camp"])
 	root.add_child(camp)
 	var ways: Array = camp.spots.filter(func(s): return s.kind == "way")
 	var n: int = camp.campaign.lord_missions(2).size()

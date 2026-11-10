@@ -2,11 +2,6 @@ extends "res://tests/test_case.gd"
 ## Battles of the online game on the server (server/battle.gd, room.gd, loot.gd and the
 ## battle requests of online.gd), as pyport's pow_server/battle.py, loot.py and Room.
 
-const Online := preload("res://server/online.gd")
-const Battle := preload("res://server/battle.gd")
-const Rules := preload("res://server/rules.gd")
-const Loot := preload("res://server/loot.gd")
-const Accounts := preload("res://server/accounts.gd")
 const ServerTests := preload("res://tests/test_server.gd")
 const OnlineTests := preload("res://tests/test_online_server.gd")
 
@@ -17,10 +12,10 @@ func _dir() -> String:
 	return d
 
 
-func _online(d: String) -> Online:
+func _online(d: String) -> OnlineServer:
 	var a := Accounts.new(d.path_join("accounts"))
 	a.rounds = 20
-	var o := Online.new(d, a)
+	var o := OnlineServer.new(d, a)
 	o.rng.seed = 11
 	o.add_bots()
 	return o
@@ -28,18 +23,18 @@ func _online(d: String) -> Online:
 
 ## A player online, with what the server pushed to him in .inbox.
 class Player:
-	var s: Online.Session
+	var s: OnlineServer.Session
 	var inbox: Array = []
 	var seen: Array = []  # every push, in order
 
 
-func _player(o: Online, uid: String, hero := {}) -> Player:
+func _player(o: OnlineServer, uid: String, hero := {}) -> Player:
 	var p := Player.new()
 	if not o.accounts.has_account(uid):
 		o.accounts.create_account(uid, "1234")
 	if not hero.is_empty():
 		o.accounts.hero_put(uid, int(o.accounts.hero_get(uid).rev), 1, hero)
-	p.s = Online.Session.new()
+	p.s = OnlineServer.Session.new()
 	var inbox := p.inbox
 	p.s.send = func(m: Dictionary) -> void: inbox.append(m)
 	check(o.enter(p.s, uid).ok, "%s online" % uid)
@@ -48,7 +43,7 @@ func _player(o: Online, uid: String, hero := {}) -> Player:
 
 ## Plays the pushes as a client that never waits: ready after every result, the bot chooses
 ## its moves (action AUTO). Stops when nothing is left to answer.
-func _play(o: Online, players: Array, limit := 5000) -> void:
+func _play(o: OnlineServer, players: Array, limit := 5000) -> void:
 	var busy := true
 	while busy and limit > 0:
 		busy = false
@@ -87,8 +82,14 @@ func _fighter(atk: int, def: int, hp := 100) -> Battle.Fighter:
 
 
 func test_single_player_numbers() -> void:
-	eq(Rules.hero_stats(10, {"atk": 2, "def": 1, "hp": 2}, 0), {"hp": 100, "mp": 10, "atk": 17, "def": 10})
-	eq(Rules.hero_stats(12, {"atk": 4, "def": 4, "hp": 5, "mp": 7}, 2), {"hp": 70, "mp": 61, "atk": 11, "def": 11})
+	eq(
+		Rules.hero_stats(10, {"atk": 2, "def": 1, "hp": 2}, 0),
+		{"hp": 100, "mp": 10, "atk": 17, "def": 10}
+	)
+	eq(
+		Rules.hero_stats(12, {"atk": 4, "def": 4, "hp": 5, "mp": 7}, 2),
+		{"hp": 70, "mp": 61, "atk": 11, "def": 11}
+	)
 	eq(Rules.soldier_stats(2, 7), {"atk": 15, "def": 6, "hp": 28}, "a squad of level 7")
 	eq([Rules.skill_bonus(3, 20, 4), Rules.heal(9, 100, 3), Rules.heal(10, 100, 3)], [4, 28, 60])
 	eq(Rules.soul(13, 30, 20, 5), [6, 4, 100], "Protection of the Virgin Lv5")
@@ -102,10 +103,21 @@ func test_single_player_numbers() -> void:
 func test_strikes_and_stances() -> void:
 	var f := _fighter(20, 0)
 	var t := _fighter(0, 5)
-	eq([Battle.strike_damage(f, t, Battle.ATTACK, 100), Battle.strike_damage(f, t, Battle.ATTACK, 60),
-		Battle.strike_damage(f, t, Battle.ATTACK, 10)], [45, 30, 15], "the bar decides 3, 2 or 1 hits")
+	eq(
+		[
+			Battle.strike_damage(f, t, Battle.ATTACK, 100),
+			Battle.strike_damage(f, t, Battle.ATTACK, 60),
+			Battle.strike_damage(f, t, Battle.ATTACK, 10)
+		],
+		[45, 30, 15],
+		"the bar decides 3, 2 or 1 hits"
+	)
 	eq(Battle.strike_damage(f, t, Battle.ATTACK, 100, true), 18, "Defend takes 40 %")
-	eq(Battle.strike_damage(f, t, Battle.WIND), 48, "Whirlwind Sabre: 3 hits of ATK - DEF + ATK / 20")
+	eq(
+		Battle.strike_damage(f, t, Battle.WIND),
+		48,
+		"Whirlwind Sabre: 3 hits of ATK - DEF + ATK / 20"
+	)
 	eq(Battle.strike_damage(_fighter(1, 0), _fighter(0, 50), Battle.ATTACK, 0), 1, "at least 1")
 	t.slot = 1
 	var b := Battle.new(RandomNumberGenerator.new(), [f, t])
@@ -113,8 +125,11 @@ func test_strikes_and_stances() -> void:
 	eq(r.actions, [Battle.ATTACK, Battle.DEFEND, 0, 0])
 	eq(r.records.size(), 1, "a stance makes no record")
 	var rec: Dictionary = r.records[0]
-	eq([rec.actor, rec.target, rec.result, rec.target_hp, rec.actor_mp], [0, 1, Battle.RES_HIT, 82, 20],
-		"18 through Defend; +20 MP an Attack")
+	eq(
+		[rec.actor, rec.target, rec.result, rec.target_hp, rec.actor_mp],
+		[0, 1, Battle.RES_HIT, 82, 20],
+		"18 through Defend; +20 MP an Attack"
+	)
 	eq(t.mp, 25, "+15 a stance, +10 a hit")
 	f.mp = 100
 	r = b.resolve({0: [1, Battle.WIND, 100], 1: [0, Battle.ATTACK, 100]})
@@ -172,7 +187,11 @@ func test_two_players_meet_in_the_queue() -> void:
 	eq(o.answer(b.s, "mp_match", {"mode": 1}).waiting, true, "another kind of duel")
 	o.answer(b.s, "mp_cancel", {})
 	eq(o.answer(b.s, "mp_match", {"mode": 0}).waiting, false, "found")
-	eq([a.inbox[0].via, a.inbox[0].slot, b.inbox[0].slot], ["match", 0, 1], "who waited is on the left")
+	eq(
+		[a.inbox[0].via, a.inbox[0].slot, b.inbox[0].slot],
+		["match", 0, 1],
+		"who waited is on the left"
+	)
 	eq(a.inbox[0].fighters.map(func(f): return f.name), ["ANDREY", "MARIA"])
 	_play(o, [a, b])
 	var ends: Array = _of(a, "battle_end") + _of(b, "battle_end")
@@ -186,7 +205,11 @@ func test_two_players_meet_in_the_queue() -> void:
 	eq(c.inbox.size(), 0, "still waiting")
 	now[0] = 60.0
 	o.tick()
-	eq([c.inbox[0].t, c.inbox[0].fighters.size()], ["room", 4], "a minute: a 2-on-2 against the CPU")
+	eq(
+		[c.inbox[0].t, c.inbox[0].fighters.size()],
+		["room", 4],
+		"a minute: a 2-on-2 against the CPU"
+	)
 	ServerTests._rm(d)
 
 
@@ -209,12 +232,19 @@ func test_a_solo_mission() -> void:
 	eq(end.size(), 1)
 	var stages := _of(a, "stage_info").size()
 	eq(_of(a, "room_join").size(), 2 * (stages - 1), "two new foes a stage")
-	eq(_of(a, "stage_end").size(), stages - 1 if not end.is_empty() and end[0].win else _of(a, "stage_end").size())
+	eq(
+		_of(a, "stage_end").size(),
+		stages - 1 if not end.is_empty() and end[0].win else _of(a, "stage_end").size()
+	)
 	if not end.is_empty() and end[0].win:
 		eq(stages, 4)
 		check(int(o.online_part("ANDREY").mission_grade) > 0, "a Mission grade")
 		eq(end[0].gold, 9 * 150, "h = 3 (stages - 1)")
-	eq(int(o.online_part("ANDREY").wins) + int(o.online_part("ANDREY").losses), 0, "no wins or losses")
+	eq(
+		int(o.online_part("ANDREY").wins) + int(o.online_part("ANDREY").losses),
+		0,
+		"no wins or losses"
+	)
 	ServerTests._rm(d)
 
 
@@ -228,12 +258,20 @@ func test_invitations() -> void:
 	eq(o.answer(a.s, "mp_invite", {"mode": 0, "id": "NOBODY"}).err, "no player")
 	eq(o.answer(a.s, "mp_invite", {"mode": 0, "id": "OLEG"}).err, "not online")
 	eq(o.answer(a.s, "mp_invite", {"mode": 7, "id": "MARIA"}).err, "bad message")
-	eq(o.answer(a.s, "mp_invite", {"mode": 3, "id": "MARIA"}).err, "not member", "Invite a member: an order")
+	eq(
+		o.answer(a.s, "mp_invite", {"mode": 3, "id": "MARIA"}).err,
+		"not member",
+		"Invite a member: an order"
+	)
 	o.answer(b.s, "mp_options_set", {"invitation": 0})
 	eq(o.answer(a.s, "mp_invite", {"mode": 0, "id": "MARIA"}).err, "denied")
 	o.answer(b.s, "mp_options_set", {"invitation": 1})
 	check(o.answer(a.s, "mp_invite", {"mode": 2, "id": "maria"}).ok, "Invite An Ally")
-	eq([a.inbox[0].via, b.inbox[0].via, b.inbox[0].slot], ["invite", "invited", 2], "no question: she is in")
+	eq(
+		[a.inbox[0].via, b.inbox[0].via, b.inbox[0].slot],
+		["invite", "invited", 2],
+		"no question: she is in"
+	)
 	eq(o.answer(a.s, "mp_invite", {"mode": 0, "id": "BLADE"}).err, "busy", "I am in a battle")
 	var c := _player(o, "OLEG")
 	eq(o.answer(c.s, "mp_invite", {"mode": 0, "id": "MARIA"}).err, "playing")
@@ -242,7 +280,10 @@ func test_invitations() -> void:
 	eq([bot[0].name, bot[0].cpu], ["Blade", true], "the bot fights under its name")
 	eq(c.inbox[0].fighters.size(), 4)
 	_play(o, [a, b, c])
-	eq([_of(a, "battle_end").size(), _of(b, "battle_end").size(), _of(c, "battle_end").size()], [1, 1, 1])
+	eq(
+		[_of(a, "battle_end").size(), _of(b, "battle_end").size(), _of(c, "battle_end").size()],
+		[1, 1, 1]
+	)
 	o.answer(a.s, "order_create", {"name": "WOLVES"})
 	o.answer(b.s, "order_join", {"name": "WOLVES"})
 	a.inbox.clear()
@@ -266,12 +307,16 @@ func test_leaving_a_duel_loses_it() -> void:
 	o.answer(b.s, "mp_ready", {})
 	eq(b.inbox.size(), 1)
 	if b.inbox.size() == 1:
-		eq([b.inbox[0].t, b.inbox[0].win, b.inbox[0].fame], ["battle_end", 1, 2], "won: a level-1 hero beaten")
+		eq(
+			[b.inbox[0].t, b.inbox[0].win, b.inbox[0].fame],
+			["battle_end", 1, 2],
+			"won: a level-1 hero beaten"
+		)
 	eq(int(o.online_part("MARIA").wins), 1)
 	eq(o.rooms.size(), 0)
 	o.match_wait = 0
 	o.answer(a.s, "mp_match", {"mode": 0})
-	var again := Online.Session.new()  # the same UserID from another device
+	var again := OnlineServer.Session.new()  # the same UserID from another device
 	o.enter(again, "ANDREY")
 	eq(int(o.online_part("ANDREY").losses), 2, "kicked out of a duel: lost")
 	eq(o.rooms.size(), 0)
@@ -295,7 +340,10 @@ func test_loot() -> void:
 		var it: Dictionary = got[id]
 		check(not str(it.name).is_empty(), "%d has a name" % id)
 		if id > 100 and id <= 200:
-			var rec := Loot.Items.info(id)
-			var v: int = it[Loot.Items.GEAR_STATS[int(rec.stat)]]
-			check(v >= int(rec.bonus) and v <= int(rec.bonus) + int(rec.range), "%d: base + 0..range" % id)
+			var rec := Items.info(id)
+			var v: int = it[Items.GEAR_STATS[int(rec.stat)]]
+			check(
+				v >= int(rec.bonus) and v <= int(rec.bonus) + int(rec.range),
+				"%d: base + 0..range" % id
+			)
 	eq(Loot.roll(rng, 30, []), {}, "nothing beaten, nothing found")

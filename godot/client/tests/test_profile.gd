@@ -1,9 +1,5 @@
 extends "res://tests/test_case.gd"
 
-const Profile := preload("res://scripts/core/profile.gd")
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const Items := preload("res://scripts/core/items.gd")
 const TEST_PATH := "user://test_hero.json"
 
 

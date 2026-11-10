@@ -3,7 +3,6 @@ extends Node
 ##   godot --path godot/client --resolution 1280x720 res://tools/art_shots.tscn -- OUT_DIR
 ## CI runs it after tools/shots.gd into the same folder (.github/workflows/godot.yml).
 
-const ArtSlice := preload("res://scripts/art/art_slice.gd")
 ## name, place, camera pitch, camera distance
 const SHOTS := [
 	["art_camp_overview", "camp", 50.0, 24.0],

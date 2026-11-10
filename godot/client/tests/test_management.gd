@@ -1,10 +1,5 @@
 extends "res://tests/test_case.gd"
 
-const Profile := preload("res://scripts/core/profile.gd")
-const Attributes := preload("res://scripts/screens/attributes_screen.gd")
-const Skills := preload("res://scripts/screens/skills_screen.gd")
-const Items := preload("res://scripts/core/items.gd")
-const AssignItems := preload("res://scripts/screens/assign_items_screen.gd")
 const TEST_PATH := "user://test_attributes.json"
 
 
@@ -29,7 +24,7 @@ func test_attributes_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = Attributes.new()
+	var screen: Control = Router.make(Router.SCREENS["attributes"])
 	root.add_child(screen)
 	eq(screen.values["Points"].text, "5", "five points")
 	eq(screen.values["ATK"].text, "5+1", "own attack and the claymore's")
@@ -52,7 +47,7 @@ func test_attributes_screen() -> void:
 
 
 func test_skills_data() -> void:
-	var d: Dictionary = Skills.load_data()
+	var d: Dictionary = SkillsScreen.load_data()
 	eq(d["names"].size(), 19, "19 skills")
 	eq(d["names"][0], "Whirlwind Sabre", "the first skill")
 	eq(d["effects"][0], "Dash & Slash", "what it does")
@@ -66,11 +61,14 @@ func test_skills_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = Skills.new()
+	var screen: Control = Router.make(Router.SCREENS["skills"])
 	root.add_child(screen)
 	eq(screen.keys.size(), 5, "five skill keys")
 	eq(screen.describe(12), "Whirlwind Sabre / Lv1 Dash & Slash", "a learned skill")
-	check(screen.describe(13).ends_with("/ (Not Available)"), "a skill not learned: %s" % screen.describe(13))
+	check(
+		screen.describe(13).ends_with("/ (Not Available)"),
+		"a skill not learned: %s" % screen.describe(13)
+	)
 	var lines: Array = screen.card_lines(12)
 	eq(lines[0], ["Whirlwind Sabre  Lv1", true], "the card's heading")
 	eq(lines[1][0], "Dash & Slash", "what it is")
@@ -116,9 +114,13 @@ func test_assign_items_screen() -> void:
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = AssignItems.new()
+	var screen: Control = Router.make(Router.SCREENS["assign_items"])
 	root.add_child(screen)
-	eq(screen.marks.map(func(m): return m.text), ["Z", "X", "C", "V", "B"], "belt keys only, no * or #")
+	eq(
+		screen.marks.map(func(m): return m.text),
+		["Z", "X", "C", "V", "B"],
+		"belt keys only, no * or #"
+	)
 	eq(screen.find_child("Keys", true, false).text, "Keys Z X C V B", "the line under the slots")
 	check(screen.find_child("Key1", true, false) == null, "no * / # buttons")
 	check(screen.slots[3].icon != null, "the blue potion's icon")

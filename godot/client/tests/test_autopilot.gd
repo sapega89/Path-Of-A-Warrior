@@ -1,12 +1,6 @@
 extends "res://tests/test_case.gd"
 ## Auto-hunt: it walks to the enemies and fights, drinks and heals, and leaves a cleared room.
 
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const MapBuilder := preload("res://scripts/world/map_builder.gd")
-const Autopilot := preload("res://scripts/sim/autopilot.gd")
-const JavaRandom := preload("res://scripts/sim/java_random.gd")
-const Campaign := preload("res://scripts/core/campaign.gd")
-
 
 func _sim() -> RefCounted:
 	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
@@ -79,9 +73,12 @@ func test_leaves_an_archer_it_cannot_reach() -> void:
 	var sim: RefCounted = MapSim.new(MapBuilder.load_map(Campaign.lord_map(6)), 0, Vector2i(11, 4))
 	sim.rng = JavaRandom.new(60)
 	sim.continue_in_clear_room()
-	sim._run_cell_scripts()
-	eq(sim.enemies.map(func(e): return [e.type, e.pos / 27]),
-		[[MapSim.KIND_ARCHERS, Vector2i(13, 2)], [MapSim.KIND_ARCHERS, Vector2i(14, 5)]], "the archers")
+	MapRoomPlay.run_cell_scripts(sim)
+	eq(
+		sim.enemies.map(func(e): return [e.type, e.pos / 27]),
+		[[MapSim.KIND_ARCHERS, Vector2i(13, 2)], [MapSim.KIND_ARCHERS, Vector2i(14, 5)]],
+		"the archers"
+	)
 	var room: int = sim.cell
 	var a := Autopilot.new()
 	a.toggle()

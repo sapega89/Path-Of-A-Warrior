@@ -2,11 +2,6 @@ extends "res://tests/test_case.gd"
 ## The exp bar of the pages after a won mission (pyport's draw_exp_bar): what the hero had,
 ## what the mission gives growing 4 px a tick, a level up at the end of the bar.
 
-const Profile := preload("res://scripts/core/profile.gd")
-const MapSim := preload("res://scripts/sim/map_sim.gd")
-const ExpBars := preload("res://scripts/sim/exp_bars.gd")
-const MissionScreen := preload("res://scripts/screens/mission_screen.gd")
-
 
 func test_the_bar_grows_and_goes_up_a_level() -> void:
 	var bar: RefCounted = ExpBars.new()
@@ -20,7 +15,11 @@ func test_the_bar_grows_and_goes_up_a_level() -> void:
 	eq(bar.grown(), [50, 1], "the bar is full")
 	eq(bar.level, 1, "the level up comes on the next tick")
 	bar.tick()
-	eq([bar.level, bar.level_up_ticks], [2, ExpBars.LEVEL_UP_TICKS], "Level Up : Lv 2, for 20 ticks")
+	eq(
+		[bar.level, bar.level_up_ticks],
+		[2, ExpBars.LEVEL_UP_TICKS],
+		"Level Up : Lv 2, for 20 ticks"
+	)
 	eq(bar.bars, [0, 24, 24], "the bar starts again with the rest")
 	for t in ExpBars.LEVEL_UP_TICKS:
 		bar.tick()
@@ -32,8 +31,11 @@ func test_the_bar_grows_and_goes_up_a_level() -> void:
 	var p: RefCounted = Profile.new()
 	p.experience = 25
 	p.gain_exp(50)
-	eq([p.level, p.experience * 100 / Profile.exp_needed(p.level)], [bar.level, 24],
-		"the bar ends where the hero is after the mission")
+	eq(
+		[p.level, p.experience * 100 / Profile.exp_needed(p.level)],
+		[bar.level, 24],
+		"the bar ends where the hero is after the mission"
+	)
 	bar.begin_time(60)
 	eq(bar.bars, [0, 24, 33], "Time Exp: 10 more, from the end of the mission's part")
 	eq(bar.part, 1, "the time's part grows")
@@ -47,7 +49,7 @@ func test_the_bar_grows_and_goes_up_a_level() -> void:
 func test_the_exp_pages_show_the_bar() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
-	var screen: Control = MissionScreen.new()
+	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	var sim: RefCounted = screen.sim
 	eq(sim.hero_exp, screen.profile.experience, "the sim knows the hero's exp")
@@ -56,7 +58,7 @@ func test_the_exp_pages_show_the_bar() -> void:
 	sim.mission_exp = 10
 	sim.difficulty = 1
 	sim.time_limit = 0
-	sim._show_banner(MapSim.BANNER_SUCCESS)
+	sim.show_banner(MapSim.BANNER_SUCCESS)
 	for t in MapSim.BANNER_TICKS:
 		sim.tick(-1)
 	eq(sim.banner, MapSim.BANNER_TOTAL_EXP, "Total Exp")
@@ -71,7 +73,10 @@ func test_the_exp_pages_show_the_bar() -> void:
 	sim.tick(-1, -1, true)
 	eq(sim.exp_bars.level_up_ticks, 1, "a key cuts it short")
 	screen._show_banner()
-	check(screen.banner_text.text.ends_with(screen.tr("mission.level_up") % 2), screen.banner_text.text)
+	check(
+		screen.banner_text.text.ends_with(screen.tr("mission.level_up") % 2),
+		screen.banner_text.text
+	)
 	sim.banner = MapSim.BANNER_STAGE_CLEAR
 	screen._show_banner()
 	check(not screen.exp_bar.visible, "no bar on other banners")
