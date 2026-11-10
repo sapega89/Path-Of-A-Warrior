@@ -124,12 +124,13 @@ void fragment() {
 		a = dot_ * smoothstep(1.0, 0.4, h);
 		hot = dot_;
 	} else if (shape == SWEEP) {
-		float lead = progress * 1.4;
-		float head = 1.0 - smoothstep(lead - 0.15, lead + 0.05, UV.x);
-		float tail = smoothstep(lead - 0.75, lead - 0.2, UV.x);
-		float rim = smoothstep(0.45, 0.9, UV.y) * (1.0 - smoothstep(0.93, 1.0, UV.y));
-		a = head * tail * rim * (1.0 - smoothstep(0.75, 1.0, progress));
-		hot = smoothstep(0.75, 0.95, UV.y) * head;
+		// a broad crescent: bright along the edge the blade swept, fading into the swing
+		float lead = progress * 1.3;
+		float head = 1.0 - smoothstep(lead - 0.1, lead + 0.05, UV.x);
+		float tail = smoothstep(lead - 1.1, lead - 0.3, UV.x);
+		float rim = smoothstep(0.1, 0.85, UV.y) * (1.0 - smoothstep(0.94, 1.0, UV.y));
+		a = head * tail * rim * (1.0 - smoothstep(0.85, 1.0, progress));
+		hot = smoothstep(0.7, 0.95, UV.y) * (0.4 + 0.6 * head);
 	} else if (shape == SPLASH) {
 		float top = 0.35 + 0.65 * fx_hash(floor(UV.x * count) + seed);
 		a = smoothstep(top, top - 0.18, h) * (0.35 + 0.65 * h);

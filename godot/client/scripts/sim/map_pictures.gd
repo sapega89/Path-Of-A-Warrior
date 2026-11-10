@@ -199,6 +199,19 @@ static func trails(sim: MapSim, pick: RandomNumberGenerator) -> Array:
 	return out
 
 
+## The trails to draw this tick: the new swings, and the last tick's fading away (true at their
+## end: the swing done), so a blow's trail stays a moment. A swing that goes on over two ticks
+## (the same picture at the same place) fades in its second.
+static func trails_with_fading(now: Array, before: Array) -> Array:
+	var out: Array = []
+	for tr in now:
+		out.append([tr[0], tr[1], tr[2], true] if tr in before else tr)
+	for tr in before:
+		if not tr in now:
+			out.append([tr[0], tr[1], tr[2], true])
+	return out
+
+
 ## The step of the hero's weapon trail now, or -1 for none.
 static func hero_trail_step(sim: MapSim, _pick: RandomNumberGenerator = null) -> int:
 	var a := sim.hero.action
