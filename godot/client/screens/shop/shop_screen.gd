@@ -6,12 +6,12 @@ extends BaseScreen
 ## costs gold, asks first, and can fail or lose the thing. Combine: three things of the
 ## backpack chosen (a gold border) make one new thing, for a fee, or fail and maybe lose
 ## one of them. Every change is saved at once. After Yes to Enchant or Combine a sparkle plays
-## on the thing (on each of the three) for five frames of 120 ms, then comes the outcome.
+## on the thing (on each of the three) for five steps of 120 ms, then comes the outcome; it is
+## drawn in the new art by the Sparkle node (EnchantSparkle).
 
 const QUICK := 5
-## The sparkle's frames in itemReinforce.png: x, y and the side of the square.
-const SPARKLE := [[0, 0, 16], [15, 0, 16], [30, 0, 16], [0, 16, 20], [20, 16, 24]]
-const SPARKLE_FRAME := 0.12  # seconds a frame shows, as a frame of the menus
+const SPARKLE_STEPS := 5
+const SPARKLE_FRAME := 0.12  # seconds a step lasts, as a frame of the menus
 
 var profile: RefCounted
 var path: String = Profile.PATH
@@ -24,11 +24,10 @@ var asked := -1  # the cell waiting for the answer to "Continue?"
 var chosen: Array[int] = []  # Combine: the backpack places chosen
 var plan := {}  # Combine: what the three chosen make (Profile.combine_plan)
 var rng := RandomNumberGenerator.new()
-var sparkle := -1  # the sparkle's frame shown now, -1: none
+var sparkle := -1  # the sparkle's step now, -1: none
 var sparkle_cells: Array[int] = []  # the cells it plays on
 var _sparkle_time := 0.0
-@onready var _sparkle_view: Control = %Sparkle
-var _sparkle_sheet: Texture2D = preload("res://assets/original/ui/itemReinforce.png")
+@onready var _sparkle_view: EnchantSparkle = %Sparkle
 
 
 func _ready() -> void:
@@ -160,7 +159,7 @@ func confirm() -> void:
 	sparkle = 0
 	_sparkle_time = 0.0
 	set_process(true)
-	_sparkle_view.queue_redraw()
+	redraw_sparkle()
 
 
 func _process(delta: float) -> void:
@@ -168,18 +167,21 @@ func _process(delta: float) -> void:
 	while sparkle >= 0 and _sparkle_time >= SPARKLE_FRAME:
 		_sparkle_time -= SPARKLE_FRAME
 		next_sparkle()
+	if sparkle >= 0:
+		redraw_sparkle()  # it moves on between the steps too
 
 
-## The sparkle's next frame; after the fifth the outcome. Returns the line shown then.
+## The sparkle's next step; after the fifth the outcome. Returns the line shown then.
 func next_sparkle() -> String:
 	if sparkle < 0:
 		return ""
 	sparkle += 1
-	_sparkle_view.queue_redraw()
-	if sparkle < SPARKLE.size():
+	if sparkle < SPARKLE_STEPS:
+		redraw_sparkle()
 		return ""
 	sparkle = -1
 	sparkle_cells.clear()
+	redraw_sparkle()
 	set_process(false)
 	return finish()
 
@@ -214,20 +216,21 @@ func finish() -> String:
 	return said
 
 
-## The sparkle's frame over the middle of each of its cells, twice as big as the icons.
-func _draw_sparkle() -> void:
+## How far the sparkle has played, 0..1 (between its steps too).
+func sparkle_phase() -> float:
 	if sparkle < 0:
-		return
-	var f: Array = SPARKLE[sparkle]
-	var side := float(f[2])
-	for i in sparkle_cells:
-		var mid := cells[i].get_global_rect().get_center()
-		var half := side * ItemSlot.SCALE / 2.0
-		_sparkle_view.draw_texture_rect_region(
-			_sparkle_sheet,
-			Rect2(mid - Vector2(half, half), Vector2(half, half) * 2.0),
-			Rect2(f[0], f[1], side, side)
-		)
+		return 0.0
+	var step := clampf(_sparkle_time / SPARKLE_FRAME, 0.0, 1.0)
+	return clampf((sparkle + step) / SPARKLE_STEPS, 0.0, 1.0)
+
+
+## Shows the sparkle over its cells as far as it has played; nothing while it does not play.
+func redraw_sparkle() -> void:
+	var rects: Array[Rect2] = []
+	if sparkle >= 0:
+		for i in sparkle_cells:
+			rects.append(cells[i].get_global_rect())
+	_sparkle_view.show_over(rects, sparkle_phase())
 
 
 func refresh() -> void:

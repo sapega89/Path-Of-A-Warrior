@@ -207,8 +207,8 @@ func _ready() -> void:
 	Router.push("live_cancel", live_params)
 	await _frames(2)
 	await _shot(out, "10o_live_cancel")
-	# Opening the game menu with something new on Live: a notice, the Sale List, the Gift List,
-	# the Exp and Fame kept there.
+	# Opening the game menu with something new on Live: a notice, the Sale List, the note that
+	# gifts came, the Exp and Fame kept there; then the Gift List in Trade.
 	market.notices = [["Welcome to Live!", "Sell what you", "do not need."]]
 	var on_server: Dictionary = market.user("ANDREY")
 	on_server.sold.append({"item": items.make(146), "price": 1800})
@@ -228,11 +228,30 @@ func _ready() -> void:
 	await _shot(out, "10q_live_sale_list")
 	news.list_done()
 	await _frames(2)
-	await _shot(out, "10r_live_gift_list")
-	news.list_done()
+	await _shot(out, "10r_live_gifts_came")
+	news.note.hide()
+	news.note.confirmed.emit()
 	await _frames(2)
 	await _shot(out, "10s_live_fame")
 	news.note.hide()
+	news.note.confirmed.emit()
+	Router.push("live_gifts", live_params)
+	await _frames(2)
+	await _shot(out, "10t_live_gift_list")
+	# Give a Gift: the first thing that can be given, MARIA typed in, then "Give ... to MARIA?".
+	Router.back()
+	Router.push("live_give", live_params)
+	await _frames(2)
+	for i in LiveClient.WAREHOUSE:
+		if Router.current.pick(i):
+			break
+	Router.current.to.text = "MARIA"
+	await _frames(2)
+	await _shot(out, "10u_live_give")
+	Router.current.ask_give()
+	await _frames(2)
+	await _shot(out, "10v_live_give_ask")
+	Router.current.ask.hide()
 	# Multiplayer: the menu, the Character pages, Skills, Ranking, the Order, the Chat and the
 	# Options. The server's online game runs in this process (server/online.gd) with its bots;
 	# Maria is in my order and wrote while I was away.
@@ -370,11 +389,12 @@ func _ready() -> void:
 	await _shot(out, "11o_online_order_pick")
 	Router.back()
 	Router.back()
-	Router.push("help")  # the Duel topic of the one help
-	await _frames(2)
-	Router.current.open(Router.current.topics.size() - 2)
-	await _shot(out, "11p_online_help")
-	Router.back()
+	if OnlineSection.BATTLES:  # the Duel topic of the one help, while the battles are shown
+		Router.push("help")
+		await _frames(2)
+		Router.current.open(Router.current.topics.size() - 2)
+		await _shot(out, "11p_online_help")
+		Router.back()
 	await _battle_shots(out, game, mp)
 	mp.leave()
 	# The Blacksmith: buying from the shop, and enchanting the sword in hand.
@@ -395,9 +415,10 @@ func _ready() -> void:
 	Router.current.ask.hide()
 	Router.current.sparkle = 3  # the sparkle after Yes, without the outcome
 	Router.current.sparkle_cells = [25] as Array[int]
-	Router.current.get_node("Sparkle").queue_redraw()
+	Router.current.redraw_sparkle()
 	await _shot(out, "16_enchant_sparkle")
 	Router.current.sparkle = -1
+	Router.current.redraw_sparkle()
 	Router.back()
 	Router.current.open_page("combine")
 	await _frames(2)

@@ -662,8 +662,8 @@ func test_effects_of_skills_and_potions() -> void:
 	for t in 3:
 		sim.tick(-1, -1)
 	var fx: Array = sim.effects()
-	eq(fx.size(), 1, "the dash shows its effect")
-	eq(fx[0][0], "slash", "from the slash sheet")
+	eq(fx.size(), 2, "the dash shows its effects")
+	eq([fx[0][0], fx[1][0]], ["slash", "whirlwind"], "the dust and the blade going round")
 	var sim2: RefCounted = _duel()[0]
 	sim2.add_quick_item(4)
 	sim2.tick(-1, -1, false, -1, 0)
@@ -681,25 +681,30 @@ func test_effects_of_a_generals_skills() -> void:
 	var sim: RefCounted = d[0]
 	var g = d[1]
 	g.dir = 2
-	# action, frame -> the picture shown on him (or in front of him, the blast)
+	# action, frame -> the pictures shown on him (or in front of him, the blast); the skills'
+	# own effects (SkillEffects) go the way he faces, 2
 	var cases := [
-		[6, 3, ["slash", 3, g.pos]],
-		[8, 2, ["slash", 2, g.pos]],
-		[10, 5, ["heal", 1, g.pos]],
-		[12, 4, ["buff", 0, g.pos]],
-		[15, 6, ["whirl", 1, g.pos]],
-		[16, 3, ["slash", 1, g.pos]],
-		[17, 5, ["slash", 0, g.pos]],
-		[18, 6, ["burst", 1, g.pos]],
-		[18, 5, ["burst", 0, g.pos + MapSim.BURST_FIRST_SHIFT]],
-		[20, 3, ["wave", 8, g.pos]],
-		[21, 9, ["blast", 1, MapEnemyPlay.front_of(g.pos, 2)]]
+		[6, 3, [["slash", 3, g.pos], ["whirlwind", 2 * 4 + 1, g.pos]]],
+		[8, 2, [["slash", 2, g.pos], ["thrust", 2 * 8 + 1, g.pos]]],
+		[9, 5, [["heal", 1, g.pos]]],
+		[10, 5, [["spring", 1, g.pos]]],
+		[12, 4, [["charm", 0, g.pos]]],
+		[13, 4, [["buff", 0, g.pos]]],
+		[14, 3, [["surge", 2 * 4 + 3, g.pos]]],
+		[15, 6, [["whirl", 1, g.pos]]],
+		[16, 3, [["slash", 1, g.pos], ["flood", 2 * 6 + 1, g.pos]]],
+		[17, 5, [["slash", 0, g.pos], ["fire_ring", 1, g.pos]]],
+		[18, 6, [["burst", 1, g.pos], ["fire_whirl", 5, g.pos]]],
+		[18, 5, [["burst", 0, g.pos + MapSim.BURST_FIRST_SHIFT], ["fire_whirl", 4, g.pos]]],
+		[19, 3, [["blaze", 3, g.pos]]],
+		[20, 3, [["wave", 8, g.pos]]],
+		[21, 9, [["blast", 1, MapEnemyPlay.front_of(g.pos, 2)]]]
 	]
 	for c in cases:
 		g.action = c[0]
 		g.frame = c[1]
-		eq(sim.effects(), [c[2]], "general action %d frame %d" % [c[0], c[1]])
-	for c in [[6, 2], [7, 8], [14, 3], [19, 3], [1, 0]]:
+		eq(sim.effects(), c[2], "general action %d frame %d" % [c[0], c[1]])
+	for c in [[6, 1], [7, 8], [11, 2], [13, 2], [1, 0]]:
 		g.action = c[0]
 		g.frame = c[1]
 		eq(sim.effects().size(), 0, "nothing at action %d frame %d" % [c[0], c[1]])

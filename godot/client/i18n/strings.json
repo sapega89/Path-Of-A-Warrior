@@ -368,8 +368,40 @@
     "uk": "Дружба зросла на 5."
   },
   "visit.full": {
-    "en": "Friendship:100%",
+    "en": "Friendship: 100%",
     "uk": "Дружба: 100%"
+  },
+  "visit.gift_attack": {
+    "en": "Attack +1",
+    "uk": "Атака +1"
+  },
+  "visit.gift_defense": {
+    "en": "Defence +1",
+    "uk": "Захист +1"
+  },
+  "visit.gift_hp": {
+    "en": "HP +5",
+    "uk": "HP +5"
+  },
+  "visit.gift_mp": {
+    "en": "MP +3",
+    "uk": "MP +3"
+  },
+  "visit.gift_fame": {
+    "en": "Fame +10",
+    "uk": "Слава +10"
+  },
+  "visit.gift_skill": {
+    "en": "A new skill:",
+    "uk": "Нове вміння:"
+  },
+  "visit.gift_skill_up": {
+    "en": "Skill up:",
+    "uk": "Вміння зросло:"
+  },
+  "visit.gift_item": {
+    "en": "Item acquired!",
+    "uk": "Отримано річ!"
   },
   "visit.ok": {
     "en": "OK",
@@ -914,6 +946,54 @@
   "live.gift_lines": {
     "en": "Listed Items has been received.",
     "uk": "Ці речі вам подарували (вони на складі)."
+  },
+  "live.no_gifts": {
+    "en": "No new gifts.",
+    "uk": "Нових подарунків немає."
+  },
+  "live.gift_from": {
+    "en": "From %s",
+    "uk": "Від: %s"
+  },
+  "live.give": {
+    "en": "Give a Gift",
+    "uk": "Подарувати"
+  },
+  "live.give_to": {
+    "en": "Who is it for? Type the player's UserID.",
+    "uk": "Кому? Введіть UserID гравця."
+  },
+  "live.give_ask": {
+    "en": "Give %s to %s?",
+    "uk": "Подарувати %s гравцеві %s?"
+  },
+  "live.given": {
+    "en": "%s has been sent to %s.",
+    "uk": "%s надіслано гравцеві %s."
+  },
+  "live.bad_user_id": {
+    "en": "A UserID is 4 to 12 letters.",
+    "uk": "UserID — це від 4 до 12 латинських літер."
+  },
+  "live.no_player": {
+    "en": "There is no player with that UserID.",
+    "uk": "Гравця з таким UserID немає."
+  },
+  "live.gift_self": {
+    "en": "You cannot give a gift to yourself.",
+    "uk": "Собі подарунок не надішлеш."
+  },
+  "live.their_warehouse_full": {
+    "en": "That player's Warehouse is full.",
+    "uk": "Склад цього гравця повний."
+  },
+  "live.not_giftable": {
+    "en": "This cannot be given.",
+    "uk": "Це не можна подарувати."
+  },
+  "live.gifts_waiting": {
+    "en": "Other players sent you gifts. They are in the Warehouse;\nsee who sent what at the auctioneer (Trade > Gift List).",
+    "uk": "Інші гравці надіслали вам подарунки. Вони вже на складі,\nа хто що надіслав, покаже аукціоніст (Торгівля > Подарунки)."
   },
   "live.fame_applied": {
     "en": "Saved Exp (%d) and Fame (%d) in Server has been applied.",

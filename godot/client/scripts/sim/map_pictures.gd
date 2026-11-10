@@ -76,10 +76,10 @@ static func effects(sim: MapSim) -> Array:
 		14:
 			if f > 0 and f < 9:
 				out.append(["slash", sim.hero.dir + (f & 1), p])
-		15, 16:
+		15:
 			if f > 3:
 				out.append(["heal", f - 4, p])
-		17, 18, 19:
+		19:
 			if f > 3 and f < 10:
 				out.append(["buff", f - 4, p])
 		21:
@@ -116,6 +116,7 @@ static func effects(sim: MapSim) -> Array:
 			elif f > 12 and f < 15:
 				for i in 3:
 					out.append(["blast", (f - 13) * 5 + 2 + i, MapRoomPlay.room_middle(sim)])
+	skill_effects(a, f, p, sim.hero.dir, out)
 	match sim.effect_item:
 		0:
 			pass
@@ -149,10 +150,10 @@ static func _general_effects(e: MapActor, out: Array) -> void:
 		8:
 			if f > 0 and f < 9:
 				out.append(["slash", e.dir + (f & 1), p])
-		9, 10:
+		9:
 			if f > 3:
 				out.append(["heal", f - 4, p])
-		11, 12, 13:
+		13:
 			if f > 3 and f < 10:
 				out.append(["buff", f - 4, p])
 		15:
@@ -174,6 +175,46 @@ static func _general_effects(e: MapActor, out: Array) -> void:
 				out.append(["blast", 1, MapEnemyPlay.front_of(p, e.dir)])
 			elif f > 1 and f < 9:
 				out.append(["wave", f - 2 + (e.dir >> 1) * 7, p])
+	if e.action >= 6 and e.action <= 21:
+		skill_effects(e.action + 6, f, p, e.dir, out)
+
+
+## The skills' own effects (SkillEffects), the hero's and a general's alike: the skill 12..30,
+## its frame f, and where the one using it stands and which way he faces.
+static func skill_effects(skill: int, f: int, p: Vector2i, dir: int, out: Array) -> void:
+	match skill:
+		12:
+			if f > 1 and f < 6:
+				out.append(["whirlwind", dir * 4 + f - 2, p])
+		13:
+			if f > 4 and f < 8:
+				out.append(["smash", dir * 3 + f - 5, p])
+		14:
+			if f > 0 and f < 9:
+				out.append(["thrust", dir * 8 + f - 1, p])
+		16:
+			if f > 3 and f < 13:
+				out.append(["spring", f - 4, p])
+		17:
+			if f > 3 and f < 10:
+				out.append(["fury", f - 4, p])
+		18:
+			if f > 3 and f < 10:
+				out.append(["charm", f - 4, p])
+		20:
+			out.append(["surge", dir * 4 + f % 4, p])
+		22:
+			if f > 1 and f < 8:
+				out.append(["flood", dir * 6 + f - 2, p])
+		23:
+			if f > 3 and f < 10:
+				out.append(["fire_ring", f - 4, p])
+		24:
+			if f > 0 and f < 7:
+				out.append(["fire_whirl", f - 1, p])
+		25:
+			if f < 8:
+				out.append(["blaze", f, p])
 
 
 ## The weapon trails to draw: ["trail", picture, position]. The picture is the direction
@@ -196,6 +237,19 @@ static func trails(sim: MapSim, pick: RandomNumberGenerator) -> Array:
 		step = general_trail_step(e, pick)
 		if step > -1:
 			out.append(["trail", _trail_picture(e.dir, e.action == 19, e.frame, step), e.pos])
+	return out
+
+
+## The trails to draw this tick: the new swings, and the last tick's fading away (true at their
+## end: the swing done), so a blow's trail stays a moment. A swing that goes on over two ticks
+## (the same picture at the same place) fades in its second.
+static func trails_with_fading(now: Array, before: Array) -> Array:
+	var out: Array = []
+	for tr in now:
+		out.append([tr[0], tr[1], tr[2], true] if tr in before else tr)
+	for tr in before:
+		if not tr in now:
+			out.append([tr[0], tr[1], tr[2], true])
 	return out
 
 

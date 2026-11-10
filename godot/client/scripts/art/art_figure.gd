@@ -115,6 +115,13 @@ func act(motion: Array, duration := 0.0, restart := false, progress := 0.0, blen
 	_hold_until = length * 0.8
 
 
+## Carries the whole body as a skill's move does (Motion.body_pose): x lifts it (metres), y
+## turns it about Y and z leans it forward (radians).
+func carry(pose: Vector3) -> void:
+	body.position.y = pose.x
+	body.rotation = Vector3(pose.z, pose.y, 0.0)
+
+
 ## Puts a weapon from characters/weapons.glb into the hand it belongs to.
 func equip(weapon: String) -> void:
 	var source: Node = ArtKit.scene("characters/weapons.glb").instantiate()

@@ -16,7 +16,7 @@ extends "res://scripts/world/map_builder.gd"
 ##   props        what stands on a cell (a fir, a bush, a rock, a fence, a palisade, a barrel,
 ##                a haystack, a well, a campfire...) is a 3D piece of the new art; a tent or a
 ##                hut drawn over several cells is one tent or hut over their middle;
-##   objects      the breakable ones too, each with its own material, so a hit flashes it;
+##   objects      the breakable ones too: a hit flashes each, a glowing brass outline marks it;
 ##   around       the land goes on past the edges and rises into low hills, with fields of
 ##                wheat; grass on the meadows in and around the map; both sway in the wind.
 ## The simulation does not see any of this: it keeps the original cells.
@@ -429,12 +429,12 @@ func _build_props() -> void:
 				_stand(holder, "crag", x, y, false).position.y -= 0.1
 
 
-## A prop of `what` on cell (x, y); breakable: with its own material (a hit flashes it).
+## A prop of `what` on cell (x, y); breakable: marked as one (ArtKit.breakable_prop).
 func _stand(parent: Node3D, what: String, x: int, y: int, breakable: bool) -> Node3D:
 	var spec: Array = PROP.get(what, [])
 	if spec.is_empty():
 		return null
-	var node := ArtKit.prop(spec[0], breakable)
+	var node := ArtKit.breakable_prop(spec[0]) if breakable else ArtKit.prop(spec[0])
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash(Vector2i(x, y))
 	var scale_by: Vector3 = spec[1] * rng.randf_range(0.9, 1.1)

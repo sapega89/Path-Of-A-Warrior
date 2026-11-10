@@ -8,7 +8,11 @@ func test_help_screen() -> void:
 	Router.params = {}
 	var screen: Control = Router.make(Router.SCREENS["help"])
 	root.add_child(screen)
-	eq(screen.topics.size(), 10, "eight of the campaign, two of the multiplayer")
+	eq(
+		screen.topics.size(),
+		10 if OnlineSection.BATTLES else 8,
+		"eight of the campaign, two of the multiplayer while its battles are shown"
+	)
 	eq(str(screen.list.get_child(0).text), "Missions", "the first")
 	screen.open(2)
 	eq(screen.heading.text, "Blacksmith", "a topic")
@@ -19,8 +23,8 @@ func test_help_screen() -> void:
 	screen.open(HelpScreen.CONTROL_TOPIC)
 	eq(
 		screen.pages_of(HelpScreen.CONTROL_TOPIC).size(),
-		4,
-		"Control: this version's keys, on the map and online"
+		4 if OnlineSection.BATTLES else 2,
+		"Control: this version's keys, on the map (and online while the battles are shown)"
 	)
 	check(not screen.text.text.contains("keypad"), "not the phone's keypad")
 	screen.go_back()
@@ -38,6 +42,20 @@ func test_multiplayer_topics_in_the_same_help() -> void:
 	Router.params = {}
 	var screen: Control = Router.make(Router.SCREENS["help"])
 	root.add_child(screen)
+	if not OnlineSection.BATTLES:
+		eq(
+			screen.topics.slice(8),
+			[],
+			"no Duel or Online Missions while the online battles are hidden"
+		)
+		eq(
+			screen.pages_of(HelpScreen.CONTROL_TOPIC),
+			[tr("help.control_1"), tr("help.control_2")],
+			"Control: only the map's keys"
+		)
+		screen.free()
+		Router.params = old
+		return
 	eq(
 		screen.topics.slice(8).map(func(t): return t.name),
 		[tr("online.duel"), tr("menu.online_missions")]

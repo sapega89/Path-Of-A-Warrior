@@ -1,15 +1,18 @@
 class_name LiveSafeScreen
 extends BaseScreen
 ## Game menu > Safe: gold between the hero (Local) and the Safe on the server. The arrow between
-## the two says which way it goes, out of the Safe at first; it turns when pressed. The amount
-## is typed in (no more than there is on that side) and OK moves it; the hero is saved then.
+## the two (the menus' brass blade, assets/art/ui/safe_arrow.svg) says which way it goes, out of
+## the Safe at first; it turns when pressed. The amount is typed in (no more than there is on
+## that side) and OK moves it; the hero is saved then.
 
-const ARROWS := ["res://assets/original/ui/arrow1.png", "res://assets/original/ui/arrow3.png"]
+const ARROW := "safe_arrow"  # drawn pointing right, at the Safe
+const ARROW_PX := 96
 
 var live: RefCounted
 var profile: RefCounted
 var path: String = Profile.PATH
 var to_safe := false  # the arrow points at the Safe (else at the hero)
+var _arrows: Array[Texture2D] = [arrow_icon(false), arrow_icon(true)]
 @onready var local: Label = %Local.get_node("Gold/Value")
 @onready var server: Label = %Server.get_node("Gold/Value")
 @onready var arrow: Button = %Arrow
@@ -93,4 +96,14 @@ func moved(err: String) -> void:
 func refresh() -> void:
 	local.text = str(profile.gold)
 	server.text = "-" if live == null or not live.synced else str(live.safe)
-	arrow.icon = load(ARROWS[1 if to_safe else 0])
+	arrow.icon = _arrows[1 if to_safe else 0]
+
+
+## The arrow at the Safe (right) or at the hero (left).
+static func arrow_icon(at_safe: bool) -> Texture2D:
+	var tex := ArtHud.icon(ARROW, ARROW_PX)
+	if at_safe:
+		return tex
+	var img := tex.get_image()
+	img.flip_x()
+	return ImageTexture.create_from_image(img)
