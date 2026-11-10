@@ -50,6 +50,8 @@ var arrows: Array[Sprite3D] = []
 var rng := RandomNumberGenerator.new()
 var _blink := 0.0
 var _leaving := false
+## How the hero stands (Motion.idle): a long weapon held ready in both hands, as in the missions.
+var _stand := "idle"
 
 @onready var world: Node3D = $World/Viewport/WorldRoot
 @onready var fort: CampFort = $World/Viewport/WorldRoot/Fort
@@ -104,16 +106,19 @@ func spot_of(kind: String) -> Dictionary:
 
 
 ## The hero as the missions show him (the figure of his class with his blade: the body walks,
-## the figure plays idle or walk and turns the way he goes), in the yard facing north.
+## the figure stands as his weapon has him, or walks, and turns the way he goes), in the yard
+## facing north.
 func _place_hero() -> void:
-	hero.set_look(int(profile.head), profile.weapon_kind())
+	var weapon_kind: int = clampi(profile.weapon_kind(), 0, 1)
+	hero.set_look(int(profile.head), weapon_kind)
 	hero.global_position = CampPlan.START + Vector3(0, 0.05, 0)
 	hero.dir8 = 4  # facing up, into the camp
 	figure.setup(MapPeople.HEROES[clampi(int(profile.head), 0, 3)])
 	figure.unequip_all()
-	figure.equip(MapPeople.BLADES[clampi(profile.weapon_kind(), 0, 1)])
+	figure.equip(MapPeople.BLADES[weapon_kind])
 	figure.rotation.y = Motion.yaw_of(hero.dir8)
-	figure.play("idle", 0.0)
+	_stand = Motion.idle(weapon_kind)
+	figure.play(_stand, 0.0)
 	if hero.sprite != null:
 		hero.sprite.visible = false
 
@@ -169,7 +174,7 @@ func _process(delta: float) -> void:
 	if figure != null:
 		if hero.sprite != null:
 			hero.sprite.visible = false
-		figure.play("walk" if hero.walking else "idle")
+		figure.play("walk" if hero.walking else _stand)
 		figure.rotation.y = lerp_angle(
 			figure.rotation.y, Motion.yaw_of(hero.dir8), 1.0 - exp(-16.0 * delta)
 		)
