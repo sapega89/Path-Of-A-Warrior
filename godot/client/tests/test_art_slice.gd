@@ -117,3 +117,11 @@ func test_no_original_pictures() -> void:
 			if file.ends_with(".gd") or file.ends_with(".gdshader"):
 				var text := FileAccess.get_file_as_string(dir + file)
 				check(not text.contains("assets/original"), "%s uses only the new art" % file)
+	# Screens redrawn in the new art: the Safe's arrow, the blacksmith's sparkle.
+	for file in [
+		"res://screens/live_safe/live_safe_screen.gd",
+		"res://screens/shop/shop_screen.gd",
+		"res://screens/shop/enchant_sparkle.gd",
+	]:
+		var text := FileAccess.get_file_as_string(file)
+		check(not text.contains("assets/original"), "%s uses only the new art" % file)
