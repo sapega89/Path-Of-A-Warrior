@@ -42,7 +42,7 @@ func _ready() -> void:
 	else:
 		fullscreen.get_parent().free()
 		fullscreen = null
-	language.grab_focus.call_deferred()
+	language.grab_focus()
 
 
 func _back() -> void:

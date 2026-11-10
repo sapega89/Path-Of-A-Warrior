@@ -14,7 +14,7 @@ extends BaseScreen
 ## general, and the visits of the generals: one after each mission won,
 ## scripts/core/visits.gd), which the hero enters from a few steps off its door. The game is
 ## saved when the hero comes into a camp. Pause opens the camp menu: the game menu, the world
-## map, the main menu.
+## map, the settings, the main menu.
 ## Router.params: profile_path; first: true starts the first mission at once (a new game).
 
 const BLINK_TIME := 0.25
@@ -345,6 +345,10 @@ func open_game_menu() -> void:
 
 func open_world_map() -> void:
 	Router.push("campaign", {"level": 1, "profile_path": path})
+
+
+func open_settings() -> void:
+	Router.push("settings")
 
 
 func open_main_menu() -> void:
