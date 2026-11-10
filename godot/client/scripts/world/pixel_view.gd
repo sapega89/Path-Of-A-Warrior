@@ -8,6 +8,9 @@ extends SubViewportContainer
 ## `pixel` screen pixels, the same whole number across the screen. Its colours are then held to
 ## a few steps of lightness and colour with an ordered dither between them (pixel_post.gdshader).
 ## Off: the world is drawn at the window's own pixels with smoothed edges.
+## The setting "brightness" lifts or deepens the shade of the world (Settings.world_gamma): in
+## pixel art before its steps, smooth by the shader world_light.gdshader, which is left off at
+## the middle brightness, so the colours stay as they are.
 ##
 ## The screens are laid out at 1280×720 and stretched to the window (canvas_items). The viewport
 ## still reports the layout size (size_2d_override), so positions the screens take from the
@@ -19,6 +22,7 @@ extends SubViewportContainer
 ## larger on each side.
 
 const POST := preload("res://assets/art/shaders/pixel_post.gdshader")
+const LIGHT := preload("res://assets/art/shaders/world_light.gdshader")
 ## About how many rows of pixels the world has in pixel art, whatever the window.
 const ROWS := 360.0
 const MARGIN := 1
@@ -34,6 +38,7 @@ var margin := 0
 ## Screen pixels to one layout unit.
 var ratio := 1.0
 var post := ShaderMaterial.new()
+var light := ShaderMaterial.new()  # the smooth world's brightness
 
 @onready var viewport: SubViewport = $Viewport
 
@@ -46,6 +51,7 @@ static func pixel_for(screen_rows: float, on: bool) -> int:
 func _ready() -> void:
 	process_priority = AFTER_THE_CAMERA
 	post.shader = POST
+	light.shader = LIGHT
 	viewport.size_2d_override_stretch = true
 	get_tree().root.size_changed.connect(fit)
 	var parent := get_parent() as Control
@@ -82,7 +88,7 @@ func fit() -> void:
 	size = cells
 	viewport.size_2d_override = Vector2i((cells * pixel / ratio).round())
 	viewport.msaa_3d = Viewport.MSAA_DISABLED if pixel_art else Viewport.MSAA_2X
-	material = post if pixel_art else null
+	material = post if pixel_art else _smooth_material()
 	texture_filter = (
 		CanvasItem.TEXTURE_FILTER_NEAREST if pixel_art else CanvasItem.TEXTURE_FILTER_LINEAR
 	)
@@ -101,8 +107,15 @@ func _process(_delta: float) -> void:
 
 
 func _on_setting(key: String) -> void:
-	if key == "pixel_art":
+	if key in ["pixel_art", "brightness"]:
 		fit()
+
+
+func _smooth_material() -> Material:
+	var middle: bool = is_equal_approx(
+		float(Settings.get_value("brightness")), float(Settings.DEFAULTS.brightness)
+	)
+	return null if middle else light
 
 
 func _place(rest: Vector2) -> void:

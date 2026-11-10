@@ -4,7 +4,8 @@ shader_type canvas_item;
 // The steps are taken in OKLab, where equal steps look equal: so many of lightness, and of the
 // colour (its a and b) a fixed size. Between two steps a 4×4 ordered dither mixes the pixels,
 // so a slope of light becomes a pattern instead of a band. The pattern is laid on the world's
-// pixels, not the screen's.
+// pixels, not the screen's. Before the steps the picture takes the brightness of the settings
+// (world_gamma: 1 as drawn), so the steps stay as crisp at any brightness.
 
 // steps of lightness from black to white
 uniform float light_steps = 18.0;
@@ -12,6 +13,7 @@ uniform float light_steps = 18.0;
 uniform float colour_step = 0.03;
 // how much the pattern mixes neighbouring steps (0: hard bands, 1: a full dither)
 uniform float dither = 0.4;
+global uniform float world_gamma;
 
 const float BAYER[16] = float[16](
 	0.0, 8.0, 2.0, 10.0,
@@ -57,6 +59,9 @@ void fragment() {
 	ivec2 size = textureSize(TEXTURE, 0);
 	ivec2 cell = clamp(ivec2(floor(UV * vec2(size))), ivec2(0), size - 1);
 	vec4 src = texelFetch(TEXTURE, cell, 0);
+	if (world_gamma != 1.0) {
+		src.rgb = pow(src.rgb, vec3(world_gamma));
+	}
 	vec3 lab = to_oklab(to_linear(src.rgb));
 	float t = ((BAYER[(cell.x & 3) + (cell.y & 3) * 4] + 0.5) / 16.0 - 0.5) * dither;
 	lab.x = floor(lab.x * light_steps + 0.5 + t) / light_steps;

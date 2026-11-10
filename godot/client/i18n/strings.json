@@ -2106,5 +2106,9 @@
   "controls.belt_5": {
     "en": "Belt slot 5",
     "uk": "Пояс, комірка 5"
+  },
+  "settings.brightness": {
+    "en": "Brightness",
+    "uk": "Яскравість"
   }
 }

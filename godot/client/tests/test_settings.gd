@@ -78,3 +78,34 @@ func test_volume_by_ear() -> void:
 	s.free()
 	root.get_node("/root/Settings").apply_all()  # the game's own volumes again
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))
+
+
+func test_brightness() -> void:
+	var s := _fresh()
+	eq(s.get_value("brightness"), 0.5, "the middle by default")
+	eq(SettingsScript.world_gamma(0.5), 1.0, "the middle: the world as it is drawn")
+	check(SettingsScript.world_gamma(1.0) < 1.0, "brighter: the shade lifted")
+	check(SettingsScript.world_gamma(0.0) > 1.0, "darker: the shade deeper")
+	check(
+		SettingsScript.world_gamma(0.75) < 1.0 and SettingsScript.world_gamma(0.75) > 0.5,
+		"a step up stays mild"
+	)
+	check(s.set_value("brightness", 3.0), "too bright")
+	eq(s.get_value("brightness"), 1.0, "clamped")
+	check(not "brightness" in SettingsScript.CLOUD_KEYS, "the screen's own, not the account's")
+	s.free()
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))
+
+
+func test_the_brightness_slider() -> void:
+	var old_path: String = Settings.path
+	Settings.path = PATH
+	var screen: SettingsScreen = Router.make(Router.SCREENS["settings"])
+	root.add_child(screen)
+	eq(screen.brightness.value, Settings.get_value("brightness"), "shows the setting")
+	screen.brightness.value = 0.7
+	check(is_equal_approx(Settings.get_value("brightness"), 0.7), "and sets it")
+	Settings.set_value("brightness", 0.5)
+	screen.free()
+	Settings.path = old_path
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))

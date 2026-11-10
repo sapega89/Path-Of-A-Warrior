@@ -1,9 +1,9 @@
 class_name SettingsScreen
 extends BaseScreen
 ## Settings: language, music and sound volume, the game speed, the hit effects on the map (all
-## of them, the screen shake, the vibration), the world as pixel art or smooth, fullscreen
-## (desktop only), Controls (controls_screen.gd: the keys and pad buttons, shown over these
-## settings) and Training (training_screen.gd) to take the training again (not over the
+## of them, the screen shake, the vibration), the world as pixel art or smooth, its brightness,
+## fullscreen (desktop only), Controls (controls_screen.gd: the keys and pad buttons, shown over
+## these settings) and Training (training_screen.gd) to take the training again (not over the
 ## mission's pause). The options scroll; Controls, Training and Back stay in a row under them.
 
 const I18nScript := preload("res://scripts/core/i18n.gd")
@@ -19,6 +19,7 @@ const LANGUAGE_NAMES := {"en": "English", "uk": "Українська"}
 @onready var screen_shake: CheckBox = %ScreenShake
 @onready var rumble: CheckBox = %Rumble
 @onready var pixel_art: CheckBox = %PixelArt
+@onready var brightness: HSlider = %Brightness
 @onready var column: VBoxContainer = %Column
 ## Shown over another screen (the mission's pause menu): what Back does instead of going back.
 var close := Callable()
@@ -41,6 +42,7 @@ func _ready() -> void:
 	screen_shake.set_pressed_no_signal(Settings.get_value("screen_shake"))
 	rumble.set_pressed_no_signal(Settings.get_value("rumble"))
 	pixel_art.set_pressed_no_signal(Settings.get_value("pixel_art"))
+	brightness.set_value_no_signal(Settings.get_value("brightness"))
 	if Settings.can_fullscreen():
 		fullscreen.set_pressed_no_signal(Settings.get_value("fullscreen"))
 	else:
@@ -84,6 +86,10 @@ func _on_screen_shake(on: bool) -> void:
 
 func _on_pixel_art(on: bool) -> void:
 	Settings.set_value("pixel_art", on)
+
+
+func _on_brightness(v: float) -> void:
+	Settings.set_value("brightness", v)
 
 
 func _on_rumble(on: bool) -> void:
