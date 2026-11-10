@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://screens/visiting/visiting_screen.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/ui/heading.gd" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/ui/dialogue.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://screens/visiting/visit_row.tscn" id="4"]
 
 [node name="VisitingScreen" type="Control"]
 layout_mode = 3
@@ -18,28 +19,28 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 1
-grow_vertical = 1
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Column" type="VBoxContainer" parent="Center"]
 unique_name_in_owner = true
-layout_mode = 2
 custom_minimum_size = Vector2(760, 0)
+layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="Heading" type="Label" parent="Center/Column"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"Heading"
-text = "visit.title"
-horizontal_alignment = 1
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 40
+text = "visit.title"
+horizontal_alignment = 1
 script = ExtResource("2")
 
 [node name="Scroll" type="ScrollContainer" parent="Center/Column"]
-layout_mode = 2
 custom_minimum_size = Vector2(760, 470)
+layout_mode = 2
 follow_focus = true
 horizontal_scroll_mode = 0
 
@@ -49,54 +50,185 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 6
 
-[node name="Talk" type="VBoxContainer" parent="Center/Column"]
+[node name="Notice" type="Label" parent="Center/Column/Scroll/List"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
-theme_override_constants/separation = 12
+text = "visit.not_now"
+horizontal_alignment = 1
+autowrap_mode = 3
 
-[node name="Dialogue" parent="Center/Column/Talk" instance=ExtResource("3")]
+[node name="Header" parent="Center/Column/Scroll/List" instance=ExtResource("4")]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+disabled = true
+
+[node name="Friends" type="VBoxContainer" parent="Center/Column/Scroll/List"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Back" type="Button" parent="Center/Column/Scroll/List"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "common.back"
+
+[node name="Popup" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Shade" type="ColorRect" parent="Popup"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0, 0, 0, 0.6)
+
+[node name="Center" type="CenterContainer" parent="Popup"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Talk" type="PanelContainer" parent="Popup/Center"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(900, 0)
+layout_mode = 2
+mouse_filter = 1
+
+[node name="Column" type="VBoxContainer" parent="Popup/Center/Talk"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="GeneralName" type="Label" parent="Popup/Center/Talk/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+auto_translate_mode = 2
+theme_type_variation = &"Heading"
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 34
+horizontal_alignment = 1
+script = ExtResource("2")
+
+[node name="Dialogue" parent="Popup/Center/Talk/Column" instance=ExtResource("3")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Text" type="Label" parent="Center/Column/Talk"]
+[node name="HeroSays" parent="Popup/Center/Talk/Column/Dialogue/Bottom" index="0"]
+horizontal_alignment = 2
+
+[node name="Topics" type="VBoxContainer" parent="Popup/Center/Talk/Column/Dialogue/Bottom" index="1"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="Question" type="Label" parent="Popup/Center/Talk/Column/Dialogue/Bottom/Topics"]
+layout_mode = 2
+theme_type_variation = &"DimLabel"
+text = "visit.which_topic"
+horizontal_alignment = 1
+
+[node name="Grid" type="GridContainer" parent="Popup/Center/Talk/Column/Dialogue/Bottom/Topics"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+columns = 4
+
+[node name="Topic0" type="Button" parent="Popup/Center/Talk/Column/Dialogue/Bottom/Topics/Grid"]
 unique_name_in_owner = true
 layout_mode = 2
-custom_minimum_size = Vector2(760, 0)
+size_flags_horizontal = 3
+text = "visit.topic_0"
+
+[node name="Topic1" type="Button" parent="Popup/Center/Talk/Column/Dialogue/Bottom/Topics/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "visit.topic_1"
+
+[node name="Topic2" type="Button" parent="Popup/Center/Talk/Column/Dialogue/Bottom/Topics/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "visit.topic_2"
+
+[node name="Topic3" type="Button" parent="Popup/Center/Talk/Column/Dialogue/Bottom/Topics/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "visit.topic_3"
+
+[node name="Note" type="Control" parent="Popup"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="Center" type="CenterContainer" parent="Popup/Note"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="Popup/Note/Center"]
+custom_minimum_size = Vector2(560, 0)
+layout_mode = 2
+mouse_filter = 1
+
+[node name="Margin" type="MarginContainer" parent="Popup/Note/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Column" type="VBoxContainer" parent="Popup/Note/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Text" type="Label" parent="Popup/Note/Center/Panel/Margin/Column"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
 auto_translate_mode = 2
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Topics" type="VBoxContainer" parent="Center/Column/Talk"]
+[node name="Ok" type="Button" parent="Popup/Note/Center/Panel/Margin/Column"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-
-[node name="Topic0" type="Button" parent="Center/Column/Talk/Topics"]
-layout_mode = 2
-text = "visit.topic_0"
-
-[node name="Topic1" type="Button" parent="Center/Column/Talk/Topics"]
-layout_mode = 2
-text = "visit.topic_1"
-
-[node name="Topic2" type="Button" parent="Center/Column/Talk/Topics"]
-layout_mode = 2
-text = "visit.topic_2"
-
-[node name="Topic3" type="Button" parent="Center/Column/Talk/Topics"]
-layout_mode = 2
-text = "visit.topic_3"
-
-[node name="Ok" type="Button" parent="Center/Column/Talk"]
-unique_name_in_owner = true
-layout_mode = 2
+size_flags_horizontal = 4
 text = "visit.ok"
 
-[connection signal="pressed" from="Center/Column/Talk/Topics/Topic0" to="." method="choose" binds= [0]]
+[connection signal="pressed" from="Center/Column/Scroll/List/Back" to="." method="go_back"]
 
-[connection signal="pressed" from="Center/Column/Talk/Topics/Topic1" to="." method="choose" binds= [1]]
+[connection signal="pressed" from="Popup/Center/Talk/Column/Dialogue/Bottom/Topics/Grid/Topic0" to="." method="choose" binds= [0]]
 
-[connection signal="pressed" from="Center/Column/Talk/Topics/Topic2" to="." method="choose" binds= [2]]
+[connection signal="pressed" from="Popup/Center/Talk/Column/Dialogue/Bottom/Topics/Grid/Topic1" to="." method="choose" binds= [1]]
 
-[connection signal="pressed" from="Center/Column/Talk/Topics/Topic3" to="." method="choose" binds= [3]]
+[connection signal="pressed" from="Popup/Center/Talk/Column/Dialogue/Bottom/Topics/Grid/Topic2" to="." method="choose" binds= [2]]
 
-[connection signal="pressed" from="Center/Column/Talk/Ok" to="." method="press"]
+[connection signal="pressed" from="Popup/Center/Talk/Column/Dialogue/Bottom/Topics/Grid/Topic3" to="." method="choose" binds= [3]]
+
+[connection signal="pressed" from="Popup/Note/Center/Panel/Margin/Column/Ok" to="." method="press"]
+
+[editable path="Popup/Center/Talk/Column/Dialogue"]

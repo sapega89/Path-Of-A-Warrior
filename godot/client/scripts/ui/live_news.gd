@@ -2,13 +2,14 @@ class_name LiveNews
 extends Control
 ## What Live kept for the player while away, shown over the main menu: the notices (once a
 ## game, page by page), the Sale List (what other players bought from him; the money is in the
-## Safe), the Gift List (five at a time; the gifts are in the Warehouse), and the Exp and Fame
-## kept on the server, which the hero gets now (and maybe a level or more).
+## Safe), a note that gifts came (once a game; they are in the Warehouse, and the Gift List is at
+## the auctioneer: screens/live_gifts), and the Exp and Fame kept on the server, which the hero
+## gets now (and maybe a level or more).
 ##
 ## It first sends the hero's gold and backpack to Live (scripts/net/live_client.gd sync), then
-## asks what is new. A notice or the Exp and Fame is a popup; a list is shown in place of the
-## menu (showing_list) until OK. finished comes when everything is read, or at once when the
-## server does not answer: Trade, Warehouse and Safe say that themselves.
+## asks what is new. A notice, the gifts or the Exp and Fame is a popup; the Sale List is shown
+## in place of the menu (showing_list) until OK. finished comes when everything is read, or at
+## once when the server does not answer: Trade, Warehouse and Safe say that themselves.
 
 signal showing_list(on: bool)
 signal finished
@@ -17,14 +18,11 @@ const LIST_PLACES := 20
 
 var live: RefCounted
 var path: String
-var list: VBoxContainer  # the Sale List / Gift List
-var list_kind := ""  # "sold" or "gifts"
-var list_title: Label
-var list_text: Label
+var list: VBoxContainer  # the Sale List
 var list_cells: Array[Button] = []
 var list_info: Label
 var list_ok: Button
-var note: AcceptDialog  # a page of the notices, the Exp / Fame applied
+var note: AcceptDialog  # a page of the notices, the gifts came, the Exp / Fame applied
 var after_note: Callable
 var done := false
 
@@ -54,10 +52,10 @@ func _build_list() -> void:
 	list.name = "List"
 	list.visible = false
 	list.add_theme_constant_override("separation", 8)
-	list_title = UiTheme.heading("live.sale_list", 44)
-	list.add_child(list_title)
-	list_text = UiTheme.note("Text")
-	list.add_child(list_text)
+	list.add_child(UiTheme.heading("live.sale_list", 44))
+	var text := UiTheme.note("Text")
+	text.text = tr("live.sold_lines")
+	list.add_child(text)
 	list_cells = ItemGrid.add(list, LIST_PLACES, 140, func(_i): pass, show_entry)
 	list_info = UiTheme.note("Info", 100)
 	list.add_child(list_info)
@@ -106,17 +104,16 @@ func _noticed(err: String) -> void:
 
 func _read_sold() -> void:
 	if live.has_sold:
-		list_kind = "sold"
 		live.ask_sold(LiveClient.later(self, &"_listed"))
 	else:
-		_read_gifts()
+		_tell_gifts()
 
 
-## The gifts come five at a time, until there are no more.
-func _read_gifts() -> void:
-	if live.has_gifts:
-		list_kind = "gifts"
-		live.ask_gifts(LiveClient.later(self, &"_listed"))
+## The gifts are not read here (that is the auctioneer's Gift List): only told of, once a game.
+func _tell_gifts() -> void:
+	if live.has_gifts and not live.gifts_told:
+		live.gifts_told = true
+		_show_note(tr("live.gifts_waiting"), _read_fame)
 	else:
 		_read_fame()
 
@@ -125,17 +122,12 @@ func _read_fame() -> void:
 	live.ask_fame(LiveClient.later(self, &"_famed"))
 
 
-## The Sale List or a page of the Gift List came: shown until OK.
+## The Sale List came: shown until OK.
 func _listed(err: String) -> void:
-	var entries := entries_shown()
+	var entries: Array = live.sold
 	if not err.is_empty() or entries.is_empty():
-		if list_kind == "sold":
-			_read_gifts()
-		else:
-			_read_fame()
+		_tell_gifts()
 		return
-	list_title.text = "live.sale_list" if list_kind == "sold" else "live.gift_list"
-	list_text.text = tr("live.sold_lines" if list_kind == "sold" else "live.gift_lines")
 	for i in list_cells.size():
 		list_cells[i].visible = i < maxi(entries.size(), 5)
 		list_cells[i].icon = (
@@ -146,36 +138,28 @@ func _listed(err: String) -> void:
 	list_ok.grab_focus.call_deferred()
 
 
-func entries_shown() -> Array:
-	return live.sold if list_kind == "sold" else live.gifts
-
-
 func show_entry(i: int) -> void:
-	var entries := entries_shown()
-	if i >= entries.size():
+	if i >= live.sold.size():
 		list_info.text = ""
 		return
-	var e: Dictionary = entries[i]
+	var e: Dictionary = live.sold[i]
 	var it: Dictionary = e.item
-	if list_kind == "sold":
-		list_info.text = (
-			"%s\n%s\n%s"
-			% [
-				Items.name_of(int(it.id)),
-				tr("live.price") % int(e.price),
-				tr("live.enchant_lv") % int(it.enchant)
-			]
-		)
-	else:
-		list_info.text = "%s\n%s\n%s" % [str(e.from), Items.name_of(int(it.id)), Items.describe(it)]
+	list_info.text = (
+		"%s\n%s\n%s"
+		% [
+			Items.name_of(int(it.id)),
+			tr("live.price") % int(e.price),
+			tr("live.enchant_lv") % int(it.enchant)
+		]
+	)
 
 
-## OK under a list: after the Sale List the gifts, after a page of gifts the next one.
+## OK under the Sale List: then the gifts.
 func list_done() -> void:
 	if live.busy:
 		return
 	_set_list_shown(false)
-	_read_gifts()
+	_tell_gifts()
 
 
 ## The Exp and Fame kept on the server go to the hero (and maybe a level or more).

@@ -35,7 +35,9 @@ func test_who_is_who() -> void:
 		eq(BattleMotion.kind_of(f), MapPeople.HEROES[face], "a player: the model of his class")
 		eq(BattleMotion.portrait_of(f), 38 + face, "and its portrait")
 	f.weapon = 1
-	eq(BattleMotion.weapons_of(f), ["palash"], "his blade")
+	eq(BattleMotion.weapons_of(f), ["spear"], "a long weapon (ids 101..115): the pike")
+	f.weapon = 0
+	eq(BattleMotion.weapons_of(f), ["palash"], "a short one: the broadsword")
 	f.kind = OnlineBattle.CPU
 	var kinds := {}
 	for name in ["Brakka", "Kaida", "Ulric", "Ysolde", "Dorn", "Borin", "Thane", "Selene"]:

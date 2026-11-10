@@ -1,7 +1,8 @@
 class_name SettingsScreen
 extends BaseScreen
 ## Settings: language, music and sound volume, the game speed, the hit effects on the map (all
-## of them, the screen shake, the vibration), fullscreen (desktop only), and Training
+## of them, the screen shake, the vibration), the world as pixel art or smooth, fullscreen
+## (desktop only), and Training
 ## (training_screen.gd) to take the training again (not over the mission's pause).
 
 const I18nScript := preload("res://scripts/core/i18n.gd")
@@ -16,6 +17,7 @@ const LANGUAGE_NAMES := {"en": "English", "uk": "Українська"}
 @onready var hit_feel: CheckBox = %HitFeel
 @onready var screen_shake: CheckBox = %ScreenShake
 @onready var rumble: CheckBox = %Rumble
+@onready var pixel_art: CheckBox = %PixelArt
 ## Shown over another screen (the mission's pause menu): what Back does instead of going back.
 var close := Callable()
 
@@ -36,6 +38,7 @@ func _ready() -> void:
 	hit_feel.set_pressed_no_signal(Settings.get_value("hit_feel"))
 	screen_shake.set_pressed_no_signal(Settings.get_value("screen_shake"))
 	rumble.set_pressed_no_signal(Settings.get_value("rumble"))
+	pixel_art.set_pressed_no_signal(Settings.get_value("pixel_art"))
 	if Settings.can_fullscreen():
 		fullscreen.set_pressed_no_signal(Settings.get_value("fullscreen"))
 	else:
@@ -75,6 +78,10 @@ func _on_hit_feel(on: bool) -> void:
 
 func _on_screen_shake(on: bool) -> void:
 	Settings.set_value("screen_shake", on)
+
+
+func _on_pixel_art(on: bool) -> void:
+	Settings.set_value("pixel_art", on)
 
 
 func _on_rumble(on: bool) -> void:

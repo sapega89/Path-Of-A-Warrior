@@ -39,6 +39,7 @@ var has_notice := false
 var has_sold := false
 var has_gifts := false
 var notices_seen := false  # the notices are shown once a game
+var gifts_told := false  # the game menu says once a game that gifts came
 var notice: Array = []  # the lines of a page of notices
 var more_notices := false
 var sold: Array = []  # Sale List: [{item, price}] (what others bought from me)
@@ -334,20 +335,32 @@ func sell(profile: RefCounted, from_warehouse: bool, at: int, price: int, done: 
 	if not for_sale(int(it.id)):
 		done.call("not for sale")
 		return
-	var serial := int(warehouse[at].serial) if from_warehouse else int(serials[at])
 	var msg := {
-		"t": "live_sell", "from_warehouse": from_warehouse, "serial": serial, "price": price
+		"t": "live_sell",
+		"from_warehouse": from_warehouse,
+		"serial": _serial_at(from_warehouse, at),
+		"price": price
 	}
-	_send(
-		msg,
-		done,
-		func(_r: Dictionary) -> void:
-			if from_warehouse:
-				warehouse.remove_at(at)
-			else:
-				profile.backpack[at] = Items.empty()
-				serials[at] = 0
-	)
+	_send(msg, done, func(_r: Dictionary) -> void: _forget(profile, from_warehouse, at))
+
+
+## Gives a thing of a backpack place (or of the Warehouse) to the player with UserID `to`: it
+## goes into his Warehouse, with a line in his Gift List.
+func give(profile: RefCounted, from_warehouse: bool, at: int, to: String, done: Callable) -> void:
+	var it := _at(profile, from_warehouse, at)
+	if it.is_empty():
+		done.call("gone")
+		return
+	if not for_sale(int(it.id)):
+		done.call("not for sale")
+		return
+	var msg := {
+		"t": "live_give",
+		"to": to,
+		"from_warehouse": from_warehouse,
+		"serial": _serial_at(from_warehouse, at)
+	}
+	_send(msg, done, func(_r: Dictionary) -> void: _forget(profile, from_warehouse, at))
 
 
 ## Takes one of my lots off the market: into the backpack, or the Warehouse when it is full.
@@ -378,6 +391,19 @@ func _at(profile: RefCounted, from_warehouse: bool, at: int) -> Dictionary:
 	):
 		return {}
 	return profile.backpack[at] if int(profile.backpack[at].id) != 0 else {}
+
+
+func _serial_at(from_warehouse: bool, at: int) -> int:
+	return int(warehouse[at].serial) if from_warehouse else int(serials[at])
+
+
+## The thing of a backpack place (or of the Warehouse) is gone to the server.
+func _forget(profile: RefCounted, from_warehouse: bool, at: int) -> void:
+	if from_warehouse:
+		warehouse.remove_at(at)
+	else:
+		profile.backpack[at] = Items.empty()
+		serials[at] = 0
 
 
 ## A thing from the server into a backpack place with its serial, or (place -1) the Warehouse.

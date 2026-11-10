@@ -40,6 +40,8 @@ WORK = {
     "straw": "B09A62",
     "canvas": "BEB298",
     "canvas_dark": "948770",
+    "canvas_smoke": "5E5A4E",  # tents gone dark with smoke and rain
+    "iron_dark": "33383D",
     "clay": "9A6646",
     "stone": "8C8577",
     "stone_dark": "5F5A52",
@@ -59,6 +61,14 @@ WORK = {
     "skin_upyr": "8F9B7C",  # the grey-green skin of the forest upyr (the battles' monsters)
     "skin_upyr_dark": "6B7759",
     "bone": "DCCFB4",
+    # the hero's Cossack (hero.py)
+    "noir": "29272E",  # the black zhupan
+    "noir_light": "34333B",  # black sharovary
+    "wine": "6E1F2B",  # wine-red embroidery and sash
+    "wine_dark": "4A1620",  # the zhupan's lining
+    "iris_steel": "626A78",  # steel-grey eyes
+    "hair_black": "1A191E",
+    "scalp": "8E7062",  # a shaved head, its stubble
 }
 
 COLORS = {**BASE, **WORK}

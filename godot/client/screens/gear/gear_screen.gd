@@ -100,7 +100,7 @@ func _light_the_hero() -> void:
 	figure.setup(MapPeople.HEROES[clampi(int(profile.head), 0, 3)])
 	figure.unequip_all()
 	figure.equip(MapPeople.BLADES[clampi(profile.weapon_kind(), 0, 1)])
-	figure.play("idle", 0.0)
+	figure.play(Motion.idle(profile.weapon_kind()), 0.0)
 
 
 ## The line of control hints under the screen (scripts/ui/hint_bar.gd): what picking a thing does.

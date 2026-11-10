@@ -18,6 +18,7 @@ const DEFAULTS := {
 	"hit_feel": true,  # the hitstop, shake, flash, flight and sound of a hit on the map
 	"screen_shake": true,  # of those, the camera shake
 	"rumble": true,  # of those, the pad's (or the phone's) rumble
+	"pixel_art": true,  # the 3D world drawn as pixel art (pixel_view.gd), or smooth
 }
 ## One tick of a mission at each game speed, in ms (2, Med, is the simulation's own tick).
 const SPEED_MS := [250, 180, 120, 90, 50]
@@ -166,6 +167,11 @@ func _apply(key: String) -> void:
 				var v: float = get_value(key)
 				AudioServer.set_bus_volume_db(bus, volume_db(v))
 				AudioServer.set_bus_mute(bus, v <= 0.0)
+		"pixel_art":
+			# the shaders of the world draw for it: hard steps of light, no grain finer than a pixel
+			RenderingServer.global_shader_parameter_set(
+				&"pixel_art", 1.0 if get_value(key) else 0.0
+			)
 		"fullscreen":
 			if can_fullscreen():
 				DisplayServer.window_set_mode(

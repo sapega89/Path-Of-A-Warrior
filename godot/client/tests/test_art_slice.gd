@@ -2,7 +2,9 @@ extends "res://tests/test_case.gd"
 ## The art slice (scripts/art, assets/art): the models load, the people share one clip
 ## library, and the camp and the battle room build with everything in place.
 
-const PEOPLE := ["kozak", "kozak_camp", "kozak_svyta", "zholner", "luchnyk", "polkovnyk"]
+const PEOPLE := [
+	"kozak", "kozak_hero", "kozak_camp", "kozak_svyta", "zholner", "luchnyk", "polkovnyk"
+]
 const WEAPONS := ["sabre", "sabre_gold", "bulava", "spear", "shield", "bow"]
 const CLIPS := [
 	"idle",
@@ -117,3 +119,11 @@ func test_no_original_pictures() -> void:
 			if file.ends_with(".gd") or file.ends_with(".gdshader"):
 				var text := FileAccess.get_file_as_string(dir + file)
 				check(not text.contains("assets/original"), "%s uses only the new art" % file)
+	# Screens redrawn in the new art: the Safe's arrow, the blacksmith's sparkle.
+	for file in [
+		"res://screens/live_safe/live_safe_screen.gd",
+		"res://screens/shop/shop_screen.gd",
+		"res://screens/shop/enchant_sparkle.gd",
+	]:
+		var text := FileAccess.get_file_as_string(file)
+		check(not text.contains("assets/original"), "%s uses only the new art" % file)

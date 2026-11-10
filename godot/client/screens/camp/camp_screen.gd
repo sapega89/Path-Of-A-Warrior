@@ -1,72 +1,50 @@
 class_name CampScreen
 extends BaseScreen
-## The stop between missions (scripts/world/camp_map.gd): the hero walks about the camp of
-## his place, and each way on from there (one, two or three places, as the campaign goes) is a
-## gap in the trees with a blinking arrow; past the gap lies the land of that place (a lake,
-## mountains, a forest, a town or the steppe, from its map: terrain()), nothing more, so which
-## way is better is learnt by playing. Walking out tells the story of the next mission of that
-## place not won yet (choices()), then its briefing; the mission comes back
-## here when it is over (won: the camp of the new place; lost: this one again, to try once
-## more with the same hero). A closed way is fenced. Every camp has the blacksmith (buy, sell,
-## enchant,
-## combine), the warehouse and the town hall (every colonel and general, and the visits of
-## the generals: one after each mission won, scripts/core/visits.gd). The game is saved when the
-## hero comes into a camp. Pause opens the camp menu:
-## the game menu, the world map, the main menu.
+## The stop between missions: the hero walks about the camp on the marsh, «Плавні», at dusk
+## (camp_fort.gd builds it from its plan, camp_plan.gd), and the camera follows him. Each way
+## on (one, two or three places, as the campaign goes) is a gate in the palisade on a side of
+## the world (north, east, west, south, then north-east and north-west) with a blinking arrow;
+## past the gate lies the land of that place (a lake, mountains, a forest, a town or the steppe,
+## from its map: terrain()), nothing more, so which way is better is learnt by playing. Walking
+## out tells the story of the next mission of that place not won yet (choices()), then its
+## briefing; the mission comes back here when it is over (won: the camp of the new place; lost:
+## this one again, to try once more with the same hero). A closed way's gate is barred. Every
+## camp has the blacksmith (buy, sell, enchant, combine), the stores (the warehouse), the
+## auctioneer (trade: buy, sell, the hero's own lots) and the town hall (every colonel and
+## general, and the visits of the generals: one after each mission won,
+## scripts/core/visits.gd), which the hero enters from a few steps off its door. The game is
+## saved when the hero comes into a camp. Pause opens the camp menu: the game menu, the world
+## map, the main menu.
 ## Router.params: profile_path; first: true starts the first mission at once (a new game).
 
-const TALK_RANGE := 1.4  # tiles
-## The arrow picture for a gap on the top, the right and the left side (arrow0..3: down,
-## left, up, right).
-const ARROW_OF_SIDE := [2, 3, 1]
 const BLINK_TIME := 0.25
-const MAX_WAYS := 6  # gaps in a camp
-## What lies past a gap, by the land of its place: pieces of the new art (MapArt.PROP) and,
-## for a lake, its water.
-const LAND := {
-	"mountains":
-	[
-		["boulder", 1.8, -2.6, 1.6],
-		["crag", 2.8, 2.4, 2.4],
-		["boulder", 4.0, -1.4, 2.4],
-		["crag", 4.4, 2.2, 3.4],
-		["rock", 2.0, 1.4, 1.0]
-	],
-	"forest":
-	[
-		["fir", 1.8, -2.4, 1.0],
-		["fir", 2.2, 2.4, 1.1],
-		["fir", 3.8, -3.4, 1.2],
-		["fir", 4.2, 3.2, 1.2],
-		["bush", 1.4, -1.4, 1.0]
-	],
-	"town":
-	[
-		["palisade", 1.4, -2.0, 1.0],
-		["palisade", 1.4, -2.8, 1.0],
-		["palisade", 1.4, 2.0, 1.0],
-		["palisade", 1.4, 2.8, 1.0],
-		["hut", 3.6, -2.8, 0.6]
-	],
-	"steppe":
-	[
-		["hay", 1.6, -2.0, 0.6],
-		["bush", 2.4, 2.2, 1.0],
-		["pebbles", 3.0, -1.4, 1.0],
-		["hay", 3.6, 2.8, 0.7]
-	],
-	"lake": [["bush", 1.4, -1.8, 0.9], ["rock", 1.6, 2.0, 1.0]],
+const MAX_WAYS := 6  # gates in a camp
+const CAMERA_DISTANCE := 15.0  # it follows the hero, a good part of the camp in view
+## The name over each thing to use: its spot's kind and where it hangs from the spot.
+const LABELS := {
+	"Smith": ["smith", Vector3(0.0, 2.4, -1.6)],
+	"Store": ["store", Vector3(0.0, 2.0, -1.6)],
+	"Hall": ["hall", Vector3(0.0, 3.2, -1.2)],
+	"Auction": ["auction", Vector3(0.0, 2.7, -2.1)],
 }
-const CAMERA_DISTANCE := 19.0  # the whole camp on the screen, the camera does not move
+## The blinking arrow in an open gate: how high, how big.
+const ARROW_HEIGHT := 0.6
+const ARROW_PIXEL := 1.0 / 72.0
+## The arrow picture for a way out going down (south), left, up and right.
+const ARROW_DOWN := 0
+const ARROW_LEFT := 1
+const ARROW_UP := 2
+const ARROW_RIGHT := 3
 
 var path: String = Profile.PATH
 var profile: RefCounted
 var campaign := Campaign.new()
 var world_map: RefCounted
-var camp: RefCounted
+var plan: CampPlan
 var place := 0
-## What the hero can use where he stands: {kind: "way"|"hall"|"smith", place, at: Vector3}
-var spots: Array = []
+## What the hero can use where he stands (CampPlan.spots()): the ways first, in the order of
+## plan.exits, then the smithy, the stores, the town hall and the auctioneer.
+var spots: Array[Dictionary] = []
 var near := {}  # the spot in reach, or empty
 var arrows: Array[Sprite3D] = []
 var rng := RandomNumberGenerator.new()
@@ -74,7 +52,7 @@ var _blink := 0.0
 var _leaving := false
 
 @onready var world: Node3D = $World/Viewport/WorldRoot
-@onready var builder: MapArt = $World/Viewport/WorldRoot/Map
+@onready var fort: CampFort = $World/Viewport/WorldRoot/Fort
 @onready var hero: Hero = $World/Viewport/WorldRoot/Hero
 @onready var figure: ArtFigure = $World/Viewport/WorldRoot/Hero/Figure
 @onready var camera: FollowCamera = $World/Viewport/WorldRoot/Camera
@@ -89,7 +67,8 @@ func _ready() -> void:
 	place = int(profile.place)
 	world_map = WorldMap.new(campaign)
 	rng.seed = hash([place, profile.done.size()])  # the same ways each time back here
-	camp = CampMap.new(choices(), CampMap.is_main(camp_place()), camp_place())
+	plan = CampPlan.new(choices(), CampPlan.is_main(camp_place()))
+	spots = plan.spots()
 	_build_world()
 	_show_place()
 	if profile.on_map.is_empty():
@@ -100,12 +79,36 @@ func _ready() -> void:
 
 
 func _build_world() -> void:
-	builder.build(camp.data)
+	var lands: Array = plan.exits.map(func(e: Dictionary) -> String: return terrain(e.place))
+	fort.build(plan, lands, hash(camp_place()))
+	var light: WorldEnvironment = world.find_children("*", "WorldEnvironment", false, false)[0]
+	CampFort.dusk(light, world.get_node("Sun"))
+	_place_hero()
+	camera.target = hero
+	camera.distance = CAMERA_DISTANCE
+	camera.snap()
+	for e in plan.exits:
+		if e.open:
+			_add_arrow(e)
+	for label_name in LABELS:
+		var spot := spot_of(LABELS[label_name][0])
+		(get_node("%" + label_name) as Node3D).position = spot.at + LABELS[label_name][1]
+
+
+## The spot of a kind ("smith", "store", "hall", "auction"; the first way for "way").
+func spot_of(kind: String) -> Dictionary:
+	for s in spots:
+		if s.kind == kind:
+			return s
+	return {}
+
+
+## The hero as the missions show him (the figure of his class with his blade: the body walks,
+## the figure plays idle or walk and turns the way he goes), in the yard facing north.
+func _place_hero() -> void:
 	hero.set_look(int(profile.head), profile.weapon_kind())
-	hero.global_position = MapBuilder.cell_to_world(camp.start) + Vector3(0, 0.05, 0)
+	hero.global_position = CampPlan.START + Vector3(0, 0.05, 0)
 	hero.dir8 = 4  # facing up, into the camp
-	# The hero as the missions show him: the figure of his class with his blade (the body
-	# walks, the figure plays idle or walk and turns the way he goes).
 	figure.setup(MapPeople.HEROES[clampi(int(profile.head), 0, 3)])
 	figure.unequip_all()
 	figure.equip(MapPeople.BLADES[clampi(profile.weapon_kind(), 0, 1)])
@@ -113,47 +116,31 @@ func _build_world() -> void:
 	figure.play("idle", 0.0)
 	if hero.sprite != null:
 		hero.sprite.visible = false
-	# a little of the land past the top
-	camera.focus = Vector3(CampMap.W / 2.0, 0.0, CampMap.H / 2.0 - 0.3)
-	camera.distance = CAMERA_DISTANCE
-	camera.snap()
-	# Each open way: only the blinking arrow of the original rooms in its gap; nothing says
-	# where it leads (that is learnt by playing).
-	for e in camp.exits:
-		var at := MapBuilder.cell_to_world(e.inside)
-		if e.open:
-			var arrow := Sprite3D.new()
-			arrow.name = "Arrow%d_%d" % [e.place, e.mission]
-			arrow.texture = MissionScreen.exit_arrow(ARROW_OF_SIDE[int(e.side)])
-			arrow.pixel_size = 1.0 / 72.0
-			arrow.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-			arrow.no_depth_test = true
-			arrow.position = MapBuilder.cell_to_world(e.gap[1]).lerp(at, 0.5) + Vector3(0, 0.6, 0)
-			world.add_child(arrow)
-			arrows.append(arrow)
-		_scenery(e, terrain(int(e.place)))
-		spots.append(
-			{
-				"kind": "way",
-				"place": int(e.place),
-				"mission": int(e.mission),
-				"open": bool(e.open),
-				"at": at
-			}
-		)
-	var smith := MapBuilder.cell_to_world(camp.smith_spot())
-	%Smith.position = smith + Vector3(0, 2.1, -0.6)
-	spots.append({"kind": "smith", "at": smith})
-	var store := MapBuilder.cell_to_world(camp.store_spot())
-	%Store.position = store + Vector3(0, 1.3, -0.5)
-	spots.append({"kind": "store", "at": store})
-	var door := MapBuilder.cell_to_world(camp.hall_door())
-	%Hall.position = door + Vector3(0, 2.8, -1.0)
-	spots.append({"kind": "hall", "at": door})
+
+
+## The blinking arrow in an open gate, pointing the way out; nothing says where it leads.
+func _add_arrow(e: Dictionary) -> void:
+	var arrow := Sprite3D.new()
+	arrow.name = "Arrow%d_%d" % [e.place, e.mission]
+	arrow.texture = MissionScreen.exit_arrow(arrow_side(e.out))
+	arrow.pixel_size = ARROW_PIXEL
+	arrow.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	arrow.no_depth_test = true
+	var at: Vector3 = e.gate.lerp(e.inside, 0.5)
+	arrow.position = at + Vector3(0, ARROW_HEIGHT, 0)
+	world.add_child(arrow)
+	arrows.append(arrow)
+
+
+## The arrow picture (MissionScreen.exit_arrow) for a way out going `out` on the ground.
+static func arrow_side(out: Vector3) -> int:
+	if absf(out.z) >= absf(out.x):
+		return ARROW_UP if out.z < 0.0 else ARROW_DOWN
+	return ARROW_RIGHT if out.x > 0.0 else ARROW_LEFT
 
 
 func _show_place() -> void:
-	var kind := tr("camp.main") if camp.main else tr("camp.stop")
+	var kind := tr("camp.main") if plan.main else tr("camp.stop")
 	title.text = (
 		"%s · %s"
 		% [kind, campaign.lord_name(camp_place()) if camp_place() > 0 else tr("camp.start")]
@@ -209,35 +196,15 @@ func _physics_process(_delta: float) -> void:
 		use(near)
 
 
-## The spot in talking range of a position, or empty.
+## The nearest spot whose range reaches a position, or empty.
 func spot_near(pos: Vector3) -> Dictionary:
-	for s in spots:
-		var d := Vector2(pos.x - s.at.x, pos.z - s.at.z).length()
-		if d <= TALK_RANGE:
-			return s
-	return {}
+	return CampPlan.spot_near(spots, pos)
 
 
-## The open way whose gap the position has walked out of, or empty.
+## The open way whose gate the position has walked out of, or empty.
 func exit_crossed(pos: Vector3) -> Dictionary:
-	if pos.z > 0.6 and pos.x > 0.6 and pos.x < CampMap.W - 0.6:
-		return {}
-	for i in camp.exits.size():
-		var e: Dictionary = camp.exits[i]
-		if not e.open:
-			continue
-		var c: Vector2i = e.gap[1]
-		var hit := false
-		match int(e.side):
-			0:
-				hit = pos.z <= 0.6 and absf(pos.x - (c.x + 0.5)) < 1.6
-			1:
-				hit = pos.x >= CampMap.W - 0.6 and absf(pos.z - (c.y + 0.5)) < 1.6
-			2:
-				hit = pos.x <= 0.6 and absf(pos.z - (c.y + 0.5)) < 1.6
-		if hit:
-			return spots[i]
-	return {}
+	var i := plan.exit_crossed(pos)
+	return {} if i < 0 else spots[i]
 
 
 func _hint_text(s: Dictionary) -> String:
@@ -248,6 +215,8 @@ func _hint_text(s: Dictionary) -> String:
 			return InputSetup.hint("camp.enter_smith")
 		"store":
 			return InputSetup.hint("camp.enter_store")
+		"auction":
+			return InputSetup.hint("camp.enter_auction")
 	return InputSetup.hint("camp.hint_walk")
 
 
@@ -272,13 +241,15 @@ func use(s: Dictionary) -> void:
 			Router.push("blacksmith", {"profile_path": path})
 		"store":
 			Router.push("live_warehouse", {"profile_path": path})
+		"auction":
+			Router.push("live_trade", {"profile_path": path})
 
 
-## The ways out of the camp, one gap each: [place, open, mission], in a shuffled order so a
-## gap's side says nothing. When the hero chose the way on at the end of his last mission
+## The ways out of the camp, one gate each: [place, open, mission], in a shuffled order so a
+## gate's side says nothing. When the hero chose the way on at the end of his last mission
 ## (profile.heading), the camp is that place's: a way per mission of it not won yet (each its
 ## general to beat; all of them when all are won). Otherwise (the start, after an ending) a way
-## per place on from here, to the first mission of it not won yet; a closed place is fenced.
+## per place on from here, to the first mission of it not won yet; a closed place is barred.
 func choices() -> Array:
 	var out: Array = []
 	var to: int = int(profile.heading)
@@ -340,74 +311,6 @@ static func terrain_of(map: Dictionary) -> String:
 	if count.town >= 0.2 * n:
 		return "town"
 	return "steppe"
-
-
-## The land past an open or closed gap: a few pictures beside the road on, outside the camp.
-func _scenery(e: Dictionary, land: String) -> void:
-	var out := Vector2.ZERO  # the way out of the gap
-	var across := Vector2.ZERO  # along the edge
-	match int(e.side):
-		0:
-			out = Vector2(0, -1)
-			across = Vector2(1, 0)
-		1:
-			out = Vector2(1, 0)
-			across = Vector2(0, 1)
-		2:
-			out = Vector2(-1, 0)
-			across = Vector2(0, 1)
-	# The middle of the gap's outer edge (its road is the two cells from the gap's centre on).
-	var c: Vector2i = e.gap[1]
-	var mid := Vector2(c.x + 0.5, c.y + 0.5)
-	if int(e.side) == 0:
-		mid = Vector2(c.x + 1.0, 0.0)
-	elif int(e.side) == 1:
-		mid = Vector2(CampMap.W, c.y + 1.0)
-	else:
-		mid = Vector2(0.0, c.y + 1.0)
-	var at := func(ahead: float, side: float) -> Vector3:
-		var p: Vector2 = mid + out * ahead + across * side
-		return Vector3(p.x, 0.0, p.y)
-	for piece in LAND.get(land, LAND["steppe"]):
-		_land_piece(str(piece[0]), at.call(float(piece[1]), float(piece[2])), float(piece[3]))
-	if land == "lake":
-		_lake(at.call(3.2, 0.0) + Vector3(across.x, 0, across.y) * -2.6)
-		_lake(at.call(4.2, 0.0) + Vector3(across.x, 0, across.y) * 3.0)
-
-
-## A piece of the new art standing on the land past the trees (on its hills).
-func _land_piece(what: String, at: Vector3, scale_by: float) -> void:
-	var node: Node3D
-	if what == "hut":
-		node = ArtKit.prop(MapArt.CLUSTERS["hut"])
-	else:
-		var spec: Array = MapArt.PROP.get(what, [])
-		if spec.is_empty():
-			return
-		node = ArtKit.prop(spec[0], false)
-		scale_by *= float(spec[1].x)
-	node.name = "Land%d" % world.get_child_count()
-	node.scale = Vector3.ONE * scale_by
-	node.rotation.y = float(hash(Vector2(at.x, at.z)) % 628) / 100.0
-	node.position = Vector3(at.x, builder.hills(at.x, at.z), at.z)
-	world.add_child(node)
-
-
-## A pond past the trees: a disc of the maps' water on the land.
-func _lake(centre: Vector3) -> void:
-	var mesh := CylinderMesh.new()
-	mesh.top_radius = 1.6
-	mesh.bottom_radius = 1.6
-	mesh.height = 0.02
-	var mi := MeshInstance3D.new()
-	mi.name = "Land%d" % world.get_child_count()
-	mi.mesh = mesh
-	var m := ShaderMaterial.new()
-	m.shader = MapArt.WATER_SHADER
-	mi.material_override = m
-	mi.scale = Vector3(1.4, 1.0, 1.0)
-	mi.position = Vector3(centre.x, builder.hills(centre.x, centre.z) + 0.03, centre.z)
-	world.add_child(mi)
 
 
 func _shuffle(a: Array) -> void:

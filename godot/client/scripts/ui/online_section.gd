@@ -1,14 +1,18 @@
 class_name OnlineSection
 extends VBoxContainer
-## The multiplayer part of the game menu, under the line of the character: Duel, Online Missions,
-## Character, Ranking, Order,
-## Chat and Invitations, open once the player is online. Showing it puts the player online
+## The multiplayer part of the game menu, under the line of the character: Character, Ranking,
+## Order and Chat, open once the player is online. Duel and Online Missions, and Invitations
+## (whether another player's challenge takes me into a battle), are hidden while the online
+## battles are being redone (BATTLES). Showing it puts the player online
 ## (scripts/net/online_client.gd enter); until the server answers it says "Connecting...",
 ## without an answer "Network connection has failed".
 ## The line under the heading is the character: display name, level, wins and losses; Chat
 ## shows the messages waiting (order and private). Another device taking the player online
 ## ("kicked") closes them. leave() takes the player off the online game.
 
+## Whether the online battles are shown: Duel, Online Missions and Invitations here, their
+## topics and keys in Help. Off while they are being redone.
+const BATTLES := false
 ## Button name, text key, screen and the kind for that screen.
 const PAGES := [
 	["Duel", "online.duel", "online_battles", "duel"],
@@ -19,6 +23,8 @@ const PAGES := [
 	["Chat", "online.chat", "online_chat", ""],
 	["Invitations", "menu.invitations", "online_options", ""],
 ]
+## The pages of the online battles, hidden while BATTLES is off.
+const BATTLE_PAGES := ["Duel", "OnlineMissions", "Invitations"]
 
 var online: RefCounted
 var who: Label
@@ -37,7 +43,7 @@ func _init(params: Dictionary) -> void:
 	add_child(who)
 	status = UiTheme.note("Status")
 	add_child(status)
-	for page in PAGES:
+	for page in shown_pages():
 		var b := Button.new()
 		b.name = page[0]
 		b.text = page[1]
@@ -50,6 +56,13 @@ func _init(params: Dictionary) -> void:
 		add_child(b)
 		buttons.append(b)
 	chat = get_node("Chat")
+
+
+## The pages of PAGES shown: without the battles' pages while BATTLES is off.
+static func shown_pages() -> Array:
+	if BATTLES:
+		return PAGES
+	return PAGES.filter(func(p: Array) -> bool: return not p[0] in BATTLE_PAGES)
 
 
 func _ready() -> void:
