@@ -370,11 +370,12 @@ func _ready() -> void:
 	await _shot(out, "11o_online_order_pick")
 	Router.back()
 	Router.back()
-	Router.push("help")  # the Duel topic of the one help
-	await _frames(2)
-	Router.current.open(Router.current.topics.size() - 2)
-	await _shot(out, "11p_online_help")
-	Router.back()
+	if OnlineSection.BATTLES:  # the Duel topic of the one help, while the battles are shown
+		Router.push("help")
+		await _frames(2)
+		Router.current.open(Router.current.topics.size() - 2)
+		await _shot(out, "11p_online_help")
+		Router.back()
 	await _battle_shots(out, game, mp)
 	mp.leave()
 	# The Blacksmith: buying from the shop, and enchanting the sword in hand.
@@ -395,9 +396,10 @@ func _ready() -> void:
 	Router.current.ask.hide()
 	Router.current.sparkle = 3  # the sparkle after Yes, without the outcome
 	Router.current.sparkle_cells = [25] as Array[int]
-	Router.current.get_node("Sparkle").queue_redraw()
+	Router.current.redraw_sparkle()
 	await _shot(out, "16_enchant_sparkle")
 	Router.current.sparkle = -1
+	Router.current.redraw_sparkle()
 	Router.back()
 	Router.current.open_page("combine")
 	await _frames(2)

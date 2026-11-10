@@ -160,9 +160,11 @@ func test_safe_screen() -> void:
 	var screen: Control = Router.make(Router.SCREENS["live_safe"])
 	root.add_child(screen)
 	eq([screen.local.text, screen.server.text], ["500", "0"])
+	eq(screen.arrow.icon, screen._arrows[0], "the arrow points at the hero first")
 	check(not screen.submit(), "nothing in the Safe to take out")
 	eq(screen.info.text, tr("live.no_safe_gold"))
 	screen.turn()
+	eq(screen.arrow.icon, screen._arrows[1], "and at the Safe when turned")
 	screen.amount.text = "9999"
 	screen._typed(screen.amount.text)
 	eq(screen.amount.text, "500", "no more than the hero has")
@@ -176,6 +178,20 @@ func test_safe_screen() -> void:
 	ServerTests._rm(d)
 
 
+func test_safe_arrow_in_the_new_art() -> void:
+	var right := LiveSafeScreen.arrow_icon(true).get_image()
+	var left := LiveSafeScreen.arrow_icon(false).get_image()
+	eq(right.get_width(), LiveSafeScreen.ARROW_PX, "as wide as ARROW_PX")
+	var y := right.get_height() / 2
+	check(right.get_pixel(87, y).a > 0.5 and right.get_pixel(1, y).a < 0.1, "points right")
+	var mirrored := true
+	for x in right.get_width():
+		mirrored = (
+			mirrored and left.get_pixel(x, y) == right.get_pixel(right.get_width() - 1 - x, y)
+		)
+	check(mirrored, "the hero's arrow is the Safe's one turned round")
+
+
 func test_game_menu_has_the_game_and_the_main_menu_the_rest() -> void:
 	var d := _dir()
 	var t := _client(d)
@@ -186,12 +202,13 @@ func test_game_menu_has_the_game_and_the_main_menu_the_rest() -> void:
 	root.add_child(screen)
 	eq(
 		screen.buttons.map(func(b): return str(b.name)),
-		["Missions", "Management", "Blacksmith", "Visiting", "Trade", "Warehouse", "Safe", "Help"]
+		["Management", "Blacksmith", "Visiting", "Trade", "Safe", "Help"],
+		"no Missions (the camp's ways) and no Warehouse (the camp's stores)"
 	)
 	eq(
 		screen.online.buttons.map(func(b): return str(b.name)),
-		["Duel", "OnlineMissions", "Character", "Ranking", "Order", "Chat", "Invitations"],
-		"the multiplayer pages in the same menu"
+		["Character", "Ranking", "Order", "Chat"],
+		"the multiplayer pages in the same menu, without the online battles while they are hidden"
 	)
 	check(t[0].synced and screen.news.done, "Live synced, nothing new")
 	check(screen.menu.visible)

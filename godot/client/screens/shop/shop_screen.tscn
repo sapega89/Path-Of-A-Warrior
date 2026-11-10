@@ -1,8 +1,12 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://screens/shop/shop_screen.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/ui/heading.gd" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/ui/gold_row.tscn" id="3"]
+[ext_resource type="Script" path="res://screens/shop/enchant_sparkle.gd" id="4"]
+
+[sub_resource type="CanvasItemMaterial" id="SparkleLight"]
+blend_mode = 1
 
 [node name="ShopScreen" type="Control"]
 layout_mode = 3
@@ -76,12 +80,13 @@ unique_name_in_owner = true
 [node name="Sparkle" type="Control" parent="."]
 unique_name_in_owner = true
 top_level = true
+material = SubResource("SparkleLight")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-texture_filter = 1
+script = ExtResource("4")
 
 [connection signal="pressed" from="Center/Column/Back" to="." method="go_back"]
 
@@ -89,4 +94,3 @@ texture_filter = 1
 
 [connection signal="canceled" from="Ask" to="." method="_cancel"]
 
-[connection signal="draw" from="Sparkle" to="." method="_draw_sparkle"]
