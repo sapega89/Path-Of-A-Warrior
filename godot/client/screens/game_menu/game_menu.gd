@@ -1,10 +1,11 @@
 class_name GameMenu
 extends BaseScreen
-## Game menu, the hero's game (Main menu > Continue, and after the opening of a new game), one
-## column: the campaign (missions, management, blacksmith, visiting), the Live pages on the
-## server (trade, warehouse, safe), multiplayer (scripts/ui/online_section.gd) and the help of
-## the whole game, a small gap between the groups; it scrolls with the focus. Back returns to
-## the main menu.
+## Game menu, the hero's game (opened from the camp's pause menu), one column: the campaign
+## (management, blacksmith, visiting), the Live pages on the server (trade, safe), multiplayer
+## (scripts/ui/online_section.gd) and the help of the whole game, a small gap between the
+## groups; it scrolls with the focus. The missions start from the ways out of the camp and the
+## warehouse is the camp's stores, so neither is here. Back returns to the camp (to the main
+## menu when there is nothing to go back to).
 ##
 ## The game is always online: here it starts (Cloud.game_started), and without an account the
 ## login opens (the main menu asks for it before, so only when the account was dropped), since

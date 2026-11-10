@@ -370,11 +370,12 @@ func _ready() -> void:
 	await _shot(out, "11o_online_order_pick")
 	Router.back()
 	Router.back()
-	Router.push("help")  # the Duel topic of the one help
-	await _frames(2)
-	Router.current.open(Router.current.topics.size() - 2)
-	await _shot(out, "11p_online_help")
-	Router.back()
+	if OnlineSection.BATTLES:  # the Duel topic of the one help, while the battles are shown
+		Router.push("help")
+		await _frames(2)
+		Router.current.open(Router.current.topics.size() - 2)
+		await _shot(out, "11p_online_help")
+		Router.back()
 	await _battle_shots(out, game, mp)
 	mp.leave()
 	# The Blacksmith: buying from the shop, and enchanting the sword in hand.

@@ -49,10 +49,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 6
 
-[node name="Missions" type="Button" parent="Center/Column/Scroll/List"]
-layout_mode = 2
-text = "menu.missions"
-
 [node name="Management" type="Button" parent="Center/Column/Scroll/List"]
 layout_mode = 2
 text = "menu.management"
@@ -73,10 +69,6 @@ custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
 text = "live.trade"
 
-[node name="Warehouse" type="Button" parent="Center/Column/Scroll/List"]
-layout_mode = 2
-text = "live.warehouse"
-
 [node name="Safe" type="Button" parent="Center/Column/Scroll/List"]
 layout_mode = 2
 text = "live.safe"
@@ -93,8 +85,6 @@ custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
 text = "menu.help"
 
-[connection signal="pressed" from="Center/Column/Scroll/List/Missions" to="." method="_open" binds= ["campaign"]]
-
 [connection signal="pressed" from="Center/Column/Scroll/List/Management" to="." method="_open" binds= ["management"]]
 
 [connection signal="pressed" from="Center/Column/Scroll/List/Blacksmith" to="." method="_open" binds= ["blacksmith"]]
@@ -102,8 +92,6 @@ text = "menu.help"
 [connection signal="pressed" from="Center/Column/Scroll/List/Visiting" to="." method="_open" binds= ["visiting"]]
 
 [connection signal="pressed" from="Center/Column/Scroll/List/Trade" to="." method="_open" binds= ["live_trade"]]
-
-[connection signal="pressed" from="Center/Column/Scroll/List/Warehouse" to="." method="_open" binds= ["live_warehouse"]]
 
 [connection signal="pressed" from="Center/Column/Scroll/List/Safe" to="." method="_open" binds= ["live_safe"]]
 

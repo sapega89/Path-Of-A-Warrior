@@ -261,3 +261,28 @@ func test_the_camp_of_the_way_chosen_offers_its_generals() -> void:
 	var back: RefCounted = Profile.load_or_new(CAMP_PATH)
 	eq(back.heading, 2, "the way chosen is kept")
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))
+
+
+## The town hall names every colonel; how far the hero has come with one only once it is
+## something.
+func test_town_hall_colonels_without_zero() -> void:
+	Profile.new().save(CAMP_PATH)
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": CAMP_PATH}
+	var hall: Control = Router.make(Router.SCREENS["town_hall"])
+	root.add_child(hall)
+	var lines: Array = hall.list.get_node("Colonels").get_children()
+	eq(lines.size(), hall.colonels().size(), "a line per colonel")
+	for l in lines:
+		check(not (l as Label).text.contains("%"), "no 0% for a colonel the hero has not won with")
+	var first: Array = hall.colonels()[0]
+	eq(hall.colonel_line(first), tr(str(first[1])), "only his name")
+	hall.profile.progress[str(first[0])] = 15
+	eq(
+		hall.colonel_line(first),
+		tr("hall.progress") % [tr(str(first[1])), 15],
+		"15% once he has won with him"
+	)
+	hall.free()
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))
