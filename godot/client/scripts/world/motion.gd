@@ -12,27 +12,39 @@ const MIN_FIT := 0.42
 ## Ground speed (m/s) at which the walk and run clips play at speed 1.
 const WALK_SPEED := 1.9
 const RUN_SPEED := 4.2
+## How far the body goes in a skill's move (body_pose()): metres up, radians of turn.
+const LUNGE_LEAN := 0.22
+const LEAP_HEIGHT := 0.9
+const LEAP_LEAN := 0.3
+const STOMP_HEIGHT := 0.35
+const STOMP_LEAN := 0.12
+const RISE_HEIGHT := 0.45
+const TREMBLE_TURN := 0.06
+const TREMBLE_LEAN := 0.05
 
-## The hero's skills 12..30: [clip, mode, speed].
+## The hero's skills 12..30: [clip, mode, speed, body], each its own move: the clip, and how
+## the whole body goes with it (body_pose()): "lunge" leans into the blow, "leap" jumps and
+## comes down with it, "stomp" hops and lands hard, "spin" turns round once more, "rise" is
+## lifted off the ground, "tremble" shakes, "" stands.
 const SKILLS := {
-	12: ["attack_spin", "fit", 1.0],  # Whirlwind Sabre: a dash and a whirl
-	13: ["attack_2h_slash", "fit", 1.0],  # Storm Sabre: smash through
-	14: ["attack_stab", "loop", 2.6],  # Thunder Sabre: a series of thrusts
-	15: ["cast_raise", "fit", 1.0],  # Healing Herbs
-	16: ["cast_raise", "fit", 1.0],  # Living Water
-	17: ["cheer", "fit", 1.0],  # Fury
-	18: ["cast_raise", "fit", 1.0],  # Charm
-	19: ["cast_raise", "fit", 1.0],  # Protection of the Virgin
-	20: ["attack_sweep", "loop", 2.2],  # Dnipro Wave: blow after blow
-	21: ["attack_2h_slash", "fit", 1.0],  # Rapids: knocks back
-	22: ["attack_2h_stab", "fit", 1.0],  # Flood: straight ahead
-	23: ["attack_spin", "fit", 1.0],  # Ring of Fire
-	24: ["attack_spin", "fit", 1.0],  # Fire Whirl
-	25: ["attack_spin", "loop", 1.6],  # Steppe Blaze
-	26: ["cast", "fit", 1.0],  # Lightning
-	27: ["cast", "fit", 1.0],  # Perun's Arrow
-	28: ["cast_raise", "fit", 1.0],  # Thunderstorm
-	29: ["cast_raise", "fit", 1.0],  # Serpent's Breath
+	12: ["attack_spin", "fit", 1.0, "lunge"],  # Whirlwind Sabre: a dash and a whirl
+	13: ["attack_2h_slash", "fit", 1.0, "leap"],  # Storm Sabre: a leap and a smash
+	14: ["attack_stab", "loop", 2.6, "lunge"],  # Thunder Sabre: a series of thrusts
+	15: ["pick_up", "fit", 1.0, ""],  # Healing Herbs: gathers herbs
+	16: ["interact", "fit", 1.0, ""],  # Living Water: pours it out
+	17: ["cheer", "fit", 1.0, "tremble"],  # Fury: a war cry, shaking with rage
+	18: ["cast", "fit", 1.0, "rise"],  # Charm: a guarding spell lifts him
+	19: ["block", "fit", 1.0, ""],  # Protection of the Virgin: on guard under the veil
+	20: ["attack_sweep", "loop", 2.2, "lunge"],  # Dnipro Wave: blow after blow
+	21: ["attack_chop", "fit", 1.0, "stomp"],  # Rapids: a chop into the ground
+	22: ["attack_2h_stab", "fit", 1.0, "lunge"],  # Flood: straight ahead
+	23: ["attack_spin", "fit", 1.0, "stomp"],  # Ring of Fire: a whirl and a stamp
+	24: ["attack_spin", "fit", 1.0, "spin"],  # Fire Whirl: whirls twice
+	25: ["attack_spin", "loop", 1.6, ""],  # Steppe Blaze: whirl after whirl
+	26: ["cast", "fit", 1.0, ""],  # Lightning
+	27: ["throw", "fit", 1.0, ""],  # Perun's Arrow: hurls it
+	28: ["cast_raise", "fit", 1.0, "rise"],  # Thunderstorm: lifted to the clouds
+	29: ["cast_raise", "fit", 1.0, "spin"],  # Serpent's Breath: turns with the serpent
 	30: ["cast_raise", "fit", 1.0],  # Rain of Fire
 }
 ## The three blows of the combo with a short weapon (actions 3..5): quick cuts.
@@ -120,3 +132,27 @@ static func yaw_of(dir8: int) -> float:
 	return [0.0, -PI / 4.0, -PI / 2.0, -3.0 * PI / 4.0, PI, 3.0 * PI / 4.0, PI / 2.0, PI / 4.0][posmod(
 		dir8, 8
 	)]
+
+
+## How the whole body goes with a skill's move (SKILLS) at x, 0..1 of the action: Vector3(lift
+## in metres, extra turn about Y, lean forward), both turns in radians. Any other motion: none.
+static func body_pose(motion: Array, x: float) -> Vector3:
+	var move: String = motion[3] if motion.size() > 3 else ""
+	var swell := sin(PI * clampf(x, 0.0, 1.0))
+	match move:
+		"lunge":
+			return Vector3(0.0, 0.0, LUNGE_LEAN * swell)
+		"leap":
+			var up := sin(PI * clampf(x / 0.6, 0.0, 1.0))
+			return Vector3(LEAP_HEIGHT * up, 0.0, LEAP_LEAN * smoothstep(0.35, 0.6, x) * (1.0 - x))
+		"stomp":
+			var hop := sin(PI * clampf((x - 0.15) / 0.4, 0.0, 1.0))
+			return Vector3(STOMP_HEIGHT * hop, 0.0, STOMP_LEAN * swell)
+		"spin":
+			return Vector3(0.0, TAU * smoothstep(0.1, 0.9, x), 0.0)
+		"rise":
+			var lifted := smoothstep(0.0, 0.3, x) * (1.0 - smoothstep(0.75, 1.0, x))
+			return Vector3(RISE_HEIGHT * lifted, 0.0, 0.0)
+		"tremble":
+			return Vector3(0.0, TREMBLE_TURN * sin(x * 90.0) * swell, TREMBLE_LEAN * swell)
+	return Vector3.ZERO
