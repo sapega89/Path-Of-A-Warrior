@@ -3158,6 +3158,26 @@ null,
 },
 "pages": [
 {
+"en": "In a mission you fight your way from room to room. Walk up to an enemy and strike; gold and things that fall are yours once you walk over them.",
+"uk": "У місії ти пробиваєшся з кімнати в кімнату. Підійди до ворога й бий; золото й речі, що впали, стануть твоїми, щойно пройдеш по них."
+},
+{
+"en": "The red ball at the bottom of the screen is your health, the blue one your spirit. Skills cost spirit; potions bring health and spirit back.",
+"uk": "Червона куля внизу екрана — твоє здоров'я, синя — дух. Уміння витрачають дух; зілля повертає здоров'я й дух."
+},
+{
+"en": "Your skills are on the keys 1 to 5; Management > Skills in the game menu chooses which. Potions and scrolls you pick up go onto the belt and are used with Z, X, C, V and B. A gamepad's buttons are under Control.",
+"uk": "Твої вміння — на клавішах 1–5; які саме, вибираєш в ігровому меню: Керування > Уміння. Підібране зілля й сувої лягають на пояс і вживаються клавішами Z, X, C, V і B. Кнопки геймпада — у темі «Керування»."
+},
+{
+"en": "Auto-hunt (Tab) lets your warrior fight by himself; move or strike and you have him back. There is no auto-hunt on Hard.",
+"uk": "Автополювання (Tab) — твій вояк б'ється сам; рушиш чи вдариш — і він знову твій. На складності «Важко» автополювання немає."
+},
+{
+"en": "When a room is cleared, its ways out open: walk out where the arrow blinks at the edge of the screen.",
+"uk": "Коли кімнату очищено, виходи з неї відкриваються: вийди туди, де на краю екрана блимає стрілка."
+},
+{
 "en": "A mission won brings gold, fame, experience and things found on the field.",
 "uk": "Виграна місія приносить золото, славу, досвід і речі, знайдені в полі."
 },
@@ -3190,8 +3210,8 @@ null,
 "uk": "Генералів, з якими ти закінчив місію або зустрівся в полі, можна навідати, коли місія скінчилася."
 },
 {
-"en": "You will find Visiting in the main menu, but only once a mission has been won.",
-"uk": "Відвідини ти знайдеш у головному меню, та лише коли місію виграно."
+"en": "You will find Visiting in the game menu and in the Town Hall of a camp, once a mission has been won.",
+"uk": "Візити ти знайдеш в ігровому меню й у ратуші табору, та лише коли місію виграно."
 },
 {
 "en": "A visit can bring you a skill, a thing, gold, fame, or even a point to your stats!",
@@ -3206,8 +3226,8 @@ null,
 },
 "pages": [
 {
-"en": "The smith buys and sells things.",
-"uk": "Коваль купує й продає речі."
+"en": "The smith, in every camp, buys and sells things.",
+"uk": "Коваль, що є в кожному таборі, купує й продає речі."
 },
 {
 "en": "He can also charm a thing by combining it with certain others.",
@@ -3218,16 +3238,16 @@ null,
 "uk": "Спробуй складати різні речі в коваля, щоб відкрити нові."
 },
 {
-"en": "Online you can buy, sell or give things to other players, and keep your gold on the server.",
-"uk": "У мережі можна купувати, продавати або дарувати речі іншим гравцям і тримати золото на сервері."
+"en": "In the game menu, Trade buys and sells things with other players, and Safe keeps your gold on the server.",
+"uk": "В ігровому меню Торгівля купує й продає речі разом з іншими гравцями, а Сейф тримає твоє золото на сервері."
 },
 {
 "en": "Remember that a tax is taken on every thing sold or given to another player.",
 "uk": "Пам'ятай, що з кожної речі, проданої чи подарованої іншому гравцеві, береться податок."
 },
 {
-"en": "Changed your mind about a sale? Live > Trade > Cancel Sale takes the thing back.",
-"uk": "Передумав продавати? Мережа > Обмін > Скасувати продаж поверне річ."
+"en": "Changed your mind about a sale? Trade > Cancel Sale takes the thing back.",
+"uk": "Передумав продавати? Торгівля > Зняти з продажу поверне річ."
 }
 ]
 },
@@ -3242,8 +3262,8 @@ null,
 "uk": "Єдиний спосіб навчитися вміння або вдосконалити його — відвідини вояка чи генерала."
 },
 {
-"en": "Open Management > Skill in the game menu before a mission to swap the skills you carry.",
-"uk": "Відкрий Управління > Вміння в ігровому меню перед місією, щоб поміняти вміння, які береш із собою."
+"en": "Before a mission, Management > Skills in the game menu swaps the skills you carry.",
+"uk": "Перед місією в ігровому меню, Керування > Уміння, можна поміняти вміння, які береш із собою."
 },
 {
 "en": "A skill's level rises only through a visit to a general.",
@@ -3262,8 +3282,8 @@ null,
 "uk": "Усе, що можна носити, зброя так само, як і обладунок, зветься спорядженням."
 },
 {
-"en": "Before a mission starts you can put on your gear under Management > Gear in the game menu.",
-"uk": "Перед початком місії спорядження можна одягнути в ігровому меню: Управління > Спорядження."
+"en": "Before a mission you put on your gear under Management > Gear in the game menu.",
+"uk": "Перед місією спорядження одягають в ігровому меню: Керування > Спорядження."
 },
 {
 "en": "A piece of gear is plain, special or rare. Some pieces are very hard to come by.",
@@ -3318,32 +3338,20 @@ null,
 },
 "pages": [
 {
-"en": "Every step you take is saved on its own.",
-"uk": "Кожен твій крок зберігається сам собою."
+"en": "The game is saved each time your warrior comes into a camp.",
+"uk": "Гра зберігається щоразу, коли твій вояк приходить до табору."
 },
 {
-"en": "A mission can be saved after a stage is cleared, but if the mission is lost, that save is lost too.",
-"uk": "Місію можна зберегти після пройденого етапу, та якщо місію програно, це збереження теж пропадає."
+"en": "There is no saving in the middle of a mission: a lost mission takes you back to the camp you set out from, to try it again.",
+"uk": "Посеред місії зберегтися не можна: програна місія повертає до табору, з якого ти вирушив, і її можна пройти знову."
 },
 {
-"en": "The Live entry of the game menu puts your warrior on the server and fetches him back.",
-"uk": "Пункт Мережа в ігровому меню кладе твого вояка на сервер і забирає назад."
+"en": "Your warrior is kept on the server, so the game needs a connection; log in to your account to play him on any device.",
+"uk": "Твій вояк зберігається на сервері, тому грі потрібне з'єднання; увійди у свій обліковий запис — і грай ним на будь-якому пристрої."
 },
 {
-"en": "Try your warrior in online missions. He is ranked against other players without you lifting a finger.",
-"uk": "Спробуй свого вояка в мережевих місіях. Його місце серед інших гравців визначається саме собою."
-},
-{
-"en": "Your standing is shown in the multiplayer game.",
-"uk": "Твоє місце показано в грі для кількох гравців."
-},
-{
-"en": "Use Load User Data to load a warrior saved on this device.",
-"uk": "Щоб завантажити вояка, збереженого на цьому пристрої, вибери Завантажити дані."
-},
-{
-"en": "Connecting to Live adds your saved experience and fame on its own.",
-"uk": "Підключення до мережі саме додає збережені досвід і славу."
+"en": "What happened while you were away (sales, gifts, experience and fame) is shown when the game menu opens.",
+"uk": "Що сталося, поки тебе не було (продажі, подарунки, досвід і слава), показується, коли відкриваєш ігрове меню."
 }
 ]
 },

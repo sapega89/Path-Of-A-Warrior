@@ -47,3 +47,28 @@ func test_new_game_steps() -> void:
 	eq(saved.base_hp, 25, "the Haidamaka's HP")
 	screen.free()
 	Router.params = old
+
+
+## New Game: the opening story, then the camp, which starts the first mission at once (no
+## training before it); the Settings offer no training either.
+func test_after_the_opening_the_first_mission() -> void:
+	var old: Dictionary = Router.params
+	var host := Control.new()
+	root.add_child(host)
+	Router.attach(host)
+	Router.go("settings")
+	check(Router.current.find_child("Training", true, false) == null, "Settings: no Training")
+	Router.push("new_game", {"profile_path": TEST_PATH})
+	Router.current.finish()
+	eq(Router.current_name(), "story", "the opening story")
+	eq(
+		[Router.params.get("then"), Router.params.get("then_params")],
+		["camp", {"first": true, "profile_path": TEST_PATH}],
+		"then the camp, at the first mission"
+	)
+	Router.current._end()
+	eq(Router.current_name(), "camp", "the camp of the new hero")
+	eq(Router.params.get("profile_path"), TEST_PATH, "its hero")
+	Router.attach(null)
+	host.free()
+	Router.params = old

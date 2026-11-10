@@ -146,11 +146,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Training" type="Button" parent="Center/Column"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "settings.training"
-
 [node name="Back" type="Button" parent="Center/Column"]
 layout_mode = 2
 text = "common.back"
@@ -170,7 +165,5 @@ text = "common.back"
 [connection signal="toggled" from="Center/Column/RumbleRow/Rumble" to="." method="_on_rumble"]
 
 [connection signal="toggled" from="Center/Column/FullscreenRow/Fullscreen" to="." method="_on_fullscreen"]
-
-[connection signal="pressed" from="Center/Column/Training" to="." method="_on_training"]
 
 [connection signal="pressed" from="Center/Column/Back" to="." method="_back"]
