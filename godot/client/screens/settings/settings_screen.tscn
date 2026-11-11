@@ -144,19 +144,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PixelArtRow" type="HBoxContainer" parent="Center/Column/Scroll/Rows"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Center/Column/Scroll/Rows/PixelArtRow"]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "settings.pixel_art"
-
-[node name="PixelArt" type="CheckBox" parent="Center/Column/Scroll/Rows/PixelArtRow"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
 [node name="BrightnessRow" type="HBoxContainer" parent="Center/Column/Scroll/Rows"]
 layout_mode = 2
 
@@ -241,8 +228,6 @@ text = "common.back"
 [connection signal="toggled" from="Center/Column/Scroll/Rows/ScreenShakeRow/ScreenShake" to="." method="_on_screen_shake"]
 
 [connection signal="toggled" from="Center/Column/Scroll/Rows/RumbleRow/Rumble" to="." method="_on_rumble"]
-
-[connection signal="toggled" from="Center/Column/Scroll/Rows/PixelArtRow/PixelArt" to="." method="_on_pixel_art"]
 
 [connection signal="value_changed" from="Center/Column/Scroll/Rows/BrightnessRow/Brightness" to="." method="_on_brightness"]
 

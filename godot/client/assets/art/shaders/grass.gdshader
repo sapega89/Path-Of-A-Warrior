@@ -5,7 +5,7 @@ shader_type spatial;
 // data: the colour, and in alpha how much lighter or darker this one is) and is lit as the
 // ground (its normal points up), so it grows out of the land instead of standing on it.
 // The vertex colour tells the blade's parts: red how high up (0 at the root, 1 at the tip),
-// alpha 1 on an ear of wheat.
+// alpha 1 on an ear of wheat. Drawn for pixel art: the shadows' edges hard.
 render_mode cull_disabled, world_vertex_coords;
 
 uniform vec3 shade_tint : source_color = vec3(0.56, 0.6, 0.78);
@@ -22,8 +22,6 @@ uniform float sway = 0.45;
 uniform float tip_light = 0.55;
 // the colour of the ears of wheat (sRGB)
 uniform vec3 ear_colour : source_color = vec3(0.85, 0.7, 0.4);
-// 1 when the world is drawn as pixel art (Settings "pixel_art"): the shadows' edges hard
-global uniform float pixel_art;
 
 varying float up;
 varying float ear;
@@ -70,8 +68,7 @@ void fragment() {
 
 void light() {
 	if (LIGHT_IS_DIRECTIONAL) {
-		float shadow = mix(smoothstep(0.2, 0.6, ATTENUATION), step(0.5, ATTENUATION), pixel_art);
-		float lit = clamp(dot(NORMAL, LIGHT) * 2.0, 0.0, 1.0) * shadow;
+		float lit = clamp(dot(NORMAL, LIGHT) * 2.0, 0.0, 1.0) * step(0.5, ATTENUATION);
 		DIFFUSE_LIGHT += mix(shade_tint * shade_depth, vec3(1.0), lit) * LIGHT_COLOR / PI;
 	} else {
 		DIFFUSE_LIGHT += clamp(dot(NORMAL, LIGHT), 0.0, 1.0) * ATTENUATION * LIGHT_COLOR / PI;

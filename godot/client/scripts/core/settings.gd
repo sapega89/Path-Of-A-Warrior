@@ -15,7 +15,6 @@ const DEFAULTS := {
 	"hit_feel": true,  # the hitstop, shake, flash, flight and sound of a hit on the map
 	"screen_shake": true,  # of those, the camera shake
 	"rumble": true,  # of those, the pad's (or the phone's) rumble
-	"pixel_art": true,  # the 3D world drawn as pixel art (pixel_view.gd), or smooth
 	"brightness": 0.5,  # the 3D world's: 0.5 as it is drawn, 0 darker, 1 brighter (world_gamma)
 	"graphics": 1,  # 0 Low, 1 Medium (the engine's own), 2 High (GRAPHICS)
 	"window_size": 0,  # the window when not in full screen (WINDOW_SIZES; desktop only)
@@ -25,28 +24,12 @@ const DEFAULTS := {
 const SPEED_MS := [250, 180, 120, 90, 50]
 const BUSES := {"music_volume": "Music", "sfx_volume": "SFX"}
 ## What each graphics quality (Low, Medium, High) draws: the sun's shadow map (pixels a side) and
-## how soft its edges are, the lamps' and fires' shadow maps in each 3D view (never 0: the
-## compatibility renderer then draws the world white), and in the smooth world how its edges are
-## smoothed (pixel art has none). Medium is the engine's own.
+## how soft its edges are, and the lamps' and fires' shadow maps in each 3D view (never 0: the
+## compatibility renderer then draws the world white). Medium is the engine's own.
 const GRAPHICS := [
-	{
-		"sun": 2048,
-		"soft": RenderingServer.SHADOW_QUALITY_HARD,
-		"lamps": 1024,
-		"msaa": Viewport.MSAA_DISABLED,
-	},
-	{
-		"sun": 4096,
-		"soft": RenderingServer.SHADOW_QUALITY_SOFT_LOW,
-		"lamps": 2048,
-		"msaa": Viewport.MSAA_2X,
-	},
-	{
-		"sun": 4096,
-		"soft": RenderingServer.SHADOW_QUALITY_SOFT_HIGH,
-		"lamps": 4096,
-		"msaa": Viewport.MSAA_4X,
-	},
+	{"sun": 2048, "soft": RenderingServer.SHADOW_QUALITY_HARD, "lamps": 1024},
+	{"sun": 4096, "soft": RenderingServer.SHADOW_QUALITY_SOFT_LOW, "lamps": 2048},
+	{"sun": 4096, "soft": RenderingServer.SHADOW_QUALITY_SOFT_HIGH, "lamps": 4096},
 ]
 ## The window's sizes to choose from (the first is the game's own); those larger than the screen
 ## are not offered.
@@ -164,11 +147,6 @@ func _apply(key: String) -> void:
 				var v: float = get_value(key)
 				AudioServer.set_bus_volume_db(bus, volume_db(v))
 				AudioServer.set_bus_mute(bus, v <= 0.0)
-		"pixel_art":
-			# the shaders of the world draw for it: hard steps of light, no grain finer than a pixel
-			RenderingServer.global_shader_parameter_set(
-				&"pixel_art", 1.0 if get_value(key) else 0.0
-			)
 		"brightness":
 			RenderingServer.global_shader_parameter_set(&"world_gamma", world_gamma(get_value(key)))
 		"fullscreen":

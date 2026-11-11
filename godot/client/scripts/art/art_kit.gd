@@ -47,11 +47,32 @@ const AMBIENT_ENERGY := 0.5
 const AIR := Color("a7a393")
 ## The grade of the finished picture: brightness, contrast, saturation (a little muted).
 const GRADE := Vector3(1.0, 1.1, 0.88)
+## The rings of a thing one can break (breakable_outline.gdshader), from the outside in: a dark
+## one out past a light one and a little behind it, and the light one, that goes from brass to
+## near white and back. How far each reaches out: width_px pixels in a window 720 high, and
+## min_pixels pixels of the world at least; behind: metres away from the camera.
+const BREAKABLE_RINGS := [
+	{
+		"color": PALETTE.chernozem,
+		"peak": PALETTE.chernozem,
+		"width_px": 5.0,
+		"min_pixels": 3.0,
+		"behind": 0.03,
+	},
+	{
+		"color": Color(1.0, 0.86, 0.5),
+		"peak": Color(1.0, 0.96, 0.82),
+		"width_px": 3.0,
+		"min_pixels": 2.0,
+		"behind": 0.0,
+	},
+]
 
 static var _scenes := {}
 static var _clips: AnimationLibrary
 static var _props_material: ShaderMaterial
 static var _tufts_material: ShaderMaterial
+static var _breakable_rings: ShaderMaterial
 
 
 static func scene(path: String) -> PackedScene:
@@ -119,19 +140,33 @@ static func prop(prop_name: String, outline := false) -> Node3D:
 
 
 ## A piece one can break (a barrel, a crate, a bush in the way): with its own material (a hit
-## flashes it) and, in place of the ink outline, a brass one with warm edges that slowly glow
-## and dim, so it reads apart from what only stands around.
+## flashes it) and, in place of the ink outline, two rings (breakable_outline.gdshader): a light
+## one that slowly glows and dims, and a dark one outside it; its edges warm with the light ring.
+## So it reads at a glance apart from what only stands around, on any ground and in any wood.
 static func breakable_prop(prop_name: String) -> Node3D:
 	var node: Node3D = scene("props/%s.glb" % prop_name).instantiate()
 	var m := painted(false)
-	var outline := ShaderMaterial.new()
-	outline.shader = BREAKABLE_OUTLINE
-	var glow := ShaderMaterial.new()
-	glow.shader = BREAKABLE_GLOW
-	outline.next_pass = glow
-	m.next_pass = outline
+	m.next_pass = breakable_rings()
 	dress(node, m)
 	return node
+
+
+## The passes that mark a thing one can break, shared by all of them: its rings
+## (BREAKABLE_RINGS), then its warm edges.
+static func breakable_rings() -> ShaderMaterial:
+	if _breakable_rings == null:
+		var glow := ShaderMaterial.new()
+		glow.shader = BREAKABLE_GLOW
+		var after: Material = glow
+		for i in range(BREAKABLE_RINGS.size() - 1, -1, -1):
+			var ring := ShaderMaterial.new()
+			ring.shader = BREAKABLE_OUTLINE
+			for key: String in BREAKABLE_RINGS[i]:
+				ring.set_shader_parameter(key, BREAKABLE_RINGS[i][key])
+			ring.next_pass = after
+			after = ring
+		_breakable_rings = after as ShaderMaterial
+	return _breakable_rings
 
 
 ## The clips every person shares, from characters/humanoid_clips.glb.
