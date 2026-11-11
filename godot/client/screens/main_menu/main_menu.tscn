@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://screens/main_menu/main_menu.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/ui/heading.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ask_dialog.tscn" id="3"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -55,6 +56,11 @@ text = "menu.settings"
 layout_mode = 2
 text = "menu.quit"
 
+[node name="Ask" parent="." instance=ExtResource("3")]
+unique_name_in_owner = true
+layout_mode = 1
+safe_default = true
+
 [connection signal="pressed" from="Center/Column/Play" to="." method="play"]
 
 [connection signal="pressed" from="Center/Column/NewGame" to="." method="new_game"]
@@ -64,3 +70,5 @@ text = "menu.quit"
 [connection signal="pressed" from="Center/Column/Settings" to="." method="open_settings"]
 
 [connection signal="pressed" from="Center/Column/Quit" to="." method="quit"]
+
+[connection signal="confirmed" from="Ask" to="." method="start_new_game"]

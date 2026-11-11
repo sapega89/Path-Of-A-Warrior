@@ -6,7 +6,9 @@ extends BaseScreen
 ## saved on this computer (Profile.PATH).
 
 var buttons: Array[Button] = []
-var ask: AskDialog  # "Starting a new game will cause your saved game to be deleted.", No first
+
+## "Starting a new game will cause your saved game to be deleted.", No first
+@onready var ask: AskDialog = %Ask
 
 
 func _ready() -> void:
@@ -18,11 +20,7 @@ func _ready() -> void:
 	for b in col.get_children():
 		if b is Button:
 			buttons.append(b)
-	ask = AskDialog.new()
-	ask.safe_default = true
 	ask.dialog_text = tr("newgame.ask_delete")
-	ask.confirmed.connect(func(): Router.push("new_game", {}))
-	add_child(ask)
 	_focus_first.call_deferred()
 
 
@@ -68,6 +66,10 @@ func new_game() -> void:
 	if Profile.exists():
 		ask.popup_centered()
 		return
+	start_new_game()
+
+
+func start_new_game() -> void:
 	Router.push("new_game", {})
 
 

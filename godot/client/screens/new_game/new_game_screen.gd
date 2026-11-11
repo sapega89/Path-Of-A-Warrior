@@ -20,7 +20,6 @@ const STAT_KEYS := ["hp", "mp", "attack", "defense"]
 var path: String = Profile.PATH
 var profile := Profile.new()
 var step := Step.DIFFICULTY
-var ask: AskDialog
 var stat_buttons: Array[Button] = []  # the "+" of each stat
 var stat_values: Array[Label] = []
 
@@ -32,6 +31,7 @@ var stat_values: Array[Label] = []
 @onready var points_hint: Label = %PointsHint
 @onready var reset_button: Button = %Reset
 @onready var done_button: Button = %Done
+@onready var ask: AskDialog = %Ask
 ## Each step's page and heading.
 @onready var pages := {
 	Step.DIFFICULTY: [%DifficultyPage, "newgame.difficulty"],
@@ -49,9 +49,6 @@ func _ready() -> void:
 	for i in STAT_KEYS.size():
 		stat_buttons.append(%PointsPage.get_node("Row%d/Stat%d" % [i, i]))
 		stat_values.append(%PointsPage.get_node("Row%d/Value" % i))
-	ask = AskDialog.new()
-	ask.confirmed.connect(_confirmed)
-	add_child(ask)
 	show_step(Step.DIFFICULTY)
 
 

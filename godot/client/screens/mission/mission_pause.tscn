@@ -1,0 +1,104 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://screens/mission/mission_pause.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/ui/heading.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ask_dialog.tscn" id="3"]
+
+[node name="Pause" type="Control"]
+top_level = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="Dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="Menu" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Center" type="CenterContainer" parent="Menu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Column" type="VBoxContainer" parent="Menu/Center"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Heading" type="Label" parent="Menu/Center/Column"]
+layout_mode = 2
+theme_type_variation = &"Heading"
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 44
+text = "pause.title"
+horizontal_alignment = 1
+script = ExtResource("2")
+
+[node name="Resume" type="Button" parent="Menu/Center/Column"]
+layout_mode = 2
+text = "pause.resume"
+
+[node name="Items" type="Button" parent="Menu/Center/Column"]
+layout_mode = 2
+text = "pause.items"
+
+[node name="Options" type="Button" parent="Menu/Center/Column"]
+layout_mode = 2
+text = "pause.options"
+
+[node name="Help" type="Button" parent="Menu/Center/Column"]
+layout_mode = 2
+text = "pause.help"
+
+[node name="Exit" type="Button" parent="Menu/Center/Column"]
+layout_mode = 2
+text = "pause.exit"
+
+[node name="Quit" type="Button" parent="Menu/Center/Column"]
+layout_mode = 2
+text = "pause.quit"
+
+[node name="Note" parent="." instance=ExtResource("3")]
+unique_name_in_owner = true
+layout_mode = 1
+notice = true
+
+[node name="Ask" parent="." instance=ExtResource("3")]
+unique_name_in_owner = true
+layout_mode = 1
+safe_default = true
+
+[connection signal="pressed" from="Menu/Center/Column/Resume" to="." method="resume"]
+
+[connection signal="pressed" from="Menu/Center/Column/Items" to="." method="open_items"]
+
+[connection signal="pressed" from="Menu/Center/Column/Options" to="." method="open_options"]
+
+[connection signal="pressed" from="Menu/Center/Column/Help" to="." method="open_help"]
+
+[connection signal="pressed" from="Menu/Center/Column/Exit" to="." method="_ask" binds= ["exit"]]
+
+[connection signal="pressed" from="Menu/Center/Column/Quit" to="." method="_ask" binds= ["quit"]]
+
+[connection signal="confirmed" from="Ask" to="." method="confirmed"]

@@ -494,8 +494,7 @@ func pause() -> void:
 		return
 	set_process(false)
 	_release_keys()
-	pause_menu = MissionPause.new()
-	pause_menu.name = "Pause"
+	pause_menu = (load(MissionPause.SCENE) as PackedScene).instantiate()
 	pause_menu.sim = sim
 	pause_menu.save_game = save_on_map
 	pause_menu.resumed.connect(resume)

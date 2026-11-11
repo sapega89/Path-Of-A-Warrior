@@ -18,6 +18,9 @@ func test_pause_menu() -> void:
 		["Resume", "Items", "Options", "Help", "Exit"],
 		"its rows: no Save, the camps keep the game"
 	)
+	eq(screen.pause_menu.name, &"Pause", "from its scene")
+	check(screen.pause_menu.ask.safe_default, "exit asked with No first")
+	check(screen.pause_menu.note.notice, "the notice has OK alone")
 	screen.sim.quick_slots[2] = [4, 1]
 	screen.pause_menu.open_items()
 	var items: Control = screen.pause_menu.settings
@@ -40,8 +43,8 @@ func test_pause_menu() -> void:
 	check(screen.pause_menu.settings is HelpScreen, "the help over it")
 	screen.pause_menu.settings.go_back()
 	check(screen.pause_menu.settings == null, "leaving the help returns to the pause menu")
-	screen.pause_menu.resumed.emit()
-	check(screen.pause_menu == null, "resumed: the menu goes")
+	screen.pause_menu.buttons[0].pressed.emit()
+	check(screen.pause_menu == null, "Resume: the menu goes")
 	check(screen.is_processing(), "and the game runs on")
 	screen.free()
 	Router.params = old
