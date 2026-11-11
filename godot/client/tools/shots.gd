@@ -130,13 +130,13 @@ func _ready() -> void:
 	Router.back()
 	Router.current.open_page("enchant")
 	await _frames(2)
-	Router.current.cells[25].grab_focus()
-	Router.current.press_cell(25)
+	Router.current.cells[0].grab_focus()  # the sword in hand, first among the things worn
+	Router.current.press_cell(0)
 	await _frames(2)
 	await _shot(out, "16_enchant_ask")
 	Router.current.ask.hide()
 	Router.current.sparkle = 3  # the sparkle after Yes, without the outcome
-	Router.current.sparkle_cells = [25] as Array[int]
+	Router.current.sparkle_cells = [0] as Array[int]
 	Router.current.redraw_sparkle()
 	await _shot(out, "16_enchant_sparkle")
 	Router.current.sparkle = -1

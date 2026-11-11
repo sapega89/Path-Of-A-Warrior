@@ -271,6 +271,14 @@
     "en": "Your backpack is full. Please empty some items and try again.",
     "uk": "Торба повна. Звільніть місце й спробуйте ще."
   },
+  "enchant.worn": {
+    "en": "Worn",
+    "uk": "На герої"
+  },
+  "enchant.backpack": {
+    "en": "Backpack",
+    "uk": "Торба"
+  },
   "enchant.not_possible": {
     "en": "Not possible to enchant.",
     "uk": "Це не зачарувати."
