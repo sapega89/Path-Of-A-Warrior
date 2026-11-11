@@ -1,16 +1,15 @@
 extends BaseScreen
 ## The town hall of a main camp: every colonel who gives missions, with how far the hero has
 ## come with him (Profile.progress, 5 per mission won; only his name while it is nothing yet),
-## and the generals the hero knows, with their friendship (Visits.generals). Visiting opens the
-## visits from here. Over them, the hero's flasks of living water (HeroRun) and his fame; in the
-## town hall of the start camp (Router.params.start) the next flask is sold for fame.
+## and the generals the hero knows, with their friendship (Profile.friendship, in the order he
+## met them). Over them, the hero's flasks of living water (HeroRun) and his fame; in the town
+## hall of the start camp (Router.params.start) the next flask is sold for fame.
 
 var path: String = Profile.PATH
 var profile: Profile
 var campaign := Campaign.new()
 var at_start := false  # the start camp's town hall: it sells the flasks
 @onready var list: VBoxContainer = %List
-@onready var visit: Button = %Visit
 @onready var flasks: Label = %Flasks
 @onready var buy: Button = %BuyFlask
 
@@ -25,18 +24,16 @@ func _ready() -> void:
 	for r in colonels():
 		_cell(grid, colonel_line(r))
 	_section("hall.generals")
-	var gens: Array = Visits.generals(profile)
-	if gens.is_empty():
+	if profile.friendship.is_empty():
 		var none := UiTheme.note("Nobody")
 		none.text = tr("hall.nobody")
 		list.add_child(none)
 	else:
 		grid = _grid("Generals")
-		for g in gens:
-			var name_key := str(MapSim.general_data(int(g[0])).get("name", "?"))
-			_cell(grid, tr("hall.friend") % [tr(name_key), int(g[1])])
-	visit.disabled = not Visits.can_visit(profile)
-	(%Back if visit.disabled else visit).grab_focus.call_deferred()
+		for id in profile.friendship:
+			var name_key := str(MapSim.general_data(int(id)).get("name", "?"))
+			_cell(grid, tr("hall.friend") % [tr(name_key), int(profile.friendship[id])])
+	%Back.grab_focus.call_deferred()
 
 
 ## How many flasks are bought and full, and the fame; at the start the next flask's price.
@@ -55,10 +52,6 @@ func buy_flask() -> void:
 	if profile.run.buy_flask(profile):
 		profile.save(path)
 	_show_flasks()
-
-
-func open_visits() -> void:
-	Router.push("visiting", {"profile_path": path})
 
 
 ## A colonel's line: his name, and how far the hero has come with him once it is something.

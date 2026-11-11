@@ -5,6 +5,7 @@ extends RefCounted
 ## level, gear, gold and fame stay. The flasks are bought with fame in the start camp's town
 ## hall, once and for good, and are full again at every new run: a mission lost empties one,
 ## and the hero tries again from the same camp. An ending that goes on to a main camp fills one.
+## A mission won leaves the gift of its general (Gifts) here until the hero takes a card.
 
 const MAX_FLASKS := 3
 ## The fame the first, second and third flask cost.
@@ -16,6 +17,8 @@ const START_HOTKEYS := [12, 17, 0, 0, 0]
 
 var flasks := 0  # bought, 0..MAX_FLASKS
 var flasks_left := 0  # still full in this run
+var gift: Array[Dictionary] = []  # the cards of the last mission won, until one is taken
+var gift_from := 0  # the general who offers them (0: none)
 
 
 ## What a mission lost costs: the gear it may take (Profile.lose_gear, rolled with rng), and a
@@ -51,6 +54,22 @@ func fill_one() -> void:
 	flasks_left = mini(flasks_left + 1, flasks)
 
 
+## A mission won: its general (campaign.json generals; 0 or an ending: none) offers his cards.
+func offer_gift(profile: Profile, general_id: int, rng: RandomNumberGenerator) -> void:
+	gift_from = general_id
+	gift = Gifts.offer(profile, general_id, rng)
+
+
+## The hero takes card i of the gift; the others are gone. False when there was no such card or
+## no room for it any more.
+func take_gift(profile: Profile, i: int, rng: RandomNumberGenerator) -> bool:
+	if i < 0 or i >= gift.size():
+		return false
+	var card: Dictionary = gift[i]
+	gift = []
+	return Gifts.take(profile, card, rng)
+
+
 ## What the next flask costs in fame (0: all are bought).
 func flask_price() -> int:
 	return int(FLASK_PRICES[flasks]) if flasks < MAX_FLASKS else 0
@@ -69,9 +88,16 @@ func buy_flask(profile: Profile) -> bool:
 
 
 func to_dict() -> Dictionary:
-	return {"flasks": flasks, "flasks_left": flasks_left}
+	return {"flasks": flasks, "flasks_left": flasks_left, "gift": gift, "gift_from": gift_from}
 
 
 func from_dict(d: Dictionary) -> void:
 	flasks = clampi(int(d.get("flasks", 0)), 0, MAX_FLASKS)
 	flasks_left = clampi(int(d.get("flasks_left", flasks)), 0, flasks)
+	gift = []
+	var cards: Variant = d.get("gift", [])
+	if typeof(cards) == TYPE_ARRAY:
+		for c: Variant in cards:
+			if typeof(c) == TYPE_DICTIONARY:
+				gift.append({"kind": int(c.get("kind", -1)), "id": int(c.get("id", 0))})
+	gift_from = int(d.get("gift_from", 0))

@@ -61,18 +61,11 @@ unique_name_in_owner = true
 layout_mode = 2
 auto_translate_mode = 2
 
-[node name="Visit" type="Button" parent="Center/Column/Buttons"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "hall.visits"
-
 [node name="Back" type="Button" parent="Center/Column/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "common.back"
 
 [connection signal="pressed" from="Center/Column/Buttons/BuyFlask" to="." method="buy_flask"]
-
-[connection signal="pressed" from="Center/Column/Buttons/Visit" to="." method="open_visits"]
 
 [connection signal="pressed" from="Center/Column/Buttons/Back" to="." method="go_back"]

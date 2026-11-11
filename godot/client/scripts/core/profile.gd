@@ -54,7 +54,6 @@ var hotkeys: Array = [12, 17, 0, 0, 0]
 var quick_slots: Array = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]
 var quick_keys: Array = [0, 1]
 var friendship := {}  # general id (as text) -> points
-var can_visit := false  # a mission was won since the last visit of a general (Visits)
 var progress := {}  # ruler id (as text) -> 0..100, 5 a won mission
 var done := {}  # "lord:mission" of the missions won
 var place := 0  # where the hero is: the lords of campaign chapter `place` can be fought for
@@ -306,8 +305,8 @@ func apply_to(sim: MapSim) -> void:
 
 ## What the mission left: picked gold and things (a found gear gets its random extra from
 ## rng; what does not fit in the backpack is lost), used potions, friendship; if won, the
-## mission's gold and exp, its progress and its place among the missions done.
-## Returns the levels gained.
+## mission's gold and exp, its progress and its place among the missions done, and the gift
+## of its general (HeroRun.offer_gift). Returns the levels gained.
 func take_from(
 	sim: MapSim, lord_id: int, mission: int, ruler_id: int, rng: RandomNumberGenerator = null
 ) -> int:
@@ -326,10 +325,9 @@ func take_from(
 	var key := str(ruler_id)
 	progress[key] = mini(int(progress.get(key, 0)) + PROGRESS_PER_WIN, 100)
 	done["%d:%d" % [lord_id, mission]] = true
-	if not friendship.is_empty():
-		can_visit = true
 	var levels := gain_exp(int(sim.exp_reward()))
 	Blacksmith.fill_shop(self, rng)
+	run.offer_gift(self, sim.mission_general, rng)
 	return levels
 
 
@@ -444,7 +442,6 @@ func to_dict() -> Dictionary:
 		"quick_slots": quick_slots,
 		"quick_keys": quick_keys,
 		"friendship": friendship,
-		"can_visit": can_visit,
 		"progress": progress,
 		"done": done,
 		"place": place,
@@ -480,7 +477,6 @@ func from_dict(d: Dictionary) -> void:
 	quick_slots = _copy_slots(d.get("quick_slots", quick_slots))
 	quick_keys = d.get("quick_keys", quick_keys)
 	friendship = d.get("friendship", friendship)
-	can_visit = bool(d.get("can_visit", can_visit))
 	progress = d.get("progress", progress)
 	done = d.get("done", done)
 	place = int(d.get("place", place))

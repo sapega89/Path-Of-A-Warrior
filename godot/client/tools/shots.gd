@@ -148,26 +148,15 @@ func _ready() -> void:
 	Router.current.press_cell(2)
 	Router.current.cells[2].grab_focus()
 	await _shot(out, "17_combine")
-	# Visiting: three friends after a won mission; Jan Gorski's greeting, the topics, the gift.
+	# The gift of a mission won: the three cards of Jan Gorski.
 	hero = Profile.load_or_new("user://shot_hero.json")
-	hero.friendship = {"4": 100, "13": 35, "29": 5}
-	hero.can_visit = true
+	var gift_rng := RandomNumberGenerator.new()
+	gift_rng.seed = 7
+	hero.run.offer_gift(hero, 4, gift_rng)
 	hero.save("user://shot_hero.json")
 	Router.go("main_menu")
-	Router.push("visiting", {"profile_path": "user://shot_hero.json", "seed": 7})
-	await _shot(out, "18_visiting_list")
-	var visit: Node = Router.current
-	visit.open(4)
-	for i in 5:  # each line typed out at once, then the next
-		visit.press()
-	await _shot(out, "19_visiting_greeting")
-	visit.press()
-	await _shot(out, "20_visiting_topic")
-	visit.choose(2)
-	for i in 4:
-		visit.press()
-	visit.press()
-	await _shot(out, "21_visiting_gift")
+	Router.push("gift", {"profile_path": "user://shot_hero.json"})
+	await _shot(out, "18_gift")
 	# Endings: three reached, the cursor on one that is not.
 	hero.endings = (1 << 0) | (1 << 2) | (1 << 3)
 	hero.save("user://shot_hero.json")

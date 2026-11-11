@@ -10,10 +10,10 @@ extends BaseScreen
 ## briefing; the mission comes back here when it is over (won: the camp of the new place; lost:
 ## this one again, to try once more with the same hero). A closed way's gate is barred. Every
 ## camp has the blacksmith (buy, sell, enchant, combine) and the town hall (every colonel and
-## general, and the visits of the generals: one after each mission won,
-## scripts/core/visits.gd), which the hero enters from a few steps off its door. The game is
-## saved when the hero comes into a camp. Pause opens the camp menu: the game menu, the world
-## map, the settings, the main menu.
+## general the hero knows), which the hero enters from a few steps off its door. The game is
+## saved when the hero comes into a camp; the gift of the mission just won comes up then
+## (open_gift). Pause opens the camp menu: the game menu, the world map, the settings, the main
+## menu.
 ## Router.params: profile_path; first: true starts the first mission at once (a new game).
 
 const BLINK_TIME := 0.25
@@ -72,9 +72,18 @@ func _ready() -> void:
 	_show_place()
 	if profile.on_map.is_empty():
 		profile.save(path)  # the game is kept between missions, here
+	if not profile.run.gift.is_empty():
+		open_gift.call_deferred()
 	if bool(Router.params.get("first", false)) and profile.done.is_empty():
 		Router.params.erase("first")
 		start_mission.call_deferred(1, 0)
+
+
+## The gift of the mission just won waits (HeroRun.gift): its cards come up over the camp once
+## the camp is the screen shown (a story after the mission goes first).
+func open_gift() -> void:
+	if Router.current == self:
+		Router.push("gift", {"profile_path": path})
 
 
 func _build_world() -> void:

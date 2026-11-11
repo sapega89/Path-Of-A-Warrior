@@ -315,98 +315,6 @@
     "en": "Compounding Fail",
     "uk": "Поєднання не вдалося"
   },
-  "menu.visiting": {
-    "en": "Visiting",
-    "uk": "Візити"
-  },
-  "visit.title": {
-    "en": "Visiting",
-    "uk": "Візити"
-  },
-  "visit.name": {
-    "en": "Name",
-    "uk": "Ім'я"
-  },
-  "visit.points": {
-    "en": "Points",
-    "uk": "Дружба"
-  },
-  "visit.not_now": {
-    "en": "Generals can not be visited at this time. Try again after completing a mission.",
-    "uk": "Зараз генералів не можна запросити. Спробуйте після виконаної місії."
-  },
-  "visit.which_topic": {
-    "en": "What do you want to talk about?",
-    "uk": "Про що ви хочете поговорити?"
-  },
-  "visit.topic_0": {
-    "en": "Sword",
-    "uk": "Меч"
-  },
-  "visit.topic_1": {
-    "en": "Books",
-    "uk": "Книги"
-  },
-  "visit.topic_2": {
-    "en": "Tactics",
-    "uk": "Тактика"
-  },
-  "visit.topic_3": {
-    "en": "People",
-    "uk": "Люди"
-  },
-  "visit.discussed": {
-    "en": "You discussed %s with %s.",
-    "uk": "Ви обговорили тему «%s» з %s."
-  },
-  "visit.visited": {
-    "en": "You visited %s.",
-    "uk": "Вас відвідав %s."
-  },
-  "visit.more": {
-    "en": "Friendship increased by 5.",
-    "uk": "Дружба зросла на 5."
-  },
-  "visit.full": {
-    "en": "Friendship: 100%",
-    "uk": "Дружба: 100%"
-  },
-  "visit.gift_attack": {
-    "en": "Attack +1",
-    "uk": "Атака +1"
-  },
-  "visit.gift_defense": {
-    "en": "Defence +1",
-    "uk": "Захист +1"
-  },
-  "visit.gift_hp": {
-    "en": "HP +5",
-    "uk": "HP +5"
-  },
-  "visit.gift_mp": {
-    "en": "MP +3",
-    "uk": "MP +3"
-  },
-  "visit.gift_fame": {
-    "en": "Fame +10",
-    "uk": "Слава +10"
-  },
-  "visit.gift_skill": {
-    "en": "A new skill:",
-    "uk": "Нове вміння:"
-  },
-  "visit.gift_skill_up": {
-    "en": "Skill up:",
-    "uk": "Вміння зросло:"
-  },
-  "visit.gift_item": {
-    "en": "Item acquired!",
-    "uk": "Отримано річ!"
-  },
-  "visit.ok": {
-    "en": "OK",
-    "uk": "OK"
-  },
   "pause.title": {
     "en": "PAUSE",
     "uk": "ПАУЗА"
@@ -730,10 +638,6 @@
   "hall.nobody": {
     "en": "Nobody yet: win missions beside the generals",
     "uk": "Поки нікого: вигравай місії разом із генералами"
-  },
-  "hall.visits": {
-    "en": "Visiting",
-    "uk": "Візити"
   },
   "hint.menu": {
     "en": "{ui_move}: choose · {ui_accept}: OK · {ui_back_click}: back",
@@ -1106,5 +1010,53 @@
   "run_end.go": {
     "en": "Back to the start",
     "uk": "Повернутися на початок"
+  },
+  "gift.title": {
+    "en": "%s offers a gift",
+    "uk": "%s пропонує дар"
+  },
+  "gift.title_none": {
+    "en": "A gift for the victory",
+    "uk": "Дар за перемогу"
+  },
+  "gift.choose": {
+    "en": "Take one: a skill lasts this run, the rest stays for good",
+    "uk": "Візьми один: навик живе цей похід, решта лишається назавжди"
+  },
+  "gift.kind_skill": {
+    "en": "Skill for this run",
+    "uk": "Навик на цей похід"
+  },
+  "gift.kind_stat": {
+    "en": "Attribute",
+    "uk": "Атрибут"
+  },
+  "gift.kind_gear": {
+    "en": "Item",
+    "uk": "Річ"
+  },
+  "gift.kind_potion": {
+    "en": "Potion",
+    "uk": "Зілля"
+  },
+  "gift.skill_level": {
+    "en": "%s, level %d",
+    "uk": "%s, рівень %d"
+  },
+  "gift.attack": {
+    "en": "Attack +1",
+    "uk": "Атака +1"
+  },
+  "gift.defense": {
+    "en": "Defence +1",
+    "uk": "Захист +1"
+  },
+  "gift.hp": {
+    "en": "HP +5",
+    "uk": "HP +5"
+  },
+  "gift.mp": {
+    "en": "MP +3",
+    "uk": "MP +3"
   }
 }

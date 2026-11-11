@@ -57,10 +57,6 @@ text = "menu.management"
 layout_mode = 2
 text = "menu.blacksmith"
 
-[node name="Visiting" type="Button" parent="Center/Column/Scroll/List"]
-layout_mode = 2
-text = "menu.visiting"
-
 [node name="Gap1" type="Control" parent="Center/Column/Scroll/List"]
 layout_mode = 2
 custom_minimum_size = Vector2(0, 14)
@@ -72,7 +68,5 @@ text = "menu.help"
 [connection signal="pressed" from="Center/Column/Scroll/List/Management" to="." method="_open" binds= ["management"]]
 
 [connection signal="pressed" from="Center/Column/Scroll/List/Blacksmith" to="." method="_open" binds= ["blacksmith"]]
-
-[connection signal="pressed" from="Center/Column/Scroll/List/Visiting" to="." method="_open" binds= ["visiting"]]
 
 [connection signal="pressed" from="Center/Column/Scroll/List/Help" to="." method="_open" binds= ["help"]]

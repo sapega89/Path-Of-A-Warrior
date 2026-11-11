@@ -110,7 +110,6 @@ func test_story_texts_in_the_players_language() -> void:
 		check(t["uk"].get(key, "") != "", "%s has no uk text" % key)
 	var before := TranslationServer.get_locale()
 	TranslationServer.set_locale("uk")
-	eq(Visits.line(0), "Добридень.", "a visit greeting")
 	eq(
 		Stories.pages(Stories.OPENING, "Лесь")[2].text,
 		"[Настоятель] Отже, ти знайшов дорогу до Мотронинського монастиря.",
