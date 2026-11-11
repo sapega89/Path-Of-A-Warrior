@@ -13,8 +13,6 @@ const OK := "OK"
 const KEY_SIZE := Vector2(48, 44)
 const KEY_THEME := "res://assets/art/ui/key_theme.tres"
 const FONT_SIZE := 24
-## The registration's keys: the UserID's letters and the password's digits.
-const ACCOUNT := ["ABCDEFGHIJKLM", "NOPQRSTUVWXYZ", "0123456789"]
 ## The hero's name: letters in both cases.
 const LETTERS := ["ABCDEFGHIJKLM", "NOPQRSTUVWXYZ", "abcdefghijklm", "nopqrstuvwxyz"]
 

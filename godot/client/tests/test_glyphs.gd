@@ -131,28 +131,6 @@ func test_hints_follow_the_pad_maker() -> void:
 	InputSetup.pad_brand = was[1]
 
 
-## The login says what a field takes while it types, not the menus' arrows.
-func test_login_hint_while_typing() -> void:
-	var old: Dictionary = Router.params
-	var was: String = InputSetup.device
-	Router.params = {}
-	var screen: Control = Router.make(Router.SCREENS["login"])
-	root.add_child(screen)
-	InputSetup.device = "keys"
-	screen.user_id.grab_focus()
-	eq(screen.controls_hint(), "UserID: letters A–Z · Enter: to the password", "the UserID")
-	screen.password.grab_focus()
-	eq(screen.controls_hint(), "Password: digits 0–9 · Enter: log in", "the password")
-	screen.login_button.grab_focus()
-	eq(screen.controls_hint(), InputSetup.hint("hint.menu"), "a button: the menus' line")
-	InputSetup.device = "pad"
-	screen.user_id.grab_focus()
-	eq(screen.controls_hint(), InputSetup.hint("hint.menu"), "a pad types on the keys below")
-	screen.free()
-	InputSetup.device = was
-	Router.params = old
-
-
 func test_normal_comes_first() -> void:
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": "user://test_glyphs.json"}

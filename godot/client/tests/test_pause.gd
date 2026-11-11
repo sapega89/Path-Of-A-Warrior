@@ -51,7 +51,6 @@ func test_game_speed_changed_in_the_pause_applies_at_once() -> void:
 	var old_params: Dictionary = Router.params
 	var old_path: String = Settings.path
 	var old_speed: int = int(Settings.get_value("game_speed"))
-	var old_cloud: Dictionary = Settings.cloud.duplicate()
 	Settings.path = SETTINGS_PATH
 	Settings.set_value("game_speed", 2)
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
@@ -69,7 +68,6 @@ func test_game_speed_changed_in_the_pause_applies_at_once() -> void:
 	eq(screen.tick, Settings.SPEED_MS[4] / 1000.0, "and on after the pause")
 	screen.free()
 	Settings.set_value("game_speed", old_speed)
-	Settings.cloud = old_cloud
 	Settings.path = old_path
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(SETTINGS_PATH))
 	Router.params = old_params

@@ -782,10 +782,6 @@ func resume_on_map(sim: RefCounted) -> void:
 
 
 func _write(path: String) -> bool:
-	var cloud := _cloud()
-	if cloud != null and path == PATH:
-		cloud.save_hero(to_dict())  # always online: the hero lives on the server
-		return true
 	var f := FileAccess.open(path, FileAccess.WRITE)
 	if f == null:
 		return false
@@ -796,12 +792,6 @@ func _write(path: String) -> bool:
 ## The saved hero, or a new one.
 static func load_or_new(path: String = PATH) -> RefCounted:
 	var p: RefCounted = load("res://scripts/core/profile.gd").new()
-	var cloud := _cloud()
-	if cloud != null and path == PATH:
-		var h: Variant = cloud.hero()
-		if h is Dictionary:
-			p.from_dict((h as Dictionary).duplicate(true))
-		return p
 	var f := FileAccess.open(path, FileAccess.READ)
 	if f != null:
 		var data: Variant = JSON.parse_string(f.get_as_text())
@@ -810,21 +800,9 @@ static func load_or_new(path: String = PATH) -> RefCounted:
 	return p
 
 
-## A hero has been saved (on the server when the game is always online).
+## A hero has been saved on this computer.
 static func exists(path: String = PATH) -> bool:
-	var cloud := _cloud()
-	if cloud != null and path == PATH:
-		return cloud.hero() != null
 	return FileAccess.file_exists(path)
-
-
-## The Cloud autoload when the game is always online (scripts/net/cloud.gd), else null.
-static func _cloud() -> Node:
-	var tree := Engine.get_main_loop() as SceneTree
-	if tree == null:
-		return null
-	var c := tree.root.get_node_or_null("Cloud")
-	return c if c != null and c.enabled() else null
 
 
 ## A saved list of things, as many places as the hero has; the default when none was saved.

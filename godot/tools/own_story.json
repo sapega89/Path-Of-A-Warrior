@@ -3334,8 +3334,8 @@ null,
 "uk": "Посеред місії зберегтися не можна: програна місія повертає до табору, з якого ти вирушив, і її можна пройти знову."
 },
 {
-"en": "Your warrior is kept on the server, so the game needs a connection; log in to your account to play him on any device.",
-"uk": "Твій вояк зберігається на сервері, тому грі потрібне з'єднання; увійди у свій обліковий запис — і грай ним на будь-якому пристрої."
+"en": "Your warrior is kept on this computer, so the game needs no connection. One warrior is kept at a time: a new game takes his place.",
+"uk": "Твій вояк зберігається на цьому комп'ютері, тому грі не потрібне з'єднання. Зберігається один вояк: нова гра стає на його місце."
 }
 ]
 },

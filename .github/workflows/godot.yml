@@ -28,8 +28,8 @@ jobs:
         run: |
           python3 -m venv "$RUNNER_TEMP/lint"
           "$RUNNER_TEMP/lint/bin/pip" install -q "gdtoolkit==4.5.0"
-          "$RUNNER_TEMP/lint/bin/gdformat" --check scripts server tests tools lab
-          "$RUNNER_TEMP/lint/bin/gdlint" scripts server tests tools lab
+          "$RUNNER_TEMP/lint/bin/gdformat" --check scripts tests tools lab
+          "$RUNNER_TEMP/lint/bin/gdlint" scripts tests tools lab
 
       - name: Converted data is up to date
         run: |
@@ -43,18 +43,6 @@ jobs:
 
       - name: Tests
         run: timeout 300 "$RUNNER_TEMP/godot" --headless --path godot/client res://tests/runner.tscn
-
-      - name: Server (headless, ENet + DTLS)
-        run: |
-          "$RUNNER_TEMP/godot" --headless --path godot/client res://server/main.tscn -- \
-            --port 28310 --bind 127.0.0.1 --data "$RUNNER_TEMP/server" > "$RUNNER_TEMP/server.log" 2>&1 &
-          for i in $(seq 1 60); do [ -f "$RUNNER_TEMP/server/server.crt" ] && grep -q listening "$RUNNER_TEMP/server.log" && break; sleep 1; done
-          status=0
-          timeout 60 "$RUNNER_TEMP/godot" --headless --path godot/client -s res://tools/net_check.gd -- \
-            127.0.0.1 28310 "$RUNNER_TEMP/server/server.crt" || status=$?
-          kill %1 || true
-          cat "$RUNNER_TEMP/server.log"
-          exit $status
 
       - name: Screenshots
         run: |

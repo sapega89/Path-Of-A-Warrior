@@ -1,9 +1,5 @@
 extends Node
-## Player settings, kept in user://settings.cfg and applied to the engine.
-## The volumes and the game speed (CLOUD_KEYS) are kept on the server too, with the account
-## (scripts/net/cloud_sync.gd): the newer copy wins, and on a device the account is new to,
-## the server's. The language, the full screen, the window's size, the brightness, the graphics
-## and the controls belong to the device.
+## Player settings, kept on this computer in user://settings.cfg and applied to the engine.
 
 signal changed(key: String)
 
@@ -28,8 +24,6 @@ const DEFAULTS := {
 ## One tick of a mission at each game speed, in ms (2, Med, is the simulation's own tick).
 const SPEED_MS := [250, 180, 120, 90, 50]
 const BUSES := {"music_volume": "Music", "sfx_volume": "SFX"}
-const CLOUD_KEYS := ["music_volume", "sfx_volume", "game_speed"]
-const CLOUD_SECTION := "cloud"
 ## What each graphics quality (Low, Medium, High) draws: the sun's shadow map (pixels a side) and
 ## how soft its edges are, the lamps' and fires' shadow maps in each 3D view (never 0: the
 ## compatibility renderer then draws the world white), and in the smooth world how its edges are
@@ -67,10 +61,6 @@ const GAMMA_RANGE := 1.5
 
 var path := DEFAULT_PATH
 var _values := {}
-## The copy on the server: the account it is of ("" none yet), its revision, when these
-## options last changed (unix ms) and whether that change still has to reach the server.
-var cloud := {"user": "", "rev": 0, "at": 0, "dirty": false}
-var clock: Callable = func() -> int: return int(Time.get_unix_time_from_system() * 1000.0)
 
 
 func _ready() -> void:
@@ -94,9 +84,6 @@ func set_value(key: String, value: Variant) -> bool:
 	if get_value(key) == value:
 		return true
 	_values[key] = value
-	if key in CLOUD_KEYS:
-		cloud.at = maxi(int(clock.call()), int(cloud.at) + 1)
-		cloud.dirty = true
 	_apply(key)
 	save_to_disk()
 	changed.emit(key)
@@ -105,7 +92,6 @@ func set_value(key: String, value: Variant) -> bool:
 
 func reset() -> void:
 	_values = DEFAULTS.duplicate()
-	cloud = {"user": "", "rev": 0, "at": 0, "dirty": false}
 
 
 func load_from_disk() -> void:
@@ -117,44 +103,13 @@ func load_from_disk() -> void:
 		var v: Variant = _coerce(key, cfg.get_value(SECTION, key, DEFAULTS[key]))
 		if v != null:
 			_values[key] = v
-	cloud.user = str(cfg.get_value(CLOUD_SECTION, "user", ""))
-	cloud.rev = int(cfg.get_value(CLOUD_SECTION, "rev", 0))
-	cloud.at = int(cfg.get_value(CLOUD_SECTION, "at", 0))
-	cloud.dirty = bool(cfg.get_value(CLOUD_SECTION, "dirty", false))
 
 
 func save_to_disk() -> Error:
 	var cfg := ConfigFile.new()
 	for key in DEFAULTS:
 		cfg.set_value(SECTION, key, get_value(key))
-	for key in cloud:
-		cfg.set_value(CLOUD_SECTION, key, cloud[key])
 	return cfg.save(path)
-
-
-## The options kept on the server.
-func cloud_values() -> Dictionary:
-	var d := {}
-	for key in CLOUD_KEYS:
-		d[key] = get_value(key)
-	return d
-
-
-## The server's copy of the options: applied and saved, nothing to send back.
-func take_cloud(values: Dictionary) -> void:
-	for key in CLOUD_KEYS:
-		var v: Variant = _coerce(key, values.get(key))
-		if v == null or v == get_value(key):
-			continue
-		_values[key] = v
-		_apply(key)
-		changed.emit(key)
-	save_to_disk()
-
-
-## Keeps `cloud` (changed by the sync) with the options.
-func save_cloud() -> void:
-	save_to_disk()
 
 
 func apply_all() -> void:
