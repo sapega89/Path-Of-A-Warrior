@@ -72,7 +72,7 @@ static func create_enemy(sim: MapSim, kind: int, tx: int, ty: int, side: int) ->
 			sim.boss_fight = true
 		sim.boss_spawned = true
 		set_general(sim, kind)
-		MapTalks.start_map_talk(sim)
+		MapTalks.start_map_talk(sim, kind)
 		general_stats(sim, e)
 		sim.waves[1] = 1
 	sim.enemies.append(e)

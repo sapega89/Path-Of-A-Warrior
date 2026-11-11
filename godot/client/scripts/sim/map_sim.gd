@@ -101,6 +101,7 @@ var hero_exp := 0  # the hero's exp into his level before the mission
 var exp_bars := ExpBars.new()  # the exp bar of the pages Total Exp and Time Exp
 ## Friendship points of the generals the hero talked with (general id -> points).
 var friendship := {}
+var fought := {}  # the generals met as foes in this mission (general id -> true)
 ## What follows the talk: 0 the map goes on, 1 the exits open, 2 the mission is over.
 var talk_after := 0
 var failed := false
