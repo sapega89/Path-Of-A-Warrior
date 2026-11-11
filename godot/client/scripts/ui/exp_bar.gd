@@ -3,7 +3,8 @@ extends Control
 ## Draws the exp bar of the pages after a won mission (MapSim.exp_bars, scripts/sim/exp_bars.gd)
 ## in the new art: a dark hollow of 102 x 7 grid pixels with an iron rim and hard ends, what the
 ## hero had blood-red, what the mission gave blue, what the time gave brass; each part in three
-## lines of colour, lighter to the middle, and a shine along its top.
+## lines of colour, lighter to the middle, and a shine along its top. The hollow and the rim
+## are the theme's ExpBar boxes (their corners and rim for px 3).
 
 const W := 100
 const H := 7
@@ -14,7 +15,6 @@ const COLORS := [
 	[Color("101d36"), Color("2d3f57"), Color("4f78b0")],
 	[Color("6f5a33"), Color("b08d4a"), Color("dcc48e")],
 ]
-const RIM := Color("4e4a45")
 
 var px := 3.0  # screen pixels to an original pixel
 var bars: ExpBars  # the sim's exp bar
@@ -26,20 +26,11 @@ func _ready() -> void:
 
 
 func _draw() -> void:
-	var hollow := StyleBoxFlat.new()
-	hollow.bg_color = Color("0b0b0c")
-	hollow.set_corner_radius_all(int(px / 2.0))
-	hollow.anti_aliasing = true
-	draw_style_box(hollow, Rect2(Vector2.ZERO, Vector2(W + 2, H) * px))
+	var rect := Rect2(Vector2.ZERO, Vector2(W + 2, H) * px)
+	draw_style_box(get_theme_stylebox("hollow", "ExpBar"), rect)
 	if bars != null:
 		_draw_parts()
-	var rim := StyleBoxFlat.new()
-	rim.draw_center = false
-	rim.border_color = RIM
-	rim.set_border_width_all(maxi(1, int(px / 2.0)))
-	rim.set_corner_radius_all(int(px / 2.0))
-	rim.anti_aliasing = true
-	draw_style_box(rim, Rect2(Vector2.ZERO, Vector2(W + 2, H) * px))
+	draw_style_box(get_theme_stylebox("rim", "ExpBar"), rect)
 
 
 func _draw_parts() -> void:

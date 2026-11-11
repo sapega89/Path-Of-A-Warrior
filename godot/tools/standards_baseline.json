@@ -36,8 +36,6 @@
  },
  "theme_in_code": {
   "scripts/art/art_hud.gd": 13,
-  "scripts/ui/exp_bar.gd": 2,
-  "scripts/ui/ornament.gd": 1,
   "scripts/ui/ui_theme.gd": 4
  },
  "ui_in_code": {
