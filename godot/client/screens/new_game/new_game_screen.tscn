@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://screens/new_game/new_game_screen.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/ui/heading.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ask_dialog.tscn" id="ask"]
 
 [node name="NewGameScreen" type="Control"]
 layout_mode = 3
@@ -225,6 +226,10 @@ custom_minimum_size = Vector2(0, 80)
 horizontal_alignment = 1
 autowrap_mode = 3
 
+[node name="Ask" parent="." instance=ExtResource("ask")]
+unique_name_in_owner = true
+layout_mode = 1
+
 [connection signal="pressed" from="Center/Column/Body/DifficultyPage/Difficulty1" to="." method="choose_difficulty" binds= [1]]
 
 [connection signal="focus_entered" from="Center/Column/Body/DifficultyPage/Difficulty1" to="." method="_show_mode" binds= [1]]
@@ -262,3 +267,5 @@ autowrap_mode = 3
 [connection signal="pressed" from="Center/Column/Body/PointsPage/Actions/Done" to="." method="ask_done"]
 
 [connection signal="pressed" from="Center/Column/Body/PointsPage/Actions/Back" to="." method="go_back"]
+
+[connection signal="confirmed" from="Ask" to="." method="_confirmed"]

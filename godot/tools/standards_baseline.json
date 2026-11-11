@@ -2,7 +2,6 @@
  "code_order": {},
  "long_file": {
   "screens/mission/mission_screen.gd": 1,
-  "scripts/core/profile.gd": 1,
   "scripts/world/map_art.gd": 1,
   "scripts/world/map_effects.gd": 1
  },
@@ -54,7 +53,6 @@
   "screens/story/story_screen.gd": 6,
   "screens/town_hall/town_hall_screen.gd": 3,
   "scripts/art/art_hud.gd": 13,
-  "scripts/ui/ask_dialog.gd": 3,
   "scripts/ui/exp_bar.gd": 2,
   "scripts/ui/hint_bar.gd": 3,
   "scripts/ui/item_slot.gd": 5,
@@ -75,12 +73,10 @@
   "screens/town_hall/town_hall_screen.gd": 3,
   "scripts/art/art_hud.gd": 13,
   "scripts/main.gd": 1,
-  "scripts/ui/ask_dialog.gd": 7,
   "scripts/ui/hint_bar.gd": 1,
   "scripts/ui/item_slot.gd": 1,
   "scripts/ui/key_grid.gd": 2,
   "scripts/ui/map_hud.gd": 1,
-  "scripts/ui/mission_pause.gd": 3,
   "scripts/ui/ui_theme.gd": 7,
   "scripts/ui/world_map_view.gd": 1
  },

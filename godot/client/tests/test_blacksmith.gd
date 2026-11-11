@@ -25,7 +25,7 @@ func test_the_shop_is_filled() -> void:
 	var p := Profile.new()
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 3
-	p.fill_shop(rng)
+	Blacksmith.fill_shop(p, rng)
 	eq(p.shop.size(), 25, "25 things")
 	for i in Items.SHOP_POTIONS.size():
 		eq(int(p.shop[i].id), int(Items.SHOP_POTIONS[i]), "potions and scrolls first")
@@ -40,40 +40,40 @@ func test_the_shop_is_filled() -> void:
 func test_buy_and_sell() -> void:
 	var p := Profile.new()
 	p.gold = 100
-	eq(p.buy(0), "bought", "a Red Potion (S)")
+	eq(Blacksmith.buy(p, 0), "bought", "a Red Potion (S)")
 	eq(p.quick_slots[0], [1, 1], "into a quick slot")
 	eq(p.gold, 40, "for 60")
-	eq(p.buy(0), "no_gold", "40 is not enough")
+	eq(Blacksmith.buy(p, 0), "no_gold", "40 is not enough")
 	p.gold = 1000
 	p.quick_slots[0] = [1, 5]
-	eq(p.buy(0), "no_more", "5 at most")
+	eq(Blacksmith.buy(p, 0), "no_more", "5 at most")
 	p.gold = 100000
 	var gear: Dictionary = p.shop[8].duplicate()
-	eq(p.buy(8), "bought", "a gear")
+	eq(Blacksmith.buy(p, 8), "bought", "a gear")
 	eq(int(p.backpack[0].id), int(gear.id), "into the backpack")
 	eq(int(p.shop[8].id), 0, "and out of the shop")
 	var before := p.gold
-	check(p.sell("backpack", 0), "sold")
+	check(Blacksmith.sell(p, "backpack", 0), "sold")
 	eq(p.gold, before + Items.price(gear) / 2, "for half the price")
 	eq(int(p.backpack[0].id), 0, "gone")
-	check(p.sell("quick", 0), "a potion sold")
+	check(Blacksmith.sell(p, "quick", 0), "a potion sold")
 	eq(p.quick_slots[0], [1, 4], "one less")
 
 
 func test_enchanting() -> void:
 	var p := Profile.new()
-	eq(p.can_enchant({"id": 1, "enchant": 0}), "not_possible", "a potion")
+	eq(Blacksmith.can_enchant({"id": 1, "enchant": 0}), "not_possible", "a potion")
 	var blade := Items.make(101)
-	eq(p.can_enchant(blade), "ok", "a gear")
+	eq(Blacksmith.can_enchant(blade), "ok", "a gear")
 	p.gold = 150
-	eq(p.enchant(blade), "no_gold", "it costs 200")
+	eq(Blacksmith.enchant(p, blade), "no_gold", "it costs 200")
 	p.gold = 1000
-	eq(p.enchant(blade), "success", "the first enchanting always works")
+	eq(Blacksmith.enchant(p, blade), "success", "the first enchanting always works")
 	eq(int(blade.attack), 3, "ATK grows by at least 1")
 	eq(int(blade.enchant), 1, "enchanted once")
 	eq(p.gold, 800, "for 200")
 	blade.enchant = 5
-	eq(p.can_enchant(blade), "full", "5 times at most for an Iron Sabre")
+	eq(Blacksmith.can_enchant(blade), "full", "5 times at most for an Iron Sabre")
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 11
 	var lost := false
@@ -81,7 +81,7 @@ func test_enchanting() -> void:
 		var spear := Items.make(301)
 		spear.enchant = 8
 		p.gold = 100000
-		var r: String = p.enchant(spear, rng)
+		var r: String = Blacksmith.enchant(p, spear, rng)
 		if r == "lost":
 			eq(int(spear.id), 0, "a lost thing is gone")
 			lost = true
@@ -142,15 +142,15 @@ func test_combine() -> void:
 		p.add_item(Items.make(id))
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 5
-	var plan: Dictionary = p.combine_plan([0, 1, 2], rng)
+	var plan: Dictionary = Blacksmith.combine_plan(p, [0, 1, 2], rng)
 	eq(int(plan.result.id), 342, "what they make")
 	eq(int(plan.price), Items.price(plan.result) / 4, "a quarter of its price")
-	eq(p.combine_plan([0, 1, 3], rng), {}, "an empty place: nothing")
+	eq(Blacksmith.combine_plan(p, [0, 1, 3], rng), {}, "an empty place: nothing")
 	p.gold = 0
-	eq(p.combine([0, 1, 2], plan), "no_gold", "the fee first")
+	eq(Blacksmith.combine(p, [0, 1, 2], plan), "no_gold", "the fee first")
 	p.gold = 100000
 	plan.success = true
-	eq(p.combine([0, 1, 2], plan), "success", "combined")
+	eq(Blacksmith.combine(p, [0, 1, 2], plan), "success", "combined")
 	eq(int(p.backpack[0].id), 0, "the first is used up")
 	eq(int(p.backpack[1].id), 0, "the second too")
 	eq(int(p.backpack[2].id), 342, "the new thing in the third's place")
@@ -158,7 +158,7 @@ func test_combine() -> void:
 		p.add_item(Items.make(id))
 	plan.success = false
 	plan.lost = 1
-	eq(p.combine([0, 1, 3], plan), "fail", "it failed")
+	eq(Blacksmith.combine(p, [0, 1, 3], plan), "fail", "it failed")
 	eq(int(p.backpack[1].id), 0, "and lost one")
 	eq(int(p.backpack[0].id), 101, "the others stay")
 

@@ -15,7 +15,6 @@ const DONE_MARK := "  ✓"
 
 var campaign := Campaign.new()
 var profile: Profile
-var ask: AskDialog
 var world_view: Control  # the world map (level 1)
 ## 1 the world map at the hero's place, 2 missions of a lord, 3 the description of a mission
 var level := 1
@@ -30,6 +29,7 @@ var rng := RandomNumberGenerator.new()
 @onready var heading: Label = %Heading
 @onready var scroll: ScrollContainer = %Scroll
 @onready var ok: Button = %Ok  # under the description: accept the mission?
+@onready var ask: AskDialog = %Ask
 @onready var column: Control = %Center  # the list, the missions and the description
 
 
@@ -39,9 +39,6 @@ func _ready() -> void:
 	profile = Profile.load_or_new(path)
 	if p.has("seed"):
 		rng.seed = int(p.seed)
-	ask = AskDialog.new()
-	ask.confirmed.connect(accept)
-	add_child(ask)
 	level = clampi(int(p.get("level", 1)), 1, 3)
 	chapter = int(p.get("chapter", profile.place))
 	lord_id = int(p.get("lord", 0))

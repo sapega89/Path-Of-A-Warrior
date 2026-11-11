@@ -246,7 +246,7 @@ func _ready() -> void:
 	Router.go(
 		"briefing", {"lord": 1, "mission": 0, "line": 0, "profile_path": "user://shot_walker.json"}
 	)
-	Router.current.set_process(false)
+	Router.current.process_mode = Node.PROCESS_MODE_DISABLED  # the briefing held still
 	Router.current.press()
 	Router.current.next_line()
 	Router.current.press()

@@ -20,3 +20,9 @@ func eq(actual: Variant, expected: Variant, message: String = "") -> void:
 				% [current, message, var_to_str(expected), var_to_str(actual)]
 			)
 		)
+
+
+## Moves a Dialogue's typing (and the stay after the line) `seconds` on, as frames would.
+func step_dialogue(dialogue: Dialogue, seconds: float) -> void:
+	if dialogue.tween != null and dialogue.tween.is_valid():
+		dialogue.tween.custom_step(seconds)

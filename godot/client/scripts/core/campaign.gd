@@ -1,9 +1,12 @@
 class_name Campaign
 extends RefCounted
 ## The original campaign tables (data/campaign.json, made by godot/tools/import_original.py):
-## chapters list the lords you can fight for, each lord has one map and a run of missions.
+## chapters list the lords you can fight for, each lord has one map and a run of missions;
+## the exp table gives the exp of each level.
 
 const PATH := "res://data/campaign.json"
+
+static var _exp_table: Array = []
 
 var chapters: Array = []
 var lords: Dictionary = {}
@@ -20,6 +23,18 @@ func _init() -> void:
 	chapters = data.get("chapters", [])
 	lords = data.get("lords", {})
 	missions = data.get("missions", [])
+
+
+## The exp from level n to n + 1.
+static func exp_needed(at_level: int) -> int:
+	if _exp_table.is_empty():
+		var f := FileAccess.open(PATH, FileAccess.READ)
+		if f != null:
+			var data: Variant = JSON.parse_string(f.get_as_text())
+			if typeof(data) == TYPE_DICTIONARY:
+				_exp_table = data.get("exp_table", [])
+	var i := at_level - 1
+	return int(_exp_table[i]) if i >= 0 and i < _exp_table.size() else 0
 
 
 func lord(id: int) -> Dictionary:

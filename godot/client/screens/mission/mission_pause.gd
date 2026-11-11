@@ -1,51 +1,47 @@
 class_name MissionPause
 extends Control
-## The pause menu of a mission, over the stopped game: Resume, Items (Assign Items for this
-## mission's potion keys), Options (the settings), Help, Exit to Menu (asked first: the
-## mission is lost, back to the camp) and Exit Game (asked first; not on phones and the web).
-## The game is saved in the camps between missions, so there is no Save here (save() is kept
-## for a mission saved on its map by an older version). Items, Options and Help show over the
-## menu. Back resumes.
+## The pause menu of a mission, over the stopped game (mission_pause.tscn): Resume, Items
+## (Assign Items for this mission's potion keys), Options (the settings), Help, Exit to Menu
+## (asked first: the mission is lost, back to the camp) and Exit Game (asked first; not on phones
+## and the web). The game is saved in the camps between missions, so there is no Save here
+## (save() is kept for a mission saved on its map by an older version). Items, Options and Help
+## show over the menu. Back resumes.
 
 signal resumed
 
+const SCENE := "res://screens/mission/mission_pause.tscn"
+
 var buttons: Array[Button] = []
-var menu: Control
 var settings: Control  # the items, the settings or the help shown over the menu
 var sim: MapSim  # the mission's (its potion keys)
 var save_game := Callable()  # the mission's save on its map: true when saved
-var note: AskDialog  # a notice: OK alone
-var ask: AskDialog
 var asked := ""  # "exit" or "quit"
+
+@onready var menu: Control = %Menu
+@onready var note: AskDialog = %Note  # a notice: OK alone
+@onready var ask: AskDialog = %Ask
 
 
 func _ready() -> void:
-	top_level = true  # the whole window, over the HUD and the touch controls
-	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	var dim := ColorRect.new()
-	dim.color = Color(0, 0, 0, 0.6)
-	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(dim)
-	menu = Control.new()
-	menu.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(menu)
-	var col := UiTheme.menu_column(menu)
-	col.add_child(UiTheme.heading("pause.title", 44))
-	_add(col, "Resume", "pause.resume", func(): resumed.emit())
-	_add(col, "Items", "pause.items", open_items)
-	_add(col, "Options", "pause.options", open_options)
-	_add(col, "Help", "pause.help", open_help)
-	_add(col, "Exit", "pause.exit", func(): _ask("exit"))
-	if MainMenu.show_quit():
-		_add(col, "Quit", "pause.quit", func(): _ask("quit"))
-	note = AskDialog.new(true)
-	note.name = "Note"
-	add_child(note)
-	ask = AskDialog.new()
-	ask.safe_default = true
-	ask.confirmed.connect(confirmed)
-	add_child(ask)
+	if not MainMenu.show_quit():
+		%Column.get_node("Quit").free()
+	for b in %Column.get_children():
+		if b is Button:
+			buttons.append(b)
 	buttons[0].grab_focus.call_deferred()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if (
+		settings == null
+		and (event.is_action_pressed("ui_cancel") or event.is_action_pressed("pause"))
+	):
+		get_viewport().set_input_as_handled()
+		resumed.emit()
+
+
+func resume() -> void:
+	resumed.emit()
 
 
 ## "Exit Game and go to main menu?" / "Exit Game?", No first.
@@ -77,15 +73,6 @@ func open_items() -> void:
 	_open_over(screen, "Items")
 
 
-func _add(col: VBoxContainer, node_name: String, text_key: String, on_press: Callable) -> void:
-	var b := Button.new()
-	b.name = node_name
-	b.text = text_key
-	b.pressed.connect(on_press)
-	col.add_child(b)
-	buttons.append(b)
-
-
 ## The settings over the pause menu; their Back comes back here.
 func open_options() -> void:
 	_open_over(Router.make(Router.SCREENS["settings"]), "Settings")
@@ -114,12 +101,3 @@ func close_options() -> void:
 	for b in buttons:
 		if str(b.name) == ("Options" if was == "Settings" else was):
 			b.grab_focus.call_deferred()
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if (
-		settings == null
-		and (event.is_action_pressed("ui_cancel") or event.is_action_pressed("pause"))
-	):
-		get_viewport().set_input_as_handled()
-		resumed.emit()

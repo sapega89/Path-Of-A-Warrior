@@ -10,7 +10,6 @@ extends RefCounted
 enum Stat { HP, MP, ATTACK, DEFENSE }
 
 const PATH := "user://hero.json"
-const CAMPAIGN_PATH := "res://data/campaign.json"
 ## A new hero: HP, MP, attack, defence, and the free stat points.
 const BASE_HP := 30
 const BASE_MP := 10
@@ -31,22 +30,10 @@ const NEXT_PLACE := [
 ]
 const ENDING_BASE := 200
 const SCARF := 502  # Katria's scarf: the reward of ending 2, needed to see ending 3
-## What one stat point adds: HP, MP, attack, defence.
-const POINT_GAINS := [5, 3, 1, 1]
-## The four heroes (the faces) start with their own HP, MP, attack and defence. Every set is
-## worth the same stat points (POINT_GAINS), so no hero is stronger, only different. Face 0
-## has the numbers every hero had in the original.
-const HERO_BASES := [[30, 10, 5, 4], [40, 7, 3, 5], [25, 16, 4, 4], [25, 10, 7, 3]]
 const HERO_CLASSES := ["Cossack", "Serdiuk", "Kharakternyk", "Haidamaka"]
-## Resetting the attributes costs gold per hero level, or one of these elixirs.
-const RESPEC_GOLD_PER_LEVEL := 100
-## St John's Wort Tincture, Cornflower Tincture, Rapids / Forest Remedy
-const RESPEC_ITEMS := [434, 435, 436, 437]
 ## The briefing's advice: 28 pairs of lines (talk.json "briefing"), the first 10 in turn.
 const BRIEFING_PAIRS := 28
 const BRIEFINGS_IN_TURN := 10
-
-static var _exp_table: Array = []
 
 var hero_name := "Hero"
 var head := 0  # the hero's face (0..3): his portrait and his look on the map
@@ -97,19 +84,7 @@ func _init() -> void:
 	for i in Items.BACKPACK:
 		backpack.append(Items.empty())
 	equipped[0] = Items.make(START_WEAPON)
-	fill_shop()
-
-
-## The exp from level n to n + 1.
-static func exp_needed(at_level: int) -> int:
-	if _exp_table.is_empty():
-		var f := FileAccess.open(CAMPAIGN_PATH, FileAccess.READ)
-		if f != null:
-			var data: Variant = JSON.parse_string(f.get_as_text())
-			if typeof(data) == TYPE_DICTIONARY:
-				_exp_table = data.get("exp_table", [])
-	var i := at_level - 1
-	return int(_exp_table[i]) if i >= 0 and i < _exp_table.size() else 0
+	Blacksmith.fill_shop(self)
 
 
 ## Adds exp; every full level gives a level and its stat points. Returns the levels gained.
@@ -117,7 +92,7 @@ func gain_exp(amount: int) -> int:
 	experience += amount
 	var gained := 0
 	while true:
-		var need := exp_needed(level)
+		var need := Campaign.exp_needed(level)
 		if need <= 0 or experience < need:
 			break
 		experience -= need
@@ -131,8 +106,8 @@ func gain_exp(amount: int) -> int:
 func level_with(amount: int) -> int:
 	var lv := level
 	var left := experience + amount
-	while exp_needed(lv) > 0 and left >= exp_needed(lv):
-		left -= exp_needed(lv)
+	while Campaign.exp_needed(lv) > 0 and left >= Campaign.exp_needed(lv):
+		left -= Campaign.exp_needed(lv)
 		lv += 1
 	return lv
 
@@ -173,6 +148,22 @@ func add_item(item: Dictionary) -> bool:
 	for i in backpack.size():
 		if int(backpack[i].id) == 0:
 			backpack[i] = item
+			return true
+	return false
+
+
+## Puts one potion into its quick slot, or the first free one (five at most in a slot).
+## False when there is no room.
+func add_potion(id: int) -> bool:
+	for s in quick_slots.size():
+		if int(quick_slots[s][0]) == id:
+			if int(quick_slots[s][1]) >= 5:
+				return false
+			quick_slots[s][1] = int(quick_slots[s][1]) + 1
+			return true
+	for s in quick_slots.size():
+		if int(quick_slots[s][0]) == 0:
+			quick_slots[s] = [id, 1]
 			return true
 	return false
 
@@ -229,85 +220,31 @@ func use_item(i: int) -> String:
 	return ""
 
 
-## The face's base stats: [HP, MP, attack, defence].
-static func hero_base(face: int) -> Array:
-	return HERO_BASES[face & 3]
-
-
-## "HP30 MP10 ATK5 DEF4": a face's base stats.
-static func stats_line(face: int) -> String:
-	var b := hero_base(face)
-	return "HP%d MP%d ATK%d DEF%d" % b
-
-
 ## A new hero's face: his base stats become that face's.
 func set_head(face: int) -> void:
 	head = face & 3
-	var b := hero_base(head)
+	var b := Attributes.hero_base(head)
 	base_hp = b[0]
 	base_mp = b[1]
 	base_attack = b[2]
 	base_defense = b[3]
 
 
-## The stat points in the base stats over the face's set (the elixirs drunk too).
-func spent_points() -> int:
-	var b := hero_base(head)
-	var own := [base_hp, base_mp, base_attack, base_defense]
-	var n := 0
-	for i in 4:
-		n += (int(own[i]) - int(b[i])) / int(POINT_GAINS[i])
-	return maxi(0, n)
-
-
-func respec_gold() -> int:
-	return RESPEC_GOLD_PER_LEVEL * maxi(1, level)
-
-
-## The backpack place of the first elixir that pays for a reset, or -1.
-func respec_item_slot() -> int:
-	for i in backpack.size():
-		if int(backpack[i].id) in RESPEC_ITEMS:
-			return i
-	return -1
-
-
-## Resets the attributes, paid with gold (by_item false) or an elixir: the base stats go back
-## to the face's set and the points spent are free again. Returns "" when done, else why not:
-## "nothing", "gold", "item".
-func respec(by_item: bool) -> String:
-	var n := spent_points()
-	if n == 0:
-		return "nothing"
-	if by_item:
-		var i := respec_item_slot()
-		if i < 0:
-			return "item"
-		backpack[i] = Items.empty()
-	else:
-		if gold < respec_gold():
-			return "gold"
-		gold -= respec_gold()
-	set_head(head)
-	stat_points += n
-	return ""
-
-
 ## Spends a free stat point on HP (+5), MP (+3), attack (+1) or defence (+1).
 ## False when there is no point left.
 func spend_point(stat: int) -> bool:
-	if stat_points <= 0 or stat < 0 or stat >= POINT_GAINS.size():
+	if stat_points <= 0 or stat < 0 or stat >= Attributes.POINT_GAINS.size():
 		return false
 	stat_points -= 1
 	match stat:
 		Stat.HP:
-			base_hp += POINT_GAINS[stat]
+			base_hp += Attributes.POINT_GAINS[stat]
 		Stat.MP:
-			base_mp += POINT_GAINS[stat]
+			base_mp += Attributes.POINT_GAINS[stat]
 		Stat.ATTACK:
-			base_attack += POINT_GAINS[stat]
+			base_attack += Attributes.POINT_GAINS[stat]
 		Stat.DEFENSE:
-			base_defense += POINT_GAINS[stat]
+			base_defense += Attributes.POINT_GAINS[stat]
 	return true
 
 
@@ -392,7 +329,7 @@ func take_from(
 	if not friendship.is_empty():
 		can_visit = true
 	var levels := gain_exp(int(sim.exp_reward()))
-	fill_shop(rng)
+	Blacksmith.fill_shop(self, rng)
 	return levels
 
 
@@ -448,187 +385,6 @@ func advance(sim: MapSim, lord_id: int, info: Dictionary, rng: RandomNumberGener
 	if ending == 3 and not has_item(SCARF):
 		place = 4  # without the scarf the story of ending 3 is not told: back to chapter 4
 	return ending
-
-
-# ---- the Blacksmith ------------------------------------------------------------------------
-
-
-## New things in the shop (after a mission won): its potions and scrolls, and 17 gears of the
-## tiers the hero's level finds, the cheapest first.
-func fill_shop(rng: RandomNumberGenerator = null) -> void:
-	if rng == null:
-		rng = RandomNumberGenerator.new()
-	var ids: Array[int] = []
-	for i in Items.SHOP_GEAR:
-		ids.append(101 + 5 * rng.randi_range(0, 19) + Items.tier(level, rng.randi_range(0, 99)))
-	ids.sort()
-	shop = []
-	for id in Items.SHOP_POTIONS:
-		var it := Items.empty()
-		it.id = id
-		shop.append(it)
-	for id in ids:
-		shop.append(Items.make(id, rng))
-
-
-## Buys thing i of the shop: a potion goes to its quick slot (5 at most), a gear to the
-## backpack and out of the shop. Returns "bought", "no_gold", "no_more" or "full".
-func buy(i: int) -> String:
-	if i < 0 or i >= shop.size() or int(shop[i].id) == 0:
-		return ""
-	var item: Dictionary = shop[i]
-	var cost := Items.price(item)
-	if gold < cost:
-		return "no_gold"
-	var id := int(item.id)
-	if id < 100:
-		var at := -1
-		for s in quick_slots.size():
-			if int(quick_slots[s][0]) == id:
-				at = s
-				break
-		if at >= 0:
-			if int(quick_slots[at][1]) >= 5:
-				return "no_more"
-			quick_slots[at][1] = int(quick_slots[at][1]) + 1
-		else:
-			for s in quick_slots.size():
-				if int(quick_slots[s][0]) == 0:
-					at = s
-					break
-			if at < 0:
-				return "full"
-			quick_slots[at] = [id, 1]
-	else:
-		if not add_item(item.duplicate()):
-			return "full"
-		shop[i] = Items.empty()
-	gold -= cost
-	return "bought"
-
-
-## Puts one potion into its quick slot, or the first free one (five at most in a slot).
-## False when there is no room.
-func add_potion(id: int) -> bool:
-	for s in quick_slots.size():
-		if int(quick_slots[s][0]) == id:
-			if int(quick_slots[s][1]) >= 5:
-				return false
-			quick_slots[s][1] = int(quick_slots[s][1]) + 1
-			return true
-	for s in quick_slots.size():
-		if int(quick_slots[s][0]) == 0:
-			quick_slots[s] = [id, 1]
-			return true
-	return false
-
-
-## Sells a potion of quick slot i (where = "quick") or the thing in backpack place i, for
-## half its price. False when there is nothing there.
-func sell(where: String, i: int) -> bool:
-	if where == "quick":
-		if i < 0 or i >= quick_slots.size() or int(quick_slots[i][0]) == 0:
-			return false
-		gold += Items.price({"id": int(quick_slots[i][0])}) / 2
-		if int(quick_slots[i][1]) > 1:
-			quick_slots[i][1] = int(quick_slots[i][1]) - 1
-		else:
-			quick_slots[i] = [0, 0]
-		return true
-	if i < 0 or i >= backpack.size() or int(backpack[i].id) == 0:
-		return false
-	gold += Items.price(backpack[i]) / 2
-	backpack[i] = Items.empty()
-	return true
-
-
-## Whether a thing can be enchanted now: "ok", "not_possible" or "full" (enchanted as far
-## as it goes).
-func can_enchant(item: Dictionary) -> String:
-	var limit := Items.enchant_max(int(item.get("id", 0)))
-	if limit <= 0:
-		return "not_possible"
-	if int(item.enchant) >= limit:
-		return "full"
-	return "ok"
-
-
-## Enchants a thing of the backpack or the Gear page for its price: "success", "fail"
-## (nothing happens), "lost" (the thing is gone) or "no_gold".
-func enchant(item: Dictionary, rng: RandomNumberGenerator = null) -> String:
-	if can_enchant(item) != "ok":
-		return ""
-	var cost := Items.enchant_price(item)
-	if gold < cost:
-		return "no_gold"
-	if rng == null:
-		rng = RandomNumberGenerator.new()
-	gold -= cost
-	var n := int(item.enchant)
-	if rng.randi_range(1, 100) <= int(Items.ENCHANT_SUCCESS[n]):
-		Items.enchant(item, rng)
-		return "success"
-	if rng.randi_range(0, 99) <= int(Items.ENCHANT_LOST[n]):
-		var cleared := Items.empty()
-		for k in cleared:
-			item[k] = cleared[k]
-		return "lost"
-	return "fail"
-
-
-## Combine: what three things of the backpack (places) would make, worked out when the third
-## is chosen, as the Blacksmith tells it before asking: {} when they make nothing, else
-## {"result": the new thing, "price": the fee, "success": whether it works (the new thing is
-## then enchanted a third of their enchantings), "lost": the place lost when it fails, or -1}.
-## A thing of a higher level is harder to make, and its failure loses more.
-func combine_plan(places: Array, rng: RandomNumberGenerator = null) -> Dictionary:
-	if places.size() != 3:
-		return {}
-	if rng == null:
-		rng = RandomNumberGenerator.new()
-	var ids: Array = []
-	var enchants := 0
-	for p in places:
-		var it: Dictionary = backpack[int(p)]
-		if int(it.id) <= 100:
-			return {}
-		ids.append(int(it.id))
-		enchants += int(it.enchant)
-	var results := Items.mixes(ids)
-	if results.is_empty():
-		return {}
-	var id := int(results[rng.randi_range(0, results.size() - 1)])
-	var result := Items.make(id, rng)
-	var plan := {"result": result, "price": Items.price(result) / 4, "success": false, "lost": -1}
-	var chance := (200 - Items.level_needed(id)) / 12
-	if chance >= rng.randi_range(0, 100):
-		plan.success = true
-		for i in enchants / 3:
-			Items.enchant(result, rng)
-	else:
-		var div := 15 if id < 500 else 12
-		var lose := (100 - chance) * 10 / div
-		if lose >= rng.randi_range(0, 100):
-			plan.lost = int(places[rng.randi_range(0, 2)])
-	return plan
-
-
-## Pays for a planned Combine: the three things become the new one (in the third's place),
-## or when it fails one of them may be lost. "success", "fail" or "no_gold".
-func combine(places: Array, plan: Dictionary) -> String:
-	if plan.is_empty():
-		return ""
-	if gold < int(plan.price):
-		return "no_gold"
-	gold -= int(plan.price)
-	if plan.success:
-		for p in places:
-			backpack[int(p)] = Items.empty()
-		backpack[int(places[2])] = (plan.result as Dictionary).duplicate()
-		return "success"
-	if int(plan.lost) >= 0:
-		backpack[int(plan.lost)] = Items.empty()
-	return "fail"
 
 
 ## A mission lost, as the original: from level 10 on, with a chance of level / 4 in 100, one of
