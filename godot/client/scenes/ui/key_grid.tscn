@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/key_grid.gd" id="1"]
+[ext_resource type="Theme" path="res://assets/art/ui/key_theme.tres" id="2"]
+
+[node name="Keys" type="VBoxContainer"]
+theme = ExtResource("2")
+alignment = 1
+script = ExtResource("1")

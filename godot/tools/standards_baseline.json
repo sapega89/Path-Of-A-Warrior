@@ -37,7 +37,6 @@
  "theme_in_code": {
   "scripts/art/art_hud.gd": 13,
   "scripts/ui/exp_bar.gd": 2,
-  "scripts/ui/key_grid.gd": 3,
   "scripts/ui/ornament.gd": 1,
   "scripts/ui/ui_theme.gd": 4,
   "scripts/ui/world_map_view.gd": 4
@@ -45,7 +44,6 @@
  "ui_in_code": {
   "screens/gear/gear_screen.gd": 1,
   "scripts/art/art_hud.gd": 13,
-  "scripts/ui/key_grid.gd": 2,
   "scripts/ui/ui_theme.gd": 6,
   "scripts/ui/world_map_view.gd": 1
  },
