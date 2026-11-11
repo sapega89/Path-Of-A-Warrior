@@ -43,7 +43,7 @@ var _last := Vector2i(-1, -1)
 var _still := 0
 var _detour := -1
 var _detour_ticks := 0
-var _target = null  # the enemy it walks to
+var _target: MapActor = null  # the enemy it walks to
 var _closest := 0  # its nearest distance to the target so far
 var _no_closer := 0  # ticks since it last came closer
 var _tries := 0  # ways around the target in a row
@@ -65,14 +65,14 @@ func player_key() -> void:
 
 
 ## This tick's input: {held: direction or -1, fire, hotkey (0..4 or -1), belt (0..4 or -1)}.
-func decide(sim: RefCounted) -> Dictionary:
+func decide(sim: MapSim) -> Dictionary:
 	var out := {"held": -1, "fire": false, "hotkey": -1, "belt": -1}
 	if not on or sim.banner != 0 or not sim.talk.is_empty() or sim.scrolling or sim.finished:
 		return out
 	if manual > 0:
 		manual -= 1
 		return out
-	var h = sim.hero
+	var h := sim.hero
 	if h.action >= 2 or sim.effect_item != 0:  # busy: a strike, a skill, hurt, a potion
 		return out
 	var foes: Array = []
@@ -93,7 +93,7 @@ func decide(sim: RefCounted) -> Dictionary:
 			_out_of_reach.clear()  # no way out yet: it tries them again
 		out.held = _to_exit(sim)
 		return out
-	var target = hunt[0]
+	var target: MapActor = hunt[0]
 	var dist := MapGeometry.distance(h.pos, target.pos)
 	for e in hunt:
 		var d := MapGeometry.distance(h.pos, e.pos)
@@ -115,7 +115,7 @@ func decide(sim: RefCounted) -> Dictionary:
 
 
 ## The enemies it goes for: the living ones, but those it left alone in this room.
-func _hunted(sim: RefCounted, foes: Array) -> Array:
+func _hunted(sim: MapSim, foes: Array) -> Array:
 	if _hunt_cell != sim.cell:
 		_hunt_cell = sim.cell
 		_out_of_reach.clear()
@@ -124,8 +124,8 @@ func _hunted(sim: RefCounted, foes: Array) -> Array:
 	return foes.filter(func(e): return not e in _out_of_reach)
 
 
-func _walk(sim: RefCounted, target) -> int:
-	var h = sim.hero
+func _walk(sim: MapSim, target: MapActor) -> int:
+	var h := sim.hero
 	_still = _still + 1 if h.pos == _last and h.action == 1 else 0
 	_last = h.pos
 	var dist := MapGeometry.distance(h.pos, target.pos)
@@ -172,8 +172,8 @@ func _walk(sim: RefCounted, target) -> int:
 
 
 ## A belt slot to drink from, or -1.
-func _potion(sim: RefCounted, foes: Array) -> int:
-	var h = sim.hero
+func _potion(sim: MapSim, foes: Array) -> int:
+	var h := sim.hero
 	var hp_low: bool = h.hp * 100 < h.max_hp * 30
 	if hp_low and not _castable(sim, HEALS).is_empty():
 		hp_low = false  # the heal skill comes first
@@ -199,7 +199,7 @@ func _potion(sim: RefCounted, foes: Array) -> int:
 
 
 ## [key, skill] of the learned skills on the keys.
-func _slots(sim: RefCounted) -> Array:
+func _slots(sim: MapSim) -> Array:
 	var out: Array = []
 	for k in sim.hotkeys.size():
 		var s := int(sim.hotkeys[k])
@@ -208,7 +208,7 @@ func _slots(sim: RefCounted) -> Array:
 	return out
 
 
-func _castable(sim: RefCounted, kinds: Array) -> Array:
+func _castable(sim: MapSim, kinds: Array) -> Array:
 	var out: Array = []
 	for ks in _slots(sim):
 		if ks[1] in kinds and sim.skill_mp_need(ks[1]) <= sim.hero.mp:
@@ -217,7 +217,7 @@ func _castable(sim: RefCounted, kinds: Array) -> Array:
 
 
 ## The key of each skill on the keys (the first key holding it).
-func _key_of(sim: RefCounted) -> Dictionary:
+func _key_of(sim: MapSim) -> Dictionary:
 	var out := {}
 	var slots := _slots(sim)
 	slots.reverse()
@@ -227,8 +227,8 @@ func _key_of(sim: RefCounted) -> Dictionary:
 
 
 ## Healing Herbs below 40 % HP, Living Water first below 25 %. A skill key or -1.
-func _heal(sim: RefCounted) -> int:
-	var h = sim.hero
+func _heal(sim: MapSim) -> int:
+	var h := sim.hero
 	var pct: int = h.hp * 100 / maxi(1, h.max_hp)
 	if pct >= 40:
 		return -1
@@ -240,7 +240,7 @@ func _heal(sim: RefCounted) -> int:
 
 
 ## The room is clear and its exits open: walk out, to a room not seen yet when there is one.
-func _to_exit(sim: RefCounted) -> int:
+func _to_exit(sim: MapSim) -> int:
 	if not sim.exits_open():
 		return -1
 	var cell: int = sim.cell
@@ -262,7 +262,7 @@ func _to_exit(sim: RefCounted) -> int:
 	if _detour_ticks > 0:
 		_detour_ticks -= 1
 		return _detour
-	var h = sim.hero
+	var h := sim.hero
 	_still = _still + 1 if h.pos == _last and h.action == 1 else 0
 	_last = h.pos
 	var want: int = [DOWN, LEFT, UP, RIGHT][_exit]
@@ -275,8 +275,8 @@ func _to_exit(sim: RefCounted) -> int:
 
 
 ## A skill key for the fight, or -1.
-func _skill(sim: RefCounted, foes: Array, target, dist: int, reach: int) -> int:
-	var h = sim.hero
+func _skill(sim: MapSim, foes: Array, target: MapActor, dist: int, reach: int) -> int:
+	var h := sim.hero
 	var key_of := _key_of(sim)
 	if key_of.is_empty():
 		return -1

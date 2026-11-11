@@ -7,14 +7,14 @@ extends BaseScreen
 ## mission's slots and saves nothing; close goes back there.
 const SLOTS := 5
 
-var profile: RefCounted
+var profile: Profile
 var path: String = Profile.PATH
 var slot := 0
 var slots: Array[Button] = []
 var marks: Array[Label] = []
 @onready var gold: Label = %Gold.get_node("Value")
 @onready var info: Label = %Info
-var sim: RefCounted = null  # a mission's: its slots and keys are the ones changed
+var sim: MapSim = null  # a mission's: its slots and keys are the ones changed
 var close := Callable()  # set by the pause menu: what Back does instead of Router.back()
 
 

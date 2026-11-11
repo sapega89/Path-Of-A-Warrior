@@ -14,7 +14,7 @@ const CHARS_PER_SECOND := 40.0
 const WAIT_TICKS := 15
 enum Step { LIST, GREETING, TOPIC, TALK, DISCUSSED, VISITED, CLOSED }
 
-var profile: RefCounted
+var profile: Profile
 var path: String = Profile.PATH
 var step := Step.LIST
 @onready var column: VBoxContainer = %Column

@@ -5,7 +5,7 @@ extends BaseScreen
 ## visits from here.
 
 var path: String = Profile.PATH
-var profile: RefCounted
+var profile: Profile
 var campaign := Campaign.new()
 @onready var list: VBoxContainer = %List
 @onready var visit: Button = %Visit

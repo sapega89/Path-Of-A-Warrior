@@ -15,7 +15,7 @@ const STATS := [
 	["DEF", "attributes.defense", Profile.Stat.DEFENSE],
 ]
 
-var profile: RefCounted
+var profile: Profile
 var path: String = Profile.PATH
 var values := {}  # row name -> its value Label
 var plus := {}  # stat row name -> its "+" Button

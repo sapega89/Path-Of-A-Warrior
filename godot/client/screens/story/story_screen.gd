@@ -37,7 +37,7 @@ const LINE_FONT := 32
 const PICTURE_TICKS := 3
 const AFTER_TICKS := 3
 
-var profile: RefCounted
+var profile: Profile
 var story := Stories.OPENING
 var pages: Array = []
 var page := -1

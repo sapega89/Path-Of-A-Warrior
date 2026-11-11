@@ -10,7 +10,7 @@ extends BaseScreen
 const SKILLS_PATH := "res://data/skills.json"
 const KEY_COUNT := 5
 
-var profile: RefCounted
+var profile: Profile
 var path: String = Profile.PATH
 var data: Dictionary = {}
 var slot := 0  # the skill key being set

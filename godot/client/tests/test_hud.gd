@@ -36,7 +36,7 @@ func test_skill_bar_slots() -> void:
 	eq(MapHud.slot_x(false, 0), 0, "the belt from the left")
 	eq(MapHud.slot_x(true, 4), 240 - 24, "the last skill at the right")
 	var hud := MapHud.new()
-	hud.sim = RefCounted.new()  # anything not null: slot_at only measures
+	hud.sim = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))  # slot_at only measures
 	root.add_child(hud)
 	var view := hud.get_viewport_rect().size
 	var k := hud.scale_of(view)

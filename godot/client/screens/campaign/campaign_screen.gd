@@ -14,7 +14,7 @@ extends BaseScreen
 const DONE_MARK := "  ✓"
 
 var campaign := Campaign.new()
-var profile: RefCounted
+var profile: Profile
 @onready var list: VBoxContainer = %List
 @onready var heading: Label = %Heading
 @onready var scroll: ScrollContainer = %Scroll

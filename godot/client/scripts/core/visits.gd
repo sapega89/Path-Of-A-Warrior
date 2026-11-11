@@ -66,13 +66,13 @@ static func line(i: int) -> String:
 
 
 ## Can the hero invite someone now: a mission won since the last visit, and a friend.
-static func can_visit(profile: RefCounted) -> bool:
+static func can_visit(profile: Profile) -> bool:
 	return profile.can_visit and not profile.friendship.is_empty()
 
 
 ## The generals on the list, in the order the hero met them: [[id, friendship], ...].
 ## With the Hetman's Seal: all generals one can visit, 0 for those not met.
-static func generals(profile: RefCounted) -> Array:
+static func generals(profile: Profile) -> Array:
 	var out: Array = []
 	if profile.has_item(SEAL):
 		for id in data().get("generals", []):
@@ -105,7 +105,7 @@ static func _said(who: String, text: String) -> String:
 
 ## Adds friendship to a general (met or, with amount > 0, one of the 44 one can visit).
 ## Over 100 it stays 100; at 0 or over 200 he leaves the list. True when it reached 100.
-static func add_friendship(profile: RefCounted, id: int, amount: int) -> bool:
+static func add_friendship(profile: Profile, id: int, amount: int) -> bool:
 	var key := str(id)
 	if not profile.friendship.has(key):
 		if amount <= 0 or not (id in data().get("generals", []).map(func(g): return int(g))):
@@ -126,11 +126,7 @@ static func add_friendship(profile: RefCounted, id: int, amount: int) -> bool:
 ## Returns {kind: Gift, text, title} (text and title translation keys or names); kind NONE when
 ## there is none (or no room for it).
 static func give_gift(
-	profile: RefCounted,
-	general_id: int,
-	general: Dictionary,
-	chosen: int,
-	rng: RandomNumberGenerator
+	profile: Profile, general_id: int, general: Dictionary, chosen: int, rng: RandomNumberGenerator
 ) -> Dictionary:
 	var none := {"kind": Gift.NONE, "text": "", "title": ""}
 	var points := int(profile.friendship.get(str(general_id), 0))
@@ -223,11 +219,7 @@ static func skill_name(i: int) -> String:
 ## Ends a visit: no more until the next mission won, the gift, 5 more friendship.
 ## Returns the gift (give_gift) and "full": whether the friendship reached 100.
 static func finish(
-	profile: RefCounted,
-	general_id: int,
-	general: Dictionary,
-	chosen: int,
-	rng: RandomNumberGenerator
+	profile: Profile, general_id: int, general: Dictionary, chosen: int, rng: RandomNumberGenerator
 ) -> Dictionary:
 	profile.can_visit = false
 	var gift := give_gift(profile, general_id, general, chosen, rng)

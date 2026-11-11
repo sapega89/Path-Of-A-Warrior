@@ -337,8 +337,8 @@ func assign_quick_key(key: int, slot: int) -> bool:
 
 
 ## The hero of a mission starts with this hero's numbers, full HP and MP.
-func apply_to(sim: RefCounted) -> void:
-	var h = sim.hero
+func apply_to(sim: MapSim) -> void:
+	var h := sim.hero
 	h.level = level
 	sim.hero_exp = experience
 	h.attack = attack()
@@ -369,7 +369,7 @@ func apply_to(sim: RefCounted) -> void:
 ## mission's gold and exp, its progress and its place among the missions done.
 ## Returns the levels gained.
 func take_from(
-	sim: RefCounted, lord_id: int, mission: int, ruler_id: int, rng: RandomNumberGenerator = null
+	sim: MapSim, lord_id: int, mission: int, ruler_id: int, rng: RandomNumberGenerator = null
 ) -> int:
 	gold += int(sim.gold)
 	if rng == null:
@@ -398,9 +398,7 @@ func take_from(
 ## reward is 200 + i (lost) ends the story with ending i: the hero goes to that ending's
 ## place, gets the mission's gold anyway when lost, sometimes a gear (Katria's scarf
 ## after ending 2), and one more lord opens. Returns the ending reached, or -1.
-func advance(
-	sim: RefCounted, lord_id: int, info: Dictionary, rng: RandomNumberGenerator = null
-) -> int:
+func advance(sim: MapSim, lord_id: int, info: Dictionary, rng: RandomNumberGenerator = null) -> int:
 	if rng == null:
 		rng = RandomNumberGenerator.new()
 	var general := int(info.get("general", 0))
@@ -629,7 +627,7 @@ func combine(places: Array, plan: Dictionary) -> String:
 ## A mission lost, as the original: from level 10 on, with a chance of level / 4 in 100, one of
 ## the 9 places of the Gear page is picked at random and what is worn there is lost. rng: the
 ## mission's JavaRandom (below). Returns the thing lost, or {} (nothing, or the place empty).
-func lose_gear(rng: RefCounted) -> Dictionary:
+func lose_gear(rng: JavaRandom) -> Dictionary:
 	if level <= 9 or rng.below(100) >= level >> 2:
 		return {}
 	var i: int = rng.below(Items.EQUIPPED)
@@ -747,7 +745,7 @@ func save_keeping_map(path: String = PATH) -> bool:
 ## (and is taken from the mission, so its end does not give it twice) and the place in it is
 ## kept for Continue.
 func save_on_map(
-	sim: RefCounted, lord_id: int, mission: int, ruler_id: int, path: String = PATH
+	sim: MapSim, lord_id: int, mission: int, ruler_id: int, path: String = PATH
 ) -> bool:
 	take_from(sim, lord_id, mission, ruler_id)
 	sim.gold = 0
@@ -769,7 +767,7 @@ func save_on_map(
 
 
 ## The mission saved on its map goes on: its place and numbers into the new mission.
-func resume_on_map(sim: RefCounted) -> void:
+func resume_on_map(sim: MapSim) -> void:
 	if on_map.is_empty():
 		return
 	sim.hero.hp = clampi(int(on_map.get("hp", sim.hero.hp)), 1, sim.hero.max_hp)
@@ -790,8 +788,8 @@ func _write(path: String) -> bool:
 
 
 ## The saved hero, or a new one.
-static func load_or_new(path: String = PATH) -> RefCounted:
-	var p: RefCounted = load("res://scripts/core/profile.gd").new()
+static func load_or_new(path: String = PATH) -> Profile:
+	var p := Profile.new()
 	var f := FileAccess.open(path, FileAccess.READ)
 	if f != null:
 		var data: Variant = JSON.parse_string(f.get_as_text())
