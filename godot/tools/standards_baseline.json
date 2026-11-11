@@ -39,7 +39,6 @@
   "screens/mission/mission_screen.gd": 1,
   "scripts/art/art_hud.gd": 13,
   "scripts/ui/exp_bar.gd": 2,
-  "scripts/ui/hint_bar.gd": 3,
   "scripts/ui/key_grid.gd": 3,
   "scripts/ui/ornament.gd": 1,
   "scripts/ui/ui_theme.gd": 4,
@@ -48,10 +47,8 @@
  "ui_in_code": {
   "screens/gear/gear_screen.gd": 1,
   "scripts/art/art_hud.gd": 13,
-  "scripts/main.gd": 1,
-  "scripts/ui/hint_bar.gd": 1,
   "scripts/ui/key_grid.gd": 2,
-  "scripts/ui/ui_theme.gd": 7,
+  "scripts/ui/ui_theme.gd": 6,
   "scripts/ui/world_map_view.gd": 1
  },
  "untyped": {},
