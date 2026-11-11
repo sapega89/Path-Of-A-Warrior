@@ -1,20 +1,13 @@
 class_name PanelBox
 extends StyleBox
 ## The plate of a panel or a window: dark leather in an iron rim, a stitched seam inside it and
-## an iron rivet in each corner. Its content margins are set where it is used (theme.tres): a
-## script's _init runs after the loaded values, so it leaves them alone.
+## an iron rivet in each corner. Its content margins and its plate are set where it is used
+## (theme.tres).
 
 ## How far it reaches out of its rect: left, top, right, bottom (a window's frame and title).
 @export var outset: Array[float] = [0.0, 0.0, 0.0, 0.0]
-
-var plate: StyleBoxFlat
-
-
-func _init() -> void:
-	plate = Ornament.flat(Color(UiTheme.PANEL, 0.97), UiTheme.IRON, 3, UiTheme.RADIUS)
-	plate.shadow_color = Color(0, 0, 0, 0.55)
-	plate.shadow_size = 10
-	plate.shadow_offset = Vector2(0, 4)
+## The leather in its iron rim, with its shadow under it.
+@export var plate: StyleBoxFlat
 
 
 func _get_draw_rect(rect: Rect2) -> Rect2:

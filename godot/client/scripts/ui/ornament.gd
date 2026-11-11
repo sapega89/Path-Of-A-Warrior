@@ -13,16 +13,6 @@ static func rhombus(to: RID, c: Vector2, r: float, color: Color) -> void:
 	RenderingServer.canvas_item_add_polyline(to, points, PackedColorArray([color]), 1.0, true)
 
 
-static func flat(color: Color, border: Color, width: int, radius: int) -> StyleBoxFlat:
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = color
-	sb.border_color = border
-	sb.set_border_width_all(width)
-	sb.set_corner_radius_all(radius)
-	sb.anti_aliasing = true
-	return sb
-
-
 ## A round dot of radius r at c, its edge smoothed.
 static func disc(to: RID, c: Vector2, r: float, color: Color) -> void:
 	var points := PackedVector2Array()

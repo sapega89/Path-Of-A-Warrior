@@ -82,3 +82,13 @@ func test_the_exp_pages_show_the_bar() -> void:
 	check(not screen.banner.exp_bar.visible, "no bar on other banners")
 	screen.free()
 	Router.params = old
+
+
+## The bar's hollow and rim are the theme's: dark, in a thin iron rim with small corners.
+func test_the_hollow_and_rim_from_the_theme() -> void:
+	var t: Theme = UiTheme.theme(UiTheme.THEME)
+	var hollow := t.get_stylebox("hollow", "ExpBar") as StyleBoxFlat
+	eq([hollow.bg_color, hollow.corner_radius_top_left], [Color("0b0b0c"), 1], "a dark hollow")
+	var rim := t.get_stylebox("rim", "ExpBar") as StyleBoxFlat
+	check(not rim.draw_center, "the rim only")
+	eq([rim.border_width_top, rim.border_color], [1, UiTheme.IRON], "of iron")

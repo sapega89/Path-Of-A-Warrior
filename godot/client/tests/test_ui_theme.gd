@@ -41,6 +41,16 @@ func test_plaques_and_panels() -> void:
 		t.get_stylebox("panel", "PanelContainer") is PanelBox, "panels of leather with their rivets"
 	)
 	check(t.get_stylebox("embedded_border", "Window") is PanelBox, "and the dialogs")
+	var plate := (t.get_stylebox("panel", "PanelContainer") as PanelBox).plate
+	eq(
+		[plate.bg_color, plate.border_color, plate.border_width_top],
+		[Color(UiTheme.PANEL, 0.97), UiTheme.IRON, 3],
+		"dark leather in an iron rim"
+	)
+	eq(plate.shadow_size, 10, "a shadow under it")
+	check(
+		(t.get_stylebox("embedded_border", "Window") as PanelBox).plate == plate, "the same plate"
+	)
 	var on := t.get_icon("checked", "CheckBox")
 	var off := t.get_icon("unchecked", "CheckBox")
 	check(on != null and off != null and on != off, "the check boxes drawn")
