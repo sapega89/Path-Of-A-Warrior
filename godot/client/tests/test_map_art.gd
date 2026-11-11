@@ -56,19 +56,23 @@ func test_people_walk_on_flat_ground() -> void:
 
 func test_the_ground_and_around() -> void:
 	var b := _map(1)
-	var ground: MeshInstance3D = b.get_node("Ground")
-	var verts: PackedVector3Array = ground.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+	var ground: Node3D = b.get_node("Ground")
+	check(ground.get_child_count() > 1, "in chunks")
+	var corners := {}
+	var lo := Vector3(INF, INF, INF)
+	var hi := -lo
+	for chunk: MeshInstance3D in ground.get_children():
+		check(chunk.material_override == b.ground_material, "%s: painted as one" % chunk.name)
+		for v: Vector3 in chunk.mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]:
+			corners[Vector2(v.x, v.z)] = true
+			lo = lo.min(v)
+			hi = hi.max(v)
 	var m := MapArt.MARGIN
 	eq(
-		verts.size(),
+		corners.size(),
 		((b.w + 2 * m) * MapArt.PARTS + 1) * ((b.h + 2 * m) * MapArt.PARTS + 1),
 		"a grid of parts"
 	)
-	var lo := Vector3(INF, INF, INF)
-	var hi := -lo
-	for v in verts:
-		lo = lo.min(v)
-		hi = hi.max(v)
 	eq(
 		[lo.x, lo.z, hi.x, hi.z],
 		[-float(m), -float(m), float(b.w + m), float(b.h + m)],
@@ -77,7 +81,7 @@ func test_the_ground_and_around() -> void:
 	check(
 		b.hills(-m, -m) > 0.5 and b.hills(b.w / 2.0, b.h / 2.0) == 0.0, "hills around, flat inside"
 	)
-	check(ground.material_override is ShaderMaterial, "painted by its shader")
+	check(b.ground_material.shader == MapArt.GROUND_SHADER, "painted by its shader")
 	var blocked := 0
 	for y in b.h:
 		for x in b.w:

@@ -2,10 +2,11 @@ class_name MapArt
 extends "res://scripts/world/map_builder.gd"
 ## A map of the campaign in the new art, from the same data as MapBuilder (data/maps/N.json),
 ## with the same cells, collision and breakable objects:
-##   the ground   one painted surface, three parts to a tile, each part the kind of ground its
-##                tile shows there (assets/art/tiles.json, made by godot/tools/art/tiles.py):
-##                meadow, grass, dirt, sand, gravel, stone, rock, water, wood or cobble, with
-##                the detail of its kind (pebbles, planks, paving);
+##   the ground   one painted surface (in chunks, GroundMesh, so that only what is in view is
+##                drawn), three parts to a tile, each part the kind of ground its tile shows
+##                there (assets/art/tiles.json, made by godot/tools/art/tiles.py): meadow,
+##                grass, dirt, sand, gravel, stone, rock, water, wood or cobble, with the
+##                detail of its kind (pebbles, planks, paving);
 ##   raised       a blocked cell of rock, stone, gravel, cobble or wood rises as a cliff or a wall
 ##                (its faces drawn as strata, stone courses or logs); a blocked cell of grass as
 ##                a bank; the slope stays inside the blocked cell, so the free cells stay flat;
@@ -103,6 +104,10 @@ var part_face := PackedByteArray()
 var cell_kind := PackedInt32Array()
 var cell_raise := PackedFloat32Array()
 var props: Array[Node3D] = []
+## What paints the ground (map_ground.gdshader), shared by its chunks (GroundMesh), and the
+## water (none on a map without it).
+var ground_material: ShaderMaterial
+var water_material: ShaderMaterial
 
 
 static func tiles() -> Dictionary:
@@ -305,38 +310,22 @@ func hills(x: float, z: float) -> float:
 
 
 func _build_ground() -> void:
-	var st := SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var lo := -MARGIN * PARTS
 	var nx := (w + 2 * MARGIN) * PARTS + 1
 	var nz := (h + 2 * MARGIN) * PARTS + 1
+	var grid := GroundMesh.new(nx, nz, 1.0 / PARTS)
 	for j in nz:
 		for i in nx:
-			_ground_vertex(st, lo + i, lo + j)
-	for j in nz - 1:
-		for i in nx - 1:
-			var a := j * nx + i
-			var b := a + nx
-			st.add_index(a)
-			st.add_index(a + 1)
-			st.add_index(b)
-			st.add_index(b)
-			st.add_index(a + 1)
-			st.add_index(b + 1)
-	st.generate_normals()
-	var mi := MeshInstance3D.new()  # standards: allow nodes_in_code (the map's ground)
-	mi.name = "Ground"
-	mi.mesh = st.commit()
-	var m := ShaderMaterial.new()
-	m.shader = GROUND_SHADER
-	mi.material_override = m
-	add_child(mi)
+			_ground_vertex(grid, lo + i, lo + j)
+	ground_material = ShaderMaterial.new()
+	ground_material.shader = GROUND_SHADER
+	add_child(grid.build(ground_material))
 
 
 ## The ground's vertex at the corner (vx, vz) of four parts: their colours mixed, its height
 ## (raised when all four are, sunk under water when all four are wet), the detail of their
 ## kinds (pebbles, planks, paving) and of a cliff's face.
-func _ground_vertex(st: SurfaceTool, vx: int, vz: int) -> void:
+func _ground_vertex(grid: GroundMesh, vx: int, vz: int) -> void:
 	var colour := Color(0, 0, 0, 0)
 	var detail := [0.0, 0.0, 0.0]
 	var raised := 0
@@ -366,10 +355,8 @@ func _ground_vertex(st: SurfaceTool, vx: int, vz: int) -> void:
 	elif wet == 4:
 		y -= WATER_DEPTH
 	colour.a = face / raised if raised > 0 else 0.0
-	st.set_color(colour)
-	st.set_uv(Vector2(detail[0], detail[1]))
-	st.set_uv2(Vector2(detail[2], cliff))
-	st.add_vertex(Vector3(x, y, z))
+	grid.add(Vector3(x, y, z), colour)
+	grid.add_uv(Vector2(detail[0], detail[1]), Vector2(detail[2], cliff))
 
 
 static func _wobble(x: float, z: float) -> float:
@@ -391,9 +378,9 @@ func _build_water() -> void:
 	mi.name = "Water"
 	mi.mesh = q
 	mi.position = Vector3(w / 2.0, WATER_LEVEL, h / 2.0)
-	var m := ShaderMaterial.new()
-	m.shader = WATER_SHADER
-	mi.material_override = m
+	water_material = ShaderMaterial.new()
+	water_material.shader = WATER_SHADER
+	mi.material_override = water_material
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(mi)
 
@@ -506,10 +493,8 @@ func show_only(cells: Dictionary) -> void:
 		for x in w:
 			img.set_pixel(x, y, Color.WHITE if is_shown(x, y) else Color.BLACK)
 	var tex := ImageTexture.create_from_image(img)
-	for n in ["Ground", "Water"]:
-		var mi := get_node_or_null(n) as MeshInstance3D
-		if mi != null and mi.material_override is ShaderMaterial:
-			var m := mi.material_override as ShaderMaterial
+	for m: ShaderMaterial in [ground_material, water_material]:
+		if m != null:
 			m.set_shader_parameter("view_mask", tex)
 			m.set_shader_parameter(
 				"view_rect", Vector4(0, 0, w, h) if not cells.is_empty() else Vector4.ZERO
