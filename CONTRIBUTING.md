@@ -30,6 +30,8 @@ python godot/tools/check_standards.py
 ```
 
 - Тести зелені, у лозі немає нових рядків `ERROR`.
+- Додали скрипт, шейдер чи ассет: запустіть імпорт і закомітьте нові файли `.uid` і `.import`
+  (Godot тримає в них id, на які посилаються сцени, і налаштування імпорту).
 - `check_standards.py` зелений: новий код не додає порушень правил `CLAUDE.md`. Старі порушення
   записані в `godot/tools/standards_baseline.json`; прибрали якесь, тоді
   `python godot/tools/check_standards.py --update` у тому ж PR.
