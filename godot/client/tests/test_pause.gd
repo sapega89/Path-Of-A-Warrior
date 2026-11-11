@@ -27,7 +27,10 @@ func test_pause_menu() -> void:
 	screen.sim.quick_slots[2] = [4, 1]
 	screen.pause_menu.open_items()
 	var items: Control = screen.pause_menu.settings
-	check(items is AssignItemsScreen, "Assign Items over it")
+	check(items is InventoryScreen, "the Inventory over it")
+	check(not items.gear.visible and items.cells.is_empty(), "its belt only: no gear in a fight")
+	check(items.belt.slots[2].icon != null, "the mission's belt")
+	check(items.get_node("%Body").vertical, "the belt above the gold")
 	items.press_slot(2)
 	check(items.press_key(0), "slot 3 on the * key")
 	eq(int(screen.sim.quick_keys[0]), 2, "the mission's key changed at once")
