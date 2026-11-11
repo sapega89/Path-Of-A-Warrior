@@ -2,6 +2,9 @@ class_name MapActor
 extends RefCounted
 ## The hero or an enemy on the map: where he is, what he does, his stats and his hit sparks.
 
+## weapon_kind of a long weapon, a pike (its reach 63 px; a short one, 1, reaches 53).
+const LONG_WEAPON := 0
+
 var pos := Vector2i.ZERO
 var dir := 0  # 8-direction: 0 down, 2 left, 4 up, 6 right
 var facing := 0

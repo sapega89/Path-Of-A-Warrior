@@ -210,16 +210,17 @@ static func skill_effects(skill: int, f: int, p: Vector2i, dir: int, out: Array)
 				out.append(["blaze", f, p])
 
 
-## The weapon trails to draw: ["trail", picture, position]. The picture is the direction
-## (4 of them) times 3 steps. pick gives the steps that are chosen at random each time the
-## trail is drawn (a swing that whirls, a general's strike).
+## The weapon trails to draw: [kind, picture, position], the kind "trail" for a blade and
+## "pike" for the hero's pike (its blows reach farther). The picture is the direction (4 of
+## them) times 3 steps. pick gives the steps that are chosen at random each time the trail is
+## drawn (a swing that whirls, a general's strike).
 static func trails(sim: MapSim, pick: RandomNumberGenerator) -> Array:
 	var out: Array = []
 	var step := hero_trail_step(sim, pick)
 	if step > -1:
 		out.append(
 			[
-				"trail",
+				"pike" if sim.hero.weapon_kind == MapActor.LONG_WEAPON else "trail",
 				_trail_picture(sim.hero.dir, sim.hero.action == 25, sim.hero.frame, step),
 				sim.hero.pos
 			]
