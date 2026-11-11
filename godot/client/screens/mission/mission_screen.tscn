@@ -1,13 +1,16 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=15 format=3]
 
 [ext_resource type="Script" path="res://screens/mission/mission_screen.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/world/map_view.tscn" id="2"]
 [ext_resource type="Script" path="res://scripts/world/map_people.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/world/map_effects.gd" id="4"]
-[ext_resource type="Script" path="res://scripts/ui/map_hud.gd" id="5"]
+[ext_resource type="PackedScene" path="res://screens/mission/hud/map_hud.tscn" id="5"]
 [ext_resource type="Script" path="res://scripts/ui/exp_bar.gd" id="6"]
 [ext_resource type="Script" path="res://scripts/ui/framed_picture.gd" id="7"]
 [ext_resource type="Script" path="res://scripts/ui/touch_controls.gd" id="8"]
+[ext_resource type="Script" path="res://screens/mission/exit_arrows.gd" id="9"]
+[ext_resource type="Script" path="res://screens/mission/mission_banner.gd" id="10"]
+[ext_resource type="Script" path="res://screens/mission/map_talk.gd" id="11"]
 
 [sub_resource type="StyleBoxEmpty" id="FaceStyle"]
 
@@ -45,62 +48,65 @@ script = ExtResource("3")
 [node name="Effects" type="Node3D" parent="World/Viewport/WorldRoot"]
 script = ExtResource("4")
 
-[node name="Arrow0" type="TextureRect" parent="."]
-visible = false
-layout_mode = 0
-mouse_filter = 2
-stretch_mode = 0
-
-[node name="Arrow1" type="TextureRect" parent="."]
-visible = false
-layout_mode = 0
-mouse_filter = 2
-stretch_mode = 0
-
-[node name="Arrow2" type="TextureRect" parent="."]
-visible = false
-layout_mode = 0
-mouse_filter = 2
-stretch_mode = 0
-
-[node name="Arrow3" type="TextureRect" parent="."]
-visible = false
-layout_mode = 0
-mouse_filter = 2
-stretch_mode = 0
-
-[node name="Arrow4" type="TextureRect" parent="."]
-visible = false
-layout_mode = 0
-mouse_filter = 2
-stretch_mode = 0
-
-[node name="Arrow5" type="TextureRect" parent="."]
-visible = false
-layout_mode = 0
-mouse_filter = 2
-stretch_mode = 0
-
-[node name="Arrow6" type="TextureRect" parent="."]
-visible = false
-layout_mode = 0
-mouse_filter = 2
-stretch_mode = 0
-
-[node name="Arrow7" type="TextureRect" parent="."]
-visible = false
-layout_mode = 0
-mouse_filter = 2
-stretch_mode = 0
-
-[node name="Hud" type="Control" parent="."]
-unique_name_in_owner = true
+[node name="Arrows" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-script = ExtResource("5")
+script = ExtResource("9")
+
+[node name="Arrow0" type="TextureRect" parent="Arrows"]
+visible = false
+layout_mode = 0
+mouse_filter = 2
+stretch_mode = 0
+
+[node name="Arrow1" type="TextureRect" parent="Arrows"]
+visible = false
+layout_mode = 0
+mouse_filter = 2
+stretch_mode = 0
+
+[node name="Arrow2" type="TextureRect" parent="Arrows"]
+visible = false
+layout_mode = 0
+mouse_filter = 2
+stretch_mode = 0
+
+[node name="Arrow3" type="TextureRect" parent="Arrows"]
+visible = false
+layout_mode = 0
+mouse_filter = 2
+stretch_mode = 0
+
+[node name="Arrow4" type="TextureRect" parent="Arrows"]
+visible = false
+layout_mode = 0
+mouse_filter = 2
+stretch_mode = 0
+
+[node name="Arrow5" type="TextureRect" parent="Arrows"]
+visible = false
+layout_mode = 0
+mouse_filter = 2
+stretch_mode = 0
+
+[node name="Arrow6" type="TextureRect" parent="Arrows"]
+visible = false
+layout_mode = 0
+mouse_filter = 2
+stretch_mode = 0
+
+[node name="Arrow7" type="TextureRect" parent="Arrows"]
+visible = false
+layout_mode = 0
+mouse_filter = 2
+stretch_mode = 0
+
+[node name="Hud" parent="." instance=ExtResource("5")]
+unique_name_in_owner = true
+layout_mode = 1
 
 [node name="Fade" type="ColorRect" parent="."]
 unique_name_in_owner = true
@@ -116,6 +122,7 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 0
 mouse_filter = 2
+script = ExtResource("10")
 
 [node name="Lines" type="VBoxContainer" parent="Banner"]
 layout_mode = 2
@@ -142,6 +149,7 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
+script = ExtResource("11")
 
 [node name="Face" type="PanelContainer" parent="Talk"]
 unique_name_in_owner = true
@@ -171,3 +179,9 @@ autowrap_mode = 3
 [node name="Touch" type="Control" parent="."]
 layout_mode = 0
 script = ExtResource("8")
+
+[connection signal="auto_pressed" from="Hud" to="." method="_on_hud_auto_pressed"]
+[connection signal="belt_pressed" from="Hud" to="." method="_on_hud_belt_pressed"]
+[connection signal="pause_pressed" from="Hud" to="." method="_on_hud_pause_pressed"]
+[connection signal="skill_pressed" from="Hud" to="." method="_on_hud_skill_pressed"]
+[connection signal="skip_pressed" from="Hud" to="." method="_on_hud_skip_pressed"]

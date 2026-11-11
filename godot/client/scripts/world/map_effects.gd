@@ -1,16 +1,15 @@
 class_name MapEffects
 extends SkillEffects
-## The effects of a mission in the new art, made in code: the blows, skills, potions and
-## scrolls MapSim shows, the fire on whoever burns, the auras of buffs, the blood of hits (and
-## the blots it leaves on the ground for a while), the weapon trails and the archers' arrows.
-## show_effects() takes what MapSim gives each tick: [kind, frame, point in map pixels], with an
-## optional true for the ring of an aura (on the ground behind the one who glows) or for a trail
-## whose swing is done (it fades). The frame says how far the effect has gone (and for some,
-## which way it goes); t, 0..1 of the way to the next tick, carries it on smoothly.
-## Room-wide skills (Thunderstorm, Rain of Fire) strike at places that follow from the frame,
-## the same each time.
+## The effects of a mission in the new art, rigs (scenes/world/effects) placed and tuned in code:
+## the blows, skills, potions and scrolls MapSim shows, the fire on whoever burns, the auras of
+## buffs, the blood of hits (and the blots it leaves on the ground for a while), the weapon trails
+## and the archers' arrows. show_effects() takes what MapSim gives each tick: [kind, frame, point in
+## map pixels], with an optional true for the ring of an aura (on the ground behind the one who
+## glows) or for a trail whose swing is done (it fades). The frame says how far the effect has gone
+## (and for some, which way it goes); t, 0..1 of the way to the next tick, carries it on smoothly.
+## Room-wide skills (Thunderstorm, Rain of Fire) strike at places that follow from the frame, the
+## same each time.
 
-const BLOOD := preload("res://assets/art/shaders/fx_blood.gdshader")
 ## The kinds of effects and how many frames each has (the skills' own: SKILL_FRAMES).
 ##   slash:  dust kicked up by a dash (frame: direction << 1 | step)
 ##   trail:  the trail of a blade (direction * 3 + which blow)
@@ -44,6 +43,9 @@ const FRAMES := {
 	"quake": 15,
 	"scroll": 16
 }
+## The colours (sRGB, [core, edge]) of a spark: a light hit, a hard one.
+const WARM := [Color(1.0, 0.95, 0.8), Color(0.83, 0.65, 0.27)]
+const HOT := [Color(1.0, 0.92, 0.66), Color(0.91, 0.4, 0.14)]
 ## Height of the flames of someone burning, by frame.
 const FIRE_H := [0.6, 1.0, 1.4, 1.75, 1.95, 2.0, 1.95, 1.75, 0.9, 0.5]
 ## How far (px) the arrows fly each tick.
@@ -51,12 +53,16 @@ const ARROW_STEP := 12
 ## The blood hits leave on the ground: [blot, when it was left (ms)]; the oldest goes first.
 const STAINS := 24
 const STAIN_MS := 9000.0
+## A blot of blood on the ground, and what holds the blots.
+const STAIN := preload("res://scenes/world/effects/stain.tscn")
+const STAIN_HOLDER := preload("res://scenes/world/effects/stains.tscn")
+## An archer's arrow in flight (ArrowMesh).
+const ARROW := preload("res://scenes/world/effects/arrow.tscn")
 
 ## What the last show_effects() drew: [kind, frame, rig].
 var drawn: Array = []
 
 var _arrows: Array[Node3D] = []
-var _arrow_mesh: ArrayMesh
 var _stains: Array = []
 var _stain_holder: Node3D
 ## The hits that bled last time and this time (by place and blow), so that each leaves one stain.
@@ -97,11 +103,9 @@ func shown() -> int:
 ## while a big skill holds the room), so they are drawn on their way to the next place.
 func show_shots(arrows: Array, t := 0.0, moving := true) -> void:
 	while _arrows.size() < arrows.size():
-		var a := MeshInstance3D.new()
+		var a := ARROW.instantiate() as MeshInstance3D
 		a.name = "Arrow%d" % _arrows.size()
-		a.mesh = _arrow()
 		a.material_override = ArtKit.props_material()
-		a.visible = false
 		add_child(a)
 		_arrows.append(a)
 	for i in _arrows.size():
@@ -123,12 +127,6 @@ func show_shots(arrows: Array, t := 0.0, moving := true) -> void:
 
 
 # ---- a dash: dust ------------------------------------------------------------------------
-
-
-func _build_slash(rig: Node3D) -> void:
-	_light(rig, "Ring", Shape.RING, Turn.PLACED, DUST, 0.4)
-	for i in 3:
-		_puff(rig, "Dust%d" % i, Turn.FACING, DUST)
 
 
 func _draw_slash(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
@@ -159,27 +157,6 @@ func _draw_slash(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 # ---- the trail of a blade ----------------------------------------------------------------
 
 
-func _build_trail(rig: Node3D) -> void:
-	# a sweep to the left, one back to the right, and a chop from above
-	var sweeps := [[-80.0, 160.0, 0.35], [80.0, -160.0, -0.35]]
-	for i in 2:
-		var r := ArtEffects.slash(
-			rig, Vector3.ZERO, sweeps[i][0], sweeps[i][1], 1.05, 0.95, sweeps[i][2]
-		)
-		r.name = "Blow%d" % i
-	var chop := ArtEffects.slash(rig, Vector3.ZERO, 120.0, -170.0, 1.0, 0.0, 0.0)
-	chop.name = "Blow2"
-	chop.rotation = Vector3(0.0, 0.0, PI / 2.0)
-	chop.position = Vector3(0.0, 0.95, 0.0)
-	for i in 3:
-		var m := ShaderMaterial.new()
-		m.shader = LIGHT
-		m.set_shader_parameter("shape", Shape.SWEEP)
-		m.set_shader_parameter("body", 0.55)
-		_colours(m, STEEL)
-		(rig.get_node("Blow%d" % i) as MeshInstance3D).material_override = m
-
-
 func _draw_trail(rig: Node3D, frame: int, p: Vector2, t: float, fading: bool) -> void:
 	var blow := frame % 3
 	rig.position = _at(p)
@@ -193,11 +170,6 @@ func _draw_trail(rig: Node3D, frame: int, p: Vector2, t: float, fading: bool) ->
 
 
 # ---- a hit -------------------------------------------------------------------------------
-
-
-func _build_spark(rig: Node3D) -> void:
-	_light(rig, "Glow", Shape.GLOW, Turn.FACING, WARM)
-	_light(rig, "Star", Shape.STAR, Turn.FACING, WARM, 0.35)
 
 
 func _draw_spark(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
@@ -225,30 +197,6 @@ func _draw_spark(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 
 
 # ---- blood -------------------------------------------------------------------------------
-
-
-## A part of blood: a quad with fx_blood in a shape (0 the spray, 1 a blot on the ground).
-func _blood_part(rig: Node3D, part: String, shape: int, turn: Turn) -> MeshInstance3D:
-	var mi := MeshInstance3D.new()
-	mi.name = part
-	var q := QuadMesh.new()
-	q.size = Vector2.ONE
-	mi.mesh = q
-	var m := ShaderMaterial.new()
-	m.shader = BLOOD
-	m.set_shader_parameter("shape", shape)
-	m.set_shader_parameter("billboard", turn)
-	mi.material_override = m
-	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	mi.extra_cull_margin = 4.0
-	if rig != null:
-		rig.add_child(mi)
-	return mi
-
-
-func _build_blood(rig: Node3D) -> void:
-	_blood_part(rig, "Spray", 0, Turn.FACING)
-	_light(rig, "Glint", Shape.GLOW, Turn.FACING, STEEL)
 
 
 func _draw_blood(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
@@ -283,14 +231,15 @@ func _draw_blood(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 ## Leaves a blot of blood on the ground, the oldest going when there are too many.
 func _stain(at: Vector3, size: float, seed_value: float) -> void:
 	if _stain_holder == null:
-		_stain_holder = Node3D.new()
-		_stain_holder.name = "Stains"
+		_stain_holder = STAIN_HOLDER.instantiate() as Node3D
 		add_child(_stain_holder)
 	var blot: MeshInstance3D
 	if _stains.size() >= STAINS:
 		blot = _stains.pop_front()[0]
 	else:
-		blot = _blood_part(_stain_holder, "Stain%d" % _stains.size(), 1, Turn.PLACED)
+		blot = STAIN.instantiate() as MeshInstance3D
+		blot.name = "Stain%d" % _stains.size()
+		_stain_holder.add_child(blot)
 	_flat(blot, at, size)
 	_tune(blot, {"seed": seed_value, "progress": 0.0, "strength": 0.85})
 	_stains.append([blot, Time.get_ticks_msec()])
@@ -310,10 +259,6 @@ func _age_stains() -> void:
 		)
 
 
-func _build_pool(rig: Node3D) -> void:
-	_blood_part(rig, "Pool", 1, Turn.PLACED)
-
-
 func _draw_pool(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
 	var ph := _run(frame, t, 8)
 	var pool := rig.get_node("Pool") as MeshInstance3D
@@ -322,12 +267,6 @@ func _draw_pool(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) ->
 
 
 # ---- healing, buffs, auras ---------------------------------------------------------------
-
-
-func _build_heal(rig: Node3D) -> void:
-	_light(rig, "Spiral", Shape.SPIRAL, Turn.PLACED, HEAL, 0.35, true)
-	_light(rig, "Motes", Shape.MOTES, Turn.PLACED, HEAL, 0.6, true)
-	_light(rig, "Ground", Shape.GLOW, Turn.PLACED, HEAL)
 
 
 func _draw_heal(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
@@ -340,12 +279,6 @@ func _draw_heal(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) ->
 	_tune(rig.get_node("Motes"), {"count": 10.0, "strength": swell})
 	_flat(rig.get_node("Ground"), at, 1.9)
 	_tune(rig.get_node("Ground"), {"strength": 0.6 * swell})
-
-
-func _build_buff(rig: Node3D) -> void:
-	_light(rig, "Column", Shape.COLUMN, Turn.PLACED, WARM, 0.15, true)
-	_light(rig, "Ring", Shape.RING, Turn.PLACED, WARM, 0.4)
-	_light(rig, "Ground", Shape.GLOW, Turn.PLACED, WARM)
 
 
 ## A pillar of light comes down on him (frames 0-3) and spreads in a ring on the ground (3-5;
@@ -371,11 +304,6 @@ func _draw_buff(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) ->
 	_tune(rig.get_node("Ground"), {"strength": 0.5 * maxf(column, 1.0 - spread)})
 
 
-func _build_aura(rig: Node3D) -> void:
-	_light(rig, "Ring", Shape.RING, Turn.PLACED, WARM, 0.4)
-	_light(rig, "Light", Shape.MOTES, Turn.PLACED, WARM, 0.6, true)
-
-
 ## The ring on the ground behind him (frames 0-2) or the light rising around him (3-5).
 func _draw_aura(rig: Node3D, frame: int, p: Vector2, t: float, behind: bool) -> void:
 	var at := _at(p - Vector2(0, 3))
@@ -393,12 +321,6 @@ func _draw_aura(rig: Node3D, frame: int, p: Vector2, t: float, behind: bool) -> 
 # ---- water, fire, explosions -------------------------------------------------------------
 
 
-func _build_whirl(rig: Node3D) -> void:
-	_light(rig, "Ring", Shape.RING, Turn.PLACED, WATER, 0.5)
-	_light(rig, "Wall", Shape.SPLASH, Turn.PLACED, WATER, 0.5, true)
-	_light(rig, "Ground", Shape.GLOW, Turn.PLACED, WATER)
-
-
 func _draw_whirl(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
 	var ph := _run(frame, t, 2)
 	var at := _at(p)
@@ -413,12 +335,6 @@ func _draw_whirl(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 	_tune(rig.get_node("Ground"), {"strength": 0.45 * (1.0 - ph)})
 
 
-func _build_fire(rig: Node3D) -> void:
-	_light(rig, "Flame0", Shape.FLAME, Turn.UPRIGHT, HOT, 0.55)
-	_light(rig, "Flame1", Shape.FLAME, Turn.UPRIGHT, HOT, 0.55)
-	_light(rig, "Ground", Shape.GLOW, Turn.PLACED, HOT)
-
-
 func _draw_fire(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
 	var h := lerpf(FIRE_H[frame], FIRE_H[mini(frame + 1, FIRE_H.size() - 1)], t)
 	var at := _at(p)
@@ -429,12 +345,6 @@ func _draw_fire(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) ->
 	_tune(rig.get_node("Flame1"), {"seed": s + 3.0, "toward": 0.5})
 	_flat(rig.get_node("Ground"), at, 1.0 + 0.7 * h)
 	_tune(rig.get_node("Ground"), {"strength": 0.55})
-
-
-func _build_burst(rig: Node3D) -> void:
-	_light(rig, "Glow", Shape.GLOW, Turn.FACING, HOT)
-	_light(rig, "Star", Shape.STAR, Turn.FACING, HOT, 0.35)
-	_light(rig, "Ring", Shape.RING, Turn.PLACED, HOT, 0.4)
 
 
 func _draw_burst(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
@@ -449,14 +359,6 @@ func _draw_burst(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 	)
 	_flat(rig.get_node("Ring"), at, 1.2 + 3.2 * ph)
 	_tune(rig.get_node("Ring"), {"radius": 0.75, "width": 0.08, "count": 0.0, "strength": 1.0 - ph})
-
-
-func _build_blast(rig: Node3D) -> void:
-	_light(rig, "Glow", Shape.GLOW, Turn.FACING, HOT)
-	_light(rig, "Star", Shape.STAR, Turn.FACING, HOT, 0.35)
-	_light(rig, "Scorch", Shape.RING, Turn.PLACED, HOT, 0.4)
-	for i in 2:
-		_puff(rig, "Smoke%d" % i, Turn.FACING, SMOKE)
 
 
 ## An explosion: a scroll's (frames 0-1, where it lands) or one of those that end Rain of
@@ -491,13 +393,6 @@ func _draw_blast(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 # ---- lightning ---------------------------------------------------------------------------
 
 
-func _build_wave(rig: Node3D) -> void:
-	for i in 3:
-		_light(rig, "Bolt%d" % i, Shape.BOLT, Turn.AXIS, STORM, 0.3)
-	_light(rig, "Ball", Shape.GLOW, Turn.FACING, STORM)
-	_light(rig, "Ground", Shape.GLOW, Turn.PLACED, STORM)
-
-
 ## Lightning runs ahead of the caster: a ball crackling on its way, a bolt from his hand to it.
 func _draw_wave(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
 	var step := frame % 7
@@ -517,12 +412,6 @@ func _draw_wave(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) ->
 	_tune(rig.get_node("Ball"), {"strength": 1.0, "toward": 0.3})
 	_flat(rig.get_node("Ground"), Vector3(ball.x, 0.0, ball.z), 1.8)
 	_tune(rig.get_node("Ground"), {"strength": 0.5})
-
-
-func _build_storm(rig: Node3D) -> void:
-	_light(rig, "Bolt", Shape.BOLT, Turn.AXIS, STORM, 0.3)
-	_light(rig, "Ground", Shape.GLOW, Turn.PLACED, STORM)
-	_light(rig, "Ring", Shape.RING, Turn.PLACED, STORM, 0.3)
 
 
 ## Thunderstorm: strikes from the sky, first over the middle of the room (frames 0-5, the
@@ -549,12 +438,6 @@ func _draw_storm(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 # ---- fire from above, the fire serpent ---------------------------------------------------
 
 
-func _build_rain(rig: Node3D) -> void:
-	_light(rig, "Tail", Shape.STREAK, Turn.AXIS, HOT, 0.35)
-	_light(rig, "Head", Shape.GLOW, Turn.FACING, HOT, 0.3)
-	_light(rig, "Ground", Shape.GLOW, Turn.PLACED, HOT)
-
-
 ## Rain of Fire: five fireballs a tick fall from the sky on places all over the room.
 func _draw_rain(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
 	var ground := _at(p + scatter("rain", frame, 105.0, 85.0))
@@ -568,24 +451,6 @@ func _draw_rain(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) ->
 	_tune(rig.get_node("Head"), {"strength": 1.0})
 	_flat(rig.get_node("Ground"), ground, 0.8 + 1.6 * fall)
 	_tune(rig.get_node("Ground"), {"strength": 0.25 + 0.6 * fall})
-
-
-func _build_quake(rig: Node3D) -> void:
-	var body := MeshInstance3D.new()
-	body.name = "Body"
-	body.mesh = ImmediateMesh.new()
-	var m := ShaderMaterial.new()
-	m.shader = LIGHT
-	m.set_shader_parameter("shape", Shape.RIBBON)
-	m.set_shader_parameter("billboard", Turn.PLACED)
-	m.set_shader_parameter("body", 0.5)
-	_colours(m, HOT)
-	body.material_override = m
-	body.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	body.extra_cull_margin = 8.0
-	rig.add_child(body)
-	_light(rig, "Head", Shape.GLOW, Turn.FACING, HOT, 0.3)
-	_light(rig, "Ground", Shape.GLOW, Turn.PLACED, HOT)
 
 
 ## Serpent's Breath: a serpent of fire winds round the room.
@@ -631,13 +496,6 @@ func _draw_quake(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 # ---- a scroll ----------------------------------------------------------------------------
 
 
-func _build_scroll(rig: Node3D) -> void:
-	_light(rig, "Orb", Shape.GLOW, Turn.FACING, WARM, 0.3)
-	_light(rig, "Star", Shape.STAR, Turn.FACING, WARM, 0.3)
-	_light(rig, "Tail", Shape.STREAK, Turn.AXIS, WARM, 0.2)
-	_puff(rig, "Shadow", Turn.PLACED, SMOKE)
-
-
 ## The orb of a scroll flies up and ahead to where its blast falls.
 func _draw_scroll(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
 	var d := frame >> 2
@@ -657,62 +515,3 @@ func _draw_scroll(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) 
 	_tune(rig.get_node("Tail"), {"strength": 0.8 if s > 0.02 else 0.0})
 	_flat(rig.get_node("Shadow"), ground, 0.6)
 	_tune(rig.get_node("Shadow"), {"strength": 0.35})
-
-
-# ---- an arrow ----------------------------------------------------------------------------
-
-
-## An arrow along +Z: a shaft of oak, a steel head, white and red fletching.
-func _arrow() -> ArrayMesh:
-	if _arrow_mesh != null:
-		return _arrow_mesh
-	var st := SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	_box(
-		st, Vector3(0.0, 0.0, 0.0), Vector3(0.03, 0.03, 0.72), ArtKit.color("ochre").darkened(0.25)
-	)
-	# the head: a pyramid
-	var steel := ArtKit.color("steel").lightened(0.2)
-	var tip := Vector3(0.0, 0.0, 0.48)
-	var base := [
-		Vector3(-0.045, 0.0, 0.34),
-		Vector3(0.0, 0.045, 0.34),
-		Vector3(0.045, 0.0, 0.34),
-		Vector3(0.0, -0.045, 0.34)
-	]
-	for i in 4:
-		_tri(st, base[i], base[(i + 1) % 4], tip, steel)
-	# the fletching: two crossed vanes
-	for v in [Vector3(0.07, 0.0, 0.0), Vector3(0.0, 0.07, 0.0)]:
-		var col := ArtKit.color("whitewash") if v.x > 0.0 else ArtKit.color("cinnabar")
-		var a := Vector3(0.0, 0.0, -0.36)
-		var b := Vector3(0.0, 0.0, -0.2)
-		_tri(st, a - v, b, a + v, col)
-		_tri(st, a + v, b, a - v, col)
-	st.generate_normals()
-	_arrow_mesh = st.commit()
-	return _arrow_mesh
-
-
-static func _tri(st: SurfaceTool, a: Vector3, b: Vector3, c: Vector3, col: Color) -> void:
-	st.set_color(col.srgb_to_linear())
-	st.add_vertex(a)
-	st.add_vertex(b)
-	st.add_vertex(c)
-
-
-static func _box(st: SurfaceTool, at: Vector3, size: Vector3, col: Color) -> void:
-	var h := size / 2.0
-	var c := [
-		Vector3(-h.x, -h.y, -h.z),
-		Vector3(h.x, -h.y, -h.z),
-		Vector3(h.x, h.y, -h.z),
-		Vector3(-h.x, h.y, -h.z),
-		Vector3(-h.x, -h.y, h.z),
-		Vector3(h.x, -h.y, h.z),
-		Vector3(h.x, h.y, h.z),
-		Vector3(-h.x, h.y, h.z)
-	]
-	for f in [[0, 3, 2, 1], [4, 5, 6, 7], [0, 1, 5, 4], [3, 7, 6, 2], [0, 4, 7, 3], [1, 2, 6, 5]]:
-		_tri(st, at + c[f[0]], at + c[f[1]], at + c[f[2]], col)
-		_tri(st, at + c[f[0]], at + c[f[2]], at + c[f[3]], col)

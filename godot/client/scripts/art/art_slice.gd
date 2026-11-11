@@ -66,7 +66,7 @@ func build(where: String, pitch_deg: float) -> void:
 		_camp()
 	_camera()
 	if not place in ["lineup", "people", "effects", "effects_room"]:
-		hud = ArtHud.new()
+		hud = (load(ArtHud.SCENE) as PackedScene).instantiate()
 		var layer := CanvasLayer.new()
 		add_child(layer)
 		layer.add_child(hud)
@@ -139,9 +139,8 @@ func _prop(
 
 
 func _figure(kind: String, at: Vector3, clip: String, face_to: Vector3, at_time := -1.0) -> Node3D:
-	var f: Node3D = ArtFigure.new()
+	var f := ArtFigure.create(kind)
 	add_child(f)
-	f.setup(kind)
 	f.position = at
 	f.face(face_to - at)
 	if at_time >= 0.0:

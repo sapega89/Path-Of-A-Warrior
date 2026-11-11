@@ -76,8 +76,12 @@ func test_skills_screen() -> void:
 	eq(lines[3][0], "Lv2: MP 8, DMG 6 x3", "the next level")
 	eq(screen.card_lines(13)[2][0], "Not learned", "a skill not learned")
 	eq(screen.card_lines(0)[0][0], "Empty slot", "an empty key")
+	eq(screen.keys[0].name, &"Key1", "the keys from their scene")
+	eq(screen.info.theme_type_variation, &"SmallAccentLabel", "the card's heading in brass")
 	screen.press_key(2)
 	eq(screen.slot, 2, "the third key is set")
+	eq(screen.keys[2].theme_type_variation, ItemSlot.CHOSEN, "its place chosen")
+	eq(screen.keys[0].theme_type_variation, ItemSlot.PLAIN, "the others not")
 	check(not screen.press_skill(13), "a skill not learned stays off the keys")
 	check(screen.press_skill(17), "a learned one goes on")
 	eq(int(screen.profile.hotkeys[2]), 17, "on the third key")
@@ -124,7 +128,9 @@ func test_assign_items_screen() -> void:
 	eq(screen.find_child("Keys", true, false).text, "Keys Z X C V B", "the line under the slots")
 	check(screen.find_child("Key1", true, false) == null, "no * / # buttons")
 	check(screen.slots[3].icon != null, "the blue potion's icon")
+	eq(screen.slots[3].get_parent().get_node("Count").text, "x2", "its count under it")
 	screen.press_slot(3)
+	eq(screen.slots[3].theme_type_variation, ItemSlot.CHOSEN, "the slot chosen")
 	check(screen.press_key(1), "the keypad's / still puts slot 4 on the second key")
 	eq(screen.marks[3].text, "V", "no mark for it")
 	eq(screen.describe(3), "Blue Potion(M) / Recover 60% of total MP", "the line")
@@ -133,3 +139,24 @@ func test_assign_items_screen() -> void:
 	eq(int(saved.quick_keys[1]), 3, "saved")
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
+
+
+## The places of icons take their look from the theme: a thin rim, a brass border on the chosen.
+func test_item_slots_from_the_theme() -> void:
+	var host := Control.new()
+	host.theme = UiTheme.theme(UiTheme.THEME)
+	root.add_child(host)
+	var b := ItemSlot.button("Cell0")
+	host.add_child(b)
+	eq(b.custom_minimum_size, Vector2(64, 64), "an icon of 28 original pixels, twice, and a rim")
+	var plain := b.get_theme_stylebox("normal") as StyleBoxFlat
+	eq([plain.border_color, plain.border_width_top], [UiTheme.SLOT_RIM, 1], "a thin rim")
+	ItemSlot.choose(b, true)
+	var chosen := b.get_theme_stylebox("normal") as StyleBoxFlat
+	eq([chosen.border_color, chosen.border_width_top], [UiTheme.ACCENT, 3], "a brass border")
+	eq(
+		b.get_theme_stylebox("hover"),
+		host.theme.get_stylebox("hover", "ItemSlot"),
+		"its hover kept"
+	)
+	host.free()

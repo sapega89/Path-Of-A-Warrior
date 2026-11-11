@@ -7,6 +7,7 @@ extends BaseScreen
 ## mission's slots and saves nothing; close goes back there.
 
 const SLOTS := 5
+const SLOT_SCENE := preload("res://screens/assign_items/belt_slot.tscn")
 
 var profile: Profile
 var path: String = Profile.PATH
@@ -28,31 +29,24 @@ func _ready() -> void:
 		profile.quick_keys = sim.quick_keys
 		profile.gold += int(sim.gold)
 	%Keys.text = tr("assign.keys")
-	var row: HBoxContainer = %Slots
 	for i in SLOTS:
-		var box := VBoxContainer.new()
-		var mark := Label.new()
-		mark.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-		mark.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		mark.custom_minimum_size = Vector2(0, 40)
-		box.add_child(mark)
-		marks.append(mark)
-		var b := ItemSlot.button("Slot%d" % (i + 1))
-		var at := i
-		b.pressed.connect(func(): press_slot(at))
-		b.focus_entered.connect(func(): _show_info(at))
-		b.mouse_entered.connect(func(): _show_info(at))
-		box.add_child(b)
-		var count := Label.new()
-		count.name = "Count"
-		count.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-		count.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		box.add_child(count)
-		row.add_child(box)
-		slots.append(b)
+		_add_slot(i)
 	refresh()
 	_show_info(0)
 	slots[0].grab_focus.call_deferred()
+
+
+## Belt slot i (belt_slot.tscn): its key above it, its count under it.
+func _add_slot(i: int) -> void:
+	var cell: Control = SLOT_SCENE.instantiate()
+	marks.append(cell.get_node("Mark"))
+	var b: Button = cell.get_node("Slot")
+	b.name = "Slot%d" % (i + 1)
+	b.pressed.connect(press_slot.bind(i))
+	b.focus_entered.connect(_show_info.bind(i))
+	b.mouse_entered.connect(_show_info.bind(i))
+	%Slots.add_child(cell)
+	slots.append(b)
 
 
 ## The belt key of slot i ("Z" .. "B").
@@ -89,7 +83,7 @@ func refresh() -> void:
 		var s: Array = profile.quick_slots[i]
 		var id := int(s[0])
 		slots[i].icon = ItemSlot.item_icon(id) if id != 0 else null
-		slots[i].add_theme_stylebox_override("normal", ItemSlot.box(i == slot))
+		ItemSlot.choose(slots[i], i == slot)
 		slots[i].get_parent().get_node("Count").text = "x%d" % int(s[1]) if id != 0 else ""
 		marks[i].text = belt_key(i)
 

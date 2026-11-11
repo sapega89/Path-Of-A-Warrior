@@ -6,6 +6,8 @@ extends BaseScreen
 ## of the start camp (Router.params.start) opens what comes before a run (the run setup screen:
 ## the starting skill, the flasks and the perks bought with fame).
 
+const CELL_SCENE := preload("res://screens/town_hall/hall_cell.tscn")
+
 var path: String = Profile.PATH
 var profile: Profile
 var campaign := Campaign.new()
@@ -20,20 +22,13 @@ func _ready() -> void:
 	profile = Profile.load_or_new(path)
 	at_start = bool(Router.params.get("start", false))
 	_show_flasks()
-	_section("hall.colonels")
-	var grid := _grid("Colonels")
 	for r in colonels():
-		_cell(grid, colonel_line(r))
-	_section("hall.generals")
-	if profile.friendship.is_empty():
-		var none := UiTheme.note("Nobody")
-		none.text = tr("hall.nobody")
-		list.add_child(none)
-	else:
-		grid = _grid("Generals")
-		for id in profile.friendship:
-			var name_key := str(MapSim.general_data(int(id)).get("name", "?"))
-			_cell(grid, tr("hall.friend") % [tr(name_key), int(profile.friendship[id])])
+		_cell(%Colonels, colonel_line(r))
+	%Nobody.visible = profile.friendship.is_empty()
+	%Generals.visible = not profile.friendship.is_empty()
+	for id in profile.friendship:
+		var name_key := str(MapSim.general_data(int(id)).get("name", "?"))
+		_cell(%Generals, tr("hall.friend") % [tr(name_key), int(profile.friendship[id])])
 	%Back.grab_focus.call_deferred()
 
 
@@ -69,27 +64,8 @@ func colonels() -> Array:
 	return ids.map(func(id): return [id, seen[id]])
 
 
-func _section(key: String) -> void:
-	var l := Label.new()
-	l.text = key
-	l.add_theme_color_override("font_color", UiTheme.ACCENT)
-	list.add_child(l)
-
-
-func _grid(node_name: String) -> GridContainer:
-	var g := GridContainer.new()
-	g.name = node_name
-	g.columns = 2
-	g.add_theme_constant_override("h_separation", 24)
-	list.add_child(g)
-	return g
-
-
+## A line of a list (hall_cell.tscn): a colonel or a general.
 func _cell(grid: GridContainer, text: String) -> void:
-	var l := Label.new()
-	l.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	var l: Label = CELL_SCENE.instantiate()
 	l.text = text
-	l.custom_minimum_size = Vector2(360, 0)
-	l.add_theme_font_size_override("font_size", 22)
-	l.clip_text = true
 	grid.add_child(l)

@@ -31,7 +31,10 @@ const RISE := 2
 const WRAP := 200
 const BRIGHT := 72
 const GONE := -28
-const LINE_FONT := 32
+const LINE_FONT := 32  # the size of the theme's StoryLine, for wrapping
+const LINE_SCENE := preload("res://screens/story/story_line.tscn")
+const LINE_BRIGHT := &"StoryLine"
+const LINE_DIM := &"StoryLineDim"
 ## Ticks the picture comes and goes in, and the wait after it before the next page.
 const PICTURE_TICKS := 3
 const AFTER_TICKS := 3
@@ -172,28 +175,9 @@ func _set_lines(new_lines: PackedStringArray) -> void:
 		float_box.remove_child(c)
 		c.queue_free()
 	for l in lines:
-		var label := Label.new()
+		var label: Label = LINE_SCENE.instantiate()  # as wide as its words, on a dark box
 		label.text = l
-		label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		label.add_theme_font_size_override("font_size", LINE_FONT)
-		label.add_theme_color_override("font_outline_color", Color.BLACK)
-		label.add_theme_constant_override("outline_size", 6)
-		label.add_theme_stylebox_override("normal", line_backing())
-		label.set_anchors_preset(Control.PRESET_CENTER_TOP)  # as wide as its words
-		label.grow_horizontal = Control.GROW_DIRECTION_BOTH
-		label.visible = false
 		float_box.add_child(label)
-
-
-## The dark, half-clear box under a floating line.
-static func line_backing() -> StyleBoxFlat:
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0, 0, 0, 0.55)
-	sb.content_margin_left = 16
-	sb.content_margin_right = 16
-	sb.set_corner_radius_all(6)
-	return sb
 
 
 ## The y of floating line `i` on the original screen, or -1000 while it is not drawn (not up to
@@ -205,9 +189,9 @@ func line_y(i: int) -> int:
 	return y if y <= TEXT_FROM else -1000
 
 
-## White within 72 of the middle of the screen, grey beyond it.
-static func line_color(y: int) -> Color:
-	return UiTheme.TEXT if absi(y - MIDDLE) <= BRIGHT else UiTheme.TEXT_DIM
+## The look of a line at y: white within 72 of the middle of the screen, grey beyond it.
+static func line_look(y: int) -> StringName:
+	return LINE_BRIGHT if absi(y - MIDDLE) <= BRIGHT else LINE_DIM
 
 
 func _place_lines() -> void:
@@ -219,7 +203,7 @@ func _place_lines() -> void:
 		if label.visible:
 			label.offset_top = size.y / 2 + (y - MIDDLE) * SCALE
 			label.offset_bottom = label.offset_top + LINE_STEP * SCALE
-			label.add_theme_color_override("font_color", line_color(y))
+			label.theme_type_variation = line_look(y)
 	if page < pages.size() and str(pages[page].kind) == "picture":
 		picture.visible = phase == 1 or (_fade > 0 and _fade <= PICTURE_TICKS)
 

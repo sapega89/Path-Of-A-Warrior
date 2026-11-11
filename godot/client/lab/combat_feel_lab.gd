@@ -17,6 +17,7 @@ const MISSION := 0
 const WAVE := 3  # swordsmen in a wave
 const GENERAL := 5  # the general who comes on F4 (mission 1's)
 const PX := 1.0 / 27.0
+const HUD := preload("res://screens/mission/hud/map_hud.tscn")
 
 var tick := MapSim.TICK_MS / 1000.0
 var sim: RefCounted
@@ -93,7 +94,7 @@ func _ready() -> void:
 	world.add_child(camera)
 	camera.make_current()
 
-	hud = MapHud.new()
+	hud = HUD.instantiate()
 	hud.auto_allowed = true
 	add_child(hud)
 	panel = FeelPanel.new()
@@ -291,7 +292,7 @@ func _update_view(t: float) -> void:
 	hero = people.hero
 	camera.focus = sim.rooms.center(sim.cell)
 	feel.shake_camera(camera, PX)
-	hud.queue_redraw()
+	hud.refresh()
 	effects.show_shots(sim.arrows, t, not sim.arrows_wait())
 	var shown: Array = sim.auras()
 	shown.append_array(sim.effects())

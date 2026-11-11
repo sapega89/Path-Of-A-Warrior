@@ -14,7 +14,6 @@ enum Step { DIFFICULTY, HERO, NAME, POINTS }
 
 const HEADS := 4
 const NAME_MAX := 8
-const SCALE := 3
 const STAT_KEYS := ["hp", "mp", "attack", "defense"]
 
 var path: String = Profile.PATH
@@ -44,28 +43,13 @@ var stat_values: Array[Label] = []
 func _ready() -> void:
 	path = profile_path()
 	for h in HEADS:
-		%Heads.add_child(_head_button(h))
+		var face: TextureRect = %Heads.get_node("Head%d/Portrait" % h)
+		face.texture = Pictures.portrait(Stories.HERO_PORTRAIT + h)
 	name_edit.add_sibling(KeyGrid.create(KeyGrid.LETTERS, name_edit))
 	for i in STAT_KEYS.size():
 		stat_buttons.append(%PointsPage.get_node("Row%d/Stat%d" % [i, i]))
 		stat_values.append(%PointsPage.get_node("Row%d/Value" % i))
 	show_step(Step.DIFFICULTY)
-
-
-## The button of face h: the hero's portrait in its frame.
-func _head_button(h: int) -> Button:
-	var b := Button.new()
-	b.name = "Head%d" % h
-	b.custom_minimum_size = Vector2(46, 46) * SCALE + Vector2(12, 12)
-	var face := Pictures.framed("Portrait", Vector2(46, 46) * SCALE)
-	face.texture = Pictures.portrait(Stories.HERO_PORTRAIT + h)
-	face.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	face.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 6)
-	b.add_child(face)
-	b.pressed.connect(choose_head.bind(h))
-	b.focus_entered.connect(show_class.bind(h))
-	b.mouse_entered.connect(show_class.bind(h))
-	return b
 
 
 ## The line of control hints under the screen (scripts/ui/hint_bar.gd), for this step.

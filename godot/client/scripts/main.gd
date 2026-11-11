@@ -1,17 +1,14 @@
 extends Control
-## Root of the game: applies the UI theme, lays the menus' backdrop, hands the screen area to
-## the Router and keeps the line of control hints under it (scripts/ui/hint_bar.gd).
+## Root of the game: applies the UI theme and hands the screen area to the Router. Its scene
+## lays the menus' backdrop (assets/art/shaders/ui_backdrop.gdshader), the screen area and the
+## line of control hints under it (scenes/ui/hint_bar.tscn).
+
+@onready var screens: Control = %Screens
+@onready var hints: HintBar = %HintBar
 
 
 func _ready() -> void:
 	theme = UiTheme.theme(UiTheme.THEME)
-	add_child(UiTheme.backdrop())
-	var host := Control.new()
-	host.name = "Screens"
-	host.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(host)
-	var hints := HintBar.new()
-	hints.host = host
-	add_child(hints)
-	Router.attach(host)
+	hints.host = screens
+	Router.attach(screens)
 	Router.go("title")

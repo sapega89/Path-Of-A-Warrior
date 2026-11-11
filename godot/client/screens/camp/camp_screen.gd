@@ -134,7 +134,7 @@ func _place_hero() -> void:
 func _add_arrow(e: Dictionary) -> void:
 	var arrow := Sprite3D.new()
 	arrow.name = "Arrow%d_%d" % [e.place, e.mission]
-	arrow.texture = MissionScreen.exit_arrow(arrow_side(e.out))
+	arrow.texture = ExitArrows.exit_arrow(arrow_side(e.out))
 	arrow.pixel_size = ARROW_PIXEL
 	arrow.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	arrow.no_depth_test = true
@@ -144,7 +144,7 @@ func _add_arrow(e: Dictionary) -> void:
 	arrows.append(arrow)
 
 
-## The arrow picture (MissionScreen.exit_arrow) for a way out going `out` on the ground.
+## The arrow picture (ExitArrows.exit_arrow) for a way out going `out` on the ground.
 static func arrow_side(out: Vector3) -> int:
 	if absf(out.z) >= absf(out.x):
 		return ARROW_UP if out.z < 0.0 else ARROW_DOWN

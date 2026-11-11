@@ -15,15 +15,12 @@ extends BaseScreen
 ## Vibration): the picture stands still a moment, the camera shakes, the one hit flashes white and
 ## recoils, the one killed flies off, the hit sound varies a little and the pad rumbles.
 ## The mouse: the left button beside the hero walks that way while it is held
-## (dragging turns him, two quick clicks run), a click on the hero or the right button attacks,
-## a click on the skill bar uses the slot, on AUTO toggles the auto-hunt, on PAUSE pauses.
-## While someone talks on the map, SKIP (Q, F1, the pad's Back, a click on SKIP in AUTO's
-## corner) skips the talk.
+## (dragging turns him, two quick clicks run), a click on the hero or the right button attacks.
+## The HUD's buttons (screens/mission/hud/map_hud.gd): a slot of the skill bar uses it, AUTO
+## toggles the auto-hunt, PAUSE pauses. While someone talks on the map, SKIP (Q, F1, the pad's
+## Back, the button SKIP in AUTO's corner) skips the talk.
 
 const GOLD_ICON := 12  # the heap of gold in the tool icons
-## The exit arrow of the new art, pointing down: two brass chevrons in ink, the near one fainter.
-# gdlint:ignore = max-line-length
-const EXIT_ARROW := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 40"><g fill="#b89550" stroke="#0f0d0c" stroke-width="2.5" stroke-linejoin="round"><path d="M4 3 L24 17 L44 3 L44 11 L24 25 L4 11 Z" fill-opacity="0.55"/><path d="M4 15 L24 29 L44 15 L44 23 L24 37 L4 23 Z"/></g><path d="M24 30.5 l3 2.5 l-3 2.5 l-3 -2.5 z" fill="#7e241f"/></svg>'
 const FADE_TIME := 0.35
 
 ## One tick of the game, by the game speed of the settings (MapSim.TICK_MS at Med).
@@ -37,8 +34,6 @@ var lord_name := ""
 var sim: MapSim
 var hero: Node3D  # the hero's figure (people.hero)
 var profile: Profile
-## 0..3 the room's exits (down, left, up, right); 4..7 a second way on a side
-var arrows: Array[TextureRect] = []
 ## After a mission won: the ways on, one per open place the campaign goes to next:
 ## [{exit: Rooms.EXIT_*, half: -1 the whole side | 0 its first half | 1 its second, place}]
 var ways_out: Array = []
@@ -74,15 +69,10 @@ var _anim_dt := 0.0  # seconds the figures' clips move on this frame (0 while a 
 @onready var effects: MapEffects = $World/Viewport/WorldRoot/Effects  # arrows in flight too
 @onready var hud: MapHud = %Hud
 @onready var fade: ColorRect = %Fade  # the short dark between two rooms
-@onready var banner: PanelContainer = %Banner
-@onready var banner_text: Label = %BannerText
-@onready var exp_bar: ExpBar = %ExpBar  # under the text of the pages Total Exp and Time Exp
+@onready var exit_arrows: ExitArrows = $Arrows
+@onready var banner: MissionBanner = %Banner
 ## A talk over the map: the portrait of who speaks and the line beside it, just above the HUD.
-@onready var talk_box: Control = %Talk
-@onready var talk_face: PanelContainer = %Face
-@onready var talk_portrait: TextureRect = %Portrait
-@onready var talk_panel: PanelContainer = %Box
-@onready var talk_text: Label = %Line
+@onready var talk_box: MapTalk = %Talk
 
 
 func _ready() -> void:
@@ -119,18 +109,19 @@ func _ready() -> void:
 	camera.focus = sim.rooms.center(sim.cell)
 	camera.snap()
 
-	for i in 8:
-		var a: TextureRect = get_node("Arrow%d" % i)
-		a.texture = exit_arrow(i % 4)
-		arrows.append(a)
-
 	hud.sim = sim
 	hud.auto_allowed = auto_allowed()
-	exp_bar.bars = sim.exp_bars
+	banner.exp_bar.bars = sim.exp_bars
 	add_to_group(InputSetup.RIGHT_BUTTON)  # the right button attacks, not BACK
 	feel.use_settings(Settings)
 	Settings.changed.connect(_on_setting_changed)
 	_update_view(0.0)
+
+
+## Leaving the mission from its pause menu (Exit to Menu) lets the game run again.
+func _exit_tree() -> void:
+	if pause_menu != null:
+		get_tree().paused = false
 
 
 ## A setting changed over the pause menu: the hit effects and the game speed apply at once.
@@ -272,7 +263,7 @@ func _update_view(t: float) -> void:
 	hero = people.hero
 	camera.focus = sim.rooms.center(sim.cell)
 	feel.shake_camera(camera, Hero.PIXEL_SIZE)
-	hud.queue_redraw()
+	hud.refresh()
 	effects.show_shots(sim.arrows, t, not sim.arrows_wait())
 	var shown: Array = sim.auras()
 	shown.append_array(sim.effects())
@@ -284,7 +275,7 @@ func _update_view(t: float) -> void:
 	effects.show_effects(shown, t)
 	_place_objects()
 	_place_loot()
-	_place_arrows()
+	exit_arrows.show_exits(sim, ways_out, (_blink & 2) != 0)
 	_show_banner()
 
 
@@ -324,56 +315,21 @@ func _place_loot() -> void:
 		loot[d] = s
 
 
+## The talk on the map, or the banner of the page the mission is on.
 func _show_banner() -> void:
 	talk_box.visible = sim.banner == 0 and not sim.talk.is_empty()
 	if talk_box.visible:
-		_place_talk()
-	banner.visible = sim.banner != 0
-	exp_bar.visible = sim.banner == MapSim.BANNER_TOTAL_EXP or sim.banner == MapSim.BANNER_TIME_EXP
-	exp_bar.queue_redraw()
-	if not banner.visible:
-		return
-	if sim.banner == MapSim.BANNER_ACQUIRED:
-		banner_text.text = "%s\n%s" % [Items.name_of(sim.acquired), tr("mission.acquired")]
-		_place_banner(0.3)
-		return
-	var stage := tr("mission.stage") + " " + str(sim.rooms_visited)
-	if sim.banner == MapSim.BANNER_STAGE_CLEAR:
-		stage += " " + tr("mission.complete")
-	elif sim.banner == MapSim.BANNER_FAILED:
-		stage = tr("mission.failed")
-		if not story_ends_when_lost():
-			stage += (
-				"\n"
-				+ (tr("run.over") if run_over else tr("run.flask_used") % profile.run.flasks_left)
-			)
-		if not lost_gear.is_empty():
-			stage += "\n%s\n%s" % [tr("mission.lost"), Items.name_of(int(lost_gear.id))]
-	elif sim.banner == MapSim.BANNER_SUCCESS:
-		stage = "%s\n%s\n%d" % [tr("mission.success"), tr("mission.gold"), sim.gold_reward()]
-	elif sim.banner == MapSim.BANNER_TOTAL_EXP or sim.banner == MapSim.BANNER_TIME_EXP:
-		if sim.banner == MapSim.BANNER_TOTAL_EXP:
-			stage = "%s\n%d" % [tr("mission.total_exp"), sim.exp_reward()]
-		else:
-			stage = (
-				"%s\n%s %s\n%s %s"
-				% [
-					tr("mission.time_exp"),
-					tr("mission.time_limit"),
-					clock(sim.time_limit),
-					tr("mission.time_taken"),
-					clock(sim.play_seconds())
-				]
-			)
-		if sim.exp_bars.level_up_ticks > 0:
-			stage += "\n" + tr("mission.level_up") % sim.exp_bars.level
-	banner_text.text = "%s\n%s\n%s" % [lord_name, tr(str(mission_info.get("name", ""))), stage]
-	_place_banner(0.3)
+		talk_box.show_line(Pictures.portrait(talk_portrait_id()), sim.talk_text())
+	var mission_name := tr(str(mission_info.get("name", "")))
+	banner.show_page(sim, lord_name, mission_name, lost_gear, _run_line())
 
 
-## mm:ss
-static func clock(secs: int) -> String:
-	return "%02d:%02d" % [secs / 60, secs % 60]
+## The fail banner's line on the run: a flask spent, or the run over ("" for a mission won, or
+## one whose loss ends the story and costs no flask).
+func _run_line() -> String:
+	if not sim.failed or story_ends_when_lost():
+		return ""
+	return tr("run.over") if run_over else tr("run.flask_used") % profile.run.flasks_left
 
 
 ## The portrait of who speaks the line shown now: the general's, or the hero's for his own lines.
@@ -381,79 +337,6 @@ func talk_portrait_id() -> int:
 	if sim.hero_talks():
 		return Stories.HERO_PORTRAIT + int(profile.head)
 	return int(sim.general.get("portrait", 0))
-
-
-## The talk on the map (in map pixels, over the HUD's width): a 48 px portrait box at the left
-## and the speech box from x 54, 38 high, both just above the HUD (and its skill bar).
-func _place_talk() -> void:
-	var view := get_viewport_rect().size
-	var k := hud.scale_of(view)
-	var top := view.y - (MapHud.PANEL_H + (MapHud.BAR_H if hud.show_bar else 0)) * k
-	var left := view.x / 2.0 - 120.0 * k
-	talk_portrait.texture = Pictures.portrait(talk_portrait_id())
-	talk_portrait.custom_minimum_size = Vector2(46, 46) * k
-	talk_face.position = Vector2(left + 2 * k, top - 50 * k)
-	talk_face.size = Vector2(48, 48) * k
-	talk_text.text = sim.talk_text()
-	talk_text.add_theme_font_size_override("font_size", int(11 * k))
-	talk_panel.custom_minimum_size = Vector2(184, 38) * k
-	talk_panel.size = talk_panel.custom_minimum_size
-	talk_panel.reset_size()
-	talk_panel.position = Vector2(left + 54 * k, top - 2 * k - talk_panel.size.y)
-
-
-func _place_banner(y: float) -> void:
-	var view := get_viewport_rect().size
-	banner.size = Vector2(520, 0)
-	banner.reset_size()
-	banner.position = Vector2((view.x - banner.size.x) / 2.0, view.y * y)
-
-
-## The exit arrow to side i (0 down, 1 left, 2 up, 3 right), 72 px across.
-static func exit_arrow(i: int) -> Texture2D:
-	var img := Image.new()
-	img.load_svg_from_string(EXIT_ARROW, 1.5)
-	match i:
-		1:
-			img.rotate_90(CLOCKWISE)
-		2:
-			img.rotate_180()
-		3:
-			img.rotate_90(COUNTERCLOCKWISE)
-	return ImageTexture.create_from_image(img)
-
-
-## The exit arrows at the screen's edges, blinking while the exits are open; the one down sits
-## above the HUD (at the very bottom the HUD hid it).
-func _place_arrows() -> void:
-	var view := get_viewport_rect().size
-	var blink := (_blink & 2) != 0
-	var lit: bool = sim.exits_open() and blink
-	for i in 8:
-		var a := arrows[i]
-		var along := 0.5  # where on its side: the middle, or a half's middle
-		if sim.choosing:
-			a.visible = false
-			for w in ways_out:
-				if (
-					int(w.exit) - 1 == i % 4
-					and (int(w.half) == -1 and i < 4 or int(w.half) == i / 4)
-				):
-					a.visible = blink
-					along = 0.5 if int(w.half) == -1 else 0.25 + 0.5 * int(w.half)
-		else:
-			a.visible = i < 4 and lit and sim.rooms.has_exit(sim.cell, i + 1)
-		var s := a.texture.get_size()
-		a.size = s
-		match i % 4:
-			0:
-				a.position = Vector2(view.x * along - s.x / 2.0, hud.top_of(view) - s.y - 8)  # above the HUD
-			1:
-				a.position = Vector2(16, view.y * along - s.y / 2.0)
-			2:
-				a.position = Vector2(view.x * along - s.x / 2.0, 16)
-			3:
-				a.position = Vector2(view.x - s.x - 16, view.y * along - s.y / 2.0)
 
 
 ## The ways on from a place won: one per open place the campaign goes to next, each on a side
@@ -504,11 +387,12 @@ func way_for(exit_no: int, at: Vector3) -> int:
 	return 0
 
 
-## Stops the mission and shows the pause menu (Resume, Options, Exit to Menu, Exit Game).
+## Stops the mission and shows the pause menu (Resume, Options, Exit to Menu, Exit Game): the
+## scene tree is paused, and only the menu (and what it opens) runs.
 func pause() -> void:
 	if pause_menu != null:
 		return
-	set_process(false)
+	get_tree().paused = true
 	_release_keys()
 	pause_menu = (load(MissionPause.SCENE) as PackedScene).instantiate()
 	pause_menu.sim = sim
@@ -522,9 +406,9 @@ func resume() -> void:
 		return
 	pause_menu.queue_free()
 	pause_menu = null
+	get_tree().paused = false
 	_acc = 0.0
 	_last_held = -1
-	set_process(not sim.finished)
 
 
 ## Pause menu Save: the mission is saved on its map, once the room is cleared; Continue comes
@@ -590,7 +474,7 @@ func _gui_input(event: InputEvent) -> void:
 		_mouse_button(event)
 	elif event is InputEventMouseMotion and _mouse_dir != -1:
 		var d := pointer_dir(event.position)
-		if d != -1 and not hud.panel_at(event.position) and hud.slot_at(event.position).is_empty():
+		if d != -1 and not hud.covers(event.position):
 			_mouse_dir = d  # dragging turns the hero
 
 
@@ -600,13 +484,6 @@ func _mouse_button(event: InputEventMouseButton) -> void:
 		return
 	if not event.pressed:
 		return
-	if event.button_index == MOUSE_BUTTON_LEFT:
-		if click_bar(event.position):
-			return
-		if hud.pause_at(event.position):
-			get_viewport().set_input_as_handled()
-			pause()
-			return
 	# a touch comes as a click too: on a phone the touch controls walk and attack
 	if event.device == InputEvent.DEVICE_ID_EMULATION or not is_processing():
 		return
@@ -661,7 +538,7 @@ func toggle_auto() -> void:
 		return
 	autopilot.toggle()
 	hud.auto_on = autopilot.on
-	hud.queue_redraw()
+	hud.refresh()
 
 
 ## The auto-hunt is there only on normal: on hard the player fights by hand.
@@ -669,26 +546,30 @@ func auto_allowed() -> bool:
 	return sim != null and sim.difficulty != 0
 
 
-## A click on the skill bar: a belt slot is used, a skill cast; on the corner AUTO / SKIP. False
-## when it missed them.
-func click_bar(at: Vector2) -> bool:
-	if hud.skip_at(at):
-		get_viewport().set_input_as_handled()
-		_skip = true
-		return true
-	if hud.auto_at(at):
-		get_viewport().set_input_as_handled()
+## The HUD's buttons, while the pause menu is not open: a belt slot is used, a skill cast,
+## AUTO toggles the auto-hunt, SKIP skips the talk, PAUSE pauses.
+func _on_hud_belt_pressed(slot: int) -> void:
+	if pause_menu == null:
+		_belt = slot
+
+
+func _on_hud_skill_pressed(slot: int) -> void:
+	if pause_menu == null:
+		_hotkey = slot
+
+
+func _on_hud_auto_pressed() -> void:
+	if pause_menu == null:
 		toggle_auto()
-		return true
-	var hit: Array = hud.slot_at(at)
-	if hit.is_empty():
-		return false
-	get_viewport().set_input_as_handled()
-	if hit[0] == "belt":
-		_belt = hit[1]
-	elif hit[0] == "skill":
-		_hotkey = hit[1]
-	return true
+
+
+func _on_hud_skip_pressed() -> void:
+	if pause_menu == null:
+		_skip = true
+
+
+func _on_hud_pause_pressed() -> void:
+	pause()
 
 
 ## No line of control hints under this screen: it shows its own (scripts/ui/hint_bar.gd).

@@ -1,0 +1,82 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_ajhwa"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_o4kwk"]
+resource_local_to_scene = true
+shader = ExtResource("1_ajhwa")
+shader_parameter/billboard = 3
+shader_parameter/core = Vector3(0.93, 0.96, 1)
+shader_parameter/edge = Vector3(0.42, 0.5, 0.98)
+shader_parameter/shape = 4
+shader_parameter/body = 0.3
+
+[sub_resource type="QuadMesh" id="QuadMesh_yj6ib"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ueqs2"]
+resource_local_to_scene = true
+shader = ExtResource("1_ajhwa")
+shader_parameter/billboard = 3
+shader_parameter/core = Vector3(0.93, 0.96, 1)
+shader_parameter/edge = Vector3(0.42, 0.5, 0.98)
+shader_parameter/shape = 4
+shader_parameter/body = 0.3
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t6nx4"]
+resource_local_to_scene = true
+shader = ExtResource("1_ajhwa")
+shader_parameter/billboard = 3
+shader_parameter/core = Vector3(0.93, 0.96, 1)
+shader_parameter/edge = Vector3(0.42, 0.5, 0.98)
+shader_parameter/shape = 4
+shader_parameter/body = 0.3
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3fbjl"]
+resource_local_to_scene = true
+shader = ExtResource("1_ajhwa")
+shader_parameter/billboard = 1
+shader_parameter/core = Vector3(0.93, 0.96, 1)
+shader_parameter/edge = Vector3(0.42, 0.5, 0.98)
+shader_parameter/shape = 0
+shader_parameter/body = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ofsrs"]
+resource_local_to_scene = true
+shader = ExtResource("1_ajhwa")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(0.93, 0.96, 1)
+shader_parameter/edge = Vector3(0.42, 0.5, 0.98)
+shader_parameter/shape = 0
+shader_parameter/body = 0.0
+
+[node name="Wave" type="Node3D"]
+
+[node name="Bolt0" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_o4kwk")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_yj6ib")
+
+[node name="Bolt1" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_ueqs2")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_yj6ib")
+
+[node name="Bolt2" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_t6nx4")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_yj6ib")
+
+[node name="Ball" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_3fbjl")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_yj6ib")
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_ofsrs")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_yj6ib")

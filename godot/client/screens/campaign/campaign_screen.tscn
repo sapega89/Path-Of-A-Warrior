@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://screens/campaign/campaign_screen.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/ui/heading.gd" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ask_dialog.tscn" id="ask"]
+[ext_resource type="PackedScene" path="res://screens/campaign/world_map_view.tscn" id="world"]
 
 [node name="CampaignScreen" type="Control"]
 layout_mode = 3
@@ -52,6 +53,21 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 6
 
+[node name="Mission" type="Label" parent="Center/Column/Scroll/List"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+auto_translate_mode = 2
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="Center/Column/Scroll/List"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+auto_translate_mode = 2
+autowrap_mode = 3
+
 [node name="Ok" type="Button" parent="Center/Column"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -65,8 +81,14 @@ text = "common.back"
 unique_name_in_owner = true
 layout_mode = 1
 
+[node name="WorldMap" parent="." instance=ExtResource("world")]
+unique_name_in_owner = true
+layout_mode = 1
+
 [connection signal="pressed" from="Center/Column/Ok" to="." method="_on_ok"]
 
 [connection signal="pressed" from="Center/Column/Back" to="." method="go_back"]
 
 [connection signal="confirmed" from="Ask" to="." method="accept"]
+
+[connection signal="place_chosen" from="WorldMap" to="." method="_open_lord"]

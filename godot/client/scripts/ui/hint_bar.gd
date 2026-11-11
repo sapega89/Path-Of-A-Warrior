@@ -4,34 +4,15 @@ extends PanelContainer
 ## back, named for the device just used (InputSetup.hint: the keyboard's, the pad's or touch).
 ## A screen says its own line with `controls_hint() -> String` (already translated; "" hides the
 ## bar, e.g. on the map, where the HUD shows the keys); without it the menus' line is shown.
-## The bar takes HEIGHT px off the bottom of the screen area while it shows.
+## The bar takes HEIGHT px off the bottom of the screen area while it shows; its look is the
+## theme's HintBar and HintText (scenes/ui/hint_bar.tscn).
 
 const HEIGHT := 40
-const FONT_SIZE := 20
 const MENU_HINT := "hint.menu"
 
-var label: Label
 var host: Control  # the screen area, made shorter while the bar shows
 
-
-func _init() -> void:
-	name = "HintBar"
-	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	offset_top = -HEIGHT
-	var sb := UiTheme.box(UiTheme.PANEL)
-	sb.content_margin_top = 4
-	sb.content_margin_bottom = 4
-	add_theme_stylebox_override("panel", sb)
-	label = Label.new()
-	label.name = "Text"
-	label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	label.add_theme_font_size_override("font_size", FONT_SIZE)
-	label.add_theme_color_override("font_color", UiTheme.TEXT_DIM)
-	add_child(label)
+@onready var label: Label = %Text
 
 
 func _ready() -> void:

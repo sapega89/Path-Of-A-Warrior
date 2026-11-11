@@ -1,6 +1,6 @@
 class_name CampaignScreen
 extends BaseScreen
-## The campaign: the world map (scripts/ui/world_map_view.gd) with the hero's place and the
+## The campaign: the world map (world_map_view.tscn) with the hero's place and the
 ## places he can go to from there, then the missions of a place (a lord: one map). A place
 ## that is not open yet is dark; a mission won has a mark. Winning takes the hero to that
 ## place, so the map changes. A mission shows its description first; OK asks whether to accept it
@@ -12,10 +12,10 @@ extends BaseScreen
 ## Back under the list goes a level up, as BACK does.
 
 const DONE_MARK := "  ✓"
+const ROW_SCENE := preload("res://screens/campaign/mission_row.tscn")
 
 var campaign := Campaign.new()
 var profile: Profile
-var world_view: Control  # the world map (level 1)
 ## 1 the world map at the hero's place, 2 missions of a lord, 3 the description of a mission
 var level := 1
 var chapter := 0
@@ -26,10 +26,13 @@ var from_camp := false
 var rng := RandomNumberGenerator.new()
 
 @onready var list: VBoxContainer = %List
+@onready var world_view: WorldMapView = %WorldMap  # level 1
 @onready var heading: Label = %Heading
 @onready var scroll: ScrollContainer = %Scroll
 @onready var ok: Button = %Ok  # under the description: accept the mission?
 @onready var ask: AskDialog = %Ask
+@onready var mission_title: Label = %Mission  # the description's two lines, under the list
+@onready var description: Label = %Description
 @onready var column: Control = %Center  # the list, the missions and the description
 
 
@@ -44,22 +47,17 @@ func _ready() -> void:
 	lord_id = int(p.get("lord", 0))
 	mission = int(p.get("mission", 0))
 	from_camp = bool(p.get("camp", false))
-	world_view = WorldMapView.new(WorldMap.new(campaign), profile, chapter)
-	world_view.set_anchors_preset(Control.PRESET_FULL_RECT)
-	world_view.offset_left = 30
-	world_view.offset_right = -30
-	world_view.offset_top = 90
-	world_view.offset_bottom = -20
-	world_view.place_chosen.connect(_open_lord)
-	add_child(world_view)
+	world_view.setup(WorldMap.new(campaign), profile, chapter)
 	show_level()
 
 
 func show_level() -> void:
-	for c in list.get_children():
+	for c in _rows():
 		list.remove_child(c)
 		c.queue_free()
 	ok.visible = level == 3
+	mission_title.visible = level == 3
+	description.visible = level == 3
 	scroll.scroll_vertical = 0
 	world_view.visible = level == 1
 	scroll.visible = level != 1
@@ -80,23 +78,13 @@ func show_level() -> void:
 		3:
 			heading.text = campaign.lord_name(lord_id)
 			var m := mission_data()
-			var title := Label.new()
-			title.name = "Mission"
-			title.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-			title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			title.text = str(m.get("name", ""))
-			list.add_child(title)
-			var text := Label.new()
-			text.name = "Description"
-			text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-			text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-			text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			text.text = I18n.text(m.get("description", ""))
-			list.add_child(text)
+			mission_title.text = str(m.get("name", ""))
+			description.text = I18n.text(m.get("description", ""))
 	# The focus: the first one open; back from a description, that mission; OK on one.
-	var open := list.get_children().filter(func(c): return c is Button and not c.disabled)
-	if level == 2 and mission < list.get_child_count():
-		open.push_front(list.get_child(mission))
+	var rows := _rows()
+	var open := rows.filter(func(c: Button) -> bool: return not c.disabled)
+	if level == 2 and mission < rows.size():
+		open.push_front(rows[mission])
 	if level == 3:
 		open = [ok]
 	if level == 1:
@@ -106,15 +94,19 @@ func show_level() -> void:
 		(open[0] as Button).grab_focus.call_deferred()
 
 
+## A mission of the list (mission_row.tscn), before the description's two lines.
 func _item(text: String, on_press: Callable) -> Button:
-	var b := Button.new()
+	var b: Button = ROW_SCENE.instantiate()
 	b.text = text
-	b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	b.clip_text = true
 	b.pressed.connect(on_press)
 	list.add_child(b)
+	list.move_child(b, mission_title.get_index())
 	return b
+
+
+## The missions in the list now.
+func _rows() -> Array[Node]:
+	return list.get_children().filter(func(c: Node) -> bool: return c is Button)
 
 
 func _open_lord(id: int) -> void:

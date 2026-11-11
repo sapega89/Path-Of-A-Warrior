@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" path="res://screens/camp/camp_screen.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/world/map_view.tscn" id="2"]
-[ext_resource type="Script" path="res://scripts/world/hero.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/art/art_figure.gd" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/world/hero.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/art/art_figure.tscn" id="4"]
 [ext_resource type="Script" path="res://scripts/ui/heading.gd" id="5"]
 [ext_resource type="Script" path="res://scripts/ui/touch_controls.gd" id="6"]
 [ext_resource type="PackedScene" path="res://screens/camp/camp_fort.tscn" id="7"]
@@ -22,11 +22,9 @@ layout_mode = 1
 
 [node name="Fort" parent="World/Viewport/WorldRoot" instance=ExtResource("7")]
 
-[node name="Hero" type="CharacterBody3D" parent="World/Viewport/WorldRoot"]
-script = ExtResource("3")
+[node name="Hero" parent="World/Viewport/WorldRoot" instance=ExtResource("3")]
 
-[node name="Figure" type="Node3D" parent="World/Viewport/WorldRoot/Hero"]
-script = ExtResource("4")
+[node name="Figure" parent="World/Viewport/WorldRoot/Hero" instance=ExtResource("4")]
 
 [node name="Smith" type="Label3D" parent="World/Viewport/WorldRoot"]
 unique_name_in_owner = true

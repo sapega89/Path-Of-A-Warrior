@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://screens/gear/gear_screen.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/ui/heading.gd" id="2"]
 [ext_resource type="Script" path="res://screens/gear/gear_stage.gd" id="3"]
-[ext_resource type="Script" path="res://scripts/art/art_figure.gd" id="4"]
+[ext_resource type="PackedScene" path="res://scenes/art/art_figure.tscn" id="4"]
 
 [sub_resource type="ViewportTexture" id="HeroTexture"]
 resource_local_to_scene = true
@@ -99,10 +99,9 @@ unique_name_in_owner = true
 [node name="World" type="WorldEnvironment" parent="HeroView"]
 unique_name_in_owner = true
 
-[node name="Figure" type="Node3D" parent="HeroView"]
+[node name="Figure" parent="HeroView" instance=ExtResource("4")]
 unique_name_in_owner = true
 rotation = Vector3(0, 0.45, 0)
-script = ExtResource("4")
 
 [node name="Camera" type="Camera3D" parent="HeroView"]
 position = Vector3(0, 1.15, 6.4)

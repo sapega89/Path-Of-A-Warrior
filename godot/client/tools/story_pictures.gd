@@ -177,9 +177,8 @@ func _prop(
 
 ## A person in a clip, held at a part of it (0 its start, 1 its end), facing a point.
 func _person(kind: String, at: Vector3, face_to: Vector3, clip := "idle", part := 0.3) -> Node3D:
-	var f: Node3D = ArtFigure.new()
+	var f := ArtFigure.create(kind)
 	world.add_child(f)
-	f.setup(kind)
 	f.position = at
 	f.face(face_to - at)
 	var length: float = f.player.get_animation(clip).length if f.player.has_animation(clip) else 1.0

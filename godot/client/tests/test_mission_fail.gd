@@ -55,7 +55,7 @@ func test_lost_gear_on_the_fail_banner() -> void:
 	screen._process(0.0)
 	eq(int(screen.lost_gear.get("id", 0)), Profile.START_WEAPON, "the weapon is lost")
 	eq(int(screen.profile.equipped[0].id), 0, "taken from the hero")
-	var text: String = screen.banner_text.text
+	var text: String = screen.banner.label.text
 	# no flask was bought, so the lost mission also ends the run
 	var lines: PackedStringArray = [
 		tr("mission.failed"),
@@ -80,7 +80,7 @@ func test_a_flask_on_the_fail_banner() -> void:
 	screen.sim.failed = true
 	screen.sim.banner = MapSim.BANNER_FAILED
 	screen._process(0.0)
-	var text: String = screen.banner_text.text
+	var text: String = screen.banner.label.text
 	check(text.contains(tr("run.flask_used") % 0), "a flask is spent: %s" % text)
 	check(not screen.run_over, "the run goes on")
 	screen.free()

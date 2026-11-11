@@ -1,0 +1,157 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_54e7r"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_h41ax"]
+resource_local_to_scene = true
+shader = ExtResource("1_54e7r")
+shader_parameter/billboard = 2
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 3
+shader_parameter/body = 0.55
+
+[sub_resource type="QuadMesh" id="QuadMesh_hm87p"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_w4ojv"]
+resource_local_to_scene = true
+shader = ExtResource("1_54e7r")
+shader_parameter/billboard = 2
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 3
+shader_parameter/body = 0.55
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qft6w"]
+resource_local_to_scene = true
+shader = ExtResource("1_54e7r")
+shader_parameter/billboard = 2
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 3
+shader_parameter/body = 0.55
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_356xj"]
+resource_local_to_scene = true
+shader = ExtResource("1_54e7r")
+shader_parameter/billboard = 2
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 3
+shader_parameter/body = 0.55
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8oym5"]
+resource_local_to_scene = true
+shader = ExtResource("1_54e7r")
+shader_parameter/billboard = 2
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 3
+shader_parameter/body = 0.55
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_d8tyv"]
+resource_local_to_scene = true
+shader = ExtResource("1_54e7r")
+shader_parameter/billboard = 2
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 3
+shader_parameter/body = 0.55
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iq22o"]
+resource_local_to_scene = true
+shader = ExtResource("1_54e7r")
+shader_parameter/billboard = 2
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 3
+shader_parameter/body = 0.55
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_gb1ah"]
+resource_local_to_scene = true
+shader = ExtResource("1_54e7r")
+shader_parameter/billboard = 2
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 3
+shader_parameter/body = 0.55
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bakdq"]
+resource_local_to_scene = true
+shader = ExtResource("1_54e7r")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 1
+shader_parameter/body = 0.4
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xxecf"]
+resource_local_to_scene = true
+shader = ExtResource("1_54e7r")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 0
+shader_parameter/body = 0.0
+
+[node name="FireRing" type="Node3D"]
+
+[node name="Flame0" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_h41ax")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_hm87p")
+
+[node name="Flame1" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_w4ojv")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_hm87p")
+
+[node name="Flame2" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_qft6w")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_hm87p")
+
+[node name="Flame3" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_356xj")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_hm87p")
+
+[node name="Flame4" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_8oym5")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_hm87p")
+
+[node name="Flame5" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_d8tyv")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_hm87p")
+
+[node name="Flame6" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_iq22o")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_hm87p")
+
+[node name="Flame7" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_gb1ah")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_hm87p")
+
+[node name="Ring" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_bakdq")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_hm87p")
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_xxecf")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_hm87p")

@@ -18,6 +18,34 @@ func test_menu_line_by_device() -> void:
 	menu.free()
 
 
+## The bar is a scene of the main one, under the screen area; its look is the theme's.
+func test_the_bar_from_its_scene() -> void:
+	var main: Control = load("res://scenes/main.tscn").instantiate()
+	eq(
+		Array(main.get_children().map(func(c: Node) -> String: return c.name)),
+		["Backdrop", "Screens", "HintBar"],
+		"the backdrop, the screens, the bar over them"
+	)
+	var bar: HintBar = main.get_node("HintBar")
+	eq([bar.offset_top, bar.anchor_top], [-float(HintBar.HEIGHT), 1.0], "at the bottom")
+	eq(bar.mouse_filter, Control.MOUSE_FILTER_IGNORE, "clicks pass")
+	eq(bar.theme_type_variation, &"HintBar", "the theme's bar")
+	eq(bar.get_node("Text").theme_type_variation, &"HintText", "and its text")
+	main.free()
+	var t: Theme = UiTheme.theme(UiTheme.THEME)
+	var strip := t.get_stylebox("panel", "HintBar") as StyleBoxFlat
+	eq(
+		[strip.bg_color, strip.content_margin_top, strip.content_margin_left],
+		[UiTheme.PANEL, 4.0, 20.0],
+		"a low strip of leather"
+	)
+	eq(
+		[t.get_font_size("font_size", "HintText"), t.get_color("font_color", "HintText")],
+		[20, UiTheme.TEXT_DIM],
+		"small grey letters"
+	)
+
+
 func test_screens_with_own_line() -> void:
 	var screen: Control = Router.make(Router.SCREENS["title"])
 	eq(HintBar.text_for(screen), "", "the title has its own line: no bar")

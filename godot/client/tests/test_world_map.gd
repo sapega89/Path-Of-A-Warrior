@@ -56,16 +56,56 @@ func test_campaign_screen_opens_a_place_from_the_map() -> void:
 	check(view.visible, "level 1 is the world map")
 	eq(view.buttons.size(), 45, "a button per place")
 	check(view.can_choose(1) and not view.can_choose(2), "only Uprising for a new hero")
+	eq(
+		[view.buttons[1].theme_type_variation, view.buttons[2].theme_type_variation],
+		[&"PlaceNext", &"PlaceAway"],
+		"Uprising marked, the next place not"
+	)
 	view.buttons[2].pressed.emit()
 	eq(screen.level, 1, "a place further on does not open")
 	view.buttons[1].pressed.emit()
 	eq([screen.level, screen.lord_id], [2, 1], "Uprising opens its missions")
 	check(not view.visible, "the map hides")
 	screen._open_mission(0)
-	check(screen.list.get_node_or_null("Description") != null, "a mission shows its story")
+	check(screen.list.get_node("Description").visible, "a mission shows its story")
 	r.free()
 	host.free()
 	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://test_world_map.json"))
+
+
+## A place's look is the theme's: the hero's lit, those he can go to rimmed in brass, the closed
+## ones in grey, and a green rim where every mission is won.
+func test_the_looks_of_the_places() -> void:
+	var cases := [
+		[WorldMap.State.HERE, Vector2i(4, 4), &"PlaceHere"],
+		[WorldMap.State.NEXT, Vector2i(2, 4), &"PlaceNext"],
+		[WorldMap.State.NEXT, Vector2i(4, 4), &"PlaceNextWon"],
+		[WorldMap.State.CLOSED, Vector2i(1, 1), &"PlaceClosedWon"],
+		[WorldMap.State.AWAY, Vector2i(0, 0), &"PlaceAway"],
+	]
+	for c in cases:
+		eq(WorldMapView.look(c[0], c[1]), c[2], "%s, %s won" % [c[2], c[1]])
+	var t: Theme = UiTheme.theme(UiTheme.THEME)
+	var rim := func(look: StringName) -> Color:
+		return (t.get_stylebox("normal", look) as StyleBoxFlat).border_color
+	eq(
+		[rim.call(&"PlaceNext"), rim.call(&"PlaceNextWon"), rim.call(&"PlaceClosed")],
+		[UiTheme.ACCENT, Color("7fb069"), UiTheme.TEXT_DIM],
+		"brass, green, grey"
+	)
+	eq(
+		(t.get_stylebox("normal", &"PlaceHere") as StyleBoxFlat).bg_color,
+		UiTheme.ACCENT,
+		"the hero's place lit"
+	)
+	eq(t.get_color("font_color", &"PlaceHere"), UiTheme.BG, "dark letters on it")
+	eq(t.get_type_variation_base(&"PlaceAway"), &"Place", "every look a place's")
+	eq(t.get_font_size("font_size", &"Place"), 16, "the places' small numbers")
+	eq(
+		(t.get_stylebox("focus", &"Place") as StyleBoxFlat).border_color,
+		UiTheme.TEXT,
+		"the one in focus rimmed in white"
+	)
 
 
 func test_a_room_shows_only_itself_and_the_next() -> void:
@@ -177,6 +217,9 @@ func test_town_hall_colonels_without_zero() -> void:
 	eq(lines.size(), hall.colonels().size(), "a line per colonel")
 	for l in lines:
 		check(not (l as Label).text.contains("%"), "no 0% for a colonel the hero has not won with")
+	eq((lines[0] as Label).theme_type_variation, &"SmallLabel", "a line from its scene")
+	check(hall.list.get_node("Nobody").visible, "a new hero knows no general yet")
+	check(not hall.list.get_node("Generals").visible, "so no list of them")
 	var first: Array = hall.colonels()[0]
 	eq(hall.colonel_line(first), tr(str(first[1])), "only his name")
 	hall.profile.progress[str(first[0])] = 15
