@@ -1,6 +1,6 @@
 class_name CampaignScreen
 extends BaseScreen
-## The campaign: the world map (scripts/ui/world_map_view.gd) with the hero's place and the
+## The campaign: the world map (world_map_view.tscn) with the hero's place and the
 ## places he can go to from there, then the missions of a place (a lord: one map). A place
 ## that is not open yet is dark; a mission won has a mark. Winning takes the hero to that
 ## place, so the map changes. A mission shows its description first; OK asks whether to accept it
@@ -16,7 +16,6 @@ const ROW_SCENE := preload("res://screens/campaign/mission_row.tscn")
 
 var campaign := Campaign.new()
 var profile: Profile
-var world_view: Control  # the world map (level 1)
 ## 1 the world map at the hero's place, 2 missions of a lord, 3 the description of a mission
 var level := 1
 var chapter := 0
@@ -27,6 +26,7 @@ var from_camp := false
 var rng := RandomNumberGenerator.new()
 
 @onready var list: VBoxContainer = %List
+@onready var world_view: WorldMapView = %WorldMap  # level 1
 @onready var heading: Label = %Heading
 @onready var scroll: ScrollContainer = %Scroll
 @onready var ok: Button = %Ok  # under the description: accept the mission?
@@ -47,14 +47,7 @@ func _ready() -> void:
 	lord_id = int(p.get("lord", 0))
 	mission = int(p.get("mission", 0))
 	from_camp = bool(p.get("camp", false))
-	world_view = WorldMapView.new(WorldMap.new(campaign), profile, chapter)
-	world_view.set_anchors_preset(Control.PRESET_FULL_RECT)
-	world_view.offset_left = 30
-	world_view.offset_right = -30
-	world_view.offset_top = 90
-	world_view.offset_bottom = -20
-	world_view.place_chosen.connect(_open_lord)
-	add_child(world_view)
+	world_view.setup(WorldMap.new(campaign), profile, chapter)
 	show_level()
 
 
