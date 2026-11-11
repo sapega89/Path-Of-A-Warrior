@@ -271,6 +271,10 @@
     "en": "Your backpack is full. Please empty some items and try again.",
     "uk": "Торба повна. Звільніть місце й спробуйте ще."
   },
+  "shop.vow": {
+    "en": "A vow: no potions from the shop this run.",
+    "uk": "Обітниця: цей похід без зілль із крамниці."
+  },
   "enchant.not_possible": {
     "en": "Not possible to enchant.",
     "uk": "Це не зачарувати."
@@ -1064,8 +1068,8 @@
     "uk": "Перед походом"
   },
   "run_setup.fame": {
-    "en": "Fame: %d",
-    "uk": "Слава: %d"
+    "en": "For fame (%d), once and for good",
+    "uk": "За славу (%d), раз і назавжди"
   },
   "run_setup.start_one": {
     "en": "The run starts with this skill",
@@ -1074,10 +1078,6 @@
   "run_setup.start_two": {
     "en": "The run starts with these two skills",
     "uk": "Похід починається з цими двома навиками"
-  },
-  "run_setup.for_fame": {
-    "en": "For fame, once and for good",
-    "uk": "За славу, раз і назавжди"
   },
   "run_setup.flask": {
     "en": "Flask of living water %d of %d: %d fame",
@@ -1118,5 +1118,33 @@
   "blacksmith.start_only": {
     "en": "Enchant and Combine: in the start camp only",
     "uk": "Зачарувати й поєднати — лише в стартовому таборі"
+  },
+  "run_setup.vows": {
+    "en": "Vows: gold and fame +%d%%",
+    "uk": "Обітниці: золото й слава +%d%%"
+  },
+  "vow.hp": {
+    "en": "Enemies +20%% HP a step: %d of %d",
+    "uk": "Вороги +20%% HP за крок: %d з %d"
+  },
+  "vow.short_time": {
+    "en": "A time limit a quarter shorter",
+    "uk": "Ліміт часу на чверть коротший"
+  },
+  "vow.no_shop_potions": {
+    "en": "No potions from the shop",
+    "uk": "Без зілль із крамниці"
+  },
+  "vow.no_flasks": {
+    "en": "No flasks of living water",
+    "uk": "Без фляг живої води"
+  },
+  "vow.on": {
+    "en": "%s: taken",
+    "uk": "%s: узято"
+  },
+  "story.new_road": {
+    "en": "A new road is open:",
+    "uk": "Відкрилася нова дорога:"
   }
 }

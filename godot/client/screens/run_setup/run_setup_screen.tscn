@@ -22,8 +22,8 @@ grow_vertical = 1
 
 [node name="Column" type="VBoxContainer" parent="Center"]
 layout_mode = 2
-custom_minimum_size = Vector2(980, 0)
-theme_override_constants/separation = 12
+custom_minimum_size = Vector2(1000, 0)
+theme_override_constants/separation = 8
 
 [node name="Heading" type="Label" parent="Center/Column"]
 layout_mode = 2
@@ -33,12 +33,6 @@ horizontal_alignment = 1
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 40
 script = ExtResource("2")
-
-[node name="Fame" type="Label" parent="Center/Column"]
-unique_name_in_owner = true
-layout_mode = 2
-auto_translate_mode = 2
-horizontal_alignment = 1
 
 [node name="SkillsTitle" type="Label" parent="Center/Column"]
 unique_name_in_owner = true
@@ -53,8 +47,9 @@ alignment = 1
 theme_override_constants/separation = 10
 
 [node name="Skill0" type="Button" parent="Center/Column/Skills"]
-custom_minimum_size = Vector2(150, 160)
+custom_minimum_size = Vector2(150, 140)
 layout_mode = 2
+theme_type_variation = &"SkillChoice"
 toggle_mode = true
 text = "Whirlwind Sabre"
 icon_alignment = 1
@@ -63,8 +58,9 @@ expand_icon = true
 autowrap_mode = 3
 
 [node name="Skill3" type="Button" parent="Center/Column/Skills"]
-custom_minimum_size = Vector2(150, 160)
+custom_minimum_size = Vector2(150, 140)
 layout_mode = 2
+theme_type_variation = &"SkillChoice"
 toggle_mode = true
 text = "Healing Herbs"
 icon_alignment = 1
@@ -73,8 +69,9 @@ expand_icon = true
 autowrap_mode = 3
 
 [node name="Skill5" type="Button" parent="Center/Column/Skills"]
-custom_minimum_size = Vector2(150, 160)
+custom_minimum_size = Vector2(150, 140)
 layout_mode = 2
+theme_type_variation = &"SkillChoice"
 toggle_mode = true
 text = "Fury"
 icon_alignment = 1
@@ -83,8 +80,9 @@ expand_icon = true
 autowrap_mode = 3
 
 [node name="Skill8" type="Button" parent="Center/Column/Skills"]
-custom_minimum_size = Vector2(150, 160)
+custom_minimum_size = Vector2(150, 140)
 layout_mode = 2
+theme_type_variation = &"SkillChoice"
 toggle_mode = true
 text = "Dnipro Wave"
 icon_alignment = 1
@@ -93,8 +91,9 @@ expand_icon = true
 autowrap_mode = 3
 
 [node name="Skill11" type="Button" parent="Center/Column/Skills"]
-custom_minimum_size = Vector2(150, 160)
+custom_minimum_size = Vector2(150, 140)
 layout_mode = 2
+theme_type_variation = &"SkillChoice"
 toggle_mode = true
 text = "Ring of Fire"
 icon_alignment = 1
@@ -103,8 +102,9 @@ expand_icon = true
 autowrap_mode = 3
 
 [node name="Skill14" type="Button" parent="Center/Column/Skills"]
-custom_minimum_size = Vector2(150, 160)
+custom_minimum_size = Vector2(150, 140)
 layout_mode = 2
+theme_type_variation = &"SkillChoice"
 toggle_mode = true
 text = "Lightning"
 icon_alignment = 1
@@ -112,37 +112,75 @@ vertical_icon_alignment = 0
 expand_icon = true
 autowrap_mode = 3
 
-[node name="PerksTitle" type="Label" parent="Center/Column"]
+[node name="Columns" type="HBoxContainer" parent="Center/Column"]
 layout_mode = 2
-text = "run_setup.for_fame"
-horizontal_alignment = 1
+alignment = 1
+theme_override_constants/separation = 32
 
-[node name="Perks" type="VBoxContainer" parent="Center/Column"]
+[node name="Perks" type="VBoxContainer" parent="Center/Column/Columns"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
-size_flags_horizontal = 4
 theme_override_constants/separation = 8
 
-[node name="Flask" type="Button" parent="Center/Column/Perks"]
+[node name="Fame" type="Label" parent="Center/Column/Columns/Perks"]
+unique_name_in_owner = true
+layout_mode = 2
+auto_translate_mode = 2
+horizontal_alignment = 1
+
+[node name="Flask" type="Button" parent="Center/Column/Columns/Perks"]
 unique_name_in_owner = true
 layout_mode = 2
 auto_translate_mode = 2
 text = "run_setup.flask"
 
-[node name="Card" type="Button" parent="Center/Column/Perks"]
+[node name="Card" type="Button" parent="Center/Column/Columns/Perks"]
 layout_mode = 2
 auto_translate_mode = 2
 text = "run_setup.perk_card"
 
-[node name="Reroll" type="Button" parent="Center/Column/Perks"]
+[node name="Reroll" type="Button" parent="Center/Column/Columns/Perks"]
 layout_mode = 2
 auto_translate_mode = 2
 text = "run_setup.perk_reroll"
 
-[node name="SecondSkill" type="Button" parent="Center/Column/Perks"]
+[node name="SecondSkill" type="Button" parent="Center/Column/Columns/Perks"]
 layout_mode = 2
 auto_translate_mode = 2
 text = "run_setup.perk_second_skill"
+
+[node name="Vows" type="VBoxContainer" parent="Center/Column/Columns"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="VowsTitle" type="Label" parent="Center/Column/Columns/Vows"]
+unique_name_in_owner = true
+layout_mode = 2
+auto_translate_mode = 2
+horizontal_alignment = 1
+
+[node name="Hp" type="Button" parent="Center/Column/Columns/Vows"]
+layout_mode = 2
+auto_translate_mode = 2
+text = "vow.hp"
+
+[node name="ShortTime" type="Button" parent="Center/Column/Columns/Vows"]
+layout_mode = 2
+auto_translate_mode = 2
+text = "vow.short_time"
+
+[node name="NoShopPotions" type="Button" parent="Center/Column/Columns/Vows"]
+layout_mode = 2
+auto_translate_mode = 2
+text = "vow.no_shop_potions"
+
+[node name="NoFlasks" type="Button" parent="Center/Column/Columns/Vows"]
+layout_mode = 2
+auto_translate_mode = 2
+text = "vow.no_flasks"
 
 [node name="Back" type="Button" parent="Center/Column"]
 unique_name_in_owner = true
@@ -162,12 +200,20 @@ text = "common.back"
 
 [connection signal="pressed" from="Center/Column/Skills/Skill14" to="." method="choose" binds= [14]]
 
-[connection signal="pressed" from="Center/Column/Perks/Card" to="." method="buy_perk" binds= ["card"]]
+[connection signal="pressed" from="Center/Column/Columns/Perks/Card" to="." method="buy_perk" binds= ["card"]]
 
-[connection signal="pressed" from="Center/Column/Perks/Reroll" to="." method="buy_perk" binds= ["reroll"]]
+[connection signal="pressed" from="Center/Column/Columns/Perks/Reroll" to="." method="buy_perk" binds= ["reroll"]]
 
-[connection signal="pressed" from="Center/Column/Perks/SecondSkill" to="." method="buy_perk" binds= ["second_skill"]]
+[connection signal="pressed" from="Center/Column/Columns/Perks/SecondSkill" to="." method="buy_perk" binds= ["second_skill"]]
 
-[connection signal="pressed" from="Center/Column/Perks/Flask" to="." method="buy_flask"]
+[connection signal="pressed" from="Center/Column/Columns/Perks/Flask" to="." method="buy_flask"]
 
 [connection signal="pressed" from="Center/Column/Back" to="." method="go_back"]
+
+[connection signal="pressed" from="Center/Column/Columns/Vows/Hp" to="." method="next_hp_step"]
+
+[connection signal="pressed" from="Center/Column/Columns/Vows/ShortTime" to="." method="switch_vow" binds= ["short_time"]]
+
+[connection signal="pressed" from="Center/Column/Columns/Vows/NoShopPotions" to="." method="switch_vow" binds= ["no_shop_potions"]]
+
+[connection signal="pressed" from="Center/Column/Columns/Vows/NoFlasks" to="." method="switch_vow" binds= ["no_flasks"]]

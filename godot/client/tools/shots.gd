@@ -269,6 +269,11 @@ func _ready() -> void:
 	await _shot(out, "04h_town_hall")
 	Router.go("run_end", {"profile_path": "user://shot_walker.json"})
 	await _shot(out, "04k_run_end")
+	# before a run, after an ending back to the start: two vows taken
+	walker.endings = 1 << 2
+	walker.run.vows.next_hp_step()
+	walker.run.vows.switch("short_time")
+	walker.save("user://shot_walker.json")
 	Router.go("run_setup", {"profile_path": "user://shot_walker.json"})
 	await _shot(out, "04l_run_setup")
 	Router.go("mission", {"lord": 1, "mission": 0, "seed": 1})

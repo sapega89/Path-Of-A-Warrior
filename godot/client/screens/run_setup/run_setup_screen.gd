@@ -3,14 +3,20 @@ extends BaseScreen
 ## Before the run, from the start camp's town hall: the starting skill, one of the first skills
 ## of the rows with its icon (two with the perk; HeroRun.choose_start_skill), and what fame buys
 ## there once and for good: the flasks of living water, a 4th gift card, a reroll of a gift each
-## run and a second starting skill. Each with its price, or "bought". Every choice is saved at
-## once.
+## run and a second starting skill. Each with its price, or "bought". Beside them, once an ending
+## has led back to the start, the vows (Vows): the enemies' HP a step up per press, and three
+## to take or give up, with what they add to the gold and fame. Every choice is saved at once.
 
 ## The buttons of the perks (HeroRun.PERK_PRICES) and the names they show.
 const PERKS := {
 	"card": ["Card", "run_setup.perk_card"],
 	"reroll": ["Reroll", "run_setup.perk_reroll"],
 	"second_skill": ["SecondSkill", "run_setup.perk_second_skill"],
+}
+
+## The buttons of the vows besides the enemies' HP (Vows.SWITCHES).
+const VOW_BUTTONS := {
+	"short_time": "ShortTime", "no_shop_potions": "NoShopPotions", "no_flasks": "NoFlasks"
 }
 
 var path: String = Profile.PATH
@@ -21,6 +27,8 @@ var skills := {}  # skill place -> its Button
 @onready var skills_title: Label = %SkillsTitle
 @onready var flask: Button = %Flask
 @onready var perk_list: VBoxContainer = %Perks
+@onready var vow_list: VBoxContainer = %Vows
+@onready var vows_title: Label = %VowsTitle
 
 
 func _ready() -> void:
@@ -60,6 +68,17 @@ func refresh() -> void:
 			else tr("run_setup.price") % [perk_name, cost]
 		)
 		b.disabled = bought or profile.fame < cost
+	_show_vows()
+
+
+func _show_vows() -> void:
+	var vows: Vows = profile.run.vows
+	vow_list.visible = Vows.open(profile)
+	vows_title.text = tr("run_setup.vows") % (vows.bonus_percent() - 100)
+	vow_list.get_node("Hp").text = tr("vow.hp") % [vows.hp_steps, Vows.MAX_HP_STEPS]
+	for vow: String in VOW_BUTTONS:
+		var b: Button = vow_list.get_node(VOW_BUTTONS[vow])
+		b.text = tr("vow.on") % tr("vow." + vow) if vows.has(vow) else tr("vow." + vow)
 
 
 ## Picks a starting skill and saves.
@@ -71,6 +90,18 @@ func choose(place: int) -> void:
 
 func buy_flask() -> void:
 	if profile.run.buy_flask(profile):
+		profile.save(path)
+	refresh()
+
+
+func next_hp_step() -> void:
+	profile.run.vows.next_hp_step()
+	profile.save(path)
+	refresh()
+
+
+func switch_vow(vow: String) -> void:
+	if profile.run.vows.switch(vow):
 		profile.save(path)
 	refresh()
 

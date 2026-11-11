@@ -95,6 +95,7 @@ var mission_exp := 0
 var mission_gold := 0
 var mission_general := 0
 var time_limit := 0  # seconds; in time the exp grows
+var enemy_hp_percent := 100  # the vows of the run (Vows) make the enemies tougher
 var time_exp := 0  # the exp for time, given when the mission was won in time
 var hero_exp := 0  # the hero's exp into his level before the mission
 var exp_bars := ExpBars.new()  # the exp bar of the pages Total Exp and Time Exp

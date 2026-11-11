@@ -787,3 +787,6 @@ AskColumn/base_type = &"VBoxContainer"
 AskColumn/constants/separation = 28
 AskButtons/base_type = &"HBoxContainer"
 AskButtons/constants/separation = 24
+SkillChoice/base_type = &"Button"
+SkillChoice/constants/icon_max_width = 72
+SkillChoice/font_sizes/font_size = 22

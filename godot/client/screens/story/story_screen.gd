@@ -124,8 +124,8 @@ func next_page() -> bool:
 	return true
 
 
-## What the ending gave, in a popup: "Oksana's scarf / received!", then "Hidden
-## Mission!" and the lord opened.
+## What the ending gave, in a popup: "Oksana's scarf / received!", then "A new road is open:"
+## and the place it opened (Profile.ROAD_OF_ENDING).
 func reward_lines() -> Array:
 	var p: Dictionary = Router.params
 	var out: Array = []
@@ -138,7 +138,7 @@ func reward_lines() -> Array:
 	if lord != 0:
 		if not out.is_empty():
 			out.append("")
-		out.append_array(["Hidden Mission!", Campaign.new().lord_name(lord)])
+		out.append_array([tr("story.new_road"), Campaign.new().lord_name(lord)])
 	return out
 
 

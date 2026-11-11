@@ -178,7 +178,7 @@ func test_story_numbers_and_reward() -> void:
 	check(screen.reward.visible, "the reward popup")
 	eq(
 		screen.reward.dialog_text,
-		"Oksana's scarf\nreceived!\n\nHidden Mission!\n%s" % Campaign.new().lord_name(8),
+		"Oksana's scarf\nreceived!\n\n%s\n%s" % [tr("story.new_road"), Campaign.new().lord_name(8)],
 		"what the ending gave"
 	)
 	screen.skip()

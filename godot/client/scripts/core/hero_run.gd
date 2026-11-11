@@ -7,7 +7,7 @@ extends RefCounted
 ## fame in the start camp, once and for good, and are full again at every new run: a mission
 ## lost empties one, and the hero tries again from the same camp. An ending that goes on to a
 ## main camp fills one. A mission won leaves the gift of its general (Gifts) here until the hero
-## takes a card. Fame also buys the perks, once and for good.
+## takes a card. Fame also buys the perks, once and for good. The vows (Vows) are kept here too.
 
 const MAX_FLASKS := 3
 ## The fame the first, second and third flask cost.
@@ -28,6 +28,7 @@ var perks := {}  # PERK_PRICES name -> true, once bought
 var reroll_used := false  # the reroll of this run is spent
 var gift: Array[Dictionary] = []  # the cards of the last mission won, until one is taken
 var gift_from := 0  # the general who offers them (0: none)
+var vows := Vows.new()  # taken in the start camp, for the runs until changed
 
 
 ## The hero is in the start camp, where the run begins (and where nothing of it is learnt yet).
@@ -42,7 +43,7 @@ func lose_mission(profile: Profile, story_ends: bool, rng: JavaRandom) -> Dictio
 	var lost: Dictionary = profile.lose_gear(rng)
 	var over := false
 	if not story_ends:
-		if flasks_left > 0:
+		if flasks_left > 0 and not vows.has("no_flasks"):
 			flasks_left -= 1
 		else:
 			over = true
@@ -169,7 +170,8 @@ func to_dict() -> Dictionary:
 		"perks": perks.keys(),
 		"reroll_used": reroll_used,
 		"gift": gift,
-		"gift_from": gift_from
+		"gift_from": gift_from,
+		"vows": vows.to_dict()
 	}
 
 
@@ -192,6 +194,8 @@ func from_dict(d: Dictionary) -> void:
 		if typeof(c) == TYPE_DICTIONARY:
 			gift.append({"kind": int(c.get("kind", -1)), "id": int(c.get("id", 0))})
 	gift_from = int(d.get("gift_from", 0))
+	var v: Variant = d.get("vows", {})
+	vows.from_dict(v if typeof(v) == TYPE_DICTIONARY else {})
 
 
 static func _array(v: Variant) -> Array:

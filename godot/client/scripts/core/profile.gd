@@ -22,13 +22,16 @@ const START_WEAPON := 116
 const PROGRESS_PER_WIN := 5
 ## The lords a new hero can fight for: bit (id - 1) set.
 const START_LORDS_OPEN := 35113052110447
-const LORD_COUNT := 45
 ## Where the hero goes after ending i (0: back to the start, the progress of the rulers lost and
 ## the run over; a main camp: one flask filled, HeroRun).
 const NEXT_PLACE := [
 	0, 0, 0, 0, 0, 0, 11, 8, 0, 15, 15, 20, 17, 19, 19, 0, 30, 22, 35, 38, 39, 33, 33, 44
 ]
 const ENDING_BASE := 200
+## The place closed at the start that an ending opens: the endings back to the start the first
+## ones (the first of them on the second place of the way), two endings deep in the campaign the
+## last two.
+const ROAD_OF_ENDING := {1: 5, 2: 16, 3: 25, 4: 8, 5: 9, 8: 26, 15: 28, 0: 37, 18: 29, 21: 32}
 const SCARF := 502  # Katria's scarf: the reward of ending 2, needed to see ending 3
 const HERO_CLASSES := ["Cossack", "Serdiuk", "Kharakternyk", "Haidamaka"]
 ## The briefing's advice: 28 pairs of lines (talk.json "briefing"), the first 10 in turn.
@@ -301,6 +304,8 @@ func apply_to(sim: MapSim) -> void:
 	for k in friendship:
 		sim.friendship[int(k)] = int(friendship[k])
 	sim.free_places = backpack.filter(func(it): return int(it.get("id", 0)) == 0).size()
+	sim.enemy_hp_percent = run.vows.enemy_hp_percent()
+	sim.time_limit = run.vows.time_limit(sim.time_limit)
 
 
 ## What the mission left: picked gold and things (a found gear gets its random extra from
@@ -310,7 +315,8 @@ func apply_to(sim: MapSim) -> void:
 func take_from(
 	sim: MapSim, lord_id: int, mission: int, ruler_id: int, rng: RandomNumberGenerator = null
 ) -> int:
-	gold += int(sim.gold)
+	var bonus := run.vows.bonus_percent()  # the vows of the run add to its gold and fame
+	gold += int(sim.gold) * bonus / 100
 	if rng == null:
 		rng = RandomNumberGenerator.new()
 	for id in sim.items:
@@ -320,8 +326,8 @@ func take_from(
 		friendship[str(k)] = int(sim.friendship[k])
 	if not sim.won:
 		return 0
-	gold += int(sim.gold_reward())
-	fame += int(sim.mission_exp) - int(sim.time_exp)
+	gold += int(sim.gold_reward()) * bonus / 100
+	fame += (int(sim.mission_exp) - int(sim.time_exp)) * bonus / 100
 	var key := str(ruler_id)
 	progress[key] = mini(int(progress.get(key, 0)) + PROGRESS_PER_WIN, 100)
 	done["%d:%d" % [lord_id, mission]] = true
@@ -335,7 +341,8 @@ func take_from(
 ## takes the hero to the lord's place. A mission whose general is 200 + i (won) or whose
 ## reward is 200 + i (lost) ends the story with ending i: the hero goes to that ending's
 ## place, gets the mission's gold anyway when lost, sometimes a gear (Katria's scarf
-## after ending 2), and one more lord opens. Returns the ending reached, or -1.
+## after ending 2), and some endings open a road (ROAD_OF_ENDING). Returns the ending reached,
+## or -1.
 func advance(sim: MapSim, lord_id: int, info: Dictionary, rng: RandomNumberGenerator = null) -> int:
 	if rng == null:
 		rng = RandomNumberGenerator.new()
@@ -370,14 +377,10 @@ func advance(sim: MapSim, lord_id: int, info: Dictionary, rng: RandomNumberGener
 		item = SCARF
 	elif rng.randi_range(0, 9) == 0:
 		item = 101 + (4 if level / 20 > 4 else level / 20) + 5 * rng.randi_range(0, 19)
-	var closed: Array = []
-	for i in LORD_COUNT:
-		if lords_open & (1 << i) == 0:
-			closed.append(i)
-	if not closed.is_empty():
-		var i := int(closed[rng.randi_range(0, closed.size() - 1)])
-		lords_open |= 1 << i
-		opened_lord = i + 1
+	var road := int(ROAD_OF_ENDING.get(ending, 0))
+	if road > 0 and not is_lord_open(road) and endings & (1 << ending) != 0:
+		lords_open |= 1 << (road - 1)
+		opened_lord = road
 	if item != 0 and add_item(Items.make(item, rng)):
 		reward_item = item
 	if ending == 3 and not has_item(SCARF):
