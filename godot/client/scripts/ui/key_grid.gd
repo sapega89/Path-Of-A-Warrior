@@ -10,9 +10,13 @@ extends VBoxContainer
 
 const BACK := "⌫"
 const OK := "OK"
-const KEY_SIZE := Vector2(48, 44)
+const KEY_GAP := 4  # between the keys and the rows (key_theme.tres)
+## The game's buttons with narrow margins, so that every key is as wide as the others, their
+## letters' size and the gaps (the rest of the theme comes from the screen around the grid).
 const KEY_THEME := "res://assets/art/ui/key_theme.tres"
-const FONT_SIZE := 24
+const SCENE := "res://scenes/ui/key_grid.tscn"
+const ROW_SCENE := preload("res://scenes/ui/key_row.tscn")
+const KEY_SCENE := preload("res://scenes/ui/key_button.tscn")
 ## The hero's name: letters in both cases.
 const LETTERS := ["ABCDEFGHIJKLM", "NOPQRSTUVWXYZ", "abcdefghijklm", "nopqrstuvwxyz"]
 
@@ -43,43 +47,26 @@ func shown_for(device: String) -> void:
 
 ## A keyboard of these rows (each a string of keys) and a last row of BACK and OK, typing
 ## into `field`.
-static func create(rows: Array, field: LineEdit) -> VBoxContainer:
-	var g: VBoxContainer = (load("res://scripts/ui/key_grid.gd") as GDScript).new()
-	g.name = "Keys"
+static func create(rows: Array, field: LineEdit) -> KeyGrid:
+	var g: KeyGrid = (load(SCENE) as PackedScene).instantiate()
 	g.target = field
-	g.alignment = BoxContainer.ALIGNMENT_CENTER
-	g.add_theme_constant_override("separation", 4)
-	g.theme = key_theme()
 	for r in rows + [[BACK, OK]]:
-		var labels: Array = []
+		var row: HBoxContainer = ROW_SCENE.instantiate()
 		for c in r:
-			labels.append(c)
-		var row := HBoxContainer.new()
-		row.alignment = BoxContainer.ALIGNMENT_CENTER
-		row.add_theme_constant_override("separation", 4)
-		for label: String in labels:
-			row.add_child(g._key(label))
+			row.add_child(g._key(c))
 		g.add_child(row)
 	return g
 
 
 func _key(label: String) -> Button:
-	var b := Button.new()
+	var b: Button = KEY_SCENE.instantiate()
 	b.name = "Key_" + ("Back" if label == BACK else label)
 	b.text = label
-	b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	var wide := label == BACK or label == OK  # two keys wide
-	b.custom_minimum_size = Vector2(KEY_SIZE.x * 2 + 4 if wide else KEY_SIZE.x, KEY_SIZE.y)
-	b.add_theme_font_size_override("font_size", FONT_SIZE)
+	if label == BACK or label == OK:  # two keys wide
+		b.custom_minimum_size.x = b.custom_minimum_size.x * 2 + KEY_GAP
 	b.pressed.connect(press.bind(label))
 	keys.append(b)
 	return b
-
-
-## The buttons of the game's theme with narrow margins, so that every key is as wide as the
-## others (the rest of the theme comes from the screen around the grid).
-static func key_theme() -> Theme:
-	return UiTheme.theme(KEY_THEME)
 
 
 ## The keys type into `field` once it has had the focus.
