@@ -346,12 +346,12 @@ func _ready() -> void:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path("user://hero.json"))
 	else:
 		FileAccess.open("user://hero.json", FileAccess.WRITE).store_string(kept)
-	Input.action_press("move_right")  # off the barrel's column
+	_press("move_right")  # off the barrel's column
 	await _seconds(0.3)
-	Input.action_release("move_right")
-	Input.action_press("move_down")
+	_release("move_right")
+	_press("move_down")
 	await _seconds(6.0)
-	Input.action_release("move_down")
+	_release("move_down")
 	await _seconds(1.0)
 	print("room after walking down: ", mission.sim.cell, " stage ", mission.sim.rooms_visited)
 	await _shot(out, "mission_1_room_2")
@@ -359,9 +359,9 @@ func _ready() -> void:
 	var msim: RefCounted = mission.sim
 	msim.no_enemies = true
 	while msim.banner != 0 or not msim.talk.is_empty():
-		Input.action_press("attack")
+		_press("attack")
 		await _frames(2)
-		Input.action_release("attack")
+		_release("attack")
 		await _seconds(0.2)
 	msim.add_quick_item(4)
 	msim.add_quick_item(4)
@@ -371,13 +371,13 @@ func _ready() -> void:
 	await _seconds(0.3)
 	await _shot(out, "mission_1_potions")
 	while msim.banner != 0:
-		Input.action_press("attack")
+		_press("attack")
 		await _frames(2)
-		Input.action_release("attack")
+		_release("attack")
 		await _seconds(0.2)
-	Input.action_press("potion_1")
+	_press("potion_1")
 	await _frames(2)
-	Input.action_release("potion_1")
+	_release("potion_1")
 	await _seconds(0.13)
 	print("potion: effect ", msim.effect_item, " mp ", msim.hero.mp)
 	await _shot(out, "mission_1_potion_drunk")
@@ -447,9 +447,9 @@ func _ready() -> void:
 	await _seconds(1.5)
 	await _shot(out, "mission_1_general_talk")
 	for i in 8:
-		Input.action_press("attack")
+		_press("attack")
 		await _frames(2)
-		Input.action_release("attack")
+		_release("attack")
 		await _seconds(0.15)
 	t0 = Time.get_ticks_msec()
 	var shot_general := false
@@ -460,15 +460,15 @@ func _ready() -> void:
 			await _shot(out, "mission_1_general_fight")
 			_release_all()
 			while not sim.talk.is_empty():  # (a skill waits for the end of his words)
-				Input.action_press("attack")
+				_press("attack")
 				await _frames(2)
-				Input.action_release("attack")
+				_release("attack")
 				await _seconds(0.15)
 			sim.hero.mp = sim.hero.max_mp  # the first skill, a dash, against the general
 			for i in 20:  # (it starts when the hero stands or walks)
-				Input.action_press("skill_1")
+				_press("skill_1")
 				await _frames(2)
-				Input.action_release("skill_1")
+				_release("skill_1")
 				await _seconds(0.1)
 				if sim.hero.action == 12:
 					break
@@ -496,8 +496,8 @@ const DIR_ACTIONS := {0: "move_down", 2: "move_left", 4: "move_up", 6: "move_rig
 
 func _release_all() -> void:
 	for a in DIR_ACTIONS.values():
-		Input.action_release(a)
-	Input.action_release("attack")
+		_release(a)
+	_release("attack")
 
 
 ## One step of a simple fighter: towards the nearest soldier that is in the room, strike when close.
@@ -512,12 +512,28 @@ func _fight_step(sim: RefCounted) -> void:
 	_release_all()
 	if best != null:
 		if best_d <= 40:
-			Input.action_press("attack")
+			_press("attack")
 		else:
-			Input.action_press(DIR_ACTIONS[MapGeometry.dir4(sim.hero.pos, best.pos)])
+			_press(DIR_ACTIONS[MapGeometry.dir4(sim.hero.pos, best.pos)])
 	await _frames(4)
-	Input.action_release("attack")
+	_release("attack")
 	await _frames(4)
+
+
+## A key pressed as the player presses it: an input event, which the screens read too.
+func _press(action: String) -> void:
+	_send(action, true)
+
+
+func _release(action: String) -> void:
+	_send(action, false)
+
+
+func _send(action: String, pressed: bool) -> void:
+	var ev := InputEventAction.new()
+	ev.action = action
+	ev.pressed = pressed
+	Input.parse_input_event(ev)
 
 
 func _seconds(t: float) -> void:
