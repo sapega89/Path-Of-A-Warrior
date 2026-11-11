@@ -1,7 +1,6 @@
 {
  "code_order": {},
  "long_file": {
-  "screens/mission/mission_screen.gd": 1,
   "scripts/world/map_art.gd": 1
  },
  "long_function": {
@@ -36,7 +35,6 @@
   "scripts/core/settings.gd": 1
  },
  "theme_in_code": {
-  "screens/mission/mission_screen.gd": 1,
   "scripts/art/art_hud.gd": 13,
   "scripts/ui/exp_bar.gd": 2,
   "scripts/ui/hint_bar.gd": 3,

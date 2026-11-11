@@ -55,7 +55,7 @@ func test_lost_gear_on_the_fail_banner() -> void:
 	screen._process(0.0)
 	eq(int(screen.lost_gear.get("id", 0)), Profile.START_WEAPON, "the weapon is lost")
 	eq(int(screen.profile.equipped[0].id), 0, "taken from the hero")
-	var text: String = screen.banner_text.text
+	var text: String = screen.banner.label.text
 	check(
 		text.ends_with(
 			(

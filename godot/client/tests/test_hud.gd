@@ -123,9 +123,9 @@ func test_the_exit_arrow_down_shows_above_the_hud() -> void:
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
-	screen._place_arrows()
+	screen.exit_arrows.show_exits(screen.sim, screen.ways_out, true)
 	var view: Vector2 = screen.get_viewport_rect().size
-	var a: TextureRect = screen.arrows[0]
+	var a: TextureRect = screen.exit_arrows.arrows[0]
 	var top := MapHud.top_of(view)
 	check(
 		a.position.y + a.size.y <= top,
