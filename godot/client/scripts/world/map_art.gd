@@ -312,42 +312,7 @@ func _build_ground() -> void:
 	var nz := (h + 2 * MARGIN) * PARTS + 1
 	for j in nz:
 		for i in nx:
-			var vx := lo + i
-			var vz := lo + j
-			var colour := Color(0, 0, 0, 0)
-			var detail := [0.0, 0.0, 0.0]
-			var raised := 0
-			var lowest := 99.0
-			var wet := 0
-			var face := 0.0
-			var cliff := 0.0
-			for d in [Vector2i(-1, -1), Vector2i(0, -1), Vector2i(-1, 0), Vector2i(0, 0)]:
-				var p: Array = _part(vx + d.x, vz + d.y)
-				var name := _kind_name(p[0])
-				var c: Color = KIND_COLOUR.get(name, KIND_COLOUR["meadow"])
-				colour += Color(c.r, c.g, c.b, 0.0) * 0.25
-				if DETAIL.has(name):
-					detail[DETAIL[name]] += 0.25
-				if float(p[1]) > 0.0:
-					raised += 1
-					lowest = minf(lowest, float(p[1]))
-					face += float(FACE.get(name, 0.0))
-				if name == "water":
-					wet += 1
-				cliff += 0.25 * int(p[2])
-			var x := float(vx) / PARTS
-			var z := float(vz) / PARTS
-			var y := hills(x, z)
-			if raised == 4:
-				y += lowest + (_wobble(x, z) * 0.08 if face / raised < 0.4 else 0.0)
-			elif wet == 4:
-				y -= WATER_DEPTH
-			colour.a = face / raised if raised > 0 else 0.0
-			st.set_color(colour)
-			# the detail of the kinds around (pebbles, planks, paving) and of a cliff's face
-			st.set_uv(Vector2(detail[0], detail[1]))
-			st.set_uv2(Vector2(detail[2], cliff))
-			st.add_vertex(Vector3(x, y, z))
+			_ground_vertex(st, lo + i, lo + j)
 	for j in nz - 1:
 		for i in nx - 1:
 			var a := j * nx + i
@@ -366,6 +331,45 @@ func _build_ground() -> void:
 	m.shader = GROUND_SHADER
 	mi.material_override = m
 	add_child(mi)
+
+
+## The ground's vertex at the corner (vx, vz) of four parts: their colours mixed, its height
+## (raised when all four are, sunk under water when all four are wet), the detail of their
+## kinds (pebbles, planks, paving) and of a cliff's face.
+func _ground_vertex(st: SurfaceTool, vx: int, vz: int) -> void:
+	var colour := Color(0, 0, 0, 0)
+	var detail := [0.0, 0.0, 0.0]
+	var raised := 0
+	var lowest := 99.0
+	var wet := 0
+	var face := 0.0
+	var cliff := 0.0
+	for d in [Vector2i(-1, -1), Vector2i(0, -1), Vector2i(-1, 0), Vector2i(0, 0)]:
+		var p: Array = _part(vx + d.x, vz + d.y)
+		var name := _kind_name(p[0])
+		var c: Color = KIND_COLOUR.get(name, KIND_COLOUR["meadow"])
+		colour += Color(c.r, c.g, c.b, 0.0) * 0.25
+		if DETAIL.has(name):
+			detail[DETAIL[name]] += 0.25
+		if float(p[1]) > 0.0:
+			raised += 1
+			lowest = minf(lowest, float(p[1]))
+			face += float(FACE.get(name, 0.0))
+		if name == "water":
+			wet += 1
+		cliff += 0.25 * int(p[2])
+	var x := float(vx) / PARTS
+	var z := float(vz) / PARTS
+	var y := hills(x, z)
+	if raised == 4:
+		y += lowest + (_wobble(x, z) * 0.08 if face / raised < 0.4 else 0.0)
+	elif wet == 4:
+		y -= WATER_DEPTH
+	colour.a = face / raised if raised > 0 else 0.0
+	st.set_color(colour)
+	st.set_uv(Vector2(detail[0], detail[1]))
+	st.set_uv2(Vector2(detail[2], cliff))
+	st.add_vertex(Vector3(x, y, z))
 
 
 static func _wobble(x: float, z: float) -> float:

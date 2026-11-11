@@ -4,10 +4,7 @@
   "scripts/world/map_art.gd": 1
  },
  "long_function": {
-  "screens/mission/mission_screen.gd": 1,
-  "scripts/art/art_slice.gd": 1,
-  "scripts/world/combat_feel.gd": 1,
-  "scripts/world/map_art.gd": 1
+  "screens/mission/mission_screen.gd": 1
  },
  "nodes_in_code": {
   "screens/camp/camp_fort.gd": 3,

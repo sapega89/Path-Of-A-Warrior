@@ -199,47 +199,15 @@ func react(list: Array) -> void:
 	rumble_wanted = []
 	for h in list:
 		var g := grade(h)
-		var r: Array = p["rumble_" + g]
-		if (
-			on.rumble
-			and (
-				rumble_wanted.is_empty()
-				or float(r[1]) + float(r[0]) > float(rumble_wanted[1]) + float(rumble_wanted[0])
-			)
-		):
-			rumble_wanted = r
-		if float(p["stop_" + g]) > stop:
-			stop = float(p["stop_" + g])
+		_want_rumble(p["rumble_" + g])
+		stop = maxf(stop, float(p["stop_" + g]))
 		if float(p["trauma_" + g]) > shake:
 			shake = float(p["trauma_" + g])
 			kick = h.dir if g != "hit" and g != "object" else Vector2.ZERO
 		var a: RefCounted = h.actor  # standards: allow weak_type (actor or breakable)
-		if seen.has(a):
-			continue  # hit twice in a tick: one effect
-		seen[a] = true
-		if on.flash:
-			var t := float(p["flash_" + g])
-			flashes[a] = {"t": t, "total": t, "color": HURT if g == "hurt" else WHITE}
-		if h.who != "enemy":
-			continue
-		if on.launch and h.killed:
-			var t := float(p.launch_time)
-			launches[a] = {
-				"t": 0.0,
-				"total": t,
-				"dir": h.dir,
-				"px": float(p.launch_boss_px if h.boss else p.launch_px),
-				"hop": float(p.launch_hop_px)
-			}
-			recoils.erase(a)
-		elif on.recoil:
-			var t := float(p.recoil_time)
-			recoils[a] = {
-				"t": 0.0,
-				"total": t,
-				"dir": h.dir,
-				"px": float(p.recoil_heavy_px if h.heavy else p.recoil_px)
-			}
+		if not seen.has(a):  # hit twice in a tick: one effect
+			seen[a] = true
+			_mark(h, g)
 	if on.hitstop and stop > 0.0:
 		var want := stop * float(p.stop_scale)
 		var got := minf(want, _budget)
@@ -248,6 +216,43 @@ func react(list: Array) -> void:
 	if on.shake and shake > 0.0:
 		trauma = minf(1.0, trauma + shake)
 		_kick = kick * float(p.shake_kick_px)
+
+
+## The strongest rumble of the tick's hits (their strength and length added up).
+func _want_rumble(r: Array) -> void:
+	if not on.rumble:
+		return
+	if (
+		rumble_wanted.is_empty()
+		or float(r[1]) + float(r[0]) > float(rumble_wanted[1]) + float(rumble_wanted[0])
+	):
+		rumble_wanted = r
+
+
+## The one hit its actor takes this tick (graded g): its flash, and an enemy's recoil, or its
+## flight when killed.
+func _mark(h: Dictionary, g: String) -> void:
+	if on.flash:
+		var t := float(p["flash_" + g])
+		flashes[h.actor] = {"t": t, "total": t, "color": HURT if g == "hurt" else WHITE}
+	if h.who != "enemy":
+		return
+	if on.launch and h.killed:
+		launches[h.actor] = {
+			"t": 0.0,
+			"total": float(p.launch_time),
+			"dir": h.dir,
+			"px": float(p.launch_boss_px if h.boss else p.launch_px),
+			"hop": float(p.launch_hop_px)
+		}
+		recoils.erase(h.actor)
+	elif on.recoil:
+		recoils[h.actor] = {
+			"t": 0.0,
+			"total": float(p.recoil_time),
+			"dir": h.dir,
+			"px": float(p.recoil_heavy_px if h.heavy else p.recoil_px)
+		}
 
 
 ## Real time goes on: the shake and the flashes fade even while the picture stands still; the

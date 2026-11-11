@@ -163,6 +163,17 @@ func _ground(paths: Array, greens: Array, play: Rect2) -> void:
 
 # -- Korsun camp ----------------------------------------------------------------------
 func _camp() -> void:
+	_camp_ground()
+	_camp_back()
+	# fire in the middle
+	var fire := Vector3(-2.7, 0, -0.9)
+	_prop("vohnyshche", fire)
+	effects.append(ArtEffects.campfire(self, fire))
+	_camp_front()
+	_camp_people(fire)
+
+
+func _camp_ground() -> void:
 	var centre := Vector2(0.0, -0.4)
 	_ground(
 		[
@@ -181,6 +192,10 @@ func _camp() -> void:
 		[Vector3(-8, -8, 4), Vector3(8, -7, 4), Vector3(-8, 5, 3), Vector3(6, 6, 4)],
 		Rect2(-12, -11, 24, 20)
 	)
+
+
+## The hut, the tent, the well and the cannon at the back.
+func _camp_back() -> void:
 	# hut, fence and poplars at the back left
 	_prop("khata", Vector3(-5.0, 0, -6.2), 8.0)
 	_prop("tyn", Vector3(-7.2, 0, -3.5))
@@ -197,10 +212,10 @@ func _camp() -> void:
 	_prop("banner", Vector3(6.8, 0, -3.6), -20.0)
 	_prop("dub", Vector3(9.4, 0, -4.0))
 	_prop("harmata", Vector3(-0.2, 0, -4.4), 170.0)
-	# fire in the middle
-	var fire := Vector3(-2.7, 0, -0.9)
-	_prop("vohnyshche", fire)
-	effects.append(ArtEffects.campfire(self, fire))
+
+
+## The forge, the cart, the barrels and the bushes in front.
+func _camp_front() -> void:
 	# forge on the right, cart and barrels on the left
 	_prop("kuznya", Vector3(8.0, 0, -0.6), -90.0)
 	_prop("penok", Vector3(3.6, 0, 3.2))
@@ -213,7 +228,10 @@ func _camp() -> void:
 	_prop("kushch", Vector3(-1.4, 0, 4.9), 90.0, 0.8)
 	_prop("kamin", Vector3(7.6, 0, 3.6))
 	_prop("namet", Vector3(9.4, 0, 3.2), 75.0)
-	# people
+
+
+## The people round the fire in the middle, the colonel, the smith, an archer and the hero.
+func _camp_people(fire: Vector3) -> void:
 	_figure("kozak_svyta", fire + Vector3(0.1, 0, -1.25), "sit", fire + Vector3(0.6, 0, 2.0), 1.0)
 	_figure("kozak_camp", fire + Vector3(-1.25, 0, 0.1), "interact", fire, 0.45)
 	_figure("kozak_camp", fire + Vector3(1.05, 0, 0.85), "cheer", fire, 0.55)
