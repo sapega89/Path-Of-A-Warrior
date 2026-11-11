@@ -1,12 +1,12 @@
 class_name Gifts
 extends RefCounted
-## The gifts of a mission won: its general offers three cards and the hero takes one. A card is
-## a skill the general knows (new at level 1 or one level up, to 10), a stat (+1 attack, +1
-## defence, +5 HP or +3 MP), a gear of the hero's level or a potion. The skill lasts the run
-## (HeroRun ends it); the rest is the hero's for good. The kind of each card is rolled on the
-## general's gift table, a random row of it; no fame. A general who knows a later skill of a row
-## offers the first one of the row the hero lacks. A mission with no general (an ending, two
-## missions of the campaign) offers a stat, a gear and a potion.
+## The gifts of a mission won: its general offers three cards (four with the perk) and the hero
+## takes one. A card is a skill the general knows (new at level 1 or one level up, to 10), a
+## stat (+1 attack, +1 defence, +5 HP or +3 MP), a gear of the hero's level or a potion. The
+## skill lasts the run (HeroRun ends it); the rest is the hero's for good. The kind of each card
+## is rolled on the general's gift table, a random row of it; no fame. A general who knows a
+## later skill of a row offers the first one of the row the hero lacks. A mission with no
+## general (an ending, two missions of the campaign) offers a stat, a gear and a potion.
 
 enum Kind { SKILL, ATTACK, DEFENSE, HP, MP, GEAR, POTION }
 
@@ -60,21 +60,25 @@ const TIER_ODDS := [
 ]
 
 
-## Up to three different cards from general `general_id` (campaign.json generals; 0 or an
-## ending's number: no general) for the hero: [{kind: Kind, id}], id the skill's place, the
-## gear's or the potion's id. Fewer when there are not three to give.
+## Up to `count` different cards (three; four with the perk, HeroRun) from general `general_id`
+## (campaign.json generals; 0 or an ending's number: no general) for the hero: [{kind: Kind, id}],
+## id the skill's place, the gear's or the potion's id. Fewer when there are not so many to give.
+## With no general: a stat, a gear, a potion and another stat.
 static func offer(
-	profile: Profile, general_id: int, rng: RandomNumberGenerator
+	profile: Profile, general_id: int, count: int, rng: RandomNumberGenerator
 ) -> Array[Dictionary]:
 	var general := MapSim.general_data(general_id)
 	var cards: Array[Dictionary] = []
 	if general.is_empty():
-		for kind: int in [STATS[rng.randi_range(0, STATS.size() - 1)], Kind.GEAR, Kind.POTION]:
+		var first := rng.randi_range(0, STATS.size() - 1)
+		var other := (first + rng.randi_range(1, STATS.size() - 1)) % STATS.size()
+		var kinds: Array = [STATS[first], Kind.GEAR, Kind.POTION, STATS[other]]
+		for kind: int in kinds.slice(0, count):
 			_add(cards, card_of(profile, general, kind, rng))
 		return cards
 	var table: Array = ODDS[clampi(int(general.get("gift_table", 0)), 0, ODDS.size() - 1)]
 	for t in TRIES:
-		if cards.size() >= CARDS:
+		if cards.size() >= count:
 			break
 		var kind := roll(table[rng.randi_range(0, table.size() - 1)], rng)
 		if kind >= 0:

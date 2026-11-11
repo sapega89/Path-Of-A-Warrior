@@ -17,6 +17,7 @@ const SCREENS := {
 	"town_hall": "res://screens/town_hall/town_hall_screen.tscn",
 	"run_end": "res://screens/run_end/run_end_screen.tscn",
 	"gift": "res://screens/gift/gift_screen.tscn",
+	"run_setup": "res://screens/run_setup/run_setup_screen.tscn",
 	"mission": "res://screens/mission/mission_screen.tscn",
 	"briefing": "res://screens/briefing/briefing_screen.tscn",
 	"management": "res://screens/management/management_screen.tscn",

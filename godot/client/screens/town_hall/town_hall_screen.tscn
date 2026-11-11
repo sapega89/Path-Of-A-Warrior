@@ -56,16 +56,16 @@ layout_mode = 2
 alignment = 1
 theme_override_constants/separation = 12
 
-[node name="BuyFlask" type="Button" parent="Center/Column/Buttons"]
+[node name="Prepare" type="Button" parent="Center/Column/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
-auto_translate_mode = 2
+text = "hall.prepare"
 
 [node name="Back" type="Button" parent="Center/Column/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "common.back"
 
-[connection signal="pressed" from="Center/Column/Buttons/BuyFlask" to="." method="buy_flask"]
+[connection signal="pressed" from="Center/Column/Buttons/Prepare" to="." method="open_run_setup"]
 
 [connection signal="pressed" from="Center/Column/Buttons/Back" to="." method="go_back"]

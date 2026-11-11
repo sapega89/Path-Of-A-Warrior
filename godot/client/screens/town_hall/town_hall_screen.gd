@@ -2,16 +2,17 @@ extends BaseScreen
 ## The town hall of a main camp: every colonel who gives missions, with how far the hero has
 ## come with him (Profile.progress, 5 per mission won; only his name while it is nothing yet),
 ## and the generals the hero knows, with their friendship (Profile.friendship, in the order he
-## met them). Over them, the hero's flasks of living water (HeroRun) and his fame; in the town
-## hall of the start camp (Router.params.start) the next flask is sold for fame.
+## met them). Over them, the hero's flasks of living water (HeroRun) and his fame; the town hall
+## of the start camp (Router.params.start) opens what comes before a run (the run setup screen:
+## the starting skill, the flasks and the perks bought with fame).
 
 var path: String = Profile.PATH
 var profile: Profile
 var campaign := Campaign.new()
-var at_start := false  # the start camp's town hall: it sells the flasks
+var at_start := false  # the start camp's town hall: it opens the run setup
 @onready var list: VBoxContainer = %List
 @onready var flasks: Label = %Flasks
-@onready var buy: Button = %BuyFlask
+@onready var prepare: Button = %Prepare
 
 
 func _ready() -> void:
@@ -36,22 +37,17 @@ func _ready() -> void:
 	%Back.grab_focus.call_deferred()
 
 
-## How many flasks are bought and full, and the fame; at the start the next flask's price.
+## How many flasks are bought and full, and the fame.
 func _show_flasks() -> void:
 	var run: HeroRun = profile.run
 	flasks.text = (
 		tr("hall.flasks") % [run.flasks, HeroRun.MAX_FLASKS, run.flasks_left, profile.fame]
 	)
-	var price := run.flask_price()
-	buy.visible = at_start and price > 0
-	buy.text = tr("hall.buy_flask") % price
-	buy.disabled = profile.fame < price
+	prepare.visible = at_start
 
 
-func buy_flask() -> void:
-	if profile.run.buy_flask(profile):
-		profile.save(path)
-	_show_flasks()
+func open_run_setup() -> void:
+	Router.push("run_setup", {"profile_path": path})
 
 
 ## A colonel's line: his name, and how far the hero has come with him once it is something.

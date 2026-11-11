@@ -5,7 +5,8 @@ extends BaseScreen
 ## Attack and defence show the hero's own part and the gear's part ("4+1").
 ## Every point spent is saved at once. Reset gives the points back: the base stats go back to
 ## the hero's face, paid with 100 gold per level or an elixir (St John's Wort / Cornflower Tincture,
-## Rapids / Forest Remedy).
+## Rapids / Forest Remedy). Points are spent and reset only in the start camp (HeroRun.at_start):
+## elsewhere they wait, and a note says so.
 
 ## Stat row name, text key, Profile.Stat.
 const STATS := [
@@ -22,6 +23,7 @@ var plus := {}  # stat row name -> its "+" Button
 var pay_item: Button
 
 @onready var reset: Button = %Reset
+@onready var start_only: Label = %StartOnly  # the points wait for the start camp
 @onready var ask: ConfirmationDialog = %Ask  # pay with gold (OK), an elixir ("item") or cancel
 @onready var note: AcceptDialog = %Note
 
@@ -44,7 +46,7 @@ func _ready() -> void:
 
 ## Spends a point on the stat and saves the hero. False when no point is left.
 func spend(stat: int) -> bool:
-	if not profile.spend_point(stat):
+	if not HeroRun.at_start(profile) or not profile.spend_point(stat):
 		return false
 	profile.save(path)
 	refresh()
@@ -60,8 +62,11 @@ func refresh() -> void:
 	values["MP"].text = str(profile.max_mp())
 	values["ATK"].text = _with_gear(profile.base_attack, profile.attack())
 	values["DEF"].text = _with_gear(profile.base_defense, profile.defense())
+	var here := HeroRun.at_start(profile)
 	for b in plus.values():
-		b.disabled = profile.stat_points <= 0
+		b.disabled = profile.stat_points <= 0 or not here
+	reset.disabled = not here
+	start_only.visible = not here
 
 
 func _on_pay_gold() -> void:

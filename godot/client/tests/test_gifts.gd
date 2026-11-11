@@ -17,7 +17,7 @@ func test_a_general_offers_three_different_cards() -> void:
 	var p := Profile.new()
 	var kinds := {}
 	for s in 50:
-		var cards := Gifts.offer(p, GORSKI, _rng(s))
+		var cards := Gifts.offer(p, GORSKI, Gifts.CARDS, _rng(s))
 		eq(cards.size(), Gifts.CARDS, "three cards (seed %d)" % s)
 		for i in cards.size():
 			kinds[int(cards[i].kind)] = true
@@ -48,7 +48,7 @@ func test_skills_come_in_the_order_of_their_row() -> void:
 func test_no_general_offers_a_stat_a_gear_and_a_potion() -> void:
 	var p := Profile.new()
 	for general in [0, Profile.ENDING_BASE + 6]:
-		var cards := Gifts.offer(p, general, _rng(3))
+		var cards := Gifts.offer(p, general, Gifts.CARDS, _rng(3))
 		eq(cards.size(), 3, "three cards (%d)" % general)
 		check(int(cards[0].kind) in Gifts.STATS, "a stat")
 		eq(int(cards[1].kind), Gifts.Kind.GEAR, "a gear")

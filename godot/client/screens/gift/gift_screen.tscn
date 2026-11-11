@@ -53,3 +53,11 @@ unique_name_in_owner = true
 layout_mode = 2
 alignment = 1
 theme_override_constants/separation = 24
+
+[node name="Reroll" type="Button" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+text = "gift.reroll"
+
+[connection signal="pressed" from="Center/Column/Reroll" to="." method="reroll"]

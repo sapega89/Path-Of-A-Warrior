@@ -3,7 +3,8 @@ extends BaseScreen
 ## The gift of the mission just won (Gifts, kept in HeroRun until taken): the general's portrait
 ## and name over his cards (gift_card.tscn), each with what kind it is, what it gives and its
 ## icon. The card pressed is the hero's, saved at once, and the screen goes back to the camp.
-## A gift is always taken, so Back stays here while there is one.
+## With the reroll bought, Reroll rolls the cards again once a run. A gift is always taken, so
+## Back stays here while there is one.
 
 const CARD := "res://screens/gift/gift_card.tscn"
 
@@ -15,6 +16,7 @@ var rng := RandomNumberGenerator.new()
 @onready var title: Label = %Title
 @onready var portrait: TextureRect = %Portrait
 @onready var row: HBoxContainer = %Cards
+@onready var reroll_button: Button = %Reroll
 
 
 func _ready() -> void:
@@ -27,6 +29,14 @@ func _ready() -> void:
 	else:
 		title.text = tr("gift.title") % tr(str(general.get("name", "")))
 		portrait.texture = Pictures.portrait(int(general.get("portrait", 0)))
+	_show_cards()
+
+
+## A button per card of the gift, the first one focused; Reroll while it may be used.
+func _show_cards() -> void:
+	for card in cards:
+		card.free()
+	cards.clear()
 	var scene := load(CARD) as PackedScene
 	for i in profile.run.gift.size():
 		var gift: Dictionary = profile.run.gift[i]
@@ -37,6 +47,7 @@ func _ready() -> void:
 		card.pressed.connect(take.bind(i))
 		row.add_child(card)
 		cards.append(card)
+	reroll_button.visible = profile.run.can_reroll()
 	if not cards.is_empty():
 		cards[0].grab_focus.call_deferred()
 
@@ -59,6 +70,13 @@ func take(i: int) -> void:
 	profile.run.take_gift(profile, i, rng)
 	profile.save(path)
 	Router.back()
+
+
+## Rolls the cards again (once a run, with the perk) and saves.
+func reroll() -> void:
+	if profile.run.reroll_gift(profile, rng):
+		profile.save(path)
+		_show_cards()
 
 
 ## Back leaves only when there is no gift to take.

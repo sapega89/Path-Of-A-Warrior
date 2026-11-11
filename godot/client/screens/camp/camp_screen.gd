@@ -9,8 +9,9 @@ extends BaseScreen
 ## out tells the story of the next mission of that place not won yet (choices()), then its
 ## briefing; the mission comes back here when it is over (won: the camp of the new place; lost:
 ## this one again, to try once more with the same hero). A closed way's gate is barred. Every
-## camp has the blacksmith (buy, sell, enchant, combine) and the town hall (every colonel and
-## general the hero knows), which the hero enters from a few steps off its door. The game is
+## camp has the blacksmith (buy and sell; enchant and combine in the start camp only) and the
+## town hall (every colonel and general the hero knows; in the start camp, what comes before a
+## run), which the hero enters from a few steps off its door. The game is
 ## saved when the hero comes into a camp; the gift of the mission just won comes up then
 ## (open_gift). Pause opens the camp menu: the game menu, the world map, the settings, the main
 ## menu.
