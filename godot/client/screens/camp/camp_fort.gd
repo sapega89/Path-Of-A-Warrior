@@ -134,7 +134,7 @@ var _rng := RandomNumberGenerator.new()
 func build(camp_plan: CampPlan, lands: Array, seed_value: int) -> void:
 	plan = camp_plan
 	_rng.seed = seed_value
-	body = StaticBody3D.new()
+	body = StaticBody3D.new()  # standards: allow nodes_in_code (the solids of the plan)
 	body.name = "Solid"
 	add_child(body)
 	_box(Vector3(0.0, -0.5, 0.0), Vector3(GROUND_SIZE, 1.0, GROUND_SIZE), 0.0)
@@ -476,7 +476,7 @@ func _solid(node: Node3D, fill := 1.0) -> Node3D:
 ## A round one cannot walk through: in the plan and as a cylinder in the body.
 func _round(centre: Vector2, radius: float) -> void:
 	plan.add_solid(centre, radius)
-	var shape := CollisionShape3D.new()
+	var shape := CollisionShape3D.new()  # standards: allow nodes_in_code (a solid of the plan)
 	var c := CylinderShape3D.new()
 	c.radius = radius
 	c.height = 2.0
@@ -503,7 +503,7 @@ func _footprint(node: Node3D) -> AABB:
 
 
 func _box(at: Vector3, size: Vector3, yaw: float) -> void:
-	var shape := CollisionShape3D.new()
+	var shape := CollisionShape3D.new()  # standards: allow nodes_in_code (a solid of the plan)
 	var b := BoxShape3D.new()
 	b.size = size
 	shape.shape = b
