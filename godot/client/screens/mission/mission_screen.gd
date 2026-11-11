@@ -21,6 +21,7 @@ extends BaseScreen
 ## Back, the button SKIP in AUTO's corner) skips the talk.
 
 const GOLD_ICON := 12  # the heap of gold in the tool icons
+const LOOT := preload("res://scenes/world/loot.tscn")
 const FADE_TIME := 0.35
 
 ## One tick of the game, by the game speed of the settings (MapSim.TICK_MS at Med).
@@ -139,48 +140,14 @@ static func dir4_of(v: Vector2) -> int:
 
 
 func _process(delta: float) -> void:
-	var held := dir4_of(Input.get_vector("move_left", "move_right", "move_up", "move_down"))
-	if held == -1:
-		held = _mouse_dir
-	if held != -1 and held != _last_held:
-		_pressed = held  # a new direction this tick: the original's key press
-	_last_held = held
-	if held != -1 or _fire or _hotkey != -1 or _potion != -1 or _belt != -1:
-		autopilot.player_key()
+	var held := _held_dir()
 	feel.advance(delta)
 	_anim_dt = delta if feel.freeze <= 0.0 else 0.0
 	if feel.freeze <= 0.0:
 		_acc += delta  # while a hit holds the picture, no tick goes by
 	while _acc >= tick and feel.freeze <= 0.0:
 		_acc -= tick
-		var auto: Dictionary = autopilot.decide(sim)
-		if int(auto.held) != -1 and held == -1:
-			held = int(auto.held)
-		if bool(auto.fire):
-			_fire = true
-		if int(auto.hotkey) != -1 and _hotkey == -1:
-			_hotkey = int(auto.hotkey)
-		if int(auto.belt) != -1 and _belt == -1:
-			_belt = int(auto.belt)
-		if _skip:
-			sim.skip_talk()
-			_skip = false
-		var before := CombatFeel.snapshot(sim)
-		sim.tick(held, _pressed, _fire, _hotkey, _potion, _belt)
-		var hits := CombatFeel.hits(sim, before)
-		feel.react(hits)
-		feel.play_sounds(sim.sounds, hits)
-		feel.rumble(InputSetup.device)
-		_forget_feel()
-		_pressed = -1
-		_fire = false
-		_hotkey = -1
-		_potion = -1
-		_belt = -1
-		hud.tick()
-		_blink += 1
-		_trails_before = trails
-		trails = sim.trails(_trail_pick)
+		held = _one_tick(held)
 	if sim.failed and not _fail_seen:
 		_fail_seen = true
 		lost_gear = profile.lose_gear(sim.rng)
@@ -194,29 +161,83 @@ func _process(delta: float) -> void:
 			return
 		sim.way_out = 0
 	if sim.finished:
-		profile.take_from(sim, lord_id, mission, int(mission_info.get("id", 0)))
-		var ending: int = profile.advance(sim, lord_id, mission_info)
-		profile.save()
-		if ending < 0 and sim.won:
-			ways_out = ways_on(lord_id)
-			if not ways_out.is_empty():
-				# The way on is chosen here, in the last room: an arrow per place on.
-				sim.start_choosing()
-				_update_view(_acc / tick)
-				return
-		set_process(false)
-		Router.back()
-		if ending >= 0:
-			Router.push(
-				"story",
-				{
-					"story": ending,
-					"reward_item": profile.reward_item,
-					"opened_lord": profile.opened_lord
-				}
-			)
+		_finish()
 		return
 	_update_view(_acc / tick)
+
+
+## The direction held this frame (a key or the mouse), -1 none. A key of the player hands the
+## autopilot off for a while.
+func _held_dir() -> int:
+	var held := dir4_of(Input.get_vector("move_left", "move_right", "move_up", "move_down"))
+	if held == -1:
+		held = _mouse_dir
+	if held != -1 and held != _last_held:
+		_pressed = held  # a new direction this tick: a key press (tap to walk)
+	_last_held = held
+	if held != -1 or _fire or _hotkey != -1 or _potion != -1 or _belt != -1:
+		autopilot.player_key()
+	return held
+
+
+## One tick of the map with the player's keys and the autopilot's, and how its hits feel.
+## Returns the direction held (the autopilot's, when the player holds none).
+func _one_tick(held: int) -> int:
+	var auto: Dictionary = autopilot.decide(sim)
+	if int(auto.held) != -1 and held == -1:
+		held = int(auto.held)
+	if bool(auto.fire):
+		_fire = true
+	if int(auto.hotkey) != -1 and _hotkey == -1:
+		_hotkey = int(auto.hotkey)
+	if int(auto.belt) != -1 and _belt == -1:
+		_belt = int(auto.belt)
+	if _skip:
+		sim.skip_talk()
+		_skip = false
+	var before := CombatFeel.snapshot(sim)
+	sim.tick(held, _pressed, _fire, _hotkey, _potion, _belt)
+	var hits := CombatFeel.hits(sim, before)
+	feel.react(hits)
+	feel.play_sounds(sim.sounds, hits)
+	feel.rumble(InputSetup.device)
+	_forget_feel()
+	_pressed = -1
+	_fire = false
+	_hotkey = -1
+	_potion = -1
+	_belt = -1
+	hud.tick()
+	_blink += 1
+	_trails_before = trails
+	trails = sim.trails(_trail_pick)
+	return held
+
+
+## The mission is over: the hero takes what he won, and the screen leaves, to the story of an
+## ending; or, won with places to go on to, the hero chooses his way out in the last room.
+func _finish() -> void:
+	profile.take_from(sim, lord_id, mission, int(mission_info.get("id", 0)))
+	var ending: int = profile.advance(sim, lord_id, mission_info)
+	profile.save()
+	if ending < 0 and sim.won:
+		ways_out = ways_on(lord_id)
+		if not ways_out.is_empty():
+			# The way on is chosen here, in the last room: an arrow per place on.
+			sim.start_choosing()
+			_update_view(_acc / tick)
+			return
+	set_process(false)
+	Router.back()
+	if ending >= 0:
+		Router.push(
+			"story",
+			{
+				"story": ending,
+				"reward_item": profile.reward_item,
+				"opened_lord": profile.opened_lord
+			}
+		)
 
 
 ## The position between the last two ticks (a jump, such as a new room, is not smoothed).
@@ -289,16 +310,13 @@ func _place_loot() -> void:
 	for d in sim.drops:
 		if loot.has(d):
 			continue
-		var s := Sprite3D.new()
-		s.name = "Loot"
-		# an icon of the new art, as big as the original's 28 px (gold: 24 px)
+		var s: Sprite3D = LOOT.instantiate()
+		# an icon of the new art, 28 px of the map high (gold: 24 px)
 		var px := 24.0 if d.item > 10000 else 28.0
 		s.texture = ItemSlot.icon(
 			"tool", GOLD_ICON if d.item > 10000 else (11 if d.item > 100 else d.item - 1)
 		)
 		s.pixel_size = px / 27.0 / ItemSlot.ART
-		s.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
-		s.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 		world.add_child(s)
 		s.global_position = Hero.px_to_world(Vector2(d.pos)) + Vector3(0.0, px / 54.0, 0.0)
 		loot[d] = s
