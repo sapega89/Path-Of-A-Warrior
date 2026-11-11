@@ -20,9 +20,7 @@ const SCREEN_MUSIC := {
 	"skills": 2,
 	"blacksmith": 2,
 	"shop": 2,
-	"gear": 2,
 	"inventory": 2,
-	"assign_items": 2,
 }
 const OVERLAPPING := [3, 4, 15, 16]
 const MIN_GAP_MS := {9: 500}

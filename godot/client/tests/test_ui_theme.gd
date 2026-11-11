@@ -1,7 +1,7 @@
 extends "res://tests/test_case.gd"
 ## The menus and the HUD in the new art (scripts/ui/ui_theme.gd, scripts/ui/map_hud.gd): the
 ## fonts of the new art with their Cyrillic, plaques and panels, the backdrop, the coin, the
-## HUD's orbs and plates, the exit arrows, the hero on the Gear page as a 3D figure.
+## HUD's orbs and plates, the exit arrows, the hero in the Inventory as a 3D figure.
 
 const TEST_PATH := "user://test_ui_theme.json"
 
@@ -102,14 +102,15 @@ func test_exit_arrows() -> void:
 	check(up.get_pixel(36, 8).a > up.get_pixel(36, 52).a, "up: at the top")
 
 
-func test_the_hero_on_the_gear_page() -> void:
+func test_the_hero_in_the_inventory() -> void:
 	var p := Profile.new()
 	p.head = 2
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var gear: Control = Router.make(Router.SCREENS["gear"])
-	root.add_child(gear)
+	var inv: InventoryScreen = Router.make(Router.SCREENS["inventory"])
+	root.add_child(inv)
+	var gear: GearBoard = inv.gear
 	check(gear.figure != null, "a figure")
 	eq(gear.figure.kind, MapPeople.HEROES[2], "of his class")
 	var view: SubViewport = gear.get_node("HeroView")
@@ -124,7 +125,11 @@ func test_the_hero_on_the_gear_page() -> void:
 		check(gear.ghosts[i].texture != null, "place %d: what goes there" % i)
 		eq(gear.ghosts[i].visible, gear.places[i].icon == null, "place %d: shown when empty" % i)
 	check(not gear.ghosts[0].visible, "the weapon is worn")
-	gear.free()
+	eq(gear.blade, 1, "the broadsword in his hand")
+	inv.profile.add_item(Items.make(101))
+	inv.press_cell(0)
+	eq(gear.blade, 0, "a sabre, the other kind: the blade changes at once")
+	inv.free()
 	Router.params = old
 	DirAccess.remove_absolute(TEST_PATH)
 

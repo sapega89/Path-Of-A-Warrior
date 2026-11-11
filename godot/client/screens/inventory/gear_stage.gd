@@ -1,6 +1,6 @@
 extends Control
-## The round stage under the hero on the Gear page: a dark ellipse with an iron rim and rivets
-## around it.
+## The round stage under the hero in the Inventory (gear_board.tscn): a dark ellipse with an
+## iron rim and rivets around it.
 
 
 func _draw() -> void:

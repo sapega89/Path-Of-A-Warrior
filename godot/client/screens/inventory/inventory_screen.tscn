@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://screens/inventory/inventory_screen.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/ui/heading.gd" id="2"]
+[ext_resource type="PackedScene" path="res://screens/inventory/gear_board.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://screens/inventory/belt.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/ui/gold_row.tscn" id="9"]
 
 [node name="InventoryScreen" type="Control"]
@@ -36,28 +38,42 @@ theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 44
 script = ExtResource("2")
 
-[node name="Gold" parent="Center/Column" instance=ExtResource("9")]
+[node name="Body" type="BoxContainer" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 40
+
+[node name="HeroSide" type="VBoxContainer" parent="Center/Column/Body"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Gear" parent="Center/Column/Body/HeroSide" instance=ExtResource("3")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Belt" parent="Center/Column/Body/HeroSide" instance=ExtResource("4")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Scroll" type="ScrollContainer" parent="Center/Column"]
+[node name="Bag" type="VBoxContainer" parent="Center/Column/Body"]
 layout_mode = 2
-custom_minimum_size = Vector2(0, 340)
-follow_focus = true
-horizontal_scroll_mode = 0
+custom_minimum_size = Vector2(624, 0)
+theme_override_constants/separation = 8
 
-[node name="Center" type="CenterContainer" parent="Center/Column/Scroll"]
+[node name="Gold" parent="Center/Column/Body/Bag" instance=ExtResource("9")]
+unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
 
-[node name="Backpack" type="GridContainer" parent="Center/Column/Scroll/Center"]
+[node name="Backpack" type="GridContainer" parent="Center/Column/Body/Bag"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/h_separation = 6
 theme_override_constants/v_separation = 6
-columns = 5
+columns = 9
 
-[node name="Info" type="Label" parent="Center/Column"]
+[node name="Info" type="Label" parent="Center/Column/Body/Bag"]
 unique_name_in_owner = true
 layout_mode = 2
 custom_minimum_size = Vector2(0, 72)
@@ -67,6 +83,8 @@ autowrap_mode = 3
 
 [node name="Back" type="Button" parent="Center/Column"]
 layout_mode = 2
+custom_minimum_size = Vector2(640, 0)
+size_flags_horizontal = 4
 text = "common.back"
 
 [connection signal="pressed" from="Center/Column/Back" to="." method="go_back"]

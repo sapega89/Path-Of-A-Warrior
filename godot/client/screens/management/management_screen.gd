@@ -1,13 +1,11 @@
 extends BaseScreen
-## Management: the hero's pages between missions: Attributes, Skills, Gear, Inventory and
-## Assign Items.
+## Management: the hero's pages between missions: Attributes, Skills and the Inventory (his
+## gear, backpack and belt in one window).
 
 @onready var buttons: Array[Button] = [
 	%Column.get_node("Attributes"),
 	%Column.get_node("Skills"),
-	%Column.get_node("Gear"),
 	%Column.get_node("Inventory"),
-	%Column.get_node("AssignItems"),
 ]
 
 

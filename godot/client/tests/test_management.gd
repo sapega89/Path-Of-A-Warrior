@@ -111,29 +111,50 @@ func test_potion_keys() -> void:
 	eq(Items.describe_potion(10), " Powerful Bomb / Ranged ATK", "the bomb")
 
 
-func test_assign_items_screen() -> void:
+## Management opens the hero's pages: his gear, backpack and belt are one of them.
+func test_management_pages() -> void:
+	var screen: Control = Router.make(Router.SCREENS["management"])
+	root.add_child(screen)
+	eq(
+		screen.buttons.map(func(b: Button) -> String: return str(b.name)),
+		["Attributes", "Skills", "Inventory"],
+		"no Gear or Assign Items of their own"
+	)
+	check(not Router.SCREENS.has("assign_items"), "the belt is in the Inventory")
+	screen.free()
+
+
+## The belt in the Inventory: its five slots with their keys above and counts under them.
+func test_the_belt_in_the_inventory() -> void:
 	var p := Profile.new()
 	p.quick_slots[0] = [1, 3]
 	p.quick_slots[3] = [5, 2]
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var screen: Control = Router.make(Router.SCREENS["assign_items"])
+	var screen: InventoryScreen = Router.make(Router.SCREENS["inventory"])
 	root.add_child(screen)
+	var belt: Belt = screen.belt
 	eq(
-		screen.marks.map(func(m): return m.text),
+		belt.marks.map(func(m: Label) -> String: return m.text),
 		["Z", "X", "C", "V", "B"],
 		"belt keys only, no * or #"
 	)
-	eq(screen.find_child("Keys", true, false).text, "Keys Z X C V B", "the line under the slots")
 	check(screen.find_child("Key1", true, false) == null, "no * / # buttons")
-	check(screen.slots[3].icon != null, "the blue potion's icon")
-	eq(screen.slots[3].get_parent().get_node("Count").text, "x2", "its count under it")
-	screen.press_slot(3)
-	eq(screen.slots[3].theme_type_variation, ItemSlot.CHOSEN, "the slot chosen")
+	check(belt.slots[3].icon != null, "the blue potion's icon")
+	eq(belt.counts[3].text, "x2", "its count under it")
+	eq(belt.counts[1].text, "", "none under an empty slot")
+	belt.slots[3].pressed.emit()
+	eq(belt.slots[3].theme_type_variation, ItemSlot.CHOSEN, "the slot chosen")
+	eq(screen.info.text, "Blue Potion(M) / Recover 60% of total MP", "the line")
 	check(screen.press_key(1), "the keypad's / still puts slot 4 on the second key")
-	eq(screen.marks[3].text, "V", "no mark for it")
-	eq(screen.describe(3), "Blue Potion(M) / Recover 60% of total MP", "the line")
+	eq(belt.marks[3].text, "V", "no mark for it")
+	belt.slots[3].grab_focus()
+	eq(screen.controls_hint(), InputSetup.hint("hint.grid_assign"), "the belt's hint")
+	screen.cells[0].grab_focus()
+	eq(screen.controls_hint(), InputSetup.hint("hint.grid_inventory"), "the backpack's")
+	screen.gear.places[0].grab_focus()
+	eq(screen.controls_hint(), InputSetup.hint("hint.grid_gear"), "the gear's")
 	screen.free()
 	var saved: RefCounted = Profile.load_or_new(TEST_PATH)
 	eq(int(saved.quick_keys[1]), 3, "saved")
