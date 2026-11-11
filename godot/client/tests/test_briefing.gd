@@ -134,19 +134,19 @@ func test_description_accept_briefing_mission() -> void:
 		"the advice of the mission's lord"
 	)
 	eq(b.lord_says.visible_characters, 0, "typed out")
-	b._process(0.1)
+	step_dialogue(b.dialogue, 0.11)
 	eq(b.lord_says.visible_characters, 4, "40 a second")
 	b.press()
 	eq(b.lord_says.visible_characters, -1, "a press: the whole line")
-	b._process(0.1)
+	step_dialogue(b.dialogue, 0.1)
 	eq(b.typing, b.lord_says, "it stays a moment")
-	b._process(1.0)
+	step_dialogue(b.dialogue, 1.0)
 	eq(b.typing, b.hero_says, "then the hero answers")
 	eq(b.hero_says.text, "[Ann] I hear you.", "his answer")
 	check(not b.lord_says.text.is_empty(), "the advice stays in its box")
-	b._process(10.0)
+	step_dialogue(b.dialogue, b.hero_says.text.length() / Dialogue.CHARS_PER_SECOND + 0.01)
 	eq(b.hero_says.visible_characters, -1, "typed")
-	b._process(10.0)
+	step_dialogue(b.dialogue, 10.0)
 	eq(
 		[Router.current_name(), Router.depth()],
 		["mission", 2],

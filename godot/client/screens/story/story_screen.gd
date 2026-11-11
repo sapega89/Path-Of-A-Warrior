@@ -17,7 +17,6 @@ extends BaseScreen
 ## of going back).
 
 const SCALE := 3
-const CHARS_PER_SECOND := 40.0
 ## Ticks a typed line stays before the story goes on by itself.
 const WAIT_TICKS := 15
 ## The floating text, in the original screen's pixels (240 x 320, the middle at y 160): it
@@ -41,7 +40,9 @@ var profile: Profile
 var story := Stories.OPENING
 var pages: Array = []
 var page := -1
-var typing: Label  # the box being typed on a talk page
+var typing: Label:  # the box being typed on a talk page
+	get:
+		return dialogue.typing
 var lines: PackedStringArray = []  # the floating text of this page
 ## Picture pages: 0 the picture comes, 1 its text floats up, 2 the picture goes.
 var phase := 0
@@ -51,13 +52,12 @@ var first_y := 0  # its y
 var _fade := 0
 var _after := 0  # ticks left before the next page, 0: not yet
 var _ticks := 0.0
-var _typed := 0.0
-var _wait := -1.0  # seconds before the next talk page comes by itself, -1: not yet
 var _over := false
 
 @onready var background: ColorRect = %Background  # black under the pictures and the numbers
 @onready var talk_box: Control = %Center
 @onready var title: Label = %Title
+@onready var dialogue: Dialogue = %Dialogue
 @onready var speaker_portrait: TextureRect = %Dialogue.speaker_portrait
 @onready var hero_portrait: TextureRect = %Dialogue.hero_portrait
 @onready var speaker_says: Label = %Dialogue.speaker_says
@@ -78,13 +78,14 @@ func _ready() -> void:
 	if story != Stories.OPENING:
 		title.text = "story.epilogue"
 	hero_portrait.texture = Pictures.portrait(Stories.HERO_PORTRAIT + int(profile.head))
+	dialogue.line_done.connect(next_page)
 	next_page()
 
 
 ## Shows the next page, or ends the story. False when it is over.
 func next_page() -> bool:
 	page += 1
-	_wait = -1.0
+	dialogue.stop()
 	_after = 0
 	_ticks = 0.0
 	_set_lines([])
@@ -99,17 +100,11 @@ func next_page() -> bool:
 	match str(pg.kind):
 		"talk":
 			Audio.play_music(0)
-			if typing != null:
-				typing.visible_characters = -1  # the other box keeps its line whole
 			var who := int(pg.speaker)
-			if who == Stories.HERO:
-				typing = hero_says
-			else:
-				typing = speaker_says
+			if who != Stories.HERO:
 				speaker_portrait.texture = Pictures.portrait(who)
-			typing.text = str(pg.text)
-			typing.visible_characters = 0
-			_typed = 0.0
+			var box := hero_says if who == Stories.HERO else speaker_says
+			dialogue.say(box, str(pg.text), WAIT_TICKS * Settings.tick_seconds())
 		"picture":
 			Audio.play_music(2)
 			picture.texture = Pictures.story(int(pg.picture) + 1)
@@ -262,38 +257,19 @@ func tick() -> void:
 
 ## Attack / accept / a click: on a talk, the whole line, or the next page at once.
 func press() -> void:
-	if _over or page >= pages.size() or str(pages[page].kind) != "talk":
-		return
-	if typing.visible_characters >= 0 and typing.visible_characters < typing.text.length():
-		typing.visible_characters = -1
-		_wait = WAIT_TICKS * Settings.tick_seconds()
-	else:
-		next_page()
+	if not _over and page < pages.size() and str(pages[page].kind) == "talk":
+		dialogue.press(WAIT_TICKS * Settings.tick_seconds())
 
 
 func _process(delta: float) -> void:
-	if _over or page >= pages.size():
+	if _over or page >= pages.size() or str(pages[page].kind) == "talk":
 		return
-	if str(pages[page].kind) != "talk":
-		_ticks += delta
-		var t: float = Settings.tick_seconds()
-		var at := page
-		while _ticks >= t and page == at and not _over:
-			_ticks -= t
-			tick()
-		return
-	if _wait >= 0.0:
-		_wait -= delta
-		if _wait < 0.0:
-			next_page()
-		return
-	if typing.visible_characters < 0:
-		return
-	_typed += delta * CHARS_PER_SECOND
-	typing.visible_characters = mini(int(_typed), typing.text.length())
-	if typing.visible_characters >= typing.text.length():
-		typing.visible_characters = -1
-		_wait = WAIT_TICKS * Settings.tick_seconds()
+	_ticks += delta
+	var t: float = Settings.tick_seconds()
+	var at := page
+	while _ticks >= t and page == at and not _over:
+		_ticks -= t
+		tick()
 
 
 ## The story is over: back (or on to `then`); while the popup of what the ending gave is up,
@@ -307,6 +283,7 @@ func _end() -> void:
 		return
 	_over = true
 	set_process(false)
+	dialogue.stop()
 	var then := str(Router.params.get("then", ""))
 	var then_params: Dictionary = Router.params.get("then_params", {})
 	Router.back()

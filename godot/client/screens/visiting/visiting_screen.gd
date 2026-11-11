@@ -11,14 +11,15 @@ extends BaseScreen
 
 enum Step { LIST, GREETING, TOPIC, TALK, DISCUSSED, VISITED, CLOSED }
 
-const CHARS_PER_SECOND := 40.0
 ## Ticks a line shown whole stays before the talk goes on by itself.
 const WAIT_TICKS := 15
 
 var profile: Profile
 var path: String = Profile.PATH
 var step := Step.LIST
-var typing: Label  # the speech being typed
+var typing: Label:  # the speech being typed
+	get:
+		return dialogue.typing
 var general_id := 0
 var general := {}
 var chosen := 0
@@ -26,9 +27,6 @@ var lines: Array = []
 var line_at := 0
 var gift := {}
 var rng := RandomNumberGenerator.new()
-
-var _typed := 0.0
-var _wait := -1.0  # seconds before the talk goes on by itself, -1: it waits for a key
 
 @onready var column: VBoxContainer = %Column
 @onready var list: VBoxContainer = %List
@@ -40,6 +38,7 @@ var _wait := -1.0  # seconds before the talk goes on by itself, -1: it waits for
 @onready var popup: Control = %Popup
 @onready var talk: PanelContainer = %Talk
 @onready var general_name: Label = %GeneralName
+@onready var dialogue: Dialogue = %Dialogue
 @onready var general_portrait: TextureRect = %Dialogue.speaker_portrait
 @onready var hero_portrait: TextureRect = %Dialogue.hero_portrait
 @onready var general_says: Label = %Dialogue.speaker_says
@@ -60,6 +59,7 @@ func _ready() -> void:
 		rng.seed = int(Router.params.seed)
 	hero_portrait.texture = Pictures.portrait(Stories.HERO_PORTRAIT + int(profile.head))
 	header.show_general("visit.name", "visit.points")
+	dialogue.line_done.connect(next_line)
 	show_list()
 
 
@@ -109,15 +109,13 @@ func _name() -> String:
 func _show_line() -> void:
 	topics.visible = false
 	hero_says.visible = true
-	typing = hero_says if line_at % 2 == 0 else general_says
-	typing.text = str(lines[line_at])
-	_typed = 0.0
-	typing.visible_characters = 0
+	var box := hero_says if line_at % 2 == 0 else general_says
+	dialogue.say(box, str(lines[line_at]), WAIT_TICKS * Settings.tick_seconds())
 
 
 ## The notice in the talk's place: its text and OK.
 func _show_note(body: String) -> void:
-	typing = null
+	dialogue.stop()
 	text.text = body
 	talk.visible = false
 	note.visible = true
@@ -137,25 +135,9 @@ func choose(i: int) -> void:
 
 ## Attack / accept / OK: the whole line, the next line, the next page.
 func press() -> void:
-	_wait = -1.0
 	match step:
 		Step.GREETING, Step.TALK:
-			if typing != null and typing.visible_characters >= 0:
-				typing.visible_characters = -1
-				_wait = WAIT_TICKS * Settings.tick_seconds()
-				return
-			line_at += 1
-			if line_at < lines.size():
-				_show_line()
-			elif step == Step.GREETING:
-				step = Step.TOPIC
-				typing = null
-				hero_says.visible = false
-				topics.visible = true
-				first_topic.grab_focus.call_deferred()
-			else:
-				step = Step.DISCUSSED
-				_show_note(tr("visit.discussed") % [tr("visit.topic_%d" % chosen), _name()])
+			dialogue.press(WAIT_TICKS * Settings.tick_seconds())
 		Step.DISCUSSED:
 			step = Step.VISITED
 			gift = Visits.finish(profile, general_id, general, chosen, rng)
@@ -165,6 +147,22 @@ func press() -> void:
 		Step.VISITED:
 			step = Step.CLOSED
 			Router.back()
+
+
+## The talk's next line; after the greeting the things to talk about, after the talk what
+## was discussed.
+func next_line() -> void:
+	line_at += 1
+	if line_at < lines.size():
+		_show_line()
+	elif step == Step.GREETING:
+		step = Step.TOPIC
+		hero_says.visible = false
+		topics.visible = true
+		first_topic.grab_focus.call_deferred()
+	else:
+		step = Step.DISCUSSED
+		_show_note(tr("visit.discussed") % [tr("visit.topic_%d" % chosen), _name()])
 
 
 ## "You visited Jan Gorski. Friendship increased by 5." and the gift, if any.
@@ -177,21 +175,6 @@ func visited_text() -> String:
 			out.append(tr(str(gift.title)))
 		out.append(tr(str(gift.text)))
 	return "\n".join(PackedStringArray(out))
-
-
-func _process(delta: float) -> void:
-	if _wait >= 0.0:
-		_wait -= delta
-		if _wait < 0.0:
-			press()
-		return
-	if typing == null or typing.visible_characters < 0:
-		return
-	_typed += delta * CHARS_PER_SECOND
-	typing.visible_characters = mini(int(_typed), typing.text.length())
-	if typing.visible_characters >= typing.text.length():
-		typing.visible_characters = -1
-		_wait = WAIT_TICKS * Settings.tick_seconds()
 
 
 ## Back leaves the visits from the list of friends; in a talk it does nothing.
