@@ -100,6 +100,11 @@ func test_the_town_hall_only_in_the_start_camp() -> void:
 	root.add_child(camp)
 	check(not camp.spot_of("hall").is_empty(), "the start camp has the town hall")
 	check(camp.get_node("%Hall").visible, "and its name over it")
+	eq(
+		camp._hint_text(camp.spot_of("smith")),
+		InputSetup.hint("camp.enter_smith"),
+		"its smith enchants and combines too"
+	)
 	camp.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))
@@ -134,6 +139,8 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 	var smith: Dictionary = camp.spot_of("smith")
 	eq(camp.spot_near(smith.at), smith, "at the anvil")
 	check(camp._hint_text(smith).contains(tr("menu.blacksmith")), "says what is there")
+	eq(camp._hint_text(smith), InputSetup.hint("camp.enter_shop"), "buy and sell in a run's camp")
+	eq(camp._hint_text({}), "", "no line in the open yard")
 	check(camp.rulers(1).size() == 4, "four colonels give the missions at Uprising")
 	eq(camp.arrows.size(), 1, "an arrow on the open way only")
 	eq(camp.camera.target, camp.hero, "the camera follows the hero")

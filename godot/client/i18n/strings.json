@@ -575,21 +575,13 @@
     "en": "won %d / %d",
     "uk": "виграно %d / %d"
   },
-  "camp.hint_walk": {
-    "en": "Choose a way: walk out by an arrow   [Esc] camp menu",
-    "uk": "Обери шлях: вийди туди, де стрілка   [Esc] меню табору"
-  },
-  "camp.hint_walk_pad": {
-    "en": "Choose a way: walk out by an arrow   [Start] camp menu",
-    "uk": "Обери шлях: вийди туди, де стрілка   [Start] меню табору"
-  },
   "camp.enter_hall": {
-    "en": "[Enter] Town Hall: colonels, generals, visits",
-    "uk": "[Enter] Ратуша: полковники, генерали, візити"
+    "en": "[Enter] Town Hall: before the run, flasks, generals",
+    "uk": "[Enter] Ратуша: перед походом, фляги, генерали"
   },
   "camp.enter_hall_pad": {
-    "en": "[A] Town Hall: colonels, generals, visits",
-    "uk": "[A] Ратуша: полковники, генерали, візити"
+    "en": "[A] Town Hall: before the run, flasks, generals",
+    "uk": "[A] Ратуша: перед походом, фляги, генерали"
   },
   "camp.enter_smith": {
     "en": "[Enter] Blacksmith: buy, sell, enchant, combine",
@@ -598,6 +590,14 @@
   "camp.enter_smith_pad": {
     "en": "[A] Blacksmith: buy, sell, enchant, combine",
     "uk": "[A] Коваль: купити, продати, заточити, скласти"
+  },
+  "camp.enter_shop": {
+    "en": "[Enter] Blacksmith: buy, sell",
+    "uk": "[Enter] Коваль: купити, продати"
+  },
+  "camp.enter_shop_pad": {
+    "en": "[A] Blacksmith: buy, sell",
+    "uk": "[A] Коваль: купити, продати"
   },
   "camp.hall": {
     "en": "Town Hall",

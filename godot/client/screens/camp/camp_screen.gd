@@ -220,13 +220,15 @@ func exit_crossed(pos: Vector3) -> Dictionary:
 	return {} if i < 0 else spots[i]
 
 
+## The line under the camp by the town hall or the smithy (the smithy of a camp of the run only
+## buys and sells); nothing elsewhere.
 func _hint_text(s: Dictionary) -> String:
 	match str(s.get("kind", "")):
 		"hall":
 			return InputSetup.hint("camp.enter_hall")
 		"smith":
-			return InputSetup.hint("camp.enter_smith")
-	return InputSetup.hint("camp.hint_walk")
+			return InputSetup.hint("camp.enter_smith" if camp_place() == 0 else "camp.enter_shop")
+	return ""
 
 
 func use(s: Dictionary) -> void:
