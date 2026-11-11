@@ -222,8 +222,8 @@ func test_breakables_marked() -> void:
 
 
 ## The rings read on any ground and in any wood: the light one stays light all through its
-## pulse, the dark one stays dark, and the dark one lies out past the light one and behind it,
-## smooth and in pixel art, so both show.
+## pulse, the dark one stays dark, and the dark one lies out past the light one and behind it, in
+## any window, so both show.
 func test_breakable_rings() -> void:
 	var dark := ArtKit.breakable_rings()
 	var light := dark.next_pass as ShaderMaterial
@@ -235,7 +235,7 @@ func test_breakable_rings() -> void:
 			dark.get_shader_parameter(key) >= light.get_shader_parameter(key) + 1.0,
 			"the dark one a pixel further out: %s" % key
 		)
-	check(light.get_shader_parameter("min_pixels") >= 1.0, "light: a whole pixel in pixel art")
+	check(light.get_shader_parameter("min_pixels") >= 1.0, "light: a whole pixel of the world")
 	check(dark.get_shader_parameter("behind") > 0.0, "the dark one behind the light one")
 	eq(light.get_shader_parameter("behind"), 0.0, "the light one where the thing is")
 	check(ArtKit.breakable_rings() == dark, "shared by all")

@@ -1,7 +1,7 @@
 extends "res://tests/test_case.gd"
 ## The 3D world as pixel art (scripts/world/pixel_view.gd): drawn small and blown up in whole
-## screen pixels, its colours held to steps; smooth when the setting is off; the camera moving in
-## whole pixels of the world, with what is left over made up by shifting the picture.
+## screen pixels, its colours held to steps, and never smooth; the camera moving in whole pixels
+## of the world, with what is left over made up by shifting the picture.
 
 const MAP_VIEW := preload("res://scenes/world/map_view.tscn")
 const TEST_PATH := "user://test_pixel_settings.cfg"
@@ -12,10 +12,6 @@ func _area(size: Vector2) -> Control:
 	c.size = size
 	root.add_child(c)
 	return c
-
-
-func _set_pixel_art(on: bool) -> void:
-	_set_setting("pixel_art", on)
 
 
 func _set_setting(key: String, value: Variant) -> void:
@@ -33,24 +29,22 @@ func _view_in(area: Control) -> MapView:
 
 
 func test_a_pixel_is_a_whole_number_of_screen_pixels() -> void:
-	eq(PixelView.pixel_for(720.0, true), 2, "720 rows")
-	eq(PixelView.pixel_for(1080.0, true), 3, "1080 rows")
-	eq(PixelView.pixel_for(1440.0, true), 4, "1440 rows")
-	eq(PixelView.pixel_for(2160.0, true), 6, "4K")
-	eq(PixelView.pixel_for(240.0, true), 1, "never less than one")
-	eq(PixelView.pixel_for(1080.0, false), 1, "smooth: the window's own pixels")
+	eq(PixelView.pixel_for(720.0), 2, "720 rows")
+	eq(PixelView.pixel_for(1080.0), 3, "1080 rows")
+	eq(PixelView.pixel_for(1440.0), 4, "1440 rows")
+	eq(PixelView.pixel_for(2160.0), 6, "4K")
+	eq(PixelView.pixel_for(240.0), 1, "never less than one")
 
 
 func test_the_world_is_drawn_small_and_blown_up() -> void:
-	_set_pixel_art(true)
 	var area := _area(Vector2(1280, 720))
 	var view := _view_in(area)
 	var r: float = view.ratio
 	var px: int = view.pixel
 	check(px >= 1, "a pixel: %d" % px)
-	var rows: int = view.viewport.size.y - 2 * view.margin
+	var rows: int = view.viewport.size.y - 2 * PixelView.MARGIN
 	check(absf(rows * px - 720.0 * r) < px, "the rows cover the area: %d × %d" % [rows, px])
-	eq(view.margin, PixelView.MARGIN, "a pixel more on each side")
+	eq(view.viewport.size_2d_override.y, roundi(view.viewport.size.y * px / r), "layout units")
 	check(view.scale.is_equal_approx(Vector2.ONE * px / r), "blown up by a whole pixel")
 	check((view.size * view.scale).y >= 720.0, "covers the area")
 	eq(view.viewport.msaa_3d, Viewport.MSAA_DISABLED, "no smoothing of the edges")
@@ -61,42 +55,26 @@ func test_the_world_is_drawn_small_and_blown_up() -> void:
 	area.free()
 
 
-func test_smooth_when_the_setting_is_off() -> void:
-	_set_pixel_art(false)
+func test_the_brightness_goes_through_the_steps() -> void:
 	var area := _area(Vector2(1280, 720))
 	var view := _view_in(area)
-	eq(view.pixel, 1, "the window's own pixels")
-	eq(view.margin, 0, "no margin")
-	check(view.material == null, "the colours as they are")
-	check(view.viewport.msaa_3d != Viewport.MSAA_DISABLED, "smoothed edges")
-	eq(view.viewport.size_2d_override, Vector2i(1280, 720), "positions in layout units")
 	_set_setting("brightness", 0.8)
-	eq(view.material, view.light, "brighter: the smooth world through world_light")
-	_set_setting("brightness", 0.5)
-	check(view.material == null, "the middle again: as it is")
-	# and back on while it is shown
-	_set_pixel_art(true)
-	check(view.material != null and view.margin == PixelView.MARGIN, "pixel art again")
+	eq(view.material, view.post, "brighter: the same shader takes the brightness")
 	_set_setting("brightness", 0.2)
-	eq(view.material, view.post, "pixel art takes the brightness in its own shader")
+	eq(view.material, view.post, "darker: the same")
 	_set_setting("brightness", 0.5)
 	area.free()
 
 
 func test_the_graphics_quality() -> void:
-	_set_pixel_art(false)
 	var area := _area(Vector2(1280, 720))
 	var view := _view_in(area)
-	eq(view.viewport.msaa_3d, Viewport.MSAA_2X, "Medium: smoothed as the game did")
-	eq(view.viewport.positional_shadow_atlas_size, 2048, "and the lamps' shadows the engine's")
+	eq(view.viewport.positional_shadow_atlas_size, 2048, "Medium: the lamps' shadows the engine's")
 	_set_setting("graphics", 0)
-	eq(view.viewport.msaa_3d, Viewport.MSAA_DISABLED, "Low: no smoothing")
-	eq(view.viewport.positional_shadow_atlas_size, 1024, "and coarser shadows of lamps")
+	eq(view.viewport.positional_shadow_atlas_size, 1024, "Low: coarser shadows of lamps")
 	_set_setting("graphics", 2)
-	eq(view.viewport.msaa_3d, Viewport.MSAA_4X, "High: smoother")
-	eq(view.viewport.positional_shadow_atlas_size, 4096, "finer shadows of lamps")
-	_set_pixel_art(true)
-	eq(view.viewport.msaa_3d, Viewport.MSAA_DISABLED, "pixel art: never smoothed")
+	eq(view.viewport.positional_shadow_atlas_size, 4096, "High: finer shadows of lamps")
+	eq(view.viewport.msaa_3d, Viewport.MSAA_DISABLED, "never smoothed")
 	_set_setting("graphics", 1)
 	area.free()
 
@@ -137,7 +115,6 @@ func test_the_camera_moves_in_whole_pixels() -> void:
 
 
 func test_the_mission_draws_its_world_as_pixel_art() -> void:
-	_set_pixel_art(true)
 	var old: Dictionary = Router.params
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
 	var screen: Control = Router.make(Router.SCREENS["mission"])

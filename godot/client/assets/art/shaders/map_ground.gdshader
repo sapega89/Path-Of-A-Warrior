@@ -5,7 +5,8 @@ shader_type spatial;
 // cracks), UV.y boards (planks), UV2.x paving (cobbles), UV2.y the face of a cliff (its slope
 // painted as rock). Steep faces get their own look by the vertex alpha: 0 dark rock in strata,
 // 0.25 an earth bank, 0.5 stone in courses, 1 logs. Two-step light (warm sun, cool shade), as the
-// figures.
+// figures. Drawn for pixel art: the light and the shadows in hard steps, and detail smaller than a
+// few pixels faded to its average, as it would only flicker.
 
 uniform vec3 shade_tint : source_color = vec3(0.56, 0.6, 0.78);
 // the colour rock faces lean to (sRGB)
@@ -20,9 +21,6 @@ uniform vec4 view_rect = vec4(0.0);
 uniform float hidden_shade = 0.5;
 // how much of the sun the shade keeps
 uniform float shade_depth = 0.6;
-// 1 when the world is drawn as pixel art (Settings "pixel_art"): the light and the shadows in
-// hard steps, and the finest detail (small pebbles) left out, as it would only flicker
-global uniform float pixel_art;
 
 float shown_at(vec2 p) {
 	if (view_rect.z <= 0.0) {
@@ -79,12 +77,12 @@ void fragment() {
 	float strokes = noise(vec2(p.x * 2.4 + p.y * 0.9, p.y * 4.5));
 	vec3 c = base * (0.86 + 0.24 * n) * (0.94 + 0.1 * strokes);
 	float top = step(0.3, world_pos.y) * smoothstep(0.8, 0.9, world_normal.y) * (1.0 - detail.w);
-	// pixel art: metres of ground in one pixel; detail smaller than a few pixels (far away, or
-	// seen at a slant) fades to its average, so it does not break into noise
-	float per_pixel = max(length(dFdx(p)), length(dFdy(p))) * pixel_art;
+	// metres of ground in one pixel; detail smaller than a few pixels (far away, or seen at a
+	// slant) fades to its average, so it does not break into noise
+	float per_pixel = max(length(dFdx(p)), length(dFdy(p)));
 	// stony ground: pebbles light and dark; on the top of a cliff, a few cracks
 	if (detail.x > 0.01) {
-		float stones = pebbles(p * 7.0) * 0.18 + pebbles(p * 13.0 + 5.0) * 0.1 * (1.0 - pixel_art);
+		float stones = pebbles(p * 7.0) * 0.18;
 		stones *= 1.0 - smoothstep(0.25, 0.45, per_pixel * 7.0);
 		float cracks = crack(p * 1.3 + 11.0) * smoothstep(0.55, 0.75, noise(p * 0.6 + 3.0));
 		float rough = (1.0 + stones) * (1.0 - cracks * 0.3 * top);
@@ -146,11 +144,9 @@ void fragment() {
 void light() {
 	float ndl = dot(NORMAL, LIGHT);
 	if (LIGHT_IS_DIRECTIONAL) {
-		float slope = clamp(ndl * 2.0, 0.0, 1.0);
-		float shadow = smoothstep(0.2, 0.6, ATTENUATION);
-		// pixel art: three steps of light on the slopes, the shadow's edge hard
-		slope = mix(slope, floor(slope * 3.0 + 0.5) / 3.0, pixel_art);
-		shadow = mix(shadow, step(0.5, ATTENUATION), pixel_art);
+		// three steps of light on the slopes, the shadow's edge hard
+		float slope = floor(clamp(ndl * 2.0, 0.0, 1.0) * 3.0 + 0.5) / 3.0;
+		float shadow = step(0.5, ATTENUATION);
 		DIFFUSE_LIGHT += mix(shade_tint * shade_depth, vec3(1.0), slope * shadow) * LIGHT_COLOR / PI;
 	} else {
 		DIFFUSE_LIGHT += clamp(ndl, 0.0, 1.0) * ATTENUATION * LIGHT_COLOR / PI;

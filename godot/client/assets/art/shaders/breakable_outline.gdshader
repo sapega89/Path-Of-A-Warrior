@@ -4,10 +4,10 @@ shader_type spatial;
 // ArtKit.BREAKABLE_RINGS sets them: a dark ring outside and a light one inside it, that slowly
 // goes from brass to near white and back. The light ring stands out on dark ground and dark wood,
 // the dark one on light ground and light wood. The back faces are pushed out along the normal by a
-// fixed number of pixels, as in outline.gdshader; in pixel art (Settings "pixel_art") by whole
-// pixels of the world at least, so the rings do not break up. The dark ring is pushed a little
-// away from the camera too, so the light one lies over it. The last pass,
-// breakable_glow.gdshader, warms the thing's edges in the same pulse.
+// fixed number of pixels, as in outline.gdshader, and by whole pixels of the world at least, so
+// the rings do not break up in pixel art. The dark ring is pushed a little away from the camera
+// too, so the light one lies over it. The last pass, breakable_glow.gdshader, warms the thing's
+// edges in the same pulse.
 render_mode unshaded, cull_front, shadows_disabled;
 
 // at the dimmest and at the brightest of the pulse
@@ -15,9 +15,8 @@ uniform vec4 color : source_color;
 uniform vec4 peak : source_color;
 uniform float pulse_seconds = 1.6;  // one glow and back
 uniform float width_px;  // in a window 720 pixels high
-uniform float min_pixels;  // pixels of the world in pixel art at least
+uniform float min_pixels;  // pixels of the world at least
 uniform float behind;  // metres away from the camera
-global uniform float pixel_art;
 
 void vertex() {
 	vec4 view = MODELVIEW_MATRIX * vec4(VERTEX, 1.0);
@@ -29,7 +28,7 @@ void vertex() {
 	if (len > 0.0001) {
 		dir /= len;
 	}
-	float width = max(width_px * VIEWPORT_SIZE.y / 720.0, min_pixels * pixel_art);
+	float width = max(width_px * VIEWPORT_SIZE.y / 720.0, min_pixels);
 	clip.xy += dir * width * 2.0 / VIEWPORT_SIZE * clip.w;
 	POSITION = clip;
 }
