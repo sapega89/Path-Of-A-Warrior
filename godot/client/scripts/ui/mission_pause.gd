@@ -12,7 +12,7 @@ signal resumed
 var buttons: Array[Button] = []
 var menu: Control
 var settings: Control  # the items, the settings or the help shown over the menu
-var sim: RefCounted  # the mission's (its potion keys)
+var sim: MapSim  # the mission's (its potion keys)
 var save_game := Callable()  # the mission's save on its map: true when saved
 var note: AskDialog  # a notice: OK alone
 var ask: AskDialog
@@ -59,7 +59,7 @@ func confirmed() -> void:
 	if asked == "exit":
 		Router.back()
 	elif asked == "quit":
-		Cloud.quit_game()
+		get_tree().quit()
 
 
 ## Saves the mission on its map and says how it went ("Saving Success!" or "Can't Save!").

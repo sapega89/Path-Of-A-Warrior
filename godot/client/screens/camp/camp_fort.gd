@@ -6,8 +6,8 @@ extends Node3D
 ## yard and a dry causeway across the water; past it lies the land of that place (LAND). A
 ## closed way's gate is barred. In the middle the yard with two fires, the town hall's big
 ## tent, gone grey with smoke, north-west of it; round them the smithy (an anvil by its forge),
-## smoke-dark tents, torches, guards inside the gates. Reeds, bushes and trees round the marsh are placed by the
-## camp's own seed, so each place looks its own and the same each time.
+## smoke-dark tents, torches, guards inside the gates. Reeds, bushes and trees round the marsh
+## are placed by the camp's own seed, so each place looks its own and the same each time.
 ## The water and the mist are the scene's (camp_fort.tscn); dusk() turns the world's light
 ## into the dusk. What stands is a round in the plan (CampPlan.add_solid) and a cylinder in
 ## `body`; the palisade and the barred gates are boxes in `body`, and the ground is one too.

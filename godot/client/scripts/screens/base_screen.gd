@@ -4,7 +4,7 @@ extends Control
 ## the back key and where the hero the screen works on is kept.
 ##
 ## The back key (ui_cancel) calls go_back(), which goes to the previous screen; a screen whose
-## back does more (closes a step first, asks, leaves the server) overrides go_back(), and one
+## back does more (closes a step first, asks) overrides go_back(), and one
 ## where the key is not "back" now returns false from handles_back(). Every other key goes to
 ## _screen_input(), which a screen overrides instead of _unhandled_input().
 
@@ -32,7 +32,7 @@ func _screen_input(_event: InputEvent) -> void:
 	pass
 
 
-## Where the hero is kept: Profile.PATH (on the server when the game is online), or the file
-## a test gives in Router.params.profile_path.
+## Where the hero is kept: Profile.PATH (user://hero.json on this computer), or the file a test
+## gives in Router.params.profile_path.
 static func profile_path() -> String:
 	return str(Router.params.get("profile_path", Profile.PATH))

@@ -28,8 +28,11 @@ jobs:
         run: |
           python3 -m venv "$RUNNER_TEMP/lint"
           "$RUNNER_TEMP/lint/bin/pip" install -q "gdtoolkit==4.5.0"
-          "$RUNNER_TEMP/lint/bin/gdformat" --check scripts server tests tools lab
-          "$RUNNER_TEMP/lint/bin/gdlint" scripts server tests tools lab
+          "$RUNNER_TEMP/lint/bin/gdformat" --check scripts screens tests tools lab
+          "$RUNNER_TEMP/lint/bin/gdlint" scripts screens tests tools lab
+
+      - name: Rules of CLAUDE.md (new code adds no violations)
+        run: '"$RUNNER_TEMP/lint/bin/python" godot/tools/check_standards.py'
 
       - name: Converted data is up to date
         run: |
@@ -41,20 +44,25 @@ jobs:
       - name: Import
         run: timeout 300 "$RUNNER_TEMP/godot" --headless --path godot/client --import
 
+      - name: The import's .uid and .import files are committed, none left over
+        run: |
+          new=$(git status --porcelain --untracked-files=all -- godot/client | grep -E '\.(uid|import)$' || true)
+          if [ -n "$new" ]; then
+            echo "The import made files that are not in the repository; commit them:"
+            echo "$new"
+            exit 1
+          fi
+          left=$(git ls-files -- 'godot/client/*.uid' 'godot/client/*.import' | while read -r f; do
+            [ -e "${f%.*}" ] || echo "$f"
+          done)
+          if [ -n "$left" ]; then
+            echo "These files belong to files that are gone; remove them:"
+            echo "$left"
+            exit 1
+          fi
+
       - name: Tests
         run: timeout 300 "$RUNNER_TEMP/godot" --headless --path godot/client res://tests/runner.tscn
-
-      - name: Server (headless, ENet + DTLS)
-        run: |
-          "$RUNNER_TEMP/godot" --headless --path godot/client res://server/main.tscn -- \
-            --port 28310 --bind 127.0.0.1 --data "$RUNNER_TEMP/server" > "$RUNNER_TEMP/server.log" 2>&1 &
-          for i in $(seq 1 60); do [ -f "$RUNNER_TEMP/server/server.crt" ] && grep -q listening "$RUNNER_TEMP/server.log" && break; sleep 1; done
-          status=0
-          timeout 60 "$RUNNER_TEMP/godot" --headless --path godot/client -s res://tools/net_check.gd -- \
-            127.0.0.1 28310 "$RUNNER_TEMP/server/server.crt" || status=$?
-          kill %1 || true
-          cat "$RUNNER_TEMP/server.log"
-          exit $status
 
       - name: Screenshots
         run: |

@@ -46,7 +46,7 @@ var w := 0
 var h := 0
 var flags: Array = []
 var objects: Array = []
-var rooms: RefCounted
+var rooms: Rooms
 var cell := 0  # the current room
 var room_phase := 2  # 0 playing, 1 cleared (exits open), 2 entered (banner), 3 just cleared
 var room_phase_timer := 1
@@ -90,7 +90,6 @@ var ticks := 0  # every tick of the map: the aura's pictures go round with it
 ## The aura shows on the hero: a buff of his was on at the end of the last tick of play, or
 ## he picked something up in this one.
 var hero_glows := false
-var _buffed := false
 var mission_exp := 0
 ## The mission's rewards and its general who talks after it (0 none, >= 200 none).
 var mission_gold := 0
@@ -129,6 +128,8 @@ var gold := 0
 var items: Array[int] = []  # picked up this mission (potions and gear), in order
 ## The sound effects of this tick (sound numbers 3..16), for the screen to play.
 var sounds: Array[int] = []
+
+var _buffed := false
 
 
 static func tables() -> Dictionary:

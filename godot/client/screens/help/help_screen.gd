@@ -12,13 +12,14 @@ const CONTROL_PAGES := ["help.control_1", "help.control_2"]
 var topics: Array = []
 var topic := -1  # -1: the list of topics
 var page := 0
+## Shown over another screen (the mission's pause menu): what leaving does instead of going back.
+var close := Callable()
+
 @onready var list: VBoxContainer = %List
 @onready var page_box: VBoxContainer = %Page
 @onready var heading: Label = %Heading
 @onready var text: Label = %Text
 @onready var page_label: Label = %Number
-## Shown over another screen (the mission's pause menu): what leaving does instead of going back.
-var close := Callable()
 
 
 func _ready() -> void:

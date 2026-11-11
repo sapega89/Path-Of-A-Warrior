@@ -3,14 +3,14 @@ extends BaseScreen
 ## Skills: the five skill keys and the skills by group (MOVE, HEAL, PASV, FWD, NEAR, RANGE,
 ## WHOLE). A learned skill has its coloured icon, one not yet learned its grey icon.
 ## Pick a key, then a learned skill to put it on that key; picking a key that holds a skill
-## takes the skill off. Beside the groups, the card of the skill under the cursor (as in
-## pyport): name and level, what it is, MP and what it does now and at the next level.
+## takes the skill off. Beside the groups, the card of the skill under the cursor: name and
+## level, what it is, MP and what it does now and at the next level.
 ## Every change is saved at once.
 
 const SKILLS_PATH := "res://data/skills.json"
 const KEY_COUNT := 5
 
-var profile: RefCounted
+var profile: Profile
 var path: String = Profile.PATH
 var data: Dictionary = {}
 var slot := 0  # the skill key being set

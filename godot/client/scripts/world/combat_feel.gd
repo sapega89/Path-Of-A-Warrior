@@ -8,6 +8,10 @@ extends RefCounted
 ## its ticks are never changed. Every effect can be switched off (`on`, use_settings()) and
 ## every number tuned (`p`, the lab's panel).
 
+const HIT_SOUNDS := [3, 4, 15, 16]
+const WHITE := Color(1.0, 1.0, 1.0)
+const HURT := Color(1.0, 0.35, 0.3)  # the hero's flash when he is hit
+
 ## The effects, each on or off.
 var on := {
 	"hitstop": true,
@@ -73,11 +77,6 @@ var p := {
 	"rumble_object": [0.2, 0.0, 0.05],
 	"rumble_scale": 1.0,
 }
-
-const HIT_SOUNDS := [3, 4, 15, 16]
-const WHITE := Color(1.0, 1.0, 1.0)
-const HURT := Color(1.0, 0.35, 0.3)  # the hero's flash when he is hit
-
 ## The picture stands still while this is above 0 (seconds of real time).
 var freeze := 0.0
 var trauma := 0.0
@@ -87,10 +86,10 @@ var flashes := {}
 var recoils := {}
 ## actor -> {t, total, dir: Vector2, px, hop}
 var launches := {}
-
 ## The rumble this tick's strongest hit asks for, [weak, strong, seconds] (empty: none);
 ## rumble() plays it.
 var rumble_wanted: Array = []
+
 var _budget := 0.2
 var _time := 0.0
 var _sound_pick := RandomNumberGenerator.new()
@@ -106,7 +105,7 @@ func _init() -> void:
 
 
 ## What the hits are judged by: the HP of everyone (and of the breakable objects) now.
-static func snapshot(sim: RefCounted) -> Dictionary:
+static func snapshot(sim: MapSim) -> Dictionary:
 	var hp := {}
 	hp[sim.hero] = sim.hero.hp
 	for e in sim.enemies:
@@ -120,9 +119,9 @@ static func snapshot(sim: RefCounted) -> Dictionary:
 ## {who: "enemy" | "hero" | "object", actor, pos (map px), dir (away from the blow, unit),
 ## killed, heavy (a combo's third strike or a skill: he is knocked back; the hero: a general's
 ## skill that pushes him), boss (a general)}.
-static func hits(sim: RefCounted, before: Dictionary) -> Array:
+static func hits(sim: MapSim, before: Dictionary) -> Array:
 	var out: Array = []
-	var hero = sim.hero
+	var hero := sim.hero
 	for e in sim.enemies:
 		if not before.has(e) or e.hp >= int(before[e]):
 			continue
@@ -214,7 +213,7 @@ func react(list: Array) -> void:
 		if float(p["trauma_" + g]) > shake:
 			shake = float(p["trauma_" + g])
 			kick = h.dir if g != "hit" and g != "object" else Vector2.ZERO
-		var a = h.actor
+		var a: RefCounted = h.actor  # standards: allow weak_type (actor or breakable)
 		if seen.has(a):
 			continue  # hit twice in a tick: one effect
 		seen[a] = true
@@ -276,7 +275,7 @@ func advance(delta: float) -> void:
 
 
 ## How white the actor shows (0..1) and in which colour.
-func flash_of(actor) -> Array:
+func flash_of(actor: RefCounted) -> Array:  # standards: allow weak_type (actor or breakable)
 	if not flashes.has(actor):
 		return [0.0, WHITE]
 	var f: Dictionary = flashes[actor]
@@ -284,7 +283,7 @@ func flash_of(actor) -> Array:
 
 
 ## Where the actor is drawn off its place, in map pixels: x, y on the floor, z up (the hop).
-func offset_of(actor) -> Vector3:
+func offset_of(actor: RefCounted) -> Vector3:  # standards: allow weak_type (actor or breakable)
 	var out := Vector3.ZERO
 	if recoils.has(actor):
 		var r: Dictionary = recoils[actor]

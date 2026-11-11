@@ -92,7 +92,8 @@ func test_brightness() -> void:
 	)
 	check(s.set_value("brightness", 3.0), "too bright")
 	eq(s.get_value("brightness"), 1.0, "clamped")
-	check(not "brightness" in SettingsScript.CLOUD_KEYS, "the screen's own, not the account's")
+	s.load_from_disk()
+	eq(s.get_value("brightness"), 1.0, "kept on this computer")
 	s.free()
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(PATH))
 
@@ -114,7 +115,8 @@ func test_the_brightness_slider() -> void:
 func test_graphics_and_the_window() -> void:
 	var s := _fresh()
 	eq(s.get_value("graphics"), 1, "Medium by default")
-	eq(SettingsScript.GRAPHICS[1].msaa, Viewport.MSAA_2X, "Medium smooths as the game did")
+	check(not SettingsScript.DEFAULTS.has("pixel_art"), "the world is always pixel art")
+	check(not SettingsScript.GRAPHICS[1].has("msaa"), "and never smoothed")
 	check(
 		0 < SettingsScript.GRAPHICS[0].lamps and SettingsScript.GRAPHICS[0].lamps < 2048,
 		"Low: the lamps' and fires' shadows coarser (never none: the world went white)"

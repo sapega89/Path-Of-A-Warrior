@@ -7,6 +7,8 @@ extends RefCounted
 ## potions picked up and used, the friendship of the talks and, when won, the mission's gold
 ## and exp.
 
+enum Stat { HP, MP, ATTACK, DEFENSE }
+
 const PATH := "user://hero.json"
 const CAMPAIGN_PATH := "res://data/campaign.json"
 ## A new hero: HP, MP, attack, defence, and the free stat points.
@@ -43,7 +45,8 @@ const RESPEC_ITEMS := [434, 435, 436, 437]
 ## The briefing's advice: 28 pairs of lines (talk.json "briefing"), the first 10 in turn.
 const BRIEFING_PAIRS := 28
 const BRIEFINGS_IN_TURN := 10
-enum Stat { HP, MP, ATTACK, DEFENSE }
+
+static var _exp_table: Array = []
 
 var hero_name := "Hero"
 var head := 0  # the hero's face (0..3): his portrait and his look on the map
@@ -79,11 +82,9 @@ var reward_item := 0  # what the last ending gave (not saved)
 var opened_lord := 0  # the lord the last ending opened (not saved)
 ## A mission saved on its map (pause menu Save, once the room is cleared): lord, mission,
 ## the room's middle tile (x, y), HP, MP, rooms visited, its exp so far, kills and ticks of
-## play. Continue goes back there. Any other save forgets it (as pyport's save flag).
+## play. Continue goes back there. Any other save forgets it.
 var on_map := {}
 var run := HeroRun.new()  # the run: its flasks of living water
-
-static var _exp_table: Array = []
 
 
 func _init() -> void:
@@ -339,8 +340,8 @@ func assign_quick_key(key: int, slot: int) -> bool:
 
 
 ## The hero of a mission starts with this hero's numbers, full HP and MP.
-func apply_to(sim: RefCounted) -> void:
-	var h = sim.hero
+func apply_to(sim: MapSim) -> void:
+	var h := sim.hero
 	h.level = level
 	sim.hero_exp = experience
 	h.attack = attack()
@@ -371,7 +372,7 @@ func apply_to(sim: RefCounted) -> void:
 ## mission's gold and exp, its progress and its place among the missions done.
 ## Returns the levels gained.
 func take_from(
-	sim: RefCounted, lord_id: int, mission: int, ruler_id: int, rng: RandomNumberGenerator = null
+	sim: MapSim, lord_id: int, mission: int, ruler_id: int, rng: RandomNumberGenerator = null
 ) -> int:
 	gold += int(sim.gold)
 	if rng == null:
@@ -400,9 +401,7 @@ func take_from(
 ## reward is 200 + i (lost) ends the story with ending i: the hero goes to that ending's
 ## place, gets the mission's gold anyway when lost, sometimes a gear (Katria's scarf
 ## after ending 2), and one more lord opens. Returns the ending reached, or -1.
-func advance(
-	sim: RefCounted, lord_id: int, info: Dictionary, rng: RandomNumberGenerator = null
-) -> int:
+func advance(sim: MapSim, lord_id: int, info: Dictionary, rng: RandomNumberGenerator = null) -> int:
 	if rng == null:
 		rng = RandomNumberGenerator.new()
 	var general := int(info.get("general", 0))
@@ -635,7 +634,7 @@ func combine(places: Array, plan: Dictionary) -> String:
 ## A mission lost, as the original: from level 10 on, with a chance of level / 4 in 100, one of
 ## the 9 places of the Gear page is picked at random and what is worn there is lost. rng: the
 ## mission's JavaRandom (below). Returns the thing lost, or {} (nothing, or the place empty).
-func lose_gear(rng: RefCounted) -> Dictionary:
+func lose_gear(rng: JavaRandom) -> Dictionary:
 	if level <= 9 or rng.below(100) >= level >> 2:
 		return {}
 	var i: int = rng.below(Items.EQUIPPED)
@@ -756,7 +755,7 @@ func save_keeping_map(path: String = PATH) -> bool:
 ## (and is taken from the mission, so its end does not give it twice) and the place in it is
 ## kept for Continue.
 func save_on_map(
-	sim: RefCounted, lord_id: int, mission: int, ruler_id: int, path: String = PATH
+	sim: MapSim, lord_id: int, mission: int, ruler_id: int, path: String = PATH
 ) -> bool:
 	take_from(sim, lord_id, mission, ruler_id)
 	sim.gold = 0
@@ -778,7 +777,7 @@ func save_on_map(
 
 
 ## The mission saved on its map goes on: its place and numbers into the new mission.
-func resume_on_map(sim: RefCounted) -> void:
+func resume_on_map(sim: MapSim) -> void:
 	if on_map.is_empty():
 		return
 	sim.hero.hp = clampi(int(on_map.get("hp", sim.hero.hp)), 1, sim.hero.max_hp)
@@ -791,10 +790,6 @@ func resume_on_map(sim: RefCounted) -> void:
 
 
 func _write(path: String) -> bool:
-	var cloud := _cloud()
-	if cloud != null and path == PATH:
-		cloud.save_hero(to_dict())  # always online: the hero lives on the server
-		return true
 	var f := FileAccess.open(path, FileAccess.WRITE)
 	if f == null:
 		return false
@@ -803,14 +798,8 @@ func _write(path: String) -> bool:
 
 
 ## The saved hero, or a new one.
-static func load_or_new(path: String = PATH) -> RefCounted:
-	var p: RefCounted = load("res://scripts/core/profile.gd").new()
-	var cloud := _cloud()
-	if cloud != null and path == PATH:
-		var h: Variant = cloud.hero()
-		if h is Dictionary:
-			p.from_dict((h as Dictionary).duplicate(true))
-		return p
+static func load_or_new(path: String = PATH) -> Profile:
+	var p := Profile.new()
 	var f := FileAccess.open(path, FileAccess.READ)
 	if f != null:
 		var data: Variant = JSON.parse_string(f.get_as_text())
@@ -819,21 +808,9 @@ static func load_or_new(path: String = PATH) -> RefCounted:
 	return p
 
 
-## A hero has been saved (on the server when the game is always online).
+## A hero has been saved on this computer.
 static func exists(path: String = PATH) -> bool:
-	var cloud := _cloud()
-	if cloud != null and path == PATH:
-		return cloud.hero() != null
 	return FileAccess.file_exists(path)
-
-
-## The Cloud autoload when the game is always online (scripts/net/cloud.gd), else null.
-static func _cloud() -> Node:
-	var tree := Engine.get_main_loop() as SceneTree
-	if tree == null:
-		return null
-	var c := tree.root.get_node_or_null("Cloud")
-	return c if c != null and c.enabled() else null
 
 
 ## A saved list of things, as many places as the hero has; the default when none was saved.

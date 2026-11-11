@@ -1,17 +1,15 @@
 class_name PixelView
 extends SubViewportContainer
-## A 3D world on the screen (a map's MapView), drawn by its child Viewport. It places and sizes
-## itself over its parent (no anchors), stretching its viewport.
+## A 3D world on the screen (a map's MapView), drawn by its child Viewport as pixel art. It places
+## and sizes itself over its parent (no anchors), stretching its viewport.
 ##
-## Pixel art (the setting "pixel_art", on by default): the world is drawn small, about ROWS rows
-## of pixels high, and blown up without smoothing, so each of its pixels is a crisp square of
-## `pixel` screen pixels, the same whole number across the screen. Its colours are then held to
-## a few steps of lightness and colour with an ordered dither between them (pixel_post.gdshader).
-## Off: the world is drawn at the window's own pixels with smoothed edges (as the graphics
-## quality says: Settings.GRAPHICS msaa), and the lamps' and fires' shadows are as good as it says.
-## The setting "brightness" lifts or deepens the shade of the world (Settings.world_gamma): in
-## pixel art before its steps, smooth by the shader world_light.gdshader, which is left off at
-## the middle brightness, so the colours stay as they are.
+## The world is drawn small, about ROWS rows of pixels high, with no smoothing of its edges, and
+## blown up without smoothing, so each of its pixels is a crisp square of `pixel` screen pixels,
+## the same whole number across the screen. Its colours are then held to a few steps of lightness
+## and colour with an ordered dither between them (pixel_post.gdshader). The setting "brightness"
+## lifts or deepens the shade of the world (Settings.world_gamma) before those steps, in the same
+## shader. The graphics quality (Settings.GRAPHICS) sets how good the lamps' and fires' shadows
+## are.
 ##
 ## The screens are laid out at 1280×720 and stretched to the window (canvas_items). The viewport
 ## still reports the layout size (size_2d_override), so positions the screens take from the
@@ -23,36 +21,33 @@ extends SubViewportContainer
 ## larger on each side.
 
 const POST := preload("res://assets/art/shaders/pixel_post.gdshader")
-const LIGHT := preload("res://assets/art/shaders/world_light.gdshader")
-## About how many rows of pixels the world has in pixel art, whatever the window.
+## About how many rows of pixels the world has, whatever the window.
 const ROWS := 360.0
+## Pixels of the world drawn past each edge.
 const MARGIN := 1
 ## After the camera has moved in the frame, so the picture is shifted by where it is now.
 const AFTER_THE_CAMERA := 100
 
-## Whether the world is drawn as pixel art now (the setting).
-var pixel_art := true
-## Screen pixels to one pixel of the world (1 when smooth).
+## Screen pixels to one pixel of the world.
 var pixel := 1
-## Pixels of the world drawn past each edge.
-var margin := 0
 ## Screen pixels to one layout unit.
 var ratio := 1.0
 var post := ShaderMaterial.new()
-var light := ShaderMaterial.new()  # the smooth world's brightness
 
 @onready var viewport: SubViewport = $Viewport
 
 
 ## Screen pixels to one pixel of the world for an area this many screen pixels high.
-static func pixel_for(screen_rows: float, on: bool) -> int:
-	return maxi(1, roundi(screen_rows / ROWS)) if on else 1
+static func pixel_for(screen_rows: float) -> int:
+	return maxi(1, roundi(screen_rows / ROWS))
 
 
 func _ready() -> void:
 	process_priority = AFTER_THE_CAMERA
 	post.shader = POST
-	light.shader = LIGHT
+	material = post
+	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	viewport.msaa_3d = Viewport.MSAA_DISABLED
 	viewport.size_2d_override_stretch = true
 	get_tree().root.size_changed.connect(fit)
 	var parent := get_parent() as Control
@@ -71,8 +66,8 @@ func pixel_ratio() -> float:
 	return maxf(0.01, minf(root.size.x / layout.x, root.size.y / layout.y))
 
 
-## Covers the parent (or the whole screen) again after the window, the parent or the setting
-## changed.
+## Covers the parent (or the whole screen) again after the window, the parent or the graphics
+## quality changed.
 func fit() -> void:
 	if not is_inside_tree():
 		return
@@ -81,45 +76,29 @@ func fit() -> void:
 	if area.x <= 0.0 or area.y <= 0.0:
 		return
 	ratio = pixel_ratio()
-	pixel_art = bool(Settings.get_value("pixel_art"))
-	pixel = pixel_for(area.y * ratio, pixel_art)
-	margin = MARGIN if pixel_art else 0
-	var cells := (area * ratio / pixel).ceil() + Vector2.ONE * margin * 2
+	pixel = pixel_for(area.y * ratio)
+	var cells := (area * ratio / pixel).ceil() + Vector2.ONE * MARGIN * 2
 	scale = Vector2.ONE * (pixel / ratio)
 	size = cells
 	viewport.size_2d_override = Vector2i((cells * pixel / ratio).round())
-	var graphics: Dictionary = Settings.graphics()
-	viewport.msaa_3d = Viewport.MSAA_DISABLED if pixel_art else graphics.msaa
-	viewport.positional_shadow_atlas_size = graphics.lamps
-	material = post if pixel_art else _smooth_material()
-	texture_filter = (
-		CanvasItem.TEXTURE_FILTER_NEAREST if pixel_art else CanvasItem.TEXTURE_FILTER_LINEAR
-	)
+	viewport.positional_shadow_atlas_size = Settings.graphics().lamps
 	_place(Vector2.ZERO)
 
 
-## The world's camera, told to move in whole pixels in pixel art; the picture shifted by what it
-## has left over.
+## The world's camera, told to move in whole pixels; the picture shifted by what it has left over.
 func _process(_delta: float) -> void:
 	var camera := viewport.get_camera_3d() as FollowCamera
 	var rest := Vector2.ZERO
 	if camera != null:
-		camera.pixel_snap = pixel_art
+		camera.pixel_snap = true
 		rest = camera.pixel_rest
 	_place(rest)
 
 
 func _on_setting(key: String) -> void:
-	if key in ["pixel_art", "brightness", "graphics"]:
+	if key == "graphics":
 		fit()
 
 
-func _smooth_material() -> Material:
-	var middle: bool = is_equal_approx(
-		float(Settings.get_value("brightness")), float(Settings.DEFAULTS.brightness)
-	)
-	return null if middle else light
-
-
 func _place(rest: Vector2) -> void:
-	position = -(Vector2.ONE * margin + rest) * pixel / ratio
+	position = -(Vector2.ONE * MARGIN + rest) * pixel / ratio

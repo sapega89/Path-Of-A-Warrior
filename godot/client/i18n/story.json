@@ -1879,9 +1879,9 @@
 "en": "Your skills are on the keys 1 to 5; Management > Skills in the game menu chooses which. Potions and scrolls you pick up go onto the belt and are used with Z, X, C, V and B. A gamepad's buttons are under Control.",
 "uk": "Твої вміння — на клавішах 1–5; які саме, вибираєш в ігровому меню: Керування > Уміння. Підібране зілля й сувої лягають на пояс і вживаються клавішами Z, X, C, V і B. Кнопки геймпада — у темі «Керування»."
 },
-"Your warrior is kept on the server, so the game needs a connection; log in to your account to play him on any device.": {
-"en": "Your warrior is kept on the server, so the game needs a connection; log in to your account to play him on any device.",
-"uk": "Твій вояк зберігається на сервері, тому грі потрібне з'єднання; увійди у свій обліковий запис — і грай ним на будь-якому пристрої."
+"Your warrior is kept on this computer, so the game needs no connection. One warrior is kept at a time: a new game takes his place.": {
+"en": "Your warrior is kept on this computer, so the game needs no connection. One warrior is kept at a time: a new game takes his place.",
+"uk": "Твій вояк зберігається на цьому комп'ютері, тому грі не потрібне з'єднання. Зберігається один вояк: нова гра стає на його місце."
 },
 "Your warrior rises a level each time his experience reaches the next mark.": {
 "en": "Your warrior rises a level each time his experience reaches the next mark.",

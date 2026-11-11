@@ -1,10 +1,10 @@
 class_name ExpBars
 extends RefCounted
-## The exp bar of the pages Total Exp and Time Exp after a won mission, as in pyport
-## (map_scene.make_exp_bars, menus.draw_exp_bar): 100 px for the hero's level, what he had,
-## then what the mission gives, then (Time Exp) what the time gives; the new part grows 4 px
-## a tick. At the end of the bar the hero goes up a level: "Level Up : Lv N" shows for 20
-## ticks and the bar starts again from empty with the rest. Drawn by scripts/ui/exp_bar.gd.
+## The exp bar of the pages Total Exp and Time Exp after a won mission: 100 px for the hero's
+## level, what he had, then what the mission gives, then (Time Exp) what the time gives; the
+## new part grows 4 px a tick. At the end of the bar the hero goes up a level: "Level Up : Lv N"
+## shows for 20 ticks and the bar starts again from empty with the rest. Drawn by
+## scripts/ui/exp_bar.gd.
 
 const W := 100  # the bar's length in original pixels
 const GROW := 4  # px a tick

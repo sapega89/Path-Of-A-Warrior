@@ -1,6 +1,6 @@
 class_name SkillCard
 extends RefCounted
-## The skill card of the Skills screen (as pyport's SKILL_CARD): the skill's name and level,
+## The skill card of the Skills screen: the skill's name and level,
 ## what it is, its MP and what it does at this level (damage and strikes, heal, buff and how
 ## long) and at the next one. The numbers come from the formulas of the fight (MapSim).
 

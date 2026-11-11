@@ -10,22 +10,24 @@ extends BaseScreen
 ## any old one and the opening story starts, then the game menu.
 ## Params: profile_path (optional), then (the screen after the opening, default game_menu).
 
+enum Step { DIFFICULTY, HERO, NAME, POINTS }
+
 const HEADS := 4
 const NAME_MAX := 8
 const SCALE := 3
 const STAT_KEYS := ["hp", "mp", "attack", "defense"]
-enum Step { DIFFICULTY, HERO, NAME, POINTS }
 
 var path: String = Profile.PATH
-var profile: RefCounted = Profile.new()
+var profile := Profile.new()
 var step := Step.DIFFICULTY
+var ask: AskDialog
+var stat_buttons: Array[Button] = []  # the "+" of each stat
+var stat_values: Array[Label] = []
+
 @onready var heading: Label = %Heading
 @onready var body: VBoxContainer = %DifficultyPage  # the page of this step
 @onready var info: Label = %Info
-var ask: AskDialog
 @onready var name_edit: LineEdit = %Name
-var stat_buttons: Array[Button] = []  # the "+" of each stat
-var stat_values: Array[Label] = []
 @onready var points_label: Label = %Points
 @onready var points_hint: Label = %PointsHint
 @onready var reset_button: Button = %Reset
@@ -179,7 +181,7 @@ func spend(stat: int) -> void:
 
 ## Gives the points back: the hero of the chosen face again, with his name.
 func reset_points() -> void:
-	var fresh: RefCounted = Profile.new()
+	var fresh := Profile.new()
 	fresh.difficulty = profile.difficulty
 	fresh.set_head(profile.head)
 	fresh.hero_name = profile.hero_name

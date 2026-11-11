@@ -2,9 +2,11 @@ class_name PanelBox
 extends StyleBox
 ## The plate of a panel or a window: dark leather in an iron rim, a stitched seam inside it and
 ## an iron rivet in each corner.
-var plate: StyleBoxFlat
+
 ## How far it reaches out of its rect: left, top, right, bottom (a window's frame and title).
 @export var outset: Array[float] = [0.0, 0.0, 0.0, 0.0]
+
+var plate: StyleBoxFlat
 
 
 func _init() -> void:

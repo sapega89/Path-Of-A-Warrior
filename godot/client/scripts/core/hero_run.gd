@@ -21,7 +21,7 @@ var flasks_left := 0  # still full in this run
 ## What a mission lost costs: the gear it may take (Profile.lose_gear, rolled with rng), and a
 ## flask, or the run when none is left. A mission whose loss ends the story (story_ends) costs
 ## no flask: the ending comes. Returns {gear: the thing lost or {}, over: the run is over}.
-func lose_mission(profile: Profile, story_ends: bool, rng: RefCounted) -> Dictionary:
+func lose_mission(profile: Profile, story_ends: bool, rng: JavaRandom) -> Dictionary:
 	var lost: Dictionary = profile.lose_gear(rng)
 	var over := false
 	if not story_ends:

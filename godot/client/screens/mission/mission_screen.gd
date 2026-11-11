@@ -3,38 +3,38 @@ extends BaseScreen
 ## A mission of the original campaign on its map. The game itself runs in MapSim
 ## (original pixels and ticks); this screen reads the input, ticks the simulation every
 ## 120 ms and draws its state in 3D: the hero, the camera on the current room,
-## the exit arrows and the "Stage" banners (after a won mission the exp bar of pyport on the
+## the exit arrows and the "Stage" banners (after a won mission the exp bar on the
 ## pages Total Exp and Time Exp, the level gone up on it), the soldiers (the people as 3D
 ## figures playing the clips of their actions, scripts/world/map_people.gd), the effects made
 ## in code (scripts/world/map_effects.gd: skills, potions and scrolls, the fire on whoever a
 ## fire skill hits, the auras of buffs, the blood of hits, weapon trails, the archers' arrows), and
 ## the HUD. A talk on the map shows the portrait of who speaks beside the line, just
-## above the HUD, as pyport's.
+## above the HUD.
 ## Params: {lord, mission, seed (optional: the same enemies every run)}.
 ## A hit on the map is felt (scripts/world/combat_feel.gd, the options Hit effects, Screen shake,
 ## Vibration): the picture stands still a moment, the camera shakes, the one hit flashes white and
 ## recoils, the one killed flies off, the hit sound varies a little and the pad rumbles.
-## The mouse, as pyport's: the left button beside the hero walks that way while it is held
+## The mouse: the left button beside the hero walks that way while it is held
 ## (dragging turns him, two quick clicks run), a click on the hero or the right button attacks,
 ## a click on the skill bar uses the slot, on AUTO toggles the auto-hunt, on PAUSE pauses.
 ## While someone talks on the map, SKIP (Q, F1, the pad's Back, a click on SKIP in AUTO's
 ## corner) skips the talk.
 
-## One tick of the game, by the game speed of the settings (MapSim.TICK_MS at Med).
-var tick := MapSim.TICK_MS / 1000.0
 const GOLD_ICON := 12  # the heap of gold in the tool icons
 ## The exit arrow of the new art, pointing down: two brass chevrons in ink, the near one fainter.
 # gdlint:ignore = max-line-length
 const EXIT_ARROW := '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 40"><g fill="#b89550" stroke="#0f0d0c" stroke-width="2.5" stroke-linejoin="round"><path d="M4 3 L24 17 L44 3 L44 11 L24 25 L4 11 Z" fill-opacity="0.55"/><path d="M4 15 L24 29 L44 15 L44 23 L24 37 L4 23 Z"/></g><path d="M24 30.5 l3 2.5 l-3 2.5 l-3 -2.5 z" fill="#7e241f"/></svg>'
+const FADE_TIME := 0.35
 
+## One tick of the game, by the game speed of the settings (MapSim.TICK_MS at Med).
+var tick := MapSim.TICK_MS / 1000.0
 var lord_id := 1
 var mission := 0
 var mission_info := {}
 var lost_gear := {}  # what the hero lost with the mission (Profile.lose_gear), shown on its banner
 var run_over := false  # the mission was lost with no flask left: the run is over (HeroRun)
-var _fail_seen := false
 var lord_name := ""
-var sim: RefCounted
+var sim: MapSim
 var hero: Node3D  # the hero's figure (people.hero)
 var profile: Profile
 ## 0..3 the room's exits (down, left, up, right); 4..7 a second way on a side
@@ -42,11 +42,16 @@ var arrows: Array[TextureRect] = []
 ## After a mission won: the ways on, one per open place the campaign goes to next:
 ## [{exit: Rooms.EXIT_*, half: -1 the whole side | 0 its first half | 1 its second, place}]
 var ways_out: Array = []
-var _last_cell := -1
-const FADE_TIME := 0.35
 var tint := 0
 var loot := {}  # sim drop -> Sprite3D
 var trails: Array = []  # the weapon trails of this tick
+var autopilot := Autopilot.new()
+var pause_menu: MissionPause  # shown while the game is paused
+var feel := CombatFeel.new()  # how a hit feels: the hitstop, shake, flash, flight, sound, rumble
+
+var _fail_seen := false
+var _last_cell := -1
+var _fade_tween: Tween
 var _trails_before: Array = []  # and of the last one, fading
 var _trail_pick := RandomNumberGenerator.new()
 var _acc := 0.0
@@ -56,13 +61,9 @@ var _hotkey := -1  # a skill key pressed since the last tick
 var _potion := -1  # a potion key pressed since the last tick
 var _belt := -1  # a belt slot used by its key or a click on the skill bar since the last tick
 var _skip := false  # SKIP since the last tick: the talk on the map is skipped
-var autopilot := Autopilot.new()
-var _keys_down := {}  # attack, skill and potion keys held at the last frame
 var _last_held := -1
 var _mouse_dir := -1  # the direction the left mouse button holds, -1: none
 var _blink := 0
-var pause_menu: MissionPause  # shown while the game is paused
-var feel := CombatFeel.new()  # how a hit feels: the hitstop, shake, flash, flight, sound, rumble
 var _flash_mats := {}  # Sprite3D -> its flash material
 var _anim_dt := 0.0  # seconds the figures' clips move on this frame (0 while a hit holds)
 
@@ -96,7 +97,7 @@ func _ready() -> void:
 
 	var map := MapBuilder.load_map(Campaign.lord_map(lord_id))
 	builder.build(map)
-	profile = Profile.load_or_new(str(p.get("profile_path", Profile.PATH)))
+	profile = Profile.load_or_new(profile_path())
 	var s: Array = mission_info.get("start", [4, 4])
 	var resume := bool(p.get("resume", false)) and not profile.on_map.is_empty()
 	if resume:
@@ -154,23 +155,6 @@ func _process(delta: float) -> void:
 	if held != -1 and held != _last_held:
 		_pressed = held  # a new direction this tick: the original's key press
 	_last_held = held
-	# the pad's Back is both, as the HUD's corner: SKIP while someone talks, AUTO otherwise
-	var skip_now := _pressed_now("skip")
-	if _pressed_now("auto") and not (skip_now and hud.talking()):
-		toggle_auto()
-	if skip_now:
-		_skip = true
-	if _pressed_now("attack"):
-		_fire = true
-	for i in 5:
-		if _pressed_now("skill_%d" % (i + 1)):
-			_hotkey = i
-	for i in 2:
-		if _pressed_now("potion_%d" % (i + 1)):
-			_potion = i
-	for i in 5:
-		if _pressed_now("belt_%d" % (i + 1)):
-			_belt = i
 	if held != -1 or _fire or _hotkey != -1 or _potion != -1 or _belt != -1:
 		autopilot.player_key()
 	feel.advance(delta)
@@ -255,14 +239,6 @@ func story_ends_when_lost() -> bool:
 	return int(mission_info.get("reward", 0)) > Profile.ENDING_BASE
 
 
-## The key went down since the last frame (a press seen once, whenever the frame runs).
-func _pressed_now(action: String) -> bool:
-	var down := Input.is_action_pressed(action)
-	var was: bool = _keys_down.get(action, false)
-	_keys_down[action] = down
-	return down and not was
-
-
 ## The position between the last two ticks (a jump, such as a new room, is not smoothed).
 static func smooth(prev: Vector2i, now: Vector2i, t: float) -> Vector2:
 	if (now - prev).length() > 40:
@@ -283,12 +259,14 @@ func _forget_feel() -> void:
 func _update_view(t: float) -> void:
 	if sim.cell != _last_cell:
 		if _last_cell >= 0 and fade != null:
+			if _fade_tween != null:
+				_fade_tween.kill()
 			fade.color.a = 1.0
+			_fade_tween = create_tween()
+			_fade_tween.tween_property(fade, "color:a", 0.0, FADE_TIME)
 		_last_cell = sim.cell
 		# Only this room and the next ones it leads to; the rest is the ground around the map.
 		builder.show_only(sim.rooms.view_cells(sim.cell))
-	if fade != null and fade.color.a > 0.0:
-		fade.color.a = maxf(fade.color.a - get_process_delta_time() / FADE_TIME, 0.0)
 	people.update(t, _anim_dt, tick, feel)
 	_anim_dt = 0.0
 	hero = people.hero
@@ -405,7 +383,7 @@ func talk_portrait_id() -> int:
 	return int(sim.general.get("portrait", 0))
 
 
-## As pyport's map talk (in its pixels, over the HUD's width): a 48 px portrait box at the left
+## The talk on the map (in map pixels, over the HUD's width): a 48 px portrait box at the left
 ## and the speech box from x 54, 38 high, both just above the HUD (and its skill bar).
 func _place_talk() -> void:
 	var view := get_viewport_rect().size
@@ -567,7 +545,6 @@ func _release_keys() -> void:
 	_potion = -1
 	_belt = -1
 	_mouse_dir = -1
-	_keys_down.clear()
 
 
 ## Back pauses the mission (below), so the base does not take it.
@@ -581,6 +558,28 @@ func _screen_input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
 		pause()
+	elif is_processing():
+		_take_key(event)
+
+
+## A key of the game pressed while it plays: kept until the next tick takes it.
+func _take_key(event: InputEvent) -> void:
+	# the pad's Back is both, as the HUD's corner: SKIP while someone talks, AUTO otherwise
+	var skip := event.is_action_pressed("skip")
+	if event.is_action_pressed("auto") and not (skip and hud.talking()):
+		toggle_auto()
+	if skip:
+		_skip = true
+	if event.is_action_pressed("attack"):
+		_fire = true
+	for i in 5:
+		if event.is_action_pressed("skill_%d" % (i + 1)):
+			_hotkey = i
+		if event.is_action_pressed("belt_%d" % (i + 1)):
+			_belt = i
+	for i in 2:
+		if event.is_action_pressed("potion_%d" % (i + 1)):
+			_potion = i
 
 
 ## The mouse (and a touch, which comes as a click too) over the map: the screen itself takes
@@ -633,7 +632,7 @@ func uses_right_button() -> bool:
 
 ## The direction from the hero to a point of the screen (6 right, 2 left, 4 up, 0 down), or -1
 ## on the hero himself: within 14 x 20 original pixels of the middle of his body, 20 px above
-## his position, as pyport's pointer.
+## his position.
 func pointer_dir(at: Vector2) -> int:
 	var middle := hero.global_position + Vector3(0, (20 + Hero.FOOT_PX) * Hero.PIXEL_SIZE, 0)
 	# measured on the still camera: the shake of a hit does not turn the hero

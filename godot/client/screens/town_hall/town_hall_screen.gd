@@ -6,7 +6,7 @@ extends BaseScreen
 ## town hall of the start camp (Router.params.start) the next flask is sold for fame.
 
 var path: String = Profile.PATH
-var profile: RefCounted
+var profile: Profile
 var campaign := Campaign.new()
 var at_start := false  # the start camp's town hall: it sells the flasks
 @onready var list: VBoxContainer = %List

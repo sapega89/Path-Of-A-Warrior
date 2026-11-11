@@ -66,11 +66,11 @@ func test_hints_name_the_device_last_used() -> void:
 		"[Enter] Blacksmith: buy, sell, enchant, combine",
 		"keys"
 	)
-	eq(InputSetup.hint("offline.try_again"), "Enter: try again", "keys: Enter")
+	check(InputSetup.hint("hint.new_name").ends_with("Enter: OK · Esc: back"), "keys: Enter")
 	InputSetup._input(_pad_press(JOY_BUTTON_A))
 	eq(InputSetup.device, "pad", "a pad button")
 	eq(InputSetup.hint("camp.enter_smith"), "[A] Blacksmith: buy, sell, enchant, combine", "pad")
-	eq(InputSetup.hint("offline.other_account"), "B: other account", "pad: B")
+	check(InputSetup.hint("hint.new_name").ends_with("A: type it · B: back"), "pad: A and B")
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
 	click.pressed = true
@@ -81,35 +81,23 @@ func test_hints_name_the_device_last_used() -> void:
 	var touch := InputEventScreenTouch.new()
 	touch.pressed = true
 	InputSetup._input(touch)
-	eq(InputSetup.hint("offline.try_again"), "OK: try again", "touch: OK, as before")
+	eq(InputSetup.hint("hint.new_name"), "Tap the letters, then OK", "touch: its own words")
 	eq(InputSetup.hint("viewer.info"), tr("viewer.info"), "no touch text: the keyboard's")
 	eq(seen, ["pad", "keys", "touch"], "device_changed, once for each change")
 	InputSetup.device_changed.disconnect(on_change)
 	InputSetup.device = was
 
 
-func test_offline_screen_and_map_viewer_follow_the_device() -> void:
+func test_the_map_viewer_follows_the_device() -> void:
 	var was: String = InputSetup.device
 	InputSetup.device = "keys"
-	var offline: Control = Router.make(Router.SCREENS["offline"])
-	root.add_child(offline)
-	check(
-		offline.controls_hint().ends_with("Enter: try again"),
-		"the keyboard's OK, in the line of hints"
-	)
 	var viewer: Control = Router.make(Router.SCREENS["map_viewer"])
 	root.add_child(viewer)
 	eq(viewer.info.text, "Map 1 / %d   [3] [4] change map   [Esc] back" % viewer.map_total, "keys")
 	InputSetup._input(_pad_press(JOY_BUTTON_B))
-	check(offline.controls_hint().ends_with("A: try again"), "the pad's OK")
 	eq(viewer.info.text, "Map 1 / %d   [LB] [RB] change map   [B] back" % viewer.map_total, "pad")
-	var click := InputEventMouseButton.new()
-	click.button_index = MOUSE_BUTTON_LEFT
-	click.pressed = true
-	offline._gui_input(click)  # a click anywhere tries again
 	InputSetup._input(_key_press(KEY_ENTER))
-	eq(offline.text.text, tr("offline.connecting"), "a click tried again; Connecting... stays")
-	offline.free()
+	eq(viewer.info.text, "Map 1 / %d   [3] [4] change map   [Esc] back" % viewer.map_total, "keys")
 	viewer.free()
 	InputSetup.device = was
 

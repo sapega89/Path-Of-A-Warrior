@@ -4,7 +4,7 @@ extends "res://tests/test_case.gd"
 
 ## Gives the numbers it is told, as rng.below would.
 class Rolls:
-	extends RefCounted
+	extends JavaRandom
 	var values: Array = []
 	var asked: Array = []
 

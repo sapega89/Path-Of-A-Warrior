@@ -28,7 +28,7 @@ const TURN := 16.0
 
 static var _sides: Dictionary = {}
 
-var sim: RefCounted
+var sim: MapSim
 var hero: Node3D  # an ArtFigure
 var side := "crown"  # whose soldiers the mission's are
 var enemies := {}  # sim actor -> Node3D holding 1 figure (3 for a squad)
@@ -64,7 +64,7 @@ static func to_world(p: Vector2) -> Vector3:
 	return Vector3(p.x * PX, 0.0, (p.y + FOOT_PX) * PX)
 
 
-func setup(map_sim: RefCounted, hero_class: int) -> void:
+func setup(map_sim: MapSim, hero_class: int) -> void:
 	sim = map_sim
 	side = side_of(int(sim.mission_general)) if int(sim.mission_general) > 0 else "crown"
 	set_hero_look(hero_class, int(sim.hero.weapon_kind))
@@ -103,8 +103,8 @@ func _figure(kind: String, weapons: Array) -> Node3D:
 
 ## Draws the state between the last two ticks: t 0..1 of the way, dt seconds the clips
 ## move on (0 while a hit holds the picture), tick seconds per tick, feel: CombatFeel.
-func update(t: float, dt: float, tick: float, feel: RefCounted) -> void:
-	var h: RefCounted = sim.hero
+func update(t: float, dt: float, tick: float, feel: CombatFeel) -> void:
+	var h: MapActor = sim.hero
 	hero.position = to_world(_smooth(h.prev_pos, h.pos, t))
 	var speed := _ground_speed(h, tick)
 	_drive(
@@ -121,7 +121,7 @@ func update(t: float, dt: float, tick: float, feel: RefCounted) -> void:
 	_place_enemies(t, dt, tick, feel)
 
 
-func _place_enemies(t: float, dt: float, tick: float, feel: RefCounted) -> void:
+func _place_enemies(t: float, dt: float, tick: float, feel: CombatFeel) -> void:
 	for e in enemies.keys():
 		if not sim.enemies.has(e):
 			enemies[e].queue_free()
@@ -161,7 +161,7 @@ func _place_enemies(t: float, dt: float, tick: float, feel: RefCounted) -> void:
 		_state[e] = [e.action, e.frame]
 
 
-func _enemy_node(e: RefCounted) -> Node3D:
+func _enemy_node(e: MapActor) -> Node3D:
 	var node := Node3D.new()
 	node.name = "Enemy"
 	add_child(node)
@@ -180,7 +180,7 @@ func _enemy_node(e: RefCounted) -> Node3D:
 
 
 func _drive(
-	fig: Node3D, a: RefCounted, motion: Array, anim: Array, t: float, dt: float, tick: float
+	fig: Node3D, a: MapActor, motion: Array, anim: Array, t: float, dt: float, tick: float
 ) -> void:
 	_act(fig, a, motion, anim, t, tick, _restarted(a))
 	_state[a] = [a.action, a.frame]
@@ -188,7 +188,7 @@ func _drive(
 
 
 func _act(
-	fig: Node3D, a: RefCounted, motion: Array, anim: Array, t: float, tick: float, restart: bool
+	fig: Node3D, a: MapActor, motion: Array, anim: Array, t: float, tick: float, restart: bool
 ) -> void:
 	var n := Motion.ticks(anim)
 	var x := clampf((float(a.frame) + t) / float(n), 0.0, 1.0)
@@ -197,7 +197,7 @@ func _act(
 
 
 ## The action began (again) since the last tick drawn.
-func _restarted(a: RefCounted) -> bool:
+func _restarted(a: MapActor) -> bool:
 	var last: Array = _state.get(a, [-1, 0])
 	return int(last[0]) != a.action or a.frame < int(last[1])
 
@@ -210,13 +210,13 @@ func _turn(fig: Node3D, yaw: float, dt: float) -> void:
 		fig.rotation.y = lerp_angle(fig.rotation.y, yaw, 1.0 - exp(-TURN * dt))
 
 
-func _flash(fig: Node3D, a: RefCounted, feel: RefCounted) -> void:
+func _flash(fig: Node3D, a: MapActor, feel: CombatFeel) -> void:
 	var f: Array = feel.flash_of(a) if feel != null else [0.0, Color.WHITE]
 	fig.flash(float(f[0]), f[1])
 
 
 ## m/s the actor moved over the last tick.
-func _ground_speed(a: RefCounted, tick: float) -> float:
+func _ground_speed(a: MapActor, tick: float) -> float:
 	var d: Vector2i = a.pos - a.prev_pos
 	if d.length() > 40:
 		return 0.0

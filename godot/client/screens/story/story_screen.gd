@@ -1,6 +1,6 @@
 class_name StoryScreen
 extends BaseScreen
-## The story player, as pyport's: the opening of a new game and the endings.
+## The story player: the opening of a new game and the endings.
 ## A talk page types its line into one of two boxes under "Prologue" / "Epilogue", as the
 ## briefing does: the one who speaks (the master, a general) at the top beside his portrait,
 ## the hero at the bottom beside his; each box keeps its last line. A line typed out goes on
@@ -37,27 +37,17 @@ const LINE_FONT := 32
 const PICTURE_TICKS := 3
 const AFTER_TICKS := 3
 
-var profile: RefCounted
+var profile: Profile
 var story := Stories.OPENING
 var pages: Array = []
 var page := -1
-@onready var background: ColorRect = %Background  # black under the pictures and the numbers
-@onready var talk_box: Control = %Center
-@onready var title: Label = %Title
-@onready var speaker_portrait: TextureRect = %Dialogue.speaker_portrait
-@onready var hero_portrait: TextureRect = %Dialogue.hero_portrait
-@onready var speaker_says: Label = %Dialogue.speaker_says
-@onready var hero_says: Label = %Dialogue.hero_says
 var typing: Label  # the box being typed on a talk page
-@onready var picture: TextureRect = %Picture
-@onready var float_box: Control = %Lines  # the floating lines, a Label each
 var lines: PackedStringArray = []  # the floating text of this page
-@onready var reward: AcceptDialog = %Reward  # what the ending gave
-@onready var skip_button: Button = %Skip
 ## Picture pages: 0 the picture comes, 1 its text floats up, 2 the picture goes.
 var phase := 0
 var first_line := 0  # the first floating line still on the screen
 var first_y := 0  # its y
+
 var _fade := 0
 var _after := 0  # ticks left before the next page, 0: not yet
 var _ticks := 0.0
@@ -65,10 +55,22 @@ var _typed := 0.0
 var _wait := -1.0  # seconds before the next talk page comes by itself, -1: not yet
 var _over := false
 
+@onready var background: ColorRect = %Background  # black under the pictures and the numbers
+@onready var talk_box: Control = %Center
+@onready var title: Label = %Title
+@onready var speaker_portrait: TextureRect = %Dialogue.speaker_portrait
+@onready var hero_portrait: TextureRect = %Dialogue.hero_portrait
+@onready var speaker_says: Label = %Dialogue.speaker_says
+@onready var hero_says: Label = %Dialogue.hero_says
+@onready var picture: TextureRect = %Picture
+@onready var float_box: Control = %Lines  # the floating lines, a Label each
+@onready var reward: AcceptDialog = %Reward  # what the ending gave
+@onready var skip_button: Button = %Skip
+
 
 func _ready() -> void:
 	var p: Dictionary = Router.params
-	profile = Profile.load_or_new(str(p.get("profile_path", Profile.PATH)))
+	profile = Profile.load_or_new(profile_path())
 	story = int(p.get("story", Stories.OPENING))
 	pages = Stories.pages(story, profile.hero_name)
 	if bool(p.get("replay", false)):
@@ -127,7 +129,7 @@ func next_page() -> bool:
 	return true
 
 
-## What the ending gave, as pyport's popup: "Oksana's scarf / received!", then "Hidden
+## What the ending gave, in a popup: "Oksana's scarf / received!", then "Hidden
 ## Mission!" and the lord opened.
 func reward_lines() -> Array:
 	var p: Dictionary = Router.params

@@ -15,13 +15,14 @@ const STATS := [
 	["DEF", "attributes.defense", Profile.Stat.DEFENSE],
 ]
 
-var profile: RefCounted
+var profile: Profile
 var path: String = Profile.PATH
 var values := {}  # row name -> its value Label
 var plus := {}  # stat row name -> its "+" Button
+var pay_item: Button
+
 @onready var reset: Button = %Reset
 @onready var ask: ConfirmationDialog = %Ask  # pay with gold (OK), an elixir ("item") or cancel
-var pay_item: Button
 @onready var note: AcceptDialog = %Note
 
 

@@ -6,17 +6,30 @@ extends BaseScreen
 ## about in place of his line, they talk, and a small notice in the talk's place tells what was
 ## discussed, then the friendship gained and the general's gift. Saved at once. Without a
 ## mission won since the last visit (or without a friend) only a notice is shown.
-## A line typed out goes on by itself after 15 ticks, as pyport's; attack / accept shows the
+## A line typed out goes on by itself after 15 ticks; attack / accept shows the
 ## whole line, or goes on at once; back leaves the list.
+
+enum Step { LIST, GREETING, TOPIC, TALK, DISCUSSED, VISITED, CLOSED }
 
 const CHARS_PER_SECOND := 40.0
 ## Ticks a line shown whole stays before the talk goes on by itself.
 const WAIT_TICKS := 15
-enum Step { LIST, GREETING, TOPIC, TALK, DISCUSSED, VISITED, CLOSED }
 
-var profile: RefCounted
+var profile: Profile
 var path: String = Profile.PATH
 var step := Step.LIST
+var typing: Label  # the speech being typed
+var general_id := 0
+var general := {}
+var chosen := 0
+var lines: Array = []
+var line_at := 0
+var gift := {}
+var rng := RandomNumberGenerator.new()
+
+var _typed := 0.0
+var _wait := -1.0  # seconds before the talk goes on by itself, -1: it waits for a key
+
 @onready var column: VBoxContainer = %Column
 @onready var list: VBoxContainer = %List
 @onready var notice: Label = %Notice
@@ -38,16 +51,6 @@ var step := Step.LIST
 @onready var note: Control = %Note
 @onready var text: Label = %Text
 @onready var ok: Button = %Ok
-var typing: Label  # the speech being typed
-var general_id := 0
-var general := {}
-var chosen := 0
-var lines: Array = []
-var line_at := 0
-var gift := {}
-var rng := RandomNumberGenerator.new()
-var _typed := 0.0
-var _wait := -1.0  # seconds before the talk goes on by itself, -1: it waits for a key
 
 
 func _ready() -> void:

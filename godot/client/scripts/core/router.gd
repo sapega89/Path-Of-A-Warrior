@@ -31,8 +31,6 @@ const SCREENS := {
 	"new_game": "res://screens/new_game/new_game_screen.tscn",
 	"endings": "res://screens/endings/endings_screen.tscn",
 	"help": "res://screens/help/help_screen.tscn",
-	"offline": "res://screens/offline/offline_screen.tscn",
-	"login": "res://screens/login/login_screen.tscn",
 }
 
 var current: Control

@@ -1,9 +1,5 @@
 extends Node
-## Player settings, kept in user://settings.cfg and applied to the engine.
-## The volumes and the game speed (CLOUD_KEYS) are kept on the server too, with the account
-## (scripts/net/cloud_sync.gd): the newer copy wins, and on a device the account is new to,
-## the server's. The language, the full screen, the window's size, the brightness, the graphics
-## and the controls belong to the device.
+## Player settings, kept on this computer in user://settings.cfg and applied to the engine.
 
 signal changed(key: String)
 
@@ -19,7 +15,6 @@ const DEFAULTS := {
 	"hit_feel": true,  # the hitstop, shake, flash, flight and sound of a hit on the map
 	"screen_shake": true,  # of those, the camera shake
 	"rumble": true,  # of those, the pad's (or the phone's) rumble
-	"pixel_art": true,  # the 3D world drawn as pixel art (pixel_view.gd), or smooth
 	"brightness": 0.5,  # the 3D world's: 0.5 as it is drawn, 0 darker, 1 brighter (world_gamma)
 	"graphics": 1,  # 0 Low, 1 Medium (the engine's own), 2 High (GRAPHICS)
 	"window_size": 0,  # the window when not in full screen (WINDOW_SIZES; desktop only)
@@ -28,31 +23,13 @@ const DEFAULTS := {
 ## One tick of a mission at each game speed, in ms (2, Med, is the simulation's own tick).
 const SPEED_MS := [250, 180, 120, 90, 50]
 const BUSES := {"music_volume": "Music", "sfx_volume": "SFX"}
-const CLOUD_KEYS := ["music_volume", "sfx_volume", "game_speed"]
-const CLOUD_SECTION := "cloud"
 ## What each graphics quality (Low, Medium, High) draws: the sun's shadow map (pixels a side) and
-## how soft its edges are, the lamps' and fires' shadow maps in each 3D view (never 0: the
-## compatibility renderer then draws the world white), and in the smooth world how its edges are
-## smoothed (pixel art has none). Medium is the engine's own.
+## how soft its edges are, and the lamps' and fires' shadow maps in each 3D view (never 0: the
+## compatibility renderer then draws the world white). Medium is the engine's own.
 const GRAPHICS := [
-	{
-		"sun": 2048,
-		"soft": RenderingServer.SHADOW_QUALITY_HARD,
-		"lamps": 1024,
-		"msaa": Viewport.MSAA_DISABLED,
-	},
-	{
-		"sun": 4096,
-		"soft": RenderingServer.SHADOW_QUALITY_SOFT_LOW,
-		"lamps": 2048,
-		"msaa": Viewport.MSAA_2X,
-	},
-	{
-		"sun": 4096,
-		"soft": RenderingServer.SHADOW_QUALITY_SOFT_HIGH,
-		"lamps": 4096,
-		"msaa": Viewport.MSAA_4X,
-	},
+	{"sun": 2048, "soft": RenderingServer.SHADOW_QUALITY_HARD, "lamps": 1024},
+	{"sun": 4096, "soft": RenderingServer.SHADOW_QUALITY_SOFT_LOW, "lamps": 2048},
+	{"sun": 4096, "soft": RenderingServer.SHADOW_QUALITY_SOFT_HIGH, "lamps": 4096},
 ]
 ## The window's sizes to choose from (the first is the game's own); those larger than the screen
 ## are not offered.
@@ -67,10 +44,6 @@ const GAMMA_RANGE := 1.5
 
 var path := DEFAULT_PATH
 var _values := {}
-## The copy on the server: the account it is of ("" none yet), its revision, when these
-## options last changed (unix ms) and whether that change still has to reach the server.
-var cloud := {"user": "", "rev": 0, "at": 0, "dirty": false}
-var clock: Callable = func() -> int: return int(Time.get_unix_time_from_system() * 1000.0)
 
 
 func _ready() -> void:
@@ -94,9 +67,6 @@ func set_value(key: String, value: Variant) -> bool:
 	if get_value(key) == value:
 		return true
 	_values[key] = value
-	if key in CLOUD_KEYS:
-		cloud.at = maxi(int(clock.call()), int(cloud.at) + 1)
-		cloud.dirty = true
 	_apply(key)
 	save_to_disk()
 	changed.emit(key)
@@ -105,7 +75,6 @@ func set_value(key: String, value: Variant) -> bool:
 
 func reset() -> void:
 	_values = DEFAULTS.duplicate()
-	cloud = {"user": "", "rev": 0, "at": 0, "dirty": false}
 
 
 func load_from_disk() -> void:
@@ -117,44 +86,13 @@ func load_from_disk() -> void:
 		var v: Variant = _coerce(key, cfg.get_value(SECTION, key, DEFAULTS[key]))
 		if v != null:
 			_values[key] = v
-	cloud.user = str(cfg.get_value(CLOUD_SECTION, "user", ""))
-	cloud.rev = int(cfg.get_value(CLOUD_SECTION, "rev", 0))
-	cloud.at = int(cfg.get_value(CLOUD_SECTION, "at", 0))
-	cloud.dirty = bool(cfg.get_value(CLOUD_SECTION, "dirty", false))
 
 
 func save_to_disk() -> Error:
 	var cfg := ConfigFile.new()
 	for key in DEFAULTS:
 		cfg.set_value(SECTION, key, get_value(key))
-	for key in cloud:
-		cfg.set_value(CLOUD_SECTION, key, cloud[key])
 	return cfg.save(path)
-
-
-## The options kept on the server.
-func cloud_values() -> Dictionary:
-	var d := {}
-	for key in CLOUD_KEYS:
-		d[key] = get_value(key)
-	return d
-
-
-## The server's copy of the options: applied and saved, nothing to send back.
-func take_cloud(values: Dictionary) -> void:
-	for key in CLOUD_KEYS:
-		var v: Variant = _coerce(key, values.get(key))
-		if v == null or v == get_value(key):
-			continue
-		_values[key] = v
-		_apply(key)
-		changed.emit(key)
-	save_to_disk()
-
-
-## Keeps `cloud` (changed by the sync) with the options.
-func save_cloud() -> void:
-	save_to_disk()
 
 
 func apply_all() -> void:
@@ -209,11 +147,6 @@ func _apply(key: String) -> void:
 				var v: float = get_value(key)
 				AudioServer.set_bus_volume_db(bus, volume_db(v))
 				AudioServer.set_bus_mute(bus, v <= 0.0)
-		"pixel_art":
-			# the shaders of the world draw for it: hard steps of light, no grain finer than a pixel
-			RenderingServer.global_shader_parameter_set(
-				&"pixel_art", 1.0 if get_value(key) else 0.0
-			)
 		"brightness":
 			RenderingServer.global_shader_parameter_set(&"world_gamma", world_gamma(get_value(key)))
 		"fullscreen":
@@ -267,7 +200,7 @@ static func world_gamma(brightness: float) -> float:
 	return pow(2.0, (0.5 - brightness) * GAMMA_RANGE)
 
 
-## A volume (0..1) as its bus's dB, by ear as in pyport: the amplitude is the volume squared,
+## A volume (0..1) as its bus's dB, by ear: the amplitude is the volume squared,
 ## so a quarter is -24 dB, a half -12 dB, three quarters -5 dB.
 static func volume_db(volume: float) -> float:
 	return linear_to_db(maxf(volume * volume, 0.000001))
