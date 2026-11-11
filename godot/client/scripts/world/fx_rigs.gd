@@ -1,29 +1,13 @@
 class_name FxRigs
 extends Node3D
-## The effects drawn in code are made of rigs: a Node3D for each effect shown, built once by
-## _build_<kind>(rig) and kept in a pool by its kind. A rig's parts are quads (or an open
-## cylinder) of light (fx_light.gdshader) or of dust and smoke (fx_puff.gdshader); the
-## functions here make them, place them on the map and set how they look.
+## The effects are made of rigs: a scene for each kind (scenes/world/effects/<kind>.tscn),
+## instanced once for each effect shown at a time and kept in a pool by its kind. A rig's parts
+## are quads (or open cylinders, OpenCylinderMesh) of light (fx_light.gdshader), of blood
+## (fx_blood.gdshader) or of dust and smoke (fx_puff.gdshader); the functions here place them on
+## the map and set how they look.
 
-## The shapes of fx_light.gdshader.
-enum Shape { GLOW, RING, STAR, FLAME, BOLT, STREAK, RIBBON, SPIRAL, COLUMN, MOTES, SPLASH, SWEEP }
-## How a part turns to the camera (fx_common.gdshaderinc).
-enum Turn { PLACED, FACING, UPRIGHT, AXIS }
-
-const LIGHT := preload("res://assets/art/shaders/fx_light.gdshader")
-const PUFF := preload("res://assets/art/shaders/fx_puff.gdshader")
+const RIG_PATH := "res://scenes/world/effects/%s.tscn"
 const PX := 1.0 / 27.0
-## Colours (sRGB): [core, edge].
-const WARM := [Color(1.0, 0.95, 0.8), Color(0.83, 0.65, 0.27)]
-const HOT := [Color(1.0, 0.92, 0.66), Color(0.91, 0.4, 0.14)]
-const HEAL := [Color(0.88, 1.0, 0.82), Color(0.36, 0.74, 0.44)]
-const STORM := [Color(0.93, 0.96, 1.0), Color(0.42, 0.5, 0.98)]
-const WATER := [Color(0.9, 0.96, 1.0), Color(0.27, 0.5, 0.84)]
-const STEEL := [Color(1.0, 1.0, 0.97), Color(0.7, 0.76, 0.86)]
-const DUST := [Color(0.94, 0.89, 0.79), Color(0.73, 0.65, 0.55)]
-const SMOKE := [Color(0.48, 0.44, 0.41), Color(0.3, 0.27, 0.25)]
-
-static var _tube_mesh: ArrayMesh
 
 var _pools := {}  # kind -> Array of rigs (Node3D)
 var _used := {}  # kind -> rigs used by the last call
@@ -36,90 +20,11 @@ func _rig(kind: String) -> Node3D:
 	_used[kind] = i + 1
 	if i < pool.size():
 		return pool[i]
-	var rig := Node3D.new()
+	var rig := (load(RIG_PATH % kind) as PackedScene).instantiate() as Node3D
 	rig.name = "%s%d" % [kind.capitalize(), i]
 	add_child(rig)
-	call("_build_" + kind, rig)
 	pool.append(rig)
 	return rig
-
-
-## A part of light: a quad (or an open cylinder) with fx_light in a shape.
-func _light(
-	rig: Node3D,
-	part: String,
-	shape: Shape,
-	turn: Turn,
-	colours: Array,
-	body := 0.0,
-	cylinder := false
-) -> MeshInstance3D:
-	var mi := MeshInstance3D.new()
-	mi.name = part
-	if cylinder:
-		mi.mesh = _tube()
-	else:
-		var q := QuadMesh.new()
-		q.size = Vector2.ONE
-		mi.mesh = q
-	var m := ShaderMaterial.new()
-	m.shader = LIGHT
-	m.set_shader_parameter("shape", shape)
-	m.set_shader_parameter("billboard", turn)
-	m.set_shader_parameter("body", body)
-	_colours(m, colours)
-	mi.material_override = m
-	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	mi.extra_cull_margin = 4.0
-	rig.add_child(mi)
-	return mi
-
-
-## An open cylinder 1 across and 1 high, its middle at the origin: UV.x goes round it, UV.y
-## from the top (0) to the bottom (1).
-static func _tube() -> ArrayMesh:
-	if _tube_mesh != null:
-		return _tube_mesh
-	var st := SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var n := 24
-	for i in n:
-		var u0 := float(i) / n
-		var u1 := float(i + 1) / n
-		var a := Vector3(cos(u0 * TAU), 0.0, sin(u0 * TAU))
-		var b := Vector3(cos(u1 * TAU), 0.0, sin(u1 * TAU))
-		var top := Vector3(0.0, 0.5, 0.0)
-		for v in [
-			[a + top, Vector2(u0, 0.0)],
-			[b + top, Vector2(u1, 0.0)],
-			[b - top, Vector2(u1, 1.0)],
-			[a + top, Vector2(u0, 0.0)],
-			[b - top, Vector2(u1, 1.0)],
-			[a - top, Vector2(u0, 1.0)]
-		]:
-			st.set_uv(v[1])
-			st.add_vertex(v[0])
-	_tube_mesh = st.commit()
-	return _tube_mesh
-
-
-## A part of dust or smoke.
-func _puff(rig: Node3D, part: String, turn: Turn, colours: Array) -> MeshInstance3D:
-	var mi := MeshInstance3D.new()
-	mi.name = part
-	var q := QuadMesh.new()
-	q.size = Vector2.ONE
-	mi.mesh = q
-	var m := ShaderMaterial.new()
-	m.shader = PUFF
-	m.set_shader_parameter("billboard", turn)
-	m.set_shader_parameter("color", _rgb(colours[0]))
-	m.set_shader_parameter("shade", _rgb(colours[1]))
-	mi.material_override = m
-	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	mi.extra_cull_margin = 4.0
-	rig.add_child(mi)
-	return mi
 
 
 static func _rgb(c: Color) -> Vector3:

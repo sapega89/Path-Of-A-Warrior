@@ -1,0 +1,79 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_qfkeq"]
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_puff.gdshader" id="2_58xad"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wfq6o"]
+resource_local_to_scene = true
+shader = ExtResource("1_qfkeq")
+shader_parameter/billboard = 1
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 0
+shader_parameter/body = 0.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_d0hu1"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ok7e3"]
+resource_local_to_scene = true
+shader = ExtResource("1_qfkeq")
+shader_parameter/billboard = 1
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 2
+shader_parameter/body = 0.35
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hve5t"]
+resource_local_to_scene = true
+shader = ExtResource("1_qfkeq")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 1
+shader_parameter/body = 0.4
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ft8dw"]
+resource_local_to_scene = true
+shader = ExtResource("2_58xad")
+shader_parameter/billboard = 1
+shader_parameter/color = Vector3(0.48, 0.44, 0.41)
+shader_parameter/shade = Vector3(0.3, 0.27, 0.25)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7mxri"]
+resource_local_to_scene = true
+shader = ExtResource("2_58xad")
+shader_parameter/billboard = 1
+shader_parameter/color = Vector3(0.48, 0.44, 0.41)
+shader_parameter/shade = Vector3(0.3, 0.27, 0.25)
+
+[node name="Blast" type="Node3D"]
+
+[node name="Glow" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_wfq6o")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_d0hu1")
+
+[node name="Star" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_ok7e3")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_d0hu1")
+
+[node name="Scorch" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_hve5t")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_d0hu1")
+
+[node name="Smoke0" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_ft8dw")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_d0hu1")
+
+[node name="Smoke1" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_7mxri")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_d0hu1")

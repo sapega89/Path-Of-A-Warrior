@@ -1,0 +1,112 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_0gibp"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_v6udq"]
+resource_local_to_scene = true
+shader = ExtResource("1_0gibp")
+shader_parameter/billboard = 2
+shader_parameter/core = Vector3(1, 0.8, 0.55)
+shader_parameter/edge = Vector3(0.82, 0.16, 0.08)
+shader_parameter/shape = 3
+shader_parameter/body = 0.55
+
+[sub_resource type="QuadMesh" id="QuadMesh_agv5t"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t3jt0"]
+resource_local_to_scene = true
+shader = ExtResource("1_0gibp")
+shader_parameter/billboard = 2
+shader_parameter/core = Vector3(1, 0.8, 0.55)
+shader_parameter/edge = Vector3(0.82, 0.16, 0.08)
+shader_parameter/shape = 3
+shader_parameter/body = 0.55
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b8hig"]
+resource_local_to_scene = true
+shader = ExtResource("1_0gibp")
+shader_parameter/billboard = 2
+shader_parameter/core = Vector3(1, 0.8, 0.55)
+shader_parameter/edge = Vector3(0.82, 0.16, 0.08)
+shader_parameter/shape = 3
+shader_parameter/body = 0.55
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cgepm"]
+resource_local_to_scene = true
+shader = ExtResource("1_0gibp")
+shader_parameter/billboard = 2
+shader_parameter/core = Vector3(1, 0.8, 0.55)
+shader_parameter/edge = Vector3(0.82, 0.16, 0.08)
+shader_parameter/shape = 3
+shader_parameter/body = 0.55
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3u5k0"]
+resource_local_to_scene = true
+shader = ExtResource("1_0gibp")
+shader_parameter/billboard = 2
+shader_parameter/core = Vector3(1, 0.8, 0.55)
+shader_parameter/edge = Vector3(0.82, 0.16, 0.08)
+shader_parameter/shape = 3
+shader_parameter/body = 0.55
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_krkp8"]
+resource_local_to_scene = true
+shader = ExtResource("1_0gibp")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.8, 0.55)
+shader_parameter/edge = Vector3(0.82, 0.16, 0.08)
+shader_parameter/shape = 1
+shader_parameter/body = 0.4
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_em1ll"]
+resource_local_to_scene = true
+shader = ExtResource("1_0gibp")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.8, 0.55)
+shader_parameter/edge = Vector3(0.82, 0.16, 0.08)
+shader_parameter/shape = 0
+shader_parameter/body = 0.0
+
+[node name="Fury" type="Node3D"]
+
+[node name="Flame0" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_v6udq")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_agv5t")
+
+[node name="Flame1" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_t3jt0")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_agv5t")
+
+[node name="Flame2" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_b8hig")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_agv5t")
+
+[node name="Flame3" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_cgepm")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_agv5t")
+
+[node name="Flame4" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_3u5k0")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_agv5t")
+
+[node name="Ring" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_krkp8")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_agv5t")
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_em1ll")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_agv5t")
