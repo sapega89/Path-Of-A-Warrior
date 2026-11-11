@@ -31,7 +31,6 @@ const FONT_SIZE := 28
 const TITLE_SIZE := 56
 const RADIUS := 2
 
-const BACKDROP := preload("res://assets/art/shaders/ui_backdrop.gdshader")
 const COIN := "res://assets/art/ui/coin.svg"
 const FONT_PATH := "res://assets/art/fonts/%s-normal.woff2"
 ## Each font: its Latin file and its Cyrillic one.
@@ -84,21 +83,6 @@ static func box(color: Color, border: Color = Color.TRANSPARENT, width: int = 0)
 	sb.content_margin_left = 20
 	sb.content_margin_right = 20
 	return sb
-
-
-## The forged backdrop of the menus: soot-black, mottled like old leather and darker to the
-## edges, a riveted iron strip along the top and the bottom
-## (assets/art/shaders/ui_backdrop.gdshader).
-static func backdrop() -> ColorRect:
-	var bg := ColorRect.new()
-	bg.name = "Backdrop"
-	bg.color = BG
-	var m := ShaderMaterial.new()
-	m.shader = BACKDROP
-	bg.material = m
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return bg
 
 
 ## A centred column for menu screens.

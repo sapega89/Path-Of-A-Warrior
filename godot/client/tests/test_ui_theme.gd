@@ -53,10 +53,12 @@ func test_plaques_and_panels() -> void:
 
 
 func test_the_backdrop_and_the_coin() -> void:
-	var bg := UiTheme.backdrop()
+	var main: Control = load("res://scenes/main.tscn").instantiate()
+	var bg: ColorRect = main.get_node("Backdrop")
 	check(bg.material is ShaderMaterial, "painted by its shader")
 	eq(bg.mouse_filter, Control.MOUSE_FILTER_IGNORE, "clicks pass")
-	bg.free()
+	eq(bg.color, UiTheme.BG, "on soot")
+	main.free()
 	var coin := UiTheme.coin()
 	eq(coin.get_size(), Vector2(128, 128), "the coin")
 	check(coin.get_image().has_mipmaps(), "smooth when small")
