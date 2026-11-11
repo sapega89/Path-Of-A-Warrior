@@ -15,7 +15,7 @@ const DEFAULTS := {
 	"screen_shake": true,  # of those, the camera shake
 	"rumble": true,  # of those, the pad's (or the phone's) rumble
 	"brightness": 0.5,  # the 3D world's: 0.5 as it is drawn, 0 darker, 1 brighter (world_gamma)
-	"graphics": 1,  # 0 Low, 1 Medium (the engine's own), 2 High (GRAPHICS)
+	"graphics": 1,  # 0 Low, 1 Medium (the engine's own but the sun map), 2 High (GRAPHICS)
 	"window_size": 0,  # the window when not in full screen (WINDOW_SIZES; desktop only)
 	"controls": {},  # the keys and pad buttons changed by the player (KeyBindings.changes())
 }
@@ -24,10 +24,12 @@ const SPEED_MS := [250, 180, 120, 90, 50]
 const BUSES := {"music_volume": "Music", "sfx_volume": "SFX"}
 ## What each graphics quality (Low, Medium, High) draws: the sun's shadow map (pixels a side) and
 ## how soft its edges are, and the lamps' and fires' shadow maps in each 3D view (never 0: the
-## compatibility renderer then draws the world white). Medium is the engine's own.
+## compatibility renderer then draws the world white). The world is drawn about 360 pixels high,
+## so a sun map of 2048 is already finer than the picture: Medium is the engine's own but for the
+## sun, whose map of 4096 would cost four times the pixels each frame for the same picture.
 const GRAPHICS := [
-	{"sun": 2048, "soft": RenderingServer.SHADOW_QUALITY_HARD, "lamps": 1024},
-	{"sun": 4096, "soft": RenderingServer.SHADOW_QUALITY_SOFT_LOW, "lamps": 2048},
+	{"sun": 1024, "soft": RenderingServer.SHADOW_QUALITY_HARD, "lamps": 1024},
+	{"sun": 2048, "soft": RenderingServer.SHADOW_QUALITY_SOFT_LOW, "lamps": 2048},
 	{"sun": 4096, "soft": RenderingServer.SHADOW_QUALITY_SOFT_HIGH, "lamps": 4096},
 ]
 ## The window's sizes to choose from (the first is the game's own); those larger than the screen

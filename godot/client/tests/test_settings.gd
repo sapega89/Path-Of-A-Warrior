@@ -122,6 +122,8 @@ func test_graphics_and_the_window() -> void:
 		"Low: the lamps' and fires' shadows coarser (never none: the world went white)"
 	)
 	check(SettingsScript.GRAPHICS[2].lamps > SettingsScript.GRAPHICS[1].lamps, "High: finer")
+	var suns: Array = SettingsScript.GRAPHICS.map(func(g: Dictionary) -> int: return g.sun)
+	eq(suns, [1024, 2048, 4096], "the sun's shadows: 2048 on Medium, as fine as the world is drawn")
 	check(s.set_value("graphics", 9), "too high")
 	eq(s.graphics(), SettingsScript.GRAPHICS[2], "clamped to High")
 	check(s.set_value("game_speed", 4), "each number has its own range")
