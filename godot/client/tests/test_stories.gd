@@ -126,13 +126,18 @@ func test_story_picture_floats() -> void:
 		[1, 230, -1000],
 		"the first line at 230, the next below"
 	)
-	eq(screen.line_color(230), Color(UiTheme.TEXT), "white in the middle")
+	eq(screen.line_look(230), StoryScreen.LINE_BRIGHT, "white in the middle")
+	var t: Theme = UiTheme.theme(UiTheme.THEME)
+	eq(t.get_color("font_color", StoryScreen.LINE_BRIGHT), Color(UiTheme.TEXT), "white")
+	eq(t.get_font_size("font_size", StoryScreen.LINE_BRIGHT), StoryScreen.LINE_FONT, "as wrapped")
+	eq(screen.float_box.get_child(0).theme_type_variation, StoryScreen.LINE_BRIGHT, "drawn so")
 	screen.tick()
 	eq(screen.line_y(0), 228, "up 2 a tick")
 	for i in 10:
 		screen.tick()
 	eq([screen.line_y(0), screen.line_y(1)], [208, 230], "the next line 22 below")
-	eq(screen.line_color(60), Color(UiTheme.TEXT_DIM), "grey above the middle")
+	eq(screen.line_look(60), StoryScreen.LINE_DIM, "grey above the middle")
+	eq(t.get_color("font_color", StoryScreen.LINE_DIM), Color(UiTheme.TEXT_DIM), "grey")
 	screen.press()
 	eq(screen.page, 14, "a press does nothing there")
 	var guard := 0
