@@ -34,63 +34,62 @@ static func data() -> Dictionary:
 ## The pages of a story, in order, in the player's language (I18n.text). The hero's lines
 ## carry his name, the master's the name of his office (strings.json story.master).
 static func pages(story: int, hero_name: String) -> Array:
-	var out: Array = []
 	var d := data()
 	if story == OPENING:
-		var lines: Array = d.get("opening", [])
-		for i in lines.size():
-			if i < 2:
-				out.append(
-					{"kind": "picture", "picture": 1 if i == 0 else 10, "text": I18n.text(lines[i])}
-				)
-			elif i % 2 == 0:
-				out.append(
-					{
-						"kind": "talk",
-						"speaker": NOFACE,
-						"text":
-						(
-							"[%s] %s"
-							% [TranslationServer.translate("story.master"), I18n.text(lines[i])]
-						)
-					}
-				)
-			else:
-				out.append(
-					{
-						"kind": "talk",
-						"speaker": HERO,
-						"text": "[%s] %s" % [hero_name, I18n.text(lines[i])]
-					}
-				)
-		return out
+		return _opening_pages(d.get("opening", []), hero_name)
 	var endings: Array = d.get("endings", [])
 	if story < 0 or story >= endings.size():
-		return out
-	var gamestr: Array = d.get("gamestr", ["", ""])
-	var talk: Array = endings[story].get("talk", [])
+		return []
+	return _ending_pages(story, endings[story], d.get("gamestr", ["", ""]), hero_name)
+
+
+## The opening: two pictures, then the master and the hero by turns.
+static func _opening_pages(lines: Array, hero_name: String) -> Array:
+	var out: Array = []
+	for i in lines.size():
+		if i < 2:
+			out.append(_picture(1 if i == 0 else 10, I18n.text(lines[i])))
+		elif i % 2 == 0:
+			var master := TranslationServer.translate("story.master")
+			out.append(_talk(NOFACE, "[%s] %s" % [master, I18n.text(lines[i])]))
+		else:
+			out.append(_talk(HERO, "[%s] %s" % [hero_name, I18n.text(lines[i])]))
+	return out
+
+
+## An ending: its talk (a numbered line is another speaker's, the rest the hero's), its
+## pictures and the stats page.
+static func _ending_pages(
+	story: int, ending: Dictionary, gamestr: Array, hero_name: String
+) -> Array:
+	var out: Array = []
+	var talk: Array = ending.get("talk", [])
 	for i in talk.size():
 		var line := str(talk[i])
 		if story == 0 and i == 2:
-			out.append({"kind": "talk", "speaker": NOFACE, "text": I18n.text(gamestr[1])})
+			out.append(_talk(NOFACE, I18n.text(gamestr[1])))
 		elif _numbered(line):
 			var parts := _split(line)
-			out.append({"kind": "talk", "speaker": parts[0], "text": I18n.text(parts[1])})
+			out.append(_talk(parts[0], I18n.text(parts[1])))
 		else:
-			out.append(
-				{"kind": "talk", "speaker": HERO, "text": "[%s] %s" % [hero_name, I18n.text(line)]}
-			)
-	var pictures: Array = endings[story].get("pictures", [])
+			out.append(_talk(HERO, "[%s] %s" % [hero_name, I18n.text(line)]))
+	var pictures: Array = ending.get("pictures", [])
 	for i in pictures.size():
 		if story == 0 and i == 0:
-			out.append({"kind": "picture", "picture": 0, "text": I18n.text(gamestr[0])})
+			out.append(_picture(0, I18n.text(gamestr[0])))
 		else:
 			var parts := _split(str(pictures[i]))
-			out.append(
-				{"kind": "picture", "picture": int(parts[0]) - 1, "text": I18n.text(parts[1])}
-			)
+			out.append(_picture(int(parts[0]) - 1, I18n.text(parts[1])))
 	out.append({"kind": "stats"})
 	return out
+
+
+static func _talk(speaker: int, text: String) -> Dictionary:
+	return {"kind": "talk", "speaker": speaker, "text": text}
+
+
+static func _picture(picture: int, text: String) -> Dictionary:
+	return {"kind": "picture", "picture": picture, "text": text}
 
 
 ## The lines of the last page of an ending: missions, hidden missions, endings and generals
