@@ -61,18 +61,15 @@ func test_icons_are_drawn_and_smooth() -> void:
 
 
 func test_the_hud_draws_them_smooth() -> void:
-	var hud := MapHud.new()
+	var hud: MapHud = load("res://screens/mission/hud/map_hud.tscn").instantiate()
 	root.add_child(hud)
-	var icons: Control = hud.get_node("Icons")
-	eq(icons.texture_filter, CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS, "the icons smooth")
-	eq(
-		hud.get_node("Labels").texture_filter,
-		CanvasItem.TEXTURE_FILTER_LINEAR,
-		"the counts and keys smooth"
-	)
+	var slot := hud.get_node("%Belt1")
+	var icon: TextureRect = slot.get_node("%Icon")
+	eq(icon.texture_filter, CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS, "the icons smooth")
 	check(
-		hud.get_node("Labels").get_index() > icons.get_index(), "the counts and keys over the icons"
+		slot.get_node("%Count").get_index() > icon.get_index(), "the counts and keys over the icons"
 	)
+	check(slot.get_node("%Key").get_index() > icon.get_index(), "and the keys")
 	hud.free()
 
 

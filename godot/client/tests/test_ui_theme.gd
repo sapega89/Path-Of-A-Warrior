@@ -67,21 +67,17 @@ func test_the_backdrop_and_the_coin() -> void:
 
 
 func test_the_hud_panel() -> void:
-	for x in MapHud.ORB_X:
-		check(x - MapHud.ORB_R >= 0 and x + MapHud.ORB_R <= 240, "an orb in the panel: %d" % x)
-	check(
-		MapHud.ORB_Y - MapHud.ORB_R > 3 and MapHud.ORB_Y + MapHud.ORB_R < MapHud.PANEL_H,
-		"and under its rim"
-	)
-	for b in 2:
-		var r := MapHud._potion_rect(Vector2.ZERO, b, 1.0)
-		for x in MapHud.ORB_X:
-			check(
-				absf(r.get_center().x - x) > MapHud.ORB_R + MapHud.ITEM / 2.0,
-				"potion %d beside the orbs" % b
-			)
-	var src := FileAccess.get_file_as_string("res://scripts/ui/map_hud.gd")
-	check(not src.contains("assets/original"), "no old pictures")
+	var hud: MapHud = load("res://screens/mission/hud/map_hud.tscn").instantiate()
+	root.add_child(hud)
+	var panel: Rect2 = (hud.get_node("Bottom/Panel") as Control).get_global_rect()
+	for orb in ["%HpOrb", "%MpOrb"]:
+		var r: Rect2 = (hud.get_node(orb) as Control).get_global_rect()
+		check(panel.encloses(r), "%s in the panel: %s in %s" % [orb, r, panel])
+	hud.free()
+	for path in ["res://screens/mission/hud/map_hud.gd", "res://screens/mission/hud/hud_orb.gd"]:
+		check(
+			not FileAccess.get_file_as_string(path).contains("assets/original"), "no old pictures"
+		)
 
 
 func test_exit_arrows() -> void:

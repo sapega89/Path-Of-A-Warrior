@@ -72,10 +72,17 @@ func test_click_on_the_hero_or_right_button_attacks() -> void:
 func test_pause_corner() -> void:
 	var old: Dictionary = Router.params
 	var screen := _screen()
-	var view: Vector2 = screen.hud.get_viewport_rect().size
-	check(not screen.hud.pause_at(view - Vector2(200, 2)), "not left of the corner")
-	check(screen.hud.pause_at(view - Vector2(4, 4)), "the bottom-right corner")
-	screen._gui_input(_click(view - Vector2(4, 4)))
+	var view: Vector2 = screen.get_viewport_rect().size
+	_push(_click(view - Vector2(200, 2)))
+	_push(_click(view - Vector2(200, 2), MOUSE_BUTTON_LEFT, false))
+	check(screen.pause_menu == null, "not left of the corner")
+	_push(_click(view - Vector2(4, 4)))
+	_push(_click(view - Vector2(4, 4), MOUSE_BUTTON_LEFT, false))
 	check(screen.pause_menu != null, "PAUSE pauses")
 	screen.free()
 	Router.params = old
+
+
+## An event as the window sends it, through the controls on the screen.
+func _push(ev: InputEvent) -> void:
+	root.get_viewport().push_input(ev, true)  # in the viewport's own pixels
