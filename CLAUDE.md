@@ -88,7 +88,7 @@ hero's path, `preload` of a script, files over 600 lines, functions over 50 line
 - Every behaviour change or new screen comes with a test in `godot/client/tests/test_*.gd`
 - Before pushing: `godot --headless --path godot/client res://tests/runner.tscn` passes, and the
   run adds no new `ERROR` lines to the log; in `godot/client`:
-  `gdformat --check scripts tests tools lab` and `gdlint scripts tests tools lab`;
+  `gdformat --check scripts screens tests tools lab` and `gdlint scripts screens tests tools lab`;
   in the repo root: `python godot/tools/check_standards.py`
 - `.uid` files are not committed
 - CI screenshots (`tools/shots.tscn`) must not change unless the change is meant to change them

@@ -28,8 +28,8 @@ jobs:
         run: |
           python3 -m venv "$RUNNER_TEMP/lint"
           "$RUNNER_TEMP/lint/bin/pip" install -q "gdtoolkit==4.5.0"
-          "$RUNNER_TEMP/lint/bin/gdformat" --check scripts tests tools lab
-          "$RUNNER_TEMP/lint/bin/gdlint" scripts tests tools lab
+          "$RUNNER_TEMP/lint/bin/gdformat" --check scripts screens tests tools lab
+          "$RUNNER_TEMP/lint/bin/gdlint" scripts screens tests tools lab
 
       - name: Rules of CLAUDE.md (new code adds no violations)
         run: '"$RUNNER_TEMP/lint/bin/python" godot/tools/check_standards.py'
