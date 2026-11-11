@@ -1,0 +1,37 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_4dk6q"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_27660"]
+resource_local_to_scene = true
+shader = ExtResource("1_4dk6q")
+shader_parameter/billboard = 1
+shader_parameter/core = Vector3(1, 0.95, 0.8)
+shader_parameter/edge = Vector3(0.83, 0.65, 0.27)
+shader_parameter/shape = 0
+shader_parameter/body = 0.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_c1qsi"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b540y"]
+resource_local_to_scene = true
+shader = ExtResource("1_4dk6q")
+shader_parameter/billboard = 1
+shader_parameter/core = Vector3(1, 0.95, 0.8)
+shader_parameter/edge = Vector3(0.83, 0.65, 0.27)
+shader_parameter/shape = 2
+shader_parameter/body = 0.35
+
+[node name="Spark" type="Node3D"]
+
+[node name="Glow" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_27660")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_c1qsi")
+
+[node name="Star" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_b540y")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_c1qsi")

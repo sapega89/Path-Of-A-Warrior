@@ -1,9 +1,9 @@
 class_name SkillEffects
 extends FxRigs
-## The skills' own effects in the new art, made in code: each skill that showed only dust, the
-## same light as another skill or nothing at all gets its own. MapEffects draws them with the
-## rest (show_effects()); MapPictures.skill_effects() says when. A frame of a kind that goes
-## one way is its 8-direction * its steps + the step.
+## The skills' own effects in the new art (rigs of scenes/world/effects): each skill that showed
+## only dust, the same light as another skill or nothing at all gets its own. MapEffects draws them
+## with the rest (show_effects()); MapPictures.skill_effects() says when. A frame of a kind that
+## goes one way is its 8-direction * its steps + the step.
 ##   whirlwind:  Whirlwind Sabre, a ring of steel round him (4 steps, one way)
 ##   smash:      Storm Sabre, the blow from above and the shock where it lands (3, one way)
 ##   thrust:     Thunder Sabre, each thrust a crack of lightning ahead (8, one way)
@@ -29,10 +29,7 @@ const SKILL_FRAMES := {
 	"blaze": 8,
 }
 
-## Colours (sRGB): [core, edge].
-const RAGE := [Color(1.0, 0.8, 0.55), Color(0.82, 0.16, 0.08)]
-const SPELL := [Color(0.96, 0.9, 1.0), Color(0.56, 0.4, 0.9)]
-## Flames round one in Fury and in Ring of Fire.
+## Flames round one in Fury and in Ring of Fire (as many as their scenes hold).
 const FURY_FLAMES := 5
 const RING_FLAMES := 8
 
@@ -40,22 +37,6 @@ const RING_FLAMES := 8
 ## Vector2i(8-direction, step) of a frame of a kind that goes one way.
 static func _way(frame: int, steps: int) -> Vector2i:
 	return Vector2i(frame / steps, frame % steps)
-
-
-## A ribbon of light like a blade's trail (ArtEffects.slash): arc degrees from start (0 in
-## front), its head at progress.
-func _sweep(
-	rig: Node3D, part: String, colours: Array, arc: Vector2, radius: float, height: float
-) -> MeshInstance3D:
-	var r := ArtEffects.slash(rig, Vector3.ZERO, arc.x, arc.y, radius, height, 0.0)
-	r.name = part
-	var m := ShaderMaterial.new()
-	m.shader = LIGHT
-	m.set_shader_parameter("shape", Shape.SWEEP)
-	m.set_shader_parameter("body", 0.55)
-	_colours(m, colours)
-	r.material_override = m
-	return r
 
 
 ## The rig stands where the skill is used, turned the way it goes.
@@ -78,11 +59,6 @@ static func _flames(rig: Node3D, n: int, r: float, h: float, p: Vector2) -> void
 # ---- blades: Whirlwind Sabre, Storm Sabre, Thunder Sabre ---------------------------------
 
 
-func _build_whirlwind(rig: Node3D) -> void:
-	_sweep(rig, "Ring", STEEL, Vector2(0.0, 360.0), 1.5, 0.95)
-	_light(rig, "Gust", Shape.RING, Turn.PLACED, DUST, 0.3)
-
-
 ## The blade goes round him once, and the wind of it spreads on the ground.
 func _draw_whirlwind(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
 	var w := _way(frame, 4)
@@ -94,16 +70,6 @@ func _draw_whirlwind(rig: Node3D, frame: int, p: Vector2, t: float, _behind: boo
 		rig.get_node("Gust"),
 		{"radius": 0.72, "width": 0.12, "count": 0.0, "strength": 0.7 - 0.6 * ph}
 	)
-
-
-func _build_smash(rig: Node3D) -> void:
-	var arc := _sweep(rig, "Arc", WARM, Vector2(120.0, -170.0), 1.6, 0.0)
-	arc.rotation = Vector3(0.0, 0.0, PI / 2.0)
-	arc.position = Vector3(0.0, 1.1, 0.0)
-	_light(rig, "Shock", Shape.RING, Turn.PLACED, WARM, 0.4)
-	_light(rig, "Crack", Shape.STAR, Turn.PLACED, WARM, 0.3)
-	for i in 2:
-		_puff(rig, "Dust%d" % i, Turn.FACING, DUST)
 
 
 ## The blade comes down from above in front of him, and where it lands the ground cracks
@@ -128,13 +94,6 @@ func _draw_smash(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 		_tune(dust, {"strength": 0.8 * sin(PI * hit), "seed": _seed(p, i)})
 
 
-func _build_thrust(rig: Node3D) -> void:
-	_light(rig, "Bolt", Shape.BOLT, Turn.AXIS, STORM, 0.3)
-	_light(rig, "Fork", Shape.BOLT, Turn.AXIS, STORM, 0.3)
-	_light(rig, "Tip", Shape.GLOW, Turn.FACING, STORM)
-	_light(rig, "Crackle", Shape.STAR, Turn.FACING, STORM, 0.35)
-
-
 ## Each thrust cracks off the point of the blade like thunder, left and right of him by turns.
 func _draw_thrust(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
 	var w := _way(frame, 8)
@@ -157,13 +116,6 @@ func _draw_thrust(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) 
 # ---- healing and blessings: Living Water, Fury, Charm ------------------------------------
 
 
-func _build_spring(rig: Node3D) -> void:
-	_light(rig, "Spiral", Shape.SPIRAL, Turn.PLACED, WATER, 0.35, true)
-	_light(rig, "Wall", Shape.SPLASH, Turn.PLACED, WATER, 0.5, true)
-	_light(rig, "Drops", Shape.MOTES, Turn.PLACED, WATER, 0.6, true)
-	_light(rig, "Ground", Shape.GLOW, Turn.PLACED, WATER)
-
-
 ## Water wells up round his feet and winds up round him.
 func _draw_spring(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
 	var ph := _run(frame, t, 9)
@@ -179,13 +131,6 @@ func _draw_spring(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) 
 	_tune(rig.get_node("Ground"), {"strength": 0.6 * swell})
 
 
-func _build_fury(rig: Node3D) -> void:
-	for i in FURY_FLAMES:
-		_light(rig, "Flame%d" % i, Shape.FLAME, Turn.UPRIGHT, RAGE, 0.55)
-	_light(rig, "Ring", Shape.RING, Turn.PLACED, RAGE, 0.4)
-	_light(rig, "Ground", Shape.GLOW, Turn.PLACED, RAGE)
-
-
 ## Flames of rage flare up round him and a red ring throbs on the ground.
 func _draw_fury(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
 	var ph := _run(frame, t, 6)
@@ -199,13 +144,6 @@ func _draw_fury(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) ->
 	)
 	_flat(rig.get_node("Ground"), Vector3.ZERO, 2.3)
 	_tune(rig.get_node("Ground"), {"strength": 0.6 * swell})
-
-
-func _build_charm(rig: Node3D) -> void:
-	_light(rig, "Runes", Shape.RING, Turn.PLACED, SPELL, 0.4)
-	_light(rig, "Spiral", Shape.SPIRAL, Turn.PLACED, SPELL, 0.3, true)
-	_light(rig, "Motes", Shape.MOTES, Turn.PLACED, SPELL, 0.6, true)
-	_light(rig, "Ground", Shape.GLOW, Turn.PLACED, SPELL)
 
 
 ## A ring of runes turns on the ground and a violet light winds up round him.
@@ -229,12 +167,6 @@ func _draw_charm(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 # ---- water: Dnipro Wave, Flood -----------------------------------------------------------
 
 
-func _build_surge(rig: Node3D) -> void:
-	_sweep(rig, "Wave", WATER, Vector2(-75.0, 150.0), 1.7, 0.6)
-	_light(rig, "Splash", Shape.SPLASH, Turn.PLACED, WATER, 0.5, true)
-	_light(rig, "Ground", Shape.GLOW, Turn.PLACED, WATER)
-
-
 ## Each blow sweeps a wave of water before him that breaks in a splash.
 func _draw_surge(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
 	var w := _way(frame, 4)
@@ -246,12 +178,6 @@ func _draw_surge(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 	_tune(rig.get_node("Splash"), {"count": 14.0, "seed": _seed(p, w.y), "strength": 1.0 - ph})
 	_flat(rig.get_node("Ground"), front, 1.9)
 	_tune(rig.get_node("Ground"), {"strength": 0.5 * (1.0 - ph)})
-
-
-func _build_flood(rig: Node3D) -> void:
-	for i in 3:
-		_light(rig, "Wave%d" % i, Shape.SPLASH, Turn.PLACED, WATER, 0.5, true)
-	_light(rig, "Ground", Shape.GLOW, Turn.PLACED, WATER)
 
 
 ## Three waves, one after another, run ahead of him and break.
@@ -274,13 +200,6 @@ func _draw_flood(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 # ---- fire: Ring of Fire, Fire Whirl, Steppe Blaze ----------------------------------------
 
 
-func _build_fire_ring(rig: Node3D) -> void:
-	for i in RING_FLAMES:
-		_light(rig, "Flame%d" % i, Shape.FLAME, Turn.UPRIGHT, HOT, 0.55)
-	_light(rig, "Ring", Shape.RING, Turn.PLACED, HOT, 0.4)
-	_light(rig, "Ground", Shape.GLOW, Turn.PLACED, HOT)
-
-
 ## Flames burst out of the ground round him and spread outwards in a ring.
 func _draw_fire_ring(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
 	var ph := _run(frame, t, 6)
@@ -297,12 +216,6 @@ func _draw_fire_ring(rig: Node3D, frame: int, p: Vector2, t: float, _behind: boo
 	_tune(rig.get_node("Ground"), {"strength": 0.5 * swell})
 
 
-func _build_fire_whirl(rig: Node3D) -> void:
-	_light(rig, "Spiral", Shape.SPIRAL, Turn.PLACED, HOT, 0.45, true)
-	_light(rig, "Inner", Shape.SPIRAL, Turn.PLACED, HOT, 0.45, true)
-	_light(rig, "Ground", Shape.GLOW, Turn.PLACED, HOT)
-
-
 ## Fire winds up round him in a whirl, faster and faster.
 func _draw_fire_whirl(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -> void:
 	var ph := _run(frame, t, 6)
@@ -314,12 +227,6 @@ func _draw_fire_whirl(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bo
 	_tune(rig.get_node("Inner"), {"count": 2.0, "progress": -ph * 3.0, "strength": 0.8 * swell})
 	_flat(rig.get_node("Ground"), Vector3.ZERO, 2.5)
 	_tune(rig.get_node("Ground"), {"strength": 0.6 * swell})
-
-
-func _build_blaze(rig: Node3D) -> void:
-	_sweep(rig, "Ring", HOT, Vector2(0.0, 360.0), 1.7, 0.5)
-	_light(rig, "Embers", Shape.MOTES, Turn.PLACED, HOT, 0.6, true)
-	_light(rig, "Scorch", Shape.RING, Turn.PLACED, HOT, 0.4)
 
 
 ## A ring of fire sweeps round him twice, scorching the ground, embers flying up.

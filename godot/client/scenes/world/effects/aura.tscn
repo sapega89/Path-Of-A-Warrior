@@ -1,0 +1,41 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_pi0i2"]
+[ext_resource type="Script" path="res://scripts/world/open_cylinder_mesh.gd" id="2_5y1n6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_18u5x"]
+resource_local_to_scene = true
+shader = ExtResource("1_pi0i2")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.95, 0.8)
+shader_parameter/edge = Vector3(0.83, 0.65, 0.27)
+shader_parameter/shape = 1
+shader_parameter/body = 0.4
+
+[sub_resource type="QuadMesh" id="QuadMesh_ej50f"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hieph"]
+resource_local_to_scene = true
+shader = ExtResource("1_pi0i2")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.95, 0.8)
+shader_parameter/edge = Vector3(0.83, 0.65, 0.27)
+shader_parameter/shape = 9
+shader_parameter/body = 0.6
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_j7qdg"]
+script = ExtResource("2_5y1n6")
+
+[node name="Aura" type="Node3D"]
+
+[node name="Ring" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_18u5x")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_ej50f")
+
+[node name="Light" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_hieph")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("PrimitiveMesh_j7qdg")

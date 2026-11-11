@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/slash.gdshader" id="1_i5p06"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_hl3rw"]
+resource_local_to_scene = true
+shader = ExtResource("1_i5p06")
+
+[node name="Slash" type="MeshInstance3D"]
+material_override = SubResource("ShaderMaterial_hl3rw")
+cast_shadow = 0
