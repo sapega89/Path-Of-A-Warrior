@@ -90,7 +90,10 @@ hero's path, `preload` of a script, files over 600 lines, functions over 50 line
   run adds no new `ERROR` lines to the log; in `godot/client`:
   `gdformat --check scripts screens tests tools lab` and `gdlint scripts screens tests tools lab`;
   in the repo root: `python godot/tools/check_standards.py`
-- `.uid` files are not committed
+- `.uid` and `.import` files are committed, as Godot asks: they keep the ids that scenes refer to
+  and the import settings of each asset. After adding a script, a shader or an asset, run the
+  import (`godot --headless --path godot/client --import`) and commit the files it makes; CI
+  fails when the import makes one that is not committed
 - CI screenshots (`tools/shots.tscn`) must not change unless the change is meant to change them
 - Small PRs: one screen group or one module at a time; do not mix a refactor with a new feature
 - Behaviour changes the player asked for are documented in `godot/README.md`

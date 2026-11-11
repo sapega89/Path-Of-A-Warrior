@@ -4,9 +4,6 @@
 export_presets.cfg
 !godot/client/export_presets.cfg
 godot/build/
-# made by the editor and the import on every machine; not kept in the repository
-*.uid
-*.import
 
 # Godot import cache (optional, uncomment if too large)
 # .godot/imported/
