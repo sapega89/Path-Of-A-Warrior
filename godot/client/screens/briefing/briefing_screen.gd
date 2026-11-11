@@ -9,7 +9,6 @@ extends BaseScreen
 ## Params: lord, mission, line (the advice's line of talk.json "briefing", the hero answers
 ## with the next one), profile_path.
 
-const CHARS_PER_SECOND := 40.0
 ## Ticks a typed line stays before the next one, and after a press that showed it whole.
 const WAIT_TICKS := 15
 const WAIT_AFTER_PRESS := 3
@@ -18,12 +17,13 @@ var lord_id := 0
 var mission := 0
 var lines: Array = []  # the advice and the hero's answer, "[Speaker] text"
 var line_at := 0
-var typing: Label  # the box being typed
+var typing: Label:  # the box being typed
+	get:
+		return dialogue.typing
 
-var _typed := 0.0
-var _wait := -1.0  # seconds before the next line once this one is shown, -1 while typing
 var _done := false
 
+@onready var dialogue: Dialogue = %Dialogue
 @onready var lord_portrait: TextureRect = %Dialogue.speaker_portrait
 @onready var hero_portrait: TextureRect = %Dialogue.hero_portrait
 @onready var lord_says: Label = %Dialogue.speaker_says
@@ -43,6 +43,7 @@ func _ready() -> void:
 	lord_portrait.texture = Pictures.portrait(int(m.get("portrait", 0)))
 	hero_portrait.texture = Pictures.portrait(Stories.HERO_PORTRAIT + int(profile.head))
 
+	dialogue.line_done.connect(next_line)
 	_show_line()
 
 
@@ -61,22 +62,14 @@ static func talk(line: int, speaker: String, hero: String) -> Array:
 
 ## Types lines[line_at] into its box: the advice at the top, the answer at the bottom.
 func _show_line() -> void:
-	typing = lord_says if line_at == 0 else hero_says
-	typing.text = str(lines[line_at])
-	typing.visible_characters = 0
-	_typed = 0.0
-	_wait = -1.0
+	var box := lord_says if line_at == 0 else hero_says
+	dialogue.say(box, str(lines[line_at]), WAIT_TICKS * Settings.tick_seconds())
 
 
 ## Attack / accept / a click: the whole line, or the next one at once.
 func press() -> void:
-	if _done:
-		return
-	if _wait < 0.0:
-		typing.visible_characters = -1
-		_wait = WAIT_AFTER_PRESS * Settings.tick_seconds()
-	else:
-		next_line()
+	if not _done:
+		dialogue.press(WAIT_AFTER_PRESS * Settings.tick_seconds())
 
 
 func next_line() -> void:
@@ -92,23 +85,8 @@ func finish() -> void:
 	if _done:
 		return
 	_done = true
-	set_process(false)
+	dialogue.stop()
 	Router.replace("mission", {"lord": lord_id, "mission": mission})
-
-
-func _process(delta: float) -> void:
-	if _done:
-		return
-	if _wait >= 0.0:
-		_wait -= delta
-		if _wait < 0.0:
-			next_line()
-		return
-	_typed += delta * CHARS_PER_SECOND
-	typing.visible_characters = mini(int(_typed), typing.text.length())
-	if typing.visible_characters >= typing.text.length():
-		typing.visible_characters = -1
-		_wait = WAIT_TICKS * Settings.tick_seconds()
 
 
 func go_back() -> void:
