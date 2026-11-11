@@ -63,13 +63,21 @@ func test_skip_corner_on_the_map() -> void:
 	check(not screen._skip, "once")
 
 	MapTalks.start_general_talk(screen.sim, 5, 0)
-	Input.action_press("skip")
+	_action("skip", true)
 	screen._process(screen.tick)
-	Input.action_release("skip")
+	_action("skip", false)
 	screen._process(0.0)
 	check(screen.sim.talk.is_empty(), "the skip key")
 	screen.free()
 	Router.params = old
+
+
+func _action(action: String, pressed: bool) -> void:
+	var ev := InputEventAction.new()
+	ev.action = action
+	ev.pressed = pressed
+	Input.parse_input_event(ev)
+	Input.flush_buffered_events()
 
 
 func _pad_back(pressed: bool) -> void:

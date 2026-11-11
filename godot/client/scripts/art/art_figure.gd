@@ -3,6 +3,9 @@ extends Node3D
 ## A person in the new art: the body from characters/<kind>.glb with its weapons, the
 ## shared clips, the painted material and the ink outline. The model faces +Z.
 
+## A change of clip blends over this many seconds.
+const BLEND := 0.08
+
 var kind := ""
 var body: Node3D
 var skeleton: Skeleton3D
@@ -12,11 +15,9 @@ var blades: ShaderMaterial  # the weapons: no mud on them
 ## The clip and play mode shown now (act()).
 var shown_clip := ""
 var shown_mode := ""
+
 var _hold_until := 0.0
 var _speed := 1.0
-
-## A change of clip blends over this many seconds.
-const BLEND := 0.08
 
 
 func setup(figure_kind: String) -> Node3D:

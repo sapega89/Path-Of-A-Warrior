@@ -200,7 +200,7 @@ static func world_gamma(brightness: float) -> float:
 	return pow(2.0, (0.5 - brightness) * GAMMA_RANGE)
 
 
-## A volume (0..1) as its bus's dB, by ear as in pyport: the amplitude is the volume squared,
+## A volume (0..1) as its bus's dB, by ear: the amplitude is the volume squared,
 ## so a quarter is -24 dB, a half -12 dB, three quarters -5 dB.
 static func volume_db(volume: float) -> float:
 	return linear_to_db(maxf(volume * volume, 0.000001))

@@ -6,15 +6,15 @@ extends Control
 ## and HP) at the top right, and the panel at the bottom: a dark plate with an iron rim and a
 ## riveted iron bar, the HP orb (left, blood-red) and the MP orb (right, blue) that empty from
 ## the top as HP or MP goes, with the value in the middle, and the two potions on the potion
-## keys. Above the panel the skill bar (as in pyport): the five belt slots (keys Z X C V B) on
+## keys. Above the panel the skill bar: the five belt slots (keys Z X C V B) on
 ## the left with their counts, the five skills (keys 1-5) on the right, grey when not learned
 ## or without the MP; the slot in use has a light rim. A click on a slot uses it. Each slot is
 ## labelled with its key or button for the device just used (scripts/ui/glyphs.gd: Z or the
 ## d-pad up, 1 or X, a PlayStation shape), and not on touch, where the slots are tapped. With the
 ## bar the panel does not show the two potions (the belt shows all five). In the bottom-left corner
 ## AUTO: brass while the auto-hunt is on, grey while off; a click toggles it. While someone talks
-## on the map that corner is SKIP (pyport's left soft key): a click skips the talk. In the
-## bottom-right corner PAUSE (pyport's soft key): a click pauses the game.
+## on the map that corner is SKIP: a click skips the talk. In the
+## bottom-right corner PAUSE: a click pauses the game.
 ## The icons of the potions and the skills are the new art's (ItemSlot.icon), drawn smooth on
 ## a layer of their own over the plates, the counts and the keys on a layer over them.
 
@@ -30,20 +30,19 @@ const BAR_H := 24
 const AUTO_W := 48  # the AUTO corner
 const AUTO_H := 17
 const PAUSE_W := 48  # the PAUSE corner
-
-var sim: MapSim
-var kills_shown := 0  # counts up to the kills one a tick
-
 ## The colours of the orbs: [top of the liquid, its bottom].
 const HP_LIQUID := [Color("bf3a2e"), Color("4a0f0c")]
 const MP_LIQUID := [Color("4f78b0"), Color("101d36")]
 const PLATE := Color(0.07, 0.066, 0.062, 0.92)
 
-var _icons: Control  # the icons, drawn smooth
-var _labels: Control  # the counts and the keys over them
+var sim: MapSim
+var kills_shown := 0  # counts up to the kills one a tick
 var show_bar := true
 var auto_on := false
 var auto_allowed := true  # false on hard: no AUTO corner (screens/mission/mission_screen.gd)
+
+var _icons: Control  # the icons, drawn smooth
+var _labels: Control  # the counts and the keys over them
 
 
 func _ready() -> void:

@@ -15,12 +15,7 @@ const DONE_MARK := "  ✓"
 
 var campaign := Campaign.new()
 var profile: Profile
-@onready var list: VBoxContainer = %List
-@onready var heading: Label = %Heading
-@onready var scroll: ScrollContainer = %Scroll
-@onready var ok: Button = %Ok  # under the description: accept the mission?
 var ask: AskDialog
-@onready var column: Control = %Center  # the list, the missions and the description
 var world_view: Control  # the world map (level 1)
 ## 1 the world map at the hero's place, 2 missions of a lord, 3 the description of a mission
 var level := 1
@@ -31,10 +26,16 @@ var path: String = Profile.PATH
 var from_camp := false
 var rng := RandomNumberGenerator.new()
 
+@onready var list: VBoxContainer = %List
+@onready var heading: Label = %Heading
+@onready var scroll: ScrollContainer = %Scroll
+@onready var ok: Button = %Ok  # under the description: accept the mission?
+@onready var column: Control = %Center  # the list, the missions and the description
+
 
 func _ready() -> void:
 	var p: Dictionary = Router.params
-	path = str(p.get("profile_path", Profile.PATH))
+	path = profile_path()
 	profile = Profile.load_or_new(path)
 	if p.has("seed"):
 		rng.seed = int(p.seed)

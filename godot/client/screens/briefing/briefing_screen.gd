@@ -18,22 +18,24 @@ var lord_id := 0
 var mission := 0
 var lines: Array = []  # the advice and the hero's answer, "[Speaker] text"
 var line_at := 0
+var typing: Label  # the box being typed
+
+var _typed := 0.0
+var _wait := -1.0  # seconds before the next line once this one is shown, -1 while typing
+var _done := false
+
 @onready var lord_portrait: TextureRect = %Dialogue.speaker_portrait
 @onready var hero_portrait: TextureRect = %Dialogue.hero_portrait
 @onready var lord_says: Label = %Dialogue.speaker_says
 @onready var hero_says: Label = %Dialogue.hero_says
-var typing: Label  # the box being typed
 @onready var skip: Button = %Skip
-var _typed := 0.0
-var _wait := -1.0  # seconds before the next line once this one is shown, -1 while typing
-var _done := false
 
 
 func _ready() -> void:
 	var p: Dictionary = Router.params
 	lord_id = int(p.get("lord", 0))
 	mission = int(p.get("mission", 0))
-	var profile := Profile.load_or_new(str(p.get("profile_path", Profile.PATH)))
+	var profile := Profile.load_or_new(profile_path())
 	var ms := Campaign.new().lord_missions(lord_id)
 	var m: Dictionary = ms[mission] if mission >= 0 and mission < ms.size() else {}
 	lines = talk(int(p.get("line", 0)), tr(str(m.get("name", ""))), profile.hero_name)
