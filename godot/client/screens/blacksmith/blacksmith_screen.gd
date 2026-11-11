@@ -1,6 +1,6 @@
 extends BaseScreen
 ## Blacksmith: Buy, Sell, Enchant and Combine, each a page of things (the shop screen).
-## Combine with fewer than 3 things in the Inventory only says so, as pyport's popup 39.
+## Combine with fewer than 3 things in the Inventory only says so.
 
 ## Things the Inventory needs for Combine to open.
 const COMBINE_AT_LEAST := 3

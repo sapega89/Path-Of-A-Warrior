@@ -7,6 +7,8 @@ extends RefCounted
 ## potions picked up and used, the friendship of the talks and, when won, the mission's gold
 ## and exp.
 
+enum Stat { HP, MP, ATTACK, DEFENSE }
+
 const PATH := "user://hero.json"
 const CAMPAIGN_PATH := "res://data/campaign.json"
 ## A new hero: HP, MP, attack, defence, and the free stat points.
@@ -42,7 +44,8 @@ const RESPEC_ITEMS := [434, 435, 436, 437]
 ## The briefing's advice: 28 pairs of lines (talk.json "briefing"), the first 10 in turn.
 const BRIEFING_PAIRS := 28
 const BRIEFINGS_IN_TURN := 10
-enum Stat { HP, MP, ATTACK, DEFENSE }
+
+static var _exp_table: Array = []
 
 var hero_name := "Hero"
 var head := 0  # the hero's face (0..3): his portrait and his look on the map
@@ -78,10 +81,8 @@ var reward_item := 0  # what the last ending gave (not saved)
 var opened_lord := 0  # the lord the last ending opened (not saved)
 ## A mission saved on its map (pause menu Save, once the room is cleared): lord, mission,
 ## the room's middle tile (x, y), HP, MP, rooms visited, its exp so far, kills and ticks of
-## play. Continue goes back there. Any other save forgets it (as pyport's save flag).
+## play. Continue goes back there. Any other save forgets it.
 var on_map := {}
-
-static var _exp_table: Array = []
 
 
 func _init() -> void:

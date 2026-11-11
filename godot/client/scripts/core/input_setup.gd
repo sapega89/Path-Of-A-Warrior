@@ -4,24 +4,24 @@ extends Node
 ## Game code reads only actions ("attack", "skill_1"), never keys, so the
 ## same code works with a keyboard, a gamepad and the touch buttons.
 ## Menus use Godot's built-in ui_* actions, with MENU_KEYS and MENU_PAD (A: OK, B: BACK) added.
-## As in pyport: 1-5 (or U I O P K) the five skills, Z X C V B the five belt slots, * and #
+## 1-5 (or U I O P K) the five skills, Z X C V B the five belt slots, * and #
 ## (the numeric keypad, RT and L3 of a pad) the two potion keys. On a pad the hero moves with
 ## the left stick, and the d-pad up / right / down / left uses the belt slots Z X C V, a press
 ## of the right stick (R3) the fifth, B (Andrey's choice: the belt on the d-pad, as the HUD shows
 ## it; in the menus the d-pad still moves the cursor).
-## Tab or F: auto-hunt on / off. Q or F1: SKIP (pyport's left soft key), the talk on the map,
+## Tab or F: auto-hunt on / off. Q or F1: SKIP, the talk on the map,
 ## the briefing and the story skipped. On a pad both are Back (View, Select), as the HUD's
 ## bottom-left corner, which is AUTO and, while someone talks, SKIP (the mission screen tells
-## the two apart). The numeric keypad is the phone's, as in pyport: 8 2 4 6 move, 5 attacks
+## the two apart). The numeric keypad is the phone's: 8 2 4 6 move, 5 attacks
 ## (Enter too), 1 3 7 9 0 are the five skills.
 ##
-## Key hints, as pyport's: `device` is what the last key came from ("keys", "pad"; "touch" on a
+## Key hints: `device` is what the last key came from ("keys", "pad"; "touch" on a
 ## phone or after a touch; the mouse changes nothing), and `pad_brand` which maker's pad it was
 ## (scripts/ui/glyphs.gd). hint(key) is the text `key` + "_" + device when the strings have one,
 ## `key` otherwise, with every {action} in it named for the device: "{ui_accept}: OK" is
 ## "Enter: OK" after the keyboard and "A: OK" after an Xbox pad.
 ##
-## The right mouse button is BACK (ui_cancel), as pyport's, on every screen and over any control,
+## The right mouse button is BACK (ui_cancel) on every screen and over any control,
 ## except where a node of the group RIGHT_BUTTON uses it itself (the mission's map attacks with
 ## it while the hero plays). The phone's own Back button is BACK too (the game does not quit on
 ## it: application/config/quit_on_go_back is off).
@@ -29,6 +29,8 @@ extends Node
 ## The player can change the game actions' keys and pad buttons (Settings -> Controls,
 ## key_bindings.gd); what they changed is kept in Settings "controls" and bound here at the start
 ## and on each change.
+
+signal device_changed(device: String)
 
 const KEYS := {
 	"move_left": [KEY_A, KEY_LEFT, KEY_KP_4],
@@ -52,7 +54,7 @@ const KEYS := {
 	"auto": [KEY_TAB, KEY_F],
 	"skip": [KEY_Q, KEY_F1],
 }
-## The menus' own keys besides Godot's (the arrows, Enter, Space, Esc), as pyport's: WASD and the
+## The menus' own keys besides Godot's (the arrows, Enter, Space, Esc): WASD and the
 ## numeric keypad (8 2 4 6, 5 OK) move and choose, J is OK too. Backspace is BACK (see _input).
 const MENU_KEYS := {
 	"ui_up": [KEY_W, KEY_KP_8],
@@ -111,8 +113,6 @@ const PAD_MOTION := 0.5
 ## Nodes that use the right mouse button themselves: uses_right_button() says when.
 const RIGHT_BUTTON := "right_button"
 
-signal device_changed(device: String)
-
 var device := "touch" if OS.has_feature("mobile") else "keys"
 var pad_brand := "generic"
 
@@ -155,7 +155,7 @@ func right_button_taken() -> bool:
 	return false
 
 
-## Backspace pressed: BACK, as pyport's (Esc is BACK through ui_cancel itself).
+## Backspace pressed: BACK (Esc is BACK through ui_cancel itself).
 static func is_back_key(event: InputEvent) -> bool:
 	return (
 		event is InputEventKey

@@ -1,10 +1,11 @@
 class_name AssignItemsScreen
 extends BaseScreen
 ## Assign Items: the hero's gold and the five potion slots of the belt, each with its key above
-## it (Z X C V B, used in a mission) and "Keys Z X C V B" under them, as in pyport with the skill
-## bar. The keypad's * and / still put the chosen slot on the old potion keys (no buttons or
+## it (Z X C V B, used in a mission) and "Keys Z X C V B" under them, as on the skill bar.
+## The keypad's * and / still put the chosen slot on the old potion keys (no buttons or
 ## marks for them). Saved at once. Opened from a mission's pause menu (sim set) it changes that
 ## mission's slots and saves nothing; close goes back there.
+
 const SLOTS := 5
 
 var profile: Profile
@@ -12,10 +13,11 @@ var path: String = Profile.PATH
 var slot := 0
 var slots: Array[Button] = []
 var marks: Array[Label] = []
-@onready var gold: Label = %Gold.get_node("Value")
-@onready var info: Label = %Info
 var sim: MapSim = null  # a mission's: its slots and keys are the ones changed
 var close := Callable()  # set by the pause menu: what Back does instead of Router.back()
+
+@onready var gold: Label = %Gold.get_node("Value")
+@onready var info: Label = %Info
 
 
 func _ready() -> void:

@@ -1,6 +1,6 @@
 class_name Autopilot
 extends RefCounted
-## Auto-hunt on a mission's map (as pyport's autopilot.py; Tab, F or a pad's Back, or a click on
+## Auto-hunt on a mission's map (Tab, F or a pad's Back, or a click on
 ## AUTO in the bottom-left corner). It plays like a player: every tick it may hold a direction
 ## and press one key (attack, a skill key, a belt slot), so the game's rules stay the same:
 ##   - potions: an HP potion below 30 % HP when no heal skill can be cast, an MP potion when the

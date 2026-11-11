@@ -8,6 +8,10 @@ extends RefCounted
 ## its ticks are never changed. Every effect can be switched off (`on`, use_settings()) and
 ## every number tuned (`p`, the lab's panel).
 
+const HIT_SOUNDS := [3, 4, 15, 16]
+const WHITE := Color(1.0, 1.0, 1.0)
+const HURT := Color(1.0, 0.35, 0.3)  # the hero's flash when he is hit
+
 ## The effects, each on or off.
 var on := {
 	"hitstop": true,
@@ -73,11 +77,6 @@ var p := {
 	"rumble_object": [0.2, 0.0, 0.05],
 	"rumble_scale": 1.0,
 }
-
-const HIT_SOUNDS := [3, 4, 15, 16]
-const WHITE := Color(1.0, 1.0, 1.0)
-const HURT := Color(1.0, 0.35, 0.3)  # the hero's flash when he is hit
-
 ## The picture stands still while this is above 0 (seconds of real time).
 var freeze := 0.0
 var trauma := 0.0
@@ -87,10 +86,10 @@ var flashes := {}
 var recoils := {}
 ## actor -> {t, total, dir: Vector2, px, hop}
 var launches := {}
-
 ## The rumble this tick's strongest hit asks for, [weak, strong, seconds] (empty: none);
 ## rumble() plays it.
 var rumble_wanted: Array = []
+
 var _budget := 0.2
 var _time := 0.0
 var _sound_pick := RandomNumberGenerator.new()
