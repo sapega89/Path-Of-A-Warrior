@@ -2,8 +2,9 @@ class_name ShopScreen
 extends BaseScreen
 ## A page of the Blacksmith (Router.params "mode"): the hero's gold over a grid of things.
 ## Buy: the shop's potions, scrolls and gears. Sell: the quick slots' potions, then the
-## backpack, for half the price. Enchant: the backpack, then what the hero wears; enchanting
-## costs gold, asks first, and can fail or lose the thing. Combine: three things of the
+## backpack, for half the price. Enchant: what the hero wears, first and under its own title,
+## then the backpack under its own; enchanting costs gold, asks first, and can fail or lose the
+## thing. Combine: three things of the
 ## backpack chosen (a gold border) make one new thing, for a fee, or fail and maybe lose
 ## one of them. Every change is saved at once. After Yes to Enchant or Combine a sparkle plays
 ## on the thing (on each of the three) for five steps of 120 ms, then comes the outcome; it is
@@ -39,13 +40,16 @@ func _ready() -> void:
 	profile = Profile.load_or_new(path)
 	profile.compact_backpack()
 	%Heading.text = "blacksmith." + mode
-	var grid: GridContainer = %Things
+	var worn := Items.EQUIPPED if mode == "enchant" else 0  # the first cells: what is worn
+	for title: Control in [%WornTitle, %Worn, %BackpackTitle]:
+		title.visible = worn > 0
 	for i in cell_count():
 		var b := ItemSlot.button("Cell%d" % i)
 		var at := i
 		b.pressed.connect(func(): press_cell(at))
 		b.focus_entered.connect(func(): _show_info(at))
 		b.mouse_entered.connect(func(): _show_info(at))
+		var grid: GridContainer = %Worn if i < worn else %Things
 		grid.add_child(b)
 		cells.append(b)
 	set_process(false)
@@ -61,7 +65,7 @@ func cell_count() -> int:
 		"sell":
 			return QUICK + Items.BACKPACK
 		"enchant":
-			return Items.BACKPACK + Items.EQUIPPED
+			return Items.EQUIPPED + Items.BACKPACK
 		"combine":
 			return Items.BACKPACK
 	return profile.shop.size()
@@ -77,9 +81,9 @@ func item_at(i: int) -> Dictionary:
 				return it
 			return profile.backpack[i - QUICK]
 		"enchant":
-			if i < Items.BACKPACK:
-				return profile.backpack[i]
-			return profile.equipped[i - Items.BACKPACK]
+			if i < Items.EQUIPPED:
+				return profile.equipped[i]
+			return profile.backpack[i - Items.EQUIPPED]
 		"combine":
 			return profile.backpack[i]
 	return profile.shop[i]
