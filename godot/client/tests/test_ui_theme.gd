@@ -18,13 +18,9 @@ func test_the_fonts_of_the_new_art() -> void:
 	var t: Theme = UiTheme.theme(UiTheme.THEME)
 	eq(t.default_font, UiTheme.font("text"), "the text")
 	eq(t.get_font("font", "Button"), UiTheme.font("bold"), "the buttons bold")
-	var h := UiTheme.heading("gear.title", 44)
-	check(h is Label, "a heading is a label")
-	eq(h.theme_type_variation, &"Heading", "of the theme's headings")
+	eq(t.get_type_variation_base(&"Heading"), &"Label", "a heading is a label")
 	eq(t.get_font("font", "Heading"), UiTheme.font("title"), "in Kurale")
 	eq(t.get_color("font_color", "Heading"), UiTheme.ACCENT, "brass")
-	eq(h.get_theme_font_size("font_size"), 44, "its own size")
-	h.free()
 
 
 func test_plaques_and_panels() -> void:
@@ -72,7 +68,8 @@ func test_the_backdrop_and_the_coin() -> void:
 	var coin := UiTheme.coin()
 	eq(coin.get_size(), Vector2(128, 128), "the coin")
 	check(coin.get_image().has_mipmaps(), "smooth when small")
-	var row := UiTheme.gold_row("Gold")
+	var row: GoldRow = load("res://scenes/ui/gold_row.tscn").instantiate()
+	root.add_child(row)
 	eq((row.get_child(0) as TextureRect).texture, coin, "the purse shows it")
 	check(row.get_node("Value") is Label, "and the gold")
 	row.free()
@@ -118,6 +115,11 @@ func test_the_hero_on_the_gear_page() -> void:
 	var view: SubViewport = gear.get_node("HeroView")
 	check(view.own_world_3d and view.transparent_bg, "in a world of its own, on the panel")
 	eq(gear.ghosts.size(), Items.EQUIPPED, "a picture for each place")
+	eq(
+		[gear.ghosts[0].name, gear.ghosts[0].mouse_filter, gear.ghosts[0].offset_left],
+		[&"Ghost", Control.MOUSE_FILTER_IGNORE, 8.0],
+		"faint, inside its place, clicks pass (place_ghost.tscn)"
+	)
 	for i in Items.EQUIPPED:
 		check(gear.ghosts[i].texture != null, "place %d: what goes there" % i)
 		eq(gear.ghosts[i].visible, gear.places[i].icon == null, "place %d: shown when empty" % i)

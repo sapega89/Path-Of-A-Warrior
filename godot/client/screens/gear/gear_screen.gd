@@ -11,6 +11,8 @@ const BOARD := Vector2(158, 162)  # the panel, in grid pixels
 ## The places around the middle of the panel, in grid pixels (top-left of the 28 px icon).
 const PLACE_DX := [-77, -77, -77, -33, 3, 47, 47, 47, -15]
 const PLACE_DY := [21, -15, -51, -79, -79, -51, -15, 21, 49]
+## The faint picture of what goes in an empty place.
+const GHOST_SCENE := preload("res://screens/gear/place_ghost.tscn")
 
 var profile: Profile
 var path: String = Profile.PATH
@@ -30,15 +32,8 @@ func _ready() -> void:
 		var b := ItemSlot.button("Place%d" % i)
 		b.position = mid + Vector2(PLACE_DX[i] - 1, PLACE_DY[i] - 1) * SCALE - Vector2(3, 3)
 		b.size = b.custom_minimum_size
-		var ghost := TextureRect.new()
-		ghost.name = "Ghost"
+		var ghost: TextureRect = GHOST_SCENE.instantiate()
 		ghost.texture = ItemSlot.item_icon(_sample(i))
-		ghost.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		ghost.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		ghost.modulate = Color(0.55, 0.6, 0.72, 0.28)
-		ghost.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		ghost.set_anchors_preset(Control.PRESET_FULL_RECT)
-		ghost.set_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 8)
 		b.add_child(ghost)
 		ghosts.append(ghost)
 		var at := i

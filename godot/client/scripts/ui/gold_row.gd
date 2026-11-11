@@ -5,6 +5,4 @@ extends HBoxContainer
 
 
 func _ready() -> void:
-	var coin := UiTheme.coin_rect()
-	add_child(coin)
-	move_child(coin, 0)
+	(%Coin as TextureRect).texture = UiTheme.coin()
