@@ -122,40 +122,12 @@ static func dir_to_hero(sim: MapSim, p: Vector2i) -> int:
 
 ## The enemy's next action, every 6 ticks while it stands or walks.
 static func choose_enemy_action(sim: MapSim, e: MapActor) -> void:
-	var i := MapGeometry.distance(sim.hero.pos, e.pos)
-	var near := 1 if i < 90 else 0
+	var dist := MapGeometry.distance(sim.hero.pos, e.pos)
 	e.frame = 0
 	var roll := sim.rng.below(1000)
 	var to_hero := dir_to_hero(sim, e.pos)
 	if e.type == MapSim.KIND_SWORDS or e.type == MapSim.KIND_SQUAD:
-		if roll < 150 + near * 300:
-			e.action = 0
-			e.dir = (to_hero + TURNS[roll & 7]) & 7
-		elif roll < 850 - near * 100:
-			if near != 0:
-				if (
-					i <= 45
-					and sim.hero.action != 9
-					and sim.hero.action != 10
-					and sim.hero.action < 12
-				):
-					e.action = 1
-					e.dir = MapGeometry.dir4(e.pos, sim.hero.pos)
-					e.facing = e.dir
-					MapHeroPlay.hero_is_hit(sim, e)
-					return
-				e.action = 0
-				e.dir = (to_hero + TURNS[roll & 7]) & 7
-			else:
-				e.action = 0
-				e.dir = (e.dir + TURNS[roll & 7]) & 7
-		else:
-			e.action = 0
-			if near != 0:
-				e.dir = roll & 7
-			else:
-				e.dir = (e.dir + TURNS[roll & 7]) & 7
-		e.facing = e.dir
+		_soldier_action(sim, e, dist, roll, to_hero)
 	elif e.type == MapSim.KIND_ARCHERS:
 		e.action = 1
 		e.think_ticks = 15
@@ -164,7 +136,7 @@ static func choose_enemy_action(sim: MapSim, e: MapActor) -> void:
 		general_pick_skill(sim, e, false)
 	elif roll < 350:
 		if (
-			i <= 60
+			dist <= 60
 			and (sim.hero.action != 9 or sim.hero.frame >= 6)
 			and sim.hero.action != 10
 			and sim.hero.action < 12
@@ -175,6 +147,31 @@ static func choose_enemy_action(sim: MapSim, e: MapActor) -> void:
 	else:
 		e.dir = to_hero
 		e.facing = to_hero
+
+
+## A swordsman (or a squad) walks about, closer to the hero when he is near (90 px), and
+## strikes him within 45 px.
+static func _soldier_action(sim: MapSim, e: MapActor, dist: int, roll: int, to_hero: int) -> void:
+	var near := 1 if dist < 90 else 0
+	e.action = 0
+	if roll < 150 + near * 300:
+		e.dir = (to_hero + TURNS[roll & 7]) & 7
+	elif roll < 850 - near * 100:
+		if near == 0:
+			e.dir = (e.dir + TURNS[roll & 7]) & 7
+		elif dist <= 45 and sim.hero.action != 9 and sim.hero.action != 10 and sim.hero.action < 12:
+			e.action = 1
+			e.dir = MapGeometry.dir4(e.pos, sim.hero.pos)
+			e.facing = e.dir
+			MapHeroPlay.hero_is_hit(sim, e)
+			return
+		else:
+			e.dir = (to_hero + TURNS[roll & 7]) & 7
+	elif near != 0:
+		e.dir = roll & 7
+	else:
+		e.dir = (e.dir + TURNS[roll & 7]) & 7
+	e.facing = e.dir
 
 
 ## A general picks one of his four skills (an empty slot is a plain strike); a heal only
@@ -215,157 +212,150 @@ static func shoot_arrow(sim: MapSim, e: MapActor) -> void:
 
 ## One tick of every enemy: animation, AI, movement and strikes.
 static func tick_enemies(sim: MapSim) -> void:
-	var dx8 := MapSim.table("dir_dx8")
-	var dy8 := MapSim.table("dir_dy8")
-	var b := -1
-	while true:
+	var b := 0
+	while b < sim.enemies.size():
+		_tick_enemy(sim, sim.enemies[b])
 		b += 1
-		if b >= sim.enemies.size():
-			break
-		var e: MapActor = sim.enemies[b]
-		e.action = mini(e.action, MapAnims.enemy_actions(e) - 1)
-		e.frame += 1
-		e.think_ticks -= 1
-		var anim := MapAnims.enemy_anim(e, e.action)
-		var anim_frame := int(anim[mini(e.frame, anim.size() - 1)])
-		if e.attack_buff_ticks > 0:
-			e.attack_buff_ticks -= 1
-			if e.attack_buff_ticks < 1:
-				e.attack_buff = 0
-		if e.defense_buff_ticks > 0:
-			e.defense_buff_ticks -= 1
-			if e.defense_buff_ticks < 1:
-				e.defense_buff = 0
-		if e.action == 3:
-			if anim_frame > MapSim.END:
-				_enemy_dies(sim, e)
-				# (the next enemy waits a tick, as in the original's loop)
-				if sim.enemies_alive < 1 and sim.waves[0] == 0 and e.type != MapSim.KIND_ARCHERS:
-					if sim.boss_fight:
-						sim.room_phase = 4
-						sim.room_phase_timer = 22
-					else:
-						sim.room_phase = 3
-						sim.room_phase_timer = 5
-			continue
+
+
+## One tick of an enemy. One that dies leaves the list, so the one after it waits a tick.
+static func _tick_enemy(sim: MapSim, e: MapActor) -> void:
+	e.action = mini(e.action, MapAnims.enemy_actions(e) - 1)
+	e.frame += 1
+	e.think_ticks -= 1
+	var anim := MapAnims.enemy_anim(e, e.action)
+	var anim_frame := int(anim[mini(e.frame, anim.size() - 1)])
+	_tick_buffs(e)
+	if e.action == 3:
 		if anim_frame > MapSim.END:
-			e.action = 3 if e.hp < 1 else 0
-			e.frame = 0
-		if e.think_ticks < 1:
-			e.alerted = 1
-			e.think_ticks = 6
-			if e.action == 0:
-				choose_enemy_action(sim, e)
-		if e.type == MapSim.KIND_ARCHERS:
-			e.dir = MapGeometry.dir4(e.pos, sim.hero.pos)
-			e.facing = e.dir
-			continue
-		var move_dir := e.facing
-		if e.alerted == 0:
-			# still outside: walks straight in, through anything
-			e.pos += Vector2i(int(dx8[move_dir]), int(dy8[move_dir]))
-			continue
-		var step_x := 0
-		var step_y := 0
-		var action := e.action
-		var frame := e.frame
-		var dir := e.dir
-		if action == 0:
-			step_x = int(dx8[move_dir])
-			step_y = int(dy8[move_dir])
-		elif action in [1, 4, 5]:
-			step_x = int(dx8[dir]) / 3
-			step_y = int(dy8[dir]) / 3
-		elif action == 6:
-			if frame > 2 and frame < 6:
-				step_x = int(dx8[dir]) << 2
-				step_y = int(dy8[dir]) << 2
-		elif action == 7 or action == 8:
-			var lunge := action == 8
-			if action == 7 and frame > 4 and frame < 8:
-				# a dash: straight on until a wall, then the step of action 8 as well
-				var sx := int(dx8[dir]) << 2
-				var sy := int(dy8[dir]) << 2
-				if sx > 0:
-					sx = MapWalls.step_until_free(sim, e.pos, sx, 6)
-				elif sx < 0:
-					sx = MapWalls.step_until_free(sim, e.pos, sx, 2)
-				if sy > 0:
-					sy = MapWalls.step_until_free(sim, e.pos, sy, 0)
-				elif sy < 0:
-					sy = MapWalls.step_until_free(sim, e.pos, sy, 4)
-				e.pos += MapRoomPlay.keep_in_room(sim, e.pos, sx, sy)
-				lunge = true
-			if lunge and frame > 0 and frame < 9:
-				step_x = int(dx8[dir])
-				step_y = int(dy8[dir])
-		elif action == 14:
-			if (frame & 1) == 0:
-				step_x = int(dx8[dir])
-				step_y = int(dy8[dir])
-		elif action == 2 and e.ai_mode > 0:
-			e.ai_mode -= 1
-			move_dir = (move_dir + 4) & 7
-			step_x = int(dx8[move_dir]) << 2
-			step_y = int(dy8[move_dir]) << 2
-		elif action == 2 and frame == 1:
+			_enemy_dies(sim, e)
+			if sim.enemies_alive < 1 and sim.waves[0] == 0 and e.type != MapSim.KIND_ARCHERS:
+				_room_won(sim)
+		return
+	if anim_frame > MapSim.END:
+		e.action = 3 if e.hp < 1 else 0
+		e.frame = 0
+	if e.think_ticks < 1:
+		e.alerted = 1
+		e.think_ticks = 6
+		if e.action == 0:
+			choose_enemy_action(sim, e)
+	if e.type == MapSim.KIND_ARCHERS:
+		e.dir = MapGeometry.dir4(e.pos, sim.hero.pos)
+		e.facing = e.dir
+		return
+	if e.alerted == 0:
+		# still outside: walks straight in, through anything
+		e.pos += MapWalls.dir_step(e.facing)
+		return
+	_move_enemy(sim, e)
+	_action_frame(sim, e)
+
+
+static func _tick_buffs(e: MapActor) -> void:
+	if e.attack_buff_ticks > 0:
+		e.attack_buff_ticks -= 1
+		if e.attack_buff_ticks < 1:
+			e.attack_buff = 0
+	if e.defense_buff_ticks > 0:
+		e.defense_buff_ticks -= 1
+		if e.defense_buff_ticks < 1:
+			e.defense_buff = 0
+
+
+## The last enemy of the room's list is dead: the room is cleared, or the mission's general
+## defeated.
+static func _room_won(sim: MapSim) -> void:
+	if sim.boss_fight:
+		sim.room_phase = 4
+		sim.room_phase_timer = 22
+	else:
+		sim.room_phase = 3
+		sim.room_phase_timer = 5
+
+
+## The enemy's step this tick, by its action: walking, a strike's small step, knocked back,
+## or a general's skill (MapWalls.skill_step).
+static func _move_enemy(sim: MapSim, e: MapActor) -> void:
+	var move_dir := e.facing
+	var step := Vector2i.ZERO
+	match e.action:
+		0:
+			step = MapWalls.dir_step(move_dir)
+		1, 4, 5:
+			step = MapWalls.dir_step(e.dir) / 3
+		2:
 			move_dir = (e.facing + 4) & 7
-			step_x = int(dx8[move_dir]) * 3 / 4
-			step_y = int(dy8[move_dir]) * 3 / 4
-		if step_x != 0 or step_y != 0:
-			var i: int
-			if e.type == MapSim.KIND_SQUAD:
-				var shift: Vector2i = SQUAD_SHIFT.get(move_dir, Vector2i.ZERO)
-				i = MapWalls.move(sim, e.pos + shift, step_x, step_y, move_dir, e)
-				if i != -1:
-					e.pos -= shift
-			else:
-				i = MapWalls.move(sim, e.pos, step_x, step_y, move_dir, e)
-			if e.action == 0 and move_dir in [0, 2, 4, 6] and i == -1:
-				i = MapWalls.slide_corner(sim, e.pos, e.facing, e)
-				if i != -1:
-					MapWalls.move(sim, e.pos, int(dx8[i]), int(dy8[i]), i, e)
-		action = e.action
-		frame = e.frame
-		match action:
-			1, 4, 5:
-				if frame == 1:
-					_enemy_strikes_hero(sim, e)
-			6:
-				if frame > 2 and frame < 6:
-					_enemy_strikes_hero(sim, e)
-			7:
-				if frame > 4 and frame < 8:
-					_enemy_strikes_hero(sim, e)
-			8:
-				if frame in [2, 4, 6, 8]:
-					_enemy_strikes_hero(sim, e)
-			9, 10:
-				if frame == 11:  # heals 20 / 50 %
-					e.hp = mini(e.hp + e.max_hp * (20 if action == 9 else 50) / 100, e.max_hp)
-			11, 12, 13:
-				if frame == 11:  # attack / defence buffs for 50 ticks
-					if action != 12:
-						e.attack_buff = maxi(e.attack / int(MapSim.BUFF_DIV[action - 11]), 1)
-						e.attack_buff_ticks = 50
-					if action != 11:
-						e.defense_buff = maxi(e.defense / int(MapSim.BUFF_DIV[action - 11]), 1)
-						e.defense_buff_ticks = 50
-			14, 19:
-				if (frame & 1) != 0:
-					_enemy_strikes_hero(sim, e)
-			15:
-				if frame == 5:
-					_enemy_strikes_hero(sim, e)
-			16:
-				if frame == 6:
-					_enemy_strikes_hero(sim, e)
-			17, 18:
-				if frame == 5:
-					_enemy_strikes_hero(sim, e)
-			20, 21:
-				if frame == 8:
-					_enemy_strikes_hero(sim, e)
+			if e.ai_mode > 0:
+				e.ai_mode -= 1
+				step = MapWalls.dir_step(move_dir) * 4
+			elif e.frame == 1:
+				step = MapWalls.dir_step(move_dir) * 3 / 4
+		_:
+			if e.action >= 6:
+				step = MapWalls.skill_step(sim, e, e.action + 6, e.frame, e.dir)
+	if step != Vector2i.ZERO:
+		_enemy_step(sim, e, step, move_dir)
+
+
+## The enemy steps (a squad as if it stood aside, where its men are); walking straight into a
+## wall, it slides round its corner.
+static func _enemy_step(sim: MapSim, e: MapActor, step: Vector2i, move_dir: int) -> void:
+	var i: int
+	if e.type == MapSim.KIND_SQUAD:
+		var shift: Vector2i = SQUAD_SHIFT.get(move_dir, Vector2i.ZERO)
+		i = MapWalls.move(sim, e.pos + shift, step.x, step.y, move_dir, e)
+		if i != -1:
+			e.pos -= shift
+	else:
+		i = MapWalls.move(sim, e.pos, step.x, step.y, move_dir, e)
+	if e.action == 0 and move_dir in [0, 2, 4, 6] and i == -1:
+		i = MapWalls.slide_corner(sim, e.pos, e.facing, e)
+		if i != -1:
+			var slide := MapWalls.dir_step(i)
+			MapWalls.move(sim, e.pos, slide.x, slide.y, i, e)
+
+
+## What the enemy's action does on this frame: a strike at the hero, a general's heal
+## (9: 20 %, 10: 50 %) or his buffs for 50 ticks (11 attack, 12 defence, 13 both).
+static func _action_frame(sim: MapSim, e: MapActor) -> void:
+	var action := e.action
+	if _strikes_now(action, e.frame):
+		_enemy_strikes_hero(sim, e)
+	elif e.frame != 11:
+		return
+	elif action == 9 or action == 10:
+		e.hp = mini(e.hp + e.max_hp * (20 if action == 9 else 50) / 100, e.max_hp)
+	elif action >= 11 and action <= 13:
+		var div := int(MapSim.BUFF_DIV[action - 11])
+		if action != 12:
+			e.attack_buff = maxi(e.attack / div, 1)
+			e.attack_buff_ticks = 50
+		if action != 11:
+			e.defense_buff = maxi(e.defense / div, 1)
+			e.defense_buff_ticks = 50
+
+
+## Whether the enemy's action strikes on this frame.
+static func _strikes_now(action: int, frame: int) -> bool:
+	match action:
+		1, 4, 5:
+			return frame == 1
+		6:
+			return frame > 2 and frame < 6
+		7:
+			return frame > 4 and frame < 8
+		8:
+			return frame in [2, 4, 6, 8]
+		14, 19:
+			return (frame & 1) != 0
+		15, 17, 18:
+			return frame == 5
+		16:
+			return frame == 6
+		20, 21:
+			return frame == 8
+	return false
 
 
 static func _general_reach(sim: MapSim) -> int:

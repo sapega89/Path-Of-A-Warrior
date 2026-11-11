@@ -248,14 +248,24 @@ func test_the_mission_stands_on_the_new_maps() -> void:
 	root.add_child(screen)
 	screen.set_process(false)
 	check(screen.builder is MapArt, "the map in the new art")
-	check(screen.world.find_child("Sun", false, false) is DirectionalLight3D, "the sun")
-	var env: WorldEnvironment = null
-	for c in screen.world.get_children():
-		if c is WorldEnvironment:
-			env = c
-	check(env != null and env.environment.fog_enabled, "the air")
+	check(screen.world.find_child("Sun", true, false) is DirectionalLight3D, "the sun")
+	var env: WorldEnvironment = screen.world.find_children("*", "WorldEnvironment", true, false)[0]
+	check(env.environment.fog_enabled, "the air")
 	for i in 20:
 		screen._process(screen.tick)
 	check(screen.sim.hero != null, "the hero plays on it")
 	screen.queue_free()
 	Router.params = old
+
+
+func test_each_map_has_its_own_air() -> void:
+	var scene := load(MapLight.SCENE) as PackedScene
+	var a: MapLight = scene.instantiate()
+	var b: MapLight = scene.instantiate()
+	root.add_child(a)
+	root.add_child(b)
+	check(a.air.environment != b.air.environment, "a screen can change its air alone")
+	eq(a.air.environment.background_color, ArtKit.AIR, "the land fades into grey dust")
+	check(a.sun.shadow_enabled, "soft shadows")
+	a.free()
+	b.free()

@@ -312,42 +312,7 @@ func _build_ground() -> void:
 	var nz := (h + 2 * MARGIN) * PARTS + 1
 	for j in nz:
 		for i in nx:
-			var vx := lo + i
-			var vz := lo + j
-			var colour := Color(0, 0, 0, 0)
-			var detail := [0.0, 0.0, 0.0]
-			var raised := 0
-			var lowest := 99.0
-			var wet := 0
-			var face := 0.0
-			var cliff := 0.0
-			for d in [Vector2i(-1, -1), Vector2i(0, -1), Vector2i(-1, 0), Vector2i(0, 0)]:
-				var p: Array = _part(vx + d.x, vz + d.y)
-				var name := _kind_name(p[0])
-				var c: Color = KIND_COLOUR.get(name, KIND_COLOUR["meadow"])
-				colour += Color(c.r, c.g, c.b, 0.0) * 0.25
-				if DETAIL.has(name):
-					detail[DETAIL[name]] += 0.25
-				if float(p[1]) > 0.0:
-					raised += 1
-					lowest = minf(lowest, float(p[1]))
-					face += float(FACE.get(name, 0.0))
-				if name == "water":
-					wet += 1
-				cliff += 0.25 * int(p[2])
-			var x := float(vx) / PARTS
-			var z := float(vz) / PARTS
-			var y := hills(x, z)
-			if raised == 4:
-				y += lowest + (_wobble(x, z) * 0.08 if face / raised < 0.4 else 0.0)
-			elif wet == 4:
-				y -= WATER_DEPTH
-			colour.a = face / raised if raised > 0 else 0.0
-			st.set_color(colour)
-			# the detail of the kinds around (pebbles, planks, paving) and of a cliff's face
-			st.set_uv(Vector2(detail[0], detail[1]))
-			st.set_uv2(Vector2(detail[2], cliff))
-			st.add_vertex(Vector3(x, y, z))
+			_ground_vertex(st, lo + i, lo + j)
 	for j in nz - 1:
 		for i in nx - 1:
 			var a := j * nx + i
@@ -359,13 +324,52 @@ func _build_ground() -> void:
 			st.add_index(a + 1)
 			st.add_index(b + 1)
 	st.generate_normals()
-	var mi := MeshInstance3D.new()
+	var mi := MeshInstance3D.new()  # standards: allow nodes_in_code (the map's ground)
 	mi.name = "Ground"
 	mi.mesh = st.commit()
 	var m := ShaderMaterial.new()
 	m.shader = GROUND_SHADER
 	mi.material_override = m
 	add_child(mi)
+
+
+## The ground's vertex at the corner (vx, vz) of four parts: their colours mixed, its height
+## (raised when all four are, sunk under water when all four are wet), the detail of their
+## kinds (pebbles, planks, paving) and of a cliff's face.
+func _ground_vertex(st: SurfaceTool, vx: int, vz: int) -> void:
+	var colour := Color(0, 0, 0, 0)
+	var detail := [0.0, 0.0, 0.0]
+	var raised := 0
+	var lowest := 99.0
+	var wet := 0
+	var face := 0.0
+	var cliff := 0.0
+	for d in [Vector2i(-1, -1), Vector2i(0, -1), Vector2i(-1, 0), Vector2i(0, 0)]:
+		var p: Array = _part(vx + d.x, vz + d.y)
+		var name := _kind_name(p[0])
+		var c: Color = KIND_COLOUR.get(name, KIND_COLOUR["meadow"])
+		colour += Color(c.r, c.g, c.b, 0.0) * 0.25
+		if DETAIL.has(name):
+			detail[DETAIL[name]] += 0.25
+		if float(p[1]) > 0.0:
+			raised += 1
+			lowest = minf(lowest, float(p[1]))
+			face += float(FACE.get(name, 0.0))
+		if name == "water":
+			wet += 1
+		cliff += 0.25 * int(p[2])
+	var x := float(vx) / PARTS
+	var z := float(vz) / PARTS
+	var y := hills(x, z)
+	if raised == 4:
+		y += lowest + (_wobble(x, z) * 0.08 if face / raised < 0.4 else 0.0)
+	elif wet == 4:
+		y -= WATER_DEPTH
+	colour.a = face / raised if raised > 0 else 0.0
+	st.set_color(colour)
+	st.set_uv(Vector2(detail[0], detail[1]))
+	st.set_uv2(Vector2(detail[2], cliff))
+	st.add_vertex(Vector3(x, y, z))
 
 
 static func _wobble(x: float, z: float) -> float:
@@ -383,7 +387,7 @@ func _build_water() -> void:
 		return
 	var q := PlaneMesh.new()
 	q.size = Vector2(w + 2.0, h + 2.0)
-	var mi := MeshInstance3D.new()
+	var mi := MeshInstance3D.new()  # standards: allow nodes_in_code (the map's water)
 	mi.name = "Water"
 	mi.mesh = q
 	mi.position = Vector3(w / 2.0, WATER_LEVEL, h / 2.0)
@@ -398,7 +402,7 @@ func _build_water() -> void:
 
 
 func _build_props() -> void:
-	var holder := Node3D.new()
+	var holder := Node3D.new()  # standards: allow nodes_in_code (the map's props)
 	holder.name = "Props"
 	add_child(holder)
 	var clustered := {}  # Vector2i -> class, the blocked cells of tents and huts
@@ -526,7 +530,7 @@ func _build_objects() -> void:
 			var kind := cell("objects", x, y)
 			if kind == 0:
 				continue
-			var node := Node3D.new()
+			var node := Node3D.new()  # standards: allow nodes_in_code (an object of the map)
 			node.name = "Object_%d_%d" % [x, y]
 			add_child(node)
 			var piece := _stand(
@@ -584,33 +588,3 @@ func in_field(x: float, z: float) -> bool:
 		return false
 	var block := Vector2i(floori(x / Grass.FIELD.x), floori(z / Grass.FIELD.y))
 	return (hash([block, w, h]) & 0xff) < Grass.SOWN
-
-
-## Light and air for a map in the new art (ArtKit.light): a dull sun from the upper left with
-## soft shadows, a deep cool shade, and the land fading into grey dust far away.
-static func add_environment(parent: Node3D) -> void:
-	var sun := DirectionalLight3D.new()
-	sun.name = "Sun"
-	sun.shadow_enabled = true
-	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
-	sun.directional_shadow_max_distance = 40.0
-	sun.shadow_blur = 1.5
-	sun.transform = Transform3D(
-		Basis.looking_at(Vector3(0.5, -0.74, -0.45).normalized(), Vector3.UP), Vector3.ZERO
-	)
-	parent.add_child(sun)
-	var env := Environment.new()
-	ArtKit.light(sun, env)
-	env.background_mode = Environment.BG_COLOR
-	env.background_color = ArtKit.AIR
-	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
-	env.fog_enabled = true
-	env.fog_mode = Environment.FOG_MODE_DEPTH
-	env.fog_light_color = ArtKit.AIR
-	env.fog_density = 1.0
-	env.fog_depth_begin = 20.0
-	env.fog_depth_end = 52.0
-	env.fog_sky_affect = 0.0
-	var we := WorldEnvironment.new()
-	we.environment = env
-	parent.add_child(we)

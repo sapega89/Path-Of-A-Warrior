@@ -25,7 +25,7 @@ func _ready() -> void:
 	for s in SHOTS:
 		if not only.is_empty() and not String(s[0]).contains(only):
 			continue
-		var slice: Node3D = ArtSlice.new()
+		var slice: ArtSlice = (load(ArtSlice.SCENE) as PackedScene).instantiate()
 		slice.distance = s[3]
 		add_child(slice)
 		slice.build(s[1], s[2])

@@ -33,6 +33,8 @@ func _screen_input(_event: InputEvent) -> void:
 
 
 ## Where the hero is kept: Profile.PATH (user://hero.json on this computer), or the file a test
-## gives in Router.params.profile_path.
+## gives in Router.params.profile_path. This is the one place that reads that param (the
+## standards check's profile_path_param marks the others).
 static func profile_path() -> String:
-	return str(Router.params.get("profile_path", Profile.PATH))
+	var params: Dictionary = Router.params
+	return str(params.get("profile_path", Profile.PATH))  # standards: allow profile_path_param (owner)

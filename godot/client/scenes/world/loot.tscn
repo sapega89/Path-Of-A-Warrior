@@ -1,0 +1,4 @@
+[gd_scene format=3]
+
+[node name="Loot" type="Sprite3D"]
+billboard = 2

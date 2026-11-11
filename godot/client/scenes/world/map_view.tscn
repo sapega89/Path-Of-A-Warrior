@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/map_view.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/world/map_art.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/world/follow_camera.gd" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/world/map_light.tscn" id="4"]
 
 [node name="World" type="SubViewportContainer"]
 stretch = true
@@ -18,3 +19,5 @@ script = ExtResource("2")
 
 [node name="Camera" type="Camera3D" parent="Viewport/WorldRoot"]
 script = ExtResource("3")
+
+[node name="Light" parent="Viewport/WorldRoot" instance=ExtResource("4")]

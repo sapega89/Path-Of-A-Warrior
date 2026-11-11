@@ -539,6 +539,11 @@ func drop_item(kind: int, p: Vector2i) -> void:
 	MapLoot.drop_item(self, kind, p)
 
 
+## See MapRoomPlay.open_sides().
+func open_sides() -> Array[int]:
+	return MapRoomPlay.open_sides(self)
+
+
 ## See MapRoomPlay.keep_in_room().
 func keep_in_room(pos: Vector2i, dx: int, dy: int) -> Vector2i:
 	return MapRoomPlay.keep_in_room(self, pos, dx, dy)

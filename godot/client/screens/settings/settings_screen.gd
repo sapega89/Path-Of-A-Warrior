@@ -6,7 +6,6 @@ extends BaseScreen
 ## pad buttons, shown over these settings). The options scroll; Controls and Back stay in a row
 ## under them.
 
-const I18nScript := preload("res://scripts/core/i18n.gd")
 ## Language names are shown in their own language, not translated.
 const LANGUAGE_NAMES := {"en": "English", "uk": "Українська"}
 
@@ -30,11 +29,11 @@ var close := Callable()
 ## The settings as they are now; the rows the platform has not (fullscreen, the window's size)
 ## are taken away.
 func _ready() -> void:
-	for i in I18nScript.LOCALES.size():
-		var code: String = I18nScript.LOCALES[i]
+	for i in I18n.LOCALES.size():
+		var code: String = I18n.LOCALES[i]
 		language.add_item(LANGUAGE_NAMES.get(code, code), i)
 		language.set_item_metadata(i, code)
-	language.select(I18nScript.LOCALES.find(Settings.current_locale()))
+	language.select(I18n.LOCALES.find(Settings.current_locale()))
 	for i in Settings.SPEED_MS.size():
 		speed.add_item(tr("settings.speed_%d" % i), i)
 	speed.select(int(Settings.get_value("game_speed")))

@@ -25,17 +25,19 @@ const EFFECT_GRID := [
 ]
 
 const FOV := 35.0
+const SCENE := "res://scenes/art_slice.tscn"
 const DISTANCE := 13.0
 
 var place := "camp"
 var pitch := 50.0
 ## Camera distance; the game's own camera keeps 13 m, a larger value shows the whole place.
 var distance := DISTANCE
-var camera: Camera3D
 var hero: Node3D
 var hud: Control
 var figures: Array[Node3D] = []
 var effects: Array[Node] = []
+
+@onready var camera: Camera3D = $Camera
 
 
 func _ready() -> void:
@@ -73,37 +75,16 @@ func build(where: String, pitch_deg: float) -> void:
 		hud.setup(hero, place)
 
 
+## The map's light and air (MapLight), the fog drawn back with the camera's distance.
 func _world() -> void:
-	var env := Environment.new()
-	env.background_mode = Environment.BG_COLOR
-	env.background_color = ArtKit.AIR
-	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
-	env.fog_enabled = true
-	env.fog_mode = Environment.FOG_MODE_DEPTH
-	env.fog_light_color = ArtKit.AIR
-	env.fog_density = 1.0
-	env.fog_depth_begin = distance + 8.0
-	env.fog_depth_end = distance + 40.0
-	env.fog_sky_affect = 0.0
-	var we := WorldEnvironment.new()
-	we.environment = env
-	add_child(we)
-	var sun := DirectionalLight3D.new()
-	ArtKit.light(sun, env)
-	sun.shadow_enabled = true
-	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
-	sun.directional_shadow_max_distance = 40.0
-	sun.shadow_blur = 1.5
-	# from the upper left and a little from the viewer, so faces are in the light
-	var dir := Vector3(0.5, -0.74, -0.45).normalized()
-	sun.transform = Transform3D(Basis.looking_at(dir, Vector3.UP), Vector3.ZERO)
-	add_child(sun)
+	var light: MapLight = (load(MapLight.SCENE) as PackedScene).instantiate()
+	add_child(light)
+	light.air.environment.fog_depth_begin = distance + 8.0
+	light.air.environment.fog_depth_end = distance + 40.0
 
 
 func _camera() -> void:
-	camera = Camera3D.new()
 	camera.fov = FOV
-	add_child(camera)
 	var target := hero.global_position if hero != null else Vector3.ZERO
 	if place == "lineup":
 		camera.fov = 30.0
@@ -163,6 +144,17 @@ func _ground(paths: Array, greens: Array, play: Rect2) -> void:
 
 # -- Korsun camp ----------------------------------------------------------------------
 func _camp() -> void:
+	_camp_ground()
+	_camp_back()
+	# fire in the middle
+	var fire := Vector3(-2.7, 0, -0.9)
+	_prop("vohnyshche", fire)
+	effects.append(ArtEffects.campfire(self, fire))
+	_camp_front()
+	_camp_people(fire)
+
+
+func _camp_ground() -> void:
 	var centre := Vector2(0.0, -0.4)
 	_ground(
 		[
@@ -181,6 +173,10 @@ func _camp() -> void:
 		[Vector3(-8, -8, 4), Vector3(8, -7, 4), Vector3(-8, 5, 3), Vector3(6, 6, 4)],
 		Rect2(-12, -11, 24, 20)
 	)
+
+
+## The hut, the tent, the well and the cannon at the back.
+func _camp_back() -> void:
 	# hut, fence and poplars at the back left
 	_prop("khata", Vector3(-5.0, 0, -6.2), 8.0)
 	_prop("tyn", Vector3(-7.2, 0, -3.5))
@@ -197,10 +193,10 @@ func _camp() -> void:
 	_prop("banner", Vector3(6.8, 0, -3.6), -20.0)
 	_prop("dub", Vector3(9.4, 0, -4.0))
 	_prop("harmata", Vector3(-0.2, 0, -4.4), 170.0)
-	# fire in the middle
-	var fire := Vector3(-2.7, 0, -0.9)
-	_prop("vohnyshche", fire)
-	effects.append(ArtEffects.campfire(self, fire))
+
+
+## The forge, the cart, the barrels and the bushes in front.
+func _camp_front() -> void:
 	# forge on the right, cart and barrels on the left
 	_prop("kuznya", Vector3(8.0, 0, -0.6), -90.0)
 	_prop("penok", Vector3(3.6, 0, 3.2))
@@ -213,7 +209,10 @@ func _camp() -> void:
 	_prop("kushch", Vector3(-1.4, 0, 4.9), 90.0, 0.8)
 	_prop("kamin", Vector3(7.6, 0, 3.6))
 	_prop("namet", Vector3(9.4, 0, 3.2), 75.0)
-	# people
+
+
+## The people round the fire in the middle, the colonel, the smith, an archer and the hero.
+func _camp_people(fire: Vector3) -> void:
 	_figure("kozak_svyta", fire + Vector3(0.1, 0, -1.25), "sit", fire + Vector3(0.6, 0, 2.0), 1.0)
 	_figure("kozak_camp", fire + Vector3(-1.25, 0, 0.1), "interact", fire, 0.45)
 	_figure("kozak_camp", fire + Vector3(1.05, 0, 0.85), "cheer", fire, 0.55)
