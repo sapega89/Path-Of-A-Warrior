@@ -118,6 +118,7 @@ var pad_brand := "generic"
 
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS  # BACK and the device in use also in a paused mission
 	register()
 	bind(saved_bindings())
 	Settings.changed.connect(_on_setting_changed)

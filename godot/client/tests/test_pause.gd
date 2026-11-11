@@ -8,10 +8,13 @@ func test_pause_menu() -> void:
 	Router.params = {"lord": 1, "mission": 0, "seed": 2}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
-	check(screen.is_processing(), "the mission runs")
+	check(screen.can_process(), "the mission runs")
 	screen.pause()
-	check(not screen.is_processing(), "paused: the game stops")
+	check(screen.get_tree().paused, "paused: the scene tree stops")
+	check(not screen.can_process(), "and the game with it")
 	check(screen.pause_menu != null, "the pause menu shows")
+	check(screen.pause_menu.can_process(), "the menu itself runs")
+	check(InputSetup.can_process() and Audio.can_process(), "BACK and the music go on")
 	var names: Array = screen.pause_menu.buttons.map(func(b): return str(b.name))
 	eq(
 		names.slice(0, 5),
@@ -45,8 +48,10 @@ func test_pause_menu() -> void:
 	check(screen.pause_menu.settings == null, "leaving the help returns to the pause menu")
 	screen.pause_menu.buttons[0].pressed.emit()
 	check(screen.pause_menu == null, "Resume: the menu goes")
-	check(screen.is_processing(), "and the game runs on")
-	screen.free()
+	check(not screen.get_tree().paused and screen.can_process(), "and the game runs on")
+	screen.pause()
+	screen.free()  # Exit to Menu: the mission goes while paused
+	check(not root.get_tree().paused, "the game runs again without it")
 	Router.params = old
 
 

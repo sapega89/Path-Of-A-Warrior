@@ -132,6 +132,12 @@ func _ready() -> void:
 	_update_view(0.0)
 
 
+## Leaving the mission from its pause menu (Exit to Menu) lets the game run again.
+func _exit_tree() -> void:
+	if pause_menu != null:
+		get_tree().paused = false
+
+
 ## A setting changed over the pause menu: the hit effects and the game speed apply at once.
 func _on_setting_changed(_key: String) -> void:
 	feel.use_settings(Settings)
@@ -488,11 +494,12 @@ func way_for(exit_no: int, at: Vector3) -> int:
 	return 0
 
 
-## Stops the mission and shows the pause menu (Resume, Options, Exit to Menu, Exit Game).
+## Stops the mission and shows the pause menu (Resume, Options, Exit to Menu, Exit Game): the
+## scene tree is paused, and only the menu (and what it opens) runs.
 func pause() -> void:
 	if pause_menu != null:
 		return
-	set_process(false)
+	get_tree().paused = true
 	_release_keys()
 	pause_menu = (load(MissionPause.SCENE) as PackedScene).instantiate()
 	pause_menu.sim = sim
@@ -506,9 +513,9 @@ func resume() -> void:
 		return
 	pause_menu.queue_free()
 	pause_menu = null
+	get_tree().paused = false
 	_acc = 0.0
 	_last_held = -1
-	set_process(not sim.finished)
 
 
 ## Pause menu Save: the mission is saved on its map, once the room is cleared; Continue comes
