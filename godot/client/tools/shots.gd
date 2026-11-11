@@ -290,7 +290,8 @@ func _ready() -> void:
 	camp.camera.distance = 42.0
 	camp.camera.snap()
 	await _shot(out, "04j_camp_overview")
-	Router.go("town_hall", {"profile_path": "user://shot_walker.json"})
+	# the town hall of the start camp: the flasks and the button that buys the next one
+	Router.go("town_hall", {"profile_path": "user://shot_walker.json", "start": true})
 	await _shot(out, "04h_town_hall")
 	Router.go("run_end", {"profile_path": "user://shot_walker.json"})
 	await _shot(out, "04k_run_end")
