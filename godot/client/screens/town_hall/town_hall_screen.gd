@@ -1,5 +1,5 @@
 extends BaseScreen
-## The town hall of the start camp (the only camp that has one, CampPlan.has_hall): what comes
+## The town hall of the start camp (the only camp that has one, CampPlan.sich): what comes
 ## before a run (Prepare: the run setup screen, the starting skill, the flasks, the perks and the
 ## vows), over it the hero's flasks of living water (HeroRun) and his fame, and the generals the
 ## hero knows, with their friendship (Profile.friendship, in the order he met them).

@@ -1,12 +1,14 @@
 class_name CampFort
 extends Node3D
-## The camp between missions in the new art, «Плавні», built from its CampPlan: a ring of
-## palisade on dry ground among water channels and reeds, at dusk. Each way on is a gate in
-## the ring (the main gate with its icon in the south, side gates elsewhere) with a road to the
-## yard and a dry causeway across the water; past it lies the land of that place (LAND). A
-## closed way's gate is barred. In the middle the yard with two fires, the town hall's big
-## tent, gone grey with smoke, north-west of it; round them the smithy (an anvil by its forge),
-## smoke-dark tents, torches, guards inside the gates. Reeds, bushes and trees round the marsh
+## The camp between missions in the new art, «Плавні», built from its CampPlan: a ring on dry
+## ground among water channels and reeds, at dusk. The Sich (the start camp) is a fort: a
+## palisade, the town hall's big tent gone grey with smoke north-west of the yard, two fires,
+## smoke-dark tents and a cannon. A camp of the run is a field camp: a ring of wagons, one fire,
+## a few light tents and barrels. Each way on is a gate in the ring (in the palisade the main
+## gate with its icon in the south, side gates elsewhere; among the wagons a gap) with a road
+## to the yard and a dry causeway across the water; past it lies the land of that place (LAND).
+## A closed way's gate is barred (a wagon across the gap). Round the yard the smithy (an anvil
+## by its forge), torches, guards inside the gates. Reeds, bushes and trees round the marsh
 ## are placed by the camp's own seed, so each place looks its own and the same each time.
 ## The water and the mist are the scene's (camp_fort.tscn); dusk() turns the world's light
 ## into the dusk. What stands is a round in the plan (CampPlan.add_solid) and a cylinder in
@@ -33,6 +35,10 @@ const HALL_SCALE := 1.6
 const PALISADE_HEIGHT := 3.0
 const PALISADE_DEPTH := 0.5
 const BAR_INSIDE := 1.2  # a barred gate's palisade stands this far inside the ring
+## The wagons of a camp of the run: each takes two pieces of the ring, turned a little this
+## way and that; the model's middle lies this far along it from its origin.
+const WAGON_TILT := 7.0
+const WAGON_MIDDLE := 0.8
 const PERSON := 0.4  # metres round a person standing
 const MOAT_STEP := 6.0  # degrees of one piece of a water channel
 ## The ground: its size, how fine its grid, the flat middle, the colours of the marsh.
@@ -72,6 +78,13 @@ const TENTS := [
 ]
 ## Things that stand about the camp: [prop, x, z, yaw, how much of its width blocks].
 const ABOUT := [["harmata", -11.2, -6.4, 230.0, 0.8], ["stoiak", 3.0, -10.0, 30.0, 0.8]]
+## A camp of the run: its fewer tents (of TENTS) and what stands about it.
+const FIELD_TENTS := [0, 3, 5]
+const FIELD_ABOUT := [
+	["bochka", -10.8, 2.0, 0.0, 0.8],
+	["bochka", -11.6, 2.8, 40.0, 0.8],
+	["stih", 11.2, -2.0, 0.0, 0.8]
+]
 ## The land past a gate, by the land of its place: pieces [kind, ahead, aside, scale], ahead
 ## of the causeway's end and aside of the way on (metres). Only LOW pieces stand in the
 ## south, where a tall one would stand before the camera.
@@ -139,9 +152,11 @@ func build(camp_plan: CampPlan, lands: Array, seed_value: int) -> void:
 	add_child(body)
 	_box(Vector3(0.0, -0.5, 0.0), Vector3(GROUND_SIZE, 1.0, GROUND_SIZE), 0.0)
 	_ground()
-	_palisade()
-	if plan.has_hall:
+	if plan.sich:
+		_palisade()
 		_hall()
+	else:
+		_wagons()
 	_yard()
 	_smithy()
 	_tents()
@@ -257,10 +272,7 @@ func _palisade() -> void:
 	var r := CampPlan.RADIUS * cos(deg_to_rad(step / 2.0))
 	for i in roundi(360.0 / step):
 		var a := (i + 0.5) * step
-		if plan.exits.any(
-			func(e: Dictionary) -> bool:
-				return CampPlan.apart(a, e.angle) < plan.gate_half_width(e.angle) + 0.1
-		):
+		if _in_gate(a):
 			continue
 		_prop("palisade", CampPlan.on_ring(a, r), a)
 		_wall(a, r)
@@ -274,6 +286,50 @@ func _palisade() -> void:
 			var a: float = e.angle + (k - (pieces - 1) / 2.0) * step
 			_prop("palisade", CampPlan.on_ring(a, r - BAR_INSIDE), a)
 			_wall(a, r - BAR_INSIDE)
+
+
+## The ring of a camp of the run: wagons end to end, two pieces of the ring each (a barrel
+## where one piece is left before a gap), the walls of the palisade's pieces under them; a
+## closed way's gap is shut by one more wagon across it.
+func _wagons() -> void:
+	var step := plan.step
+	var r := CampPlan.RADIUS * cos(deg_to_rad(step / 2.0))
+	var n := roundi(360.0 / step)
+	var covered := false  # the piece is under the wagon of the one before
+	var tilt := WAGON_TILT
+	for i in n:
+		var a := (i + 0.5) * step
+		if _in_gate(a):
+			continue
+		_wall(a, r)
+		if covered:
+			covered = false
+		elif i == n - 1 or _in_gate(a + step):
+			_solid(_prop("bochka", CampPlan.on_ring(a, r - 0.3), a), 0.8)
+		else:
+			_wagon(CampPlan.on_ring(a + step / 2.0, r), a + step / 2.0 + 90.0 + tilt)
+			tilt = -tilt
+			covered = true
+	for e in plan.exits:
+		if not e.open:
+			_wagon(CampPlan.on_ring(e.angle, r - BAR_INSIDE), e.angle + 90.0)
+			var pieces := CampPlan.gate_pieces(e.angle)
+			for k in pieces:
+				_wall(e.angle + (k - (pieces - 1) / 2.0) * step, r - BAR_INSIDE)
+
+
+## A wagon with its middle at `at`, its length along `yaw`.
+func _wagon(at: Vector3, yaw: float) -> void:
+	var along := Basis(Vector3.UP, deg_to_rad(yaw)) * Vector3.BACK
+	_prop("viz", at - along * WAGON_MIDDLE, yaw)
+
+
+## Whether `deg` round the ring lies in a gate.
+func _in_gate(deg: float) -> bool:
+	return plan.exits.any(
+		func(e: Dictionary) -> bool:
+			return CampPlan.apart(deg, e.angle) < plan.gate_half_width(e.angle) + 0.1
+	)
 
 
 ## A piece of palisade one cannot walk through, at `deg` round the ring, `r` from the middle.
@@ -297,9 +353,9 @@ func _hall() -> void:
 	_figure("polkovnyk", at + Vector3(-2.4, 0, 3.4), "idle", at + Vector3(-1.0, 0, 8.0), 0.4)
 
 
-## The yard's two fires with men round them.
+## The yard's fires with men round them: two in the Sich, one in a camp of the run.
 func _yard() -> void:
-	for f in CampPlan.FIRES:
+	for f in CampPlan.FIRES if plan.sich else CampPlan.FIRES.slice(0, 1):
 		_solid(_prop("vohnyshche", f), 0.9)
 		var fire := ArtEffects.campfire(self, f)
 		_warm(fire, FIRE_LIGHT, true)
@@ -307,6 +363,8 @@ func _yard() -> void:
 	var two: Vector3 = CampPlan.FIRES[1]
 	_figure("kozak_svyta", one + Vector3(0.1, 0, -1.25), "sit", one + Vector3(0.6, 0, 2.0), 1.0)
 	_figure("kozak_camp", one + Vector3(-1.2, 0, 0.2), "interact", one, 0.45)
+	if not plan.sich:
+		return
 	_figure("kozak_camp", two + Vector3(-0.9, 0, -0.9), "cheer", two, 0.55)
 	_figure("kozak_svyta", two + Vector3(1.1, 0, -0.5), "sit", two, 1.0)
 
@@ -322,11 +380,15 @@ func _smithy() -> void:
 	_figure("kozak_camp", at + Vector3(0.9, 0.0, -0.5), "attack_chop", at, 0.55)
 
 
-## Smoke-dark tents round the yard, a cannon, a rack and firewood about.
+## Tents round the yard (the Sich's smoke-dark, a camp of the run's fewer and light), a cannon
+## and a rack in the Sich, barrels and a haystack in a camp of the run, firewood.
 func _tents() -> void:
-	for t in TENTS:
-		_solid(_prop("namet_dark", Vector3(t[0], 0.0, t[1]), t[2], t[3]), 0.85)
-	for a in ABOUT:
+	for i in TENTS.size():
+		if plan.sich or i in FIELD_TENTS:
+			var t: Array = TENTS[i]
+			var tent := "namet_dark" if plan.sich else "namet"
+			_solid(_prop(tent, Vector3(t[0], 0.0, t[1]), t[2], t[3]), 0.85)
+	for a in ABOUT if plan.sich else FIELD_ABOUT:
 		_solid(_prop(a[0], Vector3(a[1], 0.0, a[2]), a[3]), a[4])
 	_solid(_prop("drova", Vector3(9.4, 0.0, -9.2), 40.0), 0.8)
 
@@ -336,7 +398,7 @@ func _tents() -> void:
 func _torches() -> void:
 	var door := CampPlan.HALL_AT + Vector3(0.0, 0.0, 3.4)
 	var torches: Array[Vector3] = []
-	if plan.has_hall:
+	if plan.sich:
 		torches.assign([door + Vector3(-1.9, 0, 0), door + Vector3(1.9, 0, 0)])
 	for e in plan.exits:
 		if e.open:

@@ -63,20 +63,51 @@ func test_the_town_hall_from_farther_off() -> void:
 	eq(CampPlan.spot_near(spots, CampPlan.START), {}, "nothing in the yard")
 
 
+## The Sich and a camp of the run (wagons), each with 1, 4 and 6 ways.
 func test_the_fort_leaves_every_way_and_spot_free() -> void:
-	for n in [1, 4, 6]:
-		var plan := CampPlan.new(_ways(n))
+	for sich in [true, false]:
+		for n in [1, 4, 6]:
+			var plan := CampPlan.new(_ways(n), false, sich)
+			var fort: CampFort = FORT_SCENE.instantiate()
+			root.add_child(fort)
+			fort.build(plan, ["steppe", "forest", "lake", "town", "mountains", "steppe"], n)
+			var what := "%s, %d ways" % ["the Sich" if sich else "a camp of the run", n]
+			var seen := plan.reachable(CampPlan.START)
+			for s in plan.spots():
+				if s.kind != "way" or s.open:
+					check(
+						seen.has(CampPlan.cell_of(s.at)), "%s: %s can be reached" % [what, s.kind]
+					)
+			check(fort.find_child("Land*", false, false) != null, "the land past the gates")
+			check(fort.body.get_child_count() > plan.solids.size(), "the ring stands: " + what)
+			var lights := fort.find_children("*", "OmniLight3D", true, false)
+			check(lights.size() <= CampFort.LIGHTS, "%s: %d lights at most" % [what, lights.size()])
+			fort.free()
+
+
+## The Sich is a fort with a palisade; a camp of the run a ring of wagons, one fire, light tents.
+func test_a_camp_of_the_run_is_a_ring_of_wagons() -> void:
+	var count := func(fort: CampFort, model: String) -> int:
+		return (
+			fort
+			. get_children()
+			. filter(func(c: Node) -> bool: return c.scene_file_path.ends_with("/%s.glb" % model))
+			. size()
+		)
+	for sich in [true, false]:
 		var fort: CampFort = FORT_SCENE.instantiate()
 		root.add_child(fort)
-		fort.build(plan, ["steppe", "forest", "lake", "town", "mountains", "steppe"], n)
-		var seen := plan.reachable(CampPlan.START)
-		for s in plan.spots():
-			if s.kind != "way" or s.open:
-				check(seen.has(CampPlan.cell_of(s.at)), "%d ways: %s can be reached" % [n, s.kind])
-		check(fort.find_child("Land*", false, false) != null, "the land past the gates")
-		check(fort.body.get_child_count() > plan.solids.size(), "the palisade stands")
-		var lights := fort.find_children("*", "OmniLight3D", true, false)
-		check(lights.size() <= CampFort.LIGHTS, "%d lights at most (%d)" % [n, lights.size()])
+		fort.build(CampPlan.new(_ways(3), false, sich), ["steppe", "forest", "lake"], 3)
+		var wagons: int = count.call(fort, "viz")
+		if sich:
+			check(count.call(fort, "palisade") > 30 and wagons == 0, "the Sich: a palisade")
+			eq(count.call(fort, "vohnyshche"), 2, "two fires")
+			eq(count.call(fort, "harmata"), 1, "a cannon")
+		else:
+			check(wagons > 15 and count.call(fort, "palisade") == 0, "wagons: %d" % wagons)
+			eq(count.call(fort, "brama") + count.call(fort, "vorota"), 0, "no gates, gaps")
+			eq(count.call(fort, "vohnyshche"), 1, "one fire")
+			eq(count.call(fort, "namet"), CampFort.FIELD_TENTS.size(), "a few light tents")
 		fort.free()
 
 
