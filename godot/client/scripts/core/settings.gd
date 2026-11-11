@@ -3,7 +3,6 @@ extends Node
 
 signal changed(key: String)
 
-const I18nScript := preload("res://scripts/core/i18n.gd")
 const DEFAULT_PATH := "user://settings.cfg"
 const SECTION := "settings"
 const DEFAULTS := {
@@ -102,7 +101,7 @@ func apply_all() -> void:
 
 ## The locale the game shows now.
 func current_locale() -> String:
-	return I18nScript.pick_locale(get_value("locale"), OS.get_locale_language())
+	return I18n.pick_locale(get_value("locale"), OS.get_locale_language())
 
 
 ## A mission's tick at the chosen game speed, in seconds.
