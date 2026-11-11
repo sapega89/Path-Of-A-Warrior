@@ -15,7 +15,7 @@ func test_new_hero() -> void:
 
 func test_exp_and_levels() -> void:
 	var p := Profile.new()
-	eq(Profile.exp_needed(1), 50, "50 exp to level 2")
+	eq(Campaign.exp_needed(1), 50, "50 exp to level 2")
 	eq(p.level_with(160), 3, "50 + 104 exp: level 3")
 	eq(p.gain_exp(160), 2, "two levels")
 	eq(p.level, 3, "level 3")

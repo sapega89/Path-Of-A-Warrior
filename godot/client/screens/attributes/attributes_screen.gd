@@ -75,12 +75,12 @@ func _on_pay_item(_action: StringName) -> void:
 
 ## Asks how to pay for the reset; says so when there is nothing to reset.
 func open_reset() -> void:
-	if profile.spent_points() == 0:
+	if Attributes.spent_points(profile) == 0:
 		_note(tr("attributes.reset_nothing"))
 		return
-	ask.dialog_text = tr("attributes.reset_ask") % profile.spent_points()
-	ask.ok_button_text = tr("attributes.pay_gold") % profile.respec_gold()
-	var slot: int = profile.respec_item_slot()
+	ask.dialog_text = tr("attributes.reset_ask") % Attributes.spent_points(profile)
+	ask.ok_button_text = tr("attributes.pay_gold") % Attributes.reset_gold(profile)
+	var slot: int = Attributes.reset_elixir_slot(profile)
 	pay_item.disabled = slot < 0
 	pay_item.text = (
 		tr("attributes.no_elixir")
@@ -92,8 +92,8 @@ func open_reset() -> void:
 
 ## Resets, paid with gold or an elixir, saves and says how it went. Returns the line said.
 func finish_reset(by_item: bool) -> String:
-	var free: int = profile.spent_points()
-	var why: String = profile.respec(by_item)
+	var free: int = Attributes.spent_points(profile)
+	var why: String = Attributes.reset(profile, by_item)
 	var said := (
 		tr("attributes.reset_done") % free if why.is_empty() else tr("attributes.reset_" + why)
 	)

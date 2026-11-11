@@ -30,7 +30,7 @@ func begin(hero_level: int, hero_exp: int, reward: int) -> void:
 	_ups = 0
 	level = hero_level
 	level_up_ticks = 0
-	var need := Profile.exp_needed(hero_level)
+	var need := Campaign.exp_needed(hero_level)
 	bars[0] = hero_exp * 100 / need if need > 0 else 0
 	bars[1] = bar_of(hero_exp + reward)
 	bars[2] = bars[1]
@@ -50,7 +50,7 @@ func begin_time(reward: int) -> void:
 func bar_of(total_exp: int) -> int:
 	var sum := 0
 	for lv in LEVELS:
-		var need := Profile.exp_needed(_level0 + lv)
+		var need := Campaign.exp_needed(_level0 + lv)
 		if need <= 0:
 			return lv * 100
 		sum += need

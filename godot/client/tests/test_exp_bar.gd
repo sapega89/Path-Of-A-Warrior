@@ -5,8 +5,8 @@ extends "res://tests/test_case.gd"
 
 func test_the_bar_grows_and_goes_up_a_level() -> void:
 	var bar: RefCounted = ExpBars.new()
-	eq(Profile.exp_needed(1), 50, "level 1 needs 50")
-	eq(Profile.exp_needed(2), 104, "level 2 needs 104")
+	eq(Campaign.exp_needed(1), 50, "level 1 needs 50")
+	eq(Campaign.exp_needed(2), 104, "level 2 needs 104")
 	bar.begin(1, 25, 50)
 	eq(bar.bars, [50, 124, 124], "half of level 1; 25 of 104 into level 2 after the mission")
 	eq(bar.grown(), [0, 0], "nothing grown yet")
@@ -32,7 +32,7 @@ func test_the_bar_grows_and_goes_up_a_level() -> void:
 	p.experience = 25
 	p.gain_exp(50)
 	eq(
-		[p.level, p.experience * 100 / Profile.exp_needed(p.level)],
+		[p.level, p.experience * 100 / Campaign.exp_needed(p.level)],
 		[bar.level, 24],
 		"the bar ends where the hero is after the mission"
 	)
