@@ -191,7 +191,7 @@ func _ground() -> void:
 	add_child(g)
 	g.build()
 	ground = g
-	var m := (g.get_node("Ground") as MeshInstance3D).material_override as ShaderMaterial
+	var m := g.material
 	m.set_shader_parameter("soil", SOIL)
 	m.set_shader_parameter("grass_dry", GRASS_DRY)
 	m.set_shader_parameter("grass_green", GRASS_GREEN)
