@@ -23,14 +23,31 @@ const DEFAULTS := {
 const SPEED_MS := [250, 180, 120, 90, 50]
 const BUSES := {"music_volume": "Music", "sfx_volume": "SFX"}
 ## What each graphics quality (Low, Medium, High) draws: the sun's shadow map (pixels a side) and
-## how soft its edges are, and the lamps' and fires' shadow maps in each 3D view (never 0: the
-## compatibility renderer then draws the world white). The world is drawn about 360 pixels high,
-## so a sun map of 2048 is already finer than the picture: Medium is the engine's own but for the
-## sun, whose map of 4096 would cost four times the pixels each frame for the same picture.
+## how soft its edges are, the lamps' and fires' shadow maps in each 3D view (never 0: the
+## compatibility renderer then draws the world white), and whether the camp's fires cast shadows
+## (each is a cube map: the scene drawn six more times a frame, 2/3 of the camp's triangles; not
+## on Low). The world is drawn about 360 pixels high, so a sun map of 2048 is already finer than
+## the picture: Medium is the engine's own but for the sun, whose map of 4096 would cost four
+## times the pixels each frame for the same picture.
 const GRAPHICS := [
-	{"sun": 1024, "soft": RenderingServer.SHADOW_QUALITY_HARD, "lamps": 1024},
-	{"sun": 2048, "soft": RenderingServer.SHADOW_QUALITY_SOFT_LOW, "lamps": 2048},
-	{"sun": 4096, "soft": RenderingServer.SHADOW_QUALITY_SOFT_HIGH, "lamps": 4096},
+	{
+		"sun": 1024,
+		"soft": RenderingServer.SHADOW_QUALITY_HARD,
+		"lamps": 1024,
+		"fire_shadows": false,
+	},
+	{
+		"sun": 2048,
+		"soft": RenderingServer.SHADOW_QUALITY_SOFT_LOW,
+		"lamps": 2048,
+		"fire_shadows": true,
+	},
+	{
+		"sun": 4096,
+		"soft": RenderingServer.SHADOW_QUALITY_SOFT_HIGH,
+		"lamps": 4096,
+		"fire_shadows": true,
+	},
 ]
 ## The window's sizes to choose from (the first is the game's own); those larger than the screen
 ## are not offered.

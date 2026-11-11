@@ -19,7 +19,8 @@ const MOON_COLOR := Color("a3b0d2")
 const MOON_ENERGY := 0.5
 const MOON_LIGHT := Vector3(0.45, -0.55, -0.7)
 const MOON_SHADOW := 60.0  # metres its shadows reach
-## A campfire's warm light at dusk: colour, energy, reach (metres); it casts shadows.
+## A campfire's warm light at dusk: colour, energy, reach (metres); it casts shadows but on Low
+## graphics (Settings.GRAPHICS).
 const FIRE_LIGHT := [Color("ff9443"), 2.1, 9.0]
 const LIGHT_FALLOFF := 1.6
 ## The Compatibility renderer lights one mesh (the ground) with this many lights at most:
@@ -300,7 +301,7 @@ func _hall_and_yard() -> void:
 	for f in CampPlan.FIRES:
 		_solid(_prop("vohnyshche", f), 0.9)
 		var fire := ArtEffects.campfire(self, f)
-		_warm(fire, FIRE_LIGHT, true)
+		_warm(fire, FIRE_LIGHT, Settings.graphics().fire_shadows)
 	var one: Vector3 = CampPlan.FIRES[0]
 	var two: Vector3 = CampPlan.FIRES[1]
 	_figure("kozak_svyta", one + Vector3(0.1, 0, -1.25), "sit", one + Vector3(0.6, 0, 2.0), 1.0)

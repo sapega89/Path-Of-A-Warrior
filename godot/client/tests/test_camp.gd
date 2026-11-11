@@ -3,6 +3,7 @@ extends "res://tests/test_case.gd"
 ## blocked, which gate is walked out of, the spots), the fort built from it, and the screen.
 
 const CAMP_PATH := "user://test_camp_plavni.json"
+const CAMP_SETTINGS := "user://test_camp_settings.cfg"
 
 
 ## n ways: [[place, open, mission], ...], the second one closed.
@@ -236,3 +237,23 @@ func test_the_ground_casts_no_shadow() -> void:
 	eq(land_chunk.cast_shadow, GeometryInstance3D.SHADOW_CASTING_SETTING_ON, "other ground does")
 	open_land.free()
 	fort.free()
+
+
+## The fires cast shadows, but not on Low graphics: each is a cube map, the scene drawn six more
+## times a frame.
+func test_the_fires_cast_shadows_but_on_low() -> void:
+	var old_path: String = Settings.path
+	var old_graphics: int = int(Settings.get_value("graphics"))
+	Settings.path = CAMP_SETTINGS
+	for case in [[0, 0], [1, CampPlan.FIRES.size()], [2, CampPlan.FIRES.size()]]:
+		Settings.set_value("graphics", case[0])
+		var fort := _fort(CampPlan.new(_ways(1)), 1)
+		var casting := 0
+		for light: OmniLight3D in fort.find_children("*", "OmniLight3D", true, false):
+			if light.shadow_enabled:
+				casting += 1
+		eq(casting, case[1], "graphics %d: %d lights cast shadows" % case)
+		fort.free()
+	Settings.set_value("graphics", old_graphics)
+	Settings.path = old_path
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_SETTINGS))
