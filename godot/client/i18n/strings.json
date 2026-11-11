@@ -623,17 +623,9 @@
     "en": "Back to the camp",
     "uk": "Назад до табору"
   },
-  "hall.colonels": {
-    "en": "Colonels",
-    "uk": "Полковники"
-  },
   "hall.generals": {
     "en": "Generals you know",
     "uk": "Знайомі генерали"
-  },
-  "hall.progress": {
-    "en": "%s: %d%%",
-    "uk": "%s: %d%%"
   },
   "hall.friend": {
     "en": "%s: friendship %d",
@@ -1068,8 +1060,8 @@
     "uk": "Перед походом"
   },
   "run_setup.fame": {
-    "en": "For fame (%d), once and for good",
-    "uk": "За славу (%d), раз і назавжди"
+    "en": "Fame: %d. Bought with it once and for good:",
+    "uk": "Слава: %d. За неї, раз і назавжди:"
   },
   "run_setup.start_one": {
     "en": "The run starts with this skill",

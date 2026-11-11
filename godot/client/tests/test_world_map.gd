@@ -230,29 +230,28 @@ func test_the_camp_of_the_way_chosen_offers_its_generals() -> void:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))
 
 
-## The town hall names every colonel; how far the hero has come with one only once it is
-## something.
-func test_town_hall_colonels_without_zero() -> void:
+## The town hall lists the generals the hero knows, with their friendship; no colonels (their
+## progress lives one run).
+func test_the_town_hall_lists_the_generals_known() -> void:
 	Profile.new().save(CAMP_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": CAMP_PATH}
 	var hall: Control = Router.make(Router.SCREENS["town_hall"])
 	root.add_child(hall)
-	var lines: Array = hall.list.get_node("Colonels").get_children()
-	eq(lines.size(), hall.colonels().size(), "a line per colonel")
-	for l in lines:
-		check(not (l as Label).text.contains("%"), "no 0% for a colonel the hero has not won with")
-	eq((lines[0] as Label).theme_type_variation, &"SmallLabel", "a line from its scene")
 	check(hall.list.get_node("Nobody").visible, "a new hero knows no general yet")
 	check(not hall.list.get_node("Generals").visible, "so no list of them")
-	var first: Array = hall.colonels()[0]
-	eq(hall.colonel_line(first), tr(str(first[1])), "only his name")
-	hall.profile.progress[str(first[0])] = 15
-	eq(
-		hall.colonel_line(first),
-		tr("hall.progress") % [tr(str(first[1])), 15],
-		"15% once he has won with him"
-	)
+	check(hall.list.get_node_or_null("Colonels") == null, "no colonels")
+	hall.free()
+	var p := Profile.new()
+	p.friendship = {"1": 5}
+	p.save(CAMP_PATH)
+	hall = Router.make(Router.SCREENS["town_hall"])
+	root.add_child(hall)
+	var lines: Array = hall.list.get_node("Generals").get_children()
+	eq(lines.size(), 1, "a line per general known")
+	var name_key := str(MapSim.general_data(1).name)
+	eq((lines[0] as Label).text, tr("hall.friend") % [tr(name_key), 5], "with his friendship")
+	eq((lines[0] as Label).theme_type_variation, &"SmallLabel", "a line from its scene")
 	hall.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))

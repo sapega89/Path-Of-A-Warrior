@@ -28,6 +28,26 @@ func test_a_general_offers_three_different_cards() -> void:
 	check(kinds.has(Gifts.Kind.ATTACK) or kinds.has(Gifts.Kind.DEFENSE), "and stats")
 
 
+## A general's friendship is the chance, never all of it, that his skill is among the cards.
+func test_friendship_brings_his_skill() -> void:
+	var with_skill := func(p: Profile) -> int:
+		var n := 0
+		for s in 200:
+			var cards := Gifts.offer(p, GORSKI, Gifts.CARDS, _rng(s))
+			eq(cards.size(), Gifts.CARDS, "still three cards")
+			if cards.any(func(c: Dictionary) -> bool: return int(c.kind) == Gifts.Kind.SKILL):
+				n += 1
+		return n
+	var p := Profile.new()
+	var strangers: int = with_skill.call(p)
+	p.friendship = {str(GORSKI): 100}
+	var friends: int = with_skill.call(p)
+	check(
+		friends > strangers + 40, "more often his skill: %d of 200, not %d" % [friends, strangers]
+	)
+	check(friends < 200, "but not always: %d of 200" % friends)
+
+
 func test_skills_come_in_the_order_of_their_row() -> void:
 	var p := Profile.new()
 	var storm := {"skills": [2, 0, 0, 0]}  # Storm Sabre, the second of the sabres

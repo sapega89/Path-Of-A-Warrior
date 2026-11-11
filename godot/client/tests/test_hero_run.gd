@@ -128,11 +128,13 @@ func test_the_starting_skill() -> void:
 	var p := Profile.new()
 	var run: HeroRun = p.run
 	eq(run.start_skills, [0] as Array[int], "Whirlwind Sabre at first")
+	run.known_skills = [3, 8]  # learnt in runs before
 	check(run.choose_start_skill(p, 3), "Healing Herbs")
 	eq(int(p.skill_levels[3]), 1, "learnt")
 	eq(int(p.skill_levels[0]) + int(p.skill_levels[5]), 0, "and nothing else")
 	eq(p.hotkeys, [15, 0, 0, 0, 0], "on key 1")
 	check(not run.choose_start_skill(p, 1), "Storm Sabre is not a first skill")
+	eq(run.start_choices(p), [0, 3, 5, 8] as Array[int], "Whirlwind Sabre and Fury stay known")
 	p.fame = int(HeroRun.PERK_PRICES["second_skill"])
 	check(run.buy_perk(p, "second_skill"), "a second skill bought")
 	run.choose_start_skill(p, 5)
@@ -146,6 +148,24 @@ func test_the_starting_skill() -> void:
 	eq(run.start_skills, [5] as Array[int], "the last one stays")
 	run.end(p)
 	eq(int(p.skill_levels[5]), 1, "a new run starts with it")
+
+
+## A run may start only with a skill the hero has learnt in a run: a new hero with his first
+## run's two, then what a run taught him too; kept in the save.
+func test_only_the_skills_learnt_in_a_run_to_start_with() -> void:
+	var p := Profile.new()
+	var run: HeroRun = p.run
+	eq(run.start_choices(p), [0, 5] as Array[int], "a new hero: Whirlwind Sabre and Fury")
+	check(not run.choose_start_skill(p, 11), "not Ring of Fire, never learnt")
+	p.skill_levels[11] = 2  # a gift in the run
+	run.end(p)
+	eq(int(p.skill_levels[11]), 0, "gone with the run")
+	eq(run.start_choices(p), [0, 5, 11] as Array[int], "but a choice for the next one")
+	check(p.save(TEST_PATH), "saved")
+	var q := Profile.load_or_new(TEST_PATH)
+	eq(q.run.known_skills, [0, 5, 11] as Array[int], "kept")
+	check(q.run.choose_start_skill(q, 11), "Ring of Fire chosen")
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
 
 
 func test_perks_bought_with_fame() -> void:
@@ -178,12 +198,17 @@ func test_perks_bought_with_fame() -> void:
 func test_the_run_setup_screen() -> void:
 	var p := Profile.new()
 	p.fame = int(HeroRun.FLASK_PRICES[0]) + int(HeroRun.PERK_PRICES["second_skill"])
+	p.run.known_skills = [11]
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
 	var screen: Control = Router.make(Router.SCREENS["run_setup"])
 	root.add_child(screen)
 	eq(screen.skills.size(), HeroRun.START_CHOICES.size(), "six first skills")
+	var shown: Array = screen.skills.keys().filter(
+		func(k: int) -> bool: return screen.skills[k].visible
+	)
+	eq(shown, [0, 5, 11], "only those learnt in a run")
 	check(screen.skills[0].button_pressed, "Whirlwind Sabre chosen")
 	check(screen.skills[0].icon != null, "with its icon")
 	screen.choose(11)

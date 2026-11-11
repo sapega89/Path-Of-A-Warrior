@@ -1,7 +1,8 @@
 class_name RunSetupScreen
 extends BaseScreen
 ## Before the run, from the start camp's town hall: the starting skill, one of the first skills
-## of the rows with its icon (two with the perk; HeroRun.choose_start_skill), and what fame buys
+## of the rows with its icon (two with the perk; HeroRun.choose_start_skill), only those the hero
+## has learnt in a run (HeroRun.start_choices; the others are hidden), and what fame buys
 ## there once and for good: the flasks of living water, a 4th gift card, a reroll of a gift each
 ## run and a second starting skill. Each with its price, or "bought". Beside them, once an ending
 ## has led back to the start, the vows (Vows): the enemies' HP a step up per press, and three
@@ -48,7 +49,9 @@ func refresh() -> void:
 	skills_title.text = tr(
 		"run_setup.start_two" if run.has_perk("second_skill") else "run_setup.start_one"
 	)
+	var choices := run.start_choices(profile)
 	for place: int in skills:
+		skills[place].visible = place in choices
 		skills[place].button_pressed = place in run.start_skills
 	var price := run.flask_price()
 	flask.text = (

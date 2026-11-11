@@ -6,7 +6,8 @@ extends RefCounted
 ## camp (one of the first skills of the rows; two with the perk). The flasks are bought with
 ## fame in the start camp, once and for good, and are full again at every new run: a mission
 ## lost empties one, and the hero tries again from the same camp. An ending that goes on to a
-## main camp fills one. A mission won leaves the gift of its general (Gifts) here until the hero
+## main camp fills one. A run may start only with a skill the hero has learnt in a run before
+## (known_skills). A mission won leaves the gift of its general (Gifts) here until the hero
 ## takes a card. Fame also buys the perks, once and for good. The vows (Vows) are kept here too.
 
 const MAX_FLASKS := 3
@@ -24,6 +25,7 @@ const PERK_PRICES := {"card": 1500, "reroll": 800, "second_skill": 2000}
 var flasks := 0  # bought, 0..MAX_FLASKS
 var flasks_left := 0  # still full in this run
 var start_skills: Array[int] = [0]  # places in Profile.skill_levels, one of START_CHOICES each
+var known_skills: Array[int] = []  # the START_CHOICES the hero has learnt in a run so far
 var perks := {}  # PERK_PRICES name -> true, once bought
 var reroll_used := false  # the reroll of this run is spent
 var gift: Array[Dictionary] = []  # the cards of the last mission won, until one is taken
@@ -55,6 +57,7 @@ func lose_mission(profile: Profile, story_ends: bool, rng: JavaRandom) -> Dictio
 ## The run is over: the skills go back to the starting ones, the colonels' progress is lost, the
 ## hero is at the start, every flask he bought is full again and the reroll is back.
 func end(profile: Profile) -> void:
+	note_skills(profile)
 	reset_skills(profile)
 	profile.progress = {}
 	profile.place = 0
@@ -72,13 +75,32 @@ func reset_skills(profile: Profile) -> void:
 		profile.hotkeys.append(FIRST_SKILL_ID + start_skills[k] if k < start_skills.size() else 0)
 
 
-## Picks a starting skill (a place of START_CHOICES): it replaces the one chosen, or with the
+## Remembers the starting skills (START_CHOICES) the hero has now: later runs may start with
+## them.
+func note_skills(profile: Profile) -> void:
+	for place: int in START_CHOICES:
+		if int(profile.skill_levels[place]) > 0 and not place in known_skills:
+			known_skills.append(place)
+
+
+## The skills a run may start with: those of START_CHOICES the hero has learnt in a run before,
+## or has now (a new hero: Whirlwind Sabre and Fury, his first run's).
+func start_choices(profile: Profile) -> Array[int]:
+	var out: Array[int] = []
+	for place: int in START_CHOICES:
+		if place in known_skills or int(profile.skill_levels[place]) > 0:
+			out.append(place)
+	return out
+
+
+## Picks a starting skill (a place of start_choices): it replaces the one chosen, or with the
 ## second skill bought is added to it (the older one goes when there are two; pressing one of
 ## the two drops it while the other stays). The hero is at the start, so his skills are those of
 ## a new run at once. False for a skill that is not one of the choices.
 func choose_start_skill(profile: Profile, place: int) -> bool:
-	if not place in START_CHOICES:
+	if not place in start_choices(profile):
 		return false
+	note_skills(profile)  # what he has now stays a choice after the reset
 	if not has_perk("second_skill"):
 		start_skills = [place]
 	elif place in start_skills:
@@ -167,6 +189,7 @@ func to_dict() -> Dictionary:
 		"flasks": flasks,
 		"flasks_left": flasks_left,
 		"start_skills": start_skills,
+		"known_skills": known_skills,
 		"perks": perks.keys(),
 		"reroll_used": reroll_used,
 		"gift": gift,
@@ -184,6 +207,10 @@ func from_dict(d: Dictionary) -> void:
 			start_skills.append(int(s))
 	if start_skills.is_empty():
 		start_skills = [int(START_CHOICES[0])]
+	known_skills = []
+	for s: Variant in _array(d.get("known_skills", [])):
+		if int(s) in START_CHOICES and not int(s) in known_skills:
+			known_skills.append(int(s))
 	perks = {}
 	for p: Variant in _array(d.get("perks", [])):
 		if PERK_PRICES.has(str(p)):

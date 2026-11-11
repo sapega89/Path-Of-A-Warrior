@@ -5,12 +5,16 @@ extends RefCounted
 ## stat (+1 attack, +1 defence, +5 HP or +3 MP), a gear of the hero's level or a potion. The
 ## skill lasts the run (HeroRun ends it); the rest is the hero's for good. The kind of each card
 ## is rolled on the general's gift table, a random row of it; no fame. A general who knows a
-## later skill of a row offers the first one of the row the hero lacks. A mission with no
-## general (an ending, two missions of the campaign) offers a stat, a gear and a potion.
+## later skill of a row offers the first one of the row the hero lacks. The general's friendship
+## (Profile.friendship, 5 a talk) is the percent chance, at most FRIEND_MAX, that one of the cards
+## is his skill. A mission with no general (an ending, two missions of the campaign) offers a
+## stat, a gear and a potion.
 
 enum Kind { SKILL, ATTACK, DEFENSE, HP, MP, GEAR, POTION }
 
 const CARDS := 3
+## The most a general's friendship makes the chance of his skill among the cards, in percent.
+const FRIEND_MAX := 90
 const TRIES := 40  # rolls before three different cards are given up
 ## Per gift table (a general's gift_table), four rows: a roll of 0..999 below the n-th number
 ## gives the n-th of ROLLED (the last one when below none).
@@ -83,7 +87,30 @@ static func offer(
 		var kind := roll(table[rng.randi_range(0, table.size() - 1)], rng)
 		if kind >= 0:
 			_add(cards, card_of(profile, general, kind, rng))
+	_friends_skill(profile, general_id, cards, count, rng)
 	return cards
+
+
+## With the chance of the general's friendship (at most FRIEND_MAX percent), his skill is one of
+## the cards when none is yet: it comes first and the last card gives way.
+static func _friends_skill(
+	profile: Profile,
+	general_id: int,
+	cards: Array[Dictionary],
+	count: int,
+	rng: RandomNumberGenerator
+) -> void:
+	var friend := mini(int(profile.friendship.get(str(general_id), 0)), FRIEND_MAX)
+	if friend <= 0 or cards.any(func(c: Dictionary) -> bool: return int(c.kind) == Kind.SKILL):
+		return
+	if rng.randi_range(0, 99) >= friend:
+		return
+	var card := card_of(profile, MapSim.general_data(general_id), Kind.SKILL, rng)
+	if card.is_empty():
+		return
+	if cards.size() >= count:
+		cards.pop_back()
+	cards.push_front(card)
 
 
 ## The kind a roll on one row of a gift table gives (-1: fame, none).

@@ -51,17 +51,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ColonelsTitle" type="Label" parent="Center/Column/Scroll/List"]
-layout_mode = 2
-theme_type_variation = &"AccentLabel"
-text = "hall.colonels"
-
-[node name="Colonels" type="GridContainer" parent="Center/Column/Scroll/List"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_constants/h_separation = 24
-columns = 2
-
 [node name="GeneralsTitle" type="Label" parent="Center/Column/Scroll/List"]
 layout_mode = 2
 theme_type_variation = &"AccentLabel"
