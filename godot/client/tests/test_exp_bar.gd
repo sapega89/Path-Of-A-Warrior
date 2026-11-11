@@ -63,9 +63,9 @@ func test_the_exp_pages_show_the_bar() -> void:
 		sim.tick(-1)
 	eq(sim.banner, MapSim.BANNER_TOTAL_EXP, "Total Exp")
 	screen._show_banner()
-	check(screen.exp_bar.visible, "the bar under the text")
+	check(screen.banner.exp_bar.visible, "the bar under the text")
 	eq(sim.exp_bars.bars, [90, 114, 114], "45 of 50, then 20 more")
-	check(not screen.banner_text.text.contains("Lv"), "no level up yet")
+	check(not screen.banner.label.text.contains("Lv"), "no level up yet")
 	for t in 4:
 		sim.tick(-1)
 	eq(sim.exp_bars.level, 2, "the bar went past its end")
@@ -74,11 +74,11 @@ func test_the_exp_pages_show_the_bar() -> void:
 	eq(sim.exp_bars.level_up_ticks, 1, "a key cuts it short")
 	screen._show_banner()
 	check(
-		screen.banner_text.text.ends_with(screen.tr("mission.level_up") % 2),
-		screen.banner_text.text
+		screen.banner.label.text.ends_with(screen.tr("mission.level_up") % 2),
+		screen.banner.label.text
 	)
 	sim.banner = MapSim.BANNER_STAGE_CLEAR
 	screen._show_banner()
-	check(not screen.exp_bar.visible, "no bar on other banners")
+	check(not screen.banner.exp_bar.visible, "no bar on other banners")
 	screen.free()
 	Router.params = old

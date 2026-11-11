@@ -81,11 +81,11 @@ func test_the_hud_panel() -> void:
 
 
 func test_exit_arrows() -> void:
-	eq(MissionScreen.exit_arrow(0).get_size(), Vector2(72, 60), "down")
-	eq(MissionScreen.exit_arrow(1).get_size(), Vector2(60, 72), "left")
-	eq(MissionScreen.exit_arrow(2).get_size(), Vector2(72, 60), "up")
-	var down := MissionScreen.exit_arrow(0).get_image()
-	var up := MissionScreen.exit_arrow(2).get_image()
+	eq(ExitArrows.exit_arrow(0).get_size(), Vector2(72, 60), "down")
+	eq(ExitArrows.exit_arrow(1).get_size(), Vector2(60, 72), "left")
+	eq(ExitArrows.exit_arrow(2).get_size(), Vector2(72, 60), "up")
+	var down := ExitArrows.exit_arrow(0).get_image()
+	var up := ExitArrows.exit_arrow(2).get_image()
 	check(
 		down.get_pixel(36, 8).a < down.get_pixel(36, 52).a,
 		"down: the point at the bottom is the strong one"
