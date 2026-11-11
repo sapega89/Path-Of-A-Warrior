@@ -1,0 +1,62 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_p1k3a"]
+[ext_resource type="Script" path="res://scripts/art/sweep_mesh.gd" id="2_p1k3b"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_p1kt0"]
+resource_local_to_scene = true
+shader = ExtResource("1_p1k3a")
+shader_parameter/billboard = 3
+shader_parameter/core = Vector3(1, 1, 0.97)
+shader_parameter/edge = Vector3(0.7, 0.76, 0.86)
+shader_parameter/shape = 5
+shader_parameter/body = 0.3
+
+[sub_resource type="QuadMesh" id="QuadMesh_p1kq0"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_p1kc1"]
+resource_local_to_scene = true
+shader = ExtResource("1_p1k3a")
+shader_parameter/core = Vector3(1, 1, 0.97)
+shader_parameter/edge = Vector3(0.7, 0.76, 0.86)
+shader_parameter/shape = 11
+shader_parameter/body = 0.55
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_p1kc1"]
+script = ExtResource("2_p1k3b")
+start_deg = 105.0
+arc_deg = -145.0
+radius = 1.9
+height = 1.9
+tilt = -0.26
+inner = 0.75
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_p1kt2"]
+resource_local_to_scene = true
+shader = ExtResource("1_p1k3a")
+shader_parameter/billboard = 3
+shader_parameter/core = Vector3(1, 1, 0.97)
+shader_parameter/edge = Vector3(0.7, 0.76, 0.86)
+shader_parameter/shape = 5
+shader_parameter/body = 0.3
+
+[node name="Pike" type="Node3D"]
+
+[node name="Blow0" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.08354, -0.4493, 0.005877, -0.1492, 0, -0.9948, 1.45, -0.02588, -0.102, -0.398, 0.8971, 1.725)
+material_override = SubResource("ShaderMaterial_p1kt0")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_p1kq0")
+
+[node name="Blow1" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_p1kc1")
+cast_shadow = 0
+mesh = SubResource("PrimitiveMesh_p1kc1")
+
+[node name="Blow2" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.1558, -0.4474, -0.01307, 0.1798, 0, -0.9925, 1.45, -0.04807, 0.1216, -0.3404, 1.211, 1.725)
+material_override = SubResource("ShaderMaterial_p1kt2")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_p1kq0")
