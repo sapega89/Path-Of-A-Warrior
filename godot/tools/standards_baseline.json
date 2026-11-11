@@ -25,17 +25,14 @@
   "screens/camp/camp_screen.gd": 1,
   "screens/mission/mission_screen.gd": 1,
   "scripts/art/art_effects.gd": 7,
-  "scripts/art/art_figure.gd": 2,
   "scripts/art/art_ground.gd": 2,
   "scripts/art/art_hud.gd": 2,
   "scripts/art/art_slice.gd": 3,
   "scripts/art/grass.gd": 2,
   "scripts/world/fx_rigs.gd": 3,
-  "scripts/world/hero.gd": 2,
   "scripts/world/map_art.gd": 6,
   "scripts/world/map_builder.gd": 7,
-  "scripts/world/map_effects.gd": 4,
-  "scripts/world/map_people.gd": 1
+  "scripts/world/map_effects.gd": 4
  },
  "profile_path_param": {
   "scripts/screens/base_screen.gd": 1

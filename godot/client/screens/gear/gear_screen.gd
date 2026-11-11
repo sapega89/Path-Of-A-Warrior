@@ -16,7 +16,7 @@ var profile: Profile
 var path: String = Profile.PATH
 var places: Array[Button] = []
 var ghosts: Array[TextureRect] = []  # the faint pictures of the empty places
-@onready var figure: Node3D = %Figure  # the hero (an ArtFigure)
+@onready var figure: ArtFigure = %Figure  # the hero
 @onready var info: Label = %Info
 
 

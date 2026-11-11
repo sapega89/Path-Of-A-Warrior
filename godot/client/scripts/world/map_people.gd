@@ -1,7 +1,7 @@
 class_name MapPeople
 extends Node3D
 ## The people of a mission in the new art: the hero and the enemies of MapSim as 3D figures
-## (scripts/art/art_figure.gd) on their places, turned their way and playing the clip of
+## (scenes/art/art_figure.tscn) on their places, turned their way and playing the clip of
 ## their action (scripts/world/motion.gd) in time with the ticks. A hit flashes them and
 ## knocks them off their place as CombatFeel says; a hit that holds the picture holds their
 ## clips too. The hero's look follows his class and his blade; an enemy's follows the side
@@ -9,6 +9,8 @@ extends Node3D
 ## rival colonel, swordsmen, archers and squads of three.
 
 const PEOPLE_PATH := "res://assets/art/people.json"
+## What holds an enemy's figure (the three of a squad).
+const ENEMY := preload("res://scenes/world/enemy.tscn")
 const PX := 1.0 / 27.0  # world units per map pixel (a tile is 27 px)
 const FOOT_PX := 6  # the original's body box reaches this far below the position
 
@@ -29,7 +31,7 @@ const TURN := 16.0
 static var _sides: Dictionary = {}
 
 var sim: MapSim
-var hero: Node3D  # an ArtFigure
+var hero: ArtFigure
 var side := "crown"  # whose soldiers the mission's are
 var enemies := {}  # sim actor -> Node3D holding 1 figure (3 for a squad)
 var _state := {}  # sim actor -> [action, frame] of the last tick drawn
@@ -89,10 +91,9 @@ func set_hero_look(hero_class: int, weapon_kind: int) -> void:
 	_state.erase(sim.hero)
 
 
-func _figure(kind: String, weapons: Array) -> Node3D:
-	var f: Node3D = ArtFigure.new()
+func _figure(kind: String, weapons: Array) -> ArtFigure:
+	var f := ArtFigure.create(kind)
 	add_child(f)
-	f.setup(kind)
 	f.drive_manually()
 	if not weapons.is_empty():
 		f.unequip_all()
@@ -148,7 +149,7 @@ func _place_enemies(t: float, dt: float, tick: float, feel: CombatFeel) -> void:
 		var restart := _restarted(e)
 		var dir4 := int(map4[e.dir])
 		for i in node.get_child_count():
-			var fig := node.get_child(i) as Node3D
+			var fig := node.get_child(i) as ArtFigure
 			_act(fig, e, motion, anim, t, tick, restart)
 			fig.advance(dt)
 			_turn(fig, Motion.yaw_of(e.dir), dt)
@@ -162,8 +163,7 @@ func _place_enemies(t: float, dt: float, tick: float, feel: CombatFeel) -> void:
 
 
 func _enemy_node(e: MapActor) -> Node3D:
-	var node := Node3D.new()
-	node.name = "Enemy"
+	var node := ENEMY.instantiate() as Node3D
 	add_child(node)
 	var kind: String
 	if e.type < 200:
@@ -171,16 +171,15 @@ func _enemy_node(e: MapActor) -> Node3D:
 	else:
 		kind = SOLDIERS[side][1 if e.type == MapSim.KIND_ARCHERS else 0]
 	for i in 3 if e.type == MapSim.KIND_SQUAD else 1:
-		var f: Node3D = ArtFigure.new()
+		var f := ArtFigure.create(kind)
 		node.add_child(f)
-		f.setup(kind)
 		f.drive_manually()
 		f.rotation.y = Motion.yaw_of(e.dir)
 	return node
 
 
 func _drive(
-	fig: Node3D, a: MapActor, motion: Array, anim: Array, t: float, dt: float, tick: float
+	fig: ArtFigure, a: MapActor, motion: Array, anim: Array, t: float, dt: float, tick: float
 ) -> void:
 	_act(fig, a, motion, anim, t, tick, _restarted(a))
 	_state[a] = [a.action, a.frame]
@@ -188,7 +187,7 @@ func _drive(
 
 
 func _act(
-	fig: Node3D, a: MapActor, motion: Array, anim: Array, t: float, tick: float, restart: bool
+	fig: ArtFigure, a: MapActor, motion: Array, anim: Array, t: float, tick: float, restart: bool
 ) -> void:
 	var n := Motion.ticks(anim)
 	var x := clampf((float(a.frame) + t) / float(n), 0.0, 1.0)
@@ -203,14 +202,14 @@ func _restarted(a: MapActor) -> bool:
 
 
 ## Turns smoothly while the clips move; a still picture shows the direction at once.
-func _turn(fig: Node3D, yaw: float, dt: float) -> void:
+func _turn(fig: ArtFigure, yaw: float, dt: float) -> void:
 	if dt <= 0.0:
 		fig.rotation.y = yaw
 	else:
 		fig.rotation.y = lerp_angle(fig.rotation.y, yaw, 1.0 - exp(-TURN * dt))
 
 
-func _flash(fig: Node3D, a: MapActor, feel: CombatFeel) -> void:
+func _flash(fig: ArtFigure, a: MapActor, feel: CombatFeel) -> void:
 	var f: Array = feel.flash_of(a) if feel != null else [0.0, Color.WHITE]
 	fig.flash(float(f[0]), f[1])
 
