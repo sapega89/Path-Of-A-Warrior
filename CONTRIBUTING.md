@@ -26,9 +26,13 @@
 
 ```
 godot --headless --path godot/client res://tests/runner.tscn
+python godot/tools/check_standards.py
 ```
 
 - Тести зелені, у лозі немає нових рядків `ERROR`.
+- `check_standards.py` зелений: новий код не додає порушень правил `CLAUDE.md`. Старі порушення
+  записані в `godot/tools/standards_baseline.json`; прибрали якесь, тоді
+  `python godot/tools/check_standards.py --update` у тому ж PR.
 - Зміна поведінки має тест; зміна, яку просив гравець, описана в `godot/README.md`.
 - Змінили конвертер — перезапустіть його і закомітьте дані (CI перевіряє, що вони свіжі).
 - Скриншоти CI (`tools/shots.tscn`) не змінюються, якщо зміна не про вигляд.
