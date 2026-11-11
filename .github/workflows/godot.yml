@@ -44,6 +44,23 @@ jobs:
       - name: Import
         run: timeout 300 "$RUNNER_TEMP/godot" --headless --path godot/client --import
 
+      - name: The import's .uid and .import files are committed, none left over
+        run: |
+          new=$(git status --porcelain --untracked-files=all -- godot/client | grep -E '\.(uid|import)$' || true)
+          if [ -n "$new" ]; then
+            echo "The import made files that are not in the repository; commit them:"
+            echo "$new"
+            exit 1
+          fi
+          left=$(git ls-files -- 'godot/client/*.uid' 'godot/client/*.import' | while read -r f; do
+            [ -e "${f%.*}" ] || echo "$f"
+          done)
+          if [ -n "$left" ]; then
+            echo "These files belong to files that are gone; remove them:"
+            echo "$left"
+            exit 1
+          fi
+
       - name: Tests
         run: timeout 300 "$RUNNER_TEMP/godot" --headless --path godot/client res://tests/runner.tscn
 
