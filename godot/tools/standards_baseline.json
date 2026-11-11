@@ -37,7 +37,6 @@
  },
  "theme_in_code": {
   "screens/mission/mission_screen.gd": 1,
-  "screens/story/story_screen.gd": 6,
   "scripts/art/art_hud.gd": 13,
   "scripts/ui/exp_bar.gd": 2,
   "scripts/ui/hint_bar.gd": 3,
@@ -48,7 +47,6 @@
  },
  "ui_in_code": {
   "screens/gear/gear_screen.gd": 1,
-  "screens/story/story_screen.gd": 1,
   "scripts/art/art_hud.gd": 13,
   "scripts/main.gd": 1,
   "scripts/ui/hint_bar.gd": 1,
