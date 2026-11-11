@@ -24,6 +24,9 @@ var hollow_width := 1.8
 var hollow_depth := 0.7
 var tufts := 140
 var seed_value := 3
+## Whether the ground casts shadows. Off where it is nearly flat (the camp): its shadows there
+## fall on nothing, yet a lamp's shadow would draw it six times a frame.
+var casts_shadow := true
 ## What paints the ground (ground.gdshader), shared by its chunks (GroundMesh).
 var material: ShaderMaterial
 
@@ -45,7 +48,11 @@ func build() -> void:
 			)
 	material = ShaderMaterial.new()
 	material.shader = GROUND
-	add_child(grid.build(material))
+	var chunks := grid.build(material)
+	if not casts_shadow:
+		for chunk: MeshInstance3D in chunks.get_children():
+			chunk.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(chunks)
 	_scatter_tufts()
 
 
