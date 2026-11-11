@@ -62,7 +62,7 @@ func test_campaign_screen_opens_a_place_from_the_map() -> void:
 	eq([screen.level, screen.lord_id], [2, 1], "Uprising opens its missions")
 	check(not view.visible, "the map hides")
 	screen._open_mission(0)
-	check(screen.list.get_node_or_null("Description") != null, "a mission shows its story")
+	check(screen.list.get_node("Description").visible, "a mission shows its story")
 	r.free()
 	host.free()
 	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://test_world_map.json"))
@@ -177,6 +177,9 @@ func test_town_hall_colonels_without_zero() -> void:
 	eq(lines.size(), hall.colonels().size(), "a line per colonel")
 	for l in lines:
 		check(not (l as Label).text.contains("%"), "no 0% for a colonel the hero has not won with")
+	eq((lines[0] as Label).theme_type_variation, &"SmallLabel", "a line from its scene")
+	check(hall.list.get_node("Nobody").visible, "a new hero knows no general yet")
+	check(not hall.list.get_node("Generals").visible, "so no list of them")
 	var first: Array = hall.colonels()[0]
 	eq(hall.colonel_line(first), tr(str(first[1])), "only his name")
 	hall.profile.progress[str(first[0])] = 15

@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://screens/new_game/new_game_screen.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/ui/heading.gd" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ask_dialog.tscn" id="ask"]
+[ext_resource type="PackedScene" path="res://screens/new_game/head_button.tscn" id="head"]
 
 [node name="NewGameScreen" type="Control"]
 layout_mode = 3
@@ -70,6 +71,18 @@ unique_name_in_owner = true
 layout_mode = 2
 alignment = 1
 theme_override_constants/separation = 24
+
+[node name="Head0" parent="Center/Column/Body/HeroPage/Heads" instance=ExtResource("head")]
+layout_mode = 2
+
+[node name="Head1" parent="Center/Column/Body/HeroPage/Heads" instance=ExtResource("head")]
+layout_mode = 2
+
+[node name="Head2" parent="Center/Column/Body/HeroPage/Heads" instance=ExtResource("head")]
+layout_mode = 2
+
+[node name="Head3" parent="Center/Column/Body/HeroPage/Heads" instance=ExtResource("head")]
+layout_mode = 2
 
 [node name="Back" type="Button" parent="Center/Column/Body/HeroPage"]
 layout_mode = 2
@@ -269,3 +282,27 @@ layout_mode = 1
 [connection signal="pressed" from="Center/Column/Body/PointsPage/Actions/Back" to="." method="go_back"]
 
 [connection signal="confirmed" from="Ask" to="." method="_confirmed"]
+
+[connection signal="pressed" from="Center/Column/Body/HeroPage/Heads/Head0" to="." method="choose_head" binds= [0]]
+
+[connection signal="focus_entered" from="Center/Column/Body/HeroPage/Heads/Head0" to="." method="show_class" binds= [0]]
+
+[connection signal="mouse_entered" from="Center/Column/Body/HeroPage/Heads/Head0" to="." method="show_class" binds= [0]]
+
+[connection signal="pressed" from="Center/Column/Body/HeroPage/Heads/Head1" to="." method="choose_head" binds= [1]]
+
+[connection signal="focus_entered" from="Center/Column/Body/HeroPage/Heads/Head1" to="." method="show_class" binds= [1]]
+
+[connection signal="mouse_entered" from="Center/Column/Body/HeroPage/Heads/Head1" to="." method="show_class" binds= [1]]
+
+[connection signal="pressed" from="Center/Column/Body/HeroPage/Heads/Head2" to="." method="choose_head" binds= [2]]
+
+[connection signal="focus_entered" from="Center/Column/Body/HeroPage/Heads/Head2" to="." method="show_class" binds= [2]]
+
+[connection signal="mouse_entered" from="Center/Column/Body/HeroPage/Heads/Head2" to="." method="show_class" binds= [2]]
+
+[connection signal="pressed" from="Center/Column/Body/HeroPage/Heads/Head3" to="." method="choose_head" binds= [3]]
+
+[connection signal="focus_entered" from="Center/Column/Body/HeroPage/Heads/Head3" to="." method="show_class" binds= [3]]
+
+[connection signal="mouse_entered" from="Center/Column/Body/HeroPage/Heads/Head3" to="." method="show_class" binds= [3]]

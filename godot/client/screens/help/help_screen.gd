@@ -8,6 +8,7 @@ extends BaseScreen
 const PATH := "res://data/help.json"
 const CONTROL_TOPIC := 7
 const CONTROL_PAGES := ["help.control_1", "help.control_2"]
+const ROW_SCENE := preload("res://scenes/ui/list_button.tscn")
 
 var topics: Array = []
 var topic := -1  # -1: the list of topics
@@ -25,9 +26,8 @@ var close := Callable()
 func _ready() -> void:
 	topics = _read(PATH, "topics")
 	for i in topics.size():
-		var b := Button.new()
+		var b: Button = ROW_SCENE.instantiate()
 		b.name = "Topic%d" % i
-		b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 		b.text = I18n.text(topics[i].get("name", ""))
 		b.pressed.connect(open.bind(i))
 		list.add_child(b)
