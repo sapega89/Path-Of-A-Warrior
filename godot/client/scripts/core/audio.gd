@@ -39,6 +39,7 @@ var _last_time := 0
 
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS  # the music and the clicks go on in a paused mission
 	_music_player = AudioStreamPlayer.new()
 	_music_player.name = "Music"
 	_music_player.bus = &"Music"

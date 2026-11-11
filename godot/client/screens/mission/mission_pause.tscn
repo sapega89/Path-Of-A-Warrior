@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/ask_dialog.tscn" id="3"]
 
 [node name="Pause" type="Control"]
+process_mode = 3
 top_level = true
 layout_mode = 3
 anchors_preset = 15
