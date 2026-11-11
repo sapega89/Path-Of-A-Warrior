@@ -226,7 +226,8 @@ func test_the_run_setup_screen() -> void:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
 
 
-func test_attributes_and_the_smith_only_at_the_start() -> void:
+## Stat points are spent in any camp; the smith enchants and combines only at the start.
+func test_points_anywhere_the_smiths_craft_only_at_the_start() -> void:
 	var p := Profile.new()
 	p.stat_points = 3
 	p.place = 7
@@ -235,9 +236,9 @@ func test_attributes_and_the_smith_only_at_the_start() -> void:
 	Router.params = {"profile_path": TEST_PATH}
 	var attributes: Control = Router.make(Router.SCREENS["attributes"])
 	root.add_child(attributes)
-	check(attributes.plus["HP"].disabled, "no point spent in a camp of the run")
-	check(attributes.start_only.visible, "and a note says so")
-	check(not attributes.spend(Profile.Stat.HP), "not even by a call")
+	check(not attributes.plus["HP"].disabled, "a point to spend in a camp of the run")
+	check(attributes.spend(Profile.Stat.HP), "spent")
+	check(attributes.find_child("StartOnly") == null, "no note about the start camp")
 	attributes.free()
 	var smith: Control = Router.make(Router.SCREENS["blacksmith"])
 	root.add_child(smith)
@@ -251,11 +252,6 @@ func test_attributes_and_the_smith_only_at_the_start() -> void:
 	root.add_child(smith)
 	check(smith.buttons[2].visible and smith.buttons[3].visible, "the start: enchant and combine")
 	smith.free()
-	attributes = Router.make(Router.SCREENS["attributes"])
-	root.add_child(attributes)
-	check(not attributes.start_only.visible, "the start camp")
-	check(attributes.spend(Profile.Stat.HP), "spends a point")
-	attributes.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
 

@@ -1103,10 +1103,6 @@
     "en": "Reroll the cards",
     "uk": "Перекинути картки"
   },
-  "attributes.start_only": {
-    "en": "Points are spent in the start camp only",
-    "uk": "Очки розподіляються лише в стартовому таборі"
-  },
   "run_setup.vows": {
     "en": "Vows: gold and fame +%d%%",
     "uk": "Обітниці: золото й слава +%d%%"
