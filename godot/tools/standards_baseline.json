@@ -10,14 +10,9 @@
   "screens/mission/mission_screen.gd": 1,
   "scripts/art/art_slice.gd": 1
  },
- "profile_path_param": {
-  "scripts/screens/base_screen.gd": 1
- },
+ "profile_path_param": {},
  "pyport_ref": {},
- "script_preload": {
-  "screens/settings/settings_screen.gd": 1,
-  "scripts/core/settings.gd": 1
- },
+ "script_preload": {},
  "theme_in_code": {},
  "ui_in_code": {},
  "untyped": {},
