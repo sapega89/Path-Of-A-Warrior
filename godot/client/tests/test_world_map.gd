@@ -178,6 +178,12 @@ func test_after_a_mission_won_the_way_on_is_chosen_in_the_room() -> void:
 	var sim: RefCounted = screen.sim
 	sim.start_choosing()
 	check(sim.choosing and not sim.finished and sim.enemies.is_empty(), "the room is quiet")
+	for t in 4:
+		sim.tick(2)  # hold left
+	eq(sim.hero.shown_dir, 2, "he turns where he walks")
+	for t in 4:
+		sim.tick(6)  # hold right
+	eq(sim.hero.shown_dir, 6, "and turns back")
 	sim.keep_in_room(sim.hero.pos, 0, -2000)
 	eq(sim.way_out, Rooms.EXIT_UP, "walked into the top side")
 	screen.free()

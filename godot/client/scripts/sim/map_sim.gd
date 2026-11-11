@@ -218,6 +218,7 @@ func tick(
 		e.prev_pos = e.pos
 	if choosing:
 		_tick_scene(held, pressed, 3 if fire else 0, potion)
+		_hero_drawn()
 		return
 	if banner != 0:
 		_tick_banner(fire)
@@ -325,18 +326,22 @@ func play_seconds() -> int:
 	return play_ticks * TICK_MS / 1000
 
 
+## The tick is drawn with the direction the hero moved in (a slide can turn it), then he looks
+## where he faces again.
+func _hero_drawn() -> void:
+	hero.shown_dir = hero.dir
+	hero.dir = hero.facing
+	hero.last_action = hero.action
+	hero.last_frame = hero.frame
+
+
 func sound(n: int) -> void:
 	sounds.append(n)
 
 
 func _end_tick() -> void:
 	MapEnemyPlay.advance_sparks(self)
-	# The tick is drawn with the direction it moved in (a slide can turn it), then the
-	# hero looks where he faces again.
-	hero.shown_dir = hero.dir
-	hero.dir = hero.facing
-	hero.last_action = hero.action
-	hero.last_frame = hero.frame
+	_hero_drawn()
 	hero.idle_ticks += 1
 	_buffed = hero.attack_buff_ticks > 0 or hero.defense_buff_ticks > 0
 	if hero.attack_buff_ticks > 0:
