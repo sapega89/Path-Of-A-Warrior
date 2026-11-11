@@ -175,7 +175,8 @@ func _process(delta: float) -> void:
 
 
 ## The ground: roads from the gates and the spots to the yard, the water channels round the
-## ring (a causeway at each gate) and two creeks, green patches.
+## ring (a causeway at each gate) and two creeks, green patches. It casts no shadows: inside the
+## palisade it is flat, and the fires' shadows would draw it in every face of their cube maps.
 func _ground() -> void:
 	var g := ArtGround.new()
 	g.name = "Ground"
@@ -188,6 +189,7 @@ func _ground() -> void:
 	g.step = GROUND_STEP
 	g.tufts = TUFTS
 	g.seed_value = _rng.randi()
+	g.casts_shadow = false
 	add_child(g)
 	g.build()
 	ground = g

@@ -209,3 +209,30 @@ func test_reeds_and_palisade_drawn_in_batches() -> void:
 			holder.get_child_count() < copies / 4, "%s: few batches for %d" % [holder_name, copies]
 		)
 	fort.free()
+
+
+## The camp's ground casts no shadows (it is flat; the fires' cube maps would draw it six times),
+## while the props on it still do.
+func test_the_ground_casts_no_shadow() -> void:
+	var fort := _fort(CampPlan.new(_ways(4)), 4)
+	var chunks := fort.ground.find_children("Chunk_*", "MeshInstance3D", true, false)
+	check(not chunks.is_empty(), "the ground in chunks")
+	var casting := 0
+	for chunk: MeshInstance3D in chunks:
+		if chunk.cast_shadow != GeometryInstance3D.SHADOW_CASTING_SETTING_OFF:
+			casting += 1
+	eq(casting, 0, "no chunk casts a shadow")
+	var tent: Array = fort.hall.find_children("*", "MeshInstance3D", true, false)
+	eq(
+		(tent[0] as MeshInstance3D).cast_shadow,
+		GeometryInstance3D.SHADOW_CASTING_SETTING_ON,
+		"the town hall's tent does"
+	)
+	var open_land := ArtGround.new()
+	open_land.size = 8.0
+	root.add_child(open_land)
+	open_land.build()
+	var land_chunk := open_land.find_child("Chunk_*", true, false) as MeshInstance3D
+	eq(land_chunk.cast_shadow, GeometryInstance3D.SHADOW_CASTING_SETTING_ON, "other ground does")
+	open_land.free()
+	fort.free()
