@@ -7,6 +7,8 @@ extends RefCounted
 ## gives a gift: a skill of his, a stat, fame, a gear or a potion. One visit per mission won.
 ## With the Hetman's Seal in the backpack all 44 generals one can visit are on the list.
 
+enum Gift { SKILL, ATTACK, DEFENSE, HP, MP, FAME, GEAR, POTION, NONE }
+
 const PATH := "res://data/visit.json"
 const SEAL := 504
 const FRIENDSHIP_PER_VISIT := 5
@@ -34,7 +36,6 @@ const GIFT_ODDS := [
 		[1, 2, 5, 10, 40, 100, 200]
 	]
 ]
-enum Gift { SKILL, ATTACK, DEFENSE, HP, MP, FAME, GEAR, POTION, NONE }
 ## The gear a gift is: the hero's level picks the odds of its tier.
 const TIER_MIN_LEVEL := [69, 44, 24, 9, 0]
 const TIER_ODDS := [

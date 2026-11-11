@@ -7,8 +7,9 @@ extends BaseScreen
 ## Router.params: profile_path (tests and screenshots) goes on to the pages.
 
 var path: String = Profile.PATH
-@onready var list: VBoxContainer = %List
 var buttons: Array[Button] = []
+
+@onready var list: VBoxContainer = %List
 
 
 func _ready() -> void:

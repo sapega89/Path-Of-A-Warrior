@@ -1,29 +1,5 @@
 {
- "code_order": {
-  "screens/assign_items/assign_items_screen.gd": 2,
-  "screens/attributes/attributes_screen.gd": 1,
-  "screens/briefing/briefing_screen.gd": 4,
-  "screens/campaign/campaign_screen.gd": 9,
-  "screens/game_menu/game_menu.gd": 1,
-  "screens/help/help_screen.gd": 1,
-  "screens/mission/mission_screen.gd": 15,
-  "screens/new_game/new_game_screen.gd": 4,
-  "screens/settings/settings_screen.gd": 1,
-  "screens/shop/shop_screen.gd": 7,
-  "screens/story/story_screen.gd": 11,
-  "screens/visiting/visiting_screen.gd": 11,
-  "scripts/art/art_figure.gd": 1,
-  "scripts/core/input_setup.gd": 1,
-  "scripts/core/items.gd": 14,
-  "scripts/core/profile.gd": 2,
-  "scripts/core/visits.gd": 1,
-  "scripts/sim/map_sim.gd": 28,
-  "scripts/ui/map_hud.gd": 6,
-  "scripts/ui/panel_box.gd": 1,
-  "scripts/world/combat_feel.gd": 3,
-  "scripts/world/fx_rigs.gd": 3,
-  "scripts/world/map_effects.gd": 3
- },
+ "code_order": {},
  "long_file": {
   "screens/mission/mission_screen.gd": 1,
   "scripts/core/profile.gd": 1,
@@ -62,29 +38,9 @@
   "scripts/world/map_people.gd": 1
  },
  "profile_path_param": {
-  "screens/briefing/briefing_screen.gd": 1,
-  "screens/campaign/campaign_screen.gd": 1,
-  "screens/mission/mission_screen.gd": 1,
-  "screens/story/story_screen.gd": 1,
   "scripts/screens/base_screen.gd": 1
  },
- "pyport_ref": {
-  "screens/assign_items/assign_items_screen.gd": 1,
-  "screens/blacksmith/blacksmith_screen.gd": 1,
-  "screens/mission/mission_screen.gd": 5,
-  "screens/skills/skills_screen.gd": 1,
-  "screens/story/story_screen.gd": 2,
-  "screens/visiting/visiting_screen.gd": 1,
-  "scripts/core/input_setup.gd": 7,
-  "scripts/core/items.gd": 1,
-  "scripts/core/profile.gd": 1,
-  "scripts/core/settings.gd": 1,
-  "scripts/core/skill_card.gd": 1,
-  "scripts/sim/autopilot.gd": 1,
-  "scripts/sim/exp_bars.gd": 1,
-  "scripts/sim/java_random.gd": 1,
-  "scripts/ui/map_hud.gd": 3
- },
+ "pyport_ref": {},
  "script_preload": {
   "screens/settings/settings_screen.gd": 1,
   "scripts/core/settings.gd": 1

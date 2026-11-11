@@ -5,15 +5,14 @@ extends Node3D
 ## cylinder) of light (fx_light.gdshader) or of dust and smoke (fx_puff.gdshader); the
 ## functions here make them, place them on the map and set how they look.
 
-const LIGHT := preload("res://assets/art/shaders/fx_light.gdshader")
-const PUFF := preload("res://assets/art/shaders/fx_puff.gdshader")
-const PX := 1.0 / 27.0
-
 ## The shapes of fx_light.gdshader.
 enum Shape { GLOW, RING, STAR, FLAME, BOLT, STREAK, RIBBON, SPIRAL, COLUMN, MOTES, SPLASH, SWEEP }
 ## How a part turns to the camera (fx_common.gdshaderinc).
 enum Turn { PLACED, FACING, UPRIGHT, AXIS }
 
+const LIGHT := preload("res://assets/art/shaders/fx_light.gdshader")
+const PUFF := preload("res://assets/art/shaders/fx_puff.gdshader")
+const PX := 1.0 / 27.0
 ## Colours (sRGB): [core, edge].
 const WARM := [Color(1.0, 0.95, 0.8), Color(0.83, 0.65, 0.27)]
 const HOT := [Color(1.0, 0.92, 0.66), Color(0.91, 0.4, 0.14)]
@@ -24,9 +23,10 @@ const STEEL := [Color(1.0, 1.0, 0.97), Color(0.7, 0.76, 0.86)]
 const DUST := [Color(0.94, 0.89, 0.79), Color(0.73, 0.65, 0.55)]
 const SMOKE := [Color(0.48, 0.44, 0.41), Color(0.3, 0.27, 0.25)]
 
+static var _tube_mesh: ArrayMesh
+
 var _pools := {}  # kind -> Array of rigs (Node3D)
 var _used := {}  # kind -> rigs used by the last call
-static var _tube_mesh: ArrayMesh
 
 
 func _rig(kind: String) -> Node3D:

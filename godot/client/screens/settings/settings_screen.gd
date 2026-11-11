@@ -10,6 +10,9 @@ const I18nScript := preload("res://scripts/core/i18n.gd")
 ## Language names are shown in their own language, not translated.
 const LANGUAGE_NAMES := {"en": "English", "uk": "Українська"}
 
+## Shown over another screen (the mission's pause menu): what Back does instead of going back.
+var close := Callable()
+
 @onready var language: OptionButton = %Language
 @onready var music: HSlider = %Music
 @onready var sfx: HSlider = %Sfx
@@ -22,8 +25,6 @@ const LANGUAGE_NAMES := {"en": "English", "uk": "Українська"}
 @onready var graphics: OptionButton = %Graphics
 @onready var window_size: OptionButton = %WindowSize  # desktop only (freed elsewhere)
 @onready var column: VBoxContainer = %Column
-## Shown over another screen (the mission's pause menu): what Back does instead of going back.
-var close := Callable()
 
 
 ## The settings as they are now; the rows the platform has not (fullscreen, the window's size)

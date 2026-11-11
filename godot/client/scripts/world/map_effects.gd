@@ -11,7 +11,6 @@ extends SkillEffects
 ## the same each time.
 
 const BLOOD := preload("res://assets/art/shaders/fx_blood.gdshader")
-
 ## The kinds of effects and how many frames each has (the skills' own: SKILL_FRAMES).
 ##   slash:  dust kicked up by a dash (frame: direction << 1 | step)
 ##   trail:  the trail of a blade (direction * 3 + which blow)
@@ -45,19 +44,19 @@ const FRAMES := {
 	"quake": 15,
 	"scroll": 16
 }
-
 ## Height of the flames of someone burning, by frame.
 const FIRE_H := [0.6, 1.0, 1.4, 1.75, 1.95, 2.0, 1.95, 1.75, 0.9, 0.5]
 ## How far (px) the arrows fly each tick.
 const ARROW_STEP := 12
-
-var _arrows: Array[Node3D] = []
-var _arrow_mesh: ArrayMesh
-## What the last show_effects() drew: [kind, frame, rig].
-var drawn: Array = []
 ## The blood hits leave on the ground: [blot, when it was left (ms)]; the oldest goes first.
 const STAINS := 24
 const STAIN_MS := 9000.0
+
+## What the last show_effects() drew: [kind, frame, rig].
+var drawn: Array = []
+
+var _arrows: Array[Node3D] = []
+var _arrow_mesh: ArrayMesh
 var _stains: Array = []
 var _stain_holder: Node3D
 ## The hits that bled last time and this time (by place and blow), so that each leaves one stain.

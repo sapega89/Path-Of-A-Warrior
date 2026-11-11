@@ -6,7 +6,7 @@ extends RefCounted
 
 const DATA_PATH := "res://data/items.json"
 const EQUIPPED := 9
-const BACKPACK := 45  # 25 in the original; more room, as in pyport (BACKPACK_SIZE)
+const BACKPACK := 45  # places in the backpack
 ## Slot type of a thing -> its place on the Gear page (0 the weapon: both sword types).
 const EQUIP_PLACE := [0, 0, 3, 5, 2, 8, 6, 1, 4, 7]
 ## Things that are used up from the backpack: what each adds to the hero.
@@ -29,8 +29,42 @@ const SUFFIX := {
 const GEAR_STATS := ["attack", "defense", "hp", "mp"]
 ## Icon sheets: potions, gear, treasures, rare things (28 px icons in a row).
 const SHEETS := ["tool", "kibo", "sungbo", "shinki"]
+const POTION_NAMES := [
+	"Red Potion (S)",
+	"Red Potion (M)",
+	"Red Potion (L)",
+	"Blue Potion(S)",
+	"Blue Potion(M)",
+	"Blue Potion(L)",
+	"H.M.Potion(S)",
+	"H.M.Potion(M)",
+	"H.M.Potion(M)",
+	" Powerful Bomb",
+	"Handy Dynamite"
+]
+const POTION_KINDS := ["HP", "MP", "HP&MP"]
+const POTION_PERCENTS := [30, 60, 100]
+## What the bomb and the dynamite do (the texts of skills 26 and 27; potions recover a share).
+const SCROLL_TEXTS := ["Ranged ATK", "Ranged ATK & Knocks back"]
+const POTION_PRICES := [60, 100, 150, 60, 100, 150, 100, 250, 400, 150, 200]
+## The potions and scrolls the shop always has, before its 17 gears.
+const SHOP_POTIONS := [1, 2, 3, 4, 5, 6, 10, 11]
+const SHOP_GEAR := 17
+## The hero's level from which each of the 5 tiers of gear is found, and per tier reached the
+## odds (in %, a byte each, lowest first) of finding a gear of tier 0, 1, 2, 3 (else 4).
+const TIER_LEVELS := [1, 10, 25, 45, 70]
+const TIER_ODDS := [5200, 1321000, 169745950, 421075205, 572588032]
+## Enchanting a thing enchanted n times: the chance (%) it works, and when it does not, the
+## chance (%) the thing is lost.
+const ENCHANT_SUCCESS := [100, 90, 80, 70, 60, 45, 30, 10, 1]
+const ENCHANT_LOST := [0, 10, 20, 40, 50, 60, 70, 80, 90]
+## How much one enchanting adds: 50, 60, ... 100 % of a tenth of each stat, with these odds.
+const ENCHANT_ODDS := [30, 25, 20, 15, 9, 1]
+## The Combine table: [id, id, id (smallest first), what they make], data/mixing.json.
+const MIXING_PATH := "res://data/mixing.json"
 
 static var _data: Dictionary = {}
+static var _mixing: Array = []
 
 
 static func data() -> Dictionary:
@@ -111,25 +145,6 @@ static func describe(item: Dictionary) -> String:
 	return text
 
 
-const POTION_NAMES := [
-	"Red Potion (S)",
-	"Red Potion (M)",
-	"Red Potion (L)",
-	"Blue Potion(S)",
-	"Blue Potion(M)",
-	"Blue Potion(L)",
-	"H.M.Potion(S)",
-	"H.M.Potion(M)",
-	"H.M.Potion(M)",
-	" Powerful Bomb",
-	"Handy Dynamite"
-]
-const POTION_KINDS := ["HP", "MP", "HP&MP"]
-const POTION_PERCENTS := [30, 60, 100]
-## What the bomb and the dynamite do (the texts of skills 26 and 27; potions recover a share).
-const SCROLL_TEXTS := ["Ranged ATK", "Ranged ATK & Knocks back"]
-
-
 ## "Red Potion (S) / Recover 30% of total HP", the line under the Assign Items page.
 static func describe_potion(potion: int) -> String:
 	var i := potion - 1
@@ -157,21 +172,6 @@ static func icon(id: int) -> Array:
 
 
 # ---- the Blacksmith: prices, the shop, enchanting -----------------------------------------
-
-const POTION_PRICES := [60, 100, 150, 60, 100, 150, 100, 250, 400, 150, 200]
-## The potions and scrolls the shop always has, before its 17 gears.
-const SHOP_POTIONS := [1, 2, 3, 4, 5, 6, 10, 11]
-const SHOP_GEAR := 17
-## The hero's level from which each of the 5 tiers of gear is found, and per tier reached the
-## odds (in %, a byte each, lowest first) of finding a gear of tier 0, 1, 2, 3 (else 4).
-const TIER_LEVELS := [1, 10, 25, 45, 70]
-const TIER_ODDS := [5200, 1321000, 169745950, 421075205, 572588032]
-## Enchanting a thing enchanted n times: the chance (%) it works, and when it does not, the
-## chance (%) the thing is lost.
-const ENCHANT_SUCCESS := [100, 90, 80, 70, 60, 45, 30, 10, 1]
-const ENCHANT_LOST := [0, 10, 20, 40, 50, 60, 70, 80, 90]
-## How much one enchanting adds: 50, 60, ... 100 % of a tenth of each stat, with these odds.
-const ENCHANT_ODDS := [30, 25, 20, 15, 9, 1]
 
 
 ## The tier (0..4) of a gear found by a hero of this level, for a roll of 0..99.
@@ -253,11 +253,6 @@ static func describe_for_sale(item: Dictionary, selling: bool) -> String:
 	if id < 100:
 		return "%s / Price: %d" % [describe_potion(id), p]
 	return "%s / Price: %d" % [describe(item), p]
-
-
-## The Combine table: [id, id, id (smallest first), what they make], data/mixing.json.
-const MIXING_PATH := "res://data/mixing.json"
-static var _mixing: Array = []
 
 
 ## What three things can make (one of them, at random): their ids in any order.

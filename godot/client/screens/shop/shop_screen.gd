@@ -17,16 +17,19 @@ var profile: Profile
 var path: String = Profile.PATH
 var mode := "buy"
 var cells: Array[Button] = []
-@onready var gold: Label = %Gold.get_node("Value")
-@onready var info: Label = %Info
-@onready var ask: ConfirmationDialog = %Ask
 var asked := -1  # the cell waiting for the answer to "Continue?"
 var chosen: Array[int] = []  # Combine: the backpack places chosen
 var plan := {}  # Combine: what the three chosen make (Profile.combine_plan)
 var rng := RandomNumberGenerator.new()
 var sparkle := -1  # the sparkle's step now, -1: none
 var sparkle_cells: Array[int] = []  # the cells it plays on
+
 var _sparkle_time := 0.0
+
+@onready var gold: Label = %Gold.get_node("Value")
+@onready var info: Label = %Info
+@onready var ask: ConfirmationDialog = %Ask
+
 @onready var _sparkle_view: EnchantSparkle = %Sparkle
 
 

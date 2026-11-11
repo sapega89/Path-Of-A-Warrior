@@ -28,7 +28,6 @@ var world: Node3D
 var builder: Node3D
 var hero: Node3D  # the hero's figure (people.hero)
 var people: MapPeople  # the hero and the soldiers as figures
-var _anim_dt := 0.0  # seconds the figures' clips move on this frame (0 while a hit holds)
 var camera: Camera3D
 var effects: MapEffects  # the effects, arrows in flight among them
 var hud: MapHud
@@ -42,6 +41,8 @@ var god := true
 var seed := -1
 var waves_on := true
 var autopilot := Autopilot.new()
+
+var _anim_dt := 0.0  # seconds the figures' clips move on this frame (0 while a hit holds)
 ## The effects as they were before E switched them all off.
 var _saved_on := {}
 var _acc := 0.0
