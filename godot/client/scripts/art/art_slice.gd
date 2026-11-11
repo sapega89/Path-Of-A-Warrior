@@ -25,17 +25,19 @@ const EFFECT_GRID := [
 ]
 
 const FOV := 35.0
+const SCENE := "res://scenes/art_slice.tscn"
 const DISTANCE := 13.0
 
 var place := "camp"
 var pitch := 50.0
 ## Camera distance; the game's own camera keeps 13 m, a larger value shows the whole place.
 var distance := DISTANCE
-var camera: Camera3D
 var hero: Node3D
 var hud: Control
 var figures: Array[Node3D] = []
 var effects: Array[Node] = []
+
+@onready var camera: Camera3D = $Camera
 
 
 func _ready() -> void:
@@ -82,9 +84,7 @@ func _world() -> void:
 
 
 func _camera() -> void:
-	camera = Camera3D.new()
 	camera.fov = FOV
-	add_child(camera)
 	var target := hero.global_position if hero != null else Vector3.ZERO
 	if place == "lineup":
 		camera.fov = 30.0

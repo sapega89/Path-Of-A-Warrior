@@ -132,7 +132,7 @@ func test_the_hud_from_its_scene() -> void:
 
 func test_camp_and_battle_build() -> void:
 	for place in ["camp", "battle"]:
-		var slice: Node3D = ArtSlice.new()
+		var slice: ArtSlice = (load(ArtSlice.SCENE) as PackedScene).instantiate()
 		root.add_child(slice)
 		slice.build(place, 50.0)
 		check(slice.hero != null, "%s: a hero" % place)

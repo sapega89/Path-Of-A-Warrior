@@ -26,7 +26,8 @@ const LABELS := {
 }
 ## The blinking arrow in an open gate: how high, how big.
 const ARROW_HEIGHT := 0.6
-const ARROW_PIXEL := 1.0 / 72.0
+## The blinking arrow in an open gate (72 px to the metre, over everything).
+const GATE_ARROW := preload("res://scenes/world/gate_arrow.tscn")
 ## The arrow picture for a way out going down (south), left, up and right.
 const ARROW_DOWN := 0
 const ARROW_LEFT := 1
@@ -122,12 +123,9 @@ func _place_hero() -> void:
 
 ## The blinking arrow in an open gate, pointing the way out; nothing says where it leads.
 func _add_arrow(e: Dictionary) -> void:
-	var arrow := Sprite3D.new()
+	var arrow: Sprite3D = GATE_ARROW.instantiate()
 	arrow.name = "Arrow%d_%d" % [e.place, e.mission]
 	arrow.texture = ExitArrows.exit_arrow(arrow_side(e.out))
-	arrow.pixel_size = ARROW_PIXEL
-	arrow.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	arrow.no_depth_test = true
 	var at: Vector3 = e.gate.lerp(e.inside, 0.5)
 	arrow.position = at + Vector3(0, ARROW_HEIGHT, 0)
 	world.add_child(arrow)

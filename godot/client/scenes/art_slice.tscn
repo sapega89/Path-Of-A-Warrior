@@ -4,3 +4,5 @@
 
 [node name="ArtSlice" type="Node3D"]
 script = ExtResource("1")
+
+[node name="Camera" type="Camera3D" parent="."]
