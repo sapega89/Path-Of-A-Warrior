@@ -253,6 +253,7 @@ func _arc(from: float, to: float) -> PackedVector2Array:
 func _palisade() -> void:
 	var step := plan.step
 	var r := CampPlan.RADIUS * cos(deg_to_rad(step / 2.0))
+	var pieces := PropField.new("palisade")
 	for i in roundi(360.0 / step):
 		var a := (i + 0.5) * step
 		if plan.exits.any(
@@ -260,18 +261,19 @@ func _palisade() -> void:
 				return CampPlan.apart(a, e.angle) < plan.gate_half_width(e.angle) + 0.1
 		):
 			continue
-		_prop("palisade", CampPlan.on_ring(a, r), a)
+		pieces.add(_placed(CampPlan.on_ring(a, r), a))
 		_wall(a, r)
 	for e in plan.exits:
 		var main := CampPlan.gate_pieces(e.angle) == CampPlan.MAIN_GATE_PIECES
 		_prop("brama" if main else "vorota", CampPlan.on_ring(e.angle, r), e.angle)
 		if e.open:
 			continue
-		var pieces := CampPlan.gate_pieces(e.angle)
-		for k in pieces:
-			var a: float = e.angle + (k - (pieces - 1) / 2.0) * step
-			_prop("palisade", CampPlan.on_ring(a, r - BAR_INSIDE), a)
+		var bars := CampPlan.gate_pieces(e.angle)
+		for k in bars:
+			var a: float = e.angle + (k - (bars - 1) / 2.0) * step
+			pieces.add(_placed(CampPlan.on_ring(a, r - BAR_INSIDE), a))
 			_wall(a, r - BAR_INSIDE)
+	pieces.build(self)
 
 
 ## A piece of palisade one cannot walk through, at `deg` round the ring, `r` from the middle.
@@ -362,6 +364,7 @@ func _guards() -> void:
 
 ## Reeds on both banks of the water, but not on the ways out.
 func _reeds() -> void:
+	var reeds := PropField.new("ochert")
 	for line in ground.hollows:
 		var pl: PackedVector2Array = line
 		for k in pl.size() - 1:
@@ -374,7 +377,8 @@ func _reeds() -> void:
 					var p: Vector2 = pl[k].lerp(pl[k + 1], (j + _rng.randf()) / n)
 					p += across * side * _rng.randf_range(1.2, 2.1)
 					if not _on_way_out(Vector3(p.x, 0.0, p.y), 3.0):
-						_stand("ochert", p, _rng.randf_range(0.75, 1.25), -0.05)
+						reeds.add(_standing(p, _rng.randf_range(0.75, 1.25), -0.05))
+	reeds.build(self)
 
 
 ## Bushes past the water all round, trees in the north half behind the camp.
@@ -428,8 +432,21 @@ func _prop(what: String, at: Vector3, yaw := 0.0, scale_by := 1.0, outline := fa
 
 ## A prop standing on the ground at p (on its hills and banks), turned any way.
 func _stand(what: String, p: Vector2, scale_by: float, sink := 0.0) -> Node3D:
+	var node := ArtKit.prop(what)
+	node.transform = _standing(p, scale_by, sink)
+	add_child(node)
+	return node
+
+
+## Where a prop stands on the ground at p (on its hills and banks), turned any way.
+func _standing(p: Vector2, scale_by: float, sink := 0.0) -> Transform3D:
 	var at := Vector3(p.x, ground.height(p.x, p.y) + sink, p.y)
-	return _prop(what, at, _rng.randf() * 360.0, scale_by)
+	return _placed(at, _rng.randf() * 360.0, scale_by)
+
+
+## A prop's place: at `at`, turned `yaw` degrees about the vertical, `scale_by` its size.
+static func _placed(at: Vector3, yaw: float, scale_by := 1.0) -> Transform3D:
+	return Transform3D(Basis(Vector3.UP, deg_to_rad(yaw)).scaled(Vector3.ONE * scale_by), at)
 
 
 ## A person of the camp playing `clip` (at `at_time` seconds and still, or from a random

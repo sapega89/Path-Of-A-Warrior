@@ -13,6 +13,14 @@ func _ways(n: int) -> Array:
 	return ways
 
 
+## The camp of a plan with n ways, built in the tree.
+func _fort(plan: CampPlan, n: int) -> CampFort:
+	var fort: CampFort = load("res://screens/camp/camp_fort.tscn").instantiate()
+	root.add_child(fort)
+	fort.build(plan, ["steppe", "forest", "lake", "town", "mountains", "steppe"], n)
+	return fort
+
+
 func test_gates_on_the_sides_of_the_world() -> void:
 	for n in range(0, 7):
 		eq(CampPlan.new(_ways(n)).exits.size(), n, "%d ways, %d gates" % [n, n])
@@ -65,9 +73,7 @@ func test_the_town_hall_from_farther_off() -> void:
 func test_the_fort_leaves_every_way_and_spot_free() -> void:
 	for n in [1, 4, 6]:
 		var plan := CampPlan.new(_ways(n))
-		var fort: CampFort = load("res://screens/camp/camp_fort.tscn").instantiate()
-		root.add_child(fort)
-		fort.build(plan, ["steppe", "forest", "lake", "town", "mountains", "steppe"], n)
+		var fort := _fort(plan, n)
 		var seen := plan.reachable(CampPlan.START)
 		for s in plan.spots():
 			if s.kind != "way" or s.open:
@@ -189,3 +195,17 @@ func test_the_hero_stands_as_his_weapon_has_him() -> void:
 		camp.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))
+
+
+func test_reeds_and_palisade_drawn_in_batches() -> void:
+	var fort := _fort(CampPlan.new(_ways(4)), 4)
+	for holder_name in ["Ochert", "Palisade"]:
+		var holder := fort.get_node(holder_name) as Node3D
+		var copies := 0
+		for chunk: MultiMeshInstance3D in holder.get_children():
+			copies += chunk.multimesh.instance_count
+			check(chunk.material_override == ArtKit.props_material(), "%s: as a prop" % chunk.name)
+		check(
+			holder.get_child_count() < copies / 4, "%s: few batches for %d" % [holder_name, copies]
+		)
+	fort.free()
