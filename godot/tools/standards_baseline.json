@@ -1,12 +1,10 @@
 {
  "code_order": {},
  "long_file": {
-  "scripts/world/map_art.gd": 1,
-  "scripts/world/map_effects.gd": 1
+  "scripts/world/map_art.gd": 1
  },
  "long_function": {
   "screens/mission/mission_screen.gd": 1,
-  "scripts/art/art_effects.gd": 1,
   "scripts/art/art_slice.gd": 1,
   "scripts/core/stories.gd": 1,
   "scripts/sim/autopilot.gd": 1,
@@ -21,15 +19,12 @@
   "screens/camp/camp_fort.gd": 3,
   "screens/camp/camp_screen.gd": 1,
   "screens/mission/mission_screen.gd": 1,
-  "scripts/art/art_effects.gd": 7,
   "scripts/art/art_ground.gd": 2,
   "scripts/art/art_hud.gd": 2,
   "scripts/art/art_slice.gd": 3,
   "scripts/art/grass.gd": 2,
-  "scripts/world/fx_rigs.gd": 3,
   "scripts/world/map_art.gd": 6,
-  "scripts/world/map_builder.gd": 7,
-  "scripts/world/map_effects.gd": 4
+  "scripts/world/map_builder.gd": 7
  },
  "profile_path_param": {
   "scripts/screens/base_screen.gd": 1
@@ -40,7 +35,6 @@
   "scripts/core/settings.gd": 1
  },
  "theme_in_code": {
-  "screens/story/story_screen.gd": 6,
   "scripts/art/art_hud.gd": 13,
   "scripts/ui/exp_bar.gd": 2,
   "scripts/ui/hint_bar.gd": 3,
@@ -51,7 +45,6 @@
  },
  "ui_in_code": {
   "screens/gear/gear_screen.gd": 1,
-  "screens/story/story_screen.gd": 1,
   "scripts/art/art_hud.gd": 13,
   "scripts/main.gd": 1,
   "scripts/ui/hint_bar.gd": 1,

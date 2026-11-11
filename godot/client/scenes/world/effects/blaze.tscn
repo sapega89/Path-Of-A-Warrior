@@ -1,0 +1,62 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_tyg71"]
+[ext_resource type="Script" path="res://scripts/art/sweep_mesh.gd" id="2_i3r6e"]
+[ext_resource type="Script" path="res://scripts/world/open_cylinder_mesh.gd" id="3_gw38v"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_s22ah"]
+resource_local_to_scene = true
+shader = ExtResource("1_tyg71")
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 11
+shader_parameter/body = 0.55
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_2812p"]
+script = ExtResource("2_i3r6e")
+arc_deg = 360.0
+radius = 1.7
+height = 0.5
+tilt = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vsdgy"]
+resource_local_to_scene = true
+shader = ExtResource("1_tyg71")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 9
+shader_parameter/body = 0.6
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_j7qdg"]
+script = ExtResource("3_gw38v")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_o3u6w"]
+resource_local_to_scene = true
+shader = ExtResource("1_tyg71")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 1
+shader_parameter/body = 0.4
+
+[sub_resource type="QuadMesh" id="QuadMesh_thk8v"]
+
+[node name="Blaze" type="Node3D"]
+
+[node name="Ring" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_s22ah")
+cast_shadow = 0
+mesh = SubResource("PrimitiveMesh_2812p")
+
+[node name="Embers" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_vsdgy")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("PrimitiveMesh_j7qdg")
+
+[node name="Scorch" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_o3u6w")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_thk8v")

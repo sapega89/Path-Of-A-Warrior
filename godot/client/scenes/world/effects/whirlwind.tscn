@@ -1,0 +1,43 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_r5isg"]
+[ext_resource type="Script" path="res://scripts/art/sweep_mesh.gd" id="2_8ptks"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a6qt8"]
+resource_local_to_scene = true
+shader = ExtResource("1_r5isg")
+shader_parameter/core = Vector3(1, 1, 0.97)
+shader_parameter/edge = Vector3(0.7, 0.76, 0.86)
+shader_parameter/shape = 11
+shader_parameter/body = 0.55
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_88dwi"]
+script = ExtResource("2_8ptks")
+arc_deg = 360.0
+radius = 1.5
+height = 0.95
+tilt = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ko7l8"]
+resource_local_to_scene = true
+shader = ExtResource("1_r5isg")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(0.94, 0.89, 0.79)
+shader_parameter/edge = Vector3(0.73, 0.65, 0.55)
+shader_parameter/shape = 1
+shader_parameter/body = 0.3
+
+[sub_resource type="QuadMesh" id="QuadMesh_80qh6"]
+
+[node name="Whirlwind" type="Node3D"]
+
+[node name="Ring" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_a6qt8")
+cast_shadow = 0
+mesh = SubResource("PrimitiveMesh_88dwi")
+
+[node name="Gust" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_ko7l8")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_80qh6")

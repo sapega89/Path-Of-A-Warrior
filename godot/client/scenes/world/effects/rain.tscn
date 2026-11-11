@@ -1,0 +1,52 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_rryf4"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kn0hv"]
+resource_local_to_scene = true
+shader = ExtResource("1_rryf4")
+shader_parameter/billboard = 3
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 5
+shader_parameter/body = 0.35
+
+[sub_resource type="QuadMesh" id="QuadMesh_pepbd"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vqhm3"]
+resource_local_to_scene = true
+shader = ExtResource("1_rryf4")
+shader_parameter/billboard = 1
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 0
+shader_parameter/body = 0.3
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8x1ay"]
+resource_local_to_scene = true
+shader = ExtResource("1_rryf4")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 0
+shader_parameter/body = 0.0
+
+[node name="Rain" type="Node3D"]
+
+[node name="Tail" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_kn0hv")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_pepbd")
+
+[node name="Head" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_vqhm3")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_pepbd")
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_8x1ay")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_pepbd")

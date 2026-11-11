@@ -1,0 +1,52 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_vqlw6"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_120qr"]
+resource_local_to_scene = true
+shader = ExtResource("1_vqlw6")
+shader_parameter/billboard = 2
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 3
+shader_parameter/body = 0.55
+
+[sub_resource type="QuadMesh" id="QuadMesh_lc7u7"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_q1rtr"]
+resource_local_to_scene = true
+shader = ExtResource("1_vqlw6")
+shader_parameter/billboard = 2
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 3
+shader_parameter/body = 0.55
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mx5gq"]
+resource_local_to_scene = true
+shader = ExtResource("1_vqlw6")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 0
+shader_parameter/body = 0.0
+
+[node name="Fire" type="Node3D"]
+
+[node name="Flame0" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_120qr")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_lc7u7")
+
+[node name="Flame1" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_q1rtr")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_lc7u7")
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_mx5gq")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_lc7u7")

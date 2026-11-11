@@ -1,0 +1,67 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_4rngn"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_l5grt"]
+resource_local_to_scene = true
+shader = ExtResource("1_4rngn")
+shader_parameter/billboard = 3
+shader_parameter/core = Vector3(0.93, 0.96, 1)
+shader_parameter/edge = Vector3(0.42, 0.5, 0.98)
+shader_parameter/shape = 4
+shader_parameter/body = 0.3
+
+[sub_resource type="QuadMesh" id="QuadMesh_wq0s5"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_401fs"]
+resource_local_to_scene = true
+shader = ExtResource("1_4rngn")
+shader_parameter/billboard = 3
+shader_parameter/core = Vector3(0.93, 0.96, 1)
+shader_parameter/edge = Vector3(0.42, 0.5, 0.98)
+shader_parameter/shape = 4
+shader_parameter/body = 0.3
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7ky8u"]
+resource_local_to_scene = true
+shader = ExtResource("1_4rngn")
+shader_parameter/billboard = 1
+shader_parameter/core = Vector3(0.93, 0.96, 1)
+shader_parameter/edge = Vector3(0.42, 0.5, 0.98)
+shader_parameter/shape = 0
+shader_parameter/body = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tq1wb"]
+resource_local_to_scene = true
+shader = ExtResource("1_4rngn")
+shader_parameter/billboard = 1
+shader_parameter/core = Vector3(0.93, 0.96, 1)
+shader_parameter/edge = Vector3(0.42, 0.5, 0.98)
+shader_parameter/shape = 2
+shader_parameter/body = 0.35
+
+[node name="Thrust" type="Node3D"]
+
+[node name="Bolt" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_l5grt")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_wq0s5")
+
+[node name="Fork" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_401fs")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_wq0s5")
+
+[node name="Tip" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_7ky8u")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_wq0s5")
+
+[node name="Crackle" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_tq1wb")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_wq0s5")

@@ -95,6 +95,19 @@ func test_room_wide_strikes_keep_their_places() -> void:
 	fx.free()
 
 
+func test_every_kind_is_a_scene_whose_rigs_glow_on_their_own() -> void:
+	for kind in MapEffects.FRAMES.keys() + MapEffects.SKILL_FRAMES.keys():
+		check(ResourceLoader.exists(MapEffects.RIG_PATH % kind), "a scene for %s" % kind)
+	var fx: Node3D = MapEffects.new()
+	fx.show_effects([["spark", 0, Vector2i(10, 10)], ["spark", 2, Vector2i(40, 10)]])
+	var light: Node3D = fx.drawn[0][2].get_node("Star")
+	var hard: Node3D = fx.drawn[1][2].get_node("Star")
+	check(light.material_override != hard.material_override, "each spark its own light")
+	var core: Vector3 = light.material_override.get_shader_parameter("core")
+	check(core != hard.material_override.get_shader_parameter("core"), "a light hit, a hard one")
+	fx.free()
+
+
 func test_the_aura_ring_lies_on_the_ground() -> void:
 	var fx: Node3D = MapEffects.new()
 	fx.show_effects([["aura", 1, Vector2i(50, 53), true], ["aura", 4, Vector2i(50, 53)]])
