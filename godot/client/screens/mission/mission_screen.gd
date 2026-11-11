@@ -43,6 +43,7 @@ var arrows: Array[TextureRect] = []
 var ways_out: Array = []
 var _last_cell := -1
 const FADE_TIME := 0.35
+var _fade_tween: Tween
 var tint := 0
 var loot := {}  # sim drop -> Sprite3D
 var trails: Array = []  # the weapon trails of this tick
@@ -56,7 +57,6 @@ var _potion := -1  # a potion key pressed since the last tick
 var _belt := -1  # a belt slot used by its key or a click on the skill bar since the last tick
 var _skip := false  # SKIP since the last tick: the talk on the map is skipped
 var autopilot := Autopilot.new()
-var _keys_down := {}  # attack, skill and potion keys held at the last frame
 var _last_held := -1
 var _mouse_dir := -1  # the direction the left mouse button holds, -1: none
 var _blink := 0
@@ -153,23 +153,6 @@ func _process(delta: float) -> void:
 	if held != -1 and held != _last_held:
 		_pressed = held  # a new direction this tick: the original's key press
 	_last_held = held
-	# the pad's Back is both, as the HUD's corner: SKIP while someone talks, AUTO otherwise
-	var skip_now := _pressed_now("skip")
-	if _pressed_now("auto") and not (skip_now and hud.talking()):
-		toggle_auto()
-	if skip_now:
-		_skip = true
-	if _pressed_now("attack"):
-		_fire = true
-	for i in 5:
-		if _pressed_now("skill_%d" % (i + 1)):
-			_hotkey = i
-	for i in 2:
-		if _pressed_now("potion_%d" % (i + 1)):
-			_potion = i
-	for i in 5:
-		if _pressed_now("belt_%d" % (i + 1)):
-			_belt = i
 	if held != -1 or _fire or _hotkey != -1 or _potion != -1 or _belt != -1:
 		autopilot.player_key()
 	feel.advance(delta)
@@ -244,14 +227,6 @@ func _process(delta: float) -> void:
 	_update_view(_acc / tick)
 
 
-## The key went down since the last frame (a press seen once, whenever the frame runs).
-func _pressed_now(action: String) -> bool:
-	var down := Input.is_action_pressed(action)
-	var was: bool = _keys_down.get(action, false)
-	_keys_down[action] = down
-	return down and not was
-
-
 ## The position between the last two ticks (a jump, such as a new room, is not smoothed).
 static func smooth(prev: Vector2i, now: Vector2i, t: float) -> Vector2:
 	if (now - prev).length() > 40:
@@ -272,12 +247,14 @@ func _forget_feel() -> void:
 func _update_view(t: float) -> void:
 	if sim.cell != _last_cell:
 		if _last_cell >= 0 and fade != null:
+			if _fade_tween != null:
+				_fade_tween.kill()
 			fade.color.a = 1.0
+			_fade_tween = create_tween()
+			_fade_tween.tween_property(fade, "color:a", 0.0, FADE_TIME)
 		_last_cell = sim.cell
 		# Only this room and the next ones it leads to; the rest is the ground around the map.
 		builder.show_only(sim.rooms.view_cells(sim.cell))
-	if fade != null and fade.color.a > 0.0:
-		fade.color.a = maxf(fade.color.a - get_process_delta_time() / FADE_TIME, 0.0)
 	people.update(t, _anim_dt, tick, feel)
 	_anim_dt = 0.0
 	hero = people.hero
@@ -551,7 +528,6 @@ func _release_keys() -> void:
 	_potion = -1
 	_belt = -1
 	_mouse_dir = -1
-	_keys_down.clear()
 
 
 ## Back pauses the mission (below), so the base does not take it.
@@ -565,6 +541,28 @@ func _screen_input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
 		pause()
+	elif is_processing():
+		_take_key(event)
+
+
+## A key of the game pressed while it plays: kept until the next tick takes it.
+func _take_key(event: InputEvent) -> void:
+	# the pad's Back is both, as the HUD's corner: SKIP while someone talks, AUTO otherwise
+	var skip := event.is_action_pressed("skip")
+	if event.is_action_pressed("auto") and not (skip and hud.talking()):
+		toggle_auto()
+	if skip:
+		_skip = true
+	if event.is_action_pressed("attack"):
+		_fire = true
+	for i in 5:
+		if event.is_action_pressed("skill_%d" % (i + 1)):
+			_hotkey = i
+		if event.is_action_pressed("belt_%d" % (i + 1)):
+			_belt = i
+	for i in 2:
+		if event.is_action_pressed("potion_%d" % (i + 1)):
+			_potion = i
 
 
 ## The mouse (and a touch, which comes as a click too) over the map: the screen itself takes
