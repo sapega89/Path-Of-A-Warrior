@@ -108,7 +108,10 @@ func set_frame(frame: int, skill: bool = false) -> void:
 	_show_frame(frame)
 
 
-func _physics_process(delta: float) -> void:
+## A step every frame, not every physics tick, so the walk is smooth at any refresh rate (60
+## steps a second on a 144 Hz screen would move him in jerks); move_and_slide() takes the
+## frame's delta here.
+func _process(delta: float) -> void:
 	if external:
 		return
 	step(read_move(), delta)

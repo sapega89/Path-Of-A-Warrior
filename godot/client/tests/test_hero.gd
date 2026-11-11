@@ -1,6 +1,13 @@
 extends "res://tests/test_case.gd"
 
 
+## A hero in the tree.
+func _hero() -> Hero:
+	var h := (load("res://scenes/world/hero.tscn") as PackedScene).instantiate() as Hero
+	root.add_child(h)
+	return h
+
+
 func test_directions() -> void:
 	eq(Hero.dir8_of(Vector2.DOWN), 0, "down")
 	eq(Hero.dir8_of(Vector2.LEFT), 2, "left")
@@ -10,8 +17,7 @@ func test_directions() -> void:
 
 
 func test_walk_uses_original_tables() -> void:
-	var h := (load("res://scenes/world/hero.tscn") as PackedScene).instantiate() as Hero
-	root.add_child(h)
+	var h := _hero()
 	eq(int(h.info.frames), 53, "frames in the sheet")
 	check(is_equal_approx(h.sprite.pixel_size, Hero.PIXEL_SIZE), "the sprite: a tile a world unit")
 	eq(h.current_frame(), 1, "idle facing down")
@@ -22,6 +28,13 @@ func test_walk_uses_original_tables() -> void:
 	eq(h.current_table(), h.info.walk[3], "walk table right")
 	h.step(Vector2.ZERO, 0.016)
 	eq(h.current_frame(), 10, "idle facing right")
+	h.free()
+
+
+func test_the_hero_steps_every_frame() -> void:
+	var h := _hero()
+	check(h.is_processing(), "a step each frame")
+	check(not h.is_physics_processing(), "not each physics tick")
 	h.free()
 
 
