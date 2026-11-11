@@ -17,7 +17,7 @@ const COLORS := [
 const RIM := Color("4e4a45")
 
 var px := 3.0  # screen pixels to an original pixel
-var bars: RefCounted  # the sim's exp bar
+var bars: ExpBars  # the sim's exp bar
 
 
 func _ready() -> void:

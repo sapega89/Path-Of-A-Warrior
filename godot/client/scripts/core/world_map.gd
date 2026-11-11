@@ -10,14 +10,14 @@ extends RefCounted
 
 enum State { HERE, NEXT, CLOSED, AWAY }
 
-var campaign: RefCounted
+var campaign: Campaign
 ## Place id -> Vector2(column, row); rows are centred on 0 and may be halves.
 var cells := {}
 var columns := 0
 var rows := 0  # the most places in one column
 
 
-func _init(c: RefCounted = null) -> void:
+func _init(c: Campaign = null) -> void:
 	campaign = c if c != null else Campaign.new()
 	_layout()
 
@@ -54,7 +54,7 @@ func comes_from(place: int) -> Array:
 
 ## How the place looks to a hero at `here`: his own place, one he can go to now (and fight
 ## for), one he could go to but is closed, or one further away.
-func state(place: int, here: int, profile: RefCounted) -> int:
+func state(place: int, here: int, profile: Profile) -> int:
 	if place == here:
 		return State.HERE
 	if place in next_places(here):
@@ -63,7 +63,7 @@ func state(place: int, here: int, profile: RefCounted) -> int:
 
 
 ## Missions won at the place and how many it has.
-func won(place: int, profile: RefCounted) -> Vector2i:
+func won(place: int, profile: Profile) -> Vector2i:
 	var n: int = campaign.lord_missions(place).size()
 	var w := 0
 	for i in n:

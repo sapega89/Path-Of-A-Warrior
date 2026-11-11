@@ -6,7 +6,7 @@ extends BaseScreen
 
 const PER_PAGE := 5
 
-var profile: RefCounted
+var profile: Profile
 var path: String = Profile.PATH
 var page := 0
 @onready var list: VBoxContainer = %List

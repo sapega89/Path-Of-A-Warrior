@@ -12,7 +12,7 @@ signal resumed
 var buttons: Array[Button] = []
 var menu: Control
 var settings: Control  # the items, the settings or the help shown over the menu
-var sim: RefCounted  # the mission's (its potion keys)
+var sim: MapSim  # the mission's (its potion keys)
 var save_game := Callable()  # the mission's save on its map: true when saved
 var note: AskDialog  # a notice: OK alone
 var ask: AskDialog

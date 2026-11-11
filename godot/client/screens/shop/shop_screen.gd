@@ -13,7 +13,7 @@ const QUICK := 5
 const SPARKLE_STEPS := 5
 const SPARKLE_FRAME := 0.12  # seconds a step lasts, as a frame of the menus
 
-var profile: RefCounted
+var profile: Profile
 var path: String = Profile.PATH
 var mode := "buy"
 var cells: Array[Button] = []

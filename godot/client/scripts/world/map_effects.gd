@@ -107,7 +107,7 @@ func show_shots(arrows: Array, t := 0.0, moving := true) -> void:
 		_arrows.append(a)
 	for i in _arrows.size():
 		var node := _arrows[i]
-		var a = arrows[i] if i < arrows.size() else null
+		var a = arrows[i] if i < arrows.size() else null  # standards: allow untyped (a leak at exit)
 		node.visible = a != null and a.active
 		if not node.visible:
 			continue

@@ -34,9 +34,9 @@ const ARROW_UP := 2
 const ARROW_RIGHT := 3
 
 var path: String = Profile.PATH
-var profile: RefCounted
+var profile: Profile
 var campaign := Campaign.new()
-var world_map: RefCounted
+var world_map: WorldMap
 var plan: CampPlan
 var place := 0
 ## What the hero can use where he stands (CampPlan.spots()): the ways first, in the order of

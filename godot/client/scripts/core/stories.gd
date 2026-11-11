@@ -95,7 +95,7 @@ static func pages(story: int, hero_name: String) -> Array:
 
 ## The lines of the last page of an ending: missions, hidden missions, endings and generals
 ## done, in per cent, and their average.
-static func stats_lines(profile: RefCounted) -> Array:
+static func stats_lines(profile: Profile) -> Array:
 	var missions := 0
 	var hidden := 0
 	for key in profile.done:

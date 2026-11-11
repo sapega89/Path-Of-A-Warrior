@@ -33,7 +33,7 @@ func _ready() -> void:
 	var p: Dictionary = Router.params
 	lord_id = int(p.get("lord", 0))
 	mission = int(p.get("mission", 0))
-	var profile: RefCounted = Profile.load_or_new(str(p.get("profile_path", Profile.PATH)))
+	var profile := Profile.load_or_new(str(p.get("profile_path", Profile.PATH)))
 	var ms := Campaign.new().lord_missions(lord_id)
 	var m: Dictionary = ms[mission] if mission >= 0 and mission < ms.size() else {}
 	lines = talk(int(p.get("line", 0)), tr(str(m.get("name", ""))), profile.hero_name)

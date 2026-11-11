@@ -5,7 +5,7 @@ extends BaseScreen
 ## item (HP, MP, ATK, DEF up) is used up. Gear above the hero's level cannot be taken. Every change
 ## is saved at once.
 
-var profile: RefCounted
+var profile: Profile
 var path: String = Profile.PATH
 var cells: Array[Button] = []
 @onready var gold: Label = %Gold.get_node("Value")

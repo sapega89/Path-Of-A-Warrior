@@ -33,7 +33,7 @@ var mission_info := {}
 var lost_gear := {}  # what the hero lost with the mission (Profile.lose_gear), shown on its banner
 var _fail_seen := false
 var lord_name := ""
-var sim: RefCounted
+var sim: MapSim
 var hero: Node3D  # the hero's figure (people.hero)
 var profile: Profile
 ## 0..3 the room's exits (down, left, up, right); 4..7 a second way on a side

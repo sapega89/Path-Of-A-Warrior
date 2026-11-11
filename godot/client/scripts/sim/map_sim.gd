@@ -46,7 +46,7 @@ var w := 0
 var h := 0
 var flags: Array = []
 var objects: Array = []
-var rooms: RefCounted
+var rooms: Rooms
 var cell := 0  # the current room
 var room_phase := 2  # 0 playing, 1 cleared (exits open), 2 entered (banner), 3 just cleared
 var room_phase_timer := 1

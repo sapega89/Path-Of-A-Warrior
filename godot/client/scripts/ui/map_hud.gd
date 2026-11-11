@@ -31,7 +31,7 @@ const AUTO_W := 48  # the AUTO corner
 const AUTO_H := 17
 const PAUSE_W := 48  # the PAUSE corner
 
-var sim: RefCounted
+var sim: MapSim
 var kills_shown := 0  # counts up to the kills one a tick
 
 ## The colours of the orbs: [top of the liquid, its bottom].

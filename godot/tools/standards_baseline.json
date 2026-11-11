@@ -128,40 +128,6 @@
   "scripts/ui/ui_theme.gd": 7,
   "scripts/ui/world_map_view.gd": 1
  },
- "untyped": {
-  "scripts/core/profile.gd": 1,
-  "scripts/sim/autopilot.gd": 10,
-  "scripts/world/combat_feel.gd": 4,
-  "scripts/world/map_effects.gd": 1
- },
- "weak_type": {
-  "screens/assign_items/assign_items_screen.gd": 2,
-  "screens/attributes/attributes_screen.gd": 1,
-  "screens/blacksmith/blacksmith_screen.gd": 1,
-  "screens/briefing/briefing_screen.gd": 1,
-  "screens/camp/camp_screen.gd": 2,
-  "screens/campaign/campaign_screen.gd": 1,
-  "screens/endings/endings_screen.gd": 1,
-  "screens/gear/gear_screen.gd": 1,
-  "screens/inventory/inventory_screen.gd": 1,
-  "screens/mission/mission_screen.gd": 1,
-  "screens/new_game/new_game_screen.gd": 2,
-  "screens/shop/shop_screen.gd": 1,
-  "screens/skills/skills_screen.gd": 1,
-  "screens/story/story_screen.gd": 1,
-  "screens/town_hall/town_hall_screen.gd": 1,
-  "screens/visiting/visiting_screen.gd": 1,
-  "scripts/core/profile.gd": 8,
-  "scripts/core/stories.gd": 1,
-  "scripts/core/visits.gd": 5,
-  "scripts/core/world_map.gd": 4,
-  "scripts/sim/autopilot.gd": 10,
-  "scripts/sim/map_sim.gd": 1,
-  "scripts/ui/exp_bar.gd": 1,
-  "scripts/ui/map_hud.gd": 1,
-  "scripts/ui/mission_pause.gd": 1,
-  "scripts/ui/world_map_view.gd": 3,
-  "scripts/world/combat_feel.gd": 2,
-  "scripts/world/map_people.gd": 11
- }
+ "untyped": {},
+ "weak_type": {}
 }

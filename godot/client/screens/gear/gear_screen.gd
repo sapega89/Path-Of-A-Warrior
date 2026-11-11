@@ -12,7 +12,7 @@ const BOARD := Vector2(158, 162)  # the panel, in grid pixels
 const PLACE_DX := [-77, -77, -77, -33, 3, 47, 47, 47, -15]
 const PLACE_DY := [21, -15, -51, -79, -79, -51, -15, 21, 49]
 
-var profile: RefCounted
+var profile: Profile
 var path: String = Profile.PATH
 var places: Array[Button] = []
 var ghosts: Array[TextureRect] = []  # the faint pictures of the empty places

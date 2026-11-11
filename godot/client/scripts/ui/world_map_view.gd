@@ -11,15 +11,15 @@ const NODE := 38.0  # a place's button, px
 const WON := Color("7fb069")
 const WAY := Color(0.6, 0.57, 0.65, 0.35)
 
-var world: RefCounted
-var profile: RefCounted
+var world: WorldMap
+var profile: Profile
 var here := 0
 var buttons := {}  # place id -> Button
 var info: Label
 var _area := Rect2()
 
 
-func _init(w: RefCounted, p: RefCounted, place: int) -> void:
+func _init(w: WorldMap, p: Profile, place: int) -> void:
 	world = w
 	profile = p
 	here = place

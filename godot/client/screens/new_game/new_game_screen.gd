@@ -17,7 +17,7 @@ const STAT_KEYS := ["hp", "mp", "attack", "defense"]
 enum Step { DIFFICULTY, HERO, NAME, POINTS }
 
 var path: String = Profile.PATH
-var profile: RefCounted = Profile.new()
+var profile := Profile.new()
 var step := Step.DIFFICULTY
 @onready var heading: Label = %Heading
 @onready var body: VBoxContainer = %DifficultyPage  # the page of this step
@@ -179,7 +179,7 @@ func spend(stat: int) -> void:
 
 ## Gives the points back: the hero of the chosen face again, with his name.
 func reset_points() -> void:
-	var fresh: RefCounted = Profile.new()
+	var fresh := Profile.new()
 	fresh.difficulty = profile.difficulty
 	fresh.set_head(profile.head)
 	fresh.hero_name = profile.hero_name
