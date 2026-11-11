@@ -197,18 +197,19 @@ func test_breakables_flash() -> void:
 	b.free()
 
 
-## A thing one can break wears a brass outline and warm edges that glow and dim; the other
-## props do not.
+## A thing one can break wears two rings and warm edges that glow and dim; the other props do
+## not.
 func test_breakables_marked() -> void:
 	var b := _map(1)
 	for o in b.breakables:
 		var m: ShaderMaterial = o.get_meta("material")
-		var outline := m.next_pass as ShaderMaterial
+		var dark := m.next_pass as ShaderMaterial
+		check(dark != null and dark.shader == ArtKit.BREAKABLE_OUTLINE, "%s: a dark ring" % o.name)
+		var light := dark.next_pass as ShaderMaterial if dark != null else null
 		check(
-			outline != null and outline.shader == ArtKit.BREAKABLE_OUTLINE,
-			"%s: a brass outline" % o.name
+			light != null and light.shader == ArtKit.BREAKABLE_OUTLINE, "%s: a light ring" % o.name
 		)
-		var glow := outline.next_pass as ShaderMaterial if outline != null else null
+		var glow := light.next_pass as ShaderMaterial if light != null else null
 		check(glow != null and glow.shader == ArtKit.BREAKABLE_GLOW, "%s: warm edges" % o.name)
 	var others := 0
 	for p in b.props:
@@ -218,6 +219,26 @@ func test_breakables_marked() -> void:
 			others += 1
 	check(others > 0, "props around")
 	b.free()
+
+
+## The rings read on any ground and in any wood: the light one stays light all through its
+## pulse, the dark one stays dark, and the dark one lies out past the light one and behind it,
+## smooth and in pixel art, so both show.
+func test_breakable_rings() -> void:
+	var dark := ArtKit.breakable_rings()
+	var light := dark.next_pass as ShaderMaterial
+	for key in ["color", "peak"]:
+		check(dark.get_shader_parameter(key).get_luminance() < 0.2, "dark: %s" % key)
+		check(light.get_shader_parameter(key).get_luminance() > 0.8, "light: %s" % key)
+	for key in ["width_px", "min_pixels"]:
+		check(
+			dark.get_shader_parameter(key) >= light.get_shader_parameter(key) + 1.0,
+			"the dark one a pixel further out: %s" % key
+		)
+	check(light.get_shader_parameter("min_pixels") >= 1.0, "light: a whole pixel in pixel art")
+	check(dark.get_shader_parameter("behind") > 0.0, "the dark one behind the light one")
+	eq(light.get_shader_parameter("behind"), 0.0, "the light one where the thing is")
+	check(ArtKit.breakable_rings() == dark, "shared by all")
 
 
 func test_the_mission_stands_on_the_new_maps() -> void:
