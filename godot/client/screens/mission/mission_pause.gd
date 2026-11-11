@@ -1,11 +1,11 @@
 class_name MissionPause
 extends Control
 ## The pause menu of a mission, over the stopped game (mission_pause.tscn): Resume, Items
-## (Assign Items for this mission's potion keys), Options (the settings), Help, Exit to Menu
-## (asked first: the mission is lost, back to the camp) and Exit Game (asked first; not on phones
-## and the web). The game is saved in the camps between missions, so there is no Save here
-## (save() is kept for a mission saved on its map by an older version). Items, Options and Help
-## show over the menu. Back resumes.
+## (the Inventory with its belt only: this mission's potion keys), Options (the settings),
+## Help, Exit to Menu (asked first: the mission is lost, back to the camp) and Exit Game (asked
+## first; not on phones and the web). The game is saved in the camps between missions, so there
+## is no Save here (save() is kept for a mission saved on its map by an older version). Items,
+## Options and Help show over the menu. Back resumes.
 
 signal resumed
 
@@ -66,9 +66,9 @@ func save() -> bool:
 	return ok
 
 
-## Assign Items over the pause menu, for this mission's potion keys.
+## The Inventory over the pause menu, its belt only, for this mission's potion keys.
 func open_items() -> void:
-	var screen: Control = Router.make(Router.SCREENS["assign_items"])
+	var screen: Control = Router.make(Router.SCREENS["inventory"])
 	screen.sim = sim
 	_open_over(screen, "Items")
 

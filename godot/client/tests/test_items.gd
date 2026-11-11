@@ -69,30 +69,64 @@ func test_gear_saved() -> void:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
 
 
-func test_gear_and_inventory_pages() -> void:
+## The gear, the backpack and the belt are one window: what is worn is taken off into the
+## backpack there, and a thing of the backpack is worn from it.
+func test_gear_and_backpack_in_one_window() -> void:
 	var p := Profile.new()
 	p.add_item(Items.make(131))
 	p.add_item(Items.make(102))
 	p.save(TEST_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": TEST_PATH}
-	var gear: Control = Router.make(Router.SCREENS["gear"])
-	root.add_child(gear)
-	eq(gear.places.size(), 9, "nine places")
-	check(gear.places[0].icon != null, "the claymore's icon")
-	check(gear.places[3].icon == null, "no helmet")
-	eq(gear.describe(0), "Iron Broadsword / ATK+1 / Available at Lv1", "the weapon")
-	gear.free()
-	var inv: Control = Router.make(Router.SCREENS["inventory"])
+	check(not Router.SCREENS.has("gear"), "no Gear page of its own")
+	var inv: InventoryScreen = Router.make(Router.SCREENS["inventory"])
 	root.add_child(inv)
+	eq(inv.gear.places.size(), 9, "the nine places of the gear")
+	eq(inv.cells.size(), Items.BACKPACK, "the backpack's places")
+	eq(inv.belt.slots.size(), 5, "and the belt, in the same window")
+	eq(inv.get_node("%Backpack").columns, 9, "the backpack in five rows of nine: no scrolling")
+	check(inv.gear.places[0].icon != null, "the claymore's icon")
+	check(inv.gear.places[3].icon == null, "no helmet")
+	inv.gear.place_pointed.emit(0)
+	eq(inv.info.text, "Iron Broadsword / ATK+1 / Available at Lv1", "the weapon")
 	eq(inv.gold.text, "0", "gold")
 	eq(inv.press_cell(1), "cannot", "too high a level")
 	eq(inv.info.text, "You can't take this equipment.", "said so")
 	eq(inv.press_cell(0), "", "the helmet is worn")
 	check(inv.cells[0].icon == null, "its place is empty")
+	check(inv.gear.places[3].icon != null, "and it is on the hero at once")
+	check(not inv.press_place(4), "nothing worn there")
 	inv.free()
 	var saved: RefCounted = Profile.load_or_new(TEST_PATH)
 	eq(int(saved.equipped[3].id), 131, "saved")
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
+
+
+## Picking a worn thing takes it off into the first free place of the backpack, and the cursor
+## goes there; with the backpack full it stays on and the line says why.
+func test_taking_off_in_the_inventory() -> void:
+	var p := Profile.new()
+	p.add_item(Items.make(131))
+	p.use_item(0)
+	p.add_item(Items.make(102))
+	p.save(TEST_PATH)
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": TEST_PATH}
+	var inv: InventoryScreen = Router.make(Router.SCREENS["inventory"])
+	root.add_child(inv)
+	check(inv.press_place(3), "the helmet taken off")
+	check(inv.gear.places[3].icon == null, "its place empty")
+	check(inv.cells[1].icon != null, "it is in the backpack, after the spear")
+	check(inv.cells[1].has_focus(), "the cursor on it")
+	eq(int(Profile.load_or_new(TEST_PATH).backpack[1].id), 131, "saved")
+	for i in Items.BACKPACK:
+		inv.profile.backpack[i] = Items.make(102)
+	inv.refresh()
+	check(not inv.press_place(0), "the backpack is full")
+	eq(inv.info.text, tr("shop.full"), "said so")
+	check(inv.gear.places[0].icon != null, "the claymore still worn")
+	inv.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
 

@@ -79,7 +79,8 @@ func _ready() -> void:
 	Router.current.refresh()
 	Router.current.skills[20].grab_focus()
 	await _shot(out, "07_skills")
-	# Gear and Inventory: a helmet and armour worn, a few things and some gold in the backpack.
+	# The Inventory, gear, backpack and belt in one window: a helmet and armour worn, a few things
+	# and some gold in the backpack, three kinds of potion on the belt.
 	Router.back()
 	var items: GDScript = load("res://scripts/core/items.gd")
 	for id in [131, 136]:
@@ -88,29 +89,18 @@ func _ready() -> void:
 	for id in [126, 146, 102, 434, 503]:
 		hero.add_item(items.make(id))
 	hero.gold = 1250
+	hero.quick_slots = [[1, 3], [4, 2], [7, 1], [0, 0], [0, 0]]
+	hero.quick_keys = [0, 1]
 	hero.save("user://shot_hero.json")
-	Router.push("gear", Router.params)
-	await _frames(2)
-	Router.current.places[5].grab_focus()
-	await _shot(out, "08_gear")
-	Router.back()
 	Router.push("inventory", Router.params)
 	await _frames(2)
 	Router.current.cells[1].grab_focus()
 	await _shot(out, "09_inventory")
-	Router.current.cells[42].grab_focus()
-	await _frames(2)
-	await _shot(out, "09a_inventory_last_rows")
-	# Assign Items: three kinds of potion, the second key on the blue ones.
-	Router.back()
-	hero.quick_slots = [[1, 3], [4, 2], [7, 1], [0, 0], [0, 0]]
-	hero.quick_keys = [0, 1]
-	hero.save("user://shot_hero.json")
-	Router.push("assign_items", Router.params)
-	await _frames(2)
+	Router.current.gear.places[5].grab_focus()
+	await _shot(out, "09a_inventory_gear")
 	Router.current.press_slot(2)
-	Router.current.slots[2].grab_focus()
-	await _shot(out, "10_assign_items")
+	Router.current.belt.slots[2].grab_focus()
+	await _shot(out, "09b_inventory_belt")
 	# The game menu, and its end: the list scrolls down to Help.
 	Router.go("main_menu")
 	Router.push("game_menu", {"profile_path": "user://shot_hero.json"})

@@ -147,17 +147,9 @@
     "en": "Skills",
     "uk": "Уміння"
   },
-  "management.gear": {
-    "en": "Gear",
-    "uk": "Спорядження"
-  },
   "management.inventory": {
     "en": "Inventory",
-    "uk": "Торба"
-  },
-  "management.assign_items": {
-    "en": "Assign Items",
-    "uk": "Швидкі предмети"
+    "uk": "Інвентар"
   },
   "attributes.title": {
     "en": "Attributes",
@@ -203,25 +195,13 @@
     "en": "(Not Available)",
     "uk": "(Недоступно)"
   },
-  "gear.title": {
-    "en": "Gear",
-    "uk": "Спорядження"
-  },
   "inventory.title": {
     "en": "Inventory",
-    "uk": "Торба"
+    "uk": "Інвентар"
   },
   "inventory.cannot_take": {
     "en": "You can't take this equipment.",
     "uk": "Ви не можете взяти це спорядження."
-  },
-  "assign.title": {
-    "en": "Assign Items",
-    "uk": "Швидкі предмети"
-  },
-  "assign.keys": {
-    "en": "Keys Z X C V B",
-    "uk": "Клавіші Z X C V B"
   },
   "campaign.lords": {
     "en": "Lords",
@@ -712,12 +692,12 @@
     "uk": "Торкніться речі: вибрати 3 речі для поєднання"
   },
   "hint.grid_gear": {
-    "en": "{ui_move}: choose a thing · {ui_click}: take off and choose another · {ui_cancel}: back",
-    "uk": "{ui_move}: вибір речі · {ui_click}: зняти й вибрати іншу · {ui_cancel}: назад"
+    "en": "{ui_move}: choose a thing · {ui_click}: take off into the backpack · {ui_cancel}: back",
+    "uk": "{ui_move}: вибір речі · {ui_click}: зняти в торбу · {ui_cancel}: назад"
   },
   "hint.grid_gear_touch": {
-    "en": "Tap a thing: take off and choose another",
-    "uk": "Торкніться речі: зняти й вибрати іншу"
+    "en": "Tap a thing: take off into the backpack",
+    "uk": "Торкніться речі: зняти в торбу"
   },
   "hint.grid_assign": {
     "en": "{ui_move}: choose a thing · {ui_click}: choose a slot, then a potion · {ui_cancel}: back",
