@@ -35,7 +35,8 @@ func test_no_auto_on_hard() -> void:
 	screen.sim.difficulty = 0
 	screen.hud.auto_allowed = screen.auto_allowed()
 	check(not screen.auto_allowed(), "hard: no AUTO")
-	check(not screen.hud.auto_at(corner), "hard: no AUTO corner")
+	screen.hud.refresh()
+	check(not screen.hud.get_node("%Auto").visible, "hard: no AUTO corner")
 	screen.toggle_auto()
 	check(not screen.autopilot.on, "hard: it stays off")
 	screen.queue_free()
@@ -49,13 +50,20 @@ func test_skip_corner_on_the_map() -> void:
 	root.add_child(screen)
 	var view: Vector2 = screen.hud.get_viewport_rect().size
 	var corner := Vector2(4, view.y - 4)
+	var auto: Button = screen.hud.get_node("%Auto")
+	var skip: Button = screen.hud.get_node("%Skip")
 	check(not screen.hud.talking(), "nobody talks")
-	check(screen.hud.auto_at(corner) and not screen.hud.skip_at(corner), "the corner is AUTO")
+	check(auto.visible and not skip.visible, "the corner is AUTO")
 	MapTalks.start_general_talk(screen.sim, 5, 0)
+	screen.hud.refresh()
 	check(screen.hud.talking(), "a general talks")
-	check(screen.hud.skip_at(corner) and not screen.hud.auto_at(corner), "the corner is SKIP")
+	check(skip.visible and not auto.visible, "the corner is SKIP")
+	check(skip.get_global_rect().has_point(corner), "in AUTO's place")
 	var auto_was: bool = screen.autopilot.on
-	screen._gui_input(_click(corner, InputEvent.DEVICE_ID_EMULATION))
+	root.get_viewport().push_input(_click(corner, InputEvent.DEVICE_ID_EMULATION), true)
+	var up := _click(corner, InputEvent.DEVICE_ID_EMULATION)
+	up.pressed = false
+	root.get_viewport().push_input(up, true)
 	eq(screen.autopilot.on, auto_was, "a tap on it does not toggle the auto-hunt")
 	check(screen._skip, "it skips, a touch too")
 	screen._process(screen.tick)

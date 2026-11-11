@@ -15,10 +15,10 @@ extends BaseScreen
 ## Vibration): the picture stands still a moment, the camera shakes, the one hit flashes white and
 ## recoils, the one killed flies off, the hit sound varies a little and the pad rumbles.
 ## The mouse: the left button beside the hero walks that way while it is held
-## (dragging turns him, two quick clicks run), a click on the hero or the right button attacks,
-## a click on the skill bar uses the slot, on AUTO toggles the auto-hunt, on PAUSE pauses.
-## While someone talks on the map, SKIP (Q, F1, the pad's Back, a click on SKIP in AUTO's
-## corner) skips the talk.
+## (dragging turns him, two quick clicks run), a click on the hero or the right button attacks.
+## The HUD's buttons (screens/mission/hud/map_hud.gd): a slot of the skill bar uses it, AUTO
+## toggles the auto-hunt, PAUSE pauses. While someone talks on the map, SKIP (Q, F1, the pad's
+## Back, the button SKIP in AUTO's corner) skips the talk.
 
 const GOLD_ICON := 12  # the heap of gold in the tool icons
 ## The exit arrow of the new art, pointing down: two brass chevrons in ink, the near one fainter.
@@ -267,7 +267,7 @@ func _update_view(t: float) -> void:
 	hero = people.hero
 	camera.focus = sim.rooms.center(sim.cell)
 	feel.shake_camera(camera, Hero.PIXEL_SIZE)
-	hud.queue_redraw()
+	hud.refresh()
 	effects.show_shots(sim.arrows, t, not sim.arrows_wait())
 	var shown: Array = sim.auras()
 	shown.append_array(sim.effects())
@@ -377,8 +377,8 @@ func talk_portrait_id() -> int:
 ## and the speech box from x 54, 38 high, both just above the HUD (and its skill bar).
 func _place_talk() -> void:
 	var view := get_viewport_rect().size
-	var k := hud.scale_of(view)
-	var top := view.y - (MapHud.PANEL_H + (MapHud.BAR_H if hud.show_bar else 0)) * k
+	var k := MapHud.scale_of(view)
+	var top := MapHud.top_of(view)
 	var left := view.x / 2.0 - 120.0 * k
 	talk_portrait.texture = Pictures.portrait(talk_portrait_id())
 	talk_portrait.custom_minimum_size = Vector2(46, 46) * k
@@ -437,7 +437,7 @@ func _place_arrows() -> void:
 		a.size = s
 		match i % 4:
 			0:
-				a.position = Vector2(view.x * along - s.x / 2.0, hud.top_of(view) - s.y - 8)  # above the HUD
+				a.position = Vector2(view.x * along - s.x / 2.0, MapHud.top_of(view) - s.y - 8)  # above the HUD
 			1:
 				a.position = Vector2(16, view.y * along - s.y / 2.0)
 			2:
@@ -581,7 +581,7 @@ func _gui_input(event: InputEvent) -> void:
 		_mouse_button(event)
 	elif event is InputEventMouseMotion and _mouse_dir != -1:
 		var d := pointer_dir(event.position)
-		if d != -1 and not hud.panel_at(event.position) and hud.slot_at(event.position).is_empty():
+		if d != -1 and not hud.covers(event.position):
 			_mouse_dir = d  # dragging turns the hero
 
 
@@ -591,13 +591,6 @@ func _mouse_button(event: InputEventMouseButton) -> void:
 		return
 	if not event.pressed:
 		return
-	if event.button_index == MOUSE_BUTTON_LEFT:
-		if click_bar(event.position):
-			return
-		if hud.pause_at(event.position):
-			get_viewport().set_input_as_handled()
-			pause()
-			return
 	# a touch comes as a click too: on a phone the touch controls walk and attack
 	if event.device == InputEvent.DEVICE_ID_EMULATION or not is_processing():
 		return
@@ -652,7 +645,7 @@ func toggle_auto() -> void:
 		return
 	autopilot.toggle()
 	hud.auto_on = autopilot.on
-	hud.queue_redraw()
+	hud.refresh()
 
 
 ## The auto-hunt is there only on normal: on hard the player fights by hand.
@@ -660,26 +653,30 @@ func auto_allowed() -> bool:
 	return sim != null and sim.difficulty != 0
 
 
-## A click on the skill bar: a belt slot is used, a skill cast; on the corner AUTO / SKIP. False
-## when it missed them.
-func click_bar(at: Vector2) -> bool:
-	if hud.skip_at(at):
-		get_viewport().set_input_as_handled()
-		_skip = true
-		return true
-	if hud.auto_at(at):
-		get_viewport().set_input_as_handled()
+## The HUD's buttons, while the pause menu is not open: a belt slot is used, a skill cast,
+## AUTO toggles the auto-hunt, SKIP skips the talk, PAUSE pauses.
+func _on_hud_belt_pressed(slot: int) -> void:
+	if pause_menu == null:
+		_belt = slot
+
+
+func _on_hud_skill_pressed(slot: int) -> void:
+	if pause_menu == null:
+		_hotkey = slot
+
+
+func _on_hud_auto_pressed() -> void:
+	if pause_menu == null:
 		toggle_auto()
-		return true
-	var hit: Array = hud.slot_at(at)
-	if hit.is_empty():
-		return false
-	get_viewport().set_input_as_handled()
-	if hit[0] == "belt":
-		_belt = hit[1]
-	elif hit[0] == "skill":
-		_hotkey = hit[1]
-	return true
+
+
+func _on_hud_skip_pressed() -> void:
+	if pause_menu == null:
+		_skip = true
+
+
+func _on_hud_pause_pressed() -> void:
+	pause()
 
 
 ## No line of control hints under this screen: it shows its own (scripts/ui/hint_bar.gd).

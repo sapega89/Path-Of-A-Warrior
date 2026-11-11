@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" path="res://scenes/world/map_view.tscn" id="2"]
 [ext_resource type="Script" path="res://scripts/world/map_people.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/world/map_effects.gd" id="4"]
-[ext_resource type="Script" path="res://scripts/ui/map_hud.gd" id="5"]
+[ext_resource type="PackedScene" path="res://screens/mission/hud/map_hud.tscn" id="5"]
 [ext_resource type="Script" path="res://scripts/ui/exp_bar.gd" id="6"]
 [ext_resource type="Script" path="res://scripts/ui/framed_picture.gd" id="7"]
 [ext_resource type="Script" path="res://scripts/ui/touch_controls.gd" id="8"]
@@ -93,14 +93,9 @@ layout_mode = 0
 mouse_filter = 2
 stretch_mode = 0
 
-[node name="Hud" type="Control" parent="."]
+[node name="Hud" parent="." instance=ExtResource("5")]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-script = ExtResource("5")
 
 [node name="Fade" type="ColorRect" parent="."]
 unique_name_in_owner = true
@@ -171,3 +166,9 @@ autowrap_mode = 3
 [node name="Touch" type="Control" parent="."]
 layout_mode = 0
 script = ExtResource("8")
+
+[connection signal="auto_pressed" from="Hud" to="." method="_on_hud_auto_pressed"]
+[connection signal="belt_pressed" from="Hud" to="." method="_on_hud_belt_pressed"]
+[connection signal="pause_pressed" from="Hud" to="." method="_on_hud_pause_pressed"]
+[connection signal="skill_pressed" from="Hud" to="." method="_on_hud_skill_pressed"]
+[connection signal="skip_pressed" from="Hud" to="." method="_on_hud_skip_pressed"]

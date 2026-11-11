@@ -4,7 +4,7 @@
 й ряд усіх людей у єдиному стилі. У місіях гра вже бере з неї людей: героя за класом і зброєю,
 ворогів за стороною генерала місії (`scripts/world/map_people.gd`), ефекти, намальовані
 кодом (`scripts/world/map_effects.gd`), карти (`scripts/world/map_art.gd`) та іконки речей і
-вмінь (`assets/art/icons`), меню й HUD (`scripts/ui/ui_theme.gd`, `scripts/ui/map_hud.gd`),
+вмінь (`assets/art/icons`), меню й HUD (`scripts/ui/ui_theme.gd`, `screens/mission/hud/`),
 портрети й ілюстрації сюжету (`scripts/ui/pictures.gd`).
 
 ```
@@ -43,7 +43,7 @@ godot --path godot/client --resolution 1280x720 res://tools/art_shots.tscn -- OU
 | Іконки HUD вітрини, монета, орнамент-петриківка | SVG вручну (`assets/art/ui/*.svg`) | наш код |
 | Іконки всіх речей і вмінь (80) | Кодом у SVG (`icons.py`) | наш код |
 | Шрифти Kurale (заголовки), PT Sans (текст) | `@fontsource`, латиниця й кирилиця | OFL 1.1, тексти поруч зі шрифтами |
-| Тема меню, HUD місії, тло, стрілки виходів, значки прапорця й повзунка | Кодом (`ui_theme.gd`, `map_hud.gd`, `ui_backdrop.gdshader`) | наш код |
+| Тема меню, HUD місії, тло, стрілки виходів, значки прапорця й повзунка | Кодом (`ui_theme.gd`, `ui_backdrop.gdshader`), тема й SVG HUD (`hud_theme.tres`, `assets/art/ui/hud/`) | наш код |
 | 46 портретів і 15 ілюстрацій сюжету | Погруддя й сцени з людей і речей нового арту (`portraits.py`, `tools/portraits.tscn`, `tools/story_pictures.tscn`), небо й рамка — шейдери | наш код |
 
 Жодної картинки з оригінальної гри; тест `test_art_slice.gd` перевіряє, що скрипти й шейдери
@@ -165,9 +165,11 @@ godot --path godot/client --resolution 1040x800 res://tools/story_pictures.tscn 
   `StyleBox`: пластина, лінія, ромби в кутах), заголовок `Heading` (лінії з ромбами обабіч
   тексту), значки прапорця, повзунка й списку з SVG у коді, монета, тло `backdrop()`
   (`ui_backdrop.gdshader`).
-- `scripts/ui/map_hud.gd` — HUD місії на сітці 240×320 оригіналу (ціле число разів), але
-  векторами: плашки, скляні кулі з рідиною-полігоном, ромби, текст PT Sans Bold з контуром;
-  іконки — на своєму шарі з міпмапами, числа й клавіші — над ними.
+- `screens/mission/hud/map_hud.tscn` — HUD місії на сітці 240×320 оригіналу (ціле число разів):
+  плашки й комірки — стилі теми `hud_theme.tres`, кулі — `TextureProgressBar` з рідиною й дном
+  у SVG (`assets/art/ui/hud/*.tres`, `DPITexture`, малюються в масштабі HUD), скло й обідок
+  кулі, планка з заклепками й ромбом — кодом; написи — `Label` PT Sans Bold з контуром, іконки
+  з міпмапами під числами й клавішами.
 - `scripts/ui/pictures.gd` — портрети й ілюстрації сюжету в екранах: текстура з міпмапами (стає
   на місце імпортованої за тим самим шляхом) і `TextureRect` у золотій рамці
   (`portrait_frame.gdshader`: округлі кути, обідок, лінія тушшю, затінок до краю).

@@ -15,7 +15,6 @@
   "scripts/sim/hero_play.gd": 2,
   "scripts/sim/map_pictures.gd": 1,
   "scripts/sim/map_walls.gd": 1,
-  "scripts/ui/map_hud.gd": 1,
   "scripts/world/combat_feel.gd": 1,
   "scripts/world/map_art.gd": 1
  },
@@ -76,7 +75,6 @@
   "scripts/ui/hint_bar.gd": 1,
   "scripts/ui/item_slot.gd": 1,
   "scripts/ui/key_grid.gd": 2,
-  "scripts/ui/map_hud.gd": 1,
   "scripts/ui/ui_theme.gd": 7,
   "scripts/ui/world_map_view.gd": 1
  },
