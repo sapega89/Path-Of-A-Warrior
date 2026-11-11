@@ -96,18 +96,18 @@ func press_cell(i: int) -> String:
 	var said := ""
 	match mode:
 		"buy":
-			var r: String = profile.buy(i)
+			var r: String = Blacksmith.buy(profile, i)
 			said = tr("shop." + r).replace("%s", _name(id))
 			if r == "bought":
 				profile.save(path)
 		"sell":
 			var where := "quick" if i < QUICK else "backpack"
 			var thing := _name(id)
-			if profile.sell(where, i if i < QUICK else i - QUICK):
+			if Blacksmith.sell(profile, where, i if i < QUICK else i - QUICK):
 				profile.save(path)
 				said = tr("shop.sold").replace("%s", thing)
 		"enchant":
-			var can: String = profile.can_enchant(item)
+			var can: String = Blacksmith.can_enchant(item)
 			if can != "ok":
 				said = tr("enchant." + can)
 			else:
@@ -133,7 +133,7 @@ func _choose(i: int) -> String:
 	chosen.append(i)
 	if chosen.size() < 3:
 		return Items.describe(profile.backpack[i])
-	plan = profile.combine_plan(chosen, rng)
+	plan = Blacksmith.combine_plan(profile, chosen, rng)
 	if plan.is_empty():
 		chosen.clear()
 		return tr("combine.not_possible")
@@ -195,7 +195,7 @@ func finish() -> String:
 	if asked < 0:
 		return ""
 	if mode == "combine":
-		var c: String = profile.combine(chosen, plan)
+		var c: String = Blacksmith.combine(profile, chosen, plan)
 		asked = -1
 		chosen.clear()
 		plan = {}
@@ -205,7 +205,7 @@ func finish() -> String:
 		refresh()
 		info.text = line
 		return line
-	var r: String = profile.enchant(item_at(asked), rng)
+	var r: String = Blacksmith.enchant(profile, item_at(asked), rng)
 	asked = -1
 	if r != "no_gold":
 		profile.save(path)

@@ -2,7 +2,6 @@
  "code_order": {},
  "long_file": {
   "screens/mission/mission_screen.gd": 1,
-  "scripts/core/profile.gd": 1,
   "scripts/world/map_art.gd": 1,
   "scripts/world/map_effects.gd": 1
  },

@@ -135,7 +135,7 @@ func show_class(h: int) -> void:
 			tr("newgame.select_1"),
 			tr("newgame.select_2"),
 			tr(Profile.HERO_CLASSES[h]),
-			Profile.stats_line(h)
+			Attributes.stats_line(h)
 		]
 	)
 
