@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[node name="HallCell" type="Label"]
+custom_minimum_size = Vector2(360, 0)
+theme_type_variation = &"SmallLabel"
+auto_translate_mode = 2
+clip_text = true

@@ -26,7 +26,9 @@ func test_new_game_steps() -> void:
 	screen.choose_difficulty(0)
 	screen._confirmed()
 	eq(screen.step, NewGameScreen.Step.HERO, "then the face")
-	screen.choose_head(3)
+	var head: Button = screen.find_child("Head3", true, false)
+	check(head.get_node("Portrait").texture != null, "each face in its button")
+	head.pressed.emit()
 	eq(screen.step, NewGameScreen.Step.NAME, "then the name")
 	screen.name_edit.text = ""
 	check(not screen.submit_name(), "a name is needed")

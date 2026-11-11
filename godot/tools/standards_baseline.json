@@ -45,10 +45,8 @@
   "scripts/core/settings.gd": 1
  },
  "theme_in_code": {
-  "screens/endings/endings_screen.gd": 2,
   "screens/mission/mission_screen.gd": 1,
   "screens/story/story_screen.gd": 6,
-  "screens/town_hall/town_hall_screen.gd": 3,
   "scripts/art/art_hud.gd": 13,
   "scripts/ui/exp_bar.gd": 2,
   "scripts/ui/hint_bar.gd": 3,
@@ -58,13 +56,8 @@
   "scripts/ui/world_map_view.gd": 4
  },
  "ui_in_code": {
-  "screens/campaign/campaign_screen.gd": 3,
-  "screens/endings/endings_screen.gd": 1,
   "screens/gear/gear_screen.gd": 1,
-  "screens/help/help_screen.gd": 1,
-  "screens/new_game/new_game_screen.gd": 1,
   "screens/story/story_screen.gd": 1,
-  "screens/town_hall/town_hall_screen.gd": 3,
   "scripts/art/art_hud.gd": 13,
   "scripts/main.gd": 1,
   "scripts/ui/hint_bar.gd": 1,

@@ -18,6 +18,8 @@ func test_endings_screen() -> void:
 	var screen: Control = Router.make(Router.SCREENS["endings"])
 	root.add_child(screen)
 	eq(screen.list.get_child_count(), 5, "five on a page")
+	eq(screen.list.get_child(0).theme_type_variation, &"", "one reached as any button")
+	eq(screen.list.get_child(3).theme_type_variation, &"LockedButton", "one not reached greyed")
 	eq(screen.page_label.text, "1 / 5", "page 1")
 	check(not screen.open(3), "an ending not reached does not play")
 	eq(screen.info.text, "endings.locked", "it says why")

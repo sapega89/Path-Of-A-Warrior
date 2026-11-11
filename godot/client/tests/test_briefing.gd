@@ -101,6 +101,7 @@ func test_description_accept_briefing_mission() -> void:
 	c._unhandled_input(_cancel())
 	eq(c.level, 2, "back: the missions")
 	check(not c.ok.visible, "no OK on the list")
+	check(not c.list.get_node("Description").visible, "nor the description")
 	(c.list.get_child(0) as Button).pressed.emit()
 	check(c.ok.visible, "OK under it")
 	(c.ok as Button).pressed.emit()

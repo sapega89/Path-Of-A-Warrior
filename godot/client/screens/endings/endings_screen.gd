@@ -5,6 +5,7 @@ extends BaseScreen
 ## Up / down pick, left / right turn the page, back leaves.
 
 const PER_PAGE := 5
+const ROW_SCENE := preload("res://scenes/ui/list_button.tscn")
 
 var profile: Profile
 var path: String = Profile.PATH
@@ -42,13 +43,11 @@ func show_page() -> void:
 		var i := page * PER_PAGE + k
 		if i >= Stories.ENDINGS:
 			break
-		var b := Button.new()
+		var b: Button = ROW_SCENE.instantiate()
 		b.name = "Ending%d" % i
-		b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 		b.text = title(i)
 		if not reached(i):
-			b.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
-			b.add_theme_color_override("font_focus_color", Color(0.6, 0.6, 0.6))
+			b.theme_type_variation = &"LockedButton"  # greyed
 		b.pressed.connect(open.bind(i))
 		list.add_child(b)
 	page_label.text = "%d / %d" % [page + 1, pages()]
