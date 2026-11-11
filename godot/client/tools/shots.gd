@@ -4,6 +4,7 @@ extends Node
 ## Opens the main scene, walks through the screens and some maps, saves PNGs to OUT_DIR.
 
 const MAPS: Array[int] = [1, 5, 10, 20, 30, 40]
+const DIR_ACTIONS := {0: "move_down", 2: "move_left", 4: "move_up", 6: "move_right"}
 
 
 func _ready() -> void:
@@ -489,9 +490,6 @@ func _ready() -> void:
 		await _seconds(1.0)
 		await _shot(out, page[1])
 	get_tree().quit()
-
-
-const DIR_ACTIONS := {0: "move_down", 2: "move_left", 4: "move_up", 6: "move_right"}
 
 
 func _release_all() -> void:
