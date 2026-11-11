@@ -280,21 +280,7 @@ func _skill(sim: MapSim, foes: Array, target: MapActor, dist: int, reach: int) -
 	var key_of := _key_of(sim)
 	if key_of.is_empty():
 		return -1
-	var heal_mp := 0
-	for s in HEALS:
-		if key_of.has(s):
-			heal_mp = sim.skill_mp_need(s) if heal_mp == 0 else mini(heal_mp, sim.skill_mp_need(s))
-	var usable := func(group: Array) -> Array:
-		var out: Array = []
-		for s in group:
-			if (
-				key_of.has(s)
-				and sim.skill_mp_need(s) <= h.mp
-				and h.mp - sim.skill_mp_need(s) >= heal_mp
-			):
-				out.append(s)
-		out.sort_custom(func(a, b): return sim.skill_mp_need(a) > sim.skill_mp_need(b))
-		return out
+	var heal_mp := _heal_mp(sim, key_of)
 	var near := 0
 	var general := false
 	for e in foes:
@@ -302,27 +288,19 @@ func _skill(sim: MapSim, foes: Array, target: MapActor, dist: int, reach: int) -
 			near += 1
 		if e.type < 200:
 			general = true
+	var picks: Array = []
 	if (foes.size() >= 3 or general) and h.attack_buff_ticks <= 0 and h.defense_buff_ticks <= 0:
 		for s in [19, 17, 18]:
-			if s in usable.call([s]):
-				return key_of[s]
+			picks.append_array(_usable(sim, key_of, heal_mp, [s]))
 	if foes.size() >= 3:
-		var u: Array = usable.call(WHOLE)
-		if not u.is_empty():
-			return key_of[u[0]]
+		picks.append_array(_usable(sim, key_of, heal_mp, WHOLE))
 	if near >= 2:
-		var u: Array = usable.call(NEAR)
-		if not u.is_empty():
-			return key_of[u[0]]
+		picks.append_array(_usable(sim, key_of, heal_mp, NEAR))
+	if not picks.is_empty():
+		return key_of[picks[0]]
 	if dist > reach:
-		var d := MapGeometry.dir4(h.pos, target.pos)
-		var ax: int = h.pos.x + int(MapSim.table("front_dx")[d >> 1])
-		var ay: int = h.pos.y + int(MapSim.table("front_dy")[d >> 1])
-		if (
-			(ax - target.pos.x) * (ax - target.pos.x) + (ay - target.pos.y) * (ay - target.pos.y)
-			<= 35 * 35
-		):
-			var u: Array = usable.call(RANGED)
+		if _in_ranged_reach(h, target):
+			var u := _usable(sim, key_of, heal_mp, RANGED)
 			if not u.is_empty():
 				return key_of[u[0]]
 		return -1
@@ -331,7 +309,43 @@ func _skill(sim: MapSim, foes: Array, target: MapActor, dist: int, reach: int) -
 		if MapGeometry.distance(h.pos, e.pos) <= reach:
 			crowd += 1
 	if (general and target.type < 200) or crowd >= 2 or h.mp * 100 >= h.max_mp * 80:
-		var u: Array = usable.call(STRIKES)
+		var u := _usable(sim, key_of, heal_mp, STRIKES)
 		if not u.is_empty():
 			return key_of[u[0]]
 	return -1
+
+
+## The MP the cheapest heal on a key needs (kept for it), 0 with none.
+func _heal_mp(sim: MapSim, key_of: Dictionary) -> int:
+	var heal_mp := 0
+	for s in HEALS:
+		if key_of.has(s):
+			heal_mp = sim.skill_mp_need(s) if heal_mp == 0 else mini(heal_mp, sim.skill_mp_need(s))
+	return heal_mp
+
+
+## The skills of `group` on a key that the hero's MP pays for, the MP of a heal kept, the
+## dearest first.
+func _usable(sim: MapSim, key_of: Dictionary, heal_mp: int, group: Array) -> Array:
+	var mp := sim.hero.mp
+	var out: Array = []
+	for s in group:
+		var need := sim.skill_mp_need(s)
+		if key_of.has(s) and need <= mp and mp - need >= heal_mp:
+			out.append(s)
+	out.sort_custom(
+		func(a: int, b: int) -> bool: return sim.skill_mp_need(a) > sim.skill_mp_need(b)
+	)
+	return out
+
+
+## Whether the target stands within 35 px of the point in front of the hero, where a ranged
+## skill lands.
+func _in_ranged_reach(h: MapActor, target: MapActor) -> bool:
+	var d := MapGeometry.dir4(h.pos, target.pos)
+	var ax: int = h.pos.x + int(MapSim.table("front_dx")[d >> 1])
+	var ay: int = h.pos.y + int(MapSim.table("front_dy")[d >> 1])
+	return (
+		(ax - target.pos.x) * (ax - target.pos.x) + (ay - target.pos.y) * (ay - target.pos.y)
+		<= 35 * 35
+	)

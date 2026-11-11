@@ -67,15 +67,36 @@ static func effects(sim: MapSim) -> Array:
 	match a:
 		2:
 			out.append(["slash", sim.hero.dir + (f & 1), p])
+		24:
+			if f == 5 or f == 6:
+				out.append(["burst", f - 5, p])
+		28, 29, 30:
+			_whole_room_effects(a, f, MapRoomPlay.room_middle(sim), out)
+		_:
+			_skill_pictures(a, f, p, sim.hero.dir, sim.hero.shown_dir, out)
+	skill_effects(a, f, p, sim.hero.dir, out)
+	_item_effects(sim, out)
+	for e in sim.enemies:
+		if e.type < 200:
+			_general_effects(e, out)
+	return out
+
+
+## The pictures of a skill (12..27, the hero's numbers) the hero and the generals share: dir
+## the way he faces, front_dir the way the blast in front of him (27) goes.
+static func _skill_pictures(
+	skill: int, f: int, p: Vector2i, dir: int, front_dir: int, out: Array
+) -> void:
+	match skill:
 		12:
 			if f > 2 and f < 6:
-				out.append(["slash", sim.hero.dir + (f & 1), p])
+				out.append(["slash", dir + (f & 1), p])
 		13:
 			if f > 4 and f < 8:
-				out.append(["slash", sim.hero.dir + (f & 1), p])
+				out.append(["slash", dir + (f & 1), p])
 		14:
 			if f > 0 and f < 9:
-				out.append(["slash", sim.hero.dir + (f & 1), p])
+				out.append(["slash", dir + (f & 1), p])
 		15:
 			if f > 3:
 				out.append(["heal", f - 4, p])
@@ -91,32 +112,37 @@ static func effects(sim: MapSim) -> Array:
 		23:
 			if f == 5 or f == 6:
 				out.append(["slash", f - 5, p])
-		24:
-			if f == 5 or f == 6:
-				out.append(["burst", f - 5, p])
 		26, 27:
-			if a == 27 and f == 9:
-				out.append(["blast", 1, MapEnemyPlay.front_of(p, sim.hero.shown_dir)])
+			if skill == 27 and f == 9:
+				out.append(["blast", 1, MapEnemyPlay.front_of(p, front_dir)])
 			elif f > 1 and f < 9:
-				out.append(["wave", f - 2 + (sim.hero.dir >> 1) * 7, p])
+				out.append(["wave", f - 2 + (dir >> 1) * 7, p])
+
+
+## The hero's skills over the whole room (28..30), round its middle.
+static func _whole_room_effects(a: int, f: int, middle: Vector2i, out: Array) -> void:
+	match a:
 		28:
 			if f > 3 and f < 22:
 				if f > 9:
 					for i in 3:
-						out.append(["storm", (f - 10) * 3 + 6 + i, MapRoomPlay.room_middle(sim)])
+						out.append(["storm", (f - 10) * 3 + 6 + i, middle])
 				else:
-					out.append(["storm", f - 4, MapRoomPlay.room_middle(sim)])
+					out.append(["storm", f - 4, middle])
 		29:
 			if f > 6 and f < 22:
-				out.append(["quake", f - 7, MapRoomPlay.room_middle(sim)])
+				out.append(["quake", f - 7, middle])
 		30:
 			if f > 3 and f < 9:
 				for i in 5:
-					out.append(["rain", (f - 4) * 5 + i, MapRoomPlay.room_middle(sim)])
+					out.append(["rain", (f - 4) * 5 + i, middle])
 			elif f > 12 and f < 15:
 				for i in 3:
-					out.append(["blast", (f - 13) * 5 + 2 + i, MapRoomPlay.room_middle(sim)])
-	skill_effects(a, f, p, sim.hero.dir, out)
+					out.append(["blast", (f - 13) * 5 + 2 + i, middle])
+
+
+## The potion or scroll in use: its sparkle, its blast in flight, its fire or lightning.
+static func _item_effects(sim: MapSim, out: Array) -> void:
 	match sim.effect_item:
 		0:
 			pass
@@ -130,53 +156,20 @@ static func effects(sim: MapSim) -> Array:
 				out.append(["scroll", sim.effect_step - 1 + (sim.effect_dir << 2), sim.effect_pos])
 		_:
 			out.append(["buff", sim.effect_step + 4, sim.effect_pos])
-	for e in sim.enemies:
-		if e.type < 200:
-			_general_effects(e, out)
-	return out
 
 
 ## The pictures of a general's skill (his actions 6..21), as the hero's: the same sheets.
 static func _general_effects(e: MapActor, out: Array) -> void:
-	var f := e.frame
-	var p := e.pos
-	match e.action:
-		6:
-			if f > 2 and f < 6:
-				out.append(["slash", e.dir + (f & 1), p])
-		7:
-			if f > 4 and f < 8:
-				out.append(["slash", e.dir + (f & 1), p])
-		8:
-			if f > 0 and f < 9:
-				out.append(["slash", e.dir + (f & 1), p])
-		9:
-			if f > 3:
-				out.append(["heal", f - 4, p])
-		13:
-			if f > 3 and f < 10:
-				out.append(["buff", f - 4, p])
-		15:
-			if f == 5 or f == 6:
-				out.append(["whirl", f - 5, p])
-		16:
-			if f > 1 and f < 6:
-				out.append(["slash", f & 1, p])
-		17:
-			if f == 5 or f == 6:
-				out.append(["slash", f - 5, p])
-		18:
-			if f == 5:
-				out.append(["burst", 0, p + MapSim.BURST_FIRST_SHIFT])
-			elif f == 6:
-				out.append(["burst", 1, p])
-		20, 21:
-			if e.action == 21 and f == 9:
-				out.append(["blast", 1, MapEnemyPlay.front_of(p, e.dir)])
-			elif f > 1 and f < 9:
-				out.append(["wave", f - 2 + (e.dir >> 1) * 7, p])
-	if e.action >= 6 and e.action <= 21:
-		skill_effects(e.action + 6, f, p, e.dir, out)
+	if e.action < 6 or e.action > 21:
+		return
+	if e.action == 18:
+		if e.frame == 5:
+			out.append(["burst", 0, e.pos + MapSim.BURST_FIRST_SHIFT])
+		elif e.frame == 6:
+			out.append(["burst", 1, e.pos])
+	else:
+		_skill_pictures(e.action + 6, e.frame, e.pos, e.dir, e.dir, out)
+	skill_effects(e.action + 6, e.frame, e.pos, e.dir, out)
 
 
 ## The skills' own effects (SkillEffects), the hero's and a general's alike: the skill 12..30,

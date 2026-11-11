@@ -87,80 +87,72 @@ static func check_run(sim: MapSim) -> bool:
 
 
 static func move_hero(sim: MapSim) -> void:
-	var dx8 := MapSim.table("dir_dx8")
-	var dy8 := MapSim.table("dir_dy8")
-	var step_x := 0
-	var step_y := 0
 	var move_dir := sim.hero.facing
-	var action := sim.hero.action
+	var step := MapWalls.dir_step(move_dir)
 	var frame := sim.hero.frame
-	if action == 1:
-		step_x = int(dx8[move_dir])
-		step_y = int(dy8[move_dir])
-	elif action == 2:
-		step_x = int(dx8[move_dir]) << 2
-		step_y = int(dy8[move_dir]) << 2
-	elif action >= 3 and action <= 8:
-		step_x = int(dx8[move_dir]) / 3
-		step_y = int(dy8[move_dir]) / 3
-	elif action == 12:
-		if frame > 2 and frame < 6:
-			step_x = int(dx8[move_dir]) << 2
-			step_y = int(dy8[move_dir]) << 2
-	elif action == 13 or action == 14:
-		var lunge := action == 14
-		if action == 13 and frame > 4 and frame < 8:
-			var sx := int(dx8[move_dir]) << 2
-			var sy := int(dy8[move_dir]) << 2
-			if sx > 0:
-				sx = MapWalls.step_until_free(sim, sim.hero.pos, sx, 6)
-			elif sx < 0:
-				sx = MapWalls.step_until_free(sim, sim.hero.pos, sx, 2)
-			if sy > 0:
-				sy = MapWalls.step_until_free(sim, sim.hero.pos, sy, 0)
-			elif sy < 0:
-				sy = MapWalls.step_until_free(sim, sim.hero.pos, sy, 4)
-			sim.hero.pos += MapRoomPlay.keep_in_room(sim, sim.hero.pos, sx, sy)
-			lunge = true
-		if lunge and frame > 0 and frame < 9:
-			step_x = int(dx8[move_dir])
-			step_y = int(dy8[move_dir])
-	elif action == 20:
-		if (frame & 1) == 0:
-			step_x = int(dx8[move_dir])
-			step_y = int(dy8[move_dir])
-	elif action == 10:
-		if frame < 10:
-			sim.hero.pos.x += -1 if (frame & 1) != 0 else 1
-	elif action == 9 and sim.hero.hurt_ticks > 0:
-		sim.hero.hurt_ticks -= 1
-		move_dir = (sim.hero.facing + 4) & 7
-		step_x = int(dx8[move_dir]) << 2
-		step_y = int(dy8[move_dir]) << 2
-	elif action == 9 and frame == 1:
-		move_dir = (sim.hero.facing + 4) & 7
-		step_x = int(dx8[move_dir]) * 3 / 4
-		step_y = int(dy8[move_dir]) * 3 / 4
-	if step_x != 0 or step_y != 0:
-		var i := MapWalls.move(sim, sim.hero.pos, step_x, step_y, move_dir, sim.hero)
-		if sim.hero.action == 1:
-			if sim.hero.facing in [0, 2, 4, 6]:
-				if i == -1:  # a wall: slide around the corner
-					i = MapWalls.slide_corner(sim, sim.hero.pos, sim.hero.dir, sim.hero)
-					if i != -1:
-						i = MapWalls.move(sim, sim.hero.pos, int(dx8[i]), int(dy8[i]), i, sim.hero)
-						if i > -1 and i < 8:
-							sim.hero.dir = i
-			elif i != -1 and i != 9:
-				sim.hero.dir = i
+	match sim.hero.action:
+		1:
+			pass
+		2:
+			step *= 4
+		3, 4, 5, 6, 7, 8:
+			step /= 3
+		10:
+			step = Vector2i.ZERO
+			if frame < 10:
+				sim.hero.pos.x += -1 if (frame & 1) != 0 else 1
+		9:
+			move_dir = (sim.hero.facing + 4) & 7
+			step = MapWalls.dir_step(move_dir)
+			if sim.hero.hurt_ticks > 0:
+				sim.hero.hurt_ticks -= 1
+				step *= 4
+			elif frame == 1:
+				step = step * 3 / 4
+			else:
+				step = Vector2i.ZERO
+		_:
+			step = MapWalls.skill_step(sim, sim.hero, sim.hero.action, frame, move_dir)
+	if step != Vector2i.ZERO:
+		_walk_step(sim, step, move_dir)
+
+
+## The hero steps; walking straight into a wall, he slides round its corner.
+static func _walk_step(sim: MapSim, step: Vector2i, move_dir: int) -> void:
+	var i := MapWalls.move(sim, sim.hero.pos, step.x, step.y, move_dir, sim.hero)
+	if sim.hero.action != 1:
+		return
+	if sim.hero.facing in [0, 2, 4, 6]:
+		if i == -1:  # a wall: slide around the corner
+			i = MapWalls.slide_corner(sim, sim.hero.pos, sim.hero.dir, sim.hero)
+			if i != -1:
+				var slide := MapWalls.dir_step(i)
+				i = MapWalls.move(sim, sim.hero.pos, slide.x, slide.y, i, sim.hero)
+				if i > -1 and i < 8:
+					sim.hero.dir = i
+	elif i != -1 and i != 9:
+		sim.hero.dir = i
 
 
 ## The frames of the hero's action that hit, heal or buff. False: a skill's cinematic
 ## stops the world this tick (arrows and enemies wait).
 static func hero_action_hits(sim: MapSim) -> bool:
-	var world_runs := true
 	var action := sim.hero.action
 	var frame := sim.hero.frame
+	if action >= 26:
+		return _cinematic_frame(sim, action, frame)
+	if action == 15 or action == 16:
+		if frame == 11:
+			_heal(sim, action)
+	elif action >= 17 and action <= 19:
+		_buff_frame(sim, action, frame)
+	else:
+		_strike_frame(sim, action, frame)
+	return true
+
+
+## The frames of the sword and of the strike skills that hit, and their sounds.
+static func _strike_frame(sim: MapSim, action: int, frame: int) -> void:
 	if (action >= 3 and action <= 8) or (action >= 21 and action <= 24):
 		if frame == HIT_FRAME[action]:
 			if action <= 8:
@@ -171,101 +163,106 @@ static func hero_action_hits(sim: MapSim) -> bool:
 				sim.sound(16)
 			else:
 				sim.sound(9)
-			_hero_attack(sim, 0)
-			MapLoot.hero_hits_breakables(sim)
-	elif action == 2:
-		if frame == 1:
-			sim.sound(7)
-	elif action == 12:
-		if frame > 2 and frame < 6:
-			if frame == 3:
+			_strike(sim)
+		return
+	match action:
+		2:
+			if frame == 1:
 				sim.sound(7)
-			_hero_attack(sim, 0)
-			MapLoot.hero_hits_breakables(sim)
-	elif action == 13:
-		if frame > 4 and frame < 8:
-			if frame == 5:
-				sim.sound(7)
-			_hero_attack(sim, 0)
-			MapLoot.hero_hits_breakables(sim)
-	elif action == 14:
-		if frame in [2, 4, 6, 8]:
-			sim.sound(15)
-			_hero_attack(sim, 0)
-			MapLoot.hero_hits_breakables(sim)
-	elif action == 15 or action == 16:
-		if frame == 11:  # heals
-			sim.sound(8)
-			if action == 15:
-				sim.hero.hp += sim.hero.max_hp * (4 + sim.skill_levels[3]) / 25
-			else:
-				sim.hero.hp += sim.hero.max_hp * (9 + sim.skill_levels[4]) / 20
-			_clamp_hero(sim)
-	elif action >= 17 and action <= 19:
-		if frame == 11:  # buffs: attack (17), defence (18), both (19)
-			var lv := sim.skill_levels[action - 12]
-			var ticks := 50 if lv < 4 else (100 if lv < 8 else 150)
-			if action != 18:
-				sim.hero.attack_buff = maxi(
-					sim.hero.attack * lv / int(MapSim.BUFF_DIV[action - 17]), 1
-				)
-				sim.hero.attack_buff_ticks = ticks
-			if action != 17:
-				sim.hero.defense_buff = maxi(
-					sim.hero.defense * lv / int(MapSim.BUFF_DIV[action - 17]), 1
-				)
-				sim.hero.defense_buff_ticks = ticks
-		elif frame == 4:
-			sim.sound(12)
-	elif action == 20:
-		if (frame & 1) != 0:
-			sim.sound(15)
-			sim.hero.combo = 0 if frame in [1, 5, 9] else 2
-			_hero_attack(sim, 0)
-			MapLoot.hero_hits_breakables(sim)
-	elif action == 25:
-		if (frame & 1) != 0:
-			sim.sound(9)
-			_hero_attack(sim, 0)
-			MapLoot.hero_hits_breakables(sim)
-	elif action == 26 or action == 27:
-		if frame == 8:
-			if action == 27:
+		12:
+			if frame > 2 and frame < 6:
+				if frame == 3:
+					sim.sound(7)
+				_strike(sim)
+		13:
+			if frame > 4 and frame < 8:
+				if frame == 5:
+					sim.sound(7)
+				_strike(sim)
+		14:
+			if frame in [2, 4, 6, 8]:
+				sim.sound(15)
+				_strike(sim)
+		20:
+			if (frame & 1) != 0:
+				sim.sound(15)
+				sim.hero.combo = 0 if frame in [1, 5, 9] else 2
+				_strike(sim)
+		25:
+			if (frame & 1) != 0:
 				sim.sound(9)
-			_hero_attack(sim, 0)
-			MapLoot.hero_hits_breakables(sim)
-		if frame > 1 and frame < 9:
-			if frame == 2:
-				sim.sound(13)
-			world_runs = false
-	elif action == 28:
-		if frame == 22:
-			_hero_attack(sim, 0)
-			MapLoot.hero_hits_breakables(sim)
-		elif frame > 3:
-			if frame == 6:
-				sim.sound(13)
-			world_runs = false
-	elif action == 29:
-		if frame == 22:
-			_hero_attack(sim, 0)
-			MapLoot.hero_hits_breakables(sim)
-		elif frame > 6:
-			if frame == 7:
-				sim.sound(14)
-			world_runs = false
-	elif action == 30:
-		if frame > 3:
+				_strike(sim)
+
+
+## The heals: 15 a little, 16 more, by their levels.
+static func _heal(sim: MapSim, action: int) -> void:
+	sim.sound(8)
+	if action == 15:
+		sim.hero.hp += sim.hero.max_hp * (4 + sim.skill_levels[3]) / 25
+	else:
+		sim.hero.hp += sim.hero.max_hp * (9 + sim.skill_levels[4]) / 20
+	_clamp_hero(sim)
+
+
+## The buffs: attack (17), defence (18), both (19), for longer at higher levels.
+static func _buff_frame(sim: MapSim, action: int, frame: int) -> void:
+	if frame == 4:
+		sim.sound(12)
+	if frame != 11:
+		return
+	var lv := sim.skill_levels[action - 12]
+	var ticks := 50 if lv < 4 else (100 if lv < 8 else 150)
+	var div := int(MapSim.BUFF_DIV[action - 17])
+	if action != 18:
+		sim.hero.attack_buff = maxi(sim.hero.attack * lv / div, 1)
+		sim.hero.attack_buff_ticks = ticks
+	if action != 17:
+		sim.hero.defense_buff = maxi(sim.hero.defense * lv / div, 1)
+		sim.hero.defense_buff_ticks = ticks
+
+
+## The skills that stop the world while they play (26..30): false on those frames.
+static func _cinematic_frame(sim: MapSim, action: int, frame: int) -> bool:
+	match action:
+		26, 27:
+			if frame == 8:
+				if action == 27:
+					sim.sound(9)
+				_strike(sim)
+			if frame > 1 and frame < 9:
+				if frame == 2:
+					sim.sound(13)
+				return false
+		28:
+			if frame == 22:
+				_strike(sim)
+			elif frame > 3:
+				if frame == 6:
+					sim.sound(13)
+				return false
+		29:
+			if frame == 22:
+				_strike(sim)
+			elif frame > 6:
+				if frame == 7:
+					sim.sound(14)
+				return false
+		30:
 			if frame == 4:
 				sim.sound(11)
 			elif frame == 13:
 				sim.sound(9)
-			if frame < 15:
-				world_runs = false
-			elif frame == 15:
-				_hero_attack(sim, 0)
-				MapLoot.hero_hits_breakables(sim)
-	return world_runs
+			if frame > 3 and frame < 15:
+				return false
+			if frame == 15:
+				_strike(sim)
+	return true
+
+
+## The hero's blow lands on the enemies and the breakables in its reach.
+static func _strike(sim: MapSim) -> void:
+	_hero_attack(sim, 0)
+	MapLoot.hero_hits_breakables(sim)
 
 
 static func _clamp_hero(sim: MapSim) -> void:
