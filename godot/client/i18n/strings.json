@@ -1212,8 +1212,8 @@
     "uk": "Похід закінчено"
   },
   "run_end.kept": {
-    "en": "Kept: level %d, gold %d, fame %d and all your gear",
-    "uk": "Лишилося: рівень %d, золото %d, слава %d і всі речі"
+    "en": "Kept: level %d, gold %d, fame %d and your gear",
+    "uk": "Лишилося: рівень %d, золото %d, слава %d і речі"
   },
   "run_end.lost": {
     "en": "Gone: the skills of this run and the colonels' progress",
