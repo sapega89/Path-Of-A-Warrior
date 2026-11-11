@@ -1,9 +1,10 @@
 class_name GameMenu
 extends BaseScreen
 ## Game menu, the hero's game (opened from the camp's pause menu), one column: the campaign
-## (management, blacksmith, visiting), then after a small gap the help of the whole game; it
-## scrolls with the focus. The missions start from the ways out of the camp, so they are not
-## here. Back returns to the camp (to the main menu when there is nothing to go back to).
+## (management, visiting), then after a small gap the help of the whole game; it scrolls with
+## the focus. The missions start from the ways out of the camp and the blacksmith stands in the
+## camp, so neither is here. Back returns to the camp (to the main menu when there is nothing to
+## go back to).
 ## Router.params: profile_path (tests and screenshots) goes on to the pages.
 
 var path: String = Profile.PATH
