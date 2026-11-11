@@ -245,7 +245,7 @@ func refresh() -> void:
 			cells[i].text = str(int(profile.quick_slots[i][1]))
 		else:
 			cells[i].text = ""
-		cells[i].add_theme_stylebox_override("normal", ItemSlot.box(i in chosen))
+		ItemSlot.choose(cells[i], i in chosen)
 
 
 func describe(i: int) -> String:
