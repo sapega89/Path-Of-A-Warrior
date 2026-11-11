@@ -1,8 +1,8 @@
 extends BaseScreen
 ## Blacksmith: Buy, Sell, Enchant and Combine, each a page of things (the shop screen).
 ## Combine with fewer than 3 things in the Inventory only says so. Enchant and Combine are only
-## in the start camp (HeroRun.at_start); the camps of a run have the shop alone, and a note says
-## so.
+## in the start camp (HeroRun.at_start); in the camps of a run their buttons are hidden and the
+## blacksmith has the shop alone.
 
 ## Things the Inventory needs for Combine to open.
 const COMBINE_AT_LEAST := 3
@@ -15,14 +15,12 @@ const START_ONLY := ["enchant", "combine"]
 	%Column.get_node("Combine"),
 ]
 @onready var notice: AcceptDialog = %Notice
-@onready var start_only: Label = %StartOnly
 
 
 func _ready() -> void:
 	var here := HeroRun.at_start(Profile.load_or_new(profile_path()))
-	buttons[2].disabled = not here
-	buttons[3].disabled = not here
-	start_only.visible = not here
+	buttons[2].visible = here
+	buttons[3].visible = here
 	buttons[0].grab_focus.call_deferred()
 
 

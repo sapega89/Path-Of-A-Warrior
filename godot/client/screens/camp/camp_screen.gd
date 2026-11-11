@@ -9,9 +9,9 @@ extends BaseScreen
 ## out tells the story of the next mission of that place not won yet (choices()), then its
 ## briefing; the mission comes back here when it is over (won: the camp of the new place; lost:
 ## this one again, to try once more with the same hero). A closed way's gate is barred. Every
-## camp has the blacksmith (buy and sell; enchant and combine in the start camp only) and the
-## town hall (every colonel and general the hero knows; in the start camp, what comes before a
-## run), which the hero enters from a few steps off its door. The game is
+## camp has the blacksmith (buy and sell; enchant and combine in the start camp only); the start
+## camp also has the town hall (what comes before a run, every colonel and general the hero
+## knows), which the hero enters from a few steps off its door. The game is
 ## saved when the hero comes into a camp; the gift of the mission just won comes up then
 ## (open_gift). Pause opens the camp menu: the game menu, the world map, the settings, the main
 ## menu.
@@ -69,7 +69,7 @@ func _ready() -> void:
 	place = int(profile.place)
 	world_map = WorldMap.new(campaign)
 	rng.seed = hash([place, profile.done.size()])  # the same ways each time back here
-	plan = CampPlan.new(choices(), CampPlan.is_main(camp_place()))
+	plan = CampPlan.new(choices(), CampPlan.is_main(camp_place()), camp_place() == 0)
 	spots = plan.spots()
 	_build_world()
 	_show_place()
@@ -102,7 +102,10 @@ func _build_world() -> void:
 			_add_arrow(e)
 	for label_name in LABELS:
 		var spot := spot_of(LABELS[label_name][0])
-		(get_node("%" + label_name) as Node3D).position = spot.at + LABELS[label_name][1]
+		var label: Node3D = get_node("%" + label_name)
+		label.visible = not spot.is_empty()  # no town hall in a camp of the run
+		if label.visible:
+			label.position = spot.at + LABELS[label_name][1]
 
 
 ## The spot of a kind ("smith", "hall"; the first way for "way").
@@ -242,7 +245,7 @@ func use(s: Dictionary) -> void:
 					}
 				)
 		"hall":
-			Router.push("town_hall", {"profile_path": path, "start": camp_place() == 0})
+			Router.push("town_hall", {"profile_path": path})
 		"smith":
 			Router.push("blacksmith", {"profile_path": path})
 

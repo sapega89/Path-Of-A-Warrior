@@ -51,13 +51,6 @@ text = "blacksmith.enchant"
 layout_mode = 2
 text = "blacksmith.combine"
 
-[node name="StartOnly" type="Label" parent="Center/Column"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "blacksmith.start_only"
-horizontal_alignment = 1
-autowrap_mode = 3
-
 [node name="Back" type="Button" parent="Center/Column"]
 layout_mode = 2
 text = "common.back"

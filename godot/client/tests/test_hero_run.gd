@@ -114,15 +114,10 @@ func test_the_flasks_are_saved() -> void:
 func test_the_town_hall_of_the_start_opens_the_run_setup() -> void:
 	Profile.new().save(TEST_PATH)
 	var old: Dictionary = Router.params
-	Router.params = {"profile_path": TEST_PATH, "start": true}
+	Router.params = {"profile_path": TEST_PATH}
 	var hall: Control = Router.make(Router.SCREENS["town_hall"])
 	root.add_child(hall)
-	check(hall.prepare.visible, "the start camp: before the run")
-	hall.free()
-	Router.params = {"profile_path": TEST_PATH, "start": false}
-	hall = Router.make(Router.SCREENS["town_hall"])
-	root.add_child(hall)
-	check(not hall.prepare.visible, "not another camp")
+	check(hall.prepare.visible, "before the run")
 	check(hall.flasks.text.contains("0"), "which shows the flasks: %s" % hall.flasks.text)
 	hall.free()
 	Router.params = old
@@ -221,12 +216,16 @@ func test_attributes_and_the_smith_only_at_the_start() -> void:
 	attributes.free()
 	var smith: Control = Router.make(Router.SCREENS["blacksmith"])
 	root.add_child(smith)
-	check(smith.buttons[2].disabled and smith.buttons[3].disabled, "no enchant, no combine")
-	check(not smith.buttons[0].disabled, "the shop is open")
+	check(not smith.buttons[2].visible and not smith.buttons[3].visible, "no enchant, no combine")
+	check(smith.buttons[0].visible and smith.buttons[1].visible, "the shop is open")
 	check(not smith.open_page("enchant"), "enchant does not open")
 	smith.free()
 	p.place = 0
 	p.save(TEST_PATH)
+	smith = Router.make(Router.SCREENS["blacksmith"])
+	root.add_child(smith)
+	check(smith.buttons[2].visible and smith.buttons[3].visible, "the start: enchant and combine")
+	smith.free()
 	attributes = Router.make(Router.SCREENS["attributes"])
 	root.add_child(attributes)
 	check(not attributes.start_only.visible, "the start camp")

@@ -3,12 +3,12 @@ extends RefCounted
 ## The ground plan of the camp between missions, «Плавні» (no nodes; CampFort builds it): a
 ## ring of palisade RADIUS metres round with a gate for each way on (a mission, see
 ## camp_screen.gd) on a side of the world (GATES: north, east, west, south, then north-east and
-## north-west), the yard with its fires in the middle, the town hall north-west of it (off the
-## north road, so it never hides the hero there), east of the yard the smithy. A closed way's
-## gate is barred. What stands in the camp is added as a round
+## north-west), the yard with its fires in the middle, in the start camp the town hall
+## north-west of it (off the north road, so it never hides the hero there), east of the yard the
+## smithy. A closed way's gate is barred. What stands in the camp is added as a round
 ## (add_solid), so blocked() and reachable() know the ground without physics. The spots are
-## where the hero uses something (SPOTS): a way's road inside its gate, the town hall's door
-## (from farther off than the smithy's), the smithy.
+## where the hero uses something (SPOTS): a way's road inside its gate, the smithy, the town
+## hall's door (from farther off than the smithy's).
 ## Coordinates: metres on the XZ plane, the middle of the ring at (0, 0); +Z is south (towards
 ## the camera), +X east.
 
@@ -62,14 +62,17 @@ const MAIN := [0, 8, 11, 15, 17, 19, 20, 22, 30, 33, 35, 38, 39, 44]
 ## middle of the gate, inside: its road just within it}.
 var exits: Array[Dictionary] = []
 var main := false
+var has_hall := true  # the town hall stands only in the start camp (CampScreen)
 ## What stands: [centre (Vector2 on XZ), radius]; the palisade ring is not in it (blocked()).
 var solids: Array = []
 var step := 0.0  # degrees of one piece of palisade
 
 
-## ways: [[place id, open], ...] or [[place id, open, mission], ...], at most six.
-func _init(ways: Array = [], is_main_camp := false) -> void:
+## ways: [[place id, open], ...] or [[place id, open, mission], ...], at most six. with_hall:
+## the town hall stands in the camp.
+func _init(ways: Array = [], is_main_camp := false, with_hall := true) -> void:
 	main = is_main_camp
+	has_hall = with_hall
 	var pieces := floori(360.0 / rad_to_deg(2.0 * asin(PIECE / 2.0 / RADIUS)))
 	step = 360.0 / pieces
 	var gates: Array = GATES[clampi(ways.size(), 0, GATES.size() - 1)]
@@ -180,7 +183,7 @@ static func cell_of(p: Vector3) -> Vector2i:
 
 
 ## Where the hero uses things: a way's road inside its gate (with its place, mission and
-## whether it is open), then the smithy and the town hall; each {kind, at, range}.
+## whether it is open), then the smithy and the town hall (if it stands); each {kind, at, range}.
 func spots() -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	for e in exits:
@@ -197,7 +200,7 @@ func spots() -> Array[Dictionary]:
 				}
 			)
 		)
-	for kind in ["smith", "hall"]:
+	for kind in ["smith", "hall"] if has_hall else ["smith"]:
 		out.append({"kind": kind, "at": SPOTS[kind][0], "range": SPOTS[kind][1]})
 	return out
 

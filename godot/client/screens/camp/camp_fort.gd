@@ -140,7 +140,9 @@ func build(camp_plan: CampPlan, lands: Array, seed_value: int) -> void:
 	_box(Vector3(0.0, -0.5, 0.0), Vector3(GROUND_SIZE, 1.0, GROUND_SIZE), 0.0)
 	_ground()
 	_palisade()
-	_hall_and_yard()
+	if plan.has_hall:
+		_hall()
+	_yard()
 	_smithy()
 	_tents()
 	_torches()
@@ -283,9 +285,8 @@ func _wall(deg: float, r: float) -> void:
 # -- the middle of the camp ------------------------------------------------------------------
 
 
-## The town hall's big tent and its banner, the yard's two fires with men round them, and a
-## colonel by the hall.
-func _hall_and_yard() -> void:
+## The town hall's big tent, its banner and a colonel by it.
+func _hall() -> void:
 	var at := CampPlan.HALL_AT
 	hall = _prop("shatro", at, 0.0, HALL_SCALE)
 	var smoked := ArtKit.painted(false)
@@ -293,6 +294,11 @@ func _hall_and_yard() -> void:
 	ArtKit.dress(hall, smoked)
 	_solid(hall, 0.82)
 	_solid(_prop("banner", at + Vector3(-3.6, 0.0, 3.0), 15.0), 0.6)
+	_figure("polkovnyk", at + Vector3(-2.4, 0, 3.4), "idle", at + Vector3(-1.0, 0, 8.0), 0.4)
+
+
+## The yard's two fires with men round them.
+func _yard() -> void:
 	for f in CampPlan.FIRES:
 		_solid(_prop("vohnyshche", f), 0.9)
 		var fire := ArtEffects.campfire(self, f)
@@ -303,7 +309,6 @@ func _hall_and_yard() -> void:
 	_figure("kozak_camp", one + Vector3(-1.2, 0, 0.2), "interact", one, 0.45)
 	_figure("kozak_camp", two + Vector3(-0.9, 0, -0.9), "cheer", two, 0.55)
 	_figure("kozak_svyta", two + Vector3(1.1, 0, -0.5), "sit", two, 1.0)
-	_figure("polkovnyk", at + Vector3(-2.4, 0, 3.4), "idle", at + Vector3(-1.0, 0, 8.0), 0.4)
 
 
 ## The smithy: the anvil on its stump, the forge's fire, a rack of weapons, a chest and the
@@ -326,11 +331,13 @@ func _tents() -> void:
 	_solid(_prop("drova", Vector3(9.4, 0.0, -9.2), 40.0), 0.8)
 
 
-## Torches at the hall's door and on both sides inside every open gate; those past the
-## lights the renderer has (LIGHTS) burn without light.
+## Torches at the hall's door (if it stands) and on both sides inside every open gate; those
+## past the lights the renderer has (LIGHTS) burn without light.
 func _torches() -> void:
 	var door := CampPlan.HALL_AT + Vector3(0.0, 0.0, 3.4)
-	var torches: Array[Vector3] = [door + Vector3(-1.9, 0, 0), door + Vector3(1.9, 0, 0)]
+	var torches: Array[Vector3] = []
+	if plan.has_hall:
+		torches.assign([door + Vector3(-1.9, 0, 0), door + Vector3(1.9, 0, 0)])
 	for e in plan.exits:
 		if e.open:
 			var half := plan.gate_half_width(e.angle) + 2.5

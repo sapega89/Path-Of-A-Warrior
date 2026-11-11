@@ -3,6 +3,7 @@ extends "res://tests/test_case.gd"
 ## blocked, which gate is walked out of, the spots), the fort built from it, and the screen.
 
 const CAMP_PATH := "user://test_camp_plavni.json"
+const FORT_SCENE := preload("res://screens/camp/camp_fort.tscn")
 
 
 ## n ways: [[place, open, mission], ...], the second one closed.
@@ -65,7 +66,7 @@ func test_the_town_hall_from_farther_off() -> void:
 func test_the_fort_leaves_every_way_and_spot_free() -> void:
 	for n in [1, 4, 6]:
 		var plan := CampPlan.new(_ways(n))
-		var fort: CampFort = load("res://screens/camp/camp_fort.tscn").instantiate()
+		var fort: CampFort = FORT_SCENE.instantiate()
 		root.add_child(fort)
 		fort.build(plan, ["steppe", "forest", "lake", "town", "mountains", "steppe"], n)
 		var seen := plan.reachable(CampPlan.START)
@@ -79,6 +80,31 @@ func test_the_fort_leaves_every_way_and_spot_free() -> void:
 		fort.free()
 
 
+func test_the_town_hall_only_in_the_start_camp() -> void:
+	var plan := CampPlan.new(_ways(2), true, false)
+	eq(
+		plan.spots().map(func(s: Dictionary) -> String: return s.kind),
+		["way", "way", "smith"],
+		"no hall"
+	)
+	var fort: CampFort = FORT_SCENE.instantiate()
+	root.add_child(fort)
+	fort.build(plan, ["steppe", "forest"], 2)
+	check(fort.hall == null, "no tent of the town hall")
+	check(not plan.blocked(CampPlan.HALL_AT), "its ground free")
+	fort.free()
+	Profile.new().save(CAMP_PATH)
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": CAMP_PATH}
+	var camp: CampScreen = Router.make(Router.SCREENS["camp"])
+	root.add_child(camp)
+	check(not camp.spot_of("hall").is_empty(), "the start camp has the town hall")
+	check(camp.get_node("%Hall").visible, "and its name over it")
+	camp.free()
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))
+
+
 func test_camp_screen_ways_lead_to_the_missions() -> void:
 	var p: RefCounted = Profile.new()
 	p.place = 4
@@ -90,9 +116,10 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 	eq(camp.place, 4, "the camp of the hero's place")
 	eq(
 		camp.spots.map(func(s): return s.kind),
-		["way", "way", "smith", "hall"],
-		"a way per place on, then the blacksmith and the town hall"
+		["way", "way", "smith"],
+		"a way per place on, then the blacksmith (the town hall is only at the start)"
 	)
+	check(not camp.get_node("%Hall").visible, "no town hall over the yard")
 	var ways: Array = camp.spots.filter(func(s): return s.kind == "way")
 	var open: Array = ways.filter(func(s): return s.open)
 	eq(ways.filter(func(s): return not s.open).map(func(s): return s.place), [5], "Regalia barred")

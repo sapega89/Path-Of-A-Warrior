@@ -242,7 +242,7 @@ func _ready() -> void:
 	await _shot(out, "04d_briefing")
 	# The camps between missions: a stop with a way per mission (one place closed) and its
 	# pause menu, six ways, the main camp at the start, its smithy and all of it from above, and
-	# the town hall that every camp has.
+	# its town hall (the only camp that has one).
 	walker.place = 4
 	walker.save("user://shot_walker.json")
 	Router.go("camp", {"profile_path": "user://shot_walker.json"})
@@ -265,7 +265,7 @@ func _ready() -> void:
 	camp.camera.snap()
 	await _shot(out, "04j_camp_overview")
 	# the town hall of the start camp: the flasks and the button that buys the next one
-	Router.go("town_hall", {"profile_path": "user://shot_walker.json", "start": true})
+	Router.go("town_hall", {"profile_path": "user://shot_walker.json"})
 	await _shot(out, "04h_town_hall")
 	Router.go("run_end", {"profile_path": "user://shot_walker.json"})
 	await _shot(out, "04k_run_end")

@@ -1,17 +1,16 @@
 extends BaseScreen
-## The town hall of a main camp: every colonel who gives missions, with how far the hero has
-## come with him (Profile.progress, 5 per mission won; only his name while it is nothing yet),
-## and the generals the hero knows, with their friendship (Profile.friendship, in the order he
-## met them). Over them, the hero's flasks of living water (HeroRun) and his fame; the town hall
-## of the start camp (Router.params.start) opens what comes before a run (the run setup screen:
-## the starting skill, the flasks and the perks bought with fame).
+## The town hall of the start camp (the only camp that has one, CampPlan.has_hall): what comes
+## before a run (Prepare: the run setup screen, the starting skill, the flasks, the perks and the
+## vows), over it the hero's flasks of living water (HeroRun) and his fame, and every colonel
+## who gives missions, with how far the hero has come with him (Profile.progress, 5 per mission
+## won; only his name while it is nothing yet), and the generals the hero knows, with their
+## friendship (Profile.friendship, in the order he met them).
 
 const CELL_SCENE := preload("res://screens/town_hall/hall_cell.tscn")
 
 var path: String = Profile.PATH
 var profile: Profile
 var campaign := Campaign.new()
-var at_start := false  # the start camp's town hall: it opens the run setup
 @onready var list: VBoxContainer = %List
 @onready var flasks: Label = %Flasks
 @onready var prepare: Button = %Prepare
@@ -20,7 +19,6 @@ var at_start := false  # the start camp's town hall: it opens the run setup
 func _ready() -> void:
 	path = profile_path()
 	profile = Profile.load_or_new(path)
-	at_start = bool(Router.params.get("start", false))
 	_show_flasks()
 	for r in colonels():
 		_cell(%Colonels, colonel_line(r))
@@ -38,7 +36,6 @@ func _show_flasks() -> void:
 	flasks.text = (
 		tr("hall.flasks") % [run.flasks, HeroRun.MAX_FLASKS, run.flasks_left, profile.fame]
 	)
-	prepare.visible = at_start
 
 
 func open_run_setup() -> void:
