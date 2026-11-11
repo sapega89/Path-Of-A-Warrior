@@ -1,10 +1,12 @@
 class_name ArtFigure
 extends Node3D
-## A person in the new art: the body from characters/<kind>.glb with its weapons, the
-## shared clips, the painted material and the ink outline. The model faces +Z.
+## A person in the new art (scenes/art/art_figure.tscn): the body from characters/<kind>.glb
+## with its weapons, the shared clips (the Clips player of the scene), the painted material and
+## the ink outline. The model faces +Z.
 
 ## A change of clip blends over this many seconds.
 const BLEND := 0.08
+const SCENE_PATH := "res://scenes/art/art_figure.tscn"
 
 var kind := ""
 var body: Node3D
@@ -20,9 +22,17 @@ var _hold_until := 0.0
 var _speed := 1.0
 
 
+## A new figure of a kind, its body made (setup()).
+static func create(figure_kind: String) -> ArtFigure:
+	var figure := (load(SCENE_PATH) as PackedScene).instantiate() as ArtFigure
+	figure.setup(figure_kind)
+	return figure
+
+
 func setup(figure_kind: String) -> Node3D:
 	kind = figure_kind
 	body = ArtKit.scene("characters/%s.glb" % kind).instantiate()
+	body.name = "Body"  # the clips play on it
 	add_child(body)
 	skeleton = body.find_child("Skeleton3D", true, false) as Skeleton3D
 	material = ArtKit.painted(true)
@@ -31,10 +41,7 @@ func setup(figure_kind: String) -> Node3D:
 	ArtKit.dress(body, material)
 	for attach in body.find_children("*", "BoneAttachment3D", true, false):
 		ArtKit.dress(attach, blades)
-	player = AnimationPlayer.new()
-	player.name = "Clips"
-	body.add_child(player)
-	player.root_node = NodePath("..")
+	player = $Clips as AnimationPlayer
 	player.add_animation_library(&"", ArtKit.clips())
 	return self
 
@@ -123,21 +130,19 @@ func carry(pose: Vector3) -> void:
 	body.rotation = Vector3(pose.z, pose.y, 0.0)
 
 
-## Puts a weapon from characters/weapons.glb into the hand it belongs to.
+## Puts a weapon from characters/weapons.glb into the hand it belongs to: its hand (a bone
+## attachment) moves over from the model of the weapons, with only this weapon in it.
 func equip(weapon: String) -> void:
 	var source: Node = ArtKit.scene("characters/weapons.glb").instantiate()
 	var mesh := source.find_child(weapon, true, false) as MeshInstance3D
 	if mesh != null:
-		var holder := mesh.get_parent() as BoneAttachment3D
-		var attach := BoneAttachment3D.new()
-		attach.bone_name = holder.bone_name
-		skeleton.add_child(attach)
-		var copy := MeshInstance3D.new()
-		copy.name = weapon
-		copy.mesh = mesh.mesh
-		copy.transform = mesh.transform
-		copy.material_override = blades
-		attach.add_child(copy)
+		var hand := mesh.get_parent() as BoneAttachment3D
+		for other in hand.get_children():
+			if other != mesh:
+				other.free()
+		hand.get_parent().remove_child(hand)
+		mesh.material_override = blades
+		skeleton.add_child(hand)
 	source.free()
 
 

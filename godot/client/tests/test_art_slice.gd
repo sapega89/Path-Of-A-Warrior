@@ -47,9 +47,8 @@ func test_shared_clips() -> void:
 
 
 func test_figure_plays_and_holds_a_weapon() -> void:
-	var fig: Node3D = ArtFigure.new()
+	var fig := ArtFigure.create("kozak_camp")
 	root.add_child(fig)
-	fig.setup("kozak_camp")
 	fig.play("walk")
 	eq(String(fig.player.current_animation), "walk", "the clip plays")
 	var before: int = fig.skeleton.find_children("*", "BoneAttachment3D", true, false).size()
@@ -57,6 +56,8 @@ func test_figure_plays_and_holds_a_weapon() -> void:
 	var hands: Array = fig.skeleton.find_children("*", "BoneAttachment3D", true, false)
 	eq(hands.size(), before + 1, "the spear goes into a hand")
 	eq(String((hands[-1] as BoneAttachment3D).bone_name), "handslot.r", "the right hand")
+	eq(hands[-1].get_child_count(), 1, "with the spear alone")
+	eq(fig.player.get_node(fig.player.root_node), fig.body, "the clips of the scene move the body")
 	fig.face(Vector3(1, 0, 0))
 	check(is_equal_approx(fig.rotation.y, PI / 2.0), "faces +X")
 	fig.free()

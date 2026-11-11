@@ -10,9 +10,10 @@ func test_directions() -> void:
 
 
 func test_walk_uses_original_tables() -> void:
-	var h: CharacterBody3D = Hero.new()
+	var h := (load("res://scenes/world/hero.tscn") as PackedScene).instantiate() as Hero
 	root.add_child(h)
 	eq(int(h.info.frames), 53, "frames in the sheet")
+	check(is_equal_approx(h.sprite.pixel_size, Hero.PIXEL_SIZE), "the sprite: a tile a world unit")
 	eq(h.current_frame(), 1, "idle facing down")
 	h.step(Vector2.RIGHT, 0.016)
 	check(h.walking, "walking")

@@ -1,7 +1,7 @@
 class_name Hero
 extends CharacterBody3D
-## The hero: the original 2D sprite standing in the 3D world (decisions 06.11:
-## "3D world, 2D hero", "move the game over as it is first").
+## The hero (scenes/world/hero.tscn): the original 2D sprite standing in the 3D world
+## (decisions 06.11: "3D world, 2D hero", "move the game over as it is first").
 ##
 ## The frames come from assets/original/hero_<head>_<weapon>.png, made by
 ## godot/tools/import_original.py from the original body, head and weapon parts.
@@ -32,7 +32,6 @@ var dir8 := 0
 ## Driven by the map simulation (set_frame / world position) instead of reading the input.
 var external := false
 var walking := false
-var sprite: Sprite3D
 var info := {}
 var _anim_pos := 0
 var _anim_time := 0.0
@@ -41,33 +40,20 @@ var _base: Texture2D
 var _skill: Texture2D
 var _showing_skill := false
 
+@onready var sprite: Sprite3D = $Sprite
 
+
+## The sprite of the scene shows the sheet of the first head and weapon (hero_0_0.png), one
+## PIXEL_SIZE a pixel, turned to the camera about Y, with sharp edges (alpha cut) so that it is
+## sorted, lit and shadowed in 3D.
 func _ready() -> void:
-	var shape := CollisionShape3D.new()
-	var capsule := CapsuleShape3D.new()
-	capsule.radius = 0.3
-	capsule.height = 1.2
-	shape.shape = capsule
-	shape.position.y = 0.6
-	add_child(shape)
-
 	info = load_info()
-	sprite = Sprite3D.new()
-	sprite.name = "Sprite"
-	_base = load(SHEET_PATH % [0, 0])
+	_base = sprite.texture
 	_skill = load(SKILL_SHEET_PATH % [0, 0])
-	sprite.texture = _base
-	sprite.region_enabled = true
-	sprite.pixel_size = PIXEL_SIZE
-	sprite.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
-	sprite.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD  # sharp edges, correct depth, casts a shadow
-	sprite.shaded = true
 	# The sprite is centred on its cell; the feet are (origin - cell / 2) px below the middle.
 	var cell: Array = info.get("cell", [96, 96])
 	var origin: Array = info.get("origin", [48, 72])
 	sprite.position.y = (float(origin[1]) - float(cell[1]) / 2.0 + FOOT_PX) * PIXEL_SIZE
-	add_child(sprite)
 	_show_frame(current_frame())
 
 
