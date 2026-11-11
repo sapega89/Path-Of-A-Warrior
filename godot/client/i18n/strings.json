@@ -1190,5 +1190,41 @@
   "settings.window_size": {
     "en": "Window size",
     "uk": "Розмір вікна"
+  },
+  "run.flask_used": {
+    "en": "A flask of living water is spent: %d left",
+    "uk": "Фляга живої води витрачена: лишилось %d"
+  },
+  "run.over": {
+    "en": "No flask left: the run is over",
+    "uk": "Фляг не лишилося: похід закінчено"
+  },
+  "hall.flasks": {
+    "en": "Flasks of living water: %d of %d bought, %d full · Fame: %d",
+    "uk": "Фляги живої води: куплено %d з %d, повних %d · Слава: %d"
+  },
+  "hall.buy_flask": {
+    "en": "Buy a flask (%d fame)",
+    "uk": "Купити флягу (%d слави)"
+  },
+  "run_end.title": {
+    "en": "The run is over",
+    "uk": "Похід закінчено"
+  },
+  "run_end.kept": {
+    "en": "Kept: level %d, gold %d, fame %d and all your gear",
+    "uk": "Лишилося: рівень %d, золото %d, слава %d і всі речі"
+  },
+  "run_end.lost": {
+    "en": "Gone: the skills of this run and the colonels' progress",
+    "uk": "Пропало: навички цього походу і прихильність полковників"
+  },
+  "run_end.flasks": {
+    "en": "Full flasks for the next run: %d",
+    "uk": "Повних фляг на новий похід: %d"
+  },
+  "run_end.go": {
+    "en": "Back to the start",
+    "uk": "Повернутися на початок"
   }
 }

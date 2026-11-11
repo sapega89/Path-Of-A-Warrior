@@ -56,16 +56,32 @@ func test_lost_gear_on_the_fail_banner() -> void:
 	eq(int(screen.lost_gear.get("id", 0)), Profile.START_WEAPON, "the weapon is lost")
 	eq(int(screen.profile.equipped[0].id), 0, "taken from the hero")
 	var text: String = screen.banner_text.text
-	check(
-		text.ends_with(
-			(
-				"%s\n%s\n%s"
-				% [tr("mission.failed"), tr("mission.lost"), Items.name_of(Profile.START_WEAPON)]
-			)
-		),
-		"the banner names it: %s" % text
-	)
+	# no flask was bought, so the lost mission also ends the run
+	var lines: PackedStringArray = [
+		tr("mission.failed"),
+		tr("run.over"),
+		tr("mission.lost"),
+		Items.name_of(Profile.START_WEAPON)
+	]
+	check(text.ends_with("\n".join(lines)), "the banner names it: %s" % text)
 	screen._process(0.0)
 	eq(int(screen.profile.equipped[0].id), 0, "once")
+	screen.free()
+	Router.params = old
+
+
+func test_a_flask_on_the_fail_banner() -> void:
+	var old: Dictionary = Router.params
+	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	var screen: Control = Router.make(Router.SCREENS["mission"])
+	root.add_child(screen)
+	screen.profile.run.flasks = 1
+	screen.profile.run.flasks_left = 1
+	screen.sim.failed = true
+	screen.sim.banner = MapSim.BANNER_FAILED
+	screen._process(0.0)
+	var text: String = screen.banner_text.text
+	check(text.contains(tr("run.flask_used") % 0), "a flask is spent: %s" % text)
+	check(not screen.run_over, "the run goes on")
 	screen.free()
 	Router.params = old

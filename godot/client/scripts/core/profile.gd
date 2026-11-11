@@ -22,7 +22,8 @@ const PROGRESS_PER_WIN := 5
 ## The lords a new hero can fight for: bit (id - 1) set.
 const START_LORDS_OPEN := 35113052110447
 const LORD_COUNT := 45
-## Where the hero goes after ending i (0: back to the start, the progress of the rulers lost).
+## Where the hero goes after ending i (0: back to the start, the progress of the rulers lost and
+## the run over; a main camp: one flask filled, HeroRun).
 const NEXT_PLACE := [
 	0, 0, 0, 0, 0, 0, 11, 8, 0, 15, 15, 20, 17, 19, 19, 0, 30, 22, 35, 38, 39, 33, 33, 44
 ]
@@ -80,6 +81,7 @@ var opened_lord := 0  # the lord the last ending opened (not saved)
 ## the room's middle tile (x, y), HP, MP, rooms visited, its exp so far, kills and ticks of
 ## play. Continue goes back there. Any other save forgets it (as pyport's save flag).
 var on_map := {}
+var run := HeroRun.new()  # the run: its flasks of living water
 
 static var _exp_table: Array = []
 
@@ -425,6 +427,10 @@ func advance(
 	place = NEXT_PLACE[ending] if ending < NEXT_PLACE.size() else 0
 	if place == 0:
 		progress = {}
+		if ending != 3 or has_item(SCARF):
+			run.end(self)
+	else:
+		run.fill_one()
 	var item := 0
 	if ending == 2:
 		item = SCARF
@@ -692,7 +698,8 @@ func to_dict() -> Dictionary:
 		"endings": endings,
 		"briefings": briefings,
 		"shop": shop,
-		"on_map": on_map
+		"on_map": on_map,
+		"run": run.to_dict()
 	}
 
 
@@ -729,6 +736,8 @@ func from_dict(d: Dictionary) -> void:
 	shop = _copy_items(d.get("shop", []), Items.SHOP_POTIONS.size() + Items.SHOP_GEAR, shop)
 	var m: Variant = d.get("on_map", {})
 	on_map = m if typeof(m) == TYPE_DICTIONARY else {}
+	var r: Variant = d.get("run", {})
+	run.from_dict(r if typeof(r) == TYPE_DICTIONARY else {})
 
 
 ## Saves the hero; a mission saved on its map is forgotten (save_on_map keeps one).

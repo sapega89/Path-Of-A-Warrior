@@ -2,18 +2,24 @@ extends BaseScreen
 ## The town hall of a main camp: every colonel who gives missions, with how far the hero has
 ## come with him (Profile.progress, 5 per mission won; only his name while it is nothing yet),
 ## and the generals the hero knows, with their friendship (Visits.generals). Visiting opens the
-## visits from here.
+## visits from here. Over them, the hero's flasks of living water (HeroRun) and his fame; in the
+## town hall of the start camp (Router.params.start) the next flask is sold for fame.
 
 var path: String = Profile.PATH
 var profile: RefCounted
 var campaign := Campaign.new()
+var at_start := false  # the start camp's town hall: it sells the flasks
 @onready var list: VBoxContainer = %List
 @onready var visit: Button = %Visit
+@onready var flasks: Label = %Flasks
+@onready var buy: Button = %BuyFlask
 
 
 func _ready() -> void:
 	path = profile_path()
 	profile = Profile.load_or_new(path)
+	at_start = bool(Router.params.get("start", false))
+	_show_flasks()
 	_section("hall.colonels")
 	var grid := _grid("Colonels")
 	for r in colonels():
@@ -31,6 +37,24 @@ func _ready() -> void:
 			_cell(grid, tr("hall.friend") % [tr(name_key), int(g[1])])
 	visit.disabled = not Visits.can_visit(profile)
 	(%Back if visit.disabled else visit).grab_focus.call_deferred()
+
+
+## How many flasks are bought and full, and the fame; at the start the next flask's price.
+func _show_flasks() -> void:
+	var run: HeroRun = profile.run
+	flasks.text = (
+		tr("hall.flasks") % [run.flasks, HeroRun.MAX_FLASKS, run.flasks_left, profile.fame]
+	)
+	var price := run.flask_price()
+	buy.visible = at_start and price > 0
+	buy.text = tr("hall.buy_flask") % price
+	buy.disabled = profile.fame < price
+
+
+func buy_flask() -> void:
+	if profile.run.buy_flask(profile):
+		profile.save(path)
+	_show_flasks()
 
 
 func open_visits() -> void:

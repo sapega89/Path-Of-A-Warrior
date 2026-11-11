@@ -234,7 +234,7 @@ func use(s: Dictionary) -> void:
 					}
 				)
 		"hall":
-			Router.push("town_hall", {"profile_path": path})
+			Router.push("town_hall", {"profile_path": path, "start": camp_place() == 0})
 		"smith":
 			Router.push("blacksmith", {"profile_path": path})
 

@@ -292,6 +292,8 @@ func _ready() -> void:
 	await _shot(out, "04j_camp_overview")
 	Router.go("town_hall", {"profile_path": "user://shot_walker.json"})
 	await _shot(out, "04h_town_hall")
+	Router.go("run_end", {"profile_path": "user://shot_walker.json"})
+	await _shot(out, "04k_run_end")
 	Router.go("mission", {"lord": 1, "mission": 0, "seed": 1})
 	var mission: Node = Router.current
 	await _frames(20)

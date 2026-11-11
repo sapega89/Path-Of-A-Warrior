@@ -15,6 +15,7 @@ const SCREENS := {
 	"campaign": "res://screens/campaign/campaign_screen.tscn",
 	"camp": "res://screens/camp/camp_screen.tscn",
 	"town_hall": "res://screens/town_hall/town_hall_screen.tscn",
+	"run_end": "res://screens/run_end/run_end_screen.tscn",
 	"mission": "res://screens/mission/mission_screen.tscn",
 	"briefing": "res://screens/briefing/briefing_screen.tscn",
 	"management": "res://screens/management/management_screen.tscn",

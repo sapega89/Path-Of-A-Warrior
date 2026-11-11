@@ -31,6 +31,7 @@ var lord_id := 1
 var mission := 0
 var mission_info := {}
 var lost_gear := {}  # what the hero lost with the mission (Profile.lose_gear), shown on its banner
+var run_over := false  # the mission was lost with no flask left: the run is over (HeroRun)
 var _fail_seen := false
 var lord_name := ""
 var sim: RefCounted
@@ -208,7 +209,9 @@ func _process(delta: float) -> void:
 		trails = sim.trails(_trail_pick)
 	if sim.failed and not _fail_seen:
 		_fail_seen = true
-		lost_gear = profile.lose_gear(sim.rng)
+		var cost: Dictionary = profile.run.lose_mission(profile, story_ends_when_lost(), sim.rng)
+		lost_gear = cost.gear
+		run_over = cost.over
 	if sim.choosing and sim.way_out != 0:
 		var to := way_for(sim.way_out, Hero.px_to_world(Vector2(sim.hero.pos)))
 		if to > 0:
@@ -232,16 +235,24 @@ func _process(delta: float) -> void:
 		set_process(false)
 		Router.back()
 		if ending >= 0:
-			Router.push(
-				"story",
-				{
-					"story": ending,
-					"reward_item": profile.reward_item,
-					"opened_lord": profile.opened_lord
-				}
-			)
+			var story := {
+				"story": ending,
+				"reward_item": profile.reward_item,
+				"opened_lord": profile.opened_lord
+			}
+			if profile.place == 0:  # the ending leads back to the start: the run is over
+				story.merge({"then": "run_end", "then_params": {}})
+			Router.push("story", story)
+		elif run_over:
+			Router.push("run_end")
 		return
 	_update_view(_acc / tick)
+
+
+## A mission whose loss ends the story: its reward is an ending (Profile.advance), so the loss
+## costs no flask.
+func story_ends_when_lost() -> bool:
+	return int(mission_info.get("reward", 0)) > Profile.ENDING_BASE
 
 
 ## The key went down since the last frame (a press seen once, whenever the frame runs).
@@ -353,6 +364,11 @@ func _show_banner() -> void:
 		stage += " " + tr("mission.complete")
 	elif sim.banner == MapSim.BANNER_FAILED:
 		stage = tr("mission.failed")
+		if not story_ends_when_lost():
+			stage += (
+				"\n"
+				+ (tr("run.over") if run_over else tr("run.flask_used") % profile.run.flasks_left)
+			)
 		if not lost_gear.is_empty():
 			stage += "\n%s\n%s" % [tr("mission.lost"), Items.name_of(int(lost_gear.id))]
 	elif sim.banner == MapSim.BANNER_SUCCESS:
