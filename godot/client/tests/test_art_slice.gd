@@ -89,16 +89,45 @@ func test_icons_and_fonts() -> void:
 	for name in ICONS:
 		var tex := ArtHud.icon(name, 64)
 		check(tex != null and tex.get_width() == 64, "icon %s at 64 px" % name)
-	var f := ArtHud.font(
-		[
-			"res://assets/art/fonts/kurale-latin-400-normal.woff2",
-			"res://assets/art/fonts/kurale-cyrillic-400-normal.woff2"
-		]
+	var t: Theme = UiTheme.theme(ArtHud.THEME)
+	for look in ["ArtName", "ArtLevel"]:
+		var f := t.get_font("font", look)
+		check(
+			f.has_char("К".unicode_at(0)) or f.fallbacks[0].has_char("К".unicode_at(0)),
+			"%s: Cyrillic letters" % look
+		)
+
+
+## The HUD is a scene with its own theme: the skills' slots in a row, the first lit in a
+## battle, one cooling down, the place's name on the ribbon.
+func test_the_hud_from_its_scene() -> void:
+	var layer := CanvasLayer.new()
+	root.add_child(layer)
+	var hud: ArtHud = (load(ArtHud.SCENE) as PackedScene).instantiate()
+	layer.add_child(hud)
+	hud.setup(null, "battle")
+	eq(hud.theme.resource_path, ArtHud.THEME, "its theme")
+	var slots: Array[Node] = hud.get_node("%Skills").get_children()
+	eq(slots.size(), ArtHud.SKILLS.size(), "a slot per skill")
+	eq(
+		[slots[0].theme_type_variation, slots[1].theme_type_variation],
+		[&"ArtSkillActive", &"ArtSkill"],
+		"the first lit in a battle"
 	)
-	check(
-		f.has_char("К".unicode_at(0)) or f.fallbacks[0].has_char("К".unicode_at(0)),
-		"Cyrillic letters"
+	check(slots[ArtHud.COOLING].get_node("Cooldown").visible, "one cooling down")
+	check(not slots[0].get_node("Cooldown").visible, "the others ready")
+	eq((slots[4].get_node("Key") as Label).text, "5", "their keys")
+	check((slots[0].get_node("Icon") as TextureRect).texture != null, "their icons")
+	eq((hud.get_node("%Place") as Label).text, "Крута балка", "the place")
+	eq(
+		(hud.get_node("%Face") as TextureRect).texture.get_rid(),
+		hud.portrait_view.get_texture().get_rid(),
+		"the portrait drawn live"
 	)
+	var t: Theme = hud.theme
+	eq(t.get_font_size("font_size", "ArtName"), 30, "the hero's name")
+	eq(t.get_constant("separation", "ArtSkills"), 12, "the slots' gaps")
+	layer.free()
 
 
 func test_camp_and_battle_build() -> void:
