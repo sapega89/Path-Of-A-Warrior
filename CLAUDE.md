@@ -13,8 +13,9 @@
 
 `godot/README.md` describes the layout and how to run the game and the tests;
 `docs/GODOT_PLAN.md` is the plan of the port. The code is moving to the usual Godot structure step
-by step (the plan: "План переходу Godot-коду на стандарт Godot"). Every change follows the rules
-below, also when the code around it is still in the old style.
+by step: what old code still breaks is counted in `godot/tools/standards_baseline.json` (see
+"Checks" below). Every change follows the rules below, also when the code around it is still in the
+old style.
 
 ## Rules: Godot structure
 
@@ -35,6 +36,17 @@ below, also when the code around it is still in the old style.
 - Shared classes have a `class_name`; do not add `const X := preload("res://...gd")` for them
 - Calls go down, signals go up: a child node never reaches its parent or siblings by path;
   autoloads only for state that is truly global
+- Godot's own nodes and methods come before our own code for the same thing:
+  - what the player clicks or taps is a `Button` / `TextureButton` with its `pressed` signal, not a
+    picture drawn in `_draw` with hit tests by coordinates; a bar or an orb is a
+    `ProgressBar` / `TextureProgressBar`
+  - a change over time (a fade, a flash, a blink, text typed out) is a `Tween` or an
+    `AnimationPlayer`, not a counter in `_process`; only `MapSim` keeps its own tick
+  - input is read with `Input.is_action_just_pressed()` and the other `Input` / `InputEvent`
+    methods, not with our copies of them
+  - a pause is `get_tree().paused`, with `process_mode` on the nodes that keep running
+- The objects of the world (the hero, an enemy, an effect, a prop) are scenes (`.tscn`) that code
+  instances; code builds nodes only for what map data describes (the ground, the walls)
 - Game logic stays in classes without nodes (`RefCounted`: map simulation, battle, rules), and
   scenes only show their state. Logic never touches nodes, the screen or input
 - Folders by feature (`screens/gear/`, `world/hero/`), file names snake_case, node names PascalCase
@@ -47,20 +59,37 @@ below, also when the code around it is still in the old style.
   - a long `match` / `if` chain over message or action types becomes a table of handlers
   - the same code in a third place becomes a shared function, scene or base class
   - no code "for later": no unused options, parameters, layers or abstractions
-- Follow the official GDScript style guide; type every variable, parameter and return value.
-  `gdformat` and `gdlint` (gdtoolkit 4.5.0, config `godot/client/gdlintrc`) run in CI
+- Follow the official GDScript style guide, its code order too: signals, enums, consts, static
+  vars, `@export` vars, vars, `@onready` vars, then the methods. `gdformat` and `gdlint`
+  (gdtoolkit 4.5.0, config `godot/client/gdlintrc`) run in CI
+- Type every variable, parameter and return value, with the class's own name (`Profile`,
+  `MapSim`), not `RefCounted`, `Node` or `Variant` in its place; an array of one kind is typed
+  (`Array[int]`)
 - Names are ours and say what the thing does; comments explain what the code does now, not where
   it came from (no references to the original game's code or to `pyport`, no port markers)
 - Magic numbers become named constants or data in `data/*.json`
 - Do not modify existing working functionality unless explicitly asked; refactoring keeps the
   behaviour, the node names and the public fields the tests use
 
+## Checks
+
+`python godot/tools/check_standards.py` (run in CI) counts, file by file, what breaks the rules
+above that gdlint does not see: untyped or `RefCounted` declarations, UI or world nodes built
+with `.new()`, theme overrides in code, `pyport` in comments, `Router.params` read for the
+hero's path, `preload` of a script, files over 600 lines, functions over 50 lines, the code order.
+`godot/tools/standards_baseline.json` keeps the counts of the old code:
+
+- new code adds nothing to them, so a feature never waits for old code to be cleaned
+- a PR that cleans old code lowers them with `--update` in the same PR (CI asks for it)
+- a line that has to break a line rule says why at its end: `# standards: allow <rule> (<why>)`
+
 ## Rules: tests and PRs
 
 - Every behaviour change or new screen comes with a test in `godot/client/tests/test_*.gd`
 - Before pushing: `godot --headless --path godot/client res://tests/runner.tscn` passes, and the
   run adds no new `ERROR` lines to the log; in `godot/client`:
-  `gdformat --check scripts tests tools lab` and `gdlint scripts tests tools lab`
+  `gdformat --check scripts tests tools lab` and `gdlint scripts tests tools lab`;
+  in the repo root: `python godot/tools/check_standards.py`
 - `.uid` files are not committed
 - CI screenshots (`tools/shots.tscn`) must not change unless the change is meant to change them
 - Small PRs: one screen group or one module at a time; do not mix a refactor with a new feature
