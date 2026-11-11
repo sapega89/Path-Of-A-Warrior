@@ -4,56 +4,57 @@ extends Control
 ## ways between them, the hero's place lit and the places he can go to now marked. A place
 ## the hero can go to and fight for opens its missions (`place_chosen`); the line under the
 ## map names the place in focus, how it is for the hero and the missions won there.
+## Its scene is world_map_view.tscn; the campaign screen gives it the map and the hero (setup()).
 
 signal place_chosen(id: int)
 
-const NODE := 38.0  # a place's button, px
-const WON := Color("7fb069")
+const NODE := 38.0  # a place's button, px (place_button.tscn)
 const WAY := Color(0.6, 0.57, 0.65, 0.35)
+const PLACE_SCENE := preload("res://screens/campaign/place_button.tscn")
+## Each state's look in the theme; a place whose missions are all won adds "Won" to it (a green
+## rim), but not the hero's own.
+const LOOKS := {
+	WorldMap.State.HERE: "PlaceHere",
+	WorldMap.State.NEXT: "PlaceNext",
+	WorldMap.State.CLOSED: "PlaceClosed",
+	WorldMap.State.AWAY: "PlaceAway",
+}
 
 var world: WorldMap
 var profile: Profile
 var here := 0
 var buttons := {}  # place id -> Button
-var info: Label
 var _area := Rect2()
 
+@onready var info: Label = %Info
 
-func _init(w: WorldMap, p: Profile, place: int) -> void:
+
+## The places of `w` for the hero `p`, who is at `place`: a button each (place_button.tscn).
+func setup(w: WorldMap, p: Profile, place: int) -> void:
 	world = w
 	profile = p
 	here = place
-	name = "WorldMap"
-	info = UiTheme.note("Info", 40)
-	info.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	info.offset_top = -48
-	add_child(info)
 	for id in range(1, world.place_count() + 1):
-		var b := Button.new()
+		var b: Button = PLACE_SCENE.instantiate()
 		b.name = "Place%d" % id
 		b.text = str(id)
-		b.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-		b.custom_minimum_size = Vector2(NODE, NODE)
-		b.size = Vector2(NODE, NODE)
-		b.add_theme_font_size_override("font_size", 16)
-		b.add_theme_constant_override("h_separation", 0)
-		for style in ["normal", "hover", "pressed", "disabled", "focus"]:
-			var sb := UiTheme.box(UiTheme.BUTTON)
-			sb.set_content_margin_all(0)
-			sb.set_corner_radius_all(int(NODE / 2))
-			b.add_theme_stylebox_override(style, sb)
-		_style(b, id)
+		b.theme_type_variation = look(world.state(id, here, profile), world.won(id, profile))
 		b.pressed.connect(_on_press.bind(id))
 		b.focus_entered.connect(_show_info.bind(id))
 		b.mouse_entered.connect(_show_info.bind(id))
 		add_child(b)
 		buttons[id] = b
 	resized.connect(_place_buttons)
-
-
-func _ready() -> void:
 	_place_buttons()
 	_show_info(here if buttons.has(here) else first_focus())
+
+
+## The theme's look of a place in this state with `won` (missions won, of all) there.
+static func look(state: WorldMap.State, won: Vector2i) -> StringName:
+	var look_name: String = LOOKS[state]
+	if state != WorldMap.State.HERE and won.y > 0 and won.x == won.y:
+		look_name += "Won"
+	return StringName(look_name)
 
 
 ## The button to start on: the first place the hero can go to now, else his own.
@@ -78,38 +79,6 @@ func _on_press(id: int) -> void:
 		place_chosen.emit(id)
 
 
-func _style(b: Button, id: int) -> void:
-	var st: int = world.state(id, here, profile)
-	var w: Vector2i = world.won(id, profile)
-	var fill: Color = UiTheme.PANEL
-	var border := Color.TRANSPARENT
-	var font: Color = UiTheme.TEXT_DIM
-	match st:
-		WorldMap.State.HERE:
-			fill = UiTheme.ACCENT
-			font = UiTheme.BG
-		WorldMap.State.NEXT:
-			fill = UiTheme.BUTTON
-			border = UiTheme.ACCENT
-			font = UiTheme.TEXT
-		WorldMap.State.CLOSED:
-			fill = UiTheme.BG
-			border = UiTheme.TEXT_DIM
-	if st != WorldMap.State.HERE and w.y > 0 and w.x == w.y:
-		border = WON
-	for style in ["normal", "hover", "pressed", "disabled"]:
-		var sb := b.get_theme_stylebox(style) as StyleBoxFlat
-		sb.bg_color = fill.lightened(0.15) if style == "hover" else fill
-		sb.border_color = border
-		sb.set_border_width_all(2 if border.a > 0 else 0)
-	var focus := b.get_theme_stylebox("focus") as StyleBoxFlat
-	focus.bg_color = Color.TRANSPARENT
-	focus.border_color = UiTheme.TEXT
-	focus.set_border_width_all(3)
-	for c in ["font_color", "font_hover_color", "font_focus_color", "font_pressed_color"]:
-		b.add_theme_color_override(c, font)
-
-
 ## Where the places go: the columns across, the rows down, inside the space above the line.
 func _place_buttons() -> void:
 	_area = Rect2(Vector2(NODE / 2, NODE / 2), size - Vector2(NODE, NODE + 56))
@@ -131,6 +100,8 @@ func center_of(id: int) -> Vector2:
 
 
 func _draw() -> void:
+	if world == null:
+		return
 	for w in world.ways():
 		var lit: bool = w[0] == here
 		var a := center_of(w[0])

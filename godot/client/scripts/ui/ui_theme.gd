@@ -109,17 +109,6 @@ static func heading(text_key: String, size: int = TITLE_SIZE) -> Label:
 	return l
 
 
-## A centred line of text set from code (already translated), wrapped when long.
-static func note(node_name: String, min_height: int = 0) -> Label:
-	var l := Label.new()
-	l.name = node_name
-	l.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	l.custom_minimum_size = Vector2(0, min_height)
-	return l
-
-
 ## The gold coin of the new art (assets/art/ui/coin.svg), smooth at any size.
 static func coin() -> Texture2D:
 	if _coin == null:
