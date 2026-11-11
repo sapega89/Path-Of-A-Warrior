@@ -50,7 +50,7 @@ const GRADE := Vector3(1.0, 1.1, 0.88)
 ## The rings of a thing one can break (breakable_outline.gdshader), from the outside in: a dark
 ## one out past a light one and a little behind it, and the light one, that goes from brass to
 ## near white and back. How far each reaches out: width_px pixels in a window 720 high, and
-## min_pixels pixels of the world in pixel art at least; behind: metres away from the camera.
+## min_pixels pixels of the world at least; behind: metres away from the camera.
 const BREAKABLE_RINGS := [
 	{
 		"color": PALETTE.chernozem,
