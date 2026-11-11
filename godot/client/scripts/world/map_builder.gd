@@ -234,7 +234,7 @@ func _build_objects() -> void:
 			var kind := cell("objects", x, y)
 			if kind == 0:
 				continue
-			var s := Sprite3D.new()
+			var s := Sprite3D.new()  # standards: allow nodes_in_code (one per object of the map)
 			s.name = "Object_%d_%d" % [x, y]
 			s.texture = atlas
 			s.region_enabled = true
@@ -255,7 +255,7 @@ func _build_objects() -> void:
 
 
 func _build_collision() -> void:
-	var body := StaticBody3D.new()
+	var body := StaticBody3D.new()  # standards: allow nodes_in_code (the walls of the map)
 	body.name = "Collision"
 	add_child(body)
 	for y in h:
@@ -267,7 +267,7 @@ func _build_collision() -> void:
 	_box(body, Vector3(w / 2.0, WALL_HEIGHT / 2.0, h + 0.5), Vector3(w + 2, WALL_HEIGHT, 1))
 	_box(body, Vector3(-0.5, WALL_HEIGHT / 2.0, h / 2.0), Vector3(1, WALL_HEIGHT, h + 2))
 	_box(body, Vector3(w + 0.5, WALL_HEIGHT / 2.0, h / 2.0), Vector3(1, WALL_HEIGHT, h + 2))
-	var ground := CollisionShape3D.new()
+	var ground := CollisionShape3D.new()  # standards: allow nodes_in_code (the floor of the map)
 	var plane := BoxShape3D.new()
 	plane.size = Vector3(w + 2, 0.2, h + 2)
 	ground.shape = plane
@@ -276,7 +276,7 @@ func _build_collision() -> void:
 
 
 func _box(body: StaticBody3D, pos: Vector3, size: Vector3) -> void:
-	var shape := CollisionShape3D.new()
+	var shape := CollisionShape3D.new()  # standards: allow nodes_in_code (a wall of the map)
 	var box := BoxShape3D.new()
 	box.size = size
 	shape.shape = box
@@ -317,7 +317,7 @@ func _quad(
 
 
 func _add_mesh(node_name: String, st: SurfaceTool, mat: Material) -> void:
-	var mi := MeshInstance3D.new()
+	var mi := MeshInstance3D.new()  # standards: allow nodes_in_code (a mesh of the map)
 	mi.name = node_name
 	var mesh := st.commit()
 	if mesh.get_surface_count() > 0:
@@ -341,23 +341,3 @@ func start_cell(room: int = 0) -> Vector2i:
 
 static func cell_to_world(c: Vector2i) -> Vector3:
 	return Vector3(c.x + 0.5, 0.0, c.y + 0.5)
-
-
-## Light and background for a map: a sun with shadows and a strong white ambient, so the
-## original colours of the tiles and sprites stay close to how they were drawn.
-static func add_environment(parent: Node3D) -> void:
-	var sun := DirectionalLight3D.new()
-	sun.name = "Sun"
-	sun.rotation_degrees = Vector3(-60, -25, 0)
-	sun.shadow_enabled = true
-	sun.light_energy = 0.7
-	parent.add_child(sun)
-	var env := Environment.new()
-	env.background_mode = Environment.BG_COLOR
-	env.background_color = Color.BLACK
-	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.ambient_light_color = Color.WHITE
-	env.ambient_light_energy = 0.6
-	var we := WorldEnvironment.new()
-	we.environment = env
-	parent.add_child(we)

@@ -73,31 +73,12 @@ func build(where: String, pitch_deg: float) -> void:
 		hud.setup(hero, place)
 
 
+## The map's light and air (MapLight), the fog drawn back with the camera's distance.
 func _world() -> void:
-	var env := Environment.new()
-	env.background_mode = Environment.BG_COLOR
-	env.background_color = ArtKit.AIR
-	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
-	env.fog_enabled = true
-	env.fog_mode = Environment.FOG_MODE_DEPTH
-	env.fog_light_color = ArtKit.AIR
-	env.fog_density = 1.0
-	env.fog_depth_begin = distance + 8.0
-	env.fog_depth_end = distance + 40.0
-	env.fog_sky_affect = 0.0
-	var we := WorldEnvironment.new()
-	we.environment = env
-	add_child(we)
-	var sun := DirectionalLight3D.new()
-	ArtKit.light(sun, env)
-	sun.shadow_enabled = true
-	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
-	sun.directional_shadow_max_distance = 40.0
-	sun.shadow_blur = 1.5
-	# from the upper left and a little from the viewer, so faces are in the light
-	var dir := Vector3(0.5, -0.74, -0.45).normalized()
-	sun.transform = Transform3D(Basis.looking_at(dir, Vector3.UP), Vector3.ZERO)
-	add_child(sun)
+	var light: MapLight = (load(MapLight.SCENE) as PackedScene).instantiate()
+	add_child(light)
+	light.air.environment.fog_depth_begin = distance + 8.0
+	light.air.environment.fog_depth_end = distance + 40.0
 
 
 func _camera() -> void:

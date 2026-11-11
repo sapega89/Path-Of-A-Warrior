@@ -52,7 +52,7 @@ func build() -> void:
 			st.add_index(b + 1)
 			st.add_index(a + 1)
 	st.generate_normals()
-	var mi := MeshInstance3D.new()
+	var mi := MeshInstance3D.new()  # standards: allow nodes_in_code (the ground of its paths)
 	mi.name = "Ground"
 	mi.mesh = st.commit()
 	var m := ShaderMaterial.new()
@@ -134,7 +134,7 @@ func _scatter_tufts() -> void:
 	mm.instance_count = placed.size()
 	for i in placed.size():
 		mm.set_instance_transform(i, placed[i])
-	var mmi := MultiMeshInstance3D.new()
+	var mmi := MultiMeshInstance3D.new()  # standards: allow nodes_in_code (the tufts of its greens)
 	mmi.name = "Tufts"
 	mmi.multimesh = mm
 	mmi.material_override = ArtKit.tufts_material()

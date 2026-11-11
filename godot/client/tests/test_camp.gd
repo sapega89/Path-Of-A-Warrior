@@ -112,7 +112,7 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 	eq(camp.camera.target, camp.hero, "the camera follows the hero")
 	eq(camp.hero.global_position.distance_to(CampPlan.START) < 0.1, true, "he starts in the yard")
 	var world_light: WorldEnvironment = (
-		camp.world.find_children("*", "WorldEnvironment", false, false)[0]
+		camp.world.find_children("*", "WorldEnvironment", true, false)[0]
 	)
 	eq(world_light.environment, CampFort.DUSK, "dusk over the marsh")
 	p.done["6:0"] = true

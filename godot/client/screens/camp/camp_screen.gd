@@ -55,6 +55,7 @@ var _stand := "idle"
 @onready var hero: Hero = $World/Viewport/WorldRoot/Hero
 @onready var figure: ArtFigure = $World/Viewport/WorldRoot/Hero/Figure
 @onready var camera: FollowCamera = $World/Viewport/WorldRoot/Camera
+@onready var light: MapLight = $World/Viewport/WorldRoot/Light
 @onready var title: Label = %Place
 @onready var hint: Label = %Hint
 @onready var menu: PanelContainer = %Menu
@@ -80,8 +81,7 @@ func _ready() -> void:
 func _build_world() -> void:
 	var lands: Array = plan.exits.map(func(e: Dictionary) -> String: return terrain(e.place))
 	fort.build(plan, lands, hash(camp_place()))
-	var light: WorldEnvironment = world.find_children("*", "WorldEnvironment", false, false)[0]
-	CampFort.dusk(light, world.get_node("Sun"))
+	CampFort.dusk(light.air, light.sun)
 	_place_hero()
 	camera.target = hero
 	camera.distance = CAMERA_DISTANCE
