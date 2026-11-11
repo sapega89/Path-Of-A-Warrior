@@ -338,7 +338,8 @@ func talk_portrait_id() -> int:
 
 
 ## The ways on from a place won: one per open place the campaign goes to next, each on a side
-## of the room in a shuffled order (a side says nothing); with more than four places, some
+## of the room in a shuffled order (a side says nothing). Only the sides the hero can walk out
+## of (MapSim.open_sides) carry ways while they are enough; with more places than sides, some
 ## sides carry two, one on each half.
 func ways_on(won_place: int) -> Array:
 	var places: Array = WorldMap.new(Campaign.new()).next_places(won_place).filter(
@@ -352,6 +353,11 @@ func ways_on(won_place: int) -> Array:
 		var t: int = sides[i]
 		sides[i] = sides[j]
 		sides[j] = t
+	var open: Array[int] = sim.open_sides()
+	var walled: Array = sides.filter(func(s: int) -> bool: return not s in open)
+	sides = sides.filter(func(s: int) -> bool: return s in open)
+	while sides.is_empty() or sides.size() * 2 < places.size() and not walled.is_empty():
+		sides.append(walled.pop_front())  # too few open sides: a walled one too
 	var slots: Array = []
 	var split := maxi(places.size() - sides.size(), 0)  # sides that carry two
 	for k in mini(sides.size(), places.size()):

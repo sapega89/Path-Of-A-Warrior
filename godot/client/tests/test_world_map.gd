@@ -184,6 +184,31 @@ func test_after_a_mission_won_the_way_on_is_chosen_in_the_room() -> void:
 	Router.params = old
 
 
+## Yellow Waters' last room has a wall on its right: no way on is put there.
+func test_the_ways_on_only_where_the_hero_can_walk_out() -> void:
+	var old: Dictionary = Router.params
+	Router.params = {"lord": 2, "mission": 0, "seed": 2}
+	var screen: Control = Router.make(Router.SCREENS["mission"])
+	root.add_child(screen)
+	var sim: MapSim = screen.sim
+	sim.cell = 2
+	sim.hero.pos = Vector2i(27 + 94, 27 + 189 * 2 + 94)
+	eq(sim.open_sides(), [Rooms.EXIT_DOWN, Rooms.EXIT_LEFT, Rooms.EXIT_UP], "not the right")
+	var p := Profile.new()
+	p.lords_open = -1
+	screen.profile = p
+	for n in 12:
+		p.done["x:%d" % n] = true  # another shuffle of the sides
+		var ways: Array = screen.ways_on(2)
+		eq(ways.size(), 1, "one place on from Yellow Waters")
+		check(int(ways[0].exit) != Rooms.EXIT_RIGHT, "never into the wall (%d)" % n)
+	sim.cell = 0
+	sim.hero.pos = Vector2i(27 + 94, 27 + 94)
+	eq(sim.open_sides(), [Rooms.EXIT_DOWN, Rooms.EXIT_UP], "the first room: only down and up")
+	screen.free()
+	Router.params = old
+
+
 func test_the_camp_of_the_way_chosen_offers_its_generals() -> void:
 	var p: RefCounted = Profile.new()
 	p.place = 1
