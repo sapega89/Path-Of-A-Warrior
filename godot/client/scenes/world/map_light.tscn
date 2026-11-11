@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/map_light.gd" id="1_ckfj0"]
+
+[sub_resource type="Environment" id="Environment_11yth"]
+resource_local_to_scene = true
+background_mode = 1
+fog_enabled = true
+fog_mode = 1
+fog_density = 1.0
+fog_sky_affect = 0.0
+fog_depth_begin = 20.0
+fog_depth_end = 52.0
+
+[node name="Light" type="Node3D"]
+script = ExtResource("1_ckfj0")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.66896474, 0.5500102, -0.49997503, 0, 0.6726476, 0.73996305, 0.7432942, -0.49500918, 0.44997752, 0, 0, 0)
+shadow_enabled = true
+shadow_blur = 1.5
+directional_shadow_mode = 0
+directional_shadow_max_distance = 40.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_11yth")

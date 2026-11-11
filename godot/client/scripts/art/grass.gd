@@ -121,7 +121,7 @@ func count(kind: String) -> int:
 
 ## The MultiMeshes of everything placed, under `parent` (a node named Grass, one child a chunk).
 func build(parent: Node3D) -> Node3D:
-	var holder := Node3D.new()
+	var holder := Node3D.new()  # standards: allow nodes_in_code (the map's grass)
 	holder.name = "Grass"
 	parent.add_child(holder)
 	for kind in _clumps:
@@ -140,7 +140,7 @@ func build(parent: Node3D) -> Node3D:
 				mm.set_instance_transform(i, list[i][0])
 				mm.set_instance_color(i, Color.WHITE)
 				mm.set_instance_custom_data(i, list[i][1])
-			var mmi := MultiMeshInstance3D.new()
+			var mmi := MultiMeshInstance3D.new()  # standards: allow nodes_in_code (a patch of the grass)
 			mmi.name = "%s_%d_%d" % [kind, key.x, key.y]
 			mmi.multimesh = mm
 			mmi.material_override = material()

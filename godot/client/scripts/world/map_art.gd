@@ -324,7 +324,7 @@ func _build_ground() -> void:
 			st.add_index(a + 1)
 			st.add_index(b + 1)
 	st.generate_normals()
-	var mi := MeshInstance3D.new()
+	var mi := MeshInstance3D.new()  # standards: allow nodes_in_code (the map's ground)
 	mi.name = "Ground"
 	mi.mesh = st.commit()
 	var m := ShaderMaterial.new()
@@ -387,7 +387,7 @@ func _build_water() -> void:
 		return
 	var q := PlaneMesh.new()
 	q.size = Vector2(w + 2.0, h + 2.0)
-	var mi := MeshInstance3D.new()
+	var mi := MeshInstance3D.new()  # standards: allow nodes_in_code (the map's water)
 	mi.name = "Water"
 	mi.mesh = q
 	mi.position = Vector3(w / 2.0, WATER_LEVEL, h / 2.0)
@@ -402,7 +402,7 @@ func _build_water() -> void:
 
 
 func _build_props() -> void:
-	var holder := Node3D.new()
+	var holder := Node3D.new()  # standards: allow nodes_in_code (the map's props)
 	holder.name = "Props"
 	add_child(holder)
 	var clustered := {}  # Vector2i -> class, the blocked cells of tents and huts
@@ -530,7 +530,7 @@ func _build_objects() -> void:
 			var kind := cell("objects", x, y)
 			if kind == 0:
 				continue
-			var node := Node3D.new()
+			var node := Node3D.new()  # standards: allow nodes_in_code (an object of the map)
 			node.name = "Object_%d_%d" % [x, y]
 			add_child(node)
 			var piece := _stand(
@@ -588,33 +588,3 @@ func in_field(x: float, z: float) -> bool:
 		return false
 	var block := Vector2i(floori(x / Grass.FIELD.x), floori(z / Grass.FIELD.y))
 	return (hash([block, w, h]) & 0xff) < Grass.SOWN
-
-
-## Light and air for a map in the new art (ArtKit.light): a dull sun from the upper left with
-## soft shadows, a deep cool shade, and the land fading into grey dust far away.
-static func add_environment(parent: Node3D) -> void:
-	var sun := DirectionalLight3D.new()
-	sun.name = "Sun"
-	sun.shadow_enabled = true
-	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
-	sun.directional_shadow_max_distance = 40.0
-	sun.shadow_blur = 1.5
-	sun.transform = Transform3D(
-		Basis.looking_at(Vector3(0.5, -0.74, -0.45).normalized(), Vector3.UP), Vector3.ZERO
-	)
-	parent.add_child(sun)
-	var env := Environment.new()
-	ArtKit.light(sun, env)
-	env.background_mode = Environment.BG_COLOR
-	env.background_color = ArtKit.AIR
-	env.tonemap_mode = Environment.TONE_MAPPER_LINEAR
-	env.fog_enabled = true
-	env.fog_mode = Environment.FOG_MODE_DEPTH
-	env.fog_light_color = ArtKit.AIR
-	env.fog_density = 1.0
-	env.fog_depth_begin = 20.0
-	env.fog_depth_end = 52.0
-	env.fog_sky_affect = 0.0
-	var we := WorldEnvironment.new()
-	we.environment = env
-	parent.add_child(we)

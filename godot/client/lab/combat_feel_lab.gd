@@ -81,7 +81,7 @@ func _ready() -> void:
 	world = Node3D.new()
 	world.name = "WorldRoot"
 	viewport.add_child(world)
-	MapArt.add_environment(world)
+	world.add_child((load(MapLight.SCENE) as PackedScene).instantiate())
 	map = MapBuilder.load_map(Campaign.lord_map(LORD))
 	builder = MapArt.new()
 	builder.name = "Map"
