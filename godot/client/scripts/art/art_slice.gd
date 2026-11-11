@@ -66,7 +66,7 @@ func build(where: String, pitch_deg: float) -> void:
 		_camp()
 	_camera()
 	if not place in ["lineup", "people", "effects", "effects_room"]:
-		hud = ArtHud.new()
+		hud = (load(ArtHud.SCENE) as PackedScene).instantiate()
 		var layer := CanvasLayer.new()
 		add_child(layer)
 		layer.add_child(hud)
