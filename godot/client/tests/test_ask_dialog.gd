@@ -18,7 +18,7 @@ func test_question() -> void:
 	var before := Button.new()
 	host.add_child(before)
 	before.grab_focus()
-	var ask: Control = AskDialog.new()
+	var ask: AskDialog = (load(AskDialog.SCENE) as PackedScene).instantiate()
 	host.add_child(ask)
 	var answers := []
 	ask.confirmed.connect(func() -> void: answers.append("yes"))
@@ -52,13 +52,28 @@ func test_question() -> void:
 
 
 func test_notice() -> void:
-	var note: Control = AskDialog.new(true)
+	var note: AskDialog = (load(AskDialog.SCENE) as PackedScene).instantiate()
+	note.notice = true
 	root.add_child(note)
 	check(not note.cancel.visible, "a notice has OK alone")
 	eq(note.ok.text, "ask.ok", "OK")
 	note.popup_centered()
 	check(note.ok.has_focus(), "the focus on OK")
 	note.free()
+
+
+func test_its_look_comes_from_the_theme() -> void:
+	var host := Control.new()
+	host.theme = UiTheme.theme(UiTheme.THEME)
+	root.add_child(host)
+	var ask: AskDialog = (load(AskDialog.SCENE) as PackedScene).instantiate()
+	host.add_child(ask)
+	eq(ask.panel.theme_type_variation, &"AskPanel", "its panel a variation of the theme")
+	var sb := ask.panel.get_theme_stylebox("panel")
+	check(sb is PanelBox, "the dialogs' leather with its seam and rivets")
+	eq(sb.content_margin_top, 28.0, "with room around the text")
+	eq(sb.content_margin_left, 28.0, "on every side")
+	host.free()
 
 
 ## Back on the question after the last point closes the question; the points stay (it does not

@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=50 format=3]
+[gd_resource type="Theme" load_steps=51 format=3]
 
 [ext_resource type="FontFile" path="res://assets/art/fonts/pt-sans-latin-700-normal.woff2" id="1_eesv6"]
 [ext_resource type="Texture2D" path="res://assets/art/ui/icons/check_on.svg" id="2_6yqki"]
@@ -659,6 +659,15 @@ corner_radius_top_right = 2
 corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
 
+[sub_resource type="StyleBox" id="StyleBox_ask_panel"]
+resource_local_to_scene = false
+resource_name = ""
+content_margin_left = 28.0
+content_margin_top = 28.0
+content_margin_right = 28.0
+content_margin_bottom = 28.0
+script = ExtResource("6_1l05t")
+
 [resource]
 default_font = ExtResource("9_71ik8")
 default_font_size = 28
@@ -772,3 +781,9 @@ BattleHint/colors/font_color = Color(0.8627451, 0.827451, 0.7607843, 1)
 BattleHint/colors/font_outline_color = Color(0.05882353, 0.050980393, 0.047058824, 1)
 BattleHint/constants/outline_size = 6
 BattleHint/font_sizes/font_size = 22
+AskPanel/base_type = &"PanelContainer"
+AskPanel/styles/panel = SubResource("StyleBox_ask_panel")
+AskColumn/base_type = &"VBoxContainer"
+AskColumn/constants/separation = 28
+AskButtons/base_type = &"HBoxContainer"
+AskButtons/constants/separation = 24

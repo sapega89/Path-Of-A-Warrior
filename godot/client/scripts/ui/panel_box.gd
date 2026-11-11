@@ -1,7 +1,8 @@
 class_name PanelBox
 extends StyleBox
 ## The plate of a panel or a window: dark leather in an iron rim, a stitched seam inside it and
-## an iron rivet in each corner.
+## an iron rivet in each corner. Its content margins are set where it is used (theme.tres): a
+## script's _init runs after the loaded values, so it leaves them alone.
 
 ## How far it reaches out of its rect: left, top, right, bottom (a window's frame and title).
 @export var outset: Array[float] = [0.0, 0.0, 0.0, 0.0]
@@ -14,9 +15,6 @@ func _init() -> void:
 	plate.shadow_color = Color(0, 0, 0, 0.55)
 	plate.shadow_size = 10
 	plate.shadow_offset = Vector2(0, 4)
-	set_content_margin_all(14)
-	content_margin_left = 22
-	content_margin_right = 22
 
 
 func _get_draw_rect(rect: Rect2) -> Rect2:
