@@ -185,3 +185,5 @@ script = ExtResource("8")
 [connection signal="pause_pressed" from="Hud" to="." method="_on_hud_pause_pressed"]
 [connection signal="skill_pressed" from="Hud" to="." method="_on_hud_skill_pressed"]
 [connection signal="skip_pressed" from="Hud" to="." method="_on_hud_skip_pressed"]
+
+[editable path="World"]
