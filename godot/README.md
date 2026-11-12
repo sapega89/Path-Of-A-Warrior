@@ -44,12 +44,13 @@ godot/
                           гра показує їх мовою гравця через I18n.text
     data/maps/N.json      45 оригінальних карт (робить tools/import_original.py)
     assets/original/      тайли й кадри героя з оригіналу (теж import_original.py)
-    assets/original/sound/  звуки snd3..16 як є; три мелодії MIDI, зіграні через
-                          fluidsynth і General MIDI sound font у .ogg (scripts/core/audio.gd)
+    assets/original/sound/  звуки snd3..16 як є (scripts/core/audio.gd)
+    assets/music/         наша музика: три мелодії (робить tools/music/build.py, див. «Музика»)
     assets/art/           новий арт: люди, зброя, реквізит (.glb), шейдери, іконки SVG, шрифти
     tests/                тести: test_*.gd, запуск runner.tscn
   tools/import_original.py  конвертер оригінальних ресурсів з `original/`
   tools/art/              моделі нового арту кодом у Blender (tools/art/README.md)
+  tools/music/            музика гри кодом: склад і інструменти (tools/music/README.md)
 ```
 
 ## Світ і стоянки
@@ -216,7 +217,7 @@ godot/
 
 ```
 python godot/tools/import_original.py                       # після змін у конвертері
-                              # (мелодії: потрібні fluidsynth, fluid-soundfont-gm, ffmpeg)
+python godot/tools/music/build.py                           # музика (numpy, scipy, ffmpeg)
 godot --path godot/client                                   # гра
 godot --headless --path godot/client --import               # один раз після клонування
 godot --headless --path godot/client res://tests/runner.tscn  # тести
@@ -509,6 +510,24 @@ Skip унизу ліворуч.
 
 Повзунки гучності в Settings (і в паузі) — на слух, як крива гучності pyport: гучність каналу —
 квадрат рівня (`Settings.volume_db`), тож чверть — −24 дБ, половина — −12 дБ, три чверті — −5 дБ.
+
+### Музика
+
+Музика наша (просив Andrey: мелодії оригіналу не підходять, але нові мають бути такі ж
+похмурі): козацька дума — бандура, бурдон ліри, низький чоловічий хор без слів, сопілка,
+литаври й тулумбас, далекий дзвін, вітер над плавнями, у мінорі й українському дорійському
+ладі (D E F G# A B C). Три петлі по 80–90 секунд без шва (кінець переходить у початок),
+`assets/music/` (`Audio.TUNES`):
+
+- **«Дума»** (`duma.ogg`, ре, 60 ударів на хвилину) — титул, головне меню, розмови сюжету;
+- **«Похід»** (`pokhid.ogg`, мі мінор, 84) — місії: литаври й струнні «галопом», хор, бандура
+  тремоло, рівно, щоб за довгу місію не набридло;
+- **«Плавні»** (`plavni.ogg`, ля мінор, 6/8) — стоянка і її меню, карта кампанії, налаштування,
+  картинки сюжету. Стоянка тепер має свою мелодію (раніше грала та, що була перед нею).
+
+Мелодії складено кодом (`godot/tools/music/`, див. його README): ноти — у файлі кожної мелодії,
+інструменти — синтез (без записаних семплів), тож змінити ноту, темп чи інструмент і зробити
+файли знову — одна команда `python godot/tools/music/build.py`.
 
 ## Ефекти на карті
 
