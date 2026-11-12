@@ -138,26 +138,15 @@ func _ready() -> void:
 	Router.current.press_cell(2)
 	Router.current.cells[2].grab_focus()
 	await _shot(out, "17_combine")
-	# Visiting: three friends after a won mission; Jan Gorski's greeting, the topics, the gift.
+	# The gift of a mission won: the three cards of Jan Gorski.
 	hero = Profile.load_or_new("user://shot_hero.json")
-	hero.friendship = {"4": 100, "13": 35, "29": 5}
-	hero.can_visit = true
+	var gift_rng := RandomNumberGenerator.new()
+	gift_rng.seed = 7
+	hero.run.offer_gift(hero, 4, gift_rng)
 	hero.save("user://shot_hero.json")
 	Router.go("main_menu")
-	Router.push("visiting", {"profile_path": "user://shot_hero.json", "seed": 7})
-	await _shot(out, "18_visiting_list")
-	var visit: Node = Router.current
-	visit.open(4)
-	for i in 5:  # each line typed out at once, then the next
-		visit.press()
-	await _shot(out, "19_visiting_greeting")
-	visit.press()
-	await _shot(out, "20_visiting_topic")
-	visit.choose(2)
-	for i in 4:
-		visit.press()
-	visit.press()
-	await _shot(out, "21_visiting_gift")
+	Router.push("gift", {"profile_path": "user://shot_hero.json"})
+	await _shot(out, "18_gift")
 	# Endings: three reached, the cursor on one that is not.
 	hero.endings = (1 << 0) | (1 << 2) | (1 << 3)
 	hero.save("user://shot_hero.json")
@@ -243,7 +232,7 @@ func _ready() -> void:
 	await _shot(out, "04d_briefing")
 	# The camps between missions: a stop with a way per mission (one place closed) and its
 	# pause menu, six ways, the main camp at the start, its smithy and all of it from above, and
-	# the town hall that every camp has.
+	# its town hall (the only camp that has one).
 	walker.place = 4
 	walker.save("user://shot_walker.json")
 	Router.go("camp", {"profile_path": "user://shot_walker.json"})
@@ -265,8 +254,18 @@ func _ready() -> void:
 	camp.camera.distance = 42.0
 	camp.camera.snap()
 	await _shot(out, "04j_camp_overview")
+	# the town hall of the start camp: the flasks and the button that buys the next one
 	Router.go("town_hall", {"profile_path": "user://shot_walker.json"})
 	await _shot(out, "04h_town_hall")
+	Router.go("run_end", {"profile_path": "user://shot_walker.json"})
+	await _shot(out, "04k_run_end")
+	# before a run, after an ending back to the start: two vows taken
+	walker.endings = 1 << 2
+	walker.run.vows.next_hp_step()
+	walker.run.vows.switch("short_time")
+	walker.save("user://shot_walker.json")
+	Router.go("run_setup", {"profile_path": "user://shot_walker.json"})
+	await _shot(out, "04l_run_setup")
 	Router.go("mission", {"lord": 1, "mission": 0, "seed": 1})
 	var mission: Node = Router.current
 	await _frames(20)

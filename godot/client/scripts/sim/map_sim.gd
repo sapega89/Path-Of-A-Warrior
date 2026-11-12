@@ -95,11 +95,13 @@ var mission_exp := 0
 var mission_gold := 0
 var mission_general := 0
 var time_limit := 0  # seconds; in time the exp grows
+var enemy_hp_percent := 100  # the vows of the run (Vows) make the enemies tougher
 var time_exp := 0  # the exp for time, given when the mission was won in time
 var hero_exp := 0  # the hero's exp into his level before the mission
 var exp_bars := ExpBars.new()  # the exp bar of the pages Total Exp and Time Exp
 ## Friendship points of the generals the hero talked with (general id -> points).
 var friendship := {}
+var fought := {}  # the generals met as foes in this mission (general id -> true)
 ## What follows the talk: 0 the map goes on, 1 the exits open, 2 the mission is over.
 var talk_after := 0
 var failed := false
@@ -218,6 +220,7 @@ func tick(
 		e.prev_pos = e.pos
 	if choosing:
 		_tick_scene(held, pressed, 3 if fire else 0, potion)
+		_hero_drawn()
 		return
 	if banner != 0:
 		_tick_banner(fire)
@@ -325,18 +328,22 @@ func play_seconds() -> int:
 	return play_ticks * TICK_MS / 1000
 
 
+## The tick is drawn with the direction the hero moved in (a slide can turn it), then he looks
+## where he faces again.
+func _hero_drawn() -> void:
+	hero.shown_dir = hero.dir
+	hero.dir = hero.facing
+	hero.last_action = hero.action
+	hero.last_frame = hero.frame
+
+
 func sound(n: int) -> void:
 	sounds.append(n)
 
 
 func _end_tick() -> void:
 	MapEnemyPlay.advance_sparks(self)
-	# The tick is drawn with the direction it moved in (a slide can turn it), then the
-	# hero looks where he faces again.
-	hero.shown_dir = hero.dir
-	hero.dir = hero.facing
-	hero.last_action = hero.action
-	hero.last_frame = hero.frame
+	_hero_drawn()
 	hero.idle_ticks += 1
 	_buffed = hero.attack_buff_ticks > 0 or hero.defense_buff_ticks > 0
 	if hero.attack_buff_ticks > 0:
@@ -536,6 +543,11 @@ func breakable_shown(b: MapBreakable) -> bool:
 ## See MapLoot.drop_item().
 func drop_item(kind: int, p: Vector2i) -> void:
 	MapLoot.drop_item(self, kind, p)
+
+
+## See MapRoomPlay.open_sides().
+func open_sides() -> Array[int]:
+	return MapRoomPlay.open_sides(self)
 
 
 ## See MapRoomPlay.keep_in_room().

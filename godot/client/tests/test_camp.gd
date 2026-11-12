@@ -22,6 +22,15 @@ func _fort(plan: CampPlan, n: int) -> CampFort:
 	return fort
 
 
+## How many copies of a prop the batches under `holder` draw (0 with no holder).
+func _copies(holder: Node) -> int:
+	var n := 0
+	if holder != null:
+		for chunk: MultiMeshInstance3D in holder.get_children():
+			n += chunk.multimesh.instance_count
+	return n
+
+
 func test_gates_on_the_sides_of_the_world() -> void:
 	for n in range(0, 7):
 		eq(CampPlan.new(_ways(n)).exits.size(), n, "%d ways, %d gates" % [n, n])
@@ -33,6 +42,9 @@ func test_gates_on_the_sides_of_the_world() -> void:
 	)
 	eq(CampPlan.gate_pieces(CampPlan.SOUTH), 2, "the main gate in the south is two pieces wide")
 	eq(CampPlan.gate_pieces(CampPlan.EAST), 1, "a side gate one")
+	for e in four.exits:
+		var past: float = e.angle + four.gate_half_width(e.angle) + four.step
+		check(four.in_gate(e.angle) and not four.in_gate(past), "a gate at %d degrees" % e.angle)
 	var north: Dictionary = four.exits[0]
 	check(north.gate.distance_to(Vector3(0, 0, -CampPlan.RADIUS)) < 0.01, "north is -Z")
 	check(north.out.is_equal_approx(Vector3(0, 0, -1)), "its way on goes north")
@@ -71,19 +83,78 @@ func test_the_town_hall_from_farther_off() -> void:
 	eq(CampPlan.spot_near(spots, CampPlan.START), {}, "nothing in the yard")
 
 
+## The Sich and a camp of the run (wagons), each with 1, 4 and 6 ways.
 func test_the_fort_leaves_every_way_and_spot_free() -> void:
-	for n in [1, 4, 6]:
-		var plan := CampPlan.new(_ways(n))
-		var fort := _fort(plan, n)
-		var seen := plan.reachable(CampPlan.START)
-		for s in plan.spots():
-			if s.kind != "way" or s.open:
-				check(seen.has(CampPlan.cell_of(s.at)), "%d ways: %s can be reached" % [n, s.kind])
-		check(fort.find_child("Land*", false, false) != null, "the land past the gates")
-		check(fort.body.get_child_count() > plan.solids.size(), "the palisade stands")
-		var lights := fort.find_children("*", "OmniLight3D", true, false)
-		check(lights.size() <= CampFort.LIGHTS, "%d lights at most (%d)" % [n, lights.size()])
+	for sich in [true, false]:
+		for n in [1, 4, 6]:
+			var plan := CampPlan.new(_ways(n), false, sich)
+			var fort := _fort(plan, n)
+			var what := "%s, %d ways" % ["the Sich" if sich else "a camp of the run", n]
+			var seen := plan.reachable(CampPlan.START)
+			for s in plan.spots():
+				if s.kind != "way" or s.open:
+					check(
+						seen.has(CampPlan.cell_of(s.at)), "%s: %s can be reached" % [what, s.kind]
+					)
+			check(fort.find_child("Land*", false, false) != null, "the land past the gates")
+			check(fort.body.get_child_count() > plan.solids.size(), "the ring stands: " + what)
+			var lights := fort.find_children("*", "OmniLight3D", true, false)
+			check(lights.size() <= CampFort.LIGHTS, "%s: %d lights at most" % [what, lights.size()])
+			fort.free()
+
+
+## The Sich is a fort with a palisade; a camp of the run a ring of wagons, one fire, light tents.
+func test_a_camp_of_the_run_is_a_ring_of_wagons() -> void:
+	var count := func(fort: CampFort, model: String) -> int:
+		return (
+			fort
+			. get_children()
+			. filter(func(c: Node) -> bool: return c.scene_file_path.ends_with("/%s.glb" % model))
+			. size()
+		)
+	for sich in [true, false]:
+		var fort := _fort(CampPlan.new(_ways(3), false, sich), 3)
+		var wagons: int = count.call(fort, "viz")
+		var palisade := fort.get_node_or_null("Palisade")
+		if sich:
+			check(palisade != null and wagons == 0, "the Sich: a palisade")
+			check(_copies(palisade) > 30, "of many pieces")
+			eq(count.call(fort, "vohnyshche"), 2, "two fires")
+			eq(count.call(fort, "harmata"), 1, "a cannon")
+		else:
+			check(wagons > 15 and palisade == null, "wagons: %d" % wagons)
+			eq(count.call(fort, "brama") + count.call(fort, "vorota"), 0, "no gates, gaps")
+			eq(count.call(fort, "vohnyshche"), 1, "one fire")
+			eq(count.call(fort, "namet"), CampFort.FIELD_TENTS.size(), "a few light tents")
 		fort.free()
+
+
+func test_the_town_hall_only_in_the_start_camp() -> void:
+	var plan := CampPlan.new(_ways(2), true, false)
+	eq(
+		plan.spots().map(func(s: Dictionary) -> String: return s.kind),
+		["way", "way", "smith"],
+		"no hall"
+	)
+	var fort := _fort(plan, 2)
+	check(fort.hall == null, "no tent of the town hall")
+	check(not plan.blocked(CampPlan.HALL_AT), "its ground free")
+	fort.free()
+	Profile.new().save(CAMP_PATH)
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": CAMP_PATH}
+	var camp: CampScreen = Router.make(Router.SCREENS["camp"])
+	root.add_child(camp)
+	check(not camp.spot_of("hall").is_empty(), "the start camp has the town hall")
+	check(camp.get_node("%Hall").visible, "and its name over it")
+	eq(
+		camp._hint_text(camp.spot_of("smith")),
+		InputSetup.hint("camp.enter_smith"),
+		"its smith enchants and combines too"
+	)
+	camp.free()
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))
 
 
 func test_camp_screen_ways_lead_to_the_missions() -> void:
@@ -97,9 +168,10 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 	eq(camp.place, 4, "the camp of the hero's place")
 	eq(
 		camp.spots.map(func(s): return s.kind),
-		["way", "way", "smith", "hall"],
-		"a way per place on, then the blacksmith and the town hall"
+		["way", "way", "smith"],
+		"a way per place on, then the blacksmith (the town hall is only at the start)"
 	)
+	check(not camp.get_node("%Hall").visible, "no town hall over the yard")
 	var ways: Array = camp.spots.filter(func(s): return s.kind == "way")
 	var open: Array = ways.filter(func(s): return s.open)
 	eq(ways.filter(func(s): return not s.open).map(func(s): return s.place), [5], "Regalia barred")
@@ -114,6 +186,8 @@ func test_camp_screen_ways_lead_to_the_missions() -> void:
 	var smith: Dictionary = camp.spot_of("smith")
 	eq(camp.spot_near(smith.at), smith, "at the anvil")
 	check(camp._hint_text(smith).contains(tr("menu.blacksmith")), "says what is there")
+	eq(camp._hint_text(smith), InputSetup.hint("camp.enter_shop"), "buy and sell in a run's camp")
+	eq(camp._hint_text({}), "", "no line in the open yard")
 	check(camp.rulers(1).size() == 4, "four colonels give the missions at Uprising")
 	eq(camp.arrows.size(), 1, "an arrow on the open way only")
 	eq(camp.camera.target, camp.hero, "the camera follows the hero")

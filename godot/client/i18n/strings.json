@@ -251,6 +251,10 @@
     "en": "Your backpack is full. Please empty some items and try again.",
     "uk": "Торба повна. Звільніть місце й спробуйте ще."
   },
+  "shop.vow": {
+    "en": "A vow: no potions from the shop this run.",
+    "uk": "Обітниця: цей похід без зілль із крамниці."
+  },
   "enchant.worn": {
     "en": "Worn",
     "uk": "На герої"
@@ -302,98 +306,6 @@
   "combine.fail": {
     "en": "Compounding Fail",
     "uk": "Поєднання не вдалося"
-  },
-  "menu.visiting": {
-    "en": "Visiting",
-    "uk": "Візити"
-  },
-  "visit.title": {
-    "en": "Visiting",
-    "uk": "Візити"
-  },
-  "visit.name": {
-    "en": "Name",
-    "uk": "Ім'я"
-  },
-  "visit.points": {
-    "en": "Points",
-    "uk": "Дружба"
-  },
-  "visit.not_now": {
-    "en": "Generals can not be visited at this time. Try again after completing a mission.",
-    "uk": "Зараз генералів не можна запросити. Спробуйте після виконаної місії."
-  },
-  "visit.which_topic": {
-    "en": "What do you want to talk about?",
-    "uk": "Про що ви хочете поговорити?"
-  },
-  "visit.topic_0": {
-    "en": "Sword",
-    "uk": "Меч"
-  },
-  "visit.topic_1": {
-    "en": "Books",
-    "uk": "Книги"
-  },
-  "visit.topic_2": {
-    "en": "Tactics",
-    "uk": "Тактика"
-  },
-  "visit.topic_3": {
-    "en": "People",
-    "uk": "Люди"
-  },
-  "visit.discussed": {
-    "en": "You discussed %s with %s.",
-    "uk": "Ви обговорили тему «%s» з %s."
-  },
-  "visit.visited": {
-    "en": "You visited %s.",
-    "uk": "Вас відвідав %s."
-  },
-  "visit.more": {
-    "en": "Friendship increased by 5.",
-    "uk": "Дружба зросла на 5."
-  },
-  "visit.full": {
-    "en": "Friendship: 100%",
-    "uk": "Дружба: 100%"
-  },
-  "visit.gift_attack": {
-    "en": "Attack +1",
-    "uk": "Атака +1"
-  },
-  "visit.gift_defense": {
-    "en": "Defence +1",
-    "uk": "Захист +1"
-  },
-  "visit.gift_hp": {
-    "en": "HP +5",
-    "uk": "HP +5"
-  },
-  "visit.gift_mp": {
-    "en": "MP +3",
-    "uk": "MP +3"
-  },
-  "visit.gift_fame": {
-    "en": "Fame +10",
-    "uk": "Слава +10"
-  },
-  "visit.gift_skill": {
-    "en": "A new skill:",
-    "uk": "Нове вміння:"
-  },
-  "visit.gift_skill_up": {
-    "en": "Skill up:",
-    "uk": "Вміння зросло:"
-  },
-  "visit.gift_item": {
-    "en": "Item acquired!",
-    "uk": "Отримано річ!"
-  },
-  "visit.ok": {
-    "en": "OK",
-    "uk": "OK"
   },
   "pause.title": {
     "en": "PAUSE",
@@ -651,21 +563,13 @@
     "en": "won %d / %d",
     "uk": "виграно %d / %d"
   },
-  "camp.hint_walk": {
-    "en": "Choose a way: walk out by an arrow   [Esc] camp menu",
-    "uk": "Обери шлях: вийди туди, де стрілка   [Esc] меню табору"
-  },
-  "camp.hint_walk_pad": {
-    "en": "Choose a way: walk out by an arrow   [Start] camp menu",
-    "uk": "Обери шлях: вийди туди, де стрілка   [Start] меню табору"
-  },
   "camp.enter_hall": {
-    "en": "[Enter] Town Hall: colonels, generals, visits",
-    "uk": "[Enter] Ратуша: полковники, генерали, візити"
+    "en": "[Enter] Town Hall: before the run, flasks, generals",
+    "uk": "[Enter] Ратуша: перед походом, фляги, генерали"
   },
   "camp.enter_hall_pad": {
-    "en": "[A] Town Hall: colonels, generals, visits",
-    "uk": "[A] Ратуша: полковники, генерали, візити"
+    "en": "[A] Town Hall: before the run, flasks, generals",
+    "uk": "[A] Ратуша: перед походом, фляги, генерали"
   },
   "camp.enter_smith": {
     "en": "[Enter] Blacksmith: buy, sell, enchant, combine",
@@ -674,6 +578,14 @@
   "camp.enter_smith_pad": {
     "en": "[A] Blacksmith: buy, sell, enchant, combine",
     "uk": "[A] Коваль: купити, продати, заточити, скласти"
+  },
+  "camp.enter_shop": {
+    "en": "[Enter] Blacksmith: buy, sell",
+    "uk": "[Enter] Коваль: купити, продати"
+  },
+  "camp.enter_shop_pad": {
+    "en": "[A] Blacksmith: buy, sell",
+    "uk": "[A] Коваль: купити, продати"
   },
   "camp.hall": {
     "en": "Town Hall",
@@ -699,17 +611,9 @@
     "en": "Back to the camp",
     "uk": "Назад до табору"
   },
-  "hall.colonels": {
-    "en": "Colonels",
-    "uk": "Полковники"
-  },
   "hall.generals": {
     "en": "Generals you know",
     "uk": "Знайомі генерали"
-  },
-  "hall.progress": {
-    "en": "%s: %d%%",
-    "uk": "%s: %d%%"
   },
   "hall.friend": {
     "en": "%s: friendship %d",
@@ -718,10 +622,6 @@
   "hall.nobody": {
     "en": "Nobody yet: win missions beside the generals",
     "uk": "Поки нікого: вигравай місії разом із генералами"
-  },
-  "hall.visits": {
-    "en": "Visiting",
-    "uk": "Візити"
   },
   "hint.menu": {
     "en": "{ui_move}: choose · {ui_accept}: OK · {ui_back_click}: back",
@@ -1058,5 +958,165 @@
   "settings.window_size": {
     "en": "Window size",
     "uk": "Розмір вікна"
+  },
+  "run.flask_used": {
+    "en": "A flask of living water is spent: %d left",
+    "uk": "Фляга живої води витрачена: лишилось %d"
+  },
+  "run.over": {
+    "en": "No flask left: the run is over",
+    "uk": "Фляг не лишилося: похід закінчено"
+  },
+  "hall.flasks": {
+    "en": "Flasks of living water: %d of %d bought, %d full · Fame: %d",
+    "uk": "Фляги живої води: куплено %d з %d, повних %d · Слава: %d"
+  },
+  "run_end.title": {
+    "en": "The run is over",
+    "uk": "Похід закінчено"
+  },
+  "run_end.kept": {
+    "en": "Kept: level %d, gold %d, fame %d and your gear",
+    "uk": "Лишилося: рівень %d, золото %d, слава %d і речі"
+  },
+  "run_end.lost": {
+    "en": "Gone: the skills of this run and the colonels' progress",
+    "uk": "Пропало: навички цього походу і прихильність полковників"
+  },
+  "run_end.flasks": {
+    "en": "Full flasks for the next run: %d",
+    "uk": "Повних фляг на новий похід: %d"
+  },
+  "run_end.go": {
+    "en": "Back to the start",
+    "uk": "Повернутися на початок"
+  },
+  "gift.title": {
+    "en": "%s offers a gift",
+    "uk": "%s пропонує дар"
+  },
+  "gift.title_none": {
+    "en": "A gift for the victory",
+    "uk": "Дар за перемогу"
+  },
+  "gift.choose": {
+    "en": "Take one: a skill lasts this run, the rest stays for good",
+    "uk": "Візьми один: навик живе цей похід, решта лишається назавжди"
+  },
+  "gift.kind_skill": {
+    "en": "Skill for this run",
+    "uk": "Навик на цей похід"
+  },
+  "gift.kind_stat": {
+    "en": "Attribute",
+    "uk": "Атрибут"
+  },
+  "gift.kind_gear": {
+    "en": "Item",
+    "uk": "Річ"
+  },
+  "gift.kind_potion": {
+    "en": "Potion",
+    "uk": "Зілля"
+  },
+  "gift.skill_level": {
+    "en": "%s, level %d",
+    "uk": "%s, рівень %d"
+  },
+  "gift.attack": {
+    "en": "Attack +1",
+    "uk": "Атака +1"
+  },
+  "gift.defense": {
+    "en": "Defence +1",
+    "uk": "Захист +1"
+  },
+  "gift.hp": {
+    "en": "HP +5",
+    "uk": "HP +5"
+  },
+  "gift.mp": {
+    "en": "MP +3",
+    "uk": "MP +3"
+  },
+  "hall.prepare": {
+    "en": "Before the run",
+    "uk": "Перед походом"
+  },
+  "run_setup.title": {
+    "en": "Before the run",
+    "uk": "Перед походом"
+  },
+  "run_setup.fame": {
+    "en": "Fame: %d. Bought with it once and for good:",
+    "uk": "Слава: %d. За неї, раз і назавжди:"
+  },
+  "run_setup.start_one": {
+    "en": "The run starts with this skill",
+    "uk": "Похід починається з цим навиком"
+  },
+  "run_setup.start_two": {
+    "en": "The run starts with these two skills",
+    "uk": "Похід починається з цими двома навиками"
+  },
+  "run_setup.flask": {
+    "en": "Flask of living water %d of %d: %d fame",
+    "uk": "Фляга живої води %d з %d: %d слави"
+  },
+  "run_setup.flasks_all": {
+    "en": "Flasks of living water: all bought",
+    "uk": "Фляги живої води: усі куплені"
+  },
+  "run_setup.perk_card": {
+    "en": "A fourth gift card",
+    "uk": "Четверта картка дару"
+  },
+  "run_setup.perk_reroll": {
+    "en": "Reroll a gift once a run",
+    "uk": "Перекинути дар раз за похід"
+  },
+  "run_setup.perk_second_skill": {
+    "en": "A second starting skill",
+    "uk": "Другий стартовий навик"
+  },
+  "run_setup.price": {
+    "en": "%s: %d fame",
+    "uk": "%s: %d слави"
+  },
+  "run_setup.bought": {
+    "en": "%s: bought",
+    "uk": "%s: куплено"
+  },
+  "gift.reroll": {
+    "en": "Reroll the cards",
+    "uk": "Перекинути картки"
+  },
+  "run_setup.vows": {
+    "en": "Vows: gold and fame +%d%%",
+    "uk": "Обітниці: золото й слава +%d%%"
+  },
+  "vow.hp": {
+    "en": "Enemies +20%% HP a step: %d of %d",
+    "uk": "Вороги +20%% HP за крок: %d з %d"
+  },
+  "vow.short_time": {
+    "en": "A time limit a quarter shorter",
+    "uk": "Ліміт часу на чверть коротший"
+  },
+  "vow.no_shop_potions": {
+    "en": "No potions from the shop",
+    "uk": "Без зілль із крамниці"
+  },
+  "vow.no_flasks": {
+    "en": "No flasks of living water",
+    "uk": "Без фляг живої води"
+  },
+  "vow.on": {
+    "en": "%s: taken",
+    "uk": "%s: узято"
+  },
+  "story.new_road": {
+    "en": "A new road is open:",
+    "uk": "Відкрилася нова дорога:"
   }
 }

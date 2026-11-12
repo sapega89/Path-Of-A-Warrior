@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[node name="GiftCard" type="Button"]
+custom_minimum_size = Vector2(280, 300)
+auto_translate_mode = 2
+theme_override_constants/icon_max_width = 128
+text = "Card"
+icon_alignment = 1
+vertical_icon_alignment = 0
+autowrap_mode = 3

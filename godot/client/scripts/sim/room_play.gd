@@ -88,32 +88,53 @@ static func find_reachable(sim: MapSim, room_tx: int, room_ty: int, p: Vector2i)
 ## that have a free cell outside the room behind them.
 static func _find_spawn_spots(sim: MapSim) -> void:
 	sim.spawn_spots.clear()
+	var reach := _reach_from_hero(sim)
+	var exits: Array = sim.rooms.exits(sim.cell)
+	for side in 4:
+		if int(exits[side]) != 0:
+			sim.spawn_spots.append_array(_edge_cells(sim, reach, side))
+
+
+## The sides of the hero's room he can walk out of (Rooms.EXIT_*): a cell along the side he can
+## reach with a free cell outside the room behind it, whether or not the side is an exit.
+static func open_sides(sim: MapSim) -> Array[int]:
+	var reach := _reach_from_hero(sim)
+	var out: Array[int] = []
+	for side in 4:
+		if not _edge_cells(sim, reach, side).is_empty():
+			out.append(side + 1)
+	return out
+
+
+static func _reach_from_hero(sim: MapSim) -> Array:
 	var o := room_origin(sim)
-	var rtx := o.x * 7 + 1
-	var rty := o.y * 7 + 1
-	var reach := find_reachable(sim, rtx, rty, sim.hero.pos)
+	return find_reachable(sim, o.x * 7 + 1, o.y * 7 + 1, sim.hero.pos)
+
+
+## The cells along side `side` (0 down, 1 left, 2 up, 3 right) of the hero's room that he can
+## reach (reach: find_reachable) and that have a free cell outside the room behind them:
+## Vector3i(x, y, side) each.
+static func _edge_cells(sim: MapSim, reach: Array, side: int) -> Array[Vector3i]:
 	const EXIT_DX := [0, 0, 0, 6]
 	const EXIT_DY := [6, 0, 0, 0]
 	const EXIT_STEP := [1, -1, -1, 1]
-	var exits: Array = sim.rooms.exits(sim.cell)
-	for side in 4:
-		if int(exits[side]) == 0:
-			continue
-		var k: int = rtx + EXIT_DX[side]
-		var m: int = rty + EXIT_DY[side]
-		for b in 7:
-			if (side & 1) != 0:
-				if reach[k - rtx][b] == 1:
-					var q := k + (m + b) * sim.w
-					if int(sim.objects[q]) == 0 and MapWalls.cell_free(sim, q + EXIT_STEP[side]):
-						sim.spawn_spots.append(Vector3i(k, m + b, side))
-			elif reach[b][m - rty] == 1:
-				var q := k + b + m * sim.w
-				if (
-					int(sim.objects[q]) == 0
-					and MapWalls.cell_free(sim, q + EXIT_STEP[side] * sim.w)
-				):
-					sim.spawn_spots.append(Vector3i(k + b, m, side))
+	var o := room_origin(sim)
+	var rtx := o.x * 7 + 1
+	var rty := o.y * 7 + 1
+	var k: int = rtx + EXIT_DX[side]
+	var m: int = rty + EXIT_DY[side]
+	var out: Array[Vector3i] = []
+	for b in 7:
+		if (side & 1) != 0:
+			if reach[k - rtx][b] == 1:
+				var q := k + (m + b) * sim.w
+				if int(sim.objects[q]) == 0 and MapWalls.cell_free(sim, q + EXIT_STEP[side]):
+					out.append(Vector3i(k, m + b, side))
+		elif reach[b][m - rty] == 1:
+			var q := k + b + m * sim.w
+			if int(sim.objects[q]) == 0 and MapWalls.cell_free(sim, q + EXIT_STEP[side] * sim.w):
+				out.append(Vector3i(k + b, m, side))
+	return out
 
 
 ## Keeps a step inside the room; touching an edge while the room is open leaves it.

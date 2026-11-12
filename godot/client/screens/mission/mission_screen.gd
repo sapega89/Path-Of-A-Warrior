@@ -30,6 +30,7 @@ var lord_id := 1
 var mission := 0
 var mission_info := {}
 var lost_gear := {}  # what the hero lost with the mission (Profile.lose_gear), shown on its banner
+var run_over := false  # the mission was lost with no flask left: the run is over (HeroRun)
 var lord_name := ""
 var sim: MapSim
 var hero: Node3D  # the hero's figure (people.hero)
@@ -150,7 +151,9 @@ func _process(delta: float) -> void:
 		held = _one_tick(held)
 	if sim.failed and not _fail_seen:
 		_fail_seen = true
-		lost_gear = profile.lose_gear(sim.rng)
+		var cost: Dictionary = profile.run.lose_mission(profile, story_ends_when_lost(), sim.rng)
+		lost_gear = cost.gear
+		run_over = cost.over
 	if sim.choosing and sim.way_out != 0:
 		var to := way_for(sim.way_out, Hero.px_to_world(Vector2(sim.hero.pos)))
 		if to > 0:
@@ -230,14 +233,20 @@ func _finish() -> void:
 	set_process(false)
 	Router.back()
 	if ending >= 0:
-		Router.push(
-			"story",
-			{
-				"story": ending,
-				"reward_item": profile.reward_item,
-				"opened_lord": profile.opened_lord
-			}
-		)
+		var story := {
+			"story": ending, "reward_item": profile.reward_item, "opened_lord": profile.opened_lord
+		}
+		if profile.place == 0:  # the ending leads back to the start: the run is over
+			story.merge({"then": "run_end", "then_params": {}})
+		Router.push("story", story)
+	elif run_over:
+		Router.push("run_end")
+
+
+## A mission whose loss ends the story: its reward is an ending (Profile.advance), so the loss
+## costs no flask.
+func story_ends_when_lost() -> bool:
+	return int(mission_info.get("reward", 0)) > Profile.ENDING_BASE
 
 
 ## The position between the last two ticks (a jump, such as a new room, is not smoothed).
@@ -327,7 +336,16 @@ func _show_banner() -> void:
 	talk_box.visible = sim.banner == 0 and not sim.talk.is_empty()
 	if talk_box.visible:
 		talk_box.show_line(Pictures.portrait(talk_portrait_id()), sim.talk_text())
-	banner.show_page(sim, lord_name, tr(str(mission_info.get("name", ""))), lost_gear)
+	var mission_name := tr(str(mission_info.get("name", "")))
+	banner.show_page(sim, lord_name, mission_name, lost_gear, _run_line())
+
+
+## The fail banner's line on the run: a flask spent, or the run over ("" for a mission won, or
+## one whose loss ends the story and costs no flask).
+func _run_line() -> String:
+	if not sim.failed or story_ends_when_lost():
+		return ""
+	return tr("run.over") if run_over else tr("run.flask_used") % profile.run.flasks_left
 
 
 ## The portrait of who speaks the line shown now: the general's, or the hero's for his own lines.
@@ -338,7 +356,8 @@ func talk_portrait_id() -> int:
 
 
 ## The ways on from a place won: one per open place the campaign goes to next, each on a side
-## of the room in a shuffled order (a side says nothing); with more than four places, some
+## of the room in a shuffled order (a side says nothing). Only the sides the hero can walk out
+## of (MapSim.open_sides) carry ways while they are enough; with more places than sides, some
 ## sides carry two, one on each half.
 func ways_on(won_place: int) -> Array:
 	var places: Array = WorldMap.new(Campaign.new()).next_places(won_place).filter(
@@ -352,6 +371,11 @@ func ways_on(won_place: int) -> Array:
 		var t: int = sides[i]
 		sides[i] = sides[j]
 		sides[j] = t
+	var open: Array[int] = sim.open_sides()
+	var walled: Array = sides.filter(func(s: int) -> bool: return not s in open)
+	sides = sides.filter(func(s: int) -> bool: return s in open)
+	while sides.is_empty() or sides.size() * 2 < places.size() and not walled.is_empty():
+		sides.append(walled.pop_front())  # too few open sides: a walled one too
 	var slots: Array = []
 	var split := maxi(places.size() - sides.size(), 0)  # sides that carry two
 	for k in mini(sides.size(), places.size()):

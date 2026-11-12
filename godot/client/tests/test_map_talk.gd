@@ -10,12 +10,29 @@ func test_the_hero_speaks_by_his_name() -> void:
 	p.apply_to(sim)
 	eq(sim.hero_name, "Ann", "the hero's name")
 	sim.set_general(1)
-	MapTalks.start_map_talk(sim)
+	MapTalks.start_map_talk(sim, 1)
 	check(sim.talk[0].begins_with("[Zdzislaw Krzeminski]"), "the general first")
 	check(not sim.hero_talks(), "he talks")
 	eq(sim.talk[1], "[Ann] ...", "then the hero, by his name")
 	sim.talk_line = 1
 	check(sim.hero_talks(), "the hero talks")
+
+
+## Met as a foe in battle, a general likes the hero less (not below 0), and his talk after that
+## fight brings no friendship; another's talk does.
+func test_a_fight_with_a_general_costs_friendship() -> void:
+	var sim := MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	sim.friendship = {1: 20}
+	sim.set_general(1)
+	MapTalks.start_map_talk(sim, 1)
+	eq(sim.friendship[1], 20 - MapTalks.FRIENDSHIP_PER_FIGHT, "less after the meeting")
+	MapTalks.start_general_talk(sim, 1, 0)
+	eq(sim.friendship[1], 20 - MapTalks.FRIENDSHIP_PER_FIGHT, "his talk after the fight: nothing")
+	MapTalks.start_general_talk(sim, 5, 0)
+	eq(sim.friendship[5], MapTalks.FRIENDSHIP_PER_TALK, "an ally's talk: more")
+	sim.friendship[3] = 2
+	MapTalks.start_map_talk(sim, 3)
+	eq(sim.friendship[3], 0, "not below nothing")
 
 
 func test_the_talk_shows_who_speaks() -> void:

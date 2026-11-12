@@ -8,10 +8,15 @@ const EXP_PAGE_WAITS := 200  # the timer of an exp page while its bar grows
 const TALK_STEPS := 3  # a general met on the map: he, the hero, he
 const VICTORY_TALK_STEPS := 5  # a general after his room or mission: he, the hero, ...
 const FRIENDSHIP_PER_TALK := 5
+const FRIENDSHIP_PER_FIGHT := 5  # a general met as a foe on the map loses this much
 
 
-## A general met on the map: "<name> is here!!!", the hero's "...", his "Come on!".
-static func start_map_talk(sim: MapSim) -> void:
+## A general met on the map: "<name> is here!!!", the hero's "...", his "Come on!". The fight
+## costs friendship with him (not below 0), and his talk after it brings none.
+static func start_map_talk(sim: MapSim, id: int) -> void:
+	sim.friendship[id] = maxi(int(sim.friendship.get(id, 0)) - FRIENDSHIP_PER_FIGHT, 0)
+	sim.fought[id] = true
+
 	var lines := MapSim.talk_lines("map")
 	sim.talk.clear()
 	var name := String(TranslationServer.translate(str(sim.general.get("name", ""))))
@@ -140,10 +145,12 @@ static func exp_reward(sim: MapSim) -> int:
 
 
 ## A general's words after his room or the mission; the more friendship, the warmer
-## (five lines for every ten points). after: what follows (talk_after).
+## (five lines for every ten points). The talk adds friendship, unless the hero fought him in
+## this mission. after: what follows (talk_after).
 static func start_general_talk(sim: MapSim, id: int, after: int) -> void:
 	MapEnemyPlay.set_general(sim, id)
-	var points := mini(int(sim.friendship.get(id, 0)) + FRIENDSHIP_PER_TALK, 100)
+	var gain := 0 if sim.fought.has(id) else FRIENDSHIP_PER_TALK
+	var points := mini(int(sim.friendship.get(id, 0)) + gain, 100)
 	sim.friendship[id] = points
 	var first := mini(points, 95) / 10 * VICTORY_TALK_STEPS
 	var lines := MapSim.talk_lines("general")
