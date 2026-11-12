@@ -13,6 +13,8 @@ extends SkillEffects
 ## The kinds of effects and how many frames each has (the skills' own: SKILL_FRAMES).
 ##   slash:  dust kicked up by a dash (frame: direction << 1 | step)
 ##   trail:  the trail of a blade (direction * 3 + which blow)
+##   pike:   the trail of the hero's pike, out to its point: a thrust, a cut from above, a
+##           thrust higher up (direction * 3 + which blow)
 ##   spark:  where a blow lands on steel (two steps; 0-1 a light hit, 2-3 a hard one)
 ##   blood:  where a blow lands on a man: drops thrown out and the blood they leave on the
 ##           ground (two steps; 0-1 a light hit, 2-3 a hard one; +4 they fly to the right,
@@ -27,6 +29,7 @@ extends SkillEffects
 const FRAMES := {
 	"slash": 8,
 	"trail": 12,
+	"pike": 12,
 	"spark": 4,
 	"blood": 12,
 	"pool": 8,
@@ -154,9 +157,11 @@ func _draw_slash(rig: Node3D, frame: int, p: Vector2, t: float, _behind: bool) -
 		_tune(puff, {"strength": 0.9 * (1.0 - ph * ph), "seed": _seed(p, i)})
 
 
-# ---- the trail of a blade ----------------------------------------------------------------
+# ---- the trail of a blade or a pike -----------------------------------------------------
 
 
+## The rig (trail.tscn, pike.tscn) stands on the one who strikes, turned his way, and shows
+## the blow of the frame: Blow0..2.
 func _draw_trail(rig: Node3D, frame: int, p: Vector2, t: float, fading: bool) -> void:
 	var blow := frame % 3
 	rig.position = _at(p)
@@ -167,6 +172,11 @@ func _draw_trail(rig: Node3D, frame: int, p: Vector2, t: float, fading: bool) ->
 		if r.visible:
 			var swing := {"progress": 0.25 + 0.7 * t, "strength": 1.0}
 			_tune(r, {"progress": 0.8, "strength": 1.0 - t} if fading else swing)
+
+
+## A pike's blows are drawn as a blade's; its rig puts them out at the pike's point.
+func _draw_pike(rig: Node3D, frame: int, p: Vector2, t: float, fading: bool) -> void:
+	_draw_trail(rig, frame, p, t, fading)
 
 
 # ---- a hit -------------------------------------------------------------------------------

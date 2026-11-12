@@ -233,6 +233,7 @@ func test_hit_spark_shows_two_ticks() -> void:
 
 func test_weapon_trail_of_a_swing() -> void:
 	var sim := _sim(false)
+	sim.hero.weapon_kind = 1  # a sabre
 	var pick := RandomNumberGenerator.new()
 	eq(sim.trails(pick).size(), 0, "no trail standing")
 	sim.hero.dir = 4
@@ -260,6 +261,32 @@ func test_weapon_trail_of_a_swing() -> void:
 			seen = true
 		sim.tick(-1, -1)
 	check(seen, "a sword strike leaves a trail")
+
+
+## The hero's pike leaves the trail of a pike (drawn out to its point), a blade the trail of a
+## blade; a general's strike, a blade's.
+func test_a_pike_leaves_the_trail_of_a_pike() -> void:
+	var sim := _sim(false)
+	var pick := RandomNumberGenerator.new()
+	sim.hero.dir = 6
+	for case in [[MapActor.LONG_WEAPON, 6, "pike"], [1, 3, "trail"]]:
+		sim.hero.weapon_kind = case[0]
+		sim.hero.action = case[1]
+		sim.hero.frame = 1
+		var t: Array = sim.trails(pick)
+		eq(t.size(), 1, "the first blow (action %d) leaves a trail" % case[1])
+		if t.size() == 1:
+			eq(str(t[0][0]), case[2], "the %s's" % case[2])
+			eq(int(t[0][1]), 3 * 3, "facing right, the first blow")
+	sim.hero.weapon_kind = MapActor.LONG_WEAPON
+	sim.hero.action = 7
+	eq(str(sim.trails(pick)[0][0]), "pike", "the pike's second blow too")
+	var g: MapActor = sim.create_enemy(1, 4, 7, 0)
+	g.dir = 0
+	g.action = 6
+	g.frame = 3
+	var kinds: Array = sim.trails(pick).map(func(tr: Array) -> String: return str(tr[0]))
+	check("trail" in kinds, "a general strikes with a blade: %s" % [kinds])
 
 
 func test_strikes_and_hits_have_their_sounds() -> void:

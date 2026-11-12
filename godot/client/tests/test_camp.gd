@@ -3,7 +3,7 @@ extends "res://tests/test_case.gd"
 ## blocked, which gate is walked out of, the spots), the fort built from it, and the screen.
 
 const CAMP_PATH := "user://test_camp_plavni.json"
-const FORT_SCENE := preload("res://screens/camp/camp_fort.tscn")
+const CAMP_SETTINGS := "user://test_camp_settings.cfg"
 
 
 ## n ways: [[place, open, mission], ...], the second one closed.
@@ -12,6 +12,23 @@ func _ways(n: int) -> Array:
 	for i in n:
 		ways.append([i + 1, i != 1, 0])
 	return ways
+
+
+## The camp of a plan with n ways, built in the tree.
+func _fort(plan: CampPlan, n: int) -> CampFort:
+	var fort: CampFort = load("res://screens/camp/camp_fort.tscn").instantiate()
+	root.add_child(fort)
+	fort.build(plan, ["steppe", "forest", "lake", "town", "mountains", "steppe"], n)
+	return fort
+
+
+## How many copies of a prop the batches under `holder` draw (0 with no holder).
+func _copies(holder: Node) -> int:
+	var n := 0
+	if holder != null:
+		for chunk: MultiMeshInstance3D in holder.get_children():
+			n += chunk.multimesh.instance_count
+	return n
 
 
 func test_gates_on_the_sides_of_the_world() -> void:
@@ -25,6 +42,9 @@ func test_gates_on_the_sides_of_the_world() -> void:
 	)
 	eq(CampPlan.gate_pieces(CampPlan.SOUTH), 2, "the main gate in the south is two pieces wide")
 	eq(CampPlan.gate_pieces(CampPlan.EAST), 1, "a side gate one")
+	for e in four.exits:
+		var past: float = e.angle + four.gate_half_width(e.angle) + four.step
+		check(four.in_gate(e.angle) and not four.in_gate(past), "a gate at %d degrees" % e.angle)
 	var north: Dictionary = four.exits[0]
 	check(north.gate.distance_to(Vector3(0, 0, -CampPlan.RADIUS)) < 0.01, "north is -Z")
 	check(north.out.is_equal_approx(Vector3(0, 0, -1)), "its way on goes north")
@@ -68,9 +88,7 @@ func test_the_fort_leaves_every_way_and_spot_free() -> void:
 	for sich in [true, false]:
 		for n in [1, 4, 6]:
 			var plan := CampPlan.new(_ways(n), false, sich)
-			var fort: CampFort = FORT_SCENE.instantiate()
-			root.add_child(fort)
-			fort.build(plan, ["steppe", "forest", "lake", "town", "mountains", "steppe"], n)
+			var fort := _fort(plan, n)
 			var what := "%s, %d ways" % ["the Sich" if sich else "a camp of the run", n]
 			var seen := plan.reachable(CampPlan.START)
 			for s in plan.spots():
@@ -95,16 +113,16 @@ func test_a_camp_of_the_run_is_a_ring_of_wagons() -> void:
 			. size()
 		)
 	for sich in [true, false]:
-		var fort: CampFort = FORT_SCENE.instantiate()
-		root.add_child(fort)
-		fort.build(CampPlan.new(_ways(3), false, sich), ["steppe", "forest", "lake"], 3)
+		var fort := _fort(CampPlan.new(_ways(3), false, sich), 3)
 		var wagons: int = count.call(fort, "viz")
+		var palisade := fort.get_node_or_null("Palisade")
 		if sich:
-			check(count.call(fort, "palisade") > 30 and wagons == 0, "the Sich: a palisade")
+			check(palisade != null and wagons == 0, "the Sich: a palisade")
+			check(_copies(palisade) > 30, "of many pieces")
 			eq(count.call(fort, "vohnyshche"), 2, "two fires")
 			eq(count.call(fort, "harmata"), 1, "a cannon")
 		else:
-			check(wagons > 15 and count.call(fort, "palisade") == 0, "wagons: %d" % wagons)
+			check(wagons > 15 and palisade == null, "wagons: %d" % wagons)
 			eq(count.call(fort, "brama") + count.call(fort, "vorota"), 0, "no gates, gaps")
 			eq(count.call(fort, "vohnyshche"), 1, "one fire")
 			eq(count.call(fort, "namet"), CampFort.FIELD_TENTS.size(), "a few light tents")
@@ -118,9 +136,7 @@ func test_the_town_hall_only_in_the_start_camp() -> void:
 		["way", "way", "smith"],
 		"no hall"
 	)
-	var fort: CampFort = FORT_SCENE.instantiate()
-	root.add_child(fort)
-	fort.build(plan, ["steppe", "forest"], 2)
+	var fort := _fort(plan, 2)
 	check(fort.hall == null, "no tent of the town hall")
 	check(not plan.blocked(CampPlan.HALL_AT), "its ground free")
 	fort.free()
@@ -254,3 +270,64 @@ func test_the_hero_stands_as_his_weapon_has_him() -> void:
 		camp.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))
+
+
+func test_reeds_and_palisade_drawn_in_batches() -> void:
+	var fort := _fort(CampPlan.new(_ways(4)), 4)
+	for holder_name in ["Ochert", "Palisade"]:
+		var holder := fort.get_node(holder_name) as Node3D
+		var copies := 0
+		for chunk: MultiMeshInstance3D in holder.get_children():
+			copies += chunk.multimesh.instance_count
+			check(chunk.material_override == ArtKit.props_material(), "%s: as a prop" % chunk.name)
+		check(
+			holder.get_child_count() < copies / 4, "%s: few batches for %d" % [holder_name, copies]
+		)
+	fort.free()
+
+
+## The camp's ground casts no shadows (it is flat; the fires' cube maps would draw it six times),
+## while the props on it still do.
+func test_the_ground_casts_no_shadow() -> void:
+	var fort := _fort(CampPlan.new(_ways(4)), 4)
+	var chunks := fort.ground.find_children("Chunk_*", "MeshInstance3D", true, false)
+	check(not chunks.is_empty(), "the ground in chunks")
+	var casting := 0
+	for chunk: MeshInstance3D in chunks:
+		if chunk.cast_shadow != GeometryInstance3D.SHADOW_CASTING_SETTING_OFF:
+			casting += 1
+	eq(casting, 0, "no chunk casts a shadow")
+	var tent: Array = fort.hall.find_children("*", "MeshInstance3D", true, false)
+	eq(
+		(tent[0] as MeshInstance3D).cast_shadow,
+		GeometryInstance3D.SHADOW_CASTING_SETTING_ON,
+		"the town hall's tent does"
+	)
+	var open_land := ArtGround.new()
+	open_land.size = 8.0
+	root.add_child(open_land)
+	open_land.build()
+	var land_chunk := open_land.find_child("Chunk_*", true, false) as MeshInstance3D
+	eq(land_chunk.cast_shadow, GeometryInstance3D.SHADOW_CASTING_SETTING_ON, "other ground does")
+	open_land.free()
+	fort.free()
+
+
+## The fires cast shadows, but not on Low graphics: each is a cube map, the scene drawn six more
+## times a frame.
+func test_the_fires_cast_shadows_but_on_low() -> void:
+	var old_path: String = Settings.path
+	var old_graphics: int = int(Settings.get_value("graphics"))
+	Settings.path = CAMP_SETTINGS
+	for case in [[0, 0], [1, CampPlan.FIRES.size()], [2, CampPlan.FIRES.size()]]:
+		Settings.set_value("graphics", case[0])
+		var fort := _fort(CampPlan.new(_ways(1)), 1)
+		var casting := 0
+		for light: OmniLight3D in fort.find_children("*", "OmniLight3D", true, false):
+			if light.shadow_enabled:
+				casting += 1
+		eq(casting, case[1], "graphics %d: %d lights cast shadows" % case)
+		fort.free()
+	Settings.set_value("graphics", old_graphics)
+	Settings.path = old_path
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_SETTINGS))

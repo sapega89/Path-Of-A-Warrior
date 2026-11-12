@@ -3,6 +3,13 @@ extends "res://tests/test_case.gd"
 ## every kind is drawn in code, the rigs are reused, room-wide strikes keep their places, the
 ## arrows fly their way.
 
+## How far into a blow's clip its trail is shown (the blow's first tick).
+const BLOW_AT := 0.4
+## How near the trail of a pike must come to its point (m), and how far a blade's falls short
+## of it.
+const NEAR_POINT := 0.3
+const SHORT_OF_POINT := 0.6
+
 
 func _shown_parts(rig: Node3D) -> int:
 	var n := 0
@@ -127,6 +134,48 @@ func test_a_blow_shows_its_trail() -> void:
 			eq(rig.get_node("Blow%d" % i).visible, i == blow, "blow %d: trail %d" % [blow, i])
 		check(is_equal_approx(rig.rotation.y, Motion.yaw_of(6)), "to the right")
 	fx.free()
+
+
+## The trail of a pike is out at its point, not round the hero as a blade's: a thrust ends
+## at the point of the pike held out, the cut from above sweeps where the point goes. The
+## hero's own figure strikes facing down, as the trail does.
+func test_a_pike_trail_is_at_the_point_of_the_pike() -> void:
+	var fig := ArtFigure.create("kozak_hero")
+	root.add_child(fig)
+	fig.unequip_all()
+	fig.equip("spear")
+	var pike := fig.skeleton.find_child("spear", true, false) as MeshInstance3D
+	var box := pike.get_aabb()
+	var end := Vector3(box.get_center().x, box.get_center().y, box.end.z)
+	var fx: Node3D = MapEffects.new()
+	root.add_child(fx)
+	for blow in 3:
+		var clip: String = Motion.LONG_COMBO[blow]
+		fig.pose(clip, fig.player.get_animation(clip).length * BLOW_AT)
+		(pike.get_parent() as BoneAttachment3D).on_skeleton_update()
+		var point := fig.to_local(pike.global_transform * end)
+		fx.show_effects([["pike", blow, Vector2i(50, 50)]], 0.5)
+		var part := fx.drawn[0][2].get_node("Blow%d" % blow) as MeshInstance3D
+		check(part.visible, "blow %d shows" % blow)
+		var near := _nearest_edge(part, point)
+		check(near < NEAR_POINT, "blow %d (%s) reaches the point: %.2f m off" % [blow, clip, near])
+		fx.show_effects([["trail", blow, Vector2i(50, 50)]], 0.5)
+		var blade := _nearest_edge(fx.drawn[0][2].get_node("Blow%d" % blow), point)
+		check(blade > SHORT_OF_POINT, "a blade's trail stays short of it: %.2f m" % blade)
+	fx.free()
+	fig.free()
+
+
+## How near the far edge of a trail's part comes to a point (in the rig's place): the head of
+## a streak of light, or the outer edge of a swept ribbon.
+func _nearest_edge(part: MeshInstance3D, point: Vector3) -> float:
+	if part.mesh is SweepMesh:
+		var best := INF
+		var vertices: PackedVector3Array = part.mesh.get_mesh_arrays()[Mesh.ARRAY_VERTEX]
+		for i in range(1, vertices.size(), 2):  # the outer edge
+			best = minf(best, (part.transform * vertices[i]).distance_to(point))
+		return best
+	return (part.transform * Vector3(0.5, 0.0, 0.0)).distance_to(point)
 
 
 func test_arrows_fly_their_way() -> void:

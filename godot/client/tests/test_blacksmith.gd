@@ -107,19 +107,20 @@ func test_shop_screen() -> void:
 	Router.params = {"profile_path": TEST_PATH, "mode": "enchant"}
 	screen = Router.make(Router.SCREENS["shop"])
 	root.add_child(screen)
-	eq(screen.cells.size(), Items.BACKPACK + Items.EQUIPPED, "the backpack and the Gear page")
-	screen.press_cell(0)
-	eq(screen.asked, 0, "asks first")
+	eq(screen.cells.size(), Items.EQUIPPED + Items.BACKPACK, "what is worn and the backpack")
+	var sabre := Items.EQUIPPED  # the backpack's first thing, after the things worn
+	screen.press_cell(sabre)
+	eq(screen.asked, sabre, "asks first")
 	screen.confirm()
 	eq(screen.sparkle, 0, "Yes: the sparkle starts")
-	eq(screen.sparkle_cells, [0] as Array[int], "on the thing")
+	eq(screen.sparkle_cells, [sabre] as Array[int], "on the thing")
 	var view: EnchantSparkle = screen.get_node("Sparkle")
-	eq(view.places, [screen.cells[0].get_global_rect()] as Array[Rect2], "drawn over its cell")
+	eq(view.places, [screen.cells[sabre].get_global_rect()] as Array[Rect2], "drawn over its cell")
 	eq(view.phase, 0.0, "from its start")
 	screen._process(ShopScreen.SPARKLE_FRAME / 2.0)
 	check(is_equal_approx(view.phase, 0.1), "moving on between the steps")
 	eq(int(screen.profile.backpack[0].enchant), 0, "not enchanted yet")
-	eq(screen.press_cell(1), "", "nothing is pressed while it plays")
+	eq(screen.press_cell(0), "", "nothing is pressed while it plays")
 	for f in 4:
 		eq(screen.next_sparkle(), "", "frame %d" % (f + 2))
 	eq(screen.next_sparkle(), screen.info.text, "after the fifth frame the outcome")
@@ -130,6 +131,46 @@ func test_shop_screen() -> void:
 	var saved: RefCounted = Profile.load_or_new(TEST_PATH)
 	eq(int(saved.backpack[0].enchant), 1, "saved")
 	eq(int(saved.quick_slots[0][0]), 1, "the potion bought is kept")
+	Router.params = old
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
+
+
+## Enchant shows what the hero wears first, in a row of its own under its title, so it is found
+## at once; the backpack follows under its own title. A thing worn is enchanted where it is.
+func test_enchanting_what_the_hero_wears() -> void:
+	var p := Profile.new()
+	p.gold = 1000
+	p.add_item(Items.make(101))
+	p.save(TEST_PATH)
+	var old: Dictionary = Router.params
+	Router.params = {"profile_path": TEST_PATH, "mode": "enchant"}
+	var screen: ShopScreen = Router.make(Router.SCREENS["shop"])
+	root.add_child(screen)
+	var worn: GridContainer = screen.get_node("%Worn")
+	check(
+		worn.visible and screen.get_node("%WornTitle").visible,
+		"the things worn: a row of their own"
+	)
+	eq(worn.get_child_count(), Items.EQUIPPED, "all nine places of the gear")
+	eq(screen.cells[0].get_parent(), worn, "first")
+	eq(screen.cells[Items.EQUIPPED].get_parent(), screen.get_node("%Things"), "then the backpack")
+	check(screen.get_node("%BackpackTitle").visible, "under its own title")
+	eq(screen.describe(0), "Iron Broadsword / ATK+1 / Available at Lv1", "the blade in hand")
+	eq(screen.describe(Items.EQUIPPED), Items.describe(p.backpack[0]), "the backpack's first")
+	screen.press_cell(0)
+	eq(screen.asked, 0, "asks first")
+	screen.confirm()
+	for f in 5:
+		screen.next_sparkle()
+	eq(int(screen.profile.equipped[0].enchant), 1, "the blade in hand enchanted")
+	screen.free()
+	eq(int(Profile.load_or_new(TEST_PATH).equipped[0].enchant), 1, "saved")
+	Router.params = {"profile_path": TEST_PATH, "mode": "buy"}
+	screen = Router.make(Router.SCREENS["shop"])
+	root.add_child(screen)
+	check(not screen.get_node("%Worn").visible, "no row of things worn when buying")
+	check(not screen.get_node("%WornTitle").visible, "nor its title")
+	screen.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
 

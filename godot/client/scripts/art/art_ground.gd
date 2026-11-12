@@ -1,10 +1,10 @@
 class_name ArtGround
 extends Node3D
-## Ground for a scene in the new art: a grid painted by ground.gdshader. Vertex colours
-## mark trodden paths (r), green grass (g) and wet mud (b); outside the play area the land
-## rises into low hills so the edge of the world is never seen. Hollows sink the ground into
-## channels for water (the marsh round a camp), with wet mud along their banks. Grass tufts
-## are one MultiMesh.
+## Ground for a scene in the new art: a grid painted by ground.gdshader, in chunks (GroundMesh)
+## so that only what is in view is drawn. Vertex colours mark trodden paths (r), green grass (g)
+## and wet mud (b); outside the play area the land rises into low hills so the edge of the world
+## is never seen. Hollows sink the ground into channels for water (the marsh round a camp), with
+## wet mud along their banks. Grass tufts are one MultiMesh.
 
 const GROUND := preload("res://assets/art/shaders/ground.gdshader")
 
@@ -24,41 +24,35 @@ var hollow_width := 1.8
 var hollow_depth := 0.7
 var tufts := 140
 var seed_value := 3
+## Whether the ground casts shadows. Off where it is nearly flat (the camp): its shadows there
+## fall on nothing, yet a lamp's shadow would draw it six times a frame.
+var casts_shadow := true
+## What paints the ground (ground.gdshader), shared by its chunks (GroundMesh).
+var material: ShaderMaterial
 
 var _rng := RandomNumberGenerator.new()
 
 
 func build() -> void:
 	_rng.seed = seed_value
-	var st := SurfaceTool.new()
-	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	var n := int(size / step)
 	var half := size / 2.0
-	for i in n + 1:
-		for j in n + 1:
+	var grid := GroundMesh.new(n + 1, n + 1, step)
+	for j in n + 1:
+		for i in n + 1:
 			var x := -half + i * step
 			var z := -half + j * step
-			st.set_color(Color(_path_amount(x, z), _green_amount(x, z), _wet_amount(x, z)))
-			st.add_vertex(Vector3(x, height(x, z), z))
-	for i in n:
-		for j in n:
-			var a := i * (n + 1) + j
-			var b := a + n + 1
-			# clockwise seen from above: Godot's front face
-			st.add_index(a)
-			st.add_index(b)
-			st.add_index(a + 1)
-			st.add_index(b)
-			st.add_index(b + 1)
-			st.add_index(a + 1)
-	st.generate_normals()
-	var mi := MeshInstance3D.new()  # standards: allow nodes_in_code (the ground of its paths)
-	mi.name = "Ground"
-	mi.mesh = st.commit()
-	var m := ShaderMaterial.new()
-	m.shader = GROUND
-	mi.material_override = m
-	add_child(mi)
+			grid.add(
+				Vector3(x, height(x, z), z),
+				Color(_path_amount(x, z), _green_amount(x, z), _wet_amount(x, z))
+			)
+	material = ShaderMaterial.new()
+	material.shader = GROUND
+	var chunks := grid.build(material)
+	if not casts_shadow:
+		for chunk: MeshInstance3D in chunks.get_children():
+			chunk.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(chunks)
 	_scatter_tufts()
 
 

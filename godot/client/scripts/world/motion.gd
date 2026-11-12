@@ -53,7 +53,7 @@ const COMBO := ["attack_slash", "attack_sweep", "attack_chop"]
 ## sweeping thrust.
 const LONG_COMBO := ["attack_stab", "attack_2h_slash", "attack_2h_stab"]
 ## MapActor.weapon_kind of a long weapon (its reach 63 px, the short one's 53).
-const LONG_WEAPON := 0
+const LONG_WEAPON := MapActor.LONG_WEAPON
 ## A general's actions 6..21 are the hero's skills.
 const GENERAL_SKILL := [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27]
 

@@ -255,6 +255,14 @@
     "en": "A vow: no potions from the shop this run.",
     "uk": "Обітниця: цей похід без зілль із крамниці."
   },
+  "enchant.worn": {
+    "en": "Worn",
+    "uk": "На герої"
+  },
+  "enchant.backpack": {
+    "en": "Backpack",
+    "uk": "Торба"
+  },
   "enchant.not_possible": {
     "en": "Not possible to enchant.",
     "uk": "Це не зачарувати."

@@ -2,13 +2,12 @@
 class_name SweepMesh
 extends PrimitiveMesh
 ## A curved ribbon round a middle, like the trail of a blade: `arc_deg` degrees round from
-## `start_deg` (0 in front, +Z), from 0.55 of `radius` out to all of it, `height` up and rising
-## by `tilt` along the way. UV.x runs along the arc (0..1), UV.y across it (0 inside, 1 outside).
+## `start_deg` (0 in front, +Z), from `inner` of `radius` out to all of it, `height` up and
+## rising by `tilt` along the way. UV.x runs along the arc (0..1), UV.y across it (0 inside, 1
+## outside).
 
 ## Quads along the arc.
 const STEPS := 24
-## Where the ribbon starts, a part of the radius.
-const INNER := 0.55
 
 @export var start_deg := 0.0:
 	set(value):
@@ -30,6 +29,12 @@ const INNER := 0.55
 	set(value):
 		tilt = value
 		request_update()
+## Where the ribbon starts, a part of the radius (a blade sweeps from near the hand, a pike's
+## point far out).
+@export var inner := 0.55:
+	set(value):
+		inner = value
+		request_update()
 
 
 func _create_mesh_array() -> Array:
@@ -41,7 +46,7 @@ func _create_mesh_array() -> Array:
 		var dir := Vector3(sin(a), 0.0, cos(a))
 		var lift := tilt * (t - 0.5)
 		for j in 2:
-			var r := radius * (INNER if j == 0 else 1.0)
+			var r := radius * (inner if j == 0 else 1.0)
 			st.set_uv(Vector2(t, float(j)))
 			st.add_vertex(dir * r + Vector3(0.0, height + lift * r, 0.0))
 	for i in STEPS:

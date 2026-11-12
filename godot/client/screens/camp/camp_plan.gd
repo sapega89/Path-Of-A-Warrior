@@ -126,6 +126,13 @@ func gate_half_width(angle: float) -> float:
 	return step * gate_pieces(angle) / 2.0
 
 
+## Whether `deg` round the ring lies in a gate.
+func in_gate(deg: float) -> bool:
+	return exits.any(
+		func(e: Dictionary) -> bool: return apart(deg, e.angle) < gate_half_width(e.angle) + 0.1
+	)
+
+
 ## The open way whose gate the position has walked out of, as its index, or -1.
 func exit_crossed(pos: Vector3) -> int:
 	if Vector2(pos.x, pos.z).length() < RADIUS + OUT:
