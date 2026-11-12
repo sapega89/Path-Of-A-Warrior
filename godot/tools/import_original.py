@@ -823,32 +823,13 @@ def export_mixing(out):
     (out / "mixing.json").write_text(json.dumps(rows, separators=(",", ":")))
 
 
-SOUND_FONTS = ["/usr/share/sounds/sf2/FluidR3_GM.sf2", "/usr/share/sounds/sf2/default-GM.sf2"]
-
-
 def export_sounds(out):
-    """The effects snd3..16 as they are (sfx_N.wav); the three MIDI tunes snd0..2 played
-    through a General MIDI sound font into music_N.ogg (needs fluidsynth and ffmpeg). A tune
-    already made is kept: delete it to make it again."""
+    """The effects snd3..16 as they are (sfx_N.wav). The music is our own
+    (godot/tools/music), not the original's tunes."""
     import shutil
-    import subprocess
-    import tempfile
     out.mkdir(parents=True, exist_ok=True)
     for n in range(3, 17):
         shutil.copyfile(ORIGINAL / ("snd%d.wav" % n), out / ("sfx_%d.wav" % n))
-    font = next((f for f in SOUND_FONTS if pathlib.Path(f).exists()), None)
-    if font is None or not shutil.which("fluidsynth") or not shutil.which("ffmpeg"):
-        print("music: fluidsynth, ffmpeg or a sound font missing, the tunes are kept")
-        return
-    with tempfile.TemporaryDirectory() as tmp:
-        for n in range(3):
-            if (out / ("music_%d.ogg" % n)).exists():
-                continue
-            wav = pathlib.Path(tmp) / ("music_%d.wav" % n)
-            subprocess.run(["fluidsynth", "-ni", "-F", str(wav), "-r", "44100", font,
-                            str(ORIGINAL / ("snd%d.mid" % n))], check=True, capture_output=True)
-            subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", str(wav), "-c:a", "libvorbis",
-                            "-q:a", "3", str(out / ("music_%d.ogg" % n))], check=True)
 
 
 def main():
