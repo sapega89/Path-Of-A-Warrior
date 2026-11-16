@@ -66,7 +66,7 @@ func test_volume_by_ear() -> void:
 	eq(
 		[0.25, 0.5, 0.75, 1.0].map(func(v): return roundi(SettingsScript.volume_db(v))),
 		[-24, -12, -5, 0],
-		"the amplitude is the volume squared, as in pyport"
+		"the amplitude is the volume squared"
 	)
 	var s := _fresh()
 	s.set_value("music_volume", 0.5)

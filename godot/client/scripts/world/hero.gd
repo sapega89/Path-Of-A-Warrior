@@ -3,8 +3,8 @@ extends CharacterBody3D
 ## The hero (scenes/world/hero.tscn): the original 2D sprite standing in the 3D world
 ## (decisions 06.11: "3D world, 2D hero", "move the game over as it is first").
 ##
-## The frames come from assets/original/hero_<head>_<weapon>.png, made by
-## godot/tools/import_original.py from the original body, head and weapon parts.
+## The frames come from assets/original/hero_<head>_<weapon>.png (body, head and weapon put
+## together).
 ## The sprite turns to the camera around the vertical axis (Y billboard), so it
 ## stays flat to the screen but is sorted, lit and shadowed in 3D.
 ## Directions and the idle / walk tables are the original ones (hero.json).

@@ -1,13 +1,12 @@
-# Path of a Warrior — Godot 4
+# Mercenary's Path — Godot 4
 
 ## Tech Stack
 
 - **Main project:** Godot 4.5, GDScript, in `godot/client` (game and tests in one project). The
   game is offline: no server, the hero and the settings are saved on the computer
-- **Data:** `python godot/tools/import_original.py` makes `godot/client/data` and
-  `godot/client/assets/original` from the original files
-- **Reference only:** `pyport/` (Python + pygame-ce) describes how the original game behaves. No new
-  features go there; change it only when asked
+- **Data:** `godot/client/data/*.json` (maps, campaign, items, skills, talks) and
+  `godot/client/i18n/*.json` (the texts in both languages) are the game's own files, edited by hand;
+  `godot/tools/art` and `godot/tools/music` make the art and the music in code
 
 ## Project Context
 
@@ -66,7 +65,7 @@ old style.
   `MapSim`), not `RefCounted`, `Node` or `Variant` in its place; an array of one kind is typed
   (`Array[int]`)
 - Names are ours and say what the thing does; comments explain what the code does now, not where
-  it came from (no references to the original game's code or to `pyport`, no port markers)
+  it came from (no references to other games or to old versions of this one, no port markers)
 - Magic numbers become named constants or data in `data/*.json`
 - Do not modify existing working functionality unless explicitly asked; refactoring keeps the
   behaviour, the node names and the public fields the tests use
@@ -97,4 +96,3 @@ hero's path, `preload` of a script, files over 600 lines, functions over 50 line
 - CI screenshots (`tools/shots.tscn`) must not change unless the change is meant to change them
 - Small PRs: one screen group or one module at a time; do not mix a refactor with a new feature
 - Behaviour changes the player asked for are documented in `godot/README.md`
-- Changes to `pyport/`, when asked: run `python -m pytest` in `pyport/` before pushing

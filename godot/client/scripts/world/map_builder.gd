@@ -1,7 +1,6 @@
 class_name MapBuilder
 extends Node3D
-## Builds a 3D map from an original map (data/maps/<n>.json, made by
-## godot/tools/import_original.py) with the original tiles.
+## Builds a 3D map from a map of the campaign (data/maps/<n>.json) with the old tiles.
 ##
 ## One tile = 1 world unit; tile (x, y) covers x..x+1 on X and y..y+1 on Z
 ## (screen "down" is +Z, the camera looks along -Z).

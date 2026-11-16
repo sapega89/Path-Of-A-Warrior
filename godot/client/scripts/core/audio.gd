@@ -1,7 +1,7 @@
 extends Node
 ## The music and the sound effects: the three tunes (TUNES: 0 the title, 1 the missions, 2 the
 ## camp and the menus, from assets/music, made by godot/tools/music/build.py) and the effects
-## 3..16, from assets/original/sound (godot/tools/import_original.py).
+## 3..16, from assets/original/sound.
 ## Each screen has its tune (SCREEN_MUSIC); the story chooses its own by the page. A tune
 ## asked for again goes on playing. An effect cuts off the effects still playing, except
 ## the short hits (OVERLAPPING); after effect 9 nothing new plays for half a second.

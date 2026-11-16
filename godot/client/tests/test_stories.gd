@@ -60,7 +60,7 @@ func _story(params: Dictionary) -> Control:
 	return screen
 
 
-## A talk, as pyport's: two boxes under "Epilogue", the one who speaks at the top, the hero at
+## A talk: two boxes under "Epilogue", the one who speaks at the top, the hero at
 ## the bottom; each keeps its last line.
 func test_story_talk() -> void:
 	var old: Dictionary = Router.params
@@ -104,7 +104,7 @@ func test_story_talk() -> void:
 	Router.params = old
 
 
-## A picture, as pyport's: the picture comes, its text floats up over it 2 a tick (a line every
+## A picture: the picture comes, its text floats up over it 2 a tick (a line every
 ## 22, from y 230, white within 72 of the middle), the picture goes and the next page comes.
 func test_story_picture_floats() -> void:
 	var old: Dictionary = Router.params
@@ -170,11 +170,7 @@ func test_story_numbers_and_reward() -> void:
 	screen.next_page()
 	eq(screen.pages[screen.page].kind, "stats", "the numbers")
 	check(not screen.picture.visible, "no picture")
-	eq(
-		Array(screen.lines.slice(0, 3)),
-		["Mission", "Accomplished", "0 %"],
-		"a line each, as pyport's"
-	)
+	eq(Array(screen.lines.slice(0, 3)), ["Mission", "Accomplished", "0 %"], "a line each")
 	eq(screen.lines.size(), 12, "missions, hidden missions, endings, generals, the total")
 	eq(screen.line_y(0), -1000, "below the screen")
 	for i in 45:
@@ -230,7 +226,7 @@ func test_story_screen_click() -> void:
 	Router.params = old
 
 
-## As pyport's: a talk typed out goes on by itself after 15 ticks; a picture goes on by itself
+## A talk typed out goes on by itself after 15 ticks; a picture goes on by itself
 ## in ticks of the game's speed.
 func test_story_goes_on_by_itself() -> void:
 	var old: Dictionary = Router.params

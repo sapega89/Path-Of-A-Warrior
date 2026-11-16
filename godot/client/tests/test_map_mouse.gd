@@ -1,5 +1,5 @@
 extends "res://tests/test_case.gd"
-## The mouse on a mission's map, as pyport's pointer: beside the hero walks, on him attacks.
+## The mouse on a mission's map as a pointer: beside the hero walks, on him attacks.
 
 
 func _click(at: Vector2, button := MOUSE_BUTTON_LEFT, pressed := true) -> InputEventMouseButton:

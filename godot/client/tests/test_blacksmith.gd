@@ -241,7 +241,7 @@ func test_combine_screen() -> void:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(TEST_PATH))
 
 
-## As pyport's popup 39: Combine with fewer than 3 things in the Inventory only says so.
+## Combine with fewer than 3 things in the Inventory only says so.
 func test_combine_needs_three_things() -> void:
 	var p := Profile.new()
 	for id in [101, 156]:

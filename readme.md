@@ -1,30 +1,32 @@
-# Path of a Warrior
+# Mercenary's Path
 
-Гра на Godot 4.5 (GDScript): кампанія з 45 місцями, бої на 3D-картах, мультиплеєр і Live через
-власний сервер. Клієнт, сервер і тести — один проєкт Godot у `godot/client`.
+Гра на Godot 4.5 (GDScript): козацький найманець іде походами через 45 місць, б'ється в
+3D-кімнатах, збирає речі, навички й дари генералів. Гра офлайн: герой і налаштування
+зберігаються на комп'ютері. Гра й тести — один проєкт Godot у `godot/client`.
+
+Натхнення — мобільна action-RPG «Path of a Warrior» (2008): звідти жанр і механіки, а код,
+назви, тексти, графіка й музика — наші (що ще тимчасове — у [`docs/GODOT_PLAN.md`](docs/GODOT_PLAN.md)).
 
 ## Швидкий старт
 
-Потрібні Godot 4.5.1 і Python 3 з Pillow (для конвертера даних).
+Потрібен Godot 4.5.1.
 
 ```
 godot --headless --path godot/client --import                 # один раз після клонування
-godot --path godot/client                                     # гра (локальний сервер запускається сам)
+godot --path godot/client                                     # гра
 godot --headless --path godot/client res://tests/runner.tscn  # тести
 ```
 
-Докладніше про запуск, сервер і будову проєкту — у [`godot/README.md`](godot/README.md),
+Докладніше про запуск і будову проєкту — у [`godot/README.md`](godot/README.md),
 як працювати з кодом і робити PR — у [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## Що де лежить
 
 | Шлях | Що там |
 | --- | --- |
-| `godot/client` | Проєкт Godot: гра, сервер (`server/`), тести (`tests/`), дані (`data/`) |
-| `godot/tools/import_original.py` | Конвертер: робить `godot/client/data` і `assets/original` з `original/` |
-| `original/` | Файли оригінальної гри (графіка, карти, тексти, звуки); тільки для конвертера |
-| `pyport/` | Python-версія: довідка про те, як поводиться оригінал. Нових фіч там немає |
-| `docs/GODOT_PLAN.md` | План Godot-версії |
-| `docs/analysis/` | Розбір оригінальної гри |
-| `docs/history/` | Старі плани й документи (Python-порт, перша спроба на Godot); не актуальні |
+| `godot/client` | Проєкт Godot: гра, тести (`tests/`), дані (`data/`), тексти обома мовами (`i18n/`) |
+| `godot/tools/art` | Графіка гри кодом (Blender): люди, зброя, реквізит, портрети |
+| `godot/tools/music` | Музика гри кодом |
+| `godot/FRIENDS.md` | Як запустити збірку (він же `ІНСТРУКЦІЯ.txt` в архіві) |
+| `docs/GODOT_PLAN.md` | План гри |
 | `CLAUDE.md` | Правила для Claude і людей: структура Godot, якість коду, тести |
