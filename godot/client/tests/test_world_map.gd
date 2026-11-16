@@ -178,8 +178,39 @@ func test_after_a_mission_won_the_way_on_is_chosen_in_the_room() -> void:
 	var sim: RefCounted = screen.sim
 	sim.start_choosing()
 	check(sim.choosing and not sim.finished and sim.enemies.is_empty(), "the room is quiet")
+	for t in 4:
+		sim.tick(2)  # hold left
+	eq(sim.hero.shown_dir, 2, "he turns where he walks")
+	for t in 4:
+		sim.tick(6)  # hold right
+	eq(sim.hero.shown_dir, 6, "and turns back")
 	sim.keep_in_room(sim.hero.pos, 0, -2000)
 	eq(sim.way_out, Rooms.EXIT_UP, "walked into the top side")
+	screen.free()
+	Router.params = old
+
+
+## Yellow Waters' last room has a wall on its right: no way on is put there.
+func test_the_ways_on_only_where_the_hero_can_walk_out() -> void:
+	var old: Dictionary = Router.params
+	Router.params = {"lord": 2, "mission": 0, "seed": 2}
+	var screen: Control = Router.make(Router.SCREENS["mission"])
+	root.add_child(screen)
+	var sim: MapSim = screen.sim
+	sim.cell = 2
+	sim.hero.pos = Vector2i(27 + 94, 27 + 189 * 2 + 94)
+	eq(sim.open_sides(), [Rooms.EXIT_DOWN, Rooms.EXIT_LEFT, Rooms.EXIT_UP], "not the right")
+	var p := Profile.new()
+	p.lords_open = -1
+	screen.profile = p
+	for n in 12:
+		p.done["x:%d" % n] = true  # another shuffle of the sides
+		var ways: Array = screen.ways_on(2)
+		eq(ways.size(), 1, "one place on from Yellow Waters")
+		check(int(ways[0].exit) != Rooms.EXIT_RIGHT, "never into the wall (%d)" % n)
+	sim.cell = 0
+	sim.hero.pos = Vector2i(27 + 94, 27 + 94)
+	eq(sim.open_sides(), [Rooms.EXIT_DOWN, Rooms.EXIT_UP], "the first room: only down and up")
 	screen.free()
 	Router.params = old
 
@@ -205,29 +236,28 @@ func test_the_camp_of_the_way_chosen_offers_its_generals() -> void:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))
 
 
-## The town hall names every colonel; how far the hero has come with one only once it is
-## something.
-func test_town_hall_colonels_without_zero() -> void:
+## The town hall lists the generals the hero knows, with their friendship; no colonels (their
+## progress lives one run).
+func test_the_town_hall_lists_the_generals_known() -> void:
 	Profile.new().save(CAMP_PATH)
 	var old: Dictionary = Router.params
 	Router.params = {"profile_path": CAMP_PATH}
 	var hall: Control = Router.make(Router.SCREENS["town_hall"])
 	root.add_child(hall)
-	var lines: Array = hall.list.get_node("Colonels").get_children()
-	eq(lines.size(), hall.colonels().size(), "a line per colonel")
-	for l in lines:
-		check(not (l as Label).text.contains("%"), "no 0% for a colonel the hero has not won with")
-	eq((lines[0] as Label).theme_type_variation, &"SmallLabel", "a line from its scene")
 	check(hall.list.get_node("Nobody").visible, "a new hero knows no general yet")
 	check(not hall.list.get_node("Generals").visible, "so no list of them")
-	var first: Array = hall.colonels()[0]
-	eq(hall.colonel_line(first), tr(str(first[1])), "only his name")
-	hall.profile.progress[str(first[0])] = 15
-	eq(
-		hall.colonel_line(first),
-		tr("hall.progress") % [tr(str(first[1])), 15],
-		"15% once he has won with him"
-	)
+	check(hall.list.get_node_or_null("Colonels") == null, "no colonels")
+	hall.free()
+	var p := Profile.new()
+	p.friendship = {"1": 5}
+	p.save(CAMP_PATH)
+	hall = Router.make(Router.SCREENS["town_hall"])
+	root.add_child(hall)
+	var lines: Array = hall.list.get_node("Generals").get_children()
+	eq(lines.size(), 1, "a line per general known")
+	var name_key := str(MapSim.general_data(1).name)
+	eq((lines[0] as Label).text, tr("hall.friend") % [tr(name_key), 5], "with his friendship")
+	eq((lines[0] as Label).theme_type_variation, &"SmallLabel", "a line from its scene")
 	hall.free()
 	Router.params = old
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(CAMP_PATH))

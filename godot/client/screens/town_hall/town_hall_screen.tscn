@@ -35,6 +35,12 @@ theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 40
 script = ExtResource("2")
 
+[node name="Flasks" type="Label" parent="Center/Column"]
+unique_name_in_owner = true
+layout_mode = 2
+auto_translate_mode = 2
+horizontal_alignment = 1
+
 [node name="Scroll" type="ScrollContainer" parent="Center/Column"]
 layout_mode = 2
 custom_minimum_size = Vector2(760, 500)
@@ -44,17 +50,6 @@ horizontal_scroll_mode = 0
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-
-[node name="ColonelsTitle" type="Label" parent="Center/Column/Scroll/List"]
-layout_mode = 2
-theme_type_variation = &"AccentLabel"
-text = "hall.colonels"
-
-[node name="Colonels" type="GridContainer" parent="Center/Column/Scroll/List"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_constants/h_separation = 24
-columns = 2
 
 [node name="GeneralsTitle" type="Label" parent="Center/Column/Scroll/List"]
 layout_mode = 2
@@ -80,16 +75,16 @@ layout_mode = 2
 alignment = 1
 theme_override_constants/separation = 12
 
-[node name="Visit" type="Button" parent="Center/Column/Buttons"]
+[node name="Prepare" type="Button" parent="Center/Column/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "hall.visits"
+text = "hall.prepare"
 
 [node name="Back" type="Button" parent="Center/Column/Buttons"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "common.back"
 
-[connection signal="pressed" from="Center/Column/Buttons/Visit" to="." method="open_visits"]
+[connection signal="pressed" from="Center/Column/Buttons/Prepare" to="." method="open_run_setup"]
 
 [connection signal="pressed" from="Center/Column/Buttons/Back" to="." method="go_back"]

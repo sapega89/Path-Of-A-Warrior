@@ -26,15 +26,18 @@ static func fill_shop(hero: Profile, rng: RandomNumberGenerator = null) -> void:
 
 
 ## Buys thing i of the shop: a potion goes to its quick slot (5 at most), a gear to the
-## backpack and out of the shop. Returns "bought", "no_gold", "no_more" or "full".
+## backpack and out of the shop. Returns "bought", "no_gold", "no_more", "full" or "vow" (a
+## potion under the vow of no shop potions, Vows).
 static func buy(hero: Profile, i: int) -> String:
 	if i < 0 or i >= hero.shop.size() or int(hero.shop[i].id) == 0:
 		return ""
 	var item: Dictionary = hero.shop[i]
 	var cost := Items.price(item)
+	var id := int(item.id)
+	if id < 100 and hero.run.vows.has("no_shop_potions"):
+		return "vow"
 	if hero.gold < cost:
 		return "no_gold"
-	var id := int(item.id)
 	if id < 100:
 		var slots := hero.quick_slots
 		var at := -1

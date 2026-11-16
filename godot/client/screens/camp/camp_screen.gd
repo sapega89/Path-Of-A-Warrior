@@ -9,11 +9,12 @@ extends BaseScreen
 ## out tells the story of the next mission of that place not won yet (choices()), then its
 ## briefing; the mission comes back here when it is over (won: the camp of the new place; lost:
 ## this one again, to try once more with the same hero). A closed way's gate is barred. Every
-## camp has the blacksmith (buy, sell, enchant, combine) and the town hall (every colonel and
-## general, and the visits of the generals: one after each mission won,
-## scripts/core/visits.gd), which the hero enters from a few steps off its door. The game is
-## saved when the hero comes into a camp. Pause opens the camp menu: the game menu, the world
-## map, the settings, the main menu.
+## camp has the blacksmith (buy and sell; enchant and combine in the start camp only); the start
+## camp also has the town hall (what comes before a run, every colonel and general the hero
+## knows), which the hero enters from a few steps off its door. The game is
+## saved when the hero comes into a camp; the gift of the mission just won comes up then
+## (open_gift). Pause opens the camp menu: the game menu, the world map, the settings, the main
+## menu.
 ## Router.params: profile_path; first: true starts the first mission at once (a new game).
 
 const BLINK_TIME := 0.25
@@ -68,15 +69,24 @@ func _ready() -> void:
 	place = int(profile.place)
 	world_map = WorldMap.new(campaign)
 	rng.seed = hash([place, profile.done.size()])  # the same ways each time back here
-	plan = CampPlan.new(choices(), CampPlan.is_main(camp_place()))
+	plan = CampPlan.new(choices(), CampPlan.is_main(camp_place()), camp_place() == 0)
 	spots = plan.spots()
 	_build_world()
 	_show_place()
 	if profile.on_map.is_empty():
 		profile.save(path)  # the game is kept between missions, here
+	if not profile.run.gift.is_empty():
+		open_gift.call_deferred()
 	if bool(Router.params.get("first", false)) and profile.done.is_empty():
 		Router.params.erase("first")
 		start_mission.call_deferred(1, 0)
+
+
+## The gift of the mission just won waits (HeroRun.gift): its cards come up over the camp once
+## the camp is the screen shown (a story after the mission goes first).
+func open_gift() -> void:
+	if Router.current == self:
+		Router.push("gift", {"profile_path": path})
 
 
 func _build_world() -> void:
@@ -92,7 +102,10 @@ func _build_world() -> void:
 			_add_arrow(e)
 	for label_name in LABELS:
 		var spot := spot_of(LABELS[label_name][0])
-		(get_node("%" + label_name) as Node3D).position = spot.at + LABELS[label_name][1]
+		var label: Node3D = get_node("%" + label_name)
+		label.visible = not spot.is_empty()  # no town hall in a camp of the run
+		if label.visible:
+			label.position = spot.at + LABELS[label_name][1]
 
 
 ## The spot of a kind ("smith", "hall"; the first way for "way").
@@ -207,13 +220,15 @@ func exit_crossed(pos: Vector3) -> Dictionary:
 	return {} if i < 0 else spots[i]
 
 
+## The line under the camp by the town hall or the smithy (the smithy of a camp of the run only
+## buys and sells); nothing elsewhere.
 func _hint_text(s: Dictionary) -> String:
 	match str(s.get("kind", "")):
 		"hall":
 			return InputSetup.hint("camp.enter_hall")
 		"smith":
-			return InputSetup.hint("camp.enter_smith")
-	return InputSetup.hint("camp.hint_walk")
+			return InputSetup.hint("camp.enter_smith" if camp_place() == 0 else "camp.enter_shop")
+	return ""
 
 
 func use(s: Dictionary) -> void:

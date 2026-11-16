@@ -6,7 +6,7 @@ const SIDES := ["plain", "cossack", "crown", "horde", "hero"]
 const SCREENS := [
 	"story_screen",
 	"briefing_screen",
-	"visiting_screen",
+	"gift_screen",
 	"new_game_screen",
 	"mission_screen",
 ]

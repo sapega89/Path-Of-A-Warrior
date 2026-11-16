@@ -2,10 +2,21 @@ extends "res://tests/test_case.gd"
 
 
 func test_the_sounds_are_there() -> void:
-	for n in 3:
-		check(ResourceLoader.exists(Audio.MUSIC_PATH % n), "tune %d" % n)
+	for tune: String in Audio.TUNES:
+		check(ResourceLoader.exists(Audio.MUSIC_PATH % tune), tune)
 	for n in range(3, 17):
 		check(ResourceLoader.exists(Audio.SFX_PATH % n), "effect %d" % n)
+
+
+func test_the_tunes_are_long_loops() -> void:
+	for tune: String in Audio.TUNES:
+		var stream := load(Audio.MUSIC_PATH % tune) as AudioStreamOggVorbis
+		check(stream != null and stream.get_length() > 60.0, "%s goes on over a minute" % tune)
+	Audio.play_music(-1)
+	Audio.play_music(1)
+	var playing := Audio.get_node("Music") as AudioStreamPlayer
+	check((playing.stream as AudioStreamOggVorbis).loop, "and plays round and round")
+	Audio.play_music(-1)
 
 
 func test_each_screen_has_its_tune() -> void:
@@ -16,6 +27,9 @@ func test_each_screen_has_its_tune() -> void:
 	eq(Audio.music, 2, "the menus")
 	Audio._on_screen_changed("mission")
 	eq(Audio.music, 1, "a mission")
+	Audio._on_screen_changed("camp")
+	eq(Audio.music, 2, "the camp has the menus' tune")
+	Audio._on_screen_changed("mission")
 	Audio._on_screen_changed("story")
 	eq(Audio.music, 1, "the story chooses its own")
 	Audio.play_music(-1)

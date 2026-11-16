@@ -1,11 +1,13 @@
 extends Node
-## The music and the sound effects: the three tunes (0 the title, 1 the missions, 2 the
-## menus) and the effects 3..16, from assets/original/sound (godot/tools/import_original.py).
+## The music and the sound effects: the three tunes (TUNES: 0 the title, 1 the missions, 2 the
+## camp and the menus, from assets/music, made by godot/tools/music/build.py) and the effects
+## 3..16, from assets/original/sound (godot/tools/import_original.py).
 ## Each screen has its tune (SCREEN_MUSIC); the story chooses its own by the page. A tune
 ## asked for again goes on playing. An effect cuts off the effects still playing, except
 ## the short hits (OVERLAPPING); after effect 9 nothing new plays for half a second.
 
-const MUSIC_PATH := "res://assets/original/sound/music_%d.ogg"
+const TUNES: Array[String] = ["duma", "pokhid", "plavni"]
+const MUSIC_PATH := "res://assets/music/%s.ogg"
 const SFX_PATH := "res://assets/original/sound/sfx_%d.wav"
 const SCREEN_MUSIC := {
 	"title": 0,
@@ -13,6 +15,7 @@ const SCREEN_MUSIC := {
 	"game_menu": 2,
 	"mission": 1,
 	"campaign": 2,
+	"camp": 2,
 	"settings": 2,
 	"controls": 2,
 	"management": 2,
@@ -58,7 +61,7 @@ func play_music(tune: int) -> void:
 	_music_player.stop()
 	if tune < 0:
 		return
-	var stream := _stream(MUSIC_PATH % tune)
+	var stream := _stream(MUSIC_PATH % TUNES[tune])
 	if stream is AudioStreamOggVorbis:
 		(stream as AudioStreamOggVorbis).loop = true
 	_music_player.stream = stream

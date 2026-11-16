@@ -72,7 +72,7 @@ static func create_enemy(sim: MapSim, kind: int, tx: int, ty: int, side: int) ->
 			sim.boss_fight = true
 		sim.boss_spawned = true
 		set_general(sim, kind)
-		MapTalks.start_map_talk(sim)
+		MapTalks.start_map_talk(sim, kind)
 		general_stats(sim, e)
 		sim.waves[1] = 1
 	sim.enemies.append(e)
@@ -91,7 +91,7 @@ static func enemy_stats(sim: MapSim, e: MapActor, kind: int) -> void:
 		e.level = sim.hero.level + sim.rng.below(16) - 5
 	e.attack = (BASE_ATTACK[kind] + e.level) * ATTACK_PCT[kind] / 100
 	e.defense = e.level - 1
-	e.hp = BASE_HP[kind] + 3 * e.level
+	e.hp = (BASE_HP[kind] + 3 * e.level) * sim.enemy_hp_percent / 100
 	e.max_hp = e.hp
 
 
@@ -100,7 +100,7 @@ static func general_stats(sim: MapSim, e: MapActor) -> void:
 	e.level = sim.hero.level + sim.waves[1]
 	e.attack = (int(sim.general.get("attack", 0)) + e.level - 1) * 6 / 5
 	e.defense = (int(sim.general.get("defense", 0)) + e.level - 1) * 6 / 5
-	e.hp = int(sim.general.get("hp", 1)) + (e.level - 1) * 3
+	e.hp = (int(sim.general.get("hp", 1)) + (e.level - 1) * 3) * sim.enemy_hp_percent / 100
 	e.max_hp = e.hp
 
 
