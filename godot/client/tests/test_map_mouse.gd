@@ -16,7 +16,7 @@ func _hero_middle(screen: Control) -> Vector2:
 
 
 func _screen() -> Control:
-	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	Router.params = {"lord": 1, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	return screen

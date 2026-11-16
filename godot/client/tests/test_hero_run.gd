@@ -22,7 +22,7 @@ func _hero_mid_run() -> Profile:
 
 
 func _sim(won: bool) -> RefCounted:
-	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim: RefCounted = MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	sim.won = won
 	return sim
 

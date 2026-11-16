@@ -26,7 +26,7 @@ func test_exp_and_levels() -> void:
 ## The mission knows the places left in the Inventory (a gear found with none stays on the floor).
 func test_the_mission_knows_the_places_left() -> void:
 	var p := Profile.new()
-	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim: RefCounted = MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	p.apply_to(sim)
 	var empty: int = sim.free_places
 	check(empty > 0 and empty <= p.backpack.size(), "the places left: %d" % empty)
@@ -38,7 +38,7 @@ func test_the_mission_knows_the_places_left() -> void:
 func test_mission_goes_in_and_out() -> void:
 	var p := Profile.new()
 	p.quick_slots[0] = [4, 2]
-	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim: RefCounted = MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	p.apply_to(sim)
 	eq(sim.hero.attack, 6, "the hero's attack")
 	eq(int(sim.quick_slots[0][1]), 2, "his potions")
@@ -76,7 +76,7 @@ func test_saved_and_loaded() -> void:
 
 
 func _sim_won(won: bool) -> RefCounted:
-	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim: RefCounted = MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	sim.won = won
 	sim.mission_gold = 2
 	return sim

@@ -2,9 +2,9 @@
 extends "res://tests/test_case.gd"
 
 
-## Mission 1 of lord 1 on map 1, the same random numbers every run.
+## The first mission on the three rooms (the tests' own map), the same random numbers every run.
 func _sim(enemies: bool = true) -> RefCounted:
-	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim: RefCounted = MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	sim.rng = GameRandom.new(1)
 	sim.no_enemies = not enemies
 	return sim
@@ -39,17 +39,21 @@ func _duel() -> Array:
 
 
 func test_archers_stand_on_their_cells() -> void:
-	# Map 1 puts an archer on cell (3, 1) of its first room in its fourth mission.
-	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 3, Vector2i(4, 2))
+	# The scripts of the three rooms put two archers in the middle room in the second mission:
+	# on cells (7, 11) and (2, 12).
+	var middle := Vector2i(4, 9)
+	var sim: RefCounted = MapSim.new(own_map("three_rooms"), 1, middle)
 	var archers: Array = sim.enemies.filter(func(e): return e.type == MapSim.KIND_ARCHERS)
-	eq(archers.size(), 1, "the archer of the room's script")
-	if archers.size() == 1:
-		eq(archers[0].pos, Vector2i(3 * 27 + 12, 1 * 27 + 20), "on his cell")
-		eq(archers[0].alerted, 1, "on guard at once")
+	eq(
+		archers.map(func(e): return e.pos),
+		[Vector2i(7 * 27 + 12, 11 * 27 + 20), Vector2i(2 * 27 + 12, 12 * 27 + 20)],
+		"the archers of the room's scripts, on their cells"
+	)
+	check(archers.all(func(e): return e.alerted == 1), "on guard at once")
 	eq(sim.enemies_alive, 0, "archers do not count for clearing the room")
-	sim = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	sim = MapSim.new(own_map("three_rooms"), 0, middle)
 	eq(sim.enemies.size(), 0, "another mission: nobody there")
-	sim = MapSim.new(MapBuilder.load_map(1), 3, Vector2i(4, 2))
+	sim = MapSim.new(own_map("three_rooms"), 1, middle)
 	sim.no_enemies = true
 	sim.enemies.clear()
 	sim.enter_room()
@@ -360,13 +364,13 @@ func test_barrel_breaks() -> void:
 		sim.tick(-1, -1, sim.banner != 0)
 	var barrel = null
 	for b in sim.breakables:
-		if b.tile == Vector2i(4, 6):
+		if b.tile == Vector2i(2, 4):
 			barrel = b
-	check(barrel != null, "the barrel at (4, 6) is in the room")
+	check(barrel != null, "the barrel at (2, 4) is in the room")
 	if barrel == null:
 		return
-	eq(barrel.hp, 41, "a barrel takes 41")
-	sim.hero.pos = Vector2i(120, 150)
+	eq(barrel.hp, 21, "a barrel takes 21")
+	sim.hero.pos = Vector2i(2 * 27 + 12, 3 * 27 + 15)  # on the cell above it
 	sim.hero.facing = 0
 	sim.hero.dir = 0
 	for t in 120:
@@ -374,7 +378,7 @@ func test_barrel_breaks() -> void:
 		if barrel.hp < 1:
 			break
 	check(barrel.hp < 1, "broken by the sword: %d" % barrel.hp)
-	eq(int(sim.objects[6 * sim.w + 4]), 0, "the cell is free")
+	eq(int(sim.objects[4 * sim.w + 2]), 0, "the cell is free")
 	for t in 13:
 		sim.tick(-1, -1)
 	check(not barrel.active, "gone after blinking")

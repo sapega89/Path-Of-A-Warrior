@@ -10,7 +10,7 @@ extends BaseScreen
 ## fire skill hits, the auras of buffs, the blood of hits, weapon trails, the archers' arrows), and
 ## the HUD. A talk on the map shows the portrait of who speaks beside the line, just
 ## above the HUD.
-## Params: {lord, mission, seed (optional: the same enemies every run)}.
+## Params: {lord, mission, seed (optional: the same enemies every run), map_path (a test's map)}.
 ## A hit on the map is felt (scripts/world/combat_feel.gd, the options Hit effects, Screen shake,
 ## Vibration): the picture stands still a moment, the camera shakes, the one hit flashes white and
 ## recoils, the one killed flies off, the hit sound varies a little and the pad rumbles.
@@ -86,7 +86,8 @@ func _ready() -> void:
 	mission_info = ms[mission] if mission < ms.size() else {}
 	lord_name = campaign.lord_name(lord_id)
 
-	var map := MapBuilder.load_map(Campaign.lord_map(lord_id))
+	var map_path := MapBuilder.map_path(Campaign.lord_map(lord_id))
+	var map := MapBuilder.load_map_file(str(p.get("map_path", map_path)))
 	builder.build(map)
 	profile = Profile.load_or_new(profile_path())
 	var s := MapBuilder.mission_start(map, mission)

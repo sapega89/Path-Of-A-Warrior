@@ -26,7 +26,12 @@ static func map_path(number: int) -> String:
 
 
 static func load_map(number: int) -> Dictionary:
-	var f := FileAccess.open(map_path(number), FileAccess.READ)
+	return load_map_file(map_path(number))
+
+
+## A map from its file: a map of the campaign, or a test's own (tests/maps); {} if there is none.
+static func load_map_file(path: String) -> Dictionary:
+	var f := FileAccess.open(path, FileAccess.READ)
 	if f == null:
 		return {}
 	var data: Variant = JSON.parse_string(f.get_as_text())

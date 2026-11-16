@@ -22,7 +22,7 @@ func _skip_key() -> InputEventAction:
 ## Hard has no auto-hunt: no AUTO corner, and Tab / F / the pad's Back do nothing.
 func test_no_auto_on_hard() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	Router.params = {"lord": 1, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	var view: Vector2 = screen.hud.get_viewport_rect().size
@@ -45,7 +45,7 @@ func test_no_auto_on_hard() -> void:
 
 func test_skip_corner_on_the_map() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	Router.params = {"lord": 1, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	var view: Vector2 = screen.hud.get_viewport_rect().size
@@ -101,7 +101,7 @@ func _pad_back(pressed: bool) -> void:
 func test_pad_back_skips_or_toggles_auto() -> void:
 	var old: Dictionary = Router.params
 	var was: String = InputSetup.device
-	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	Router.params = {"lord": 1, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	screen.sim.difficulty = 1

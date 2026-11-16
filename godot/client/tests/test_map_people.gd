@@ -4,7 +4,7 @@ extends "res://tests/test_case.gd"
 
 
 func _sim() -> RefCounted:
-	return MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	return MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 
 
 func test_every_action_has_a_clip() -> void:
@@ -126,7 +126,7 @@ func test_a_squad_is_three() -> void:
 
 func test_the_mission_draws_figures() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	Router.params = {"lord": 1, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	screen.set_process(false)

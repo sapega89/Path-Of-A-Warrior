@@ -7,7 +7,7 @@ const TEST_PATH := "user://test_vows.json"
 
 
 func _sim(won: bool) -> MapSim:
-	var sim := MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim := MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	sim.won = won
 	return sim
 

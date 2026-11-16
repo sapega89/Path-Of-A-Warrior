@@ -75,7 +75,7 @@ func test_the_hud_draws_them_smooth() -> void:
 
 func test_things_on_the_ground() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	Router.params = {"lord": 1, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	screen.set_process(false)

@@ -1,14 +1,15 @@
 extends "res://tests/test_case.gd"
-## The maps of the campaign in the new art (scripts/world/map_art.gd): every part and prop is
-## known, the ground rises where it is blocked and stays flat where people walk, the faces of
-## cliffs climb, bridges and decks hold, what stands on a cell is a 3D piece, the breakable ones
-## flash.
+## The maps in the new art (scripts/world/map_art.gd): every part and prop of the campaign's
+## maps is known; on the tests' own maps the ground rises where it is blocked and stays flat
+## where people walk, the faces of cliffs climb, bridges and decks hold, what stands on a cell is
+## a 3D piece, the breakable ones flash.
 
 
-func _map(n: int) -> Node3D:
+## One of the tests' own maps (three_rooms, terrain) in the new art.
+func _map(name: String) -> Node3D:
 	var b: Node3D = MapArt.new()
 	root.add_child(b)
-	b.build(MapBuilder.load_map(n))
+	b.build(own_map(name))
 	return b
 
 
@@ -45,21 +46,21 @@ func test_every_part_and_prop_is_known() -> void:
 
 
 func test_people_walk_on_flat_ground() -> void:
-	for n in [1, 2, 5, 9, 27, 33, 43]:
-		var b := _map(n)
+	for name in ["three_rooms", "terrain"]:
+		var b := _map(name)
 		var raised := 0
 		for y in b.h:
 			for x in b.w:
 				if b.is_blocked(x, y):
 					raised += 1 if b.height_of(x, y) > 0.0 else 0
 				else:
-					eq(b.height_of(x, y), 0.0, "map %d: (%d, %d) is free and flat" % [n, x, y])
-		check(raised > 0, "map %d: some blocked cells rise" % n)
+					eq(b.height_of(x, y), 0.0, "%s: (%d, %d) is free and flat" % [name, x, y])
+		check(raised > 0, "%s: some blocked cells rise" % name)
 		b.free()
 
 
 func test_the_ground_and_around() -> void:
-	var b := _map(1)
+	var b := _map("three_rooms")
 	var ground: Node3D = b.get_node("Ground")
 	check(ground.get_child_count() > 1, "in chunks")
 	var corners := {}
@@ -94,18 +95,19 @@ func test_the_ground_and_around() -> void:
 	b.free()
 
 
+## The cliff of the terrain map: its stone top in rows 0 and 1, its face of rock in rows 2..4.
 func test_a_cliff_climbs_to_its_top() -> void:
-	var b := _map(5)
-	eq(_kind(b, 9, 1), "stone", "the top of the cliff")
-	eq(b.height_of(9, 1), MapArt.RAISE["stone"], "rises")
-	eq(_kind(b, 9, 5), "rock", "its face")
+	var b := _map("terrain")
+	eq(_kind(b, 2, 1), "stone", "the top of the cliff")
+	eq(b.height_of(2, 1), MapArt.RAISE["stone"], "rises")
+	eq(_kind(b, 2, 3), "rock", "its face")
 	var pw: int = b.w * MapArt.PARTS
 	var faces := 0
-	for py in range(MapArt.PARTS * 4, MapArt.PARTS * 9):
-		if b.part_face[py * pw + 9 * MapArt.PARTS] == 1:
+	for py in range(MapArt.PARTS * 2, MapArt.PARTS * 5):
+		if b.part_face[py * pw + 2 * MapArt.PARTS] == 1:
 			faces += 1
-			var here: float = b.part_raise[py * pw + 9 * MapArt.PARTS]
-			var above: float = b.part_raise[(py - 1) * pw + 9 * MapArt.PARTS]
+			var here: float = b.part_raise[py * pw + 2 * MapArt.PARTS]
+			var above: float = b.part_raise[(py - 1) * pw + 2 * MapArt.PARTS]
 			check(
 				here > 0.0 and here < above,
 				"the face climbs north: %.2f under %.2f" % [here, above]
@@ -115,31 +117,33 @@ func test_a_cliff_climbs_to_its_top() -> void:
 
 
 func test_a_pit_in_the_cliff_is_filled() -> void:
-	var b := _map(5)
-	eq(b.prop_at(8, 1), "pebbles", "pebbles on the cliff's top")
-	check(b.is_blocked(8, 1), "blocked")
-	eq(b.height_of(8, 1), b.height_of(9, 1), "the cell rises with the cliff")
+	var b := _map("terrain")
+	eq(b.prop_at(3, 1), "pebbles", "pebbles on the cliff's top")
+	check(b.is_blocked(3, 1), "blocked")
+	eq(b.height_of(3, 1), b.height_of(2, 1), "the cell rises with the cliff")
 	var on_top := false
 	for p in b.props:
-		if p.position.distance_to(Vector3(8.5, b.height_of(8, 1), 1.5)) < 0.01:
+		if p.position.distance_to(Vector3(3.5, b.height_of(3, 1), 1.5)) < 0.01:
 			on_top = true
 	check(on_top, "the pebbles lie on its top")
 	b.free()
 
 
+## The river of the terrain map runs down columns 9 and 10, the log bridge across it in row 4.
 func test_water_bridges_and_decks() -> void:
-	var b := _map(43)
+	var b := _map("terrain")
 	check(b.has_node("Water"), "a river")
-	eq(_kind(b, 11, 21), "wood", "a log bridge")
-	eq(_kind(b, 11, 22), "wood", "over the water")
-	eq(b.prop_at(10, 22), "palisade", "a post at its side")
-	eq(_kind(b, 10, 22), "wood", "stands on a deck, not in the water")
-	eq(_kind(b, 7, 0), "water", "the river")
+	eq(_kind(b, 9, 4), "wood", "a log bridge")
+	eq(_kind(b, 10, 4), "wood", "over the water")
+	check(not b.is_blocked(10, 4), "people cross it")
+	eq(b.prop_at(9, 3), "palisade", "a post at its side")
+	eq(_kind(b, 9, 3), "wood", "stands on a deck, not in the water")
+	eq(_kind(b, 9, 0), "water", "the river")
 	b.free()
 
 
 func test_what_stands_on_the_map() -> void:
-	var b := _map(9)
+	var b := _map("terrain")
 	check(b.props.size() > 20, "props: %d" % b.props.size())
 	var tents := 0
 	for p in b.props:
@@ -162,7 +166,7 @@ func test_what_stands_on_the_map() -> void:
 ## Grass and wheat sway (grass.gdshader), are lit as the ground, and only past the map's edge
 ## is wheat sown.
 func test_grass_and_wheat() -> void:
-	var b := _map(9)
+	var b := _map("terrain")
 	var chunk: MultiMeshInstance3D = b.get_node("Grass").get_child(0)
 	eq(chunk.material_override, Grass.material(), "one material for all the grass")
 	eq(chunk.cast_shadow, GeometryInstance3D.SHADOW_CASTING_SETTING_OFF, "no shadows of its own")
@@ -184,8 +188,8 @@ func test_grass_and_wheat() -> void:
 
 
 func test_breakables_flash() -> void:
-	var b := _map(1)
-	eq(b.breakables.size(), 10, "breakable objects")
+	var b := _map("three_rooms")
+	eq(b.breakables.size(), 6, "breakable objects")
 	var materials := {}
 	for o in b.breakables:
 		var at: PackedStringArray = String(o.name).split("_")
@@ -208,7 +212,7 @@ func test_breakables_flash() -> void:
 ## A thing one can break wears two rings and warm edges that glow and dim; the other props do
 ## not.
 func test_breakables_marked() -> void:
-	var b := _map(1)
+	var b := _map("three_rooms")
 	for o in b.breakables:
 		var m: ShaderMaterial = o.get_meta("material")
 		var dark := m.next_pass as ShaderMaterial
@@ -251,7 +255,7 @@ func test_breakable_rings() -> void:
 
 func test_the_mission_stands_on_the_new_maps() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"lord": 5, "mission": 0, "seed": 2}
+	Router.params = {"lord": 5, "mission": 0, "seed": 2, "map_path": own_map_path("terrain")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	screen.set_process(false)

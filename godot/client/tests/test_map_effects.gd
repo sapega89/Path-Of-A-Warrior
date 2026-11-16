@@ -179,7 +179,7 @@ func _nearest_edge(part: MeshInstance3D, point: Vector3) -> float:
 
 
 func test_arrows_fly_their_way() -> void:
-	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim: RefCounted = MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	var fx: Node3D = MapEffects.new()
 	var a = sim.arrows[0]
 	a.active = true
@@ -209,7 +209,7 @@ func test_arrows_fly_their_way() -> void:
 
 func test_the_mission_draws_effects_in_code() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	Router.params = {"lord": 1, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	screen.set_process(false)

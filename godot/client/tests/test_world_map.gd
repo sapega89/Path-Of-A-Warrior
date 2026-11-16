@@ -109,7 +109,7 @@ func test_the_looks_of_the_places() -> void:
 
 
 func test_a_room_shows_only_itself_and_the_next() -> void:
-	var map: Dictionary = MapBuilder.load_map(6)
+	var map: Dictionary = own_map("three_rooms")
 	var rooms: RefCounted = Rooms.new(map, 0)
 	var next: Array = rooms.next_rooms(0)
 	check(not next.is_empty(), "the first room leads on")
@@ -137,7 +137,7 @@ func test_a_room_shows_only_itself_and_the_next() -> void:
 
 func test_after_a_mission_won_the_way_on_is_chosen_in_the_room() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"lord": 4, "mission": 0, "seed": 2}
+	Router.params = {"lord": 4, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	var p: RefCounted = Profile.new()
@@ -190,10 +190,11 @@ func test_after_a_mission_won_the_way_on_is_chosen_in_the_room() -> void:
 	Router.params = old
 
 
-## Yellow Waters' last room has a wall on its right: no way on is put there.
+## The last of the three rooms has a wall on its right: no way on from Yellow Waters is put
+## there.
 func test_the_ways_on_only_where_the_hero_can_walk_out() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"lord": 2, "mission": 0, "seed": 2}
+	Router.params = {"lord": 2, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	var sim: MapSim = screen.sim
@@ -208,9 +209,9 @@ func test_the_ways_on_only_where_the_hero_can_walk_out() -> void:
 		var ways: Array = screen.ways_on(2)
 		eq(ways.size(), 1, "one place on from Yellow Waters")
 		check(int(ways[0].exit) != Rooms.EXIT_RIGHT, "never into the wall (%d)" % n)
-	sim.cell = 0
-	sim.hero.pos = Vector2i(27 + 94, 27 + 94)
-	eq(sim.open_sides(), [Rooms.EXIT_DOWN, Rooms.EXIT_UP], "the first room: only down and up")
+	sim.cell = 1
+	sim.hero.pos = Vector2i(27 + 94, 27 + 189 + 94)
+	eq(sim.open_sides(), [Rooms.EXIT_DOWN, Rooms.EXIT_UP], "the middle room: only down and up")
 	screen.free()
 	Router.params = old
 
