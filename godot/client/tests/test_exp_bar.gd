@@ -1,5 +1,5 @@
 extends "res://tests/test_case.gd"
-## The exp bar of the pages after a won mission (pyport's draw_exp_bar): what the hero had,
+## The exp bar of the pages after a won mission: what the hero had,
 ## what the mission gives growing 4 px a tick, a level up at the end of the bar.
 
 

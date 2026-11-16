@@ -1,5 +1,5 @@
 extends "res://tests/test_case.gd"
-## A talk on the map, as pyport's: the hero speaks by his own name, and the portrait of who
+## A talk on the map: the hero speaks by his own name, and the portrait of who
 ## speaks stands beside the line, just above the HUD.
 
 

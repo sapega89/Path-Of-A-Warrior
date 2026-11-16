@@ -8,18 +8,8 @@ godot/build/
 # Godot import cache (optional, uncomment if too large)
 # .godot/imported/
 
-# Java / J2ME build
-*.class
-*.jar
-*.jad
+# Build output
 build/
-out/
-target/
-.idea/
-*.iml
-.settings/
-.project
-.classpath
 
 # OS
 .DS_Store
@@ -27,6 +17,8 @@ Thumbs.db
 desktop.ini
 
 # Editor / IDE
+.idea/
+*.iml
 *.swp
 *.swo
 *~
@@ -35,6 +27,5 @@ desktop.ini
 # Logs
 *.log
 
-# POW Multiplayer server data (pyport/pow_server)
-*.sqlite
+# Python tools (godot/tools)
 __pycache__/

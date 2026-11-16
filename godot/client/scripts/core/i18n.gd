@@ -5,11 +5,11 @@ extends Node
 ##   {"menu.play": {"en": "Play", "uk": "Грати"}, ...}
 ## Controls translate their text automatically, code uses tr("menu.play").
 ## JSON (not CSV) so that tests and headless runs need no import step.
-## res://i18n/names.json (made by godot/tools/import_original.py) has the same shape: the
-## English names of heroes, skills and things -> their text per locale, so tr(name) shows a
-## name in the player's language. res://i18n/story.json (made by the same tool from
-## godot/tools/own_story.json) likewise: the English story texts of data (mission briefings,
-## the opening and the endings, the talks, the visits, the help) -> their text per locale.
+## res://i18n/names.json has the same shape: the English names of heroes, skills and things
+## (as data/*.json has them) -> their text per locale, so tr(name) shows a name in the player's
+## language. res://i18n/story.json likewise: the English story texts of data (mission
+## briefings, the opening and the endings, the talks, the visits, the help) -> their text per
+## locale. A text changed in data is changed in its i18n file too.
 
 const STRINGS_PATH := "res://i18n/strings.json"
 const NAMES_PATH := "res://i18n/names.json"

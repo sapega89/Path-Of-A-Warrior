@@ -141,10 +141,10 @@ func test_right_click_is_back() -> void:
 	Router.params = old
 
 
-## The keyboard as pyport's: WASD and the numeric keypad move and choose in menus (5 and J are
+## The keyboard: WASD and the numeric keypad move and choose in menus (5 and J are
 ## OK), Enter and Num 5 attack, Num 1 3 7 9 0 are the skills, and Backspace is BACK, except in
 ## a text field, where it deletes.
-func test_keyboard_as_pyport() -> void:
+func test_keyboard_keys() -> void:
 	InputSetupScript.register()
 	for pair in [
 		[KEY_W, "ui_up"],

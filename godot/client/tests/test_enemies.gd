@@ -392,7 +392,7 @@ func test_gold_is_picked_up() -> void:
 	check(sim.drops.is_empty(), "nothing left on the floor")
 
 
-## As pyport's popup 13: a gear picked up shows "<its name> Acquired!!" for 20 ticks while the
+## A gear picked up shows "<its name> Acquired!!" for 20 ticks while the
 ## map waits (a key: 2); with no place left in the Inventory it stays on the floor.
 func test_a_gear_picked_up_is_acquired() -> void:
 	var sim := _sim(false)

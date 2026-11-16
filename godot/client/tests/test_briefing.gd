@@ -1,5 +1,5 @@
 extends "res://tests/test_case.gd"
-## Before a mission, as pyport: its description, "Do you want to accept this mission?", the
+## Before a mission: its description, "Do you want to accept this mission?", the
 ## briefing (the advice and the hero's answer), then the map.
 
 const RouterScript := preload("res://scripts/core/router.gd")

@@ -6,8 +6,9 @@
 
 1. Godot 4.5.1 (той самий, що в CI: `.github/workflows/godot.yml`).
 2. `godot --headless --path godot/client --import` після клонування.
-3. Для змін у даних: Python 3 + `pip install pillow`, потім `python godot/tools/import_original.py`.
-   Мелодії ще потребують fluidsynth, fluid-soundfont-gm і ffmpeg; без них конвертер лишає готові.
+3. Дані гри (`godot/client/data/*.json`) і тексти (`godot/client/i18n/*.json`) правляться руками:
+   змінили англійський текст у `data`, змініть його й у `i18n`. Графіку й музику роблять скрипти
+   `godot/tools/art` і `godot/tools/music` (що їм треба — у їхніх README).
 
 ## Будова клієнта
 
@@ -16,7 +17,6 @@
 - `scripts/sim/` — логіка гри без вузлів (`map_sim.gd` — карта тік за тіком); сцени лише малюють її стан
 - `scripts/world/` — 3D-світ: карта, люди, ефекти, камера
 - `scripts/ui/` — спільні елементи інтерфейсу, тема
-- `scripts/net/` — зв'язок із сервером; `server/` — сам сервер (той самий проєкт, без графіки)
 - `tests/test_*.gd` — тести, `tests/runner.tscn` запускає всі
 
 Код поступово переходить на звичну для Godot структуру (сцени `.tscn` для екранів, `BaseScreen`,
@@ -36,7 +36,6 @@ python godot/tools/check_standards.py
   записані в `godot/tools/standards_baseline.json`; прибрали якесь, тоді
   `python godot/tools/check_standards.py --update` у тому ж PR.
 - Зміна поведінки має тест; зміна, яку просив гравець, описана в `godot/README.md`.
-- Змінили конвертер — перезапустіть його і закомітьте дані (CI перевіряє, що вони свіжі).
 - Скриншоти CI (`tools/shots.tscn`) не змінюються, якщо зміна не про вигляд.
 - Один PR — одна річ: не змішуйте рефакторинг із новою фічею.
 - PR іде в гілку `dev`.

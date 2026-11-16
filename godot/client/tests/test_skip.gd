@@ -1,5 +1,5 @@
 extends "res://tests/test_case.gd"
-## SKIP, as pyport's left soft key: Q, F1 or the pad's Back, or a click on SKIP. It skips the
+## SKIP, the left soft key: Q, F1 or the pad's Back, or a click on SKIP. It skips the
 ## talk on the map, the briefing and the story.
 
 
@@ -123,7 +123,7 @@ func test_pad_back_skips_or_toggles_auto() -> void:
 	Router.params = old
 
 
-## As pyport's: on a talk of an ending SKIP goes to its pictures, on a picture to the next
+## On a talk of an ending SKIP goes to its pictures, on a picture to the next
 ## page; on a talk of the opening it ends the story.
 func test_skip_the_story() -> void:
 	var old: Dictionary = Router.params
