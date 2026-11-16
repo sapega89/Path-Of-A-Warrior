@@ -2,8 +2,9 @@ class_name MapGenerator
 extends RefCounted
 ## Makes the map of a place from its plan (MapPlan) and the rules of data/map_rules.json, in the
 ## format of the campaign's maps (MapBuilder), step by step on a MapDraft: the grid of rooms and
-## each mission's route (RoomLayout), what stands in the rooms (RoomFill), the ground
-## (GroundPaint), the plan's generals and talks in the rooms of the routes. Each step draws from
+## each mission's route (RoomLayout), what stands in the rooms (RoomFill, with the rooms made by
+## hand: SetPiece), the ground (GroundPaint), the plan's generals and talks in the rooms of the
+## routes. Each step draws from
 ## its own random numbers, started from the seed and the step's name, so that new rules for one
 ## step do not move what the others make. A map the game cannot play (MapCheck) is made again
 ## from the next seed, up to TRIES seeds.
