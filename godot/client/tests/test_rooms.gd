@@ -42,9 +42,8 @@ func test_campaign_tables() -> void:
 	var ms: Array = c.lord_missions(1)
 	eq(ms.size(), 4, "lord 1 has 4 missions")
 	eq(ms[0].name, "Colonel Bairak", "first mission")
-	var sim: RefCounted = MapSim.new(
-		MapBuilder.load_map(1), 0, Vector2i(int(ms[0].start[0]), int(ms[0].start[1]))
-	)
+	var map_1 := MapBuilder.load_map(1)
+	var sim: RefCounted = MapSim.new(map_1, 0, MapBuilder.mission_start(map_1, 0))
 	eq(sim.hero.pos, Vector2i(4 * 27 + 12, 2 * 27 + 20), "start position in pixels")
 	# Every lord's map exists and its missions have room data.
 	for id in c.lords:

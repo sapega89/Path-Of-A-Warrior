@@ -287,32 +287,7 @@ func camp_place() -> int:
 
 ## The land of a place, from its map: "lake", "mountains", "forest", "town" or "steppe".
 static func terrain(id: int) -> String:
-	return terrain_of(MapBuilder.load_map(id))
-
-
-static func terrain_of(map: Dictionary) -> String:
-	var n := maxi(int(map.get("w", 0)) * int(map.get("h", 0)), 1)
-	var count := {"lake": 0, "mountains": 0, "forest": 0, "town": 0}
-	for layer in ["ground", "upper"]:
-		for t in map.get(layer, []):
-			var k := int(t)
-			if (k >= 73 and k <= 81) or k == 145 or k == 149:
-				count.lake += 1
-			elif (k >= 69 and k <= 72) or k == 101 or k == 102 or (k >= 36 and k <= 48):
-				count.mountains += 1
-			elif k >= 63 and k <= 68:
-				count.forest += 1
-			elif (k >= 146 and k <= 188) or (k >= 193 and k <= 236):
-				count.town += 1
-	if count.lake >= 0.08 * n:
-		return "lake"
-	if count.mountains >= 0.1 * n:
-		return "mountains"
-	if count.forest >= 0.1 * n:
-		return "forest"
-	if count.town >= 0.2 * n:
-		return "town"
-	return "steppe"
+	return String(MapBuilder.load_map(id).get("biome", "steppe"))
 
 
 func _shuffle(a: Array) -> void:

@@ -18,7 +18,7 @@ static func find_breakables(sim: MapSim) -> void:
 			b.tile = Vector2i(x, y)
 			b.pos = Vector2i(x * 27 + 12, y * 27 + 20)
 			b.kind = kind
-			b.hp = 41 if kind in [101, 113] else 21
+			b.hp = int(MapSim.table("breakable_hp")[kind])
 			sim.breakables.append(b)
 
 

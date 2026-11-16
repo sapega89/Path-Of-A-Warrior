@@ -162,14 +162,13 @@ func _mission(p: Profile, lord: int, mission: int) -> Dictionary:
 
 
 func _play(p: Profile, lord: int, info: Dictionary, mission: int) -> MapSim:
-	var s: Array = info.get("start", [4, 4])
 	var map := MapBuilder.load_map(Campaign.lord_map(lord))
-	var sim := MapSim.new(map, mission, Vector2i(int(s[0]), int(s[1])))
+	var sim := MapSim.new(map, mission, MapBuilder.mission_start(map, mission))
 	sim.rng = GameRandom.new(rng.randi())
 	sim.boss_type = int(info.get("boss_type", 0))
 	sim.mission_gold = int(info.get("gold", 0))
 	sim.mission_general = int(info.get("general", 0))
-	sim.time_limit = int(info.get("time_limit", 0))
+	sim.time_limit = MapBuilder.mission_time(map, mission)
 	p.apply_to(sim)
 	var pilot := Autopilot.new()
 	pilot.toggle()

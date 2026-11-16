@@ -390,16 +390,11 @@
 "missions": [
 {
 "id": 1,
-"start": [
-4,
-2
-],
 "tint": 1,
 "boss_type": 1,
 "general": 5,
 "reward": 0,
 "gold": 3,
-"time_limit": 192,
 "level_bonus": 1,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -407,16 +402,11 @@
 },
 {
 "id": 2,
-"start": [
-4,
-2
-],
 "tint": 1,
 "boss_type": 2,
 "general": 4,
 "reward": 0,
 "gold": 3,
-"time_limit": 192,
 "level_bonus": 2,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -424,16 +414,11 @@
 },
 {
 "id": 3,
-"start": [
-4,
-2
-],
 "tint": 1,
 "boss_type": 3,
 "general": 18,
 "reward": 0,
 "gold": 3,
-"time_limit": 192,
 "level_bonus": 3,
 "name": "Colonel Syvous",
 "portrait": 25,
@@ -441,16 +426,11 @@
 },
 {
 "id": 4,
-"start": [
-4,
-20
-],
 "tint": 3,
 "boss_type": 6,
 "general": 0,
 "reward": 0,
 "gold": 6,
-"time_limit": 252,
 "level_bonus": 15,
 "name": "Colonel Vovkodav",
 "portrait": 0,
@@ -458,16 +438,11 @@
 },
 {
 "id": 1,
-"start": [
-4,
-2
-],
 "tint": 1,
 "boss_type": 7,
 "general": 6,
 "reward": 0,
 "gold": 3,
-"time_limit": 192,
 "level_bonus": 1,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -475,16 +450,11 @@
 },
 {
 "id": 2,
-"start": [
-4,
-2
-],
 "tint": 1,
 "boss_type": 8,
 "general": 11,
 "reward": 0,
 "gold": 3,
-"time_limit": 192,
 "level_bonus": 2,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -492,16 +462,11 @@
 },
 {
 "id": 3,
-"start": [
-4,
-2
-],
 "tint": 1,
 "boss_type": 9,
 "general": 74,
 "reward": 0,
 "gold": 3,
-"time_limit": 192,
 "level_bonus": 3,
 "name": "Colonel Syvous",
 "portrait": 25,
@@ -509,16 +474,11 @@
 },
 {
 "id": 5,
-"start": [
-4,
-20
-],
 "tint": 3,
 "boss_type": 6,
 "general": 201,
 "reward": 0,
 "gold": 9,
-"time_limit": 252,
 "level_bonus": 30,
 "name": "Colonel Dovhan",
 "portrait": 0,
@@ -526,16 +486,11 @@
 },
 {
 "id": 6,
-"start": [
-20,
-12
-],
 "tint": 3,
 "boss_type": 10,
 "general": 6,
 "reward": 0,
 "gold": 3,
-"time_limit": 192,
 "level_bonus": 2,
 "name": "Colonel Shabliuk",
 "portrait": 0,
@@ -543,16 +498,11 @@
 },
 {
 "id": 7,
-"start": [
-11,
-2
-],
 "tint": 3,
 "boss_type": 10,
 "general": 27,
 "reward": 0,
 "gold": 3,
-"time_limit": 192,
 "level_bonus": 2,
 "name": "Colonel Tuman",
 "portrait": 0,
@@ -560,16 +510,11 @@
 },
 {
 "id": 2,
-"start": [
-3,
-2
-],
 "tint": 3,
 "boss_type": 10,
 "general": 11,
 "reward": 0,
 "gold": 3,
-"time_limit": 246,
 "level_bonus": 2,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -577,16 +522,11 @@
 },
 {
 "id": 3,
-"start": [
-1,
-9
-],
 "tint": 3,
 "boss_type": 10,
 "general": 18,
 "reward": 0,
 "gold": 3,
-"time_limit": 192,
 "level_bonus": 2,
 "name": "Colonel Syvous",
 "portrait": 25,
@@ -594,16 +534,11 @@
 },
 {
 "id": 8,
-"start": [
-11,
-20
-],
 "tint": 2,
 "boss_type": 12,
 "general": 202,
 "reward": 0,
 "gold": 5,
-"time_limit": 312,
 "level_bonus": 7,
 "name": "Colonel Yavir",
 "portrait": 0,
@@ -611,16 +546,11 @@
 },
 {
 "id": 6,
-"start": [
-18,
-2
-],
 "tint": 3,
 "boss_type": 141,
 "general": 5,
 "reward": 0,
 "gold": 3,
-"time_limit": 300,
 "level_bonus": 2,
 "name": "Colonel Shabliuk",
 "portrait": 0,
@@ -628,16 +558,11 @@
 },
 {
 "id": 7,
-"start": [
-11,
-2
-],
 "tint": 3,
 "boss_type": 141,
 "general": 27,
 "reward": 0,
 "gold": 3,
-"time_limit": 300,
 "level_bonus": 2,
 "name": "Colonel Tuman",
 "portrait": 0,
@@ -645,16 +570,11 @@
 },
 {
 "id": 2,
-"start": [
-4,
-2
-],
 "tint": 3,
 "boss_type": 141,
 "general": 58,
 "reward": 0,
 "gold": 3,
-"time_limit": 300,
 "level_bonus": 2,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -662,16 +582,11 @@
 },
 {
 "id": 3,
-"start": [
-3,
-14
-],
 "tint": 3,
 "boss_type": 141,
 "general": 18,
 "reward": 0,
 "gold": 3,
-"time_limit": 300,
 "level_bonus": 2,
 "name": "Colonel Syvous",
 "portrait": 25,
@@ -679,16 +594,11 @@
 },
 {
 "id": 8,
-"start": [
-11,
-26
-],
 "tint": 2,
 "boss_type": 12,
 "general": 203,
 "reward": 0,
 "gold": 5,
-"time_limit": 366,
 "level_bonus": 7,
 "name": "Colonel Yavir",
 "portrait": 0,
@@ -696,16 +606,11 @@
 },
 {
 "id": 3,
-"start": [
-4,
-3
-],
 "tint": 1,
 "boss_type": 16,
 "general": 74,
 "reward": 0,
 "gold": 3,
-"time_limit": 354,
 "level_bonus": 2,
 "name": "Colonel Syvous",
 "portrait": 25,
@@ -713,16 +618,11 @@
 },
 {
 "id": 9,
-"start": [
-4,
-27
-],
 "tint": 2,
 "boss_type": 12,
 "general": 204,
 "reward": 0,
 "gold": 5,
-"time_limit": 354,
 "level_bonus": 4,
 "name": "Colonel Kremin",
 "portrait": 0,
@@ -730,16 +630,11 @@
 },
 {
 "id": 6,
-"start": [
-4,
-2
-],
 "tint": 2,
 "boss_type": 14,
 "general": 15,
 "reward": 0,
 "gold": 3,
-"time_limit": 246,
 "level_bonus": 3,
 "name": "Colonel Shabliuk",
 "portrait": 0,
@@ -747,16 +642,11 @@
 },
 {
 "id": 7,
-"start": [
-3,
-27
-],
 "tint": 1,
 "boss_type": 15,
 "general": 14,
 "reward": 0,
 "gold": 5,
-"time_limit": 246,
 "level_bonus": 5,
 "name": "Colonel Tuman",
 "portrait": 0,
@@ -764,16 +654,11 @@
 },
 {
 "id": 6,
-"start": [
-4,
-27
-],
 "tint": 2,
 "boss_type": 14,
 "general": 207,
 "reward": 0,
 "gold": 3,
-"time_limit": 300,
 "level_bonus": 5,
 "name": "Colonel Shabliuk",
 "portrait": 0,
@@ -781,16 +666,11 @@
 },
 {
 "id": 7,
-"start": [
-11,
-2
-],
 "tint": 1,
 "boss_type": 15,
 "general": 14,
 "reward": 0,
 "gold": 3,
-"time_limit": 300,
 "level_bonus": 3,
 "name": "Colonel Tuman",
 "portrait": 0,
@@ -798,16 +678,11 @@
 },
 {
 "id": 2,
-"start": [
-18,
-19
-],
 "tint": 1,
 "boss_type": 20,
 "general": 21,
 "reward": 0,
 "gold": 3,
-"time_limit": 630,
 "level_bonus": 5,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -815,16 +690,11 @@
 },
 {
 "id": 10,
-"start": [
-4,
-2
-],
 "tint": 0,
 "boss_type": 21,
 "general": 205,
 "reward": 0,
 "gold": 3,
-"time_limit": 300,
 "level_bonus": 4,
 "name": "Colonel Teren",
 "portrait": 0,
@@ -832,16 +702,11 @@
 },
 {
 "id": 11,
-"start": [
-11,
-27
-],
 "tint": 1,
 "boss_type": 18,
 "general": 19,
 "reward": 0,
 "gold": 3,
-"time_limit": 408,
 "level_bonus": 4,
 "name": "Colonel Derkach",
 "portrait": 31,
@@ -849,16 +714,11 @@
 },
 {
 "id": 12,
-"start": [
-11,
-11
-],
 "tint": 2,
 "boss_type": 19,
 "general": 208,
 "reward": 0,
 "gold": 3,
-"time_limit": 408,
 "level_bonus": 4,
 "name": "Colonel Lysytsia",
 "portrait": 0,
@@ -866,16 +726,11 @@
 },
 {
 "id": 1,
-"start": [
-11,
-3
-],
 "tint": 2,
 "boss_type": 17,
 "general": 15,
 "reward": 0,
 "gold": 3,
-"time_limit": 192,
 "level_bonus": 4,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -883,16 +738,11 @@
 },
 {
 "id": 13,
-"start": [
-11,
-19
-],
 "tint": 3,
 "boss_type": 15,
 "general": 0,
 "reward": 0,
 "gold": 6,
-"time_limit": 252,
 "level_bonus": 10,
 "name": "Colonel Dubovyk",
 "portrait": 0,
@@ -900,16 +750,11 @@
 },
 {
 "id": 14,
-"start": [
-4,
-25
-],
 "tint": 0,
 "boss_type": 11,
 "general": 206,
 "reward": 0,
 "gold": 6,
-"time_limit": 174,
 "level_bonus": 5,
 "name": "Colonel Zaderykhvist",
 "portrait": 4,
@@ -917,16 +762,11 @@
 },
 {
 "id": 1,
-"start": [
-4,
-2
-],
 "tint": 1,
 "boss_type": 13,
 "general": 6,
 "reward": 0,
 "gold": 3,
-"time_limit": 276,
 "level_bonus": 5,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -934,16 +774,11 @@
 },
 {
 "id": 2,
-"start": [
-4,
-47
-],
 "tint": 1,
 "boss_type": 13,
 "general": 4,
 "reward": 0,
 "gold": 3,
-"time_limit": 276,
 "level_bonus": 5,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -951,16 +786,11 @@
 },
 {
 "id": 14,
-"start": [
-25,
-3
-],
 "tint": 2,
 "boss_type": 73,
 "general": 13,
 "reward": 0,
 "gold": 6,
-"time_limit": 312,
 "level_bonus": 3,
 "name": "Colonel Zaderykhvist",
 "portrait": 4,
@@ -968,16 +798,11 @@
 },
 {
 "id": 1,
-"start": [
-25,
-18
-],
 "tint": 2,
 "boss_type": 73,
 "general": 5,
 "reward": 0,
 "gold": 3,
-"time_limit": 312,
 "level_bonus": 3,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -985,16 +810,11 @@
 },
 {
 "id": 2,
-"start": [
-4,
-3
-],
 "tint": 2,
 "boss_type": 73,
 "general": 4,
 "reward": 0,
 "gold": 3,
-"time_limit": 366,
 "level_bonus": 3,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1002,16 +822,11 @@
 },
 {
 "id": 11,
-"start": [
-4,
-20
-],
 "tint": 2,
 "boss_type": 73,
 "general": 18,
 "reward": 0,
 "gold": 3,
-"time_limit": 366,
 "level_bonus": 3,
 "name": "Colonel Derkach",
 "portrait": 31,
@@ -1019,16 +834,11 @@
 },
 {
 "id": 13,
-"start": [
-18,
-11
-],
 "tint": 0,
 "boss_type": 4,
 "general": 209,
 "reward": 0,
 "gold": 10,
-"time_limit": 720,
 "level_bonus": 5,
 "name": "Colonel Dubovyk",
 "portrait": 0,
@@ -1036,16 +846,11 @@
 },
 {
 "id": 2,
-"start": [
-4,
-3
-],
 "tint": 3,
 "boss_type": 6,
 "general": 26,
 "reward": 0,
 "gold": 3,
-"time_limit": 246,
 "level_bonus": 5,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1053,16 +858,11 @@
 },
 {
 "id": 1,
-"start": [
-18,
-19
-],
 "tint": 0,
 "boss_type": 11,
 "general": 6,
 "reward": 0,
 "gold": 6,
-"time_limit": 720,
 "level_bonus": 5,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1070,16 +870,11 @@
 },
 {
 "id": 7,
-"start": [
-4,
-40
-],
 "tint": 0,
 "boss_type": 6,
 "general": 27,
 "reward": 0,
 "gold": 3,
-"time_limit": 384,
 "level_bonus": 5,
 "name": "Colonel Tuman",
 "portrait": 0,
@@ -1087,16 +882,11 @@
 },
 {
 "id": 2,
-"start": [
-4,
-3
-],
 "tint": 2,
 "boss_type": 14,
 "general": 26,
 "reward": 0,
 "gold": 6,
-"time_limit": 384,
 "level_bonus": 7,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1104,16 +894,11 @@
 },
 {
 "id": 7,
-"start": [
-26,
-11
-],
 "tint": 0,
 "boss_type": 31,
 "general": 211,
 "reward": 0,
 "gold": 6,
-"time_limit": 390,
 "level_bonus": 6,
 "name": "Colonel Tuman",
 "portrait": 0,
@@ -1121,16 +906,11 @@
 },
 {
 "id": 2,
-"start": [
-4,
-3
-],
 "tint": 2,
 "boss_type": 29,
 "general": 6,
 "reward": 0,
 "gold": 3,
-"time_limit": 360,
 "level_bonus": 5,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1138,16 +918,11 @@
 },
 {
 "id": 1,
-"start": [
-4,
-2
-],
 "tint": 0,
 "boss_type": 4,
 "general": 6,
 "reward": 210,
 "gold": 3,
-"time_limit": 720,
 "level_bonus": 8,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1155,16 +930,11 @@
 },
 {
 "id": 1,
-"start": [
-4,
-41
-],
 "tint": 0,
 "boss_type": 31,
 "general": 5,
 "reward": 0,
 "gold": 3,
-"time_limit": 444,
 "level_bonus": 8,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1172,16 +942,11 @@
 },
 {
 "id": 2,
-"start": [
-4,
-2
-],
 "tint": 3,
 "boss_type": 6,
 "general": 212,
 "reward": 0,
 "gold": 3,
-"time_limit": 444,
 "level_bonus": 8,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1189,16 +954,11 @@
 },
 {
 "id": 7,
-"start": [
-4,
-3
-],
 "tint": 0,
 "boss_type": 4,
 "general": 213,
 "reward": 0,
 "gold": 6,
-"time_limit": 366,
 "level_bonus": 10,
 "name": "Colonel Tuman",
 "portrait": 0,
@@ -1206,16 +966,11 @@
 },
 {
 "id": 2,
-"start": [
-17,
-13
-],
 "tint": 2,
 "boss_type": 45,
 "general": 29,
 "reward": 0,
 "gold": 3,
-"time_limit": 366,
 "level_bonus": 10,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1223,16 +978,11 @@
 },
 {
 "id": 7,
-"start": [
-11,
-4
-],
 "tint": 0,
 "boss_type": 25,
 "general": 214,
 "reward": 0,
 "gold": 6,
-"time_limit": 390,
 "level_bonus": 15,
 "name": "Colonel Tuman",
 "portrait": 0,
@@ -1240,16 +990,11 @@
 },
 {
 "id": 2,
-"start": [
-11,
-33
-],
 "tint": 2,
 "boss_type": 48,
 "general": 31,
 "reward": 0,
 "gold": 3,
-"time_limit": 360,
 "level_bonus": 8,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1257,16 +1002,11 @@
 },
 {
 "id": 1,
-"start": [
-11,
-3
-],
 "tint": 0,
 "boss_type": 50,
 "general": 15,
 "reward": 0,
 "gold": 3,
-"time_limit": 384,
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1274,16 +1014,11 @@
 },
 {
 "id": 2,
-"start": [
-11,
-26
-],
 "tint": 3,
 "boss_type": 15,
 "general": 58,
 "reward": 0,
 "gold": 6,
-"time_limit": 414,
 "level_bonus": 10,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1291,16 +1026,11 @@
 },
 {
 "id": 1,
-"start": [
-11,
-34
-],
 "tint": 0,
 "boss_type": 58,
 "general": 5,
 "reward": 0,
 "gold": 3,
-"time_limit": 498,
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1308,16 +1038,11 @@
 },
 {
 "id": 2,
-"start": [
-11,
-3
-],
 "tint": 3,
 "boss_type": 6,
 "general": 58,
 "reward": 0,
 "gold": 3,
-"time_limit": 468,
 "level_bonus": 15,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1325,16 +1050,11 @@
 },
 {
 "id": 15,
-"start": [
-25,
-13
-],
 "tint": 1,
 "boss_type": 54,
 "general": 56,
 "reward": 0,
 "gold": 3,
-"time_limit": 444,
 "level_bonus": 8,
 "name": "Colonel Voron",
 "portrait": 32,
@@ -1342,16 +1062,11 @@
 },
 {
 "id": 9,
-"start": [
-4,
-3
-],
 "tint": 2,
 "boss_type": 74,
 "general": 217,
 "reward": 0,
 "gold": 6,
-"time_limit": 720,
 "level_bonus": 11,
 "name": "Colonel Kremin",
 "portrait": 0,
@@ -1359,16 +1074,11 @@
 },
 {
 "id": 1,
-"start": [
-4,
-41
-],
 "tint": 0,
 "boss_type": 4,
 "general": 6,
 "reward": 0,
 "gold": 5,
-"time_limit": 474,
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1376,16 +1086,11 @@
 },
 {
 "id": 2,
-"start": [
-4,
-2
-],
 "tint": 3,
 "boss_type": 6,
 "general": 215,
 "reward": 0,
 "gold": 6,
-"time_limit": 414,
 "level_bonus": 15,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1393,16 +1098,11 @@
 },
 {
 "id": 1,
-"start": [
-4,
-41
-],
 "tint": 0,
 "boss_type": 11,
 "general": 5,
 "reward": 0,
 "gold": 3,
-"time_limit": 1020,
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1410,16 +1110,11 @@
 },
 {
 "id": 2,
-"start": [
-4,
-3
-],
 "tint": 3,
 "boss_type": 6,
 "general": 11,
 "reward": 0,
 "gold": 8,
-"time_limit": 522,
 "level_bonus": 30,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1427,16 +1122,11 @@
 },
 {
 "id": 1,
-"start": [
-11,
-2
-],
 "tint": 0,
 "boss_type": 4,
 "general": 15,
 "reward": 0,
 "gold": 10,
-"time_limit": 840,
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1444,16 +1134,11 @@
 },
 {
 "id": 1,
-"start": [
-11,
-10
-],
 "tint": 0,
 "boss_type": 11,
 "general": 15,
 "reward": 0,
 "gold": 3,
-"time_limit": 1320,
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1461,16 +1146,11 @@
 },
 {
 "id": 2,
-"start": [
-19,
-4
-],
 "tint": 3,
 "boss_type": 6,
 "general": 4,
 "reward": 0,
 "gold": 3,
-"time_limit": 1170,
 "level_bonus": 30,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1478,16 +1158,11 @@
 },
 {
 "id": 15,
-"start": [
-25,
-12
-],
 "tint": 0,
 "boss_type": 31,
 "general": 19,
 "reward": 0,
 "gold": 3,
-"time_limit": 1512,
 "level_bonus": 10,
 "name": "Colonel Voron",
 "portrait": 32,
@@ -1495,16 +1170,11 @@
 },
 {
 "id": 2,
-"start": [
-25,
-17
-],
 "tint": 2,
 "boss_type": 19,
 "general": 87,
 "reward": 0,
 "gold": 8,
-"time_limit": 2280,
 "level_bonus": 60,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1512,16 +1182,11 @@
 },
 {
 "id": 15,
-"start": [
-19,
-4
-],
 "tint": 3,
 "boss_type": 15,
 "general": 55,
 "reward": 0,
 "gold": 10,
-"time_limit": 1140,
 "level_bonus": 50,
 "name": "Colonel Voron",
 "portrait": 32,
@@ -1529,16 +1194,11 @@
 },
 {
 "id": 1,
-"start": [
-11,
-10
-],
 "tint": 2,
 "boss_type": 71,
 "general": 40,
 "reward": 0,
 "gold": 3,
-"time_limit": 1230,
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1546,16 +1206,11 @@
 },
 {
 "id": 1,
-"start": [
-4,
-34
-],
 "tint": 0,
 "boss_type": 11,
 "general": 88,
 "reward": 0,
 "gold": 3,
-"time_limit": 540,
 "level_bonus": 11,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1563,16 +1218,11 @@
 },
 {
 "id": 2,
-"start": [
-4,
-2
-],
 "tint": 3,
 "boss_type": 6,
 "general": 25,
 "reward": 216,
 "gold": 8,
-"time_limit": 990,
 "level_bonus": 30,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1580,16 +1230,11 @@
 },
 {
 "id": 15,
-"start": [
-4,
-2
-],
 "tint": 0,
 "boss_type": 58,
 "general": 74,
 "reward": 0,
 "gold": 3,
-"time_limit": 840,
 "level_bonus": 11,
 "name": "Colonel Voron",
 "portrait": 32,
@@ -1597,16 +1242,11 @@
 },
 {
 "id": 2,
-"start": [
-4,
-39
-],
 "tint": 2,
 "boss_type": 57,
 "general": 58,
 "reward": 0,
 "gold": 8,
-"time_limit": 1560,
 "level_bonus": 50,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1614,16 +1254,11 @@
 },
 {
 "id": 16,
-"start": [
-18,
-27
-],
 "tint": 0,
 "boss_type": 26,
 "general": 101,
 "reward": 0,
 "gold": 3,
-"time_limit": 600,
 "level_bonus": 15,
 "name": "Colonel Holota",
 "portrait": 7,
@@ -1631,16 +1266,11 @@
 },
 {
 "id": 2,
-"start": [
-18,
-2
-],
 "tint": 1,
 "boss_type": 102,
 "general": 26,
 "reward": 0,
 "gold": 6,
-"time_limit": 630,
 "level_bonus": 30,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1648,16 +1278,11 @@
 },
 {
 "id": 16,
-"start": [
-3,
-11
-],
 "tint": 0,
 "boss_type": 31,
 "general": 102,
 "reward": 0,
 "gold": 3,
-"time_limit": 648,
 "level_bonus": 12,
 "name": "Colonel Holota",
 "portrait": 7,
@@ -1665,16 +1290,11 @@
 },
 {
 "id": 2,
-"start": [
-26,
-11
-],
 "tint": 1,
 "boss_type": 102,
 "general": 31,
 "reward": 0,
 "gold": 3,
-"time_limit": 378,
 "level_bonus": 30,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1682,16 +1302,11 @@
 },
 {
 "id": 17,
-"start": [
-11,
-34
-],
 "tint": 0,
 "boss_type": 31,
 "general": 221,
 "reward": 0,
 "gold": 8,
-"time_limit": 1200,
 "level_bonus": 40,
 "name": "Lady Buriak",
 "portrait": 36,
@@ -1699,16 +1314,11 @@
 },
 {
 "id": 2,
-"start": [
-11,
-2
-],
 "tint": 1,
 "boss_type": 101,
 "general": 26,
 "reward": 0,
 "gold": 3,
-"time_limit": 570,
 "level_bonus": 12,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -1716,16 +1326,11 @@
 },
 {
 "id": 1,
-"start": [
-3,
-4
-],
 "tint": 1,
 "boss_type": 106,
 "general": 15,
 "reward": 0,
 "gold": 3,
-"time_limit": 1080,
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1733,16 +1338,11 @@
 },
 {
 "id": 18,
-"start": [
-19,
-18
-],
 "tint": 3,
 "boss_type": 15,
 "general": 218,
 "reward": 0,
 "gold": 6,
-"time_limit": 900,
 "level_bonus": 40,
 "name": "Colonel Sokyra",
 "portrait": 0,
@@ -1750,16 +1350,11 @@
 },
 {
 "id": 1,
-"start": [
-3,
-27
-],
 "tint": 1,
 "boss_type": 109,
 "general": 15,
 "reward": 0,
 "gold": 3,
-"time_limit": 690,
 "level_bonus": 15,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1767,16 +1362,11 @@
 },
 {
 "id": 19,
-"start": [
-11,
-2
-],
 "tint": 3,
 "boss_type": 15,
 "general": 218,
 "reward": 0,
 "gold": 6,
-"time_limit": 630,
 "level_bonus": 40,
 "name": "Colonel Korzhyk",
 "portrait": 0,
@@ -1784,16 +1374,11 @@
 },
 {
 "id": 1,
-"start": [
-11,
-18
-],
 "tint": 1,
 "boss_type": 110,
 "general": 5,
 "reward": 0,
 "gold": 3,
-"time_limit": 390,
 "level_bonus": 10,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1801,16 +1386,11 @@
 },
 {
 "id": 20,
-"start": [
-11,
-4
-],
 "tint": 3,
 "boss_type": 5,
 "general": 218,
 "reward": 0,
 "gold": 6,
-"time_limit": 390,
 "level_bonus": 40,
 "name": "Colonel Siroshapka",
 "portrait": 0,
@@ -1818,16 +1398,11 @@
 },
 {
 "id": 1,
-"start": [
-4,
-3
-],
 "tint": 1,
 "boss_type": 113,
 "general": 113,
 "reward": 0,
 "gold": 5,
-"time_limit": 930,
 "level_bonus": 15,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1835,16 +1410,11 @@
 },
 {
 "id": 21,
-"start": [
-4,
-41
-],
 "tint": 3,
 "boss_type": 6,
 "general": 219,
 "reward": 0,
 "gold": 6,
-"time_limit": 870,
 "level_bonus": 50,
 "name": "Colonel Huska",
 "portrait": 0,
@@ -1852,16 +1422,11 @@
 },
 {
 "id": 1,
-"start": [
-4,
-4
-],
 "tint": 1,
 "boss_type": 115,
 "general": 112,
 "reward": 0,
 "gold": 4,
-"time_limit": 630,
 "level_bonus": 20,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1869,16 +1434,11 @@
 },
 {
 "id": 22,
-"start": [
-4,
-4
-],
 "tint": 3,
 "boss_type": 113,
 "general": 220,
 "reward": 0,
 "gold": 8,
-"time_limit": 1350,
 "level_bonus": 30,
 "name": "Colonel Pidhornyi",
 "portrait": 35,
@@ -1886,16 +1446,11 @@
 },
 {
 "id": 1,
-"start": [
-11,
-20
-],
 "tint": 1,
 "boss_type": 121,
 "general": 113,
 "reward": 0,
 "gold": 5,
-"time_limit": 780,
 "level_bonus": 11,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1903,16 +1458,11 @@
 },
 {
 "id": 22,
-"start": [
-18,
-3
-],
 "tint": 3,
 "boss_type": 5,
 "general": 220,
 "reward": 0,
 "gold": 10,
-"time_limit": 870,
 "level_bonus": 40,
 "name": "Colonel Pidhornyi",
 "portrait": 35,
@@ -1920,16 +1470,11 @@
 },
 {
 "id": 1,
-"start": [
-25,
-20
-],
 "tint": 1,
 "boss_type": 125,
 "general": 112,
 "reward": 0,
 "gold": 5,
-"time_limit": 1530,
 "level_bonus": 15,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1937,16 +1482,11 @@
 },
 {
 "id": 22,
-"start": [
-2,
-4
-],
 "tint": 3,
 "boss_type": 5,
 "general": 220,
 "reward": 0,
 "gold": 10,
-"time_limit": 2250,
 "level_bonus": 40,
 "name": "Colonel Pidhornyi",
 "portrait": 35,
@@ -1954,16 +1494,11 @@
 },
 {
 "id": 1,
-"start": [
-4,
-4
-],
 "tint": 1,
 "boss_type": 102,
 "general": 102,
 "reward": 0,
 "gold": 6,
-"time_limit": 990,
 "level_bonus": 15,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -1971,16 +1506,11 @@
 },
 {
 "id": 16,
-"start": [
-19,
-4
-],
 "tint": 3,
 "boss_type": 5,
 "general": 222,
 "reward": 0,
 "gold": 12,
-"time_limit": 1590,
 "level_bonus": 40,
 "name": "Colonel Holota",
 "portrait": 7,
@@ -1988,16 +1518,11 @@
 },
 {
 "id": 1,
-"start": [
-5,
-27
-],
 "tint": 0,
 "boss_type": 132,
 "general": 102,
 "reward": 0,
 "gold": 6,
-"time_limit": 3660,
 "level_bonus": 12,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -2005,16 +1530,11 @@
 },
 {
 "id": 2,
-"start": [
-25,
-17
-],
 "tint": 3,
 "boss_type": 102,
 "general": 26,
 "reward": 0,
 "gold": 12,
-"time_limit": 2430,
 "level_bonus": 60,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -2022,16 +1542,11 @@
 },
 {
 "id": 15,
-"start": [
-11,
-27
-],
 "tint": 0,
 "boss_type": 25,
 "general": 133,
 "reward": 0,
 "gold": 12,
-"time_limit": 1830,
 "level_bonus": 16,
 "name": "Colonel Voron",
 "portrait": 32,
@@ -2039,16 +1554,11 @@
 },
 {
 "id": 2,
-"start": [
-4,
-27
-],
 "tint": 2,
 "boss_type": 133,
 "general": 101,
 "reward": 0,
 "gold": 12,
-"time_limit": 1830,
 "level_bonus": 16,
 "name": "Colonel Chornohuz",
 "portrait": 34,
@@ -2056,16 +1566,11 @@
 },
 {
 "id": 1,
-"start": [
-4,
-2
-],
 "tint": 2,
 "boss_type": 133,
 "general": 223,
 "reward": 0,
 "gold": 15,
-"time_limit": 1506,
 "level_bonus": 60,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -2073,16 +1578,11 @@
 },
 {
 "id": 15,
-"start": [
-4,
-48
-],
 "tint": 3,
 "boss_type": 6,
 "general": 133,
 "reward": 0,
 "gold": 10,
-"time_limit": 990,
 "level_bonus": 15,
 "name": "Colonel Voron",
 "portrait": 32,
@@ -2090,16 +1590,11 @@
 },
 {
 "id": 1,
-"start": [
-3,
-12
-],
 "tint": 2,
 "boss_type": 133,
 "general": 200,
 "reward": 0,
 "gold": 15,
-"time_limit": 1140,
 "level_bonus": 50,
 "name": "Colonel Bairak",
 "portrait": 33,
@@ -2107,16 +1602,11 @@
 },
 {
 "id": 15,
-"start": [
-33,
-12
-],
 "tint": 3,
 "boss_type": 15,
 "general": 200,
 "reward": 0,
 "gold": 10,
-"time_limit": 750,
 "level_bonus": 13,
 "name": "Colonel Voron",
 "portrait": 32,

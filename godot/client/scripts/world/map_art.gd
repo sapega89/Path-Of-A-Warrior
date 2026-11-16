@@ -3,10 +3,10 @@ extends "res://scripts/world/map_builder.gd"
 ## A map of the campaign in the new art, from the same data as MapBuilder (data/maps/N.json),
 ## with the same cells, collision and breakable objects:
 ##   the ground   one painted surface (in chunks, GroundMesh, so that only what is in view is
-##                drawn), three parts to a tile, each part the kind of ground its tile shows
-##                there (assets/art/tiles.json, made by godot/tools/art/tiles.py): meadow,
-##                grass, dirt, sand, gravel, stone, rock, water, wood or cobble, with the
-##                detail of its kind (pebbles, planks, paving);
+##                drawn), three parts to a tile, each part the kind of ground the map gives
+##                it (its parts: nine letters a cell, KIND_LETTERS): meadow, grass, dirt,
+##                sand, gravel, stone, rock, water, wood or cobble, with the detail of its
+##                kind (pebbles, planks, paving);
 ##   raised       a blocked cell of rock, stone, gravel, cobble or wood rises as a cliff or a wall
 ##                (its faces drawn as strata, stone courses or logs); a blocked cell of grass as
 ##                a bank; the slope stays inside the blocked cell, so the free cells stay flat;
@@ -14,17 +14,23 @@ extends "res://scripts/world/map_builder.gd"
 ##                crags; a rock or a bush in the middle of a cliff lies on its top;
 ##   water        sinks under a water surface; a bridge of logs, or a deck under a fence over
 ##                the water, is boards;
-##   props        what stands on a cell (a fir, a bush, a rock, a fence, a palisade, a barrel,
-##                a haystack, a well, a campfire...) is a 3D piece of the new art; a tent or a
-##                hut drawn over several cells is one tent or hut over their middle;
-##   objects      the breakable ones too: a hit flashes each, a glowing brass outline marks it;
+##   props        what stands on a cell (the map's props: a fir, a bush, a rock, a fence, a
+##                palisade, a barrel, a haystack, a well, a campfire...) is a 3D piece of the
+##                new art; a tent or a hut drawn over several cells is one tent or hut over
+##                their middle;
+##   objects      the breakable ones too (what each code is: the table breakable_prop): a hit
+##                flashes each, a glowing brass outline marks it;
 ##   around       the land goes on past the edges and rises into low hills, with fields of
 ##                wheat; grass on the meadows in and around the map; both sway in the wind.
 ## The simulation does not see any of this: it keeps the cells of the map data.
 
 const GROUND_SHADER := preload("res://assets/art/shaders/map_ground.gdshader")
 const WATER_SHADER := preload("res://assets/art/shaders/water.gdshader")
-const TILES_PATH := "res://assets/art/tiles.json"
+## The kinds of ground, and the letter of each in a map's parts (in the same order).
+const KINDS := [
+	"meadow", "grass", "dirt", "sand", "gravel", "stone", "rock", "water", "wood", "cobble"
+]
+const KIND_LETTERS := "mgdsvtrwoc"
 const PARTS := 3  # parts to a tile, each way
 const MARGIN := 10  # tiles of land around the map
 
@@ -87,14 +93,10 @@ const PROP := {
 }
 ## What grows or lies on a cell: in the middle of a raised place it rises with it.
 const NATURAL := ["fir", "bush", "boulder", "rock", "pebbles", "stump", "tuft", "grave"]
-## Drawn by the ground itself (raised when blocked), not by a prop.
-const AS_GROUND := ["cliff", "wall"]
 ## One piece over all the blocked cells it covers.
 const CLUSTERS := {"tent": "shatro", "hut": "khata"}
 
-static var _tiles := {}
-
-var kinds: Array = []
+var kinds: Array = KINDS
 ## Per part of the map (x + y * w * PARTS): the kind (index into kinds) and how high it rises.
 var part_kind := PackedInt32Array()
 var part_raise := PackedFloat32Array()
@@ -110,21 +112,6 @@ var ground_material: ShaderMaterial
 var water_material: ShaderMaterial
 
 
-static func tiles() -> Dictionary:
-	if _tiles.is_empty():
-		var f := FileAccess.open(TILES_PATH, FileAccess.READ)
-		if f != null:
-			var data: Variant = JSON.parse_string(f.get_as_text())
-			if typeof(data) == TYPE_DICTIONARY:
-				_tiles = data
-	return _tiles
-
-
-## What the tile shows standing on a cell ("" for plain ground).
-static func prop_of(tile: int) -> String:
-	return String(tiles().get("props", {}).get(str(tile), ""))
-
-
 func build(data: Dictionary) -> void:
 	map = data
 	w = int(map.get("w", 0))
@@ -133,7 +120,6 @@ func build(data: Dictionary) -> void:
 		child.queue_free()
 	breakables.clear()
 	props.clear()
-	kinds = tiles().get("kinds", [])
 	_layout()
 	_build_ground()
 	_build_water()
@@ -154,30 +140,13 @@ func _layout() -> void:
 	part_face.fill(0)
 	cell_kind.resize(w * h)
 	cell_raise.resize(w * h)
-	var ground: Dictionary = tiles().get("ground", {})
-	var water := kinds.find("water")
-	var wood := kinds.find("wood")
+	var parts: Array = map.get("parts", [])
 	for y in h:
 		for x in w:
-			var g := cell("ground", x, y)
-			var u := cell("upper", x, y)
-			var gparts: Array = ground.get(str(g), [])
-			var uparts: Array = []
-			if u != 0 and (prop_of(u) == "" or prop_of(u) in AS_GROUND):
-				uparts = ground.get(str(u), [])
-			var main := _main_kind(gparts)
-			# a fence or a palisade does not stand in water: a deck of boards under it
-			var decked := prop_of(u) in ["fence", "palisade"]
+			var letters := String(parts[y * w + x])
 			var cell_kinds: Array[int] = []
 			for i in PARTS * PARTS:
-				var k := main
-				if i < uparts.size() and int(uparts[i]) >= 0:
-					k = int(uparts[i])
-				elif i < gparts.size() and int(gparts[i]) >= 0:
-					k = int(gparts[i])
-				if decked and k == water:
-					k = wood
-				cell_kinds.append(k)
+				cell_kinds.append(KIND_LETTERS.find(letters[i]))
 			cell_kind[y * w + x] = _main_kind(cell_kinds)
 			cell_raise[y * w + x] = _raise_of(x, y, cell_kinds)
 			for i in PARTS * PARTS:
@@ -198,7 +167,7 @@ func _fill_pits() -> void:
 	var lifted := {}
 	for y in h:
 		for x in w:
-			var what := prop_of(cell("upper", x, y))
+			var what := prop_at(x, y)
 			if (
 				cell_raise[y * w + x] > 0.0
 				or (cell("flags", x, y) & FLAG_BLOCKED) == 0
@@ -267,12 +236,11 @@ func _main_kind(parts: Array) -> int:
 	return best
 
 
-## How high a cell rises: a blocked cell of ground (or of a cliff or wall tile) by its kind.
+## How high a cell rises: a blocked cell of ground by its kind (not one something stands on).
 func _raise_of(x: int, y: int, cell_kinds: Array[int]) -> float:
 	if (cell("flags", x, y) & FLAG_BLOCKED) == 0 or cell("objects", x, y) != 0:
 		return 0.0
-	var u := cell("upper", x, y)
-	if u != 0 and prop_of(u) != "" and not prop_of(u) in AS_GROUND:
+	if prop_at(x, y) != "":
 		return 0.0
 	var main := _main_kind(cell_kinds)
 	return float(RAISE.get(_kind_name(main), 0.0))
@@ -395,8 +363,8 @@ func _build_props() -> void:
 	for y in h:
 		for x in w:
 			var flags := cell("flags", x, y)
-			var what := prop_of(cell("upper", x, y))
-			if what == "" or what in AS_GROUND or cell("objects", x, y) != 0:
+			var what := prop_at(x, y)
+			if what == "" or cell("objects", x, y) != 0:
 				continue
 			var blocked := (flags & FLAG_BLOCKED) != 0
 			if CLUSTERS.has(what):
@@ -405,7 +373,7 @@ func _build_props() -> void:
 				continue
 			if not blocked and (flags & FLAG_OVER) != 0:
 				continue  # the top of something drawn over the people: its foot stands below
-			if what == "fir" and prop_of(cell("upper", x, y + 1)) == "fir":
+			if what == "fir" and prop_at(x, y + 1) == "fir":
 				continue  # one fir for the cells of one tree: at its foot
 			_stand(holder, what, x, y, false)
 	_build_clusters(holder, clustered)
@@ -417,6 +385,13 @@ func _build_props() -> void:
 				and hash(Vector2i(x, y) * 31) % 100 < 30
 			):
 				_stand(holder, "crag", x, y, false).position.y -= 0.1
+
+
+## What stands on cell (x, y) ("" for plain ground, and outside the map).
+func prop_at(x: int, y: int) -> String:
+	if x < 0 or y < 0 or x >= w or y >= h:
+		return ""
+	return String(map["props"][y * w + x])
 
 
 ## A prop of `what` on cell (x, y); breakable: marked as one (ArtKit.breakable_prop).
@@ -446,11 +421,9 @@ func _stand(parent: Node3D, what: String, x: int, y: int, breakable: bool) -> No
 ## A fence runs along X unless its neighbours run along Z.
 func _along_x(x: int, y: int) -> bool:
 	var fences := ["fence", "palisade"]
-	if prop_of(cell("upper", x - 1, y)) in fences or prop_of(cell("upper", x + 1, y)) in fences:
+	if prop_at(x - 1, y) in fences or prop_at(x + 1, y) in fences:
 		return true
-	return not (
-		prop_of(cell("upper", x, y - 1)) in fences or prop_of(cell("upper", x, y + 1)) in fences
-	)
+	return not (prop_at(x, y - 1) in fences or prop_at(x, y + 1) in fences)
 
 
 ## Each group of touching blocked cells of a tent (or a hut) is one tent over its middle.
@@ -517,11 +490,9 @@ func _build_objects() -> void:
 			var node := Node3D.new()  # standards: allow nodes_in_code (an object of the map)
 			node.name = "Object_%d_%d" % [x, y]
 			add_child(node)
-			var piece := _stand(
-				node, prop_of(kind) if PROP.has(prop_of(kind)) else "barrel", x, y, true
-			)
+			var piece := _stand(node, String(MapSim.table("breakable_prop")[kind]), x, y, true)
 			node.set_meta("kind", kind)
-			node.set_meta("hp", 41 if kind in [101, 113] else 21)
+			node.set_meta("hp", int(MapSim.table("breakable_hp")[kind]))
 			node.set_meta("material", _material_of(piece))
 			breakables.append(node)
 
