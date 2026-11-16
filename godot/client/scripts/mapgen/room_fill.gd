@@ -9,10 +9,12 @@ extends RefCounted
 ## their doors, so is the ring around the rooms (with the ring's own barrier where the biome has
 ## one: the land past the map goes on as the ring's ground), the rooms off every route are filled
 ## with the biome's land, and the rooms of the routes get its obstacles until they take the share
-## of the room the crowding says. In front of a fight (the front rows of a room on a route, where
-## the camera looks over them, and the row below it) the barrier is the biome's low one and no
-## tall thing stands (a fir, a tent). Of a column of firs every other one is a bush: the game
-## draws a single fir for the cells of one column.
+## of the room the crowding says. Some rooms of the routes get a piece made by hand instead
+## (SetPiece): the last one of a mission the arena of its general, the first one a start, others
+## now and then a crossing, a village or a gate; it is opened where the ways go. In front of a
+## fight (the front rows of a room on a route, where the camera looks over them, and the row below
+## it) the barrier is the biome's low one and no tall thing stands (a fir, a tent). Of a column
+## of firs every other one is a bush: the game draws a single fir for the cells of one column.
 ##
 ## An obstacle in the rules: shape (single, line, block, clump), size [fewest, most] (cells of a
 ## line or a clump, a side of a block), kind (the ground of its cells, a letter of
@@ -37,10 +39,20 @@ const TRIES := 60
 const CLUMP_STEPS := 4
 ## Ways on the campaign shows on one side of the room where a mission is won.
 const WAYS_A_SIDE := 2
+## The roles of the pieces laid in the rooms of a route between the first and the last, and how
+## many in a thousand of those rooms get one.
+const ON_THE_WAY: Array[String] = ["crossing", "village", "gate"]
+const PIECES_IN := 350
+const IN := 1000
+## What a kept cell of a piece's water becomes: the boards of a bridge.
+const WATER := "w"
+const BRIDGE := "o"
 
 var draft: MapDraft
 var biome: Dictionary
 var random: GameRandom
+## Room -> the name of the piece laid in it (SetPiece).
+var pieces := {}
 ## Rooms on any route -> true.
 var _on_route := {}
 ## Rooms where generals fight -> true.
@@ -69,9 +81,12 @@ func fill(plan: MapPlan, crowding: Vector2) -> void:
 		_find_doors(m, plan.ways_on)
 	for m in layout.routes.size():
 		_keep_ways(m)
+	_lay_pieces(plan)
 	_close_sides()
 	var land: Dictionary = biome["land"]
 	for room in layout.rooms_x * layout.rooms_y:
+		if pieces.has(room):
+			continue
 		if _on_route.has(room):
 			var share := crowding.x + (crowding.y - crowding.x) * random.below(1000) / 1000.0
 			_crowd(room, share, biome["obstacles"])
@@ -136,6 +151,44 @@ func _keep_ways(mission: int) -> void:
 	var first := draft.corner(layout.routes[mission][0]) + Vector2i.ONE * (RoomLayout.ROOM / 2)
 	_keep_box(start - Vector2i.ONE, start + Vector2i.ONE)
 	_mark_path(start, first)
+
+
+## The pieces of the rooms of the routes: the arena of its general in the last room of a
+## mission, a start in its first room, now and then a crossing, a village or a gate in a room on
+## the way where no general fights, of those that fit the biome.
+func _lay_pieces(plan: MapPlan) -> void:
+	var roles := {}
+	for route: Array in draft.layout.routes:
+		for i in range(1, route.size() - 1):
+			if roles.has(route[i]) or _arenas.has(route[i]):
+				continue
+			if random.below(IN) < PIECES_IN:
+				roles[route[i]] = ON_THE_WAY[random.below(ON_THE_WAY.size())]
+		roles[route[0]] = "start"
+	for route: Array in draft.layout.routes:
+		roles[route.back()] = "general"
+	for room: int in roles:
+		var fit := SetPiece.fitting(roles[room], plan.biome)
+		if not fit.is_empty():
+			_lay(room, fit[random.below(fit.size())], random.below(SetPiece.WAYS))
+
+
+## Lays a piece in a room, the `way`-th way: what stands on its cells but the kept ones (where its
+## water is kept, a bridge), and none of its tall things in front of a fight.
+func _lay(room: int, piece: SetPiece, way: int) -> void:
+	pieces[room] = piece.name
+	var o := draft.corner(room)
+	for y in SetPiece.SIDE:
+		for x in SetPiece.SIDE:
+			var c := o + Vector2i(x, y)
+			var what := piece.cell(Vector2i(x, y), way)
+			var kind := str(what.get("kind", ""))
+			var prop := str(what.get("prop", ""))
+			if draft.keep[draft.at(c)] == 1:
+				if kind == WATER:
+					draft.kinds[draft.at(c)] = BRIDGE
+			elif not what.is_empty() and not (prop in TALL and _in_front(c)):
+				draft.put(c, kind, prop)
 
 
 ## The cells of a room's door, along its side from its start on.
