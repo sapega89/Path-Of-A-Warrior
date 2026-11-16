@@ -54,7 +54,7 @@ func test_every_skill_moves_its_own_way() -> void:
 
 
 func test_the_figure_carries_the_move() -> void:
-	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim: RefCounted = MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	var people := MapPeople.new()
 	root.add_child(people)
 	people.setup(sim, 0)
@@ -107,7 +107,7 @@ func test_every_skill_shows_its_own_effect() -> void:
 
 
 func test_the_hero_and_a_general_show_them() -> void:
-	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim: RefCounted = MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	sim.hero.action = 16
 	sim.hero.frame = 6
 	var kinds := _kinds(MapPictures.effects(sim))

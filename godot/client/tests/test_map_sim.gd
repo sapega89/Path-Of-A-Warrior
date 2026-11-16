@@ -3,7 +3,7 @@ extends "res://tests/test_case.gd"
 
 ## The map without enemies (the rooms open at once), for the walking tests.
 func _sim() -> RefCounted:
-	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim: RefCounted = MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	sim.no_enemies = true
 	return sim
 
@@ -43,17 +43,14 @@ func test_walk_and_stand() -> void:
 
 func test_walls_stop_the_step() -> void:
 	var sim := _sim()
-	# The house of map 1 is blocked at x 7..8, y 10..12; 2 px fit before it.
-	eq(sim.step_until_free(Vector2i(174, 317), 6, 6), 2, "shortened before the wall")
+	# The walls of the middle room's nook start at x 5 (y 9..13); 2 px fit before them.
+	eq(sim.step_until_free(Vector2i(120, 290), 6, 6), 2, "shortened before the wall")
 	eq(sim.step_until_free(Vector2i(120, 74), 6, 6), 6, "free floor")
 
 
 func test_walk_down_into_the_next_room() -> void:
-	# Column 5 is free down to the next room. (From column 4 the hero gets stuck on the
-	# barrel at (4, 6): the corner slide lines him up at 27 * 5 + 8 px, where his body still
-	# overlaps column 4 when holding down.)
-	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(5, 2))
-	sim.no_enemies = true
+	# The dirt path down the middle (column 4) is free down to the next room.
+	var sim := _sim()
 	_open(sim)
 	for t in 200:
 		sim.tick(0, -1, sim.banner != 0)

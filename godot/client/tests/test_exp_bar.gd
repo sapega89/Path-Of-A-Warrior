@@ -44,7 +44,7 @@ func test_the_bar_grows_and_goes_up_a_level() -> void:
 
 func test_the_exp_pages_show_the_bar() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	Router.params = {"lord": 1, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	var sim: RefCounted = screen.sim

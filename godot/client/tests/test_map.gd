@@ -20,10 +20,10 @@ func test_all_maps_load() -> void:
 			)
 
 
-func test_map_1_layout() -> void:
+func test_three_rooms_layout() -> void:
 	var b: Node3D = MapArt.new()
 	root.add_child(b)
-	b.build(MapBuilder.load_map(1))
+	b.build(own_map("three_rooms"))
 	eq(b.w, 9, "width")
 	eq(b.h, 23, "height")
 	# One collision box per blocked cell or object, plus 4 edges and the ground.
@@ -33,15 +33,16 @@ func test_map_1_layout() -> void:
 			if b.is_blocked(x, y):
 				blocked += 1
 	eq(b.get_node("Collision").get_child_count(), blocked + 5, "collision boxes")
-	eq(b.breakables.size(), 10, "breakable objects")
+	eq(b.breakables.size(), 6, "breakable objects: 4 bushes, a barrel, a rock")
 	var start: Vector2i = b.start_cell(0)
 	check(not b.is_blocked(start.x, start.y), "start cell is free")
 	b.free()
 
 
 func test_mission_start_and_time() -> void:
-	var m := MapBuilder.load_map(1)
+	var m := own_map("three_rooms")
 	eq(MapBuilder.mission_start(m, 0), Vector2i(4, 2), "the first mission starts at (4, 2)")
-	eq(MapBuilder.mission_time(m, 0), 192, "in 192 seconds")
+	eq(MapBuilder.mission_time(m, 0), 180, "in 180 seconds")
+	eq(MapBuilder.mission_time(m, 1), 240, "the second in 240")
 	eq(MapBuilder.mission_start(m, 99), MapBuilder.DEFAULT_START, "a mission the map has not")
 	eq(MapBuilder.mission_time(m, 99), 0, "no time limit then")

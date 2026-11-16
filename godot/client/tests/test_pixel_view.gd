@@ -116,7 +116,7 @@ func test_the_camera_moves_in_whole_pixels() -> void:
 
 func test_the_mission_draws_its_world_as_pixel_art() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	Router.params = {"lord": 1, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	var view := screen.get_node("World") as PixelView

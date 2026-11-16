@@ -8,7 +8,7 @@ const SettingsScript := preload("res://scripts/core/settings.gd")
 
 ## An empty, open room with one swordsman standing below the hero, looking at him.
 func _duel() -> Array:
-	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim: RefCounted = MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	sim.rng = GameRandom.new(1)
 	sim.no_enemies = true
 	for t in 200:
@@ -193,7 +193,7 @@ func test_the_options_switch_the_effects() -> void:
 ## The hero flashes and the camera shakes, and both settle.
 func test_the_mission_feels_a_hit() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	Router.params = {"lord": 1, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	screen.set_process(false)

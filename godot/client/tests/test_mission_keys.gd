@@ -14,7 +14,7 @@ func _action(action: String, pressed: bool) -> void:
 
 func test_a_press_is_taken_once() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	Router.params = {"lord": 1, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: MissionScreen = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	_action("attack", true)

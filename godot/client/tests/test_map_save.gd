@@ -9,7 +9,7 @@ func test_save_on_the_map_and_continue() -> void:
 	p.gold = 100
 	p.save()
 	var old: Dictionary = Router.params
-	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	Router.params = {"lord": 1, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	var sim: RefCounted = screen.sim
@@ -32,7 +32,9 @@ func test_save_on_the_map_and_continue() -> void:
 	var room: int = sim.cell
 	screen.free()
 
-	Router.params = {"lord": 1, "mission": 0, "seed": 2, "resume": true}
+	Router.params = {
+		"lord": 1, "mission": 0, "seed": 2, "resume": true, "map_path": own_map_path("three_rooms")
+	}
 	var again: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(again)
 	eq(again.sim.hero.hp, 10, "Continue: the HP of the save")

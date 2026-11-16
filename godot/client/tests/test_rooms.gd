@@ -1,20 +1,20 @@
 extends "res://tests/test_case.gd"
 
 
-func test_map_1_rooms() -> void:
-	var r: RefCounted = Rooms.new(MapBuilder.load_map(1), 0)
-	eq(r.count(), 3, "map 1 is one column of 3 rooms")
+func test_three_rooms() -> void:
+	var r: RefCounted = Rooms.new(own_map("three_rooms"), 0)
+	eq(r.count(), 3, "one column of 3 rooms")
 	eq(r.room_at(Vector3(4.5, 0, 4.5)), 0, "top room")
 	eq(r.room_at(Vector3(4.5, 0, 11.5)), 1, "middle room")
 	eq(r.room_at(Vector3(4.5, 0, 20.0)), 2, "bottom room")
 	eq(r.exits(0), [1.0, 0.0, 0.0, 0.0], "room 1 exits down (JSON numbers)")
 	eq(r.neighbour(0, Rooms.EXIT_DOWN), 1, "down = next row")
-	eq(r.waves(0), [[201, 5]], "five soldiers 201")
+	eq(r.waves(0), [[201, 4]], "four soldiers 201")
 	check(not r.has_general(0), "no general")
 
 
 func test_bounds_are_map_pixels() -> void:
-	var r: RefCounted = Rooms.new(MapBuilder.load_map(1), 0)
+	var r: RefCounted = Rooms.new(own_map("three_rooms"), 0)
 	var b: Rect2 = r.bounds(0)
 	# x: 27 + 12 .. 216 - 12 px, z: 27 + 10 .. 216 + 10 px
 	check(absf(b.position.x - 39.0 / 27.0) < 0.001, "left")
@@ -24,7 +24,7 @@ func test_bounds_are_map_pixels() -> void:
 
 
 func test_keep_inside_reports_the_edge() -> void:
-	var r: RefCounted = Rooms.new(MapBuilder.load_map(1), 0)
+	var r: RefCounted = Rooms.new(own_map("three_rooms"), 0)
 	var k: Dictionary = r.keep_inside(0, Vector3(4, 0, 20))
 	eq(k.edge, Rooms.EXIT_DOWN, "bottom edge")
 	check(absf(k.pos.z - 226.0 / 27.0) < 0.001, "kept at the bottom")
@@ -42,8 +42,8 @@ func test_campaign_tables() -> void:
 	var ms: Array = c.lord_missions(1)
 	eq(ms.size(), 4, "lord 1 has 4 missions")
 	eq(ms[0].name, "Colonel Bairak", "first mission")
-	var map_1 := MapBuilder.load_map(1)
-	var sim: RefCounted = MapSim.new(map_1, 0, MapBuilder.mission_start(map_1, 0))
+	var own := own_map("three_rooms")
+	var sim: RefCounted = MapSim.new(own, 0, MapBuilder.mission_start(own, 0))
 	eq(sim.hero.pos, Vector2i(4 * 27 + 12, 2 * 27 + 20), "start position in pixels")
 	# Every lord's map exists and its missions have room data.
 	for id in c.lords:

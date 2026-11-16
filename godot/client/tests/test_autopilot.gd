@@ -3,7 +3,7 @@ extends "res://tests/test_case.gd"
 
 
 func _sim() -> RefCounted:
-	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim: RefCounted = MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	sim.rng = GameRandom.new(5)
 	return sim
 
@@ -67,16 +67,16 @@ func test_a_key_of_the_player_hands_off() -> void:
 
 
 func test_leaves_an_archer_it_cannot_reach() -> void:
-	# Lord 6's first mission, its second room: two archers, one in the room, one up in a walled
-	# nook, out of the hero's reach. The room is clear and its exit open (archers do not keep it
-	# shut): the hero kills the first, gives up on the second and walks out.
-	var sim: RefCounted = MapSim.new(MapBuilder.load_map(Campaign.lord_map(6)), 0, Vector2i(11, 4))
+	# The second mission on the three rooms, the middle room: two archers, one in the room, one
+	# in a walled nook, out of the hero's reach. The room is clear and its exit open (archers do
+	# not keep it shut): the hero kills the first, gives up on the second and walks out.
+	var sim: RefCounted = MapSim.new(own_map("three_rooms"), 1, Vector2i(4, 9))
 	sim.rng = GameRandom.new(60)
 	sim.continue_in_clear_room()
 	MapRoomPlay.run_cell_scripts(sim)
 	eq(
 		sim.enemies.map(func(e): return [e.type, e.pos / 27]),
-		[[MapSim.KIND_ARCHERS, Vector2i(13, 2)], [MapSim.KIND_ARCHERS, Vector2i(14, 5)]],
+		[[MapSim.KIND_ARCHERS, Vector2i(7, 11)], [MapSim.KIND_ARCHERS, Vector2i(2, 12)]],
 		"the archers"
 	)
 	var room: int = sim.cell

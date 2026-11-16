@@ -35,7 +35,7 @@ func test_scale() -> void:
 
 
 func test_clock_and_kills() -> void:
-	var sim := MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim := MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	sim.no_enemies = true
 	for t in 200:
 		sim.tick(-1, -1, sim.banner != 0)
@@ -58,7 +58,7 @@ func test_clock_and_kills() -> void:
 
 
 func test_the_last_enemy_hit_in_place_of_the_kills() -> void:
-	var sim := MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim := MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	var hud := _hud(sim)
 	sim.target_info = {"name": "Swords", "level": 2, "hp_bar": 31}
 	hud.refresh()
@@ -72,7 +72,7 @@ func test_the_last_enemy_hit_in_place_of_the_kills() -> void:
 
 
 func test_skill_bar_slots() -> void:
-	var hud := _hud(MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2)))
+	var hud := _hud(MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2)))
 	var got: Array = []
 	hud.belt_pressed.connect(func(i: int) -> void: got.append(["belt", i]))
 	hud.skill_pressed.connect(func(i: int) -> void: got.append(["skill", i]))
@@ -98,7 +98,7 @@ func test_skill_bar_slots() -> void:
 
 ## The corners: AUTO lit while the auto-hunt is on, none on hard, SKIP while someone talks.
 func test_corners() -> void:
-	var sim := MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim := MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	var hud := _hud(sim)
 	var auto := hud.get_node("%Auto") as Button
 	var skip := hud.get_node("%Skip") as Button
@@ -120,7 +120,7 @@ func test_corners() -> void:
 ## The blinking arrow down to the next room sits above the HUD, not under it.
 func test_the_exit_arrow_down_shows_above_the_hud() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	Router.params = {"lord": 1, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	screen.exit_arrows.show_exits(screen.sim, screen.ways_out, true)

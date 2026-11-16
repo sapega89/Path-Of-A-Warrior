@@ -5,7 +5,7 @@ const SETTINGS_PATH := "user://test_pause_settings.cfg"
 
 func test_pause_menu() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	Router.params = {"lord": 1, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	check(screen.can_process(), "the mission runs")
@@ -64,7 +64,7 @@ func test_game_speed_changed_in_the_pause_applies_at_once() -> void:
 	var old_speed: int = int(Settings.get_value("game_speed"))
 	Settings.path = SETTINGS_PATH
 	Settings.set_value("game_speed", 2)
-	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	Router.params = {"lord": 1, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	eq(screen.tick, Settings.SPEED_MS[2] / 1000.0, "the mission starts at Med")

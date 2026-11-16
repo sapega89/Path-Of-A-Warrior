@@ -4,7 +4,7 @@ extends "res://tests/test_case.gd"
 
 
 func test_the_hero_speaks_by_his_name() -> void:
-	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim: RefCounted = MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	var p := Profile.new()
 	p.hero_name = "Ann"
 	p.apply_to(sim)
@@ -21,7 +21,7 @@ func test_the_hero_speaks_by_his_name() -> void:
 ## Met as a foe in battle, a general likes the hero less (not below 0), and his talk after that
 ## fight brings no friendship; another's talk does.
 func test_a_fight_with_a_general_costs_friendship() -> void:
-	var sim := MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim := MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	sim.friendship = {1: 20}
 	sim.set_general(1)
 	MapTalks.start_map_talk(sim, 1)
@@ -37,7 +37,7 @@ func test_a_fight_with_a_general_costs_friendship() -> void:
 
 func test_the_talk_shows_who_speaks() -> void:
 	var old: Dictionary = Router.params
-	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	Router.params = {"lord": 1, "mission": 0, "seed": 2, "map_path": own_map_path("three_rooms")}
 	var screen: Control = Router.make(Router.SCREENS["mission"])
 	root.add_child(screen)
 	screen._show_banner()

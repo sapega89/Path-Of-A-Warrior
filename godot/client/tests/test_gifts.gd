@@ -110,7 +110,7 @@ func test_no_room_no_card() -> void:
 
 func test_a_won_mission_leaves_the_gift_until_taken() -> void:
 	var p := Profile.new()
-	var sim: MapSim = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim: MapSim = MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	sim.mission_general = GORSKI
 	p.take_from(sim, 1, 0, 1, _rng(5))
 	check(p.run.gift.is_empty(), "a lost mission gives none")

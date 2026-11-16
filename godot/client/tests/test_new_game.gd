@@ -12,7 +12,7 @@ func test_head_and_difficulty_are_kept() -> void:
 	var q: RefCounted = Profile.load_or_new(TEST_PATH)
 	eq(q.head, 2, "the face")
 	eq(q.difficulty, 0, "hard")
-	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
+	var sim: RefCounted = MapSim.new(own_map("three_rooms"), 0, Vector2i(4, 2))
 	q.apply_to(sim)
 	eq(sim.difficulty, 0, "the mission is played hard")
 
