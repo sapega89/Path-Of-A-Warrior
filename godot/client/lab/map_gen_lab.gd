@@ -1,9 +1,10 @@
 extends Control
 ## The map generator lab: the map the generator makes for a place (MapGenerator.build), in the
 ## game's art seen from above, with the route of one of its missions over it (its rooms joined
-## from the start, a ring on the rooms of its stops, a wider one on the last). It shows the map of
-## any seed, also one the game could not play (the line at the top says what MapCheck finds), so
-## that the look of the rules can be seen quickly on many places and seeds.
+## from the start, a ring on the rooms of its stops, a wider one on the last). The line at the top
+## says how many rooms, soldiers and archers the mission has and its time. It shows the map of any
+## seed, also one the game could not play (the line says what MapCheck finds), so that the look
+## of the rules can be seen quickly on many places and seeds.
 ##
 ## Run: godot --path godot/client res://lab/map_gen_lab.tscn (in the editor: open the scene, F6).
 ## Keys: Left / Right the place before / after, N another seed, R the place's own seed again,
@@ -85,7 +86,7 @@ func _show_info() -> void:
 		"plays" if problems.is_empty() else "%d problems: %s" % [problems.size(), problems[0]]
 	)
 	info.text = (
-		"Place %d (%s, depth %d), seed %d, mission %d of %d, %d rooms. %s"
+		"Place %d (%s, depth %d), seed %d, mission %d of %d: %s. %s"
 		% [
 			place,
 			plan.biome,
@@ -93,11 +94,27 @@ func _show_info() -> void:
 			map_seed,
 			mission + 1,
 			plan.missions.size(),
-			layout.routes[mission].size(),
+			_fights(),
 			check
 		]
 	)
 	route_line.queue_redraw()
+
+
+## The mission's rooms, soldiers and archers, and its time.
+func _fights() -> String:
+	var rooms := Rooms.new(map, mission)
+	var soldiers := 0
+	for room: int in layout.routes[mission]:
+		for wave: Array in rooms.waves(room):
+			soldiers += int(wave[1]) if wave[0] == MapSim.KIND_SWORDS else 0
+	var archers := 0
+	for script: Dictionary in map.scripts:
+		archers += script.ops.count([0, mission + 1, MapSim.KIND_ARCHERS - 200])
+	return (
+		"%d rooms, %d soldiers, %d archers, %d s"
+		% [layout.routes[mission].size(), soldiers, archers, MapBuilder.mission_time(map, mission)]
+	)
 
 
 ## The route of the mission over the map: its rooms joined, rings on the rooms of its stops.

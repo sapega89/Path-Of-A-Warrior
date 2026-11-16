@@ -1,13 +1,21 @@
 {
 "curve": [
-{"depths": [1, 4], "route_rooms": [3, 4], "crowding": [0.12, 0.33]},
-{"depths": [5, 8], "route_rooms": [4, 7], "crowding": [0.14, 0.31]},
-{"depths": [9, 12], "route_rooms": [5, 7], "crowding": [0.22, 0.35]},
-{"depths": [13, 16], "route_rooms": [5, 7], "crowding": [0.18, 0.35]},
-{"depths": [17, 19], "route_rooms": [6, 8], "crowding": [0.2, 0.43]}
+{"depths": [1, 4], "route_rooms": [3, 4], "crowding": [0.12, 0.33],
+ "soldiers": [7, 9], "archers": [0, 0]},
+{"depths": [5, 8], "route_rooms": [4, 7], "crowding": [0.14, 0.31],
+ "soldiers": [7, 9], "archers": [0.6, 1.0]},
+{"depths": [9, 12], "route_rooms": [5, 7], "crowding": [0.22, 0.35],
+ "soldiers": [7, 9], "archers": [0.5, 1.0]},
+{"depths": [13, 16], "route_rooms": [5, 7], "crowding": [0.18, 0.35],
+ "soldiers": [16, 24], "archers": [0.5, 1.5]},
+{"depths": [17, 19], "route_rooms": [6, 8], "crowding": [0.2, 0.43],
+ "soldiers": [26, 34], "archers": [0.9, 1.3]}
 ],
+"breakables": [2, 4],
+"time": {"base": 10, "room": 10, "enemy": 5, "general": 30},
 "biomes": {
 "steppe": {
+"breakables": ["woodpile", "chest", "rack", "hay", "barrel"],
 "ground": "m", "patches": [["g", 0.3], ["d", 0.1]], "path": "d",
 "barrier": {"kind": "v"}, "low_barrier": {"kind": "m"}, "ring": {"kind": "m"},
 "obstacles": [
@@ -25,6 +33,7 @@
 "loose": [["tuft", 0.06], ["pebbles", 0.02]]
 },
 "forest": {
+"breakables": ["stump", "woodpile", "hay", "chest"],
 "ground": "g", "patches": [["m", 0.3], ["d", 0.1]], "path": "d",
 "barrier": {"prop": "fir"}, "low_barrier": {"prop": "bush"},
 "obstacles": [
@@ -41,6 +50,7 @@
 "loose": [["tuft", 0.05], ["stump", 0.01], ["pebbles", 0.01]]
 },
 "lake": {
+"breakables": ["woodpile", "bucket", "chest", "hay", "barrel"],
 "ground": "m", "patches": [["g", 0.3], ["s", 0.08]], "path": "d",
 "barrier": {"kind": "w"}, "low_barrier": {"kind": "w"},
 "obstacles": [
@@ -56,6 +66,7 @@
 "loose": [["tuft", 0.05], ["pebbles", 0.02]]
 },
 "mountains": {
+"breakables": ["rock", "chest", "woodpile", "rack"],
 "ground": "d", "patches": [["v", 0.3], ["t", 0.08]], "path": "v",
 "barrier": {"kind": "t"}, "low_barrier": {"kind": "d"},
 "obstacles": [
@@ -71,6 +82,7 @@
 "loose": [["pebbles", 0.05], ["tuft", 0.02]]
 },
 "town": {
+"breakables": ["barrel", "chest", "woodpile", "rack", "hay", "bucket"],
 "ground": "d", "patches": [["v", 0.3], ["m", 0.15]], "path": "c",
 "barrier": {"kind": "c"}, "low_barrier": {"prop": "fence"}, "ring": {"kind": "g", "prop": "fir"},
 "obstacles": [

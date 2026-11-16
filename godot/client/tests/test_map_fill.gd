@@ -126,4 +126,5 @@ func test_the_lab_shows_the_maps() -> void:
 	eq([lab.place, lab.mission], [MapBuilder.map_count(), 0], "Left from the first: the last place")
 	check(lab.info.text.begins_with("Place %d " % lab.place), lab.info.text)
 	check(lab.info.text.ends_with("plays"), "its map plays: " + lab.info.text)
+	check(lab.info.text.contains(" soldiers, "), "the mission's fights: " + lab.info.text)
 	lab.free()
