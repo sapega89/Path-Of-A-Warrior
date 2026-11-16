@@ -3,16 +3,16 @@ extends RefCounted
 ## Makes the map of a place from its plan (MapPlan) and the rules of data/map_rules.json, in the
 ## format of the campaign's maps (MapBuilder), step by step on a MapDraft: the grid of rooms and
 ## each mission's route (RoomLayout), what stands in the rooms (RoomFill, with the rooms made by
-## hand: SetPiece), the ground (GroundPaint), the plan's generals and talks in the rooms of the
-## routes. Each step draws from
-## its own random numbers, started from the seed and the step's name, so that new rules for one
-## step do not move what the others make. A map the game cannot play (MapCheck) is made again
-## from the next seed, up to TRIES seeds.
+## hand: SetPiece), the fights of each mission, its things to break and its time (WavePlan), the
+## ground (GroundPaint). Each step draws from its own random numbers, started from the seed and
+## the step's name, so that new rules for one step do not move what the others make. A map the
+## game cannot play (MapCheck) is made again from the next seed, up to TRIES seeds.
 ##
 ## map_rules.json: curve: per band of depths in the campaign (MapPlan.depth: [first, last]),
-## route_rooms ([fewest, most] rooms on a mission's route) and crowding (the least and the most
-## of a room on a route its obstacles take); biomes: per biome of the plan, its ground
-## (GroundPaint), barrier, low_barrier, obstacles, land and loose things (RoomFill).
+## route_rooms ([fewest, most] rooms on a mission's route), crowding (the least and the most of a
+## room on a route its obstacles take), soldiers and archers (WavePlan); breakables and time
+## (WavePlan); biomes: per biome of the plan, its ground (GroundPaint), barrier, low_barrier,
+## obstacles, land and loose things (RoomFill), breakables (WavePlan).
 
 const RULES_PATH := "res://data/map_rules.json"
 const FORMAT := 2
@@ -20,8 +20,6 @@ const FORMAT := 2
 const TRIES := 50
 ## Enemies alive at once in a room: a rule of the fight, the same in every room.
 const MAX_ENEMIES := 3
-## Numbers in a room's waves: [kind, count] pairs, zeros after the last.
-const WAVE_NUMBERS := 12
 
 static var _rules: Dictionary = {}
 
@@ -49,25 +47,25 @@ static func build(plan: MapPlan, map_seed: int) -> Dictionary:
 	RoomFill.new(draft, biome, stream(map_seed, "fill")).fill(
 		plan, Vector2(crowding[0], crowding[1])
 	)
+	var fights := WavePlan.new(draft, plan, _rules_of(), stream(map_seed, "waves"))
+	fights.make()
 	GroundPaint.new(draft, biome, stream(map_seed, "ground")).paint()
 	var map := {"format": FORMAT, "seed": map_seed, "w": draft.w, "h": draft.h}
 	map["biome"] = plan.biome
 	map["parts"] = Array(draft.parts)
 	map["props"] = Array(draft.props)
-	var objects: Array = []
-	objects.resize(draft.w * draft.h)
-	objects.fill(0)
-	map["objects"] = objects
+	map["objects"] = Array(fights.objects)
 	map["flags"] = Array(draft.blocked)
-	map["scripts"] = []
+	map["scripts"] = Array(fights.scripts)
 	var missions: Array = []
 	var starts: Array = []
 	for mission in plan.missions.size():
-		missions.append(_mission_rooms(plan, layout, mission))
+		missions.append(_mission_rooms(plan, layout, fights.waves[mission], mission))
 		var start := layout.start(mission)
 		starts.append([start.x, start.y])
 	map["rooms"] = {"rooms_x": layout.rooms_x, "rooms_y": layout.rooms_y, "missions": missions}
 	map["starts"] = starts
+	map["time_limits"] = Array(fights.time_limits)
 	return map
 
 
@@ -109,29 +107,22 @@ static func stream(map_seed: int, step: String) -> GameRandom:
 	return GameRandom.new(hash_of)
 
 
-## The rooms of a mission (Rooms.cells): the exits of its route, and in the room of each stop of
-## its plan the stop's generals as waves and who talks.
-static func _mission_rooms(plan: MapPlan, layout: RoomLayout, mission: int) -> Array:
-	var stop_at := {}
-	var route: Array = layout.routes[mission]
-	var stops: Array = plan.missions[mission]
-	for i in stops.size():
-		stop_at[route[layout.stops[mission][i]]] = stops[i]
+## The rooms of a mission (Rooms.cells): the exits of its route, its waves (WavePlan) and in the
+## room of each stop of its plan who talks.
+static func _mission_rooms(plan: MapPlan, layout: RoomLayout, waves: Array, mission: int) -> Array:
+	var talks := {}
+	for i in plan.missions[mission].size():
+		talks[layout.routes[mission][layout.stops[mission][i]]] = plan.missions[mission][i]["talk"]
 	var rooms: Array = []
 	for room in layout.rooms_x * layout.rooms_y:
-		var stop: Dictionary = stop_at.get(room, {"generals": [], "talk": 0})
-		var waves: Array[int] = []
-		for general: Array in stop["generals"]:
-			waves.append_array(general)
-		waves.resize(WAVE_NUMBERS)
 		(
 			rooms
 			. append(
 				{
 					"exits": layout.exits(mission, room),
 					"max_enemies": MAX_ENEMIES,
-					"waves": waves,
-					"general": stop["talk"],
+					"waves": waves[room],
+					"general": talks.get(room, 0),
 				}
 			)
 		)

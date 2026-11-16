@@ -126,7 +126,7 @@ func test_the_generals_where_the_plan_puts_them() -> void:
 				),
 				"%s: its own general in the last room" % at
 			)
-			eq(rooms.waves(route[0]), [], "%s: no general in the first room" % at)
+			check(not rooms.has_general(route[0]), "%s: no general in the first room" % at)
 			eq(int(rooms.cells[route[0]].general), 0, "%s: no talk in the first room" % at)
 
 
