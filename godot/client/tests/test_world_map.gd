@@ -121,7 +121,7 @@ func test_a_room_shows_only_itself_and_the_next() -> void:
 		if r != 0 and not r in next:
 			var q: Vector2i = rooms.room_xy(r)
 			check(not cells.has(Vector2i(7 * q.x + 4, 7 * q.y + 4)), "not room %d" % r)
-	var b: Node3D = MapBuilder.new()
+	var b: Node3D = MapArt.new()
 	root.add_child(b)
 	b.build(map)
 	b.show_only(cells)

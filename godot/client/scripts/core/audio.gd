@@ -1,14 +1,14 @@
 extends Node
 ## The music and the sound effects: the three tunes (TUNES: 0 the title, 1 the missions, 2 the
 ## camp and the menus, from assets/music, made by godot/tools/music/build.py) and the effects
-## 3..16, from assets/original/sound.
+## 3..16 (10 is not played), from assets/sound, made by godot/tools/music/sounds.py.
 ## Each screen has its tune (SCREEN_MUSIC); the story chooses its own by the page. A tune
 ## asked for again goes on playing. An effect cuts off the effects still playing, except
 ## the short hits (OVERLAPPING); after effect 9 nothing new plays for half a second.
 
 const TUNES: Array[String] = ["duma", "pokhid", "plavni"]
 const MUSIC_PATH := "res://assets/music/%s.ogg"
-const SFX_PATH := "res://assets/original/sound/sfx_%d.wav"
+const SFX_PATH := "res://assets/sound/sfx_%d.wav"
 const SCREEN_MUSIC := {
 	"title": 0,
 	"main_menu": 0,

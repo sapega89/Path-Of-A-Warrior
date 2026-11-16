@@ -20,7 +20,7 @@ extends "res://scripts/world/map_builder.gd"
 ##   objects      the breakable ones too: a hit flashes each, a glowing brass outline marks it;
 ##   around       the land goes on past the edges and rises into low hills, with fields of
 ##                wheat; grass on the meadows in and around the map; both sway in the wind.
-## The simulation does not see any of this: it keeps the original cells.
+## The simulation does not see any of this: it keeps the cells of the map data.
 
 const GROUND_SHADER := preload("res://assets/art/shaders/map_ground.gdshader")
 const WATER_SHADER := preload("res://assets/art/shaders/water.gdshader")
@@ -133,7 +133,6 @@ func build(data: Dictionary) -> void:
 		child.queue_free()
 	breakables.clear()
 	props.clear()
-	_standing.clear()
 	kinds = tiles().get("kinds", [])
 	_layout()
 	_build_ground()
@@ -483,7 +482,7 @@ func _build_clusters(parent: Node3D, clustered: Dictionary) -> void:
 		props.append(node)
 
 
-## Draws only these cells (as MapBuilder.show_only; empty: all): the ground and the water of
+## Draws only these cells (empty: all): the ground and the water of
 ## the others darker (a mask the shaders read), the props on them hidden. The breakables'
 ## nodes stay (the mission screen hides them by is_shown); collision stays.
 func show_only(cells: Dictionary) -> void:
@@ -508,7 +507,7 @@ func show_only(cells: Dictionary) -> void:
 			node.visible = is_shown(floori(node.position.x), floori(node.position.z))
 
 
-## The breakable objects (MapSim.breakables) as props, named Object_x_y like MapBuilder's.
+## The breakable objects (MapSim.breakables) as props, named Object_x_y.
 func _build_objects() -> void:
 	for y in h:
 		for x in w:

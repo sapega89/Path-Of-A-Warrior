@@ -11,7 +11,7 @@ func test_the_hero_is_the_cossack_figure() -> void:
 		viewer.figure.skeleton.find_child(MapPeople.BLADES.front(), true, false) != null,
 		"his weapon"
 	)
-	check(not viewer.hero.sprite.visible, "not the flat picture")
+	check(viewer.hero.find_children("*", "Sprite3D").is_empty(), "no flat picture")
 	eq(viewer.figure.player.current_animation, "idle_2h", "standing, the spear ready in both hands")
 	for i in 10:
 		viewer.hero.step(Vector2.RIGHT, 1.0 / 60.0)
