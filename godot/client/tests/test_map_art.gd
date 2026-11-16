@@ -1,7 +1,8 @@
 extends "res://tests/test_case.gd"
-## The maps of the campaign in the new art (scripts/world/map_art.gd): every tile is known,
-## the ground rises where it is blocked and stays flat where people walk, the faces of cliffs
-## climb, bridges and decks hold, what stands on a cell is a 3D piece, the breakable ones flash.
+## The maps of the campaign in the new art (scripts/world/map_art.gd): every part and prop is
+## known, the ground rises where it is blocked and stays flat where people walk, the faces of
+## cliffs climb, bridges and decks hold, what stands on a cell is a 3D piece, the breakable ones
+## flash.
 
 
 func _map(n: int) -> Node3D:
@@ -15,29 +16,32 @@ func _kind(b: Node3D, x: int, y: int) -> String:
 	return b.kinds[int(b._part(x * MapArt.PARTS + 1, y * MapArt.PARTS + 1)[0])]
 
 
-func test_every_tile_is_known() -> void:
-	var t := MapArt.tiles()
-	eq(int(t.get("parts")), MapArt.PARTS, "three parts to a tile")
-	for k in t.kinds:
+func test_every_part_and_prop_is_known() -> void:
+	eq(MapArt.KIND_LETTERS.length(), MapArt.KINDS.size(), "a letter for each kind of ground")
+	for k in MapArt.KINDS:
 		check(MapArt.KIND_COLOUR.has(k), "a colour for %s" % k)
-	for tile in t.props:
-		var what: String = t.props[tile]
+	var breakable: Array = MapSim.table("breakable_prop")
+	eq(MapSim.table("breakable_hp").size(), breakable.size(), "a strength for each breakable")
+	for code in range(1, breakable.size()):
 		check(
-			MapArt.PROP.has(what) or MapArt.CLUSTERS.has(what) or what in MapArt.AS_GROUND,
-			"tile %s: %s is drawn" % [tile, what]
+			MapArt.PROP.has(breakable[code]), "breakable %d: %s is drawn" % [code, breakable[code]]
 		)
-	var used := {}
 	for n in range(1, MapBuilder.map_count() + 1):
 		var m := MapBuilder.load_map(n)
-		for layer in ["ground", "upper"]:
-			for tile in m[layer]:
-				used[int(tile)] = n
-	for tile in used:
-		if tile != 0:
-			check(
-				t.ground.has(str(tile)) or t.props.has(str(tile)),
-				"tile %d (map %d)" % [tile, used[tile]]
-			)
+		var unknown := {}
+		for letters: String in m.parts:
+			for letter in letters:
+				if not letter in MapArt.KIND_LETTERS:
+					unknown[letter] = true
+			if letters.length() != MapArt.PARTS * MapArt.PARTS:
+				unknown[letters] = true
+		for what: String in m.props:
+			if what != "" and not (MapArt.PROP.has(what) or MapArt.CLUSTERS.has(what)):
+				unknown[what] = true
+		for code in m.objects:
+			if int(code) < 0 or int(code) >= breakable.size():
+				unknown[code] = true
+		eq(unknown.keys(), [], "map %d: every part, prop and object is known" % n)
 
 
 func test_people_walk_on_flat_ground() -> void:
@@ -112,7 +116,7 @@ func test_a_cliff_climbs_to_its_top() -> void:
 
 func test_a_pit_in_the_cliff_is_filled() -> void:
 	var b := _map(5)
-	eq(MapArt.prop_of(b.cell("upper", 8, 1)), "pebbles", "pebbles on the cliff's top")
+	eq(b.prop_at(8, 1), "pebbles", "pebbles on the cliff's top")
 	check(b.is_blocked(8, 1), "blocked")
 	eq(b.height_of(8, 1), b.height_of(9, 1), "the cell rises with the cliff")
 	var on_top := false
@@ -128,7 +132,7 @@ func test_water_bridges_and_decks() -> void:
 	check(b.has_node("Water"), "a river")
 	eq(_kind(b, 11, 21), "wood", "a log bridge")
 	eq(_kind(b, 11, 22), "wood", "over the water")
-	eq(MapArt.prop_of(b.cell("upper", 10, 22)), "palisade", "a post at its side")
+	eq(b.prop_at(10, 22), "palisade", "a post at its side")
 	eq(_kind(b, 10, 22), "wood", "stands on a deck, not in the water")
 	eq(_kind(b, 7, 0), "water", "the river")
 	b.free()

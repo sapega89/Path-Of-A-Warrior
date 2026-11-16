@@ -11,6 +11,7 @@ extends Node3D
 const FLAG_BLOCKED := 1
 const FLAG_OVER := 2
 const WALL_HEIGHT := 1.5  # collision height of a blocked cell
+const DEFAULT_START := Vector2i(4, 4)  # a map that names no start for the mission
 
 var map: Dictionary
 var w := 0
@@ -30,6 +31,20 @@ static func load_map(number: int) -> Dictionary:
 		return {}
 	var data: Variant = JSON.parse_string(f.get_as_text())
 	return data if typeof(data) == TYPE_DICTIONARY else {}
+
+
+## Where the hero starts mission `mission` of the map (its index in the lord's missions).
+static func mission_start(map: Dictionary, mission: int) -> Vector2i:
+	var starts: Array = map.get("starts", [])
+	if mission < 0 or mission >= starts.size():
+		return DEFAULT_START
+	return Vector2i(int(starts[mission][0]), int(starts[mission][1]))
+
+
+## The time limit of mission `mission` of the map, in seconds (0: none).
+static func mission_time(map: Dictionary, mission: int) -> int:
+	var limits: Array = map.get("time_limits", [])
+	return int(limits[mission]) if mission >= 0 and mission < limits.size() else 0
 
 
 static func map_count() -> int:

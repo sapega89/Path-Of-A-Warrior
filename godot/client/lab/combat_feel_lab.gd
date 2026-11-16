@@ -125,8 +125,7 @@ func start() -> void:
 		n.queue_free()
 	loot.clear()
 	var info: Dictionary = Campaign.new().lord_missions(LORD)[MISSION]
-	var s: Array = info.get("start", [4, 2])
-	sim = MapSim.new(map, MISSION, Vector2i(int(s[0]), int(s[1])))
+	sim = MapSim.new(map, MISSION, MapBuilder.mission_start(map, MISSION))
 	sim.rng = GameRandom.new(seed if seed >= 0 else int(Time.get_ticks_usec() & 0x7fffffff))
 	sim.no_enemies = true  # the lab brings the enemies itself
 	tint = int(info.get("tint", 0))

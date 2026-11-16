@@ -89,18 +89,18 @@ func _ready() -> void:
 	var map := MapBuilder.load_map(Campaign.lord_map(lord_id))
 	builder.build(map)
 	profile = Profile.load_or_new(profile_path())
-	var s: Array = mission_info.get("start", [4, 4])
+	var s := MapBuilder.mission_start(map, mission)
 	var resume := bool(p.get("resume", false)) and not profile.on_map.is_empty()
 	if resume:
-		s = [int(profile.on_map.get("x", s[0])), int(profile.on_map.get("y", s[1]))]
-	sim = MapSim.new(map, mission, Vector2i(int(s[0]), int(s[1])))
+		s = Vector2i(int(profile.on_map.get("x", s.x)), int(profile.on_map.get("y", s.y)))
+	sim = MapSim.new(map, mission, s)
 	if p.has("seed"):
 		sim.rng = GameRandom.new(int(p.seed))
 	tint = int(mission_info.get("tint", 0))
 	sim.boss_type = int(mission_info.get("boss_type", 0))
 	sim.mission_gold = int(mission_info.get("gold", 0))
 	sim.mission_general = int(mission_info.get("general", 0))
-	sim.time_limit = int(mission_info.get("time_limit", 0))
+	sim.time_limit = MapBuilder.mission_time(map, mission)
 	profile.apply_to(sim)
 	if resume:
 		profile.resume_on_map(sim)
