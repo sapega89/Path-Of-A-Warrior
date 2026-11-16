@@ -11,11 +11,13 @@ extends RefCounted
 ##   - a ranged skill when the target stands about 60 px ahead, out of the sword's reach;
 ##   - a strike skill on a general, on 2+ enemies in reach or with the MP nearly full, else the
 ##     attack combo;
-##   - it walks to the nearest living enemy, and around a wall when it stops moving or comes
-##     no closer (each way around longer than the one before, to the other side); an enemy that
-##     four ways around bring no closer (an archer up on a wall) it leaves alone in this room;
-##   - a cleared room (or one where only such enemies are left): out through an open exit, to
-##     a room not seen yet when it can.
+##   - it goes for the nearest living enemy within the sword's reach, else for the one fewest
+##     steps away, by the shortest way over the free cells of the room (RoomPath), or, when
+##     there is none, through things to break, which it breaks on the way; an enemy it has no
+##     way to (an archer up on a wall), or comes no nearer to for a while, it leaves alone in
+##     this room till it comes within the sword's reach;
+##   - a cleared room (or one where only such enemies are left): out through an open exit by
+##     the shortest way, to a room not seen yet when it can.
 ## Talks, banners and the pause menu stay the player's; any key of the player hands off for a
 ## moment.
 
@@ -27,27 +29,14 @@ const STRIKES := [12, 13, 14, 20, 21, 22]
 const HP_POTIONS := [1, 2, 3, 7, 8, 9]
 const MP_POTIONS := [4, 5, 6, 7, 8, 9]
 const MANUAL_PAUSE := 12  # ticks it waits after a key of the player
-const STUCK_TICKS := 4  # ticks without moving: go around
-const NO_CLOSER_TICKS := 16  # ticks without coming closer to the target: go around
-const DETOUR_TICKS := 8  # the first way around; the n-th is n times as long
-const GIVE_UP_TRIES := 4  # ways around that bring it no closer: the target is out of reach
-const CLOSER := 27  # px closer than where the ways around began: they worked
-const DOWN := 0
-const LEFT := 2
-const UP := 4
-const RIGHT := 6
+const GIVE_UP_TICKS := 64  # ticks without a step nearer the target: it is out of reach
+const THROUGH_THINGS := 49  # steps more that a way through things to break counts for
 
 var on := false
 var manual := 0
-var _last := Vector2i(-1, -1)
-var _still := 0
-var _detour := -1
-var _detour_ticks := 0
 var _target: MapActor = null  # the enemy it walks to
-var _closest := 0  # its nearest distance to the target so far
-var _no_closer := 0  # ticks since it last came closer
-var _tries := 0  # ways around the target in a row
-var _try_from := 0  # the nearest distance when they began
+var _closest := 0  # the fewest steps it has been from the target
+var _no_closer := 0  # ticks since it last came a step nearer
 var _out_of_reach: Array = []  # the enemies of this room it leaves alone
 var _hunt_cell := -1  # the room _out_of_reach belongs to
 var _seen := {}
@@ -87,22 +76,17 @@ func decide(sim: MapSim) -> Dictionary:
 	if key >= 0:
 		out.hotkey = key
 		return out
-	var hunt := _hunted(sim, foes)
-	if hunt.is_empty():
+	var reach := int(MapSim.table("weapon_reach")[h.weapon_kind]) - 6
+	var target := _nearest(sim, _hunted(sim, foes, reach), reach)
+	if target == null:
 		if not sim.exits_open():
 			_out_of_reach.clear()  # no way out yet: it tries them again
-		out.held = _to_exit(sim)
+		_to_exit(sim, out)
 		return out
-	var target: MapActor = hunt[0]
 	var dist := MapGeometry.distance(h.pos, target.pos)
-	for e in hunt:
-		var d := MapGeometry.distance(h.pos, e.pos)
-		if d < dist:
-			dist = d
-			target = e
-	var reach := int(MapSim.table("weapon_reach")[h.weapon_kind]) - 6
 	key = _skill(sim, foes, target, dist, reach)
 	if key >= 0 or dist <= reach:
+		_target = null  # a fight: its way to the next target starts afresh
 		h.dir = MapGeometry.dir4(h.pos, target.pos)  # turns the hero
 		h.facing = h.dir
 		if key >= 0:
@@ -110,65 +94,103 @@ func decide(sim: MapSim) -> Dictionary:
 		else:
 			out.fire = true
 		return out
-	out.held = _walk(sim, target)
+	_walk(sim, target, out)
 	return out
 
 
-## The enemies it goes for: the living ones, but those it left alone in this room.
-func _hunted(sim: MapSim, foes: Array) -> Array:
+## The enemies it goes for: the living ones, but those it left alone in this room unless they
+## come within the sword's reach.
+func _hunted(sim: MapSim, foes: Array, reach: int) -> Array:
 	if _hunt_cell != sim.cell:
 		_hunt_cell = sim.cell
 		_out_of_reach.clear()
 		_target = null
 	_out_of_reach = _out_of_reach.filter(func(e): return e in foes)
-	return foes.filter(func(e): return not e in _out_of_reach)
-
-
-func _walk(sim: MapSim, target: MapActor) -> int:
 	var h := sim.hero
-	_still = _still + 1 if h.pos == _last and h.action == 1 else 0
-	_last = h.pos
-	var dist := MapGeometry.distance(h.pos, target.pos)
-	if target != _target:
+	return foes.filter(
+		func(e: MapActor) -> bool:
+			return not e in _out_of_reach or MapGeometry.distance(h.pos, e.pos) <= reach
+	)
+
+
+## The enemy it goes for: the nearest within the sword's reach, else the one fewest steps away
+## (the nearest of those); one it has no way to it leaves alone in this room. Null: none.
+func _nearest(sim: MapSim, hunt: Array, reach: int) -> MapActor:
+	var h := sim.hero
+	var from: Array[Vector2i] = [RoomPath.cell_of(sim, h.pos)]
+	var free := RoomPath.steps_from(sim, from)
+	var through := RoomPath.steps_from(sim, from, true)
+	var best: MapActor = null
+	var best_key := Vector2i.ZERO
+	for e: MapActor in hunt:
+		var dist := MapGeometry.distance(h.pos, e.pos)
+		var away := 0 if dist <= reach else _away(free, through, RoomPath.cell_of(sim, e.pos))
+		if away < 0:
+			_out_of_reach.append(e)
+			continue
+		if best == null or Vector2i(away, dist) < best_key:
+			best = e
+			best_key = Vector2i(away, dist)
+	return best
+
+
+## The steps to cell `c` by the free cells (steps `free`), else THROUGH_THINGS more by the way
+## through things to break (`through`); -1 no way.
+static func _away(free: Dictionary, through: Dictionary, c: Vector2i) -> int:
+	var away := RoomPath.steps_to(free, c)
+	if away < 0:
+		away = RoomPath.steps_to(through, c)
+		away += THROUGH_THINGS if away >= 0 else 0
+	return away
+
+
+## A step nearer the target by the way through the room, or straight at it from its cell or the
+## one next to it; a target it comes no nearer to for GIVE_UP_TICKS it leaves alone in this room.
+func _walk(sim: MapSim, target: MapActor, out: Dictionary) -> void:
+	var h := sim.hero
+	var goal: Array[Vector2i] = [RoomPath.cell_of(sim, target.pos)]
+	var at := RoomPath.cell_of(sim, h.pos)
+	var steps := RoomPath.steps_from(sim, goal)
+	if not steps.has(at):
+		steps = RoomPath.steps_from(sim, goal, true)
+	var left := int(steps.get(at, -1))
+	if target != _target or left < _closest:
 		_target = target
-		_closest = dist
+		_closest = left
 		_no_closer = 0
-		_tries = 0
-	elif dist < _closest:
-		_closest = dist
-		_no_closer = 0
-		if _tries > 0 and dist <= _try_from - CLOSER:
-			_tries = 0
 	else:
 		_no_closer += 1
-	if _detour_ticks > 0:
-		_detour_ticks -= 1
-		_no_closer = 0
-		return _detour
-	var want := MapGeometry.dir4(h.pos, target.pos)
-	if _still < STUCK_TICKS and _no_closer < NO_CLOSER_TICKS:
-		return want
-	# a wall, or a corner it goes to and fro at: along it, toward the target's other axis first,
-	# then to the other side
-	_still = 0
-	_no_closer = 0
-	_tries += 1
-	if _tries == 1:
-		_try_from = _closest
-	if _tries > GIVE_UP_TRIES:
+	if _no_closer >= GIVE_UP_TICKS:
 		_out_of_reach.append(target)
 		_target = null
-		return -1
-	var dx: int = target.pos.x - h.pos.x
-	var dy: int = target.pos.y - h.pos.y
-	if want == DOWN or want == UP:
-		_detour = RIGHT if dx > 0 else LEFT
-	else:
-		_detour = DOWN if dy > 0 else UP
-	if _tries % 2 == 0:
-		_detour = (_detour + 4) & 7
-	_detour_ticks = DETOUR_TICKS * _tries
-	return _detour
+	elif not _step(sim, steps, target.pos - h.pos, out):
+		out.held = MapGeometry.dir4(h.pos, target.pos)
+	elif out.fire:
+		_no_closer = 0  # breaking a thing in the way
+
+
+## A step on the way `steps` leads (RoomPath.steps_from its goal), the one most along `toward`
+## of those as short; false: the hero stands on the goal or has no way from here.
+func _step(sim: MapSim, steps: Dictionary, toward: Vector2i, out: Dictionary) -> bool:
+	var d := RoomPath.next_step(sim, steps, toward)
+	if d < 0:
+		return false
+	_step_into(sim, d, out)
+	return true
+
+
+## Into the next cell towards `direction` (0, 2, 4, 6), or a blow at the thing to break on it.
+func _step_into(sim: MapSim, direction: int, out: Dictionary) -> void:
+	var h := sim.hero
+	var at := RoomPath.cell_of(sim, h.pos)
+	var next := at + RoomPath.STEPS[direction >> 1]
+	for b: MapBreakable in sim.breakables:
+		if b.tile == next and b.active and b.hp > 0:
+			h.dir = MapGeometry.dir4(h.pos, b.pos)  # turns the hero
+			h.facing = h.dir
+			out.fire = true
+			return
+	out.held = RoomPath.step_to(sim, at, direction)
 
 
 ## A belt slot to drink from, or -1.
@@ -239,39 +261,48 @@ func _heal(sim: MapSim) -> int:
 	return -1
 
 
-## The room is clear and its exits open: walk out, to a room not seen yet when there is one.
-func _to_exit(sim: MapSim) -> int:
+## The room is clear and its exits open: walk out by the shortest way (through things to
+## break when there is no other), to a room not seen yet when there is one.
+func _to_exit(sim: MapSim, out: Dictionary) -> void:
 	if not sim.exits_open():
-		return -1
-	var cell: int = sim.cell
-	_seen[cell] = true
-	if _exit_cell != cell:
-		_exit_cell = cell
-		var exits: Array = sim.rooms.exits(cell)
-		var open: Array = []
-		var fresh: Array = []
-		for b in 4:
-			if int(exits[b]) != 0:
-				open.append(b)
-				if not _seen.has(sim.rooms.neighbour(cell, b + 1)):
-					fresh.append(b)
-		var pick: Array = fresh if not fresh.is_empty() else open
-		_exit = -1 if pick.is_empty() else int(pick[sim.play_ticks % pick.size()])
+		return
+	_seen[sim.cell] = true
+	if _exit_cell != sim.cell:
+		_exit_cell = sim.cell
+		_exit = _pick_exit(sim)
 	if _exit < 0:
-		return -1
-	if _detour_ticks > 0:
-		_detour_ticks -= 1
-		return _detour
-	var h := sim.hero
-	_still = _still + 1 if h.pos == _last and h.action == 1 else 0
-	_last = h.pos
-	var want: int = [DOWN, LEFT, UP, RIGHT][_exit]
-	if _still >= STUCK_TICKS:
-		_still = 0
-		_detour = (want + 2 + 4 * (sim.play_ticks & 1)) & 7
-		_detour_ticks = DETOUR_TICKS
-		return _detour
-	return want
+		return
+	var at := RoomPath.cell_of(sim, sim.hero.pos)
+	var steps := RoomPath.steps_from(sim, RoomPath.ways_out(sim, _exit))
+	if not steps.has(at):
+		steps = RoomPath.steps_from(sim, RoomPath.ways_out(sim, _exit, true), true)
+	if int(steps.get(at, -1)) == 0:
+		_step_into(sim, _exit * 2, out)
+	elif not _step(sim, steps, RoomPath.STEPS[_exit], out):
+		out.held = _exit * 2
+
+
+## The exit it walks out of: one it has a way to and to a room not seen yet, else one it has a
+## way to (through things to break too), else any open one; -1 none.
+func _pick_exit(sim: MapSim) -> int:
+	var exits: Array = sim.rooms.exits(sim.cell)
+	var from: Array[Vector2i] = [RoomPath.cell_of(sim, sim.hero.pos)]
+	var steps := RoomPath.steps_from(sim, from, true)
+	var fresh: Array[int] = []
+	var ways: Array[int] = []
+	var open: Array[int] = []
+	for b in 4:
+		if int(exits[b]) == 0:
+			continue
+		open.append(b)
+		if RoomPath.ways_out(sim, b, true).any(func(c: Vector2i) -> bool: return steps.has(c)):
+			ways.append(b)
+			if not _seen.has(sim.rooms.neighbour(sim.cell, b + 1)):
+				fresh.append(b)
+	for pick: Array[int] in [fresh, ways, open]:
+		if not pick.is_empty():
+			return pick[sim.play_ticks % pick.size()]
+	return -1
 
 
 ## A skill key for the fight, or -1.
