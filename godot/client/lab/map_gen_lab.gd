@@ -103,17 +103,10 @@ func _show_info() -> void:
 
 ## The mission's rooms, soldiers and archers, and its time.
 func _fights() -> String:
-	var rooms := Rooms.new(map, mission)
-	var soldiers := 0
-	for room: int in layout.routes[mission]:
-		for wave: Array in rooms.waves(room):
-			soldiers += int(wave[1]) if wave[0] == MapSim.KIND_SWORDS else 0
-	var archers := 0
-	for script: Dictionary in map.scripts:
-		archers += script.ops.count([0, mission + 1, MapSim.KIND_ARCHERS - 200])
+	var fights := WavePlan.fights_of(map, mission)
 	return (
 		"%d rooms, %d soldiers, %d archers, %d s"
-		% [layout.routes[mission].size(), soldiers, archers, MapBuilder.mission_time(map, mission)]
+		% [fights.rooms, fights.soldiers, fights.archers, fights.time]
 	)
 
 

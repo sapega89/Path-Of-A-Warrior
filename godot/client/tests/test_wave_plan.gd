@@ -4,7 +4,8 @@ extends "res://tests/test_case.gd"
 ## route as the curve gives, the first room lighter than the last; in a general's room soldiers
 ## before him and fewer after; archers on free cells of the rooms past the first, none at the
 ## start of the campaign; things to break in the rooms of the routes, of the biome's own; the
-## time of each mission by its formula; the autopilot wins generated missions.
+## time of each mission by its formula; the autopilot wins every mission of the maps of the
+## campaign the generator made.
 
 ## The maps made, by place: each made once for all the tests here.
 static var _made := {}
@@ -184,9 +185,8 @@ func test_the_time_of_a_mission() -> void:
 			eq(MapBuilder.mission_time(map, m), roundi(time), "place %d, mission %d" % [n, m])
 
 
-## Plays a mission of a generated map with the autopilot, a strong hero, up to `ticks` ticks.
-func _played(place: int, mission: int, ticks: int) -> MapSim:
-	var map := _map(place)
+## Plays a mission of a map with the autopilot, a strong hero, up to `ticks` ticks.
+func _played(map: Dictionary, place: int, mission: int, ticks: int) -> MapSim:
 	var sim := MapSim.new(map, mission, MapBuilder.mission_start(map, mission))
 	sim.rng = GameRandom.new(7)
 	sim.boss_type = MapPlan.of(place).bosses[mission]
@@ -205,7 +205,14 @@ func _played(place: int, mission: int, ticks: int) -> MapSim:
 	return sim
 
 
-func test_the_autopilot_wins_generated_missions() -> void:
-	for at: Vector2i in [Vector2i(1, 0), Vector2i(8, 0)]:
-		var sim := _played(at.x, at.y, 5000)
-		check(sim.won, "place %d, mission %d won in %d ticks" % [at.x, at.y + 1, sim.ticks])
+func test_the_autopilot_wins_every_mission_of_the_maps_made() -> void:
+	var won := 0
+	for n: int in _places():
+		var map := MapBuilder.load_map(n)
+		if not map.has("seed"):
+			continue  # a map of the campaign the generator has not made yet
+		for m in MapPlan.of(n).missions.size():
+			var sim := _played(map, n, m, 5000)
+			check(sim.won, "place %d, mission %d: won, %d ticks" % [n, m + 1, sim.ticks])
+			won += 1 if sim.won else 0
+	check(won > 0, "missions won: %d" % won)
