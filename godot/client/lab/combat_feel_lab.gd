@@ -56,8 +56,6 @@ var _keys_down := {}
 var _last_held := -1
 var _trail_pick := RandomNumberGenerator.new()
 var _flash_mats := {}  # Sprite3D -> StandardMaterial3D
-var _tool_tex: Texture2D = preload("res://assets/original/ui/tool.png")
-var _gold_tex: Texture2D = preload("res://assets/original/ui/gold.png")
 
 
 func _ready() -> void:
@@ -320,23 +318,16 @@ func _place_loot() -> void:
 	for d in sim.drops:
 		if loot.has(d):
 			continue
-		var s := Sprite3D.new()
-		s.region_enabled = true
-		if d.item > 10000:
-			s.texture = _gold_tex
-			s.region_rect = Rect2(Vector2.ZERO, _gold_tex.get_size())
-		else:
-			s.texture = _tool_tex
-			var f: int = 11 if d.item > 100 else d.item - 1
-			s.region_rect = Rect2(f * 28, 0, 28, 28)
-		s.pixel_size = PX
-		s.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
-		s.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-		s.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
-		world.add_child(s)
-		s.global_position = (
-			Hero.px_to_world(Vector2(d.pos)) + Vector3(0.0, s.region_rect.size.y / 54.0, 0.0)
+		# the loot as the missions show it: an icon of the new art
+		var s: Sprite3D = MissionScreen.LOOT.instantiate()
+		var px := 24.0 if d.item > 10000 else 28.0
+		s.texture = ItemSlot.icon(
+			"tool",
+			MissionScreen.GOLD_ICON if d.item > 10000 else (11 if d.item > 100 else d.item - 1)
 		)
+		s.pixel_size = px / 27.0 / ItemSlot.ART
+		world.add_child(s)
+		s.global_position = Hero.px_to_world(Vector2(d.pos)) + Vector3(0.0, px / 54.0, 0.0)
 		loot[d] = s
 
 

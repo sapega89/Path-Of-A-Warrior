@@ -5,7 +5,8 @@ func test_the_sounds_are_there() -> void:
 	for tune: String in Audio.TUNES:
 		check(ResourceLoader.exists(Audio.MUSIC_PATH % tune), tune)
 	for n in range(3, 17):
-		check(ResourceLoader.exists(Audio.SFX_PATH % n), "effect %d" % n)
+		if n != 10:  # not played
+			check(ResourceLoader.exists(Audio.SFX_PATH % n), "effect %d" % n)
 
 
 func test_the_tunes_are_long_loops() -> void:

@@ -121,7 +121,6 @@ func spot_of(kind: String) -> Dictionary:
 ## facing north.
 func _place_hero() -> void:
 	var weapon_kind: int = clampi(profile.weapon_kind(), 0, 1)
-	hero.set_look(int(profile.head), weapon_kind)
 	hero.global_position = CampPlan.START + Vector3(0, 0.05, 0)
 	hero.dir8 = 4  # facing up, into the camp
 	figure.setup(MapPeople.HEROES[clampi(int(profile.head), 0, 3)])
@@ -130,8 +129,6 @@ func _place_hero() -> void:
 	figure.rotation.y = Motion.yaw_of(hero.dir8)
 	_stand = Motion.idle(weapon_kind)
 	figure.play(_stand, 0.0)
-	if hero.sprite != null:
-		hero.sprite.visible = false
 
 
 ## The blinking arrow in an open gate, pointing the way out; nothing says where it leads.
@@ -180,8 +177,6 @@ func ruler_name(ruler: int) -> String:
 func _process(delta: float) -> void:
 	_blink += delta
 	if figure != null:
-		if hero.sprite != null:
-			hero.sprite.visible = false
 		figure.play("walk" if hero.walking else _stand)
 		figure.rotation.y = lerp_angle(
 			figure.rotation.y, Motion.yaw_of(hero.dir8), 1.0 - exp(-16.0 * delta)

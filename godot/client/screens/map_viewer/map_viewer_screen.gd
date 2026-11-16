@@ -24,7 +24,6 @@ func _ready() -> void:
 	figure.unequip_all()
 	figure.equip(MapPeople.BLADES[WEAPON_KIND])
 	figure.play(Motion.idle(WEAPON_KIND), 0.0)
-	hero.sprite.visible = false
 	InputSetup.device_changed.connect(show_info)
 	map_total = MapBuilder.map_count()
 	show_map(1)

@@ -16,18 +16,17 @@ func test_directions() -> void:
 	eq(Hero.dir8_of(Vector2(1, 1)), 7, "down-right")
 
 
-func test_walk_uses_original_tables() -> void:
+func test_walk() -> void:
 	var h := _hero()
-	eq(int(h.info.frames), 53, "frames in the sheet")
-	check(is_equal_approx(h.sprite.pixel_size, Hero.PIXEL_SIZE), "the sprite: a tile a world unit")
-	eq(h.current_frame(), 1, "idle facing down")
+	check(h.find_children("*", "Sprite3D").is_empty(), "only the body: the figure is drawn")
+	check(not h.walking, "standing")
 	h.step(Vector2.RIGHT, 0.016)
 	check(h.walking, "walking")
 	eq(h.dir8, 6, "facing right")
 	eq(h.velocity.x, Hero.SPEED, "speed")
-	eq(h.current_table(), h.info.walk[3], "walk table right")
 	h.step(Vector2.ZERO, 0.016)
-	eq(h.current_frame(), 10, "idle facing right")
+	check(not h.walking, "stopped")
+	eq(h.dir8, 6, "still facing right")
 	h.free()
 
 
