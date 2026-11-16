@@ -91,7 +91,7 @@ func _ready() -> void:
 	builder.build(map)
 	profile = Profile.load_or_new(profile_path())
 	var s := MapBuilder.mission_start(map, mission)
-	var resume := bool(p.get("resume", false)) and not profile.on_map.is_empty()
+	var resume := bool(p.get("resume", false)) and profile.on_map_fits(map)
 	if resume:
 		s = Vector2i(int(profile.on_map.get("x", s.x)), int(profile.on_map.get("y", s.y)))
 	sim = MapSim.new(map, mission, s)

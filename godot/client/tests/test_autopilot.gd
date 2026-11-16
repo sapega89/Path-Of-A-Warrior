@@ -1,5 +1,6 @@
 extends "res://tests/test_case.gd"
-## Auto-hunt: it walks to the enemies and fights, drinks and heals, and leaves a cleared room.
+## Auto-hunt: it walks to the enemies round the walls and fights, drinks and heals, and leaves
+## a cleared room.
 
 
 func _sim() -> RefCounted:
@@ -90,4 +91,51 @@ func test_leaves_an_archer_it_cannot_reach() -> void:
 			left = t
 			break
 	eq(sim.kills, 1, "the one in the room killed")
+	check(left > 0, "out of the room after %d ticks" % left)
+
+
+func test_walks_out_of_a_pocket_the_long_way_round() -> void:
+	# The first room, cleared, with walls round the hero but above him; its exit is down, and
+	# straight down is a wall: the way out goes up out of the pocket, round it and down.
+	var map := own_map("three_rooms")
+	var pocket := ["#...#", "#...#", "#####"]  # its cells 2 to 6, rows 4 to 6
+	for y in pocket.size():
+		for x in pocket[y].length():
+			if pocket[y][x] == "#":
+				map.flags[(4 + y) * int(map.w) + 2 + x] = 1
+	var sim := MapSim.new(map, 0, Vector2i(4, 5))
+	sim.continue_in_clear_room()
+	var a := Autopilot.new()
+	a.toggle()
+	var left := -1
+	for t in 300:
+		var d: Dictionary = a.decide(sim)
+		sim.tick(int(d.held), -1, false, int(d.hotkey), -1, int(d.belt))
+		if sim.cell != 0:
+			left = t
+			break
+	check(left > 0, "out of the room after %d ticks" % left)
+
+
+func test_breaks_a_thing_in_its_way_out() -> void:
+	# The first room, cleared, with a wall across it and a barrel in its one gap: the hero breaks
+	# the barrel and walks out down.
+	var map := own_map("three_rooms")
+	var w := int(map.w)
+	for x in range(1, 8):
+		map.flags[6 * w + x] = 1
+	map.flags[6 * w + 4] = 0
+	map.objects[6 * w + 4] = MapSim.table("breakable_prop").find("barrel")
+	var sim := MapSim.new(map, 0, Vector2i(4, 2))
+	sim.continue_in_clear_room()
+	var a := Autopilot.new()
+	a.toggle()
+	var left := -1
+	for t in 300:
+		var d: Dictionary = a.decide(sim)
+		sim.tick(int(d.held), -1, bool(d.fire), int(d.hotkey), -1, int(d.belt))
+		if sim.cell != 0:
+			left = t
+			break
+	eq(int(sim.objects[6 * w + 4]), 0, "the barrel broken")
 	check(left > 0, "out of the room after %d ticks" % left)

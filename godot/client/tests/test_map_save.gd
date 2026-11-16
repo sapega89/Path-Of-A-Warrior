@@ -1,6 +1,7 @@
 extends "res://tests/test_case.gd"
 ## Save on the map (pause menu): once the room is cleared, the mission is saved with what was
-## picked up, and Continue comes back to that room.
+## picked up, and Continue comes back to that room; on a map made again from another seed the
+## mission starts again from its start.
 
 
 func test_save_on_the_map_and_continue() -> void:
@@ -46,6 +47,14 @@ func test_save_on_the_map_and_continue() -> void:
 	eq(again.sim.banner, 0, "no Stage banner")
 	check(again.sim.exits_open(), "its exits open")
 	again.free()
+
+	saved.on_map["seed"] = 5  # the map made again from another seed since
+	saved.save_keeping_map()
+	var remade: Control = Router.make(Router.SCREENS["mission"])
+	root.add_child(remade)
+	eq(remade.sim.hero.pos / 27, Vector2i(4, 2), "a map from another seed: from the start")
+	eq([remade.sim.hero.hp, remade.sim.kills], [remade.sim.hero.max_hp, 0], "a new mission")
+	remade.free()
 
 	saved.save()
 	check(Profile.load_or_new().on_map.is_empty(), "any other save forgets it")
