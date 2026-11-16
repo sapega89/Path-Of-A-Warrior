@@ -92,7 +92,7 @@ static func _find_spawn_spots(sim: MapSim) -> void:
 	var exits: Array = sim.rooms.exits(sim.cell)
 	for side in 4:
 		if int(exits[side]) != 0:
-			sim.spawn_spots.append_array(_edge_cells(sim, reach, side))
+			sim.spawn_spots.append_array(edge_cells(sim, reach, side))
 
 
 ## The sides of the hero's room he can walk out of (Rooms.EXIT_*): a cell along the side he can
@@ -101,7 +101,7 @@ static func open_sides(sim: MapSim) -> Array[int]:
 	var reach := _reach_from_hero(sim)
 	var out: Array[int] = []
 	for side in 4:
-		if not _edge_cells(sim, reach, side).is_empty():
+		if not edge_cells(sim, reach, side).is_empty():
 			out.append(side + 1)
 	return out
 
@@ -114,7 +114,7 @@ static func _reach_from_hero(sim: MapSim) -> Array:
 ## The cells along side `side` (0 down, 1 left, 2 up, 3 right) of the hero's room that he can
 ## reach (reach: find_reachable) and that have a free cell outside the room behind them:
 ## Vector3i(x, y, side) each.
-static func _edge_cells(sim: MapSim, reach: Array, side: int) -> Array[Vector3i]:
+static func edge_cells(sim: MapSim, reach: Array, side: int) -> Array[Vector3i]:
 	const EXIT_DX := [0, 0, 0, 6]
 	const EXIT_DY := [6, 0, 0, 0]
 	const EXIT_STEP := [1, -1, -1, 1]

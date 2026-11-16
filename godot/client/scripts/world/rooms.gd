@@ -113,6 +113,15 @@ func neighbour(room: int, exit_no: int) -> int:
 	return room
 
 
+## The room on the other side of side `exit_no` of the room (-1: past the edge of the grid).
+func beside(room: int, exit_no: int) -> int:
+	const STEP: Array[Vector2i] = [Vector2i(0, 1), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(1, 0)]
+	var p := room_xy(room) + STEP[exit_no - 1]
+	if p.x < 0 or p.y < 0 or p.x >= rooms_x or p.y >= rooms_y:
+		return -1
+	return p.y * rooms_x + p.x
+
+
 ## The room's enemy list: [[kind, count], ...] in order (kind >= 200 = soldiers, < 200 = a general).
 func waves(room: int) -> Array:
 	var out: Array = []
