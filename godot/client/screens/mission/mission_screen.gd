@@ -1,10 +1,10 @@
 class_name MissionScreen
 extends BaseScreen
-## A mission of the original campaign on its map. The game itself runs in MapSim
-## (original pixels and ticks); this screen reads the input, ticks the simulation every
+## A mission of the campaign on its map. The game itself runs in MapSim
+## (map pixels and ticks); this screen reads the input, ticks the simulation every
 ## 120 ms and draws its state in 3D: the hero, the camera on the current room,
 ## the exit arrows and the "Stage" banners (after a won mission the exp bar on the
-## pages Total Exp and Time Exp, the level gone up on it), the soldiers (the people as 3D
+## experience pages, the level gone up on it), the soldiers (the people as 3D
 ## figures playing the clips of their actions, scripts/world/map_people.gd), the effects made
 ## in code (scripts/world/map_effects.gd: skills, potions and scrolls, the fire on whoever a
 ## fire skill hits, the auras of buffs, the blood of hits, weapon trails, the archers' arrows), and
@@ -95,7 +95,7 @@ func _ready() -> void:
 		s = [int(profile.on_map.get("x", s[0])), int(profile.on_map.get("y", s[1]))]
 	sim = MapSim.new(map, mission, Vector2i(int(s[0]), int(s[1])))
 	if p.has("seed"):
-		sim.rng = JavaRandom.new(int(p.seed))
+		sim.rng = GameRandom.new(int(p.seed))
 	tint = int(mission_info.get("tint", 0))
 	sim.boss_type = int(mission_info.get("boss_type", 0))
 	sim.mission_gold = int(mission_info.get("gold", 0))
@@ -119,7 +119,7 @@ func _ready() -> void:
 	_update_view(0.0)
 
 
-## Leaving the mission from its pause menu (Exit to Menu) lets the game run again.
+## Leaving the mission from its pause menu (Leave to the menu) lets the game run again.
 func _exit_tree() -> void:
 	if pause_menu != null:
 		get_tree().paused = false
@@ -131,7 +131,7 @@ func _on_setting_changed(_key: String) -> void:
 	tick = Settings.tick_seconds()
 
 
-## The 4-direction of a stick or keys (the original hero walks in 4 directions), or -1.
+## The 4-direction of a stick or keys (the hero walks in 4 directions), or -1.
 static func dir4_of(v: Vector2) -> int:
 	if v.length() < 0.3:
 		return -1
@@ -323,7 +323,7 @@ func _place_loot() -> void:
 		# an icon of the new art, 28 px of the map high (gold: 24 px)
 		var px := 24.0 if d.item > 10000 else 28.0
 		s.texture = ItemSlot.icon(
-			"tool", GOLD_ICON if d.item > 10000 else (11 if d.item > 100 else d.item - 1)
+			"potions", GOLD_ICON if d.item > 10000 else (11 if d.item > 100 else d.item - 1)
 		)
 		s.pixel_size = px / 27.0 / ItemSlot.ART
 		world.add_child(s)
@@ -409,8 +409,8 @@ func way_for(exit_no: int, at: Vector3) -> int:
 	return 0
 
 
-## Stops the mission and shows the pause menu (Resume, Options, Exit to Menu, Exit Game): the
-## scene tree is paused, and only the menu (and what it opens) runs.
+## Stops the mission and shows the pause menu (Resume, Options, Leave to the menu, Quit the
+## game): the scene tree is paused, and only the menu (and what it opens) runs.
 func pause() -> void:
 	if pause_menu != null:
 		return
@@ -529,7 +529,7 @@ func uses_right_button() -> bool:
 
 
 ## The direction from the hero to a point of the screen (6 right, 2 left, 4 up, 0 down), or -1
-## on the hero himself: within 14 x 20 original pixels of the middle of his body, 20 px above
+## on the hero himself: within 14 x 20 map pixels of the middle of his body, 20 px above
 ## his position.
 func pointer_dir(at: Vector2) -> int:
 	var middle := hero.global_position + Vector3(0, (20 + Hero.FOOT_PX) * Hero.PIXEL_SIZE, 0)

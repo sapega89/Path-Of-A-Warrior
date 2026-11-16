@@ -1,5 +1,5 @@
 extends "res://tests/test_case.gd"
-## Before a mission: its description, "Do you want to accept this mission?", the
+## Before a mission: its description, "Take on this mission?", the
 ## briefing (the advice and the hero's answer), then the map.
 
 const RouterScript := preload("res://scripts/core/router.gd")
@@ -72,7 +72,7 @@ func test_briefing_talk() -> void:
 		"[Colonel Bairak] A new face. Before you ride anywhere, go and see the smith. A bare sabre wins no wars.",
 		"the advice"
 	)
-	eq(lines[1], "[Ann] I hear you.", "the answer")
+	eq(lines[1], "[Ann] Understood.", "the answer")
 
 
 func test_description_accept_briefing_mission() -> void:
@@ -143,7 +143,7 @@ func test_description_accept_briefing_mission() -> void:
 	eq(b.typing, b.lord_says, "it stays a moment")
 	step_dialogue(b.dialogue, 1.0)
 	eq(b.typing, b.hero_says, "then the hero answers")
-	eq(b.hero_says.text, "[Ann] I hear you.", "his answer")
+	eq(b.hero_says.text, "[Ann] Understood.", "his answer")
 	check(not b.lord_says.text.is_empty(), "the advice stays in its box")
 	step_dialogue(b.dialogue, b.hero_says.text.length() / Dialogue.CHARS_PER_SECOND + 0.01)
 	eq(b.hero_says.visible_characters, -1, "typed")

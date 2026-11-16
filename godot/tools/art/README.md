@@ -105,8 +105,8 @@ godot --path godot/client --resolution 1040x800 res://tools/story_pictures.tscn 
   (Оксана, Маруся) — вінок, коса, намисто, червоний кептар, довга сорочка, червоні чобітки; вона ж
   — ціла фігура для ілюстрацій.
 - `icons.py` — `assets/art/icons/<аркуш>.svg` (без Blender: `python godot/tools/art/icons.py`):
-  аркуші tool, kibo, sungbo, shinki, skill і skillgray — смуги іконок 128×128 у порядку
-  оригінальних аркушів (номер іконки той самий). Невеликий набір у самому скрипті (клинок, держак,
+  аркуші potions, gear, treasures, rare, skills і skills_grey — смуги іконок 128×128 у порядку
+  номерів речей у `data/items.json`. Невеликий набір у самому скрипті (клинок, держак,
   гарда, наконечник, скло, хутро, медальйон...) і рецепт на кожну іконку; ранг речі задає метал
   і сяйво, сіре вміння — ті самі кольори, переведені в сірий.
 - `assets/art/tiles.json` — для кожного з 240 тайлів карт вид землі в кожній з його 3×3
@@ -164,7 +164,7 @@ godot --path godot/client --resolution 1040x800 res://tools/story_pictures.tscn 
   `StyleBox`: пластина, лінія, ромби в кутах), заголовок `Heading` (лінії з ромбами обабіч
   тексту), значки прапорця, повзунка й списку з SVG у коді, монета, тло `backdrop()`
   (`ui_backdrop.gdshader`).
-- `screens/mission/hud/map_hud.tscn` — HUD місії на сітці 240×320 оригіналу (ціле число разів):
+- `screens/mission/hud/map_hud.tscn` — HUD місії на сітці 240×320 (ціле число разів):
   плашки й комірки — стилі теми `hud_theme.tres`, кулі — `TextureProgressBar` з рідиною й дном
   у SVG (`assets/art/ui/hud/*.tres`, `DPITexture`, малюються в масштабі HUD), скло й обідок
   кулі, планка з заклепками й ромбом — кодом; написи — `Label` PT Sans Bold з контуром, іконки

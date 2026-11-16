@@ -1,14 +1,14 @@
 class_name MissionBanner
 extends PanelContainer
 ## The banner over the map: "Stage N" and "Stage N Complete", a thing acquired, the mission
-## failed (with the gear it took) or won, and after a won mission the pages Total Exp and
-## Time Exp with the exp bar under the text (the level gone up on it).
+## failed (with the gear it took) or won, and after a won mission the pages Experience in all and
+## Experience for speed with the exp bar under the text (the level gone up on it).
 
 const WIDTH := 520
 const TOP := 0.3  # its top, in parts of the screen's height
 
 @onready var label: Label = $Lines/BannerText
-@onready var exp_bar: ExpBar = $Lines/ExpBar  # on the pages Total Exp and Time Exp
+@onready var exp_bar: ExpBar = $Lines/ExpBar  # on the experience pages
 
 
 ## The banner of the page sim is on, hidden when there is none. run_line: on a failed

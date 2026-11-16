@@ -9,7 +9,7 @@ const SettingsScript := preload("res://scripts/core/settings.gd")
 ## An empty, open room with one swordsman standing below the hero, looking at him.
 func _duel() -> Array:
 	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
-	sim.rng = JavaRandom.new(1)
+	sim.rng = GameRandom.new(1)
 	sim.no_enemies = true
 	for t in 200:
 		if sim.exits_open():

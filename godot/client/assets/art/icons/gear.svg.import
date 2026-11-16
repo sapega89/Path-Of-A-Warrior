@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dfhpfoobhbu0s"
-path="res://.godot/imported/skillgray.svg-714b3cf81be6b1dc0ec492c458d21e86.ctex"
+uid="uid://bnlru7ysxj511"
+path="res://.godot/imported/gear.svg-929fd5f2178b2932d1e415fca67cf538.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/icons/skillgray.svg"
-dest_files=["res://.godot/imported/skillgray.svg-714b3cf81be6b1dc0ec492c458d21e86.ctex"]
+source_file="res://assets/art/icons/gear.svg"
+dest_files=["res://.godot/imported/gear.svg-929fd5f2178b2932d1e415fca67cf538.ctex"]
 
 [params]
 

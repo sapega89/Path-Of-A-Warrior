@@ -1,6 +1,6 @@
 class_name MapHud
 extends Control
-## The HUD of a mission's map (map_hud.tscn), laid out on the original 240x320 grid at a
+## The HUD of a mission's map (map_hud.tscn), laid out on a 240x320 grid at a
 ## whole-number scale: the mission clock on a plaque at the top left, the kills (or the last
 ## enemy hit: his name, his level on a badge and his HP bar) at the top right, and at the bottom
 ## the skill bar over the panel with the HP orb (left) and the MP orb (right, HudOrb). The bar
@@ -140,7 +140,7 @@ func refresh() -> void:
 	for b in 5:
 		var item := int(sim.quick_slots[b][0])
 		_belt[b].show_item(
-			ItemSlot.icon("tool", item - 1) if item != 0 else null,
+			ItemSlot.icon("potions", item - 1) if item != 0 else null,
 			int(sim.quick_slots[b][1]) if item != 0 else 0,
 			sim.effect_item != 0 and sim.effect_slot == b
 		)
@@ -215,7 +215,7 @@ func _skill_icon(s: int) -> Texture2D:
 	if s < 12 or s > 30:
 		return null
 	var ready: bool = sim.skill_levels[s - 12] > 0 and sim.skill_mp_need(s) <= sim.hero.mp
-	return ItemSlot.icon("skill" if ready else "skillgray", s - 12)
+	return ItemSlot.icon("skills" if ready else "skills_grey", s - 12)
 
 
 ## Two crossed sabres, before the kills.

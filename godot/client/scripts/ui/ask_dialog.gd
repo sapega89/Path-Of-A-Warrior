@@ -15,7 +15,7 @@ signal canceled
 
 const SCENE := "res://scenes/ui/ask_dialog.tscn"
 
-## A notice with OK alone ("Saving Success!"), else a question with Yes and No.
+## A notice with OK alone ("Saved."), else a question with Yes and No.
 @export var notice := false
 ## The focus starts on No: Yes loses something.
 @export var safe_default := false

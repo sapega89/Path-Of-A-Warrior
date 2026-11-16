@@ -128,7 +128,7 @@ func mission_data() -> Dictionary:
 
 
 ## The question before a mission: the general to beat, his level and the mission's gold
-## (twice on hard), "Do you want to accept this mission?".
+## (twice on hard), "Take on this mission?".
 func accept_text() -> String:
 	var m := mission_data()
 	var general := MapSim.general_data(int(m.get("boss_type", 0)))

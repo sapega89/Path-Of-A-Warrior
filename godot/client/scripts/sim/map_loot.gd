@@ -97,7 +97,7 @@ static func breakable_shown(b: MapBreakable) -> bool:
 
 
 ## Something may drop at p: kind 0 soldier, 1 general, 2 the mission's general, 3 object.
-## Only in the part of the room the game's view checks (its upper left), as the original.
+## Only in the part of the room the game's view checks (its upper left).
 static func drop_item(sim: MapSim, kind: int, p: Vector2i) -> void:
 	var o := MapRoomPlay.room_origin(sim)
 	var cam := Vector2i(o.x * 7 * 27 + 1, o.y * 7 * 27)

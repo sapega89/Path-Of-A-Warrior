@@ -49,7 +49,7 @@ func test_a_lost_mission_spends_a_flask() -> void:
 	var p := _hero_mid_run()
 	p.run.flasks = 1
 	p.run.flasks_left = 1
-	var cost: Dictionary = p.run.lose_mission(p, false, JavaRandom.new(1))
+	var cost: Dictionary = p.run.lose_mission(p, false, GameRandom.new(1))
 	check(not cost.over, "the run goes on")
 	eq(p.run.flasks_left, 0, "the flask is empty")
 	eq(p.place, 2, "the same camp")
@@ -61,7 +61,7 @@ func test_a_lost_mission_with_no_flask_ends_the_run() -> void:
 	var p := _hero_mid_run()
 	p.run.flasks = 2  # bought, both spent
 	p.run.flasks_left = 0
-	var cost: Dictionary = p.run.lose_mission(p, false, JavaRandom.new(1))
+	var cost: Dictionary = p.run.lose_mission(p, false, GameRandom.new(1))
 	check(cost.over, "the run is over")
 	eq(p.place, 0, "back at the start")
 	eq(p.heading, 0, "heading nowhere")
@@ -78,7 +78,7 @@ func test_a_lost_mission_with_no_flask_ends_the_run() -> void:
 
 func test_a_loss_that_ends_the_story_costs_no_flask() -> void:
 	var p := _hero_mid_run()
-	var cost: Dictionary = p.run.lose_mission(p, true, JavaRandom.new(1))
+	var cost: Dictionary = p.run.lose_mission(p, true, GameRandom.new(1))
 	check(not cost.over, "the ending comes instead")
 	eq(p.place, 2, "nothing is reset here")
 

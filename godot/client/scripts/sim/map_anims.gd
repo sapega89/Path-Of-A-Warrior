@@ -5,7 +5,7 @@ extends RefCounted
 ## Static functions over the state of a MapSim (MapSim.tick() runs them).
 
 
-## The hero's frame list for an action and 8-direction (as the original builds hero.anims).
+## The hero's frame list for an action and 8-direction.
 static func hero_anim(action: int, dir8: int) -> Array:
 	var dir4: int = int(MapSim.table("dir8_to_dir4")[dir8])
 	var names := {

@@ -11,41 +11,41 @@ const BACKPACK := 45  # places in the backpack
 const EQUIP_PLACE := [0, 0, 3, 5, 2, 8, 6, 1, 4, 7]
 ## Things that are used up from the backpack: what each adds to the hero.
 const STAT_ITEMS := {
-	434: {"stat": "hp", "add": 5, "text": "HP Up : 5"},
-	435: {"stat": "mp", "add": 3, "text": "MP Up : 3"},
-	436: {"stat": "defense", "add": 1, "text": "Def Up : 1"},
-	437: {"stat": "attack", "add": 1, "text": "Atk Up : 1"},
+	434: {"stat": "hp", "add": 5, "text": "HP +5"},
+	435: {"stat": "mp", "add": 3, "text": "MP +3"},
+	436: {"stat": "defense", "add": 1, "text": "DEF +1"},
+	437: {"stat": "attack", "add": 1, "text": "ATK +1"},
 }
 ## Things that can be carried but not worn.
 const NOT_WORN := [502, 504]
 const SUFFIX := {
-	434: " / Hp 5 Increased",
-	435: " / MP 3 Increased",
-	436: " / DEF 1 Increased",
-	437: " / ATK 1 Increased",
+	434: " / HP +5 for good",
+	435: " / MP +3 for good",
+	436: " / DEF +1 for good",
+	437: " / ATK +1 for good",
 	502: " / Oksana's scarf",
-	504: " / all General Visiting"
+	504: " / a keepsake"
 }
 const GEAR_STATS := ["attack", "defense", "hp", "mp"]
 ## Icon sheets: potions, gear, treasures, rare things (28 px icons in a row).
-const SHEETS := ["tool", "kibo", "sungbo", "shinki"]
+const SHEETS := ["potions", "gear", "treasures", "rare"]
 const POTION_NAMES := [
-	"Red Potion (S)",
-	"Red Potion (M)",
-	"Red Potion (L)",
-	"Blue Potion(S)",
-	"Blue Potion(M)",
-	"Blue Potion(L)",
-	"H.M.Potion(S)",
-	"H.M.Potion(M)",
-	"H.M.Potion(M)",
-	" Powerful Bomb",
-	"Handy Dynamite"
+	"Small Herb Brew",
+	"Herb Brew",
+	"Great Herb Brew",
+	"Small Spirit Mead",
+	"Spirit Mead",
+	"Great Spirit Mead",
+	"Small Field Balm",
+	"Field Balm",
+	"Great Field Balm",
+	"Powder Pot",
+	"Fire Grenade"
 ]
-const POTION_KINDS := ["HP", "MP", "HP&MP"]
+const POTION_KINDS := ["HP", "MP", "HP and MP"]
 const POTION_PERCENTS := [30, 60, 100]
 ## What the bomb and the dynamite do (the texts of skills 26 and 27; potions recover a share).
-const SCROLL_TEXTS := ["Ranged ATK", "Ranged ATK & Knocks back"]
+const SCROLL_TEXTS := ["Strikes from afar", "Strikes from afar, throws back"]
 const POTION_PRICES := [60, 100, 150, 60, 100, 150, 100, 250, 400, 150, 200]
 ## The potions and scrolls the shop always has, before its 17 gears.
 const SHOP_POTIONS := [1, 2, 3, 4, 5, 6, 10, 11]
@@ -126,7 +126,7 @@ static func name_of(id: int) -> String:
 	return String(TranslationServer.translate(str(info(id).get("name", ""))))
 
 
-## "Iron Broadsword / ATK+1 / Available at Lv1", the line under the Gear and Inventory pages.
+## "Iron Broadsword / ATK+1 / from level 1", the line under the Gear and Inventory pages.
 static func describe(item: Dictionary) -> String:
 	var id := int(item.get("id", 0))
 	if id == 0:
@@ -138,21 +138,21 @@ static func describe(item: Dictionary) -> String:
 			text += " / %s+%d" % [k[1], v]
 	var enchant := int(item.get("enchant", 0))
 	if enchant != 0:
-		text += " / Enchanted Lv%d" % enchant
+		text += " / enchanted +%d" % enchant
 	var level := level_needed(id)
 	if level != 0:
-		text += " / Available at Lv%d" % level
+		text += " / from level %d" % level
 	return text
 
 
-## "Red Potion (S) / Recover 30% of total HP", the line under the Assign Items page.
+## "Small Herb Brew / restores 30% of HP", the line under the belt.
 static func describe_potion(potion: int) -> String:
 	var i := potion - 1
 	if i < 0 or i >= POTION_NAMES.size():
 		return ""
 	if i < 9:
 		return (
-			"%s / Recover %d%% of total %s"
+			"%s / restores %d%% of %s"
 			% [POTION_NAMES[i], POTION_PERCENTS[i % 3], POTION_KINDS[i / 3]]
 		)
 	return "%s / %s" % [POTION_NAMES[i], SCROLL_TEXTS[i - 9]]

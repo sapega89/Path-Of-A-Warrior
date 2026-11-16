@@ -5,7 +5,7 @@ extends "res://tests/test_case.gd"
 ## Mission 1 of lord 1 on map 1, the same random numbers every run.
 func _sim(enemies: bool = true) -> RefCounted:
 	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
-	sim.rng = JavaRandom.new(1)
+	sim.rng = GameRandom.new(1)
 	sim.no_enemies = not enemies
 	return sim
 
@@ -93,7 +93,7 @@ func test_arrows_wait_while_a_big_skill_holds_the_room() -> void:
 
 
 func test_random_numbers() -> void:
-	var r := JavaRandom.new(42)
+	var r := GameRandom.new(42)
 	eq(r.next_int(), -1170105035, "first number of seed 42")
 	eq(r.next_int(), 234785527, "second number")
 	for i in 100:
@@ -338,7 +338,7 @@ func test_hero_falls() -> void:
 		heard = heard or (sim.banner == MapSim.BANNER_FAILED and 6 in sim.sounds)
 		if sim.banner == MapSim.BANNER_FAILED:
 			break
-	eq(sim.banner, MapSim.BANNER_FAILED, "Mission fail!")
+	eq(sim.banner, MapSim.BANNER_FAILED, "The mission is lost.")
 	check(heard, "with its sound (6)")
 	eq(_next_page(sim), MapSim.BANNER_TICKS, "20 ticks, then the mission is over")
 	check(sim.finished, "over")
@@ -392,7 +392,7 @@ func test_gold_is_picked_up() -> void:
 	check(sim.drops.is_empty(), "nothing left on the floor")
 
 
-## A gear picked up shows "<its name> Acquired!!" for 20 ticks while the
+## A gear picked up shows "<its name> Found!" for 20 ticks while the
 ## map waits (a key: 2); with no place left in the Inventory it stays on the floor.
 func test_a_gear_picked_up_is_acquired() -> void:
 	var sim := _sim(false)
@@ -407,7 +407,7 @@ func test_a_gear_picked_up_is_acquired() -> void:
 		d.pos = sim.hero.pos
 		sim.drops.append(d)
 	sim.tick(-1, -1)
-	eq([sim.items.size(), sim.banner, sim.acquired], [1, MapSim.BANNER_ACQUIRED, 131], "Acquired!!")
+	eq([sim.items.size(), sim.banner, sim.acquired], [1, MapSim.BANNER_ACQUIRED, 131], "Found!")
 	eq(sim.free_places, 0, "the last place taken")
 	eq(sim.drops.size(), 1, "the other stays on the floor")
 	var ticks: int = sim.play_ticks
@@ -451,7 +451,7 @@ func test_general_comes_with_his_talk() -> void:
 	eq(g.level, 2, "the hero's level and the list's count")
 	eq(g.hp, 23, "20 HP and 3 a level")
 	eq(sim.talk.size(), 3, "three lines")
-	eq(sim.talk[0], "[Zdzislaw Krzeminski] Zdzislaw Krzeminski is here!", "his name for &")
+	eq(sim.talk[0], "[Zdzislaw Krzeminski] Zdzislaw Krzeminski has come!", "his name for &")
 	sim.tick(-1, -1)
 	eq(sim.talk_text(), "[", "typed a letter a tick")
 	var x: int = sim.hero.pos.x
@@ -479,7 +479,7 @@ func test_mission_won_when_his_general_falls() -> void:
 		sim.tick(-1, -1)
 		if sim.banner == MapSim.BANNER_SUCCESS:
 			break
-	eq(sim.banner, MapSim.BANNER_SUCCESS, "Mission Success!")
+	eq(sim.banner, MapSim.BANNER_SUCCESS, "Mission done!")
 	check(sim.won, "won")
 	for t in 5:
 		sim.tick(-1, -1, true)
@@ -503,7 +503,7 @@ func test_rewards_and_the_talk_after_the_mission() -> void:
 	eq(sim.banner, MapSim.BANNER_TOTAL_EXP, "the exp")
 	eq(sim.exp_reward(), 80, "exp: twice on normal")
 	sim.hero_exp = 0
-	# 80 exp from 0: the bar's 100 px in 26 ticks, the level up, "Level Up" 20 ticks, the
+	# 80 exp from 0: the bar's 100 px in 26 ticks, the level up, "Level N!" 20 ticks, the
 	# 28 px of the 30 / 104 left in 8, then the page stays 16
 	eq(_next_page(sim), 26 + 1 + 20 + 8 + MapSim.EXP_PAGE_TICKS, "the exp page goes on by itself")
 	eq(sim.banner, MapSim.BANNER_TIME_EXP, "in time: the exp for time")

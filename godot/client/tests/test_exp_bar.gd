@@ -15,11 +15,7 @@ func test_the_bar_grows_and_goes_up_a_level() -> void:
 	eq(bar.grown(), [50, 1], "the bar is full")
 	eq(bar.level, 1, "the level up comes on the next tick")
 	bar.tick()
-	eq(
-		[bar.level, bar.level_up_ticks],
-		[2, ExpBars.LEVEL_UP_TICKS],
-		"Level Up : Lv 2, for 20 ticks"
-	)
+	eq([bar.level, bar.level_up_ticks], [2, ExpBars.LEVEL_UP_TICKS], "Level 2! for 20 ticks")
 	eq(bar.bars, [0, 24, 24], "the bar starts again with the rest")
 	for t in ExpBars.LEVEL_UP_TICKS:
 		bar.tick()
@@ -37,7 +33,7 @@ func test_the_bar_grows_and_goes_up_a_level() -> void:
 		"the bar ends where the hero is after the mission"
 	)
 	bar.begin_time(60)
-	eq(bar.bars, [0, 24, 33], "Time Exp: 10 more, from the end of the mission's part")
+	eq(bar.bars, [0, 24, 33], "Experience for speed: 10 more, from the end of the mission's part")
 	eq(bar.part, 1, "the time's part grows")
 	bar.tick()
 	bar.tick()
@@ -61,7 +57,7 @@ func test_the_exp_pages_show_the_bar() -> void:
 	sim.show_banner(MapSim.BANNER_SUCCESS)
 	for t in MapSim.BANNER_TICKS:
 		sim.tick(-1)
-	eq(sim.banner, MapSim.BANNER_TOTAL_EXP, "Total Exp")
+	eq(sim.banner, MapSim.BANNER_TOTAL_EXP, "Experience in all")
 	screen._show_banner()
 	check(screen.banner.exp_bar.visible, "the bar under the text")
 	eq(sim.exp_bars.bars, [90, 114, 114], "45 of 50, then 20 more")

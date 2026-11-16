@@ -98,7 +98,7 @@
 "0|[Colonel Topolia] Thief! You dare carry the Hetman's Seal out of this holy place?",
 "The Seal? I have no idea what you mean.",
 "0|[Colonel Topolia] Do not play the fool with me. Shoot him!",
-"A poisoned arrow...!",
+"The arrow... it bore poison...!",
 "0|[Colonel Topolia] Go and meet your Maker, you greedy cur. Now then... yes! Here it is, the Seal!",
 "I do not die that easily... And whose hands are bloodier, colonel, mine or yours?",
 "0|[Colonel Topolia] Impossible... the poison should have... no!",
@@ -247,7 +247,7 @@
 "34|[Colonel Chornohuz] I let him slip through my fingers... what now...",
 "...",
 "34|[Colonel Chornohuz] Bairak! Where are you hiding?",
-"I must leave you now.",
+"My road leads elsewhere now.",
 "34|[Colonel Chornohuz] Thank you for everything you did.",
 "...",
 "34|[Colonel Chornohuz] It has to be you, Bairak. You are the only one worth fighting. There is no one else!"
@@ -266,7 +266,7 @@
 "I keep my own law and nobody else's. My sabre is for hire, not my knee. Find yourself another man.",
 "0|[Skoryk] A cut-throat, that is all you are!",
 "Keep your hand off that sabre. I will not warn you twice.",
-"0|[Skoryk] Defend yourself, dog!",
+"0|[Skoryk] Draw your sabre, dog!",
 "...!!!",
 "0|[Skoryk] ARRR!",
 "0|[Omelko] Take him! Kill him!",
@@ -340,7 +340,7 @@
 {
 "talk": [
 "0|[Colonel Topolia] Bandit! Scum!",
-"0|[Chupryna] I will be back, colonel!",
+"0|[Chupryna] This isn't over, colonel!",
 "0|[Colonel Topolia] Come back and I will strangle you with my own hands!",
 "0|[Chupryna] Then have your coffin ready when I do!",
 "0|[Colonel Topolia] Ha-ha! Try it, peasant!",
@@ -374,7 +374,7 @@
 {
 "talk": [
 "10|[Shram] Ho there! Leaving us already, youngster?",
-"1|[Osaul Zalizo] This is only the beginning! I will be back.",
+"1|[Osaul Zalizo] This is only the beginning! We'll meet again.",
 "18|[Nazar] Zalizo! Come back here! We are not finished!",
 "1|[Osaul Zalizo] Soon!",
 "18|[Nazar] ...!",
@@ -412,7 +412,7 @@
 {
 "talk": [
 "36|[Colonel Rudyi] Your eyes give you away, Chornohuz. There is hate in them.",
-"34|[Colonel Chornohuz] I will be back!",
+"34|[Colonel Chornohuz] You haven't seen the last of me!",
 "36|[Colonel Rudyi] My little parcel of land is enough for me. I want no more than that.",
 "34|[Colonel Chornohuz] Nothing against you personally. You are simply standing in my road.",
 "36|[Colonel Rudyi] Is that so?",
@@ -455,7 +455,7 @@
 "1|[Osaul Zalizo] I only wish my colonel had more sabres like yours.",
 "...",
 "1|[Osaul Zalizo] Listen to me. If you want a long life and not a short blaze like a gust of wind, leave the hired trade behind. Come with me and serve my colonel.",
-"...Very well. I will.",
+"...So be it. I will go.",
 "1|[Osaul Zalizo] Good. Then let us ride!"
 ],
 "pictures": [
@@ -464,7 +464,7 @@
 ]
 }
 ],
-"gamestr": [
+"first_ending": [
 "That was how I walked away from the fields of slaughter. They gave me a sotnia and a roof, and I no longer had to roam from one battle to the next.",
 "[Messenger] The country still needs men like you."
 ],

@@ -37,7 +37,7 @@ func _ready() -> void:
 	profile = Profile.load_or_new(path)
 	for place: int in HeroRun.START_CHOICES:
 		var b: Button = %Skills.get_node("Skill%d" % place)
-		b.icon = ItemSlot.icon("skill", place)
+		b.icon = ItemSlot.icon("skills", place)
 		skills[place] = b
 	refresh()
 	skills[profile.run.start_skills[0]].grab_focus.call_deferred()

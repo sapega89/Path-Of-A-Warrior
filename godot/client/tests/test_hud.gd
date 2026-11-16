@@ -31,7 +31,7 @@ func test_ball_fill() -> void:
 
 func test_scale() -> void:
 	eq(MapHud.scale_of(Vector2(1280, 720)), 2.0, "720 rows: twice")
-	eq(MapHud.scale_of(Vector2(240, 320)), 1.0, "the original size")
+	eq(MapHud.scale_of(Vector2(240, 320)), 1.0, "the base size")
 
 
 func test_clock_and_kills() -> void:

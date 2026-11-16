@@ -5,7 +5,7 @@ extends RefCounted
 ## Static functions over the state of a MapSim (MapSim.tick() runs them).
 
 
-## The room of a pixel position (the original takes the cell of (x, y - 6)).
+## The room of a pixel position (the cell of (x, y - 6)).
 static func room_of(sim: MapSim, p: Vector2i) -> int:
 	return sim.rooms.room_at(Vector3(p.x / 27.0, 0.0, p.y / 27.0))
 

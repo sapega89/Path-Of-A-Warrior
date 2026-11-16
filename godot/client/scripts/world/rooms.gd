@@ -1,12 +1,12 @@
 class_name Rooms
 extends RefCounted
-## The rooms of a map, as in the original: the map is a grid of 7x7-tile rooms
+## The rooms of a map: the map is a grid of 7x7-tile rooms
 ## shifted by one tile (room (rx, ry) covers tiles 1 + 7 rx .. 7 + 7 rx across and
 ## 1 + 7 ry .. 7 + 7 ry down). The hero stays inside the current room; when the room
 ## is cleared its exits open, and walking into an open edge moves to the next room.
 ##
 ## Positions here are world units (1 = one 27 px tile), x across and z down the screen,
-## the same as the original pixel position / 27.
+## the same as the map pixel position / 27.
 
 const EXIT_DOWN := 1
 const EXIT_LEFT := 2
@@ -14,7 +14,7 @@ const EXIT_UP := 3
 const EXIT_RIGHT := 4
 const PX := 27.0
 const ROOM_PX := 189.0  # 7 tiles
-## Margins of the hero inside the room, original pixels.
+## Margins of the hero inside the room, map pixels.
 const MARGIN_X := 12.0
 const MARGIN_TOP := 10.0
 const MARGIN_BOTTOM := -10.0  # the bottom edge lets the feet 10 px past the room
@@ -40,7 +40,7 @@ func count() -> int:
 	return rooms_x * rooms_y
 
 
-## The room the position is in (the original takes the cell of (x, z - 6 px)).
+## The room the position is in (the cell of (x, z - 6 px)).
 func room_at(pos: Vector3) -> int:
 	var tx := floori(pos.x)
 	var tz := floori(pos.z - 6.0 / PX)
@@ -134,7 +134,7 @@ func has_general(room: int) -> bool:
 
 
 ## Keeps a position inside the room. Returns {pos, edge}: edge is the exit number of the
-## side that was touched (0 = none), as the original's keep-in-room check.
+## side that was touched (0 = none), as the keep-in-room check of the simulation.
 func keep_inside(room: int, pos: Vector3) -> Dictionary:
 	var b := bounds(room)
 	var edge := 0

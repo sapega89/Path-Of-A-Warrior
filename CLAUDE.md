@@ -11,7 +11,7 @@
 ## Project Context
 
 `godot/README.md` describes the layout and how to run the game and the tests;
-`docs/GODOT_PLAN.md` is the plan of the port. The code is moving to the usual Godot structure step
+`docs/GODOT_PLAN.md` is the plan of the game. The code is moving to the usual Godot structure step
 by step: what old code still breaks is counted in `godot/tools/standards_baseline.json` (see
 "Checks" below). Every change follows the rules below, also when the code around it is still in the
 old style.

@@ -32,7 +32,7 @@ const ENDING_BASE := 200
 ## ones (the first of them on the second place of the way), two endings deep in the campaign the
 ## last two.
 const ROAD_OF_ENDING := {1: 5, 2: 16, 3: 25, 4: 8, 5: 9, 8: 26, 15: 28, 0: 37, 18: 29, 21: 32}
-const SCARF := 502  # Katria's scarf: the reward of ending 2, needed to see ending 3
+const SCARF := 502  # Oksana's scarf: the reward of ending 2, needed to see ending 3
 const HERO_CLASSES := ["Cossack", "Serdiuk", "Kharakternyk", "Haidamaka"]
 ## The briefing's advice: 28 pairs of lines (talk.json "briefing"), the first 10 in turn.
 const BRIEFING_PAIRS := 28
@@ -340,7 +340,7 @@ func take_from(
 ## Where the campaign goes after a mission (info: its campaign.json record). A won mission
 ## takes the hero to the lord's place. A mission whose general is 200 + i (won) or whose
 ## reward is 200 + i (lost) ends the story with ending i: the hero goes to that ending's
-## place, gets the mission's gold anyway when lost, sometimes a gear (Katria's scarf
+## place, gets the mission's gold anyway when lost, sometimes a gear (Oksana's scarf
 ## after ending 2), and some endings open a road (ROAD_OF_ENDING). Returns the ending reached,
 ## or -1.
 func advance(sim: MapSim, lord_id: int, info: Dictionary, rng: RandomNumberGenerator = null) -> int:
@@ -388,10 +388,10 @@ func advance(sim: MapSim, lord_id: int, info: Dictionary, rng: RandomNumberGener
 	return ending
 
 
-## A mission lost, as the original: from level 10 on, with a chance of level / 4 in 100, one of
+## A mission lost: from level 10 on, with a chance of level / 4 in 100, one of
 ## the 9 places of the Gear page is picked at random and what is worn there is lost. rng: the
-## mission's JavaRandom (below). Returns the thing lost, or {} (nothing, or the place empty).
-func lose_gear(rng: JavaRandom) -> Dictionary:
+## mission's GameRandom (below). Returns the thing lost, or {} (nothing, or the place empty).
+func lose_gear(rng: GameRandom) -> Dictionary:
 	if level <= 9 or rng.below(100) >= level >> 2:
 		return {}
 	var i: int = rng.below(Items.EQUIPPED)

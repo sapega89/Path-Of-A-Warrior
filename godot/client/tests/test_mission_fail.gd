@@ -1,10 +1,10 @@
 extends "res://tests/test_case.gd"
-## A mission lost, as the original: from level 10 on the hero may lose a thing he wears.
+## A mission lost: from level 10 on the hero may lose a thing he wears.
 
 
 ## Gives the numbers it is told, as rng.below would.
 class Rolls:
-	extends JavaRandom
+	extends GameRandom
 	var values: Array = []
 	var asked: Array = []
 
@@ -45,11 +45,11 @@ func test_lost_gear_on_the_fail_banner() -> void:
 	# a seed whose rolls lose the weapon: below 10 of 100, then place 0
 	var s := 0
 	while true:
-		var t := JavaRandom.new(s)
+		var t := GameRandom.new(s)
 		if t.below(100) < 10 and t.below(Items.EQUIPPED) == 0:
 			break
 		s += 1
-	screen.sim.rng = JavaRandom.new(s)
+	screen.sim.rng = GameRandom.new(s)
 	screen.sim.failed = true
 	screen.sim.banner = MapSim.BANNER_FAILED
 	screen._process(0.0)

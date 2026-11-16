@@ -126,7 +126,7 @@ static func _pace(ground_speed: float, nominal: float) -> float:
 	return clampf(ground_speed / nominal, 0.6, 2.2) if ground_speed > 0.05 else 1.0
 
 
-## The original 8-direction (0 down, 2 left, 4 up, 6 right) as a turn about Y: the figure
+## The 8-direction (0 down, 2 left, 4 up, 6 right) as a turn about Y: the figure
 ## faces +Z at 0.
 static func yaw_of(dir8: int) -> float:
 	return [0.0, -PI / 4.0, -PI / 2.0, -3.0 * PI / 4.0, PI, 3.0 * PI / 4.0, PI / 2.0, PI / 4.0][posmod(

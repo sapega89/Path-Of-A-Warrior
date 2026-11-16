@@ -11,14 +11,14 @@ extends RefCounted
 ## MapPictures (what the screen draws of the effects) and MapGeometry (distances, directions).
 
 const TABLES_PATH := "res://data/tables.json"
-const TICK_MS := 120  # speed 2 of the original (speed_frame_ms)
+const TICK_MS := 120  # the middle speed (Settings: speed 2)
 const END := 200  # animation frame numbers above this end the animation (222 = loop end)
-## Banners shown over the map (the original's popups 8 and 9).
+## Banners shown over the map.
 const BANNER_STAGE := 8
 const BANNER_STAGE_CLEAR := 9
-const BANNER_SUCCESS := 10  # "Mission Success!": 20 ticks, a key does not end it
-const BANNER_FAILED := 22  # "Mission fail!": 20 ticks (a key: 2 more), then the mission ends
-const BANNER_ACQUIRED := 13  # a gear picked up: "<its name> Acquired!!"
+const BANNER_SUCCESS := 10  # "Mission done!": 20 ticks, a key does not end it
+const BANNER_FAILED := 22  # "The mission is lost.": 20 ticks (a key: 2 more), then the mission ends
+const BANNER_ACQUIRED := 13  # a gear picked up: "<its name> Found!"
 const BANNER_TICKS := 20
 const EXP_PAGE_TICKS := 16  # an exp page stays after its bar is all shown
 const KIND_SWORDS := 201
@@ -32,7 +32,7 @@ const SKILL_COST_PER_LEVEL := [3, 4, 5, 3, 4, 3, 3, 5, 3, 4, 5, 3, 4, 5, 5, 6, 5
 const CAMPAIGN_PATH := "res://data/campaign.json"
 const TALK_PATH := "res://data/talk.json"
 const BUFF_DIV := [20, 20, 25]
-## The pages after "Mission Success!" (which shows the gold): the exp, the exp for time.
+## The pages after "Mission done!" (which shows the gold): the exp, the exp for time.
 const BANNER_TOTAL_EXP := 11
 const BANNER_TIME_EXP := 12
 const HERO_NAME := "Hero"
@@ -79,7 +79,7 @@ var talk: Array[String] = []
 var talk_line := 0
 var talk_chars := 0
 var talk_wait := 0
-var rng := JavaRandom.new()
+var rng := GameRandom.new()
 var enemies: Array[MapActor] = []  # in drawing order (sorted by y each tick)
 var enemies_alive := 0  # archers do not count
 var spawn_spots: Array[Vector3i] = []  # tile x, tile y, exit side (0 down 1 left 2 up 3 right)
@@ -98,7 +98,7 @@ var time_limit := 0  # seconds; in time the exp grows
 var enemy_hp_percent := 100  # the vows of the run (Vows) make the enemies tougher
 var time_exp := 0  # the exp for time, given when the mission was won in time
 var hero_exp := 0  # the hero's exp into his level before the mission
-var exp_bars := ExpBars.new()  # the exp bar of the pages Total Exp and Time Exp
+var exp_bars := ExpBars.new()  # the exp bar of the experience pages
 ## Friendship points of the generals the hero talked with (general id -> points).
 var friendship := {}
 var fought := {}  # the generals met as foes in this mission (general id -> true)
@@ -201,7 +201,7 @@ func _init(
 
 
 ## One tick. held: the 8-direction of the held direction key (0, 2, 4, 6) or -1.
-## pressed: a direction key pressed this tick (-1 none), for the original's tap-to-walk.
+## pressed: a direction key pressed this tick (-1 none), for tap-to-walk.
 ## fire: the attack key was pressed (it also closes a banner). hotkey: a skill key (0..4)
 ## pressed, -1 none; potion: a potion key (0, 1), -1 none; belt: a belt slot (0..4) used by
 ## its own key (the skill bar's Z X C V B), -1 none.
@@ -242,7 +242,7 @@ func tick(
 
 
 ## The banners go on by themselves: a key shortens a "Stage" banner
-## and "Mission fail!" to 2 more ticks, and "Level Up" on an exp bar, but not "Mission
+## and "The mission is lost." to 2 more ticks, and "Level N!" on an exp bar, but not "Mission
 ## Success!" nor the exp pages.
 func _tick_banner(fire: bool) -> void:
 	if banner == BANNER_TOTAL_EXP or banner == BANNER_TIME_EXP:
@@ -301,7 +301,7 @@ func _tick_scene(held: int, pressed: int, skill: int, potion: int = -1) -> void:
 				dir_history[i] = -1
 			pressed = -1
 		elif hero.action == 10:
-			# The hero fell: "Mission fail!" with its sound, then back to the menu.
+			# The hero fell: "The mission is lost." with its sound, then back to the menu.
 			sound(6)
 			hero.frame = 10
 			failed = true

@@ -67,7 +67,7 @@
 "level": 1
 },
 "107": {
-"name": "Iron Pike",
+"name": "Forged Pike",
 "slot": 0,
 "stat": 0,
 "bonus": 6,
@@ -331,7 +331,7 @@
 "level": 70
 },
 "131": {
-"name": "Leather Helmet",
+"name": "Rawhide Helm",
 "slot": 2,
 "stat": 1,
 "bonus": 1,
@@ -540,7 +540,7 @@
 "level": 45
 },
 "150": {
-"name": "Heaven's Gauntlets",
+"name": "Starlit Gauntlets",
 "slot": 4,
 "stat": 2,
 "bonus": 95,
@@ -551,7 +551,7 @@
 "level": 70
 },
 "151": {
-"name": "Leather Boots",
+"name": "Postoly",
 "slot": 5,
 "stat": 2,
 "bonus": 5,
@@ -606,7 +606,7 @@
 "level": 70
 },
 "156": {
-"name": "Leather Belt",
+"name": "Rawhide Belt",
 "slot": 6,
 "stat": 2,
 "bonus": 5,
@@ -815,7 +815,7 @@
 "level": 45
 },
 "175": {
-"name": "Heaven's Bracer",
+"name": "Starlit Bracer",
 "slot": 7,
 "stat": 2,
 "bonus": 65,
@@ -1035,7 +1035,7 @@
 "level": 45
 },
 "195": {
-"name": "Heaven's Locket",
+"name": "Starlit Locket",
 "slot": 8,
 "stat": 2,
 "bonus": 95,
@@ -1587,7 +1587,7 @@
 "level": 16
 },
 "345": {
-"name": "Hungarian Bow",
+"name": "Steppe Bow",
 "slot": 9,
 "attack": 5,
 "defense": 0,
@@ -1664,7 +1664,7 @@
 "level": 100
 },
 "352": {
-"name": "Plate Armour",
+"name": "Lamellar Armour",
 "slot": 3,
 "attack": 0,
 "defense": 35,
@@ -1675,7 +1675,7 @@
 "level": 130
 },
 "353": {
-"name": "Plate Armour",
+"name": "Lamellar Armour",
 "slot": 3,
 "attack": 0,
 "defense": 35,
@@ -1785,7 +1785,7 @@
 "level": 96
 },
 "363": {
-"name": "War Boots",
+"name": "Horseman's Boots",
 "slot": 5,
 "attack": 0,
 "defense": 0,
@@ -2027,7 +2027,7 @@
 "level": 56
 },
 "385": {
-"name": "Black Courser",
+"name": "Raven Horse",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2159,7 +2159,7 @@
 "level": 24
 },
 "397": {
-"name": "White Courser",
+"name": "Grey Horse",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2445,7 +2445,7 @@
 "level": 50
 },
 "423": {
-"name": "Autumn Scroll",
+"name": "Harvest Scroll",
 "slot": 9,
 "attack": 0,
 "defense": 0,
@@ -2634,7 +2634,7 @@
 "level": 0
 },
 "503": {
-"name": "Heaven's Spear",
+"name": "Starlit Spear",
 "slot": 0,
 "attack": 135,
 "defense": 36,
@@ -2656,7 +2656,7 @@
 "level": 0
 },
 "505": {
-"name": "Heaven's Armour",
+"name": "Starlit Armour",
 "slot": 3,
 "attack": 0,
 "defense": 90,
@@ -2678,7 +2678,7 @@
 "level": 100
 },
 "507": {
-"name": "Heaven's Boots",
+"name": "Starlit Boots",
 "slot": 5,
 "attack": 10,
 "defense": 80,
@@ -2689,7 +2689,7 @@
 "level": 99
 },
 "508": {
-"name": "Heaven's Konchar",
+"name": "Starlit Konchar",
 "slot": 0,
 "attack": 128,
 "defense": 25,
@@ -2744,7 +2744,7 @@
 "level": 95
 },
 "513": {
-"name": "Heaven's Sabre",
+"name": "Starlit Sabre",
 "slot": 0,
 "attack": 128,
 "defense": 4,
@@ -2777,7 +2777,7 @@
 "level": 92
 },
 "516": {
-"name": "Heaven's Konchar",
+"name": "Starlit Konchar",
 "slot": 1,
 "attack": 105,
 "defense": 15,
@@ -2788,7 +2788,7 @@
 "level": 90
 },
 "517": {
-"name": "Heaven's Kuchma",
+"name": "Starlit Kuchma",
 "slot": 2,
 "attack": 0,
 "defense": 30,
@@ -2799,7 +2799,7 @@
 "level": 100
 },
 "518": {
-"name": "Heaven's Belt",
+"name": "Starlit Belt",
 "slot": 6,
 "attack": 0,
 "defense": 80,

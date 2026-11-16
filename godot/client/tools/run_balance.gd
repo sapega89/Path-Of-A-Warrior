@@ -165,7 +165,7 @@ func _play(p: Profile, lord: int, info: Dictionary, mission: int) -> MapSim:
 	var s: Array = info.get("start", [4, 4])
 	var map := MapBuilder.load_map(Campaign.lord_map(lord))
 	var sim := MapSim.new(map, mission, Vector2i(int(s[0]), int(s[1])))
-	sim.rng = JavaRandom.new(rng.randi())
+	sim.rng = GameRandom.new(rng.randi())
 	sim.boss_type = int(info.get("boss_type", 0))
 	sim.mission_gold = int(info.get("gold", 0))
 	sim.mission_general = int(info.get("general", 0))

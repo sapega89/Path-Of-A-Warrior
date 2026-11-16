@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bbeg3mjb220sj"
-path="res://.godot/imported/shinki.svg-ea184b8df80496ac224a599d03b71966.ctex"
+uid="uid://bpd67ludt3vi0"
+path="res://.godot/imported/potions.svg-3b88bb26eb51566b1ac3615fd3e800ba.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/icons/shinki.svg"
-dest_files=["res://.godot/imported/shinki.svg-ea184b8df80496ac224a599d03b71966.ctex"]
+source_file="res://assets/art/icons/potions.svg"
+dest_files=["res://.godot/imported/potions.svg-3b88bb26eb51566b1ac3615fd3e800ba.ctex"]
 
 [params]
 

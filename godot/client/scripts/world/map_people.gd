@@ -12,7 +12,7 @@ const PEOPLE_PATH := "res://assets/art/people.json"
 ## What holds an enemy's figure (the three of a squad).
 const ENEMY := preload("res://scenes/world/enemy.tscn")
 const PX := 1.0 / 27.0  # world units per map pixel (a tile is 27 px)
-const FOOT_PX := 6  # the original's body box reaches this far below the position
+const FOOT_PX := 6  # the body box reaches this far below the position
 
 ## The hero's model by his class (Profile.HERO_CLASSES) and his weapon by its kind
 ## (MapActor.weapon_kind): 0 a long one, a pike; 1 a short one, a broadsword.
@@ -61,7 +61,7 @@ static func side_of_general(general: Dictionary) -> String:
 	return "crown"
 
 
-## The original pixel position to the world (the feet: FOOT_PX below the position).
+## A map pixel position to the world (the feet: FOOT_PX below the position).
 static func to_world(p: Vector2) -> Vector3:
 	return Vector3(p.x * PX, 0.0, (p.y + FOOT_PX) * PX)
 

@@ -1,7 +1,7 @@
 class_name SkillsScreen
 extends BaseScreen
-## Skills: the five skill keys and the skills by group (MOVE, HEAL, PASV, FWD, NEAR, RANGE,
-## WHOLE). A learned skill has its coloured icon, one not yet learned its grey icon.
+## Skills: the five skill keys and the skills by group (SABRE, HEAL, SPIRIT, WATER, FIRE,
+## THUNDER, SKY). A learned skill has its coloured icon, one not yet learned its grey icon.
 ## Pick a key, then a learned skill to put it on that key; picking a key that holds a skill
 ## takes the skill off. Beside the groups, the card of the skill under the cursor: name and
 ## level, what it is, MP and what it does now and at the next level.
@@ -118,7 +118,7 @@ func refresh() -> void:
 		skills[skill].icon = _icon(skill, profile.skill_level(skill) > 0)
 
 
-## "Whirlwind Sabre / Lv1 Dash & Slash", or "... / (Not Available)" for a skill not learned.
+## "Whirlwind Sabre / Lv1 A spinning dash", or "... / (not learned)" for a skill not learned.
 func describe(skill: int) -> String:
 	var i := skill - 12
 	var names: Array = data.get("names", [])
@@ -160,4 +160,4 @@ func _show_info(skill: int) -> void:
 
 
 func _icon(skill: int, learned: bool) -> Texture2D:
-	return ItemSlot.icon("skill" if learned else "skillgray", skill - 12)
+	return ItemSlot.icon("skills" if learned else "skills_grey", skill - 12)

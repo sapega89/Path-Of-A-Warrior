@@ -99,7 +99,7 @@ func test_no_flasks_and_no_shop_potions() -> void:
 	p.run.flasks = 2
 	p.run.flasks_left = 2
 	p.run.vows.switch("no_flasks")
-	var lost := p.run.lose_mission(p, false, JavaRandom.new(1))
+	var lost := p.run.lose_mission(p, false, GameRandom.new(1))
 	check(bool(lost.over), "the first lost mission ends the run")
 	eq(p.place, 0, "back to the start")
 	Blacksmith.fill_shop(p, RandomNumberGenerator.new())

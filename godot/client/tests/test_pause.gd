@@ -53,7 +53,7 @@ func test_pause_menu() -> void:
 	check(screen.pause_menu == null, "Resume: the menu goes")
 	check(not screen.get_tree().paused and screen.can_process(), "and the game runs on")
 	screen.pause()
-	screen.free()  # Exit to Menu: the mission goes while paused
+	screen.free()  # Leave to the menu: the mission goes while paused
 	check(not root.get_tree().paused, "the game runs again without it")
 	Router.params = old
 

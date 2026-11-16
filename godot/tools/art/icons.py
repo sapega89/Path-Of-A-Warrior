@@ -3,10 +3,10 @@
     python godot/tools/art/icons.py     # writes godot/client/assets/art/icons/<sheet>.svg
 
 The game shows a thing or a skill by a sheet and an index (scripts/core/items.gd `icon`,
-scripts/ui/item_slot.gd): tool (potions, bomb, dynamite, a box for gear found on the ground,
-then a heap of gold), kibo (gear), sungbo (treasures), shinki (rare things), skill and skillgray
-(skills 12..30, learned and not yet). Each sheet here is one strip of 128 x 128 icons in the
-order of the original sheets, so only the picture changes.
+scripts/ui/item_slot.gd): potions (the potions, the powder pot, the grenade, a box for gear found
+on the ground, then a heap of gold), gear, treasures, rare (rare things), skills and skills_grey
+(skills 12..30, learned and not yet). Each sheet here is one strip of 128 x 128 icons, in the
+order of the ids in data/items.json.
 
 The style is the one of the figures: flat colours of the palette (palette.py), a dark ink
 outline, a light stroke for the shine. Common gear is iron and leather, treasures have gold
@@ -168,7 +168,7 @@ def berdysh_head(k, x0, x1, steel, shine, edge=None):
     k.bar(x1 - 4, 2, x1 - 4, 6, c("iron"), 3)
 
 
-# ---- tool: potions, the bomb, the dynamite, a box --------------------------------------------
+# ---- potions: the potions, the powder pot, the grenade, a box ----------------------------------
 
 POTION = {"red": ("#D2463A", "#8E2620"), "blue": ("#3D7CC9", "#22457A"), "gold": ("#E9A93A", "#A8662A")}
 
@@ -252,13 +252,13 @@ def gold_heap(k):
     k.shine("M48 44 Q56 34 68 34", C["gold_light"], 4, 0.9)
 
 
-TOOL = [lambda k: vial(k, "red"), lambda k: bottle(k, "red"), lambda k: flask(k, "red"),
+POTIONS = [lambda k: vial(k, "red"), lambda k: bottle(k, "red"), lambda k: flask(k, "red"),
         lambda k: vial(k, "blue"), lambda k: bottle(k, "blue"), lambda k: flask(k, "blue"),
         lambda k: vial(k, "gold"), lambda k: bottle(k, "gold"), lambda k: flask(k, "gold"),
         bomb, dynamite, crate, gold_heap]
 
 
-# ---- gear (kibo): iron and leather; treasures (sungbo): gold and stones; rare (shinki) ------
+# ---- gear: iron and leather; treasures: gold and stones; rare: gold, azure and shine -----------
 
 class Look:
     """The materials of a thing by its rank."""
@@ -646,18 +646,18 @@ KIBO_LOOK = Look("gear")
 SUNGBO_LOOK = Look("treasure")
 SHINKI_LOOK = Look("rare")
 
-KIBO = [broadsword(KIBO_LOOK), konchar(KIBO_LOOK), berdysh(KIBO_LOOK), sabre(KIBO_LOOK), spear(KIBO_LOOK),
+GEAR = [broadsword(KIBO_LOOK), konchar(KIBO_LOOK), berdysh(KIBO_LOOK), sabre(KIBO_LOOK), spear(KIBO_LOOK),
         kindjal(KIBO_LOOK), helmet(KIBO_LOOK), armour(KIBO_LOOK, "mail"), belt(KIBO_LOOK), bracer(KIBO_LOOK),
         locket(KIBO_LOOK), gauntlet(KIBO_LOOK), boots(KIBO_LOOK)]
 
-SUNGBO = [broadsword(SUNGBO_LOOK), konchar(SUNGBO_LOOK), berdysh(SUNGBO_LOOK), spear(SUNGBO_LOOK),
+TREASURES = [broadsword(SUNGBO_LOOK), konchar(SUNGBO_LOOK), berdysh(SUNGBO_LOOK), spear(SUNGBO_LOOK),
           spear(SUNGBO_LOOK, 10, True, C["red"]), spear(SUNGBO_LOOK, 10, True, moon=True), bow(SUNGBO_LOOK),
           kuchma(SUNGBO_LOOK), armour(SUNGBO_LOOK, "plate"), boots(SUNGBO_LOOK, C["red"], toe=True),
           belt(SUNGBO_LOOK, sash=True), horse("#8A5A36", C["fur"], SUNGBO_LOOK), scroll,
           tincture("#D9A23A", C["yellow"], 5), tincture("#3D6FB8", "#5C8FE0", 7),
           gourd(C["teal"], C["white"]), gourd(C["green"], C["red"], C["red"])]
 
-SHINKI = [book, rushnyk, spear(SHINKI_LOOK, 12, True), seal, armour(SHINKI_LOOK, "plate"),
+RARE = [book, rushnyk, spear(SHINKI_LOOK, 12, True), seal, armour(SHINKI_LOOK, "plate"),
           horse("#E8DCC4", C["gold"], SHINKI_LOOK), boots(SHINKI_LOOK, C["blue_light"], toe=True, wings=True),
           konchar(SHINKI_LOOK), broadsword(Look("rare", grip=C["red_dark"], gem=C["red"]), C["blade"]),
           yatagan(SHINKI_LOOK), sabre(Look("rare", grip=C["dusk"], gem=C["amethyst"], glow="white"), "#7C8494"),
@@ -861,7 +861,7 @@ SKILL = [skill_whirl, skill_storm, skill_thunder, skill_herbs, skill_water, skil
          skill_pokrova, skill_wave, skill_rapids, skill_flood, skill_ring_of_fire, skill_fire_whirl,
          skill_blaze, skill_lightning, skill_perun, skill_storm_cloud, skill_serpent, skill_rain]
 
-SHEETS = {"tool": TOOL, "kibo": KIBO, "sungbo": SUNGBO, "shinki": SHINKI, "skill": SKILL}
+SHEETS = {"potions": POTIONS, "gear": GEAR, "treasures": TREASURES, "rare": RARE, "skills": SKILL}
 
 
 def strip(recipes):
@@ -901,8 +901,8 @@ def main():
         svg = strip(recipes)
         with open(os.path.join(OUT, name + ".svg"), "w", encoding="utf-8") as f:
             f.write(svg)
-        if name == "skill":
-            with open(os.path.join(OUT, "skillgray.svg"), "w", encoding="utf-8") as f:
+        if name == "skills":
+            with open(os.path.join(OUT, "skills_grey.svg"), "w", encoding="utf-8") as f:
                 f.write(grey(svg))
         counts[name] = len(recipes)
     print(OUT, counts)

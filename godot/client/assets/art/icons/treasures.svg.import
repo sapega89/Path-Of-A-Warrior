@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cdrkiwxshim6n"
-path="res://.godot/imported/skill.svg-623b8eff37ccf15114cc72b1547c8f85.ctex"
+uid="uid://b31g7pwtrctu3"
+path="res://.godot/imported/treasures.svg-17c3d7c3462a1387c38dedcc743aef81.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/icons/skill.svg"
-dest_files=["res://.godot/imported/skill.svg-623b8eff37ccf15114cc72b1547c8f85.ctex"]
+source_file="res://assets/art/icons/treasures.svg"
+dest_files=["res://.godot/imported/treasures.svg-17c3d7c3462a1387c38dedcc743aef81.ctex"]
 
 [params]
 

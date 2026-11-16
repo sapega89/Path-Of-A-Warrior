@@ -4,7 +4,7 @@ extends "res://tests/test_case.gd"
 
 func _sim() -> RefCounted:
 	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(4, 2))
-	sim.rng = JavaRandom.new(5)
+	sim.rng = GameRandom.new(5)
 	return sim
 
 
@@ -71,7 +71,7 @@ func test_leaves_an_archer_it_cannot_reach() -> void:
 	# nook, out of the hero's reach. The room is clear and its exit open (archers do not keep it
 	# shut): the hero kills the first, gives up on the second and walks out.
 	var sim: RefCounted = MapSim.new(MapBuilder.load_map(Campaign.lord_map(6)), 0, Vector2i(11, 4))
-	sim.rng = JavaRandom.new(60)
+	sim.rng = GameRandom.new(60)
 	sim.continue_in_clear_room()
 	MapRoomPlay.run_cell_scripts(sim)
 	eq(

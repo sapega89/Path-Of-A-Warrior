@@ -127,7 +127,7 @@ func start() -> void:
 	var info: Dictionary = Campaign.new().lord_missions(LORD)[MISSION]
 	var s: Array = info.get("start", [4, 2])
 	sim = MapSim.new(map, MISSION, Vector2i(int(s[0]), int(s[1])))
-	sim.rng = JavaRandom.new(seed if seed >= 0 else int(Time.get_ticks_usec() & 0x7fffffff))
+	sim.rng = GameRandom.new(seed if seed >= 0 else int(Time.get_ticks_usec() & 0x7fffffff))
 	sim.no_enemies = true  # the lab brings the enemies itself
 	tint = int(info.get("tint", 0))
 	profile = Profile.new()
@@ -322,7 +322,7 @@ func _place_loot() -> void:
 		var s: Sprite3D = MissionScreen.LOOT.instantiate()
 		var px := 24.0 if d.item > 10000 else 28.0
 		s.texture = ItemSlot.icon(
-			"tool",
+			"potions",
 			MissionScreen.GOLD_ICON if d.item > 10000 else (11 if d.item > 100 else d.item - 1)
 		)
 		s.pixel_size = px / 27.0 / ItemSlot.ART

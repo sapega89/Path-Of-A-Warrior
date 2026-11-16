@@ -23,7 +23,7 @@ var on := {
 	"sound": true,
 	"rumble": true,
 }
-## The numbers: times in seconds, distances in the original's pixels (27 to a tile).
+## The numbers: times in seconds, distances in map pixels (27 to a tile).
 var p := {
 	# hitstop: how long the picture stands still
 	"stop_hit": 0.04,
@@ -172,7 +172,7 @@ static func _away(from: Vector2i, to: Vector2i, facing: int) -> Vector2:
 	return d.normalized()
 
 
-## The original 8-direction (0 down, 2 left, 4 up, 6 right) as a unit vector on the map.
+## The 8-direction (0 down, 2 left, 4 up, 6 right) as a unit vector on the map.
 static func _dir8_vec(d8: int) -> Vector2:
 	var a := float(d8) * PI / 4.0
 	return Vector2(-sin(a), cos(a))

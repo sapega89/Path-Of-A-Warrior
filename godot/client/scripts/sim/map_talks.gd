@@ -85,7 +85,7 @@ static func room_general(sim: MapSim) -> int:
 	)
 
 
-## "Mission Success!" (with the gold) -> the exp -> the exp for time if in time -> the
+## "Mission done!" (with the gold) -> the exp -> the exp for time if in time -> the
 ## general's talk -> the mission is over.
 static func next_result_page(sim: MapSim) -> void:
 	match sim.banner:
@@ -111,7 +111,7 @@ static func next_result_page(sim: MapSim) -> void:
 
 
 ## An exp page: its bar grows; all shown, the page stays 16 ticks more and the next one
-## comes. A key cuts a "Level Up" short.
+## comes. A key cuts a "Level N!" short.
 static func tick_exp_page(sim: MapSim, fire: bool) -> void:
 	if fire and sim.exp_bars.level_up_ticks > 2:
 		sim.exp_bars.level_up_ticks = 2

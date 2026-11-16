@@ -152,8 +152,7 @@ static func _slide_direction(s: Vector2i) -> int:
 	return 8
 
 
-## Not walking into other actors. The game's own check shortens nothing (its result is
-## never used), so actors pass through each other, as in the original.
+## Not walking into other actors: it shortens nothing, so actors pass through each other.
 static func blocked_by_actor(_pos: Vector2i, dx: int, dy: int, _actor: MapActor) -> Vector2i:
 	return Vector2i(dx, dy)
 

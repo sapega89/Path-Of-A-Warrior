@@ -19,7 +19,7 @@ extends BaseScreen
 const SCALE := 3
 ## Ticks a typed line stays before the story goes on by itself.
 const WAIT_TICKS := 15
-## The floating text, in the original screen's pixels (240 x 320, the middle at y 160): it
+## The floating text, in the pixels of the 240 x 320 layout (the middle at y 160): it
 ## starts at y 230 (the numbers at 320, below the screen), goes up 2 a tick, a line every 22,
 ## wrapped at 200; a line is drawn from y 230 up, white within 72 of the middle, grey beyond,
 ## and is gone above -28.
@@ -180,7 +180,7 @@ func _set_lines(new_lines: PackedStringArray) -> void:
 		float_box.add_child(label)
 
 
-## The y of floating line `i` on the original screen, or -1000 while it is not drawn (not up to
+## The y of floating line `i` on the 240 x 320 layout, or -1000 while it is not drawn (not up to
 ## y 230 yet, gone, or not floating now).
 func line_y(i: int) -> int:
 	if phase != 1 or i < first_line or i >= lines.size():

@@ -20,6 +20,6 @@ func test_effects() -> void:
 		"Lv2 adds attack * 2 / 20, on all"
 	)
 	var lines: Array = SkillCard.lines(
-		12, 10, ["Whirlwind Sabre"], ["Dash & Slash"], 20, 5, 100, 0.12
+		12, 10, ["Whirlwind Sabre"], ["A spinning dash"], 20, 5, 100, 0.12
 	)
 	eq(lines[-1][0], "Max level", "nothing after Lv10")

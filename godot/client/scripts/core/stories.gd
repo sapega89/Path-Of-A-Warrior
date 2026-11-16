@@ -9,7 +9,7 @@ const PATH := "res://data/stories.json"
 const OPENING := 100
 const HERO := -1
 const NOFACE := 0
-## The hero's portraits by head (imgchar 38..41).
+## The hero's portraits by head (portraits 38..41).
 const HERO_PORTRAIT := 38
 ## The lords of the hidden missions are the ones whose bit is clear here.
 const SHOWN_LORDS := 0x1FEF64FF7E6F
@@ -40,7 +40,7 @@ static func pages(story: int, hero_name: String) -> Array:
 	var endings: Array = d.get("endings", [])
 	if story < 0 or story >= endings.size():
 		return []
-	return _ending_pages(story, endings[story], d.get("gamestr", ["", ""]), hero_name)
+	return _ending_pages(story, endings[story], d.get("first_ending", ["", ""]), hero_name)
 
 
 ## The opening: two pictures, then the master and the hero by turns.
@@ -58,16 +58,17 @@ static func _opening_pages(lines: Array, hero_name: String) -> Array:
 
 
 ## An ending: its talk (a numbered line is another speaker's, the rest the hero's), its
-## pictures and the stats page.
+## pictures and the stats page. first_ending: the two lines of ending 0 that are not in its
+## talk and pictures (the text of its first picture, the messenger's words).
 static func _ending_pages(
-	story: int, ending: Dictionary, gamestr: Array, hero_name: String
+	story: int, ending: Dictionary, first_ending: Array, hero_name: String
 ) -> Array:
 	var out: Array = []
 	var talk: Array = ending.get("talk", [])
 	for i in talk.size():
 		var line := str(talk[i])
 		if story == 0 and i == 2:
-			out.append(_talk(NOFACE, I18n.text(gamestr[1])))
+			out.append(_talk(NOFACE, I18n.text(first_ending[1])))
 		elif _numbered(line):
 			var parts := _split(line)
 			out.append(_talk(parts[0], I18n.text(parts[1])))
@@ -76,7 +77,7 @@ static func _ending_pages(
 	var pictures: Array = ending.get("pictures", [])
 	for i in pictures.size():
 		if story == 0 and i == 0:
-			out.append(_picture(0, I18n.text(gamestr[0])))
+			out.append(_picture(0, I18n.text(first_ending[0])))
 		else:
 			var parts := _split(str(pictures[i]))
 			out.append(_picture(int(parts[0]) - 1, I18n.text(parts[1])))
@@ -111,17 +112,17 @@ static func stats_lines(profile: Profile) -> Array:
 	var e := endings * 100 / ENDINGS
 	var g: int = profile.friendship.size() * 100 / GENERALS
 	return [
-		"Mission",
-		"Accomplished",
+		"Missions",
+		"won",
 		"%d %%" % m,
-		"Hidden Mission",
-		"Accomplished",
+		"Hidden missions",
+		"won",
 		"%d %%" % h,
-		"Ending Collected",
+		"Endings seen",
 		"%d %%" % e,
-		"Warrior Collected",
+		"Generals befriended",
 		"%d %%" % g,
-		"Total Accomplished",
+		"All in all",
 		"%d %%" % ((m + h + e + g) >> 2)
 	]
 

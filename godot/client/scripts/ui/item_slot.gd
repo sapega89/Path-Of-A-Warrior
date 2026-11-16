@@ -26,8 +26,8 @@ static func choose(place: Button, chosen: bool) -> void:
 	place.theme_type_variation = CHOSEN if chosen else PLAIN
 
 
-## Icon i of a sheet (tool, kibo, sungbo, shinki, skill, skillgray), in the order of the
-## original sheets; its own texture with mipmaps, so it stays smooth at any size.
+## Icon i of a sheet (potions, gear, treasures, rare, skills, skills_grey), by its number in the
+## sheet; its own texture with mipmaps, so it stays smooth at any size.
 static func icon(sheet: String, i: int) -> Texture2D:
 	if sheet.is_empty() or i < 0:
 		return null

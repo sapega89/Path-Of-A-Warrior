@@ -93,7 +93,7 @@ static func in_strike_reach(a: Vector2i, b: Vector2i, d8: int, reach: int) -> bo
 	return false
 
 
-## Room edges in pixels: 27 + 189 k, as the original's table (x 3 / 2).
+## Room edges in pixels: 27 + 189 k (x 3 / 2).
 static func edge(k: int) -> int:
 	return 27 + 189 * k
 

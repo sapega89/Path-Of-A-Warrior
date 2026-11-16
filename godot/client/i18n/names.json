@@ -67,10 +67,6 @@
 "en": "Ataman's Kindjal",
 "uk": "Отаманський кинджал"
 },
-"Autumn Scroll": {
-"en": "Autumn Scroll",
-"uk": "Осінній сувій"
-},
 "Avram Hulak": {
 "en": "Avram Hulak",
 "uk": "Аврам Гуляк"
@@ -162,10 +158,6 @@
 "Black Bakhmat": {
 "en": "Black Bakhmat",
 "uk": "Вороний бахмат"
-},
-"Black Courser": {
-"en": "Black Courser",
-"uk": "Вороний скакун"
 },
 "Black Rumak": {
 "en": "Black Rumak",
@@ -695,6 +687,10 @@
 "en": "Fesko Krucha",
 "uk": "Феско Круча"
 },
+"Field Balm": {
+"en": "Field Balm",
+"uk": "Польовий бальзам"
+},
 "Fierce Konchar": {
 "en": "Fierce Konchar",
 "uk": "Лютий кончар"
@@ -710,6 +706,10 @@
 "Fire Bracer": {
 "en": "Fire Bracer",
 "uk": "Вогняний наруч"
+},
+"Fire Grenade": {
+"en": "Fire Grenade",
+"uk": "Вогняна граната"
 },
 "Fire Locket": {
 "en": "Fire Locket",
@@ -747,6 +747,10 @@
 "en": "Forest Remedy",
 "uk": "Лісове зілля"
 },
+"Forged Pike": {
+"en": "Forged Pike",
+"uk": "Кована піка"
+},
 "Fortress Belt": {
 "en": "Fortress Belt",
 "uk": "Фортечний пояс"
@@ -783,6 +787,14 @@
 "en": "Great Broadsword",
 "uk": "Великий палаш"
 },
+"Great Field Balm": {
+"en": "Great Field Balm",
+"uk": "Великий польовий бальзам"
+},
+"Great Herb Brew": {
+"en": "Great Herb Brew",
+"uk": "Великий трав'яний узвар"
+},
 "Great Konchar": {
 "en": "Great Konchar",
 "uk": "Великий кончар"
@@ -791,6 +803,10 @@
 "en": "Great Sabre",
 "uk": "Велика шабля"
 },
+"Great Spirit Mead": {
+"en": "Great Spirit Mead",
+"uk": "Великий духмяний мед"
+},
 "Grey Bakhmat": {
 "en": "Grey Bakhmat",
 "uk": "Сивий бахмат"
@@ -798,6 +814,10 @@
 "Grey Draught Horse": {
 "en": "Grey Draught Horse",
 "uk": "Сивий ваговоз"
+},
+"Grey Horse": {
+"en": "Grey Horse",
+"uk": "Сивий кінь"
 },
 "Grey Packhorse": {
 "en": "Grey Packhorse",
@@ -815,6 +835,10 @@
 "en": "Harvest",
 "uk": "Жнива"
 },
+"Harvest Scroll": {
+"en": "Harvest Scroll",
+"uk": "Жнивний сувій"
+},
 "Hawk Bracer": {
 "en": "Hawk Bracer",
 "uk": "Яструбиний наруч"
@@ -830,46 +854,6 @@
 "Hearth Belt": {
 "en": "Hearth Belt",
 "uk": "Пояс вогнища"
-},
-"Heaven's Armour": {
-"en": "Heaven's Armour",
-"uk": "Небесний панцир"
-},
-"Heaven's Belt": {
-"en": "Heaven's Belt",
-"uk": "Небесний пояс"
-},
-"Heaven's Boots": {
-"en": "Heaven's Boots",
-"uk": "Небесні чоботи"
-},
-"Heaven's Bracer": {
-"en": "Heaven's Bracer",
-"uk": "Небесний наруч"
-},
-"Heaven's Gauntlets": {
-"en": "Heaven's Gauntlets",
-"uk": "Небесні рукавиці"
-},
-"Heaven's Konchar": {
-"en": "Heaven's Konchar",
-"uk": "Небесний кончар"
-},
-"Heaven's Kuchma": {
-"en": "Heaven's Kuchma",
-"uk": "Небесна кучма"
-},
-"Heaven's Locket": {
-"en": "Heaven's Locket",
-"uk": "Небесна ладанка"
-},
-"Heaven's Sabre": {
-"en": "Heaven's Sabre",
-"uk": "Небесна шабля"
-},
-"Heaven's Spear": {
-"en": "Heaven's Spear",
-"uk": "Небесний спис"
 },
 "Heavy Armour": {
 "en": "Heavy Armour",
@@ -890,6 +874,10 @@
 "Herald's Armour": {
 "en": "Herald's Armour",
 "uk": "Панцир гінця"
+},
+"Herb Brew": {
+"en": "Herb Brew",
+"uk": "Трав'яний узвар"
 },
 "Herbal": {
 "en": "Herbal",
@@ -963,6 +951,10 @@
 "en": "Holy Pike",
 "uk": "Свята піка"
 },
+"Horseman's Boots": {
+"en": "Horseman's Boots",
+"uk": "Вершницькі чоботи"
+},
 "Hryhorii Bulava": {
 "en": "Hryhorii Bulava",
 "uk": "Григорій Булава"
@@ -970,10 +962,6 @@
 "Hryts Lytvyn": {
 "en": "Hryts Lytvyn",
 "uk": "Гриць Литвин"
-},
-"Hungarian Bow": {
-"en": "Hungarian Bow",
-"uk": "Угорський лук"
 },
 "Hunting Rohatyna": {
 "en": "Hunting Rohatyna",
@@ -1022,10 +1010,6 @@
 "Iron Broadsword": {
 "en": "Iron Broadsword",
 "uk": "Залізний палаш"
-},
-"Iron Pike": {
-"en": "Iron Pike",
-"uk": "Залізна піка"
 },
 "Iron Sabre": {
 "en": "Iron Sabre",
@@ -1231,6 +1215,10 @@
 "en": "Lady Kvitka",
 "uk": "пані Квітка"
 },
+"Lamellar Armour": {
+"en": "Lamellar Armour",
+"uk": "Ламелярний панцир"
+},
 "Land Grant": {
 "en": "Land Grant",
 "uk": "Грамота на землю"
@@ -1242,18 +1230,6 @@
 "Lazar Topolia": {
 "en": "Lazar Topolia",
 "uk": "Лазар Тополя"
-},
-"Leather Belt": {
-"en": "Leather Belt",
-"uk": "Шкіряний пояс"
-},
-"Leather Boots": {
-"en": "Leather Boots",
-"uk": "Шкіряні чоботи"
-},
-"Leather Helmet": {
-"en": "Leather Helmet",
-"uk": "Шкіряний шолом"
 },
 "Leather Kaftan": {
 "en": "Leather Kaftan",
@@ -1643,10 +1619,6 @@
 "en": "Piotr Wasowicz",
 "uk": "Пйотр Вонсович"
 },
-"Plate Armour": {
-"en": "Plate Armour",
-"uk": "Пластинчастий панцир"
-},
 "Platon Chornohuz": {
 "en": "Platon Chornohuz",
 "uk": "Платон Чорногуз"
@@ -1658,6 +1630,14 @@
 "Poltava": {
 "en": "Poltava",
 "uk": "Полтава"
+},
+"Postoly": {
+"en": "Postoly",
+"uk": "Постоли"
+},
+"Powder Pot": {
+"en": "Powder Pot",
+"uk": "Пороховий горщик"
 },
 "Privilege": {
 "en": "Privilege",
@@ -1706,6 +1686,18 @@
 "Rapids Remedy": {
 "en": "Rapids Remedy",
 "uk": "Порогове зілля"
+},
+"Raven Horse": {
+"en": "Raven Horse",
+"uk": "Вороний кінь"
+},
+"Rawhide Belt": {
+"en": "Rawhide Belt",
+"uk": "Сиром'ятний пояс"
+},
+"Rawhide Helm": {
+"en": "Rawhide Helm",
+"uk": "Сиром'ятний шолом"
 },
 "Red Boots": {
 "en": "Red Boots",
@@ -2067,6 +2059,18 @@
 "en": "Siveria",
 "uk": "Сіверщина"
 },
+"Small Field Balm": {
+"en": "Small Field Balm",
+"uk": "Малий польовий бальзам"
+},
+"Small Herb Brew": {
+"en": "Small Herb Brew",
+"uk": "Малий трав'яний узвар"
+},
+"Small Spirit Mead": {
+"en": "Small Spirit Mead",
+"uk": "Малий духмяний мед"
+},
 "Snow-White Pony": {
 "en": "Snow-White Pony",
 "uk": "Сніжний коник"
@@ -2219,6 +2223,10 @@
 "en": "Sotnyk Zhuk",
 "uk": "сотник Жук"
 },
+"Spirit Mead": {
+"en": "Spirit Mead",
+"uk": "Духмяний мед"
+},
 "Spirited Boots": {
 "en": "Spirited Boots",
 "uk": "Завзяті чоботи"
@@ -2243,6 +2251,46 @@
 "en": "Stanislaw Ostrowski",
 "uk": "Станіслав Островський"
 },
+"Starlit Armour": {
+"en": "Starlit Armour",
+"uk": "Зоряний панцир"
+},
+"Starlit Belt": {
+"en": "Starlit Belt",
+"uk": "Зоряний пояс"
+},
+"Starlit Boots": {
+"en": "Starlit Boots",
+"uk": "Зоряні чоботи"
+},
+"Starlit Bracer": {
+"en": "Starlit Bracer",
+"uk": "Зоряний наруч"
+},
+"Starlit Gauntlets": {
+"en": "Starlit Gauntlets",
+"uk": "Зоряні рукавиці"
+},
+"Starlit Konchar": {
+"en": "Starlit Konchar",
+"uk": "Зоряний кончар"
+},
+"Starlit Kuchma": {
+"en": "Starlit Kuchma",
+"uk": "Зоряна кучма"
+},
+"Starlit Locket": {
+"en": "Starlit Locket",
+"uk": "Зоряна ладанка"
+},
+"Starlit Sabre": {
+"en": "Starlit Sabre",
+"uk": "Зоряна шабля"
+},
+"Starlit Spear": {
+"en": "Starlit Spear",
+"uk": "Зоряний спис"
+},
 "Starry Broadsword": {
 "en": "Starry Broadsword",
 "uk": "Зоряний палаш"
@@ -2262,6 +2310,10 @@
 "Steppe Blaze": {
 "en": "Steppe Blaze",
 "uk": "Степова пожежа"
+},
+"Steppe Bow": {
+"en": "Steppe Bow",
+"uk": "Степовий лук"
 },
 "Steppe Pike": {
 "en": "Steppe Pike",
@@ -2535,10 +2587,6 @@
 "en": "Volhynia",
 "uk": "Волинь"
 },
-"War Boots": {
-"en": "War Boots",
-"uk": "Бойові чоботи"
-},
 "War Broadsword": {
 "en": "War Broadsword",
 "uk": "Бойовий палаш"
@@ -2566,10 +2614,6 @@
 "White Bakhmat": {
 "en": "White Bakhmat",
 "uk": "Білий бахмат"
-},
-"White Courser": {
-"en": "White Courser",
-"uk": "Білий скакун"
 },
 "White Rumak": {
 "en": "White Rumak",

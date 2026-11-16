@@ -64,16 +64,16 @@
     "uk": "Рів. %d / Золото: %d"
   },
   "campaign.accept": {
-    "en": "Do you want to accept this mission?",
-    "uk": "Прийняти цю місію?"
+    "en": "Take on this mission?",
+    "uk": "Узятися за цю місію?"
   },
   "common.skip": {
     "en": "Skip",
     "uk": "Пропустити"
   },
   "mission.acquired": {
-    "en": "Acquired!!",
-    "uk": "Отримано!!"
+    "en": "Found!",
+    "uk": "Знайдено!"
   },
   "story.prologue": {
     "en": "Prologue",
@@ -96,40 +96,40 @@
     "uk": "пройдено."
   },
   "mission.failed": {
-    "en": "Mission fail!",
-    "uk": "Місію провалено!"
+    "en": "The mission is lost.",
+    "uk": "Місію провалено."
   },
   "mission.lost": {
-    "en": "Lost!!",
-    "uk": "Втрачено!!"
+    "en": "Left on the field:",
+    "uk": "Лишилося на полі:"
   },
   "mission.success": {
-    "en": "Mission Success!",
+    "en": "Mission done!",
     "uk": "Місію виконано!"
   },
   "mission.gold": {
-    "en": "Gold Acquired!",
-    "uk": "Здобуто золота!"
+    "en": "Gold found",
+    "uk": "Знайдено золота"
   },
   "mission.total_exp": {
-    "en": "Total Exp",
+    "en": "Experience in all",
     "uk": "Усього досвіду"
   },
   "mission.time_exp": {
-    "en": "Time Exp",
-    "uk": "Досвід за час"
+    "en": "Experience for speed",
+    "uk": "Досвід за швидкість"
   },
   "mission.time_limit": {
     "en": "Time Limit:",
     "uk": "Ліміт часу:"
   },
   "mission.time_taken": {
-    "en": "Ested Time:",
+    "en": "Time taken:",
     "uk": "Витрачено:"
   },
   "mission.level_up": {
-    "en": "Level Up : Lv %d",
-    "uk": "Новий рівень: %d"
+    "en": "Level %d!",
+    "uk": "Рівень %d!"
   },
   "menu.management": {
     "en": "Management",
@@ -160,7 +160,7 @@
     "uk": "Ім'я"
   },
   "attributes.level": {
-    "en": "Lev:",
+    "en": "Level:",
     "uk": "Рів.:"
   },
   "attributes.fame": {
@@ -168,7 +168,7 @@
     "uk": "Слава:"
   },
   "attributes.points": {
-    "en": "Stat Pts:",
+    "en": "Points:",
     "uk": "Очки:"
   },
   "attributes.hp": {
@@ -192,16 +192,16 @@
     "uk": "Уміння"
   },
   "skills.not_available": {
-    "en": "(Not Available)",
-    "uk": "(Недоступно)"
+    "en": "(not learned)",
+    "uk": "(не вивчено)"
   },
   "inventory.title": {
     "en": "Inventory",
     "uk": "Інвентар"
   },
   "inventory.cannot_take": {
-    "en": "You can't take this equipment.",
-    "uk": "Ви не можете взяти це спорядження."
+    "en": "You can't wear or use this yet.",
+    "uk": "Цього поки не вдягнеш і не використаєш."
   },
   "campaign.lords": {
     "en": "Lords",
@@ -240,15 +240,15 @@
     "uk": "Ви продали %s."
   },
   "shop.no_gold": {
-    "en": "Not enough Gold",
-    "uk": "Не вистачає золота"
+    "en": "Not enough gold.",
+    "uk": "Бракує золота."
   },
   "shop.no_more": {
-    "en": "You cannot buy anymore.",
-    "uk": "Більше купити не можна."
+    "en": "You can carry no more of these.",
+    "uk": "Більше таких не понесеш."
   },
   "shop.full": {
-    "en": "Your backpack is full. Please empty some items and try again.",
+    "en": "The backpack is full. Make room and try again.",
     "uk": "Торба повна. Звільніть місце й спробуйте ще."
   },
   "shop.vow": {
@@ -264,48 +264,48 @@
     "uk": "Торба"
   },
   "enchant.not_possible": {
-    "en": "Not possible to enchant.",
+    "en": "This cannot be enchanted.",
     "uk": "Це не зачарувати."
   },
   "enchant.full": {
-    "en": "Fully enchanted. Not possible to enchant.",
-    "uk": "Зачаровано до краю. Більше не можна."
+    "en": "Enchanted as far as it goes.",
+    "uk": "Зачаровано до краю."
   },
   "enchant.ask": {
-    "en": "Price is %d. If enchanting fails, items can be lost. Continue?",
+    "en": "It costs %d. A failed enchanting can take the item. Go on?",
     "uk": "Ціна %d. Якщо не вийде, річ можна втратити. Продовжити?"
   },
   "enchant.success": {
-    "en": "Enchant Success",
-    "uk": "Зачарування вдалося"
+    "en": "The enchanting worked!",
+    "uk": "Зачарування вдалося!"
   },
   "enchant.fail": {
-    "en": "Enchant Fail",
-    "uk": "Зачарування не вдалося"
+    "en": "The enchanting failed.",
+    "uk": "Зачарування не вдалося."
   },
   "combine.select": {
-    "en": "Please select 3 items to combine into one.",
-    "uk": "Виберіть 3 речі, щоб поєднати їх в одну."
+    "en": "Pick 3 items to forge into one.",
+    "uk": "Виберіть 3 речі, щоб перекувати їх в одну."
   },
   "combine.too_few": {
-    "en": "You must have at least 3 items in order to have them combined.",
-    "uk": "Щоб поєднати речі, потрібно мати принаймні 3."
+    "en": "Forging needs at least 3 items.",
+    "uk": "Щоб перекувати, потрібно принаймні 3 речі."
   },
   "combine.not_possible": {
-    "en": "Not possible.",
+    "en": "That won't work.",
     "uk": "Не вийде."
   },
   "combine.ask": {
-    "en": "Compounding fee is %d. Selected items could be lost when it fails. Continue?",
+    "en": "Forging costs %d. If it fails, the items picked can be lost. Go on?",
     "uk": "Плата %d. Якщо не вийде, вибрані речі можна втратити. Продовжити?"
   },
   "combine.success": {
-    "en": "Compounding Success",
-    "uk": "Поєднання вдалося"
+    "en": "The forging worked!",
+    "uk": "Перекування вдалося!"
   },
   "combine.fail": {
-    "en": "Compounding Fail",
-    "uk": "Поєднання не вдалося"
+    "en": "The forging failed.",
+    "uk": "Перекування не вдалося."
   },
   "pause.title": {
     "en": "PAUSE",
@@ -320,11 +320,11 @@
     "uk": "Налаштування"
   },
   "pause.exit": {
-    "en": "Exit to Menu",
+    "en": "Leave to the menu",
     "uk": "Вийти в меню"
   },
   "pause.quit": {
-    "en": "Exit Game",
+    "en": "Quit the game",
     "uk": "Вийти з гри"
   },
   "menu.endings": {
@@ -336,7 +336,7 @@
     "uk": "Кінцівки"
   },
   "endings.locked": {
-    "en": "You must first complete the missions needed to view this ending.",
+    "en": "Finish the missions that lead here to see this ending.",
     "uk": "Спершу пройдіть місії, що ведуть до цієї кінцівки."
   },
   "menu.continue": {
@@ -348,8 +348,8 @@
     "uk": "Нова гра"
   },
   "newgame.ask_delete": {
-    "en": "Starting a new game will cause your saved game to be deleted. Continue?",
-    "uk": "Нова гра видалить збережену. Продовжити?"
+    "en": "A new game wipes your saved hero. Go on?",
+    "uk": "Нова гра зітре збереженого героя. Продовжити?"
   },
   "newgame.difficulty": {
     "en": "Difficulty",
@@ -364,28 +364,28 @@
     "uk": "Нормально"
   },
   "newgame.mode_0": {
-    "en": "No auto-targeting, no AUTO\nGold/Exp x2",
+    "en": "No auto-aim, no AUTO\nGold/Exp x2",
     "uk": "Без автоприцілювання й без AUTO\nЗолото й досвід x2"
   },
   "newgame.mode_1": {
-    "en": "Auto Targetting\nGold/Exp x1",
+    "en": "Auto-aim\nGold/Exp x1",
     "uk": "Автоприцілювання\nЗолото й досвід x1"
   },
   "newgame.ask_difficulty": {
-    "en": "Difficulty will not change after starting. Continue?",
-    "uk": "Складність не зміниться після початку. Продовжити?"
+    "en": "The difficulty stays for the whole game. Go on?",
+    "uk": "Складність лишиться на всю гру. Продовжити?"
   },
   "newgame.hero": {
     "en": "Character",
     "uk": "Герой"
   },
   "newgame.select_1": {
-    "en": "Please select",
+    "en": "Choose",
     "uk": "Оберіть"
   },
   "newgame.select_2": {
-    "en": "a character for battle.",
-    "uk": "героя для бою."
+    "en": "your mercenary.",
+    "uk": "свого найманця."
   },
   "newgame.name": {
     "en": "Name",
@@ -412,7 +412,7 @@
     "uk": "Очки: %d"
   },
   "newgame.ask_done": {
-    "en": "Character settings are complete. Continue?",
+    "en": "Your hero is ready. Go on?",
     "uk": "Героя створено. Продовжити?"
   },
   "menu.help": {
@@ -512,11 +512,11 @@
     "uk": "Предмети"
   },
   "pause.ask_exit": {
-    "en": "Exit Game and go to main menu?",
+    "en": "Leave the mission for the main menu?",
     "uk": "Вийти з місії в головне меню?"
   },
   "pause.ask_quit": {
-    "en": "Exit Game?",
+    "en": "Quit the game?",
     "uk": "Вийти з гри?"
   },
   "pause.save": {
@@ -524,11 +524,11 @@
     "uk": "Зберегти"
   },
   "pause.saved": {
-    "en": "Saving Success!",
-    "uk": "Збережено!"
+    "en": "Saved.",
+    "uk": "Збережено."
   },
   "pause.cannot_save": {
-    "en": "Can't Save!\nIt needs all enemies dead.",
+    "en": "Can't save yet!\nDefeat every enemy first.",
     "uk": "Не можна зберегти!\nСпершу переможіть усіх ворогів."
   },
   "menu.game": {

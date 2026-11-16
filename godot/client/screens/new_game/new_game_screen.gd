@@ -1,6 +1,6 @@
 class_name NewGameScreen
 extends BaseScreen
-## A new game, step by step as in the original: the difficulty (Normal first: x1 gold and exp,
+## A new game, step by step: the difficulty (Normal first: x1 gold and exp,
 ## the hero turns to the nearest enemy as he strikes and AUTO hunts; Hard: x2, neither; it
 ## cannot change later), the
 ## hero's face (each face a hero with his own base stats), his name (up to 8 letters, typed or

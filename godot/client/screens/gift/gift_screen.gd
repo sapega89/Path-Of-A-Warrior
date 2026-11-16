@@ -57,11 +57,11 @@ static func icon(gift: Dictionary) -> Texture2D:
 	var id := int(gift.get("id", 0))
 	match int(gift.get("kind", -1)):
 		Gifts.Kind.SKILL:
-			return ItemSlot.icon("skill", id)
+			return ItemSlot.icon("skills", id)
 		Gifts.Kind.GEAR:
 			return ItemSlot.item_icon(id)
 		Gifts.Kind.POTION:
-			return ItemSlot.icon("tool", id - 1)
+			return ItemSlot.icon("potions", id - 1)
 	return null
 
 

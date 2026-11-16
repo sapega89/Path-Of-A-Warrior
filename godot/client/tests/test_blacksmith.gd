@@ -4,8 +4,8 @@ const TEST_PATH := "user://test_blacksmith.json"
 
 
 func test_prices() -> void:
-	eq(Items.price({"id": 1}), 60, "a Red Potion (S)")
-	eq(Items.price({"id": 11}), 200, "a Handy Dynamite")
+	eq(Items.price({"id": 1}), 60, "a Small Herb Brew")
+	eq(Items.price({"id": 11}), 200, "a Fire Grenade")
 	var blade := Items.make(101)
 	eq(int(blade.attack), 2, "an Iron Sabre: ATK+2")
 	eq(Items.price(blade), 120 + 200, "its price and 100 a point")
@@ -40,7 +40,7 @@ func test_the_shop_is_filled() -> void:
 func test_buy_and_sell() -> void:
 	var p := Profile.new()
 	p.gold = 100
-	eq(Blacksmith.buy(p, 0), "bought", "a Red Potion (S)")
+	eq(Blacksmith.buy(p, 0), "bought", "a Small Herb Brew")
 	eq(p.quick_slots[0], [1, 1], "into a quick slot")
 	eq(p.gold, 40, "for 60")
 	eq(Blacksmith.buy(p, 0), "no_gold", "40 is not enough")
@@ -100,7 +100,7 @@ func test_shop_screen() -> void:
 	root.add_child(screen)
 	eq(screen.cells.size(), 25, "the shop's 25 things")
 	check(screen.cells[0].icon != null, "a potion's icon")
-	check(screen.describe(0).begins_with("Red Potion (S)"), "its line: %s" % screen.describe(0))
+	check(screen.describe(0).begins_with("Small Herb Brew"), "its line: %s" % screen.describe(0))
 	screen.press_cell(0)
 	eq(int(screen.profile.gold), 940, "bought for 60")
 	screen.free()
@@ -155,7 +155,7 @@ func test_enchanting_what_the_hero_wears() -> void:
 	eq(screen.cells[0].get_parent(), worn, "first")
 	eq(screen.cells[Items.EQUIPPED].get_parent(), screen.get_node("%Things"), "then the backpack")
 	check(screen.get_node("%BackpackTitle").visible, "under its own title")
-	eq(screen.describe(0), "Iron Broadsword / ATK+1 / Available at Lv1", "the blade in hand")
+	eq(screen.describe(0), "Iron Broadsword / ATK+1 / from level 1", "the blade in hand")
 	eq(screen.describe(Items.EQUIPPED), Items.describe(p.backpack[0]), "the backpack's first")
 	screen.press_cell(0)
 	eq(screen.asked, 0, "asks first")

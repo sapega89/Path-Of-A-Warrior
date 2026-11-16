@@ -8,7 +8,7 @@ extends RefCounted
 const POINT_GAINS := [5, 3, 1, 1]
 ## The four heroes (the faces) start with their own HP, MP, attack and defence. Every set is
 ## worth the same stat points (POINT_GAINS), so no hero is stronger, only different. Face 0
-## has the numbers every hero had in the original.
+## has the plain set of numbers.
 const HERO_BASES := [[30, 10, 5, 4], [40, 7, 3, 5], [25, 16, 4, 4], [25, 10, 7, 3]]
 ## The gold a reset costs per hero level.
 const RESET_GOLD_PER_LEVEL := 100

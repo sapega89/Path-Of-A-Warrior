@@ -50,8 +50,8 @@ func test_walls_stop_the_step() -> void:
 
 func test_walk_down_into_the_next_room() -> void:
 	# Column 5 is free down to the next room. (From column 4 the hero gets stuck on the
-	# barrel at (4, 6): the original's corner slide lines him up at 27 * 5 + 8 px, where his
-	# body still overlaps column 4 - the same happens in the original when holding down.)
+	# barrel at (4, 6): the corner slide lines him up at 27 * 5 + 8 px, where his body still
+	# overlaps column 4 when holding down.)
 	var sim: RefCounted = MapSim.new(MapBuilder.load_map(1), 0, Vector2i(5, 2))
 	sim.no_enemies = true
 	_open(sim)

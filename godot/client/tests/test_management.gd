@@ -50,9 +50,9 @@ func test_skills_data() -> void:
 	var d: Dictionary = SkillsScreen.load_data()
 	eq(d["names"].size(), 19, "19 skills")
 	eq(d["names"][0], "Whirlwind Sabre", "the first skill")
-	eq(d["effects"][0], "Dash & Slash", "what it does")
+	eq(d["effects"][0], "A spinning dash", "what it does")
 	eq(d["groups"].size(), 7, "seven groups")
-	eq(d["groups"][0], "MOVE", "the first group")
+	eq(d["groups"][0], "SABRE", "the first group")
 	eq(d["rows"].size(), 7, "a row a group")
 
 
@@ -64,14 +64,14 @@ func test_skills_screen() -> void:
 	var screen: Control = Router.make(Router.SCREENS["skills"])
 	root.add_child(screen)
 	eq(screen.keys.size(), 5, "five skill keys")
-	eq(screen.describe(12), "Whirlwind Sabre / Lv1 Dash & Slash", "a learned skill")
+	eq(screen.describe(12), "Whirlwind Sabre / Lv1 A spinning dash", "a learned skill")
 	check(
-		screen.describe(13).ends_with("/ (Not Available)"),
+		screen.describe(13).ends_with("/ (not learned)"),
 		"a skill not learned: %s" % screen.describe(13)
 	)
 	var lines: Array = screen.card_lines(12)
 	eq(lines[0], ["Whirlwind Sabre  Lv1", true], "the card's heading")
-	eq(lines[1][0], "Dash & Slash", "what it is")
+	eq(lines[1][0], "A spinning dash", "what it is")
 	eq(lines[2][0], "MP 5, DMG 6 x3", "now: three strikes of attack 6")
 	eq(lines[3][0], "Lv2: MP 8, DMG 6 x3", "the next level")
 	eq(screen.card_lines(13)[2][0], "Not learned", "a skill not learned")
@@ -107,8 +107,8 @@ func test_potion_keys() -> void:
 	eq(p.quick_keys, [0, 2], "keys")
 	check(p.assign_quick_key(0, 2), "the slot the other key holds")
 	eq(p.quick_keys, [2, 0], "the keys swapped")
-	eq(Items.describe_potion(1), "Red Potion (S) / Recover 30% of total HP", "a potion")
-	eq(Items.describe_potion(10), " Powerful Bomb / Ranged ATK", "the bomb")
+	eq(Items.describe_potion(1), "Small Herb Brew / restores 30% of HP", "a potion")
+	eq(Items.describe_potion(10), "Powder Pot / Strikes from afar", "the bomb")
 
 
 ## Management opens the hero's pages: his gear, backpack and belt are one of them.
@@ -146,7 +146,7 @@ func test_the_belt_in_the_inventory() -> void:
 	eq(belt.counts[1].text, "", "none under an empty slot")
 	belt.slots[3].pressed.emit()
 	eq(belt.slots[3].theme_type_variation, ItemSlot.CHOSEN, "the slot chosen")
-	eq(screen.info.text, "Blue Potion(M) / Recover 60% of total MP", "the line")
+	eq(screen.info.text, "Spirit Mead / restores 60% of MP", "the line")
 	check(screen.press_key(1), "the keypad's / still puts slot 4 on the second key")
 	eq(belt.marks[3].text, "V", "no mark for it")
 	belt.slots[3].grab_focus()
@@ -169,7 +169,7 @@ func test_item_slots_from_the_theme() -> void:
 	root.add_child(host)
 	var b := ItemSlot.button("Cell0")
 	host.add_child(b)
-	eq(b.custom_minimum_size, Vector2(64, 64), "an icon of 28 original pixels, twice, and a rim")
+	eq(b.custom_minimum_size, Vector2(64, 64), "an icon of 28 map pixels, twice, and a rim")
 	var plain := b.get_theme_stylebox("normal") as StyleBoxFlat
 	eq([plain.border_color, plain.border_width_top], [UiTheme.SLOT_RIM, 1], "a thin rim")
 	ItemSlot.choose(b, true)

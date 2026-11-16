@@ -114,10 +114,10 @@ func test_story_texts_in_the_players_language() -> void:
 		"the prior's first line"
 	)
 	eq(EndingsScreen.title(0), "Довга дорога", "an ending's title")
-	eq(MapSim.talk_lines("map")[21], "& is here!", "the data stays English")
+	eq(MapSim.talk_lines("map")[21], "& has come!", "the data stays English")
 	eq(
 		I18n.text(MapSim.talk_lines("map")[21]),
-		"& тут!",
+		"& прибув!",
 		"and I18n.text gives the player's language"
 	)
 	TranslationServer.set_locale(before)

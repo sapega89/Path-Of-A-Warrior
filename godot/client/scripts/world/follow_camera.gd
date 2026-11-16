@@ -1,12 +1,12 @@
 class_name FollowCamera
 extends Camera3D
 ## The 2.5D camera: fixed angle from above and behind. It follows a target node, or,
-## when there is none, looks at a fixed point (the middle of the current room, as the
-## original screen shows one room at a time).
+## when there is none, looks at a fixed point (the middle of the current room: the screen
+## shows one room at a time).
 ## Narrow field of view so the picture looks almost flat (less perspective distortion).
 
 const PITCH_DEG := 35.0  # low enough that the flat sprites are not squashed
-const DISTANCE := 13.0  # about one 7x7 room fills the screen, as in the original
+const DISTANCE := 13.0  # about one 7x7 room fills the screen
 const FOLLOW_SPEED := 6.0
 
 var target: Node3D

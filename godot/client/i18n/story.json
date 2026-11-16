@@ -1,7 +1,7 @@
 {
-"& is here!": {
-"en": "& is here!",
-"uk": "& тут!"
+"& has come!": {
+"en": "& has come!",
+"uk": "& прибув!"
 },
 "& is my name. Yours?": {
 "en": "& is my name. Yours?",
@@ -27,9 +27,9 @@
 "en": "...Go, then.",
 "uk": "...Іди тоді."
 },
-"...Very well. I will.": {
-"en": "...Very well. I will.",
-"uk": "...Гаразд. Поїду."
+"...So be it. I will go.": {
+"en": "...So be it. I will go.",
+"uk": "...Хай так. Поїду."
 },
 "A Cossack's Love": {
 "en": "A Cossack's Love",
@@ -98,10 +98,6 @@
 "A pity. She fought well.": {
 "en": "A pity. She fought well.",
 "uk": "Шкода. Вона добре билася."
-},
-"A poisoned arrow...!": {
-"en": "A poisoned arrow...!",
-"uk": "Отруєна стріла...!"
 },
 "A scarf? What is this?": {
 "en": "A scarf? What is this?",
@@ -443,6 +439,10 @@
 "en": "Come in, come in! It is so good that you came!",
 "uk": "Заходь, заходь! Як добре, що ти прийшов!"
 },
+"Come in, the table is laid!": {
+"en": "Come in, the table is laid!",
+"uk": "Заходь, стіл накрито!"
+},
 "Come in.": {
 "en": "Come in.",
 "uk": "Заходь."
@@ -467,14 +467,6 @@
 "en": "Cut down the enemy archers first. Everything after that goes easier.",
 "uk": "Спершу рубай ворожих лучників. Усе, що далі, піде легше."
 },
-"Defend yourself!": {
-"en": "Defend yourself!",
-"uk": "Боронися!"
-},
-"Do I know you?": {
-"en": "Do I know you?",
-"uk": "Я тебе знаю?"
-},
 "Do me the honour of a jug of ale with me.": {
 "en": "Do me the honour of a jug of ale with me.",
 "uk": "Зроби мені честь і випий зі мною глечик пива."
@@ -482,6 +474,10 @@
 "Do not leave anyone on your list without a visit.": {
 "en": "Do not leave anyone on your list without a visit.",
 "uk": "Не лишай нікого у своєму списку без відвідин."
+},
+"Draw your sabre!": {
+"en": "Draw your sabre!",
+"uk": "Хапай шаблю!"
 },
 "Drop in on me some time.": {
 "en": "Drop in on me some time.",
@@ -583,6 +579,10 @@
 "en": "Gladly.",
 "uk": "Залюбки."
 },
+"Glory to you, brother!": {
+"en": "Glory to you, brother!",
+"uk": "Слава тобі, брате!"
+},
 "God forgive me, brother. My hand will do what my heart cannot.": {
 "en": "God forgive me, brother. My hand will do what my heart cannot.",
 "uk": "Прости мені, Боже, брате. Моя рука зробить те, чого не може серце."
@@ -639,10 +639,6 @@
 "en": "Greetings! It is an honour to have you under my roof!",
 "uk": "Вітаю! Честь мати тебе під своїм дахом!"
 },
-"Greetings, my good friend!": {
-"en": "Greetings, my good friend!",
-"uk": "Вітаю, добрий друже!"
-},
 "Ha! I have read a book or two in my time.": {
 "en": "Ha! I have read a book or two in my time.",
 "uk": "Ха! Прочитав книжку-другу на своєму віку."
@@ -651,9 +647,9 @@
 "en": "Ha! So have I!",
 "uk": "Ха! І я теж!"
 },
-"Ha! Well said!": {
-"en": "Ha! Well said!",
-"uk": "Ха! Добре сказано!"
+"Ha! That's the spirit!": {
+"en": "Ha! That's the spirit!",
+"uk": "Ха! Оце по-нашому!"
 },
 "Ha-ha... think it over. Farewell till then!": {
 "en": "Ha-ha... think it over. Farewell till then!",
@@ -670,6 +666,10 @@
 "Have it your way. Let the sabres talk!": {
 "en": "Have it your way. Let the sabres talk!",
 "uk": "Як хочеш. Хай говорять шаблі!"
+},
+"Have we met?": {
+"en": "Have we met?",
+"uk": "Ми знайомі?"
 },
 "Have we met? Who are you?": {
 "en": "Have we met? Who are you?",
@@ -699,10 +699,6 @@
 "en": "Hello! My, what a fine house!",
 "uk": "Вітаю! Ого, який гарний дім!"
 },
-"Hello, friend!": {
-"en": "Hello, friend!",
-"uk": "Вітаю, друже!"
-},
 "Hello, old friend!": {
 "en": "Hello, old friend!",
 "uk": "Вітаю, старий друже!"
@@ -714,10 +710,6 @@
 "Hello? Is anybody there?": {
 "en": "Hello? Is anybody there?",
 "uk": "Агов? Є тут хто?"
-},
-"Here I am!": {
-"en": "Here I am!",
-"uk": "Ось і я!"
 },
 "His osauls Hrebinka and Zalizo followed him into the grave before the year was out.": {
 "en": "His osauls Hrebinka and Zalizo followed him into the grave before the year was out.",
@@ -779,6 +771,10 @@
 "en": "I am. And you are?",
 "uk": "Так. А ти хто?"
 },
+"I came as fast as I could!": {
+"en": "I came as fast as I could!",
+"uk": "Прибув, як тільки зміг!"
+},
 "I can always come back to it when I am stronger.": {
 "en": "I can always come back to it when I am stronger.",
 "uk": "Я завжди можу повернутися до неї, коли стану сильнішим."
@@ -803,10 +799,6 @@
 "en": "I had fought for Tuman's heir, and he did not outlive his father by much. I hoped his death was quick, and that he would be born again in a kinder age.",
 "uk": "Я бився за Туманового спадкоємця, і він ненадовго пережив батька. Я сподівався, що його смерть була швидкою і що він народиться знову в добрішу добу."
 },
-"I have arrived!": {
-"en": "I have arrived!",
-"uk": "Я прибув!"
-},
 "I have to say it: I have never seen loyalty like yours.": {
 "en": "I have to say it: I have never seen loyalty like yours.",
 "uk": "Мушу сказати: такої вірності, як твоя, я не бачив ніколи."
@@ -814,10 +806,6 @@
 "I hear they can teach a skill or put a charm on a blade too.": {
 "en": "I hear they can teach a skill or put a charm on a blade too.",
 "uk": "Я чув, вони можуть і навчити вміння, і накласти оберіг на клинок."
-},
-"I hear you.": {
-"en": "I hear you.",
-"uk": "Чую."
 },
 "I hear your tactics are out of the ordinary.": {
 "en": "I hear your tactics are out of the ordinary.",
@@ -839,10 +827,6 @@
 "en": "I must go.",
 "uk": "Мені час."
 },
-"I must leave you now.": {
-"en": "I must leave you now.",
-"uk": "Мені час іти."
-},
 "I need to be back before dark.": {
 "en": "I need to be back before dark.",
 "uk": "Мені треба вернутися до темряви."
@@ -863,10 +847,6 @@
 "en": "I will be on my way.",
 "uk": "Я поїду."
 },
-"I will be waiting.": {
-"en": "I will be waiting.",
-"uk": "Чекатиму."
-},
 "I will keep a potion close at hand.": {
 "en": "I will keep a potion close at hand.",
 "uk": "Триматиму зілля напоготові."
@@ -882,6 +862,14 @@
 "I will try that. A different pace may suit me better.": {
 "en": "I will try that. A different pace may suit me better.",
 "uk": "Спробую. Інший темп може підійти мені більше."
+},
+"I'll keep the fire lit.": {
+"en": "I'll keep the fire lit.",
+"uk": "Вогонь не згасне до твого приходу."
+},
+"I'm here, as I promised!": {
+"en": "I'm here, as I promised!",
+"uk": "Я тут, як і обіцяв!"
 },
 "If a mission looks too hard for you, take another road. There is always another road.": {
 "en": "If a mission looks too hard for you, take another road. There is always another road.",
@@ -962,6 +950,10 @@
 "Khoma died in Chornohuz's assault. Omelko, the one they were hunting, broke out and hid with the last brother, Tymish. Chornohuz is not a man to leave a job half done: he wants none of Tuman's sons left. Omelko has taken his last stand and will not last a day without you. Will you take it?": {
 "en": "Khoma died in Chornohuz's assault. Omelko, the one they were hunting, broke out and hid with the last brother, Tymish. Chornohuz is not a man to leave a job half done: he wants none of Tuman's sons left. Omelko has taken his last stand and will not last a day without you. Will you take it?",
 "uk": "Хома загинув під час Чорногузового наступу. Омелько, за яким і полювали, вирвався і сховався в останнього брата, Тимоша. Чорногуз не з тих, хто кидає справу на півдорозі: він хоче, щоб із Туманових синів не лишилося нікого. Омелько став на свій останній рубіж і без тебе не протримається й дня. Берешся?"
+},
+"Kind of you to call me.": {
+"en": "Kind of you to call me.",
+"uk": "Дякую, що покликав."
 },
 "Kind words from a kind host. Thank you.": {
 "en": "Kind words from a kind host. Thank you.",
@@ -1046,6 +1038,10 @@
 "My name does not matter. Enough talk. Prepare yourself!": {
 "en": "My name does not matter. Enough talk. Prepare yourself!",
 "uk": "Моє ім'я не має значення. Досить балачок. Готуйся!"
+},
+"My road leads elsewhere now.": {
+"en": "My road leads elsewhere now.",
+"uk": "Тепер моя дорога інша."
 },
 "My thanks, colonel, but I ride alone. At least for now.": {
 "en": "My thanks, colonel, but I ride alone. At least for now.",
@@ -1199,6 +1195,10 @@
 "en": "Our fate is in our sabres now...",
 "uk": "Тепер наша доля в наших шаблях..."
 },
+"Peace to this house!": {
+"en": "Peace to this house!",
+"uk": "Мир цій хаті!"
+},
 "People call you the wisest head in the regiment.": {
 "en": "People call you the wisest head in the regiment.",
 "uk": "Люди звуть тебе наймудрішою головою в полку."
@@ -1351,10 +1351,6 @@
 "en": "Thank you for having me.",
 "uk": "Дякую, що прийняв."
 },
-"Thank you for inviting me.": {
-"en": "Thank you for inviting me.",
-"uk": "Дякую за запрошення."
-},
 "Thank you for the warm words.": {
 "en": "Thank you for the warm words.",
 "uk": "Дякую за теплі слова."
@@ -1454,6 +1450,10 @@
 "The Zalizo whose name was dragged through the mud after Sych's attack was not the Zalizo I knew. As Bairak's loyal osaul he had beaten Oksana at Chortomlyk and cut down Pereima and Brzeski, two of the best sabres in the Hetmanate. But he quarrelled too often with Ternovyi, and so he was sent to the front line against Sych, where he was left alone, cut off from his own people. His journey back to Bairak became a legend of its own, though the fire in him had burned low by the time he grew old.": {
 "en": "The Zalizo whose name was dragged through the mud after Sych's attack was not the Zalizo I knew. As Bairak's loyal osaul he had beaten Oksana at Chortomlyk and cut down Pereima and Brzeski, two of the best sabres in the Hetmanate. But he quarrelled too often with Ternovyi, and so he was sent to the front line against Sych, where he was left alone, cut off from his own people. His journey back to Bairak became a legend of its own, though the fire in him had burned low by the time he grew old.",
 "uk": "Той Залізо, чиє ім'я волочили по багнюці після наскоку Сича, був не тим Залізом, якого знав я. Вірний осавул Байрака, він побив Оксану під Чортомликом і зарубав Перейму та Бжеського, двох найкращих шабель Гетьманщини. Та він надто часто сварився з Терновим, і тому його послали на передову проти Сича, де лишили самого, відрізаного від своїх. Його повернення до Байрака стало окремою легендою, хоча вогонь у ньому пригас, доки він постарів."
+},
+"The arrow... it bore poison...!": {
+"en": "The arrow... it bore poison...!",
+"uk": "Стріла... була з отрутою...!"
 },
 "The colonels who had been quietly robbing the Hetman were not about to let a Polish kniaz rob him first. Each gathered his regiment, called it the defence of the mace, and marched on Chyhyryn. Within a year every road to the capital was full of armies, and nobody could say any longer who was fighting for whom. What was left of the Hetman's authority blew away like chaff. In that storm, between the great names, walked thousands of men nobody wrote down: hired sabres who sold a day of their life for a handful of silver. This is the story of one of them.": {
 "en": "The colonels who had been quietly robbing the Hetman were not about to let a Polish kniaz rob him first. Each gathered his regiment, called it the defence of the mace, and marched on Chyhyryn. Within a year every road to the capital was full of armies, and nobody could say any longer who was fighting for whom. What was left of the Hetman's authority blew away like chaff. In that storm, between the great names, walked thousands of men nobody wrote down: hired sabres who sold a day of their life for a handful of silver. This is the story of one of them.",
@@ -1675,13 +1675,13 @@
 "en": "Tymish talked me into it, and I took up what Kosach had left behind. I was a plain soldier, and now a regiment looked to me for orders. A whole new life was beginning, whether I wanted it or not.",
 "uk": "Тиміш умовив мене, і я прийняв те, що лишив по собі Косач. Я був простим вояком, а тепер цілий полк чекав моїх наказів. Починалося зовсім нове життя, хотів я того чи ні."
 },
+"Understood.": {
+"en": "Understood.",
+"uk": "Зрозумів."
+},
 "Understood. Whoever stands in my way will not live to tell of it.": {
 "en": "Understood. Whoever stands in my way will not live to tell of it.",
 "uk": "Зрозумів. Хто стане на моїй дорозі, не доживе, щоб про це розповісти."
-},
-"Until next time, warrior!": {
-"en": "Until next time, warrior!",
-"uk": "До наступного разу, вояче!"
 },
 "Visiting": {
 "en": "Visiting",
@@ -1699,9 +1699,9 @@
 "en": "We will speak again. Remember the one rule. Live through this miserable age, and perhaps you will help build the next one. God keep you, warrior.",
 "uk": "Ми ще поговоримо. Пам'ятай одне правило. Переживи цю нещасну добу, і, може, допоможеш будувати наступну. Хай Бог береже тебе, вояче."
 },
-"Welcome, my friend!": {
-"en": "Welcome, my friend!",
-"uk": "Ласкаво прошу, друже!"
+"We'll meet again on the road!": {
+"en": "We'll meet again on the road!",
+"uk": "Ще стрінемося в дорозі!"
 },
 "Well enough, thank you.": {
 "en": "Well enough, thank you.",
@@ -1815,9 +1815,9 @@
 "en": "You did good work: Kniaz Dominik's Crown Army lies dead in the steppe, and for the first time in a long while people sleep soundly. The quiet is short. Out of Oleshky Sands came Colonel Kozub, and he has raised his head higher than anyone expected. While the others were fighting the Crown, he walked into Chyhyryn, drove old Verbenko the Grey from the mace and put the Hetman's younger sister Olena in his place, a girl who does whatever Kozub tells her. Colonels from across the land have called it lawlessness and are marching on Chyhyryn. Syvous of Uman is already in the saddle, with Tykhyi riding at the head of his column. In their road stands Oksana, a young otaman, the first woman Kozub ever gave a regiment to. You must face her. Can you manage it?",
 "uk": "Ти добре попрацював: Коронне військо князя Домініка лягло в степу, і люд уперше за довгий час спить спокійно. Та спокій короткий. Із Олешківських пісків прийшов полковник Козуб і підняв голову вище, ніж будь-хто сподівався. Поки інші билися з Короною, він зайшов у Чигирин, зігнав із булави старого Вербенка Сивого й посадив замість нього його молодшу сестру Олену, яка робить, що він скаже. Полковники з усього краю назвали це беззаконням і йдуть на Чигирин. Сивоус із Умані вже в сідлі, а на чолі його колони їде Тихий. На дорозі в них стоїть Оксана, молода отаманка, перша жінка, якій Козуб дав полк. Тобі треба стати проти неї. Впораєшся?"
 },
-"You fight like a god, hero!": {
-"en": "You fight like a god, hero!",
-"uk": "Ти б'єшся, як бог, герою!"
+"You fight like ten men!": {
+"en": "You fight like ten men!",
+"uk": "Ти б'єшся за десятьох!"
 },
 "You flatter me.": {
 "en": "You flatter me.",
@@ -1911,13 +1911,13 @@
 "en": "Zalizo's sense of honour did him credit, and it let one of the worst murderers of the age walk away. The fates do not like to be cheated. Zalizo himself died badly on a battlefield not many years later.",
 "uk": "Честь Заліза робила йому шану, і вона ж дала одному з найгірших убивць доби піти геть. Доля не любить, коли її обманюють. Сам Залізо помер страшною смертю на полі бою через кілька років."
 },
-"[Chupryna] I will be back, colonel!": {
-"en": "[Chupryna] I will be back, colonel!",
-"uk": "[Чуприна] Я повернуся, полковнику!"
-},
 "[Chupryna] Then have your coffin ready when I do!": {
 "en": "[Chupryna] Then have your coffin ready when I do!",
 "uk": "[Чуприна] Тоді приготуй собі домовину до мого приходу!"
+},
+"[Chupryna] This isn't over, colonel!": {
+"en": "[Chupryna] This isn't over, colonel!",
+"uk": "[Чуприна] Це ще не кінець, полковнику!"
 },
 "[Colonel Bairak] ...": {
 "en": "[Colonel Bairak] ...",
@@ -2011,10 +2011,6 @@
 "en": "[Colonel Chornohuz] I let him slip through my fingers... what now...",
 "uk": "[Полковник Чорногуз] Я випустив його з рук... і що тепер..."
 },
-"[Colonel Chornohuz] I will be back!": {
-"en": "[Colonel Chornohuz] I will be back!",
-"uk": "[Полковник Чорногуз] Я повернуся!"
-},
 "[Colonel Chornohuz] It has to be you, Bairak. You are the only one worth fighting. There is no one else!": {
 "en": "[Colonel Chornohuz] It has to be you, Bairak. You are the only one worth fighting. There is no one else!",
 "uk": "[Полковник Чорногуз] Це маєш бути ти, Байраче. Ти єдиний, з ким варто битися. Більше нема нікого!"
@@ -2058,6 +2054,10 @@
 "[Colonel Chornohuz] You dare speak to me so?!": {
 "en": "[Colonel Chornohuz] You dare speak to me so?!",
 "uk": "[Полковник Чорногуз] Ти смієш так зі мною говорити?!"
+},
+"[Colonel Chornohuz] You haven't seen the last of me!": {
+"en": "[Colonel Chornohuz] You haven't seen the last of me!",
+"uk": "[Полковник Чорногуз] Ти ще мене побачиш!"
 },
 "[Colonel Chornohuz] You will swallow those words when I return, fool.": {
 "en": "[Colonel Chornohuz] You will swallow those words when I return, fool.",
@@ -2479,9 +2479,9 @@
 "en": "[Osaul Zalizo] Then I will keep looking until I can.",
 "uk": "[Осавул Залізо] Тоді шукатиму, доки не знайду."
 },
-"[Osaul Zalizo] This is only the beginning! I will be back.": {
-"en": "[Osaul Zalizo] This is only the beginning! I will be back.",
-"uk": "[Осавул Залізо] Це лише початок! Я повернуся."
+"[Osaul Zalizo] This is only the beginning! We'll meet again.": {
+"en": "[Osaul Zalizo] This is only the beginning! We'll meet again.",
+"uk": "[Осавул Залізо] Це лише початок! Ми ще зустрінемося."
 },
 "[Osaul Zalizo] Until we meet again.": {
 "en": "[Osaul Zalizo] Until we meet again.",
@@ -2523,9 +2523,9 @@
 "en": "[Skoryk] ARRR!",
 "uk": "[Скорик] А-а-а!"
 },
-"[Skoryk] Defend yourself, dog!": {
-"en": "[Skoryk] Defend yourself, dog!",
-"uk": "[Скорик] Боронися, собако!"
+"[Skoryk] Draw your sabre, dog!": {
+"en": "[Skoryk] Draw your sabre, dog!",
+"uk": "[Скорик] Хапай шаблю, собако!"
 },
 "[Skoryk] My colonel asked you a question, churl! Answer him!": {
 "en": "[Skoryk] My colonel asked you a question, churl! Answer him!",

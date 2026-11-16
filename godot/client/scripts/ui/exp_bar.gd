@@ -16,7 +16,7 @@ const COLORS := [
 	[Color("6f5a33"), Color("b08d4a"), Color("dcc48e")],
 ]
 
-var px := 3.0  # screen pixels to an original pixel
+var px := 3.0  # screen pixels to a map pixel
 var bars: ExpBars  # the sim's exp bar
 
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bnlru7ysxj511"
-path="res://.godot/imported/kibo.svg-b8844ad7e2bc7067a6008f8f7bf91471.ctex"
+uid="uid://cdrkiwxshim6n"
+path="res://.godot/imported/skills.svg-806d5d15f740402bce4798a1bafdd01a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/icons/kibo.svg"
-dest_files=["res://.godot/imported/kibo.svg-b8844ad7e2bc7067a6008f8f7bf91471.ctex"]
+source_file="res://assets/art/icons/skills.svg"
+dest_files=["res://.godot/imported/skills.svg-806d5d15f740402bce4798a1bafdd01a.ctex"]
 
 [params]
 

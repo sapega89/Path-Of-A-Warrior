@@ -9,13 +9,13 @@ func test_item_data() -> void:
 	eq(Items.place(131), 3, "a helmet's place")
 	eq(
 		Items.describe(Items.make(116)),
-		"Iron Broadsword / ATK+1 / Available at Lv1",
+		"Iron Broadsword / ATK+1 / from level 1",
 		"as the Gear page says"
 	)
 	eq(Items.level_needed(102), 10, "a tier 2 gear")
-	eq(Items.icon(116), ["kibo", 0], "gear icon")
-	eq(Items.icon(503), ["shinki", 2], "rare icon")
-	eq(Items.icon(3), ["tool", 2], "potion icon")
+	eq(Items.icon(116), ["gear", 0], "gear icon")
+	eq(Items.icon(503), ["rare", 2], "rare icon")
+	eq(Items.icon(3), ["potions", 2], "potion icon")
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 7
 	for i in 20:
@@ -48,7 +48,7 @@ func test_wear_and_take_off() -> void:
 	p.add_item(Items.make(102))
 	eq(p.use_item(2), "cannot", "level 10 gear on a level 1 hero")
 	p.add_item(Items.make(434))
-	eq(p.use_item(3), "HP Up : 5", "a stat item")
+	eq(p.use_item(3), "HP +5", "a stat item")
 	eq(p.max_hp(), 35, "HP +5")
 	eq(int(p.backpack[3].id), 0, "used up")
 	p.backpack[0] = Items.empty()
@@ -88,10 +88,10 @@ func test_gear_and_backpack_in_one_window() -> void:
 	check(inv.gear.places[0].icon != null, "the claymore's icon")
 	check(inv.gear.places[3].icon == null, "no helmet")
 	inv.gear.place_pointed.emit(0)
-	eq(inv.info.text, "Iron Broadsword / ATK+1 / Available at Lv1", "the weapon")
+	eq(inv.info.text, "Iron Broadsword / ATK+1 / from level 1", "the weapon")
 	eq(inv.gold.text, "0", "gold")
 	eq(inv.press_cell(1), "cannot", "too high a level")
-	eq(inv.info.text, "You can't take this equipment.", "said so")
+	eq(inv.info.text, "You can't wear or use this yet.", "said so")
 	eq(inv.press_cell(0), "", "the helmet is worn")
 	check(inv.cells[0].icon == null, "its place is empty")
 	check(inv.gear.places[3].icon != null, "and it is on the hero at once")

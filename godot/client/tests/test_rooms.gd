@@ -13,7 +13,7 @@ func test_map_1_rooms() -> void:
 	check(not r.has_general(0), "no general")
 
 
-func test_bounds_are_the_original_pixels() -> void:
+func test_bounds_are_map_pixels() -> void:
 	var r: RefCounted = Rooms.new(MapBuilder.load_map(1), 0)
 	var b: Rect2 = r.bounds(0)
 	# x: 27 + 12 .. 216 - 12 px, z: 27 + 10 .. 216 + 10 px

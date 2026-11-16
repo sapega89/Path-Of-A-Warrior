@@ -170,7 +170,7 @@ func test_story_numbers_and_reward() -> void:
 	screen.next_page()
 	eq(screen.pages[screen.page].kind, "stats", "the numbers")
 	check(not screen.picture.visible, "no picture")
-	eq(Array(screen.lines.slice(0, 3)), ["Mission", "Accomplished", "0 %"], "a line each")
+	eq(Array(screen.lines.slice(0, 3)), ["Missions", "won", "0 %"], "a line each")
 	eq(screen.lines.size(), 12, "missions, hidden missions, endings, generals, the total")
 	eq(screen.line_y(0), -1000, "below the screen")
 	for i in 45:

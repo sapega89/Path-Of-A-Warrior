@@ -2,10 +2,10 @@ class_name MissionPause
 extends Control
 ## The pause menu of a mission, over the stopped game (mission_pause.tscn): Resume, Items
 ## (the Inventory with its belt only: this mission's potion keys), Options (the settings),
-## Help, Exit to Menu (asked first: the mission is lost, back to the camp) and Exit Game (asked
-## first; not on phones and the web). The game is saved in the camps between missions, so there
-## is no Save here (save() is kept for a mission saved on its map by an older version). Items,
-## Options and Help show over the menu. Back resumes.
+## Help, Leave to the menu (asked first: the mission is lost, back to the camp) and Quit the
+## game (asked first; not on phones and the web). The game is saved in the camps between
+## missions, so there is no Save here (save() is kept for a mission saved on its map by an older
+## version). Items, Options and Help show over the menu. Back resumes.
 
 signal resumed
 
@@ -44,7 +44,7 @@ func resume() -> void:
 	resumed.emit()
 
 
-## "Exit Game and go to main menu?" / "Exit Game?", No first.
+## "Leave the mission for the main menu?" / "Quit the game?", No first.
 func _ask(what: String) -> void:
 	asked = what
 	ask.dialog_text = tr("pause.ask_" + what)
@@ -58,7 +58,7 @@ func confirmed() -> void:
 		get_tree().quit()
 
 
-## Saves the mission on its map and says how it went ("Saving Success!" or "Can't Save!").
+## Saves the mission on its map and says how it went ("Saved." or "Can't save yet!").
 func save() -> bool:
 	var ok: bool = save_game.is_valid() and save_game.call()
 	note.dialog_text = tr("pause.saved" if ok else "pause.cannot_save")

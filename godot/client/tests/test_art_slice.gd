@@ -143,7 +143,7 @@ func test_camp_and_battle_build() -> void:
 		slice.free()
 
 
-func test_no_original_pictures() -> void:
+func test_no_old_pictures() -> void:
 	for dir in ["res://scripts/art/", "res://assets/art/shaders/"]:
 		for file in DirAccess.get_files_at(dir):
 			if file.ends_with(".gd") or file.ends_with(".gdshader"):
