@@ -69,9 +69,9 @@ var briefings := 0  # missions accepted (1..11): which advice the briefing gives
 var shop: Array = []  # the Blacksmith's 25 things: the potions and scrolls, then 17 gears
 var reward_item := 0  # what the last ending gave (not saved)
 var opened_lord := 0  # the lord the last ending opened (not saved)
-## A mission saved on its map (pause menu Save, once the room is cleared): lord, mission,
-## the room's middle tile (x, y), HP, MP, rooms visited, its exp so far, kills and ticks of
-## play. Continue goes back there. Any other save forgets it.
+## A mission saved on its map (pause menu Save, once the room is cleared): lord, mission, the
+## seed of the map, the room's middle tile (x, y), HP, MP, rooms visited, its exp so far, kills
+## and ticks of play. Continue goes back there. Any other save forgets it.
 var on_map := {}
 var run := HeroRun.new()  # the run: its flasks of living water
 
@@ -508,7 +508,8 @@ func save_keeping_map(path: String = PATH) -> bool:
 
 ## Saves a mission on its map (its room cleared): what was picked up so far goes to the hero
 ## (and is taken from the mission, so its end does not give it twice) and the place in it is
-## kept for Continue.
+## kept for Continue, with the seed of the map (a map made again from another seed has other
+## rooms: on_map_fits).
 func save_on_map(
 	sim: MapSim, lord_id: int, mission: int, ruler_id: int, path: String = PATH
 ) -> bool:
@@ -519,6 +520,7 @@ func save_on_map(
 	on_map = {
 		"lord": lord_id,
 		"mission": mission,
+		"seed": int(sim.map.get("seed", 0)),
 		"x": at.x / 27 / 7 * 7 + 4,
 		"y": at.y / 27 / 7 * 7 + 4,
 		"hp": int(sim.hero.hp),
@@ -529,6 +531,12 @@ func save_on_map(
 		"ticks": int(sim.play_ticks)
 	}
 	return _write(path)
+
+
+## Whether the mission saved on its map can go on on `map`: one was saved, on a map from the same
+## seed (none on both: a map not made by the map generator).
+func on_map_fits(map: Dictionary) -> bool:
+	return not on_map.is_empty() and int(on_map.get("seed", 0)) == int(map.get("seed", 0))
 
 
 ## The mission saved on its map goes on: its place and numbers into the new mission.
