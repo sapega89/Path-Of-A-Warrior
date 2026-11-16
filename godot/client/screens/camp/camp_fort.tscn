@@ -1,0 +1,80 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://screens/camp/camp_fort.gd" id="1_c41t5"]
+[ext_resource type="Shader" path="res://assets/art/shaders/water.gdshader" id="2_bv78y"]
+[ext_resource type="Shader" path="res://assets/art/shaders/mist.gdshader" id="3_uda76"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pysgv"]
+render_priority = 0
+shader = ExtResource("2_bv78y")
+shader_parameter/deep = Vector3(0.045, 0.055, 0.065)
+shader_parameter/shallow = Vector3(0.1, 0.115, 0.135)
+shader_parameter/glint = Vector3(0.42, 0.45, 0.52)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_jiwro"]
+size = Vector2(110, 110)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2wu6m"]
+render_priority = 0
+shader = ExtResource("3_uda76")
+shader_parameter/color = Vector3(0.37, 0.39, 0.47)
+shader_parameter/density = 0.5
+shader_parameter/clear_radius = 17.5
+shader_parameter/seed = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_d2im5"]
+render_priority = 0
+shader = ExtResource("3_uda76")
+shader_parameter/color = Vector3(0.37, 0.39, 0.47)
+shader_parameter/density = 0.38
+shader_parameter/clear_radius = 17.5
+shader_parameter/seed = 5.3
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vh1cd"]
+render_priority = 0
+shader = ExtResource("3_uda76")
+shader_parameter/color = Vector3(0.37, 0.39, 0.47)
+shader_parameter/density = 0.26
+shader_parameter/clear_radius = 17.5
+shader_parameter/seed = 10.6
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6m3ok"]
+render_priority = 0
+shader = ExtResource("3_uda76")
+shader_parameter/color = Vector3(0.37, 0.39, 0.47)
+shader_parameter/density = 0.14
+shader_parameter/clear_radius = 17.5
+shader_parameter/seed = 15.9
+
+[node name="Fort" type="Node3D"]
+script = ExtResource("1_c41t5")
+
+[node name="Water" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.32, 0)
+material_override = SubResource("ShaderMaterial_pysgv")
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_jiwro")
+
+[node name="Mist1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+material_override = SubResource("ShaderMaterial_2wu6m")
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_jiwro")
+
+[node name="Mist2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+material_override = SubResource("ShaderMaterial_d2im5")
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_jiwro")
+
+[node name="Mist3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+material_override = SubResource("ShaderMaterial_vh1cd")
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_jiwro")
+
+[node name="Mist4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+material_override = SubResource("ShaderMaterial_6m3ok")
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_jiwro")

@@ -1,0 +1,56 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_4a8am"]
+[ext_resource type="Script" path="res://scripts/world/open_cylinder_mesh.gd" id="2_x1xxt"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_58hfm"]
+resource_local_to_scene = true
+shader = ExtResource("1_4a8am")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 7
+shader_parameter/body = 0.45
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_j7qdg"]
+script = ExtResource("2_x1xxt")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4kfdm"]
+resource_local_to_scene = true
+shader = ExtResource("1_4a8am")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 7
+shader_parameter/body = 0.45
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wdp4h"]
+resource_local_to_scene = true
+shader = ExtResource("1_4a8am")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 0
+shader_parameter/body = 0.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_bldv7"]
+
+[node name="FireWhirl" type="Node3D"]
+
+[node name="Spiral" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_58hfm")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("PrimitiveMesh_j7qdg")
+
+[node name="Inner" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_4kfdm")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("PrimitiveMesh_j7qdg")
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_wdp4h")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_bldv7")

@@ -1,0 +1,87 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_wa7be"]
+[ext_resource type="Script" path="res://scripts/art/sweep_mesh.gd" id="2_wo7u5"]
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_puff.gdshader" id="3_xb30n"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dhvkc"]
+resource_local_to_scene = true
+shader = ExtResource("1_wa7be")
+shader_parameter/core = Vector3(1, 0.95, 0.8)
+shader_parameter/edge = Vector3(0.83, 0.65, 0.27)
+shader_parameter/shape = 11
+shader_parameter/body = 0.55
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_rbhy7"]
+script = ExtResource("2_wo7u5")
+start_deg = 120.0
+arc_deg = -170.0
+radius = 1.6
+height = 0.0
+tilt = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4gkt7"]
+resource_local_to_scene = true
+shader = ExtResource("1_wa7be")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.95, 0.8)
+shader_parameter/edge = Vector3(0.83, 0.65, 0.27)
+shader_parameter/shape = 1
+shader_parameter/body = 0.4
+
+[sub_resource type="QuadMesh" id="QuadMesh_bh6xx"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1us70"]
+resource_local_to_scene = true
+shader = ExtResource("1_wa7be")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.95, 0.8)
+shader_parameter/edge = Vector3(0.83, 0.65, 0.27)
+shader_parameter/shape = 2
+shader_parameter/body = 0.3
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_iui84"]
+resource_local_to_scene = true
+shader = ExtResource("3_xb30n")
+shader_parameter/billboard = 1
+shader_parameter/color = Vector3(0.94, 0.89, 0.79)
+shader_parameter/shade = Vector3(0.73, 0.65, 0.55)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_75cpw"]
+resource_local_to_scene = true
+shader = ExtResource("3_xb30n")
+shader_parameter/billboard = 1
+shader_parameter/color = Vector3(0.94, 0.89, 0.79)
+shader_parameter/shade = Vector3(0.73, 0.65, 0.55)
+
+[node name="Smash" type="Node3D"]
+
+[node name="Arc" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 1.1, 0)
+material_override = SubResource("ShaderMaterial_dhvkc")
+cast_shadow = 0
+mesh = SubResource("PrimitiveMesh_rbhy7")
+
+[node name="Shock" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_4gkt7")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_bh6xx")
+
+[node name="Crack" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_1us70")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_bh6xx")
+
+[node name="Dust0" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_iui84")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_bh6xx")
+
+[node name="Dust1" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_75cpw")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_bh6xx")

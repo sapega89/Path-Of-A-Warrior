@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lml3i"]
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+vertex_color_use_as_albedo = true
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_p3mf7"]
+material = SubResource("StandardMaterial3D_lml3i")
+size = Vector2(0.045, 0.12)
+
+[sub_resource type="Gradient" id="Gradient_6wkjv"]
+offsets = PackedFloat32Array(0, 0.33333334, 0.6666667, 1)
+colors = PackedColorArray(1, 0.8784314, 0.5411765, 1, 0.68235296, 0.54901963, 0.28235295, 1, 0.9098039, 0.45490196, 0.16470589, 1, 0.66, 0.2, 0.18, 0)
+
+[node name="Sparks" type="CPUParticles3D"]
+amount = 26
+lifetime = 0.45
+one_shot = true
+explosiveness = 0.95
+mesh = SubResource("QuadMesh_p3mf7")
+direction = Vector3(0, 0.6, 1)
+spread = 70.0
+gravity = Vector3(0, -9, 0)
+initial_velocity_min = 1.8
+initial_velocity_max = 4.0
+scale_amount_min = 0.6
+scale_amount_max = 1.2
+color_ramp = SubResource("Gradient_6wkjv")

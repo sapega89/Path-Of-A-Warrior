@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/world/arrow_mesh.gd" id="1_arrow"]
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_arrow"]
+script = ExtResource("1_arrow")
+
+[node name="Arrow" type="MeshInstance3D"]
+visible = false
+mesh = SubResource("PrimitiveMesh_arrow")

@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[node name="Arrow" type="Sprite3D"]
+pixel_size = 0.013888889
+billboard = 1
+no_depth_test = true

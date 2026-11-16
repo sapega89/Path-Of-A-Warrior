@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(python3:*)",
+      "Bash(awk '{print $5, $9}')",
+      "Bash(sort -k2 -V)",
+      "Bash(awk '{print $1, $2}')"
+    ]
+  }
+}

@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[node name="Place" type="Button"]
+custom_minimum_size = Vector2(38, 38)
+offset_right = 38.0
+offset_bottom = 38.0
+theme_type_variation = &"Place"
+auto_translate_mode = 2

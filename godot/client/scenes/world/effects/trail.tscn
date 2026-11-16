@@ -1,0 +1,69 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_ub35t"]
+[ext_resource type="Script" path="res://scripts/art/sweep_mesh.gd" id="2_2ixi2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_egkdj"]
+resource_local_to_scene = true
+shader = ExtResource("1_ub35t")
+shader_parameter/core = Vector3(1, 1, 0.97)
+shader_parameter/edge = Vector3(0.7, 0.76, 0.86)
+shader_parameter/shape = 11
+shader_parameter/body = 0.55
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_7wp3j"]
+script = ExtResource("2_2ixi2")
+start_deg = -80.0
+arc_deg = 160.0
+radius = 1.05
+height = 0.95
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jdurc"]
+resource_local_to_scene = true
+shader = ExtResource("1_ub35t")
+shader_parameter/core = Vector3(1, 1, 0.97)
+shader_parameter/edge = Vector3(0.7, 0.76, 0.86)
+shader_parameter/shape = 11
+shader_parameter/body = 0.55
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_52nfg"]
+script = ExtResource("2_2ixi2")
+start_deg = 80.0
+arc_deg = -160.0
+radius = 1.05
+height = 0.95
+tilt = -0.35
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8jubl"]
+resource_local_to_scene = true
+shader = ExtResource("1_ub35t")
+shader_parameter/core = Vector3(1, 1, 0.97)
+shader_parameter/edge = Vector3(0.7, 0.76, 0.86)
+shader_parameter/shape = 11
+shader_parameter/body = 0.55
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_p4wv5"]
+script = ExtResource("2_2ixi2")
+start_deg = 120.0
+arc_deg = -170.0
+radius = 1.0
+height = 0.0
+tilt = 0.0
+
+[node name="Trail" type="Node3D"]
+
+[node name="Blow0" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_egkdj")
+cast_shadow = 0
+mesh = SubResource("PrimitiveMesh_7wp3j")
+
+[node name="Blow1" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_jdurc")
+cast_shadow = 0
+mesh = SubResource("PrimitiveMesh_52nfg")
+
+[node name="Blow2" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0.95, 0)
+material_override = SubResource("ShaderMaterial_8jubl")
+cast_shadow = 0
+mesh = SubResource("PrimitiveMesh_p4wv5")

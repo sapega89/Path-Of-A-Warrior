@@ -1,0 +1,81 @@
+[gd_scene load_steps=9 format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lhjye"]
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+vertex_color_use_as_albedo = true
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_1gg8a"]
+material = SubResource("StandardMaterial3D_lhjye")
+size = Vector2(0.14, 0.22)
+
+[sub_resource type="Curve" id="Curve_4f81u"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_whejv"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.95, 0.62, 0.2, 0.8, 0.91, 0.42, 0.14, 0.7, 0.66, 0.2, 0.18, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kubkf"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+vertex_color_use_as_albedo = true
+
+[sub_resource type="SphereMesh" id="SphereMesh_8pbcu"]
+material = SubResource("StandardMaterial3D_kubkf")
+radius = 0.1
+height = 0.16
+radial_segments = 6
+rings = 3
+
+[sub_resource type="Curve" id="Curve_hvki3"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_66per"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.3, 0.29, 0.3, 0, 0.36, 0.35, 0.36, 0.4, 0.45, 0.44, 0.45, 0)
+
+[node name="TorchFlame" type="Node3D"]
+
+[node name="Flame" type="CPUParticles3D" parent="."]
+amount = 10
+lifetime = 0.45
+mesh = SubResource("QuadMesh_1gg8a")
+emission_shape = 1
+emission_sphere_radius = 0.06
+direction = Vector3(0, 1, 0)
+spread = 10.0
+gravity = Vector3(0, 1, 0)
+initial_velocity_min = 0.35
+initial_velocity_max = 0.7
+scale_amount_curve = SubResource("Curve_4f81u")
+color_ramp = SubResource("Gradient_whejv")
+
+[node name="Smoke" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+amount = 6
+lifetime = 1.8
+mesh = SubResource("SphereMesh_8pbcu")
+direction = Vector3(0, 1, 0)
+spread = 8.0
+gravity = Vector3(0.2, 0.1, 0)
+initial_velocity_min = 0.4
+initial_velocity_max = 0.6
+scale_amount_curve = SubResource("Curve_hvki3")
+color_ramp = SubResource("Gradient_66per")
+
+[node name="Light" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+light_color = Color(1, 0.63529414, 0.29803923, 1)
+light_energy = 1.5
+omni_range = 6.5
+omni_attenuation = 1.6

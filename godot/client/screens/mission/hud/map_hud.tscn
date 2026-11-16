@@ -1,0 +1,333 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Script" path="res://screens/mission/hud/map_hud.gd" id="1_hud"]
+[ext_resource type="Theme" path="res://assets/art/ui/hud_theme.tres" id="2_theme"]
+[ext_resource type="PackedScene" path="res://screens/mission/hud/hud_slot.tscn" id="3_slot"]
+[ext_resource type="Script" path="res://screens/mission/hud/hud_panel.gd" id="4_panel"]
+[ext_resource type="PackedScene" path="res://screens/mission/hud/hud_orb.tscn" id="5_orb"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/hud/orb_hp.tres" id="6_hp"]
+[ext_resource type="Texture2D" path="res://assets/art/ui/hud/orb_mp.tres" id="7_mp"]
+
+[node name="MapHud" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_hud")
+
+[node name="Clock" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 124.0
+offset_bottom = 48.0
+mouse_filter = 2
+theme_type_variation = &"HudPlaque"
+
+[node name="Time" type="Label" parent="Clock"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 3.0
+offset_right = 116.0
+offset_bottom = 39.0
+theme_type_variation = &"HudText"
+auto_translate_mode = 2
+text = "00:00"
+horizontal_alignment = 1
+
+[node name="Kills" type="Panel" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -124.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 48.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_type_variation = &"HudPlaque"
+
+[node name="Sabres" type="Control" parent="Kills"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 10.0
+offset_top = 8.0
+offset_right = 34.0
+offset_bottom = 32.0
+mouse_filter = 2
+
+[node name="KillCount" type="Label" parent="Kills"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 40.0
+offset_top = 3.0
+offset_right = 104.0
+offset_bottom = 39.0
+theme_type_variation = &"HudText"
+auto_translate_mode = 2
+text = "0"
+horizontal_alignment = 2
+
+[node name="Target" type="Panel" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -180.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 68.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_type_variation = &"HudPlaque"
+
+[node name="TargetName" type="Label" parent="Target"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 12.0
+offset_top = 3.0
+offset_right = -40.0
+offset_bottom = 34.0
+grow_horizontal = 2
+theme_type_variation = &"HudName"
+auto_translate_mode = 2
+
+[node name="Badge" type="Control" parent="Target"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -39.0
+offset_top = 3.0
+offset_right = -5.0
+offset_bottom = 37.0
+grow_horizontal = 0
+mouse_filter = 2
+
+[node name="TargetLevel" type="Label" parent="Target/Badge"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 4.0
+offset_right = 34.0
+offset_bottom = 30.0
+theme_type_variation = &"HudLevel"
+auto_translate_mode = 2
+text = "1"
+horizontal_alignment = 1
+
+[node name="TargetHp" type="ProgressBar" parent="Target"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 14.0
+offset_top = 42.0
+offset_right = -14.0
+offset_bottom = 50.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_type_variation = &"HudHealth"
+max_value = 62.0
+step = 1.0
+show_percentage = false
+
+[node name="Shine" type="ProgressBar" parent="Target/TargetHp"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_type_variation = &"HudHealthShine"
+max_value = 62.0
+step = 1.0
+show_percentage = false
+
+[node name="Bottom" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -240.0
+offset_top = -170.0
+offset_right = 240.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="Belt1" parent="Bottom" instance=ExtResource("3_slot")]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 1.0
+offset_top = 1.0
+offset_right = 47.0
+offset_bottom = 47.0
+
+[node name="Belt2" parent="Bottom" instance=ExtResource("3_slot")]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 47.0
+offset_top = 1.0
+offset_right = 93.0
+offset_bottom = 47.0
+
+[node name="Belt3" parent="Bottom" instance=ExtResource("3_slot")]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 93.0
+offset_top = 1.0
+offset_right = 139.0
+offset_bottom = 47.0
+
+[node name="Belt4" parent="Bottom" instance=ExtResource("3_slot")]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 139.0
+offset_top = 1.0
+offset_right = 185.0
+offset_bottom = 47.0
+
+[node name="Belt5" parent="Bottom" instance=ExtResource("3_slot")]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 185.0
+offset_top = 1.0
+offset_right = 231.0
+offset_bottom = 47.0
+
+[node name="Skill1" parent="Bottom" instance=ExtResource("3_slot")]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 249.0
+offset_top = 1.0
+offset_right = 295.0
+offset_bottom = 47.0
+
+[node name="Skill2" parent="Bottom" instance=ExtResource("3_slot")]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 295.0
+offset_top = 1.0
+offset_right = 341.0
+offset_bottom = 47.0
+
+[node name="Skill3" parent="Bottom" instance=ExtResource("3_slot")]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 341.0
+offset_top = 1.0
+offset_right = 387.0
+offset_bottom = 47.0
+
+[node name="Skill4" parent="Bottom" instance=ExtResource("3_slot")]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 387.0
+offset_top = 1.0
+offset_right = 433.0
+offset_bottom = 47.0
+
+[node name="Skill5" parent="Bottom" instance=ExtResource("3_slot")]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 433.0
+offset_top = 1.0
+offset_right = 479.0
+offset_bottom = 47.0
+
+[node name="Panel" type="Panel" parent="Bottom"]
+layout_mode = 0
+offset_top = 54.0
+offset_right = 480.0
+offset_bottom = 170.0
+mouse_filter = 2
+theme_type_variation = &"HudPanel"
+script = ExtResource("4_panel")
+
+[node name="HpOrb" parent="Bottom" instance=ExtResource("5_orb")]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 2.0
+offset_top = 64.0
+offset_right = 102.0
+offset_bottom = 164.0
+texture_progress = ExtResource("6_hp")
+liquid_top = Color(0.74901961, 0.22745098, 0.18039216, 1)
+
+[node name="MpOrb" parent="Bottom" instance=ExtResource("5_orb")]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 378.0
+offset_top = 64.0
+offset_right = 478.0
+offset_bottom = 164.0
+texture_progress = ExtResource("7_mp")
+liquid_top = Color(0.30980392, 0.47058824, 0.69019608, 1)
+
+[node name="Auto" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -34.0
+offset_right = 96.0
+grow_vertical = 0
+focus_mode = 0
+mouse_filter = 1
+theme_type_variation = &"HudAuto"
+auto_translate_mode = 2
+toggle_mode = true
+action_mode = 0
+text = "AUTO"
+
+[node name="Skip" type="Button" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -34.0
+offset_right = 96.0
+grow_vertical = 0
+focus_mode = 0
+mouse_filter = 1
+theme_type_variation = &"HudCorner"
+auto_translate_mode = 2
+action_mode = 0
+text = "SKIP"
+
+[node name="Pause" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -96.0
+offset_top = -34.0
+grow_horizontal = 0
+grow_vertical = 0
+focus_mode = 0
+mouse_filter = 1
+theme_type_variation = &"HudCorner"
+auto_translate_mode = 2
+action_mode = 0
+text = "PAUSE"

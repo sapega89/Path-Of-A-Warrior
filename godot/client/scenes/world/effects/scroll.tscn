@@ -1,0 +1,66 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_25gox"]
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_puff.gdshader" id="2_oyefo"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dq1ef"]
+resource_local_to_scene = true
+shader = ExtResource("1_25gox")
+shader_parameter/billboard = 1
+shader_parameter/core = Vector3(1, 0.95, 0.8)
+shader_parameter/edge = Vector3(0.83, 0.65, 0.27)
+shader_parameter/shape = 0
+shader_parameter/body = 0.3
+
+[sub_resource type="QuadMesh" id="QuadMesh_txf8u"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_d1rcl"]
+resource_local_to_scene = true
+shader = ExtResource("1_25gox")
+shader_parameter/billboard = 1
+shader_parameter/core = Vector3(1, 0.95, 0.8)
+shader_parameter/edge = Vector3(0.83, 0.65, 0.27)
+shader_parameter/shape = 2
+shader_parameter/body = 0.3
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cyowo"]
+resource_local_to_scene = true
+shader = ExtResource("1_25gox")
+shader_parameter/billboard = 3
+shader_parameter/core = Vector3(1, 0.95, 0.8)
+shader_parameter/edge = Vector3(0.83, 0.65, 0.27)
+shader_parameter/shape = 5
+shader_parameter/body = 0.2
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_663ve"]
+resource_local_to_scene = true
+shader = ExtResource("2_oyefo")
+shader_parameter/billboard = 0
+shader_parameter/color = Vector3(0.48, 0.44, 0.41)
+shader_parameter/shade = Vector3(0.3, 0.27, 0.25)
+
+[node name="Scroll" type="Node3D"]
+
+[node name="Orb" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_dq1ef")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_txf8u")
+
+[node name="Star" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_d1rcl")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_txf8u")
+
+[node name="Tail" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_cyowo")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_txf8u")
+
+[node name="Shadow" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_663ve")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_txf8u")

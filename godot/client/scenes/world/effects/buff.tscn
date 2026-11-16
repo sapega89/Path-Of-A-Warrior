@@ -1,0 +1,56 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_nwm3k"]
+[ext_resource type="Script" path="res://scripts/world/open_cylinder_mesh.gd" id="2_ec75y"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vd8rx"]
+resource_local_to_scene = true
+shader = ExtResource("1_nwm3k")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.95, 0.8)
+shader_parameter/edge = Vector3(0.83, 0.65, 0.27)
+shader_parameter/shape = 8
+shader_parameter/body = 0.15
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_j7qdg"]
+script = ExtResource("2_ec75y")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dghop"]
+resource_local_to_scene = true
+shader = ExtResource("1_nwm3k")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.95, 0.8)
+shader_parameter/edge = Vector3(0.83, 0.65, 0.27)
+shader_parameter/shape = 1
+shader_parameter/body = 0.4
+
+[sub_resource type="QuadMesh" id="QuadMesh_wd7xa"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_e21px"]
+resource_local_to_scene = true
+shader = ExtResource("1_nwm3k")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.95, 0.8)
+shader_parameter/edge = Vector3(0.83, 0.65, 0.27)
+shader_parameter/shape = 0
+shader_parameter/body = 0.0
+
+[node name="Buff" type="Node3D"]
+
+[node name="Column" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_vd8rx")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("PrimitiveMesh_j7qdg")
+
+[node name="Ring" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_dghop")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_wd7xa")
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_e21px")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_wd7xa")

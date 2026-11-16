@@ -1,0 +1,4 @@
+[gd_scene format=3]
+
+[node name="ListButton" type="Button"]
+auto_translate_mode = 2

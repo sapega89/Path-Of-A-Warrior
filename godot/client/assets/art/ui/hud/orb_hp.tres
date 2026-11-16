@@ -1,0 +1,14 @@
+[gd_resource type="DPITexture" format=3]
+
+[resource]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"43\" height=\"43\">
+  <defs>
+    <linearGradient id=\"liquid\" x1=\"0\" y1=\"-0.5\" x2=\"0\" y2=\"43.5\" gradientUnits=\"userSpaceOnUse\">
+      <stop offset=\"0\" stop-color=\"#bf3a2e\"/>
+      <stop offset=\"1\" stop-color=\"#4a0f0c\"/>
+    </linearGradient>
+  </defs>
+  <circle cx=\"21.5\" cy=\"21.5\" r=\"21.5\" fill=\"url(#liquid)\"/>
+</svg>
+"
+base_scale = 2.0

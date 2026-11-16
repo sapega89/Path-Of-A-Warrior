@@ -1,0 +1,52 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_tf4b7"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t05mi"]
+resource_local_to_scene = true
+shader = ExtResource("1_tf4b7")
+shader_parameter/billboard = 1
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 0
+shader_parameter/body = 0.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_33p8m"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4x20i"]
+resource_local_to_scene = true
+shader = ExtResource("1_tf4b7")
+shader_parameter/billboard = 1
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 2
+shader_parameter/body = 0.35
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vjy6i"]
+resource_local_to_scene = true
+shader = ExtResource("1_tf4b7")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 1
+shader_parameter/body = 0.4
+
+[node name="Burst" type="Node3D"]
+
+[node name="Glow" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_t05mi")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_33p8m")
+
+[node name="Star" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_4x20i")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_33p8m")
+
+[node name="Ring" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_vjy6i")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_33p8m")

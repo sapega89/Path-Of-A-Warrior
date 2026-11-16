@@ -1,0 +1,55 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_hknt1"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_uhf58"]
+resource_local_to_scene = true
+shader = ExtResource("1_hknt1")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 6
+shader_parameter/body = 0.5
+
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_7lpyi"]
+resource_local_to_scene = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_el4ag"]
+resource_local_to_scene = true
+shader = ExtResource("1_hknt1")
+shader_parameter/billboard = 1
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 0
+shader_parameter/body = 0.3
+
+[sub_resource type="QuadMesh" id="QuadMesh_w0uhh"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8tkkq"]
+resource_local_to_scene = true
+shader = ExtResource("1_hknt1")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(1, 0.92, 0.66)
+shader_parameter/edge = Vector3(0.91, 0.4, 0.14)
+shader_parameter/shape = 0
+shader_parameter/body = 0.0
+
+[node name="Quake" type="Node3D"]
+
+[node name="Body" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_uhf58")
+cast_shadow = 0
+extra_cull_margin = 8.0
+mesh = SubResource("ImmediateMesh_7lpyi")
+
+[node name="Head" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_el4ag")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_w0uhh")
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_8tkkq")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_w0uhh")

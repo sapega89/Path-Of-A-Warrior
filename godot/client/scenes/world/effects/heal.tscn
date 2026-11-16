@@ -1,0 +1,56 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_light.gdshader" id="1_45vr6"]
+[ext_resource type="Script" path="res://scripts/world/open_cylinder_mesh.gd" id="2_yomdc"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a1pbq"]
+resource_local_to_scene = true
+shader = ExtResource("1_45vr6")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(0.88, 1, 0.82)
+shader_parameter/edge = Vector3(0.36, 0.74, 0.44)
+shader_parameter/shape = 7
+shader_parameter/body = 0.35
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_j7qdg"]
+script = ExtResource("2_yomdc")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rqoua"]
+resource_local_to_scene = true
+shader = ExtResource("1_45vr6")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(0.88, 1, 0.82)
+shader_parameter/edge = Vector3(0.36, 0.74, 0.44)
+shader_parameter/shape = 9
+shader_parameter/body = 0.6
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ibdif"]
+resource_local_to_scene = true
+shader = ExtResource("1_45vr6")
+shader_parameter/billboard = 0
+shader_parameter/core = Vector3(0.88, 1, 0.82)
+shader_parameter/edge = Vector3(0.36, 0.74, 0.44)
+shader_parameter/shape = 0
+shader_parameter/body = 0.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_puajh"]
+
+[node name="Heal" type="Node3D"]
+
+[node name="Spiral" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_a1pbq")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("PrimitiveMesh_j7qdg")
+
+[node name="Motes" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_rqoua")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("PrimitiveMesh_j7qdg")
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_ibdif")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_puajh")

@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Shader" path="res://assets/art/shaders/fx_blood.gdshader" id="1_ie7ju"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_s73m2"]
+resource_local_to_scene = true
+shader = ExtResource("1_ie7ju")
+shader_parameter/billboard = 0
+shader_parameter/shape = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_je3sc"]
+
+[node name="Pool" type="Node3D"]
+
+[node name="Pool" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_s73m2")
+cast_shadow = 0
+extra_cull_margin = 4.0
+mesh = SubResource("QuadMesh_je3sc")

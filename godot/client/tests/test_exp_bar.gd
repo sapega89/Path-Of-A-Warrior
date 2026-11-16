@@ -1,0 +1,90 @@
+extends "res://tests/test_case.gd"
+## The exp bar of the pages after a won mission: what the hero had,
+## what the mission gives growing 4 px a tick, a level up at the end of the bar.
+
+
+func test_the_bar_grows_and_goes_up_a_level() -> void:
+	var bar: RefCounted = ExpBars.new()
+	eq(Campaign.exp_needed(1), 50, "level 1 needs 50")
+	eq(Campaign.exp_needed(2), 104, "level 2 needs 104")
+	bar.begin(1, 25, 50)
+	eq(bar.bars, [50, 124, 124], "half of level 1; 25 of 104 into level 2 after the mission")
+	eq(bar.grown(), [0, 0], "nothing grown yet")
+	for t in 13:
+		bar.tick()
+	eq(bar.grown(), [50, 1], "the bar is full")
+	eq(bar.level, 1, "the level up comes on the next tick")
+	bar.tick()
+	eq([bar.level, bar.level_up_ticks], [2, ExpBars.LEVEL_UP_TICKS], "Level 2! for 20 ticks")
+	eq(bar.bars, [0, 24, 24], "the bar starts again with the rest")
+	for t in ExpBars.LEVEL_UP_TICKS:
+		bar.tick()
+	eq([bar.level_up_ticks, bar.step], [0, 0], "it waits while Level Up shows")
+	for t in 7:
+		bar.tick()
+	eq(bar.grown(), [24, 2], "all of it shown")
+	check(bar.done(), "done")
+	var p: RefCounted = Profile.new()
+	p.experience = 25
+	p.gain_exp(50)
+	eq(
+		[p.level, p.experience * 100 / Campaign.exp_needed(p.level)],
+		[bar.level, 24],
+		"the bar ends where the hero is after the mission"
+	)
+	bar.begin_time(60)
+	eq(bar.bars, [0, 24, 33], "Experience for speed: 10 more, from the end of the mission's part")
+	eq(bar.part, 1, "the time's part grows")
+	bar.tick()
+	bar.tick()
+	eq(bar.grown(), [8, 0], "4 px a tick")
+	bar.begin(1, 0, 0)
+	eq(bar.bars, [0, 1, 1], "nothing gained: at least a little into the level")
+
+
+func test_the_exp_pages_show_the_bar() -> void:
+	var old: Dictionary = Router.params
+	Router.params = {"lord": 1, "mission": 0, "seed": 2}
+	var screen: Control = Router.make(Router.SCREENS["mission"])
+	root.add_child(screen)
+	var sim: RefCounted = screen.sim
+	eq(sim.hero_exp, screen.profile.experience, "the sim knows the hero's exp")
+	sim.hero.level = 1
+	sim.hero_exp = 45
+	sim.mission_exp = 10
+	sim.difficulty = 1
+	sim.time_limit = 0
+	sim.show_banner(MapSim.BANNER_SUCCESS)
+	for t in MapSim.BANNER_TICKS:
+		sim.tick(-1)
+	eq(sim.banner, MapSim.BANNER_TOTAL_EXP, "Experience in all")
+	screen._show_banner()
+	check(screen.banner.exp_bar.visible, "the bar under the text")
+	eq(sim.exp_bars.bars, [90, 114, 114], "45 of 50, then 20 more")
+	check(not screen.banner.label.text.contains("Lv"), "no level up yet")
+	for t in 4:
+		sim.tick(-1)
+	eq(sim.exp_bars.level, 2, "the bar went past its end")
+	eq(sim.exp_bars.level_up_ticks, 20, "Level Up shows")
+	sim.tick(-1, -1, true)
+	eq(sim.exp_bars.level_up_ticks, 1, "a key cuts it short")
+	screen._show_banner()
+	check(
+		screen.banner.label.text.ends_with(screen.tr("mission.level_up") % 2),
+		screen.banner.label.text
+	)
+	sim.banner = MapSim.BANNER_STAGE_CLEAR
+	screen._show_banner()
+	check(not screen.banner.exp_bar.visible, "no bar on other banners")
+	screen.free()
+	Router.params = old
+
+
+## The bar's hollow and rim are the theme's: dark, in a thin iron rim with small corners.
+func test_the_hollow_and_rim_from_the_theme() -> void:
+	var t: Theme = UiTheme.theme(UiTheme.THEME)
+	var hollow := t.get_stylebox("hollow", "ExpBar") as StyleBoxFlat
+	eq([hollow.bg_color, hollow.corner_radius_top_left], [Color("0b0b0c"), 1], "a dark hollow")
+	var rim := t.get_stylebox("rim", "ExpBar") as StyleBoxFlat
+	check(not rim.draw_center, "the rim only")
+	eq([rim.border_width_top, rim.border_color], [1, UiTheme.IRON], "of iron")

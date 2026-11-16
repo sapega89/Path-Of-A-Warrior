@@ -1,0 +1,37 @@
+[gd_scene load_steps=5 format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_71nii"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+vertex_color_use_as_albedo = true
+
+[sub_resource type="SphereMesh" id="SphereMesh_pqahb"]
+material = SubResource("StandardMaterial3D_71nii")
+radius = 0.16
+height = 0.26
+radial_segments = 8
+rings = 4
+
+[sub_resource type="Curve" id="Curve_hhcmf"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_28tkn"]
+colors = PackedColorArray(0.85, 0.75, 0.55, 0.75, 0.85, 0.75, 0.55, 0)
+
+[node name="Dust" type="CPUParticles3D"]
+amount = 10
+lifetime = 0.9
+one_shot = true
+explosiveness = 0.8
+mesh = SubResource("SphereMesh_pqahb")
+direction = Vector3(0, 0.3, 0)
+spread = 180.0
+gravity = Vector3(0, 0.3, 0)
+initial_velocity_min = 0.4
+initial_velocity_max = 1.2
+scale_amount_min = 0.6
+scale_amount_max = 1.4
+scale_amount_curve = SubResource("Curve_hhcmf")
+color_ramp = SubResource("Gradient_28tkn")

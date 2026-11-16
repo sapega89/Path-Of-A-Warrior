@@ -1,0 +1,83 @@
+[gd_scene load_steps=9 format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k0fkb"]
+resource_local_to_scene = true
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+vertex_color_use_as_albedo = true
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_xd41m"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_k0fkb")
+size = Vector2(0.32, 0.42)
+
+[sub_resource type="Curve" id="Curve_fhrmk"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.15), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_i4d45"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.9490196, 0.7019608, 0.23921569, 1, 0.9098039, 0.45490196, 0.16470589, 1, 0.66, 0.2, 0.18, 0)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_x8vje"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+vertex_color_use_as_albedo = true
+
+[sub_resource type="SphereMesh" id="SphereMesh_8g04q"]
+material = SubResource("StandardMaterial3D_x8vje")
+radius = 0.22
+height = 0.36
+radial_segments = 8
+rings = 4
+
+[sub_resource type="Curve" id="Curve_2lnjy"]
+_data = [Vector2(0, 0.6), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_012is"]
+offsets = PackedFloat32Array(0, 0.5, 1)
+colors = PackedColorArray(0.42, 0.4, 0.4, 0, 0.5, 0.48, 0.46, 0.45, 0.6, 0.58, 0.56, 0)
+
+[node name="Campfire" type="Node3D"]
+
+[node name="Flame" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+amount = 26
+lifetime = 0.7
+mesh = SubResource("QuadMesh_xd41m")
+emission_shape = 1
+emission_sphere_radius = 0.18
+direction = Vector3(0, 1, 0)
+spread = 12.0
+gravity = Vector3(0, 1.2, 0)
+initial_velocity_min = 0.4
+initial_velocity_max = 0.9
+scale_amount_curve = SubResource("Curve_fhrmk")
+color_ramp = SubResource("Gradient_i4d45")
+
+[node name="Smoke" type="CPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+amount = 14
+lifetime = 2.6
+mesh = SubResource("SphereMesh_8g04q")
+direction = Vector3(0, 1, 0)
+spread = 10.0
+gravity = Vector3(0.25, 0.15, 0)
+initial_velocity_min = 0.5
+initial_velocity_max = 0.8
+scale_amount_curve = SubResource("Curve_2lnjy")
+color_ramp = SubResource("Gradient_012is")
+
+[node name="Light" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+light_color = Color(0.9490196, 0.7019608, 0.23921569, 1)
+light_energy = 0.9
+omni_range = 4.5

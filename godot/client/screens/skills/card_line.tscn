@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[node name="CardLine" type="Label"]
+custom_minimum_size = Vector2(310, 0)
+theme_type_variation = &"SmallLabel"
+auto_translate_mode = 2
+autowrap_mode = 3

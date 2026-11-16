@@ -1,0 +1,178 @@
+[gd_resource type="Theme" load_steps=12 format=3]
+
+[ext_resource type="FontFile" path="res://assets/art/fonts/kurale-latin-400-normal.woff2" id="1_title"]
+[ext_resource type="FontFile" path="res://assets/art/fonts/pt-sans-latin-700-normal.woff2" id="3_bold"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ring"]
+bg_color = Color(0.11372549, 0.105882354, 0.101960786, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.30588236, 0.2901961, 0.27058825, 1)
+corner_radius_top_left = 66
+corner_radius_top_right = 66
+corner_radius_bottom_right = 66
+corner_radius_bottom_left = 66
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_level_badge"]
+bg_color = Color(0.49411765, 0.14117648, 0.12156863, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.6901961, 0.5529412, 0.2901961, 1)
+corner_radius_top_left = 22
+corner_radius_top_right = 22
+corner_radius_bottom_right = 22
+corner_radius_bottom_left = 22
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bar_back"]
+bg_color = Color(0.0972549, 0.089411765, 0.0854902, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.30588236, 0.2901961, 0.27058825, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_health"]
+bg_color = Color(0.49411765, 0.14117648, 0.12156863, 1)
+border_color = Color(0, 0, 0, 0)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+expand_margin_left = -3.0
+expand_margin_top = -3.0
+expand_margin_right = -3.0
+expand_margin_bottom = -3.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_spirit"]
+bg_color = Color(0.1764706, 0.24705882, 0.34117648, 1)
+border_color = Color(0, 0, 0, 0)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+expand_margin_left = -3.0
+expand_margin_top = -3.0
+expand_margin_right = -3.0
+expand_margin_bottom = -3.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_skill_plate"]
+bg_color = Color(0.11372549, 0.105882354, 0.101960786, 0.8)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.30588236, 0.2901961, 0.27058825, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_skill"]
+bg_color = Color(0.16470589, 0.14901961, 0.13725491, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.30588236, 0.2901961, 0.27058825, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_skill_active"]
+bg_color = Color(0.16470589, 0.14901961, 0.13725491, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.6901961, 0.5529412, 0.2901961, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ribbon"]
+content_margin_left = 26.0
+content_margin_top = 4.0
+content_margin_right = 26.0
+content_margin_bottom = 6.0
+bg_color = Color(0.8627451, 0.827451, 0.7607843, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.49411765, 0.14117648, 0.12156863, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[resource]
+ArtBarText/base_type = &"Label"
+ArtBarText/colors/font_color = Color(0.8627450980392157, 0.8274509803921568, 0.7607843137254902, 1)
+ArtBarText/colors/font_outline_color = Color(0.058823529411764705, 0.050980392156862744, 0.047058823529411764, 1)
+ArtBarText/constants/outline_size = 4
+ArtBarText/font_sizes/font_size = 17
+ArtBarText/fonts/font = ExtResource("3_bold")
+ArtCooldown/base_type = &"Label"
+ArtCooldown/colors/font_color = Color(0.8627450980392157, 0.8274509803921568, 0.7607843137254902, 1)
+ArtCooldown/colors/font_outline_color = Color(0.058823529411764705, 0.050980392156862744, 0.047058823529411764, 1)
+ArtCooldown/constants/outline_size = 6
+ArtCooldown/font_sizes/font_size = 34
+ArtCooldown/fonts/font = ExtResource("1_title")
+ArtGold/base_type = &"Label"
+ArtGold/colors/font_color = Color(0.9490196078431372, 0.8352941176470589, 0.5411764705882353, 1)
+ArtGold/colors/font_outline_color = Color(0.058823529411764705, 0.050980392156862744, 0.047058823529411764, 1)
+ArtGold/constants/outline_size = 6
+ArtGold/font_sizes/font_size = 30
+ArtGold/fonts/font = ExtResource("1_title")
+ArtHealth/base_type = &"ProgressBar"
+ArtHealth/styles/background = SubResource("StyleBoxFlat_bar_back")
+ArtHealth/styles/fill = SubResource("StyleBoxFlat_health")
+ArtKey/base_type = &"Label"
+ArtKey/colors/font_color = Color(0.6901960784313725, 0.5529411764705883, 0.2901960784313726, 1)
+ArtKey/colors/font_outline_color = Color(0.058823529411764705, 0.050980392156862744, 0.047058823529411764, 1)
+ArtKey/constants/outline_size = 4
+ArtKey/font_sizes/font_size = 16
+ArtKey/fonts/font = ExtResource("3_bold")
+ArtLevel/base_type = &"Label"
+ArtLevel/colors/font_color = Color(0.8627450980392157, 0.8274509803921568, 0.7607843137254902, 1)
+ArtLevel/colors/font_outline_color = Color(0.058823529411764705, 0.050980392156862744, 0.047058823529411764, 1)
+ArtLevel/constants/outline_size = 4
+ArtLevel/font_sizes/font_size = 22
+ArtLevel/fonts/font = ExtResource("3_bold")
+ArtLevelBadge/base_type = &"Panel"
+ArtLevelBadge/styles/panel = SubResource("StyleBoxFlat_level_badge")
+ArtName/base_type = &"Label"
+ArtName/colors/font_color = Color(0.8627450980392157, 0.8274509803921568, 0.7607843137254902, 1)
+ArtName/colors/font_outline_color = Color(0.058823529411764705, 0.050980392156862744, 0.047058823529411764, 1)
+ArtName/constants/outline_size = 6
+ArtName/font_sizes/font_size = 30
+ArtName/fonts/font = ExtResource("1_title")
+ArtPlace/base_type = &"Label"
+ArtPlace/colors/font_color = Color(0.058823529411764705, 0.050980392156862744, 0.047058823529411764, 1)
+ArtPlace/font_sizes/font_size = 28
+ArtPlace/fonts/font = ExtResource("1_title")
+ArtRibbon/base_type = &"PanelContainer"
+ArtRibbon/styles/panel = SubResource("StyleBoxFlat_ribbon")
+ArtRing/base_type = &"Panel"
+ArtRing/styles/panel = SubResource("StyleBoxFlat_ring")
+ArtSkill/base_type = &"Panel"
+ArtSkill/styles/panel = SubResource("StyleBoxFlat_skill")
+ArtSkillActive/base_type = &"Panel"
+ArtSkillActive/styles/panel = SubResource("StyleBoxFlat_skill_active")
+ArtSkillPlate/base_type = &"Panel"
+ArtSkillPlate/styles/panel = SubResource("StyleBoxFlat_skill_plate")
+ArtSkills/base_type = &"HBoxContainer"
+ArtSkills/constants/separation = 12
+ArtSpirit/base_type = &"ProgressBar"
+ArtSpirit/styles/background = SubResource("StyleBoxFlat_bar_back")
+ArtSpirit/styles/fill = SubResource("StyleBoxFlat_spirit")
