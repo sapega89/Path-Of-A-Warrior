@@ -1,0 +1,9 @@
+{
+"curve": [
+{"depths": [1, 4], "route_rooms": [3, 4]},
+{"depths": [5, 8], "route_rooms": [4, 7]},
+{"depths": [9, 12], "route_rooms": [5, 7]},
+{"depths": [13, 16], "route_rooms": [5, 7]},
+{"depths": [17, 19], "route_rooms": [6, 8]}
+]
+}

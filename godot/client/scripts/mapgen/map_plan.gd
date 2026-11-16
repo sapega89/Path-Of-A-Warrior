@@ -1,9 +1,9 @@
 class_name MapPlan
 extends RefCounted
 ## The plan of a place's map: what the map generator keeps of the campaign. From
-## data/map_plans.json: the place's biome and, for each mission, its generals in the order the
-## hero meets them; from campaign.json: the general whose fall wins each mission and how many
-## places the campaign goes on to from here.
+## data/map_plans.json: the place's biome, its seed and, for each mission, its generals in the
+## order the hero meets them; from campaign.json: how deep in the campaign the place is, the
+## general whose fall wins each mission and how many places the campaign goes on to from here.
 
 const PATH := "res://data/map_plans.json"
 
@@ -11,6 +11,11 @@ static var _data: Dictionary = {}
 
 var place := 0
 var biome := ""
+## Where the map generator's random numbers start (MapGenerator).
+var seed := 0
+## How deep in the campaign the place is: the fewest places won on the way to it from the
+## start, itself too (the places the hero can go to first are 1).
+var depth := 0
 ## Per mission, the rooms with generals or a talk as the hero meets them, the room of the
 ## mission's own general last (stops_of): {generals: [[kind, level bonus], ...], talk: the one
 ## who talks when the room is cleared, 0 none}.
@@ -28,6 +33,7 @@ static func of(place_id: int) -> MapPlan:
 	plan.place = place_id
 	var data: Dictionary = _data.get(str(place_id), {})
 	plan.biome = str(data.get("biome", ""))
+	plan.seed = int(data.get("seed", 0))
 	for stops: Array in data.get("missions", []):
 		var mission: Array[Dictionary] = []
 		for stop: Dictionary in stops:
@@ -36,7 +42,9 @@ static func of(place_id: int) -> MapPlan:
 	var campaign := Campaign.new()
 	for info: Dictionary in campaign.lord_missions(place_id):
 		plan.bosses.append(int(info.get("boss_type", 0)))
-	plan.ways_on = WorldMap.new(campaign).next_places(place_id).size()
+	var world := WorldMap.new(campaign)
+	plan.ways_on = world.next_places(place_id).size()
+	plan.depth = _depth(world, place_id)
 	return plan
 
 
@@ -78,6 +86,19 @@ static func stops_of(map: Dictionary, mission: int, boss: int) -> Array[Dictiona
 	if not last.is_empty():
 		out.append(last)
 	return out
+
+
+## The fewest steps from the start (place 0) to the place along the ways of the campaign.
+static func _depth(world: WorldMap, place_id: int) -> int:
+	var steps := {0: 0}
+	var todo: Array[int] = [0]
+	while not todo.is_empty():
+		var at: int = todo.pop_front()
+		for next: int in world.next_places(at):
+			if not steps.has(next):
+				steps[next] = int(steps[at]) + 1
+				todo.append(next)
+	return int(steps.get(place_id, 0))
 
 
 static func _has_general(rooms: Rooms, room: int, general: int) -> bool:
