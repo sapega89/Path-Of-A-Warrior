@@ -123,3 +123,5 @@ text = "camp.back"
 [connection signal="pressed" from="Center/Menu/Column/MainMenu" to="." method="open_main_menu"]
 
 [connection signal="pressed" from="Center/Menu/Column/Back" to="." method="toggle_menu"]
+
+[editable path="World"]

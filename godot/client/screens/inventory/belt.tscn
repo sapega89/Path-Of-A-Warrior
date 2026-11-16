@@ -37,3 +37,9 @@ layout_mode = 2
 
 [node name="Mark" parent="Belt5" index="0"]
 text = "B"
+
+[editable path="Belt1"]
+[editable path="Belt2"]
+[editable path="Belt3"]
+[editable path="Belt4"]
+[editable path="Belt5"]
