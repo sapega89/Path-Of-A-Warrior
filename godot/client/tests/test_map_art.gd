@@ -1,8 +1,9 @@
 extends "res://tests/test_case.gd"
-## The maps in the new art (scripts/world/map_art.gd): every part and prop of the campaign's
-## maps is known; on the tests' own maps the ground rises where it is blocked and stays flat
-## where people walk, the faces of cliffs climb, bridges and decks hold, what stands on a cell is
-## a 3D piece, the breakable ones flash.
+## The maps in the new art (scripts/world/map_art.gd): every kind of ground and breakable thing
+## has its look (that the maps hold only those is MapCheck's, test_map_check.gd); on the tests'
+## own maps the ground rises where it is blocked and stays flat where people walk, the faces of
+## cliffs climb, bridges and decks hold, what stands on a cell is a 3D piece, the breakable ones
+## flash.
 
 
 ## One of the tests' own maps (three_rooms, terrain) in the new art.
@@ -17,7 +18,7 @@ func _kind(b: Node3D, x: int, y: int) -> String:
 	return b.kinds[int(b._part(x * MapArt.PARTS + 1, y * MapArt.PARTS + 1)[0])]
 
 
-func test_every_part_and_prop_is_known() -> void:
+func test_every_kind_has_its_look() -> void:
 	eq(MapArt.KIND_LETTERS.length(), MapArt.KINDS.size(), "a letter for each kind of ground")
 	for k in MapArt.KINDS:
 		check(MapArt.KIND_COLOUR.has(k), "a colour for %s" % k)
@@ -27,22 +28,6 @@ func test_every_part_and_prop_is_known() -> void:
 		check(
 			MapArt.PROP.has(breakable[code]), "breakable %d: %s is drawn" % [code, breakable[code]]
 		)
-	for n in range(1, MapBuilder.map_count() + 1):
-		var m := MapBuilder.load_map(n)
-		var unknown := {}
-		for letters: String in m.parts:
-			for letter in letters:
-				if not letter in MapArt.KIND_LETTERS:
-					unknown[letter] = true
-			if letters.length() != MapArt.PARTS * MapArt.PARTS:
-				unknown[letters] = true
-		for what: String in m.props:
-			if what != "" and not (MapArt.PROP.has(what) or MapArt.CLUSTERS.has(what)):
-				unknown[what] = true
-		for code in m.objects:
-			if int(code) < 0 or int(code) >= breakable.size():
-				unknown[code] = true
-		eq(unknown.keys(), [], "map %d: every part, prop and object is known" % n)
 
 
 func test_people_walk_on_flat_ground() -> void:
