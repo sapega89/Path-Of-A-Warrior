@@ -1,9 +1,90 @@
 {
 "curve": [
-{"depths": [1, 4], "route_rooms": [3, 4]},
-{"depths": [5, 8], "route_rooms": [4, 7]},
-{"depths": [9, 12], "route_rooms": [5, 7]},
-{"depths": [13, 16], "route_rooms": [5, 7]},
-{"depths": [17, 19], "route_rooms": [6, 8]}
-]
+{"depths": [1, 4], "route_rooms": [3, 4], "crowding": [0.12, 0.33]},
+{"depths": [5, 8], "route_rooms": [4, 7], "crowding": [0.14, 0.31]},
+{"depths": [9, 12], "route_rooms": [5, 7], "crowding": [0.22, 0.35]},
+{"depths": [13, 16], "route_rooms": [5, 7], "crowding": [0.18, 0.35]},
+{"depths": [17, 19], "route_rooms": [6, 8], "crowding": [0.2, 0.43]}
+],
+"biomes": {
+"steppe": {
+"ground": "m", "patches": [["g", 0.3], ["d", 0.1]], "path": "d",
+"barrier": {"kind": "v"}, "low_barrier": {"kind": "m"}, "ring": {"kind": "m"},
+"obstacles": [
+{"shape": "clump", "size": [2, 4], "kind": "v", "weight": 3},
+{"shape": "clump", "size": [1, 3], "kind": "r", "weight": 1},
+{"shape": "single", "size": [1, 1], "prop": "bush", "weight": 2},
+{"shape": "block", "size": [2, 3], "prop": "tent", "weight": 2},
+{"shape": "single", "size": [1, 1], "prop": "boulder", "weight": 1}
+],
+"land": {"crowding": 0.45, "obstacles": [
+{"shape": "block", "size": [2, 3], "prop": "tent", "weight": 3},
+{"shape": "clump", "size": [3, 6], "kind": "v", "weight": 2},
+{"shape": "single", "size": [1, 1], "prop": "bush", "weight": 2}
+]},
+"loose": [["tuft", 0.06], ["pebbles", 0.02]]
+},
+"forest": {
+"ground": "g", "patches": [["m", 0.3], ["d", 0.1]], "path": "d",
+"barrier": {"prop": "fir"}, "low_barrier": {"prop": "bush"},
+"obstacles": [
+{"shape": "clump", "size": [2, 4], "prop": "fir", "weight": 4},
+{"shape": "single", "size": [1, 1], "prop": "bush", "weight": 2},
+{"shape": "single", "size": [1, 1], "prop": "stump", "weight": 1},
+{"shape": "single", "size": [1, 1], "prop": "boulder", "weight": 1},
+{"shape": "clump", "size": [2, 3], "kind": "m", "weight": 1}
+],
+"land": {"crowding": 0.6, "obstacles": [
+{"shape": "clump", "size": [3, 6], "prop": "fir", "weight": 4},
+{"shape": "single", "size": [1, 1], "prop": "bush", "weight": 1}
+]},
+"loose": [["tuft", 0.05], ["stump", 0.01], ["pebbles", 0.01]]
+},
+"lake": {
+"ground": "m", "patches": [["g", 0.3], ["s", 0.08]], "path": "d",
+"barrier": {"kind": "w"}, "low_barrier": {"kind": "w"},
+"obstacles": [
+{"shape": "clump", "size": [2, 5], "kind": "w", "weight": 3},
+{"shape": "line", "size": [3, 4], "prop": "fence", "weight": 1},
+{"shape": "single", "size": [1, 1], "prop": "bush", "weight": 2},
+{"shape": "block", "size": [2, 3], "prop": "hut", "weight": 1}
+],
+"land": {"crowding": 0.55, "obstacles": [
+{"shape": "clump", "size": [4, 8], "kind": "w", "weight": 3},
+{"shape": "block", "size": [3, 3], "prop": "hut", "weight": 1}
+]},
+"loose": [["tuft", 0.05], ["pebbles", 0.02]]
+},
+"mountains": {
+"ground": "d", "patches": [["v", 0.3], ["t", 0.08]], "path": "v",
+"barrier": {"kind": "t"}, "low_barrier": {"kind": "d"},
+"obstacles": [
+{"shape": "block", "size": [2, 3], "kind": "t", "face": "r", "weight": 3},
+{"shape": "clump", "size": [1, 3], "kind": "r", "weight": 2},
+{"shape": "single", "size": [1, 1], "prop": "boulder", "weight": 2},
+{"shape": "single", "size": [1, 1], "prop": "pebbles", "weight": 1}
+],
+"land": {"crowding": 0.6, "obstacles": [
+{"shape": "block", "size": [3, 4], "kind": "t", "face": "r", "weight": 3},
+{"shape": "clump", "size": [2, 4], "kind": "r", "weight": 1}
+]},
+"loose": [["pebbles", 0.05], ["tuft", 0.02]]
+},
+"town": {
+"ground": "d", "patches": [["v", 0.3], ["m", 0.15]], "path": "c",
+"barrier": {"kind": "c"}, "low_barrier": {"prop": "fence"}, "ring": {"kind": "g", "prop": "fir"},
+"obstacles": [
+{"shape": "block", "size": [2, 3], "prop": "hut", "weight": 3},
+{"shape": "line", "size": [3, 4], "prop": "fence", "weight": 2},
+{"shape": "line", "size": [2, 4], "kind": "c", "weight": 2},
+{"shape": "single", "size": [1, 1], "prop": "well", "weight": 1},
+{"shape": "single", "size": [1, 1], "prop": "hay", "weight": 1}
+],
+"land": {"crowding": 0.5, "obstacles": [
+{"shape": "block", "size": [3, 3], "prop": "hut", "weight": 3},
+{"shape": "line", "size": [3, 5], "kind": "c", "weight": 1}
+]},
+"loose": [["pebbles", 0.03], ["tuft", 0.02]]
+}
+}
 }
