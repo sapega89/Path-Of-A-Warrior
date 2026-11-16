@@ -73,6 +73,14 @@ func room_xy(room: int) -> Vector2i:
 	return Vector2i(room % rooms_x, room / rooms_x)
 
 
+## The room past side `side` of a room (Rooms.EXIT_* - 1), -1 past the edge of the grid.
+func beside(room: int, side: int) -> int:
+	var p := room_xy(room) + STEP[side]
+	if p.x < 0 or p.y < 0 or p.x >= rooms_x or p.y >= rooms_y:
+		return -1
+	return p.y * rooms_x + p.x
+
+
 ## The side of room `from` that leads to the room `to` beside it (Rooms.EXIT_* - 1).
 func _side(from: int, to: int) -> int:
 	return STEP.find(room_xy(to) - room_xy(from))
@@ -94,7 +102,7 @@ func _pick_grid(longest: int, random: GameRandom) -> void:
 ## A route of `length` rooms unlike the routes of the missions before: from each room in a random
 ## order, the first one found going on to the rooms beside in a random order ([]: none).
 func _route(length: int, random: GameRandom) -> Array[int]:
-	for first: int in _shuffled(range(rooms_x * rooms_y), random):
+	for first: int in shuffled(range(rooms_x * rooms_y), random):
 		var path: Array[int] = [first]
 		if _walk(path, length, random):
 			return path
@@ -107,7 +115,7 @@ func _walk(path: Array[int], length: int, random: GameRandom) -> bool:
 	if path.size() == length:
 		return not routes.has(path)
 	var at := room_xy(path[-1])
-	for side: int in _shuffled([0, 1, 2, 3], random):
+	for side: int in shuffled([0, 1, 2, 3], random):
 		var p := at + STEP[side]
 		var room := p.y * rooms_x + p.x
 		if p.x >= 0 and p.y >= 0 and p.x < rooms_x and p.y < rooms_y and not path.has(room):
@@ -118,7 +126,8 @@ func _walk(path: Array[int], length: int, random: GameRandom) -> bool:
 	return false
 
 
-static func _shuffled(items: Array, random: GameRandom) -> Array:
+## The items in a random order.
+static func shuffled(items: Array, random: GameRandom) -> Array:
 	var out := items.duplicate()
 	for i in range(out.size() - 1, 0, -1):
 		var j := random.below(i + 1)

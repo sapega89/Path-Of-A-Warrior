@@ -54,7 +54,7 @@ func test_the_same_seed_the_same_map() -> void:
 		var map := JSON.stringify(MapGenerator.build(plan, plan.seed))
 		eq(JSON.stringify(MapGenerator.build(plan, plan.seed)), map, "place %d" % n)
 		var others := {}
-		for i in range(1, 4):
+		for i in range(1, 3):
 			others[JSON.stringify(MapGenerator.build(plan, plan.seed + i).rooms)] = true
 		check(others.size() > 1, "place %d: other seeds, other rooms" % n)
 

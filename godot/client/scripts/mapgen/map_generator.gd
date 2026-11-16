@@ -1,14 +1,17 @@
 class_name MapGenerator
 extends RefCounted
 ## Makes the map of a place from its plan (MapPlan) and the rules of data/map_rules.json, in the
-## format of the campaign's maps (MapBuilder): the grid of rooms and each mission's route
-## (RoomLayout), for now rooms of bare meadow with the plan's generals and talks in the rooms of
-## the route. Each step draws from its own random numbers, started from the seed and the step's
-## name, so that new rules for one step do not move what the others make. A map the game cannot
-## play (MapCheck) is made again from the next seed, up to TRIES seeds.
+## format of the campaign's maps (MapBuilder), step by step on a MapDraft: the grid of rooms and
+## each mission's route (RoomLayout), what stands in the rooms (RoomFill), the ground
+## (GroundPaint), the plan's generals and talks in the rooms of the routes. Each step draws from
+## its own random numbers, started from the seed and the step's name, so that new rules for one
+## step do not move what the others make. A map the game cannot play (MapCheck) is made again
+## from the next seed, up to TRIES seeds.
 ##
 ## map_rules.json: curve: per band of depths in the campaign (MapPlan.depth: [first, last]),
-## route_rooms: [fewest, most] rooms on a mission's route.
+## route_rooms ([fewest, most] rooms on a mission's route) and crowding (the least and the most
+## of a room on a route its obstacles take); biomes: per biome of the plan, its ground
+## (GroundPaint), barrier, low_barrier, obstacles, land and loose things (RoomFill).
 
 const RULES_PATH := "res://data/map_rules.json"
 const FORMAT := 2
@@ -18,8 +21,6 @@ const TRIES := 50
 const MAX_ENEMIES := 3
 ## Numbers in a room's waves: [kind, count] pairs, zeros after the last.
 const WAVE_NUMBERS := 12
-## The ground everywhere for now: meadow in all the parts of a cell.
-const GROUND := "mmmmmmmmm"
 
 static var _rules: Dictionary = {}
 
@@ -41,10 +42,22 @@ func make(plan: MapPlan) -> Dictionary:
 ## The map of the place from `map_seed`, whether the game can play it or not.
 static func build(plan: MapPlan, map_seed: int) -> Dictionary:
 	var layout := layout_of(plan, map_seed)
-	var w := layout.rooms_x * RoomLayout.ROOM + 2
-	var h := layout.rooms_y * RoomLayout.ROOM + 2
-	var map := {"format": FORMAT, "seed": map_seed, "w": w, "h": h, "biome": plan.biome}
-	map.merge(_ground(w, h))
+	var draft := MapDraft.new(layout)
+	var biome: Dictionary = _rules_of()["biomes"][plan.biome]
+	var crowding: Array = curve(plan.depth)["crowding"]
+	RoomFill.new(draft, biome, stream(map_seed, "fill")).fill(
+		plan, Vector2(crowding[0], crowding[1])
+	)
+	GroundPaint.new(draft, biome, stream(map_seed, "ground")).paint()
+	var map := {"format": FORMAT, "seed": map_seed, "w": draft.w, "h": draft.h}
+	map["biome"] = plan.biome
+	map["parts"] = Array(draft.parts)
+	map["props"] = Array(draft.props)
+	var objects: Array = []
+	objects.resize(draft.w * draft.h)
+	objects.fill(0)
+	map["objects"] = objects
+	map["flags"] = Array(draft.blocked)
 	map["scripts"] = []
 	var missions: Array = []
 	var starts: Array = []
@@ -71,13 +84,17 @@ static func route_rooms(depth: int) -> Vector2i:
 
 ## The band of the curve (map_rules.json) for a place `depth` steps into the campaign.
 static func curve(depth: int) -> Dictionary:
-	if _rules.is_empty():
-		_rules = JSON.parse_string(FileAccess.get_file_as_string(RULES_PATH))
-	var bands: Array = _rules["curve"]
+	var bands: Array = _rules_of()["curve"]
 	for band: Dictionary in bands:
 		if depth <= int(band["depths"][1]):
 			return band
 	return bands[-1]
+
+
+static func _rules_of() -> Dictionary:
+	if _rules.is_empty():
+		_rules = JSON.parse_string(FileAccess.get_file_as_string(RULES_PATH))
+	return _rules
 
 
 ## Random numbers for one step of making the map: started from the seed and the step's name
@@ -89,18 +106,6 @@ static func stream(map_seed: int, step: String) -> GameRandom:
 	for byte in ("%d:%s" % [map_seed, step]).to_utf8_buffer():
 		hash_of = ((hash_of ^ byte) * FNV_PRIME) & 0xFFFFFFFF
 	return GameRandom.new(hash_of)
-
-
-## The layers of the cells: parts, props, objects and flags, w * h cells each, row by row.
-static func _ground(w: int, h: int) -> Dictionary:
-	var blank := {"parts": GROUND, "props": "", "objects": 0, "flags": 0}
-	var layers := {}
-	for layer: String in blank:
-		var cells: Array = []
-		cells.resize(w * h)
-		cells.fill(blank[layer])
-		layers[layer] = cells
-	return layers
 
 
 ## The rooms of a mission (Rooms.cells): the exits of its route, and in the room of each stop of
