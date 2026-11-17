@@ -63,6 +63,25 @@ func make() -> void:
 		scripts.append({"x": c.x, "y": c.y, "ops": ops[c]})
 
 
+## What mission `mission` of a map has to fight: {rooms (with soldiers), soldiers, archers,
+## time (seconds)}.
+static func fights_of(map: Dictionary, mission: int) -> Dictionary:
+	var rooms := Rooms.new(map, mission)
+	var out := {"rooms": 0, "soldiers": 0, "archers": 0}
+	out["time"] = MapBuilder.mission_time(map, mission)
+	for room in rooms.cells.size():
+		var soldiers := 0
+		for wave: Array in rooms.waves(room):
+			soldiers += int(wave[1]) if wave[0] == MapSim.KIND_SWORDS else 0
+		out.rooms += 1 if soldiers > 0 else 0
+		out.soldiers += soldiers
+	for script: Dictionary in map.get("scripts", []):
+		for op: Array in script.ops:
+			var archer := int(op[0]) == 0 and int(op[2]) == MapSim.KIND_ARCHERS - 200
+			out.archers += 1 if archer and int(op[1]) == mission + 1 else 0
+	return out
+
+
 ## A number from [fewest, most].
 func _between(fewest_most: Array) -> float:
 	var fewest := float(fewest_most[0])

@@ -336,14 +336,19 @@ func _ready() -> void:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path("user://hero.json"))
 	else:
 		FileAccess.open("user://hero.json", FileAccess.WRITE).store_string(kept)
-	_press("move_right")  # off the barrel's column
-	await _seconds(0.3)
-	_release("move_right")
-	_press("move_down")
-	await _seconds(6.0)
-	_release("move_down")
+	# Out of the cleared room into the next one on the auto-hunt, by the room's open exit.
+	var first_room: int = mission.sim.cell
+	Router.current.toggle_auto()
+	t0 = Time.get_ticks_msec()
+	while mission.sim.cell == first_room and Time.get_ticks_msec() - t0 < 20000:
+		await _frames(1)
+	Router.current.toggle_auto()
+	var entering := func() -> bool:
+		return mission.sim.scrolling or mission.sim.room_phase != 0 or mission.sim.banner != 0
+	while entering.call() and Time.get_ticks_msec() - t0 < 30000:  # its scroll and Stage banner
+		await _frames(1)
 	await _seconds(1.0)
-	print("room after walking down: ", mission.sim.cell, " stage ", mission.sim.rooms_visited)
+	print("room after walking out: ", mission.sim.cell, " stage ", mission.sim.rooms_visited)
 	await _shot(out, "mission_1_room_2")
 	# Potions in the quick slots of the HUD, then one drunk.
 	var msim: RefCounted = mission.sim

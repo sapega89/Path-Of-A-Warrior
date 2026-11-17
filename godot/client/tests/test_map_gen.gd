@@ -3,7 +3,8 @@ extends "res://tests/test_case.gd"
 ## from its plan. The same seed makes the same map on any computer; each mission's route never
 ## comes back to a room, is as long as the curve of data/map_rules.json says and leads from the
 ## start to the room of the mission's own general, the plan's other stops spread along it; the
-## game can play every map (MapCheck).
+## game can play every map (MapCheck), from its own seed and the next ones; the maps of the
+## campaign the generator made (data/maps/N.json with a seed) are the ones it makes now.
 
 ## The maps made, by place: each made once for all the tests here.
 static var _made := {}
@@ -108,6 +109,31 @@ func test_every_map_the_game_can_play() -> void:
 		eq(maker.problems, [] as Array[String], "place %d" % n)
 		eq(map.get("seed"), plan.seed, "place %d: from its own seed" % n)
 		eq(MapCheck.unknown_things(map), [] as Array[String], "place %d: all of it drawn" % n)
+
+
+func test_five_seeds_of_every_place() -> void:
+	const SEEDS := 5
+	for n: int in _places():
+		var plan := MapPlan.of(n)
+		for i in range(1, SEEDS + 1):
+			var map := MapGenerator.build(plan, plan.seed + i)
+			var problems := MapCheck.problems(map, plan.bosses, plan.ways_on)
+			eq(problems, [] as Array[String], "place %d, seed %d" % [n, plan.seed + i])
+
+
+func test_the_maps_of_the_campaign_as_made_now() -> void:
+	var made := 0
+	for n: int in _places():
+		var saved := MapBuilder.load_map(n)
+		if not saved.has("seed"):
+			continue  # a map the generator has not made yet
+		made += 1
+		var now: Variant = JSON.parse_string(JSON.stringify(_map(n)))
+		check(
+			JSON.stringify(now) == JSON.stringify(saved),
+			"place %d: data/maps/%d.json made again by tools/gen_maps.tscn" % [n, n]
+		)
+	check(made > 0, "maps of the campaign the generator made: %d" % made)
 
 
 func test_the_generals_where_the_plan_puts_them() -> void:
