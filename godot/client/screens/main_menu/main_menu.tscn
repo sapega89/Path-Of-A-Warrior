@@ -48,6 +48,10 @@ text = "menu.new_game"
 layout_mode = 2
 text = "menu.endings"
 
+[node name="TestGround" type="Button" parent="Center/Column"]
+layout_mode = 2
+text = "menu.test_ground"
+
 [node name="Settings" type="Button" parent="Center/Column"]
 layout_mode = 2
 text = "menu.settings"
@@ -66,6 +70,8 @@ safe_default = true
 [connection signal="pressed" from="Center/Column/NewGame" to="." method="new_game"]
 
 [connection signal="pressed" from="Center/Column/Endings" to="." method="open_endings"]
+
+[connection signal="pressed" from="Center/Column/TestGround" to="." method="open_test_ground"]
 
 [connection signal="pressed" from="Center/Column/Settings" to="." method="open_settings"]
 

@@ -1,9 +1,9 @@
 class_name MainMenu
 extends BaseScreen
-## Main menu: continue (or play), new game, endings, settings, quit (no quit button on phones
-## and the web). Continue opens the hero's camp (screens/camp/camp_screen.gd), where his
-## game goes on; a new game starts its first mission at once after the opening. The hero is
-## saved on this computer (Profile.PATH).
+## Main menu: continue (or play), new game, endings, the test ground, settings, quit (no quit
+## button on phones and the web). Continue opens the hero's camp (screens/camp/camp_screen.gd),
+## where his game goes on; a new game starts its first mission at once after the opening. The
+## hero is saved on this computer (Profile.PATH).
 
 var buttons: Array[Button] = []
 
@@ -51,6 +51,11 @@ func play() -> void:
 
 func open_endings() -> void:
 	Router.push("endings", {})
+
+
+## Every map of the campaign with an immortal hero, nothing saved (TestGroundScreen).
+func open_test_ground() -> void:
+	Router.push("test_ground")
 
 
 func open_settings() -> void:

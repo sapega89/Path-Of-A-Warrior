@@ -66,6 +66,8 @@ var dir_history: Array[int] = [-1, -1, -1, -1, -1]
 var hold_to_move := true  # the player's option: walk while the key is held
 ## The map without enemies (a test option): a room's list counts as defeated.
 var no_enemies := false
+## The hero takes no damage: a hit still shows, his HP stays (the test ground, TestMissionScreen).
+var immortal := false
 var difficulty := 1  # 0 hard (gold and exp x2), 1 normal
 var general_side := 0  # the side (weapon) of the last general met: 0 long, 1 short sword
 var general := {}  # the last general met (campaign.json generals)

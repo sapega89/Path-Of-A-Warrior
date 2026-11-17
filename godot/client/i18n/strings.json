@@ -1118,5 +1118,21 @@
   "story.new_road": {
     "en": "A new road is open:",
     "uk": "Відкрилася нова дорога:"
+  },
+  "menu.test_ground": {
+    "en": "Test Ground",
+    "uk": "Тестовий майданчик"
+  },
+  "test_ground.title": {
+    "en": "Test Ground",
+    "uk": "Тестовий майданчик"
+  },
+  "test_ground.info": {
+    "en": "Every map of the campaign with its enemies. The hero cannot die, nothing is saved. In a mission PgUp / PgDn (or [ ]) change the map, a mission won leads to the next one.",
+    "uk": "Усі карти кампанії з ворогами. Герой не гине, нічого не зберігається. У місії PgUp / PgDn (або [ ]) міняють карту, виграна місія веде до наступної."
+  },
+  "test_ground.where": {
+    "en": "Map %d / %d: %s · Mission %d / %d\n[PgUp] [PgDn] change map · immortal, nothing is saved",
+    "uk": "Карта %d / %d: %s · Місія %d / %d\n[PgUp] [PgDn] інша карта · безсмертя, нічого не зберігається"
   }
 }
