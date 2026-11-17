@@ -1,7 +1,7 @@
 extends "res://tests/test_case.gd"
 ## MapCheck (scripts/mapgen/map_check.gd): what the game needs of a map. The tests' own three
 ## rooms pass it, a copy of them broken one way at a time is told what is wrong, and the maps of
-## the campaign pass it but for one fault of place 27.
+## the campaign pass it.
 
 
 ## The three rooms: generals 1 and 2 win their two missions.
@@ -92,9 +92,9 @@ func test_unknown_things() -> void:
 	)
 
 
-## The maps of the campaign pass, but for place 27 (Dawn over the Dnipro): it has six ways on
-## and the room where each of its missions is won has two sides to walk out on, so once five or
-## six of those places are open, ways go on a walled side too. Its generated map mends it.
+## The maps of the campaign pass, place 27 (Dawn over the Dnipro) too: its old map had six ways
+## on and two sides to walk out on in the room where each of its missions is won, its generated
+## map has room for them.
 func test_the_maps_of_the_campaign_pass() -> void:
 	var found := {}
 	for n in range(1, MapBuilder.map_count() + 1):
@@ -102,14 +102,4 @@ func test_the_maps_of_the_campaign_pass() -> void:
 		var problems := MapCheck.problems(MapBuilder.load_map(n), plan.bosses, plan.ways_on)
 		if not problems.is_empty():
 			found[n] = problems
-	eq(
-		found,
-		{
-			27:
-			[
-				"mission 0, room 11 (in at 22, 21): 2 open sides for 6 ways on",
-				"mission 1, room 7 (in at 22, 8): 2 open sides for 6 ways on"
-			]
-		},
-		"one fault: place 27"
-	)
+	eq(found, {}, "no faults")

@@ -3,7 +3,7 @@ extends RefCounted
 ## The fights of a map being made (MapDraft), mission by mission along the routes of its rooms
 ## (RoomLayout): the soldiers of each room of a route, as many a room as the curve gives for the
 ## place's depth, the first room lighter and the last one heavier; in the room of each stop of
-## the plan its generals, the room's soldiers before them and a third after them, as the game
+## the plan its generals, the room's soldiers before them and a few after them, as the game
 ## sends them (Rooms.waves); archers standing in the rooms past the first; the time of the
 ## mission for its speed bonus. Things to break stand in the rooms of the routes. Archers and
 ## things to break stand on cells the ways through the room do not keep (RoomFill) and the hero
@@ -22,8 +22,10 @@ const WAVE_NUMBERS := 12
 const FIRST_SHARE := 0.6
 const LAST_SHARE := 1.25
 const GENERALS_SHARE := 1.1
-## Of the soldiers of a room where generals fight, one in AFTER_GENERALS comes after them.
+## Of the soldiers of a room where generals fight, one in AFTER_GENERALS comes after them, at
+## most MOST_AFTER_GENERALS.
 const AFTER_GENERALS := 3
+const MOST_AFTER_GENERALS := 5
 const ARCHERS_A_ROOM := 2
 const IN := 1000
 
@@ -162,10 +164,11 @@ static func _shared(total: int, shares: Array[float]) -> Array[int]:
 
 
 ## A room's waves: its soldiers and generals ([kind, levels over the hero]); the soldiers before
-## the generals, a third of them after them as long as the waves have room.
+## the generals, a third of them (MOST_AFTER_GENERALS at most) after them as long as the waves
+## have room.
 static func _room_waves(soldiers: int, generals: Array) -> Array[int]:
 	var waves_after := mini(generals.size(), WAVE_NUMBERS / 2 - 1 - generals.size())
-	var after := soldiers / AFTER_GENERALS if waves_after > 0 else 0
+	var after := mini(soldiers / AFTER_GENERALS, MOST_AFTER_GENERALS) if waves_after > 0 else 0
 	var out: Array[int] = []
 	_add_soldiers(out, soldiers - after)
 	for g in generals.size():
