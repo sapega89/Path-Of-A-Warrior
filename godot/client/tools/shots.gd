@@ -20,6 +20,13 @@ func _ready() -> void:
 	Router.current.ask.popup_centered()  # a new game over a saved one: the game's question, No first
 	await _shot(out, "02_main_menu_delete_ask")
 	Router.current.ask.hide()
+	# The test ground: a button a map, and a map's mission with the line on top.
+	Router.push("test_ground")
+	await _shot(out, "02_test_ground")
+	Router.current.open(12)
+	await _seconds(1.0)
+	await _shot(out, "02_test_mission")
+	Router.go("main_menu")
 	# A new game: the difficulty, the face, the name, the points.
 	Router.push("new_game", {"profile_path": "user://shot_new.json"})
 	var ng: Node = Router.current

@@ -353,7 +353,7 @@ static func hero_is_hit(sim: MapSim, e: MapActor, a: MapArrow = null) -> void:
 		sim.hero.facing = ((a.dir << 1) + 4) & 7
 		dmg = a.attack - sim.hero.defense - sim.hero.defense_buff
 	sim.hero.dir = sim.hero.facing
-	dmg = maxi(dmg, 1)
+	dmg = 0 if sim.immortal else maxi(dmg, 1)
 	sim.hero.hp = sim.hero.hp - dmg if sim.hero.hp > dmg else 0
 	if e != null:
 		_show_target_info(sim, e)

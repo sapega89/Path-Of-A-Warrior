@@ -63,6 +63,12 @@ const MENU_KEYS := {
 	"ui_right": [KEY_D, KEY_KP_6],
 	"ui_accept": [KEY_J, KEY_KP_5],
 }
+## The test ground's own keys (TestMissionScreen), not among the Controls: PageUp or [ the
+## previous map, PageDown or ] the next.
+const TEST_KEYS := {
+	"map_prev": [KEY_PAGEUP, KEY_BRACKETLEFT],
+	"map_next": [KEY_PAGEDOWN, KEY_BRACKETRIGHT],
+}
 ## The pad in the menus: Godot's own ui_accept and ui_cancel have no pad button (A pressed no
 ## button, B went nowhere), and its d-pad and stick are only for the first pad (device 0).
 const MENU_PAD := {
@@ -226,11 +232,14 @@ static func actions() -> Array:
 
 ## Adds the actions and default bindings to InputMap. Safe to call twice.
 static func register() -> void:
-	for action in MENU_KEYS:
-		for key in MENU_KEYS[action]:
-			var mk := InputEventKey.new()
-			mk.physical_keycode = key
-			_add(action, mk)
+	for keys: Dictionary in [MENU_KEYS, TEST_KEYS]:
+		for action: String in keys:
+			if not InputMap.has_action(action):
+				InputMap.add_action(action)
+			for key: Key in keys[action]:
+				var mk := InputEventKey.new()
+				mk.physical_keycode = key
+				_add(action, mk)
 	for action in MENU_PAD:
 		var mb := InputEventJoypadButton.new()
 		mb.button_index = MENU_PAD[action]

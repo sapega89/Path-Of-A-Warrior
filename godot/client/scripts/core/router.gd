@@ -29,6 +29,8 @@ const SCREENS := {
 	"shop": "res://screens/shop/shop_screen.tscn",
 	"new_game": "res://screens/new_game/new_game_screen.tscn",
 	"endings": "res://screens/endings/endings_screen.tscn",
+	"test_ground": "res://screens/test_ground/test_ground_screen.tscn",
+	"test_mission": "res://screens/test_ground/test_mission_screen.tscn",
 	"help": "res://screens/help/help_screen.tscn",
 }
 
